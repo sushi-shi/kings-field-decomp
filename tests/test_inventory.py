@@ -136,7 +136,7 @@ class InventoryTests(unittest.TestCase):
     def test_effect_union_views_preserve_record_layout(self) -> None:
         layouts = _header_structure_layouts()
         for name, size, members in (
-            ("KfEffectDirection", 8, 2), ("KfEffectRotation", 8, 2),
+            ("KfEffectDirection", 8, 2), ("KfRotation", 8, 2),
             ("KfEffectControl", 2, 5),
         ):
             layout = layouts[name]
@@ -253,9 +253,9 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["data"], 2920)
         self.assertGreaterEqual(counts["functions_named"], 240)
         self.assertGreaterEqual(counts["data_named"], 100)
-        self.assertEqual(counts["structures"], 106)
-        self.assertEqual(counts["structure_fields"], 818)
-        self.assertEqual(counts["structure_fields_named"], 725)
+        self.assertEqual(counts["structures"], 105)
+        self.assertEqual(counts["structure_fields"], 805)
+        self.assertEqual(counts["structure_fields_named"], 717)
 
     def test_animation_cache_slots_share_one_pointer_type_without_layout_changes(self) -> None:
         structures = load_structure_identities(RETAIL_CONFIG)
@@ -272,8 +272,8 @@ class InventoryTests(unittest.TestCase):
                 self.assertEqual(_structure_field(structure, offset),
                                  (name, "KfPoolRecord *", 4))
         # The rotation view occupies 0x34..0x3b, not the cache pointer.
-        self.assertEqual(_structure_field("KfMapEvent", 0x3A),
-                         ("unknown_3a", "u8[2]", 2))
+        self.assertEqual(_structure_field("KfMapEvent", 0x34),
+                         ("rotation", "SVECTOR", 8))
         self.assertEqual(_structure_field("KfMapEvent", 0x40),
                          ("rotation_target", "s16", 2))
 
@@ -624,7 +624,6 @@ class InventoryTests(unittest.TestCase):
             "KfVecXZs",
             "KfVec3s",
             "KfVec3i",
-            "KfPitchYaw",
             "KfEulerAngles",
         ):
             declaration = f"struct {structure} {{"

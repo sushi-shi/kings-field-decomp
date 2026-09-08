@@ -421,7 +421,7 @@ s32 actor_move_xz_with_collision(const struct KfVecXZs *delta, s32 stop_on_colli
                     actor->movement_yaw = (actor->movement_yaw + KF_ANGLE_HALF_TURN) & KF_ANGLE_WRAP_MASK;
                     actor->collision_state = KF_ACTOR_COLLISION_BLOCKED;
                 }
-            } else if (actor->movement_yaw == actor->rotation.y) {
+            } else if (actor->movement_yaw == actor->rotation.angles.y) {
                 actor->movement_yaw = (actor->movement_yaw + ACTOR_BLOCKED_TURN_STEP) & KF_ANGLE_WRAP_MASK;
             }
         }
@@ -478,11 +478,11 @@ s32 actor_move_along_heading(s32 direction, s32 stop_on_collision)
 
     if (actor->collision_state == KF_ACTOR_COLLISION_SLIDING) {
         rate = definition->turn_rate;
-        actor->rotation.y = angle_approach(actor->rotation.y, actor->movement_yaw, (rate + rate + rate) >> 1);
+        actor->rotation.angles.y = angle_approach(actor->rotation.angles.y, actor->movement_yaw, (rate + rate + rate) >> 1);
     } else {
-        actor->rotation.y = angle_approach(actor->rotation.y, actor->movement_yaw, definition->turn_rate);
+        actor->rotation.angles.y = angle_approach(actor->rotation.angles.y, actor->movement_yaw, definition->turn_rate);
     }
-    angle_to_forward_xz(actor->rotation.y, &delta);
+    angle_to_forward_xz(actor->rotation.angles.y, &delta);
     vector2s_scale_shift11(definition->move_speed, &delta);
     if (direction < 0) {
         delta.x = -delta.x;
@@ -493,7 +493,7 @@ s32 actor_move_along_heading(s32 direction, s32 stop_on_collision)
 
 /*
  * Spawns the effect of EFFECT_CODE at the actor's attachment point: the
- * offset is rotated by the actor's angles, aimed at the player when the
+ * offset is rotated by the actor's orientation, aimed at the player when the
  * player is inside the cone, scaled per code, and handed to the spawner.
  * Bit 5 of the code spawns a mirrored pair.
  */
@@ -504,10 +504,10 @@ void actor_spawn_action_effect(s32 effect_code, KfActorEffectSlot effect_slot)
     KfActorDefinition *definition = actor_state.current_definition;
     SVECTOR direction;
     SVECTOR offset;
-    struct KfEulerAngles angles;
+    KfRotation effect_rotation;
     VECTOR position;
     MATRIX matrix;
-    struct KfEulerAngles burst_angles;
+    KfRotation burst_rotation;
     s32 repeat;
     s32 i;
     s16 facing;
@@ -542,22 +542,22 @@ void actor_spawn_action_effect(s32 effect_code, KfActorEffectSlot effect_slot)
                     offset.vx = offset.vx - ACTOR_PAIRED_EFFECT_X_OFFSET;
                 }
             }
-            angles.x = actor->rotation.x;
-            angles.y = -actor->rotation.y & KF_ANGLE_WRAP_MASK;
-            angles.z = actor->rotation.z;
-            matrix_set_rotation_yxz(&angles, &matrix);
+            effect_rotation.angles.x = actor->rotation.angles.x;
+            effect_rotation.angles.y = -actor->rotation.angles.y & KF_ANGLE_WRAP_MASK;
+            effect_rotation.angles.z = actor->rotation.angles.z;
+            matrix_set_rotation_yxz(&effect_rotation.angles, &matrix);
             ApplyMatrix(&matrix, &offset, &position);
             position.vx += actor->position.vx;
             position.vy += actor->position.vy;
             position.vz += actor->position.vz;
-            facing = (KF_ANGLE_HALF_TURN - actor->rotation.y) & KF_ANGLE_WRAP_MASK;
+            facing = (KF_ANGLE_HALF_TURN - actor->rotation.angles.y) & KF_ANGLE_WRAP_MASK;
             distance = player_distance_to_point_in_cone(
                 (struct KfVec3i *)&position, facing, ACTOR_EFFECT_AIM_RANGE, KF_ACTOR_AIM_TOLERANCE);
             if (distance == -1) {
-                angles.x = 0;
+                effect_rotation.angles.x = 0;
                 if (KF_ENUM_DECODE(KfEffectKindArgument, effect_code) == KF_EFFECT_KIND_LIGHTNING_BOLT_ALTERNATE) {
                     speed = ACTOR_LIGHTNING_VARIANT_SPEED;
-                    angles.x = ACTOR_LIGHTNING_FALLBACK_PITCH;
+                    effect_rotation.angles.x = ACTOR_LIGHTNING_FALLBACK_PITCH;
                     distance = ACTOR_EFFECT_FALLBACK_MOVE_COUNT;
                 } else if (KF_ENUM_DECODE(KfEffectKindArgument, effect_code) == KF_EFFECT_KIND_ACTOR_SPAWNER
                            || KF_ENUM_DECODE(KfEffectKindArgument, effect_code) == KF_EFFECT_KIND_SCATTER_PROJECTILE) {
@@ -566,18 +566,18 @@ void actor_spawn_action_effect(s32 effect_code, KfActorEffectSlot effect_slot)
                 } else {
                     speed = ACTOR_EFFECT_DEFAULT_SPEED;
                 }
-                angles.y = facing;
+                effect_rotation.angles.y = facing;
             } else {
-                angles.y = vector_xz_to_angle(
+                effect_rotation.angles.y = vector_xz_to_angle(
                     actor_state.player_position.vx - position.vx,
                     position.vz - actor_state.player_position.vz);
                 if (KF_ENUM_DECODE(KfEffectKindArgument, effect_code) == KF_EFFECT_KIND_LIGHTNING_BOLT_ALTERNATE) {
                     speed = ACTOR_LIGHTNING_VARIANT_SPEED;
-                    angles.x = vector_xz_to_angle(
+                    effect_rotation.angles.x = vector_xz_to_angle(
                         position.vy - (actor_state.player_position.vy - ACTOR_LIGHTNING_TARGET_Y_OFFSET), -distance);
                     distance = distance / speed;
                 } else {
-                    angles.x = vector_xz_to_angle(
+                    effect_rotation.angles.x = vector_xz_to_angle(
                         position.vy - actor_state.player_position.vy, -distance);
                     if (KF_ENUM_DECODE(KfEffectKindArgument, effect_code) == KF_EFFECT_KIND_SCATTER_PROJECTILE) {
                         speed = ACTOR_PROPAGATING_EFFECT_SPEED;
@@ -598,23 +598,23 @@ void actor_spawn_action_effect(s32 effect_code, KfActorEffectSlot effect_slot)
                     }
                 }
             }
-            angles.z = 0;
+            effect_rotation.angles.z = 0;
             if (KF_ENUM_DECODE(KfEffectKindArgument, effect_code) == KF_EFFECT_KIND_WIND_CUTTER) {
                 speed = ACTOR_WIND_CUTTER_SPEED;
             }
-            pitch_yaw_to_forward_vector((struct KfPitchYaw *)&angles, &direction);
+            pitch_yaw_to_forward_vector(&effect_rotation.angles, &direction);
             vector3s_scale_shift12(speed, &direction);
             if (KF_ENUM_DECODE(KfEffectKindArgument, effect_code) == KF_EFFECT_KIND_LIGHT_NEEDLE || KF_ENUM_DECODE(KfEffectKindArgument, effect_code) == KF_EFFECT_KIND_PHYSICAL_PROJECTILE) {
                 effect_pool_construct(
                     definition->effect_owner_id, 0x20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
-                    KF_ENUM_DECODE(KfEffectKindArgument, effect_code), &position, &direction, &angles, 1);
+                    KF_ENUM_DECODE(KfEffectKindArgument, effect_code), &position, &direction, &effect_rotation.vector, 1);
             } else if (KF_ENUM_DECODE(KfEffectKindArgument, effect_code) == KF_EFFECT_KIND_HOMING_PROJECTILE_ALTERNATE) {
-                burst_angles.x = actor->rotation.x;
-                burst_angles.y = facing;
-                burst_angles.z = actor->rotation.z;
+                burst_rotation.angles.x = actor->rotation.angles.x;
+                burst_rotation.angles.y = facing;
+                burst_rotation.angles.z = actor->rotation.angles.z;
                 effect_pool_construct(
                     definition->effect_owner_id, 0x20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER, KF_EFFECT_KIND_HOMING_PROJECTILE_ALTERNATE,
-                    &position, &direction, &burst_angles, KF_ENUM_ENCODE(u8, KF_EFFECT_HOMING_PLAYER), 1);
+                    &position, &direction, &burst_rotation.vector, KF_ENUM_ENCODE(u8, KF_EFFECT_HOMING_PLAYER), 1);
             } else if (KF_ENUM_DECODE(KfEffectKindArgument, effect_code) == KF_EFFECT_KIND_SCATTER_PROJECTILE) {
                 effect_pool_construct(
                     definition->effect_owner_id, 0x20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
@@ -640,8 +640,8 @@ void actor_prepare_charge_toward_player(void)
     actor->movement_yaw = vector_xz_to_angle(
         actor_state.player_position.vx - actor->position.vx,
         actor_state.player_position.vz - actor->position.vz);
-    if (angle_within_tolerance(actor->rotation.y, (s16)actor->movement_yaw, KF_ACTOR_AIM_TOLERANCE) == 0) {
-        actor->movement_yaw = actor->rotation.y;
+    if (angle_within_tolerance(actor->rotation.angles.y, actor->movement_yaw, KF_ACTOR_AIM_TOLERANCE) == 0) {
+        actor->movement_yaw = actor->rotation.angles.y;
     }
     length = fixed_vector2_length(
         actor_state.player_position.vx - actor->position.vx,
@@ -1155,7 +1155,7 @@ void actor_update_current_action(void)
         if (result != KF_COLLISION_NONE) {
             target.x = actor->position.vx;
             target.z = actor->position.vz;
-            angle_to_forward_xz(actor->rotation.y, &direction);
+            angle_to_forward_xz(actor->rotation.angles.y, &direction);
             vector2s_scale_shift11(definition->move_speed, &direction);
             vector3i_add_xz(&target, &direction);
             if (actor_pool_find_overlap(target.x, KF_COLLISION_IGNORE_HEIGHT, target.z, definition->collision_radius, 0)
@@ -1192,7 +1192,7 @@ void actor_update_current_action(void)
                 actor->movement_yaw = -ACTOR_DRIFT_YAW_SPEED_LIMIT;
             }
         }
-        actor->rotation.y = (actor->rotation.y + actor->movement_yaw) & KF_ANGLE_WRAP_MASK;
+        actor->rotation.angles.y = (actor->rotation.angles.y + actor->movement_yaw) & KF_ANGLE_WRAP_MASK;
         actor_advance_animation_wrapped(actor, definition->action_animation_steps[KF_ACTOR_ANIM_SLOT_DRIFT]);
         break;
     case KF_ACTOR_ACTION_EFFECT0:
@@ -1225,12 +1225,12 @@ void actor_update_current_action(void)
             if (home_dx > -ACTOR_HOME_AXIS_TOLERANCE && home_dx < ACTOR_HOME_AXIS_TOLERANCE
                 && home_dz > -ACTOR_HOME_AXIS_TOLERANCE && home_dz < ACTOR_HOME_AXIS_TOLERANCE) {
                 actor->movement_yaw = actor->heading_quadrant * KF_ANGLE_QUARTER_TURN;
-                actor->rotation.y = angle_approach(
-                    actor->rotation.y, actor->movement_yaw, definition->turn_rate);
+                actor->rotation.angles.y = angle_approach(
+                    actor->rotation.angles.y, actor->movement_yaw, definition->turn_rate);
                 if (actor->animation_id != definition->action_animations[KF_ACTOR_ANIM_SLOT_MELEE]) {
                     break;
                 }
-                if (actor->movement_yaw == actor->rotation.y
+                if (actor->movement_yaw == actor->rotation.angles.y
                     && actor_animation_crossed_phase(actor, ACTOR_HOME_ANIMATION_RESET_PHASE)) {
                     actor->animation_phase = 0;
                     actor->animation_id = definition->action_animations[KF_ACTOR_ANIM_SLOT_MELEE];

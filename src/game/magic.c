@@ -113,7 +113,7 @@ void magic_cast(void)
         }
         angles.y = player_state.camera_rotation.vy;
         angles.z = player_state.camera_rotation.vz;
-        pitch_yaw_to_forward_vector((struct KfPitchYaw *)&angles, &direction);
+        pitch_yaw_to_forward_vector(&angles, &direction);
         vector3s_scale_shift12(speed, &direction);
         if (player_state.selected_magic_id == KF_MAGIC_LIGHT_NEEDLE) {
             SVECTOR rotation;
@@ -142,7 +142,7 @@ void magic_cast(void)
             effect_pool_construct(
                 KF_PLAYER_DAMAGE_MULTIPLIER_ONE, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
                 KF_ENUM_DECODE(KfEffectKind, KF_ENUM_ENCODE(u8, player_state.selected_magic_id)), &target->position,
-                (SVECTOR *)&player_state.camera_rotation, KF_ENUM_ENCODE(u16, KF_EFFECT_GROUND_BRANCH_ROOT));
+                &player_state.camera_rotation, KF_ENUM_ENCODE(u16, KF_EFFECT_GROUND_BRANCH_ROOT));
         } else {
             VECTOR spawn;
             s32 cell_x;
@@ -157,7 +157,7 @@ void magic_cast(void)
             spawn.vy = -(map_floor_height_grid[cell_z][cell_x] * KF_MAP_HEIGHT_STEP);
             effect_pool_construct(
                 KF_PLAYER_DAMAGE_MULTIPLIER_ONE, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
-                KF_ENUM_DECODE(KfEffectKind, KF_ENUM_ENCODE(u8, player_state.selected_magic_id)), &spawn, (SVECTOR *)&player_state.camera_rotation,
+                KF_ENUM_DECODE(KfEffectKind, KF_ENUM_ENCODE(u8, player_state.selected_magic_id)), &spawn, &player_state.camera_rotation,
                 KF_ENUM_ENCODE(u16, KF_EFFECT_GROUND_BRANCH_ROOT));
         }
         break;

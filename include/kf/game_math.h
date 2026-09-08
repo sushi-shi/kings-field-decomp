@@ -42,16 +42,20 @@ struct KfVec3i {
     s32 z;
 };
 
-struct KfPitchYaw {
-    s16 pitch;
-    s16 yaw;
-};
-
 struct KfEulerAngles {
     s16 x;
     s16 y;
     s16 z;
 };
+
+/* SDK aggregate transfers include pad; game Euler helpers read x/y/z. */
+typedef union KfRotation {
+    SVECTOR vector;
+    struct KfEulerAngles angles;
+} KfRotation;
+
+typedef char check_rotation_size[sizeof(KfRotation) == 8 ? 1 : -1];
+typedef char check_euler_angles_size[sizeof(struct KfEulerAngles) == 6 ? 1 : -1];
 
 extern s16 angle_approach(s16 current, s16 target, s32 step);
 extern int angle_mod_delta_le_half_turn(int lhs, int rhs);
@@ -68,7 +72,7 @@ extern void matrix_set_rotation_z(s16 angle, MATRIX *matrix);
 extern void matrix_set_rotation_yxz(
     const struct KfEulerAngles *angles, MATRIX *matrix);
 extern void pitch_yaw_to_forward_vector(
-    const struct KfPitchYaw *angles, SVECTOR *direction);
+    const struct KfEulerAngles *angles, SVECTOR *direction);
 extern void vector2s_scale_shift11(s16 scale, struct KfVecXZs *vector);
 extern void vector2s_scale_shift12(s16 scale, s16 *vector);
 extern void vector3i_add_xz(

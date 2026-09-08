@@ -22,8 +22,7 @@ KfActor	0x16	0x02	cell_x	u16	supported	game_actor.h;asm;xrefs	map cell x; every 
 KfActor	0x18	0x02	cell_z	u16	supported	game_actor.h;asm;xrefs	map cell z; every band load is lhu
 KfActor	0x1a	0x02	unknown_1a	s16	opaque	game_actor.h;asm;xrefs	meaning unresolved
 KfActor	0x1c	0x10	position	VECTOR	supported	game_actor.h;asm;xrefs;actor_move_xz_with_collision	world position as a four-lane vector; actor_move_xz_with_collision copies all 16 bytes and audio calls pass it as VECTOR
-KfActor	0x2c	0x06	rotation	KfEulerAngles	supported	game_actor.h;asm;xrefs	actor rotation
-KfActor	0x32	0x02	unknown_32	u16	opaque	game_actor.h;asm;xrefs	meaning unresolved
+KfActor	0x2c	0x08	rotation	KfRotation	supported	game_actor.h;asm;xrefs;collision_query_world;typed-world-transforms.md	SDK/Euler rotation; collision captures all eight bytes including pad
 KfActor	0x34	0x04	animation_cache	KfPoolRecord *	supported	game_actor.h;asm;game_semantic_animation_slots.tsv	live animation record installed by the binder through the actor slot and cleared by actor_pool_clear or pool_record_release
 KfActor	0x38	0x01	action_progress	u8	supported	game_actor.h;asm;xrefs;game-actor-states.md	action progress: initialization 0, running 1, selection lock 240, completion 255; also jump phases and action-specific counters
 KfActor	0x39	0x01	collision_state	KfActorCollisionState	supported	game_actor.h;asm;xrefs;game-actor-states.md	horizontal steering state: clear 0, axis slide 1, blocked/reversed heading 2; distinct from collision-query result codes
@@ -187,7 +186,7 @@ KfEffectRecord	0x07	0x01	phase	u8	supported	game_effect.h;asm;effect_pool_constr
 KfEffectRecord	0x08	0x02	visual	KfEffectVisualState	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed;semantic-field-names.md;asm;CFG;callers;callees;xrefs	kind 10 pulse scale shares storage with model animation phase
 KfEffectRecord	0x0a	0x02	unknown_0a	u16	opaque	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	meaning unresolved
 KfEffectRecord	0x0c	0x10	position	VECTOR	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	world position copied wholesale from the constructor argument
-KfEffectRecord	0x1c	0x08	rotation	KfEffectRotation	supported	game_effect.h;asm;effect_pool_construct;effect_update_dispatch;game-effect-constructor.md;LIBGTE.H;game-projectile-helpers.md	complete signed rotation vector including pad; SDK matrix/angle consumers; typed-effect-records.md
+KfEffectRecord	0x1c	0x08	rotation	KfRotation	supported	game_effect.h;asm;effect_pool_construct;effect_update_dispatch;game-effect-constructor.md;LIBGTE.H;game-projectile-helpers.md	complete signed rotation vector including pad; SDK matrix/angle consumers; typed-effect-records.md
 KfEffectRecord	0x24	0x02	scale_x	u16	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	scale x; constructors default it to 0x1000 (1.0 fixed point)
 KfEffectRecord	0x26	0x02	scale_y	u16	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	scale y; constructors default it to 0x1000; warp shimmer sweeps it as intensity
 KfEffectRecord	0x28	0x02	scale_z	u16	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	scale z; constructors default it to 0x1000
@@ -196,8 +195,6 @@ KfEffectRecord	0x2c	0x08	direction	KfEffectDirection	supported	game_effect.h;asm
 KfEffectRecord	0x34	0x04	animation_cache	KfPoolRecord *	supported	game_effect.h;asm;game_semantic_animation_slots.tsv	live animation record slot passed directly to the binder by render_actor_sprite
 KfEffectRecord	0x38	0x02	control	KfEffectControl	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed;semantic-field-names.md;asm;CFG;callers;callees;xrefs	kind selects countdown, orbit angle, parent effect index or homing mode; not an audio handle
 KfEffectRecord	0x3a	0x02	propagation	KfEffectPropagation	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed;semantic-field-names.md;asm;CFG;callers;callees;xrefs	kind 10 generation count or kind 6 branch selector
-KfEffectRotation	0x00	0x08	vector	SVECTOR	supported	game_effect.h;asm;effect_pool_construct;effect_projectile_update_3d;typed-effect-records.md	complete SDK vector copied with its pad halfword
-KfEffectRotation	0x00	0x06	angles	KfEulerAngles	supported	game_effect.h;asm;render_actor_sprite;matrix_set_rotation_yxz;typed-effect-records.md	signed Euler components supplied to the game matrix helper
 KfEffectSprite	0x00	0x01	state	KfEffectSpriteState	supported	game_render.h;asm;render_effect_sprites;render_frame	1 is active; every other value stops traversal, including hidden 0 and the authored 0xff end row
 KfEffectSprite	0x01	0x01	visibility_tag	u8	supported	game_render.h;asm;render_effect_sprites	animation visibility tag passed to render_bind_animated_instance
 KfEffectSprite	0x02	0x02	asset_variant	u16	supported	game_render.h;asm;render_effect_sprites	asset variant passed to render_bind_animated_instance
@@ -344,14 +341,8 @@ KfMapEvent	0x1c	0x02	cell_x	u16	supported	game_map.h;asm;xrefs	map cell x
 KfMapEvent	0x1e	0x02	cell_z	u16	supported	game_map.h;asm;xrefs	map cell z
 KfMapEvent	0x20	0x02	radius	u16	supported	game_map.h;asm;xrefs	interaction radius
 KfMapEvent	0x22	0x02	unknown_22	u16	opaque	game_map.h;asm;xrefs	meaning unresolved
-KfMapEvent	0x24	0x04	reference_x	s32	supported	game_map.h;asm;xrefs	query reference x
-KfMapEvent	0x28	0x04	position_y	s32	supported	game_map.h;asm;xrefs	world y
-KfMapEvent	0x2c	0x04	reference_z	s32	supported	game_map.h;asm;xrefs	query reference z
-KfMapEvent	0x30	0x04	unknown_30	u8[4]	opaque	game_map.h;asm;xrefs	meaning unresolved
-KfMapEvent	0x34	0x02	rotation_x	u16	supported	game_map.h;asm;xrefs;semantic-field-names.md;asm;CFG;callers;callees;xrefs	outer X lane of the SVECTOR consumed by RotMatrix and collision; preserved unsigned storage
-KfMapEvent	0x36	0x02	rotation	s16	supported	game_map.h;asm;xrefs	current rotation
-KfMapEvent	0x38	0x02	rotation_z	u16	supported	game_map.h;asm;xrefs;semantic-field-names.md;asm;CFG;callers;callees;xrefs	outer Z lane of the SVECTOR consumed by RotMatrix and collision; preserved unsigned storage
-KfMapEvent	0x3a	0x02	unknown_3a	u8[2]	opaque	game_map.h;asm;game_semantic_animation_slots.tsv	trailing halfword of the eight-byte rotation view starting at 0x34
+KfMapEvent	0x24	0x10	reference_position	VECTOR	supported	game_map.h;asm;xrefs;collision_query_world;typed-world-transforms.md	current query/render position; wander updates X/Z, floor load sets Y, collision copies the fourth lane
+KfMapEvent	0x34	0x08	rotation	SVECTOR	supported	game_map.h;asm;xrefs;semantic-field-names.md;asm;CFG;callers;callees;xrefs;collision_query_world;typed-world-transforms.md	complete signed SDK rotation including copied pad; loader initializes X/Z to zero and yaw drives wandering
 KfMapEvent	0x3c	0x04	animation_cache	KfPoolRecord *	supported	game_map.h;asm;game_semantic_animation_slots.tsv	live animation record installed through the event+0x3c slot; follows the rotation view and precedes rotation_target without overlap
 KfMapEvent	0x40	0x02	rotation_target	s16	supported	game_map.h;asm;xrefs	target rotation
 KfMapEvent	0x42	0x02	unknown_42	u16	opaque	game_map.h;asm;xrefs	meaning unresolved
@@ -388,12 +379,8 @@ KfMapObject	0x01	0x01	unknown_01	u8	opaque	game_map.h;asm;xrefs	meaning unresolv
 KfMapObject	0x02	0x02	cell_x	u16	supported	game_map.h;asm;xrefs	map cell x
 KfMapObject	0x04	0x02	cell_z	u16	supported	game_map.h;asm;xrefs	map cell z
 KfMapObject	0x06	0x02	unknown_06	u8[2]	opaque	game_map.h;asm;xrefs	meaning unresolved
-KfMapObject	0x08	0x04	position_x	s32	supported	game_map.h;asm;xrefs	world x
-KfMapObject	0x0c	0x04	position_y	s32	supported	game_map.h;asm;xrefs	world y
-KfMapObject	0x10	0x04	position_z	s32	supported	game_map.h;asm;xrefs	world z
-KfMapObject	0x14	0x04	unknown_14	u8[4]	opaque	game_map.h;asm;xrefs	meaning unresolved
-KfMapObject	0x18	0x06	rotation	KfEulerAngles	supported	game_map.h;asm;xrefs	object rotation
-KfMapObject	0x1e	0x02	unknown_1e	u16	opaque	game_map.h;asm;xrefs	meaning unresolved
+KfMapObject	0x08	0x10	position	VECTOR	supported	game_map.h;asm;xrefs;collision_query_world;typed-world-transforms.md	complete world position including the fourth lane copied by collision and effect construction
+KfMapObject	0x18	0x08	rotation	KfRotation	supported	game_map.h;asm;xrefs;collision_query_world;typed-world-transforms.md	SDK/Euler rotation; collision and effect construction copy all eight bytes
 KfMapObject	0x20	0x08	link	KfMapObjectLink	supported	game_map.h;asm;map_object_pool_load	link block copied verbatim from the placement record
 KfMapObject	0x28	0x01	action	KfMapObjectAction	supported	game_map.h;asm;xrefs	action dispatcher selector
 KfMapObject	0x29	0x01	unknown_29	u8	opaque	game_map.h;asm;xrefs	meaning unresolved
@@ -481,8 +468,6 @@ KfOpeningEntityState	0x50a	0x02	unknown_control_50a	u16	opaque	open_resources.h;
 KfOpeningEntityState	0x50c	0x02	unknown_control_50c	u16	opaque	open_resources.h;open_semantic_resources.tsv;asm;semantic-field-names.md:unresolved-consumer-audit	OPEN 0x80049a44: individual zero store at 0x800199cc, plus whole-owner clear; exact admitted relocations have no read. GAME pool-tail analogy remains candidate, not a recovered role.
 KfOpeningEntityState	0x50e	0x02	unknown_control_50e	u16	opaque	open_resources.h;open_semantic_resources.tsv;asm;semantic-field-names.md:unresolved-consumer-audit	OPEN 0x80049a46: individual zero store at 0x800199c4, plus whole-owner clear; exact admitted relocations have no read. GAME pool-tail analogy remains candidate, not a recovered role.
 KfOrderingTable	0x00	0x10000	entries	u32[16384]	supported	render_types.h;asm	ordering table entries
-KfPitchYaw	0x00	0x02	pitch	s16	supported	game_math.h;asm;xrefs	pitch angle
-KfPitchYaw	0x02	0x02	yaw	s16	supported	game_math.h;asm;xrefs	yaw angle
 KfPlayerAttackChargeState	0x00	0x02	current	u16	supported	game_player.h;asm;xrefs	current POWER charge
 KfPlayerAttackChargeState	0x02	0x02	committed	u16	supported	game_player.h;asm;xrefs	attack-time POWER snapshot
 KfPlayerLevelGrowth	0x00	0x02	maximum_hp	u16	supported	game_player.h;asm;xrefs	level maximum HP
@@ -622,6 +607,8 @@ KfRenderStateOpen	0x64	0x10	view_position	VECTOR	supported	open_render.h;asm;bas
 KfRenderStateOpen	0x74	0x08	view_rotation	SVECTOR	supported	open_render.h;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
 KfRenderStateOpen	0x7c	0x04	view_cell	KfVecXZs	supported	open_render.h;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
 KfRenderStateOpen	0x80	0x80	quadrant_matrices	MATRIX[4]	supported	open_render.h;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
+KfRotation	0x00	0x08	vector	SVECTOR	supported	game_math.h;asm;effect_pool_construct;effect_projectile_update_3d;typed-effect-records.md;typed-world-transforms.md	complete SDK vector copied with its pad halfword
+KfRotation	0x00	0x06	angles	KfEulerAngles	supported	game_math.h;asm;render_actor_sprite;matrix_set_rotation_yxz;typed-effect-records.md;typed-world-transforms.md	signed Euler components supplied to the game matrix helper
 KfSaveDirectory	0x00	0x04	slot_ids	KF_ENUM_STORAGE(KfSaveSlotId, u8)[4]	supported	game_save.h;asm;xrefs	four byte directory tags: empty0, logical slots1..3, spare4; signed-halfword API domain and byte storage: save-slot-id-domain.md
 KfSaveDirectory	0x04	0x1c	reserved	u8[28]	opaque	game_save.h;asm;xrefs	reserved/unknown header range
 KfSaveDirectory	0x20	0x60	summaries	KfSaveSlotSummary[4]	supported	game_save.h;asm;xrefs	four slot summaries

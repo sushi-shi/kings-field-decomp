@@ -140,3 +140,11 @@ mutation through the owning types. Eight more pointer casts and one redundant
 scalar cast disappear. All 21 affected-unit functions retain their linked
 words. C-file pointer casts now total 583, down 223 from 806; the remaining
 vector-prefix interfaces and other families above are still open.
+
+
+The [world-transform stage](typed-world-transforms.md) completes map-object
+and event vectors, shares actor/effect SDK rotations and removes incompatible
+angle-prefix interfaces. Its 26 pointer-cast removals bring the C-file count
+to 557 (249 removed overall). All 129 affected-unit functions retain their
+reference-resolved instruction streams. Packed map fields, remaining vector
+interfaces, animation/projection views and exact-code residues remain open.

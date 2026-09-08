@@ -6,16 +6,15 @@
 
 /*
  * Map-event model emitter invoked by the frame renderer's pool sweep
- * (render_entities) for each of the seven live map events.  It carries the
+ * (render_entities) for each live map event. It carries the
  * event's world position into the view, orients the model from the event's
  * rotation vector composed onto the view matrix, and enqueues the asset that
  * follows the event's model index.
  */
 
 /*
- * The world position is taken from the low halves of the event's reference and
- * y coordinates. The eight-byte render-rotation view overlaps the rotation
- * field and its neighbours, ending immediately before animation_cache.
+ * Screen deltas use the low halves of the reference-position vector.
+ * The complete SDK rotation ends immediately before animation_cache.
  */
 ADDRESS(0x8001f0c4, 0x154)
 void render_map_event(KfMapEvent *event)
@@ -27,14 +26,14 @@ void render_map_event(KfMapEvent *event)
     u16 asset;
     KfTmdObject *object;
 
-    SetRotMatrix((MATRIX *)&game_graphics_runtime.render_state.view_matrix);
-    SetTransMatrix((MATRIX *)&game_graphics_runtime.render_state.view_matrix);
-    screen.vx = (u16)event->reference_x - (u16)game_graphics_runtime.render_state.view_position.vx;
-    screen.vy = (u16)event->position_y - (u16)game_graphics_runtime.render_state.view_position.vy;
-    screen.vz = (u16)event->reference_z - (u16)game_graphics_runtime.render_state.view_position.vz;
+    SetRotMatrix(&game_graphics_runtime.render_state.view_matrix);
+    SetTransMatrix(&game_graphics_runtime.render_state.view_matrix);
+    screen.vx = (u16)event->reference_position.vx - (u16)game_graphics_runtime.render_state.view_position.vx;
+    screen.vy = (u16)event->reference_position.vy - (u16)game_graphics_runtime.render_state.view_position.vy;
+    screen.vz = (u16)event->reference_position.vz - (u16)game_graphics_runtime.render_state.view_position.vz;
     RotTrans(&screen, (VECTOR *)&composed.t, &flag);
-    RotMatrix((SVECTOR *)&event->rotation_x, &model);
-    MulMatrix0((MATRIX *)&game_graphics_runtime.render_state.view_matrix, &model, &composed);
+    RotMatrix(&event->rotation, &model);
+    MulMatrix0(&game_graphics_runtime.render_state.view_matrix, &model, &composed);
     SetRotMatrix(&composed);
     SetTransMatrix(&composed);
     asset = event->model_index + KF_ASSET_MAP_EVENT_FIRST;

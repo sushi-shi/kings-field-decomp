@@ -182,12 +182,6 @@ typedef union KfEffectDirection {
     KfEffectDirectionWords words;
 } KfEffectDirection;
 
-/* SDK transfers include pad; the game Euler helper reads only x/y/z. */
-typedef union KfEffectRotation {
-    SVECTOR vector;
-    struct KfEulerAngles angles;
-} KfEffectRotation;
-
 /* Each kind selects the interpretation of the shared storage. */
 typedef union KfEffectVisualState {
     u16 animation_phase;
@@ -245,7 +239,7 @@ typedef struct KfEffectRecord {
     KfEffectVisualState visual; /* 0x08: animation phase, or kind-10 pulse scale */
     u16 unknown_0a;      /* 0x0a */
     VECTOR position;     /* 0x0c */
-    KfEffectRotation rotation; /* 0x1c */
+    KfRotation rotation; /* 0x1c */
     u16 scale_x;         /* 0x24 */
     u16 scale_y;         /* 0x26 */
     u16 scale_z;         /* 0x28 */
@@ -260,7 +254,7 @@ typedef struct KfEffectRecord {
     typedef char check_effect_##label[ \
         ((unsigned long)&((KfEffectRecord *)0)->member == (offset)) ? 1 : -1]
 typedef char check_effect_record_size[sizeof(KfEffectRecord) == 60 ? 1 : -1];
-typedef char check_effect_rotation_size[sizeof(KfEffectRotation) == 8 ? 1 : -1];
+typedef char check_effect_rotation_size[sizeof(KfRotation) == 8 ? 1 : -1];
 KF_EFFECT_OFFSET_CHECK(position, position, 0x0c);
 KF_EFFECT_OFFSET_CHECK(rotation, rotation, 0x1c);
 KF_EFFECT_OFFSET_CHECK(rotation_vector, rotation.vector, 0x1c);

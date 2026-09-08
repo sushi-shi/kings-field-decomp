@@ -267,12 +267,8 @@ typedef struct KfMapObject {
     u16 cell_x;
     u16 cell_z;
     u8 unknown_06[2];
-    s32 position_x;
-    s32 position_y;
-    s32 position_z;
-    u8 unknown_14[4];
-    struct KfEulerAngles rotation;
-    u16 unknown_1e;
+    VECTOR position;
+    KfRotation rotation;
     KfMapObjectLink link;
     KfMapObjectAction action;
     u8 unknown_29;
@@ -405,18 +401,28 @@ typedef struct KfMapEvent {
     u16 cell_z;
     u16 radius;
     u16 unknown_22;
-    s32 reference_x;
-    s32 position_y;
-    s32 reference_z;
-    u8 unknown_30[4];
-    u16 rotation_x;
-    s16 rotation;
-    u16 rotation_z;
-    u8 unknown_3a[2];
+    VECTOR reference_position;
+    SVECTOR rotation;
     struct KfPoolRecord *animation_cache;
     s16 rotation_target;
     u16 unknown_42;
 } KfMapEvent;
+
+typedef char check_map_object_size[sizeof(KfMapObject) == 0x2c ? 1 : -1];
+typedef char check_map_event_size[sizeof(KfMapEvent) == 0x44 ? 1 : -1];
+#define KF_MAP_TRANSFORM_OFFSET_CHECK(type, label, member, offset) \
+    typedef char check_map_transform_##label[ \
+        ((unsigned long)&((type *)0)->member == (offset)) ? 1 : -1]
+KF_MAP_TRANSFORM_OFFSET_CHECK(KfMapObject, object_position, position, 0x08);
+KF_MAP_TRANSFORM_OFFSET_CHECK(KfMapObject, object_position_pad, position.pad, 0x14);
+KF_MAP_TRANSFORM_OFFSET_CHECK(KfMapObject, object_rotation, rotation, 0x18);
+KF_MAP_TRANSFORM_OFFSET_CHECK(KfMapObject, object_rotation_pad, rotation.vector.pad, 0x1e);
+KF_MAP_TRANSFORM_OFFSET_CHECK(KfMapEvent, event_position, reference_position, 0x24);
+KF_MAP_TRANSFORM_OFFSET_CHECK(KfMapEvent, event_position_pad, reference_position.pad, 0x30);
+KF_MAP_TRANSFORM_OFFSET_CHECK(KfMapEvent, event_rotation, rotation, 0x34);
+KF_MAP_TRANSFORM_OFFSET_CHECK(KfMapEvent, event_rotation_pad, rotation.pad, 0x3a);
+KF_MAP_TRANSFORM_OFFSET_CHECK(KfMapEvent, event_animation_cache, animation_cache, 0x3c);
+#undef KF_MAP_TRANSFORM_OFFSET_CHECK
 
 /* Definitions and the live pool form one base-register-relative aggregate. */
 typedef struct KfMapObjectState {

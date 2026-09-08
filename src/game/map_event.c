@@ -66,18 +66,18 @@ void map_event_pool_load(const KfMapEventDefinition *definitions)
                 event->unknown_0d = definitions->unknown_0c;
                 event->behavior = definitions->behavior;
                 event->position_x = definitions->cell_x * KF_MAP_TILE_SIZE + definitions->position_x_offset;
-                event->reference_x = event->position_x;
+                event->reference_position.vx = event->position_x;
                 event->position_z = definitions->cell_z * KF_MAP_TILE_SIZE + definitions->position_z_offset;
-                event->reference_z = event->position_z;
+                event->reference_position.vz = event->position_z;
                 event->cell_x = definitions->cell_x;
                 event->cell_z = definitions->cell_z;
                 event->radius = definitions->radius;
-                event->position_y =
+                event->reference_position.vy =
                     -(map_floor_height_grid[event->cell_z][event->cell_x] * KF_MAP_HEIGHT_STEP);
-                event->rotation = definitions->initial_rotation;
+                event->rotation.vy = definitions->initial_rotation;
                 definitions++;
-                event->rotation_z = 0;
-                event->rotation_x = 0;
+                event->rotation.vz = 0;
+                event->rotation.vx = 0;
                 event->dialogue_page = KF_DIALOGUE_FIRST_PAGE;
                 event->dialogue_stage = KF_DIALOGUE_FIRST_STAGE;
                 event->dialogue_page_delay = 0;
@@ -99,12 +99,12 @@ ADDRESS(0x80033ae4, 0xa8)
 s32 map_event_distance_to_point(
     const KfMapEvent *event, s32 point_x, s32 point_z, s32 max_distance)
 {
-    s32 delta_x = event->reference_x - point_x;
+    s32 delta_x = event->reference_position.vx - point_x;
     s32 delta_z;
     s32 distance;
 
     if (delta_x >= -max_distance && delta_x <= max_distance) {
-        delta_z = event->reference_z - point_z;
+        delta_z = event->reference_position.vz - point_z;
         if (delta_z >= -max_distance && delta_z <= max_distance) {
             delta_x >>= KF_LENGTH_SQUARE_DOWNSHIFT;
             delta_z >>= KF_LENGTH_SQUARE_DOWNSHIFT;
@@ -144,7 +144,7 @@ KfMapEvent *map_event_pool_find_target_in_cone(
             continue;
         }
         angle = vector_xz_to_angle(
-            event->reference_x - origin->x, origin->z - event->reference_z) - facing;
+            event->reference_position.vx - origin->x, origin->z - event->reference_position.vz) - facing;
         angle &= KF_ANGLE_WRAP_MASK;
         folded = angle;
         if (angle >= KF_ANGLE_HALF_TURN + 1) {

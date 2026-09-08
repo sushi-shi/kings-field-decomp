@@ -111,7 +111,7 @@ void player_update(void)
     const struct KfVec3i *origin;
     SVECTOR direction;
     SVECTOR spawn_offset;
-    struct KfEulerAngles angles;
+    KfRotation effect_rotation;
     VECTOR position;
     MATRIX matrix;
     s32 distance;
@@ -437,26 +437,26 @@ void player_update(void)
                     spawn_offset.vx = PLAYER_WEAPON_MAGIC_SPAWN_X;
                     spawn_offset.vy = PLAYER_WEAPON_MAGIC_SPAWN_Y;
                     spawn_offset.vz = PLAYER_WEAPON_MAGIC_SPAWN_Z;
-                    angles.x = -player_state.camera_rotation.vx;
-                    angles.y = player_state.camera_rotation.vy;
-                    angles.z = -player_state.camera_rotation.vz;
-                    matrix_set_rotation_yxz(&angles, &matrix);
+                    effect_rotation.angles.x = -player_state.camera_rotation.vx;
+                    effect_rotation.angles.y = player_state.camera_rotation.vy;
+                    effect_rotation.angles.z = -player_state.camera_rotation.vz;
+                    matrix_set_rotation_yxz(&effect_rotation.angles, &matrix);
                     ApplyMatrix(&matrix, &spawn_offset, &position);
                     position.vx += player_state.camera_position.vx;
                     position.vy += player_state.camera_position.vy;
-                    angles.y = player_state.camera_rotation.vy;
+                    effect_rotation.angles.y = player_state.camera_rotation.vy;
                     position.vz += player_state.camera_position.vz;
-                    angles.x = player_state.camera_rotation.vx;
-                    angles.z = player_state.camera_rotation.vz;
+                    effect_rotation.angles.x = player_state.camera_rotation.vx;
+                    effect_rotation.angles.z = player_state.camera_rotation.vz;
                     origin = (const struct KfVec3i *)&player_state.camera_position;
                     if ((effect == KF_EFFECT_KIND_FIRE_BALL || effect == KF_EFFECT_KIND_LIGHT_NEEDLE)
                         && player_state.weapon_magic_shots_remaining != 1) {
                         actor_state.player_target = actor_pool_find_target_in_cone(
                             origin, player_state.camera_rotation.vy, PLAYER_WEAPON_MAGIC_TARGET_RANGE,
                             PLAYER_WEAPON_MAGIC_BURST_CONE, &distance);
-                        angles.x -= PLAYER_WEAPON_MAGIC_JITTER_BIAS
+                        effect_rotation.angles.x -= PLAYER_WEAPON_MAGIC_JITTER_BIAS
                             - (rand() >> PLAYER_WEAPON_MAGIC_RANDOM_SHIFT);
-                        angles.y -= PLAYER_WEAPON_MAGIC_JITTER_BIAS
+                        effect_rotation.angles.y -= PLAYER_WEAPON_MAGIC_JITTER_BIAS
                             - (rand() >> PLAYER_WEAPON_MAGIC_RANDOM_SHIFT);
                         attachment = player_state.weapon_magic_shots_remaining & 1;
                     } else {
@@ -471,25 +471,25 @@ void player_update(void)
                             attachment = target - actor_state.actors;
                         }
                     }
-                    pitch_yaw_to_forward_vector((const struct KfPitchYaw *)&angles, &direction);
+                    pitch_yaw_to_forward_vector(&effect_rotation.angles, &direction);
                     vector3s_scale_shift12(PLAYER_WEAPON_MAGIC_SPEED, &direction);
                     effect_pool_construct(
                         10, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS, effect,
                         &position, &direction, &player_state.camera_rotation, attachment, 1);
                     if (effect == KF_EFFECT_KIND_HOMING_PROJECTILE) {
                         position.vy += PLAYER_TRIPLE_FANG_Y_OFFSET;
-                        angles.y = player_state.camera_rotation.vy;
-                        angles.z = player_state.camera_rotation.vz;
-                        angles.x = player_state.camera_rotation.vx + PLAYER_TRIPLE_FANG_PITCH_OFFSET;
+                        effect_rotation.angles.y = player_state.camera_rotation.vy;
+                        effect_rotation.angles.z = player_state.camera_rotation.vz;
+                        effect_rotation.angles.x = player_state.camera_rotation.vx + PLAYER_TRIPLE_FANG_PITCH_OFFSET;
                         effect_pool_construct(
                             10, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS,
-                            KF_EFFECT_KIND_HOMING_PROJECTILE, &position, &direction, &angles, attachment,
+                            KF_EFFECT_KIND_HOMING_PROJECTILE, &position, &direction, &effect_rotation.vector, attachment,
                             0);
-                        angles.x -= 2 * PLAYER_TRIPLE_FANG_PITCH_OFFSET;
+                        effect_rotation.angles.x -= 2 * PLAYER_TRIPLE_FANG_PITCH_OFFSET;
                         position.vy -= 2 * PLAYER_TRIPLE_FANG_Y_OFFSET;
                         effect_pool_construct(
                             10, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS,
-                            KF_EFFECT_KIND_HOMING_PROJECTILE, &position, &direction, &angles, attachment,
+                            KF_EFFECT_KIND_HOMING_PROJECTILE, &position, &direction, &effect_rotation.vector, attachment,
                             0);
                     }
                 }

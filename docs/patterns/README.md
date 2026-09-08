@@ -11,6 +11,8 @@ promotes a probe to a proven historical toolchain.
   glyph rows and list titles through all menu consumers and by-value labels.
 - [typed-effect-records.md](typed-effect-records.md): one shared effect pool
   record for construction, rendering, rotation and direction mutation.
+- [typed-world-transforms.md](typed-world-transforms.md): complete map vectors,
+  shared actor/effect rotations and compatible angle helper interfaces.
 
 - [gcc257-instrumentation.md](gcc257-instrumentation.md): source-pinned debug
   compiler, observational trace contract, controlled probes and OPEN residues.

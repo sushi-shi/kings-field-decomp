@@ -161,7 +161,7 @@ void map_ambient_script_floor2(void)
     if (map_event_pool[1].dialogue_stage == 2 && map_event_pool[1].dialogue_page < 3
         && rand() < MAP_FLOOR2_AMBIENT_RANDOM_LIMIT) {
         audio_play_spatial_default_range(
-            &gameplay_sound_ref_8, (const VECTOR *)&map_event_pool[1].reference_x, KF_AUDIO_MAX_VOLUME);
+            &gameplay_sound_ref_8, &map_event_pool[1].reference_position, KF_AUDIO_MAX_VOLUME);
     }
 }
 
@@ -234,8 +234,8 @@ void map_reveal_fade(void)
     for (blend = 0; blend < KF_FIXED12_ONE + 1; blend += MAP_REVEAL_FADE_IN_STEP) {
         lighting_set_color_matrix(&color_matrix_table[KF_ENUM_ENCODE(s32, KF_GAME_COLOR_DEFAULT)], &color_matrix_table[KF_ENUM_ENCODE(s32, KF_GAME_COLOR_WHITE)], blend);
         if (blend >= KF_FIXED12_ONE / 4 + 1) {
-            map_event_pool[3].position_y -= MAP_REVEAL_RISE_STEP;
-            map_event_pool[3].rotation += MAP_REVEAL_YAW_STEP;
+            map_event_pool[3].reference_position.vy -= MAP_REVEAL_RISE_STEP;
+            map_event_pool[3].rotation.vy += MAP_REVEAL_YAW_STEP;
         } else {
             matrix_interpolate(&saved, &map_reveal_light_matrix,
                                &game_graphics_runtime.render_state.light_matrix_copy, blend << MAP_REVEAL_LIGHT_BLEND_SHIFT);
@@ -333,14 +333,14 @@ void map_floor5_transition_cutscene(void)
     effect->object_id = KF_MAP_OBJECT_DRAGON_SWORD;
     effect->cell_x = 85;
     effect->cell_z = 40;
-    effect->position_x = effect->cell_x * KF_MAP_TILE_SIZE + KF_MAP_TILE_CENTER;
-    effect->position_z = effect->cell_z * KF_MAP_TILE_SIZE + KF_MAP_TILE_CENTER;
+    effect->position.vx = effect->cell_x * KF_MAP_TILE_SIZE + KF_MAP_TILE_CENTER;
+    effect->position.vz = effect->cell_z * KF_MAP_TILE_SIZE + KF_MAP_TILE_CENTER;
     grid_height = map_floor_height_grid[effect->cell_z][effect->cell_x];
-    effect->rotation.z = 0;
-    effect->rotation.x = 0;
-    effect->rotation.y = KF_ANGLE_HALF_TURN;
+    effect->rotation.angles.z = 0;
+    effect->rotation.angles.x = 0;
+    effect->rotation.angles.y = KF_ANGLE_HALF_TURN;
     effect->action = KF_MAP_OBJECT_ACTION_IDLE;
-    effect->position_y = -(grid_height * KF_MAP_HEIGHT_STEP) - MAP_WEAPON_TRANSFORM_HEIGHT;
+    effect->position.vy = -(grid_height * KF_MAP_HEIGHT_STEP) - MAP_WEAPON_TRANSFORM_HEIGHT;
 
     spin = 0;
     hold = 0;
@@ -348,13 +348,13 @@ void map_floor5_transition_cutscene(void)
     for (;;) {
         switch (phase) {
         case MAP_WEAPON_TRANSFORM_SPIN_UP:
-            effect->rotation.y += spin;
+            effect->rotation.angles.y += spin;
             if (hold != 0) {
                 hold -= 1;
                 if (hold == 1) {
                     phase = MAP_WEAPON_TRANSFORM_SPIN_DOWN;
                 } else if (hold == MAP_WEAPON_TRANSFORM_SWAP_COUNTDOWN) {
-                    spawn = *(VECTOR *)&effect->position_x;
+                    spawn = effect->position;
                     spawn.vy -= MAP_WEAPON_TRANSFORM_BLAST_HEIGHT;
                     effect_pool_construct(
                         0, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
@@ -368,7 +368,7 @@ void map_floor5_transition_cutscene(void)
             }
             break;
         case MAP_WEAPON_TRANSFORM_SPIN_DOWN:
-            effect->rotation.y += spin;
+            effect->rotation.angles.y += spin;
             if (spin > 0) {
                 spin -= MAP_WEAPON_TRANSFORM_YAW_ACCELERATION;
             } else {
@@ -574,7 +574,7 @@ clear_event_phase:
             if (object->link.link_id != KF_MAP_LINK_NONE) {
                 goto notify_linked;
             }
-            if (!angle_within_tolerance(rotation->vy, object->rotation.y, KF_ANGLE_EIGHTH_TURN)) {
+            if (!angle_within_tolerance(rotation->vy, object->rotation.angles.y, KF_ANGLE_EIGHTH_TURN)) {
                 break;
             }
 
@@ -587,12 +587,12 @@ clear_event_phase:
 
             saved_pitch = rotation->vx;
             audio_play_spatial_default_range(
-                &gameplay_sound_ref_2, (const VECTOR *)&object->position_x, KF_AUDIO_MAX_VOLUME);
-            while (object->rotation.x >= -(KF_ANGLE_QUARTER_TURN - 1)) {
+                &gameplay_sound_ref_2, &object->position, KF_AUDIO_MAX_VOLUME);
+            while (object->rotation.angles.x >= -(KF_ANGLE_QUARTER_TURN - 1)) {
                 if ((u16)(rotation->vx - MAP_CONTAINER_CAMERA_PITCH_MIN) >= MAP_CONTAINER_CAMERA_PITCH_SPAN) {
                     rotation->vx += MAP_CONTAINER_CAMERA_PITCH_STEP;
                 }
-                object->rotation.x -= MAP_CONTAINER_OPEN_PITCH_STEP;
+                object->rotation.angles.x -= MAP_CONTAINER_OPEN_PITCH_STEP;
                 render_frame(position, rotation);
                 frame_pacer_wait();
             }
@@ -614,12 +614,12 @@ clear_event_phase:
                     }
                 }
                 item_index--;
-                if ((s16)item_index == -1) {
+                if (item_index == -1) {
                     break;
                 }
                 item_id++;
             }
-            object->rotation.x = 0;
+            object->rotation.angles.x = 0;
             rotation->vx = saved_pitch;
             break;
 
@@ -647,7 +647,7 @@ notify_linked:
                     }
                 }
                 item_index--;
-                if ((s16)item_index == -1) {
+                if (item_index == -1) {
                     break;
                 }
                 item_id++;
@@ -658,9 +658,9 @@ notify_linked:
             continue;
 
         case KF_MAP_OBJECT_BEHAVIOR_LIFT_DOOR:
-            if (!angle_within_tolerance(rotation->vy, object->rotation.y, MAP_DOOR_FACING_TOLERANCE)
+            if (!angle_within_tolerance(rotation->vy, object->rotation.angles.y, MAP_DOOR_FACING_TOLERANCE)
                 && !angle_within_tolerance(
-                    rotation->vy, object->rotation.y + KF_ANGLE_HALF_TURN, MAP_DOOR_FACING_TOLERANCE)) {
+                    rotation->vy, object->rotation.angles.y + KF_ANGLE_HALF_TURN, MAP_DOOR_FACING_TOLERANCE)) {
                 break;
             }
             if (object->action != KF_MAP_OBJECT_ACTION_IDLE) {
@@ -674,9 +674,9 @@ notify_linked:
 
         case KF_MAP_OBJECT_BEHAVIOR_HINGED_DOOR:
         case KF_MAP_OBJECT_BEHAVIOR_HINGED_DOOR_PARTNER:
-            if (!angle_within_tolerance(rotation->vy, object->rotation.y, MAP_DOOR_FACING_TOLERANCE)
+            if (!angle_within_tolerance(rotation->vy, object->rotation.angles.y, MAP_DOOR_FACING_TOLERANCE)
                 && !angle_within_tolerance(
-                    rotation->vy, object->rotation.y + KF_ANGLE_HALF_TURN, MAP_DOOR_FACING_TOLERANCE)) {
+                    rotation->vy, object->rotation.angles.y + KF_ANGLE_HALF_TURN, MAP_DOOR_FACING_TOLERANCE)) {
                 break;
             }
             if (object->link.link_id != KF_MAP_LINK_NONE && definition->behavior_type == KF_MAP_OBJECT_BEHAVIOR_HINGED_DOOR) {
@@ -686,7 +686,7 @@ notify_linked:
             neighbor_index = 0;
             for (;;) {
                 neighbor_index = map_object_pool_find_interaction_from(
-                    neighbor_index, object->position_x, object->position_z, MAP_DOOR_PARTNER_SEARCH_PADDING);
+                    neighbor_index, object->position.vx, object->position.vz, MAP_DOOR_PARTNER_SEARCH_PADDING);
                 if (neighbor_index == -1) {
                     object->link.action_parameter = KF_MAP_OBJECT_PARAMETER_NONE;
                     break;

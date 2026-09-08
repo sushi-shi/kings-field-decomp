@@ -113,7 +113,7 @@ u32 collision_query_world(
                 KfActorDefinition *definition = &actor_state.definitions[actor->definition_id];
 
                 collision_target.position = actor->position;
-                collision_target.rotation = *(SVECTOR *)&actor->rotation;
+                collision_target.rotation = actor->rotation.vector;
                 collision_target.radius = definition->collision_radius;
             }
             return hit | KF_COLLISION_ACTOR;
@@ -126,8 +126,8 @@ u32 collision_query_world(
                 KfMapObject *object = &map_object_state.objects[hit];
                 KfMapObjectDefinition *definition = &map_object_state.definitions[KF_ENUM_ENCODE(u8, object->object_id)];
 
-                collision_target.position = *(VECTOR *)&object->position_x;
-                collision_target.rotation = *(SVECTOR *)&object->rotation;
+                collision_target.position = object->position;
+                collision_target.rotation = object->rotation.vector;
                 collision_target.radius = definition->collision_radius;
             }
             return hit | KF_COLLISION_MAP_OBJECT;
@@ -141,8 +141,8 @@ u32 collision_query_world(
         if (flags & KF_COLLISION_CAPTURE_TARGET) {
             KfMapEvent *event = &map_event_pool[hit];
 
-            collision_target.position = *(VECTOR *)&event->reference_x;
-            collision_target.rotation = *(SVECTOR *)&event->rotation_x;
+            collision_target.position = event->reference_position;
+            collision_target.rotation = event->rotation;
             collision_target.radius = event->radius;
         }
         return hit | KF_COLLISION_MAP_EVENT;

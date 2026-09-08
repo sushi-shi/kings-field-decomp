@@ -106,3 +106,7 @@ ownership, reference-closure and section-placement gates, with no artifact
 failures. Only the six directly edited exact functions are banked here.
 Vector-prefix interfaces elsewhere in the effect dispatcher remain part of
 the wider vector campaign; they are not resolved by this record-view change.
+
+The [world-transform stage](typed-world-transforms.md) subsequently moves the
+shared rotation union to the math header as `KfRotation`, after proving the
+same complete SDK/Euler storage in actors and map objects.

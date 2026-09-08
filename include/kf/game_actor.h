@@ -261,8 +261,7 @@ typedef struct KfActor {
     u16 cell_z;
     s16 unknown_1a;
     VECTOR position;
-    struct KfEulerAngles rotation;
-    u16 unknown_32;
+    KfRotation rotation;
     struct KfPoolRecord *animation_cache;
     u8 action_progress;
     KfActorCollisionState collision_state;
@@ -274,6 +273,16 @@ typedef struct KfActor {
     s16 movement_y;
     u8 unknown_46[2];
 } KfActor;
+
+typedef char check_actor_size[sizeof(KfActor) == 0x48 ? 1 : -1];
+#define KF_ACTOR_OFFSET_CHECK(label, member, offset) \
+    typedef char check_actor_##label[ \
+        ((unsigned long)&((KfActor *)0)->member == (offset)) ? 1 : -1]
+KF_ACTOR_OFFSET_CHECK(position, position, 0x1c);
+KF_ACTOR_OFFSET_CHECK(rotation, rotation, 0x2c);
+KF_ACTOR_OFFSET_CHECK(rotation_pad, rotation.vector.pad, 0x32);
+KF_ACTOR_OFFSET_CHECK(animation_cache, animation_cache, 0x34);
+#undef KF_ACTOR_OFFSET_CHECK
 
 #if KF_MODERN_TYPES
 static_assert(__builtin_offsetof(KfActorPlacement, slot_state) == 0);
