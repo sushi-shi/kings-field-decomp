@@ -114,6 +114,13 @@ def parser() -> argparse.ArgumentParser:
     types.add_argument("--unit", action="append")
     types.add_argument("-j", "--jobs", type=int, default=4)
 
+    casts = subs.add_parser(
+        "casts", help="count deduplicated written C-style casts with target-C Clang"
+    )
+    from scripts.kf.casts import add_arguments as add_cast_arguments
+
+    add_cast_arguments(casts)
+
     build = subs.add_parser("build", help="configure if needed and run the Ninja graph")
     build.add_argument("phase", nargs="?", choices=PHASES, default="all")
     build.add_argument("--image", action="append", choices=tuple(IMAGE_ALIASES))
@@ -252,6 +259,10 @@ def main(argv: list[str] | None = None) -> int:
 
             return check_types(images=_images(args.image), names=tuple(args.unit or ()),
                                jobs=args.jobs)
+        if args.command == "casts":
+            from scripts.kf.casts import run as run_cast_audit
+
+            return run_cast_audit(args)
         if args.command == "build":
             return _build(args)
         if args.command == "try":

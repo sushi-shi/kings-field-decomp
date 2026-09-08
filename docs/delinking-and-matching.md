@@ -206,6 +206,7 @@ incremental Ninja graph. The normal commands are:
 | `kf try --unit ID [--source FILE]` | compile one unit into a scratch object, compare full-extent instruction/relocation listings, and report paired CFG clues for differing functions without updating recorded matches |
 | `kf match [--unit ID]` | build, identify content-changed base objects, and summarize scores |
 | `kf status [--json] [--all]` | report current state without building or writing |
+| [`kf casts [--kind K] [--scope S] [--list\|--json]`](cast-audit.md) | parse every selected target-C unit variant and count written C-style casts once by spelling location, including shared macros and headers |
 | `kf check [--strict]` | fail on data mismatches/incomplete comparisons, known-reference ownership gaps, unfaithful target relink/placement, non-exact vendored source verification, unchanged-input regressions, lost banked rows, or invalid/stale reports |
 | `kf verify roundtrip [--image I] [--unit ID] [--output PATH]` | relink manifested target ELF sections at claim-derived addresses with pinned GNU ld and compare all initialized bytes with verified retail |
 | `kf bank [--unit ID] [--dirty]` | manually update all fresh scores, or only selected units when every selected function is exactly 100% |

@@ -255,6 +255,7 @@
       analysisPython = pkgs.python3.withPackages (pythonPackages: with pythonPackages; [
         capstone
         intervaltree
+        libclang
         pyelftools
         pyghidra
         pytest
