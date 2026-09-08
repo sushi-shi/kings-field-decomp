@@ -1,17 +1,16 @@
 # Entity and HUD renderer retained literals
 
-Companion to [the renderer review](renderer-literal-review.md). All **249**
+Companion to [the renderer review](renderer-literal-review.md). All **247**
 remaining numeric occurrences in the listed files have individual reasons.
 Claims, comments, strings and named constant definitions are excluded.
 Repeated tokens have separate rows in source order.
 
 ## `src/game/entity_render.c`
 
-243 retained occurrences.
+241 retained occurrences.
 
 | Function / data owner | Line | Token | Expression | Reason |
 | --- | ---: | --- | --- | --- |
-| `floor_item_sprites` | 18 | `7` | `KfSpriteQuad floor_item_sprites[7] = {` | Seven complete floor-sprite descriptors, supported by placement selectors and the independent OPEN table; this is a table extent, not an item ID. |
 | `floor_item_sprites` | 19 | `0x90` | `{0x90, 0x0, 0x20, 0x20, 0xfe00, 0xfc40, 0x400, 0x400},` | Authored texture U origin; retain the exact atlas placement or rectangle span for this descriptor. |
 | `floor_item_sprites` | 19 | `0x0` | `{0x90, 0x0, 0x20, 0x20, 0xfe00, 0xfc40, 0x400, 0x400},` | Authored texture V origin; retain the exact atlas placement or rectangle span for this descriptor. |
 | `floor_item_sprites` | 19 | `0x20` | `{0x90, 0x0, 0x20, 0x20, 0xfe00, 0xfc40, 0x400, 0x400},` | Authored texture U span; retain the exact atlas placement or rectangle span for this descriptor. |
@@ -68,7 +67,6 @@ Repeated tokens have separate rows in source order.
 | `floor_item_sprites` | 25 | `0xfb40` | `{0xd0, 0x20, 0x20, 0x27, 0xfe00, 0xfb40, 0x400, 0x500},` | Authored local Y origin; preserve the unsigned halfword bit pattern and its later signed-corner conversion. |
 | `floor_item_sprites` | 25 | `0x400` | `{0xd0, 0x20, 0x20, 0x27, 0xfe00, 0xfb40, 0x400, 0x500},` | Authored local width; retain the exact atlas placement or rectangle span for this descriptor. |
 | `floor_item_sprites` | 25 | `0x500` | `{0xd0, 0x20, 0x20, 0x27, 0xfe00, 0xfb40, 0x400, 0x500},` | Authored local height; retain the exact atlas placement or rectangle span for this descriptor. |
-| `effect_billboard_sprites` | 29 | `22` | `KfSpriteQuad effect_billboard_sprites[22] = {` | Twenty-two complete effect-sprite descriptors through the next distinct HUD layout, supported by constructor/frame selectors. |
 | `effect_billboard_sprites` | 30 | `0x0` | `{0x0, 0x0, 0x2f, 0x2f, 0xfe80, 0xfe80, 0x300, 0x300},` | Authored texture U origin; retain the exact atlas placement or rectangle span for this descriptor. |
 | `effect_billboard_sprites` | 30 | `0x0` | `{0x0, 0x0, 0x2f, 0x2f, 0xfe80, 0xfe80, 0x300, 0x300},` | Authored texture V origin; retain the exact atlas placement or rectangle span for this descriptor. |
 | `effect_billboard_sprites` | 30 | `0x2f` | `{0x0, 0x0, 0x2f, 0x2f, 0xfe80, 0xfe80, 0x300, 0x300},` | Authored texture U span; retain the exact atlas placement or rectangle span for this descriptor. |

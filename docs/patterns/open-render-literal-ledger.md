@@ -26,12 +26,11 @@ constants and retains its separate earlier literal audit.
 
 ## `src/open/entity_render.c`
 
-76 retained occurrences. The [sprite cue review](sprite-cue-tmd-slots.md) names
+75 retained occurrences. The [sprite cue review](sprite-cue-tmd-slots.md) names
 the floor-item depth-cue argument.
 
 | Function | Line | Token | Expression | Reason |
 | --- | ---: | --- | --- | --- |
-| `initializers` | 19 | `7` | `KfSpriteQuad floor_item_sprites[7] = {` | Complete authored descriptor count, including the duplicated second frame; not an inferred item-type enum. |
 | `initializers` | 20 | `0x90` | `{0x90, 0x00, 0x20, 0x20, 0xfe00, 0xfc40, 0x400, 0x400},` | Authored floor-item sprite u coordinate/span; the typed tuple preserves atlas layout and projected billboard geometry. |
 | `initializers` | 20 | `0x00` | `{0x90, 0x00, 0x20, 0x20, 0xfe00, 0xfc40, 0x400, 0x400},` | Authored floor-item sprite v coordinate/span; the typed tuple preserves atlas layout and projected billboard geometry. |
 | `initializers` | 20 | `0x20` | `{0x90, 0x00, 0x20, 0x20, 0xfe00, 0xfc40, 0x400, 0x400},` | Authored floor-item sprite u_span coordinate/span; the typed tuple preserves atlas layout and projected billboard geometry. |

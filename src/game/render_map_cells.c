@@ -3,6 +3,11 @@
 #include <kf/game_render.h>
 #include <kf/game.h>
 
+enum {
+    ILLUSION_STAFF_REMAP_PHASE_MASK = 3,
+    ILLUSION_STAFF_REMAP_ACTIVE_UPDATES = 2
+};
+
 /* Local legend preserves the authored grid shape. */
 #define H KF_CELL_WINDOW_HIDDEN
 #define D KF_CELL_WINDOW_DISTANT
@@ -53,7 +58,8 @@ void render_map_cell(s32 col, s32 row, KF_ENUM_PARAM(KfCellVisibility, char) cel
     }
     staff_timer = player_state.illusion_staff_timer;
     /* Two-on/two-off updates; -1 disables the authored mesh remapping. */
-    if (staff_timer != KF_ILLUSION_STAFF_INACTIVE && (staff_timer & 3) < 2) {
+    if (staff_timer != KF_ILLUSION_STAFF_INACTIVE
+        && (staff_timer & ILLUSION_STAFF_REMAP_PHASE_MASK) < ILLUSION_STAFF_REMAP_ACTIVE_UPDATES) {
         switch (object_index) {
         case 0x44:
             object_index = 0x17;

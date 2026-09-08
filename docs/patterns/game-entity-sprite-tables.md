@@ -1,5 +1,34 @@
 # GAME floor-item and effect sprite descriptors
 
+## Table-count and staff-phase naming follow-up
+
+Function Match Plan: name the supported seven-descriptor floor table in both
+images and the twenty-two-descriptor GAME effect table. Reuse each name in
+its definition and extern declaration, retaining every initialized byte and
+the existing ownership caveats below. The current image-qualified data/xref
+views confirm GAME `80055b00 / 0x54`, GAME `80055b54 / 0x108` and OPEN
+`800358e0 / 0x54`, with their existing twelve-byte indexed consumers. Function
+bodies and curated data identities are unchanged by these extent names.
+
+Also name the two-on/two-off staff remapping phase in GAME
+`8001e5ec / 0x250`, `render_map_cell`. Fresh disassembly/CFG, callers, callees,
+strings and stored match views, adjacent source and history were reviewed.
+`8001e650` masks the timer with three and `8001e654` compares the result with
+two. Preserve the inactive-timer guard, all nine proven calls, fifteen validated
+references, byte selector/char visibility widths and 120-byte return-frame
+release. The stored score is 96.743240%; this is game-owned rendering policy,
+not a vendored body. No new mesh identity is inferred for attributes 44/46
+or replacement attributes 17/18/19 (hex).
+
+Use named integer counts and local phase constants. Builds, compiler checks,
+tests and post-edit matches remain deferred under the user's instruction.
+
+Final verdict: both descriptor counts now appear consistently in declarations
+and definitions, and the staff-phase predicate uses named values. Five raw
+source occurrences were removed; all 111 current file ledgers reconcile.
+Initializer values, extents and function operations are unchanged by source
+review. No post-edit binary claim is made.
+
 ## Function Match Plan
 
 At `5b5db21`, replace the unclassified `DAT_80055afc` byte view with the

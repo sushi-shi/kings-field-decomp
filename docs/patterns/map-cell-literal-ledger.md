@@ -1,7 +1,7 @@
 # Map-cell retained-literal ledger
 
 Companion to [the visibility-domain review](visibility-screen-domains.md).
-All 30 retained numeric occurrences in these two modules are listed below.
+All 28 retained numeric occurrences in these two modules are listed below.
 The named fixed-window classes are excluded. Repeated tokens have separate rows.
 
 ## `src/game/render_map_cells.c`
@@ -12,8 +12,6 @@ The named fixed-window classes are excluded. Repeated tokens have separate rows.
 | `render_fixed_cell_window` | 12 | `13` | `13, 13, 6, 6,` | Authored fixed-window height in cells; preserve the explicit table dimensions. |
 | `render_fixed_cell_window` | 12 | `6` | `13, 13, 6, 6,` | Authored horizontal origin, centered within the 13-column pattern. |
 | `render_fixed_cell_window` | 12 | `6` | `13, 13, 6, 6,` | Authored depth origin, centered within the 13-row pattern. |
-| `render_map_cell` | 56 | `3` | `if (staff_timer != KF_ILLUSION_STAFF_INACTIVE && (staff_timer & 3) < 2) {` | Low two timer bits select the repeating four-update phase; the adjacent comparison documents the two-on/two-off rule. |
-| `render_map_cell` | 56 | `2` | `if (staff_timer != KF_ILLUSION_STAFF_INACTIVE && (staff_timer & 3) < 2) {` | The first half of the four-update phase enables the staff mesh remapping; retain this arithmetic comparison with its explanatory comment. |
 | `render_map_cell` | 58 | `0x44` | `case 0x44:` | Authored source attribute in the staff remapping; its specific wall/door identity remains unproved, so do not invent a semantic mesh name. |
 | `render_map_cell` | 59 | `0x17` | `object_index = 0x17;` | Authored replacement attribute in the staff remapping, before conversion to a zero-based mesh index; no independent semantic identity for this replacement is established. |
 | `render_map_cell` | 62 | `0x18` | `object_index = 0x18;` | Authored replacement attribute in the staff remapping, before conversion to a zero-based mesh index; no independent semantic identity for this replacement is established. |

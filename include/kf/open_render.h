@@ -117,7 +117,7 @@ KF_OPEN_GRAPHICS_OFFSET_CHECK(unknown_24786, 0x24786);
 #undef KF_OPEN_GRAPHICS_OFFSET_CHECK
 
 extern MATRIX color_matrix_table[KF_OPEN_COLOR_PRESET_COUNT];
-extern KfSpriteQuad floor_item_sprites[7];
+extern KfSpriteQuad floor_item_sprites[KF_FLOOR_ITEM_SPRITE_COUNT];
 extern MATRIX floor_item_light_matrix;
 extern SVECTOR render_sprite_light_normal;
 extern CVECTOR map_textured_primitive_color;
