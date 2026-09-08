@@ -39,16 +39,16 @@ replaces the raw mode comparison with a typed visibility-grid member.
 
 | Function | Line | Token | Expression | Reason |
 | --- | ---: | --- | --- | --- |
-| `render_entities` | 32 | `1` | `for (i = KF_MAP_OBJECT_CAPACITY - 1; i != -1; i--) {` | Convert pool capacity into the last zero-based countdown value. |
-| `render_entities` | 32 | `1` | `for (i = KF_MAP_OBJECT_CAPACITY - 1; i != -1; i--) {` | Negative-one exhausted countdown sentinel; token 1 is preceded by unary minus. |
-| `render_entities` | 48 | `1` | `for (i = KF_ACTOR_CAPACITY - 1; i != -1; i--) {` | Convert pool capacity into the last zero-based countdown value. |
-| `render_entities` | 48 | `1` | `for (i = KF_ACTOR_CAPACITY - 1; i != -1; i--) {` | Negative-one exhausted countdown sentinel; token 1 is preceded by unary minus. |
-| `render_entities` | 75 | `0` | `if (visible != 0) {` | Boolean/nonzero visibility result gates the actor emitter. |
-| `render_entities` | 92 | `1` | `for (i--; i != -1; i--) {` | Negative-one exhausted countdown sentinel; token 1 is preceded by unary minus. |
-| `render_entities` | 108 | `1` | `for (i = KF_EFFECT_CAPACITY - 1; i != -1; i--) {` | Convert pool capacity into the last zero-based countdown value. |
-| `render_entities` | 108 | `1` | `for (i = KF_EFFECT_CAPACITY - 1; i != -1; i--) {` | Negative-one exhausted countdown sentinel; token 1 is preceded by unary minus. |
-| `render_entities` | 129 | `1` | `for (i = KF_MAP_EVENT_CAPACITY - 1; i != -1; i--) {` | Convert pool capacity into the last zero-based countdown value. |
-| `render_entities` | 129 | `1` | `for (i = KF_MAP_EVENT_CAPACITY - 1; i != -1; i--) {` | Negative-one exhausted countdown sentinel; token 1 is preceded by unary minus. |
+| `render_entities` | 36 | `1` | `for (i = KF_MAP_OBJECT_CAPACITY - 1; i != -1; i--) {` | Convert pool capacity into the last zero-based countdown value. |
+| `render_entities` | 36 | `1` | `for (i = KF_MAP_OBJECT_CAPACITY - 1; i != -1; i--) {` | Negative-one exhausted countdown sentinel; token 1 is preceded by unary minus. |
+| `render_entities` | 54 | `1` | `for (i = KF_ACTOR_CAPACITY - 1; i != -1; i--) {` | Convert pool capacity into the last zero-based countdown value. |
+| `render_entities` | 54 | `1` | `for (i = KF_ACTOR_CAPACITY - 1; i != -1; i--) {` | Negative-one exhausted countdown sentinel; token 1 is preceded by unary minus. |
+| `render_entities` | 85 | `0` | `if (visible != 0) {` | Boolean/nonzero visibility result gates the actor emitter. |
+| `render_entities` | 103 | `1` | `for (i--; i != -1; i--) {` | Negative-one exhausted countdown sentinel; token 1 is preceded by unary minus. |
+| `render_entities` | 121 | `1` | `for (i = KF_EFFECT_CAPACITY - 1; i != -1; i--) {` | Convert pool capacity into the last zero-based countdown value. |
+| `render_entities` | 121 | `1` | `for (i = KF_EFFECT_CAPACITY - 1; i != -1; i--) {` | Negative-one exhausted countdown sentinel; token 1 is preceded by unary minus. |
+| `render_entities` | 144 | `1` | `for (i = KF_MAP_EVENT_CAPACITY - 1; i != -1; i--) {` | Convert pool capacity into the last zero-based countdown value. |
+| `render_entities` | 144 | `1` | `for (i = KF_MAP_EVENT_CAPACITY - 1; i != -1; i--) {` | Negative-one exhausted countdown sentinel; token 1 is preceded by unary minus. |
 
 ## `src/game/geometry_render.c`
 

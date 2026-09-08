@@ -1,5 +1,10 @@
 # GAME entity-pool traversal
 
+The later [entity-culling trace campaign](game-entity-cull-traces.md) reaches
+99.517044%, 1408 bytes, through shared wrapped coordinates and the texture-page
+pointer lifetime. All ordered retail calls and address pairs agree; thirty
+words still differ in GPR operands. The function remains unbanked.
+
 ## Function Match Plan: wrapped origins and shared continuations
 
 GAME `8001f218`, `render_entities(void)`, owns 1408 retail bytes in the

@@ -18,6 +18,16 @@ promotes a probe to a proven historical toolchain.
   the rejected scroll-enable equality's new reload requirement.
 - [game-save-ui-matches.md](game-save-ui-matches.md): status-result and dialogue
   pathname trials, plus delay-slot and unseen-prologue trace controls.
+- [game-dialogue-path-traces.md](game-dialogue-path-traces.md): rejected
+  independent directory-byte and advancing-cursor controls, with three-compiler
+  parity and preservation of all 23 sibling bodies.
+- [game-experience-traces.md](game-experience-traces.md): rejected scalar-field
+  pointer control for the level loop; twelve exact siblings remain unchanged.
+- [game-world-count-traces.md](game-world-count-traces.md): byte-count and
+  explicit action-join controls emit the unchanged serialized world writer.
+- [game-entity-cull-traces.md](game-entity-cull-traces.md): shared wrapped
+  coordinates and texture-page lifetime recover the retail body size and
+  ordered references; small controls reproduce both changes.
 - [game-ui-trace-matches.md](game-ui-trace-matches.md): exact configuration and
   buy/sell panels through shared control flow and the real selection-result
   channel; rejected notification-tail and sell-navigation trials.
