@@ -27,17 +27,17 @@ void menu_draw_window(KfMenuWindowKind kind, s32 count, s32 highlight, KfMenuCon
     if (count > 0) {
         row = 0;
         do {
-            const MenuGlyphString *label = &layout->rows[row];
-            const MenuSpriteDef *box = &menu_assets.row_background;
-
             if (row == highlight && confirmation == KF_MENU_CONFIRM_REQUESTED) {
-                box = &menu_assets.row_confirmed_background;
+                menu_blit_sprite_translucent(&menu_assets.row_confirmed_background,
+                    (const MenuPoint *)&layout->rows[row]);
+            } else {
+                menu_blit_sprite_translucent(&menu_assets.row_background,
+                    (const MenuPoint *)&layout->rows[row]);
             }
-            menu_blit_sprite_translucent(box, (const MenuPoint *)label);
             if (row == highlight) {
-                menu_blit_sprite(&menu_assets.selection_cursor, (const MenuPoint *)label);
+                menu_blit_sprite(&menu_assets.selection_cursor, (const MenuPoint *)&layout->rows[row]);
             }
-            menu_draw_string(&menu_assets.glyph_atlas, label);
+            menu_draw_string(&menu_assets.glyph_atlas, &layout->rows[row]);
             row++;
         } while (row < count);
     }

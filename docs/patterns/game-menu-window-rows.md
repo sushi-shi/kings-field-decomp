@@ -115,3 +115,73 @@ function; `menu_list_render` begins at 0x80028a70. Full-image regression and
 build results are recorded with the concurrently completed
 [event-image helper](game-event-progress-image.md). No shared coordinate
 type or function signature was changed.
+
+
+## Function Match Plan: window background branches
+
+GAME 80028914 / 348 bytes, game.menu_draw_window, strict 87.540230%,
+352 compiled bytes. Current six views, raw compare, all caller functions,
+neighboring prompt/list and drawing-helper bodies are in build/window-evidence.txt
+and window-context.txt. Previous row-pointer and conditional-pointer controls
+in game-menu-window-rows.md were reviewed; the complete 264-byte window,
+24-byte glyph rows, four word arguments, signed title halfword, count>0,
+highlight equality, exact confirmation==1 and kind!=6 backdrop policy remain.
+There are six calls, seven conditional branches, nine validated address
+pairs, no strings or indirect transfers. This is game menu composition with
+only game helper calls and no vendor identity.
+
+Retail has a 48-byte frame saving s0..s5 and ra; the candidate adds s6.
+Retail materializes both background member addresses independently, compares
+row/highlight displacements, and forms layout+row in three call delay slots.
+The candidate caches that pointer across calls and derives the confirmed
+background by adding twelve to the default address. Shared data ownership
+and every physical target stay unchanged; no raw byte view is introduced.
+
+Sixteen combinations cross four background selection forms (existing pointer,
+confirmed-first calls, default-first calls, nested row/confirmation calls),
+local versus direct typed row addresses, and bottom-tested versus for loops.
+Separate call expressions may compile to the one retail static row-background
+call; reject any added machine call site. Preserve dynamic title/background/
+cursor/string/backdrop order and all read widths. Local-removal/loop controls
+alone are not new semantic claims. Inspect first raw differences and complete
+strict/raw results; no padding, fake locals or forced registers are allowed.
+
+## Sixteen-state result and exact composition
+
+Exactly one state reaches strict 100%: confirmed-first separate background
+calls, direct `&layout->rows[row]` arguments, and the existing bottom-tested
+loop. Keep both source facts together. Separate calls with a cached label
+score 94.206894%; direct row arguments with the original pointer choice
+score 87.022990%. The same successful pair with a for loop scores 97.701150%.
+These controls show why neither previously rejected fact closes the function
+alone. No added machine call remains: the compiler merges the mutually
+exclusive row blits into the retail call site.
+
+The retained source removes the label and box locals. It explicitly draws
+the confirmed background only for the highlighted row and requested
+confirmation, otherwise the default background, then preserves the optional
+cursor and label draw. It does not change row contents, layout ownership,
+constants, argument widths, guard order or call order. All three row calls
+now recompute the typed row address in the retail delay slots; both background
+symbol pairs and the six-saved-register frame agree. No compiler mechanism
+or historical source spelling is claimed from the successful composition.
+
+Fresh canonical compilation and independent numeric relocation resolution
+compare all 87 retail words, six ordered calls and nine address pairs exactly.
+A wrong translucent-blitter address changes exactly its two calls, confirming
+sensitivity to a wrong referent. The prologue, signed title load, loop branch
+and all call/return delay slots are included. Generated results are under
+build/hypotheses/20260908-161051-game-menu_draw_window-menu_draw_window;
+raw evidence is build/window-raw-verification.json.
+
+Master's independently committed radial match c3700f8 was brought into the
+isolated baseline before the full verification build. The full build reports
+GAME 333/362, OPEN 106/108 and PSX 1/1 exact, with all thirteen vendor controls
+exact. Its nonzero exit remains the pre-existing data ownership/placement
+and target-relink failures, with no artifact failures. This source-only
+matching change is to be committed to master without concurrent tooling work.
+
+Ruff and whitespace checks pass. All 713 repository tests pass in 110.453
+seconds with nine optional skips. The focused bank selects only GAME
+80028914 under the verified input hash; no other partial or unrelated
+function is banked. Tooling, SDK declarations and inventories are unchanged.
