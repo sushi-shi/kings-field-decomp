@@ -17,7 +17,7 @@ void weapon_records_load_and_mirror_angles(const KfWeaponRecord *source)
     remaining = KF_WEAPON_RECORD_COUNT - 1;
     record = weapon_records;
     do {
-        record->mirrored_angle = -record->mirrored_angle;
+        record->render_rotation.vy = -record->render_rotation.vy;
         record++;
     } while (remaining-- != 0);
 }

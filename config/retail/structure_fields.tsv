@@ -782,16 +782,17 @@ KfVec3s	0x02	0x02	y	s16	supported	game_math.h;asm;xrefs	y coordinate
 KfVec3s	0x04	0x02	z	s16	supported	game_math.h;asm;xrefs	z coordinate
 KfVecXZs	0x00	0x02	x	s16	supported	game_math.h;asm;xrefs	x coordinate
 KfVecXZs	0x02	0x02	z	s16	supported	game_math.h;asm;xrefs	z coordinate
-KfWeaponRecord	0x00	0x01	unknown_00	u8	opaque	game_equipment.h;asm;xrefs	meaning unresolved
-KfWeaponRecord	0x01	0x01	charge_rate	u8	supported	game_equipment.h;game_semantic_player_motion_attack.tsv;asm;xrefs	combined with physical power to advance POWER while the weapon is idle
-KfWeaponRecord	0x02	0x0a	attack_components	u16[5]	supported	game_equipment.h;game_semantic_player_stats.tsv;asm;xrefs	five outgoing damage components copied into player combat state
-KfWeaponRecord	0x0c	0x02	hp_regen_interval	u16	supported	game_equipment.h;asm;player_update	nonzero: player_adjust_hp(1) every N frames of player_state.unknown_58
-KfWeaponRecord	0x0e	0x02	mp_regen_interval	u16	supported	game_equipment.h;asm;player_update	nonzero: player_adjust_mp(1) every N frames of player_state.unknown_58
-KfWeaponRecord	0x10	0x02	unknown_10	u8[2]	opaque	game_equipment.h;asm;xrefs	meaning unresolved
-KfWeaponRecord	0x12	0x02	attack_z_offset	u16	supported	game_equipment.h;game_semantic_player_motion_attack.tsv;asm;xrefs	local z component rotated into the weapon hit-test point
-KfWeaponRecord	0x14	0x12	unknown_14	u8[18]	opaque	game_equipment.h;asm;xrefs	meaning unresolved
-KfWeaponRecord	0x26	0x02	mirrored_angle	u16	candidate	game_equipment.h;game_semantic_player_interactions.tsv;asm;exact-C-match	one halfword per record is negated after the sixteen-record load; the gameplay meaning of the angle remains unresolved
-KfWeaponRecord	0x28	0x04	unknown_28	u8[4]	opaque	game_equipment.h;asm;xrefs	meaning unresolved
+KfWeaponRecord	0x00	0x01	unknown_00	u8	opaque	game_equipment.h;asm;xrefs;typed-weapon-render.md	meaning unresolved
+KfWeaponRecord	0x01	0x01	charge_rate	u8	supported	game_equipment.h;game_semantic_player_motion_attack.tsv;asm;xrefs;typed-weapon-render.md	combined with physical power to advance POWER while the weapon is idle
+KfWeaponRecord	0x02	0x0a	attack_components	u16[5]	supported	game_equipment.h;game_semantic_player_stats.tsv;asm;xrefs;typed-weapon-render.md	five outgoing damage components copied into player combat state
+KfWeaponRecord	0x0c	0x02	hp_regen_interval	u16	supported	game_equipment.h;asm;player_update;typed-weapon-render.md	nonzero: player_adjust_hp(1) every N frames of player_state.unknown_58
+KfWeaponRecord	0x0e	0x02	mp_regen_interval	u16	supported	game_equipment.h;asm;player_update;typed-weapon-render.md	nonzero: player_adjust_mp(1) every N frames of player_state.unknown_58
+KfWeaponRecord	0x10	0x02	projection_distance	u16	supported	game_equipment.h;asm;xrefs;typed-weapon-render.md	unsigned distance supplied to SetGeomScreen
+KfWeaponRecord	0x12	0x02	attack_z_offset	u16	supported	game_equipment.h;game_semantic_player_motion_attack.tsv;asm;xrefs;typed-weapon-render.md	local z component rotated into the weapon hit-test point
+KfWeaponRecord	0x14	0x08	unknown_14	u8[8]	opaque	game_equipment.h;asm;xrefs;typed-weapon-render.md	meaning unresolved
+KfWeaponRecord	0x1c	0x06	render_translation	KfVec3s	supported	game_equipment.h;asm;typed-weapon-render.md	signed XYZ halfwords copied into the view model translation; Z also biases depth
+KfWeaponRecord	0x22	0x02	unknown_22	u16	opaque	game_equipment.h;asm;typed-weapon-render.md	unresolved halfword between translation and rotation
+KfWeaponRecord	0x24	0x08	render_rotation	SVECTOR	supported	game_equipment.h;asm;typed-weapon-render.md	SDK RotMatrix input; resource loader negates its Y component at record+0x26
 MenuGlyphRow	0x0	0x14	codes	s16[10]	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT	ten glyph codes; item/name copy and indexed 20-byte stride
 MenuGlyphString	0x0	0x4	position	MenuPoint	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT;typed-menu-records.md	shared signed screen point passed to sprite blitters; retail title guard uses lh; complete label stride remains 24 bytes
 MenuGlyphString	0x4	0x14	glyphs	MenuGlyphRow	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT;typed-menu-records.md	complete ten-code row copied from item and magic tables; halfword alignment preserves retail unaligned word-copy sequences

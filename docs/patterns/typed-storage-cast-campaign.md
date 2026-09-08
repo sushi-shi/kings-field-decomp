@@ -154,3 +154,8 @@ gold amounts, behavior-dependent spawn values and bounded container item
 arrays. It removes another 18 C pointer casts while preserving all 45 compared
 function bodies. The running reduction is 267 of the initial 806 C pointer
 casts; 539 remain for boundary and model review.
+
+The [weapon render stage](typed-weapon-render.md) types the proven projection,
+translation and SDK rotation fields, identifies the loader's mirrored Y angle,
+and removes nine more C pointer casts. All 20 compared bodies are unchanged;
+the C pointer count is 530, down 276 from the original count.

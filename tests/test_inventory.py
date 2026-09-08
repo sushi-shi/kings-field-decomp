@@ -254,8 +254,8 @@ class InventoryTests(unittest.TestCase):
         self.assertGreaterEqual(counts["functions_named"], 240)
         self.assertGreaterEqual(counts["data_named"], 100)
         self.assertEqual(counts["structures"], 108)
-        self.assertEqual(counts["structure_fields"], 815)
-        self.assertEqual(counts["structure_fields_named"], 727)
+        self.assertEqual(counts["structure_fields"], 816)
+        self.assertEqual(counts["structure_fields_named"], 729)
 
     def test_animation_cache_slots_share_one_pointer_type_without_layout_changes(self) -> None:
         structures = load_structure_identities(RETAIL_CONFIG)
@@ -421,11 +421,12 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(weapon_fields["attack_components"].size, 0x0A)
         self.assertEqual(weapon_fields["attack_z_offset"].offset, 0x12)
         self.assertEqual(weapon_fields["unknown_14"].meaning_confidence, "opaque")
-        self.assertEqual(weapon_fields["mirrored_angle"].offset, 0x26)
-        self.assertEqual(
-            weapon_fields["mirrored_angle"].meaning_confidence,
-            "candidate",
-        )
+        self.assertEqual(weapon_fields["projection_distance"].offset, 0x10)
+        self.assertEqual(weapon_fields["render_translation"].offset, 0x1C)
+        self.assertEqual(weapon_fields["render_translation"].size, 6)
+        self.assertEqual(weapon_fields["render_rotation"].offset, 0x24)
+        self.assertEqual(weapon_fields["render_rotation"].size, 8)
+        self.assertEqual(weapon_fields["render_rotation"].meaning_confidence, "supported")
         collision_fields = {
             row.name: row for row in fields if row.structure == "KfCollisionTarget"
         }

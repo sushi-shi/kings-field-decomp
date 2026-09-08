@@ -16,6 +16,8 @@ promotes a probe to a proven historical toolchain.
 
 - [typed-map-links.md](typed-map-links.md): shared byte, word, gold, spawn and
   bounded item-array views for complete map link records.
+- [typed-weapon-render.md](typed-weapon-render.md): typed weapon projection,
+  translation and SDK rotation fields, with all compared bodies unchanged.
 - [gcc257-instrumentation.md](gcc257-instrumentation.md): source-pinned debug
   compiler, observational trace contract, controlled probes and OPEN residues.
 - [gcc257-address-quantities.md](gcc257-address-quantities.md): observed CSE

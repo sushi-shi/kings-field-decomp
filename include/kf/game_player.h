@@ -197,7 +197,7 @@ typedef struct KfPlayerState {
     KfMagicRecord *selected_magic_record;
     KfItemId equipped_weapon_id;
     u8 unknown_65[3];
-    const KfWeaponRecord *equipped_weapon_record;
+    KfWeaponRecord *equipped_weapon_record;
     struct KfAssetHeader *weapon_asset_buffer;
     s16 weapon_attack_phase;
     u8 unknown_72[2];

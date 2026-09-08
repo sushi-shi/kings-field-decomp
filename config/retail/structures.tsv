@@ -101,7 +101,7 @@ KfTmdStateOpen	0xc	supported	open_render.h;asm;base-register;tmd_register	OPEN.E
 KfVec3i	0x0c	supported	game_math.h;asm;xrefs	three signed 32-bit coordinates
 KfVec3s	0x06	supported	game_math.h;asm;xrefs	three signed halfword coordinates
 KfVecXZs	0x04	supported	game_math.h;asm;xrefs	two signed horizontal halfword coordinates
-KfWeaponRecord	0x2c	supported	game_equipment.h;game_semantic_player_motion_attack.tsv;game_semantic_player_stats.tsv;asm;xrefs;runtime-stride	runtime-loaded weapon record with reviewed charge, component, and attack-offset fields
+KfWeaponRecord	0x2c	supported	game_equipment.h;game_semantic_player_motion_attack.tsv;game_semantic_player_stats.tsv;asm;xrefs;runtime-stride	runtime-loaded weapon record with combat fields, projection distance, signed render translation and SDK rotation
 MenuGlyphRow	0x14	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT	ten glyph codes; item/name copy and indexed 20-byte stride
 MenuGlyphString	0x18	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT	position and ten glyph codes; 24-byte positioned row stride
 MenuPoint	0x4	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT	sprite blitters read two screen-coordinate halfwords
