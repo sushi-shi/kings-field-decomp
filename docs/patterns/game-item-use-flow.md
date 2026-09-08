@@ -1,5 +1,11 @@
 # GAME item-use panel control flow
 
+Subsequent strict closure: the
+[root/item compiler-trace campaign](game-root-item-use-traces.md) reaches
+**100%** by placing the fruit's HP addition before its independent status
+clear in source. Compiler scheduling restores the retail store order, and
+all 477 words now agree. The earlier seven-word residue below is resolved.
+
 ## Function Match Plan
 
 Start at `a665d54` on master with hash-verified Japanese retail and the existing

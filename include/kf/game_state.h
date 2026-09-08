@@ -14,8 +14,6 @@
 #include <kf/psyq.h>
 
 extern u32 DAT_80057d24;
-extern u32 DAT_80095698;
-extern u32 DAT_8009569c;
 extern u32 DAT_800a0768;
 extern KfGameExitCode game_exit_code;
 extern const SoundRef gameplay_sound_ref_0;

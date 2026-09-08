@@ -57,6 +57,38 @@ def validate_reload(trace: Trace) -> None:
                 "reload selected a conflicting register")
 
 
+
+def input_stack_homes(instructions: tuple[int, ...]) -> dict[int, int]:
+    """Decode the straight-line input-to-spill prefix of the scalar controls."""
+    registers = {4: ("input", 0), 29: ("stack", 0)}
+    slots = {}
+    for word in instructions:
+        opcode = word >> 26
+        rs, rt, rd = (word >> 21) & 31, (word >> 16) & 31, (word >> 11) & 31
+        immediate = (word & 0xFFFF) - (0x10000 if word & 0x8000 else 0)
+        if opcode == 3:
+            return slots
+        if opcode == 9:
+            if rs in registers:
+                kind, offset = registers[rs]
+                registers[rt] = kind, offset + immediate
+            else:
+                registers.pop(rt, None)
+        elif opcode == 0 and word & 63 in (33, 37) and (rs == 0 or rt == 0):
+            registers[rd] = registers.get(rt if rs == 0 else rs, ("unknown", 0))
+        elif opcode == 35:
+            kind, offset = registers.get(rs, ("unknown", 0))
+            if kind == "input":
+                registers[rt] = "value", (offset + immediate) // 4
+            else:
+                registers.pop(rt, None)
+        elif opcode == 43 and rs == 29:
+            kind, index = registers.get(rt, ("unknown", 0))
+            if kind == "value":
+                slots[index] = immediate
+    raise RuntimeError("scalar stack control has no observe call")
+
+
 def validate_controls(path: Path, obj: Path) -> None:
     # One reader pass validates every serialized row. Then group the controlled
     # functions without reparsing the complete TU once per assertion.
@@ -93,10 +125,38 @@ def validate_controls(path: Path, obj: Path) -> None:
             "member rewrites were attributed to the wrong CSE decision")
     require(all(row["calls_crossed"] == 0 for row in folded["allocation"]["global-alloc"]),
             "folded address incorrectly reported live across calls")
+    require(folded["address_inputs"]["cse2"] == {
+        "status": "observed", "stores_without_observation": 0,
+        "observations": [{"form": "expression", "quantity": "constant",
+                          "mode_matches": True, "count": 4}],
+    }, "folded members did not enter CSE2 with recorded base constants")
     retained = summarize(traces["member_retained"], [{"name": "p", "kind": "source_lifetime",
                          "source_value": "first"}], obj, obj)["p"]["value"]
     require(any(row["calls_crossed"] >= 2 for row in retained["allocation"]["global-alloc"]),
             "unknown struct pointer did not retain its real call-crossing lifetime")
+    inputs = traces["member_retained"].select("cse.address")
+    require(len(inputs) == 12 and all(row["reason"] == "store" and row["y"] is None
+            and row["values"][1:] == [1, 1] for row in inputs),
+            "dynamic pointer incorrectly acquired a recorded quantity constant")
+
+    mixed = summarize(traces["member_root_and_offset"], [{
+        "name": "root", "kind": "address_lifetime", "symbol": "object", "offset": 0,
+        "members": [0, 4],
+    }], obj, obj)["root"]["value"]
+    require(mixed["stores"]["cse1"]["relative"] == 4
+            and mixed["stores"]["cse2"] == {
+                "relative": 2, "other_base_relative": 0, "absolute": 2},
+            "direct-root and offset stores lost their distinct CSE outcomes")
+    require(mixed["address_inputs"]["cse2"] == {
+        "status": "observed", "stores_without_observation": 0,
+        "observations": [{"form": form, "quantity": "constant",
+                          "mode_matches": True, "count": 2}
+                         for form in ("expression", "register")],
+    }, "direct-root/offset control did not observe both recorded base constants")
+    require(any(row["calls_crossed"] == 1 for row in mixed["allocation"]["global-alloc"]),
+            "direct root did not retain its call-crossing lifetime")
+    require(mixed["absolute_rewrites"] == [{"pass": "cse2", "context": "cse.fold-address"}] * 2,
+            "offset-store rewrites were attributed to the wrong decision")
     require(bool(traces["member_folded"].select("cse.constant"))
             and bool(traces["member_folded"].select("cse.invalidate"))
             and bool(traces["member_folded"].select("cse.remove")),
@@ -125,6 +185,26 @@ def validate_controls(path: Path, obj: Path) -> None:
     require(len(acquired) == 2 and acquired[0]["x"]["ops"] == acquired[1]["x"]["ops"]
             and len(reused.select("stack.reuse")) == 1
             and len(reused.select("stack.release")) == 2, "stack lifetime/reuse control failed")
+
+    for name, expected in (("spill_order_declared", {9: 16, 10: 24, 11: 32}),
+                           ("spill_order_reversed", {9: 24, 10: 16, 11: 32})):
+        trace = traces[name]
+        allocated = {row["pseudo"]: row["hard_reg"]
+                     for row in trace.select("allocation.pseudo", stage="global-alloc")}
+        pseudos = {index: next(iter(trace.source_pseudos(f"value_{index}")))
+                   for index in expected}
+        require(all(allocated[p] == -1 for p in pseudos.values()),
+                "scalar control values were not left for stack allocation")
+        by_pseudo = sorted(expected, key=pseudos.get)
+        require([expected[index] for index in by_pseudo] == [16, 24, 32],
+                "declaration/pseudo order does not predict the controlled stack homes")
+        require(input_stack_homes(words(obj, name)) == expected,
+                "emitted input-to-stack stores disagree with scalar allocation")
+        # stack.allocate has a pass tag, not a stage-name reason.
+        allocations = [row for row in trace.select("stack.allocate")
+                       if row["pass"] == "reload" and row["values"][0]]
+        require([row["values"][:2] for row in allocations] == [[8, 8]] * 3,
+                "scalar slots do not have the observed eight-byte allocation")
 
     feature = [{"name": "phase", "kind": "constant_registers",
                 "source_value": "phase", "constants": [1, 2]}]
@@ -227,6 +307,8 @@ def main() -> None:
         includes += (Path(os.environ["PSYQ_INCLUDE"]),)
     report = []
     for name, source, object_name, delink, defines, unit in corpus:
+        assembler_version = manifest.profiles[unit.profile].aspsx_version if unit else "1.07"
+        assembler_flags = manifest.profiles[unit.profile].maspsx_flags if unit else ()
         reference = None
         trace_reference = None
         records = []
@@ -236,8 +318,8 @@ def main() -> None:
                             ("enabled-2", args.instrumented)):
             output = args.output / name / mode / object_name
             trace = output.with_suffix(".jsonl") if mode.startswith("enabled") else None
-            compile_source(source, "OPEN.EXE", output, delink, "O2", 0, "1.07",
-                           includes, ("-mcpu=r2000",), "gcc257-native", defines=defines,
+            compile_source(source, "OPEN.EXE", output, delink, "O2", 0, assembler_version,
+                           includes, ("-mcpu=r2000",), "gcc257-native", assembler_flags, defines=defines,
                            cc1_override=probe, trace_path=trace)
             blob = output.read_bytes()
             if reference is None:
@@ -255,7 +337,8 @@ def main() -> None:
                     raise RuntimeError(f"{name}: invalid source provenance")
         row = {"unit": name, "object_sha256": hashlib.sha256(reference).hexdigest(),
                "trace_sha256": hashlib.sha256(trace_reference).hexdigest(),
-               "events": len(records), "strict_scores": {}}
+               "events": len(records), "strict_scores": {},
+               "aspsx_version": assembler_version, "maspsx_flags": list(assembler_flags)}
         if unit:
             target = delink / "open/modules" / object_name
             for function in unit.functions:

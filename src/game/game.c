@@ -1,3 +1,4 @@
+#include <kf/game_graphics.h>
 #include <kf/address.h>
 #include <kf/overlay.h>
 #include <kf/game_player.h>
@@ -7,7 +8,6 @@
 #include <kf/game.h>
 
 enum {
-    INITIAL_GRAPHICS_CLEAR_BYTES = 0x249cc,
     INITIAL_ACTOR_CLEAR_BYTES = 0x2b48,
     INITIAL_MAP_OBJECT_CLEAR_BYTES = 0x25b8,
     INITIAL_MAP_EVENT_CLEAR_BYTES = 0x2360,
@@ -27,7 +27,7 @@ void game_main_loop(void)
 {
     s32 vsync_event;
 
-    memset(&display_state.buffer_index, 0, INITIAL_GRAPHICS_CLEAR_BYTES);
+    memset(&game_graphics_runtime, 0, sizeof game_graphics_runtime);
     memset(actor_state.definitions, 0, INITIAL_ACTOR_CLEAR_BYTES);
     memset(map_object_state.definitions, 0, INITIAL_MAP_OBJECT_CLEAR_BYTES);
     memset(&effect_state, 0, sizeof(KfEffectState));

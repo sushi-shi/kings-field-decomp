@@ -24,8 +24,6 @@ typedef struct KfAssetHeader {
     u32 clip_table_offset;
 } KfAssetHeader;
 
-extern KfAssetHeader *asset_registry_entries[];
-
 extern void asset_registry_load_tmd_archive(
     u16 first_asset_id, u8 *archive);
 extern void asset_registry_select(u16 index);

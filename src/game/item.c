@@ -1,3 +1,4 @@
+#include <kf/game_graphics.h>
 #include <kf/address.h>
 #include <kf/map_data.h>
 #include <kf/item.h>
@@ -47,15 +48,14 @@ void item_load_floor_placements(KfFloorItemPlacement *placements)
 {
     KfFloorItemPlacement *first_placement;
     KfFloorItem *item;
-    u16 *count = &floor_item_count;
 
-    *count = 0;
+    game_graphics_runtime.floor_item_count = 0;
     first_placement = placements;
     while (placements++->base_sprite_index != KF_FLOOR_ITEM_END) {
-        (*count)++;
+        game_graphics_runtime.floor_item_count++;
     }
 
-    item = floor_items;
+    item = game_graphics_runtime.floor_items;
     placements = first_placement;
     if (placements->base_sprite_index != KF_FLOOR_ITEM_END) {
         do {

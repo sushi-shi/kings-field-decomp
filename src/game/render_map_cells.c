@@ -1,3 +1,4 @@
+#include <kf/game_graphics.h>
 #include <kf/address.h>
 #include <kf/map_data.h>
 #include <kf/game_render.h>
@@ -34,9 +35,6 @@ static KfCellWindow render_fixed_cell_window = {
 #undef H
 #undef D
 #undef N
-
-DATA(0x80095860, 0x4)
-const KfCellWindow *active_cell_window;
 
 /*
  * Keep the unsigned low-halfword view coordinates. RotTrans writes MATRIX.t
@@ -81,10 +79,10 @@ void render_map_cell(s32 col, s32 row, KF_ENUM_PARAM(KfCellVisibility, char) cel
         object_index += KF_MAP_MESHES_PER_BANK;
     }
     setVector(&position,
-        col * KF_MAP_TILE_SIZE - (u16)render_state.view_position.vx,
+        col * KF_MAP_TILE_SIZE - (u16)game_graphics_runtime.render_state.view_position.vx,
         map_floor_height_grid[row][col] * -KF_MAP_HEIGHT_STEP
-            - (u16)render_state.view_position.vy,
-        row * KF_MAP_TILE_SIZE - (u16)render_state.view_position.vz);
+            - (u16)game_graphics_runtime.render_state.view_position.vy,
+        row * KF_MAP_TILE_SIZE - (u16)game_graphics_runtime.render_state.view_position.vz);
     if (orient == KF_MAP_ORIENT_QUARTER_TURN - 1) {
         position.vz += KF_MAP_TILE_SIZE;
     } else if (orient == KF_MAP_ORIENT_HALF_TURN - 1) {
@@ -94,14 +92,14 @@ void render_map_cell(s32 col, s32 row, KF_ENUM_PARAM(KfCellVisibility, char) cel
         position.vx += KF_MAP_TILE_SIZE;
     }
 
-    SetRotMatrix((MATRIX *)&render_state.view_matrix);
-    SetTransMatrix((MATRIX *)&render_state.view_matrix);
+    SetRotMatrix((MATRIX *)&game_graphics_runtime.render_state.view_matrix);
+    SetTransMatrix((MATRIX *)&game_graphics_runtime.render_state.view_matrix);
     RotTrans(&position, (VECTOR *)&cell_matrix.t, &flag);
-    MulMatrix0((MATRIX *)&render_state.view_matrix,
-               &render_state.quadrant_matrices[orient], &cell_matrix);
+    MulMatrix0((MATRIX *)&game_graphics_runtime.render_state.view_matrix,
+               &game_graphics_runtime.render_state.quadrant_matrices[orient], &cell_matrix);
     SetRotMatrix(&cell_matrix);
     SetTransMatrix(&cell_matrix);
-    SetLightMatrix(&light_quadrant_matrices[orient]);
+    SetLightMatrix(&game_graphics_runtime.light_quadrant_matrices[orient]);
     tmd_select_object_vertices(object_index);
     render_enqueue_map(object_index);
 }
@@ -110,7 +108,7 @@ void render_map_cell(s32 col, s32 row, KF_ENUM_PARAM(KfCellVisibility, char) cel
  * Visible-cell dispatcher for the map geometry pass.  It selects the cell
  * window for the current view (a per-yaw window from render_cell_windows
  * when the pitch is near level, otherwise the fixed window),
- * publishes it through active_cell_window for render_entities' cull tests,
+ * publishes the selected window for render_entities' cull tests,
  * then walks the window's cell grid and hands every populated, in-range cell
  * to the per-cell emitter render_map_cell.
  */
@@ -126,25 +124,25 @@ void render_map_cells(void)
     u8 cols;
 
     /* Directional windows apply only for -45 degrees < pitch < 45 degrees. */
-    if ((u16)((u16)render_state.view_rotation.vx + (KF_ANGLE_EIGHTH_TURN - 1))
+    if ((u16)((u16)game_graphics_runtime.render_state.view_rotation.vx + (KF_ANGLE_EIGHTH_TURN - 1))
         >= 2 * KF_ANGLE_EIGHTH_TURN - 1) {
-        active_cell_window = &render_fixed_cell_window;
+        game_graphics_runtime.active_cell_window = &render_fixed_cell_window;
     } else {
-        active_cell_window =
+        game_graphics_runtime.active_cell_window =
             &render_cell_windows[KF_CELL_WINDOW_YAW_COUNT - 1
-                - (render_state.view_rotation.vy >> KF_CELL_WINDOW_YAW_SHIFT)];
+                - (game_graphics_runtime.render_state.view_rotation.vy >> KF_CELL_WINDOW_YAW_SHIFT)];
     }
 
-    row = (u16)render_state.view_cell.z - active_cell_window->origin_z;
-    col_base = (u16)render_state.view_cell.x - active_cell_window->origin_x;
-    cell = active_cell_window->cells;
+    row = (u16)game_graphics_runtime.render_state.view_cell.z - game_graphics_runtime.active_cell_window->origin_z;
+    col_base = (u16)game_graphics_runtime.render_state.view_cell.x - game_graphics_runtime.active_cell_window->origin_x;
+    cell = game_graphics_runtime.active_cell_window->cells;
     tmd_select(KF_TMD_SLOT_MAP);
 
-    rows = active_cell_window->height;
+    rows = game_graphics_runtime.active_cell_window->height;
     do {
         if ((u32)row < KF_MAP_ROWS) {
             col = col_base;
-            cols = active_cell_window->width;
+            cols = game_graphics_runtime.active_cell_window->width;
             do {
                 if ((u32)col < KF_MAP_COLUMNS && *cell != KF_CELL_WINDOW_HIDDEN) {
                     render_map_cell(col, row, *cell);
@@ -154,7 +152,7 @@ void render_map_cells(void)
                 cols--;
             } while (cols != 0);
         } else {
-            cell += active_cell_window->width;
+            cell += game_graphics_runtime.active_cell_window->width;
         }
         row++;
         rows--;

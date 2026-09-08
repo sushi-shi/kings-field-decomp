@@ -16,7 +16,8 @@ The presence of a ledger reason does not declare those domains complete.
 
 ## `src/game/map_object.c`
 
-63 retained occurrences.
+63 retained occurrences. The [drop initialization correction](game-map-drop-initialization.md)
+replaces three branch-local velocity clears with one unconditional clear.
 
 | Function | Line | Token | Expression | Reason |
 | --- | ---: | --- | --- | --- |
@@ -33,9 +34,7 @@ The presence of a ledger reason does not declare those domains complete.
 | `map_object_effect_pool_acquire` | 140 | `0` | `} while (--count != 0);` | Zero exhausted-count termination; preserves pre/postdecrement ordering. |
 | `map_object_spawn_effect` | 170 | `0` | `object->rotation.z = 0;` | Zero angle or vector component; no extra rotation or vertical displacement/velocity. |
 | `map_object_spawn_effect` | 171 | `0` | `object->rotation.x = 0;` | Zero angle or vector component; no extra rotation or vertical displacement/velocity. |
-| `map_object_spawn_effect` | 176 | `0` | `object->link.vertical_velocity = 0;` | Initial vertical rest before the selected drop action accelerates. |
-| `map_object_spawn_effect` | 179 | `0` | `object->link.vertical_velocity = 0;` | Initial vertical rest before the selected drop action accelerates. |
-| `map_object_spawn_effect` | 182 | `0` | `object->link.vertical_velocity = 0;` | Initial vertical rest before the selected drop action accelerates. |
+| `map_object_spawn_effect` | 181 | `0` | `object->link.vertical_velocity = 0;` | Clear initial vertical velocity for every ID, including IDs outside all three action bands. |
 | `map_object_spawn_actor_debris` | 206 | `0` | `object->rotation.z = 0;` | Zero angle or vector component; no extra rotation or vertical displacement/velocity. |
 | `map_object_spawn_actor_debris` | 207 | `0` | `object->rotation.x = 0;` | Zero angle or vector component; no extra rotation or vertical displacement/velocity. |
 | `map_object_pool_trigger_link` | 222 | `1` | `u16 count = KF_MAP_OBJECT_CAPACITY - 1;` | Inclusive countdown starts at the last slot index. |

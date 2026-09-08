@@ -1,3 +1,4 @@
+#include <kf/game_graphics.h>
 #include <kf/address.h>
 #include <kf/psyq.h>
 #include <kf/game_render.h>
@@ -29,17 +30,17 @@ void render_actor(KfActor *actor)
     u8 descriptor;
     u16 asset;
 
-    SetRotMatrix(&render_state.view_matrix);
-    SetTransMatrix(&render_state.view_matrix);
-    screen.vx = (u16)actor->position.vx - (u16)render_state.view_position.vx;
-    screen.vy = (u16)actor->position.vy - (u16)render_state.view_position.vy;
-    screen.vz = (u16)actor->position.vz - (u16)render_state.view_position.vz;
+    SetRotMatrix(&game_graphics_runtime.render_state.view_matrix);
+    SetTransMatrix(&game_graphics_runtime.render_state.view_matrix);
+    screen.vx = (u16)actor->position.vx - (u16)game_graphics_runtime.render_state.view_position.vx;
+    screen.vy = (u16)actor->position.vy - (u16)game_graphics_runtime.render_state.view_position.vy;
+    screen.vz = (u16)actor->position.vz - (u16)game_graphics_runtime.render_state.view_position.vz;
     RotTrans(&screen, (VECTOR *)&model.t, &flag);
     matrix_set_rotation_x(actor->rotation.x, &model);
     matrix_set_rotation_y(-actor->rotation.y, &rot_y);
     MulMatrix2(&rot_y, &model);
     MulMatrix0(&render_light_matrices[KF_RENDER_LIGHT_ACTOR], &model, &light);
-    MulMatrix2(&render_state.view_matrix, &model);
+    MulMatrix2(&game_graphics_runtime.render_state.view_matrix, &model);
     SetRotMatrix(&model);
     SetTransMatrix(&model);
     SetLightMatrix(&light);
@@ -61,8 +62,8 @@ void render_actor(KfActor *actor)
     if (descriptor-- == 0) {
         render_enqueue_tmd(0, 0);
     } else {
-        active_render_tpage = effect5_texture_pages[descriptor];
-        active_render_clut = effect5_texture_cluts[descriptor];
+        game_graphics_runtime.active_render_tpage = game_graphics_runtime.effect5_texture_pages[descriptor];
+        game_graphics_runtime.active_render_clut = game_graphics_runtime.effect5_texture_cluts[descriptor];
         render_enqueue_model(0, 0);
     }
 }
@@ -78,17 +79,17 @@ void render_map_object(KfMapObject *object)
     KF_ENUM_STORAGE(KfMapObjectId, u16) id;
     s16 depth;
 
-    SetRotMatrix(&render_state.view_matrix);
-    SetTransMatrix(&render_state.view_matrix);
-    screen.vx = (u16)object->position_x - (u16)render_state.view_position.vx;
-    screen.vy = (u16)object->position_y - (u16)render_state.view_position.vy;
-    screen.vz = (u16)object->position_z - (u16)render_state.view_position.vz;
+    SetRotMatrix(&game_graphics_runtime.render_state.view_matrix);
+    SetTransMatrix(&game_graphics_runtime.render_state.view_matrix);
+    screen.vx = (u16)object->position_x - (u16)game_graphics_runtime.render_state.view_position.vx;
+    screen.vy = (u16)object->position_y - (u16)game_graphics_runtime.render_state.view_position.vy;
+    screen.vz = (u16)object->position_z - (u16)game_graphics_runtime.render_state.view_position.vz;
     RotTrans(&screen, (VECTOR *)&model.t, &flag);
     matrix_set_rotation_x(object->rotation.x, &rot_x);
     matrix_set_rotation_y(object->rotation.y, &model);
     MulMatrix(&model, &rot_x);
-    MulMatrix0(&render_state.light_matrix, &model, &light);
-    MulMatrix2(&render_state.view_matrix, &model);
+    MulMatrix0(&game_graphics_runtime.render_state.light_matrix, &model, &light);
+    MulMatrix2(&game_graphics_runtime.render_state.view_matrix, &model);
     SetRotMatrix(&model);
     SetTransMatrix(&model);
     SetLightMatrix(&light);

@@ -167,3 +167,13 @@ verification and still fails the existing data/ownership/placement gates:
 source data 10/61, SDK config data 4/4, target relink 110/116 and six
 conflicting section bases, with no data artifact failures. No banked baseline
 row, generated product or unrelated source is included in this correction.
+
+
+## Strict closure follow-up
+
+The [selection trace campaign](game-selection-trace-matches.md) reaches strict
+100% using the real confirmation-result channel and direct references to the
+same seven named equipment fields. The complete KfPlayerState type is preserved.
+Independent trials recover the 24 register-operand and eight base/displacement
+words separately; their retained composition reproduces all 303 retail words.
+The three save/load siblings remain exact.

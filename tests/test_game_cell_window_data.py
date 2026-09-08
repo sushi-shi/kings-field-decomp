@@ -30,7 +30,6 @@ WINDOWS_DIGEST = 'b085bf1fbe30831d084f21d0ba52af1609ee6f721a6f9a1937a305f97cb61e
 OWNERS = (
     ('game.render_map_cells', 0x80055E9C, 'render_fixed_cell_window', 204, 'load', 'static'),
     ('game.resources', 0x80065BE8, 'render_cell_windows', 3264, 'bss', 'global'),
-    ('game.render_map_cells', 0x80095860, 'active_cell_window', 4, 'bss', 'global'),
 )
 REFERENCES = {
     0x80055E9C: (0x8001E874,),
@@ -98,7 +97,10 @@ class GameCellWindowDataTests(unittest.TestCase):
         header = (REPO / 'include/kf/game_render.h').read_text()
         self.assertIn(
             'extern KfCellWindow render_cell_windows[KF_CELL_WINDOW_YAW_COUNT];', header)
-        self.assertIn('extern const KfCellWindow *active_cell_window;', header)
+        graphics_header = (REPO / 'include/kf/game_graphics.h').read_text()
+        self.assertIn('const KfCellWindow *active_cell_window;', graphics_header)
+        self.assertNotIn(('GAME.EXE', 0x80095860), identities)
+        self.assertEqual(identities['GAME.EXE', 0x80070E98].name, 'game_graphics_runtime')
         headers = '\n'.join(p.read_text() for p in (REPO / 'include/kf').glob('*.h'))
         self.assertNotIn('render_fixed_cell_window', headers)
         self.assertNotIn('DAT_80055e9c', headers)
@@ -163,8 +165,7 @@ class GameCellWindowDataTests(unittest.TestCase):
             if name == 'game.render_map_cells':
                 self.assertEqual(sections['.data'].status, 'placement')
                 self.assertIn('invalid-section-placement', sections['.data'].detail)
-                self.assertEqual((sections['.bss'].status, sections['.bss'].retail_size,
-                                  sections['.bss'].recon_size), ('size', 4, 8))
+                self.assertNotIn('.bss', sections)
             else:
                 self.assertEqual(_diff_bss(retail, source).status, 'match')
                 self.assertEqual(sections['.bss'].status, 'placement')
@@ -174,8 +175,11 @@ class GameCellWindowDataTests(unittest.TestCase):
         image, ctx, catalog = self.retail(), Context('GAME.EXE'), load_catalog(RETAIL_CONFIG)
         rows = {(r['image'], int(r['site_va'], 0)): r
                 for r in read_tsv(RETAIL_CONFIG / 'relocs.tsv')[1]}
-        for _unit, va, name, _size, _storage, _scope in OWNERS:
-            references = ctx.refs.incoming(ctx.idx.datum(va), confirmed_only=True)
+        reference_owners = [(va, name) for _, va, name, _, _, _ in OWNERS]
+        reference_owners.append((0x80095860, 'game_graphics_runtime'))
+        for va, name in reference_owners:
+            datum = ctx.idx.data_owner(va)
+            references = [r for r in ctx.refs.incoming(datum, confirmed_only=True) if r.target == va]
             self.assertEqual({r.site for r in references}, set(REFERENCES[va]))
             for reference in references:
                 site = reference.site
@@ -183,15 +187,15 @@ class GameCellWindowDataTests(unittest.TestCase):
                 self.assertEqual((row['target_name'], int(row['target_va'], 0), row['status']),
                                  (name, va, 'reviewed'))
                 self.assertEqual((reference.target, reference.destination, reference.referent.name),
-                                 (va, va, name))
+                                 (va, datum.va, name))
                 owner = ctx.idx.function_owner(site)
                 body = bytearray(image.require(owner.va, owner.body_size))
                 relocs, used = _apply_relocation(
                     body, catalog.function_starts['GAME.EXE'][owner.va], row, catalog, 'safe')
                 self.assertEqual([r.symbol for r in relocs], [name, name])
-                self.assertEqual(int(used['addend'], 0), 0)
+                self.assertEqual(int(used['addend'], 0), va - datum.va)
                 high, low = struct.unpack_from('<2I', body, site - owner.va)
-                self.assertEqual(decode_hi_lo_target(high, low), 0)
+                self.assertEqual(decode_hi_lo_target(high, low), va - datum.va)
                 self.assertEqual(struct.pack('<2I', *encode_hi_lo_addend(high, low, va)),
                                  image.require(site, 8))
 
@@ -202,8 +206,9 @@ class GameCellWindowDataTests(unittest.TestCase):
         hooks = [ExternalHook(name, lambda ctx: HookReturn(0))
                  for name in ('tmd_select', 'render_map_cell')]
         program = RetailProgram.link(symbols, ['render_map_cells'], hooks=hooks)
-        pointer = MemoryRange('pointer', *symbols.datum('active_cell_window'))
-        state_address, state_size = symbols.datum('render_state')
+        graphics = symbols.datum('game_graphics_runtime')[0]
+        pointer = MemoryRange('pointer', graphics + 0x249C8, 4)
+        state_address, state_size = graphics + 0x24808, 0x140
         fixed = image.require(0x80055E9C, 204)
         cases = [(0, yaw, 50, 50) for yaw in range(16)]
         cases += [(pitch, yaw, x, z) for pitch in (-512, -511, 511, 512)

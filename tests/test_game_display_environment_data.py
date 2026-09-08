@@ -1,4 +1,4 @@
-"""GAME environment BSS ownership, first-declaration order and exact screen CFG."""
+"""GAME environment members, complete owner extent and exact screen CFG."""
 
 from __future__ import annotations
 
@@ -44,31 +44,31 @@ class GameDisplayEnvironmentDataTests(unittest.TestCase):
         return graphics.GameGraphicsOwnerProbeTests()
 
     def address_maps(self):
-        data = {d.name: d.va for (image, _), d in load_data_identities(RETAIL_CONFIG).items()
-                if image == 'GAME.EXE'}
+        data = graphics.data_addresses()
         functions = {f.symbol: f.va for f in load_catalog(RETAIL_CONFIG).functions['GAME.EXE']}
         return data, functions
 
-    def test_complete_source_claims_keep_interior_fields_and_following_gap_separate(self):
+    def test_environment_fields_have_one_complete_graphics_owner(self):
         manifest, identities = load_manifest(), load_data_identities(RETAIL_CONFIG)
         for va, name, size in OWNERS:
             claims = [(u.unit, d) for u in manifest.units if u.image == 'GAME.EXE'
-                      for d in u.data if va <= d.va < va + size]
+                      for d in u.data if d.va <= va and va + size <= d.va + d.size]
             self.assertEqual(len(claims), 1)
             unit, datum = claims[0]
             self.assertEqual((unit, datum.va, datum.symbol, datum.size, datum.storage, datum.scope),
-                             ('game.render', va, name, size, 'bss', 'global'))
-            identity = identities['GAME.EXE', va]
-            self.assertEqual((identity.name, identity.size, identity.storage), (name, size, 'bss'))
+                             ('game.render', graphics.ORIGIN, 'game_graphics_runtime',
+                              graphics.EXTENT, 'bss', 'global'))
+            self.assertNotIn(('GAME.EXE', va), identities)
             self.assertEqual([a for i, a in identities if i == 'GAME.EXE' and va < a < va + size], [])
         self.assertEqual(OWNERS[-1][0] + OWNERS[-1][2], 0x80090FA0)
-        self.assertEqual(identities['GAME.EXE', 0x80090FA8].name, 'tmd_state')
+        self.assertNotIn(('GAME.EXE', 0x80090FA8), identities)
         source = manifest.by_name()['game.render'].source_path.read_text()
-        header = (REPO / 'include/kf/game_render.h').read_text()
+        header = (REPO / 'include/kf/game_graphics.h').read_text()
+        self.assertIn('KfGraphicsRuntimeGame game_graphics_runtime;', source)
         for declaration in ('DRAWENV display_draw_environments[KF_DISPLAY_BUFFER_COUNT];',
                             'DISPENV display_disp_environments[KF_DISPLAY_BUFFER_COUNT];'):
-            self.assertIn(declaration, source)
-            self.assertIn('extern ' + declaration, header)
+            self.assertIn(declaration, header)
+            self.assertNotIn('extern ' + declaration, header)
 
     def test_pinned_sdk_layout_and_retail_cross_array_derivation(self):
         probe = self.probe()
@@ -76,9 +76,10 @@ class GameDisplayEnvironmentDataTests(unittest.TestCase):
         image = probe.retail()
         unit = load_manifest().by_name()['game.render']
         fields = ('dtd', 'dfe', 'isbg', 'r0', 'g0', 'b0', 'dr_env')
-        query = ('#include <kf/game_render.h>\nunsigned long layout[] = {\n'
+        query = ('#include <kf/game_graphics.h>\nunsigned long layout[] = {\n'
                  'sizeof(DRAWENV), sizeof(DISPENV), sizeof(DR_ENV),\n'
-                 'sizeof(display_draw_environments), sizeof(display_disp_environments),\n'
+                 'sizeof(game_graphics_runtime.display_draw_environments), '
+                 'sizeof(game_graphics_runtime.display_disp_environments),\n'
                  + ',\n'.join('(unsigned long)&((DRAWENV *)0)->' + f for f in fields)
                  + '};\n')
         with tempfile.TemporaryDirectory() as directory:
@@ -95,19 +96,19 @@ class GameDisplayEnvironmentDataTests(unittest.TestCase):
         self.assertEqual(image.require(0x8001BCB8, 4), struct.pack('<I', 0xAE02486A))
         self.assertEqual(0x80090EC0 + 0x16 + 0x486A, 0x80095740)
 
-    def test_complete_bss_matches_layout_and_placement_without_hiding_rodata(self):
+    def test_complete_bss_extent_keeps_allocation_rounding_and_rodata_visible(self):
         image = self.probe().retail()
         unit = load_manifest().by_name()['game.render']
         paths = [BUILD / prefix / unit.object_name
                  for prefix in ('delink/game/modules', 'objdiff/game/base')]
         if not all(path.is_file() for path in paths):
             self.skipTest('freshly built GAME render source and target objects required')
-        for path in paths:
+        for path, section_size in zip(paths, (graphics.EXTENT, graphics.EXTENT + 4)):
             with path.open('rb') as stream:
                 elf = ELFFile(stream)
                 section = elf.get_section_by_name('.bss')
-                self.assertEqual((section['sh_type'], section['sh_size']), ('SHT_NOBITS', 224))
-                for (va, name, size), offset in zip(OWNERS, (0, 184)):
+                self.assertEqual((section['sh_type'], section['sh_size']), ('SHT_NOBITS', section_size))
+                for va, name, size, offset in ((graphics.ORIGIN, 'game_graphics_runtime', graphics.EXTENT, 0),):
                     symbols = elf.get_section_by_name('.symtab').get_symbol_by_name(name)
                     self.assertEqual(len(symbols), 1)
                     symbol = symbols[0]
@@ -116,44 +117,39 @@ class GameDisplayEnvironmentDataTests(unittest.TestCase):
                     self.assertEqual(elf.get_section(symbol['st_shndx']).name, '.bss')
                     self.assertFalse(image.contains(va, size))
         retail, source = [Elf(path) for path in paths]
-        self.assertEqual(_diff_bss(retail, source).status, 'match')
+        self.assertEqual(_diff_bss(retail, source).status, 'size')
         whole = diff_unit(unit, BUILD / 'delink', BUILD / 'objdiff')
         self.assertFalse(whole.matches)
         sections = {d.name: d for d in whole.diffs}
-        self.assertEqual(sections['.bss'].status, 'match')
-        self.assertEqual(sections['.bss'].detail, '')
+        self.assertEqual(sections['.bss'].status, 'size')
+        self.assertIn('invalid-section-placement', sections['.bss'].detail)
         # This campaign does not claim the existing switch-table residue is fixed.
         self.assertEqual(sections['.rodata'].status, 'addend')
 
-    def test_first_header_declaration_decides_common_order_without_changing_text(self):
+    def test_reversed_environment_fields_fail_the_production_layout_checks(self):
         probe = self.probe()
         probe.tools()
         unit = load_manifest().by_name()['game.render']
-        target = BUILD / 'delink/game/modules' / unit.object_name
-        if not target.is_file():
-            self.skipTest('delinked GAME render target required')
-        canonical = unit.source_path.read_text()
-        declarations = ('DRAWENV display_draw_environments[2];',
-                        'DISPENV display_disp_environments[2];')
-        # Early declarations are a controlled substitute for each header order;
-        # production has one shared declaration of each, in retail order.
-        text = None
+        header = (REPO / 'include/kf/game_graphics.h').read_text()
+        declarations = ('DRAWENV display_draw_environments[KF_DISPLAY_BUFFER_COUNT];',
+                        'DISPENV display_disp_environments[KF_DISPLAY_BUFFER_COUNT];')
         for wrong in (False, True):
-            first = declarations[::-1] if wrong else declarations
-            prefix = '#include <kf/psyq.h>\n' + ''.join('extern ' + d + '\n' for d in first)
             with self.subTest(reversed=wrong), tempfile.TemporaryDirectory() as directory:
                 root = Path(directory)
-                obj = probe.compile(root, unit, prefix + canonical)
-                source = Elf(root / unit.object_name)
-                self.assertEqual(source.sections['.bss'].size, 224)
-                result = _diff_bss(Elf(target), source)
-                self.assertEqual(result.status, 'layout' if wrong else 'match')
-                values = [obj.named_symbol(name).value for _, name, _ in OWNERS]
-                self.assertEqual(values, [40, 0] if wrong else [0, 184])
-                if text is None:
-                    text = obj.sections['.text']
+                candidate = header
+                if wrong:
+                    old = '\n'.join('    ' + d for d in declarations)
+                    self.assertEqual(candidate.count(old), 1)
+                    candidate = candidate.replace(old, '\n'.join('    ' + d for d in declarations[::-1]))
+                (root / 'graphics_layout_control.h').write_text(candidate)
+                query = '#include "graphics_layout_control.h"\nu32 layout = sizeof(KfGraphicsRuntimeGame);\n'
+                if wrong:
+                    with self.assertRaisesRegex(RuntimeError, 'check_game_graphics_display_'):
+                        probe.compile(root, unit, query)
                 else:
-                    self.assertEqual(obj.sections['.text'], text)
+                    obj = probe.compile(root, unit, query)
+                    symbol = obj.named_symbol('layout')
+                    self.assertEqual(struct.unpack_from('<I', obj.sections['.data'], symbol.value)[0], graphics.EXTENT)
 
     def test_all_thirty_pairs_use_array_owners_and_round_trip_exactly(self):
         image, ctx = self.probe().retail(), Context('GAME.EXE')
@@ -162,24 +158,25 @@ class GameDisplayEnvironmentDataTests(unittest.TestCase):
                 for r in read_tsv(RETAIL_CONFIG / 'relocs.tsv')[1]}
         new = {0x8002C8B0: 0x17, 0x8002C8C0: 0, 0x8002C9A0: 0x17}
         for va, name, size in OWNERS:
-            references = ctx.refs.incoming(ctx.idx.datum(va), confirmed_only=True)
+            references = [r for r in ctx.refs.incoming(ctx.idx.data_owner(va), confirmed_only=True)
+                          if va <= r.target < va + size]
             self.assertEqual({r.site for r in references}, set(REFERENCES[va]))
             for reference in references:
                 site = reference.site
                 row = rows['GAME.EXE', site]
                 target = int(row['target_va'], 0)
-                self.assertEqual((row['target_name'], row['status']), (name, 'reviewed'))
+                self.assertEqual((row['target_name'], row['status']), ('game_graphics_runtime', 'reviewed'))
                 self.assertTrue(va <= target < va + size)
-                self.assertEqual(reference.referent.name, name)
+                self.assertEqual(reference.referent.name, 'game_graphics_runtime')
                 owner = ctx.idx.function_owner(site)
                 function = catalog.function_starts['GAME.EXE'][owner.va]
                 original = image.require(owner.va, owner.body_size)
                 body = bytearray(original)
                 relocs, used = _apply_relocation(body, function, row, catalog, 'safe')
-                self.assertEqual([r.symbol for r in relocs], [name, name])
-                self.assertEqual(int(used['addend'], 0), target - va)
+                self.assertEqual([r.symbol for r in relocs], ['game_graphics_runtime'] * 2)
+                self.assertEqual(int(used['addend'], 0), target - graphics.ORIGIN)
                 words = struct.unpack_from('<2I', body, site - owner.va)
-                self.assertEqual(decode_hi_lo_target(*words), target - va)
+                self.assertEqual(decode_hi_lo_target(*words), target - graphics.ORIGIN)
                 self.assertEqual(struct.pack('<2I', *encode_hi_lo_addend(*words, target)),
                                  image.require(site, 8))
                 if site in new:
@@ -230,7 +227,7 @@ class GameDisplayEnvironmentDataTests(unittest.TestCase):
                     self.assertNotEqual(actual, expected)
                 else:
                     self.assertEqual(actual, expected)
-                    shifted = {**data, 'display_draw_environments': 0x80090EC1}
+                    shifted = {**data, 'game_graphics_runtime': graphics.ORIGIN + 1}
                     bad, same_calls, _ = linked_words(obj, unit, claim, shifted, functions)
                     self.assertNotEqual(bad, expected)
                     self.assertEqual(same_calls, calls)
@@ -245,7 +242,7 @@ class GameDisplayEnvironmentDataTests(unittest.TestCase):
                              ('game.menu_runtime', 'menu_present_frame')):
             unit = load_manifest().by_name()[name]
             claim = next(c for c in unit.functions if c.symbol == target)
-            canonical = unit.source_path.read_text()
+            canonical = graphics.standalone_source(unit)
             selected = graphics.candidate_source(unit, {target})
             # Reuse the bounded function-only rewrite, but test a smaller owner
             # than the complete-clear pilot. Both authentic array types remain.

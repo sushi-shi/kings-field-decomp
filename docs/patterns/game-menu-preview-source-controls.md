@@ -147,3 +147,10 @@ data/ownership/placement failures: data PSX 0/1, GAME 9/42 and OPEN 2/19;
 target relink 1/1, 75/77 and 34/38, respectively; zero artifact failures.
 The focused canonical match was an actual source compile, not a Ninja no-op.
 No tooling or flake implementation changes were made.
+
+## Instrumented follow-up
+
+The [compiler-trace campaign](game-preview-traces.md) replaces bank-pointer
+selection with conditional actual price values, recovering twenty more detail
+words and reaching 98.579230%. The detail name-copy residue and the preview
+three-word ordering residue remain open; this is not an exact closure.

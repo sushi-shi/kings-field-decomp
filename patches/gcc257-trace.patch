@@ -39,13 +39,43 @@
  
    /* If X is a register, dependencies on its contents
       are recorded through the qty number mechanism.
-@@ -2531,9 +2538,14 @@
+@@ -2531,9 +2538,44 @@
       sometimes simplify the expression.  Many simplifications
       will not be valid, but some, usually applying the associative rule, will
       be valid and produce better code.  */
 -  if (GET_CODE (addr) != REG
 -      && validate_change (insn, loc, fold_rtx (addr, insn), 0))
 -    addr = *loc;
++  if (kf_trace_active ())
++    {
++      rtx base = 0;
++      rtx known = 0;
++      int number = -1, quantity = -1, valid = 0, mode_matches = -1;
++      int store = (GET_CODE (PATTERN (insn)) == SET
++                   && GET_CODE (SET_DEST (PATTERN (insn))) == MEM
++                   && loc == &XEXP (SET_DEST (PATTERN (insn)), 0));
++      if (GET_CODE (addr) == REG)
++        base = addr;
++      else if (GET_CODE (addr) == PLUS
++               && GET_CODE (XEXP (addr, 0)) == REG
++               && GET_CODE (XEXP (addr, 1)) == CONST_INT)
++        base = XEXP (addr, 0);
++      if (base)
++        {
++          number = REGNO (base);
++          quantity = reg_qty[number];
++          valid = REGNO_QTY_VALID_P (number);
++          if (valid)
++            {
++              mode_matches = qty_mode[quantity] == GET_MODE (base);
++              known = qty_const[quantity];
++            }
++        }
++      kf_trace_event ("cse.address", insn, number, -1,
++                      store ? "store" : "other", addr, known,
++                      quantity, valid, mode_matches);
++    }
++
 +  if (GET_CODE (addr) != REG)
 +    {
 +      const char *saved_context = kf_trace_context;
@@ -57,7 +87,7 @@
  	
    /* If this address is not in the hash table, we can't look for equivalences
       of the whole address.  Also, ignore if volatile.  */
-@@ -4949,6 +4961,9 @@
+@@ -4949,6 +4991,9 @@
  	    const_arg = equiv_constant (folded_arg);
  	  }
  

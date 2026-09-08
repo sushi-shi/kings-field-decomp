@@ -7,11 +7,25 @@ promotes a probe to a proven historical toolchain.
 
 - [gcc257-instrumentation.md](gcc257-instrumentation.md): source-pinned debug
   compiler, observational trace contract, controlled probes and OPEN residues.
+- [gcc257-address-quantities.md](gcc257-address-quantities.md): observed CSE
+  address inputs and quantity constants, independent debugger controls, and
+  production assembler-profile parity.
+- [open-dispatch-constant-lifetimes.md](open-dispatch-constant-lifetimes.md):
+  exact OPEN constant-sharing control, local versus global allocation, and
+  the rejected scroll-enable equality's new reload requirement.
 - [game-save-ui-matches.md](game-save-ui-matches.md): status-result and dialogue
   pathname trials, plus delay-slot and unseen-prologue trace controls.
 - [game-ui-trace-matches.md](game-ui-trace-matches.md): exact configuration and
   buy/sell panels through shared control flow and the real selection-result
   channel; rejected notification-tail and sell-navigation trials.
+- [game-selection-trace-matches.md](game-selection-trace-matches.md): exact
+  drop-item and active-spell selectors through the confirmation-result channel
+  and direct equipment-field references; all six unit functions verified.
+- [game-root-item-use-traces.md](game-root-item-use-traces.md): exact root and
+  item-use panels through the magic-result channel and HP-first recovery;
+  all three unit functions and the seven switch pointers match retail.
+- [game-map-drop-initialization.md](game-map-drop-initialization.md): dropped
+  object velocity initialization through the common action-selection exit.
 
 - [game-horizontal-movement-bearing.md](game-horizontal-movement-bearing.md):
   corrected collision-bearing Z sign, SDK short-vector stack layout,
@@ -190,7 +204,7 @@ promotes a probe to a proven historical toolchain.
   joins, struct copies, two-statement accumulations).
 - [game-model-emitter-lifetimes.md](game-model-emitter-lifetimes.md): retail
   case-body order closes map-object rendering; updating the byte texture index
-  and the temporary complete graphics owner reproduce the entire actor body.
+  and the complete graphics owner reproduce the entire actor body.
 - [compiler-attribution.md](compiler-attribution.md): a dedicated
   cross-version pass over the residue corpus. How GCC 2.4.1 CC1PSX was made
   runnable (a go32-stub frankenbinary under DOSBox) and the finding that it
@@ -300,10 +314,16 @@ promotes a probe to a proven historical toolchain.
   graphics owner, exact map traversal/VRAM adjustment, and preserved initializer controls.
 - [game-graphics-owner-pilot.md](game-graphics-owner-pilot.md): complete-clear
   ownership pilot, preserved initializer/traversal controls, and the exact
-  unconditional view-matrix rebuild; GAME data migration remains unresolved.
+  unconditional view-matrix rebuild; the production migration is documented below.
+- [game-enqueue-stack-order.md](game-enqueue-stack-order.md): controlled GCC
+  declaration/pseudo/stack evidence closes both remaining textured polygon
+  enqueuers without changing expressions or compiler options.
+- [game-graphics-runtime-owner.md](game-graphics-runtime-owner.md): production
+  graphics owner closes floor placement, sprite enqueue and actor rendering;
+  all 173 affected-unit bodies checked, with data placement limits retained.
 - [game-display-environment-data.md](game-display-environment-data.md): complete
   SDK-typed environment arrays, reviewed interior references and the screen
-  fade's unconditional RGB stores; larger graphics ownership stays provisional.
+  fade's unconditional RGB stores; the later complete owner retains these checks.
 - [open-map-enqueue.md](open-map-enqueue.md): lit map GT3/GT4 emission,
   the complete colour owner, and byte-identical shared packed-coordinate types.
 - [open-emitter-source-controls.md](open-emitter-source-controls.md): negative
@@ -410,6 +430,12 @@ promotes a probe to a proven historical toolchain.
 - [game-stats-header-index.md](game-stats-header-index.md): one consumed glyph
   index across class and status phases recovers eighteen class-calculation
   words; row-spacing materialization and the frame remain non-exact.
+- [game-status-render-traces.md](game-status-render-traces.md): a shared
+  attack/defense subtotal recovers sixteen rating instructions; the renderer
+  remains non-exact, with early coordinate and row-spacing differences.
+- [game-display-owner-traces.md](game-display-owner-traces.md): consuming the
+  published fog distance leaves both display-owner candidates unchanged; CSE
+  still drops the retail DTD base before the fog store.
 - [game-status-rating-arithmetic.md](game-status-rating-arithmetic.md): signed
   attack/defense rating divisions and reviewed class-selection jumps restore
   the detailed status renderer's arithmetic branches and ordered references.
@@ -442,6 +468,10 @@ promotes a probe to a proven historical toolchain.
 - [game-menu-sprite-blit.md](game-menu-sprite-blit.md): thirteen-caller audit
   and shared signed point/dimension recovery; the genuine SDK rectangle macro
   closes both blitters while preserving every narrow load and ordered store.
+- [game-preview-traces.md](game-preview-traces.md): conditional price values
+  recover twenty detail-renderer words; both name-copy loops remain partial.
+- [game-item-database-traces.md](game-item-database-traces.md): three decimal
+  filename controls emit the same non-exact loader; no source change retained.
 - [game-item-menu-dimensions.md](game-item-menu-dimensions.md): shared item,
   stock and glyph-row extents, complete-object startup clears, CD sector units,
   and the [database/startup literal ledger](game-item-database-literal-ledger.md).
@@ -478,7 +508,8 @@ promotes a probe to a proven historical toolchain.
   selection before the exit guard closes the option-menu dispatch loop.
 - [game-menu-root-results.md](game-menu-root-results.md): removing three
   unsupported result resets improves the main-menu loop; an equivalent
-  cancellation-condition control leaves the remaining comparison unchanged.
+  cancellation-condition control leaves the remaining comparison unchanged;
+  the subsequent root/item trace campaign closes the function.
 - [game-config-panel-abi.md](game-config-panel-abi.md): two by-value labels,
   input policy and first-frame/loop-tail draw structure recover the options
   panel's CFG; its draw helper stays exact and nine register-role words remain.
@@ -489,8 +520,8 @@ promotes a probe to a proven historical toolchain.
   resets, shared returns, empty-slot arm order and the explicit format-row
   guard recover both panels without register or constant carriers.
 - [game-drop-item-flow.md](game-drop-item-flow.md): observed initialization
-  and traversal order recover the inventory back-edge delay slot; the
-  remaining three register roles are an unattributed, non-exact residue.
+  and traversal order recover the inventory back-edge delay slot; the later
+  selection-trace campaign closes the remaining register and address differences.
 - [game-status-panel-flow.md](game-status-panel-flow.md): reviewed frame-head
   jump, shared settling increment and natural corner order recover the
   status-panel CFG; descriptor addressing and frame extent remain non-exact.
@@ -502,7 +533,8 @@ promotes a probe to a proven historical toolchain.
   redraw entries close the shared list-confirmation loop.
 - [game-item-use-flow.md](game-item-use-flow.md): restores empty-list input,
   confirmation reset and long-list upward wrap; direct name-row indexing and
-  loop shape recover all transfers, leaving one seven-word healing residue.
+  loop shape recover all transfers; the subsequent root/item trace campaign
+  closes the seven-word healing residue.
 - [game-shop-panel-flow.md](game-shop-panel-flow.md): restores buy/sell
   confirmation reset and long-list upward wrap; subsequent GCC trace work
   closes both panels with all 689 retail instruction words matching.
@@ -511,7 +543,8 @@ promotes a probe to a proven historical toolchain.
   return close the magic panel while preserving its distinct failure exits.
 - [game-equipment-spell-selector-flow.md](game-equipment-spell-selector-flow.md):
   pre-switch stock-bank acquisition closes equipment selection and its two
-  tables; indexed spell names remove a separate cursor-order mismatch.
+  tables; indexed spell names restore cursor order, and the later
+  selection-trace campaign closes the active-spell panel.
 - [game-dialog-summary-loop.md](game-dialog-summary-loop.md): indexing the
   shared save-summary records removes duplicate advancing pointers and closes
   the dialog-frame renderer.

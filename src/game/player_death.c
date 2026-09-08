@@ -1,3 +1,4 @@
+#include <kf/game_graphics.h>
 #include <kf/address.h>
 #include <kf/game_player.h>
 #include <kf/psyq_libc.h>
@@ -53,7 +54,7 @@ void player_death_begin(void)
     player_state.death_visual_blend = 0;
     sound_ref_play(&player_sound_refs[KF_PLAYER_SOUND_DEATH], KF_AUDIO_MAX_VOLUME);
     ReadColorMatrix(&player_death_saved_color_matrix);
-    player_death_saved_fog_near = render_state.fog_near_distance;
+    player_death_saved_fog_near = game_graphics_runtime.render_state.fog_near_distance;
 }
 
 /*
@@ -187,7 +188,7 @@ void player_death_restart(void)
     player_state.update_state = KF_PLAYER_UPDATE_RECOVERY_FADE;
     player_state.death_camera_pitch_step = 0;
     player_state.death_visual_blend = 0;
-    hud_brightness = 0;
+    game_graphics_runtime.hud_brightness = 0;
     player_state.view_rotation_offset.vz = 0;
     player_state.view_rotation_offset.vy = 0;
     player_state.view_rotation_offset.vx = 0;
@@ -195,7 +196,6 @@ void player_death_restart(void)
     player_state.previous_map_cell.z = player_state.map_cell.z;
     player_state.camera_position.vy = player_state.floor_height - KF_PLAYER_CAMERA_HEIGHT;
 }
-
 
 ADDRESS(0x8001564c, 0x70)
 void player_adjust_hp(s32 delta)
@@ -233,7 +233,6 @@ void player_adjust_mp(s32 delta)
         player_state.vitals.current_mp = value;
     }
 }
-
 
 RODATA(0x80012000, 0x2c)
 
@@ -462,7 +461,6 @@ void player_add_experience(s16 amount)
     }
 }
 
-
 /*
  * The parameters are reused as the working values: retail keeps the
  * threshold in $a0 and the excess in $a1 for the whole body.
@@ -483,7 +481,6 @@ s32 player_calculate_damage_component(s32 base_power, s32 defense, s32 attack)
     }
     return defense + (attack * attack) / (base_power * PLAYER_DAMAGE_THRESHOLD_MULTIPLIER);
 }
-
 
 /*
  * Applies curse, darkness (blocked by the moon amulet), resisted poison
@@ -602,8 +599,6 @@ void player_apply_radial_damage(
         component0, component1, component2, 0, component3, component4,
         attenuation, multiplier_tenths);
 }
-
-
 
 ADDRESS(0x800167e4, 0x64)
 void player_select_magic(KfSelectedMagicId magic_id)

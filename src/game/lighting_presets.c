@@ -1,3 +1,4 @@
+#include <kf/game_graphics.h>
 #include <kf/address.h>
 #include <kf/game_render.h>
 
@@ -14,7 +15,7 @@ void lighting_apply_weapon9_environment(void)
     ReadColorMatrix(&current);
     lighting_set_color_matrix(
         &current, &color_matrix_table[KF_ENUM_ENCODE(s32, KF_GAME_COLOR_BLACK)], SHADOW_BLADE_COLOR_BLEND);
-    SetFogNear(render_state.fog_near_distance - (render_state.fog_near_distance >> 1),
+    SetFogNear(game_graphics_runtime.render_state.fog_near_distance - (game_graphics_runtime.render_state.fog_near_distance >> 1),
         KF_DEFAULT_PROJECTION_DISTANCE);
 }
 

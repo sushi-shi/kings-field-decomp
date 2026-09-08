@@ -1,3 +1,4 @@
+#include <kf/game_graphics.h>
 #include <kf/address.h>
 #include <kf/game_menu.h>
 #include <kf/game.h>
@@ -31,7 +32,7 @@ void menu_list_render(const KfMenuList *list)
 
     src = list->glyph_rows;
     counts = list->quantities;
-    current_poly_ft4 = (POLY_FT4 *)display_state.primitive_buffer->cursor;
+    current_poly_ft4 = (POLY_FT4 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
     if (list->title_x != 0) {
         menu_blit_sprite_translucent(

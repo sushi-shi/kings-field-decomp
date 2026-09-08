@@ -1,3 +1,4 @@
+#include <kf/game_graphics.h>
 #include <kf/address.h>
 #include <kf/game_menu.h>
 #include <kf/game.h>
@@ -42,7 +43,7 @@ void menu_draw_item_detail(KF_ENUM_PARAM(KfItemId, s32) item_id, KF_ENUM_PARAM(K
     MATRIX rot;
     MATRIX lsrc;
     MATRIX lres;
-    u16 (*prices)[KF_ITEM_SHOP_COUNT];
+    s32 price;
     s16 *name;
     s32 i;
 
@@ -73,7 +74,7 @@ void menu_draw_item_detail(KF_ENUM_PARAM(KfItemId, s32) item_id, KF_ENUM_PARAM(K
     SetTransMatrix(&rot);
     menu_render_item_model();
 
-    current_poly_ft4 = (POLY_FT4 *)display_state.primitive_buffer->cursor;
+    current_poly_ft4 = (POLY_FT4 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
     gs.x = MENU_ITEM_PREVIEW_NAME_X;
     gs.y = MENU_ITEM_PREVIEW_NAME_Y;
@@ -85,11 +86,14 @@ void menu_draw_item_detail(KF_ENUM_PARAM(KfItemId, s32) item_id, KF_ENUM_PARAM(K
 
     gs.x = MENU_ITEM_DETAIL_PRICE_X;
     gs.y += MENU_ITEM_PREVIEW_LINE_HEIGHT;
-    prices = item_sell_prices;
     if (price_mode == KF_ITEM_PRICE_BUY) {
-        prices = item_buy_prices;
+        price = item_buy_prices[KF_ENUM_ENCODE(s32, item_id)]
+            [KF_ENUM_ENCODE(s32, shop_id) - KF_ENUM_ENCODE(s32, KF_SHOP_FIRST)];
+    } else {
+        price = item_sell_prices[KF_ENUM_ENCODE(s32, item_id)]
+            [KF_ENUM_ENCODE(s32, shop_id) - KF_ENUM_ENCODE(s32, KF_SHOP_FIRST)];
     }
-    menu_format_number(prices[KF_ENUM_ENCODE(s32, item_id)][KF_ENUM_ENCODE(s32, shop_id) - KF_ENUM_ENCODE(s32, KF_SHOP_FIRST)], MENU_ITEM_DETAIL_PRICE_DIGITS, 0, gs.codes);
+    menu_format_number(price, MENU_ITEM_DETAIL_PRICE_DIGITS, 0, gs.codes);
     menu_draw_number(&menu_assets.number_atlas, &gs);
 
     gs.x = MENU_ITEM_DETAIL_LABEL_X;
@@ -133,16 +137,16 @@ void menu_draw_item_detail(KF_ENUM_PARAM(KfItemId, s32) item_id, KF_ENUM_PARAM(K
 ADDRESS(0x80027e58, 0x48)
 void menu_add_marker_quad(void)
 {
-    AddPrim(display_state.ordering_table + MENU_MARKER_OT_DEPTH,
-            &menu_assets.mid_depth_quads[display_state.buffer_index]);
+    AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_MARKER_OT_DEPTH,
+            &menu_assets.mid_depth_quads[game_graphics_runtime.display_state.buffer_index]);
 }
 
 /* Link the shared front menu quad at ordering-table slot 0. */
 ADDRESS(0x80027ea0, 0x44)
 void menu_add_frame_quad(void)
 {
-    AddPrim(display_state.ordering_table,
-            &menu_assets.foreground_quads[display_state.buffer_index]);
+    AddPrim(game_graphics_runtime.display_state.ordering_table,
+            &menu_assets.foreground_quads[game_graphics_runtime.display_state.buffer_index]);
 }
 
 /*
@@ -160,33 +164,33 @@ void menu_draw_dialog_frame(const KfSaveSlotSummary *rows, KfSaveSlotOverlay ove
     MenuGlyphString gs;
     s32 i;
 
-    current_poly_ft4 = (POLY_FT4 *)display_state.primitive_buffer->cursor;
+    current_poly_ft4 = (POLY_FT4 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
     if (overlay == KF_SAVE_OVERLAY_SKIP_FIRST) {
-        AddPrim(display_state.ordering_table + MENU_DIALOG_OT_DEPTH,
-                &menu_assets.dialog_quads[display_state.buffer_index][MENU_SAVE_SLOT1_QUAD]);
-        AddPrim(display_state.ordering_table + MENU_DIALOG_OT_DEPTH,
-                &menu_assets.dialog_quads[display_state.buffer_index][MENU_SAVE_SLOT2_QUAD]);
+        AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_DIALOG_OT_DEPTH,
+                &menu_assets.dialog_quads[game_graphics_runtime.display_state.buffer_index][MENU_SAVE_SLOT1_QUAD]);
+        AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_DIALOG_OT_DEPTH,
+                &menu_assets.dialog_quads[game_graphics_runtime.display_state.buffer_index][MENU_SAVE_SLOT2_QUAD]);
     }
     if (overlay == KF_SAVE_OVERLAY_SKIP_SECOND) {
-        AddPrim(display_state.ordering_table + MENU_DIALOG_OT_DEPTH,
-                &menu_assets.dialog_quads[display_state.buffer_index][MENU_SAVE_SLOT0_QUAD]);
-        AddPrim(display_state.ordering_table + MENU_DIALOG_OT_DEPTH,
-                &menu_assets.dialog_quads[display_state.buffer_index][MENU_SAVE_SLOT2_QUAD]);
+        AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_DIALOG_OT_DEPTH,
+                &menu_assets.dialog_quads[game_graphics_runtime.display_state.buffer_index][MENU_SAVE_SLOT0_QUAD]);
+        AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_DIALOG_OT_DEPTH,
+                &menu_assets.dialog_quads[game_graphics_runtime.display_state.buffer_index][MENU_SAVE_SLOT2_QUAD]);
     }
     if (overlay == KF_SAVE_OVERLAY_SKIP_THIRD) {
-        AddPrim(display_state.ordering_table + MENU_DIALOG_OT_DEPTH,
-                &menu_assets.dialog_quads[display_state.buffer_index][MENU_SAVE_SLOT0_QUAD]);
-        AddPrim(display_state.ordering_table + MENU_DIALOG_OT_DEPTH,
-                &menu_assets.dialog_quads[display_state.buffer_index][MENU_SAVE_SLOT1_QUAD]);
+        AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_DIALOG_OT_DEPTH,
+                &menu_assets.dialog_quads[game_graphics_runtime.display_state.buffer_index][MENU_SAVE_SLOT0_QUAD]);
+        AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_DIALOG_OT_DEPTH,
+                &menu_assets.dialog_quads[game_graphics_runtime.display_state.buffer_index][MENU_SAVE_SLOT1_QUAD]);
     }
     if (overlay >= KF_SAVE_OVERLAY_ALL) {
-        AddPrim(display_state.ordering_table + MENU_DIALOG_OT_DEPTH,
-                &menu_assets.dialog_quads[display_state.buffer_index][MENU_SAVE_SLOT0_QUAD]);
-        AddPrim(display_state.ordering_table + MENU_DIALOG_OT_DEPTH,
-                &menu_assets.dialog_quads[display_state.buffer_index][MENU_SAVE_SLOT1_QUAD]);
-        AddPrim(display_state.ordering_table + MENU_DIALOG_OT_DEPTH,
-                &menu_assets.dialog_quads[display_state.buffer_index][MENU_SAVE_SLOT2_QUAD]);
+        AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_DIALOG_OT_DEPTH,
+                &menu_assets.dialog_quads[game_graphics_runtime.display_state.buffer_index][MENU_SAVE_SLOT0_QUAD]);
+        AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_DIALOG_OT_DEPTH,
+                &menu_assets.dialog_quads[game_graphics_runtime.display_state.buffer_index][MENU_SAVE_SLOT1_QUAD]);
+        AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_DIALOG_OT_DEPTH,
+                &menu_assets.dialog_quads[game_graphics_runtime.display_state.buffer_index][MENU_SAVE_SLOT2_QUAD]);
     }
 
     if (rows == 0) {

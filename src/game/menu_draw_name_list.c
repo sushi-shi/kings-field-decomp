@@ -1,3 +1,4 @@
+#include <kf/game_graphics.h>
 #include <kf/address.h>
 #include <kf/game_menu.h>
 #include <kf/game.h>
@@ -19,7 +20,7 @@ void menu_draw_name_list(void)
 {
     MenuGlyphString gs;
 
-    current_poly_ft4 = (POLY_FT4 *)display_state.primitive_buffer->cursor;
+    current_poly_ft4 = (POLY_FT4 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
     gs.x = EQUIPMENT_NAME_X;
     gs.y = EQUIPMENT_NAME_FIRST_Y;

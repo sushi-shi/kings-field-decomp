@@ -1,3 +1,4 @@
+#include <kf/game_graphics.h>
 #include <kf/address.h>
 #include <kf/map_data.h>
 #include <kf/game_render.h>
@@ -16,9 +17,9 @@ enum {
 ADDRESS(0x8001f218, 0x580)
 void render_entities(void)
 {
-    const KfCellWindow *grid = active_cell_window;
-    u16 window_origin_z = (u16)render_state.view_cell.z - grid->origin_z;
-    u16 window_origin_x = (u16)render_state.view_cell.x - grid->origin_x;
+    const KfCellWindow *grid = game_graphics_runtime.active_cell_window;
+    u16 window_origin_z = (u16)game_graphics_runtime.render_state.view_cell.z - grid->origin_z;
+    u16 window_origin_x = (u16)game_graphics_runtime.render_state.view_cell.x - grid->origin_x;
     KfMapObject *object;
     KfActor *actor;
     KfMapEvent *event;
@@ -32,7 +33,7 @@ void render_entities(void)
     for (i = KF_MAP_OBJECT_CAPACITY - 1; i != -1; i--) {
         if (object->object_id < KF_MAP_OBJECT_RENDER_ID_END) {
             u16 row = object->cell_z - window_origin_z;
-            const KfCellWindow *g = active_cell_window;
+            const KfCellWindow *g = game_graphics_runtime.active_cell_window;
             if (row < g->height) {
                 u16 col = object->cell_x - window_origin_x;
                 if (col < g->width && g->cells[row * g->width + col] != KF_CELL_WINDOW_HIDDEN) {
@@ -52,7 +53,7 @@ void render_entities(void)
         }
         if (actor->culling_mode == KF_ACTOR_CULL_VISIBILITY_GRID) {
             u16 row = actor->cell_z - window_origin_z;
-            const KfCellWindow *g = active_cell_window;
+            const KfCellWindow *g = game_graphics_runtime.active_cell_window;
             if (row >= g->height) {
                 goto next_actor;
             }
@@ -67,11 +68,11 @@ void render_entities(void)
         } else {
             u16 dz = actor->cell_z + ACTOR_CULL_SQUARE_HALF_WIDTH;
             u16 dx;
-            if ((u16)(dz - (u16)render_state.view_cell.z) >= ACTOR_CULL_SQUARE_WIDTH) {
+            if ((u16)(dz - (u16)game_graphics_runtime.render_state.view_cell.z) >= ACTOR_CULL_SQUARE_WIDTH) {
                 goto next_actor;
             }
             dx = actor->cell_x + ACTOR_CULL_SQUARE_HALF_WIDTH;
-            visible = (u16)(dx - (u16)render_state.view_cell.x) < ACTOR_CULL_SQUARE_WIDTH;
+            visible = (u16)(dx - (u16)game_graphics_runtime.render_state.view_cell.x) < ACTOR_CULL_SQUARE_WIDTH;
         }
         if (visible != 0) {
             render_actor(actor);
@@ -82,17 +83,17 @@ next_actor:
 
     /* Floor items. */
     SetLightMatrix(&render_light_matrices[KF_RENDER_LIGHT_FLOOR_ITEM]);
-    active_render_blue = FLOOR_ITEM_RENDER_BRIGHTNESS;
-    active_render_green = FLOOR_ITEM_RENDER_BRIGHTNESS;
-    active_render_red = FLOOR_ITEM_RENDER_BRIGHTNESS;
-    i = floor_item_count;
-    active_render_tpage = floor_item_tpage;
-    active_render_clut = floor_item_clut;
+    game_graphics_runtime.active_render_blue = FLOOR_ITEM_RENDER_BRIGHTNESS;
+    game_graphics_runtime.active_render_green = FLOOR_ITEM_RENDER_BRIGHTNESS;
+    game_graphics_runtime.active_render_red = FLOOR_ITEM_RENDER_BRIGHTNESS;
+    i = game_graphics_runtime.floor_item_count;
+    game_graphics_runtime.active_render_tpage = game_graphics_runtime.floor_item_tpage;
+    game_graphics_runtime.active_render_clut = game_graphics_runtime.floor_item_clut;
     {
-        KfFloorItem *items = floor_items;
+        KfFloorItem *items = game_graphics_runtime.floor_items;
         for (i--; i != -1; i--) {
             u16 row = (items->position_z / KF_MAP_TILE_SIZE) - window_origin_z;
-            const KfCellWindow *g = active_cell_window;
+            const KfCellWindow *g = game_graphics_runtime.active_cell_window;
             if (row < g->height) {
                 u16 col = (items->position_x / KF_MAP_TILE_SIZE) - window_origin_x;
                 if (col < g->width && g->cells[row * g->width + col] != KF_CELL_WINDOW_HIDDEN) {
@@ -112,7 +113,7 @@ next_actor:
         }
         {
             u16 row = (*(s32 *)&sprite->position_z / KF_MAP_TILE_SIZE) - window_origin_z;
-            const KfCellWindow *g = active_cell_window;
+            const KfCellWindow *g = game_graphics_runtime.active_cell_window;
             if (row < g->height) {
                 u16 col = (*(s32 *)&sprite->position_x / KF_MAP_TILE_SIZE) - window_origin_x;
                 if (col < g->width && g->cells[row * g->width + col] != KF_CELL_WINDOW_HIDDEN) {
@@ -125,12 +126,12 @@ next_sprite:
     }
 
     /* Map events. */
-    SetLightMatrix(&render_state.light_matrix_copy);
+    SetLightMatrix(&game_graphics_runtime.render_state.light_matrix_copy);
     event = map_event_pool;
     for (i = KF_MAP_EVENT_CAPACITY - 1; i != -1; i--) {
         if (event->state == KF_MAP_EVENT_ACTIVE) {
             u16 row = event->cell_z - window_origin_z;
-            const KfCellWindow *g = active_cell_window;
+            const KfCellWindow *g = game_graphics_runtime.active_cell_window;
             if (row < g->height) {
                 u16 col = event->cell_x - window_origin_x;
                 if (col < g->width && g->cells[row * g->width + col] != KF_CELL_WINDOW_HIDDEN) {

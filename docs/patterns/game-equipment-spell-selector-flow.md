@@ -111,3 +111,13 @@ After the concurrent inventory/test updates, the root rerun passes all
 657 tests in 82.659 seconds with no skips. Ruff and whitespace checks also
 pass on the current shared tree. The notification changes remain outside
 this campaign's commit.
+
+
+## Strict closure follow-up
+
+The [selection trace campaign](game-selection-trace-matches.md) closes the
+active-spell panel at strict 100%. Its existing numeric selection channel
+consumes the real confirmation result before mapping cancellation to pending
+or acceptance to a row index. All 284 retail words match without an extra
+result-copy instruction. The equipment panel and both switch tables remain
+unchanged and exact.

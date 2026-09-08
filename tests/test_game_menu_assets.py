@@ -248,7 +248,7 @@ class GameMenuAssetsTests(unittest.TestCase):
     def test_retail_and_source_mirrored_packets_and_background_enqueue_order(self):
         image, symbols = self.retail(), GameSymbols.load()
         path = self.object('game.menu_runtime')
-        display = symbols.datum('display_state')[0]
+        display = symbols.datum('game_graphics_runtime')[0]
         current = symbols.datum('current_poly_ft4')[0]
         descriptor = (0x123, 0x7C80, 231, 197, 71, 104)
         asset_data = bytearray(ASSET_SIZE)

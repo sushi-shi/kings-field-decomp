@@ -1,3 +1,4 @@
+#include <kf/game_graphics.h>
 #include <kf/address.h>
 #include <kf/game_math.h>
 #include <kf/game_asset.h>
@@ -40,9 +41,6 @@ typedef struct KfMorphObject {
  * before pool_release_stale frees whatever was not touched.
  */
 
-DATA(0x800910c0, 0xf0)
-KfPoolRecord pool_records[KF_ANIMATION_CACHE_CAPACITY];
-
 static inline void copy_vertices(SVECTOR *output, const SVECTOR *input, u16 count)
 {
     const u32 *source = (const u32 *)input;
@@ -60,7 +58,7 @@ u16 *render_bind_animated_instance(
     u16 vertex_count)
 {
     KfPoolRecord *record = *owner_slot;
-    KfAssetHeader *asset_header = asset_registry_entries[asset_index];
+    KfAssetHeader *asset_header = ((KfAssetHeader **)game_graphics_runtime.unknown_registry_20134)[asset_index];
     KfAnimClip *clip;
     KfAnimKeyframe *keyframe;
     KfMorphObject *morph_object;
@@ -150,7 +148,7 @@ update_vertex_cache:
     asset_registry_select(asset_index);
     tmd_select_object_vertices(0);
 
-    copy_vertices(record->cached_vertices, current_tmd_vertices, vertex_count);
+    copy_vertices(record->cached_vertices, game_graphics_runtime.current_tmd_vertices, vertex_count);
 
     morphs_left = keyframe->morph_count;
     {
@@ -172,11 +170,11 @@ blend_scratch:
     record->clip_index = clip_index;
     record->keyframe_index = keyframe_index;
 
-    copy_vertices(&tmd_morph_scratch[1], record->cached_vertices, vertex_count);
+    copy_vertices(&((SVECTOR *)(game_graphics_runtime.unknown_projection_morph_20318 + 0x1f40))[1], record->cached_vertices, vertex_count);
 
     morph_object = record->rest_morph;
     {
-        SVECTOR *scratch_vertex = &tmd_morph_scratch[morph_object->base_vertex];
+        SVECTOR *scratch_vertex = &((SVECTOR *)(game_graphics_runtime.unknown_projection_morph_20318 + 0x1f40))[morph_object->base_vertex];
         u32 saved_xy_word = ((u32 *)scratch_vertex)[0];
         u32 saved_z_pad_word = ((u32 *)scratch_vertex)[1];
 
@@ -186,7 +184,7 @@ blend_scratch:
         ((u32 *)scratch_vertex)[0] = saved_xy_word;
         ((u32 *)scratch_vertex)[1] = saved_z_pad_word;
     }
-    tmd_set_current_vertices(&tmd_morph_scratch[1]);
+    tmd_set_current_vertices(&((SVECTOR *)(game_graphics_runtime.unknown_projection_morph_20318 + 0x1f40))[1]);
     record->state = KF_ANIMATION_CACHE_LIVE;
     return (u16 *)record;
 }
@@ -194,7 +192,7 @@ blend_scratch:
 ADDRESS(0x80020978, 0x30)
 void pool_reset(void)
 {
-    KfPoolRecord *record = pool_records;
+    KfPoolRecord *record = game_graphics_runtime.pool_records;
     u16 records_left = KF_ANIMATION_CACHE_CAPACITY;
 
     do {
@@ -207,7 +205,7 @@ void pool_reset(void)
 ADDRESS(0x800209a8, 0x3c)
 void pool_mark_allocated(void)
 {
-    KfPoolRecord *record = pool_records;
+    KfPoolRecord *record = game_graphics_runtime.pool_records;
     u16 records_left = KF_ANIMATION_CACHE_CAPACITY;
 
     do {
@@ -237,7 +235,7 @@ void pool_record_release(KfPoolRecord *record)
 ADDRESS(0x80020a2c, 0x6c)
 void pool_release_all(void)
 {
-    KfPoolRecord *record = pool_records;
+    KfPoolRecord *record = game_graphics_runtime.pool_records;
     s16 records_left;
 
     for (records_left = KF_ANIMATION_CACHE_CAPACITY - 1; records_left != -1; records_left--) {
@@ -256,7 +254,7 @@ void pool_release_all(void)
 ADDRESS(0x80020a98, 0x6c)
 void pool_release_stale(void)
 {
-    KfPoolRecord *record = pool_records;
+    KfPoolRecord *record = game_graphics_runtime.pool_records;
     u16 records_left = KF_ANIMATION_CACHE_CAPACITY;
 
     do {
@@ -270,7 +268,7 @@ void pool_release_stale(void)
 ADDRESS(0x80020b04, 0x48)
 KfPoolRecord *pool_allocate(void)
 {
-    KfPoolRecord *record = pool_records;
+    KfPoolRecord *record = game_graphics_runtime.pool_records;
     u16 records_left = KF_ANIMATION_CACHE_CAPACITY;
 
     do {

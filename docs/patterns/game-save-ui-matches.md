@@ -104,3 +104,28 @@ Ruff, `git diff --check`, all 703 local tests (nine optional skips), and
 `nix flake check -L` pass. Nix's test suite has 144 local-artifact skips and
 its compiler parity/trace checks also pass. Completing the remaining 45 GAME
 and two OPEN functions at strict 100% remains the campaign's success criterion.
+
+## Follow-up at `81fa559`
+
+A fresh six-view/caller/target audit rechecked both functions. Explicitly
+updating the real signed `ones` value with `'0'` immediately before its two
+byte stores leaves every linked word unchanged: CSE still removes the named
+digit copies and retains the divmod remainder in v1. The return joins,
+conditional return, cursor rewind and direct path-member trials reconfirm the
+rejected source families above; they do not constitute new owner coverage.
+No source spelling is retained from this follow-up.
+
+All 24 current unit bodies were freshly compiled and numerically relinked:
+1665 source words versus 1664 retail words, with all 22 exact siblings preserved.
+Native/traced whole ELFs agree per source. Wrong-callee controls change exactly
+one call, and a one-byte path shift changes seven address instructions while
+preserving its call. The direct-member trial recovers v0 for the remainder but
+retains template+10 instead of +6 as its shared root and changes the middle
+address-pair order; the complete comparison rejects it.
+
+Current evidence is under `build/gcc257/save-ui/`, including complete raw
+comparisons and allocation snapshots. Both strict scores remain unchanged.
+Ruff, whitespace checks and all 703 tests pass (135.803 seconds, nine skips).
+Full build retains the existing data/ownership/placement failures and zero
+artifact failures. GAME remains 324/362 and OPEN 106/108 exact; forty functions
+remain open, with no new bank entry from these trials.

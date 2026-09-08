@@ -1,3 +1,4 @@
+#include <kf/game_graphics.h>
 #include <kf/address.h>
 #include <kf/game_render.h>
 
@@ -5,9 +6,9 @@ ADDRESS(0x80014314, 0x1c0)
 void sprite_add_ft4(const KfScreenRect *position, u8 *texcoords, u32 tpage, u32 clut,
                    const CVECTOR *color, u16 ot_index)
 {
-    POLY_FT4 *prim = (POLY_FT4 *)display_state.primitive_buffer->cursor;
+    POLY_FT4 *prim = (POLY_FT4 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
-    display_state.primitive_buffer->cursor += sizeof(POLY_FT4);
+    game_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_FT4);
     SetPolyFT4(prim);
     prim->clut = clut;
     prim->tpage = tpage;
@@ -31,6 +32,6 @@ void sprite_add_ft4(const KfScreenRect *position, u8 *texcoords, u32 tpage, u32 
     prim->g0 = color->g;
     prim->b0 = color->b;
     AddPrim(
-        &display_state.ordering_table[ot_index & KF_ORDERING_TABLE_INDEX_MASK],
+        &game_graphics_runtime.display_state.ordering_table[ot_index & KF_ORDERING_TABLE_INDEX_MASK],
         prim);
 }

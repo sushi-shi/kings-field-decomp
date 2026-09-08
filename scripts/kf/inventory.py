@@ -426,6 +426,7 @@ def _header_structure_layouts() -> dict[str, HeaderStructureLayout]:
         r"KF_ENUM_STORAGE\(\s*([A-Za-z_]\w*)\s*,\s*([A-Za-z_]\w*)\s*\)"
     )
     integer_enumerator = re.compile(r"([A-Za-z_]\w*)\s*=\s*(0x[0-9a-fA-F]+|\d+)")
+    implicit_enumerator = re.compile(r"[A-Za-z_]\w*")
     checked_headers = (
         REPO / "include/kf/game_types.h",
         REPO / "include/kf/floor.h",
@@ -447,6 +448,7 @@ def _header_structure_layouts() -> dict[str, HeaderStructureLayout]:
         REPO / "include/kf/notify_types.h",
         REPO / "include/kf/notify.h",
         REPO / "include/kf/open_render.h",
+        REPO / "include/kf/game_graphics.h",
         REPO / "include/kf/open_resources.h",
         REPO / "include/kf/game_save.h",
         REPO / "include/kf/game_menu.h",
@@ -469,16 +471,28 @@ def _header_structure_layouts() -> dict[str, HeaderStructureLayout]:
             primitive_layouts[name] = primitive_layouts[storage]
             enum_domains.add(name)
             enum_bodies.append(body)
-        # Resolve explicit integer enumerators only. Other C expressions are
-        # rejected when used as bounds; never guess an inventory's byte extent.
+        # An implicit enumerator starts at zero or follows a known integer.
+        # Unsupported expressions break that chain until an explicit integer
+        # resets it; never guess an inventory's byte extent.
         for body in enum_bodies:
+            next_value = 0
             for enumerator in body.split(","):
-                constant = integer_enumerator.fullmatch(enumerator.strip())
+                enumerator = enumerator.strip()
+                if not enumerator:
+                    continue
+                constant = integer_enumerator.fullmatch(enumerator)
                 if constant:
                     constant_name, value = constant.groups()
-                    if constant_name in constants:
-                        raise ValueError(f"{path}: duplicate checked constant {constant_name}")
-                    constants[constant_name] = int(value, 0)
+                    number = int(value, 0)
+                elif implicit_enumerator.fullmatch(enumerator) and next_value is not None:
+                    constant_name, number = enumerator, next_value
+                else:
+                    next_value = None
+                    continue
+                if constant_name in constants:
+                    raise ValueError(f"{path}: duplicate checked constant {constant_name}")
+                constants[constant_name] = number
+                next_value = number + 1 if number < 0x7fffffff else None
         for match in definition_pattern.finditer(text):
             kind, name, body = match.groups()
             if name in definitions or name in primitive_layouts:

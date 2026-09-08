@@ -504,6 +504,9 @@ Residues left in the module:
 - `map_object_spawn_effect`: retail keeps the sequence pointer in `s0` and the
   acquired object in `s1` with the return copy scheduled before the counter
   store; every tried spelling reuses `s0` for the object.
+  The later [velocity-initialization audit](game-map-drop-initialization.md)
+  also finds and corrects a missed unconditional store for IDs at or above 65.
+  That CFG correction leaves the earlier register difference unresolved.
 - `map_object_pool_clear_link`: subsequently closed at **100%** by
   [correcting the behavior predicate](game-map-object-clearing.md). Retail's
   `kind < 8` branch goes directly to the link comparison, skipping the

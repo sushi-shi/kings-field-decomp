@@ -1,7 +1,7 @@
+#include <kf/game_graphics.h>
 #include <kf/address.h>
 #include <kf/game_menu.h>
 #include <kf/game.h>
-
 
 enum {
     MENU_MAP_MARKER_OT_DEPTH = 500,
@@ -41,7 +41,7 @@ void menu_map_viewer(KF_ENUM_PARAM(KfItemId, s32) item_code)
     path[5] = map_number + '0';
     path[6] = KF_ENUM_ENCODE(u8, player_state.progress_state.current_floor) + '0';
 
-    buffer = display_state.primitive_buffer->cursor;
+    buffer = game_graphics_runtime.display_state.primitive_buffer->cursor;
     if (cd_file_load_into(buffer, path) != 0)
         return;
     tim_upload_images((u_long *)buffer);
@@ -97,18 +97,18 @@ void menu_map_viewer(KF_ENUM_PARAM(KfItemId, s32) item_code)
 
     for (;;) {
         menu_frame_begin();
-        AddPrim(display_state.ordering_table + MENU_MAP_MARKER_OT_DEPTH,
-                &poly_marker[display_state.buffer_index]);
-        AddPrim(display_state.ordering_table + MENU_MAP_IMAGE_OT_DEPTH,
-                &poly_bg[display_state.buffer_index]);
-        AddPrim(display_state.ordering_table + MENU_BACKGROUND_OT_DEPTH,
-                &menu_assets.background_quads[display_state.buffer_index][3]);
-        AddPrim(display_state.ordering_table + MENU_BACKGROUND_OT_DEPTH,
-                &menu_assets.background_quads[display_state.buffer_index][2]);
-        AddPrim(display_state.ordering_table + MENU_BACKGROUND_OT_DEPTH,
-                &menu_assets.background_quads[display_state.buffer_index][1]);
-        AddPrim(display_state.ordering_table + MENU_BACKGROUND_OT_DEPTH,
-                &menu_assets.background_quads[display_state.buffer_index][0]);
+        AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_MAP_MARKER_OT_DEPTH,
+                &poly_marker[game_graphics_runtime.display_state.buffer_index]);
+        AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_MAP_IMAGE_OT_DEPTH,
+                &poly_bg[game_graphics_runtime.display_state.buffer_index]);
+        AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_BACKGROUND_OT_DEPTH,
+                &menu_assets.background_quads[game_graphics_runtime.display_state.buffer_index][3]);
+        AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_BACKGROUND_OT_DEPTH,
+                &menu_assets.background_quads[game_graphics_runtime.display_state.buffer_index][2]);
+        AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_BACKGROUND_OT_DEPTH,
+                &menu_assets.background_quads[game_graphics_runtime.display_state.buffer_index][1]);
+        AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_BACKGROUND_OT_DEPTH,
+                &menu_assets.background_quads[game_graphics_runtime.display_state.buffer_index][0]);
         menu_present_frame();
         if (frame < MENU_PANEL_INPUT_RELEASE_FRAME) {
             frame++;

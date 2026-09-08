@@ -1,3 +1,4 @@
+#include <kf/game_graphics.h>
 #include <kf/address.h>
 #include <kf/game_menu.h>
 #include <kf/game.h>
@@ -17,7 +18,7 @@ void menu_draw_window(KfMenuWindowKind kind, s32 count, s32 highlight, KfMenuCon
     s32 row;
 
     layout = &menu_window_layouts[KF_ENUM_ENCODE(s32, kind)];
-    current_poly_ft4 = (POLY_FT4 *)display_state.primitive_buffer->cursor;
+    current_poly_ft4 = (POLY_FT4 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
     if ((s16)layout->title.x != 0) {
         menu_blit_sprite_translucent(
             &menu_assets.row_background, (const MenuPoint *)&layout->title);

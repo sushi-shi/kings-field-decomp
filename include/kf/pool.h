@@ -33,8 +33,6 @@ typedef struct KfPoolRecord {
     struct KfPoolRecord **owner_slot;
 } KfPoolRecord;
 
-extern KfPoolRecord pool_records[KF_ANIMATION_CACHE_CAPACITY];
-
 /* Returns zero on pool exhaustion, one for a static asset, or the live record. */
 extern u16 *render_bind_animated_instance(
     KfPoolRecord **owner_slot, u16 asset_index, u16 clip_index, u16 phase,

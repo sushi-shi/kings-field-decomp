@@ -5,7 +5,7 @@ Complete current accounting for `src/game/menu_draw_stats_header.c` and
 [layout review](game-status-text-layout.md). Each numeric occurrence has its
 own row, including duplicates in a source expression. Comments, strings,
 identifier digits, named enum/macro definitions and address claims are excluded.
-The current shared `glyph_index` lifetime and signed rating divisions replace
+The current shared `glyph_index` and `rating` lifetimes and signed divisions replace
 the historical expressions in the earlier ledger. Authored text-atlas cells
 remain encoded glyph-stream data, with their known roles recorded below.
 
@@ -249,8 +249,8 @@ remain encoded glyph-stream data, with their known roles recorded below.
 | `menu_draw_status_details` | 187 | `0` | `menu_format_number(player_state.gold, MENU_STATS_VALUE_DIGITS, 0, gs.codes);` | False zero-padding flag selects leading blank glyphs in the decimal formatter; field width is named. |
 | `menu_draw_status_details` | 190 | `0` | `menu_format_number(player_state.physical_power, MENU_STATS_VALUE_DIGITS, 0, gs.codes);` | False zero-padding flag selects leading blank glyphs in the decimal formatter; field width is named. |
 | `menu_draw_status_details` | 193 | `0` | `menu_format_number(player_state.magic, MENU_STATS_VALUE_DIGITS, 0, gs.codes);` | False zero-padding flag selects leading blank glyphs in the decimal formatter; field width is named. |
-| `menu_draw_status_details` | 200 | `0` | `menu_format_number(attack_rating, MENU_STATS_VALUE_DIGITS, 0, gs.codes);` | False zero-padding flag selects leading blank glyphs in the decimal formatter; field width is named. |
-| `menu_draw_status_details` | 207 | `0` | `MENU_STATS_VALUE_DIGITS, 0, gs.codes);` | False zero-padding flag selects leading blank glyphs in the decimal formatter; field width is named. |
+| `menu_draw_status_details` | 200 | `0` | `menu_format_number(rating, MENU_STATS_VALUE_DIGITS, 0, gs.codes);` | False zero-padding flag selects leading blank glyphs in the decimal formatter; field width is named. |
+| `menu_draw_status_details` | 207 | `0` | `menu_format_number(rating, MENU_STATS_VALUE_DIGITS, 0, gs.codes);` | False zero-padding flag selects leading blank glyphs in the decimal formatter; field width is named. |
 | `menu_draw_status_details` | 210 | `0xb5` | `gs.x = 0xb5;` | Explicit screen X anchor 181 pixels for the following text run; preserve the authored layout, whose original placement rationale is unknown. |
 | `menu_draw_status_details` | 211 | `0x1e` | `gs.y = 0x1e;` | Explicit screen Y anchor 30 pixels for the following text run; preserve the authored layout, whose original placement rationale is unknown. |
 | `menu_draw_status_details` | 212 | `0` | `gs.codes[0] = 0x89;` | At zero-based glyph position 0, encode authored text-atlas cell 0x89. These are glyph-stream data, not Unicode or gameplay IDs; retain the literal cell rather than inventing a per-character constant. |

@@ -1,3 +1,4 @@
+#include <kf/game_graphics.h>
 #include <kf/address.h>
 #include <kf/game_menu.h>
 #include <kf/game.h>
@@ -29,9 +30,9 @@ void menu_draw_status_details(void)
 {
     MenuGlyphString gs;
     s32 glyph_index;
-    s32 attack_rating;
+    s32 rating;
 
-    current_poly_ft4 = (POLY_FT4 *)display_state.primitive_buffer->cursor;
+    current_poly_ft4 = (POLY_FT4 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
     gs.x = 0x15;
     gs.y = 0x23;
@@ -203,23 +204,22 @@ void menu_draw_status_details(void)
     gs.y += STATUS_SUMMARY_ROW_STEP;
     menu_format_number(player_state.magic, MENU_STATS_VALUE_DIGITS, 0, gs.codes);
     menu_draw_number(&menu_assets.number_atlas, &gs);
-    attack_rating = (((u32)player_state.cutting_attack + player_state.striking_attack +
-                      player_state.piercing_attack) * STATUS_PHYSICAL_ATTACK_MULTIPLIER
-                      >> STATUS_PHYSICAL_ATTACK_DOWNSHIFT) +
-                    (player_state.holy_attack + player_state.fire_attack)
-                    * STATUS_ELEMENTAL_ATTACK_MULTIPLIER;
-    attack_rating = attack_rating * STATUS_ATTACK_SCALE_NUMERATOR
+    rating = (((u32)player_state.cutting_attack + player_state.striking_attack +
+               player_state.piercing_attack) * STATUS_PHYSICAL_ATTACK_MULTIPLIER
+               >> STATUS_PHYSICAL_ATTACK_DOWNSHIFT) +
+             (player_state.holy_attack + player_state.fire_attack)
+             * STATUS_ELEMENTAL_ATTACK_MULTIPLIER;
+    rating = rating * STATUS_ATTACK_SCALE_NUMERATOR
         / STATUS_ATTACK_SCALE_DENOMINATOR;
     gs.y += STATUS_SUMMARY_ROW_STEP;
-    menu_format_number(attack_rating, MENU_STATS_VALUE_DIGITS, 0, gs.codes);
+    menu_format_number(rating, MENU_STATS_VALUE_DIGITS, 0, gs.codes);
     menu_draw_number(&menu_assets.number_atlas, &gs);
+    rating = player_state.cutting_defense + player_state.striking_defense +
+             player_state.piercing_defense + player_state.poison_resistance / STATUS_POISON_RESISTANCE_DIVISOR +
+             player_state.magic_defense + player_state.fire_defense;
+    rating = rating * STATUS_DEFENSE_SCALE_NUMERATOR / STATUS_DEFENSE_SCALE_DENOMINATOR;
     gs.y += STATUS_SUMMARY_ROW_STEP;
-    menu_format_number(
-        ((player_state.cutting_defense + player_state.striking_defense +
-          player_state.piercing_defense + player_state.poison_resistance / STATUS_POISON_RESISTANCE_DIVISOR +
-          player_state.magic_defense + player_state.fire_defense) * STATUS_DEFENSE_SCALE_NUMERATOR)
-          / STATUS_DEFENSE_SCALE_DENOMINATOR,
-        MENU_STATS_VALUE_DIGITS, 0, gs.codes);
+    menu_format_number(rating, MENU_STATS_VALUE_DIGITS, 0, gs.codes);
     menu_draw_number(&menu_assets.number_atlas, &gs);
 
     gs.x = 0xb5;

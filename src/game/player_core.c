@@ -1,3 +1,4 @@
+#include <kf/game_graphics.h>
 #include <kf/address.h>
 #include <kf/map_data.h>
 #include <kf/game_player.h>
@@ -38,7 +39,6 @@ enum {
  * warp helpers, and related per-frame player updates. Assembled from ten
  * address-adjacent single-purpose units; module boundary is WIP.
  */
-
 
 RODATA(0x80012030, 0x18)
 
@@ -145,7 +145,6 @@ void player_begin_weapon_attack(void)
     }
 }
 
-
 /* Psy-Q LIBGTE: RotMatrix(SVECTOR *r, MATRIX *m); ApplyMatrix(MATRIX *m, SVECTOR *v, VECTOR *rv). */
 
 ADDRESS(0x80016bc0, 0x264)
@@ -212,7 +211,6 @@ void player_update_weapon_attack(void)
     }
 }
 
-
 ADDRESS(0x80016e24, 0x94)
 void game_initialize_session(void)
 {
@@ -261,11 +259,10 @@ void player_sync_position_to_map(void)
     player_state.camera_position.vy = view_offset + floor_height;
     player_clear_motion();
     collision_adjust_cell_occupancy(player_state.map_cell.x, player_state.map_cell.z, 1);
-    hud_brightness = KF_HUD_DEFAULT_BRIGHTNESS;
+    game_graphics_runtime.hud_brightness = KF_HUD_DEFAULT_BRIGHTNESS;
     player_state.vertical_state = KF_PLAYER_VERTICAL_GROUNDED;
     player_state.vertical_velocity = 0;
 }
-
 
 /* Psy-Q LIBGTE: rsin, rcos. */
 /* Psy-Q LIBGTE: long SquareRoot0(long a); */
@@ -497,7 +494,6 @@ s32 player_move_horizontal(s32 heading, s32 distance)
     return 1;
 }
 
-
 ADDRESS(0x80017a24, 0x5c)
 void player_update_view_bob(void)
 {
@@ -511,7 +507,6 @@ void player_update_view_bob(void)
         player_state.view_bob_offset = rsin(phase) >> PLAYER_BOB_SINE_DOWNSHIFT;
     }
 }
-
 
 ADDRESS(0x80017a80, 0x278)
 void player_update_vertical_motion(void)
@@ -575,7 +570,6 @@ done:
     player_state.camera_position.vy = view_offset + player_state.floor_height;
 }
 
-
 ADDRESS(0x80017cf8, 0x144)
 void player_warp_to_floor_entry(void)
 {
@@ -607,7 +601,6 @@ void player_warp_to_floor_entry(void)
     position.vy = player_state.floor_height;
     player_warp_shimmer(KF_WARP_SHIMMER_SHRINK_REMOVE, &position);
 }
-
 
 ADDRESS(0x80017e3c, 0xa0)
 void player_update_transform_snapshot(VECTOR *position_out, SVECTOR *rotation_out)

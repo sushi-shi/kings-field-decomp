@@ -144,47 +144,16 @@ typedef struct KfRenderState {
     MATRIX quadrant_matrices[KF_VIEW_QUADRANT_COUNT];
 } KfRenderState;
 
-/* Copied vertices begin at element 1; the complete capacity is unresolved. */
-extern SVECTOR tmd_morph_scratch[];
 extern MATRIX color_matrix_table[KF_GAME_COLOR_PRESET_COUNT];
 extern POLY_FT4 *current_poly_ft4;
-extern DRAWENV display_draw_environments[KF_DISPLAY_BUFFER_COUNT];
-extern DISPENV display_disp_environments[KF_DISPLAY_BUFFER_COUNT];
-extern KfDisplayState display_state;
 extern KfCellWindow render_cell_windows[KF_CELL_WINDOW_YAW_COUNT];
-extern const KfCellWindow *active_cell_window;
-extern u16 effect5_texture_pages[3];
-extern u16 effect5_texture_cluts[3];
 extern KfSpriteQuad floor_item_sprites[KF_FLOOR_ITEM_SPRITE_COUNT];
 extern KfSpriteQuad effect_billboard_sprites[KF_EFFECT_BILLBOARD_SPRITE_COUNT];
 extern KfEffectSprite effect_sprites[KF_EFFECT_SPRITE_TABLE_ROWS];
 extern KfHudSprite hud_sprites[KF_HUD_TABLE_ROWS];
-extern MATRIX light_quadrant_matrices[KF_VIEW_QUADRANT_COUNT];
 extern MATRIX render_light_matrices[KF_RENDER_LIGHT_COUNT];
-extern KfRenderState render_state;
-extern KfTmdState tmd_state;
-/* GAME's projected-array capacity remains unresolved. */
-extern SVECTOR *current_tmd_vertices;
-extern KfScreenVertex tmd_projected_vertices[];
 extern RECT hud_palette_rect;
 extern RECT notification_palette_rect;
-/* Cached SDK selectors and HUD intensity; enclosing graphics storage is WIP. */
-extern u16 hud_clut;
-extern u16 hud_tpage;
-extern u8 hud_brightness;
-extern u16 notification_text_clut;
-extern u16 notification_text_tpage;
-extern u16 notification_digit_clut;
-extern u16 notification_digit_tpage;
-extern u16 floor_item_clut;
-extern u16 floor_item_tpage;
-extern u16 active_render_clut;
-extern u16 active_render_tpage;
-/* Contiguous RGB/command bytes; the enclosing graphics object is unresolved. */
-extern u8 active_render_red;
-extern u8 active_render_green;
-extern u8 active_render_blue;
-extern u8 active_render_code;
 
 extern void display_begin_frame(void);
 extern void display_flip_buffer_index(void);

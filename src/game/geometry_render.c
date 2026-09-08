@@ -1,3 +1,4 @@
+#include <kf/game_graphics.h>
 #include <kf/address.h>
 #include <kf/game_asset.h>
 #include <kf/game_math.h>
@@ -100,7 +101,7 @@ void render_effect_sprites(void)
     u16 scale_numerator;
 
     ReadColorMatrix(&saved_color_matrix);
-    SetColorMatrix(&render_state.effect_color_matrix);
+    SetColorMatrix(&game_graphics_runtime.render_state.effect_color_matrix);
     scale.vz = KF_FIXED12_ONE;
     entry = effect_sprites;
     while (entry->state == KF_EFFECT_SPRITE_ACTIVE) {

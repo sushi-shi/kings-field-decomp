@@ -1,5 +1,11 @@
 # GAME main-menu result lifetime
 
+Subsequent strict closure: the
+[root/item compiler-trace campaign](game-root-item-use-traces.md) reaches
+**100%** by consuming the magic-panel return through the existing numeric
+result channel. All 176 retail words and seven switch targets now agree;
+the earlier experiments and evidence below remain the historical baseline.
+
 ## Function Match Plan
 
 GAME `0x80022348 menu_root`, 704 bytes, `game.menu`, existing

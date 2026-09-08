@@ -173,6 +173,34 @@ class InventoryTests(unittest.TestCase):
                     with self.assertRaisesRegex(ValueError, error + " array bound"):
                         _header_structure_layouts()
 
+    def test_implicit_enum_array_count_starts_at_zero_and_follows_known_resets(self) -> None:
+        declarations = """
+            typedef enum TileIndex { FIRST, SECOND, THIRD, FOURTH, TILE_COUNT } TileIndex;
+            enum { RESET = 0x7, NEXT, ROW_COUNT };
+            typedef struct TileGrid { u16 tiles[ROW_COUNT][TILE_COUNT]; } TileGrid;
+        """
+        with patch("scripts.kf.inventory.Path.read_text",
+                   lambda path: declarations if path.name == "game_types.h" else ""):
+            layout = _header_structure_layouts()["TileGrid"]
+        self.assertEqual((layout.size, layout.alignment), (72, 2))
+        self.assertEqual(layout.fields[0].datatype, "u16[9][4]")
+
+    def test_implicit_enum_bound_does_not_guess_after_unknown_expression_or_overflow(self) -> None:
+        for value in ("EXTERNAL + 1", "0x7fffffff"):
+            with self.subTest(value=value):
+                declarations = f"""
+                    enum {{ FIRST = {value}, UNKNOWN_COUNT, RESET = 2, KNOWN_COUNT }};
+                    typedef struct UnknownGrid {{ u8 cells[UNKNOWN_COUNT]; }} UnknownGrid;
+                """
+                with patch("scripts.kf.inventory.Path.read_text",
+                           lambda path: declarations if path.name == "game_types.h" else ""):
+                    with self.assertRaisesRegex(ValueError, "unresolved array bound 'UNKNOWN_COUNT'"):
+                        _header_structure_layouts()
+                declarations = declarations.replace("cells[UNKNOWN_COUNT]", "cells[KNOWN_COUNT]")
+                with patch("scripts.kf.inventory.Path.read_text",
+                           lambda path: declarations if path.name == "game_types.h" else ""):
+                    self.assertEqual(_header_structure_layouts()["UnknownGrid"].size, 3)
+
     def test_union_storage_overlaps_and_rounds_up_for_enclosing_struct(self) -> None:
         declarations = """
             typedef union ExamplePayload {
@@ -219,12 +247,12 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["signatures_started"], 471)
         self.assertEqual(counts["typed_returns"], 471)
         self.assertEqual(counts["parameterized"], 306)
-        self.assertEqual(counts["data"], 2954)
+        self.assertEqual(counts["data"], 2920)
         self.assertGreaterEqual(counts["functions_named"], 240)
         self.assertGreaterEqual(counts["data_named"], 100)
-        self.assertEqual(counts["structures"], 105)
-        self.assertEqual(counts["structure_fields"], 805)
-        self.assertEqual(counts["structure_fields_named"], 713)
+        self.assertEqual(counts["structures"], 106)
+        self.assertEqual(counts["structure_fields"], 844)
+        self.assertEqual(counts["structure_fields_named"], 743)
 
     def test_animation_cache_slots_share_one_pointer_type_without_layout_changes(self) -> None:
         structures = load_structure_identities(RETAIL_CONFIG)
@@ -281,15 +309,15 @@ class InventoryTests(unittest.TestCase):
             self.assertEqual(_structure_field("KfPoolRecord", offset),
                              (name, datatype, size))
         game = index("GAME.EXE")
-        datum = game.datum(0x800910C0)
+        datum = game.data_owner(0x800910C0)
         self.assertEqual((datum.name, datum.datatype, datum.size),
-                         ("pool_records", "KfPoolRecord[12]", 0xF0))
+                         ("game_graphics_runtime", "KfGraphicsRuntimeGame", 0x249CC))
+        self.assertEqual(_structure_field('KfGraphicsRuntimeGame', 0x20228),
+                         ('pool_records', 'KfPoolRecord[12]', 0xF0))
         claims = load_manifest().by_name()["game.pool"].data
-        self.assertEqual([(claim.va, claim.size, claim.symbol, claim.storage)
-                          for claim in claims],
-                         [(0x800910C0, 0xF0, "pool_records", "bss")])
+        self.assertEqual(claims, ())
         self.assertEqual(game.data_owner(0x800911AF), datum)
-        self.assertNotEqual(game.data_owner(0x800911B0), datum)
+        self.assertEqual(game.data_owner(0x800911B0), datum)
 
     def test_animation_binder_and_cache_lifecycle_share_contiguous_ownership(self) -> None:
         manifest = load_manifest()
@@ -305,21 +333,16 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(unit.functions[-1].va + unit.functions[-1].body_size,
                          0x80020B4C)
 
-    def test_game_tmd_buffer_prefixes_have_one_array_identity_each(self) -> None:
+    def test_game_tmd_buffer_starts_belong_to_one_owner_without_capacity_claims(self) -> None:
         game = index("GAME.EXE")
-        for base, size, name, datatype in (
-            (0x800911B0, 8, "tmd_projected_vertices", "KfScreenVertex[]"),
-            (0x800930F0, 24, "tmd_morph_scratch", "SVECTOR[]"),
-        ):
-            datum = game.datum(base)
-            self.assertEqual((datum.name, datum.datatype, datum.size),
-                             (name, datatype, size))
-            for offset in range(1, size):
+        datum = game.datum(0x80070E98)
+        for base, size in ((0x800911B0, 8), (0x800930F0, 24)):
+            for offset in range(size):
                 self.assertIsNone(game.datum(base + offset))
                 self.assertEqual(game.data_owner(base + offset), datum)
-            # Referenced prefixes are not complete-object capacity claims.
-            self.assertEqual(datum.unit, "")
-            self.assertIn("not complete capacity", datum.note)
+        self.assertEqual(_structure_field('KfGraphicsRuntimeGame', 0x20318),
+                         ('unknown_projection_morph_20318', 'u8[16008]', 0x3E88))
+        self.assertIn('subobject extents remain unresolved', datum.note)
         opening = index("OPEN.EXE").data_owner(0x80069B80)
         self.assertEqual((opening.name, opening.datatype, opening.size),
                          ("open_graphics_runtime", "KfGraphicsRuntimeOpen", 0x24788))
@@ -343,7 +366,7 @@ class InventoryTests(unittest.TestCase):
         for site, (target, name) in expected.items():
             row = found[site]
             self.assertEqual((parse_int(row["target_va"]), row["target_name"]),
-                             (target, name))
+                             (target, 'game_graphics_runtime'))
             self.assertEqual(parse_int(row["paired_site_va"]), site + 4)
             self.assertEqual((row["kind"], row["opcode"], row["status"]),
                              ("mips_hi16_lo16", "lui+addiu", "reviewed"))
@@ -2955,10 +2978,10 @@ class InventoryTests(unittest.TestCase):
             (function.owner_type, function.action),
             ("vector2s", "scale_shift11"),
         )
-        datum = game.datum(0x800910C0)
+        datum = game.data_owner(0x800910C0)
         self.assertEqual(
             (datum.name, datum.kind, datum.size),
-            ("pool_records", "bss", 0xF0),
+            ("game_graphics_runtime", "bss", 0x249CC),
         )
         candidate = game.datum(0x80058000)
         self.assertEqual(

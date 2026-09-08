@@ -1,3 +1,4 @@
+#include <kf/game_graphics.h>
 #include <kf/address.h>
 #include <kf/game_asset.h>
 #include <kf/game_render.h>
@@ -14,7 +15,7 @@ void asset_registry_load_tmd_archive(u16 first_asset_id, u8 *archive)
 
     archive += KF_ASSET_ARCHIVE_HEADER_BYTES;
     while (count-- != 0) {
-        asset_registry_entries[first_asset_id] = (KfAssetHeader *)archive;
+        ((KfAssetHeader **)game_graphics_runtime.unknown_registry_20134)[first_asset_id] = (KfAssetHeader *)archive;
         asset_registry_select(first_asset_id);
         tmd_prepare_primitive_indices();
         first_asset_id++;
@@ -25,7 +26,7 @@ void asset_registry_load_tmd_archive(u16 first_asset_id, u8 *archive)
 ADDRESS(0x8002055c, 0x40)
 void asset_registry_set(u16 index, KfAssetHeader *asset)
 {
-    asset_registry_entries[index] = asset;
+    ((KfAssetHeader **)game_graphics_runtime.unknown_registry_20134)[index] = asset;
     asset_registry_select(index);
     tmd_prepare_primitive_indices();
 }
@@ -33,7 +34,7 @@ void asset_registry_set(u16 index, KfAssetHeader *asset)
 ADDRESS(0x8002059c, 0x38)
 void asset_registry_select(u16 index)
 {
-    KfAssetHeader *asset = asset_registry_entries[index];
+    KfAssetHeader *asset = ((KfAssetHeader **)game_graphics_runtime.unknown_registry_20134)[index];
 
-    tmd_state.current_asset = (u8 *)asset + asset->tmd_data_offset;
+    game_graphics_runtime.tmd_state.current_asset = (u8 *)asset + asset->tmd_data_offset;
 }

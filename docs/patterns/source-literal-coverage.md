@@ -96,6 +96,12 @@ not proof that every possible semantic improvement has been exhausted.
 Builds, compiler checks, tests and post-edit matches remain deferred until the
 naming pass finishes, as requested.
 
+The later [drop initialization correction](game-map-drop-initialization.md)
+reduces `map_object.c` from 65 to 63 occurrences by replacing three conditional
+velocity clears with one unconditional clear. Its current ledger and table
+entry below include that correction; the earlier whole-tree snapshot above
+has not been recounted here.
+
 ## Remaining semantic work
 
 1. Investigate the unresolved field families below using actual consumers and

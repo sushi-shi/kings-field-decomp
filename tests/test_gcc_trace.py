@@ -23,6 +23,35 @@ def trace_rows() -> list[dict]:
             for index, stage in enumerate(STAGES)]
 
 
+def rtl(code, *ops):
+    return {"code": code, "mode": "SI", "flags": [0] * 4, "ops": list(ops)}
+
+
+def address_rows() -> list[dict]:
+    rows = []
+    root = rtl("const", rtl("plus", rtl("symbol_ref", "objects"), rtl("const_int", 16)))
+    for end in trace_rows():
+        stage = end["pass"]
+        if stage in {"cse1", "cse2"}:
+            # One selected member and one unrelated member of the same object.
+            for uid, offset in ((20, 1), (21, 99)):
+                addr = rtl("plus", rtl("reg", 71), rtl("const_int", offset))
+                rows.append({**end, "event": "cse.address", "reason": "store",
+                             "uid": uid, "pseudo": 71, "values": [100, 1, 1],
+                             "x": addr, "y": root if stage == "cse2" else None})
+            # A load in the selected instruction must not count as its store.
+            rows.append({**rows[-2], "reason": "other"})
+            patterns = [rtl("set", rtl("reg", 71), root)]
+            patterns += [rtl("set", rtl("mem", rtl("plus", rtl("reg", 71),
+                                                  rtl("const_int", offset))), rtl("const_int", 1))
+                         for offset in (1, 99)]
+            for uid, pattern in zip((10, 20, 21), patterns):
+                insn = {**rtl("insn"), "uid": uid, "pattern": pattern}
+                rows.append({**end, "event": "rtl.snapshot", "uid": uid, "x": insn})
+        rows.append(end)
+    return [{**row, "seq": index + 1} for index, row in enumerate(rows)]
+
+
 class TraceTests(unittest.TestCase):
     def object(self, words):
         directory = tempfile.TemporaryDirectory()
@@ -130,6 +159,73 @@ class TraceTests(unittest.TestCase):
         self.assertEqual(frontier_key(first), frontier_key(second))
         second["phase"]["value"]["same"] = True
         self.assertNotEqual(frontier_key(first), frontier_key(second))
+
+    def address_summary(self, rows):
+        feature = [{"name": "member", "kind": "address_lifetime", "symbol": "objects",
+                    "offset": 16, "members": [17]}]
+        return summarize(self.read(rows), feature, None, None)
+
+    def test_address_inputs_select_member_stores_and_recorded_quantities(self):
+        summary = self.address_summary(address_rows())["member"]["value"]
+        for stage, quantity in (("cse1", "no-constant"), ("cse2", "constant")):
+            self.assertEqual(summary["address_inputs"][stage], {
+                "status": "observed", "stores_without_observation": 0,
+                "observations": [{"form": "expression", "quantity": quantity,
+                                  "mode_matches": True, "count": 1}],
+            })
+
+    def test_address_inputs_missing_is_not_no_constant(self):
+        rows = [row for row in address_rows() if row["event"] != "cse.address"]
+        summary = self.address_summary(rows)["member"]["value"]
+        for result in summary["address_inputs"].values():
+            self.assertEqual(result, {"status": "unavailable", "observations": [],
+                                      "stores_without_observation": 1})
+
+    def test_address_inputs_zero_constant_and_mode_mismatch_are_explicit(self):
+        rows = address_rows()
+        for row in rows:
+            if row["event"] == "cse.address":
+                row.update(x=rtl("reg", 71), y=rtl("const_int", 0), values=[100, 1, 0])
+        summary = self.address_summary(rows)["member"]["value"]
+        self.assertEqual(summary["address_inputs"]["cse1"]["observations"], [
+            {"form": "register", "quantity": "constant", "mode_matches": False, "count": 1},
+        ])
+
+    def test_address_inputs_unassigned_quantity_is_distinct(self):
+        rows = address_rows()
+        for row in rows:
+            if row["event"] == "cse.address":
+                row.update(y=None, values=[71, 0, -1])
+        summary = self.address_summary(rows)["member"]["value"]
+        self.assertEqual(summary["address_inputs"]["cse1"]["observations"][0]["quantity"],
+                         "unassigned")
+        self.assertIsNone(summary["address_inputs"]["cse1"]["observations"][0]["mode_matches"])
+
+    def test_address_frontier_ignores_pseudo_quantity_uid_and_sequence_churn(self):
+        rows = address_rows()
+        before = self.address_summary(rows)
+        # Renumber serialized identities without changing the observed facts.
+        def renumber(value):
+            if isinstance(value, dict):
+                if value.get("code") == "reg":
+                    value["ops"][0] += 30
+                if "uid" in value:
+                    value["uid"] += 40
+                for child in value.values():
+                    renumber(child)
+            elif isinstance(value, list):
+                for child in value:
+                    renumber(child)
+        rows = json.loads(json.dumps(rows))
+        renumber(rows)
+        for row in rows:
+            row["seq"] *= 3
+            if row["event"] == "cse.address":
+                row["pseudo"] += 30
+                row["values"][0] += 50
+        after = self.address_summary(rows)
+        self.assertNotEqual(before["member"]["evidence"], after["member"]["evidence"])
+        self.assertEqual(frontier_key(before), frontier_key(after))
 
     def test_retains_low_score_distinct_state_and_all_exact_results(self):
         rows = [{"index": index, "score": score, "frontier_key": key,

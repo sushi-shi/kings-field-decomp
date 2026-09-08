@@ -1,3 +1,4 @@
+#include <kf/game_graphics.h>
 #include <kf/address.h>
 #include <kf/game_menu.h>
 #include <kf/game.h>
@@ -51,7 +52,7 @@ void menu_item_model_preview(KF_ENUM_PARAM(KfItemId, s32) item_id)
         SetTransMatrix(&rot);
         menu_render_item_model();
 
-        current_poly_ft4 = (POLY_FT4 *)display_state.primitive_buffer->cursor;
+        current_poly_ft4 = (POLY_FT4 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
         gs.x = MENU_ITEM_PREVIEW_NAME_X;
         gs.y = MENU_ITEM_PREVIEW_NAME_Y;
