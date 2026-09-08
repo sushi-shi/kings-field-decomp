@@ -715,3 +715,7 @@ promotes a probe to a proven historical toolchain.
 
 - [Typed matrix elements](typed-matrix-elements.md): GAME adopts the SDK cell
   pointers of its exact OPEN twin; all 12 functions retain their retail words.
+
+- [Typed animation vertices](typed-animation-vertices.md): shared SDK/word
+  vertex views, a typed cache-record result and the VDF header blend; all 51
+  compared functions preserve their linked instructions.

@@ -262,7 +262,7 @@ KfGraphicsRuntimeGame	0x200e0	0x28	display_disp_environments	DISPENV[2]	supporte
 KfGraphicsRuntimeGame	0x20108	0x8	unknown_20108	u8[8]	opaque	game_graphics.h;asm;neighbor-field-extents;game-graphics-runtime-owner.md	unresolved storage interval; no original array capacity or padding role claimed
 KfGraphicsRuntimeGame	0x20110	0x24	tmd_state	KfTmdState	supported	game_semantic_display_tmd.tsv;asm;base-register;tmd_register;game-graphics-runtime-owner.md	registered TMD slots and the selected asset: tmd_register stores the slot from the current-asset address minus 32 through one base register
 KfGraphicsRuntimeGame	0x20134	0xf0	unknown_registry_20134	u8[240]	opaque	game_graphics.h;asm;neighbor-field-extents;game-graphics-runtime-owner.md	unresolved storage interval; no original array capacity or padding role claimed
-KfGraphicsRuntimeGame	0x20224	0x4	current_tmd_vertices	SVECTOR *	supported	game_semantic_display_tmd.tsv;asm;xrefs;game-graphics-runtime-owner.md	current TMD vertex-array pointer; consumers scale indices by the eight-byte element width
+KfGraphicsRuntimeGame	0x20224	0x4	current_tmd_vertices	KfPackedSVector *	supported	game_semantic_display_tmd.tsv;asm;xrefs;game-graphics-runtime-owner.md;typed-animation-vertices.md	current TMD vertex-array pointer; consumers scale indices by the eight-byte element width
 KfGraphicsRuntimeGame	0x20228	0xf0	pool_records	KfPoolRecord[12]	supported	game_semantic_animation_pool.tsv;reviewed-reloc;asm;game-graphics-runtime-owner.md	complete animation cache: five lifecycle scans visit 12 records of stride 20
 KfGraphicsRuntimeGame	0x20318	0x3e88	unknown_projection_morph_20318	u8[16008]	opaque	game_graphics.h;asm;neighbor-field-extents;game-graphics-runtime-owner.md	unresolved storage interval; no original array capacity or padding role claimed
 KfGraphicsRuntimeGame	0x241a0	0x6	effect5_texture_pages	u16[3]	supported	game_semantic_effect5_texture_tables.tsv;asm;three-contiguous-stores;indexed-read;game-graphics-runtime-owner.md	three texture-page IDs prepared for floor mode five and indexed by the actor descriptor high nibble
@@ -299,7 +299,7 @@ KfGraphicsRuntimeOpen	0x200e0	0x28	display_disp_environments	DISPENV[2]	supporte
 KfGraphicsRuntimeOpen	0x20108	0x8	unknown_20108	u8[8]	opaque	open_render.h;asm;docs/patterns/open-graphics-runtime-owner.md	unclassified interval within the independently cleared region
 KfGraphicsRuntimeOpen	0x20110	0xc	tmd_state	KfTmdStateOpen	supported	open_render.h;asm;docs/patterns/open-graphics-runtime-owner.md	preserved subobject or field at its reviewed physical offset
 KfGraphicsRuntimeOpen	0x2011c	0x4	unknown_2011c	u8[4]	opaque	open_render.h;asm;docs/patterns/open-graphics-runtime-owner.md	unclassified interval within the independently cleared region
-KfGraphicsRuntimeOpen	0x20120	0x4	current_tmd_vertices	SVECTOR *	supported	open_render.h;asm;docs/patterns/open-graphics-runtime-owner.md	preserved subobject or field at its reviewed physical offset
+KfGraphicsRuntimeOpen	0x20120	0x4	current_tmd_vertices	KfPackedSVector *	supported	open_render.h;asm;docs/patterns/open-graphics-runtime-owner.md;typed-animation-vertices.md	preserved subobject or field at its reviewed physical offset
 KfGraphicsRuntimeOpen	0x20124	0x14	unknown_20124	u8[20]	opaque	open_render.h;asm;docs/patterns/open-graphics-runtime-owner.md	unclassified interval within the independently cleared region
 KfGraphicsRuntimeOpen	0x20138	0x1f40	tmd_projected_vertices	KfScreenVertex[1000]	supported	open_render.h;asm;docs/patterns/open-graphics-runtime-owner.md	preserved subobject or field at its reviewed physical offset
 KfGraphicsRuntimeOpen	0x22078	0x1f68	unknown_22078	u8[8040]	opaque	open_render.h;asm;docs/patterns/open-graphics-runtime-owner.md	unclassified interval within the independently cleared region
@@ -487,6 +487,8 @@ KfOpeningEntityState	0x50a	0x02	unknown_control_50a	u16	opaque	open_resources.h;
 KfOpeningEntityState	0x50c	0x02	unknown_control_50c	u16	opaque	open_resources.h;open_semantic_resources.tsv;asm;semantic-field-names.md:unresolved-consumer-audit	OPEN 0x80049a44: individual zero store at 0x800199cc, plus whole-owner clear; exact admitted relocations have no read. GAME pool-tail analogy remains candidate, not a recovered role.
 KfOpeningEntityState	0x50e	0x02	unknown_control_50e	u16	opaque	open_resources.h;open_semantic_resources.tsv;asm;semantic-field-names.md:unresolved-consumer-audit	OPEN 0x80049a46: individual zero store at 0x800199c4, plus whole-owner clear; exact admitted relocations have no read. GAME pool-tail analogy remains candidate, not a recovered role.
 KfOrderingTable	0x00	0x10000	entries	u32[16384]	supported	render_types.h;asm	ordering table entries
+KfPackedSVector	0x00	0x08	vector	SVECTOR	supported	tmd.h;asm;typed-animation-vertices.md	alternative view of the complete vertex
+KfPackedSVector	0x00	0x08	words	u32[2]	supported	tmd.h;asm;typed-animation-vertices.md	alternative view of the complete vertex
 KfPlayerAttackChargeState	0x00	0x02	current	u16	supported	game_player.h;asm;xrefs	current POWER charge
 KfPlayerAttackChargeState	0x02	0x02	committed	u16	supported	game_player.h;asm;xrefs	attack-time POWER snapshot
 KfPlayerLevelGrowth	0x00	0x02	maximum_hp	u16	supported	game_player.h;asm;xrefs	level maximum HP
@@ -598,7 +600,7 @@ KfPoolRecord	0x02	0x02	asset_index	u16	supported	pool.h;game_semantic_animation_
 KfPoolRecord	0x04	0x02	clip_index	u16	supported	pool.h;game_semantic_animation_pool.tsv;GAME:0x800207ac;GAME:0x800208c0	cached clip index; allocator and asset reinitialization invalidate it with 0xff
 KfPoolRecord	0x06	0x02	keyframe_index	u16	supported	pool.h;game_semantic_animation_pool.tsv;GAME:0x800207c0;GAME:0x800208ac	cached keyframe index compared with the binder selection
 KfPoolRecord	0x08	0x04	rest_morph	KfMorphObject *	supported	pool.h;game_semantic_animation_pool.tsv;GAME:0x800208a4;GAME:0x800208f8	asset-relative object-table target selected by the keyframe rest index
-KfPoolRecord	0x0c	0x04	cached_vertices	SVECTOR *	supported	pool.h;game_semantic_animation_pool.tsv;GAME:0x80020690;GAME:0x80020870	vertex_count times 8-byte allocation; full-weight morph cache passed to gteMIMefunc
+KfPoolRecord	0x0c	0x04	cached_vertices	KfPackedSVector *	supported	pool.h;game_semantic_animation_pool.tsv;GAME:0x80020690;GAME:0x80020870;typed-animation-vertices.md	vertex_count times 8-byte allocation; full-weight morph cache passed to gteMIMefunc
 KfPoolRecord	0x10	0x04	owner_slot	KfPoolRecord **	supported	pool.h;game_semantic_animation_pool.tsv;GAME:0x80020688;GAME:0x800209f4	address of the instance record-pointer slot; release clears the pointed-to slot
 KfPrimitiveBuffer	0x00	0x04	start	u8 *	supported	render_types.h;game_semantic_display_tmd.tsv;asm;xrefs	first byte of the primitive allocation range
 KfPrimitiveBuffer	0x04	0x04	end	u8 *	supported	render_types.h;game_semantic_display_tmd.tsv;asm;xrefs	one-past-end boundary initialized from start plus the overlay-specific buffer span

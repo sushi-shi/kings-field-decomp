@@ -17,7 +17,7 @@ typedef struct KfGraphicsRuntimeGame {
     u8 unknown_20108[8];
     KfTmdState tmd_state;
     u8 unknown_registry_20134[0xf0];
-    SVECTOR *current_tmd_vertices;
+    KfPackedSVector *current_tmd_vertices;
     KfPoolRecord pool_records[KF_ANIMATION_CACHE_CAPACITY];
     u8 unknown_projection_morph_20318[0x3e88];
     u16 effect5_texture_pages[KF_FLOOR5_ACTOR_TEXTURE_COUNT];

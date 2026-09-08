@@ -253,9 +253,9 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["data"], 2920)
         self.assertGreaterEqual(counts["functions_named"], 240)
         self.assertGreaterEqual(counts["data_named"], 100)
-        self.assertEqual(counts["structures"], 116)
-        self.assertEqual(counts["structure_fields"], 831)
-        self.assertEqual(counts["structure_fields_named"], 744)
+        self.assertEqual(counts["structures"], 117)
+        self.assertEqual(counts["structure_fields"], 833)
+        self.assertEqual(counts["structure_fields_named"], 746)
 
     def test_animation_cache_slots_share_one_pointer_type_without_layout_changes(self) -> None:
         structures = load_structure_identities(RETAIL_CONFIG)
@@ -284,7 +284,7 @@ class InventoryTests(unittest.TestCase):
                          "u16 phase;u16 vertex_count")
         pool_header = (REPO / "include/kf/pool.h").read_text()
         render_header = (REPO / "include/kf/game_render.h").read_text()
-        self.assertIn("extern u16 *render_bind_animated_instance(\n"
+        self.assertIn("extern KfPoolRecord *render_bind_animated_instance(\n"
                       "    KfPoolRecord **owner_slot", pool_header)
         self.assertNotIn("extern u16 *render_bind_animated_instance", render_header)
         self.assertIn("#include <kf/pool.h>", render_header)
@@ -304,7 +304,7 @@ class InventoryTests(unittest.TestCase):
             (0x04, "clip_index", "u16", 2),
             (0x06, "keyframe_index", "u16", 2),
             (0x08, "rest_morph", "KfMorphObject *", 4),
-            (0x0C, "cached_vertices", "SVECTOR *", 4),
+            (0x0C, "cached_vertices", "KfPackedSVector *", 4),
             (0x10, "owner_slot", "KfPoolRecord **", 4),
         )
         for offset, name, datatype, size in fields:
@@ -584,7 +584,7 @@ class InventoryTests(unittest.TestCase):
             "tmd_release_last_allocation": ("void", "KF_ENUM_PARAM(KfTmdSlot, s32) slot"),
             "tmd_select": ("void", "KfTmdSlot slot"),
             "tmd_select_object_vertices": ("void", "u16 object_index"),
-            "tmd_set_current_vertices": ("void", "SVECTOR *vertices"),
+            "tmd_set_current_vertices": ("void", "KfPackedSVector *vertices"),
         }
         identities = load_function_identities(RETAIL_CONFIG, required=True)
         common = (REPO / "include/kf/tmd.h").read_text()

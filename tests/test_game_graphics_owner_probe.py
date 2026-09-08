@@ -88,7 +88,7 @@ def standalone_source(unit):
     source = source.replace(
         '((KfScreenVertex *)game_graphics_runtime.unknown_projection_morph_20318)', 'tmd_projected_vertices')
     source = source.replace(
-        '((SVECTOR *)(game_graphics_runtime.unknown_projection_morph_20318 + 0x1f40))',
+        '((KfPackedSVector *)(game_graphics_runtime.unknown_projection_morph_20318 + 0x1f40))',
         'tmd_morph_scratch')
     source = source.replace('game_graphics_runtime.', '')
     source = source.replace('memset(&game_graphics_runtime, 0, sizeof game_graphics_runtime);',
@@ -137,7 +137,7 @@ class GameGraphicsOwnerProbeTests(unittest.TestCase):
     def test_named_morph_offset_cannot_hide_a_changed_physical_reference(self):
         source = '''enum { MORPH_SCRATCH_OFFSET_IN_PROJECTION_STORAGE = 0x1f40 };
             void control(void) {
-                consume(((SVECTOR *)(game_graphics_runtime.unknown_projection_morph_20318 + MORPH_SCRATCH_OFFSET_IN_PROJECTION_STORAGE)));
+                consume(((KfPackedSVector *)(game_graphics_runtime.unknown_projection_morph_20318 + MORPH_SCRATCH_OFFSET_IN_PROJECTION_STORAGE)));
             }
         '''
         unit = SimpleNamespace(unit='game.pool', source_path=Path('control.c'))
@@ -545,7 +545,7 @@ extern KfMaterialProbe material_probe;
                         '(KfScreenVertex *)graphics_owner_probe.unknown_projection_morph_20318')
                     source = source.replace(
                         'tmd_morph_scratch',
-                        '((SVECTOR *)(graphics_owner_probe.unknown_projection_morph_20318 + 0x1f40))')
+                        '((KfPackedSVector *)(graphics_owner_probe.unknown_projection_morph_20318 + 0x1f40))')
                     source = source.replace(
                         'asset_registry_entries',
                         '((KfAssetHeader **)graphics_owner_probe.unknown_registry_20134)')

@@ -200,3 +200,8 @@ interface diagnostics are tracked separately from the clean target-C census.
 The [matrix stage](typed-matrix-elements.md) replaces three whole-MATRIX
 reinterpretations with the SDK's element pointers. Both units remain exact;
 475 C pointer casts remain, down 331 from the start.
+
+The [animation-vertex stage](typed-animation-vertices.md) removes nine more
+casts using complete SDK/word vertex views and a record-pointer binder
+result. All 51 compared functions retain their instructions; 466 C pointer
+casts remain, down 340 from the starting count.

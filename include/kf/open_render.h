@@ -79,7 +79,7 @@ typedef struct KfGraphicsRuntimeOpen {
     u8 unknown_20108[8];
     KfTmdStateOpen tmd_state;
     u8 unknown_2011c[4];
-    SVECTOR *current_tmd_vertices;
+    KfPackedSVector *current_tmd_vertices;
     u8 unknown_20124[0x14];
     KfScreenVertex tmd_projected_vertices[KF_OPEN_PROJECTED_VERTEX_CAPACITY];
     u8 unknown_22078[0x1f68];
