@@ -201,3 +201,40 @@ and full-build audit recorded in the
 [pool consumer checkpoint](game-graphics-owner-pilot.md#pool-lifecycle-consumer-audit-at-81fa559).
 The map helper remains strict 88.888885%; all forty remaining functions still
 require strict 100% closure.
+
+## Group-boundary control at `8e26b18`
+
+Refresh the six GAME views, all 36 retail and 37 candidate words, the sole
+caller and neighboring boundaries, the exact image-display callee, shared
+types, initialized path and source history. The baseline remains 88.888885%,
+148 bytes, with native/traced whole-ELF parity. All fourteen exact siblings
+reproduce their retail words; the interaction dispatcher is a separate
+99.211440% partial. Calls remain proven and the five address pairs validated.
+The formatter has three divide-guard branches, two traps, a 24-byte frame,
+one call and its frame-restoring return slot, with no indirect transfers,
+strings or candidate outgoing references.
+
+At `800355c8..800355e4`, both caller arms define the group as zero or one;
+unsupported object IDs return before the call. The group is consumed only
+by addition of ASCII zero and a byte store. These facts permit testing an
+unsigned-byte argument without changing any reachable input or output. They
+do not prove that the original declaration was narrow. Keep the separate
+index argument signed-word: its full-word signed division and traps remain.
+
+First validate the byte-versus-word group behavior in a reduced formatter,
+then test `KF_ENUM_PARAM(KfMapImageGroup, u8)` on the actual private function.
+Preserve the caller's enum domain, all four stores, the floor-byte read,
+directory cursor and every arithmetic expression. This is a boundary-width
+hypothesis, distinct from the rejected digit temporaries and pointer-binding
+orders. Require an unchanged caller and exact siblings; reject an ineffective
+or contradicted width control instead of banking a signature assumption.
+
+The reduced word/byte controls emit identical 148-byte instruction streams.
+The byte source introduces a QI argument pseudo at EXPAND, but CSE1 removes
+the narrowing because only the stored byte is consumed. All three compiler
+builds agree on each complete ELF. The actual byte-group trial likewise
+reproduces all 37 baseline words, five ordered referents, the partial caller
+and fourteen exact siblings. Native/traced/debug whole-ELF parity holds for
+the actual baseline and trial. Reject the no-effect signature change;
+production C and the 88.888885% score remain unchanged. Generated evidence
+is under `build/gcc257/game-image-group-traces/`.

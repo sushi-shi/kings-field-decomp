@@ -118,3 +118,78 @@ relinking 110/116 units (PSX 1/1, OPEN 34/38, GAME 75/77), with six conflicting
 section-base cases and no data-artifact failures. These are not a clean
 whole-image closure. Unrelated dirty player/magic/effect/menu changes are
 preserved and excluded from this campaign's commit.
+
+## Frame back-edge Function Match Plan at `8e26b18`
+
+Fresh six-view GAME evidence, all 423 retail and 355 candidate words, caller
+and neighboring boundaries, shared menu types, source history and primitive
+helper/SDK instructions retain the 81.900710% baseline. Native and traced
+whole ELF objects agree. Retail has twenty ordered calls, 105 address pairs,
+five conditional branches and one validated internal jump; the candidate has
+the same calls and control policy but only 37 address pairs. Neither source
+nor inventory ownership changes during this experiment.
+
+Retail retains the page-member address before entering the frame head while
+materializing other descriptor fields independently. The earlier explicit
+page-pointer trial used the structured frame loop. First test the existing
+two back edges as a named frame label and `goto`, retaining the shared frame
+increment, release waits, input guard and all draw expressions. This is a
+separate source-control hypothesis from the earlier increment-tail repair.
+Inspect whether descriptor address definitions still move across the frame
+head. If that changes, test the independently observed page-member lifetime
+on this source form, without splitting its complete owner or caching values.
+
+Preserve positions 6/77 and 16/120, texture reflections, depth 2900, all
+halfword/byte stores, the authentic POLY_FT4 and the frame-restoring return.
+The unexplained extra 64 retail stack bytes remain outside this hypothesis.
+No padding, placeholder objects, volatile accesses or constant carriers are
+permitted. Only strict 100% with raw-word verification permits banking.
+
+The frame-label control reaches 96.560290% and 1668 bytes. All 105 address
+pairs are present, with the page pair now placed after the first semi-trans
+call instead of before the frame head. Other descriptor loads use their
+retail absolute addresses. The constants are initialized within the first
+draw region and the candidate saves five registers in forty bytes; retail
+initializes them before the head and saves six. Next compose the real page
+pointer assigned after `frame = 0` and before `next_frame`, leaving all
+other accesses through the complete menu asset owner. This tests that
+specific retained address lifetime without introducing coordinate carriers.
+
+The page-pointer composition reaches 96.664300%, still 1668 bytes, but
+retains a second CLUT-member address and emits 102 pairs instead of 105.
+Reject that composition: the extra CLUT lifetime contradicts retail.
+
+The decoded active-input branch is also the frame-loop exit test: zero input
+returns to drawing; nonzero input reaches the cue and final release wait.
+Test that exit-controlled form independently from the baseline: the settling
+arm increments the frame and supplies zero input, while the active arm reads
+PadRead; `do ... while (input == 0)` then precedes the cue and release wait.
+The zero input is consumed by the loop condition and represents a frame with
+input disabled. It is not a constant carrier or a new local. Keep the decoded
+shared increment and the original input call positions on every path.
+
+The input-exit control gives 81.534280%, 1424 bytes and 37 address pairs.
+Its settling path reaches a shared input test through a zero-result move,
+instead of retail's direct frame-head jump. Reject it.
+
+Three reduced two-quad controls reproduce the addressing distinction:
+structured iteration emits 288 bytes and retains a common descriptor base;
+the explicit back edge emits 324 bytes and independently materializes the
+non-page fields; adding the page pointer emits 328 bytes and keeps a second
+CLUT base. All three have native/traced/debug whole-ELF parity, as do the
+actual baseline and all three full-function trials.
+
+In the full baseline, CSE1 relates the fields to page pseudo 74; LOOP moves
+its definition before the frame head as UID 937. CSE2 keeps the related
+loads. With the explicit back edge, the original page definition remains
+inside the draw region and CSE2 selects the independent field addresses.
+The reduced controls reproduce both placements and address choices. The
+pinned source's `loop_optimize` starts from `NOTE_INSN_LOOP_BEG` notes; this
+explains the tested probe's scope, without identifying the historical compiler.
+
+Retain the frame-label result only as an isolated source frontier. It recovers
+68 address materializations but loses retail's pre-head page/coordinate
+initialization and changes the saved-register set. The page composition
+does not resolve that tradeoff. Production C remains unchanged at 81.900710%,
+and no function is banked. Complete generated controls and traces are under
+`build/gcc257/game-status-loop-traces/`.

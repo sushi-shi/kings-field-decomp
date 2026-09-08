@@ -215,3 +215,28 @@ The recorded observations describe this pinned GCC 2.5.7 probe; they do not
 establish the original source spelling or compiler. Generated dossiers,
 traces, debugger observations and raw comparisons remain under
 `build/gcc257/game-notification-revisit/`.
+
+## Message-value scope control at `8e26b18`
+
+Refresh all six GAME views, the complete 179-word retail body and 178-word
+candidate, the caller at `8002018c`, both adjacent functions, the numeric
+formatter, shared headers and source history. The baseline is unchanged at
+99.385475%, with five calls, a 56-byte frame, five internal jumps and one
+missing address pair. All three exact siblings reproduce their 53 retail
+words. No candidate, string, indirect transfer or SDK body needs promotion.
+
+The idle and rotation-exit cases both snapshot the current message ID from
+the same queue. Test one function-scope `KfNotificationId` for these mutually
+exclusive uses, preserving the byte type, every load and its source position.
+This asks whether separate case-local value ownership explains the remaining
+address selection; it does not change the control pointer or repeat the
+earlier pointer-binding and tail-snapshot trials. Preserve all fields, phase
+guards, modulo-eight updates and the numeric-message exception. Compare the
+first raw difference, ordered referents and exact siblings with native/traced
+parity before retaining anything.
+
+The shared-ID control emits the same 178 resolved words and ordered targets
+as the baseline. Both have native, traced and uninstrumented-debug whole-ELF
+parity. All three exact siblings remain byte-exact. The initial tail load is
+still phase-relative, so reject this control and leave production C unchanged.
+Generated evidence is under `build/gcc257/game-notification-cursor-traces/`.
