@@ -135,3 +135,32 @@ Ruff, whitespace checks and all 703 tests pass (135.803 seconds, nine skips).
 Full build retains the existing data/ownership/placement failures and zero
 artifact failures. GAME remains 324/362 and OPEN 106/108 exact; forty functions
 remain open, with no new bank entry from these trials.
+
+## Signed-word digit-expression control
+
+Function Match Plan: refresh GAME 8002c9d4/164-byte identity, disassembly,
+all four caller windows, callee, strings and strict state after hash-validating
+the configured retail files. Current baseline is 98.780490%; six blocks, three
+division-guard branches, one return, one image-display call and seven validated
+path address pairs agree. Retail reads the remainder into v0; current source
+uses v1 and retains the directory pointer in v0 rather than a0. This remains
+game path formatting, with the existing image-display helper as the boundary.
+
+Test a three-state JSON digit-expression axis: existing signed numeric word
+locals; signed ASCII word locals initialized with quotient/remainder plus
+48; and signed quotient/remainder expressions at the two chained stores.
+The latter removes the numeric locals without changing the character-ID API,
+store ordering, byte destinations, pointer expression or signed division.
+The ASCII-word form is distinct from the earlier narrowed ASCII-byte trial.
+
+All three states remain 98.780490%. Independent recompilation proves the
+complete function raw listings, including relocation annotations, identical.
+Thus neither moving the signed digit arithmetic to its stores nor representing
+those actual digits as ASCII words explains the retail remainder/pointer
+allocation. Keep source unchanged and leave the function open. No result banked.
+
+Results: `build/hypotheses/20260908-183427-game-save_system-talk_show_dialogue_page`;
+manifest: `build/dialogue-digit-hypotheses.json`; independent listings:
+`build/dialogue-digit-objects`. Fresh baseline comparison is
+`build/dialogue-current-compare.txt`; retail references and callee/caller
+windows are in `build/dialogue-evidence.txt` and `build/dialogue-callers.txt`.

@@ -93,7 +93,7 @@ void menu_draw_item_name_frame(KF_ENUM_PARAM(KfItemId, s32) item_id)
     MATRIX rotation;
     MATRIX light_source;
     MATRIX light_result;
-    s16 *name;
+    const MenuGlyphRow *name;
     s32 i;
 
     rotation.t[0] = 0xdc;
@@ -119,12 +119,12 @@ void menu_draw_item_name_frame(KF_ENUM_PARAM(KfItemId, s32) item_id)
     SetTransMatrix(&rotation);
     menu_render_item_model();
 
-    name = item_name_rows[KF_ENUM_ENCODE(s32, item_id)].codes;
+    name = &item_name_rows[KF_ENUM_ENCODE(s32, item_id)];
     current_poly_ft4 = (POLY_FT4 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
     string.position.x = 0x80;
     string.position.y = 0x24;
     for (i = 0; i < MENU_GLYPHS_PER_ROW; i++) {
-        string.glyphs.codes[i] = name[i];
+        string.glyphs.codes[i] = name->codes[i];
     }
     menu_draw_string(&menu_assets.glyph_atlas, &string);
 
@@ -134,9 +134,9 @@ void menu_draw_item_name_frame(KF_ENUM_PARAM(KfItemId, s32) item_id)
     current_poly_ft4->clut = menu_assets.window_backdrop.clut;
     current_poly_ft4->x0 = MENU_PICKUP_BACKDROP_LEFT_X;
     current_poly_ft4->y0 = MENU_BACKDROP_TOP_Y;
+    current_poly_ft4->x1 = menu_assets.window_backdrop.width + MENU_PICKUP_BACKDROP_LEFT_X;
     current_poly_ft4->y1 = MENU_BACKDROP_TOP_Y;
     current_poly_ft4->x2 = MENU_PICKUP_BACKDROP_LEFT_X;
-    current_poly_ft4->x1 = menu_assets.window_backdrop.width + MENU_PICKUP_BACKDROP_LEFT_X;
     current_poly_ft4->y2 = menu_assets.window_backdrop.height + MENU_BACKDROP_TOP_Y;
     current_poly_ft4->x3 = menu_assets.window_backdrop.width + MENU_PICKUP_BACKDROP_LEFT_X;
     current_poly_ft4->y3 = menu_assets.window_backdrop.height + MENU_BACKDROP_TOP_Y;
@@ -156,9 +156,9 @@ void menu_draw_item_name_frame(KF_ENUM_PARAM(KfItemId, s32) item_id)
     current_poly_ft4->clut = menu_assets.window_backdrop.clut;
     current_poly_ft4->x0 = MENU_PICKUP_BACKDROP_RIGHT_X;
     current_poly_ft4->y0 = MENU_BACKDROP_TOP_Y;
+    current_poly_ft4->x1 = menu_assets.window_backdrop.width + MENU_PICKUP_BACKDROP_RIGHT_X;
     current_poly_ft4->y1 = MENU_BACKDROP_TOP_Y;
     current_poly_ft4->x2 = MENU_PICKUP_BACKDROP_RIGHT_X;
-    current_poly_ft4->x1 = menu_assets.window_backdrop.width + MENU_PICKUP_BACKDROP_RIGHT_X;
     current_poly_ft4->y2 = menu_assets.window_backdrop.height + MENU_BACKDROP_TOP_Y;
     current_poly_ft4->x3 = menu_assets.window_backdrop.width + MENU_PICKUP_BACKDROP_RIGHT_X;
     current_poly_ft4->y3 = menu_assets.window_backdrop.height + MENU_BACKDROP_TOP_Y;
@@ -178,9 +178,9 @@ void menu_draw_item_name_frame(KF_ENUM_PARAM(KfItemId, s32) item_id)
     current_poly_ft4->clut = menu_assets.window_backdrop.clut;
     current_poly_ft4->x0 = MENU_PICKUP_BACKDROP_LEFT_X;
     current_poly_ft4->y0 = MENU_BACKDROP_BOTTOM_Y;
+    current_poly_ft4->x1 = menu_assets.window_backdrop.width + MENU_PICKUP_BACKDROP_LEFT_X;
     current_poly_ft4->y1 = MENU_BACKDROP_BOTTOM_Y;
     current_poly_ft4->x2 = MENU_PICKUP_BACKDROP_LEFT_X;
-    current_poly_ft4->x1 = menu_assets.window_backdrop.width + MENU_PICKUP_BACKDROP_LEFT_X;
     current_poly_ft4->y2 = menu_assets.window_backdrop.height + MENU_BACKDROP_BOTTOM_Y;
     current_poly_ft4->x3 = menu_assets.window_backdrop.width + MENU_PICKUP_BACKDROP_LEFT_X;
     current_poly_ft4->y3 = menu_assets.window_backdrop.height + MENU_BACKDROP_BOTTOM_Y;
@@ -200,9 +200,9 @@ void menu_draw_item_name_frame(KF_ENUM_PARAM(KfItemId, s32) item_id)
     current_poly_ft4->clut = menu_assets.window_backdrop.clut;
     current_poly_ft4->x0 = MENU_PICKUP_BACKDROP_RIGHT_X;
     current_poly_ft4->y0 = MENU_BACKDROP_BOTTOM_Y;
+    current_poly_ft4->x1 = menu_assets.window_backdrop.width + MENU_PICKUP_BACKDROP_RIGHT_X;
     current_poly_ft4->y1 = MENU_BACKDROP_BOTTOM_Y;
     current_poly_ft4->x2 = MENU_PICKUP_BACKDROP_RIGHT_X;
-    current_poly_ft4->x1 = menu_assets.window_backdrop.width + MENU_PICKUP_BACKDROP_RIGHT_X;
     current_poly_ft4->y2 = menu_assets.window_backdrop.height + MENU_BACKDROP_BOTTOM_Y;
     current_poly_ft4->x3 = menu_assets.window_backdrop.width + MENU_PICKUP_BACKDROP_RIGHT_X;
     current_poly_ft4->y3 = menu_assets.window_backdrop.height + MENU_BACKDROP_BOTTOM_Y;

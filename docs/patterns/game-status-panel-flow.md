@@ -193,3 +193,75 @@ initialization and changes the saved-register set. The page composition
 does not resolve that tradeoff. Production C remains unchanged at 81.900710%,
 and no function is banked. Complete generated controls and traces are under
 `build/gcc257/game-status-loop-traces/`.
+
+
+## Shared-quad reconstruction
+
+Function Match Plan at `e56bbf8`: hash-validate retail and refresh all six
+GAME views for `8002430c`/1692 bytes. Read all 423 retail words, ordered
+references, the root caller, primitive begin/commit implementations, adjacent
+boundaries, source history, shared MenuTileSprite/POLY_FT4 types and both
+prior panel dossiers. The existing panel is 1420 bytes / 81.900710%, with
+20 calls, 37 address pairs and a 48-byte frame. Retail has 105 address pairs
+and a 112-byte frame. No string or indirect transfer is involved. The SDK
+SetSemiTrans provider remains independently archive-identified.
+
+The four quads repeat a single reflected-tile operation at (6,16), (77,16),
+(6,120), (77,120). Test full begin/fill/commit and fill-only inline boundaries
+with global or typed descriptor inputs; fill-only also admits the actual
+POLY_FT4 pointer as a control. Preserve every corner assignment, UV reflection,
+field width, source load order, depth 2900, frame-two release handling, shared
+increment jump and twenty machine calls. Do not add an unobserved frame object.
+
+All seven JSON states compile. The four global-packet helper forms emit
+identical 1692-byte bodies at 97.900710%, with 108 address pairs. They restore
+the independent descriptor loads but materialize tpage separately for each
+quad. The two explicit-packet forms instead produce 1524 bytes / 84.614655%
+with 80 pairs and lose retail's repeated global packet-pointer loads.
+
+Next compose the independently observed tpage cursor with the recovered
+helper. Pass the real page-field pointer through either full or fill-only
+helpers, preserving its four reads after SetSemiTrans. Both produce identical
+1692-byte bodies at 99.489365% and all 105 retail address pairs. Passing the
+page value to a fill-only helper instead yields 97.598110% and is rejected.
+Finally initialize frame before the page pointer, as retail does. This
+restores the three startup words at +20/+24/+28 and reaches 99.962170%.
+
+Keep the full shared helper with the page pointer. The canonical source uses
+one reflected-tile implementation and four calls, retaining authentic SDK and
+shared descriptor types. The explicit page pointer is the consumed field
+cursor observed in retail; neither a fake carrier nor a split data owner is
+introduced. The prior pointer-only control failed with the old duplicated
+source; the helper boundary is the additional independently tested structure.
+
+Separate fresh compilation after source cleanup matches the successful trial
+and the production object exactly. Resolving all references reproduces 407 of
+423 retail words. All twenty direct calls, 105 ordered address pairs, the
+internal jump, branch targets and drawing operations match. Exactly sixteen
+words differ: stack allocation at +0; saves at +4..+1c; restores at
++678..+690; and frame release at +698. All save/restore offsets and frame sizes
+differ by 64 bytes (retail 112, source 48). This residue remains unattributed.
+No padding or unused object is added and no partial function is banked.
+
+The delinked target independently reproduces all retail words. Wrong-owner
+and wrong-commit-target controls both fail raw equality. The preserved frame
+loop and all drawn packet operations therefore have full linked-instruction
+evidence beyond the percentage. This is not strict function closure.
+
+Generated JSON reports:
+`build/hypotheses/20260908-210929-game-menu_status_panel-menu_status_panel`,
+`build/hypotheses/20260908-211105-game-menu_status_panel-menu_status_panel`, and
+`build/hypotheses/20260908-211203-game-menu_status_panel-menu_status_panel`.
+Canonical verification is `build/status-quad-canonical-verification.json`;
+its script and all trial objects remain uncommitted under `build/`.
+The panel literal ledger now covers all seventeen occurrences, including
+explicit horizontal/vertical reflection flags at each helper call.
+
+The focused canonical match performs a real compile and reports 99.962170%.
+Ruff, all 713 tests (102.623 seconds) and `git diff --check` pass. Full
+`kf build` preserves GAME 337/362 exact, OPEN 106/108 and PSX 1/1; GAME
+aggregate similarity rises from 99.182% to 99.375%. Source-data matches remain
+GAME 11/41, OPEN 3/19 and PSX 0/1; target relink remains 75/77, 34/38 and
+1/1. Artifact failures are zero. Existing incomplete closure checks keep the
+full build nonzero. Generated README status and unrelated changes are excluded
+from this source/evidence commit.

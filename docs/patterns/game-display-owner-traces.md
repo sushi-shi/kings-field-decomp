@@ -78,3 +78,107 @@ bank rows and compiler profile are unchanged, so the verified `494484d` full
 build and 703-test checkpoint still apply. This refresh does not add three
 previously unreviewed consumers to the older owner audit. GAME remains 324/362
 and OPEN 106/108 exact; all forty remaining functions still require strict 100%.
+
+## Post-adoption typed-owner control
+
+After the complete owner was adopted, a fresh six-view retail audit and
+focused compile confirm `display_initialize` at 98.421684%. The remaining
+raw difference starts at +a4: the dtd anchor uses a0 rather than s0, and
+fog uses an additional absolute address pair. The existing 13 calls and
+post-setup store order remain the controls.
+
+Function Match Plan: compare direct owner members with a typed
+`KfGraphicsRuntimeGame *` scoped from the dtd assignments through SetFogNear.
+Use only the established complete owner and real members; preserve SDK types,
+constants and order. The two-state JSON result is 98.421684% for direct
+members and 79.421684% for the typed pointer. Raw inspection shows the pointer
+retains owner+0x20000 in s0, combines the byte stores under that base, forms
+PutDispEnv separately and expands the frame to 40 bytes. Retail retains
+owner+0x2003e and independent byte-address pairs. Reject the pointer trial;
+no canonical source or owner change is retained.
+
+Results: `build/hypotheses/20260908-182634-game-render-display_initialize`.
+Raw listings: `build/display-owner-objects`. This is a negative source-lifetime
+control, not a compiler-mechanism attribution.
+
+## Byte-assignment expression controls
+
+Function Match Plan: with the same six-view GAME 8001bb94/332-byte evidence
+and adopted complete owner, cross three two-state assignment axes in JSON:
+chained versus separate dtd stores, separate versus chained isbg stores, and
+separate versus chained RGB stores. Preserve the observed byte-store order
+(dtd 1 then 0, isbg 0 then 1, RGB r/g/b for each environment), real SDK field
+types, thirteen calls, constants and referents. These are assignment-expression
+controls; no new pointer, owner or padding is introduced.
+
+All eight states compile. The four chained-dtd states remain 98.421684%;
+the four separate-dtd states score 93.518074%. Independent recompilation and
+complete raw listings, including relocation annotations, prove each group
+byte-identical internally: neither isbg nor RGB chaining affects instructions.
+Splitting dtd changes the first post-setup instruction at +0x98, materializing
+owner+0x2009a in a0 before loading 1. The first environment dtd then uses an
+absolute store, and PutDispEnv derives its argument with +70 instead of +162.
+The extra absolute fog-store address remains. Retail instead loads 1 first
+and retains owner+0x2003e in s0. Reject the separate-dtd form; retain canonical
+source unchanged and leave the function open at 98.421684%.
+
+Results: `build/hypotheses/20260908-183009-game-render-display_initialize`.
+Manifest: `build/display-assign-hypotheses.json`; independently compiled raw
+listings: `build/display-assign-objects`. This batch yields no exact result.
+
+
+## Environment initialization inline boundaries
+
+Function Match Plan at `36859de`: hash-validate retail and refresh all six
+GAME views for `8001bb94`/332 bytes. Read the complete 83-word body, startup
+caller, adjacent texture/render initializers, source history, adopted owner
+layout and prior pointer/assignment controls. Baseline is 336 bytes and
+98.421684%, first differing at +a4: a0 rather than s0 holds the first dtd
+address. Preserve the 32-byte frame, thirteen proven calls, fourteen retail
+address pairs, one return and all delay slots. There are no branches, strings
+or unresolved transfers. SDK services retain LIBGPU/LIBGTE archive/header
+attribution; their implementations are not campaign source.
+
+Test three cohesive inline scopes: dtd/isbg/RGB initialization, those stores
+plus PutDispEnv, and the four default-environment calls plus those stores and
+activation. For each, use global fields, typed SDK array parameters, or the
+existing complete graphics owner. All nine hypotheses preserve store order:
+dtd 1 then 0, isbg 0 then 1, and RGB r/g/b for each environment. The baseline
+makes ten JSON states. No artificial local or field is introduced.
+
+All states compile and inline with the thirteen original machine calls.
+Independent fresh compilation and linked-word resolution give three groups:
+
+| States | Bytes / strict score | Raw result |
+| --- | --- | --- |
+| Baseline and all three global helpers | 336 / 98.421684% | All 84 words and fifteen address pairs identical. First difference remains +a4. |
+| Flags arrays/owner, activation arrays/owner, full setup owner | 340 / 94.253010% | Identical within the group. At +a4 the dtd store becomes absolute; PutDispEnv gains its own pair and a nop delay slot. Sixteen pairs; the fog pair remains. |
+| Full setup SDK arrays | 332 / 89.168680% | First difference +0: frame 40, extra s1 save. The first draw-environment base stays in s1 across setup calls; twelve address pairs. Matching extent does not imply matching source. |
+
+Reject every helper. All seventeen sibling functions preserve every retail
+word and ordered target. No canonical source, identity or bank change is kept.
+The JSON report is
+`build/hypotheses/20260908-205726-game-render-display_initialize`;
+the dossier and independent objects are `build/display-inline-evidence.txt`
+and `build/display-inline-objects`.
+
+A follow-up Function Match Plan returns the initialized graphics owner from
+the full environment helper, consuming it in the actual later fog-field
+store. Compare a global helper returning the owner with a helper accepting
+and returning that owner. Both preserve all dynamic operations and SDK types.
+The global-return form grows to 348 bytes / 94.686745%: after SetFarColor it
+materializes the full owner and adds 0x20000 before storing at +0x48a8, rather
+than reusing the retail dtd anchor. It retains fifteen address pairs and first
+difference +a4. The provided-owner form is raw-identical to the earlier
+340-byte/sixteen-pair group (94.253010%). All siblings remain retail-exact.
+Neither result is retained. The three-state report is
+`build/hypotheses/20260908-205844-game-render-display_initialize`, with
+independent controls under `build/display-result-inline-objects`.
+
+Both JSON baselines have the canonical source SHA; all thirteen states have
+no compile errors. Ruff, all 713 tests (103.393 seconds) and
+`git diff --check` pass. Full `kf build` retains GAME 337/362 exact and
+99.182% aggregate similarity. Data matches remain GAME 11/41, OPEN 3/19,
+PSX 0/1; target relink remains 75/77, 34/38, 1/1. Artifact failures are zero.
+Existing incomplete closure checks keep the full build nonzero. Generated
+manifests, sources and comparisons remain uncommitted under `build/`.

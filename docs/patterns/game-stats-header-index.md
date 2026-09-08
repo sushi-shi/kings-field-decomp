@@ -166,3 +166,94 @@ menu naming/layout changes are outside this source-and-evidence campaign.
 All 680 existing repository tests pass in 83.512 seconds; Ruff and
 `git diff --check` pass. No shared header, tooling, inventory or banking
 change belongs to this follow-up.
+
+## Header row and value inline boundaries
+
+Function Match Plan at `4bdb0e8`: hash-validate retail and refresh all six
+GAME views for `80025f38`/1440 bytes/97.991670%. Read all 360 retail words,
+three menu-root caller windows, neighboring configuration/details renderers,
+the complete glyph/number/formatter implementations, shared MenuGlyphString
+layout, source history and earlier index/layout controls. The no-argument
+void signature remains the curated candidate. This is game statistics policy;
+the three callees are game renderers/formatter, not reconstructed SDK bodies.
+
+Preserve the shared glyph-index lifetime, fourteen Y advances of 23, 28
+proven calls, 36 validated data pairs, nine branches, two internal jumps and
+one frame-restoring return. Retail uses a 72-byte frame and retains pitch 23
+from the first class-guard delay slot; canonical is 1428 bytes with a 64-byte
+frame. Do not invent a pitch carrier or additional glyph workspace.
+
+First test the row advance as an ordinary inline operation: a fixed-pitch
+MenuGlyphString pointer helper, a helper receiving the signed pixel pitch,
+or a helper returning the next unsigned-halfword Y coordinate. All four
+states including canonical compile. The coordinate-return form equals every
+canonical word/reference. The two pointer forms are identical: 1432 bytes /
+93.244446%, first difference +0x30 (initial Y retained in s3 rather than s2).
+They reproduce the frame but retain the glyph-string address in s1 and later
+s3, replacing repeated sp-relative call arguments; pitch remains immediate.
+Reject all three as explanations of the missing retail instructions.
+
+Next test all eight formatting/number-drawing pairs as one inline operation,
+or just the five existing next-row/format/draw sequences as one operation.
+Each scope uses either the global number atlas or an explicit typed atlas
+argument. All five states compile. The atlas interfaces are byte-identical
+within each scope. Format/draw emits 1432 bytes / 95.333336%, first differing
+at +0x204 when it retains sp+16 in s1 before drawing experience. Next-row
+format/draw emits 1428 bytes / 95.525000%; the first 576 bytes equal retail,
+including the frame. Its first difference is +0x240: X=237 uses v0 rather
+than v1. It still moves the second class comparison into the first guard's
+delay slot instead of retaining 23, and later retains gs/codes pointers in
+s3/s4. Recovering the prologue alone does not close this source boundary.
+Reject all four helpers and keep canonical source; nothing is banked.
+
+Independent disposable recompilation resolves all linked words. All nine
+states retain the complete 28-call and 36-address ordered target sequences,
+nine branches, two jumps and one return; no helper call survives. These
+counts do not substitute for the documented instruction differences.
+The single-claim target independently reproduces all 360 raw retail words.
+The source SHA256 remains
+`41c712940813fbdfb8b704c9a7a6b6b0be19856920c2cbb35503d093c9a3a52a`.
+Dossiers, manifests, independently compiled objects and verification logs use
+`stats-row-inline` and `stats-value-inline` prefixes under `build/`.
+JSON results are
+`build/hypotheses/20260908-222227-game-menu_draw_stats_header-menu_draw_stats_header`
+and
+`build/hypotheses/20260908-222411-game-menu_draw_stats_header-menu_draw_stats_header`.
+
+Full `kf build` retains GAME 337/362 exact / 99.428% aggregate, with zero
+artifact failures. Data matches remain GAME 11/41, OPEN 3/19 and PSX 0/1;
+target relinks remain 75/77, 34/38 and 1/1. Existing data/closure checks
+keep the build nonzero. No production source, profile, owner or bank changes.
+Ruff, all 713 repository tests (116.838 seconds) and `git diff --check` pass.
+
+## Current-source compiler profile controls
+
+At `cdc8059`, recompile the unchanged header above against the three existing
+GCC 2.5.7 profiles. This controls whether earlier profile observations still
+apply after the shared glyph-index correction; it does not establish the
+historical compiler. Revalidate retail with `kf init` and independently verify
+that the delinked target resolves to all 360 retail words before comparison.
+
+| Profile | Strict objdiff | Body bytes |
+| --- | ---: | ---: |
+| `probe-gcc257-o2-g0` | 97.991670% | 1428 |
+| `probe-gcc257-o2-plain` | 85.294440% | 1428 |
+| `probe-gcc257-o2-nosched` | 93.200000% | 1436 |
+
+All three first differ at +0: `addiu sp,sp,-64` versus retail's
+`addiu sp,sp,-72`. Each preserves the ordered 28 direct call targets and
+the multiset of 36 data addresses. Only the current profile preserves their
+complete order. Both alternatives exchange the first two address
+materializations: `game_graphics_runtime + 32` (`80070eb8`) precedes
+`menu_assets + 780` (`800583f4`), whereas retail orders them oppositely.
+This is an instruction-order difference, not evidence of missing ownership.
+
+No profile is exact; retain the production profile and canonical source.
+No compiler mechanism is attributed and nothing is banked. Disposable
+recompilation, resolved word/reference arrays, disassembly and strict scores
+are under `build/stats-profile-controls/`; the source hash remains unchanged.
+
+Full `kf build` still reports GAME 337/362 exact / 99.428% aggregate and
+zero artifact failures. Existing data/ownership/placement failures remain;
+data matches and target relinks equal the preceding control. Ruff, all 713
+repository tests (113.360 seconds) and `git diff --check` pass.

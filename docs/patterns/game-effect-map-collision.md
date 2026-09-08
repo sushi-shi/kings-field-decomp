@@ -385,3 +385,22 @@ The direct signed-halfword selection remains canonical. These controls leave
 the existing twelve-byte deficit and one missing known return frontier
 unattributed; no source, compiler profile, target referent or bank entry is
 changed.
+
+## Final-query inline boundary controls
+
+A fresh six-view pass on GAME `80037850` reconfirmed the 1900-byte target,
+32-byte frame, twelve validated address pairs, one world-query call, fifteen
+internal jumps, fourteen checked signed divisions and six raw switch rows.
+The six callers retain the VECTOR/word-radius interface and encoded return
+interpretation. Existing entry/return and orientation controls are not repeated.
+
+A three-state JSON campaign compared the local final class switch with a
+small inline helper receiving either the captured `KfEffectRecord *` or its
+actual type byte. Only the final target-class query moved across that boundary;
+all geometry, pointer-snapshot timing, flags and the defined default remained.
+Independent compilation and numeric relocation resolution prove all three
+forms identical in all 472 linked words, the sole call and twelve address
+pairs: 1888 bytes, strict 98.221054%. No extra helper call is emitted. The
+first raw difference remains the bounds-rejection branch at `+0x94`.
+Reject both no-effect boundaries and leave canonical source unchanged; neither
+the missing return block nor the orientation/default residues are explained.

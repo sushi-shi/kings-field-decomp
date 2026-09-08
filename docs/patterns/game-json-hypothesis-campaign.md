@@ -453,3 +453,152 @@ owner reaches 99.536964%/99.529780%. Pointer/direct reaches
 99.321360%/99.314170%. Only the exact combined source is retained.
 The [TMD dossier](game-tmd-enqueue.md#strict-closure-2026-09-08) records raw
 verification for every unit function and all switch targets.
+
+
+## GAME effect dispatch: Function Match Plan for value scopes
+
+At 78427bd, GAME `80038a38 effect_update_dispatch` / 6156 bytes remains
+strict 96.939570%. Fresh six-view evidence, full retail and source bodies,
+ordered-call comparison, sweep caller, both neighbors, magic-power body,
+shared signatures/layouts, source history and the complete earlier dispatch
+dossier were reviewed. Both bodies have 1539 words, 168-byte frames, 69
+ordered calls, 135 conditionals, 69 internal jumps and one return. The
+navigator counts 257 blocks with unresolved switch reachability; the 49
+RODATA pointers remain candidate xrefs, not individually promoted evidence.
+Source has 21 address pairs versus retail's 22: the kind-33 component base
+is retained across damage where retail forms both absolute fields again.
+The first raw difference remains the current-effect register at +0x30.
+
+The five power results have independent definitions and no cross-handler
+consumer: common collision, ground trail, radial blast, lightning radial
+blast, and ground-branch damage. Likewise the two collision/class values
+belong to the common and ground-trail query paths, while three unsigned
+scale intermediates belong to scatter, radial blast and lightning blast.
+Retail preserves each result only through its corresponding consumers:
+common power through audio/damage, radial powers across two damage calls,
+and each scale through its own stores. No handler passes these values into
+another handler through the proved shared sound, increment or return joins.
+
+Test eight combinations of keeping each family at function scope or defining
+it inside its actual handler/guard scope. This reconstructs distinct local
+values rather than making unrelated assignments share one source identity.
+Keep all expressions, widths, call/store order, shared joins, initialized
+radius, entry kind/phase/magic snapshots, complete SDK aggregates and the
+known uninitialized homing-distance read. The game-policy dispatcher remains
+separate from its SDK trig/matrix/random providers. No fake local, new data
+reference, forced lifetime or compiler option is introduced. Compare from
+the first divergence and reject added calls, wrong CFG/referents or merely
+cosmetic score gains; strict 100% is required before banking.
+
+
+### First scope batch and typed-family continuation
+
+All eight states compile without exact closure. Full scoping reaches
+97.257960% and 6156 bytes; power+scale reaches 97.166990%, power+collision
+97.011050%, baseline 96.939570%, scale alone 96.909035%, collision+scale
+96.824560%, power alone 96.629630%, collision alone 96.577644%. The best
+trial restores common collision/impact-magic/power to s2/s1/s7 but still
+moves the effect/radius and entry magic/kind registers, with the same first
++0x30 divergence. All 257 known CFG blocks and 135 branches remain, as does
+the kind-33 retained component address. No candidate is installed or banked.
+
+The remaining function-wide `radius` crosses two API domains: signed
+collision radius (100, with the emerging override 150) and unsigned radial
+damage radius (entry phase times 333). The shared signatures and the full
+retail def/use chains establish their independence. Likewise `value` names
+three independent results: signed trig output in scatter, the u32 world
+collision result during actor-spawner travel, and signed random selection
+during actor-spawner creation. None flows between those mutually exclusive
+operations or through a cross-handler label.
+
+Test eight states: original versus fully scoped exploratory source, each
+with shared versus distinct typed radius domains and shared versus distinct
+result domains. Preserve the genuine collision-radius initialization before
+dispatch, its emerging override and all three consumers. Preserve radial
+radius calculation before the power call and both damage uses; keep every
+value's calculation at its existing statement. This is type/identity recovery
+for separate calculations, not a declaration-order search. No force-inline,
+volatile, new call or new memory read is permitted. Inspect all raw results
+before retaining source; the higher earlier fuzzy result is not closure.
+
+### Typed-family verdict
+
+All eight further states compile; none is exact. Fully scoped plus distinct
+radius domains reaches 97.514620% with or without distinct result domains.
+The same scoped base without radius splitting stays 97.257960% with either
+result form. Original scope plus radius splitting reaches 97.111760% with
+either result form; original baseline remains 96.939570%, and splitting
+results alone reaches 96.662120%. Every state remains 6156 bytes.
+
+The best raw comparison still starts at +0x30 with the current-effect register.
+Entry effect/radius and magic/kind registers still differ; the common handler's
+collision, impact-magic and power registers now agree. The 257 known blocks,
+135 branches and 36 incoming return frontiers agree by ordered block position,
+without resolving indirect reachability. Kind 33 still retains the component
+base across the actor-damage call instead of retail's fresh absolute load.
+There is no new raw referent, call or CFG correction to retain. Canonical
+source stays at 96.939570%; these sixteen exploratory states remain unbanked.
+Generated results: `build/hypotheses/20260908-171741-game-effect_dispatch-effect_update_dispatch`
+and `build/hypotheses/20260908-172032-game-effect_dispatch-effect_update_dispatch`.
+
+## Player item argument promotion
+
+Function Match Plan: GAME `player_update`, 0x80018880, 6684 bytes,
+96.909640% before this correction. The six semantic queries are recorded in
+`build/player-update-evidence.txt`; callee evidence is in
+`build/item-abi-evidence.txt`. This is game input and player policy, not an SDK
+body. Retail passes the nonnegative menu result unchanged to `player_use_item`
+at 0x80018974, with a NOP delay slot. The exact callee retains byte semantics;
+its switch masks the argument. History before enum typing already declared
+the callee with a byte parameter but passed the menu result without a cast.
+
+Compare explicit byte decode against promoted-domain decode, keeping the
+callee declaration and body unchanged. Both JSON states compile to 6632 bytes.
+The promoted form reaches 96.945540% and removes the extra caller `andi`;
+the baseline remains 96.909640%. Canonical focused comparison confirms that
+correction. Keep the promoted decode to preserve the original argument
+conversion while retaining the modern enum domain. No exact claim or bank.
+The first remaining difference is the 224-byte retail versus 216-byte source
+frame; CFG remains 325/324 blocks, 189/189 branches and one return.
+Further frame, status-base reuse and scheduling differences remain unresolved.
+Results: `build/hypotheses/20260908-172920-game-player_update-player_update`.
+
+## Forward-probe cardinal dispatch controls
+
+GAME `map_object_probe_forward` at `80030eb8` (196 bytes) remains
+93.755104% in `game.map_object_pool`. The refreshed six semantic views,
+complete CFG, both caller windows, collision callee, adjacent functions,
+source history and prior forward-probe dossier were read before generating
+candidates. The two callers pass a word pointer and halfword-derived yaw,
+then compare the result with -1. Object X/Z are word fields at +8/+16;
+behavior is a byte in the eight-byte definition. The custom door policy
+remains game code. There are no strings or unresolved outgoing references.
+The one call, shared return, 32-byte frame, radius 3000, Y sentinel 65535,
+zero height, flags 0x21 and cardinal +/-2000 adjustments remain the controls.
+
+Function Match Plan: test the inner cardinal switch against a flat equality
+chain and a predicate tree corresponding to retail's quarter-turn comparison
+and 1025 split. Preserve the outer behavior switch, shared probe label,
+widths, ownership, single query and existing indeterminate unsupported-input
+paths. These controls test a previously untested inner dispatch boundary;
+they do not add a radius carrier or force a register.
+
+The JSON runner compiled all three candidates without changing canonical
+source. Baseline is 196 bytes / 93.755104%; the flat chain is 176 bytes /
+66.428570%; the split tree is 188 bytes / 76.693880%. Neither is exact.
+Separate disposable recompilation and raw disassembly show why neither is
+retained. The flat chain already changes the initial object-load order at
++8 and replaces the retail comparison tree. The split tree retains the
+original first difference at +0xc (X in a3 instead of t0), emits an unsigned
+1025 comparison rather than retail's signed comparison, reverses cardinal
+branch topology and duplicates the zero-height store on one path. Both
+retain radius setup in the call delay slot instead of recovering retail's
+two earlier materializations. One numeric collision call and the shared
+map-object-state referent remain, but internal jump targets change.
+
+The original switch source is unchanged; all seven sibling listings remain
+identical to retail in the focused canonical compile. These results reject
+the tested predicate forms and leave the existing residue unattributed.
+Generated manifests, sources and scores are in
+`build/hypotheses/20260908-173732-game-map_object_pool-map_object_probe_forward`;
+raw candidate listings are in `build/forward-dispatch-objects`.

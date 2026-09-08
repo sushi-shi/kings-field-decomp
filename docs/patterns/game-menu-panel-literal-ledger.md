@@ -1,6 +1,6 @@
 # Retained menu panel, map and list literals
 
-Complete current ledger of **103 numeric/character occurrences** across
+Complete current ledger of **108 numeric/character occurrences** across
 `menu_status_panel.c`, `menu_map_viewer.c` and `menu_list_render.c` after the
 [geometry review](game-menu-panel-geometry.md). This replaces the historical
 190-occurrence snapshot, including the superseded list workspace and loops.
@@ -95,22 +95,27 @@ explicit numeric boundaries.
 
 ## `src/game/menu_status_panel.c`
 
-12 retained occurrences.
+17 retained occurrences after the shared-quad reconstruction.
 
 | Function | Line | Token | Expression | Reason |
 | --- | ---: | --- | --- | --- |
-| `menu_status_panel` | 24 | `0` | `frame = 0;` | Zero-based panel draw counter starts before the first draw; the named release frame is tested after presentation. |
-| `menu_status_panel` | 25 | `1` | `while (1) {` | Unconditional panel loop; the explicit input-controlled return exits it. |
-| `menu_status_panel` | 30 | `1` | `SetSemiTrans(current_poly_ft4, 1);` | SDK Boolean 1 enables semi-transparency. |
-| `menu_status_panel` | 52 | `1` | `SetSemiTrans(current_poly_ft4, 1);` | SDK Boolean 1 enables semi-transparency. |
-| `menu_status_panel` | 74 | `1` | `SetSemiTrans(current_poly_ft4, 1);` | SDK Boolean 1 enables semi-transparency. |
-| `menu_status_panel` | 96 | `1` | `SetSemiTrans(current_poly_ft4, 1);` | SDK Boolean 1 enables semi-transparency. |
-| `menu_status_panel` | 123 | `1` | `while (PadRead(1) != 0) {` | Retain SDK PadRead selector 1; zero means no reported button bits. Release waits test nonzero, while dismissal tests a new nonzero sample. |
-| `menu_status_panel` | 123 | `0` | `while (PadRead(1) != 0) {` | Retain SDK PadRead selector 1; zero means no reported button bits. Release waits test nonzero, while dismissal tests a new nonzero sample. |
-| `menu_status_panel` | 128 | `1` | `input = PadRead(1);` | Retain SDK PadRead selector 1; zero means no reported button bits. Release waits test nonzero, while dismissal tests a new nonzero sample. |
-| `menu_status_panel` | 129 | `0` | `if (input != 0) {` | Any reported button bit dismisses the status panel after its release gate. |
-| `menu_status_panel` | 131 | `1` | `while (PadRead(1) != 0) {` | Retain SDK PadRead selector 1; zero means no reported button bits. Release waits test nonzero, while dismissal tests a new nonzero sample. |
-| `menu_status_panel` | 131 | `0` | `while (PadRead(1) != 0) {` | Retain SDK PadRead selector 1; zero means no reported button bits. Release waits test nonzero, while dismissal tests a new nonzero sample. |
+| `menu_status_draw_backdrop_quad` | 15 | `1` | `SetSemiTrans(current_poly_ft4, 1);` | SDK Boolean 1 enables semi-transparency for each emitted quad. |
+| `menu_status_panel` | 67 | `0` | `frame = 0;` | Zero-based panel draw counter starts before the first draw and before the retained texture-page pointer. |
+| `menu_status_panel` | 69 | `1` | `while (1) {` | Unconditional panel loop; the input-controlled return exits it. |
+| `menu_status_panel` | 73 | `0` | `menu_status_draw_backdrop_quad(MENU_STATUS_BACKDROP_LEFT_X, MENU_BACKDROP_TOP_Y, 0, 0, texture_page);` | Horizontal reflection flag: zero keeps the texture direction and one reverses it for this quadrant. |
+| `menu_status_panel` | 73 | `0` | `menu_status_draw_backdrop_quad(MENU_STATUS_BACKDROP_LEFT_X, MENU_BACKDROP_TOP_Y, 0, 0, texture_page);` | Vertical reflection flag: zero keeps the texture direction and one reverses it for this quadrant. |
+| `menu_status_panel` | 75 | `1` | `menu_status_draw_backdrop_quad(MENU_STATUS_BACKDROP_RIGHT_X, MENU_BACKDROP_TOP_Y, 1, 0, texture_page);` | Horizontal reflection flag: zero keeps the texture direction and one reverses it for this quadrant. |
+| `menu_status_panel` | 75 | `0` | `menu_status_draw_backdrop_quad(MENU_STATUS_BACKDROP_RIGHT_X, MENU_BACKDROP_TOP_Y, 1, 0, texture_page);` | Vertical reflection flag: zero keeps the texture direction and one reverses it for this quadrant. |
+| `menu_status_panel` | 77 | `0` | `menu_status_draw_backdrop_quad(MENU_STATUS_BACKDROP_LEFT_X, MENU_BACKDROP_BOTTOM_Y, 0, 1, texture_page);` | Horizontal reflection flag: zero keeps the texture direction and one reverses it for this quadrant. |
+| `menu_status_panel` | 77 | `1` | `menu_status_draw_backdrop_quad(MENU_STATUS_BACKDROP_LEFT_X, MENU_BACKDROP_BOTTOM_Y, 0, 1, texture_page);` | Vertical reflection flag: zero keeps the texture direction and one reverses it for this quadrant. |
+| `menu_status_panel` | 79 | `1` | `menu_status_draw_backdrop_quad(MENU_STATUS_BACKDROP_RIGHT_X, MENU_BACKDROP_BOTTOM_Y, 1, 1, texture_page);` | Horizontal reflection flag: zero keeps the texture direction and one reverses it for this quadrant. |
+| `menu_status_panel` | 79 | `1` | `menu_status_draw_backdrop_quad(MENU_STATUS_BACKDROP_RIGHT_X, MENU_BACKDROP_BOTTOM_Y, 1, 1, texture_page);` | Vertical reflection flag: zero keeps the texture direction and one reverses it for this quadrant. |
+| `menu_status_panel` | 87 | `1` | `while (PadRead(1) != 0) {` | SDK PadRead selector 1; zero means no reported button bits. Release waits retain their nonzero tests. |
+| `menu_status_panel` | 87 | `0` | `while (PadRead(1) != 0) {` | SDK PadRead selector 1; zero means no reported button bits. Release waits retain their nonzero tests. |
+| `menu_status_panel` | 92 | `1` | `input = PadRead(1);` | SDK PadRead selector 1; zero means no reported button bits. Release waits retain their nonzero tests. |
+| `menu_status_panel` | 93 | `0` | `if (input != 0) {` | Any reported button bit dismisses the panel after the release gate. |
+| `menu_status_panel` | 95 | `1` | `while (PadRead(1) != 0) {` | SDK PadRead selector 1; zero means no reported button bits. Release waits retain their nonzero tests. |
+| `menu_status_panel` | 95 | `0` | `while (PadRead(1) != 0) {` | SDK PadRead selector 1; zero means no reported button bits. Release waits retain their nonzero tests. |
 
 ## `src/game/menu_list_render.c`
 

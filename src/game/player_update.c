@@ -138,7 +138,7 @@ void player_update(void)
         && player_state.weapon_attack_phase == KF_WEAPON_ATTACK_INACTIVE) {
         item = menu_enter_mode(KF_MENU_MODE_ROOT);
         if (item >= 0) {
-            player_use_item(KF_ENUM_DECODE(KfItemId, item));
+            player_use_item(KF_ENUM_DECODE(KF_ENUM_PROMOTED(KfItemId), item));
         } else if (item == KF_MENU_ROOT_GAME_LOADED) {
             pool_release_all();
             audio_close_vab();

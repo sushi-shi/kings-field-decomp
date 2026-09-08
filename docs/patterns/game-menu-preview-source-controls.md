@@ -154,3 +154,67 @@ The [compiler-trace campaign](game-preview-traces.md) replaces bank-pointer
 selection with conditional actual price values, recovering twenty more detail
 words and reaching 98.579230%. The detail name-copy residue and the preview
 three-word ordering residue remain open; this is not an exact closure.
+
+## Read-only glyph-pointer control
+
+Function Match Plan: refresh GAME 800279c4/440-byte six-view evidence and
+all 110 retail words. The seven proven callers, ten calls, eight validated
+address pairs, five blocks, two branches, one return and 152-byte frame retain
+the previous interface/SDK evidence. The current focused diff still consists
+only of the last item*20 shift preceding rather than following the name-table
+address pair. Complete-row, direct-index, cursor and loop controls above are
+not repeated.
+
+Test the selected glyph pointer as `const s16 *` rather than `s16 *`. The
+actual row is only read by this copy; preserve its ten-halfword layout, every
+load/store, signed item index, all calls and global mutability. Both JSON
+states score 98.181816%, and independent complete raw listings, including
+relocation annotations, are identical. Pointer qualification does not explain
+the stride/address schedule. Keep canonical source unchanged and leave the
+function open; nothing banked.
+
+Results: `build/hypotheses/20260908-185114-game-menu_item_model_preview-menu_item_model_preview`;
+manifest: `build/preview-const-hypotheses.json`; independent raw listings:
+`build/preview-const-objects`. Fresh evidence is `build/preview-const-evidence.txt`
+and the baseline comparison is `build/preview-current-compare.txt`.
+
+## Inline name-copy boundary controls
+
+GAME `800279c4`, 440 bytes, was tested with the existing local ten-glyph
+loop and two small inline helpers: glyph-pointer arguments and the established
+`MenuGlyphString`/`MenuGlyphRow` arguments. The repeated copy in the adjacent
+detail renderer supports testing this boundary without claiming an original
+helper identity. Preserve the full signed item index, 255 guard, ten calls,
+eight address pairs, all matrix/glyph workspaces and 152-byte frame.
+
+The three-state JSON campaign gives 98.181816% for the local loop and row
+helper, and 93.945460% for the glyph-pointer helper. Independent compilation
+and relocation resolution prove the row helper identical to the baseline in
+all 110 words and ordered references. Both helpers inline without another
+machine call and retain 440 bytes. The glyph-pointer helper instead forms
+its destination at sp+20 and stores at offset zero, versus retail's sp+16
+cursor with offset-four stores. Its counter/cursor initialization already
+changes `+0xc4`; it does not repair the name-table/stride ordering. Reject
+both helpers and keep the canonical local loop. These controls leave the
+original three-word ordering residue unattributed and do not bank an exact.
+
+The corresponding detail-renderer control was independently refreshed at
+GAME `80027b7c`, 732 bytes / 98.579230%. Its seventeen proven calls, twenty
+validated address pairs, three branches, seven blocks and 160-byte frame
+remain the boundary evidence; three exact unit siblings are controls.
+The row helper is identical across all 183 candidate words and references.
+The glyph-pointer helper scores 96.278690%, keeps 732 bytes and the same
+calls/referents, but changes the analogous cursor/counter region beginning
+at `+0xd4`, using a codes-array base rather than retail's string-base cursor.
+All three siblings reproduce their retail words in every independently
+compiled state. Neither helper is retained.
+
+A final two-state control per renderer moved the item-name row selection
+inside the row helper, passing the signed item ID along with the destination
+string. This tests the complete repeated selection/copy operation, leaving
+primitive-cursor publication, positions and all subsequent rendering outside.
+Independent compilation and numeric relocation resolution prove both inline
+forms identical to their respective canonical baselines: 440 / 732 bytes,
+98.181816% / 98.579230%, with first raw differences at `+0xc4` / `+0xd4`.
+The detail siblings remain exact. No helper control closes either function;
+canonical source is unchanged.

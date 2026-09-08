@@ -183,3 +183,48 @@ The final all-484-row comparison confirms forward probe is unchanged at
 is the independently closed effect scatter helper. Required full-build,
 lint, 649-test and raw verification results are recorded with the
 [scatter closure](game-effect-scatter.md#strict-and-raw-verification).
+
+
+## Collision-query inline boundary controls
+
+Function Match Plan at `ea26919`: initialize hash-identical retail, refresh
+all six GAME semantic views for `80030eb8`/196 bytes and read the complete
+49-word CFG. Review both caller windows, the shared collision signature and
+callee policy, neighboring source, source history and the prior per-case-call,
+owner-lookup and cardinal-predicate trials. The baseline remains 93.755104%,
+first differing at +0xc: point X uses a3 rather than t0. One proven world
+query, one validated data pair, five internal jump relocations and the shared
+return retain their existing evidence. No strings or indirect outgoing calls.
+This is game door policy, not a vendored body.
+
+Test the collision query as an inline operation with either fixed door policy
+(two signed point coordinates) or planar policy (coordinates plus the real
+radius and flags). The latter directly uses the existing world-query parameter
+types; no radius carrier is introduced in the caller. For each interface,
+compare a signed status return with the callee's unsigned packed-result return.
+The outer result and public signature remain unchanged. Preserve the shared
+probe label, switch topology, 32-byte frame, point-Y 65535, radius 3000,
+height zero, flags 0x21 and cardinal adjustments +/-2000. Unsupported inputs
+keep the existing indeterminate-result paths; no fallback is invented.
+
+All five JSON states compile to exactly the same 49 linked words, direct call
+and data address pair as baseline. Each is 196 bytes / 93.755104%, with first
+difference +0xc. Retail's two early radius materializations and Y-sentinel
+call delay slot remain unexplained; all four helpers retain the baseline's
+radius in the call delay slot. Seven sibling functions preserve complete
+retail instruction equality and ordered targets in separate fresh compiles.
+Reject the helper forms; no canonical source, identity or bank change is kept.
+
+The generated report is
+`build/hypotheses/20260908-210404-game-map_object_pool-map_object_probe_forward`.
+The refreshed dossier is `build/forward-inline-evidence.txt`; independent
+compiles and raw comparisons are under `build/forward-inline-objects` using
+`build/forward-inline-inspect.py` and `build/verify-forward-inline.py`.
+The matrix baseline SHA equals canonical source and all states have no compile
+errors. Generated artifacts remain uncommitted.
+
+Ruff, all 713 tests (104.427 seconds) and `git diff --check` pass.
+Full `kf build` retains GAME 337/362 exact and 99.182% aggregate similarity.
+Source-data matches remain GAME 11/41, OPEN 3/19 and PSX 0/1; target relink
+remains 75/77, 34/38 and 1/1. No artifact failures occur. The full build
+still exits nonzero on existing incomplete closure checks.

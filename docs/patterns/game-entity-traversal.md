@@ -134,3 +134,115 @@ strict matching to 97.380684% and reducing the candidate to 1416 bytes without
 changing the known successor lists or call set. The owner-only loader exact
 and remaining traversal/ownership differences are recorded there; traversal
 is still partial and is not banked.
+
+## Effect-pool record owner control
+
+A fresh six-view evidence pass for GAME `8001f218` retains the 1408-byte
+extent, 61 retail blocks, 40 branches, nine calls, 24 validated address pairs
+and one internal jump. The current strict baseline is 96.667610%, with a
+1416-byte candidate. The first instruction divergence remains the saved-origin
+register assignment; this control does not attribute that residue.
+
+The 60-byte `KfEffectRecord` owner is established by effect constructors and
+shared field declarations. Traversal reads signed word positions at +0x0c
+and +0x14, tests the render selector at +3, and advances by 60. Its temporary
+rendering view instead exposes halfwords at those positions and required
+pointer-punning reads to recover the full words. The pre-edit plan was to use
+`KfEffectRecord *`, `render_id`, and `position.vx/vz` for traversal, retaining
+one explicit rendering-view conversion at the existing emitter boundary.
+The emitter's low-halfword coordinate interpretation remains supported.
+
+The two-state JSON control emitted 1416 bytes and strict 96.667610% for both
+states. Separate pinned-profile compiles confirmed identical complete `.text`
+bytes and ordered relocation rows. Retain the typed owner correction because
+it removes obsolete temporary-view word reads without altering generated code.
+No function becomes exact and nothing is banked. The generated manifest and
+results are under
+`build/hypotheses/20260908-190153-game-render_scene-render_entities`.
+
+## Actor visibility join controls
+
+A fresh six-view pass on GAME `8001f218` confirmed the current 96.667610%
+strict baseline, 61 retail blocks, 40 branches, nine calls and 24 address
+pairs. The actor join receives either a raw visibility byte or an unsigned
+comparison result; its only observer is a zero test. A four-state JSON
+campaign tested the existing byte local, unsigned/signed word locals and an
+explicit Boolean conversion of the grid byte. No pool, coordinate, owner,
+countdown, call or signature changed.
+
+Independent compilation and numeric relocation resolution proved the byte
+and both word forms identical across all 354 candidate words and ordered
+references. Explicit normalization scored 96.312500% at the same 1416 bytes;
+its sole changed instruction is `+0x1a0`, replacing the retail `nop` in the
+join jump delay slot with `sltu v0,zero,v0`. All nine call targets and 24
+address pairs remain unchanged. No variant is retained: widening supplies
+no new evidence and normalization contradicts the observed raw-byte join.
+The baseline still first differs at `+0x5c` and remains partial.
+
+## Visibility and emission inline boundaries
+
+Function Match Plan at `eba19b7`: refresh GAME `8001f218`/1408 bytes with
+all six semantic views and read the complete 352-word retail stream, caller,
+shared pool/emitter types, source history and previous ownership/visibility
+controls. The current candidate is 1416 bytes / 96.667610%. Preserve its
+48-byte frame, nine calls, five pool passes, signed-halfword countdowns,
+wrapped row/column coordinates, signed world-coordinate division checks,
+raw visibility byte and actor square-culling alternative. SetLightMatrix
+retains its separate SDK LIBGTE/MTX attribution; no vendor body is changed.
+
+Four of the five passes repeat the same row-first visibility test. Test
+per-record typed inline helpers for map objects/events, floor items/effects,
+or both pairs. The helpers return the raw grid byte on success and hidden
+on either failed bound; their parameter types preserve the complete existing
+record owners. Each emitter remains guarded by that value in the caller.
+This is a source-boundary hypothesis, not proof of historical helper identity.
+
+| Boundary | Bytes | Strict % |
+| --- | ---: | ---: |
+| Canonical | 1416 | 96.667610 |
+| Cell-coordinate visibility helpers | 1432 | 94.963066 |
+| World-coordinate visibility helpers | 1428 | 94.647730 |
+| Both helper pairs | 1444 | 92.562500 |
+
+All four states inline and preserve the nine ordered calls and 24 baseline
+data pairs. The first retail difference stays at +5c. Helpers introduce
+zero-result assignments and additional jumps joining successful grid reads
+with rejected bounds; they do not reproduce retail's direct skip-to-next
+paths. Reject these return-value forms.
+
+A separate two-state plan tests the active texture-page destination lifetime.
+Retail forms its address before the floor-count/page/CLUT reads, whereas the
+candidate forms it afterward. Declare a u16 pointer to that actual field,
+bind it before the existing count snapshot, and use it for the page store.
+No store/read order or owner changes. Both states remain identical across
+all 354 words and ordered calls/data pairs at 96.667610%; the explicit view
+does not recover the earlier address formation and is not retained.
+
+The next four-state plan includes each existing emitter inside its typed
+visibility helper. This removes the need to return hidden on failed bounds
+and directly tests the extra join paths found above. All three helper forms
+are identical to canonical across every linked word and ordered reference:
+1416 bytes / 96.667610%. Reject them as explanations of the residue. The
+actor alternate path, all material stores and every loop remain unchanged.
+
+Independent disposable compilation resolves every trial against the curated
+identities and checks the target's complete word stream against raw retail.
+All three JSON baselines match current source. The 24 candidate data pairs
+are identical across all ten states, but are not in retail order: the active
+page destination follows the count/page/CLUT reads rather than preceding them.
+Equal pair counts alone are not reference-sequence equality. No source,
+identity, data claim or bank entry is changed; the function remains partial.
+
+Results are under `build/hypotheses/` with runs
+`20260908-214539-game-render_scene-render_entities`,
+`20260908-214706-game-render_scene-render_entities` and
+`20260908-214835-game-render_scene-render_entities`.
+Manifests and independent objects use the `entities-inline-visibility`,
+`entities-page-pointer` and `entities-inline-emission` prefixes under `build/`;
+fresh evidence is `build/entities-inline-visibility-evidence.txt`.
+
+Full `kf build` preserves GAME 337/362 exact / 99.428% aggregate and the
+existing data/relink failures: data GAME 11/41, OPEN 3/19, PSX 0/1; relinks
+75/77, 34/38 and 1/1. Artifact failures remain zero. Only documentation is
+changed; the preceding successful 713-test/Ruff run covers the unchanged
+production code, configuration and tests. Whitespace checks pass again.

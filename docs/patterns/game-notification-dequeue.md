@@ -297,3 +297,86 @@ Ruff, all 735 repository tests (124.410 seconds) and `git diff --check` pass.
 Function-scoped banking records only GAME `8001fafc`; the other baseline
 rows and unrelated staged files remain untouched. Twenty-three GAME
 functions still require strict closure.
+
+## Completed-case exit control
+
+Function Match Plan: refresh GAME 8001fafc/716-byte six-view evidence,
+all 179 retail words and the render-frame caller at 8002018c. Fresh focused
+comparison still reports 18 matching block successor lists, ten branches,
+one return and the previously identified independent-tail-address omission.
+The no-argument game state machine retains five game-helper calls, 36 retail
+address pairs, five internal jumps and the 56-byte frame. Shared control/sprite
+types, digit helper, buffer-flip boundary and prior pointer/loop controls are
+unchanged. Preserve phases, widths, all stores and modulo-eight dequeue.
+
+Test two JSON states: the existing three completed-case breaks, and direct
+returns at those same sites. Since the switch is the final function operation,
+the exits have identical behavior for every phase, including unlisted values.
+Neither changes loop tests, call sites or any source object. Both compile at
+99.385475%. Independent complete raw listings, including relocation annotations,
+are identical. The compiler still reuses the phase base for the initial tail
+load, emitting 712 bytes rather than retail 716. Reject the exit-form hypothesis;
+keep source unchanged and leave the function open. Nothing banked.
+
+Results: `build/hypotheses/20260908-184454-game-notify_queue-notify_effect_update`;
+manifest: `build/notify-exit-hypotheses.json`; independent raw listings:
+`build/notify-exit-objects`. The fresh dossier is `build/notify-exit-evidence.txt`
+and focused baseline comparison is `build/notify-current-compare.txt`.
+
+## Strict closure through the dequeue boundary
+
+Function Match Plan at `d8be864`: refresh all six GAME views for `8001fafc`,
+716 bytes / 99.385475%, and inspect the frame-renderer caller, both adjacent
+functions, shared notification types, source history and previous controls.
+The game-authored state machine retains five calls, 36 validated address
+pairs, five internal jumps, ten branches and a 56-byte frame. No vendor body,
+new storage or relocation correction is involved. Preserve the initial phase
+snapshot, signed narrowed angle, sprite-reset order, modulo-eight tail update,
+numeric-message exception and final phase clear.
+
+Test the complete dequeue operation as an ordinary inline helper. Its initial
+message snapshot and duplicate-consumption loop form a self-contained operation
+following the six sprite clears. Compare global access, explicit control/ID
+array arguments, and the initial ID passed by value against the local block.
+These are source-boundary hypotheses, not evidence of an original helper name.
+No forced inlining, new machine call or changed object view is requested.
+
+| Dequeue boundary | Bytes | Strict score |
+| --- | ---: | ---: |
+| Local block | 712 | 99.385475% |
+| Global-access inline helper | 716 | **100%** |
+| Control and ID-array arguments | 712 | 92.067040% |
+| Captured ID argument | 712 | 99.385475% |
+
+The global-access helper alone restores the independent `lui v0` / `lbu v0`
+queue-tail load at `+0x240/+0x244`, retaining the control base in v1 and the
+phase-relative pointer formation. This also restores all five internal jump
+addends and three affected forward-branch displacements. The captured-ID form
+is identical to the local block across all linked words and references. The
+pointer-argument form keeps only 712 bytes and produces 38 address pairs;
+it does not explain retail.
+
+Keep `notify_dequeue_group` with the exact existing operations and call it
+from the completed rotate-out case. Independent compilation of all four JSON
+states preserves all three exact siblings. Fresh canonical compilation then
+matches both the winning trial and retail in all 232 unit instruction words:
+40 enqueue, six digit setter, 179 updater and seven buffer flip. The updater
+retains all five numeric call targets and 36 ordered address pairs. Moving the
+graphics owner's address by four bytes changes fourteen updater words,
+including `+0x244`, confirming sensitivity to the corrected referent.
+
+This establishes a matching source boundary under the pinned profile; it does
+not prove historical helper spelling or attribute a compiler optimization.
+GAME advances **336 to 337 / 362 exact**, and `game.notify_queue` is **4/4**.
+Generated evidence: `build/notify-inline-evidence.txt`; four-state manifest:
+`build/notify-inline-hypotheses.json`; scores and trial sources:
+`build/hypotheses/20260908-200603-game-notify_queue-notify_effect_update`;
+canonical raw checks: `build/notify-inline-canonical-raw.json`.
+
+Full `kf build` confirms 337 GAME, 106 OPEN and one PSX exact. It retains
+existing data/ownership/placement failures: GAME data 11/41 and target relink
+75/77, OPEN data 3/19 and relink 34/38, PSX data 0/1 and relink 1/1; there are
+no artifact failures. Ruff, all 713 repository tests (108.119 seconds) and
+`git diff --check` pass. Scoped `kf bank --unit game.notify_queue --dirty` records
+only these four exact rows, refreshing the three unchanged sibling hashes.
+Unrelated dirty source inputs and generated trial files remain unbanked.

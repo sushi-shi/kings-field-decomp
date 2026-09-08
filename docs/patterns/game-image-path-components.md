@@ -238,3 +238,187 @@ and fourteen exact siblings. Native/traced/debug whole-ELF parity holds for
 the actual baseline and trial. Reject the no-effect signature change;
 production C and the 88.888885% score remain unchanged. Generated evidence
 is under `build/gcc257/game-image-group-traces/`.
+
+## Map decimal-expression controls
+
+Function Match Plan: refresh the GAME 80034d54/144-byte six-view evidence,
+CFG and sole caller window at 800355c0..80035600. Preserve signed-word group
+and index boundaries, the byte floor load, four byte stores, three checked
+division branches/two traps, one display call, five validated address pairs,
+and 24-byte frame. Current source remains 148 bytes/88.888885%; the address
+and floor-load order still leaves an extra load-delay nop. The preceding
+interaction routine and exact display callee retain the previously reviewed
+source/retail evidence. This is custom path policy, not a vendor body.
+
+Test the direct division/remainder baseline against signed ASCII-word digit
+locals and a signed remainder computed as `index - tens * 10`, with
+`tens = index / 10`. The quotient product remains within signed-word range,
+including at INT_MIN; preserve the existing store order and directory cursor.
+These decimal expressions introduce no new owner or parameter narrowing.
+
+Three JSON states compile: direct and ASCII-word forms both score 88.888885%;
+independent complete raw listings, including relocations, are identical. The
+quotient-subtraction form scores 74.027780% and grows to 160 bytes. Its first
+word already uses v1 for divisor 10 instead of retail v0, and it replaces
+retail mfhi with two shifts, an add and a subtraction. The directory still
+precedes the floor load, and the extra load-delay nop remains. Reject both
+trials as explanations of retail; source remains unchanged and unbanked.
+
+Results: `build/hypotheses/20260908-183712-game-map_scripts-map_show_screen_image`;
+manifest: `build/map-screen-digit-hypotheses.json`; independent raw listings:
+`build/map-screen-digit-objects`. Evidence refresh: `build/map-screen-evidence.txt`
+and `build/map-screen-cfg-caller.txt`.
+
+## Map path inline boundaries
+
+Function Match Plan at `dda02e5`: refresh all six GAME views for
+`80034d54` / 144 retail bytes, the sole caller at `800355ec`, current path
+owner, adjacent functions, display callee, signatures, history and prior
+cursor/digit trials. Current source is 148 bytes / 88.888885%. Preserve
+signed-word index division and its three guards/two traps, the floor-byte
+read, four ordered path stores, one display call, five retail address pairs
+and the 24-byte frame. This is game path policy with no vendor body change.
+The caller's group 0/1 and byte index do not prove a narrower public signature.
+
+Test the complete path-formatting operation as an ordinary inline helper:
+patch the global array, return that global array, or take and return the
+existing path buffer. All keep the directory-digit cursor, full path contents
+and exact statement order. These are source-boundary hypotheses; no explicit
+negative-offset call argument or substitute string owner is introduced.
+
+All three helper forms compile to the same 148-byte body at 95.111115%.
+Independent raw inspection shows that they recover the retail divmod registers
+and floor-load ordering, moving the first difference from `+0x30` to `+0x54`.
+However, they materialize the full path instead of its directory-digit base,
+write the floor digit through another symbol pair and leave a nop in the call
+delay slot. Six address pairs replace retail's five; the higher score does
+not justify losing the established cursor relationship. Reject all three.
+
+A separate three-state control isolates only the two filename-index stores,
+with the original directory cursor remaining in the caller. Both global-path
+and supplied-buffer inline helpers are identical to baseline in all 37 linked
+words, the sole display target and all five ordered address pairs. They stay
+148 bytes / 88.888885%, with the same first difference at `+0x30`.
+
+All seven independently compiled states preserve fourteen exact sibling
+bodies against retail and leave the partial interaction dispatcher unchanged.
+No extra helper call is emitted. Canonical source and bank remain unchanged;
+neither formatting boundary explains the complete retail body.
+
+Four-state results:
+`build/hypotheses/20260908-202814-game-map_scripts-map_show_screen_image`;
+three-state index results:
+`build/hypotheses/20260908-202950-game-map_scripts-map_show_screen_image`.
+Fresh evidence is `build/map-path-inline-evidence.txt`; independent raw checks
+are in `build/map-{path,index}-inline-raw-verification.log`.
+
+Both JSON baselines match the current source hash and all seven states compile.
+Ruff, all 713 repository tests (105.710 seconds), and whitespace checks pass.
+Full build retains GAME 337/362 exact and the existing data/relink failures,
+with zero artifact failures. No source or bank entry is changed by this batch.
+
+## TALK path inline boundaries
+
+Function Match Plan at `5eb368f`: refresh the six GAME views for
+`8002c9d4` / 164 bytes / 98.780490%, all four caller sites, the complete
+source, shared byte/word parameter types, display callee, adjacent boundaries,
+path owner, history and prior digit/cursor controls. Preserve seven ordered
+byte stores, signed division and its three guards/two traps, one display call,
+seven retail address pairs and the 24-byte frame. The custom dialogue policy
+remains outside the vendor inventory; no signature or owner changes are tested.
+
+A four-state JSON campaign compares local formatting with complete inline
+helpers that patch the global template, return it, or take and return a
+buffer. All three helpers recover v0 for the remainder but emit 168 bytes /
+95.707310%, with eight address pairs. The first difference moves from `+0x30`
+to `+0x64`: a0 holds the full path rather than path+6. The tens directory store
+gets an independent address pair and the call delay slot becomes a nop.
+Reject the three helpers because they lose the observed directory cursor.
+
+A three-state follow-up isolates the character ID's paired filename/directory
+writes. Its helper either owns the directory cursor or receives the existing
+caller cursor. Passing the cursor is identical to baseline in all 41 linked
+words, one numeric display target and seven ordered address pairs. The
+internal-cursor form scores 84.829270% / 164 bytes and first differs at `+0x3c`:
+it retains path+10 in v1, then derives the full path with minus ten, rather
+than retail's path+6 in a0 and minus six. All seven stores still target the
+same bytes; that does not establish the required ordered address sequence.
+
+All seven independently compiled states preserve the 22 exact sibling bodies
+against retail and leave the partial status-message wrapper unchanged. No
+extra helper call is emitted. No source or bank change is retained.
+Four-state results:
+`build/hypotheses/20260908-203526-game-save_system-talk_show_dialogue_page`;
+three character states:
+`build/hypotheses/20260908-203640-game-save_system-talk_show_dialogue_page`.
+Fresh evidence is `build/talk-path-inline-evidence.txt`; independent raw
+checks are in `build/talk-{path,character}-inline-raw-verification.log`.
+
+Both JSON baselines match the current source hash and all seven states compile.
+Ruff, all 713 tests (121.606 seconds), and whitespace checks pass. Full build
+retains GAME 337/362 exact and the existing data/relink failures, with zero
+artifact failures. Canonical source and bank remain unchanged.
+
+## Formatting-and-display inline boundary
+
+Function Match Plan at `8a5cdba`: refresh hashes and all six GAME semantic
+views for map `80034d54`/144 bytes/88.888885% and TALK
+`8002c9d4`/164 bytes/98.780490%. Read both complete raw bodies, all five
+caller paths, preceding/following source, exact display callee, shared
+signatures, path owners, history and the earlier formatting-only controls.
+The map signature remains a candidate; byte caller values do not independently
+prove narrower parameters. Both remain custom game path policy, with the
+existing display helper retaining its SDK boundaries.
+
+The earlier helpers ended before the display call. Test a complete inline
+format-and-display operation, once using its global path and once receiving
+the existing path buffer. This keeps each directory cursor and its consumer
+inside one operation, without returning a full-path pointer between scopes.
+Preserve four map/seven TALK byte stores in order, the signed divmod and
+three guards/two traps, one display call, and 24-byte frames. Retail has
+five map/seven TALK address pairs and derives the full path in the call slot
+from directory offsets five/six. Each JSON manifest has three states including
+canonical; no forced inline attribute, new data owner or parameter narrowing.
+
+All six states compile. Both map helpers emit 148 bytes / 95.111115%, with
+six address pairs. Their first difference is +0x54: they materialize path+0
+instead of path+5, add an independent floor-digit address pair and leave a
+NOP in the call delay slot. Both TALK helpers emit 168 bytes / 95.707310%,
+with eight pairs. Their first difference is +0x64: path+0 replaces path+6;
+an independent directory-tens pair and NOP call slot follow. Thus including
+the display consumer does not recover the retail cursor lifetime. Reject all
+four helpers and retain canonical source; nothing is banked.
+
+Independent disposable recompilation resolves every word and ordered call/
+address target. All fourteen exact map siblings and twenty-two exact TALK
+siblings reproduce complete retail bodies and references in every state.
+The partial interaction dispatcher and status-message wrapper are unchanged.
+Both canonical source hashes still match the manifest inputs. Evidence is
+`build/path-display-inline-evidence.txt` and
+`build/path-display-inline-verification.log`; independent objects use the
+`map-display-inline-objects` and `talk-display-inline-objects` directories.
+JSON results are
+`build/hypotheses/20260908-215959-game-map_scripts-map_show_screen_image` and
+`build/hypotheses/20260908-220004-game-save_system-talk_show_dialogue_page`.
+
+The lost cursor motivates one additional two-state plan per function: leave
+the existing directory cursor in the caller and pass it to the complete
+format-and-display helper. Keep global filename writes and the original
+complete-array display argument. This introduces neither an extra full-path
+view nor explicit negative-offset call arithmetic. Both new helpers reproduce
+canonical exactly in all linked words and ordered references: map remains
+148 bytes/88.888885%, TALK 164 bytes/98.780490%, both first differing at
++0x30. All 36 exact sibling controls and both partial siblings remain unchanged.
+Reject these two forms as well; moving the consumer is not the missing fact.
+Results are
+`build/hypotheses/20260908-220247-game-map_scripts-map_show_screen_image` and
+`build/hypotheses/20260908-220251-game-save_system-talk_show_dialogue_page`;
+independent verification uses the `path-directory-display` prefix.
+
+The full production build retains GAME 337/362 exact and 99.428% aggregate,
+with zero artifact failures. Source-data matches remain GAME 11/41, OPEN
+3/19 and PSX 0/1; target relinks remain 75/77, 34/38 and 1/1. Existing
+incomplete data/closure checks still cause its nonzero exit. Production
+source, configuration, profiles and bank entries are unchanged.
+Ruff, all 713 repository tests (102.621 seconds) and `git diff --check`
+pass on this final state.

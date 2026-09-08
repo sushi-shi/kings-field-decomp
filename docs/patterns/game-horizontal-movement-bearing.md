@@ -110,3 +110,109 @@ gates: data PSX 0/1, GAME 9/42, OPEN 2/19; target relinks 1/1, 75/77,
 34/38; six conflicting section bases and zero artifact failures. No new
 exact function is claimed or banked. Concurrent OPEN naming and unrelated
 documentation changes are excluded from this campaign.
+
+## Typed owner pointer controls
+
+A nine-state JSON campaign tested `player_move_horizontal` (GAME
+`0x800171fc`, retail 2088 bytes), keeping the established signature, field
+widths, operations and declaration order. Controls introduced pointers to
+its camera `VECTOR`, two-byte `KfMapCell`, floor-height word, their combinations,
+and the complete player object. These are source-shape hypotheses, not new
+ownership claims.
+
+| View | Strict score | Bytes | HI/LO pairs |
+| --- | ---: | ---: | ---: |
+| Existing direct fields | 96.568960 | 2128 | 43 |
+| Camera | 92.360150 | 2080 | 29 |
+| Map cell | 97.113030 | 2116 | 39 |
+| Camera and cell | 92.927200 | 2076 | 28 |
+| Floor height | 95.143680 | 2124 | 44 |
+| Camera and floor height | 92.390810 | 2080 | 29 |
+| Cell and floor height | 95.250960 | 2072 | 29 |
+| All three | 92.927200 | 2076 | 28 |
+| Complete player | 91.086205 | 2024 | 15 |
+
+Independent compilation and relocation resolution confirmed the same seven
+ordered direct calls and unchanged sibling function outputs in all states.
+Retail has 33 address pairs. The map-cell control first changes the existing
+entry address sequence at `+0x30`: it replaces the retained cell-Z pointer
+with a direct byte load and loses the floor-height anchor derived at offset
+`-22`. Its higher score does not establish a better reconstruction. The
+other views also remain non-exact. No variant was retained or banked; the
+existing first raw difference at `+0x2c` remains an unattributed residue.
+
+The narrower diagonal-block lifetime was also tested independently. Scoped
+player, camera and cell pointers scored 95.076630%, 95.890810% and 95.335250%
+with 2116, 2116 and 2120 bytes, respectively; address-pair counts were 40,
+40 and 41. None reproduced retail's cell-X anchor with camera accesses at
+`-31` and `-39`: camera Z still materialized separately, while the camera
+view only reused its own base for X. All three preserve the seven ordered
+calls and thirteen sibling outputs, but retain the first raw mismatch at
+`+0x2c`; their first new raw change is the initial cell-byte destination at
+`+0x38`. No scoped view is retained. Together these controls rule out these
+simple pointer spellings under the probe, not the underlying shared owner.
+
+## Starting-cell read and recentering boundaries
+
+Function Match Plan at `2ae04f0`: refresh hashes and all six GAME views for
+`800171fc`/2088 bytes/96.568960%. Read all 522 retail words, 49 outgoing
+rows (seven proven calls, 33 validated data pairs and nine internal jumps),
+three caller windows, adjacent functions, callee source, shared player and
+collision layouts, history and prior pointer controls. The 88-byte frame,
+SDK SVECTOR stores, signed-halfword retry counter, 58 conditional branches,
+word heading/distance and common return remain fixed. The routine is custom
+movement policy; rsin/rcos retain exact Release 2.5 LIBGTE GEO attribution.
+
+Retail reads the starting cell for the diagonal-range guard, then reads it
+again after both coordinate remainders at `8001763c`. Canonical carries its
+byte snapshot and emits an `andi` there. First compare canonical with an
+explicit indexed reread after the remainders and with a direct grid-range
+predicate followed by that reread. Both new states are identical: 2148 bytes /
+92.111115%, 46 data pairs, first difference +0 (80-byte frame). They recover
+a second load but reconstruct the cell address with seven arithmetic words;
+retail retains that address. They also add a separate floor-height pair at
+the collision call. Reject both; recovering one read does not recover the
+complete address and frame evidence.
+
+Next test inline recentering, either the camera-coordinate operation alone
+or that operation plus the following map-cell update. For each scope use
+global fields, the actual SDK VECTOR, or the complete KfPlayerState pointer.
+Preserve the signed remainders/half corrections, case predicates and store
+order. All seven states including canonical are identical in all 532 linked
+words, seven calls and 43 ordered data pairs. None explains the first +0x2c
+heading-register difference or the extra player-field materializations.
+
+A four-state follow-up isolates the retained starting-cell address: canonical,
+read-only cursor, cursor with explicit reread, and cursor passed into the
+recentering helper that reads it. All three cursor states are identical at
+2128 bytes / 96.176250%, with the same 43 pairs. Only four words differ from
+canonical, at +0x394..+0x3a0: the saved-cell load moves and index/base additions
+associate differently. The reread still disappears. No result is retained.
+
+The grid has real mutable writers in map_object_pool and the resource loader.
+A five-state control therefore compares canonical, those three cursor forms
+with mutable pointee type, and direct cursor reads in the initial predicate
+and first recentering dispatch. Mutable/read-only pairs are completely
+identical; no qualifier mechanism is established. The direct-read form reaches
+96.329500%, reproducing the earlier pointer control: its second lbu replaces
+the canonical andi, but it retains the changed index association, 2128-byte
+body and 43 pairs. It is not a new closure and is rejected again. All remaining
+arithmetic, calls, owners and source are unchanged; nothing is banked.
+
+All nineteen JSON states compile. Separate disposable recompilation proves
+all thirteen siblings equal their complete raw retail bodies and ordered
+references in every state; every delinked target also reproduces raw retail.
+The canonical source SHA256 remains
+`04a98ff5e573d89d3d5f19057b4dd6b75f6735ffe30a8320a849e7a54178cd05`.
+Generated dossiers, manifests, objects and verification logs use the
+`horizontal-{type-read,recenter-inline,cell-cursor,mutable-cursor}` prefixes
+under `build/`. The four JSON result directory names begin with
+`20260908-220928`, `20260908-221116`, `20260908-221313` and
+`20260908-221503` followed by `-game-player_core-player_move_horizontal`.
+
+Full `kf build` retains GAME 337/362 exact / 99.428% aggregate, with
+zero artifact failures. Data matches remain GAME 11/41, OPEN 3/19 and
+PSX 0/1; target relinks remain 75/77, 34/38 and 1/1. Existing incomplete
+data/closure checks keep the build nonzero. Production source, owners,
+profiles and bank entries are unchanged by this batch.
+Ruff, all 713 repository tests (102.725 seconds) and `git diff --check` pass.

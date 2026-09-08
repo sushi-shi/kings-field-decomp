@@ -187,3 +187,60 @@ units respectively. All thirteen vendored source controls remain exact.
 No banked function regresses; exact counts remain PSX 1/1, GAME 337/362 and
 OPEN 106/108, or 444/471 overall. Twenty-five GAME and two OPEN functions
 still require strict closure.
+
+## Window and complete-view pointer controls on master
+
+Function Match Plan at `5491cad3`: refresh the six GAME views, all 352
+retail words, the caller at `800202c0`, neighboring event/weapon emitters,
+all seven callee implementations/contracts, shared layouts, source history
+and the prior lifetime controls above. The current single-claim unit remains
+1408 bytes / 99.517044%. Nine calls, 24 address pairs, the internal jump,
+all branch destinations and 48-byte frame agree; thirty words differ in GPR
+operands. The game pool policy and separate SetLightMatrix SDK attribution
+remain unchanged. No source, signature, storage or inventory change is
+authorized by the score alone.
+
+The shared row/column correction motivates a separate three-state JSON test
+of window-pointer ownership: retain five local `g` pointers, reuse one `g`
+across the five passes, or reuse the initial `grid` pointer as well. Preserve
+each existing assignment position, every color member, all bounds and loads;
+do not hoist a current-window read across a call in source.
+
+| Window pointer | Strict match | Bytes | Unequal retail words |
+| --- | ---: | ---: | ---: |
+| Existing locals | 99.517044% | 1408 | 30 |
+| Shared across passes | 98.750000% | 1408 | 73 |
+| Shared initial and pass pointer | 99.133520% | 1408 | 54 |
+
+All three retain the nine ordered calls and 24 ordered address targets.
+Neither trial changes the first difference at +5c, the saved Z origin.
+Both add a window-register difference at +84/+88 in the map-object pass:
+shared-pass uses a0 and shared-initial uses a1, against retail a2. Reject
+both ownership forms; source remains canonical. A generated member-renaming
+typo was corrected before this complete three-state result; that failed
+compile is not a source verdict.
+
+Next test a pointer to the actual four-byte `struct KfVecXZs view_cell`
+subobject, retaining both signed-halfword members and their existing unsigned
+reads. This differs from the rejected scalar-Z pointer: it never indexes
+outside one field, and X/Z stay in their established owner. Bind it either
+before the actor pass for its two reads, or before the origin calculations
+for all four reads. Keep the window locals and every arithmetic expression
+unchanged; do not compose either rejected shared-window trial.
+
+The actor-only pointer emits 1408 bytes / 98.886360%. It anchors on X at
+`8009575c`, before the actor-base pair, rather than retail's Z address
+`8009575e` after that pair. Z uses +2 and X +0 instead of +0/-2. All nine
+calls remain, but the address sequence differs. The initial-and-actor pointer
+emits 1404 bytes / 97.119316% and only 22 address pairs, deriving its view
+base from the active-window address. Its first difference moves to +28.
+Reject both; neither preserves the independently observed address sequence.
+
+Independent recompilation resolves every trial against a target separately
+verified against all retail bytes. Both baselines reproduce the production
+body exactly. The two valid JSON matrices are
+`build/hypotheses/entity-window-lifetime-corrected` and
+`build/hypotheses/entity-view-cell-owner`; raw objects and complete linked
+word arrays are under `build/entity-window-objects` and
+`build/entity-view-cell-objects`. The canonical source, profile and bank
+remain unchanged. No compiler mechanism is inferred from these controls.

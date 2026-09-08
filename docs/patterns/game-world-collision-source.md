@@ -202,3 +202,68 @@ OPEN 98/108 and PSX 1/1, or 392/471 eligible functions; all thirteen vendored
 verification functions remain exact. The failed effect-helper return-form
 trial was restored to the committed 97.452630% source. No baseline changed,
 no banked function regressed, and no general CFG tooling was added.
+
+## Named ceiling-offset control
+
+Function Match Plan: refresh GAME 8001a5ac/1284-byte identity, complete
+321-word retail body/CFG, calls, data references, strings and strict state.
+The six signed-coordinate/radius/height and unsigned-flags O32 parameters
+retain the earlier sixteen-caller evidence. Fresh comparison reports 49
+blocks, 28 branches, one return, and matching known successor lists. Keep
+the five calls, 21 validated address pairs, eight internal jumps, 64-byte
+frame, terrain-first priority and all four optional output publications.
+
+Retail 8001a710..8001a728 loads the signed halfword attribute height, adds
+the caller's word height, tests its sign and adds floor height in the branch
+delay slot. Test naming that actual signed-word ceiling offset within the
+terrain branch instead of writing the same expression in both comparisons.
+Preserve the full-width addition, short circuit, table identity and return.
+No flag snapshot, new object, volatile access or storage padding is introduced.
+
+Both JSON states score 97.943924%. Independent complete raw listings, including
+relocation annotations, are identical. The named offset does not explain the
+eight-byte entry deficit or saved input-register differences. Keep canonical
+source unchanged; the function remains open and nothing is banked.
+
+Results: `build/hypotheses/20260908-184802-game-collision-collision_query_world`;
+manifest: `build/collision-ceiling-hypotheses.json`; independent listings:
+`build/collision-ceiling-objects`. Fresh full evidence and baseline diff are
+`build/collision-ceiling-evidence.txt` and `build/collision-current-compare.txt`.
+
+The preceding target-selection check rebuilt `game.render_map_cells`: its
+remaining per-cell differences are still exactly stack allocation/offsets,
+while the traversal's local `.data` spelling is a section-reference display
+difference. No unsupported local storage is added to address that residue.
+
+## Inline query-boundary controls
+
+Function Match Plan at `663d13f`: refresh the six GAME semantic views and
+all 321 retail words for `8001a5ac`/1284 bytes; retain the sixteen-caller
+O32 evidence, five callee contracts, shared owners, neighboring claims and
+prior source-history controls. The baseline remains 97.943924%, 1276 bytes,
+with 49 blocks, 28 branches, five calls, 21 address pairs and eight internal
+jumps. Its eight-byte deficit still corresponds to the stack-flags load,
+wait and copy sequence, alongside the saved input-register assignments.
+
+Test two cohesive inline boundaries without forced inlining: a cell query
+receiving the calculated flat cell and original six query values, and the
+four object-class checks after grid rejection. Preserve the public API,
+all checks and class priority, every optional transform/radius publication,
+full-width flags and the existing cell conversions. Each helper consumes
+only actual query inputs; no argument is added as a register carrier.
+
+The three-state JSON batch scores baseline and after-cell at 97.943924%,
+object-classes at 97.788160%; all emit 1276 bytes. Independent recompilation
+confirms the after-cell function's entire instruction/relocation listing is
+identical to baseline. The object-class boundary changes only nine words:
+terrain hit moves from t1 to v1, and the earlier flag intersection uses a0/v1
+instead of v1/t1. Those changes lose the already recovered shared hit roles;
+the deficient entry is unchanged. Symbol inspection confirms both helpers
+expand with no separate body, and the five original call targets remain.
+
+Reject both source forms, retain canonical source, and bank nothing. This
+rules out these inline boundaries under the current probe, without claiming
+historical compiler attribution. Fresh evidence is
+`build/collision-inline-evidence.txt`; the JSON report is
+`build/hypotheses/20260908-192212-game-collision-collision_query_world`.
+Independent raw listings and symbols are in `build/collision-inline-objects`.

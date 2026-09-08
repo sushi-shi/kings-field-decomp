@@ -261,9 +261,9 @@ void map_world_state_persist(void)
             u8 *link = object->link.bytes;
             s32 k = sizeof(object->link) - 1;
 
-            do {
+            for (; k != -1; k--) {
                 *out++ = *link++;
-            } while (--k != -1);
+            }
         }
     }
     *count_slot = active;

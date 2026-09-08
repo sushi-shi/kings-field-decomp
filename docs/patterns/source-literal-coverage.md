@@ -13,6 +13,12 @@ The separate [header ledger](header-literal-ledger.md) covers **53 headers /
 169 retained occurrences**, including 36 headers with zero retained tokens.
 Together the C and header ledgers account for **5,946 retained occurrences**.
 
+The later [status-quad reconstruction](game-status-panel-flow.md#shared-quad-reconstruction)
+updates the panel row from 12 to 17 occurrences: four repeated SDK Boolean
+tokens become one helper occurrence, and eight reflection flags describe its
+four calls. Headline totals retain the earlier naming snapshot; this update
+does not claim a new source-wide census.
+
 ## Current ledger coverage verified
 
 For **all 111 files / 5,777 occurrences**, explicit ledger rows were compared
@@ -203,7 +209,7 @@ retained literal reasons preserve these limitations without inventing semantics.
 | [menu_panels.c](../../src/game/menu_panels.c) | 56 | [complete ledger](menu-root-list-save-literal-ledger.md); [confirmation state](menu-confirm-state.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [menu_runtime.c](../../src/game/menu_runtime.c) | 100 | [complete runtime ledger](game-menu-runtime-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [menu_select.c](../../src/game/menu_select.c) | 95 | [complete equipment ledger](game-equipment-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
-| [menu_status_panel.c](../../src/game/menu_status_panel.c) | 12 | [complete panel ledger](game-menu-panel-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
+| [menu_status_panel.c](../../src/game/menu_status_panel.c) | 17 | [complete panel ledger](game-menu-panel-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [menu_two_option_prompt.c](../../src/game/menu_two_option_prompt.c) | 26 | [confirmation/item ledger](game-menu-confirm-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [notify_queue.c](../../src/game/notify_queue.c) | 92 | [complete ledger](game-notification-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [player_core.c](../../src/game/player_core.c) | 74 | [complete ledger](game-player-core-literal-ledger.md); [sound slots](game-player-sound-slots.md) | Current token/expression coverage verified; every occurrence has a reason. |

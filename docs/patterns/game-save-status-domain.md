@@ -144,3 +144,94 @@ menu-facing and cleanup channels while preserving their distinct mappings and
 pass-through values. It supersedes the earlier decision above to leave those
 returns as integers. The internal `KfSaveStatus` domain remains in place; the
 current complete save ledger has 135 retained occurrences.
+
+## Result-switch and inline-operation controls
+
+Function Match Plan at `663d13f`: refresh all six GAME views for
+`8002c510`/208 bytes, inspect the complete retail body and previously audited
+five caller windows, exact image-loader callee, adjacent claims, shared types
+and source history. Preserve signed-halfword selection and loader argument,
+24-byte frame, one table address pair, twelve internal jumps, one loader call,
+all message cases/default and full-word result forwarding. The indirect
+selection remains unresolved in the navigator; candidate table rows are not
+promoted by these experiments. The game-specific wrapper is not vendored.
+
+The existing 212-byte candidate is 97.980770%. Its first difference remains
+an extra `move a0,v0` after the loader; retail compares v0 directly with one,
+replaces one by minus one and otherwise returns the loaded result unchanged.
+Test the final result classification as a switch with direct case/default
+returns, then as a switch updating the result before a shared return. These
+are distinct from the prior if/conditional-expression controls. Both retain
+the same behavior for every possible word result.
+
+Three JSON states produce baseline 97.980770%, direct switch returns
+93.076920%, and switch update 96.538460%. Independent raw inspection shows
+that both retain the extra move. The direct-return switch reverses the branch
+and places minus one in its delay slot; the update moves through v1 and copies
+back to v0 in the return sequence. Neither explains retail.
+
+A separate three-state control tests an inline operation that accepts the
+selected signed-halfword image ID, calls the image loader, and translates its
+result. Selection stays in the original wrapper. Both the early-forward and
+conditional-update helper forms expand without a separate helper call/body.
+They retain the sole `menu_load_message_image` call and unchanged selection
+prefix, but reach only 91.730770% and 96.538460%. Both add result-copy work;
+the forwarding form also changes the branch polarity. Reject both.
+
+No production source, signature, profile, target inventory or bank entry
+changes. This rejects these source boundaries without attributing an
+optimizer limitation. Fresh evidence is `build/save-result-switch-evidence.txt`;
+results are under
+`build/hypotheses/20260908-191538-game-save_system-memory_card_show_status_message`
+and
+`build/hypotheses/20260908-191651-game-save_system-memory_card_show_status_message`.
+Independent listings are in `build/save-result-switch-objects` and
+`build/save-result-inline-objects`.
+
+## Status-selection inline boundaries
+
+Function Match Plan at `ea8d315`: refresh the six GAME views for
+`8002c510` / 208 bytes and recheck the five caller windows, neighboring
+buffer initializer, image-loader body, status types, source history and
+previous return/load helper controls. Baseline is still 212 bytes /
+97.980770%, with a 24-byte frame, one loader call, one table address pair
+and twelve internal jumps. Preserve both signed-halfword narrowing steps,
+all status cases/default, full-word result forwarding and the return delay
+slot. The fifteen table-row candidates remain unpromoted. This game policy
+wrapper does not reconstruct a vendor implementation.
+
+Test status-to-image selection as a signed-halfword inline helper, with
+one selected-value return or direct returns from each case. Leave the image
+load and result translation in the original wrapper. A separate two-state
+control then combines selection and image loading in one inline operation,
+returning the loader's word result to the unchanged outer translation.
+These boundaries differ from the earlier helper receiving an image ID and
+performing the load and translation itself.
+
+| Boundary | Bytes | Strict score | First raw difference |
+| --- | ---: | ---: | --- |
+| Local selection | 212 | 97.980770% | `+0xb0` |
+| Selection, shared return | 212 | 97.980770% | `+0xb0` |
+| Selection, case returns | 208 | 94.711540% | `+4` |
+| Selection and load | 212 | 97.980770% | `+0xb0` |
+
+Independent compilation and numeric relocation resolution prove the shared
+selection and selection/load helpers identical to baseline in all 53 words,
+the loader target and table address. Direct case returns remove the entry
+`move v1,a0` and select messages in a0, but keep the unwanted post-call
+`move a0,v0`; equal extent therefore does not close the function. All 22
+exact siblings still reproduce retail, and the partial dialogue sibling is
+unchanged in every state. No additional helper call is emitted.
+
+Reject all three boundaries and keep canonical source and bank unchanged.
+The three selection states are under
+`build/hypotheses/20260908-202034-game-save_system-memory_card_show_status_message`;
+the two selection/load states are under
+`build/hypotheses/20260908-202251-game-save_system-memory_card_show_status_message`.
+Fresh evidence is `build/status-selection-inline-evidence.txt`; independent
+raw checks are in `build/status-{selection,load}-inline-raw-verification.log`.
+
+Both JSON baseline hashes match the current source; every state compiled.
+Ruff, all 713 tests (110.760 seconds), and whitespace checks pass. Full
+`kf build` retains GAME 337/362 exact and the existing data/placement failures,
+with zero artifact failures. No source or bank entry changes from this batch.

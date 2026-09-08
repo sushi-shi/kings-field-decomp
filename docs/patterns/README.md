@@ -25,6 +25,11 @@ promotes a probe to a proven historical toolchain.
   vectors across actor, effect, player, map and targeting interfaces.
 - [typed-screen-coordinates.md](typed-screen-coordinates.md): shared packed
   word and SDK halfword views across GAME and OPEN projection consumers.
+
+- [game-json-hypothesis-campaign.md](game-json-hypothesis-campaign.md): JSON
+  source controls, per-function verdicts and exact actor-awareness wait join.
+- [game-branch-integration.md](game-branch-integration.md): integration verdicts,
+  preserved newer source models and current validation of four partial functions.
 - [gcc257-instrumentation.md](gcc257-instrumentation.md): source-pinned debug
   compiler, observational trace contract, controlled probes and OPEN residues.
 - [gcc257-address-quantities.md](gcc257-address-quantities.md): observed CSE
@@ -228,7 +233,8 @@ promotes a probe to a proven historical toolchain.
 - [game-shop-price-domains.md](game-shop-price-domains.md): typed buy/sell prices,
   shop-window rows, retail Gold Cross/key identities and the shop literal ledger.
 - [game-menu-preview-transform.md](game-menu-preview-transform.md): complete
-  shared preview rotation, draw-rate units, Q12 lighting and retained literal ledger.
+  shared preview rotation, draw-rate units, Q12 lighting and retained literal ledger;
+  pickup corner ordering recovers the complete tile/enqueue suffix at 99.570850%.
 - [game-menu-preview-source-controls.md](game-menu-preview-source-controls.md):
   audited name-row ordering residue and recovered sell/buy price-selection CFG.
 - [game-shop-menu-controls.md](game-shop-menu-controls.md): separate typed shop
@@ -336,7 +342,7 @@ promotes a probe to a proven historical toolchain.
   between the recovered notification fields and the wider graphics object.
 - [game-notification-dequeue.md](game-notification-dequeue.md): typed dequeue
   control subobject and late pointer binding recover retail base/offset forms;
-  the initial tail-load address materialization remains non-exact.
+  an inline dequeue boundary restores the initial tail load and closes the unit.
 - [game-warp-mode-domain.md](game-warp-mode-domain.md): checked shimmer modes,
   constructor kind identity and the renderer's Y-scale/yaw consumers.
 - [game-warp-literal-ledger.md](game-warp-literal-ledger.md): complete current
@@ -650,6 +656,9 @@ promotes a probe to a proven historical toolchain.
   parser match attempts, retained source improvements and instruction-level residues.
 - [game-parser-inline-helpers.md](game-parser-inline-helpers.md): pinned-compiler
   inline support, six parser helper experiments and the retained typed vertex copy.
+- [game-world-state-address.md](game-world-state-address.md): reader/writer
+  floor-address components and link countdown recover the writer's first
+  356 bytes; strict 97.528730%, with unchanged serialized state and exact siblings.
 - [game-world-state-layout.md](game-world-state-layout.md): the complete map
   runtime owner, preserved interior referents and newly exact spinner consumer.
 - [tmd-packet-header.md](tmd-packet-header.md): bounded packet-header inline
@@ -786,3 +795,6 @@ promotes a probe to a proven historical toolchain.
 - [GCC 2.5.7 typedef comparisons](gcc257-typedef-comparisons.md): a real-function
   control separates the s32 typedef from bare long, with limits on its
   relevance to the two remaining OPEN mismatches.
+
+- [GAME effect-slot sequence helper boundary](game-map-object-sequence-inline.md):
+  two acquire/publish inline boundaries preserve the spawn residue.

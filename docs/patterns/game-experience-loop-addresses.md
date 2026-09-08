@@ -107,3 +107,116 @@ repository tests and `git diff --check` pass. Full `kf build` was run; its
 existing data-placement/extent, target-relink and ownership failures remain.
 The separate audio-initializer match is the only changed function score in
 that 484-row comparison. No experience result is newly banked.
+
+## Maximum-level exit control
+
+A fresh six-view retail audit, complete body/CFG, actor call window, adjacent
+bodies, callee source and current comparison reconfirm the same baseline.
+Function Match Plan: replace only the level-255 loop break with an immediate
+void return. The loop is the function's final statement, so all progression
+work, widths, growth references, caps and the three calls remain unchanged.
+This tests a source exit boundary without changing pointer views or owners.
+
+Both JSON variants score 88.824814%. Independent recompilation produces
+identical complete raw function listings, including relocation annotations.
+The extra saved growth-table base and first frame-save difference remain.
+No canonical source change is retained. Results are under
+`build/hypotheses/20260908-182105-game-player_death-player_add_experience`,
+with raw listings in `build/experience-exit-objects`.
+
+## Growth-branch orientation control
+
+The next two-state JSON trial compares the existing `level >= 40`
+extrapolation-first branch with an equivalent `level < 40` table-row-first
+branch. Both preserve all stores, arithmetic, caps, calls and owner identities.
+The baseline remains 88.824814%; table-first scores 61.576640%. Independent
+raw inspection shows the same extra s2 save and retained growth-table +468
+address, plus the reversed branch layout and an index shift in its delay
+slot instead of retail's nop. No source change is retained. Results are in
+`build/hypotheses/20260908-182337-game-player_death-player_add_experience`;
+raw listings are under `build/experience-growth-objects`.
+
+## Inline growth boundaries
+
+A refreshed six-view pass for GAME `80016058` retains the 548-byte target,
+three calls, twelve address pairs, eighteen blocks and nine branches. The
+current 528-byte candidate retains one growth-table base across the loop.
+Test two inline boundaries without changing operations: extrapolation only,
+and the complete extrapolation/table-row selection. A follow-up passes the
+existing `KfPlayerState *` into each helper instead of accessing the global
+directly. The outer experience loop, byte-level boundary, all caps, field
+widths and three calls remain fixed; helper identities are hypotheses only.
+
+| Boundary | Bytes | Strict score | Address pairs |
+| --- | ---: | ---: | ---: |
+| Canonical local growth | 528 | 88.824814 | 5 |
+| Inline extrapolation | 592 | 85.846720 | 22 |
+| Inline full growth | 608 | 83.613140 | 28 |
+| Inline extrapolation with player argument | 592 | 85.846720 | 22 |
+| Inline full growth with player argument | 608 | 83.613140 | 28 |
+
+Independent compilation and numeric relocation resolution confirm the same
+three call targets and all twelve exact sibling bodies in every state.
+Each typed interface is identical to its direct-global counterpart across
+all words and references. The helpers recover the retail frame saves and
+initial experience-cap instructions, moving the first raw difference from
+`+4` to the changed entry-exit displacement at `+0x58`. They then exchange
+the progress/vitals anchor registers, introduce separate player-field address
+pairs, and load the magic increment earlier in the extrapolation block.
+Thus they recover neither the twelve-pair address sequence nor its field-load
+order. No source is retained or banked; the boundaries do not explain retail.
+
+## Inline growth with explicit player subobjects
+
+Function Match Plan at `216ebf5`: refresh all six GAME views for `80016058`,
+548 retail bytes / 88.824814%, and read its entire raw body, actor award
+caller, adjacent training/damage functions, growth loader, shared types,
+notification/audio/stat callees and previous loop/helper controls. The signed
+halfword entry, byte level, nine conditional branches, common return, three
+calls, twelve data pairs and internal jump retain the preceding evidence.
+The semantic navigator counts that internal jump as a thirteenth validated
+outgoing row; it is not another data address. The custom progression code
+remains separate from SDK providers.
+
+The earlier inline helpers recover the frame but lose player-address sharing;
+the earlier typed views were tested in local or label loops. Test their
+combination: extrapolation-only and complete-growth inline helpers, each with
+an explicit progress view, vitals view, or both. Initialize each view from its
+existing real subobject before the loop; pass the vitals view to the helper
+when used there. Keep unrelated player fields as complete-owner accesses.
+This adds no offset casts, overlapping globals or accesses outside a view.
+Preserve all arithmetic, field widths, stores, cap tests and the three calls.
+
+| JSON state | Bytes | Strict % | Data pairs | Frame |
+| --- | ---: | ---: | ---: | ---: |
+| Canonical | 528 | 88.824814 | 5 | 32 |
+| Extrapolation / progress | 600 | 78.284670 | 21 | 32 |
+| Extrapolation / vitals | 596 | 82.452550 | 17 | 40 |
+| Extrapolation / both | 596 | 81.102190 | 17 | 40 |
+| Complete growth / progress | 616 | 75.846720 | 27 | 32 |
+| Complete growth / vitals | 604 | 81.686134 | 21 | 40 |
+| Complete growth / both | 604 | 81.284670 | 21 | 40 |
+
+Every state compiles and preserves all three ordered call targets. The
+progress-only variants first differ at the saved-ra word (+4); vitals/both
+variants first differ at frame allocation (+0). They introduce independent
+player power/threshold references rather than recovering the twelve retail
+data pairs. The normal-row path and cap region also use different player
+anchors. No variant resolves the joint address/loop residue, so reject all
+six and retain the original body at 88.824814%. No function is banked.
+
+Separate disposable recompilation resolves all words and relocations. Across
+all seven states, the twelve sibling functions match their raw retail bodies
+and ordered calls/address pairs. The canonical source hash is unchanged.
+The JSON report is
+`build/hypotheses/20260908-213541-game-player_death-player_add_experience`;
+the manifest is `build/experience-inline-views-hypotheses.json`, the refreshed
+dossier is `build/experience-inline-views-evidence.txt`, and independent
+objects/checks are under `build/experience-inline-views-objects`.
+
+The full production build remains GAME 337/362 exact / 99.428% aggregate,
+with source-data matches 11/41 and target relinks 75/77. OPEN/PSX retain
+3/19 and 0/1 data matches, and 34/38 and 1/1 relinks. There are no artifact
+failures; existing data/relink gates keep the build nonzero. This follow-up
+changes documentation only. The preceding 713-test/Ruff run covered the same
+production source, configuration and tests; whitespace checks pass again.

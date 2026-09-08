@@ -139,3 +139,83 @@ implementation or flake are added or changed.
 | `0x800238d8` | `menu_equip_select` | 97.89973 | Unchanged linked code; partial |
 | `0x80022608` | `menu_use_item_panel` | 92.8218 | Unchanged linked code; partial |
 | `0x800249a8` | `menu_drop_item` | 98.85478 | Unchanged linked code; partial |
+
+## Pickup quad follow-up: corner order and shared row type
+
+### Function Match Plan
+
+At `af68261`, GAME `800292f8 / 1976`, `menu_draw_item_name_frame`, remains
+95.376520% under `probe-gcc257-o2-g0`. Fresh hash validation and all six semantic
+views confirm five calls from `item_pickup_confirm`, 23 direct outgoing calls,
+112 validated address pairs, one ten-halfword copy loop, one return with its
+stack-release delay slot, and no strings or unresolved indirect calls. The
+adjacent selection/sprite routines, primitive begin/commit bodies, authentic
+SDK packet and matrix types, `MenuTileSprite`, callers and source history were
+reviewed. The SDK providers retain their existing vendored attribution; the
+item preview and asset-specific tiling are game policy.
+
+Test the status-panel quad helper on the four repeated pickup tiles, preserving
+origins (118,16), (189,16), (118,120), (189,120), reflected UVs, descriptor
+widths, transform and glyph copy, and descending background-quad enqueue order.
+Compare explicit texture-page access and the natural corner order against the
+existing direct body. Require unchanged siblings and inspect resolved words,
+ordered calls and address pairs independently of the fuzzy score.
+
+The six-state JSON matrix tests the original body; global, explicit-page and
+fill-only helpers with the existing corner order; and global/explicit-page
+helpers with natural corner order. Existing-order helpers reach 93.975710%
+and emit identical 1996-byte bodies with 116 address pairs. Natural-order
+helpers reach 97.534420%, also mutually identical, at 1980 bytes. All preserve
+23 calls, but the helpers rematerialize the page and background references
+instead of retaining retail's shared page base. These forms are not retained.
+
+Raw comparison shows the original body's `y1`/`x2` stores precede the width
+load, whereas retail places them in the gap before the dependent `x1` store.
+That adds one NOP per tile. The next three-state matrix tests the original
+body, direct natural corner order, and a natural-order helper with an explicit
+caller-owned page pointer. Both new forms produce identical 1976-byte bodies
+at 99.570850%, retaining all 112 ordered address pairs and 23 calls. The direct
+form is retained. It visits the packet's corners in order without introducing
+a helper or changing any field expression, literal or API boundary.
+
+The remaining non-frame difference is the three-instruction item-name address
+sequence at +0xc0..+0xc8. A final four-state matrix compares the original body,
+the corrected corners, and mutable/const `MenuGlyphRow` pointers for the
+already-declared 20-byte name row. Both row-pointer forms produce exactly the
+same words as corrected corners alone; they do not explain the instruction
+order. Keep the const shared row type because this function reads the complete
+ten-code row without modifying it. No offset cast or overlapping datum is
+introduced. These are source hypotheses, not compiler-mechanism attribution.
+
+### Raw result
+
+Independent compilation of all thirteen matrix states preserves every other
+function in `game.menu_runtime`, comparing relocated instructions and ordered
+references. The retained function has 494 words; 479 equal raw retail. Twelve
+remaining differences are frame allocation/release and five register save/load
+pairs: retail reserves 224 bytes, candidate 160, with save slots uniformly
+64 bytes lower. The only other three differing words reorder the row-index
+shift and table-base address pair at +0xc0..+0xc8. Stack accesses to the real
+string and three matrices agree with retail; no unused object or padding is
+added to cover the unexplained 64-byte extent. The full tiling and background
+enqueue suffix agrees word-for-word from +0xcc to the epilogue.
+
+Final verdict: `menu_draw_item_name_frame` improves 95.376520% → 99.570850%,
+remaining partial. All fifteen siblings remain unchanged, including the
+partial `menu_draw_window_backdrop`; no new function is banked. Literal tokens
+and their meanings are unchanged in both existing ledgers.
+
+The remaining name-address ordering also occurs in the related
+[preview source controls](game-menu-preview-source-controls.md). Their row,
+const-pointer and inline-copy trials did not explain it either; this follow-up
+does not attribute that shared residue to a compiler mechanism.
+
+The retained source was rebuilt independently and with `kf match`; both equal
+the successful const-row trial. A raw control rejects deliberate +4 changes
+to the menu asset owner and AddPrim target. Ruff, all 713 tests (100.223 seconds)
+and whitespace checks pass. Full `kf build` preserves GAME 337/362 exact,
+OPEN 106/108 and PSX 1/1; GAME aggregate similarity rises 99.375% → 99.428%.
+Existing data gates remain GAME 11/41, OPEN 3/19 and PSX 0/1, and target relinks
+remain 75/77, 34/38 and 1/1 respectively, with zero artifact failures. The build
+therefore still returns failure for those existing gates. No configuration,
+profile, bank entry, tooling or generated product is included in this change.
