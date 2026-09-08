@@ -731,3 +731,5 @@ promotes a probe to a proven historical toolchain.
 - [Projected addresses and sprite packets](typed-projected-addresses.md): exact OPEN sprite color view and controlled byte-pointer, owner and packed-XY residue comparisons.
 
 - [Shared allocator state](typed-memory-owner.md): one arena owner per image, shared cursor/stack fields, exact instruction controls and explicit OPEN BSS placement residue.
+
+- [Redundant casts after type propagation](typed-redundant-casts.md): seven identity conversions removed with all 27 compared bodies unchanged.

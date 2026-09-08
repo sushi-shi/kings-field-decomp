@@ -29,7 +29,7 @@ enum {
 /* Object-table records follow the 12-byte TMD header of the selected asset. */
 #define TMD_OBJECTS(asset) ((KfTmdObject *)((asset) + 1))
 /* Packet bodies follow the 4-byte packet header (olen, ilen, flag, mode). */
-#define TMD_PACKET_BODY(packet) ((u8 *)(packet) + KF_TMD_PACKET_HEADER_BYTES)
+#define TMD_PACKET_BODY(packet) ((packet) + KF_TMD_PACKET_HEADER_BYTES)
 
 /* tmd_register primitive-mode dispatch table. */
 RODATA(0x800121b4, 0x74)

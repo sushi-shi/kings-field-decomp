@@ -229,3 +229,8 @@ layout with shared arena/allocation types and one 80-byte owner per image.
 All 33 compared bodies remain exact; C pointer casts total 454, down 352.
 The controller takes the typed allocation subobject directly, while its
 container recovery retains the documented exact-instruction residue.
+
+The [redundant-cast cleanup](typed-redundant-casts.md) removes one pointer
+cast and six redundant scalar casts left by earlier type recovery. All 27
+compared bodies are unchanged. C pointer casts total 453, down 353; the
+remaining complete workspace boundaries are reviewed next.

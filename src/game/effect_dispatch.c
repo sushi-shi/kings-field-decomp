@@ -430,7 +430,7 @@ play_phase_sound:
         goto advance_effect_phase;
 
     case KF_EFFECT_KIND_GROUND_TRAIL:
-        linked_effect = &effect_pool_records[(u8)effect->control.parent_effect_index];
+        linked_effect = &effect_pool_records[effect->control.parent_effect_index];
         collision = effect_map_collision(&effect->position, radius);
         if (collision != (u32)KF_COLLISION_NONE) {
             collision_kind = collision >> KF_COLLISION_KIND_SHIFT;

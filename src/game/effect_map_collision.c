@@ -50,7 +50,7 @@ u32 effect_map_collision(VECTOR *position, s32 radius)
         return KF_COLLISION_TERRAIN;
     }
     y = position->vy;
-    floor = (u8)map_floor_height_grid.cells[z][x] * -KF_MAP_HEIGHT_STEP;
+    floor = map_floor_height_grid.cells[z][x] * -KF_MAP_HEIGHT_STEP;
     if (floor < y) {
         return KF_COLLISION_TERRAIN;
     }
