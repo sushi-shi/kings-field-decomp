@@ -34,7 +34,7 @@ typedef struct {
                            (u32)&((OpeningArenaState *)0)->allocation))
 
 DATA(0x800372d4, 0x6)
-char opening_initial_tim_path[6] = "B0\\L0.";
+char opening_initial_tim_path[KF_OPENING_INITIAL_TIM_PATH_BYTES] = "B0\\L0.";
 
 RODATA(0x80012020, 0x18)
 

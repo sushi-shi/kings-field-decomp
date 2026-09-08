@@ -118,11 +118,10 @@ Every row is one retained token, including duplicates. Named definitions, string
 
 ## `src/open/opening_controller.c`
 
-7 retained occurrences.
+6 retained occurrences.
 
 | Function | Line | Token | Expression | Reason |
 | --- | ---: | --- | --- | --- |
-| `initializers` | 37 | `6` | `char opening_initial_tim_path[6] = "B0\\L0.";` | The retail six-byte path object holds the six authored characters without an in-object NUL; preserve its exact extent and existing adjacent-storage behavior. |
 | `opening_run` | 49 | `0` | `PadInit(0);` | The original zero SDK initialization argument selects the normal pad initialization path. |
 | `opening_run` | 51 | `0` | `memset(&open_graphics_runtime, 0, sizeof open_graphics_runtime);` | Fill the complete graphics/runtime aggregate with zero bytes before initialization. |
 | `opening_run` | 52 | `0` | `memset(&opening_entity_state, 0, sizeof opening_entity_state);` | Zero-fill the opening entity-state aggregate before its pool initialization. |

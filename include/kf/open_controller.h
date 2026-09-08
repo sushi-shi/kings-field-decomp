@@ -4,7 +4,9 @@
 #include <kf/game_types.h>
 #include <kf/overlay.h>
 
-extern char opening_initial_tim_path[6];
+enum { KF_OPENING_INITIAL_TIM_PATH_BYTES = 6 };
+
+extern char opening_initial_tim_path[KF_OPENING_INITIAL_TIM_PATH_BYTES];
 
 extern void opening_run(KfOpenMode display_mode);
 

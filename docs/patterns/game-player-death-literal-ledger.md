@@ -102,7 +102,7 @@ and its death/level-up indices; the nine authored selector bytes remain below.
 | `player_death_restart` | 172 | `0` | `player_state.view_bob_offset = 0;` | Reset the named view-bob, death-pitch or death-blend value to zero before recovery fade; each field keeps its existing update behavior. |
 | `player_death_restart` | 174 | `0` | `player_state.death_camera_pitch_step = 0;` | Reset the named view-bob, death-pitch or death-blend value to zero before recovery fade; each field keeps its existing update behavior. |
 | `player_death_restart` | 175 | `0` | `player_state.death_visual_blend = 0;` | Reset the named view-bob, death-pitch or death-blend value to zero before recovery fade; each field keeps its existing update behavior. |
-| `player_death_restart` | 176 | `0` | `hud_brightness = 0;` | Begin recovery fade with a dark HUD; the fade updater restores brightness. |
+| `player_death_restart` | 176 | `0` | `game_graphics_runtime.hud_brightness = 0;` | Begin recovery fade with a dark HUD; the fade updater restores brightness. |
 | `player_death_restart` | 177 | `0` | `player_state.view_rotation_offset.vz = 0;` | Zero the named camera Euler angle or transient view-rotation component, preserving their independent stores and restart orientation. |
 | `player_death_restart` | 178 | `0` | `player_state.view_rotation_offset.vy = 0;` | Zero the named camera Euler angle or transient view-rotation component, preserving their independent stores and restart orientation. |
 | `player_death_restart` | 179 | `0` | `player_state.view_rotation_offset.vx = 0;` | Zero the named camera Euler angle or transient view-rotation component, preserving their independent stores and restart orientation. |

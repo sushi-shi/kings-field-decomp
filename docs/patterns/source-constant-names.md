@@ -1,5 +1,47 @@
 # Source constant naming
 
+## Final shared-bound review
+
+Naming plan: give the existing two-vector actor attachment view, twelve-byte
+GAME resource path and six-byte OPEN initial TIM path explicit bound names.
+This changes declarations and one data-definition bound, with no function-body
+edits. The actor [consumer evidence](game-actor-constants.md) preserves the
+third effect slot's access beyond the current two-vector view; the new count
+does not claim three safe attachments. GAME `80055af0 / c` remains the curated
+external path owner. OPEN `800372d4 / 6` contains exactly `B0\\L0.` without an
+in-object terminator, as established by the
+[controller dossier](../../config/evidence/open_semantic_opening_controller.tsv).
+Keep both path extents and all bytes unchanged. These are game resource/layout
+models, not SDK implementations. Builds and compiler checks remain deferred.
+
+The integrated GAME graphics owner also retains three floor-five actor texture
+page/CLUT pairs. Name that shared capacity in its header. The
+[texture-state evidence](game-texture-state-owner.md) records the six independent
+stores in GAME `8001bae4 / b0`; the model renderer selects the pair from the
+definition's encoded texture descriptor. Keep all three entries and their
+halfword widths. This declaration-only change does not reattribute the WIP
+graphics layout or alter a consumer.
+
+Function Match Plan for the merged scratch view: GAME
+`800205d4 / 3a4`, `render_bind_animated_instance`, now spells the same scratch
+base three times as `unknown_projection_morph_20318 + 0x1f40`. Name that local
+byte displacement `MORPH_SCRATCH_OFFSET_IN_PROJECTION_STORAGE`. The refreshed
+six semantic views show twelve proven calls, four validated data pairs, five
+validated internal jumps, no strings and a 72-byte return-frame release.
+Raw `800208fc/80020900` targets graphics offset `22258`; the source span starts
+at `20318`, giving `1f40`. Copy/output starts one eight-byte SVECTOR later at
+`22260`. Preserve that extra vector and the morph header save/restore. The five
+render callers, adjacent registry/pool functions and existing owner dossier
+support this game-owned binder; SDK morph operations remain external. Stored
+match state is 100%; naming adds no capacity claim for the opaque span, and
+post-edit builds/matches remain deferred.
+
+Final verdict: all five header-bound occurrences, the OPEN data-definition
+bound and three scratch-offset uses now have the planned names. Their values,
+field types and physical referents are preserved at source level. The complete
+C/header accounting is recorded in the [coverage map](source-literal-coverage.md);
+no post-edit binary-match claim is made.
+
 ## Save and resource array-count follow-up
 
 Naming plan: replace established storage bounds in the save, CD and magic

@@ -35,8 +35,10 @@ promotes a probe to a proven historical toolchain.
   and the remaining serialized-field questions.
 - [source-constant-names.md](source-constant-names.md): domain-specific constant
   names and the reasons for retaining individual classes of inline literals.
-- [source-literal-coverage.md](source-literal-coverage.md): all 111 source files,
-  current literal counts, verified ledger coverage and remaining audit scopes.
+- [source-literal-coverage.md](source-literal-coverage.md): completed literal
+  naming/accounting scope, current counts and links to all source ledgers.
+- [header-literal-ledger.md](header-literal-ledger.md): all 53 headers, retained
+  layout witnesses and opaque byte extents, including zero-token headers.
 - [effect-homing-mode-domain.md](effect-homing-mode-domain.md): byte homing mode
   through construction and steering, with explicit mixed-payload boundaries.
 - [ground-effect-branch-domain.md](ground-effect-branch-domain.md): semantic child

@@ -22,8 +22,8 @@ indices and initialized data. Claims and named definitions are excluded.
 | `initializers` | 25 | `0` | `CVECTOR fade_screen_color = {0, 0, 0, 0};` | Authored zero in the SDK command byte; these helpers only read RGB. |
 | `initializers` | 27 | `7` | `char fade_screen_path[7] = "B0\\L0.";` | Authored path storage includes its terminating NUL; retain the explicit seven-byte data extent. |
 | `display_play_transition` | 41 | `0` | `DrawSync(0);` | Authentic SDK blocking synchronization mode; wait for queued GPU work. |
-| `display_play_transition` | 42 | `0` | `PutDrawEnv(&display_draw_environments[0]);` | Index of one of the two display-environment records; preserve their explicit submission order. |
-| `display_play_transition` | 43 | `1` | `PutDrawEnv(&display_draw_environments[1]);` | Index of one of the two display-environment records; preserve their explicit submission order. |
+| `display_play_transition` | 42 | `0` | `PutDrawEnv(&game_graphics_runtime.display_draw_environments[0]);` | Index of one of the two display-environment records; preserve their explicit submission order. |
+| `display_play_transition` | 43 | `1` | `PutDrawEnv(&game_graphics_runtime.display_draw_environments[1]);` | Index of one of the two display-environment records; preserve their explicit submission order. |
 | `display_play_transition` | 44 | `0` | `DrawSync(0);` | Authentic SDK blocking synchronization mode; wait for queued GPU work. |
 | `display_play_transition` | 54 | `0` | `clut = GetClut(0, KF_TRANSITION_CLUT_Y);` | Palette starts at VRAM X zero; the Y row has a separate named contract. |
 | `display_play_transition` | 56 | `0` | `for (i = 0; i < KF_TRANSITION_FADE_FRAMES; i++) {` | Start the frame count at zero; the named frame bound determines the fade duration. |

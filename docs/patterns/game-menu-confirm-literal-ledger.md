@@ -111,7 +111,7 @@ Other documented retained selectors may still need a future semantic domain.
 
 | Function | Line | Token | Expression | Reason |
 | --- | ---: | --- | --- | --- |
-| `item_load_floor_placements` | 52 | `0` | `*count = 0;` | Begin the placement count at zero before scanning the end marker. |
+| `item_load_floor_placements` | 52 | `0` | `game_graphics_runtime.floor_item_count = 0;` | Begin the placement count at zero before scanning the end marker. |
 | `item_load_database` | 89 | `40` | `char name[40] = "\\KF\\ITEM0\\I000.TMD;1";` | Forty-byte local path workspace holds the 20-character ISO path plus NUL. Only directory/digit positions are rewritten; the original extra-capacity rationale is unproven. |
 | `item_load_database` | 94 | `0` | `if (cd_file_load_allocated(&stat_data, "COM\\STAT.DAT") != 0)` | Any nonzero allocation/load result takes the fatal startup exit; zero alone permits parsing the loaded STAT.DAT banks. |
 | `item_load_database` | 95 | `1` | `exit(1);` | Nonzero process-exit status for the fatal database-load path; this is not a file or menu-selection ID. |

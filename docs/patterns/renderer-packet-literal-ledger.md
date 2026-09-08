@@ -104,7 +104,7 @@ Repeated tokens have separate rows in source order.
 | `render_enqueue_sprite` | 790 | `2` | `RotTransPers4(&corners[0], &corners[1], &corners[2], &corners[3],` | The lower-left corner is passed in the SDK four-vertex projection order. |
 | `render_enqueue_sprite` | 790 | `3` | `RotTransPers4(&corners[0], &corners[1], &corners[2], &corners[3],` | The lower-right corner is passed in the SDK four-vertex projection order. |
 | `render_enqueue_sprite` | 811 | `1` | `depth_cue += depth_cue >> 1;` | One-bit signed shift supplies half the depth-cue factor for the named boosted mode, preserving its rounding. |
-| `render_enqueue_sprite` | 814 | `2` | `NormalColorDpq(&render_sprite_light_normal, (CVECTOR *)(&active_render_clut + 2), depth_cue,` | Two halfwords reach the measured four-byte-offset color span; enclosing GAME graphics ownership remains unresolved (render-material.md). |
+| `render_enqueue_sprite` | 814 | `2` | `NormalColorDpq(&render_sprite_light_normal, (CVECTOR *)(&game_graphics_runtime.active_render_clut + 2), depth_cue,` | Two halfwords reach the measured four-byte-offset color span; enclosing GAME graphics ownership remains unresolved (render-material.md). |
 
 ## `src/open/render_tmd.c`
 

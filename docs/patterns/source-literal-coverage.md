@@ -1,16 +1,21 @@
 # Source literal coverage map
 
-Working snapshot after the [quad texture-offset review](quad-rectangle-types.md#texture-descriptor-offset-naming-follow-up):
+Final naming/accounting snapshot, including the graphics-owner integration and
+[shared-bound review](source-constant-names.md#final-shared-bound-review):
 **111 C files**, **112 source/image variants**, and
-**5,768 inline numeric/character occurrences**. Counts include authored
+**5,765 inline numeric/character occurrences**. Counts include authored
 initializers, local extents, component indices, booleans and arithmetic. They
 exclude comments, string contents, identifier digits, named enum/macro definitions
 and ADDRESS/DATA/RODATA claims. These are inventory counts, **not missing-name
 counts**. Vendor sources are included for source coverage, not game progress.
 
+The separate [header ledger](header-literal-ledger.md) covers **53 headers /
+169 retained occurrences**, including 36 headers with zero retained tokens.
+Together the C and header ledgers account for **5,934 retained occurrences**.
+
 ## Current ledger coverage verified
 
-For **all 111 files / 5,768 occurrences**, explicit ledger rows were compared
+For **all 111 files / 5,765 occurrences**, explicit ledger rows were compared
 against every current numeric/character token and its complete source-line
 expression, including duplicate occurrences and initializers. All matched and
 each row has a reason. Line-number drift is excluded from the comparison;
@@ -85,50 +90,47 @@ The renderer follow-up names three sprite-table bounds and the two staff
 remapping phase values, removing five raw occurrences.
 The [header-capacity follow-up](source-constant-names.md#header-array-capacity-follow-up)
 separately names twelve bounds in TMD, visibility, notification and menu types.
-It changes no C-body occurrences; header literals are outside this census.
+It changes no C-body occurrences; header literals have their own ledger.
 The save/resource array review names twelve more header bounds and four OPEN
 camera-path definition bounds, including each path's terminal record.
 The quad texture review names twenty-four descriptor offsets and four byte
 array bounds. Both FT4 helpers now have zero inline literal occurrences.
-Historical ledgers and domain notes may describe earlier source, so their old
-counts are not current totals. This comparison establishes literal accounting,
-not proof that every possible semantic improvement has been exhausted.
-Builds, compiler checks, tests and post-edit matches remain deferred until the
-naming pass finishes, as requested.
+The final header review names five shared array-bound uses and the OPEN path
+bound in its definition. The graphics integration introduces three explicit
+morph scratch displacements, now named from their decoded addresses. Updated
+ledger expressions retain the integrated owner references and source shapes.
+The merged status formula removes two inline occurrences; the OPEN path bound
+removes one more. All current C and header expressions and token multiplicities
+have been reconciled, with a reason for every retained occurrence.
+Historical ledgers and domain notes may describe earlier source; their old
+counts are not current totals. No builds, compiler checks, tests, post-edit
+matches or banking were run for this naming completion.
 
-The later [drop initialization correction](game-map-drop-initialization.md)
-reduces `map_object.c` from 65 to 63 occurrences by replacing three conditional
-velocity clears with one unconditional clear. Its current ledger and table
-entry below include that correction; the earlier whole-tree snapshot above
-has not been recounted here.
+## Retained literals and separate reconstruction work
 
-## Remaining semantic work
+The naming/accounting pass is complete under the requested “accounted for or
+zero” criterion. Retained values are individually documented: ordinary count
+and arithmetic boundaries, component ordinals, authored resource/text/layout
+data, independent ABI witnesses, opaque storage extents, and unresolved values
+whose consumers do not support a more specific semantic identity. A useful
+name was added where the existing evidence established a domain or role.
 
-1. Investigate the unresolved field families below using actual consumers and
-   resource evidence; serialization or a reset alone does not establish a name.
-2. Continue enum propagation through selector fields, locals and APIs, preserving
-   the encoded widths and explicit boundaries used by the retail code.
-3. Review the semantic adequacy of retained-literal reasons and unresolved
-   resource selectors. A reason being present does not prove that a value should
-   remain unnamed; promote it when evidence establishes a useful domain or role.
+Further field reconstruction and type propagation can continue as separate
+work. They are not prerequisites for accounting for the remaining literals.
+In particular, the earlier field audit left these consumer gaps:
 
-## Unresolved source fields
-
-The original 323 matching source lines have been reduced to **10 lines** with
-`unknown_` identifiers (**14 identifier tokens**, because some copies name both
-sides). Their established uses and missing evidence are:
-
-| Field family | Current evidence | What remains unresolved |
+| Field family | Established evidence | Missing evidence |
 | --- | --- | --- |
 | OPEN controls +0x50a/+0x50c/+0x50e | Reset to zero in the opening entity pool. | No validated value-consuming reads establish their roles. |
 | Floor-item byte +3 | Copied from placements in both GAME and OPEN; observed values include 8,28,32,64. | No established behavioral consumer supports a semantic label. |
-| Map-event definition/runtime bytes | Copied on load; runtime +0x0d is saved/restored. Definition bytes are zero in the reviewed floor resources. | Serialization establishes persistence, not gameplay meaning. |
-| Animation clip halfword +2 | All 214 reviewed clip headers contain 20. | No validated consumer establishes units or purpose; calling it a frame rate would be speculative. |
+| Map-event definition/runtime bytes | Copied on load; runtime +0x0d is saved/restored. | Persistence does not establish gameplay meaning. |
+| Animation clip halfword +2 | All 214 reviewed clip headers contain 20. | No validated consumer establishes units or purpose. |
+| GAME graphics registry/projection/morph storage | Decoded starts support typed access views within the complete graphics owner. | Original subobject extents remain unresolved; no guessed capacities are introduced. |
 
-These fields remain unresolved in source rather than receiving invented names.
-See [field identities](semantic-field-names.md) and the
-[animation layout evidence](game-asset-animation-layout.md). Header-only opaque
-fields and address-derived function names are separate from this ten-line count.
+See [field identities](semantic-field-names.md), the
+[animation layout evidence](game-asset-animation-layout.md), and the
+[graphics owner](game-graphics-runtime-owner.md). Explicitly opaque names and
+retained literal reasons preserve these limitations without inventing semantics.
 
 ## PSX.EXE
 
@@ -140,7 +142,7 @@ fields and address-derived function names are separate from this ten-line count.
 
 ## GAME.EXE
 
-73 files; 4,566 occurrences.
+73 files; 4,564 occurrences.
 
 | Source | Occurrences | Existing audit references | Scope to check |
 | --- | ---: | --- | --- |
@@ -174,7 +176,7 @@ fields and address-derived function names are separate from this ten-line count.
 | [map_event_render.c](../../src/game/map_event_render.c) | 6 | [complete renderer ledger](entity-render-literal-ledger.md); [review](renderer-literal-review.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [map_events.c](../../src/game/map_events.c) | 33 | [game-map-event ledger](game-map-event-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [map_load.c](../../src/game/map_load.c) | 42 | [game-map-event ledger](game-map-event-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
-| [map_object.c](../../src/game/map_object.c) | 63 | [domain evidence](game-map-object-motion-constants.md); [current ledger](game-map-object-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
+| [map_object.c](../../src/game/map_object.c) | 61 | [domain evidence](game-map-object-motion-constants.md); [current ledger](game-map-object-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [map_object_pool.c](../../src/game/map_object_pool.c) | 78 | [domain evidence](game-map-object-motion-constants.md); [current ledger](game-map-object-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [map_scripts.c](../../src/game/map_scripts.c) | 211 | [game-map-script ledger](game-map-script-literal-ledger.md); [image groups](map-image-groups.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [matrix.c](../../src/game/matrix.c) | 2 | [complete math ledger](math-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
@@ -220,7 +222,7 @@ fields and address-derived function names are separate from this ten-line count.
 
 ## OPEN.EXE
 
-34 files; 1,180 occurrences.
+34 files; 1,179 occurrences.
 
 | Source | Occurrences | Existing audit references | Scope to check |
 | --- | ---: | --- | --- |
@@ -238,7 +240,7 @@ fields and address-derived function names are separate from this ten-line count.
 | [main.c](../../src/open/main.c) | 2 | [complete allocator/startup ledger](allocator-startup-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [matrix.c](../../src/open/matrix.c) | 8 | [complete math ledger](math-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [matrix_rotation.c](../../src/open/matrix_rotation.c) | 87 | [complete math ledger](math-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
-| [opening_controller.c](../../src/open/opening_controller.c) | 7 | [complete audio/resource ledger](audio-sequence-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
+| [opening_controller.c](../../src/open/opening_controller.c) | 6 | [complete audio/resource ledger](audio-sequence-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [opening_entity_pool.c](../../src/open/opening_entity_pool.c) | 13 | [pool ledger](open-entity-pool-literal-ledger.md); [domain evidence](open-model-domain.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [opening_fade.c](../../src/open/opening_fade.c) | 14 | [complete fade/quad ledger](fade-quad-literal-ledger.md); [color types](quad-color-types.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [opening_helpers.c](../../src/open/opening_helpers.c) | 4 | [complete small-module ledger](small-module-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
@@ -271,9 +273,9 @@ fields and address-derived function names are separate from this ten-line count.
 
 ## Completion boundary
 
-The naming goal remains open. Completion requires evidence-supported names for
-all unknown fields and all constants that warrant names, plus a reason for
-every retained literal across all source files. Current occurrence accounting
-is complete; the unresolved field families, further type propagation and semantic
-adequacy review above remain outstanding work. A green compiler or unchanged runtime contents
-proves neither semantic identity nor documentation completeness.
+Every retained numeric/character occurrence in the 111 C sources and 53 headers
+has an explicit ledger entry and reason; files without occurrences are listed
+as zero. This closes the requested naming/accounting scope. It does not claim
+that every resource or field identity has been recovered, or that the naming
+changes have been compiled or byte-matched. Build and match verification remains
+for the later verification pass requested by the user.

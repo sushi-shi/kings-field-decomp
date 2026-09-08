@@ -102,7 +102,7 @@ and menu boundaries. Broader source-domain review remains open.
 | `menu_spell_select` | 261 | `0` | `ctx.quantities = 0;` | Null quantity list: selection panels display names without stock counts. |
 | `menu_spell_select` | 264 | `0` | `if (ctx.entry_count != 0) {` | Only preview/render an item when the list has entries. |
 | `menu_spell_select` | 265 | `1` | `if (menu_load_item_texture(KF_ENUM_ENCODE(u8, codes[ctx.selected_index])) == 1)` | Numbered-texture loader returns 1 on load failure; retain the equality check. |
-| `menu_spell_select` | 276 | `0` | `KF_MENU_PREVIEW_MAGIC_ICON, KF_ENUM_ENCODE(s32, codes[ctx.selected_index]), 0, KF_ITEM_PRICE_BUY)` | The shop index is an unused zero for model/icon previews; the named BUY price mode is also unused on these paths. |
+| `menu_spell_select` | 276 | `0` | `KF_MENU_PREVIEW_MAGIC_ICON, KF_ENUM_ENCODE(s32, codes[ctx.selected_index]), 0, KF_ITEM_PRICE_BUY));` | The shop index is an unused zero for model/icon previews; the named BUY price mode is also unused on these paths. |
 | `menu_spell_select` | 283 | `1` | `while (PadRead(1) != 0)` | Preserve the ignored PadRead call-site argument 1 and wait until the returned button bits are zero; the linked SDK uses global PadIdentifier, not this argument as a port. |
 | `menu_spell_select` | 283 | `0` | `while (PadRead(1) != 0)` | Preserve the ignored PadRead call-site argument 1 and wait until the returned button bits are zero; the linked SDK uses global PadIdentifier, not this argument as a port. |
 | `menu_spell_select` | 291 | `1` | `input = PadRead(1);` | Ignored retail PadRead call-site argument; the linked routine uses its global pad identifier. |

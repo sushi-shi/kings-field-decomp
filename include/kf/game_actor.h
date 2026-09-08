@@ -14,6 +14,7 @@ struct KfPoolRecord;
 
 enum {
     KF_ACTOR_DEFINITION_COUNT = 12,
+    KF_ACTOR_ATTACHMENT_OFFSET_COUNT = 2,
     KF_ACTOR_CAPACITY = 128
 };
 
@@ -198,7 +199,7 @@ typedef struct KfActorDefinition {
     u8 action_animations[KF_ACTOR_ANIM_SLOT_COUNT];
     u8 turn_rate;
     SoundRef sounds[KF_ACTOR_SOUND_COUNT];
-    struct KfVec3s attachment_offsets[2];
+    struct KfVec3s attachment_offsets[KF_ACTOR_ATTACHMENT_OFFSET_COUNT];
     s16 special_attack_chance;
     s16 special_attack_range;
     u8 unknown_38[2];

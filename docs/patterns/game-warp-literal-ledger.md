@@ -112,7 +112,7 @@ completeness of other modules or of the larger naming goal.
 | --- | ---: | --- | --- | --- |
 | `frame_pacer_vsync_count` | 20 | `0` | `u32 frame_pacer_vsync_count = 0;` | Zero initialized VBlank counter or saved counter baseline. |
 | `frame_pacer_last_vsync` | 23 | `0` | `u32 frame_pacer_last_vsync = 0;` | Zero initialized VBlank counter or saved counter baseline. |
-| `game_main_loop` | 30 | `0` | `memset(&display_state.buffer_index, 0, INITIAL_GRAPHICS_CLEAR_BYTES);` | Zero byte pattern initializes the reviewed state span. |
+| `game_main_loop` | 30 | `0` | `memset(&game_graphics_runtime, 0, sizeof game_graphics_runtime);` | Zero byte pattern initializes the reviewed state span. |
 | `game_main_loop` | 31 | `0` | `memset(actor_state.definitions, 0, INITIAL_ACTOR_CLEAR_BYTES);` | Zero byte pattern initializes the reviewed state span. |
 | `game_main_loop` | 32 | `0` | `memset(map_object_state.definitions, 0, INITIAL_MAP_OBJECT_CLEAR_BYTES);` | Zero byte pattern initializes the reviewed state span. |
 | `game_main_loop` | 33 | `0` | `memset(&effect_state, 0, sizeof(KfEffectState));` | Zero byte pattern initializes the reviewed state span. |

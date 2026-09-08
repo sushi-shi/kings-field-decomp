@@ -5,6 +5,8 @@
 #include <kf/game_asset.h>
 #include <kf/notify.h>
 
+enum { KF_FLOOR5_ACTOR_TEXTURE_COUNT = 3 };
+
 /* One startup-cleared graphics region; the original declaration is WIP.
  * Registry and projection/morph subobject extents remain unresolved. Their
  * typed source views use the decoded starts without asserting capacities. */
@@ -18,9 +20,9 @@ typedef struct KfGraphicsRuntimeGame {
     SVECTOR *current_tmd_vertices;
     KfPoolRecord pool_records[KF_ANIMATION_CACHE_CAPACITY];
     u8 unknown_projection_morph_20318[0x3e88];
-    u16 effect5_texture_pages[3];
+    u16 effect5_texture_pages[KF_FLOOR5_ACTOR_TEXTURE_COUNT];
     u8 unknown_241a6[10];
-    u16 effect5_texture_cluts[3];
+    u16 effect5_texture_cluts[KF_FLOOR5_ACTOR_TEXTURE_COUNT];
     u8 unknown_241b6[10];
     u16 active_render_clut;
     u16 active_render_tpage;

@@ -21,6 +21,7 @@ enum {
 
 enum {
     KF_MAP_OBJECT_DEFINITION_COUNT = 160,
+    KF_MAP_RESOURCE_PATH_BYTES = 12,
     KF_MAP_OBJECT_CAPACITY = 190,
     KF_MAP_OBJECT_EFFECT_FIRST = 160,
     KF_MAP_EVENT_CAPACITY = 8
@@ -451,7 +452,7 @@ extern KfMapObjectState map_object_state;
 extern u16 map_object_effect_sequence_160;
 extern u16 map_object_effect_sequence_170;
 extern u16 map_object_effect_sequence_180;
-extern char map_resource_path[12];
+extern char map_resource_path[KF_MAP_RESOURCE_PATH_BYTES];
 
 extern void camera_path_begin(KfCameraPathState *path, const KfCameraPathPoint *points);
 extern void camera_path_compute_segment(KfCameraPathState *path);

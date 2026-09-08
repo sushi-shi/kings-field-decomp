@@ -22,7 +22,7 @@ The named fixed-window classes are excluded. Repeated tokens have separate rows.
 | `render_map_cell` | 82 | `1` | `if (orient == KF_MAP_ORIENT_QUARTER_TURN - 1) {` | Compare the zero-based quadrant with the corresponding one-based orientation member minus one. |
 | `render_map_cell` | 84 | `1` | `} else if (orient == KF_MAP_ORIENT_HALF_TURN - 1) {` | Compare the zero-based quadrant with the corresponding one-based orientation member minus one. |
 | `render_map_cell` | 87 | `1` | `} else if (orient == KF_MAP_ORIENT_THREE_QUARTER_TURN - 1) {` | Compare the zero-based quadrant with the corresponding one-based orientation member minus one. |
-| `render_map_cells` | 123 | `1` | `if ((u16)((u16)render_state.view_rotation.vx + (KF_ANGLE_EIGHTH_TURN - 1))` | Endpoint adjustment preserves the strict -45 to +45 degree directional-window interval in integer angle units. |
+| `render_map_cells` | 123 | `1` | `if ((u16)((u16)game_graphics_runtime.render_state.view_rotation.vx + (KF_ANGLE_EIGHTH_TURN - 1))` | Endpoint adjustment preserves the strict -45 to +45 degree directional-window interval in integer angle units. |
 | `render_map_cells` | 124 | `2` | `>= 2 * KF_ANGLE_EIGHTH_TURN - 1) {` | Symmetric pitch interval spans twice the named eighth-turn angle. |
 | `render_map_cells` | 124 | `1` | `>= 2 * KF_ANGLE_EIGHTH_TURN - 1) {` | Endpoint adjustment preserves the strict -45 to +45 degree directional-window interval in integer angle units. |
 | `render_map_cells` | 128 | `1` | `&render_cell_windows[KF_CELL_WINDOW_YAW_COUNT - 1` | Convert the yaw-window count to its last index before reversing the yaw order. |

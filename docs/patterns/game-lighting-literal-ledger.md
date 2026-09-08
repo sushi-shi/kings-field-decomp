@@ -215,7 +215,7 @@ dossiers and verification reports are under
 
 | Function | Line | Token | Expression | Reason |
 | --- | ---: | --- | --- | --- |
-| `lighting_apply_weapon9_environment` | 17 | `1` | `SetFogNear(render_state.fog_near_distance - (render_state.fog_near_distance >> 1),` | Arithmetic right shift by one obtains the signed lower half for distance - (distance >> 1); retain the subtraction and its positive-odd rounding, rather than inventing a mode value. |
+| `lighting_apply_weapon9_environment` | 17 | `1` | `SetFogNear(game_graphics_runtime.render_state.fog_near_distance - (game_graphics_runtime.render_state.fog_near_distance >> 1),` | Arithmetic right shift by one obtains the signed lower half for distance - (distance >> 1); retain the subtraction and its positive-odd rounding, rather than inventing a mode value. |
 
 ## `src/game/player_death_fade.c`
 
