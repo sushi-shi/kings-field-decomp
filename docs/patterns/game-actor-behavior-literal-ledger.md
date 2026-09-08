@@ -1,6 +1,6 @@
 # Actor-behavior remainder literal ledger
 
-Complete account of **160 numeric occurrences** in `src/game/actor_behavior.c`.
+Complete account of **158 numeric occurrences** in `src/game/actor_behavior.c`.
 The [behavior review](game-actor-behavior-constants.md) records the names, units,
 evidence and verification. Comments, strings, identifier digits, enums and retail
 claims are excluded. Repeated tokens have separate rows; signs stay in expressions.
@@ -40,14 +40,12 @@ explicit numeric boundaries.
 | `actor_spawn_action_effect` | 518 | `1` | `repeat = 1;` | One ordinary emission or two paired emissions; direct loop cardinality. |
 | `actor_spawn_action_effect` | 520 | `2` | `repeat = 2;` | One ordinary emission or two paired emissions; direct loop cardinality. |
 | `actor_spawn_action_effect` | 523 | `0` | `for (i = 0; i < repeat; i++) {` | Begin the emission loop at its first iteration. |
-| `actor_spawn_action_effect` | 533 | `22` | `case KF_ENUM_DECODE(KfEffectKind, 22):` | Input kind 22 uses model 14 and the shared physical-projectile path; specific asset identity unresolved. |
 | `actor_spawn_action_effect` | 539 | `2` | `if (repeat == 2) {` | One ordinary emission or two paired emissions; direct loop cardinality. |
 | `actor_spawn_action_effect` | 540 | `0` | `if (i == 0) {` | First paired emission chooses the positive local-X offset. |
 | `actor_spawn_action_effect` | 557 | `1` | `if (distance == -1) {` | Established negative-one miss from distance/overlap queries. |
 | `actor_spawn_action_effect` | 558 | `0` | `angles.x = 0;` | Zero pitch/roll coordinate before any kind-specific aiming adjustment. |
 | `actor_spawn_action_effect` | 589 | `1` | `distance = 1;` | Minimum movement count when the standoff-adjusted distance is at most one speed step. |
 | `actor_spawn_action_effect` | 602 | `0` | `angles.z = 0;` | Zero pitch/roll coordinate before any kind-specific aiming adjustment. |
-| `actor_spawn_action_effect` | 608 | `22` | `if (KF_ENUM_DECODE(KfEffectKindArgument, effect_code) == KF_EFFECT_KIND_LIGHT_NEEDLE \|\| KF_ENUM_DECODE(KfEffectKindArgument, effect_code) == KF_ENUM_DECODE(KfEffectKind, 22)) {` | Input kind 22 uses model 14 and the shared physical-projectile path; specific asset identity unresolved. |
 | `actor_spawn_action_effect` | 610 | `0x20` | `definition->effect_owner_id, 0x20 \| KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,` | Effect damage-credit class, distinct from its named collision-target bits; independent class identity remains unresolved. |
 | `actor_spawn_action_effect` | 611 | `1` | `KF_ENUM_DECODE(KfEffectKindArgument, effect_code), &position, &direction, &angles, 1);` | True requests sound in constructor kinds that consume this variadic slot; ignored slots keep their original argument. |
 | `actor_spawn_action_effect` | 617 | `0x20` | `definition->effect_owner_id, 0x20 \| KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER, KF_EFFECT_KIND_HOMING_PROJECTILE_ALTERNATE,` | Effect damage-credit class, distinct from its named collision-target bits; independent class identity remains unresolved. |

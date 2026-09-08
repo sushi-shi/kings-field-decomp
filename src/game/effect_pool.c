@@ -71,8 +71,8 @@ KfEffectRecord *effect_pool_construct(
         switch (record->kind) {
         case KF_EFFECT_KIND_FIRE_BALL:
             record->animation_clip = KF_EFFECT_ANIMATION_BILLBOARD;
-            record->base_render_id = 0;
-            record->render_id = 0;
+            record->base_render_id = KF_EFFECT_BILLBOARD_FIRE_BALL;
+            record->render_id = KF_EFFECT_BILLBOARD_FIRE_BALL;
             record->rotation.vx = 0;
             record->rotation.vy = 0;
             record->rotation.vz = 0;
@@ -81,8 +81,8 @@ KfEffectRecord *effect_pool_construct(
             break;
         case KF_EFFECT_KIND_WIND_CUTTER:
             record->animation_clip = KF_EFFECT_ANIMATION_BILLBOARD;
-            record->base_render_id = 5;
-            record->render_id = 5;
+            record->base_render_id = KF_EFFECT_BILLBOARD_WIND_CUTTER;
+            record->render_id = KF_EFFECT_BILLBOARD_WIND_CUTTER;
             record->rotation.vx = EFFECT_WIND_CUTTER_PITCH;
             record->rotation.vy = 0;
             record->rotation.vz = 0;
@@ -92,13 +92,13 @@ KfEffectRecord *effect_pool_construct(
             }
             break;
         case KF_EFFECT_KIND_LIGHTNING_BOLT_ALTERNATE:
-            record->base_render_id = 0x11;
-            record->render_id = 0x11;
+            record->base_render_id = KF_EFFECT_BILLBOARD_LIGHTNING_BOLT_ALTERNATE;
+            record->render_id = KF_EFFECT_BILLBOARD_LIGHTNING_BOLT_ALTERNATE;
             record->kind = KF_EFFECT_KIND_LIGHTNING_BOLT;
             goto initialize_lightning_bolt;
         case KF_EFFECT_KIND_LIGHTNING_BOLT:
-            record->base_render_id = 6;
-            record->render_id = 6;
+            record->base_render_id = KF_EFFECT_BILLBOARD_LIGHTNING_BOLT;
+            record->render_id = KF_EFFECT_BILLBOARD_LIGHTNING_BOLT;
         initialize_lightning_bolt:
             record->animation_clip = KF_EFFECT_ANIMATION_BILLBOARD;
             record->rotation.vx = 0;
@@ -114,13 +114,13 @@ KfEffectRecord *effect_pool_construct(
             }
             break;
         case KF_EFFECT_KIND_LIGHTNING_IMPACT_ALTERNATE:
-            record->base_render_id = 0x13;
-            record->render_id = 0x13;
+            record->base_render_id = KF_EFFECT_BILLBOARD_LIGHTNING_IMPACT_ALTERNATE;
+            record->render_id = KF_EFFECT_BILLBOARD_LIGHTNING_IMPACT_ALTERNATE;
             record->kind = KF_EFFECT_KIND_LIGHTNING_IMPACT;
             goto initialize_lightning_impact;
         case KF_EFFECT_KIND_LIGHTNING_IMPACT:
-            record->base_render_id = 0xb;
-            record->render_id = 0xb;
+            record->base_render_id = KF_EFFECT_BILLBOARD_LIGHTNING_IMPACT;
+            record->render_id = KF_EFFECT_BILLBOARD_LIGHTNING_IMPACT;
         initialize_lightning_impact:
             record->animation_clip = KF_EFFECT_ANIMATION_BILLBOARD;
             record->rotation.vx = 0;
@@ -133,26 +133,26 @@ KfEffectRecord *effect_pool_construct(
                 EFFECT_EXTENDED_SOUND_ATTENUATION_DISTANCE);
             break;
         case KF_EFFECT_KIND_LIGHTNING_RADIAL_BLAST_ALTERNATE:
-            record->base_render_id = 0xf;
-            record->render_id = 0xf;
+            record->base_render_id = KF_EFFECT_MODEL_LIGHTNING_RADIAL_BLAST_ALTERNATE;
+            record->render_id = KF_EFFECT_MODEL_LIGHTNING_RADIAL_BLAST_ALTERNATE;
             record->kind = KF_EFFECT_KIND_LIGHTNING_RADIAL_BLAST;
-            record->animation_clip = 0;
+            record->animation_clip = KF_EFFECT_ANIMATION_FIRST_CLIP;
             record->rotation.vx = 0;
             record->rotation.vy = 0;
             record->rotation.vz = 0;
             break;
         case KF_EFFECT_KIND_LIGHTNING_RADIAL_BLAST:
-            record->base_render_id = 0;
-            record->render_id = 0;
-            record->animation_clip = 0;
+            record->base_render_id = KF_EFFECT_MODEL_LIGHTNING_RADIAL_BLAST;
+            record->render_id = KF_EFFECT_MODEL_LIGHTNING_RADIAL_BLAST;
+            record->animation_clip = KF_EFFECT_ANIMATION_FIRST_CLIP;
             record->rotation.vx = 0;
             record->rotation.vy = 0;
             record->rotation.vz = 0;
             break;
         case KF_EFFECT_KIND_GROUND_BRANCH:
-            record->animation_clip = 0;
-            record->base_render_id = 1;
-            record->render_id = 1;
+            record->animation_clip = KF_EFFECT_ANIMATION_FIRST_CLIP;
+            record->base_render_id = KF_EFFECT_MODEL_GROUND_BRANCH;
+            record->render_id = KF_EFFECT_MODEL_GROUND_BRANCH;
             record->rotation.vx = 0;
             record->rotation.vy = 0;
             record->rotation.vz = 0;
@@ -167,18 +167,18 @@ KfEffectRecord *effect_pool_construct(
             }
             break;
         case KF_EFFECT_KIND_GROUND_BRANCH_VISUAL:
-            record->animation_clip = 0;
-            record->base_render_id = 2;
-            record->render_id = 2;
+            record->animation_clip = KF_EFFECT_ANIMATION_FIRST_CLIP;
+            record->base_render_id = KF_EFFECT_MODEL_GROUND_BRANCH_VISUAL;
+            record->render_id = KF_EFFECT_MODEL_GROUND_BRANCH_VISUAL;
             record->rotation.vx = 0;
             record->rotation.vy = 0;
             record->rotation.vz = 0;
             record->scale_y = 0;
             break;
         case KF_EFFECT_KIND_ACTOR_SPAWNER:
-            record->animation_clip = 0;
-            record->base_render_id = 3;
-            record->render_id = 3;
+            record->animation_clip = KF_EFFECT_ANIMATION_FIRST_CLIP;
+            record->base_render_id = KF_EFFECT_MODEL_ACTOR_SPAWNER;
+            record->render_id = KF_EFFECT_MODEL_ACTOR_SPAWNER;
             record->rotation.vx = 0;
             record->rotation.vy = 0;
             record->rotation.vz = 0;
@@ -191,8 +191,8 @@ KfEffectRecord *effect_pool_construct(
             break;
         case KF_EFFECT_KIND_SCATTER_PROJECTILE:
             record->animation_clip = KF_EFFECT_ANIMATION_BILLBOARD;
-            record->base_render_id = 9;
-            record->render_id = 9;
+            record->base_render_id = KF_EFFECT_BILLBOARD_SCATTER_PROJECTILE;
+            record->render_id = KF_EFFECT_BILLBOARD_SCATTER_PROJECTILE;
             record->rotation.vx = 0;
             record->rotation.vy = 0;
             record->rotation.vz = 0;
@@ -205,8 +205,8 @@ KfEffectRecord *effect_pool_construct(
             break;
         case KF_EFFECT_KIND_DARKNESS_PROJECTILE:
             record->animation_clip = KF_EFFECT_ANIMATION_BILLBOARD;
-            record->base_render_id = 8;
-            record->render_id = 8;
+            record->base_render_id = KF_EFFECT_BILLBOARD_DARKNESS_PROJECTILE;
+            record->render_id = KF_EFFECT_BILLBOARD_DARKNESS_PROJECTILE;
             record->rotation.vx = 0;
             record->rotation.vy = 0;
             record->rotation.vz = 0;
@@ -215,8 +215,8 @@ KfEffectRecord *effect_pool_construct(
             break;
         case KF_EFFECT_KIND_CURSE_PROJECTILE:
             record->animation_clip = KF_EFFECT_ANIMATION_BILLBOARD;
-            record->base_render_id = 0xa;
-            record->render_id = 0xa;
+            record->base_render_id = KF_EFFECT_BILLBOARD_CURSE_PROJECTILE;
+            record->render_id = KF_EFFECT_BILLBOARD_CURSE_PROJECTILE;
             record->rotation.vx = 0;
             record->rotation.vy = 0;
             record->rotation.vz = 0;
@@ -224,9 +224,9 @@ KfEffectRecord *effect_pool_construct(
                                              &record->position, KF_AUDIO_MAX_VOLUME);
             break;
         case KF_EFFECT_KIND_EMERGING_PROJECTILE:
-            record->animation_clip = 0;
-            record->base_render_id = 9;
-            record->render_id = 9;
+            record->animation_clip = KF_EFFECT_ANIMATION_FIRST_CLIP;
+            record->base_render_id = KF_EFFECT_MODEL_EMERGING_PROJECTILE;
+            record->render_id = KF_EFFECT_MODEL_EMERGING_PROJECTILE;
             record->rotation.vx = 0;
             record->rotation.vy = 0;
             record->rotation.vz = 0;
@@ -236,22 +236,22 @@ KfEffectRecord *effect_pool_construct(
             record->scale_x = EFFECT_EMERGING_INITIAL_SCALE;
             record->position.vy += KF_EFFECT_EMERGE_DEPTH;
             break;
-        case KF_ENUM_DECODE(KfEffectKind, 0xe):
-            record->animation_clip = 0;
-            record->base_render_id = 4;
-            record->render_id = 4;
+        case KF_EFFECT_KIND_MAP_EMITTER_PROJECTILE:
+            record->animation_clip = KF_EFFECT_ANIMATION_FIRST_CLIP;
+            record->base_render_id = KF_EFFECT_MODEL_MAP_EMITTER_PROJECTILE;
+            record->render_id = KF_EFFECT_MODEL_MAP_EMITTER_PROJECTILE;
             record->rotation = *(const SVECTOR *)va[1];
             break;
         case KF_EFFECT_KIND_MAP_SWITCH:
-            record->animation_clip = 0;
-            record->base_render_id = 5;
-            record->render_id = 5;
+            record->animation_clip = KF_EFFECT_ANIMATION_FIRST_CLIP;
+            record->base_render_id = KF_EFFECT_MODEL_MAP_SWITCH;
+            record->render_id = KF_EFFECT_MODEL_MAP_SWITCH;
             record->rotation = *(const SVECTOR *)va[1];
             break;
         case KF_EFFECT_KIND_LIGHT_NEEDLE:
-            record->animation_clip = 0;
-            record->base_render_id = 6;
-            record->render_id = 6;
+            record->animation_clip = KF_EFFECT_ANIMATION_FIRST_CLIP;
+            record->base_render_id = KF_EFFECT_MODEL_LIGHT_NEEDLE;
+            record->render_id = KF_EFFECT_MODEL_LIGHT_NEEDLE;
             record->rotation = *(const SVECTOR *)va[1];
             record->rotation.vx = -record->rotation.vx;
             if (va[2] != 0) {
@@ -259,10 +259,10 @@ KfEffectRecord *effect_pool_construct(
                                                  &record->position, KF_AUDIO_MAX_VOLUME);
             }
             break;
-        case KF_ENUM_DECODE(KfEffectKind, 0x16):
-            record->animation_clip = 0;
-            record->base_render_id = 0xe;
-            record->render_id = 0xe;
+        case KF_EFFECT_KIND_PHYSICAL_PROJECTILE:
+            record->animation_clip = KF_EFFECT_ANIMATION_FIRST_CLIP;
+            record->base_render_id = KF_EFFECT_MODEL_PHYSICAL_PROJECTILE;
+            record->render_id = KF_EFFECT_MODEL_PHYSICAL_PROJECTILE;
             record->rotation = *(const SVECTOR *)va[1];
             record->rotation.vx = -record->rotation.vx;
             if (va[2] != 0) {
@@ -271,9 +271,9 @@ KfEffectRecord *effect_pool_construct(
             }
             break;
         case KF_EFFECT_KIND_SWINGING_HAZARD_SHORT:
-            record->animation_clip = 0;
-            record->base_render_id = 7;
-            record->render_id = 7;
+            record->animation_clip = KF_EFFECT_ANIMATION_FIRST_CLIP;
+            record->base_render_id = KF_EFFECT_MODEL_SWINGING_HAZARD;
+            record->render_id = KF_EFFECT_MODEL_SWINGING_HAZARD;
             record->rotation = *(const SVECTOR *)va[1];
             record->rotation.vx = KF_ANGLE_EIGHTH_TURN;
             record->direction.words.z = 0;
@@ -284,9 +284,9 @@ KfEffectRecord *effect_pool_construct(
             record->scale_x = EFFECT_SHORT_SWING_SCALE;
             break;
         case KF_EFFECT_KIND_SWINGING_HAZARD_LONG:
-            record->animation_clip = 0;
-            record->base_render_id = 7;
-            record->render_id = 7;
+            record->animation_clip = KF_EFFECT_ANIMATION_FIRST_CLIP;
+            record->base_render_id = KF_EFFECT_MODEL_SWINGING_HAZARD;
+            record->render_id = KF_EFFECT_MODEL_SWINGING_HAZARD;
             record->rotation = *(const SVECTOR *)va[1];
             record->rotation.vx = KF_ANGLE_EIGHTH_TURN;
             record->direction.words.z = 0;
@@ -294,9 +294,9 @@ KfEffectRecord *effect_pool_construct(
             record->direction.words.x = 0;
             break;
         case KF_EFFECT_KIND_ORBITING_PROJECTILE:
-            record->animation_clip = 0;
-            record->base_render_id = 9;
-            record->render_id = 9;
+            record->animation_clip = KF_EFFECT_ANIMATION_FIRST_CLIP;
+            record->base_render_id = KF_EFFECT_MODEL_EMERGING_PROJECTILE;
+            record->render_id = KF_EFFECT_MODEL_EMERGING_PROJECTILE;
             record->rotation.vz = 0;
             record->rotation.vy = 0;
             record->rotation.vx = 0;
@@ -309,9 +309,9 @@ KfEffectRecord *effect_pool_construct(
             record->direction.words.y = (u16)record->position.vy;
             break;
         case KF_EFFECT_KIND_MOONLIGHT_PROJECTILE:
-            record->animation_clip = 0;
-            record->base_render_id = 0xa;
-            record->render_id = 0xa;
+            record->animation_clip = KF_EFFECT_ANIMATION_FIRST_CLIP;
+            record->base_render_id = KF_EFFECT_MODEL_MOONLIGHT_PROJECTILE;
+            record->render_id = KF_EFFECT_MODEL_MOONLIGHT_PROJECTILE;
             record->rotation = *(const SVECTOR *)va[1];
             record->control.bytes.high = 0xff;
             record->control.bytes.low = 0xff;
@@ -324,8 +324,8 @@ KfEffectRecord *effect_pool_construct(
             break;
         case KF_EFFECT_KIND_GROUND_TRAIL:
             record->animation_clip = KF_EFFECT_ANIMATION_BILLBOARD;
-            record->base_render_id = 0xe;
-            record->render_id = 0xe;
+            record->base_render_id = KF_EFFECT_BILLBOARD_GROUND_TRAIL;
+            record->render_id = KF_EFFECT_BILLBOARD_GROUND_TRAIL;
             {
                 u8 argument = *(u8 *)(va + 1);
                 record->rotation.vz = 0;
@@ -335,10 +335,10 @@ KfEffectRecord *effect_pool_construct(
             }
             break;
         case KF_EFFECT_KIND_RADIAL_BLAST_ALTERNATE:
-            record->base_render_id = 0x11;
-            record->render_id = 0x11;
+            record->base_render_id = KF_EFFECT_MODEL_RADIAL_BLAST_ALTERNATE;
+            record->render_id = KF_EFFECT_MODEL_RADIAL_BLAST_ALTERNATE;
             record->kind = KF_EFFECT_KIND_RADIAL_BLAST;
-            record->animation_clip = 0;
+            record->animation_clip = KF_EFFECT_ANIMATION_FIRST_CLIP;
             if (va[1] != 0) {
                 audio_play_spatial_range(
                     &magic_records[KF_ENUM_ENCODE(u8, KF_EFFECT_KIND_RADIAL_BLAST)].sounds[0],
@@ -348,9 +348,9 @@ KfEffectRecord *effect_pool_construct(
             }
             break;
         case KF_EFFECT_KIND_RADIAL_BLAST:
-            record->base_render_id = 0xb;
-            record->render_id = 0xb;
-            record->animation_clip = 0;
+            record->base_render_id = KF_EFFECT_MODEL_RADIAL_BLAST;
+            record->render_id = KF_EFFECT_MODEL_RADIAL_BLAST;
+            record->animation_clip = KF_EFFECT_ANIMATION_FIRST_CLIP;
             if (va[1] != 0) {
                 audio_play_spatial_range(
                     &magic_records[KF_ENUM_ENCODE(u8, KF_EFFECT_KIND_RADIAL_BLAST)].sounds[0],
@@ -360,10 +360,10 @@ KfEffectRecord *effect_pool_construct(
             }
             break;
         case KF_EFFECT_KIND_HOMING_PROJECTILE_ALTERNATE:
-            record->base_render_id = 0x10;
-            record->render_id = 0x10;
+            record->base_render_id = KF_EFFECT_MODEL_HOMING_PROJECTILE_ALTERNATE;
+            record->render_id = KF_EFFECT_MODEL_HOMING_PROJECTILE_ALTERNATE;
             record->kind = KF_EFFECT_KIND_HOMING_PROJECTILE;
-            record->animation_clip = 0;
+            record->animation_clip = KF_EFFECT_ANIMATION_FIRST_CLIP;
             record->rotation = *(const SVECTOR *)va[1];
             record->rotation.vx = -record->rotation.vx;
             record->control.target_mode = KF_ENUM_DECODE(KfEffectHomingMode, *(u8 *)(va + 2));
@@ -377,9 +377,9 @@ KfEffectRecord *effect_pool_construct(
             }
             break;
         case KF_EFFECT_KIND_HOMING_PROJECTILE:
-            record->base_render_id = 0xc;
-            record->render_id = 0xc;
-            record->animation_clip = 0;
+            record->base_render_id = KF_EFFECT_MODEL_HOMING_PROJECTILE;
+            record->render_id = KF_EFFECT_MODEL_HOMING_PROJECTILE;
+            record->animation_clip = KF_EFFECT_ANIMATION_FIRST_CLIP;
             record->rotation = *(const SVECTOR *)va[1];
             record->rotation.vx = -record->rotation.vx;
             record->control.target_mode = KF_ENUM_DECODE(KfEffectHomingMode, *(u8 *)(va + 2));
@@ -393,9 +393,9 @@ KfEffectRecord *effect_pool_construct(
             }
             break;
         case KF_EFFECT_KIND_WARP_SHIMMER:
-            record->animation_clip = 0;
-            record->base_render_id = 0xd;
-            record->render_id = 0xd;
+            record->animation_clip = KF_EFFECT_ANIMATION_FIRST_CLIP;
+            record->base_render_id = KF_EFFECT_MODEL_WARP_SHIMMER;
+            record->render_id = KF_EFFECT_MODEL_WARP_SHIMMER;
             record->scale_y = 0;
             record->scale_z = 0x1800;
             record->scale_x = 0x1800;

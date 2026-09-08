@@ -28,9 +28,9 @@ enum {
     SCATTER_FINAL_COUNTDOWN = 15,
     SCATTER_BRANCH_COUNTDOWN = 5,
     SCATTER_PULSE_ANGLE_SHIFT = 9,
-    KIND14_SOUND_RANDOM_CUTOFF = (RAND_MAX + 1) / 4,
-    KIND14_SOUND_MAX_DISTANCE = 4000,
-    KIND14_SOUND_ATTENUATION_DISTANCE = 12000
+    MAP_EMITTER_SOUND_RANDOM_CUTOFF = (RAND_MAX + 1) / 4,
+    MAP_EMITTER_SOUND_MAX_DISTANCE = 4000,
+    MAP_EMITTER_SOUND_ATTENUATION_DISTANCE = 12000
 };
 
 enum {
@@ -179,8 +179,8 @@ void effect_update_dispatch(void)
     case KF_EFFECT_KIND_SCATTER_PROJECTILE:
     case KF_EFFECT_KIND_DARKNESS_PROJECTILE:
     case KF_EFFECT_KIND_CURSE_PROJECTILE:
-    case KF_ENUM_DECODE(KfEffectKind, 14):
-    case KF_ENUM_DECODE(KfEffectKind, 22):
+    case KF_EFFECT_KIND_MAP_EMITTER_PROJECTILE:
+    case KF_EFFECT_KIND_PHYSICAL_PROJECTILE:
 shared_projectile:
         if (phase == KF_EFFECT_PROJECTILE_TRAVEL) {
             collision = effect_map_collision(&effect->position, radius);
@@ -196,7 +196,7 @@ shared_projectile:
                         &impact_magic->sounds[1], &effect->position, KF_AUDIO_MAX_VOLUME);
                 }
                 if (collision_kind == (KF_COLLISION_ACTOR >> 16)) {
-                    if (kind == KF_ENUM_DECODE(KfEffectKind, 14) || kind == KF_ENUM_DECODE(KfEffectKind, 22) || kind == KF_EFFECT_KIND_WIND_CUTTER) {
+                    if (kind == KF_EFFECT_KIND_MAP_EMITTER_PROJECTILE || kind == KF_EFFECT_KIND_PHYSICAL_PROJECTILE || kind == KF_EFFECT_KIND_WIND_CUTTER) {
                         actor_apply_damage(
                             (u16)collision, power,
                             impact_magic->damage_components[0],
@@ -214,7 +214,7 @@ shared_projectile:
                         goto advance_shared_projectile;
                     }
                 } else if (collision_kind == (KF_COLLISION_PLAYER >> 16)) {
-                    if (kind == KF_EFFECT_KIND_EMERGING_PROJECTILE || kind == KF_ENUM_DECODE(KfEffectKind, 14) || kind == KF_ENUM_DECODE(KfEffectKind, 22)) {
+                    if (kind == KF_EFFECT_KIND_EMERGING_PROJECTILE || kind == KF_EFFECT_KIND_MAP_EMITTER_PROJECTILE || kind == KF_EFFECT_KIND_PHYSICAL_PROJECTILE) {
                         player_apply_damage(
                             impact_magic->damage_components[0],
                             impact_magic->damage_components[2],
@@ -276,7 +276,7 @@ lightning_impact:
                     impact_position.vy =
                         -(map_floor_height_grid[effect->position.vz / KF_MAP_TILE_SIZE]
                                                [effect->position.vx / KF_MAP_TILE_SIZE] * KF_MAP_HEIGHT_STEP);
-                    if (effect->base_render_id == 6) {
+                    if (effect->base_render_id == KF_EFFECT_BILLBOARD_LIGHTNING_BOLT) {
                         effect_pool_construct(
                             effect->id, effect->type, KF_EFFECT_KIND_LIGHTNING_IMPACT,
                             &impact_position, &effect->rotation);
@@ -330,15 +330,15 @@ lightning_impact:
                 effect->rotation.vz = (effect->rotation.vz + EMERGING_ROLL_STEP) & KF_ANGLE_WRAP_MASK;
                 return;
             }
-            if (kind == KF_ENUM_DECODE(KfEffectKind, 14)) {
-                if (rand() < KIND14_SOUND_RANDOM_CUTOFF && effect->sound_played == 0) {
+            if (kind == KF_EFFECT_KIND_MAP_EMITTER_PROJECTILE) {
+                if (rand() < MAP_EMITTER_SOUND_RANDOM_CUTOFF && effect->sound_played == 0) {
                     effect->sound_played = audio_play_spatial_range(
                         &magic->sounds[0], &effect->position, KF_AUDIO_MAX_VOLUME,
-                        KIND14_SOUND_MAX_DISTANCE, KIND14_SOUND_ATTENUATION_DISTANCE);
+                        MAP_EMITTER_SOUND_MAX_DISTANCE, MAP_EMITTER_SOUND_ATTENUATION_DISTANCE);
                 }
                 return;
             }
-            if (kind == KF_EFFECT_KIND_LIGHT_NEEDLE || kind == KF_ENUM_DECODE(KfEffectKind, 22)) {
+            if (kind == KF_EFFECT_KIND_LIGHT_NEEDLE || kind == KF_EFFECT_KIND_PHYSICAL_PROJECTILE) {
                 return;
             }
             effect->rotation.vz = (effect->rotation.vz + PROJECTILE_DEFAULT_ROLL_STEP) & KF_ANGLE_WRAP_MASK;
@@ -568,7 +568,7 @@ randomize_homing_direction:
         effect->phase++;
         effect->rotation.vz = (effect->rotation.vz + HOMING_ROLL_STEP) & KF_ANGLE_WRAP_MASK;
         if (effect_map_collision(&effect->position, radius) != (u32)KF_COLLISION_NONE) {
-            if (effect->base_render_id == 0x10) {
+            if (effect->base_render_id == KF_EFFECT_MODEL_HOMING_PROJECTILE_ALTERNATE) {
                 effect_pool_construct(
                     effect->id, effect->type, KF_EFFECT_KIND_RADIAL_BLAST_ALTERNATE,
                     &effect->position, &effect->direction.vector, 1);
@@ -591,7 +591,7 @@ randomize_homing_direction:
             effect->render_id = effect->base_render_id;
         }
         if (phase == LIGHTNING_IMPACT_EMIT_FIRST || phase == LIGHTNING_IMPACT_EMIT_SECOND || phase == LIGHTNING_IMPACT_EMIT_LAST) {
-            if (effect->base_render_id == 11) {
+            if (effect->base_render_id == KF_EFFECT_BILLBOARD_LIGHTNING_IMPACT) {
                 effect_pool_construct(
                     effect->id, effect->type, KF_EFFECT_KIND_LIGHTNING_RADIAL_BLAST,
                     &effect->position, &effect->rotation);

@@ -1,7 +1,7 @@
 # Retained GAME map-object literals
 
 Complete current occurrence ledger for `src/game/map_object.c` and
-`src/game/map_object_pool.c`: **143 numeric/character occurrences**.
+`src/game/map_object_pool.c`: **142 numeric/character occurrences**.
 The [motion review](game-map-object-motion-constants.md) supplies the original
 reasons; [model identities](game-object-model-domain.md) and
 [behavior/action typing](game-map-object-state-domains.md) account for later
@@ -16,7 +16,7 @@ The presence of a ledger reason does not declare those domains complete.
 
 ## `src/game/map_object.c`
 
-65 retained occurrences.
+64 retained occurrences.
 
 | Function | Line | Token | Expression | Reason |
 | --- | ---: | --- | --- | --- |
@@ -65,7 +65,6 @@ The presence of a ledger reason does not declare those domains complete.
 | `map_object_pool_update` | 434 | `1` | `== -1) {` | Established negative-one distance-query miss result. |
 | `map_object_pool_update` | 439 | `0` | `direction.y = 0;` | Zero angle or vector component; no extra rotation or vertical displacement/velocity. |
 | `map_object_pool_update` | 444 | `0x20` | `0x20 \| KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,` | Effect damage-credit class; shared protocol identity remains under review, independent of collision target bits. |
-| `map_object_pool_update` | 445 | `0xe` | `KF_ENUM_DECODE(KfEffectKind, 0xe),` | Effect kind 14 emitted by object 137; independent behavioral identity unresolved. |
 | `map_object_pool_update` | 452 | `0` | `direction.y = 0;` | Zero angle or vector component; no extra rotation or vertical displacement/velocity. |
 | `map_object_pool_update` | 460 | `0x20` | `0x20 \| KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,` | Effect damage-credit class; shared protocol identity remains under review, independent of collision target bits. |
 | `map_object_pool_update` | 468 | `0` | `direction.y = 0;` | Zero angle or vector component; no extra rotation or vertical displacement/velocity. |

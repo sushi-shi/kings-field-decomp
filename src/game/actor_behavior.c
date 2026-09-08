@@ -530,7 +530,7 @@ void actor_spawn_action_effect(s32 effect_code, KfActorEffectSlot effect_slot)
         case KF_EFFECT_KIND_DARKNESS_PROJECTILE:
         case KF_EFFECT_KIND_CURSE_PROJECTILE:
         case KF_EFFECT_KIND_EMERGING_PROJECTILE:
-        case KF_ENUM_DECODE(KfEffectKind, 22):
+        case KF_EFFECT_KIND_PHYSICAL_PROJECTILE:
         case KF_EFFECT_KIND_LIGHTNING_BOLT_ALTERNATE:
         case KF_EFFECT_KIND_HOMING_PROJECTILE_ALTERNATE:
             offset.vx = definition->attachment_offsets[KF_ENUM_ENCODE(s32, effect_slot)].x;
@@ -605,7 +605,7 @@ void actor_spawn_action_effect(s32 effect_code, KfActorEffectSlot effect_slot)
             }
             pitch_yaw_to_forward_vector((struct KfPitchYaw *)&angles, &direction);
             vector3s_scale_shift12(speed, &direction);
-            if (KF_ENUM_DECODE(KfEffectKindArgument, effect_code) == KF_EFFECT_KIND_LIGHT_NEEDLE || KF_ENUM_DECODE(KfEffectKindArgument, effect_code) == KF_ENUM_DECODE(KfEffectKind, 22)) {
+            if (KF_ENUM_DECODE(KfEffectKindArgument, effect_code) == KF_EFFECT_KIND_LIGHT_NEEDLE || KF_ENUM_DECODE(KfEffectKindArgument, effect_code) == KF_EFFECT_KIND_PHYSICAL_PROJECTILE) {
                 effect_pool_construct(
                     definition->effect_owner_id, 0x20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
                     KF_ENUM_DECODE(KfEffectKindArgument, effect_code), &position, &direction, &angles, 1);

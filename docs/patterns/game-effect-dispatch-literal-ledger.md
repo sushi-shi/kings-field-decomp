@@ -1,7 +1,7 @@
 # Effect-dispatch remainder literal ledger
 
-Complete per-occurrence account of **150 retained numeric literals** in
-`src/game/effect_dispatch.c`: six initialized probe zeros and 147 function uses.
+Complete per-occurrence account of **139 retained numeric literals** in
+`src/game/effect_dispatch.c`.
 Named definitions and retail claims are excluded. Comments, strings and identifier
 digits are not numeric literals; signs are operators. The
 [dispatcher review](game-effect-dispatch-constants.md) explains named units and verification.
@@ -14,13 +14,9 @@ digits are not numeric literals; signs are operators. The
 | `initializers` | 137 | `0` | `{0, LONG_SWING_PROBE_LENGTH, 0, 0},` | Zero local X keeps this authored collision probe on the local Y axis. |
 | `initializers` | 137 | `0` | `{0, LONG_SWING_PROBE_LENGTH, 0, 0},` | Zero local Z keeps this authored collision probe on the local Y axis. |
 | `initializers` | 137 | `0` | `{0, LONG_SWING_PROBE_LENGTH, 0, 0},` | Zero SDK SVECTOR pad halfword is part of the initialized eight-byte probe payload. |
-| `effect_update_dispatch` | 182 | `14` | `case KF_ENUM_DECODE(KfEffectKind, 14):` | Kind 14 uses model 4, the physical damage component route and periodic spatial sound; its specific effect identity remains unsupported. |
-| `effect_update_dispatch` | 183 | `22` | `case KF_ENUM_DECODE(KfEffectKind, 22):` | Kind 22 uses model 14 and skips shared spinning; its physical damage path differs from Light Needle. Preserve its unresolved kind identity. |
 | `effect_update_dispatch` | 189 | `16` | `collision_kind = collision >> 16;` | Extract or compare the high halfword of the packed collision class; 16 is its representation width. |
 | `effect_update_dispatch` | 196 | `1` | `&impact_magic->sounds[1], &effect->position, KF_AUDIO_MAX_VOLUME);` | Second magic sound slot supplies impact playback; fixed-row selection remains separately named where applicable. |
 | `effect_update_dispatch` | 198 | `16` | `if (collision_kind == (KF_COLLISION_ACTOR >> 16)) {` | Extract or compare the high halfword of the packed collision class; 16 is its representation width. |
-| `effect_update_dispatch` | 199 | `14` | `if (kind == KF_ENUM_DECODE(KfEffectKind, 14) \|\| kind == KF_ENUM_DECODE(KfEffectKind, 22) \|\| kind == KF_EFFECT_KIND_WIND_CUTTER) {` | Kind 14 uses model 4, the physical damage component route and periodic spatial sound; its specific effect identity remains unsupported. |
-| `effect_update_dispatch` | 199 | `22` | `if (kind == KF_ENUM_DECODE(KfEffectKind, 14) \|\| kind == KF_ENUM_DECODE(KfEffectKind, 22) \|\| kind == KF_EFFECT_KIND_WIND_CUTTER) {` | Kind 22 uses model 14 and skips shared spinning; its physical damage path differs from Light Needle. Preserve its unresolved kind identity. |
 | `effect_update_dispatch` | 202 | `0` | `impact_magic->damage_components[0],` | Magic component array ordinal: physical calls preserve the 0,2,1 mapping, while magic-channel calls use 0,1. No unsupported damage-channel identity is inferred from an ordinal. |
 | `effect_update_dispatch` | 203 | `2` | `impact_magic->damage_components[2],` | Magic component array ordinal: physical calls preserve the 0,2,1 mapping, while magic-channel calls use 0,1. No unsupported damage-channel identity is inferred from an ordinal. |
 | `effect_update_dispatch` | 204 | `1` | `impact_magic->damage_components[1],` | Magic component array ordinal: physical calls preserve the 0,2,1 mapping, while magic-channel calls use 0,1. No unsupported damage-channel identity is inferred from an ordinal. |
@@ -32,8 +28,6 @@ digits are not numeric literals; signs are operators. The
 | `effect_update_dispatch` | 209 | `0` | `0, 0, 0, impact_magic->damage_components[0],` | The first three zeros omit physical damage channels; the bracketed zero selects the first magic component for the later channel. Preserve argument order and positional resource mapping. |
 | `effect_update_dispatch` | 210 | `1` | `impact_magic->damage_components[1],` | Magic component array ordinal: physical calls preserve the 0,2,1 mapping, while magic-channel calls use 0,1. No unsupported damage-channel identity is inferred from an ordinal. |
 | `effect_update_dispatch` | 216 | `16` | `} else if (collision_kind == (KF_COLLISION_PLAYER >> 16)) {` | Extract or compare the high halfword of the packed collision class; 16 is its representation width. |
-| `effect_update_dispatch` | 217 | `14` | `if (kind == KF_EFFECT_KIND_EMERGING_PROJECTILE \|\| kind == KF_ENUM_DECODE(KfEffectKind, 14) \|\| kind == KF_ENUM_DECODE(KfEffectKind, 22)) {` | Kind 14 uses model 4, the physical damage component route and periodic spatial sound; its specific effect identity remains unsupported. |
-| `effect_update_dispatch` | 217 | `22` | `if (kind == KF_EFFECT_KIND_EMERGING_PROJECTILE \|\| kind == KF_ENUM_DECODE(KfEffectKind, 14) \|\| kind == KF_ENUM_DECODE(KfEffectKind, 22)) {` | Kind 22 uses model 14 and skips shared spinning; its physical damage path differs from Light Needle. Preserve its unresolved kind identity. |
 | `effect_update_dispatch` | 219 | `0` | `impact_magic->damage_components[0],` | Magic component array ordinal: physical calls preserve the 0,2,1 mapping, while magic-channel calls use 0,1. No unsupported damage-channel identity is inferred from an ordinal. |
 | `effect_update_dispatch` | 220 | `2` | `impact_magic->damage_components[2],` | Magic component array ordinal: physical calls preserve the 0,2,1 mapping, while magic-channel calls use 0,1. No unsupported damage-channel identity is inferred from an ordinal. |
 | `effect_update_dispatch` | 221 | `1` | `impact_magic->damage_components[1],` | Magic component array ordinal: physical calls preserve the 0,2,1 mapping, while magic-channel calls use 0,1. No unsupported damage-channel identity is inferred from an ordinal. |
@@ -65,7 +59,6 @@ digits are not numeric literals; signs are operators. The
 | `effect_update_dispatch` | 267 | `1` | `remaining = effect->control.frames_remaining - 1;` | Decrement the Lightning Bolt halfword travel countdown by one before testing exhaustion. |
 | `effect_update_dispatch` | 269 | `0` | `if ((u16)remaining == 0) {` | Zero is exhaustion of the updated halfword countdown; retain the decrement and storage order. |
 | `effect_update_dispatch` | 272 | `1` | `&magic->sounds[1], &effect->position, KF_AUDIO_MAX_VOLUME);` | Second magic sound slot supplies impact playback; fixed-row selection remains separately named where applicable. |
-| `effect_update_dispatch` | 279 | `6` | `if (effect->base_render_id == 6) {` | Billboard base 6 selects the ordinary Lightning Impact child; the alternate Lightning Bolt resource selects constructor variant 41. Keep the resource ordinal until its asset is independently identified. |
 | `effect_update_dispatch` | 290 | `1` | `effect->base_render_id + ((u8)effect->control.frames_remaining & 1);` | Countdown parity alternates the two Lightning Bolt billboard entries; one is the low-bit mask. |
 | `effect_update_dispatch` | 298 | `0` | `if (--effect->control.frames_remaining == 0) {` | Zero is exhaustion of the updated halfword countdown; retain the decrement and storage order. |
 | `effect_update_dispatch` | 299 | `0` | `if (effect->propagation.generations_remaining != 0) {` | Zero means no further scatter descendants, selecting the final countdown or freeing the expired slot. |
@@ -74,10 +67,8 @@ digits are not numeric literals; signs are operators. The
 | `effect_update_dispatch` | 308 | `0` | `effect->control.frames_remaining = effect->propagation.generations_remaining == 0 ? SCATTER_FINAL_COUNTDOWN : SCATTER_BRANCH_COUNTDOWN;` | Zero means no further scatter descendants, selecting the final countdown or freeing the expired slot. |
 | `effect_update_dispatch` | 321 | `1` | `+ ((effect->visual.pulse_base_scale * value) >> (KF_FIXED12_BITS + 1));` | One extra shift beyond Q12 halves the sine/cosine pulse amplitude; direct fixed-point arithmetic, not an RNG extraction. |
 | `effect_update_dispatch` | 326 | `1` | `+ ((effect->visual.pulse_base_scale * value) >> (KF_FIXED12_BITS + 1));` | One extra shift beyond Q12 halves the sine/cosine pulse amplitude; direct fixed-point arithmetic, not an RNG extraction. |
-| `effect_update_dispatch` | 333 | `14` | `if (kind == KF_ENUM_DECODE(KfEffectKind, 14)) {` | Kind 14 uses model 4, the physical damage component route and periodic spatial sound; its specific effect identity remains unsupported. |
-| `effect_update_dispatch` | 334 | `0` | `if (rand() < KIND14_SOUND_RANDOM_CUTOFF && effect->sound_played == 0) {` | Zero means sound has not been accepted; the preceding rand call still occurs first even when this flag is already nonzero. |
+| `effect_update_dispatch` | 334 | `0` | `if (rand() < MAP_EMITTER_SOUND_RANDOM_CUTOFF && effect->sound_played == 0) {` | Zero means sound has not been accepted; the preceding rand call still occurs first even when this flag is already nonzero. |
 | `effect_update_dispatch` | 336 | `0` | `&magic->sounds[0], &effect->position, KF_AUDIO_MAX_VOLUME,` | First magic sound slot supplies travel/emergence playback; retain the positional sound-record mapping. |
-| `effect_update_dispatch` | 341 | `22` | `if (kind == KF_EFFECT_KIND_LIGHT_NEEDLE \|\| kind == KF_ENUM_DECODE(KfEffectKind, 22)) {` | Kind 22 uses model 14 and skips shared spinning; its physical damage path differs from Light Needle. Preserve its unresolved kind identity. |
 | `effect_update_dispatch` | 364 | `0` | `phase_sound = &magic->sounds[0];` | First magic sound slot supplies travel/emergence playback; retain the positional sound-record mapping. |
 | `effect_update_dispatch` | 384 | `0` | `if ((s16)effect->scale_y < 0) {` | Negative signed halfword Y scale terminates the status-projectile shrink; zero itself remains live. |
 | `effect_update_dispatch` | 394 | `1` | `if (phase < MOONLIGHT_TRAVEL_LAST + 1) {` | One expresses the exclusive bound including the last moving/holding phase. |
@@ -112,10 +103,8 @@ digits are not numeric literals; signs are operators. The
 | `effect_update_dispatch` | 545 | `0` | `effect->direction.words.x = 0;` | A missing homing actor target requests level pitch; zero is an angle origin, not a target index. |
 | `effect_update_dispatch` | 555 | `0` | `local_motion.vx = 0;` | Zero local X/Y leaves only the named forward displacement before pitch/yaw transforms. |
 | `effect_update_dispatch` | 556 | `0` | `local_motion.vy = 0;` | Zero local X/Y leaves only the named forward displacement before pitch/yaw transforms. |
-| `effect_update_dispatch` | 571 | `0x10` | `if (effect->base_render_id == 0x10) {` | Homing model base 16 selects radial child variant 44; ordinary homing chooses kind 18. This resource ordinal is distinct from a kind or state. |
 | `effect_update_dispatch` | 574 | `1` | `&effect->position, &effect->direction.vector, 1);` | True requests the radial-blast constructor sound via its sixth variadic slot; not a phase or actor identifier. |
 | `effect_update_dispatch` | 578 | `1` | `&effect->position, &effect->direction.vector, 1);` | True requests the radial-blast constructor sound via its sixth variadic slot; not a phase or actor identifier. |
-| `effect_update_dispatch` | 594 | `11` | `if (effect->base_render_id == 11) {` | Impact billboard base 11 selects ordinary Lightning Radial Blast; the alternate resource selects constructor variant 42. Its asset-specific identity remains unresolved. |
 | `effect_update_dispatch` | 604 | `1` | `phase_sound = &magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_LIGHTNING_BOLT)].sounds[1];` | Second magic sound slot supplies impact playback; fixed-row selection remains separately named where applicable. |
 | `effect_update_dispatch` | 621 | `1` | `if (phase & 1) {` | Oddness of the old lightning-blast phase gates damage; the shared increment happens afterward. |
 | `effect_update_dispatch` | 630 | `0` | `&position, damage_radius, KF_FIXED12_ONE, power, 0, 0, 0,` | Zero damage arguments omit channels or status on this specific call. Named actor/player scales and any nonzero status preserve their separate argument positions. |

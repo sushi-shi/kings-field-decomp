@@ -442,7 +442,7 @@ void map_object_pool_update(void)
                 effect_pool_construct(
                     *(u8 *)&object->link.spawn_sequence,
                     0x20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
-                    KF_ENUM_DECODE(KfEffectKind, 0xe),
+                    KF_EFFECT_KIND_MAP_EMITTER_PROJECTILE,
                     &object->position_x,
                     &direction,
                     &object->rotation);

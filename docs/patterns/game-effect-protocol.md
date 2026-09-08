@@ -219,3 +219,40 @@ Result: all fifteen uses now name their variant. The four planned functions
 retain their expressions and calls apart from replacing literal enum decodes;
 source review and ledger reconciliation cover all 111 C files and 5,978 retained
 literal occurrences. No build, compiler check, test or post-edit match ran.
+
+## Effect resource selectors and remaining projectile kinds
+
+Plan: name the remaining kinds 14/22 and all constructor resource selectors,
+then use the same selector names in the dispatcher's three child-variant tests.
+Affected GAME functions are `effect_pool_construct` (0x80036f44/0x82c),
+`effect_update_dispatch` (0x80038a38/0x180c), `actor_spawn_action_effect`
+(0x8002edd4/0x454), and the map-object emitter dispatcher. Existing retail
+constructor/dispatcher dossiers and current source/call paths establish the
+behavior; `render_actor_sprite` (0x8001eedc/0x1e8), reviewed as a consumer,
+selects billboard descriptors for mode 255 and effect model assets otherwise.
+
+Kind 14 is `MAP_EMITTER_PROJECTILE`: the map projectile-emitter action creates
+it, and dispatch applies physical damage and occasional in-flight sound.
+Kind 22 is `PHYSICAL_PROJECTILE`: actor effect emission constructs it, and
+its physical-damage branch differs from Light Needle despite their matching
+orientation setup. Neither name claims a monster, weapon or artwork identity.
+The old `KIND14_SOUND_*` constants receive the map-emitter prefix.
+
+Billboard and model constants are separate integer selector groups because the
+stored byte serves both tables and animated billboards advance numerically.
+Names describe each resource's established effect use. Both swinging hazards
+use the same model; orbiting and emerging projectiles also share a model.
+Their indices are not interpreted as different assets merely because the effect
+kind differs. `KF_EFFECT_ANIMATION_FIRST_CLIP` names model clip zero; frame age,
+neutral rotations and numeric scale origins keep their own meanings.
+
+No field width, array, resource bytes, geometry, control flow or bounds behavior
+changes. Builds, compiler checks, tests and post-edit matches remain deferred.
+
+Result: all used kind IDs and all numeric constructor billboard/model selectors
+now have behavioral names. The shared model identities stay shared; all three
+variant comparisons use their matching table constants. This supersedes the
+older notes retaining these IDs pending artwork identification. Source naming
+and value review completed for the four affected functions. The batch replaces
+93 inline occurrences; current ledgers cover all 111 C files and 5,885
+retained occurrences. No builds, compiler checks, tests or banking ran.
