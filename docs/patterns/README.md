@@ -18,6 +18,8 @@ promotes a probe to a proven historical toolchain.
 - [game-root-item-use-traces.md](game-root-item-use-traces.md): exact root and
   item-use panels through the magic-result channel and HP-first recovery;
   all three unit functions and the seven switch pointers match retail.
+- [game-map-drop-initialization.md](game-map-drop-initialization.md): dropped
+  object velocity initialization through the common action-selection exit.
 
 - [game-horizontal-movement-bearing.md](game-horizontal-movement-bearing.md):
   corrected collision-bearing Z sign, SDK short-vector stack layout,

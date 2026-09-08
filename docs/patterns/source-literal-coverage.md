@@ -66,6 +66,12 @@ not proof that every possible semantic improvement has been exhausted.
 Builds, compiler checks, tests and post-edit matches remain deferred until the
 naming pass finishes, as requested.
 
+The later [drop initialization correction](game-map-drop-initialization.md)
+reduces `map_object.c` from 65 to 63 occurrences by replacing three conditional
+velocity clears with one unconditional clear. Its current ledger and table
+entry below include that correction; the earlier whole-tree snapshot above
+has not been recounted here.
+
 ## Remaining semantic work
 
 1. Investigate the unresolved field families below using actual consumers and
@@ -138,7 +144,7 @@ fields and address-derived function names are separate from this ten-line count.
 | [map_event_render.c](../../src/game/map_event_render.c) | 6 | [complete renderer ledger](entity-render-literal-ledger.md); [review](renderer-literal-review.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [map_events.c](../../src/game/map_events.c) | 33 | [game-map-event ledger](game-map-event-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [map_load.c](../../src/game/map_load.c) | 42 | [game-map-event ledger](game-map-event-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
-| [map_object.c](../../src/game/map_object.c) | 65 | [domain evidence](game-map-object-motion-constants.md); [current ledger](game-map-object-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
+| [map_object.c](../../src/game/map_object.c) | 63 | [domain evidence](game-map-object-motion-constants.md); [current ledger](game-map-object-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [map_object_pool.c](../../src/game/map_object_pool.c) | 78 | [domain evidence](game-map-object-motion-constants.md); [current ledger](game-map-object-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [map_scripts.c](../../src/game/map_scripts.c) | 211 | [game-map-script ledger](game-map-script-literal-ledger.md); [image groups](map-image-groups.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [matrix.c](../../src/game/matrix.c) | 2 | [complete math ledger](math-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |

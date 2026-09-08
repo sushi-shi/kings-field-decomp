@@ -173,14 +173,12 @@ void map_object_spawn_effect(u8 kind, KfMapObjectId object_id, const struct KfVe
     object->action = KF_MAP_OBJECT_ACTION_IDLE;
     if (object_id < KF_MAP_DROP_TIP_ID_END) {
         map_object_start_action_if_idle(object, KF_MAP_OBJECT_ACTION_FALL_AND_TIP);
-        object->link.vertical_velocity = 0;
     } else if (object_id < KF_MAP_DROP_SPIN_ID_END) {
         map_object_start_action_if_idle(object, KF_MAP_OBJECT_ACTION_FALL_AND_SPIN);
-        object->link.vertical_velocity = 0;
     } else if (object_id < KF_MAP_DROP_BOUNCE_ID_END) {
         map_object_start_action_if_idle(object, KF_MAP_OBJECT_ACTION_BOUNCE);
-        object->link.vertical_velocity = 0;
     }
+    object->link.vertical_velocity = 0;
 }
 
 /* Spawns debris object 39 for SOURCE at a random bearing 600 units from POSITION. */
