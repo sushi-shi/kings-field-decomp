@@ -673,7 +673,7 @@ void actor_apply_horizontal_movement(void)
         definition->collision_height,
         ACTOR_VELOCITY_COLLISION_FLAGS);
     if (result != KF_COLLISION_NONE) {
-        if ((result >> 16) != (KF_COLLISION_PLAYER >> 16)) {
+        if ((result >> KF_COLLISION_KIND_SHIFT) != (KF_COLLISION_PLAYER >> KF_COLLISION_KIND_SHIFT)) {
             actor->movement_x = -actor->movement_x >> 1;
             actor->movement_z = -actor->movement_z >> 1;
         } else {
@@ -1104,7 +1104,7 @@ void actor_update_current_action(void)
                     definition->collision_height,
                     ACTOR_VELOCITY_COLLISION_FLAGS);
                 /* Retail compares the high half against the low-half ceiling code. */
-                if (result != KF_COLLISION_NONE && (result >> 16) == 0xfff1) {
+                if (result != KF_COLLISION_NONE && (result >> KF_COLLISION_KIND_SHIFT) == KF_COLLISION_DETAIL_CEILING) {
                     actor->vertical_state = KF_ACTOR_VERTICAL_FALL;
                     actor->vertical_velocity = 0;
                 }
@@ -1319,23 +1319,23 @@ vertical:
         if (hit == KF_COLLISION_NONE) {
             goto fall;
         }
-        if ((hit >> 16) == (KF_COLLISION_PLAYER >> 16)) {
+        if ((hit >> KF_COLLISION_KIND_SHIFT) == (KF_COLLISION_PLAYER >> KF_COLLISION_KIND_SHIFT)) {
             player_apply_damage(0, ACTOR_JUMP_CONTACT_STRIKING_DAMAGE, 0, 0, 0, 0, KF_FIXED12_ONE, KF_PLAYER_DAMAGE_MULTIPLIER_ONE);
         stagger:
             actor->vertical_state = KF_ACTOR_VERTICAL_JUMP_ATTACK;
             actor->vertical_velocity = ACTOR_JUMP_BOUNCE_VELOCITY_Y;
             actor->animation_phase = 0;
-        } else if ((hit >> 16) == (KF_COLLISION_TERRAIN >> 16)) {
-            switch (hit & 0xffff) {
-            case (KF_COLLISION_BELOW_FLOOR & 0xffff):
+        } else if ((hit >> KF_COLLISION_KIND_SHIFT) == (KF_COLLISION_TERRAIN >> KF_COLLISION_KIND_SHIFT)) {
+            switch (hit & KF_COLLISION_DETAIL_MASK) {
+            case KF_COLLISION_DETAIL_BELOW_FLOOR:
                 floor_height = map_floor_height_at_position(&actor->position);
                 goto land;
-            case (KF_COLLISION_CEILING & 0xffff):
+            case KF_COLLISION_DETAIL_CEILING:
                 actor->vertical_state = KF_ACTOR_VERTICAL_JUMP_ATTACK;
                 actor->vertical_velocity = ACTOR_JUMP_CEILING_VELOCITY_Y;
                 break;
             }
-        } else if ((hit >> 16) == (KF_COLLISION_ACTOR >> 16)) {
+        } else if ((hit >> KF_COLLISION_KIND_SHIFT) == (KF_COLLISION_ACTOR >> KF_COLLISION_KIND_SHIFT)) {
             goto stagger;
         }
         break;

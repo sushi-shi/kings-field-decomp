@@ -33,6 +33,14 @@ enum {
     KF_COLLISION_PLAYER = 0x800000
 };
 
+/* Packed query result: high-half kind and low-half index or terrain detail. */
+enum {
+    KF_COLLISION_KIND_SHIFT = 16,
+    KF_COLLISION_DETAIL_MASK = 0xffff,
+    KF_COLLISION_DETAIL_BELOW_FLOOR = KF_COLLISION_BELOW_FLOOR & KF_COLLISION_DETAIL_MASK,
+    KF_COLLISION_DETAIL_CEILING = KF_COLLISION_CEILING & KF_COLLISION_DETAIL_MASK
+};
+
 /*
  * Optional output from collision_query_world. The query copies a transform
  * from the selected player, actor, map object, or map event and records the

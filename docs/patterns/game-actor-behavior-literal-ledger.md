@@ -1,6 +1,6 @@
 # Actor-behavior remainder literal ledger
 
-Complete account of **158 numeric occurrences** in `src/game/actor_behavior.c`.
+Complete account of **145 numeric occurrences** in `src/game/actor_behavior.c`.
 The [behavior review](game-actor-behavior-constants.md) records the names, units,
 evidence and verification. Comments, strings, identifier digits, enums and retail
 claims are excluded. Repeated tokens have separate rows; signs stay in expressions.
@@ -54,8 +54,6 @@ explicit numeric boundaries.
 | `actor_spawn_action_effect` | 625 | `0x20` | `definition->effect_owner_id, 0x20 \| KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,` | Effect damage-credit class, distinct from its named collision-target bits; independent class identity remains unresolved. |
 | `actor_spawn_action_effect` | 626 | `1` | `KF_ENUM_DECODE(KfEffectKindArgument, effect_code), &position, &direction, distance, 1);` | True requests sound in constructor kinds that consume this variadic slot; ignored slots keep their original argument. |
 | `actor_prepare_charge_toward_player` | 644 | `0` | `if (angle_within_tolerance(actor->rotation.y, (s16)actor->movement_yaw, KF_ACTOR_AIM_TOLERANCE) == 0) {` | False cone test keeps the actor current yaw rather than targeting the player. |
-| `actor_apply_horizontal_movement` | 676 | `16` | `if ((result >> 16) != (KF_COLLISION_PLAYER >> 16)) {` | Extract the encoded collision result high halfword, from both the result and its named class as applicable. |
-| `actor_apply_horizontal_movement` | 676 | `16` | `if ((result >> 16) != (KF_COLLISION_PLAYER >> 16)) {` | Extract the encoded collision result high halfword, from both the result and its named class as applicable. |
 | `actor_apply_horizontal_movement` | 677 | `1` | `actor->movement_x = -actor->movement_x >> 1;` | Arithmetic halving after velocity negation on horizontal collision; preserve signed rounding order. |
 | `actor_apply_horizontal_movement` | 678 | `1` | `actor->movement_z = -actor->movement_z >> 1;` | Arithmetic halving after velocity negation on horizontal collision; preserve signed rounding order. |
 | `actor_apply_horizontal_movement` | 680 | `0` | `actor->movement_z = 0;` | Zero movement component or yaw coordinate; initialization or stopping after player collision. |
@@ -120,8 +118,6 @@ explicit numeric boundaries.
 | `actor_update_current_action` | 1091 | `0` | `actor_try_attack_player(0, definition->special_attack_range, 0, KF_ACTOR_AIM_TOLERANCE);` | Zero minimum attack range; no lower exclusion. |
 | `actor_update_current_action` | 1091 | `0` | `actor_try_attack_player(0, definition->special_attack_range, 0, KF_ACTOR_AIM_TOLERANCE);` | Zero yaw offset; attack along the current facing. |
 | `actor_update_current_action` | 1098 | `0` | `actor->vertical_velocity = 0;` | Clear vertical velocity at initialization, landing or transition. |
-| `actor_update_current_action` | 1107 | `16` | `if (result != KF_COLLISION_NONE && (result >> 16) == 0xfff1) {` | Extract the encoded collision result high halfword, from both the result and its named class as applicable. |
-| `actor_update_current_action` | 1107 | `0xfff1` | `if (result != KF_COLLISION_NONE && (result >> 16) == 0xfff1) {` | Retail compares the high result halfword against the low-half ceiling code; keep this exceptional comparison without correcting it. |
 | `actor_update_current_action` | 1109 | `0` | `actor->vertical_velocity = 0;` | Clear vertical velocity at initialization, landing or transition. |
 | `actor_update_current_action` | 1118 | `0` | `0,` | Zero height or vertical padding in the height-ignored actor-distance query. |
 | `actor_update_current_action` | 1119 | `0` | `0));` | Zero height or vertical padding in the height-ignored actor-distance query. |
@@ -153,19 +149,10 @@ explicit numeric boundaries.
 | `actor_update_current_action` | 1278 | `0` | `0,` | Zero height or vertical padding in the height-ignored actor-distance query. |
 | `actor_update_current_action` | 1279 | `0` | `0));` | Zero height or vertical padding in the height-ignored actor-distance query. |
 | `actor_update_current_action` | 1296 | `0` | `actor->vertical_velocity = 0;` | Clear vertical velocity at initialization, landing or transition. |
-| `actor_update_current_action` | 1322 | `16` | `if ((hit >> 16) == (KF_COLLISION_PLAYER >> 16)) {` | Extract the encoded collision result high halfword, from both the result and its named class as applicable. |
-| `actor_update_current_action` | 1322 | `16` | `if ((hit >> 16) == (KF_COLLISION_PLAYER >> 16)) {` | Extract the encoded collision result high halfword, from both the result and its named class as applicable. |
 | `actor_update_current_action` | 1323 | `0` | `player_apply_damage(0, ACTOR_JUMP_CONTACT_STRIKING_DAMAGE, 0, 0, 0, 0, KF_FIXED12_ONE, KF_PLAYER_DAMAGE_MULTIPLIER_ONE);` | Absent damage component or status payload; the only nonzero component here is the named striking input. |
 | `actor_update_current_action` | 1323 | `0` | `player_apply_damage(0, ACTOR_JUMP_CONTACT_STRIKING_DAMAGE, 0, 0, 0, 0, KF_FIXED12_ONE, KF_PLAYER_DAMAGE_MULTIPLIER_ONE);` | Absent damage component or status payload; the only nonzero component here is the named striking input. |
 | `actor_update_current_action` | 1323 | `0` | `player_apply_damage(0, ACTOR_JUMP_CONTACT_STRIKING_DAMAGE, 0, 0, 0, 0, KF_FIXED12_ONE, KF_PLAYER_DAMAGE_MULTIPLIER_ONE);` | Absent damage component or status payload; the only nonzero component here is the named striking input. |
 | `actor_update_current_action` | 1323 | `0` | `player_apply_damage(0, ACTOR_JUMP_CONTACT_STRIKING_DAMAGE, 0, 0, 0, 0, KF_FIXED12_ONE, KF_PLAYER_DAMAGE_MULTIPLIER_ONE);` | Absent damage component or status payload; the only nonzero component here is the named striking input. |
 | `actor_update_current_action` | 1323 | `0` | `player_apply_damage(0, ACTOR_JUMP_CONTACT_STRIKING_DAMAGE, 0, 0, 0, 0, KF_FIXED12_ONE, KF_PLAYER_DAMAGE_MULTIPLIER_ONE);` | Absent damage component or status payload; the only nonzero component here is the named striking input. |
 | `actor_update_current_action` | 1327 | `0` | `actor->animation_phase = 0;` | Reset the selected animation cycle to its initial phase. |
-| `actor_update_current_action` | 1328 | `16` | `} else if ((hit >> 16) == (KF_COLLISION_TERRAIN >> 16)) {` | Extract the encoded collision result high halfword, from both the result and its named class as applicable. |
-| `actor_update_current_action` | 1328 | `16` | `} else if ((hit >> 16) == (KF_COLLISION_TERRAIN >> 16)) {` | Extract the encoded collision result high halfword, from both the result and its named class as applicable. |
-| `actor_update_current_action` | 1329 | `0xffff` | `switch (hit & 0xffff) {` | Extract the encoded terrain-detail low halfword. |
-| `actor_update_current_action` | 1330 | `0xffff` | `case (KF_COLLISION_BELOW_FLOOR & 0xffff):` | Extract the encoded terrain-detail low halfword. |
-| `actor_update_current_action` | 1333 | `0xffff` | `case (KF_COLLISION_CEILING & 0xffff):` | Extract the encoded terrain-detail low halfword. |
-| `actor_update_current_action` | 1338 | `16` | `} else if ((hit >> 16) == (KF_COLLISION_ACTOR >> 16)) {` | Extract the encoded collision result high halfword, from both the result and its named class as applicable. |
-| `actor_update_current_action` | 1338 | `16` | `} else if ((hit >> 16) == (KF_COLLISION_ACTOR >> 16)) {` | Extract the encoded collision result high halfword, from both the result and its named class as applicable. |
 | `actor_update_current_action` | 1343 | `1` | `collision_adjust_cell_occupancy(actor->cell_x, actor->cell_z, 1);` | Remove exactly one actor before movement, then add it back after non-removal paths. |

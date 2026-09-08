@@ -186,7 +186,7 @@ shared_projectile:
             collision = effect_map_collision(&effect->position, radius);
             if (collision != (u32)KF_COLLISION_NONE) {
                 impact_magic = current_effect_magic_record;
-                collision_kind = collision >> 16;
+                collision_kind = collision >> KF_COLLISION_KIND_SHIFT;
                 if (kind == KF_EFFECT_KIND_LIGHTNING_BOLT) {
                     goto lightning_impact;
                 }
@@ -195,7 +195,7 @@ shared_projectile:
                     audio_play_spatial_default_range(
                         &impact_magic->sounds[1], &effect->position, KF_AUDIO_MAX_VOLUME);
                 }
-                if (collision_kind == (KF_COLLISION_ACTOR >> 16)) {
+                if (collision_kind == (KF_COLLISION_ACTOR >> KF_COLLISION_KIND_SHIFT)) {
                     if (kind == KF_EFFECT_KIND_MAP_EMITTER_PROJECTILE || kind == KF_EFFECT_KIND_PHYSICAL_PROJECTILE || kind == KF_EFFECT_KIND_WIND_CUTTER) {
                         actor_apply_damage(
                             (u16)collision, power,
@@ -213,7 +213,7 @@ shared_projectile:
                     if (kind == KF_EFFECT_KIND_WIND_CUTTER) {
                         goto advance_shared_projectile;
                     }
-                } else if (collision_kind == (KF_COLLISION_PLAYER >> 16)) {
+                } else if (collision_kind == (KF_COLLISION_PLAYER >> KF_COLLISION_KIND_SHIFT)) {
                     if (kind == KF_EFFECT_KIND_EMERGING_PROJECTILE || kind == KF_EFFECT_KIND_MAP_EMITTER_PROJECTILE || kind == KF_EFFECT_KIND_PHYSICAL_PROJECTILE) {
                         player_apply_damage(
                             impact_magic->damage_components[0],
@@ -433,9 +433,9 @@ play_phase_sound:
         linked_effect = &effect_pool_records[(u8)effect->control.parent_effect_index];
         collision = effect_map_collision(&effect->position, radius);
         if (collision != (u32)KF_COLLISION_NONE) {
-            collision_kind = collision >> 16;
+            collision_kind = collision >> KF_COLLISION_KIND_SHIFT;
             power = effect_magic_power(effect);
-            if (collision_kind == (KF_COLLISION_ACTOR >> 16)) {
+            if (collision_kind == (KF_COLLISION_ACTOR >> KF_COLLISION_KIND_SHIFT)) {
                 actor_apply_damage(
                     (u16)collision, power, 0, 0, 0,
                     magic->damage_components[0], magic->damage_components[1],

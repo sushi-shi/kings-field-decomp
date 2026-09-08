@@ -126,3 +126,26 @@ failures: data matches PSX 0/1, GAME 9/42, OPEN 2/19; target relinks PSX 1/1,
 GAME 75/77, OPEN 34/38; six conflicting section bases and zero artifact
 failures. This documentation completion does not claim a passing full build
 or completion of the broader naming goal.
+
+## Packed collision result constants
+
+Plan: name the result kind's 16-bit shift, its low-half detail mask, and the
+below-floor/ceiling details. `collision_query_world` combines terrain or object
+indices with named high-half kinds; effect damage extracts the actor index,
+while vertical actor handling switches on terrain details. Reviewed GAME
+consumers are the 3D/2D effect helpers (0x80037fe0/0x2b8, 0x80038298/0x260),
+effect dispatch (0x80038a38/0x180c), horizontal actor movement
+(0x8002f31c/0x14c), and actor action dispatch (0x8002fa88/0xd90).
+Existing collision/effect/actor dossiers and current call paths establish
+these encoded roles. The low half may contain an index or terrain detail,
+so the mask is not named as an actor-only index mask.
+
+Name the existing ceiling detail in the special-attack high-half comparison
+without correcting the mismatched half. Integer values, shifts, operand widths
+and control flow remain unchanged. No build, compiler check, test or post-edit
+match is run during this naming pass.
+
+Result: 28 raw occurrences now use packed-result constants. All five
+planned functions retain their value and comparison forms; the unusual ceiling
+comparison still tests the high half. Source review and literal documentation
+reconcile all 111 files and 5,857 retained occurrences; builds remain deferred.

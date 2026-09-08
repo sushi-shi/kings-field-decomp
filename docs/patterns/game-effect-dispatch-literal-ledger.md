@@ -1,6 +1,6 @@
 # Effect-dispatch remainder literal ledger
 
-Complete per-occurrence account of **139 retained numeric literals** in
+Complete per-occurrence account of **134 retained numeric literals** in
 `src/game/effect_dispatch.c`.
 Named definitions and retail claims are excluded. Comments, strings and identifier
 digits are not numeric literals; signs are operators. The
@@ -14,9 +14,7 @@ digits are not numeric literals; signs are operators. The
 | `initializers` | 137 | `0` | `{0, LONG_SWING_PROBE_LENGTH, 0, 0},` | Zero local X keeps this authored collision probe on the local Y axis. |
 | `initializers` | 137 | `0` | `{0, LONG_SWING_PROBE_LENGTH, 0, 0},` | Zero local Z keeps this authored collision probe on the local Y axis. |
 | `initializers` | 137 | `0` | `{0, LONG_SWING_PROBE_LENGTH, 0, 0},` | Zero SDK SVECTOR pad halfword is part of the initialized eight-byte probe payload. |
-| `effect_update_dispatch` | 189 | `16` | `collision_kind = collision >> 16;` | Extract or compare the high halfword of the packed collision class; 16 is its representation width. |
 | `effect_update_dispatch` | 196 | `1` | `&impact_magic->sounds[1], &effect->position, KF_AUDIO_MAX_VOLUME);` | Second magic sound slot supplies impact playback; fixed-row selection remains separately named where applicable. |
-| `effect_update_dispatch` | 198 | `16` | `if (collision_kind == (KF_COLLISION_ACTOR >> 16)) {` | Extract or compare the high halfword of the packed collision class; 16 is its representation width. |
 | `effect_update_dispatch` | 202 | `0` | `impact_magic->damage_components[0],` | Magic component array ordinal: physical calls preserve the 0,2,1 mapping, while magic-channel calls use 0,1. No unsupported damage-channel identity is inferred from an ordinal. |
 | `effect_update_dispatch` | 203 | `2` | `impact_magic->damage_components[2],` | Magic component array ordinal: physical calls preserve the 0,2,1 mapping, while magic-channel calls use 0,1. No unsupported damage-channel identity is inferred from an ordinal. |
 | `effect_update_dispatch` | 204 | `1` | `impact_magic->damage_components[1],` | Magic component array ordinal: physical calls preserve the 0,2,1 mapping, while magic-channel calls use 0,1. No unsupported damage-channel identity is inferred from an ordinal. |
@@ -27,7 +25,6 @@ digits are not numeric literals; signs are operators. The
 | `effect_update_dispatch` | 209 | `0` | `0, 0, 0, impact_magic->damage_components[0],` | The first three zeros omit physical damage channels; the bracketed zero selects the first magic component for the later channel. Preserve argument order and positional resource mapping. |
 | `effect_update_dispatch` | 209 | `0` | `0, 0, 0, impact_magic->damage_components[0],` | The first three zeros omit physical damage channels; the bracketed zero selects the first magic component for the later channel. Preserve argument order and positional resource mapping. |
 | `effect_update_dispatch` | 210 | `1` | `impact_magic->damage_components[1],` | Magic component array ordinal: physical calls preserve the 0,2,1 mapping, while magic-channel calls use 0,1. No unsupported damage-channel identity is inferred from an ordinal. |
-| `effect_update_dispatch` | 216 | `16` | `} else if (collision_kind == (KF_COLLISION_PLAYER >> 16)) {` | Extract or compare the high halfword of the packed collision class; 16 is its representation width. |
 | `effect_update_dispatch` | 219 | `0` | `impact_magic->damage_components[0],` | Magic component array ordinal: physical calls preserve the 0,2,1 mapping, while magic-channel calls use 0,1. No unsupported damage-channel identity is inferred from an ordinal. |
 | `effect_update_dispatch` | 220 | `2` | `impact_magic->damage_components[2],` | Magic component array ordinal: physical calls preserve the 0,2,1 mapping, while magic-channel calls use 0,1. No unsupported damage-channel identity is inferred from an ordinal. |
 | `effect_update_dispatch` | 221 | `1` | `impact_magic->damage_components[1],` | Magic component array ordinal: physical calls preserve the 0,2,1 mapping, while magic-channel calls use 0,1. No unsupported damage-channel identity is inferred from an ordinal. |
@@ -77,8 +74,6 @@ digits are not numeric literals; signs are operators. The
 | `effect_update_dispatch` | 421 | `1` | `if (((phase - MOONLIGHT_IMPACT_FIRST) & 1) == 0) {` | Mask one and compare with zero to emit on even offsets from impact start; the test precedes terminal-phase invalidation. |
 | `effect_update_dispatch` | 421 | `0` | `if (((phase - MOONLIGHT_IMPACT_FIRST) & 1) == 0) {` | Mask one and compare with zero to emit on even offsets from impact start; the test precedes terminal-phase invalidation. |
 | `effect_update_dispatch` | 424 | `1` | `&effect->position, &effect->direction.vector, 1);` | True requests the radial-blast constructor sound via its sixth variadic slot; not a phase or actor identifier. |
-| `effect_update_dispatch` | 436 | `16` | `collision_kind = collision >> 16;` | Extract or compare the high halfword of the packed collision class; 16 is its representation width. |
-| `effect_update_dispatch` | 438 | `16` | `if (collision_kind == (KF_COLLISION_ACTOR >> 16)) {` | Extract or compare the high halfword of the packed collision class; 16 is its representation width. |
 | `effect_update_dispatch` | 440 | `0` | `(u16)collision, power, 0, 0, 0,` | Zero damage arguments omit channels or status on this specific call. Named actor/player scales and any nonzero status preserve their separate argument positions. |
 | `effect_update_dispatch` | 440 | `0` | `(u16)collision, power, 0, 0, 0,` | Zero damage arguments omit channels or status on this specific call. Named actor/player scales and any nonzero status preserve their separate argument positions. |
 | `effect_update_dispatch` | 440 | `0` | `(u16)collision, power, 0, 0, 0,` | Zero damage arguments omit channels or status on this specific call. Named actor/player scales and any nonzero status preserve their separate argument positions. |

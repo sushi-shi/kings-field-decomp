@@ -69,11 +69,11 @@ void effect_projectile_update_3d(SVECTOR *probe_offset, s32 phase_limit)
         world.vz += record->position.vz;
         collision = effect_map_collision(&world, EFFECT_SWING_COLLISION_RADIUS);
         if (collision != (u32)KF_COLLISION_NONE) {
-            if ((collision >> 16) == (KF_COLLISION_ACTOR >> 16)) {
-                actor_apply_damage(collision & 0xffff, 0, magic->damage_components[0],
+            if ((collision >> KF_COLLISION_KIND_SHIFT) == (KF_COLLISION_ACTOR >> KF_COLLISION_KIND_SHIFT)) {
+                actor_apply_damage(collision & KF_COLLISION_DETAIL_MASK, 0, magic->damage_components[0],
                     magic->damage_components[2], magic->damage_components[1],
                     0, 0, KF_ACTOR_DAMAGE_SCALE_ONE, record->type);
-            } else if ((collision >> 16) == (KF_COLLISION_PLAYER >> 16)) {
+            } else if ((collision >> KF_COLLISION_KIND_SHIFT) == (KF_COLLISION_PLAYER >> KF_COLLISION_KIND_SHIFT)) {
                 player_apply_damage(magic->damage_components[0],
                     magic->damage_components[2], magic->damage_components[1],
                     0, 0, 0, KF_FIXED12_ONE, record->id);
@@ -135,11 +135,11 @@ void effect_projectile_update_2d(s32 orbit_radius, s32 phase_limit)
             + KF_ANGLE_FULL_TURN / EFFECT_ORBIT_UPDATES_PER_TURN) & KF_ANGLE_WRAP_MASK;
         collision = effect_map_collision(&record->position, EFFECT_ORBIT_COLLISION_RADIUS);
         if (collision != (u32)KF_COLLISION_NONE) {
-            if ((collision >> 16) == (KF_COLLISION_ACTOR >> 16)) {
-                actor_apply_damage(collision & 0xffff, 0, magic->damage_components[0],
+            if ((collision >> KF_COLLISION_KIND_SHIFT) == (KF_COLLISION_ACTOR >> KF_COLLISION_KIND_SHIFT)) {
+                actor_apply_damage(collision & KF_COLLISION_DETAIL_MASK, 0, magic->damage_components[0],
                     magic->damage_components[2], magic->damage_components[1],
                     0, 0, KF_ACTOR_DAMAGE_SCALE_ONE, record->type);
-            } else if ((collision >> 16) == (KF_COLLISION_PLAYER >> 16)) {
+            } else if ((collision >> KF_COLLISION_KIND_SHIFT) == (KF_COLLISION_PLAYER >> KF_COLLISION_KIND_SHIFT)) {
                 player_apply_damage(magic->damage_components[0],
                     magic->damage_components[2], magic->damage_components[1],
                     0, 0, 0, KF_FIXED12_ONE, record->id);
