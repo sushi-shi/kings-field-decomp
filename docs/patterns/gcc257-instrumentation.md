@@ -336,6 +336,44 @@ Both retain the baseline's selected lighting-constant and two-spill-register
 state, so neither supplies an independent correction to compose. Both are
 rejected; the production ending source remains at 97.952675%.
 
+### Follow-up match plan: shared ending-light reset
+
+After the strict GAME configuration-panel closure at `b99b38c`, refresh all six
+OPEN views and read the full `80014e28` body, caller at `80015890`, adjacent
+returns, declarations, source history and SDK provider controls. The unchanged
+baseline remains 97.952675%, 1944 retail bytes, a 264-byte frame with ten saves,
+forty direct calls, 31 address pairs and eight internal jumps. There are no
+strings, outgoing candidates or indirect transfers. The infinite frame loop
+and its detached return epilogue are preserved, as are both signed-halfword
+lighting states and the signed-word countdown with its literal -1 comparison.
+
+Retail's two completed lighting phases meet at `80015230`: a halfword phase
+store followed by one lighting-blend reset. Test sharing the existing reset
+in C: the first completed phase assigns GREEN and jumps to the reset label;
+the second assigns FINISHED and falls through to it. This models the decoded
+join without adding a next-state carrier or changing the blend guards, matrix
+calls, increments, inactive-phase behavior or subsequent sequence dispatch.
+The GAME result motivates this source question but does not prove the OPEN
+mechanism; the earlier two-register reload requirement remains a separate
+constraint to measure.
+
+Compare native/traced whole-object parity, strict objdiff and the first raw
+divergence. Track lighting-blend lifetime, both phase-constant registers,
+reload requirements, cross-jump events and the exact frame. Preserve all six
+exact same-unit functions. Only a retained strict-100% result, verified against
+raw retail words and through focused/full checks and banking, closes this
+remaining function.
+
+The shared-reset trial gives 97.623460%, retaining the 1944-byte extent and
+264-byte frame. Normal/traced objects agree. The blend pseudo loses two
+weighted references (17 to 15) and moves from hard register 20 to 30; both
+lighting constants still use distinct registers, and the two-register reload
+requirement remains. The source join does not recover the retail state. It is
+not retained or banked; production remains at 97.952675%. Numeric relocation
+resolution finds the first unequal word at `80014ee8`: lighting-blend zero
+initialization uses s8 instead of s4. There are 179 unequal aligned words;
+this confirms the earlier allocation divergence rather than a new exact result.
+
 ### Function Match Plan: GAME save/load argument promotion
 
 The required six views, full CFGs, sole callers, adjacent functions, history,

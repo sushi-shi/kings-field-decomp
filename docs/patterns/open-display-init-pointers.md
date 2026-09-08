@@ -1,5 +1,113 @@
 # OPEN display-initialization pointer lifetimes
 
+## Retained bases and offset stores are separate facts
+
+The unchanged same-unit `render_initialize`, OPEN `80016908`/468 bytes, was
+rebuilt at strict100% with complete resolved retail-word equality. Its two
+other exact siblings remain exact, while `display_initialize` remains
+92.177960%/484 bytes. Native, traced and debugger-driven objects agree.
+
+The matrix initializer retains its light-matrix root p85 in `s0` for four
+`MulMatrix0` argument groups. The trace gives it nine weighted references,
+three crossed calls and live length81. Its adjacent matrix field stores
+still use absolute addresses in the final object. Its earlier buffer-pointer
+stores also undergo the same two-pass pattern seen in display: CSE1 makes
+them relative to a common root, then CSE2 folds them absolute. These are
+features of a byte-exact control, not additional progress in the count.
+
+Direct `find_best_addr` entry/return observations distinguish a simple `REG`
+address from an offset expression. The preliminary fold in `cse.c:2534`
+applies only to non-`REG` addresses. A small control using authentic MATRIX
+fields and two `MulMatrix0` calls retains its first matrix address in `s0`
+while both stores at offset2 become absolute in CSE2. Direct root stores
+remain register addresses even when their quantity has a known constant.
+Thus retaining a base across calls alone does not recover display's stores.
+
+For canonical display, the four first-pass DFE operands start relative to
+whole-DRAWENV pseudos whose quantities have no recorded constant. Address
+equivalence lookup rewrites them relative to DTD. On the second pass, that
+DTD quantity has its actual constant and all four offsets fold absolute.
+In the retained explicit INTRO case, the whole-DRAWENV bases still have no
+recorded quantity constant at those stores in either pass, and the operands
+remain relative to those objects. All four real/small controls have complete
+native/traced/debugger parity and audited source/compiler fingerprints.
+Evidence and assertions are under `build/gcc257/open-matrix-address-control/`.
+
+## Single-pass submission and fallback control
+
+The preceding observations motivated a bounded control-flow hypothesis:
+express the existing ending submission as a `do … while (0)` block, break
+to the draw fallback for non-ending modes, and jump to the common finish
+after the ending calls. The two exits represent the existing branches; all
+calls, writes, ordering, types and default behavior remain unchanged. GCC's
+loop-end note is significant to its first CSE traversal, so the question was
+whether that boundary could delay the DTD rewrite until the second pass.
+
+The actual result is identical to the canonical unit after relocation
+resolution: 92.177960%,484 bytes,40-byte frame and all four extra address
+pairs. Native, traced and debugger-driven complete candidate objects agree;
+all three exact siblings remain exact. The loop begin/continue/end notes
+survive through jump2. In both CSE passes, the debugger records an `AROUND`
+path at UID320 to the one-use label222, rather than canonical's `TAKEN` path.
+That traversal still permits the first-pass rewrite; the four stores are
+DTD-relative after CSE1 and absolute after CSE2. No new exact function or
+production change results. Keep the earlier retained states; one-pass
+wrappers and loop-note presence do not by themselves supply the correction.
+The plan, source, traces, raw audit and path assertions are in
+`build/gcc257/open-display-single-pass/`.
+
+## Explicit INTRO case and CSE path control
+
+The Function Match Plan for OPEN `80016adc display_initialize` refreshed the
+six semantic views, sole caller, full CFG, source history, SDK types, complete
+graphics owner and three exact unit neighbors. The starting candidate remains
+strict 92.177960%, 484 bytes versus retail 472, with a 40-byte versus 48-byte
+frame. The valid mode domain names INTRO (1) and ENDING (254); the current
+non-ending arm also handles every other value.
+
+Replace only the second mode dispatch with a switch that explicitly names
+INTRO, sharing its existing block with default. Preserve the first ResetGraph
+dispatch and every call, field width, write order and default behavior. The
+source question is whether the additional incoming edge changes CSE's path
+selection: `cse_end_of_basic_block` follows a conditional target only when
+`LABEL_NUSES` is one. The plan was recorded before the isolated source edit.
+
+The trial reaches strict **90.635590%**, still 484 bytes and a 40-byte frame.
+It removes all four extra absolute DFE address pairs: the 18 ordered calls and
+16 ordered absolute referents now agree with retail. The three neighboring
+functions remain raw exact. This is a useful intermediate state despite its
+lower score, and the candidate is retained under `build/`.
+
+| Source | DFE stores after CSE1 | DFE stores after CSE2 | Draw-block label uses |
+| --- | --- | --- | ---: |
+| Original if/else | Four relative to first DTD | Four absolute | 1 |
+| Explicit INTRO/default | Four relative to DRAWENV pointers | Same four relative stores | 2 |
+
+The missing DTD lifetime is separate. In the explicit-case trial, CSE1 still
+creates the first-DTD pseudo and derives the two whole DRAWENV pointers at
+-22 and +70. The draw block retains its incoming whole-object expressions
+at +23 instead of adopting the DTD-relative forms at +1 and +93. The DTD
+pseudo therefore crosses no calls and receives `a0`; retail retains it in
+`s0`. The extra INTRO equality also survives to final machine code. The first
+raw divergence remains the smaller frame, so this source is not bankable.
+
+Read-only debugger observations confirm the path decision in both CSE passes.
+Canonical branch UID185 targets label202 with one use and is followed from
+UID38. The explicit-case branches UID244/247 target label203 with two uses;
+neither enters a followed path. Two small controls using authentic DRAWENV
+fields reproduce both the label-use decision and the corresponding address
+rewrites. Native, traced and debugger-produced complete objects agree for
+the actual candidates and the small controls under the unchanged pinned
+GCC 2.5.7 target profile.
+
+Eight bounded static mode comparisons preserve all SDK arguments, ordered
+writes and frame restoration, including the two named modes, other values
+and signed extremes. These checks do not execute the game or establish byte
+exactness. Generated plans, sources, traces, debugger scripts, raw comparisons
+and passing assertions are retained in `build/gcc257/open-display-intro-case`.
+Both this state and the original candidate remain available; recovering the
+retail DTD root and single mode test still requires a supported source change.
+
 ## Release 2.5 LIBGPU macro audit
 
 The pinned Release 2.5 `LIBGPU.H` (`3.51`, 1994-11-21) defines DRAWENV with
