@@ -170,3 +170,48 @@ the trials; all three exact unit siblings retain their complete retail
 words. Moving the fixture root by four bytes breaks the reference control.
 Direct phase access therefore does not explain this residue. No production
 source, owner declaration, score or bank entry changes from this trial.
+
+## CSE address selection revisit at `c3700f8`
+
+Fresh six-view GAME evidence and complete resolved source/target comparisons
+retain the 99.385475%, 712-byte baseline. The current complete graphics owner
+replaces the older standalone state identity without changing the numeric
+references. Enqueue, digit UV and buffer flip remain strict 100% and reproduce
+all 53 retail words. The sole caller, shared byte fields, five calls, 56-byte
+frame, sprite clears and duplicate-message policy are unchanged.
+
+Native, instrumented and debugger compiler runs produce identical complete
+ELF objects. During CSE1, phase pseudo 71 anchors both the idle tail read
+(UID 19) and the rotation-exit snapshot (UID 354) at offset -2. In CSE2,
+`find_best_addr` first accepts the absolute tail address for both reads. It
+then replaces the rotation-exit address with phase minus two again, while the
+idle read retains the absolute address. The phase quantity is known in both
+observations. Thus neither an unknown phase value nor an invalid absolute
+load explains this difference. The preceding control-pointer definition
+supplies an address equivalence which is absent at the idle read.
+
+The Function Match Plan tests defining the existing control pointer at its
+first use inside the unconditional dequeue iteration. The initial ID snapshot
+still precedes the loop; the same pointer serves the loop and final reset.
+This adds no memory access or synthetic state. CSE1 removes the initial tail
+address definition, and loop optimization hoists the control definition only
+to the position after the ID snapshot. CSE2 now retains the desired absolute
+tail read. However, CSE1 also converts the final phase reset to an absolute
+address, and the control/ID registers exchange roles. This trial is rejected:
+99.156425%, 720 bytes, with an extra final phase address pair.
+
+A separate follow-up snapshots the byte tail before binding the control
+pointer, then reads the indexed ID after binding. Unlike the earlier byte
+trial, the pointer is not defined before the byte read. Unlike the earlier
+ID-before-pointer trial, the array read remains after the binding. CSE1 still
+keeps the first tail-address pseudo because the later control definition
+copies it. CSE2 therefore again sees that equivalence before the snapshot.
+The complete linked body and ordered referents are identical to baseline:
+99.385475%, 712 bytes. This composition is also rejected.
+
+Both trials have native/instrumented whole-ELF parity and preserve all three
+exact siblings. Production notification C and its bank entries are unchanged.
+The recorded observations describe this pinned GCC 2.5.7 probe; they do not
+establish the original source spelling or compiler. Generated dossiers,
+traces, debugger observations and raw comparisons remain under
+`build/gcc257/game-notification-revisit/`.

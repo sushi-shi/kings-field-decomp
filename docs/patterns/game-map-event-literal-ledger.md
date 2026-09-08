@@ -67,23 +67,23 @@ explicit numeric boundaries.
 | `map_event_pool_update` | 153 | `1` | `*gate = current - 1;` | Decrement by one update; wrap/reload follows the old value's zero test. |
 | `map_event_pool_update` | 154 | `0` | `if (current == 0) {` | Zero is the countdown endpoint that reloads the gate. |
 | `map_event_pool_update` | 159 | `0` | `if (map_ambient_script_countdown-- == 0) {` | Post-decrement zero endpoint gives eleven updates per reload of ten. |
-| `map_world_state_persist` | 196 | `1` | `*out++ = 1;` | Serialized boolean records-present marker, read by the inverse parser. |
-| `map_world_state_persist` | 199 | `0` | `for (i = 0; i < KF_MAP_EVENT_CAPACITY; i++, event++) {` | Zero-based traversal of the explicitly named pool/group capacity. |
-| `map_world_state_persist` | 204 | `1` | `*out++ = event->dialogue_pages.last_page[event->dialogue_stage - 1];` | Convert a one-based dialogue stage to its zero-based last-page array index. |
-| `map_world_state_persist` | 210 | `0` | `active = 0;` | Start the sparse record count at zero before backfilling its count byte. |
-| `map_world_state_persist` | 211 | `0` | `actor = &actor_state.actors[0];` | Begin at the first record of the owning array. |
-| `map_world_state_persist` | 212 | `0` | `for (i = 0; i < KF_ACTOR_CAPACITY; i++, actor++) {` | Zero-based traversal of the explicitly named pool/group capacity. |
-| `map_world_state_persist` | 225 | `0` | `object = &map_object_state.objects[0];` | Begin at the first record of the owning array. |
-| `map_world_state_persist` | 226 | `0` | `for (i = 0; i < KF_MAP_OBJECT_CAPACITY; i++, object++) {` | Zero-based traversal of the explicitly named pool/group capacity. |
-| `map_world_state_persist` | 231 | `0` | `active = 0;` | Start the sparse record count at zero before backfilling its count byte. |
-| `map_world_state_persist` | 232 | `0` | `object = &map_object_state.objects[0];` | Begin at the first record of the owning array. |
-| `map_world_state_persist` | 234 | `0` | `for (i = 0; i < KF_MAP_OBJECT_EFFECT_FIRST; i++, object++) {` | Zero-based traversal of the explicitly named pool/group capacity. |
-| `map_world_state_persist` | 256 | `1` | `s32 k = sizeof(object->link) - 1;` | Initialize the signed byte-copy countdown to the complete member extent minus one. |
-| `map_world_state_persist` | 260 | `1` | `} while (--k != -1);` | Negative countdown endpoint preserves zero-count skipping and the complete byte/record traversal. |
-| `map_world_state_persist` | 266 | `0` | `for (i = 0; i < KF_MAP_OBJECT_EFFECT_GROUP_CAPACITY; i++, object++) {` | Zero-based traversal of the explicitly named pool/group capacity. |
-| `map_world_state_persist` | 270 | `8` | `*out++ = (u8)(*(const u16 *)&object->link >> 8);` | Extract the high byte of the little-endian two-byte link prefix. |
-| `map_world_state_persist` | 274 | `0` | `for (i = 0; i < 2 * KF_MAP_OBJECT_EFFECT_GROUP_CAPACITY; i++, object++) {` | Zero-based record traversal; multiplier 2 spans the adjacent definition-drop and placement-drop groups. |
-| `map_world_state_persist` | 274 | `2` | `for (i = 0; i < 2 * KF_MAP_OBJECT_EFFECT_GROUP_CAPACITY; i++, object++) {` | Zero-based record traversal; multiplier 2 spans the adjacent definition-drop and placement-drop groups. |
+| `map_world_state_persist` | 202 | `1` | `*out++ = 1;` | Serialized boolean records-present marker, read by the inverse parser. |
+| `map_world_state_persist` | 205 | `0` | `for (i = 0; i < KF_MAP_EVENT_CAPACITY; i++, event++) {` | Zero-based traversal of the explicitly named pool/group capacity. |
+| `map_world_state_persist` | 210 | `1` | `*out++ = event->dialogue_pages.last_page[event->dialogue_stage - 1];` | Convert a one-based dialogue stage to its zero-based last-page array index. |
+| `map_world_state_persist` | 216 | `0` | `active = 0;` | Start the sparse record count at zero before backfilling its count byte. |
+| `map_world_state_persist` | 217 | `0` | `actor = &actor_state.actors[0];` | Begin at the first record of the owning array. |
+| `map_world_state_persist` | 218 | `0` | `for (i = 0; i < KF_ACTOR_CAPACITY; i++, actor++) {` | Zero-based traversal of the explicitly named pool/group capacity. |
+| `map_world_state_persist` | 231 | `0` | `object = &map_object_state.objects[0];` | Begin at the first record of the owning array. |
+| `map_world_state_persist` | 232 | `0` | `for (i = 0; i < KF_MAP_OBJECT_CAPACITY; i++, object++) {` | Zero-based traversal of the explicitly named pool/group capacity. |
+| `map_world_state_persist` | 237 | `0` | `active = 0;` | Start the sparse record count at zero before backfilling its count byte. |
+| `map_world_state_persist` | 238 | `0` | `object = &map_object_state.objects[0];` | Begin at the first record of the owning array. |
+| `map_world_state_persist` | 240 | `0` | `for (i = 0; i < KF_MAP_OBJECT_EFFECT_FIRST; i++, object++) {` | Zero-based traversal of the explicitly named pool/group capacity. |
+| `map_world_state_persist` | 262 | `1` | `s32 k = sizeof(object->link) - 1;` | Initialize the signed byte-copy countdown to the complete member extent minus one. |
+| `map_world_state_persist` | 266 | `1` | `} while (--k != -1);` | Negative countdown endpoint preserves zero-count skipping and the complete byte/record traversal. |
+| `map_world_state_persist` | 272 | `0` | `for (i = 0; i < KF_MAP_OBJECT_EFFECT_GROUP_CAPACITY; i++, object++) {` | Zero-based traversal of the explicitly named pool/group capacity. |
+| `map_world_state_persist` | 276 | `8` | `*out++ = (u8)(*(const u16 *)&object->link >> 8);` | Extract the high byte of the little-endian two-byte link prefix. |
+| `map_world_state_persist` | 280 | `0` | `for (i = 0; i < 2 * KF_MAP_OBJECT_EFFECT_GROUP_CAPACITY; i++, object++) {` | Zero-based record traversal; multiplier 2 spans the adjacent definition-drop and placement-drop groups. |
+| `map_world_state_persist` | 280 | `2` | `for (i = 0; i < 2 * KF_MAP_OBJECT_EFFECT_GROUP_CAPACITY; i++, object++) {` | Zero-based record traversal; multiplier 2 spans the adjacent definition-drop and placement-drop groups. |
 
 ## `src/game/map_load.c`
 

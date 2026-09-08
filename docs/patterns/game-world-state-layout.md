@@ -183,3 +183,64 @@ Sony providers and deterministic SDK, allocation and GTE hooks remain explicit
 boundaries. The runner separately audits executed R3000 load-delay hazards
 and guards writes; Unicorn alone is not evidence of all original hardware
 behavior. Finite corpus agreement is not a proof over every possible input.
+
+## Writer base-expression revisit at `c3700f8`
+
+The Function Match Plan refreshes all six GAME views, all 174 retail words,
+three no-argument call sites, neighboring functions, shared owners, source
+history and the earlier parser/layout/inline-helper controls. The writer is
+still a game-owned leaf with no calls, strings or indirect transfers; its
+seven address pairs and one internal jump are validated. The production
+baseline is 94.821840%, 700 bytes versus retail's 696 bytes.
+
+Use the two short-lived address components already verified in the exact
+inverse reader: `floor_offset` holds the floor byte times 1,700, and
+`records_base` holds the saved-world anchor minus 1,690. Their sum initializes
+the output cursor. This is distinct from the previously rejected combined
+expression and adjustment of the long-lived cursor itself. It preserves the
+complete owner and every byte written to the serialized stream.
+
+The retained source reaches **96.005745%**, still 700 bytes. The first 49
+retail words now agree exactly, including the base adjustment, scheduling and
+complete event loop. All subsequent source words and ordered numeric
+references remain unchanged from the baseline. The five exact unit siblings
+retain their combined 297 retail words. No function becomes newly exact.
+
+Two separate follow-up controls are rejected:
+
+| Control | Strict result | Observed result |
+| --- | ---: | --- |
+| Eight-byte copy uses `k-- != 0` | 92.040230% / 700 bytes | The old counter copy survives through combine; it does not become retail's decrement-and-minus-one test. Registers change throughout the body. |
+| Behavior comparison uses the promoted enum form | 96.005745% / 700 bytes | Complete linked instructions and ordered references are unchanged. The byte storage and original local type are retained. |
+
+Debugger observation of `move_movables` explains where the current two
+misplaced constants move. The inner copy has seven RTL instructions and
+hoists -1, with lifetime/savings 1/1. The outer object loop has 37 RTL
+instructions and threshold 52; 65 has lifetime/savings 1/1 and the already
+moved -1 has 11/1. Both move to the outer preheader. The measured behavior
+agrees with the source's profitability test, including its increased cost
+for an already moved expression. It supplies no independently supported
+source correction for those constants, so no carrier, extra operation,
+profile change or declaration permutation is introduced.
+
+The remaining differences are the active-count register, definition-base
+placement, behavior-value register and the two constant lifetimes in the
+sparse-object loop. Source remains one instruction longer overall. All six
+walk extents, predicates, byte order, return delay slot and numeric referents
+are preserved. No partial result is banked. Generated evidence remains under
+`build/gcc257/game-world-save-revisit/`.
+
+Final verification uses an actual affected-unit rebuild, followed by the full
+`kf build`. Native, instrumented and debugger compiles have whole-ELF parity
+when compared at identical source paths; production instructions match the
+retained experiment. Modern type checking, Ruff, whitespace checks and all
+725 repository tests pass, including the existing world-persistence oracle.
+Full build retains the existing data ownership/extent/placement failures and
+PSX/GAME/OPEN target relinks of 1/1, 75/77 and 34/38, with no artifact failures
+or banked-function regression. The 17 writer literal-ledger rows have updated
+line references; their tokens, expressions and reasons are unchanged.
+
+Concurrent master commits `fb415a6` and `9080261` close the menu-window and
+map-object updater functions. Those independent changes bring GAME to 334/362
+strict exact; OPEN remains 106/108 and PSX 1/1. This writer correction adds
+zero exact functions and no bank row. The remaining goal is still open.
