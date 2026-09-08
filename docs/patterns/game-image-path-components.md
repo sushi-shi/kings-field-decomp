@@ -143,3 +143,61 @@ and names its complete private array `map_screen_image_path`. The directory
 cursor and instruction sequence are preserved after normalizing the owning
 `.data` addends; the strict result remains 88.888885%. DATA ownership evidence
 is in `config/evidence/game_map_script_data.md`.
+
+## Map formatter trace plan at `395429f`
+
+Refresh the six GAME views, complete 144-byte retail body, sole caller,
+adjacent boundaries, 16-byte private path, current source/history and exact
+576-byte display callee. The caller still supplies group 0/1 and an unsigned
+link byte; the signed division body does not independently settle the index
+parameter's original width. Preserve its current signed-word boundary, group
+enum and all four byte destinations. This custom path policy remains outside
+the vendored inventory; retain the display callee's authentic SDK interfaces.
+
+Fresh native/traced/repeated compilation reproduces the current 148-byte
+candidate and all fourteen exact siblings in the sixteen-function unit.
+Every delinked target reconstructs its retail body. The selected function
+retains three checked-division branches, two traps, one call, five validated
+address pairs and the 24-byte frame/return slot. Its first raw divergence is
+the remainder's destination at +30 (hex); its path+5 address precedes the
+floor-byte load instead of following it, retaining the extra load-delay nop.
+
+Test one actual decimal decomposition: compute signed `tens = index / 10`
+and `ones = index % 10` before the existing path operations, then use those
+values for the two filename digits. Both values already exist as the divmod
+results; the source must retain the arithmetic, stores and their order rather
+than introduce a new carrier or narrow an unproved parameter. Inspect whether
+the named values survive CSE and whether the independent cursor lifetime
+changes. The previously rejected floor snapshot and cursor-binding variants
+are not a new search axis. Compare complete words and ordered referents,
+require native/traced parity, and preserve all other fifteen unit functions.
+Only a strict 100% production result can be banked.
+
+The decomposition emits exactly the baseline instructions in all sixteen
+functions, preserving the fourteen exact siblings and the partial dispatcher.
+Both objects' DATA and RODATA bytes also agree. The named `tens`/`ones`
+pseudos 73/77 disappear by CSE1; the first divmod's quotient/remainder pseudos
+74/75 retain hard registers a1/a2, just as baseline pseudos 81/82 do. Their
+reference counts and live lengths remain 2/9 and 2/11, with no crossed calls.
+
+The cursor changes pseudo number from 73 to 81 but retains v1, three references
+and live length ten. Both scheduling snapshots materialize it before the
+floor load and form the fixed a0 call argument before the last cursor-based
+store. That surviving overlap is directly visible in the probe; retail instead
+uses a0 for the cursor and derives the path in the call slot. Naming decimal
+values does not change this state. The first raw difference remains the mfhi
+destination at +30, and the path+5/floor address order remains reversed.
+This is a rejected source control, not historical compiler attribution or a
+reason to alter the reference inventory.
+
+Native/traced/repeated whole ELFs agree per source and repeated traces are
+byte-identical. A one-byte private-path shift changes exactly four address
+instructions; shifting the display callee by four changes only its call word.
+Complete evidence is under `build/gcc257/map-image-trace/`. No production source,
+profile, header, identity, relocation or bank entry changes. Current-state
+verification has zero failures and still reports GAME 324/362 and OPEN 106/108
+exact. The same unchanged production inputs passed the 703-test/Ruff checks
+and full-build audit recorded in the
+[pool consumer checkpoint](game-graphics-owner-pilot.md#pool-lifecycle-consumer-audit-at-81fa559).
+The map helper remains strict 88.888885%; all forty remaining functions still
+require strict 100% closure.
