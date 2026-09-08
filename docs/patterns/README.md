@@ -362,8 +362,9 @@ promotes a probe to a proven historical toolchain.
   home-distance dependency control and explicit shared-epilogue exit audit.
 - [game-actor-damage-exits.md](game-actor-damage-exits.md): boss-only health
   guard, unconditional credit mask, fatal-first arm and rounded damage lifetime.
-- [game-actor-radial-falloff.md](game-actor-radial-falloff.md): calculated-first
-  falloff and short scale restore the loop; entry setup remains non-exact.
+- [game-actor-radial-falloff.md](game-actor-radial-falloff.md): exact radial
+  damage through unconditional loop-entry deficit calculation, with controlled
+  constant sharing and loop motion.
 - [game-actor-motion-limits.md](game-actor-motion-limits.md): drift acceleration,
   per-axis and yaw speed limits, exclusive home tolerance, and progress-byte roles.
 - [game-actor-constants.md](game-actor-constants.md): actor phase limits,

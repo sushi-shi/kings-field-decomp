@@ -412,7 +412,7 @@ void actor_pool_apply_radial_damage(
     u16 hit_flags)
 {
     s32 falloff_value = falloff;
-    s32 remaining = KF_FIXED12_ONE - falloff_value;
+    s32 remaining;
     KfActor *actor = actor_state.actors;
     KfActorDefinition *definition;
     s16 index;
@@ -422,6 +422,7 @@ void actor_pool_apply_radial_damage(
     u16 damage_scale;
 
     for (index = 0; index < KF_ACTOR_CAPACITY; index++, actor++) {
+        remaining = KF_FIXED12_ONE - falloff_value;
         if (actor->lifecycle != KF_ACTOR_LIFECYCLE_ACTIVE) {
             continue;
         }
