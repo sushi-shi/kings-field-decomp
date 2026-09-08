@@ -33,6 +33,9 @@ promotes a probe to a proven historical toolchain.
 - [open-dispatch-constant-lifetimes.md](open-dispatch-constant-lifetimes.md):
   exact OPEN constant-sharing control, local versus global allocation, and
   the rejected scroll-enable equality's new reload requirement.
+- [gcc257-stack-object-alignment.md](gcc257-stack-object-alignment.md): OPEN
+  automatic aggregate spacing, used extents and limits on inferring capacities
+  or compact local groupings from stack gaps.
 - [game-save-ui-matches.md](game-save-ui-matches.md): status-result and dialogue
   pathname trials, plus delay-slot and unseen-prologue trace controls.
 - [game-status-result-traces.md](game-status-result-traces.md): exact status
@@ -280,6 +283,9 @@ promotes a probe to a proven historical toolchain.
 - [retail initialized packing](../../config/evidence/open_sound_data_extent.md):
   carve actual inter-object bytes, including nonzero controls, and separate
   OPEN's three-byte SoundRef from its following census byte.
+- [objdiff-local-branch-comparison.md](objdiff-local-branch-comparison.md):
+  reject a false exact MIPS jump hidden by a function shift and local label;
+  compare aligned destinations before accepting equal instruction bytes.
 - [bss-ownership-comparison.md](bss-ownership-comparison.md): per-section BSS
   ownership checks, swapped-identity and linkage false-positive controls, and
   inclusion of custom allocated NOBITS sections; matching data must also admit
@@ -616,6 +622,11 @@ promotes a probe to a proven historical toolchain.
 - [open-ending-scroll.md](open-ending-scroll.md): complete ending-scroll C,
   initialized panel/camera/color owners, the unreachable epilogue correction,
   and the remaining short-state and branch-join comparison.
+- [open-sentinel-sharing.md](open-sentinel-sharing.md): retained color-argument
+  lifetime, seven-word working residue, and shared-sentinel source controls.
+- [open-inline-struct-floating.md](open-inline-struct-floating.md): inline
+  helper boundaries, local lighting/geometry structs, and bounded float/double
+  arithmetic controls for the two remaining OPEN functions.
 - [open-tmd-enqueue.md](open-tmd-enqueue.md): all twelve general TMD polygon
   modes, SDK-preserving packed views, static compiled/retail call-path controls,
   and the remaining shared graphics-base and instruction differences.
@@ -771,3 +782,7 @@ promotes a probe to a proven historical toolchain.
 - [Allocated save workspace](typed-save-workspace.md): complete header/payload allocation with independent public buffer views and exact null-path behavior.
 
 - [Final typed-storage cast audit](typed-cast-audit.md): complete 451-site classification, whole-campaign byte preservation and explicit remaining evidence limits.
+
+- [GCC 2.5.7 typedef comparisons](gcc257-typedef-comparisons.md): a real-function
+  control separates the s32 typedef from bare long, with limits on its
+  relevance to the two remaining OPEN mismatches.

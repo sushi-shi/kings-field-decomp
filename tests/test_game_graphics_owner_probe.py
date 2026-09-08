@@ -721,7 +721,6 @@ extern KfMaterialProbe material_probe;
             'menu_draw_window',
             'menu_draw_window_backdrop',
             'menu_item_model_preview',
-            'notify_effect_update',
             'player_add_experience',
             'player_move_horizontal',
             'render_entities',
@@ -761,7 +760,7 @@ extern KfMaterialProbe material_probe;
                                         {**addresses, 'game_graphics_runtime': ORIGIN + 4}, functions)
                                     self.assertNotEqual(wrong, expected, claim.symbol)
                                     self.assertEqual(same_calls, calls)
-        self.assertEqual((checked, exact), (173, 156))
+        self.assertEqual((checked, exact), (173, 157))
 
 
 if __name__ == '__main__':

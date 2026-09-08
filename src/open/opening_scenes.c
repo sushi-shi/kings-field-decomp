@@ -782,6 +782,8 @@ void opening_ending_scroll_run(void)
     bottom_color = opening_ending_scroll_bottom_start;
 
     for (;;) {
+        CVECTOR *top = &top_color;
+
         switch (lighting_phase) {
         case ENDING_LIGHT_TO_MIDPOINT:
             if (lighting_blend <= KF_FIXED12_ONE) {
@@ -844,11 +846,11 @@ void opening_ending_scroll_run(void)
             background_blend = KF_FIXED12_ONE;
         }
         color_lerp_cvector(&opening_ending_scroll_top_start,
-                          &opening_ending_scroll_top_end, &top_color, background_blend);
+                          &opening_ending_scroll_top_end, top, background_blend);
         color_lerp_cvector(&opening_ending_scroll_bottom_start,
                           &opening_ending_scroll_bottom_end, &bottom_color, background_blend);
         sprite_add_g4(&opening_ending_scroll_backgrounds[0],
-                      &top_color, &top_color, &bottom_color, &bottom_color);
+                      top, top, &bottom_color, &bottom_color);
         sprite_add_f4(&opening_ending_scroll_backgrounds[1],
                       &opening_ending_scroll_background_color, ENDING_BACKGROUND_OT_DEPTH);
 

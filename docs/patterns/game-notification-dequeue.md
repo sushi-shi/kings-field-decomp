@@ -240,3 +240,60 @@ as the baseline. Both have native, traced and uninstrumented-debug whole-ELF
 parity. All three exact siblings remain byte-exact. The initial tail load is
 still phase-relative, so reject this control and leave production C unchanged.
 Generated evidence is under `build/gcc257/game-notification-cursor-traces/`.
+
+## Dequeue-boundary closure on master
+
+Function Match Plan at `9ee18fde`: refresh retail hashes, all six GAME
+views, all 179 retail words, the sole caller at `8002018c`, neighboring
+digit/flip bodies, formatter implementation, shared notification types and
+source history. Master starts at 338/362 exact; this function remains
+99.385475%, 712 bytes. The separate worktree's successful boundary is a
+candidate to revalidate against master's current typed storage, not a reason
+to import its other source changes.
+
+The initial message snapshot and duplicate-consumption loop form a complete
+dequeue operation after the six sprite clears. Compare four JSON states:
+the local block, a global-access inline helper, control/ID-array arguments,
+and the initial ID passed by value. Preserve phase dispatch, the narrowed
+angle, modulo-eight tail update, numeric-message exception, final phase
+clear and all object ownership. This remains game-specific UI policy;
+no SDK body, forced inline attribute or new machine call is introduced.
+
+| Source boundary | Strict match | Bytes |
+| --- | ---: | ---: |
+| Local block | 99.385475% | 712 |
+| Global-access helper | **100%** | 716 |
+| Control and ID-array arguments | 92.067040% | 712 |
+| Captured ID argument | 99.385475% | 712 |
+
+The global helper restores the independent tail-address pair at +240/+244,
+the five internal jump addends and affected forward-branch displacements.
+Keep that operation as `notify_dequeue_group`, called from the completed
+rotate-out case. This identifies a matching source boundary under the pinned
+profile; the original helper name remains unknown.
+
+Five independent whole-unit compilations cover all four trials and the final
+canonical source. All three exact siblings retain their complete retail
+bodies. Both the winning and canonical sources equal the independently
+delinked retail target in all 232 unit words, including 179 updater words,
+and all ordered call/address targets. The canonical production object agrees
+with the independent compile. The updater retains five calls and 36 address
+pairs; shifting the graphics owner by four bytes changes fourteen words,
+including +244, so the corrected referent is not masked.
+
+The existing graphics-owner test now requires the updater's full retail
+body and wrong-owner sensitivity; its required exact count grows from 156
+to 157. The literal ledger keeps its occurrence count and assigns the two
+ring-arithmetic literals to the helper. JSON trials are in
+`build/hypotheses/master-notify-inline`; independent objects, full word
+arrays and verification results are in `build/master-notify-inline-objects`.
+
+Full `kf build` reports GAME **339/362 exact**, OPEN 106/108 and PSX 1/1,
+with all thirteen vendored controls exact. Existing data/ownership/placement
+checks still fail: source-data comparisons are GAME 12/42, OPEN 3/20 and
+PSX 1/1; target relinks are 75/77, 34/38 and 1/1. There are no artifact
+failures. Concurrent tooling and OPEN changes are outside this campaign.
+Ruff, all 735 repository tests (124.410 seconds) and `git diff --check` pass.
+Function-scoped banking records only GAME `8001fafc`; the other baseline
+rows and unrelated staged files remain untouched. Twenty-three GAME
+functions still require strict closure.

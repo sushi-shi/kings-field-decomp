@@ -159,7 +159,7 @@ class OpenDisplayInitTests(unittest.TestCase):
             self.skipTest("compiled OPEN render-init object is required")
         obj = _load_object(path)
         fn = obj.named_symbol("display_initialize")
-        self.assertEqual(fn.size, 484)  # Non-exact: retail is 472 bytes.
+        self.assertEqual(fn.size, 476)  # Non-exact: retail is 472 bytes.
         compiled = list(struct.unpack_from(f"<{fn.size // 4}I", obj.sections[".text"], fn.value))
         data = {item.name: item.va for (image, _), item in
                 load_data_identities(RETAIL_CONFIG).items() if image == "OPEN.EXE"}
@@ -193,7 +193,7 @@ class OpenDisplayInitTests(unittest.TestCase):
         self.assertEqual(list(candidate_calls.values()), list(calls.values()))
         self.assertEqual(Counter(addresses), Counter(
             [parse_int(row["target_va"]) for row in rows if row["kind"] == "mips_hi16_lo16"]
-            + [0x80069A87, 0x80069AE3, 0x80069A87, 0x80069AE3]))
+            + [0x80069ACC]))  # Additional entry-time second-DRAWENV address.
         init = next(offset for offset, name in candidate_calls.items() if name == "InitGeom")
         self.assertEqual(compiled[(init + 4) // 4], 0x341000F0)
         for mode in (0, 1, 2, 0xFE, 0x100FE, -2):

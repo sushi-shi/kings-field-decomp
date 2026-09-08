@@ -86,6 +86,21 @@ void notification_digit_set_v(KfSpriteQuad *sprite, s32 digit)
     sprite->v = digit * NOTIFICATION_DIGIT_ROW_HEIGHT;
 }
 
+static inline void notify_dequeue_group(void)
+{
+    KfNotificationControl *control;
+    KfNotificationId id;
+
+    control = &game_graphics_runtime.notification_state.control;
+    id = game_graphics_runtime.notification_message_ids[game_graphics_runtime.notification_state.control.queue_tail];
+    do {
+        game_graphics_runtime.notification_message_ids[control->queue_tail] = KF_NOTIFICATION_NONE;
+        control->queue_tail = (control->queue_tail + 1) & (KF_NOTIFICATION_CAPACITY - 1);
+    } while (id == game_graphics_runtime.notification_message_ids[control->queue_tail]
+        && id != KF_NOTIFICATION_GOLD);
+    control->effect_phase = KF_NOTIFICATION_IDLE;
+}
+
 /*
  * Notification effect state machine, stepped once per frame by the frame
  * renderer (render_frame).  It consumes the notification ring filled by
@@ -170,8 +185,6 @@ void notify_effect_update(void)
         s16 angle_x = game_graphics_runtime.notification_state.control.effect_angle_x + NOTIFICATION_EXIT_ANGLE_STEP;
         game_graphics_runtime.notification_state.control.effect_angle_x = angle_x;
         if (angle_x >= KF_ANGLE_EIGHTH_TURN) {
-            KfNotificationControl *control;
-            KfNotificationId id;
             game_graphics_runtime.notification_state.control.effect_angle_x = KF_ANGLE_EIGHTH_TURN;
             notification_sprites[KF_NOTIFICATION_THOUSANDS_SPRITE].active = KF_NOTIFICATION_SPRITE_HIDDEN;
             notification_sprites[KF_NOTIFICATION_HUNDREDS_SPRITE].active = KF_NOTIFICATION_SPRITE_HIDDEN;
@@ -179,14 +192,7 @@ void notify_effect_update(void)
             notification_sprites[KF_NOTIFICATION_ONES_SPRITE].active = KF_NOTIFICATION_SPRITE_HIDDEN;
             notification_sprites[KF_NOTIFICATION_GOLD_SPRITE].active = KF_NOTIFICATION_SPRITE_HIDDEN;
             notification_sprites[KF_NOTIFICATION_TEXT_SPRITE].active = KF_NOTIFICATION_SPRITE_HIDDEN;
-            control = &game_graphics_runtime.notification_state.control;
-            id = game_graphics_runtime.notification_message_ids[game_graphics_runtime.notification_state.control.queue_tail];
-            do {
-                game_graphics_runtime.notification_message_ids[control->queue_tail] = KF_NOTIFICATION_NONE;
-                control->queue_tail = (control->queue_tail + 1) & (KF_NOTIFICATION_CAPACITY - 1);
-            } while (id == game_graphics_runtime.notification_message_ids[control->queue_tail]
-                && id != KF_NOTIFICATION_GOLD);
-            control->effect_phase = KF_NOTIFICATION_IDLE;
+            notify_dequeue_group();
         }
         break;
     }
