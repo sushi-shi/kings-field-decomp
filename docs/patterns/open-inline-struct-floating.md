@@ -352,3 +352,101 @@ After control 26, all 26 native/traced object pairs were compared again and
 remain byte-identical. Production source, headers, configuration, tooling and
 tests are unchanged from the preceding full verification; its build failure
 and test results remain the applicable baseline, not a new successful build.
+
+
+## Combined models and user-authorized declaration permutations
+
+After the isolated controls, the user explicitly requested combinations of
+aggregate modelling, inline boundaries and prior hypotheses, and authorized
+permutations and JSON choices. The following bounded searches use the existing
+hypotheses runner with the pinned native/instrumented compiler. They do not
+establish a historical compiler mechanism or exhaust the source search space.
+
+The ending JSON product combines scalar/structured lighting storage, local/
+value-return/pointer lighting helpers, top-color pointer/direct access, four
+panel predicates, literal/phase-derived matrices and three volume boundaries.
+277 states were compiled after excluding baseline and single-axis states.
+All have native/traced ELF parity, the ordered retail call sequence and six
+raw-exact siblings. Best strict score is 99.843620%, below retained 99.917694%.
+Seven states recover the original seven dispatch words, but none is globally
+exact. For example, direct top color plus hold exclusions plus inline volume
+quotient matches the retail prefix through +0x654, then diverges at +0x658;
+it is 1948 bytes at 99.236626%. Complete references match retail in 134/277
+states; retain the complete references for the others rather than treating
+constant folding or different address reuse as a relocation cure.
+
+The display product combines scalar/s16/u16/s32 dimension models, four buffer
+helper forms where type-compatible, paired-draw and activation helpers,
+early-related/late-independent draw pointers, and s16/s32 lower origins.
+215 combined states were compiled. Single-axis states were excluded to focus
+on combinations; this does not claim every excluded parent was tested before.
+All preserve 18 ordered calls, three raw-exact siblings and native/traced ELF
+parity. Best strict score equals retained 96.652540%. The best structured
+candidate uses u16 dimensions, scalar-value buffer helper and independent
+late draw pointers: 520 bytes at 82.686440%, with or without inline activation.
+Every candidate's ordered reference sequence differs from retail, including
+the retained-equivalent cases; none is exact.
+
+A further display search permutes the four existing local declarations over
+the retained and these two structured contexts. The initialized local values
+are independent constants/addresses. Of 72 source states, three parent hashes
+were skipped and 69 compiled. Every permutation is completely resolved-equal
+to its respective parent, including calls and references. All three siblings
+remain exact. Declaration order is neutral for these contexts under this
+profile; that observation is not a claim about all possible source models.
+
+Plans, JSON axes, flattened source-substitution manifests, every generated
+source, native/traced objects, frame/spill observations, resolved calls and
+references, and all scores remain under `build/open-missed-evidence/` in
+`ending-joint-search`, `display-joint-search` and `display-declaration-search`.
+No production source, inventory, compiler profile or banked baseline changed.
+
+
+The lighting aggregate placement search moves only the actual phase/blend
+struct declaration among existing local declarations. It crosses local and
+pointer-pair lighting helpers with original top/panel/volume expressions or
+direct top/hold exclusions/inline quotient. 64 new source hashes were compiled
+(68 positions/contexts less four known parents). Each of four contexts has
+seven distinct resolved results; the local and pointer helper contexts agree.
+All preserve retail calls/referents and six exact siblings, but use a 256-byte
+frame instead of retail's 264 and diverge from instruction zero. Best score
+is 94.004110%; direct-top combined forms peak at 92.911520%. Moving the actual
+aggregate affects code, but does not recover the retail frame or body.
+
+A second data model groups the two existing ending entity pointers into a
+two-element pointer array, preserving their assignment order and constant
+index uses. Combining it with lighting-aggregate placement over original or
+direct-top/hold-exclusion/inline-quotient expressions produces 32 candidates.
+All preserve calls/referents and six exact siblings with native/traced parity,
+but now have 248-byte frames and diverge at instruction zero. Best score is
+89.559670% (1948 bytes), with 285 unequal aligned words. This grouping remains
+an unsupported original-source hypothesis and is not adopted. Evidence is in
+`ending-aggregate-search` and `ending-actor-array-search`.
+
+
+The ending declaration search crosses all 120 orders of the existing
+entity_27, sequence_phase, lighting_blend, background_blend and scroll_tick
+declarations with retained source, direct-top/hold-exclusion/inline-quotient,
+and phase-derived-matrix/direct-top/inline-panel-predicate contexts. Three
+prior parent source hashes are skipped; all 357 new states compile with
+native/traced parity. Each context yields exactly one complete resolved body,
+identical to its parent: respectively 99.917694%/1944 bytes,
+99.236626%/1948 bytes and 99.000000%/1960 bytes. All calls and six siblings
+pass; the 119 phase-matrix states retain their parent's non-retail ordered
+reference sequence. Declaration order is neutral for these five variables
+in these three contexts. Evidence is in `ending-declaration-search`.
+
+These six JSON batches contain 1,014 compilations. No candidate reaches 100%
+or improves either retained function; OPEN remains 106/108 exact. The later
+permutation batches skip source hashes found across the earlier local
+corpora. The initial Cartesian products excluded baseline/single-axis states
+but may include previously tried combinations; their count is not a claim
+of 1,014 globally novel hypotheses.
+
+After these batches, `ruff check scripts tests` passes; unittest discovery
+passes 703 tests with nine skips; `git diff --check` passes. A fresh full
+`kf build` exits 1 with the same data/ownership/placement failures and target
+relink counts OPEN34/38, GAME75/77 and PSX1/1. No production source or config
+changed, and nothing is newly banked. These negative results bound only the
+listed combinations and declaration placements, not aggregate modelling or
+inlining in general.
