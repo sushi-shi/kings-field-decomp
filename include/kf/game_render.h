@@ -126,8 +126,8 @@ typedef struct KfDisplayState {
 
 /* Eight registered TMD slots and the selected asset. */
 typedef struct KfTmdState {
-    u8 *slots[KF_GAME_TMD_SLOT_COUNT];
-    void *current_asset;
+    KfTmdHeader *slots[KF_GAME_TMD_SLOT_COUNT];
+    KfTmdHeader *current_asset;
 } KfTmdState;
 
 /* GAME.EXE view, lighting, fog, and quadrant matrices. */

@@ -796,10 +796,10 @@ KfTmdObject	0x0c	0x04	normal_count	u32	supported	tmd.h;game_semantic_display_tmd
 KfTmdObject	0x10	0x04	primitive_offset	u32	supported	tmd.h;game_semantic_display_tmd.tsv;asm;xrefs;Psy-Q-TMD-layout	offset from the TMD object-table base to the primitive stream
 KfTmdObject	0x14	0x04	primitive_count	u32	supported	tmd.h;game_semantic_tmd_counts.tsv;asm;Sony-File-Formats-1998:p2-25	word-sized count read with lw by all three polygon emitters; both index-preparation routines narrow it to u16
 KfTmdObject	0x18	0x04	scale	s32	supported	tmd.h;game_semantic_display_tmd.tsv;Psy-Q-TMD-layout	standard TMD object scale field
-KfTmdState	0x00	0x20	slots	u8 *[8]	supported	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;tmd_register	member of the tmd_state aggregate
-KfTmdState	0x20	0x04	current_asset	void *	supported	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;tmd_register	member of the tmd_state aggregate
-KfTmdStateOpen	0x00	0x08	slots	u8 *[2]	supported	open_render.h;asm;base-register;tmd_register	member of the tmd_state aggregate
-KfTmdStateOpen	0x08	0x04	current_asset	void *	supported	open_render.h;asm;base-register;tmd_register	member of the tmd_state aggregate
+KfTmdState	0x00	0x20	slots	KfTmdHeader *[8]	supported	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;tmd_register;typed-tmd-headers.md	member of the tmd_state aggregate
+KfTmdState	0x20	0x04	current_asset	KfTmdHeader *	supported	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;tmd_register;typed-tmd-headers.md	member of the tmd_state aggregate
+KfTmdStateOpen	0x00	0x08	slots	KfTmdHeader *[2]	supported	open_render.h;asm;base-register;tmd_register;typed-tmd-headers.md	member of the tmd_state aggregate
+KfTmdStateOpen	0x08	0x04	current_asset	KfTmdHeader *	supported	open_render.h;asm;base-register;tmd_register;typed-tmd-headers.md	member of the tmd_state aggregate
 KfVec3s	0x00	0x02	x	s16	supported	game_math.h;asm;xrefs	x coordinate
 KfVec3s	0x02	0x02	y	s16	supported	game_math.h;asm;xrefs	y coordinate
 KfVec3s	0x04	0x02	z	s16	supported	game_math.h;asm;xrefs	z coordinate

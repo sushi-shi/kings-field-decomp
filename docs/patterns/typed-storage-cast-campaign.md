@@ -210,3 +210,9 @@ The [map-table stage](typed-map-tables.md) models five complete grids, both
 resource definition tables and saved-world byte initialization. It removes
 fourteen C pointer casts and one header cast, keeping all 177 compared
 functions unchanged. C pointer casts now total 452, down 354 from the start.
+
+The [TMD-header stage](typed-tmd-headers.md) types stored assets and the
+registration interface. Four header/object casts disappear; eight explicit
+resource-boundary conversions are added. All 76 compared functions remain
+unchanged. C pointer casts total 456, down 350 from the original 806; the
+net increase preserves real serialized decoding boundaries.

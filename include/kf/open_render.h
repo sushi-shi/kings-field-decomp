@@ -36,8 +36,8 @@ typedef struct KfDisplayStateOpen {
 
 /* Two registered TMD slots and the selected asset. */
 typedef struct KfTmdStateOpen {
-    u8 *slots[KF_OPEN_TMD_SLOT_COUNT];
-    void *current_asset;
+    KfTmdHeader *slots[KF_OPEN_TMD_SLOT_COUNT];
+    KfTmdHeader *current_asset;
 } KfTmdStateOpen;
 
 /* OPEN.EXE view state lacks GAME's two extra light matrices. */

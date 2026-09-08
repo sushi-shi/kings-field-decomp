@@ -48,6 +48,8 @@ typedef struct KfTmdHeader {
     u32 flags;
     u32 object_count;
 } KfTmdHeader;
+typedef char check_tmd_header_size[
+    sizeof(KfTmdHeader) == KF_TMD_HEADER_BYTES ? 1 : -1];
 
 /* Standard 0x1c-byte object-table record in an unlinked TMD payload. */
 typedef struct KfTmdObject {
@@ -252,7 +254,7 @@ typedef char check_screen_vertex_size[sizeof(KfScreenVertex) == 8 ? 1 : -1];
 extern KfTmdObject *tmd_get_object(u16 object_index);
 extern void tmd_prepare_primitive_indices(void);
 extern void tmd_project_vertices(s32 count);
-extern void tmd_register(KfTmdSlot slot, u8 *tmd);
+extern void tmd_register(KfTmdSlot slot, KfTmdHeader *tmd);
 extern void tmd_release_last_allocation(KF_ENUM_PARAM(KfTmdSlot, s32) slot);
 extern void tmd_select(KfTmdSlot slot);
 extern void tmd_select_object_vertices(u16 object_index);

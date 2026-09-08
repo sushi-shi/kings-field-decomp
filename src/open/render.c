@@ -12,7 +12,7 @@
  */
 
 /* Object-table records follow the 12-byte TMD header of the selected asset. */
-#define TMD_OBJECTS(asset) ((KfTmdObject *)((u8 *)(asset) + KF_TMD_HEADER_BYTES))
+#define TMD_OBJECTS(asset) ((KfTmdObject *)((asset) + 1))
 /* Packet bodies follow the 4-byte packet header (olen, ilen, flag, mode). */
 #define TMD_PACKET_BODY(packet) ((packet) + KF_TMD_PACKET_HEADER_BYTES)
 
@@ -104,7 +104,7 @@ void tmd_prepare_primitive_indices(void)
     u16 primitives_left;
     KfTmdPacketHeader header;
 
-    object_count = (u16)((KfTmdHeader *)open_graphics_runtime.tmd_state.current_asset)->object_count;
+    object_count = (u16)open_graphics_runtime.tmd_state.current_asset->object_count;
     objects_left = object_count - 1;
     object = TMD_OBJECTS(open_graphics_runtime.tmd_state.current_asset);
     if (object_count == 0) {
@@ -208,7 +208,7 @@ void tmd_prepare_primitive_indices(void)
 }
 
 ADDRESS(0x80017330, 0x3c)
-void tmd_register(KfTmdSlot slot, u8 *tmd)
+void tmd_register(KfTmdSlot slot, KfTmdHeader *tmd)
 {
     open_graphics_runtime.tmd_state.current_asset = open_graphics_runtime.tmd_state.slots[KF_ENUM_ENCODE(u16, slot)] = tmd;
     tmd_prepare_primitive_indices();

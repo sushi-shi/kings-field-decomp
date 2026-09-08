@@ -580,7 +580,7 @@ class InventoryTests(unittest.TestCase):
             "tmd_get_object": ("KfTmdObject *", "u16 object_index"),
             "tmd_prepare_primitive_indices": ("void", ""),
             "tmd_project_vertices": ("void", "s32 count"),
-            "tmd_register": ("void", "KfTmdSlot slot;u8 *tmd"),
+            "tmd_register": ("void", "KfTmdSlot slot;KfTmdHeader *tmd"),
             "tmd_release_last_allocation": ("void", "KF_ENUM_PARAM(KfTmdSlot, s32) slot"),
             "tmd_select": ("void", "KfTmdSlot slot"),
             "tmd_select_object_vertices": ("void", "u16 object_index"),

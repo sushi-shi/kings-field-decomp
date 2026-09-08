@@ -36,5 +36,6 @@ void asset_registry_select(u16 index)
 {
     KfAssetHeader *asset = ((KfAssetHeader **)game_graphics_runtime.unknown_registry_20134)[index];
 
-    game_graphics_runtime.tmd_state.current_asset = (u8 *)asset + asset->tmd_data_offset;
+    game_graphics_runtime.tmd_state.current_asset =
+        (KfTmdHeader *)((u8 *)asset + asset->tmd_data_offset);
 }

@@ -194,8 +194,10 @@ void map_resources_load(KfFloorId floor, s32 use_variant)
     memory_release_last();
     memory_arena_cursor = block + KF_RESOURCE_REUSE_PREFIX_BYTES;
     stream = map_resource_load_file("MIXB.DAT");
-    tmd_register(KF_TMD_SLOT_ENTITIES, stream + KF_RESOURCE_CHUNK_HEADER_BYTES);
-    tmd_register(KF_TMD_SLOT_MAP, STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES);
+    tmd_register(KF_TMD_SLOT_ENTITIES,
+        (KfTmdHeader *)(stream + KF_RESOURCE_CHUNK_HEADER_BYTES));
+    tmd_register(KF_TMD_SLOT_MAP,
+        (KfTmdHeader *)(STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES));
     asset_registry_load_tmd_archive(KF_ASSET_MAP_EVENT_FIRST,
         STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES);
     asset_registry_load_tmd_archive(KF_ASSET_EFFECT_FIRST,

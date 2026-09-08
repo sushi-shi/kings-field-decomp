@@ -50,7 +50,7 @@ PAIRS = (
         "const VECTOR *position;const SVECTOR *rotation",
     ),
     ("GAME.EXE", 0x8001C2B0, "tmd_prepare_primitive_indices", "void", ""),
-    ("GAME.EXE", 0x8001C5B0, "tmd_register", "void", "KfTmdSlot slot;u8 *tmd"),
+    ("GAME.EXE", 0x8001C5B0, "tmd_register", "void", "KfTmdSlot slot;KfTmdHeader *tmd"),
     ("GAME.EXE", 0x8001C5EC, "tmd_release_last_allocation", "void", "KF_ENUM_PARAM(KfTmdSlot, s32) slot"),
     ("OPEN.EXE", 0x80016908, "render_initialize", "void", ""),
     ("OPEN.EXE", 0x80016D38, "display_begin_frame", "void", ""),
@@ -67,7 +67,7 @@ PAIRS = (
         "const VECTOR *position;const SVECTOR *rotation",
     ),
     ("OPEN.EXE", 0x80017030, "tmd_prepare_primitive_indices", "void", ""),
-    ("OPEN.EXE", 0x80017330, "tmd_register", "void", "KfTmdSlot slot;u8 *tmd"),
+    ("OPEN.EXE", 0x80017330, "tmd_register", "void", "KfTmdSlot slot;KfTmdHeader *tmd"),
     ("OPEN.EXE", 0x8001736C, "tmd_release_last_allocation", "void", "KF_ENUM_PARAM(KfTmdSlot, s32) slot"),
 )
 

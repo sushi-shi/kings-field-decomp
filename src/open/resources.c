@@ -186,8 +186,10 @@ void opening_resources_load_scene0(void)
     memory_arena_cursor = vab_chunk + KF_RESOURCE_REUSE_PREFIX_BYTES;
     audio_play_sequence_file("B0\\OPEN0.");
     cd_file_load_allocated(&stream.storage, "B0\\MIXB0.");
-    tmd_register(KF_TMD_SLOT_ENTITIES, stream.bytes + KF_RESOURCE_CHUNK_HEADER_BYTES);
-    tmd_register(KF_TMD_SLOT_MAP, STREAM_NEXT(stream.bytes) + KF_RESOURCE_CHUNK_HEADER_BYTES);
+    tmd_register(KF_TMD_SLOT_ENTITIES,
+        (KfTmdHeader *)(stream.bytes + KF_RESOURCE_CHUNK_HEADER_BYTES));
+    tmd_register(KF_TMD_SLOT_MAP,
+        (KfTmdHeader *)(STREAM_NEXT(stream.bytes) + KF_RESOURCE_CHUNK_HEADER_BYTES));
     STREAM_NEXT(stream.bytes);
     memory_set_allocation_mode(KF_MEMORY_USE_HEAP);
 }
@@ -231,7 +233,8 @@ void opening_resources_load_scene3(void)
     STREAM_NEXT(stream.bytes);
     memory_release_last();
     cd_file_load_allocated(&stream.storage, "B0\\MIXB3.");
-    tmd_register(KF_TMD_SLOT_ENTITIES, stream.bytes + KF_RESOURCE_CHUNK_HEADER_BYTES);
+    tmd_register(KF_TMD_SLOT_ENTITIES,
+        (KfTmdHeader *)(stream.bytes + KF_RESOURCE_CHUNK_HEADER_BYTES));
     STREAM_NEXT(stream.bytes);
     memory_release_last();
     memory_set_allocation_mode(KF_MEMORY_USE_HEAP);
@@ -260,7 +263,8 @@ void opening_resources_load_ending(void)
     *arena_cursor = vab_chunk + KF_RESOURCE_REUSE_PREFIX_BYTES;
     audio_play_sequence_file(opening_ending_sequence_path);
     cd_file_load_allocated(&stream.storage, "B0\\MIXBE.");
-    tmd_register(KF_TMD_SLOT_ENTITIES, stream.bytes + KF_RESOURCE_CHUNK_HEADER_BYTES);
+    tmd_register(KF_TMD_SLOT_ENTITIES,
+        (KfTmdHeader *)(stream.bytes + KF_RESOURCE_CHUNK_HEADER_BYTES));
     STREAM_NEXT(stream.bytes);
     opening_ending_arena_cursor = *arena_cursor;
     memory_set_allocation_mode(KF_MEMORY_USE_HEAP);

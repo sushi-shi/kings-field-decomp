@@ -619,7 +619,7 @@ u32 menu_load_item_model(KF_ENUM_PARAM(KfItemId, s32) id)
         if (cd_file_load_table_entry(&asset, KF_ENUM_ENCODE(s32, id)) != 0) {
             return 1;
         }
-        tmd_register(KF_TMD_SLOT_MENU_ITEM, asset);
+        tmd_register(KF_TMD_SLOT_MENU_ITEM, (KfTmdHeader *)asset);
         menu_item_model_allocation_pending = 1;
     }
     menu_item_preview_rotation.vy = 0;
