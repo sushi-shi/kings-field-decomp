@@ -21,7 +21,9 @@ enum {
     WARP_DEFAULT_VARIANT = 0,
     WARP_CELL_X_SHIFT = 24,
     WARP_CELL_Z_SHIFT = 16,
-    ACTOR_TRANSFORM_RESULT_DEFINITION = 6
+    ACTOR_TRANSFORM_RESULT_DEFINITION = 6,
+    ACTOR_TRANSFORM_BLEND_INTERVALS = 64,
+    ACTOR_TRANSFORM_Y_STEP = 40
 };
 
 #define WARP_CELL_KEY_MASK 0xffff0000
@@ -273,18 +275,18 @@ void actor_transform_definition5_to6(KfActor *actor)
     /* Both blend endpoints execute: 65 motion updates per phase.
      * Y moves 40 world units per update; its design rationale is unresolved.
      * Blend and yaw advance by 1/64 of their full ranges, then reverse. */
-    for (blend = 0; blend < KF_FIXED12_ONE + 1; blend += KF_FIXED12_ONE / 64) {
+    for (blend = 0; blend < KF_FIXED12_ONE + 1; blend += KF_FIXED12_ONE / ACTOR_TRANSFORM_BLEND_INTERVALS) {
         lighting_set_color_matrix(&saved, &actor_transform_color_matrix, blend);
-        actor->position.vy += 40;
-        actor->rotation.y += KF_ANGLE_FULL_TURN / 64;
+        actor->position.vy += ACTOR_TRANSFORM_Y_STEP;
+        actor->rotation.y += KF_ANGLE_FULL_TURN / ACTOR_TRANSFORM_BLEND_INTERVALS;
         render_frame(0, 0);
         frame_pacer_wait();
     }
     actor->definition_id = ACTOR_TRANSFORM_RESULT_DEFINITION;
-    for (blend = KF_FIXED12_ONE; blend >= 0; blend -= KF_FIXED12_ONE / 64) {
+    for (blend = KF_FIXED12_ONE; blend >= 0; blend -= KF_FIXED12_ONE / ACTOR_TRANSFORM_BLEND_INTERVALS) {
         lighting_set_color_matrix(&saved, &actor_transform_color_matrix, blend);
-        actor->position.vy -= 40;
-        actor->rotation.y -= KF_ANGLE_FULL_TURN / 64;
+        actor->position.vy -= ACTOR_TRANSFORM_Y_STEP;
+        actor->rotation.y -= KF_ANGLE_FULL_TURN / ACTOR_TRANSFORM_BLEND_INTERVALS;
         render_frame(0, 0);
         frame_pacer_wait();
     }

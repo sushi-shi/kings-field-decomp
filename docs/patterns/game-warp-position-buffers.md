@@ -136,3 +136,18 @@ The final full build retains source data 5/60, independent SDK data 4/4,
 target relinking 110/116 and six conflicting section bases. There are zero
 artifact failures and no banked-function regressions. Selectively banked only
 GAME80036850 and GAME800369ac. The GAME-wide 100% goal remains open.
+
+## Transformation interval names
+
+Plan for GAME `actor_transform_definition5_to6` (0x80036d3c/0xf4): name the
+64 blend/yaw intervals and 40-world-unit vertical step. Retail adds 64 to blend
+at 0x80036d8c, 40 to Y at 0x80036d98, and 64 to yaw at 0x80036da0;
+the reverse phase subtracts the same increments. The reviewed caller is
+`actor_update_current_action`; color-matrix interpolation, rendering and pacing
+calls are unchanged. Inclusive endpoints execute 65 times, moving 2600 world
+units and 65/64 turns per phase before the reverse phase undoes both.
+The names describe the authored roles and units, not an unknown design rationale.
+
+Replace six literal occurrences without changing expression order, widths or
+bounds. Source review and literal accounting are the validation for this naming
+edit; builds, compiler checks, tests and post-edit matches remain deferred.

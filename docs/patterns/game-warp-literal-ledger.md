@@ -9,7 +9,7 @@ completeness of other modules or of the larger naming goal.
 
 ## `src/game/player_warp.c`
 
-96 retained occurrences.
+90 retained occurrences.
 
 | Function / datum | Line | Token | Expression | Reason |
 | --- | ---: | --- | --- | --- |
@@ -96,17 +96,11 @@ completeness of other modules or of the larger naming goal.
 | `player_warp_trigger_update` | 261 | `0` | `return 0;` | No ending request; an ordinary floor or within-floor warp may already have occurred. |
 | `actor_transform_definition5_to6` | 270 | `1` | `map_event_pool[1].state = KF_MAP_EVENT_DISABLED;` | Authored runtime event slot disabled by the definition-5-to-6 transform; no independently supported event identity. |
 | `actor_transform_definition5_to6` | 271 | `2` | `map_event_pool[2].state = KF_MAP_EVENT_DISABLED;` | Second authored runtime event slot disabled by this transform; no independently supported event identity. |
-| `actor_transform_definition5_to6` | 276 | `0` | `for (blend = 0; blend < KF_FIXED12_ONE + 1; blend += KF_FIXED12_ONE / 64) {` | Zero blend starts the forward transformation. |
-| `actor_transform_definition5_to6` | 276 | `1` | `for (blend = 0; blend < KF_FIXED12_ONE + 1; blend += KF_FIXED12_ONE / 64) {` | One-past bound includes both Q12 endpoints, producing 65 motion updates. |
-| `actor_transform_definition5_to6` | 276 | `64` | `for (blend = 0; blend < KF_FIXED12_ONE + 1; blend += KF_FIXED12_ONE / 64) {` | Sixty-four equal blend intervals span the full Q12 range; preserve the authored subdivision. |
-| `actor_transform_definition5_to6` | 278 | `40` | `actor->position.vy += 40;` | Forty world units downward per update; the original design rationale is unresolved. The reverse phase undoes the displacement. |
-| `actor_transform_definition5_to6` | 279 | `64` | `actor->rotation.y += KF_ANGLE_FULL_TURN / 64;` | One sixty-fourth turn (5.625 degrees) per forward update, sharing the blend subdivision. |
+| `actor_transform_definition5_to6` | 276 | `0` | `for (blend = 0; blend < KF_FIXED12_ONE + 1; blend += KF_FIXED12_ONE / ACTOR_TRANSFORM_BLEND_INTERVALS) {` | Zero blend starts the forward transformation. |
+| `actor_transform_definition5_to6` | 276 | `1` | `for (blend = 0; blend < KF_FIXED12_ONE + 1; blend += KF_FIXED12_ONE / ACTOR_TRANSFORM_BLEND_INTERVALS) {` | One-past bound includes both Q12 endpoints, producing 65 motion updates. |
 | `actor_transform_definition5_to6` | 280 | `0` | `render_frame(0, 0);` | Null position preserves the current view position. |
 | `actor_transform_definition5_to6` | 280 | `0` | `render_frame(0, 0);` | Null rotation preserves the current view rotation. |
-| `actor_transform_definition5_to6` | 284 | `0` | `for (blend = KF_FIXED12_ONE; blend >= 0; blend -= KF_FIXED12_ONE / 64) {` | Zero is included as the reverse interpolation endpoint. |
-| `actor_transform_definition5_to6` | 284 | `64` | `for (blend = KF_FIXED12_ONE; blend >= 0; blend -= KF_FIXED12_ONE / 64) {` | Sixty-four equal blend intervals reverse the same Q12 schedule. |
-| `actor_transform_definition5_to6` | 286 | `40` | `actor->position.vy -= 40;` | Forty world units upward per reverse update, undoing the forward displacement; original magnitude rationale unresolved. |
-| `actor_transform_definition5_to6` | 287 | `64` | `actor->rotation.y -= KF_ANGLE_FULL_TURN / 64;` | One sixty-fourth turn (5.625 degrees) per reverse update, undoing the forward yaw. |
+| `actor_transform_definition5_to6` | 284 | `0` | `for (blend = KF_FIXED12_ONE; blend >= 0; blend -= KF_FIXED12_ONE / ACTOR_TRANSFORM_BLEND_INTERVALS) {` | Zero is included as the reverse interpolation endpoint. |
 | `actor_transform_definition5_to6` | 288 | `0` | `render_frame(0, 0);` | Null position preserves the current view position. |
 | `actor_transform_definition5_to6` | 288 | `0` | `render_frame(0, 0);` | Null rotation preserves the current view rotation. |
 

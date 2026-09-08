@@ -1,8 +1,8 @@
 # Source literal coverage map
 
-Working snapshot after the [packed collision review](game-world-collision-literals.md#packed-collision-result-constants):
+Working snapshot after the [transformation interval review](game-warp-position-buffers.md#transformation-interval-names):
 **111 C files**, **112 source/image variants**, and
-**5,857 inline numeric/character occurrences**. Counts include authored
+**5,851 inline numeric/character occurrences**. Counts include authored
 initializers, local extents, component indices, booleans and arithmetic. They
 exclude comments, string contents, identifier digits, named enum/macro definitions
 and ADDRESS/DATA/RODATA claims. These are inventory counts, **not missing-name
@@ -10,7 +10,7 @@ counts**. Vendor sources are included for source coverage, not game progress.
 
 ## Current ledger coverage verified
 
-For **all 111 files / 5,857 occurrences**, explicit ledger rows were compared
+For **all 111 files / 5,851 occurrences**, explicit ledger rows were compared
 against every current numeric/character token and its complete source-line
 expression, including duplicate occurrences and initializers. All matched and
 each row has a reason. Line-number drift is excluded from the comparison;
@@ -71,6 +71,8 @@ billboard/model selectors and first-clip choices, plus three dispatch selector
 comparisons. Together these replace 93 raw occurrences.
 The packed-collision review names 28 kind-shift, detail-mask and ceiling-code
 occurrences while preserving the original high-half ceiling comparison.
+The transformation review names its 64 blend intervals and 40-unit Y step,
+removing six raw occurrences while retaining both endpoint updates.
 Historical ledgers and domain notes may describe earlier source, so their old
 counts are not current totals. This comparison establishes literal accounting,
 not proof that every possible semantic improvement has been exhausted.
@@ -115,7 +117,7 @@ fields and address-derived function names are separate from this ten-line count.
 
 ## GAME.EXE
 
-73 files; 4,634 occurrences.
+73 files; 4,628 occurrences.
 
 | Source | Occurrences | Existing audit references | Scope to check |
 | --- | ---: | --- | --- |
@@ -180,7 +182,7 @@ fields and address-derived function names are separate from this ten-line count.
 | [player_status_effect4.c](../../src/game/player_status_effect4.c) | 0 | [complete small-module ledger](small-module-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [player_update.c](../../src/game/player_update.c) | 168 | [game-player-update ledger](game-player-update-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [player_use_item.c](../../src/game/player_use_item.c) | 39 | [complete ledger](game-item-use-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
-| [player_warp.c](../../src/game/player_warp.c) | 96 | [warp/lifecycle ledger](game-warp-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
+| [player_warp.c](../../src/game/player_warp.c) | 90 | [warp/lifecycle ledger](game-warp-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [player_warp_shimmer_at_player.c](../../src/game/player_warp_shimmer_at_player.c) | 0 | [warp/lifecycle ledger](game-warp-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [pool.c](../../src/game/pool.c) | 35 | [complete cache/camera ledger](game-animation-cache-camera-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [render.c](../../src/game/render.c) | 146 | [complete renderer setup ledger](game-render-setup-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
