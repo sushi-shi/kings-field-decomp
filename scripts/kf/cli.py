@@ -202,6 +202,11 @@ def parser() -> argparse.ArgumentParser:
         help="cleanliness ratchet board and data-section matching vs retail",
     )
     verify_parser.add_argument("verify_args", nargs=argparse.REMAINDER)
+    link_parser = subs.add_parser(
+        "link", add_help=False,
+        help="link executables with supplied libraries and compare complete retail files",
+    )
+    link_parser.add_argument("link_args", nargs=argparse.REMAINDER)
     return root
 
 
@@ -223,6 +228,10 @@ def main(argv: list[str] | None = None) -> int:
         from scripts.kf.verify import main as verify_main
 
         return verify_main(raw[1:])
+    if raw and raw[0] == "link":
+        from scripts.kf.executable import main as link_main
+
+        return link_main(raw[1:])
     args = parser().parse_args(raw)
     try:
         if args.command == "init":

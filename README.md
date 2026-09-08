@@ -89,3 +89,4 @@ attribution live under `config/retail/`.
 - [GAME parser census and retail/C/Rust coverage](docs/game-resource-parser-coverage.md)
 - [Vendored-function evidence](docs/vendored-functions.md)
 - [Recovered object placement and link order](docs/object-link-order.md)
+- [Executable links and complete-file comparisons](docs/executable-linking.md)

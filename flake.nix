@@ -411,6 +411,7 @@
         packages = [
           psyqToolchain
           psy-k
+          pkgs.dosbox-x
           maspsx
           cc1psx260
           cpppsx260
@@ -517,12 +518,13 @@
 
       toolchainTests = pkgs.runCommand "kings-field-toolchain-tests" {
         nativeBuildInputs = [
-          analysisPython mipsBinutilsAliases psy-k objdiff-cli
+          analysisPython mipsBinutilsAliases psy-k objdiff-cli pkgs.dosbox-x
           pkgs.llvmPackages.clang-unwrapped
         ];
         GHIDRA_PSX_LOADER = "${ghidraPsxLoader}/lib/ghidra/Ghidra/Extensions/ghidra_psx_ldr";
         PSYQ_LIB = "${psyqToolchain}/psyq/lib";
         PSYQ_INCLUDE = "${psyqToolchain}/psyq/include";
+        PSYQ_BIN = "${psyqToolchain}/psyq/bin";
       } ''
         mkdir project
         cp -r ${./scripts} project/scripts
