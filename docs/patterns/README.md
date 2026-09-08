@@ -419,6 +419,9 @@ promotes a probe to a proven historical toolchain.
 - [game-status-render-traces.md](game-status-render-traces.md): a shared
   attack/defense subtotal recovers sixteen rating instructions; the renderer
   remains non-exact, with early coordinate and row-spacing differences.
+- [game-display-owner-traces.md](game-display-owner-traces.md): consuming the
+  published fog distance leaves both display-owner candidates unchanged; CSE
+  still drops the retail DTD base before the fog store.
 - [game-status-rating-arithmetic.md](game-status-rating-arithmetic.md): signed
   attack/defense rating divisions and reviewed class-selection jumps restore
   the detailed status renderer's arithmetic branches and ordered references.
