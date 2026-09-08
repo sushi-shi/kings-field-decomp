@@ -7,6 +7,17 @@ enum {
     STATUS_COMPONENT_ROW_STEP = 14
 };
 
+enum {
+    STATUS_PHYSICAL_ATTACK_MULTIPLIER = 3,
+    STATUS_PHYSICAL_ATTACK_DOWNSHIFT = 1,
+    STATUS_ELEMENTAL_ATTACK_MULTIPLIER = 2,
+    STATUS_ATTACK_SCALE_NUMERATOR = 10,
+    STATUS_ATTACK_SCALE_DENOMINATOR = 8,
+    STATUS_POISON_RESISTANCE_DIVISOR = 5,
+    STATUS_DEFENSE_SCALE_NUMERATOR = 10,
+    STATUS_DEFENSE_SCALE_DENOMINATOR = 7
+};
+
 /*
  * Draw the full status page: the left column of vitals (experience, level,
  * displayed class, HP/MP pairs, status icons, gold, the derived
@@ -193,17 +204,21 @@ void menu_draw_status_details(void)
     menu_format_number(player_state.magic, MENU_STATS_VALUE_DIGITS, 0, gs.codes);
     menu_draw_number(&menu_assets.number_atlas, &gs);
     attack_rating = (((u32)player_state.cutting_attack + player_state.striking_attack +
-                      player_state.piercing_attack) * 3 >> 1) +
-                    (player_state.holy_attack + player_state.fire_attack) * 2;
-    attack_rating = attack_rating * 10 / 8;
+                      player_state.piercing_attack) * STATUS_PHYSICAL_ATTACK_MULTIPLIER
+                      >> STATUS_PHYSICAL_ATTACK_DOWNSHIFT) +
+                    (player_state.holy_attack + player_state.fire_attack)
+                    * STATUS_ELEMENTAL_ATTACK_MULTIPLIER;
+    attack_rating = attack_rating * STATUS_ATTACK_SCALE_NUMERATOR
+        / STATUS_ATTACK_SCALE_DENOMINATOR;
     gs.y += STATUS_SUMMARY_ROW_STEP;
     menu_format_number(attack_rating, MENU_STATS_VALUE_DIGITS, 0, gs.codes);
     menu_draw_number(&menu_assets.number_atlas, &gs);
     gs.y += STATUS_SUMMARY_ROW_STEP;
     menu_format_number(
         ((player_state.cutting_defense + player_state.striking_defense +
-          player_state.piercing_defense + player_state.poison_resistance / 5 +
-          player_state.magic_defense + player_state.fire_defense) * 10) / 7,
+          player_state.piercing_defense + player_state.poison_resistance / STATUS_POISON_RESISTANCE_DIVISOR +
+          player_state.magic_defense + player_state.fire_defense) * STATUS_DEFENSE_SCALE_NUMERATOR)
+          / STATUS_DEFENSE_SCALE_DENOMINATOR,
         MENU_STATS_VALUE_DIGITS, 0, gs.codes);
     menu_draw_number(&menu_assets.number_atlas, &gs);
 

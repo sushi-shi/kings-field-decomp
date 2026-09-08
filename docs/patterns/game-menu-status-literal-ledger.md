@@ -122,7 +122,7 @@ remain encoded glyph-stream data, with their known roles recorded below.
 
 ## `src/game/menu_draw_status_details.c`
 
-283 → 216 retained occurrences.
+283 → 208 retained occurrences after naming the eight rating weights.
 
 | Function | Line | Token | Expression | Reason |
 | --- | ---: | --- | --- | --- |
@@ -249,15 +249,7 @@ remain encoded glyph-stream data, with their known roles recorded below.
 | `menu_draw_status_details` | 187 | `0` | `menu_format_number(player_state.gold, MENU_STATS_VALUE_DIGITS, 0, gs.codes);` | False zero-padding flag selects leading blank glyphs in the decimal formatter; field width is named. |
 | `menu_draw_status_details` | 190 | `0` | `menu_format_number(player_state.physical_power, MENU_STATS_VALUE_DIGITS, 0, gs.codes);` | False zero-padding flag selects leading blank glyphs in the decimal formatter; field width is named. |
 | `menu_draw_status_details` | 193 | `0` | `menu_format_number(player_state.magic, MENU_STATS_VALUE_DIGITS, 0, gs.codes);` | False zero-padding flag selects leading blank glyphs in the decimal formatter; field width is named. |
-| `menu_draw_status_details` | 196 | `3` | `player_state.piercing_attack) * 3 >> 1) +` | Weight the three physical attack halfwords by three, then logically halve that unsigned subtotal; preserve multiply/shift order. |
-| `menu_draw_status_details` | 196 | `1` | `player_state.piercing_attack) * 3 >> 1) +` | Weight the three physical attack halfwords by three, then logically halve that unsigned subtotal; preserve multiply/shift order. |
-| `menu_draw_status_details` | 197 | `2` | `(player_state.holy_attack + player_state.fire_attack) * 2;` | Weight the holy/fire subtotal by two before adding it to the physical subtotal. |
-| `menu_draw_status_details` | 198 | `10` | `attack_rating = attack_rating * 10 / 8;` | Scale the signed attack subtotal by ten and divide by eight with truncation toward zero; preserve the corrected signed arithmetic. |
-| `menu_draw_status_details` | 198 | `8` | `attack_rating = attack_rating * 10 / 8;` | Scale the signed attack subtotal by ten and divide by eight with truncation toward zero; preserve the corrected signed arithmetic. |
 | `menu_draw_status_details` | 200 | `0` | `menu_format_number(attack_rating, MENU_STATS_VALUE_DIGITS, 0, gs.codes);` | False zero-padding flag selects leading blank glyphs in the decimal formatter; field width is named. |
-| `menu_draw_status_details` | 205 | `5` | `player_state.piercing_defense + player_state.poison_resistance / 5 +` | Divide poison resistance by five before adding it to the defense subtotal; preserve this authored display weighting and its integer truncation. |
-| `menu_draw_status_details` | 206 | `10` | `player_state.magic_defense + player_state.fire_defense) * 10) / 7,` | Scale the combined defense subtotal by ten and divide by seven. Preserve the authored display-score formula; the divisor is not inferred to be a count of equal components. |
-| `menu_draw_status_details` | 206 | `7` | `player_state.magic_defense + player_state.fire_defense) * 10) / 7,` | Scale the combined defense subtotal by ten and divide by seven. Preserve the authored display-score formula; the divisor is not inferred to be a count of equal components. |
 | `menu_draw_status_details` | 207 | `0` | `MENU_STATS_VALUE_DIGITS, 0, gs.codes);` | False zero-padding flag selects leading blank glyphs in the decimal formatter; field width is named. |
 | `menu_draw_status_details` | 210 | `0xb5` | `gs.x = 0xb5;` | Explicit screen X anchor 181 pixels for the following text run; preserve the authored layout, whose original placement rationale is unknown. |
 | `menu_draw_status_details` | 211 | `0x1e` | `gs.y = 0x1e;` | Explicit screen Y anchor 30 pixels for the following text run; preserve the authored layout, whose original placement rationale is unknown. |

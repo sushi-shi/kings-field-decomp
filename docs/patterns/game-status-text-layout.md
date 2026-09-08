@@ -1,5 +1,34 @@
 # GAME statistics text layout and current literal ledger
 
+## Rating-weight naming follow-up
+
+Function Match Plan: name the eight formula literals in GAME
+`800264d8 / 0xcb4`, `menu_draw_status_details`, without changing operations,
+operand types or evaluation order. The fresh six-view dossier still reports
+the existing 98.296430% result; it is a stored result, not post-edit verification.
+The direct caller, adjacent renderers, game-owned player/atlas references,
+source history and vendor exclusion agree with the evidence below.
+
+Retail `80026b58..80026b98` forms physical attack times three then logical
+half, adds twice holy/fire, and scales the signed subtotal by ten/eight.
+`80026bd0` divides poison resistance by five before summation, and
+`80026c38..80026c48` scales the signed defense subtotal by ten/seven.
+Keep all 72 calls, 91 validated references, branch/delay-slot ownership and
+the final frame release at `80027188` unchanged. The denominators are display
+weights, not inferred component counts; their original calibration is unknown.
+
+Use local integer constants for the physical multiplier and downshift,
+elemental multiplier, and separate attack/defense scale numerators and
+denominators. No shared API or field domain changes. Builds, compiler checks,
+tests and post-edit matches remain deferred under the user's naming-pass
+instruction. The final source review will verify literal values and accounting;
+it cannot establish a new binary match result.
+
+Final verdict: all eight values now have the planned local names. Source
+review preserves each operation and type boundary; the retained-literal
+ledger has 208 occurrences and all 111 current file ledgers reconcile.
+No build or match claim is made for this naming edit.
+
 ## Function Match Plan
 
 The two statistics renderers share four-digit HP/MP fields and six-digit
