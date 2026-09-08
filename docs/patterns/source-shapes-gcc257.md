@@ -527,8 +527,10 @@ Residues left in the module:
 | `bgez x → L; li v0,0xc00; li v0,0x400; L: sh` (one store) | `if (delta->x < 0) yaw = 0x400; else yaw = 0xc00;` — the ternary sets the temporary before the branch and takes another register | same |
 | `slti drop,400; bnez → -120 block` with the -300 block inline | `if (drop >= 400) { -300 } else { -120 }` | same |
 
-Residue: `actor_update_awareness` keeps the constant 1 in `s5` for both the
-lifecycle switch and the later `kind == 1` compare; ours re-materialises it.
+`actor_update_awareness` subsequently reached **100%** by expressing the
+three rejections as one shared suppression store. CSE then retains constant 1
+in `s5` for both the lifecycle switch and the later slot-policy comparison.
+See [the awareness trace controls](game-actor-awareness.md).
 
 | `sll v0,limit,16` shared in the branch delay slot by both clamp branches | write both clamps with the field first (`movement > limit`, `movement < -limit`) so the extension pseudo takes the same register in both arms and reorg can hoist the common first instruction | `actor_apply_random_movement` `0x8002f558` |
 

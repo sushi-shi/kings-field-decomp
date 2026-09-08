@@ -304,8 +304,7 @@ void actor_update_awareness(void)
             }
         } else {
             if (distance < ACTOR_NEAR_SPAWN_EXCLUSION_RANGE && player_state.allow_near_actor_spawn == 0) {
-                actor->lifecycle = KF_ACTOR_LIFECYCLE_WAIT_FOR_RANGE_EXIT;
-                return;
+                goto wait_for_range_exit;
             }
             if ((actor->spawn_chance << ACTOR_SPAWN_CHANCE_SHIFT) > rand()
                 || spawn_policy == KF_ACTOR_SLOT_PERSISTENT || spawn_policy == KF_ACTOR_SLOT_HOMEBOUND) {
@@ -316,12 +315,12 @@ void actor_update_awareness(void)
                         definition->collision_radius,
                         0)
                     != -1) {
-                    actor->lifecycle = KF_ACTOR_LIFECYCLE_WAIT_FOR_RANGE_EXIT;
-                    return;
+                    goto wait_for_range_exit;
                 }
                 actor_initialize_current();
                 actor_select_next_action(distance);
             } else {
+            wait_for_range_exit:
                 actor->lifecycle = KF_ACTOR_LIFECYCLE_WAIT_FOR_RANGE_EXIT;
             }
         }

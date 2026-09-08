@@ -26,6 +26,9 @@ promotes a probe to a proven historical toolchain.
   all three unit functions and the seven switch pointers match retail.
 - [game-map-drop-initialization.md](game-map-drop-initialization.md): dropped
   object velocity initialization through the common action-selection exit.
+- [game-actor-awareness.md](game-actor-awareness.md): exact actor lifecycle
+  update through the shared suppression store, with CSE traversal and small
+  constant-sharing controls.
 
 - [game-horizontal-movement-bearing.md](game-horizontal-movement-bearing.md):
   corrected collision-bearing Z sign, SDK short-vector stack layout,
