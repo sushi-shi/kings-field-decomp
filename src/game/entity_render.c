@@ -1,3 +1,4 @@
+#include <kf/game_graphics.h>
 #include <kf/address.h>
 #include <kf/game_asset.h>
 #include <kf/game_math.h>
@@ -69,22 +70,22 @@ void render_floor_item(KfFloorItem *item)
     u32 frame_count;
     s16 depth_bias;
 
-    SetRotMatrix(&render_state.view_matrix);
-    SetTransMatrix(&render_state.view_matrix);
-    screen.vx = (u16)item->position_x - (u16)render_state.view_position.vx;
-    screen.vy = (u16)item->position_y - (u16)render_state.view_position.vy;
-    screen.vz = (u16)item->position_z - (u16)render_state.view_position.vz;
+    SetRotMatrix(&game_graphics_runtime.render_state.view_matrix);
+    SetTransMatrix(&game_graphics_runtime.render_state.view_matrix);
+    screen.vx = (u16)item->position_x - (u16)game_graphics_runtime.render_state.view_position.vx;
+    screen.vy = (u16)item->position_y - (u16)game_graphics_runtime.render_state.view_position.vy;
+    screen.vz = (u16)item->position_z - (u16)game_graphics_runtime.render_state.view_position.vz;
     RotTrans(&screen, (VECTOR *)&model.t, &flag);
     facing = item->facing_and_frame_count & KF_FLOOR_ITEM_FACING_MASK;
     if ((u8)facing != KF_FLOOR_ITEM_FACING_BILLBOARD) {
         matrix_set_rotation_y(
             (facing - KF_FLOOR_ITEM_FACING_ZERO_YAW) << KF_FLOOR_ITEM_FACING_TO_ANGLE_SHIFT,
             &model);
-        MulMatrix2(&render_state.view_matrix, &model);
+        MulMatrix2(&game_graphics_runtime.render_state.view_matrix, &model);
         SetRotMatrix(&model);
         depth_bias = KF_FLOOR_ITEM_FIXED_FACING_DEPTH_BIAS;
     } else {
-        SetRotMatrix(&render_state.pitch_matrix);
+        SetRotMatrix(&game_graphics_runtime.render_state.pitch_matrix);
         depth_bias = KF_FLOOR_ITEM_BILLBOARD_DEPTH_BIAS;
     }
     SetTransMatrix(&model);
@@ -119,11 +120,11 @@ void render_actor_sprite(KfEffectRenderView *sprite)
     if (sprite->sprite_id == KF_EFFECT_RENDER_NONE) {
         return;
     }
-    SetRotMatrix((MATRIX *)&render_state.view_matrix);
-    SetTransMatrix((MATRIX *)&render_state.view_matrix);
-    screen.vx = sprite->position_x - (u16)render_state.view_position.vx;
-    screen.vy = sprite->position_y - (u16)render_state.view_position.vy;
-    screen.vz = sprite->position_z - (u16)render_state.view_position.vz;
+    SetRotMatrix((MATRIX *)&game_graphics_runtime.render_state.view_matrix);
+    SetTransMatrix((MATRIX *)&game_graphics_runtime.render_state.view_matrix);
+    screen.vx = sprite->position_x - (u16)game_graphics_runtime.render_state.view_position.vx;
+    screen.vy = sprite->position_y - (u16)game_graphics_runtime.render_state.view_position.vy;
+    screen.vz = sprite->position_z - (u16)game_graphics_runtime.render_state.view_position.vz;
     RotTrans(&screen, (VECTOR *)&model.t, &flag);
     matrix_set_rotation_yxz(&sprite->rotation, &model);
     scale.vx = sprite->scale_x;
@@ -131,12 +132,12 @@ void render_actor_sprite(KfEffectRenderView *sprite)
     scale.vz = sprite->scale_z;
     ScaleMatrix(&model, &scale);
     if (sprite->mode == KF_EFFECT_ANIMATION_BILLBOARD) {
-        MulMatrix2((MATRIX *)&render_state.pitch_matrix, &model);
+        MulMatrix2((MATRIX *)&game_graphics_runtime.render_state.pitch_matrix, &model);
         SetRotMatrix(&model);
         SetTransMatrix(&model);
         render_enqueue_sprite(&effect_billboard_sprites[sprite->sprite_id], 0, KF_SPRITE_DEPTH_CUE_NORMAL);
     } else {
-        MulMatrix2((MATRIX *)&render_state.view_matrix, &model);
+        MulMatrix2((MATRIX *)&game_graphics_runtime.render_state.view_matrix, &model);
         SetRotMatrix(&model);
         SetTransMatrix(&model);
         asset = sprite->sprite_id + KF_ASSET_EFFECT_FIRST;

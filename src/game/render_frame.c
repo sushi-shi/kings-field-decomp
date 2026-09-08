@@ -1,3 +1,4 @@
+#include <kf/game_graphics.h>
 #include <kf/address.h>
 #include <kf/psyq.h>
 #include <kf/game_render.h>
@@ -103,34 +104,34 @@ void render_frame(const VECTOR *position, const SVECTOR *rotation)
         KF_ENUM_ENCODE(u8, player_state.compass_enabled));
     effect_sprites[KF_EFFECT_SPRITE_COMPASS].state = KF_ENUM_DECODE(KfEffectSpriteState,
         KF_ENUM_ENCODE(u8, player_state.compass_enabled));
-    effect_sprites[KF_EFFECT_SPRITE_COMPASS].rotation.vz = -render_state.view_rotation.vy & KF_ANGLE_WRAP_MASK;
+    effect_sprites[KF_EFFECT_SPRITE_COMPASS].rotation.vz = -game_graphics_runtime.render_state.view_rotation.vy & KF_ANGLE_WRAP_MASK;
     render_effect_sprites();
 
-    active_render_tpage = hud_tpage;
-    active_render_clut = hud_clut;
-    active_render_blue = hud_brightness;
-    active_render_green = hud_brightness;
-    active_render_red = hud_brightness;
+    game_graphics_runtime.active_render_tpage = game_graphics_runtime.hud_tpage;
+    game_graphics_runtime.active_render_clut = game_graphics_runtime.hud_clut;
+    game_graphics_runtime.active_render_blue = game_graphics_runtime.hud_brightness;
+    game_graphics_runtime.active_render_green = game_graphics_runtime.hud_brightness;
+    game_graphics_runtime.active_render_red = game_graphics_runtime.hud_brightness;
     render_hud_gauges(auxiliary_sprite - KF_HUD_COMPASS);
 
     SetLightMatrix(&render_light_matrices[KF_RENDER_LIGHT_NOTIFICATION]);
     notify_effect_update();
 
-    active_render_red = NOTIFICATION_RENDER_BRIGHTNESS;
-    active_render_green = NOTIFICATION_RENDER_BRIGHTNESS;
-    active_render_blue = NOTIFICATION_RENDER_BRIGHTNESS;
+    game_graphics_runtime.active_render_red = NOTIFICATION_RENDER_BRIGHTNESS;
+    game_graphics_runtime.active_render_green = NOTIFICATION_RENDER_BRIGHTNESS;
+    game_graphics_runtime.active_render_blue = NOTIFICATION_RENDER_BRIGHTNESS;
     model.t[0] = 0;
     model.t[1] = NOTIFICATION_MODEL_Y;
     model.t[2] = NOTIFICATION_MODEL_Z;
     spin.vz = 0;
     spin.vy = 0;
-    spin.vx = notification_state.control.effect_angle_x;
+    spin.vx = game_graphics_runtime.notification_state.control.effect_angle_x;
     RotMatrix(&spin, &model);
     SetRotMatrix(&model);
     SetTransMatrix(&model);
 
-    active_render_tpage = notification_text_tpage;
-    active_render_clut = notification_text_clut;
+    game_graphics_runtime.active_render_tpage = game_graphics_runtime.notification_text_tpage;
+    game_graphics_runtime.active_render_clut = game_graphics_runtime.notification_text_clut;
     record = notification_sprites;
     if (record[KF_NOTIFICATION_TEXT_SPRITE].active == KF_NOTIFICATION_SPRITE_VISIBLE) {
         render_enqueue_sprite(&record[KF_NOTIFICATION_TEXT_SPRITE].sprite, 0, KF_SPRITE_DEPTH_CUE_NORMAL);
@@ -139,8 +140,8 @@ void render_frame(const VECTOR *position, const SVECTOR *rotation)
         render_enqueue_sprite(&record[KF_NOTIFICATION_GOLD_SPRITE].sprite, 0, KF_SPRITE_DEPTH_CUE_NORMAL);
     }
     record += KF_NOTIFICATION_ONES_SPRITE;
-    active_render_tpage = notification_digit_tpage;
-    active_render_clut = notification_digit_clut;
+    game_graphics_runtime.active_render_tpage = game_graphics_runtime.notification_digit_tpage;
+    game_graphics_runtime.active_render_clut = game_graphics_runtime.notification_digit_clut;
     for (i = KF_NOTIFICATION_THOUSANDS_SPRITE - KF_NOTIFICATION_ONES_SPRITE; i != -1; i--) {
         if (record->active == KF_NOTIFICATION_SPRITE_VISIBLE) {
             render_enqueue_sprite(&record->sprite, 0, KF_SPRITE_DEPTH_CUE_NORMAL);

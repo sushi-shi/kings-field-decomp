@@ -1,3 +1,4 @@
+#include <kf/game_graphics.h>
 #include <kf/address.h>
 #include <kf/game_math.h>
 #include <kf/notify.h>
@@ -37,18 +38,11 @@ KfNotificationSprite notification_sprites[KF_NOTIFICATION_SPRITE_COUNT] = {
     {KF_NOTIFICATION_SPRITE_HIDDEN, 0, {0xf0, 0, 7, 0x0b, 0xffa6, 0xffa3, 7, 0x0b}},
 };
 
-DATA(0x8009506e, 0x8)
-KfNotificationId notification_message_ids[KF_NOTIFICATION_CAPACITY];
-
-DATA(0x80095076, 0x16)
-KfNotificationState notification_state;
-
 /*
  * Notification queue and effect, one contiguous run
  * 0x8001fa44..0x8001fde4 (GAME.EXE): the notification ring enqueue/dequeue and
  * the on-screen notification effect. Module boundary is WIP.
  */
-
 
 /*
  * On-screen notification ring.  Player stat routines (level, training,
@@ -67,11 +61,11 @@ void notify_enqueue(KfNotificationArgument message_id, ...)
     if (message_id == KF_NOTIFICATION_NONE) {
         return;
     }
-    head = &notification_state.control.queue_head;
-    if (notification_message_ids[*head] == KF_NOTIFICATION_NONE) {
-        notification_message_ids[*head] = message_id;
+    head = &game_graphics_runtime.notification_state.control.queue_head;
+    if (game_graphics_runtime.notification_message_ids[*head] == KF_NOTIFICATION_NONE) {
+        game_graphics_runtime.notification_message_ids[*head] = message_id;
         if (message_id == KF_NOTIFICATION_GOLD) {
-            u16 *payload = notification_state.message_payloads;
+            u16 *payload = game_graphics_runtime.notification_state.message_payloads;
 #if KF_MODERN_TYPES
             __builtin_va_list arguments;
             __builtin_va_start(arguments, message_id);
@@ -86,13 +80,11 @@ void notify_enqueue(KfNotificationArgument message_id, ...)
     }
 }
 
-
 ADDRESS(0x8001fae4, 0x18)
 void notification_digit_set_v(KfSpriteQuad *sprite, s32 digit)
 {
     sprite->v = digit * NOTIFICATION_DIGIT_ROW_HEIGHT;
 }
-
 
 /*
  * Notification effect state machine, stepped once per frame by the frame
@@ -116,18 +108,18 @@ void notification_digit_set_v(KfSpriteQuad *sprite, s32 digit)
 ADDRESS(0x8001fafc, 0x2cc)
 void notify_effect_update(void)
 {
-    KfNotificationPhase *phase = &notification_state.control.effect_phase;
+    KfNotificationPhase *phase = &game_graphics_runtime.notification_state.control.effect_phase;
 
     switch (*phase) {
     case KF_NOTIFICATION_IDLE: {
-        u8 tail = notification_state.control.queue_tail;
-        KfNotificationId id = notification_message_ids[tail];
+        u8 tail = game_graphics_runtime.notification_state.control.queue_tail;
+        KfNotificationId id = game_graphics_runtime.notification_message_ids[tail];
         if (id == KF_NOTIFICATION_NONE) {
             return;
         }
         *phase = KF_NOTIFICATION_HOLD;
-        notification_state.control.effect_angle_x = 0;
-        notification_state.control.hold_frames = NOTIFICATION_HOLD_FRAMES;
+        game_graphics_runtime.notification_state.control.effect_angle_x = 0;
+        game_graphics_runtime.notification_state.control.hold_frames = NOTIFICATION_HOLD_FRAMES;
         if (id == KF_NOTIFICATION_GOLD) {
             KfNotificationSprite *sprite_records = notification_sprites;
             KfNotificationDigitBuffer digits;
@@ -138,7 +130,7 @@ void notify_effect_update(void)
             notification_sprites[KF_NOTIFICATION_GOLD_SPRITE].sprite.v =
                 (KF_ENUM_ENCODE(u8, id) & NOTIFICATION_ATLAS_ROW_MASK) << NOTIFICATION_ATLAS_ROW_SHIFT;
             menu_format_number(
-                notification_state.message_payloads[tail],
+                game_graphics_runtime.notification_state.message_payloads[tail],
                 NOTIFICATION_GOLD_DIGITS, 0, digits.formatted);
             notification_sprites[KF_NOTIFICATION_ONES_SPRITE].active = KF_NOTIFICATION_SPRITE_VISIBLE;
             notification_digit_set_v(
@@ -167,32 +159,32 @@ void notify_effect_update(void)
         break;
     }
     case KF_NOTIFICATION_HOLD: {
-        u8 counter = notification_state.control.hold_frames - 1;
-        notification_state.control.hold_frames = counter;
+        u8 counter = game_graphics_runtime.notification_state.control.hold_frames - 1;
+        game_graphics_runtime.notification_state.control.hold_frames = counter;
         if (counter == 0) {
             *phase = KF_NOTIFICATION_ROTATE_OUT;
         }
         break;
     }
     case KF_NOTIFICATION_ROTATE_OUT: {
-        s16 angle_x = notification_state.control.effect_angle_x + NOTIFICATION_EXIT_ANGLE_STEP;
-        notification_state.control.effect_angle_x = angle_x;
+        s16 angle_x = game_graphics_runtime.notification_state.control.effect_angle_x + NOTIFICATION_EXIT_ANGLE_STEP;
+        game_graphics_runtime.notification_state.control.effect_angle_x = angle_x;
         if (angle_x >= KF_ANGLE_EIGHTH_TURN) {
             KfNotificationControl *control;
             KfNotificationId id;
-            notification_state.control.effect_angle_x = KF_ANGLE_EIGHTH_TURN;
+            game_graphics_runtime.notification_state.control.effect_angle_x = KF_ANGLE_EIGHTH_TURN;
             notification_sprites[KF_NOTIFICATION_THOUSANDS_SPRITE].active = KF_NOTIFICATION_SPRITE_HIDDEN;
             notification_sprites[KF_NOTIFICATION_HUNDREDS_SPRITE].active = KF_NOTIFICATION_SPRITE_HIDDEN;
             notification_sprites[KF_NOTIFICATION_TENS_SPRITE].active = KF_NOTIFICATION_SPRITE_HIDDEN;
             notification_sprites[KF_NOTIFICATION_ONES_SPRITE].active = KF_NOTIFICATION_SPRITE_HIDDEN;
             notification_sprites[KF_NOTIFICATION_GOLD_SPRITE].active = KF_NOTIFICATION_SPRITE_HIDDEN;
             notification_sprites[KF_NOTIFICATION_TEXT_SPRITE].active = KF_NOTIFICATION_SPRITE_HIDDEN;
-            control = &notification_state.control;
-            id = notification_message_ids[notification_state.control.queue_tail];
+            control = &game_graphics_runtime.notification_state.control;
+            id = game_graphics_runtime.notification_message_ids[game_graphics_runtime.notification_state.control.queue_tail];
             do {
-                notification_message_ids[control->queue_tail] = KF_NOTIFICATION_NONE;
+                game_graphics_runtime.notification_message_ids[control->queue_tail] = KF_NOTIFICATION_NONE;
                 control->queue_tail = (control->queue_tail + 1) & (KF_NOTIFICATION_CAPACITY - 1);
-            } while (id == notification_message_ids[control->queue_tail]
+            } while (id == game_graphics_runtime.notification_message_ids[control->queue_tail]
                 && id != KF_NOTIFICATION_GOLD);
             control->effect_phase = KF_NOTIFICATION_IDLE;
         }
@@ -201,9 +193,8 @@ void notify_effect_update(void)
     }
 }
 
-
 ADDRESS(0x8001fdc8, 0x1c)
 void display_flip_buffer_index(void)
 {
-    display_state.buffer_index = (display_state.buffer_index == 0);
+    game_graphics_runtime.display_state.buffer_index = (game_graphics_runtime.display_state.buffer_index == 0);
 }

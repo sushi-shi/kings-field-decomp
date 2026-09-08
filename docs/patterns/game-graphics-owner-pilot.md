@@ -1,13 +1,13 @@
 # GAME graphics owner: complete-clear pilot
 
-This is a tested ownership hypothesis, not an adopted DATA claim or a recovered
-original C declaration. The complete GAME graphics clear is larger than the
-current fragmented globals. The pilot tests one shared declaration against
-independent retail instructions before changing production ownership.
+The complete owner has now been [adopted in production](game-graphics-runtime-owner.md),
+closing three functions at strict 100% while preserving every existing exact
+body. The original C declaration and unresolved subobject extents remain WIP.
+The sections below preserve the earlier pilot evidence and controls.
 
 The initial map-cell result below is superseded by
 [the byte-index/switch/XYZ source correction](game-map-cell-source.md).
-Production is now strict 96.743240%; the unchanged shared-owner declaration
+The pre-migration source was strict 96.743240%; the shared-owner declaration
 emits all 592 bytes with only eighteen stack operands different. Its ownership
 limitations still apply; neither form is a new exact claim.
 

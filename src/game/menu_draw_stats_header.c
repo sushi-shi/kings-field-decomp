@@ -1,3 +1,4 @@
+#include <kf/game_graphics.h>
 #include <kf/address.h>
 #include <kf/game_menu.h>
 #include <kf/game.h>
@@ -17,7 +18,7 @@ void menu_draw_stats_header(void)
     MenuGlyphString gs;
     s32 glyph_index;
 
-    current_poly_ft4 = (POLY_FT4 *)display_state.primitive_buffer->cursor;
+    current_poly_ft4 = (POLY_FT4 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
     gs.x = 0xb5;
     gs.y = 0x24;

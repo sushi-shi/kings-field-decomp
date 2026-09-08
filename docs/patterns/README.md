@@ -198,7 +198,7 @@ promotes a probe to a proven historical toolchain.
   joins, struct copies, two-statement accumulations).
 - [game-model-emitter-lifetimes.md](game-model-emitter-lifetimes.md): retail
   case-body order closes map-object rendering; updating the byte texture index
-  and the temporary complete graphics owner reproduce the entire actor body.
+  and the complete graphics owner reproduce the entire actor body.
 - [compiler-attribution.md](compiler-attribution.md): a dedicated
   cross-version pass over the residue corpus. How GCC 2.4.1 CC1PSX was made
   runnable (a go32-stub frankenbinary under DOSBox) and the finding that it
@@ -308,10 +308,13 @@ promotes a probe to a proven historical toolchain.
   graphics owner, exact map traversal/VRAM adjustment, and preserved initializer controls.
 - [game-graphics-owner-pilot.md](game-graphics-owner-pilot.md): complete-clear
   ownership pilot, preserved initializer/traversal controls, and the exact
-  unconditional view-matrix rebuild; GAME data migration remains unresolved.
+  unconditional view-matrix rebuild; the production migration is documented below.
+- [game-graphics-runtime-owner.md](game-graphics-runtime-owner.md): production
+  graphics owner closes floor placement, sprite enqueue and actor rendering;
+  all 173 affected-unit bodies checked, with data placement limits retained.
 - [game-display-environment-data.md](game-display-environment-data.md): complete
   SDK-typed environment arrays, reviewed interior references and the screen
-  fade's unconditional RGB stores; larger graphics ownership stays provisional.
+  fade's unconditional RGB stores; the later complete owner retains these checks.
 - [open-map-enqueue.md](open-map-enqueue.md): lit map GT3/GT4 emission,
   the complete colour owner, and byte-identical shared packed-coordinate types.
 - [open-emitter-source-controls.md](open-emitter-source-controls.md): negative

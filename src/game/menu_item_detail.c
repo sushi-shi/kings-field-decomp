@@ -1,3 +1,4 @@
+#include <kf/game_graphics.h>
 #include <kf/address.h>
 #include <kf/game_menu.h>
 #include <kf/game.h>
@@ -73,7 +74,7 @@ void menu_draw_item_detail(KF_ENUM_PARAM(KfItemId, s32) item_id, KF_ENUM_PARAM(K
     SetTransMatrix(&rot);
     menu_render_item_model();
 
-    current_poly_ft4 = (POLY_FT4 *)display_state.primitive_buffer->cursor;
+    current_poly_ft4 = (POLY_FT4 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
     gs.x = MENU_ITEM_PREVIEW_NAME_X;
     gs.y = MENU_ITEM_PREVIEW_NAME_Y;
@@ -136,16 +137,16 @@ void menu_draw_item_detail(KF_ENUM_PARAM(KfItemId, s32) item_id, KF_ENUM_PARAM(K
 ADDRESS(0x80027e58, 0x48)
 void menu_add_marker_quad(void)
 {
-    AddPrim(display_state.ordering_table + MENU_MARKER_OT_DEPTH,
-            &menu_assets.mid_depth_quads[display_state.buffer_index]);
+    AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_MARKER_OT_DEPTH,
+            &menu_assets.mid_depth_quads[game_graphics_runtime.display_state.buffer_index]);
 }
 
 /* Link the shared front menu quad at ordering-table slot 0. */
 ADDRESS(0x80027ea0, 0x44)
 void menu_add_frame_quad(void)
 {
-    AddPrim(display_state.ordering_table,
-            &menu_assets.foreground_quads[display_state.buffer_index]);
+    AddPrim(game_graphics_runtime.display_state.ordering_table,
+            &menu_assets.foreground_quads[game_graphics_runtime.display_state.buffer_index]);
 }
 
 /*
@@ -163,33 +164,33 @@ void menu_draw_dialog_frame(const KfSaveSlotSummary *rows, KfSaveSlotOverlay ove
     MenuGlyphString gs;
     s32 i;
 
-    current_poly_ft4 = (POLY_FT4 *)display_state.primitive_buffer->cursor;
+    current_poly_ft4 = (POLY_FT4 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
     if (overlay == KF_SAVE_OVERLAY_SKIP_FIRST) {
-        AddPrim(display_state.ordering_table + MENU_DIALOG_OT_DEPTH,
-                &menu_assets.dialog_quads[display_state.buffer_index][MENU_SAVE_SLOT1_QUAD]);
-        AddPrim(display_state.ordering_table + MENU_DIALOG_OT_DEPTH,
-                &menu_assets.dialog_quads[display_state.buffer_index][MENU_SAVE_SLOT2_QUAD]);
+        AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_DIALOG_OT_DEPTH,
+                &menu_assets.dialog_quads[game_graphics_runtime.display_state.buffer_index][MENU_SAVE_SLOT1_QUAD]);
+        AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_DIALOG_OT_DEPTH,
+                &menu_assets.dialog_quads[game_graphics_runtime.display_state.buffer_index][MENU_SAVE_SLOT2_QUAD]);
     }
     if (overlay == KF_SAVE_OVERLAY_SKIP_SECOND) {
-        AddPrim(display_state.ordering_table + MENU_DIALOG_OT_DEPTH,
-                &menu_assets.dialog_quads[display_state.buffer_index][MENU_SAVE_SLOT0_QUAD]);
-        AddPrim(display_state.ordering_table + MENU_DIALOG_OT_DEPTH,
-                &menu_assets.dialog_quads[display_state.buffer_index][MENU_SAVE_SLOT2_QUAD]);
+        AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_DIALOG_OT_DEPTH,
+                &menu_assets.dialog_quads[game_graphics_runtime.display_state.buffer_index][MENU_SAVE_SLOT0_QUAD]);
+        AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_DIALOG_OT_DEPTH,
+                &menu_assets.dialog_quads[game_graphics_runtime.display_state.buffer_index][MENU_SAVE_SLOT2_QUAD]);
     }
     if (overlay == KF_SAVE_OVERLAY_SKIP_THIRD) {
-        AddPrim(display_state.ordering_table + MENU_DIALOG_OT_DEPTH,
-                &menu_assets.dialog_quads[display_state.buffer_index][MENU_SAVE_SLOT0_QUAD]);
-        AddPrim(display_state.ordering_table + MENU_DIALOG_OT_DEPTH,
-                &menu_assets.dialog_quads[display_state.buffer_index][MENU_SAVE_SLOT1_QUAD]);
+        AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_DIALOG_OT_DEPTH,
+                &menu_assets.dialog_quads[game_graphics_runtime.display_state.buffer_index][MENU_SAVE_SLOT0_QUAD]);
+        AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_DIALOG_OT_DEPTH,
+                &menu_assets.dialog_quads[game_graphics_runtime.display_state.buffer_index][MENU_SAVE_SLOT1_QUAD]);
     }
     if (overlay >= KF_SAVE_OVERLAY_ALL) {
-        AddPrim(display_state.ordering_table + MENU_DIALOG_OT_DEPTH,
-                &menu_assets.dialog_quads[display_state.buffer_index][MENU_SAVE_SLOT0_QUAD]);
-        AddPrim(display_state.ordering_table + MENU_DIALOG_OT_DEPTH,
-                &menu_assets.dialog_quads[display_state.buffer_index][MENU_SAVE_SLOT1_QUAD]);
-        AddPrim(display_state.ordering_table + MENU_DIALOG_OT_DEPTH,
-                &menu_assets.dialog_quads[display_state.buffer_index][MENU_SAVE_SLOT2_QUAD]);
+        AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_DIALOG_OT_DEPTH,
+                &menu_assets.dialog_quads[game_graphics_runtime.display_state.buffer_index][MENU_SAVE_SLOT0_QUAD]);
+        AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_DIALOG_OT_DEPTH,
+                &menu_assets.dialog_quads[game_graphics_runtime.display_state.buffer_index][MENU_SAVE_SLOT1_QUAD]);
+        AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_DIALOG_OT_DEPTH,
+                &menu_assets.dialog_quads[game_graphics_runtime.display_state.buffer_index][MENU_SAVE_SLOT2_QUAD]);
     }
 
     if (rows == 0) {

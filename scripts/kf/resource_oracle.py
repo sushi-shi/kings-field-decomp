@@ -231,7 +231,7 @@ def compare_archives(retail: RetailImage, symbols: GameSymbols, rust: RustCodec,
             raise AssertionError(f"{label}: archive exceeds isolated input arena")
         if operation == "register-tmd":
             entry = "tmd_register"
-            table_va = symbols.datum("tmd_state")[0]
+            table_va = symbols.datum("game_graphics_runtime")[0] + 0x20110
             table = pattern(32, 7)
             functions = [CandidateFunction(entry, BUILD / "objdiff/game/base/8001b7b0_render.o")]
         else:
@@ -240,7 +240,7 @@ def compare_archives(retail: RetailImage, symbols: GameSymbols, rust: RustCodec,
                 if operation == "register-archive"
                 else "asset_registry_set"
             )
-            table_va = symbols.datum("asset_registry_entries")[0]
+            table_va = symbols.datum("game_graphics_runtime")[0] + 0x20134
             table = pattern(256, 7)
             functions = [
                 CandidateFunction(name, BUILD / "objdiff/game/base/800204c0_asset_registry.o")
@@ -297,7 +297,7 @@ def compare_common(retail: RetailImage, symbols: GameSymbols, rust: RustCodec, r
     record_specs = record_cases(root, symbols)[:6]
     captures = [MemoryRange(case.operation, case.destination, case.size) for case in record_specs]
     captures += [
-        MemoryRange("registry", symbols.datum("asset_registry_entries")[0], 256),
+        MemoryRange("registry", symbols.datum("game_graphics_runtime")[0] + 0x20134, 256),
         MemoryRange("COM payload", INPUT_VA, len(source)),
         MemoryRange("selected TMD", 0x80090FC8, 4),
         MemoryRange("arena cursor", symbols.datum("memory_arena_cursor")[0], 4),
@@ -827,7 +827,7 @@ def compare_placements(
             "items",
             "item_load_floor_placements",
             "80020b4c_item.o",
-            symbols.datum("floor_items")[0],
+            symbols.datum("game_graphics_runtime")[0] + 0x24200,
             64 * 24,
         ),
         (4, "objects", "map_object_pool_load", "80030a98_map_object_pool.o", object_base, 190 * 44),
@@ -873,7 +873,7 @@ def compare_placements(
         output = MemoryRange("pool", address, len(initial))
         grid_ranges = [MemoryRange(name, symbols.datum(name)[0], 10_000) for name in GRID_NAMES]
         captures = [output, *grid_ranges]
-        count = MemoryRange("floor_item_count", symbols.datum("floor_item_count")[0], 2)
+        count = MemoryRange("floor_item_count", symbols.datum("game_graphics_runtime")[0] + 0x241f8, 2)
         if family == "items":
             captures.append(count)
         memory = [

@@ -48,9 +48,10 @@ DEFAULT_INSTRUCTION_LIMIT = 20_000_000
 DEFAULT_CANDIDATE = BUILD / "objdiff/game/base/8001b7b0_render.o"
 
 # The current source migration names the complete owner; older candidate
-# objects name its interior TMD subobject.  Both resolve to the retail BSS span
+# objects name smaller context/TMD owners. All resolve to the retail BSS span
 # and, after their implicit field addends, to CURRENT_ASSET_PTR_VA.
 GAME_EXTERNALS = {
+    "game_graphics_runtime": 0x80070E98,
     "graphics_context": 0x80090EBC,
     "tmd_state": 0x80090FA8,
 }

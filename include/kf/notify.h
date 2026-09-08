@@ -53,8 +53,6 @@ typedef struct KfNotificationState {
     KfNotificationControl control;
 } KfNotificationState;
 
-extern KfNotificationId notification_message_ids[KF_NOTIFICATION_CAPACITY];
-extern KfNotificationState notification_state;
 extern KfNotificationSprite notification_sprites[KF_NOTIFICATION_SPRITE_COUNT];
 extern void notify_enqueue(KfNotificationArgument message_id, ...);
 extern void notify_effect_update(void);

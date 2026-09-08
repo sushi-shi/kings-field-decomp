@@ -1,3 +1,4 @@
+#include <kf/game_graphics.h>
 #include <kf/address.h>
 #include <kf/game_menu.h>
 #include <kf/game.h>
@@ -12,7 +13,6 @@ enum {
 /* The two labels are private by-value copies; only their Y positions advance. */
 void menu_config_panel_draw(
     MenuGlyphString option_a, MenuGlyphString option_b, KfPlayerOption *values);
-
 
 /*
  * Four editable config rows and an exit row. Both exit inputs publish the
@@ -139,7 +139,7 @@ void menu_config_panel_draw(
     KfPlayerOption *states;
     const MenuSpriteDef *box_b;
 
-    current_poly_ft4 = (POLY_FT4 *)display_state.primitive_buffer->cursor;
+    current_poly_ft4 = (POLY_FT4 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
     states = values;
     for (i = 0; i < KF_MENU_CONFIG_SETTING_COUNT; i++) {
         if (*states == KF_PLAYER_OPTION_ON) {
@@ -160,12 +160,12 @@ void menu_config_panel_draw(
         option_a.y += CONFIG_OPTION_ROW_STEP;
         option_b.y += CONFIG_OPTION_ROW_STEP;
     }
-    AddPrim(&display_state.ordering_table[MENU_BACKGROUND_OT_DEPTH],
-            &menu_assets.background_quads[display_state.buffer_index][3]);
-    AddPrim(&display_state.ordering_table[MENU_BACKGROUND_OT_DEPTH],
-            &menu_assets.background_quads[display_state.buffer_index][2]);
-    AddPrim(&display_state.ordering_table[MENU_BACKGROUND_OT_DEPTH],
-            &menu_assets.background_quads[display_state.buffer_index][1]);
-    AddPrim(&display_state.ordering_table[MENU_BACKGROUND_OT_DEPTH],
-            &menu_assets.background_quads[display_state.buffer_index][0]);
+    AddPrim(&game_graphics_runtime.display_state.ordering_table[MENU_BACKGROUND_OT_DEPTH],
+            &menu_assets.background_quads[game_graphics_runtime.display_state.buffer_index][3]);
+    AddPrim(&game_graphics_runtime.display_state.ordering_table[MENU_BACKGROUND_OT_DEPTH],
+            &menu_assets.background_quads[game_graphics_runtime.display_state.buffer_index][2]);
+    AddPrim(&game_graphics_runtime.display_state.ordering_table[MENU_BACKGROUND_OT_DEPTH],
+            &menu_assets.background_quads[game_graphics_runtime.display_state.buffer_index][1]);
+    AddPrim(&game_graphics_runtime.display_state.ordering_table[MENU_BACKGROUND_OT_DEPTH],
+            &menu_assets.background_quads[game_graphics_runtime.display_state.buffer_index][0]);
 }

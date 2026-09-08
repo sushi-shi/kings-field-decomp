@@ -1,3 +1,4 @@
+#include <kf/game_graphics.h>
 #include <kf/address.h>
 #include <kf/game_menu.h>
 #include <kf/game.h>
@@ -53,7 +54,7 @@ void menu_draw_two_option(
     const MenuGlyphString *option0, const MenuGlyphString *option1,
     KfMenuConfirmChoice selected, KfMenuConfirmState highlight)
 {
-    current_poly_ft4 = (POLY_FT4 *)display_state.primitive_buffer->cursor;
+    current_poly_ft4 = (POLY_FT4 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
     if (selected == KF_MENU_CHOICE_ACCEPT) {
         menu_blit_sprite(&menu_assets.selection_cursor, (const MenuPoint *)option0);
     } else {
@@ -119,7 +120,7 @@ void menu_draw_item_name_frame(KF_ENUM_PARAM(KfItemId, s32) item_id)
     menu_render_item_model();
 
     name = item_name_rows[KF_ENUM_ENCODE(s32, item_id)].codes;
-    current_poly_ft4 = (POLY_FT4 *)display_state.primitive_buffer->cursor;
+    current_poly_ft4 = (POLY_FT4 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
     string.x = 0x80;
     string.y = 0x24;
     for (i = 0; i < MENU_GLYPHS_PER_ROW; i++) {
@@ -216,17 +217,17 @@ void menu_draw_item_name_frame(KF_ENUM_PARAM(KfItemId, s32) item_id)
     primitive_buffer_commit_poly_ft4(MENU_WINDOW_OT_DEPTH);
 
     AddPrim(
-        display_state.ordering_table + MENU_BACKGROUND_OT_DEPTH,
-        &menu_assets.background_quads[display_state.buffer_index][3]);
+        game_graphics_runtime.display_state.ordering_table + MENU_BACKGROUND_OT_DEPTH,
+        &menu_assets.background_quads[game_graphics_runtime.display_state.buffer_index][3]);
     AddPrim(
-        display_state.ordering_table + MENU_BACKGROUND_OT_DEPTH,
-        &menu_assets.background_quads[display_state.buffer_index][2]);
+        game_graphics_runtime.display_state.ordering_table + MENU_BACKGROUND_OT_DEPTH,
+        &menu_assets.background_quads[game_graphics_runtime.display_state.buffer_index][2]);
     AddPrim(
-        display_state.ordering_table + MENU_BACKGROUND_OT_DEPTH,
-        &menu_assets.background_quads[display_state.buffer_index][1]);
+        game_graphics_runtime.display_state.ordering_table + MENU_BACKGROUND_OT_DEPTH,
+        &menu_assets.background_quads[game_graphics_runtime.display_state.buffer_index][1]);
     AddPrim(
-        display_state.ordering_table + MENU_BACKGROUND_OT_DEPTH,
-        &menu_assets.background_quads[display_state.buffer_index][0]);
+        game_graphics_runtime.display_state.ordering_table + MENU_BACKGROUND_OT_DEPTH,
+        &menu_assets.background_quads[game_graphics_runtime.display_state.buffer_index][0]);
 }
 
 /*
@@ -503,17 +504,17 @@ void menu_draw_window_backdrop(void)
     primitive_buffer_commit_poly_ft4(MENU_WINDOW_OT_DEPTH);
 
     AddPrim(
-        display_state.ordering_table + MENU_BACKGROUND_OT_DEPTH,
-        &menu_assets.background_quads[display_state.buffer_index][3]);
+        game_graphics_runtime.display_state.ordering_table + MENU_BACKGROUND_OT_DEPTH,
+        &menu_assets.background_quads[game_graphics_runtime.display_state.buffer_index][3]);
     AddPrim(
-        display_state.ordering_table + MENU_BACKGROUND_OT_DEPTH,
-        &menu_assets.background_quads[display_state.buffer_index][2]);
+        game_graphics_runtime.display_state.ordering_table + MENU_BACKGROUND_OT_DEPTH,
+        &menu_assets.background_quads[game_graphics_runtime.display_state.buffer_index][2]);
     AddPrim(
-        display_state.ordering_table + MENU_BACKGROUND_OT_DEPTH,
-        &menu_assets.background_quads[display_state.buffer_index][1]);
+        game_graphics_runtime.display_state.ordering_table + MENU_BACKGROUND_OT_DEPTH,
+        &menu_assets.background_quads[game_graphics_runtime.display_state.buffer_index][1]);
     AddPrim(
-        display_state.ordering_table + MENU_BACKGROUND_OT_DEPTH,
-        &menu_assets.background_quads[display_state.buffer_index][0]);
+        game_graphics_runtime.display_state.ordering_table + MENU_BACKGROUND_OT_DEPTH,
+        &menu_assets.background_quads[game_graphics_runtime.display_state.buffer_index][0]);
 }
 
 /*
@@ -524,14 +525,14 @@ void menu_draw_window_backdrop(void)
 ADDRESS(0x8002abb4, 0x80)
 void menu_frame_begin(void)
 {
-    display_state.buffer_index = display_state.buffer_index == 0;
-    display_state.primitive_buffer =
-        &display_state.primitive_buffers[display_state.buffer_index];
-    display_state.ordering_table =
-        display_state.ordering_tables[display_state.buffer_index].entries;
-    ClearOTagR(display_state.ordering_table, KF_ORDERING_TABLE_LENGTH);
-    display_state.primitive_buffer->cursor =
-        display_state.primitive_buffer->start;
+    game_graphics_runtime.display_state.buffer_index = game_graphics_runtime.display_state.buffer_index == 0;
+    game_graphics_runtime.display_state.primitive_buffer =
+        &game_graphics_runtime.display_state.primitive_buffers[game_graphics_runtime.display_state.buffer_index];
+    game_graphics_runtime.display_state.ordering_table =
+        game_graphics_runtime.display_state.ordering_tables[game_graphics_runtime.display_state.buffer_index].entries;
+    ClearOTagR(game_graphics_runtime.display_state.ordering_table, KF_ORDERING_TABLE_LENGTH);
+    game_graphics_runtime.display_state.primitive_buffer->cursor =
+        game_graphics_runtime.display_state.primitive_buffer->start;
 }
 
 /* Wait for the GPU/retrace, install the active environments, and submit OT. */
@@ -540,9 +541,9 @@ void menu_present_frame(void)
 {
     DrawSync(0);
     VSync(0);
-    PutDrawEnv(&display_draw_environments[display_state.buffer_index]);
-    PutDispEnv(&display_disp_environments[display_state.buffer_index]);
-    DrawOTag(display_state.ordering_table + (KF_ORDERING_TABLE_LENGTH - 1));
+    PutDrawEnv(&game_graphics_runtime.display_draw_environments[game_graphics_runtime.display_state.buffer_index]);
+    PutDispEnv(&game_graphics_runtime.display_disp_environments[game_graphics_runtime.display_state.buffer_index]);
+    DrawOTag(game_graphics_runtime.display_state.ordering_table + (KF_ORDERING_TABLE_LENGTH - 1));
 }
 
 ADDRESS(0x8002accc, 0x50)
@@ -559,10 +560,10 @@ void primitive_buffer_commit_poly_ft4(s32 depth)
 {
     depth <<= 2;
     AddPrim(
-        (u32 *)((u8 *)display_state.ordering_table + depth),
+        (u32 *)((u8 *)game_graphics_runtime.display_state.ordering_table + depth),
         current_poly_ft4);
     current_poly_ft4++;
-    display_state.primitive_buffer->cursor = (u8 *)current_poly_ft4;
+    game_graphics_runtime.display_state.primitive_buffer->cursor = (u8 *)current_poly_ft4;
 }
 
 /* Initialize a menu list header and copy its label glyphs from the table. */
@@ -649,7 +650,7 @@ u32 menu_load_item_texture(s32 id)
         remainder = number % 100;
         name[6] = remainder / 10 + '0';
         name[7] = remainder % 10 + '0';
-        destination = display_state.primitive_buffer->cursor;
+        destination = game_graphics_runtime.display_state.primitive_buffer->cursor;
         if (cd_file_load_into(destination, name) != 0) {
             return 1;
         }

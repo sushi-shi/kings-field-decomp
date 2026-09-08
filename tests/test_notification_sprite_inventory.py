@@ -15,16 +15,20 @@ from scripts.kf.retail import parse_int, read_tsv
 class NotificationSpriteInventoryTests(unittest.TestCase):
     def test_payloads_and_control_fields_share_one_nonoverlapping_owner(self) -> None:
         identities = load_data_identities(RETAIL_CONFIG)
-        state = identities[("GAME.EXE", 0x80095076)]
+        state = identities[("GAME.EXE", 0x80070E98)]
         self.assertEqual(
             (state.name, state.size, state.datatype, state.storage),
-            ("notification_state", 0x16, "KfNotificationState", "bss"),
+            ("game_graphics_runtime", 0x249CC, "KfGraphicsRuntimeGame", "bss"),
         )
         interior = {
             va for image, va in identities
             if image == "GAME.EXE" and 0x80095076 <= va < 0x8009508C
         }
-        self.assertEqual(interior, {0x80095076})
+        self.assertEqual(interior, set())
+        owner_fields = {row.name: (row.offset, row.size, row.datatype)
+                        for row in load_structure_field_identities(RETAIL_CONFIG)
+                        if row.structure == 'KfGraphicsRuntimeGame'}
+        self.assertEqual(owner_fields['notification_state'], (0x241DE, 0x16, 'KfNotificationState'))
         fields = {
             row.name: (row.offset, row.size, row.datatype)
             for row in load_structure_field_identities(RETAIL_CONFIG)
@@ -58,8 +62,8 @@ class NotificationSpriteInventoryTests(unittest.TestCase):
         self.assertEqual(len(references), 17)
         self.assertEqual({row["target_name"] for row in references}, {state.name})
         self.assertEqual(
-            identities[("GAME.EXE", 0x8009506E)].name,
-            "notification_message_ids",
+            owner_fields['notification_message_ids'],
+            (0x241D6, 8, 'KfNotificationId[8]'),
         )
 
     def test_enqueue_signature_preserves_the_optional_promoted_argument(self) -> None:

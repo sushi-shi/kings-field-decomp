@@ -1,3 +1,4 @@
+#include <kf/game_graphics.h>
 #include <kf/address.h>
 #include <kf/map_data.h>
 #include <kf/game_cd.h>
@@ -37,11 +38,8 @@ RODATA(0x800121b4, 0x74)
 DATA(0x80057b50, 0x7)
 char error_screen_path[7] = "\\E0.;1";
 
-DATA(0x80090ec0, 0xb8)
-DRAWENV display_draw_environments[KF_DISPLAY_BUFFER_COUNT];
-
-DATA(0x80090f78, 0x28)
-DISPENV display_disp_environments[KF_DISPLAY_BUFFER_COUNT];
+DATA(0x80070e98, 0x249cc)
+KfGraphicsRuntimeGame game_graphics_runtime;
 
 /* Loads and shows the system-message screen for STAGE as a semi-transparent
  * textured box, then blocks until a controller button is pressed and released.
@@ -97,31 +95,31 @@ void display_show_error_screen(KfSystemScreen stage)
 
         CdControl(CdlSetloc, (u_char *)&cd_read_location, 0);
         CdRead(cd_search_file.size >> KF_CD_SECTOR_SHIFT,
-               display_state.asset_load_buffer, CdlModeSpeed);
+               game_graphics_runtime.display_state.asset_load_buffer, CdlModeSpeed);
         while ((result = CdReadSync(KF_CD_READ_POLL, 0)) > 0) {
         }
         if (result == 0) {
             attempt = KF_CD_READ_STOP_ATTEMPT;
         }
     }
-    tim_upload_images(display_state.asset_load_buffer);
+    tim_upload_images(game_graphics_runtime.display_state.asset_load_buffer);
 
-    back = display_state.buffer_index == 0;
-    display_draw_environments[back].isbg = 0;
-    display_draw_environments[back].dfe = 0;
-    PutDrawEnv(&display_draw_environments[back]);
-    display_state.ordering_table = display_state.ordering_tables[back].entries;
+    back = game_graphics_runtime.display_state.buffer_index == 0;
+    game_graphics_runtime.display_draw_environments[back].isbg = 0;
+    game_graphics_runtime.display_draw_environments[back].dfe = 0;
+    PutDrawEnv(&game_graphics_runtime.display_draw_environments[back]);
+    game_graphics_runtime.display_state.ordering_table = game_graphics_runtime.display_state.ordering_tables[back].entries;
     setRGB0(&prim, brightness, brightness, brightness);
-    ClearOTagR(display_state.ordering_table, KF_ORDERING_TABLE_LENGTH);
-    AddPrim(display_state.ordering_table, &prim);
+    ClearOTagR(game_graphics_runtime.display_state.ordering_table, KF_ORDERING_TABLE_LENGTH);
+    AddPrim(game_graphics_runtime.display_state.ordering_table, &prim);
     DrawSync(0);
-    DrawOTag(display_state.ordering_table + (KF_ORDERING_TABLE_LENGTH - 1));
+    DrawOTag(game_graphics_runtime.display_state.ordering_table + (KF_ORDERING_TABLE_LENGTH - 1));
     while (PadRead(1) == 0) {
     }
     while (PadRead(1) != 0) {
     }
-    display_draw_environments[back].isbg = 1;
-    display_draw_environments[back].dfe = 1;
+    game_graphics_runtime.display_draw_environments[back].isbg = 1;
+    game_graphics_runtime.display_draw_environments[back].dfe = 1;
     DrawSync(0);
 }
 
@@ -135,18 +133,18 @@ ADDRESS(0x8001bae4, 0xb0)
 void effect5_texture_cache_prepare(KfFloorId floor)
 {
     if (floor == KF_FLOOR_5) {
-        effect5_texture_pages[0] = GetTPage(
+        game_graphics_runtime.effect5_texture_pages[0] = GetTPage(
             KF_GPU_TEXTURE_8BIT, KF_GPU_BLEND_AVERAGE,
             EFFECT_TEXTURE_FIRST_PAGE_X, KF_TEXTURE_LOWER_PAGE_Y);
-        effect5_texture_pages[1] = GetTPage(
+        game_graphics_runtime.effect5_texture_pages[1] = GetTPage(
             KF_GPU_TEXTURE_8BIT, KF_GPU_BLEND_AVERAGE,
             EFFECT_TEXTURE_SECOND_PAGE_X, KF_TEXTURE_LOWER_PAGE_Y);
-        effect5_texture_pages[2] = GetTPage(
+        game_graphics_runtime.effect5_texture_pages[2] = GetTPage(
             KF_GPU_TEXTURE_8BIT, KF_GPU_BLEND_AVERAGE,
             EFFECT_TEXTURE_THIRD_PAGE_X, KF_TEXTURE_LOWER_PAGE_Y);
-        effect5_texture_cluts[0] = GetClut(0, EFFECT_TEXTURE_CLUT_Y);
-        effect5_texture_cluts[1] = GetClut(0, EFFECT_TEXTURE_CLUT_Y);
-        effect5_texture_cluts[2] = GetClut(0, EFFECT_TEXTURE_CLUT_Y);
+        game_graphics_runtime.effect5_texture_cluts[0] = GetClut(0, EFFECT_TEXTURE_CLUT_Y);
+        game_graphics_runtime.effect5_texture_cluts[1] = GetClut(0, EFFECT_TEXTURE_CLUT_Y);
+        game_graphics_runtime.effect5_texture_cluts[2] = GetClut(0, EFFECT_TEXTURE_CLUT_Y);
     }
 }
 
@@ -157,31 +155,31 @@ void display_initialize(void)
     InitGeom();
     SetGeomOffset(KF_DISPLAY_WIDTH / 2, KF_DISPLAY_HEIGHT / 2);
     SetDefDrawEnv(
-        &display_draw_environments[0], 0, 0,
+        &game_graphics_runtime.display_draw_environments[0], 0, 0,
         KF_DISPLAY_WIDTH, KF_DISPLAY_HEIGHT);
     SetDefDispEnv(
-        &display_disp_environments[0], 0, KF_DISPLAY_HEIGHT,
+        &game_graphics_runtime.display_disp_environments[0], 0, KF_DISPLAY_HEIGHT,
         KF_DISPLAY_WIDTH, KF_DISPLAY_HEIGHT);
     SetDefDrawEnv(
-        &display_draw_environments[1], 0, KF_DISPLAY_HEIGHT,
+        &game_graphics_runtime.display_draw_environments[1], 0, KF_DISPLAY_HEIGHT,
         KF_DISPLAY_WIDTH, KF_DISPLAY_HEIGHT);
     SetDefDispEnv(
-        &display_disp_environments[1], 0, 0,
+        &game_graphics_runtime.display_disp_environments[1], 0, 0,
         KF_DISPLAY_WIDTH, KF_DISPLAY_HEIGHT);
-    display_draw_environments[0].dtd = display_draw_environments[1].dtd = 1;
-    display_draw_environments[0].isbg = 1;
-    display_draw_environments[1].isbg = 1;
-    display_draw_environments[0].r0 = 0;
-    display_draw_environments[0].g0 = 0;
-    display_draw_environments[0].b0 = 0;
-    display_draw_environments[1].r0 = 0;
-    display_draw_environments[1].g0 = 0;
-    display_draw_environments[1].b0 = 0;
-    PutDispEnv(&display_disp_environments[0]);
+    game_graphics_runtime.display_draw_environments[0].dtd = game_graphics_runtime.display_draw_environments[1].dtd = 1;
+    game_graphics_runtime.display_draw_environments[0].isbg = 1;
+    game_graphics_runtime.display_draw_environments[1].isbg = 1;
+    game_graphics_runtime.display_draw_environments[0].r0 = 0;
+    game_graphics_runtime.display_draw_environments[0].g0 = 0;
+    game_graphics_runtime.display_draw_environments[0].b0 = 0;
+    game_graphics_runtime.display_draw_environments[1].r0 = 0;
+    game_graphics_runtime.display_draw_environments[1].g0 = 0;
+    game_graphics_runtime.display_draw_environments[1].b0 = 0;
+    PutDispEnv(&game_graphics_runtime.display_disp_environments[0]);
     SetBackColor(INITIAL_BACK_COLOR, INITIAL_BACK_COLOR, INITIAL_BACK_COLOR);
     lighting_set_active_color_matrix(KF_GAME_COLOR_DEFAULT);
     SetFarColor(0, 0, 0);
-    render_state.fog_near_distance = KF_INITIAL_FOG_NEAR_DISTANCE;
+    game_graphics_runtime.render_state.fog_near_distance = KF_INITIAL_FOG_NEAR_DISTANCE;
     SetFogNear(KF_INITIAL_FOG_NEAR_DISTANCE, KF_DEFAULT_PROJECTION_DISTANCE);
     render_initialize();
 }
@@ -194,70 +192,70 @@ void render_initialize(void)
     u8 count;
     u8 *buffer;
 
-    display_state.buffer_index = KF_DISPLAY_BUFFER_UNINITIALIZED;
+    game_graphics_runtime.display_state.buffer_index = KF_DISPLAY_BUFFER_UNINITIALIZED;
     buffer = memory_allocate(KF_DISPLAY_BUFFER_COUNT * PRIMITIVE_BUFFER_BYTES);
-    display_state.asset_load_buffer = buffer;
-    display_state.primitive_buffers[0].start = buffer;
+    game_graphics_runtime.display_state.asset_load_buffer = buffer;
+    game_graphics_runtime.display_state.primitive_buffers[0].start = buffer;
     buffer += PRIMITIVE_BUFFER_BYTES;
-    display_state.primitive_buffers[0].end = buffer;
-    display_state.primitive_buffers[1].start = buffer;
+    game_graphics_runtime.display_state.primitive_buffers[0].end = buffer;
+    game_graphics_runtime.display_state.primitive_buffers[1].start = buffer;
     buffer += PRIMITIVE_BUFFER_BYTES;
-    display_state.primitive_buffers[1].end = buffer;
-    floor_item_count = 0;
+    game_graphics_runtime.display_state.primitive_buffers[1].end = buffer;
+    game_graphics_runtime.floor_item_count = 0;
     angles.vx = 0;
     angles.vy = 0;
     angles.vz = 0;
-    RotMatrix(&angles, &render_state.quadrant_matrices[0]);
+    RotMatrix(&angles, &game_graphics_runtime.render_state.quadrant_matrices[0]);
     angles.vy = KF_ANGLE_THREE_QUARTER_TURN;
-    RotMatrix(&angles, &render_state.quadrant_matrices[3]);
+    RotMatrix(&angles, &game_graphics_runtime.render_state.quadrant_matrices[3]);
     angles.vy = KF_ANGLE_HALF_TURN;
-    RotMatrix(&angles, &render_state.quadrant_matrices[2]);
+    RotMatrix(&angles, &game_graphics_runtime.render_state.quadrant_matrices[2]);
     angles.vy = KF_ANGLE_QUARTER_TURN;
-    RotMatrix(&angles, &render_state.quadrant_matrices[1]);
-    render_state.light_matrix.m[0][0] = 3800;
-    render_state.light_matrix.m[0][1] = -2800;
-    render_state.light_matrix.m[0][2] = 0;
-    render_state.light_matrix.m[1][0] = -3000;
-    render_state.light_matrix.m[1][1] = -3600;
-    render_state.light_matrix.m[1][2] = -3400;
-    render_state.light_matrix.m[2][0] = -1300;
-    render_state.light_matrix.m[2][1] = 2700;
-    render_state.light_matrix.m[2][2] = 800;
-    render_state.light_matrix_copy = render_state.light_matrix;
+    RotMatrix(&angles, &game_graphics_runtime.render_state.quadrant_matrices[1]);
+    game_graphics_runtime.render_state.light_matrix.m[0][0] = 3800;
+    game_graphics_runtime.render_state.light_matrix.m[0][1] = -2800;
+    game_graphics_runtime.render_state.light_matrix.m[0][2] = 0;
+    game_graphics_runtime.render_state.light_matrix.m[1][0] = -3000;
+    game_graphics_runtime.render_state.light_matrix.m[1][1] = -3600;
+    game_graphics_runtime.render_state.light_matrix.m[1][2] = -3400;
+    game_graphics_runtime.render_state.light_matrix.m[2][0] = -1300;
+    game_graphics_runtime.render_state.light_matrix.m[2][1] = 2700;
+    game_graphics_runtime.render_state.light_matrix.m[2][2] = 800;
+    game_graphics_runtime.render_state.light_matrix_copy = game_graphics_runtime.render_state.light_matrix;
     MulMatrix0(
-        &render_state.light_matrix,
-        &render_state.quadrant_matrices[0],
-        &light_quadrant_matrices[0]);
+        &game_graphics_runtime.render_state.light_matrix,
+        &game_graphics_runtime.render_state.quadrant_matrices[0],
+        &game_graphics_runtime.light_quadrant_matrices[0]);
     MulMatrix0(
-        &render_state.light_matrix,
-        &render_state.quadrant_matrices[1],
-        &light_quadrant_matrices[1]);
+        &game_graphics_runtime.render_state.light_matrix,
+        &game_graphics_runtime.render_state.quadrant_matrices[1],
+        &game_graphics_runtime.light_quadrant_matrices[1]);
     MulMatrix0(
-        &render_state.light_matrix,
-        &render_state.quadrant_matrices[2],
-        &light_quadrant_matrices[2]);
+        &game_graphics_runtime.render_state.light_matrix,
+        &game_graphics_runtime.render_state.quadrant_matrices[2],
+        &game_graphics_runtime.light_quadrant_matrices[2]);
     MulMatrix0(
-        &render_state.light_matrix,
-        &render_state.quadrant_matrices[3],
-        &light_quadrant_matrices[3]);
-    floor_item_tpage = GetTPage(
+        &game_graphics_runtime.render_state.light_matrix,
+        &game_graphics_runtime.render_state.quadrant_matrices[3],
+        &game_graphics_runtime.light_quadrant_matrices[3]);
+    game_graphics_runtime.floor_item_tpage = GetTPage(
         KF_GPU_TEXTURE_8BIT, KF_GPU_BLEND_AVERAGE,
         FLOOR_ITEM_TPAGE_X, 0);
-    floor_item_clut = FLOOR_ITEM_CLUT;
-    hud_tpage = GetTPage(
+    game_graphics_runtime.floor_item_clut = FLOOR_ITEM_CLUT;
+    game_graphics_runtime.hud_tpage = GetTPage(
         KF_GPU_TEXTURE_4BIT, KF_GPU_BLEND_AVERAGE,
         HUD_TPAGE_X, KF_TEXTURE_LOWER_PAGE_Y);
-    hud_clut = GetClut(hud_palette_rect.x, hud_palette_rect.y);
-    notification_text_tpage = GetTPage(
+    game_graphics_runtime.hud_clut = GetClut(hud_palette_rect.x, hud_palette_rect.y);
+    game_graphics_runtime.notification_text_tpage = GetTPage(
         KF_GPU_TEXTURE_4BIT, KF_GPU_BLEND_AVERAGE,
         NOTIFICATION_TPAGE_X, KF_TEXTURE_LOWER_PAGE_Y);
-    notification_digit_clut = notification_text_clut =
+    game_graphics_runtime.notification_digit_clut = game_graphics_runtime.notification_text_clut =
         GetClut(notification_palette_rect.x, notification_palette_rect.y);
-    notification_digit_tpage = NOTIFICATION_DIGIT_TPAGE;
-    notification_state.control.effect_phase = KF_NOTIFICATION_IDLE;
-    notification_state.control.queue_tail = 0;
-    notification_state.control.queue_head = 0;
-    flag = notification_message_ids;
+    game_graphics_runtime.notification_digit_tpage = NOTIFICATION_DIGIT_TPAGE;
+    game_graphics_runtime.notification_state.control.effect_phase = KF_NOTIFICATION_IDLE;
+    game_graphics_runtime.notification_state.control.queue_tail = 0;
+    game_graphics_runtime.notification_state.control.queue_head = 0;
+    flag = game_graphics_runtime.notification_message_ids;
     count = KF_NOTIFICATION_CAPACITY - 1;
     do {
         *flag++ = KF_NOTIFICATION_NONE;
@@ -268,15 +266,15 @@ void render_initialize(void)
 ADDRESS(0x8001bfb8, 0x98)
 void display_begin_frame(void)
 {
-    display_state.buffer_index = display_state.buffer_index == 0;
-    display_state.primitive_buffer = &display_state.primitive_buffers[display_state.buffer_index];
-    display_state.ordering_table =
-        display_state.ordering_tables[display_state.buffer_index].entries;
-    ClearOTagR(display_state.ordering_table, KF_ORDERING_TABLE_LENGTH);
-    display_state.primitive_buffer->cursor = display_state.primitive_buffer->start;
+    game_graphics_runtime.display_state.buffer_index = game_graphics_runtime.display_state.buffer_index == 0;
+    game_graphics_runtime.display_state.primitive_buffer = &game_graphics_runtime.display_state.primitive_buffers[game_graphics_runtime.display_state.buffer_index];
+    game_graphics_runtime.display_state.ordering_table =
+        game_graphics_runtime.display_state.ordering_tables[game_graphics_runtime.display_state.buffer_index].entries;
+    ClearOTagR(game_graphics_runtime.display_state.ordering_table, KF_ORDERING_TABLE_LENGTH);
+    game_graphics_runtime.display_state.primitive_buffer->cursor = game_graphics_runtime.display_state.primitive_buffer->start;
     DAT_800a0768 = 0;
-    DAT_8009569c = 0;
-    DAT_80095698 = 0;
+    game_graphics_runtime.DAT_8009569c = 0;
+    game_graphics_runtime.DAT_80095698 = 0;
 }
 
 ADDRESS(0x8001c050, 0x98)
@@ -284,34 +282,34 @@ void display_present_frame(void)
 {
     DrawSync(0);
     VSync(0);
-    PutDrawEnv(&display_draw_environments[display_state.buffer_index]);
-    PutDispEnv(&display_disp_environments[display_state.buffer_index]);
-    DrawOTag(display_state.ordering_table + (KF_ORDERING_TABLE_LENGTH - 1));
+    PutDrawEnv(&game_graphics_runtime.display_draw_environments[game_graphics_runtime.display_state.buffer_index]);
+    PutDispEnv(&game_graphics_runtime.display_disp_environments[game_graphics_runtime.display_state.buffer_index]);
+    DrawOTag(game_graphics_runtime.display_state.ordering_table + (KF_ORDERING_TABLE_LENGTH - 1));
 }
 
 ADDRESS(0x8001c0e8, 0x2c)
 void tmd_select(KfTmdSlot slot)
 {
-    tmd_state.current_asset = tmd_state.slots[KF_ENUM_ENCODE(u16, slot)];
+    game_graphics_runtime.tmd_state.current_asset = game_graphics_runtime.tmd_state.slots[KF_ENUM_ENCODE(u16, slot)];
 }
 
 ADDRESS(0x8001c114, 0x24)
 KfTmdObject *tmd_get_object(u16 index)
 {
-    return TMD_OBJECTS(tmd_state.current_asset) + index;
+    return TMD_OBJECTS(game_graphics_runtime.tmd_state.current_asset) + index;
 }
 
 ADDRESS(0x8001c138, 0x10)
 void tmd_set_current_vertices(SVECTOR *vertices)
 {
-    current_tmd_vertices = vertices;
+    game_graphics_runtime.current_tmd_vertices = vertices;
 }
 
 ADDRESS(0x8001c148, 0x3c)
 void tmd_select_object_vertices(u16 index)
 {
-    current_tmd_vertices =
-        (SVECTOR *)((u8 *)tmd_state.current_asset
+    game_graphics_runtime.current_tmd_vertices =
+        (SVECTOR *)((u8 *)game_graphics_runtime.tmd_state.current_asset
             + KF_TMD_HEADER_BYTES + tmd_get_object(index)->vertex_offset);
 }
 
@@ -322,18 +320,18 @@ void render_set_view_transform(
     SVECTOR angles;
 
     if (position != 0) {
-        render_state.view_position = *position;
-        render_state.view_cell.x = render_state.view_position.vx / KF_MAP_TILE_SIZE;
-        render_state.view_cell.z = render_state.view_position.vz / KF_MAP_TILE_SIZE;
+        game_graphics_runtime.render_state.view_position = *position;
+        game_graphics_runtime.render_state.view_cell.x = game_graphics_runtime.render_state.view_position.vx / KF_MAP_TILE_SIZE;
+        game_graphics_runtime.render_state.view_cell.z = game_graphics_runtime.render_state.view_position.vz / KF_MAP_TILE_SIZE;
     }
     if (rotation != 0) {
-        render_state.view_rotation = *rotation;
+        game_graphics_runtime.render_state.view_rotation = *rotation;
     }
-    RotMatrix(&render_state.view_rotation, &render_state.view_matrix);
+    RotMatrix(&game_graphics_runtime.render_state.view_rotation, &game_graphics_runtime.render_state.view_matrix);
     angles.vz = 0;
     angles.vy = 0;
-    angles.vx = render_state.view_rotation.vx;
-    RotMatrix(&angles, &render_state.pitch_matrix);
+    angles.vx = game_graphics_runtime.render_state.view_rotation.vx;
+    RotMatrix(&angles, &game_graphics_runtime.render_state.pitch_matrix);
 }
 
 /*
@@ -352,15 +350,15 @@ void tmd_prepare_primitive_indices(void)
     u16 primitives_left;
     KfTmdPacketHeader header;
 
-    object_count = (u16)((KfTmdHeader *)tmd_state.current_asset)->object_count;
+    object_count = (u16)((KfTmdHeader *)game_graphics_runtime.tmd_state.current_asset)->object_count;
     objects_left = object_count - 1;
-    object = TMD_OBJECTS(tmd_state.current_asset);
+    object = TMD_OBJECTS(game_graphics_runtime.tmd_state.current_asset);
     if (object_count == 0) {
         return;
     }
     do {
         primitive_count = (u16)object->primitive_count;
-        packet = (u8 *)tmd_state.current_asset + (object->primitive_offset + KF_TMD_HEADER_BYTES);
+        packet = (u8 *)game_graphics_runtime.tmd_state.current_asset + (object->primitive_offset + KF_TMD_HEADER_BYTES);
         primitives_left = primitive_count;
         primitives_left--;
         if (primitive_count != 0) {
@@ -457,7 +455,7 @@ void tmd_prepare_primitive_indices(void)
 ADDRESS(0x8001c5b0, 0x3c)
 void tmd_register(KfTmdSlot slot, u8 *tmd)
 {
-    tmd_state.current_asset = tmd_state.slots[KF_ENUM_ENCODE(u16, slot)] = tmd;
+    game_graphics_runtime.tmd_state.current_asset = game_graphics_runtime.tmd_state.slots[KF_ENUM_ENCODE(u16, slot)] = tmd;
     tmd_prepare_primitive_indices();
 }
 
@@ -478,8 +476,8 @@ void tmd_project_vertices(s32 count)
     long depth;
     long unused_depth;
 
-    projected = tmd_projected_vertices;
-    vertex = current_tmd_vertices;
+    projected = ((KfScreenVertex *)game_graphics_runtime.unknown_projection_morph_20318);
+    vertex = game_graphics_runtime.current_tmd_vertices;
     for (count--; count != -1; count--) {
         RotTransPers(vertex, &projected->sxy, &perspective, &gte_flags);
         projected->p2 = (u16)perspective << KF_TMD_DEFAULT_PERSPECTIVE_SHIFT;
@@ -500,8 +498,8 @@ void tmd_project_vertices_shift(s32 count, u8 shift)
     long depth;
     long unused_depth;
 
-    projected = tmd_projected_vertices;
-    vertex = current_tmd_vertices;
+    projected = ((KfScreenVertex *)game_graphics_runtime.unknown_projection_morph_20318);
+    vertex = game_graphics_runtime.current_tmd_vertices;
     for (count--; count != -1; count--) {
         RotTransPers(vertex, &projected->sxy, &perspective, &gte_flags);
         projected->p2 = (u16)perspective << KF_TMD_DEFAULT_PERSPECTIVE_SHIFT;
@@ -521,8 +519,8 @@ void tmd_transform_vertices(s32 count)
     long gte_flags;
     s32 remaining;
 
-    projected = tmd_projected_vertices;
-    vertex = current_tmd_vertices;
+    projected = ((KfScreenVertex *)game_graphics_runtime.unknown_projection_morph_20318);
+    vertex = game_graphics_runtime.current_tmd_vertices;
     for (remaining = count - 1; remaining != -1; remaining--) {
         RotTrans(vertex, &transformed, &gte_flags);
         ((DVECTOR *)&projected->sxy)->vx = transformed.vx;

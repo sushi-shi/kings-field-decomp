@@ -1,4 +1,4 @@
-"""GAME graphics clear bounds and a shared-owner pilot; no production claim."""
+"""GAME graphics owner, complete retail bodies, and rejected ownership controls."""
 
 from __future__ import annotations
 
@@ -52,6 +52,42 @@ PILOT = {
 }
 
 
+def data_addresses():
+    """Current owner plus independent physical starts for separated-owner controls."""
+    data = {item.name: item.va for (key, _), item in load_data_identities(RETAIL_CONFIG).items()
+            if key == 'GAME.EXE'}
+    data.update({name: ORIGIN + offset for name, offset in FIELDS.items()
+                 if not name.startswith('unknown_')})
+    data.update(asset_registry_entries=0x80090FCC, tmd_projected_vertices=0x800911B0,
+                tmd_morph_scratch=0x800930F0)
+    return data
+
+
+def standalone_source(unit):
+    """Recreate the rejected separate declarations from the current whole owner.
+
+    These extern views exist only in temporary negative controls. Production
+    defines one owner and retains no overlapping globals.
+    """
+    source = unit.source_path.read_text()
+    source = source.replace(
+        '((KfAssetHeader **)game_graphics_runtime.unknown_registry_20134)', 'asset_registry_entries')
+    source = source.replace(
+        '((KfScreenVertex *)game_graphics_runtime.unknown_projection_morph_20318)', 'tmd_projected_vertices')
+    source = source.replace(
+        '((SVECTOR *)(game_graphics_runtime.unknown_projection_morph_20318 + 0x1f40))',
+        'tmd_morph_scratch')
+    source = source.replace('game_graphics_runtime.', '')
+    source = source.replace('memset(&game_graphics_runtime, 0, sizeof game_graphics_runtime);',
+                            'memset(&display_state.buffer_index, 0, INITIAL_GRAPHICS_CLEAR_BYTES);')
+    if unit.unit == 'game.item':
+        source = source.replace('    KfFloorItem *item;\n',
+                                '    KfFloorItem *item;\n    u16 *count = &floor_item_count;\n', 1)
+        source = source.replace('    floor_item_count = 0;', '    *count = 0;', 1)
+        source = source.replace('        floor_item_count++;', '        (*count)++;', 1)
+    return '#include "game_graphics_standalone.h"\n' + source
+
+
 def candidate_source(unit, selected):
     """Replace only reviewed function references, using one shared declaration."""
     names = '|'.join(re.escape(name) for name in FIELDS if not name.startswith('unknown_'))
@@ -64,7 +100,7 @@ def candidate_source(unit, selected):
         return pattern.sub(lambda item: 'graphics_owner_probe.' + item[0], match.group(0))
 
     source = re.sub(r'^ADDRESS\((0x[0-9a-f]+),[^\n]+\n.*?(?=^ADDRESS\(|\Z)',
-                    rewrite, unit.source_path.read_text(), flags=re.M | re.S)
+                    rewrite, standalone_source(unit), flags=re.M | re.S)
     if 'game_main_loop' in selected:
         old = ('memset(&graphics_owner_probe.display_state.buffer_index, 0, '
                'INITIAL_GRAPHICS_CLEAR_BYTES);')
@@ -103,14 +139,16 @@ class GameGraphicsOwnerProbeTests(unittest.TestCase):
             '<6I', 0x3C048007, 0x24840E98, 0x00002821, 0x3C060002, 0x0C0140C3, 0x34C649CC))
         self.assertEqual(ORIGIN + EXTENT, 0x80095864)
         identities = load_data_identities(RETAIL_CONFIG)
-        by_name = {item.name: item for (image, _), item in identities.items() if image == 'GAME.EXE'}
-        for field, offset in FIELDS.items():
-            if not field.startswith('unknown_'):
-                self.assertEqual(by_name[field].va, ORIGIN + offset, field)
-        self.assertEqual(by_name['audio_state'].va, ORIGIN + EXTENT + 4)
-        # This pilot must not relabel array prefixes as proved capacities.
-        self.assertEqual(by_name['tmd_projected_vertices'].size, 8)
-        self.assertEqual(by_name['tmd_morph_scratch'].size, 24)
+        owner = identities['GAME.EXE', ORIGIN]
+        self.assertEqual((owner.name, owner.size, owner.storage),
+                         ('game_graphics_runtime', EXTENT, 'bss'))
+        self.assertEqual([va for image, va in identities
+                          if image == 'GAME.EXE' and ORIGIN < va < ORIGIN + EXTENT], [])
+        self.assertEqual(identities['GAME.EXE', ORIGIN + EXTENT + 4].name, 'audio_state')
+        # Unknown subobject extents remain byte spans, not invented capacities.
+        header = (REPO / 'include/kf/game_graphics.h').read_text()
+        self.assertIn('u8 unknown_registry_20134[0xf0];', header)
+        self.assertIn('u8 unknown_projection_morph_20318[0x3e88];', header)
 
     def test_pinned_compiler_measures_whole_layout_and_detects_wrong_gap(self):
         self.tools()
@@ -138,8 +176,7 @@ class GameGraphicsOwnerProbeTests(unittest.TestCase):
     def test_shared_owner_pilot_and_exact_controls(self):
         self.tools()
         image, manifest = self.retail(), load_manifest()
-        data = {item.name: item.va for (key, _), item in load_data_identities(RETAIL_CONFIG).items()
-                if key == 'GAME.EXE'}
+        data = data_addresses()
         data['graphics_owner_probe'] = ORIGIN
         functions = {item.symbol: item.va for item in load_catalog(RETAIL_CONFIG).functions['GAME.EXE']}
         for unit_name, selected in PILOT.items():
@@ -202,8 +239,7 @@ class GameGraphicsOwnerProbeTests(unittest.TestCase):
         image, manifest = self.retail(), load_manifest()
         unit = manifest.by_name()['game.render']
         claim = next(c for c in unit.functions if c.symbol == 'render_set_view_transform')
-        data = {item.name: item.va for (key, _), item in load_data_identities(RETAIL_CONFIG).items()
-                if key == 'GAME.EXE'}
+        data = data_addresses()
         functions = {item.symbol: item.va for item in load_catalog(RETAIL_CONFIG).functions['GAME.EXE']}
         expected = list(struct.unpack(f'<{claim.body_size // 4}I',
                                      image.require(claim.va, claim.body_size)))
@@ -219,7 +255,7 @@ class GameGraphicsOwnerProbeTests(unittest.TestCase):
         angles.vz = 0;
         angles.vy = 0;
     }'''
-        canonical = unit.source_path.read_text()
+        canonical = standalone_source(unit)
         self.assertEqual(canonical.count(correct), 1)
         for wrong in (False, True):
             with self.subTest(old_bug=wrong), tempfile.TemporaryDirectory() as directory:
@@ -237,8 +273,7 @@ class GameGraphicsOwnerProbeTests(unittest.TestCase):
     def test_extended_display_tmd_pilot_preserves_exacts_but_does_not_close_owner(self):
         self.tools()
         image, manifest = self.retail(), load_manifest()
-        data = {item.name: item.va for (key, _), item in load_data_identities(RETAIL_CONFIG).items()
-                if key == 'GAME.EXE'}
+        data = data_addresses()
         data['graphics_owner_probe'] = ORIGIN
         functions = {item.symbol: item.va for item in load_catalog(RETAIL_CONFIG).functions['GAME.EXE']}
         selected = {
@@ -322,14 +357,13 @@ class GameGraphicsOwnerProbeTests(unittest.TestCase):
         claim = next(c for c in unit.functions if c.symbol == 'item_load_floor_placements')
         expected = list(struct.unpack(f'<{claim.body_size // 4}I',
                                      image.require(claim.va, claim.body_size)))
-        data = {item.name: item.va for (key, _), item in load_data_identities(RETAIL_CONFIG).items()
-                if key == 'GAME.EXE'}
+        data = data_addresses()
         data['graphics_owner_probe'] = ORIGIN
         functions = {item.symbol: item.va for item in load_catalog(RETAIL_CONFIG).functions['GAME.EXE']}
         for owner in (False, True):
             prefix = 'graphics_owner_probe.' if owner else ''
             source = (candidate_source(unit, {claim.symbol}) if owner
-                      else unit.source_path.read_text())
+                      else standalone_source(unit))
             for direct in (False, True):
                 candidate = source
                 if direct:
@@ -359,13 +393,12 @@ class GameGraphicsOwnerProbeTests(unittest.TestCase):
         self.tools()
         image, manifest = self.retail(), load_manifest()
         unit = manifest.by_name()['game.entity_model_render']
-        data = {item.name: item.va for (key, _), item in load_data_identities(RETAIL_CONFIG).items()
-                if key == 'GAME.EXE'}
+        data = data_addresses()
         data['graphics_owner_probe'] = ORIGIN
         functions = {item.symbol: item.va for item in load_catalog(RETAIL_CONFIG).functions['GAME.EXE']}
         for owner in (False, True):
             source = (candidate_source(unit, {'render_actor'}) if owner
-                      else unit.source_path.read_text())
+                      else standalone_source(unit))
             for byte_index in (False, True):
                 candidate = source
                 if not byte_index:
@@ -409,15 +442,14 @@ class GameGraphicsOwnerProbeTests(unittest.TestCase):
         claim = unit.functions[0]
         expected = list(struct.unpack(f'<{claim.body_size // 4}I',
                                      image.require(claim.va, claim.body_size)))
-        data = {item.name: item.va for (key, _), item in load_data_identities(RETAIL_CONFIG).items()
-                if key == 'GAME.EXE'}
+        data = data_addresses()
         functions = {item.symbol: item.va for item in load_catalog(RETAIL_CONFIG).functions['GAME.EXE']}
         fields = {
             'active_render_clut': 'clut', 'active_render_tpage': 'tpage',
             'active_render_red': 'color.r', 'active_render_green': 'color.g',
             'active_render_blue': 'color.b', 'active_render_code': 'color.cd',
         }
-        canonical = unit.source_path.read_text()
+        canonical = standalone_source(unit)
         narrow = '''#include <kf/game_render.h>
 typedef struct KfMaterialProbe {
     u16 clut;
@@ -452,8 +484,7 @@ extern KfMaterialProbe material_probe;
     def test_scratch_consumers_preserve_typed_accesses_without_capacity_claims(self):
         self.tools()
         image, manifest = self.retail(), load_manifest()
-        data = {item.name: item.va for (key, _), item in load_data_identities(RETAIL_CONFIG).items()
-                if key == 'GAME.EXE'}
+        data = data_addresses()
         data['graphics_owner_probe'] = ORIGIN
         functions = {item.symbol: item.va for item in load_catalog(RETAIL_CONFIG).functions['GAME.EXE']}
         selected = {
@@ -468,7 +499,7 @@ extern KfMaterialProbe material_probe;
         for unit_name, names in selected.items():
             unit = manifest.by_name()[unit_name]
             for owner in (False, True):
-                source = unit.source_path.read_text()
+                source = standalone_source(unit)
                 if owner:
                     source = candidate_source(unit, names).replace(
                         'tmd_projected_vertices',
@@ -514,8 +545,7 @@ extern KfMaterialProbe material_probe;
         source = source.replace(
             '= tmd_projected_vertices;',
             '= (KfScreenVertex *)graphics_owner_probe.unknown_projection_morph_20318;')
-        data = {item.name: item.va for (key, _), item in load_data_identities(RETAIL_CONFIG).items()
-                if key == 'GAME.EXE'}
+        data = data_addresses()
         data['graphics_owner_probe'] = ORIGIN
         self.assertEqual(ORIGIN + FIELDS['unknown_projection_morph_20318'], 0x800911B0)
         functions = {item.symbol: item.va for item in load_catalog(RETAIL_CONFIG).functions['GAME.EXE']}
@@ -578,6 +608,110 @@ extern KfMaterialProbe material_probe;
                             self.assertEqual(actual, first_pass[claim.symbol])
                         else:
                             first_pass[claim.symbol] = actual
+
+
+    def test_production_owner_preserves_complete_campaign_functions(self):
+        self.tools()
+        image, manifest = self.retail(), load_manifest()
+        catalog = load_catalog(RETAIL_CONFIG)
+        data = {d.symbol: d.va for d in catalog.data['GAME.EXE']}
+        functions = {f.symbol: f.va for f in catalog.functions['GAME.EXE']}
+        units = (
+            'game.asset_registry',
+            'game.display_play_transition',
+            'game.entity_model_render',
+            'game.entity_render',
+            'game.game',
+            'game.geometry_render',
+            'game.item',
+            'game.lighting_presets',
+            'game.map_event_render',
+            'game.map_load',
+            'game.map_scripts',
+            'game.matrix',
+            'game.menu_config_panel',
+            'game.menu_draw_name_list',
+            'game.menu_draw_stats_header',
+            'game.menu_draw_status_details',
+            'game.menu_draw_window',
+            'game.menu_item_detail',
+            'game.menu_item_model_preview',
+            'game.menu_list_render',
+            'game.menu_map_viewer',
+            'game.menu_runtime',
+            'game.notify_queue',
+            'game.player_core',
+            'game.player_death',
+            'game.player_death_fade',
+            'game.pool',
+            'game.render',
+            'game.render_enqueue',
+            'game.render_frame',
+            'game.render_map_cells',
+            'game.render_scene',
+            'game.render_sprite',
+            'game.save_system',
+            'game.sprite_add_ft4',
+        )
+        # These open functions are checked for calls and target integrity,
+        # without accepting partial words as exact or requiring a future residue.
+        partial = {
+            'display_initialize',
+            'item_load_database',
+            'map_interaction_dispatch',
+            'map_show_screen_image',
+            'memory_card_show_status_message',
+            'menu_draw_item_detail',
+            'menu_draw_item_name_frame',
+            'menu_draw_stats_header',
+            'menu_draw_status_details',
+            'menu_draw_window',
+            'menu_draw_window_backdrop',
+            'menu_item_model_preview',
+            'notify_effect_update',
+            'player_add_experience',
+            'player_move_horizontal',
+            'render_enqueue_map',
+            'render_enqueue_model',
+            'render_enqueue_tmd',
+            'render_entities',
+            'render_map_cell',
+            'talk_show_dialogue_page',
+        }
+        checked, exact = 0, 0
+        for name in units:
+            unit = manifest.by_name()[name]
+            with self.subTest(unit=name), tempfile.TemporaryDirectory() as directory:
+                source = self.compile(Path(directory), unit, unit.source_path.read_text())
+                target = _load_object(BUILD / 'delink/game/modules' / unit.object_name)
+                for obj in (source, target):
+                    addresses = dict(data)
+                    for claim in unit.data:
+                        symbol = obj.named_symbol(claim.symbol)
+                        if symbol.section in {'.data', '.bss'}:
+                            base = claim.va - symbol.value
+                            self.assertEqual(addresses.setdefault(symbol.section, base), base)
+                    for claim in unit.functions:
+                        expected = list(struct.unpack(f'<{claim.body_size // 4}I',
+                                                     image.require(claim.va, claim.body_size)))
+                        actual, calls, refs = linked_words(obj, unit, claim, addresses, functions)
+                        expected_calls = [((claim.va + i * 4 + 4) & 0xF0000000)
+                                          | ((word & 0x3FFFFFF) << 2)
+                                          for i, word in enumerate(expected) if word >> 26 == 3]
+                        self.assertEqual(calls, expected_calls, claim.symbol)
+                        if obj is target or claim.symbol not in partial:
+                            self.assertEqual(actual, expected, claim.symbol)
+                        if obj is source:
+                            checked += 1
+                            if claim.symbol not in partial:
+                                exact += 1
+                                if any(ORIGIN <= a < ORIGIN + EXTENT for a in refs):
+                                    wrong, same_calls, _ = linked_words(
+                                        obj, unit, claim,
+                                        {**addresses, 'game_graphics_runtime': ORIGIN + 4}, functions)
+                                    self.assertNotEqual(wrong, expected, claim.symbol)
+                                    self.assertEqual(same_calls, calls)
+        self.assertEqual((checked, exact), (173, 152))
 
 
 if __name__ == '__main__':

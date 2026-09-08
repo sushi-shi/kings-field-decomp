@@ -1,3 +1,4 @@
+#include <kf/game_graphics.h>
 #include <kf/address.h>
 #include <kf/game_asset.h>
 #include <kf/game_render.h>
@@ -26,14 +27,14 @@ void render_map_event(KfMapEvent *event)
     u16 asset;
     KfTmdObject *object;
 
-    SetRotMatrix((MATRIX *)&render_state.view_matrix);
-    SetTransMatrix((MATRIX *)&render_state.view_matrix);
-    screen.vx = (u16)event->reference_x - (u16)render_state.view_position.vx;
-    screen.vy = (u16)event->position_y - (u16)render_state.view_position.vy;
-    screen.vz = (u16)event->reference_z - (u16)render_state.view_position.vz;
+    SetRotMatrix((MATRIX *)&game_graphics_runtime.render_state.view_matrix);
+    SetTransMatrix((MATRIX *)&game_graphics_runtime.render_state.view_matrix);
+    screen.vx = (u16)event->reference_x - (u16)game_graphics_runtime.render_state.view_position.vx;
+    screen.vy = (u16)event->position_y - (u16)game_graphics_runtime.render_state.view_position.vy;
+    screen.vz = (u16)event->reference_z - (u16)game_graphics_runtime.render_state.view_position.vz;
     RotTrans(&screen, (VECTOR *)&composed.t, &flag);
     RotMatrix((SVECTOR *)&event->rotation_x, &model);
-    MulMatrix0((MATRIX *)&render_state.view_matrix, &model, &composed);
+    MulMatrix0((MATRIX *)&game_graphics_runtime.render_state.view_matrix, &model, &composed);
     SetRotMatrix(&composed);
     SetTransMatrix(&composed);
     asset = event->model_index + KF_ASSET_MAP_EVENT_FIRST;

@@ -1,3 +1,4 @@
+#include <kf/game_graphics.h>
 #include <kf/address.h>
 #include <kf/cd_file.h>
 #include <kf/game_save.h>
@@ -747,7 +748,7 @@ s32 menu_load_message_image(s32 message_id)
         path[5] = message_id / 100 + '0';
         path[6] = remainder / 10 + '0';
         path[7] = remainder % 10 + '0';
-        buffer = display_state.primitive_buffer->cursor;
+        buffer = game_graphics_runtime.display_state.primitive_buffer->cursor;
         if (cd_file_load_into(buffer, path) != 0) {
             return 1;
         }
@@ -806,15 +807,15 @@ void screen_show_image_until_input(const char *path)
     polygon.tpage = GetTPage(
         KF_GPU_TEXTURE_4BIT, KF_GPU_BLEND_AVERAGE,
         KF_SYSTEM_SCREEN_TPAGE_X, KF_TEXTURE_LOWER_PAGE_Y);
-    if (cd_file_load_into(display_state.asset_load_buffer, path) != 0) {
+    if (cd_file_load_into(game_graphics_runtime.display_state.asset_load_buffer, path) != 0) {
         return;
     }
-    tim_upload_images(display_state.asset_load_buffer);
-    index = display_state.buffer_index == 0;
-    display_draw_environments[index].isbg = 0;
-    display_draw_environments[index].dfe = 0;
-    PutDrawEnv(&display_draw_environments[index]);
-    display_state.ordering_table = display_state.ordering_tables[index].entries;
+    tim_upload_images(game_graphics_runtime.display_state.asset_load_buffer);
+    index = game_graphics_runtime.display_state.buffer_index == 0;
+    game_graphics_runtime.display_draw_environments[index].isbg = 0;
+    game_graphics_runtime.display_draw_environments[index].dfe = 0;
+    PutDrawEnv(&game_graphics_runtime.display_draw_environments[index]);
+    game_graphics_runtime.display_state.ordering_table = game_graphics_runtime.display_state.ordering_tables[index].entries;
     for (;;) {
         if (brightness < IMAGE_WAIT_MAX_BRIGHTNESS) {
             brightness++;
@@ -822,10 +823,10 @@ void screen_show_image_until_input(const char *path)
         polygon.r0 = brightness;
         polygon.g0 = brightness;
         polygon.b0 = brightness;
-        ClearOTagR(display_state.ordering_table, KF_ORDERING_TABLE_LENGTH);
-        AddPrim(display_state.ordering_table, &polygon);
+        ClearOTagR(game_graphics_runtime.display_state.ordering_table, KF_ORDERING_TABLE_LENGTH);
+        AddPrim(game_graphics_runtime.display_state.ordering_table, &polygon);
         DrawSync(0);
-        DrawOTag(&display_state.ordering_table[KF_ORDERING_TABLE_LENGTH - 1]);
+        DrawOTag(&game_graphics_runtime.display_state.ordering_table[KF_ORDERING_TABLE_LENGTH - 1]);
         if (pressed == 0) {
             if (PadRead(1) == 0) {
                 pressed = 1;
@@ -836,8 +837,8 @@ void screen_show_image_until_input(const char *path)
             break;
         }
     }
-    display_draw_environments[index].isbg = 1;
-    display_draw_environments[index].dfe = 1;
+    game_graphics_runtime.display_draw_environments[index].isbg = 1;
+    game_graphics_runtime.display_draw_environments[index].dfe = 1;
     DrawSync(0);
 }
 

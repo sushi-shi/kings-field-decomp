@@ -74,13 +74,7 @@ PAIRS = (
 
 STATE = {
     "GAME.EXE": {
-        0x80070E98: ("display_state", 0x20028, "KfDisplayState"),
-        0x80090EC0: ("display_draw_environments", 0xB8, "DRAWENV[2]"),
-        0x80090F78: ("display_disp_environments", 0x28, "DISPENV[2]"),
-        0x80090FA8: ("tmd_state", 0x24, "KfTmdState"),
-        0x800910BC: ("current_tmd_vertices", 0x04, "SVECTOR *"),
-        0x800956A0: ("render_state", 0x140, "KfRenderState"),
-        0x800957E0: ("light_quadrant_matrices", 0x80, "MATRIX[4]"),
+        0x80070E98: ("game_graphics_runtime", 0x249CC, "KfGraphicsRuntimeGame"),
     },
     "OPEN.EXE": {
         0x80049A48: ("open_graphics_runtime", 0x24788, "KfGraphicsRuntimeOpen"),
@@ -185,12 +179,14 @@ class DisplayTmdInventoryTests(unittest.TestCase):
             0x8009505F: ("active_render_code", 1, "u8"),
         }
         identities = load_data_identities(RETAIL_CONFIG)
+        fields = {0x80070E98 + row.offset: row
+                  for row in load_structure_field_identities(RETAIL_CONFIG)
+                  if row.structure == 'KfGraphicsRuntimeGame'}
         for va, shape in expected.items():
-            datum = identities[("GAME.EXE", va)]
-            self.assertEqual((datum.name, datum.size, datum.datatype), shape)
-            self.assertEqual(datum.storage, "bss")
-            self.assertEqual(datum.confidence, "supported")
-            self.assertIn("game_semantic_render_material.tsv", datum.evidence)
+            self.assertNotIn(("GAME.EXE", va), identities)
+            field = fields[va]
+            self.assertEqual((field.name, field.size, field.datatype), shape)
+            self.assertIn("game_semantic_render_material.tsv", field.evidence)
 
         _fields, rows = read_tsv(RETAIL_CONFIG / "relocs.tsv")
         references = [
@@ -200,7 +196,7 @@ class DisplayTmdInventoryTests(unittest.TestCase):
         ]
         self.assertEqual(len(references), 27)
         for row in references:
-            self.assertEqual(row["target_name"], expected[parse_int(row["target_va"])][0])
+            self.assertEqual(row["target_name"], "game_graphics_runtime")
             self.assertEqual(row["status"], "reviewed")
 
     def test_decoded_relocations_and_direct_calls_are_reviewed(self) -> None:

@@ -1,3 +1,4 @@
+#include <kf/game_graphics.h>
 #include <kf/address.h>
 #include <kf/game_actor.h>
 #include <kf/map_data.h>
@@ -228,7 +229,7 @@ void map_reveal_fade(void)
     MATRIX saved;
     s32 blend;
 
-    saved = render_state.light_matrix_copy;
+    saved = game_graphics_runtime.render_state.light_matrix_copy;
 
     for (blend = 0; blend < KF_FIXED12_ONE + 1; blend += MAP_REVEAL_FADE_IN_STEP) {
         lighting_set_color_matrix(&color_matrix_table[KF_ENUM_ENCODE(s32, KF_GAME_COLOR_DEFAULT)], &color_matrix_table[KF_ENUM_ENCODE(s32, KF_GAME_COLOR_WHITE)], blend);
@@ -237,7 +238,7 @@ void map_reveal_fade(void)
             map_event_pool[3].rotation += MAP_REVEAL_YAW_STEP;
         } else {
             matrix_interpolate(&saved, &map_reveal_light_matrix,
-                               &render_state.light_matrix_copy, blend << MAP_REVEAL_LIGHT_BLEND_SHIFT);
+                               &game_graphics_runtime.render_state.light_matrix_copy, blend << MAP_REVEAL_LIGHT_BLEND_SHIFT);
         }
         render_frame(0, 0);
         frame_pacer_wait();
@@ -253,7 +254,7 @@ void map_reveal_fade(void)
     }
 
     lighting_set_active_color_matrix(KF_GAME_COLOR_DEFAULT);
-    render_state.light_matrix_copy = saved;
+    game_graphics_runtime.render_state.light_matrix_copy = saved;
 }
 
 /* Floor-2 action script: fade after event 3's first stage-2 dialogue page. */
@@ -516,7 +517,7 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
 
     sound_x = position->vx - (rsin(rotation->vy) * MAP_INTERACTION_PROBE_DISTANCE >> KF_FIXED12_BITS);
     sound_z = position->vz + (rcos(rotation->vy) * MAP_INTERACTION_PROBE_DISTANCE >> KF_FIXED12_BITS);
-    if (notification_state.control.effect_phase == KF_NOTIFICATION_IDLE) {
+    if (game_graphics_runtime.notification_state.control.effect_phase == KF_NOTIFICATION_IDLE) {
         index = map_event_pool_find_overlap(sound_x, sound_z, MAP_INTERACTION_RADIUS_PADDING);
         if (index != -1) {
             event = &map_event_pool[index];
@@ -532,7 +533,7 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
                 map_event_advance_animation_blocking(event, KF_MAP_EVENT_ANIMATION_PHASE_MASK, KF_MAP_EVENT_ANIMATION_TALK_STEP);
                 goto clear_event_phase;
             case KF_MAP_EVENT_BEHAVIOR_ANIMATION_LOOP:
-                result = asset_registry_entries[
+                result = ((KfAssetHeader **)game_graphics_runtime.unknown_registry_20134)[
                     event->model_index + KF_ASSET_MAP_EVENT_FIRST]->animation_clip_count;
                 map_event_advance_animation_blocking(event, KF_MAP_EVENT_ANIMATION_PHASE_MASK, KF_MAP_EVENT_ANIMATION_FINISH_STEP);
                 result = result < 2;
@@ -749,7 +750,7 @@ notify_linked:
         case KF_MAP_OBJECT_BEHAVIOR_SCREEN_IMAGE: {
             KfMapImageGroup image_group;
 
-            if (notification_state.control.effect_phase != KF_NOTIFICATION_IDLE) {
+            if (game_graphics_runtime.notification_state.control.effect_phase != KF_NOTIFICATION_IDLE) {
                 break;
             }
             if (object->object_id == KF_MAP_OBJECT_SIGNBOARD) {

@@ -1,3 +1,4 @@
+#include <kf/game_graphics.h>
 #include <kf/address.h>
 #include <kf/game_render.h>
 #include <kf/game.h>
@@ -35,14 +36,14 @@ void display_play_transition(void)
     s32 i;
 
     DrawSync(0);
-    PutDrawEnv(&display_draw_environments[0]);
-    PutDrawEnv(&display_draw_environments[1]);
+    PutDrawEnv(&game_graphics_runtime.display_draw_environments[0]);
+    PutDrawEnv(&game_graphics_runtime.display_draw_environments[1]);
     DrawSync(0);
 
-    if (cd_file_load_into(display_state.asset_load_buffer, fade_screen_path)) {
+    if (cd_file_load_into(game_graphics_runtime.display_state.asset_load_buffer, fade_screen_path)) {
         return;
     }
-    tim_upload_images(display_state.asset_load_buffer);
+    tim_upload_images(game_graphics_runtime.display_state.asset_load_buffer);
 
     tpage = GetTPage(
         KF_GPU_TEXTURE_4BIT, KF_GPU_BLEND_AVERAGE,
