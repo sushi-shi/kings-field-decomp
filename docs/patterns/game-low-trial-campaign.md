@@ -86,3 +86,96 @@ Ruff, all 722 repository tests (123.830 seconds), and `git diff --check`
 pass on the retained source. The existing collision rectangle, orientation,
 boundary and query-argument controls are included. The literal ledger keeps
 43 occurrences, assigning the moved expressions to their helper owner.
+
+## Item detail: complete name-row pointer
+
+Function Match Plan at `6cbea3fd`: refresh all six GAME views and read all
+183 retail words for `80027b7c`, 732 bytes / 98.579230%. Six callers preserve
+the signed-word item/shop and price-mode interface. Seventeen calls, twenty
+ordered address pairs, seven blocks, three branches and the 160-byte frame
+remain unchanged. Three exact siblings are controls. This is game menu
+policy using the established SDK matrix providers, not vendored source.
+
+The remaining first difference at +d4 concerns the name-table base and
+twenty-byte row stride. Test the direct `const MenuGlyphRow *` local and
+`name->codes[i]` access, preserving the halfword loop and all statement order.
+The shared row is already established by the table and string declarations,
+and the item-name frame uses it. This tests direct row ownership rather than
+repeating the prior inline-copy or inline-selection helpers. No signature,
+layout, call, width or compiler option changes.
+
+Both name-pointer states compile to the same 183 linked words, seventeen
+call targets and twenty ordered address pairs at 98.579230%. All three
+siblings remain exact. Reject the direct-pointer spelling as an explanation
+of the residue; canonical source is unchanged.
+
+Next test the cohesive name-copy-and-draw operation across an ordinary inline
+boundary, either beginning at row selection or including primitive-pointer
+publication and string positioning. Both receive the existing glyph string
+and signed item ID; all operations keep their order and widths. The adjacent
+preview renderer repeats this complete display stage. Earlier helpers ended
+before the draw call, so these controls test an additional consumer boundary.
+
+Both stage helpers compile to identical 736-byte bodies at 97.213110%.
+Independent recompilation preserves seventeen calls, twenty ordered address
+pairs and all three exact siblings. They add a counter initialization at
++d4, change the copy's counter/source/destination registers, and leave the
+draw call delay slot empty instead of forming the glyph-string argument
+there. The entry sentinel branch consequently changes displacement at +28.
+Reject both forms; they do not recover the original name-address schedule.
+
+All five new detail states compile, and the original source remains unchanged
+at 98.579230%. Reports are `build/hypotheses/low-trial-detail/` and
+`build/hypotheses/low-trial-detail-stage/`; independent complete linked words
+and sibling checks are under their `build/*-objects/` directories. These
+negative controls do not close the function or remove it from the campaign.
+
+## Orbit helper: phase width and motion boundary
+
+Function Match Plan: GAME `80038298`, 608 bytes / 99.934210%. Fresh hashes,
+six semantic views and all 152 retail words reconfirm one dispatcher caller,
+nine calls, five ordered data-address pairs, three internal jumps and the
+signed-word radius/limit interface. The existing seven exact unit siblings
+are controls. The function is game orbit/damage/audio policy; trigonometry,
+random and square-root providers retain their SDK ownership.
+
+The only canonical differences are ten stack allocation/save/restore words:
+56-byte source frame versus 120 retail. Existing profile controls do not
+explain the extra space. Do not infer or add an unused 64-byte object.
+Test two real source facts independently and together: retain the loaded
+phase in its actual unsigned-byte local, and isolate the complete orbit
+position/angle update as an ordinary inline helper of record and radius.
+Keep the existing phase masks, signed angle/center conversions, three trig
+calls, X/Z/Y stores, angle publication before collision, and all subsequent
+damage/audio behavior. The phase is consumed before any call on its other
+path; the motion boundary returns no synthetic value or new storage.
+
+All four states preserve 608 bytes, the 56-byte frame and exactly the same
+ten stack-difference offsets. Their nine calls, five ordered address pairs
+and seven exact siblings agree with retail. Neither boundary explains the
+missing frame extent. Next test the actual three-axis distance calculation
+as a complete VECTOR local or a small inline distance helper receiving the
+existing position. Preserve X/Y/Z subtraction, signed downshift, squared-sum
+order, SquareRoot0, final shift and distance threshold. Every introduced
+coordinate is consumed; no unused matrix or padding object is added.
+
+The distance helper is identical to the scalar baseline, including all linked
+words and ordered references. The VECTOR form instead gives 620 bytes /
+97.960526% and a 72-byte frame. It stores the three actual delta components
+at sp+40/+44/+48; retail has none of those stores. This legitimate aggregate
+accounts for sixteen bytes of source storage but does not explain the retail
+frame. Reject it. All seven new states preserve nine call targets, five
+ordered address pairs and all seven exact siblings. Six states reproduce
+the original complete function words; no orbit source or bank change is kept.
+
+Generated reports are `build/hypotheses/low-trial-orbit/` and
+`build/hypotheses/low-trial-orbit-distance/`; fresh independent objects and
+complete resolved words are in the corresponding `build/*-objects/` folders.
+The 64-byte frame difference remains unattributed. The earlier profile
+controls and these source controls are negative evidence, not authority to
+add an unobserved local object.
+
+The detail/orbit follow-up changes evidence only. Ruff, all 722 tests
+(106.976 seconds), and whitespace checks pass. A fresh full build retains
+GAME 339/362 exact and 99.629% aggregate, with unchanged data/placement
+failures and zero artifact failures. No partial function is banked.
