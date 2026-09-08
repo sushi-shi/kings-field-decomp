@@ -15,6 +15,9 @@ promotes a probe to a proven historical toolchain.
 - [game-selection-trace-matches.md](game-selection-trace-matches.md): exact
   drop-item and active-spell selectors through the confirmation-result channel
   and direct equipment-field references; all six unit functions verified.
+- [game-root-item-use-traces.md](game-root-item-use-traces.md): exact root and
+  item-use panels through the magic-result channel and HP-first recovery;
+  all three unit functions and the seven switch pointers match retail.
 
 - [game-horizontal-movement-bearing.md](game-horizontal-movement-bearing.md):
   corrected collision-bearing Z sign, SDK short-vector stack layout,
@@ -481,7 +484,8 @@ promotes a probe to a proven historical toolchain.
   selection before the exit guard closes the option-menu dispatch loop.
 - [game-menu-root-results.md](game-menu-root-results.md): removing three
   unsupported result resets improves the main-menu loop; an equivalent
-  cancellation-condition control leaves the remaining comparison unchanged.
+  cancellation-condition control leaves the remaining comparison unchanged;
+  the subsequent root/item trace campaign closes the function.
 - [game-config-panel-abi.md](game-config-panel-abi.md): two by-value labels,
   input policy and first-frame/loop-tail draw structure recover the options
   panel's CFG; its draw helper stays exact and nine register-role words remain.
@@ -505,7 +509,8 @@ promotes a probe to a proven historical toolchain.
   redraw entries close the shared list-confirmation loop.
 - [game-item-use-flow.md](game-item-use-flow.md): restores empty-list input,
   confirmation reset and long-list upward wrap; direct name-row indexing and
-  loop shape recover all transfers, leaving one seven-word healing residue.
+  loop shape recover all transfers; the subsequent root/item trace campaign
+  closes the seven-word healing residue.
 - [game-shop-panel-flow.md](game-shop-panel-flow.md): restores buy/sell
   confirmation reset and long-list upward wrap; subsequent GCC trace work
   closes both panels with all 689 retail instruction words matching.

@@ -77,9 +77,11 @@ s32 menu_root(void)
             result = menu_use_item_panel();
             goto join_result;
         case KF_ROOT_CHOICE_USE_MAGIC:
-            result = KF_MENU_ROOT_NO_ITEM;
-            if (menu_magic_panel() == KF_MENU_LIST_NO_SELECTION)
+            result = menu_magic_panel();
+            if (result == KF_MENU_LIST_NO_SELECTION)
                 result = KF_MENU_ROOT_PENDING;
+            else
+                result = KF_MENU_ROOT_NO_ITEM;
             break;
         case KF_ROOT_CHOICE_EQUIPMENT:
             menu_option_root();
@@ -321,8 +323,8 @@ s32 menu_use_item_panel(void)
             player_state.vitals.current_hp += DRAGON_KING_GRASS_LEAF_HP_RECOVERY;
             player_state.status_effect_flags = 0;
         } else if (selection == KF_ENUM_ENCODE(s32, KF_ITEM_DRAGON_KING_GRASS_FRUIT)) {
-            player_state.status_effect_flags = 0;
             player_state.vitals.current_hp += DRAGON_KING_GRASS_FRUIT_HP_RECOVERY;
+            player_state.status_effect_flags = 0;
             player_state.vitals.current_mp = player_state.vitals.maximum_mp;
         }
         if (player_state.vitals.current_hp > player_state.vitals.maximum_hp)
