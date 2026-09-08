@@ -448,6 +448,10 @@ promotes a probe to a proven historical toolchain.
 - [game-menu-sprite-blit.md](game-menu-sprite-blit.md): thirteen-caller audit
   and shared signed point/dimension recovery; the genuine SDK rectangle macro
   closes both blitters while preserving every narrow load and ordered store.
+- [game-preview-traces.md](game-preview-traces.md): conditional price values
+  recover twenty detail-renderer words; both name-copy loops remain partial.
+- [game-item-database-traces.md](game-item-database-traces.md): three decimal
+  filename controls emit the same non-exact loader; no source change retained.
 - [game-item-menu-dimensions.md](game-item-menu-dimensions.md): shared item,
   stock and glyph-row extents, complete-object startup clears, CD sector units,
   and the [database/startup literal ledger](game-item-database-literal-ledger.md).

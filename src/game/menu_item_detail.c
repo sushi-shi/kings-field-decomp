@@ -42,7 +42,7 @@ void menu_draw_item_detail(KF_ENUM_PARAM(KfItemId, s32) item_id, KF_ENUM_PARAM(K
     MATRIX rot;
     MATRIX lsrc;
     MATRIX lres;
-    u16 (*prices)[KF_ITEM_SHOP_COUNT];
+    s32 price;
     s16 *name;
     s32 i;
 
@@ -85,11 +85,14 @@ void menu_draw_item_detail(KF_ENUM_PARAM(KfItemId, s32) item_id, KF_ENUM_PARAM(K
 
     gs.x = MENU_ITEM_DETAIL_PRICE_X;
     gs.y += MENU_ITEM_PREVIEW_LINE_HEIGHT;
-    prices = item_sell_prices;
     if (price_mode == KF_ITEM_PRICE_BUY) {
-        prices = item_buy_prices;
+        price = item_buy_prices[KF_ENUM_ENCODE(s32, item_id)]
+            [KF_ENUM_ENCODE(s32, shop_id) - KF_ENUM_ENCODE(s32, KF_SHOP_FIRST)];
+    } else {
+        price = item_sell_prices[KF_ENUM_ENCODE(s32, item_id)]
+            [KF_ENUM_ENCODE(s32, shop_id) - KF_ENUM_ENCODE(s32, KF_SHOP_FIRST)];
     }
-    menu_format_number(prices[KF_ENUM_ENCODE(s32, item_id)][KF_ENUM_ENCODE(s32, shop_id) - KF_ENUM_ENCODE(s32, KF_SHOP_FIRST)], MENU_ITEM_DETAIL_PRICE_DIGITS, 0, gs.codes);
+    menu_format_number(price, MENU_ITEM_DETAIL_PRICE_DIGITS, 0, gs.codes);
     menu_draw_number(&menu_assets.number_atlas, &gs);
 
     gs.x = MENU_ITEM_DETAIL_LABEL_X;
