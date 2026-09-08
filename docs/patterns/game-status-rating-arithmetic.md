@@ -129,3 +129,10 @@ Full `kf build` retains the existing data/ownership failures: data PSX 0/1,
 GAME 9/42, OPEN 2/19; target relink 1/1, 75/77, 34/38, respectively. There
 are six conflicting section bases and zero artifact failures. No tooling,
 shared-header, OPEN source, or banking change belongs to this campaign.
+
+## Shared-rating follow-up
+
+The [instrumented status campaign](game-status-render-traces.md) gives both
+aggregate subtotals one consumed signed word value before their respective
+scaling and division. It recovers sixteen rating instructions and reaches
+strict 98.431730%; coordinate and constant-lifetime differences remain open.

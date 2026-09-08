@@ -416,6 +416,9 @@ promotes a probe to a proven historical toolchain.
 - [game-stats-header-index.md](game-stats-header-index.md): one consumed glyph
   index across class and status phases recovers eighteen class-calculation
   words; row-spacing materialization and the frame remain non-exact.
+- [game-status-render-traces.md](game-status-render-traces.md): a shared
+  attack/defense subtotal recovers sixteen rating instructions; the renderer
+  remains non-exact, with early coordinate and row-spacing differences.
 - [game-status-rating-arithmetic.md](game-status-rating-arithmetic.md): signed
   attack/defense rating divisions and reviewed class-selection jumps restore
   the detailed status renderer's arithmetic branches and ordered references.
