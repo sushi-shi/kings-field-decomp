@@ -735,3 +735,5 @@ promotes a probe to a proven historical toolchain.
 - [Redundant casts after type propagation](typed-redundant-casts.md): seven identity conversions removed with all 27 compared bodies unchanged.
 
 - [Typed menu ordering-table indexing](typed-ordering-index.md): two byte-pointer casts removed, with all sixteen compared bodies unchanged.
+
+- [Allocated save workspace](typed-save-workspace.md): complete header/payload allocation with independent public buffer views and exact null-path behavior.

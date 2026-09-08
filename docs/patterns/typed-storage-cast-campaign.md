@@ -238,3 +238,8 @@ remaining complete workspace boundaries are reviewed next.
 The [ordering-table stage](typed-ordering-index.md) replaces byte scaling
 with typed element indexing. Both pointer casts disappear and all sixteen
 compared bodies remain unchanged; 451 C pointer casts remain, down 355.
+
+The [save-workspace stage](typed-save-workspace.md) models the complete
+allocation while preserving the separate stack-backed header/payload callers.
+All 31 compared bodies remain unchanged; 451 C pointer casts remain. The
+former field reinterpretation is now an explicit generic allocator boundary.

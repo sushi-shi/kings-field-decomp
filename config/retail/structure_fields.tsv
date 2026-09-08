@@ -665,6 +665,8 @@ KfSaveSlotSummary	0x08	0x04	current_hp	u32	supported	game_save.h;save_file_write
 KfSaveSlotSummary	0x0c	0x04	maximum_hp	u32	supported	game_save.h;save_file_write_slot;save_file_read_slot;menu_draw_dialog_frame;asm	serialized player unsigned maximum-HP halfword; stored and copied as a word
 KfSaveSlotSummary	0x10	0x04	current_mp	u32	supported	game_save.h;save_file_write_slot;save_file_read_slot;menu_draw_dialog_frame;asm	serialized player unsigned current-MP halfword; stored and copied as a word
 KfSaveSlotSummary	0x14	0x04	maximum_mp	u32	supported	game_save.h;save_file_write_slot;save_file_read_slot;menu_draw_dialog_frame;asm	serialized player unsigned maximum-MP halfword; stored and copied as a word
+KfSaveWorkspace	0x00	0x280	header	KfSaveHeader	supported	game_save.h;asm;save_workspace_allocate	first 0x280 bytes of the successful 0x2800-byte allocation
+KfSaveWorkspace	0x280	0x2580	payload	KfSavePayload	supported	game_save.h;asm;save_workspace_allocate	remainder of the allocation; separately published and cleared
 KfScreenRect	0x00	0x02	x	u16	supported	render_types.h;quad-rectangle-types.md;GAME:sprite_add_ft4;OPEN:sprite_add_g4;asm;lhu	screen X origin
 KfScreenRect	0x02	0x02	y	u16	supported	render_types.h;quad-rectangle-types.md;OPEN:opening_ending_scroll_run;asm;lhu;lh;sh	screen Y origin; scrolling updates wrap as halfwords and the final-panel stop test reads signed Y
 KfScreenRect	0x04	0x02	w	u16	supported	render_types.h;quad-rectangle-types.md;GAME:sprite_add_ft4;OPEN:sprite_add_f4;asm;lhu	screen width added to X for right vertices

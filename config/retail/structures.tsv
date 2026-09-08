@@ -95,6 +95,7 @@ KfSaveDirectory	0x80	supported	game_save.h;game_semantic_save_system.tsv;asm;xre
 KfSaveHeader	0x280	supported	game_save.h;game_semantic_save_system.tsv;PlayStation-save-format	standard header plus game directory
 KfSavePayload	0x2580	supported	game_save.h;game_semantic_save_system.tsv;asm;xrefs;save_file_write_slot;save_file_read_slot	serialized game-slot payload; four copied ranges typed by their copy-loop alignment, contents still opaque
 KfSaveSlotSummary	0x18	supported	game_save.h;game_semantic_save_system.tsv;asm;xrefs	six serialized words: experience, floor, current/maximum HP and MP
+KfSaveWorkspace	0x2800	supported	game_save.h;asm;save_workspace_allocate;typed-save-workspace.md	allocated header followed by payload; public buffer pointers may instead refer to independent stack objects
 KfScreenRect	0x08	supported	render_types.h;quad-rectangle-types.md;GAME:sprite_add_ft4;OPEN:sprite_add_f4;OPEN:sprite_add_g4;asm;lhu;retail-bytes	four unsigned halfwords for screen position and spans; scrolling callers explicitly reinterpret wrapped Y as signed
 KfScreenVertex	0x08	supported	tmd.h;game_semantic_projection_scratch.tsv;asm;xrefs	eight-byte GTE projection result shared by TMD projection producers and polygon enqueue consumers
 KfScreenXY	0x04	supported	tmd.h;asm;RotTransPers;RotTrans;typed-screen-coordinates.md	SDK packed screen word and signed DVECTOR coordinate views

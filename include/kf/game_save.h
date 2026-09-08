@@ -135,6 +135,16 @@ typedef struct KfSavePayload {
     u8 unknown_2548[56];
 } KfSavePayload;
 
+/* Allocated backing; the public pointers can also refer to separate stack objects. */
+typedef struct KfSaveWorkspace {
+    KfSaveHeader header;
+    KfSavePayload payload;
+} KfSaveWorkspace;
+
+typedef char check_save_workspace_size[(sizeof(KfSaveWorkspace) == 0x2800) ? 1 : -1];
+typedef char check_save_workspace_payload[
+    ((unsigned long)&((KfSaveWorkspace *)0)->payload == 0x280) ? 1 : -1];
+
 #define KF_PSX_SAVE_HEADER_OFFSET_CHECK(member, offset) \
     typedef char check_psx_save_header_##member[ \
         ((unsigned long)&((KfPsxSaveHeader *)0)->member == (offset)) ? 1 : -1]
