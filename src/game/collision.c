@@ -61,8 +61,9 @@ u32 collision_query_world(
     u8 attribute;
     u8 cell_flags;
     u32 rejection_mask;
+    u16 query_flags = flags;
 
-    if ((flags & KF_COLLISION_SKIP_TERRAIN) == 0) {
+    if ((query_flags & KF_COLLISION_SKIP_TERRAIN) == 0) {
         hit = map_collision_grid[0][(u16)cell];
 
         if (hit != KF_MAP_CELL_FLOOR && hit != KF_MAP_CELL_STEP) {
@@ -85,7 +86,7 @@ u32 collision_query_world(
         }
     }
     cell_flags = map_collision_flag_grid[0][(u16)cell];
-    rejection_mask = (flags >> KF_COLLISION_CELL_FLAG_SHIFT) & KF_COLLISION_CELL_FLAG_MASK;
+    rejection_mask = (query_flags >> KF_COLLISION_CELL_FLAG_SHIFT) & KF_COLLISION_CELL_FLAG_MASK;
     hit = cell_flags & rejection_mask;
     if (hit != 0) {
         return hit << KF_COLLISION_CELL_FLAG_SHIFT;
@@ -93,11 +94,11 @@ u32 collision_query_world(
     if ((cell_flags & KF_CELL_OCCUPANT_COUNT_MASK) == 0) {
         return KF_COLLISION_NONE;
     }
-    if ((flags & KF_COLLISION_SKIP_PLAYER) == 0) {
+    if ((query_flags & KF_COLLISION_SKIP_PLAYER) == 0) {
         hit = player_distance_to_point(
             point_x, point_y, point_z, radius + KF_COLLISION_PLAYER_RADIUS, height);
         if (hit != KF_COLLISION_NONE) {
-            if (flags & KF_COLLISION_CAPTURE_TARGET) {
+            if (query_flags & KF_COLLISION_CAPTURE_TARGET) {
                 collision_target.position = player_state.camera_position;
                 collision_target.rotation = player_state.camera_rotation;
                 collision_target.radius = KF_COLLISION_PLAYER_RADIUS;
@@ -105,10 +106,10 @@ u32 collision_query_world(
             return KF_COLLISION_PLAYER;
         }
     }
-    if ((flags & KF_COLLISION_SKIP_ACTORS) == 0) {
+    if ((query_flags & KF_COLLISION_SKIP_ACTORS) == 0) {
         hit = actor_pool_find_overlap(point_x, point_y, point_z, radius, height);
         if (hit != KF_COLLISION_NONE) {
-            if (flags & KF_COLLISION_CAPTURE_TARGET) {
+            if (query_flags & KF_COLLISION_CAPTURE_TARGET) {
                 KfActor *actor = &actor_state.actors[hit];
                 KfActorDefinition *definition = &actor_state.definitions[actor->definition_id];
 
@@ -119,10 +120,10 @@ u32 collision_query_world(
             return hit | KF_COLLISION_ACTOR;
         }
     }
-    if ((flags & KF_COLLISION_SKIP_MAP_OBJECTS) == 0) {
+    if ((query_flags & KF_COLLISION_SKIP_MAP_OBJECTS) == 0) {
         hit = map_object_pool_find_near_point(point_x, point_z, radius);
         if (hit != KF_COLLISION_NONE) {
-            if (flags & KF_COLLISION_CAPTURE_TARGET) {
+            if (query_flags & KF_COLLISION_CAPTURE_TARGET) {
                 KfMapObject *object = &map_object_state.objects[hit];
                 KfMapObjectDefinition *definition = &map_object_state.definitions[KF_ENUM_ENCODE(u8, object->object_id)];
 
@@ -133,12 +134,12 @@ u32 collision_query_world(
             return hit | KF_COLLISION_MAP_OBJECT;
         }
     }
-    if (flags & KF_COLLISION_SKIP_MAP_EVENTS) {
+    if (query_flags & KF_COLLISION_SKIP_MAP_EVENTS) {
         return KF_COLLISION_NONE;
     }
     hit = map_event_pool_find_overlap(point_x, point_z, radius);
     if (hit != KF_COLLISION_NONE) {
-        if (flags & KF_COLLISION_CAPTURE_TARGET) {
+        if (query_flags & KF_COLLISION_CAPTURE_TARGET) {
             KfMapEvent *event = &map_event_pool[hit];
 
             collision_target.position = *(VECTOR *)&event->reference_x;

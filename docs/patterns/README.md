@@ -408,7 +408,10 @@ promotes a probe to a proven historical toolchain.
   bounds-return sharing and final query/default scheduling remain non-exact.
 - [game-world-collision-source.md](game-world-collision-source.md): early
   typed definition pointers, shared hit value and separate query mask recover
-  world-query instructions; entry differences remain non-exact.
+  world-query instructions.
+- [game-world-collision-traces.md](game-world-collision-traces.md): a local
+  unsigned halfword query mask recovers the incoming word load/copy and closes
+  all 321 world-query instructions at strict 100%.
 - [game-magic-cast-source.md](game-magic-cast-source.md): case-local objects,
   distinct distance outputs and live projectile speed, followed by exact
   pitch initialization and branch-local height intermediates; all four unit

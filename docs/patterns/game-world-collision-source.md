@@ -1,5 +1,9 @@
 # GAME world-collision source recovery
 
+The later [argument-width trace campaign](game-world-collision-traces.md)
+closes this function at strict 100%. The evidence below records the earlier
+source recovery and its then-unresolved entry differences.
+
 ## Function Match Plan at `a0ffa9b`
 
 GAME `8001a5ac collision_query_world`, 1284 bytes (`0x504`), is the sole
