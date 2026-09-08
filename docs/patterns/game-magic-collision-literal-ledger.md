@@ -1,7 +1,7 @@
 # Magic and effect-collision remainder literal ledger
 
-Complete per-occurrence account of **52 retained numeric literals**:
-nine in `src/game/magic.c`, 43 in `src/game/effect_map_collision.c`.
+Complete per-occurrence account of **53 retained numeric literals**:
+ten in `src/game/magic.c`, 43 in `src/game/effect_map_collision.c`.
 The latter includes all 28 authored rectangle halfwords. Named definitions
 and retail claims are excluded; comments/strings/identifier digits are not
 numeric literals, and signs remain operators. See the
@@ -12,6 +12,7 @@ numeric literals, and signs remain operators. See the
 | `magic.c` | `effect_pool_reset` | 30 | `0` | `for (i = 0; i < KF_EFFECT_CAPACITY; i++) {` | Zero starts the slot ordinal; the named capacity bounds the complete reset. |
 | `magic.c` | `magic_load_records` | 42 | `0` | `for (count = sizeof effect_state.magic / sizeof *source; count != 0; count--) {` | Zero terminates the word count derived from the existing magic owner and source element sizes; no raw record count is duplicated. |
 | `magic.c` | `magic_cast` | 84 | `0` | `if (target == 0) {` | Null denotes an absent actor from the cone query; this chooses untargeted versus targeted placement. |
+| `magic.c` | `magic_cast` | 91 | `0` | `angles.x = 0;` | Initialize the untargeted non-Lightning pitch offset before adding camera pitch; retail's jump delay slot stores this zero. |
 | `magic.c` | `magic_cast` | 97 | `1` | `map_cell_attribute_grid[target->cell_z][target->cell_x] - 1]` | Lightning alone indexes the preceding attribute-table halfword; retail uses map_cell_attribute_height_table-2 plus twice the attribute. Keep this measured lookup bias, without inventing a level identity or new bounds guard. |
 | `magic.c` | `magic_cast` | 126 | `1` | `KF_ENUM_DECODE(KfEffectKind, KF_ENUM_ENCODE(u8, player_state.selected_magic_id)), &world_pos, &direction, &rotation, 1);` | True requests Light Needle constructor sound in the seventh slot; the sixth slot is the rotation pointer, not a countdown. |
 | `magic.c` | `magic_cast` | 130 | `1` | `KF_ENUM_DECODE(KfEffectKind, KF_ENUM_ENCODE(u8, player_state.selected_magic_id)), &world_pos, &direction, distance, 1);` | True requests the constructor sound in the seventh slot; the sixth value is consumed as a halfword travel countdown only by Lightning on this casting branch. |

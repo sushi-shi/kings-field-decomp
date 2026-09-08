@@ -88,7 +88,8 @@ void magic_cast(void)
                 angles.x = LIGHTNING_UNTARGETED_PITCH;
                 distance = LIGHTNING_UNTARGETED_UPDATES;
             } else {
-                angles.x = player_state.camera_rotation.vx;
+                angles.x = 0;
+                angles.x += player_state.camera_rotation.vx;
             }
         } else {
             speed = MAGIC_DEFAULT_SPEED;
@@ -96,11 +97,11 @@ void magic_cast(void)
                 if (map_cell_attribute_height_table[
                         map_cell_attribute_grid[target->cell_z][target->cell_x] - 1]
                         >= LIGHTNING_HEIGHT_CLASS_THRESHOLD) {
-                    angles.x = vector_xz_to_angle(
-                        world_pos.vy + LIGHTNING_DEFAULT_TARGET_Y_OFFSET - target->position.vy, -distance);
+                    s32 aim_y = world_pos.vy + LIGHTNING_DEFAULT_TARGET_Y_OFFSET;
+                    angles.x = vector_xz_to_angle(aim_y - target->position.vy, -distance);
                 } else {
-                    angles.x = vector_xz_to_angle(
-                        world_pos.vy + LIGHTNING_LOWER_HEIGHT_Y_OFFSET - target->position.vy, -distance);
+                    s32 aim_y = world_pos.vy + LIGHTNING_LOWER_HEIGHT_Y_OFFSET;
+                    angles.x = vector_xz_to_angle(aim_y - target->position.vy, -distance);
                 }
                 speed = LIGHTNING_SPEED;
                 distance = distance / speed;

@@ -169,3 +169,89 @@ Full `kf build` still exits 1 at the existing data/ownership/placement gates:
 source data 7/60 (PSX 0/1, GAME 5/40, OPEN 2/19), complete SDK contributions
 4/4, target relink 110/116 (1/1, 75/77, 34/38), no artifact failures or banked
 regressions. No SDK source, shared type, inventory, profile or gate changed.
+
+## Exact pitch initialization and height intermediates
+
+### Function Match Plan at `44ab6f9`
+
+The refreshed six GAME semantic views and focused comparison start at
+98.891450%, 1204 candidate bytes. Read the current player-update call at
+`800193ac`, adjacent record loader/sweep, angle helper, source history,
+shared types and the prior controls above. The authentic SVECTOR extent
+correction made since the earlier campaign restores the ground-position
+stack offsets; no remaining automatic-object layout change is needed.
+Keep the no-argument signature, 144-byte frame, thirteen direct calls,
+twenty-four address pairs, seven retail internal jumps, seventeen branches,
+all delay slots and the five-entry switch contribution. The navigator's
+indirect jump and candidate table rows retain their existing evidence tiers.
+SDK ApplyMatrix/rsin/rcos stay separately attributed external providers.
+
+Retail's untargeted non-Lightning path loads camera pitch, jumps to the
+shared pitch store and clears the local pitch in the jump's delay slot.
+Test zero-initialization followed by adding camera pitch to that actual
+local. This consumes the initialized value and explains the decoded store;
+it introduces no dummy carrier, volatile access or unused object. The
+targeted non-Lightning path keeps its direct camera-pitch assignment.
+
+Both Lightning height branches must compute the world height plus the
+positive 3000/5000 offset, subtract target height and call the angle helper.
+Cross the pitch control with four equivalent signed source expressions:
+elevation-minus-target, difference-plus-offset, offset-plus-difference and
+negative-target-plus-elevation. Compare the raw operation sequence before
+considering any composed control. Retain all per-arm calls, the real speed
+divisor, height-table bias and constructor arguments. Only strict 100% after
+focused/full verification permits banking and master integration.
+
+### Thirteen JSON states
+
+The eight-state matrix recovers all three missing instructions only with
+zero-initialization followed by camera-pitch addition. The original height
+expression then scores 99.894740% with the correct 1216-byte body. Exactly
+seven arithmetic words remain different: the candidate adjusts target Y
+negatively rather than world Y positively. The other expression forms do
+not resolve them (98.996710–99.078950% with pitch initialization).
+
+The five-state follow-up composes that initialization with consumed height
+intermediates while retaining the angle calls inside their respective
+branches. This differs from the earlier rejected shared-call trial.
+
+| Height form | Strict result | Verdict |
+| --- | ---: | --- |
+| Original complete expression | 99.894740% | Control |
+| Branch-local adjusted world height | 100% | Kept |
+| Branch-local height, then compound subtraction | 100% | Equivalent exact control |
+| Separate branch-local target and world heights | 100% | Equivalent exact control |
+| Case-owned adjusted height reused by both branches | 99.835526% | Rejected |
+
+The retained `s32 aim_y` in each branch represents the positively adjusted
+world height and is immediately consumed by the existing angle call. No
+type, constant, source operation, call topology or storage owner is invented
+to obtain the result. The resulting source explains retail under the pinned
+probe; it does not prove historical compiler or variable-name attribution.
+
+### Exact verification
+
+Fresh `kf try` gives four identical listings; canonical `kf match` confirms
+all four functions are strict **100%**. Independently resolving relocations
+reproduces all **358 retail words**, **15 calls** and **27 address
+materializations** across the unit. `magic_cast` itself contributes 304
+words, thirteen calls and twenty-four addresses. The other three functions
+remain exact. A wrong angle-helper address changes exactly one call word.
+
+All five switch rows independently resolve to retail: four point to
+`8003a2e8`, and Fire Wall points to `8003a5b8`. The twenty-byte RODATA
+contribution now matches too. No target relocation is added, removed or
+weakened; the missing internal jump returns through the source correction.
+
+Ruff, whitespace checks and all 713 repository tests pass (107.291 seconds,
+nine optional skips). Full `kf build` reports GAME **335/362**, OPEN
+**106/108**, PSX **1/1**, and thirteen exact vendored controls. GAME data
+matching improves from 10/41 to **11/41** through the repaired switch table.
+Other data results remain OPEN 3/19 and PSX 0/1. The build still exits with
+existing data ownership/placement and target-relink failures; target relinks
+remain GAME 75/77, OPEN 34/38 and PSX 1/1, with zero artifact failures.
+
+Banking selects the four verified functions in `game.magic`. The retained
+zero initialization is added to the current literal ledger. Generated batch
+results, raw audit and verification logs stay under `build/`; no tooling,
+compiler profile or unrelated source is included in the matching commit.

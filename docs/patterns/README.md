@@ -398,8 +398,9 @@ promotes a probe to a proven historical toolchain.
   typed definition pointers, shared hit value and separate query mask recover
   world-query instructions; entry differences remain non-exact.
 - [game-magic-cast-source.md](game-magic-cast-source.md): case-local objects,
-  distinct distance outputs, projectile-speed lifetime and height-branch order
-  improve magic casting; remaining stack/angle differences stay unattributed.
+  distinct distance outputs and live projectile speed, followed by exact
+  pitch initialization and branch-local height intermediates; all four unit
+  functions and five switch targets match retail.
 - [game-map-object-clearing.md](game-map-object-clearing.md): corrected
   type-0..8 link predicate and aligned whole-link reset close both clearing
   functions; the earlier memset control emitted an unsupported call.

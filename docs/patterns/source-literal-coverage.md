@@ -3,7 +3,7 @@
 Final naming/accounting snapshot, including the graphics-owner integration and
 [shared-bound review](source-constant-names.md#final-shared-bound-review):
 **111 C files**, **112 source/image variants**, and
-**5,765 inline numeric/character occurrences**. Counts include authored
+**5,766 inline numeric/character occurrences**. Counts include authored
 initializers, local extents, component indices, booleans and arithmetic. They
 exclude comments, string contents, identifier digits, named enum/macro definitions
 and ADDRESS/DATA/RODATA claims. These are inventory counts, **not missing-name
@@ -11,11 +11,11 @@ counts**. Vendor sources are included for source coverage, not game progress.
 
 The separate [header ledger](header-literal-ledger.md) covers **53 headers /
 169 retained occurrences**, including 36 headers with zero retained tokens.
-Together the C and header ledgers account for **5,934 retained occurrences**.
+Together the C and header ledgers account for **5,935 retained occurrences**.
 
 ## Current ledger coverage verified
 
-For **all 111 files / 5,765 occurrences**, explicit ledger rows were compared
+For **all 111 files / 5,766 occurrences**, explicit ledger rows were compared
 against every current numeric/character token and its complete source-line
 expression, including duplicate occurrences and initializers. All matched and
 each row has a reason. Line-number drift is excluded from the comparison;
@@ -170,7 +170,7 @@ retained literal reasons preserve these limitations without inventing semantics.
 | [item.c](../../src/game/item.c) | 146 | [confirmation/item ledger](game-menu-confirm-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [lighting.c](../../src/game/lighting.c) | 108 | [complete lighting/fade ledger](game-lighting-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [lighting_presets.c](../../src/game/lighting_presets.c) | 1 | [complete lighting/fade ledger](game-lighting-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
-| [magic.c](../../src/game/magic.c) | 9 | [complete ledger](game-magic-collision-literal-ledger.md); [reconciliation](collision-ledger-reconciliation.md) | Current token/expression coverage verified; every occurrence has a reason. |
+| [magic.c](../../src/game/magic.c) | 10 | [complete ledger](game-magic-collision-literal-ledger.md); [reconciliation](collision-ledger-reconciliation.md) | Includes the retail-backed zero pitch initialization before applying camera pitch. |
 | [main.c](../../src/game/main.c) | 4 | [complete allocator/startup ledger](allocator-startup-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [map_event.c](../../src/game/map_event.c) | 26 | [game-map-event ledger](game-map-event-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 | [map_event_render.c](../../src/game/map_event_render.c) | 6 | [complete renderer ledger](entity-render-literal-ledger.md); [review](renderer-literal-review.md) | Current token/expression coverage verified; every occurrence has a reason. |
