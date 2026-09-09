@@ -856,7 +856,7 @@ KfActorAction actor_try_select_profiled_action(KfActorAction action, s32 distanc
     }
     odds = (chance * odds) >> KF_FIXED8_BITS;
     if (!((rand() >> ACTOR_SELECTION_RANDOM_SHIFT) < odds)) {
-        goto rejected;
+        return KF_ACTOR_ACTION_NONE;
     }
     if (!angle_within_tolerance(
             actor->rotation.angles.y,
@@ -888,7 +888,7 @@ KfActorAction actor_try_select_profiled_action(KfActorAction action, s32 distanc
         record++;
     } while (--index != -1);
     if (count >= ACTOR_SPAWNER_POPULATION_LIMIT) {
-        goto rejected;
+        return KF_ACTOR_ACTION_NONE;
     }
 accepted:
     return action;
