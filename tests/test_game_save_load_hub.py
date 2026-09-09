@@ -28,7 +28,7 @@ class GameSaveLoadHubTests(unittest.TestCase):
         if not shutil.which("cc1psx-257") or "PSYQ_INCLUDE" not in os.environ:
             self.skipTest("pinned compiler and SDK headers required")
         manifest = load_manifest()
-        unit = manifest.by_name()["game.menu_item_drop"]
+        unit = manifest.by_name()["game.menu_runtime"]
         claim = next(fn for fn in unit.functions if fn.symbol == "menu_save_load_hub")
         profile = manifest.profiles[unit.profile]
         target_path = BUILD / "delink/game/modules" / unit.object_name

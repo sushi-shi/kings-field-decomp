@@ -145,7 +145,6 @@ typedef struct KfRenderState {
 } KfRenderState;
 
 extern MATRIX color_matrix_table[KF_GAME_COLOR_PRESET_COUNT];
-extern POLY_FT4 *current_poly_ft4;
 extern KfCellWindow render_cell_windows[KF_CELL_WINDOW_YAW_COUNT];
 extern KfSpriteQuad floor_item_sprites[KF_FLOOR_ITEM_SPRITE_COUNT];
 extern KfSpriteQuad effect_billboard_sprites[KF_EFFECT_BILLBOARD_SPRITE_COUNT];

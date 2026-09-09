@@ -2978,7 +2978,7 @@ GAME.EXE	0x80057e78	0x46678	0x4	bss	reviewed	player_death_saved_fog_near	s32	man
 GAME.EXE	0x80057e7c	0x4667c	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 GAME.EXE	0x80057e80	0x46680	0x4	bss	reviewed	cd_read_location	CdlLOC	manual:cd_resource_bss	CPE-tail storage shared by CD and error-screen loaders; all three CdlSetloc bytes written before use
 GAME.EXE	0x80057e84	0x46684	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-GAME.EXE	0x80057e88	0x46688	0x4	defined	reviewed	current_poly_ft4	POLY_FT4 *	manual:game_semantic_menu_frame	zero-initialized current menu textured-quad allocation cursor
+GAME.EXE	0x80057e88	0x46688	0x4	bss	reviewed	current_poly_ft4	POLY_FT4 *	manual:data-module-continuation:menu-storage	private menu packet cursor; draw entry points write before use; rounded executable tail bytes are not an initializer
 GAME.EXE	0x80057e8c	0x4668c	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 GAME.EXE	0x80057e90	0x46690	0x4	bss	reviewed	memory_card_io_end_event	s32	manual:executable-linking.md:tail-BSS-write-before-read	memory_card_initialize stores OpenEvent result before first EnableEvent; subsequent uses require initialization; eight-byte tail-BSS spacing
 GAME.EXE	0x80057e94	0x46694	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data

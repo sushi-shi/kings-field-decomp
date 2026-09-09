@@ -672,14 +672,6 @@ extern KfMaterialProbe material_probe;
             'game.map_load',
             'game.map_scripts',
             'game.matrix',
-            'game.menu_config_panel',
-            'game.menu_draw_name_list',
-            'game.menu_draw_stats_header',
-            'game.menu_draw_status_details',
-            'game.menu_draw_window',
-            'game.menu_item_detail',
-            'game.menu_item_model_preview',
-            'game.menu_list_render',
             'game.menu_map_viewer',
             'game.menu_runtime',
             'game.notify_queue',
@@ -702,6 +694,7 @@ extern KfMaterialProbe material_probe;
             'item_load_database',
             'map_interaction_dispatch',
             'map_show_screen_image',
+            'menu_status_panel',
             'menu_draw_item_detail',
             'menu_draw_item_name_frame',
             'menu_draw_status_details',
@@ -747,7 +740,7 @@ extern KfMaterialProbe material_probe;
                                         {**addresses, 'game_graphics_runtime': ORIGIN + 4}, functions)
                                     self.assertNotEqual(wrong, expected, claim.symbol)
                                     self.assertEqual(same_calls, calls)
-        self.assertEqual((checked, exact), (173, 160))
+        self.assertEqual((checked, exact), (180, 166))
 
 
 if __name__ == '__main__':
