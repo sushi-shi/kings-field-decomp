@@ -143,32 +143,6 @@ typedef struct KfSaveWorkspace {
     KfSavePayload payload;
 } KfSaveWorkspace;
 
-typedef char check_save_workspace_size[(sizeof(KfSaveWorkspace) == 0x2800) ? 1 : -1];
-typedef char check_save_workspace_payload[
-    ((unsigned long)&((KfSaveWorkspace *)0)->payload == 0x280) ? 1 : -1];
-
-#define KF_PSX_SAVE_HEADER_OFFSET_CHECK(member, offset) \
-    typedef char check_psx_save_header_##member[ \
-        ((unsigned long)&((KfPsxSaveHeader *)0)->member == (offset)) ? 1 : -1]
-KF_PSX_SAVE_HEADER_OFFSET_CHECK(magic, 0x00);
-KF_PSX_SAVE_HEADER_OFFSET_CHECK(icon_type, 0x02);
-KF_PSX_SAVE_HEADER_OFFSET_CHECK(block_count, 0x03);
-KF_PSX_SAVE_HEADER_OFFSET_CHECK(title, 0x04);
-KF_PSX_SAVE_HEADER_OFFSET_CHECK(zero_pad, 0x44);
-KF_PSX_SAVE_HEADER_OFFSET_CHECK(clut, 0x60);
-KF_PSX_SAVE_HEADER_OFFSET_CHECK(icon_frames, 0x80);
-#undef KF_PSX_SAVE_HEADER_OFFSET_CHECK
-#define KF_SAVE_SUMMARY_OFFSET_CHECK(member, offset) \
-    typedef char check_save_summary_##member[ \
-        ((unsigned long)&((KfSaveSlotSummary *)0)->member == (offset)) ? 1 : -1]
-KF_SAVE_SUMMARY_OFFSET_CHECK(experience, 0x00);
-KF_SAVE_SUMMARY_OFFSET_CHECK(current_floor, 0x04);
-KF_SAVE_SUMMARY_OFFSET_CHECK(current_hp, 0x08);
-KF_SAVE_SUMMARY_OFFSET_CHECK(maximum_hp, 0x0c);
-KF_SAVE_SUMMARY_OFFSET_CHECK(current_mp, 0x10);
-KF_SAVE_SUMMARY_OFFSET_CHECK(maximum_mp, 0x14);
-#undef KF_SAVE_SUMMARY_OFFSET_CHECK
-
 extern char memory_card_message_path_template[];
 extern char memory_card_root_path[];
 extern KfSaveHeader *save_header_buffer;

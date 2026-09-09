@@ -5,6 +5,7 @@
 ADDRESS(0x80018344, 0x2a4)
 void render_enqueue_unlit_triangles(u16 object_index, s16 depth_bias)
 {
+    KfTmdPrimitive *polygon;
     KfTmdObject *object = tmd_get_object(object_index);
     u32 remaining = object->primitive_count;
     u8 *packet = (u8 *)open_graphics_runtime.tmd_state.current_asset +
@@ -23,20 +24,20 @@ void render_enqueue_unlit_triangles(u16 object_index, s16 depth_bias)
 
         header = *(u32 *)packet;
         packet += KF_TMD_PACKET_HEADER_BYTES;
+        polygon = (KfTmdPrimitive *)packet;
         switch (tmd_packet_mode(header)) {
         case KF_TMD_MODE_FT3: {
-            KfTmdPrimitive *triangle = (KfTmdPrimitive *)packet;
             KfGpuFT3 *prim;
             u16 vertex1_offset;
             u16 vertex2_offset;
 
-            vertex0 = (KfScreenVertex *)(vertices + triangle->ft3.v0);
-            vertex1_offset = triangle->ft3.v1;
+            vertex0 = (KfScreenVertex *)(vertices + polygon->ft3.v0);
+            vertex1_offset = polygon->ft3.v1;
             vertex1 = (KfScreenVertex *)(vertices + vertex1_offset);
-            vertex2_offset = triangle->ft3.v2;
+            vertex2_offset = polygon->ft3.v2;
             /* Prepared indices are byte offsets into the same projected array. */
             vertex2 = (KfScreenVertex *)((u8 *)vertex1 +
-                ((s32)vertex2_offset - vertex1_offset));
+                (vertex2_offset - vertex1_offset));
             if (NormalClip(vertex0->sxy.word, vertex1->sxy.word,
                            vertex2->sxy.word) <= 0) {
                 continue;
@@ -44,14 +45,14 @@ void render_enqueue_unlit_triangles(u16 object_index, s16 depth_bias)
             prim = (KfGpuFT3 *)primitive_buffer_allocate(sizeof(POLY_FT3));
             primitive = &prim->sdk;
             SetPolyFT3(&prim->sdk);
-            prim->packed.clut = triangle->ft3.cba;
-            prim->packed.tpage = triangle->ft3.tsb;
+            prim->packed.clut = polygon->ft3.cba;
+            prim->packed.tpage = polygon->ft3.tsb;
             prim->packed.xy0 = vertex0->sxy.word;
             prim->packed.xy1 = vertex1->sxy.word;
             prim->packed.xy2 = vertex2->sxy.word;
-            prim->packed.uv0 = triangle->texture.uv0;
-            prim->packed.uv1 = triangle->texture.uv1;
-            prim->packed.uv2 = triangle->texture.uv2;
+            prim->packed.uv0 = polygon->texture.uv0;
+            prim->packed.uv1 = polygon->texture.uv1;
+            prim->packed.uv2 = polygon->texture.uv2;
             setRGB0(&prim->sdk,
                 open_graphics_runtime.floor_item_state.material.color.r,
                 open_graphics_runtime.floor_item_state.material.color.g,
@@ -59,12 +60,11 @@ void render_enqueue_unlit_triangles(u16 object_index, s16 depth_bias)
             break;
         }
         case KF_TMD_MODE_F3: {
-            KfTmdPrimitive *triangle = (KfTmdPrimitive *)packet;
             KfGpuF3 *prim;
 
-            vertex0 = (KfScreenVertex *)(vertices + triangle->f3.v0);
-            vertex1 = (KfScreenVertex *)(vertices + triangle->f3.v1);
-            vertex2 = (KfScreenVertex *)(vertices + triangle->f3.v2);
+            vertex0 = (KfScreenVertex *)(vertices + polygon->f3.v0);
+            vertex1 = (KfScreenVertex *)(vertices + polygon->f3.v1);
+            vertex2 = (KfScreenVertex *)(vertices + polygon->f3.v2);
             if (NormalClip(vertex0->sxy.word, vertex1->sxy.word,
                            vertex2->sxy.word) <= 0) {
                 continue;
@@ -75,7 +75,7 @@ void render_enqueue_unlit_triangles(u16 object_index, s16 depth_bias)
             prim->packed.xy0 = vertex0->sxy.word;
             prim->packed.xy1 = vertex1->sxy.word;
             prim->packed.xy2 = vertex2->sxy.word;
-            setRGB0(&prim->sdk, triangle->f3.r, triangle->f3.g, triangle->f3.b);
+            setRGB0(&prim->sdk, polygon->f3.r, polygon->f3.g, polygon->f3.b);
             break;
         }
         default:

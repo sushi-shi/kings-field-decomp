@@ -19,8 +19,8 @@ void matrix_interpolate(
     s16 count = KF_MATRIX_ROTATION_ELEMENTS - 1;
 
     do {
-        u16 from_value = (u16)*source++;
-        u16 to_value = (u16)*target++;
+        u16 from_value = *source++;
+        u16 to_value = *target++;
 
         *destination++ = from_value + ((((s16)to_value - (s16)from_value) * blend) >> KF_FIXED12_BITS);
     } while (--count != -1);

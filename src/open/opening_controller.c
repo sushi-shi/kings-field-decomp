@@ -26,7 +26,7 @@ RODATA(0x80012020, 0x15)
 ADDRESS(0x800156bc, 0x214)
 void opening_run(KfOpenMode display_mode)
 {
-    void *tim_data;
+    u8 *tim_data;
     KfMemoryAllocationState *allocation_state;
     KF_ENUM_STORAGE(KfOpeningInputAction, s32) scene3_action;
     KF_ENUM_STORAGE(KfOpeningInputAction, s32) skip_action;
@@ -52,12 +52,12 @@ void opening_run(KfOpenMode display_mode)
             return;
         }
         scene3_action = KF_OPENING_INPUT_ADVANCE;
-        tim_upload_images((u_long *)open_graphics_runtime.display_state.asset_load_buffer);
+        tim_upload_images(open_graphics_runtime.display_state.asset_load_buffer);
         skip_action = KF_OPENING_INPUT_SKIP;
         opening_fade_in();
         cd_file_load_allocated(&tim_data, "B0\\MIX0.");
         allocation_state = &memory_arena.allocation;
-        tim_upload_images((u_long *)tim_data);
+        tim_upload_images(tim_data);
         memory_release_last();
         opening_input_action = KF_OPENING_INPUT_NONE;
 
@@ -75,7 +75,7 @@ opening_reload:
         allocation_state->cursor =
             OPENING_ARENA_FROM_ALLOCATION(allocation_state)->start;
         cd_file_load_allocated(&tim_data, "B0\\MIX3.");
-        tim_upload_images((u_long *)tim_data);
+        tim_upload_images(tim_data);
         memory_release_last();
         goto opening_complete;
 

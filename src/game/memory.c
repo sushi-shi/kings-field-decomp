@@ -32,7 +32,7 @@ KfMemoryArena memory_arena;
 ADDRESS(0x8001aab0, 0x38)
 void *memory_malloc_checked(s32 size)
 {
-    u8 *block = (u8 *)malloc(size);
+    void *block = malloc(size);
 
     if ((u32)block + MEMORY_CACHED_RAM_BASE > MEMORY_MAIN_RAM_BYTES - 1) {
         return 0;
@@ -88,11 +88,11 @@ ADDRESS(0x8001ac0c, 0x80)
 void *memory_allocate(s32 size)
 {
     u8 **cursor = &memory_arena.allocation.cursor;
-    u8 *block;
+    void *block;
     s32 depth;
 
     if (*cursor == 0) {
-        block = (u8 *)memory_malloc_checked(size);
+        block = memory_malloc_checked(size);
         size = (s32)block;
     } else {
         block = *cursor;

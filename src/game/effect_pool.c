@@ -3,14 +3,6 @@
 #include <kf/game_effect.h>
 #include <kf/game.h>
 
-typedef char effect_state_alignment[__alignof__(KfEffectState) == 4 ? 1 : -1];
-typedef char effect_state_records_offset[
-    (u32)&((KfEffectState *)0)->records == 0x1e0 ? 1 : -1];
-typedef char effect_state_current_magic_offset[
-    (u32)&((KfEffectState *)0)->current_magic == 0xd20 ? 1 : -1];
-typedef char effect_state_current_record_offset[
-    (u32)&((KfEffectState *)0)->current_record == 0xd24 ? 1 : -1];
-
 enum {
     EFFECT_WIND_CUTTER_PITCH = 850,
     EFFECT_GROUND_BRANCH_DELAY = 6,
@@ -282,7 +274,7 @@ KfEffectRecord *effect_pool_construct(
             record->scale_x = EFFECT_ORBIT_SCALE;
             record->direction.words.x = record->position.vx >> KF_EFFECT_ORBIT_CENTER_SHIFT;
             record->direction.words.z = record->position.vz >> KF_EFFECT_ORBIT_CENTER_SHIFT;
-            record->direction.words.y = (u16)record->position.vy;
+            record->direction.words.y = record->position.vy;
             break;
         case KF_EFFECT_KIND_MOONLIGHT_PROJECTILE:
             record->animation_clip = KF_ANIMATION_CLIP_FIRST;

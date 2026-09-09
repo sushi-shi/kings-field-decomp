@@ -152,7 +152,7 @@ void effect_update_dispatch(void)
 shared_projectile:
         if (phase == KF_EFFECT_PROJECTILE_TRAVEL) {
             collision = effect_map_collision(&effect->position, radius);
-            if (collision != (u32)KF_COLLISION_NONE) {
+            if (collision != KF_COLLISION_NONE) {
                 u16 impact_power;
 
                 impact_magic = current_effect_magic_record;
@@ -255,7 +255,7 @@ lightning_impact:
                     }
                 } else {
                     effect->render_id.billboard = KF_ENUM_DECODE(KfEffectBillboardId,
-                        KF_ENUM_ENCODE(u8, effect->base_render_id.billboard) + ((u8)effect->control.frames_remaining & 1));
+                        KF_ENUM_ENCODE(u8, effect->base_render_id.billboard) + (effect->control.frames_remaining & 1));
                 }
                 return;
             }
@@ -340,7 +340,7 @@ play_phase_sound:
             }
         } else if (phase == KF_EFFECT_PROJECTILE_FALL) {
             effect->direction.words.y += EMERGING_FALL_ACCELERATION;
-            effect->position.vy += (s16)effect->direction.words.y;
+            effect->position.vy += effect->direction.vector.vy;
             if (effect->position.vy
                 > -(map_floor_height_grid.cells[effect->position.vz / KF_MAP_TILE_SIZE]
                                         [effect->position.vx / KF_MAP_TILE_SIZE] * KF_MAP_HEIGHT_STEP)
@@ -364,7 +364,7 @@ play_phase_sound:
 
     case KF_EFFECT_KIND_MOONLIGHT_PROJECTILE:
         if (KF_ENUM_ENCODE(u8, phase) < KF_ENUM_ENCODE(u8, KF_EFFECT_MOONLIGHT_TRAVEL_LAST) + 1) {
-            if (effect_map_collision(&effect->position, PROJECTILE_COLLISION_RADIUS) != (u32)KF_COLLISION_NONE) {
+            if (effect_map_collision(&effect->position, PROJECTILE_COLLISION_RADIUS) != KF_COLLISION_NONE) {
                 effect->animation_clip = KF_ANIMATION_CLIP_NONE;
                 effect->base_render_id.model = KF_EFFECT_MODEL_NONE;
                 effect->render_id.model = KF_EFFECT_MODEL_NONE;
@@ -407,7 +407,7 @@ play_phase_sound:
 
         linked_effect = &effect_pool_records[effect->control.parent_effect_index];
         collision = effect_map_collision(&effect->position, radius);
-        if (collision != (u32)KF_COLLISION_NONE) {
+        if (collision != KF_COLLISION_NONE) {
             collision_kind = collision >> KF_COLLISION_KIND_SHIFT;
             power = effect_magic_power(effect);
             if (collision_kind == (KF_COLLISION_ACTOR >> KF_COLLISION_KIND_SHIFT)) {
@@ -525,9 +525,9 @@ randomize_homing_direction:
         }
 
         effect->rotation.vector.vx = angle_approach(
-            effect->rotation.vector.vx, (s16)effect->direction.words.x, HOMING_TURN_STEP);
+            effect->rotation.vector.vx, effect->direction.vector.vx, HOMING_TURN_STEP);
         effect->rotation.vector.vy = angle_approach(
-            effect->rotation.vector.vy, (s16)effect->direction.words.y, HOMING_TURN_STEP);
+            effect->rotation.vector.vy, effect->direction.vector.vy, HOMING_TURN_STEP);
         local_motion.vy = 0;
         local_motion.vx = 0;
         local_motion.vz = HOMING_FORWARD_STEP;
@@ -539,7 +539,7 @@ randomize_homing_direction:
         addVector(&effect->position, &movement);
         effect->phase++;
         effect->rotation.vector.vz = (effect->rotation.vector.vz + HOMING_ROLL_STEP) & KF_ANGLE_WRAP_MASK;
-        if (effect_map_collision(&effect->position, radius) != (u32)KF_COLLISION_NONE) {
+        if (effect_map_collision(&effect->position, radius) != KF_COLLISION_NONE) {
             if (effect->base_render_id.model == KF_EFFECT_MODEL_HOMING_PROJECTILE_ALTERNATE) {
                 effect_pool_construct(
                     effect->id, effect->type, KF_EFFECT_KIND_RADIAL_BLAST_ALTERNATE,
@@ -715,8 +715,8 @@ advance_effect_phase:
         } else if (KF_ENUM_ENCODE(u8, phase) < KF_ENUM_ENCODE(u8, KF_EFFECT_ACTOR_SPAWNER_TRAVEL_LAST) + 1) {
             VECTOR position;
 
-            position.vx = effect->position.vx + (s16)effect->direction.words.x;
-            position.vz = effect->position.vz + (s16)effect->direction.words.z;
+            position.vx = effect->position.vx + effect->direction.vector.vx;
+            position.vz = effect->position.vz + effect->direction.vector.vz;
             position.vy = effect->position.vy;
             value = collision_query_world(
                 position.vx, position.vy, position.vz, ACTOR_SPAWNER_COLLISION_RADIUS, 0,
@@ -801,8 +801,8 @@ rotate_actor_spawner:
             for (column = 0; column < effect->rotation.vector.vy; column++) {
                 effect_floor_deform_line(
                     effect->rotation.vector.vx + column,
-                    (s16)effect->direction.words.z,
-                    -(s16)effect->direction.words.y);
+                    effect->direction.vector.vz,
+                    -effect->direction.vector.vy);
             }
             break;
         case KF_EFFECT_FLOOR_DEFORM_HOLD:
@@ -825,8 +825,8 @@ invalidate_and_return:
             for (column = 0; column < effect->rotation.vector.vy; column++) {
                 effect_floor_deform_line(
                     effect->rotation.vector.vx + column,
-                    (s16)effect->direction.words.z,
-                    (s16)effect->direction.words.y);
+                    effect->direction.vector.vz,
+                    effect->direction.vector.vy);
             }
             break;
         }

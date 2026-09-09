@@ -18,7 +18,7 @@ DATA(0x80057b84, 0x4)
 s32 audio_voice_slot_index = 9;
 
 DATA(0x80059738, 0x158)
-u8 audio_sequence_table[SS_SEQ_TABSIZ * KF_AUDIO_SEQUENCE_CAPACITY];
+char audio_sequence_table[SS_SEQ_TABSIZ * KF_AUDIO_SEQUENCE_CAPACITY];
 
 DATA(0x80095868, 0x90)
 KfAudioState audio_state;
@@ -35,7 +35,7 @@ void audio_initialize(void)
     s16 inactive_voice_id;
 
     SsInit();
-    SsSetTableSize((char *)audio_sequence_table,
+    SsSetTableSize(audio_sequence_table,
         KF_AUDIO_SEQUENCE_CAPACITY, KF_AUDIO_TRACKS_PER_SEQUENCE);
     SsSetTickMode(SS_TICK60);
     SsStart();
@@ -43,7 +43,7 @@ void audio_initialize(void)
     SsUtSetReverbType(SS_REV_TYPE_STUDIO_C);
     SsUtReverbOn();
     SsUtSetReverbDepth(GAME_REVERB_DEPTH, GAME_REVERB_DEPTH);
-    audio_state.sequence_buffer = (u8 *)memory_allocate(GAME_SEQUENCE_BUFFER_BYTES);
+    audio_state.sequence_buffer = (u_long *)memory_allocate(GAME_SEQUENCE_BUFFER_BYTES);
     audio_state.sequence_active = KF_AUDIO_SEQUENCE_INACTIVE;
     inactive_voice_id = KF_AUDIO_VOICE_INACTIVE;
     index = KF_AUDIO_VOICE_SLOTS - 1;
@@ -81,7 +81,7 @@ void audio_play_map_sequence(u8 sequence_id)
         path[1] = KF_ENUM_ENCODE(u8, player_state.progress_state.current_floor) + '0';
         if (cd_file_load_into(audio_state.sequence_buffer, path) == KF_RESOURCE_LOADED) {
             audio_state.sequence_id = SsSeqOpen(
-                (u32 *)audio_state.sequence_buffer, audio_state.active_vab_id);
+                audio_state.sequence_buffer, audio_state.active_vab_id);
             SsSeqSetVol(audio_state.sequence_id, GAME_SEQUENCE_VOLUME, GAME_SEQUENCE_VOLUME);
             SsSeqPlay(audio_state.sequence_id, SSPLAY_PLAY, SSPLAY_INFINITY);
             audio_state.sequence_active = KF_AUDIO_SEQUENCE_ACTIVE;

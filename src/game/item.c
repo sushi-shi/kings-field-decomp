@@ -87,14 +87,14 @@ ADDRESS(0x80020cfc, 0x5dc)
 void item_load_database(void)
 {
     char name[40] = "\\KF\\ITEM0\\I000.TMD;1";
-    void *stat_data;
+    u8 *stat_data;
     u8 *src;
     s32 i;
 
     if (cd_file_load_allocated(&stat_data, "COM\\STAT.DAT") != KF_RESOURCE_LOADED)
         exit(1);
 
-    src = (u8 *)stat_data;
+    src = stat_data;
     memcpy(&menu_assets, src, sizeof menu_assets);
     src += sizeof menu_assets;
     memcpy(menu_window_layouts, src, sizeof menu_window_layouts);

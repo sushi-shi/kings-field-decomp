@@ -139,7 +139,7 @@ constexpr KfMapObjectAction map_object_action_from_behavior(KfMapObjectBehavior 
     return KF_ENUM_DECODE(KfMapObjectAction, KF_ENUM_ENCODE(u8, behavior));
 }
 #else
-#define map_object_action_from_behavior(behavior) ((KfMapObjectAction)(behavior))
+#define map_object_action_from_behavior(behavior) (behavior)
 #endif
 
 /* Authored groups selected by weapon and boss progress. */
@@ -273,7 +273,6 @@ typedef struct KfMapCopyRegion {
     u8 height;
 } KfMapCopyRegion;
 
-
 typedef union KfMapObjectSpawn {
     u16 sequence;
     u8 effect_id;
@@ -285,8 +284,6 @@ typedef union KfMapObjectParameter {
     u8 object_index;
     KfMapCopyRegionId copy_region;
 } KfMapObjectParameter;
-typedef char check_map_object_parameter_size[
-    sizeof(KfMapObjectParameter) == 1 ? 1 : -1];
 
 typedef struct KfMapObjectLinkFields {
     u8 link_id;
@@ -311,21 +308,6 @@ typedef union KfMapObjectLink {
     u32 words[2];
     u8 bytes[8];
 } KfMapObjectLink;
-
-typedef char check_map_object_spawn_size[sizeof(KfMapObjectSpawn) == 2 ? 1 : -1];
-typedef char check_map_object_link_fields_size[sizeof(KfMapObjectLinkFields) == 8 ? 1 : -1];
-typedef char check_map_object_hinged_container_size[
-    sizeof(KfMapObjectHingedContainer) == 5 ? 1 : -1];
-#define KF_MAP_LINK_OFFSET(field, offset) \
-    typedef char check_map_link_##field[ \
-        (unsigned long)&((KfMapObjectLinkFields *)0)->field == (offset) ? 1 : -1]
-KF_MAP_LINK_OFFSET(link_id, 0);
-KF_MAP_LINK_OFFSET(action_parameter, 1);
-KF_MAP_LINK_OFFSET(spawn, 2);
-KF_MAP_LINK_OFFSET(vertical_velocity, 4);
-KF_MAP_LINK_OFFSET(linked_notification, 6);
-KF_MAP_LINK_OFFSET(default_notification, 7);
-#undef KF_MAP_LINK_OFFSET
 
 /* Encoded model byte is decoded against the consuming image's model table. */
 typedef struct KfMapObjectPlacement {
@@ -352,8 +334,6 @@ typedef union KfMapObjectDefinitionTable {
     KfMapObjectDefinition entries[KF_MAP_OBJECT_DEFINITION_COUNT];
     u32 words[KF_MAP_OBJECT_DEFINITION_WORD_COUNT];
 } KfMapObjectDefinitionTable;
-typedef char check_map_object_definition_table_size[
-    sizeof(KfMapObjectDefinitionTable) == 0x500 ? 1 : -1];
 
 typedef struct KfMapObject {
     KfMapObjectId object_id;
@@ -368,12 +348,6 @@ typedef struct KfMapObject {
     u8 unknown_29;
     KfMapObjectProgress action_timer;
 } KfMapObject;
-
-/* The pool reset and placement loader access the whole link as two words. */
-typedef char check_map_object_link_offset[
-    (unsigned long)&((KfMapObject *)0)->link == 0x20 ? 1 : -1];
-typedef char check_map_placement_link_offset[
-    (unsigned long)&((KfMapObjectPlacement *)0)->link == 0x0c ? 1 : -1];
 
 /*
  * Cutscene camera paths use 0x1c-byte serialized points and a 0x64-byte
@@ -507,28 +481,6 @@ typedef struct KfMapEvent {
     u16 unknown_42;
 } KfMapEvent;
 
-typedef char check_map_object_size[sizeof(KfMapObject) == 0x2c ? 1 : -1];
-typedef char check_map_cell_size[sizeof(KfMapCell) == 2 ? 1 : -1];
-typedef char check_dialogue_state_size[sizeof(KfDialogueState) == 4 ? 1 : -1];
-typedef char check_map_event_size[sizeof(KfMapEvent) == 0x44 ? 1 : -1];
-#define KF_MAP_TRANSFORM_OFFSET_CHECK(type, label, member, offset) \
-    typedef char check_map_transform_##label[ \
-        ((unsigned long)&((type *)0)->member == (offset)) ? 1 : -1]
-KF_MAP_TRANSFORM_OFFSET_CHECK(KfMapObject, object_position, position, 0x08);
-KF_MAP_TRANSFORM_OFFSET_CHECK(KfMapObject, object_position_pad, position.pad, 0x14);
-KF_MAP_TRANSFORM_OFFSET_CHECK(KfMapObject, object_rotation, rotation, 0x18);
-KF_MAP_TRANSFORM_OFFSET_CHECK(KfMapObject, object_rotation_pad, rotation.vector.pad, 0x1e);
-KF_MAP_TRANSFORM_OFFSET_CHECK(KfMapEvent, event_dialogue, dialogue.word, 0x08);
-KF_MAP_TRANSFORM_OFFSET_CHECK(KfMapEvent, event_dialogue_stage, dialogue.fields.stage, 0x09);
-KF_MAP_TRANSFORM_OFFSET_CHECK(KfMapEvent, event_dialogue_page, dialogue.fields.page, 0x0a);
-KF_MAP_TRANSFORM_OFFSET_CHECK(KfMapEvent, event_dialogue_delay, dialogue.fields.page_delay, 0x0b);
-KF_MAP_TRANSFORM_OFFSET_CHECK(KfMapEvent, event_position, reference_position, 0x24);
-KF_MAP_TRANSFORM_OFFSET_CHECK(KfMapEvent, event_position_pad, reference_position.pad, 0x30);
-KF_MAP_TRANSFORM_OFFSET_CHECK(KfMapEvent, event_rotation, rotation, 0x34);
-KF_MAP_TRANSFORM_OFFSET_CHECK(KfMapEvent, event_rotation_pad, rotation.pad, 0x3a);
-KF_MAP_TRANSFORM_OFFSET_CHECK(KfMapEvent, event_animation_cache, animation_cache, 0x3c);
-#undef KF_MAP_TRANSFORM_OFFSET_CHECK
-
 /* Startup clears the definitions, live pool and shared 16-byte control tail. */
 typedef struct KfMapObjectState {
     KfMapObjectDefinitionTable definitions;
@@ -538,12 +490,6 @@ typedef struct KfMapObjectState {
     u16 effect_sequence_170;
     u16 effect_sequence_180;
 } KfMapObjectState;
-
-typedef char KfMapObjectStateSizeCheck[
-    sizeof(KfMapObjectState) == 0x25b8 ? 1 : -1];
-typedef char KfMapObjectStateSequenceOffsetCheck[
-    (u32)&((KfMapObjectState *)0)->effect_sequence_160 == 0x25b2 ? 1 : -1];
-
 
 /* Cleared as 0x2360 bytes; the final 0x2134 bytes are copied by save I/O. */
 typedef struct KfMapRuntimeState {
@@ -615,7 +561,7 @@ extern void map_object_spawn_actor_debris(u16 source, const VECTOR *position, s3
 extern void map_object_spawn_effect(KfMapObjectDropSource kind, KfMapObjectId object_id, const VECTOR *position, s32 y_offset);
 extern void map_object_start_action_if_idle(KfMapObject *object, KfMapObjectAction action);
 extern const u32 *map_resource_copy_words( u32 *destination, const u32 *source, u32 word_count);
-extern void *map_resource_load_file(const char *filename);
+extern u8 *map_resource_load_file(const char *filename);
 extern void map_resource_path_set_floor(KfFloorId floor);
 extern void map_resources_load(KfFloorId floor, KF_ENUM_PARAM(KfMapVariant, s32) map_variant);
 extern void map_unload_floor(void);

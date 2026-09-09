@@ -29,9 +29,9 @@ void render_map_event(KfMapEvent *event)
     SetRotMatrix(&game_graphics_runtime.render_state.view_matrix);
     SetTransMatrix(&game_graphics_runtime.render_state.view_matrix);
     setVector(&screen,
-        (u16)event->reference_position.vx - (u16)game_graphics_runtime.render_state.view_position.vx,
-        (u16)event->reference_position.vy - (u16)game_graphics_runtime.render_state.view_position.vy,
-        (u16)event->reference_position.vz - (u16)game_graphics_runtime.render_state.view_position.vz);
+        event->reference_position.vx - game_graphics_runtime.render_state.view_position.vx,
+        event->reference_position.vy - game_graphics_runtime.render_state.view_position.vy,
+        event->reference_position.vz - game_graphics_runtime.render_state.view_position.vz);
     RotTrans(&screen, (VECTOR *)&composed.t, &flag);
     RotMatrix(&event->rotation, &model);
     MulMatrix0(&game_graphics_runtime.render_state.view_matrix, &model, &composed);

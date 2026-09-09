@@ -11,10 +11,13 @@ Structure recovery is a first-class part of the semantic inventory:
 `kf inventory check` calculates the PlayStation 32-bit C layout from those
 headers and compares it with both TSVs. It rejects missing or duplicate types
 and fields and any disagreement in size, offset, extent, name, or datatype.
-The repository deliberately carries no compile-time size/offset assertions.
+Production C and headers carry no compile-time size/offset assertions.
+Independent target-compiler tests measure selected layouts and reject
+deliberately incorrect fields and gaps. The inventory calculation is not a
+compiler query and does not cover every local or anonymous aggregate.
 
-The current inventory contains 71 structures and 635 fields. Of those fields,
-521 have candidate-or-better meanings; 114 ranges are explicitly `opaque`.
+The current inventory contains 129 structures and 871 fields. Of those fields,
+783 have candidate-or-better meanings; 88 ranges are explicitly `opaque`.
 Opaque fields still preserve exact layout and prevent known interior bytes from
 being mislabeled as independent globals.
 
@@ -31,7 +34,7 @@ Selected checked layouts:
 | `KfMapObject` | `0x2c` | `KfMapObjectDefinition` | `0x08` |
 | `KfMapObjectPlacement` | `0x14` | `KfMatrix` | `0x20` |
 | `KfPitchYaw` | `0x04` | `KfPlayerAttackChargeState` | `0x04` |
-| `KfPlayerLevelGrowth` | `0x0c` | `KfPlayerMotionState` | `0x0a` |
+| `KfPlayerLevelGrowth` | `0x0c` | `KfPlayerMotionState` | `0x0c` |
 | `KfPlayerProgressState` | `0x04` | `KfPlayerVitals` | `0x08` |
 | `KfPlayerState` | `0xe0` |  |  |
 | `KfPoolRecord` | `0x14` | `KfPrimitiveBuffer` | `0x0c` |

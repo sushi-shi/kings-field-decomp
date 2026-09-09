@@ -32,20 +32,6 @@ typedef struct KfMemoryArena {
     s32 system_heap_size;
 } KfMemoryArena;
 
-typedef char KfMemoryAllocationStateSizeCheck[
-    sizeof(KfMemoryAllocationState) == 0x48 ? 1 : -1];
-typedef char KfMemoryArenaSizeCheck[
-    sizeof(KfMemoryArena) == 0x58 ? 1 : -1];
-typedef char KfMemoryArenaAllocationOffsetCheck[
-    (unsigned long)&((KfMemoryArena *)0)->allocation == 8 ? 1 : -1];
-typedef char KfMemoryStackOffsetCheck[
-    (unsigned long)&((KfMemoryAllocationState *)0)->stack == 4 ? 1 : -1];
-
-typedef char KfMemorySystemHeapStartOffsetCheck[
-    (unsigned long)&((KfMemoryArena *)0)->system_heap_start == 0x50 ? 1 : -1];
-typedef char KfMemorySystemHeapSizeOffsetCheck[
-    (unsigned long)&((KfMemoryArena *)0)->system_heap_size == 0x54 ? 1 : -1];
-
 extern KfMemoryArena memory_arena;
 
 extern void *memory_allocate(s32 size);

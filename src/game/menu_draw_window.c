@@ -29,13 +29,13 @@ void menu_draw_window(KfMenuWindowKind kind, s32 count, s32 highlight, KfMenuCon
         do {
             if (row == highlight && confirmation == KF_MENU_CONFIRM_REQUESTED) {
                 menu_blit_sprite_translucent(&menu_assets.row_confirmed_background,
-                    (const MenuPoint *)&layout->rows[row]);
+                    &layout->rows[row].position);
             } else {
                 menu_blit_sprite_translucent(&menu_assets.row_background,
-                    (const MenuPoint *)&layout->rows[row]);
+                    &layout->rows[row].position);
             }
             if (row == highlight) {
-                menu_blit_sprite(&menu_assets.selection_cursor, (const MenuPoint *)&layout->rows[row]);
+                menu_blit_sprite(&menu_assets.selection_cursor, &layout->rows[row].position);
             }
             menu_draw_string(&menu_assets.glyph_atlas, &layout->rows[row]);
             row++;

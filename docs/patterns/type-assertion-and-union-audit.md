@@ -7,6 +7,10 @@ Historical matching dossiers supply hypotheses, not proof of original C
 declarations. Representative retail instructions were rechecked after
 `kf init` verified all three images.
 
+The subsequent implementation and final checks are in
+[type-cleanup.md](type-cleanup.md); the counts below describe the audited
+baseline before that cleanup.
+
 ## Recommendation
 
 Remove layout-assertion declarations from reconstructed C and headers in a

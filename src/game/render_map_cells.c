@@ -37,8 +37,8 @@ static KfCellWindow render_fixed_cell_window = {
 #undef N
 
 /*
- * Keep the unsigned low-halfword view coordinates. RotTrans writes MATRIX.t
- * before MulMatrix0 fills its rotation without overwriting that translation.
+ * The SVECTOR destination narrows the view-relative coordinates. RotTrans
+ * writes MATRIX.t before MulMatrix0 fills its rotation.
  */
 ADDRESS(0x8001e5ec, 0x250)
 void render_map_cell(s32 col, s32 row, KF_ENUM_PARAM(KfCellVisibility, char) cell)
@@ -47,45 +47,42 @@ void render_map_cell(s32 col, s32 row, KF_ENUM_PARAM(KfCellVisibility, char) cel
     SVECTOR position;
     long flag;
     s32 orient;
-    union {
-        KfMapAttribute attribute;
-        u8 object_index;
-    } selection;
+    u8 object_index;
     s16 staff_timer;
 
-    selection.attribute = map_cell_attribute_grid.cells[row][col];
-    if (selection.attribute == KF_MAP_ATTRIBUTE_NONE) {
+    object_index = KF_ENUM_ENCODE(u8, map_cell_attribute_grid.cells[row][col]);
+    if (object_index == KF_ENUM_ENCODE(u8, KF_MAP_ATTRIBUTE_NONE)) {
         return;
     }
     staff_timer = player_state.illusion_staff_timer;
     /* Two-on/two-off updates; -1 disables the authored mesh remapping. */
     if (staff_timer != KF_ILLUSION_STAFF_INACTIVE
         && (staff_timer & ILLUSION_STAFF_REMAP_PHASE_MASK) < ILLUSION_STAFF_REMAP_ACTIVE_UPDATES) {
-        switch (selection.attribute) {
-        case KF_MAP_ATTRIBUTE_44:
-            selection.attribute = KF_MAP_ATTRIBUTE_17;
+        switch (object_index) {
+        case KF_ENUM_ENCODE(u8, KF_MAP_ATTRIBUTE_44):
+            object_index = KF_ENUM_ENCODE(u8, KF_MAP_ATTRIBUTE_17);
             break;
-        case KF_MAP_ATTRIBUTE_HIDDEN_DOOR:
-            selection.attribute = KF_MAP_ATTRIBUTE_18;
+        case KF_ENUM_ENCODE(u8, KF_MAP_ATTRIBUTE_HIDDEN_DOOR):
+            object_index = KF_ENUM_ENCODE(u8, KF_MAP_ATTRIBUTE_18);
             break;
-        case KF_MAP_ATTRIBUTE_46:
-            selection.attribute = KF_MAP_ATTRIBUTE_19;
+        case KF_ENUM_ENCODE(u8, KF_MAP_ATTRIBUTE_46):
+            object_index = KF_ENUM_ENCODE(u8, KF_MAP_ATTRIBUTE_19);
             break;
         }
     }
-    selection.object_index = KF_ENUM_ENCODE(u8, selection.attribute) - 1;
-    if (selection.object_index > KF_MAP_MESHES_PER_BANK - 1) {
+    object_index = object_index - 1;
+    if (object_index > KF_MAP_MESHES_PER_BANK - 1) {
         return;
     }
     orient = KF_ENUM_ENCODE(u8, map_cell_orientation_grid.cells[row][col]) - 1;
     if (cell == KF_CELL_WINDOW_DISTANT) {
-        selection.object_index += KF_MAP_MESHES_PER_BANK;
+        object_index += KF_MAP_MESHES_PER_BANK;
     }
     setVector(&position,
-        col * KF_MAP_TILE_SIZE - (u16)game_graphics_runtime.render_state.view_position.vx,
+        col * KF_MAP_TILE_SIZE - game_graphics_runtime.render_state.view_position.vx,
         map_floor_height_grid.cells[row][col] * -KF_MAP_HEIGHT_STEP
-            - (u16)game_graphics_runtime.render_state.view_position.vy,
-        row * KF_MAP_TILE_SIZE - (u16)game_graphics_runtime.render_state.view_position.vz);
+            - game_graphics_runtime.render_state.view_position.vy,
+        row * KF_MAP_TILE_SIZE - game_graphics_runtime.render_state.view_position.vz);
     if (orient == KF_ENUM_ENCODE(u8, KF_MAP_ORIENT_QUARTER_TURN) - 1) {
         position.vz += KF_MAP_TILE_SIZE;
     } else if (orient == KF_ENUM_ENCODE(u8, KF_MAP_ORIENT_HALF_TURN) - 1) {
@@ -103,8 +100,8 @@ void render_map_cell(s32 col, s32 row, KF_ENUM_PARAM(KfCellVisibility, char) cel
     SetRotMatrix(&cell_matrix);
     SetTransMatrix(&cell_matrix);
     SetLightMatrix(&game_graphics_runtime.light_quadrant_matrices[orient]);
-    tmd_select_object_vertices(selection.object_index);
-    render_enqueue_map(selection.object_index);
+    tmd_select_object_vertices(object_index);
+    render_enqueue_map(object_index);
 }
 
 /*
@@ -127,7 +124,7 @@ void render_map_cells(void)
     u8 cols;
 
     /* Directional windows apply only for -45 degrees < pitch < 45 degrees. */
-    if ((u16)((u16)game_graphics_runtime.render_state.view_rotation.vx + (KF_ANGLE_EIGHTH_TURN - 1))
+    if ((u16)(game_graphics_runtime.render_state.view_rotation.vx + (KF_ANGLE_EIGHTH_TURN - 1))
         >= 2 * KF_ANGLE_EIGHTH_TURN - 1) {
         game_graphics_runtime.active_cell_window = &render_fixed_cell_window;
     } else {

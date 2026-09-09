@@ -66,7 +66,7 @@ void map_event_update_wander(void)
     if (collision_query_world(
             point.vx, KF_COLLISION_IGNORE_HEIGHT, point.vz, event->radius, 0,
             KF_COLLISION_SKIP_MAP_EVENTS | (0x80 << KF_COLLISION_CELL_FLAG_SHIFT))
-            == (u32)KF_COLLISION_NONE) {
+            == KF_COLLISION_NONE) {
         event->reference_position.vx = point.vx;
         event->reference_position.vz = point.vz;
         event->cell_x = point.vx / KF_MAP_TILE_SIZE;
@@ -263,17 +263,17 @@ void map_world_state_persist(void)
 
     object = &map_object_state.objects[KF_MAP_OBJECT_GOLD_DROP_FIRST];
     for (i = 0; i < KF_MAP_OBJECT_EFFECT_GROUP_CAPACITY; i++, object++) {
-        *out++ = (u8)object->cell_x;
-        *out++ = (u8)object->cell_z;
+        *out++ = object->cell_x;
+        *out++ = object->cell_z;
         *out++ = object->link.fields.link_id;
-        *out++ = (u8)(object->link.gold_amount >> 8);
+        *out++ = object->link.gold_amount >> 8;
     }
 
     object = &map_object_state.objects[KF_MAP_OBJECT_DEFINITION_DROP_FIRST];
     for (i = 0; i < 2 * KF_MAP_OBJECT_EFFECT_GROUP_CAPACITY; i++, object++) {
-        *out++ = (u8)object->cell_x;
-        *out++ = (u8)object->cell_z;
-        *out++ = (u8)((u16)object->rotation.angles.y >> KF_MAP_SAVED_YAW_SHIFT);
+        *out++ = object->cell_x;
+        *out++ = object->cell_z;
+        *out++ = (u16)object->rotation.angles.y >> KF_MAP_SAVED_YAW_SHIFT;
     }
 }
 

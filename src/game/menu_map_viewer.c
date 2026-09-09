@@ -44,7 +44,7 @@ void menu_map_viewer(KF_ENUM_PARAM(KfItemId, s32) item_code)
     buffer = game_graphics_runtime.display_state.primitive_buffer->cursor;
     if (cd_file_load_into(buffer, path) != KF_RESOURCE_LOADED)
         return;
-    tim_upload_images((u_long *)buffer);
+    tim_upload_images(buffer);
 
     SetPolyFT4(&poly_bg[0]);
     SetSemiTrans(&poly_bg[0], 1);

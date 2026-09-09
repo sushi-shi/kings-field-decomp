@@ -785,7 +785,7 @@ KfBool32 menu_load_message_image(s32 message_id)
         if (cd_file_load_into(buffer, path) != KF_RESOURCE_LOADED) {
             return KF_TRUE;
         }
-        tim_upload_images((u_long *)buffer);
+        tim_upload_images(buffer);
     }
     return KF_FALSE;
 }
@@ -833,7 +833,7 @@ void screen_show_image_until_input(const char *path)
     if (cd_file_load_into(game_graphics_runtime.display_state.asset_load_buffer, path) != KF_RESOURCE_LOADED) {
         return;
     }
-    tim_upload_images((u_long *)game_graphics_runtime.display_state.asset_load_buffer);
+    tim_upload_images(game_graphics_runtime.display_state.asset_load_buffer);
     index = game_graphics_runtime.display_state.buffer_index == KF_DISPLAY_BUFFER_FIRST;
     game_graphics_runtime.display_draw_environments[index].isbg = 0;
     game_graphics_runtime.display_draw_environments[index].dfe = 0;
