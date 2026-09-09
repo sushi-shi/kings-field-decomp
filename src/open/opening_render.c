@@ -24,25 +24,10 @@ void sprite_add_g4(const KfScreenRect *position, const CVECTOR *color0, const CV
 
     open_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_G4);
     SetPolyG4(prim);
-    prim->x0 = position->x;
-    prim->y0 = position->y;
-    prim->x1 = position->x + position->w;
-    prim->y1 = position->y;
-    prim->x2 = position->x;
-    prim->y2 = position->y + position->h;
-    prim->x3 = position->x + position->w;
-    prim->y3 = position->y + position->h;
-    prim->r0 = color0->r;
-    prim->g0 = color0->g;
-    prim->b0 = color0->b;
-    prim->r1 = color1->r;
-    prim->g1 = color1->g;
-    prim->b1 = color1->b;
-    prim->r2 = color2->r;
-    prim->g2 = color2->g;
-    prim->b2 = color2->b;
-    prim->r3 = color3->r;
-    prim->g3 = color3->g;
-    prim->b3 = color3->b;
+    setXYWH(prim, position->x, position->y, position->w, position->h);
+    setRGB0(prim, color0->r, color0->g, color0->b);
+    setRGB1(prim, color1->r, color1->g, color1->b);
+    setRGB2(prim, color2->r, color2->g, color2->b);
+    setRGB3(prim, color3->r, color3->g, color3->b);
     AddPrim(&open_graphics_runtime.ordering_table[ENDING_GRADIENT_OT_DEPTH], prim);
 }

@@ -809,3 +809,7 @@ promotes a probe to a proven historical toolchain.
 - [Array enum review](array-enum-review.md): every array declaration and explicit
   aggregate initializer, typed overlay argument slots and fixed floor-sprite
   selectors, with unchanged compiled objects.
+
+- [Sony SDK header helpers](sony-header-helpers.md): Release 2.5 macro/inline
+  census, candidate source families, retail GTE negative controls and fifteen
+  instruction-preserving SDK macro uses in sprite/camera code.
