@@ -33,9 +33,9 @@ void render_actor(KfActor *actor)
     SetRotMatrix(&game_graphics_runtime.render_state.view_matrix);
     SetTransMatrix(&game_graphics_runtime.render_state.view_matrix);
     setVector(&screen,
-        (u16)actor->position.vx - (u16)game_graphics_runtime.render_state.view_position.vx,
-        (u16)actor->position.vy - (u16)game_graphics_runtime.render_state.view_position.vy,
-        (u16)actor->position.vz - (u16)game_graphics_runtime.render_state.view_position.vz);
+        actor->position.vx - game_graphics_runtime.render_state.view_position.vx,
+        actor->position.vy - game_graphics_runtime.render_state.view_position.vy,
+        actor->position.vz - game_graphics_runtime.render_state.view_position.vz);
     RotTrans(&screen, (VECTOR *)&model.t, &flag);
     matrix_set_rotation_x(actor->rotation.angles.x, &model);
     matrix_set_rotation_y(-actor->rotation.angles.y, &rot_y);
@@ -83,9 +83,9 @@ void render_map_object(KfMapObject *object)
     SetRotMatrix(&game_graphics_runtime.render_state.view_matrix);
     SetTransMatrix(&game_graphics_runtime.render_state.view_matrix);
     setVector(&screen,
-        (u16)object->position.vx - (u16)game_graphics_runtime.render_state.view_position.vx,
-        (u16)object->position.vy - (u16)game_graphics_runtime.render_state.view_position.vy,
-        (u16)object->position.vz - (u16)game_graphics_runtime.render_state.view_position.vz);
+        object->position.vx - game_graphics_runtime.render_state.view_position.vx,
+        object->position.vy - game_graphics_runtime.render_state.view_position.vy,
+        object->position.vz - game_graphics_runtime.render_state.view_position.vz);
     RotTrans(&screen, (VECTOR *)&model.t, &flag);
     matrix_set_rotation_x(object->rotation.angles.x, &rot_x);
     matrix_set_rotation_y(object->rotation.angles.y, &model);

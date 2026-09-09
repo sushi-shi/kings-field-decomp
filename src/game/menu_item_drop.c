@@ -263,14 +263,11 @@ KfMenuConfirmResult menu_save_panel(void)
     s32 input = 0;
     s32 prev;
     KfMenuConfirmResult result = KF_MENU_CONFIRM_PENDING;
-    union {
-        KfSaveResult operation;
-        KfSaveCleanupResult cleanup;
-    } status;
+    s32 status;
     s32 i;
 
-    status.operation = save_system_read_catalog(summaries);
-    if (status.operation != KF_SAVE_RESULT_OK && status.operation != KF_SAVE_RESULT_NO_SPACE) {
+    status = KF_ENUM_ENCODE(s32, save_system_read_catalog(summaries));
+    if (status != KF_ENUM_ENCODE(s32, KF_SAVE_RESULT_OK) && status != KF_ENUM_ENCODE(s32, KF_SAVE_RESULT_NO_SPACE)) {
         menu_play_input_sound(MENU_SOUND_CURSOR);
         while (PadRead(1) == 0) {
             menu_frame_begin();
@@ -297,8 +294,8 @@ KfMenuConfirmResult menu_save_panel(void)
 
         if (confirm == KF_MENU_CONFIRM_REQUESTED && cursor != KF_MENU_SAVE_RETURN_ROW) {
             if (cursor == KF_MENU_SAVE_FORMAT_ROW) {
-                status.cleanup = save_file_cleanup_temporary();
-                if (status.cleanup == KF_SAVE_CLEANUP_TEMP_OPENED) {
+                status = KF_ENUM_ENCODE(s32, save_file_cleanup_temporary());
+                if (status == KF_ENUM_ENCODE(s32, KF_SAVE_CLEANUP_TEMP_OPENED)) {
                     menu_load_item_texture(MENU_TEXTURE_CONFIRM_CARD_FORMAT);
                     while (PadRead(1) == 0) {
                         menu_frame_begin();
@@ -326,7 +323,7 @@ KfMenuConfirmResult menu_save_panel(void)
                         menu_draw_window(KF_MENU_WINDOW_SAVE, KF_MENU_SAVE_ROW_COUNT, cursor, confirm);
                         menu_present_frame();
                     }
-                    status.operation = save_system_write_slot(KF_ENUM_DECODE(KfSaveSlotArgument, cursor + KF_ENUM_ENCODE(s16, KF_SAVE_SLOT_FIRST)));
+                    status = KF_ENUM_ENCODE(s32, save_system_write_slot(KF_ENUM_DECODE(KfSaveSlotArgument, cursor + KF_ENUM_ENCODE(s16, KF_SAVE_SLOT_FIRST))));
                 } else if (cursor == KF_MENU_SAVE_FORMAT_ROW) {
                     menu_load_item_texture(MENU_TEXTURE_FORMATTING_CARD);
                     for (i = 0; i < 3; i++) {
@@ -336,11 +333,11 @@ KfMenuConfirmResult menu_save_panel(void)
                         menu_draw_window(KF_MENU_WINDOW_SAVE, KF_MENU_SAVE_ROW_COUNT, cursor, confirm);
                         menu_present_frame();
                     }
-                    status.operation = memory_card_check_or_format(KF_CARD_FORMAT_CONFIRMED);
+                    status = KF_ENUM_ENCODE(s32, memory_card_check_or_format(KF_CARD_FORMAT_CONFIRMED));
                     memset(summaries, 0, sizeof(summaries));
                 }
 
-                if (status.operation != KF_SAVE_RESULT_OK) {
+                if (status != KF_ENUM_ENCODE(s32, KF_SAVE_RESULT_OK)) {
                     while (PadRead(1) == 0) {
                         menu_frame_begin();
                         menu_add_frame_quad();

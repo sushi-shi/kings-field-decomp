@@ -15,19 +15,6 @@ enum {
     NOTIFICATION_ATLAS_ROW_SHIFT = 4
 };
 
-typedef char notification_control_offset[
-    (u32)&((KfNotificationState *)0)->control == 0x10 ? 1 : -1];
-typedef char notification_tail_offset[
-    (u32)&((KfNotificationControl *)0)->queue_tail == 0 ? 1 : -1];
-typedef char notification_head_offset[
-    (u32)&((KfNotificationControl *)0)->queue_head == 1 ? 1 : -1];
-typedef char notification_phase_offset[
-    (u32)&((KfNotificationControl *)0)->effect_phase == 2 ? 1 : -1];
-typedef char notification_hold_offset[
-    (u32)&((KfNotificationControl *)0)->hold_frames == 3 ? 1 : -1];
-typedef char notification_angle_offset[
-    (u32)&((KfNotificationControl *)0)->effect_angle_x == 4 ? 1 : -1];
-
 DATA(0x80055d20, 0x54)
 KfNotificationSprite notification_sprites[KF_NOTIFICATION_SPRITE_COUNT] = {
     {KF_NOTIFICATION_SPRITE_HIDDEN, 0, {0, 0, 0x7f, 0x0f, 0xffc0, 0xffa0, 0x7f, 0x0f}},

@@ -73,9 +73,9 @@ void render_floor_item(KfFloorItem *item)
     SetRotMatrix(&game_graphics_runtime.render_state.view_matrix);
     SetTransMatrix(&game_graphics_runtime.render_state.view_matrix);
     setVector(&screen,
-        (u16)item->position_x - (u16)game_graphics_runtime.render_state.view_position.vx,
-        (u16)item->position_y - (u16)game_graphics_runtime.render_state.view_position.vy,
-        (u16)item->position_z - (u16)game_graphics_runtime.render_state.view_position.vz);
+        item->position_x - game_graphics_runtime.render_state.view_position.vx,
+        item->position_y - game_graphics_runtime.render_state.view_position.vy,
+        item->position_z - game_graphics_runtime.render_state.view_position.vz);
     RotTrans(&screen, (VECTOR *)&model.t, &flag);
     facing = floor_item_facing(item->facing_and_frame_count);
     if (KF_ENUM_ENCODE(u8, facing) != KF_ENUM_ENCODE(u8, KF_FLOOR_ITEM_FACING_BILLBOARD)) {
@@ -124,9 +124,9 @@ void render_actor_sprite(KfEffectRecord *sprite)
     SetRotMatrix(&game_graphics_runtime.render_state.view_matrix);
     SetTransMatrix(&game_graphics_runtime.render_state.view_matrix);
     setVector(&screen,
-        (u16)sprite->position.vx - (u16)game_graphics_runtime.render_state.view_position.vx,
-        (u16)sprite->position.vy - (u16)game_graphics_runtime.render_state.view_position.vy,
-        (u16)sprite->position.vz - (u16)game_graphics_runtime.render_state.view_position.vz);
+        sprite->position.vx - game_graphics_runtime.render_state.view_position.vx,
+        sprite->position.vy - game_graphics_runtime.render_state.view_position.vy,
+        sprite->position.vz - game_graphics_runtime.render_state.view_position.vz);
     RotTrans(&screen, (VECTOR *)&model.t, &flag);
     matrix_set_rotation_yxz(&sprite->rotation.angles, &model);
     setVector(&scale, (s16)sprite->scale_x, (s16)sprite->scale_y, (s16)sprite->scale_z);

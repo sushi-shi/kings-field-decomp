@@ -81,17 +81,6 @@ typedef struct KfWeaponRecord {
     SVECTOR render_rotation;
 } KfWeaponRecord;
 
-typedef char check_weapon_record_size[sizeof(KfWeaponRecord) == 0x2c ? 1 : -1];
-#define KF_WEAPON_OFFSET_CHECK(field, offset) \
-    typedef char check_weapon_##field[ \
-        (unsigned long)&((KfWeaponRecord *)0)->field == (offset) ? 1 : -1]
-KF_WEAPON_OFFSET_CHECK(projection_distance, 0x10);
-KF_WEAPON_OFFSET_CHECK(attack_z_offset, 0x12);
-KF_WEAPON_OFFSET_CHECK(render_translation, 0x1c);
-KF_WEAPON_OFFSET_CHECK(unknown_22, 0x22);
-KF_WEAPON_OFFSET_CHECK(render_rotation, 0x24);
-#undef KF_WEAPON_OFFSET_CHECK
-
 /* The resource loaders copy the complete tables in aligned words. */
 typedef union KfWeaponTable {
     KfWeaponRecord entries[KF_WEAPON_RECORD_COUNT];
@@ -102,9 +91,6 @@ typedef union KfArmorTable {
     KfArmorRecord entries[KF_ARMOR_RECORD_COUNT];
     u32 words[KF_ARMOR_TABLE_WORD_COUNT];
 } KfArmorTable;
-
-typedef char check_weapon_table_size[sizeof(KfWeaponTable) == 0x2c0 ? 1 : -1];
-typedef char check_armor_table_size[sizeof(KfArmorTable) == 0x498 ? 1 : -1];
 
 extern KfWeaponTable weapon_records;
 extern KfArmorTable armor_records;

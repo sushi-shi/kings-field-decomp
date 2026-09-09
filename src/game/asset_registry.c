@@ -15,11 +15,13 @@ void asset_registry_load_tmd_archive(u16 first_asset_id, u8 *archive)
 
     archive += KF_ASSET_ARCHIVE_HEADER_BYTES;
     while (count-- != 0) {
-        ((KfAssetHeader **)game_graphics_runtime.unknown_registry_20134)[first_asset_id] = (KfAssetHeader *)archive;
+        KfAssetHeader *asset = (KfAssetHeader *)archive;
+
+        ((KfAssetHeader **)game_graphics_runtime.unknown_registry_20134)[first_asset_id] = asset;
         asset_registry_select(first_asset_id);
         tmd_prepare_primitive_indices();
         first_asset_id++;
-        archive += ((KfAssetHeader *)archive)->byte_size;
+        archive += asset->byte_size;
     }
 }
 

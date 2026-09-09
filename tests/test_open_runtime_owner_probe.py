@@ -4,7 +4,6 @@ from __future__ import annotations
 import os
 import shutil
 import struct
-import subprocess
 import unittest
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -85,29 +84,50 @@ class OpenRuntimeOwnerProbeTests(unittest.TestCase):
         return cpp, cc1, sdk
 
     def test_complete_region_layout_and_wrong_gap_control(self):
-        cpp, cc1, sdk = self.tools()
+        _, _, sdk = self.tools()
         original = HEADER.read_text()
+        manifest = load_manifest()
+        unit = manifest.by_name()['open.render_init']
+        profile = manifest.profiles[unit.profile]
+        fields = (
+            ('display_state', 0x0), ('ordering_table', 0x20024),
+            ('display_draw_environments', 0x20028), ('display_disp_environments', 0x200E0),
+            ('unknown_20108', 0x20108), ('tmd_state', 0x20110),
+            ('unknown_2011c', 0x2011C), ('current_tmd_vertices', 0x20120),
+            ('unknown_20124', 0x20124), ('tmd_projected_vertices', 0x20138),
+            ('unknown_22078', 0x22078), ('floor_item_state', 0x23FE0),
+            ('DAT_8006e040', 0x245F8), ('DAT_8006e044', 0x245FC),
+            ('render_state', 0x24600), ('light_quadrant_matrices', 0x24700),
+            ('active_cell_window', 0x24780), ('tmd_projection_shift', 0x24784),
+            ('unknown_24786', 0x24786),
+        )
+        query = ('\nunsigned long layout[] = {\n'
+                 + ',\n'.join('(unsigned long)&((KfGraphicsRuntimeOpen *)0)->' + name
+                             for name, _ in fields)
+                 + ',\nsizeof(KfGraphicsRuntimeOpen)};\n')
+        expected = tuple(offset for _, offset in fields) + (0x24788,)
         with TemporaryDirectory(prefix="kf-open-runtime-layout-") as directory:
             root = Path(directory)
             for gap in (0x1F68, 0x1F64):
                 with self.subTest(gap=gap):
                     source = root / "layout.c"
-                    source.write_text(original.replace("[0x1f68]", f"[{gap:#x}]"))
-                    preprocessed = subprocess.run(
-                        [cpp, "-lang-c", "-undef", "-nostdinc", "-I", str(REPO / "include"),
-                         "-I", sdk, str(source)], capture_output=True, check=True,
+                    source.write_text(original.replace("[0x1f68]", f"[{gap:#x}]") + query)
+                    output = root / unit.object_name
+                    compile_source(
+                        source, unit.image, output, BUILD / 'delink', profile.optimization,
+                        profile.small_data, profile.aspsx_version,
+                        (REPO / 'include', Path(sdk)), profile.cc1_flags,
+                        profile.compiler, profile.maspsx_flags, defines=unit.defines,
                     )
-                    intermediate = root / "layout.i"
-                    intermediate.write_bytes(preprocessed.stdout)
-                    result = subprocess.run(
-                        [cc1, "-quiet", "-O2", "-G0", "-mcpu=r2000", str(intermediate),
-                         "-o", str(root / "layout.s")], capture_output=True, text=True,
-                    )
+                    obj = _load_object(output)
+                    symbol = obj.named_symbol('layout')
+                    measured = struct.unpack_from('<20I', obj.sections['.data'], symbol.value)
                     if gap == 0x1F68:
-                        self.assertEqual(result.returncode, 0, result.stderr)
+                        self.assertEqual(measured, expected)
                     else:
-                        self.assertNotEqual(result.returncode, 0)
-                        self.assertIn("check_floor_item_state", result.stderr)
+                        self.assertNotEqual(measured, expected)
+                        self.assertEqual(measured[:11], expected[:11])
+                        self.assertEqual(measured[11:], tuple(offset - 4 for offset in expected[11:]))
 
     def test_initializer_and_allocator_retain_every_linked_instruction(self):
         self.check_exact_consumers("open.render_init", {

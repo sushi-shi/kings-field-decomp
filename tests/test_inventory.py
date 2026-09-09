@@ -253,9 +253,9 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["data"], 2918)
         self.assertGreaterEqual(counts["functions_named"], 240)
         self.assertGreaterEqual(counts["data_named"], 100)
-        self.assertEqual(counts["structures"], 130)
-        self.assertEqual(counts["structure_fields"], 868)
-        self.assertEqual(counts["structure_fields_named"], 781)
+        self.assertEqual(counts["structures"], 129)
+        self.assertEqual(counts["structure_fields"], 865)
+        self.assertEqual(counts["structure_fields_named"], 778)
 
     def test_animation_cache_slots_share_one_pointer_type_without_layout_changes(self) -> None:
         structures = load_structure_identities(RETAIL_CONFIG)
@@ -3145,7 +3145,7 @@ class InventoryTests(unittest.TestCase):
             (sequence_table.name, sequence_table.datatype, sequence_table.size),
             (
                 "audio_sequence_table",
-                "u8[SS_SEQ_TABSIZ * 2]",
+                "char[SS_SEQ_TABSIZ * 2]",
                 0x158,
             ),
         )

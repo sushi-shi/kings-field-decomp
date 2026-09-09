@@ -30,9 +30,6 @@ enum {
     MENU_TEXT_OT_DEPTH = 1000
 };
 
-typedef char menu_window_row_codes_offset[
-    (u32)&((MenuWindowLayout *)0)->rows[0].glyphs.codes == 0x1c ? 1 : -1];
-
 /*
  * Contiguous GAME.EXE menu presentation/runtime run
  * 0x800291ec..0x8002b078. The original source boundary is WIP.
@@ -591,7 +588,7 @@ KF_ENUM_PARAM(KfResourceLoadResult, u32) menu_load_item_texture(KfMenuTextureId 
         if (cd_file_load_into(destination, name) != KF_RESOURCE_LOADED) {
             return KF_RESOURCE_LOAD_FAILED;
         }
-        tim_upload_images((u_long *)destination);
+        tim_upload_images(destination);
     }
     return KF_RESOURCE_LOADED;
 }

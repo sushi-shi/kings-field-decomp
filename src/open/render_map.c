@@ -17,6 +17,7 @@ CVECTOR map_textured_primitive_color = {
 ADDRESS(0x800185e8, 0x3b8)
 void render_enqueue_map(u16 object_index)
 {
+    KfTmdPrimitive *primitive;
     KfTmdObject *object = tmd_get_object(object_index);
     u32 header;
     u8 *normals = (u8 *)open_graphics_runtime.tmd_state.current_asset +
@@ -40,32 +41,32 @@ void render_enqueue_map(u16 object_index)
 
         header = *(u32 *)packet;
         packet += KF_TMD_PACKET_HEADER_BYTES;
+        primitive = (KfTmdPrimitive *)packet;
         switch (tmd_packet_mode(header)) {
         case KF_TMD_MODE_FT4: {
-            KfTmdPrimitive *polygon = (KfTmdPrimitive *)packet;
             s32 depth;
 
-            vertex0 = (KfScreenVertex *)(vertices + polygon->ft4.v0);
-            vertex1 = (KfScreenVertex *)(vertices + polygon->ft4.v1);
-            vertex2 = (KfScreenVertex *)(vertices + polygon->ft4.v2);
+            vertex0 = (KfScreenVertex *)(vertices + primitive->ft4.v0);
+            vertex1 = (KfScreenVertex *)(vertices + primitive->ft4.v1);
+            vertex2 = (KfScreenVertex *)(vertices + primitive->ft4.v2);
             if (NormalClip(vertex0->sxy.word, vertex1->sxy.word, vertex2->sxy.word) <= 0) {
                 continue;
             }
-            vertex3 = (KfScreenVertex *)(vertices + polygon->ft4.v3);
+            vertex3 = (KfScreenVertex *)(vertices + primitive->ft4.v3);
             prim = (KfMapGpuPrimitive *)primitive_buffer_allocate(sizeof(POLY_GT4));
             SetPolyGT4(&prim->quad.sdk);
-            prim->quad.packed.clut = polygon->ft4.cba;
-            prim->quad.packed.tpage = polygon->ft4.tsb;
+            prim->quad.packed.clut = primitive->ft4.cba;
+            prim->quad.packed.tpage = primitive->ft4.tsb;
             prim->quad.packed.xy0 = vertex0->sxy.word;
             prim->quad.packed.xy1 = vertex1->sxy.word;
             prim->quad.packed.xy2 = vertex2->sxy.word;
             prim->quad.packed.xy3 = vertex3->sxy.word;
-            prim->quad.packed.uv0 = polygon->texture.uv0;
-            prim->quad.packed.uv1 = polygon->texture.uv1;
-            prim->quad.packed.uv2 = polygon->texture.uv2;
-            prim->quad.packed.uv3 = polygon->texture.uv3;
+            prim->quad.packed.uv0 = primitive->texture.uv0;
+            prim->quad.packed.uv1 = primitive->texture.uv1;
+            prim->quad.packed.uv2 = primitive->texture.uv2;
+            prim->quad.packed.uv3 = primitive->texture.uv3;
             map_textured_primitive_color.cd = prim->quad.sdk.code;
-            NormalColorCol((SVECTOR *)(normals + polygon->ft4.n0),
+            NormalColorCol((SVECTOR *)(normals + primitive->ft4.n0),
                            &map_textured_primitive_color, &shade);
             DpqColor(&shade, vertex0->p2, &prim->quad.packed.color0);
             DpqColor(&shade, vertex1->p2, &prim->quad.packed.color1);
@@ -82,27 +83,26 @@ void render_enqueue_map(u16 object_index)
             break;
         }
         case KF_TMD_MODE_FT3: {
-            KfTmdPrimitive *polygon = (KfTmdPrimitive *)packet;
             s32 depth;
 
-            vertex0 = (KfScreenVertex *)(vertices + polygon->ft3.v0);
-            vertex1 = (KfScreenVertex *)(vertices + polygon->ft3.v1);
-            vertex2 = (KfScreenVertex *)(vertices + polygon->ft3.v2);
+            vertex0 = (KfScreenVertex *)(vertices + primitive->ft3.v0);
+            vertex1 = (KfScreenVertex *)(vertices + primitive->ft3.v1);
+            vertex2 = (KfScreenVertex *)(vertices + primitive->ft3.v2);
             if (NormalClip(vertex0->sxy.word, vertex1->sxy.word, vertex2->sxy.word) <= 0) {
                 continue;
             }
             prim = (KfMapGpuPrimitive *)primitive_buffer_allocate(sizeof(POLY_GT3));
             SetPolyGT3(&prim->triangle.sdk);
-            prim->triangle.packed.clut = polygon->ft3.cba;
-            prim->triangle.packed.tpage = polygon->ft3.tsb;
+            prim->triangle.packed.clut = primitive->ft3.cba;
+            prim->triangle.packed.tpage = primitive->ft3.tsb;
             prim->triangle.packed.xy0 = vertex0->sxy.word;
             prim->triangle.packed.xy1 = vertex1->sxy.word;
             prim->triangle.packed.xy2 = vertex2->sxy.word;
-            prim->triangle.packed.uv0 = polygon->texture.uv0;
-            prim->triangle.packed.uv1 = polygon->texture.uv1;
-            prim->triangle.packed.uv2 = polygon->texture.uv2;
+            prim->triangle.packed.uv0 = primitive->texture.uv0;
+            prim->triangle.packed.uv1 = primitive->texture.uv1;
+            prim->triangle.packed.uv2 = primitive->texture.uv2;
             map_textured_primitive_color.cd = prim->triangle.sdk.code;
-            NormalColorCol((SVECTOR *)(normals + polygon->ft3.n0),
+            NormalColorCol((SVECTOR *)(normals + primitive->ft3.n0),
                            &map_textured_primitive_color, &shade);
             DpqColor(&shade, vertex0->p2, &prim->triangle.packed.color0);
             DpqColor(&shade, vertex1->p2, &prim->triangle.packed.color1);

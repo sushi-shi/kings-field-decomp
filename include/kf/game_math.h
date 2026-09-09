@@ -48,9 +48,6 @@ typedef union KfRotation {
     struct KfEulerAngles angles;
 } KfRotation;
 
-typedef char check_rotation_size[sizeof(KfRotation) == 8 ? 1 : -1];
-typedef char check_euler_angles_size[sizeof(struct KfEulerAngles) == 6 ? 1 : -1];
-
 extern s16 angle_approach(s16 current, s16 target, s32 step);
 extern int angle_mod_delta_le_half_turn(int lhs, int rhs);
 extern s16 angle_shortest_delta(s32 first, s32 second);

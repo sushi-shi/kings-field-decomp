@@ -66,7 +66,7 @@ void effect_projectile_update_3d(SVECTOR *probe_offset, KF_ENUM_PARAM(KfEffectPh
         ApplyMatrix(&rotation_matrix, probe_offset, &world);
         addVector(&world, &record->position);
         collision = effect_map_collision(&world, EFFECT_SWING_COLLISION_RADIUS);
-        if (collision != (u32)KF_COLLISION_NONE) {
+        if (collision != KF_COLLISION_NONE) {
             if ((collision >> KF_COLLISION_KIND_SHIFT) == (KF_COLLISION_ACTOR >> KF_COLLISION_KIND_SHIFT)) {
                 actor_apply_damage(collision & KF_COLLISION_DETAIL_MASK, 0, magic->damage_components[0],
                     magic->damage_components[2], magic->damage_components[1],
@@ -98,7 +98,7 @@ void effect_projectile_update_3d(SVECTOR *probe_offset, KF_ENUM_PARAM(KfEffectPh
             record->direction.words.x += EFFECT_SWING_ANGULAR_ACCEL;
         }
         pitch = record->rotation.vector.vx;
-        next_pitch = (s16)(record->rotation.vector.vx + record->direction.words.x);
+        next_pitch = record->rotation.vector.vx + record->direction.words.x;
         if ((next_pitch <= 0 && pitch >= 0) || (next_pitch >= 0 && pitch <= 0)) {
             if (life == KF_EFFECT_HAZARD_RELEASE_REQUEST) {
                 next_pitch = 0;
@@ -108,7 +108,7 @@ void effect_projectile_update_3d(SVECTOR *probe_offset, KF_ENUM_PARAM(KfEffectPh
             }
         }
         record->rotation.vector.vx = next_pitch;
-    } else if (KF_ENUM_ENCODE(u8, life) >= (u32)KF_ENUM_ENCODE(u8, KF_EFFECT_HAZARD_RISE_FIRST) && KF_ENUM_ENCODE(s16, phase_limit) >= KF_ENUM_ENCODE(u8, life)) {
+    } else if (KF_ENUM_ENCODE(u8, life) >= KF_ENUM_ENCODE(u8, KF_EFFECT_HAZARD_RISE_FIRST) && KF_ENUM_ENCODE(s16, phase_limit) >= KF_ENUM_ENCODE(u8, life)) {
         record->position.vy -= EFFECT_HAZARD_RISE_STEP;
         record->phase++;
     }
@@ -123,16 +123,16 @@ void effect_projectile_update_2d(s32 orbit_radius, KF_ENUM_PARAM(KfEffectPhase, 
     u32 collision;
 
     if ((KF_ENUM_ENCODE(u32, life) & 0xff) < KF_ENUM_ENCODE(u8, KF_EFFECT_HAZARD_RELEASE_REQUEST) + 1) {
-        record->position.vx = ((s16)record->direction.words.x << KF_EFFECT_ORBIT_CENTER_SHIFT)
+        record->position.vx = (record->direction.vector.vx << KF_EFFECT_ORBIT_CENTER_SHIFT)
             + (rsin((s16)record->control.orbit_angle) * orbit_radius >> KF_FIXED12_BITS);
-        record->position.vz = ((s16)record->direction.words.z << KF_EFFECT_ORBIT_CENTER_SHIFT)
+        record->position.vz = (record->direction.vector.vz << KF_EFFECT_ORBIT_CENTER_SHIFT)
             + (rcos((s16)record->control.orbit_angle) * orbit_radius >> KF_FIXED12_BITS);
-        record->position.vy = (s16)record->direction.words.y
+        record->position.vy = record->direction.vector.vy
             + (rsin((s16)record->control.orbit_angle << 1) >> 2);
         record->control.orbit_angle = (record->control.orbit_angle
             + KF_ANGLE_FULL_TURN / EFFECT_ORBIT_UPDATES_PER_TURN) & KF_ANGLE_WRAP_MASK;
         collision = effect_map_collision(&record->position, EFFECT_ORBIT_COLLISION_RADIUS);
-        if (collision != (u32)KF_COLLISION_NONE) {
+        if (collision != KF_COLLISION_NONE) {
             if ((collision >> KF_COLLISION_KIND_SHIFT) == (KF_COLLISION_ACTOR >> KF_COLLISION_KIND_SHIFT)) {
                 actor_apply_damage(collision & KF_COLLISION_DETAIL_MASK, 0, magic->damage_components[0],
                     magic->damage_components[2], magic->damage_components[1],

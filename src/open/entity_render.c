@@ -48,9 +48,9 @@ void opening_entity_render(KfOpeningEntity *entity)
     SetRotMatrix(&open_graphics_runtime.render_state.view_matrix);
     SetTransMatrix(&open_graphics_runtime.render_state.view_matrix);
     setVector(&screen,
-        (u16)entity->position.vx - (u16)open_graphics_runtime.render_state.view_position.vx,
-        (u16)entity->position.vy - (u16)open_graphics_runtime.render_state.view_position.vy,
-        (u16)entity->position.vz - (u16)open_graphics_runtime.render_state.view_position.vz);
+        entity->position.vx - open_graphics_runtime.render_state.view_position.vx,
+        entity->position.vy - open_graphics_runtime.render_state.view_position.vy,
+        entity->position.vz - open_graphics_runtime.render_state.view_position.vz);
     /* RotTrans writes the three translation words, not a VECTOR pad word. */
     RotTrans(&screen, (VECTOR *)&model.t, &flag);
     matrix_set_rotation_yxz(&entity->rotation, &model);
@@ -120,9 +120,9 @@ void render_floor_item(KfFloorItem *item)
     SetRotMatrix(&open_graphics_runtime.render_state.view_matrix);
     SetTransMatrix(&open_graphics_runtime.render_state.view_matrix);
     setVector(&screen,
-        (u16)item->position_x - (u16)open_graphics_runtime.render_state.view_position.vx,
-        (u16)item->position_y - (u16)open_graphics_runtime.render_state.view_position.vy,
-        (u16)item->position_z - (u16)open_graphics_runtime.render_state.view_position.vz);
+        item->position_x - open_graphics_runtime.render_state.view_position.vx,
+        item->position_y - open_graphics_runtime.render_state.view_position.vy,
+        item->position_z - open_graphics_runtime.render_state.view_position.vz);
     RotTrans(&screen, (VECTOR *)&model.t, &flag);
     facing = floor_item_facing(item->facing_and_frame_count);
     if (KF_ENUM_ENCODE(u8, facing) != KF_ENUM_ENCODE(u8, KF_FLOOR_ITEM_FACING_BILLBOARD)) {
@@ -151,8 +151,8 @@ ADDRESS(0x80019240, 0x298)
 void opening_render_entities_and_items(void)
 {
     const KfCellWindow *window = open_graphics_runtime.active_cell_window;
-    u16 origin_z = (u16)open_graphics_runtime.render_state.view_cell.z - window->origin_z;
-    u16 origin_x = (u16)open_graphics_runtime.render_state.view_cell.x - window->origin_x;
+    u16 origin_z = open_graphics_runtime.render_state.view_cell.z - window->origin_z;
+    u16 origin_x = open_graphics_runtime.render_state.view_cell.x - window->origin_x;
     KfOpeningEntity *entity;
     KfFloorItem *item;
     u16 *material_tpage;

@@ -131,7 +131,7 @@ class GameDisplayEnvironmentDataTests(unittest.TestCase):
         self.assertEqual(sections['.rodata'].status, 'placement')
         self.assertIn('invalid-section-placement', sections['.rodata'].detail)
 
-    def test_reversed_environment_fields_fail_the_production_layout_checks(self):
+    def test_compiler_layout_measurement_detects_reversed_environment_fields(self):
         probe = self.probe()
         probe.tools()
         unit = load_manifest().by_name()['game.render']
@@ -147,14 +147,19 @@ class GameDisplayEnvironmentDataTests(unittest.TestCase):
                     self.assertEqual(candidate.count(old), 1)
                     candidate = candidate.replace(old, '\n'.join('    ' + d for d in declarations[::-1]))
                 (root / 'graphics_layout_control.h').write_text(candidate)
-                query = '#include "graphics_layout_control.h"\nu32 layout = sizeof(KfGraphicsRuntimeGame);\n'
+                query = ('#include "graphics_layout_control.h"\n'
+                         'unsigned long layout[] = {sizeof(KfGraphicsRuntimeGame),\n'
+                         '(unsigned long)&((KfGraphicsRuntimeGame *)0)->display_draw_environments,\n'
+                         '(unsigned long)&((KfGraphicsRuntimeGame *)0)->display_disp_environments};\n')
+                obj = probe.compile(root, unit, query)
+                symbol = obj.named_symbol('layout')
+                measured = struct.unpack_from('<3I', obj.sections['.data'], symbol.value)
+                expected = (graphics.EXTENT, 0x20028, 0x200E0)
                 if wrong:
-                    with self.assertRaisesRegex(RuntimeError, 'check_game_graphics_display_'):
-                        probe.compile(root, unit, query)
+                    self.assertNotEqual(measured, expected)
+                    self.assertEqual(measured, (graphics.EXTENT, 0x20050, 0x20028))
                 else:
-                    obj = probe.compile(root, unit, query)
-                    symbol = obj.named_symbol('layout')
-                    self.assertEqual(struct.unpack_from('<I', obj.sections['.data'], symbol.value)[0], graphics.EXTENT)
+                    self.assertEqual(measured, expected)
 
     def test_all_thirty_pairs_use_array_owners_and_round_trip_exactly(self):
         image, ctx = self.probe().retail(), Context('GAME.EXE')

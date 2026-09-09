@@ -109,7 +109,7 @@ KfAssetHeader	0x10	0x04	clip_table_offset	u32	supported	game_asset.h;asm;render_
 KfAudioState	0x00	0x04	vab_header	u8 *	supported	audio.h;asm;xrefs	loaded VAB header pointer
 KfAudioState	0x04	0x02	active_vab_id	s16	supported	audio.h;asm;xrefs	active VAB identifier; minus one after close
 KfAudioState	0x06	0x02	unknown_06	u8[2]	opaque	audio.h;asm;xrefs	padding or unresolved
-KfAudioState	0x08	0x04	sequence_buffer	u8 *	supported	audio.h;asm;xrefs	allocated SEQ buffer
+KfAudioState	0x08	0x04	sequence_buffer	u_long *	supported	audio.h;asm;xrefs;Psy-Q-2.5-LIBSND.H:SsSeqOpen	allocated SEQ buffer passed to the SDK unsigned-long interface
 KfAudioState	0x0c	0x02	sequence_id	s16	supported	audio.h;asm;xrefs	open sequence identifier
 KfAudioState	0x0e	0x02	unknown_0e	u8[2]	opaque	audio.h;asm;xrefs	padding or unresolved
 KfAudioState	0x10	0x04	sequence_active	KfAudioSequenceState	supported	audio.h;asm;xrefs	bookkeeping state: 0 inactive, 1 active after issuing playback; stop routines require exactly 1
@@ -663,9 +663,6 @@ KfRenderStateOpen	0x64	0x10	view_position	VECTOR	supported	open_render.h;asm;bas
 KfRenderStateOpen	0x74	0x08	view_rotation	SVECTOR	supported	open_render.h;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
 KfRenderStateOpen	0x7c	0x04	view_cell	KfVecXZs	supported	open_render.h;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
 KfRenderStateOpen	0x80	0x80	quadrant_matrices	MATRIX[4]	supported	open_render.h;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
-KfResourcePointer	0x00	0x04	storage	void *	supported	resources.h;asm;typed-resource-boundaries.md	alternative pointer view in the shared allocation slot
-KfResourcePointer	0x00	0x04	bytes	u8 *	supported	resources.h;asm;typed-resource-boundaries.md	alternative pointer view in the shared allocation slot
-KfResourcePointer	0x00	0x04	tim_data	u_long *	supported	resources.h;asm;typed-resource-boundaries.md	alternative pointer view in the shared allocation slot
 KfRotation	0x00	0x08	vector	SVECTOR	supported	game_math.h;asm;effect_pool_construct;effect_projectile_update_3d;typed-effect-records.md;typed-world-transforms.md	complete SDK vector copied with its pad halfword
 KfRotation	0x00	0x06	angles	KfEulerAngles	supported	game_math.h;asm;render_actor_sprite;matrix_set_rotation_yxz;typed-effect-records.md;typed-world-transforms.md	signed Euler components supplied to the game matrix helper
 KfSaveDirectory	0x00	0x04	slot_ids	KF_ENUM_STORAGE(KfSaveSlotId, u8)[4]	supported	game_save.h;asm;xrefs	four byte directory tags: empty0, logical slots1..3, spare4; signed-halfword API domain and byte storage: save-slot-id-domain.md
@@ -688,7 +685,7 @@ KfSaveSlotSummary	0x14	0x04	maximum_mp	u32	supported	game_save.h;save_file_write
 KfSaveWorkspace	0x00	0x280	header	KfSaveHeader	supported	game_save.h;asm;save_workspace_allocate	first 0x280 bytes of the successful 0x2800-byte allocation
 KfSaveWorkspace	0x280	0x2580	payload	KfSavePayload	supported	game_save.h;asm;save_workspace_allocate	remainder of the allocation; separately published and cleared
 KfScreenRect	0x00	0x02	x	u16	supported	render_types.h;quad-rectangle-types.md;GAME:sprite_add_ft4;OPEN:sprite_add_g4;asm;lhu	screen X origin
-KfScreenRect	0x02	0x02	y	u16	supported	render_types.h;quad-rectangle-types.md;OPEN:opening_ending_scroll_run;asm;lhu;lh;sh	screen Y origin; scrolling updates wrap as halfwords and the final-panel stop test reads signed Y
+KfScreenRect	0x02	0x02	y	s16	supported	render_types.h;quad-rectangle-types.md;cast-reduction-review.md;OPEN:opening_ending_scroll_run;asm;lhu;lh;sh	signed screen Y origin; scrolling crosses zero and the final-panel stop test reads signed Y
 KfScreenRect	0x04	0x02	w	u16	supported	render_types.h;quad-rectangle-types.md;GAME:sprite_add_ft4;OPEN:sprite_add_f4;asm;lhu	screen width added to X for right vertices
 KfScreenRect	0x06	0x02	h	u16	supported	render_types.h;quad-rectangle-types.md;GAME:sprite_add_ft4;OPEN:sprite_add_f4;asm;lhu	screen height added to Y for lower vertices
 KfScreenVertex	0x00	0x04	sxy	KfScreenXY	supported	tmd.h;game_semantic_projection_scratch.tsv;game_open_semantic_packed_projection.tsv;asm;RotTransPers;NormalClip	SDK packed signed screen x/y word written by RotTransPers and consumed by clipping and GPU packets; non-perspective writers use its two DVECTOR halfwords

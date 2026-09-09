@@ -60,7 +60,6 @@ typedef union KfPackedSVector {
     SVECTOR vector;
     u32 words[2];
 } KfPackedSVector;
-typedef char check_packed_svector_size[sizeof(KfPackedSVector) == 8 ? 1 : -1];
 
 /* On-disk counts are words; individual consumers may narrow them. */
 typedef struct KfTmdHeader {
@@ -68,8 +67,6 @@ typedef struct KfTmdHeader {
     u32 flags;
     u32 object_count;
 } KfTmdHeader;
-typedef char check_tmd_header_size[
-    sizeof(KfTmdHeader) == KF_TMD_HEADER_BYTES ? 1 : -1];
 
 /* Standard 0x1c-byte object-table record in an unlinked TMD payload. */
 typedef struct KfTmdObject {
@@ -92,8 +89,6 @@ typedef union KfTmdPacketHeader {
         KfTmdMode mode;
     } bytes;
 } KfTmdPacketHeader;
-typedef char check_tmd_packet_header_size[
-    sizeof(KfTmdPacketHeader) == KF_TMD_PACKET_HEADER_BYTES ? 1 : -1];
 
 /*
  * Primitive bodies follow the four-byte olen/ilen/flag/mode header. n0..n3
@@ -266,9 +261,6 @@ typedef struct KfScreenVertex {
     s16 sz;
     s16 p2;
 } KfScreenVertex;
-
-typedef char check_screen_xy_size[sizeof(KfScreenXY) == 4 ? 1 : -1];
-typedef char check_screen_vertex_size[sizeof(KfScreenVertex) == 8 ? 1 : -1];
 
 /* GAME.EXE and OPEN.EXE implement this interface with separate state. */
 extern KfTmdObject *tmd_get_object(u16 object_index);

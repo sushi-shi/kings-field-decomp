@@ -82,8 +82,14 @@ def standalone_source(unit):
             'KfScreenVertex *vertices = '
             '((KfScreenVertex *)game_graphics_runtime.unknown_projection_morph_20318);')
         source = source.replace(
+            'u8 *vertices = game_graphics_runtime.unknown_projection_morph_20318;',
+            'KfScreenVertex *vertices = '
+            '((KfScreenVertex *)game_graphics_runtime.unknown_projection_morph_20318);')
+        source = source.replace('(KfScreenVertex *)(vertices +',
+                                '(KfScreenVertex *)((u8 *)vertices +')
+        source = source.replace(
             '                    KfGraphicsRuntimeGame *graphics = (KfGraphicsRuntimeGame *)(\n'
-            '                        (u32)vertices - '
+            '                        vertices - '
             '(u32)&((KfGraphicsRuntimeGame *)0)->unknown_projection_morph_20318);\n', '')
         source = source.replace('&graphics->display_state.ordering_table[',
                                 '&game_graphics_runtime.display_state.ordering_table[')

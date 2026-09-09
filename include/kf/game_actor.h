@@ -217,12 +217,6 @@ typedef struct KfActorActionParameters {
     u8 drop_chance;
 } KfActorActionParameters;
 
-typedef char check_actor_action_parameters_size[
-    sizeof(KfActorActionParameters) == 8 ? 1 : -1];
-typedef char check_actor_action_drop_offset[
-    (unsigned long)&((KfActorActionParameters *)0)->drop_object == 6 ? 1 : -1];
-
-
 /* Damage magnitude uses a decimal fixed-point scale. */
 enum {
     KF_ACTOR_DAMAGE_SCALE_ONE = 5000
@@ -270,8 +264,6 @@ typedef union KfActorDefinitionTable {
     KfActorDefinition entries[KF_ACTOR_DEFINITION_COUNT];
     u32 words[KF_ACTOR_DEFINITION_WORD_COUNT];
 } KfActorDefinitionTable;
-typedef char check_actor_definition_table_size[
-    sizeof(KfActorDefinitionTable) == 0x720 ? 1 : -1];
 
 typedef struct KfActorActionProfile {
     s16 far_distance;
@@ -337,26 +329,6 @@ typedef struct KfActor {
     s16 movement_y;
     u8 unknown_46[2];
 } KfActor;
-
-typedef char check_actor_size[sizeof(KfActor) == 0x48 ? 1 : -1];
-#define KF_ACTOR_OFFSET_CHECK(label, member, offset) \
-    typedef char check_actor_##label[ \
-        ((unsigned long)&((KfActor *)0)->member == (offset)) ? 1 : -1]
-KF_ACTOR_OFFSET_CHECK(position, position, 0x1c);
-KF_ACTOR_OFFSET_CHECK(rotation, rotation, 0x2c);
-KF_ACTOR_OFFSET_CHECK(rotation_pad, rotation.vector.pad, 0x32);
-KF_ACTOR_OFFSET_CHECK(animation_cache, animation_cache, 0x34);
-#undef KF_ACTOR_OFFSET_CHECK
-
-#if KF_MODERN_TYPES
-static_assert(__builtin_offsetof(KfActorPlacement, slot_state) == 0);
-static_assert(__builtin_offsetof(KfActor, slot_state) == 0);
-static_assert(__builtin_offsetof(KfActor, lifecycle) == 0x06);
-static_assert(__builtin_offsetof(KfActor, action) == 0x08);
-static_assert(__builtin_offsetof(KfActor, vertical_state) == 0x0b);
-static_assert(__builtin_offsetof(KfActor, action_progress) == 0x38);
-static_assert(__builtin_offsetof(KfActor, collision_state) == 0x39);
-#endif
 
 /*
  * Actor routines derive the definition array and current context from the

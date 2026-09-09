@@ -5,6 +5,13 @@ about which source shapes reproduce it under the current probes. Each note
 records the retail evidence first and the probe behaviour second; none of them
 promotes a probe to a proven historical toolchain.
 
+- [cast-reduction-review.md](cast-reduction-review.md): complete 729-site
+  review, 187 further cast removals, and unchanged instructions and scores.
+- [type-cleanup.md](type-cleanup.md): production assertion removal, five
+  union removals, shared resource interfaces, rejected cast substitutions,
+  and measured matching impact.
+- [type-assertion-and-union-audit.md](type-assertion-and-union-audit.md):
+  assertion compiler-output controls and the complete 43-union review.
 - [executable-byte-provenance.md](executable-byte-provenance.md): native PSX
   initialized bytes, CPE2X uninitialized-memory disclosure, retail header/tail
   consumers, complete-converter and DOS controls, and the retail date window.
