@@ -140,16 +140,19 @@ s32 map_object_probe_forward(const KfMapObject *object, u16 yaw)
     s32 point_x = object->position.vx;
     s32 point_z = object->position.vz;
     s32 result;
+    s32 probe_radius;
 
     yaw &= KF_ANGLE_WRAP_MASK;
     switch (definition->behavior_type) {
     case KF_MAP_OBJECT_BEHAVIOR_LIFT_DOOR:
+        probe_radius = MAP_DOOR_CLOSING_PROBE_RADIUS;
     probe:
         result = collision_query_world(
-            point_x, KF_COLLISION_IGNORE_HEIGHT, point_z, MAP_DOOR_CLOSING_PROBE_RADIUS, 0,
+            point_x, KF_COLLISION_IGNORE_HEIGHT, point_z, probe_radius, 0,
             KF_COLLISION_SKIP_TERRAIN | KF_COLLISION_SKIP_MAP_OBJECTS);
         break;
     case KF_MAP_OBJECT_BEHAVIOR_HINGED_DOOR:
+        probe_radius = MAP_DOOR_CLOSING_PROBE_RADIUS;
         switch (yaw) {
         case 0x000:
             point_x += KF_MAP_TILE_SIZE;

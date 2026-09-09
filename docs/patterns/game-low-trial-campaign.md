@@ -324,6 +324,43 @@ The detail/orbit follow-up changes evidence only. Ruff, all 722 tests
 GAME 339/362 exact and 99.629% aggregate, with unchanged data/placement
 failures and zero artifact failures. No partial function is banked.
 
+Follow-up Function Match Plan: GAME `80038298` remains 608 bytes at strict
+99.934210%. Fresh retail validation and all six semantic views reconfirm the
+signed-word radius/phase-limit interface, sole dispatcher caller, nine calls,
+five ordered address pairs, three internal jumps, 29 CFG blocks, fourteen
+branches, one return and no strings. The 56-byte probe frame and 120-byte
+retail frame differ only in ten allocation/save/restore words; retail never
+accesses the intervening 64 bytes. The body remains game orbit, collision,
+damage and audio policy around separately owned SDK providers.
+
+Trace the pinned compiler's actual lifetimes for the effect record, magic
+record, phase and collision values, frame construction and spills. Test the
+real narrower ownership already present: move `magic` and `collision` into
+the only motion path that consumes them, independently and together. Retain
+the earlier byte-phase, motion-helper and distance-aggregate controls as
+negative evidence. Use incompatible unaccessed 64-byte shapes only to test
+whether frame extent mechanically explains exact bytes; never retain them.
+Preserve all nine calls, referents, collision classes, damage arguments,
+sound policy, phase path, branches and delay-slot operations.
+
+Native/instrumented parity passes for all seven states. The current allocator
+keeps the effect record in `s0` across nine calls and the magic record in `s1`
+across seven; collision remains a call-free `a0` value, and the named phase
+folds before allocation. No spill register is required. Scoping collision to
+its consuming path is byte-identical to canonical. Scoping the magic pointer
+shortens its measured lifetime by three units but changes instruction order
+throughout the motion path and falls to 94.144740%, without changing the
+56-byte frame. Reject both magic-scope states.
+
+As with the backdrop, three incompatible unaccessed declarations each produce
+strict 100%: 64 bytes, two matrices, or sixteen words. Each merely shifts the
+four saved registers by 64 bytes and leaves the 152 instruction words otherwise
+unchanged. The untouched retail interval cannot distinguish these source
+types, so none is a valid reconstruction. Canonical remains 608 bytes at
+99.934210% and is not banked. Results and traces are under
+`build/hypotheses/projectile2d-instrumentation/` and
+`build/gcc257/projectile2d-instrumentation-traces/`.
+
 ## Map cell: computed matrix ownership
 
 Function Match Plan at `81a59be6`: GAME `8001e5ec`, 592 bytes / 99.878380%.
@@ -358,6 +395,56 @@ resolved words and verification are under `build/low-trial-cell-objects/`.
 The full build again retains GAME 339/362 exact, 99.629% aggregate and zero
 artifact failures, with the existing data/ownership/placement checks nonzero.
 Canonical source, configuration and bank entries remain unchanged.
+
+Follow-up Function Match Plan: GAME `8001e5ec`, 592 bytes and strict
+99.878380%, still differs only in eighteen stack-address words. Fresh retail
+validation and all six semantic views reconfirm the word column/row and byte
+visibility interface, sole exact dispatcher caller, nine calls, ten ordered
+address pairs, 24 CFG blocks, twelve branches, three known return frontiers,
+and no strings. Retail and source agree outside one uniform 32-byte frame
+displacement: retail allocates 120 bytes and places `position` at `sp+80`, the
+`RotTrans` flag at `sp+88`, and saved registers at `sp+104..116`; the probe
+allocates 88 bytes and places the same objects at `sp+48`, `sp+56`, and
+`sp+72..84`. The body is game map/render policy around separately owned Psy-Q
+matrix providers, and no archive or vendored inventory identifies it as a
+library routine.
+
+Trace the pinned GCC 2.5.7 probe before proposing another source shape. Record
+the real automatic allocations, lexical lifetimes, frame construction and
+spill requirements for `cell_matrix`, `position`, and `flag`, with normal and
+instrumented whole-object parity. Then test only complete, consumed object
+forms supported by the retail accesses: declaration-scope alternatives for
+the existing objects and authentic aggregate ownership where the same MATRIX,
+SVECTOR and flag values remain observable. Preserve every call, referent,
+width, branch, delay-slot operation and the exact sibling. Reject unused
+objects, artificial padding, volatile/register steering, incompatible SDK
+views, or any source whose extra frame storage has no accessed semantic owner.
+Strict 100% plus full raw verification remains required before banking.
+
+The native and instrumented objects are byte-identical. EXPAND allocates the
+32-byte `MATRIX`, eight-byte `SVECTOR`, and four-byte flag as three real stack
+objects; RELOAD needs no spill registers, and lexical scoping or combining the
+three values into one authentic aggregate leaves the 88-byte frame and every
+linked word unchanged. Reordering the matrix after the smaller objects grows
+the frame to 96 bytes, saves an extra register, and falls to 94.527020%.
+
+Three diagnostic controls each reach strict 100%: a two-element MATRIX array,
+two separate matrices, and a record containing two matrices. They all add one
+unaccessed 32-byte capacity before the real matrix, produce the same 120-byte
+frame, and collapse to the same exact machine frontier. This ambiguity proves
+that the retail bytes do not identify which source object occupied `sp+48..79`.
+The exact controls violate the source model because the additional capacity is
+never accessed; none is retained or banked. The exact OPEN counterpart uses
+the same one-MATRIX/SVECTOR/flag source family without that capacity, and no
+shared game type or source history supports a 64-byte owner here.
+
+All seven repaired stack-shape states compile and preserve the nine calls and
+ten ordered referents. The canonical 592-byte body remains 99.878380% with its
+eighteen uniform stack-word differences. Instrumented summaries and retained
+traces are under `build/hypotheses/render-map-cell-stack-shapes-v3/` and
+`build/gcc257/render-map-cell-stack-shapes-v3-traces/`; the baseline allocation
+trace is under `build/hypotheses/low-trial-cell-trace-baseline/`. This function
+remains open because exact bytes alone do not support a truthful source choice.
 
 ## Status detail: refreshed entry baseline
 
@@ -507,6 +594,56 @@ Full build retains GAME 339/362 exact and 99.629% aggregate, with the existing
 data/ownership/placement failures and zero artifact failures. Whitespace
 checks pass; no production source, configuration or bank change is kept.
 
+Second follow-up Function Match Plan: keep GAME `80034de4` at the established
+2308-byte target, 72-byte frame, 54 ordered calls, thirteen ordered referents,
+complete switch policies and current source semantics. The remaining early
+differences show two linked allocation questions: retail keeps `position` in
+`s7` and its shared minus-one sentinel in `s8`, while the probe reverses those
+roles; inside the hinged-container prescan, retail separately materializes a
+local minus one and jumps back to the following comparison, while the probe
+reuses the outer sentinel and jumps to the preceding nop. The partner-door
+path also retains the separately established three-versus-one behavior loads.
+
+Trace the pinned 2.5.7 allocator, CSE, loop and reload decisions for the real
+position, rotation, object index, prescan counter, neighbor index and definition
+pointer before another source experiment. Compare only actual lifetime changes:
+disjoint aliases used by the coordinate and frame-render operations, explicitly
+scoped countdown ownership, and direct typed definition consumers at their
+three observed policy decisions. Reuse prior controls as negative evidence.
+Every state must preserve the signature, widths, all calls and referents, and
+the defined failure paths. Reject synthetic sentinel carriers, volatile loads,
+fake aliases or code added solely to select hard registers.
+
+Native/instrumented parity passes. The current trace assigns the `position`
+pseudo to `s8`: eight references span 406 allocation units and 36 calls. CSE1
+creates a separate compiler-only `-1` pseudo with 27 references over 602 units
+and assigns it to `s7`; it has no unique source local. The two block-owned
+`item_index` declarations remain distinct pseudos, while `neighbor_definition`
+has only a two-unit, call-free lifetime in `v0`. RELOAD reports one single-register
+search and no multi-register spill requirement. These are measured decisions
+of the pinned probe, not historical compiler attribution.
+
+Instrumenting the strongest prior lifetime controls explains their limits. A
+word sentinel initialized at function entry receives `s8` and moves `position`
+to retail's `s7`, but its 744-unit lifetime lets the scheduler place `li s8,-1`
+in the first `rsin` delay slot, where retail has `nop`; the body also contracts
+to 2292 bytes. Initializing the same real local at the object-loop boundary
+keeps `position` in `s8` and assigns the sentinel to `s7`. Halfword sentinel
+forms are optimized out as named pseudos; the best scores 99.324090% but still
+has the reversed saved-register roles and does not recover the prescan CFG.
+Reusing the existing general result as the sentinel assigns it to `s5`, grows
+its lifetime across 30 calls, and falls to 98.778160% or lower.
+
+The earlier separate typed partner behaviors also remain negative evidence:
+the call-free definition/value region is collapsed before allocation, so
+source scopes do not establish three loads. Restoring them would still require
+an unsupported volatile or alias claim. Across nine new instrumented states,
+the canonical 2296-byte function remains the best truthful source at
+99.202774%; all 54 calls, thirteen referents, frame and failure behavior stay
+unchanged, and nothing is banked. Results and traces are under
+`build/hypotheses/interaction-{instrumentation,prior-lifetimes,result-sentinel}/`
+and `build/gcc257/interaction-*-traces/`.
+
 ## Window backdrop: repeated tile operation
 
 Function Match Plan: GAME `8002a510`, 1700 bytes, strict 99.971760%.
@@ -544,6 +681,42 @@ source states; the second manifest repeats its two controls. Full build
 retains GAME 339/362 exact and 99.629% aggregate with existing data/placement
 failures and zero artifact failures. Whitespace checks pass. No source or
 bank change is kept.
+
+Follow-up Function Match Plan: GAME `8002a510` remains 1700 bytes at strict
+99.971760%. Fresh retail validation and six semantic views reconfirm three
+callers, sixteen calls, 107 ordered address pairs, a single CFG block, no
+branches, one return and no strings. Every non-stack instruction and referent
+already agrees. Retail reserves 104 bytes and saves `s0`-`s3`/`ra` at
+`sp+80..96`; the probe reserves 40 and saves them at `sp+16..32`, leaving the
+64-byte retail interval untouched. The menu tile composition is game code;
+the packet macros and ordering-table insertion retain their SDK boundaries.
+
+Trace the pinned compiler's real stack-object acquisition, frame construction,
+saved-register allocation and address lifetime for the shared menu asset and
+primitive-buffer owners. Then compare only consumed tile aggregates and
+operation scopes already supported by the four repeated quads, using the
+earlier helper and typed-local controls as negative evidence. Separately use
+multiple unaccessed 64-byte object shapes only as diagnostic ambiguity controls.
+They may show whether frame extent alone closes the bytes, but cannot be kept.
+Preserve all calls, ordered referents, packet writes and persistent-quad order;
+do not retain padding, unused storage, volatile state or a forced register.
+
+The current native and traced objects agree byte for byte. The probe acquires
+no automatic stack object and needs no spill register; its frame consists only
+of the five saved registers. A direct `const u16 *` texture-page owner and a
+direct `const MenuTileSprite *` owner are both real, consumed aliases spanning
+nine references and thirteen calls in `s2`. Each compiles identically to the
+canonical 1700 bytes and 40-byte frame, so neither explains retail storage.
+The earlier helper and accessed `KfSpriteQuad` controls remain negative.
+
+Three diagnostic declarations each reach strict 100%: 64 unaccessed bytes,
+two unaccessed matrices, or sixteen unaccessed words. All produce the same
+104-byte frame and exact 425 linked words. Their incompatible C types prove
+that the untouched interval supplies no object identity; keeping any would be
+an unused-storage codegen device. The canonical source remains 99.971760%, and
+the function is not banked. Six valid native/instrumented states and retained
+traces are under `build/hypotheses/backdrop-instrumentation-v2/` and
+`build/gcc257/backdrop-instrumentation-v2-traces/`.
 
 ## Player update: magic-button failure and recharge paths
 
@@ -748,3 +921,62 @@ and `player_update` retains an eight-byte frame difference after exact call,
 referent, status and fade controls. Compiler/profile sweeps do not close any
 of these seven residues. They remain partial because closing them would
 require source facts the retail program does not establish.
+
+## Map-object forward probe: coordinate and query lifetimes
+
+Function Match Plan at `491870b4`: GAME `80030eb8`, 196 bytes / strict
+93.755104%, unit `game.map_object_pool`. Hash-identical retail and all six
+image-qualified semantic views were refreshed. The complete body retains a
+32-byte frame, thirteen CFG blocks, one proven `collision_query_world` call,
+one validated `map_object_state` HI16/LO16 pair, five validated internal jump
+relocations and no strings or unresolved outgoing control flow. Both callers
+in `map_object_pool_update` pass a halfword-derived yaw and compare the signed
+word result with -1. The established word X/Z fields, byte behavior field,
+cardinal adjustments of 2000, radius 3000, ignored-height sentinel 65535,
+zero height and flags 0x21 remain unchanged. This door policy is game code;
+no Psy-Q archive or vendored inventory identifies the body.
+
+Retail captures X in `t0`, reads the definition behavior byte, and fills its
+load-delay slot with Z in `t1`. It materializes radius 3000 in the type-two
+guard delay slot and again in the first cardinal comparison delay slot, then
+loads the height sentinel in the sole call's delay slot. The canonical probe
+keeps X in `a3`, Z in `v1`, and result in `t0`; it materializes the sentinel
+before the call and radius in the call delay slot. Earlier per-case calls,
+direct owner lookup, outer/inner predicate rewrites and collision-helper
+boundaries failed to recover this schedule.
+
+Trace the canonical `definition`, `point_x`, `point_z`, `result` and `yaw`
+source values through allocation and crossed calls, together with frame,
+spill and cross-jump observations. Test bounded declaration/initialization
+orders and scopes for the genuine captured coordinates and definition owner,
+then test only query spellings that consume the same six established
+arguments at the shared call. Preserve the current switch topology, single
+static call, indeterminate unsupported-input paths, all 49 linked words and
+all eight ordered relocations. Reject unused carriers, incompatible object
+views, forced registers, volatile qualifiers, padding, inline assembly and
+any candidate that adds a call or changes the admitted inputs.
+
+All six states compile with native/instrumented byte parity. Moving the real
+coordinate and definition declarations either reproduces the baseline or
+worsens load order. Assigning one consumed `probe_radius` on each admitted
+outer-switch path reaches strict 100% for both signed- and unsigned-word
+spellings. The signed word is retained because it matches the established
+`collision_query_world` radius parameter. It gives the radius pseudo three
+references over a 27-unit lifetime in `a3`; X, Z and result consequently
+allocate to `t0`, `a2` and `t1`, exactly as retail. This restores the complete
+49-word instruction stream, including both radius delay slots and the call's
+height-sentinel delay slot.
+
+The focused unit compile reports all eight functions as identical. The probe
+has the retail 32-byte frame and its eight physical relocations agree in order:
+the `map_object_state` HI16/LO16 pair, the world-query call and five internal
+jumps. The generated sources and summaries are under
+`build/hypotheses/map-object-probe-instrumentation/`; retained traces are under
+`build/gcc257/map-object-probe-instrumentation-traces/`. This function is now
+strict exact and is eligible for banking after the required full verification.
+
+Final verification passes the focused compile, complete 739-test / 9183-subtest
+suite, Ruff and whitespace checks. The full build raises GAME to 341/362 exact
+at 99.787% aggregate and the repository total to 448/471 exact. It reaches the
+existing data ownership and section-placement failures with zero artifact
+failures. `map_object_probe_forward` is banked at strict 100%.
