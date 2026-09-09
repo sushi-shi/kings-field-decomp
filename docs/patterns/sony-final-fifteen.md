@@ -179,3 +179,68 @@ Ruff, Rust tests and whitespace checks pass. Of the integrated Python suite's
 a retry after the merged-unit target objects were regenerated; that retry
 passes, including all 26 subtests. No source, profile, relocation or banking
 change is retained by this follow-up.
+
+## World-coordinate boundary follow-up plan
+
+Continue from `2f24a5cf` with GAME `render_map_cell`. Its retail matrix remains
+at `sp+16`, while its SVECTOR input and flag are each 32 bytes above the current
+object. This differs from a uniform shift of all automatic objects and does
+not by itself identify the missing source object. The actual inputs comprise
+three world coordinates and the existing camera VECTOR; all six values are
+consumed by the relative-coordinate calculation before narrowing to SVECTOR.
+
+Test one complete world VECTOR built with `setVector`, and separately a
+complete camera VECTOR captured with `copyVector`. These controls introduce
+only coordinates used in that calculation, keep padding untouched and retain
+every matrix/GTE API boundary. A combined control is meaningful only if both
+individual input captures preserve the arithmetic and object identities.
+Compare their complete words, frame operands, references and siblings under
+the unchanged profile; an increased frame alone cannot validate either form.
+
+### Boundary results and observed frame layout
+
+Both controls are rejected. They preserve the call list, referent identities
+and exact sibling but change reference order and introduce stack traffic absent
+from retail. The world capture emits three word stores followed by halfword
+reloads; the camera capture additionally replaces the original camera halfword
+reads with word loads. Combining those independently contradicted memory
+boundaries is not supported.
+
+| Control | Strict % | Body bytes | Frame bytes |
+| --- | ---: | ---: | ---: |
+| Existing source | 99.87838 | 592 | 88 |
+| World VECTOR built with `setVector` | 82.560814 | 612 | 104 |
+| Camera VECTOR captured with `copyVector` | 91.12838 | 620 | 104 |
+| Retail | 100 | 592 | 120 |
+
+Five further observational compilations cover the three frame-only functions
+and these two controls. Every complete object equals its normal native-probe
+counterpart byte for byte. Positive-size `stack.allocate` events distinguish
+the actual local objects from reload allocations:
+
+| Function / control | Expansion allocations | Reload allocations |
+| --- | --- | --- |
+| `player_update` | Three 8-byte aggregates, one 16-byte aggregate, one 32-byte aggregate, one 4-byte word | Nine 8-byte slots, SI mode |
+| `render_map_cell` | One 32-byte aggregate, one 8-byte aggregate, one 4-byte word | One 8-byte slot, SI mode |
+| `effect_projectile_update_2d` | None | None |
+| Each rejected cell capture | The cell objects plus one 16-byte aggregate | One 8-byte slot, SI mode |
+
+The cell matrix starts at `sp+16` in both retail and current output. The input
+SVECTOR starts at retail `sp+80` versus current `sp+48`; the flag follows at
+`sp+88` versus `sp+56`. The observed reload allocation follows those expanded
+objects. Under this probe and these declarations, adding reload allocations
+like the UV control would not insert the missing region between the matrix
+and SVECTOR. That location constrains further source recovery; it is not proof
+of a second matrix or any other unused object.
+
+The player's nine slots use SI mode, unlike the successful UV control's eight
+QI slots. The orbit function has no positive-size automatic allocation at all.
+Neither observation identifies a missing SDK expression. All fifteen final
+verdicts above remain unchanged; the two additional trials bring this campaign
+to twenty-two controls with no further exact function. Generated evidence is
+under `build/sony-final-15/vector-boundaries/` and `frame-trace/`.
+
+Fresh verification after this follow-up passes all 775 Python tests and 9,223
+subtests, Ruff and whitespace checks. The full build retains the same twenty
+data-owner mismatches and zero artifact failures. Production sources, profiles,
+inventories and banking inputs remain unchanged from `2f24a5cf`.
