@@ -224,34 +224,24 @@ void opening_scene0_run(void)
             entity_12->rotation.y += SCENE0_YAW_STEP;
         }
 
-        if (opening_camera_path_state.point_index >= SCENE0_FADE_OUT_START_POINT) {
-            goto fade_out;
-        }
-        if (opening_input_action == KF_OPENING_INPUT_NONE) {
-            goto fade_in;
+        if (opening_camera_path_state.point_index >= SCENE0_FADE_OUT_START_POINT ||
+            opening_input_action != KF_OPENING_INPUT_NONE) {
+            if (blend < 0) {
+                break;
+            }
+            next_blend = blend - OPENING_COLOR_FADE_STEP;
+            blend = next_blend;
+            lighting_set_color_matrix(
+                &color_matrix_table[KF_ENUM_ENCODE(s32, KF_OPEN_COLOR_BLACK)],
+                &color_matrix_table[KF_ENUM_ENCODE(s32, KF_OPEN_COLOR_DEFAULT)], next_blend);
+        } else if (blend < KF_FIXED12_ONE) {
+            next_blend = blend + OPENING_COLOR_FADE_STEP;
+            blend = next_blend;
+            lighting_set_color_matrix(
+                &color_matrix_table[KF_ENUM_ENCODE(s32, KF_OPEN_COLOR_BLACK)],
+                &color_matrix_table[KF_ENUM_ENCODE(s32, KF_OPEN_COLOR_DEFAULT)], next_blend);
         }
 
-fade_out:
-        if (blend < 0) {
-            goto scene_complete;
-        }
-        next_blend = blend - OPENING_COLOR_FADE_STEP;
-        blend = next_blend;
-        goto update_color;
-
-fade_in:
-        if (blend >= KF_FIXED12_ONE) {
-            goto render_frame;
-        }
-        next_blend = blend + OPENING_COLOR_FADE_STEP;
-        blend = next_blend;
-
-update_color:
-        lighting_set_color_matrix(
-            &color_matrix_table[KF_ENUM_ENCODE(s32, KF_OPEN_COLOR_BLACK)],
-            &color_matrix_table[KF_ENUM_ENCODE(s32, KF_OPEN_COLOR_DEFAULT)], next_blend);
-
-render_frame:
         audio_set_listener_transform(
             &opening_camera_path_state.position,
             &opening_camera_path_state.rotation);
@@ -260,7 +250,6 @@ render_frame:
             &opening_camera_path_state.rotation);
     }
 
-scene_complete:
     audio_stop_sequence(KF_AUDIO_STOP_FADE);
 }
 
