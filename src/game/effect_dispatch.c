@@ -709,7 +709,11 @@ advance_effect_phase:
         if (phase < KF_EFFECT_ACTOR_SPAWNER_TRAVEL_FIRST) {
             scale = effect->scale_x + ACTOR_SPAWNER_SCALE_STEP;
             scale_phase = effect->phase;
-            goto publish_actor_spawner_scale;
+            effect->scale_x = scale;
+            effect->scale_z = scale;
+            effect->scale_y = scale;
+            scale_phase++;
+            effect->phase = scale_phase;
         } else if (KF_ENUM_ENCODE(u8, phase) < KF_ENUM_ENCODE(u8, KF_EFFECT_ACTOR_SPAWNER_TRAVEL_LAST) + 1) {
             VECTOR position;
 
@@ -759,7 +763,6 @@ advance_actor_spawner_phase:
         } else if (phase < KF_EFFECT_ACTOR_SPAWNER_PHASE_END) {
             scale = effect->scale_x - ACTOR_SPAWNER_SCALE_STEP;
             scale_phase = effect->phase;
-publish_actor_spawner_scale:
             effect->scale_x = scale;
             effect->scale_z = scale;
             effect->scale_y = scale;
