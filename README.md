@@ -59,8 +59,19 @@ Manually maintained cleanup checklist:
 - [ ] Review casts and remove avoidable conversions: **533 written casts**
   (**430 pointer**, **103 scalar**).
 - [ ] Review unions and simplify avoidable alternate views: **38 union definitions**.
+- [ ] Review gotos: **103 statements** (**92 GAME**, **11 OPEN**).
+- [ ] Review artificial address arithmetic: **2 cases**.
+- [ ] Review owner recovery from member pointers: **26 sites**.
+- [ ] Review out-of-object pointers: **1 case**.
+- [ ] Review manual varargs: **3 functions**.
+- [ ] Review unrelated variable reuse: **4 functions**.
+- [ ] Review stack aggregates and unused members: **2 functions**.
+- [ ] Review unresolved buffer bounds: **3 regions**.
+- [ ] Search for inline functions.
+- [ ] Search for macros for common code.
 
-Counts cover project C sources and headers. See the
+Preserve banked matches. Cast/union/goto counts cover the tree; other counts
+cover audited cases. See the
 [cast review and matching constraints](docs/patterns/cast-owner-reduction.md).
 
 ## Quickstart

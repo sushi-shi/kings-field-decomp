@@ -2068,3 +2068,236 @@ do not bank the function. Results are under
 `build/gcc257/render-entities-actor-origin-owner-traces/`, and the independent
 audit is `build/render-entities-actor-origin-owner-audit/summary.json`. The
 remaining register-role cycle is unattributed.
+
+## Effect dispatcher: exhausted allocation frontier
+
+Final campaign verdict: GAME `80038a38` has already received a fresh
+ten-state instrumented entry-owner batch in this least-tried pass, bringing
+the recorded corpus to 26 trials. That batch varied every real declaration
+and initialization boundary for effect, magic, kind, phase and radius. All
+states emit the same 6156 bytes at 99.827810%; 1539 of 1539 instruction
+positions retain identical non-register bits, with 69 ordered calls, 22
+ordered referents and the complete CFG unchanged. The broader dispatcher
+trace dossier also covers the supported collision, power, radius, scale,
+phase and magic-row ownership families.
+
+The remaining 42 words are only the already recorded `s3`/`s6` entry-role
+exchange, ground/radial `s3`/`s5` ownership and ordinary-radial `v0`/`v1`
+exchange. No untried source operation, width, referent, call or control edge is
+supported by retail. A further attempt would require a fake live value,
+forced register, volatile carrier, duplicate read or a semantic regression.
+Treat this function as exhausted under the source-model rules; leave
+`src/game/effect_dispatch.c` unchanged and do not bank it.
+
+## Dialogue page: late directory publication
+
+Third follow-up Function Match Plan: GAME `8002c9d4`, 164 bytes, strict
+98.780490%, unit `game.save_system`. The current campaign evidence retains
+four callers, one ordered display call, seven ordered TALK-path referents, six
+checked-division CFG blocks, three branches, two traps, a 24-byte frame and
+one return. Every opcode, immediate, memory access, control destination and
+delay-slot operation agrees. Retail assigns quotient/remainder/directory to
+`a2`/`v0`/`a0`; the probe assigns them to `a2`/`v1`/`v0`.
+
+Prior instrumented trials varied divmod declaration order, an encoded
+character owner, direct and advancing directory accesses, cursor rewind and
+three complete-path consumers. They initialized or assigned the directory
+owner before the three independent floor/stage/page stores. Retail first
+materializes path+6 immediately after those stores. Test that missing source
+boundary by declaring the cursor early but assigning it only after the page
+store, independently and with the directly decoded cursor-minus-six call.
+Also test a named complete-path value in that same late-publication form.
+Trace the directory, quotient, remainder and complete-path lifetimes. Preserve
+the signed divmod, all seven stores and referents, their order, the call delay
+slot and all 23 sibling bodies. Reject duplicate arithmetic, moved stores, a
+second path owner, volatile/register forcing or any non-register difference;
+retain and bank only strict 100%.
+
+All seven states compile with instrumented/native object parity. Assigning or
+initializing the cursor after the page store makes its named lifetime disappear
+before allocation and emits one common 164-byte body at 84.829270%. It moves
+the path+0xc address ahead of path+6, yielding sixteen unequal words and the
+wrong ordered referents. Destructively rewinding the late cursor emits 160
+bytes at 86.658540%, loses the path+6 referent and has 26 unequal aligned
+words. Direct, cursor-derived and named complete-path calls do not distinguish
+either body.
+
+The canonical early owner remains the strongest form at 98.780490%, 164 bytes
+and eight unequal register words. Every variant preserves the sole call and
+all 23 exact sibling functions; the six non-rewind forms retain the same seven
+referent identities, though the late forms have the wrong order. Reject all
+late-publication forms, leave `src/game/save_system.c` unchanged and do not
+bank the function. Results and selected traces are under
+`build/hypotheses/talk-dialogue-late-directory/` and
+`build/gcc257/talk-dialogue-late-directory-traces/`; the independent audit is
+`build/talk-dialogue-late-directory-audit/summary.json`. The quotient,
+remainder and directory register assignment remains unattributed after all
+supported ownership and consumer families.
+
+## Horizontal player movement: collision-target owner
+
+Second follow-up Function Match Plan: GAME `800171fc`, 2088 retail / 2128
+probe bytes, strict 96.568960%, within `game.player_core`. The refreshed
+campaign evidence retains three call sites, seven ordered calls, 33 retail
+versus 43 probe address pairs, 100 retail CFG blocks, 58 branches, an 88-byte
+frame and the common result one. The signed-word heading/distance ABI, SDK
+`SVECTOR` delta, opposite X/Z bearing subtraction, signed-halfword retry,
+collision predicates and all constants remain established game semantics;
+`rcos`/`rsin` retain separate Release 2.5 library ownership.
+
+Retail and the probe both construct the collision-target radius address and
+reuse it to access position Z/X at -16/-24. Their entry allocations differ as
+a four-role cycle: heading/attempt/floor anchor/radius anchor are
+`s7`/`s6`/`s5`/`s8` in retail and `s6`/`s5`/`s8`/`s7` in the probe. Earlier
+typed-owner campaigns covered the player, camera, map cell and floor-height
+owners, but did not cover the already proven complete `KfCollisionTarget` or
+its actual radius subobject.
+
+Test a typed complete collision-target owner and a typed pointer to its radius,
+with entry and first-use initialization boundaries and const controls. Trace
+heading, attempt, target owner, radius owner and the collision-target
+base/radius address lifetimes. Preserve both position reads, the radius load,
+seven calls, field widths, CFG, delay slots, 88-byte frame and all thirteen
+exact siblings. Reject raw offsets, copied targets, duplicated reads, changed
+referents, volatile/register forcing or any changed operation. Retain and bank
+only strict 100%.
+
+All ten states compile with native/instrumented parity. A radius pointer
+assigned at first use folds into the existing seven-reference radius-address
+pseudo in `s7` and is byte-identical to canonical at 96.568960%, 2128 bytes
+and 43 ordered referents. Entry-initialized radius owners instead cross five
+calls without a hard register, emit 2124 bytes at 95.203064% and introduce the
+radius address as a separate referent.
+
+The complete target owner initialized at entry is the useful allocation
+control: heading and attempt move from `s6`/`s5` into retail's `s7`/`s6`.
+However, the eleven-reference target base occupies `s5`, the radius-root
+topology disappears, the body becomes 2116 bytes and strict similarity falls
+to 96.024900%. Const qualification is erased. Delaying that owner to the first
+hit shortens it across one call and falls to 94.130270%. Position-only owners
+emit 2120 bytes at 95.833336% or 93.938700%; composing an entry position and
+radius owner is identical to position alone.
+
+Every state preserves the seven ordered calls and all thirteen exact sibling
+functions. Only canonical and the eliminated first-use radius owner retain the
+canonical referent sequence. Reject the target-owner forms, leave
+`src/game/player_core.c` unchanged and do not bank the function. Results and
+selected traces are under
+`build/hypotheses/player-move-collision-target-owner/` and
+`build/gcc257/player-move-collision-target-owner-traces/`; the independent
+audit is `build/player-move-collision-target-owner-audit/summary.json`. The
+control explains two register choices but does not justify replacing the
+retail radius-relative address shape with a different source topology.
+
+## Effect collision: exhausted selector frontier
+
+Final campaign verdict: GAME `80037850` already has three focused selector
+campaigns after the retained in-cell boundary correction, plus the exhaustive
+switch-domain permutation set and the pinned-profile controls. Together they
+cover explicit and aliased defaults, an explicit zero case, all supported case
+orders, complete conditional chains, zero-first guards, query-only switches,
+named signed and unsigned selectors, result widths, initialization boundaries
+and the scheduler profiles. The current source still matches 474 of 475 linked
+words at strict 99.873690%, with the sole call, twelve ordered referents, all
+1900 bytes and every geometry word unchanged.
+
+The only residue is retail `nop` versus the probe's redundant `li v0,1` in the
+class-three selector branch delay slot at `+718`. The selector is masked by
+three, and the source defines its zero fallback as one; eliminating that
+assignment would require undefined fallback behavior, while retaining it in
+every ordinary supported topology reproduces or worsens the residue. No
+untried width, operation, referent, call, CFG edge or declaration boundary is
+supported by the binary. Treat the function as exhausted under the source
+model rules; leave `src/game/effect_map_collision.c` unchanged and do not bank
+it.
+
+## Item database: destructive decimal working value
+
+Second follow-up Function Match Plan: GAME `80020cfc`, 1500 bytes / strict
+99.746666%, unit `game.item`. The fresh campaign evidence retains the sole
+initialization caller, five ordered calls, ten ordered address pairs, six
+internal jumps, two literal paths, a 40-byte filename in an 80-byte frame and
+five strict-exact siblings. All 375 linked positions agree outside register
+fields. The sixteen unequal words are confined to the signed divisions and
+four filename stores: retail assigns the directory quotient, one-based number
+and hundreds quotient to `a2`/`v0`/`v1`, while the probe uses
+`v1`/`a2`/`a2`. The remainder and tens quotient already agree.
+
+Earlier campaigns covered calculation order, direct and named digits, all
+supported scalar widths, loop-index widths, formatting/helper boundaries,
+typed file-table and path owners, and a destructive remainder only after the
+hundreds store. Test the remaining cohesive decimal representation: capture
+the real remainder, then destructively divide the one-based working number by
+100 for the hundreds digit. Also test a single working value whose quotient
+and remainder updates are sequenced before the same four stores. These forms
+preserve all filename bytes for the complete signed input domain and express
+real consumed values rather than register carriers.
+
+Trace the loop index, working number, quotient and remainder lifetimes. Keep
+the signed divide checks, store order, frame, calls, referents, table traversal
+and exact siblings. Reject any changed opcode, immediate, control edge or
+target introduced merely to alter allocation; do not use volatile state,
+forced registers, duplicate arithmetic or an additional live value. Retain
+and bank only strict 100%.
+
+All six states compile with native/instrumented parity. Naming the directory
+quotient before destructively dividing the working number is completely
+linked-word identical to canonical at 1500 bytes and 99.746666%; both named
+owners disappear before allocation, while `n` retains the same six-reference
+`a2` allocation. The named-quotient, destructive-quotient,
+destructive-remainder and two-working-value forms all emit 1500 bytes at
+99.101330%. They change the arithmetic/store schedule without recovering the
+retail register assignment, despite retaining the 80-byte frame.
+
+Every state preserves the five ordered calls, ten ordered referents and all
+five exact sibling functions. Reject all destructive forms, leave
+`src/game/item.c` unchanged and do not bank the function. Results and selected
+traces are under `build/hypotheses/item-database-destructive-decimal/` and
+`build/gcc257/item-database-destructive-decimal-traces/`; the independent
+linked audit is `build/item-database-destructive-decimal-audit.json`. With the
+calculation-order, width, inline-boundary, table/path-owner and destructive
+working-value families exhausted, the sixteen register-field differences
+remain unattributed.
+
+## OPEN ending scroll: exhausted lighting-dispatch frontier
+
+Final campaign verdict: OPEN `80014e28` has the largest source corpus in the
+remaining set. The retained 1944-byte body matches at strict 99.917694%, with
+40 ordered calls, 31 ordered referents, a 264-byte frame and all six siblings
+exact. Its seven unequal linked words are confined to the lighting selector,
+comparison-one owner and the two phase-transition constants at offsets
+`+398..+418`; no call, referent, opcode family, memory access or later frame
+operation differs.
+
+The instrumented campaigns cover phase and blend widths, initialization and
+declaration scopes, every ordinary switch/if/label layout, explicit terminal
+cases, successful and failed edge joins, shared and duplicated transition
+tails, next-phase carriers, increment updates, sequence-phase consumers,
+scroll predicates, color-pointer roles, local stack owners, scheduling
+profiles and the broader generated worktree corpus. The latest increment
+batch confirms that a real monotone update increases the phase lifetime and
+changes hundreds of later aligned words instead of joining retail's constant
+one. An explicit terminal case likewise changes the dispatch range tree.
+
+No untried source operation, width, owner, call boundary, control edge or
+referent is supported by retail. A further change would require a fake
+constant owner, forced register, volatile carrier or semantic distortion.
+Treat the function as exhausted under the source-model rules; leave
+`src/open/opening_scenes.c` unchanged and do not bank it. The seven register
+and internal-jump fields remain an unattributed code-generation residue.
+
+## Final campaign verification
+
+Ruff, all 769 repository tests (142.86 seconds), and `git diff --check` pass.
+The required full three-image `kf build` compiles and scores every unit with
+zero artifact failures. Function closure is PSX 1/1, GAME 345/362 and OPEN
+107/108; aggregate fuzzy similarity is 99.879% for GAME and 99.995% for OPEN.
+The build remains nonzero only at the existing reference-closure, data-owner
+and section-placement gates: data units match 1/1 PSX, 30/44 GAME and 11/20
+OPEN, while target relinks verify 1/1, 68/77 and 33/38 respectively.
+
+Every remaining non-exact function received an image-qualified evidence pass
+and instrumented source controls in least-tried order. Only strict-exact,
+source-supported results were banked during the campaign. The final frontier
+produced no additional exact result, so no partial or generated state is
+banked and no baseline is changed.
