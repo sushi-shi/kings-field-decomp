@@ -100,7 +100,7 @@ void map_event_update_animation_loop(void)
     if (player_state.progress_state.current_floor == KF_FLOOR_5
             && event == &map_event_pool[0]
             && map_event_pool[0].animation_phase < KF_MAP_EVENT_ANIMATION_LOOP_STEP) {
-        audio_play_spatial_range(&gameplay_sound_ref_10,
+        audio_play_spatial_range(&gameplay_sound_refs[10],
             &map_event_pool[0].reference_position,
             KF_AUDIO_MAX_VOLUME, MAP_EVENT_LOOP_SOUND_MAX_DISTANCE, MAP_EVENT_LOOP_SOUND_ATTENUATION_DISTANCE);
     }

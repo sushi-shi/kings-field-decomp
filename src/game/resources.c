@@ -41,7 +41,7 @@ KfMapCollisionGrid map_collision_grid;
 DATA(0x8009a748, 0x2710)
 KfMapAttributeGrid map_cell_attribute_grid;
 
-RODATA(0x80012178, 0x3c)
+RODATA(0x80012178, 0x39)
 
 /*
  * Advances a chunked stream to its next chunk: each chunk is a byte length

@@ -137,21 +137,17 @@ class GameMapScriptDataTests(unittest.TestCase):
             self.assertEqual(sizes['method'], 'pinned-compiler-sizeof-probe')
             self.assertEqual(sizes['sizes'], {s: len(p) for _, s, p in selected})
 
-    def test_section_equality_does_not_waive_placement(self):
+    def test_equal_sections_satisfy_native_aspsx_placement(self):
         for name in ('game.map_scripts', 'game.player_warp', 'game.effect_update'):
             unit, paths = self.built_pair(name)
             self.assertEqual(_diff_init_section('.data', *(Elf(p) for p in paths)).status, 'match')
             result = diff_unit(unit, BUILD / 'delink', BUILD / 'objdiff')
             datum = next(d for d in result.diffs if d.name == '.data')
-            if name == 'game.map_scripts':
-                self.assertEqual(datum.status, 'match')
-            else:
-                self.assertEqual(datum.status, 'placement')
-                self.assertIn('invalid-section-placement', datum.detail)
-                with paths[1].open('rb') as stream:
-                    alignment = ELFFile(stream).get_section_by_name('.data')['sh_addralign']
-                    self.assertEqual(alignment, 16)
-                    self.assertNotEqual(unit.data[0].va % alignment, 0)
+            self.assertEqual(datum.status, 'match')
+            with paths[1].open('rb') as stream:
+                alignment = ELFFile(stream).get_section_by_name('.data')['sh_addralign']
+                self.assertEqual(alignment, 4)
+                self.assertEqual(unit.data[0].va % alignment, 0)
 
     def test_twelve_reviewed_pairs_roundtrip_and_sdk_candidate_stays_candidate(self):
         image, ctx, catalog = self.retail(), Context('GAME.EXE'), load_catalog(RETAIL_CONFIG)
@@ -211,7 +207,7 @@ class GameMapScriptDataTests(unittest.TestCase):
         grid = MemoryRange('grid', *symbols.datum('map_floor_height_grid'))
         guard = MemoryRange('guard', grid.address - 8, grid.size + 16)
         table = MemoryRange('table-neighbors', 0x80056260, 52)
-        sound = symbols.datum('gameplay_sound_ref_4')[0]
+        sound = symbols.datum('gameplay_sound_refs')[0] + 4 * 3
         for index, segment in enumerate(SEGMENTS):
             for start in (-800, -1, 0, 1, 3899, 3900, 3901, 4096, 4097, 4899):
                 for step in (-800, -1, 0, 1, 800):

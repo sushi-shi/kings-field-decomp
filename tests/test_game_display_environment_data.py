@@ -124,12 +124,11 @@ class GameDisplayEnvironmentDataTests(unittest.TestCase):
         self.assertEqual(sections['.bss'].status, 'size')
         self.assertIn('conflicting-section-bases', sections['.bss'].detail)
         # Exact display initialization also fixes the later switch-label offsets.
-        # Matching payload and relocations do not waive section placement.
+        # Native four-byte alignment also preserves its retail placement.
         self.assertEqual(retail.sections['.rodata'].data, source.sections['.rodata'].data)
         self.assertEqual(retail.relocations('.rodata'), source.relocations('.rodata'))
         self.assertEqual(len(source.relocations('.rodata')), 29)
-        self.assertEqual(sections['.rodata'].status, 'placement')
-        self.assertIn('invalid-section-placement', sections['.rodata'].detail)
+        self.assertEqual(sections['.rodata'].status, 'match')
 
     def test_reversed_environment_fields_fail_the_production_layout_checks(self):
         probe = self.probe()

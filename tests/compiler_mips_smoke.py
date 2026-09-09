@@ -106,7 +106,8 @@ def tentative_controls(root: Path) -> None:
 
 def assembler_binding_controls(root: Path) -> None:
     # Exercise both allocation classes and the adapter's opt-in COMMON paths.
-    # G8 here tests the adapter, not the project's G0 compiler/profile choice.
+    # Native ASPSX 1.07 keeps exported COMMON in .bss under G8; only
+    # private small requests become fixed .sbss contributions.
     source = ".comm exported,8\n.lcomm private,8\n"
     source += ".type exported,@object\n.type private,@object\n"
     for limit in (0, 8):
@@ -132,8 +133,9 @@ def assembler_binding_controls(root: Path) -> None:
                                        capture_output=True, text=True, check=True).stdout
                 rows = {parts[-1]: parts for line in table.splitlines()
                         if len(parts := line.split()) == 6}
-                section = ".sbss" if limit else ".bss"
-                for name, offset in (("exported", 0), ("private", 8)):
+                expected = (("exported", ".bss", 0),
+                            ("private", ".sbss" if limit else ".bss", 0 if limit else 8))
+                for name, section, offset in expected:
                     if rows[name][3] != section or int(rows[name][0], 16) != offset:
                         raise RuntimeError(f"G{limit} allocation layout changed: {rows[name]}")
 
@@ -168,13 +170,15 @@ def section_extent_controls(root: Path) -> None:
                                    f'{name}: {sections[name]}')
         # Compiler-specified COMMON rounding is real input, not a GAS tail.
         allocation = 16 if version == '257' else 9
-        if sections['.bss'][:2] != (allocation, 16):
+        if sections['.bss'][:2] != (allocation, 4):
             raise RuntimeError(f'GCC {version}: tentative allocation/alignment changed: {sections}')
-        if sections['.data'][1] != 16:
-            raise RuntimeError('no-tail-padding must not rewrite the ELF data alignment')
+        if sections['.data'][1] != 4:
+            raise RuntimeError('C analysis object must preserve the native ASPSX section constraint')
         metadata = json.loads(output.with_suffix('.o.json').read_text())
         if metadata.get('gnu_as_section_flags') != ['-no-pad-sections']:
             raise RuntimeError('object metadata does not identify its section-padding contract')
+        if metadata.get('section_alignment', {}).get('method') != 'aspsx-1.07-section-declarations':
+            raise RuntimeError('object metadata does not identify its native section constraint')
 
     # Diagnostic assembly, not a game reconstruction: retain an explicit final
     # NOP, .space bytes, interior alignment padding and a relocated addend.

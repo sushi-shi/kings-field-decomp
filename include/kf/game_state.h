@@ -16,18 +16,9 @@
 extern u32 DAT_80057d24;
 extern u32 DAT_800a0768;
 extern KfGameExitCode game_exit_code;
-extern SoundRef gameplay_sound_ref_0;
-extern SoundRef gameplay_sound_ref_1;
-extern SoundRef gameplay_sound_ref_10;
-extern SoundRef gameplay_sound_ref_11;
-extern SoundRef gameplay_sound_ref_12;
-extern SoundRef gameplay_sound_ref_2;
-extern SoundRef gameplay_sound_ref_3;
-extern SoundRef gameplay_sound_ref_4;
-extern SoundRef gameplay_sound_ref_5;
-extern SoundRef gameplay_sound_ref_6;
-extern SoundRef gameplay_sound_ref_7;
-extern SoundRef gameplay_sound_ref_8;
+
+enum { KF_GAMEPLAY_SOUND_COUNT = 13 };
+extern SoundRef gameplay_sound_refs[KF_GAMEPLAY_SOUND_COUNT];
 extern char talk_image_path_template[];
 
 #endif

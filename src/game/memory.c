@@ -21,14 +21,10 @@ enum {
 #define MEMORY_REBASED_ARENA_LAST_OFFSET 0xfefff
 #endif
 
-DATA(0x800a01f0, 0x50)
+DATA(0x800a01f0, 0x58)
 KfMemoryArena memory_arena;
 
-DATA(0x800a0240, 0x4)
-u8 *memory_system_heap_start;
 
-DATA(0x800a0244, 0x4)
-s32 memory_system_heap_size;
 
 /* Element 0 is the depth; elements 1..16 hold each allocation's size or malloc block. */
 
@@ -74,14 +70,14 @@ void memory_set_allocation_mode(KfMemoryAllocationMode mode)
 ADDRESS(0x8001abb0, 0x20)
 void memory_capture_system_heap_start(void)
 {
-    memory_system_heap_start = memory_arena.end + 1;
+    memory_arena.system_heap_start = memory_arena.end + 1;
 }
 
 ADDRESS(0x8001abd0, 0x3c)
 void memory_reset_system_heap(void)
 {
-    memory_system_heap_size = (u8 *)MEMORY_SYSTEM_HEAP_END_ADDRESS - memory_system_heap_start;
-    InitHeap(memory_system_heap_start, memory_system_heap_size);
+    memory_arena.system_heap_size = (u8 *)MEMORY_SYSTEM_HEAP_END_ADDRESS - memory_arena.system_heap_start;
+    InitHeap(memory_arena.system_heap_start, memory_arena.system_heap_size);
 }
 
 /*

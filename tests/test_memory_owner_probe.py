@@ -42,9 +42,7 @@ class MemoryOwnerProbeTests(unittest.TestCase):
             arena_base = data["memory_arena"]
             if name.endswith(".memory"):
                 self.assertEqual([(d.symbol, d.va, d.size) for d in unit.data],
-                                 [("memory_arena", arena_base, 0x50),
-                                  ("memory_system_heap_start", arena_base + 0x50, 4),
-                                  ("memory_system_heap_size", arena_base + 0x54, 4)])
+                                 [("memory_arena", arena_base, 0x58)])
             functions = {f.symbol: f.va for f in catalog.functions[unit.image]}
             with TemporaryDirectory(prefix="kf-memory-owner-") as directory:
                 root = Path(directory)
@@ -66,7 +64,7 @@ class MemoryOwnerProbeTests(unittest.TestCase):
                             f"<{claim.body_size // 4}I", retail[unit.image],
                             IMAGE_LAYOUTS[unit.image].file_offset(claim.va)))
                         self.assertEqual(words, expected)
-                        if any(arena_base <= va < arena_base + 0x50 for va in targets):
+                        if any(arena_base <= va < arena_base + 0x58 for va in targets):
                             shifted = dict(data, memory_arena=arena_base + 4)
                             if ".bss" in shifted:
                                 shifted[".bss"] += 4

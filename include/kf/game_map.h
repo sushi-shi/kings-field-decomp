@@ -529,11 +529,21 @@ KF_MAP_TRANSFORM_OFFSET_CHECK(KfMapEvent, event_rotation_pad, rotation.pad, 0x3a
 KF_MAP_TRANSFORM_OFFSET_CHECK(KfMapEvent, event_animation_cache, animation_cache, 0x3c);
 #undef KF_MAP_TRANSFORM_OFFSET_CHECK
 
-/* Definitions and the live pool form one base-register-relative aggregate. */
+/* Startup clears the definitions, live pool and shared 16-byte control tail. */
 typedef struct KfMapObjectState {
     KfMapObjectDefinitionTable definitions;
     KfMapObject objects[KF_MAP_OBJECT_CAPACITY];
+    u8 unknown_25a8[10];
+    u16 effect_sequence_160;
+    u16 effect_sequence_170;
+    u16 effect_sequence_180;
 } KfMapObjectState;
+
+typedef char KfMapObjectStateSizeCheck[
+    sizeof(KfMapObjectState) == 0x25b8 ? 1 : -1];
+typedef char KfMapObjectStateSequenceOffsetCheck[
+    (u32)&((KfMapObjectState *)0)->effect_sequence_160 == 0x25b2 ? 1 : -1];
+
 
 /* Cleared as 0x2360 bytes; the final 0x2134 bytes are copied by save I/O. */
 typedef struct KfMapRuntimeState {
@@ -559,9 +569,6 @@ extern KfMapRuntimeState map_runtime_state;
 #define map_floor5_script (map_runtime_state.world_state.floors[4].script.floor5)
 #define boss_defeat_complete (map_floor5_script.boss_defeat)
 extern KfMapObjectState map_object_state;
-extern u16 map_object_effect_sequence_160;
-extern u16 map_object_effect_sequence_170;
-extern u16 map_object_effect_sequence_180;
 extern char map_resource_path[KF_MAP_RESOURCE_PATH_BYTES];
 
 extern void camera_path_begin(KfCameraPathState *path, const KfCameraPathPoint *points);

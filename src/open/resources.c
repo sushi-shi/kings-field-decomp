@@ -57,7 +57,7 @@ KfMapCollisionGrid map_collision_grid;
 DATA(0x800730a0, 0x2710)
 KfMapAttributeGrid map_cell_attribute_grid;
 
-RODATA(0x8001205c, 0xb4)
+RODATA(0x8001205c, 0xb1)
 
 /* A resource chunk stores its payload byte length before the payload. */
 #define STREAM_NEXT(stream) \

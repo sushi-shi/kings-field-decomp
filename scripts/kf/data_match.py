@@ -210,6 +210,9 @@ def _diff_init_section(name: str, retail: Elf, recon: Elf) -> SectionDiff | None
     if rc_present and not rt_present:
         return SectionDiff(name, rt_size, rc_size, "extra",
                            f"reconstruction has {rc_size} B, retail has none")
+    if (rt.type, rt.flags) != (rc.type, rc.flags):
+        return SectionDiff(name, rt_size, rc_size, "class",
+                           "initialized allocation type/flags differ")
     rt_rel = retail.relocations(name)
     rc_rel = recon.relocations(name)
     # Strict means the complete object-section extent is part of the comparison.
@@ -292,7 +295,7 @@ def _data_placement_issues(path: Path, unit: Unit) -> list[tuple[str, dict]]:
     # data-placement failures. All DATA/RODATA claims and ELF sections remain.
     with path.open("rb") as stream:
         plan(ELFFile(stream), replace(unit, functions=()), result)
-    owned = {d.symbol: ".data" if d.storage == "load" else ".bss" for d in unit.data}
+    owned = {d.symbol: d.section_name for d in unit.data}
     return [(issue.get("section", owned.get(issue.get("symbol"), "object")), issue)
             for issue in result.issues if issue.get("section") != ".text"]
 

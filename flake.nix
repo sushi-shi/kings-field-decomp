@@ -122,7 +122,10 @@
       maspsxPatched = pkgs.applyPatches {
         name = "maspsx-private-bss-source";
         src = maspsx-src;
-        patches = [ ./patches/maspsx-private-bss.patch ];
+        patches = [
+          ./patches/maspsx-private-bss.patch
+          ./patches/maspsx-107-small-data.patch
+        ];
       };
 
       maspsx = pkgs.writeShellApplication {
@@ -538,7 +541,7 @@
       toolchainTests = pkgs.runCommand "kings-field-toolchain-tests" {
         nativeBuildInputs = [
           analysisPython mipsBinutilsAliases psy-k objdiff-cli pkgs.dosbox-x
-          cc1psx257 cpppsx257
+          cc1psx257 cpppsx257 maspsx
           pkgs.llvmPackages.clang-unwrapped
         ];
         GHIDRA_PSX_LOADER = "${ghidraPsxLoader}/lib/ghidra/Ghidra/Extensions/ghidra_psx_ldr";

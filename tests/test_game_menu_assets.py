@@ -71,7 +71,7 @@ class GameMenuAssetsTests(unittest.TestCase):
                   if f.structure == 'MenuTileSprite' and f.meaning_confidence == 'opaque']
         self.assertEqual([(f.offset, f.size) for f in opaque], [(5, 1), (7, 1)])
 
-    def test_complete_bank_layout_matches_but_source_alignment_still_prevents_placement(self):
+    def test_complete_bank_layout_and_native_literal_extent_match(self):
         source = self.object('game.item')
         target = BUILD / 'delink/game/modules' / source.name
         if not target.is_file():
@@ -94,15 +94,12 @@ class GameMenuAssetsTests(unittest.TestCase):
                                BUILD / 'delink', BUILD / 'objdiff')
         self.assertIsNotNone(comparison)
         self.assertEqual([(d.name, d.status) for d in comparison.diffs],
-                         [('.rodata', 'size'), ('.bss', 'placement')])
-        # No automatic GNU-as tail: the compiler's 37 literal bytes do not
-        # explain the complete 40-byte RODATA claim. Keep that mismatch visible.
+                         [('.rodata', 'match'), ('.bss', 'match')])
+        # The native object ends at the last NUL; the following three bytes
+        # belong to linker alignment, not the compiler's literal contribution.
         self.assertEqual((comparison.diffs[0].retail_size, comparison.diffs[0].recon_size),
-                         (40, 37))
-        self.assertIn('reconstruction:', comparison.diffs[1].detail)
-        self.assertIn('invalid-section-placement', comparison.diffs[1].detail)
-        self.assertIn('"alignment": 16', comparison.diffs[1].detail)
-        self.assertNotIn('target:', comparison.diffs[1].detail)
+                         (37, 37))
+        self.assertTrue(comparison.matches)
 
     def test_all_stat_banks_have_one_typed_source_owner_without_invented_gap_data(self):
         units, identities = load_manifest().units, load_data_identities(RETAIL_CONFIG)

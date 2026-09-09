@@ -229,6 +229,8 @@ def emit(out: Path = NINJA, retail_dir: Path | None = None) -> tuple[int, int]:
         str(UNITS_MANIFEST.relative_to(REPO)),
         str((RETAIL_CONFIG / "data_contributions.tsv").relative_to(REPO)),
         str((RETAIL_CONFIG / "data_identities.tsv").relative_to(REPO)),
+        str((RETAIL_CONFIG / "data_sections.tsv").relative_to(REPO)),
+        str((RETAIL_CONFIG / "data_reservations.tsv").relative_to(REPO)),
         *_script_inputs(),
         *scanner.scanned(),
     ]

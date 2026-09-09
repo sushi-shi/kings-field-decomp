@@ -154,6 +154,12 @@ class Datum:
     symbol: str
     storage: str
     scope: str = ""
+    section: str = ""
+    reservation_size: int = 0
+
+    @property
+    def section_name(self) -> str:
+        return self.section or (".data" if self.storage == "load" else ".bss")
 
     @property
     def end(self) -> int:
@@ -165,6 +171,9 @@ class Datum:
 
     @property
     def alignment(self) -> int:
+        if self.reservation_size:
+            # Native ASPSX fixed requests concatenate without internal alignment.
+            return 1
         # Working packing constraint bounded by the retail address, not proof
         # of the original section alignment or allocation class. The pinned
         # GCC 2.5.7/maspsx path gives both local and exported tentative BSS
@@ -648,8 +657,10 @@ def _module_data(
     module: Module,
     data_blobs: dict[int, tuple[bytes, list[MipsRelocation]]],
     load_padding: Callable[[int, int], bytes] | None = None,
+    *,
+    section: str = ".data",
 ) -> tuple[bytes, list[DefinedSymbol], list[MipsRelocation], int, list[DefinedSymbol]]:
-    """Lay out a module's claimed data (.data bytes) and bss (sizes only)."""
+    """Pack one initialized section; the default call also lays out fixed BSS."""
     data = bytearray()
     data_symbols: list[DefinedSymbol] = []
     data_relocations: list[MipsRelocation] = []
@@ -658,6 +669,8 @@ def _module_data(
     previous_load_end: int | None = None
     for datum in module.data:
         if datum.storage == "load":
+            if datum.section_name != section:
+                continue
             blob, relocations = data_blobs[datum.va]
             if len(blob) != datum.size:
                 raise ValueError(f"module {module.unit}: truncated data for {datum.symbol}")
@@ -684,12 +697,12 @@ def _module_data(
             )
             data.extend(blob)
             previous_load_end = datum.end
-        else:
+        elif datum.section_name == (".bss" if section == ".data" else section):
             offset = (bss_size + datum.alignment - 1) & -datum.alignment
             bss_symbols.append(
                 DefinedSymbol(datum.symbol, offset, datum.size, STT_OBJECT, datum.binding)
             )
-            bss_size = offset + datum.size
+            bss_size = offset + (datum.reservation_size or datum.size)
     return bytes(data), data_symbols, data_relocations, bss_size, bss_symbols
 
 
@@ -704,7 +717,7 @@ def _module_object(
 ) -> ModuleImage:
     """Concatenate a module's carved functions into one .text section.
 
-    Claimed data follows in ``.data``/``.bss`` so the object compares the whole
+    Claimed data follows in ``.data``/``.sdata``/``.bss`` so the object compares the whole
     translation-unit hypothesis, not only its code. Do not append the probe
     assembler's alignment tails: bytes outside the retail claims can belong to
     another object, and synthesized zeros are not recovered retail storage.
@@ -738,6 +751,12 @@ def _module_object(
     data, data_symbols, data_relocations, bss_size, bss_symbols = _module_data(
         module, data_blobs or {}, load_padding
     )
+    sdata, sdata_symbols, sdata_relocations, _, _ = _module_data(
+        module, data_blobs or {}, load_padding, section=".sdata"
+    )
+    _, _, _, sbss_size, sbss_symbols = _module_data(
+        module, {}, section=".sbss"
+    )
     rodata, rodata_relocations = b"", []
     if module.rodata is not None:
         if rodata_blob is None:
@@ -756,20 +775,28 @@ def _module_object(
             data=data,
             data_symbols=data_symbols,
             data_relocations=data_relocations,
-            data_alignment=max((d.alignment for d in module.data if d.storage == "load"),
+            data_alignment=max((d.alignment for d in module.data if d.section_name == ".data"),
                                default=1),
+            sdata=sdata,
+            sdata_symbols=sdata_symbols,
+            sdata_relocations=sdata_relocations,
+            sdata_alignment=max((d.alignment for d in module.data
+                                 if d.section_name == ".sdata"), default=1),
             bss_size=bss_size,
             bss_symbols=bss_symbols,
-            bss_alignment=max((d.alignment for d in module.data if d.storage == "bss"),
-                              default=1),
+            bss_alignment=max((4 if d.reservation_size else d.alignment
+                               for d in module.data if d.section_name == ".bss"), default=1),
+            sbss_size=sbss_size,
+            sbss_symbols=sbss_symbols,
+            sbss_alignment=4,
             rodata=rodata,
             rodata_relocations=rodata_relocations,
         ),
-        [*relocations, *data_relocations, *rodata_relocations],
+        [*relocations, *data_relocations, *sdata_relocations, *rodata_relocations],
         len(text),
         body_total,
-        len(data),
-        bss_size,
+        len(data) + len(sdata),
+        bss_size + sbss_size,
         len(rodata),
     )
 

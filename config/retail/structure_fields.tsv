@@ -448,6 +448,10 @@ KfMapObjectSpawn	0x00	0x02	sequence	u16	supported	game_map.h;asm;typed-map-links
 KfMapObjectSpawn	0x00	0x01	effect_id	u8	supported	game_map.h;asm;typed-map-links.md	effect constructor first argument for placed objects
 KfMapObjectState	0x00	0x500	definitions	KfMapObjectDefinitionTable	supported	game_map.h;asm;base-register;map_object_pool_clear_link;typed-map-tables.md	member of the map_object_state aggregate
 KfMapObjectState	0x500	0x20a8	objects	KfMapObject[190]	supported	game_map.h;asm;base-register;map_object_pool_clear_link	member of the map_object_state aggregate
+KfMapObjectState	0x25a8	0xa	unknown_25a8	u8[10]	opaque	game_main_loop;OPEN-pool-tail-lineage;data-repair-campaign.md	within complete startup clear; no identified nonzero consumer
+KfMapObjectState	0x25b2	0x2	effect_sequence_160	u16	supported	asm;map_object_pool_clear;data-repair-campaign.md	wrapping sequence for reserved slots 160 through 169
+KfMapObjectState	0x25b4	0x2	effect_sequence_170	u16	supported	asm;map_object_pool_clear;data-repair-campaign.md	wrapping sequence for reserved slots 170 through 179
+KfMapObjectState	0x25b6	0x2	effect_sequence_180	u16	supported	asm;map_object_pool_clear;data-repair-campaign.md	wrapping sequence for reserved slots 180 through 189
 KfMapOrientationGrid	0x00	0x2710	cells	KfMapOrientation[100][100]	supported	map_data.h;strict-enum-audit.md;map_load;map_object_mark_collision_edge;render_map_cells	typed cell selectors share the unchanged 0x2710-byte resource-copy span
 KfMapOrientationGrid	0x00	0x2710	bytes	KfMapOrientation[10000]	supported	map_data.h;strict-enum-audit.md;map_load;map_object_mark_collision_edge;render_map_cells	typed cell selectors share the unchanged 0x2710-byte resource-copy span
 KfMapOrientationGrid	0x00	0x2710	words	u32[2500]	supported	map_data.h;strict-enum-audit.md;map_load;map_object_mark_collision_edge;render_map_cells	aligned full-grid load and copy view
@@ -467,6 +471,8 @@ KfMemoryAllocationState	0x4	0x44	stack	u32[17]	supported	memory.h;asm;typed-memo
 KfMemoryArena	0x0	0x4	start	u8 *	supported	memory.h;asm;typed-memory-owner.md	base restored by allocation reset
 KfMemoryArena	0x4	0x4	end	u8 *	supported	memory.h;asm;typed-memory-owner.md	inclusive arena end
 KfMemoryArena	0x8	0x48	allocation	KfMemoryAllocationState	supported	memory.h;asm;typed-memory-owner.md	cursor-relative retail reset accesses start at -8 and stack depth at +4
+KfMemoryArena	0x50	0x4	system_heap_start	u8 *	supported	asm;cross-overlay-lineage;memory_capture_system_heap_start;data-repair-campaign.md	first system-heap byte captured after the inclusive arena end
+KfMemoryArena	0x54	0x4	system_heap_size	s32	supported	asm;cross-overlay-lineage;memory_reset_system_heap;data-repair-campaign.md	byte extent passed to InitHeap
 KfMenuAssets	0x0	0x140	background_quads	POLY_FT4[2][4]	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT	complete runtime-loaded menu asset block
 KfMenuAssets	0x140	0x50	mid_depth_quads	POLY_FT4[2]	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT	complete runtime-loaded menu asset block
 KfMenuAssets	0x190	0x50	foreground_quads	POLY_FT4[2]	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT	complete runtime-loaded menu asset block

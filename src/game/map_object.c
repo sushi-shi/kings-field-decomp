@@ -44,44 +44,22 @@ enum {
 #define MAP_FIRE_BALL_EMITTER_VELOCITY_NUMERATOR 25u
 #define MAP_BOSS_EMITTER_VELOCITY_NUMERATOR 225u
 
-DATA(0x80056188, 0x3)
-SoundRef gameplay_sound_ref_0 = {9, 0, 72};
-
-DATA(0x8005618b, 0x3)
-SoundRef gameplay_sound_ref_1 = {10, 0, 77};
-
-DATA(0x8005618e, 0x3)
-SoundRef gameplay_sound_ref_2 = {11, 0, 60};
-
-DATA(0x80056191, 0x3)
-SoundRef gameplay_sound_ref_3 = {9, 0, 80};
-
-DATA(0x80056194, 0x3)
-SoundRef gameplay_sound_ref_4 = {21, 0, 48};
-
-DATA(0x80056197, 0x3)
-SoundRef gameplay_sound_ref_5 = {12, 0, 83};
-
-DATA(0x8005619a, 0x3)
-SoundRef gameplay_sound_ref_6 = {19, 4, 103};
-
-DATA(0x8005619d, 0x3)
-SoundRef gameplay_sound_ref_7 = {9, 0, 67};
-
-DATA(0x800561a0, 0x3)
-SoundRef gameplay_sound_ref_8 = {20, 0, 48};
-
-DATA(0x800561a3, 0x3)
-SoundRef gameplay_sound_ref_9 = {8, 0, 47};
-
-DATA(0x800561a6, 0x3)
-SoundRef gameplay_sound_ref_10 = {60, 0, 44};
-
-DATA(0x800561a9, 0x3)
-SoundRef gameplay_sound_ref_11 = {27, 0, 65};
-
-DATA(0x800561ac, 0x3)
-SoundRef gameplay_sound_ref_12 = {15, 0, 71};
+DATA(0x80056188, 0x27)
+SoundRef gameplay_sound_refs[KF_GAMEPLAY_SOUND_COUNT] = {
+    {9, 0, 72},
+    {10, 0, 77},
+    {11, 0, 60},
+    {9, 0, 80},
+    {21, 0, 48},
+    {12, 0, 83},
+    {19, 4, 103},
+    {9, 0, 67},
+    {20, 0, 48},
+    {8, 0, 47},
+    {60, 0, 44},
+    {27, 0, 65},
+    {15, 0, 71}
+};
 
 RODATA(0x80012888, 0x18c)
 
@@ -182,11 +160,11 @@ void map_object_spawn_effect(KfMapObjectDropSource kind, KfMapObjectId object_id
     KfMapObject *object;
 
     if (kind == KF_MAP_OBJECT_DROP_FROM_PLACEMENT) {
-        sequence = &map_object_effect_sequence_180;
+        sequence = &map_object_state.effect_sequence_180;
         first_index = KF_MAP_OBJECT_PLACEMENT_DROP_FIRST;
     } else {
         first_index = KF_MAP_OBJECT_DEFINITION_DROP_FIRST;
-        sequence = &map_object_effect_sequence_170;
+        sequence = &map_object_state.effect_sequence_170;
     }
     object = map_object_effect_pool_acquire(first_index, KF_MAP_OBJECT_EFFECT_GROUP_CAPACITY, *sequence);
     object->link.fields.spawn.sequence = (*sequence)++;
@@ -216,7 +194,7 @@ void map_object_spawn_actor_debris(u16 source, const VECTOR *position, s32 y_off
     u16 *sequence;
     u16 angle;
 
-    sequence = &map_object_effect_sequence_160;
+    sequence = &map_object_state.effect_sequence_160;
     object = map_object_effect_pool_acquire(KF_MAP_OBJECT_GOLD_DROP_FIRST, KF_MAP_OBJECT_EFFECT_GROUP_CAPACITY, *sequence);
     object->link.fields.spawn.sequence = (*sequence)++;
     object->object_id = KF_MAP_OBJECT_GOLD_COIN;
@@ -329,10 +307,10 @@ void map_object_pool_update(void)
                 if (timer == KF_MAP_OBJECT_PROGRESS_INIT) {
                     if (object->object_id == KF_MAP_OBJECT_HINGED_DOOR) {
                         audio_play_spatial_default_range(
-                            &gameplay_sound_ref_1, &object->position, KF_AUDIO_MAX_VOLUME);
+                            &gameplay_sound_refs[1], &object->position, KF_AUDIO_MAX_VOLUME);
                     } else {
                         audio_play_spatial_default_range(
-                            &gameplay_sound_ref_7, &object->position, KF_AUDIO_MAX_VOLUME);
+                            &gameplay_sound_refs[7], &object->position, KF_AUDIO_MAX_VOLUME);
                     }
                 }
                 if (timer == KF_MAP_OBJECT_SWING_OPEN_LAST) {
@@ -351,10 +329,10 @@ void map_object_pool_update(void)
                     map_object_mark_collision_edge(object, KF_MAP_CELL_BLOCKED, object->rotation.angles.y - KF_ANGLE_QUARTER_TURN);
                     if (object->object_id == KF_MAP_OBJECT_HINGED_DOOR) {
                         audio_play_spatial_default_range(
-                            &gameplay_sound_ref_1, &object->position, KF_AUDIO_MAX_VOLUME);
+                            &gameplay_sound_refs[1], &object->position, KF_AUDIO_MAX_VOLUME);
                     } else {
                         audio_play_spatial_default_range(
-                            &gameplay_sound_ref_7, &object->position, KF_AUDIO_MAX_VOLUME);
+                            &gameplay_sound_refs[7], &object->position, KF_AUDIO_MAX_VOLUME);
                     }
                 }
                 object->rotation.angles.y -= MAP_SWING_DOOR_YAW_STEP;
@@ -369,7 +347,7 @@ void map_object_pool_update(void)
                 object->position.vy -= MAP_LIFT_DOOR_Y_STEP;
                 if (elapsed == KF_MAP_OBJECT_PROGRESS_INIT) {
                     audio_play_spatial_default_range(
-                        &gameplay_sound_ref_0, &object->position, KF_AUDIO_MAX_VOLUME);
+                        &gameplay_sound_refs[0], &object->position, KF_AUDIO_MAX_VOLUME);
                 }
                 if (elapsed == KF_MAP_OBJECT_LIFT_OPEN_LAST) {
                     map_object_mark_collision_edge(object, KF_MAP_CELL_FLOOR, object->rotation.angles.y);
@@ -386,7 +364,7 @@ void map_object_pool_update(void)
                     }
                     map_object_mark_collision_edge(object, KF_MAP_CELL_BLOCKED, object->rotation.angles.y);
                     audio_play_spatial_default_range(
-                        &gameplay_sound_ref_0, &object->position, KF_AUDIO_MAX_VOLUME);
+                        &gameplay_sound_refs[0], &object->position, KF_AUDIO_MAX_VOLUME);
                 }
                 object->position.vy += MAP_LIFT_DOOR_Y_STEP;
             }
@@ -557,7 +535,7 @@ void map_object_pool_update(void)
                 record = &effect_pool_records[object->link.fields.action_parameter.effect_index];
                 if (record->visual.animation_phase == 0) {
                     audio_play_spatial_default_range(
-                        &gameplay_sound_ref_3, &object->position, KF_AUDIO_MAX_VOLUME);
+                        &gameplay_sound_refs[3], &object->position, KF_AUDIO_MAX_VOLUME);
                 }
                 record->visual.animation_phase += MAP_EFFECT_SWITCH_PHASE_STEP;
                 if (record->visual.animation_phase >= KF_FIXED12_ONE) {
@@ -573,7 +551,7 @@ void map_object_pool_update(void)
                 record = &effect_pool_records[object->link.fields.action_parameter.effect_index];
                 if (record->visual.animation_phase == (KF_FIXED12_ONE - 1)) {
                     audio_play_spatial_default_range(
-                        &gameplay_sound_ref_3, &object->position, KF_AUDIO_MAX_VOLUME);
+                        &gameplay_sound_refs[3], &object->position, KF_AUDIO_MAX_VOLUME);
                 }
                 record->visual.animation_phase -= MAP_EFFECT_SWITCH_PHASE_STEP;
                 if (record->visual.animation_phase > KF_FIXED12_ONE) {
@@ -603,21 +581,21 @@ void map_object_pool_update(void)
             } else if (object->action_timer == KF_MAP_OBJECT_REVEAL_SETTLE_END) {
                 if (player_state.progress_state.current_floor == KF_FLOOR_3) {
                     audio_play_spatial_default_range(
-                        &gameplay_sound_ref_11, &object->position, KF_AUDIO_MAX_VOLUME);
+                        &gameplay_sound_refs[11], &object->position, KF_AUDIO_MAX_VOLUME);
                     counter = &map_floor3_script.revealed_piece_count;
                     if (*counter != KF_MAP_FLOOR3_REQUIRED_REVEALS) {
                         (*counter)++;
                         if (*counter >= KF_MAP_FLOOR3_REQUIRED_REVEALS) {
                             map_apply_copy_region(KF_MAP_COPY_FLOOR3_REVEAL_FIRST);
                             map_apply_copy_region(KF_MAP_COPY_FLOOR3_REVEAL_SECOND);
-                            sound_ref_play(&gameplay_sound_ref_7, KF_AUDIO_MAX_VOLUME);
+                            sound_ref_play(&gameplay_sound_refs[7], KF_AUDIO_MAX_VOLUME);
                             *counter = KF_MAP_FLOOR3_REQUIRED_REVEALS;
                         }
                     }
                 } else if (player_state.progress_state.current_floor == KF_FLOOR_1) {
                     if (map_floor1_script.revival_enabled == KF_MAP_SCRIPT_UNSET) {
                         audio_play_spatial_default_range(
-                            &gameplay_sound_ref_5, &object->position, KF_AUDIO_MAX_VOLUME);
+                            &gameplay_sound_refs[5], &object->position, KF_AUDIO_MAX_VOLUME);
                         map_floor1_script.revival_enabled = KF_MAP_SCRIPT_SET;
                     }
                 }

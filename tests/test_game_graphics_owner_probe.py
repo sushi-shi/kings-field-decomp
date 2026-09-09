@@ -181,7 +181,13 @@ class GameGraphicsOwnerProbeTests(unittest.TestCase):
         path = root / unit.source_path.name
         path.write_text(source)
         output = root / unit.object_name
-        compile_source(path, unit.image, output, BUILD / 'delink', profile.optimization,
+        # Layout-only probes need no retail target; register their scratch output
+        # locally so the same compiler controls run in a clean flake build.
+        delink = root / 'delink'
+        index = delink / unit.image.removesuffix('.EXE').lower() / 'objects.tsv'
+        index.parent.mkdir(parents=True, exist_ok=True)
+        index.write_text(f'object\tscope\nmodules/{unit.object_name}\tmodule\n')
+        compile_source(path, unit.image, output, delink, profile.optimization,
                        profile.small_data, profile.aspsx_version,
                        (REPO / 'include', root, HEADER.parent, Path(os.environ['PSYQ_INCLUDE'])),
                        profile.cc1_flags, profile.compiler, profile.maspsx_flags, defines=unit.defines)

@@ -22,7 +22,7 @@ enum {
     MENU_MAP_MARKER_ORIGIN_Y = 216
 };
 
-RODATA(0x800122e4, 0xc)
+RODATA(0x800122e4, 0x9)
 
 /* Display the current-floor map image and player-position marker. */
 ADDRESS(0x80022d7c, 0x400)

@@ -79,7 +79,7 @@ void player_warp_shimmer(KfWarpShimmerMode mode, VECTOR *position)
     for (frame = 0; frame < WARP_SHIMMER_FRAMES; frame++) {
         cursor = effects;
         if (frame == WARP_SHIMMER_SOUND_FRAME) {
-            sound_ref_play(&gameplay_sound_ref_6, KF_AUDIO_MAX_VOLUME);
+            sound_ref_play(&gameplay_sound_refs[6], KF_AUDIO_MAX_VOLUME);
         }
         for (i = 0; i < WARP_SHIMMER_COUNT; i++) {
             effect = *cursor++;

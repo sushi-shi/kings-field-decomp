@@ -749,6 +749,12 @@ def validate(config_dir: Path = RETAIL_CONFIG) -> dict[str, int]:
         targets = bss_targets_by_image.get(row.image, [])
         index = bisect.bisect_left(targets, row.va)
         return index < len(targets) and targets[index] < row.va + row.size
+    from scripts.kf.data_sections import load as load_sections
+
+    from scripts.kf.data_reservations import load as load_reservations
+
+    load_sections(config_dir)
+    load_reservations(config_dir)
     data = load_data_identities(config_dir)
     data_path = config_dir / "data_identities.tsv"
     ordered_data = list(data)
