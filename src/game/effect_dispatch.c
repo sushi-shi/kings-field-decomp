@@ -576,7 +576,8 @@ randomize_homing_direction:
                 goto play_phase_sound;
             }
         }
-        goto advance_effect_phase;
+        effect->phase++;
+        break;
 
     case KF_EFFECT_KIND_LIGHTNING_RADIAL_BLAST: {
         VECTOR position;
@@ -607,7 +608,8 @@ randomize_homing_direction:
                 lightning_magic->damage_components[0],
                 lightning_magic->damage_components[1], EFFECT_PLAYER_RADIAL_SCALE_Q12, effect->id);
         }
-        goto advance_effect_phase;
+        effect->phase++;
+        break;
     }
 
 invalidate_and_advance:
