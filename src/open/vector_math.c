@@ -1,3 +1,4 @@
+#include <kf/bool.h>
 #include <kf/address.h>
 #include <kf/game_math.h>
 
@@ -24,7 +25,7 @@ void vector3s_scale_shift12_alt(s16 scale, s16 *vector)
 }
 
 ADDRESS(0x80015c98, 0x3c)
-int angle_within_tolerance(int lhs, int rhs, s16 range)
+KfBool angle_within_tolerance(int lhs, int rhs, s16 range)
 {
     int delta = (lhs - rhs) & KF_ANGLE_WRAP_MASK;
 

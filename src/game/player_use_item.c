@@ -1,3 +1,4 @@
+#include <kf/bool.h>
 #include <kf/address.h>
 #include <kf/game_player.h>
 #include <kf/game.h>
@@ -66,7 +67,7 @@ void player_use_item(KfItemId item_id)
     s32 reach_x;
     s32 reach_z;
     s16 slot;
-    u8 used = 0;
+    KfBool8 used = KF_FALSE;
 
     reach_x = player_state.camera_position.vx - ((rsin(player_state.camera_rotation.vy) * MAP_INTERACTION_PROBE_DISTANCE) >> KF_FIXED12_BITS);
     reach_z = player_state.camera_position.vz + ((rcos(player_state.camera_rotation.vy) * MAP_INTERACTION_PROBE_DISTANCE) >> KF_FIXED12_BITS);
@@ -98,7 +99,7 @@ void player_use_item(KfItemId item_id)
                 } else if (object->object_id != KF_MAP_OBJECT_GRAVESTONE
                            || angle_within_tolerance(
                                player_state.camera_rotation.vy, KF_ANGLE_HALF_TURN - object->rotation.angles.y, MAP_DOOR_FACING_TOLERANCE)) {
-                    used = 1;
+                    used = KF_TRUE;
                     if (object->link.fields.link_id == KF_ENUM_ENCODE(u8, item_id)) {
                         object->link.fields.link_id = KF_MAP_LINK_NONE;
                         sound_ref_play(&gameplay_sound_refs[12], PLAYER_KEY_UNLOCK_VOLUME);
@@ -130,7 +131,7 @@ void player_use_item(KfItemId item_id)
                     notify_enqueue(KF_NOTIFICATION_NOTHING_HAPPENS);
                 } else {
                     item_stock[KF_ITEM_STOCK_PLAYER][KF_ENUM_ENCODE(u8, object->object_id)] = 0;
-                    used = 1;
+                    used = KF_TRUE;
                     map_object_pool_trigger_link(object->link.fields.link_id);
                     object->link.fields.link_id = KF_MAP_LINK_NONE;
                 }
@@ -162,14 +163,14 @@ void player_use_item(KfItemId item_id)
             break;
         }
         sound_ref_play(&gameplay_sound_refs[8], KF_AUDIO_MAX_VOLUME);
-        used = 1;
+        used = KF_TRUE;
         break;
     case KF_ITEM_MEDICINAL_HERB:
     case KF_ITEM_ANTIDOTE_HERB:
     case KF_ITEM_RECOVERY_MEDICINE:
     case KF_ITEM_DRAGON_KING_GRASS_LEAF:
     case KF_ITEM_DRAGON_KING_GRASS_FRUIT:
-        used = 1;
+        used = KF_TRUE;
         break;
     case KF_ITEM_GREEN_DRAGON_STAFF:
         player_warp_to_floor_entry();
@@ -204,7 +205,7 @@ void player_use_item(KfItemId item_id)
         return;
     case KF_ITEM_VERDITE:
         player_state.magic_training += KF_PLAYER_TRAINING_POINTS_PER_GAIN;
-        used = 1;
+        used = KF_TRUE;
         player_increment_magic_training();
         break;
     }

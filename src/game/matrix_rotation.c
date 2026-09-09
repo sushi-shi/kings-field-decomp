@@ -1,3 +1,4 @@
+#include <kf/bool.h>
 #include <kf/address.h>
 #include <kf/game_math.h>
 
@@ -201,7 +202,7 @@ void vector3i_add_xz(
 }
 
 ADDRESS(0x80014f6c, 0x3c)
-int angle_within_tolerance(int lhs, int rhs, s16 range)
+KfBool angle_within_tolerance(int lhs, int rhs, s16 range)
 {
     int delta = (lhs - rhs) & KF_ANGLE_WRAP_MASK;
 
@@ -209,7 +210,7 @@ int angle_within_tolerance(int lhs, int rhs, s16 range)
 }
 
 ADDRESS(0x80014fa8, 0x10)
-int angle_mod_delta_le_half_turn(int lhs, int rhs)
+KfBool angle_mod_delta_le_half_turn(int lhs, int rhs)
 {
     return ((lhs - rhs) & KF_ANGLE_WRAP_MASK) < (KF_ANGLE_HALF_TURN + 1);
 }

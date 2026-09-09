@@ -144,4 +144,4 @@ six-view dossiers.
 | `0x80035e44 / 1692` | `map_restore_floor_state` | 99.9645 | 18 | Partial, unchanged |
 | `0x800364e0 / 116` | `map_refresh_dialogue_stages` | 100 | 1 | Exact, unchanged / 29 |
 | `0x80036554 / 164` | `map_load_floor` | 100 | 4 | Exact, unchanged / 41 |
-| `0x800365f8 / 32` | `func_800365f8` | 100 | 1 | Exact, unchanged / 8 |
+| `0x800365f8 / 32` | `map_load_floor_wrapper` | 100 | 1 | Exact, unchanged / 8 |

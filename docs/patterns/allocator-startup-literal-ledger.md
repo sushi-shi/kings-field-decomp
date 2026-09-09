@@ -60,5 +60,5 @@ and `resources.c`, remain covered by their existing complete ledgers.
 
 | Function | Line | Token | Expression | Reason |
 | --- | ---: | --- | --- | --- |
-| `func_80013734` | 19 | `0` | `while (count-- != 0) {` | Repeat-count exhaustion with post-decrement. The store destination never advances; this is not a BSS byte-length loop. |
-| `main` | 27 | `0` | `func_80013734((int *)STARTUP_STORE_ADDRESS, STARTUP_REPEAT_STORE_COUNT, 0);` | The repeated word value is arithmetic zero, matching the GAME helper; no broader initialization purpose is inferred. |
+| `repeat_store_word` | 19 | `0` | `while (count-- != 0) {` | Repeat-count exhaustion with post-decrement. The store destination never advances; this is not a BSS byte-length loop. |
+| `main` | 27 | `0` | `repeat_store_word((int *)STARTUP_STORE_ADDRESS, STARTUP_REPEAT_STORE_COUNT, 0);` | The repeated word value is arithmetic zero, matching the GAME helper; no broader initialization purpose is inferred. |

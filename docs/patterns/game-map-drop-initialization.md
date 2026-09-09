@@ -120,3 +120,11 @@ entry changes. The isolated plan, source and raw/trace evidence remain under
 `build/gcc257/game-drop-revisit/`. The unchanged constructor is included in
 the 725-test and full-build verification recorded in the
 [interaction campaign](game-map-interaction-loops.md#verification-and-unit-verdicts).
+
+A later clean-clone control composed that branch-local acquisition with the
+declaration order used by the exact debris constructor (`object` before
+`sequence`). It reproduced the same 408-byte result: the probe kept the two
+pointers separate but still assigned the acquired object to `s0` and the
+sequence to `s1`, opposite retail, and inserted a load-delay `nop` after the
+post-call sequence reload. Declaration order therefore does not supply the
+missing source fact; the canonical constructor remains unchanged and partial.

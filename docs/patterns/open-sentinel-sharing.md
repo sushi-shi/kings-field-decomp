@@ -1193,3 +1193,20 @@ those saved sources declares the pointer inside that loop. This limits the
 recent controls' novelty to frame-loop scope/lifetime with the retained
 source, not the consumer-role idea itself. Missing saved states are not
 inferred from report names alone, and no old source is recompiled here.
+
+## Explicit terminal lighting case
+
+A final clean-clone control adds only
+`case ENDING_LIGHT_FINISHED: break` to the lighting-phase switch. The source
+already assigns that terminal state after the green transition, so this tests
+whether spelling the otherwise implicit exit explains the retained lighting
+dispatch residue without changing reachable behavior, data, or calls.
+
+It does not. The probe changes the two-arm dispatch into a range tree, reducing
+the function from 49 to 48 CFG blocks while increasing branches from 26 to 27.
+It also removes the load-delay `nop`, shrinks the body by one word, changes the
+selector and constant registers, and moves the following default jump. All six
+sibling functions remain exact, but the target function moves substantially
+farther from retail. Reject the explicit terminal case and retain the original
+49-block source and its seven unequal linked words; no source or configuration
+change is justified and the function remains unbanked.

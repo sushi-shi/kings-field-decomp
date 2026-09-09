@@ -14,8 +14,13 @@ promotes a probe to a proven historical toolchain.
 - [executable-byte-provenance.md](executable-byte-provenance.md): native PSX
   initialized bytes, CPE2X uninitialized-memory disclosure, retail header/tail
   consumers, complete-converter and DOS controls, and the retail date window.
+- [boolean-modeling.md](boolean-modeling.md): whole-source libclang value-flow
+  census, Boolean storage types, reviewed conversions and numeric exclusions.
 - [typed-storage-cast-campaign.md](typed-storage-cast-campaign.md): shared object
   models, complete cast accounting, and verified packet/colour conversions.
+- [type-assertion-and-union-audit.md](type-assertion-and-union-audit.md):
+  assertion-removal compiler controls and a complete review of the 43 unions,
+  distinguishing representation conveniences from supported payload variants.
 - [typed-menu-records.md](typed-menu-records.md): shared screen points, complete
   glyph rows and list titles through all menu consumers and by-value labels.
 - [typed-effect-records.md](typed-effect-records.md): one shared effect pool

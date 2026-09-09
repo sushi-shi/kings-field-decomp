@@ -1,3 +1,4 @@
+#include <kf/bool.h>
 #include <kf/address.h>
 #include <kf/map_data.h>
 #include <kf/game_math.h>
@@ -43,13 +44,13 @@ ADDRESS(0x80019a24, 0x180)
 void opening_entity_pool_load_placements(
     const KfMapObjectPlacement *placements, s32 base_y)
 {
-    u16 exhausted = 0;
+    KfBool16 exhausted = KF_FALSE;
     const KfMapObjectPlacement *placement = placements;
     KfOpeningEntity *entity = opening_entity_state.entities;
     u16 remaining = KF_OPENING_ENTITY_CAPACITY - 1;
 
     do {
-        if (exhausted == 1) {
+        if (exhausted == KF_TRUE) {
             /* The terminator path below shares this inactive-slot store and
              * leaves the placement pointer unchanged. */
         mark_empty:
@@ -79,7 +80,7 @@ void opening_entity_pool_load_placements(
                 }
                 placement++;
             } else {
-                exhausted = 1;
+                exhausted = KF_TRUE;
                 goto mark_empty;
             }
         }

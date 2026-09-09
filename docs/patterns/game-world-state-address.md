@@ -198,3 +198,22 @@ Ruff, all 713 repository tests (105.437 seconds), and whitespace checks pass.
 The full build confirms GAME 337/362 exact and unchanged data/placement gates
 with zero artifact failures. Neither manifest changes canonical source or
 banks any partial result; baseline source hashes match the current file.
+
+## Final behavior-constant controls
+
+A clean-clone follow-up held the retained 700-byte / 97.528730% source,
+28-block CFG, unsigned behavior load, seven address targets and zero-call
+topology fixed while testing four narrower explanations for the final sparse
+object loop. Encoding the last `GOLD` comparison explicitly in the underlying
+`u8` domain, decoding it into the named `KfMapObjectBehavior` domain, and
+making the definitions-table pointer `const` each emitted the complete
+canonical listing byte-for-byte. None changes the relevant constant lifetime.
+
+Separating the `GOLD` comparison into its own guard adds a block and branch
+(29/18), perturbs allocation before the residue, and moves farther from
+retail. Reject all four controls and retain canonical source. The remaining
+observable difference is still unattributed: retail hoists the definitions
+base and four constants, materializing `0x41` in the preceding branch delay
+slot, while the probe hoists all five constants and emits one extra word.
+No semantic source distinction was established, so the function remains
+partial and unbanked.

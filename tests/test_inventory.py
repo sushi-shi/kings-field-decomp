@@ -489,24 +489,25 @@ class InventoryTests(unittest.TestCase):
             self.assertEqual(row["final_signature"], signature)
             self.assertIn(evidence_path.name, identity.evidence)
 
-    def test_reviewed_unresolved_functions_keep_address_identities(self) -> None:
+    def test_reviewed_partial_identities_match_evidence(self) -> None:
         evidence_path = CONFIG / "evidence/game_semantic_unresolved_functions.tsv"
         _, rows = read_tsv(evidence_path)
         identities = load_function_identities(RETAIL_CONFIG, required=True)
         expected = {
-            ("GAME.EXE", 0x800365F8),
-            ("GAME.EXE", 0x80036E30),
-            ("GAME.EXE", 0x8003AC4C),
+            ("GAME.EXE", 0x800365F8): ("map_load_floor_wrapper", "supported"),
+            ("GAME.EXE", 0x80036E30): ("func_80036e30", "address-only"),
+            ("GAME.EXE", 0x8003AC4C): ("func_8003ac4c", "address-only"),
         }
 
         self.assertEqual(
-            {(row["image"], parse_int(row["va"])) for row in rows}, expected
+            {(row["image"], parse_int(row["va"])) for row in rows}, set(expected)
         )
         for row in rows:
-            identity = identities[(row["image"], parse_int(row["va"]))]
+            key = (row["image"], parse_int(row["va"]))
+            identity = identities[key]
             parameters = ", ".join(identity.parameters.split(";")) or "void"
             signature = f"{identity.return_type} {identity.name}({parameters})"
-            self.assertEqual(identity.name_confidence, "address-only")
+            self.assertEqual((identity.name, identity.name_confidence), expected[key])
             self.assertEqual(identity.signature_confidence, "supported")
             self.assertEqual(row["final_name"], identity.name)
             self.assertEqual(row["final_signature"], signature)

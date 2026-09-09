@@ -1,3 +1,4 @@
+#include <kf/bool.h>
 #include <kf/address.h>
 #include <kf/map_data.h>
 #include <kf/game_actor.h>
@@ -117,7 +118,7 @@ void actor_select_next_action(s32 player_distance)
     KfActorDefinition *definition = actor_state.current_definition;
     KfActorAction action = actor->action;
     KfActorAction chosen = KF_ACTOR_ACTION_NONE;
-    s32 recently_active;
+    KfBool32 recently_active;
     s32 awareness;
     s32 near_range;
 

@@ -1,3 +1,4 @@
+#include <kf/bool.h>
 #include <kf/address.h>
 #include <kf/map_data.h>
 #include <kf/game_player.h>
@@ -170,7 +171,7 @@ void player_warp_same_floor(KF_ENUM_PARAM(KfMapVariant, u32) variant, s32 cell_x
 RODATA(0x80012c14, 0x14)
 
 ADDRESS(0x80036af0, 0x24c)
-u32 player_warp_trigger_update(void)
+KfBoolU32 player_warp_trigger_update(void)
 {
     u32 cell;
     KfFloorId destination_floor;
@@ -191,7 +192,7 @@ change_floor:
             goto change_to_floor4;
         } else if (cell == WARP_CELL_KEY(15, 2)) {
             if (boss_defeat_complete != KF_MAP_SCRIPT_UNSET) {
-                return 1;
+                return KF_TRUE;
             }
         }
         break;
@@ -250,7 +251,7 @@ change_to_floor4:
             if (boss_defeat_complete == KF_MAP_SCRIPT_UNSET) {
                 player_warp_same_floor(KF_MAP_VARIANT_2, 5, 25);
             } else {
-                return 1;
+                return KF_TRUE;
             }
         } else if (cell == WARP_CELL_KEY(5, 37)) {
             player_warp_same_floor(KF_FLOOR5_ENTRY_VARIANT, 14, 79);
@@ -259,7 +260,7 @@ change_to_floor4:
         }
         break;
     }
-    return 0;
+    return KF_FALSE;
 }
 
 ADDRESS(0x80036d3c, 0xf4)

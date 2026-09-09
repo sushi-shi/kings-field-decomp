@@ -187,7 +187,7 @@ void player_death_restart(void)
         player_state.map_variant = KF_MAP_VARIANT_DEFAULT;
         pool_release_all();
         audio_close_vab();
-        func_800365f8();
+        map_load_floor_wrapper();
     }
     player_sync_position_to_map();
     player_state.view_bob_offset = 0;

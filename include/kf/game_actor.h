@@ -3,6 +3,7 @@
 
 /* Actor and combatant layouts, state, and operations. */
 
+#include <kf/bool.h>
 #include <kf/animation.h>
 #include <kf/game_effect.h>
 #include <kf/player_status.h>
@@ -379,7 +380,7 @@ extern KfActorState actor_state;
 extern SoundRef boss_death_loop_sound;
 extern SoundRef boss_death_phase_sounds[KF_ACTOR_BOSS_DEATH_SOUND_COUNT];
 
-extern s32 actor_animation_crossed_phase(const KfActor *actor, u16 phase);
+extern KfBool32 actor_animation_crossed_phase(const KfActor *actor, u16 phase);
 extern void actor_advance_animation_clamped(KfActor *actor, s16 delta);
 extern void actor_advance_animation_wrapped(KfActor *actor, s16 delta);
 extern void actor_apply_horizontal_movement(void);

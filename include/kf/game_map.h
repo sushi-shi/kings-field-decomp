@@ -596,7 +596,7 @@ extern void map_event_set_current(KfMapEvent *event);
 extern void map_event_timers_reset(void);
 extern void map_interaction_dispatch(
     const VECTOR *position, SVECTOR *rotation);
-extern void func_800365f8(void);
+extern void map_load_floor_wrapper(void);
 extern void map_load_floor(void);
 extern void map_object_definitions_load(const KfMapObjectDefinitionTable *definitions);
 extern s32 map_object_distance_to_point( const KfMapObject *object, s32 point_x, s32 point_z, s32 max_distance);

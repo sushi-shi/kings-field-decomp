@@ -51,7 +51,7 @@ void game_main_loop(void)
     memory_set_allocation_mode(KF_MEMORY_REBASE_ARENA);
     memory_capture_system_heap_start();
     memory_reset_system_heap();
-    func_800365f8();
+    map_load_floor_wrapper();
     SetDispMask(1);
     vsync_event = OpenEvent(RCntCNT3, EvSpINT, EvMdINTR, frame_pacer_vsync_callback);
     EnableEvent(vsync_event);

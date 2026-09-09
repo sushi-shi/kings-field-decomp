@@ -89,7 +89,7 @@ initial strict score, signature and widths under `probe-gcc257-o2-g0`.
 | 0x80035e44 / 1692 | `map_restore_floor_state` | 99.964540 | 423 / 18 / 32 | Partial, unchanged |
 | 0x800364e0 / 116 | `map_refresh_dialogue_stages` | 100.000000 | 29 / 1 / 1 | Exact, unchanged |
 | 0x80036554 / 164 | `map_load_floor` | 100.000000 | 41 / 4 / 4 | Exact, unchanged |
-| 0x800365f8 / 32 | `func_800365f8` | 100.000000 | 8 / 1 / 0 | Exact, unchanged |
+| 0x800365f8 / 32 | `map_load_floor_wrapper` | 100.000000 | 8 / 1 / 0 | Exact, unchanged |
 
 The partial save parser first differs at GAME `80035b6c`: source
 `lui v1,0x800a`, retail `addiu a1,a0,-0x21f`. The restore parser first

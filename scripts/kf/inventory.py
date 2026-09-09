@@ -392,6 +392,11 @@ def _header_structure_layouts() -> dict[str, HeaderStructureLayout]:
         "u16": (2, 2),
         "s32": (4, 4),
         "u32": (4, 4),
+        "KfBool": (4, 4),
+        "KfBool32": (4, 4),
+        "KfBoolU32": (4, 4),
+        "KfBool8": (1, 1),
+        "KfBool16": (2, 2),
         # Target O32/Psy-Q long, independent of the host Python ABI.
         "long": (4, 4),
         # Psy-Q SDK fixed-layout types (declared in real LIBGTE/LIBGPU headers,

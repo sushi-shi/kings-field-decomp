@@ -65,7 +65,7 @@ only nulls the cursor, retaining depth and existing entries.
 | GAME.EXE | `map_variant_assets_load` | `0x8001b414 / 136` | Unedited caller-unit control: preserve existing signature, resource/frame behavior, calls and data references. |
 | GAME.EXE | `audio_play_current_map_sequence` | `0x8001b49c / 188` | Unedited caller-unit control: preserve existing signature, resource/frame behavior, calls and data references. |
 | GAME.EXE | `map_resources_load` | `0x8001b558 / 600` | Pass heap mode after map/variant resource setup; separate integer variant parameter remains outside this domain. |
-| OPEN.EXE | `func_80013734` | `0x80013734 / 36` | Same repeated-store behavior; broader purpose and original name remain unresolved. |
+| OPEN.EXE | `repeat_store_word` | `0x80013734 / 36` | Same repeated-store behavior; broader purpose and original name remain unresolved. |
 | OPEN.EXE | `main` | `0x80013758 / 108` | Preserve ordered startup calls, SDK arguments and image-specific entry/return protocol. |
 | OPEN.EXE | `opening_run` | `0x800156bc / 532` | Pass create then rebase; preserve later loading, display and scene decisions. |
 | OPEN.EXE | `memory_malloc_checked` | `0x80015dd4 / 56` | Preserve unsigned cached-RAM range guard around vendored malloc; signed byte count and pointer result. |
@@ -184,7 +184,7 @@ references agree with the previous objects, delinked targets and raw retail.
 | GAME.EXE | `map_variant_assets_load` | `0x8001b414 / 136` | 100%; unchanged words and references. |
 | GAME.EXE | `audio_play_current_map_sequence` | `0x8001b49c / 188` | 100%; unchanged words and references. |
 | GAME.EXE | `map_resources_load` | `0x8001b558 / 600` | 100%; unchanged words and references. |
-| OPEN.EXE | `func_80013734` | `0x80013734 / 36` | 100%; unchanged words and references. |
+| OPEN.EXE | `repeat_store_word` | `0x80013734 / 36` | 100%; unchanged words and references. |
 | OPEN.EXE | `main` | `0x80013758 / 108` | 100%; unchanged words and references. |
 | OPEN.EXE | `opening_run` | `0x800156bc / 532` | 100%; unchanged words and references. |
 | OPEN.EXE | `memory_malloc_checked` | `0x80015dd4 / 56` | 100%; unchanged words and references. |

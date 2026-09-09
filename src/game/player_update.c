@@ -110,6 +110,7 @@ void player_update(void)
     KfActor *target;
     const VECTOR *origin;
     SVECTOR direction;
+    SVECTOR *launch_direction;
     SVECTOR spawn_offset;
     KfRotation effect_rotation;
     VECTOR position;
@@ -142,7 +143,7 @@ void player_update(void)
         } else if (item == KF_MENU_ROOT_GAME_LOADED) {
             pool_release_all();
             audio_close_vab();
-            func_800365f8();
+            map_load_floor_wrapper();
             player_sync_position_to_map();
             player_state.previous_map_cell.coords.x = player_state.motion_state.fields.map_cell.coords.x;
             player_state.previous_map_cell.coords.z = player_state.motion_state.fields.map_cell.coords.z;
@@ -465,11 +466,12 @@ void player_update(void)
                                 target - actor_state.actors);
                         }
                     }
-                    pitch_yaw_to_forward_vector(&effect_rotation.angles, &direction);
-                    vector3s_scale_shift12(PLAYER_WEAPON_MAGIC_SPEED, &direction);
+                    launch_direction = &direction;
+                    pitch_yaw_to_forward_vector(&effect_rotation.angles, launch_direction);
+                    vector3s_scale_shift12(PLAYER_WEAPON_MAGIC_SPEED, launch_direction);
                     effect_pool_construct(
                         10, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS, effect,
-                        &position, &direction, KF_EFFECT_ARGS_HOMING(&player_state.camera_rotation, attachment, KF_EFFECT_SOUND_PLAY));
+                        &position, launch_direction, KF_EFFECT_ARGS_HOMING(&player_state.camera_rotation, attachment, KF_EFFECT_SOUND_PLAY));
                     if (effect == KF_EFFECT_KIND_HOMING_PROJECTILE) {
                         position.vy += PLAYER_TRIPLE_FANG_Y_OFFSET;
                         effect_rotation.angles.y = player_state.camera_rotation.vy;
@@ -477,12 +479,12 @@ void player_update(void)
                         effect_rotation.angles.x = player_state.camera_rotation.vx + PLAYER_TRIPLE_FANG_PITCH_OFFSET;
                         effect_pool_construct(
                             10, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS,
-                            KF_EFFECT_KIND_HOMING_PROJECTILE, &position, &direction, KF_EFFECT_ARGS_HOMING(&effect_rotation.vector, attachment, KF_EFFECT_SOUND_SILENT));
+                            KF_EFFECT_KIND_HOMING_PROJECTILE, &position, launch_direction, KF_EFFECT_ARGS_HOMING(&effect_rotation.vector, attachment, KF_EFFECT_SOUND_SILENT));
                         effect_rotation.angles.x -= 2 * PLAYER_TRIPLE_FANG_PITCH_OFFSET;
                         position.vy -= 2 * PLAYER_TRIPLE_FANG_Y_OFFSET;
                         effect_pool_construct(
                             10, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS,
-                            KF_EFFECT_KIND_HOMING_PROJECTILE, &position, &direction, KF_EFFECT_ARGS_HOMING(&effect_rotation.vector, attachment, KF_EFFECT_SOUND_SILENT));
+                            KF_EFFECT_KIND_HOMING_PROJECTILE, &position, launch_direction, KF_EFFECT_ARGS_HOMING(&effect_rotation.vector, attachment, KF_EFFECT_SOUND_SILENT));
                     }
                 }
                 player_state.weapon_magic_shots_remaining--;

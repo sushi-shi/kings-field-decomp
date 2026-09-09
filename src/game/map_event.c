@@ -1,3 +1,4 @@
+#include <kf/bool.h>
 #include <kf/address.h>
 #include <kf/map_data.h>
 #include <kf/game_map.h>
@@ -47,12 +48,12 @@ void map_event_advance_animation_blocking(KfMapEvent *event, u16 target, s16 ste
 ADDRESS(0x800338b8, 0x22c)
 void map_event_pool_load(const KfMapEventDefinition *definitions)
 {
-    u8 exhausted = 0;
+    KfBool8 exhausted = KF_FALSE;
     KfMapEvent *event = map_event_pool;
     u16 count = KF_MAP_EVENT_CAPACITY - 1;
 
     do {
-        if (exhausted == 1) {
+        if (exhausted == KF_TRUE) {
         mark_free:
             event->state = KF_MAP_EVENT_FREE;
         } else {
@@ -87,7 +88,7 @@ void map_event_pool_load(const KfMapEventDefinition *definitions)
                 event->collision_turn_pending = KF_MAP_EVENT_COLLISION_TURN_NONE;
                 collision_adjust_cell_occupancy(event->cell_x, event->cell_z, 1);
             } else {
-                exhausted = 1;
+                exhausted = KF_TRUE;
                 goto mark_free;
             }
         }

@@ -1470,7 +1470,7 @@ GAME.EXE	0x80057b78	0x6	memory_card_root_path	global	load	char[6]	save_system	su
 GAME.EXE	0x80057b80	0x3	boss_death_loop_sound	global	load	SoundRef	actor	supported	data.tsv:direct-references;game_semantic_actor_actions.tsv;asm;sound_ref_play	periodic sound used by the boss death sequence; source linkage remains unresolved
 GAME.EXE	0x80057b84	0x4	audio_voice_slot_index	global	load	s32	audio	supported	data.tsv:direct-references;game_semantic_audio_spatial.tsv;asm;xrefs;retail-initial-value-9	managed sound-effect ring index advanced modulo ten before each voice; source linkage remains unresolved
 GAME.EXE	0x80057b88	0x10	effect_swing_probe_offsets	global	load	SVECTOR[2]	effect_dispatch	supported	data.tsv:direct-references;asm;effect_update_dispatch;retail-initializers	two initialized rotated collision-probe offsets {0,2500,0,0} and {0,4900,0,0} used by effect kinds 15 and 16
-GAME.EXE	0x80057b98	0x4	debug_stop_flag	global	load	s32	debug	candidate	data.tsv:direct-references;asm;debug_stop	debug-stop toggle flag read and inverted by debug_stop; initial value zero
+GAME.EXE	0x80057b98	0x4	debug_stop_flag	global	load	KfBool32	debug	candidate	data.tsv:direct-references;asm;debug_stop	debug-stop toggle flag read and inverted by debug_stop; initial value zero
 GAME.EXE	0x80057ba4	0x4	DAT_80057ba4	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80057bff	0x1	DAT_80057bff	unknown	load	undefined1		address-only	data.tsv:ghidra-defined	unresolved global/static candidate
 GAME.EXE	0x80057c00	0x4	DAT_80057c00	unknown	load	undefined4		address-only	data.tsv:ghidra-defined	unresolved global/static candidate

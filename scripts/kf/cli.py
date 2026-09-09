@@ -121,6 +121,13 @@ def parser() -> argparse.ArgumentParser:
 
     add_cast_arguments(casts)
 
+    booleans = subs.add_parser(
+        "bools", help="audit Boolean candidates and value flow with target-C Clang"
+    )
+    from scripts.kf.booleans import add_arguments as add_boolean_arguments
+
+    add_boolean_arguments(booleans)
+
     build = subs.add_parser("build", help="configure if needed and run the Ninja graph")
     build.add_argument("phase", nargs="?", choices=PHASES, default="all")
     build.add_argument("--image", action="append", choices=tuple(IMAGE_ALIASES))
@@ -263,6 +270,10 @@ def main(argv: list[str] | None = None) -> int:
             from scripts.kf.casts import run as run_cast_audit
 
             return run_cast_audit(args)
+        if args.command == "bools":
+            from scripts.kf.booleans import run as run_boolean_audit
+
+            return run_boolean_audit(args)
         if args.command == "build":
             return _build(args)
         if args.command == "try":

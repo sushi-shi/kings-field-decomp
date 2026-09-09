@@ -1,3 +1,4 @@
+#include <kf/bool.h>
 #include <kf/game_graphics.h>
 #include <kf/address.h>
 #include <kf/game_actor.h>
@@ -483,7 +484,7 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
     KfItemPickupResult pickup_result;
     s32 neighbor_index;
     u16 saved_pitch;
-    u8 found_item;
+    KfBool8 found_item;
     KfMapEvent *event;
     KfMapObject *object;
     KfMapObject *neighbor;
@@ -640,11 +641,11 @@ notify_linked:
             KfItemId *item_id;
 
             item_id = object->link.item_ids;
-            found_item = 0;
+            found_item = KF_FALSE;
             item_index = KF_MAP_CONTAINER_ITEM_COUNT - 1;
             for (;;) {
                 if (*item_id != KF_ITEM_NONE) {
-                    found_item = 1;
+                    found_item = KF_TRUE;
                     pickup_result = KF_ENUM_DECODE(KfItemPickupResult, menu_enter_mode(KF_MENU_MODE_ITEM_PICKUP, *item_id));
                     switch (pickup_result) {
                     case KF_ITEM_PICKUP_ACQUIRED:
@@ -663,7 +664,7 @@ notify_linked:
                 }
                 item_id++;
             }
-            if (found_item == 0) {
+            if (found_item == KF_FALSE) {
                 goto notify_default;
             }
             continue;

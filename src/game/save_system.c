@@ -1,3 +1,4 @@
+#include <kf/bool.h>
 #include <kf/game_graphics.h>
 #include <kf/address.h>
 #include <kf/cd_file.h>
@@ -99,7 +100,7 @@ KfSaveStatus save_file_read_header(void);
 KfSaveStatus save_file_read_slot(KfSaveSlotId slot_id);
 void save_file_initialize_buffers(void);
 s32 memory_card_show_status_message(KF_ENUM_PARAM(KfSaveStatus, s16) status);
-s32 menu_load_message_image(s32 message_id);
+KfBool32 menu_load_message_image(s32 message_id);
 void screen_show_image_until_input(const char *path);
 
 ADDRESS(0x8002b078, 0xd8)
@@ -716,7 +717,7 @@ s32 memory_card_show_status_message(KF_ENUM_PARAM(KfSaveStatus, s16) status)
 {
     KF_ENUM_STORAGE(KfSaveStatus, s16) status_value = status;
     s16 message = KF_ENUM_ENCODE(s16, status_value);
-    s32 result;
+    KfBool32 result;
 
     switch (status_value) {
     case SAVE_STATUS_OK:
@@ -762,14 +763,14 @@ s32 memory_card_show_status_message(KF_ENUM_PARAM(KfSaveStatus, s16) status)
         break;
     }
     result = menu_load_message_image(message);
-    if (result == 1) {
+    if (result == KF_TRUE) {
         return -1;
     }
     /* All retail callers discard the result; success falls through. */
 }
 
 ADDRESS(0x8002c5e0, 0x12c)
-s32 menu_load_message_image(s32 message_id)
+KfBool32 menu_load_message_image(s32 message_id)
 {
     char path[16] = "TIM\\M000.";
     void *buffer;
@@ -782,11 +783,11 @@ s32 menu_load_message_image(s32 message_id)
         path[7] = remainder % 10 + '0';
         buffer = game_graphics_runtime.display_state.primitive_buffer->cursor;
         if (cd_file_load_into(buffer, path) != KF_RESOURCE_LOADED) {
-            return 1;
+            return KF_TRUE;
         }
         tim_upload_images((u_long *)buffer);
     }
-    return 0;
+    return KF_FALSE;
 }
 
 ADDRESS(0x8002c70c, 0x88)
@@ -813,7 +814,7 @@ void screen_show_image_until_input(const char *path)
 {
     POLY_FT4 polygon;
     s32 brightness = IMAGE_WAIT_INITIAL_BRIGHTNESS;
-    u8 pressed = 0;
+    KfBool8 pressed = KF_FALSE;
     s32 index;
 
     DrawSync(0);
@@ -847,9 +848,9 @@ void screen_show_image_until_input(const char *path)
         AddPrim(game_graphics_runtime.display_state.ordering_table, &polygon);
         DrawSync(0);
         DrawOTag(&game_graphics_runtime.display_state.ordering_table[KF_ORDERING_TABLE_LENGTH - 1]);
-        if (pressed == 0) {
+        if (pressed == KF_FALSE) {
             if (PadRead(1) == 0) {
-                pressed = 1;
+                pressed = KF_TRUE;
             }
         } else if (PadRead(1) != 0) {
             while (PadRead(1) != 0) {

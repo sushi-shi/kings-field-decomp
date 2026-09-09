@@ -30,7 +30,7 @@ CALLEES = (
     'player_death_update', 'player_death_update_reverse_fade',
     'collision_adjust_cell_occupancy', 'PadRead', 'display_show_error_screen',
     'menu_enter_mode', 'player_use_item', 'pool_release_all', 'audio_close_vab',
-    'func_800365f8', 'player_sync_position_to_map', 'player_equip_weapon',
+    'map_load_floor_wrapper', 'player_sync_position_to_map', 'player_equip_weapon',
     'player_select_magic', 'map_interaction_dispatch', 'SquareRoot0',
     'player_move_horizontal', 'player_update_view_bob', 'player_begin_weapon_attack',
     'magic_cast', 'fixed6_ratio_step', 'matrix_set_rotation_yxz', 'ApplyMatrix',

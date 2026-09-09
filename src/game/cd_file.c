@@ -1,3 +1,4 @@
+#include <kf/bool.h>
 #include <kf/address.h>
 #include <kf/game_cd.h>
 #include <kf/psyq_libc.h>
@@ -70,10 +71,10 @@ ADDRESS(0x8001ae60, 0x13c)
 KfResourceLoadResult cd_file_load_table_entry(void **destination, s32 index)
 {
     s32 attempt;
-    s32 loaded;
+    KfBool32 loaded;
 
     *destination = memory_allocate(cd_file_table[index].size);
-    loaded = 0;
+    loaded = KF_FALSE;
     cd_read_location.minute = cd_file_table[index].minute;
     cd_read_location.second = cd_file_table[index].second;
     cd_read_location.sector = cd_file_table[index].sector;
@@ -86,10 +87,10 @@ KfResourceLoadResult cd_file_load_table_entry(void **destination, s32 index)
         }
         if (result == 0) {
             attempt = KF_CD_READ_STOP_ATTEMPT;
-            loaded = 1;
+            loaded = KF_TRUE;
         }
     }
-    if (loaded == 0) {
+    if (loaded == KF_FALSE) {
         display_show_error_screen(KF_SYSTEM_SCREEN_CD_READ_FAILED);
     }
     return KF_RESOURCE_LOADED;

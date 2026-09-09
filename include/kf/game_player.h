@@ -3,6 +3,7 @@
 
 /* Player state, shared player data, and player operations. */
 
+#include <kf/bool.h>
 #include <kf/audio.h>
 #include <kf/enum.h>
 #include <kf/game_equipment.h>
@@ -339,6 +340,6 @@ extern void player_warp_shimmer(KfWarpShimmerMode mode, VECTOR *position);
 extern void player_warp_shimmer_at_player(KF_ENUM_PARAM(KfWarpShimmerMode, u32) mode);
 extern void player_warp_same_floor(KF_ENUM_PARAM(KfMapVariant, u32) variant, s32 cell_x, s32 cell_z);
 extern void player_warp_to_floor_entry(void);
-extern u32 player_warp_trigger_update(void);
+extern KfBoolU32 player_warp_trigger_update(void);
 
 #endif

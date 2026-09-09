@@ -1,3 +1,4 @@
+#include <kf/bool.h>
 #include <kf/address.h>
 #include <kf/game_menu.h>
 #include <kf/game.h>
@@ -9,7 +10,7 @@ enum {
 
 /* Draw one reflected tile of the status-panel backdrop. */
 static inline void menu_status_draw_backdrop_quad(
-    s32 x, s32 y, s32 flip_x, s32 flip_y, const u16 *texture_page)
+    s32 x, s32 y, KfBool32 flip_x, KfBool32 flip_y, const u16 *texture_page)
 {
     primitive_buffer_begin_poly_ft4();
     SetSemiTrans(current_poly_ft4, 1);
@@ -68,13 +69,13 @@ void menu_status_panel(void)
         menu_frame_begin();
         menu_draw_status_details();
 
-        menu_status_draw_backdrop_quad(MENU_STATUS_BACKDROP_LEFT_X, MENU_BACKDROP_TOP_Y, 0, 0, texture_page);
+        menu_status_draw_backdrop_quad(MENU_STATUS_BACKDROP_LEFT_X, MENU_BACKDROP_TOP_Y, KF_FALSE, KF_FALSE, texture_page);
 
-        menu_status_draw_backdrop_quad(MENU_STATUS_BACKDROP_RIGHT_X, MENU_BACKDROP_TOP_Y, 1, 0, texture_page);
+        menu_status_draw_backdrop_quad(MENU_STATUS_BACKDROP_RIGHT_X, MENU_BACKDROP_TOP_Y, KF_TRUE, KF_FALSE, texture_page);
 
-        menu_status_draw_backdrop_quad(MENU_STATUS_BACKDROP_LEFT_X, MENU_BACKDROP_BOTTOM_Y, 0, 1, texture_page);
+        menu_status_draw_backdrop_quad(MENU_STATUS_BACKDROP_LEFT_X, MENU_BACKDROP_BOTTOM_Y, KF_FALSE, KF_TRUE, texture_page);
 
-        menu_status_draw_backdrop_quad(MENU_STATUS_BACKDROP_RIGHT_X, MENU_BACKDROP_BOTTOM_Y, 1, 1, texture_page);
+        menu_status_draw_backdrop_quad(MENU_STATUS_BACKDROP_RIGHT_X, MENU_BACKDROP_BOTTOM_Y, KF_TRUE, KF_TRUE, texture_page);
 
         menu_draw_window_backdrop();
         menu_present_frame();

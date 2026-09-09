@@ -1,3 +1,4 @@
+#include <kf/bool.h>
 #include <kf/address.h>
 #include <kf/game_effect.h>
 #include <kf/map_data.h>
@@ -690,7 +691,7 @@ void actor_advance_animation_clamped(KfActor *actor, s16 delta)
 }
 
 ADDRESS(0x8002dccc, 0x30)
-s32 actor_animation_crossed_phase(const KfActor *actor, u16 phase)
+KfBool32 actor_animation_crossed_phase(const KfActor *actor, u16 phase)
 {
     return phase < actor->animation_phase
         && phase >= actor->animation_phase - actor->animation_step;

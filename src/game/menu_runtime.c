@@ -96,6 +96,7 @@ void menu_draw_item_name_frame(KF_ENUM_PARAM(KfItemId, s32) item_id)
     MATRIX rotation;
     MATRIX light_source;
     MATRIX light_result;
+    const MenuGlyphRow *rows;
     const MenuGlyphRow *name;
     s32 i;
 
@@ -122,7 +123,8 @@ void menu_draw_item_name_frame(KF_ENUM_PARAM(KfItemId, s32) item_id)
     SetTransMatrix(&rotation);
     menu_render_item_model();
 
-    name = &item_name_rows[KF_ENUM_ENCODE(s32, item_id)];
+    rows = item_name_rows;
+    name = &rows[KF_ENUM_ENCODE(s32, item_id)];
     current_poly_ft4 = (POLY_FT4 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
     string.position.x = 0x80;
     string.position.y = 0x24;

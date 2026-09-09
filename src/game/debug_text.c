@@ -1,3 +1,4 @@
+#include <kf/bool.h>
 #include <kf/address.h>
 #include <kf/debug.h>
 #include <kf/game_types.h>
@@ -14,7 +15,7 @@
 RODATA(0x80012dd4, 0x10)
 
 DATA(0x80057b98, 0x4)
-s32 debug_stop_flag = 0;
+KfBool32 debug_stop_flag = KF_FALSE;
 
 DATA(0x800598a8, 0x18)
 static char format_number_buffer[24];
@@ -23,7 +24,7 @@ ADDRESS(0x8003a7dc, 0x40)
 void debug_stop(void)
 {
     debug_printf_sink("DEBUG STOP !!!\n");
-    debug_stop_flag = debug_stop_flag == 0;
+    debug_stop_flag = debug_stop_flag == KF_FALSE;
 }
 
 ADDRESS(0x8003a81c, 0xe0)

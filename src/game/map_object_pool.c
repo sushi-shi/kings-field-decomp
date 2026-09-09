@@ -1,3 +1,4 @@
+#include <kf/bool.h>
 #include <kf/address.h>
 #include <kf/map_data.h>
 #include <kf/game_map.h>
@@ -206,7 +207,7 @@ ADDRESS(0x80031008, 0x448)
 void map_object_pool_load(const KfMapObjectPlacement *placements)
 {
     u16 remaining;
-    u16 ended = 0;
+    KfBool16 ended = KF_FALSE;
     const KfMapObjectPlacement *placement = placements;
     KfMapObject *object = map_object_state.objects;
     KfMapObjectDefinition *definition;
@@ -215,7 +216,7 @@ void map_object_pool_load(const KfMapObjectPlacement *placements)
 
     remaining = KF_MAP_OBJECT_CAPACITY - 1;
     for (;;) {
-        if (ended == 1) {
+        if (ended == KF_TRUE) {
         fill:
             object->object_id = KF_MAP_OBJECT_FREE;
         } else if (KF_ENUM_DECODE(KfMapObjectId, placement->object_id) != KF_MAP_OBJECT_FREE) {
@@ -303,7 +304,7 @@ void map_object_pool_load(const KfMapObjectPlacement *placements)
             map_object_mark_collision_edge(object, KF_MAP_CELL_BLOCKED, object->rotation.angles.y);
             placement++;
         } else {
-            ended = 1;
+            ended = KF_TRUE;
             goto fill;
         }
         object++;

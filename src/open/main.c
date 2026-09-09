@@ -14,7 +14,7 @@ enum {
 };
 
 ADDRESS(0x80013734, 0x24)
-void func_80013734(int *destination, int count, int value)
+void repeat_store_word(int *destination, int count, int value)
 {
     /* Retail stores to the same word on every iteration. */
     while (count-- != 0) {
@@ -25,7 +25,7 @@ void func_80013734(int *destination, int count, int value)
 ADDRESS(0x80013758, 0x6c)
 void main(s32 entry_arg0, KfOverlayArguments *entry_args)
 {
-    func_80013734((int *)STARTUP_STORE_ADDRESS, STARTUP_REPEAT_STORE_COUNT, 0);
+    repeat_store_word((int *)STARTUP_STORE_ADDRESS, STARTUP_REPEAT_STORE_COUNT, 0);
     CdInit();
     InitHeap((void *)INITIAL_HEAP_ADDRESS, INITIAL_HEAP_BYTES);
     ExitCriticalSection();
