@@ -59,7 +59,7 @@ Manually maintained cleanup checklist:
 - [ ] Review casts and remove avoidable conversions: **533 written casts**
   (**430 pointer**, **103 scalar**).
 - [ ] Review unions and simplify avoidable alternate views: **38 union definitions**.
-- [ ] Review gotos: **103 statements** (**92 GAME**, **11 OPEN**).
+- [ ] Review gotos: **74 statements** (**68 GAME**, **6 OPEN**).
 - [ ] Review artificial address arithmetic: **2 cases**.
 - [ ] Review owner recovery from member pointers: **26 sites**.
 - [ ] Review out-of-object pointers: **1 case**.
