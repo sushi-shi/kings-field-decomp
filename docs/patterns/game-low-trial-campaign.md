@@ -179,3 +179,197 @@ The detail/orbit follow-up changes evidence only. Ruff, all 722 tests
 (106.976 seconds), and whitespace checks pass. A fresh full build retains
 GAME 339/362 exact and 99.629% aggregate, with unchanged data/placement
 failures and zero artifact failures. No partial function is banked.
+
+## Map cell: computed matrix ownership
+
+Function Match Plan at `81a59be6`: GAME `8001e5ec`, 592 bytes / 99.878380%.
+Fresh hashes, six semantic views and all 148 retail words retain the word
+column/row and byte visibility interface, sole dispatcher caller, nine calls,
+ten ordered address pairs and five internal jumps. The dispatcher is an
+exact control. The map policy is game code; its matrix operations retain
+their existing SDK providers. Shared grid, view and MATRIX ownership remains.
+
+Retail uses a 120-byte frame versus source 88. Existing profile controls
+leave that discrepancy. Test a cohesive helper computing the actual cell
+matrix: install the view transform, transform position into its translation,
+then multiply the view and quadrant rotations. Compare ordinary inline
+interfaces returning the consumed MATRIX value or filling the caller's
+MATRIX pointer. The helper owns the real RotTrans flag output. The caller
+keeps position construction, orientation adjustment and all rendering calls.
+Preserve translation-before-rotation order and the authentic SDK types.
+The returned matrix is consumed, not an unused object added for stack size.
+
+All three states compile. The output-pointer helper gives 604 bytes /
+94.533780% and a 96-byte frame, adding an s3 save and changing the downstream
+register roles. Returning MATRIX gives 668 bytes / 85.006760% and a 128-byte
+frame. It constructs the matrix at sp+56 and copies eight words into the
+caller's matrix at sp+16; retail has no such copy. Neither explains the
+retail 120-byte frame. Reject both and preserve the 592-byte canonical body.
+
+Independent recompilation resolves all target words to retail and preserves
+all nine calls, ten ordered address pairs and the exact dispatcher in each
+state. Canonical retains its eighteen stack-related unequal words. Generated
+states are `build/hypotheses/low-trial-cell/`; independent objects, complete
+resolved words and verification are under `build/low-trial-cell-objects/`.
+The full build again retains GAME 339/362 exact, 99.629% aggregate and zero
+artifact failures, with the existing data/ownership/placement checks nonzero.
+Canonical source, configuration and bank entries remain unchanged.
+
+## Status detail: refreshed entry baseline
+
+Fresh retail validation and six GAME semantic views reconfirm `800264d8`,
+3252 bytes, strict 98.425580%. Independent compilation preserves the 80-byte
+frame, all 72 ordered calls and 89 ordered data-address pairs. Resolving the
+target object reproduces every retail word. The source remains unchanged.
+
+The first difference is still +3c: source leaves the primitive-buffer load
+delay empty; retail materializes Y=35 in s2 there. Source materializes that
+coordinate later in t0, shifting the subsequent instruction stream by one
+word until later differences compensate. Therefore the large count of
+unequal same-offset words is not a count of independent source defects.
+The earlier signed-rating corrections remain the baseline; this inspection
+does not justify revisiting them or introducing a constant-carrying local.
+Generated independent evidence is under
+`build/low-trial-status-baseline-objects/`. This is a baseline audit, not a
+new scored source hypothesis or a closure claim.
+
+Function Match Plan: test the established signed-halfword MenuPoint operation
+at the four explicit X/Y anchors through an ordinary inline setter. Separately
+test the complete first experience-label draw through an inline helper taking
+the existing glyph workspace and signed-halfword coordinates. The adjacent
+header repeats that same label operation. Preserve primitive publication,
+all four glyph stores, coordinate widths, and the draw call. These are consumed
+object operations, without an artificial constant local or forced inlining.
+The complete retail body, caller, adjacent sources and three shared game
+render/format interfaces were reviewed; no SDK body or shared type is changed.
+
+All three scored states compile and preserve the 80-byte frame, 72 ordered
+calls and 89 ordered address pairs. The position helper gives 3264 bytes /
+94.432970%; the experience-label helper gives 3256 bytes / 96.937270%.
+Both first diverge at +34, introducing `s1 = sp+16` before the primitive
+pointer loads. Both retain the empty load delay and late Y materialization,
+and change subsequent glyph-string arguments to moves from s1. This does
+not recover the retail entry sequence. Reject both helpers and retain the
+3252-byte source at 98.425580%, without banking.
+
+The generated manifest is `build/low-trial-status.json`; scored reports are
+under `build/hypotheses/low-trial-status/`. Independent recompilation and
+complete resolved words are under `build/low-trial-status-objects/`.
+These three states count as new recorded comparisons, including the control;
+the prior standalone baseline audit does not count as another hypothesis.
+
+Full `kf build` retains GAME 339/362 exact and 99.629% aggregate, with zero
+artifact failures and the existing data/ownership/placement failures.
+Whitespace checks pass. No production source or configuration changed.
+
+## Map interaction: partner-definition ownership
+
+Function Match Plan: GAME `80034de4`, 2308 retail bytes, strict 99.202774%.
+Fresh hashes and all six views retain the camera VECTOR/SVECTOR interface,
+sole player-update caller, 54 calls, thirteen address pairs and 72-byte frame.
+All retail instructions and current source were read. The 89 switch pointers
+remain candidates and both indirect successors remain unresolved. This is
+game interaction policy; trigonometric SDK providers retain their ownership.
+
+Preserve the earlier container-loop and gold corrections. The remaining
+paired-door admission reads its definition once in source versus three times
+in retail. Test a definition pointer scoped to the actual neighbor iteration,
+and separately an ordinary inline admission predicate receiving that same
+definition. Preserve the nested validation, failure notification, action call,
+link writes and original-door join. Earlier selection-before-validation moved
+the loop back edge; these controls leave that source topology intact. Neither
+adds volatile qualification or a synthetic store to defeat reuse.
+
+All three states compile to identical 2296-byte dispatcher bodies at
+99.202774%, retaining the 72-byte frame, 54 calls and thirteen address pairs.
+Independent recompilation proves complete linked-word equality between the
+variants, verifies every target word against retail, and retains all fourteen
+exact siblings. The first difference remains +2c, with the position pointer
+in s8 instead of s7. Neither scope nor the admission helper recovers the
+missing partner-definition reloads; reject both and keep canonical source.
+Generated reports are `build/hypotheses/low-trial-interaction/`, with independent
+objects and complete dispatcher words under `build/low-trial-interaction-objects/`.
+
+Full build retains GAME 339/362 exact and 99.629% aggregate, with the existing
+data/ownership/placement failures and zero artifact failures. Whitespace
+checks pass; no production source, configuration or bank change is kept.
+
+## Window backdrop: repeated tile operation
+
+Function Match Plan: GAME `8002a510`, 1700 bytes, strict 99.971760%.
+Fresh hash validation, six semantic views, the complete retail body and source,
+three void callers, adjacent helpers and source history retain sixteen calls
+and 107 validated address pairs. Retail allocates 104 stack bytes. The four
+reflected tiles and descending four background primitives are game composition;
+SetSemiTrans and AddPrim remain the established SDK providers.
+
+Test the complete repeated tile operation through an ordinary inline helper
+of signed-word X/Y and horizontal/vertical reflection flags. The status-panel
+caller already uses this operation shape. Preserve each begin, transparency,
+texture/CLUT, XY/UV write and commit in order, followed by the four existing
+AddPrim calls. Use the same global texture-page read, authentic POLY_FT4
+layout and shared sprite fields. Do not add a stack object for the frame gap.
+
+The first helper control gives 1704 bytes / 97.334114%, with a 32-byte frame
+and 111 address pairs instead of 107. It no longer keeps the texture-page
+address across tiles, rematerializing direct addresses instead. Test that
+observed shared address explicitly as a `const u16 *` passed to the same
+helper, as the existing status-panel helper does. This pointer supplies four
+real loads; it is not an unused carrier. Keep every other operation fixed.
+
+The shared-page helper reproduces all baseline words and ordered references:
+1700 bytes, 40-byte frame, sixteen calls and 107 address pairs. Its twelve
+unequal retail words remain stack allocation/save/restore instructions.
+Neither helper explains the 64-byte frame gap; retain the original source
+at 99.971760%. Every other unit function remains identical across independent
+compilations. All target functions independently resolve to their retail bytes.
+
+Reports are `build/hypotheses/low-trial-backdrop{,-page}/`, with independent
+objects and complete dispatcher words in the corresponding
+`build/low-trial-backdrop{,-page}-objects/` directories. There are three distinct
+source states; the second manifest repeats its two controls. Full build
+retains GAME 339/362 exact and 99.629% aggregate with existing data/placement
+failures and zero artifact failures. Whitespace checks pass. No source or
+bank change is kept.
+
+## Player update: magic-button failure and recharge paths
+
+Function Match Plan: GAME `80018880`, 6684 retail bytes, strict 96.939560%.
+Fresh hashes and six views, all retail instructions, current source/history
+and the sole game-loop caller preserve the void interface. This is game
+input/movement/magic/status policy, using established SDK providers.
+
+Retail's normal-magic attempt reaches `800193bc` on absent magic, incomplete
+charge or insufficient MP, clearing weapon_attack_fully_charged and jumping
+to weapon-magic processing. Successful casting also reaches that clear after
+resetting magic_charge. Recharge begins at `800193cc` only on the other
+button-edge path, and first rejects the no-magic sentinel. Current source
+places a selected-magic recharge block on failed attempts and an unguarded
+recharge block on the other path. Restore this decoded branch ownership,
+keeping the earlier successful weapon-magic jumps and promoted item argument.
+No arithmetic, widths, field identities, calls or frame fillers are invented.
+
+Keep the corrected branch ownership. Independent compilation produces 6632
+bytes and a 216-byte frame in both states, with strict match improving from
+96.939560% to 96.954520%. Exactly five instructions change, at function offsets
+`8d0`, `8e8`, `a8c`, `aa0`, and `b18`; every corrected branch word equals retail
+at the same offset. All other words, all 66 ordered calls and all 204 source
+address pairs are unchanged. Retail has 210 pairs, so this is not whole-function
+referent closure. The remaining 52-byte size deficit and frame difference
+remain unattributed.
+
+The independent audit resolves section-relative data references through each
+named object's extent and curated VA. A single aggregate `.data` or `.bss`
+base is invalid for this unit's scattered claims; its initial exploratory
+address comparison is superseded by that object-owned audit. The complete
+target still resolves to all 1671 retail words. Reports and controls are
+`build/hypotheses/low-trial-player/`, `build/low-trial-player-objects/` and
+`build/low-trial-player-audit.py`.
+
+Focused match and full build retain 339/362 exact GAME functions; aggregate
+match is 99.630%. Full build fails existing data/placement checks, with
+12/42 GAME data owners matching and zero artifact failures. No exact claim
+or bank promotion is made for this correction.
+
+Ruff, all 722 repository tests (106.776 seconds), and whitespace checks pass
+for the retained player correction and preceding map/menu experiments.

@@ -363,10 +363,10 @@ void player_update(void)
                         player_state.vitals.current_mp -= cost;
                         magic_cast();
                         player_state.magic_charge = 0;
-                        player_state.weapon_attack_fully_charged = 0;
-                        goto magic_done;
                     }
                 }
+                player_state.weapon_attack_fully_charged = 0;
+            } else {
                 magic_id = player_state.selected_magic_id;
                 if (magic_id != KF_MAGIC_NONE) {
                     player_state.magic_charge +=
@@ -375,13 +375,6 @@ void player_update(void)
                     if (player_state.magic_charge > KF_PLAYER_CHARGE_FULL) {
                         player_state.magic_charge = KF_PLAYER_CHARGE_FULL;
                     }
-                }
-            } else {
-                player_state.magic_charge +=
-                    fixed6_ratio_step(player_state.magic, player_state.selected_magic_record->charge_rate)
-                        * KF_PLAYER_CHARGE_GAIN_MULTIPLIER;
-                if (player_state.magic_charge > KF_PLAYER_CHARGE_FULL) {
-                    player_state.magic_charge = KF_PLAYER_CHARGE_FULL;
                 }
             }
         }
