@@ -29,6 +29,7 @@ static inline u32 effect_collision_in_cell(
     s32 floor;
     s32 height;
     u8 attr;
+    u32 result;
 
     y = position->vy;
     floor = map_floor_height_grid.cells[z][x] * -KF_MAP_HEIGHT_STEP;
@@ -41,7 +42,8 @@ static inline u32 effect_collision_in_cell(
         if (height < 0) {
             height += floor;
             if (y < height) {
-                return KF_COLLISION_TERRAIN;
+                result = KF_COLLISION_TERRAIN;
+                goto return_result;
             }
         } else {
             record = &map_cell_height_records[height];
@@ -123,21 +125,28 @@ grid_shape:
 
 collide:
     switch (effect->type & KF_EFFECT_COLLISION_TARGETS_MASK) {
+    default:
+        result = 1;
+        break;
     case KF_EFFECT_COLLISION_TARGET_ACTORS:
-        return collision_query_world(position->vx, position->vy, position->vz, radius, 0,
+        result = collision_query_world(position->vx, position->vy, position->vz, radius, 0,
             KF_COLLISION_SKIP_TERRAIN | KF_COLLISION_SKIP_PLAYER
                 | KF_COLLISION_SKIP_MAP_OBJECTS | KF_COLLISION_SKIP_MAP_EVENTS);
+        break;
     case KF_EFFECT_COLLISION_TARGET_PLAYER:
-        return collision_query_world(position->vx, position->vy, position->vz, radius, 0,
+        result = collision_query_world(position->vx, position->vy, position->vz, radius, 0,
             KF_COLLISION_SKIP_TERRAIN | KF_COLLISION_SKIP_ACTORS
                 | KF_COLLISION_SKIP_MAP_OBJECTS | KF_COLLISION_SKIP_MAP_EVENTS);
+        break;
     case KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER:
-        return collision_query_world(position->vx, position->vy, position->vz, radius, 0,
+        result = collision_query_world(position->vx, position->vy, position->vz, radius, 0,
             KF_COLLISION_SKIP_TERRAIN | KF_COLLISION_SKIP_MAP_OBJECTS
                 | KF_COLLISION_SKIP_MAP_EVENTS);
-    default:
-        return 1;
+        break;
     }
+
+return_result:
+    return result;
 }
 
 /*

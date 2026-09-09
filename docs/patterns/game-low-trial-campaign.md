@@ -87,6 +87,46 @@ pass on the retained source. The existing collision rectangle, orientation,
 boundary and query-argument controls are included. The literal ledger keeps
 43 occurrences, assigning the moved expressions to their helper owner.
 
+Follow-up Function Match Plan: retain the verified in-cell boundary, signature,
+widths, data owners, call set and ordered referents. Test the negative-height
+predicate as the direct nonmutating `height + floor` expression, because retail
+consumes the sum only in that comparison. Independently test a real shared
+collision-result exit across the geometry returns and target-policy switch.
+Retail loads the terrain result in the negative branch delay slot, leaves its
+following exit jump empty, and also leaves both defined-default exit jumps
+empty; these are consistent with a result selected before one source return.
+Compare the direct expression, a scoped negative-path result, a switch result,
+and their cohesive shared-exit composition. Reject any form that changes the
+sole world-query call, twelve ordered address pairs, signed comparisons, grid
+reads, or defined class-zero result. Do not introduce padding or an unused
+carrier.
+
+The direct-sum and inverted direct-sum predicates both emit 1896 bytes at
+98.621056%; each changes five otherwise matching register words and retains
+the old negative-height delay slot. A scoped result only for that path grows
+to the retail extent but disrupts the entry join. Preserve the in-place height
+update and carry one genuine result through the final target-policy switch
+instead. With the switch's defined fallback written first, this emits all
+1900 bytes and restores the negative path, every later destination, the three
+case-local stack arguments, and the class-three flag load. The retained source
+matches 474 of 475 complete linked words at strict 99.873690%.
+
+The sole residue is the delay slot after the class-three selector branch at
+`+718`: retail has `nop`; the probe copies the fallback's `li v0,1` into that
+slot. On the taken class-three path the following block overwrites v0 with
+`0x61`; on the untaken path values above three cannot occur because the loaded
+byte is masked by three. Explicit fallback returns, gotos, switch fallthrough,
+preinitialization, an explicit zero case, zero/default aliases, and supported
+case orders do not remove this one word while keeping the default defined.
+The sole call and twelve ordered address pairs remain exactly equal. This is
+an unattributed code-generation residue, so the function remains unbanked.
+
+The focused collision controls, Ruff, all 723 repository tests (105.698
+seconds), and `git diff --check` pass. The full build keeps GAME at 339/362
+exact and raises aggregate similarity to 99.751%; PSX remains 1/1 and OPEN
+106/108 exact. Existing data ownership and section-placement checks remain
+nonzero with no artifact failures.
+
 ## Item detail: complete name-row pointer
 
 Function Match Plan at `6cbea3fd`: refresh all six GAME views and read all
@@ -373,3 +413,124 @@ or bank promotion is made for this correction.
 
 Ruff, all 722 repository tests (106.776 seconds), and whitespace checks pass
 for the retained player correction and preceding map/menu experiments.
+
+## Player status: shared cancellation/expiry blocks
+
+Function Match Plan at `9e5985ab`: GAME `80018880`, 6684 retail bytes,
+6632 source bytes / 96.954520%. The complete raw comparison after the magic
+correction preserves 66 calls and 204 source address pairs against retail's
+210. The established void interface, sole caller, typed player object, SDK
+boundaries and prior six-view evidence remain applicable. Current source,
+history and the complete slowed/poison/curse retail slices were reread.
+
+Retail cancellation jumps to common flag-clearing blocks at `8001a064`,
+`8001a0cc` and `8001a180`. Current C duplicates those clears in cancellation
+and expiry arms, and compiled code reuses the earlier flag value rather than
+retail's fresh address/load. Test explicit shared labels independently for
+these three existing operations, then together. Preserve all timer writes,
+poison remainder width, curse recalculation, call order and defined paths.
+This is a control-flow hypothesis, not a request to force a reload or pad
+frames; reject it if it fails to explain the observed retail structure.
+
+All five states compile. Individual slowed/poison/curse shared blocks reach
+97.308200%, 97.302216% and 97.401560%; together they reach 98.102936%
+(6688 bytes, 216-byte frame). The complete three-status region is now equal
+in all 108 instructions when internal jump targets are expressed relative
+to its start. Keep all three shared blocks. Independent objects preserve
+all 66 calls and restore the six missing address pairs (210 total); earlier
+weapon-spawn address ordering still differs from retail. A focused regression
+control recompiles the whole source and compares the full status region,
+including loads, calls, branch displacements and delay slots. It passes this
+source and rejects the previous source.
+
+On this retained source, test darkness fade as a promoted signed-word value
+whose two arithmetic results explicitly pass through the evidenced signed
+halfword conversion. Retail sign-extends both differences before the sign
+branches at `8001999c` and `800199b4`, then shifts the resulting word for both
+lighting calls. The current signed-halfword local keeps a separate unextended
+value across those branches and combines extension with the eventual shift.
+Keep both conversions, formulas, branches and API arguments; do not widen
+away the halfword semantics or alter the fixed-point scale.
+
+The promoted halfword fade reaches 98.470980% without changing size or frame.
+Independent compilation confirms that the full 66-instruction darkness
+region now equals retail after resolving named relocations and expressing
+internal jumps relative to the region start. The regression control covers
+this region alongside the 108 slowed/poison/curse instructions. Keep the
+explicit signed-halfword results in the promoted local. All 66 calls remain;
+210 address pairs remain, with only earlier weapon-spawn ordering unresolved.
+The first raw difference is still the frame prologue, followed by the
+weapon-spawn local layout and instruction ordering. No compiler attribution
+or exact claim follows from these partial improvements.
+
+Generated evidence is under `build/hypotheses/low-trial-player-{status,fade}`,
+`build/low-trial-player-{status,fade}-objects`, and the corresponding audit
+scripts and residue reports. Canonical focused match and full build retain
+339/362 GAME exact functions at 99.694% aggregate. Existing data/placement
+failures remain (12/42 GAME data owners; zero artifact failures).
+
+Final combined verification: Ruff and all 723 repository tests pass
+(115.411 seconds), as does `git diff --check`. No partial result is banked.
+
+## Player weapon spawn: camera-position owner
+
+Function Match Plan at `f56b1b28`: GAME `80018880`, 6684 retail bytes,
+6688 source bytes / 98.470980%. Fresh retail validation and the prior complete
+six-view pass retain the void interface, sole caller, 66 calls, 210 address
+pairs, typed SDK aggregates and game ownership. The frame gap is already an
+unattributed residue; no placeholder object or forced alignment is permitted.
+
+After `ApplyMatrix`, retail consumes camera position Y, camera rotation Y,
+camera position Z, camera rotation X and camera rotation Z in that order.
+Source contains that semantic statement order, but the probe hoists the three
+rotation reads and leaves the position reads later. The existing `origin`
+pointer is the proved camera-position owner used by the following cone query.
+Test moving its assignment before translation, first retaining direct field
+access and then consistently using `origin->vx/vy/vz` for the three additions.
+Keep the same VECTOR extent, position arithmetic, rotation halfword writes,
+query arguments, calls and constants. This is an ownership/alias hypothesis;
+reject it if it does not restore the ordered references and retail operations.
+
+All three pointer-placement states compile to the same object and remain at
+98.470980%; assignment placement and member spelling alone do not change the
+five references. Reject both. As a focused follow-up, test the same six
+consumed assignments through one ordinary typed operation accepting position,
+effect rotation, camera position and camera rotation pointers. This preserves
+the existing object family and operation order while representing the alias
+boundary visible in retail. Compare it against the unchanged baseline; the
+operation must inline completely and must not add a call or unclaimed body.
+
+The typed operation inlines but drops to 97.881510%; reject it. Its broader
+alias boundary changes instructions outside the five-reference residue. Test
+two direct, object-grouped statement orders next: translate X/Y/Z before
+copying rotation Y/X/Z, and translate X/Y/Z before copying rotation X/Y/Z.
+Both preserve all values and the final objects. Retail may interleave the
+loads while scheduling these independent groups; retain a grouping only if
+raw order and instructions move toward retail without changing referents.
+
+Both object-grouped orders compile identically at 99.476960%. They recover the
+exact 6684-byte function extent, all 66 ordered calls and all 210 ordered
+address pairs. Keep the natural X/Y/Z grouping for both position and rotation;
+retail cannot distinguish it from the Y/X/Z source order because both compile
+to the same object. The first remaining difference is the 224-byte retail
+frame versus 216-byte source frame. Local accesses throughout the weapon-spawn
+region differ by eight bytes; attachment and direction registers also differ
+after the cone query. These remain unattributed. No unreferenced object,
+alignment annotation or register carrier is added.
+
+The independent audit resolves every target function word to retail, compiles
+the six source states separately, and records the reduced raw residue in
+`build/low-trial-player-origin-residue.txt`. The typed helper is excluded from
+that final comparison because it emitted an unclaimed body and was already
+rejected. A repository regression control now compares all 66 external calls
+and 210 named data references in order, in addition to the two complete exact
+status regions.
+
+Canonical focused matching confirms 99.476960% and preserves 339/362 exact
+GAME functions. The required full build raises aggregate GAME similarity to
+99.737% and retains the existing data/placement failure: 12/42 GAME data
+owners, zero artifact failures and 75/77 target units verified. This partial
+function is not banked.
+
+Ruff, all 723 repository tests (104.379 seconds), and `git diff --check` pass
+with the grouped source and expanded ordered-referent control.

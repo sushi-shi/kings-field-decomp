@@ -101,7 +101,7 @@ void player_update(void)
     s32 strafe_sq;
     s32 forward_sq;
     s16 magnitude;
-    s16 fade;
+    s32 fade;
     u16 phase;
     s32 cost;
     KF_ENUM_PARAM(KfEffectKind, s32) effect;
@@ -437,9 +437,9 @@ void player_update(void)
                     ApplyMatrix(&matrix, &spawn_offset, &position);
                     position.vx += player_state.camera_position.vx;
                     position.vy += player_state.camera_position.vy;
-                    effect_rotation.angles.y = player_state.camera_rotation.vy;
                     position.vz += player_state.camera_position.vz;
                     effect_rotation.angles.x = player_state.camera_rotation.vx;
+                    effect_rotation.angles.y = player_state.camera_rotation.vy;
                     effect_rotation.angles.z = player_state.camera_rotation.vz;
                     origin = &player_state.camera_position;
                     if ((effect == KF_EFFECT_KIND_FIRE_BALL || effect == KF_EFFECT_KIND_LIGHT_NEEDLE)
@@ -507,10 +507,10 @@ void player_update(void)
         if (player_state.darkness_timer == KF_PLAYER_STATUS_TIMER_INACTIVE) {
             player_state.status_effect_flags &= ~KF_PLAYER_STATUS_DARKNESS;
         } else {
-            fade = player_state.darkness_timer
-                - (KF_DARKNESS_DURATION_UPDATES - DARKNESS_FADE_STEPS);
+            fade = (s16)(player_state.darkness_timer
+                - (KF_DARKNESS_DURATION_UPDATES - DARKNESS_FADE_STEPS));
             if (fade < 0) {
-                fade = DARKNESS_FADE_STEPS - player_state.darkness_timer;
+                fade = (s16)(DARKNESS_FADE_STEPS - player_state.darkness_timer);
             }
             if (fade >= 0) {
                 lighting_set_color_matrix(&player_darkness_color_matrix, color_matrix_table,
@@ -614,10 +614,11 @@ void player_update(void)
     if (player_state.slowed_timer != KF_PLAYER_STATUS_TIMER_INACTIVE) {
         if (!(player_state.status_effect_flags & KF_PLAYER_STATUS_SLOWED)) {
             player_state.slowed_timer = KF_PLAYER_STATUS_TIMER_INACTIVE;
-            player_state.status_effect_flags &= ~KF_PLAYER_STATUS_SLOWED;
+            goto clear_slowed;
         } else {
             player_state.slowed_timer--;
             if (player_state.slowed_timer == KF_PLAYER_STATUS_TIMER_INACTIVE) {
+            clear_slowed:
                 player_state.status_effect_flags &= ~KF_PLAYER_STATUS_SLOWED;
             }
         }
@@ -625,10 +626,11 @@ void player_update(void)
     if (player_state.poison_timer != KF_PLAYER_STATUS_TIMER_INACTIVE) {
         if (!(player_state.status_effect_flags & KF_PLAYER_STATUS_POISON)) {
             player_state.poison_timer = KF_PLAYER_STATUS_TIMER_INACTIVE;
-            player_state.status_effect_flags &= ~KF_PLAYER_STATUS_POISON;
+            goto clear_poison;
         } else {
             player_state.poison_timer--;
             if (player_state.poison_timer == KF_PLAYER_STATUS_TIMER_INACTIVE) {
+            clear_poison:
                 player_state.status_effect_flags &= ~KF_PLAYER_STATUS_POISON;
             } else {
                 phase = player_state.poison_timer % POISON_DAMAGE_INTERVAL_UPDATES;
@@ -644,9 +646,9 @@ void player_update(void)
     if (player_state.curse_timer != KF_PLAYER_STATUS_TIMER_INACTIVE) {
         if (!(player_state.status_effect_flags & KF_PLAYER_STATUS_CURSE)) {
             player_state.curse_timer = 0;
-            player_state.status_effect_flags &= ~KF_PLAYER_STATUS_CURSE;
-            player_recalculate_combat_stats();
+            goto clear_curse;
         } else if (player_state.curse_timer == 0) {
+        clear_curse:
             player_state.status_effect_flags &= ~KF_PLAYER_STATUS_CURSE;
             player_recalculate_combat_stats();
         } else if (player_state.curse_timer == KF_CURSE_DURATION_UPDATES) {
