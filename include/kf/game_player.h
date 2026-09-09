@@ -258,18 +258,6 @@ typedef struct KfPlayerState {
     u8 unknown_df[1];
 } KfPlayerState;
 
-typedef char check_player_state_size[sizeof(KfPlayerState) == 0xe0 ? 1 : -1];
-typedef char check_player_motion_size[sizeof(KfPlayerMotionState) == 0x0c ? 1 : -1];
-#define KF_PLAYER_MOTION_OFFSET_CHECK(label, member, offset) \
-    typedef char check_player_motion_##label[ \
-        ((unsigned long)&((KfPlayerState *)0)->member == (offset)) ? 1 : -1]
-KF_PLAYER_MOTION_OFFSET_CHECK(word, motion_state.words[2], 0xc8);
-KF_PLAYER_MOTION_OFFSET_CHECK(pitch, motion_state.fields.pitch_step, 0xc8);
-KF_PLAYER_MOTION_OFFSET_CHECK(cell_z, motion_state.fields.map_cell.coords.z, 0xca);
-KF_PLAYER_MOTION_OFFSET_CHECK(cell_x, motion_state.fields.map_cell.coords.x, 0xcb);
-KF_PLAYER_MOTION_OFFSET_CHECK(previous_cell, previous_map_cell.word, 0xcc);
-#undef KF_PLAYER_MOTION_OFFSET_CHECK
-
 /*
  * Per-floor entry cell (one-based floor number). player_warp_to_floor_entry
  * copies byte 0 into previous_map_cell.coords.x and byte 1 into .coords.z, so this table

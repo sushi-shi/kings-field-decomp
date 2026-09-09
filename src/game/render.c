@@ -105,7 +105,7 @@ void display_show_error_screen(KfSystemScreen stage)
             attempt = KF_CD_READ_STOP_ATTEMPT;
         }
     }
-    tim_upload_images((u_long *)game_graphics_runtime.display_state.asset_load_buffer);
+    tim_upload_images(game_graphics_runtime.display_state.asset_load_buffer);
 
     back = game_graphics_runtime.display_state.buffer_index == KF_DISPLAY_BUFFER_FIRST;
     game_graphics_runtime.display_draw_environments[back].isbg = 0;

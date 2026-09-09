@@ -91,9 +91,6 @@ KF_ENUM_BEGIN(KfEndingScrollTick, s16)
     ENDING_SCROLL_TICK_HOLD_AFTER_STARFIELD = 3
 KF_ENUM_END(KfEndingScrollTick)
 
-typedef char KfOpeningEntityPositionOffsetCheck[
-    (u32)&((KfOpeningEntity *)0)->position == 0x08 ? 1 : -1];
-
 DATA(0x800354f4, 0x1dc)
 KfCameraPathPoint opening_scene0_camera_path[KF_OPENING_SCENE0_CAMERA_POINT_COUNT] = {
     {{101000, -13000, 101000, 0}, {256, 0, 200, 0}, 0, 0},

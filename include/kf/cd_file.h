@@ -24,7 +24,7 @@ extern CdlFILE cd_search_file;
 extern char cd_path_buffer[KF_CD_PATH_BYTES];
 
 extern KfResourceLoadResult cd_file_load_allocated(
-    void **destination, const char *relative_path);
+    u8 **destination, const char *relative_path);
 extern KfResourceLoadResult cd_file_load_into(
     void *destination, const char *relative_path);
 

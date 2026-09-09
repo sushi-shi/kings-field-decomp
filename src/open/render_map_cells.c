@@ -13,22 +13,19 @@ void render_map_cell(s32 col, s32 row, KfCellVisibility cell)
     SVECTOR position;
     long flag;
     s32 orientation;
-    union {
-        KfMapAttribute attribute;
-        u8 object_index;
-    } selection;
+    u8 object_index;
 
-    selection.attribute = map_cell_attribute_grid.cells[row][col];
-    if (selection.attribute == KF_MAP_ATTRIBUTE_NONE) {
+    object_index = KF_ENUM_ENCODE(u8, map_cell_attribute_grid.cells[row][col]);
+    if (object_index == KF_ENUM_ENCODE(u8, KF_MAP_ATTRIBUTE_NONE)) {
         return;
     }
-    selection.object_index = KF_ENUM_ENCODE(u8, selection.attribute) - 1;
-    if (selection.object_index > KF_MAP_MESHES_PER_BANK - 1) {
+    object_index = object_index - 1;
+    if (object_index > KF_MAP_MESHES_PER_BANK - 1) {
         return;
     }
     orientation = KF_ENUM_ENCODE(u8, map_cell_orientation_grid.cells[row][col]) - 1;
     if (cell == KF_CELL_WINDOW_DISTANT) {
-        selection.object_index += KF_MAP_MESHES_PER_BANK;
+        object_index += KF_MAP_MESHES_PER_BANK;
     }
     setVector(&position,
         col * KF_MAP_TILE_SIZE - (u16)open_graphics_runtime.render_state.view_position.vx,
@@ -53,8 +50,8 @@ void render_map_cell(s32 col, s32 row, KfCellVisibility cell)
     SetRotMatrix(&cell_matrix);
     SetTransMatrix(&cell_matrix);
     SetLightMatrix(&open_graphics_runtime.light_quadrant_matrices[orientation]);
-    tmd_select_object_vertices(selection.object_index);
-    render_enqueue_map(selection.object_index);
+    tmd_select_object_vertices(object_index);
+    render_enqueue_map(object_index);
 }
 
 ADDRESS(0x80018d8c, 0x140)

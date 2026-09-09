@@ -38,7 +38,6 @@ typedef union KfMorphPrefix {
     KfMorphRange range;
     SVECTOR vector;
 } KfMorphPrefix;
-typedef char check_morph_prefix_size[sizeof(KfMorphPrefix) == 8 ? 1 : -1];
 
 /* asset base + object_table[index]: one VDF-format morph/rest object. */
 typedef struct KfMorphObject {

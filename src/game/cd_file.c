@@ -26,7 +26,7 @@ KfCdFileEntry cd_file_table[KF_CD_FILE_TABLE_ENTRIES];
 
 /* Loads \KF\<relative_path>;1 into a fresh arena allocation. */
 ADDRESS(0x8001acf0, 0x170)
-KfResourceLoadResult cd_file_load_allocated(void **destination, const char *relative_path)
+KfResourceLoadResult cd_file_load_allocated(u8 **destination, const char *relative_path)
 {
     char *path = cd_path_buffer;
     s32 attempt;
@@ -42,7 +42,7 @@ KfResourceLoadResult cd_file_load_allocated(void **destination, const char *rela
         loaded = (cd_search_file.size >> KF_CD_SECTOR_SHIFT) + 1;
         cd_search_file.size = loaded << KF_CD_SECTOR_SHIFT;
     }
-    *destination = memory_allocate(cd_search_file.size);
+    *destination = (u8 *)memory_allocate(cd_search_file.size);
     loaded = 0;
     cd_read_location.minute = cd_search_file.pos.minute;
     cd_read_location.second = cd_search_file.pos.second;

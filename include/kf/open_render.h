@@ -93,29 +93,6 @@ typedef struct KfGraphicsRuntimeOpen {
     u8 unknown_24786[2];
 } KfGraphicsRuntimeOpen;
 extern KfGraphicsRuntimeOpen open_graphics_runtime;
-#define KF_OPEN_GRAPHICS_OFFSET_CHECK(member, offset) \
-    typedef char check_##member[ \
-        ((unsigned long)&((KfGraphicsRuntimeOpen *)0)->member == (offset)) ? 1 : -1]
-KF_OPEN_GRAPHICS_OFFSET_CHECK(display_state, 0x0);
-KF_OPEN_GRAPHICS_OFFSET_CHECK(ordering_table, 0x20024);
-KF_OPEN_GRAPHICS_OFFSET_CHECK(display_draw_environments, 0x20028);
-KF_OPEN_GRAPHICS_OFFSET_CHECK(display_disp_environments, 0x200e0);
-KF_OPEN_GRAPHICS_OFFSET_CHECK(unknown_20108, 0x20108);
-KF_OPEN_GRAPHICS_OFFSET_CHECK(tmd_state, 0x20110);
-KF_OPEN_GRAPHICS_OFFSET_CHECK(unknown_2011c, 0x2011c);
-KF_OPEN_GRAPHICS_OFFSET_CHECK(current_tmd_vertices, 0x20120);
-KF_OPEN_GRAPHICS_OFFSET_CHECK(unknown_20124, 0x20124);
-KF_OPEN_GRAPHICS_OFFSET_CHECK(tmd_projected_vertices, 0x20138);
-KF_OPEN_GRAPHICS_OFFSET_CHECK(unknown_22078, 0x22078);
-KF_OPEN_GRAPHICS_OFFSET_CHECK(floor_item_state, 0x23fe0);
-KF_OPEN_GRAPHICS_OFFSET_CHECK(DAT_8006e040, 0x245f8);
-KF_OPEN_GRAPHICS_OFFSET_CHECK(DAT_8006e044, 0x245fc);
-KF_OPEN_GRAPHICS_OFFSET_CHECK(render_state, 0x24600);
-KF_OPEN_GRAPHICS_OFFSET_CHECK(light_quadrant_matrices, 0x24700);
-KF_OPEN_GRAPHICS_OFFSET_CHECK(active_cell_window, 0x24780);
-KF_OPEN_GRAPHICS_OFFSET_CHECK(tmd_projection_shift, 0x24784);
-KF_OPEN_GRAPHICS_OFFSET_CHECK(unknown_24786, 0x24786);
-#undef KF_OPEN_GRAPHICS_OFFSET_CHECK
 
 extern MATRIX color_matrix_table[KF_OPEN_COLOR_PRESET_COUNT];
 extern KfSpriteQuad floor_item_sprites[KF_FLOOR_ITEM_SPRITE_COUNT];

@@ -663,9 +663,6 @@ KfRenderStateOpen	0x64	0x10	view_position	VECTOR	supported	open_render.h;asm;bas
 KfRenderStateOpen	0x74	0x08	view_rotation	SVECTOR	supported	open_render.h;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
 KfRenderStateOpen	0x7c	0x04	view_cell	KfVecXZs	supported	open_render.h;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
 KfRenderStateOpen	0x80	0x80	quadrant_matrices	MATRIX[4]	supported	open_render.h;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
-KfResourcePointer	0x00	0x04	storage	void *	supported	resources.h;asm;typed-resource-boundaries.md	alternative pointer view in the shared allocation slot
-KfResourcePointer	0x00	0x04	bytes	u8 *	supported	resources.h;asm;typed-resource-boundaries.md	alternative pointer view in the shared allocation slot
-KfResourcePointer	0x00	0x04	tim_data	u_long *	supported	resources.h;asm;typed-resource-boundaries.md	alternative pointer view in the shared allocation slot
 KfRotation	0x00	0x08	vector	SVECTOR	supported	game_math.h;asm;effect_pool_construct;effect_projectile_update_3d;typed-effect-records.md;typed-world-transforms.md	complete SDK vector copied with its pad halfword
 KfRotation	0x00	0x06	angles	KfEulerAngles	supported	game_math.h;asm;render_actor_sprite;matrix_set_rotation_yxz;typed-effect-records.md;typed-world-transforms.md	signed Euler components supplied to the game matrix helper
 KfSaveDirectory	0x00	0x04	slot_ids	KF_ENUM_STORAGE(KfSaveSlotId, u8)[4]	supported	game_save.h;asm;xrefs	four byte directory tags: empty0, logical slots1..3, spare4; signed-halfword API domain and byte storage: save-slot-id-domain.md

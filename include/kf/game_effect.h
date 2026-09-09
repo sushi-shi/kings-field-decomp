@@ -140,7 +140,6 @@ enum {
     KF_EFFECT_GROUND_BRANCH_TIMER_DONE = 0xff
 };
 
-
 /* Kind-specific phases and update counters share byte 7. Intermediate
  * ages are advanced within their named ranges, with byte wrap at 0xff. */
 KF_ENUM_BEGIN(KfEffectPhase, u8)
@@ -277,7 +276,6 @@ typedef union KfEffectRenderId {
     KfEffectBillboardId billboard;
     KfEffectModelId model;
 } KfEffectRenderId;
-typedef char check_effect_render_id_size[sizeof(KfEffectRenderId) == 1 ? 1 : -1];
 
 typedef struct KfEffectRecord {
     KfEffectType type;    /* 0x00: targets, class and free sentinel */
@@ -301,28 +299,6 @@ typedef struct KfEffectRecord {
     KfEffectControl control; /* 0x38: countdown, orbit, parent, or homing selector */
     KfEffectPropagation propagation; /* 0x3a: kind-10 generations or kind-6 branch */
 } KfEffectRecord;
-
-#define KF_EFFECT_OFFSET_CHECK(label, member, offset) \
-    typedef char check_effect_##label[ \
-        ((unsigned long)&((KfEffectRecord *)0)->member == (offset)) ? 1 : -1]
-typedef char check_effect_record_size[sizeof(KfEffectRecord) == 60 ? 1 : -1];
-typedef char check_effect_rotation_size[sizeof(KfRotation) == 8 ? 1 : -1];
-KF_EFFECT_OFFSET_CHECK(position, position, 0x0c);
-KF_EFFECT_OFFSET_CHECK(rotation, rotation, 0x1c);
-KF_EFFECT_OFFSET_CHECK(rotation_vector, rotation.vector, 0x1c);
-KF_EFFECT_OFFSET_CHECK(rotation_angles, rotation.angles, 0x1c);
-KF_EFFECT_OFFSET_CHECK(rotation_angle_y, rotation.angles.y, 0x1e);
-KF_EFFECT_OFFSET_CHECK(rotation_angle_z, rotation.angles.z, 0x20);
-KF_EFFECT_OFFSET_CHECK(rotation_y, rotation.vector.vy, 0x1e);
-KF_EFFECT_OFFSET_CHECK(rotation_z, rotation.vector.vz, 0x20);
-KF_EFFECT_OFFSET_CHECK(rotation_pad, rotation.vector.pad, 0x22);
-KF_EFFECT_OFFSET_CHECK(direction, direction, 0x2c);
-KF_EFFECT_OFFSET_CHECK(direction_pad, direction.words.pad, 0x32);
-KF_EFFECT_OFFSET_CHECK(visual, visual, 0x08);
-KF_EFFECT_OFFSET_CHECK(control, control, 0x38);
-KF_EFFECT_OFFSET_CHECK(control_high_byte, control.bytes.high, 0x39);
-KF_EFFECT_OFFSET_CHECK(propagation, propagation, 0x3a);
-#undef KF_EFFECT_OFFSET_CHECK
 
 /* Startup clears this whole object; selection derives the magic array from
  * the current-record slot by a fixed member offset. */

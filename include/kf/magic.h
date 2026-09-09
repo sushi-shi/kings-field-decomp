@@ -53,8 +53,6 @@ typedef union KfMagicTable {
     u32 words[KF_MAGIC_TABLE_WORD_COUNT];
 } KfMagicTable;
 
-typedef char check_magic_table_size[sizeof(KfMagicTable) == 0x1e0 ? 1 : -1];
-
 extern void magic_load_records(const KfMagicTable *table);
 extern void magic_cast(void);
 

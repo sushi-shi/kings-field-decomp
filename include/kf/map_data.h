@@ -159,15 +159,12 @@ typedef union KfMapGrid {
     u8 bytes[KF_MAP_CELL_COUNT];
     u32 words[KF_MAP_GRID_WORD_COUNT];
 } KfMapGrid;
-typedef char check_map_grid_size[sizeof(KfMapGrid) == 0x2710 ? 1 : -1];
 
 typedef union KfMapAttributeGrid {
     KfMapAttribute cells[KF_MAP_ROWS][KF_MAP_COLUMNS];
     KfMapAttribute bytes[KF_MAP_CELL_COUNT];
     u32 words[KF_MAP_GRID_WORD_COUNT];
 } KfMapAttributeGrid;
-typedef char check_map_attribute_grid_size[
-    sizeof(KfMapAttributeGrid) == 0x2710 ? 1 : -1];
 
 typedef union KfMapCollisionGrid {
     KfMapCellKind cells[KF_MAP_ROWS][KF_MAP_COLUMNS];
@@ -180,9 +177,6 @@ typedef union KfMapOrientationGrid {
     KfMapOrientation bytes[KF_MAP_CELL_COUNT];
     u32 words[KF_MAP_GRID_WORD_COUNT];
 } KfMapOrientationGrid;
-
-typedef char check_map_collision_grid_size[sizeof(KfMapCollisionGrid) == 0x2710 ? 1 : -1];
-typedef char check_map_orientation_grid_size[sizeof(KfMapOrientationGrid) == 0x2710 ? 1 : -1];
 
 extern KfMapAttributeGrid map_cell_attribute_grid;
 extern KfMapOrientationGrid map_cell_orientation_grid;

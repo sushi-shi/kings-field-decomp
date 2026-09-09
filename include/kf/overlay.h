@@ -21,10 +21,6 @@ typedef struct KfOverlayArguments {
     KfOpenMode request;
     KfGameExitCode result;
 } KfOverlayArguments;
-typedef char check_overlay_arguments_size[
-    sizeof(KfOverlayArguments) == 8 ? 1 : -1];
-typedef char check_overlay_arguments_result_offset[
-    (unsigned long)&((KfOverlayArguments *)0)->result == 4 ? 1 : -1];
 
 /* The SDK transports this block through Exec's char ** argument. */
 enum {
