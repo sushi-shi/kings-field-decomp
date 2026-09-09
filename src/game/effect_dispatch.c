@@ -730,10 +730,9 @@ advance_effect_phase:
                 effect->position.vz = position.vz;
                 effect->control.frames_remaining--;
             }
-            if (phase == KF_EFFECT_ACTOR_SPAWNER_TRAVEL_LAST) {
-                goto rotate_actor_spawner;
+            if (phase != KF_EFFECT_ACTOR_SPAWNER_TRAVEL_LAST) {
+                effect->phase++;
             }
-            goto advance_actor_spawner_phase;
         } else if (phase < KF_EFFECT_ACTOR_SPAWNER_SHRINK_FIRST) {
             if (phase == KF_EFFECT_ACTOR_SPAWNER_CREATE_PHASE) {
                 struct KfVec3s actor_rotation;
@@ -757,9 +756,7 @@ advance_effect_phase:
                     actor_pool_spawn(0, &position, &actor_rotation);
                 }
             }
-advance_actor_spawner_phase:
             effect->phase++;
-            goto rotate_actor_spawner;
         } else if (phase < KF_EFFECT_ACTOR_SPAWNER_PHASE_END) {
             scale = effect->scale_x - ACTOR_SPAWNER_SCALE_STEP;
             scale_phase = effect->phase;
@@ -771,7 +768,6 @@ advance_actor_spawner_phase:
         } else {
             effect->type = KF_EFFECT_SLOT_FREE;
         }
-rotate_actor_spawner:
         effect->rotation.vector.vy = (effect->rotation.vector.vy + ACTOR_SPAWNER_YAW_STEP) & KF_ANGLE_WRAP_MASK;
         effect->rotation.vector.vx = (effect->rotation.vector.vx + ACTOR_SPAWNER_PITCH_STEP) & KF_ANGLE_WRAP_MASK;
         effect->rotation.vector.vz = (effect->rotation.vector.vz + ACTOR_SPAWNER_ROLL_STEP) & KF_ANGLE_WRAP_MASK;
