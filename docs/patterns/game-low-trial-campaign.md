@@ -87,6 +87,46 @@ pass on the retained source. The existing collision rectangle, orientation,
 boundary and query-argument controls are included. The literal ledger keeps
 43 occurrences, assigning the moved expressions to their helper owner.
 
+Follow-up Function Match Plan: retain the verified in-cell boundary, signature,
+widths, data owners, call set and ordered referents. Test the negative-height
+predicate as the direct nonmutating `height + floor` expression, because retail
+consumes the sum only in that comparison. Independently test a real shared
+collision-result exit across the geometry returns and target-policy switch.
+Retail loads the terrain result in the negative branch delay slot, leaves its
+following exit jump empty, and also leaves both defined-default exit jumps
+empty; these are consistent with a result selected before one source return.
+Compare the direct expression, a scoped negative-path result, a switch result,
+and their cohesive shared-exit composition. Reject any form that changes the
+sole world-query call, twelve ordered address pairs, signed comparisons, grid
+reads, or defined class-zero result. Do not introduce padding or an unused
+carrier.
+
+The direct-sum and inverted direct-sum predicates both emit 1896 bytes at
+98.621056%; each changes five otherwise matching register words and retains
+the old negative-height delay slot. A scoped result only for that path grows
+to the retail extent but disrupts the entry join. Preserve the in-place height
+update and carry one genuine result through the final target-policy switch
+instead. With the switch's defined fallback written first, this emits all
+1900 bytes and restores the negative path, every later destination, the three
+case-local stack arguments, and the class-three flag load. The retained source
+matches 474 of 475 complete linked words at strict 99.873690%.
+
+The sole residue is the delay slot after the class-three selector branch at
+`+718`: retail has `nop`; the probe copies the fallback's `li v0,1` into that
+slot. On the taken class-three path the following block overwrites v0 with
+`0x61`; on the untaken path values above three cannot occur because the loaded
+byte is masked by three. Explicit fallback returns, gotos, switch fallthrough,
+preinitialization, an explicit zero case, zero/default aliases, and supported
+case orders do not remove this one word while keeping the default defined.
+The sole call and twelve ordered address pairs remain exactly equal. This is
+an unattributed code-generation residue, so the function remains unbanked.
+
+The focused collision controls, Ruff, all 723 repository tests (105.698
+seconds), and `git diff --check` pass. The full build keeps GAME at 339/362
+exact and raises aggregate similarity to 99.751%; PSX remains 1/1 and OPEN
+106/108 exact. Existing data ownership and section-placement checks remain
+nonzero with no artifact failures.
+
 ## Item detail: complete name-row pointer
 
 Function Match Plan at `6cbea3fd`: refresh all six GAME views and read all
