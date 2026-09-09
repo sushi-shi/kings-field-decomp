@@ -392,7 +392,8 @@ play_phase_sound:
                     &effect->position, &effect->direction.vector, KF_EFFECT_ARGS_SOUND(KF_EFFECT_SOUND_PLAY));
             }
             if (phase > KF_EFFECT_MOONLIGHT_IMPACT_LAST) {
-                goto invalidate_and_return;
+                effect->type = KF_EFFECT_SLOT_FREE;
+                return;
             }
         }
         effect->phase++;
