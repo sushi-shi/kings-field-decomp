@@ -181,7 +181,6 @@ void map_event_pool_update(void)
 ADDRESS(0x80035b5c, 0x2b8)
 void map_world_state_persist(void)
 {
-    u8 *base = map_runtime_state.world_state.bytes;
     u8 *out;
     u8 *count_slot;
     KfMapEvent *event;
@@ -191,14 +190,8 @@ void map_world_state_persist(void)
     s32 i;
     s32 active;
 
-    {
-        s32 floor_offset = KF_MAP_SAVED_FLOOR_BYTES
-            * KF_ENUM_ENCODE(u8, player_state.progress_state.current_floor);
-        u8 *records_base =
-            base - (KF_MAP_SAVED_FLOOR_BYTES - KF_MAP_SAVED_RECORDS_OFFSET);
-
-        out = records_base + floor_offset;
-    }
+    out = map_runtime_state.world_state.floors[
+        KF_ENUM_ENCODE(u8, player_state.progress_state.current_floor) - 1].records;
     *out++ = 1;
 
     event = map_runtime_state.events;

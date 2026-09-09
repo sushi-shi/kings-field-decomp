@@ -330,7 +330,7 @@ class GameGraphicsOwnerProbeTests(unittest.TestCase):
                 else:
                     self.assertEqual(actual, expected)
 
-    def test_extended_display_tmd_pilot_preserves_exacts_but_does_not_close_owner(self):
+    def test_extended_display_tmd_pilot_preserves_complete_functions(self):
         self.tools()
         image, manifest = self.retail(), load_manifest()
         data = data_addresses()
@@ -699,18 +699,15 @@ extern KfMaterialProbe material_probe;
         # These open functions are checked for calls and target integrity,
         # without accepting partial words as exact or requiring a future residue.
         partial = {
-            'display_initialize',
             'item_load_database',
             'map_interaction_dispatch',
             'map_show_screen_image',
             'menu_draw_item_detail',
             'menu_draw_item_name_frame',
-            'menu_draw_stats_header',
             'menu_draw_status_details',
             'menu_draw_window',
             'menu_draw_window_backdrop',
             'menu_item_model_preview',
-            'player_add_experience',
             'player_move_horizontal',
             'render_entities',
             'render_map_cell',
@@ -750,7 +747,7 @@ extern KfMaterialProbe material_probe;
                                         {**addresses, 'game_graphics_runtime': ORIGIN + 4}, functions)
                                     self.assertNotEqual(wrong, expected, claim.symbol)
                                     self.assertEqual(same_calls, calls)
-        self.assertEqual((checked, exact), (173, 157))
+        self.assertEqual((checked, exact), (173, 160))
 
 
 if __name__ == '__main__':
