@@ -326,7 +326,7 @@ lightning_impact:
             effect->scale_z = scale;
             effect->scale_y = scale;
         } else if (phase == KF_EFFECT_PROJECTILE_DISSIPATE_END) {
-            goto invalidate_and_advance;
+            effect->type = KF_EFFECT_SLOT_FREE;
         } else if (phase < KF_EFFECT_PROJECTILE_FALL) {
             effect->position.vy -= KF_EFFECT_EMERGE_Y_STEP;
             if (phase == KF_EFFECT_PROJECTILE_EMERGE_LAST) {
@@ -356,7 +356,7 @@ play_phase_sound:
             }
             return;
         } else {
-            goto invalidate_and_advance;
+            effect->type = KF_EFFECT_SLOT_FREE;
         }
         goto advance_effect_phase;
 
@@ -555,25 +555,26 @@ randomize_homing_direction:
 
     case KF_EFFECT_KIND_LIGHTNING_IMPACT:
         if (phase > KF_EFFECT_LIGHTNING_IMPACT_PHASE_LAST) {
-            goto invalidate_and_advance;
-        }
-        effect->render_id.billboard++;
-        if (KF_ENUM_ENCODE(u8, effect->render_id.billboard) >= KF_ENUM_ENCODE(u8, effect->base_render_id.billboard) + LIGHTNING_IMPACT_RENDER_FRAME_COUNT) {
-            effect->render_id.billboard = effect->base_render_id.billboard;
-        }
-        if (phase == KF_EFFECT_LIGHTNING_IMPACT_EMIT_FIRST || phase == KF_EFFECT_LIGHTNING_IMPACT_EMIT_SECOND || phase == KF_EFFECT_LIGHTNING_IMPACT_EMIT_LAST) {
-            if (effect->base_render_id.billboard == KF_EFFECT_BILLBOARD_LIGHTNING_IMPACT) {
-                effect_pool_construct(
-                    effect->id, effect->type, KF_EFFECT_KIND_LIGHTNING_RADIAL_BLAST,
-                    &effect->position, &effect->rotation.vector);
-            } else {
-                effect_pool_construct(
-                    effect->id, effect->type, KF_EFFECT_KIND_LIGHTNING_RADIAL_BLAST_ALTERNATE,
-                    &effect->position, &effect->rotation.vector);
+            effect->type = KF_EFFECT_SLOT_FREE;
+        } else {
+            effect->render_id.billboard++;
+            if (KF_ENUM_ENCODE(u8, effect->render_id.billboard) >= KF_ENUM_ENCODE(u8, effect->base_render_id.billboard) + LIGHTNING_IMPACT_RENDER_FRAME_COUNT) {
+                effect->render_id.billboard = effect->base_render_id.billboard;
             }
-            if (phase == KF_EFFECT_LIGHTNING_IMPACT_EMIT_FIRST) {
-                phase_sound = &magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_LIGHTNING_BOLT)].sounds[1];
-                goto play_phase_sound;
+            if (phase == KF_EFFECT_LIGHTNING_IMPACT_EMIT_FIRST || phase == KF_EFFECT_LIGHTNING_IMPACT_EMIT_SECOND || phase == KF_EFFECT_LIGHTNING_IMPACT_EMIT_LAST) {
+                if (effect->base_render_id.billboard == KF_EFFECT_BILLBOARD_LIGHTNING_IMPACT) {
+                    effect_pool_construct(
+                        effect->id, effect->type, KF_EFFECT_KIND_LIGHTNING_RADIAL_BLAST,
+                        &effect->position, &effect->rotation.vector);
+                } else {
+                    effect_pool_construct(
+                        effect->id, effect->type, KF_EFFECT_KIND_LIGHTNING_RADIAL_BLAST_ALTERNATE,
+                        &effect->position, &effect->rotation.vector);
+                }
+                if (phase == KF_EFFECT_LIGHTNING_IMPACT_EMIT_FIRST) {
+                    phase_sound = &magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_LIGHTNING_BOLT)].sounds[1];
+                    goto play_phase_sound;
+                }
             }
         }
         effect->phase++;
@@ -583,30 +584,31 @@ randomize_homing_direction:
         VECTOR position;
 
         if (phase > KF_EFFECT_LIGHTNING_BLAST_PHASE_LAST) {
-            goto invalidate_and_advance;
-        }
-        effect->scale_y = effect->scale_z =
-            effect->scale_x += LIGHTNING_BLAST_SCALE_STEP;
-        effect->rotation.vector.vy = (effect->rotation.vector.vy + LIGHTNING_BLAST_YAW_STEP) & KF_ANGLE_WRAP_MASK;
-        if (KF_ENUM_ENCODE(u8, phase) & 1) {
-            u32 damage_radius;
-            KfMagicRecord *lightning_magic;
+            effect->type = KF_EFFECT_SLOT_FREE;
+        } else {
+            effect->scale_y = effect->scale_z =
+                effect->scale_x += LIGHTNING_BLAST_SCALE_STEP;
+            effect->rotation.vector.vy = (effect->rotation.vector.vy + LIGHTNING_BLAST_YAW_STEP) & KF_ANGLE_WRAP_MASK;
+            if (KF_ENUM_ENCODE(u8, phase) & 1) {
+                u32 damage_radius;
+                KfMagicRecord *lightning_magic;
 
-            setVector(&position,
-                effect->position.vx,
-                KF_COLLISION_IGNORE_HEIGHT,
-                effect->position.vz);
-            damage_radius = KF_ENUM_ENCODE(u8, phase) * LIGHTNING_BLAST_RADIUS_STEP;
-            power = effect_magic_power(effect);
-            lightning_magic = &magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_LIGHTNING_BOLT)];
-            actor_pool_apply_radial_damage(
-                &position, damage_radius, KF_FIXED12_ONE, power, 0, 0, 0,
-                lightning_magic->damage_components[0],
-                lightning_magic->damage_components[1], KF_ACTOR_DAMAGE_SCALE_ONE, effect->type);
-            player_apply_radial_damage(
-                &position, damage_radius, KF_FIXED12_ONE, power, 0, 0, 0,
-                lightning_magic->damage_components[0],
-                lightning_magic->damage_components[1], EFFECT_PLAYER_RADIAL_SCALE_Q12, effect->id);
+                setVector(&position,
+                    effect->position.vx,
+                    KF_COLLISION_IGNORE_HEIGHT,
+                    effect->position.vz);
+                damage_radius = KF_ENUM_ENCODE(u8, phase) * LIGHTNING_BLAST_RADIUS_STEP;
+                power = effect_magic_power(effect);
+                lightning_magic = &magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_LIGHTNING_BOLT)];
+                actor_pool_apply_radial_damage(
+                    &position, damage_radius, KF_FIXED12_ONE, power, 0, 0, 0,
+                    lightning_magic->damage_components[0],
+                    lightning_magic->damage_components[1], KF_ACTOR_DAMAGE_SCALE_ONE, effect->type);
+                player_apply_radial_damage(
+                    &position, damage_radius, KF_FIXED12_ONE, power, 0, 0, 0,
+                    lightning_magic->damage_components[0],
+                    lightning_magic->damage_components[1], EFFECT_PLAYER_RADIAL_SCALE_Q12, effect->id);
+            }
         }
         effect->phase++;
         break;
