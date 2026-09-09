@@ -859,3 +859,6 @@ promotes a probe to a proven historical toolchain.
 - [Remaining Sony helper investigation](sony-remaining-functions.md): all eighteen
   non-exact functions reviewed, thirty compiled controls, and three exact menu
   functions from reflected SDK UV rectangles and byte-domain texture dimensions.
+- [SDK expressions and the final fifteen](sony-final-fifteen.md): refreshed
+  evidence for every remaining function, twenty additional source controls,
+  and native-parity traces of the successful UV expressions' stack allocations.
