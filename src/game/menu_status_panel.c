@@ -81,21 +81,21 @@ void menu_status_panel(void)
         menu_draw_window_backdrop();
         menu_present_frame();
         if (frame < MENU_PANEL_INPUT_RELEASE_FRAME) {
-            goto advance;
+            frame++;
+            continue;
         }
         if (frame == MENU_PANEL_INPUT_RELEASE_FRAME) {
             while (PadRead(1) != 0) {
             }
-        advance:
             frame++;
-        } else {
-            input = PadRead(1);
-            if (input != 0) {
-                menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
-                while (PadRead(1) != 0) {
-                }
-                return;
+            continue;
+        }
+        input = PadRead(1);
+        if (input != 0) {
+            menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
+            while (PadRead(1) != 0) {
             }
+            return;
         }
     }
 }

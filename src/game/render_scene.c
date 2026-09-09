@@ -49,10 +49,10 @@ void render_entities(void)
 
     /* Actors. */
     actor = actor_state.actors;
-    for (i = KF_ACTOR_CAPACITY - 1; i != -1; i--) {
+    for (i = KF_ACTOR_CAPACITY - 1; i != -1; actor++, i--) {
         u8 visible;
         if (actor->lifecycle != KF_ACTOR_LIFECYCLE_ACTIVE) {
-            goto next_actor;
+            continue;
         }
         if (actor->culling_mode == KF_ACTOR_CULL_VISIBILITY_GRID) {
             const KfCellWindow *g;
@@ -60,12 +60,12 @@ void render_entities(void)
             row = actor->cell_z - window_origin_z;
             g = game_graphics_runtime.active_cell_window;
             if (row >= g->height) {
-                goto next_actor;
+                continue;
             }
             {
                 col = actor->cell_x - window_origin_x;
                 if (col >= g->width) {
-                    goto next_actor;
+                    continue;
                 }
                 /* This join also carries the square-culling predicate below. */
                 visible = KF_ENUM_ENCODE(u8, g->cells[row * g->width + col]);
@@ -74,7 +74,7 @@ void render_entities(void)
             row = actor->cell_z + ACTOR_CULL_SQUARE_HALF_WIDTH;
             row -= (u16)game_graphics_runtime.render_state.view_cell.z;
             if (row >= ACTOR_CULL_SQUARE_WIDTH) {
-                goto next_actor;
+                continue;
             }
             col = actor->cell_x + ACTOR_CULL_SQUARE_HALF_WIDTH;
             col -= (u16)game_graphics_runtime.render_state.view_cell.x;
@@ -83,8 +83,6 @@ void render_entities(void)
         if (visible != 0) {
             render_actor(actor);
         }
-next_actor:
-        actor++;
     }
 
     /* Floor items. */
@@ -116,9 +114,9 @@ next_actor:
     /* Actor sprites. */
     SetLightMatrix(&render_light_matrices[KF_RENDER_LIGHT_EFFECT]);
     sprite = effect_pool_records;
-    for (i = KF_EFFECT_CAPACITY - 1; i != -1; i--) {
+    for (i = KF_EFFECT_CAPACITY - 1; i != -1; sprite++, i--) {
         if (sprite->type == KF_EFFECT_SLOT_FREE || sprite->render_id.model == KF_EFFECT_MODEL_NONE) {
-            goto next_sprite;
+            continue;
         }
         {
             const KfCellWindow *g;
@@ -132,8 +130,6 @@ next_actor:
                 }
             }
         }
-next_sprite:
-        sprite++;
     }
 
     /* Map events. */
