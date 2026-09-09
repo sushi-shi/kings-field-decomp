@@ -111,9 +111,9 @@ void player_update(void)
     KfActor *target;
     const VECTOR *origin;
     SVECTOR direction;
+    KfRotation effect_rotation;
     SVECTOR *launch_direction;
     SVECTOR spawn_offset;
-    KfRotation effect_rotation;
     VECTOR position;
     MATRIX matrix;
     s32 distance;

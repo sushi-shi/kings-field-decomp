@@ -156,6 +156,7 @@ KfMapObject *map_object_effect_pool_acquire(u16 first_index, u16 count, u16 sequ
 ADDRESS(0x80031834, 0x194)
 void map_object_spawn_effect(KfMapObjectDropSource kind, KfMapObjectId object_id, const VECTOR *position, s32 y_offset)
 {
+    KfBool within_drop_range;
     u16 *sequence;
     u16 first_index;
     KfMapObject *object;
@@ -175,13 +176,14 @@ void map_object_spawn_effect(KfMapObjectDropSource kind, KfMapObjectId object_id
     object->cell_z = object->position.vz / KF_MAP_TILE_SIZE;
     object->rotation.angles.z = 0;
     object->rotation.angles.x = 0;
+    within_drop_range = object_id < KF_MAP_DROP_BOUNCE_ID_END;
     object->rotation.angles.y = rand() >> MAP_DROP_RANDOM_YAW_SHIFT;
     object->action = KF_MAP_OBJECT_ACTION_IDLE;
     if (object_id < KF_MAP_DROP_TIP_ID_END) {
         map_object_start_action_if_idle(object, KF_MAP_OBJECT_ACTION_FALL_AND_TIP);
     } else if (object_id < KF_MAP_DROP_SPIN_ID_END) {
         map_object_start_action_if_idle(object, KF_MAP_OBJECT_ACTION_FALL_AND_SPIN);
-    } else if (object_id < KF_MAP_DROP_BOUNCE_ID_END) {
+    } else if (within_drop_range) {
         map_object_start_action_if_idle(object, KF_MAP_OBJECT_ACTION_BOUNCE);
     }
     object->link.fields.vertical_velocity = 0;

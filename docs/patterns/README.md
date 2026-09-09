@@ -5,6 +5,10 @@ about which source shapes reproduce it under the current probes. Each note
 records the retail evidence first and the probe behaviour second; none of them
 promotes a probe to a proven historical toolchain.
 
+- [game-upstream-ast-campaign.md](game-upstream-ast-campaign.md): upstream AST
+  search of the twelve remaining GAME functions, the exact entity renderer
+  through a consumed matrix pointer, reviewed spawn/player improvements and
+  rejected semantic false leads.
 - [game-filename-permuter.md](game-filename-permuter.md): two strict-exact GAME
   filename builders, upstream finite-combination search, complete-TU sibling
   preservation and the remaining thirteen-function campaign.

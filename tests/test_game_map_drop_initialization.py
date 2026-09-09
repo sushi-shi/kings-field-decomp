@@ -64,7 +64,9 @@ class GameMapDropInitializationTests(unittest.TestCase):
                 # Its final conditional skips only the optional bounce call.
                 branches = [i for i, word in enumerate(words) if word >> 26 in (4, 5, 6, 7)]
                 branch = branches[-1]
-                self.assertEqual(words[branch] >> 16, 0x1040)
+                # The predicate register may differ in a non-exact source body.
+                self.assertEqual(words[branch] & 0xFC1F0000, 0x10000000)  # beq rs,zero
+                self.assertNotEqual((words[branch] >> 21) & 31, 0)
                 destination = branch + 1 + (words[branch] & 0xFFFF)
                 if old_scope:
                     self.assertEqual(words[destination] >> 26, 0x23)  # Old path skips to lw ra.

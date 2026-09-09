@@ -23,6 +23,7 @@ void render_entities(void)
     KfMapEvent *event;
     KfEffectRecord *sprite;
     s16 i;
+    MATRIX *effect_light_matrix;
     u16 *active_tpage;
     u16 row;
     u16 col;
@@ -93,6 +94,7 @@ void render_entities(void)
     game_graphics_runtime.active_render_color.r = FLOOR_ITEM_RENDER_BRIGHTNESS;
     i = game_graphics_runtime.floor_item_count;
     *active_tpage = game_graphics_runtime.floor_item_tpage;
+    effect_light_matrix = &render_light_matrices[KF_RENDER_LIGHT_EFFECT];
     game_graphics_runtime.active_render_clut = game_graphics_runtime.floor_item_clut;
     {
         KfFloorItem *items = game_graphics_runtime.floor_items;
@@ -112,7 +114,7 @@ void render_entities(void)
     }
 
     /* Actor sprites. */
-    SetLightMatrix(&render_light_matrices[KF_RENDER_LIGHT_EFFECT]);
+    SetLightMatrix(effect_light_matrix);
     sprite = effect_pool_records;
     for (i = KF_EFFECT_CAPACITY - 1; i != -1; sprite++, i--) {
         if (sprite->type == KF_EFFECT_SLOT_FREE || sprite->render_id.model == KF_EFFECT_MODEL_NONE) {
