@@ -27,7 +27,7 @@ void repeat_store_word(int *destination, int count, int value)
  * constants in retail (lui/ori forms carry no relocation).
  */
 ADDRESS(0x8001428c, 0x88)
-void main(s32 entry_arg0, u32 *entry_args)
+void main(s32 entry_arg0, KfOverlayArguments *entry_args)
 {
     repeat_store_word((int *)STARTUP_STORE_ADDRESS, STARTUP_REPEAT_STORE_COUNT, 0);
     InitHeap((u32 *)INITIAL_HEAP_ADDRESS, INITIAL_HEAP_BYTES);
@@ -36,5 +36,5 @@ void main(s32 entry_arg0, u32 *entry_args)
     InitCARD2(1);
     ExitCriticalSection();
     game_main_loop();
-    entry_args[KF_OVERLAY_RESULT_WORD] = KF_ENUM_ENCODE(u32, game_exit_code);
+    entry_args->result = game_exit_code;
 }

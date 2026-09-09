@@ -1,0 +1,83 @@
+# MANUALLY REVIEWED - all explicit brace/string variable initializers, including SDK MATRIX aggregates; values reviewed through their element/member types.
+declaration	name	datatype	verdict	finding	note
+src/game/actor.c:46	actor_action_profiles	KfActorActionProfile[25]	numeric		Five halfword distances and random-selection weights; the row selector has its own effect-code domain.
+src/game/actor.c:79	boss_death_phase_sounds	SoundRef[4]	sdk_audio		SDK program, tone and note numbers passed to sound APIs; numerical handles/pitch, not game selectors.
+src/game/audio.c:67	path	char[20]	encoded_content		Filename, path template, debug text or number-formatting character buffer; byte positions hold character encodings.
+src/game/cd_file.c:12	cd_path_prefix	char[5]	encoded_content		Filename, path template, debug text or number-formatting character buffer; byte positions hold character encodings.
+src/game/cd_file.c:14	cd_version_suffix	char[3]	encoded_content		Filename, path template, debug text or number-formatting character buffer; byte positions hold character encodings.
+src/game/collision.c:11	map_cell_attribute_height_table	s16[255]	numeric_geometry		Signed height values looked up using typed map attributes and consumed in collision geometry.
+src/game/display_play_transition.c:14	fade_screen_rect	KfScreenRect	numeric_geometry		Screen rectangle positions and dimensions; no categorical element.
+src/game/display_play_transition.c:18	fade_screen_uv	FadeUv	packed_gpu		Interleaved numerical UV/span descriptor bytes.
+src/game/display_play_transition.c:22	fade_screen_color	CVECTOR	sdk_record		Numerical RGB intensities and the SDK packed GPU command/padding byte; no game selector field.
+src/game/display_play_transition.c:24	fade_screen_path	char[7]	encoded_content		Filename, path template, debug text or number-formatting character buffer; byte positions hold character encodings.
+src/game/effect_dispatch.c:104	effect_swing_probe_offsets	SVECTOR[2]	numeric_geometry		SDK vector coordinates/rotation/displacements and padding; quantitative geometry.
+src/game/effect_map_collision.c:8	map_cell_height_records	KfCellHeightRecord[7]	numeric_geometry		Cell-height coefficients and geometric dimensions evaluated arithmetically.
+src/game/effect_update.c:28	floor_deform_segments	KfFloorDeformSegment[5]	numeric_geometry		Coordinate ranges, modulo-256 steps, counts and interpolated heights.
+src/game/entity_render.c:19	floor_item_sprites	KfSpriteQuad[7]	numeric_geometry	A2	All eight members are UV origins/spans and quad coordinates/dimensions. Fixed-bank selection is represented separately by KfFloorItemSpriteId or KfEffectBillboardId.
+src/game/entity_render.c:30	effect_billboard_sprites	KfSpriteQuad[22]	numeric_geometry		All eight members are UV origins/spans and quad coordinates/dimensions. Fixed-bank selection is represented separately by KfFloorItemSpriteId or KfEffectBillboardId.
+src/game/geometry_render.c:16	hud_sprites	KfHudSprite[14]	typed_record		Each row already carries KfHudSpriteState; its nested KfSpriteQuad stores numerical geometry.
+src/game/item.c:89	name	char[40]	encoded_content		Filename, path template, debug text or number-formatting character buffer; byte positions hold character encodings.
+src/game/lighting.c:16	color_matrix_table	MATRIX[7]	numeric_matrix		SDK matrix coefficients/translation; arithmetic interpolation and matrix multiplication accept quantities. KF_FIXED12_ONE names numeric Q12 unity.
+src/game/map_object_pool.c:24	map_copy_regions	KfMapCopyRegion[5]	numeric_geometry		Rectangle coordinates and extents; selecting a row uses the existing KfMapCopyRegionId API.
+src/game/map_scripts.c:62	map_floor5_camera_path	KfCameraPathPoint[2]	numeric_geometry		Timed camera positions/rotations are interpolated; record components are numerical motion data.
+src/game/map_scripts.c:68	map_floor1_sound_position	VECTOR	numeric_geometry		SDK position/vector components and padding; numerical world-space coordinates.
+src/game/map_scripts.c:71	map_reveal_light_matrix	MATRIX	numeric_matrix		SDK matrix coefficients/translation; arithmetic interpolation and matrix multiplication accept quantities. KF_FIXED12_ONE names numeric Q12 unity.
+src/game/map_scripts.c:76	map_screen_image_path	char[16]	encoded_content		Filename, path template, debug text or number-formatting character buffer; byte positions hold character encodings.
+src/game/menu_item_model_preview.c:12	menu_item_preview_rotation	SVECTOR	numeric_geometry		SDK vector coordinates/rotation/displacements and padding; quantitative geometry.
+src/game/menu_map_viewer.c:34	path	char[16]	encoded_content		Filename, path template, debug text or number-formatting character buffer; byte positions hold character encodings.
+src/game/menu_runtime.c:641	name	char[16]	encoded_content		Filename, path template, debug text or number-formatting character buffer; byte positions hold character encodings.
+src/game/notify_queue.c:32	notification_sprites	KfNotificationSprite[6]	typed_record		Each row already carries KfNotificationSpriteState; sprite coordinates and UVs remain quantities.
+src/game/player_core.c:46	weapon_image_path_template	char[16]	encoded_content		Filename, path template, debug text or number-formatting character buffer; byte positions hold character encodings.
+src/game/player_core.c:49	floor_entry_cells	KfFloorEntryCell[5]	numeric_geometry		Tile X/Z coordinates selected by the existing floor domain.
+src/game/player_death.c:33	player_sound_refs	SoundRef[3]	sdk_audio		SDK program, tone and note numbers passed to sound APIs; numerical handles/pitch, not game selectors.
+src/game/player_update.c:68	player_darkness_color_matrix	MATRIX	numeric_matrix		SDK matrix coefficients/translation; arithmetic interpolation and matrix multiplication accept quantities. KF_FIXED12_ONE names numeric Q12 unity.
+src/game/player_update.c:74	player_damage_camera_offsets	SVECTOR[8]	numeric_geometry		SDK vector coordinates/rotation/displacements and padding; quantitative geometry.
+src/game/player_use_item.c:25	enemy_info_image_path_template	char[14]	encoded_content		Filename, path template, debug text or number-formatting character buffer; byte positions hold character encodings.
+src/game/player_use_item.c:28	person_image_path_template	char[15]	encoded_content		Filename, path template, debug text or number-formatting character buffer; byte positions hold character encodings.
+src/game/player_warp.c:8	actor_transform_color_matrix	MATRIX	numeric_matrix		SDK matrix coefficients/translation; arithmetic interpolation and matrix multiplication accept quantities. KF_FIXED12_ONE names numeric Q12 unity.
+src/game/render.c:39	error_screen_path	char[7]	encoded_content		Filename, path template, debug text or number-formatting character buffer; byte positions hold character encodings.
+src/game/render_enqueuers.c:9	tmd_textured_primitive_color	CVECTOR	sdk_record		Numerical RGB intensities and the SDK packed GPU command/padding byte; no game selector field.
+src/game/render_enqueuers.c:463	model_textured_primitive_color	CVECTOR	sdk_record		Numerical RGB intensities and the SDK packed GPU command/padding byte; no game selector field.
+src/game/render_enqueuers.c:649	map_textured_primitive_color	CVECTOR	sdk_record		Numerical RGB intensities and the SDK packed GPU command/padding byte; no game selector field.
+src/game/render_enqueuers.c:655	render_sprite_light_normal	SVECTOR	numeric_geometry		SDK vector coordinates/rotation/displacements and padding; quantitative geometry.
+src/game/render_frame.c:30	effect_sprites	KfEffectSprite[2]	typed_record		State and animation clip already use enum domains. asset_variant is the numerical binder phase; other members are geometry, scale, padding and a cache pointer.
+src/game/render_frame.c:37	hud_palette_rect	RECT	numeric_geometry		SDK VRAM or screen rectangle coordinates and dimensions.
+src/game/render_frame.c:40	notification_palette_rect	RECT	numeric_geometry		SDK VRAM or screen rectangle coordinates and dimensions.
+src/game/render_map_cells.c:17	render_fixed_cell_window	KfCellWindow	typed_record		Grid dimensions and origin remain numerical; cells already use KfCellVisibility.
+src/game/resources.c:21	map_mix_tim_filename	char[8]	encoded_content		Filename, path template, debug text or number-formatting character buffer; byte positions hold character encodings.
+src/game/save_system.c:744	path	char[16]	encoded_content		Filename, path template, debug text or number-formatting character buffer; byte positions hold character encodings.
+src/open/entity_render.c:19	floor_item_sprites	KfSpriteQuad[7]	numeric_geometry	A2	All eight members are UV origins/spans and quad coordinates/dimensions. Fixed-bank selection is represented separately by KfFloorItemSpriteId or KfEffectBillboardId.
+src/open/entity_render.c:30	floor_item_light_matrix	MATRIX	numeric_matrix		SDK matrix coefficients/translation; arithmetic interpolation and matrix multiplication accept quantities. KF_FIXED12_ONE names numeric Q12 unity.
+src/open/matrix_rotation.c:8	debug_matrix_label	const char[16]	encoded_content		Filename, path template, debug text or number-formatting character buffer; byte positions hold character encodings.
+src/open/opening_controller.c:22	opening_initial_tim_path	char[6]	encoded_content		Filename, path template, debug text or number-formatting character buffer; byte positions hold character encodings.
+src/open/opening_fade.c:5	opening_fade_rect	KfScreenRect	numeric_geometry		Screen rectangle positions and dimensions; no categorical element.
+src/open/opening_fade.c:9	opening_fade_uv	u8[8]	packed_gpu		Interleaved U/V/span descriptor bytes passed to sprite_add_ft4; numerical texture coordinates, with odd bytes unclassified.
+src/open/opening_fade.c:13	opening_fade_color	CVECTOR	sdk_record		Numerical RGB intensities and the SDK packed GPU command/padding byte; no game selector field.
+src/open/opening_scenes.c:98	opening_scene0_camera_path	KfCameraPathPoint[17]	numeric_geometry		Timed camera positions/rotations are interpolated; record components are numerical motion data.
+src/open/opening_scenes.c:119	opening_scene3_camera_path	KfCameraPathPoint[3]	numeric_geometry		Timed camera positions/rotations are interpolated; record components are numerical motion data.
+src/open/opening_scenes.c:126	opening_ending_camera_path	KfCameraPathPoint[9]	numeric_geometry		Timed camera positions/rotations are interpolated; record components are numerical motion data.
+src/open/opening_scenes.c:139	opening_ending_scroll_camera_path	KfCameraPathPoint[3]	numeric_geometry		Timed camera positions/rotations are interpolated; record components are numerical motion data.
+src/open/opening_scenes.c:146	opening_scene0_sound	SoundRef	sdk_audio		SDK program, tone and note numbers passed to sound APIs; numerical handles/pitch, not game selectors.
+src/open/opening_scenes.c:149	opening_scene3_overlay_rects	KfScreenRect[2]	numeric_geometry		Screen rectangle positions and dimensions; no categorical element.
+src/open/opening_scenes.c:155	opening_ending_scroll_panels	KfScreenRect[9]	numeric_geometry		Screen rectangle positions and dimensions; no categorical element.
+src/open/opening_scenes.c:168	opening_scene3_overlay_uv	u8[8]	packed_gpu		Interleaved U/V/span descriptor bytes passed to sprite_add_ft4; numerical texture coordinates, with odd bytes unclassified.
+src/open/opening_scenes.c:171	opening_scene3_overlay_color	CVECTOR	sdk_record		Numerical RGB intensities and the SDK packed GPU command/padding byte; no game selector field.
+src/open/opening_scenes.c:174	opening_ending_scroll_backgrounds	KfScreenRect[2]	numeric_geometry		Screen rectangle positions and dimensions; no categorical element.
+src/open/opening_scenes.c:179	opening_ending_scroll_top_start	CVECTOR	sdk_record		Numerical RGB intensities and the SDK packed GPU command/padding byte; no game selector field.
+src/open/opening_scenes.c:182	opening_ending_scroll_bottom_start	CVECTOR	sdk_record		Numerical RGB intensities and the SDK packed GPU command/padding byte; no game selector field.
+src/open/opening_scenes.c:185	opening_ending_scroll_top_end	CVECTOR	sdk_record		Numerical RGB intensities and the SDK packed GPU command/padding byte; no game selector field.
+src/open/opening_scenes.c:188	opening_ending_scroll_bottom_end	CVECTOR	sdk_record		Numerical RGB intensities and the SDK packed GPU command/padding byte; no game selector field.
+src/open/opening_scenes.c:191	opening_ending_scroll_panel_color	CVECTOR	sdk_record		Numerical RGB intensities and the SDK packed GPU command/padding byte; no game selector field.
+src/open/opening_scenes.c:194	opening_ending_scroll_background_color	CVECTOR	sdk_record		Numerical RGB intensities and the SDK packed GPU command/padding byte; no game selector field.
+src/open/opening_scenes.c:197	opening_ending_scroll_uv	u8[8]	packed_gpu		Interleaved U/V/span descriptor bytes passed to sprite_add_ft4; numerical texture coordinates, with odd bytes unclassified.
+src/open/opening_scenes.c:698	light_matrix	MATRIX	numeric_matrix		SDK matrix coefficients/translation; arithmetic interpolation and matrix multiplication accept quantities. KF_FIXED12_ONE names numeric Q12 unity.
+src/open/render_init.c:17	color_matrix_table	MATRIX[5]	numeric_matrix		SDK matrix coefficients/translation; arithmetic interpolation and matrix multiplication accept quantities. KF_FIXED12_ONE names numeric Q12 unity.
+src/open/render_map.c:12	map_textured_primitive_color	CVECTOR	sdk_record		Numerical RGB intensities and the SDK packed GPU command/padding byte; no game selector field.
+src/open/render_sprite.c:6	render_sprite_light_normal	SVECTOR	numeric_geometry		SDK vector coordinates/rotation/displacements and padding; quantitative geometry.
+src/open/render_tmd.c:6	tmd_textured_primitive_color	CVECTOR	sdk_record		Numerical RGB intensities and the SDK packed GPU command/padding byte; no game selector field.
+src/open/resources.c:24	cd_path_prefix	char[5]	encoded_content		Filename, path template, debug text or number-formatting character buffer; byte positions hold character encodings.
+src/open/resources.c:26	cd_version_suffix	char[3]	encoded_content		Filename, path template, debug text or number-formatting character buffer; byte positions hold character encodings.
+src/open/resources.c:28	opening_ending_sequence_path	char[8]	encoded_content		Filename, path template, debug text or number-formatting character buffer; byte positions hold character encodings.
+src/psx/main.c:8	overlay_path_GAME	const char[20]	encoded_content		Filename, path template, debug text or number-formatting character buffer; byte positions hold character encodings.
+src/psx/main.c:9	overlay_path_OPEN	const char[20]	encoded_content		Filename, path template, debug text or number-formatting character buffer; byte positions hold character encodings.
+src/psx/main.c:12	overlay_path_table	const char *[2]	pointer_table		Array elements are object/string addresses; selected row identity is separate from element type.

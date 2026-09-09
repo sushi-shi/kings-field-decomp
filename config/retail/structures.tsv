@@ -82,6 +82,7 @@ KfNotificationState	0x16	supported	notify.h;game_semantic_notification_state.tsv
 KfOpeningEntity	0x28	supported	open_resources.h;open_semantic_resources.tsv;open_semantic_opening_entity_transition.tsv;asm	OPEN runtime entity record initialized by the exact placement loader and refined by the transition helper's full VECTOR copy
 KfOpeningEntityState	0x510	supported	open_resources.h;open_semantic_resources.tsv;asm;controller-memset-0x510	OPEN opening entity aggregate: 32 records followed by an unresolved gap and three halfword controls
 KfOrderingTable	0x10000	supported	render_types.h;asm;ClearOTagR-0x4000	one reversed ordering table; display_begin_frame clears 0x4000 entries and display_present_frame draws from entry 0x3fff
+KfOverlayArguments	0x08	supported	overlay.h;PSX-main;GAME-main;OPEN-main;asm;Exec-shared-argument-block;array-enum-review.md	shared input OPEN mode and writable GAME exit result, one word each
 KfPackedSVector	0x08	supported	tmd.h;asm;typed-animation-vertices.md	eight-byte vertex with authentic SDK and aligned word-copy views
 KfPlayerAttackChargeState	0x04	supported	game_player.h;game_semantic_player_stats.tsv;asm;xrefs	POWER charge and committed attack snapshot
 KfPlayerLevelGrowth	0x0c	supported	game_player.h;game_semantic_player_stats.tsv;asm;xrefs;runtime-stride	loaded player level-growth record

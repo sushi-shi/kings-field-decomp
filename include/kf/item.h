@@ -29,7 +29,6 @@ KF_ENUM_END(KfShopId)
 
 enum {
     KF_FLOOR_ITEM_CAPACITY = 64,
-    KF_FLOOR_ITEM_END = 0xffff,
     KF_ITEM_STACK_CAPACITY = 99
 };
 
@@ -106,6 +105,19 @@ KF_ENUM_BEGIN(KfItemId, u8)
     KF_ITEM_NONE = 0xff
 KF_ENUM_END(KfItemId)
 
+/* Row identities in the fixed seven-descriptor floor sprite bank.
+ * Shipped animations start at rows 0 and 4; artwork identities remain WIP. */
+KF_ENUM_BEGIN(KfFloorItemSpriteId, u16)
+    KF_FLOOR_ITEM_SPRITE_0 = 0,
+    KF_FLOOR_ITEM_SPRITE_1 = 1,
+    KF_FLOOR_ITEM_SPRITE_2 = 2,
+    KF_FLOOR_ITEM_SPRITE_3 = 3,
+    KF_FLOOR_ITEM_SPRITE_4 = 4,
+    KF_FLOOR_ITEM_SPRITE_5 = 5,
+    KF_FLOOR_ITEM_SPRITE_6 = 6,
+    KF_FLOOR_ITEM_END = 0xffff
+KF_ENUM_END(KfFloorItemSpriteId)
+
 /* High nibble: zero billboard or biased quarter-turn facing; low: frame count. */
 enum {
     KF_FLOOR_ITEM_SPRITE_COUNT = 7,
@@ -172,7 +184,7 @@ constexpr KfFloorItemFacing floor_item_facing(KfFloorItemAppearance appearance)
  * -100 sinks the item onto the floor.
  */
 typedef struct KfFloorItemPlacement {
-    u16 base_sprite_index;
+    KfFloorItemSpriteId base_sprite_index;
     KfFloorItemAppearance facing_and_frame_count;
     u8 unknown_03;
     u8 tile_z;
@@ -183,7 +195,7 @@ typedef struct KfFloorItemPlacement {
 } KfFloorItemPlacement;
 
 typedef struct KfFloorItem {
-    u16 base_sprite_index;
+    KfFloorItemSpriteId base_sprite_index;
     KfFloorItemAppearance facing_and_frame_count;
     u8 unknown_03;
     s32 position_x;

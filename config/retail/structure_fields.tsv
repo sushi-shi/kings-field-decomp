@@ -240,7 +240,7 @@ KfFloorDeformSegment	0x05	0x01	start_height	u8	supported	game_effect.h;effect_fl
 KfFloorDeformSegment	0x06	0x01	end_height	u8	supported	game_effect.h;effect_floor_deform_line;asm:lbu6	grid height at progress 4096; also determines sound Y times -100
 KfFloorEntryCell	0x00	0x1	x	u8	supported	game_player.h;asm;xrefs	copied into previous_map_cell.x
 KfFloorEntryCell	0x01	0x1	z	u8	supported	game_player.h;asm;xrefs	copied into previous_map_cell.z
-KfFloorItem	0x00	0x02	base_sprite_index	u16	supported	item.h;asm;func_80020b4c;render_floor_item;floor-sprite-base-index.md	first sprite descriptor index; animation_frame is added by rendering
+KfFloorItem	0x00	0x02	base_sprite_index	KfFloorItemSpriteId	supported	item.h;asm;func_80020b4c;render_floor_item;floor-sprite-base-index.md;array-enum-review.md;fixed-seven-row-bank;117-shipped-placements	fixed floor sprite bank selector; animation_frame is a numeric offset; 0xffff terminates serialized placements
 KfFloorItem	0x02	0x01	facing_and_frame_count	KfFloorItemAppearance	supported	item.h;asm;item_load_floor_placements;render_floor_item;enum-field-review.md	high nibble selects facing and low nibble bounds the animation frame; copied from the placement record
 KfFloorItem	0x03	0x01	unknown_03	u8	opaque	item.h;asm;func_80020b4c;semantic-field-names.md:unresolved-consumer-audit	Copied unchanged from placement +3: GAME load/store 0x80020bf4/0x80020bfc; OPEN 0x8001988c/0x80019894. Runtime base is biased by +20; no behavioral consumer established.
 KfFloorItem	0x04	0x04	position_x	s32	supported	item.h;asm;func_80020b4c	world x = tile_x*2000 + local_x
@@ -249,7 +249,7 @@ KfFloorItem	0x0c	0x04	position_z	s32	supported	item.h;asm;func_80020b4c	world z 
 KfFloorItem	0x10	0x04	unknown_10	u8[4]	opaque	item.h;func_80020b4c	not written by the loader
 KfFloorItem	0x14	0x01	animation_frame	u8	supported	item.h;asm;item_load_floor_placements;render_floor_item	randomized by the loader, advanced once per render, and wrapped against the packed field's low nibble
 KfFloorItem	0x15	0x03	unknown_15	u8[3]	opaque	item.h;func_80020b4c	not written by the loader
-KfFloorItemPlacement	0x00	0x02	base_sprite_index	u16	supported	item.h;asm;func_80020b4c;render_floor_item;floor-sprite-base-index.md	first sprite descriptor index; 0xffff terminates the placement stream
+KfFloorItemPlacement	0x00	0x02	base_sprite_index	KfFloorItemSpriteId	supported	item.h;asm;func_80020b4c;render_floor_item;floor-sprite-base-index.md;array-enum-review.md;fixed-seven-row-bank;117-shipped-placements	fixed floor sprite bank selector; animation_frame is a numeric offset; 0xffff terminates serialized placements
 KfFloorItemPlacement	0x02	0x01	facing_and_frame_count	KfFloorItemAppearance	supported	item.h;asm;item_load_floor_placements;render_floor_item;enum-field-review.md	packed facing and animation-frame count copied into the runtime record
 KfFloorItemPlacement	0x03	0x01	unknown_03	u8	opaque	item.h;asm;func_80020b4c;semantic-field-names.md:unresolved-consumer-audit	Copied to runtime +3 in GAME and OPEN; source pointer is placement+10, load displacement -7. Reviewed values include 8,28,32,64; values alone do not establish flags, scale or units.
 KfFloorItemPlacement	0x04	0x01	tile_z	u8	supported	item.h;asm;func_80020b4c	map tile z (floor-height grid row)
@@ -518,6 +518,8 @@ KfOpeningEntityState	0x50a	0x02	unknown_control_50a	u16	opaque	open_resources.h;
 KfOpeningEntityState	0x50c	0x02	unknown_control_50c	u16	opaque	open_resources.h;open_semantic_resources.tsv;asm;semantic-field-names.md:unresolved-consumer-audit	OPEN 0x80049a44: individual zero store at 0x800199cc, plus whole-owner clear; exact admitted relocations have no read. GAME pool-tail analogy remains candidate, not a recovered role.
 KfOpeningEntityState	0x50e	0x02	unknown_control_50e	u16	opaque	open_resources.h;open_semantic_resources.tsv;asm;semantic-field-names.md:unresolved-consumer-audit	OPEN 0x80049a46: individual zero store at 0x800199c4, plus whole-owner clear; exact admitted relocations have no read. GAME pool-tail analogy remains candidate, not a recovered role.
 KfOrderingTable	0x00	0x10000	entries	u32[16384]	supported	render_types.h;asm	ordering table entries
+KfOverlayArguments	0x00	0x04	request	KfOpenMode	supported	overlay.h;asm;PSX-main;GAME-main;OPEN-main;array-enum-review.md	PSX copies the previous result encoding here; OPEN passes it to opening_run
+KfOverlayArguments	0x04	0x04	result	KfGameExitCode	supported	overlay.h;asm;PSX-main;GAME-main;OPEN-main;array-enum-review.md	PSX initializes INTRO; GAME writes game_exit_code on return
 KfPackedSVector	0x00	0x08	vector	SVECTOR	supported	tmd.h;asm;typed-animation-vertices.md	alternative view of the complete vertex
 KfPackedSVector	0x00	0x08	words	u32[2]	supported	tmd.h;asm;typed-animation-vertices.md	alternative view of the complete vertex
 KfPlayerAttackChargeState	0x00	0x02	current	u16	supported	game_player.h;asm;xrefs	current POWER charge

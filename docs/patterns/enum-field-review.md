@@ -8,6 +8,10 @@ with shared enums, typed flag operations and behavior-selected union members.
 The findings below retain the original evidence; the implementation results
 follow the campaign plan.
 
+The subsequent [array audit](array-enum-review.md) extends the current field
+ledger to 1,048 declarations, adds typed overlay slots and corrects the two
+fixed-bank floor-sprite selectors. Counts below describe this earlier campaign.
+
 ## Original audit coverage and method
 
 The review uses the flake's Python `clang.cindex` bindings and libclang 21.1.8,

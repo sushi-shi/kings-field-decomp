@@ -23,11 +23,11 @@ void func_80013734(int *destination, int count, int value)
 }
 
 ADDRESS(0x80013758, 0x6c)
-void main(s32 entry_arg0, u32 *entry_args)
+void main(s32 entry_arg0, KfOverlayArguments *entry_args)
 {
     func_80013734((int *)STARTUP_STORE_ADDRESS, STARTUP_REPEAT_STORE_COUNT, 0);
     CdInit();
     InitHeap((void *)INITIAL_HEAP_ADDRESS, INITIAL_HEAP_BYTES);
     ExitCriticalSection();
-    opening_run(KF_ENUM_DECODE(KfOpenMode, entry_args[KF_OVERLAY_REQUEST_WORD]));
+    opening_run(entry_args->request);
 }

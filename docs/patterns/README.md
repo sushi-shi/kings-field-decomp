@@ -808,3 +808,7 @@ promotes a probe to a proven historical toolchain.
 - [Complete Clang field review](enum-field-review.md): 1,046 current declarations,
   a per-field evidence ledger, and all nine findings implemented as shared enums,
   typed flags and component views.
+
+- [Array enum review](array-enum-review.md): every array declaration and explicit
+  aggregate initializer, typed overlay argument slots and fixed floor-sprite
+  selectors, with unchanged compiled objects.
