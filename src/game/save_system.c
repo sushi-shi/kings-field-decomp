@@ -1,3 +1,4 @@
+#include <kf/null.h>
 #include <kf/bool.h>
 #include <kf/game_graphics.h>
 #include <kf/address.h>
@@ -160,10 +161,10 @@ void memory_card_initialize(void)
     u8 buffer[0x80];
 
     memset(buffer, 0xff, sizeof(buffer));
-    memory_card_io_end_event = OpenEvent(HwCARD, EvSpIOE, EvMdNOINTR, 0);
-    memory_card_timeout_event = OpenEvent(HwCARD, EvSpTIMOUT, EvMdNOINTR, 0);
-    memory_card_new_device_event = OpenEvent(HwCARD, EvSpNEW, EvMdNOINTR, 0);
-    memory_card_error_event = OpenEvent(HwCARD, EvSpERROR, EvMdNOINTR, 0);
+    memory_card_io_end_event = OpenEvent(HwCARD, EvSpIOE, EvMdNOINTR, NULL);
+    memory_card_timeout_event = OpenEvent(HwCARD, EvSpTIMOUT, EvMdNOINTR, NULL);
+    memory_card_new_device_event = OpenEvent(HwCARD, EvSpNEW, EvMdNOINTR, NULL);
+    memory_card_error_event = OpenEvent(HwCARD, EvSpERROR, EvMdNOINTR, NULL);
     EnableEvent(memory_card_io_end_event);
     EnableEvent(memory_card_timeout_event);
     EnableEvent(memory_card_new_device_event);
@@ -671,8 +672,8 @@ s32 save_workspace_allocate(void)
 {
     KfSaveWorkspace *workspace = (KfSaveWorkspace *)memory_allocate(sizeof(KfSaveWorkspace));
 
-    save_header_buffer = workspace != 0 ? &workspace->header : 0;
-    if (save_header_buffer == 0) {
+    save_header_buffer = workspace != NULL ? &workspace->header : NULL;
+    if (save_header_buffer == NULL) {
         return -1;
     }
     save_payload_buffer = &workspace->payload;

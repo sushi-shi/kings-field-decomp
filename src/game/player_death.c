@@ -1,3 +1,4 @@
+#include <kf/null.h>
 #include <kf/game_graphics.h>
 #include <kf/address.h>
 #include <kf/game_player.h>
@@ -613,7 +614,7 @@ void player_select_magic(KfMagicId magic_id)
     player_state.magic_charge = 0;
     player_state.selected_magic_id = magic_id;
     if (magic_id == KF_MAGIC_NONE) {
-        player_state.selected_magic_record = 0;
+        player_state.selected_magic_record = NULL;
     } else {
         player_state.selected_magic_record =
             &magic_records[KF_ENUM_ENCODE(u8, player_state.selected_magic_id)];

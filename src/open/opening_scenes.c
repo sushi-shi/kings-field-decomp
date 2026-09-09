@@ -1,3 +1,4 @@
+#include <kf/null.h>
 #include <kf/address.h>
 #include <kf/audio.h>
 #include <kf/game_math.h>
@@ -394,7 +395,7 @@ void opening_entity_transition(KfOpeningTransitionMode mode, const VECTOR *posit
                 (entity->rotation.y + TRANSITION_YAW_STEP) & KF_ANGLE_WRAP_MASK;
             entity++;
         } while (entity_index < TRANSITION_ENTITY_COUNT);
-        opening_render_frame(0, 0);
+        opening_render_frame(NULL, NULL);
         VSync(0);
         frame++;
     } while (frame < TRANSITION_FRAMES);

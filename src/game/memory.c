@@ -1,3 +1,4 @@
+#include <kf/null.h>
 #include <kf/address.h>
 #include <kf/game_types.h>
 #include <kf/psyq_kernel.h>
@@ -35,7 +36,7 @@ void *memory_malloc_checked(s32 size)
     void *block = malloc(size);
 
     if ((u32)block + MEMORY_CACHED_RAM_BASE > MEMORY_MAIN_RAM_BYTES - 1) {
-        return 0;
+        return NULL;
     }
     return block;
 }
@@ -62,7 +63,7 @@ void memory_set_allocation_mode(KfMemoryAllocationMode mode)
         memory_allocation_reset();
         break;
     case KF_MEMORY_USE_HEAP:
-        memory_arena.allocation.cursor = 0;
+        memory_arena.allocation.cursor = NULL;
         break;
     }
 }
@@ -91,7 +92,7 @@ void *memory_allocate(s32 size)
     void *block;
     s32 depth;
 
-    if (*cursor == 0) {
+    if (*cursor == NULL) {
         block = memory_malloc_checked(size);
         size = (s32)block;
     } else {
@@ -114,7 +115,7 @@ void memory_release_last(void)
 
     memory_arena.allocation.stack[KF_MEMORY_STACK_DEPTH_INDEX] = depth;
     entry = memory_arena.allocation.stack[KF_MEMORY_STACK_FIRST_ENTRY + depth];
-    if (memory_arena.allocation.cursor == 0) {
+    if (memory_arena.allocation.cursor == NULL) {
         free((void *)entry);
     } else {
         memory_arena.allocation.cursor -= entry;

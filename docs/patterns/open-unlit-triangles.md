@@ -1,6 +1,6 @@
 # OPEN unlit triangle emission
 
-## Exact related-offset lifetime closure
+## Exact bytes with unresolved artificial arithmetic
 
 OPEN `render_enqueue_unlit_triangles` at `80018344` is now strict
 **100.000000000%**.  The pre-edit residue was limited to a 56-byte probe frame
@@ -21,13 +21,15 @@ With those identities recovered, the natural range-safe depth order
 `vertex0 + vertex1 + vertex2` matches the final two loads as well.
 
 The same relative expression confined to F3 instead of FT3 is byte-identical.
-Retail therefore proves that one arm had the related-offset lifetime under
-this probe, but does not identify which original source arm owned it.  The FT3
-form is retained because its larger textured packet makes the explicit
-prepared-offset view the more natural source model; no compiler attribution is
-claimed.  Applying the relation to both arms produces two stale slots and a
-72-byte frame, while applying it to neither reproduces the old 56-byte frame.
+This does not prove that either original source arm contained the expression.
+The two prepared offsets select independent vertices; subtracting one and
+adding it back has no independent semantic purpose. Applying the relation to
+both arms produces two stale slots and a 72-byte frame, while applying it to
+neither reproduces the old 56-byte frame.
 The strict row is banked; OPEN advances from 103 to 104 exact functions.
+The arithmetic remains cleanup debt. The
+[focused review](open-address-arithmetic-review.md) records the rejected direct
+lookup and the probe's unused-slot mechanism.
 The focused unit rebuild and strict semantic query both report 100%; the two
 inventory/caller test files pass 7 tests and 23 subtests, Ruff passes, and the
 source-controlled suite passes 670 tests plus 9,041 subtests.  The one excluded

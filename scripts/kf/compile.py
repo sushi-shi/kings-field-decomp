@@ -14,6 +14,7 @@ from pathlib import Path
 
 from elftools.elf.elffile import ELFFile
 
+from scripts.kf.allocation_notes import assembly_note, compiler_requests
 from scripts.kf.delink import image_key
 from scripts.kf.model import scan_data_claims
 from scripts.kf.retail import IMAGE_LAYOUTS, read_tsv
@@ -317,6 +318,7 @@ def compile_source(
                 trace_environment["KF_GCC257_TRACE_FUNCTION"] = trace_function
         _run([*compiler_arguments, str(preprocessed), '-o', str(assembly)],
              trace_environment=trace_environment)
+        exported_requests = compiler_requests(assembly.read_text())
         if trace_path is not None and (not trace_path.is_file() or not trace_path.stat().st_size):
             raise RuntimeError("instrumented compiler produced no trace")
         data_claims = scan_data_claims(source)
@@ -333,6 +335,10 @@ def compile_source(
                 for claim in data_claims:
                     stream.write(f"\t.type\t{claim.name},@object\n")
                     stream.write(f"\t.size\t{claim.name},{source_sizes[claim.name]}\n")
+        # maspsx currently flattens COMMON into BSS. Preserve the native request
+        # class/extent separately so placement cannot mistake it for fixed BSS.
+        with assembly.open('a', encoding='utf-8') as stream:
+            stream.write(assembly_note(exported_requests))
         _run([*assembler_arguments, '-o', str(staged)], input_data=assembly.read_bytes())
         metadata.update({
             "language": "c",

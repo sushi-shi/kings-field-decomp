@@ -97,67 +97,64 @@ s32 format_vsprintf(u8 *out, u8 *format, s32 *args)
                 width = c - '0';
                 continue;
             }
-            goto literal;
-        }
-        switch (c) {
-        case '%':
-            parser_state = KF_FORMAT_PARSER_CONVERSION;
-            padding_mode = KF_FORMAT_PAD_SPACES;
-            width = KF_FORMAT_WIDTH_UNSPECIFIED;
-            continue;
-        case '0':
-            if (parser_state == KF_FORMAT_PARSER_TEXT) {
-                goto literal;
-            }
-            padding_mode = KF_FORMAT_PAD_ZEROES;
-            continue;
-        case 'D':
-        case 'd':
-            if (parser_state == KF_FORMAT_PARSER_TEXT) {
-                goto literal;
-            }
-            parser_state = KF_FORMAT_PARSER_TEXT;
-            s = format_int_dec(*args++);
-        emit_padded:
-            if (width != KF_FORMAT_WIDTH_UNSPECIFIED) {
-                if (padding_mode == KF_FORMAT_PAD_SPACES) {
-                    s = format_pad_left(s, ' ', width);
-                } else {
-                    s = format_pad_left(s, '0', width);
+        } else {
+            switch (c) {
+            case '%':
+                parser_state = KF_FORMAT_PARSER_CONVERSION;
+                padding_mode = KF_FORMAT_PAD_SPACES;
+                width = KF_FORMAT_WIDTH_UNSPECIFIED;
+                continue;
+            case '0':
+                if (parser_state == KF_FORMAT_PARSER_TEXT) {
+                    break;
                 }
-            }
-        copy:
-            while ((c = *s++) != 0) {
-                *out++ = c;
+                padding_mode = KF_FORMAT_PAD_ZEROES;
+                continue;
+            case 'D':
+            case 'd':
+                if (parser_state == KF_FORMAT_PARSER_TEXT) {
+                    break;
+                }
+                parser_state = KF_FORMAT_PARSER_TEXT;
+                s = format_int_dec(*args++);
+            emit_padded:
+                if (width != KF_FORMAT_WIDTH_UNSPECIFIED) {
+                    if (padding_mode == KF_FORMAT_PAD_SPACES) {
+                        s = format_pad_left(s, ' ', width);
+                    } else {
+                        s = format_pad_left(s, '0', width);
+                    }
+                }
+            copy:
+                while ((c = *s++) != 0) {
+                    *out++ = c;
+                    count++;
+                }
+                continue;
+            case 'X':
+            case 'x':
+                if (parser_state == KF_FORMAT_PARSER_TEXT) {
+                    break;
+                }
+                parser_state = KF_FORMAT_PARSER_TEXT;
+                s = format_int_hex(*args++);
+                goto emit_padded;
+            case 'S':
+            case 's':
+                if (parser_state == KF_FORMAT_PARSER_TEXT) {
+                    break;
+                }
+                parser_state = KF_FORMAT_PARSER_TEXT;
+                s = (char *)*args++;
+                goto copy;
+            case '\n':
+                *out++ = '\r';
                 count++;
+                continue;
             }
-            continue;
-        case 'X':
-        case 'x':
-            if (parser_state == KF_FORMAT_PARSER_TEXT) {
-                goto literal;
-            }
-            parser_state = KF_FORMAT_PARSER_TEXT;
-            s = format_int_hex(*args++);
-            goto emit_padded;
-        case 'S':
-        case 's':
-            if (parser_state == KF_FORMAT_PARSER_TEXT) {
-                goto literal;
-            }
-            parser_state = KF_FORMAT_PARSER_TEXT;
-            s = (char *)*args++;
-            goto copy;
-        case '\n':
-            *out++ = '\r';
-            count++;
-            continue;
-        default:
-        literal:
-            *out++ = c;
-            count++;
-            continue;
         }
+        *out++ = c;
+        count++;
     }
     *out = '\0';
     return count + 1;

@@ -130,3 +130,17 @@ with an exact dispatch region had changed the final blend input incorrectly;
 repairing that semantic error reproduced a previously known inferior state.
 No OPEN production change is retained. Large sample counts describe explored
 states, not exhaustive coverage of possible C programs.
+
+### Integration with current master
+
+The source commit is `778b31f2`. Integration with master `1b458260` preserves
+its newer NULL spellings, structured control flow and allocation-provenance
+checks. Fresh compilation again proves both complete retail bodies and all
+38 sibling bodies unchanged. The merged suite passes 785 tests and 9,227
+subtests; Ruff, whitespace checks and `nix flake check -L` pass.
+
+The integrated full build still reports 458/471 exact functions and zero
+artifact failures. Master's stricter exported-allocation provenance checks
+report data owners PSX 1/1, GAME 22/41 and OPEN 9/20; relink counts remain
+1/1, 57/64 and 34/38. These separate ownership gates remain open. Neither the
+merge nor the two function matches claims complete data or executable closure.

@@ -30,9 +30,9 @@ def run(arguments: list[str], *, cwd: Path, env: dict[str, str] | None = None) -
         )
 
 
-def symbol_address(path: Path, name: str) -> int:
+def symbol_address(path: Path, name: str, *, case_sensitive: bool = False) -> int:
     data = path.read_bytes()
-    encoded = name.upper().encode("ascii")
+    encoded = (name if case_sensitive else name.upper()).encode("ascii")
     marker = bytes((2, len(encoded))) + encoded
     offsets = []
     cursor = 0

@@ -1,3 +1,4 @@
+#include <kf/null.h>
 #include <kf/address.h>
 #include <kf/gpu_packets.h>
 #include <kf/open_render.h>
@@ -86,7 +87,7 @@ void render_enqueue_unlit_triangles(u16 object_index, s16 depth_bias)
         if (depth >= KF_SCENE_MIN_OT_DEPTH) {
             /* The projected array and active OT share this complete owner. */
             KfGraphicsRuntimeOpen *graphics = (KfGraphicsRuntimeOpen *)(
-                vertices - (unsigned long)&((KfGraphicsRuntimeOpen *)0)->
+                vertices - (unsigned long)&((KfGraphicsRuntimeOpen *)NULL)->
                     tmd_projected_vertices);
 
             AddPrim(

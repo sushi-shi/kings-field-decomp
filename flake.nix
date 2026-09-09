@@ -255,10 +255,24 @@
         done
       '';
 
+      pylibclang = pkgs.python3Packages.buildPythonPackage {
+        pname = "pylibclang";
+        version = "318.1.1";
+        format = "wheel";
+        src = pkgs.fetchurl {
+          url = "https://files.pythonhosted.org/packages/99/89/cd76c442cb55ae3767a61c8c1590255452aeb75a5e8b2d25be05b5aea177/pylibclang-318.1.1-cp313-cp313-manylinux_2_27_x86_64.manylinux_2_28_x86_64.whl";
+          sha256 = "39f8b1f97bedd042d5c51348b28cea91311dc554d36ebdebd6761bd7b21301ac";
+        };
+        nativeBuildInputs = [ pkgs.autoPatchelfHook ];
+        buildInputs = [ pkgs.stdenv.cc.cc.lib pkgs.zlib ];
+        pythonImportsCheck = [ "pylibclang.cindex" ];
+      };
+
       analysisPython = pkgs.python3.withPackages (pythonPackages: with pythonPackages; [
         capstone
         intervaltree
         libclang
+        pylibclang
         pyelftools
         pyghidra
         pytest

@@ -1,3 +1,4 @@
+#include <kf/null.h>
 #include <kf/address.h>
 #include <kf/game_menu.h>
 #include <kf/game.h>
@@ -95,7 +96,7 @@ void menu_equip_select(KfEquipmentMenuCategory category)
     ctx.entry_count = k;
     ctx.glyphs_per_entry = MENU_GLYPHS_PER_ROW;
     ctx.glyph_rows = &labels[0][0];
-    ctx.quantities = 0;
+    ctx.quantities = NULL;
 
     if (ctx.entry_count != 0) {
         if (menu_load_item_model(codes[ctx.selected_index]) != KF_RESOURCE_LOADED)
@@ -258,7 +259,7 @@ void menu_spell_select(void)
     ctx.entry_count = k;
     ctx.glyphs_per_entry = MENU_GLYPHS_PER_ROW;
     ctx.glyph_rows = &labels[0][0];
-    ctx.quantities = 0;
+    ctx.quantities = NULL;
 
     menu_frame_begin();
     if (ctx.entry_count != 0) {

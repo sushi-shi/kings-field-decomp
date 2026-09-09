@@ -31,6 +31,7 @@ class Input:
     fixed: int = 0
     tag: int = 8
     reverse_ids: bool = False
+    references: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -41,6 +42,7 @@ class Case:
     regular: tuple[tuple[str, int, int, int, int, int], ...]
     # name, observed origin-relative address, observed reserved extent.
     common: tuple[tuple[str, int, int], ...]
+    case_sensitive: bool = False
 
 
 SINGLE = (('A', 0, 4, 0x14, 0x14, 0x14),)
@@ -49,6 +51,28 @@ PAIR = (('one', 8), ('two', 4))
 PAIR_PLACED = (('one', 0x14, 8), ('two', 0x1C, 4))
 ODD_COMMON = (('one', 1), ('two', 3), ('three', 9))
 ODD_PLACED = (('one', 0x10, 4), ('two', 0x14, 4), ('three', 0x18, 12))
+HASH_NAMES = ('one', 'two', 'shared', 'ZZZ', 'AAA', 'AB', 'BA',
+              'opening_input_action', 'PadIdentifier', 'open_graphics_runtime',
+              'audio_state', 'map_floor_height_grid', 'abc', 'bca', 'cab',
+              'sn_long_name_with_a_prefix', 'X' * 20, 'Y' * 20, 'Z' * 20)
+# Observed native allocation order. These tables do not call a proposed hash
+# implementation to calculate their expectations.
+HASH_FOLDED = (7, 15, 11, 9, 6, 5, 4, 14, 13, 12, 0, 16, 1, 17, 3, 18, 10, 2, 8)
+HASH_SENSITIVE = (7, 2, 6, 5, 10, 11, 4, 15, 9, 16, 17, 3, 18, 8, 14, 13, 12, 0, 1)
+HASH_LONG_ORDER = (
+    154, 123, 92, 61, 30, 162, 131, 100, 69, 38, 7, 170, 139, 108, 77, 46, 15,
+    178, 147, 116, 85, 54, 23, 155, 124, 93, 62, 31, 163, 132, 101, 70, 39, 8,
+    171, 140, 109, 78, 47, 16, 179, 148, 117, 86, 55, 24, 156, 125, 94, 63, 32, 1,
+    164, 133, 102, 71, 40, 9, 172, 141, 110, 79, 48, 17, 149, 118, 87, 56, 25,
+    157, 126, 95, 64, 33, 2, 165, 134, 103, 72, 41, 10, 173, 142, 111, 80, 49, 18,
+    150, 119, 88, 57, 26, 158, 127, 96, 65, 34, 3, 166, 135, 104, 73, 42, 11,
+    174, 143, 112, 81, 50, 19, 151, 120, 89, 58, 27, 159, 128, 97, 66, 35, 4,
+    167, 136, 105, 74, 43, 12, 175, 144, 113, 82, 51, 20, 152, 121, 90, 59, 28,
+    160, 129, 98, 67, 36, 5, 168, 137, 106, 75, 44, 13, 176, 145, 114, 83, 52, 21,
+    153, 122, 91, 60, 29, 161, 130, 99, 68, 37, 6, 169, 138, 107, 76, 45, 14,
+    177, 146, 115, 84, 53, 22,
+)
+EMPTY_FIXED = (('A', 0, 4, 4, 4, 4),)
 CASES = (
     Case('BASE', (Input('A', PAIR),), SINGLE, PAIR_PLACED),
     Case('REVREC', (Input('A', PAIR[::-1]),), SINGLE, PAIR_PLACED),
@@ -81,6 +105,8 @@ CASES = (
          (('BA', 0x14, 4), ('AB', 0x18, 8))),
     Case('REVCOLL', (Input('A', (('BA', 4), ('AB', 8))),), SINGLE,
          (('AB', 0x14, 8), ('BA', 0x1C, 4))),
+    Case('REFCOLL', (Input('A', (('AB', 8), ('BA', 4)), references=('BA',)),), SINGLE,
+         (('AB', 0x14, 8), ('BA', 0x1C, 4))),
     Case('FIXODD', (Input('A', (('one', 3), ('two', 5)), small=9, fixed=3),),
          (('A', 0, 4, 0xD, 0x10, 0x13),), (('one', 0x13, 4), ('two', 0x17, 8))),
     Case('TAG2', (Input('A', ODD_COMMON, small=9, fixed=1, tag=2),),
@@ -90,6 +116,15 @@ CASES = (
                     Input('B', (('two', 4),), small=9, fixed=3)),
          (('A', 0, 8, 0x18, 0x24, 0x29), ('B', 3, 0x18, 0x21, 0x2C, 0x2F)),
          (('one', 0x2F, 8), ('two', 0x37, 4))),
+    Case('HASHFOLD', (Input('A', tuple((name, 4) for name in HASH_NAMES), small=0),),
+         EMPTY_FIXED, tuple((HASH_NAMES[index], 4 + 4 * rank, 4)
+                            for rank, index in enumerate(HASH_FOLDED))),
+    Case('HASHCASE', (Input('A', tuple((name, 4) for name in HASH_NAMES), small=0),),
+         EMPTY_FIXED, tuple((HASH_NAMES[index], 4 + 4 * rank, 4)
+                            for rank, index in enumerate(HASH_SENSITIVE)), case_sensitive=True),
+    Case('HASHLONG', (Input('A', tuple(('N' + 'A' * n, 4) for n in range(1, 180)), small=0),),
+         EMPTY_FIXED, tuple(('N' + 'A' * n, 4 + 4 * rank, 4)
+                            for rank, n in enumerate(HASH_LONG_ORDER)), case_sensitive=True),
 )
 
 
@@ -113,6 +148,9 @@ def data_object(item: Input) -> bytes:
         blob += struct.pack('<BHBI', 6, number, 8, size)
         blob += symbol(11 + number, number, 0, item.label + '_' + name)
         blob += symbol(21 + number, number, size, item.label + '_' + name + '_end')
+    for index, name in enumerate(item.references):
+        encoded = name.encode('ascii')
+        blob += struct.pack('<BHB', 14, 2000 + index, len(encoded)) + encoded
     for index, (name, size) in enumerate(item.common):
         blob += symbol(110 - index if item.reverse_ids else 100 + index, 3, size, name, 48)
     return bytes(blob) + b'\0'
@@ -132,6 +170,8 @@ def validate_input(path: Path, item: Input) -> None:
     for index, (name, size) in enumerate(item.common):
         number = 110 - index if item.reverse_ids else 100 + index
         expected.append(f"48 : XBSS symbol number {number:x} '{name}' size {size:x} in section 3")
+    for index, name in enumerate(item.references):
+        expected.append(f"14 : XREF symbol number {2000 + index:x} '{name}'")
     for line in expected:
         if line not in listing:
             raise RuntimeError(f'{path.name}: missing decoded input {line!r}\n{listing}')
@@ -147,7 +187,8 @@ def verify_output(root: Path, case: Case) -> None:
     expected = bytearray(b'CPE\x01\x08\x00')
 
     def check_symbol(name, offset):
-        actual = symbol_address(root / f'{case.name}.SYM', name)
+        actual = symbol_address(root / f'{case.name}.SYM', name,
+                                case_sensitive=case.case_sensitive)
         if actual != ORIGIN + offset:
             raise RuntimeError(f'{case.name}: {name}={actual:#x}, expected {ORIGIN + offset:#x}')
 
@@ -189,7 +230,8 @@ def main() -> int:
                 path.write_bytes(data_object(item))
                 validate_input(path, item)
                 inputs.append(path.name)
-            commands.append(f'psylink /o${ORIGIN:x} ' + '+'.join(inputs)
+            sensitivity = '/c ' if case.case_sensitive else ''
+            commands.append(f'psylink {sensitivity}/o${ORIGIN:x} ' + '+'.join(inputs)
                             + f',{case.name}.CPE,{case.name}.SYM,{case.name}.MAP > {case.name}.TXT')
         (root / 'PROBE.BAT').write_bytes(('\r\n'.join(commands) + '\r\n').encode('ascii'))
         environment = dict(os.environ, SDL_VIDEODRIVER='dummy', SDL_AUDIODRIVER='dummy',

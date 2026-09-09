@@ -1,3 +1,4 @@
+#include <kf/null.h>
 #include <kf/address.h>
 #include <kf/map_data.h>
 #include <kf/game_map.h>
@@ -127,7 +128,7 @@ ADDRESS(0x800317a4, 0x90)
 KfMapObject *map_object_effect_pool_acquire(u16 first_index, u16 count, u16 sequence)
 {
     KfMapObject *object = &map_object_state.objects[first_index];
-    KfMapObject *oldest = 0;
+    KfMapObject *oldest = NULL;
     s32 oldest_age = 0;
     s32 age;
 
@@ -296,12 +297,12 @@ void map_object_pool_update(void)
             if (object->link.fields.action_parameter.object_index != KF_MAP_OBJECT_PARAMETER_NONE) {
                 pair = &map_object_state.objects[object->link.fields.action_parameter.object_index];
             } else {
-                pair = 0;
+                pair = NULL;
             }
             object->action_timer++;
             if (timer < KF_MAP_OBJECT_SWING_OPEN_END) {
                 object->rotation.angles.y += MAP_SWING_DOOR_YAW_STEP;
-                if (pair != 0) {
+                if (pair != NULL) {
                     pair->rotation.angles.y -= MAP_SWING_DOOR_YAW_STEP;
                 }
                 if (timer == KF_MAP_OBJECT_PROGRESS_INIT) {
@@ -337,7 +338,7 @@ void map_object_pool_update(void)
                     }
                 }
                 object->rotation.angles.y -= MAP_SWING_DOOR_YAW_STEP;
-                if (pair != 0) {
+                if (pair != NULL) {
                     pair->rotation.angles.y += MAP_SWING_DOOR_YAW_STEP;
                 }
             }

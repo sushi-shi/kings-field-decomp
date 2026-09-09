@@ -1,3 +1,4 @@
+#include <kf/null.h>
 #include <kf/address.h>
 #include <kf/audio.h>
 #include <kf/cd_file.h>
@@ -75,7 +76,7 @@ KfResourceLoadResult cd_file_load_allocated(
     memcpy(path, cd_path_prefix, sizeof cd_path_prefix);
     strcat(path, relative_path);
     strcat(path, cd_version_suffix);
-    if (CdSearchFile(&cd_search_file, path) == 0) {
+    if (CdSearchFile(&cd_search_file, path) == NULL) {
         return KF_RESOURCE_LOAD_FAILED;
     }
     if ((cd_search_file.size & (KF_CD_SECTOR_BYTES - 1)) != 0) {
@@ -89,12 +90,12 @@ KfResourceLoadResult cd_file_load_allocated(
     for (attempt = 0; attempt < OPEN_CD_READ_ATTEMPTS; attempt++) {
         s32 result;
 
-        CdControl(CdlSetloc, (u_char *)&cd_read_location, 0);
+        CdControl(CdlSetloc, (u_char *)&cd_read_location, NULL);
         CdRead(
             cd_search_file.size >> KF_CD_SECTOR_SHIFT,
             (u_long *)*destination,
             CdlModeSpeed);
-        while ((result = CdReadSync(KF_CD_READ_POLL, 0)) > 0) {
+        while ((result = CdReadSync(KF_CD_READ_POLL, NULL)) > 0) {
         }
         if (result == 0) {
             attempt = KF_CD_READ_STOP_ATTEMPT;
@@ -114,7 +115,7 @@ KfResourceLoadResult cd_file_load_into(
     memcpy(path, cd_path_prefix, sizeof cd_path_prefix);
     strcat(path, relative_path);
     strcat(path, cd_version_suffix);
-    if (CdSearchFile(&cd_search_file, path) == 0) {
+    if (CdSearchFile(&cd_search_file, path) == NULL) {
         return KF_RESOURCE_LOAD_FAILED;
     }
     if ((cd_search_file.size & (KF_CD_SECTOR_BYTES - 1)) != 0) {
@@ -127,12 +128,12 @@ KfResourceLoadResult cd_file_load_into(
     for (attempt = 0; attempt < OPEN_CD_READ_ATTEMPTS; attempt++) {
         s32 result;
 
-        CdControl(CdlSetloc, (u_char *)&cd_read_location, 0);
+        CdControl(CdlSetloc, (u_char *)&cd_read_location, NULL);
         CdRead(
             cd_search_file.size >> KF_CD_SECTOR_SHIFT,
             (u_long *)destination,
             CdlModeSpeed);
-        while ((result = CdReadSync(KF_CD_READ_POLL, 0)) > 0) {
+        while ((result = CdReadSync(KF_CD_READ_POLL, NULL)) > 0) {
         }
         if (result == 0) {
             attempt = KF_CD_READ_STOP_ATTEMPT;
@@ -148,12 +149,12 @@ void tim_upload_images(void *tim_data)
     TIM_IMAGE image;
 
     OpenTIM((u_long *)tim_data);
-    while (ReadTIM(&image) != 0) {
-        if (image.caddr != 0) {
+    while (ReadTIM(&image) != NULL) {
+        if (image.caddr != NULL) {
             LoadImage(image.crect, image.caddr);
             DrawSync(0);
         }
-        if (image.paddr != 0) {
+        if (image.paddr != NULL) {
             LoadImage(image.prect, image.paddr);
             DrawSync(0);
         }

@@ -1,3 +1,4 @@
+#include <kf/null.h>
 #include <kf/address.h>
 #include <kf/game_math.h>
 #include <kf/game_render.h>
@@ -15,7 +16,7 @@ void lighting_transition_color_matrix(const MATRIX *from, const MATRIX *to)
 
     do {
         lighting_set_color_matrix(from, to, blend);
-        render_frame(0, 0);
+        render_frame(NULL, NULL);
         frame_pacer_wait();
         blend += LIGHTING_COLOR_BLEND_STEP;
     } while (blend <= KF_FIXED12_ONE);

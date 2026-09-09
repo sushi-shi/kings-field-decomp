@@ -1,3 +1,4 @@
+#include <kf/null.h>
 #include <kf/game_graphics.h>
 #include <kf/address.h>
 #include <kf/game_math.h>
@@ -62,8 +63,8 @@ void player_death_update(void)
     blend = player_state.death_visual_blend;
     if (blend >= KF_FIXED12_ONE) {
         player_death_apply_visual_fade(&player_death_saved_color_matrix, KF_FIXED12_ONE);
-        render_frame(0, 0);
-        render_frame(0, 0);
+        render_frame(NULL, NULL);
+        render_frame(NULL, NULL);
         player_death_restart();
     } else {
         player_death_apply_visual_fade(&player_death_saved_color_matrix, blend);

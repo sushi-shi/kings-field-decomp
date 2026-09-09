@@ -1,3 +1,4 @@
+#include <kf/null.h>
 #include <kf/address.h>
 #include <kf/cd_file.h>
 #include <kf/memory.h>
@@ -137,5 +138,5 @@ void audio_close_vab(void)
         SsVabClose(*vab_id);
     }
     *vab_id = KF_AUDIO_VAB_UNAVAILABLE;
-    audio_state.vab_header = 0;
+    audio_state.vab_header = NULL;
 }

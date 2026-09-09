@@ -1,3 +1,4 @@
+#include <kf/null.h>
 #include <kf/game_graphics.h>
 #include <kf/address.h>
 #include <kf/game_math.h>
@@ -86,7 +87,7 @@ KfPoolRecord *render_bind_animated_instance(
     u16 keyframes_left;
 
     if (asset_header->animation_clip_count == 0) {
-        if (record != 0) {
+        if (record != NULL) {
             pool_record_release(record);
         }
         asset_registry_select(asset_index);
@@ -94,10 +95,10 @@ KfPoolRecord *render_bind_animated_instance(
         return (KfPoolRecord *)KF_ANIMATION_BIND_STATIC;
     }
 
-    if (record == 0) {
+    if (record == NULL) {
         record = pool_allocate();
-        if (record == 0) {
-            return 0;
+        if (record == NULL) {
+            return NULL;
         }
 
 reinitialize_record:
@@ -106,7 +107,7 @@ reinitialize_record:
 retry_allocation:
         record->cached_vertices = (KfPackedSVector *)memory_malloc_checked(
             vertex_count * sizeof(KfPackedSVector));
-        if (record->cached_vertices == 0) {
+        if (record->cached_vertices == NULL) {
             pool_release_all();
             goto retry_allocation;
         }
@@ -201,7 +202,7 @@ void pool_reset(void)
 
     do {
         record->state = KF_ANIMATION_CACHE_FREE;
-        record->cached_vertices = 0;
+        record->cached_vertices = NULL;
         record++;
     } while (--records_left != 0);
 }
@@ -224,10 +225,10 @@ ADDRESS(0x800209e4, 0x48)
 void pool_record_release(KfPoolRecord *record)
 {
     record->state = KF_ANIMATION_CACHE_FREE;
-    *record->owner_slot = 0;
-    if (record->cached_vertices != 0) {
+    *record->owner_slot = NULL;
+    if (record->cached_vertices != NULL) {
         free(record->cached_vertices);
-        record->cached_vertices = 0;
+        record->cached_vertices = NULL;
     }
 }
 
@@ -282,5 +283,5 @@ KfPoolRecord *pool_allocate(void)
         }
         record++;
     } while (--records_left != 0);
-    return 0;
+    return NULL;
 }

@@ -1,3 +1,4 @@
+#include <kf/null.h>
 #include <kf/address.h>
 #include <kf/audio.h>
 #include <kf/game_math.h>
@@ -97,10 +98,10 @@ void audio_set_listener_transform(
     const VECTOR *position_or_null,
     const SVECTOR *rotation_or_null)
 {
-    if (position_or_null != 0) {
+    if (position_or_null != NULL) {
         audio_state.listener_position = *position_or_null;
     }
-    if (rotation_or_null != 0) {
+    if (rotation_or_null != NULL) {
         audio_state.listener_rotation = *rotation_or_null;
     }
 }

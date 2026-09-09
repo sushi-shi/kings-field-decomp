@@ -32,6 +32,7 @@ LIBRARIES = {
 }
 ENTRY = '__SN_ENTRY_POINT'
 OVERLAY_STARTUP = 'src/sdk/overlay_start.s'
+OVERLAY_SDATA = 'src/sdk/overlay_sdata.s'
 # LIBAPI A74/A75/A76/A69: identical BIOS B0 selectors 4a/4b/4c/45.
 GAME_SDK_ALIASES = {'InitCARD2': 'InitCARD', 'StartCARD2': 'StartCARD',
                     'StopCARD2': 'StopCARD', 'erase': 'delete'}
@@ -153,17 +154,19 @@ def build_image(name: str, manifest: Manifest, root: Path) -> dict:
             report['units'].append(compile_unit(unit, manifest.profiles[unit.profile], root, index))
         assembler_commands = [u['assembler_command'] for u in report['units']]
         if name != 'PSX.EXE':
-            # The minimal SDK startup anchors .sdata before the libraries. Do
-            # not silently move that anchor after a new game contribution.
-            for unit in report['units']:
-                if re.search(r'(?m)^\s*\.sdata\b', (root / unit['assembly']).read_text()):
-                    raise ValueError(f'{unit["unit"]}: overlay startup needs the first .sdata contribution')
             source = REPO / OVERLAY_STARTUP
             (root / 'START.S').write_bytes(source.read_bytes().replace(b'\n', b'\r\n'))
             command = 'aspsx -G0 -o START.OBJ START.S > START.TXT'
             report['startup'] = {'source': OVERLAY_STARTUP, 'source_sha256': file_hash(source),
                                  'object': 'START.OBJ', 'assembler_command': command,
                                  'provenance': 'reconstructed vendored NONE2 assembly family'}
+            assembler_commands.append(command)
+            source = REPO / OVERLAY_SDATA
+            (root / 'SDATA.S').write_bytes(source.read_bytes().replace(b'\n', b'\r\n'))
+            command = 'aspsx -G0 -o SDATA.OBJ SDATA.S > SDATA.TXT'
+            report['startup']['anchor'] = {
+                'source': OVERLAY_SDATA, 'source_sha256': file_hash(source),
+                'object': 'SDATA.OBJ', 'assembler_command': command}
             assembler_commands.append(command)
         report['phase'] = 'assemble'
         dos_run(root, assembler_commands, 'asm')
@@ -173,6 +176,8 @@ def build_image(name: str, manifest: Manifest, root: Path) -> dict:
         if report['startup']:
             tool_succeeded(root, 'START.TXT', 'START.OBJ', b'LNK\x02')
             report['startup']['object_sha256'] = file_hash(root / 'START.OBJ')
+            tool_succeeded(root, 'SDATA.TXT', 'SDATA.OBJ', b'LNK\x02')
+            report['startup']['anchor']['object_sha256'] = file_hash(root / 'SDATA.OBJ')
         for library in LIBRARIES[name]:
             filename = library + '.LIB'
             source = Path(os.environ['PSYQ_LIB']) / filename
@@ -182,6 +187,7 @@ def build_image(name: str, manifest: Manifest, root: Path) -> dict:
         report['phase'] = 'link'
         stem = name.removesuffix('.EXE')
         commands = [f'\torg ${IMAGE_LAYOUTS[name].load_address:08x}',
+                    *(['\tinclude "SDATA.OBJ"'] if report['startup'] else []),
                     *(f'\tinclude "{u["object"]}"' for u in report['units']),
                     *(['\tinclude "START.OBJ"'] if report['startup'] else []),
                     *(f'\tinclib "{library["file"]}"' for library in report['libraries']),
