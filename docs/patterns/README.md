@@ -77,6 +77,8 @@ promotes a probe to a proven historical toolchain.
 - [gcc257-stack-object-alignment.md](gcc257-stack-object-alignment.md): OPEN
   automatic aggregate spacing, used extents and limits on inferring capacities
   or compact local groupings from stack gaps.
+- [open-address-arithmetic-review.md](open-address-arithmetic-review.md): two
+  rejected direct vertex lookups and traced unused stack slots; cleanup remains open.
 - [game-save-ui-matches.md](game-save-ui-matches.md): status-result and dialogue
   pathname trials, plus delay-slot and unseen-prologue trace controls.
 - [game-status-result-traces.md](game-status-result-traces.md): exact status
