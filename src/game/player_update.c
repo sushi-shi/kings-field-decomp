@@ -373,9 +373,7 @@ void player_update(void)
                     player_state.magic_charge +=
                         fixed6_ratio_step(player_state.magic, player_state.selected_magic_record->charge_rate)
                         * KF_PLAYER_CHARGE_GAIN_MULTIPLIER;
-                    if (player_state.magic_charge > KF_PLAYER_CHARGE_FULL) {
-                        player_state.magic_charge = KF_PLAYER_CHARGE_FULL;
-                    }
+                    limitRange(player_state.magic_charge, 0, KF_PLAYER_CHARGE_FULL);
                 }
             }
         }

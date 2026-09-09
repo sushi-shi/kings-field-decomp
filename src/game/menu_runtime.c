@@ -155,15 +155,11 @@ void menu_draw_item_name_frame(KF_ENUM_PARAM(KfItemId, s32) item_id)
         MENU_BACKDROP_TOP_Y,
         menu_assets.window_backdrop.width,
         menu_assets.window_backdrop.height);
-    setUV4(current_poly_ft4,
+    setUVWH(current_poly_ft4,
         menu_assets.window_backdrop.u + menu_assets.window_backdrop.width,
         menu_assets.window_backdrop.v,
-        menu_assets.window_backdrop.u,
-        menu_assets.window_backdrop.v,
-        menu_assets.window_backdrop.u + menu_assets.window_backdrop.width,
-        menu_assets.window_backdrop.v + menu_assets.window_backdrop.height,
-        menu_assets.window_backdrop.u,
-        menu_assets.window_backdrop.v + menu_assets.window_backdrop.height);
+        -menu_assets.window_backdrop.width,
+        menu_assets.window_backdrop.height);
     primitive_buffer_commit_poly_ft4(MENU_WINDOW_OT_DEPTH);
 
     primitive_buffer_begin_poly_ft4();
@@ -175,15 +171,11 @@ void menu_draw_item_name_frame(KF_ENUM_PARAM(KfItemId, s32) item_id)
         MENU_BACKDROP_BOTTOM_Y,
         menu_assets.window_backdrop.width,
         menu_assets.window_backdrop.height);
-    setUV4(current_poly_ft4,
+    setUVWH(current_poly_ft4,
         menu_assets.window_backdrop.u,
         menu_assets.window_backdrop.v + menu_assets.window_backdrop.height,
-        menu_assets.window_backdrop.u + menu_assets.window_backdrop.width,
-        menu_assets.window_backdrop.v + menu_assets.window_backdrop.height,
-        menu_assets.window_backdrop.u,
-        menu_assets.window_backdrop.v,
-        menu_assets.window_backdrop.u + menu_assets.window_backdrop.width,
-        menu_assets.window_backdrop.v);
+        menu_assets.window_backdrop.width,
+        -menu_assets.window_backdrop.height);
     primitive_buffer_commit_poly_ft4(MENU_WINDOW_OT_DEPTH);
 
     primitive_buffer_begin_poly_ft4();
@@ -195,15 +187,11 @@ void menu_draw_item_name_frame(KF_ENUM_PARAM(KfItemId, s32) item_id)
         MENU_BACKDROP_BOTTOM_Y,
         menu_assets.window_backdrop.width,
         menu_assets.window_backdrop.height);
-    setUV4(current_poly_ft4,
+    setUVWH(current_poly_ft4,
         menu_assets.window_backdrop.u + menu_assets.window_backdrop.width,
         menu_assets.window_backdrop.v + menu_assets.window_backdrop.height,
-        menu_assets.window_backdrop.u,
-        menu_assets.window_backdrop.v + menu_assets.window_backdrop.height,
-        menu_assets.window_backdrop.u + menu_assets.window_backdrop.width,
-        menu_assets.window_backdrop.v,
-        menu_assets.window_backdrop.u,
-        menu_assets.window_backdrop.v);
+        -menu_assets.window_backdrop.width,
+        -menu_assets.window_backdrop.height);
     primitive_buffer_commit_poly_ft4(MENU_WINDOW_OT_DEPTH);
 
     AddPrim(
@@ -388,15 +376,11 @@ void menu_draw_window_backdrop(void)
         MENU_BACKDROP_TOP_Y,
         menu_assets.window_backdrop.width,
         menu_assets.window_backdrop.height);
-    setUV4(current_poly_ft4,
+    setUVWH(current_poly_ft4,
         menu_assets.window_backdrop.u + menu_assets.window_backdrop.width,
         menu_assets.window_backdrop.v,
-        menu_assets.window_backdrop.u,
-        menu_assets.window_backdrop.v,
-        menu_assets.window_backdrop.u + menu_assets.window_backdrop.width,
-        menu_assets.window_backdrop.v + menu_assets.window_backdrop.height,
-        menu_assets.window_backdrop.u,
-        menu_assets.window_backdrop.v + menu_assets.window_backdrop.height);
+        -menu_assets.window_backdrop.width,
+        menu_assets.window_backdrop.height);
     primitive_buffer_commit_poly_ft4(MENU_WINDOW_OT_DEPTH);
 
     primitive_buffer_begin_poly_ft4();
@@ -408,15 +392,11 @@ void menu_draw_window_backdrop(void)
         MENU_BACKDROP_BOTTOM_Y,
         menu_assets.window_backdrop.width,
         menu_assets.window_backdrop.height);
-    setUV4(current_poly_ft4,
+    setUVWH(current_poly_ft4,
         menu_assets.window_backdrop.u,
         menu_assets.window_backdrop.v + menu_assets.window_backdrop.height,
-        menu_assets.window_backdrop.u + menu_assets.window_backdrop.width,
-        menu_assets.window_backdrop.v + menu_assets.window_backdrop.height,
-        menu_assets.window_backdrop.u,
-        menu_assets.window_backdrop.v,
-        menu_assets.window_backdrop.u + menu_assets.window_backdrop.width,
-        menu_assets.window_backdrop.v);
+        menu_assets.window_backdrop.width,
+        -menu_assets.window_backdrop.height);
     primitive_buffer_commit_poly_ft4(MENU_WINDOW_OT_DEPTH);
 
     primitive_buffer_begin_poly_ft4();
@@ -428,15 +408,11 @@ void menu_draw_window_backdrop(void)
         MENU_BACKDROP_BOTTOM_Y,
         menu_assets.window_backdrop.width,
         menu_assets.window_backdrop.height);
-    setUV4(current_poly_ft4,
+    setUVWH(current_poly_ft4,
         menu_assets.window_backdrop.u + menu_assets.window_backdrop.width,
         menu_assets.window_backdrop.v + menu_assets.window_backdrop.height,
-        menu_assets.window_backdrop.u,
-        menu_assets.window_backdrop.v + menu_assets.window_backdrop.height,
-        menu_assets.window_backdrop.u + menu_assets.window_backdrop.width,
-        menu_assets.window_backdrop.v,
-        menu_assets.window_backdrop.u,
-        menu_assets.window_backdrop.v);
+        -menu_assets.window_backdrop.width,
+        -menu_assets.window_backdrop.height);
     primitive_buffer_commit_poly_ft4(MENU_WINDOW_OT_DEPTH);
 
     AddPrim(

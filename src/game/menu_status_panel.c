@@ -21,31 +21,16 @@ static inline void menu_status_draw_backdrop_quad(
         y,
         menu_assets.window_backdrop.width,
         menu_assets.window_backdrop.height);
-    setUV4(current_poly_ft4,
+    /* UV dimensions wrap at eight bits; screen dimensions remain halfwords. */
+    setUVWH(current_poly_ft4,
         flip_x
-            ? menu_assets.window_backdrop.u + menu_assets.window_backdrop.width
+            ? menu_assets.window_backdrop.u + (u8)menu_assets.window_backdrop.width
             : menu_assets.window_backdrop.u,
         flip_y
-            ? menu_assets.window_backdrop.v + menu_assets.window_backdrop.height
+            ? menu_assets.window_backdrop.v + (u8)menu_assets.window_backdrop.height
             : menu_assets.window_backdrop.v,
-        flip_x
-            ? menu_assets.window_backdrop.u
-            : menu_assets.window_backdrop.u + menu_assets.window_backdrop.width,
-        flip_y
-            ? menu_assets.window_backdrop.v + menu_assets.window_backdrop.height
-            : menu_assets.window_backdrop.v,
-        flip_x
-            ? menu_assets.window_backdrop.u + menu_assets.window_backdrop.width
-            : menu_assets.window_backdrop.u,
-        flip_y
-            ? menu_assets.window_backdrop.v
-            : menu_assets.window_backdrop.v + menu_assets.window_backdrop.height,
-        flip_x
-            ? menu_assets.window_backdrop.u
-            : menu_assets.window_backdrop.u + menu_assets.window_backdrop.width,
-        flip_y
-            ? menu_assets.window_backdrop.v
-            : menu_assets.window_backdrop.v + menu_assets.window_backdrop.height);
+        flip_x ? -(u8)menu_assets.window_backdrop.width : (u8)menu_assets.window_backdrop.width,
+        flip_y ? -(u8)menu_assets.window_backdrop.height : (u8)menu_assets.window_backdrop.height);
     primitive_buffer_commit_poly_ft4(MENU_WINDOW_OT_DEPTH);
 }
 

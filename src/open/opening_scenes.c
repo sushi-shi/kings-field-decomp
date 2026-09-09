@@ -727,9 +727,9 @@ void opening_ending_scroll_run(void)
     SetFarColor(0, 0, 0);
     open_graphics_runtime.tmd_projection_shift = ENDING_TMD_PROJECTION_SHIFT;
     /* Retail retains this otherwise unconsumed stack-owned position snapshot. */
-    transition_position.vy = TRANSITION_BASE_Y;
-    transition_position.vx = opening_camera_path_state.position.vx;
-    transition_position.vz = opening_camera_path_state.position.vz;
+    setVector(&transition_position,
+        opening_camera_path_state.position.vx, TRANSITION_BASE_Y,
+        opening_camera_path_state.position.vz);
     open_graphics_runtime.floor_item_state.material.color.r = 0;
     open_graphics_runtime.floor_item_state.material.color.g = 0;
     open_graphics_runtime.floor_item_state.material.color.b = 0;

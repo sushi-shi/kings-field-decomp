@@ -844,3 +844,6 @@ promotes a probe to a proven historical toolchain.
 - [Sony helper near misses](sony-helper-near-misses.md): reordered triples,
   chained sprite corners and scalar controls; three more player helpers remove
   the remaining operation-order differences, leaving an eight-byte frame residue.
+- [Remaining Sony helper investigation](sony-remaining-functions.md): all eighteen
+  non-exact functions reviewed, thirty compiled controls, and three exact menu
+  functions from reflected SDK UV rectangles and byte-domain texture dimensions.
