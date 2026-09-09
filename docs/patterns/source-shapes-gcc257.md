@@ -1237,3 +1237,34 @@ linked follow-ups supersede the original claims where source gaps were found:
   the reset/return corrections, retail retains an explicit row-3 format
   guard omitted from the old source. Restoring that path preserves the
   existing status lifetime and recovers the complete saved-register set.
+
+## Forward-join reduction campaign
+
+The September 2026 goto-reduction pass retained 29 source-level removals while
+keeping every affected function's compiled listing unchanged. The campaign
+started from 103 `goto` statements and ended at 74; the earlier cleanup passes
+started from 184. These results describe the current probe only and do not
+prove the historical compiler.
+
+| Retail form | Source shape | Witness |
+| --- | --- | --- |
+| Five parser cases branch to one literal-byte tail | put the conversion switch in the width-digit `else`; let literal cases `break` and place the literal store after the switch | GAME and OPEN `format_vsprintf` |
+| Several policy exits jump forward to one chosen-result tail | use a constant single-pass `switch (0)` around only the policy region and replace those exits with `break`; leave backward loop joins outside it | `actor_select_next_action`, `actor_update_awareness` |
+| A bounded distance calculation has two late out-of-range exits | use the same single-pass region for the calculation and return the sentinel after it; retain genuine early returns for the cheap bounds checks | `player_distance_to_point`, `actor_distance_to_point` |
+| A special fatal-drop exemption skips to the common camera-height publisher | enclose the death/vertical-state region and let that exemption `break` to the publisher | `player_update_vertical_motion` |
+| Wind Cutter actor/player hits share the projectile advance tail | enclose only collision response; the two hit arms `break`, while all other collision results retain their return | `effect_update_dispatch` |
+| Negative attribute height returns the current collision result after the remaining geometry tests | enclose the attribute/grid/target selection region and break directly to the result return | `effect_collision_in_cell` in `effect_map_collision` |
+
+The constant-switch form is intentionally narrow. It is useful only when its
+`break` names a coherent policy or calculation boundary and GCC erases the
+wrapper completely. A `do { ... } while (0)` replacement for
+`opening_entity_transition` was also byte-identical, but was rejected because
+it merely disguised the multi-level jump and did not improve the source.
+
+`map_event_refresh_dialogue_stage` is a negative control. Retail places the
+shared page-reset stores before the stage-limit arm, which jumps backward into
+them. Duplicated stores (61.3%), a `stage_changed` flag (26.9%), guard-clause
+forms (61.3%), a natural stage-selecting `if`/`else` with one reset tail
+(68.8%), and a runtime two-way switch (37.5%) all preserved the values but
+changed the block order or materialized extra state. The exact `goto` remains;
+a constant switch or one-pass loop would only rename the same control edge.
