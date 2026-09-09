@@ -431,3 +431,66 @@ failures remain (12/42 GAME data owners; zero artifact failures).
 
 Final combined verification: Ruff and all 723 repository tests pass
 (115.411 seconds), as does `git diff --check`. No partial result is banked.
+
+## Player weapon spawn: camera-position owner
+
+Function Match Plan at `f56b1b28`: GAME `80018880`, 6684 retail bytes,
+6688 source bytes / 98.470980%. Fresh retail validation and the prior complete
+six-view pass retain the void interface, sole caller, 66 calls, 210 address
+pairs, typed SDK aggregates and game ownership. The frame gap is already an
+unattributed residue; no placeholder object or forced alignment is permitted.
+
+After `ApplyMatrix`, retail consumes camera position Y, camera rotation Y,
+camera position Z, camera rotation X and camera rotation Z in that order.
+Source contains that semantic statement order, but the probe hoists the three
+rotation reads and leaves the position reads later. The existing `origin`
+pointer is the proved camera-position owner used by the following cone query.
+Test moving its assignment before translation, first retaining direct field
+access and then consistently using `origin->vx/vy/vz` for the three additions.
+Keep the same VECTOR extent, position arithmetic, rotation halfword writes,
+query arguments, calls and constants. This is an ownership/alias hypothesis;
+reject it if it does not restore the ordered references and retail operations.
+
+All three pointer-placement states compile to the same object and remain at
+98.470980%; assignment placement and member spelling alone do not change the
+five references. Reject both. As a focused follow-up, test the same six
+consumed assignments through one ordinary typed operation accepting position,
+effect rotation, camera position and camera rotation pointers. This preserves
+the existing object family and operation order while representing the alias
+boundary visible in retail. Compare it against the unchanged baseline; the
+operation must inline completely and must not add a call or unclaimed body.
+
+The typed operation inlines but drops to 97.881510%; reject it. Its broader
+alias boundary changes instructions outside the five-reference residue. Test
+two direct, object-grouped statement orders next: translate X/Y/Z before
+copying rotation Y/X/Z, and translate X/Y/Z before copying rotation X/Y/Z.
+Both preserve all values and the final objects. Retail may interleave the
+loads while scheduling these independent groups; retain a grouping only if
+raw order and instructions move toward retail without changing referents.
+
+Both object-grouped orders compile identically at 99.476960%. They recover the
+exact 6684-byte function extent, all 66 ordered calls and all 210 ordered
+address pairs. Keep the natural X/Y/Z grouping for both position and rotation;
+retail cannot distinguish it from the Y/X/Z source order because both compile
+to the same object. The first remaining difference is the 224-byte retail
+frame versus 216-byte source frame. Local accesses throughout the weapon-spawn
+region differ by eight bytes; attachment and direction registers also differ
+after the cone query. These remain unattributed. No unreferenced object,
+alignment annotation or register carrier is added.
+
+The independent audit resolves every target function word to retail, compiles
+the six source states separately, and records the reduced raw residue in
+`build/low-trial-player-origin-residue.txt`. The typed helper is excluded from
+that final comparison because it emitted an unclaimed body and was already
+rejected. A repository regression control now compares all 66 external calls
+and 210 named data references in order, in addition to the two complete exact
+status regions.
+
+Canonical focused matching confirms 99.476960% and preserves 339/362 exact
+GAME functions. The required full build raises aggregate GAME similarity to
+99.737% and retains the existing data/placement failure: 12/42 GAME data
+owners, zero artifact failures and 75/77 target units verified. This partial
+function is not banked.
+
+Ruff, all 723 repository tests (104.379 seconds), and `git diff --check` pass
+with the grouped source and expanded ordered-referent control.

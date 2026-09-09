@@ -72,6 +72,44 @@ def status_region(path, region='status'):
     return normalized[start:end]
 
 
+def external_referents(path):
+    """Return ordered text address identities and calls, independent of placement."""
+    obj = _load_object(path)
+    function = obj.named_symbol('player_update')
+    pending = []
+    calls = []
+    addresses = []
+    for reloc in obj.relocations:
+        if reloc.section != '.text' or not function.value <= reloc.offset < function.value + function.size:
+            continue
+        symbol = obj.symbol(reloc.symbol_index)
+        index = (reloc.offset - function.value) // 4
+        words = struct.unpack_from('<I', obj.sections['.text'], reloc.offset)[0]
+        if reloc.kind == 5:
+            pending.append((index, symbol.index))
+        elif reloc.kind == 6:
+            assert len(pending) == 1
+            high, symbol_index = pending.pop()
+            assert symbol_index == symbol.index
+            addend = decode_hi_lo_target(
+                struct.unpack_from('<I', obj.sections['.text'], function.value + high * 4)[0],
+                words,
+            )
+            name = symbol.name
+            if symbol.kind == 'STT_SECTION':
+                offset = symbol.value + addend
+                owners = [item for item in obj.symbols
+                          if item.section == symbol.section and item.kind == 'STT_OBJECT'
+                          and item.value <= offset < item.value + item.size]
+                assert len(owners) == 1
+                name, addend = owners[0].name, offset - owners[0].value
+            addresses.append((name, addend))
+        elif reloc.kind == 4 and words >> 26 == 3:
+            calls.append((symbol.name, (words & 0x3FFFFFF) * 4))
+    assert not pending
+    return calls, addresses
+
+
 class PlayerStatusPathTests(unittest.TestCase):
     def test_compiled_status_paths_preserve_every_retail_instruction(self):
         if shutil.which('cc1psx-260') is None or not os.environ.get('PSYQ_INCLUDE'):
@@ -99,3 +137,8 @@ class PlayerStatusPathTests(unittest.TestCase):
 
             self.assertEqual(len(status_region(target, 'darkness')), (0x1198 - 0x1090) // 4)
             self.assertEqual(status_region(output, 'darkness'), status_region(target, 'darkness'))
+            actual_calls, actual_addresses = external_referents(output)
+            expected_calls, expected_addresses = external_referents(target)
+            self.assertEqual((len(expected_calls), len(expected_addresses)), (66, 210))
+            self.assertEqual(actual_calls, expected_calls)
+            self.assertEqual(actual_addresses, expected_addresses)

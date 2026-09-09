@@ -437,9 +437,9 @@ void player_update(void)
                     ApplyMatrix(&matrix, &spawn_offset, &position);
                     position.vx += player_state.camera_position.vx;
                     position.vy += player_state.camera_position.vy;
-                    effect_rotation.angles.y = player_state.camera_rotation.vy;
                     position.vz += player_state.camera_position.vz;
                     effect_rotation.angles.x = player_state.camera_rotation.vx;
+                    effect_rotation.angles.y = player_state.camera_rotation.vy;
                     effect_rotation.angles.z = player_state.camera_rotation.vz;
                     origin = &player_state.camera_position;
                     if ((effect == KF_EFFECT_KIND_FIRE_BALL || effect == KF_EFFECT_KIND_LIGHT_NEEDLE)
