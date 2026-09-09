@@ -70,13 +70,12 @@ rectangle_span:
                     coordinate = KF_MAP_TILE_SIZE - subx;
                     goto rectangle_span;
                 default:
-                    goto grid_shape;
+                    break;
                 }
             }
         }
     }
 
-grid_shape:
     switch (map_collision_grid.cells[z][x]) {
     case KF_MAP_CELL_BLOCKED:
         if (((map_collision_grid.cells[z + 1][x] != KF_MAP_CELL_FLOOR
