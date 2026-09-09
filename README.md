@@ -106,6 +106,18 @@ Python libclang. `--list` displays candidates and review cases; `--image` and
 uses, and existing enum/Boolean domains. Review proposals against retail before
 changing types; see [Boolean modeling](docs/patterns/boolean-modeling.md).
 
+Run `python -m scripts.kf.pointer_zeros` inside `nix develop` to find written
+zero literals converted to pointers using [pylibclang](https://pypi.org/project/pylibclang/).
+It prints `file:line:column` locations for assignments, initializers (including
+aggregates), casts, arguments, returns, and comparisons, excluding existing
+`NULL` expansions and ordinary integer zeros. It scans every manifest C variant
+and its included project headers, deduplicating written locations. Inactive
+preprocessor branches and implicit zero-fill are outside the scan.
+Use `--image game`, `--unit game.actor`, or `--path src/game/` to narrow the
+search; `--json` emits locations and image/unit/function/type contexts for agents.
+`--check` exits 1 when sites remain; parse errors exit 2. The script never edits
+C sources.
+
 ## Project
 
 This is three decomps in one repository: the bootstrap `PSX.EXE`, main-game
