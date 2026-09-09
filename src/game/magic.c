@@ -125,11 +125,11 @@ void magic_cast(void)
             rotation.vz = player_state.camera_rotation.vz;
             effect_pool_construct(
                 KF_PLAYER_DAMAGE_MULTIPLIER_ONE, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS,
-                KF_ENUM_DECODE(KfEffectKind, KF_ENUM_ENCODE(u8, player_state.selected_magic_id)), &world_pos, &direction, &rotation, 1);
+                KF_ENUM_DECODE(KfEffectKind, KF_ENUM_ENCODE(u8, player_state.selected_magic_id)), &world_pos, &direction, KF_EFFECT_ARGS_ROTATION_SOUND(&rotation, KF_EFFECT_SOUND_PLAY));
         } else {
             effect_pool_construct(
                 KF_PLAYER_DAMAGE_MULTIPLIER_ONE, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS,
-                KF_ENUM_DECODE(KfEffectKind, KF_ENUM_ENCODE(u8, player_state.selected_magic_id)), &world_pos, &direction, distance, 1);
+                KF_ENUM_DECODE(KfEffectKind, KF_ENUM_ENCODE(u8, player_state.selected_magic_id)), &world_pos, &direction, KF_EFFECT_ARGS_DURATION_SOUND(distance, KF_EFFECT_SOUND_PLAY));
         }
         break;
     }
@@ -144,7 +144,7 @@ void magic_cast(void)
             effect_pool_construct(
                 KF_PLAYER_DAMAGE_MULTIPLIER_ONE, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
                 KF_ENUM_DECODE(KfEffectKind, KF_ENUM_ENCODE(u8, player_state.selected_magic_id)), &target->position,
-                &player_state.camera_rotation, KF_ENUM_ENCODE(u16, KF_EFFECT_GROUND_BRANCH_ROOT));
+                &player_state.camera_rotation, KF_EFFECT_ARGS_BRANCH(KF_EFFECT_GROUND_BRANCH_ROOT));
         } else {
             VECTOR spawn;
             s32 cell_x;
@@ -160,7 +160,7 @@ void magic_cast(void)
             effect_pool_construct(
                 KF_PLAYER_DAMAGE_MULTIPLIER_ONE, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
                 KF_ENUM_DECODE(KfEffectKind, KF_ENUM_ENCODE(u8, player_state.selected_magic_id)), &spawn, &player_state.camera_rotation,
-                KF_ENUM_ENCODE(u16, KF_EFFECT_GROUND_BRANCH_ROOT));
+                KF_EFFECT_ARGS_BRANCH(KF_EFFECT_GROUND_BRANCH_ROOT));
         }
         break;
     }

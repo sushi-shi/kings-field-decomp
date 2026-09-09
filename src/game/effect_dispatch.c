@@ -282,8 +282,7 @@ lightning_impact:
                         }
                         effect_pool_construct(
                             effect->id, effect->type, kind, &effect->position, &scatter.vector,
-                            effect->propagation.generations_remaining, effect->control.frames_remaining,
-                            (s16)effect->scale_x);
+                            KF_EFFECT_ARGS_SCATTER(effect->propagation.generations_remaining, effect->control.frames_remaining, (s16)effect->scale_x));
                         effect_scatter_triple(&effect->direction.words);
                     } else {
                         effect->type = KF_EFFECT_SLOT_FREE;
@@ -395,7 +394,7 @@ play_phase_sound:
             if (((KF_ENUM_ENCODE(u8, phase) - KF_ENUM_ENCODE(u8, KF_EFFECT_MOONLIGHT_IMPACT_FIRST)) & 1) == 0) {
                 effect_pool_construct(
                     effect->id, effect->type, KF_EFFECT_KIND_RADIAL_BLAST,
-                    &effect->position, &effect->direction.vector, 1);
+                    &effect->position, &effect->direction.vector, KF_EFFECT_ARGS_SOUND(KF_EFFECT_SOUND_PLAY));
             }
             if (phase > KF_EFFECT_MOONLIGHT_IMPACT_LAST) {
                 goto invalidate_and_return;
@@ -553,11 +552,11 @@ randomize_homing_direction:
             if (effect->base_render_id == KF_EFFECT_MODEL_HOMING_PROJECTILE_ALTERNATE) {
                 effect_pool_construct(
                     effect->id, effect->type, KF_EFFECT_KIND_RADIAL_BLAST_ALTERNATE,
-                    &effect->position, &effect->direction.vector, 1);
+                    &effect->position, &effect->direction.vector, KF_EFFECT_ARGS_SOUND(KF_EFFECT_SOUND_PLAY));
             } else {
                 effect_pool_construct(
                     effect->id, effect->type, KF_EFFECT_KIND_RADIAL_BLAST,
-                    &effect->position, &effect->direction.vector, 1);
+                    &effect->position, &effect->direction.vector, KF_EFFECT_ARGS_SOUND(KF_EFFECT_SOUND_PLAY));
             }
             effect->type = KF_EFFECT_SLOT_FREE;
         }

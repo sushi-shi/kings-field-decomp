@@ -598,22 +598,22 @@ void actor_spawn_action_effect(s32 effect_code, KfActorEffectSlot effect_slot)
             if (KF_ENUM_DECODE(KfEffectKindArgument, effect_code) == KF_EFFECT_KIND_LIGHT_NEEDLE || KF_ENUM_DECODE(KfEffectKindArgument, effect_code) == KF_EFFECT_KIND_PHYSICAL_PROJECTILE) {
                 effect_pool_construct(
                     definition->effect_owner_id, 0x20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
-                    KF_ENUM_DECODE(KfEffectKindArgument, effect_code), &position, &direction, &effect_rotation.vector, 1);
+                    KF_ENUM_DECODE(KfEffectKindArgument, effect_code), &position, &direction, KF_EFFECT_ARGS_ROTATION_SOUND(&effect_rotation.vector, KF_EFFECT_SOUND_PLAY));
             } else if (KF_ENUM_DECODE(KfEffectKindArgument, effect_code) == KF_EFFECT_KIND_HOMING_PROJECTILE_ALTERNATE) {
                 burst_rotation.angles.x = actor->rotation.angles.x;
                 burst_rotation.angles.y = facing;
                 burst_rotation.angles.z = actor->rotation.angles.z;
                 effect_pool_construct(
                     definition->effect_owner_id, 0x20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER, KF_EFFECT_KIND_HOMING_PROJECTILE_ALTERNATE,
-                    &position, &direction, &burst_rotation.vector, KF_ENUM_ENCODE(u8, KF_EFFECT_HOMING_PLAYER), 1);
+                    &position, &direction, KF_EFFECT_ARGS_HOMING(&burst_rotation.vector, KF_EFFECT_HOMING_PLAYER, KF_EFFECT_SOUND_PLAY));
             } else if (KF_ENUM_DECODE(KfEffectKindArgument, effect_code) == KF_EFFECT_KIND_SCATTER_PROJECTILE) {
                 effect_pool_construct(
                     definition->effect_owner_id, 0x20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
-                    KF_EFFECT_KIND_SCATTER_PROJECTILE, &position, &direction, ACTOR_SCATTER_GENERATIONS, distance, ACTOR_SCATTER_INITIAL_SCALE);
+                    KF_EFFECT_KIND_SCATTER_PROJECTILE, &position, &direction, KF_EFFECT_ARGS_SCATTER(ACTOR_SCATTER_GENERATIONS, distance, ACTOR_SCATTER_INITIAL_SCALE));
             } else {
                 effect_pool_construct(
                     definition->effect_owner_id, 0x20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
-                    KF_ENUM_DECODE(KfEffectKindArgument, effect_code), &position, &direction, distance, 1);
+                    KF_ENUM_DECODE(KfEffectKindArgument, effect_code), &position, &direction, KF_EFFECT_ARGS_DURATION_SOUND(distance, KF_EFFECT_SOUND_PLAY));
             }
             break;
         }
@@ -833,7 +833,7 @@ void actor_update_boss_death_sequence(void)
         /* Retail leaves this kind's direction and the position pad unwritten. */
         effect_pool_construct(
             0, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER, KF_EFFECT_KIND_RADIAL_BLAST_ALTERNATE,
-            &position, &direction, 0);
+            &position, &direction, KF_EFFECT_ARGS_SOUND(KF_EFFECT_SOUND_SILENT));
         if (actor->animation_phase % (definition->action_animation_steps[KF_ACTOR_ANIM_SLOT_DEATH] * ACTOR_BOSS_DEATH_SOUND_PERIOD) == 0) {
             sound_ref_play(&boss_death_loop_sound, ACTOR_BOSS_DEATH_LOOP_VOLUME);
         }

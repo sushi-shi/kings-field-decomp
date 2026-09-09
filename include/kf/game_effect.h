@@ -318,10 +318,106 @@ extern KfEffectState effect_state;
 #define current_effect_magic_record (effect_state.current_magic)
 #define current_effect (effect_state.current_record)
 
+/* The variadic tail is selected by kind. In strict checking, named groups
+ * prevent integer/foreign-enum arguments from entering enum-valued slots.
+ * Retail expands each group to the same original argument expressions. */
+KF_ENUM_BEGIN(KfEffectSoundRequest, s32)
+    KF_EFFECT_SOUND_SILENT = 0,
+    KF_EFFECT_SOUND_PLAY = 1
+KF_ENUM_END(KfEffectSoundRequest)
+
+#if KF_MODERN_TYPES
+constexpr KfEffectSoundRequest effect_sound_request(bool requested)
+{
+    return requested ? KF_EFFECT_SOUND_PLAY : KF_EFFECT_SOUND_SILENT;
+}
+
+class KfEffectBranchArguments { public: KfEffectGroundBranchRole role; };
+class KfEffectRotationArguments { public: const SVECTOR *rotation; };
+class KfEffectRotationSoundArguments {
+public:
+    const SVECTOR *rotation;
+    KfEffectSoundRequest sound;
+};
+class KfEffectDurationSoundArguments {
+public:
+    s32 duration;
+    KfEffectSoundRequest sound;
+};
+class KfEffectScatterArguments {
+public:
+    s32 generations;
+    s32 duration;
+    s32 scale;
+};
+class KfEffectSoundArguments { public: KfEffectSoundRequest sound; };
+class KfEffectHomingArguments {
+public:
+    const SVECTOR *rotation;
+    KfEffectHomingMode target;
+    KfEffectSoundRequest sound;
+};
+class KfEffectParentArguments { public: s32 parent_index; };
+
+#define KF_EFFECT_ARGS_BRANCH(role) KfEffectBranchArguments{role}
+#define KF_EFFECT_ARGS_ROTATION(rotation) KfEffectRotationArguments{rotation}
+#define KF_EFFECT_ARGS_ROTATION_SOUND(rotation, sound) \
+    KfEffectRotationSoundArguments{rotation, sound}
+#define KF_EFFECT_ARGS_DURATION_SOUND(duration, sound) \
+    KfEffectDurationSoundArguments{duration, sound}
+#define KF_EFFECT_ARGS_SCATTER(generations, duration, scale) \
+    KfEffectScatterArguments{generations, duration, scale}
+#define KF_EFFECT_ARGS_SOUND(sound) KfEffectSoundArguments{sound}
+#define KF_EFFECT_ARGS_HOMING(rotation, target, sound) \
+    KfEffectHomingArguments{rotation, target, sound}
+#define KF_EFFECT_ARGS_PARENT(parent) KfEffectParentArguments{parent}
+#else
+#define effect_sound_request(requested) (requested)
+#define KF_EFFECT_ARGS_BRANCH(role) (role)
+#define KF_EFFECT_ARGS_ROTATION(rotation) (rotation)
+#define KF_EFFECT_ARGS_ROTATION_SOUND(rotation, sound) (rotation), (sound)
+#define KF_EFFECT_ARGS_DURATION_SOUND(duration, sound) (duration), (sound)
+#define KF_EFFECT_ARGS_SCATTER(generations, duration, scale) \
+    (generations), (duration), (scale)
+#define KF_EFFECT_ARGS_SOUND(sound) (sound)
+#define KF_EFFECT_ARGS_HOMING(rotation, target, sound) (rotation), (target), (sound)
+#define KF_EFFECT_ARGS_PARENT(parent) (parent)
+#endif
+
 extern KfEffectRecord *effect_pool_find_free(void);
+#if KF_MODERN_TYPES && !defined(KF_EFFECT_POOL_IMPLEMENTATION)
+extern KfEffectRecord *effect_pool_construct(
+    u8 id, u8 type, KfEffectKind kind, const VECTOR *position,
+    const SVECTOR *direction);
+extern KfEffectRecord *effect_pool_construct(
+    u8 id, u8 type, KfEffectKind kind, const VECTOR *position,
+    const SVECTOR *direction, KfEffectBranchArguments arguments);
+extern KfEffectRecord *effect_pool_construct(
+    u8 id, u8 type, KfEffectKind kind, const VECTOR *position,
+    const SVECTOR *direction, KfEffectRotationArguments arguments);
+extern KfEffectRecord *effect_pool_construct(
+    u8 id, u8 type, KfEffectKind kind, const VECTOR *position,
+    const SVECTOR *direction, KfEffectRotationSoundArguments arguments);
+extern KfEffectRecord *effect_pool_construct(
+    u8 id, u8 type, KfEffectKind kind, const VECTOR *position,
+    const SVECTOR *direction, KfEffectDurationSoundArguments arguments);
+extern KfEffectRecord *effect_pool_construct(
+    u8 id, u8 type, KfEffectKind kind, const VECTOR *position,
+    const SVECTOR *direction, KfEffectScatterArguments arguments);
+extern KfEffectRecord *effect_pool_construct(
+    u8 id, u8 type, KfEffectKind kind, const VECTOR *position,
+    const SVECTOR *direction, KfEffectSoundArguments arguments);
+extern KfEffectRecord *effect_pool_construct(
+    u8 id, u8 type, KfEffectKind kind, const VECTOR *position,
+    const SVECTOR *direction, KfEffectHomingArguments arguments);
+extern KfEffectRecord *effect_pool_construct(
+    u8 id, u8 type, KfEffectKind kind, const VECTOR *position,
+    const SVECTOR *direction, KfEffectParentArguments arguments);
+#else
 extern KfEffectRecord *effect_pool_construct(
     u8 id, u8 type, KfEffectKind kind, const VECTOR *position,
     const SVECTOR *direction, ...);
+#endif
 extern KfEffectRecord *effect_pool_spawn_typed(
     u16 first_segment, u16 segment_count, u16 progress_per_update, u16 cell_stagger,
     s32 sweep_updates, s32 hold_countdown);

@@ -436,7 +436,7 @@ void map_object_pool_update(void)
                     KF_EFFECT_KIND_MAP_EMITTER_PROJECTILE,
                     &object->position,
                     &direction,
-                    &object->rotation.vector);
+                    KF_EFFECT_ARGS_ROTATION(&object->rotation.vector));
                 object->action_timer = KF_ENUM_DECODE(KfMapObjectProgress, (rand() >> MAP_EMITTER_COUNTDOWN_RANDOM_SHIFT) + MAP_EMITTER_COUNTDOWN_BASE);
                 break;
             case KF_MAP_OBJECT_FIRE_BALL_EMITTER:
@@ -452,7 +452,7 @@ void map_object_pool_update(void)
                     KF_EFFECT_KIND_FIRE_BALL,
                     &point,
                     &direction,
-                    &object->rotation.vector);
+                    KF_EFFECT_ARGS_ROTATION(&object->rotation.vector));
                 object->action_timer = KF_ENUM_DECODE(KfMapObjectProgress, (rand() >> MAP_EMITTER_COUNTDOWN_RANDOM_SHIFT) + MAP_EMITTER_COUNTDOWN_BASE);
                 break;
             case KF_MAP_OBJECT_WIND_CUTTER_EMITTER:
@@ -468,8 +468,7 @@ void map_object_pool_update(void)
                     KF_EFFECT_KIND_WIND_CUTTER,
                     &point,
                     &direction,
-                    &object->rotation.vector,
-                    1);
+                    KF_EFFECT_ARGS_ROTATION_SOUND(&object->rotation.vector, KF_EFFECT_SOUND_PLAY));
                 object->action_timer = KF_ENUM_DECODE(KfMapObjectProgress, (rand() >> MAP_EMITTER_COUNTDOWN_RANDOM_SHIFT) + MAP_EMITTER_COUNTDOWN_BASE);
                 break;
             case KF_MAP_OBJECT_BOSS_PROJECTILE_EMITTER:
@@ -496,8 +495,7 @@ void map_object_pool_update(void)
                     KF_EFFECT_KIND_WIND_CUTTER,
                     &point,
                     &direction,
-                    &object->rotation.vector,
-                    rand() < MAP_BOSS_EMITTER_SOUND_RANDOM_LIMIT);
+                    KF_EFFECT_ARGS_ROTATION_SOUND(&object->rotation.vector, effect_sound_request(rand() < MAP_BOSS_EMITTER_SOUND_RANDOM_LIMIT)));
                 object->action_timer = KF_ENUM_DECODE(KfMapObjectProgress, (rand() >> MAP_EMITTER_COUNTDOWN_RANDOM_SHIFT) + MAP_BOSS_EMITTER_COUNTDOWN_BASE);
                 break;
             }

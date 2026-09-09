@@ -1,4 +1,5 @@
 #include <kf/address.h>
+#define KF_EFFECT_POOL_IMPLEMENTATION
 #include <kf/game_effect.h>
 #include <kf/game.h>
 
@@ -87,7 +88,7 @@ KfEffectRecord *effect_pool_construct(
             record->rotation.vector.vx = EFFECT_WIND_CUTTER_PITCH;
             record->rotation.vector.vy = 0;
             record->rotation.vector.vz = 0;
-            if (va[2] != 0) {
+            if (KF_ENUM_DECODE(KfEffectSoundRequest, va[2]) != KF_EFFECT_SOUND_SILENT) {
                 audio_play_spatial_default_range(&magic->sounds[0],
                                                  &record->position, KF_AUDIO_MAX_VOLUME);
             }
@@ -106,7 +107,7 @@ KfEffectRecord *effect_pool_construct(
             record->rotation.vector.vy = 0;
             record->rotation.vector.vz = 0;
             record->control.frames_remaining = *(u16 *)(va + 1);
-            if (va[2] != 0) {
+            if (KF_ENUM_DECODE(KfEffectSoundRequest, va[2]) != KF_EFFECT_SOUND_SILENT) {
                 audio_play_spatial_range(
                     &magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_LIGHTNING_BOLT)].sounds[0],
                     &record->position, KF_AUDIO_MAX_VOLUME,
@@ -255,7 +256,7 @@ KfEffectRecord *effect_pool_construct(
             record->render_id = KF_EFFECT_MODEL_LIGHT_NEEDLE;
             record->rotation.vector = *(const SVECTOR *)va[1];
             record->rotation.vector.vx = -record->rotation.vector.vx;
-            if (va[2] != 0) {
+            if (KF_ENUM_DECODE(KfEffectSoundRequest, va[2]) != KF_EFFECT_SOUND_SILENT) {
                 audio_play_spatial_default_range(&magic->sounds[0],
                                                  &record->position, KF_AUDIO_MAX_VOLUME);
             }
@@ -266,7 +267,7 @@ KfEffectRecord *effect_pool_construct(
             record->render_id = KF_EFFECT_MODEL_PHYSICAL_PROJECTILE;
             record->rotation.vector = *(const SVECTOR *)va[1];
             record->rotation.vector.vx = -record->rotation.vector.vx;
-            if (va[2] != 0) {
+            if (KF_ENUM_DECODE(KfEffectSoundRequest, va[2]) != KF_EFFECT_SOUND_SILENT) {
                 audio_play_spatial_default_range(&magic->sounds[0],
                                                  &record->position, KF_AUDIO_MAX_VOLUME);
             }
@@ -340,7 +341,7 @@ KfEffectRecord *effect_pool_construct(
             record->render_id = KF_EFFECT_MODEL_RADIAL_BLAST_ALTERNATE;
             record->kind = KF_EFFECT_KIND_RADIAL_BLAST;
             record->animation_clip = KF_ANIMATION_CLIP_FIRST;
-            if (va[1] != 0) {
+            if (KF_ENUM_DECODE(KfEffectSoundRequest, va[1]) != KF_EFFECT_SOUND_SILENT) {
                 audio_play_spatial_range(
                     &magic_records[KF_ENUM_ENCODE(u8, KF_EFFECT_KIND_RADIAL_BLAST)].sounds[0],
                     &record->position, KF_AUDIO_MAX_VOLUME,
@@ -352,7 +353,7 @@ KfEffectRecord *effect_pool_construct(
             record->base_render_id = KF_EFFECT_MODEL_RADIAL_BLAST;
             record->render_id = KF_EFFECT_MODEL_RADIAL_BLAST;
             record->animation_clip = KF_ANIMATION_CLIP_FIRST;
-            if (va[1] != 0) {
+            if (KF_ENUM_DECODE(KfEffectSoundRequest, va[1]) != KF_EFFECT_SOUND_SILENT) {
                 audio_play_spatial_range(
                     &magic_records[KF_ENUM_ENCODE(u8, KF_EFFECT_KIND_RADIAL_BLAST)].sounds[0],
                     &record->position, KF_AUDIO_MAX_VOLUME,
@@ -371,7 +372,7 @@ KfEffectRecord *effect_pool_construct(
             record->direction.vector = record->rotation.vector;
             record->scale_y = KF_FIXED12_ONE / 2;
             record->scale_x = KF_FIXED12_ONE / 2;
-            if (va[3] != 0) {
+            if (KF_ENUM_DECODE(KfEffectSoundRequest, va[3]) != KF_EFFECT_SOUND_SILENT) {
                 audio_play_spatial_default_range(
                     &magic_records[KF_ENUM_ENCODE(u8, KF_EFFECT_KIND_HOMING_PROJECTILE)].sounds[0],
                     &record->position, KF_AUDIO_MAX_VOLUME);
@@ -387,7 +388,7 @@ KfEffectRecord *effect_pool_construct(
             record->direction.vector = record->rotation.vector;
             record->scale_y = KF_FIXED12_ONE / 2;
             record->scale_x = KF_FIXED12_ONE / 2;
-            if (va[3] != 0) {
+            if (KF_ENUM_DECODE(KfEffectSoundRequest, va[3]) != KF_EFFECT_SOUND_SILENT) {
                 audio_play_spatial_default_range(
                     &magic_records[KF_ENUM_ENCODE(u8, KF_EFFECT_KIND_HOMING_PROJECTILE)].sounds[0],
                     &record->position, KF_AUDIO_MAX_VOLUME);

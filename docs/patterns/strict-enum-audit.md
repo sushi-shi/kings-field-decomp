@@ -56,7 +56,7 @@ The audit covers all 484 source-owned functions in 112 source/image variants
 and the remaining project headers/local aggregate definitions. The vendored
 controller front ends are compatibility controls, not new game progress.
 
-The campaign adds 25 shared enum declarations, including two replacements for
+The campaign adds 26 shared enum declarations, including two replacements for
 narrower duplicated domains. It changes 28 curated function signatures and 22
 existing field declarations, and adds two typed views of the existing map-grid
 layout. No addresses, extents, image ownership or relocation targets change.
@@ -94,9 +94,10 @@ return truth values; SDK results and callback signatures retain their actual
 API types. Generic menu-root/list results combine row/item payloads with signed
 control values; conversion to a narrower caller domain is explicit.
 
-Unknown fields remain explicitly opaque. Actor action parameters and the
-variadic effect constructor have kind-dependent numeric/pointer payloads;
-there is no invented enum for an unresolved payload. Encoded placement model
+Unknown fields remain explicitly opaque. Actor action parameters retain
+kind-dependent numeric/pointer payloads; there is no invented enum for an
+unresolved payload. The effect constructor uses eight typed checking argument
+groups for its resolved variadic layouts, as recorded below. Encoded placement model
 IDs that are interpreted differently by GAME and OPEN stay at the resource
 boundary. No raw integer assignment operator was added to the enum storage
 wrapper.
@@ -160,9 +161,62 @@ incomplete known-reference data ownership and data-section comparison; GAME
 and OPEN also have existing target-relink/section-placement mismatches. No
 banked function regresses. This is not a successful full-build closure.
 
-`ruff check scripts tests` and `git diff --check` pass. The existing local
-suite completed with 712 passing tests, nine skips and one obsolete sprite
-field expectation; after correcting that expectation, all four tests in its
-module pass. The final `nix flake check -L` passes, including the full hermetic
-suite (722 tests, 139 environment-dependent skips). No new tests or banking
-entries were introduced.
+`ruff check scripts tests` and `git diff --check` pass. The final existing local
+suite passes: 713 tests, nine skips and 9,173 subtests. The full hermetic flake
+suite also passes (722 tests, 139 environment-dependent skips). No new tests
+or banking entries were introduced.
+
+## Follow-up Function Match Plan: variadic enum arguments
+
+The completion audit found that `effect_pool_construct` still exposed its
+ellipsis to strict callers. Its sixth argument is a ground-branch enum for
+kind 6; its seventh argument is a homing selector for kinds 20/24. The existing
+enum decodes in the body correctly describe the retail argument slots but did
+not constrain callers. The sound-request slots likewise represent a finite
+choice. This contradicts complete argument propagation.
+
+The follow-up keeps the original symbol and retail variadic call sequence.
+Strict callers construct typed argument groups; retail macros expand those
+groups to the original argument expressions. The implementation alone sees
+its raw ellipsis declaration. Ground-branch role, homing target and sound
+request remain enums in the checking groups; duration, scale, generation and
+parent indexes remain numeric. Inspect all 33 callers and the constructor's
+kind switch against the existing GAME dossiers, then rebuild all affected
+units and require the original object/relocation comparison to remain equal.
+No new functions, tests, addresses or banking entries are planned.
+
+### Variadic follow-up verdict
+
+All 33 effect-constructor call sites were inspected. Eight checking argument
+groups cover their tails; the seven calls without optional arguments use the
+fixed five-argument overload. No strict caller sees the ellipsis. The pool
+implementation retains the raw declaration because its body reads the original
+argument homes, decoding sound-request words into the same domain used by
+callers. `KfEffectGroundBranchRole`, `KfEffectHomingMode` and the new
+`KfEffectSoundRequest` constrain the appropriate group members; integers and
+foreign enums cannot initialize those members implicitly. Numeric tail fields
+remain numbers. The eight C++ checking classes have no retail layout claims.
+
+The player weapon burst's word-sized attachment selector now retains the
+homing domain through the local and argument group. Its actor-index and parity
+calculations are explicit encoding boundaries. Some selected effect kinds
+ignore tail slots or interpret the selector's 0/1 parity as a sound gate; the
+original ordered argument expressions remain intact. The groups check member
+types, not the runtime relationship between a kind value and its payload.
+
+The final strict check passes 112/112 source/image variants. The full rebuild
+again compares all 116 preserved objects identically, covering all 484
+functions; the pre-existing full-build verification failures are unchanged.
+No new tests, target functions, data claims, or banking entries were added.
+
+## Requirement completion audit
+
+| Requirement | Current source evidence and result |
+| --- | --- |
+| Closed fields declare enum domains | The 125 target aggregates and 854 inventory fields agree with the checked header layouts. The audit table above records the changed field families and the uses that distinguish remaining numeric, packed and opaque storage. The additional checking argument groups also declare their enum members directly. |
+| Assignment accepts only the same enum type | `KF_ENUM_BEGIN` expands to `enum class`; `KfEnumStorage` has an enum-typed constructor and assignment operator, with private integer storage. Neither accepts integers or foreign enum domains implicitly. `KfActor.action_progress` directly declares `KfActorActionProgress`. |
+| Invalid assignments fail statically | `kf check-types` selects every manifest C source/image variant, uses `-x c++ -std=gnu++20 -fsyntax-only`, and fails on compiler errors. There is no permissive enum mode or integer assignment overload. This is a language-level constraint rather than a runtime assertion. |
+| Audit every structure/field/function/parameter without new tests | All 484 function dossiers, 854 target field records, header declarations, local structures and 33 effect-constructor call sites were inspected. Existing inventory expectations were updated; no new test cases were added. |
+| Function arguments retain their enum domains | Public enum parameters use their domain or `KF_ENUM_PARAM`; mixed menu calls expose typed overloads. Resolved variadic effect tails now expose typed groups rather than an ellipsis. Serialized/ABI decoding remains explicit inside the owners. |
+| Consolidation and sibling comparison | Actor progress and effect phases each have one owner domain; animation and magic domains span all consumers. The local Gruntz and HoMM2 headers were inspected; their integer-accepting storage assignment operators were deliberately not adopted. |
+| Preserve matching and isolation | The dedicated worktree retains 116 byte-identical objects and ordered relocations, with 446/471 exact game functions and 13/13 vendored controls. Existing full-build failures are documented above. The primary worktree is not modified by this campaign. |

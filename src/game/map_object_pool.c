@@ -255,7 +255,7 @@ void map_object_pool_load(const KfMapObjectPlacement *placements)
                                                     KF_EFFECT_KIND_SWINGING_HAZARD_SHORT,
                                                     &object->position,
                                                     &effect_direction,
-                                                    &object->rotation.vector)
+                                                    KF_EFFECT_ARGS_ROTATION(&object->rotation.vector))
                     - effect_pool_records;
                 map_object_start_action_if_idle(object, KF_MAP_OBJECT_ACTION_RELEASE_ORBIT_OR_SHORT_SWING);
                 break;
@@ -266,7 +266,7 @@ void map_object_pool_load(const KfMapObjectPlacement *placements)
                                                     KF_EFFECT_KIND_SWINGING_HAZARD_LONG,
                                                     &object->position,
                                                     &effect_direction,
-                                                    &object->rotation.vector)
+                                                    KF_EFFECT_ARGS_ROTATION(&object->rotation.vector))
                     - effect_pool_records;
                 map_object_start_action_if_idle(object, KF_MAP_OBJECT_ACTION_RELEASE_LONG_SWING);
                 break;
@@ -274,7 +274,7 @@ void map_object_pool_load(const KfMapObjectPlacement *placements)
                 object->link.fields.action_parameter =
                     effect_pool_construct(
                         0, KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER, KF_EFFECT_KIND_MAP_SWITCH, &object->position,
-                        &effect_direction, &object->rotation.vector)
+                        &effect_direction, KF_EFFECT_ARGS_ROTATION(&object->rotation.vector))
                     - effect_pool_records;
                 map_object_start_action_if_idle(object, KF_MAP_OBJECT_ACTION_EFFECT_SWITCH);
                 break;

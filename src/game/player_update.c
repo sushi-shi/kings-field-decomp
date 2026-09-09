@@ -105,7 +105,7 @@ void player_update(void)
     u16 phase;
     s32 cost;
     KF_ENUM_PARAM(KfEffectKind, s32) effect;
-    s32 attachment;
+    KF_ENUM_PARAM(KfEffectHomingMode, s32) attachment;
     KfMagicRecord *record;
     KfActor *target;
     const VECTOR *origin;
@@ -451,7 +451,8 @@ void player_update(void)
                             - (rand() >> PLAYER_WEAPON_MAGIC_RANDOM_SHIFT);
                         effect_rotation.angles.y -= PLAYER_WEAPON_MAGIC_JITTER_BIAS
                             - (rand() >> PLAYER_WEAPON_MAGIC_RANDOM_SHIFT);
-                        attachment = player_state.weapon_magic_shots_remaining & 1;
+                        attachment = KF_ENUM_DECODE(KF_ENUM_PARAM(KfEffectHomingMode, s32),
+                            player_state.weapon_magic_shots_remaining & 1);
                     } else {
                         target = actor_pool_find_target_in_cone(
                             &player_state.camera_position,
@@ -459,16 +460,17 @@ void player_update(void)
                             PLAYER_WEAPON_MAGIC_TARGET_CONE, &distance);
                         actor_state.player_target = target;
                         if (target == 0) {
-                            attachment = KF_ENUM_ENCODE(s32, KF_EFFECT_HOMING_WANDER);
+                            attachment = KF_EFFECT_HOMING_WANDER;
                         } else {
-                            attachment = target - actor_state.actors;
+                            attachment = KF_ENUM_DECODE(KF_ENUM_PARAM(KfEffectHomingMode, s32),
+                                target - actor_state.actors);
                         }
                     }
                     pitch_yaw_to_forward_vector(&effect_rotation.angles, &direction);
                     vector3s_scale_shift12(PLAYER_WEAPON_MAGIC_SPEED, &direction);
                     effect_pool_construct(
                         10, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS, effect,
-                        &position, &direction, &player_state.camera_rotation, attachment, 1);
+                        &position, &direction, KF_EFFECT_ARGS_HOMING(&player_state.camera_rotation, attachment, KF_EFFECT_SOUND_PLAY));
                     if (effect == KF_EFFECT_KIND_HOMING_PROJECTILE) {
                         position.vy += PLAYER_TRIPLE_FANG_Y_OFFSET;
                         effect_rotation.angles.y = player_state.camera_rotation.vy;
@@ -476,14 +478,12 @@ void player_update(void)
                         effect_rotation.angles.x = player_state.camera_rotation.vx + PLAYER_TRIPLE_FANG_PITCH_OFFSET;
                         effect_pool_construct(
                             10, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS,
-                            KF_EFFECT_KIND_HOMING_PROJECTILE, &position, &direction, &effect_rotation.vector, attachment,
-                            0);
+                            KF_EFFECT_KIND_HOMING_PROJECTILE, &position, &direction, KF_EFFECT_ARGS_HOMING(&effect_rotation.vector, attachment, KF_EFFECT_SOUND_SILENT));
                         effect_rotation.angles.x -= 2 * PLAYER_TRIPLE_FANG_PITCH_OFFSET;
                         position.vy -= 2 * PLAYER_TRIPLE_FANG_Y_OFFSET;
                         effect_pool_construct(
                             10, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS,
-                            KF_EFFECT_KIND_HOMING_PROJECTILE, &position, &direction, &effect_rotation.vector, attachment,
-                            0);
+                            KF_EFFECT_KIND_HOMING_PROJECTILE, &position, &direction, KF_EFFECT_ARGS_HOMING(&effect_rotation.vector, attachment, KF_EFFECT_SOUND_SILENT));
                     }
                 }
                 player_state.weapon_magic_shots_remaining--;

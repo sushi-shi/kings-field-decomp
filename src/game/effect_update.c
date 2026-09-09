@@ -262,7 +262,7 @@ void effect_spawn_ground_trail(u8 id, KfEffectRecord *record, s16 angle, s32 dis
     position.vx += record->position.vx;
     position.vz += record->position.vz;
     effect_pool_construct(id, record->type, KF_EFFECT_KIND_GROUND_TRAIL, &position,
-        &record->direction.vector, index);
+        &record->direction.vector, KF_EFFECT_ARGS_PARENT(index));
 }
 
 ADDRESS(0x800388b4, 0x184)
@@ -279,5 +279,5 @@ void effect_spawn_ground_branch(u8 id, KfEffectRecord *record, s16 angle_offset,
     cell_x = position.vx / KF_MAP_TILE_SIZE;
     position.vy = -(map_floor_height_grid.cells[cell_z][cell_x] * KF_MAP_HEIGHT_STEP);
     effect_pool_construct(id, record->type, KF_EFFECT_KIND_GROUND_BRANCH, &position,
-        &record->direction.vector, KF_ENUM_ENCODE(s32, branch_role));
+        &record->direction.vector, KF_EFFECT_ARGS_BRANCH(branch_role));
 }

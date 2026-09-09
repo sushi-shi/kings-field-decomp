@@ -356,7 +356,7 @@ void map_floor5_transition_cutscene(void)
                     spawn.vy -= MAP_WEAPON_TRANSFORM_BLAST_HEIGHT;
                     effect_pool_construct(
                         0, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
-                        KF_EFFECT_KIND_RADIAL_BLAST, &spawn, &direction, 1);
+                        KF_EFFECT_KIND_RADIAL_BLAST, &spawn, &direction, KF_EFFECT_ARGS_SOUND(KF_EFFECT_SOUND_PLAY));
                     effect->object_id = KF_MAP_OBJECT_MOONLIGHT_SWORD;
                 }
             } else if (spin < MAP_WEAPON_TRANSFORM_MAX_YAW_STEP) {
