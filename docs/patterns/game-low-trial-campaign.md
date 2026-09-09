@@ -373,3 +373,61 @@ or bank promotion is made for this correction.
 
 Ruff, all 722 repository tests (106.776 seconds), and whitespace checks pass
 for the retained player correction and preceding map/menu experiments.
+
+## Player status: shared cancellation/expiry blocks
+
+Function Match Plan at `9e5985ab`: GAME `80018880`, 6684 retail bytes,
+6632 source bytes / 96.954520%. The complete raw comparison after the magic
+correction preserves 66 calls and 204 source address pairs against retail's
+210. The established void interface, sole caller, typed player object, SDK
+boundaries and prior six-view evidence remain applicable. Current source,
+history and the complete slowed/poison/curse retail slices were reread.
+
+Retail cancellation jumps to common flag-clearing blocks at `8001a064`,
+`8001a0cc` and `8001a180`. Current C duplicates those clears in cancellation
+and expiry arms, and compiled code reuses the earlier flag value rather than
+retail's fresh address/load. Test explicit shared labels independently for
+these three existing operations, then together. Preserve all timer writes,
+poison remainder width, curse recalculation, call order and defined paths.
+This is a control-flow hypothesis, not a request to force a reload or pad
+frames; reject it if it fails to explain the observed retail structure.
+
+All five states compile. Individual slowed/poison/curse shared blocks reach
+97.308200%, 97.302216% and 97.401560%; together they reach 98.102936%
+(6688 bytes, 216-byte frame). The complete three-status region is now equal
+in all 108 instructions when internal jump targets are expressed relative
+to its start. Keep all three shared blocks. Independent objects preserve
+all 66 calls and restore the six missing address pairs (210 total); earlier
+weapon-spawn address ordering still differs from retail. A focused regression
+control recompiles the whole source and compares the full status region,
+including loads, calls, branch displacements and delay slots. It passes this
+source and rejects the previous source.
+
+On this retained source, test darkness fade as a promoted signed-word value
+whose two arithmetic results explicitly pass through the evidenced signed
+halfword conversion. Retail sign-extends both differences before the sign
+branches at `8001999c` and `800199b4`, then shifts the resulting word for both
+lighting calls. The current signed-halfword local keeps a separate unextended
+value across those branches and combines extension with the eventual shift.
+Keep both conversions, formulas, branches and API arguments; do not widen
+away the halfword semantics or alter the fixed-point scale.
+
+The promoted halfword fade reaches 98.470980% without changing size or frame.
+Independent compilation confirms that the full 66-instruction darkness
+region now equals retail after resolving named relocations and expressing
+internal jumps relative to the region start. The regression control covers
+this region alongside the 108 slowed/poison/curse instructions. Keep the
+explicit signed-halfword results in the promoted local. All 66 calls remain;
+210 address pairs remain, with only earlier weapon-spawn ordering unresolved.
+The first raw difference is still the frame prologue, followed by the
+weapon-spawn local layout and instruction ordering. No compiler attribution
+or exact claim follows from these partial improvements.
+
+Generated evidence is under `build/hypotheses/low-trial-player-{status,fade}`,
+`build/low-trial-player-{status,fade}-objects`, and the corresponding audit
+scripts and residue reports. Canonical focused match and full build retain
+339/362 GAME exact functions at 99.694% aggregate. Existing data/placement
+failures remain (12/42 GAME data owners; zero artifact failures).
+
+Final combined verification: Ruff and all 723 repository tests pass
+(115.411 seconds), as does `git diff --check`. No partial result is banked.
