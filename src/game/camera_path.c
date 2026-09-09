@@ -71,12 +71,8 @@ void camera_path_step(KfCameraPathState *path, s32 y_offset)
             return;
         }
     }
-    path->position_fixed.vx += path->position_delta.vx;
-    path->position_fixed.vy += path->position_delta.vy;
-    path->position_fixed.vz += path->position_delta.vz;
-    path->rotation_fixed.vx += path->rotation_delta.vx;
-    path->rotation_fixed.vy += path->rotation_delta.vy;
-    path->rotation_fixed.vz += path->rotation_delta.vz;
+    addVector(&path->position_fixed, &path->position_delta);
+    addVector(&path->rotation_fixed, &path->rotation_delta);
     setVector(&path->position,
         path->position_fixed.vx >> KF_FIXED4_BITS,
         (path->position_fixed.vy >> KF_FIXED4_BITS) + y_offset,
