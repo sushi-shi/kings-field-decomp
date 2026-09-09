@@ -123,6 +123,57 @@ The measured cases constrain that work but do not establish the full original
 allocator or assembler. Until it exists, COMMON must remain a visible failure,
 not omitted storage. Existing PAD placement conflicts remain unresolved.
 
+## Follow-up: the native symbol hash
+
+The OPEN twenty-owner campaign added independent symbol-name controls and
+inspected the same hash-pinned PSYLINK executable. Its MZ header is 512 bytes;
+the offsets below refer to the executable file, not a game-image address.
+
+At file `0x1451`, the symbol lookup routine saves the length-prefixed name
+pointer, reads the length byte, clears AH and initializes both CX and DX with
+that length. With case sensitivity disabled, `0x1464..0x146c` translates each
+character through a case-fold table, adds the byte to DX and replaces it in
+the name. With case sensitivity enabled, `0x1470..0x1473` adds the original
+bytes. At `0x1478` it masks DX with `0x1ff`, doubles the index, and reads the
+bucket head. Thus its hash includes the length byte:
+
+```text
+bucket = (name_length + sum(normalized_name_bytes)) & 511
+```
+
+The routine compares the stored length and all name bytes within a collision
+chain. At `0x14bc..0x14ea`, insertion calls that lookup; a new symbol becomes
+the bucket head and links to the previous head. An existing symbol is reused.
+The exported-allocation pass at file `0x189b..0x19c1` traverses all 512 buckets
+in increasing order and follows each symbol's next link. Entries with flag
+`0x40` allocate their requested extent, advance the section contribution,
+receive the previous section offset and become ordinary defined symbols.
+The allocation loop uses the symbol table order, not C declaration order.
+
+Four additional full-CPE cases in `tests/psylink_bss_smoke.py` preserve
+observed placement tables independently of this formula. Nineteen varied
+names are checked with and without `/c`; 179 longer names cross hash wraps.
+Their complete CPE records, labels, request extents and EOF are verified.
+The fourth case introduces an XREF to `BA` before the unchanged `AB`/`BA`
+XBSS declarations. It changes their allocated order: the earlier reference
+creates the symbol first, and its later allocation declaration reuses that
+entry. All 22 cases pass, including the original private-reservation,
+cross-input coalescing and collision controls.
+
+A simpler sum-only hypothesis was falsified by `PadIdentifier`: in the
+case-sensitive control it precedes `abc`, although its character sum is
+larger. Including the length predicts the observed order and agrees with
+the decoded routine. A separate earlier `and bx,0x1ff` occurrence belongs
+to sector-size arithmetic, not the symbol hash; it is not evidence for the
+allocator.
+
+This does not establish original game symbol spellings. The current source
+identities are curated names; changing them changes native placement. A
+future COMMON contract must preserve all requests and actual symbol-interning
+order and test the complete allocation against retail evidence. These
+controls do not authorize scattering symbols to their desired addresses or
+counting equal unallocated requests as a completed data-owner match.
+
 ## Reproduction
 
 In `nix develop`, set `PSYLINK_DOSBOX` to the flake's DOSBox-X and run:
