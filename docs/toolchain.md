@@ -70,8 +70,7 @@ and load hoisting; see
 The Release 2.5 GCC 2.4.1 frontend is a raw DJGPP v1 COFF image that needs a
 `GO32` extender the media does not include, so it has not been executed.
 
-The initializer keeps the useful verification half of the Gruntz project
-pattern, without its derived release archive:
+The initializer verifies and stages the original media directly:
 
 1. `flake.nix` fetches original media by immutable SHA-256 and supplies all
    extraction tools.
@@ -83,10 +82,7 @@ pattern, without its derived release archive:
 
 The two historical source files total 6.3 MiB and the staged output is 7.7 MiB.
 The optional native GCC 2.6.0 probe adds a 3.18 MiB compressed fixed-output
-archive. Gruntz's
-separate release artifact avoided repeatedly fetching much larger Visual
-Studio, service-pack, and DirectX media; that indirection has no useful payoff
-at this size.
+archive.
 
 No generated SDK binary, retail game image, or executable belongs in Git.
 

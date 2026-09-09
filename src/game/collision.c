@@ -43,6 +43,9 @@ s16 map_cell_attribute_height_table[KF_MAP_ATTRIBUTE_COUNT] = {
     0, 0, 0, 0, 0, 0, -25000,
 };
 
+DATA(0x800a01d0, 0x20)
+KfCollisionTarget collision_target;
+
 /*
  * World-space probe used by movement and interaction. Cells are 2000 units
  * wide and the grids are indexed by the flat cell number. Bits of `flags`:

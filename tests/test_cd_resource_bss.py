@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+from dataclasses import replace
 from pathlib import Path
 import re
 import unittest
@@ -36,13 +37,18 @@ class CdResourceBssTests(unittest.TestCase):
         for module in load().modules():
             if module.unit not in expected:
                 continue
-            claims = [d for d in module.data if d.storage == 'bss']
+            reviewed = {va for va, _name, _scope in expected[module.unit]}
+            claims = [d for d in module.data if d.va in reviewed]
             self.assertEqual([(d.va, d.symbol, d.scope) for d in claims], expected[module.unit])
             for datum in claims:
                 row = census[module.image, datum.va]
                 self.assertEqual((datum.size, int(row['size'], 0), row['kind']), (4, 4, 'bss'))
                 self.assertEqual(row['confidence'], 'reviewed')
             blobs = {d.va: (bytes(d.size), []) for d in module.data if d.storage == 'load'}
+            # Keep this four-word storage control scoped to its reviewed
+            # parameters/pointers as the production module gains other BSS.
+            module = replace(module, data=tuple(d for d in module.data
+                                               if d.storage == 'load' or d.va in reviewed))
             # This storage-only fixture supplies explicit synthetic payloads,
             # including gaps. Actual initialized bytes are checked separately.
             data, symbols, _relocs, bss_size, bss_symbols = _module_data(

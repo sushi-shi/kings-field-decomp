@@ -100,11 +100,12 @@ class GameItemStockDataTests(unittest.TestCase):
                 symbols = elf.get_section_by_name('.symtab').get_symbol_by_name('item_stock')
                 self.assertEqual(len(symbols or ()), 1)
                 symbol = symbols[0]
-                self.assertEqual((symbol['st_size'], symbol['st_value'], symbol['st_info']['bind']),
-                                 (240, 0, 'STB_GLOBAL'))
+                self.assertEqual((symbol['st_size'], symbol['st_info']['bind']),
+                                 (240, 'STB_GLOBAL'))
                 section = elf.get_section(symbol['st_shndx'])
                 self.assertEqual((section.name, section['sh_type'], section['sh_size']),
-                                 ('.bss', 'SHT_NOBITS', 240))
+                                 ('.bss', 'SHT_NOBITS', 280))
+                self.assertLessEqual(symbol['st_value'] + symbol['st_size'], section['sh_size'])
         metadata = json.loads((BUILD / 'objdiff/game/base' / f'{unit.object_name}.json').read_text())
         self.assertEqual(metadata['data_symbol_sizes']['method'], 'pinned-compiler-sizeof-probe')
         self.assertEqual(metadata['data_symbol_sizes']['sizes']['item_stock'], 240)
@@ -112,7 +113,9 @@ class GameItemStockDataTests(unittest.TestCase):
     def test_equal_bss_extent_does_not_waive_real_source_alignment(self):
         unit, paths = self.built_pair()
         target, source = [Elf(path) for path in paths]
-        self.assertEqual(_diff_bss(target, source).status, 'match')
+        # The two newly owned death snapshots expose a different tentative
+        # allocation order; equal section lengths must not hide that failure.
+        self.assertEqual(_diff_bss(target, source).status, 'layout')
         with paths[1].open('rb') as stream:
             section = ELFFile(stream).get_section_by_name('.bss')
             self.assertEqual(section['sh_addralign'], 16)
@@ -120,8 +123,8 @@ class GameItemStockDataTests(unittest.TestCase):
         result = diff_unit(unit, BUILD / 'delink', BUILD / 'objdiff')
         self.assertFalse(result.matches)
         bss = next(diff for diff in result.diffs if diff.name == '.bss')
-        self.assertEqual(bss.status, 'placement')
-        self.assertIn('invalid-section-placement', bss.detail)
+        self.assertEqual(bss.status, 'layout')
+        self.assertIn('conflicting-section-bases', bss.detail)
 
     def test_all_64_reviewed_pairs_keep_owner_and_interior_addends(self):
         image, ctx, catalog = self.retail(), Context('GAME.EXE'), load_catalog(RETAIL_CONFIG)

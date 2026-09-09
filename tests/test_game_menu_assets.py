@@ -123,7 +123,8 @@ class GameMenuAssetsTests(unittest.TestCase):
         function = 'menu_list_init'
         path = self.object('game.menu_runtime')
         programs = (RetailProgram.link(symbols, [function]),
-                    CandidateProgram.link(symbols, [CandidateFunction(function, path)]))
+                    CandidateProgram.link(symbols, [CandidateFunction(function, path)],
+                                          bind_data_objects=True))
         window_bank = bytearray(2376)
         for window in range(9):
             for row in range(10):
@@ -230,7 +231,8 @@ class GameMenuAssetsTests(unittest.TestCase):
             hooks = [ExternalHook(name, service) for name in
                      ('cd_file_load_allocated', 'memset', 'exit', 'memory_release_last', 'CdSearchFile')]
             programs = (RetailProgram.link(symbols, [function], hooks=hooks),
-                        CandidateProgram.link(symbols, [CandidateFunction(function, path)], hooks=hooks))
+                        CandidateProgram.link(symbols, [CandidateFunction(function, path)], hooks=hooks,
+                                              bind_data_objects=True))
             regions = [MemoryRange(f'bank{i}', va, size) for i, (va, size) in enumerate(BANKS)]
             gap = MemoryRange('gap', 0x800594B4, 4)
             for program in programs:
@@ -285,7 +287,8 @@ class GameMenuAssetsTests(unittest.TestCase):
                     names += (*passive, 'menu_draw_string')
                 hooks = [ExternalHook(name, service) for name in names]
                 programs = (RetailProgram.link(symbols, [function], hooks=hooks),
-                            CandidateProgram.link(symbols, [CandidateFunction(function, path)], hooks=hooks))
+                            CandidateProgram.link(symbols, [CandidateFunction(function, path)], hooks=hooks,
+                                                  bind_data_objects=True))
                 packet_range = MemoryRange('packets', PACKETS, 160)
                 pointer_range = MemoryRange('current', current, 4)
                 spin_range = MemoryRange('spin', 0x80057B72, 2)

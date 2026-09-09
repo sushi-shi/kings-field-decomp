@@ -376,7 +376,7 @@ typedef struct KfActorState {
 
 extern KfActorActionProfile actor_action_profiles[KF_ACTOR_ACTION_PROFILE_COUNT];
 extern KfActorState actor_state;
-extern const SoundRef boss_death_loop_sound;
+extern SoundRef boss_death_loop_sound;
 extern SoundRef boss_death_phase_sounds[KF_ACTOR_BOSS_DEATH_SOUND_COUNT];
 
 extern s32 actor_animation_crossed_phase(const KfActor *actor, u16 phase);

@@ -44,6 +44,45 @@ enum {
 #define MAP_FIRE_BALL_EMITTER_VELOCITY_NUMERATOR 25u
 #define MAP_BOSS_EMITTER_VELOCITY_NUMERATOR 225u
 
+DATA(0x80056188, 0x3)
+SoundRef gameplay_sound_ref_0 = {9, 0, 72};
+
+DATA(0x8005618b, 0x3)
+SoundRef gameplay_sound_ref_1 = {10, 0, 77};
+
+DATA(0x8005618e, 0x3)
+SoundRef gameplay_sound_ref_2 = {11, 0, 60};
+
+DATA(0x80056191, 0x3)
+SoundRef gameplay_sound_ref_3 = {9, 0, 80};
+
+DATA(0x80056194, 0x3)
+SoundRef gameplay_sound_ref_4 = {21, 0, 48};
+
+DATA(0x80056197, 0x3)
+SoundRef gameplay_sound_ref_5 = {12, 0, 83};
+
+DATA(0x8005619a, 0x3)
+SoundRef gameplay_sound_ref_6 = {19, 4, 103};
+
+DATA(0x8005619d, 0x3)
+SoundRef gameplay_sound_ref_7 = {9, 0, 67};
+
+DATA(0x800561a0, 0x3)
+SoundRef gameplay_sound_ref_8 = {20, 0, 48};
+
+DATA(0x800561a3, 0x3)
+SoundRef gameplay_sound_ref_9 = {8, 0, 47};
+
+DATA(0x800561a6, 0x3)
+SoundRef gameplay_sound_ref_10 = {60, 0, 44};
+
+DATA(0x800561a9, 0x3)
+SoundRef gameplay_sound_ref_11 = {27, 0, 65};
+
+DATA(0x800561ac, 0x3)
+SoundRef gameplay_sound_ref_12 = {15, 0, 71};
+
 RODATA(0x80012888, 0x18c)
 
 /*

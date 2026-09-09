@@ -5,9 +5,9 @@ about which source shapes reproduce it under the current probes. Each note
 records the retail evidence first and the probe behaviour second; none of them
 promotes a probe to a proven historical toolchain.
 
-- [psx-exact-link.md](psx-exact-link.md): direct C -> ASPSX -> PSYLINK ->
-  CPE2X build using original SDK libraries; exact initialized PSX bytes and
-  unresolved header/padding differences, with no output adapters.
+- [executable-byte-provenance.md](executable-byte-provenance.md): native PSX
+  initialized bytes, CPE2X uninitialized-memory disclosure, retail header/tail
+  consumers, complete-converter and DOS controls, and the retail date window.
 - [typed-storage-cast-campaign.md](typed-storage-cast-campaign.md): shared object
   models, complete cast accounting, and verified packet/colour conversions.
 - [typed-menu-records.md](typed-menu-records.md): shared screen points, complete
@@ -270,9 +270,6 @@ promotes a probe to a proven historical toolchain.
   functions, worse where it diverges); the residue ceiling is an unattributed
   scheduling/regalloc residue, and `-mcpu=r2000` is a per-TU discriminator, not
   a global truth.
-- [psyq-cpe-tail-and-bss.md](psyq-cpe-tail-and-bss.md): the CPE v1 prefix
-  embedded at GAME's and OPEN's initialized-data tails, and why referenced storage inside
-  the final page can still be original BSS rather than initialized source data.
 - [maspsx-private-bss.md](maspsx-private-bss.md): preserving compiler-private
   tentative storage in ELF, cross-TU linker controls, and the distinction
   between linkage correction and unresolved allocation topology.

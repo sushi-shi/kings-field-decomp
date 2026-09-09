@@ -135,7 +135,8 @@ def _program(symbols: GameSymbols, function: str, candidate: bool,
              hooks: Sequence[ExternalHook]):
     if candidate:
         return CandidateProgram.link(
-            symbols, [CandidateFunction(function, SAVE_OBJECT)], hooks=hooks
+            symbols, [CandidateFunction(function, SAVE_OBJECT)], hooks=hooks,
+            bind_data_objects=True,
         )
     return RetailProgram.link(symbols, [function], hooks=hooks)
 

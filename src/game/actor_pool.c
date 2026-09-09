@@ -9,6 +9,9 @@ KF_ENUM_BEGIN(KfActorPlacementStreamState, s32)
 KF_ENUM_END(KfActorPlacementStreamState)
 
 /* Runs awareness and the current action for every occupied actor slot. */
+DATA(0x8006bd98, 0x2b48)
+KfActorState actor_state;
+
 ADDRESS(0x80030818, 0xa8)
 void actor_pool_update(void)
 {

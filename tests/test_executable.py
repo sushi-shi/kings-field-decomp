@@ -6,6 +6,7 @@ import contextlib
 import io
 import os
 from pathlib import Path
+import re
 import shutil
 import struct
 import tempfile
@@ -59,13 +60,13 @@ class ComparisonTests(unittest.TestCase):
                                                              'PSYQ_INCLUDE')),
                      'requires pinned compiler, original DOS tools and SDK libraries')
 class NativeBuildControls(unittest.TestCase):
-    def manifest(self, root: Path, sources: tuple[str, ...]) -> Manifest:
+    def manifest(self, root: Path, sources: tuple[str, ...], image: str = 'PSX.EXE') -> Manifest:
         profile = Profile('native-control', 'c', 'gcc257-native', 'O2', 0, '1.07', ('-mcpu=r2000',))
         units = []
         for index, source in enumerate(sources):
             path = root / f'source{index}.c'
             path.write_text(source)
-            units.append(Unit(f'psx.control{index}', 'PSX.EXE', str(path), profile.name, ()))
+            units.append(Unit(f'{image[:-4].lower()}.control{index}', image, str(path), profile.name, ()))
         return Manifest({profile.name: profile}, tuple(units))
 
     def test_source_objects_and_original_archives_link_without_retail_inputs(self):
@@ -96,6 +97,56 @@ class NativeBuildControls(unittest.TestCase):
             self.assertEqual(actual[2048 + end - base:], bytes(len(actual) - 2048 - end + base))
             for row in report['libraries']:
                 self.assertEqual((output / row['file']).read_bytes(), Path(row['path']).read_bytes())
+
+    def test_overlay_startup_sdk_aliases_and_bss_use_native_linker_inputs(self):
+        for image in ('OPEN.EXE', 'GAME.EXE'):
+            with self.subTest(image=image), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                source = ('unsigned char buffer[8192]; int initialized_zero = 0;\n'
+                          'extern void InitCARD2(long); extern void StartCARD2(void);\n'
+                          'extern void StopCARD2(void); extern long erase(const char *);\n'
+                          'int main(void) { buffer[4] = 7; ')
+                if image == 'GAME.EXE':
+                    source += 'InitCARD2(0); StartCARD2(); StopCARD2(); erase("bu00:test"); '
+                source += 'return buffer[2] + initialized_zero; }\n'
+                output = root / 'output'
+                manifest = self.manifest(root, (source,), image)
+                with mock.patch.object(RetailImage, 'load', side_effect=AssertionError('retail input used')):
+                    report = build_image(image, manifest, output)
+                self.assertTrue(report['linked'], report.get('error'))
+                self.assertEqual(report['startup']['source'], executable.OVERLAY_STARTUP)
+                self.assertEqual(report['retail_payload_inputs'], [])
+                actual = (output / image).read_bytes()
+                base = struct.unpack_from('<I', actual, 0x18)[0]
+                entry, loads = cpe_loads((output / (image[:-4] + '.CPE')).read_bytes())
+                sections = {name: (int(start, 16), int(size, 16)) for start, size, name in re.findall(
+                    r'(?m)^ ([0-9A-F]{8}) [0-9A-F]{8} ([0-9A-F]{8})  (\.[a-z]+)',
+                    (output / (image[:-4] + '.MAP')).read_text())}
+                offset = 2048 + entry - base
+                self.assertEqual(actual[offset - 8:offset], bytes.fromhex('0800e00300000000'))
+                high, low, jump, delay = struct.unpack_from('<4I', actual, offset)
+                self.assertEqual(high & 0xffff0000, 0x3c1c0000)
+                self.assertEqual(low & 0xffff0000, 0x279c0000)
+                signed_low = (low & 0xffff) - (0x10000 if low & 0x8000 else 0)
+                # PSYLINK omits empty sections from MAP. With these BIOS-only
+                # controls the empty .sdata anchor follows initialized data.
+                gp_base = sections.get('.sdata', (sum(sections['.data']), 0))[0]
+                self.assertEqual(((high & 0xffff) << 16) + signed_low, gp_base)
+                self.assertEqual(jump >> 26, 2)
+                self.assertEqual(((jump & 0x3ffffff) << 2) | (entry & 0xf0000000), sections['.text'][0])
+                self.assertEqual(delay, 0)
+                self.assertGreaterEqual(sections['.bss'][1], 8192)
+                self.assertTrue(all(address + len(data) <= sections['.bss'][0]
+                                    for address, data in loads))
+                self.assertLess(len(actual), 8192)
+                data_base, data_size = sections['.data']
+                self.assertGreaterEqual(data_size, 4)
+                self.assertTrue(any(address <= data_base and address + len(data) >= data_base + 4
+                                    for address, data in loads))
+                if image == 'GAME.EXE':
+                    for selector in (0x4a, 0x4b, 0x4c, 0x45):
+                        self.assertIn(struct.pack('<3I', 0x240a00b0, 0x01400008,
+                                                  0x24090000 | selector), actual[2048:])
 
     def test_unresolved_source_symbol_fails_without_fallback_or_stale_executable(self):
         with tempfile.TemporaryDirectory() as directory:

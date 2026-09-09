@@ -4,6 +4,7 @@ import unittest
 from pathlib import Path
 
 from scripts.kf.mips_elf import (
+    DATA_SECTION_SYMBOL,
     RODATA_SECTION_SYMBOL,
     SECTION_SYMBOL,
     STT_FUNC,
@@ -15,6 +16,7 @@ from scripts.kf.mips_elf import (
 from scripts.kf.parser_machine import (
     CODE_BASE,
     CandidateFunction,
+    CandidateLinkError,
     CandidateProgram,
     ExternalHook,
     GameSymbols,
@@ -328,6 +330,66 @@ class ParserMachineTest(unittest.TestCase):
         self.assertEqual(result.memory_by_name()["out"], words(11))
         self.assertEqual([item.name for item in result.trace], ["root", "helper"])
         self.assertTrue(all(item.kind == "candidate" for item in result.trace))
+
+    def test_object_binding_is_explicit_and_does_not_claim_section_placement(self) -> None:
+        code = words(0x3c020000, 0x24420000, 0x8c420000, 0x03e00008, 0)
+        blob = write_mips_elf(
+            code, 'load_second', len(code),
+            [MipsRelocation(0, 'R_MIPS_HI16', 'second'),
+             MipsRelocation(4, 'R_MIPS_LO16', 'second')],
+            data=words(11, 0xdeadbeef, 99),
+            data_symbols=[DefinedSymbol('first', 0, 4, STT_OBJECT),
+                          DefinedSymbol('second', 8, 4, STT_OBJECT)],
+        )
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'objects.o'
+            path.write_bytes(blob)
+            symbols = GameSymbols({'load_second': (LOAD_VA, len(code))},
+                                  {'first': (DATA_VA, 4), 'second': (DATA_VA + 0x100, 4)})
+            functions = [CandidateFunction('load_second', path)]
+            with self.assertRaisesRegex(CandidateLinkError, 'inconsistent .data base'):
+                CandidateProgram.link(symbols, functions)
+            program = CandidateProgram.link(symbols, functions, bind_data_objects=True)
+            self.assertEqual(program.data_binding, 'objects')
+            self.assertEqual([(p.address, p.data) for p in program.patches if p.address >= DATA_VA
+                              and p.address < CODE_BASE],
+                             [(DATA_VA, words(11)), (DATA_VA + 0x100, words(99))])
+            self.assertEqual(ParserMachine(synthetic_retail(b''), program).call('load_second').v0, 99)
+            wrong_size = GameSymbols(symbols.functions,
+                                     {**symbols.data, 'second': (DATA_VA + 0x100, 8)})
+            with self.assertRaisesRegex(CandidateLinkError, 'data extent differs'):
+                CandidateProgram.link(wrong_size, functions, bind_data_objects=True)
+            overlap = GameSymbols(symbols.functions,
+                                  {**symbols.data, 'second': (DATA_VA + 2, 4)})
+            with self.assertRaisesRegex(CandidateLinkError, 'data objects overlap'):
+                CandidateProgram.link(overlap, functions, bind_data_objects=True)
+            with self.assertRaisesRegex(CandidateLinkError, 'cannot be combined'):
+                CandidateProgram.link(symbols, functions, bind_data_objects=True,
+                                      section_bases={(path, '.data'): DATA_VA})
+
+    def test_object_binding_rejects_padding_and_ambiguous_one_past_addresses(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'section-reference.o'
+            functions = [CandidateFunction('load', path)]
+            for first_size, addend in ((4, 6), (8, 8)):
+                code = words(0x3c020000, 0x24420000 | addend, 0x8c420000, 0x03e00008, 0)
+                path.write_bytes(write_mips_elf(
+                    code, 'load', len(code),
+                    [MipsRelocation(0, 'R_MIPS_HI16', DATA_SECTION_SYMBOL),
+                     MipsRelocation(4, 'R_MIPS_LO16', DATA_SECTION_SYMBOL)],
+                    data=words(11, 22, 99),
+                    data_symbols=[DefinedSymbol('first', 0, first_size, STT_OBJECT),
+                                  DefinedSymbol('second', 8, 4, STT_OBJECT)],
+                ))
+                symbols = GameSymbols({'load': (LOAD_VA, len(code))},
+                                      {'first': (DATA_VA, first_size), 'second': (DATA_VA + 0x100, 4)})
+                with self.subTest(first_size=first_size), self.assertRaisesRegex(
+                        CandidateLinkError, 'does not identify one data object'):
+                    CandidateProgram.link(symbols, functions, bind_data_objects=True)
+            adjacent = GameSymbols(symbols.functions,
+                                   {**symbols.data, 'second': (DATA_VA + 8, 4)})
+            program = CandidateProgram.link(adjacent, functions, bind_data_objects=True)
+            self.assertEqual(ParserMachine(synthetic_retail(b''), program).call('load').v0, 99)
 
     def test_unselected_function_relocations_are_not_resolved(self) -> None:
         selected = words(0x03E00008, 0)

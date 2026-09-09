@@ -2645,12 +2645,11 @@ GAME.EXE	0x80055dbc	0x445bc	0xe0	defined	reviewed	color_matrix_table	MATRIX[7]	m
 GAME.EXE	0x80055e9c	0x4469c	0xcc	defined	reviewed	render_fixed_cell_window	KfCellWindow	manual:game_cell_window_data	13-by-13 mask in the common 196-cell-capacity window; four halfword header fields and zero remaining cells; no separate interior globals
 GAME.EXE	0x80055f68	0x44768	0xc0	data	direct-references	render_light_matrices	MATRIX[6]	asm;SetLightMatrix-references;32-byte-stride	six GTE light matrices fed to SetLightMatrix, one per render subsystem
 GAME.EXE	0x80056028	0x44828	0xc	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-GAME.EXE	0x80056034	0x44834	0x19	string	byte-pattern	save_main_file_path	ascii	investigation:string-census	escaped text: bu00:BISLPS-00017KF\x20\x20\x20\x20\x20\x20
-GAME.EXE	0x8005604d	0x4484d	0x3	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-GAME.EXE	0x80056050	0x44850	0x19	string	byte-pattern	save_temporary_file_path	ascii	investigation:string-census	escaped text: bu00:BISLPS-00017KFTMP\x20\x20\x20
-GAME.EXE	0x80056069	0x44869	0x3	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-GAME.EXE	0x8005606c	0x4486c	0x13	string	byte-pattern	talk_image_path_template	ascii	investigation:string-census;game_semantic_screen_talk.tsv	mutable path template patched by talk_show_dialogue_page: TALK\\C00\\T00000.TIM
-GAME.EXE	0x8005607f	0x4487f	0x1	unclassified	coverage-gap			payload-complement	alignment byte before actor action profiles
+GAME.EXE	0x80056034	0x44834	0x1a	string	byte-pattern	save_main_file_path	char[26]	investigation:string-census;executable-linking.md:source-path-owner	escaped text: bu00:BISLPS-00017KF\x20\x20\x20\x20\x20\x20; extent includes terminating NUL
+GAME.EXE	0x8005604e	0x4484e	0x2	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
+GAME.EXE	0x80056050	0x44850	0x1a	string	byte-pattern	save_temporary_file_path	char[26]	investigation:string-census;executable-linking.md:source-path-owner	escaped text: bu00:BISLPS-00017KFTMP\x20\x20\x20; extent includes terminating NUL
+GAME.EXE	0x8005606a	0x4486a	0x2	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
+GAME.EXE	0x8005606c	0x4486c	0x14	string	byte-pattern	talk_image_path_template	char[20]	investigation:string-census;game_semantic_screen_talk.tsv;executable-linking.md:source-path-owner	mutable path template patched by talk_show_dialogue_page: TALK\\C00\\T00000.TIM; extent includes terminating NUL
 GAME.EXE	0x80056080	0x44880	0xfa	data	direct-references	actor_action_profiles	KfActorActionProfile[25]	game_semantic_actor_ai.tsv;game_semantic_actor_actions.tsv	25 ten-byte distance/weight profiles; the former 26th record was a false overlap with packed sound references
 GAME.EXE	0x8005617a	0x4497a	0x2	unclassified	coverage-gap			payload-complement	padding between actor action profiles and boss-death sound references
 GAME.EXE	0x8005617c	0x4497c	0xc	data	direct-references	boss_death_phase_sounds	SoundRef[4]	game_semantic_actor_actions.tsv;game_semantic_audio_spatial.tsv	four packed program/tone/note references; the death handler directly uses entries one through three
@@ -2829,8 +2828,8 @@ GAME.EXE	0x80057b60	0x46360	0x4	data	reviewed	map_textured_primitive_color	CVECT
 GAME.EXE	0x80057b64	0x46364	0x8	data	reviewed	render_sprite_light_normal	SVECTOR	manual:game_render_enqueuers	initialized {0, 0, 0x1000, 0} light normal passed by the following sprite enqueuer to NormalColorDpq
 GAME.EXE	0x80057b6c	0x4636c	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 GAME.EXE	0x80057b70	0x46370	0x8	data	reviewed	menu_item_preview_rotation	SVECTOR	manual:game_menu_preview_transform	zero-initialized item preview angles; three RotMatrix callers pass the base after updating yaw at +2
-GAME.EXE	0x80057b78	0x46378	0x5	string	byte-pattern	memory_card_root_path	ascii	investigation:string-census	escaped text: bu00:
-GAME.EXE	0x80057b7d	0x4637d	0x3	unclassified	coverage-gap			payload-complement	unclassified bytes before boss-death loop sound
+GAME.EXE	0x80057b78	0x46378	0x6	string	byte-pattern	memory_card_root_path	char[6]	investigation:string-census;executable-linking.md:source-path-owner	escaped text: bu00:; extent includes terminating NUL
+GAME.EXE	0x80057b7e	0x4637e	0x2	unclassified	coverage-gap			payload-complement	unclassified bytes before boss-death loop sound
 GAME.EXE	0x80057b80	0x46380	0x3	data	direct-references	boss_death_loop_sound	SoundRef	game_semantic_actor_actions.tsv;game_semantic_audio_spatial.tsv	program/tone/note reference played periodically during the boss death sequence
 GAME.EXE	0x80057b83	0x46383	0x1	unclassified	coverage-gap			payload-complement	padding after boss-death loop sound
 GAME.EXE	0x80057b84	0x46384	0x4	defined	direct-references	audio_voice_slot_index	s32	game_semantic_audio_spatial.tsv	loaded ring index initialized to nine and advanced modulo ten before each managed sound-effect voice
@@ -2987,19 +2986,19 @@ GAME.EXE	0x80057e68	0x46668	0x4	bss	reviewed	player_movement_velocity_limit	s32	
 GAME.EXE	0x80057e6c	0x4666c	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 GAME.EXE	0x80057e70	0x46670	0x4	bss	reviewed	player_turn_step_limit	s32	manual:game_semantic_player_update	TU-private write-before-read yaw-step limit; address lies in the CPE residue/zero-filled tail rather than initialized source data
 GAME.EXE	0x80057e74	0x46674	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-GAME.EXE	0x80057e78	0x46678	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
+GAME.EXE	0x80057e78	0x46678	0x4	bss	reviewed	player_death_saved_fog_near	s32	manual:executable-linking.md:tail-BSS-write-before-read	death entry writes snapshot before forward/reverse fades; eight-byte tail-BSS spacing
 GAME.EXE	0x80057e7c	0x4667c	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 GAME.EXE	0x80057e80	0x46680	0x4	bss	reviewed	cd_read_location	CdlLOC	manual:cd_resource_bss	CPE-tail storage shared by CD and error-screen loaders; all three CdlSetloc bytes written before use
 GAME.EXE	0x80057e84	0x46684	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 GAME.EXE	0x80057e88	0x46688	0x4	defined	reviewed	current_poly_ft4	POLY_FT4 *	manual:game_semantic_menu_frame	zero-initialized current menu textured-quad allocation cursor
 GAME.EXE	0x80057e8c	0x4668c	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-GAME.EXE	0x80057e90	0x46690	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
+GAME.EXE	0x80057e90	0x46690	0x4	bss	reviewed	memory_card_io_end_event	s32	manual:executable-linking.md:tail-BSS-write-before-read	memory_card_initialize stores OpenEvent result before first EnableEvent; subsequent uses require initialization; eight-byte tail-BSS spacing
 GAME.EXE	0x80057e94	0x46694	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-GAME.EXE	0x80057e98	0x46698	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
+GAME.EXE	0x80057e98	0x46698	0x4	bss	reviewed	memory_card_timeout_event	s32	manual:executable-linking.md:tail-BSS-write-before-read	memory_card_initialize stores OpenEvent result before first EnableEvent; subsequent uses require initialization; eight-byte tail-BSS spacing
 GAME.EXE	0x80057e9c	0x4669c	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-GAME.EXE	0x80057ea0	0x466a0	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
+GAME.EXE	0x80057ea0	0x466a0	0x4	bss	reviewed	memory_card_new_device_event	s32	manual:executable-linking.md:tail-BSS-write-before-read	memory_card_initialize stores OpenEvent result before first EnableEvent; subsequent uses require initialization; eight-byte tail-BSS spacing
 GAME.EXE	0x80057ea4	0x466a4	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-GAME.EXE	0x80057ea8	0x466a8	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
+GAME.EXE	0x80057ea8	0x466a8	0x4	bss	reviewed	memory_card_error_event	s32	manual:executable-linking.md:tail-BSS-write-before-read	memory_card_initialize stores OpenEvent result before first EnableEvent; subsequent uses require initialization; eight-byte tail-BSS spacing
 GAME.EXE	0x80057eac	0x466ac	0x4	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 GAME.EXE	0x80057eb0	0x466b0	0x1	defined	ghidra-defined		undefined1	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 GAME.EXE	0x80057eb1	0x466b1	0x1	defined	ghidra-defined		undefined1	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum

@@ -29,6 +29,18 @@ KfMapCopyRegion map_copy_regions[KF_MAP_COPY_REGION_COUNT] = {
     {0, 0, 36, 4, 7, 1},
 };
 
+DATA(0x8006e8e0, 0x25a8)
+KfMapObjectState map_object_state;
+
+DATA(0x80070e92, 0x2)
+u16 map_object_effect_sequence_160;
+
+DATA(0x80070e94, 0x2)
+u16 map_object_effect_sequence_170;
+
+DATA(0x80070e96, 0x2)
+u16 map_object_effect_sequence_180;
+
 ADDRESS(0x80030a98, 0x1e4)
 void map_apply_copy_region(KfMapCopyRegionId region_id)
 {

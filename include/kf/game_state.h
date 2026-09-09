@@ -16,18 +16,18 @@
 extern u32 DAT_80057d24;
 extern u32 DAT_800a0768;
 extern KfGameExitCode game_exit_code;
-extern const SoundRef gameplay_sound_ref_0;
-extern const SoundRef gameplay_sound_ref_1;
+extern SoundRef gameplay_sound_ref_0;
+extern SoundRef gameplay_sound_ref_1;
 extern SoundRef gameplay_sound_ref_10;
-extern const SoundRef gameplay_sound_ref_11;
-extern const SoundRef gameplay_sound_ref_12;
+extern SoundRef gameplay_sound_ref_11;
+extern SoundRef gameplay_sound_ref_12;
 extern SoundRef gameplay_sound_ref_2;
-extern const SoundRef gameplay_sound_ref_3;
+extern SoundRef gameplay_sound_ref_3;
 extern SoundRef gameplay_sound_ref_4;
-extern const SoundRef gameplay_sound_ref_5;
+extern SoundRef gameplay_sound_ref_5;
 extern SoundRef gameplay_sound_ref_6;
-extern const SoundRef gameplay_sound_ref_7;
-extern const SoundRef gameplay_sound_ref_8;
+extern SoundRef gameplay_sound_ref_7;
+extern SoundRef gameplay_sound_ref_8;
 extern char talk_image_path_template[];
 
 #endif

@@ -24,6 +24,12 @@ enum {
 DATA(0x800a01f0, 0x50)
 KfMemoryArena memory_arena;
 
+DATA(0x800a0240, 0x4)
+u8 *memory_system_heap_start;
+
+DATA(0x800a0244, 0x4)
+s32 memory_system_heap_size;
+
 /* Element 0 is the depth; elements 1..16 hold each allocation's size or malloc block. */
 
 /* Allocations must land in the 2 MiB of RAM mirrored at 0x80000000. */

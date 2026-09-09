@@ -36,6 +36,12 @@ SoundRef player_sound_refs[KF_PLAYER_SOUND_COUNT] = {
     {13, 0, 67}
 };
 
+DATA(0x80057e78, 0x4)
+s32 player_death_saved_fog_near;
+
+DATA(0x80058060, 0x20)
+MATRIX player_death_saved_color_matrix;
+
 DATA(0x800652a8, 0xf0)
 u8 item_stock[KF_ITEM_STOCK_BANK_COUNT][KF_ITEM_COUNT];
 

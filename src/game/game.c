@@ -21,6 +21,10 @@ u32 frame_pacer_vsync_count = 0;
 
 DATA(0x80057b10, 0x4)
 u32 frame_pacer_last_vsync = 0;
+
+DATA(0x800958f8, 0x4)
+KfGameExitCode game_exit_code;
+
 /* Clear the reviewed BSS spans without changing their starting referents. */
 ADDRESS(0x800146b8, 0x2e4)
 void game_main_loop(void)

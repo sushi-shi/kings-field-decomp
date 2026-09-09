@@ -243,6 +243,7 @@ def programs(symbols: GameSymbols, hooks: tuple[ExternalHook, ...] | None = None
         tuple(CandidateFunction(name, CANDIDATE_OBJECT) for name in functions),
         hooks=hooks,
         providers=providers,
+        bind_data_objects=True,
     )
     return retail, candidate
 

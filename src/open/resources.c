@@ -36,6 +36,27 @@ static u8 *opening_scene1_arena_cursor;
 DATA(0x800375e8, 0x4)
 static u8 *opening_ending_arena_cursor;
 
+DATA(0x800377a0, 0x18)
+CdlFILE cd_search_file;
+
+DATA(0x800377b8, 0x50)
+char cd_path_buffer[KF_CD_PATH_BYTES];
+
+DATA(0x800446c8, 0x2710)
+KfMapGrid map_collision_flag_grid;
+
+DATA(0x80046df8, 0x2710)
+KfMapOrientationGrid map_cell_orientation_grid;
+
+DATA(0x8006e260, 0x2710)
+KfMapGrid map_floor_height_grid;
+
+DATA(0x80070978, 0x2710)
+KfMapCollisionGrid map_collision_grid;
+
+DATA(0x800730a0, 0x2710)
+KfMapAttributeGrid map_cell_attribute_grid;
+
 RODATA(0x8001205c, 0xb4)
 
 /* A resource chunk stores its payload byte length before the payload. */

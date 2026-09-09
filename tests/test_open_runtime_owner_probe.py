@@ -14,7 +14,7 @@ from scripts.kf.delink import load_catalog
 from scripts.kf.inventory import load_data_identities
 from scripts.kf.local_config import configured_retail_dir
 from scripts.kf.manifest import load as load_manifest
-from scripts.kf.parser_machine import _load_object
+from scripts.kf.parser_machine import _load_object, resolve_data_object
 from scripts.kf.paths import BUILD, REPO, RETAIL_CONFIG
 from scripts.kf.relocations import decode_hi_lo_target, encode_hi_lo_addend
 from scripts.kf.retail import IMAGE_LAYOUTS
@@ -41,6 +41,13 @@ def linked_words(obj, unit, claim, data, functions):
             assert len(pending) == 1
             high, symbol_index = pending.pop()
             assert symbol_index == symbol.index
+            addend = decode_hi_lo_target(words[high], words[index])
+            if (symbol.kind == "STT_SECTION" and symbol.section in {'.data', '.bss', '.sdata', '.sbss'}
+                    and symbol.section not in data):
+                target = resolve_data_object(obj, symbol, addend, data)
+                addresses.append(target)
+                words[high], words[index] = encode_hi_lo_addend(words[high], words[index], target)
+                continue
             if symbol.name in functions:
                 base = functions[symbol.name]
             elif symbol.kind == "STT_SECTION":
@@ -48,7 +55,7 @@ def linked_words(obj, unit, claim, data, functions):
                         else data[symbol.section]) + symbol.value
             else:
                 base = data[symbol.name]
-            target = (base + decode_hi_lo_target(words[high], words[index])) & 0xFFFFFFFF
+            target = (base + addend) & 0xFFFFFFFF
             addresses.append(target)
             words[high], words[index] = encode_hi_lo_addend(words[high], words[index], target)
         elif reloc.kind == 4:

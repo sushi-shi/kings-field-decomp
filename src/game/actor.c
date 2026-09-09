@@ -83,6 +83,9 @@ SoundRef boss_death_phase_sounds[KF_ACTOR_BOSS_DEATH_SOUND_COUNT] = {
     {88, 88, 88},
 };
 
+DATA(0x80057b80, 0x3)
+SoundRef boss_death_loop_sound = {70, 0, 65};
+
 ADDRESS(0x8002ca78, 0x3c)
 KfActor *actor_pool_find_free(void)
 {

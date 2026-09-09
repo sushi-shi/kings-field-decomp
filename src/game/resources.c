@@ -17,11 +17,29 @@ enum {
     MAP_FLOOR2_ALTERNATE_MUSIC_PROGRESS = 25
 };
 
+DATA(0x80055af0, 0xc)
+char map_resource_path[KF_MAP_RESOURCE_PATH_BYTES] = "B0\\";
+
 DATA(0x80057b48, 0x8)
 char map_mix_tim_filename[8] = "MIX.TIM";
 
 DATA(0x80065be8, 0xcc0)
 KfCellWindow render_cell_windows[KF_CELL_WINDOW_YAW_COUNT];
+
+DATA(0x800668e8, 0x2710)
+KfMapGrid map_collision_flag_grid;
+
+DATA(0x80069018, 0x2710)
+KfMapOrientationGrid map_cell_orientation_grid;
+
+DATA(0x80095900, 0x2710)
+KfMapGrid map_floor_height_grid;
+
+DATA(0x80098018, 0x2710)
+KfMapCollisionGrid map_collision_grid;
+
+DATA(0x8009a748, 0x2710)
+KfMapAttributeGrid map_cell_attribute_grid;
 
 RODATA(0x80012178, 0x3c)
 

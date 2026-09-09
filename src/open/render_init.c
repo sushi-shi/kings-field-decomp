@@ -25,6 +25,9 @@ MATRIX color_matrix_table[KF_OPEN_COLOR_PRESET_COUNT] = {
 DATA(0x80049a48, 0x24788)
 KfGraphicsRuntimeOpen open_graphics_runtime;
 
+DATA(0x80075928, 0x4)
+u32 primitive_allocation_count;
+
 /*
  * OPEN.EXE render initialisation. The colour-preset selector, display setup,
  * and primitive allocator share the same matrix/display state and direct

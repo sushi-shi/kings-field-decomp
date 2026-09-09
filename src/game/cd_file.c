@@ -15,6 +15,15 @@ char cd_version_suffix[3] = ";1";
 DATA(0x80057e80, 0x4)
 CdlLOC cd_read_location;
 
+DATA(0x80058080, 0x18)
+CdlFILE cd_search_file;
+
+DATA(0x80058098, 0x50)
+char cd_path_buffer[KF_CD_PATH_BYTES];
+
+DATA(0x8006b730, 0x640)
+KfCdFileEntry cd_file_table[KF_CD_FILE_TABLE_ENTRIES];
+
 /* Loads \KF\<relative_path>;1 into a fresh arena allocation. */
 ADDRESS(0x8001acf0, 0x170)
 KfResourceLoadResult cd_file_load_allocated(void **destination, const char *relative_path)

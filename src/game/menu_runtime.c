@@ -41,6 +41,9 @@ typedef char menu_window_row_codes_offset[
 /* The numbered-item TIM path template used by menu_load_item_texture. */
 RODATA(0x80012350, 0xc)
 
+DATA(0x80057b6c, 0x4)
+KfMenuModelAllocation menu_item_model_allocation_pending = KF_MENU_MODEL_RELEASED;
+
 DATA(0x80057e88, 0x4)
 POLY_FT4 *current_poly_ft4 = 0;
 

@@ -103,7 +103,7 @@ class GameDisplayEnvironmentDataTests(unittest.TestCase):
                  for prefix in ('delink/game/modules', 'objdiff/game/base')]
         if not all(path.is_file() for path in paths):
             self.skipTest('freshly built GAME render source and target objects required')
-        for path, section_size in zip(paths, (graphics.EXTENT, graphics.EXTENT + 4)):
+        for path, section_size in zip(paths, (graphics.EXTENT + 8, graphics.EXTENT + 12)):
             with path.open('rb') as stream:
                 elf = ELFFile(stream)
                 section = elf.get_section_by_name('.bss')
@@ -122,7 +122,7 @@ class GameDisplayEnvironmentDataTests(unittest.TestCase):
         self.assertFalse(whole.matches)
         sections = {d.name: d for d in whole.diffs}
         self.assertEqual(sections['.bss'].status, 'size')
-        self.assertIn('invalid-section-placement', sections['.bss'].detail)
+        self.assertIn('conflicting-section-bases', sections['.bss'].detail)
         # This campaign does not claim the existing switch-table residue is fixed.
         self.assertEqual(sections['.rodata'].status, 'addend')
 

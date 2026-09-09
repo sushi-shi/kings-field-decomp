@@ -205,6 +205,7 @@ class LinkedProgram:
     patches: tuple[MemoryPatch, ...] = ()
     hooks: tuple[_HookBinding, ...] = ()
     label: str = "program"
+    data_binding: str = "sections"
 
     def address_of(self, name: str) -> int:
         matches = [item.address for item in self.functions if item.name == name]
@@ -301,6 +302,37 @@ class _ObjectFile:
         return matches[0]
 
 
+def resolve_data_object(
+    obj: _ObjectFile, symbol: _ElfSymbol, addend: int, addresses: Mapping[str, int]
+) -> int:
+    """Bind one named object for an isolated function test, not section placement.
+
+    Section-relative references must identify one complete object. Padding,
+    ambiguous one-past references and missing identities remain errors.
+    """
+    if symbol.kind == "STT_OBJECT" and symbol.name in addresses:
+        target, offset = symbol, addend
+    else:
+        offset = symbol.value + addend
+        candidates = [item for item in obj.symbols
+                      if item.section == symbol.section and item.kind == "STT_OBJECT"
+                      and item.size > 0 and item.value <= offset <= item.value + item.size]
+        destinations = {addresses[item.name] + offset - item.value for item in candidates
+                        if item.name in addresses}
+        if not candidates or len(destinations) != 1 or any(item.name not in addresses
+                                                          for item in candidates):
+            raise CandidateLinkError(
+                f"{obj.path}: {symbol.section}+{offset:#x} does not identify one data object")
+        # A preceding object's one-past pointer and the next object's start
+        # are equivalent only when both mappings produce the same address.
+        target = candidates[0]
+        offset -= target.value
+    if target.name not in addresses or not 0 <= offset <= target.size:
+        raise CandidateLinkError(
+            f"{obj.path}: unmapped or out-of-bounds data object {target.name!r}+{offset:#x}")
+    return (addresses[target.name] + offset) & 0xFFFFFFFF
+
+
 def _load_object(path: Path) -> _ObjectFile:
     path = path.resolve()
     with path.open("rb") as stream:
@@ -385,9 +417,12 @@ class CandidateProgram:
         providers: Sequence[RetailProvider] = (),
         symbol_overrides: Mapping[str, int] | None = None,
         section_bases: Mapping[tuple[Path, str], int] | None = None,
+        bind_data_objects: bool = False,
     ) -> LinkedProgram:
         if not functions:
             raise CandidateLinkError("candidate closure is empty")
+        if bind_data_objects and section_bases:
+            raise CandidateLinkError("object bindings cannot be combined with section placement")
         overrides = dict(symbol_overrides or {})
         explicit_section_bases = {
             (Path(path).resolve(), section): address
@@ -484,6 +519,13 @@ class CandidateProgram:
                     continue
                 if elf_symbol.name not in known_data:
                     continue
+                if bind_data_objects:
+                    if elf_symbol.kind != "STT_OBJECT" or elf_symbol.size <= 0:
+                        raise CandidateLinkError(f"{path}: missing extent for {elf_symbol.name!r}")
+                    if (elf_symbol.name in symbols.data
+                            and elf_symbol.size != symbols.data[elf_symbol.name][1]):
+                        raise CandidateLinkError(f"{path}: data extent differs for {elf_symbol.name!r}")
+                    continue
                 key = path, elf_symbol.section
                 inferred = (known_data[elf_symbol.name] - elf_symbol.value) & 0xFFFFFFFF
                 previous = data_bases.setdefault(key, inferred)
@@ -571,6 +613,8 @@ class CandidateProgram:
                     ) from error
                 return (base + symbol.value + addend) & 0xFFFFFFFF
             if symbol.section in {".data", ".bss", ".sdata", ".sbss"}:
+                if bind_data_objects:
+                    return resolve_data_object(owner.obj, symbol, addend, known_data)
                 key = owner.obj.path, symbol.section
                 try:
                     base = data_bases[key]
@@ -709,6 +753,25 @@ class CandidateProgram:
                 data = obj.sections.get(section_name)
                 if not data:
                     continue
+                if bind_data_objects:
+                    relocated = relocate(owner, section_name, data)
+                    for symbol in obj.symbols:
+                        if symbol.section != section_name or symbol.kind != "STT_OBJECT":
+                            continue
+                        if symbol.size <= 0 or symbol.value + symbol.size > len(relocated):
+                            raise CandidateLinkError(f"{path}: invalid initialized extent for {symbol.name!r}")
+                        address = resolve_data_object(obj, symbol, 0, known_data)
+                        payload = relocated[symbol.value:symbol.value + symbol.size]
+                        for previous_address, previous in seen_data_patches.items():
+                            if (address < previous_address + len(previous)
+                                    and previous_address < address + len(payload)
+                                    and (address != previous_address or payload != previous)):
+                                raise CandidateLinkError("candidate initialized data objects overlap")
+                        if address not in seen_data_patches:
+                            patches.append(MemoryPatch(f"candidate:{path.name}:{symbol.name}",
+                                                       address, payload))
+                            seen_data_patches[address] = payload
+                    continue
                 key = path, section_name
                 if key not in data_bases:
                     raise CandidateLinkError(
@@ -741,6 +804,7 @@ class CandidateProgram:
             tuple(patches),
             tuple(hook_bindings),
             "candidate",
+            "objects" if bind_data_objects else "sections",
         )
 
 

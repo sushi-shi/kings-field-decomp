@@ -167,9 +167,11 @@ class GameCellWindowDataTests(unittest.TestCase):
                 self.assertIn('invalid-section-placement', sections['.data'].detail)
                 self.assertNotIn('.bss', sections)
             else:
-                self.assertEqual(_diff_bss(retail, source).status, 'match')
-                self.assertEqual(sections['.bss'].status, 'placement')
-                self.assertIn('invalid-section-placement', sections['.bss'].detail)
+                # The resource owner now also defines five map grids. Their
+                # tentative allocation order differs, and remains a failure.
+                self.assertEqual(_diff_bss(retail, source).status, 'layout')
+                self.assertEqual(sections['.bss'].status, 'layout')
+                self.assertIn('conflicting-section-bases', sections['.bss'].detail)
 
     def test_all_fourteen_reviewed_pairs_round_trip_to_original_words(self):
         image, ctx, catalog = self.retail(), Context('GAME.EXE'), load_catalog(RETAIL_CONFIG)

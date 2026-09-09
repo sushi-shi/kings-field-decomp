@@ -2,6 +2,12 @@
 #include <kf/game_equipment.h>
 #include <kf/game_math.h>
 
+DATA(0x8009ff10, 0x2c0)
+KfWeaponTable weapon_records;
+
+DATA(0x800a0248, 0x498)
+KfArmorTable armor_records;
+
 ADDRESS(0x800150a8, 0x54)
 void weapon_records_load_and_mirror_angles(const KfWeaponTable *source)
 {

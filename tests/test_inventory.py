@@ -250,7 +250,7 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["signatures_started"], 471)
         self.assertEqual(counts["typed_returns"], 471)
         self.assertEqual(counts["parameterized"], 306)
-        self.assertEqual(counts["data"], 2914)
+        self.assertEqual(counts["data"], 2918)
         self.assertGreaterEqual(counts["functions_named"], 240)
         self.assertGreaterEqual(counts["data_named"], 100)
         self.assertEqual(counts["structures"], 130)
@@ -3082,11 +3082,11 @@ class InventoryTests(unittest.TestCase):
         )
         self.assertIsNone(game.datum(0x8009F847))
         self.assertEqual(
-            {
+            [
                 data_identities[("GAME.EXE", va)].scope
                 for va in (0x8005617C, 0x80057B80)
-            },
-            {"unknown"},
+            ],
+            ["unknown", "global"],
         )
         map_copy_regions = game.datum(0x800561B0)
         self.assertEqual(
@@ -3167,11 +3167,11 @@ class InventoryTests(unittest.TestCase):
                     0x80095868,
                 )
             },
-            {"unknown"},
+            {"global"},
         )
         self.assertEqual(
             data_identities[("GAME.EXE", 0x8006E8E0)].scope,
-            "unknown",
+            "global",
         )
         effect_sequences = tuple(
             game.datum(va) for va in (0x80070E92, 0x80070E94, 0x80070E96)
@@ -3189,7 +3189,7 @@ class InventoryTests(unittest.TestCase):
                 data_identities[("GAME.EXE", va)].scope
                 for va in (0x80070E92, 0x80070E94, 0x80070E96)
             },
-            {"unknown"},
+            {"global"},
         )
         object_action = game.function(0x80031784)
         self.assertEqual(
@@ -3289,7 +3289,7 @@ class InventoryTests(unittest.TestCase):
                     0x80057E78,
                 )
             },
-            {"unknown"},
+            {"global"},
         )
         self.assertEqual(data_identities[("GAME.EXE", 0x8009DB88)].scope, "global")
         self.assertNotIn(("GAME.EXE", 0x8009DDA8), data_identities)

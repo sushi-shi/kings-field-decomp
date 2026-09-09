@@ -173,12 +173,12 @@ extern s32 memory_card_error_event;
 extern s32 memory_card_io_end_event;
 extern char memory_card_message_path_template[];
 extern s32 memory_card_new_device_event;
-extern const char memory_card_root_path[];
+extern char memory_card_root_path[];
 extern s32 memory_card_timeout_event;
 extern KfSaveHeader *save_header_buffer;
-extern const char save_main_file_path[];
+extern char save_main_file_path[];
 extern KfSavePayload *save_payload_buffer;
-extern const char save_temporary_file_path[];
+extern char save_temporary_file_path[];
 
 extern KfSaveResult memory_card_check_or_format(KfCardFormatConfirmation confirmation);
 extern void memory_card_initialize(void);

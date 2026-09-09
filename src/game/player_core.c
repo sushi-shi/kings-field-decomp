@@ -50,6 +50,18 @@ KfFloorEntryCell floor_entry_cells[KF_PLAYER_FLOOR_ENTRY_COUNT] = {
     {15, 2}, {29, 56}, {28, 18}, {7, 22}, {39, 69}
 };
 
+DATA(0x80065098, 0x8)
+SVECTOR player_rotation_snapshot;
+
+DATA(0x800650a0, 0x10)
+VECTOR player_position_snapshot;
+
+DATA(0x800650b0, 0x1e0)
+KfPlayerLevelGrowth player_level_growth_table[KF_PLAYER_LEVEL_GROWTH_COUNT];
+
+DATA(0x800a0780, 0xe0)
+KfPlayerState player_state;
+
 /* Stores the item id into one of the six armor slots, re-resolves the five armor record pointers, and recalculates. */
 ADDRESS(0x80016848, 0x1e8)
 void player_set_equipment_slot(KfItemId item_id, KfEquipmentSlot slot)

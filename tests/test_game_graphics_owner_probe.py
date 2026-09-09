@@ -737,9 +737,10 @@ extern KfMaterialProbe material_probe;
                     addresses = dict(data)
                     for claim in unit.data:
                         symbol = obj.named_symbol(claim.symbol)
-                        if symbol.section in {'.data', '.bss'}:
-                            base = claim.va - symbol.value
-                            self.assertEqual(addresses.setdefault(symbol.section, base), base)
+                        self.assertEqual(symbol.size, claim.size)
+                    # This checks complete function instructions at named
+                    # referents. Full section placement is checked separately
+                    # by data_match and is not established by a function test.
                     for claim in unit.functions:
                         expected = list(struct.unpack(f'<{claim.body_size // 4}I',
                                                      image.require(claim.va, claim.body_size)))

@@ -402,6 +402,7 @@ def _vab_programs(symbols: GameSymbols):
         ],
         hooks=_vab_hooks(),
         providers=providers,
+        bind_data_objects=True,
     )
     return retail, candidate
 
@@ -585,6 +586,7 @@ def _seq_wrapper_program(symbols: GameSymbols, case: SeqCase, *, candidate: bool
             ],
             hooks=hooks,
             providers=providers,
+            bind_data_objects=True,
         )
     return RetailProgram.link(
         symbols,

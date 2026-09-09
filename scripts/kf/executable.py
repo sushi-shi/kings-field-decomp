@@ -28,7 +28,11 @@ LIBRARIES = {
     'OPEN.EXE': ('LIBSN', 'LIBCD', 'LIBSND', 'LIBSPU', 'LIBGTE', 'LIBGPU',
                  'LIBETC', 'LIBAPI', 'LIBPRESS'),
 }
-ENTRY = {'PSX.EXE': '__SN_ENTRY_POINT', 'GAME.EXE': 'start', 'OPEN.EXE': 'start'}
+ENTRY = '__SN_ENTRY_POINT'
+OVERLAY_STARTUP = 'src/sdk/overlay_start.s'
+# LIBAPI A74/A75/A76/A69: identical BIOS B0 selectors 4a/4b/4c/45.
+GAME_SDK_ALIASES = {'InitCARD2': 'InitCARD', 'StartCARD2': 'StartCARD',
+                    'StopCARD2': 'StopCARD', 'erase': 'delete'}
 
 
 def file_hash(path: Path) -> str:
@@ -130,7 +134,7 @@ def build_image(name: str, manifest: Manifest, root: Path) -> dict:
         shutil.rmtree(root)
     root.mkdir(parents=True)
     report = {'image': name, 'linked': False, 'phase': 'compile', 'units': [],
-              'libraries': [], 'tools': {}, 'output_rewritten': False,
+              'libraries': [], 'startup': None, 'tools': {}, 'output_rewritten': False,
               'retail_payload_inputs': [], 'game_execution_tested': False,
               'historical_toolchain_proven': False}
     try:
@@ -145,11 +149,28 @@ def build_image(name: str, manifest: Manifest, root: Path) -> dict:
             raise ValueError(f'{name}: no C source units')
         for index, unit in enumerate(units):
             report['units'].append(compile_unit(unit, manifest.profiles[unit.profile], root, index))
+        assembler_commands = [u['assembler_command'] for u in report['units']]
+        if name != 'PSX.EXE':
+            # The minimal SDK startup anchors .sdata before the libraries. Do
+            # not silently move that anchor after a new game contribution.
+            for unit in report['units']:
+                if re.search(r'(?m)^\s*\.sdata\b', (root / unit['assembly']).read_text()):
+                    raise ValueError(f'{unit["unit"]}: overlay startup needs the first .sdata contribution')
+            source = REPO / OVERLAY_STARTUP
+            (root / 'START.S').write_bytes(source.read_bytes().replace(b'\n', b'\r\n'))
+            command = 'aspsx -G0 -o START.OBJ START.S > START.TXT'
+            report['startup'] = {'source': OVERLAY_STARTUP, 'source_sha256': file_hash(source),
+                                 'object': 'START.OBJ', 'assembler_command': command,
+                                 'provenance': 'reconstructed vendored NONE2 assembly family'}
+            assembler_commands.append(command)
         report['phase'] = 'assemble'
-        dos_run(root, [u['assembler_command'] for u in report['units']], 'asm')
+        dos_run(root, assembler_commands, 'asm')
         for unit in report['units']:
             tool_succeeded(root, unit['log'], unit['object'], b'LNK\x02')
             unit['object_sha256'] = file_hash(root / unit['object'])
+        if report['startup']:
+            tool_succeeded(root, 'START.TXT', 'START.OBJ', b'LNK\x02')
+            report['startup']['object_sha256'] = file_hash(root / 'START.OBJ')
         for library in LIBRARIES[name]:
             filename = library + '.LIB'
             source = Path(os.environ['PSYQ_LIB']) / filename
@@ -160,8 +181,13 @@ def build_image(name: str, manifest: Manifest, root: Path) -> dict:
         stem = name.removesuffix('.EXE')
         commands = [f'\torg ${IMAGE_LAYOUTS[name].load_address:08x}',
                     *(f'\tinclude "{u["object"]}"' for u in report['units']),
+                    *(['\tinclude "START.OBJ"'] if report['startup'] else []),
                     *(f'\tinclib "{library["file"]}"' for library in report['libraries']),
-                    f'\tregs pc={ENTRY[name]}']
+                    *(f'{alias} alias {symbol}' for alias, symbol in
+                      (GAME_SDK_ALIASES.items() if name == 'GAME.EXE' else ())),
+                    'bssdata group bss', '\tsection .sbss,bssdata',
+                    '\tsection .bss,bssdata',
+                    f'\tregs pc={ENTRY}']
         (root / 'LINK.LNK').write_bytes(('\r\n'.join(commands) + '\r\n').encode('ascii'))
         report['linker_command'] = f'psylink /c @LINK.LNK,{stem}.CPE,{stem}.SYM,{stem}.MAP > LINK.TXT'
         dos_run(root, [report['linker_command']], 'link')

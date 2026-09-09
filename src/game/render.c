@@ -41,6 +41,9 @@ char error_screen_path[7] = "\\E0.;1";
 DATA(0x80070e98, 0x249cc)
 KfGraphicsRuntimeGame game_graphics_runtime;
 
+DATA(0x800a0768, 0x4)
+u32 DAT_800a0768;
+
 /* Loads and shows the system-message screen for STAGE as a semi-transparent
  * textured box, then blocks until a controller button is pressed and released.
  * Called by cd_file_load_into on disc failure and by game_main_loop on a save
