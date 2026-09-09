@@ -5,6 +5,9 @@ about which source shapes reproduce it under the current probes. Each note
 records the retail evidence first and the probe behaviour second; none of them
 promotes a probe to a proven historical toolchain.
 
+- [game-filename-permuter.md](game-filename-permuter.md): two strict-exact GAME
+  filename builders, upstream finite-combination search, complete-TU sibling
+  preservation and the remaining thirteen-function campaign.
 - [cast-owner-reduction.md](cast-owner-reduction.md): fifteen further cast
   removals, 31 source controls, registry reader/writer bounds, and unchanged
   production objects; the merged tree has 533 casts, including 430 pointer casts.

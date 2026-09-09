@@ -467,11 +467,11 @@ void map_show_screen_image(KfMapImageGroup group, s32 index)
 {
     char *directory_floor = &map_screen_image_path[5];
 
-    map_screen_image_path[8] = KF_ENUM_ENCODE(s32, group) + '0';
     *directory_floor = KF_ENUM_ENCODE(u8, player_state.progress_state.current_floor) + '0';
+    map_screen_image_path[8] = KF_ENUM_ENCODE(s32, group) + '0';
     map_screen_image_path[9] = index / 10 + '0';
     map_screen_image_path[10] = index % 10 + '0';
-    screen_show_image_until_input(map_screen_image_path);
+    screen_show_image_until_input(directory_floor - 5);
 }
 
 ADDRESS(0x80034de4, 0x904)

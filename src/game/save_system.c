@@ -866,15 +866,14 @@ void screen_show_image_until_input(const char *path)
 ADDRESS(0x8002c9d4, 0xa4)
 void talk_show_dialogue_page(KF_ENUM_PARAM(KfFloorId, u8) floor, u8 stage, KF_ENUM_PARAM(KfCharacterId, s32) character_id, u8 page)
 {
-    s32 tens = KF_ENUM_ENCODE(s32, character_id) / 10;
-    s32 ones = KF_ENUM_ENCODE(s32, character_id) % 10;
-
     char *directory_character = &talk_image_path_template[6];
 
+    talk_image_path_template[0xc] = KF_ENUM_ENCODE(s32, character_id) / 10 + '0';
+    directory_character[0] = KF_ENUM_ENCODE(s32, character_id) / 10 + '0';
     talk_image_path_template[0xa] = KF_ENUM_ENCODE(u8, floor) + '0';
+    directory_character[1] = talk_image_path_template[0xd] =
+        KF_ENUM_ENCODE(s32, character_id) % 10 + '0';
     talk_image_path_template[0xb] = stage + '0';
     talk_image_path_template[0xe] = page + '0';
-    directory_character[0] = talk_image_path_template[0xc] = tens + '0';
-    directory_character[1] = talk_image_path_template[0xd] = ones + '0';
-    screen_show_image_until_input(talk_image_path_template);
+    screen_show_image_until_input(directory_character - 6);
 }
