@@ -36,7 +36,7 @@ void render_enqueue_unlit_triangles(u16 object_index, s16 depth_bias)
             vertex1 = (KfScreenVertex *)(vertices + vertex1_offset);
             vertex2_offset = polygon->ft3.v2;
             /* Prepared indices are byte offsets into the same projected array. */
-            vertex2 = (KfScreenVertex *)((u8 *)vertex1 +
+            vertex2 = (KfScreenVertex *)(vertices + vertex1_offset +
                 (vertex2_offset - vertex1_offset));
             if (NormalClip(vertex0->sxy.word, vertex1->sxy.word,
                            vertex2->sxy.word) <= 0) {

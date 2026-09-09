@@ -528,7 +528,7 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
                 map_event_advance_animation_blocking(event, KF_MAP_EVENT_ANIMATION_PHASE_MASK, KF_MAP_EVENT_ANIMATION_TALK_STEP);
                 goto clear_event_phase;
             case KF_MAP_EVENT_BEHAVIOR_ANIMATION_LOOP:
-                result = ((KfAssetHeader **)game_graphics_runtime.unknown_registry_20134)[
+                result = game_graphics_runtime.asset_registry_entries[
                     event->model_index + KF_ASSET_MAP_EVENT_FIRST]->animation_clip_count;
                 map_event_advance_animation_blocking(event, KF_MAP_EVENT_ANIMATION_PHASE_MASK, KF_MAP_EVENT_ANIMATION_FINISH_STEP);
                 result = result < 2;

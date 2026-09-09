@@ -1,6 +1,7 @@
 #include <kf/game_graphics.h>
 #include <kf/address.h>
 #include <kf/psyq.h>
+#include <kf/psyq_libc.h>
 #include <kf/game_render.h>
 #include <kf/tmd.h>
 #include <kf/gpu_packets.h>
@@ -819,10 +820,10 @@ void render_enqueue_sprite(
     prim->sdk.clut = game_graphics_runtime.active_render_clut;
     prim->sdk.tpage = game_graphics_runtime.active_render_tpage;
     /* Each packed GTE word spans the SDK packet's x/y halfwords. */
-    *(long *)&prim->sdk.x0 = sxy0;
-    *(long *)&prim->sdk.x1 = sxy1;
-    *(long *)&prim->sdk.x2 = sxy2;
-    *(long *)&prim->sdk.x3 = sxy3;
+    memcpy(&prim->sdk.x0, &sxy0, sizeof sxy0);
+    memcpy(&prim->sdk.x1, &sxy1, sizeof sxy1);
+    memcpy(&prim->sdk.x2, &sxy2, sizeof sxy2);
+    memcpy(&prim->sdk.x3, &sxy3, sizeof sxy3);
     prim->sdk.u0 = prim->sdk.u2 = sprite->u;
     prim->sdk.u1 = prim->sdk.u3 = sprite->u + sprite->u_span;
     prim->sdk.v0 = prim->sdk.v1 = sprite->v;

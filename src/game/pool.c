@@ -71,7 +71,7 @@ KfPoolRecord *render_bind_animated_instance(
     u16 vertex_count)
 {
     KfPoolRecord *record = *owner_slot;
-    KfAssetHeader *asset_header = ((KfAssetHeader **)game_graphics_runtime.unknown_registry_20134)[asset_index];
+    KfAssetHeader *asset_header = game_graphics_runtime.asset_registry_entries[asset_index];
     KfAnimClip *clip;
     KfAnimKeyframe *keyframe;
     KfMorphObject *morph_object;

@@ -8,15 +8,16 @@
 enum { KF_FLOOR5_ACTOR_TEXTURE_COUNT = 3 };
 
 /* One startup-cleared graphics region; the original declaration is WIP.
- * Registry and projection/morph subobject extents remain unresolved. Their
- * typed source views use the decoded starts without asserting capacities. */
+ * Only the accessed registry prefix is typed; its original capacity and the
+ * projection/morph subobject extents remain unresolved. */
 typedef struct KfGraphicsRuntimeGame {
     KfDisplayState display_state;
     DRAWENV display_draw_environments[KF_DISPLAY_BUFFER_COUNT];
     DISPENV display_disp_environments[KF_DISPLAY_BUFFER_COUNT];
     u8 unknown_20108[8];
     KfTmdState tmd_state;
-    u8 unknown_registry_20134[0xf0];
+    KfAssetHeader *asset_registry_entries[KF_ASSET_REGISTRY_KNOWN_ENTRIES];
+    u8 unknown_201f4[0x30];
     KfPackedSVector *current_tmd_vertices;
     KfPoolRecord pool_records[KF_ANIMATION_CACHE_CAPACITY];
     u8 unknown_projection_morph_20318[0x3e88];

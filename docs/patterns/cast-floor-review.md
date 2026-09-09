@@ -1,4 +1,10 @@
-# Remaining casts: final decisions and floor
+# Remaining casts: first decision pass
+
+This is the historical 542-site baseline. The subsequent
+[owner and storage reduction](cast-owner-reduction.md) removes fifteen more
+casts, leaving **527 total / 430 pointer / 97 scalar**. That report supersedes
+the counts, dispositions and stopping decision below. The earlier experiments
+remain useful evidence, but did not establish an irreducible cast floor.
 
 The final decision pass at `48ff2dc8` closes the complete remaining-cast
 review. **542 written casts remain: 445 pointer and 97 scalar. There are
@@ -17,6 +23,32 @@ The pointer regression ratchet is tightened from **882 to 445**. The current
 working floor is **542 total / 445 pointer / 97 scalar**. This is a completed
 campaign decision, not a mathematical claim about every possible C spelling.
 No casts are excluded from counting, and no other cleanliness floor is changed.
+
+## Programming judgment before reopening source work
+
+Some parked casts are still desirable cleanup. The disposition above records
+the decision to retain them in this matching campaign; it does not establish
+that all 130 are equally good source code. Reviewing the actual expressions
+gives the following priorities:
+
+| Sites | Source-quality judgment | Decision for this campaign |
+| ---: | --- | --- |
+| 79 owner-recovery casts | Clear cleanup target. Repeatedly converting a field address to an integer, subtracting its offset and recovering the known owner obscures a simple member access. Prefer the complete owner directly. | Retain: the tested direct-owner forms regress banked functions. |
+| 11 registry/projection/morph storage casts | Type-model debt. The source would be clearer with correctly typed storage and one scratch view. Deleting conversions while retaining byte arrays would not solve the modeling problem. | Retain: the available evidence does not establish the complete subdivision and capacities; the shared scratch control also regresses an exact function. |
+| 8 packed sprite XY casts | Small worthwhile cleanup. The existing `prim->packed.xyN` members express the word store more clearly than casting the address of `prim->sdk.xN`. | Retain: those member substitutions regress both exact sprite functions. |
+| 24 packet-body casts | Reasonable C. Each switch case introduces its own typed packet local. Sharing the conversion could reduce repetition, but the current scopes are easy to understand. | Accept the current per-case style; no further standalone cleanup effort. |
+| 8 width/alignment casts | Low-priority cleanup at most. Five caller casts make truncation explicit, two fade casts specify signed narrowing, and the copy-source cast supplies alignment information. | Accept the explicit conversions; no further standalone cleanup effort. |
+
+Thus **98 sites belong to source-quality cleanup families**, while **32 do
+not justify further standalone effort**. These are counts of existing sites,
+not a promise that 98 casts can be removed. The 79 owner-recovery sites in
+particular include several casts within each repeated expression.
+
+The recommendation at this stage was to keep the current implementation,
+with those quality compromises stated plainly. There is no additional probe
+queue. The value **445 is the measured pointer-cast count and regression
+ceiling**; calling it a working floor means this campaign has stopped there.
+It does not establish an irreducible minimum or erase the remaining type debt.
 
 ## Function Match Plan, executed
 

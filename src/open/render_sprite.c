@@ -1,6 +1,7 @@
 #include <kf/address.h>
 #include <kf/gpu_packets.h>
 #include <kf/open_render.h>
+#include <kf/psyq_libc.h>
 
 DATA(0x800372fc, 0x8)
 SVECTOR render_sprite_light_normal = {0, 0, KF_FIXED12_ONE, 0};
@@ -36,10 +37,10 @@ void render_enqueue_sprite(
     prim->sdk.clut = open_graphics_runtime.floor_item_state.material.clut;
     prim->sdk.tpage = open_graphics_runtime.floor_item_state.material.tpage;
     /* GTE screen coordinates are copied into the GPU packet as packed words. */
-    *(long *)&prim->sdk.x0 = sxy0;
-    *(long *)&prim->sdk.x1 = sxy1;
-    *(long *)&prim->sdk.x2 = sxy2;
-    *(long *)&prim->sdk.x3 = sxy3;
+    memcpy(&prim->sdk.x0, &sxy0, sizeof sxy0);
+    memcpy(&prim->sdk.x1, &sxy1, sizeof sxy1);
+    memcpy(&prim->sdk.x2, &sxy2, sizeof sxy2);
+    memcpy(&prim->sdk.x3, &sxy3, sizeof sxy3);
     prim->sdk.u0 = prim->sdk.u2 = sprite->u;
     prim->sdk.u1 = prim->sdk.u3 = sprite->u + sprite->u_span;
     prim->sdk.v0 = prim->sdk.v1 = sprite->v;
