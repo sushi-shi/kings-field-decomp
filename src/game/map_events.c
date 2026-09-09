@@ -118,19 +118,14 @@ void map_event_pool_update(void)
         if (state == KF_MAP_EVENT_ACTIVE) {
             map_event_set_current(event);
 
-            if (event->behavior == KF_MAP_EVENT_BEHAVIOR_WANDER) {
-                goto call_wander;
+            switch (event->behavior) {
+            case KF_MAP_EVENT_BEHAVIOR_WANDER:
+                map_event_update_wander();
+                break;
+            case KF_MAP_EVENT_BEHAVIOR_ANIMATION_LOOP:
+                map_event_update_animation_loop();
+                break;
             }
-            if (event->behavior == KF_MAP_EVENT_BEHAVIOR_ANIMATION_LOOP) {
-                goto call_animation_loop;
-            }
-            goto advance_dialogue;
-        call_wander:
-            map_event_update_wander();
-            goto advance_dialogue;
-        call_animation_loop:
-            map_event_update_animation_loop();
-        advance_dialogue:
             if (map_dialogue_advance_gate == 0 && event->dialogue.fields.page_delay != 0) {
                 event->dialogue.fields.page_delay--;
                 if (event->dialogue.fields.page_delay == 0) {
