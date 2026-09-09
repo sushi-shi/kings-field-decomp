@@ -1,3 +1,4 @@
+#include <kf/null.h>
 #include <kf/address.h>
 #include <kf/gpu_packets.h>
 #include <kf/open_render.h>
@@ -68,7 +69,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 >> KF_GTE_DEPTH_TO_OT_SHIFT) + depth_bias;
             if (depth >= KF_SCENE_MIN_OT_DEPTH) {
                 KfGraphicsRuntimeOpen *graphics = (KfGraphicsRuntimeOpen *)(
-                    vertices - (unsigned long)&((KfGraphicsRuntimeOpen *)0)->
+                    vertices - (unsigned long)&((KfGraphicsRuntimeOpen *)NULL)->
                         tmd_projected_vertices);
                 AddPrim(
                     &graphics->ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
@@ -100,7 +101,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2)) + depth_bias;
             if (depth >= KF_SCENE_MIN_OT_DEPTH) {
                 KfGraphicsRuntimeOpen *graphics = (KfGraphicsRuntimeOpen *)(
-                    vertices - (unsigned long)&((KfGraphicsRuntimeOpen *)0)->
+                    vertices - (unsigned long)&((KfGraphicsRuntimeOpen *)NULL)->
                         tmd_projected_vertices);
                 AddPrim(
                     &graphics->ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
@@ -132,7 +133,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 >> KF_GTE_DEPTH_TO_OT_SHIFT) + depth_bias;
             if (depth >= KF_SCENE_MIN_OT_DEPTH) {
                 KfGraphicsRuntimeOpen *graphics = (KfGraphicsRuntimeOpen *)(
-                    vertices - (unsigned long)&((KfGraphicsRuntimeOpen *)0)->
+                    vertices - (unsigned long)&((KfGraphicsRuntimeOpen *)NULL)->
                         tmd_projected_vertices);
                 AddPrim(
                     &graphics->ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
@@ -168,7 +169,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2)) + depth_bias;
             if (depth >= KF_SCENE_MIN_OT_DEPTH) {
                 KfGraphicsRuntimeOpen *graphics = (KfGraphicsRuntimeOpen *)(
-                    vertices - (unsigned long)&((KfGraphicsRuntimeOpen *)0)->
+                    vertices - (unsigned long)&((KfGraphicsRuntimeOpen *)NULL)->
                         tmd_projected_vertices);
                 AddPrim(
                     &graphics->ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
@@ -206,7 +207,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 >> KF_GTE_DEPTH_TO_OT_SHIFT) + depth_bias;
             if (depth >= KF_SCENE_MIN_OT_DEPTH) {
                 KfGraphicsRuntimeOpen *graphics = (KfGraphicsRuntimeOpen *)(
-                    vertices - (unsigned long)&((KfGraphicsRuntimeOpen *)0)->
+                    vertices - (unsigned long)&((KfGraphicsRuntimeOpen *)NULL)->
                         tmd_projected_vertices);
                 AddPrim(
                     &graphics->ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
@@ -249,7 +250,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2)) + depth_bias;
             if (depth >= KF_SCENE_MIN_OT_DEPTH) {
                 KfGraphicsRuntimeOpen *graphics = (KfGraphicsRuntimeOpen *)(
-                    vertices - (unsigned long)&((KfGraphicsRuntimeOpen *)0)->
+                    vertices - (unsigned long)&((KfGraphicsRuntimeOpen *)NULL)->
                         tmd_projected_vertices);
                 AddPrim(
                     &graphics->ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
@@ -282,7 +283,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 >> KF_GTE_DEPTH_TO_OT_SHIFT) + depth_bias;
             if (depth >= KF_SCENE_MIN_OT_DEPTH) {
                 KfGraphicsRuntimeOpen *graphics = (KfGraphicsRuntimeOpen *)(
-                    vertices - (unsigned long)&((KfGraphicsRuntimeOpen *)0)->
+                    vertices - (unsigned long)&((KfGraphicsRuntimeOpen *)NULL)->
                         tmd_projected_vertices);
                 AddPrim(
                     &graphics->ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
@@ -321,7 +322,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2)) + depth_bias;
             if (depth >= KF_SCENE_MIN_OT_DEPTH) {
                 KfGraphicsRuntimeOpen *graphics = (KfGraphicsRuntimeOpen *)(
-                    vertices - (unsigned long)&((KfGraphicsRuntimeOpen *)0)->
+                    vertices - (unsigned long)&((KfGraphicsRuntimeOpen *)NULL)->
                         tmd_projected_vertices);
                 AddPrim(
                     &graphics->ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
@@ -351,7 +352,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 >> KF_GTE_DEPTH_TO_OT_SHIFT) + depth_bias;
             if (depth >= KF_SCENE_MIN_OT_DEPTH) {
                 KfGraphicsRuntimeOpen *graphics = (KfGraphicsRuntimeOpen *)(
-                    vertices - (unsigned long)&((KfGraphicsRuntimeOpen *)0)->
+                    vertices - (unsigned long)&((KfGraphicsRuntimeOpen *)NULL)->
                         tmd_projected_vertices);
                 AddPrim(
                     &graphics->ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
@@ -389,7 +390,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2)) + depth_bias;
             if (depth >= KF_SCENE_MIN_OT_DEPTH) {
                 KfGraphicsRuntimeOpen *graphics = (KfGraphicsRuntimeOpen *)(
-                    vertices - (unsigned long)&((KfGraphicsRuntimeOpen *)0)->
+                    vertices - (unsigned long)&((KfGraphicsRuntimeOpen *)NULL)->
                         tmd_projected_vertices);
                 AddPrim(
                     &graphics->ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
@@ -420,7 +421,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 >> KF_GTE_DEPTH_TO_OT_SHIFT) + depth_bias;
             if (depth >= KF_SCENE_MIN_OT_DEPTH) {
                 KfGraphicsRuntimeOpen *graphics = (KfGraphicsRuntimeOpen *)(
-                    vertices - (unsigned long)&((KfGraphicsRuntimeOpen *)0)->
+                    vertices - (unsigned long)&((KfGraphicsRuntimeOpen *)NULL)->
                         tmd_projected_vertices);
                 AddPrim(
                     &graphics->ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
@@ -453,7 +454,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2)) + depth_bias;
             if (depth >= KF_SCENE_MIN_OT_DEPTH) {
                 KfGraphicsRuntimeOpen *graphics = (KfGraphicsRuntimeOpen *)(
-                    vertices - (unsigned long)&((KfGraphicsRuntimeOpen *)0)->
+                    vertices - (unsigned long)&((KfGraphicsRuntimeOpen *)NULL)->
                         tmd_projected_vertices);
                 AddPrim(
                     &graphics->ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],

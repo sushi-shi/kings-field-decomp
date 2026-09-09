@@ -1,3 +1,4 @@
+#include <kf/null.h>
 #include <kf/address.h>
 #define KF_EFFECT_POOL_IMPLEMENTATION
 #include <kf/game_effect.h>
@@ -33,7 +34,7 @@ KfEffectRecord *effect_pool_find_free(void)
         }
         record++;
     } while (--i != 0);
-    return 0;
+    return NULL;
 }
 
 RODATA(0x80012c28, 0xb4)
@@ -47,7 +48,7 @@ KfEffectRecord *effect_pool_construct(
     KfEffectRecord *record = effect_pool_find_free();
     KfMagicRecord *magic;
 
-    if (record != 0) {
+    if (record != NULL) {
         record->type = type;
         record->kind = kind;
         record->position = *position;
@@ -384,7 +385,7 @@ KfEffectRecord *effect_pool_spawn_typed(
     s32 sweep_updates, s32 hold_countdown)
 {
     KfEffectRecord *record = effect_pool_find_free();
-    if (record != 0) {
+    if (record != NULL) {
         setVector(&record->rotation.vector, first_segment, segment_count, progress_per_update);
         record->position.vx = sweep_updates;
         record->position.vy = hold_countdown;

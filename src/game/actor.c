@@ -1,3 +1,4 @@
+#include <kf/null.h>
 #include <kf/bool.h>
 #include <kf/address.h>
 #include <kf/game_effect.h>
@@ -101,7 +102,7 @@ KfActor *actor_pool_find_free(void)
         }
         actor++;
     } while (--count != -1);
-    found = 0;
+    found = NULL;
 done:
     return found;
 }
@@ -118,10 +119,10 @@ void actor_set_player_transform(
     const VECTOR *position,
     const SVECTOR *rotation)
 {
-    if (position != 0) {
+    if (position != NULL) {
         actor_state.player_position = *position;
     }
-    if (rotation != 0) {
+    if (rotation != NULL) {
         actor_state.player_rotation = *rotation;
     }
 }
@@ -236,7 +237,7 @@ void actor_pool_clear(void)
     for (index = 0; index < KF_ACTOR_CAPACITY; index++, actor++) {
         actor->slot_state = KF_ACTOR_SLOT_FREE;
         actor->lifecycle = KF_ACTOR_LIFECYCLE_DORMANT;
-        actor->animation_cache = 0;
+        actor->animation_cache = NULL;
     }
 }
 
@@ -525,7 +526,7 @@ KfActor *actor_pool_find_target_in_cone(
     s32 angle_tolerance,
     s32 *distance_out)
 {
-    KfActor *best = 0;
+    KfActor *best = NULL;
     s16 best_difference = ACTOR_CONE_INITIAL_BEST_ERROR;
     s32 best_distance = 0;
     KfActor *actor = actor_state.actors;
@@ -771,7 +772,7 @@ KfActorAction actor_try_select_ground_action(KfActorAction action, s32 distance,
         return KF_ACTOR_ACTION_NONE;
     }
     if (actor_state.player_target == actor) {
-        actor_state.player_target = 0;
+        actor_state.player_target = NULL;
         return action;
     }
     if (distance > ACTOR_GROUND_SELECTION_FAR_RANGE) {

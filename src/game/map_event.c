@@ -1,3 +1,4 @@
+#include <kf/null.h>
 #include <kf/bool.h>
 #include <kf/address.h>
 #include <kf/map_data.h>
@@ -38,11 +39,11 @@ void map_event_advance_animation_blocking(KfMapEvent *event, u16 target, s16 ste
 {
     while (event->animation_phase < target) {
         event->animation_phase += step;
-        render_frame(0, 0);
+        render_frame(NULL, NULL);
         frame_pacer_wait();
     }
     event->animation_phase = target;
-    render_frame(0, 0);
+    render_frame(NULL, NULL);
 }
 
 ADDRESS(0x800338b8, 0x22c)
@@ -127,7 +128,7 @@ KfMapEvent *map_event_pool_find_target_in_cone(
     s32 angle_tolerance,
     s32 *distance_out)
 {
-    KfMapEvent *found = 0;
+    KfMapEvent *found = NULL;
     s16 best_angle = MAP_EVENT_CONE_INITIAL_BEST_ERROR;
     s32 found_distance = 0;
     KfMapEvent *event = map_event_pool;

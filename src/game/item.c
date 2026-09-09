@@ -1,3 +1,4 @@
+#include <kf/null.h>
 #include <kf/game_graphics.h>
 #include <kf/address.h>
 #include <kf/map_data.h>
@@ -118,7 +119,7 @@ void item_load_database(void)
         rem = n % 100;
         name[12] = rem / 10 + '0';
         name[13] = rem % 10 + '0';
-        if (CdSearchFile((CdlFILE *)&cd_file_table[i], name) != 0) {
+        if (CdSearchFile((CdlFILE *)&cd_file_table[i], name) != NULL) {
             if ((cd_file_table[i].size & (KF_CD_SECTOR_BYTES - 1)) != 0)
                 cd_file_table[i].size =
                     ((cd_file_table[i].size >> KF_CD_SECTOR_SHIFT) + 1) << KF_CD_SECTOR_SHIFT;
@@ -258,7 +259,7 @@ void item_menu_buy(KF_ENUM_PARAM(KfShopId, s32) shop_id)
     ctx.visible_rows = MENU_SHOP_VISIBLE_ROWS;
     ctx.glyphs_per_entry = MENU_GLYPHS_PER_ROW;
     ctx.glyph_rows = &entries[0][0];
-    ctx.quantities = 0;
+    ctx.quantities = NULL;
 
     menu_frame_begin();
     if (ctx.entry_count != 0) {
@@ -405,7 +406,7 @@ void item_menu_sell(KF_ENUM_PARAM(KfShopId, s32) shop_id)
     ctx.visible_rows = MENU_SHOP_VISIBLE_ROWS;
     ctx.glyphs_per_entry = MENU_GLYPHS_PER_ROW;
     ctx.glyph_rows = &entries[0][0];
-    ctx.quantities = 0;
+    ctx.quantities = NULL;
 
     menu_frame_begin();
     if (ctx.entry_count != 0) {

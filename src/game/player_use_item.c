@@ -1,3 +1,4 @@
+#include <kf/null.h>
 #include <kf/bool.h>
 #include <kf/address.h>
 #include <kf/game_player.h>
@@ -31,8 +32,8 @@ char person_image_path_template[15] = "PRSN\\PER00.TIM";
 ADDRESS(0x80017edc, 0xc8)
 void actor_show_info_image(const KfActor *actor)
 {
-    render_frame(0, 0);
-    render_frame(0, 0);
+    render_frame(NULL, NULL);
+    render_frame(NULL, NULL);
     enemy_info_image_path_template[3] = '0' + KF_ENUM_ENCODE(u8, player_state.progress_state.current_floor);
     enemy_info_image_path_template[7] = '0' + actor->definition_id / 10;
     enemy_info_image_path_template[8] = '0' + actor->definition_id % 10;
@@ -42,8 +43,8 @@ void actor_show_info_image(const KfActor *actor)
 ADDRESS(0x80017fa4, 0xb0)
 void map_event_show_person_image(const KfMapEvent *event)
 {
-    render_frame(0, 0);
-    render_frame(0, 0);
+    render_frame(NULL, NULL);
+    render_frame(NULL, NULL);
     person_image_path_template[8] = '0' + KF_ENUM_ENCODE(u8, event->character_id) / 10;
     person_image_path_template[9] = '0' + KF_ENUM_ENCODE(u8, event->character_id) % 10;
     screen_show_image_until_input(person_image_path_template);
@@ -188,7 +189,7 @@ void player_use_item(KfItemId item_id)
             PLAYER_MIRROR_TARGET_DISTANCE,
             PLAYER_MIRROR_ANGLE_TOLERANCE,
             &distance);
-        if (actor != 0) {
+        if (actor != NULL) {
             actor_show_info_image(actor);
             return;
         }
@@ -198,7 +199,7 @@ void player_use_item(KfItemId item_id)
             PLAYER_MIRROR_TARGET_DISTANCE,
             PLAYER_MIRROR_ANGLE_TOLERANCE,
             &distance);
-        if (event == 0) {
+        if (event == NULL) {
             break;
         }
         map_event_show_person_image(event);

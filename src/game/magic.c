@@ -1,3 +1,4 @@
+#include <kf/null.h>
 #include <kf/address.h>
 #include <kf/map_data.h>
 #include <kf/game_collision.h>
@@ -78,7 +79,7 @@ void magic_cast(void)
             &player_state.camera_position,
             player_state.camera_rotation.vy, MAGIC_TARGET_MAX_DISTANCE, KF_ACTOR_AIM_TOLERANCE, &distance);
         actor_state.player_target = target;
-        if (target == 0) {
+        if (target == NULL) {
             speed = MAGIC_DEFAULT_SPEED;
             if (player_state.selected_magic_id == KF_MAGIC_LIGHTNING_BOLT) {
                 speed = LIGHTNING_SPEED;
@@ -134,7 +135,7 @@ void magic_cast(void)
         target = actor_pool_find_target_in_cone(
             &player_state.camera_position,
             player_state.camera_rotation.vy, MAGIC_TARGET_MAX_DISTANCE, KF_ACTOR_AIM_TOLERANCE, &distance);
-        if (target != 0) {
+        if (target != NULL) {
             effect_pool_construct(
                 KF_PLAYER_DAMAGE_MULTIPLIER_ONE, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
                 KF_ENUM_DECODE(KfEffectKind, KF_ENUM_ENCODE(u8, player_state.selected_magic_id)), &target->position,

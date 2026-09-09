@@ -1,3 +1,4 @@
+#include <kf/null.h>
 #include <kf/bool.h>
 #include <kf/address.h>
 #include <kf/game_cd.h>
@@ -36,7 +37,7 @@ KfResourceLoadResult cd_file_load_allocated(u8 **destination, const char *relati
     memcpy(path, cd_path_prefix, sizeof cd_path_prefix);
     strcat(path, relative_path);
     strcat(path, cd_version_suffix);
-    if (CdSearchFile(&cd_search_file, path) == 0) {
+    if (CdSearchFile(&cd_search_file, path) == NULL) {
         display_show_error_screen(KF_SYSTEM_SCREEN_CD_SEARCH_FAILED);
     }
     if (cd_search_file.size & (KF_CD_SECTOR_BYTES - 1)) {
@@ -51,9 +52,9 @@ KfResourceLoadResult cd_file_load_allocated(u8 **destination, const char *relati
     for (attempt = 0; attempt < CD_PATH_READ_ATTEMPTS; attempt++) {
         s32 result;
 
-        CdControl(CdlSetloc, (u_char *)&cd_read_location, 0);
+        CdControl(CdlSetloc, (u_char *)&cd_read_location, NULL);
         CdRead(cd_search_file.size >> KF_CD_SECTOR_SHIFT, (u_long *)*destination, CdlModeSpeed);
-        while ((result = CdReadSync(KF_CD_READ_POLL, 0)) > 0) {
+        while ((result = CdReadSync(KF_CD_READ_POLL, NULL)) > 0) {
         }
         if (result == 0) {
             attempt = KF_CD_READ_STOP_ATTEMPT;
@@ -81,9 +82,9 @@ KfResourceLoadResult cd_file_load_table_entry(void **destination, s32 index)
     for (attempt = 0; attempt < CD_TABLE_READ_ATTEMPTS; attempt++) {
         s32 result;
 
-        CdControl(CdlSetloc, (u_char *)&cd_read_location, 0);
+        CdControl(CdlSetloc, (u_char *)&cd_read_location, NULL);
         CdRead(cd_file_table[index].size >> KF_CD_SECTOR_SHIFT, (u_long *)*destination, CdlModeSpeed);
-        while ((result = CdReadSync(KF_CD_READ_POLL, 0)) > 0) {
+        while ((result = CdReadSync(KF_CD_READ_POLL, NULL)) > 0) {
         }
         if (result == 0) {
             attempt = KF_CD_READ_STOP_ATTEMPT;
@@ -107,7 +108,7 @@ KfResourceLoadResult cd_file_load_into(void *destination, const char *relative_p
     memcpy(path, cd_path_prefix, sizeof cd_path_prefix);
     strcat(path, relative_path);
     strcat(path, cd_version_suffix);
-    if (CdSearchFile(&cd_search_file, path) == 0) {
+    if (CdSearchFile(&cd_search_file, path) == NULL) {
         display_show_error_screen(KF_SYSTEM_SCREEN_CD_SEARCH_FAILED);
     }
     if (cd_search_file.size & (KF_CD_SECTOR_BYTES - 1)) {
@@ -121,9 +122,9 @@ KfResourceLoadResult cd_file_load_into(void *destination, const char *relative_p
     for (attempt = 0; attempt < CD_PATH_READ_ATTEMPTS; attempt++) {
         s32 result;
 
-        CdControl(CdlSetloc, (u_char *)&cd_read_location, 0);
+        CdControl(CdlSetloc, (u_char *)&cd_read_location, NULL);
         CdRead(cd_search_file.size >> KF_CD_SECTOR_SHIFT, (u_long *)destination, CdlModeSpeed);
-        while ((result = CdReadSync(KF_CD_READ_POLL, 0)) > 0) {
+        while ((result = CdReadSync(KF_CD_READ_POLL, NULL)) > 0) {
         }
         if (result == 0) {
             attempt = KF_CD_READ_STOP_ATTEMPT;

@@ -1,3 +1,4 @@
+#include <kf/null.h>
 #include <kf/address.h>
 #include <kf/map_data.h>
 #include <kf/game_collision.h>
@@ -504,7 +505,7 @@ randomize_homing_direction:
                 target = actor_pool_find_target_in_cone(
                     &effect->position,
                     effect->rotation.vector.vy, HOMING_TARGET_MAX_DISTANCE, HOMING_TARGET_CONE_ANGLE, &target_distance);
-                if (target != 0) {
+                if (target != NULL) {
                     KfActorDefinition *definition =
                         &actor_state.definitions.entries[target->definition_id];
 

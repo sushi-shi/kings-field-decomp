@@ -1,3 +1,4 @@
+#include <kf/null.h>
 #include <kf/address.h>
 #include <kf/game_math.h>
 #include <kf/audio.h>
@@ -141,7 +142,7 @@ void audio_close_vab(void)
 
     SsVabClose(*vab_id);
     *vab_id = KF_AUDIO_VAB_UNAVAILABLE;
-    audio_state.vab_header = 0;
+    audio_state.vab_header = NULL;
 }
 
 ADDRESS(0x80032cf0, 0x2c8)
@@ -252,10 +253,10 @@ void audio_set_listener_transform(
     const VECTOR *position_or_null,
     const SVECTOR *rotation_or_null)
 {
-    if (position_or_null != 0) {
+    if (position_or_null != NULL) {
         audio_state.listener_position = *position_or_null;
     }
-    if (rotation_or_null != 0) {
+    if (rotation_or_null != NULL) {
         audio_state.listener_rotation = *rotation_or_null;
     }
 }

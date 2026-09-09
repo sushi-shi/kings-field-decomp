@@ -1,3 +1,4 @@
+#include <kf/null.h>
 #include <kf/bool.h>
 #include <kf/address.h>
 #include <kf/map_data.h>
@@ -37,7 +38,7 @@ KfOpeningEntity *opening_entity_find_by_object_id(
         } while (entity->object_id != KF_OPENING_ENTITY_FREE);
     }
 
-    return 0;
+    return NULL;
 }
 
 ADDRESS(0x80019a24, 0x180)

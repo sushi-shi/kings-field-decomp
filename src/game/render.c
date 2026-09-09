@@ -1,3 +1,4 @@
+#include <kf/null.h>
 #include <kf/game_graphics.h>
 #include <kf/address.h>
 #include <kf/map_data.h>
@@ -90,7 +91,7 @@ void display_show_error_screen(KfSystemScreen stage)
     memcpy(cd_path_buffer, error_screen_path, sizeof error_screen_path);
     cd_path_buffer[SYSTEM_SCREEN_PATH_DIGIT] = KF_ENUM_ENCODE(s32, stage) + '0';
     brightness = SYSTEM_SCREEN_BRIGHTNESS;
-    if (CdSearchFile(&cd_search_file, cd_path_buffer) == 0) {
+    if (CdSearchFile(&cd_search_file, cd_path_buffer) == NULL) {
         exit(1);
     }
     if (cd_search_file.size & (KF_CD_SECTOR_BYTES - 1)) {
@@ -103,10 +104,10 @@ void display_show_error_screen(KfSystemScreen stage)
     for (attempt = 0; attempt < ERROR_SCREEN_READ_ATTEMPTS; attempt++) {
         s32 result;
 
-        CdControl(CdlSetloc, (u_char *)&cd_read_location, 0);
+        CdControl(CdlSetloc, (u_char *)&cd_read_location, NULL);
         CdRead(cd_search_file.size >> KF_CD_SECTOR_SHIFT,
                (u_long *)game_graphics_runtime.display_state.asset_load_buffer, CdlModeSpeed);
-        while ((result = CdReadSync(KF_CD_READ_POLL, 0)) > 0) {
+        while ((result = CdReadSync(KF_CD_READ_POLL, NULL)) > 0) {
         }
         if (result == 0) {
             attempt = KF_CD_READ_STOP_ATTEMPT;
@@ -323,12 +324,12 @@ void render_set_view_transform(
 {
     SVECTOR angles;
 
-    if (position != 0) {
+    if (position != NULL) {
         game_graphics_runtime.render_state.view_position = *position;
         game_graphics_runtime.render_state.view_cell.x = game_graphics_runtime.render_state.view_position.vx / KF_MAP_TILE_SIZE;
         game_graphics_runtime.render_state.view_cell.z = game_graphics_runtime.render_state.view_position.vz / KF_MAP_TILE_SIZE;
     }
-    if (rotation != 0) {
+    if (rotation != NULL) {
         game_graphics_runtime.render_state.view_rotation = *rotation;
     }
     RotMatrix(&game_graphics_runtime.render_state.view_rotation, &game_graphics_runtime.render_state.view_matrix);

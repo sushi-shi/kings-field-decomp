@@ -1,3 +1,4 @@
+#include <kf/null.h>
 #include <kf/game_graphics.h>
 #include <kf/address.h>
 #include <kf/psyq.h>
@@ -52,7 +53,7 @@ void render_actor(KfActor *actor)
     object = tmd_get_object(0);
     if (render_bind_animated_instance(
             &actor->animation_cache, asset, actor->animation_id,
-            actor->animation_phase, object->vertex_count) == 0) {
+            actor->animation_phase, object->vertex_count) == NULL) {
         tmd_select_object_vertices(0);
         tmd_project_vertices(tmd_get_object(0)->vertex_count);
     } else {

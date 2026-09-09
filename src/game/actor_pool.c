@@ -1,3 +1,4 @@
+#include <kf/null.h>
 #include <kf/address.h>
 #include <kf/map_data.h>
 #include <kf/game_actor.h>
@@ -28,7 +29,7 @@ void actor_pool_update(void)
         }
         actor++;
     } while (count-- != 0);
-    actor_bind_current(0);
+    actor_bind_current(NULL);
 }
 
 /*
