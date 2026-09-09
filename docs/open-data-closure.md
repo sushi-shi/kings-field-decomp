@@ -95,3 +95,48 @@ The full build remains red on the established data, reference-coverage and
 placement failures. Source data remains PSX 1/1, GAME 29/41, OPEN 12/20;
 the four independent SDK contributions pass. No function is newly banked.
 The twenty-owner OPEN goal is still incomplete.
+
+## Exported allocation provenance plan
+
+The native source audit finds thirteen COMMON definitions in eight game
+owners. Besides the already failing owners, `memory`, `render_map_cells` and
+`opening_entity_pool` currently pass because the analysis adapter flattens
+their single exported request into fixed BSS. Native requests are respectively
+88, 3264 and 1296 bytes. None is a fixed input-section contribution.
+
+Preserve each compiler-emitted COMMON reservation in a nonallocated analysis
+note, independently of DATA claims and C sizeof. Keep allocated bytes, symbols,
+relocations and all function scores unchanged. The shared placement checker
+must reject these still-unallocated requests even when two flattened objects
+agree, until the complete native allocation can be established. Add compiled
+positive/negative controls before modifying the checker. A smaller honest
+count is preferable to counting unproved storage as complete.
+
+The analysis compiler now records every emitted `.comm` request in
+`.note.kf.allocations`, without consulting DATA claims. This nonallocated
+note preserves the reservation extent separately from the C object size;
+`.lcomm` remains a fixed private contribution. The shared placement checker
+rejects these requests as `unplaced-exported-allocation`. Malformed metadata
+also fails the gate. This does not yet model their native final placement.
+
+A compiled private/exported pair reproduces the old false pass using identical
+flattened source and target objects. The exported case now fails, while the
+private case passes. The control checks allocated section contents, flags,
+extents, named allocations and ordered relocations against an object compiled
+without the note; all remain identical. The menu-bank integration control
+still verifies all six layouts and its 37-byte literal contribution, but now
+requires the exported-allocation failure. In particular, its 180-byte magic
+name array retains the compiler's distinct 184-byte reservation request.
+
+The fresh full build preserves all 484 function sizes and scores, including
+OPEN 107/108 exact functions and thirteen exact vendor source controls. The
+corrected source-data counts are PSX 1/1, GAME 22/41 and OPEN 9/20. The
+three newly failing OPEN owners listed above were false positives, not source
+regressions. The full build remains red on data, coverage and placement.
+Native executable inputs and the previously refreshed executable scores are
+unchanged by this analysis-only correction. No function is newly banked.
+
+Ruff, `git diff --check` and all 778 local tests pass (nine skips).
+`nix flake check -L` passes, including 778 sandbox tests with 140 expected
+local-artifact skips. This verification supersedes the earlier counts above;
+the twenty-owner OPEN objective remains incomplete.
