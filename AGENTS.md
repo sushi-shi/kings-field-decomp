@@ -40,9 +40,7 @@
 - Choose a related campaign from confirmed calls, shared data, repeated source
   shape, or evidence-backed adjacency. Address proximity alone does not prove a
   TU, but it can define a pilot band whose ownership remains explicitly WIP.
-- Publish a Function Match Plan before the first edit. A bulk family may share
-  one campaign plan, but every function needs its own evidence snapshot and
-  final verdict.
+- Record a final verdict for each function in a campaign.
 - Reconstruct semantics first: signature and widths, structure fields, call
   set, constants, CFG, return form, data identity, and delay-slot schedule.
 - Compare from the first real divergence after every focused build. Triage in

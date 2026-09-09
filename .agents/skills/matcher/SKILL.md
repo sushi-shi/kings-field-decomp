@@ -46,11 +46,8 @@ Inspect adjacent functions and all call sites that constrain the O32 signature.
 Audit candidate evidence separately from `--confirmed-only` output. Search git
 history and any sibling/release source evidence before inventing a body.
 
-Before editing, record a concise per-function snapshot: image/VA/extent,
-current score, calls/branches/returns/delay slots/relocations, signature and
-width evidence, vendor negative control, constants/referents, and the first
-source hypothesis. A related bulk campaign may share common ownership/type
-hypotheses, but each function keeps its own final verdict.
+A related bulk campaign may share common ownership/type hypotheses, but each
+function keeps its own final verdict.
 
 ## Reconstruct before steering
 
