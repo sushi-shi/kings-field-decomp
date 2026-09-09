@@ -838,3 +838,6 @@ promotes a probe to a proven historical toolchain.
 - [Complete Sony helper campaign](sony-header-helper-campaign.md): all 147
   candidates reused, signed direction views, exact GAME display initialization,
   corrected switch-table addends and per-function verdicts.
+- [Sony helper near misses](sony-helper-near-misses.md): reordered triples,
+  chained sprite corners and scalar controls; three more player helpers remove
+  the remaining operation-order differences, leaving an eight-byte frame residue.
