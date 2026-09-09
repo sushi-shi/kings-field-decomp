@@ -45,6 +45,9 @@ promotes a probe to a proven historical toolchain.
 - [game-era-source-experiment.md](game-era-source-experiment.md): all 21
   non-exact GAME functions, 133 period-style C attempts, two new exact matches,
   a reproduced statistics-header match, and per-function negative results.
+- [game-second-source-pass.md](game-second-source-pass.md): seventeen remaining
+  GAME functions, forty-four complete-operation source attempts, raw-byte
+  negative controls and evidence-limited verdicts without new exact matches.
 - [game-json-hypothesis-campaign.md](game-json-hypothesis-campaign.md): JSON
   source controls, per-function verdicts and exact actor-awareness wait join.
 - [game-branch-integration.md](game-branch-integration.md): integration verdicts,
