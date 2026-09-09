@@ -1,5 +1,10 @@
 # Strict enum domain audit
 
+**Coverage correction:** the subsequent [complete Clang field review](enum-field-review.md)
+finds 1,030 project field declarations and further missing typed domains. The
+854-field count below describes the curated layouts, not every project struct.
+The earlier completion claims in this document are superseded by that review.
+
 ## Function Match Plan
 
 Baseline: `9e5985ab`, isolated branch `fix/strict-enum-domains`.

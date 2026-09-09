@@ -801,6 +801,10 @@ promotes a probe to a proven historical toolchain.
 - [GAME effect-slot sequence helper boundary](game-map-object-sequence-inline.md):
   two acquire/publish inline boundaries preserve the spawn residue.
 
-- [Strict enum domain audit](strict-enum-audit.md): complete field/API coverage,
+- [Strict enum domain audit](strict-enum-audit.md): initial field/API campaign,
   shared progress and animation domains, strict Clang compatibility, and
   unchanged retail objects across all 484 functions.
+
+- [Complete Clang field review](enum-field-review.md): 1,030 declarations,
+  a per-field evidence ledger, and remaining enum/packed-domain candidates after
+  integration of the strict enum campaign.
