@@ -101,9 +101,9 @@ void player_use_item(KfItemId item_id)
                     used = 1;
                     if (object->link.fields.link_id == KF_ENUM_ENCODE(u8, item_id)) {
                         object->link.fields.link_id = KF_MAP_LINK_NONE;
-                        sound_ref_play(&gameplay_sound_ref_12, PLAYER_KEY_UNLOCK_VOLUME);
+                        sound_ref_play(&gameplay_sound_refs[12], PLAYER_KEY_UNLOCK_VOLUME);
                         if (object->object_id == KF_MAP_OBJECT_GRAVESTONE) {
-                            sound_ref_play(&gameplay_sound_ref_7, KF_AUDIO_MAX_VOLUME);
+                            sound_ref_play(&gameplay_sound_refs[7], KF_AUDIO_MAX_VOLUME);
                         }
                     } else {
                         notify_enqueue(KF_NOTIFICATION_KEY_DOES_NOT_FIT);
@@ -161,7 +161,7 @@ void player_use_item(KfItemId item_id)
         } else {
             break;
         }
-        sound_ref_play(&gameplay_sound_ref_8, KF_AUDIO_MAX_VOLUME);
+        sound_ref_play(&gameplay_sound_refs[8], KF_AUDIO_MAX_VOLUME);
         used = 1;
         break;
     case KF_ITEM_MEDICINAL_HERB:

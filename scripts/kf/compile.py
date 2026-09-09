@@ -295,6 +295,7 @@ def compile_source(
         assembler_arguments = [
             maspsx,
             f"--aspsx-version={aspsx_version}",
+            f"-G{small_data}",
             *maspsx_flags,
             "--run-assembler",
             "--force-stdin",

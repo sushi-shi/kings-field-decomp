@@ -5,6 +5,9 @@ about which source shapes reproduce it under the current probes. Each note
 records the retail evidence first and the probe behaviour second; none of them
 promotes a probe to a proven historical toolchain.
 
+- [data-repair-campaign.md](data-repair-campaign.md): complete pool/allocator
+  extents, native small-BSS allocation, private reservations, and remaining
+  initialized-data, sound-selector and jump-table boundaries.
 - [data-owner-recovery.md](data-owner-recovery.md): native ASPSX alignment,
   literal contribution boundaries, initialized small-data ownership and the
   complete GAME/OPEN strict data-owner verdict ledger.

@@ -207,7 +207,7 @@ class GameMapScriptDataTests(unittest.TestCase):
         grid = MemoryRange('grid', *symbols.datum('map_floor_height_grid'))
         guard = MemoryRange('guard', grid.address - 8, grid.size + 16)
         table = MemoryRange('table-neighbors', 0x80056260, 52)
-        sound = symbols.datum('gameplay_sound_ref_4')[0]
+        sound = symbols.datum('gameplay_sound_refs')[0] + 4 * 3
         for index, segment in enumerate(SEGMENTS):
             for start in (-800, -1, 0, 1, 3899, 3900, 3901, 4096, 4097, 4899):
                 for step in (-800, -1, 0, 1, 800):

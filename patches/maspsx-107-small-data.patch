@@ -1,0 +1,84 @@
+--- a/maspsx/__init__.py
++++ b/maspsx/__init__.py
+@@ -444,6 +444,7 @@
+         sltu_at=False,
+         addiu_at=False,
+         div_uses_tge=False,
++        native_107_data=False,
+         gp_allow_offset=False,
+         gp_allow_la=False,
+         use_comm_section=False,
+@@ -464,6 +465,7 @@
+         self.addiu_at = addiu_at
+         self.div_uses_tge = div_uses_tge
+ 
++        self.native_107_data = native_107_data
+         self.gp_allow_offset = gp_allow_offset
+         self.gp_allow_la = gp_allow_la
+ 
+@@ -526,7 +528,9 @@
+                 _, var = line.split()
+                 symbol, size_str, *_ = var.split(",")
+                 size = int(size_str)
+-                if size <= self.sdata_limit:
++                if size <= self.sdata_limit and not (
++                    self.native_107_data and line.startswith(".comm")
++                ):
+                     self.sbss_entries[symbol] = size
+                 else:
+                     self.bss_entries[symbol] = size
+@@ -624,7 +628,7 @@
+                     res.append(f"\t.comm {symbol},{size}")
+                     continue
+ 
+-                if section == "sbss":
++                if section == "sbss" and not self.native_107_data:
+                     if size >= 8:
+                         res.append("\t.align 3")
+                     elif size >= 4:
+@@ -666,7 +670,7 @@
+         return ""  # warn user?
+ 
+     def _uses_gp(self, line: str) -> bool:
+-        if self.sdata_limit == 0:
++        if self.sdata_limit == 0 or self.native_107_data:
+             return False
+ 
+         line = strip_comments(line)
+@@ -688,7 +692,7 @@
+                     symbol = operand
+                     gp_allowed = True
+ 
+-                if gp_allowed and (
++                if gp_allowed and not self.native_107_data and (
+                     symbol in self.sbss_entries or symbol in self.sdata_entries
+                 ):
+                     return True
+@@ -974,7 +978,7 @@
+                     gp_rel = f"%gp_rel({symbol})($gp)"
+                     gp_allowed = True
+ 
+-                if gp_allowed and (
++                if gp_allowed and not self.native_107_data and (
+                     symbol in self.sdata_entries or symbol in self.sbss_entries
+                 ):
+                     res.append(f"{op}\t{r_dest},{gp_rel}")
+@@ -1065,7 +1069,7 @@
+                 if op == "la" and not self.gp_allow_la:
+                     gp_allowed = False
+ 
+-                if gp_allowed and (
++                if gp_allowed and not self.native_107_data and (
+                     symbol in self.sdata_entries or symbol in self.sbss_entries
+                 ):
+                     res.append(f"{op}\t{r_dest},{gp_rel}")
+--- a/maspsx.py
++++ b/maspsx.py
+@@ -140,6 +140,7 @@
+         processor = MaspsxProcessor(
+             in_lines,
+             sdata_limit=sdata_limit,
++            native_107_data=args.aspsx_version == "1.07",
+             expand_div=args.expand_div,
+             expand_li=version_config.expand_li,
+             nop_at_expansion=version_config.nop_at_expansion,

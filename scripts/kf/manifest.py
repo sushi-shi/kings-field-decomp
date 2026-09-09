@@ -338,7 +338,7 @@ def _bind_data_claims(
             )
         claimed[(image, claim.va)] = unit
         data.append(Datum(claim.va, claim.size, identity.name, identity.storage, identity.scope,
-                          identity.section))
+                          identity.section, identity.reservation_size))
     return tuple(data)
 
 

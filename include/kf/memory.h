@@ -23,24 +23,30 @@ typedef struct KfMemoryAllocationState {
     u32 stack[KF_MEMORY_STACK_WORDS];
 } KfMemoryAllocationState;
 
+/* Arena and fallback system-heap bookkeeping occupy one shared owner. */
 typedef struct KfMemoryArena {
     u8 *start;
     u8 *end;
     KfMemoryAllocationState allocation;
+    u8 *system_heap_start;
+    s32 system_heap_size;
 } KfMemoryArena;
 
 typedef char KfMemoryAllocationStateSizeCheck[
     sizeof(KfMemoryAllocationState) == 0x48 ? 1 : -1];
 typedef char KfMemoryArenaSizeCheck[
-    sizeof(KfMemoryArena) == 0x50 ? 1 : -1];
+    sizeof(KfMemoryArena) == 0x58 ? 1 : -1];
 typedef char KfMemoryArenaAllocationOffsetCheck[
     (unsigned long)&((KfMemoryArena *)0)->allocation == 8 ? 1 : -1];
 typedef char KfMemoryStackOffsetCheck[
     (unsigned long)&((KfMemoryAllocationState *)0)->stack == 4 ? 1 : -1];
 
+typedef char KfMemorySystemHeapStartOffsetCheck[
+    (unsigned long)&((KfMemoryArena *)0)->system_heap_start == 0x50 ? 1 : -1];
+typedef char KfMemorySystemHeapSizeOffsetCheck[
+    (unsigned long)&((KfMemoryArena *)0)->system_heap_size == 0x54 ? 1 : -1];
+
 extern KfMemoryArena memory_arena;
-extern u8 *memory_system_heap_start;
-extern s32 memory_system_heap_size;
 
 extern void *memory_allocate(s32 size);
 extern void memory_allocation_reset(void);

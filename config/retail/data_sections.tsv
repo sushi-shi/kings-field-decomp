@@ -1,2 +1,15 @@
 image	va	name	section	evidence
+GAME.EXE	0x80057b30	player_previous_input	.sdata	docs/patterns/data-repair-campaign.md:private-player-storage;native-gcc257-aspsx107-G8
+GAME.EXE	0x80057b48	map_mix_tim_filename	.sdata	docs/patterns/data-repair-campaign.md:initialized-owner-boundaries;native-gcc257-aspsx107-G8
+GAME.EXE	0x80057b78	memory_card_root_path	.sdata	docs/patterns/data-repair-campaign.md:private-event-storage;native-gcc257-aspsx107-G8
 GAME.EXE	0x80057b80	boss_death_loop_sound	.sdata	docs/patterns/data-owner-recovery.md:initialized-small-data-ownership-plan;native-gcc257-aspsx107-G8;retail-late-initialized-region
+GAME.EXE	0x80057e68	player_movement_velocity_limit	.sbss	docs/patterns/data-repair-campaign.md:private-player-storage;native-gcc257-aspsx107-G8
+GAME.EXE	0x80057e70	player_turn_step_limit	.sbss	docs/patterns/data-repair-campaign.md:private-player-storage;native-gcc257-aspsx107-G8
+GAME.EXE	0x80057e90	memory_card_io_end_event	.sbss	docs/patterns/data-repair-campaign.md:private-event-storage;native-gcc257-aspsx107-G8
+GAME.EXE	0x80057e98	memory_card_timeout_event	.sbss	docs/patterns/data-repair-campaign.md:private-event-storage;native-gcc257-aspsx107-G8
+GAME.EXE	0x80057ea0	memory_card_new_device_event	.sbss	docs/patterns/data-repair-campaign.md:private-event-storage;native-gcc257-aspsx107-G8
+GAME.EXE	0x80057ea8	memory_card_error_event	.sbss	docs/patterns/data-repair-campaign.md:private-event-storage;native-gcc257-aspsx107-G8
+GAME.EXE	0x80058020	pad_buf	.sbss	docs/patterns/data-repair-campaign.md:pad-storage;native-gcc257-aspsx107-G8
+GAME.EXE	0x80058028	pad_status	.sbss	docs/patterns/data-repair-campaign.md:pad-storage;native-gcc257-aspsx107-G8
+OPEN.EXE	0x80037760	pad_buf	.sbss	docs/patterns/data-repair-campaign.md:pad-storage;native-gcc257-aspsx107-G8
+OPEN.EXE	0x80037768	pad_status	.sbss	docs/patterns/data-repair-campaign.md:pad-storage;native-gcc257-aspsx107-G8

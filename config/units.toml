@@ -45,6 +45,16 @@ aspsx_version = "1.07"
 cc1_flags = []
 maspsx_flags = ["--expand-div"]
 
+# Native private-small-BSS probe for the SDK PAD verification sources.
+[profiles.probe-gcc257-o2-plain-g8]
+language = "c"
+compiler = "gcc257-native"
+optimization = "O2"
+small_data = 8
+aspsx_version = "1.07"
+cc1_flags = []
+maspsx_flags = ["--expand-div"]
+
 # Per-TU scheduling-model probes. `-mcpu=r2000` (the default g0) is a per-unit
 # discriminator, not a global truth: some TUs reach byte-exact only under a
 # different R3000A scheduling model. `-fno-schedule-insns` disables the cc1
@@ -156,7 +166,7 @@ profile = "probe-gcc257-o2-g0"
 unit = "game.player_update"
 image = "GAME.EXE"
 source = "src/game/player_update.c"
-profile = "probe-gcc257-o2-g0"
+profile = "probe-gcc257-o2-g8"
 
 [[unit]]
 unit = "game.collision_grid"
@@ -186,7 +196,7 @@ profile = "probe-gcc257-o2-g0"
 unit = "game.resources"
 image = "GAME.EXE"
 source = "src/game/resources.c"
-profile = "probe-gcc257-o2-g0"
+profile = "probe-gcc257-o2-g8"
 
 [[unit]]
 unit = "game.render"
@@ -391,7 +401,7 @@ profile = "probe-gcc257-o2-g0"
 unit = "game.save_system"
 image = "GAME.EXE"
 source = "src/game/save_system.c"
-profile = "probe-gcc257-o2-g0"
+profile = "probe-gcc257-o2-g8"
 
 [[unit]]
 unit = "game.actor"
@@ -531,7 +541,7 @@ scope = "vendored"
 unit = "game.pad"
 image = "GAME.EXE"
 source = "src/vendor/game_libetc_pad.c"
-profile = "probe-gcc257-o2-plain"
+profile = "probe-gcc257-o2-plain-g8"
 scope = "vendored"
 
 [[unit]]
@@ -750,5 +760,5 @@ profile = "probe-gcc257-o2-g0"
 unit = "open.pad"
 image = "OPEN.EXE"
 source = "src/vendor/open_libetc_pad.c"
-profile = "probe-gcc257-o2-plain"
+profile = "probe-gcc257-o2-plain-g8"
 scope = "vendored"

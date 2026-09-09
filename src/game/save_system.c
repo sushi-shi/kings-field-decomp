@@ -59,16 +59,16 @@ DATA(0x80057b78, 0x6)
 char memory_card_root_path[6] = "bu00:";
 
 DATA(0x80057e90, 0x4)
-s32 memory_card_io_end_event;
+static s32 memory_card_io_end_event;
 
 DATA(0x80057e98, 0x4)
-s32 memory_card_timeout_event;
+static s32 memory_card_timeout_event;
 
 DATA(0x80057ea0, 0x4)
-s32 memory_card_new_device_event;
+static s32 memory_card_new_device_event;
 
 DATA(0x80057ea8, 0x4)
-s32 memory_card_error_event;
+static s32 memory_card_error_event;
 
 DATA(0x800668d8, 0x4)
 KfSaveHeader *save_header_buffer;

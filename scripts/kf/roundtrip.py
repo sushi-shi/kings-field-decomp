@@ -31,7 +31,8 @@ from scripts.kf.sema.image import RetailImage
 
 
 SECTIONS = {".text": "SHT_PROGBITS", ".rodata": "SHT_PROGBITS",
-            ".data": "SHT_PROGBITS", ".sdata": "SHT_PROGBITS", ".bss": "SHT_NOBITS"}
+            ".data": "SHT_PROGBITS", ".sdata": "SHT_PROGBITS", ".bss": "SHT_NOBITS",
+            ".sbss": "SHT_NOBITS"}
 LINKER = "mipsel-linux-gnu-ld"
 SYMBOL_NAME = re.compile(r"[A-Za-z_$][A-Za-z0-9_$]*\Z")
 ADDRESS_NAME = re.compile(r"DAT_([0-9a-fA-F]{8})\Z")
@@ -102,6 +103,7 @@ def plan(elf: ELFFile, unit: Unit, result: UnitResult) -> dict[str, int]:
     claims = [(f.symbol, f.va, f.body_size, ".text") for f in unit.functions]
     claims += [(d.symbol, d.va, d.size, d.section_name)
                for d in unit.data]
+    reservations = {d.symbol: d.reservation_size for d in unit.data if d.reservation_size}
     bases: dict[str, set[int]] = defaultdict(set)
     sizes: Counter = Counter()
     witnesses: dict[str, list[dict]] = defaultdict(list)
@@ -120,13 +122,16 @@ def plan(elf: ELFFile, unit: Unit, result: UnitResult) -> dict[str, int]:
             continue
         offset = symbol['st_value']
         section = elf.get_section(index)
-        if offset + size > section['sh_size']:
+        if offset + max(size, reservations.get(name, 0)) > section['sh_size']:
             result.issue("owned-symbol-out-of-bounds", symbol=name)
             continue
         bases[section_name].add(va - offset)
         sizes[section_name] += size
-        witnesses[section_name].append({"symbol": name, "va": va, "offset": offset, "size": size,
-                                        "implied_base": va - offset})
+        witness = {"symbol": name, "va": va, "offset": offset, "size": size,
+                   "implied_base": va - offset}
+        if name in reservations:
+            witness["reservation_size"] = reservations[name]
+        witnesses[section_name].append(witness)
     text_extent = unit.functions[-1].end - unit.functions[0].va if unit.functions else 0
     if unit.functions:
         sizes[".text"] = text_extent
@@ -159,7 +164,7 @@ def plan(elf: ELFFile, unit: Unit, result: UnitResult) -> dict[str, int]:
             result.issue("conflicting-section-bases" if candidates else "unclaimed-section",
                          section=name, size=size, claims=witnesses[name])
             continue
-        owned = sorted((s['offset'], s['offset'] + s['size'], s['symbol'])
+        owned = sorted((s['offset'], s['offset'] + s.get('reservation_size', s['size']), s['symbol'])
                        for s in witnesses[name])
         for left, right in zip(owned, owned[1:]):
             if left[1] > right[0]:
@@ -175,7 +180,7 @@ def plan(elf: ELFFile, unit: Unit, result: UnitResult) -> dict[str, int]:
             continue
         placed[name] = base
         result.sections.append(SectionPlacement(
-            name, base, size, sizes[name], "bss" if name == ".bss" else "load",
+            name, base, size, sizes[name], "bss" if name in {".bss", ".sbss"} else "load",
         ))
     for name in bases:
         if name not in seen:

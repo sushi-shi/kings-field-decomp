@@ -169,12 +169,8 @@ KF_SAVE_SUMMARY_OFFSET_CHECK(current_mp, 0x10);
 KF_SAVE_SUMMARY_OFFSET_CHECK(maximum_mp, 0x14);
 #undef KF_SAVE_SUMMARY_OFFSET_CHECK
 
-extern s32 memory_card_error_event;
-extern s32 memory_card_io_end_event;
 extern char memory_card_message_path_template[];
-extern s32 memory_card_new_device_event;
 extern char memory_card_root_path[];
-extern s32 memory_card_timeout_event;
 extern KfSaveHeader *save_header_buffer;
 extern char save_main_file_path[];
 extern KfSavePayload *save_payload_buffer;

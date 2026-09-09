@@ -2331,9 +2331,9 @@ GAME.EXE	0x800181b0	0x69b0		mips26	instruction-word	0x8001fa44	load		jal		contro
 GAME.EXE	0x800181b8	0x69b8		mips26	instruction-word	0x80018128	load		j		manual-control-flow	reviewed	manual:game_semantic_player_interactions
 GAME.EXE	0x800181d8	0x69d8	0x800181dc	mips_hi16_lo16	reachable-code	0x800a083a	bss	player_state	lui+lh	a0	paired-reviewed	reviewed	manual:game_semantic_player_interactions
 GAME.EXE	0x800181e0	0x69e0		mips26	instruction-word	0x80014f6c	load	angle_within_tolerance	jal		control-flow-reviewed	reviewed	manual:game_semantic_player_interactions
-GAME.EXE	0x80018204	0x6a04	0x80018208	mips_hi16_lo16	instruction-word	0x800561ac	load		lui+addiu	a0	paired-reviewed	reviewed	manual:game_semantic_player_interactions
+GAME.EXE	0x80018204	0x6a04	0x80018208	mips_hi16_lo16	instruction-word	0x800561ac	load	gameplay_sound_refs	lui+addiu	a0	paired-reviewed	reviewed	manual:game_semantic_player_interactions
 GAME.EXE	0x8001820c	0x6a0c		mips26	instruction-word	0x800330ac	load	sound_ref_play	jal		control-flow-reviewed	reviewed	manual:game_semantic_player_interactions
-GAME.EXE	0x80018224	0x6a24	0x80018228	mips_hi16_lo16	instruction-word	0x8005619d	load		lui+addiu	a0	paired-reviewed	reviewed	manual:game_semantic_player_interactions
+GAME.EXE	0x80018224	0x6a24	0x80018228	mips_hi16_lo16	instruction-word	0x8005619d	load	gameplay_sound_refs	lui+addiu	a0	paired-reviewed	reviewed	manual:game_semantic_player_interactions
 GAME.EXE	0x8001822c	0x6a2c		mips26	instruction-word	0x800330ac	load	sound_ref_play	jal		control-flow-reviewed	reviewed	manual:game_semantic_player_interactions
 GAME.EXE	0x80018234	0x6a34		mips26	instruction-word	0x80018128	load		j		manual-control-flow	reviewed	manual:game_semantic_player_interactions
 GAME.EXE	0x8001823c	0x6a3c		mips26	instruction-word	0x8001fa44	load		jal		control-flow-reviewed	reviewed	manual:game_semantic_player_interactions
@@ -2349,7 +2349,7 @@ GAME.EXE	0x800182e8	0x6ae8	0x800182ec	mips_hi16_lo16	reachable-code	0x8009d040	b
 GAME.EXE	0x80018334	0x6b34	0x80018338	mips_hi16_lo16	reachable-code	0x800a078a	bss	player_state	lui+lbu	v1	paired-reviewed	reviewed	manual:game_semantic_player_interactions
 GAME.EXE	0x8001835c	0x6b5c		mips26	instruction-word	0x80018384	load		j		manual-control-flow	reviewed	manual:game_semantic_player_interactions
 GAME.EXE	0x80018388	0x6b88		mips26	instruction-word	0x80037770	load		jal		control-flow-reviewed	reviewed	manual:game_semantic_player_interactions
-GAME.EXE	0x80018390	0x6b90	0x80018394	mips_hi16_lo16	instruction-word	0x800561a0	load		lui+addiu	a0	paired-reviewed	reviewed	manual:game_semantic_player_interactions
+GAME.EXE	0x80018390	0x6b90	0x80018394	mips_hi16_lo16	instruction-word	0x800561a0	load	gameplay_sound_refs	lui+addiu	a0	paired-reviewed	reviewed	manual:game_semantic_player_interactions
 GAME.EXE	0x80018398	0x6b98		mips26	instruction-word	0x800330ac	load	sound_ref_play	jal		control-flow-reviewed	reviewed	manual:game_semantic_player_interactions
 GAME.EXE	0x800183a0	0x6ba0		mips26	instruction-word	0x80018470	load		j		manual-control-flow	reviewed	manual:game_semantic_player_interactions
 GAME.EXE	0x800183a8	0x6ba8		mips26	instruction-word	0x80017cf8	load	player_warp_to_floor_entry	jal		control-flow-reviewed	reviewed	manual:game_semantic_player_interactions
@@ -2820,9 +2820,9 @@ GAME.EXE	0x8001ab88	0x9388		mips26	reachable-code	0x8001aae8	load	memory_allocat
 GAME.EXE	0x8001ab90	0x9390		mips26	reachable-code	0x8001aba0	load		j		manual-control-flow	reviewed	manual:game_open_semantic_memory_allocator
 GAME.EXE	0x8001ab98	0x9398	0x8001ab9c	mips_hi16_lo16	reachable-code	0x800a01f8	bss	memory_arena	lui+sw	zero	paired-reviewed	reviewed	manual:game_open_semantic_memory_allocator
 GAME.EXE	0x8001abb0	0x93b0	0x8001abb4	mips_hi16_lo16	reachable-code	0x800a01f4	bss	memory_arena	lui+lw	v0	paired-reviewed	reviewed	manual:game_open_semantic_memory_allocator
-GAME.EXE	0x8001abc0	0x93c0	0x8001abc4	mips_hi16_lo16	reachable-code	0x800a0240	bss	memory_system_heap_start	lui+sw	v0	paired-reviewed	reviewed	manual:game_open_semantic_memory_allocator
-GAME.EXE	0x8001abdc	0x93dc	0x8001abe0	mips_hi16_lo16	reachable-code	0x800a0240	bss	memory_system_heap_start	lui+lw	a0	paired-reviewed	reviewed	manual:game_open_semantic_memory_allocator
-GAME.EXE	0x8001abec	0x93ec	0x8001abf0	mips_hi16_lo16	reachable-code	0x800a0244	bss	memory_system_heap_size	lui+sw	a1	paired-reviewed	reviewed	manual:game_open_semantic_memory_allocator
+GAME.EXE	0x8001abc0	0x93c0	0x8001abc4	mips_hi16_lo16	reachable-code	0x800a0240	bss	memory_arena	lui+sw	v0	paired-reviewed	reviewed	manual:game_open_semantic_memory_allocator
+GAME.EXE	0x8001abdc	0x93dc	0x8001abe0	mips_hi16_lo16	reachable-code	0x800a0240	bss	memory_arena	lui+lw	a0	paired-reviewed	reviewed	manual:game_open_semantic_memory_allocator
+GAME.EXE	0x8001abec	0x93ec	0x8001abf0	mips_hi16_lo16	reachable-code	0x800a0244	bss	memory_arena	lui+sw	a1	paired-reviewed	reviewed	manual:game_open_semantic_memory_allocator
 GAME.EXE	0x8001abf4	0x93f4		mips26	reachable-code	0x8005040c	load	InitHeap	jal		control-flow-reviewed	reviewed	manual:game_open_semantic_memory_allocator
 GAME.EXE	0x8001ac18	0x9418	0x8001ac1c	mips_hi16_lo16	reachable-code	0x800a01f8	bss	memory_arena	lui+addiu	a0	paired-reviewed	reviewed	manual:game_open_semantic_memory_allocator
 GAME.EXE	0x8001ac30	0x9430		mips26	reachable-code	0x8001aab0	load	memory_malloc_checked	jal		control-flow-reviewed	reviewed	manual:game_open_semantic_memory_allocator
@@ -6355,9 +6355,9 @@ GAME.EXE	0x80030f54	0x1f754		mips26	reachable-code	0x80030f6c	load		j		control-f
 GAME.EXE	0x80030f5c	0x1f75c		mips26	reachable-code	0x80030ef4	load		j		control-flow-reviewed	reviewed	manual:game_semantic_map_objects;carved-body-reviewed
 GAME.EXE	0x80030f64	0x1f764		mips26	reachable-code	0x80030ef4	load		j		control-flow-reviewed	reviewed	manual:game_semantic_map_objects;carved-body-reviewed
 GAME.EXE	0x80030f7c	0x1f77c	0x80030f80	mips_hi16_lo16	reachable-code	0x8006ede0	bss	map_object_state	lui+addiu	a0	paired-reviewed	reviewed	manual:game_semantic_map_objects;carved-body-reviewed
-GAME.EXE	0x80030fbc	0x1f7bc	0x80030fc0	mips_hi16_lo16	reachable-code	0x80070e96	bss	map_object_effect_sequence_180	lui+sh	zero	paired-reviewed	reviewed	manual:game_semantic_map_objects;carved-body-reviewed
-GAME.EXE	0x80030fc4	0x1f7c4	0x80030fc8	mips_hi16_lo16	reachable-code	0x80070e94	bss	map_object_effect_sequence_170	lui+sh	zero	paired-reviewed	reviewed	manual:game_semantic_map_objects;carved-body-reviewed
-GAME.EXE	0x80030fcc	0x1f7cc	0x80030fd0	mips_hi16_lo16	reachable-code	0x80070e92	bss	map_object_effect_sequence_160	lui+sh	zero	paired-reviewed	reviewed	manual:game_semantic_map_objects;carved-body-reviewed
+GAME.EXE	0x80030fbc	0x1f7bc	0x80030fc0	mips_hi16_lo16	reachable-code	0x80070e96	bss	map_object_state	lui+sh	zero	paired-reviewed	reviewed	manual:game_semantic_map_objects;carved-body-reviewed
+GAME.EXE	0x80030fc4	0x1f7c4	0x80030fc8	mips_hi16_lo16	reachable-code	0x80070e94	bss	map_object_state	lui+sh	zero	paired-reviewed	reviewed	manual:game_semantic_map_objects;carved-body-reviewed
+GAME.EXE	0x80030fcc	0x1f7cc	0x80030fd0	mips_hi16_lo16	reachable-code	0x80070e92	bss	map_object_state	lui+sh	zero	paired-reviewed	reviewed	manual:game_semantic_map_objects;carved-body-reviewed
 GAME.EXE	0x80030fdc	0x1f7dc	0x80030fe0	mips_hi16_lo16	reachable-code	0x8006e8e0	bss	map_object_state	lui+addiu	a1	paired-reviewed	reviewed	manual:game_semantic_map_objects
 GAME.EXE	0x8003103c	0x1f83c	0x80031040	mips_hi16_lo16	reachable-code	0x8006ede0	bss	map_object_state	lui+addiu	s1	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:map_objects;carved-body-reviewed
 GAME.EXE	0x80031078	0x1f878		mips26	reachable-code	0x800313f8	load		j		control-flow	reviewed	investigation:relocs.tsv;manual:map_objects;carved-body-reviewed
@@ -6403,9 +6403,9 @@ GAME.EXE	0x8003170c	0x1ff0c		mips26	reachable-code	0x80031720	load		j		control-f
 GAME.EXE	0x80031720	0x1ff20		mips26	reachable-code	0x80031450	load		jal		control-flow	reviewed	investigation:relocs.tsv;manual:map_object;carved-body-reviewed
 GAME.EXE	0x80031730	0x1ff30		mips26	reachable-code	0x80031758	load		j		control-flow	reviewed	investigation:relocs.tsv;manual:map_object;carved-body-reviewed
 GAME.EXE	0x800317bc	0x1ffbc	0x800317c0	mips_hi16_lo16	reachable-code	0x8006ede0	bss	map_object_state	lui+addiu	v1	paired-reviewed	reviewed	manual:game_semantic_map_objects;carved-body-reviewed
-GAME.EXE	0x80031864	0x20064	0x80031868	mips_hi16_lo16	reachable-code	0x80070e96	bss	DAT_80070e96	lui+addiu	s0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:map_object;carved-body-reviewed
+GAME.EXE	0x80031864	0x20064	0x80031868	mips_hi16_lo16	reachable-code	0x80070e96	bss	map_object_state	lui+addiu	s0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:map_object;carved-body-reviewed
 GAME.EXE	0x8003186c	0x2006c		mips26	instruction-word	0x80031880	load		j		range-filtered	reviewed	investigation:relocs.tsv;manual:map_object;carved-body-reviewed
-GAME.EXE	0x80031878	0x20078	0x8003187c	mips_hi16_lo16	reachable-code	0x80070e94	bss	DAT_80070e94	lui+addiu	s0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:map_object;carved-body-reviewed
+GAME.EXE	0x80031878	0x20078	0x8003187c	mips_hi16_lo16	reachable-code	0x80070e94	bss	map_object_state	lui+addiu	s0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:map_object;carved-body-reviewed
 GAME.EXE	0x80031884	0x20084		mips26	instruction-word	0x800317a4	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:map_object;carved-body-reviewed
 GAME.EXE	0x80031940	0x20140		mips26	instruction-word	0x8005049c	load	rand	jal		range-filtered	reviewed	investigation:relocs.tsv;manual:map_object;carved-body-reviewed
 GAME.EXE	0x80031968	0x20168		mips26	instruction-word	0x80031784	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:map_object;carved-body-reviewed
@@ -6413,7 +6413,7 @@ GAME.EXE	0x80031970	0x20170		mips26	instruction-word	0x800319a8	load		j		range-f
 GAME.EXE	0x80031984	0x20184		mips26	instruction-word	0x80031784	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:map_object;carved-body-reviewed
 GAME.EXE	0x8003198c	0x2018c		mips26	instruction-word	0x800319a8	load		j		range-filtered	reviewed	investigation:relocs.tsv;manual:map_object;carved-body-reviewed
 GAME.EXE	0x8003199c	0x2019c		mips26	instruction-word	0x80031784	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:map_object;carved-body-reviewed
-GAME.EXE	0x800319f0	0x201f0	0x800319f4	mips_hi16_lo16	reachable-code	0x80070e92	bss	DAT_80070e92	lui+addiu	s0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:map_object;carved-body-reviewed
+GAME.EXE	0x800319f0	0x201f0	0x800319f4	mips_hi16_lo16	reachable-code	0x80070e92	bss	map_object_state	lui+addiu	s0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:map_object;carved-body-reviewed
 GAME.EXE	0x800319fc	0x201fc		mips26	instruction-word	0x800317a4	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:map_object;carved-body-reviewed
 GAME.EXE	0x80031a24	0x20224		mips26	instruction-word	0x8005049c	load	rand	jal		range-filtered	reviewed	investigation:relocs.tsv;manual:map_object;carved-body-reviewed
 GAME.EXE	0x80031a34	0x20234		mips26	instruction-word	0x8004f27c	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:map_object;carved-body-reviewed
@@ -6430,25 +6430,25 @@ GAME.EXE	0x80031d04	0x20504	0x80031d08	mips_hi16_lo16	reachable-code	0x80095900	
 GAME.EXE	0x80031d34	0x20534	0x80031d38	mips_hi16_lo16	reachable-code	0x80012888	load		lui+addiu	at	paired-reviewed	reviewed	investigation:relocs.tsv;manual:map_objects;carved-body-reviewed
 GAME.EXE	0x80031d70	0x20570	0x80031d74	mips_hi16_lo16	reachable-code	0x8006ede0	bss	map_object_state	lui+addiu	v1	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:map_objects;carved-body-reviewed
 GAME.EXE	0x80031d78	0x20578		mips26	instruction-word	0x80031d84	load		j		range-filtered	reviewed	investigation:relocs.tsv;manual:map_objects;carved-body-reviewed
-GAME.EXE	0x80031dd4	0x205d4	0x80031dd8	mips_hi16_lo16	instruction-word	0x8005619d	load		lui+addiu	a0	paired-reviewed	reviewed	investigation:relocs.tsv;manual:map_objects;carved-body-reviewed
-GAME.EXE	0x80031de4	0x205e4	0x80031de8	mips_hi16_lo16	instruction-word	0x8005618b	load		lui+addiu	a0	paired-reviewed	reviewed	investigation:relocs.tsv;manual:map_objects;carved-body-reviewed
+GAME.EXE	0x80031dd4	0x205d4	0x80031dd8	mips_hi16_lo16	instruction-word	0x8005619d	load	gameplay_sound_refs	lui+addiu	a0	paired-reviewed	reviewed	investigation:relocs.tsv;manual:map_objects;carved-body-reviewed
+GAME.EXE	0x80031de4	0x205e4	0x80031de8	mips_hi16_lo16	instruction-word	0x8005618b	load	gameplay_sound_refs	lui+addiu	a0	paired-reviewed	reviewed	investigation:relocs.tsv;manual:map_objects;carved-body-reviewed
 GAME.EXE	0x80031dec	0x205ec		mips26	instruction-word	0x80032fb8	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:map_objects;carved-body-reviewed
 GAME.EXE	0x80031e0c	0x2060c		mips26	instruction-word	0x80030c7c	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:map_objects;carved-body-reviewed
 GAME.EXE	0x80031e14	0x20614		mips26	instruction-word	0x80031f10	load		j		range-filtered	reviewed	investigation:relocs.tsv;manual:map_objects;carved-body-reviewed
 GAME.EXE	0x80031e38	0x20638		mips26	instruction-word	0x80030eb8	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:map_objects;carved-body-reviewed
 GAME.EXE	0x80031e58	0x20658		mips26	instruction-word	0x80030c7c	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:map_objects;carved-body-reviewed
-GAME.EXE	0x80031e68	0x20668	0x80031e6c	mips_hi16_lo16	instruction-word	0x8005619d	load		lui+addiu	a0	paired-reviewed	reviewed	investigation:relocs.tsv;manual:map_objects;carved-body-reviewed
-GAME.EXE	0x80031e78	0x20678	0x80031e7c	mips_hi16_lo16	instruction-word	0x8005618b	load		lui+addiu	a0	paired-reviewed	reviewed	investigation:relocs.tsv;manual:map_objects;carved-body-reviewed
+GAME.EXE	0x80031e68	0x20668	0x80031e6c	mips_hi16_lo16	instruction-word	0x8005619d	load	gameplay_sound_refs	lui+addiu	a0	paired-reviewed	reviewed	investigation:relocs.tsv;manual:map_objects;carved-body-reviewed
+GAME.EXE	0x80031e78	0x20678	0x80031e7c	mips_hi16_lo16	instruction-word	0x8005618b	load	gameplay_sound_refs	lui+addiu	a0	paired-reviewed	reviewed	investigation:relocs.tsv;manual:map_objects;carved-body-reviewed
 GAME.EXE	0x80031e80	0x20680		mips26	instruction-word	0x80032fb8	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:map_objects;carved-body-reviewed
 GAME.EXE	0x80031ea8	0x206a8		mips26	instruction-word	0x80032894	load		j		range-filtered	reviewed	investigation:relocs.tsv;manual:map_objects;carved-body-reviewed
-GAME.EXE	0x80031ee0	0x206e0	0x80031ee4	mips_hi16_lo16	instruction-word	0x80056188	load		lui+addiu	a0	paired-reviewed	reviewed	investigation:relocs.tsv;manual:map_objects;carved-body-reviewed
+GAME.EXE	0x80031ee0	0x206e0	0x80031ee4	mips_hi16_lo16	instruction-word	0x80056188	load	gameplay_sound_refs	lui+addiu	a0	paired-reviewed	reviewed	investigation:relocs.tsv;manual:map_objects;carved-body-reviewed
 GAME.EXE	0x80031eec	0x206ec		mips26	instruction-word	0x80032fb8	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:map_objects;carved-body-reviewed
 GAME.EXE	0x80031f04	0x20704		mips26	instruction-word	0x80030c7c	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:map_objects;carved-body-reviewed
 GAME.EXE	0x80031f10	0x20710		mips26	instruction-word	0x80032894	load		j		range-filtered	reviewed	investigation:relocs.tsv;manual:map_objects;carved-body-reviewed
 GAME.EXE	0x80031f38	0x20738		mips26	instruction-word	0x80030eb8	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:map_objects;carved-body-reviewed
 GAME.EXE	0x80031f4c	0x2074c		mips26	instruction-word	0x80032894	load		j		range-filtered	reviewed	investigation:relocs.tsv;manual:map_objects;carved-body-reviewed
 GAME.EXE	0x80031f5c	0x2075c		mips26	instruction-word	0x80030c7c	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:map_objects;carved-body-reviewed
-GAME.EXE	0x80031f64	0x20764	0x80031f68	mips_hi16_lo16	instruction-word	0x80056188	load		lui+addiu	a0	paired-reviewed	reviewed	investigation:relocs.tsv;manual:map_objects;carved-body-reviewed
+GAME.EXE	0x80031f64	0x20764	0x80031f68	mips_hi16_lo16	instruction-word	0x80056188	load	gameplay_sound_refs	lui+addiu	a0	paired-reviewed	reviewed	investigation:relocs.tsv;manual:map_objects;carved-body-reviewed
 GAME.EXE	0x80031f70	0x20770		mips26	instruction-word	0x80032fb8	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:map_objects;carved-body-reviewed
 GAME.EXE	0x80031f84	0x20784		mips26	instruction-word	0x80032894	load		j		range-filtered	reviewed	investigation:relocs.tsv;manual:map_objects;carved-body-reviewed
 GAME.EXE	0x80032018	0x20818		mips26	instruction-word	0x80032894	load		j		range-filtered	reviewed	investigation:relocs.tsv;manual:map_objects;carved-body-reviewed
@@ -6487,13 +6487,13 @@ GAME.EXE	0x8003257c	0x20d7c		mips26	instruction-word	0x8003272c	load		j		range-f
 GAME.EXE	0x800325bc	0x20dbc	0x800325c0	mips_hi16_lo16	reachable-code	0x8009d048	bss	effect_state	lui+addiu	at	paired-reviewed	reviewed	manual:map_objects;admitted-missing-site
 GAME.EXE	0x800325d0	0x20dd0		mips26	instruction-word	0x80032894	load		j		range-filtered	reviewed	investigation:relocs.tsv;manual:map_objects;carved-body-reviewed
 GAME.EXE	0x800325f4	0x20df4	0x800325f8	mips_hi16_lo16	reachable-code	0x8009d040	bss	effect_state	lui+addiu	v1	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:map_objects;carved-body-reviewed
-GAME.EXE	0x80032610	0x20e10	0x80032614	mips_hi16_lo16	instruction-word	0x80056191	load		lui+addiu	a0	paired-reviewed	reviewed	investigation:relocs.tsv;manual:map_objects;carved-body-reviewed
+GAME.EXE	0x80032610	0x20e10	0x80032614	mips_hi16_lo16	instruction-word	0x80056191	load	gameplay_sound_refs	lui+addiu	a0	paired-reviewed	reviewed	investigation:relocs.tsv;manual:map_objects;carved-body-reviewed
 GAME.EXE	0x80032618	0x20e18		mips26	instruction-word	0x80032fb8	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:map_objects;carved-body-reviewed
 GAME.EXE	0x8003264c	0x20e4c		mips26	instruction-word	0x80031b54	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:map_objects;carved-body-reviewed
 GAME.EXE	0x80032668	0x20e68		mips26	instruction-word	0x80032894	load		j		range-filtered	reviewed	investigation:relocs.tsv;manual:map_objects;carved-body-reviewed
 GAME.EXE	0x80032670	0x20e70		mips26	instruction-word	0x80032894	load		j		range-filtered	reviewed	investigation:relocs.tsv;manual:map_objects;carved-body-reviewed
 GAME.EXE	0x80032694	0x20e94	0x80032698	mips_hi16_lo16	reachable-code	0x8009d040	bss	effect_state	lui+addiu	v1	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:map_objects;carved-body-reviewed
-GAME.EXE	0x800326b0	0x20eb0	0x800326b4	mips_hi16_lo16	instruction-word	0x80056191	load		lui+addiu	a0	paired-reviewed	reviewed	investigation:relocs.tsv;manual:map_objects;carved-body-reviewed
+GAME.EXE	0x800326b0	0x20eb0	0x800326b4	mips_hi16_lo16	instruction-word	0x80056191	load	gameplay_sound_refs	lui+addiu	a0	paired-reviewed	reviewed	investigation:relocs.tsv;manual:map_objects;carved-body-reviewed
 GAME.EXE	0x800326b8	0x20eb8		mips26	instruction-word	0x80032fb8	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:map_objects;carved-body-reviewed
 GAME.EXE	0x800326e8	0x20ee8		mips26	instruction-word	0x80032894	load		j		range-filtered	reviewed	investigation:relocs.tsv;manual:map_objects;carved-body-reviewed
 GAME.EXE	0x80032720	0x20f20		mips26	instruction-word	0x80030a98	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:map_objects;carved-body-reviewed
@@ -6501,16 +6501,16 @@ GAME.EXE	0x8003272c	0x20f2c		mips26	instruction-word	0x80032894	load		j		range-f
 GAME.EXE	0x80032764	0x20f64		mips26	instruction-word	0x80032894	load		j		range-filtered	reviewed	investigation:relocs.tsv;manual:map_objects;carved-body-reviewed
 GAME.EXE	0x80032788	0x20f88		mips26	instruction-word	0x80032894	load		j		range-filtered	reviewed	investigation:relocs.tsv;manual:map_objects;carved-body-reviewed
 GAME.EXE	0x80032798	0x20f98	0x8003279c	mips_hi16_lo16	reachable-code	0x800a078a	bss	player_state	lui+lbu	v1	paired-reviewed	reviewed	manual:player_state-aggregate
-GAME.EXE	0x800327ac	0x20fac	0x800327b0	mips_hi16_lo16	instruction-word	0x800561a9	load		lui+addiu	a0	paired-reviewed	reviewed	investigation:relocs.tsv;manual:map_objects;carved-body-reviewed
+GAME.EXE	0x800327ac	0x20fac	0x800327b0	mips_hi16_lo16	instruction-word	0x800561a9	load	gameplay_sound_refs	lui+addiu	a0	paired-reviewed	reviewed	investigation:relocs.tsv;manual:map_objects;carved-body-reviewed
 GAME.EXE	0x800327b4	0x20fb4		mips26	instruction-word	0x80032fb8	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:map_objects;carved-body-reviewed
 GAME.EXE	0x800327bc	0x20fbc	0x800327c0	mips_hi16_lo16	reachable-code	0x8009eafc	bss	map_runtime_state	lui+addiu	s1	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:map_objects;carved-body-reviewed
 GAME.EXE	0x800327f8	0x20ff8		mips26	instruction-word	0x80030a98	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:map_objects;carved-body-reviewed
 GAME.EXE	0x80032800	0x21000		mips26	instruction-word	0x80030a98	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:map_objects;carved-body-reviewed
-GAME.EXE	0x80032808	0x21008	0x8003280c	mips_hi16_lo16	instruction-word	0x8005619d	load		lui+addiu	a0	paired-reviewed	reviewed	investigation:relocs.tsv;manual:map_objects;carved-body-reviewed
+GAME.EXE	0x80032808	0x21008	0x8003280c	mips_hi16_lo16	instruction-word	0x8005619d	load	gameplay_sound_refs	lui+addiu	a0	paired-reviewed	reviewed	investigation:relocs.tsv;manual:map_objects;carved-body-reviewed
 GAME.EXE	0x80032810	0x21010		mips26	instruction-word	0x800330ac	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:map_objects;carved-body-reviewed
 GAME.EXE	0x80032818	0x21018		mips26	instruction-word	0x80032854	load		j		range-filtered	reviewed	investigation:relocs.tsv;manual:map_objects;carved-body-reviewed
 GAME.EXE	0x80032828	0x21028	0x8003282c	mips_hi16_lo16	reachable-code	0x8009ddb7	bss	map_runtime_state	lui+addiu	s1	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:map_objects;carved-body-reviewed
-GAME.EXE	0x80032840	0x21040	0x80032844	mips_hi16_lo16	instruction-word	0x80056197	load		lui+addiu	a0	paired-reviewed	reviewed	investigation:relocs.tsv;manual:map_objects;carved-body-reviewed
+GAME.EXE	0x80032840	0x21040	0x80032844	mips_hi16_lo16	instruction-word	0x80056197	load	gameplay_sound_refs	lui+addiu	a0	paired-reviewed	reviewed	investigation:relocs.tsv;manual:map_objects;carved-body-reviewed
 GAME.EXE	0x80032848	0x21048		mips26	instruction-word	0x80032fb8	load		jal		range-filtered	reviewed	investigation:relocs.tsv;manual:map_objects;carved-body-reviewed
 GAME.EXE	0x80032864	0x21064		mips26	instruction-word	0x80032894	load		j		range-filtered	reviewed	investigation:relocs.tsv;manual:map_objects;carved-body-reviewed
 GAME.EXE	0x800328e8	0x210e8		mips26	reachable-code	0x8003e350	load		jal		control-flow	candidate	investigation:relocs.tsv
@@ -6657,7 +6657,7 @@ GAME.EXE	0x80033ec8	0x226c8	0x80033ecc	mips_hi16_lo16	reachable-code	0x800a07aa	
 GAME.EXE	0x80033ee4	0x226e4	0x80033ee8	mips_hi16_lo16	reachable-code	0x8006c4b8	bss	actor_state	lui+addiu	a2	paired-reviewed	reviewed	manual:map_floor_scripts
 GAME.EXE	0x80033f30	0x22730		mips26	instruction-word	0x80033f5c	load		j		control-flow-reviewed	reviewed	manual:map_floor_scripts
 GAME.EXE	0x80033f70	0x22770	0x80033f74	mips_hi16_lo16	reachable-code	0x8009ddb7	bss	map_runtime_state	lui+lbu	v0	paired-reviewed	reviewed	manual:map_floor_scripts
-GAME.EXE	0x80033f84	0x22784	0x80033f88	mips_hi16_lo16	instruction-word	0x80056197	load	gameplay_sound_ref_5	lui+addiu	a0	paired-reviewed	reviewed	manual:map_floor_scripts
+GAME.EXE	0x80033f84	0x22784	0x80033f88	mips_hi16_lo16	instruction-word	0x80056197	load	gameplay_sound_refs	lui+addiu	a0	paired-reviewed	reviewed	manual:map_floor_scripts
 GAME.EXE	0x80033f8c	0x2278c	0x80033f90	mips_hi16_lo16	instruction-word	0x80056208	load	map_floor1_sound_position	lui+addiu	a1	paired-reviewed	reviewed	manual:map_floor_scripts
 GAME.EXE	0x80033f94	0x22794		mips26	instruction-word	0x80032fb8	load	audio_play_spatial_default_range	jal		control-flow-reviewed	reviewed	manual:map_floor_scripts
 GAME.EXE	0x80033f9c	0x2279c	0x80033fa0	mips_hi16_lo16	reachable-code	0x8009ddb5	bss	map_runtime_state	lui+lbu	v0	paired-reviewed	reviewed	manual:map_floor_scripts
@@ -6687,7 +6687,7 @@ GAME.EXE	0x800341cc	0x229cc	0x800341d0	mips_hi16_lo16	reachable-code	0x8006ede0	
 GAME.EXE	0x800341f8	0x229f8	0x800341fc	mips_hi16_lo16	reachable-code	0x8009dbd5	bss	map_runtime_state	lui+addiu	s0	paired-reviewed	reviewed	manual:map_floor_scripts
 GAME.EXE	0x80034210	0x22a10	0x80034214	mips_hi16_lo16	reachable-code	0x8009dbd6	bss	map_runtime_state	lui+lbu	v0	paired-reviewed	reviewed	manual:map_floor_scripts
 GAME.EXE	0x80034228	0x22a28		mips26	instruction-word	0x8005049c	load	rand	jal		control-flow-reviewed	reviewed	manual:map_floor_scripts
-GAME.EXE	0x8003423c	0x22a3c	0x80034240	mips_hi16_lo16	instruction-word	0x800561a0	load	gameplay_sound_ref_8	lui+addiu	a0	paired-reviewed	reviewed	manual:map_floor_scripts
+GAME.EXE	0x8003423c	0x22a3c	0x80034240	mips_hi16_lo16	instruction-word	0x800561a0	load	gameplay_sound_refs	lui+addiu	a0	paired-reviewed	reviewed	manual:map_floor_scripts
 GAME.EXE	0x80034244	0x22a44		mips26	instruction-word	0x80032fb8	load	audio_play_spatial_default_range	jal		control-flow-reviewed	reviewed	manual:map_floor_scripts
 GAME.EXE	0x8003425c	0x22a5c	0x80034260	mips_hi16_lo16	reachable-code	0x800a084b	bss	player_state	lui+lbu	v0	paired-reviewed	reviewed	manual:player_state-aggregate
 GAME.EXE	0x80034278	0x22a78	0x8003427c	mips_hi16_lo16	reachable-code	0x800a084a	bss	player_state	lui+lbu	v1	paired-reviewed	reviewed	manual:player_state-aggregate
@@ -6715,7 +6715,7 @@ GAME.EXE	0x800343c8	0x22bc8		mips26	instruction-word	0x80030a98	load	map_apply_c
 GAME.EXE	0x800343e0	0x22be0	0x800343e4	mips_hi16_lo16	reachable-code	0x800652e0	bss	item_stock	lui+lbu	v0	paired-reviewed	reviewed	manual:map_floor_scripts_b
 GAME.EXE	0x800343f4	0x22bf4	0x800343f8	mips_hi16_lo16	reachable-code	0x8009ddb6	bss	map_runtime_state	lui+addiu	v1	paired-reviewed	reviewed	manual:map_floor_scripts_b
 GAME.EXE	0x80034410	0x22c10		mips26	instruction-word	0x80030a98	load	map_apply_copy_region	jal		control-flow-reviewed	reviewed	manual:map_floor_scripts_b
-GAME.EXE	0x80034418	0x22c18	0x8003441c	mips_hi16_lo16	instruction-word	0x8005619d	load	gameplay_sound_ref_7	lui+addiu	a0	paired-reviewed	reviewed	manual:map_floor_scripts_b
+GAME.EXE	0x80034418	0x22c18	0x8003441c	mips_hi16_lo16	instruction-word	0x8005619d	load	gameplay_sound_refs	lui+addiu	a0	paired-reviewed	reviewed	manual:map_floor_scripts_b
 GAME.EXE	0x80034420	0x22c20		mips26	instruction-word	0x800330ac	load	sound_ref_play	jal		control-flow-reviewed	reviewed	manual:map_floor_scripts_b
 GAME.EXE	0x80034448	0x22c48	0x8003444c	mips_hi16_lo16	reachable-code	0x80095700	bss	game_graphics_runtime	lui+addiu	a1	paired-reviewed	reviewed	manual:map_floor_scripts_b
 GAME.EXE	0x80034494	0x22c94	0x80034498	mips_hi16_lo16	reachable-code	0x8009dc7c	bss	map_runtime_state	lui+addiu	s1	paired-reviewed	reviewed	manual:map_floor_scripts_b
@@ -6764,7 +6764,7 @@ GAME.EXE	0x80034818	0x23018	0x8003481c	mips_hi16_lo16	reachable-code	0x800a084a	
 GAME.EXE	0x80034820	0x23020	0x80034824	mips_hi16_lo16	reachable-code	0x800a084a	bss	player_state	lui+lbu	a1	paired-reviewed	reviewed	manual:player_state-aggregate
 GAME.EXE	0x80034828	0x23028		mips26	instruction-word	0x8001a4e8	load	collision_adjust_cell_occupancy	jal		control-flow-reviewed	reviewed	manual:game_semantic_collision_grid
 GAME.EXE	0x80034830	0x23030		mips26	instruction-word	0x8004da04	load		jal		control-flow-reviewed	reviewed	manual:game_map_interaction
-GAME.EXE	0x8003483c	0x2303c	0x80034840	mips_hi16_lo16	reachable-code	0x80070e96	bss	map_object_effect_sequence_180	lui+lhu	a2	paired-reviewed	reviewed	manual:game_map_interaction
+GAME.EXE	0x8003483c	0x2303c	0x80034840	mips_hi16_lo16	reachable-code	0x80070e96	bss	map_object_state	lui+lhu	a2	paired-reviewed	reviewed	manual:game_map_interaction
 GAME.EXE	0x80034844	0x23044		mips26	instruction-word	0x800317a4	load		jal		control-flow-reviewed	reviewed	manual:game_map_interaction
 GAME.EXE	0x8003486c	0x2306c	0x80034870	mips_hi16_lo16	reachable-code	0x80095900	bss	map_floor_height_grid	lui+addiu	a0	paired-reviewed	reviewed	manual:game_map_interaction
 GAME.EXE	0x80034924	0x23124		mips26	instruction-word	0x800349f8	load		j		control-flow-reviewed	reviewed	manual:game_map_interaction
@@ -6868,7 +6868,7 @@ GAME.EXE	0x80035190	0x23990	0x80035194	mips_hi16_lo16	reachable-code	0x8006e8e0	
 GAME.EXE	0x800351b4	0x239b4	0x800351b8	mips_hi16_lo16	reachable-code	0x80012a7c	load		lui+addiu	at	paired-reviewed	reviewed	manual:game_map_interaction
 GAME.EXE	0x800351e8	0x239e8		mips26	instruction-word	0x80014f6c	load		jal		control-flow-reviewed	reviewed	manual:game_map_interaction
 GAME.EXE	0x8003521c	0x23a1c		mips26	instruction-word	0x80035200	load		j		control-flow-reviewed	reviewed	manual:game_map_interaction
-GAME.EXE	0x80035224	0x23a24	0x80035228	mips_hi16_lo16	instruction-word	0x8005618e	load	gameplay_sound_ref_2	lui+addiu	a0	paired-reviewed	reviewed	manual:game_map_interaction
+GAME.EXE	0x80035224	0x23a24	0x80035228	mips_hi16_lo16	instruction-word	0x8005618e	load	gameplay_sound_refs	lui+addiu	a0	paired-reviewed	reviewed	manual:game_map_interaction
 GAME.EXE	0x80035234	0x23a34		mips26	instruction-word	0x80032fb8	load		jal		control-flow-reviewed	reviewed	manual:game_map_interaction
 GAME.EXE	0x80035284	0x23a84		mips26	instruction-word	0x8001fde4	load		jal		control-flow-reviewed	reviewed	manual:game_map_interaction
 GAME.EXE	0x8003528c	0x23a8c		mips26	instruction-word	0x800149f4	load		jal		control-flow-reviewed	reviewed	manual:game_map_interaction
@@ -6944,7 +6944,7 @@ GAME.EXE	0x800358c8	0x240c8		mips26	reachable-code	0x8001a4e8	load	collision_adj
 GAME.EXE	0x800358e8	0x240e8	0x800358ec	mips_hi16_lo16	reachable-code	0x8009dda8	bss	map_runtime_state	lui+addiu	a1	paired-reviewed	reviewed	manual:game_semantic_camera_events
 GAME.EXE	0x8003590c	0x2410c	0x80035910	mips_hi16_lo16	reachable-code	0x800a078a	bss	player_state	lui+lbu	v1	paired-reviewed	reviewed	manual:player_state-aggregate
 GAME.EXE	0x80035928	0x24128	0x8003592c	mips_hi16_lo16	reachable-code	0x8009db9a	bss	map_runtime_state	lui+lhu	v0	paired-reviewed	reviewed	manual:game_map_events
-GAME.EXE	0x80035944	0x24144	0x80035948	mips_hi16_lo16	reachable-code	0x800561a6	load	gameplay_sound_ref_10	lui+addiu	a0	paired-reviewed	reviewed	manual:game_map_events
+GAME.EXE	0x80035944	0x24144	0x80035948	mips_hi16_lo16	reachable-code	0x800561a6	load	gameplay_sound_refs	lui+addiu	a0	paired-reviewed	reviewed	manual:game_map_events
 GAME.EXE	0x80035954	0x24154		mips26	reachable-code	0x80032fe8	load		jal		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x80035984	0x24184	0x80035988	mips_hi16_lo16	reachable-code	0x8009db88	bss	map_runtime_state	lui+addiu	s2	paired-reviewed	reviewed	manual:game_map_events
 GAME.EXE	0x800359a4	0x241a4		mips26	reachable-code	0x8003379c	load	map_event_set_current	jal		control-flow-reviewed	reviewed	manual:game_map_events
@@ -7055,7 +7055,7 @@ GAME.EXE	0x8003670c	0x24f0c		mips26	reachable-code	0x8001fde4	load		jal		control
 GAME.EXE	0x80036714	0x24f14		mips26	reachable-code	0x8001fdc8	load		jal		control-flow	reviewed	manual:game_player_warp
 GAME.EXE	0x8003671c	0x24f1c	0x80036720	mips_hi16_lo16	reachable-code	0x800a0824	bss	player_state	lui+addiu	a0	paired-reviewed	reviewed	manual:player_state-aggregate
 GAME.EXE	0x80036724	0x24f24		mips26	reachable-code	0x8001fde4	load		jal		control-flow	reviewed	manual:game_player_warp
-GAME.EXE	0x80036740	0x24f40	0x80036744	mips_hi16_lo16	reachable-code	0x8005619a	load		lui+addiu	a0	paired-reachable	reviewed	manual:game_player_warp
+GAME.EXE	0x80036740	0x24f40	0x80036744	mips_hi16_lo16	reachable-code	0x8005619a	load	gameplay_sound_refs	lui+addiu	a0	paired-reachable	reviewed	manual:game_player_warp
 GAME.EXE	0x80036748	0x24f48		mips26	reachable-code	0x800330ac	load		jal		control-flow	reviewed	manual:game_player_warp
 GAME.EXE	0x800367b0	0x24fb0	0x800367b4	mips_hi16_lo16	reachable-code	0x800a0824	bss	player_state	lui+addiu	a0	paired-reviewed	reviewed	manual:player_state-aggregate
 GAME.EXE	0x800367b8	0x24fb8		mips26	reachable-code	0x8001fde4	load		jal		control-flow	reviewed	manual:game_player_warp
@@ -7254,7 +7254,7 @@ GAME.EXE	0x800384a8	0x26ca8		mips26	reachable-code	0x800384e0	load		j		control-f
 GAME.EXE	0x80038538	0x26d38	0x8003853c	mips_hi16_lo16	reachable-code	0x80056268	load	floor_deform_segments	lui+addiu	v1	paired-reviewed	reviewed	manual:game_effect_update
 GAME.EXE	0x800385a4	0x26da4		mips26	reachable-code	0x80038628	load		j		control-flow	reviewed	manual:game_effect_update
 GAME.EXE	0x800385b8	0x26db8		mips26	reachable-code	0x80038628	load		j		control-flow	reviewed	manual:game_effect_update
-GAME.EXE	0x80038614	0x26e14	0x80038618	mips_hi16_lo16	reachable-code	0x80056194	load		lui+addiu	a0	paired-reviewed	reviewed	manual:game_effect_update
+GAME.EXE	0x80038614	0x26e14	0x80038618	mips_hi16_lo16	reachable-code	0x80056194	load	gameplay_sound_refs	lui+addiu	a0	paired-reviewed	reviewed	manual:game_effect_update
 GAME.EXE	0x80038620	0x26e20		mips26	reachable-code	0x80032fb8	load		jal		control-flow	reviewed	manual:game_effect_update
 GAME.EXE	0x80038644	0x26e44	0x80038648	mips_hi16_lo16	reachable-code	0x80095900	bss	map_floor_height_grid	lui+addiu	a3	paired-reviewed	reviewed	manual:game_effect_update
 GAME.EXE	0x800386d0	0x26ed0		mips26	reachable-code	0x8005049c	load	rand	jal		control-flow	reviewed	manual:game_effect_update
@@ -11638,9 +11638,9 @@ OPEN.EXE	0x80015eac	0x46ac		mips26	reachable-code	0x80015e0c	load	memory_allocat
 OPEN.EXE	0x80015eb4	0x46b4		mips26	reachable-code	0x80015ec4	load		j		manual-control-flow	reviewed	manual:game_open_semantic_memory_allocator
 OPEN.EXE	0x80015ebc	0x46bc	0x80015ec0	mips_hi16_lo16	reachable-code	0x80075850	bss	memory_arena	lui+sw	zero	paired-reviewed	reviewed	manual:game_open_semantic_memory_allocator
 OPEN.EXE	0x80015ed4	0x46d4	0x80015ed8	mips_hi16_lo16	reachable-code	0x8007584c	bss	memory_arena	lui+lw	v0	paired-reviewed	reviewed	manual:game_open_semantic_memory_allocator
-OPEN.EXE	0x80015ee4	0x46e4	0x80015ee8	mips_hi16_lo16	reachable-code	0x80075898	bss	memory_system_heap_start	lui+sw	v0	paired-reviewed	reviewed	manual:game_open_semantic_memory_allocator
-OPEN.EXE	0x80015f00	0x4700	0x80015f04	mips_hi16_lo16	reachable-code	0x80075898	bss	memory_system_heap_start	lui+lw	a0	paired-reviewed	reviewed	manual:game_open_semantic_memory_allocator
-OPEN.EXE	0x80015f10	0x4710	0x80015f14	mips_hi16_lo16	reachable-code	0x8007589c	bss	memory_system_heap_size	lui+sw	a1	paired-reviewed	reviewed	manual:game_open_semantic_memory_allocator
+OPEN.EXE	0x80015ee4	0x46e4	0x80015ee8	mips_hi16_lo16	reachable-code	0x80075898	bss	memory_arena	lui+sw	v0	paired-reviewed	reviewed	manual:game_open_semantic_memory_allocator
+OPEN.EXE	0x80015f00	0x4700	0x80015f04	mips_hi16_lo16	reachable-code	0x80075898	bss	memory_arena	lui+lw	a0	paired-reviewed	reviewed	manual:game_open_semantic_memory_allocator
+OPEN.EXE	0x80015f10	0x4710	0x80015f14	mips_hi16_lo16	reachable-code	0x8007589c	bss	memory_arena	lui+sw	a1	paired-reviewed	reviewed	manual:game_open_semantic_memory_allocator
 OPEN.EXE	0x80015f18	0x4718		mips26	reachable-code	0x80030150	load	InitHeap	jal		control-flow-reviewed	reviewed	manual:game_open_semantic_memory_allocator
 OPEN.EXE	0x80015f3c	0x473c	0x80015f40	mips_hi16_lo16	reachable-code	0x80075850	bss	memory_arena	lui+addiu	a0	paired-reviewed	reviewed	manual:game_open_semantic_memory_allocator
 OPEN.EXE	0x80015f54	0x4754		mips26	reachable-code	0x80015dd4	load	memory_malloc_checked	jal		control-flow-reviewed	reviewed	manual:game_open_semantic_memory_allocator

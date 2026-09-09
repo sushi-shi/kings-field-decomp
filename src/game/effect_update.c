@@ -195,7 +195,7 @@ void effect_floor_deform_line(s32 segment_index, s32 progress_start, s32 progres
         } else if (progress >= FLOOR_DEFORM_SOUND_PROGRESS && progress < range + FLOOR_DEFORM_SOUND_PROGRESS) {
             sound_position.vx = KF_MAP_TILE_SIZE * col + KF_MAP_TILE_CENTER;
             sound_position.vz = KF_MAP_TILE_SIZE * row + KF_MAP_TILE_CENTER;
-            audio_play_spatial_default_range(&gameplay_sound_ref_4,
+            audio_play_spatial_default_range(&gameplay_sound_refs[4],
                 &sound_position, KF_AUDIO_MAX_VOLUME);
         }
         map_floor_height_grid.cells[row][col] =

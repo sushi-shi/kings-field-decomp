@@ -250,12 +250,12 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["signatures_started"], 471)
         self.assertEqual(counts["typed_returns"], 471)
         self.assertEqual(counts["parameterized"], 306)
-        self.assertEqual(counts["data"], 2918)
+        self.assertEqual(counts["data"], 2899)
         self.assertGreaterEqual(counts["functions_named"], 240)
         self.assertGreaterEqual(counts["data_named"], 100)
         self.assertEqual(counts["structures"], 130)
-        self.assertEqual(counts["structure_fields"], 868)
-        self.assertEqual(counts["structure_fields_named"], 781)
+        self.assertEqual(counts["structure_fields"], 874)
+        self.assertEqual(counts["structure_fields_named"], 786)
 
     def test_animation_cache_slots_share_one_pointer_type_without_layout_changes(self) -> None:
         structures = load_structure_identities(RETAIL_CONFIG)
@@ -3109,12 +3109,12 @@ class InventoryTests(unittest.TestCase):
         gameplay_sounds = game.datum(0x80056188)
         self.assertEqual(
             (gameplay_sounds.name, gameplay_sounds.datatype, gameplay_sounds.size),
-            ("gameplay_sound_ref_0", "SoundRef", 0x3),
+            ("gameplay_sound_refs", "SoundRef[13]", 0x27),
         )
         map_object_state = game.datum(0x8006E8E0)
         self.assertEqual(
             (map_object_state.name, map_object_state.datatype, map_object_state.size),
-            ("map_object_state", "KfMapObjectState", 0x25A8),
+            ("map_object_state", "KfMapObjectState", 0x25B8),
         )
         map_object_loader = game.function(0x80031008)
         self.assertEqual(
@@ -3173,24 +3173,13 @@ class InventoryTests(unittest.TestCase):
             data_identities[("GAME.EXE", 0x8006E8E0)].scope,
             "global",
         )
-        effect_sequences = tuple(
-            game.datum(va) for va in (0x80070E92, 0x80070E94, 0x80070E96)
-        )
-        self.assertEqual(
-            tuple(datum.name for datum in effect_sequences),
-            (
-                "map_object_effect_sequence_160",
-                "map_object_effect_sequence_170",
-                "map_object_effect_sequence_180",
-            ),
-        )
-        self.assertEqual(
-            {
-                data_identities[("GAME.EXE", va)].scope
-                for va in (0x80070E92, 0x80070E94, 0x80070E96)
-            },
-            {"global"},
-        )
+        for va, field in ((0x80070E92, "effect_sequence_160"),
+                          (0x80070E94, "effect_sequence_170"),
+                          (0x80070E96, "effect_sequence_180")):
+            self.assertNotIn(("GAME.EXE", va), data_identities)
+            self.assertEqual(game.data_owner(va).name, "map_object_state")
+            self.assertEqual(_structure_field("KfMapObjectState", va - 0x8006E8E0)[0], field)
+        self.assertEqual(data_identities[("GAME.EXE", 0x8006E8E0)].size, 0x25B8)
         object_action = game.function(0x80031784)
         self.assertEqual(
             (object_action.name, object_action.signature_confidence),

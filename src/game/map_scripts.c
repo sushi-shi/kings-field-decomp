@@ -100,7 +100,7 @@ void map_ambient_script_floor1(void)
 {
     if (map_floor1_script.revival_enabled == KF_MAP_SCRIPT_SET) {
         audio_play_spatial_default_range(
-            &gameplay_sound_ref_5, &map_floor1_sound_position, MAP_FLOOR1_AMBIENT_VOLUME);
+            &gameplay_sound_refs[5], &map_floor1_sound_position, MAP_FLOOR1_AMBIENT_VOLUME);
     }
 
     switch (map_floor1_script.actor_activation_stage) {
@@ -159,7 +159,7 @@ void map_ambient_script_floor2(void)
     if (map_event_pool[1].dialogue.fields.stage == 2 && map_event_pool[1].dialogue.fields.page < 3
         && rand() < MAP_FLOOR2_AMBIENT_RANDOM_LIMIT) {
         audio_play_spatial_default_range(
-            &gameplay_sound_ref_8, &map_event_pool[1].reference_position, KF_AUDIO_MAX_VOLUME);
+            &gameplay_sound_refs[8], &map_event_pool[1].reference_position, KF_AUDIO_MAX_VOLUME);
     }
 }
 
@@ -216,7 +216,7 @@ void map_action_script_floor1(void)
         && map_floor1_script.passage_opened == KF_MAP_SCRIPT_UNSET) {
         map_floor1_script.passage_opened = KF_MAP_SCRIPT_SET;
         map_apply_copy_region(KF_MAP_COPY_FLOOR1_PASSAGE);
-        sound_ref_play(&gameplay_sound_ref_7, MAP_PASSAGE_OPEN_SOUND_VOLUME);
+        sound_ref_play(&gameplay_sound_refs[7], MAP_PASSAGE_OPEN_SOUND_VOLUME);
     }
 }
 
@@ -327,7 +327,7 @@ void map_floor5_transition_cutscene(void)
 
     ReadColorMatrix(&color_matrix);
     effect = map_object_effect_pool_acquire(
-        KF_MAP_OBJECT_PLACEMENT_DROP_FIRST, KF_MAP_OBJECT_EFFECT_GROUP_CAPACITY, map_object_effect_sequence_180);
+        KF_MAP_OBJECT_PLACEMENT_DROP_FIRST, KF_MAP_OBJECT_EFFECT_GROUP_CAPACITY, map_object_state.effect_sequence_180);
     effect->object_id = KF_MAP_OBJECT_DRAGON_SWORD;
     effect->cell_x = 85;
     effect->cell_z = 40;
@@ -591,7 +591,7 @@ clear_event_phase:
 
             saved_pitch = rotation->vx;
             audio_play_spatial_default_range(
-                &gameplay_sound_ref_2, &object->position, KF_AUDIO_MAX_VOLUME);
+                &gameplay_sound_refs[2], &object->position, KF_AUDIO_MAX_VOLUME);
             while (object->rotation.angles.x >= -(KF_ANGLE_QUARTER_TURN - 1)) {
                 u16 current_pitch = rotation->vx;
                 u16 relative_pitch = current_pitch;

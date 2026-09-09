@@ -1,4 +1,4 @@
-"""Reviewed load-section assignments; omitted identities retain .data."""
+"""Reviewed load/BSS section assignments; omitted identities retain defaults."""
 
 from pathlib import Path
 
@@ -19,9 +19,10 @@ def load(config_dir: Path) -> dict[tuple[str, int], str]:
         key = row["image"], int(row["va"], 0)
         identity = identities.get(key)
         if (row["image"] not in IMAGE_LAYOUTS or key in result or not identity or row["name"] != identity["name"]
-                or identity["storage"] != "load" or row["section"] not in {".data", ".sdata"}
+                or row["section"] not in {"load": {".data", ".sdata"},
+                                         "bss": {".bss", ".sbss"}}.get(identity["storage"], set())
                 or not row["evidence"].strip()):
-            raise ValueError(f"{path}: invalid load-section assignment {key!r}")
+            raise ValueError(f"{path}: invalid section assignment {key!r}")
         result[key] = row["section"]
     order = {name: index for index, name in enumerate(IMAGE_LAYOUTS)}
     if list(result) != sorted(result, key=lambda k: (order[k[0]], k[1])):

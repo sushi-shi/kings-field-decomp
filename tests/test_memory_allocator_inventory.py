@@ -26,14 +26,10 @@ PAIRS = (
 
 STATE = {
     "GAME.EXE": {
-        0x800A01F0: ("memory_arena", 0x50, "KfMemoryArena"),
-        0x800A0240: ("memory_system_heap_start", 0x04, "u8 *"),
-        0x800A0244: ("memory_system_heap_size", 0x04, "s32"),
+        0x800A01F0: ("memory_arena", 0x58, "KfMemoryArena"),
     },
     "OPEN.EXE": {
-        0x80075848: ("memory_arena", 0x50, "KfMemoryArena"),
-        0x80075898: ("memory_system_heap_start", 0x04, "u8 *"),
-        0x8007589C: ("memory_system_heap_size", 0x04, "s32"),
+        0x80075848: ("memory_arena", 0x58, "KfMemoryArena"),
     },
 }
 
@@ -63,7 +59,7 @@ class MemoryAllocatorInventoryTests(unittest.TestCase):
                 self.assertEqual((row.name, row.size, row.datatype), shape)
                 self.assertEqual(row.owner, "memory")
         for image, base in (("GAME.EXE", 0x800A01F0), ("OPEN.EXE", 0x80075848)):
-            for offset in (4, 8, 12):
+            for offset in (4, 8, 12, 0x50, 0x54):
                 self.assertNotIn((image, base + offset), identities)
 
     def test_malloc_wrappers_are_exact_release_25_vendored_members(self) -> None:
