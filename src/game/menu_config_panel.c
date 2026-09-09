@@ -90,20 +90,19 @@ void menu_config_panel(void)
                    ((pad & PADLleft) != 0 && (prev & PADLleft) == 0)) {
             if (row != KF_MENU_CONFIG_RETURN_ROW) {
                 menu_play_input_sound(MENU_SOUND_CONFIRM);
-                goto toggle;
+                states[row] = KF_ENUM_DECODE(
+                    KfPlayerOption, states[row] == KF_PLAYER_OPTION_OFF);
             }
         } else if ((pad & PADRright) != 0 && (prev & PADRright) == 0) {
             menu_play_input_sound(MENU_SOUND_CONFIRM);
             if (row == KF_MENU_CONFIG_RETURN_ROW) {
                 confirm = KF_MENU_CONFIRM_REQUESTED;
-                goto close_panel;
+                phase = KF_MENU_PANEL_CLOSED;
             } else {
-            toggle:
                 states[row] = KF_ENUM_DECODE(KfPlayerOption, states[row] == KF_PLAYER_OPTION_OFF);
             }
         } else if ((pad & PADRdown) != 0 && (prev & PADRdown) == 0) {
             menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
-        close_panel:
             phase = KF_MENU_PANEL_CLOSED;
         }
         menu_config_panel_draw(option_a, option_b, states);

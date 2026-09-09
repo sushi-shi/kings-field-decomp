@@ -39,27 +39,29 @@ KfMenuConfirmResult menu_list_interact(
     if (kind == KF_MENU_CONFIRM_USE) {
         opt0.glyphs.codes[0] = 0x72;
         opt0.glyphs.codes[1] = 0x42;
+        opt0.glyphs.codes[2] = MENU_TEXT_END;
     } else if (kind == KF_MENU_CONFIRM_DROP) {
         opt0.glyphs.codes[0] = 0x75;
         opt0.glyphs.codes[1] = 0x52;
         opt0.glyphs.codes[2] = 0x6a;
         opt0.glyphs.codes[3] = MENU_TEXT_END;
-        goto opt0_done;
     } else if (kind == KF_MENU_CONFIRM_YES_NO) {
         opt0.glyphs.codes[0] = 0x59;
         opt0.glyphs.codes[1] = 0x41;
+        opt0.glyphs.codes[2] = MENU_TEXT_END;
     } else if (kind == KF_MENU_CONFIRM_BUY) {
         opt0.glyphs.codes[0] = 0x74;
         opt0.glyphs.codes[1] = 0x42;
+        opt0.glyphs.codes[2] = MENU_TEXT_END;
     } else if (kind == KF_MENU_CONFIRM_SELL) {
         opt0.glyphs.codes[0] = 0x73;
         opt0.glyphs.codes[1] = 0x6a;
+        opt0.glyphs.codes[2] = MENU_TEXT_END;
     } else {
         opt0.glyphs.codes[0] = 0x70;
         opt0.glyphs.codes[1] = 0x71;
+        opt0.glyphs.codes[2] = MENU_TEXT_END;
     }
-    opt0.glyphs.codes[2] = MENU_TEXT_END;
-opt0_done:
     if (kind == KF_MENU_CONFIRM_YES_NO) {
         opt1.glyphs.codes[0] = 0x41;
         opt1.glyphs.codes[1] = 0x41;

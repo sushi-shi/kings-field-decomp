@@ -27,7 +27,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
     KfScreenVertex *vertex3;
     s32 depth;
 
-    while (remaining-- != 0) {
+    for (; remaining-- != 0;
+         packet += (header >> KF_TMD_ILEN_TO_BYTES_SHIFT) & KF_TMD_BODY_BYTES_MASK) {
         u32 vertices = (u32)open_graphics_runtime.tmd_projected_vertices;
 
         header = *(u32 *)packet;
@@ -47,7 +48,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             vertex2 = (KfScreenVertex *)((u8 *)vertex1 +
                 vertex_offset_delta);
             if (NormalClip(vertex0->sxy.word, vertex1->sxy.word, vertex2->sxy.word) <= 0) {
-                goto next_packet;
+                continue;
             }
             prim = (KfGpuFT3 *)primitive_buffer_allocate(sizeof(POLY_FT3));
             SetPolyFT3(&prim->sdk);
@@ -83,7 +84,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             vertex1 = (KfScreenVertex *)(polygon->f4.v1 + vertices);
             vertex2 = (KfScreenVertex *)(polygon->f4.v2 + vertices);
             if (NormalClip(vertex0->sxy.word, vertex1->sxy.word, vertex2->sxy.word) <= 0) {
-                goto next_packet;
+                continue;
             }
             vertex3 = (KfScreenVertex *)(polygon->f4.v3 + vertices);
             prim = (KfGpuF4 *)primitive_buffer_allocate(sizeof(POLY_F4));
@@ -115,7 +116,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             vertex1 = (KfScreenVertex *)(polygon->g3.v1 + vertices);
             vertex2 = (KfScreenVertex *)(polygon->g3.v2 + vertices);
             if (NormalClip(vertex0->sxy.word, vertex1->sxy.word, vertex2->sxy.word) <= 0) {
-                goto next_packet;
+                continue;
             }
             prim = (KfGpuG3 *)primitive_buffer_allocate(sizeof(POLY_G3));
             SetPolyG3(&prim->sdk);
@@ -147,7 +148,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             vertex1 = (KfScreenVertex *)(polygon->g4.v1 + vertices);
             vertex2 = (KfScreenVertex *)(polygon->g4.v2 + vertices);
             if (NormalClip(vertex0->sxy.word, vertex1->sxy.word, vertex2->sxy.word) <= 0) {
-                goto next_packet;
+                continue;
             }
             vertex3 = (KfScreenVertex *)(polygon->g4.v3 + vertices);
             prim = (KfGpuG4 *)primitive_buffer_allocate(sizeof(POLY_G4));
@@ -183,7 +184,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             vertex1 = (KfScreenVertex *)(polygon->gt3.v1 + vertices);
             vertex2 = (KfScreenVertex *)(polygon->gt3.v2 + vertices);
             if (NormalClip(vertex0->sxy.word, vertex1->sxy.word, vertex2->sxy.word) <= 0) {
-                goto next_packet;
+                continue;
             }
             prim = (KfGpuGT3 *)primitive_buffer_allocate(sizeof(POLY_GT3));
             SetPolyGT3(&prim->sdk);
@@ -221,7 +222,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             vertex1 = (KfScreenVertex *)(polygon->gt4.v1 + vertices);
             vertex2 = (KfScreenVertex *)(polygon->gt4.v2 + vertices);
             if (NormalClip(vertex0->sxy.word, vertex1->sxy.word, vertex2->sxy.word) <= 0) {
-                goto next_packet;
+                continue;
             }
             vertex3 = (KfScreenVertex *)(polygon->gt4.v3 + vertices);
             prim = (KfGpuGT4 *)primitive_buffer_allocate(sizeof(POLY_GT4));
@@ -264,7 +265,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             vertex1 = (KfScreenVertex *)(polygon->g3.v1 + vertices);
             vertex2 = (KfScreenVertex *)(polygon->g3.v2 + vertices);
             if (NormalClip(vertex0->sxy.word, vertex1->sxy.word, vertex2->sxy.word) <= 0) {
-                goto next_packet;
+                continue;
             }
             prim = (KfGpuG3 *)primitive_buffer_allocate(sizeof(POLY_G3));
             SetPolyG3(&prim->sdk);
@@ -297,7 +298,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             vertex1 = (KfScreenVertex *)(polygon->ft4.v1 + vertices);
             vertex2 = (KfScreenVertex *)(polygon->ft4.v2 + vertices);
             if (NormalClip(vertex0->sxy.word, vertex1->sxy.word, vertex2->sxy.word) <= 0) {
-                goto next_packet;
+                continue;
             }
             vertex3 = (KfScreenVertex *)(polygon->ft4.v3 + vertices);
             prim = (KfGpuFT4 *)primitive_buffer_allocate(sizeof(POLY_FT4));
@@ -336,7 +337,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             vertex1 = (KfScreenVertex *)(polygon->f3.v1 + vertices);
             vertex2 = (KfScreenVertex *)(polygon->f3.v2 + vertices);
             if (NormalClip(vertex0->sxy.word, vertex1->sxy.word, vertex2->sxy.word) <= 0) {
-                goto next_packet;
+                continue;
             }
             prim = (KfGpuF3 *)primitive_buffer_allocate(sizeof(POLY_F3));
             SetPolyF3(&prim->sdk);
@@ -366,7 +367,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             vertex1 = (KfScreenVertex *)(polygon->g4.v1 + vertices);
             vertex2 = (KfScreenVertex *)(polygon->g4.v2 + vertices);
             if (NormalClip(vertex0->sxy.word, vertex1->sxy.word, vertex2->sxy.word) <= 0) {
-                goto next_packet;
+                continue;
             }
             vertex3 = (KfScreenVertex *)(polygon->g4.v3 + vertices);
             prim = (KfGpuG4 *)primitive_buffer_allocate(sizeof(POLY_G4));
@@ -404,7 +405,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             vertex1 = (KfScreenVertex *)(polygon->f3.v1 + vertices);
             vertex2 = (KfScreenVertex *)(polygon->f3.v2 + vertices);
             if (NormalClip(vertex0->sxy.word, vertex1->sxy.word, vertex2->sxy.word) <= 0) {
-                goto next_packet;
+                continue;
             }
             prim = (KfGpuF3 *)primitive_buffer_allocate(sizeof(POLY_F3));
             SetPolyF3(&prim->sdk);
@@ -435,7 +436,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             vertex1 = (KfScreenVertex *)(polygon->f4.v1 + vertices);
             vertex2 = (KfScreenVertex *)(polygon->f4.v2 + vertices);
             if (NormalClip(vertex0->sxy.word, vertex1->sxy.word, vertex2->sxy.word) <= 0) {
-                goto next_packet;
+                continue;
             }
             vertex3 = (KfScreenVertex *)(polygon->f4.v3 + vertices);
             prim = (KfGpuF4 *)primitive_buffer_allocate(sizeof(POLY_F4));
@@ -461,10 +462,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             break;
         }
         default:
-            goto next_packet;
+            continue;
         }
-
-    next_packet:
-        packet += (header >> KF_TMD_ILEN_TO_BYTES_SHIFT) & KF_TMD_BODY_BYTES_MASK;
     }
 }

@@ -75,7 +75,9 @@ s32 menu_root(void)
         switch (selection) {
         case KF_ROOT_CHOICE_USE_ITEM:
             result = menu_use_item_panel();
-            goto join_result;
+            if (result == KF_MENU_ROOT_NO_ITEM)
+                result = KF_MENU_ROOT_PENDING;
+            break;
         case KF_ROOT_CHOICE_USE_MAGIC:
             result = KF_ENUM_ENCODE(s32, menu_magic_panel());
             if (result == KF_MENU_LIST_NO_SELECTION)
@@ -94,7 +96,6 @@ s32 menu_root(void)
             break;
         case KF_ROOT_CHOICE_SYSTEM:
             result = KF_ENUM_ENCODE(s32, menu_save_load_hub());
-        join_result:
             if (result == KF_MENU_ROOT_NO_ITEM)
                 result = KF_MENU_ROOT_PENDING;
             break;

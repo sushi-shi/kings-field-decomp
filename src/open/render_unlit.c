@@ -16,7 +16,8 @@ void render_enqueue_unlit_triangles(u16 object_index, s16 depth_bias)
     u32 header;
     s32 depth;
 
-    while (remaining-- != 0) {
+    for (; remaining-- != 0;
+         packet += (header >> KF_TMD_ILEN_TO_BYTES_SHIFT) & KF_TMD_BODY_BYTES_MASK) {
         u8 *vertices = (u8 *)open_graphics_runtime.tmd_projected_vertices;
         s32 bias = depth_bias;
 
@@ -38,7 +39,7 @@ void render_enqueue_unlit_triangles(u16 object_index, s16 depth_bias)
                 ((s32)vertex2_offset - vertex1_offset));
             if (NormalClip(vertex0->sxy.word, vertex1->sxy.word,
                            vertex2->sxy.word) <= 0) {
-                goto next_packet;
+                continue;
             }
             prim = (KfGpuFT3 *)primitive_buffer_allocate(sizeof(POLY_FT3));
             primitive = &prim->sdk;
@@ -65,7 +66,7 @@ void render_enqueue_unlit_triangles(u16 object_index, s16 depth_bias)
             vertex2 = (KfScreenVertex *)(vertices + triangle->f3.v2);
             if (NormalClip(vertex0->sxy.word, vertex1->sxy.word,
                            vertex2->sxy.word) <= 0) {
-                goto next_packet;
+                continue;
             }
             prim = (KfGpuF3 *)primitive_buffer_allocate(sizeof(POLY_F3));
             primitive = &prim->sdk;
@@ -79,7 +80,7 @@ void render_enqueue_unlit_triangles(u16 object_index, s16 depth_bias)
             break;
         }
         default:
-            goto next_packet;
+            continue;
         }
         depth = ((vertex0->sz + vertex1->sz + vertex2->sz) / 3) >> KF_GTE_DEPTH_TO_OT_SHIFT;
         depth += bias;
@@ -93,8 +94,5 @@ void render_enqueue_unlit_triangles(u16 object_index, s16 depth_bias)
                 &graphics->ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
                 primitive);
         }
-
-    next_packet:
-        packet += (header >> KF_TMD_ILEN_TO_BYTES_SHIFT) & KF_TMD_BODY_BYTES_MASK;
     }
 }

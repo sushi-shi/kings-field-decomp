@@ -33,7 +33,8 @@ void render_enqueue_map(u16 object_index)
     remaining = object->primitive_count;
     packet = (u8 *)open_graphics_runtime.tmd_state.current_asset +
         (object->primitive_offset + KF_TMD_HEADER_BYTES);
-    while (remaining-- != 0) {
+    for (; remaining-- != 0;
+         packet += (header >> KF_TMD_ILEN_TO_BYTES_SHIFT) & KF_TMD_BODY_BYTES_MASK) {
         u8 *vertices = (u8 *)open_graphics_runtime.tmd_projected_vertices;
         KfMapGpuPrimitive *prim;
 
@@ -48,7 +49,7 @@ void render_enqueue_map(u16 object_index)
             vertex1 = (KfScreenVertex *)(vertices + polygon->ft4.v1);
             vertex2 = (KfScreenVertex *)(vertices + polygon->ft4.v2);
             if (NormalClip(vertex0->sxy.word, vertex1->sxy.word, vertex2->sxy.word) <= 0) {
-                goto next_packet;
+                continue;
             }
             vertex3 = (KfScreenVertex *)(vertices + polygon->ft4.v3);
             prim = (KfMapGpuPrimitive *)primitive_buffer_allocate(sizeof(POLY_GT4));
@@ -88,7 +89,7 @@ void render_enqueue_map(u16 object_index)
             vertex1 = (KfScreenVertex *)(vertices + polygon->ft3.v1);
             vertex2 = (KfScreenVertex *)(vertices + polygon->ft3.v2);
             if (NormalClip(vertex0->sxy.word, vertex1->sxy.word, vertex2->sxy.word) <= 0) {
-                goto next_packet;
+                continue;
             }
             prim = (KfMapGpuPrimitive *)primitive_buffer_allocate(sizeof(POLY_GT3));
             SetPolyGT3(&prim->triangle.sdk);
@@ -116,9 +117,7 @@ void render_enqueue_map(u16 object_index)
             break;
         }
         default:
-            goto next_packet;
+            continue;
         }
-    next_packet:
-        packet += (header >> KF_TMD_ILEN_TO_BYTES_SHIFT) & KF_TMD_BODY_BYTES_MASK;
     }
 }
