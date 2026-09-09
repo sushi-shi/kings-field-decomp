@@ -39,6 +39,12 @@ of their identified minimal NONE2 SDK startup family. The report records its
 provenance and hashes separately from compiled game units. The entry sets `gp`
 to the start of `.sdata` and jumps to `main`; the preceding `__main` stub returns
 without initialization. This SDK assembly is excluded from game progress.
+An empty `src/sdk/overlay_sdata.s` object precedes all C/library inputs and
+exports the section-start label. The startup code still follows the game
+code. This lets initialized game `.sdata` contributions precede SDK data
+without moving `gp` to the end of the game contribution. Both native objects
+and their source hashes are recorded in the build report. Native controls
+cover multiple G8 inputs and signed low-half carry in the startup address.
 
 The command file places `.sbss` and `.bss` in an uninitialized `bssdata` group.
 Their addresses are allocated, but their contents are not load records. GAME's

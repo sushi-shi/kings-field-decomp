@@ -8,6 +8,7 @@ from dataclasses import replace
 
 from elftools.elf.elffile import ELFFile
 
+from scripts.kf.allocation_notes import read_requests
 from scripts.kf.data_match import Elf, _diff_bss, diff_unit
 from scripts.kf.delink import _apply_relocation, load_catalog
 from scripts.kf.inventory import load_data_identities, load_structure_field_identities
@@ -72,7 +73,7 @@ class GameMenuAssetsTests(unittest.TestCase):
                   if f.structure == 'MenuTileSprite' and f.meaning_confidence == 'opaque']
         self.assertEqual([(f.offset, f.size) for f in opaque], [(5, 1), (7, 1)])
 
-    def test_complete_bank_layout_and_native_literal_extent_match(self):
+    def test_bank_layout_matches_but_exported_allocation_remains_unplaced(self):
         source = self.object('game.item')
         target = BUILD / 'delink/game/modules' / source.name
         if not target.is_file():
@@ -91,16 +92,23 @@ class GameMenuAssetsTests(unittest.TestCase):
                 self.assertEqual((section.name, section['sh_type'], section['sh_size']),
                                  ('.bss', 'SHT_NOBITS', BANK_SPAN))
         self.assertEqual(_diff_bss(Elf(target), Elf(source)).status, 'match')
+        with source.open('rb') as stream:
+            self.assertEqual(read_requests(ELFFile(stream)),
+                             [{'name': name, 'reservation_size': size}
+                              for name, size in zip(BANK_NAMES,
+                                                    (912, 2376, 1600, 184, 320, 320),
+                                                    strict=True)])
         comparison = diff_unit(load_manifest().by_name()['game.item'],
                                BUILD / 'delink', BUILD / 'objdiff')
         self.assertIsNotNone(comparison)
         self.assertEqual([(d.name, d.status) for d in comparison.diffs],
-                         [('.rodata', 'match'), ('.bss', 'match')])
+                         [('.rodata', 'match'), ('.bss', 'placement')])
+        self.assertIn('unplaced-exported-allocation', comparison.diffs[1].detail)
         # The native object ends at the last NUL; the following three bytes
         # belong to linker alignment, not the compiler's literal contribution.
         self.assertEqual((comparison.diffs[0].retail_size, comparison.diffs[0].recon_size),
                          (37, 37))
-        self.assertTrue(comparison.matches)
+        self.assertFalse(comparison.matches)
 
     def test_all_stat_banks_have_one_typed_source_owner_without_invented_gap_data(self):
         units, identities = load_manifest().units, load_data_identities(RETAIL_CONFIG)

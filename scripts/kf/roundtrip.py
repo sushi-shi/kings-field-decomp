@@ -23,6 +23,7 @@ from pathlib import Path
 from elftools.common.exceptions import ELFError
 from elftools.elf.elffile import ELFFile
 
+from scripts.kf.allocation_notes import read_requests
 from scripts.kf.delink import load_catalog, sanitize_symbol
 from scripts.kf.manifest import Unit, load as load_manifest
 from scripts.kf.paths import BUILD, RETAIL_CONFIG
@@ -87,6 +88,14 @@ def plan(elf: ELFFile, unit: Unit, result: UnitResult) -> dict[str, int]:
     if symtab is None:
         result.issue("missing-symbol-table")
         return {}
+    try:
+        exported_requests = read_requests(elf)
+    except ValueError as error:
+        result.issue('invalid-allocation-provenance', detail=str(error))
+        exported_requests = []
+    for request in exported_requests:
+        result.issue('unplaced-exported-allocation', symbol=request['name'],
+                     reservation_size=request['reservation_size'])
     symbols: dict[str, list] = defaultdict(list)
     for symbol in symtab.iter_symbols():
         # COMMON has no input section: SHF_ALLOC enumeration cannot see it,

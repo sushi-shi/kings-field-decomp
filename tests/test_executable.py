@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import contextlib
+from dataclasses import replace
 import io
 import json
 import os
@@ -10,6 +11,7 @@ from pathlib import Path
 import re
 import shutil
 import struct
+import subprocess
 import tempfile
 import unittest
 from unittest import mock
@@ -179,6 +181,61 @@ class NativeBuildControls(unittest.TestCase):
                     for selector in (0x4a, 0x4b, 0x4c, 0x45):
                         self.assertIn(struct.pack('<3I', 0x240a00b0, 0x01400008,
                                                   0x24090000 | selector), actual[2048:])
+
+    def test_overlay_gp_anchors_first_of_multiple_game_small_data_contributions(self):
+        for image, origin in (('OPEN.EXE', 0x80012000), ('GAME.EXE', 0x80017ff0)):
+            with self.subTest(image=image), tempfile.TemporaryDirectory() as directory:
+                root = Path(directory)
+                manifest = self.manifest(root, (
+                    'int first = 0x12345678; extern int helper(void); '
+                    'int main(void) { return first + helper(); }\n',
+                    'int second = 0x76543210; unsigned char large[12] = {3}; '
+                    'int helper(void) { return second + large[0]; }\n',
+                ), image)
+                manifest = replace(manifest, profiles={
+                    key: replace(profile, small_data=8)
+                    for key, profile in manifest.profiles.items()})
+                layout = replace(executable.IMAGE_LAYOUTS[image], load_address=origin)
+                output = root / 'output'
+                with (mock.patch.dict(executable.IMAGE_LAYOUTS, {image: layout}),
+                      mock.patch.object(RetailImage, 'load',
+                                        side_effect=AssertionError('retail input used'))):
+                    report = build_image(image, manifest, output)
+                self.assertTrue(report['linked'], report.get('error'))
+                self.assertEqual(report['startup']['anchor']['source'], executable.OVERLAY_SDATA)
+                for unit in report['units']:
+                    self.assertRegex((output / unit['assembly']).read_text(), r'(?m)^\s*\.sdata\b')
+                commands = (output / 'LINK.LNK').read_text()
+                self.assertLess(commands.index('SDATA.OBJ'), commands.index('U0000.OBJ'))
+                self.assertGreater(commands.index('START.OBJ'), commands.index('U0001.OBJ'))
+                anchor = subprocess.run(['psyk', 'list', '--code', str(output / 'SDATA.OBJ')],
+                                        capture_output=True, text=True, check=True).stdout
+                self.assertNotIn('2 : Code', anchor)
+                self.assertNotIn('8 : Uninitialized data', anchor)
+                self.assertNotIn('48 : XBSS', anchor)
+                stem = image[:-4]
+                mapping = (output / (stem + '.MAP')).read_text()
+                match = re.search(r'(?m)^ ([0-9A-F]{8}) [0-9A-F]{8} ([0-9A-F]{8})  \.sdata',
+                                  mapping)
+                self.assertIsNotNone(match)
+                gp_base, extent = (int(value, 16) for value in match.groups())
+                self.assertEqual(extent, 8)
+                entry, loads = cpe_loads((output / (stem + '.CPE')).read_bytes())
+                actual = (output / image).read_bytes()
+                self.assertEqual(actual[2048 + gp_base - origin:2048 + gp_base - origin + 8],
+                                 struct.pack('<2I', 0x12345678, 0x76543210))
+                high, low, jump, delay = struct.unpack_from('<4I', actual, 2048 + entry - origin)
+                self.assertEqual(high & 0xffff0000, 0x3c1c0000)
+                self.assertEqual(low & 0xffff0000, 0x279c0000)
+                signed_low = (low & 0xffff) - (0x10000 if low & 0x8000 else 0)
+                self.assertEqual(((high & 0xffff) << 16) + signed_low, gp_base)
+                if image == 'GAME.EXE':
+                    self.assertLess(signed_low, 0)
+                self.assertEqual(jump >> 26, 2)
+                self.assertEqual(delay, 0)
+                for address, payload in loads:
+                    offset = 2048 + address - origin
+                    self.assertEqual(actual[offset:offset + len(payload)], payload)
 
     def test_unresolved_source_symbol_fails_without_fallback_or_stale_executable(self):
         with tempfile.TemporaryDirectory() as directory:
