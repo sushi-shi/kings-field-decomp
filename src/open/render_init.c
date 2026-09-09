@@ -22,6 +22,11 @@ MATRIX color_matrix_table[KF_OPEN_COLOR_PRESET_COUNT] = {
     {{{0, 0, 0}, {375, 375, 375}, {0, 0, 0}}, {0, 0, 0}},
 };
 
+DATA(0x800359e4, 0x20)
+MATRIX floor_item_light_matrix = {
+    {{0, 0, KF_FIXED12_ONE}, {0, 0, KF_FIXED12_ONE}, {0, 0, 0}}, {0, 0, 0},
+};
+
 DATA(0x80049a48, 0x24788)
 KfGraphicsRuntimeOpen open_graphics_runtime;
 

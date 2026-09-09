@@ -54,11 +54,18 @@ class CdResourceBssTests(unittest.TestCase):
             data, symbols, _relocs, bss_size, bss_symbols = _module_data(
                 module, blobs, lambda va, size: bytes(size))
             self.assertFalse({d.symbol for d in claims} & {s.name for s in symbols})
+            self.assertEqual(data, b'')
+            sdata, _, _, _, _ = _module_data(
+                module, blobs, lambda va, size: bytes(size), section='.sdata')
             if module.unit == 'open.resources':
-                self.assertEqual((len(data), bss_size), (20, 20))
-                self.assertEqual([s.value for s in bss_symbols], [0, 8, 16])
+                self.assertEqual((len(sdata), bss_size), (20, 0))
+                sbss, _, _, sbss_size, sbss_symbols = _module_data(
+                    module, blobs, section='.sbss')
+                self.assertEqual((sbss, sbss_size), (b'', 24))
+                self.assertEqual([(s.value, s.size) for s in sbss_symbols],
+                                 [(0, 4), (8, 4), (16, 4)])
             else:
-                self.assertEqual((len(data), bss_size), (11, 4))
+                self.assertEqual((len(sdata), bss_size), (11, 4))
         # Runtime storage classification does not erase the load-page partition.
         validate_config(RETAIL_CONFIG)
 

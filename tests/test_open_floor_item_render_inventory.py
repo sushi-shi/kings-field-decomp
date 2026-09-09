@@ -86,7 +86,10 @@ class OpenFloorItemRenderTests(unittest.TestCase):
         self.assertEqual([function.va for function in unit.functions],
                          [0x80018ECC, 0x800190F4, 0x80019240])
         self.assertEqual([(datum.va, datum.size, datum.symbol) for datum in unit.data],
-                         [(0x800358E0, 0x54, "floor_item_sprites"),
+                         [(0x800358E0, 0x54, "floor_item_sprites")])
+        presets = load_manifest().by_name()["open.render_init"].data
+        self.assertEqual([(d.va, d.size, d.symbol) for d in presets if d.storage == "load"],
+                         [(0x80035944, 0xA0, "color_matrix_table"),
                           (0x800359E4, 0x20, "floor_item_light_matrix")])
         self.assertEqual(unit.rodata, (0x80012238, 0x44))
 

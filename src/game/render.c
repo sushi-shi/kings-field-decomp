@@ -10,6 +10,9 @@
 #include <kf/tmd.h>
 
 enum {
+    RENDER_PALETTE_HUD,
+    RENDER_PALETTE_NOTIFICATION,
+    RENDER_PALETTE_COUNT,
     ERROR_SCREEN_READ_ATTEMPTS = 50,
     PRIMITIVE_BUFFER_BYTES = 0x19640,
     INITIAL_BACK_COLOR = 60,
@@ -33,6 +36,20 @@ enum {
 
 /* tmd_register primitive-mode dispatch table. */
 RODATA(0x800121b4, 0x74)
+
+DATA(0x80055dac, 0x10)
+static RECT render_palette_rects[RENDER_PALETTE_COUNT] = {{0, 500, 16, 1}, {0, 499, 16, 1}};
+
+DATA(0x80055dbc, 0xe0)
+MATRIX color_matrix_table[KF_GAME_COLOR_PRESET_COUNT] = {
+    {{{2000, 700, 4000}, {2000, 700, 4000}, {2000, 700, 4000}}, {0, 0, 0}},
+    {{{3000, 1000, 4000}, {200, 70, 400}, {200, 70, 400}}, {0, 0, 0}},
+    {{{1000, 350, 2000}, {1000, 350, 2000}, {3000, 1000, 4000}}, {0, 0, 0}},
+    {{{4095, 4095, 4095}, {4095, 4095, 4095}, {4095, 4095, 4095}}, {0, 0, 0}},
+    {{{0, 0, 0}, {0, 0, 0}, {0, 0, 0}}, {0, 0, 0}},
+    {{{0, 0, 0}, {4095, 4095, 4095}, {0, 0, 0}}, {0, 0, 0}},
+    {{{0, 0, 0}, {0, 0, 0}, {4095, 4095, 4095}}, {0, 0, 0}},
+};
 
 /* System-message TIM path; byte 2 selects an error or pause screen. */
 DATA(0x80057b50, 0x7)
@@ -232,12 +249,12 @@ void render_initialize(void)
     game_graphics_runtime.hud_tpage = GetTPage(
         KF_GPU_TEXTURE_4BIT, KF_GPU_BLEND_AVERAGE,
         HUD_TPAGE_X, KF_TEXTURE_LOWER_PAGE_Y);
-    game_graphics_runtime.hud_clut = GetClut(hud_palette_rect.x, hud_palette_rect.y);
+    game_graphics_runtime.hud_clut = GetClut(render_palette_rects[RENDER_PALETTE_HUD].x, render_palette_rects[RENDER_PALETTE_HUD].y);
     game_graphics_runtime.notification_text_tpage = GetTPage(
         KF_GPU_TEXTURE_4BIT, KF_GPU_BLEND_AVERAGE,
         NOTIFICATION_TPAGE_X, KF_TEXTURE_LOWER_PAGE_Y);
     game_graphics_runtime.notification_digit_clut = game_graphics_runtime.notification_text_clut =
-        GetClut(notification_palette_rect.x, notification_palette_rect.y);
+        GetClut(render_palette_rects[RENDER_PALETTE_NOTIFICATION].x, render_palette_rects[RENDER_PALETTE_NOTIFICATION].y);
     game_graphics_runtime.notification_digit_tpage = NOTIFICATION_DIGIT_TPAGE;
     game_graphics_runtime.notification_state.control.effect_phase = KF_NOTIFICATION_IDLE;
     game_graphics_runtime.notification_state.control.queue_tail = 0;

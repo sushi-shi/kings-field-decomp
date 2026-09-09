@@ -674,7 +674,6 @@ extern KfMaterialProbe material_probe;
             'game.matrix',
             'game.menu_map_viewer',
             'game.menu_runtime',
-            'game.notify_queue',
             'game.player_core',
             'game.player_death',
             'game.player_death_fade',

@@ -17,7 +17,7 @@ enum {
 RODATA(0x8001227c, 0x32)
 
 DATA(0x80037808, 0x158)
-u8 audio_sequence_table[SS_SEQ_TABSIZ * KF_AUDIO_SEQUENCE_CAPACITY];
+static u8 audio_sequence_table[SS_SEQ_TABSIZ * KF_AUDIO_SEQUENCE_CAPACITY];
 
 DATA(0x8006e1d0, 0x90)
 KfAudioState audio_state;

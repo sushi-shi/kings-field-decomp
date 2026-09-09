@@ -11,6 +11,8 @@ enum {
 
 /* Shared by the normal CD loaders and GAME's fatal-error screen loader. */
 extern CdlLOC cd_read_location;
+extern CdlFILE cd_search_file;
+extern char cd_path_buffer[KF_CD_PATH_BYTES];
 
 /*
  * GAME's file table uses the older 20-byte CdlFILE layout with a 12-byte

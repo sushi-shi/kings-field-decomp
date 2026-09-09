@@ -5,6 +5,9 @@ about which source shapes reproduce it under the current probes. Each note
 records the retail evidence first and the probe behaviour second; none of them
 promotes a probe to a proven historical toolchain.
 
+- [remaining-data-owner-exhaustion.md](remaining-data-owner-exhaustion.md): all
+  22 failed owners audited, renderer contribution closures, private CD/audio
+  workspaces, native small initializers and per-owner evidence limits.
 - [data-module-continuation.md](data-module-continuation.md): private menu
   packet storage, native initialized/small-BSS sections, and consolidation
   preserving all 35 function bodies.

@@ -151,8 +151,6 @@ extern KfSpriteQuad effect_billboard_sprites[KF_EFFECT_BILLBOARD_SPRITE_COUNT];
 extern KfEffectSprite effect_sprites[KF_EFFECT_SPRITE_TABLE_ROWS];
 extern KfHudSprite hud_sprites[KF_HUD_TABLE_ROWS];
 extern MATRIX render_light_matrices[KF_RENDER_LIGHT_COUNT];
-extern RECT hud_palette_rect;
-extern RECT notification_palette_rect;
 
 extern void display_begin_frame(void);
 extern void display_flip_buffer_index(void);

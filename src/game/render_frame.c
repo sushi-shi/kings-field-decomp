@@ -26,19 +26,6 @@ enum {
  * layouts; unknown bytes within the records remain explicitly opaque.
  */
 
-DATA(0x80055d74, 0x38)
-KfEffectSprite effect_sprites[KF_EFFECT_SPRITE_TABLE_ROWS] = {
-    {KF_EFFECT_SPRITE_ACTIVE, KF_ANIMATION_CLIP_FIRST, 0, 0x33, 0x11e, 0x22, 0xc8, {0, 0}, {0, 0, 0, 0}, {0, 0}, 0},
-    {KF_EFFECT_SPRITE_END},
-};
-
-/* One 16-colour palette row per HUD/message material. */
-DATA(0x80055dac, 0x8)
-RECT hud_palette_rect = {0, 500, 16, 1};
-
-DATA(0x80055db4, 0x8)
-RECT notification_palette_rect = {0, 499, 16, 1};
-
 DATA(0x80055f68, 0xc0)
 MATRIX render_light_matrices[KF_RENDER_LIGHT_COUNT] = {
     {{{0, -3600, 0}, {4096, 0, -4096}, {0, 4096, 3000}}, {0, 0, 0}},

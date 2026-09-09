@@ -153,7 +153,7 @@ class GameDisplayEnvironmentDataTests(unittest.TestCase):
                 else:
                     obj = probe.compile(root, unit, query)
                     symbol = obj.named_symbol('layout')
-                    self.assertEqual(struct.unpack_from('<I', obj.sections['.data'], symbol.value)[0], graphics.EXTENT)
+                    self.assertEqual(struct.unpack_from('<I', obj.sections[symbol.section], symbol.value)[0], graphics.EXTENT)
 
     def test_all_thirty_pairs_use_array_owners_and_round_trip_exactly(self):
         image, ctx = self.probe().retail(), Context('GAME.EXE')

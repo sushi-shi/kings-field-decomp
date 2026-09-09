@@ -18,7 +18,7 @@ DATA(0x80057b84, 0x4)
 s32 audio_voice_slot_index = 9;
 
 DATA(0x80059738, 0x158)
-u8 audio_sequence_table[SS_SEQ_TABSIZ * KF_AUDIO_SEQUENCE_CAPACITY];
+static u8 audio_sequence_table[SS_SEQ_TABSIZ * KF_AUDIO_SEQUENCE_CAPACITY];
 
 DATA(0x80095868, 0x90)
 KfAudioState audio_state;

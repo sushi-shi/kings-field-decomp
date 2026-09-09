@@ -250,7 +250,7 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["signatures_started"], 471)
         self.assertEqual(counts["typed_returns"], 471)
         self.assertEqual(counts["parameterized"], 306)
-        self.assertEqual(counts["data"], 2899)
+        self.assertEqual(counts["data"], 2898)
         self.assertGreaterEqual(counts["functions_named"], 240)
         self.assertGreaterEqual(counts["data_named"], 100)
         self.assertEqual(counts["structures"], 130)
@@ -3160,15 +3160,9 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(_structure_field("KfPlayerState", 0x96)[0], "audio_effects_enabled")
         self.assertEqual(_structure_field("KfPlayerState", 0x97)[0], "audio_music_enabled")
         self.assertEqual(
-            {
-                data_identities[("GAME.EXE", va)].scope
-                for va in (
-                    0x80059738,
-                    0x80057B84,
-                    0x80095868,
-                )
-            },
-            {"global"},
+            {va: data_identities[("GAME.EXE", va)].scope
+             for va in (0x80059738, 0x80057B84, 0x80095868)},
+            {0x80059738: "static", 0x80057B84: "global", 0x80095868: "global"},
         )
         self.assertEqual(
             data_identities[("GAME.EXE", 0x8006E8E0)].scope,
