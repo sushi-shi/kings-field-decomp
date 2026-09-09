@@ -18,7 +18,6 @@ enum {
     WARP_SHIMMER_FRAMES = 48,
     WARP_SHIMMER_SOUND_FRAME = 8,
     WARP_SHIMMER_STAGGER_FRAMES = 8,
-    WARP_DEFAULT_VARIANT = 0,
     WARP_CELL_X_SHIFT = 24,
     WARP_CELL_Z_SHIFT = 16,
     ACTOR_TRANSFORM_RESULT_DEFINITION = 6,
@@ -110,7 +109,7 @@ void player_warp_shimmer(KfWarpShimmerMode mode, VECTOR *position)
 }
 
 ADDRESS(0x80036850, 0x15c)
-void player_warp_change_floor(KfFloorId floor, u32 variant)
+void player_warp_change_floor(KfFloorId floor, KF_ENUM_PARAM(KfMapVariant, u32) variant)
 {
     VECTOR position;
 
@@ -137,10 +136,10 @@ void player_warp_change_floor(KfFloorId floor, u32 variant)
 }
 
 ADDRESS(0x800369ac, 0x144)
-void player_warp_same_floor(u32 variant, s32 cell_x, s32 cell_z)
+void player_warp_same_floor(KF_ENUM_PARAM(KfMapVariant, u32) variant, s32 cell_x, s32 cell_z)
 {
     VECTOR position;
-    u8 previous_variant;
+    KfMapVariant previous_variant;
 
     position.vx = player_state.camera_position.vx;
     position.vz = player_state.camera_position.vz;
@@ -175,7 +174,7 @@ u32 player_warp_trigger_update(void)
 {
     u32 cell;
     KfFloorId destination_floor;
-    u8 destination_variant = WARP_DEFAULT_VARIANT;
+    KfMapVariant destination_variant = KF_MAP_VARIANT_DEFAULT;
 
     /* The aligned word spans pitch_step and map_cell; mask out pitch_step. */
     switch (player_state.progress_state.current_floor) {
@@ -242,21 +241,21 @@ change_to_floor4:
         if (cell == WARP_CELL_KEY(39, 69)) {
             goto change_to_floor4;
         } else if (cell == WARP_CELL_KEY(70, 61)) {
-            player_warp_same_floor(2, 18, 37);
+            player_warp_same_floor(KF_MAP_VARIANT_2, 18, 37);
         } else if (cell == WARP_CELL_KEY(18, 37)) {
             player_warp_same_floor(KF_FLOOR5_ENTRY_VARIANT, 70, 61);
         } else if (cell == WARP_CELL_KEY(5, 24)) {
             player_warp_same_floor(KF_FLOOR5_ALTERNATE_MUSIC_VARIANT, 39, 47);
         } else if (cell == WARP_CELL_KEY(39, 47)) {
             if (boss_defeat_complete == KF_MAP_SCRIPT_UNSET) {
-                player_warp_same_floor(2, 5, 25);
+                player_warp_same_floor(KF_MAP_VARIANT_2, 5, 25);
             } else {
                 return 1;
             }
         } else if (cell == WARP_CELL_KEY(5, 37)) {
             player_warp_same_floor(KF_FLOOR5_ENTRY_VARIANT, 14, 79);
         } else if (cell == WARP_CELL_KEY(14, 79)) {
-            player_warp_same_floor(2, 5, 37);
+            player_warp_same_floor(KF_MAP_VARIANT_2, 5, 37);
         }
         break;
     }

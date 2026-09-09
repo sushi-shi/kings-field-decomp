@@ -23,7 +23,7 @@ void render_map_cell(s32 col, s32 row, KfCellVisibility cell)
     if (object_index > KF_MAP_MESHES_PER_BANK - 1) {
         return;
     }
-    orientation = map_cell_orientation_grid.cells[row][col] - 1;
+    orientation = KF_ENUM_ENCODE(u8, map_cell_orientation_grid.cells[row][col]) - 1;
     if (cell == KF_CELL_WINDOW_DISTANT) {
         object_index += KF_MAP_MESHES_PER_BANK;
     }
@@ -32,12 +32,12 @@ void render_map_cell(s32 col, s32 row, KfCellVisibility cell)
         map_floor_height_grid.cells[row][col] * -KF_MAP_HEIGHT_STEP -
             (u16)open_graphics_runtime.render_state.view_position.vy,
         row * KF_MAP_TILE_SIZE - (u16)open_graphics_runtime.render_state.view_position.vz);
-    if (orientation == KF_MAP_ORIENT_QUARTER_TURN - 1) {
+    if (orientation == KF_ENUM_ENCODE(u8, KF_MAP_ORIENT_QUARTER_TURN) - 1) {
         position.vz += KF_MAP_TILE_SIZE;
-    } else if (orientation == KF_MAP_ORIENT_HALF_TURN - 1) {
+    } else if (orientation == KF_ENUM_ENCODE(u8, KF_MAP_ORIENT_HALF_TURN) - 1) {
         position.vx += KF_MAP_TILE_SIZE;
         position.vz += KF_MAP_TILE_SIZE;
-    } else if (orientation == KF_MAP_ORIENT_THREE_QUARTER_TURN - 1) {
+    } else if (orientation == KF_ENUM_ENCODE(u8, KF_MAP_ORIENT_THREE_QUARTER_TURN) - 1) {
         position.vx += KF_MAP_TILE_SIZE;
     }
 

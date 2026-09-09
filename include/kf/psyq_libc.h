@@ -17,4 +17,11 @@ extern void exit(int status);
 extern char *strcpy(char *destination, const char *source);
 extern char *strcat(char *destination, const char *source);
 
+#if defined(__cplusplus)
+extern void *memcpy(void *destination, const void *source, unsigned long size);
+extern void *memset(void *destination, int value, unsigned long size);
+extern void *malloc(unsigned long size);
+extern void free(void *allocation);
+#endif
+
 #endif

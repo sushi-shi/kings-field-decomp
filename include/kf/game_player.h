@@ -53,18 +53,34 @@ KF_ENUM_BEGIN(KfWarpShimmerMode, s32)
 KF_ENUM_END(KfWarpShimmerMode)
 
 enum {
-    KF_FLOOR5_ENTRY_VARIANT = 1,
-    KF_FLOOR5_ALTERNATE_MUSIC_VARIANT = 3,
     KF_PLAYER_FLOOR_ENTRY_COUNT = 5
 };
 
-enum {
+/* Damage animation advances through frames 1..8 before returning to normal. */
+KF_ENUM_BEGIN(KfPlayerUpdateState, u8)
     KF_PLAYER_UPDATE_NORMAL = 0,
     KF_PLAYER_DAMAGE_FRAME_FIRST = 1,
+    KF_PLAYER_DAMAGE_FRAME_2 = 2,
+    KF_PLAYER_DAMAGE_FRAME_3 = 3,
+    KF_PLAYER_DAMAGE_FRAME_4 = 4,
+    KF_PLAYER_DAMAGE_FRAME_5 = 5,
+    KF_PLAYER_DAMAGE_FRAME_6 = 6,
+    KF_PLAYER_DAMAGE_FRAME_7 = 7,
     KF_PLAYER_DAMAGE_FRAME_END = 8,
     KF_PLAYER_UPDATE_RECOVERY_FADE = 0xfe,
     KF_PLAYER_UPDATE_DYING = 0xff
-};
+KF_ENUM_END(KfPlayerUpdateState)
+KF_ENUM_COUNTER(KfPlayerUpdateState, u8)
+
+KF_ENUM_BEGIN(KfActorSpawnPermission, u8)
+    KF_ACTOR_NEAR_SPAWN_FORBIDDEN = 0,
+    KF_ACTOR_NEAR_SPAWN_ALLOWED = 1
+KF_ENUM_END(KfActorSpawnPermission)
+
+KF_ENUM_BEGIN(KfWeaponAttackCharge, u8)
+    KF_WEAPON_ATTACK_NORMAL_CHARGE = 0,
+    KF_WEAPON_ATTACK_FULL_CHARGE = 1
+KF_ENUM_END(KfWeaponAttackCharge)
 
 /* Status timers count executions of their update blocks; -1 is inactive. */
 enum {
@@ -164,8 +180,8 @@ typedef struct KfPlayerState {
     s32 experience;
     s32 next_level_experience;
     KfPlayerProgressState progress_state;
-    u8 map_variant;
-    u8 allow_near_actor_spawn;
+    KfMapVariant map_variant;
+    KfActorSpawnPermission allow_near_actor_spawn;
     u8 weapon_charge_delay;
     u8 unknown_0f;
     KfPlayerVitals vitals;
@@ -199,7 +215,7 @@ typedef struct KfPlayerState {
     s16 illusion_staff_timer;
     u8 unknown_54[4];
     u32 equipment_effect_ticks;
-    KfSelectedMagicId selected_magic_id;
+    KfMagicId selected_magic_id;
     u8 unknown_5d[3];
     KfMagicRecord *selected_magic_record;
     KfItemId equipped_weapon_id;
@@ -211,7 +227,7 @@ typedef struct KfPlayerState {
     struct KfPoolRecord *weapon_animation_cache;
     u8 weapon_magic_shots_remaining;
     u8 weapon_magic_delay;
-    u8 weapon_attack_fully_charged;
+    KfWeaponAttackCharge weapon_attack_fully_charged;
     u8 unknown_7b[1];
     KfArmorRecord *equipped_head_armor_record;
     KfArmorRecord *equipped_body_armor_record;
@@ -229,7 +245,7 @@ typedef struct KfPlayerState {
     KF_ENUM_STORAGE(KfPlayerOption, u8) hud_gauges_enabled;
     KF_ENUM_STORAGE(KfPlayerOption, u8) compass_enabled;
     SVECTOR view_rotation_offset;
-    u8 update_state;
+    KfPlayerUpdateState update_state;
     u8 unknown_a3;
     VECTOR camera_position;
     s32 floor_height;
@@ -310,7 +326,7 @@ extern void player_increment_physical_power_training(void);
 extern s32 player_move_horizontal(s32 heading, s32 distance);
 extern void player_recalculate_combat_stats(void);
 extern void player_restore_vitals_with_color_cycle(void);
-extern void player_select_magic(KfSelectedMagicId magic_id);
+extern void player_select_magic(KfMagicId magic_id);
 extern void player_set_equipment_slot(KfItemId item_id, KfEquipmentSlot slot);
 extern void player_apply_fire_defense_boost(void);
 extern void player_sync_position_to_map(void);
@@ -322,10 +338,10 @@ extern void player_update_vertical_motion(void);
 extern void player_update_view_bob(void);
 extern void player_update_weapon_attack(void);
 /* Warp variant inputs remain full words until the player-state byte store. */
-extern void player_warp_change_floor(KfFloorId floor, u32 variant);
+extern void player_warp_change_floor(KfFloorId floor, KF_ENUM_PARAM(KfMapVariant, u32) variant);
 extern void player_warp_shimmer(KfWarpShimmerMode mode, VECTOR *position);
 extern void player_warp_shimmer_at_player(KF_ENUM_PARAM(KfWarpShimmerMode, u32) mode);
-extern void player_warp_same_floor(u32 variant, s32 cell_x, s32 cell_z);
+extern void player_warp_same_floor(KF_ENUM_PARAM(KfMapVariant, u32) variant, s32 cell_x, s32 cell_z);
 extern void player_warp_to_floor_entry(void);
 extern u32 player_warp_trigger_update(void);
 

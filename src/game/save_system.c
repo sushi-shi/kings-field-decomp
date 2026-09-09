@@ -235,8 +235,8 @@ KfSaveResult memory_card_check_or_format(KfCardFormatConfirmation confirmation)
     case KF_CARD_STATUS_TIMEOUT:
     case KF_CARD_STATUS_NEW_DEVICE:
     case KF_CARD_STATUS_ERROR:
-    case KF_ENUM_DECODE(KfSaveStatus, 9):
-    case KF_ENUM_DECODE(KfSaveStatus, 10):
+    case SAVE_STATUS_09:
+    case SAVE_STATUS_10:
     case SAVE_STATUS_FORMAT_FAILED:
         result = KF_SAVE_RESULT_FAILED;
         break;
@@ -714,8 +714,8 @@ s32 memory_card_show_status_message(KF_ENUM_PARAM(KfSaveStatus, s16) status)
     case SAVE_STATUS_FORMAT_CONFIRMATION:
         message = SAVE_MESSAGE_FORMAT_CONFIRMATION;
         break;
-    case KF_ENUM_DECODE(KfSaveStatus, 9):
-    case KF_ENUM_DECODE(KfSaveStatus, 10):
+    case SAVE_STATUS_09:
+    case SAVE_STATUS_10:
         message = SAVE_MESSAGE_CARD_UNUSABLE;
         break;
     case SAVE_STATUS_FORMAT_FAILED:
@@ -751,10 +751,10 @@ s32 menu_load_message_image(s32 message_id)
         path[6] = remainder / 10 + '0';
         path[7] = remainder % 10 + '0';
         buffer = game_graphics_runtime.display_state.primitive_buffer->cursor;
-        if (cd_file_load_into(buffer, path) != 0) {
+        if (cd_file_load_into(buffer, path) != KF_RESOURCE_LOADED) {
             return 1;
         }
-        tim_upload_images(buffer);
+        tim_upload_images((u_long *)buffer);
     }
     return 0;
 }
@@ -809,11 +809,11 @@ void screen_show_image_until_input(const char *path)
     polygon.tpage = GetTPage(
         KF_GPU_TEXTURE_4BIT, KF_GPU_BLEND_AVERAGE,
         KF_SYSTEM_SCREEN_TPAGE_X, KF_TEXTURE_LOWER_PAGE_Y);
-    if (cd_file_load_into(game_graphics_runtime.display_state.asset_load_buffer, path) != 0) {
+    if (cd_file_load_into(game_graphics_runtime.display_state.asset_load_buffer, path) != KF_RESOURCE_LOADED) {
         return;
     }
-    tim_upload_images(game_graphics_runtime.display_state.asset_load_buffer);
-    index = game_graphics_runtime.display_state.buffer_index == 0;
+    tim_upload_images((u_long *)game_graphics_runtime.display_state.asset_load_buffer);
+    index = game_graphics_runtime.display_state.buffer_index == KF_DISPLAY_BUFFER_FIRST;
     game_graphics_runtime.display_draw_environments[index].isbg = 0;
     game_graphics_runtime.display_draw_environments[index].dfe = 0;
     PutDrawEnv(&game_graphics_runtime.display_draw_environments[index]);

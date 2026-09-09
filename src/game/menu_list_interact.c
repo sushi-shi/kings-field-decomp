@@ -1,4 +1,5 @@
 #include <kf/address.h>
+#define KF_MENU_LIST_IMPLEMENTATION
 #include <kf/game_menu.h>
 #include <kf/game.h>
 
@@ -14,7 +15,7 @@ enum {
 ADDRESS(0x80028380, 0x354)
 KfMenuConfirmResult menu_list_interact(
     const KfMenuList *list, KfMenuConfirmKind kind, KfMenuPreviewMode preview_mode,
-    s32 item_id, u32 shop_id, KfItemPriceMode price_mode)
+    s32 item_id, KF_ENUM_PARAM(KfShopId, u32) shop_id, KfItemPriceMode price_mode)
 {
     MenuGlyphString opt0;
     MenuGlyphString opt1;
@@ -74,7 +75,7 @@ opt0_done:
     if (preview_mode == KF_MENU_PREVIEW_ITEM_MODEL) {
         menu_item_model_preview(KF_ENUM_DECODE(KF_ENUM_PARAM(KfItemId, s32), item_id));
     } else if (preview_mode == KF_MENU_PREVIEW_ITEM_DETAIL) {
-        menu_draw_item_detail(KF_ENUM_DECODE(KF_ENUM_PARAM(KfItemId, s32), item_id), KF_ENUM_DECODE(KF_ENUM_PARAM(KfShopId, s32), shop_id), price_mode);
+        menu_draw_item_detail(KF_ENUM_DECODE(KF_ENUM_PARAM(KfItemId, s32), item_id), shop_id, price_mode);
     } else if (preview_mode == KF_MENU_PREVIEW_MAGIC_ICON
             && item_id != KF_ENUM_ENCODE(s32, KF_MAGIC_NONE)) {
         menu_add_marker_quad();
@@ -88,7 +89,7 @@ opt0_done:
             if (preview_mode == KF_MENU_PREVIEW_ITEM_MODEL) {
                 menu_item_model_preview(KF_ENUM_DECODE(KF_ENUM_PARAM(KfItemId, s32), item_id));
             } else if (preview_mode == KF_MENU_PREVIEW_ITEM_DETAIL) {
-                menu_draw_item_detail(KF_ENUM_DECODE(KF_ENUM_PARAM(KfItemId, s32), item_id), KF_ENUM_DECODE(KF_ENUM_PARAM(KfShopId, s32), shop_id), price_mode);
+                menu_draw_item_detail(KF_ENUM_DECODE(KF_ENUM_PARAM(KfItemId, s32), item_id), shop_id, price_mode);
             } else if (preview_mode == KF_MENU_PREVIEW_MAGIC_ICON
                     && item_id != KF_ENUM_ENCODE(s32, KF_MAGIC_NONE)) {
                 menu_add_marker_quad();
@@ -124,7 +125,7 @@ opt0_done:
         if (preview_mode == KF_MENU_PREVIEW_ITEM_MODEL) {
             menu_item_model_preview(KF_ENUM_DECODE(KF_ENUM_PARAM(KfItemId, s32), item_id));
         } else if (preview_mode == KF_MENU_PREVIEW_ITEM_DETAIL) {
-            menu_draw_item_detail(KF_ENUM_DECODE(KF_ENUM_PARAM(KfItemId, s32), item_id), KF_ENUM_DECODE(KF_ENUM_PARAM(KfShopId, s32), shop_id), price_mode);
+            menu_draw_item_detail(KF_ENUM_DECODE(KF_ENUM_PARAM(KfItemId, s32), item_id), shop_id, price_mode);
         } else if (preview_mode == KF_MENU_PREVIEW_MAGIC_ICON
                 && item_id != KF_ENUM_ENCODE(s32, KF_MAGIC_NONE)) {
             menu_add_marker_quad();

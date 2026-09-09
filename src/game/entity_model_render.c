@@ -97,7 +97,7 @@ void render_map_object(KfMapObject *object)
     id = object->object_id;
     switch (map_object_state.definitions.entries[KF_ENUM_ENCODE(u8, object->object_id)].behavior_type) {
     case KF_MAP_OBJECT_BEHAVIOR_LIFT_DOOR:
-    case KF_ENUM_DECODE(KfMapObjectBehavior, 3):
+    case KF_MAP_OBJECT_BEHAVIOR_03:
         depth = MAP_LIFT_DOOR_DEPTH_BIAS;
         break;
     case KF_MAP_OBJECT_BEHAVIOR_HINGED_DOOR:

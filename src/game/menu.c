@@ -77,7 +77,7 @@ s32 menu_root(void)
             result = menu_use_item_panel();
             goto join_result;
         case KF_ROOT_CHOICE_USE_MAGIC:
-            result = menu_magic_panel();
+            result = KF_ENUM_ENCODE(s32, menu_magic_panel());
             if (result == KF_MENU_LIST_NO_SELECTION)
                 result = KF_MENU_ROOT_PENDING;
             else
@@ -93,7 +93,7 @@ s32 menu_root(void)
             menu_drop_item();
             break;
         case KF_ROOT_CHOICE_SYSTEM:
-            result = menu_save_load_hub();
+            result = KF_ENUM_ENCODE(s32, menu_save_load_hub());
         join_result:
             if (result == KF_MENU_ROOT_NO_ITEM)
                 result = KF_MENU_ROOT_PENDING;
@@ -218,7 +218,7 @@ s32 menu_use_item_panel(void)
 
     menu_frame_begin();
     if (ctx.entry_count != 0) {
-        if (menu_load_item_model(codes[ctx.selected_index]) != 0)
+        if (menu_load_item_model(codes[ctx.selected_index]) != KF_RESOURCE_LOADED)
             return KF_MENU_LIST_NO_SELECTION;
         menu_item_model_preview(codes[ctx.selected_index]);
     }
@@ -228,7 +228,7 @@ s32 menu_use_item_panel(void)
     for (;;) {
         if (confirm == KF_MENU_CONFIRM_REQUESTED) {
             if (menu_list_interact(&ctx, KF_MENU_CONFIRM_USE,
-                    KF_MENU_PREVIEW_ITEM_MODEL, KF_ENUM_ENCODE(u8, codes[ctx.selected_index]), 0, KF_ITEM_PRICE_BUY)
+                    KF_MENU_PREVIEW_ITEM_MODEL, codes[ctx.selected_index], KF_SHOP_NONE, KF_ITEM_PRICE_BUY)
                     == KF_MENU_CONFIRM_CANCELLED)
                 selection = KF_MENU_LIST_PENDING;
             else
@@ -266,7 +266,7 @@ s32 menu_use_item_panel(void)
                     ctx.cursor_row = ctx.visible_rows - 1;
                 }
             }
-            if (menu_load_item_model(codes[ctx.selected_index]) != 0)
+            if (menu_load_item_model(codes[ctx.selected_index]) != KF_RESOURCE_LOADED)
                 return KF_MENU_LIST_NO_SELECTION;
         } else if ((input & PADLdown) != 0 && (prev & PADLdown) == 0) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
@@ -281,7 +281,7 @@ s32 menu_use_item_panel(void)
                 ctx.scroll_offset = 0;
                 ctx.cursor_row = 0;
             }
-            if (menu_load_item_model(codes[ctx.selected_index]) != 0)
+            if (menu_load_item_model(codes[ctx.selected_index]) != KF_RESOURCE_LOADED)
                 return KF_MENU_LIST_NO_SELECTION;
         } else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {
             menu_play_input_sound(MENU_SOUND_CONFIRM);
@@ -289,7 +289,7 @@ s32 menu_use_item_panel(void)
                 menu_release_item_model();
                 menu_map_viewer(codes[ctx.selected_index]);
                 menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
-                if (menu_load_item_model(codes[ctx.selected_index]) != 0)
+                if (menu_load_item_model(codes[ctx.selected_index]) != KF_RESOURCE_LOADED)
                     return KF_MENU_LIST_NO_SELECTION;
             } else {
                 confirm = KF_MENU_CONFIRM_REQUESTED;

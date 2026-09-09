@@ -38,6 +38,11 @@ KF_ENUM_BEGIN(KfAudioStopMode, s32)
     KF_AUDIO_STOP_FADE = 1
 KF_ENUM_END(KfAudioStopMode)
 
+KF_ENUM_BEGIN(KfAudioPlaybackResult, u32)
+    KF_AUDIO_NOT_PLAYED = 0,
+    KF_AUDIO_PLAYED = 1
+KF_ENUM_END(KfAudioPlaybackResult)
+
 typedef struct SoundRef {
     u8 program;
     u8 tone;
@@ -78,12 +83,12 @@ extern void audio_play_map_sequence(u8 sequence_id);
 extern void audio_play_sequence_file(const char *path);
 extern void audio_play_voice(
     s16 vab_id, s16 program, s16 tone, s16 note, s16 left_volume, s16 right_volume);
-extern u32 audio_play_spatial(
+extern KfAudioPlaybackResult audio_play_spatial(
     const SoundRef *sound, const VECTOR *position, s16 volume, s32 max_distance,
     s32 attenuation_distance);
-extern u32 audio_play_spatial_default_range(
+extern KfAudioPlaybackResult audio_play_spatial_default_range(
     const SoundRef *sound, const VECTOR *position, s16 volume);
-extern u32 audio_play_spatial_range(
+extern KfAudioPlaybackResult audio_play_spatial_range(
     const SoundRef *sound, const VECTOR *position, s16 volume,
     s32 max_distance, s32 attenuation_distance);
 extern void sound_ref_play(const SoundRef *sound, s16 volume);

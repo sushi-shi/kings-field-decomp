@@ -429,6 +429,8 @@ def _header_structure_layouts() -> dict[str, HeaderStructureLayout]:
     implicit_enumerator = re.compile(r"[A-Za-z_]\w*")
     checked_headers = (
         REPO / "include/kf/game_types.h",
+        REPO / "include/kf/animation.h",
+        REPO / "include/kf/cd_file.h",
         REPO / "include/kf/floor.h",
         REPO / "include/kf/audio.h",
         REPO / "include/kf/resources.h",

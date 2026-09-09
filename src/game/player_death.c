@@ -100,7 +100,7 @@ void game_state_initialize(void)
     player_state.equipped_leg_armor_id = KF_ITEM_NONE;
     player_state.equipped_shield_id = KF_ITEM_NONE;
     player_state.equipped_accessory_id = KF_ITEM_NONE;
-    player_set_equipment_slot(KF_ENUM_DECODE(KfItemId, 0), KF_EQUIPMENT_SLOT_REFRESH_ONLY);
+    player_set_equipment_slot(KF_ITEM_SHORT_SWORD, KF_EQUIPMENT_SLOT_REFRESH_ONLY);
     player_select_magic(KF_MAGIC_LIGHT_NEEDLE);
     player_state.fire_defense_timer = KF_PLAYER_STATUS_TIMER_INACTIVE;
     player_state.illusion_staff_timer = KF_ILLUSION_STAFF_INACTIVE;
@@ -178,7 +178,7 @@ void player_death_restart(void)
     player_state.camera_rotation.vx = 0;
     if (floor != KF_FLOOR_1) {
         player_state.progress_state.current_floor = KF_FLOOR_1;
-        player_state.map_variant = 0;
+        player_state.map_variant = KF_MAP_VARIANT_DEFAULT;
         pool_release_all();
         audio_close_vab();
         func_800365f8();
@@ -355,8 +355,8 @@ void player_recalculate_combat_stats(void)
     if (player_state.status_effect_flags & KF_PLAYER_STATUS_FIRE_DEFENSE_BOOST) {
         player_state.fire_defense += FIRE_DEFENSE_STATUS_BONUS;
     }
-    if (player_state.base_magic >= DISPOISON_REQUIRED_BASE_MAGIC && magic_records[KF_MAGIC_HEALING].learned != KF_MAGIC_UNLEARNED && magic_records[KF_MAGIC_DISPOISON].learned == KF_MAGIC_UNLEARNED) {
-        magic_records[KF_MAGIC_DISPOISON].learned = KF_MAGIC_LEARNED;
+    if (player_state.base_magic >= DISPOISON_REQUIRED_BASE_MAGIC && magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_HEALING)].learned != KF_MAGIC_UNLEARNED && magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_DISPOISON)].learned == KF_MAGIC_UNLEARNED) {
+        magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_DISPOISON)].learned = KF_MAGIC_LEARNED;
         notify_enqueue(KF_NOTIFICATION_MAGIC_LEARNED);
     }
     if (player_state.base_magic >= FIRE_WALL_REQUIRED_BASE_MAGIC && magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_FIRE_WALL)].learned == KF_MAGIC_UNLEARNED) {
@@ -601,7 +601,7 @@ void player_apply_radial_damage(
 }
 
 ADDRESS(0x800167e4, 0x64)
-void player_select_magic(KfSelectedMagicId magic_id)
+void player_select_magic(KfMagicId magic_id)
 {
     player_state.magic_charge = 0;
     player_state.selected_magic_id = magic_id;

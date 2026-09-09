@@ -64,9 +64,9 @@ u32 collision_query_world(
     u16 query_flags = flags;
 
     if ((query_flags & KF_COLLISION_SKIP_TERRAIN) == 0) {
-        hit = map_collision_grid.bytes[(u16)cell];
+        hit = KF_ENUM_ENCODE(u8, map_collision_grid.bytes[(u16)cell]);
 
-        if (hit != KF_MAP_CELL_FLOOR && hit != KF_MAP_CELL_STEP) {
+        if (hit != KF_ENUM_ENCODE(u8, KF_MAP_CELL_FLOOR) && hit != KF_ENUM_ENCODE(u8, KF_MAP_CELL_STEP)) {
             return hit | KF_COLLISION_TERRAIN;
         }
         if (point_y != KF_COLLISION_IGNORE_HEIGHT) {

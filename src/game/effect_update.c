@@ -46,11 +46,11 @@ int effect_magic_power(KfEffectRecord *effect)
 }
 
 ADDRESS(0x80037fe0, 0x2b8)
-void effect_projectile_update_3d(SVECTOR *probe_offset, s32 phase_limit)
+void effect_projectile_update_3d(SVECTOR *probe_offset, KF_ENUM_PARAM(KfEffectPhase, s32) phase_limit)
 {
     KfEffectRecord *record = current_effect;
     KfMagicRecord *magic = current_effect_magic_record;
-    u8 life = record->phase;
+    KfEffectPhase life = record->phase;
     MATRIX rotation_matrix;
     MATRIX yaw_matrix;
     VECTOR world;
@@ -58,7 +58,7 @@ void effect_projectile_update_3d(SVECTOR *probe_offset, s32 phase_limit)
     s16 pitch;
     s16 next_pitch;
 
-    if (life < KF_EFFECT_HAZARD_RELEASE_REQUEST + 1u) {
+    if (KF_ENUM_ENCODE(u8, life) < KF_ENUM_ENCODE(u8, KF_EFFECT_HAZARD_RELEASE_REQUEST) + 1u) {
         RotMatrix(&record->rotation.vector, &rotation_matrix);
         matrix_set_rotation_x(record->rotation.vector.vx, &rotation_matrix);
         matrix_set_rotation_y(record->rotation.vector.vy, &yaw_matrix);
@@ -80,7 +80,7 @@ void effect_projectile_update_3d(SVECTOR *probe_offset, s32 phase_limit)
             }
             record->direction.words.x = -record->direction.words.x;
         }
-        if (record->sound_played == 0) {
+        if (record->sound_played == KF_AUDIO_NOT_PLAYED) {
             if (rand() < EFFECT_HAZARD_SOUND_RANDOM_CUTOFF) {
                 record->sound_played = audio_play_spatial_range(
                     &magic->sounds[0], &world, KF_AUDIO_MAX_VOLUME,
@@ -106,25 +106,25 @@ void effect_projectile_update_3d(SVECTOR *probe_offset, s32 phase_limit)
                 next_pitch = 0;
                 record->phase = KF_EFFECT_HAZARD_RISE_FIRST;
             } else {
-                record->sound_played = 0;
+                record->sound_played = KF_AUDIO_NOT_PLAYED;
             }
         }
         record->rotation.vector.vx = next_pitch;
-    } else if (life >= (u32)KF_EFFECT_HAZARD_RISE_FIRST && (s16)phase_limit >= life) {
+    } else if (KF_ENUM_ENCODE(u8, life) >= (u32)KF_ENUM_ENCODE(u8, KF_EFFECT_HAZARD_RISE_FIRST) && KF_ENUM_ENCODE(s16, phase_limit) >= KF_ENUM_ENCODE(u8, life)) {
         record->position.vy -= EFFECT_HAZARD_RISE_STEP;
         record->phase++;
     }
 }
 
 ADDRESS(0x80038298, 0x260)
-void effect_projectile_update_2d(s32 orbit_radius, s32 phase_limit)
+void effect_projectile_update_2d(s32 orbit_radius, KF_ENUM_PARAM(KfEffectPhase, s32) phase_limit)
 {
     KfEffectRecord *record = current_effect;
     KfMagicRecord *magic = current_effect_magic_record;
-    u32 life = record->phase;
+    KF_ENUM_STORAGE(KfEffectPhase, u32) life = record->phase;
     u32 collision;
 
-    if ((life & 0xff) < KF_EFFECT_HAZARD_RELEASE_REQUEST + 1) {
+    if ((KF_ENUM_ENCODE(u32, life) & 0xff) < KF_ENUM_ENCODE(u8, KF_EFFECT_HAZARD_RELEASE_REQUEST) + 1) {
         record->position.vx = ((s16)record->direction.words.x << KF_EFFECT_ORBIT_CENTER_SHIFT)
             + (rsin((s16)record->control.orbit_angle) * orbit_radius >> KF_FIXED12_BITS);
         record->position.vz = ((s16)record->direction.words.z << KF_EFFECT_ORBIT_CENTER_SHIFT)
@@ -145,7 +145,7 @@ void effect_projectile_update_2d(s32 orbit_radius, s32 phase_limit)
                     0, 0, 0, KF_FIXED12_ONE, record->id);
             }
         }
-        if (record->sound_played == 0) {
+        if (record->sound_played == KF_AUDIO_NOT_PLAYED) {
             if (rand() < EFFECT_HAZARD_SOUND_RANDOM_CUTOFF) {
                 record->sound_played = audio_play_spatial_range(
                     &magic->sounds[0], &record->position,
@@ -157,10 +157,10 @@ void effect_projectile_update_2d(s32 orbit_radius, s32 phase_limit)
             s32 dy = (record->position.vy - player_state.camera_position.vy) >> KF_LENGTH_SQUARE_DOWNSHIFT;
             s32 dz = (record->position.vz - player_state.camera_position.vz) >> KF_LENGTH_SQUARE_DOWNSHIFT;
             if ((SquareRoot0(dx * dx + dy * dy + dz * dz) << KF_LENGTH_SQUARE_DOWNSHIFT) >= EFFECT_ORBIT_SOUND_RESET_DISTANCE) {
-                record->sound_played = 0;
+                record->sound_played = KF_AUDIO_NOT_PLAYED;
             }
         }
-    } else if ((life & 0xff) != KF_EFFECT_HAZARD_RUNNING && (s16)phase_limit >= (int)(life & 0xff)) {
+    } else if ((KF_ENUM_ENCODE(u32, life) & 0xff) != KF_ENUM_ENCODE(u8, KF_EFFECT_HAZARD_RUNNING) && KF_ENUM_ENCODE(s16, phase_limit) >= (int)(KF_ENUM_ENCODE(u32, life) & 0xff)) {
         record->position.vy -= EFFECT_HAZARD_RISE_STEP;
         record->phase++;
     }

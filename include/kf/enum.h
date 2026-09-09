@@ -11,6 +11,18 @@
 #define KF_ENUM_STORAGE(name, storage) KfEnumStorage<name, storage>
 #define KF_ENUM_PARAM(name, storage) name
 
+/* Opt in only for state bytes that retail also advances as counters.
+ * Increment/decrement keep the domain; integer assignment remains invalid. */
+#define KF_ENUM_COUNTER(name, storage) \
+    inline name& operator++(name& value) \
+    { value = static_cast<name>(static_cast<storage>(value) + 1); return value; } \
+    inline name operator++(name& value, int) \
+    { name previous = value; ++value; return previous; } \
+    inline name& operator--(name& value) \
+    { value = static_cast<name>(static_cast<storage>(value) - 1); return value; } \
+    inline name operator--(name& value, int) \
+    { name previous = value; --value; return previous; }
+
 /* One domain may use different field widths in runtime and serialized data. */
 template <typename Enum, typename Storage>
     requires (__is_enum(Enum) && __is_integral(Storage))
@@ -69,6 +81,7 @@ constexpr Integer kf_enum_encode(KfEnumStorage<Enum, Storage> value)
 #define KF_ENUM_PROMOTED(name) __typeof__(+((name)0))
 #define KF_ENUM_STORAGE(name, storage) storage
 #define KF_ENUM_PARAM(name, storage) storage
+#define KF_ENUM_COUNTER(name, storage)
 #define KF_ENUM_DECODE(type, value) ((type)(value))
 #define KF_ENUM_ENCODE(storage, value) ((storage)(value))
 #endif

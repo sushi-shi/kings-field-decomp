@@ -3,14 +3,6 @@
 #include <kf/psyq_libc.h>
 #include <kf/game.h>
 
-/* Zero-based TIM/Mddd. indices; menu_load_item_texture adds one to the ID. */
-enum {
-    MENU_TEXTURE_LOADING_DATA = 0x67,
-    MENU_TEXTURE_SAVING_DATA = 0x68,
-    MENU_TEXTURE_FORMATTING_CARD = 0x69,
-    MENU_TEXTURE_CONFIRM_CARD_FORMAT = 0x72,
-    MENU_TEXTURE_POWER_OFF = 0x3e6
-};
 
 /*
  * Inventory drop and save/load menu panels, one contiguous run
@@ -76,7 +68,7 @@ void menu_drop_item(void)
 
     menu_frame_begin();
     if (ctx.entry_count != 0) {
-        if (menu_load_item_model(codes[ctx.selected_index]) != 0)
+        if (menu_load_item_model(codes[ctx.selected_index]) != KF_RESOURCE_LOADED)
             return;
         menu_item_model_preview(codes[ctx.selected_index]);
     }
@@ -86,7 +78,7 @@ void menu_drop_item(void)
         menu_present_frame();
         if (confirm == KF_MENU_CONFIRM_REQUESTED) {
             selection = KF_ENUM_ENCODE(s32, menu_list_interact(&ctx, KF_MENU_CONFIRM_DROP,
-                    KF_MENU_PREVIEW_ITEM_MODEL, KF_ENUM_ENCODE(u8, codes[ctx.selected_index]), 0, KF_ITEM_PRICE_BUY));
+                    KF_MENU_PREVIEW_ITEM_MODEL, codes[ctx.selected_index], KF_SHOP_NONE, KF_ITEM_PRICE_BUY));
             if (selection == KF_ENUM_ENCODE(s32, KF_MENU_CONFIRM_CANCELLED))
                 selection = KF_MENU_LIST_PENDING;
             else
@@ -124,7 +116,7 @@ void menu_drop_item(void)
                     ctx.cursor_row = ctx.visible_rows - 1;
                 }
             }
-            if (menu_load_item_model(codes[ctx.selected_index]) != 0)
+            if (menu_load_item_model(codes[ctx.selected_index]) != KF_RESOURCE_LOADED)
                 return;
         } else if ((input & PADLdown) != 0 && (prev & PADLdown) == 0) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
@@ -139,7 +131,7 @@ void menu_drop_item(void)
                 ctx.scroll_offset = 0;
                 ctx.cursor_row = 0;
             }
-            if (menu_load_item_model(codes[ctx.selected_index]) != 0)
+            if (menu_load_item_model(codes[ctx.selected_index]) != KF_RESOURCE_LOADED)
                 return;
         } else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {
             menu_play_input_sound(MENU_SOUND_CONFIRM);
@@ -166,7 +158,7 @@ void menu_drop_item(void)
  * forever. Cancellation of a sub-action keeps this hub open.
  */
 ADDRESS(0x80024e64, 0x260)
-s32 menu_save_load_hub(void)
+KfMenuSystemResult menu_save_load_hub(void)
 {
     KfSaveHeader header;
     KfSavePayload payload;
@@ -174,14 +166,14 @@ s32 menu_save_load_hub(void)
     KfMenuConfirmState confirm = KF_MENU_CONFIRM_IDLE;
     s32 input = 0;
     s32 prev;
-    s32 result = KF_MENU_ROOT_PENDING;
-    s32 action = -1;
+    KfMenuSystemResult result = KF_MENU_SYSTEM_PENDING;
+    KfMenuSystemAction action = KF_MENU_SYSTEM_ACTION_NONE;
 
     save_payload_buffer = &payload;
     save_header_buffer = &header;
 
     for (;;) {
-        if (action != -1 || result == action) {
+        if (action != KF_MENU_SYSTEM_ACTION_NONE || KF_ENUM_ENCODE(s32, result) == KF_ENUM_ENCODE(s32, action)) {
             menu_frame_begin();
             menu_draw_window(KF_MENU_WINDOW_SYSTEM, KF_MENU_SYSTEM_ROW_COUNT, cursor, confirm);
             menu_present_frame();
@@ -190,15 +182,15 @@ s32 menu_save_load_hub(void)
         }
 
         switch (action) {
-        case KF_MENU_SYSTEM_LOAD_ROW:
-            result = KF_ENUM_ENCODE(s32, menu_load_panel());
-            if (result == KF_ENUM_ENCODE(s32, KF_MENU_CONFIRM_ACCEPTED))
-                result = KF_MENU_ROOT_GAME_LOADED;
+        case KF_MENU_SYSTEM_ACTION_LOAD:
+            result = KF_ENUM_DECODE(KfMenuSystemResult, KF_ENUM_ENCODE(s32, menu_load_panel()));
+            if (result == KF_MENU_SYSTEM_ACCEPTED)
+                result = KF_MENU_SYSTEM_LOADED;
             break;
-        case KF_MENU_SYSTEM_QUIT_ROW:
-            result = KF_ENUM_ENCODE(s32, menu_two_option_prompt(
-                KF_MENU_WINDOW_SYSTEM, KF_MENU_SYSTEM_ROW_COUNT, cursor, 0));
-            if (result == KF_ENUM_ENCODE(s32, KF_MENU_CONFIRM_ACCEPTED)) {
+        case KF_MENU_SYSTEM_ACTION_QUIT:
+            result = KF_ENUM_DECODE(KfMenuSystemResult, KF_ENUM_ENCODE(s32, menu_two_option_prompt(
+                KF_MENU_WINDOW_SYSTEM, KF_MENU_SYSTEM_ROW_COUNT, cursor, 0)));
+            if (result == KF_MENU_SYSTEM_ACCEPTED) {
                 menu_load_item_texture(MENU_TEXTURE_POWER_OFF);
                 audio_stop_sequence_fade();
                 for (;;) {
@@ -213,10 +205,10 @@ s32 menu_save_load_hub(void)
             break;
         }
 
-        if (action != -1 && result == KF_MENU_ROOT_NO_ITEM)
-            result = KF_MENU_ROOT_PENDING;
-        action = -1;
-        if (result != KF_MENU_ROOT_PENDING)
+        if (action != KF_MENU_SYSTEM_ACTION_NONE && result == KF_MENU_SYSTEM_CANCELLED)
+            result = KF_MENU_SYSTEM_PENDING;
+        action = KF_MENU_SYSTEM_ACTION_NONE;
+        if (result != KF_MENU_SYSTEM_PENDING)
             break;
 
         confirm = KF_MENU_CONFIRM_IDLE;
@@ -238,13 +230,13 @@ s32 menu_save_load_hub(void)
             menu_play_input_sound(MENU_SOUND_CONFIRM);
             confirm = KF_MENU_CONFIRM_REQUESTED;
             if (cursor == KF_MENU_SYSTEM_RETURN_ROW) {
-                result = KF_MENU_ROOT_NO_ITEM;
+                result = KF_MENU_SYSTEM_CANCELLED;
             } else {
-                action = cursor;
+                action = KF_ENUM_DECODE(KfMenuSystemAction, cursor);
             }
         } else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {
             menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
-            result = KF_MENU_ROOT_NO_ITEM;
+            result = KF_MENU_SYSTEM_CANCELLED;
         }
 
         menu_frame_begin();
@@ -278,7 +270,7 @@ KfMenuConfirmResult menu_save_panel(void)
     s32 i;
 
     status.operation = save_system_read_catalog(summaries);
-    if (status.operation != KF_SAVE_RESULT_OK && status.operation != KF_ENUM_DECODE(KfSaveResult, 3)) {
+    if (status.operation != KF_SAVE_RESULT_OK && status.operation != KF_SAVE_RESULT_NO_SPACE) {
         menu_play_input_sound(MENU_SOUND_CURSOR);
         while (PadRead(1) == 0) {
             menu_frame_begin();

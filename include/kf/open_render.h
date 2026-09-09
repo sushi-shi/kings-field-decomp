@@ -26,7 +26,7 @@ enum {
 
 /* OPEN.EXE display subobject; the active OT pointer follows this record. */
 typedef struct KfDisplayStateOpen {
-    u8 buffer_index;
+    KfDisplayBuffer buffer_index;
     u8 unknown_01[3];
     void *asset_load_buffer;
     KfPrimitiveBuffer primitive_buffers[KF_DISPLAY_BUFFER_COUNT];

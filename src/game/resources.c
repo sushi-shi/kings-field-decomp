@@ -120,7 +120,7 @@ void map_variant_assets_load(void)
     u8 **asset_buffer = &map_variant_asset_buffer;
 
     memcpy(&map_resource_path[3], "CHR0.MIM", sizeof "CHR0.MIM");
-    map_resource_path[6] = player_state.map_variant + '0';
+    map_resource_path[6] = KF_ENUM_ENCODE(u8, player_state.map_variant) + '0';
     cd_file_load_into(*asset_buffer, map_resource_path);
     asset_registry_load_tmd_archive(KF_ASSET_ACTOR_FIRST, *asset_buffer);
 }
@@ -151,7 +151,7 @@ void audio_play_current_map_sequence(void)
 }
 
 ADDRESS(0x8001b558, 0x258)
-void map_resources_load(KfFloorId floor, s32 use_variant)
+void map_resources_load(KfFloorId floor, KF_ENUM_PARAM(KfMapVariant, s32) use_variant)
 {
     u8 *stream;
     u8 *block;
@@ -161,9 +161,9 @@ void map_resources_load(KfFloorId floor, s32 use_variant)
     effect_pool_reset();
     memory_allocation_reset();
     map_resource_path_set_floor(floor);
-    tim_upload_images(map_resource_load_file(map_mix_tim_filename));
+    tim_upload_images((u_long *)map_resource_load_file(map_mix_tim_filename));
     memory_release_last();
-    stream = map_resource_load_file("MIXA.DAT");
+    stream = (u8 *)map_resource_load_file("MIXA.DAT");
     audio_load_vab(stream + KF_RESOURCE_CHUNK_HEADER_BYTES,
         STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES);
     block = stream;
@@ -193,7 +193,7 @@ void map_resources_load(KfFloorId floor, s32 use_variant)
         (KfMapEventDefinition *)(STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES));
     memory_release_last();
     memory_arena.allocation.cursor = block + KF_RESOURCE_REUSE_PREFIX_BYTES;
-    stream = map_resource_load_file("MIXB.DAT");
+    stream = (u8 *)map_resource_load_file("MIXB.DAT");
     tmd_register(KF_TMD_SLOT_ENTITIES,
         (KfTmdHeader *)(stream + KF_RESOURCE_CHUNK_HEADER_BYTES));
     tmd_register(KF_TMD_SLOT_MAP,
@@ -203,11 +203,11 @@ void map_resources_load(KfFloorId floor, s32 use_variant)
     asset_registry_load_tmd_archive(KF_ASSET_EFFECT_FIRST,
         STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES);
     STREAM_NEXT(stream);
-    if (use_variant == 0) {
+    if (use_variant == KF_MAP_VARIANT_DEFAULT) {
         asset_registry_load_tmd_archive(KF_ASSET_ACTOR_FIRST,
             stream + KF_RESOURCE_CHUNK_HEADER_BYTES);
     } else {
-        map_variant_asset_buffer = memory_allocate(MAP_VARIANT_ASSET_BUFFER_BYTES);
+        map_variant_asset_buffer = (u8 *)memory_allocate(MAP_VARIANT_ASSET_BUFFER_BYTES);
         map_variant_assets_load();
     }
     player_sync_position_to_map();

@@ -25,7 +25,7 @@ class EffectSpriteInventoryTests(unittest.TestCase):
             actual,
             {
                 "state": (0x00, 1, "KfEffectSpriteState"),
-                "visibility_tag": (0x01, 1, "u8"),
+                "animation_clip": (0x01, 1, "KfAnimationClip"),
                 "asset_variant": (0x02, 2, "u16"),
                 "scale": (0x04, 2, "u16"),
                 "translation_x": (0x06, 2, "s16"),

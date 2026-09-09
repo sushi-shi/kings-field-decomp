@@ -69,7 +69,7 @@ void game_main_loop(void)
         effect_pool_sweep();
         map_event_pool_update();
         render_frame(&player_position_snapshot, &player_rotation_snapshot);
-        player_state.allow_near_actor_spawn = 0;
+        player_state.allow_near_actor_spawn = KF_ACTOR_NEAR_SPAWN_FORBIDDEN;
         frame_pacer_wait();
         if (map_cell_attribute_grid.cells[player_state.motion_state.fields.map_cell.coords.z][player_state.motion_state.fields.map_cell.coords.x]
             == KF_MAP_ATTRIBUTE_WARP) {

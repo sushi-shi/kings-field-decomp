@@ -1,4 +1,5 @@
 #include <kf/address.h>
+#include <kf/psyq_pad.h>
 #include <kf/open_render.h>
 #include <LIBETC.H>
 
@@ -15,13 +16,13 @@ void display_adjust_vram_view(void)
 
     open_graphics_runtime.display_draw_environments[0].isbg = 0;
     open_graphics_runtime.display_draw_environments[1].isbg = 0;
-    open_graphics_runtime.display_state.buffer_index = open_graphics_runtime.display_state.buffer_index == 0;
+    open_graphics_runtime.display_state.buffer_index = display_next_buffer(open_graphics_runtime.display_state.buffer_index);
     DrawSync(0);
     VSync(0);
-    PutDispEnv(&open_graphics_runtime.display_disp_environments[open_graphics_runtime.display_state.buffer_index]);
-    open_graphics_runtime.display_draw_environments[open_graphics_runtime.display_state.buffer_index].dfe = 0;
-    PutDrawEnv(&open_graphics_runtime.display_draw_environments[open_graphics_runtime.display_state.buffer_index]);
-    display = &open_graphics_runtime.display_disp_environments[open_graphics_runtime.display_state.buffer_index];
+    PutDispEnv(&open_graphics_runtime.display_disp_environments[KF_ENUM_ENCODE(u8, open_graphics_runtime.display_state.buffer_index)]);
+    open_graphics_runtime.display_draw_environments[KF_ENUM_ENCODE(u8, open_graphics_runtime.display_state.buffer_index)].dfe = 0;
+    PutDrawEnv(&open_graphics_runtime.display_draw_environments[KF_ENUM_ENCODE(u8, open_graphics_runtime.display_state.buffer_index)]);
+    display = &open_graphics_runtime.display_disp_environments[KF_ENUM_ENCODE(u8, open_graphics_runtime.display_state.buffer_index)];
     saved = display->disp;
 
     while (PadRead(1) & PADh) {
@@ -51,7 +52,7 @@ void display_adjust_vram_view(void)
     while (PadRead(1) & PADh) {
     }
     display->disp = saved;
-    open_graphics_runtime.display_draw_environments[open_graphics_runtime.display_state.buffer_index].dfe = 1;
+    open_graphics_runtime.display_draw_environments[KF_ENUM_ENCODE(u8, open_graphics_runtime.display_state.buffer_index)].dfe = 1;
     open_graphics_runtime.display_draw_environments[0].isbg = 1;
     open_graphics_runtime.display_draw_environments[1].isbg = 1;
 }

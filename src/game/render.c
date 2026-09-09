@@ -95,16 +95,16 @@ void display_show_error_screen(KfSystemScreen stage)
 
         CdControl(CdlSetloc, (u_char *)&cd_read_location, 0);
         CdRead(cd_search_file.size >> KF_CD_SECTOR_SHIFT,
-               game_graphics_runtime.display_state.asset_load_buffer, CdlModeSpeed);
+               (u_long *)game_graphics_runtime.display_state.asset_load_buffer, CdlModeSpeed);
         while ((result = CdReadSync(KF_CD_READ_POLL, 0)) > 0) {
         }
         if (result == 0) {
             attempt = KF_CD_READ_STOP_ATTEMPT;
         }
     }
-    tim_upload_images(game_graphics_runtime.display_state.asset_load_buffer);
+    tim_upload_images((u_long *)game_graphics_runtime.display_state.asset_load_buffer);
 
-    back = game_graphics_runtime.display_state.buffer_index == 0;
+    back = game_graphics_runtime.display_state.buffer_index == KF_DISPLAY_BUFFER_FIRST;
     game_graphics_runtime.display_draw_environments[back].isbg = 0;
     game_graphics_runtime.display_draw_environments[back].dfe = 0;
     PutDrawEnv(&game_graphics_runtime.display_draw_environments[back]);
@@ -193,7 +193,7 @@ void render_initialize(void)
     u8 *buffer;
 
     game_graphics_runtime.display_state.buffer_index = KF_DISPLAY_BUFFER_UNINITIALIZED;
-    buffer = memory_allocate(KF_DISPLAY_BUFFER_COUNT * PRIMITIVE_BUFFER_BYTES);
+    buffer = (u8 *)memory_allocate(KF_DISPLAY_BUFFER_COUNT * PRIMITIVE_BUFFER_BYTES);
     game_graphics_runtime.display_state.asset_load_buffer = buffer;
     game_graphics_runtime.display_state.primitive_buffers[0].start = buffer;
     buffer += PRIMITIVE_BUFFER_BYTES;
@@ -266,10 +266,10 @@ void render_initialize(void)
 ADDRESS(0x8001bfb8, 0x98)
 void display_begin_frame(void)
 {
-    game_graphics_runtime.display_state.buffer_index = game_graphics_runtime.display_state.buffer_index == 0;
-    game_graphics_runtime.display_state.primitive_buffer = &game_graphics_runtime.display_state.primitive_buffers[game_graphics_runtime.display_state.buffer_index];
+    game_graphics_runtime.display_state.buffer_index = display_next_buffer(game_graphics_runtime.display_state.buffer_index);
+    game_graphics_runtime.display_state.primitive_buffer = &game_graphics_runtime.display_state.primitive_buffers[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)];
     game_graphics_runtime.display_state.ordering_table =
-        game_graphics_runtime.display_state.ordering_tables[game_graphics_runtime.display_state.buffer_index].entries;
+        game_graphics_runtime.display_state.ordering_tables[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)].entries;
     ClearOTagR(game_graphics_runtime.display_state.ordering_table, KF_ORDERING_TABLE_LENGTH);
     game_graphics_runtime.display_state.primitive_buffer->cursor = game_graphics_runtime.display_state.primitive_buffer->start;
     DAT_800a0768 = 0;
@@ -282,8 +282,8 @@ void display_present_frame(void)
 {
     DrawSync(0);
     VSync(0);
-    PutDrawEnv(&game_graphics_runtime.display_draw_environments[game_graphics_runtime.display_state.buffer_index]);
-    PutDispEnv(&game_graphics_runtime.display_disp_environments[game_graphics_runtime.display_state.buffer_index]);
+    PutDrawEnv(&game_graphics_runtime.display_draw_environments[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)]);
+    PutDispEnv(&game_graphics_runtime.display_disp_environments[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)]);
     DrawOTag(game_graphics_runtime.display_state.ordering_table + (KF_ORDERING_TABLE_LENGTH - 1));
 }
 

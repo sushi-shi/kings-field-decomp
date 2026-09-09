@@ -37,7 +37,7 @@ void audio_initialize(void)
     SsUtSetReverbType(SS_REV_TYPE_HALL);
     SsUtReverbOn();
     SsUtSetReverbDepth(OPEN_REVERB_DEPTH, OPEN_REVERB_DEPTH);
-    audio_state.sequence_buffer = memory_allocate(OPEN_SEQUENCE_BUFFER_BYTES);
+    audio_state.sequence_buffer = (u8 *)memory_allocate(OPEN_SEQUENCE_BUFFER_BYTES);
     audio_state.sequence_active = KF_AUDIO_SEQUENCE_INACTIVE;
     inactive_voice_id = KF_AUDIO_VOICE_INACTIVE;
     index = KF_AUDIO_VOICE_SLOTS - 1;
@@ -80,7 +80,7 @@ void audio_play_sequence_file(const char *path)
     s32 volume;
 
     audio_stop_sequence(KF_AUDIO_STOP_IMMEDIATE);
-    if (cd_file_load_into(audio_state.sequence_buffer, path) != 0) {
+    if (cd_file_load_into(audio_state.sequence_buffer, path) != KF_RESOURCE_LOADED) {
         return;
     }
     audio_state.sequence_id = SsSeqOpen(

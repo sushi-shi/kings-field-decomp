@@ -4,6 +4,7 @@
 /* Shared map-cell resource grids used by the GAME and OPEN overlays. */
 
 #include <kf/game_types.h>
+#include <kf/enum.h>
 
 enum {
     KF_MAP_COLUMNS = 100,
@@ -24,7 +25,7 @@ enum {
     KF_MAP_CELL_COORD_INVALID = 0xff
 };
 
-enum {
+KF_ENUM_BEGIN(KfMapCellKind, u8)
     KF_MAP_CELL_BLOCKED = 0,
     KF_MAP_CELL_FLOOR = 1,
     /* Traversable diagonal half-planes in cell-local X/Z coordinates. */
@@ -32,7 +33,10 @@ enum {
     KF_MAP_CELL_SUM_LE_SIZE = 3,
     KF_MAP_CELL_Z_GE_X = 4,
     KF_MAP_CELL_SUM_GE_SIZE = 5,
-    KF_MAP_CELL_STEP = 6,
+    KF_MAP_CELL_STEP = 6
+KF_ENUM_END(KfMapCellKind)
+
+enum {
     KF_MAP_HALF_CELL_STEP_HEIGHT = 300,
     KF_OCCUPANCY_CELL_RADIUS = 2,
     KF_OCCUPANCY_CELL_SPAN = 5,
@@ -41,12 +45,12 @@ enum {
 };
 
 /* Serialized orientations are one-based; render matrices are zero-based. */
-enum {
+KF_ENUM_BEGIN(KfMapOrientation, u8)
     KF_MAP_ORIENT_UNROTATED = 1,
     KF_MAP_ORIENT_QUARTER_TURN = 2,
     KF_MAP_ORIENT_HALF_TURN = 3,
     KF_MAP_ORIENT_THREE_QUARTER_TURN = 4
-};
+KF_ENUM_END(KfMapOrientation)
 
 /* Full resource-copy, row/column and linear-cell views of one grid. */
 typedef union KfMapGrid {
@@ -56,10 +60,25 @@ typedef union KfMapGrid {
 } KfMapGrid;
 typedef char check_map_grid_size[sizeof(KfMapGrid) == 0x2710 ? 1 : -1];
 
+typedef union KfMapCollisionGrid {
+    KfMapCellKind cells[KF_MAP_ROWS][KF_MAP_COLUMNS];
+    KfMapCellKind bytes[KF_MAP_CELL_COUNT];
+    u32 words[KF_MAP_GRID_WORD_COUNT];
+} KfMapCollisionGrid;
+
+typedef union KfMapOrientationGrid {
+    KfMapOrientation cells[KF_MAP_ROWS][KF_MAP_COLUMNS];
+    KfMapOrientation bytes[KF_MAP_CELL_COUNT];
+    u32 words[KF_MAP_GRID_WORD_COUNT];
+} KfMapOrientationGrid;
+
+typedef char check_map_collision_grid_size[sizeof(KfMapCollisionGrid) == 0x2710 ? 1 : -1];
+typedef char check_map_orientation_grid_size[sizeof(KfMapOrientationGrid) == 0x2710 ? 1 : -1];
+
 extern KfMapGrid map_cell_attribute_grid;
-extern KfMapGrid map_cell_orientation_grid;
+extern KfMapOrientationGrid map_cell_orientation_grid;
 extern KfMapGrid map_collision_flag_grid;
-extern KfMapGrid map_collision_grid;
+extern KfMapCollisionGrid map_collision_grid;
 extern KfMapGrid map_floor_height_grid;
 
 #endif

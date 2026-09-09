@@ -11,14 +11,8 @@ enum {
     MAP_GOLD_DROP_SCATTER_RADIUS = 600,
     MAP_GOLD_DROP_INITIAL_VELOCITY_Y = -120,
     MAP_EFFECT_SPAWN_SEQUENCE_MODULUS = 0x10000,
-    MAP_DOOR_HOLD_FIRST = 250,
-    MAP_DOOR_CLOSE_FIRST = 300,
-    MAP_SWING_DOOR_OPEN_UPDATES = 32,
-    MAP_SWING_DOOR_YAW_STEP = KF_ANGLE_QUARTER_TURN / MAP_SWING_DOOR_OPEN_UPDATES,
-    MAP_SWING_DOOR_CLOSE_END = MAP_DOOR_CLOSE_FIRST + MAP_SWING_DOOR_OPEN_UPDATES,
-    MAP_LIFT_DOOR_OPEN_UPDATES = 41,
+    MAP_SWING_DOOR_YAW_STEP = KF_ANGLE_QUARTER_TURN / KF_ENUM_ENCODE(u16, KF_MAP_OBJECT_SWING_OPEN_END),
     MAP_LIFT_DOOR_Y_STEP = 60,
-    MAP_LIFT_DOOR_CLOSE_END = MAP_DOOR_CLOSE_FIRST + MAP_LIFT_DOOR_OPEN_UPDATES,
     MAP_DROP_TIP_GRAVITY = 20,
     MAP_DROP_TIP_INITIAL_ANGULAR_VELOCITY = 16,
     MAP_DROP_TIP_ANGULAR_ACCELERATION = 16,
@@ -40,9 +34,8 @@ enum {
     MAP_BOSS_EMITTER_Y_OFFSET = -1000,
     MAP_BOSS_EMITTER_SOUND_RANDOM_LIMIT = (RAND_MAX + 1) / 8,
     MAP_EFFECT_SWITCH_PHASE_STEP = 128,
-    MAP_REVEAL_SETTLE_END = 6,
     MAP_REVEAL_LIFT = KF_MAP_OBJECT_REVEAL_DEPTH
-        + (MAP_REVEAL_SETTLE_END - 1) * KF_MAP_OBJECT_REVEAL_SETTLE_STEP,
+        + (KF_ENUM_ENCODE(u16, KF_MAP_OBJECT_REVEAL_SETTLE_END) - 1) * KF_MAP_OBJECT_REVEAL_SETTLE_STEP,
     MAP_RESTORE_POINT_YAW_STEP = 8
 };
 
@@ -113,7 +106,7 @@ void map_object_start_action_if_idle(KfMapObject *object, KfMapObjectAction acti
 {
     if (object->action == KF_MAP_OBJECT_ACTION_IDLE) {
         object->action = action;
-        object->action_timer = 0;
+        object->action_timer = KF_MAP_OBJECT_PROGRESS_INIT;
     }
 }
 
@@ -147,7 +140,7 @@ KfMapObject *map_object_effect_pool_acquire(u16 first_index, u16 count, u16 sequ
  * the 170.. or 180.. effect range, then starts its action by id band.
  */
 ADDRESS(0x80031834, 0x194)
-void map_object_spawn_effect(u8 kind, KfMapObjectId object_id, const VECTOR *position, s32 y_offset)
+void map_object_spawn_effect(KfMapObjectDropSource kind, KfMapObjectId object_id, const VECTOR *position, s32 y_offset)
 {
     u16 *sequence;
     u16 first_index;
@@ -276,8 +269,8 @@ void map_object_pool_update(void)
     SVECTOR direction;
     VECTOR point;
     s16 count;
-    u16 timer;
-    u16 elapsed;
+    KfMapObjectProgress timer;
+    KfMapObjectProgress elapsed;
     s32 floor;
     s32 tilt;
 
@@ -294,12 +287,12 @@ void map_object_pool_update(void)
                 pair = 0;
             }
             object->action_timer++;
-            if (timer < MAP_SWING_DOOR_OPEN_UPDATES) {
+            if (timer < KF_MAP_OBJECT_SWING_OPEN_END) {
                 object->rotation.angles.y += MAP_SWING_DOOR_YAW_STEP;
                 if (pair != 0) {
                     pair->rotation.angles.y -= MAP_SWING_DOOR_YAW_STEP;
                 }
-                if (timer == 0) {
+                if (timer == KF_MAP_OBJECT_PROGRESS_INIT) {
                     if (object->object_id == KF_MAP_OBJECT_HINGED_DOOR) {
                         audio_play_spatial_default_range(
                             &gameplay_sound_ref_1, &object->position, KF_AUDIO_MAX_VOLUME);
@@ -308,17 +301,17 @@ void map_object_pool_update(void)
                             &gameplay_sound_ref_7, &object->position, KF_AUDIO_MAX_VOLUME);
                     }
                 }
-                if (timer == MAP_SWING_DOOR_OPEN_UPDATES - 1) {
+                if (timer == KF_MAP_OBJECT_SWING_OPEN_LAST) {
                     map_object_mark_collision_edge(object, KF_MAP_CELL_FLOOR, object->rotation.angles.y - KF_ANGLE_QUARTER_TURN);
-                    object->action_timer = MAP_DOOR_HOLD_FIRST;
+                    object->action_timer = KF_MAP_OBJECT_DOOR_HOLD_FIRST;
                 }
-            } else if (timer >= MAP_DOOR_CLOSE_FIRST) {
-                if (timer >= MAP_SWING_DOOR_CLOSE_END) {
+            } else if (timer >= KF_MAP_OBJECT_DOOR_CLOSE_FIRST) {
+                if (timer >= KF_MAP_OBJECT_SWING_CLOSE_END) {
                     goto finish;
                 }
-                if (timer == MAP_DOOR_CLOSE_FIRST) {
+                if (timer == KF_MAP_OBJECT_DOOR_CLOSE_FIRST) {
                     if (map_object_probe_forward(object, object->rotation.angles.y - KF_ANGLE_QUARTER_TURN) != -1) {
-                        object->action_timer = MAP_DOOR_CLOSE_FIRST;
+                        object->action_timer = KF_MAP_OBJECT_DOOR_CLOSE_FIRST;
                         break;
                     }
                     map_object_mark_collision_edge(object, KF_MAP_CELL_BLOCKED, object->rotation.angles.y - KF_ANGLE_QUARTER_TURN);
@@ -338,23 +331,23 @@ void map_object_pool_update(void)
             break;
         case KF_MAP_OBJECT_ACTION_LIFT_DOOR:
             elapsed = object->action_timer++;
-            if (elapsed < MAP_LIFT_DOOR_OPEN_UPDATES) {
+            if (elapsed < KF_MAP_OBJECT_LIFT_OPEN_END) {
                 object->position.vy -= MAP_LIFT_DOOR_Y_STEP;
-                if (elapsed == 0) {
+                if (elapsed == KF_MAP_OBJECT_PROGRESS_INIT) {
                     audio_play_spatial_default_range(
                         &gameplay_sound_ref_0, &object->position, KF_AUDIO_MAX_VOLUME);
                 }
-                if (elapsed == MAP_LIFT_DOOR_OPEN_UPDATES - 1) {
+                if (elapsed == KF_MAP_OBJECT_LIFT_OPEN_LAST) {
                     map_object_mark_collision_edge(object, KF_MAP_CELL_FLOOR, object->rotation.angles.y);
-                    object->action_timer = MAP_DOOR_HOLD_FIRST;
+                    object->action_timer = KF_MAP_OBJECT_DOOR_HOLD_FIRST;
                 }
-            } else if (elapsed >= MAP_DOOR_CLOSE_FIRST) {
-                if (elapsed >= MAP_LIFT_DOOR_CLOSE_END) {
+            } else if (elapsed >= KF_MAP_OBJECT_DOOR_CLOSE_FIRST) {
+                if (elapsed >= KF_MAP_OBJECT_LIFT_CLOSE_END) {
                     goto finish;
                 }
-                if (elapsed == MAP_DOOR_CLOSE_FIRST) {
+                if (elapsed == KF_MAP_OBJECT_DOOR_CLOSE_FIRST) {
                     if (map_object_probe_forward(object, object->rotation.angles.y) != -1) {
-                        object->action_timer = MAP_DOOR_CLOSE_FIRST;
+                        object->action_timer = KF_MAP_OBJECT_DOOR_CLOSE_FIRST;
                         break;
                     }
                     map_object_mark_collision_edge(object, KF_MAP_CELL_BLOCKED, object->rotation.angles.y);
@@ -365,7 +358,7 @@ void map_object_pool_update(void)
             }
             break;
         case KF_MAP_OBJECT_ACTION_FALL_AND_TIP:
-            if (object->action_timer == 0) {
+            if (object->action_timer == KF_MAP_OBJECT_PROGRESS_INIT) {
                 s32 attribute = map_floor_height_grid.cells[object->cell_z][object->cell_x];
 
                 object->position.vy += object->link.fields.vertical_velocity;
@@ -375,7 +368,7 @@ void map_object_pool_update(void)
                 }
                 object->position.vy = -(attribute * KF_MAP_HEIGHT_STEP);
                 object->link.fields.vertical_velocity = MAP_DROP_TIP_INITIAL_ANGULAR_VELOCITY;
-                object->action_timer = 1;
+                object->action_timer = KF_MAP_OBJECT_PROGRESS_RUNNING;
             } else {
                 object->rotation.angles.x += object->link.fields.vertical_velocity;
                 object->link.fields.vertical_velocity += MAP_DROP_TIP_ANGULAR_ACCELERATION;
@@ -395,7 +388,7 @@ void map_object_pool_update(void)
                 break;
             }
             object->position.vy = -(attribute * KF_MAP_HEIGHT_STEP);
-            object->action_timer = 1;
+            object->action_timer = KF_MAP_OBJECT_PROGRESS_RUNNING;
             goto finish;
         }
         case KF_MAP_OBJECT_ACTION_BOUNCE: {
@@ -404,7 +397,7 @@ void map_object_pool_update(void)
             object->position.vy += object->link.fields.vertical_velocity;
             floor = -(attribute * KF_MAP_HEIGHT_STEP);
             tilt = object->rotation.angles.x;
-            if (object->action_timer == 0) {
+            if (object->action_timer == KF_MAP_OBJECT_PROGRESS_INIT) {
                 object->rotation.angles.x = (tilt + MAP_DROP_BOUNCE_PITCH_STEP) & KF_ANGLE_WRAP_MASK;
             } else {
                 object->rotation.angles.x = (tilt - MAP_DROP_BOUNCE_PITCH_STEP) & KF_ANGLE_WRAP_MASK;
@@ -419,14 +412,14 @@ void map_object_pool_update(void)
                 goto finish;
             }
             object->link.fields.vertical_velocity = -(object->link.fields.vertical_velocity >> 1);
-            object->action_timer = object->action_timer == 0;
+            object->action_timer = map_object_toggle_progress(object->action_timer);
             break;
         }
         case KF_MAP_OBJECT_ACTION_PROJECTILE_EMITTER:
             if (object->link.fields.link_id == KF_MAP_LINK_NONE) {
                 break;
             }
-            if (object->action_timer == 0) {
+            if (object->action_timer == KF_MAP_OBJECT_PROGRESS_INIT) {
                 if (player_distance_to_point(
                         object->position.vx, KF_COLLISION_IGNORE_HEIGHT, object->position.vz, MAP_EMITTER_PLAYER_RANGE, 0)
                     == -1) {
@@ -444,7 +437,7 @@ void map_object_pool_update(void)
                     &object->position,
                     &direction,
                     &object->rotation.vector);
-                object->action_timer = (rand() >> MAP_EMITTER_COUNTDOWN_RANDOM_SHIFT) + MAP_EMITTER_COUNTDOWN_BASE;
+                object->action_timer = KF_ENUM_DECODE(KfMapObjectProgress, (rand() >> MAP_EMITTER_COUNTDOWN_RANDOM_SHIFT) + MAP_EMITTER_COUNTDOWN_BASE);
                 break;
             case KF_MAP_OBJECT_FIRE_BALL_EMITTER:
                 direction.vy = 0;
@@ -460,7 +453,7 @@ void map_object_pool_update(void)
                     &point,
                     &direction,
                     &object->rotation.vector);
-                object->action_timer = (rand() >> MAP_EMITTER_COUNTDOWN_RANDOM_SHIFT) + MAP_EMITTER_COUNTDOWN_BASE;
+                object->action_timer = KF_ENUM_DECODE(KfMapObjectProgress, (rand() >> MAP_EMITTER_COUNTDOWN_RANDOM_SHIFT) + MAP_EMITTER_COUNTDOWN_BASE);
                 break;
             case KF_MAP_OBJECT_WIND_CUTTER_EMITTER:
                 direction.vy = 0;
@@ -477,7 +470,7 @@ void map_object_pool_update(void)
                     &direction,
                     &object->rotation.vector,
                     1);
-                object->action_timer = (rand() >> MAP_EMITTER_COUNTDOWN_RANDOM_SHIFT) + MAP_EMITTER_COUNTDOWN_BASE;
+                object->action_timer = KF_ENUM_DECODE(KfMapObjectProgress, (rand() >> MAP_EMITTER_COUNTDOWN_RANDOM_SHIFT) + MAP_EMITTER_COUNTDOWN_BASE);
                 break;
             case KF_MAP_OBJECT_BOSS_PROJECTILE_EMITTER:
                 if (map_floor5_script.boss_encounter_started == KF_MAP_SCRIPT_UNSET) {
@@ -505,7 +498,7 @@ void map_object_pool_update(void)
                     &direction,
                     &object->rotation.vector,
                     rand() < MAP_BOSS_EMITTER_SOUND_RANDOM_LIMIT);
-                object->action_timer = (rand() >> MAP_EMITTER_COUNTDOWN_RANDOM_SHIFT) + MAP_BOSS_EMITTER_COUNTDOWN_BASE;
+                object->action_timer = KF_ENUM_DECODE(KfMapObjectProgress, (rand() >> MAP_EMITTER_COUNTDOWN_RANDOM_SHIFT) + MAP_BOSS_EMITTER_COUNTDOWN_BASE);
                 break;
             }
             } else {
@@ -514,9 +507,9 @@ void map_object_pool_update(void)
             break;
         case KF_MAP_OBJECT_ACTION_RELEASE_ORBIT_OR_SHORT_SWING:
         case KF_MAP_OBJECT_ACTION_RELEASE_LONG_SWING:
-            if (object->link.fields.link_id == KF_MAP_LINK_NONE && object->action_timer == 0) {
+            if (object->link.fields.link_id == KF_MAP_LINK_NONE && object->action_timer == KF_MAP_OBJECT_PROGRESS_INIT) {
                 effect_pool_records[object->link.fields.action_parameter].phase = KF_EFFECT_HAZARD_RELEASE_REQUEST;
-                object->action_timer = 1;
+                object->action_timer = KF_MAP_OBJECT_PROGRESS_RUNNING;
             }
             break;
         case KF_MAP_OBJECT_ACTION_EFFECT_SWITCH:
@@ -558,24 +551,24 @@ void map_object_pool_update(void)
             }
             break;
         case KF_MAP_OBJECT_ACTION_COPY_REGION:
-            if (object->link.fields.link_id == KF_MAP_LINK_NONE && object->action_timer == 0) {
+            if (object->link.fields.link_id == KF_MAP_LINK_NONE && object->action_timer == KF_MAP_OBJECT_PROGRESS_INIT) {
                 if (object->link.fields.action_parameter != KF_MAP_OBJECT_PARAMETER_NONE) {
                     map_apply_copy_region(KF_ENUM_DECODE(KfMapCopyRegionId, object->link.fields.action_parameter));
                 }
-                object->action_timer = 1;
+                object->action_timer = KF_MAP_OBJECT_PROGRESS_RUNNING;
             }
             break;
         case KF_MAP_OBJECT_ACTION_REVEAL_MAP_PIECE:
             if (object->link.fields.link_id != KF_MAP_LINK_NONE) {
                 break;
             }
-            if (object->action_timer == 0) {
+            if (object->action_timer == KF_MAP_OBJECT_PROGRESS_INIT) {
                 object->position.vy -= MAP_REVEAL_LIFT;
-                object->action_timer = 1;
-            } else if (object->action_timer < MAP_REVEAL_SETTLE_END) {
+                object->action_timer = KF_MAP_OBJECT_PROGRESS_RUNNING;
+            } else if (object->action_timer < KF_MAP_OBJECT_REVEAL_SETTLE_END) {
                 object->position.vy += KF_MAP_OBJECT_REVEAL_SETTLE_STEP;
                 object->action_timer++;
-            } else if (object->action_timer == MAP_REVEAL_SETTLE_END) {
+            } else if (object->action_timer == KF_MAP_OBJECT_REVEAL_SETTLE_END) {
                 if (player_state.progress_state.current_floor == KF_FLOOR_3) {
                     audio_play_spatial_default_range(
                         &gameplay_sound_ref_11, &object->position, KF_AUDIO_MAX_VOLUME);

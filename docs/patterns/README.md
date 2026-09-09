@@ -800,3 +800,7 @@ promotes a probe to a proven historical toolchain.
 
 - [GAME effect-slot sequence helper boundary](game-map-object-sequence-inline.md):
   two acquire/publish inline boundaries preserve the spawn residue.
+
+- [Strict enum domain audit](strict-enum-audit.md): complete field/API coverage,
+  shared progress and animation domains, strict Clang compatibility, and
+  unchanged retail objects across all 484 functions.

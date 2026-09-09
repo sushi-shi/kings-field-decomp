@@ -19,9 +19,9 @@
 ADDRESS(0x80016d38, 0x98)
 void display_begin_frame(void)
 {
-    open_graphics_runtime.display_state.buffer_index = open_graphics_runtime.display_state.buffer_index == 0;
-    open_graphics_runtime.display_state.primitive_buffer = &open_graphics_runtime.display_state.primitive_buffers[open_graphics_runtime.display_state.buffer_index];
-    open_graphics_runtime.ordering_table = open_graphics_runtime.display_state.ordering_tables[open_graphics_runtime.display_state.buffer_index].entries;
+    open_graphics_runtime.display_state.buffer_index = display_next_buffer(open_graphics_runtime.display_state.buffer_index);
+    open_graphics_runtime.display_state.primitive_buffer = &open_graphics_runtime.display_state.primitive_buffers[KF_ENUM_ENCODE(u8, open_graphics_runtime.display_state.buffer_index)];
+    open_graphics_runtime.ordering_table = open_graphics_runtime.display_state.ordering_tables[KF_ENUM_ENCODE(u8, open_graphics_runtime.display_state.buffer_index)].entries;
     ClearOTagR(open_graphics_runtime.ordering_table, KF_ORDERING_TABLE_LENGTH);
     open_graphics_runtime.display_state.primitive_buffer->cursor = open_graphics_runtime.display_state.primitive_buffer->start;
     primitive_allocation_count = 0;
@@ -34,8 +34,8 @@ void display_present_frame(void)
 {
     DrawSync(0);
     VSync(0);
-    PutDrawEnv(&open_graphics_runtime.display_draw_environments[open_graphics_runtime.display_state.buffer_index]);
-    PutDispEnv(&open_graphics_runtime.display_disp_environments[open_graphics_runtime.display_state.buffer_index]);
+    PutDrawEnv(&open_graphics_runtime.display_draw_environments[KF_ENUM_ENCODE(u8, open_graphics_runtime.display_state.buffer_index)]);
+    PutDispEnv(&open_graphics_runtime.display_disp_environments[KF_ENUM_ENCODE(u8, open_graphics_runtime.display_state.buffer_index)]);
     DrawOTag(open_graphics_runtime.ordering_table + (KF_ORDERING_TABLE_LENGTH - 1));
 }
 

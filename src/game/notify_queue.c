@@ -146,7 +146,7 @@ void notify_effect_update(void)
                 (KF_ENUM_ENCODE(u8, id) & NOTIFICATION_ATLAS_ROW_MASK) << NOTIFICATION_ATLAS_ROW_SHIFT;
             menu_format_number(
                 game_graphics_runtime.notification_state.message_payloads[tail],
-                NOTIFICATION_GOLD_DIGITS, 0, digits.formatted);
+                NOTIFICATION_GOLD_DIGITS, KF_FORMAT_PAD_SPACES, digits.formatted);
             notification_sprites[KF_NOTIFICATION_ONES_SPRITE].active = KF_NOTIFICATION_SPRITE_VISIBLE;
             notification_digit_set_v(
                 &sprite_records[KF_NOTIFICATION_ONES_SPRITE].sprite, digits.values[3]);
@@ -202,5 +202,5 @@ void notify_effect_update(void)
 ADDRESS(0x8001fdc8, 0x1c)
 void display_flip_buffer_index(void)
 {
-    game_graphics_runtime.display_state.buffer_index = (game_graphics_runtime.display_state.buffer_index == 0);
+    game_graphics_runtime.display_state.buffer_index = display_next_buffer(game_graphics_runtime.display_state.buffer_index);
 }

@@ -69,7 +69,7 @@ void map_apply_copy_region(KfMapCopyRegionId region_id)
 }
 
 ADDRESS(0x80030c7c, 0x23c)
-void map_object_mark_collision_edge(const KfMapObject *object, u8 value, u16 yaw)
+void map_object_mark_collision_edge(const KfMapObject *object, KfMapCellKind value, u16 yaw)
 {
     u8 cell_x = object->cell_x;
     u8 cell_z;
@@ -80,7 +80,7 @@ void map_object_mark_collision_edge(const KfMapObject *object, u8 value, u16 yaw
     cell_z = object->cell_z;
     switch (definition->behavior_type) {
     case KF_MAP_OBJECT_BEHAVIOR_LIFT_DOOR:
-    case KF_ENUM_DECODE(KfMapObjectBehavior, 3):
+    case KF_MAP_OBJECT_BEHAVIOR_03:
         map_collision_grid.cells[cell_z][cell_x] = value;
         switch (yaw) {
         case 0x000:

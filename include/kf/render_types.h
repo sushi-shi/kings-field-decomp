@@ -12,13 +12,28 @@ KF_ENUM_BEGIN(KfSpriteDepthCueMode, s32)
     KF_SPRITE_DEPTH_CUE_BOOSTED = 1
 KF_ENUM_END(KfSpriteDepthCueMode)
 
+KF_ENUM_BEGIN(KfDisplayBuffer, u8)
+    KF_DISPLAY_BUFFER_FIRST = 0,
+    KF_DISPLAY_BUFFER_SECOND = 1,
+    KF_DISPLAY_BUFFER_UNINITIALIZED = 0xff
+KF_ENUM_END(KfDisplayBuffer)
+
+/* Retail toggles with an equality, so the uninitialized value selects zero. */
+#if KF_MODERN_TYPES
+constexpr KfDisplayBuffer display_next_buffer(KfDisplayBuffer current)
+{
+    return static_cast<KfDisplayBuffer>(current == KF_DISPLAY_BUFFER_FIRST);
+}
+#else
+#define display_next_buffer(current) ((current) == KF_DISPLAY_BUFFER_FIRST)
+#endif
+
 enum {
     KF_VRAM_WIDTH = 1024,
     KF_VRAM_HEIGHT = 512,
     KF_DISPLAY_WIDTH = 320,
     KF_DISPLAY_HEIGHT = 240,
     KF_DISPLAY_BUFFER_COUNT = 2,
-    KF_DISPLAY_BUFFER_UNINITIALIZED = 0xff,
     KF_ORDERING_TABLE_LENGTH = 0x4000,
     KF_ORDERING_TABLE_INDEX_MASK = KF_ORDERING_TABLE_LENGTH - 1,
     KF_SCENE_MIN_OT_DEPTH = 5,

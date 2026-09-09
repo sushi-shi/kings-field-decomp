@@ -45,7 +45,7 @@ RODATA(0x8001205c, 0xb4)
 
 /* Loads \KF\<relative_path>;1 into a fresh arena allocation. */
 ADDRESS(0x80016014, 0x148)
-s32 cd_file_load_allocated(
+KfResourceLoadResult cd_file_load_allocated(
     void **destination, const char *relative_path)
 {
     char *path = cd_path_buffer;
@@ -55,7 +55,7 @@ s32 cd_file_load_allocated(
     strcat(path, relative_path);
     strcat(path, cd_version_suffix);
     if (CdSearchFile(&cd_search_file, path) == 0) {
-        return 1;
+        return KF_RESOURCE_LOAD_FAILED;
     }
     if ((cd_search_file.size & (KF_CD_SECTOR_BYTES - 1)) != 0) {
         cd_search_file.size =
@@ -71,7 +71,7 @@ s32 cd_file_load_allocated(
         CdControl(CdlSetloc, (u_char *)&cd_read_location, 0);
         CdRead(
             cd_search_file.size >> KF_CD_SECTOR_SHIFT,
-            *destination,
+            (u_long *)*destination,
             CdlModeSpeed);
         while ((result = CdReadSync(KF_CD_READ_POLL, 0)) > 0) {
         }
@@ -79,12 +79,12 @@ s32 cd_file_load_allocated(
             attempt = KF_CD_READ_STOP_ATTEMPT;
         }
     }
-    return 0;
+    return KF_RESOURCE_LOADED;
 }
 
 /* Loads \KF\<relative_path>;1 into caller-owned storage. */
 ADDRESS(0x8001615c, 0x13c)
-s32 cd_file_load_into(
+KfResourceLoadResult cd_file_load_into(
     void *destination, const char *relative_path)
 {
     char *path = cd_path_buffer;
@@ -94,7 +94,7 @@ s32 cd_file_load_into(
     strcat(path, relative_path);
     strcat(path, cd_version_suffix);
     if (CdSearchFile(&cd_search_file, path) == 0) {
-        return 1;
+        return KF_RESOURCE_LOAD_FAILED;
     }
     if ((cd_search_file.size & (KF_CD_SECTOR_BYTES - 1)) != 0) {
         cd_search_file.size =
@@ -109,7 +109,7 @@ s32 cd_file_load_into(
         CdControl(CdlSetloc, (u_char *)&cd_read_location, 0);
         CdRead(
             cd_search_file.size >> KF_CD_SECTOR_SHIFT,
-            destination,
+            (u_long *)destination,
             CdlModeSpeed);
         while ((result = CdReadSync(KF_CD_READ_POLL, 0)) > 0) {
         }
@@ -117,7 +117,7 @@ s32 cd_file_load_into(
             attempt = KF_CD_READ_STOP_ATTEMPT;
         }
     }
-    return 0;
+    return KF_RESOURCE_LOADED;
 }
 
 /* Uploads every CLUT and pixel image in a Psy-Q TIM stream. */

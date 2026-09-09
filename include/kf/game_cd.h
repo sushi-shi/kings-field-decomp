@@ -32,6 +32,6 @@ typedef struct KfCdFileEntry {
  * stride.
  */
 extern KfCdFileEntry cd_file_table[KF_CD_FILE_TABLE_ENTRIES];
-extern s32 cd_file_load_table_entry(void **destination, s32 index);
+extern KfResourceLoadResult cd_file_load_table_entry(void **destination, s32 index);
 
 #endif

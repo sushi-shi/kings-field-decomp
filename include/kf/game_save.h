@@ -26,6 +26,8 @@ KF_ENUM_BEGIN(KfSaveStatus, s32)
     SAVE_STATUS_FAILED = 6,
     SAVE_STATUS_NO_DATA = 7,
     SAVE_STATUS_FORMAT_CONFIRMATION = 8,
+    SAVE_STATUS_09 = 9,
+    SAVE_STATUS_10 = 10,
     SAVE_STATUS_FORMAT_FAILED = 11,
     SAVE_STATUS_STALE_CATALOG = 12,
     SAVE_STATUS_READ_FAILED = 13,
@@ -74,9 +76,9 @@ KF_ENUM_END(KfSaveSlotId)
 /* MIPS promotes the signed-halfword formal before converting call arguments. */
 typedef KF_ENUM_PROMOTED(KfSaveSlotId) KfSaveSlotArgument;
 
-enum {
+KF_ENUM_BEGIN(KfSaveIconType, u8)
     KF_SAVE_ICON_THREE_FRAMES = 0x13
-};
+KF_ENUM_END(KfSaveIconType)
 
 enum {
     KF_SAVE_MAGIC_BYTES = 2,
@@ -90,7 +92,7 @@ enum {
 /* PlayStation card header with the three icon frames used by this game. */
 typedef struct KfPsxSaveHeader {
     u8 magic[KF_SAVE_MAGIC_BYTES];
-    u8 icon_type;
+    KfSaveIconType icon_type;
     u8 block_count;
     u8 title[KF_SAVE_TITLE_BYTES];
     u8 zero_pad[28];

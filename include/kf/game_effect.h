@@ -8,6 +8,7 @@
  * effect kind.
  */
 
+#include <kf/animation.h>
 #include <kf/game_math.h>
 #include <kf/magic.h>
 
@@ -87,8 +88,6 @@ enum {
     KF_EFFECT_MODEL_RADIAL_BLAST_ALTERNATE = 17
 };
 
-enum { KF_EFFECT_ANIMATION_FIRST_CLIP = 0 };
-
 /* Normalized packed codes retain word arithmetic before the byte API boundary. */
 typedef KF_ENUM_PROMOTED(KfEffectKind) KfEffectKindArgument;
 
@@ -103,7 +102,6 @@ enum {
 };
 
 enum {
-    KF_EFFECT_ANIMATION_BILLBOARD = 0xff,
     KF_EFFECT_RENDER_NONE = 0xff
 };
 
@@ -126,13 +124,15 @@ enum {
 
 enum {
     KF_EFFECT_FLOOR_DEFORM_TYPE = 0xf0,
-    KF_EFFECT_FLOOR_DEFORM_ADVANCE = 0,
-    KF_EFFECT_FLOOR_DEFORM_HOLD = 1,
-    KF_EFFECT_FLOOR_DEFORM_REVERSE = 2
 };
 
-/* Shared projectile dispatcher phases; the phase byte also counts updates. */
-enum {
+/* Kind-specific phases and update counters share byte 7. Intermediate
+ * ages are advanced within their named ranges, with byte wrap at 0xff. */
+KF_ENUM_BEGIN(KfEffectPhase, u8)
+    KF_EFFECT_PHASE_INIT = 0,
+    KF_EFFECT_FLOOR_DEFORM_ADVANCE = 0,
+    KF_EFFECT_FLOOR_DEFORM_HOLD = 1,
+    KF_EFFECT_FLOOR_DEFORM_REVERSE = 2,
     KF_EFFECT_PROJECTILE_TRAVEL = 0,
     KF_EFFECT_PROJECTILE_IMPACT_FIRST = 1,
     KF_EFFECT_PROJECTILE_DISSIPATE_FIRST = 50,
@@ -141,29 +141,58 @@ enum {
     KF_EFFECT_PROJECTILE_EMERGE_LAST = 119,
     KF_EFFECT_PROJECTILE_FALL = 120,
     KF_EFFECT_PROJECTILE_SHRINK = 121,
-    KF_EFFECT_PROJECTILE_LAUNCH_WRAP = 0xff
-};
+    KF_EFFECT_PROJECTILE_LAUNCH_WRAP = 0xff,
+    KF_EFFECT_GROUND_TRAIL_WAIT_FOR_PARENT = 0,
+    KF_EFFECT_GROUND_TRAIL_SHRINK = 1,
+    KF_EFFECT_HAZARD_RUNNING = 0,
+    KF_EFFECT_HAZARD_RELEASE_REQUEST = 1,
+    KF_EFFECT_HAZARD_RISE_FIRST = 10,
+    KF_EFFECT_SHORT_SWING_PHASE_LIMIT = 40,
+    KF_EFFECT_LONG_SWING_PHASE_LIMIT = 60,
+    KF_EFFECT_ORBIT_PHASE_LIMIT = 40,
+    KF_EFFECT_FIRE_BALL_IMPACT_END = 5,
+    KF_EFFECT_PROJECTILE_IMPACT_END = 10,
+    KF_EFFECT_MOONLIGHT_TRAVEL_LAST = 10,
+    KF_EFFECT_MOONLIGHT_TRAIL_EMIT_PHASE = 2,
+    KF_EFFECT_MOONLIGHT_IMPACT_FIRST = 20,
+    KF_EFFECT_MOONLIGHT_IMPACT_LAST = 23,
+    KF_EFFECT_RADIAL_BLAST_PHASE_END = 13,
+    KF_EFFECT_HOMING_INITIAL_PHASE_LAST = 4,
+    KF_EFFECT_HOMING_TRACKING_PHASE = 20,
+    KF_EFFECT_LIGHTNING_IMPACT_PHASE_LAST = 9,
+    KF_EFFECT_LIGHTNING_IMPACT_EMIT_FIRST = 3,
+    KF_EFFECT_LIGHTNING_IMPACT_EMIT_SECOND = 5,
+    KF_EFFECT_LIGHTNING_IMPACT_EMIT_LAST = 7,
+    KF_EFFECT_LIGHTNING_BLAST_PHASE_LAST = 7,
+    KF_EFFECT_GROUND_BRANCH_GROW_END = 16,
+    KF_EFFECT_GROUND_BRANCH_ROOT_HOLD_BASE = 16,
+    KF_EFFECT_GROUND_BRANCH_SIDE_HOLD_BASE = 26,
+    KF_EFFECT_GROUND_BRANCH_LEAF_HOLD_BASE = 36,
+    KF_EFFECT_GROUND_BRANCH_SHRINK_FIRST = 48,
+    KF_EFFECT_GROUND_BRANCH_PHASE_END = 64,
+    KF_EFFECT_GROUND_VISUAL_SHRINK_FIRST = 4,
+    KF_EFFECT_GROUND_VISUAL_PHASE_END = 8,
+    KF_EFFECT_ACTOR_SPAWNER_TRAVEL_FIRST = 17,
+    KF_EFFECT_ACTOR_SPAWNER_TRAVEL_LAST = 40,
+    KF_EFFECT_ACTOR_SPAWNER_WAIT_FIRST = 117,
+    KF_EFFECT_ACTOR_SPAWNER_CREATE_PHASE = 132,
+    KF_EFFECT_ACTOR_SPAWNER_SHRINK_FIRST = 149,
+    KF_EFFECT_ACTOR_SPAWNER_PHASE_END = 165,
+KF_ENUM_END(KfEffectPhase)
+KF_ENUM_COUNTER(KfEffectPhase, u8)
 
 /* Twenty emergence updates undo the initial downward placement offset. */
 enum {
     KF_EFFECT_EMERGE_Y_STEP = 175,
     KF_EFFECT_EMERGE_DEPTH =
-        (KF_EFFECT_PROJECTILE_FALL - KF_EFFECT_PROJECTILE_EMERGE_FIRST) * KF_EFFECT_EMERGE_Y_STEP,
+        (KF_ENUM_ENCODE(u8, KF_EFFECT_PROJECTILE_FALL) - KF_ENUM_ENCODE(u8, KF_EFFECT_PROJECTILE_EMERGE_FIRST)) * KF_EFFECT_EMERGE_Y_STEP,
     /* X/Z centers are quantized world coordinates, not Q8 fractions. */
     KF_EFFECT_ORBIT_CENTER_SHIFT = 8
-};
-
-enum {
-    KF_EFFECT_GROUND_TRAIL_WAIT_FOR_PARENT = 0,
-    KF_EFFECT_GROUND_TRAIL_SHRINK = 1
 };
 
 /* The orbit helper keeps running at RELEASE_REQUEST; only the 3D helper
  * settles its pitch and enters the rise sequence on a zero crossing. */
 enum {
-    KF_EFFECT_HAZARD_RUNNING = 0,
-    KF_EFFECT_HAZARD_RELEASE_REQUEST = 1,
-    KF_EFFECT_HAZARD_RISE_FIRST = 10,
     KF_EFFECT_SWING_PROBE_SHORT = 0,
     KF_EFFECT_SWING_PROBE_LONG = 1,
     KF_EFFECT_SWING_PROBE_COUNT = 2
@@ -232,10 +261,10 @@ typedef struct KfEffectRecord {
     KfEffectKind kind;   /* 0x01 */
     u8 base_render_id;   /* 0x02: first sprite/model in the animation */
     u8 render_id;        /* 0x03 */
-    u8 animation_clip;   /* 0x04: 0xff selects a billboard instead of a model */
-    u8 sound_played;     /* 0x05: spatial sound accepted within audible range */
+    KfAnimationClip animation_clip;   /* 0x04: 0xff selects a billboard instead of a model */
+    KF_ENUM_STORAGE(KfAudioPlaybackResult, u8) sound_played;
     u8 id;               /* 0x06 */
-    u8 phase;            /* 0x07: kind-specific lifecycle/age */
+    KfEffectPhase phase; /* 0x07: kind-specific lifecycle/age */
     KfEffectVisualState visual; /* 0x08: animation phase, or kind-10 pulse scale */
     u16 unknown_0a;      /* 0x0a */
     VECTOR position;     /* 0x0c */
@@ -301,8 +330,8 @@ extern void effect_pool_reset(void);
 extern void effect_pool_sweep(void);
 extern void effect_update_dispatch(void);
 extern int effect_magic_power(KfEffectRecord *effect);
-extern void effect_projectile_update_3d(SVECTOR *probe_offset, s32 phase_limit);
-extern void effect_projectile_update_2d(s32 orbit_radius, s32 phase_limit);
+extern void effect_projectile_update_3d(SVECTOR *probe_offset, KF_ENUM_PARAM(KfEffectPhase, s32) phase_limit);
+extern void effect_projectile_update_2d(s32 orbit_radius, KF_ENUM_PARAM(KfEffectPhase, s32) phase_limit);
 extern void effect_floor_deform_line(s32 segment_index, s32 progress_start, s32 progress_step);
 extern void effect_scatter_triple(KfEffectDirectionWords *values);
 extern void effect_rotate_scale_offset_y(SVECTOR *offset, VECTOR *out, s16 angle, s32 scale);

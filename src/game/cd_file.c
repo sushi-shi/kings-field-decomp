@@ -17,7 +17,7 @@ CdlLOC cd_read_location;
 
 /* Loads \KF\<relative_path>;1 into a fresh arena allocation. */
 ADDRESS(0x8001acf0, 0x170)
-s32 cd_file_load_allocated(void **destination, const char *relative_path)
+KfResourceLoadResult cd_file_load_allocated(void **destination, const char *relative_path)
 {
     char *path = cd_path_buffer;
     s32 attempt;
@@ -42,7 +42,7 @@ s32 cd_file_load_allocated(void **destination, const char *relative_path)
         s32 result;
 
         CdControl(CdlSetloc, (u_char *)&cd_read_location, 0);
-        CdRead(cd_search_file.size >> KF_CD_SECTOR_SHIFT, *destination, CdlModeSpeed);
+        CdRead(cd_search_file.size >> KF_CD_SECTOR_SHIFT, (u_long *)*destination, CdlModeSpeed);
         while ((result = CdReadSync(KF_CD_READ_POLL, 0)) > 0) {
         }
         if (result == 0) {
@@ -53,12 +53,12 @@ s32 cd_file_load_allocated(void **destination, const char *relative_path)
     if (loaded == 0) {
         display_show_error_screen(KF_SYSTEM_SCREEN_CD_READ_FAILED);
     }
-    return 0;
+    return KF_RESOURCE_LOADED;
 }
 
 /* Loads the file table entry INDEX into a fresh arena allocation. */
 ADDRESS(0x8001ae60, 0x13c)
-s32 cd_file_load_table_entry(void **destination, s32 index)
+KfResourceLoadResult cd_file_load_table_entry(void **destination, s32 index)
 {
     s32 attempt;
     s32 loaded;
@@ -72,7 +72,7 @@ s32 cd_file_load_table_entry(void **destination, s32 index)
         s32 result;
 
         CdControl(CdlSetloc, (u_char *)&cd_read_location, 0);
-        CdRead(cd_file_table[index].size >> KF_CD_SECTOR_SHIFT, *destination, CdlModeSpeed);
+        CdRead(cd_file_table[index].size >> KF_CD_SECTOR_SHIFT, (u_long *)*destination, CdlModeSpeed);
         while ((result = CdReadSync(KF_CD_READ_POLL, 0)) > 0) {
         }
         if (result == 0) {
@@ -83,12 +83,12 @@ s32 cd_file_load_table_entry(void **destination, s32 index)
     if (loaded == 0) {
         display_show_error_screen(KF_SYSTEM_SCREEN_CD_READ_FAILED);
     }
-    return 0;
+    return KF_RESOURCE_LOADED;
 }
 
 /* Loads \KF\<relative_path>;1 into DESTINATION. */
 ADDRESS(0x8001af9c, 0x164)
-s32 cd_file_load_into(void *destination, const char *relative_path)
+KfResourceLoadResult cd_file_load_into(void *destination, const char *relative_path)
 {
     char *path = cd_path_buffer;
     s32 attempt;
@@ -112,7 +112,7 @@ s32 cd_file_load_into(void *destination, const char *relative_path)
         s32 result;
 
         CdControl(CdlSetloc, (u_char *)&cd_read_location, 0);
-        CdRead(cd_search_file.size >> KF_CD_SECTOR_SHIFT, destination, CdlModeSpeed);
+        CdRead(cd_search_file.size >> KF_CD_SECTOR_SHIFT, (u_long *)destination, CdlModeSpeed);
         while ((result = CdReadSync(KF_CD_READ_POLL, 0)) > 0) {
         }
         if (result == 0) {
@@ -123,5 +123,5 @@ s32 cd_file_load_into(void *destination, const char *relative_path)
     if (loaded == 0) {
         display_show_error_screen(KF_SYSTEM_SCREEN_CD_READ_FAILED);
     }
-    return 0;
+    return KF_RESOURCE_LOADED;
 }

@@ -25,4 +25,12 @@ extern void SetPolyGT3(POLY_GT3 *primitive);
  * Retail writes only *depth; GAME and OPEN pass an unused second pointer. */
 extern void ReadSZ2(long *depth, long *unused_depth);
 
+/* C++ reads Release 2.5's K&R declarations as zero-argument functions.
+ * Supply the used SDK signatures only to the modern checking view. */
+#if defined(__cplusplus)
+extern void AddPrim(void *ordering_table_entry, void *primitive);
+extern void DrawOTag(u_long *ordering_table);
+extern void SetSemiTrans(void *primitive, int enabled);
+#endif
+
 #endif

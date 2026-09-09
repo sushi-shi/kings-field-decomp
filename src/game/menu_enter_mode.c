@@ -1,4 +1,5 @@
 #include <kf/address.h>
+#define KF_MENU_MODE_IMPLEMENTATION
 #include <kf/game_menu.h>
 #include <kf/game.h>
 

@@ -24,7 +24,6 @@ KF_ENUM_END(KfMapImageGroup)
 enum {
     MAP_WEAPON_TRANSFORM_HOLD_UPDATES = 40,
     MAP_WEAPON_TRANSFORM_SWAP_COUNTDOWN = 20,
-    MAP_CONTAINER_ITEM_NONE = 255,
     MAP_SHOP_SEQUENCE_INDEX = 2,
     MAP_FLOOR3_DIALOGUE_DOOR_LINK = 0x37
 };
@@ -171,9 +170,9 @@ void map_ambient_script_floor3(void)
     if (player_state.motion_state.fields.map_cell.coords.x >= 15 && player_state.motion_state.fields.map_cell.coords.x < 18
         && player_state.motion_state.fields.map_cell.coords.z == 0x40) {
         player_restore_vitals_with_color_cycle();
-        if (magic_records[KF_MAGIC_RESIST_FIRE].learned == KF_MAGIC_UNLEARNED || magic_records[KF_MAGIC_BLESS].learned == KF_MAGIC_UNLEARNED) {
-            magic_records[KF_MAGIC_RESIST_FIRE].learned = KF_MAGIC_LEARNED;
-            magic_records[KF_MAGIC_BLESS].learned = KF_MAGIC_LEARNED;
+        if (magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_RESIST_FIRE)].learned == KF_MAGIC_UNLEARNED || magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_BLESS)].learned == KF_MAGIC_UNLEARNED) {
+            magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_RESIST_FIRE)].learned = KF_MAGIC_LEARNED;
+            magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_BLESS)].learned = KF_MAGIC_LEARNED;
             notify_enqueue(KF_NOTIFICATION_MAGIC_LEARNED);
         }
     }
@@ -200,11 +199,11 @@ void map_ambient_script_floor5(void)
         render_frame(0, 0);
         render_frame(0, 0);
         screen_show_image_until_input("TALK\\C17\\T55172.TIM");
-        actor_state.definitions.entries[7].action_animations[KF_ACTOR_ANIM_SLOT_MELEE] = 2;
-        actor_state.definitions.entries[7].action_animations[KF_ACTOR_ANIM_SLOT_EFFECT0] = 3;
-        actor_state.definitions.entries[7].action_animations[KF_ACTOR_ANIM_SLOT_EFFECT1] = 3;
-        actor_state.definitions.entries[7].action_animations[KF_ACTOR_ANIM_SLOT_EFFECT2] = 3;
-        actor_state.definitions.entries[7].action_animations[KF_ACTOR_ANIM_SLOT_MULTI_HIT_ATTACK] = 1;
+        actor_state.definitions.entries[7].action_animations[KF_ACTOR_ANIM_SLOT_MELEE] = KF_ANIMATION_CLIP_THIRD;
+        actor_state.definitions.entries[7].action_animations[KF_ACTOR_ANIM_SLOT_EFFECT0] = KF_ANIMATION_CLIP_FOURTH;
+        actor_state.definitions.entries[7].action_animations[KF_ACTOR_ANIM_SLOT_EFFECT1] = KF_ANIMATION_CLIP_FOURTH;
+        actor_state.definitions.entries[7].action_animations[KF_ACTOR_ANIM_SLOT_EFFECT2] = KF_ANIMATION_CLIP_FOURTH;
+        actor_state.definitions.entries[7].action_animations[KF_ACTOR_ANIM_SLOT_MULTI_HIT_ATTACK] = KF_ANIMATION_CLIP_SECOND;
         map_apply_copy_region(KF_MAP_COPY_FLOOR5_BOSS_ENCOUNTER);
     }
 }
@@ -418,7 +417,7 @@ void map_event_interact(KfMapEvent *event)
     case KF_CHARACTER_HEALING_EXCHANGE:
         if (item_stock[KF_ITEM_STOCK_PLAYER][KF_ENUM_ENCODE(u8, KF_ITEM_MIRROR_OF_TRUTH)] != 0 && map_event_pool[2].dialogue.fields.stage == 2
             && map_event_pool[2].dialogue.fields.page < 2) {
-            magic_records[KF_MAGIC_HEALING].learned = KF_MAGIC_LEARNED;
+            magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_HEALING)].learned = KF_MAGIC_LEARNED;
             item_stock[KF_ITEM_STOCK_PLAYER][KF_ENUM_ENCODE(u8, KF_ITEM_MIRROR_OF_TRUTH)]--;
             notify_enqueue(KF_NOTIFICATION_MAGIC_LEARNED);
             map_event_pool[2].dialogue_pages.last_page[1] = 7;
@@ -521,11 +520,11 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
             switch (event->behavior) {
             case KF_MAP_EVENT_BEHAVIOR_SHOP:
                 event->animation_phase = 0;
-                event->animation_clip = KF_MAP_EVENT_CLIP_BASE;
+                event->animation_clip = KF_ANIMATION_CLIP_FIRST;
                 map_event_advance_animation_blocking(event, KF_MAP_EVENT_ANIMATION_TALK_POSE, KF_MAP_EVENT_ANIMATION_TALK_STEP);
                 audio_play_map_sequence(MAP_SHOP_SEQUENCE_INDEX);
                 map_event_interact(event);
-                menu_enter_mode(KF_MENU_MODE_SHOP, KF_ENUM_ENCODE(u8, event->character_id));
+                menu_enter_mode(KF_MENU_MODE_SHOP, KF_ENUM_DECODE(KfShopId, KF_ENUM_ENCODE(u8, event->character_id)));
                 audio_play_current_map_sequence();
                 map_event_advance_animation_blocking(event, KF_MAP_EVENT_ANIMATION_PHASE_MASK, KF_MAP_EVENT_ANIMATION_TALK_STEP);
                 goto clear_event_phase;
@@ -536,14 +535,14 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
                 result = result < 2;
                 if (result == 0) {
                     event->animation_phase = 0;
-                    event->animation_clip = KF_MAP_EVENT_CLIP_INTERACTION;
+                    event->animation_clip = KF_ANIMATION_CLIP_SECOND;
                     map_event_advance_animation_blocking(event, KF_MAP_EVENT_ANIMATION_TALK_POSE, KF_MAP_EVENT_ANIMATION_TALK_STEP);
                 }
                 map_event_interact(event);
                 if (result == 0) {
                     map_event_advance_animation_blocking(event, KF_MAP_EVENT_ANIMATION_PHASE_MASK, KF_MAP_EVENT_ANIMATION_TALK_STEP);
                 }
-                event->animation_clip = KF_MAP_EVENT_CLIP_BASE;
+                event->animation_clip = KF_ANIMATION_CLIP_FIRST;
 clear_event_phase:
                 event->animation_phase = 0;
                 player_clear_motion();
@@ -569,7 +568,7 @@ clear_event_phase:
         switch (definition->behavior_type) {
         case KF_MAP_OBJECT_BEHAVIOR_HINGED_CONTAINER: {
             s16 item_index;
-            u8 *item_id;
+            KfItemId *item_id;
 
             if (object->link.fields.link_id != KF_MAP_LINK_NONE) {
                 goto notify_linked;
@@ -580,9 +579,9 @@ clear_event_phase:
 
             item_index = KF_MAP_CONTAINER_ITEM_COUNT - 1;
             for (;;) {
-                u8 item_parameter = object->link.hinged_container.item_ids[0];
+                KfItemId item_parameter = object->link.hinged_container.item_ids[0];
 
-                if (item_parameter != KF_MAP_OBJECT_PARAMETER_NONE) {
+                if (item_parameter != KF_ITEM_NONE) {
                     break;
                 }
                 if (--item_index == -1) {
@@ -609,11 +608,11 @@ clear_event_phase:
             item_id = object->link.hinged_container.item_ids;
             item_index = KF_MAP_CONTAINER_ITEM_COUNT - 1;
             for (;;) {
-                if (*item_id != MAP_CONTAINER_ITEM_NONE) {
+                if (*item_id != KF_ITEM_NONE) {
                     pickup_result = KF_ENUM_DECODE(KfItemPickupResult, menu_enter_mode(KF_MENU_MODE_ITEM_PICKUP, *item_id));
                     switch (pickup_result) {
                     case KF_ITEM_PICKUP_ACQUIRED:
-                        *item_id = MAP_CONTAINER_ITEM_NONE;
+                        *item_id = KF_ITEM_NONE;
                         break;
                     case KF_ITEM_PICKUP_STACK_FULL:
                         notify_enqueue(KF_NOTIFICATION_CANNOT_CARRY_MORE);
@@ -640,18 +639,18 @@ notify_linked:
 
         case KF_MAP_OBJECT_BEHAVIOR_ITEM_CONTAINER: {
             s16 item_index;
-            u8 *item_id;
+            KfItemId *item_id;
 
             item_id = object->link.item_ids;
             found_item = 0;
             item_index = KF_MAP_CONTAINER_ITEM_COUNT - 1;
             for (;;) {
-                if (*item_id != MAP_CONTAINER_ITEM_NONE) {
+                if (*item_id != KF_ITEM_NONE) {
                     found_item = 1;
                     pickup_result = KF_ENUM_DECODE(KfItemPickupResult, menu_enter_mode(KF_MENU_MODE_ITEM_PICKUP, *item_id));
                     switch (pickup_result) {
                     case KF_ITEM_PICKUP_ACQUIRED:
-                        *item_id = MAP_CONTAINER_ITEM_NONE;
+                        *item_id = KF_ITEM_NONE;
                         break;
                     case KF_ITEM_PICKUP_STACK_FULL:
                         notify_enqueue(KF_NOTIFICATION_CANNOT_CARRY_MORE);
@@ -730,7 +729,7 @@ start_paired_door:
             continue;
 
         case KF_MAP_OBJECT_BEHAVIOR_ITEM_PICKUP:
-            pickup_result = KF_ENUM_DECODE(KfItemPickupResult, menu_enter_mode(KF_MENU_MODE_ITEM_PICKUP, KF_ENUM_ENCODE(u8, object->object_id)));
+            pickup_result = KF_ENUM_DECODE(KfItemPickupResult, menu_enter_mode(KF_MENU_MODE_ITEM_PICKUP, KF_ENUM_DECODE(KfItemId, KF_ENUM_ENCODE(u8, object->object_id))));
             switch (pickup_result) {
             case KF_ITEM_PICKUP_ACQUIRED:
                 object->object_id = KF_MAP_OBJECT_FREE;

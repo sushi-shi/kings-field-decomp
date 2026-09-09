@@ -1,4 +1,5 @@
 #include <kf/address.h>
+#include <kf/psyq_libc.h>
 #include <kf/overlay.h>
 #include <kf/cd_file.h>
 #include <kf/item.h>
@@ -49,7 +50,7 @@ void render_initialize(void)
 
     open_graphics_runtime.display_state.buffer_index = KF_DISPLAY_BUFFER_UNINITIALIZED;
     cd_file_load_into(render_cell_windows, "B0\\RTBL.");
-    buffer = memory_allocate(KF_DISPLAY_BUFFER_COUNT * PRIMITIVE_BUFFER_BYTES);
+    buffer = (u8 *)memory_allocate(KF_DISPLAY_BUFFER_COUNT * PRIMITIVE_BUFFER_BYTES);
     open_graphics_runtime.display_state.asset_load_buffer = buffer;
     open_graphics_runtime.display_state.primitive_buffers[0].start = buffer;
     buffer += PRIMITIVE_BUFFER_BYTES;

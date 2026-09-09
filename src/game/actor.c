@@ -155,7 +155,7 @@ ADDRESS(0x8002cc64, 0xc4)
 void actor_initialize(KfActor *actor)
 {
     actor->lifecycle = KF_ACTOR_LIFECYCLE_ACTIVE;
-    actor->animation_id = 0;
+    actor->animation_id = KF_ANIMATION_CLIP_FIRST;
     actor->animation_phase = 0;
     actor->collision_state = KF_ACTOR_COLLISION_CLEAR;
     actor->vertical_velocity = 0;
@@ -166,7 +166,7 @@ void actor_initialize(KfActor *actor)
     if (actor->slot_state == KF_ACTOR_SLOT_RESPAWNING
         || actor->slot_state == KF_ACTOR_SLOT_HOMEBOUND
         || actor->slot_state == KF_ACTOR_SLOT_PERSISTENT) {
-        actor->rotation.angles.y = actor->heading_quadrant * KF_ANGLE_QUARTER_TURN;
+        actor->rotation.angles.y = KF_ENUM_ENCODE(u8, actor->heading_quadrant) * KF_ANGLE_QUARTER_TURN;
     } else {
         actor->rotation.angles.y = rand() >> KF_ACTOR_RANDOM_YAW_SHIFT;
     }
@@ -281,7 +281,7 @@ void actor_pool_begin_death_by_definition(u16 definition_id)
     do {
         if (actor->slot_state != KF_ACTOR_SLOT_FREE && actor->definition_id == definition_id) {
             if (actor->lifecycle == KF_ACTOR_LIFECYCLE_ACTIVE
-                && definition->action_animations[KF_ACTOR_ANIM_SLOT_DEATH] != KF_ACTOR_ANIMATION_NONE) {
+                && definition->action_animations[KF_ACTOR_ANIM_SLOT_DEATH] != KF_ANIMATION_CLIP_NONE) {
                 actor_set_action(actor, KF_ACTOR_ACTION_DYING);
             } else {
                 actor->lifecycle = KF_ACTOR_LIFECYCLE_DISABLED;
@@ -386,11 +386,11 @@ void actor_apply_damage(
         if (health != 0 && hit_flags == KF_ACTOR_DAMAGE_CREDIT_PLAYER) {
             player_add_experience(definition->experience_reward);
         }
-        if (definition->action_animations[KF_ACTOR_ANIM_SLOT_DEATH] != KF_ACTOR_ANIMATION_NONE) {
+        if (definition->action_animations[KF_ACTOR_ANIM_SLOT_DEATH] != KF_ANIMATION_CLIP_NONE) {
             actor_set_action(actor, KF_ACTOR_ACTION_DYING);
         }
     } else {
-        if (definition->action_animations[KF_ACTOR_ANIM_SLOT_HIT_REACTION] != KF_ACTOR_ANIMATION_NONE) {
+        if (definition->action_animations[KF_ACTOR_ANIM_SLOT_HIT_REACTION] != KF_ANIMATION_CLIP_NONE) {
             actor_set_action(actor, KF_ACTOR_ACTION_HIT_REACTION);
         }
     }

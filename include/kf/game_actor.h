@@ -3,6 +3,7 @@
 
 /* Actor and combatant layouts, state, and operations. */
 
+#include <kf/animation.h>
 #include <kf/game_types.h>
 #include <kf/enum.h>
 #include <kf/game_map.h>
@@ -61,13 +62,39 @@ KF_ENUM_BEGIN(KfActorAction, u8)
     KF_ACTOR_ACTION_NONE = 0xff
 KF_ENUM_END(KfActorAction)
 
-/* LOCKED suppresses automatic selection; damage can still change the action. */
-enum {
+/* One byte shared by all actions, including the jump subphases. Pursuit
+ * counts down from 13..28 to 10; post-death counts up from 0 through 7.
+ * LOCKED suppresses automatic selection; damage can still change the action. */
+KF_ENUM_BEGIN(KfActorActionProgress, u8)
     KF_ACTOR_PROGRESS_INIT = 0,
     KF_ACTOR_PROGRESS_RUNNING = 1,
+    KF_ACTOR_PROGRESS_JUMP_RISING = 1,
+    KF_ACTOR_PROGRESS_JUMP_ATTACK_PENDING = 2,
+    KF_ACTOR_PROGRESS_JUMP_WAIT_FOR_LANDING = 3,
+    KF_ACTOR_PROGRESS_DRIFT_COLLIDED = 2,
+    KF_ACTOR_PROGRESS_POST_DEATH_END = 7,
+    KF_ACTOR_PROGRESS_BACKOFF_END = 11,
+    KF_ACTOR_PROGRESS_BACKOFF_BASE = 13,
+    KF_ACTOR_PROGRESS_BACKOFF_LAST = 28,
     KF_ACTOR_PROGRESS_LOCKED = 0xf0,
     KF_ACTOR_PROGRESS_COMPLETE = 0xff
-};
+KF_ENUM_END(KfActorActionProgress)
+KF_ENUM_COUNTER(KfActorActionProgress, u8)
+
+KF_ENUM_BEGIN(KfActorMoveDirection, s32)
+    KF_ACTOR_MOVE_BACKWARD = -1,
+    KF_ACTOR_MOVE_FORWARD = 1
+KF_ENUM_END(KfActorMoveDirection)
+
+KF_ENUM_BEGIN(KfActorCollisionPolicy, s32)
+    KF_ACTOR_COLLISION_STEER = 0,
+    KF_ACTOR_COLLISION_STOP = 1
+KF_ENUM_END(KfActorCollisionPolicy)
+
+KF_ENUM_BEGIN(KfActorMoveResult, s32)
+    KF_ACTOR_MOVE_SUCCEEDED = 0,
+    KF_ACTOR_MOVE_BLOCKED = 1
+KF_ENUM_END(KfActorMoveResult)
 
 KF_ENUM_BEGIN(KfActorVerticalState, u8)
     KF_ACTOR_VERTICAL_NONE = 0,
@@ -102,7 +129,6 @@ enum {
 };
 
 enum {
-    KF_ACTOR_ANIMATION_NONE = 0xff,
     KF_ACTOR_ANIMATION_PHASE_PERIOD = 0x1000,
     KF_ACTOR_ANIMATION_PHASE_MAX = KF_ACTOR_ANIMATION_PHASE_PERIOD - 1,
     KF_ACTOR_AIM_TOLERANCE = 0x155
@@ -185,7 +211,7 @@ enum {
  * remaining bytes deliberately stay opaque.
  *
  * The three animation tables share KF_ACTOR_ANIM_SLOT indices. Their byte
- * entries contain resource animation IDs, or KF_ACTOR_ANIMATION_NONE when
+ * entries contain resource animation IDs, or KF_ANIMATION_CLIP_NONE when
  * unavailable. Actions 19..21 use effect slots 8..10; slots 12..15 have no
  * decoded dispatcher use.
  */
@@ -197,7 +223,7 @@ typedef struct KfActorDefinition {
     u8 status_effect_chance;
     u8 action_parameters[KF_ACTOR_PARAM_COUNT];
     u8 move_speed;
-    u8 action_animations[KF_ACTOR_ANIM_SLOT_COUNT];
+    KfAnimationClip action_animations[KF_ACTOR_ANIM_SLOT_COUNT];
     u8 turn_rate;
     SoundRef sounds[KF_ACTOR_SOUND_COUNT];
     struct KfVec3s attachment_offsets[KF_ACTOR_ATTACHMENT_OFFSET_COUNT];
@@ -232,11 +258,18 @@ typedef struct KfActorActionProfile {
     s16 near_weight;
 } KfActorActionProfile;
 
+KF_ENUM_BEGIN(KfActorHeadingQuadrant, u8)
+    KF_ACTOR_HEADING_0 = 0,
+    KF_ACTOR_HEADING_90 = 1,
+    KF_ACTOR_HEADING_180 = 2,
+    KF_ACTOR_HEADING_270 = 3
+KF_ENUM_END(KfActorHeadingQuadrant)
+
 /* 16-byte actor placement record from the map's MIXA.DAT stream. */
 typedef struct KfActorPlacement {
     KfActorSlotState slot_state;
     u8 definition_flags;
-    u8 heading_quadrant;
+    KfActorHeadingQuadrant heading_quadrant;
     u8 tile_z;
     u8 tile_x;
     u8 spawn_chance;
@@ -251,14 +284,14 @@ typedef struct KfActor {
     KfActorSlotState slot_state;
     u8 definition_id;
     KfActorCullingMode culling_mode;
-    u8 heading_quadrant;
+    KfActorHeadingQuadrant heading_quadrant;
     u8 tile_z;
     u8 tile_x;
     KfActorLifecycle lifecycle;
     u8 spawn_chance;
     KfActorAction action;
     KfMapObjectId death_drop_object_id;
-    u8 animation_id;
+    KfAnimationClip animation_id;
     KfActorVerticalState vertical_state;
     u8 unknown_0c[2];
     s16 local_z;
@@ -271,7 +304,7 @@ typedef struct KfActor {
     VECTOR position;
     KfRotation rotation;
     struct KfPoolRecord *animation_cache;
-    u8 action_progress;
+    KfActorActionProgress action_progress;
     KfActorCollisionState collision_state;
     s16 movement_yaw;
     s16 animation_step;
@@ -298,6 +331,7 @@ static_assert(__builtin_offsetof(KfActor, slot_state) == 0);
 static_assert(__builtin_offsetof(KfActor, lifecycle) == 0x06);
 static_assert(__builtin_offsetof(KfActor, action) == 0x08);
 static_assert(__builtin_offsetof(KfActor, vertical_state) == 0x0b);
+static_assert(__builtin_offsetof(KfActor, action_progress) == 0x38);
 static_assert(__builtin_offsetof(KfActor, collision_state) == 0x39);
 #endif
 
@@ -335,8 +369,8 @@ extern void actor_definitions_load(const KfActorDefinitionTable *definitions);
 extern void actor_initialize(KfActor *actor);
 extern void actor_initialize_current(void);
 extern void actor_initialize_slot(u16 actor_index);
-extern s32 actor_move_along_heading(s32 direction, s32 stop_on_collision);
-extern s32 actor_move_xz_with_collision(const struct KfVecXZs *delta, s32 stop_on_collision);
+extern KfActorMoveResult actor_move_along_heading(KfActorMoveDirection direction, KfActorCollisionPolicy stop_on_collision);
+extern KfActorMoveResult actor_move_xz_with_collision(const struct KfVecXZs *delta, KfActorCollisionPolicy stop_on_collision);
 extern void actor_play_sound_at_phase(const SoundRef *sound, u16 phase);
 extern void actor_pool_begin_death_by_definition(u16 definition_id);
 extern void actor_pool_clear(void);

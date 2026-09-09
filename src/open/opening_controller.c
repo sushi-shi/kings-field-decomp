@@ -19,7 +19,7 @@
                        (u32)&((KfMemoryArena *)0)->allocation))
 
 DATA(0x800372d4, 0x6)
-char opening_initial_tim_path[KF_OPENING_INITIAL_TIM_PATH_BYTES] = "B0\\L0.";
+char opening_initial_tim_path[KF_OPENING_INITIAL_TIM_PATH_BYTES] = {'B', '0', '\\', 'L', '0', '.'};
 
 RODATA(0x80012020, 0x18)
 
@@ -48,16 +48,16 @@ void opening_run(KfOpenMode display_mode)
         SetDispMask(1);
         if (cd_file_load_into(
                 open_graphics_runtime.display_state.asset_load_buffer,
-                opening_initial_tim_path) != 0) {
+                opening_initial_tim_path) != KF_RESOURCE_LOADED) {
             return;
         }
         scene3_action = KF_OPENING_INPUT_ADVANCE;
-        tim_upload_images(open_graphics_runtime.display_state.asset_load_buffer);
+        tim_upload_images((u_long *)open_graphics_runtime.display_state.asset_load_buffer);
         skip_action = KF_OPENING_INPUT_SKIP;
         opening_fade_in();
         cd_file_load_allocated(&tim_data, "B0\\MIX0.");
         allocation_state = &memory_arena.allocation;
-        tim_upload_images(tim_data);
+        tim_upload_images((u_long *)tim_data);
         memory_release_last();
         opening_input_action = KF_OPENING_INPUT_NONE;
 
@@ -75,7 +75,7 @@ opening_reload:
         allocation_state->cursor =
             OPENING_ARENA_FROM_ALLOCATION(allocation_state)->start;
         cd_file_load_allocated(&tim_data, "B0\\MIX3.");
-        tim_upload_images(tim_data);
+        tim_upload_images((u_long *)tim_data);
         memory_release_last();
         goto opening_complete;
 

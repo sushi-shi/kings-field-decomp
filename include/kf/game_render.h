@@ -101,7 +101,7 @@ typedef struct KfHudSprite {
 /* Animated screen-facing model entry; only ACTIVE continues traversal. */
 typedef struct KfEffectSprite {
     KfEffectSpriteState state;
-    u8 visibility_tag;
+    KfAnimationClip animation_clip;
     u16 asset_variant;
     u16 scale;
     s16 translation_x;
@@ -115,7 +115,7 @@ typedef struct KfEffectSprite {
 
 /* Double-buffered GAME.EXE display state. */
 typedef struct KfDisplayState {
-    u8 buffer_index;
+    KfDisplayBuffer buffer_index;
     u8 unknown_01[3];
     void *asset_load_buffer;
     KfPrimitiveBuffer primitive_buffers[KF_DISPLAY_BUFFER_COUNT];

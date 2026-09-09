@@ -10,6 +10,8 @@
  */
 
 #include <kf/game_save.h>
+#include <kf/cd_file.h>
+#include <kf/debug.h>
 #include <kf/psyq.h>
 #include <kf/magic.h>
 #include <kf/render_types.h>
@@ -156,6 +158,16 @@ enum {
     KF_MENU_LIST_NO_SELECTION = -1
 };
 
+/* The utility panel reports a cast spell or a signed control result. */
+KF_ENUM_BEGIN(KfMagicPanelResult, s32)
+    KF_MAGIC_PANEL_PENDING = KF_MENU_LIST_PENDING,
+    KF_MAGIC_PANEL_CANCELLED = KF_MENU_LIST_NO_SELECTION,
+    KF_MAGIC_PANEL_HEALING = KF_ENUM_ENCODE(u8, KF_MAGIC_HEALING),
+    KF_MAGIC_PANEL_DISPOISON = KF_ENUM_ENCODE(u8, KF_MAGIC_DISPOISON),
+    KF_MAGIC_PANEL_RESIST_FIRE = KF_ENUM_ENCODE(u8, KF_MAGIC_RESIST_FIRE),
+    KF_MAGIC_PANEL_BLESS = KF_ENUM_ENCODE(u8, KF_MAGIC_BLESS)
+KF_ENUM_END(KfMagicPanelResult)
+
 /* Row positions in the loaded System, save and load windows. */
 enum {
     KF_MENU_SYSTEM_LOAD_ROW = 0,
@@ -169,6 +181,19 @@ enum {
     KF_MENU_LOAD_ROW_COUNT = KF_MENU_LOAD_RETURN_ROW + 1
 };
 
+KF_ENUM_BEGIN(KfMenuSystemAction, s32)
+    KF_MENU_SYSTEM_ACTION_NONE = -1,
+    KF_MENU_SYSTEM_ACTION_LOAD = KF_MENU_SYSTEM_LOAD_ROW,
+    KF_MENU_SYSTEM_ACTION_QUIT = KF_MENU_SYSTEM_QUIT_ROW
+KF_ENUM_END(KfMenuSystemAction)
+
+KF_ENUM_BEGIN(KfMenuSystemResult, s32)
+    KF_MENU_SYSTEM_PENDING = KF_MENU_ROOT_PENDING,
+    KF_MENU_SYSTEM_CANCELLED = KF_MENU_ROOT_NO_ITEM,
+    KF_MENU_SYSTEM_LOADED = KF_MENU_ROOT_GAME_LOADED,
+    KF_MENU_SYSTEM_ACCEPTED = KF_ENUM_ENCODE(s32, KF_MENU_CONFIRM_ACCEPTED)
+KF_ENUM_END(KfMenuSystemResult)
+
 /* Negative values suppress overlays; values at least ALL draw all three. */
 KF_ENUM_BEGIN(KfSaveSlotOverlay, s32)
     KF_SAVE_OVERLAY_NONE = -1,
@@ -178,9 +203,26 @@ KF_ENUM_BEGIN(KfSaveSlotOverlay, s32)
     KF_SAVE_OVERLAY_ALL = KF_SAVE_SLOT_COUNT
 KF_ENUM_END(KfSaveSlotOverlay)
 
-enum {
-    KF_MENU_TEXTURE_NONE = 0xff
-};
+/* Zero-based TIM/Mddd. indices; menu_load_item_texture adds one to the ID. */
+KF_ENUM_BEGIN(KfMenuTextureId, s32)
+    KF_MENU_TEXTURE_NONE = 0xff,
+    MENU_TEXTURE_LOADING_DATA = 0x67,
+    MENU_TEXTURE_SAVING_DATA = 0x68,
+    MENU_TEXTURE_FORMATTING_CARD = 0x69,
+    MENU_TEXTURE_CONFIRM_CARD_FORMAT = 0x72,
+    MENU_TEXTURE_POWER_OFF = 0x3e6
+KF_ENUM_END(KfMenuTextureId)
+
+/* Magic artwork uses the same zero-based index as its spell record. */
+#if KF_MODERN_TYPES
+constexpr KfMenuTextureId menu_texture_from_magic(KfMagicId magic)
+{
+    return KF_ENUM_DECODE(KfMenuTextureId, KF_ENUM_ENCODE(u8, magic));
+}
+#else
+#define menu_texture_from_magic(magic) ((u8)(magic))
+#endif
+
 
 KF_ENUM_BEGIN(KfItemPickupResult, s32)
     KF_ITEM_PICKUP_PENDING = -99,
@@ -310,13 +352,13 @@ typedef struct MenuTileSprite {
     u16 height;
 } MenuTileSprite;
 
-typedef enum MenuListTileIndex {
+enum {
     MENU_LIST_TILE_BACKDROP,
     MENU_LIST_TILE_ROW,
     MENU_LIST_TILE_END,
     MENU_LIST_TILE_SELECTED,
     MENU_LIST_TILE_COUNT
-} MenuListTileIndex;
+};
 
 enum {
     MENU_BACKGROUND_QUAD_COUNT = 4,
@@ -394,7 +436,11 @@ extern MenuGlyphRow item_name_rows[KF_ITEM_COUNT];
 extern MenuGlyphRow magic_name_rows[KF_MAGIC_PLAYER_COUNT];
 extern u16 item_buy_prices[KF_ITEM_COUNT][KF_ITEM_SHOP_COUNT];
 extern u16 item_sell_prices[KF_ITEM_COUNT][KF_ITEM_SHOP_COUNT];
-extern s32 menu_item_model_allocation_pending;
+KF_ENUM_BEGIN(KfMenuModelAllocation, s32)
+    KF_MENU_MODEL_RELEASED = 0,
+    KF_MENU_MODEL_ALLOCATED = 1
+KF_ENUM_END(KfMenuModelAllocation)
+extern KfMenuModelAllocation menu_item_model_allocation_pending;
 
 extern void item_load_database(void);
 extern void item_menu_root(KF_ENUM_PARAM(KfShopId, s32) shop_id);
@@ -415,6 +461,7 @@ extern void menu_draw_number(
     const MenuSpriteDef *font, const MenuGlyphString *string);
 extern void menu_draw_string(
     const MenuSpriteDef *font, const MenuGlyphString *string);
+extern void menu_draw_name_list(void);
 extern void menu_draw_stats_header(void);
 extern void menu_draw_status_details(void);
 extern void menu_draw_two_option(
@@ -423,29 +470,44 @@ extern void menu_draw_two_option(
 extern void menu_draw_window(KfMenuWindowKind kind, s32 count, s32 highlight, KfMenuConfirmState confirmation);
 extern void menu_draw_window_backdrop(void);
 extern void menu_format_number(
-    s32 value, s32 count, s32 pad_zero, s16 *out);
+    s32 value, s32 count, KF_ENUM_PARAM(KfFormatPaddingMode, s32) pad_zero, s16 *out);
 extern void menu_drop_item(void);
+#if KF_MODERN_TYPES && !defined(KF_MENU_MODE_IMPLEMENTATION)
+extern u32 menu_enter_mode(KfMenuMode mode);
+extern u32 menu_enter_mode(KfMenuMode mode, KfItemId item);
+extern u32 menu_enter_mode(KfMenuMode mode, KfShopId shop);
+#else
 extern u32 menu_enter_mode(KfMenuMode mode, ...);
+#endif
 extern void menu_equip_select(KfEquipmentMenuCategory category);
 extern void menu_frame_begin(void);
 extern void menu_item_model_preview(KF_ENUM_PARAM(KfItemId, s32) item_id);
 extern void menu_list_init(KfMenuList *list, KfMenuWindowKind kind, s32 row);
+#if KF_MODERN_TYPES && !defined(KF_MENU_LIST_IMPLEMENTATION)
 extern KfMenuConfirmResult menu_list_interact(
     const KfMenuList *list, KfMenuConfirmKind kind, KfMenuPreviewMode preview_mode,
-    s32 item_id, u32 shop_id, KfItemPriceMode price_mode);
+    KfItemId item_id, KF_ENUM_PARAM(KfShopId, u32) shop_id, KfItemPriceMode price_mode);
+extern KfMenuConfirmResult menu_list_interact(
+    const KfMenuList *list, KfMenuConfirmKind kind, KfMenuPreviewMode preview_mode,
+    KfMagicId magic_id, KF_ENUM_PARAM(KfShopId, u32) shop_id, KfItemPriceMode price_mode);
+#else
+extern KfMenuConfirmResult menu_list_interact(
+    const KfMenuList *list, KfMenuConfirmKind kind, KfMenuPreviewMode preview_mode,
+    s32 item_id, KF_ENUM_PARAM(KfShopId, u32) shop_id, KfItemPriceMode price_mode);
+#endif
 extern void menu_list_render(const KfMenuList *list);
-extern u32 menu_load_item_model(KF_ENUM_PARAM(KfItemId, s32) id);
-extern u32 menu_load_item_texture(s32 id);
+extern KF_ENUM_PARAM(KfResourceLoadResult, u32) menu_load_item_model(KF_ENUM_PARAM(KfItemId, s32) id);
+extern KF_ENUM_PARAM(KfResourceLoadResult, u32) menu_load_item_texture(KfMenuTextureId id);
 extern void menu_release_item_model(void);
 extern KfMenuConfirmResult menu_load_panel(void);
-extern s32 menu_magic_panel(void);
+extern KfMagicPanelResult menu_magic_panel(void);
 extern void menu_map_viewer(KF_ENUM_PARAM(KfItemId, s32) item_code);
 extern void menu_option_root(void);
 extern void menu_play_input_sound(KfMenuSoundCue cue);
 extern void menu_present_frame(void);
 extern s32 menu_root(void);
 extern void menu_save_confirm(void);
-extern s32 menu_save_load_hub(void);
+extern KfMenuSystemResult menu_save_load_hub(void);
 extern KfMenuConfirmResult menu_save_panel(void);
 extern void menu_spell_select(void);
 extern void menu_status_panel(void);

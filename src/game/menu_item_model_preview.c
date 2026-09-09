@@ -70,7 +70,7 @@ void menu_item_model_preview(KF_ENUM_PARAM(KfItemId, s32) item_id)
         menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
         gs.position.x = MENU_INVENTORY_QUANTITY_VALUE_X;
-        menu_format_number(item_stock[KF_ITEM_STOCK_PLAYER][KF_ENUM_ENCODE(s32, item_id)], MENU_ITEM_PREVIEW_QUANTITY_DIGITS, 0, gs.glyphs.codes);
+        menu_format_number(item_stock[KF_ITEM_STOCK_PLAYER][KF_ENUM_ENCODE(s32, item_id)], MENU_ITEM_PREVIEW_QUANTITY_DIGITS, KF_FORMAT_PAD_SPACES, gs.glyphs.codes);
         menu_draw_number(&menu_assets.number_atlas, &gs);
     }
 }

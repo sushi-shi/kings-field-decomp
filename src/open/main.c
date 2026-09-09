@@ -1,4 +1,5 @@
 #include <kf/address.h>
+#include <kf/psyq_cd.h>
 #include <kf/overlay.h>
 #include <kf/game_types.h>
 #include <kf/open_controller.h>

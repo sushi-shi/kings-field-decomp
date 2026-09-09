@@ -81,7 +81,7 @@ void map_event_pool_load(const KfMapEventDefinition *definitions)
                 event->dialogue.fields.page = KF_DIALOGUE_FIRST_PAGE;
                 event->dialogue.fields.stage = KF_DIALOGUE_FIRST_STAGE;
                 event->dialogue.fields.page_delay = 0;
-                event->animation_clip = KF_MAP_EVENT_CLIP_BASE;
+                event->animation_clip = KF_ANIMATION_CLIP_FIRST;
                 event->animation_phase = 0;
                 event->rotation_target = 0;
                 event->collision_turn_pending = KF_MAP_EVENT_COLLISION_TURN_NONE;

@@ -30,7 +30,7 @@ KfMemoryArena memory_arena;
 ADDRESS(0x8001aab0, 0x38)
 void *memory_malloc_checked(s32 size)
 {
-    u8 *block = malloc(size);
+    u8 *block = (u8 *)malloc(size);
 
     if ((u32)block + MEMORY_CACHED_RAM_BASE > MEMORY_MAIN_RAM_BYTES - 1) {
         return 0;
@@ -50,7 +50,7 @@ void memory_set_allocation_mode(KfMemoryAllocationMode mode)
 {
     switch (mode) {
     case KF_MEMORY_CREATE_ARENA:
-        memory_arena.start = memory_malloc_checked(MEMORY_INITIAL_ARENA_BYTES);
+        memory_arena.start = (u8 *)memory_malloc_checked(MEMORY_INITIAL_ARENA_BYTES);
         memory_arena.end = (u8 *)MEMORY_INITIAL_ARENA_LAST_ADDRESS;
         memory_allocation_reset();
         break;
@@ -90,7 +90,7 @@ void *memory_allocate(s32 size)
     s32 depth;
 
     if (*cursor == 0) {
-        block = memory_malloc_checked(size);
+        block = (u8 *)memory_malloc_checked(size);
         size = (s32)block;
     } else {
         block = *cursor;

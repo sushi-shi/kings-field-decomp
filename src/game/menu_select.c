@@ -98,14 +98,14 @@ void menu_equip_select(KfEquipmentMenuCategory category)
     ctx.quantities = 0;
 
     if (ctx.entry_count != 0) {
-        if (menu_load_item_model(codes[ctx.selected_index]) != 0)
+        if (menu_load_item_model(codes[ctx.selected_index]) != KF_RESOURCE_LOADED)
             return;
     }
 
     for (;;) {
         if (confirm == KF_MENU_CONFIRM_REQUESTED) {
             if (menu_list_interact(&ctx, KF_MENU_CONFIRM_EQUIP,
-                    KF_MENU_PREVIEW_ITEM_MODEL, KF_ENUM_ENCODE(u8, codes[ctx.selected_index]), 0, KF_ITEM_PRICE_BUY)
+                    KF_MENU_PREVIEW_ITEM_MODEL, codes[ctx.selected_index], KF_SHOP_NONE, KF_ITEM_PRICE_BUY)
                     == KF_MENU_CONFIRM_CANCELLED)
                 selection = KF_MENU_LIST_PENDING;
             else
@@ -143,7 +143,7 @@ void menu_equip_select(KfEquipmentMenuCategory category)
                     ctx.cursor_row = ctx.visible_rows - 1;
                 }
             }
-            if (menu_load_item_model(codes[ctx.selected_index]) != 0)
+            if (menu_load_item_model(codes[ctx.selected_index]) != KF_RESOURCE_LOADED)
                 return;
         } else if ((input & PADLdown) != 0 && (prev & PADLdown) == 0) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
@@ -158,7 +158,7 @@ void menu_equip_select(KfEquipmentMenuCategory category)
                 ctx.scroll_offset = 0;
                 ctx.cursor_row = 0;
             }
-            if (menu_load_item_model(codes[ctx.selected_index]) != 0)
+            if (menu_load_item_model(codes[ctx.selected_index]) != KF_RESOURCE_LOADED)
                 return;
         } else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {
             menu_play_input_sound(MENU_SOUND_CONFIRM);
@@ -226,7 +226,7 @@ void menu_spell_select(void)
 {
     KfMenuList ctx;
     s16 labels[20][MENU_GLYPHS_PER_ROW];
-    KfSelectedMagicId codes[20];
+    KfMagicId codes[20];
     s32 code;
     s32 j;
     s32 k;
@@ -243,7 +243,7 @@ void menu_spell_select(void)
         if (magic_records[code].learned == KF_MAGIC_LEARNED) {
             for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)
                 labels[k][j] = magic_name_rows[code].codes[j];
-            codes[k] = KF_ENUM_DECODE(KfSelectedMagicId, code);
+            codes[k] = KF_ENUM_DECODE(KfMagicId, code);
             k++;
         }
     }
@@ -262,7 +262,7 @@ void menu_spell_select(void)
 
     menu_frame_begin();
     if (ctx.entry_count != 0) {
-        if (menu_load_item_texture(KF_ENUM_ENCODE(u8, codes[ctx.selected_index])) == 1)
+        if (menu_load_item_texture(menu_texture_from_magic(codes[ctx.selected_index])) == KF_RESOURCE_LOAD_FAILED)
             return;
         if (codes[ctx.selected_index] != KF_MAGIC_NONE)
             menu_add_marker_quad();
@@ -273,7 +273,7 @@ void menu_spell_select(void)
         menu_present_frame();
         if (confirm == KF_MENU_CONFIRM_REQUESTED) {
             selection = KF_ENUM_ENCODE(s32, menu_list_interact(&ctx, KF_MENU_CONFIRM_EQUIP,
-                    KF_MENU_PREVIEW_MAGIC_ICON, KF_ENUM_ENCODE(s32, codes[ctx.selected_index]), 0, KF_ITEM_PRICE_BUY));
+                    KF_MENU_PREVIEW_MAGIC_ICON, codes[ctx.selected_index], KF_SHOP_NONE, KF_ITEM_PRICE_BUY));
             if (selection == KF_ENUM_ENCODE(s32, KF_MENU_CONFIRM_CANCELLED))
                 selection = KF_MENU_LIST_PENDING;
             else
@@ -312,7 +312,7 @@ void menu_spell_select(void)
                     ctx.cursor_row = ctx.visible_rows - 1;
                 }
             }
-            if (menu_load_item_texture(KF_ENUM_ENCODE(u8, codes[ctx.selected_index])) == 1)
+            if (menu_load_item_texture(menu_texture_from_magic(codes[ctx.selected_index])) == KF_RESOURCE_LOAD_FAILED)
                 return;
         } else if ((input & PADLdown) != 0 && (prev & PADLdown) == 0) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
@@ -327,7 +327,7 @@ void menu_spell_select(void)
                 ctx.scroll_offset = 0;
                 ctx.cursor_row = 0;
             }
-            if (menu_load_item_texture(KF_ENUM_ENCODE(u8, codes[ctx.selected_index])) == 1)
+            if (menu_load_item_texture(menu_texture_from_magic(codes[ctx.selected_index])) == KF_RESOURCE_LOAD_FAILED)
                 return;
         } else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {
             menu_play_input_sound(MENU_SOUND_CONFIRM);

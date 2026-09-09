@@ -28,7 +28,7 @@ enum {
 
 DATA(0x80055d74, 0x38)
 KfEffectSprite effect_sprites[KF_EFFECT_SPRITE_TABLE_ROWS] = {
-    {KF_EFFECT_SPRITE_ACTIVE, 0, 0, 0x33, 0x11e, 0x22, 0xc8, {0, 0}, {0, 0, 0, 0}, {0, 0}, 0},
+    {KF_EFFECT_SPRITE_ACTIVE, KF_ANIMATION_CLIP_FIRST, 0, 0x33, 0x11e, 0x22, 0xc8, {0, 0}, {0, 0, 0, 0}, {0, 0}, 0},
     {KF_EFFECT_SPRITE_END},
 };
 

@@ -42,7 +42,7 @@ void menu_map_viewer(KF_ENUM_PARAM(KfItemId, s32) item_code)
     path[6] = KF_ENUM_ENCODE(u8, player_state.progress_state.current_floor) + '0';
 
     buffer = game_graphics_runtime.display_state.primitive_buffer->cursor;
-    if (cd_file_load_into(buffer, path) != 0)
+    if (cd_file_load_into(buffer, path) != KF_RESOURCE_LOADED)
         return;
     tim_upload_images((u_long *)buffer);
 
@@ -98,17 +98,17 @@ void menu_map_viewer(KF_ENUM_PARAM(KfItemId, s32) item_code)
     for (;;) {
         menu_frame_begin();
         AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_MAP_MARKER_OT_DEPTH,
-                &poly_marker[game_graphics_runtime.display_state.buffer_index]);
+                &poly_marker[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)]);
         AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_MAP_IMAGE_OT_DEPTH,
-                &poly_bg[game_graphics_runtime.display_state.buffer_index]);
+                &poly_bg[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)]);
         AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_BACKGROUND_OT_DEPTH,
-                &menu_assets.background_quads[game_graphics_runtime.display_state.buffer_index][3]);
+                &menu_assets.background_quads[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)][3]);
         AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_BACKGROUND_OT_DEPTH,
-                &menu_assets.background_quads[game_graphics_runtime.display_state.buffer_index][2]);
+                &menu_assets.background_quads[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)][2]);
         AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_BACKGROUND_OT_DEPTH,
-                &menu_assets.background_quads[game_graphics_runtime.display_state.buffer_index][1]);
+                &menu_assets.background_quads[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)][1]);
         AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_BACKGROUND_OT_DEPTH,
-                &menu_assets.background_quads[game_graphics_runtime.display_state.buffer_index][0]);
+                &menu_assets.background_quads[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)][0]);
         menu_present_frame();
         if (frame < MENU_PANEL_INPUT_RELEASE_FRAME) {
             frame++;

@@ -5,6 +5,7 @@
  * Twelve-entry animation vertex cache and its per-frame lifecycle.
  */
 
+#include <kf/animation.h>
 #include <kf/game_types.h>
 #include <kf/enum.h>
 #include <kf/psyq.h>
@@ -20,14 +21,13 @@ KF_ENUM_END(KfAnimationCacheState)
 
 enum {
     KF_ANIMATION_CACHE_CAPACITY = 12,
-    KF_ANIMATION_CACHE_CLIP_INVALID = 0xff,
     KF_ANIMATION_BIND_STATIC = 1
 };
 
 typedef struct KfPoolRecord {
     KfAnimationCacheState state;
     u16 asset_index;
-    u16 clip_index;
+    KF_ENUM_STORAGE(KfAnimationClip, u16) clip_index;
     u16 keyframe_index;
     struct KfMorphObject *rest_morph;
     KfPackedSVector *cached_vertices;
@@ -36,7 +36,7 @@ typedef struct KfPoolRecord {
 
 /* Returns zero on pool exhaustion, one for a static asset, or the live record. */
 extern KfPoolRecord *render_bind_animated_instance(
-    KfPoolRecord **owner_slot, u16 asset_index, u16 clip_index, u16 phase,
+    KfPoolRecord **owner_slot, u16 asset_index, KF_ENUM_PARAM(KfAnimationClip, u16) clip_index, u16 phase,
     u16 vertex_count);
 extern void pool_reset(void);
 extern void pool_mark_allocated(void);

@@ -9,7 +9,7 @@ enum {
 };
 
 ADDRESS(0x80019f44, 0x1e8)
-u32 audio_play_spatial(
+KfAudioPlaybackResult audio_play_spatial(
     const SoundRef *sound,
     const VECTOR *position,
     s16 volume,
@@ -29,7 +29,7 @@ u32 audio_play_spatial(
         SquareRoot0(delta_x * delta_x + delta_y * delta_y + delta_z * delta_z)
         << KF_LENGTH_SQUARE_DOWNSHIFT;
     if (attenuation >= max_distance) {
-        return 0;
+        return KF_AUDIO_NOT_PLAYED;
     }
     attenuation =
         ((attenuation_distance - attenuation) << KF_FIXED7_BITS) / attenuation_distance;
@@ -56,11 +56,11 @@ u32 audio_play_spatial(
         sound->note,
         left,
         right);
-    return 1;
+    return KF_AUDIO_PLAYED;
 }
 
 ADDRESS(0x8001a12c, 0x30)
-u32 audio_play_spatial_default_range(
+KfAudioPlaybackResult audio_play_spatial_default_range(
     const SoundRef *sound,
     const VECTOR *position,
     s16 volume)
@@ -70,7 +70,7 @@ u32 audio_play_spatial_default_range(
 }
 
 ADDRESS(0x8001a15c, 0x2c)
-u32 audio_play_spatial_range(
+KfAudioPlaybackResult audio_play_spatial_range(
     const SoundRef *sound,
     const VECTOR *position,
     s16 volume,

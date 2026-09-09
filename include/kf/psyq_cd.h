@@ -6,4 +6,7 @@
 #include <kf/psyq.h>
 #include <LIBCD.H>
 
+/* CDREAD.OBJ exports this status poll, omitted by Release 2.5 LIBCD.H. */
+extern int CdReadSync(int mode, unsigned char *result);
+
 #endif

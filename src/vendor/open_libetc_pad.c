@@ -3,7 +3,13 @@
 #include <kf/psyq_kernel.h>
 #include <kf/psyq_libc.h>
 
-static u32 pad_init_bad_identifier();
+/* The modern view spells the two ignored K&R arguments. */
+#if defined(__cplusplus)
+#define PAD_INIT_IGNORED_ARGS s32, u32 *
+#else
+#define PAD_INIT_IGNORED_ARGS
+#endif
+static u32 pad_init_bad_identifier(PAD_INIT_IGNORED_ARGS);
 static void pad_read_bad_identifier(void);
 static void pad_stop_bad_identifier(void);
 
@@ -64,7 +70,7 @@ void PadStop(void)
 }
 
 ADDRESS(0x8002ff80, 0x30)
-static u32 pad_init_bad_identifier()
+static u32 pad_init_bad_identifier(PAD_INIT_IGNORED_ARGS)
 {
     printf("PAD_init: Bad PadIdentifier %d\n", PadIdentifier);
 }

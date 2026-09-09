@@ -537,7 +537,7 @@ void opening_scene3_run(void)
         opening_render_entities();
         overlay_index = 0;
         overlay_rect = opening_scene3_overlay_rects;
-        overlay_y = &overlay_rect->y;
+        overlay_y = (s16 *)&overlay_rect->y;
         do {
             /* Retain quads while their signed Y span can still cross the screen. */
             if ((u16)(--*overlay_y + PANEL_CLIP_Y_BIAS) < PANEL_CLIP_SPAN) {

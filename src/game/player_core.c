@@ -118,7 +118,7 @@ void player_equip_weapon(KfItemId weapon_id)
         player_state.equipped_weapon_record = &weapon_records.entries[KF_ENUM_ENCODE(u8, weapon_id)];
         weapon_image_path_template[9] = '0' + KF_ENUM_ENCODE(u32, weapon_id) / 10;
         weapon_image_path_template[10] = '0' + KF_ENUM_ENCODE(u32, weapon_id) % 10;
-        if (cd_file_load_into(player_state.weapon_asset_buffer, weapon_image_path_template) != 0) {
+        if (cd_file_load_into(player_state.weapon_asset_buffer, weapon_image_path_template) != KF_RESOURCE_LOADED) {
             exit(1);
         }
         asset_registry_set(KF_ASSET_WEAPON, player_state.weapon_asset_buffer);
@@ -137,9 +137,9 @@ void player_begin_weapon_attack(void)
         sound_ref_play(&player_sound_refs[KF_PLAYER_SOUND_WEAPON_ATTACK], KF_AUDIO_MAX_VOLUME);
         player_state.attack_charge_state.committed = player_state.attack_charge_state.current;
         if (player_state.attack_charge_state.current == KF_PLAYER_CHARGE_FULL) {
-            player_state.weapon_attack_fully_charged = 1;
+            player_state.weapon_attack_fully_charged = KF_WEAPON_ATTACK_FULL_CHARGE;
         } else {
-            player_state.weapon_attack_fully_charged = 0;
+            player_state.weapon_attack_fully_charged = KF_WEAPON_ATTACK_NORMAL_CHARGE;
         }
         player_state.attack_charge_state.current = 0;
     }
@@ -252,7 +252,7 @@ void player_sync_position_to_map(void)
     player_state.motion_state.fields.map_cell.coords.x = cell_x;
     player_state.motion_state.fields.map_cell.coords.z = cell_z;
     floor = map_floor_height_grid.cells[player_state.motion_state.fields.map_cell.coords.z][player_state.motion_state.fields.map_cell.coords.x];
-    player_state.allow_near_actor_spawn = 1;
+    player_state.allow_near_actor_spawn = KF_ACTOR_NEAR_SPAWN_ALLOWED;
     floor_height = -(floor * KF_MAP_HEIGHT_STEP);
     view_offset = player_state.view_bob_offset - KF_PLAYER_CAMERA_HEIGHT;
     player_state.floor_height = floor_height;
@@ -357,7 +357,7 @@ s32 player_move_horizontal(s32 heading, s32 distance)
     u32 cell_x;
     SVECTOR delta;
     s16 attempt = 1;
-    u8 type;
+    KfMapCellKind type;
 
     dz = (rcos(heading) * distance) >> KF_FIXED12_BITS;
     dx = (-rsin(heading) * distance) >> KF_FIXED12_BITS;

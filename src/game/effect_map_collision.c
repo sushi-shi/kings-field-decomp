@@ -46,7 +46,7 @@ static inline u32 effect_collision_in_cell(
         } else {
             record = &map_cell_height_records[height];
             if (floor + record->y_min <= y && y <= floor + record->y_max) {
-                u8 orient = map_cell_orientation_grid.cells[z][x];
+                KfMapOrientation orient = map_cell_orientation_grid.cells[z][x];
                 s16 coordinate;
 
                 subx = position->vx % KF_MAP_TILE_SIZE;

@@ -253,9 +253,9 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["data"], 2914)
         self.assertGreaterEqual(counts["functions_named"], 240)
         self.assertGreaterEqual(counts["data_named"], 100)
-        self.assertEqual(counts["structures"], 123)
-        self.assertEqual(counts["structure_fields"], 848)
-        self.assertEqual(counts["structure_fields_named"], 761)
+        self.assertEqual(counts["structures"], 125)
+        self.assertEqual(counts["structure_fields"], 854)
+        self.assertEqual(counts["structure_fields_named"], 767)
 
     def test_animation_cache_slots_share_one_pointer_type_without_layout_changes(self) -> None:
         structures = load_structure_identities(RETAIL_CONFIG)
@@ -280,7 +280,8 @@ class InventoryTests(unittest.TestCase):
     def test_animation_binder_slot_api_belongs_to_pool_header(self) -> None:
         identity = load_function_identities(RETAIL_CONFIG)[("GAME.EXE", 0x800205D4)]
         self.assertEqual(identity.parameters,
-                         "KfPoolRecord ** owner_slot;u16 asset_index;u16 clip_index;"
+                         "KfPoolRecord **owner_slot;u16 asset_index;"
+                         "KF_ENUM_PARAM(KfAnimationClip, u16) clip_index;"
                          "u16 phase;u16 vertex_count")
         pool_header = (REPO / "include/kf/pool.h").read_text()
         render_header = (REPO / "include/kf/game_render.h").read_text()
@@ -301,7 +302,7 @@ class InventoryTests(unittest.TestCase):
         fields = (
             (0x00, "state", "KfAnimationCacheState", 2),
             (0x02, "asset_index", "u16", 2),
-            (0x04, "clip_index", "u16", 2),
+            (0x04, "clip_index", "KF_ENUM_STORAGE(KfAnimationClip, u16)", 2),
             (0x06, "keyframe_index", "u16", 2),
             (0x08, "rest_morph", "KfMorphObject *", 4),
             (0x0C, "cached_vertices", "KfPackedSVector *", 4),
@@ -1133,7 +1134,7 @@ class InventoryTests(unittest.TestCase):
         occupancy = game.datum(0x800668E8)
         self.assertEqual(
             (orientation.name, orientation.datatype, orientation.size),
-            ("map_cell_orientation_grid", "KfMapGrid", 0x2710),
+            ("map_cell_orientation_grid", "KfMapOrientationGrid", 0x2710),
         )
         self.assertEqual(game.data_owner(0x8006B727), orientation)
         self.assertEqual(
@@ -1253,7 +1254,7 @@ class InventoryTests(unittest.TestCase):
         ]
         self.assertEqual(
             identity.parameters,
-            "s32 value;s32 count;s32 pad_zero;s16 * out",
+            "s32 value;s32 count;KF_ENUM_PARAM(KfFormatPaddingMode, s32) pad_zero;s16 *out",
         )
         release = load_function_identities(RETAIL_CONFIG, required=True)[
             ("GAME.EXE", 0x8002AF0C)
@@ -1265,7 +1266,7 @@ class InventoryTests(unittest.TestCase):
         ]
         self.assertEqual(
             (pending.name, pending.datatype, pending.owner),
-            ("menu_item_model_allocation_pending", "s32", "menu"),
+            ("menu_item_model_allocation_pending", "KfMenuModelAllocation", "menu"),
         )
 
         _, relocations = read_tsv(RETAIL_CONFIG / "relocs.tsv")
@@ -2475,17 +2476,17 @@ class InventoryTests(unittest.TestCase):
 
         data = load_data_identities(RETAIL_CONFIG)
         expected_grids = {
-            0x800446C8: "map_collision_flag_grid",
-            0x80046DF8: "map_cell_orientation_grid",
-            0x8006E260: "map_floor_height_grid",
-            0x80070978: "map_collision_grid",
-            0x800730A0: "map_cell_attribute_grid",
+            0x800446C8: ("map_collision_flag_grid", "KfMapGrid"),
+            0x80046DF8: ("map_cell_orientation_grid", "KfMapOrientationGrid"),
+            0x8006E260: ("map_floor_height_grid", "KfMapGrid"),
+            0x80070978: ("map_collision_grid", "KfMapCollisionGrid"),
+            0x800730A0: ("map_cell_attribute_grid", "KfMapGrid"),
         }
-        for va, name in expected_grids.items():
+        for va, (name, datatype) in expected_grids.items():
             identity = data[("OPEN.EXE", va)]
             self.assertEqual(
                 (identity.name, identity.storage, identity.datatype, identity.size),
-                (name, "bss", "KfMapGrid", 0x2710),
+                (name, "bss", datatype, 0x2710),
             )
 
     def test_open_render_init_campaign_is_exactly_modeled(self) -> None:

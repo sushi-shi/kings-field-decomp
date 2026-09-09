@@ -40,7 +40,7 @@ void render_enqueue_unlit_triangles(u16 object_index, s16 depth_bias)
                            vertex2->sxy.word) <= 0) {
                 goto next_packet;
             }
-            prim = primitive_buffer_allocate(sizeof(POLY_FT3));
+            prim = (KfGpuFT3 *)primitive_buffer_allocate(sizeof(POLY_FT3));
             primitive = &prim->sdk;
             SetPolyFT3(&prim->sdk);
             prim->packed.clut = triangle->ft3.cba;
@@ -67,7 +67,7 @@ void render_enqueue_unlit_triangles(u16 object_index, s16 depth_bias)
                            vertex2->sxy.word) <= 0) {
                 goto next_packet;
             }
-            prim = primitive_buffer_allocate(sizeof(POLY_F3));
+            prim = (KfGpuF3 *)primitive_buffer_allocate(sizeof(POLY_F3));
             primitive = &prim->sdk;
             SetPolyF3(&prim->sdk);
             prim->packed.xy0 = vertex0->sxy.word;

@@ -91,10 +91,10 @@ void item_load_database(void)
     u8 *src;
     s32 i;
 
-    if (cd_file_load_allocated(&stat_data, "COM\\STAT.DAT") != 0)
+    if (cd_file_load_allocated(&stat_data, "COM\\STAT.DAT") != KF_RESOURCE_LOADED)
         exit(1);
 
-    src = stat_data;
+    src = (u8 *)stat_data;
     memcpy(&menu_assets, src, sizeof menu_assets);
     src += sizeof menu_assets;
     memcpy(menu_window_layouts, src, sizeof menu_window_layouts);
@@ -262,7 +262,7 @@ void item_menu_buy(KF_ENUM_PARAM(KfShopId, s32) shop_id)
 
     menu_frame_begin();
     if (ctx.entry_count != 0) {
-        if (menu_load_item_model(index[ctx.selected_index]) != 0)
+        if (menu_load_item_model(index[ctx.selected_index]) != KF_RESOURCE_LOADED)
             return;
         menu_draw_item_detail(index[ctx.selected_index], shop_id, KF_ITEM_PRICE_BUY);
     }
@@ -272,7 +272,7 @@ void item_menu_buy(KF_ENUM_PARAM(KfShopId, s32) shop_id)
         menu_present_frame();
         if (confirm == KF_MENU_CONFIRM_REQUESTED) {
             if (menu_list_interact(&ctx, KF_MENU_CONFIRM_BUY,
-                    KF_MENU_PREVIEW_ITEM_DETAIL, KF_ENUM_ENCODE(u8, index[ctx.selected_index]), KF_ENUM_ENCODE(s32, shop_id), KF_ITEM_PRICE_BUY)
+                    KF_MENU_PREVIEW_ITEM_DETAIL, index[ctx.selected_index], shop_id, KF_ITEM_PRICE_BUY)
                     == KF_MENU_CONFIRM_CANCELLED)
                 selection = KF_MENU_LIST_PENDING;
             else
@@ -325,7 +325,7 @@ void item_menu_buy(KF_ENUM_PARAM(KfShopId, s32) shop_id)
                 ctx.cursor_row = 0;
             }
         load_selected_model:
-            if (menu_load_item_model(index[ctx.selected_index]) != 0)
+            if (menu_load_item_model(index[ctx.selected_index]) != KF_RESOURCE_LOADED)
                 return;
         } else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {
             if (player_state.gold
@@ -409,7 +409,7 @@ void item_menu_sell(KF_ENUM_PARAM(KfShopId, s32) shop_id)
 
     menu_frame_begin();
     if (ctx.entry_count != 0) {
-        if (menu_load_item_model(index[ctx.selected_index]) != 0)
+        if (menu_load_item_model(index[ctx.selected_index]) != KF_RESOURCE_LOADED)
             return;
         menu_draw_item_detail(index[ctx.selected_index], shop_id, KF_ITEM_PRICE_SELL);
     }
@@ -419,7 +419,7 @@ void item_menu_sell(KF_ENUM_PARAM(KfShopId, s32) shop_id)
         menu_present_frame();
         if (confirm == KF_MENU_CONFIRM_REQUESTED) {
             selection = KF_ENUM_ENCODE(s32, menu_list_interact(&ctx, KF_MENU_CONFIRM_SELL,
-                    KF_MENU_PREVIEW_ITEM_DETAIL, KF_ENUM_ENCODE(u8, index[ctx.selected_index]), KF_ENUM_ENCODE(s32, shop_id), KF_ITEM_PRICE_SELL));
+                    KF_MENU_PREVIEW_ITEM_DETAIL, index[ctx.selected_index], shop_id, KF_ITEM_PRICE_SELL));
             if (selection == KF_ENUM_ENCODE(s32, KF_MENU_CONFIRM_CANCELLED))
                 selection = KF_MENU_LIST_PENDING;
             else
@@ -457,7 +457,7 @@ void item_menu_sell(KF_ENUM_PARAM(KfShopId, s32) shop_id)
                     ctx.cursor_row = ctx.visible_rows - 1;
                 }
             }
-            if (menu_load_item_model(index[ctx.selected_index]) != 0)
+            if (menu_load_item_model(index[ctx.selected_index]) != KF_RESOURCE_LOADED)
                 return;
         } else if ((input & PADLdown) != 0 && (prev & PADLdown) == 0) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
@@ -472,7 +472,7 @@ void item_menu_sell(KF_ENUM_PARAM(KfShopId, s32) shop_id)
                 ctx.scroll_offset = 0;
                 ctx.cursor_row = 0;
             }
-            if (menu_load_item_model(index[ctx.selected_index]) != 0)
+            if (menu_load_item_model(index[ctx.selected_index]) != KF_RESOURCE_LOADED)
                 return;
         } else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {
             menu_play_input_sound(MENU_SOUND_CONFIRM);
@@ -512,7 +512,7 @@ KfItemPickupResult item_pickup_confirm(KF_ENUM_PARAM(KfItemId, s32) item_id)
     s32 prev;
 
     stock_count = item_stock[KF_ITEM_STOCK_PLAYER][KF_ENUM_ENCODE(s32, item_id)];
-    if (menu_load_item_model(item_id) != 0)
+    if (menu_load_item_model(item_id) != KF_RESOURCE_LOADED)
         return KF_ITEM_PICKUP_NOT_ACQUIRED;
 
     accept_label.position.x = MENU_PICKUP_CONFIRM_TEXT_X;

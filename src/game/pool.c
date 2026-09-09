@@ -12,7 +12,7 @@ enum { MORPH_SCRATCH_OFFSET_IN_PROJECTION_STORAGE = 0x1f40 };
 
 /* Cache full-weight keyframe morphs in a pool record; blend into shared scratch. */
 
-/* asset base + clip_table[clip_index]: one animation clip. */
+/* asset base + clip_table[KF_ENUM_ENCODE(u16, clip_index)]: one animation clip. */
 typedef struct KfAnimClip {
     u16 keyframe_count; /* +0 */
     u16 unknown_02;     /* +2 */
@@ -68,7 +68,7 @@ static inline void copy_vertices(
 
 ADDRESS(0x800205d4, 0x3a4)
 KfPoolRecord *render_bind_animated_instance(
-    KfPoolRecord **owner_slot, u16 asset_index, u16 clip_index, u16 phase,
+    KfPoolRecord **owner_slot, u16 asset_index, KF_ENUM_PARAM(KfAnimationClip, u16) clip_index, u16 phase,
     u16 vertex_count)
 {
     KfPoolRecord *record = *owner_slot;
@@ -121,14 +121,14 @@ check_record:
         goto find_keyframe;
     }
     pool_record_release(record);
-    record->clip_index = KF_ANIMATION_CACHE_CLIP_INVALID;
+    record->clip_index = KF_ANIMATION_CLIP_NONE;
     goto reinitialize_record;
 
 find_keyframe:
     phase_end = 0;
     phase_start = 0;
     clip_table = (u32 *)((char *)asset_header + asset_header->clip_table_offset);
-    clip = (KfAnimClip *)((char *)asset_header + clip_table[clip_index]);
+    clip = (KfAnimClip *)((char *)asset_header + clip_table[KF_ENUM_ENCODE(u16, clip_index)]);
     keyframes_left = clip->keyframe_count;
     {
         u32 *keyframe_offsets = clip->keyframes;
@@ -288,7 +288,7 @@ KfPoolRecord *pool_allocate(void)
 
     do {
         if (record->state == KF_ANIMATION_CACHE_FREE) {
-            record->clip_index = KF_ANIMATION_CACHE_CLIP_INVALID;
+            record->clip_index = KF_ANIMATION_CLIP_NONE;
             return record;
         }
         record++;

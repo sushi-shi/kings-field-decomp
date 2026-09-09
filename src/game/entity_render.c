@@ -131,7 +131,7 @@ void render_actor_sprite(KfEffectRecord *sprite)
     scale.vy = (s16)sprite->scale_y;
     scale.vz = (s16)sprite->scale_z;
     ScaleMatrix(&model, &scale);
-    if (sprite->animation_clip == KF_EFFECT_ANIMATION_BILLBOARD) {
+    if (sprite->animation_clip == KF_ANIMATION_CLIP_NONE) {
         MulMatrix2(&game_graphics_runtime.render_state.pitch_matrix, &model);
         SetRotMatrix(&model);
         SetTransMatrix(&model);

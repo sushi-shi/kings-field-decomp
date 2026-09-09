@@ -71,7 +71,7 @@ static MATRIX player_darkness_color_matrix = {
 };
 
 DATA(0x80055878, 0x40)
-static SVECTOR player_damage_camera_offsets[KF_PLAYER_DAMAGE_FRAME_END] = {
+static SVECTOR player_damage_camera_offsets[KF_ENUM_ENCODE(u8, KF_PLAYER_DAMAGE_FRAME_END)] = {
     {0, 0, 0, 0},
     {-32, 0, -32, 0},
     {-64, 0, -64, 0},
@@ -116,7 +116,7 @@ void player_update(void)
     MATRIX matrix;
     s32 distance;
     u8 attribute;
-    KfSelectedMagicId magic_id;
+    KfMagicId magic_id;
 
     if (player_state.update_state == KF_PLAYER_UPDATE_DYING) {
         player_death_update();
@@ -315,8 +315,8 @@ void player_update(void)
         }
         if (player_state.equipped_body_armor_id != KF_ITEM_SKULL_ARMOR) {
             if ((input & PADRleft) && !(player_previous_input & PADRleft)) {
-                if (player_state.weapon_attack_fully_charged == 1) {
-                    player_state.weapon_attack_fully_charged = 0;
+                if (player_state.weapon_attack_fully_charged == KF_WEAPON_ATTACK_FULL_CHARGE) {
+                    player_state.weapon_attack_fully_charged = KF_WEAPON_ATTACK_NORMAL_CHARGE;
                     switch (player_state.equipped_weapon_id) {
                     case KF_ITEM_FLAME_SWORD:
                         if (player_state.weapon_attack_phase >= PLAYER_WEAPON_MAGIC_PHASE_FIRST
@@ -365,7 +365,7 @@ void player_update(void)
                         player_state.magic_charge = 0;
                     }
                 }
-                player_state.weapon_attack_fully_charged = 0;
+                player_state.weapon_attack_fully_charged = KF_WEAPON_ATTACK_NORMAL_CHARGE;
             } else {
                 magic_id = player_state.selected_magic_id;
                 if (magic_id != KF_MAGIC_NONE) {
@@ -529,12 +529,12 @@ void player_update(void)
         && player_state.update_state != KF_PLAYER_UPDATE_DYING) {
         if (player_state.update_state >= KF_PLAYER_DAMAGE_FRAME_END) {
             player_state.update_state = KF_PLAYER_UPDATE_NORMAL;
-            player_state.view_rotation_offset = player_damage_camera_offsets[KF_PLAYER_UPDATE_NORMAL];
+            player_state.view_rotation_offset = player_damage_camera_offsets[KF_ENUM_ENCODE(u8, KF_PLAYER_UPDATE_NORMAL)];
             if (player_state.vitals.current_hp == 0) {
                 player_death_begin();
             }
         } else {
-            player_state.view_rotation_offset = player_damage_camera_offsets[player_state.update_state];
+            player_state.view_rotation_offset = player_damage_camera_offsets[KF_ENUM_ENCODE(u8, player_state.update_state)];
             lighting_set_active_color_matrix(KF_GAME_COLOR_DAMAGE);
             player_state.update_state++;
         }

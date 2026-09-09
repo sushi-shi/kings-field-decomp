@@ -25,29 +25,29 @@ enum {
  * the panel is cancelled.
  */
 ADDRESS(0x8002317c, 0x530)
-s32 menu_magic_panel(void)
+KfMagicPanelResult menu_magic_panel(void)
 {
     KfMenuList ctx;
     s16 labels[10][MENU_GLYPHS_PER_ROW];
-    u8 codes[16];
+    KfMagicId codes[16];
     s32 found;
     s32 code;
     s32 j;
     KfMenuConfirmState confirm = KF_MENU_CONFIRM_IDLE;
     s32 input = 0;
     s32 prev;
-    s32 selection = KF_MENU_LIST_PENDING;
+    KfMagicPanelResult selection = KF_MAGIC_PANEL_PENDING;
 
     while (PadRead(1) != 0)
         ;
     menu_list_init(&ctx, KF_MENU_WINDOW_ROOT, KF_ENUM_ENCODE(s32, KF_ROOT_CHOICE_USE_MAGIC));
 
     found = 0;
-    for (code = KF_MAGIC_HEALING; code < KF_ENUM_ENCODE(s32, KF_MAGIC_LIGHTNING_BOLT); code++) {
+    for (code = KF_ENUM_ENCODE(s32, KF_MAGIC_HEALING); code < KF_ENUM_ENCODE(s32, KF_MAGIC_LIGHTNING_BOLT); code++) {
         if (magic_records[code].learned == KF_MAGIC_LEARNED) {
             for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)
                 labels[found][j] = magic_name_rows[code].codes[j];
-            codes[found] = code;
+            codes[found] = KF_ENUM_DECODE(KfMagicId, code);
             found++;
         }
     }
@@ -58,8 +58,8 @@ s32 menu_magic_panel(void)
 
     menu_frame_begin();
     if (ctx.entry_count != 0) {
-        if (menu_load_item_texture(codes[ctx.selected_index]) == 1)
-            return KF_MENU_LIST_NO_SELECTION;
+        if (menu_load_item_texture(menu_texture_from_magic(codes[ctx.selected_index])) == KF_RESOURCE_LOAD_FAILED)
+            return KF_MAGIC_PANEL_CANCELLED;
         menu_add_marker_quad();
     }
     menu_list_render(&ctx);
@@ -68,13 +68,13 @@ s32 menu_magic_panel(void)
         menu_present_frame();
         if (confirm == KF_MENU_CONFIRM_REQUESTED) {
             if (menu_list_interact(&ctx, KF_MENU_CONFIRM_USE,
-                    KF_MENU_PREVIEW_MAGIC_ICON, codes[ctx.selected_index], 0, KF_ITEM_PRICE_BUY)
+                    KF_MENU_PREVIEW_MAGIC_ICON, codes[ctx.selected_index], KF_SHOP_NONE, KF_ITEM_PRICE_BUY)
                     == KF_MENU_CONFIRM_CANCELLED)
-                selection = KF_MENU_LIST_PENDING;
+                selection = KF_MAGIC_PANEL_PENDING;
             else
-                selection = codes[ctx.selected_index];
+                selection = KF_ENUM_DECODE(KfMagicPanelResult, KF_ENUM_ENCODE(u8, codes[ctx.selected_index]));
         }
-        if (selection != KF_MENU_LIST_PENDING) {
+        if (selection != KF_MAGIC_PANEL_PENDING) {
             while (PadRead(1) != 0)
                 ;
             break;
@@ -87,7 +87,7 @@ s32 menu_magic_panel(void)
         if (ctx.entry_count == 0) {
             if (input != 0) {
                 menu_play_input_sound(MENU_SOUND_CURSOR);
-                selection = KF_MENU_LIST_NO_SELECTION;
+                selection = KF_MAGIC_PANEL_CANCELLED;
             }
         } else if ((input & PADLup) != 0 && (prev & PADLup) == 0) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
@@ -107,8 +107,8 @@ s32 menu_magic_panel(void)
                     ctx.cursor_row = ctx.visible_rows - 1;
                 }
             }
-            if (menu_load_item_texture(codes[ctx.selected_index]) == 1)
-                return KF_MENU_LIST_NO_SELECTION;
+            if (menu_load_item_texture(menu_texture_from_magic(codes[ctx.selected_index])) == KF_RESOURCE_LOAD_FAILED)
+                return KF_MAGIC_PANEL_CANCELLED;
         } else if ((input & PADLdown) != 0 && (prev & PADLdown) == 0) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
             if (ctx.selected_index < ctx.entry_count - 1) {
@@ -122,14 +122,14 @@ s32 menu_magic_panel(void)
                 ctx.scroll_offset = 0;
                 ctx.cursor_row = 0;
             }
-            if (menu_load_item_texture(codes[ctx.selected_index]) == 1)
-                return KF_MENU_LIST_NO_SELECTION;
+            if (menu_load_item_texture(menu_texture_from_magic(codes[ctx.selected_index])) == KF_RESOURCE_LOAD_FAILED)
+                return KF_MAGIC_PANEL_CANCELLED;
         } else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {
             menu_play_input_sound(MENU_SOUND_CONFIRM);
             confirm = KF_MENU_CONFIRM_REQUESTED;
         } else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {
             menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
-            selection = KF_MENU_LIST_NO_SELECTION;
+            selection = KF_MAGIC_PANEL_CANCELLED;
         }
 
         if (ctx.entry_count != 0)
@@ -137,18 +137,18 @@ s32 menu_magic_panel(void)
         menu_list_render(&ctx);
     }
 
-    if (selection != KF_MENU_LIST_NO_SELECTION) {
-        if (player_state.vitals.current_mp < magic_records[selection].mp_cost)
+    if (selection != KF_MAGIC_PANEL_CANCELLED) {
+        if (player_state.vitals.current_mp < magic_records[KF_ENUM_ENCODE(s32, selection)].mp_cost)
             return selection;
-        player_state.vitals.current_mp -= magic_records[selection].mp_cost;
-        if (selection == KF_MAGIC_HEALING) {
+        player_state.vitals.current_mp -= magic_records[KF_ENUM_ENCODE(s32, selection)].mp_cost;
+        if (selection == KF_MAGIC_PANEL_HEALING) {
             player_state.vitals.current_hp += player_state.magic;
-        } else if (selection == KF_MAGIC_DISPOISON) {
+        } else if (selection == KF_MAGIC_PANEL_DISPOISON) {
             player_state.status_effect_flags &= KF_PLAYER_STATUS_CURSE | KF_PLAYER_STATUS_DARKNESS;
-        } else if (selection == KF_MAGIC_RESIST_FIRE) {
+        } else if (selection == KF_MAGIC_PANEL_RESIST_FIRE) {
             player_state.status_effect_flags |= KF_PLAYER_STATUS_FIRE_DEFENSE_BOOST;
             player_apply_fire_defense_boost();
-        } else if (selection == KF_MAGIC_BLESS) {
+        } else if (selection == KF_MAGIC_PANEL_BLESS) {
             player_state.status_effect_flags &= KF_PLAYER_STATUS_POISON | KF_PLAYER_STATUS_SLOWED;
             player_state.vitals.current_hp += player_state.magic * BLESS_HP_RECOVERY_MAGIC_MULTIPLIER;
         }

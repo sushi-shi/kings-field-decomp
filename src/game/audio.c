@@ -34,7 +34,7 @@ void audio_initialize(void)
     SsUtSetReverbType(SS_REV_TYPE_STUDIO_C);
     SsUtReverbOn();
     SsUtSetReverbDepth(GAME_REVERB_DEPTH, GAME_REVERB_DEPTH);
-    audio_state.sequence_buffer = memory_allocate(GAME_SEQUENCE_BUFFER_BYTES);
+    audio_state.sequence_buffer = (u8 *)memory_allocate(GAME_SEQUENCE_BUFFER_BYTES);
     audio_state.sequence_active = KF_AUDIO_SEQUENCE_INACTIVE;
     inactive_voice_id = KF_AUDIO_VOICE_INACTIVE;
     index = KF_AUDIO_VOICE_SLOTS - 1;
@@ -70,7 +70,7 @@ void audio_play_map_sequence(u8 sequence_id)
     if (player_state.audio_music_enabled != KF_PLAYER_OPTION_OFF) {
         path[6] = sequence_id + '0';
         path[1] = KF_ENUM_ENCODE(u8, player_state.progress_state.current_floor) + '0';
-        if (cd_file_load_into(audio_state.sequence_buffer, path) == 0) {
+        if (cd_file_load_into(audio_state.sequence_buffer, path) == KF_RESOURCE_LOADED) {
             audio_state.sequence_id = SsSeqOpen(
                 (u32 *)audio_state.sequence_buffer, audio_state.active_vab_id);
             SsSeqSetVol(audio_state.sequence_id, GAME_SEQUENCE_VOLUME, GAME_SEQUENCE_VOLUME);
@@ -136,7 +136,7 @@ void audio_close_vab(void)
 }
 
 ADDRESS(0x80032cf0, 0x2c8)
-u32 audio_play_spatial(
+KfAudioPlaybackResult audio_play_spatial(
     const SoundRef *sound,
     const VECTOR *position,
     s16 volume,
@@ -158,7 +158,7 @@ u32 audio_play_spatial(
     attenuation = SquareRoot0(delta_x * delta_x + delta_y * delta_y + delta_z * delta_z)
         << KF_LENGTH_SQUARE_DOWNSHIFT;
     if (attenuation >= max_distance) {
-        return 0;
+        return KF_AUDIO_NOT_PLAYED;
     }
     attenuation = ((attenuation_distance - attenuation) << KF_FIXED7_BITS) / attenuation_distance;
     level = (attenuation * volume) >> KF_FIXED7_BITS;
@@ -202,11 +202,11 @@ u32 audio_play_spatial(
         sound->note,
         left,
         right);
-    return 1;
+    return KF_AUDIO_PLAYED;
 }
 
 ADDRESS(0x80032fb8, 0x30)
-u32 audio_play_spatial_default_range(
+KfAudioPlaybackResult audio_play_spatial_default_range(
     const SoundRef *sound,
     const VECTOR *position,
     s16 volume)
@@ -216,7 +216,7 @@ u32 audio_play_spatial_default_range(
 }
 
 ADDRESS(0x80032fe8, 0x2c)
-u32 audio_play_spatial_range(
+KfAudioPlaybackResult audio_play_spatial_range(
     const SoundRef *sound,
     const VECTOR *position,
     s16 volume,

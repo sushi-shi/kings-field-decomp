@@ -31,7 +31,7 @@ void render_enqueue_sprite(
     RotTransPers4(&corners[0], &corners[1], &corners[2], &corners[3],
                   &sxy0, &sxy1, &sxy2, &sxy3, &depth_cue, &clip_flag);
 
-    prim = primitive_buffer_allocate(sizeof(POLY_FT4));
+    prim = (KfGpuFT4 *)primitive_buffer_allocate(sizeof(POLY_FT4));
     SetPolyFT4(&prim->sdk);
     prim->sdk.clut = open_graphics_runtime.floor_item_state.material.clut;
     prim->sdk.tpage = open_graphics_runtime.floor_item_state.material.tpage;

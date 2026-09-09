@@ -93,7 +93,7 @@ void menu_draw_item_detail(KF_ENUM_PARAM(KfItemId, s32) item_id, KF_ENUM_PARAM(K
         price = item_sell_prices[KF_ENUM_ENCODE(s32, item_id)]
             [KF_ENUM_ENCODE(s32, shop_id) - KF_ENUM_ENCODE(s32, KF_SHOP_FIRST)];
     }
-    menu_format_number(price, MENU_ITEM_DETAIL_PRICE_DIGITS, 0, gs.glyphs.codes);
+    menu_format_number(price, MENU_ITEM_DETAIL_PRICE_DIGITS, KF_FORMAT_PAD_SPACES, gs.glyphs.codes);
     menu_draw_number(&menu_assets.number_atlas, &gs);
 
     gs.position.x = MENU_ITEM_DETAIL_LABEL_X;
@@ -112,7 +112,7 @@ void menu_draw_item_detail(KF_ENUM_PARAM(KfItemId, s32) item_id, KF_ENUM_PARAM(K
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
     gs.position.x = MENU_ITEM_DETAIL_QUANTITY_X;
-    menu_format_number(item_stock[KF_ITEM_STOCK_PLAYER][KF_ENUM_ENCODE(s32, item_id)], MENU_ITEM_PREVIEW_QUANTITY_DIGITS, 0, gs.glyphs.codes);
+    menu_format_number(item_stock[KF_ITEM_STOCK_PLAYER][KF_ENUM_ENCODE(s32, item_id)], MENU_ITEM_PREVIEW_QUANTITY_DIGITS, KF_FORMAT_PAD_SPACES, gs.glyphs.codes);
     menu_draw_number(&menu_assets.number_atlas, &gs);
 
     menu_blit_sprite_translucent(
@@ -122,7 +122,7 @@ void menu_draw_item_detail(KF_ENUM_PARAM(KfItemId, s32) item_id, KF_ENUM_PARAM(K
 
     gs.position.x = menu_window_layouts[KF_ENUM_ENCODE(s32, KF_MENU_WINDOW_SHOP)].rows[KF_SHOP_ROW_GOLD].position.x + MENU_ITEM_DETAIL_GOLD_X_OFFSET;
     gs.position.y = menu_window_layouts[KF_ENUM_ENCODE(s32, KF_MENU_WINDOW_SHOP)].rows[KF_SHOP_ROW_GOLD].position.y;
-    menu_format_number(player_state.gold, MENU_ITEM_DETAIL_GOLD_DIGITS, 0, gs.glyphs.codes);
+    menu_format_number(player_state.gold, MENU_ITEM_DETAIL_GOLD_DIGITS, KF_FORMAT_PAD_SPACES, gs.glyphs.codes);
     menu_draw_number(&menu_assets.number_atlas, &gs);
 }
 
@@ -138,7 +138,7 @@ ADDRESS(0x80027e58, 0x48)
 void menu_add_marker_quad(void)
 {
     AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_MARKER_OT_DEPTH,
-            &menu_assets.mid_depth_quads[game_graphics_runtime.display_state.buffer_index]);
+            &menu_assets.mid_depth_quads[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)]);
 }
 
 /* Link the shared front menu quad at ordering-table slot 0. */
@@ -146,7 +146,7 @@ ADDRESS(0x80027ea0, 0x44)
 void menu_add_frame_quad(void)
 {
     AddPrim(game_graphics_runtime.display_state.ordering_table,
-            &menu_assets.foreground_quads[game_graphics_runtime.display_state.buffer_index]);
+            &menu_assets.foreground_quads[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)]);
 }
 
 /*
@@ -168,29 +168,29 @@ void menu_draw_dialog_frame(const KfSaveSlotSummary *rows, KfSaveSlotOverlay ove
 
     if (overlay == KF_SAVE_OVERLAY_SKIP_FIRST) {
         AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_DIALOG_OT_DEPTH,
-                &menu_assets.dialog_quads[game_graphics_runtime.display_state.buffer_index][MENU_SAVE_SLOT1_QUAD]);
+                &menu_assets.dialog_quads[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)][MENU_SAVE_SLOT1_QUAD]);
         AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_DIALOG_OT_DEPTH,
-                &menu_assets.dialog_quads[game_graphics_runtime.display_state.buffer_index][MENU_SAVE_SLOT2_QUAD]);
+                &menu_assets.dialog_quads[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)][MENU_SAVE_SLOT2_QUAD]);
     }
     if (overlay == KF_SAVE_OVERLAY_SKIP_SECOND) {
         AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_DIALOG_OT_DEPTH,
-                &menu_assets.dialog_quads[game_graphics_runtime.display_state.buffer_index][MENU_SAVE_SLOT0_QUAD]);
+                &menu_assets.dialog_quads[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)][MENU_SAVE_SLOT0_QUAD]);
         AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_DIALOG_OT_DEPTH,
-                &menu_assets.dialog_quads[game_graphics_runtime.display_state.buffer_index][MENU_SAVE_SLOT2_QUAD]);
+                &menu_assets.dialog_quads[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)][MENU_SAVE_SLOT2_QUAD]);
     }
     if (overlay == KF_SAVE_OVERLAY_SKIP_THIRD) {
         AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_DIALOG_OT_DEPTH,
-                &menu_assets.dialog_quads[game_graphics_runtime.display_state.buffer_index][MENU_SAVE_SLOT0_QUAD]);
+                &menu_assets.dialog_quads[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)][MENU_SAVE_SLOT0_QUAD]);
         AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_DIALOG_OT_DEPTH,
-                &menu_assets.dialog_quads[game_graphics_runtime.display_state.buffer_index][MENU_SAVE_SLOT1_QUAD]);
+                &menu_assets.dialog_quads[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)][MENU_SAVE_SLOT1_QUAD]);
     }
     if (overlay >= KF_SAVE_OVERLAY_ALL) {
         AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_DIALOG_OT_DEPTH,
-                &menu_assets.dialog_quads[game_graphics_runtime.display_state.buffer_index][MENU_SAVE_SLOT0_QUAD]);
+                &menu_assets.dialog_quads[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)][MENU_SAVE_SLOT0_QUAD]);
         AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_DIALOG_OT_DEPTH,
-                &menu_assets.dialog_quads[game_graphics_runtime.display_state.buffer_index][MENU_SAVE_SLOT1_QUAD]);
+                &menu_assets.dialog_quads[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)][MENU_SAVE_SLOT1_QUAD]);
         AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_DIALOG_OT_DEPTH,
-                &menu_assets.dialog_quads[game_graphics_runtime.display_state.buffer_index][MENU_SAVE_SLOT2_QUAD]);
+                &menu_assets.dialog_quads[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)][MENU_SAVE_SLOT2_QUAD]);
     }
 
     if (rows == 0) {
@@ -208,7 +208,7 @@ void menu_draw_dialog_frame(const KfSaveSlotSummary *rows, KfSaveSlotOverlay ove
             menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
             gs.position.x = 251;
-            menu_format_number(rows[i].experience, 6, 0, gs.glyphs.codes);
+            menu_format_number(rows[i].experience, 6, KF_FORMAT_PAD_SPACES, gs.glyphs.codes);
             menu_draw_number(&menu_assets.number_atlas, &gs);
 
             gs.position.x = MENU_SAVE_SUMMARY_LABEL_X;
@@ -219,7 +219,7 @@ void menu_draw_dialog_frame(const KfSaveSlotSummary *rows, KfSaveSlotOverlay ove
             menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
             gs.position.x = 286;
-            menu_format_number(KF_ENUM_ENCODE(u32, rows[i].current_floor), 1, 0, gs.glyphs.codes);
+            menu_format_number(KF_ENUM_ENCODE(u32, rows[i].current_floor), 1, KF_FORMAT_PAD_SPACES, gs.glyphs.codes);
             menu_draw_number(&menu_assets.number_atlas, &gs);
 
             gs.position.x = MENU_SAVE_SUMMARY_LABEL_X;
@@ -230,7 +230,7 @@ void menu_draw_dialog_frame(const KfSaveSlotSummary *rows, KfSaveSlotOverlay ove
             menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
             gs.position.x = MENU_SAVE_SUMMARY_VALUE_X;
-            menu_format_number(rows[i].current_hp, MENU_SAVE_STATUS_DIGITS, 0, gs.glyphs.codes);
+            menu_format_number(rows[i].current_hp, MENU_SAVE_STATUS_DIGITS, KF_FORMAT_PAD_SPACES, gs.glyphs.codes);
             menu_draw_number(&menu_assets.number_atlas, &gs);
 
             gs.glyphs.codes[0] = MENU_NUMBER_SLASH;
@@ -239,7 +239,7 @@ void menu_draw_dialog_frame(const KfSaveSlotSummary *rows, KfSaveSlotOverlay ove
             menu_draw_number(&menu_assets.number_atlas, &gs);
 
             gs.position.x += MENU_NUMBER_ADVANCE;
-            menu_format_number(rows[i].maximum_hp, MENU_SAVE_STATUS_DIGITS, 0, gs.glyphs.codes);
+            menu_format_number(rows[i].maximum_hp, MENU_SAVE_STATUS_DIGITS, KF_FORMAT_PAD_SPACES, gs.glyphs.codes);
             menu_draw_number(&menu_assets.number_atlas, &gs);
 
             gs.position.x = MENU_SAVE_SUMMARY_LABEL_X;
@@ -250,7 +250,7 @@ void menu_draw_dialog_frame(const KfSaveSlotSummary *rows, KfSaveSlotOverlay ove
             menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
             gs.position.x = MENU_SAVE_SUMMARY_VALUE_X;
-            menu_format_number(rows[i].current_mp, MENU_SAVE_STATUS_DIGITS, 0, gs.glyphs.codes);
+            menu_format_number(rows[i].current_mp, MENU_SAVE_STATUS_DIGITS, KF_FORMAT_PAD_SPACES, gs.glyphs.codes);
             menu_draw_number(&menu_assets.number_atlas, &gs);
 
             gs.glyphs.codes[0] = MENU_NUMBER_SLASH;
@@ -259,7 +259,7 @@ void menu_draw_dialog_frame(const KfSaveSlotSummary *rows, KfSaveSlotOverlay ove
             menu_draw_number(&menu_assets.number_atlas, &gs);
 
             gs.position.x += MENU_NUMBER_ADVANCE;
-            menu_format_number(rows[i].maximum_mp, MENU_SAVE_STATUS_DIGITS, 0, gs.glyphs.codes);
+            menu_format_number(rows[i].maximum_mp, MENU_SAVE_STATUS_DIGITS, KF_FORMAT_PAD_SPACES, gs.glyphs.codes);
             menu_draw_number(&menu_assets.number_atlas, &gs);
         }
     }
