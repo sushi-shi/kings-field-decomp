@@ -716,14 +716,14 @@ notify_linked:
                         }
                         map_object_start_action_if_idle(
                             neighbor, map_object_action_from_behavior(neighbor_definition->behavior_type));
-                        object->link.fields.action_parameter = neighbor_index;
-                        neighbor->link.fields.action_parameter = index;
+                        object->link.fields.action_parameter.object_index = neighbor_index;
+                        neighbor->link.fields.action_parameter.object_index = index;
                         goto start_paired_door;
                     }
                 }
                 neighbor_index++;
             }
-            object->link.fields.action_parameter = KF_MAP_OBJECT_PARAMETER_NONE;
+            object->link.fields.action_parameter.object_index = KF_MAP_OBJECT_PARAMETER_NONE;
 start_paired_door:
             map_object_start_action_if_idle(object, map_object_action_from_behavior(definition->behavior_type));
             continue;

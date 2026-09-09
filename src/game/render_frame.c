@@ -61,7 +61,7 @@ void render_frame(const VECTOR *position, const SVECTOR *rotation)
     hud_sprites[KF_HUD_DARKNESS_ICON].state = KF_HUD_HIDDEN;
     hud_sprites[KF_HUD_CURSE_ICON].state = KF_HUD_HIDDEN;
     if (player_state.hud_gauges_enabled == KF_PLAYER_OPTION_ON) {
-        u16 flags;
+        KfPlayerStatusFlags flags;
         hud_sprites[KF_HUD_HP_GAUGE].state = KF_HUD_VISIBLE;
         hud_sprites[KF_HUD_MP_GAUGE].state = KF_HUD_VISIBLE;
         hud_sprites[KF_HUD_ATTACK_GAUGE].state = KF_HUD_VISIBLE;
@@ -79,13 +79,13 @@ void render_frame(const VECTOR *position, const SVECTOR *rotation)
         hud_sprites[KF_HUD_ATTACK_GAUGE].sprite.w = player_state.attack_charge_state.current / HUD_CHARGE_UNITS_PER_PIXEL;
         hud_sprites[KF_HUD_MAGIC_GAUGE].sprite.w = player_state.magic_charge / HUD_CHARGE_UNITS_PER_PIXEL;
         flags = player_state.status_effect_flags;
-        if (flags & KF_PLAYER_STATUS_CURSE) {
+        if ((flags & KF_PLAYER_STATUS_CURSE) != KF_PLAYER_STATUS_NONE) {
             hud_sprites[KF_HUD_CURSE_ICON].state = KF_HUD_VISIBLE;
-        } else if (flags & KF_PLAYER_STATUS_DARKNESS) {
+        } else if ((flags & KF_PLAYER_STATUS_DARKNESS) != KF_PLAYER_STATUS_NONE) {
             hud_sprites[KF_HUD_DARKNESS_ICON].state = KF_HUD_VISIBLE;
-        } else if (flags & KF_PLAYER_STATUS_POISON) {
+        } else if ((flags & KF_PLAYER_STATUS_POISON) != KF_PLAYER_STATUS_NONE) {
             status_sprite->state = KF_HUD_VISIBLE;
-        } else if (flags & KF_PLAYER_STATUS_SLOWED) {
+        } else if ((flags & KF_PLAYER_STATUS_SLOWED) != KF_PLAYER_STATUS_NONE) {
             hud_sprites[KF_HUD_SLOWED_ICON].state = KF_HUD_VISIBLE;
         }
     } else {

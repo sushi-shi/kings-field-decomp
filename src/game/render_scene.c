@@ -117,7 +117,7 @@ next_actor:
     SetLightMatrix(&render_light_matrices[KF_RENDER_LIGHT_EFFECT]);
     sprite = effect_pool_records;
     for (i = KF_EFFECT_CAPACITY - 1; i != -1; i--) {
-        if (sprite->type == KF_EFFECT_SLOT_FREE || sprite->render_id == KF_EFFECT_RENDER_NONE) {
+        if (sprite->type == KF_EFFECT_SLOT_FREE || sprite->render_id.model == KF_EFFECT_MODEL_NONE) {
             goto next_sprite;
         }
         {

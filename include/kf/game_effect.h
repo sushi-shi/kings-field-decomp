@@ -15,8 +15,7 @@
 struct KfPoolRecord;
 
 enum {
-    KF_EFFECT_CAPACITY = 48,
-    KF_EFFECT_SLOT_FREE = 0xff
+    KF_EFFECT_CAPACITY = 48
 };
 
 /* Behavioral identities; other kind/resource IDs remain unresolved. */
@@ -54,21 +53,36 @@ KF_ENUM_BEGIN(KfEffectKind, u8)
 KF_ENUM_END(KfEffectKind)
 
 /* Resource identities follow their effect use; billboard IDs may advance by frame. */
-enum {
+KF_ENUM_BEGIN(KfEffectBillboardId, u8)
     KF_EFFECT_BILLBOARD_FIRE_BALL = 0,
+    KF_EFFECT_BILLBOARD_FIRE_BALL_FRAME_1 = 1,
+    KF_EFFECT_BILLBOARD_FIRE_BALL_FRAME_2 = 2,
+    KF_EFFECT_BILLBOARD_FIRE_BALL_FRAME_3 = 3,
+    KF_EFFECT_BILLBOARD_FIRE_BALL_FRAME_4 = 4,
     KF_EFFECT_BILLBOARD_WIND_CUTTER = 5,
     KF_EFFECT_BILLBOARD_LIGHTNING_BOLT = 6,
+    KF_EFFECT_BILLBOARD_LIGHTNING_BOLT_FRAME_1 = 7,
     KF_EFFECT_BILLBOARD_DARKNESS_PROJECTILE = 8,
     KF_EFFECT_BILLBOARD_SCATTER_PROJECTILE = 9,
     KF_EFFECT_BILLBOARD_CURSE_PROJECTILE = 10,
     KF_EFFECT_BILLBOARD_LIGHTNING_IMPACT = 11,
+    KF_EFFECT_BILLBOARD_LIGHTNING_IMPACT_FRAME_1 = 12,
+    KF_EFFECT_BILLBOARD_LIGHTNING_IMPACT_FRAME_2 = 13,
     KF_EFFECT_BILLBOARD_GROUND_TRAIL = 14,
+    KF_EFFECT_BILLBOARD_GROUND_TRAIL_FRAME_1 = 15,
+    KF_EFFECT_BILLBOARD_GROUND_TRAIL_FRAME_2 = 16,
     KF_EFFECT_BILLBOARD_LIGHTNING_BOLT_ALTERNATE = 17,
+    KF_EFFECT_BILLBOARD_LIGHTNING_ALTERNATE_FRAME_1 = 18,
     KF_EFFECT_BILLBOARD_LIGHTNING_IMPACT_ALTERNATE = 19,
-    KF_EFFECT_BILLBOARD_SPRITE_COUNT = 22
-};
+    KF_EFFECT_BILLBOARD_IMPACT_ALTERNATE_FRAME_1 = 20,
+    KF_EFFECT_BILLBOARD_IMPACT_ALTERNATE_FRAME_2 = 21,
+    KF_EFFECT_BILLBOARD_NONE = 0xff
+KF_ENUM_END(KfEffectBillboardId)
+KF_ENUM_COUNTER(KfEffectBillboardId, u8)
 
-enum {
+enum { KF_EFFECT_BILLBOARD_SPRITE_COUNT = 22 };
+
+KF_ENUM_BEGIN(KfEffectModelId, u8)
     KF_EFFECT_MODEL_LIGHTNING_RADIAL_BLAST = 0,
     KF_EFFECT_MODEL_GROUND_BRANCH = 1,
     KF_EFFECT_MODEL_GROUND_BRANCH_VISUAL = 2,
@@ -85,25 +99,29 @@ enum {
     KF_EFFECT_MODEL_PHYSICAL_PROJECTILE = 14,
     KF_EFFECT_MODEL_LIGHTNING_RADIAL_BLAST_ALTERNATE = 15,
     KF_EFFECT_MODEL_HOMING_PROJECTILE_ALTERNATE = 16,
-    KF_EFFECT_MODEL_RADIAL_BLAST_ALTERNATE = 17
-};
+    KF_EFFECT_MODEL_RADIAL_BLAST_ALTERNATE = 17,
+    KF_EFFECT_MODEL_NONE = 0xff
+KF_ENUM_END(KfEffectModelId)
 
 /* Normalized packed codes retain word arithmetic before the byte API boundary. */
 typedef KF_ENUM_PROMOTED(KfEffectKind) KfEffectKindArgument;
 
 /* Low type bits select actors/player after the separate terrain checks.
  * The power bit alone does not imply the actor-damage player-credit class. */
-enum {
-    KF_EFFECT_COLLISION_TARGETS_MASK = 3,
+KF_ENUM_BEGIN(KfEffectType, u8)
+    KF_EFFECT_TYPE_NONE = 0,
     KF_EFFECT_COLLISION_TARGET_ACTORS = 1,
     KF_EFFECT_COLLISION_TARGET_PLAYER = 2,
     KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER = 3,
-    KF_EFFECT_USE_PLAYER_MAGIC = 0x10
-};
-
-enum {
-    KF_EFFECT_RENDER_NONE = 0xff
-};
+    KF_EFFECT_COLLISION_TARGETS_MASK = 3,
+    KF_EFFECT_USE_PLAYER_MAGIC = 0x10,
+    KF_EFFECT_CLASS_20 = 0x20,
+    KF_ACTOR_DAMAGE_CREDIT_PLAYER = 0x10,
+    KF_ACTOR_DAMAGE_CREDIT_MASK = 0xf0,
+    KF_EFFECT_FLOOR_DEFORM_TYPE = 0xf0,
+    KF_EFFECT_SLOT_FREE = 0xff
+KF_ENUM_END(KfEffectType)
+KF_ENUM_FLAGS(KfEffectType, u8)
 
 /* Other selector values request a fresh actor-cone query, not an actor index. */
 KF_ENUM_BEGIN(KfEffectHomingMode, u8)
@@ -122,9 +140,6 @@ enum {
     KF_EFFECT_GROUND_BRANCH_TIMER_DONE = 0xff
 };
 
-enum {
-    KF_EFFECT_FLOOR_DEFORM_TYPE = 0xf0,
-};
 
 /* Kind-specific phases and update counters share byte 7. Intermediate
  * ages are advanced within their named ranges, with byte wrap at 0xff. */
@@ -256,11 +271,19 @@ typedef struct KfFloorDeformSegment {
  * scale is 0x1000 (1.0 fixed point); the direction triple is copied from the
  * constructor's SVECTOR argument.
  */
+/* The animation-clip tag selects the bank. NONE is 0xff in both views;
+ * shared visibility checks use the model view for that common sentinel. */
+typedef union KfEffectRenderId {
+    KfEffectBillboardId billboard;
+    KfEffectModelId model;
+} KfEffectRenderId;
+typedef char check_effect_render_id_size[sizeof(KfEffectRenderId) == 1 ? 1 : -1];
+
 typedef struct KfEffectRecord {
-    u8 type;             /* 0x00 */
+    KfEffectType type;    /* 0x00: targets, class and free sentinel */
     KfEffectKind kind;   /* 0x01 */
-    u8 base_render_id;   /* 0x02: first sprite/model in the animation */
-    u8 render_id;        /* 0x03 */
+    KfEffectRenderId base_render_id;   /* 0x02: first sprite/model in the animation */
+    KfEffectRenderId render_id;        /* 0x03 */
     KfAnimationClip animation_clip;   /* 0x04: 0xff selects a billboard instead of a model */
     KF_ENUM_STORAGE(KfAudioPlaybackResult, u8) sound_played;
     u8 id;               /* 0x06 */
@@ -387,35 +410,35 @@ class KfEffectParentArguments { public: s32 parent_index; };
 extern KfEffectRecord *effect_pool_find_free(void);
 #if KF_MODERN_TYPES && !defined(KF_EFFECT_POOL_IMPLEMENTATION)
 extern KfEffectRecord *effect_pool_construct(
-    u8 id, u8 type, KfEffectKind kind, const VECTOR *position,
+    u8 id, KfEffectType type, KfEffectKind kind, const VECTOR *position,
     const SVECTOR *direction);
 extern KfEffectRecord *effect_pool_construct(
-    u8 id, u8 type, KfEffectKind kind, const VECTOR *position,
+    u8 id, KfEffectType type, KfEffectKind kind, const VECTOR *position,
     const SVECTOR *direction, KfEffectBranchArguments arguments);
 extern KfEffectRecord *effect_pool_construct(
-    u8 id, u8 type, KfEffectKind kind, const VECTOR *position,
+    u8 id, KfEffectType type, KfEffectKind kind, const VECTOR *position,
     const SVECTOR *direction, KfEffectRotationArguments arguments);
 extern KfEffectRecord *effect_pool_construct(
-    u8 id, u8 type, KfEffectKind kind, const VECTOR *position,
+    u8 id, KfEffectType type, KfEffectKind kind, const VECTOR *position,
     const SVECTOR *direction, KfEffectRotationSoundArguments arguments);
 extern KfEffectRecord *effect_pool_construct(
-    u8 id, u8 type, KfEffectKind kind, const VECTOR *position,
+    u8 id, KfEffectType type, KfEffectKind kind, const VECTOR *position,
     const SVECTOR *direction, KfEffectDurationSoundArguments arguments);
 extern KfEffectRecord *effect_pool_construct(
-    u8 id, u8 type, KfEffectKind kind, const VECTOR *position,
+    u8 id, KfEffectType type, KfEffectKind kind, const VECTOR *position,
     const SVECTOR *direction, KfEffectScatterArguments arguments);
 extern KfEffectRecord *effect_pool_construct(
-    u8 id, u8 type, KfEffectKind kind, const VECTOR *position,
+    u8 id, KfEffectType type, KfEffectKind kind, const VECTOR *position,
     const SVECTOR *direction, KfEffectSoundArguments arguments);
 extern KfEffectRecord *effect_pool_construct(
-    u8 id, u8 type, KfEffectKind kind, const VECTOR *position,
+    u8 id, KfEffectType type, KfEffectKind kind, const VECTOR *position,
     const SVECTOR *direction, KfEffectHomingArguments arguments);
 extern KfEffectRecord *effect_pool_construct(
-    u8 id, u8 type, KfEffectKind kind, const VECTOR *position,
+    u8 id, KfEffectType type, KfEffectKind kind, const VECTOR *position,
     const SVECTOR *direction, KfEffectParentArguments arguments);
 #else
 extern KfEffectRecord *effect_pool_construct(
-    u8 id, u8 type, KfEffectKind kind, const VECTOR *position,
+    u8 id, KfEffectType type, KfEffectKind kind, const VECTOR *position,
     const SVECTOR *direction, ...);
 #endif
 extern KfEffectRecord *effect_pool_spawn_typed(

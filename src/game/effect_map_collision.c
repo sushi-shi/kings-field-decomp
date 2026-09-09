@@ -28,7 +28,7 @@ static inline u32 effect_collision_in_cell(
     s32 y;
     s32 floor;
     s32 height;
-    u8 attr;
+    KfMapAttribute attr;
     u32 result;
 
     y = position->vy;
@@ -38,7 +38,7 @@ static inline u32 effect_collision_in_cell(
     }
     attr = map_cell_attribute_grid.cells[z][x];
     if (attr != KF_MAP_ATTRIBUTE_NONE) {
-        height = map_cell_attribute_height_table[attr];
+        height = map_cell_attribute_height_table[KF_ENUM_ENCODE(u8, attr)];
         if (height < 0) {
             height += floor;
             if (y < height) {

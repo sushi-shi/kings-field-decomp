@@ -110,14 +110,58 @@ KF_ENUM_END(KfItemId)
 enum {
     KF_FLOOR_ITEM_SPRITE_COUNT = 7,
     KF_FLOOR_ITEM_FACING_MASK = 0xf0,
-    KF_FLOOR_ITEM_FACING_BILLBOARD = 0,
-    KF_FLOOR_ITEM_FACING_ZERO_YAW = 0x10,
     KF_FLOOR_ITEM_FACING_TO_ANGLE_SHIFT = 6,
     KF_FLOOR_ITEM_FRAME_COUNT_MASK = 0x0f,
     KF_FLOOR_ITEM_INITIAL_FRAME_RANDOM_BITS = 15,
     KF_FLOOR_ITEM_FIXED_FACING_DEPTH_BIAS = 150,
     KF_FLOOR_ITEM_BILLBOARD_DEPTH_BIAS = 200
 };
+
+/* High-nibble facing encodings; the renderer applies the authored yaw bias. */
+KF_ENUM_BEGIN(KfFloorItemFacing, u8)
+    KF_FLOOR_ITEM_FACING_BILLBOARD = 0,
+    KF_FLOOR_ITEM_FACING_ZERO_YAW = 0x10,
+    KF_FLOOR_ITEM_FACING_QUARTER_TURN = 0x20,
+    KF_FLOOR_ITEM_FACING_HALF_TURN = 0x30,
+    KF_FLOOR_ITEM_FACING_THREE_QUARTER_TURN = 0x40,
+    KF_FLOOR_ITEM_FACING_50 = 0x50,
+    KF_FLOOR_ITEM_FACING_60 = 0x60,
+    KF_FLOOR_ITEM_FACING_70 = 0x70,
+    KF_FLOOR_ITEM_FACING_80 = 0x80,
+    KF_FLOOR_ITEM_FACING_90 = 0x90,
+    KF_FLOOR_ITEM_FACING_A0 = 0xa0,
+    KF_FLOOR_ITEM_FACING_B0 = 0xb0,
+    KF_FLOOR_ITEM_FACING_C0 = 0xc0,
+    KF_FLOOR_ITEM_FACING_D0 = 0xd0,
+    KF_FLOOR_ITEM_FACING_E0 = 0xe0,
+    KF_FLOOR_ITEM_FACING_F0 = 0xf0
+KF_ENUM_END(KfFloorItemFacing)
+
+/* Packed appearance has a facing selector and a numeric four-bit frame count.
+ * Construct it from those components, or copy the serialized typed record. */
+KF_ENUM_BEGIN(KfFloorItemAppearance, u8)
+    KF_FLOOR_ITEM_APPEARANCE_EMPTY = 0,
+    KF_FLOOR_ITEM_APPEARANCE_FRAME_MASK = 0x0f,
+    KF_FLOOR_ITEM_APPEARANCE_FACING_MASK = 0xf0
+KF_ENUM_END(KfFloorItemAppearance)
+KF_ENUM_FLAGS(KfFloorItemAppearance, u8)
+
+#if KF_MODERN_TYPES
+constexpr KfFloorItemAppearance floor_item_appearance(KfFloorItemFacing facing, u8 frames)
+{
+    return KF_ENUM_DECODE(KfFloorItemAppearance,
+        KF_ENUM_ENCODE(u8, facing) | (frames & KF_FLOOR_ITEM_FRAME_COUNT_MASK));
+}
+constexpr KfFloorItemFacing floor_item_facing(KfFloorItemAppearance appearance)
+{
+    return KF_ENUM_DECODE(KfFloorItemFacing,
+        KF_ENUM_ENCODE(u8, appearance) & KF_FLOOR_ITEM_FACING_MASK);
+}
+#else
+#define floor_item_appearance(facing, frames) \
+    ((facing) | ((frames) & KF_FLOOR_ITEM_FRAME_COUNT_MASK))
+#define floor_item_facing(appearance) ((appearance) & KF_FLOOR_ITEM_FACING_MASK)
+#endif
 
 /*
  * Serialized floor-item placement record (12 bytes) from the map resource
@@ -129,7 +173,7 @@ enum {
  */
 typedef struct KfFloorItemPlacement {
     u16 base_sprite_index;
-    u8 facing_and_frame_count;
+    KfFloorItemAppearance facing_and_frame_count;
     u8 unknown_03;
     u8 tile_z;
     u8 tile_x;
@@ -140,7 +184,7 @@ typedef struct KfFloorItemPlacement {
 
 typedef struct KfFloorItem {
     u16 base_sprite_index;
-    u8 facing_and_frame_count;
+    KfFloorItemAppearance facing_and_frame_count;
     u8 unknown_03;
     s32 position_x;
     s32 position_y;

@@ -279,9 +279,18 @@ typedef union KfMapObjectSpawn {
     u8 effect_id;
 } KfMapObjectSpawn;
 
+/* Behavior selects an effect slot, a paired object, or a map-copy region. */
+typedef union KfMapObjectParameter {
+    u8 effect_index;
+    u8 object_index;
+    KfMapCopyRegionId copy_region;
+} KfMapObjectParameter;
+typedef char check_map_object_parameter_size[
+    sizeof(KfMapObjectParameter) == 1 ? 1 : -1];
+
 typedef struct KfMapObjectLinkFields {
     u8 link_id;
-    u8 action_parameter;
+    KfMapObjectParameter action_parameter;
     KfMapObjectSpawn spawn;
     s16 vertical_velocity;
     KfNotificationId linked_notification;

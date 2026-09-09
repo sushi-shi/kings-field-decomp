@@ -5,8 +5,7 @@
 
 enum {
     LIGHTING_COLOR_BLEND_STEP = 0x400,
-    VITAL_RESTORE_COLOR_LEVEL = 0xfff,
-    VITAL_RESTORE_STATUS_KEEP_MASK = 0xfff0
+    VITAL_RESTORE_COLOR_LEVEL = 0xfff
 };
 
 /*
@@ -73,5 +72,5 @@ void player_restore_vitals_with_color_cycle(void)
     lighting_transition_color_matrix(&first, &saved);
     player_state.vitals.current_hp = player_state.vitals.maximum_hp;
     player_state.vitals.current_mp = player_state.vitals.maximum_mp;
-    player_state.status_effect_flags &= VITAL_RESTORE_STATUS_KEEP_MASK;
+    player_state.status_effect_flags &= KF_PLAYER_STATUS_KEEP_UPPER;
 }

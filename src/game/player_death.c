@@ -173,7 +173,7 @@ void player_death_restart(void)
         game_state_initialize();
         floor = KF_FLOOR_FORCE_RELOAD;
     }
-    player_state.status_effect_flags = 0;
+    player_state.status_effect_flags = KF_PLAYER_STATUS_NONE;
     player_state.camera_rotation.vz = 0;
     player_state.camera_rotation.vx = 0;
     if (floor != KF_FLOOR_1) {
@@ -264,7 +264,7 @@ void player_recalculate_combat_stats(void)
     player_state.fire_defense = 0;
     player_state.physical_power = player_state.base_physical_power;
     player_state.magic = player_state.base_magic;
-    if (player_state.status_effect_flags & KF_PLAYER_STATUS_CURSE) {
+    if ((player_state.status_effect_flags & KF_PLAYER_STATUS_CURSE) != KF_PLAYER_STATUS_NONE) {
         power = player_state.physical_power - CURSE_PHYSICAL_POWER_PENALTY;
         if (power < 0) {
             power = 0;
@@ -352,7 +352,7 @@ void player_recalculate_combat_stats(void)
     if (player_state.equipped_head_armor_id == KF_ITEM_BLACK_MASK) {
         player_state.physical_power -= BLACK_MASK_PHYSICAL_POWER_PENALTY;
     }
-    if (player_state.status_effect_flags & KF_PLAYER_STATUS_FIRE_DEFENSE_BOOST) {
+    if ((player_state.status_effect_flags & KF_PLAYER_STATUS_FIRE_DEFENSE_BOOST) != KF_PLAYER_STATUS_NONE) {
         player_state.fire_defense += FIRE_DEFENSE_STATUS_BONUS;
     }
     if (player_state.base_magic >= DISPOISON_REQUIRED_BASE_MAGIC && magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_HEALING)].learned != KF_MAGIC_UNLEARNED && magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_DISPOISON)].learned == KF_MAGIC_UNLEARNED) {
@@ -493,7 +493,7 @@ void player_apply_damage(
     u16 component0,
     u16 component1,
     u16 component2,
-    u16 status_effect_flags,
+    KfPlayerStatusFlags status_effect_flags,
     u16 component3,
     u16 component4,
     u16 scale_q12,
@@ -503,11 +503,11 @@ void player_apply_damage(
     s32 loss;
     s32 remaining;
 
-    if (status_effect_flags & KF_PLAYER_STATUS_CURSE) {
+    if ((status_effect_flags & KF_PLAYER_STATUS_CURSE) != KF_PLAYER_STATUS_NONE) {
         player_state.curse_timer = KF_CURSE_DURATION_UPDATES;
         player_state.status_effect_flags |= KF_PLAYER_STATUS_CURSE;
     }
-    if ((status_effect_flags & KF_PLAYER_STATUS_DARKNESS)
+    if (((status_effect_flags & KF_PLAYER_STATUS_DARKNESS) != KF_PLAYER_STATUS_NONE)
         && player_state.equipped_accessory_id != KF_ITEM_MOON_AMULET) {
         if (player_state.darkness_timer != KF_PLAYER_STATUS_TIMER_INACTIVE) {
             if (player_state.darkness_timer < KF_DARKNESS_REAPPLY_TIMER) {
@@ -518,14 +518,14 @@ void player_apply_damage(
         }
         player_state.status_effect_flags |= KF_PLAYER_STATUS_DARKNESS;
     }
-    if (status_effect_flags & KF_PLAYER_STATUS_POISON) {
+    if ((status_effect_flags & KF_PLAYER_STATUS_POISON) != KF_PLAYER_STATUS_NONE) {
         if (player_state.poison_resistance
             < (rand() * PLAYER_POISON_ROLL_BUCKETS) >> PLAYER_POISON_ROLL_SHIFT) {
             player_state.poison_timer = KF_POISON_DURATION_UPDATES;
             player_state.status_effect_flags |= KF_PLAYER_STATUS_POISON;
         }
     }
-    if (status_effect_flags & KF_PLAYER_STATUS_SLOWED) {
+    if ((status_effect_flags & KF_PLAYER_STATUS_SLOWED) != KF_PLAYER_STATUS_NONE) {
         player_state.slowed_timer = KF_SLOWED_DURATION_UPDATES;
         player_state.status_effect_flags |= KF_PLAYER_STATUS_SLOWED;
     }
@@ -596,7 +596,7 @@ void player_apply_radial_damage(
         attenuation = scale_q12;
     }
     player_apply_damage(
-        component0, component1, component2, 0, component3, component4,
+        component0, component1, component2, KF_PLAYER_STATUS_NONE, component3, component4,
         attenuation, multiplier_tenths);
 }
 

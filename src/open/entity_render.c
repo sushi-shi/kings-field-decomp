@@ -113,7 +113,7 @@ void render_floor_item(KfFloorItem *item)
     SVECTOR screen;
     MATRIX model;
     long flag;
-    u16 facing;
+    KF_ENUM_PARAM(KfFloorItemFacing, u16) facing;
     u32 next_frame;
     u32 frame_count;
     s16 depth_bias;
@@ -124,10 +124,10 @@ void render_floor_item(KfFloorItem *item)
     screen.vy = (u16)item->position_y - (u16)open_graphics_runtime.render_state.view_position.vy;
     screen.vz = (u16)item->position_z - (u16)open_graphics_runtime.render_state.view_position.vz;
     RotTrans(&screen, (VECTOR *)&model.t, &flag);
-    facing = item->facing_and_frame_count & KF_FLOOR_ITEM_FACING_MASK;
-    if ((u8)facing != KF_FLOOR_ITEM_FACING_BILLBOARD) {
+    facing = floor_item_facing(item->facing_and_frame_count);
+    if (KF_ENUM_ENCODE(u8, facing) != KF_ENUM_ENCODE(u8, KF_FLOOR_ITEM_FACING_BILLBOARD)) {
         matrix_set_rotation_y(
-            (facing - KF_FLOOR_ITEM_FACING_ZERO_YAW) << KF_FLOOR_ITEM_FACING_TO_ANGLE_SHIFT,
+            (KF_ENUM_ENCODE(u16, facing) - KF_ENUM_ENCODE(u8, KF_FLOOR_ITEM_FACING_ZERO_YAW)) << KF_FLOOR_ITEM_FACING_TO_ANGLE_SHIFT,
             &model);
         MulMatrix2(&open_graphics_runtime.render_state.view_matrix, &model);
         SetRotMatrix(&model);
@@ -140,7 +140,7 @@ void render_floor_item(KfFloorItem *item)
     render_enqueue_sprite(
         &floor_item_sprites[item->base_sprite_index + item->animation_frame], depth_bias, KF_SPRITE_DEPTH_CUE_BOOSTED);
     next_frame = item->animation_frame + 1;
-    frame_count = item->facing_and_frame_count;
+    frame_count = KF_ENUM_ENCODE(u8, item->facing_and_frame_count);
     item->animation_frame = next_frame;
     if ((next_frame & 0xff) >= (frame_count & KF_FLOOR_ITEM_FRAME_COUNT_MASK)) {
         item->animation_frame = 0;

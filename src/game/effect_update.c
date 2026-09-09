@@ -39,7 +39,7 @@ static KfFloorDeformSegment floor_deform_segments[FLOOR_DEFORM_SEGMENT_COUNT] = 
 ADDRESS(0x80037fbc, 0x24)
 int effect_magic_power(KfEffectRecord *effect)
 {
-    if (effect->type & KF_EFFECT_USE_PLAYER_MAGIC) {
+    if ((effect->type & KF_EFFECT_USE_PLAYER_MAGIC) != KF_EFFECT_TYPE_NONE) {
         return player_state.magic;
     }
     return EFFECT_FIXED_MAGIC_POWER;
@@ -76,7 +76,7 @@ void effect_projectile_update_3d(SVECTOR *probe_offset, KF_ENUM_PARAM(KfEffectPh
             } else if ((collision >> KF_COLLISION_KIND_SHIFT) == (KF_COLLISION_PLAYER >> KF_COLLISION_KIND_SHIFT)) {
                 player_apply_damage(magic->damage_components[0],
                     magic->damage_components[2], magic->damage_components[1],
-                    0, 0, 0, KF_FIXED12_ONE, record->id);
+                    KF_PLAYER_STATUS_NONE, 0, 0, KF_FIXED12_ONE, record->id);
             }
             record->direction.words.x = -record->direction.words.x;
         }
@@ -142,7 +142,7 @@ void effect_projectile_update_2d(s32 orbit_radius, KF_ENUM_PARAM(KfEffectPhase, 
             } else if ((collision >> KF_COLLISION_KIND_SHIFT) == (KF_COLLISION_PLAYER >> KF_COLLISION_KIND_SHIFT)) {
                 player_apply_damage(magic->damage_components[0],
                     magic->damage_components[2], magic->damage_components[1],
-                    0, 0, 0, KF_FIXED12_ONE, record->id);
+                    KF_PLAYER_STATUS_NONE, 0, 0, KF_FIXED12_ONE, record->id);
             }
         }
         if (record->sound_played == KF_AUDIO_NOT_PLAYED) {

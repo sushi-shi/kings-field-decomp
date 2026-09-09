@@ -94,7 +94,6 @@ enum {
     ACTOR_MULTI_HIT_NEGATIVE_YAW_PHASE = 3500,
     ACTOR_MULTI_HIT_POSITIVE_YAW_PHASE = 3800,
     ACTOR_DEATH_DROP_PHASE = KF_ACTOR_ANIMATION_PHASE_PERIOD / 2,
-    ACTOR_DEFINITION_DROP_UNSET = 255,
     ACTOR_GOLD_RANDOM_SHIFT = 15,
     ACTOR_DROP_CHANCE_RANDOM_SHIFT = 7,
     ACTOR_BOSS_DEATH_SOUND_PHASE1 = 500,
@@ -159,24 +158,24 @@ void actor_select_next_action(s32 player_distance)
                && actor_try_select_profiled_action(
                       KF_ACTOR_ACTION_EFFECT0,
                       player_distance,
-                      definition->action_parameters[KF_ACTOR_PARAM_EFFECT0],
-                      definition->action_parameters[KF_ACTOR_PARAM_EFFECT0_CHANCE])
+                      definition->action_parameters.effect_codes[0],
+                      definition->action_parameters.effect_chances[0])
                    != KF_ACTOR_ACTION_NONE) {
         chosen = KF_ACTOR_ACTION_EFFECT0;
     } else if (definition->action_animations[KF_ACTOR_ANIM_SLOT_EFFECT1] != KF_ANIMATION_CLIP_NONE
                && actor_try_select_profiled_action(
                       KF_ACTOR_ACTION_EFFECT1,
                       player_distance,
-                      definition->action_parameters[KF_ACTOR_PARAM_EFFECT1],
-                      definition->action_parameters[KF_ACTOR_PARAM_EFFECT1_CHANCE])
+                      definition->action_parameters.effect_codes[1],
+                      definition->action_parameters.effect_chances[1])
                    != KF_ACTOR_ACTION_NONE) {
         chosen = KF_ACTOR_ACTION_EFFECT1;
     } else if (definition->action_animations[KF_ACTOR_ANIM_SLOT_EFFECT2] != KF_ANIMATION_CLIP_NONE
                && actor_try_select_profiled_action(
                       KF_ACTOR_ACTION_EFFECT2,
                       player_distance,
-                      definition->action_parameters[KF_ACTOR_PARAM_EFFECT2],
-                      definition->action_parameters[KF_ACTOR_PARAM_EFFECT2_CHANCE])
+                      definition->action_parameters.effect_codes[2],
+                      definition->action_parameters.effect_chances[2])
                    != KF_ACTOR_ACTION_NONE) {
         chosen = KF_ACTOR_ACTION_EFFECT2;
     } else if (definition->action_animations[KF_ACTOR_ANIM_SLOT_MELEE] != KF_ANIMATION_CLIP_NONE
@@ -489,7 +488,7 @@ KfActorMoveResult actor_move_along_heading(KfActorMoveDirection direction, KfAct
  * Bit 5 of the code spawns a mirrored pair.
  */
 ADDRESS(0x8002edd4, 0x454)
-void actor_spawn_action_effect(s32 effect_code, KfActorEffectSlot effect_slot)
+void actor_spawn_action_effect(KF_ENUM_PARAM(KfActorEffectCode, s32) effect_code, KfActorEffectSlot effect_slot)
 {
     KfActor *actor = actor_state.current;
     KfActorDefinition *definition = actor_state.current_definition;
@@ -506,23 +505,23 @@ void actor_spawn_action_effect(s32 effect_code, KfActorEffectSlot effect_slot)
     s32 speed;
 
     repeat = 1;
-    if (effect_code & KF_ACTOR_EFFECT_PAIRED) {
+    if ((effect_code & KF_ACTOR_EFFECT_PAIRED) != KF_ACTOR_EFFECT_CODE_NONE) {
         repeat = 2;
     }
     effect_code &= KF_ACTOR_EFFECT_KIND_MASK;
     for (i = 0; i < repeat; i++) {
-        switch (KF_ENUM_DECODE(KfEffectKindArgument, effect_code)) {
-        case KF_EFFECT_KIND_FIRE_BALL:
-        case KF_EFFECT_KIND_WIND_CUTTER:
-        case KF_EFFECT_KIND_LIGHT_NEEDLE:
-        case KF_EFFECT_KIND_ACTOR_SPAWNER:
-        case KF_EFFECT_KIND_SCATTER_PROJECTILE:
-        case KF_EFFECT_KIND_DARKNESS_PROJECTILE:
-        case KF_EFFECT_KIND_CURSE_PROJECTILE:
-        case KF_EFFECT_KIND_EMERGING_PROJECTILE:
-        case KF_EFFECT_KIND_PHYSICAL_PROJECTILE:
-        case KF_EFFECT_KIND_LIGHTNING_BOLT_ALTERNATE:
-        case KF_EFFECT_KIND_HOMING_PROJECTILE_ALTERNATE:
+        switch (effect_code) {
+        case KF_ACTOR_EFFECT_CODE_FIRE_BALL:
+        case KF_ACTOR_EFFECT_CODE_WIND_CUTTER:
+        case KF_ACTOR_EFFECT_CODE_LIGHT_NEEDLE:
+        case KF_ACTOR_EFFECT_CODE_ACTOR_SPAWNER:
+        case KF_ACTOR_EFFECT_CODE_SCATTER_PROJECTILE:
+        case KF_ACTOR_EFFECT_CODE_DARKNESS_PROJECTILE:
+        case KF_ACTOR_EFFECT_CODE_CURSE_PROJECTILE:
+        case KF_ACTOR_EFFECT_CODE_EMERGING_PROJECTILE:
+        case KF_ACTOR_EFFECT_CODE_PHYSICAL_PROJECTILE:
+        case KF_ACTOR_EFFECT_CODE_LIGHTNING_ALTERNATE:
+        case KF_ACTOR_EFFECT_CODE_HOMING_ALTERNATE:
             offset.vx = definition->attachment_offsets[KF_ENUM_ENCODE(s32, effect_slot)].x;
             offset.vy = definition->attachment_offsets[KF_ENUM_ENCODE(s32, effect_slot)].y;
             offset.vz = definition->attachment_offsets[KF_ENUM_ENCODE(s32, effect_slot)].z;
@@ -546,12 +545,12 @@ void actor_spawn_action_effect(s32 effect_code, KfActorEffectSlot effect_slot)
                 &position, facing, ACTOR_EFFECT_AIM_RANGE, KF_ACTOR_AIM_TOLERANCE);
             if (distance == -1) {
                 effect_rotation.angles.x = 0;
-                if (KF_ENUM_DECODE(KfEffectKindArgument, effect_code) == KF_EFFECT_KIND_LIGHTNING_BOLT_ALTERNATE) {
+                if (effect_code == KF_ACTOR_EFFECT_CODE_LIGHTNING_ALTERNATE) {
                     speed = ACTOR_LIGHTNING_VARIANT_SPEED;
                     effect_rotation.angles.x = ACTOR_LIGHTNING_FALLBACK_PITCH;
                     distance = ACTOR_EFFECT_FALLBACK_MOVE_COUNT;
-                } else if (KF_ENUM_DECODE(KfEffectKindArgument, effect_code) == KF_EFFECT_KIND_ACTOR_SPAWNER
-                           || KF_ENUM_DECODE(KfEffectKindArgument, effect_code) == KF_EFFECT_KIND_SCATTER_PROJECTILE) {
+                } else if (effect_code == KF_ACTOR_EFFECT_CODE_ACTOR_SPAWNER
+                           || effect_code == KF_ACTOR_EFFECT_CODE_SCATTER_PROJECTILE) {
                     speed = ACTOR_PROPAGATING_EFFECT_SPEED;
                     distance = ACTOR_EFFECT_FALLBACK_MOVE_COUNT;
                 } else {
@@ -562,7 +561,7 @@ void actor_spawn_action_effect(s32 effect_code, KfActorEffectSlot effect_slot)
                 effect_rotation.angles.y = vector_xz_to_angle(
                     actor_state.player_position.vx - position.vx,
                     position.vz - actor_state.player_position.vz);
-                if (KF_ENUM_DECODE(KfEffectKindArgument, effect_code) == KF_EFFECT_KIND_LIGHTNING_BOLT_ALTERNATE) {
+                if (effect_code == KF_ACTOR_EFFECT_CODE_LIGHTNING_ALTERNATE) {
                     speed = ACTOR_LIGHTNING_VARIANT_SPEED;
                     effect_rotation.angles.x = vector_xz_to_angle(
                         position.vy - (actor_state.player_position.vy - ACTOR_LIGHTNING_TARGET_Y_OFFSET), -distance);
@@ -570,7 +569,7 @@ void actor_spawn_action_effect(s32 effect_code, KfActorEffectSlot effect_slot)
                 } else {
                     effect_rotation.angles.x = vector_xz_to_angle(
                         position.vy - actor_state.player_position.vy, -distance);
-                    if (KF_ENUM_DECODE(KfEffectKindArgument, effect_code) == KF_EFFECT_KIND_SCATTER_PROJECTILE) {
+                    if (effect_code == KF_ACTOR_EFFECT_CODE_SCATTER_PROJECTILE) {
                         speed = ACTOR_PROPAGATING_EFFECT_SPEED;
                         distance -= ACTOR_SCATTER_TARGET_STANDOFF;
                     /* Retail shares one step-count clamp between codes 10 and 9. */
@@ -580,7 +579,7 @@ void actor_spawn_action_effect(s32 effect_code, KfActorEffectSlot effect_slot)
                         } else {
                             distance = distance / speed;
                         }
-                    } else if (KF_ENUM_DECODE(KfEffectKindArgument, effect_code) == KF_EFFECT_KIND_ACTOR_SPAWNER) {
+                    } else if (effect_code == KF_ACTOR_EFFECT_CODE_ACTOR_SPAWNER) {
                         speed = ACTOR_PROPAGATING_EFFECT_SPEED;
                         distance -= ACTOR_SPAWNER_TARGET_STANDOFF;
                         goto clamp_steps;
@@ -590,30 +589,30 @@ void actor_spawn_action_effect(s32 effect_code, KfActorEffectSlot effect_slot)
                 }
             }
             effect_rotation.angles.z = 0;
-            if (KF_ENUM_DECODE(KfEffectKindArgument, effect_code) == KF_EFFECT_KIND_WIND_CUTTER) {
+            if (effect_code == KF_ACTOR_EFFECT_CODE_WIND_CUTTER) {
                 speed = ACTOR_WIND_CUTTER_SPEED;
             }
             pitch_yaw_to_forward_vector(&effect_rotation.angles, &direction);
             vector3s_scale_shift12(speed, &direction);
-            if (KF_ENUM_DECODE(KfEffectKindArgument, effect_code) == KF_EFFECT_KIND_LIGHT_NEEDLE || KF_ENUM_DECODE(KfEffectKindArgument, effect_code) == KF_EFFECT_KIND_PHYSICAL_PROJECTILE) {
+            if (effect_code == KF_ACTOR_EFFECT_CODE_LIGHT_NEEDLE || effect_code == KF_ACTOR_EFFECT_CODE_PHYSICAL_PROJECTILE) {
                 effect_pool_construct(
-                    definition->effect_owner_id, 0x20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
-                    KF_ENUM_DECODE(KfEffectKindArgument, effect_code), &position, &direction, KF_EFFECT_ARGS_ROTATION_SOUND(&effect_rotation.vector, KF_EFFECT_SOUND_PLAY));
-            } else if (KF_ENUM_DECODE(KfEffectKindArgument, effect_code) == KF_EFFECT_KIND_HOMING_PROJECTILE_ALTERNATE) {
+                    definition->effect_owner_id, KF_EFFECT_CLASS_20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
+                    KF_ENUM_DECODE(KfEffectKindArgument, KF_ENUM_ENCODE(s32, effect_code)), &position, &direction, KF_EFFECT_ARGS_ROTATION_SOUND(&effect_rotation.vector, KF_EFFECT_SOUND_PLAY));
+            } else if (effect_code == KF_ACTOR_EFFECT_CODE_HOMING_ALTERNATE) {
                 burst_rotation.angles.x = actor->rotation.angles.x;
                 burst_rotation.angles.y = facing;
                 burst_rotation.angles.z = actor->rotation.angles.z;
                 effect_pool_construct(
-                    definition->effect_owner_id, 0x20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER, KF_EFFECT_KIND_HOMING_PROJECTILE_ALTERNATE,
+                    definition->effect_owner_id, KF_EFFECT_CLASS_20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER, KF_EFFECT_KIND_HOMING_PROJECTILE_ALTERNATE,
                     &position, &direction, KF_EFFECT_ARGS_HOMING(&burst_rotation.vector, KF_EFFECT_HOMING_PLAYER, KF_EFFECT_SOUND_PLAY));
-            } else if (KF_ENUM_DECODE(KfEffectKindArgument, effect_code) == KF_EFFECT_KIND_SCATTER_PROJECTILE) {
+            } else if (effect_code == KF_ACTOR_EFFECT_CODE_SCATTER_PROJECTILE) {
                 effect_pool_construct(
-                    definition->effect_owner_id, 0x20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
+                    definition->effect_owner_id, KF_EFFECT_CLASS_20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
                     KF_EFFECT_KIND_SCATTER_PROJECTILE, &position, &direction, KF_EFFECT_ARGS_SCATTER(ACTOR_SCATTER_GENERATIONS, distance, ACTOR_SCATTER_INITIAL_SCALE));
             } else {
                 effect_pool_construct(
-                    definition->effect_owner_id, 0x20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
-                    KF_ENUM_DECODE(KfEffectKindArgument, effect_code), &position, &direction, KF_EFFECT_ARGS_DURATION_SOUND(distance, KF_EFFECT_SOUND_PLAY));
+                    definition->effect_owner_id, KF_EFFECT_CLASS_20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
+                    KF_ENUM_DECODE(KfEffectKindArgument, KF_ENUM_ENCODE(s32, effect_code)), &position, &direction, KF_EFFECT_ARGS_DURATION_SOUND(distance, KF_EFFECT_SOUND_PLAY));
             }
             break;
         }
@@ -693,7 +692,7 @@ void actor_update_effect_action(KfActorEffectSlot effect_slot)
     }
     actor_advance_animation_clamped(actor, definition->action_animation_steps[index]);
     if (actor_animation_crossed_phase(actor, definition->action_animation_phases[index])) {
-        actor_spawn_action_effect(definition->action_parameters[KF_ENUM_ENCODE(s32, effect_slot)], effect_slot);
+        actor_spawn_action_effect(definition->action_parameters.effect_codes[KF_ENUM_ENCODE(s32, effect_slot)], effect_slot);
     }
     if (actor->animation_phase >= KF_ACTOR_ANIMATION_PHASE_MAX) {
         actor->action_progress = KF_ACTOR_PROGRESS_COMPLETE;
@@ -859,7 +858,7 @@ void actor_update_current_action(void)
     s32 home_x;
     s32 home_z;
     u16 debris;
-    u8 attribute;
+    KfMapAttribute attribute;
 
     collision_adjust_cell_occupancy(actor->cell_x, actor->cell_z, -1);
     switch (actor->action) {
@@ -960,11 +959,11 @@ void actor_update_current_action(void)
                     debris, &actor->position, -(definition->collision_height >> 1));
             }
             if (actor->slot_state == KF_ACTOR_SLOT_DYNAMIC || actor->slot_state == KF_ACTOR_SLOT_RESPAWNING) {
-                if (definition->action_parameters[KF_ACTOR_PARAM_DROP_OBJECT] != KF_ENUM_ENCODE(u8, KF_MAP_OBJECT_DROP_DISABLED) && definition->action_parameters[KF_ACTOR_PARAM_DROP_OBJECT] != ACTOR_DEFINITION_DROP_UNSET
-                    && (rand() >> ACTOR_DROP_CHANCE_RANDOM_SHIFT) <= definition->action_parameters[KF_ACTOR_PARAM_DROP_CHANCE]) {
+                if (definition->action_parameters.drop_object != KF_MAP_OBJECT_DROP_DISABLED && definition->action_parameters.drop_object != KF_MAP_OBJECT_FREE
+                    && (rand() >> ACTOR_DROP_CHANCE_RANDOM_SHIFT) <= definition->action_parameters.drop_chance) {
                     map_object_spawn_effect(
                         KF_MAP_OBJECT_DROP_FROM_DEFINITION,
-                        KF_ENUM_DECODE(KfMapObjectId, definition->action_parameters[KF_ACTOR_PARAM_DROP_OBJECT]),
+                        definition->action_parameters.drop_object,
                         &actor->position,
                         -(definition->collision_height >> 1));
                 }
@@ -1055,7 +1054,7 @@ void actor_update_current_action(void)
             actor->animation_id = definition->action_animations[KF_ACTOR_ANIM_SLOT_JUMP_ATTACK];
             actor->animation_phase = 0;
             attribute = map_cell_attribute_grid.cells[actor->cell_z][actor->cell_x];
-            if (map_cell_attribute_height_table[attribute - 1] > ACTOR_JUMP_HEIGHT_THRESHOLD) {
+            if (map_cell_attribute_height_table[KF_ENUM_ENCODE(u8, attribute) - 1] > ACTOR_JUMP_HEIGHT_THRESHOLD) {
                 actor->vertical_state = KF_ACTOR_VERTICAL_JUMP_ATTACK;
                 actor->vertical_velocity = ACTOR_JUMP_SHORT_VELOCITY_Y;
                 actor->animation_step = ACTOR_JUMP_SHORT_ANIMATION_STEP;
@@ -1313,7 +1312,7 @@ vertical:
             goto fall;
         }
         if ((hit >> KF_COLLISION_KIND_SHIFT) == (KF_COLLISION_PLAYER >> KF_COLLISION_KIND_SHIFT)) {
-            player_apply_damage(0, ACTOR_JUMP_CONTACT_STRIKING_DAMAGE, 0, 0, 0, 0, KF_FIXED12_ONE, KF_PLAYER_DAMAGE_MULTIPLIER_ONE);
+            player_apply_damage(0, ACTOR_JUMP_CONTACT_STRIKING_DAMAGE, 0, KF_PLAYER_STATUS_NONE, 0, 0, KF_FIXED12_ONE, KF_PLAYER_DAMAGE_MULTIPLIER_ONE);
         stagger:
             actor->vertical_state = KF_ACTOR_VERTICAL_JUMP_ATTACK;
             actor->vertical_velocity = ACTOR_JUMP_BOUNCE_VELOCITY_Y;

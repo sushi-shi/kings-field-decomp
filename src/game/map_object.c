@@ -281,8 +281,8 @@ void map_object_pool_update(void)
         switch (object->action) {
         case KF_MAP_OBJECT_ACTION_SWING_DOOR:
             timer = object->action_timer;
-            if (object->link.fields.action_parameter != KF_MAP_OBJECT_PARAMETER_NONE) {
-                pair = &map_object_state.objects[object->link.fields.action_parameter];
+            if (object->link.fields.action_parameter.object_index != KF_MAP_OBJECT_PARAMETER_NONE) {
+                pair = &map_object_state.objects[object->link.fields.action_parameter.object_index];
             } else {
                 pair = 0;
             }
@@ -432,7 +432,7 @@ void map_object_pool_update(void)
                 direction.vz = (-rcos(object->rotation.angles.y) * MAP_EMITTER_VELOCITY_NUMERATOR) >> MAP_EMITTER_VELOCITY_SHIFT;
                 effect_pool_construct(
                     object->link.fields.spawn.effect_id,
-                    0x20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
+                    KF_EFFECT_CLASS_20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
                     KF_EFFECT_KIND_MAP_EMITTER_PROJECTILE,
                     &object->position,
                     &direction,
@@ -448,7 +448,7 @@ void map_object_pool_update(void)
                 point.vy = object->position.vy + MAP_FIRE_BALL_EMITTER_Y_OFFSET;
                 effect_pool_construct(
                     object->link.fields.spawn.effect_id,
-                    0x20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
+                    KF_EFFECT_CLASS_20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
                     KF_EFFECT_KIND_FIRE_BALL,
                     &point,
                     &direction,
@@ -464,7 +464,7 @@ void map_object_pool_update(void)
                 point.vy = object->position.vy + MAP_WIND_CUTTER_EMITTER_Y_OFFSET;
                 effect_pool_construct(
                     object->link.fields.spawn.effect_id,
-                    0x20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
+                    KF_EFFECT_CLASS_20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
                     KF_EFFECT_KIND_WIND_CUTTER,
                     &point,
                     &direction,
@@ -491,7 +491,7 @@ void map_object_pool_update(void)
                 point.vy = object->position.vy + MAP_BOSS_EMITTER_Y_OFFSET;
                 effect_pool_construct(
                     object->link.fields.spawn.effect_id,
-                    0x20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
+                    KF_EFFECT_CLASS_20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
                     KF_EFFECT_KIND_WIND_CUTTER,
                     &point,
                     &direction,
@@ -506,7 +506,7 @@ void map_object_pool_update(void)
         case KF_MAP_OBJECT_ACTION_RELEASE_ORBIT_OR_SHORT_SWING:
         case KF_MAP_OBJECT_ACTION_RELEASE_LONG_SWING:
             if (object->link.fields.link_id == KF_MAP_LINK_NONE && object->action_timer == KF_MAP_OBJECT_PROGRESS_INIT) {
-                effect_pool_records[object->link.fields.action_parameter].phase = KF_EFFECT_HAZARD_RELEASE_REQUEST;
+                effect_pool_records[object->link.fields.action_parameter.effect_index].phase = KF_EFFECT_HAZARD_RELEASE_REQUEST;
                 object->action_timer = KF_MAP_OBJECT_PROGRESS_RUNNING;
             }
             break;
@@ -515,12 +515,12 @@ void map_object_pool_update(void)
                 break;
             }
             if (object->link.fields.link_id == KF_MAP_LINK_NONE) {
-                effect_pool_records[object->link.fields.action_parameter].visual.animation_phase = (KF_FIXED12_ONE - 1);
+                effect_pool_records[object->link.fields.action_parameter.effect_index].visual.animation_phase = (KF_FIXED12_ONE - 1);
                 object->action_timer = KF_MAP_OBJECT_SWITCH_DISABLED;
                 break;
             }
             if (object->action_timer == KF_MAP_OBJECT_SWITCH_FORWARD) {
-                record = &effect_pool_records[object->link.fields.action_parameter];
+                record = &effect_pool_records[object->link.fields.action_parameter.effect_index];
                 if (record->visual.animation_phase == 0) {
                     audio_play_spatial_default_range(
                         &gameplay_sound_ref_3, &object->position, KF_AUDIO_MAX_VOLUME);
@@ -536,7 +536,7 @@ void map_object_pool_update(void)
                     }
                 }
             } else if (object->action_timer == KF_MAP_OBJECT_SWITCH_REVERSE) {
-                record = &effect_pool_records[object->link.fields.action_parameter];
+                record = &effect_pool_records[object->link.fields.action_parameter.effect_index];
                 if (record->visual.animation_phase == (KF_FIXED12_ONE - 1)) {
                     audio_play_spatial_default_range(
                         &gameplay_sound_ref_3, &object->position, KF_AUDIO_MAX_VOLUME);
@@ -550,8 +550,8 @@ void map_object_pool_update(void)
             break;
         case KF_MAP_OBJECT_ACTION_COPY_REGION:
             if (object->link.fields.link_id == KF_MAP_LINK_NONE && object->action_timer == KF_MAP_OBJECT_PROGRESS_INIT) {
-                if (object->link.fields.action_parameter != KF_MAP_OBJECT_PARAMETER_NONE) {
-                    map_apply_copy_region(KF_ENUM_DECODE(KfMapCopyRegionId, object->link.fields.action_parameter));
+                if (object->link.fields.action_parameter.copy_region != KF_MAP_COPY_REGION_NONE) {
+                    map_apply_copy_region(object->link.fields.action_parameter.copy_region);
                 }
                 object->action_timer = KF_MAP_OBJECT_PROGRESS_RUNNING;
             }

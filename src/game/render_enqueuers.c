@@ -38,7 +38,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
 
         header = *(u32 *)packet;
         packet += KF_TMD_PACKET_HEADER_BYTES;
-        switch (header >> KF_TMD_MODE_SHIFT) {
+        switch (tmd_packet_mode(header)) {
         case KF_TMD_MODE_FT3: {
             KfTmdPrimitive *p = (KfTmdPrimitive *)packet;
             va = VTX(p->ft3.v0);
@@ -476,7 +476,7 @@ void render_enqueue_model(u16 object_index, s16 depth_bias)
     u8 *packet;
     u32 header;
     u32 remaining;
-    s32 type;
+    KF_ENUM_PARAM(KfTmdMode, s32) type;
     s32 otz;
     KfScreenVertex *va;
     KfScreenVertex *vb;
@@ -492,7 +492,7 @@ void render_enqueue_model(u16 object_index, s16 depth_bias)
 
         header = *(u32 *)packet;
         packet += KF_TMD_PACKET_HEADER_BYTES;
-        type = header >> KF_TMD_MODE_SHIFT;
+        type = tmd_packet_mode(header);
         switch (type) {
         case KF_TMD_MODE_GT3: {
             KfTmdPrimitive *gt = (KfTmdPrimitive *)packet;
@@ -692,7 +692,7 @@ void render_enqueue_map(u16 object_index)
 
         header = *(u32 *)packet;
         packet += KF_TMD_PACKET_HEADER_BYTES;
-        switch (header >> KF_TMD_MODE_SHIFT) {
+        switch (tmd_packet_mode(header)) {
         case KF_TMD_MODE_FT4: {
             KfTmdPrimitive *ft4 = (KfTmdPrimitive *)packet;
             s32 otz;

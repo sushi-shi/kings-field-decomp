@@ -115,7 +115,7 @@ void player_update(void)
     VECTOR position;
     MATRIX matrix;
     s32 distance;
-    u8 attribute;
+    KfMapAttribute attribute;
     KfMagicId magic_id;
 
     if (player_state.update_state == KF_PLAYER_UPDATE_DYING) {
@@ -157,7 +157,7 @@ void player_update(void)
         if ((input & PADRright) && !(player_previous_input & PADRright)) {
             map_interaction_dispatch(&player_state.camera_position, &player_state.camera_rotation);
         }
-        if (player_state.status_effect_flags & KF_PLAYER_STATUS_SLOWED) {
+        if ((player_state.status_effect_flags & KF_PLAYER_STATUS_SLOWED) != KF_PLAYER_STATUS_NONE) {
             player_movement_velocity_limit = PLAYER_SLOWED_MOVEMENT_LIMIT;
             player_turn_step_limit = PLAYER_SLOWED_TURN_LIMIT;
         } else {
@@ -499,7 +499,7 @@ void player_update(void)
     player_update_weapon_attack();
     lighting_set_active_color_matrix(KF_GAME_COLOR_DEFAULT);
     if (player_state.darkness_timer != KF_PLAYER_STATUS_TIMER_INACTIVE) {
-        if (!(player_state.status_effect_flags & KF_PLAYER_STATUS_DARKNESS)
+        if (!((player_state.status_effect_flags & KF_PLAYER_STATUS_DARKNESS) != KF_PLAYER_STATUS_NONE)
             && player_state.darkness_timer >= DARKNESS_FADE_STEPS + 1) {
             player_state.darkness_timer = DARKNESS_FADE_STEPS;
         }
@@ -604,7 +604,7 @@ void player_update(void)
     switch (attribute) {
     case KF_MAP_ATTRIBUTE_PITFALL:
         if (player_state.update_state == KF_PLAYER_UPDATE_NORMAL) {
-            player_apply_damage(5, 3, 5, 0, 0, 0, KF_FIXED12_ONE, KF_PLAYER_DAMAGE_MULTIPLIER_ONE);
+            player_apply_damage(5, 3, 5, KF_PLAYER_STATUS_NONE, 0, 0, KF_FIXED12_ONE, KF_PLAYER_DAMAGE_MULTIPLIER_ONE);
         }
         break;
     case KF_MAP_ATTRIBUTE_POISON_HOLE:
@@ -612,7 +612,7 @@ void player_update(void)
         break;
     }
     if (player_state.slowed_timer != KF_PLAYER_STATUS_TIMER_INACTIVE) {
-        if (!(player_state.status_effect_flags & KF_PLAYER_STATUS_SLOWED)) {
+        if (!((player_state.status_effect_flags & KF_PLAYER_STATUS_SLOWED) != KF_PLAYER_STATUS_NONE)) {
             player_state.slowed_timer = KF_PLAYER_STATUS_TIMER_INACTIVE;
             goto clear_slowed;
         } else {
@@ -624,7 +624,7 @@ void player_update(void)
         }
     }
     if (player_state.poison_timer != KF_PLAYER_STATUS_TIMER_INACTIVE) {
-        if (!(player_state.status_effect_flags & KF_PLAYER_STATUS_POISON)) {
+        if (!((player_state.status_effect_flags & KF_PLAYER_STATUS_POISON) != KF_PLAYER_STATUS_NONE)) {
             player_state.poison_timer = KF_PLAYER_STATUS_TIMER_INACTIVE;
             goto clear_poison;
         } else {
@@ -644,7 +644,7 @@ void player_update(void)
         }
     }
     if (player_state.curse_timer != KF_PLAYER_STATUS_TIMER_INACTIVE) {
-        if (!(player_state.status_effect_flags & KF_PLAYER_STATUS_CURSE)) {
+        if (!((player_state.status_effect_flags & KF_PLAYER_STATUS_CURSE) != KF_PLAYER_STATUS_NONE)) {
             player_state.curse_timer = 0;
             goto clear_curse;
         } else if (player_state.curse_timer == 0) {

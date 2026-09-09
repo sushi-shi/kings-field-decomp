@@ -21,7 +21,7 @@ typedef struct KfAnimClip {
 
 /* asset base + clip->keyframes[i]: one keyframe. */
 typedef struct KfAnimKeyframe {
-    u16 reverse;          /* +0: 0 => forward blend, else 0x1000 - fraction */
+    KfAnimationBlendDirection reverse; /* +0: nonzero reverses the fraction */
     u16 duration;         /* +2 */
     u16 rest_index;       /* +4: object-table index of the rest pose */
     u16 morph_count;      /* +6 */
@@ -142,7 +142,7 @@ find_keyframe:
                     / keyframe->duration;
 
                 blend_fraction = forward_fraction;
-                if (keyframe->reverse != 0) {
+                if (keyframe->reverse != KF_ANIMATION_BLEND_FORWARD) {
                     blend_fraction = KF_FIXED12_ONE - forward_fraction;
                 }
                 goto update_vertex_cache;

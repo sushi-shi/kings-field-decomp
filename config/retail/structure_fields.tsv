@@ -33,6 +33,10 @@ KfActor	0x40	0x02	movement_x	s16	supported	game_actor.h;asm;xrefs	x movement com
 KfActor	0x42	0x02	movement_z	s16	supported	game_actor.h;asm;xrefs	z movement component
 KfActor	0x44	0x02	movement_y	s16	supported	game_actor.h;asm;xrefs	y movement component
 KfActor	0x46	0x02	unknown_46	u8[2]	opaque	game_actor.h;asm;xrefs	meaning unresolved
+KfActorActionParameters	0x00	0x03	effect_codes	KfActorEffectCode[3]	supported	game_actor.h;asm;xrefs;enum-field-review.md	low five bits select effect/action profile; bit 5 emits a pair; 0xff is observed unset storage
+KfActorActionParameters	0x03	0x03	effect_chances	u8[3]	supported	game_actor.h;asm;xrefs;enum-field-review.md	per-slot probability compared with rand() >> 7
+KfActorActionParameters	0x06	0x01	drop_object	KfMapObjectId	supported	game_actor.h;asm;xrefs;enum-field-review.md	existing map-object domain; disabled and unset encodings retained
+KfActorActionParameters	0x07	0x01	drop_chance	u8	supported	game_actor.h;asm;xrefs;enum-field-review.md	death-drop probability compared with rand() >> 7
 KfActorActionProfile	0x00	0x02	far_distance	s16	supported	game_actor.h;asm;xrefs	far distance threshold
 KfActorActionProfile	0x02	0x02	far_weight	s16	supported	game_actor.h;asm;xrefs	far action weight
 KfActorActionProfile	0x04	0x02	near_distance	s16	supported	game_actor.h;asm;xrefs	near distance threshold
@@ -41,9 +45,9 @@ KfActorActionProfile	0x08	0x02	near_weight	s16	supported	game_actor.h;asm;xrefs	
 KfActorDefinition	0x00	0x01	pursuit_distance_scale	u8	supported	game_actor.h;asm;actor_update_effect_action;actor_move_along_heading;actor_update_boss_death_sequence;semantic-field-names.md;asm;CFG;callers;callees;xrefs	pursuit threshold shifted by 8 with action-selection hysteresis
 KfActorDefinition	0x01	0x01	model_and_texture	u8	supported	game_actor.h;asm;actor_update_effect_action;actor_move_along_heading;actor_update_boss_death_sequence;semantic-field-names.md;asm;CFG;callers;callees;xrefs	low nibble selects model asset; high nibble selects texture page and CLUT variant
 KfActorDefinition	0x02	0x01	melee_attack_chance	u8	supported	game_actor.h;asm;actor_update_effect_action;actor_move_along_heading;actor_update_boss_death_sequence;semantic-field-names.md;asm;CFG;callers;callees;xrefs	chance for action 4, whose animation calls actor_try_attack_player
-KfActorDefinition	0x03	0x01	status_effect	u8	supported	game_actor.h;asm;actor_update_effect_action;actor_move_along_heading;actor_update_boss_death_sequence	status effect flags passed to player_apply_damage by actor_try_attack_player
+KfActorDefinition	0x03	0x01	status_effect	KF_ENUM_STORAGE(KfPlayerStatusFlags, u8)	supported	game_actor.h;asm;actor_update_effect_action;actor_move_along_heading;actor_update_boss_death_sequence;enum-field-review.md	status effect flags passed to player_apply_damage by actor_try_attack_player
 KfActorDefinition	0x04	0x01	status_effect_chance	u8	supported	game_actor.h;asm;actor_update_effect_action;actor_move_along_heading;actor_update_boss_death_sequence	per-hit chance out of 256 compared with rand() >> 7; zero disables
-KfActorDefinition	0x05	0x08	action_parameters	u8[8]	supported	game_actor.h;asm;actor_update_effect_action;actor_move_along_heading;actor_update_boss_death_sequence	per special action byte: effect code for actor_spawn_action_effect, profile index (entries 0..2) and chance (entries 3..5) for actor_select_next_action
+KfActorDefinition	0x05	0x08	action_parameters	KfActorActionParameters	supported	game_actor.h;asm;actor_update_effect_action;actor_move_along_heading;actor_update_boss_death_sequence;enum-field-review.md	three packed effect codes, three chances, map-object drop ID and drop chance at relative offsets 0,3,6,7
 KfActorDefinition	0x0d	0x01	move_speed	u8	supported	game_actor.h;asm;actor_update_effect_action;actor_move_along_heading;actor_update_boss_death_sequence	scale applied to the forward vector by actor_move_along_heading
 KfActorDefinition	0x0e	0x10	action_animations	KfAnimationClip[16]	supported	game_actor.h;asm;actor_update_effect_action;actor_move_along_heading;actor_update_boss_death_sequence;strict-enum-audit.md	animation id per action index (action - 2); entries 3 and 4 are the hit and death animations, 0xff means none
 KfActorDefinition	0x1e	0x01	turn_rate	u8	supported	game_actor.h;asm;actor_update_effect_action;actor_move_along_heading;actor_update_boss_death_sequence	angle_approach step for actor_move_along_heading; halved-and-a-half while colliding
@@ -185,10 +189,10 @@ KfEffectDirectionWords	0x04	0x02	z	u16	supported	game_effect.h;asm;effect_pool_c
 KfEffectDirectionWords	0x06	0x02	pad	u16	supported	game_effect.h;asm;effect_pool_construct;effect_update_dispatch;game-effect-constructor.md	last halfword of the complete SDK vector copy
 KfEffectPropagation	0x00	0x02	generations_remaining	u16	supported	game_effect.h;semantic-field-names.md;asm;CFG;callers;callees;xrefs	kind 10 decrements the count passed to its child
 KfEffectPropagation	0x00	0x02	branch	KfEffectGroundBranchRole	supported	game_effect.h;semantic-field-names.md;asm;CFG;callers;callees;xrefs;ground-effect-branch-domain.md	kind 6 propagation branch: center, side or terminal
-KfEffectRecord	0x00	0x01	type	u8	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	0xff marks a free slot; otherwise the effect type tag
+KfEffectRecord	0x00	0x01	type	KfEffectType	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed;enum-field-review.md	packed actor/player targets and power/credit class; 0xff marks a free slot
 KfEffectRecord	0x01	0x01	kind	KfEffectKind	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	constructor dispatch selector and magic_records index
-KfEffectRecord	0x02	0x01	base_render_id	u8	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed;semantic-field-names.md;asm;CFG;callers;callees;xrefs	initial sprite or model selector; current ID cycles from this value
-KfEffectRecord	0x03	0x01	render_id	u8	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed;semantic-field-names.md;asm;CFG;callers;callees;xrefs	current sprite or model selector consumed by rendering
+KfEffectRecord	0x02	0x01	base_render_id	KfEffectRenderId	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed;semantic-field-names.md;asm;CFG;callers;callees;xrefs;enum-field-review.md	initial sprite or model selector; current ID cycles from this value
+KfEffectRecord	0x03	0x01	render_id	KfEffectRenderId	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed;semantic-field-names.md;asm;CFG;callers;callees;xrefs;enum-field-review.md	current sprite or model selector consumed by rendering
 KfEffectRecord	0x04	0x01	animation_clip	KfAnimationClip	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed;semantic-field-names.md;asm;CFG;callers;callees;xrefs;strict-enum-audit.md	animation clip index; 0xff selects billboard rendering
 KfEffectRecord	0x05	0x01	sound_played	KF_ENUM_STORAGE(KfAudioPlaybackResult, u8)	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed;semantic-field-names.md;asm;CFG;callers;callees;xrefs;strict-enum-audit.md	spatial-audio accepted latch; zero permits retry
 KfEffectRecord	0x06	0x01	id	u8	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	owning object id passed to the constructor
@@ -205,6 +209,8 @@ KfEffectRecord	0x2c	0x08	direction	KfEffectDirection	supported	game_effect.h;asm
 KfEffectRecord	0x34	0x04	animation_cache	KfPoolRecord *	supported	game_effect.h;asm;game_semantic_animation_slots.tsv	live animation record slot passed directly to the binder by render_actor_sprite
 KfEffectRecord	0x38	0x02	control	KfEffectControl	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed;semantic-field-names.md;asm;CFG;callers;callees;xrefs	kind selects countdown, orbit angle, parent effect index or homing mode; not an audio handle
 KfEffectRecord	0x3a	0x02	propagation	KfEffectPropagation	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed;semantic-field-names.md;asm;CFG;callers;callees;xrefs	kind 10 generation count or kind 6 branch selector
+KfEffectRenderId	0x00	0x01	billboard	KfEffectBillboardId	supported	game_effect.h;asm;xrefs;enum-field-review.md	billboard bank ID, including animation frames and NONE sentinel
+KfEffectRenderId	0x00	0x01	model	KfEffectModelId	supported	game_effect.h;asm;xrefs;enum-field-review.md	model bank ID and NONE sentinel
 KfEffectSprite	0x00	0x01	state	KfEffectSpriteState	supported	game_render.h;asm;render_effect_sprites;render_frame	1 is active; every other value stops traversal, including hidden 0 and the authored 0xff end row
 KfEffectSprite	0x01	0x01	animation_clip	KfAnimationClip	supported	game_render.h;asm;render_effect_sprites;strict-enum-audit.md	animation clip passed directly to the shared vertex cache binder
 KfEffectSprite	0x02	0x02	asset_variant	u16	supported	game_render.h;asm;render_effect_sprites	asset variant passed to render_bind_animated_instance
@@ -235,7 +241,7 @@ KfFloorDeformSegment	0x06	0x01	end_height	u8	supported	game_effect.h;effect_floo
 KfFloorEntryCell	0x00	0x1	x	u8	supported	game_player.h;asm;xrefs	copied into previous_map_cell.x
 KfFloorEntryCell	0x01	0x1	z	u8	supported	game_player.h;asm;xrefs	copied into previous_map_cell.z
 KfFloorItem	0x00	0x02	base_sprite_index	u16	supported	item.h;asm;func_80020b4c;render_floor_item;floor-sprite-base-index.md	first sprite descriptor index; animation_frame is added by rendering
-KfFloorItem	0x02	0x01	facing_and_frame_count	u8	supported	item.h;asm;item_load_floor_placements;render_floor_item	high nibble selects facing and low nibble bounds the animation frame; copied from the placement record
+KfFloorItem	0x02	0x01	facing_and_frame_count	KfFloorItemAppearance	supported	item.h;asm;item_load_floor_placements;render_floor_item;enum-field-review.md	high nibble selects facing and low nibble bounds the animation frame; copied from the placement record
 KfFloorItem	0x03	0x01	unknown_03	u8	opaque	item.h;asm;func_80020b4c;semantic-field-names.md:unresolved-consumer-audit	Copied unchanged from placement +3: GAME load/store 0x80020bf4/0x80020bfc; OPEN 0x8001988c/0x80019894. Runtime base is biased by +20; no behavioral consumer established.
 KfFloorItem	0x04	0x04	position_x	s32	supported	item.h;asm;func_80020b4c	world x = tile_x*2000 + local_x
 KfFloorItem	0x08	0x04	position_y	s32	supported	item.h;asm;func_80020b4c	world y = local_y - floor_height*100
@@ -244,7 +250,7 @@ KfFloorItem	0x10	0x04	unknown_10	u8[4]	opaque	item.h;func_80020b4c	not written b
 KfFloorItem	0x14	0x01	animation_frame	u8	supported	item.h;asm;item_load_floor_placements;render_floor_item	randomized by the loader, advanced once per render, and wrapped against the packed field's low nibble
 KfFloorItem	0x15	0x03	unknown_15	u8[3]	opaque	item.h;func_80020b4c	not written by the loader
 KfFloorItemPlacement	0x00	0x02	base_sprite_index	u16	supported	item.h;asm;func_80020b4c;render_floor_item;floor-sprite-base-index.md	first sprite descriptor index; 0xffff terminates the placement stream
-KfFloorItemPlacement	0x02	0x01	facing_and_frame_count	u8	supported	item.h;asm;item_load_floor_placements;render_floor_item	packed facing and animation-frame count copied into the runtime record
+KfFloorItemPlacement	0x02	0x01	facing_and_frame_count	KfFloorItemAppearance	supported	item.h;asm;item_load_floor_placements;render_floor_item;enum-field-review.md	packed facing and animation-frame count copied into the runtime record
 KfFloorItemPlacement	0x03	0x01	unknown_03	u8	opaque	item.h;asm;func_80020b4c;semantic-field-names.md:unresolved-consumer-audit	Copied to runtime +3 in GAME and OPEN; source pointer is placement+10, load displacement -7. Reviewed values include 8,28,32,64; values alone do not establish flags, scale or units.
 KfFloorItemPlacement	0x04	0x01	tile_z	u8	supported	item.h;asm;func_80020b4c	map tile z (floor-height grid row)
 KfFloorItemPlacement	0x05	0x01	tile_x	u8	supported	item.h;asm;func_80020b4c	map tile x (floor-height grid column)
@@ -324,6 +330,9 @@ KfMagicRecord	0x10	0x02	mp_cost	u16	supported	magic.h;asm;player_update	compared
 KfMagicRecord	0x12	0x02	unknown_12	u8[2]	opaque	magic.h;asm	meaning unresolved
 KfMagicTable	0x00	0x1e0	entries	KfMagicRecord[24]	supported	magic.h;asm;typed-record-tables.md	typed records selected by the game consumers
 KfMagicTable	0x00	0x1e0	words	u32[120]	supported	magic.h;asm;typed-record-tables.md	complete aligned resource-copy span
+KfMapAttributeGrid	0x00	0x2710	cells	KfMapAttribute[100][100]	supported	map_data.h;asm;xrefs;enum-field-review.md	100 by 100 enum attribute cells
+KfMapAttributeGrid	0x00	0x2710	bytes	KfMapAttribute[10000]	supported	map_data.h;asm;xrefs;enum-field-review.md	complete linear enum attribute view
+KfMapAttributeGrid	0x00	0x2710	words	u32[2500]	supported	map_data.h;asm;xrefs;enum-field-review.md	raw complete-table copy view; no numeric selector API
 KfMapCell	0x00	0x02	coords	KfMapCellCoordinates	supported	game_map.h;asm;xrefs;typed-packed-state.md	unsigned z/x byte coordinates
 KfMapCell	0x00	0x02	word	u16	supported	game_map.h;asm;xrefs;typed-packed-state.md	unsigned halfword comparison in main loop
 KfMapCellCoordinates	0x00	0x01	z	u8	supported	game_map.h;game_semantic_player_motion_attack.tsv;asm;xrefs	map row derived from world z divided by 2000
@@ -418,11 +427,14 @@ KfMapObjectLink	0x00	0x04	item_ids	KfItemId[4]	supported	game_map.h;asm;typed-ma
 KfMapObjectLink	0x00	0x08	words	u32[2]	supported	game_map.h;asm;typed-map-links.md	aligned placement copies and pool resets
 KfMapObjectLink	0x00	0x08	bytes	u8[8]	supported	game_map.h;asm;typed-map-links.md	complete saved-floor byte serialization
 KfMapObjectLinkFields	0x00	0x01	link_id	u8	supported	game_map.h;asm;map_object_pool_load;typed-map-links.md	trigger link id
-KfMapObjectLinkFields	0x01	0x01	action_parameter	u8	supported	game_map.h;asm;map_object_pool_load;typed-map-links.md	per-behavior parameter; effect slot index for spawned effects
+KfMapObjectLinkFields	0x01	0x01	action_parameter	KfMapObjectParameter	supported	game_map.h;asm;map_object_pool_load;typed-map-links.md;enum-field-review.md	behavior selects effect-pool index, paired-door object index or typed map-copy region
 KfMapObjectLinkFields	0x02	0x02	spawn	KfMapObjectSpawn	supported	game_map.h;asm;map_object_pool_load;typed-map-links.md	unsigned drop sequence or byte effect ID, selected by object behavior
 KfMapObjectLinkFields	0x04	0x02	vertical_velocity	s16	supported	game_map.h;asm;map_object_pool_load;typed-map-links.md	vertical velocity
 KfMapObjectLinkFields	0x06	0x01	linked_notification	KfNotificationId	supported	game_map.h;asm;map_object_pool_load;semantic-field-names.md;asm;CFG;callers;callees;xrefs;game-notification-identities.md;retail-notification-atlas;typed-map-links.md	notification ID for behavior 8 with a live link; byte message domain propagated directly to the promoted enqueue API
 KfMapObjectLinkFields	0x07	0x01	default_notification	KfNotificationId	supported	game_map.h;asm;map_object_pool_load;semantic-field-names.md;asm;CFG;callers;callees;xrefs;game-notification-identities.md;retail-notification-atlas;typed-map-links.md	default notification ID in map interaction; byte message domain propagated directly to the promoted enqueue API
+KfMapObjectParameter	0x00	0x01	effect_index	u8	supported	game_map.h;asm;xrefs;enum-field-review.md	numeric index into effect_pool_records
+KfMapObjectParameter	0x00	0x01	object_index	u8	supported	game_map.h;asm;xrefs;enum-field-review.md	numeric index into map_object_pool for a paired door
+KfMapObjectParameter	0x00	0x01	copy_region	KfMapCopyRegionId	supported	game_map.h;asm;xrefs;enum-field-review.md	existing copy-region selector used by the copy behavior
 KfMapObjectPlacement	0x00	0x01	object_id	u8	supported	game_map.h;asm;map_object_pool_load	object id; 0xff terminates the placement list
 KfMapObjectPlacement	0x01	0x01	unknown_01	u8	opaque	game_map.h;asm;map_object_pool_load	meaning unresolved
 KfMapObjectPlacement	0x02	0x01	tile_z	u8	supported	game_map.h;asm;map_object_pool_load	map tile z
@@ -543,7 +555,7 @@ KfPlayerState	0x22	0x02	base_physical_power	u16	supported	game_player.h;data_ide
 KfPlayerState	0x24	0x02	base_magic	u16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0x26	0x02	physical_power	u16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0x28	0x02	magic	u16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x2a	0x02	status_effect_flags	u16	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x2a	0x02	status_effect_flags	KfPlayerStatusFlags	supported	game_player.h;data_identities.tsv;enum-field-review.md	member of the player_state aggregate
 KfPlayerState	0x2c	0x04	gold	u32	supported	game_player.h;asm;menu;item-buy-sell	player gold total
 KfPlayerState	0x30	0x02	cutting_attack	u16	supported	game_player.h;data_identities.tsv;game-player-damage-labels.md;retail-menu-glyphs;asm;equipment-accumulation	unsigned cutting_attack field; corresponding retail UI label and component argument/defense use establish meaning
 KfPlayerState	0x32	0x02	striking_attack	u16	supported	game_player.h;data_identities.tsv;game-player-damage-labels.md;retail-menu-glyphs;asm;equipment-accumulation	unsigned striking_attack field; corresponding retail UI label and component argument/defense use establish meaning
@@ -696,7 +708,7 @@ KfSpriteQuad	0x0a	0x02	h	u16	supported	render_types.h;asm;render_screen_sprite;r
 KfTmdF3	0x00	0x01	r	u8	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF3 field
 KfTmdF3	0x01	0x01	g	u8	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF3 field
 KfTmdF3	0x02	0x01	b	u8	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF3 field
-KfTmdF3	0x03	0x01	mode	u8	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF3 field
+KfTmdF3	0x03	0x01	mode	KfTmdMode	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format;enum-field-review.md	KfTmdF3 field
 KfTmdF3	0x04	0x02	n0	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF3 field
 KfTmdF3	0x06	0x02	v0	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF3 field
 KfTmdF3	0x08	0x02	v1	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF3 field
@@ -704,7 +716,7 @@ KfTmdF3	0x0a	0x02	v2	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q
 KfTmdF4	0x00	0x01	r	u8	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF4 field
 KfTmdF4	0x01	0x01	g	u8	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF4 field
 KfTmdF4	0x02	0x01	b	u8	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF4 field
-KfTmdF4	0x03	0x01	mode	u8	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF4 field
+KfTmdF4	0x03	0x01	mode	KfTmdMode	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format;enum-field-review.md	KfTmdF4 field
 KfTmdF4	0x04	0x02	n0	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF4 field
 KfTmdF4	0x06	0x02	v0	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF4 field
 KfTmdF4	0x08	0x02	v1	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdF4 field
@@ -745,7 +757,7 @@ KfTmdFt4	0x1a	0x02	pad2	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Ps
 KfTmdG3	0x00	0x01	r	u8	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG3 field
 KfTmdG3	0x01	0x01	g	u8	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG3 field
 KfTmdG3	0x02	0x01	b	u8	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG3 field
-KfTmdG3	0x03	0x01	mode	u8	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG3 field
+KfTmdG3	0x03	0x01	mode	KfTmdMode	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format;enum-field-review.md	KfTmdG3 field
 KfTmdG3	0x04	0x02	n0	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG3 field
 KfTmdG3	0x06	0x02	v0	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG3 field
 KfTmdG3	0x08	0x02	n1	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG3 field
@@ -755,7 +767,7 @@ KfTmdG3	0x0e	0x02	v2	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q
 KfTmdG4	0x00	0x01	r	u8	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG4 field
 KfTmdG4	0x01	0x01	g	u8	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG4 field
 KfTmdG4	0x02	0x01	b	u8	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG4 field
-KfTmdG4	0x03	0x01	mode	u8	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG4 field
+KfTmdG4	0x03	0x01	mode	KfTmdMode	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format;enum-field-review.md	KfTmdG4 field
 KfTmdG4	0x04	0x02	n0	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG4 field
 KfTmdG4	0x06	0x02	v0	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG4 field
 KfTmdG4	0x08	0x02	n1	u16	supported	tmd.h;asm;tmd_prepare_primitive_indices;Psy-Q-TMD-format	KfTmdG4 field

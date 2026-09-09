@@ -321,10 +321,10 @@ s32 menu_use_item_panel(void)
                 | KF_PLAYER_STATUS_DARKNESS;
         } else if (selection == KF_ENUM_ENCODE(s32, KF_ITEM_DRAGON_KING_GRASS_LEAF)) {
             player_state.vitals.current_hp += DRAGON_KING_GRASS_LEAF_HP_RECOVERY;
-            player_state.status_effect_flags = 0;
+            player_state.status_effect_flags = KF_PLAYER_STATUS_NONE;
         } else if (selection == KF_ENUM_ENCODE(s32, KF_ITEM_DRAGON_KING_GRASS_FRUIT)) {
             player_state.vitals.current_hp += DRAGON_KING_GRASS_FRUIT_HP_RECOVERY;
-            player_state.status_effect_flags = 0;
+            player_state.status_effect_flags = KF_PLAYER_STATUS_NONE;
             player_state.vitals.current_mp = player_state.vitals.maximum_mp;
         }
         if (player_state.vitals.current_hp > player_state.vitals.maximum_hp)

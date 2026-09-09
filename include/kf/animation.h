@@ -16,4 +16,11 @@ KF_ENUM_BEGIN(KfAnimationClip, u8)
     KF_ANIMATION_CLIP_NONE = 0xff
 KF_ENUM_END(KfAnimationClip)
 
+/* Retail tests zero versus nonzero. REVERSE is the canonical source encoding;
+ * shipped keyframes all use FORWARD, so its nonzero encoding is not observed. */
+KF_ENUM_BEGIN(KfAnimationBlendDirection, u16)
+    KF_ANIMATION_BLEND_FORWARD = 0,
+    KF_ANIMATION_BLEND_REVERSE = 1
+KF_ENUM_END(KfAnimationBlendDirection)
+
 #endif

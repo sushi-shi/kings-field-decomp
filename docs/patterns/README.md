@@ -805,6 +805,6 @@ promotes a probe to a proven historical toolchain.
   shared progress and animation domains, strict Clang compatibility, and
   unchanged retail objects across all 484 functions.
 
-- [Complete Clang field review](enum-field-review.md): 1,030 declarations,
-  a per-field evidence ledger, and remaining enum/packed-domain candidates after
-  integration of the strict enum campaign.
+- [Complete Clang field review](enum-field-review.md): 1,046 current declarations,
+  a per-field evidence ledger, and all nine findings implemented as shared enums,
+  typed flags and component views.

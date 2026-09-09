@@ -4,6 +4,8 @@
 /* Actor and combatant layouts, state, and operations. */
 
 #include <kf/animation.h>
+#include <kf/game_effect.h>
+#include <kf/player_status.h>
 #include <kf/game_types.h>
 #include <kf/enum.h>
 #include <kf/game_map.h>
@@ -174,9 +176,7 @@ enum {
 
 /* The same encoded effect byte selects its action profile and spawned kind. */
 enum {
-    KF_ACTOR_ACTION_PROFILE_COUNT = 25,
-    KF_ACTOR_EFFECT_KIND_MASK = 0x1f,
-    KF_ACTOR_EFFECT_PAIRED = 0x20
+    KF_ACTOR_ACTION_PROFILE_COUNT = 25
 };
 
 /* Matching effect parameters, animation entries and attachment selections. */
@@ -186,23 +186,46 @@ KF_ENUM_BEGIN(KfActorEffectSlot, s32)
     KF_ACTOR_EFFECT_SLOT_THIRD = 2
 KF_ENUM_END(KfActorEffectSlot)
 
-enum {
-    KF_ACTOR_PARAM_EFFECT0 = 0,
-    KF_ACTOR_PARAM_EFFECT1 = 1,
-    KF_ACTOR_PARAM_EFFECT2 = 2,
-    KF_ACTOR_PARAM_EFFECT0_CHANCE = 3,
-    KF_ACTOR_PARAM_EFFECT1_CHANCE = 4,
-    KF_ACTOR_PARAM_EFFECT2_CHANCE = 5,
-    KF_ACTOR_PARAM_DROP_OBJECT = 6,
-    KF_ACTOR_PARAM_DROP_CHANCE = 7,
-    KF_ACTOR_PARAM_COUNT = 8
-};
+/* The low five bits are a kind/profile ID; bit 5 requests paired emission. */
+KF_ENUM_BEGIN(KfActorEffectCode, u8)
+    KF_ACTOR_EFFECT_CODE_NONE = 0,
+    KF_ACTOR_EFFECT_CODE_LIGHTNING_BOLT = KF_ENUM_ENCODE(u8, KF_EFFECT_KIND_LIGHTNING_BOLT),
+    KF_ACTOR_EFFECT_CODE_FIRE_BALL = KF_ENUM_ENCODE(u8, KF_EFFECT_KIND_FIRE_BALL),
+    KF_ACTOR_EFFECT_CODE_GROUND_BRANCH = KF_ENUM_ENCODE(u8, KF_EFFECT_KIND_GROUND_BRANCH),
+    KF_ACTOR_EFFECT_CODE_WIND_CUTTER = KF_ENUM_ENCODE(u8, KF_EFFECT_KIND_WIND_CUTTER),
+    KF_ACTOR_EFFECT_CODE_LIGHT_NEEDLE = KF_ENUM_ENCODE(u8, KF_EFFECT_KIND_LIGHT_NEEDLE),
+    KF_ACTOR_EFFECT_CODE_ACTOR_SPAWNER = KF_ENUM_ENCODE(u8, KF_EFFECT_KIND_ACTOR_SPAWNER),
+    KF_ACTOR_EFFECT_CODE_SCATTER_PROJECTILE = KF_ENUM_ENCODE(u8, KF_EFFECT_KIND_SCATTER_PROJECTILE),
+    KF_ACTOR_EFFECT_CODE_DARKNESS_PROJECTILE = KF_ENUM_ENCODE(u8, KF_EFFECT_KIND_DARKNESS_PROJECTILE),
+    KF_ACTOR_EFFECT_CODE_CURSE_PROJECTILE = KF_ENUM_ENCODE(u8, KF_EFFECT_KIND_CURSE_PROJECTILE),
+    KF_ACTOR_EFFECT_CODE_EMERGING_PROJECTILE = KF_ENUM_ENCODE(u8, KF_EFFECT_KIND_EMERGING_PROJECTILE),
+    KF_ACTOR_EFFECT_CODE_PHYSICAL_PROJECTILE = KF_ENUM_ENCODE(u8, KF_EFFECT_KIND_PHYSICAL_PROJECTILE),
+    KF_ACTOR_EFFECT_CODE_LIGHTNING_ALTERNATE = KF_ENUM_ENCODE(u8, KF_EFFECT_KIND_LIGHTNING_BOLT_ALTERNATE),
+    KF_ACTOR_EFFECT_CODE_HOMING_ALTERNATE = KF_ENUM_ENCODE(u8, KF_EFFECT_KIND_HOMING_PROJECTILE_ALTERNATE),
+    KF_ACTOR_EFFECT_KIND_MASK = 0x1f,
+    KF_ACTOR_EFFECT_PAIRED = 0x20,
+    KF_ACTOR_EFFECT_CODE_UNSET = 0xff
+KF_ENUM_END(KfActorEffectCode)
+KF_ENUM_FLAGS(KfActorEffectCode, u8)
 
-/* Only the exact credit nibble 0x10 awards player training and experience. */
+enum { KF_ACTOR_EFFECT_PARAMETER_COUNT = 3 };
+
+typedef struct KfActorActionParameters {
+    KfActorEffectCode effect_codes[KF_ACTOR_EFFECT_PARAMETER_COUNT];
+    u8 effect_chances[KF_ACTOR_EFFECT_PARAMETER_COUNT];
+    KfMapObjectId drop_object;
+    u8 drop_chance;
+} KfActorActionParameters;
+
+typedef char check_actor_action_parameters_size[
+    sizeof(KfActorActionParameters) == 8 ? 1 : -1];
+typedef char check_actor_action_drop_offset[
+    (unsigned long)&((KfActorActionParameters *)0)->drop_object == 6 ? 1 : -1];
+
+
+/* Damage magnitude uses a decimal fixed-point scale. */
 enum {
-    KF_ACTOR_DAMAGE_SCALE_ONE = 5000,
-    KF_ACTOR_DAMAGE_CREDIT_MASK = 0xf0,
-    KF_ACTOR_DAMAGE_CREDIT_PLAYER = 0x10
+    KF_ACTOR_DAMAGE_SCALE_ONE = 5000
 };
 
 /*
@@ -219,9 +242,9 @@ typedef struct KfActorDefinition {
     u8 pursuit_distance_scale; /* action 2 distance threshold, in units of 256 */
     u8 model_and_texture;
     u8 melee_attack_chance;
-    u8 status_effect;
+    KF_ENUM_STORAGE(KfPlayerStatusFlags, u8) status_effect;
     u8 status_effect_chance;
-    u8 action_parameters[KF_ACTOR_PARAM_COUNT];
+    KfActorActionParameters action_parameters;
     u8 move_speed;
     KfAnimationClip action_animations[KF_ACTOR_ANIM_SLOT_COUNT];
     u8 turn_rate;
@@ -364,7 +387,7 @@ extern void actor_apply_random_movement(s16 step, s16 limit);
 extern void actor_bind_current(KfActor *actor);
 extern void actor_apply_damage(
     u16 actor_index, u16 base_power, u16 component0, u16 component1,
-    u16 component2, u16 component3, u16 component4, u16 scale, u16 hit_flags);
+    u16 component2, u16 component3, u16 component4, u16 scale, KF_ENUM_PARAM(KfEffectType, u16) hit_flags);
 extern void actor_definitions_load(const KfActorDefinitionTable *definitions);
 extern void actor_initialize(KfActor *actor);
 extern void actor_initialize_current(void);
@@ -377,7 +400,7 @@ extern void actor_pool_clear(void);
 extern void actor_pool_apply_radial_damage(
     const VECTOR *origin, u32 radius, u16 falloff, u16 base_power,
     u16 component0, u16 component1, u16 component2, u16 component3,
-    u16 component4, u16 scale, u16 hit_flags);
+    u16 component4, u16 scale, KF_ENUM_PARAM(KfEffectType, u16) hit_flags);
 extern s32 actor_pool_find_at_tile(u8 tile_x, u8 tile_z);
 extern KfActor *actor_pool_find_target_in_cone(
     const VECTOR *origin, s16 facing, u32 max_distance,
@@ -402,7 +425,7 @@ extern KfActorAction actor_try_select_facing_action(
 extern KfActorAction actor_try_select_ground_action(
     KfActorAction action, s32 distance, u16 chance);
 extern KfActorAction actor_try_select_profiled_action(
-    KfActorAction action, s32 distance, u16 profile_index, u16 chance);
+    KfActorAction action, s32 distance, KF_ENUM_PARAM(KfActorEffectCode, u16) profile_index, u16 chance);
 extern void actor_try_attack_player(
     u16 minimum_distance, u16 maximum_distance,
     s16 angle_offset, s16 angle_tolerance);

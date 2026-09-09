@@ -253,9 +253,9 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["data"], 2914)
         self.assertGreaterEqual(counts["functions_named"], 240)
         self.assertGreaterEqual(counts["data_named"], 100)
-        self.assertEqual(counts["structures"], 125)
-        self.assertEqual(counts["structure_fields"], 854)
-        self.assertEqual(counts["structure_fields_named"], 767)
+        self.assertEqual(counts["structures"], 129)
+        self.assertEqual(counts["structure_fields"], 866)
+        self.assertEqual(counts["structure_fields_named"], 779)
 
     def test_animation_cache_slots_share_one_pointer_type_without_layout_changes(self) -> None:
         structures = load_structure_identities(RETAIL_CONFIG)
@@ -2480,7 +2480,7 @@ class InventoryTests(unittest.TestCase):
             0x80046DF8: ("map_cell_orientation_grid", "KfMapOrientationGrid"),
             0x8006E260: ("map_floor_height_grid", "KfMapGrid"),
             0x80070978: ("map_collision_grid", "KfMapCollisionGrid"),
-            0x800730A0: ("map_cell_attribute_grid", "KfMapGrid"),
+            0x800730A0: ("map_cell_attribute_grid", "KfMapAttributeGrid"),
         }
         for va, (name, datatype) in expected_grids.items():
             identity = data[("OPEN.EXE", va)]
@@ -3279,7 +3279,7 @@ class InventoryTests(unittest.TestCase):
         )
         self.assertEqual(
             tuple(field[1] for field in status_fields),
-            ("u16",) * 7 + ("s16",) * 4,
+            ("KfPlayerStatusFlags",) + ("u16",) * 6 + ("s16",) * 4,
         )
         self.assertEqual(
             {

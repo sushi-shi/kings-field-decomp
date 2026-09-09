@@ -189,7 +189,7 @@ shared_projectile:
                             impact_magic->damage_components[0],
                             impact_magic->damage_components[2],
                             impact_magic->damage_components[1],
-                            0, 0, 0, KF_FIXED12_ONE, effect->id);
+                            KF_PLAYER_STATUS_NONE, 0, 0, KF_FIXED12_ONE, effect->id);
                     } else if (kind == KF_EFFECT_KIND_DARKNESS_PROJECTILE) {
                         player_apply_damage(
                             0, 0, 0, KF_PLAYER_STATUS_DARKNESS, 0, 0, KF_FIXED12_ONE, effect->id);
@@ -200,7 +200,7 @@ shared_projectile:
                         player_apply_damage(0, 0, 0, KF_PLAYER_STATUS_CURSE, 0, 0, KF_FIXED12_ONE, effect->id);
                     } else {
                         player_apply_damage(
-                            0, 0, 0, 0,
+                            0, 0, 0, KF_PLAYER_STATUS_NONE,
                             impact_magic->damage_components[0],
                             impact_magic->damage_components[1],
                             KF_FIXED12_ONE, effect->id);
@@ -246,7 +246,7 @@ lightning_impact:
                     impact_position.vy =
                         -(map_floor_height_grid.cells[effect->position.vz / KF_MAP_TILE_SIZE]
                                                [effect->position.vx / KF_MAP_TILE_SIZE] * KF_MAP_HEIGHT_STEP);
-                    if (effect->base_render_id == KF_EFFECT_BILLBOARD_LIGHTNING_BOLT) {
+                    if (effect->base_render_id.billboard == KF_EFFECT_BILLBOARD_LIGHTNING_BOLT) {
                         effect_pool_construct(
                             effect->id, effect->type, KF_EFFECT_KIND_LIGHTNING_IMPACT,
                             &impact_position, &effect->rotation.vector);
@@ -256,8 +256,8 @@ lightning_impact:
                             &impact_position, &effect->rotation.vector);
                     }
                 } else {
-                    effect->render_id =
-                        effect->base_render_id + ((u8)effect->control.frames_remaining & 1);
+                    effect->render_id.billboard = KF_ENUM_DECODE(KfEffectBillboardId,
+                        KF_ENUM_ENCODE(u8, effect->base_render_id.billboard) + ((u8)effect->control.frames_remaining & 1));
                 }
                 return;
             }
@@ -319,7 +319,8 @@ lightning_impact:
         }
 
         if (phase < KF_EFFECT_FIRE_BALL_IMPACT_END && kind == KF_EFFECT_KIND_FIRE_BALL) {
-            effect->render_id = effect->base_render_id + KF_ENUM_ENCODE(u8, phase);
+            effect->render_id.billboard = KF_ENUM_DECODE(KfEffectBillboardId,
+                KF_ENUM_ENCODE(u8, effect->base_render_id.billboard) + KF_ENUM_ENCODE(u8, phase));
         } else if (phase < KF_EFFECT_PROJECTILE_IMPACT_END) {
             goto invalidate_and_advance;
         } else if (phase < KF_EFFECT_PROJECTILE_DISSIPATE_END) {
@@ -367,8 +368,8 @@ play_phase_sound:
         if (KF_ENUM_ENCODE(u8, phase) < KF_ENUM_ENCODE(u8, KF_EFFECT_MOONLIGHT_TRAVEL_LAST) + 1) {
             if (effect_map_collision(&effect->position, PROJECTILE_COLLISION_RADIUS) != (u32)KF_COLLISION_NONE) {
                 effect->animation_clip = KF_ANIMATION_CLIP_NONE;
-                effect->base_render_id = KF_EFFECT_RENDER_NONE;
-                effect->render_id = KF_EFFECT_RENDER_NONE;
+                effect->base_render_id.model = KF_EFFECT_MODEL_NONE;
+                effect->render_id.model = KF_EFFECT_MODEL_NONE;
                 effect->phase = KF_EFFECT_MOONLIGHT_IMPACT_FIRST;
                 audio_play_spatial_default_range(
                     &magic_records[KF_ENUM_ENCODE(u8, KF_EFFECT_KIND_RADIAL_BLAST)].sounds[1], &effect->position, KF_AUDIO_MAX_VOLUME);
@@ -443,9 +444,9 @@ play_phase_sound:
             break;
         }
         }
-        effect->render_id++;
-        if (effect->render_id >= effect->base_render_id + GROUND_TRAIL_RENDER_FRAME_COUNT) {
-            effect->render_id = effect->base_render_id;
+        effect->render_id.billboard++;
+        if (KF_ENUM_ENCODE(u8, effect->render_id.billboard) >= KF_ENUM_ENCODE(u8, effect->base_render_id.billboard) + GROUND_TRAIL_RENDER_FRAME_COUNT) {
+            effect->render_id.billboard = effect->base_render_id.billboard;
         }
         break;
     }
@@ -549,7 +550,7 @@ randomize_homing_direction:
         effect->phase++;
         effect->rotation.vector.vz = (effect->rotation.vector.vz + HOMING_ROLL_STEP) & KF_ANGLE_WRAP_MASK;
         if (effect_map_collision(&effect->position, radius) != (u32)KF_COLLISION_NONE) {
-            if (effect->base_render_id == KF_EFFECT_MODEL_HOMING_PROJECTILE_ALTERNATE) {
+            if (effect->base_render_id.model == KF_EFFECT_MODEL_HOMING_PROJECTILE_ALTERNATE) {
                 effect_pool_construct(
                     effect->id, effect->type, KF_EFFECT_KIND_RADIAL_BLAST_ALTERNATE,
                     &effect->position, &effect->direction.vector, KF_EFFECT_ARGS_SOUND(KF_EFFECT_SOUND_PLAY));
@@ -567,12 +568,12 @@ randomize_homing_direction:
         if (phase > KF_EFFECT_LIGHTNING_IMPACT_PHASE_LAST) {
             goto invalidate_and_advance;
         }
-        effect->render_id++;
-        if (effect->render_id >= effect->base_render_id + LIGHTNING_IMPACT_RENDER_FRAME_COUNT) {
-            effect->render_id = effect->base_render_id;
+        effect->render_id.billboard++;
+        if (KF_ENUM_ENCODE(u8, effect->render_id.billboard) >= KF_ENUM_ENCODE(u8, effect->base_render_id.billboard) + LIGHTNING_IMPACT_RENDER_FRAME_COUNT) {
+            effect->render_id.billboard = effect->base_render_id.billboard;
         }
         if (phase == KF_EFFECT_LIGHTNING_IMPACT_EMIT_FIRST || phase == KF_EFFECT_LIGHTNING_IMPACT_EMIT_SECOND || phase == KF_EFFECT_LIGHTNING_IMPACT_EMIT_LAST) {
-            if (effect->base_render_id == KF_EFFECT_BILLBOARD_LIGHTNING_IMPACT) {
+            if (effect->base_render_id.billboard == KF_EFFECT_BILLBOARD_LIGHTNING_IMPACT) {
                 effect_pool_construct(
                     effect->id, effect->type, KF_EFFECT_KIND_LIGHTNING_RADIAL_BLAST,
                     &effect->position, &effect->rotation.vector);

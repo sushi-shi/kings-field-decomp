@@ -33,14 +33,14 @@ class EnumTypeTests(unittest.TestCase):
         cases = {
             "valid": """
                 save_system_read_slot(KF_ENUM_DECODE(KfSaveSlotArgument, value + 1));
-                effect_pool_construct(0, 0,
+                effect_pool_construct(0, KF_EFFECT_TYPE_NONE,
                     KF_ENUM_DECODE(KfEffectKindArgument, value & 31), 0, 0);
             """,
             "wrong_slot_domain": """
                 save_system_read_slot(KF_ENUM_DECODE(KfEffectKindArgument, value));
             """,
             "wrong_kind_domain": """
-                effect_pool_construct(0, 0,
+                effect_pool_construct(0, KF_EFFECT_TYPE_NONE,
                     KF_ENUM_DECODE(KfSaveSlotArgument, value), 0, 0);
             """,
         }

@@ -39,7 +39,7 @@ void render_enqueue_map(u16 object_index)
 
         header = *(u32 *)packet;
         packet += KF_TMD_PACKET_HEADER_BYTES;
-        switch (header >> KF_TMD_MODE_SHIFT) {
+        switch (tmd_packet_mode(header)) {
         case KF_TMD_MODE_FT4: {
             KfTmdPrimitive *polygon = (KfTmdPrimitive *)packet;
             s32 depth;

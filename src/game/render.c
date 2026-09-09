@@ -366,7 +366,7 @@ void tmd_prepare_primitive_indices(void)
                 body = TMD_PACKET_BODY(packet);
                 header.word = *(u32 *)packet;
                 packet = body + header.bytes.input_length * KF_TMD_WORD_BYTES;
-                switch ((header.word >> KF_TMD_MODE_SHIFT) & KF_TMD_MODE_MASK) {
+                switch (tmd_packet_kind(header.word)) {
                 case KF_TMD_MODE_F3: {
                     KfTmdF3 *p = (KfTmdF3 *)body;
                     p->v0 <<= KF_TMD_VECTOR_OFFSET_SHIFT;

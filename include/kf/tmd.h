@@ -20,11 +20,16 @@ enum {
     KF_TMD_ILEN_BYTE = 1,
     KF_TMD_MODE_SHIFT = 24,
     KF_TMD_MODE_MASK = 0xfd,
-    KF_TMD_MODE_SEMITRANS = 0x02,
     KF_TMD_ILEN_TO_BYTES_SHIFT = 6,
     KF_TMD_BODY_BYTES_MASK = 0x3fc,
     KF_TMD_VECTOR_OFFSET_SHIFT = 3,
-    KF_TMD_DEFAULT_PERSPECTIVE_SHIFT = 1,
+    KF_TMD_DEFAULT_PERSPECTIVE_SHIFT = 1
+};
+
+/* Primitive mode bits retain the semitransparency modifier in packet storage. */
+KF_ENUM_BEGIN(KfTmdMode, u8)
+    KF_TMD_MODE_NONE = 0,
+    KF_TMD_MODE_SEMITRANS = 0x02,
     KF_TMD_MODE_F3 = 0x20,
     KF_TMD_MODE_FT3 = 0x24,
     KF_TMD_MODE_F4 = 0x28,
@@ -33,7 +38,22 @@ enum {
     KF_TMD_MODE_GT3 = 0x34,
     KF_TMD_MODE_G4 = 0x38,
     KF_TMD_MODE_GT4 = 0x3c
-};
+KF_ENUM_END(KfTmdMode)
+KF_ENUM_FLAGS(KfTmdMode, u8)
+
+#if KF_MODERN_TYPES
+constexpr KfTmdMode tmd_packet_mode(u32 word)
+{
+    return KF_ENUM_DECODE(KfTmdMode, word >> KF_TMD_MODE_SHIFT);
+}
+constexpr KfTmdMode tmd_packet_kind(u32 word)
+{
+    return KF_ENUM_DECODE(KfTmdMode, (word >> KF_TMD_MODE_SHIFT) & KF_TMD_MODE_MASK);
+}
+#else
+#define tmd_packet_mode(word) ((word) >> KF_TMD_MODE_SHIFT)
+#define tmd_packet_kind(word) (((word) >> KF_TMD_MODE_SHIFT) & KF_TMD_MODE_MASK)
+#endif
 
 /* Eight-byte vertex copied as aligned words and passed to the SDK as SVECTOR. */
 typedef union KfPackedSVector {
@@ -69,7 +89,7 @@ typedef union KfTmdPacketHeader {
         u8 output_length;
         u8 input_length;
         u8 flag;
-        u8 mode;
+        KfTmdMode mode;
     } bytes;
 } KfTmdPacketHeader;
 typedef char check_tmd_packet_header_size[
@@ -83,7 +103,7 @@ typedef struct KfTmdF3 {
     u8 r;
     u8 g;
     u8 b;
-    u8 mode;
+    KfTmdMode mode;
     u16 n0;
     u16 v0;
     u16 v1;
@@ -94,7 +114,7 @@ typedef struct KfTmdG3 {
     u8 r;
     u8 g;
     u8 b;
-    u8 mode;
+    KfTmdMode mode;
     u16 n0;
     u16 v0;
     u16 n1;
@@ -107,7 +127,7 @@ typedef struct KfTmdF4 {
     u8 r;
     u8 g;
     u8 b;
-    u8 mode;
+    KfTmdMode mode;
     u16 n0;
     u16 v0;
     u16 v1;
@@ -120,7 +140,7 @@ typedef struct KfTmdG4 {
     u8 r;
     u8 g;
     u8 b;
-    u8 mode;
+    KfTmdMode mode;
     u16 n0;
     u16 v0;
     u16 n1;

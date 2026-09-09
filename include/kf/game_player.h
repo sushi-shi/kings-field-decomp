@@ -9,6 +9,7 @@
 #include <kf/game_effect.h>
 #include <kf/game_map.h>
 #include <kf/magic.h>
+#include <kf/player_status.h>
 
 struct KfPoolRecord;
 struct KfAssetHeader;
@@ -84,11 +85,6 @@ KF_ENUM_END(KfWeaponAttackCharge)
 
 /* Status timers count executions of their update blocks; -1 is inactive. */
 enum {
-    KF_PLAYER_STATUS_CURSE = 1 << 0,
-    KF_PLAYER_STATUS_DARKNESS = 1 << 1,
-    KF_PLAYER_STATUS_POISON = 1 << 2,
-    KF_PLAYER_STATUS_SLOWED = 1 << 3,
-    KF_PLAYER_STATUS_FIRE_DEFENSE_BOOST = 1 << 4,
     KF_PLAYER_STATUS_TIMER_INACTIVE = -1,
     KF_CURSE_DURATION_UPDATES = 600,
     KF_DARKNESS_DURATION_UPDATES = 1000,
@@ -193,7 +189,7 @@ typedef struct KfPlayerState {
     u16 base_magic;
     u16 physical_power;
     u16 magic;
-    u16 status_effect_flags;
+    KfPlayerStatusFlags status_effect_flags;
     u32 gold;
     u16 cutting_attack;
     u16 striking_attack;
@@ -298,7 +294,7 @@ extern void player_adjust_hp(s32 delta);
 extern void player_adjust_mp(s32 delta);
 extern void player_apply_damage(
     u16 component0, u16 component1, u16 component2,
-    u16 status_effect_flags, u16 component3, u16 component4,
+    KfPlayerStatusFlags status_effect_flags, u16 component3, u16 component4,
     u16 scale_q12, u16 multiplier_tenths);
 extern void player_begin_weapon_attack(void);
 extern void player_apply_radial_damage(

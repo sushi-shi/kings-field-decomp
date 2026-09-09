@@ -96,7 +96,7 @@ void magic_cast(void)
             speed = MAGIC_DEFAULT_SPEED;
             if (player_state.selected_magic_id == KF_MAGIC_LIGHTNING_BOLT) {
                 if (map_cell_attribute_height_table[
-                        map_cell_attribute_grid.cells[target->cell_z][target->cell_x] - 1]
+                        KF_ENUM_ENCODE(u8, map_cell_attribute_grid.cells[target->cell_z][target->cell_x]) - 1]
                         >= LIGHTNING_HEIGHT_CLASS_THRESHOLD) {
                     s32 aim_y = world_pos.vy + LIGHTNING_DEFAULT_TARGET_Y_OFFSET;
                     angles.x = vector_xz_to_angle(aim_y - target->position.vy, -distance);

@@ -320,7 +320,7 @@ void actor_apply_damage(
     u16 component3,
     u16 component4,
     u16 scale,
-    u16 hit_flags)
+    KF_ENUM_PARAM(KfEffectType, u16) hit_flags)
 {
     KfActor *actor = &actor_state.actors[actor_index];
     KfActorDefinition *definition = &actor_state.definitions.entries[actor->definition_id];
@@ -409,7 +409,7 @@ void actor_pool_apply_radial_damage(
     u16 component3,
     u16 component4,
     u16 scale,
-    u16 hit_flags)
+    KF_ENUM_PARAM(KfEffectType, u16) hit_flags)
 {
     s32 falloff_value = falloff;
     s32 remaining;
@@ -475,7 +475,7 @@ void actor_try_attack_player(
     KfActor *actor = actor_state.current;
     s32 distance;
     s32 angle;
-    u16 status_effect;
+    KfPlayerStatusFlags status_effect;
 
     distance = actor_distance_to_point(
         actor,
@@ -497,7 +497,7 @@ void actor_try_attack_player(
     if (!angle_within_tolerance(actor->rotation.angles.y + angle_offset, angle, angle_tolerance)) {
         return;
     }
-    status_effect = 0;
+    status_effect = KF_PLAYER_STATUS_NONE;
     if (definition->status_effect_chance != 0
         && (rand() >> ACTOR_STATUS_CHANCE_RANDOM_SHIFT) < definition->status_effect_chance) {
         status_effect = definition->status_effect;
@@ -828,9 +828,9 @@ KfActorAction actor_try_select_facing_action(KfActorAction action, s32 distance,
 }
 
 ADDRESS(0x8002e0f0, 0x1f8)
-KfActorAction actor_try_select_profiled_action(KfActorAction action, s32 distance, u16 profile_index, u16 chance)
+KfActorAction actor_try_select_profiled_action(KfActorAction action, s32 distance, KF_ENUM_PARAM(KfActorEffectCode, u16) profile_index, u16 chance)
 {
-    KF_ENUM_PARAM(KfEffectKind, u16) profile = KF_ENUM_DECODE(KF_ENUM_PARAM(KfEffectKind, u16), profile_index & KF_ACTOR_EFFECT_KIND_MASK);
+    KF_ENUM_PARAM(KfEffectKind, u16) profile = KF_ENUM_DECODE(KF_ENUM_PARAM(KfEffectKind, u16), KF_ENUM_ENCODE(u16, profile_index & KF_ACTOR_EFFECT_KIND_MASK));
     KfActorActionProfile *weights = &actor_action_profiles[KF_ENUM_ENCODE(u16, profile)];
     KfActor *actor = actor_state.current;
     s32 odds;

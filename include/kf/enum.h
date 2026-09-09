@@ -23,6 +23,20 @@
     inline name operator--(name& value, int) \
     { name previous = value; --value; return previous; }
 
+/* Flag combinations retain their domain; integers and other enums do not mix. */
+#define KF_ENUM_FLAGS(name, storage) \
+    constexpr name operator|(name lhs, name rhs) \
+    { return static_cast<name>(static_cast<storage>(lhs) | static_cast<storage>(rhs)); } \
+    constexpr name operator&(name lhs, name rhs) \
+    { return static_cast<name>(static_cast<storage>(lhs) & static_cast<storage>(rhs)); } \
+    constexpr name operator^(name lhs, name rhs) \
+    { return static_cast<name>(static_cast<storage>(lhs) ^ static_cast<storage>(rhs)); } \
+    constexpr name operator~(name value) \
+    { return static_cast<name>(~static_cast<storage>(value)); } \
+    inline name& operator|=(name& lhs, name rhs) { return lhs = lhs | rhs; } \
+    inline name& operator&=(name& lhs, name rhs) { return lhs = lhs & rhs; } \
+    inline name& operator^=(name& lhs, name rhs) { return lhs = lhs ^ rhs; }
+
 /* One domain may use different field widths in runtime and serialized data. */
 template <typename Enum, typename Storage>
     requires (__is_enum(Enum) && __is_integral(Storage))
@@ -82,6 +96,7 @@ constexpr Integer kf_enum_encode(KfEnumStorage<Enum, Storage> value)
 #define KF_ENUM_STORAGE(name, storage) storage
 #define KF_ENUM_PARAM(name, storage) storage
 #define KF_ENUM_COUNTER(name, storage)
+#define KF_ENUM_FLAGS(name, storage)
 #define KF_ENUM_DECODE(type, value) ((type)(value))
 #define KF_ENUM_ENCODE(storage, value) ((storage)(value))
 #endif

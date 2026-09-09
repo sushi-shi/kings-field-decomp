@@ -2,10 +2,13 @@
 
 The enum commits `ffcf78cf` and `234e55be` were integrated with master's three
 concurrent matching commits at `dafd1048`. This review examines that resulting
-source state. It finds further candidates: the earlier claim that all remaining
-integer fields had been fully covered was too broad.
+source state. It found further candidates: the earlier claim that all remaining
+integer fields had been fully covered was too broad. **F1–F9 are now implemented**
+with shared enums, typed flag operations and behavior-selected union members.
+The findings below retain the original evidence; the implementation results
+follow the campaign plan.
 
-## Coverage and method
+## Original audit coverage and method
 
 The review uses the flake's Python `clang.cindex` bindings and libclang 21.1.8,
 with each source's strict MIPS C++20 arguments from `compile_commands.json`.
@@ -25,7 +28,7 @@ argument records and the generic enum-storage template; they are not 165 retail
 layout claims. SDK records imported from outside the repository retain their
 SDK declarations and are not counted as project-owned definitions.
 
-The complete, manually reviewed ledger is
+The complete, manually reviewed ledger, refreshed after implementation, is
 [`enum_field_review.tsv`](../../config/evidence/enum_field_review.tsv).
 Every row identifies its declaration, type, disposition, source evidence and
 rationale. Raw AST extraction and member-use dossiers are local products under
@@ -49,7 +52,10 @@ them; a lack of AST member references is not proof that a field is unused.
 | Candidates in F1–F9 below | 17 |
 | **Total** | **1,030** |
 
-A `typed_enum` verdict means the field already has strict type identity. It does
+The table above describes the original audit. The current ledger contains 1,046
+fields and records the F1–F9 closures and their new child members.
+
+A `typed_enum` verdict means the field has strict type identity. It does
 not certify that every runtime value is enumerated, or that every explicit
 decode in its callers is justified. Likewise, `numeric` is the current
 source-evidenced interpretation, not a claim about unreconstructed code.
@@ -225,3 +231,118 @@ failures remain in all three images; GAME and OPEN also retain target-relink
 or section-placement failures. Strict syntax checking and the test suite pass;
 full executable closure still does not. The enum audit makes no new exactness
 or banking claim. Concurrent changes in the primary worktree are preserved.
+
+## Function Match Plan: implement F1–F9
+
+Implementation baseline: `ac95ac2d`, in the isolated enum worktree. The nine
+findings are one type-propagation campaign over their existing data/call
+families. Before changing source, refresh all 484 per-function retail dossiers
+(address/extent, CFG/disassembly, callers/callees, strings, relocation and match
+state) under `build/enum-implementation/before/`, inspect the affected family
+records alongside the field ledger and source history, and preserve the 116
+current compiled objects. Existing library calls remain vendored controls.
+
+- F1: add an unsigned-halfword interpolation direction. Keep the zero/nonzero
+  branch, with a documented canonical nonzero source value rather than claiming
+  the shipped assets demonstrate it.
+- F2: replace the eight-byte actor parameter array with its proven component
+  structure. Give packed effect codes their own domain, propagate it through
+  selection/spawn helpers, and use the existing map-object domain for drops.
+- F3: give the action byte typed copy-region and numeric pool-index alternatives.
+- F4: give billboard and model IDs typed alternatives in their shared byte;
+  retain their common NONE representation and explicit frame arithmetic.
+- F5: add a dedicated attribute grid and enum, keeping numeric height/occupancy
+  grids distinct. Make table-index conversions explicit.
+- F6: type the complete effect type/class flag byte and propagate it through
+  construction, collision, power selection and damage-credit arguments.
+- F7: type the packed appearance byte and its extracted facing domain; keep
+  frame counts and coordinate conversion numeric.
+- F8: type TMD mode flags and the normalized dispatch expression, preserving
+  packed SDK transport and the semitransparency mask.
+- F9: share one player-status flag domain across actor definitions, player state
+  and damage arguments. Bitwise operations accept only the same domain.
+
+After each focused family build, compare from the first real divergence against
+both its preserved object and retail; inspect referents, calls, CFG and typed
+instruction selection in that order. Preserve all banked exact functions and
+all original data widths. Update curated identities/layouts and the field
+ledger, run strict checking and the existing suite without new tests, then run
+full `kf build`, lint, whitespace checks, and flake checks if tooling changes.
+Final verdicts must explicitly close each of F1–F9; no score-only banking or
+speculative runtime changes are part of this campaign.
+
+
+## Implementation results
+
+All nine findings are closed. The original 17 candidate declarations now have
+strict enum types or typed component views; 16 new declarations make the mixed
+storage explicit. Numeric probabilities, pool indices, frame counts and raw
+whole-object copy views retain their numeric role.
+
+| Finding | Kept implementation | Evidence and boundary |
+| --- | --- | --- |
+| F1 | `KfAnimationBlendDirection` on the private keyframe field | Unsigned halfword and zero/nonzero branch preserved. `REVERSE = 1` is a canonical source value, not an observed shipped value. |
+| F2 | `KfActorActionParameters` with `KfActorEffectCode[3]`, numeric chances and `KfMapObjectId` | Eight-byte extent, drop at relative offset 6; effect selection and spawn signatures carry the same enum at their original ABI widths. |
+| F3 | `KfMapObjectParameter` | Existing `KfMapCopyRegionId` shares one byte with separately named numeric effect/object indices; each behavior uses its matching member. |
+| F4 | `KfEffectRenderId`, `KfEffectBillboardId`, `KfEffectModelId` | Distinct resource banks; billboard frames and both NONE sentinels enumerated. Animation clip chooses the view; frame/index arithmetic explicitly encodes it. |
+| F5 | `KfMapAttributeGrid` and `KfMapAttribute` | Shared GAME/OPEN attribute type, including every shipped attribute value. Floor heights and occupancy remain in the generic grid. |
+| F6 | `KfEffectType` flag enum | Target bits, power bit, credit class, deformation and free encodings share the original byte. Constructor, collision and damage arguments retain the domain. |
+| F7 | `KfFloorItemAppearance` and `KfFloorItemFacing` | Serialized and live appearance bytes share the packed type; a typed component constructor/extractor separates facing from numeric frame count. |
+| F8 | `KfTmdMode` flag enum | All five mode fields and normalized format dispatch use one domain; packed word transport and semitransparency masks stay intact. |
+| F9 | `KfPlayerStatusFlags` | Player state and damage API use the halfword domain; actor definitions use enum-only byte storage. Same-domain bitwise operations preserve combinations. |
+
+`KF_ENUM_FLAGS` opts individual domains into bitwise operators. Those operators
+accept and return the same enum; no integer or foreign-enum overload exists.
+Ordinary assignments and function arguments still reject unrelated enums and
+integers in strict C++20. The pinned retail C view retains its original storage
+and parameter widths. Explicit encode/decode operations remain at serialized,
+packed, arithmetic and numeric API boundaries.
+
+The shipped resource census confirms attribute IDs `0x00..0x62`, `0x66`, `0x67`
+and `0xff`, packed floor-facing high nibbles `0x00`, `0x10`, `0x20`, and actor
+effect bytes including `0xff`. Other attribute names remain numeric identities
+instead of invented semantics. The facing enum names the decoded encodings;
+unused nonzero facing values are supported by arithmetic, not claimed as
+observed assets. The existing initial-frame calculation consumes the whole
+appearance byte, so its expression is preserved exactly.
+
+The map renderer originally reuses one byte first as an attribute and then as
+a bank-relative mesh index. A local union now names those two phases, with an
+explicit domain-to-index assignment. Both GAME and OPEN preserve the retail
+instruction sequence. Two independent scalar locals changed generated register
+use; that intermediate experiment was rejected after the object comparison.
+
+The refreshed Clang pass covers **1,046 unique fields in 171 record definitions**,
+all 111 C sources and all 55 project headers, with zero parse errors. All 866
+curated fields are represented, plus 180 declarations outside that inventory.
+The 16 added fields are four actor-parameter members, three map-object parameter
+alternatives, two effect-render alternatives, three attribute-grid views, and
+four local attribute/index alternatives across GAME and OPEN. The ledger keeps
+all previous declarations and assigns a final verdict to each added member.
+Four new layout claims bring the curated inventory to 129 records; six function
+signatures and both map-attribute data identities have been updated.
+
+## Verification
+
+The final per-function verdicts are local at
+`build/enum-implementation/final-verdicts.tsv`, alongside refreshed pre-edit
+retail disassembly/CFG, callers, callees, strings, data and relocation dossiers.
+All **116 preserved objects are unchanged** in allocated section bytes, sizes,
+alignment and ordered relocation offsets/types/targets. This includes four
+vendored data controls. All 484 owned function verdicts retain their original
+match state: **459 exact**, including 13 vendored functions; the game-only
+count stays **446/471**. No banked function regressed, and no new match is claimed.
+
+Strict type checking passes **112/112 source/image variants**. Focused matching
+covers the animation, actor, map-object, effect, map-rendering, floor-item,
+TMD and player-damage families. The full `kf build` was run after rebuilding
+source: it still fails the pre-existing ownership/data comparisons in all three
+images and the existing GAME/OPEN relink/placement checks. Identical preserved
+objects establish that this campaign did not introduce those differences.
+
+The existing full test run initially found three stale type/API expectations;
+those existing assertions and constructor controls were updated, with no new
+tests. All 115 tests in the affected modules then passed (41 subtests); the
+remaining tests had passed in the full run. `ruff check scripts tests` and
+`git diff --check` pass. `nix flake check -L` passes, including the hermetic
+723-test suite (140 skipped because optional/local prerequisites are absent).

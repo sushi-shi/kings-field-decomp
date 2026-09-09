@@ -525,7 +525,7 @@ void player_update_vertical_motion(void)
             player_death_begin();
         } else if (target >= -6999
                    && map_cell_attribute_grid.cells[player_state.motion_state.fields.map_cell.coords.z][player_state.motion_state.fields.map_cell.coords.x]
-                       == 0x52) {
+                       == KF_MAP_ATTRIBUTE_52) {
             player_death_begin();
         }
     }

@@ -58,7 +58,7 @@ u32 collision_query_world(
         + (s16)(point_z / KF_MAP_TILE_SIZE) * KF_MAP_COLUMNS;
     s32 floor_height;
     s32 hit;
-    u8 attribute;
+    KfMapAttribute attribute;
     u8 cell_flags;
     u32 rejection_mask;
     u16 query_flags = flags;
@@ -79,8 +79,8 @@ u32 collision_query_world(
             if (attribute == KF_MAP_ATTRIBUTE_NONE) {
                 return KF_COLLISION_MISSING_ATTRIBUTE;
             }
-            if (map_cell_attribute_height_table[attribute] + height < 0
-                && point_y < map_cell_attribute_height_table[attribute] + height + floor_height) {
+            if (map_cell_attribute_height_table[KF_ENUM_ENCODE(u8, attribute)] + height < 0
+                && point_y < map_cell_attribute_height_table[KF_ENUM_ENCODE(u8, attribute)] + height + floor_height) {
                 return KF_COLLISION_CEILING;
             }
         }

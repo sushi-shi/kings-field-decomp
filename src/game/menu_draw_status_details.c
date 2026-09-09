@@ -172,24 +172,24 @@ void menu_draw_status_details(void)
     gs.glyphs.codes[4] = MENU_TEXT_BLANK;
     gs.glyphs.codes[5] = MENU_TEXT_END;
     gs.position.y += STATUS_SUMMARY_ROW_STEP;
-    if (player_state.status_effect_flags == 0) {
+    if (player_state.status_effect_flags == KF_PLAYER_STATUS_NONE) {
         gs.glyphs.codes[3] = 0xc5;
         gs.glyphs.codes[4] = 0xc6;
     }
     glyph_index = 4;
-    if ((player_state.status_effect_flags & KF_PLAYER_STATUS_SLOWED) != 0) {
+    if ((player_state.status_effect_flags & KF_PLAYER_STATUS_SLOWED) != KF_PLAYER_STATUS_NONE) {
         gs.glyphs.codes[4] = 0xc9;
         glyph_index = 3;
     }
-    if ((player_state.status_effect_flags & KF_PLAYER_STATUS_POISON) != 0) {
+    if ((player_state.status_effect_flags & KF_PLAYER_STATUS_POISON) != KF_PLAYER_STATUS_NONE) {
         gs.glyphs.codes[glyph_index] = 0x88;
         glyph_index--;
     }
-    if ((player_state.status_effect_flags & KF_PLAYER_STATUS_DARKNESS) != 0) {
+    if ((player_state.status_effect_flags & KF_PLAYER_STATUS_DARKNESS) != KF_PLAYER_STATUS_NONE) {
         gs.glyphs.codes[glyph_index] = 199;
         glyph_index--;
     }
-    if ((player_state.status_effect_flags & KF_PLAYER_STATUS_CURSE) != 0) {
+    if ((player_state.status_effect_flags & KF_PLAYER_STATUS_CURSE) != KF_PLAYER_STATUS_NONE) {
         gs.glyphs.codes[glyph_index] = 200;
     }
     menu_draw_string(&menu_assets.glyph_atlas, &gs);

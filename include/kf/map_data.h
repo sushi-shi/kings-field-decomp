@@ -16,14 +16,115 @@ enum {
     KF_MAP_HEIGHT_STEP = 100,
     KF_MAP_MESHES_PER_BANK = 100,
     KF_MAP_ATTRIBUTE_COUNT = 255,
-    KF_MAP_ATTRIBUTE_NONE = 0xff,
-    KF_MAP_ATTRIBUTE_PITFALL = 0x3a,
-    KF_MAP_ATTRIBUTE_POISON_HOLE = 0x3f,
-    KF_MAP_ATTRIBUTE_WARP = 0x40,
-    KF_MAP_ATTRIBUTE_HIDDEN_DOOR = 0x45,
-    KF_MAP_ATTRIBUTE_BOTTOMLESS_PIT = 0x5d,
     KF_MAP_CELL_COORD_INVALID = 0xff
 };
+
+/* Shipped grid IDs also select mesh/height-table rows. Unresolved resource
+ * identities retain their encoded names; zero and 255 both occur on disc. */
+KF_ENUM_BEGIN(KfMapAttribute, u8)
+    KF_MAP_ATTRIBUTE_00 = 0x00,
+    KF_MAP_ATTRIBUTE_01 = 0x01,
+    KF_MAP_ATTRIBUTE_02 = 0x02,
+    KF_MAP_ATTRIBUTE_03 = 0x03,
+    KF_MAP_ATTRIBUTE_04 = 0x04,
+    KF_MAP_ATTRIBUTE_05 = 0x05,
+    KF_MAP_ATTRIBUTE_06 = 0x06,
+    KF_MAP_ATTRIBUTE_07 = 0x07,
+    KF_MAP_ATTRIBUTE_08 = 0x08,
+    KF_MAP_ATTRIBUTE_09 = 0x09,
+    KF_MAP_ATTRIBUTE_0A = 0x0a,
+    KF_MAP_ATTRIBUTE_0B = 0x0b,
+    KF_MAP_ATTRIBUTE_0C = 0x0c,
+    KF_MAP_ATTRIBUTE_0D = 0x0d,
+    KF_MAP_ATTRIBUTE_0E = 0x0e,
+    KF_MAP_ATTRIBUTE_0F = 0x0f,
+    KF_MAP_ATTRIBUTE_10 = 0x10,
+    KF_MAP_ATTRIBUTE_11 = 0x11,
+    KF_MAP_ATTRIBUTE_12 = 0x12,
+    KF_MAP_ATTRIBUTE_13 = 0x13,
+    KF_MAP_ATTRIBUTE_14 = 0x14,
+    KF_MAP_ATTRIBUTE_15 = 0x15,
+    KF_MAP_ATTRIBUTE_16 = 0x16,
+    KF_MAP_ATTRIBUTE_17 = 0x17,
+    KF_MAP_ATTRIBUTE_18 = 0x18,
+    KF_MAP_ATTRIBUTE_19 = 0x19,
+    KF_MAP_ATTRIBUTE_1A = 0x1a,
+    KF_MAP_ATTRIBUTE_1B = 0x1b,
+    KF_MAP_ATTRIBUTE_1C = 0x1c,
+    KF_MAP_ATTRIBUTE_1D = 0x1d,
+    KF_MAP_ATTRIBUTE_1E = 0x1e,
+    KF_MAP_ATTRIBUTE_1F = 0x1f,
+    KF_MAP_ATTRIBUTE_20 = 0x20,
+    KF_MAP_ATTRIBUTE_21 = 0x21,
+    KF_MAP_ATTRIBUTE_22 = 0x22,
+    KF_MAP_ATTRIBUTE_23 = 0x23,
+    KF_MAP_ATTRIBUTE_24 = 0x24,
+    KF_MAP_ATTRIBUTE_25 = 0x25,
+    KF_MAP_ATTRIBUTE_26 = 0x26,
+    KF_MAP_ATTRIBUTE_27 = 0x27,
+    KF_MAP_ATTRIBUTE_28 = 0x28,
+    KF_MAP_ATTRIBUTE_29 = 0x29,
+    KF_MAP_ATTRIBUTE_2A = 0x2a,
+    KF_MAP_ATTRIBUTE_2B = 0x2b,
+    KF_MAP_ATTRIBUTE_2C = 0x2c,
+    KF_MAP_ATTRIBUTE_2D = 0x2d,
+    KF_MAP_ATTRIBUTE_2E = 0x2e,
+    KF_MAP_ATTRIBUTE_2F = 0x2f,
+    KF_MAP_ATTRIBUTE_30 = 0x30,
+    KF_MAP_ATTRIBUTE_31 = 0x31,
+    KF_MAP_ATTRIBUTE_32 = 0x32,
+    KF_MAP_ATTRIBUTE_33 = 0x33,
+    KF_MAP_ATTRIBUTE_34 = 0x34,
+    KF_MAP_ATTRIBUTE_35 = 0x35,
+    KF_MAP_ATTRIBUTE_36 = 0x36,
+    KF_MAP_ATTRIBUTE_37 = 0x37,
+    KF_MAP_ATTRIBUTE_38 = 0x38,
+    KF_MAP_ATTRIBUTE_39 = 0x39,
+    KF_MAP_ATTRIBUTE_PITFALL = 0x3a,
+    KF_MAP_ATTRIBUTE_3B = 0x3b,
+    KF_MAP_ATTRIBUTE_3C = 0x3c,
+    KF_MAP_ATTRIBUTE_3D = 0x3d,
+    KF_MAP_ATTRIBUTE_3E = 0x3e,
+    KF_MAP_ATTRIBUTE_POISON_HOLE = 0x3f,
+    KF_MAP_ATTRIBUTE_WARP = 0x40,
+    KF_MAP_ATTRIBUTE_41 = 0x41,
+    KF_MAP_ATTRIBUTE_42 = 0x42,
+    KF_MAP_ATTRIBUTE_43 = 0x43,
+    KF_MAP_ATTRIBUTE_44 = 0x44,
+    KF_MAP_ATTRIBUTE_HIDDEN_DOOR = 0x45,
+    KF_MAP_ATTRIBUTE_46 = 0x46,
+    KF_MAP_ATTRIBUTE_47 = 0x47,
+    KF_MAP_ATTRIBUTE_48 = 0x48,
+    KF_MAP_ATTRIBUTE_49 = 0x49,
+    KF_MAP_ATTRIBUTE_4A = 0x4a,
+    KF_MAP_ATTRIBUTE_4B = 0x4b,
+    KF_MAP_ATTRIBUTE_4C = 0x4c,
+    KF_MAP_ATTRIBUTE_4D = 0x4d,
+    KF_MAP_ATTRIBUTE_4E = 0x4e,
+    KF_MAP_ATTRIBUTE_4F = 0x4f,
+    KF_MAP_ATTRIBUTE_50 = 0x50,
+    KF_MAP_ATTRIBUTE_51 = 0x51,
+    KF_MAP_ATTRIBUTE_52 = 0x52,
+    KF_MAP_ATTRIBUTE_53 = 0x53,
+    KF_MAP_ATTRIBUTE_54 = 0x54,
+    KF_MAP_ATTRIBUTE_55 = 0x55,
+    KF_MAP_ATTRIBUTE_56 = 0x56,
+    KF_MAP_ATTRIBUTE_57 = 0x57,
+    KF_MAP_ATTRIBUTE_58 = 0x58,
+    KF_MAP_ATTRIBUTE_59 = 0x59,
+    KF_MAP_ATTRIBUTE_5A = 0x5a,
+    KF_MAP_ATTRIBUTE_5B = 0x5b,
+    KF_MAP_ATTRIBUTE_5C = 0x5c,
+    KF_MAP_ATTRIBUTE_BOTTOMLESS_PIT = 0x5d,
+    KF_MAP_ATTRIBUTE_5E = 0x5e,
+    KF_MAP_ATTRIBUTE_5F = 0x5f,
+    KF_MAP_ATTRIBUTE_60 = 0x60,
+    KF_MAP_ATTRIBUTE_61 = 0x61,
+    KF_MAP_ATTRIBUTE_62 = 0x62,
+    KF_MAP_ATTRIBUTE_66 = 0x66,
+    KF_MAP_ATTRIBUTE_67 = 0x67,
+    KF_MAP_ATTRIBUTE_NONE = 0xff
+KF_ENUM_END(KfMapAttribute)
 
 KF_ENUM_BEGIN(KfMapCellKind, u8)
     KF_MAP_CELL_BLOCKED = 0,
@@ -60,6 +161,14 @@ typedef union KfMapGrid {
 } KfMapGrid;
 typedef char check_map_grid_size[sizeof(KfMapGrid) == 0x2710 ? 1 : -1];
 
+typedef union KfMapAttributeGrid {
+    KfMapAttribute cells[KF_MAP_ROWS][KF_MAP_COLUMNS];
+    KfMapAttribute bytes[KF_MAP_CELL_COUNT];
+    u32 words[KF_MAP_GRID_WORD_COUNT];
+} KfMapAttributeGrid;
+typedef char check_map_attribute_grid_size[
+    sizeof(KfMapAttributeGrid) == 0x2710 ? 1 : -1];
+
 typedef union KfMapCollisionGrid {
     KfMapCellKind cells[KF_MAP_ROWS][KF_MAP_COLUMNS];
     KfMapCellKind bytes[KF_MAP_CELL_COUNT];
@@ -75,7 +184,7 @@ typedef union KfMapOrientationGrid {
 typedef char check_map_collision_grid_size[sizeof(KfMapCollisionGrid) == 0x2710 ? 1 : -1];
 typedef char check_map_orientation_grid_size[sizeof(KfMapOrientationGrid) == 0x2710 ? 1 : -1];
 
-extern KfMapGrid map_cell_attribute_grid;
+extern KfMapAttributeGrid map_cell_attribute_grid;
 extern KfMapOrientationGrid map_cell_orientation_grid;
 extern KfMapGrid map_collision_flag_grid;
 extern KfMapCollisionGrid map_collision_grid;
