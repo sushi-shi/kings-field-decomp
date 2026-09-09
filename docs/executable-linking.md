@@ -101,6 +101,65 @@ layout, remaining function residues and SDK/library ordering.
 The full PSX header, padding and converter investigation is consolidated in
 [the executable byte-provenance record](patterns/executable-byte-provenance.md).
 
+## Layout-tolerant executable comparison
+
+`kf link` also compares moved byte regions and refreshes the second generated
+README block, `executable-score`, after linking. To compare existing EXEs and
+refresh that block without rebuilding them, run:
+
+```sh
+kf link --compare-only
+```
+
+Both forms accept `--image psx|game|open`. The README keeps one row per image
+and a byte-weighted total for the available images. It reads saved reports
+only when their candidate hashes match EXEs still on disk and their retail
+hashes match the configured retail identities. Missing, changed or failed
+outputs receive no cached score. The executable and function blocks share
+the same update lock and preserve each other.
+
+The report is a content heuristic called `unique-byte-islands-v1`, not a
+reimplementation of objdiff or a claim of function identity:
+
+1. Find exact 16-byte windows that occur once in each load area. Coalesce
+   overlapping windows with the same displacement, then select the longest
+   nonoverlapping runs. Each byte can be assigned at most once in each image.
+2. Extend selected runs through equal, unused neighboring bytes. Also keep
+   exact file-boundary prefixes and suffixes, so repeated padding does not
+   require a unique seed.
+3. Join adjacent anchors only when they are neighbors in both images. Each
+   intervening gap is at most 128 bytes. A bounded byte-sequence comparison
+   accepts gaps with at least 60% similarity, or edits of at most 16 bytes
+   per side when the two flanking exact runs supply at least 85% similarity
+   across that local span. Unchanged bytes inside an accepted gap earn
+   credit; its edited, inserted or deleted bytes do not.
+4. Sum equal byte pairs across all selected islands. Report similarity as
+   `200 * equal_pairs / (retail_load_bytes + candidate_load_bytes)`. All
+   unpaired bytes remain in the denominator. The nonzero score uses the
+   same formula with zero-valued bytes removed from both counts.
+
+Islands may move or reorder, but no address, opcode, register, immediate,
+constant or data byte is masked. A changed pointer still loses byte credit;
+similar pointer encodings do not prove the same referent. Short or repetitive
+regions without suitable anchors can remain unpaired even when shared.
+The algorithm is conservative and deterministic, rather than an optimal
+global alignment or an instruction-semantic comparison.
+
+The island scores cover the complete EXE load areas, including sector
+padding, and exclude the 2048-byte headers. The separate fixed-offset
+comparison still covers the complete files and is the only executable
+equality check. Neither island similarity nor island coverage changes
+function scores, banking criteria or the full data-layout gates.
+
+Normal links write the detailed score into each image's `comparison.json`
+and create `comparison.html`. Comparison-only runs write
+`fuzzy-comparison.json` and `fuzzy-comparison.html`, preserving the original
+native-build report and executable. The standalone HTML contains a movement
+map, filterable islands with both addresses and sizes, and the largest
+unanchored regions. The JSON retains all islands, complementary unanchored
+ranges, parameters, counts and input hashes. These generated files stay
+under `build/link/{psx,game,open}/` and are not committed.
+
 ## Overlay link plan and evidence
 
 The initial native runs reported 61 OPEN and 2694 GAME diagnostic references;
@@ -217,7 +276,9 @@ The full rebuild compared 484 functions, including thirteen source-verified vend
 
 All 22 newly defined initialized objects match their retail extents and raw bytes in the freshly compiled objects. This includes every sound selector, the six light matrices, path arrays and initialized state words; it does not establish their linked positions.
 
-The full repository suite passes all 726 tests with local retail/build inputs. `ruff check scripts tests`, `git diff --check` and `nix flake check -L` also pass. The isolated flake test run skips 140 checks that require local retail or build artifacts; those checks run in the full local suite.
+The full repository suite passes all 739 tests with local retail/build inputs. `ruff check scripts tests`, `git diff --check` and `nix flake check -L` also pass. The isolated flake test run skips 140 checks that require local retail or build artifacts; those checks run in the full local suite.
+
+The executable-island controls cover reordering, small edits, insertions/deletions, duplicate-copy accounting, unrelated content, padding, changed address encodings and malformed EXEs. README controls cover hash freshness, weighted totals, preservation of the function block and repeatable updates. A full native link and subsequent comparison-only pass give identical island reports for all three images; the latter leaves native EXEs and build-provenance reports unchanged. The full build also preserves the generated executable-score block. These integration checks are recorded under `build/link/island-audit/`.
 
 The native executable controls check the minimal startup opcodes and symbolic entry, all four BIOS aliases, initialized zero data, exclusion of an 8192-byte BSS buffer, unchanged original archives and rejection of unresolved references/stale output. None executes a complete game image.
 

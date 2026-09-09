@@ -3,15 +3,20 @@
 from __future__ import annotations
 
 import fcntl
+import hashlib
+import json
 import os
 from pathlib import Path
 
 from scripts.kf.paths import BUILD, REPO
+from scripts.kf.retail import IMAGE_LAYOUTS
 
 
 README = REPO / "README.md"
 START = "<!-- match-score:start -->"
 END = "<!-- match-score:end -->"
+EXECUTABLE_START = "<!-- executable-score:start -->"
+EXECUTABLE_END = "<!-- executable-score:end -->"
 
 
 def _percent(numerator: int, denominator: int) -> float:
@@ -62,13 +67,19 @@ def render_block(document: dict) -> str:
     ))
 
 
-def write_block(block: str, path: Path = README) -> bool:
+def write_block(
+    block: str, path: Path = README, *, start: str = START, end: str = END,
+    after: str | None = None,
+) -> bool:
     """Replace only the marked block, inserting it after the intro if absent."""
     text = path.read_text(encoding="utf-8")
-    if START in text and END in text:
-        before = text[:text.index(START)]
-        after = text[text.index(END) + len(END):]
-        content = before + block + after
+    if start in text and end in text:
+        before = text[:text.index(start)]
+        following = text[text.index(end) + len(end):]
+        content = before + block + following
+    elif after is not None and after in text:
+        position = text.index(after) + len(after)
+        content = text[:position] + "\n\n" + block + text[position:]
     else:
         heading = text.index("\n## ") if "\n## " in text else len(text)
         content = text[:heading].rstrip() + "\n\n" + block + "\n" + text[heading:]
@@ -93,3 +104,111 @@ def refresh() -> bool:
 
         document, _failures = snapshot()
         return write_block(render_block(document))
+
+
+def executable_snapshot(link_root: Path) -> dict[str, dict]:
+    """Use reports only when their EXE hashes match outputs still on disk."""
+    result = {}
+    for key in ('psx', 'game', 'open'):
+        image = key.upper() + '.EXE'
+        root = link_root / key
+        try:
+            data = (root / image).read_bytes()
+        except OSError:
+            continue
+        digest = hashlib.sha256(data).hexdigest()
+        for filename in ('fuzzy-comparison.json', 'comparison.json'):
+            try:
+                report = json.loads((root / filename).read_text())
+                strict, fuzzy = report['comparison'], report['layout_tolerant']
+                if (report['image'] != image or fuzzy['method'] != 'unique-byte-islands-v1'
+                        or fuzzy['candidate_sha256'] != digest
+                        or strict['linked_sha256'] != digest
+                        or fuzzy['retail_sha256'] != IMAGE_LAYOUTS[image].sha256
+                        or strict['retail_sha256'] != IMAGE_LAYOUTS[image].sha256):
+                    continue
+                # Check the fields used by the renderer before accepting a
+                # report; incomplete or inconsistent caches stay unavailable.
+                left, right = fuzzy['retail_bytes'], fuzzy['candidate_bytes']
+                nonzero_left, nonzero_right = fuzzy['retail_nonzero_bytes'], fuzzy['candidate_nonzero_bytes']
+                matched, nonzero = fuzzy['equal_paired_bytes'], fuzzy['equal_paired_nonzero_bytes']
+                if (strict['linked_size'] != len(data)
+                        or strict['retail_size'] != IMAGE_LAYOUTS[image].file_size
+                        or left != strict['retail_size'] - 0x800 or right != len(data) - 0x800
+                        or not 0 <= matched <= min(left, right)
+                        or not 0 <= nonzero <= min(nonzero_left, nonzero_right, matched)
+                        or not 0 <= nonzero_left <= left or not 0 <= nonzero_right <= right
+                        or not abs(strict['retail_size'] - len(data)) <= strict['differing_bytes']
+                        <= max(strict['retail_size'], len(data))
+                        or not 0 <= fuzzy['byte_similarity_percent'] <= 100
+                        or not 0 <= fuzzy['nonzero_byte_similarity_percent'] <= 100):
+                    continue
+                expected = 200 * matched / (left + right) if left + right else 100.0
+                expected_nonzero = (200 * nonzero / (nonzero_left + nonzero_right)
+                                    if nonzero_left + nonzero_right else 100.0)
+                if (abs(fuzzy['byte_similarity_percent'] - expected) > 1e-9
+                        or abs(fuzzy['nonzero_byte_similarity_percent'] - expected_nonzero) > 1e-9):
+                    continue
+                result[key] = {'strict': strict, 'fuzzy': fuzzy}
+                break
+            except (OSError, ValueError, KeyError, TypeError):
+                continue
+    return result
+
+
+def render_executable_block(images: dict[str, dict]) -> str:
+    """Keep complete-file equality and heuristic load-area similarity distinct."""
+    rows = []
+    total_equal = total_bytes = total_nonzero_equal = total_nonzero = 0
+    for key in ('psx', 'game', 'open'):
+        if key not in images:
+            rows.append(f"| `{key.upper()}.EXE` | — | — | — |")
+            continue
+        strict, fuzzy = images[key]['strict'], images[key]['fuzzy']
+        file_bytes = max(strict['retail_size'], strict['linked_size'])
+        fixed = _percent(file_bytes - strict['differing_bytes'], file_bytes)
+        rows.append(f"| `{key.upper()}.EXE` | {fixed:.2f}% | "
+                    f"{float(fuzzy['byte_similarity_percent']):.2f}% | "
+                    f"{float(fuzzy['nonzero_byte_similarity_percent']):.2f}% |")
+        total_equal += fuzzy['equal_paired_bytes']
+        total_bytes += fuzzy['retail_bytes'] + fuzzy['candidate_bytes']
+        total_nonzero_equal += fuzzy['equal_paired_nonzero_bytes']
+        total_nonzero += fuzzy['retail_nonzero_bytes'] + fuzzy['candidate_nonzero_bytes']
+    similarity = _percent(2 * total_equal, total_bytes) if total_bytes else 100.0
+    nonzero_similarity = _percent(2 * total_nonzero_equal, total_nonzero) if total_nonzero else 100.0
+    overall = (
+        f"**Overall ({len(images)}/3 images): {similarity:.2f}% "
+        f"island-aligned byte similarity &middot; "
+        f"{nonzero_similarity:.2f}% nonzero-byte similarity.**"
+        if images else "**No comparable executable outputs available. Run `kf link`.**")
+    return '\n'.join((
+        EXECUTABLE_START,
+        '## Executable similarity',
+        '',
+        '_Auto-generated by `kf link` and `kf link --compare-only`; do not hand-edit._',
+        '',
+        overall,
+        '',
+        '| Image | Same-offset file bytes | Island-aligned load bytes | Nonzero load bytes |',
+        '| :---- | --------------------: | -----------------------: | -----------------: |',
+        *rows,
+        '',
+        'All columns show similarity, not differences. Island scores allow moved regions and',
+        'small internal edits; unmatched bytes lower the score and no addresses are masked.',
+        'They exclude EXE headers and include sector padding. These describe the generated',
+        'executables and are diagnostic scores, not exact-match or runtime-equivalence claims.',
+        'Missing or stale outputs show —. See [the linking guide](docs/executable-linking.md)',
+        'for the algorithm, scope and per-image interactive reports.',
+        EXECUTABLE_END,
+    ))
+
+
+def refresh_executable(link_root: Path, path: Path | None = None) -> bool:
+    """Serialize both generated README blocks through the existing shared lock."""
+    lock = BUILD / 'gen' / 'readme.lock'
+    lock.parent.mkdir(parents=True, exist_ok=True)
+    with lock.open('a+') as stream:
+        fcntl.flock(stream, fcntl.LOCK_EX)
+        return write_block(render_executable_block(executable_snapshot(link_root)),
+                           path or README, start=EXECUTABLE_START, end=EXECUTABLE_END,
+                           after=END)

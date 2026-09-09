@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import contextlib
 import io
+import json
 import os
 from pathlib import Path
 import re
@@ -53,6 +54,37 @@ class ComparisonTests(unittest.TestCase):
         for broken in (cpe[:-1], cpe[:-2], cpe + b'\0', b'CPE\x01\xff\0'):
             with self.subTest(broken=broken), self.assertRaises(ValueError):
                 cpe_loads(broken)
+
+    def test_compare_only_preserves_executable_and_native_build_provenance(self):
+        image = RetailImage.synthetic('GAME.EXE', 0x80012000, bytes(range(128)))
+        with tempfile.TemporaryDirectory() as directory:
+            build = Path(directory)
+            root = build / 'link/game'
+            root.mkdir(parents=True)
+            exe = root / 'GAME.EXE'
+            exe.write_bytes(image.data)
+            original_report = root / 'comparison.json'
+            original_report.write_bytes(b'original native build provenance\n')
+            with (mock.patch.object(executable, 'BUILD', build),
+                  mock.patch.object(RetailImage, 'load', return_value=image),
+                  mock.patch.object(executable, 'load_manifest', side_effect=AssertionError('manifest used')),
+                  mock.patch.object(executable, 'build_image', side_effect=AssertionError('build used')),
+                  mock.patch.object(executable, 'refresh_executable') as refresh,
+                  contextlib.redirect_stdout(io.StringIO())):
+                self.assertEqual(executable.main(['--image', 'game', '--compare-only']), 0)
+                refresh.assert_called_once_with(build / 'link')
+            self.assertEqual(exe.read_bytes(), image.data)
+            self.assertEqual(original_report.read_bytes(), b'original native build provenance\n')
+            report = json.loads((root / 'fuzzy-comparison.json').read_text())
+            self.assertEqual(report['mode'], 'compare-existing')
+            self.assertNotIn('linked', report)
+            self.assertTrue(report['comparison']['file_equal'])
+            self.assertEqual(report['layout_tolerant']['byte_similarity_percent'], 100)
+            self.assertEqual(report['layout_tolerant']['retail_bytes'], 128)
+            html = (root / 'fuzzy-comparison.html').read_text()
+            self.assertIn('Movement map', html)
+            self.assertIn('80012000', html)
+            self.assertIn('id="minimum"', html)
 
 
 @unittest.skipUnless(all(shutil.which(tool) for tool in ('cpppsx-257', 'cc1psx-257', 'dosbox-x'))

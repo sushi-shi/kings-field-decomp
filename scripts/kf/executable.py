@@ -13,9 +13,11 @@ import struct
 import subprocess
 
 from scripts.kf.compile import C_COMPILERS, _run
+from scripts.kf.executable_diff import compare_executables, render_html
 from scripts.kf.graph import IncludeScanner
 from scripts.kf.manifest import Manifest, Profile, Unit, load as load_manifest
 from scripts.kf.paths import BUILD, REPO
+from scripts.kf.readme import refresh_executable
 from scripts.kf.retail import IMAGE_LAYOUTS
 from scripts.kf.sema.image import RetailImage
 
@@ -247,26 +249,41 @@ def compare(actual: bytes, image: RetailImage) -> dict:
 def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--image', choices=('psx', 'game', 'open'), action='append')
+    parser.add_argument('--compare-only', action='store_true',
+                        help='compare existing native EXEs without rebuilding or changing them')
     args = parser.parse_args(argv)
     names = [key.upper() + '.EXE' for key in args.image] if args.image else list(IMAGE_LAYOUTS)
     try:
-        manifest = load_manifest()
+        manifest = None if args.compare_only else load_manifest()
         verified = {name: RetailImage.load(name) for name in names}
         reports = []
         for name in names:
             root = BUILD / 'link' / name[:-4].lower()
-            report = build_image(name, manifest, root)
-            if report['linked']:
-                report['comparison'] = compare((root / name).read_bytes(), verified[name])
+            report = ({'image': name, 'mode': 'compare-existing', 'executable': str(root / name)}
+                      if args.compare_only else build_image(name, manifest, root))
+            if args.compare_only or report['linked']:
+                actual = (root / name).read_bytes()
+                report['comparison'] = compare(actual, verified[name])
+                report['layout_tolerant'] = compare_executables(verified[name].data, actual)
                 diff = report['comparison']
-                print(f'{name}: native tools linked {diff["linked_size"]} bytes; '
+                mode = 'existing EXE has' if args.compare_only else 'native tools linked'
+                print(f'{name}: {mode} {diff["linked_size"]} bytes; '
                       f'{diff["differing_bytes"]} file bytes differ from retail')
+                fuzzy = report['layout_tolerant']
+                print(f'  island-aligned byte similarity: {fuzzy["byte_similarity_percent"]:.2f}%; '
+                      f'nonzero bytes: {fuzzy["nonzero_byte_similarity_percent"]:.2f}%; '
+                      f'{fuzzy["island_count"]} islands (heuristic, not exactness)')
+                html = root / ('fuzzy-comparison.html' if args.compare_only else 'comparison.html')
+                html.write_text(render_html(name, diff, fuzzy))
+                print(f'  report: {html}')
             else:
                 print(f'{name}: {report["phase"]} failed; see {root}: {report["error"]}')
-            (root / 'comparison.json').write_text(json.dumps(report, indent=2) + '\n')
+            filename = 'fuzzy-comparison.json' if args.compare_only else 'comparison.json'
+            (root / filename).write_text(json.dumps(report, indent=2) + '\n')
             reports.append(report)
-        (BUILD / 'link' / 'comparison.json').write_text(json.dumps(reports, indent=2) + '\n')
-        return int(any(not report['linked'] for report in reports))
+        (BUILD / 'link' / filename).write_text(json.dumps(reports, indent=2) + '\n')
+        refresh_executable(BUILD / 'link')
+        return int(any(not report.get('linked', args.compare_only) for report in reports))
     except (OSError, ValueError) as error:
         parser.error(str(error))
 
