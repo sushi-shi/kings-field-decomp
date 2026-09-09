@@ -315,11 +315,11 @@ s32 player_distance_to_point(
 
     dx = player_state.camera_position.vx - point_x;
     if (dx < -max_distance || max_distance < dx) {
-        goto out_of_range;
+        return KF_COLLISION_NONE;
     }
     dz = player_state.camera_position.vz - point_z;
     if (dz < -max_distance || max_distance < dz) {
-        goto out_of_range;
+        return KF_COLLISION_NONE;
     }
     dx >>= KF_LENGTH_SQUARE_DOWNSHIFT;
     if (point_y != KF_COLLISION_IGNORE_HEIGHT) {

@@ -372,7 +372,7 @@ void map_floor5_transition_cutscene(void)
             } else {
                 map_object_start_action_if_idle(effect, KF_MAP_OBJECT_ACTION_FALL_AND_TIP);
                 effect->link.fields.vertical_velocity = 0;
-                goto done;
+                return;
             }
             break;
         default:
@@ -381,8 +381,6 @@ void map_floor5_transition_cutscene(void)
         effect_pool_sweep();
         render_frame(0, 0);
     }
-done:
-    ;
 }
 
 ADDRESS(0x80034a34, 0x4c)

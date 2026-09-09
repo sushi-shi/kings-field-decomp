@@ -583,11 +583,11 @@ s32 actor_distance_to_point(
 
     point_x = actor->position.vx - point_x;
     if (point_x < -max_distance || max_distance < point_x) {
-        goto out_of_range;
+        return -1;
     }
     point_z = actor->position.vz - point_z;
     if (point_z < -max_distance || max_distance < point_z) {
-        goto out_of_range;
+        return -1;
     }
     point_x >>= KF_LENGTH_SQUARE_DOWNSHIFT;
     if (point_y != KF_COLLISION_IGNORE_HEIGHT) {
@@ -596,7 +596,7 @@ s32 actor_distance_to_point(
         delta_y = (actor->position.vy - actor_height) - (point_y - point_height);
         point_height += actor_height;
         if (delta_y < -point_height) {
-            goto out_of_range;
+            return -1;
         }
         if (point_height < delta_y) {
             goto out_of_range;
@@ -767,7 +767,7 @@ KfActorAction actor_try_select_ground_action(KfActorAction action, s32 distance,
     }
     if (-(map_floor_height_grid.cells[actor->cell_z][actor->cell_x] * KF_MAP_HEIGHT_STEP)
         != actor->position.vy) {
-        goto rejected;
+        return KF_ACTOR_ACTION_NONE;
     }
     if (actor_state.player_target == actor) {
         actor_state.player_target = 0;
@@ -777,7 +777,7 @@ KfActorAction actor_try_select_ground_action(KfActorAction action, s32 distance,
         odds >>= ACTOR_GROUND_FAR_CHANCE_SHIFT;
     } else {
         if (distance < ACTOR_GROUND_SELECTION_MIN_RANGE) {
-            goto rejected;
+            return KF_ACTOR_ACTION_NONE;
         }
         odds <<= ACTOR_GROUND_NEAR_CHANCE_SHIFT;
     }
