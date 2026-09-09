@@ -1,5 +1,11 @@
 # OPEN display-initialization pointer lifetimes
 
+The [period-style C experiment](open-era-source-experiment.md) closes this
+function at strict 100% with direct DRAWENV arrays and actual SDK setRGB0
+macros. The negative macro controls below apply to their tested pointer
+contexts; they did not establish that the macro was neutral in direct-array
+source. The following sections retain the earlier evidence.
+
 ## Retained bases and offset stores are separate facts
 
 The unchanged same-unit `render_initialize`, OPEN `80016908`/468 bytes, was

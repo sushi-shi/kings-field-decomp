@@ -108,8 +108,6 @@ void display_initialize(KfOpenMode mode)
 {
     s32 framebuffer_height;
     s16 lower_buffer_y = KF_DISPLAY_HEIGHT;
-    DRAWENV *first_draw;
-    DRAWENV *second_draw = &open_graphics_runtime.display_draw_environments[1];
 
     if (mode == KF_OPEN_MODE_ENDING) {
         ResetGraph(KF_GPU_RESET_KEEP_DISPLAY);
@@ -140,23 +138,18 @@ void display_initialize(KfOpenMode mode)
     open_graphics_runtime.display_draw_environments[0].dtd = open_graphics_runtime.display_draw_environments[1].dtd = 1;
     open_graphics_runtime.display_draw_environments[0].isbg = 1;
     open_graphics_runtime.display_draw_environments[1].isbg = 1;
-    open_graphics_runtime.display_draw_environments[0].r0 = 0;
-    open_graphics_runtime.display_draw_environments[0].g0 = 0;
-    open_graphics_runtime.display_draw_environments[0].b0 = 0;
-    open_graphics_runtime.display_draw_environments[1].r0 = 0;
-    open_graphics_runtime.display_draw_environments[1].g0 = 0;
-    open_graphics_runtime.display_draw_environments[1].b0 = 0;
-    first_draw = second_draw - 1;
+    setRGB0(&open_graphics_runtime.display_draw_environments[0], 0, 0, 0);
+    setRGB0(&open_graphics_runtime.display_draw_environments[1], 0, 0, 0);
     if (mode == KF_OPEN_MODE_ENDING) {
         PutDispEnv(&open_graphics_runtime.display_disp_environments[0]);
         SetDispMask(1);
     } else {
-        first_draw->dfe = 0;
-        second_draw->dfe = 0;
-        PutDrawEnv(first_draw);
-        PutDrawEnv(second_draw);
-        first_draw->dfe = 1;
-        second_draw->dfe = 1;
+        open_graphics_runtime.display_draw_environments[0].dfe = 0;
+        open_graphics_runtime.display_draw_environments[1].dfe = 0;
+        PutDrawEnv(&open_graphics_runtime.display_draw_environments[0]);
+        PutDrawEnv(&open_graphics_runtime.display_draw_environments[1]);
+        open_graphics_runtime.display_draw_environments[0].dfe = 1;
+        open_graphics_runtime.display_draw_environments[1].dfe = 1;
         SetDispMask(0);
     }
     SetBackColor(0, 0, 0);

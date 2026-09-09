@@ -627,6 +627,9 @@ promotes a probe to a proven historical toolchain.
 - [open-ending-scroll.md](open-ending-scroll.md): complete ending-scroll C,
   initialized panel/camera/color owners, the unreachable epilogue correction,
   and the remaining short-state and branch-join comparison.
+- [open-era-source-experiment.md](open-era-source-experiment.md): 36 period-style
+  C alternatives; actual SDK RGB macros and direct DRAWENV arrays close display
+  initialization, while ending scroll retains its seven-word residue.
 - [open-sentinel-sharing.md](open-sentinel-sharing.md): retained color-argument
   lifetime, seven-word working residue, and shared-sentinel source controls.
 - [open-inline-struct-floating.md](open-inline-struct-floating.md): inline
