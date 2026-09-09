@@ -613,16 +613,17 @@ void player_update(void)
         break;
     }
     if (player_state.slowed_timer != KF_PLAYER_STATUS_TIMER_INACTIVE) {
-        if (!((player_state.status_effect_flags & KF_PLAYER_STATUS_SLOWED) != KF_PLAYER_STATUS_NONE)) {
-            player_state.slowed_timer = KF_PLAYER_STATUS_TIMER_INACTIVE;
-            goto clear_slowed;
-        } else {
-            player_state.slowed_timer--;
-            if (player_state.slowed_timer == KF_PLAYER_STATUS_TIMER_INACTIVE) {
-            clear_slowed:
-                player_state.status_effect_flags &= ~KF_PLAYER_STATUS_SLOWED;
+        do {
+            if (!((player_state.status_effect_flags & KF_PLAYER_STATUS_SLOWED) != KF_PLAYER_STATUS_NONE)) {
+                player_state.slowed_timer = KF_PLAYER_STATUS_TIMER_INACTIVE;
+            } else {
+                player_state.slowed_timer--;
+                if (player_state.slowed_timer != KF_PLAYER_STATUS_TIMER_INACTIVE) {
+                    break;
+                }
             }
-        }
+            player_state.status_effect_flags &= ~KF_PLAYER_STATUS_SLOWED;
+        } while (0);
     }
     if (player_state.poison_timer != KF_PLAYER_STATUS_TIMER_INACTIVE) {
         if (!((player_state.status_effect_flags & KF_PLAYER_STATUS_POISON) != KF_PLAYER_STATUS_NONE)) {

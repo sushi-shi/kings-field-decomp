@@ -139,7 +139,6 @@ void effect_update_dispatch(void)
     switch (kind) {
     case KF_EFFECT_KIND_EMERGING_PROJECTILE:
         radius = EMERGING_COLLISION_RADIUS;
-        goto shared_projectile;
     case KF_EFFECT_KIND_LIGHTNING_BOLT:
     case KF_EFFECT_KIND_FIRE_BALL:
     case KF_EFFECT_KIND_WIND_CUTTER:
@@ -149,7 +148,6 @@ void effect_update_dispatch(void)
     case KF_EFFECT_KIND_CURSE_PROJECTILE:
     case KF_EFFECT_KIND_MAP_EMITTER_PROJECTILE:
     case KF_EFFECT_KIND_PHYSICAL_PROJECTILE:
-shared_projectile:
         if (phase == KF_EFFECT_PROJECTILE_TRAVEL) {
             collision = effect_map_collision(&effect->position, radius);
             if (collision != KF_COLLISION_NONE) {
