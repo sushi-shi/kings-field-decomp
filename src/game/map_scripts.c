@@ -681,7 +681,8 @@ notify_linked:
                 break;
             }
             if (object->link.fields.link_id != KF_MAP_LINK_NONE) {
-                goto notify_default;
+                notify_enqueue(object->link.fields.default_notification);
+                break;
             }
             map_object_start_action_if_idle(object, KF_MAP_OBJECT_ACTION_LIFT_DOOR);
             continue;
@@ -694,7 +695,8 @@ notify_linked:
                 break;
             }
             if (object->link.fields.link_id != KF_MAP_LINK_NONE && definition->behavior_type == KF_MAP_OBJECT_BEHAVIOR_HINGED_DOOR) {
-                goto notify_default;
+                notify_enqueue(object->link.fields.default_notification);
+                break;
             }
 
             neighbor_index = 0;
@@ -751,14 +753,16 @@ start_paired_door:
 
         case KF_MAP_OBJECT_BEHAVIOR_EFFECT_SWITCH:
             if (object->link.fields.link_id == KF_MAP_LINK_NONE) {
-                goto notify_default;
+                notify_enqueue(object->link.fields.default_notification);
+            } else {
+                object->action_timer = KF_MAP_OBJECT_SWITCH_FORWARD;
             }
-            object->action_timer = KF_MAP_OBJECT_SWITCH_FORWARD;
             break;
 
         case KF_MAP_OBJECT_BEHAVIOR_RESTORE_POINT:
             if (object->link.fields.link_id != KF_MAP_LINK_NONE) {
-                goto notify_default;
+                notify_enqueue(object->link.fields.default_notification);
+                break;
             }
             player_restore_vitals_with_color_cycle();
             continue;
