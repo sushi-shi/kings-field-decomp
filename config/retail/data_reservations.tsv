@@ -1,11 +1,15 @@
 image	va	name	size	class	evidence
 GAME.EXE	0x80057e68	player_movement_velocity_limit	0x8	fixed	docs/patterns/data-repair-campaign.md:private-player-storage;native-gcc257-aspsx107-G8
 GAME.EXE	0x80057e70	player_turn_step_limit	0x8	fixed	docs/patterns/data-repair-campaign.md:private-player-storage;native-gcc257-aspsx107-G8
+GAME.EXE	0x80057e88	current_poly_ft4	0x8	fixed	docs/patterns/data-module-continuation.md:menu-storage;native-gcc257-aspsx107-G8
 GAME.EXE	0x80057e90	memory_card_io_end_event	0x8	fixed	docs/patterns/data-repair-campaign.md:private-event-storage;native-gcc257-aspsx107-G8
 GAME.EXE	0x80057e98	memory_card_timeout_event	0x8	fixed	docs/patterns/data-repair-campaign.md:private-event-storage;native-gcc257-aspsx107-G8
 GAME.EXE	0x80057ea0	memory_card_new_device_event	0x8	fixed	docs/patterns/data-repair-campaign.md:private-event-storage;native-gcc257-aspsx107-G8
 GAME.EXE	0x80057ea8	memory_card_error_event	0x8	fixed	docs/patterns/data-repair-campaign.md:private-event-storage;native-gcc257-aspsx107-G8
 GAME.EXE	0x80058020	pad_buf	0x8	fixed	docs/patterns/data-repair-campaign.md:pad-storage;native-gcc257-aspsx107-G8
 GAME.EXE	0x80058028	pad_status	0x8	fixed	docs/patterns/data-repair-campaign.md:pad-storage;native-gcc257-aspsx107-G8
+OPEN.EXE	0x800375d8	cd_read_location	0x8	fixed	docs/patterns/remaining-data-owner-exhaustion.md:open-resource-storage;native-gcc257-aspsx107-G8
+OPEN.EXE	0x800375e0	opening_scene1_arena_cursor	0x8	fixed	docs/patterns/remaining-data-owner-exhaustion.md:open-resource-storage;native-gcc257-aspsx107-G8
+OPEN.EXE	0x800375e8	opening_ending_arena_cursor	0x8	fixed	docs/patterns/remaining-data-owner-exhaustion.md:open-resource-storage;native-gcc257-aspsx107-G8
 OPEN.EXE	0x80037760	pad_buf	0x8	fixed	docs/patterns/data-repair-campaign.md:pad-storage;native-gcc257-aspsx107-G8
 OPEN.EXE	0x80037768	pad_status	0x8	fixed	docs/patterns/data-repair-campaign.md:pad-storage;native-gcc257-aspsx107-G8

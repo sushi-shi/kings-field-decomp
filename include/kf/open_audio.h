@@ -3,7 +3,6 @@
 
 #include <kf/audio.h>
 
-extern char audio_sequence_table[];
 extern KfAudioState audio_state;
 extern s32 audio_voice_slot_index;
 

@@ -118,6 +118,16 @@ hashes match the configured retail identities. Missing, changed or failed
 outputs receive no cached score. The executable and function blocks share
 the same update lock and preserve each other.
 
+The **Data modules exact** column shows complete passing source data owners
+out of all compared owners, using the same strict gate as `kf verify data`.
+A module counts only when every initialized section, relocation, BSS layout
+and retail section placement passes. Exact functions or equal initializer
+bytes alone do not make its data exact. Separate config-owned SDK contributions
+are excluded; these object checks do not measure the generated EXE's similarity.
+`kf build`/`kf check` and `kf bank` also refresh this column. Missing comparison
+artifacts or objects older than their source, headers, inventories or build
+inputs show `—`, independently of executable-score availability.
+
 The report is a content heuristic called `unique-byte-islands-v1`, not a
 reimplementation of objdiff or a claim of function identity:
 

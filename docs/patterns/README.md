@@ -10,6 +10,12 @@ promotes a probe to a proven historical toolchain.
 - [type-cleanup.md](type-cleanup.md): production assertion removal, five
   union removals, shared resource interfaces, rejected cast substitutions,
   and measured matching impact.
+- [remaining-data-owner-exhaustion.md](remaining-data-owner-exhaustion.md): all
+  22 failed owners audited, renderer contribution closures, private CD/audio
+  workspaces, native small initializers and per-owner evidence limits.
+- [data-module-continuation.md](data-module-continuation.md): private menu
+  packet storage, native initialized/small-BSS sections, and consolidation
+  preserving all 35 function bodies.
 - [data-repair-campaign.md](data-repair-campaign.md): complete pool/allocator
   extents, native small-BSS allocation, private reservations, and remaining
   initialized-data, sound-selector and jump-table boundaries.

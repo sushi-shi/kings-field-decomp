@@ -8,21 +8,6 @@ enum {
     VITAL_RESTORE_COLOR_LEVEL = 0xfff
 };
 
-/*
- * Seven colour matrices for lighting/screen fades; entries 0, 3 and 4 are the
- * player-death fade endpoints. Each is a MATRIX (short m[3][3], long t[3]).
- */
-DATA(0x80055dbc, 0xe0)
-MATRIX color_matrix_table[KF_GAME_COLOR_PRESET_COUNT] = {
-    {{{2000, 700, 4000}, {2000, 700, 4000}, {2000, 700, 4000}}, {0, 0, 0}},
-    {{{3000, 1000, 4000}, {200, 70, 400}, {200, 70, 400}}, {0, 0, 0}},
-    {{{1000, 350, 2000}, {1000, 350, 2000}, {3000, 1000, 4000}}, {0, 0, 0}},
-    {{{4095, 4095, 4095}, {4095, 4095, 4095}, {4095, 4095, 4095}}, {0, 0, 0}},
-    {{{0, 0, 0}, {0, 0, 0}, {0, 0, 0}}, {0, 0, 0}},
-    {{{0, 0, 0}, {4095, 4095, 4095}, {0, 0, 0}}, {0, 0, 0}},
-    {{{0, 0, 0}, {0, 0, 0}, {4095, 4095, 4095}}, {0, 0, 0}},
-};
-
 ADDRESS(0x80033d80, 0x68)
 void lighting_transition_color_matrix(const MATRIX *from, const MATRIX *to)
 {

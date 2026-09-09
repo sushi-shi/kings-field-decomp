@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import struct
 import unittest
+from dataclasses import replace
 
 from elftools.elf.elffile import ELFFile
 
@@ -300,6 +301,15 @@ class GameMenuAssetsTests(unittest.TestCase):
                 for program in programs:
                     state['next'] = PACKETS
                     labels.clear()
+                    if program.label == 'candidate':
+                        rotation = [p for p in program.patches if p.address == 0x80057B70]
+                        self.assertEqual(len(rotation), 1)
+                        self.assertEqual(rotation[0].data, bytes(8))
+                        # This frame starts after earlier draws advanced yaw.
+                        # Verify the new owner's initializer, then seed the same
+                        # runtime rotation as the retail control below.
+                        program = replace(program, patches=tuple(
+                            p for p in program.patches if p is not rotation[0]))
                     with self.subTest(function=function, buffer=buffer_index, program=program.label):
                         result = ParserMachine(image, program).call(
                             function, [3], memory=inputs, capture=[packet_range, spin_range],

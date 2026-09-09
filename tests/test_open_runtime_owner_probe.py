@@ -108,13 +108,16 @@ class OpenRuntimeOwnerProbeTests(unittest.TestCase):
         expected = tuple(offset for _, offset in fields) + (0x24788,)
         with TemporaryDirectory(prefix="kf-open-runtime-layout-") as directory:
             root = Path(directory)
+            index = root / 'delink/open/objects.tsv'
+            index.parent.mkdir(parents=True)
+            index.write_text(f'object\tscope\nmodules/{unit.object_name}\tmodule\n')
             for gap in (0x1F68, 0x1F64):
                 with self.subTest(gap=gap):
                     source = root / "layout.c"
                     source.write_text(original.replace("[0x1f68]", f"[{gap:#x}]") + query)
                     output = root / unit.object_name
                     compile_source(
-                        source, unit.image, output, BUILD / 'delink', profile.optimization,
+                        source, unit.image, output, root / 'delink', profile.optimization,
                         profile.small_data, profile.aspsx_version,
                         (REPO / 'include', Path(sdk)), profile.cc1_flags,
                         profile.compiler, profile.maspsx_flags, defines=unit.defines,

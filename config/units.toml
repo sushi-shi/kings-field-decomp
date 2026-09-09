@@ -112,7 +112,7 @@ profile = "probe-gcc257-o2-g0"
 unit = "game.game"
 image = "GAME.EXE"
 source = "src/game/game.c"
-profile = "probe-gcc257-o2-g0"
+profile = "probe-gcc257-o2-g8"
 
 [[unit]]
 unit = "game.matrix_rotation"
@@ -190,7 +190,7 @@ profile = "probe-gcc257-o2-g0"
 unit = "game.cd_file"
 image = "GAME.EXE"
 source = "src/game/cd_file.c"
-profile = "probe-gcc257-o2-g0"
+profile = "probe-gcc257-o2-g8"
 
 [[unit]]
 unit = "game.resources"
@@ -202,7 +202,7 @@ profile = "probe-gcc257-o2-g8"
 unit = "game.render"
 image = "GAME.EXE"
 source = "src/game/render.c"
-profile = "probe-gcc257-o2-g0"
+profile = "probe-gcc257-o2-g8"
 
 [[unit]]
 unit = "game.render_enqueue"
@@ -251,12 +251,6 @@ profile = "probe-gcc257-o2-g0"
 unit = "game.geometry_render"
 image = "GAME.EXE"
 source = "src/game/geometry_render.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.notify_queue"
-image = "GAME.EXE"
-source = "src/game/notify_queue.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
@@ -320,82 +314,10 @@ source = "src/game/menu_select.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
-unit = "game.menu_status_panel"
-image = "GAME.EXE"
-source = "src/game/menu_status_panel.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.menu_item_drop"
-image = "GAME.EXE"
-source = "src/game/menu_item_drop.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.menu_config_panel"
-image = "GAME.EXE"
-source = "src/game/menu_config_panel.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.menu_draw_stats_header"
-image = "GAME.EXE"
-source = "src/game/menu_draw_stats_header.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.menu_draw_status_details"
-image = "GAME.EXE"
-source = "src/game/menu_draw_status_details.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.menu_draw_name_list"
-image = "GAME.EXE"
-source = "src/game/menu_draw_name_list.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.menu_item_model_preview"
-image = "GAME.EXE"
-source = "src/game/menu_item_model_preview.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.menu_item_detail"
-image = "GAME.EXE"
-source = "src/game/menu_item_detail.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.menu_list_interact"
-image = "GAME.EXE"
-source = "src/game/menu_list_interact.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.menu_two_option_prompt"
-image = "GAME.EXE"
-source = "src/game/menu_two_option_prompt.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.menu_draw_window"
-image = "GAME.EXE"
-source = "src/game/menu_draw_window.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.menu_list_render"
-image = "GAME.EXE"
-source = "src/game/menu_list_render.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
 unit = "game.menu_runtime"
 image = "GAME.EXE"
 source = "src/game/menu_runtime.c"
-profile = "probe-gcc257-o2-g0"
+profile = "probe-gcc257-o2-g8"
 
 [[unit]]
 unit = "game.save_system"
@@ -440,7 +362,7 @@ profile = "probe-gcc257-o2-g0"
 unit = "game.audio"
 image = "GAME.EXE"
 source = "src/game/audio.c"
-profile = "probe-gcc257-o2-g0"
+profile = "probe-gcc257-o2-g8"
 
 [[unit]]
 unit = "game.camera_path"
@@ -634,7 +556,7 @@ defines = ["KF_OPEN"]
 unit = "open.resources"
 image = "OPEN.EXE"
 source = "src/open/resources.c"
-profile = "probe-gcc257-o2-g0"
+profile = "probe-gcc257-o2-g8"
 
 [[unit]]
 unit = "open.render_init"

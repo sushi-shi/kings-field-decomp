@@ -70,7 +70,6 @@ typedef struct KfAudioState {
     KfAudioVoiceSlots voice_slots;
 } KfAudioState;
 
-extern char audio_sequence_table[];
 extern KfAudioState audio_state;
 extern s32 audio_voice_slot_index;
 

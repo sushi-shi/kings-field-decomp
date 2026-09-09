@@ -26,11 +26,6 @@ KfSpriteQuad floor_item_sprites[KF_FLOOR_ITEM_SPRITE_COUNT] = {
     {0xd0, 0x20, 0x20, 0x27, 0xfe00, 0xfb40, 0x400, 0x500},
 };
 
-DATA(0x800359e4, 0x20)
-MATRIX floor_item_light_matrix = {
-    {{0, 0, KF_FIXED12_ONE}, {0, 0, KF_FIXED12_ONE}, {0, 0, 0}}, {0, 0, 0},
-};
-
 /* Shared sweep caller and transform setup support this WIP contiguous module. */
 RODATA(0x80012238, 0x44)
 

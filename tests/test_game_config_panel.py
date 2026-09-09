@@ -57,7 +57,7 @@ class GameConfigPanelTests(unittest.TestCase):
         if not shutil.which("cc1psx-257") or "PSYQ_INCLUDE" not in os.environ:
             self.skipTest("pinned compiler and SDK headers required")
         manifest = load_manifest()
-        unit = manifest.by_name()["game.menu_config_panel"]
+        unit = manifest.by_name()["game.menu_runtime"]
         profile = manifest.profiles[unit.profile]
         target_path = BUILD / "delink/game/modules" / unit.object_name
         if not target_path.is_file():
@@ -77,7 +77,10 @@ class GameConfigPanelTests(unittest.TestCase):
                 defines=unit.defines,
             )
             candidate = _load_object(output)
-            for claim in unit.functions:
+            claims = [claim for claim in unit.functions
+                      if claim.symbol in {"menu_config_panel", "menu_config_panel_draw"}]
+            self.assertEqual(len(claims), 2)
+            for claim in claims:
                 with self.subTest(function=claim.symbol):
                     actual, calls, addresses = linked_words(
                         candidate, unit, claim, data, functions)

@@ -27,7 +27,7 @@ class GameSaveLoadPanelTests(unittest.TestCase):
         if not shutil.which("cc1psx-257") or "PSYQ_INCLUDE" not in os.environ:
             self.skipTest("pinned compiler and SDK headers required")
         manifest = load_manifest()
-        unit = manifest.by_name()["game.menu_item_drop"]
+        unit = manifest.by_name()["game.menu_runtime"]
         profile = manifest.profiles[unit.profile]
         target_path = BUILD / "delink/game/modules" / unit.object_name
         if not target_path.is_file():

@@ -37,10 +37,10 @@ DATA(0x800375e8, 0x4)
 static u8 *opening_ending_arena_cursor;
 
 DATA(0x800377a0, 0x18)
-CdlFILE cd_search_file;
+static CdlFILE cd_search_file;
 
 DATA(0x800377b8, 0x50)
-char cd_path_buffer[KF_CD_PATH_BYTES];
+static char cd_path_buffer[KF_CD_PATH_BYTES];
 
 DATA(0x800446c8, 0x2710)
 KfMapGrid map_collision_flag_grid;
