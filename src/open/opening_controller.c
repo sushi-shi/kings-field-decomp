@@ -61,42 +61,37 @@ void opening_run(KfOpenMode display_mode)
         memory_release_last();
         opening_input_action = KF_OPENING_INPUT_NONE;
 
-opening_scene0:
-        opening_scene0_run();
-        if (opening_input_action == scene3_action) {
-            goto opening_scene1;
-        }
-        if (opening_input_action != skip_action) {
-            goto opening_scene1;
-        }
-
+        for (;;) {
+            opening_scene0_run();
+            if (opening_input_action != scene3_action &&
+                opening_input_action == skip_action) {
 opening_reload:
-        allocation_state->stack[KF_MEMORY_STACK_DEPTH_INDEX] = 0;
-        allocation_state->cursor =
-            OPENING_ARENA_FROM_ALLOCATION(allocation_state)->start;
-        cd_file_load_allocated(&tim_data, "B0\\MIX3.");
-        tim_upload_images(tim_data);
-        memory_release_last();
-        goto opening_complete;
+                allocation_state->stack[KF_MEMORY_STACK_DEPTH_INDEX] = 0;
+                allocation_state->cursor =
+                    OPENING_ARENA_FROM_ALLOCATION(allocation_state)->start;
+                cd_file_load_allocated(&tim_data, "B0\\MIX3.");
+                tim_upload_images(tim_data);
+                memory_release_last();
+                audio_stop_sequence(KF_AUDIO_STOP_FADE);
+                break;
+            }
 
-opening_scene1:
-        opening_input_action = KF_OPENING_INPUT_NONE;
-        opening_scene1_run();
-        if (opening_input_action == scene3_action) {
-            goto opening_scene3;
+            opening_input_action = KF_OPENING_INPUT_NONE;
+            opening_scene1_run();
+            if (opening_input_action != scene3_action) {
+                if (opening_input_action == skip_action) {
+                    goto opening_reload;
+                }
+                continue;
+            }
+
+            audio_stop_sequence(KF_AUDIO_STOP_FADE);
+            opening_input_action = KF_OPENING_INPUT_NONE;
+            opening_scene3_run();
+
+            audio_stop_sequence(KF_AUDIO_STOP_FADE);
+            break;
         }
-        if (opening_input_action == skip_action) {
-            goto opening_reload;
-        }
-        goto opening_scene0;
-
-opening_scene3:
-        audio_stop_sequence(KF_AUDIO_STOP_FADE);
-        opening_input_action = KF_OPENING_INPUT_NONE;
-        opening_scene3_run();
-
-opening_complete:
-        audio_stop_sequence(KF_AUDIO_STOP_FADE);
         break;
 
     case KF_OPEN_MODE_ENDING:
