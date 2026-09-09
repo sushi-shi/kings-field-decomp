@@ -37,7 +37,7 @@ u32 primitive_allocation_count;
  * and sets one texture page.
  */
 
-RODATA(0x80012110, 0x28)
+RODATA(0x80012110, 0x25)
 
 ADDRESS(0x800168dc, 0x2c)
 void lighting_set_active_color_matrix(KfOpenColorPreset preset)

@@ -76,7 +76,7 @@ void item_load_floor_placements(KfFloorItemPlacement *placements)
     }
 }
 
-RODATA(0x800122a0, 0x28)
+RODATA(0x800122a0, 0x25)
 
 /*
  * Loads the item database: COM\STAT.DAT is read into the six stat

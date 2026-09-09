@@ -4,6 +4,7 @@ from __future__ import annotations
 
 import argparse
 import hashlib
+import io
 import json
 import os
 import shutil
@@ -38,6 +39,41 @@ C_COMPILERS = {
 # padding. This does not lower alignment requirements or remove explicit zeros,
 # alignment directives, COMMON allocation rounding, or MIPS delay slots.
 GNU_AS_SECTION_FLAGS = ("-no-pad-sections",)
+
+
+def aspsx_section_alignment(data: bytes, version: str) -> tuple[bytes, dict]:
+    """Represent ASPSX's section declarations in the GNU analysis container.
+
+    ASPSX 1.07 emits LNK tag 8 (four-byte alignment) for all six standard
+    sections. Its .align directives align offsets *within* the section; they
+    do not raise the declaration's linker constraint. Native ASPSX/PSYLINK
+    controls cover both facts. GNU's minimum/maximum ELF conventions differ.
+    Change only sh_addralign, never bytes, extents, symbols or relocations.
+    No source claim, retail address or comparison score enters this conversion.
+    """
+    if version != "1.07":
+        raise ValueError("section alignment is calibrated only for ASPSX 1.07")
+    elf = ELFFile(io.BytesIO(data))
+    if (elf.elfclass != 32 or not elf.little_endian
+            or elf['e_machine'] != 'EM_MIPS' or elf['e_type'] != 'ET_REL'
+            or elf['e_shentsize'] != 40):
+        raise ValueError("ASPSX section conversion requires ELF32-LE MIPS relocatable input")
+    standard = {'.text', '.data', '.rodata', '.sdata', '.bss', '.sbss'}
+    output = bytearray(data)
+    sections = {}
+    for index, section in enumerate(elf.iter_sections()):
+        if not section['sh_flags'] & 2 or section.name in {'.reginfo', '.MIPS.abiflags'}:
+            continue
+        if section.name not in standard:
+            raise ValueError(f"uncalibrated ASPSX allocated section {section.name}")
+        sections[section.name] = {
+            'gnu_alignment': section['sh_addralign'], 'lnk_alignment_tag': 8,
+            'alignment': 4,
+        }
+        struct.pack_into('<I', output, elf['e_shoff'] + index * 40 + 32, 4)
+    return bytes(output), {
+        'method': 'aspsx-1.07-section-declarations', 'sections': sections,
+    }
 
 
 def _tool(name: str) -> str:
@@ -326,6 +362,9 @@ def compile_source(
         raise ValueError(f"unsupported source suffix {source.suffix!r}")
 
     object_data = staged.read_bytes()
+    if suffix == '.c':
+        object_data, metadata['section_alignment'] = aspsx_section_alignment(
+            object_data, aspsx_version)
     _validate_mips_elf(object_data, output)
     _write_bytes_if_changed(output, object_data)
     metadata_path = output.with_suffix(output.suffix + ".json")

@@ -198,10 +198,14 @@ class DataIdentity:
     size: int
     storage: str
     scope: str
+    section: str = ""
 
 
 def data_identities(config_dir: Path) -> dict[tuple[str, int], DataIdentity]:
     """Curated data identities keyed by exact (image, va)."""
+    from scripts.kf.data_sections import load as load_sections
+
+    sections = load_sections(config_dir)
     path = config_dir / "data_identities.tsv"
     if not path.is_file():
         return {}
@@ -209,6 +213,7 @@ def data_identities(config_dir: Path) -> dict[tuple[str, int], DataIdentity]:
     return {
         (row["image"], int(row["va"], 0)): DataIdentity(
             row["name"], int(row["size"], 0), row.get("storage", ""), row.get("scope", ""),
+            sections.get((row["image"], int(row["va"], 0)), ""),
         )
         for row in rows
         if row.get("name")

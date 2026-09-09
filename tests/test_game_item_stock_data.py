@@ -110,7 +110,7 @@ class GameItemStockDataTests(unittest.TestCase):
         self.assertEqual(metadata['data_symbol_sizes']['method'], 'pinned-compiler-sizeof-probe')
         self.assertEqual(metadata['data_symbol_sizes']['sizes']['item_stock'], 240)
 
-    def test_equal_bss_extent_does_not_waive_real_source_alignment(self):
+    def test_native_alignment_does_not_waive_conflicting_allocation_order(self):
         unit, paths = self.built_pair()
         target, source = [Elf(path) for path in paths]
         # The two newly owned death snapshots expose a different tentative
@@ -118,8 +118,8 @@ class GameItemStockDataTests(unittest.TestCase):
         self.assertEqual(_diff_bss(target, source).status, 'layout')
         with paths[1].open('rb') as stream:
             section = ELFFile(stream).get_section_by_name('.bss')
-            self.assertEqual(section['sh_addralign'], 16)
-            self.assertNotEqual(STOCK % section['sh_addralign'], 0)
+            self.assertEqual(section['sh_addralign'], 4)
+            self.assertEqual(STOCK % section['sh_addralign'], 0)
         result = diff_unit(unit, BUILD / 'delink', BUILD / 'objdiff')
         self.assertFalse(result.matches)
         bss = next(diff for diff in result.diffs if diff.name == '.bss')

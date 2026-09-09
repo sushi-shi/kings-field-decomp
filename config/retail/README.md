@@ -1,6 +1,6 @@
 # Retail executable censuses
 
-These eight TSVs are the admitted, manually curated work-in-progress model of
+These TSVs are the admitted, manually curated work-in-progress model of
 the original Japanese `SLPS-00017` executables:
 
 - `functions.tsv`: current function starts and explicit WIP extents;
@@ -12,6 +12,8 @@ the original Japanese `SLPS-00017` executables:
   and named parameters for all carveable non-vendored functions; and
 - `data_identities.tsv`: source-level names, extents, storage, linkage scope,
   types, and owners for initialized globals/statics and referenced BSS;
+- `data_sections.tsv`: reviewed initialized section assignments keyed by image,
+  address and identity; omitted load identities retain the WIP `.data` model;
 - `structures.tsv`: target structure names, complete sizes, confidence, and
   evidence; and
 - `structure_fields.tsv`: every structure field's offset, extent, datatype,

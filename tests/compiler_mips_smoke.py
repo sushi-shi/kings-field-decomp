@@ -168,13 +168,15 @@ def section_extent_controls(root: Path) -> None:
                                    f'{name}: {sections[name]}')
         # Compiler-specified COMMON rounding is real input, not a GAS tail.
         allocation = 16 if version == '257' else 9
-        if sections['.bss'][:2] != (allocation, 16):
+        if sections['.bss'][:2] != (allocation, 4):
             raise RuntimeError(f'GCC {version}: tentative allocation/alignment changed: {sections}')
-        if sections['.data'][1] != 16:
-            raise RuntimeError('no-tail-padding must not rewrite the ELF data alignment')
+        if sections['.data'][1] != 4:
+            raise RuntimeError('C analysis object must preserve the native ASPSX section constraint')
         metadata = json.loads(output.with_suffix('.o.json').read_text())
         if metadata.get('gnu_as_section_flags') != ['-no-pad-sections']:
             raise RuntimeError('object metadata does not identify its section-padding contract')
+        if metadata.get('section_alignment', {}).get('method') != 'aspsx-1.07-section-declarations':
+            raise RuntimeError('object metadata does not identify its native section constraint')
 
     # Diagnostic assembly, not a game reconstruction: retain an explicit final
     # NOP, .space bytes, interior alignment padding and a relocated addend.

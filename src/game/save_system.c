@@ -77,7 +77,7 @@ DATA(0x800668e0, 0x4)
 KfSavePayload *save_payload_buffer;
 
 /* Jump tables and string literals of this unit in the retail data region. */
-RODATA(0x8001235c, 0x178)
+RODATA(0x8001235c, 0x176)
 
 /* Memory-card create requests carry the block count in the high halfword. */
 #define SAVE_FILE_BLOCKS 5

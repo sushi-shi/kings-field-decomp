@@ -21,7 +21,7 @@
 DATA(0x800372d4, 0x6)
 char opening_initial_tim_path[KF_OPENING_INITIAL_TIM_PATH_BYTES] = {'B', '0', '\\', 'L', '0', '.'};
 
-RODATA(0x80012020, 0x18)
+RODATA(0x80012020, 0x15)
 
 ADDRESS(0x800156bc, 0x214)
 void opening_run(KfOpenMode display_mode)

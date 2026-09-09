@@ -154,19 +154,19 @@ class GameCellWindowDataTests(unittest.TestCase):
                         self.assertFalse(image.contains(va, size))
                         self.assertLessEqual(start + size, section['sh_size'])
 
-    def test_payload_equality_does_not_waive_whole_section_placement_or_extent(self):
+    def test_native_alignment_fixes_cell_owner_but_not_resource_allocation_order(self):
         for name in ('game.render_map_cells', 'game.resources'):
             unit, paths = self.built_pair(name)
             retail, source = [Elf(path) for path in paths]
             self.assertEqual(_diff_init_section('.data', retail, source).status, 'match')
             diffs = diff_unit(unit, BUILD / 'delink', BUILD / 'objdiff')
-            self.assertFalse(diffs.matches)
             sections = {diff.name: diff for diff in diffs.diffs}
             if name == 'game.render_map_cells':
-                self.assertEqual(sections['.data'].status, 'placement')
-                self.assertIn('invalid-section-placement', sections['.data'].detail)
+                self.assertTrue(diffs.matches)
+                self.assertEqual(sections['.data'].status, 'match')
                 self.assertNotIn('.bss', sections)
             else:
+                self.assertFalse(diffs.matches)
                 # The resource owner now also defines five map grids. Their
                 # tentative allocation order differs, and remains a failure.
                 self.assertEqual(_diff_bss(retail, source).status, 'layout')

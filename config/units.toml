@@ -26,6 +26,16 @@ aspsx_version = "1.07"
 cc1_flags = ["-mcpu=r2000"]
 maspsx_flags = ["--expand-div"]
 
+# Initialized small-data probe; native actor code remains identical to G0.
+[profiles.probe-gcc257-o2-g8]
+language = "c"
+compiler = "gcc257-native"
+optimization = "O2"
+small_data = 8
+aspsx_version = "1.07"
+cc1_flags = ["-mcpu=r2000"]
+maspsx_flags = ["--expand-div"]
+
 [profiles.probe-gcc257-o2-plain]
 language = "c"
 compiler = "gcc257-native"
@@ -387,7 +397,7 @@ profile = "probe-gcc257-o2-g0"
 unit = "game.actor"
 image = "GAME.EXE"
 source = "src/game/actor.c"
-profile = "probe-gcc257-o2-g0"
+profile = "probe-gcc257-o2-g8"
 
 [[unit]]
 unit = "game.actor_behavior"

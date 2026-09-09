@@ -5,6 +5,9 @@ about which source shapes reproduce it under the current probes. Each note
 records the retail evidence first and the probe behaviour second; none of them
 promotes a probe to a proven historical toolchain.
 
+- [data-owner-recovery.md](data-owner-recovery.md): native ASPSX alignment,
+  literal contribution boundaries, initialized small-data ownership and the
+  complete GAME/OPEN strict data-owner verdict ledger.
 - [executable-byte-provenance.md](executable-byte-provenance.md): native PSX
   initialized bytes, CPE2X uninitialized-memory disclosure, retail header/tail
   consumers, complete-converter and DOS controls, and the retail date window.

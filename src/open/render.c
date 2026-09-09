@@ -86,7 +86,7 @@ void render_set_view_transform(
     RotMatrix(&angles, &open_graphics_runtime.render_state.pitch_matrix);
 }
 
-RODATA(0x80012138, 0x88)
+RODATA(0x80012138, 0x87)
 
 /*
  * Converts every vertex and normal index of the current asset into a byte

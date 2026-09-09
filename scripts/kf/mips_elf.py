@@ -33,6 +33,7 @@ SHT_REL = 9
 SHF_WRITE = 0x1
 SHF_ALLOC = 0x2
 SHF_EXECINSTR = 0x4
+SHF_MIPS_GPREL = 0x10000000
 
 STB_LOCAL = 0
 STB_GLOBAL = 1
@@ -162,6 +163,10 @@ def write_mips_elf(
     data_symbols: Iterable[DefinedSymbol] = (),
     data_relocations: Iterable[MipsRelocation] = (),
     data_alignment: int = 4,
+    sdata: bytes = b"",
+    sdata_symbols: Iterable[DefinedSymbol] = (),
+    sdata_relocations: Iterable[MipsRelocation] = (),
+    sdata_alignment: int = 4,
     bss_size: int = 0,
     bss_symbols: Iterable[DefinedSymbol] = (),
     bss_alignment: int = 4,
@@ -190,7 +195,8 @@ def write_mips_elf(
         raise ValueError("function size must lie within .text")
     if bss_size < 0:
         raise ValueError("bss size must be non-negative")
-    for name, alignment in ((".data", data_alignment), (".bss", bss_alignment)):
+    for name, alignment in ((".data", data_alignment), (".sdata", sdata_alignment),
+                            (".bss", bss_alignment)):
         if not 0 < alignment <= 0x80000000 or alignment & (alignment - 1):
             raise ValueError(f"{name} alignment must be a positive ELF32 power of two")
 
@@ -200,10 +206,13 @@ def write_mips_elf(
     data_symbols = _check_symbols(data_symbols, len(data), ".data")
     bss_symbols = _check_symbols(bss_symbols, bss_size, ".bss")
     rodata_relocations = _check_relocations(rodata_relocations, len(rodata), ".rodata")
+    sdata_relocations = _check_relocations(sdata_relocations, len(sdata), ".sdata")
+    sdata_symbols = _check_symbols(sdata_symbols, len(sdata), ".sdata")
+    has_sdata = bool(sdata) or bool(sdata_symbols) or bool(sdata_relocations)
     has_data = bool(data) or bool(data_symbols) or bool(data_relocations)
     has_bss = bss_size > 0 or bool(bss_symbols)
     has_rodata = bool(rodata)
-    if function_name is None and (defined_symbols or relocations or not (has_data or has_bss or has_rodata)):
+    if function_name is None and (defined_symbols or relocations or not (has_data or has_sdata or has_bss or has_rodata)):
         raise ValueError("data-only objects require data and cannot define text symbols/relocations")
 
     # Section order: .text, .rel.text, [.data, [.rel.data]], [.bss], .symtab,
@@ -235,6 +244,16 @@ def write_mips_elf(
             sections.append(
                 _Section(".rel.rodata", SHT_REL, 0, b"", alignment=4, entry_size=REL_SIZE)
             )
+    sdata_index = 0
+    if has_sdata:
+        sections.append(_Section(".sdata", SHT_PROGBITS,
+                                 SHF_ALLOC | SHF_WRITE | SHF_MIPS_GPREL, sdata,
+                                 alignment=sdata_alignment))
+        sdata_index = len(sections)
+        if sdata_relocations:
+            sections.append(
+                _Section(".rel.sdata", SHT_REL, 0, b"", alignment=4, entry_size=REL_SIZE)
+            )
     symtab_index = len(sections) + 1
     strtab_index = symtab_index + 1
     shstrtab_index = strtab_index + 1
@@ -246,6 +265,8 @@ def write_mips_elf(
         section_symbols.append((BSS_SECTION_SYMBOL, bss_index))
     if has_rodata:
         section_symbols.append((RODATA_SECTION_SYMBOL, rodata_index))
+    if has_sdata:
+        section_symbols.append((".sdata", sdata_index))
     section_symbol_names = {name for name, _ in section_symbols}
 
     placed = [
@@ -254,6 +275,7 @@ def write_mips_elf(
         *((symbol, text_index) for symbol in defined_symbols if symbol.name != function_name),
         *((symbol, data_index) for symbol in data_symbols),
         *((symbol, bss_index) for symbol in bss_symbols),
+        *((symbol, sdata_index) for symbol in sdata_symbols),
     ]
     defined_names = [symbol.name for symbol, _ in placed]
     if any(name in section_symbol_names for name in defined_names):
@@ -261,7 +283,7 @@ def write_mips_elf(
     if len(set(defined_names)) != len(defined_names):
         raise ValueError("defined symbol names must be unique")
     undefined_names = sorted(
-        {item.symbol for item in (*relocations, *data_relocations, *rodata_relocations)}
+        {item.symbol for item in (*relocations, *data_relocations, *sdata_relocations, *rodata_relocations)}
         - set(defined_names)
         - section_symbol_names
     )
@@ -314,6 +336,7 @@ def write_mips_elf(
             entries, target_index = {
                 ".rel.text": (relocations, text_index),
                 ".rel.data": (data_relocations, data_index),
+                ".rel.sdata": (sdata_relocations, sdata_index),
                 ".rel.rodata": (rodata_relocations, rodata_index),
             }[section.name]
             section = _Section(

@@ -1,0 +1,2 @@
+image	va	name	section	evidence
+GAME.EXE	0x80057b80	boss_death_loop_sound	.sdata	docs/patterns/data-owner-recovery.md:initialized-small-data-ownership-plan;native-gcc257-aspsx107-G8;retail-late-initialized-region

@@ -31,7 +31,7 @@ from scripts.kf.sema.image import RetailImage
 
 
 SECTIONS = {".text": "SHT_PROGBITS", ".rodata": "SHT_PROGBITS",
-            ".data": "SHT_PROGBITS", ".bss": "SHT_NOBITS"}
+            ".data": "SHT_PROGBITS", ".sdata": "SHT_PROGBITS", ".bss": "SHT_NOBITS"}
 LINKER = "mipsel-linux-gnu-ld"
 SYMBOL_NAME = re.compile(r"[A-Za-z_$][A-Za-z0-9_$]*\Z")
 ADDRESS_NAME = re.compile(r"DAT_([0-9a-fA-F]{8})\Z")
@@ -100,7 +100,7 @@ def plan(elf: ELFFile, unit: Unit, result: UnitResult) -> dict[str, int]:
     # name, address, extent, expected section. Function sizes exclude linker
     # padding, but .text owns the entire contiguous run, including delay slots.
     claims = [(f.symbol, f.va, f.body_size, ".text") for f in unit.functions]
-    claims += [(d.symbol, d.va, d.size, ".data" if d.storage == "load" else ".bss")
+    claims += [(d.symbol, d.va, d.size, d.section_name)
                for d in unit.data]
     bases: dict[str, set[int]] = defaultdict(set)
     sizes: Counter = Counter()
