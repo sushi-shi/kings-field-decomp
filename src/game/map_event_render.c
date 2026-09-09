@@ -1,3 +1,4 @@
+#include <kf/null.h>
 #include <kf/game_graphics.h>
 #include <kf/address.h>
 #include <kf/game_asset.h>
@@ -42,7 +43,7 @@ void render_map_event(KfMapEvent *event)
     object = tmd_get_object(0);
     if (render_bind_animated_instance(
             &event->animation_cache, asset, event->animation_clip, event->animation_phase,
-            object->vertex_count) == 0) {
+            object->vertex_count) == NULL) {
         tmd_select_object_vertices(0);
         tmd_project_vertices(tmd_get_object(0)->vertex_count);
     } else {

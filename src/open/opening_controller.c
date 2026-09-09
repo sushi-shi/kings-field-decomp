@@ -1,3 +1,4 @@
+#include <kf/null.h>
 #include <kf/address.h>
 #include <kf/overlay.h>
 #include <kf/audio.h>
@@ -16,7 +17,7 @@
 /* Retail retains the allocation subobject base across scene calls. */
 #define OPENING_ARENA_FROM_ALLOCATION(state) \
     ((KfMemoryArena *)((u8 *)(state) - \
-                       (u32)&((KfMemoryArena *)0)->allocation))
+                       (u32)&((KfMemoryArena *)NULL)->allocation))
 
 DATA(0x800372d4, 0x6)
 char opening_initial_tim_path[KF_OPENING_INITIAL_TIM_PATH_BYTES] = {'B', '0', '\\', 'L', '0', '.'};

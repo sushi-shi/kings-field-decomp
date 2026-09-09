@@ -1,3 +1,4 @@
+#include <kf/null.h>
 #include <kf/bool.h>
 #include <kf/address.h>
 #include <kf/map_data.h>
@@ -279,7 +280,7 @@ void actor_transform_definition5_to6(KfActor *actor)
         lighting_set_color_matrix(&saved, &actor_transform_color_matrix, blend);
         actor->position.vy += ACTOR_TRANSFORM_Y_STEP;
         actor->rotation.angles.y += KF_ANGLE_FULL_TURN / ACTOR_TRANSFORM_BLEND_INTERVALS;
-        render_frame(0, 0);
+        render_frame(NULL, NULL);
         frame_pacer_wait();
     }
     actor->definition_id = ACTOR_TRANSFORM_RESULT_DEFINITION;
@@ -287,7 +288,7 @@ void actor_transform_definition5_to6(KfActor *actor)
         lighting_set_color_matrix(&saved, &actor_transform_color_matrix, blend);
         actor->position.vy -= ACTOR_TRANSFORM_Y_STEP;
         actor->rotation.angles.y -= KF_ANGLE_FULL_TURN / ACTOR_TRANSFORM_BLEND_INTERVALS;
-        render_frame(0, 0);
+        render_frame(NULL, NULL);
         frame_pacer_wait();
     }
     lighting_set_active_color_matrix(KF_GAME_COLOR_DEFAULT);

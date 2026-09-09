@@ -1,3 +1,4 @@
+#include <kf/null.h>
 #include <kf/address.h>
 #include <kf/overlay.h>
 #include <kf/game_player.h>
@@ -456,7 +457,7 @@ void player_update(void)
                             player_state.camera_rotation.vy, PLAYER_WEAPON_MAGIC_TARGET_RANGE,
                             PLAYER_WEAPON_MAGIC_TARGET_CONE, &distance);
                         actor_state.player_target = target;
-                        if (target == 0) {
+                        if (target == NULL) {
                             attachment = KF_EFFECT_HOMING_WANDER;
                         } else {
                             attachment = KF_ENUM_DECODE(KF_ENUM_PARAM(KfEffectHomingMode, s32),

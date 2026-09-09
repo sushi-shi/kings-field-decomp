@@ -1,3 +1,4 @@
+#include <kf/null.h>
 #include <kf/bool.h>
 #include <kf/game_graphics.h>
 #include <kf/address.h>
@@ -197,8 +198,8 @@ void map_ambient_script_floor5(void)
         && (u16)player_state.camera_rotation.vy < MAP_BOSS_REVEAL_YAW_END) {
         *encounter_started = KF_MAP_SCRIPT_SET;
         screen_show_image_until_input("TALK\\C17\\T55171.TIM");
-        render_frame(0, 0);
-        render_frame(0, 0);
+        render_frame(NULL, NULL);
+        render_frame(NULL, NULL);
         screen_show_image_until_input("TALK\\C17\\T55172.TIM");
         actor_state.definitions.entries[7].action_animations[KF_ACTOR_ANIM_SLOT_MELEE] = KF_ANIMATION_CLIP_THIRD;
         actor_state.definitions.entries[7].action_animations[KF_ACTOR_ANIM_SLOT_EFFECT0] = KF_ANIMATION_CLIP_FOURTH;
@@ -239,7 +240,7 @@ void map_reveal_fade(void)
             matrix_interpolate(&saved, &map_reveal_light_matrix,
                                &game_graphics_runtime.render_state.light_matrix_copy, blend << MAP_REVEAL_LIGHT_BLEND_SHIFT);
         }
-        render_frame(0, 0);
+        render_frame(NULL, NULL);
         frame_pacer_wait();
     }
 
@@ -248,7 +249,7 @@ void map_reveal_fade(void)
 
     for (blend = KF_FIXED12_ONE; blend >= 0; blend -= MAP_REVEAL_FADE_OUT_STEP) {
         lighting_set_color_matrix(&color_matrix_table[KF_ENUM_ENCODE(s32, KF_GAME_COLOR_DEFAULT)], &color_matrix_table[KF_ENUM_ENCODE(s32, KF_GAME_COLOR_WHITE)], blend);
-        render_frame(0, 0);
+        render_frame(NULL, NULL);
         frame_pacer_wait();
     }
 
@@ -380,7 +381,7 @@ void map_floor5_transition_cutscene(void)
             break;
         }
         effect_pool_sweep();
-        render_frame(0, 0);
+        render_frame(NULL, NULL);
     }
 }
 

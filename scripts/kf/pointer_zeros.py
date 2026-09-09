@@ -14,6 +14,7 @@ import argparse
 from dataclasses import asdict, dataclass
 import json
 from pathlib import Path
+import re
 import sys
 from typing import Any
 
@@ -63,7 +64,34 @@ def _zero_literal(cursor: Any) -> Any | None:
     return None
 
 
-def _literal_location(tu: Any, literal: Any) -> tuple[Any, str]:
+def _null_only_macro(tu: Any, location: Any) -> bool:
+    """Exclude nested NULL expansions only when no written zero can explain them."""
+    definitions: dict[str, list[str]] = {}
+    invocation: list[str] = []
+    for cursor in tu.cursor.get_children():
+        if cursor.kind == CK.CXCursor_MacroDefinition:
+            definitions.setdefault(cursor.spelling, []).extend(
+                token.spelling for token in cursor.get_tokens())
+        elif (cursor.kind == CK.CXCursor_MacroExpansion
+              and cursor.location.file is not None and location.file is not None
+              and cursor.location.file.name == location.file.name
+              and cursor.location.offset == location.offset):
+            invocation.extend(token.spelling for token in cursor.get_tokens())
+    seen: set[str] = set()
+    has_null = False
+    while invocation:
+        spelling = invocation.pop()
+        if spelling == "NULL":
+            has_null = True
+        elif re.fullmatch(r"(?:0+|0[xX]0+)[uUlL]*", spelling):
+            return False
+        elif spelling not in seen:
+            seen.add(spelling)
+            invocation.extend(definitions.get(spelling, ()))
+    return has_null
+
+
+def _literal_location(tu: Any, literal: Any) -> tuple[Any, str] | None:
     token = next(literal.get_tokens(), None)
     if token is not None:
         return token.location, token.spelling
@@ -75,6 +103,8 @@ def _literal_location(tu: Any, literal: Any) -> tuple[Any, str]:
     # Some nested/pasted expansions have no standalone spelling token. Report
     # the actual invocation text at its expansion location for manual review.
     location = literal.location
+    if _null_only_macro(tu, location):
+        return None
     start = cindex.SourceLocation.from_offset(tu, location.file, location.offset)
     end = cindex.SourceLocation.from_offset(tu, location.file, location.offset + 1)
     token = next(tu.get_tokens(extent=cindex.SourceRange.from_locations(start, end)), None)
@@ -115,7 +145,10 @@ def scan_file(path: Path, arguments: list[str], *, root: Path) -> tuple[Site, ..
             operands = [child for child in children if child.kind.is_expression()]
             literal = _zero_literal(operands[0]) if len(operands) == 1 else None
             if literal is not None:
-                location, spelling = _literal_location(tu, literal)
+                origin = _literal_location(tu, literal)
+                if origin is None:
+                    return
+                location, spelling = origin
                 in_null = any(
                     span.start.file is not None and location.file is not None
                     and span.start.file.name == location.file.name

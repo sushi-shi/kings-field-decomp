@@ -1,3 +1,4 @@
+#include <kf/null.h>
 #include <kf/game_graphics.h>
 #include <kf/address.h>
 #include <kf/psyq.h>
@@ -68,7 +69,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
                     KfGraphicsRuntimeGame *graphics = (KfGraphicsRuntimeGame *)(
-                        vertices - (u32)&((KfGraphicsRuntimeGame *)0)->unknown_projection_morph_20318);
+                        vertices - (u32)&((KfGraphicsRuntimeGame *)NULL)->unknown_projection_morph_20318);
                     AddPrim(
                         &graphics->display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
                         &prim->sdk);
@@ -100,7 +101,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
                     KfGraphicsRuntimeGame *graphics = (KfGraphicsRuntimeGame *)(
-                        vertices - (u32)&((KfGraphicsRuntimeGame *)0)->unknown_projection_morph_20318);
+                        vertices - (u32)&((KfGraphicsRuntimeGame *)NULL)->unknown_projection_morph_20318);
                     AddPrim(
                         &graphics->display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
                         &prim->sdk);
@@ -131,7 +132,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
                     KfGraphicsRuntimeGame *graphics = (KfGraphicsRuntimeGame *)(
-                        vertices - (u32)&((KfGraphicsRuntimeGame *)0)->unknown_projection_morph_20318);
+                        vertices - (u32)&((KfGraphicsRuntimeGame *)NULL)->unknown_projection_morph_20318);
                     AddPrim(
                         &graphics->display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
                         &prim->sdk);
@@ -166,7 +167,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
                     KfGraphicsRuntimeGame *graphics = (KfGraphicsRuntimeGame *)(
-                        vertices - (u32)&((KfGraphicsRuntimeGame *)0)->unknown_projection_morph_20318);
+                        vertices - (u32)&((KfGraphicsRuntimeGame *)NULL)->unknown_projection_morph_20318);
                     AddPrim(
                         &graphics->display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
                         &prim->sdk);
@@ -203,7 +204,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
                     KfGraphicsRuntimeGame *graphics = (KfGraphicsRuntimeGame *)(
-                        vertices - (u32)&((KfGraphicsRuntimeGame *)0)->unknown_projection_morph_20318);
+                        vertices - (u32)&((KfGraphicsRuntimeGame *)NULL)->unknown_projection_morph_20318);
                     AddPrim(
                         &graphics->display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
                         &prim->sdk);
@@ -245,7 +246,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
                     KfGraphicsRuntimeGame *graphics = (KfGraphicsRuntimeGame *)(
-                        vertices - (u32)&((KfGraphicsRuntimeGame *)0)->unknown_projection_morph_20318);
+                        vertices - (u32)&((KfGraphicsRuntimeGame *)NULL)->unknown_projection_morph_20318);
                     AddPrim(
                         &graphics->display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
                         &prim->sdk);
@@ -277,7 +278,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
                     KfGraphicsRuntimeGame *graphics = (KfGraphicsRuntimeGame *)(
-                        vertices - (u32)&((KfGraphicsRuntimeGame *)0)->unknown_projection_morph_20318);
+                        vertices - (u32)&((KfGraphicsRuntimeGame *)NULL)->unknown_projection_morph_20318);
                     AddPrim(
                         &graphics->display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
                         &prim->sdk);
@@ -316,7 +317,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
                     KfGraphicsRuntimeGame *graphics = (KfGraphicsRuntimeGame *)(
-                        vertices - (u32)&((KfGraphicsRuntimeGame *)0)->unknown_projection_morph_20318);
+                        vertices - (u32)&((KfGraphicsRuntimeGame *)NULL)->unknown_projection_morph_20318);
                     AddPrim(
                         &graphics->display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
                         &prim->sdk);
@@ -346,7 +347,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
                     KfGraphicsRuntimeGame *graphics = (KfGraphicsRuntimeGame *)(
-                        vertices - (u32)&((KfGraphicsRuntimeGame *)0)->unknown_projection_morph_20318);
+                        vertices - (u32)&((KfGraphicsRuntimeGame *)NULL)->unknown_projection_morph_20318);
                     AddPrim(
                         &graphics->display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
                         &prim->sdk);
@@ -381,7 +382,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
                     KfGraphicsRuntimeGame *graphics = (KfGraphicsRuntimeGame *)(
-                        vertices - (u32)&((KfGraphicsRuntimeGame *)0)->unknown_projection_morph_20318);
+                        vertices - (u32)&((KfGraphicsRuntimeGame *)NULL)->unknown_projection_morph_20318);
                     AddPrim(
                         &graphics->display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
                         &prim->sdk);
@@ -412,7 +413,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
                     KfGraphicsRuntimeGame *graphics = (KfGraphicsRuntimeGame *)(
-                        vertices - (u32)&((KfGraphicsRuntimeGame *)0)->unknown_projection_morph_20318);
+                        vertices - (u32)&((KfGraphicsRuntimeGame *)NULL)->unknown_projection_morph_20318);
                     AddPrim(
                         &graphics->display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
                         &prim->sdk);
@@ -445,7 +446,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
                     KfGraphicsRuntimeGame *graphics = (KfGraphicsRuntimeGame *)(
-                        vertices - (u32)&((KfGraphicsRuntimeGame *)0)->unknown_projection_morph_20318);
+                        vertices - (u32)&((KfGraphicsRuntimeGame *)NULL)->unknown_projection_morph_20318);
                     AddPrim(
                         &graphics->display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
                         &prim->sdk);

@@ -90,7 +90,7 @@ def standalone_source(unit):
         source = source.replace(
             '                    KfGraphicsRuntimeGame *graphics = (KfGraphicsRuntimeGame *)(\n'
             '                        vertices - '
-            '(u32)&((KfGraphicsRuntimeGame *)0)->unknown_projection_morph_20318);\n', '')
+            '(u32)&((KfGraphicsRuntimeGame *)NULL)->unknown_projection_morph_20318);\n', '')
         source = source.replace('&graphics->display_state.ordering_table[',
                                 '&game_graphics_runtime.display_state.ordering_table[')
     # Historical separate-owner controls retain their original byte fields.
@@ -364,13 +364,13 @@ class GameGraphicsOwnerProbeTests(unittest.TestCase):
         functions = {item.symbol: item.va for item in load_catalog(RETAIL_CONFIG).functions['GAME.EXE']}
         expected = list(struct.unpack(f'<{claim.body_size // 4}I',
                                      image.require(claim.va, claim.body_size)))
-        correct = '''    if (rotation != 0) {
+        correct = '''    if (rotation != NULL) {
         render_state.view_rotation = *rotation;
     }
     RotMatrix(&render_state.view_rotation, &render_state.view_matrix);
     angles.vz = 0;
     angles.vy = 0;'''
-        old_bug = '''    if (rotation != 0) {
+        old_bug = '''    if (rotation != NULL) {
         render_state.view_rotation = *rotation;
         RotMatrix(&render_state.view_rotation, &render_state.view_matrix);
         angles.vz = 0;

@@ -1,3 +1,4 @@
+#include <kf/null.h>
 #include <kf/game_graphics.h>
 #include <kf/address.h>
 #include <kf/game_asset.h>
@@ -38,7 +39,7 @@ KfNotificationSprite notification_sprites[KF_NOTIFICATION_SPRITE_COUNT] = {
 
 DATA(0x80055d74, 0x38)
 KfEffectSprite effect_sprites[KF_EFFECT_SPRITE_TABLE_ROWS] = {
-    {KF_EFFECT_SPRITE_ACTIVE, KF_ANIMATION_CLIP_FIRST, 0, 0x33, 0x11e, 0x22, 0xc8, {0, 0}, {0, 0, 0, 0}, {0, 0}, 0},
+    {KF_EFFECT_SPRITE_ACTIVE, KF_ANIMATION_CLIP_FIRST, 0, 0x33, 0x11e, 0x22, 0xc8, {0, 0}, {0, 0, 0, 0}, {0, 0}, NULL},
     {KF_EFFECT_SPRITE_END},
 };
 
@@ -89,7 +90,7 @@ void render_weapon(void)
     if (render_bind_animated_instance(
             &player_state.weapon_animation_cache, KF_ASSET_WEAPON, KF_ANIMATION_CLIP_FIRST,
             player_state.weapon_attack_phase,
-            object->vertex_count) != 0) {
+            object->vertex_count) != NULL) {
         tmd_project_vertices_shift(object->vertex_count, WEAPON_PROJECTED_DEPTH_SHIFT);
         depth_bias =
             player_state.equipped_weapon_record->render_translation.z >> WEAPON_DEPTH_BIAS_SHIFT;
@@ -134,7 +135,7 @@ void render_effect_sprites(void)
         if (render_bind_animated_instance(
                 &entry->animation_cache, KF_ASSET_EFFECT_SPRITES,
                 entry->animation_clip, entry->asset_variant,
-                object->vertex_count) != 0) {
+                object->vertex_count) != NULL) {
             tmd_transform_vertices(object->vertex_count);
             render_enqueue_tmd(0, 0);
         }

@@ -1,3 +1,4 @@
+#include <kf/null.h>
 #include <kf/address.h>
 #include <kf/game_resources.h>
 #include <kf/resources.h>
@@ -59,12 +60,12 @@ void tim_upload_images(void *tim_data)
     TIM_IMAGE image;
 
     OpenTIM((u_long *)tim_data);
-    while (ReadTIM(&image) != 0) {
-        if (image.caddr != 0) {
+    while (ReadTIM(&image) != NULL) {
+        if (image.caddr != NULL) {
             LoadImage(image.crect, image.caddr);
             DrawSync(0);
         }
-        if (image.paddr != 0) {
+        if (image.paddr != NULL) {
             LoadImage(image.prect, image.paddr);
             DrawSync(0);
         }

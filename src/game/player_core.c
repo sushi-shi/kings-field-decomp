@@ -1,3 +1,4 @@
+#include <kf/null.h>
 #include <kf/game_graphics.h>
 #include <kf/address.h>
 #include <kf/map_data.h>
@@ -89,31 +90,31 @@ void player_set_equipment_slot(KfItemId item_id, KfEquipmentSlot slot)
     if (player_state.equipped_head_armor_id != KF_ITEM_NONE) {
         player_state.equipped_head_armor_record = &armor_records.entries[KF_ENUM_ENCODE(u8, player_state.equipped_head_armor_id) - KF_ARMOR_ITEM_FIRST];
     } else {
-        player_state.equipped_head_armor_record = 0;
+        player_state.equipped_head_armor_record = NULL;
     }
     if (player_state.equipped_body_armor_id != KF_ITEM_NONE) {
         player_state.equipped_body_armor_record =
             &armor_records.entries[KF_ENUM_ENCODE(u8, player_state.equipped_body_armor_id) - KF_ARMOR_ITEM_FIRST];
     } else {
-        player_state.equipped_body_armor_record = 0;
+        player_state.equipped_body_armor_record = NULL;
     }
     if (player_state.equipped_arm_armor_id != KF_ITEM_NONE) {
         player_state.equipped_arm_armor_record =
             &armor_records.entries[KF_ENUM_ENCODE(u8, player_state.equipped_arm_armor_id) - KF_ARMOR_ITEM_FIRST];
     } else {
-        player_state.equipped_arm_armor_record = 0;
+        player_state.equipped_arm_armor_record = NULL;
     }
     if (player_state.equipped_leg_armor_id != KF_ITEM_NONE) {
         player_state.equipped_leg_armor_record =
             &armor_records.entries[KF_ENUM_ENCODE(u8, player_state.equipped_leg_armor_id) - KF_ARMOR_ITEM_FIRST];
     } else {
-        player_state.equipped_leg_armor_record = 0;
+        player_state.equipped_leg_armor_record = NULL;
     }
     if (player_state.equipped_shield_id != KF_ITEM_NONE) {
         player_state.equipped_shield_record =
             &armor_records.entries[KF_ENUM_ENCODE(u8, player_state.equipped_shield_id) - KF_ARMOR_ITEM_FIRST];
     } else {
-        player_state.equipped_shield_record = 0;
+        player_state.equipped_shield_record = NULL;
     }
     player_recalculate_combat_stats();
 }
@@ -136,7 +137,7 @@ void player_equip_weapon(KfItemId weapon_id)
         asset_registry_set(KF_ASSET_WEAPON, player_state.weapon_asset_buffer);
     }
     player_state.weapon_attack_phase = KF_WEAPON_ATTACK_INACTIVE;
-    player_state.weapon_animation_cache = 0;
+    player_state.weapon_animation_cache = NULL;
     player_recalculate_combat_stats();
 }
 

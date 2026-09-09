@@ -1,3 +1,4 @@
+#include <kf/null.h>
 #include <kf/bool.h>
 #include <kf/address.h>
 #include <kf/game_menu.h>
@@ -152,7 +153,7 @@ void menu_drop_item(void)
     ctx.entry_count = found;
     ctx.glyphs_per_entry = MENU_GLYPHS_PER_ROW;
     ctx.glyph_rows = &labels[0][0];
-    ctx.quantities = 0;
+    ctx.quantities = NULL;
 
     menu_frame_begin();
     if (ctx.entry_count != 0) {
@@ -277,7 +278,7 @@ KfMenuSystemResult menu_save_load_hub(void)
             break;
         case KF_MENU_SYSTEM_ACTION_QUIT:
             result = KF_ENUM_DECODE(KfMenuSystemResult, KF_ENUM_ENCODE(s32, menu_two_option_prompt(
-                KF_MENU_WINDOW_SYSTEM, KF_MENU_SYSTEM_ROW_COUNT, cursor, 0)));
+                KF_MENU_WINDOW_SYSTEM, KF_MENU_SYSTEM_ROW_COUNT, cursor, NULL)));
             if (result == KF_MENU_SYSTEM_ACCEPTED) {
                 menu_load_item_texture(MENU_TEXTURE_POWER_OFF);
                 audio_stop_sequence_fade();
@@ -1597,7 +1598,7 @@ void menu_draw_dialog_frame(const KfSaveSlotSummary *rows, KfSaveSlotOverlay ove
                 &menu_assets.dialog_quads[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)][MENU_SAVE_SLOT2_QUAD]);
     }
 
-    if (rows == 0) {
+    if (rows == NULL) {
         return;
     }
 
@@ -1983,7 +1984,7 @@ void menu_list_render(const KfMenuList *list)
             }
             menu_draw_string(
                 &menu_assets.glyph_atlas, &gs);
-            if (list->quantities != 0) {
+            if (list->quantities != NULL) {
                 tens = *counts / 10u;
                 ones = *counts % 10u;
                 gs.position.x += MENU_LIST_QUANTITY_X_OFFSET;

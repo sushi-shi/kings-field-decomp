@@ -109,6 +109,24 @@ int *probe(int *p, int index) {
         with self.assertRaisesRegex(ValueError, "parsing failed"):
             self.scan("#include <missing.h>\nint *p = 0;\n")
 
+    def test_null_inside_nested_header_macro_is_not_a_written_zero(self):
+        with TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / "null.h").write_text("#define NULL 0\n")
+            source = root / "probe.c"
+            source.write_text(
+                '#include "null.h"\n'
+                'struct S { int n; int p; };\n'
+                '#define NIL NULL\n'
+                '#define OWNER(p) ((struct S *)((char *)(p) - '
+                '(long)&((struct S *)NIL)->p))\n'
+                '#define PICK(p) ((p) ? (struct S *)0 : 0)\n'
+                'struct S *probe(int *p) { return OWNER(p); }\n'
+                'struct S *pick(int *p) { return PICK(p); }\n')
+            sites = scan_file(source, [*MODES["retail"], *FLAGS], root=root)
+            self.assertEqual([(site.line, site.spelling) for site in sites],
+                             [(5, "0"), (5, "0")])
+
 
 if __name__ == "__main__":
     unittest.main()
