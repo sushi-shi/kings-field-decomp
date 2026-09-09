@@ -865,3 +865,6 @@ promotes a probe to a proven historical toolchain.
 - [July 1994 Sony SDK header control](sony-sdk-july-1994.md): earlier original
   headers and samples, unchanged helper expressions, and complete-object
   equality for all fifteen functions under the older GTE declaration boundary.
+- [Remaining game source follow-up](game-final-fifteen-followup.md): sequence
+  expression, complete filename-owner and nine-function rendering-context
+  controls, with preserved exact siblings and no additional exact function.
