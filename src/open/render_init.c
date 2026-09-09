@@ -62,9 +62,7 @@ void render_initialize(void)
     buffer += PRIMITIVE_BUFFER_BYTES;
     open_graphics_runtime.display_state.primitive_buffers[1].end = buffer;
     open_graphics_runtime.floor_item_state.count = 0;
-    angles.vx = 0;
-    angles.vy = 0;
-    angles.vz = 0;
+    setVector(&angles, 0, 0, 0);
     RotMatrix(&angles, &open_graphics_runtime.render_state.quadrant_matrices[0]);
     angles.vy = KF_ANGLE_THREE_QUARTER_TURN;
     RotMatrix(&angles, &open_graphics_runtime.render_state.quadrant_matrices[3]);

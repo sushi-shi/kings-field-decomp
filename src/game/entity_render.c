@@ -72,9 +72,10 @@ void render_floor_item(KfFloorItem *item)
 
     SetRotMatrix(&game_graphics_runtime.render_state.view_matrix);
     SetTransMatrix(&game_graphics_runtime.render_state.view_matrix);
-    screen.vx = (u16)item->position_x - (u16)game_graphics_runtime.render_state.view_position.vx;
-    screen.vy = (u16)item->position_y - (u16)game_graphics_runtime.render_state.view_position.vy;
-    screen.vz = (u16)item->position_z - (u16)game_graphics_runtime.render_state.view_position.vz;
+    setVector(&screen,
+        (u16)item->position_x - (u16)game_graphics_runtime.render_state.view_position.vx,
+        (u16)item->position_y - (u16)game_graphics_runtime.render_state.view_position.vy,
+        (u16)item->position_z - (u16)game_graphics_runtime.render_state.view_position.vz);
     RotTrans(&screen, (VECTOR *)&model.t, &flag);
     facing = floor_item_facing(item->facing_and_frame_count);
     if (KF_ENUM_ENCODE(u8, facing) != KF_ENUM_ENCODE(u8, KF_FLOOR_ITEM_FACING_BILLBOARD)) {
@@ -122,14 +123,13 @@ void render_actor_sprite(KfEffectRecord *sprite)
     }
     SetRotMatrix(&game_graphics_runtime.render_state.view_matrix);
     SetTransMatrix(&game_graphics_runtime.render_state.view_matrix);
-    screen.vx = (u16)sprite->position.vx - (u16)game_graphics_runtime.render_state.view_position.vx;
-    screen.vy = (u16)sprite->position.vy - (u16)game_graphics_runtime.render_state.view_position.vy;
-    screen.vz = (u16)sprite->position.vz - (u16)game_graphics_runtime.render_state.view_position.vz;
+    setVector(&screen,
+        (u16)sprite->position.vx - (u16)game_graphics_runtime.render_state.view_position.vx,
+        (u16)sprite->position.vy - (u16)game_graphics_runtime.render_state.view_position.vy,
+        (u16)sprite->position.vz - (u16)game_graphics_runtime.render_state.view_position.vz);
     RotTrans(&screen, (VECTOR *)&model.t, &flag);
     matrix_set_rotation_yxz(&sprite->rotation.angles, &model);
-    scale.vx = (s16)sprite->scale_x;
-    scale.vy = (s16)sprite->scale_y;
-    scale.vz = (s16)sprite->scale_z;
+    setVector(&scale, (s16)sprite->scale_x, (s16)sprite->scale_y, (s16)sprite->scale_z);
     ScaleMatrix(&model, &scale);
     if (sprite->animation_clip == KF_ANIMATION_CLIP_NONE) {
         MulMatrix2(&game_graphics_runtime.render_state.pitch_matrix, &model);

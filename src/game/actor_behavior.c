@@ -522,9 +522,10 @@ void actor_spawn_action_effect(KF_ENUM_PARAM(KfActorEffectCode, s32) effect_code
         case KF_ACTOR_EFFECT_CODE_PHYSICAL_PROJECTILE:
         case KF_ACTOR_EFFECT_CODE_LIGHTNING_ALTERNATE:
         case KF_ACTOR_EFFECT_CODE_HOMING_ALTERNATE:
-            offset.vx = definition->attachment_offsets[KF_ENUM_ENCODE(s32, effect_slot)].x;
-            offset.vy = definition->attachment_offsets[KF_ENUM_ENCODE(s32, effect_slot)].y;
-            offset.vz = definition->attachment_offsets[KF_ENUM_ENCODE(s32, effect_slot)].z;
+            setVector(&offset,
+                definition->attachment_offsets[KF_ENUM_ENCODE(s32, effect_slot)].x,
+                definition->attachment_offsets[KF_ENUM_ENCODE(s32, effect_slot)].y,
+                definition->attachment_offsets[KF_ENUM_ENCODE(s32, effect_slot)].z);
             if (repeat == 2) {
                 if (i == 0) {
                     offset.vx = offset.vx + ACTOR_PAIRED_EFFECT_X_OFFSET;
@@ -537,9 +538,7 @@ void actor_spawn_action_effect(KF_ENUM_PARAM(KfActorEffectCode, s32) effect_code
             effect_rotation.angles.z = actor->rotation.angles.z;
             matrix_set_rotation_yxz(&effect_rotation.angles, &matrix);
             ApplyMatrix(&matrix, &offset, &position);
-            position.vx += actor->position.vx;
-            position.vy += actor->position.vy;
-            position.vz += actor->position.vz;
+            addVector(&position, &actor->position);
             facing = (KF_ANGLE_HALF_TURN - actor->rotation.angles.y) & KF_ANGLE_WRAP_MASK;
             distance = player_distance_to_point_in_cone(
                 &position, facing, ACTOR_EFFECT_AIM_RANGE, KF_ACTOR_AIM_TOLERANCE);

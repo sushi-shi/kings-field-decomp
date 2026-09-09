@@ -91,17 +91,11 @@ void pitch_yaw_to_forward_vector(
     SVECTOR source;
     VECTOR result;
 
-    source.vx = 0;
-    source.vy = 0;
-    source.vz = KF_FIXED12_ONE;
+    setVector(&source, 0, 0, KF_FIXED12_ONE);
     matrix_set_rotation_x(-angles->x & KF_ANGLE_WRAP_MASK, &pitch_matrix);
     ApplyMatrix(&pitch_matrix, &source, &result);
-    source.vx = result.vx;
-    source.vy = result.vy;
-    source.vz = result.vz;
+    copyVector(&source, &result);
     matrix_set_rotation_y(angles->y, &yaw_matrix);
     ApplyMatrix(&yaw_matrix, &source, &result);
-    direction->vx = result.vx;
-    direction->vy = result.vy;
-    direction->vz = result.vz;
+    copyVector(direction, &result);
 }

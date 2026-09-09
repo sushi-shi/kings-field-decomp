@@ -1,11 +1,14 @@
 # Sony header helpers in the reconstructed sources
 
 The supplied Sony/Psy-Q headers contain substantial preprocessor helpers.
-The strongest current source matches are rectangle/texture/color setup and
-vector component updates. Fifteen uses of the actual SDK macros now replace
-75 assignments without changing any emitted instructions; no new function
-becomes exact. No C inline-function definitions or unclassified inline GTE
-instructions were found in the bounded header/function census below.
+The [complete follow-up campaign](sony-header-helper-campaign.md) now reuses all
+147 original candidates and closes GAME display initialization. No C
+inline-function definitions or unclassified inline GTE instructions were found
+in the bounded header/function census below.
+
+This note preserves the SDK evidence and the initial 15-site pilot through
+`3205f777`, integrated as `ad214ccb`. Its trial scores and counts are historical;
+the follow-up has the complete per-site ledger and current verification.
 
 ## Function Match Plan
 
@@ -169,7 +172,7 @@ bounded by the curated function extents and vendor classifications; it is not
 a census of undiscovered executable islands or proof of historical header use.
 The `pollhost` development macro is also absent from current source.
 
-## Controlled results
+## Initial pilot results
 
 All trials use each unit's unchanged **GCC 2.5.7 PSX rebuild**, `-O2 -G0
 -mcpu=r2000`, with the configured maspsx ASPSX 1.07 model. This is the current
@@ -204,11 +207,11 @@ the helper substitution does not establish a compiler limitation.
 
 No newly exact function is claimed. The full code census remains PSX **1/1**,
 GAME **340/362**, OPEN **106/108**, totaling **447/471** strict-exact functions.
-The macro family is useful for recovering readable source structure; this
-bounded pass gives no evidence that omitted SDK macros explain the remaining
-non-exact instruction streams.
+The macro family recovered readable source structure in this pilot. The later
+complete pass found a counterexample to treating its neutral results as a
+general conclusion: GAME display initialization becomes exact with `setRGB0`.
 
-## Verification and reproduction
+## Initial pilot verification and reproduction
 
 The four retained units were explicitly rebuilt with `kf try` and then
 `kf match --unit`. All eight function comparisons are strict 100%. A separate

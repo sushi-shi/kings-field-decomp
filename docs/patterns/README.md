@@ -814,5 +814,8 @@ promotes a probe to a proven historical toolchain.
   selectors, with unchanged compiled objects.
 
 - [Sony SDK header helpers](sony-header-helpers.md): Release 2.5 macro/inline
-  census, candidate source families, retail GTE negative controls and fifteen
-  instruction-preserving SDK macro uses in sprite/camera code.
+  census, candidate source families, retail GTE negative controls and the
+  initial sprite/camera pilot.
+- [Complete Sony helper campaign](sony-header-helper-campaign.md): all 147
+  candidates reused, signed direction views, exact GAME display initialization,
+  corrected switch-table addends and per-function verdicts.

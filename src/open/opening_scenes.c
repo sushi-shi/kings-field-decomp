@@ -289,48 +289,16 @@ void opening_scene1_draw_fade(u8 shade)
         KF_GPU_TEXTURE_16BIT, KF_GPU_BLEND_AVERAGE,
         SCENE1_RIGHT_TPAGE_X, KF_TEXTURE_LOWER_PAGE_Y);
 
-    left->x0 = 0;
-    left->y0 = 0;
-    left->x1 = SCENE1_PANEL_WIDTH;
-    left->y1 = 0;
-    left->x2 = 0;
-    left->y2 = KF_DISPLAY_HEIGHT;
-    left->x3 = SCENE1_PANEL_WIDTH;
-    left->y3 = KF_DISPLAY_HEIGHT;
+    setXYWH(left, 0, 0, SCENE1_PANEL_WIDTH, KF_DISPLAY_HEIGHT);
 
-    right->x0 = SCENE1_RIGHT_PANEL_X;
-    right->y0 = 0;
-    right->x1 = KF_DISPLAY_WIDTH;
-    right->y1 = 0;
-    right->x2 = SCENE1_RIGHT_PANEL_X;
-    right->y2 = KF_DISPLAY_HEIGHT;
-    right->x3 = KF_DISPLAY_WIDTH;
-    right->y3 = KF_DISPLAY_HEIGHT;
+    setXYWH(right, SCENE1_RIGHT_PANEL_X, 0, SCENE1_PANEL_WIDTH, KF_DISPLAY_HEIGHT);
 
-    left->u0 = 0;
-    left->v0 = 0;
-    left->u1 = SCENE1_PANEL_WIDTH;
-    left->v1 = 0;
-    left->u2 = 0;
-    left->v2 = KF_DISPLAY_HEIGHT;
-    left->u3 = SCENE1_PANEL_WIDTH;
-    left->v3 = KF_DISPLAY_HEIGHT;
+    setUVWH(left, 0, 0, SCENE1_PANEL_WIDTH, KF_DISPLAY_HEIGHT);
 
-    right->u0 = 0;
-    right->v0 = 0;
-    right->u1 = SCENE1_PANEL_WIDTH;
-    right->v1 = 0;
-    right->u2 = 0;
-    right->v2 = KF_DISPLAY_HEIGHT;
-    right->u3 = SCENE1_PANEL_WIDTH;
-    right->v3 = KF_DISPLAY_HEIGHT;
+    setUVWH(right, 0, 0, SCENE1_PANEL_WIDTH, KF_DISPLAY_HEIGHT);
 
-    left->r0 = shade;
-    left->g0 = shade;
-    left->b0 = shade;
-    right->r0 = shade;
-    right->g0 = shade;
-    right->b0 = shade;
+    setRGB0(left, shade, shade, shade);
+    setRGB0(right, shade, shade, shade);
 
     ordering_table_slot = &open_graphics_runtime.ordering_table;
     AddPrim(*ordering_table_slot, left);
@@ -557,9 +525,10 @@ void opening_scene3_run(void)
         opening_poll_input();
     } while (opening_input_action == KF_OPENING_INPUT_NONE);
 
-    transition_position.vx = opening_camera_path_state.position.vx;
-    transition_position.vy = TRANSITION_BASE_Y;
-    transition_position.vz = opening_camera_path_state.position.vz;
+    setVector(&transition_position,
+        opening_camera_path_state.position.vx,
+        TRANSITION_BASE_Y,
+        opening_camera_path_state.position.vz);
     if (opening_input_action == KF_OPENING_INPUT_NONE) {
         opening_entity_transition(KF_OPENING_TRANSITION_GROW, &transition_position);
     }

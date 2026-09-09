@@ -59,22 +59,12 @@ void display_show_error_screen(KfSystemScreen stage)
     DrawSync(0);
     SetPolyFT4(&prim);
     SetSemiTrans(&prim, 1);
-    prim.x0 = KF_SYSTEM_SCREEN_LEFT;
-    prim.y0 = KF_SYSTEM_SCREEN_TOP;
-    prim.x1 = KF_SYSTEM_SCREEN_RIGHT;
-    prim.y1 = KF_SYSTEM_SCREEN_TOP;
-    prim.x2 = KF_SYSTEM_SCREEN_LEFT;
-    prim.y2 = KF_SYSTEM_SCREEN_BOTTOM;
-    prim.x3 = KF_SYSTEM_SCREEN_RIGHT;
-    prim.y3 = KF_SYSTEM_SCREEN_BOTTOM;
-    prim.u0 = 0;
-    prim.v0 = 0;
-    prim.u1 = KF_SYSTEM_SCREEN_U_SPAN;
-    prim.v1 = 0;
-    prim.u2 = 0;
-    prim.v2 = KF_SYSTEM_SCREEN_V_SPAN;
-    prim.u3 = KF_SYSTEM_SCREEN_U_SPAN;
-    prim.v3 = KF_SYSTEM_SCREEN_V_SPAN;
+    setXY4(&prim,
+        KF_SYSTEM_SCREEN_LEFT, KF_SYSTEM_SCREEN_TOP,
+        KF_SYSTEM_SCREEN_RIGHT, KF_SYSTEM_SCREEN_TOP,
+        KF_SYSTEM_SCREEN_LEFT, KF_SYSTEM_SCREEN_BOTTOM,
+        KF_SYSTEM_SCREEN_RIGHT, KF_SYSTEM_SCREEN_BOTTOM);
+    setUVWH(&prim, 0, 0, KF_SYSTEM_SCREEN_U_SPAN, KF_SYSTEM_SCREEN_V_SPAN);
     prim.clut = GetClut(0, KF_SYSTEM_SCREEN_CLUT_Y);
     prim.tpage = GetTPage(
         KF_GPU_TEXTURE_4BIT, KF_GPU_BLEND_AVERAGE,
@@ -172,12 +162,8 @@ void display_initialize(void)
     game_graphics_runtime.display_draw_environments[0].dtd = game_graphics_runtime.display_draw_environments[1].dtd = 1;
     game_graphics_runtime.display_draw_environments[0].isbg = 1;
     game_graphics_runtime.display_draw_environments[1].isbg = 1;
-    game_graphics_runtime.display_draw_environments[0].r0 = 0;
-    game_graphics_runtime.display_draw_environments[0].g0 = 0;
-    game_graphics_runtime.display_draw_environments[0].b0 = 0;
-    game_graphics_runtime.display_draw_environments[1].r0 = 0;
-    game_graphics_runtime.display_draw_environments[1].g0 = 0;
-    game_graphics_runtime.display_draw_environments[1].b0 = 0;
+    setRGB0(&game_graphics_runtime.display_draw_environments[0], 0, 0, 0);
+    setRGB0(&game_graphics_runtime.display_draw_environments[1], 0, 0, 0);
     PutDispEnv(&game_graphics_runtime.display_disp_environments[0]);
     SetBackColor(INITIAL_BACK_COLOR, INITIAL_BACK_COLOR, INITIAL_BACK_COLOR);
     lighting_set_active_color_matrix(KF_GAME_COLOR_DEFAULT);
@@ -205,9 +191,7 @@ void render_initialize(void)
     buffer += PRIMITIVE_BUFFER_BYTES;
     game_graphics_runtime.display_state.primitive_buffers[1].end = buffer;
     game_graphics_runtime.floor_item_count = 0;
-    angles.vx = 0;
-    angles.vy = 0;
-    angles.vz = 0;
+    setVector(&angles, 0, 0, 0);
     RotMatrix(&angles, &game_graphics_runtime.render_state.quadrant_matrices[0]);
     angles.vy = KF_ANGLE_THREE_QUARTER_TURN;
     RotMatrix(&angles, &game_graphics_runtime.render_state.quadrant_matrices[3]);

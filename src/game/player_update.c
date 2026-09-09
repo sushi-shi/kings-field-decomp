@@ -427,17 +427,16 @@ void player_update(void)
                     if (player_state.weapon_magic_shots_remaining == 1) {
                         player_state.vitals.current_mp -= record->mp_cost;
                     }
-                    spawn_offset.vx = PLAYER_WEAPON_MAGIC_SPAWN_X;
-                    spawn_offset.vy = PLAYER_WEAPON_MAGIC_SPAWN_Y;
-                    spawn_offset.vz = PLAYER_WEAPON_MAGIC_SPAWN_Z;
+                    setVector(&spawn_offset,
+                        PLAYER_WEAPON_MAGIC_SPAWN_X,
+                        PLAYER_WEAPON_MAGIC_SPAWN_Y,
+                        PLAYER_WEAPON_MAGIC_SPAWN_Z);
                     effect_rotation.angles.x = -player_state.camera_rotation.vx;
                     effect_rotation.angles.y = player_state.camera_rotation.vy;
                     effect_rotation.angles.z = -player_state.camera_rotation.vz;
                     matrix_set_rotation_yxz(&effect_rotation.angles, &matrix);
                     ApplyMatrix(&matrix, &spawn_offset, &position);
-                    position.vx += player_state.camera_position.vx;
-                    position.vy += player_state.camera_position.vy;
-                    position.vz += player_state.camera_position.vz;
+                    addVector(&position, &player_state.camera_position);
                     effect_rotation.angles.x = player_state.camera_rotation.vx;
                     effect_rotation.angles.y = player_state.camera_rotation.vy;
                     effect_rotation.angles.z = player_state.camera_rotation.vz;

@@ -819,22 +819,12 @@ void screen_show_image_until_input(const char *path)
     DrawSync(0);
     SetPolyFT4(&polygon);
     SetSemiTrans(&polygon, 1);
-    polygon.x0 = KF_SYSTEM_SCREEN_LEFT;
-    polygon.y0 = KF_SYSTEM_SCREEN_TOP;
-    polygon.x1 = KF_SYSTEM_SCREEN_RIGHT;
-    polygon.y1 = KF_SYSTEM_SCREEN_TOP;
-    polygon.x2 = KF_SYSTEM_SCREEN_LEFT;
-    polygon.y2 = KF_SYSTEM_SCREEN_BOTTOM;
-    polygon.x3 = KF_SYSTEM_SCREEN_RIGHT;
-    polygon.y3 = KF_SYSTEM_SCREEN_BOTTOM;
-    polygon.u0 = 0;
-    polygon.v0 = 0;
-    polygon.u1 = KF_SYSTEM_SCREEN_U_SPAN;
-    polygon.v1 = 0;
-    polygon.u2 = 0;
-    polygon.v2 = KF_SYSTEM_SCREEN_V_SPAN;
-    polygon.u3 = KF_SYSTEM_SCREEN_U_SPAN;
-    polygon.v3 = KF_SYSTEM_SCREEN_V_SPAN;
+    setXY4(&polygon,
+        KF_SYSTEM_SCREEN_LEFT, KF_SYSTEM_SCREEN_TOP,
+        KF_SYSTEM_SCREEN_RIGHT, KF_SYSTEM_SCREEN_TOP,
+        KF_SYSTEM_SCREEN_LEFT, KF_SYSTEM_SCREEN_BOTTOM,
+        KF_SYSTEM_SCREEN_RIGHT, KF_SYSTEM_SCREEN_BOTTOM);
+    setUVWH(&polygon, 0, 0, KF_SYSTEM_SCREEN_U_SPAN, KF_SYSTEM_SCREEN_V_SPAN);
     polygon.clut = GetClut(0, KF_SYSTEM_SCREEN_CLUT_Y);
     polygon.tpage = GetTPage(
         KF_GPU_TEXTURE_4BIT, KF_GPU_BLEND_AVERAGE,
@@ -852,9 +842,7 @@ void screen_show_image_until_input(const char *path)
         if (brightness < IMAGE_WAIT_MAX_BRIGHTNESS) {
             brightness++;
         }
-        polygon.r0 = brightness;
-        polygon.g0 = brightness;
-        polygon.b0 = brightness;
+        setRGB0(&polygon, brightness, brightness, brightness);
         ClearOTagR(game_graphics_runtime.display_state.ordering_table, KF_ORDERING_TABLE_LENGTH);
         AddPrim(game_graphics_runtime.display_state.ordering_table, &polygon);
         DrawSync(0);

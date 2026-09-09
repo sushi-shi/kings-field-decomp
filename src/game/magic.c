@@ -67,17 +67,13 @@ void magic_cast(void)
         KfActor *target;
         s32 speed;
 
-        offset.vx = MAGIC_LAUNCH_OFFSET_X;
-        offset.vy = MAGIC_LAUNCH_OFFSET_Y;
-        offset.vz = MAGIC_LAUNCH_OFFSET_Z;
+        setVector(&offset, MAGIC_LAUNCH_OFFSET_X, MAGIC_LAUNCH_OFFSET_Y, MAGIC_LAUNCH_OFFSET_Z);
         angles.x = -player_state.camera_rotation.vx;
         angles.y = player_state.camera_rotation.vy;
         angles.z = -player_state.camera_rotation.vz;
         matrix_set_rotation_yxz(&angles, &matrix);
         ApplyMatrix(&matrix, &offset, &world_pos);
-        world_pos.vx += player_state.camera_position.vx;
-        world_pos.vy += player_state.camera_position.vy;
-        world_pos.vz += player_state.camera_position.vz;
+        addVector(&world_pos, &player_state.camera_position);
         target = actor_pool_find_target_in_cone(
             &player_state.camera_position,
             player_state.camera_rotation.vy, MAGIC_TARGET_MAX_DISTANCE, KF_ACTOR_AIM_TOLERANCE, &distance);
@@ -120,9 +116,7 @@ void magic_cast(void)
         if (player_state.selected_magic_id == KF_MAGIC_LIGHT_NEEDLE) {
             SVECTOR rotation;
 
-            rotation.vx = player_state.camera_rotation.vx;
-            rotation.vy = player_state.camera_rotation.vy;
-            rotation.vz = player_state.camera_rotation.vz;
+            copyVector(&rotation, &player_state.camera_rotation);
             effect_pool_construct(
                 KF_PLAYER_DAMAGE_MULTIPLIER_ONE, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS,
                 KF_ENUM_DECODE(KfEffectKind, KF_ENUM_ENCODE(u8, player_state.selected_magic_id)), &world_pos, &direction, KF_EFFECT_ARGS_ROTATION_SOUND(&rotation, KF_EFFECT_SOUND_PLAY));

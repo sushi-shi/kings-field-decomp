@@ -28,8 +28,9 @@ void render_screen_sprite(KfSpriteQuad *sprite)
     prim->u1 = prim->u3 = sprite->u + sprite->u_span;
     prim->v0 = prim->v1 = sprite->v;
     prim->v2 = prim->v3 = sprite->v + sprite->v_span;
-    prim->r0 = game_graphics_runtime.active_render_color.r;
-    prim->g0 = game_graphics_runtime.active_render_color.g;
-    prim->b0 = game_graphics_runtime.active_render_color.b;
+    setRGB0(prim,
+        game_graphics_runtime.active_render_color.r,
+        game_graphics_runtime.active_render_color.g,
+        game_graphics_runtime.active_render_color.b);
     AddPrim(&game_graphics_runtime.display_state.ordering_table[HUD_SPRITE_OT_DEPTH], prim);
 }
