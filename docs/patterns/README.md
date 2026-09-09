@@ -860,5 +860,8 @@ promotes a probe to a proven historical toolchain.
   non-exact functions reviewed, thirty compiled controls, and three exact menu
   functions from reflected SDK UV rectangles and byte-domain texture dimensions.
 - [SDK expressions and the final fifteen](sony-final-fifteen.md): refreshed
-  evidence for every remaining function, twenty additional source controls,
+  evidence for every remaining function, twenty-two additional source controls,
   and native-parity traces of the successful UV expressions' stack allocations.
+- [July 1994 Sony SDK header control](sony-sdk-july-1994.md): earlier original
+  headers and samples, unchanged helper expressions, and complete-object
+  equality for all fifteen functions under the older GTE declaration boundary.
