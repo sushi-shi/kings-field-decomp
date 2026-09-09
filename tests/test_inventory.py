@@ -3145,7 +3145,7 @@ class InventoryTests(unittest.TestCase):
             (sequence_table.name, sequence_table.datatype, sequence_table.size),
             (
                 "audio_sequence_table",
-                "u8[SS_SEQ_TABSIZ * 2]",
+                "char[SS_SEQ_TABSIZ * 2]",
                 0x158,
             ),
         )

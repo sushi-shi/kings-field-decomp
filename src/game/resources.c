@@ -110,7 +110,7 @@ void map_resource_path_set_floor(KfFloorId floor)
 }
 
 ADDRESS(0x8001b3a4, 0x40)
-void *map_resource_load_file(const char *filename)
+u8 *map_resource_load_file(const char *filename)
 {
     u8 *data;
 
@@ -181,7 +181,7 @@ void map_resources_load(KfFloorId floor, KF_ENUM_PARAM(KfMapVariant, s32) use_va
     map_resource_path_set_floor(floor);
     tim_upload_images(map_resource_load_file(map_mix_tim_filename));
     memory_release_last();
-    stream = (u8 *)map_resource_load_file("MIXA.DAT");
+    stream = map_resource_load_file("MIXA.DAT");
     audio_load_vab(stream + KF_RESOURCE_CHUNK_HEADER_BYTES,
         STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES);
     block = stream;
@@ -211,7 +211,7 @@ void map_resources_load(KfFloorId floor, KF_ENUM_PARAM(KfMapVariant, s32) use_va
         (KfMapEventDefinition *)(STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES));
     memory_release_last();
     memory_arena.allocation.cursor = block + KF_RESOURCE_REUSE_PREFIX_BYTES;
-    stream = (u8 *)map_resource_load_file("MIXB.DAT");
+    stream = map_resource_load_file("MIXB.DAT");
     tmd_register(KF_TMD_SLOT_ENTITIES,
         (KfTmdHeader *)(stream + KF_RESOURCE_CHUNK_HEADER_BYTES));
     tmd_register(KF_TMD_SLOT_MAP,

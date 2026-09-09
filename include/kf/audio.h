@@ -61,7 +61,7 @@ typedef struct KfAudioState {
     u8 *vab_header;
     s16 active_vab_id;
     u8 unknown_06[2];
-    u8 *sequence_buffer;
+    u_long *sequence_buffer;
     s16 sequence_id;
     u8 unknown_0e[2];
     KfAudioSequenceState sequence_active;
@@ -70,7 +70,7 @@ typedef struct KfAudioState {
     KfAudioVoiceSlots voice_slots;
 } KfAudioState;
 
-extern u8 audio_sequence_table[];
+extern char audio_sequence_table[];
 extern KfAudioState audio_state;
 extern s32 audio_voice_slot_index;
 

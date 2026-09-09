@@ -300,7 +300,7 @@ KfEffectRecord *effect_pool_construct(
             record->scale_x = EFFECT_ORBIT_SCALE;
             record->direction.words.x = record->position.vx >> KF_EFFECT_ORBIT_CENTER_SHIFT;
             record->direction.words.z = record->position.vz >> KF_EFFECT_ORBIT_CENTER_SHIFT;
-            record->direction.words.y = (u16)record->position.vy;
+            record->direction.words.y = record->position.vy;
             break;
         case KF_EFFECT_KIND_MOONLIGHT_PROJECTILE:
             record->animation_clip = KF_ANIMATION_CLIP_FIRST;

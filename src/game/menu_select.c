@@ -180,19 +180,19 @@ void menu_equip_select(KfEquipmentMenuCategory category)
         switch (category) {
         case KF_EQUIP_MENU_WEAPON:
             player_state.equipped_weapon_id = KF_ENUM_DECODE(KfItemId, selection);
-            player_equip_weapon(KF_ENUM_DECODE(KfItemId, (u8)selection));
+            player_equip_weapon(KF_ENUM_DECODE(KfItemId, selection));
             break;
         case KF_EQUIP_MENU_SHIELD:
             player_state.equipped_shield_id = KF_ENUM_DECODE(KfItemId, selection);
-            player_set_equipment_slot(KF_ENUM_DECODE(KfItemId, (u8)selection), KF_EQUIPMENT_SLOT_SHIELD);
+            player_set_equipment_slot(KF_ENUM_DECODE(KfItemId, selection), KF_EQUIPMENT_SLOT_SHIELD);
             break;
         case KF_EQUIP_MENU_HEAD:
             player_state.equipped_head_armor_id = KF_ENUM_DECODE(KfItemId, selection);
-            player_set_equipment_slot(KF_ENUM_DECODE(KfItemId, (u8)selection), KF_EQUIPMENT_SLOT_HEAD);
+            player_set_equipment_slot(KF_ENUM_DECODE(KfItemId, selection), KF_EQUIPMENT_SLOT_HEAD);
             break;
         case KF_EQUIP_MENU_BODY:
             player_state.equipped_body_armor_id = KF_ENUM_DECODE(KfItemId, selection);
-            player_set_equipment_slot(KF_ENUM_DECODE(KfItemId, (u8)selection), KF_EQUIPMENT_SLOT_BODY);
+            player_set_equipment_slot(KF_ENUM_DECODE(KfItemId, selection), KF_EQUIPMENT_SLOT_BODY);
             if (selection == KF_ENUM_ENCODE(s32, KF_ITEM_FULL_PLATE)) {
                 player_state.equipped_arm_armor_id = KF_ITEM_NONE;
                 player_state.equipped_leg_armor_id = KF_ITEM_NONE;
@@ -202,15 +202,15 @@ void menu_equip_select(KfEquipmentMenuCategory category)
             break;
         case KF_EQUIP_MENU_ARM:
             player_state.equipped_arm_armor_id = KF_ENUM_DECODE(KfItemId, selection);
-            player_set_equipment_slot(KF_ENUM_DECODE(KfItemId, (u8)selection), KF_EQUIPMENT_SLOT_ARM);
+            player_set_equipment_slot(KF_ENUM_DECODE(KfItemId, selection), KF_EQUIPMENT_SLOT_ARM);
             break;
         case KF_EQUIP_MENU_LEG:
             player_state.equipped_leg_armor_id = KF_ENUM_DECODE(KfItemId, selection);
-            player_set_equipment_slot(KF_ENUM_DECODE(KfItemId, (u8)selection), KF_EQUIPMENT_SLOT_LEG);
+            player_set_equipment_slot(KF_ENUM_DECODE(KfItemId, selection), KF_EQUIPMENT_SLOT_LEG);
             break;
         case KF_EQUIP_MENU_ACCESSORY:
             player_state.equipped_accessory_id = KF_ENUM_DECODE(KfItemId, selection);
-            player_set_equipment_slot(KF_ENUM_DECODE(KfItemId, (u8)selection), KF_EQUIPMENT_SLOT_ACCESSORY);
+            player_set_equipment_slot(KF_ENUM_DECODE(KfItemId, selection), KF_EQUIPMENT_SLOT_ACCESSORY);
             break;
         }
     }

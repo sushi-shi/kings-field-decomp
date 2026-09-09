@@ -17,7 +17,7 @@ enum {
 RODATA(0x8001227c, 0x34)
 
 DATA(0x80037808, 0x158)
-u8 audio_sequence_table[SS_SEQ_TABSIZ * KF_AUDIO_SEQUENCE_CAPACITY];
+char audio_sequence_table[SS_SEQ_TABSIZ * KF_AUDIO_SEQUENCE_CAPACITY];
 
 DATA(0x8006e1d0, 0x90)
 KfAudioState audio_state;
@@ -29,7 +29,7 @@ void audio_initialize(void)
     s16 inactive_voice_id;
 
     SsInit();
-    SsSetTableSize((char *)audio_sequence_table,
+    SsSetTableSize(audio_sequence_table,
         KF_AUDIO_SEQUENCE_CAPACITY, KF_AUDIO_TRACKS_PER_SEQUENCE);
     SsSetTickMode(SS_TICK60);
     SsStart();
@@ -37,7 +37,7 @@ void audio_initialize(void)
     SsUtSetReverbType(SS_REV_TYPE_HALL);
     SsUtReverbOn();
     SsUtSetReverbDepth(OPEN_REVERB_DEPTH, OPEN_REVERB_DEPTH);
-    audio_state.sequence_buffer = (u8 *)memory_allocate(OPEN_SEQUENCE_BUFFER_BYTES);
+    audio_state.sequence_buffer = (u_long *)memory_allocate(OPEN_SEQUENCE_BUFFER_BYTES);
     audio_state.sequence_active = KF_AUDIO_SEQUENCE_INACTIVE;
     inactive_voice_id = KF_AUDIO_VOICE_INACTIVE;
     index = KF_AUDIO_VOICE_SLOTS - 1;
@@ -84,7 +84,7 @@ void audio_play_sequence_file(const char *path)
         return;
     }
     audio_state.sequence_id = SsSeqOpen(
-        (u32 *)audio_state.sequence_buffer, audio_state.active_vab_id);
+        audio_state.sequence_buffer, audio_state.active_vab_id);
     SsSeqSetVol(audio_state.sequence_id, OPEN_SEQUENCE_VOLUME, OPEN_SEQUENCE_VOLUME);
     SsSetMVol(0, 0);
     SsSeqPlay(audio_state.sequence_id, SSPLAY_PLAY, SSPLAY_INFINITY);

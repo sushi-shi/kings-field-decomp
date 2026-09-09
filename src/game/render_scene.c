@@ -16,8 +16,8 @@ ADDRESS(0x8001f218, 0x580)
 void render_entities(void)
 {
     const KfCellWindow *grid = game_graphics_runtime.active_cell_window;
-    u16 window_origin_z = (u16)game_graphics_runtime.render_state.view_cell.z - grid->origin_z;
-    u16 window_origin_x = (u16)game_graphics_runtime.render_state.view_cell.x - grid->origin_x;
+    u16 window_origin_z = game_graphics_runtime.render_state.view_cell.z - grid->origin_z;
+    u16 window_origin_x = game_graphics_runtime.render_state.view_cell.x - grid->origin_x;
     KfMapObject *object;
     KfActor *actor;
     KfMapEvent *event;
@@ -72,12 +72,12 @@ void render_entities(void)
             }
         } else {
             row = actor->cell_z + ACTOR_CULL_SQUARE_HALF_WIDTH;
-            row -= (u16)game_graphics_runtime.render_state.view_cell.z;
+            row -= game_graphics_runtime.render_state.view_cell.z;
             if (row >= ACTOR_CULL_SQUARE_WIDTH) {
                 continue;
             }
             col = actor->cell_x + ACTOR_CULL_SQUARE_HALF_WIDTH;
-            col -= (u16)game_graphics_runtime.render_state.view_cell.x;
+            col -= game_graphics_runtime.render_state.view_cell.x;
             visible = col < ACTOR_CULL_SQUARE_WIDTH;
         }
         if (visible != 0) {

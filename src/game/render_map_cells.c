@@ -37,8 +37,8 @@ static KfCellWindow render_fixed_cell_window = {
 #undef N
 
 /*
- * Keep the unsigned low-halfword view coordinates. RotTrans writes MATRIX.t
- * before MulMatrix0 fills its rotation without overwriting that translation.
+ * The SVECTOR destination narrows the view-relative coordinates. RotTrans
+ * writes MATRIX.t before MulMatrix0 fills its rotation.
  */
 ADDRESS(0x8001e5ec, 0x250)
 void render_map_cell(s32 col, s32 row, KF_ENUM_PARAM(KfCellVisibility, char) cell)
@@ -79,10 +79,10 @@ void render_map_cell(s32 col, s32 row, KF_ENUM_PARAM(KfCellVisibility, char) cel
         object_index += KF_MAP_MESHES_PER_BANK;
     }
     setVector(&position,
-        col * KF_MAP_TILE_SIZE - (u16)game_graphics_runtime.render_state.view_position.vx,
+        col * KF_MAP_TILE_SIZE - game_graphics_runtime.render_state.view_position.vx,
         map_floor_height_grid.cells[row][col] * -KF_MAP_HEIGHT_STEP
-            - (u16)game_graphics_runtime.render_state.view_position.vy,
-        row * KF_MAP_TILE_SIZE - (u16)game_graphics_runtime.render_state.view_position.vz);
+            - game_graphics_runtime.render_state.view_position.vy,
+        row * KF_MAP_TILE_SIZE - game_graphics_runtime.render_state.view_position.vz);
     if (orient == KF_ENUM_ENCODE(u8, KF_MAP_ORIENT_QUARTER_TURN) - 1) {
         position.vz += KF_MAP_TILE_SIZE;
     } else if (orient == KF_ENUM_ENCODE(u8, KF_MAP_ORIENT_HALF_TURN) - 1) {
@@ -124,7 +124,7 @@ void render_map_cells(void)
     u8 cols;
 
     /* Directional windows apply only for -45 degrees < pitch < 45 degrees. */
-    if ((u16)((u16)game_graphics_runtime.render_state.view_rotation.vx + (KF_ANGLE_EIGHTH_TURN - 1))
+    if ((u16)(game_graphics_runtime.render_state.view_rotation.vx + (KF_ANGLE_EIGHTH_TURN - 1))
         >= 2 * KF_ANGLE_EIGHTH_TURN - 1) {
         game_graphics_runtime.active_cell_window = &render_fixed_cell_window;
     } else {

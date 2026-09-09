@@ -74,10 +74,10 @@ enum {
     KF_TRANSITION_OT_DEPTH = 4
 };
 
-/* Quad input coordinates; scrolling callers interpret wrapped Y as signed. */
+/* Quad input coordinates; scrolling Y crosses the top edge of the screen. */
 typedef struct KfScreenRect {
     u16 x;
-    u16 y;
+    s16 y;
     u16 w;
     u16 h;
 } KfScreenRect;

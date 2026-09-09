@@ -220,7 +220,7 @@ constexpr KfMenuTextureId menu_texture_from_magic(KfMagicId magic)
     return KF_ENUM_DECODE(KfMenuTextureId, KF_ENUM_ENCODE(u8, magic));
 }
 #else
-#define menu_texture_from_magic(magic) ((u8)(magic))
+#define menu_texture_from_magic(magic) (magic)
 #endif
 
 KF_ENUM_BEGIN(KfItemPickupResult, s32)

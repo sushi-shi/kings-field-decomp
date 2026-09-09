@@ -139,7 +139,7 @@ constexpr KfMapObjectAction map_object_action_from_behavior(KfMapObjectBehavior 
     return KF_ENUM_DECODE(KfMapObjectAction, KF_ENUM_ENCODE(u8, behavior));
 }
 #else
-#define map_object_action_from_behavior(behavior) ((KfMapObjectAction)(behavior))
+#define map_object_action_from_behavior(behavior) (behavior)
 #endif
 
 /* Authored groups selected by weapon and boss progress. */
@@ -560,7 +560,7 @@ extern void map_object_spawn_actor_debris(u16 source, const VECTOR *position, s3
 extern void map_object_spawn_effect(KfMapObjectDropSource kind, KfMapObjectId object_id, const VECTOR *position, s32 y_offset);
 extern void map_object_start_action_if_idle(KfMapObject *object, KfMapObjectAction action);
 extern const u32 *map_resource_copy_words( u32 *destination, const u32 *source, u32 word_count);
-extern void *map_resource_load_file(const char *filename);
+extern u8 *map_resource_load_file(const char *filename);
 extern void map_resource_path_set_floor(KfFloorId floor);
 extern void map_resources_load(KfFloorId floor, KF_ENUM_PARAM(KfMapVariant, s32) map_variant);
 extern void map_unload_floor(void);
