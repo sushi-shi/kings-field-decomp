@@ -45,7 +45,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             vertex1 = (KfScreenVertex *)(vertex1_offset + vertices);
             vertex2_offset = polygon->ft3.v2;
             vertex_offset_delta = vertex2_offset - vertex1_offset;
-            vertex2 = (KfScreenVertex *)((u8 *)vertex1 +
+            vertex2 = (KfScreenVertex *)(vertices + vertex1_offset +
                 vertex_offset_delta);
             if (NormalClip(vertex0->sxy.word, vertex1->sxy.word, vertex2->sxy.word) <= 0) {
                 continue;

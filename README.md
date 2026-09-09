@@ -52,6 +52,17 @@ Missing or stale outputs show —. See [the linking guide](docs/executable-linki
 for the algorithm, scope and per-image interactive reports.
 <!-- executable-score:end -->
 
+## Reconstruction debt
+
+Manually maintained cleanup checklist:
+
+- [ ] Review casts and remove avoidable conversions: **533 written casts**
+  (**430 pointer**, **103 scalar**).
+- [ ] Review unions and simplify avoidable alternate views: **38 union definitions**.
+
+Counts cover project C sources and headers. See the
+[cast review and matching constraints](docs/patterns/cast-owner-reduction.md).
+
 ## Quickstart
 
 ```sh

@@ -211,10 +211,65 @@ class GameGraphicsOwnerProbeTests(unittest.TestCase):
         self.assertEqual([va for image, va in identities
                           if image == 'GAME.EXE' and ORIGIN < va < ORIGIN + EXTENT], [])
         self.assertEqual(identities['GAME.EXE', ORIGIN + EXTENT + 4].name, 'audio_state')
-        # Unknown subobject extents remain byte spans, not invented capacities.
+        # Type only the observed registry prefix; keep the remaining spans opaque.
         header = (REPO / 'include/kf/game_graphics.h').read_text()
-        self.assertIn('u8 unknown_registry_20134[0xf0];', header)
+        self.assertIn('KfAssetHeader *asset_registry_entries[KF_ASSET_REGISTRY_KNOWN_ENTRIES];', header)
+        self.assertIn('u8 unknown_201f4[0x30];', header)
         self.assertIn('u8 unknown_projection_morph_20318[0x3e88];', header)
+
+    def test_production_registry_prefix_preserves_the_surrounding_layout(self):
+        self.tools()
+        unit = load_manifest().by_name()['game.game']
+        source = '''#include <kf/game_graphics.h>
+            unsigned long registry_layout[] = {
+                (unsigned long)&((KfGraphicsRuntimeGame *)0)->asset_registry_entries,
+                sizeof(((KfGraphicsRuntimeGame *)0)->asset_registry_entries),
+                (unsigned long)&((KfGraphicsRuntimeGame *)0)->unknown_201f4,
+                sizeof(((KfGraphicsRuntimeGame *)0)->unknown_201f4),
+                (unsigned long)&((KfGraphicsRuntimeGame *)0)->current_tmd_vertices,
+                sizeof(KfGraphicsRuntimeGame)
+            };
+        '''
+        with tempfile.TemporaryDirectory(prefix='kf-registry-layout-') as directory:
+            obj = self.compile(Path(directory), unit, source)
+        self.assertEqual(struct.unpack('<6I', obj.sections['.data'][:24]),
+                         (0x20134, 0xc0, 0x201f4, 0x30, 0x20224, EXTENT))
+
+    def test_registry_prefix_covers_shipped_registrations_and_event_models(self):
+        self.retail()
+        from scripts.kf.local_config import configured_retail_dir
+        from scripts.kf.tmd_oracle import asset_archive_cases, length_prefixed_chunks
+
+        retail = configured_retail_dir()
+        registrations = []
+        event_counts = []
+        for floor in range(1, 6):
+            path = retail / f'KF/B{floor}/MIXB.DAT'
+            chunks = length_prefixed_chunks(path.read_bytes(), str(path))
+            for chunk, first in ((2, 10), (3, 30), (4, 0)):
+                if chunk < len(chunks):
+                    count = len(asset_archive_cases(chunks[chunk], f'{path}:{chunk}'))
+                    registrations.append((first, count))
+            model_count = len(asset_archive_cases(chunks[2], f'{path}:2'))
+            event_path = retail / f'KF/B{floor}/MIXA.DAT'
+            events = length_prefixed_chunks(event_path.read_bytes(), str(event_path))[7]
+            event_count = 0
+            # Retail reads up to eight 24-byte definitions, stopping at state 255.
+            for offset in range(0, 8 * 24, 24):
+                self.assertGreaterEqual(len(events), offset + 24)
+                if events[offset] == 255:
+                    break
+                self.assertLess(events[offset + 2], model_count)
+                event_count += 1
+            event_counts.append(event_count)
+        for path in sorted((retail / 'KF/B5').glob('CHR*.MIM')):
+            registrations.append((0, len(asset_archive_cases(path.read_bytes(), str(path)))))
+        registrations.extend(((20, 1), (21, 1)))
+        self.assertEqual(len(registrations), 19)
+        self.assertEqual(max(first + count for first, count in registrations), 48)
+        self.assertTrue(all(0 <= first < first + count <= 48
+                            for first, count in registrations))
+        self.assertEqual(event_counts, [6, 4, 2, 3, 2])
 
     def test_pinned_compiler_measures_whole_layout_and_detects_wrong_gap(self):
         self.tools()

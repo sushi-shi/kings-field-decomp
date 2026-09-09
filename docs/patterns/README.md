@@ -5,6 +5,12 @@ about which source shapes reproduce it under the current probes. Each note
 records the retail evidence first and the probe behaviour second; none of them
 promotes a probe to a proven historical toolchain.
 
+- [cast-owner-reduction.md](cast-owner-reduction.md): fifteen further cast
+  removals, 31 source controls, registry reader/writer bounds, and unchanged
+  production objects; the merged tree has 533 casts, including 430 pointer casts.
+- [cast-floor-review.md](cast-floor-review.md): historical 542-site decision
+  pass, fifteen reproduced controls and complete shipped-resource bounds
+  census; superseded by the owner and storage reduction.
 - [cast-reduction-review.md](cast-reduction-review.md): complete 729-site
   review, 187 further cast removals, and unchanged instructions and scores.
 - [type-cleanup.md](type-cleanup.md): production assertion removal, five
