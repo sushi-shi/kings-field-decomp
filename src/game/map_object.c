@@ -319,7 +319,8 @@ void map_object_pool_update(void)
                 }
             } else if (timer >= KF_MAP_OBJECT_DOOR_CLOSE_FIRST) {
                 if (timer >= KF_MAP_OBJECT_SWING_CLOSE_END) {
-                    goto finish;
+                    object->action = KF_MAP_OBJECT_ACTION_IDLE;
+                    break;
                 }
                 if (timer == KF_MAP_OBJECT_DOOR_CLOSE_FIRST) {
                     if (map_object_probe_forward(object, object->rotation.angles.y - KF_ANGLE_QUARTER_TURN) != -1) {
@@ -355,7 +356,8 @@ void map_object_pool_update(void)
                 }
             } else if (elapsed >= KF_MAP_OBJECT_DOOR_CLOSE_FIRST) {
                 if (elapsed >= KF_MAP_OBJECT_LIFT_CLOSE_END) {
-                    goto finish;
+                    object->action = KF_MAP_OBJECT_ACTION_IDLE;
+                    break;
                 }
                 if (elapsed == KF_MAP_OBJECT_DOOR_CLOSE_FIRST) {
                     if (map_object_probe_forward(object, object->rotation.angles.y) != -1) {
@@ -386,7 +388,6 @@ void map_object_pool_update(void)
                 object->link.fields.vertical_velocity += MAP_DROP_TIP_ANGULAR_ACCELERATION;
                 if (object->rotation.angles.x >= KF_ANGLE_QUARTER_TURN) {
                     object->rotation.angles.x = KF_ANGLE_QUARTER_TURN;
-                finish:
                     object->action = KF_MAP_OBJECT_ACTION_IDLE;
                 }
             }
@@ -401,7 +402,8 @@ void map_object_pool_update(void)
             }
             object->position.vy = -(attribute * KF_MAP_HEIGHT_STEP);
             object->action_timer = KF_MAP_OBJECT_PROGRESS_RUNNING;
-            goto finish;
+            object->action = KF_MAP_OBJECT_ACTION_IDLE;
+            break;
         }
         case KF_MAP_OBJECT_ACTION_BOUNCE: {
             s32 attribute = map_floor_height_grid.cells[object->cell_z][object->cell_x];
@@ -421,7 +423,8 @@ void map_object_pool_update(void)
             object->position.vy = floor;
             if (object->link.fields.vertical_velocity < MAP_DROP_BOUNCE_STOP_VELOCITY) {
                 object->rotation.angles.x = 0;
-                goto finish;
+                object->action = KF_MAP_OBJECT_ACTION_IDLE;
+                break;
             }
             object->link.fields.vertical_velocity = -(object->link.fields.vertical_velocity >> 1);
             object->action_timer = map_object_toggle_progress(object->action_timer);
