@@ -52,9 +52,10 @@ void render_enqueue_unlit_triangles(u16 object_index, s16 depth_bias)
             prim->packed.uv0 = triangle->texture.uv0;
             prim->packed.uv1 = triangle->texture.uv1;
             prim->packed.uv2 = triangle->texture.uv2;
-            prim->sdk.r0 = open_graphics_runtime.floor_item_state.material.color.r;
-            prim->sdk.g0 = open_graphics_runtime.floor_item_state.material.color.g;
-            prim->sdk.b0 = open_graphics_runtime.floor_item_state.material.color.b;
+            setRGB0(&prim->sdk,
+                open_graphics_runtime.floor_item_state.material.color.r,
+                open_graphics_runtime.floor_item_state.material.color.g,
+                open_graphics_runtime.floor_item_state.material.color.b);
             break;
         }
         case KF_TMD_MODE_F3: {
@@ -74,9 +75,7 @@ void render_enqueue_unlit_triangles(u16 object_index, s16 depth_bias)
             prim->packed.xy0 = vertex0->sxy.word;
             prim->packed.xy1 = vertex1->sxy.word;
             prim->packed.xy2 = vertex2->sxy.word;
-            prim->sdk.r0 = triangle->f3.r;
-            prim->sdk.g0 = triangle->f3.g;
-            prim->sdk.b0 = triangle->f3.b;
+            setRGB0(&prim->sdk, triangle->f3.r, triangle->f3.g, triangle->f3.b);
             break;
         }
         default:

@@ -355,15 +355,6 @@ class GameGraphicsOwnerProbeTests(unittest.TestCase):
             'pool_reset': 0x4, 'pool_mark_allocated': 0x4, 'pool_release_all': 0x18,
             'pool_release_stale': 0x1C, 'pool_allocate': 0x4,
         }
-        # Size and first raw divergence are observed symptoms, not attributed
-        # compiler mechanisms. The remaining partial suffix is not banked.
-        partial = {
-            'display_initialize': (336, 0xA4, 0x3C048009, 0x3C108009, [
-                0x80090EC0, 0x80090F78, 0x80090F1C, 0x80090F8C, 0x80090F32, 0x80090ED6,
-                0x80090ED8, 0x80090F34, 0x80090ED9, 0x80090EDA, 0x80090EDB, 0x80090F35,
-                0x80090F36, 0x80090F37, 0x80095740,
-            ]),
-        }
         for name, names in selected.items():
             unit = manifest.by_name()[name]
             with self.subTest(unit=name), tempfile.TemporaryDirectory() as directory:
@@ -379,30 +370,22 @@ class GameGraphicsOwnerProbeTests(unittest.TestCase):
                                           | ((word & 0x3FFFFFF) << 2)
                                           for i, word in enumerate(expected) if word >> 26 == 3]
                         self.assertEqual(calls, expected_calls)
-                        if claim.symbol in partial:
-                            size, first, left, right, addresses = partial[claim.symbol]
-                            self.assertNotEqual(actual, expected)
-                            self.assertEqual(len(actual) * 4, size)
-                            self.assertEqual(actual[:first // 4], expected[:first // 4])
-                            self.assertEqual((actual[first // 4], expected[first // 4]), (left, right))
-                            self.assertEqual(targets, addresses)
-                        else:
-                            self.assertEqual(actual, expected)
-                            if (claim.symbol in controls.get(name, set())
-                                    or any(ORIGIN <= target < ORIGIN + EXTENT for target in targets)):
-                                wrong, same_calls, _ = linked_words(
-                                    obj, unit, claim, {**data, 'graphics_owner_probe': ORIGIN + 4}, functions)
-                                if claim.symbol in controls.get(name, set()):
-                                    self.assertEqual(wrong, expected)
-                                else:
-                                    self.assertNotEqual(wrong, expected)
-                                if claim.symbol in pool_base_lows:
-                                    self.assertEqual(targets, [0x800910C0])
-                                    self.assertEqual(
-                                        [4 * i for i, (a, b) in enumerate(zip(wrong, expected)) if a != b],
-                                        [pool_base_lows[claim.symbol]],
-                                    )
-                                self.assertEqual(same_calls, calls)
+                        self.assertEqual(actual, expected)
+                        if (claim.symbol in controls.get(name, set())
+                                or any(ORIGIN <= target < ORIGIN + EXTENT for target in targets)):
+                            wrong, same_calls, _ = linked_words(
+                                obj, unit, claim, {**data, 'graphics_owner_probe': ORIGIN + 4}, functions)
+                            if claim.symbol in controls.get(name, set()):
+                                self.assertEqual(wrong, expected)
+                            else:
+                                self.assertNotEqual(wrong, expected)
+                            if claim.symbol in pool_base_lows:
+                                self.assertEqual(targets, [0x800910C0])
+                                self.assertEqual(
+                                    [4 * i for i, (a, b) in enumerate(zip(wrong, expected)) if a != b],
+                                    [pool_base_lows[claim.symbol]],
+                                )
+                            self.assertEqual(same_calls, calls)
 
     def test_floor_item_counter_requires_direct_member_access(self):
         self.tools()

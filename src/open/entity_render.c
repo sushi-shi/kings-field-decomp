@@ -47,15 +47,14 @@ void opening_entity_render(KfOpeningEntity *entity)
 
     SetRotMatrix(&open_graphics_runtime.render_state.view_matrix);
     SetTransMatrix(&open_graphics_runtime.render_state.view_matrix);
-    screen.vx = (u16)entity->position.vx - (u16)open_graphics_runtime.render_state.view_position.vx;
-    screen.vy = (u16)entity->position.vy - (u16)open_graphics_runtime.render_state.view_position.vy;
-    screen.vz = (u16)entity->position.vz - (u16)open_graphics_runtime.render_state.view_position.vz;
+    setVector(&screen,
+        (u16)entity->position.vx - (u16)open_graphics_runtime.render_state.view_position.vx,
+        (u16)entity->position.vy - (u16)open_graphics_runtime.render_state.view_position.vy,
+        (u16)entity->position.vz - (u16)open_graphics_runtime.render_state.view_position.vz);
     /* RotTrans writes the three translation words, not a VECTOR pad word. */
     RotTrans(&screen, (VECTOR *)&model.t, &flag);
     matrix_set_rotation_yxz(&entity->rotation, &model);
-    scale.vx = entity->scale.vx;
-    scale.vy = entity->scale.vy;
-    scale.vz = entity->scale.vz;
+    copyVector(&scale, &entity->scale);
     ScaleMatrix(&model, &scale);
     MulMatrix0(&open_graphics_runtime.render_state.light_matrix, &model, &light);
     MulMatrix2(&open_graphics_runtime.render_state.view_matrix, &model);
@@ -120,9 +119,10 @@ void render_floor_item(KfFloorItem *item)
 
     SetRotMatrix(&open_graphics_runtime.render_state.view_matrix);
     SetTransMatrix(&open_graphics_runtime.render_state.view_matrix);
-    screen.vx = (u16)item->position_x - (u16)open_graphics_runtime.render_state.view_position.vx;
-    screen.vy = (u16)item->position_y - (u16)open_graphics_runtime.render_state.view_position.vy;
-    screen.vz = (u16)item->position_z - (u16)open_graphics_runtime.render_state.view_position.vz;
+    setVector(&screen,
+        (u16)item->position_x - (u16)open_graphics_runtime.render_state.view_position.vx,
+        (u16)item->position_y - (u16)open_graphics_runtime.render_state.view_position.vy,
+        (u16)item->position_z - (u16)open_graphics_runtime.render_state.view_position.vz);
     RotTrans(&screen, (VECTOR *)&model.t, &flag);
     facing = floor_item_facing(item->facing_and_frame_count);
     if (KF_ENUM_ENCODE(u8, facing) != KF_ENUM_ENCODE(u8, KF_FLOOR_ITEM_FACING_BILLBOARD)) {

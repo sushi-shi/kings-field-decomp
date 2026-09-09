@@ -15,38 +15,36 @@ static inline void menu_status_draw_backdrop_quad(
     SetSemiTrans(current_poly_ft4, 1);
     current_poly_ft4->tpage = *texture_page;
     current_poly_ft4->clut = menu_assets.window_backdrop.clut;
-    current_poly_ft4->x0 = x;
-    current_poly_ft4->y0 = y;
-    current_poly_ft4->x1 = menu_assets.window_backdrop.width + x;
-    current_poly_ft4->y1 = y;
-    current_poly_ft4->x2 = x;
-    current_poly_ft4->y2 = menu_assets.window_backdrop.height + y;
-    current_poly_ft4->x3 = menu_assets.window_backdrop.width + x;
-    current_poly_ft4->y3 = menu_assets.window_backdrop.height + y;
-    current_poly_ft4->u0 = flip_x
-        ? menu_assets.window_backdrop.u + menu_assets.window_backdrop.width
-        : menu_assets.window_backdrop.u;
-    current_poly_ft4->v0 = flip_y
-        ? menu_assets.window_backdrop.v + menu_assets.window_backdrop.height
-        : menu_assets.window_backdrop.v;
-    current_poly_ft4->u1 = flip_x
-        ? menu_assets.window_backdrop.u
-        : menu_assets.window_backdrop.u + menu_assets.window_backdrop.width;
-    current_poly_ft4->v1 = flip_y
-        ? menu_assets.window_backdrop.v + menu_assets.window_backdrop.height
-        : menu_assets.window_backdrop.v;
-    current_poly_ft4->u2 = flip_x
-        ? menu_assets.window_backdrop.u + menu_assets.window_backdrop.width
-        : menu_assets.window_backdrop.u;
-    current_poly_ft4->v2 = flip_y
-        ? menu_assets.window_backdrop.v
-        : menu_assets.window_backdrop.v + menu_assets.window_backdrop.height;
-    current_poly_ft4->u3 = flip_x
-        ? menu_assets.window_backdrop.u
-        : menu_assets.window_backdrop.u + menu_assets.window_backdrop.width;
-    current_poly_ft4->v3 = flip_y
-        ? menu_assets.window_backdrop.v
-        : menu_assets.window_backdrop.v + menu_assets.window_backdrop.height;
+    setXYWH(current_poly_ft4,
+        x,
+        y,
+        menu_assets.window_backdrop.width,
+        menu_assets.window_backdrop.height);
+    setUV4(current_poly_ft4,
+        flip_x
+            ? menu_assets.window_backdrop.u + menu_assets.window_backdrop.width
+            : menu_assets.window_backdrop.u,
+        flip_y
+            ? menu_assets.window_backdrop.v + menu_assets.window_backdrop.height
+            : menu_assets.window_backdrop.v,
+        flip_x
+            ? menu_assets.window_backdrop.u
+            : menu_assets.window_backdrop.u + menu_assets.window_backdrop.width,
+        flip_y
+            ? menu_assets.window_backdrop.v + menu_assets.window_backdrop.height
+            : menu_assets.window_backdrop.v,
+        flip_x
+            ? menu_assets.window_backdrop.u + menu_assets.window_backdrop.width
+            : menu_assets.window_backdrop.u,
+        flip_y
+            ? menu_assets.window_backdrop.v
+            : menu_assets.window_backdrop.v + menu_assets.window_backdrop.height,
+        flip_x
+            ? menu_assets.window_backdrop.u
+            : menu_assets.window_backdrop.u + menu_assets.window_backdrop.width,
+        flip_y
+            ? menu_assets.window_backdrop.v
+            : menu_assets.window_backdrop.v + menu_assets.window_backdrop.height);
     primitive_buffer_commit_poly_ft4(MENU_WINDOW_OT_DEPTH);
 }
 

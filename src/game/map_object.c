@@ -106,9 +106,7 @@ s32 map_object_pool_find_interaction_from(s32 start_index, s32 x, s32 z, s32 ext
         }
         definition = &map_object_state.definitions.entries[KF_ENUM_ENCODE(u8, object->object_id)];
         if (definition->behavior_type == KF_MAP_OBJECT_BEHAVIOR_HINGED_DOOR) {
-            offset.vx = -KF_MAP_TILE_SIZE;
-            offset.vy = 0;
-            offset.vz = MAP_DOOR_INTERACTION_LOCAL_Z;
+            setVector(&offset, -KF_MAP_TILE_SIZE, 0, MAP_DOOR_INTERACTION_LOCAL_Z);
             matrix_set_rotation_y(object->rotation.angles.y, &matrix);
             ApplyMatrix(&matrix, &offset, &point);
             point.vx += x;
@@ -119,9 +117,7 @@ s32 map_object_pool_find_interaction_from(s32 start_index, s32 x, s32 z, s32 ext
                 return index;
             }
         } else if (definition->behavior_type == KF_MAP_OBJECT_BEHAVIOR_HINGED_DOOR_PARTNER) {
-            offset.vx = KF_MAP_TILE_SIZE;
-            offset.vy = 0;
-            offset.vz = MAP_DOOR_INTERACTION_LOCAL_Z;
+            setVector(&offset, KF_MAP_TILE_SIZE, 0, MAP_DOOR_INTERACTION_LOCAL_Z);
             matrix_set_rotation_y(object->rotation.angles.y, &matrix);
             ApplyMatrix(&matrix, &offset, &point);
             point.vx += x;
@@ -195,9 +191,7 @@ void map_object_spawn_effect(KfMapObjectDropSource kind, KfMapObjectId object_id
     object = map_object_effect_pool_acquire(first_index, KF_MAP_OBJECT_EFFECT_GROUP_CAPACITY, *sequence);
     object->link.fields.spawn.sequence = (*sequence)++;
     object->object_id = object_id;
-    object->position.vx = position->vx;
-    object->position.vy = y_offset + position->vy;
-    object->position.vz = position->vz;
+    setVector(&object->position, position->vx, y_offset + position->vy, position->vz);
     object->cell_x = object->position.vx / KF_MAP_TILE_SIZE;
     object->cell_z = object->position.vz / KF_MAP_TILE_SIZE;
     object->rotation.angles.z = 0;
@@ -229,9 +223,10 @@ void map_object_spawn_actor_debris(u16 source, const VECTOR *position, s32 y_off
     /* Gold drops store their amount across the link and parameter bytes. */
     object->link.gold_amount = source;
     angle = (u32)rand() >> MAP_DROP_RANDOM_YAW_SHIFT;
-    object->position.vx = ((rsin(angle) * MAP_GOLD_DROP_SCATTER_RADIUS) >> KF_FIXED12_BITS) + position->vx;
-    object->position.vy = y_offset + position->vy;
-    object->position.vz = ((rcos(angle) * MAP_GOLD_DROP_SCATTER_RADIUS) >> KF_FIXED12_BITS) + position->vz;
+    setVector(&object->position,
+        ((rsin(angle) * MAP_GOLD_DROP_SCATTER_RADIUS) >> KF_FIXED12_BITS) + position->vx,
+        y_offset + position->vy,
+        ((rcos(angle) * MAP_GOLD_DROP_SCATTER_RADIUS) >> KF_FIXED12_BITS) + position->vz);
     object->cell_x = object->position.vx / KF_MAP_TILE_SIZE;
     object->cell_z = object->position.vz / KF_MAP_TILE_SIZE;
     object->rotation.angles.z = 0;

@@ -223,9 +223,7 @@ shared_projectile:
             }
 
 advance_shared_projectile:
-            effect->position.vx += (s16)effect->direction.words.x;
-            effect->position.vy += (s16)effect->direction.words.y;
-            effect->position.vz += (s16)effect->direction.words.z;
+            addVector(&effect->position, &effect->direction.vector);
             if (kind == KF_EFFECT_KIND_FIRE_BALL || kind == KF_EFFECT_KIND_DARKNESS_PROJECTILE) {
                 effect->rotation.vector.vz = (effect->rotation.vector.vz + FIRE_DARKNESS_ROLL_STEP) & KF_ANGLE_WRAP_MASK;
                 return;
@@ -375,9 +373,7 @@ play_phase_sound:
                     &magic_records[KF_ENUM_ENCODE(u8, KF_EFFECT_KIND_RADIAL_BLAST)].sounds[1], &effect->position, KF_AUDIO_MAX_VOLUME);
                 return;
             }
-            effect->position.vx += (s16)effect->direction.words.x;
-            effect->position.vy += (s16)effect->direction.words.y;
-            effect->position.vz += (s16)effect->direction.words.z;
+            addVector(&effect->position, &effect->direction.vector);
             effect->scale_z += MOONLIGHT_LENGTH_STEP;
             if ((s16)effect->scale_z < 0) {
                 effect->scale_z = MOONLIGHT_LENGTH_MAX;
@@ -421,9 +417,7 @@ play_phase_sound:
                     KF_ACTOR_DAMAGE_SCALE_ONE, effect->type);
             }
         }
-        effect->position.vx += (s16)effect->direction.words.x;
-        effect->position.vy += (s16)effect->direction.words.y;
-        effect->position.vz += (s16)effect->direction.words.z;
+        addVector(&effect->position, &effect->direction.vector);
         effect->position.vy =
             -(map_floor_height_grid.cells[effect->position.vz / KF_MAP_TILE_SIZE]
                                    [effect->position.vx / KF_MAP_TILE_SIZE] * KF_MAP_HEIGHT_STEP);
@@ -539,14 +533,10 @@ randomize_homing_direction:
         local_motion.vz = HOMING_FORWARD_STEP;
         matrix_set_rotation_x(effect->rotation.vector.vx, &matrix);
         ApplyMatrix(&matrix, &local_motion, &movement);
-        local_motion.vx = movement.vx;
-        local_motion.vy = movement.vy;
-        local_motion.vz = movement.vz;
+        copyVector(&local_motion, &movement);
         matrix_set_rotation_y(effect->rotation.vector.vy, &matrix);
         ApplyMatrix(&matrix, &local_motion, &movement);
-        effect->position.vx += movement.vx;
-        effect->position.vy += movement.vy;
-        effect->position.vz += movement.vz;
+        addVector(&effect->position, &movement);
         effect->phase++;
         effect->rotation.vector.vz = (effect->rotation.vector.vz + HOMING_ROLL_STEP) & KF_ANGLE_WRAP_MASK;
         if (effect_map_collision(&effect->position, radius) != (u32)KF_COLLISION_NONE) {
@@ -602,9 +592,10 @@ randomize_homing_direction:
             u32 damage_radius;
             KfMagicRecord *lightning_magic;
 
-            position.vx = effect->position.vx;
-            position.vy = KF_COLLISION_IGNORE_HEIGHT;
-            position.vz = effect->position.vz;
+            setVector(&position,
+                effect->position.vx,
+                KF_COLLISION_IGNORE_HEIGHT,
+                effect->position.vz);
             damage_radius = KF_ENUM_ENCODE(u8, phase) * LIGHTNING_BLAST_RADIUS_STEP;
             power = effect_magic_power(effect);
             lightning_magic = &magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_LIGHTNING_BOLT)];
@@ -746,9 +737,10 @@ advance_effect_phase:
                 struct KfVec3s actor_rotation;
                 VECTOR position;
 
-                position.vx = effect->position.vx;
-                position.vy = effect->position.vy + ACTOR_SPAWNER_CREATE_Y_OFFSET;
-                position.vz = effect->position.vz;
+                setVector(&position,
+                    effect->position.vx,
+                    effect->position.vy + ACTOR_SPAWNER_CREATE_Y_OFFSET,
+                    effect->position.vz);
                 actor_rotation.x = 0;
                 actor_rotation.z = 0;
                 actor_rotation.y = vector_xz_to_angle(

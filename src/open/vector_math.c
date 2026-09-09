@@ -8,9 +8,7 @@ void vector3s_scale_shift12(s16 scale, SVECTOR *vector)
     s32 y = vector->vy * scale;
     s32 z = vector->vz * scale;
 
-    vector->vx = x >> KF_FIXED12_BITS;
-    vector->vy = y >> KF_FIXED12_BITS;
-    vector->vz = z >> KF_FIXED12_BITS;
+    setVector(vector, x >> KF_FIXED12_BITS, y >> KF_FIXED12_BITS, z >> KF_FIXED12_BITS);
 }
 
 ADDRESS(0x80015c3c, 0x5c)

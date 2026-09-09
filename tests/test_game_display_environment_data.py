@@ -123,8 +123,13 @@ class GameDisplayEnvironmentDataTests(unittest.TestCase):
         sections = {d.name: d for d in whole.diffs}
         self.assertEqual(sections['.bss'].status, 'size')
         self.assertIn('conflicting-section-bases', sections['.bss'].detail)
-        # This campaign does not claim the existing switch-table residue is fixed.
-        self.assertEqual(sections['.rodata'].status, 'addend')
+        # Exact display initialization also fixes the later switch-label offsets.
+        # Matching payload and relocations do not waive section placement.
+        self.assertEqual(retail.sections['.rodata'].data, source.sections['.rodata'].data)
+        self.assertEqual(retail.relocations('.rodata'), source.relocations('.rodata'))
+        self.assertEqual(len(source.relocations('.rodata')), 29)
+        self.assertEqual(sections['.rodata'].status, 'placement')
+        self.assertIn('invalid-section-placement', sections['.rodata'].detail)
 
     def test_reversed_environment_fields_fail_the_production_layout_checks(self):
         probe = self.probe()
@@ -199,14 +204,10 @@ class GameDisplayEnvironmentDataTests(unittest.TestCase):
         correct = '''        if (brightness < IMAGE_WAIT_MAX_BRIGHTNESS) {
             brightness++;
         }
-        polygon.r0 = brightness;
-        polygon.g0 = brightness;
-        polygon.b0 = brightness;'''
+        setRGB0(&polygon, brightness, brightness, brightness);'''
         old = '''        if (brightness < IMAGE_WAIT_MAX_BRIGHTNESS) {
             brightness++;
-            polygon.r0 = brightness;
-            polygon.g0 = brightness;
-            polygon.b0 = brightness;
+            setRGB0(&polygon, brightness, brightness, brightness);
         }'''
         canonical = unit.source_path.read_text()
         self.assertEqual(canonical.count(correct), 1)

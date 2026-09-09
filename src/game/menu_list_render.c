@@ -76,22 +76,8 @@ void menu_list_render(const KfMenuList *list)
     primitive_buffer_begin_poly_ft4();
     current_poly_ft4->tpage = tile->tpage;
     current_poly_ft4->clut = tile->clut;
-    current_poly_ft4->x0 = list->list_x;
-    current_poly_ft4->y0 = list->list_y;
-    current_poly_ft4->x1 = list->list_x + tile->width;
-    current_poly_ft4->y1 = list->list_y;
-    current_poly_ft4->x2 = list->list_x;
-    current_poly_ft4->y2 = list->list_y + tile->height;
-    current_poly_ft4->x3 = list->list_x + tile->width;
-    current_poly_ft4->y3 = list->list_y + tile->height;
-    current_poly_ft4->u0 = tile->u;
-    current_poly_ft4->v0 = tile->v;
-    current_poly_ft4->u1 = tile->u + tile->width;
-    current_poly_ft4->v1 = tile->v;
-    current_poly_ft4->u2 = tile->u;
-    current_poly_ft4->v2 = tile->v + tile->height;
-    current_poly_ft4->u3 = tile->u + tile->width;
-    current_poly_ft4->v3 = tile->v + tile->height;
+    setXYWH(current_poly_ft4, list->list_x, list->list_y, tile->width, tile->height);
+    setUVWH(current_poly_ft4, tile->u, tile->v, tile->width, tile->height);
     SetSemiTrans(current_poly_ft4, 1);
     primitive_buffer_commit_poly_ft4(MENU_WIDGET_OT_DEPTH);
 
@@ -107,22 +93,12 @@ void menu_list_render(const KfMenuList *list)
             primitive_buffer_begin_poly_ft4();
             current_poly_ft4->tpage = tile->tpage;
             current_poly_ft4->clut = tile->clut;
-            current_poly_ft4->x0 = list->list_x;
-            current_poly_ft4->y0 = list->list_y + yoff + MENU_LIST_TEXT_INSET;
-            current_poly_ft4->x1 = list->list_x + tile->width;
-            current_poly_ft4->y1 = list->list_y + yoff + MENU_LIST_TEXT_INSET;
-            current_poly_ft4->x2 = list->list_x;
-            current_poly_ft4->y2 = list->list_y + yoff + (tile->height + MENU_LIST_TEXT_INSET);
-            current_poly_ft4->x3 = list->list_x + tile->width;
-            current_poly_ft4->y3 = list->list_y + yoff + (tile->height + MENU_LIST_TEXT_INSET);
-            current_poly_ft4->u0 = tile->u;
-            current_poly_ft4->v0 = tile->v;
-            current_poly_ft4->u1 = tile->u + tile->width;
-            current_poly_ft4->v1 = tile->v;
-            current_poly_ft4->u2 = tile->u;
-            current_poly_ft4->v2 = tile->v + tile->height;
-            current_poly_ft4->u3 = tile->u + tile->width;
-            current_poly_ft4->v3 = tile->v + tile->height;
+            setXYWH(current_poly_ft4,
+                list->list_x,
+                list->list_y + yoff + MENU_LIST_TEXT_INSET,
+                tile->width,
+                tile->height);
+            setUVWH(current_poly_ft4, tile->u, tile->v, tile->width, tile->height);
             SetSemiTrans(current_poly_ft4, 1);
             primitive_buffer_commit_poly_ft4(MENU_WIDGET_OT_DEPTH);
             yoff += MENU_LIST_ROW_HEIGHT;
@@ -133,24 +109,12 @@ void menu_list_render(const KfMenuList *list)
     primitive_buffer_begin_poly_ft4();
     current_poly_ft4->tpage = tile->tpage;
     current_poly_ft4->clut = tile->clut;
-    current_poly_ft4->x0 = list->list_x;
-    current_poly_ft4->y0 = list->list_y + list->visible_rows * MENU_LIST_ROW_HEIGHT + MENU_LIST_TEXT_INSET;
-    current_poly_ft4->x1 = list->list_x + tile->width;
-    current_poly_ft4->y1 = list->list_y + list->visible_rows * MENU_LIST_ROW_HEIGHT + MENU_LIST_TEXT_INSET;
-    current_poly_ft4->x2 = list->list_x;
-    current_poly_ft4->y2 = list->list_y + list->visible_rows * MENU_LIST_ROW_HEIGHT +
-                           (tile->height + MENU_LIST_TEXT_INSET);
-    current_poly_ft4->x3 = list->list_x + tile->width;
-    current_poly_ft4->y3 = list->list_y + list->visible_rows * MENU_LIST_ROW_HEIGHT +
-                           (tile->height + MENU_LIST_TEXT_INSET);
-    current_poly_ft4->u0 = tile->u;
-    current_poly_ft4->v0 = tile->v;
-    current_poly_ft4->u1 = tile->u + tile->width;
-    current_poly_ft4->v1 = tile->v;
-    current_poly_ft4->u2 = tile->u;
-    current_poly_ft4->v2 = tile->v + tile->height;
-    current_poly_ft4->u3 = tile->u + tile->width;
-    current_poly_ft4->v3 = tile->v + tile->height;
+    setXYWH(current_poly_ft4,
+        list->list_x,
+        list->list_y + list->visible_rows * MENU_LIST_ROW_HEIGHT + MENU_LIST_TEXT_INSET,
+        tile->width,
+        tile->height);
+    setUVWH(current_poly_ft4, tile->u, tile->v, tile->width, tile->height);
     SetSemiTrans(current_poly_ft4, 1);
     primitive_buffer_commit_poly_ft4(MENU_WIDGET_OT_DEPTH);
 

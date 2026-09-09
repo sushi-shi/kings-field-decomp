@@ -64,9 +64,7 @@ void effect_projectile_update_3d(SVECTOR *probe_offset, KF_ENUM_PARAM(KfEffectPh
         matrix_set_rotation_y(record->rotation.vector.vy, &yaw_matrix);
         MulMatrix2(&yaw_matrix, &rotation_matrix);
         ApplyMatrix(&rotation_matrix, probe_offset, &world);
-        world.vx += record->position.vx;
-        world.vy += record->position.vy;
-        world.vz += record->position.vz;
+        addVector(&world, &record->position);
         collision = effect_map_collision(&world, EFFECT_SWING_COLLISION_RADIUS);
         if (collision != (u32)KF_COLLISION_NONE) {
             if ((collision >> KF_COLLISION_KIND_SHIFT) == (KF_COLLISION_ACTOR >> KF_COLLISION_KIND_SHIFT)) {
@@ -240,12 +238,11 @@ void effect_rotate_scale_offset_y(SVECTOR *offset, VECTOR *out, s16 angle, s32 s
     SVECTOR rotation;
     MATRIX matrix;
 
-    scaled.vx = (offset->vx * scale) >> KF_FIXED12_BITS;
-    scaled.vy = 0;
-    scaled.vz = (offset->vz * scale) >> KF_FIXED12_BITS;
-    rotation.vx = 0;
-    rotation.vy = angle;
-    rotation.vz = 0;
+    setVector(&scaled,
+        (offset->vx * scale) >> KF_FIXED12_BITS,
+        0,
+        (offset->vz * scale) >> KF_FIXED12_BITS);
+    setVector(&rotation, 0, angle, 0);
     RotMatrix(&rotation, &matrix);
     ApplyMatrix(&matrix, &scaled, out);
 }

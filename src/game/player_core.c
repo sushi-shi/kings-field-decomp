@@ -178,17 +178,14 @@ void player_update_weapon_attack(void)
         if (player_state.equipped_weapon_id == KF_ITEM_COLICHEMARDE
                 ? (u16)(window - PLAYER_COLICHEMARDE_HIT_PHASE) < PLAYER_WEAPON_HIT_WINDOW
                 : (u16)(window - PLAYER_WEAPON_HIT_PHASE) < PLAYER_WEAPON_HIT_WINDOW) {
-            offset.vx = 0;
-            offset.vy = PLAYER_WEAPON_HIT_Y_OFFSET;
-            offset.vz = player_state.equipped_weapon_record->attack_z_offset;
-            rotation.vx = 0;
-            rotation.vy = -player_state.camera_rotation.vy;
-            rotation.vz = 0;
+            setVector(&offset,
+                0,
+                PLAYER_WEAPON_HIT_Y_OFFSET,
+                player_state.equipped_weapon_record->attack_z_offset);
+            setVector(&rotation, 0, -player_state.camera_rotation.vy, 0);
             RotMatrix(&rotation, &matrix);
             ApplyMatrix(&matrix, &offset, &result);
-            result.vx += player_state.camera_position.vx;
-            result.vy += player_state.camera_position.vy;
-            result.vz += player_state.camera_position.vz;
+            addVector(&result, &player_state.camera_position);
             actor = actor_pool_find_overlap(result.vx, result.vy, result.vz,
                 PLAYER_WEAPON_HIT_RADIUS, PLAYER_WEAPON_HIT_HEIGHT);
             if (actor != -1) {
@@ -229,9 +226,7 @@ void game_initialize_session(void)
     player_state.camera_rotation.vz = 0;
     player_state.camera_rotation.vy = 0;
     player_state.camera_rotation.vx = 0;
-    player_state.camera_position.vx = 0x7918;
-    player_state.camera_position.vy = 0;
-    player_state.camera_position.vz = 0xfa0;
+    setVector(&player_state.camera_position, 0x7918, 0, 0xfa0);
     player_state.weapon_asset_buffer = (KfAssetHeader *)memory_allocate(KF_WEAPON_ASSET_BUFFER_BYTES);
     game_state_initialize();
     player_state.update_state = KF_PLAYER_UPDATE_NORMAL;
@@ -619,7 +614,5 @@ void player_update_transform_snapshot(VECTOR *position_out, SVECTOR *rotation_ou
 {
     *position_out = player_state.camera_position;
     *rotation_out = player_state.camera_rotation;
-    rotation_out->vx += player_state.view_rotation_offset.vx;
-    rotation_out->vy += player_state.view_rotation_offset.vy;
-    rotation_out->vz += player_state.view_rotation_offset.vz;
+    addVector(rotation_out, &player_state.view_rotation_offset);
 }
