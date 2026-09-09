@@ -395,7 +395,8 @@ play_phase_sound:
                 goto invalidate_and_return;
             }
         }
-        goto advance_effect_phase;
+        effect->phase++;
+        break;
 
     case KF_EFFECT_KIND_GROUND_TRAIL: {
         KfEffectRecord *linked_effect;
