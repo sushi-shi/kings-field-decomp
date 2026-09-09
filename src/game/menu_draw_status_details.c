@@ -31,11 +31,13 @@ void menu_draw_status_details(void)
     MenuGlyphString gs;
     s32 glyph_index;
     s32 rating;
+    s32 summary_y_origin;
 
     current_poly_ft4 = (POLY_FT4 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
+    summary_y_origin = 0x23;
     gs.position.x = 0x15;
-    gs.position.y = 0x23;
+    gs.position.y = summary_y_origin;
     gs.glyphs.codes[0] = 0x82;
     gs.glyphs.codes[1] = 0x83;
     gs.glyphs.codes[2] = 0x84;
@@ -107,7 +109,7 @@ void menu_draw_status_details(void)
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
     gs.position.x = 0x5b;
-    gs.position.y = 0x23;
+    gs.position.y = summary_y_origin;
     menu_format_number(player_state.experience, MENU_STATS_VALUE_DIGITS, KF_FORMAT_PAD_SPACES, gs.glyphs.codes);
     menu_draw_number(&menu_assets.number_atlas, &gs);
 
@@ -117,111 +119,114 @@ void menu_draw_status_details(void)
 
     gs.position.x = 0x4d;
     gs.position.y += STATUS_SUMMARY_ROW_STEP;
-    if (player_state.base_magic < MENU_CLASS_MIDDLE_STAT_MIN) {
-        glyph_index = 0;
-    } else {
-        glyph_index = 2;
-        if (player_state.base_magic < MENU_CLASS_HIGH_STAT_MIN) {
-            glyph_index = 1;
-        }
-    }
-    if (player_state.base_physical_power > (MENU_CLASS_MIDDLE_STAT_MIN - 1)) {
-        if (player_state.base_physical_power < MENU_CLASS_HIGH_STAT_MIN) {
-            glyph_index += MENU_CLASS_MAGIC_TIER_COUNT;
+    {
+        s32 summary_row_step = STATUS_SUMMARY_ROW_STEP;
+
+        if (player_state.base_magic < MENU_CLASS_MIDDLE_STAT_MIN) {
+            glyph_index = 0;
         } else {
-            glyph_index += 2 * MENU_CLASS_MAGIC_TIER_COUNT;
+            glyph_index = 2;
+            if (player_state.base_magic < MENU_CLASS_HIGH_STAT_MIN) {
+                glyph_index = 1;
+            }
         }
-    }
-    glyph_index *= MENU_CLASS_LABEL_GLYPHS;
-    gs.glyphs.codes[0] = glyph_index + MENU_CLASS_FIRST_GLYPH;
-    gs.glyphs.codes[1] = glyph_index + MENU_CLASS_FIRST_GLYPH + 1;
-    gs.glyphs.codes[2] = glyph_index + MENU_CLASS_FIRST_GLYPH + 2;
-    gs.glyphs.codes[3] = glyph_index + MENU_CLASS_FIRST_GLYPH + 3;
-    gs.glyphs.codes[4] = MENU_TEXT_END;
-    menu_draw_string(&menu_assets.glyph_atlas, &gs);
+        if (player_state.base_physical_power > (MENU_CLASS_MIDDLE_STAT_MIN - 1)) {
+            if (player_state.base_physical_power < MENU_CLASS_HIGH_STAT_MIN) {
+                glyph_index += MENU_CLASS_MAGIC_TIER_COUNT;
+            } else {
+                glyph_index += 2 * MENU_CLASS_MAGIC_TIER_COUNT;
+            }
+        }
+        glyph_index *= MENU_CLASS_LABEL_GLYPHS;
+        gs.glyphs.codes[0] = glyph_index + MENU_CLASS_FIRST_GLYPH;
+        gs.glyphs.codes[1] = glyph_index + MENU_CLASS_FIRST_GLYPH + 1;
+        gs.glyphs.codes[2] = glyph_index + MENU_CLASS_FIRST_GLYPH + 2;
+        gs.glyphs.codes[3] = glyph_index + MENU_CLASS_FIRST_GLYPH + 3;
+        gs.glyphs.codes[4] = MENU_TEXT_END;
+        menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
-    gs.position.x = 0x46;
-    gs.position.y += STATUS_SUMMARY_ROW_STEP;
-    menu_format_number(player_state.vitals.current_hp, MENU_STATS_VITAL_DIGITS, KF_FORMAT_PAD_SPACES, gs.glyphs.codes);
-    menu_draw_number(&menu_assets.number_atlas, &gs);
-    gs.glyphs.codes[0] = MENU_NUMBER_SLASH;
-    gs.glyphs.codes[1] = MENU_TEXT_END;
-    gs.position.x += MENU_STATS_VITAL_DIGITS * MENU_NUMBER_ADVANCE;
-    menu_draw_number(&menu_assets.number_atlas, &gs);
-    gs.position.x += MENU_NUMBER_ADVANCE;
-    menu_format_number(player_state.vitals.maximum_hp, MENU_STATS_VITAL_DIGITS, KF_FORMAT_PAD_SPACES, gs.glyphs.codes);
-    menu_draw_number(&menu_assets.number_atlas, &gs);
+        gs.position.x = 0x46;
+        gs.position.y += summary_row_step;
+        menu_format_number(player_state.vitals.current_hp, MENU_STATS_VITAL_DIGITS, KF_FORMAT_PAD_SPACES, gs.glyphs.codes);
+        menu_draw_number(&menu_assets.number_atlas, &gs);
+        gs.glyphs.codes[0] = MENU_NUMBER_SLASH;
+        gs.glyphs.codes[1] = MENU_TEXT_END;
+        gs.position.x += MENU_STATS_VITAL_DIGITS * MENU_NUMBER_ADVANCE;
+        menu_draw_number(&menu_assets.number_atlas, &gs);
+        gs.position.x += MENU_NUMBER_ADVANCE;
+        menu_format_number(player_state.vitals.maximum_hp, MENU_STATS_VITAL_DIGITS, KF_FORMAT_PAD_SPACES, gs.glyphs.codes);
+        menu_draw_number(&menu_assets.number_atlas, &gs);
 
-    gs.position.x = 0x46;
-    gs.position.y += STATUS_SUMMARY_ROW_STEP;
-    menu_format_number(player_state.vitals.current_mp, MENU_STATS_VITAL_DIGITS, KF_FORMAT_PAD_SPACES, gs.glyphs.codes);
-    menu_draw_number(&menu_assets.number_atlas, &gs);
-    gs.glyphs.codes[0] = MENU_NUMBER_SLASH;
-    gs.glyphs.codes[1] = MENU_TEXT_END;
-    gs.position.x += MENU_STATS_VITAL_DIGITS * MENU_NUMBER_ADVANCE;
-    menu_draw_number(&menu_assets.number_atlas, &gs);
-    gs.position.x += MENU_NUMBER_ADVANCE;
-    menu_format_number(player_state.vitals.maximum_mp, MENU_STATS_VITAL_DIGITS, KF_FORMAT_PAD_SPACES, gs.glyphs.codes);
-    menu_draw_number(&menu_assets.number_atlas, &gs);
+        gs.position.x = 0x46;
+        gs.position.y += summary_row_step;
+        menu_format_number(player_state.vitals.current_mp, MENU_STATS_VITAL_DIGITS, KF_FORMAT_PAD_SPACES, gs.glyphs.codes);
+        menu_draw_number(&menu_assets.number_atlas, &gs);
+        gs.glyphs.codes[0] = MENU_NUMBER_SLASH;
+        gs.glyphs.codes[1] = MENU_TEXT_END;
+        gs.position.x += MENU_STATS_VITAL_DIGITS * MENU_NUMBER_ADVANCE;
+        menu_draw_number(&menu_assets.number_atlas, &gs);
+        gs.position.x += MENU_NUMBER_ADVANCE;
+        menu_format_number(player_state.vitals.maximum_mp, MENU_STATS_VITAL_DIGITS, KF_FORMAT_PAD_SPACES, gs.glyphs.codes);
+        menu_draw_number(&menu_assets.number_atlas, &gs);
 
-    gs.position.x = 0x3f;
-    gs.glyphs.codes[0] = MENU_TEXT_BLANK;
-    gs.glyphs.codes[1] = MENU_TEXT_BLANK;
-    gs.glyphs.codes[2] = MENU_TEXT_BLANK;
-    gs.glyphs.codes[3] = MENU_TEXT_BLANK;
-    gs.glyphs.codes[4] = MENU_TEXT_BLANK;
-    gs.glyphs.codes[5] = MENU_TEXT_END;
-    gs.position.y += STATUS_SUMMARY_ROW_STEP;
-    if (player_state.status_effect_flags == KF_PLAYER_STATUS_NONE) {
-        gs.glyphs.codes[3] = 0xc5;
-        gs.glyphs.codes[4] = 0xc6;
-    }
-    glyph_index = 4;
-    if ((player_state.status_effect_flags & KF_PLAYER_STATUS_SLOWED) != KF_PLAYER_STATUS_NONE) {
-        gs.glyphs.codes[4] = 0xc9;
-        glyph_index = 3;
-    }
-    if ((player_state.status_effect_flags & KF_PLAYER_STATUS_POISON) != KF_PLAYER_STATUS_NONE) {
-        gs.glyphs.codes[glyph_index] = 0x88;
-        glyph_index--;
-    }
-    if ((player_state.status_effect_flags & KF_PLAYER_STATUS_DARKNESS) != KF_PLAYER_STATUS_NONE) {
-        gs.glyphs.codes[glyph_index] = 199;
-        glyph_index--;
-    }
-    if ((player_state.status_effect_flags & KF_PLAYER_STATUS_CURSE) != KF_PLAYER_STATUS_NONE) {
-        gs.glyphs.codes[glyph_index] = 200;
-    }
-    menu_draw_string(&menu_assets.glyph_atlas, &gs);
+        gs.position.x = 0x3f;
+        gs.glyphs.codes[0] = MENU_TEXT_BLANK;
+        gs.glyphs.codes[1] = MENU_TEXT_BLANK;
+        gs.glyphs.codes[2] = MENU_TEXT_BLANK;
+        gs.glyphs.codes[3] = MENU_TEXT_BLANK;
+        gs.glyphs.codes[4] = MENU_TEXT_BLANK;
+        gs.glyphs.codes[5] = MENU_TEXT_END;
+        gs.position.y += summary_row_step;
+        if (player_state.status_effect_flags == KF_PLAYER_STATUS_NONE) {
+            gs.glyphs.codes[3] = 0xc5;
+            gs.glyphs.codes[4] = 0xc6;
+        }
+        glyph_index = 4;
+        if ((player_state.status_effect_flags & KF_PLAYER_STATUS_SLOWED) != KF_PLAYER_STATUS_NONE) {
+            gs.glyphs.codes[4] = 0xc9;
+            glyph_index = 3;
+        }
+        if ((player_state.status_effect_flags & KF_PLAYER_STATUS_POISON) != KF_PLAYER_STATUS_NONE) {
+            gs.glyphs.codes[glyph_index] = 0x88;
+            glyph_index--;
+        }
+        if ((player_state.status_effect_flags & KF_PLAYER_STATUS_DARKNESS) != KF_PLAYER_STATUS_NONE) {
+            gs.glyphs.codes[glyph_index] = 199;
+            glyph_index--;
+        }
+        if ((player_state.status_effect_flags & KF_PLAYER_STATUS_CURSE) != KF_PLAYER_STATUS_NONE) {
+            gs.glyphs.codes[glyph_index] = 200;
+        }
+        menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
-    gs.position.x = 0x5b;
-    gs.position.y += STATUS_SUMMARY_ROW_STEP;
-    menu_format_number(player_state.gold, MENU_STATS_VALUE_DIGITS, KF_FORMAT_PAD_SPACES, gs.glyphs.codes);
-    menu_draw_number(&menu_assets.number_atlas, &gs);
-    gs.position.y += STATUS_SUMMARY_ROW_STEP;
-    menu_format_number(player_state.physical_power, MENU_STATS_VALUE_DIGITS, KF_FORMAT_PAD_SPACES, gs.glyphs.codes);
-    menu_draw_number(&menu_assets.number_atlas, &gs);
-    gs.position.y += STATUS_SUMMARY_ROW_STEP;
-    menu_format_number(player_state.magic, MENU_STATS_VALUE_DIGITS, KF_FORMAT_PAD_SPACES, gs.glyphs.codes);
-    menu_draw_number(&menu_assets.number_atlas, &gs);
-    rating = (((u32)player_state.cutting_attack + player_state.striking_attack +
-               player_state.piercing_attack) * STATUS_PHYSICAL_ATTACK_MULTIPLIER
-               >> STATUS_PHYSICAL_ATTACK_DOWNSHIFT) +
-             (player_state.holy_attack + player_state.fire_attack)
-             * STATUS_ELEMENTAL_ATTACK_MULTIPLIER;
-    rating = rating * STATUS_ATTACK_SCALE_NUMERATOR
-        / STATUS_ATTACK_SCALE_DENOMINATOR;
-    gs.position.y += STATUS_SUMMARY_ROW_STEP;
-    menu_format_number(rating, MENU_STATS_VALUE_DIGITS, KF_FORMAT_PAD_SPACES, gs.glyphs.codes);
-    menu_draw_number(&menu_assets.number_atlas, &gs);
-    rating = player_state.cutting_defense + player_state.striking_defense +
-             player_state.piercing_defense + player_state.poison_resistance / STATUS_POISON_RESISTANCE_DIVISOR +
-             player_state.magic_defense + player_state.fire_defense;
-    rating = rating * STATUS_DEFENSE_SCALE_NUMERATOR / STATUS_DEFENSE_SCALE_DENOMINATOR;
-    gs.position.y += STATUS_SUMMARY_ROW_STEP;
-    menu_format_number(rating, MENU_STATS_VALUE_DIGITS, KF_FORMAT_PAD_SPACES, gs.glyphs.codes);
-    menu_draw_number(&menu_assets.number_atlas, &gs);
-
+        gs.position.x = 0x5b;
+        gs.position.y += summary_row_step;
+        menu_format_number(player_state.gold, MENU_STATS_VALUE_DIGITS, KF_FORMAT_PAD_SPACES, gs.glyphs.codes);
+        menu_draw_number(&menu_assets.number_atlas, &gs);
+        gs.position.y += summary_row_step;
+        menu_format_number(player_state.physical_power, MENU_STATS_VALUE_DIGITS, KF_FORMAT_PAD_SPACES, gs.glyphs.codes);
+        menu_draw_number(&menu_assets.number_atlas, &gs);
+        gs.position.y += summary_row_step;
+        menu_format_number(player_state.magic, MENU_STATS_VALUE_DIGITS, KF_FORMAT_PAD_SPACES, gs.glyphs.codes);
+        menu_draw_number(&menu_assets.number_atlas, &gs);
+        rating = (((u32)player_state.cutting_attack + player_state.striking_attack +
+                   player_state.piercing_attack) * STATUS_PHYSICAL_ATTACK_MULTIPLIER
+                   >> STATUS_PHYSICAL_ATTACK_DOWNSHIFT) +
+                 (player_state.holy_attack + player_state.fire_attack)
+                 * STATUS_ELEMENTAL_ATTACK_MULTIPLIER;
+        rating = rating * STATUS_ATTACK_SCALE_NUMERATOR
+            / STATUS_ATTACK_SCALE_DENOMINATOR;
+        gs.position.y += summary_row_step;
+        menu_format_number(rating, MENU_STATS_VALUE_DIGITS, KF_FORMAT_PAD_SPACES, gs.glyphs.codes);
+        menu_draw_number(&menu_assets.number_atlas, &gs);
+        rating = player_state.cutting_defense + player_state.striking_defense +
+                 player_state.piercing_defense + player_state.poison_resistance / STATUS_POISON_RESISTANCE_DIVISOR +
+                 player_state.magic_defense + player_state.fire_defense;
+        rating = rating * STATUS_DEFENSE_SCALE_NUMERATOR / STATUS_DEFENSE_SCALE_DENOMINATOR;
+        gs.position.y += summary_row_step;
+        menu_format_number(rating, MENU_STATS_VALUE_DIGITS, KF_FORMAT_PAD_SPACES, gs.glyphs.codes);
+        menu_draw_number(&menu_assets.number_atlas, &gs);
+    }
     gs.position.x = 0xb5;
     gs.position.y = 0x1e;
     gs.glyphs.codes[0] = 0x89;

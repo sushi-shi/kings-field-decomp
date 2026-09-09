@@ -346,3 +346,26 @@ tests. All 115 tests in the affected modules then passed (41 subtests); the
 remaining tests had passed in the full run. `ruff check scripts tests` and
 `git diff --check` pass. `nix flake check -L` passes, including the hermetic
 723-test suite (140 skipped because optional/local prerequisites are absent).
+
+
+## Integration with concurrent matching
+
+The campaign commit `99bbc39` was merged with master commit `5f8b1b6d` in the
+isolated worktree before handoff. The concurrent status-detail layout and
+item-detail edits are retained. Resolving the status-detail overlap applies
+only the five typed NONE comparisons to master's final function body;
+`menu_draw_status_details` remains **100%** against retail. The integrated tree
+has **460/484 exact owned functions**, or **447/471 game functions**. That one
+additional exact result belongs to the concurrent matching commit.
+
+All 114 other preserved objects remain identical; the two changed objects are
+exactly the two source units changed by `5f8b1b6d`. The enum campaign itself
+preserved all 116 objects before integration. Integrated per-function verdicts
+are in `build/enum-implementation/integrated-verdicts.tsv`. The field ledger's
+member references were refreshed for both merged source units with zero Clang
+parse errors; its 1,046-field coverage and nine closed findings are unchanged.
+
+Final integration checks: **112/112 strict variants**, **714 existing tests
+passed, 9 skipped, 9,173 subtests passed**, lint and whitespace checks passed.
+The full build was rerun and retains the same pre-existing image verification
+failures described above. No new tests or banked match claims were added.

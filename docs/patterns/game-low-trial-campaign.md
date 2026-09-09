@@ -170,6 +170,40 @@ at 98.579230%. Reports are `build/hypotheses/low-trial-detail/` and
 and sibling checks are under their `build/*-objects/` directories. These
 negative controls do not close the function or remove it from the campaign.
 
+Follow-up Function Match Plan: retain the complete 732-byte body, 160-byte
+frame, price selection, seventeen calls and twenty ordered referents. The only
+twelve unequal words form one name-copy loop. Retail computes the twenty-byte
+row as `item * 5`, materializes `item_name_rows`, then completes the multiply;
+it assigns source, destination and count to `a2`, `a1` and `a0`. The probe
+completes the multiply before materializing the table and assigns those three
+values to `a1`, `a0` and `a2`. Test ordinary pointer-walk and indexed-loop
+spellings with explicit, consumed source and destination pointers, plus a
+typed row-index calculation that retains the same `MenuGlyphRow` owner. Keep
+the ten signed-halfword loads/stores, loop direction, draw call and all
+surrounding statement order. Reject casts to incompatible table types,
+volatile carriers, unrolled copies and changes outside this exact operation.
+
+Thirty ordinary typed controls compile. Direct row aliases and indexed loops
+leave nine to fourteen unequal words. Walking both halfword pointers recovers
+the retail source, destination and count registers; naming the complete row
+table before selecting the row also restores the split `item * 20` address
+schedule. Keep that cohesive form. It preserves the 732-byte extent, 160-byte
+frame, all seventeen calls, all twenty ordered referents and all three exact
+unit siblings. Complete linked comparison improves from 171/183 to 180/183
+equal words, although objdiff's fuzzy score decreases from 98.579230% to
+97.808750%; the raw retail instructions decide this source fact.
+
+The remaining three words are one representation of the same destination
+sequence. Retail initializes `a1` to the whole string at `sp+16`, then stores
+at offset four while advancing it by two. The probe initializes `a1` to the
+first glyph at `sp+20`, then stores at offset zero while advancing it by two;
+both touch exactly `sp+20` through `sp+38`. Their initialization also straddles
+the same primitive-cursor load in the opposite order. Expressing retail's
+machine cursor literally would require walking across known structure fields
+with an incompatible halfword view, so this unattributed residue remains.
+Generated sources, objects, linked words and the summary are under
+`build/detail-copy-shapes/`. The function remains unbanked.
+
 ## Orbit helper: phase width and motion boundary
 
 Function Match Plan: GAME `80038298`, 608 bytes / 99.934210%. Fresh hashes,
@@ -302,6 +336,45 @@ Full `kf build` retains GAME 339/362 exact and 99.629% aggregate, with zero
 artifact failures and the existing data/ownership/placement failures.
 Whitespace checks pass. No production source or configuration changed.
 
+Follow-up Function Match Plan: preserve the complete status-page call stream,
+80-byte frame, glyph workspace, derived ratings, and all 89 ordered referents.
+Retail materializes the summary-column Y origin `0x23` into `s2` in the
+primitive-cursor load delay, uses it for the first label row, keeps it across
+the label calls, and uses it again when the numeric column restarts. The probe
+materializes the same value twice in `t0`, leaving that load delay empty and
+shifting allocation through most of the body. Test one ordinary signed
+coordinate local consumed by exactly those two existing Y assignments, with
+both boundary-width and arithmetic-width declarations. Its lifetime ends at
+the restart; retail then reuses `s2` for the independently evidenced class-row
+step. Do not change a coordinate value, duplicate an operation, extend the
+local beyond a real use, or add volatile/register qualifiers.
+
+The three boundary-width controls (`s16`, `u16`, and `s32`) are byte-identical
+to baseline because the probe propagates `0x23` into both stores. Retail gives
+the same `s2` a second, contiguous role: it assigns the value 16 during class
+selection and uses that register for exactly the eight subsequent left-column
+row advances, ending before the right column begins. Refine the test to one
+ordinary Y-layout variable that changes from the column origin to the row
+advance at that real lifetime boundary. This is a consumed source value at
+every use, not an allocation-only carrier.
+
+Eighteen unique typed and placement states compile. A single changing `s32`
+value reaches 99.464940% but stays four bytes long because its second value is
+scheduled in the later physical-tier branch. Giving the two evidenced roles
+their actual disjoint scopes closes the function: the outer `s32` origin ends
+after the numeric-column restart, and an inner `s32` row step covers class
+selection through the final left-column value. The probe reuses `s2` for those
+nonoverlapping lifetimes and places both initializers in the retail delay
+slots. The boundary-width `s16` scoped control leaves eight extension-form
+words unequal, confirming the arithmetic-width choice.
+
+The retained source is 3252 bytes at strict 100%. Complete independent linked
+comparison has zero unequal words and preserves the 80-byte frame, all 72
+calls, all 89 ordered referents, 31 CFG blocks, 16 branches, and the single
+return. Generated states, objects, linked words, and the summary are under
+`build/status-origin-shapes-6/`. The single strict-exact row is banked by
+GAME image and address.
+
 ## Map interaction: partner-definition ownership
 
 Function Match Plan: GAME `80034de4`, 2308 retail bytes, strict 99.202774%.
@@ -329,6 +402,36 @@ in s8 instead of s7. Neither scope nor the admission helper recovers the
 missing partner-definition reloads; reject both and keep canonical source.
 Generated reports are `build/hypotheses/low-trial-interaction/`, with independent
 objects and complete dispatcher words under `build/low-trial-interaction-objects/`.
+
+Follow-up Function Match Plan: keep the established object-loop CFG, current
+definition owner, call set, widths and thirteen ordered referents. Retail forms
+the partner definition address once but loads its byte behavior separately for
+the range admission, linked-door rejection, and action conversion. The probe
+currently carries the first loaded byte through all three consumers and is
+twelve bytes short. Test direct typed definition expressions at the three real
+consumers and a split binding after admission, independently of the already
+ineffective declaration-scope and predicate-helper controls. Preserve the
+neighbor object ID, definition table, nested link test, notification path,
+action call and both link writes. Do not use volatile qualification, synthetic
+stores or incompatible structure views to force reloads.
+
+The direct-expression, split-binding and operation-boundary states all compile.
+Direct expressions at every consumer give 2300 bytes / 98.639510% and preserve
+the ordered calls and referents, but still reuse the behavior byte and form the
+definition address through `at`. Binding after admission and spelling the late
+consumers directly give 2316 and 2332 bytes / 98.812830% and 98.674180%; both
+change referent order without recovering the three retail loads. A boundary
+around the action setup is identical to canonical, while the linked-door
+predicate boundary gives 2300 bytes / 98.344890% and retains the same missing
+loads. Reject all seven follow-up states and keep canonical source.
+
+The complete independently resolved comparison keeps the 54 ordered calls.
+Only the canonical, all-direct and operation-boundary states retain all
+thirteen referents in retail order. The twelve-byte deficit therefore remains
+an unattributed value-lifetime residue. Forcing three loads would require a
+volatile or synthetic alias fact unsupported by the object model; neither is
+introduced. Results and complete linked words are under
+`build/interaction-definition-shapes/`.
 
 Full build retains GAME 339/362 exact and 99.629% aggregate, with the existing
 data/ownership/placement failures and zero artifact failures. Whitespace
