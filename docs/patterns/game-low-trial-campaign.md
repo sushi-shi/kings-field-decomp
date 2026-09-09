@@ -127,6 +127,37 @@ exact and raises aggregate similarity to 99.751%; PSX remains 1/1 and OPEN
 106/108 exact. Existing data ownership and section-placement checks remain
 nonzero with no artifact failures.
 
+Second follow-up Function Match Plan: GAME `80037850`, 1900 bytes and strict
+99.873690%, still has one unequal linked word at `+718`. Fresh retail hashes
+and all six semantic views reconfirm six callers, one world-query call, twelve
+ordered address pairs, 126 blocks, 78 branches, twelve known return frontiers,
+and no strings. The adjacent effect-pool setter and exact magic-power helper
+support game ownership; no Psy-Q archive or vendored inventory identifies this
+map-policy body. The only mismatch remains retail `nop` versus probe
+`li v0,1` in the delay slot of the selector-three branch. Both paths already
+carry the comparison value one in `v0` for the only masked default state.
+
+Test directly evidenced scalar types for the consumed result and a named
+masked-selector local. Then test whether the selector dispatch's existing
+Boolean value can define the class-zero fallback before the three query cases
+overwrite it. Keep the current shared result exit, negative-height path,
+defined fallback, one call, argument flags, complete CFG and every referent.
+Reject any spelling that adds a carrier, changes behavior for the four masked
+states, or perturbs an otherwise equal word. Separately sweep only the existing
+pinned 2.5.7 scheduling profiles; retain a profile change solely if complete
+raw instructions and relocations become exact without source distortion.
+
+All fifteen unique controls compile. Signed-word result spellings and signed
+or byte selector locals reproduce the one-word residue. Halfword results add
+extensions and change the extent. Initializing the real result from the
+masked-selector predicate grows the body and changes 32 or more linked words;
+it does not reuse the switch-lowering comparison. The generic 2.5.7 profile
+changes seven words beginning at `+1d0`; disabling scheduling changes 403,
+and the 2.6.0 probe changes 460. Every state retains the sole call and twelve
+ordered referents, but none is exact. Keep the canonical source and R2000
+2.5.7 profile. Results are under `build/effect-final-word/`; the remaining
+delay-slot difference stays an unattributed code-generation residue.
+
 ## Item detail: complete name-row pointer
 
 Function Match Plan at `6cbea3fd`: refresh all six GAME views and read all
@@ -203,6 +234,45 @@ machine cursor literally would require walking across known structure fields
 with an incompatible halfword view, so this unattributed residue remains.
 Generated sources, objects, linked words and the summary are under
 `build/detail-copy-shapes/`. The function remains unbanked.
+
+Second follow-up Function Match Plan: refresh GAME `80027b7c`, all 732 retail
+bytes, six callers, seventeen calls, twenty ordered address pairs, seven CFG
+blocks, three branches, no strings, adjacent menu renderers, source history and
+the current 180/183 linked-word result. The loop's destination is direct
+evidence for a complete `MenuGlyphString` storage view: retail initializes
+`a1` to the workspace base at `sp+16`, writes each glyph at the proven
+`glyphs.codes` offset four, and advances the base as a halfword cursor. This is
+game menu composition around established GTE and renderer APIs, with no
+vendored-body match.
+
+Test a union that owns the same 24-byte workspace as both the established
+`MenuGlyphString` fields and a twelve-halfword representation. Walk the union's
+halfword member from element zero and write element two while advancing it,
+then use the structured member for every position update and renderer call.
+The union must retain size 24 and alignment two. Compare a file-local proof
+first; promote the view to the shared menu type only if the complete unit and
+all users remain well typed. Preserve the source/name pointer walk, loop count,
+frame, seventeen calls, twenty referents and three exact sibling functions.
+Reject raw byte casts or a pointer that escapes a struct subobject.
+
+Forty-nine ordinary controls compile across all six declaration orders for
+the cursor, position and source setup, both pointer/count initialization
+orders, indexed union forms, scoped position setup, and typed primitive-buffer
+or cursor locals. The file-local union recovers the retail workspace-base
+pointer and offset-four store throughout the loop. Keep it: this complete
+object view is directly supported by the accesses and preserves the shared
+structured API at every call.
+
+The retained function is 732 bytes with 181 of 183 complete linked words
+equal. Its seventeen calls, twenty ordered referents, seven CFG blocks, three
+branches, 160-byte frame and three exact siblings all agree. At `+ec` and
+`+f4`, retail initializes the zero count, performs the runtime cursor load,
+then initializes the workspace pointer; the probe initializes the pointer,
+performs the same load, then initializes the count. Reversing the two source
+initializers changes four later loop words as well. Every tested statement
+order leaves at least these two words unequal. Results are under
+`build/item-workspace-order/`. The remaining pair is an unattributed scheduling
+residue, so the function remains unbanked.
 
 ## Orbit helper: phase width and motion boundary
 
@@ -637,3 +707,44 @@ function is not banked.
 
 Ruff, all 723 repository tests (104.379 seconds), and `git diff --check` pass
 with the grouped source and expanded ordered-referent control.
+
+Follow-up Function Match Plan: retain GAME `80018880`, its 6684-byte extent,
+66 ordered calls, 210 ordered address pairs, exact status/fade regions, typed
+SDK aggregates and the natural grouped spawn transform. Retail allocates 224
+stack bytes while the probe allocates 216; every address-taken spawn local is
+therefore eight bytes earlier in the probe. The first local sits after the
+eight outgoing stack-argument words, and neither object accesses the apparent
+eight-byte retail gap. Before proposing another source object, sweep the pinned
+2.5.7 scheduling profiles and inspect every call's stack-argument high-water
+mark. Then test only real aggregate lifetime boundaries already present in the
+spawn operation: direction, spawn offset, effect rotation, world position,
+matrix and distance. A retained hypothesis must explain the frame and the
+observed pointer setup while preserving every value, call, referent and the two
+exact regions. Do not add an unused local, padding, alignment annotation,
+volatile qualifier or incompatible SDK view.
+
+The profile sweep and nine lifetime states compile. Debug information modes,
+the generic 2.5.7 profile, and the available scheduling controls do not produce
+the 224-byte retail frame. Scoping attachment objects, spawn offset, matrix and
+distance independently or together reproduces the canonical 216-byte frame
+and residue. Scoping direction improves objdiff's fuzzy score but moves it to
+the last stack slot, contradicting retail's first address-taken local at
+`sp+40`; shortening matrix and direction together shrinks the frame to 208.
+Reject those layouts. Every retained control preserves the 6684-byte extent,
+66 calls, 210 ordered referents and both exact regions. Generated states and
+summaries are under `build/player-lifetimes/` and
+`build/debug-local-allocation/`. The unexplained eight-byte frame interval is
+not authority for an unused object, so the canonical source remains unbanked.
+
+## Campaign verdict
+
+All eight frozen functions received their own evidence snapshot and multiple
+semantic source controls. `menu_draw_status_details` reached strict 100% and
+is banked. `effect_map_collision` is one word short; `menu_draw_item_detail`
+is two words short; `effect_projectile_update_2d`, `render_map_cell` and
+`menu_draw_window_backdrop` retain unexplained stack-frame differences;
+`map_interaction_dispatch` retains unsupported reload/lifetime differences;
+and `player_update` retains an eight-byte frame difference after exact call,
+referent, status and fade controls. Compiler/profile sweeps do not close any
+of these seven residues. They remain partial because closing them would
+require source facts the retail program does not establish.

@@ -22,6 +22,16 @@ enum {
     MENU_SAVE_STATUS_DIGITS = 4
 };
 
+typedef union MenuGlyphWorkspace {
+    MenuGlyphString fields;
+    s16 halfwords[sizeof(MenuGlyphString) / sizeof(s16)];
+} MenuGlyphWorkspace;
+
+typedef char check_menu_glyph_workspace_size[
+    sizeof(MenuGlyphWorkspace) == sizeof(MenuGlyphString) ? 1 : -1];
+typedef char check_menu_glyph_workspace_alignment[
+    __alignof__(MenuGlyphWorkspace) == __alignof__(MenuGlyphString) ? 1 : -1];
+
 /*
  * Item-detail / dialog-frame menu drawing, one contiguous run
  * (0x80027b7c..0x80028380): the spinning item preview and its labels, the two
@@ -39,14 +49,13 @@ enum {
 ADDRESS(0x80027b7c, 0x2dc)
 void menu_draw_item_detail(KF_ENUM_PARAM(KfItemId, s32) item_id, KF_ENUM_PARAM(KfShopId, s32) shop_id, KfItemPriceMode price_mode)
 {
-    MenuGlyphString gs;
+    MenuGlyphWorkspace gs;
     MATRIX rot;
     MATRIX lsrc;
     MATRIX lres;
     s32 price;
     MenuGlyphRow *rows;
     s16 *name;
-    s16 *glyph;
     s32 i;
 
     if (item_id == KF_ITEM_NONE) {
@@ -77,19 +86,22 @@ void menu_draw_item_detail(KF_ENUM_PARAM(KfItemId, s32) item_id, KF_ENUM_PARAM(K
     menu_render_item_model();
 
     current_poly_ft4 = (POLY_FT4 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
-
-    gs.position.x = MENU_ITEM_PREVIEW_NAME_X;
-    gs.position.y = MENU_ITEM_PREVIEW_NAME_Y;
+    gs.fields.position.x = MENU_ITEM_PREVIEW_NAME_X;
+    gs.fields.position.y = MENU_ITEM_PREVIEW_NAME_Y;
     rows = item_name_rows;
     name = rows[KF_ENUM_ENCODE(s32, item_id)].codes;
-    glyph = gs.glyphs.codes;
-    for (i = 0; i < MENU_GLYPHS_PER_ROW; i++) {
-        *glyph++ = *name++;
-    }
-    menu_draw_string(&menu_assets.glyph_atlas, &gs);
+    {
+        s16 *glyph = gs.halfwords;
 
-    gs.position.x = MENU_ITEM_DETAIL_PRICE_X;
-    gs.position.y += MENU_ITEM_PREVIEW_LINE_HEIGHT;
+        for (i = 0; i < MENU_GLYPHS_PER_ROW; i++) {
+            glyph[sizeof(MenuPoint) / sizeof(s16)] = *name++;
+            glyph++;
+        }
+    }
+    menu_draw_string(&menu_assets.glyph_atlas, &gs.fields);
+
+    gs.fields.position.x = MENU_ITEM_DETAIL_PRICE_X;
+    gs.fields.position.y += MENU_ITEM_PREVIEW_LINE_HEIGHT;
     if (price_mode == KF_ITEM_PRICE_BUY) {
         price = item_buy_prices[KF_ENUM_ENCODE(s32, item_id)]
             [KF_ENUM_ENCODE(s32, shop_id) - KF_ENUM_ENCODE(s32, KF_SHOP_FIRST)];
@@ -97,37 +109,37 @@ void menu_draw_item_detail(KF_ENUM_PARAM(KfItemId, s32) item_id, KF_ENUM_PARAM(K
         price = item_sell_prices[KF_ENUM_ENCODE(s32, item_id)]
             [KF_ENUM_ENCODE(s32, shop_id) - KF_ENUM_ENCODE(s32, KF_SHOP_FIRST)];
     }
-    menu_format_number(price, MENU_ITEM_DETAIL_PRICE_DIGITS, KF_FORMAT_PAD_SPACES, gs.glyphs.codes);
-    menu_draw_number(&menu_assets.number_atlas, &gs);
+    menu_format_number(price, MENU_ITEM_DETAIL_PRICE_DIGITS, KF_FORMAT_PAD_SPACES, gs.fields.glyphs.codes);
+    menu_draw_number(&menu_assets.number_atlas, &gs.fields);
 
-    gs.position.x = MENU_ITEM_DETAIL_LABEL_X;
-    gs.glyphs.codes[0] = MENU_TEXT_DAKUTEN | 0x9;
-    gs.glyphs.codes[1] = 0x2d;
-    gs.glyphs.codes[2] = 0x2a;
-    gs.glyphs.codes[3] = MENU_TEXT_DAKUTEN | 0x13;
-    gs.glyphs.codes[4] = MENU_TEXT_END;
-    menu_draw_string(&menu_assets.glyph_atlas, &gs);
+    gs.fields.position.x = MENU_ITEM_DETAIL_LABEL_X;
+    gs.fields.glyphs.codes[0] = MENU_TEXT_DAKUTEN | 0x9;
+    gs.fields.glyphs.codes[1] = 0x2d;
+    gs.fields.glyphs.codes[2] = 0x2a;
+    gs.fields.glyphs.codes[3] = MENU_TEXT_DAKUTEN | 0x13;
+    gs.fields.glyphs.codes[4] = MENU_TEXT_END;
+    menu_draw_string(&menu_assets.glyph_atlas, &gs.fields);
 
-    gs.position.x = MENU_ITEM_DETAIL_LABEL_X;
-    gs.glyphs.codes[0] = 0xca;
-    gs.glyphs.codes[1] = 0xcb;
-    gs.glyphs.codes[2] = MENU_TEXT_END;
-    gs.position.y += MENU_ITEM_PREVIEW_LINE_HEIGHT;
-    menu_draw_string(&menu_assets.glyph_atlas, &gs);
+    gs.fields.position.x = MENU_ITEM_DETAIL_LABEL_X;
+    gs.fields.glyphs.codes[0] = 0xca;
+    gs.fields.glyphs.codes[1] = 0xcb;
+    gs.fields.glyphs.codes[2] = MENU_TEXT_END;
+    gs.fields.position.y += MENU_ITEM_PREVIEW_LINE_HEIGHT;
+    menu_draw_string(&menu_assets.glyph_atlas, &gs.fields);
 
-    gs.position.x = MENU_ITEM_DETAIL_QUANTITY_X;
-    menu_format_number(item_stock[KF_ITEM_STOCK_PLAYER][KF_ENUM_ENCODE(s32, item_id)], MENU_ITEM_PREVIEW_QUANTITY_DIGITS, KF_FORMAT_PAD_SPACES, gs.glyphs.codes);
-    menu_draw_number(&menu_assets.number_atlas, &gs);
+    gs.fields.position.x = MENU_ITEM_DETAIL_QUANTITY_X;
+    menu_format_number(item_stock[KF_ITEM_STOCK_PLAYER][KF_ENUM_ENCODE(s32, item_id)], MENU_ITEM_PREVIEW_QUANTITY_DIGITS, KF_FORMAT_PAD_SPACES, gs.fields.glyphs.codes);
+    menu_draw_number(&menu_assets.number_atlas, &gs.fields);
 
     menu_blit_sprite_translucent(
         &menu_assets.row_background,
         &menu_window_layouts[KF_ENUM_ENCODE(s32, KF_MENU_WINDOW_SHOP)].rows[KF_SHOP_ROW_GOLD].position);
     menu_draw_string(&menu_assets.glyph_atlas, &menu_window_layouts[KF_ENUM_ENCODE(s32, KF_MENU_WINDOW_SHOP)].rows[KF_SHOP_ROW_GOLD]);
 
-    gs.position.x = menu_window_layouts[KF_ENUM_ENCODE(s32, KF_MENU_WINDOW_SHOP)].rows[KF_SHOP_ROW_GOLD].position.x + MENU_ITEM_DETAIL_GOLD_X_OFFSET;
-    gs.position.y = menu_window_layouts[KF_ENUM_ENCODE(s32, KF_MENU_WINDOW_SHOP)].rows[KF_SHOP_ROW_GOLD].position.y;
-    menu_format_number(player_state.gold, MENU_ITEM_DETAIL_GOLD_DIGITS, KF_FORMAT_PAD_SPACES, gs.glyphs.codes);
-    menu_draw_number(&menu_assets.number_atlas, &gs);
+    gs.fields.position.x = menu_window_layouts[KF_ENUM_ENCODE(s32, KF_MENU_WINDOW_SHOP)].rows[KF_SHOP_ROW_GOLD].position.x + MENU_ITEM_DETAIL_GOLD_X_OFFSET;
+    gs.fields.position.y = menu_window_layouts[KF_ENUM_ENCODE(s32, KF_MENU_WINDOW_SHOP)].rows[KF_SHOP_ROW_GOLD].position.y;
+    menu_format_number(player_state.gold, MENU_ITEM_DETAIL_GOLD_DIGITS, KF_FORMAT_PAD_SPACES, gs.fields.glyphs.codes);
+    menu_draw_number(&menu_assets.number_atlas, &gs.fields);
 }
 
 /*
