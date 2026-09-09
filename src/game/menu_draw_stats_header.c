@@ -17,6 +17,7 @@ void menu_draw_stats_header(void)
 {
     MenuGlyphString gs;
     s32 glyph_index;
+    s32 row_step = STATS_HEADER_ROW_STEP;
 
     current_poly_ft4 = (POLY_FT4 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
@@ -32,36 +33,36 @@ void menu_draw_stats_header(void)
     gs.glyphs.codes[1] = MENU_TEXT_DAKUTEN | 0x1c;
     gs.glyphs.codes[2] = 0x2a;
     gs.glyphs.codes[3] = MENU_TEXT_END;
-    gs.position.y += STATS_HEADER_ROW_STEP;
+    gs.position.y += row_step;
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
     gs.glyphs.codes[0] = 7;
     gs.glyphs.codes[1] = 0x28;
     gs.glyphs.codes[2] = 0xc;
     gs.glyphs.codes[3] = MENU_TEXT_END;
-    gs.position.y += STATS_HEADER_ROW_STEP;
+    gs.position.y += row_step;
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
     gs.glyphs.codes[0] = 0xcc;
     gs.glyphs.codes[1] = 0xcd;
     gs.glyphs.codes[2] = MENU_TEXT_END;
-    gs.position.y += STATS_HEADER_ROW_STEP;
+    gs.position.y += row_step;
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
     gs.glyphs.codes[0] = 0xf0;
     gs.glyphs.codes[1] = 0xf2;
     gs.glyphs.codes[2] = MENU_TEXT_END;
-    gs.position.y += STATS_HEADER_ROW_STEP;
+    gs.position.y += row_step;
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
     gs.glyphs.codes[0] = 0xf1;
-    gs.position.y += STATS_HEADER_ROW_STEP;
+    gs.position.y += row_step;
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
     gs.glyphs.codes[0] = 0x85;
     gs.glyphs.codes[1] = 0x86;
     gs.glyphs.codes[2] = MENU_TEXT_END;
-    gs.position.y += STATS_HEADER_ROW_STEP;
+    gs.position.y += row_step;
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
     gs.glyphs.codes[0] = MENU_TEXT_DAKUTEN | 0x9;
@@ -69,7 +70,7 @@ void menu_draw_stats_header(void)
     gs.glyphs.codes[2] = 0x2a;
     gs.glyphs.codes[3] = MENU_TEXT_DAKUTEN | 0x13;
     gs.glyphs.codes[4] = MENU_TEXT_END;
-    gs.position.y += STATS_HEADER_ROW_STEP;
+    gs.position.y += row_step;
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
     gs.position.x = 0xfb;
@@ -77,12 +78,12 @@ void menu_draw_stats_header(void)
     menu_format_number(player_state.experience, MENU_STATS_VALUE_DIGITS, KF_FORMAT_PAD_SPACES, gs.glyphs.codes);
     menu_draw_number(&menu_assets.number_atlas, &gs);
 
-    gs.position.y += STATS_HEADER_ROW_STEP;
+    gs.position.y += row_step;
     menu_format_number(player_state.progress_state.level, MENU_STATS_VALUE_DIGITS, KF_FORMAT_PAD_SPACES, gs.glyphs.codes);
     menu_draw_number(&menu_assets.number_atlas, &gs);
 
     gs.position.x = 0xed;
-    gs.position.y += STATS_HEADER_ROW_STEP;
+    gs.position.y += row_step;
     if (player_state.base_magic < MENU_CLASS_MIDDLE_STAT_MIN) {
         glyph_index = 0;
     } else {
@@ -107,12 +108,12 @@ void menu_draw_stats_header(void)
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
     gs.position.x = 0xfb;
-    gs.position.y += STATS_HEADER_ROW_STEP;
+    gs.position.y += row_step;
     menu_format_number(KF_ENUM_ENCODE(u8, player_state.progress_state.current_floor), MENU_STATS_VALUE_DIGITS, KF_FORMAT_PAD_SPACES, gs.glyphs.codes);
     menu_draw_number(&menu_assets.number_atlas, &gs);
 
     gs.position.x = 0xe6;
-    gs.position.y += STATS_HEADER_ROW_STEP;
+    gs.position.y += row_step;
     menu_format_number(player_state.vitals.current_hp, MENU_STATS_VITAL_DIGITS, KF_FORMAT_PAD_SPACES, gs.glyphs.codes);
     menu_draw_number(&menu_assets.number_atlas, &gs);
     gs.glyphs.codes[0] = MENU_NUMBER_SLASH;
@@ -124,7 +125,7 @@ void menu_draw_stats_header(void)
     menu_draw_number(&menu_assets.number_atlas, &gs);
 
     gs.position.x = 0xe6;
-    gs.position.y += STATS_HEADER_ROW_STEP;
+    gs.position.y += row_step;
     menu_format_number(player_state.vitals.current_mp, MENU_STATS_VITAL_DIGITS, KF_FORMAT_PAD_SPACES, gs.glyphs.codes);
     menu_draw_number(&menu_assets.number_atlas, &gs);
     gs.glyphs.codes[0] = MENU_NUMBER_SLASH;
@@ -142,7 +143,7 @@ void menu_draw_stats_header(void)
     gs.glyphs.codes[3] = MENU_TEXT_BLANK;
     gs.glyphs.codes[4] = MENU_TEXT_BLANK;
     gs.glyphs.codes[5] = MENU_TEXT_END;
-    gs.position.y += STATS_HEADER_ROW_STEP;
+    gs.position.y += row_step;
     if (player_state.status_effect_flags == KF_PLAYER_STATUS_NONE) {
         gs.glyphs.codes[3] = 0xc5;
         gs.glyphs.codes[4] = 0xc6;
@@ -166,7 +167,7 @@ void menu_draw_stats_header(void)
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
     gs.position.x = 0xfb;
-    gs.position.y += STATS_HEADER_ROW_STEP;
+    gs.position.y += row_step;
     menu_format_number(player_state.gold, MENU_STATS_VALUE_DIGITS, KF_FORMAT_PAD_SPACES, gs.glyphs.codes);
     menu_draw_number(&menu_assets.number_atlas, &gs);
 }

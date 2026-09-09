@@ -172,12 +172,8 @@ void display_initialize(void)
     game_graphics_runtime.display_draw_environments[0].dtd = game_graphics_runtime.display_draw_environments[1].dtd = 1;
     game_graphics_runtime.display_draw_environments[0].isbg = 1;
     game_graphics_runtime.display_draw_environments[1].isbg = 1;
-    game_graphics_runtime.display_draw_environments[0].r0 = 0;
-    game_graphics_runtime.display_draw_environments[0].g0 = 0;
-    game_graphics_runtime.display_draw_environments[0].b0 = 0;
-    game_graphics_runtime.display_draw_environments[1].r0 = 0;
-    game_graphics_runtime.display_draw_environments[1].g0 = 0;
-    game_graphics_runtime.display_draw_environments[1].b0 = 0;
+    setRGB0(&game_graphics_runtime.display_draw_environments[0], 0, 0, 0);
+    setRGB0(&game_graphics_runtime.display_draw_environments[1], 0, 0, 0);
     PutDispEnv(&game_graphics_runtime.display_disp_environments[0]);
     SetBackColor(INITIAL_BACK_COLOR, INITIAL_BACK_COLOR, INITIAL_BACK_COLOR);
     lighting_set_active_color_matrix(KF_GAME_COLOR_DEFAULT);

@@ -9,7 +9,7 @@ from pathlib import Path
 
 from elftools.elf.elffile import ELFFile
 
-from scripts.kf.data_match import Elf, _diff_bss, diff_unit
+from scripts.kf.data_match import Elf, _diff_bss, _diff_init_section, diff_unit
 from scripts.kf.delink import _apply_relocation, load_catalog
 from scripts.kf.inventory import load_data_identities
 from scripts.kf.manifest import load as load_manifest
@@ -123,8 +123,11 @@ class GameDisplayEnvironmentDataTests(unittest.TestCase):
         sections = {d.name: d for d in whole.diffs}
         self.assertEqual(sections['.bss'].status, 'size')
         self.assertIn('conflicting-section-bases', sections['.bss'].detail)
-        # This campaign does not claim the existing switch-table residue is fixed.
-        self.assertEqual(sections['.rodata'].status, 'addend')
+        # Correct initializer size also restores later switch-label addends.
+        # The exact table payload still does not prove valid section placement.
+        self.assertEqual(_diff_init_section('.rodata', retail, source).status, 'match')
+        self.assertEqual(sections['.rodata'].status, 'placement')
+        self.assertIn('invalid-section-placement', sections['.rodata'].detail)
 
     def test_reversed_environment_fields_fail_the_production_layout_checks(self):
         probe = self.probe()

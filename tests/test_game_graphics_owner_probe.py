@@ -324,7 +324,7 @@ class GameGraphicsOwnerProbeTests(unittest.TestCase):
                 else:
                     self.assertEqual(actual, expected)
 
-    def test_extended_display_tmd_pilot_preserves_exacts_but_does_not_close_owner(self):
+    def test_extended_display_tmd_pilot_preserves_complete_functions(self):
         self.tools()
         image, manifest = self.retail(), load_manifest()
         data = data_addresses()
@@ -355,15 +355,6 @@ class GameGraphicsOwnerProbeTests(unittest.TestCase):
             'pool_reset': 0x4, 'pool_mark_allocated': 0x4, 'pool_release_all': 0x18,
             'pool_release_stale': 0x1C, 'pool_allocate': 0x4,
         }
-        # Size and first raw divergence are observed symptoms, not attributed
-        # compiler mechanisms. The remaining partial suffix is not banked.
-        partial = {
-            'display_initialize': (336, 0xA4, 0x3C048009, 0x3C108009, [
-                0x80090EC0, 0x80090F78, 0x80090F1C, 0x80090F8C, 0x80090F32, 0x80090ED6,
-                0x80090ED8, 0x80090F34, 0x80090ED9, 0x80090EDA, 0x80090EDB, 0x80090F35,
-                0x80090F36, 0x80090F37, 0x80095740,
-            ]),
-        }
         for name, names in selected.items():
             unit = manifest.by_name()[name]
             with self.subTest(unit=name), tempfile.TemporaryDirectory() as directory:
@@ -379,30 +370,22 @@ class GameGraphicsOwnerProbeTests(unittest.TestCase):
                                           | ((word & 0x3FFFFFF) << 2)
                                           for i, word in enumerate(expected) if word >> 26 == 3]
                         self.assertEqual(calls, expected_calls)
-                        if claim.symbol in partial:
-                            size, first, left, right, addresses = partial[claim.symbol]
-                            self.assertNotEqual(actual, expected)
-                            self.assertEqual(len(actual) * 4, size)
-                            self.assertEqual(actual[:first // 4], expected[:first // 4])
-                            self.assertEqual((actual[first // 4], expected[first // 4]), (left, right))
-                            self.assertEqual(targets, addresses)
-                        else:
-                            self.assertEqual(actual, expected)
-                            if (claim.symbol in controls.get(name, set())
-                                    or any(ORIGIN <= target < ORIGIN + EXTENT for target in targets)):
-                                wrong, same_calls, _ = linked_words(
-                                    obj, unit, claim, {**data, 'graphics_owner_probe': ORIGIN + 4}, functions)
-                                if claim.symbol in controls.get(name, set()):
-                                    self.assertEqual(wrong, expected)
-                                else:
-                                    self.assertNotEqual(wrong, expected)
-                                if claim.symbol in pool_base_lows:
-                                    self.assertEqual(targets, [0x800910C0])
-                                    self.assertEqual(
-                                        [4 * i for i, (a, b) in enumerate(zip(wrong, expected)) if a != b],
-                                        [pool_base_lows[claim.symbol]],
-                                    )
-                                self.assertEqual(same_calls, calls)
+                        self.assertEqual(actual, expected)
+                        if (claim.symbol in controls.get(name, set())
+                                or any(ORIGIN <= target < ORIGIN + EXTENT for target in targets)):
+                            wrong, same_calls, _ = linked_words(
+                                obj, unit, claim, {**data, 'graphics_owner_probe': ORIGIN + 4}, functions)
+                            if claim.symbol in controls.get(name, set()):
+                                self.assertEqual(wrong, expected)
+                            else:
+                                self.assertNotEqual(wrong, expected)
+                            if claim.symbol in pool_base_lows:
+                                self.assertEqual(targets, [0x800910C0])
+                                self.assertEqual(
+                                    [4 * i for i, (a, b) in enumerate(zip(wrong, expected)) if a != b],
+                                    [pool_base_lows[claim.symbol]],
+                                )
+                            self.assertEqual(same_calls, calls)
 
     def test_floor_item_counter_requires_direct_member_access(self):
         self.tools()
@@ -710,18 +693,15 @@ extern KfMaterialProbe material_probe;
         # These open functions are checked for calls and target integrity,
         # without accepting partial words as exact or requiring a future residue.
         partial = {
-            'display_initialize',
             'item_load_database',
             'map_interaction_dispatch',
             'map_show_screen_image',
             'menu_draw_item_detail',
             'menu_draw_item_name_frame',
-            'menu_draw_stats_header',
             'menu_draw_status_details',
             'menu_draw_window',
             'menu_draw_window_backdrop',
             'menu_item_model_preview',
-            'player_add_experience',
             'player_move_horizontal',
             'render_entities',
             'render_map_cell',
@@ -761,7 +741,7 @@ extern KfMaterialProbe material_probe;
                                         {**addresses, 'game_graphics_runtime': ORIGIN + 4}, functions)
                                     self.assertNotEqual(wrong, expected, claim.symbol)
                                     self.assertEqual(same_calls, calls)
-        self.assertEqual((checked, exact), (173, 157))
+        self.assertEqual((checked, exact), (173, 160))
 
 
 if __name__ == '__main__':
