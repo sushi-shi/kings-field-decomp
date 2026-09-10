@@ -161,6 +161,51 @@ for every library release at or before that date:
 | [Runtime Library 2.6](https://archive.org/download/ps1_sdks/Programmer%20Tool%20-%20Runtime%20Library%20Version%202.6%20%28Japan%29%20%28En%2CJa%29_DTL-S2170_redump.zip) | Libraries dated 1995-01-24/25, after retail | No complete match for the 29 lineage modules. Several later split sound objects match subsections of the retail VMANAGER/SPU runs, and NONE2 is unchanged; these are useful controls, not evidence that Runtime 2.6 was linked. |
 | [User-suggested PlayStation SDK](https://archive.org/details/playstation-sdk_202301) | 93,064,381-byte `PlayStation 1.7z` payload | Despite its 1994 catalog date, its contents are SDK 4.4 and later Net Yaroze material, so it is not a retail-era library source. |
 
+### Search target and candidate triage
+
+The strongest practical search window is **1994-10-18 through 1994-11-07**.
+GAME and OPEN retain Sony source markers dated through 1994-10-17, the exact
+`NONE2.OBJ` is internally dated 1994-10-18, and the retail directory records
+date OPEN to 1994-11-03 and GAME to 1994-11-07. These timestamps are not
+authenticated compilation records, so they prioritize candidate artifacts
+rather than prove hard chronological bounds.
+
+Search descriptions should include **Psy-Q Release 2.5**, **pre-2.6
+PlayStation Runtime Library**, and **October or early-November 1994 PSXLIB**.
+Also search developer backups and working trees with paths such as
+`PSXLIB/LIB`, `H2000/LIB2000`, or `isa board`; a loose `.LIB` archive or its
+original `.OBJ` members can be more useful than a complete later SDK disc.
+There is currently no evidence that formal Runtime Library 2.1, 2.2, 2.3, 2.4,
+or 2.5 distributions existed under those exact public labels. Treat those
+numbers as search terms, not established product identities.
+
+The evidence permits a mixed or rolling SDK snapshot. Many members from the
+December Release 2.5 collection match retail exactly, while large sound
+members demonstrably do not. An early-November backup can therefore be useful
+even if it lacks a coherent release label or combines differently dated
+members.
+
+Triage candidate archives in this order:
+
+1. `LIBSPU.LIB/SPU.OBJ`: look for `_spu_ioctl` with a selector ceiling of
+   `0x212` and a 531-entry (`0x84c`-byte) code-pointer table. This is the
+   highest-value discriminator and the largest known missing layout input.
+2. `LIBSND.LIB`: prioritize `SEPINIT.OBJ`, `SEQREAD.OBJ`, `CRES.OBJ`,
+   `DECRE.OBJ`, `SEQINIT.OBJ`, and `VMANAGER.OBJ`, which contain the largest
+   fixed-bit contributors after `_spu_ioctl`.
+3. `LIBSPU.LIB/S_SRMP.OBJ`, whose retail `SpuSetReverbModeParam` and tables
+   differ from the supplied member.
+4. `LIBETC.LIB/PAD.OBJ`: the retail member must explain the marker
+   `$Id: pad.c,v 1.17 1994/10/14 01:04:10 suzu Exp $` and its identifier-check
+   diagnostics.
+
+Preserve original LNK `.OBJ` files and `.LIB` archives whenever possible.
+Later linked executables can corroborate code revisions, but cannot restore
+the section records, relocations, local symbols, or archive-member boundaries
+needed for exact object closure. After extraction, run `kf-fid-census` before
+changing the pinned SDK inputs; the complete minimum target set remains the 29
+module identities listed above.
+
 Downloaded-payload SHA-256 values are
 `7bcffd476485f9a19bdadb9b33020127e0c138caf0a32f5580c9eaed2fc57c81`
 for Runtime 2.0,

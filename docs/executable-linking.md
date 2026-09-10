@@ -16,6 +16,53 @@ The reconstruction loop remains available through `kf build`, `kf match` and
 objdiff. Those commands produce ELF comparison objects with pinned analysis
 programs; they do not claim to reproduce the original executable toolchain.
 
+The former experiment did successfully emit PS-X EXE files, so linkability is
+demonstrated. That result is distinct from exactness and playability:
+
+| Property | Current status |
+| --- | --- |
+| PSYLINK emits GAME and OPEN | Demonstrated by the saved mixed-tool experiment |
+| Historical source-to-EXE path | Unavailable because the usable assembler and pinned Release 2.5 media do not form one coherent toolchain |
+| Byte-identical retail images | Not achieved; SDK-owned code/data, placement, and other closure gaps remain |
+| Boot to the game loading screen | Demonstrated by the smoke test below |
+| Playable runtime | Not demonstrated; the isolated candidate run stalls during loading under OpenBIOS |
+
+An SDK mismatch does not by itself prove that an executable is unplayable: a
+different library revision may preserve the public API and runtime behavior.
+It also cannot establish complete playability, because private object layouts,
+data, callbacks, and initialization behavior can differ even when linking
+succeeds. A full playability claim still requires testing input, audio, map
+transitions, combat, saves, and a representative playthrough. The original
+hash-verified retail disc remains the runtime reference.
+
+### Runtime smoke test
+
+On 2026-09-10, the three saved PS-X EXEs were substituted into a copy of the
+raw retail Mode 2 disc. GAME and OPEN are one sector shorter than their retail
+ISO extents, so their final sectors were zero-filled. Every changed sector's
+EDC and P/Q ECC was regenerated. The resulting temporary disc had SHA-256
+`d44f66478022dafb8e2352702b4df01bb7e7839a9313c213c517bd65e35561c5`;
+the source retail BIN remained hash-identical at
+`ae74beba377d686bfaa292ea40df8ade4454ec3139c2b5152364e02aac90b3d9`.
+
+PCSX-Redux build 236 (`b745534e`) with its bundled OpenBIOS booted the linked
+disc into the game's `loading...` screen at 60 FPS, but an isolated run did
+not advance from that screen. The emulator subsequently began reporting
+repeated reads from invalid addresses, including `0x70000581` and
+`0x02f3b850`. The run was stopped when that diagnostic loop had produced an
+unbounded log. This demonstrates bootstrap, executable loading, and entry
+into game code; it does not demonstrate playable rendering.
+
+The untouched retail control, run with the same emulator, BIOS, settings, and
+fresh memory cards, also reached `loading...` but remained there for more than
+two minutes. Earlier Mednafen runs with OpenBIOS also failed to produce a
+passing retail control. This environment therefore establishes only a boot
+smoke test. It cannot distinguish a candidate defect from OpenBIOS
+incompatibility at the loading boundary, and it supplies no evidence that the
+saved link plays correctly. Repeat the paired test with a known-compatible
+Japanese retail BIOS before using runtime differences as reconstruction
+evidence.
+
 Existing ignored executable experiments can still be inspected without
 rebuilding them:
 
