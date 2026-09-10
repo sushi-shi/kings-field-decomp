@@ -58,6 +58,18 @@ individual `.OBJ` files, or preserved SDK source with version and toolchain
 provenance. Those artifacts can establish section boundaries, relocations,
 local symbols, data, BSS and member identity rather than code bytes alone.
 
+The overlay executable comparison exposes a particularly large `SPU.OBJ`
+revision marker. Retail `_spu_ioctl` bounds its selector at `0x212`, then jumps
+through a 531-entry table at GAME `0x80013320` or OPEN `0x800127ec`. The two
+`0x84c`-byte tables have identical target offsets across the overlays and every
+entry resolves to one of 54 blocks in the corresponding `_spu_ioctl` body. The
+supplied Release 2.5 member has no equivalent table of that extent. This one
+missing read-only contribution explains more than 93% of the initial section
+shortfall in both saved links, while the supplied member's dispatcher code is
+also substantially different. A matching `SPU.OBJ` is therefore both an
+object-closure requirement and the single largest known executable-layout
+input.
+
 If matching artifacts cannot be found, reconstructing a vendored object can be
 used as a forensic fallback to test source shape, calls and object boundaries.
 It must remain excluded from game progress, and a source reconstruction alone

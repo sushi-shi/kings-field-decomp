@@ -101,6 +101,77 @@ The remainder of this page records observations from the removed mixed-input
 experiment. These results remain useful for source ownership and linker
 semantics, but they do not describe the active SDK or an available build path.
 
+### Byte attribution of the overlay scores
+
+The saved GAME and OPEN experiments score 74.174997% and 72.352139%,
+respectively. A symbol- and relocation-aware audit shows that these values do
+not measure the quality of the reconstructed game code directly. The candidate
+symbol files place every reconstructed OPEN function in retail order at a
+uniform `-0x8d0` displacement. GAME also preserves the complete order; its 362
+functions occupy five nearby displacement bands from `-0x8e8` to `-0x8c0`,
+with the smaller transitions following source-object and literal-pool
+boundaries.
+
+The initial section-size difference explains those displacements:
+
+| Image | Retail bytes before first function | Candidate `.rdata` | Shortfall |
+| --- | ---: | ---: | ---: |
+| GAME | `0x2268` | `0x1980` | `0x8e8` |
+| OPEN | `0x1734` | `0x0e64` | `0x8d0` |
+
+Most of the shortfall belongs to one proved retail-era LIBSPU construct. Both
+overlays contain a contiguous 531-entry, `0x84c`-byte dispatch table. GAME
+`8003f4b4`/`8003f4b8` loads its base at `80013320`; OPEN
+`8001f2d4`/`8001f2d8` loads its twin at `800127ec`. `_spu_ioctl` rejects
+selectors above `0x212`, indexes the table by the selector times four, loads a
+code pointer and jumps through it. All 531 entries target one of 54 blocks in
+the same `_spu_ioctl` body. The table alone accounts for 93.2% of GAME's
+initial shortfall and 94.1% of OPEN's. The supplied Release 2.5 `SPU.OBJ` has a
+different dispatcher and no corresponding table of that extent.
+
+The native reconstructed objects provide a separate control. Each function was
+aligned through the candidate symbol file and compared using the relocation
+mask from its actual `U*.OBJ`:
+
+| Image | Functions mapped | Compared bytes | Raw unequal bytes | Unequal at relocation-touched positions | Fixed-bit unequal bytes | Masked-exact functions |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| GAME | 361/362 | 155,880 | 14,539 | 12,627 | 1,924 | 350 |
+| OPEN | 108/108 | 29,504 | 2,257 | 2,251 | 6 | 107 |
+
+Relocation-touched and fixed-bit counts are separate diagnostics and can
+overlap when a byte contains both relocated and fixed instruction bits. The
+result nevertheless isolates the linked-address effect: almost every OPEN game
+instruction bit already agrees, while GAME's remaining fixed-bit differences
+are concentrated in its existing non-exact functions.
+
+The same audit against supplied Release 2.5 archive members separates exact
+library inputs from known lineage matches. In GAME, 362 mapped vendored
+functions with exact Release 2.5 evidence cover 54,988 retail bytes. Their
+fixed bits all match; the 3,324 raw unequal bytes all occur at relocated
+positions. OPEN gives the same result for 346 functions and 54,732 bytes, with
+3,276 raw unequal bytes. By contrast, the 177 mapped functions in
+version-skewed SDK objects cover 50,208 retail bytes in either overlay. Across
+the common positional spans, 23,879 GAME bytes and 23,845 OPEN bytes differ in
+fixed bits. The largest contributors are `_spu_ioctl`, `InitSoundSep`,
+`ContDataEntry`, `Snd_crescendo`, `SpuSetReverbModeParam`, `GetMetaEvent`,
+`Snd_decrescendo`, `InitSoundSeq`, `SetControlChange` and `SpuVmKeyOn`.
+
+An ordinary linker-order control tested eight plausible archive orders without
+changing any object or library. The best GAME order gained 52 equal island
+bytes, moving 74.174997% to 74.193198%; the best OPEN order gained 21 bytes,
+moving 72.352139% to 72.365903%. Large library-family address movements barely
+change the movement-tolerant score. This rules out archive command order as the
+cause of the roughly 26–28 percentage-point residue.
+
+These observations leave no evidence-backed score improvement using the
+available inputs. Adding `0x84c` bytes of padding or copying the retail dispatch
+table would manufacture layout without recovering its owner. Reconstructing
+Sony library bodies would also misclassify vendored code as game progress. A
+substantial legitimate improvement requires the intermediate retail-era SDK
+objects identified in [the SDK object audit](sdk-object-audit.md), including a
+matching `LIBSPU.LIB/SPU.OBJ`; when supplied, PSYLINK will select them through
+the ordinary archive references.
+
 The initial native runs reported 61 OPEN and 2694 GAME diagnostic references;
 these are repeated uses, not counts of distinct missing objects. OPEN lacked ten
 game data definitions and the entry symbol. GAME lacked 55 game data definitions,
