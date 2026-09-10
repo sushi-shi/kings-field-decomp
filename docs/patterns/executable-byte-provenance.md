@@ -1,22 +1,24 @@
-# Executable byte provenance: native link, converter leakage and retail tails
+# Retired composed executable experiment: byte provenance and retail tails
 
-This is the single evidence record for the native PSX link, the preserved
-CPE2X bug, retail header/tail differences, converter experiments and the
-on-disc date window. Build commands and current overlay-link status live in
-[the executable build guide](../executable-linking.md).
+This records the removed PSX executable experiment, its CPE2X behavior,
+retail header/tail differences, converter probes and the on-disc date window.
+The experiment combined a native GCC rebuild, ASPSX from a separate archive,
+and Release 2.5 PSYLINK, CPE2X and libraries. It remains evidence, not the
+active SDK or an available build path. Current status lives in
+[the executable-linking guide](../executable-linking.md).
 
-The native PSX build reproduces all 560 initialized code/data bytes. Its
+The experimental PSX build reproduced all 560 initialized code/data bytes. Its
 4096-byte EXE differs from retail in 59 header bytes and seven tail bytes.
 Of the header differences, 52 are uninitialized local-storage bytes written
 by the preserved CPE2X 1.3 used here. The other seven lie outside its final
 header-structure write. Retail suggests a similar host-memory leak, but the
 exact retail converter and process remain unidentified.
 
-## Native PSX build and evidence boundary
+## Experimental PSX build and evidence boundary
 
-Use the existing exact C source and the original library archives. Feed the
-compiler's assembly directly to ASPSX, its object directly to PSYLINK, and
-PSYLINK's CPE directly to CPE2X. Retain remaining file differences. No injected
+The experiment fed the existing exact C source through the native compiler
+rebuild, the separate ASPSX archive, Release 2.5 PSYLINK and CPE2X. It retained
+remaining file differences. No injected
 padding, copied retail header, ELF section adjustment or library object-format
 conversion is part of executable generation.
 
@@ -27,8 +29,8 @@ reconstructed game functions. The C source and SDK/API types are unchanged.
 
 ### Preserved tools and ordinary commands
 
-The compiler is the pinned GCC 2.5.7 PSX rebuild, using the existing `-O2 -G0
--mcpu=r2000` profile. The preserved ASPSX binary used by upstream's assembler
+The compiler was the pinned GCC 2.5.7 PSX rebuild, using the existing `-O2 -G0
+-mcpu=r2000` profile. The separate ASPSX binary used by upstream's assembler
 [test suite](https://github.com/mkst/maspsx/tree/746b895f02929ecd148af7b1f4ff05b69f973878/aspsx)
 identifies itself as 1.07 and runs under DOSBox-X. Its SHA-256 is:
 
@@ -152,14 +154,15 @@ still prevent whole-file byte identity: reproducing the original tool's
 logical inputs alone need not reproduce its leftover memory. Historical
 reproduction requires the producer and relevant memory history; preserving
 retail bytes would instead be an explicit output policy, not evidence that
-the original process was recovered. The current build does not apply such
-a policy. The isolated two-fill control below proves the write mask only.
+the original process was recovered. The experiment did not apply such a
+policy. The isolated two-fill control below proves the write mask only.
 
 ## Exact PSX comparison
 
 Offsets are hexadecimal **file offsets**, with no PlayStation virtual address.
 Hex pairs below are in file order, not reversed into numeric word values.
-The candidate is the unchanged native build recorded in `build/link/psx/comparison.json`.
+The candidate is the unchanged ignored artifact recorded in
+`build/link/psx/comparison.json` by the retired experiment.
 
 | Offset | SDK field | Retail bytes | Candidate bytes | Differences |
 | --- | --- | --- | --- | ---: |
@@ -282,7 +285,7 @@ All three images also share the exact twelve bytes at `7c–87` and the CPE
 fragment at `88–8f`. The twelve bytes have no assigned semantic owner yet.
 The latter is the beginning of a CPE file (`CPE`, format byte, unit record,
 then the beginning of a register record), not a PlayStation instruction or
-address. Its location is not produced by the current converter's write path.
+address. Its location was not produced by the tested converter's write path.
 
 ## Who uses the fields on PlayStation
 
@@ -393,7 +396,7 @@ No reviewed PSX reference consumes either word's original CPE-prefix value.
 A separate experiment edits copies of `PSX.CPE`, runs the unchanged pinned
 CPE2X in a fresh DOSBox process for each case, and compares each untouched EXE
 with the complete retail file. Every case uses the same DOS filename and
-command. The normal executable builder and its production CPE are unchanged.
+command. The experiment's baseline executable and CPE were unchanged.
 Retail bytes deliberately supplied to these controls are not reconstructed
 source data and are not banked.
 
@@ -426,8 +429,7 @@ Record ordering alone cannot explain those retail bytes.
 
 The local control script, unmodified converter outputs, comparison report and
 fresh disassembly are under `build/link/probe_cpe_input.py` and
-`build/link/cpe-input-experiment/`. They are experimental build artifacts,
-not an alternate production link path.
+`build/link/cpe-input-experiment/`. They are ignored experimental artifacts.
 
 The relevant PSYLINK flags were checked separately against the same native
 object, original libraries and linker command file. PSYLINK 1.17 with `/c`
@@ -443,7 +445,7 @@ control produces the retail CPE-prefix tail. The local results are under
 
 That control command did not classify the sections into a BSS group, so its
 identical `/z` result does not establish how `/z` behaves on properly declared
-BSS. The current native link uses `bssdata group bss` and assigns both `.sbss`
+BSS. The retired native link used `bssdata group bss` and assigned both `.sbss`
 and `.bss` to it. An independent control with an 8192-byte uninitialized C
 buffer confirms that PSYLINK allocates the buffer without outputting its
 contents. The original CPE2X still supplies the final page padding.
@@ -490,12 +492,12 @@ alone. The machine-readable local audit is `build/link/disc-metadata.json`.
 
 ### Diagnostic and DOS process-history experiments
 
-Ten isolated DOSBox-X controls used the unchanged production `U0000.OBJ`,
+Ten isolated DOSBox-X controls used the experiment's unchanged `U0000.OBJ`,
 SDK archives, PSYLINK 1.17 and CPE2X 1.3. The full-chain case regenerated
-`U0000.OBJ` with preserved ASPSX 1.07 from the unchanged assembly. Each case
+`U0000.OBJ` with the separate ASPSX 1.07 from the unchanged assembly. Each case
 removed its output EXE first; linker cases also removed their CPE/MAP/SYM
-outputs. All generated CPEs matched the production CPE hash, and every EXE
-body matched the production body. No retail bytes were supplied to the tools.
+outputs. All generated CPEs matched the baseline CPE hash, and every EXE
+body matched the baseline body. No retail bytes were supplied to the tools.
 
 | DOS execution history | Header differences from converter-only control |
 | --- | --- |
@@ -540,19 +542,19 @@ output bytes in this execution; the converter's own intervening calls did.
 
 Two explicit return-address examples are stronger than a resemblance test:
 
-| EXE offsets | Last write before header construction | Current output | Retail PSX |
+| EXE offsets | Last write before header construction | Experiment output | Retail PSX |
 | --- | --- | --- | --- |
 | `0e–0f` | `call 27a3` at converter image offset `1d6d` pushes return offset `1d70` | `70 1d` | `63 6f` (`co`) |
 | `80–81` | `call 1462` at converter image offset `158b` pushes return offset `158e` | `8e 15` | `04 02` |
 
-Both current values agree with DOSBox output. Reusing earlier linker memory
+Both experiment values agree with DOSBox output. Reusing earlier linker memory
 cannot change the return offsets pushed by those instructions on this path.
 The complete trace attributes the 52 bytes to 26 two-byte writes, chiefly
 argument/register pushes and call return addresses, plus local-variable
 stores. The JSON summary records each instruction and affected header offsets.
 
 The Unicorn harness has a synthetic DOS memory layout and allocation policy;
-its result differs from the DOSBox production header in 18 of the already
+its result differs from the DOSBox experiment header in 18 of the already
 identified uninitialized positions. All initialized header bytes and the
 entire body agree. It establishes the original code's write origins on the
 tested path, not an exact DOSBox or historical memory-layout reproduction.
@@ -574,10 +576,10 @@ hashes and differing offsets. `build/link/printf-trace/{redirected,console,
 redirected-a5,redirected-5a}.json` records stage snapshots, DOS writes and
 last writers. `build/link/printf-trace/summary.json` records the verification
 and instruction-to-byte mapping. The scripts and reports are local experiment
-artifacts under ignored `build/`, not installed build tools. Production input
-and EXE hashes remained unchanged.
+artifacts under ignored `build/`. Baseline input and EXE hashes remained
+unchanged during the experiment.
 
-These results make reproducing retail by merely running our current tools
+These results make reproducing retail by merely running those mixed tools
 in the same DOS session unsupported. A different converter implementation or
 an independently evidenced alternate execution/processing path remains to be
 found; the retail diagnostic fragments alone do not supply that recipe.
@@ -593,23 +595,23 @@ That control executes the **unchanged x86 header routine and its actual
 strcpy** in Unicorn with two different stack fills (`a5` and `5a`). Only
 printf and file I/O are stubbed. Both executions preserve exactly the same
 52 input bytes, matching every PSX difference below `88`. This proves the
-write mask, not the full DOS process's earlier memory history. The current
-converter bytes, production CPE, and production EXE are not modified.
+write mask, not the full DOS process's earlier memory history. The retained
+converter, CPE, and EXE artifacts were not modified by this control.
 
 The remaining historical questions are the exact source of the prior memory
 contents and the writer behavior that places the additional CPE fragment at
 `88`. No bytes are synthesized into production output to hide either issue.
 
-### Native-link verification boundary
+### Retired native-link verification boundary
 
-`tests/test_executable.py` compiles two independent C source units and links
-native objects with the unchanged SDK archives, with retail access disabled.
-It verifies original CPE records against the unchanged EXE, and separately
-checks that an undefined source symbol fails without synthesized storage,
-retail fallback or a stale executable. CPE inspection rejects truncated or
-unknown records, and file comparison includes the whole header and tail.
+The removed native-link tests compiled two independent C source units and
+linked their objects with the Release 2.5 archives while retail access was
+disabled. They verified CPE records against the unchanged EXE and checked that
+an undefined source symbol failed without synthesized storage, retail fallback
+or a stale executable. The current `tests/test_executable.py` retains only the
+complete-file and comparison-only controls.
 
 The exact initialized PSX comparison is independent of the ELF-based
-objdiff analysis path. Neither a successful native link nor an exact game
-function establishes complete-file equality. The converter experiments did
-not modify production inputs or outputs and did not execute the game.
+objdiff analysis path. The experiment's successful native link did not
+establish complete-file equality, and none of its converter probes executed
+the game.

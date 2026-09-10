@@ -1,4 +1,4 @@
-# Reviewed complete-object matches too small for the 32-byte section matcher.
+# Reviewed complete code-section matches too small for the 32-byte section matcher.
 image	va	object_size	library	module	name	note
 PSX.EXE	0x800101c4	0x10	LIBAPI.LIB	A36	EnterCriticalSection	all 16 member bytes match
 PSX.EXE	0x800101d4	0x10	LIBAPI.LIB	C113	_96_init	all 16 member bytes match
@@ -8,3 +8,82 @@ PSX.EXE	0x80010204	0x10	LIBAPI.LIB	C67	Exec	all 16 member bytes match
 PSX.EXE	0x80010214	0x10	LIBAPI.LIB	C114	_96_remove	all 16 member bytes match
 GAME.EXE	0x800502dc	0x10	LIBAPI.LIB	C51	malloc	all 12 function bytes plus four following zero padding bytes match the full 16-byte member
 OPEN.EXE	0x80030050	0x10	LIBAPI.LIB	C51	malloc	all 12 function bytes plus four following zero padding bytes match the full 16-byte member
+GAME.EXE	0x8005035c	0x10	LIBAPI.LIB	A02	SetRCnt	all 16 member bytes match, including the return delay slot and member padding
+OPEN.EXE	0x800300c0	0x10	LIBAPI.LIB	A02	SetRCnt	all 16 member bytes match, including the return delay slot and member padding
+GAME.EXE	0x80055800	0x10	LIBAPI.LIB	A03	GetRCnt	all 16 member bytes match, including the return delay slot and member padding
+OPEN.EXE	0x800354e4	0x10	LIBAPI.LIB	A03	GetRCnt	all 16 member bytes match, including the return delay slot and member padding
+GAME.EXE	0x8005044c	0x10	LIBAPI.LIB	A04	StartRCnt	all 16 member bytes match, including the return delay slot and member padding
+OPEN.EXE	0x80030170	0x10	LIBAPI.LIB	A04	StartRCnt	all 16 member bytes match, including the return delay slot and member padding
+GAME.EXE	0x8005043c	0x10	LIBAPI.LIB	A06	ResetRCnt	all 16 member bytes match, including the return delay slot and member padding
+OPEN.EXE	0x80030160	0x10	LIBAPI.LIB	A06	ResetRCnt	all 16 member bytes match, including the return delay slot and member padding
+GAME.EXE	0x800503ac	0x10	LIBAPI.LIB	A07	DeliverEvent	all 16 member bytes match, including the return delay slot and member padding
+OPEN.EXE	0x800300f0	0x10	LIBAPI.LIB	A07	DeliverEvent	all 16 member bytes match, including the return delay slot and member padding
+GAME.EXE	0x8005045c	0x10	LIBAPI.LIB	A08	OpenEvent	all 16 member bytes match, including the return delay slot and member padding
+OPEN.EXE	0x80030180	0x10	LIBAPI.LIB	A08	OpenEvent	all 16 member bytes match, including the return delay slot and member padding
+GAME.EXE	0x8005023c	0x10	LIBAPI.LIB	A09	CloseEvent	all 16 member bytes match, including the return delay slot and member padding
+OPEN.EXE	0x80030010	0x10	LIBAPI.LIB	A09	CloseEvent	all 16 member bytes match, including the return delay slot and member padding
+GAME.EXE	0x800504bc	0x10	LIBAPI.LIB	A11	TestEvent	all 16 member bytes match, including the return delay slot and member padding
+OPEN.EXE	0x800301b0	0x10	LIBAPI.LIB	A11	TestEvent	all 16 member bytes match, including the return delay slot and member padding
+GAME.EXE	0x800502bc	0x10	LIBAPI.LIB	A12	EnableEvent	all 16 member bytes match, including the return delay slot and member padding
+OPEN.EXE	0x80030040	0x10	LIBAPI.LIB	A12	EnableEvent	all 16 member bytes match, including the return delay slot and member padding
+GAME.EXE	0x8005038c	0x10	LIBAPI.LIB	A13	DisableEvent	all 16 member bytes match, including the return delay slot and member padding
+OPEN.EXE	0x800300e0	0x10	LIBAPI.LIB	A13	DisableEvent	all 16 member bytes match, including the return delay slot and member padding
+GAME.EXE	0x800502ec	0x10	LIBAPI.LIB	A20	StopPAD	all 16 member bytes match, including the return delay slot and member padding
+OPEN.EXE	0x80030060	0x10	LIBAPI.LIB	A20	StopPAD	all 16 member bytes match, including the return delay slot and member padding
+GAME.EXE	0x800503cc	0x10	LIBAPI.LIB	A21	PAD_init	all 16 member bytes match, including the return delay slot and member padding
+OPEN.EXE	0x80030110	0x10	LIBAPI.LIB	A21	PAD_init	all 16 member bytes match, including the return delay slot and member padding
+GAME.EXE	0x8005025c	0x10	LIBAPI.LIB	A22	PAD_dr	all 16 member bytes match, including the return delay slot and member padding
+OPEN.EXE	0x80030020	0x10	LIBAPI.LIB	A22	PAD_dr	all 16 member bytes match, including the return delay slot and member padding
+GAME.EXE	0x8005050c	0x10	LIBAPI.LIB	A23	ReturnFromException	all 16 member bytes match, including the return delay slot and member padding
+OPEN.EXE	0x800301f0	0x10	LIBAPI.LIB	A23	ReturnFromException	all 16 member bytes match, including the return delay slot and member padding
+GAME.EXE	0x800503bc	0x10	LIBAPI.LIB	A25	HookEntryInt	all 16 member bytes match, including the return delay slot and member padding
+OPEN.EXE	0x80030100	0x10	LIBAPI.LIB	A25	HookEntryInt	all 16 member bytes match, including the return delay slot and member padding
+GAME.EXE	0x8005046c	0x10	LIBAPI.LIB	A32	UnDeliverEvent	all 16 member bytes match, including the return delay slot and member padding
+GAME.EXE	0x800504cc	0x10	LIBAPI.LIB	A37	ExitCriticalSection	all 16 member bytes match, including the return delay slot and member padding
+OPEN.EXE	0x800301c0	0x10	LIBAPI.LIB	A37	ExitCriticalSection	all 16 member bytes match, including the return delay slot and member padding
+GAME.EXE	0x800504dc	0x10	LIBAPI.LIB	A50	open	all 16 member bytes match, including the return delay slot and member padding
+GAME.EXE	0x8005027c	0x10	LIBAPI.LIB	A51	lseek	all 16 member bytes match, including the return delay slot and member padding
+GAME.EXE	0x8005047c	0x10	LIBAPI.LIB	A52	read	all 16 member bytes match, including the return delay slot and member padding
+GAME.EXE	0x800502ac	0x10	LIBAPI.LIB	A53	write	all 16 member bytes match, including the return delay slot and member padding
+GAME.EXE	0x8005029c	0x10	LIBAPI.LIB	A54	close	all 16 member bytes match, including the return delay slot and member padding
+GAME.EXE	0x800504ec	0x10	LIBAPI.LIB	A56	exit	all 16 member bytes match, including the return delay slot and member padding
+OPEN.EXE	0x800301d0	0x10	LIBAPI.LIB	A56	exit	all 16 member bytes match, including the return delay slot and member padding
+GAME.EXE	0x800503ec	0x10	LIBAPI.LIB	A61	putchar	all 16 member bytes match, including the return delay slot and member padding
+OPEN.EXE	0x80030130	0x10	LIBAPI.LIB	A61	putchar	all 16 member bytes match, including the return delay slot and member padding
+GAME.EXE	0x800502fc	0x10	LIBAPI.LIB	A65	format	all 16 member bytes match, including the return delay slot and member padding
+GAME.EXE	0x800502cc	0x10	LIBAPI.LIB	A69	delete	all 16 member bytes match, including the return delay slot and member padding
+GAME.EXE	0x8005037c	0x10	LIBAPI.LIB	A74	InitCARD	all 16 member bytes match, including the return delay slot and member padding
+GAME.EXE	0x8005041c	0x10	LIBAPI.LIB	A75	StartCARD	all 16 member bytes match, including the return delay slot and member padding
+GAME.EXE	0x8005039c	0x10	LIBAPI.LIB	A76	StopCARD	all 16 member bytes match, including the return delay slot and member padding
+GAME.EXE	0x800504ac	0x10	LIBAPI.LIB	A80	_new_card	all 16 member bytes match, including the return delay slot and member padding
+GAME.EXE	0x8005042c	0x10	LIBAPI.LIB	C112	_bu_init	all 16 member bytes match, including the return delay slot and member padding
+GAME.EXE	0x8005024c	0x10	LIBAPI.LIB	C171	_card_info	all 16 member bytes match, including the return delay slot and member padding
+GAME.EXE	0x8005028c	0x10	LIBAPI.LIB	C173	_card_auto	all 16 member bytes match, including the return delay slot and member padding
+GAME.EXE	0x8005033c	0x10	LIBAPI.LIB	C19	setjmp	all 16 member bytes match, including the return delay slot and member padding
+OPEN.EXE	0x800300a0	0x10	LIBAPI.LIB	C19	setjmp	all 16 member bytes match, including the return delay slot and member padding
+GAME.EXE	0x800503dc	0x10	LIBAPI.LIB	C20	longjmp	all 16 member bytes match, including the return delay slot and member padding
+OPEN.EXE	0x80030120	0x10	LIBAPI.LIB	C20	longjmp	all 16 member bytes match, including the return delay slot and member padding
+GAME.EXE	0x8005031c	0x10	LIBAPI.LIB	C21	strcat	all 16 member bytes match, including the return delay slot and member padding
+OPEN.EXE	0x80030080	0x10	LIBAPI.LIB	C21	strcat	all 16 member bytes match, including the return delay slot and member padding
+GAME.EXE	0x8005034c	0x10	LIBAPI.LIB	C23	strcmp	all 16 member bytes match, including the return delay slot and member padding
+OPEN.EXE	0x800300b0	0x10	LIBAPI.LIB	C23	strcmp	all 16 member bytes match, including the return delay slot and member padding
+GAME.EXE	0x800503fc	0x10	LIBAPI.LIB	C24	strncmp	all 16 member bytes match, including the return delay slot and member padding
+OPEN.EXE	0x80030140	0x10	LIBAPI.LIB	C24	strncmp	all 16 member bytes match, including the return delay slot and member padding
+GAME.EXE	0x8005036c	0x10	LIBAPI.LIB	C25	strcpy	all 16 member bytes match, including the return delay slot and member padding
+OPEN.EXE	0x800300d0	0x10	LIBAPI.LIB	C25	strcpy	all 16 member bytes match, including the return delay slot and member padding
+GAME.EXE	0x800555c0	0x10	LIBAPI.LIB	C27	strlen	all 16 member bytes match, including the return delay slot and member padding
+OPEN.EXE	0x800352a4	0x10	LIBAPI.LIB	C27	strlen	all 16 member bytes match, including the return delay slot and member padding
+GAME.EXE	0x8005030c	0x10	LIBAPI.LIB	C43	memset	all 16 member bytes match, including the return delay slot and member padding
+OPEN.EXE	0x80030070	0x10	LIBAPI.LIB	C43	memset	all 16 member bytes match, including the return delay slot and member padding
+GAME.EXE	0x800555d0	0x10	LIBAPI.LIB	C44	memmove	all 16 member bytes match, including the return delay slot and member padding
+OPEN.EXE	0x800352b4	0x10	LIBAPI.LIB	C44	memmove	all 16 member bytes match, including the return delay slot and member padding
+GAME.EXE	0x800555b0	0x10	LIBAPI.LIB	C46	memchr	all 16 member bytes match, including the return delay slot and member padding
+OPEN.EXE	0x80035294	0x10	LIBAPI.LIB	C46	memchr	all 16 member bytes match, including the return delay slot and member padding
+GAME.EXE	0x8005049c	0x10	LIBAPI.LIB	C47	rand	all 16 member bytes match, including the return delay slot and member padding
+OPEN.EXE	0x800301a0	0x10	LIBAPI.LIB	C47	rand	all 16 member bytes match, including the return delay slot and member padding
+GAME.EXE	0x8005048c	0x10	LIBAPI.LIB	C52	free	all 16 member bytes match, including the return delay slot and member padding
+OPEN.EXE	0x80030190	0x10	LIBAPI.LIB	C52	free	all 16 member bytes match, including the return delay slot and member padding
+GAME.EXE	0x8005032c	0x10	LIBAPI.LIB	C63	printf	all 16 member bytes match, including the return delay slot and member padding
+OPEN.EXE	0x80030090	0x10	LIBAPI.LIB	C63	printf	all 16 member bytes match, including the return delay slot and member padding
+GAME.EXE	0x80052990	0x10	LIBAPI.LIB	C73	GPU_cw	all 16 member bytes match, including the return delay slot and member padding
+OPEN.EXE	0x80032674	0x10	LIBAPI.LIB	C73	GPU_cw	all 16 member bytes match, including the return delay slot and member padding

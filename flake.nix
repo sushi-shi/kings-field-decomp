@@ -41,12 +41,6 @@
         hash = "sha256-SaLzzryjqEIclPHeQ7nSDnN1CwQrCDHdKxcy0o+Ud4M=";
       };
 
-      gcc260Disk = pkgs.fetchurl {
-        name = "psyq-gnu-c-compiler-2.60-disk-1.img";
-        url = "https://archive.org/download/ps1_sdks/GNU%20C%20Compiler%20Version%202.60%20%28World%29%20%28Disk%201%29.img";
-        hash = "sha256-B6+f7NFIzUI0Ec65En7T8+kUmhFRoaJU3z4rjwwzuuc=";
-      };
-
       # Native Decompals rebuild used only as a practical code-generation probe.
       # It corresponds to GCC 2.6.0's PSX target, but is not evidence that this
       # rebuilt host binary (or either staged historical 2.6.0 binary) built KF.
@@ -79,9 +73,9 @@
         chmod +x "$out/bin"/*
       '';
 
-      # Keep the verifier/stager in the default shell so the historical tools
-      # are an actual first-load dependency, not a README-only prerequisite.
-      psyqToolchain = pkgs.runCommand "kings-field-toolchain-psyq-candidates" {
+      # The one active historical SDK is the complete pinned Release 2.5 media
+      # tree. Analysis programs below do not enter this derivation.
+      psyqSdk = pkgs.runCommand "kings-field-psyq-release-2.5-sdk" {
         nativeBuildInputs = with pkgs; [
           binutils
           coreutils
@@ -92,22 +86,9 @@
         ];
       } ''
         export PSYQ_FLOPPIES_RAR="${floppies}"
-        export PSYQ_GCC260_IMG="${gcc260Disk}"
         python3 ${./scripts/create-toolchain.py} \
           --work-dir "$TMPDIR/toolchain-work" \
           --stage-dir "$out"
-      '';
-
-      aspsxArchive = pkgs.fetchurl {
-        name = "aspsx-binaries.tar.gz";
-        url = "https://github.com/mkst/maspsx/releases/download/aspsx/aspsx-binaries.tar.gz";
-        hash = "sha256-fHU4wq+SMzjdxaevXFfSgLGTBmDpj5xDDm6iq3XlLno=";
-      };
-      aspsxNative = pkgs.runCommand "kings-field-aspsx-native" {
-        nativeBuildInputs = [ pkgs.gnutar pkgs.gzip ];
-      } ''
-        mkdir -p "$out"
-        tar -xzf ${aspsxArchive} -C "$out" ./1.07/ASPSX.EXE
       '';
 
       psy-k = pkgs.rustPlatform.buildRustPackage {
@@ -350,7 +331,7 @@
           cd "$repo"
           exec python3 -m scripts.kf.seed_vendored_functions \
             --psyk ${psy-k}/bin/psyk \
-            --sdk-lib-dir ${psyqToolchain}/psyq/lib \
+            --sdk-lib-dir "${psyqSdk}/release-2.5/isa board/PSXLIB/LIB" \
             --signature-dir ${ghidraPsxLoader}/lib/ghidra/Ghidra/Extensions/ghidra_psx_ldr/data/psyq/260 \
             "$@"
         '';
@@ -364,7 +345,7 @@
           cd "$repo"
           exec python3 -m scripts.kf.fid_census \
             --psyk ${psy-k}/bin/psyk \
-            --sdk-lib-dir ${psyqToolchain}/psyq/lib \
+            --sdk-lib-dir "${psyqSdk}/release-2.5/isa board/PSXLIB/LIB" \
             "$@"
         '';
       };
@@ -443,7 +424,7 @@
       shell = pkgs.mkShell {
         name = "kings-field";
         packages = [
-          psyqToolchain
+          psyqSdk
           psy-k
           pkgs.dosbox-x
           maspsx
@@ -516,17 +497,14 @@
 
         shellHook = ''
           export KINGS_FIELD_DIR="$(git rev-parse --show-toplevel 2>/dev/null || echo "$PWD")"
-          export PSYQ_DIR="${psyqToolchain}"
-          export PSYQ_ASPSX="${aspsxNative}/1.07/ASPSX.EXE"
-          export PSYQ_BIN="$PSYQ_DIR/psyq/bin"
-          export PSYQ_INCLUDE="$PSYQ_DIR/psyq/include"
-          export PSYQ_LIB="$PSYQ_DIR/psyq/lib"
-          # Exact compiler attribution is not yet proven. Keep all three
-          # candidates available for code-generation fingerprint tests; these
-          # are alternatives, not a claim that King's Field used all of them.
-          export PSYQ_GCC241_DIR="$PSYQ_DIR/compilers/gcc-2.4.1"
-          export PSYQ_GCC260_RELEASE25_DIR="$PSYQ_DIR/compilers/gcc-2.6.0-release-2.5"
-          export PSYQ_GCC260_DISK_DIR="$PSYQ_DIR/compilers/gcc-2.6.0-disk-1"
+          unset PSYQ_DIR PSYQ_ASPSX PSYQ_GCC241_DIR PSYQ_GCC260_RELEASE25_DIR
+          unset PSYQ_GCC260_DISK_DIR PSYQ_GCC260_IMG
+          export PSYQ_SDK="${psyqSdk}/release-2.5"
+          export PSYQ_BIN="$PSYQ_SDK/isa board/PSXBIN/BIN"
+          export PSYQ_INCLUDE="$PSYQ_SDK/isa board/PSXLIB/INCLUDE"
+          export PSYQ_LIB="$PSYQ_SDK/isa board/PSXLIB/LIB"
+          export PSYQ_H2000_LIB="$PSYQ_SDK/H2000/LIB2000"
+          export PSYQ_COMPILER="$PSYQ_SDK/compiler"
           export KF_GCC260_NATIVE="${gcc260Native}"
           export KF_GCC257_NATIVE="${gcc257Native}"
           export GHIDRA_INSTALL_DIR="${pkgs.ghidra}/lib/ghidra"
@@ -539,11 +517,11 @@
 
           ${kfCli}/bin/kf clangd >&2 || echo "[kings-field] clangd setup failed; run kf clangd after fixing the reported error" >&2
 
-          echo "[kings-field] Psy-Q candidates: $PSYQ_DIR" >&2
-          echo "[kings-field] compiler probes : GCC 2.4.1; two distinct GCC 2.6.0 builds" >&2
-          echo "[kings-field] native C probes  : cc1psx-260/cpppsx-260 and cc1psx-257/cpppsx-257 (Decompals rebuild 0.17)" >&2
+          echo "[kings-field] SDK             : Psy-Q Release 2.5; one complete pinned media tree" >&2
+          echo "[kings-field] SDK assembler   : preserved but software-key locked; no substitute" >&2
+          echo "[kings-field] compiler probes : cc1psx-260/cpppsx-260 and cc1psx-257/cpppsx-257 (analysis only)" >&2
           echo "[kings-field] analysis        : ghidra + PSX loader, pyghidra, psy-k, radare2, mipsel binutils" >&2
-          echo "[kings-field] executable link : ASPSX 1.07 + PSYLINK 1.17 + CPE2X; original SDK libraries" >&2
+          echo "[kings-field] executable link : unavailable until the pinned SDK assembler can run" >&2
           echo "[kings-field] objdiff objects : maspsx + mipsel-linux-gnu-as" >&2
           echo "[kings-field] Python RE stack : run 'kf-python-sync' once, then 'splat ...'" >&2
           echo "[kings-field] retail census   : kf-retail-validate; kf-function-audit/propose; kf-fid-census; kf-vendored-seed" >&2
@@ -552,17 +530,18 @@
         '';
       };
 
-      toolchainTests = pkgs.runCommand "kings-field-toolchain-tests" {
+      sdkBuilderTests = pkgs.runCommand "kings-field-sdk-builder-tests" {
         nativeBuildInputs = [
           analysisPython mipsBinutilsAliases psy-k objdiff-cli pkgs.dosbox-x
           cc1psx257 cpppsx257 maspsx
           pkgs.llvmPackages.clang-unwrapped
         ];
         GHIDRA_PSX_LOADER = "${ghidraPsxLoader}/lib/ghidra/Ghidra/Extensions/ghidra_psx_ldr";
-        PSYQ_LIB = "${psyqToolchain}/psyq/lib";
-        PSYQ_INCLUDE = "${psyqToolchain}/psyq/include";
-        PSYQ_BIN = "${psyqToolchain}/psyq/bin";
-        PSYQ_ASPSX = "${aspsxNative}/1.07/ASPSX.EXE";
+        PSYQ_SDK = "${psyqSdk}/release-2.5";
+        PSYQ_LIB = "${psyqSdk}/release-2.5/isa board/PSXLIB/LIB";
+        PSYQ_H2000_LIB = "${psyqSdk}/release-2.5/H2000/LIB2000";
+        PSYQ_INCLUDE = "${psyqSdk}/release-2.5/isa board/PSXLIB/INCLUDE";
+        PSYQ_BIN = "${psyqSdk}/release-2.5/isa board/PSXBIN/BIN";
       } ''
         mkdir project
         cp -r ${./scripts} project/scripts
@@ -650,8 +629,9 @@
           psy-k
         ];
         PSYLINK_DOSBOX = "${pkgs.dosbox-x}/bin/dosbox-x";
-        PSYQ_BIN = "${psyqToolchain}/psyq/bin";
-        PSYQ_LIB = "${psyqToolchain}/psyq/lib";
+        PSYQ_BIN = "${psyqSdk}/release-2.5/isa board/PSXBIN/BIN";
+        PSYQ_LIB = "${psyqSdk}/release-2.5/isa board/PSXLIB/LIB";
+        PSYQ_H2000_LIB = "${psyqSdk}/release-2.5/H2000/LIB2000";
       } ''
         export HOME="$TMPDIR/home"
         export XDG_CONFIG_HOME="$TMPDIR/config"
@@ -682,8 +662,8 @@
         gcc257Debug = gcc257Probe.debug;
         gcc257Instrumented = gcc257Probe.instrumented;
         gcc257Source = gcc257Probe.source;
-        inherit psyqToolchain psy-k maspsx gcc260Native cc1psx260 cpppsx260 gcc257Native cc1psx257 cpppsx257 mipsBinutilsAliases ghidraPsxLoader ghidraWithPlugins objdiff-cli objdiff retailValidate retailSeed functionAudit functionPropose vendoredSeed fidCensus retailDelink objdiffProject objdiffReport sourceCompile kfCli;
-        default = psyqToolchain;
+        inherit psyqSdk psy-k maspsx gcc260Native cc1psx260 cpppsx260 gcc257Native cc1psx257 cpppsx257 mipsBinutilsAliases ghidraPsxLoader ghidraWithPlugins objdiff-cli objdiff retailValidate retailSeed functionAudit functionPropose vendoredSeed fidCensus retailDelink objdiffProject objdiffReport sourceCompile kfCli;
+        default = psyqSdk;
       };
 
       devShells.${system} = {
@@ -697,8 +677,8 @@
       };
 
       checks.${system} = {
-        toolchain = psyqToolchain;
-        toolchain-builder-tests = toolchainTests;
+        sdk = psyqSdk;
+        sdk-builder-tests = sdkBuilderTests;
         gcc257-trace = gcc257TraceTests;
         ghidra-psx-loader = ghidraPsxLoader;
         ghidra-psx-loader-discovery = ghidraPluginTests;

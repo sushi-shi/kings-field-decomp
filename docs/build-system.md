@@ -100,10 +100,11 @@ name inside the unit and reports the `.data`/`.bss` sections next to the
 functions; progress and banking still count functions only.
 
 Profile names are deliberately non-attributive. `probe-gcc260-o2-g0` keeps
-the original GCC 2.6.0/maspsx route reproducible; `probe-gcc257-o2-g0` is the
-default for new units because the GCC 2.5.7 rebuild natively emits the retail
-framed epilogue and load hoisting, and its `maspsx_flags = ["--expand-div"]`
-selects the checked `div` expansion retail contains. Neither name claims that
+the older GCC 2.6.0/maspsx analysis route reproducible;
+`probe-gcc257-o2-g0` is the default for new units because the GCC 2.5.7 rebuild
+natively emits the retail framed epilogue and load hoisting, and its
+`maspsx_flags = ["--expand-div"]` selects the checked `div` expansion retail
+contains. Neither name claims that
 the historical compiler, optimization profile, assembler, or linker is proven;
 the evidence and corpus numbers are in
 [`patterns/gcc257-epilogue-and-scheduling.md`](patterns/gcc257-epilogue-and-scheduling.md).

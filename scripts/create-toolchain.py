@@ -1,10 +1,10 @@
 #!/usr/bin/env python3
-"""Build the hash-pinned King's Field Psy-Q candidate toolchain.
+"""Stage the single hash-pinned Psy-Q Release 2.5 SDK.
 
-The exact compiler/linker tuple used for King's Field is not proven.  This
-builder therefore preserves the complete Release 2.5 host-tool installation,
-both compiler frontends found beside it (GCC 2.4.1 and GCC 2.6.0), and the
-independent GNU C 2.60 disk as separate, named candidates.
+The exact SDK revision used for King's Field is not proven.  Release 2.5 is the
+repository's one active historical SDK baseline, preserved as one source-media
+tree.  Compiler and assembler replacements used for matching are analysis
+tools and never enter this staged SDK.
 
 Entry point:
 
@@ -16,7 +16,6 @@ Entry point:
 from __future__ import annotations
 
 import argparse
-import gzip
 import hashlib
 import os
 import shutil
@@ -50,18 +49,9 @@ MEDIA = {
         sha256="49a2f3cebca3a8421c94f1de43b9d20e73750b042b0831dd2b1732d28f947783",
         url="https://archive.org/download/ps1_sdks/Floppies.rar",
     ),
-    "gcc-2.60-disk-1": Medium(
-        env="PSYQ_GCC260_IMG",
-        filename="GNU C Compiler Version 2.60 (World) (Disk 1).img",
-        sha256="07af9fecd148cd423411ceb9127ed3f3e9149a1151a1a254df3e2b8f0c33bae7",
-        url=(
-            "https://archive.org/download/ps1_sdks/"
-            "GNU%20C%20Compiler%20Version%202.60%20%28World%29%20%28Disk%201%29.img"
-        ),
-    ),
 }
 
-# These gates bind the staged candidate to the exact files used by the
+# These gates bind the staged SDK to the exact files used by the
 # attribution investigation.  They are not claims that King's Field used every
 # file, nor that the surrounding Release 2.5 distribution is the exact SDK.
 EXPECTED_RELEASE25_FILES = {
@@ -95,6 +85,15 @@ EXPECTED_RELEASE25_FILES = {
     "isa board/PSXLIB/LIB/LIBCD.LIB": (
         "d05f3b1d730f4b8b63ba7231abaa7fb4289121902581f8649d411cdcbd854de3"
     ),
+    "isa board/PSXLIB/LIB/CARD.OBJ": (
+        "4ab0873cddbf26d99aded93f8b654c861f44409cee408b3bff7026fc59665387"
+    ),
+    "isa board/PSXLIB/LIB/LIBAPI.LIB": (
+        "1f4afdb983d445d53c3632b882165e9c85e0db372734e19c263ee9ee7dd92dfb"
+    ),
+    "isa board/PSXLIB/LIB/LIBETC.LIB": (
+        "571cfbbc00c34e3f1f0fd19eb54ba88ae1a15d1ba3bcb0d30e9d0fcfe42bc7be"
+    ),
     "isa board/PSXLIB/LIB/LIBSPU.LIB": (
         "24a6abb704a07f9e97f9c5c227c118d0beff642924edcbef43ff23bc565864d6"
     ),
@@ -107,14 +106,33 @@ EXPECTED_RELEASE25_FILES = {
     "isa board/PSXLIB/LIB/LIBGPU.LIB": (
         "66c22a78268ba8cb72a7e7703dafa07b44aa686e9708df00e9f6d3f8a9e52a01"
     ),
+    "isa board/PSXLIB/LIB/LIBGS.LIB": (
+        "e9d5f75c5e638300a513fabc6f55e36536f8e810b9e8312d429265eb709e13d7"
+    ),
     "isa board/PSXLIB/LIB/LIBSN.LIB": (
         "2f85afd0ea6dbd55c889ceda2cf6bd821ddad06246c20d7a55902d4dad7d791d"
     ),
-}
-
-EXPECTED_GCC260_DISK_FILES = {
-    "CC1PSX": "6587ed37f9f8795f8e47601d3a71167e93c832959f2f314e08d11c53be04661e",
-    "CPPPSX": "69e0b24ef219119200298ed450d5c8342529ee153f498a25c2166fea663c20d1",
+    "isa board/PSXLIB/LIB/LIBPRESS.LIB": (
+        "1440e132a157faa009e0b2d62d9ef85929550c0700dd8184492ca5eec336fad7"
+    ),
+    "isa board/PSXLIB/LIB/MALLOC.OBJ": (
+        "628e405fd0e3acfff2ce9d4a15d481f0aa36398c14e9eae0a82b7ff0a86a74c9"
+    ),
+    "H2000/LIB2000/2MBYTE.OBJ": (
+        "b4ed8b2e76bc841f7a81132906d846877aefa8f6233fb738600c8b1ebd032a46"
+    ),
+    "H2000/LIB2000/8MBYTE.OBJ": (
+        "0c0ccb91c6d059a88b5ec5ac8f34c65a717c636a911247c31faa0df4ae2e599e"
+    ),
+    "H2000/LIB2000/LIBAPI.LIB": (
+        "4bc72902080ef75ffbbbe35820d89c0ea721e7d4d8187276bffd43ff341a3f5f"
+    ),
+    "H2000/LIB2000/NONE2.OBJ": (
+        "38662381b57cdbebb8d083842fd23914bad1d4c66303beb871f2f5248c38774c"
+    ),
+    "demo/CARD/CARD.OBJ": (
+        "4ab0873cddbf26d99aded93f8b654c861f44409cee408b3bff7026fc59665387"
+    ),
 }
 
 TOOL_VERSION_MARKERS = {
@@ -127,7 +145,7 @@ TOOL_VERSION_MARKERS = {
 
 
 def log(message: str) -> None:
-    print(f"[toolchain] {message}", flush=True)
+    print(f"[sdk] {message}", flush=True)
 
 
 def run(command: list[str], **kwargs: object) -> subprocess.CompletedProcess[bytes]:
@@ -201,22 +219,10 @@ def extract_archive(source: Path, destination: Path) -> None:
     )
 
 
-def extract_gzip(source: Path, destination: Path) -> None:
-    with gzip.open(source, "rb") as compressed, destination.open("wb") as output:
-        shutil.copyfileobj(compressed, output)
-
-
 def copy_tree(source: Path, destination: Path) -> None:
     if not source.is_dir():
         raise RuntimeError(f"required directory is absent: {source}")
     shutil.copytree(source, destination, dirs_exist_ok=True)
-
-
-def copy_file(source: Path, destination: Path) -> None:
-    if not source.is_file():
-        raise RuntimeError(f"required file is absent: {source}")
-    destination.parent.mkdir(parents=True, exist_ok=True)
-    shutil.copyfile(source, destination)
 
 
 def verify_release25(root: Path) -> None:
@@ -240,88 +246,31 @@ def verify_release25(root: Path) -> None:
 
 
 def stage_release25(root: Path, stage: Path) -> None:
-    log("staging the Release 2.5 Psy-Q host tools, headers, and libraries")
-    copy_tree(resolve_casefold(root, "isa board/PSXBIN/BIN"), stage / "psyq" / "bin")
-    copy_tree(resolve_casefold(root, "isa board/PSXLIB/INCLUDE"), stage / "psyq" / "include")
-    copy_tree(resolve_casefold(root, "isa board/PSXLIB/LIB"), stage / "psyq" / "lib")
-
-    compiler = resolve_casefold(root, "compiler")
-    copy_file(
-        resolve_casefold(compiler, "CC1PSX"),
-        stage / "compilers" / "gcc-2.4.1" / "CC1PSX",
-    )
-    copy_file(
-        resolve_casefold(compiler, "CPPPSX"),
-        stage / "compilers" / "gcc-2.4.1" / "CPPPSX",
-    )
-    copy_file(
-        resolve_casefold(compiler, "CC1PSX.EXE"),
-        stage / "compilers" / "gcc-2.6.0-release-2.5" / "CC1PSX.EXE",
-    )
-    copy_file(
-        resolve_casefold(compiler, "CPPPSX.EXE"),
-        stage / "compilers" / "gcc-2.6.0-release-2.5" / "CPPPSX.EXE",
-    )
-
-    docs_dir = stage / "compilers" / "documentation"
-    for name in (
-        "COPYING.txt",
-        "CPP.TEX",
-        "EXTEND.TEX",
-        "GCC.TEX",
-        "INVOKE.TEX",
-        "Install.txt",
-    ):
-        candidate = resolve_casefold(compiler, name)
-        copy_file(candidate, docs_dir / candidate.name)
-
-
-def stage_gcc260_disk(extracted: Path, stage: Path) -> None:
-    log("decompressing and staging the independent GNU C 2.60 disk")
-    destination = stage / "compilers" / "gcc-2.6.0-disk-1"
-    destination.mkdir(parents=True, exist_ok=True)
-
-    for compressed_name, output_name in (
-        ("CC1PSX.EXZ", "CC1PSX"),
-        ("CPPPSX.EXZ", "CPPPSX"),
-    ):
-        source = resolve_casefold(extracted, compressed_name)
-        output = destination / output_name
-        extract_gzip(source, output)
-        verify_hash(output, EXPECTED_GCC260_DISK_FILES[output_name], output_name)
-        if b"2.6.0" not in output.read_bytes():
-            raise RuntimeError(f"{output_name} from compiler disk lacks GCC 2.6.0 marker")
-
-    for name in ("COPYING", "README.TXT"):
-        source = resolve_casefold(extracted, name)
-        copy_file(source, destination / source.name)
+    log("staging the complete Release 2.5 SDK media tree")
+    copy_tree(root, stage / "release-2.5")
 
 
 def write_attribution(stage: Path) -> None:
-    text = """# King's Field Psy-Q candidate toolchain
+    text = """# Psy-Q Release 2.5 SDK baseline
 
-This directory is a reproducible research input, not a final compiler
-attribution.  Relocation-aware library matching identifies the contemporary
-Sony Psy-Q family strongly, but the exact compiler, assembler, linker build,
-and optimization flags used for King's Field remain unresolved.
+`release-2.5/` is the complete tree extracted from the one hash-pinned Release
+2.5 floppy collection. It is preserved as a coherent SDK baseline rather than
+being combined with tools or files from other distributions.
 
-Preserved candidates:
+All 17 `.LIB`/`.OBJ` paths are present at their source-media locations. This
+includes the general PSXLIB set, the distinct H2000 set, and the demo CARD
+object. The demo CARD object is byte-identical to the general CARD object.
 
-- `psyq/`: host tools, headers, and libraries from the 1994-12-29 Release 2.5
-  floppy collection. Embedded strings identify CCPSX 1.02, PSYLINK 1.17,
-  PSYLIB 1.04, and ASMPSX 1.07. ASPSX is present but key-protected and does not
-  expose a version through the same static string gate.
-- `compilers/gcc-2.4.1/`: extensionless GCC 2.4.1 frontend pair from that
-  collection.
-- `compilers/gcc-2.6.0-release-2.5/`: DOS/COFF GCC 2.6.0 frontend pair found
-  in the same collection.
-- `compilers/gcc-2.6.0-disk-1/`: independently extracted GCC 2.6.0 frontend
-  pair from the GNU C Compiler 2.60 disk. These files are not byte-identical to
-  the Release 2.5 pair and are intentionally kept separate.
+The medium contains CCPSX 1.02, PSYLINK 1.17, PSYLIB 1.04, ASMPSX 1.07 and its
+compiler directory. The extensionless GCC 2.4.1 pair and `.EXE` GCC 2.6.0 pair
+inside that directory are both files from this one medium, not separate SDKs.
+Both supplied assembler executables require the original software key in the
+current DOS environment. No assembler from another archive is substituted.
 
-Do not collapse those alternatives until controlled compile/link probes match
-the retail executables. The original binaries remain proprietary; this output
-is generated from hash-pinned media and must not be committed to Git.
+The exact SDK revision and compiler profile used for King's Field remain
+unproven. Native compiler rebuilds, maspsx, binutils and objdiff in the
+development shell are analysis tools, not members of this SDK. The original
+binaries remain proprietary; this output must not be committed to Git.
 """
     (stage / "ATTRIBUTION.md").write_text(text, encoding="utf-8", newline="\n")
 
@@ -334,7 +283,7 @@ is generated from hash-pinned media and must not be committed to Git.
 def normalize_stage(stage: Path) -> None:
     for path in sorted(stage.rglob("*")):
         if path.is_symlink():
-            raise RuntimeError(f"staged toolchain must not contain symlinks: {path}")
+            raise RuntimeError(f"staged SDK must not contain symlinks: {path}")
         mode = 0o755 if path.is_dir() else 0o644
         path.chmod(mode)
         os.utime(path, (RELEASE_EPOCH, RELEASE_EPOCH), follow_symlinks=False)
@@ -367,17 +316,13 @@ def medium_from_environment(medium: Medium) -> Path:
 
 def build(stage: Path, work: Path) -> None:
     floppies = medium_from_environment(MEDIA["release-2.5"])
-    gcc260 = medium_from_environment(MEDIA["gcc-2.60-disk-1"])
 
     release_extract = work / "release-2.5"
-    disk_extract = work / "gcc-2.60-disk-1"
     extract_archive(floppies, release_extract)
-    extract_archive(gcc260, disk_extract)
 
     release_root = find_release_root(release_extract)
     verify_release25(release_root)
     stage_release25(release_root, stage)
-    stage_gcc260_disk(disk_extract, stage)
     write_attribution(stage)
     write_manifest(stage)
     normalize_stage(stage)
@@ -388,8 +333,8 @@ def parse_args(argv: list[str]) -> argparse.Namespace:
     parser.add_argument(
         "--stage-dir",
         type=Path,
-        default=PROJECT_DIR / "build" / "toolchain",
-        help="stage directly here (default: build/toolchain)",
+        default=PROJECT_DIR / "build" / "sdk",
+        help="stage directly here (default: build/sdk)",
     )
     parser.add_argument("--work-dir", type=Path, help="temporary extraction directory")
     parser.add_argument("--keep-work", action="store_true", help="retain temporary extraction files")
@@ -400,7 +345,7 @@ def main(argv: list[str] | None = None) -> int:
     args = parse_args(sys.argv[1:] if argv is None else argv)
     owned_work = args.work_dir is None
     work = (
-        Path(tempfile.mkdtemp(prefix="kings-field-toolchain-"))
+        Path(tempfile.mkdtemp(prefix="kings-field-sdk-"))
         if owned_work
         else args.work_dir.resolve()
     )
@@ -415,7 +360,7 @@ def main(argv: list[str] | None = None) -> int:
     log(f"stage: {stage}")
     try:
         build(stage, work)
-        log("toolchain initialization complete")
+        log("SDK initialization complete")
     finally:
         if owned_work and not args.keep_work:
             shutil.rmtree(work, ignore_errors=True)

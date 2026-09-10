@@ -1,10 +1,11 @@
 # LNK alignment tags are not ELF byte alignments
 
-The later [PSX executable campaign](executable-byte-provenance.md) now uses ASPSX 1.07
-and PSYLINK directly. It confirms that PSX's compiler `.align 2` becomes native
-LNK tag 8 and four-byte placement, without an ELF section rewrite. Historical
-tool attribution remains open; the measurements and unchanged-state statements
-below describe this earlier SDK-only comparison campaign.
+The now-retired [PSX executable campaign](executable-byte-provenance.md) used
+ASPSX 1.07 from a separate archive and the Release 2.5 PSYLINK directly. It
+confirmed that PSX compiler output using `.align 2` became native LNK tag 8
+and four-byte placement, without an ELF section rewrite. Historical tool
+attribution remains open; the measurements and unchanged-state statements
+below describe that composed comparison campaign.
 
 ## Campaign and evidence boundary
 

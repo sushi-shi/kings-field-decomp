@@ -21,7 +21,7 @@ relocation, or function must never be joined across images by address alone.
 
 The repository still shares everything that should be shared:
 
-- the pinned Psy-Q candidate toolchain and GNU/maspsx assembly route;
+- the single pinned Psy-Q Release 2.5 SDK and separate GNU/maspsx analysis route;
 - platform headers, Sony library declarations, and reconstructed types;
 - analysis scripts and Ghidra configuration;
 - evidence and naming conventions; and

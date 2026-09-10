@@ -295,6 +295,15 @@ def load_release25_symbols(
         archive = sdk_lib_dir / library
         if not archive.is_file():
             raise FileNotFoundError(f"missing Psy-Q library: {archive}")
+        if archive.suffix.casefold() == ".obj":
+            expected_module = archive.stem.upper()
+            if modules != {expected_module}:
+                raise ValueError(
+                    f"standalone {archive.name} supplies only module {expected_module}"
+                )
+            listing = run_psyk(psyk, "list", "--code", str(archive))
+            result[(library, expected_module)] = parse_object_symbols(listing)
+            continue
         with tempfile.TemporaryDirectory(prefix="kf-vendored-") as directory:
             root = Path(directory)
             run_psyk(psyk, "extract", str(archive.resolve()), cwd=root)

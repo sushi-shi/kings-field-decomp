@@ -17,6 +17,9 @@ SPEC.loader.exec_module(module)
 
 
 class ToolchainTests(unittest.TestCase):
+    def test_one_source_medium_is_active(self) -> None:
+        self.assertEqual(set(module.MEDIA), {"release-2.5"})
+
     def test_sha256_file(self) -> None:
         with tempfile.TemporaryDirectory() as directory:
             path = Path(directory) / "sample.bin"
@@ -50,6 +53,50 @@ class ToolchainTests(unittest.TestCase):
             second = (stage / "MANIFEST.tsv").read_text()
             self.assertEqual(first, second)
             self.assertLess(first.index("CCPSX.EXE"), first.index("PSYLINK.EXE"))
+
+    def test_stage_release25_preserves_all_object_sets(self) -> None:
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory) / "source"
+            stage = Path(directory) / "stage"
+            for relative in (
+                "isa board/PSXBIN/BIN",
+                "isa board/PSXLIB/INCLUDE",
+                "isa board/PSXLIB/LIB",
+            ):
+                (root / relative).mkdir(parents=True)
+            h2000 = root / "H2000/LIB2000"
+            h2000.mkdir(parents=True)
+            for name in ("2MBYTE.OBJ", "8MBYTE.OBJ", "LIBAPI.LIB", "NONE2.OBJ"):
+                (h2000 / name).write_bytes(b"LNK\x02" + name.encode())
+            demo_card = root / "demo/CARD/CARD.OBJ"
+            demo_card.parent.mkdir(parents=True)
+            demo_card.write_bytes(b"LNK\x02demo-card")
+            (root / "one-sdk-marker.txt").write_text("complete media tree")
+            compiler = root / "compiler"
+            compiler.mkdir()
+            for name in (
+                "CC1PSX", "CPPPSX", "CC1PSX.EXE", "CPPPSX.EXE",
+                "COPYING.txt", "CPP.TEX", "EXTEND.TEX", "GCC.TEX",
+                "INVOKE.TEX", "Install.txt",
+            ):
+                (compiler / name).write_bytes(name.encode())
+
+            module.stage_release25(root, stage)
+
+            for name in ("2MBYTE.OBJ", "8MBYTE.OBJ", "LIBAPI.LIB", "NONE2.OBJ"):
+                self.assertEqual(
+                    (stage / "release-2.5/H2000/LIB2000" / name).read_bytes(),
+                    (h2000 / name).read_bytes(),
+                )
+            self.assertEqual(
+                (stage / "release-2.5/demo/CARD/CARD.OBJ").read_bytes(),
+                demo_card.read_bytes(),
+            )
+            self.assertEqual(
+                (stage / "release-2.5/one-sdk-marker.txt").read_text(),
+                "complete media tree",
+            )
+            self.assertFalse((stage / "compilers").exists())
 
 
 if __name__ == "__main__":

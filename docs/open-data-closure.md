@@ -15,42 +15,43 @@ requires an evidence snapshot of its consumers and a final function verdict.
 Do not flatten exported allocation requests, invent padding, or force symbols
 to retail addresses to obtain closure.
 
-The requested fresh executable comparison first exposed a build defect:
-`kf link --image open` refuses the resources module's real `.sdata` contribution.
-The reconstructed SDK startup labels its own empty contribution and assumes
-it is the first. Its actual contract is the output section base: retail
+The now-retired composed executable comparison exposed a build defect: its
+OPEN link refused the resources module's real `.sdata` contribution. The
+reconstructed startup labelled its own empty contribution and assumed it was
+first. Its actual contract is the output section base: retail
 OPEN `8001aa7c` loads `gp=80037284` and tail-jumps to main. This is vendored
 startup work, excluded from game progress.
 
-Before further owner experiments, replace that input-order assumption with a
-native section-base reference. Calibrate the pinned original tools with empty
-and nonempty small-data contributions; require the decoded startup value to
-equal the MAP section base, including a signed low-half carry case. Preserve
-the original object/linker/converter pipeline and inspect the resulting CPE
-and EXE without rewriting output. Then record fresh executable metrics.
+That experiment replaced the input-order assumption with a native section-base
+reference and calibrated the available Psy-Q tools with empty and nonempty
+small-data contributions. The resulting controls required the decoded startup
+value to equal the MAP section base, including a signed low-half carry case.
+They are retained as historical evidence; the composed source-to-EXE path is
+no longer available.
 
 The Psy-Q development manual documents SECT as a linked section-base
 expression ([chapter 9, page 9-8](https://psx.arthus.net/sdk/Psy-Q/DOCS/Devrefs/sdevtc.pdf#page=112)).
 Applicability to the pinned ASPSX/PSYLINK versions must be established by the
 native controls, rather than presumed from the later manual.
 
-## Native executable correction
+## Retired composed executable experiment
 
 PSYLINK 1.17 rejects the proposed command-file `SECT` expression. ASPSX 1.07
 accepts `.sdata` as an external name but PSYLINK rejects that reference to a
 section; this is not a usable section-base expression either. Neither probe
-is retained in the production link.
+was retained in that experiment.
 
-The retained startup anchor is a separate, empty native object included
+The experiment's startup anchor was a separate, empty native object included
 before all C/library inputs. Its standard section declarations have the same
 order as ASPSX's C objects. It adds no instruction, initialized payload or
 BSS reservation. The original 24-byte startup family remains after game code
 and refers to the exported start label. Original ASPSX/PSYLINK/CPE2X controls
 verify empty and nonempty small data, two distinct C contributions, the signed
 low-half carry case, native CPE payloads and the unchanged conversion output.
-All nine executable tests pass.
+All nine executable tests passed at the time. The mixed linker, its startup
+shim and those controls have since been removed.
 
-Fresh native builds replace the previously stale executable snapshot:
+Those native builds replaced the previously stale executable snapshot:
 
 | Image | Same-offset file bytes | Island-aligned load bytes | Nonzero load bytes |
 | --- | --- | --- | --- |

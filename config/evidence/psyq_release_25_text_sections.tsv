@@ -1,5 +1,6 @@
-# Relocation-masked exact .text matches against the Psy-Q Release 2.5 library archive.
-# Derived from the preserved investigation output and retained as an auditable seed input.
+# Relocation-masked exact .text matches against objects from the pinned Psy-Q Release 2.5 medium.
+# Includes the standalone H2000/LIB2000/NONE2.OBJ on the same pinned medium.
+# PLAY/SCNON code is ambiguous under masking; curated ownership additionally checks the jal referent.
 library	module	block_size	compared_bits	relocations_masked	image	image_occurrences	archive_candidate_count	archive_candidates	match_confidence	ram_va
 LIBSN.LIB	SNMAIN	204	1324	18	PSX.EXE	1	1	LIBSN.LIB/SNMAIN/.text	strong_unique	0x800100f8
 LIBCD.LIB	SYS	2124	15236	86	GAME.EXE	1	1	LIBCD.LIB/SYS/.text	strong_unique	0x8003ac6c
@@ -47,3 +48,13 @@ LIBGPU.LIB	PRIM	1732	12790	61	OPEN.EXE	1	1	LIBGPU.LIB/PRIM/.text	strong_unique	0
 LIBGPU.LIB	EXT	524	3958	9	OPEN.EXE	1	1	LIBGPU.LIB/EXT/.text	strong_unique	0x80034484
 LIBGPU.LIB	OTAG	884	6106	51	OPEN.EXE	1	1	LIBGPU.LIB/OTAG/.text	strong_unique	0x80034690
 LIBGPU.LIB	SPRINTF	2192	16610	41	OPEN.EXE	1	1	LIBGPU.LIB/SPRINTF/.text	strong_unique	0x80034a04
+LIBSND.LIB	PLAY	44	326	1	GAME.EXE	1	2	LIBSND.LIB/PLAY/.text,LIBSND.LIB/SCNON/.text	archive_ambiguous	0x8004ae04
+LIBSND.LIB	PLAY	44	326	1	OPEN.EXE	1	2	LIBSND.LIB/PLAY/.text,LIBSND.LIB/SCNON/.text	archive_ambiguous	0x8002abd8
+LIBSND.LIB	SCNON	44	326	1	OPEN.EXE	1	2	LIBSND.LIB/PLAY/.text,LIBSND.LIB/SCNON/.text	archive_ambiguous	0x8002abd8
+LIBSND.LIB	SESKOFF	60	454	1	GAME.EXE	1	1	LIBSND.LIB/SESKOFF/.text	strong_unique	0x8004b6a4
+LIBSND.LIB	SESKOFF	60	454	1	OPEN.EXE	1	1	LIBSND.LIB/SESKOFF/.text	strong_unique	0x8002b478
+LIBSPU.LIB	S_GTSA	48	326	3	GAME.EXE	1	1	LIBSPU.LIB/S_GTSA/.text	strong_unique	0x80046804
+LIBSPU.LIB	S_GTSA	48	326	3	OPEN.EXE	1	1	LIBSPU.LIB/S_GTSA/.text	strong_unique	0x80026624
+LIBSND.LIB	SCNON	44	326	1	GAME.EXE	1	2	LIBSND.LIB/PLAY/.text,LIBSND.LIB/SCNON/.text	archive_ambiguous	0x8004ae04
+NONE2.OBJ	NONE2	24	134	3	GAME.EXE	1	1	NONE2.OBJ/NONE2/.text	strong_unique	0x8003ac54
+NONE2.OBJ	NONE2	24	134	3	OPEN.EXE	1	1	NONE2.OBJ/NONE2/.text	strong_unique	0x8001aa74

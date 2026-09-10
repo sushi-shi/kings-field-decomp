@@ -1,4 +1,9 @@
-# Compiler attribution probe: does GCC 2.4.1 (or any candidate) beat cc1psx-257?
+# Archived compiler-attribution probe: GCC 2.4.1 versus cc1psx-257
+
+This is a record of a one-off analysis experiment. It generated a temporary
+host executable from two compiler files on the Release 2.5 medium. That
+executable was never part of the staged SDK or the normal matching path and is
+not provided by the current environment.
 
 Later model-emitter correction: source case order now reproduces the entire
 `render_map_object` body under the current pinned profile. Updating the actor's
@@ -37,27 +42,27 @@ function-specific and matches retail for different functions under different
 settings — an unattributed scheduling residue, not a compiler-version gap.
 Keep `probe-gcc257-o2-g0`.
 
-## Running GCC 2.4.1 CC1PSX in this environment (it works)
+## Retired GCC 2.4.1 execution experiment
 
-`compilers/gcc-2.4.1/CC1PSX` in the Psy-Q candidate store is a **bare i386
+`$PSYQ_COMPILER/CC1PSX` in the Release 2.5 tree is a **bare i386
 DJGPP COFF** image (`file`: *Intel i386 COFF executable*, magic `4c 01 03 00`),
-with no MS-DOS/`go32` stub, so plain DOSBox cannot load it. The two GCC 2.6.0
-CC1PSX binaries in the same store are *MS-DOS executable, COFF*: a full **go32
+with no MS-DOS/`go32` stub, so plain DOSBox cannot load it. The medium's GCC
+2.6.0 `$PSYQ_COMPILER/CC1PSX.EXE` is *MS-DOS executable, COFF*: a full **go32
 v2 extender** (strings: `go32 version %d.%d Copyright (C) 1994 DJ Delorie`,
 `StubInfoMagic!!`) prepended to the appended COFF. The go32 stub finds its
 payload COFF at the end of its own DOS image; the MZ header's page fields give
 that size exactly:
 
-- `gcc-2.6.0-release-2.5/CC1PSX.EXE` MZ header ⇒ DOS image size `0x1334a`,
+- `$PSYQ_COMPILER/CC1PSX.EXE` MZ header ⇒ DOS image size `0x1334a`,
   and the COFF magic sits at file offset `0x1334a`. So bytes `[0, 0x1334a)` are
   `[go32 v2 stub + StubInfo]` and the COFF follows.
 
-A runnable 2.4.1 is therefore built by transplanting that stub onto the bare
-2.4.1 COFF (a "frankenbinary"):
+The experiment made a temporary runnable 2.4.1 by transplanting that stub onto
+the bare 2.4.1 COFF:
 
 ```
-stub = CC1PSX(2.6.0-release-2.5)[0 : 0x1334a]   # go32 v2 + StubInfo
-CC24GO.EXE = stub + CC1PSX(2.4.1)               # whole bare COFF appended
+stub = $PSYQ_COMPILER/CC1PSX.EXE[0 : 0x1334a]  # go32 v2 + StubInfo
+CC24GO.EXE = stub + $PSYQ_COMPILER/CC1PSX      # whole bare COFF appended
 ```
 
 The go32 v2 extender loads the older 2.4.1 COFF without complaint and the
@@ -80,9 +85,9 @@ Reproducibility (hashes; nothing binary is committed):
 
 | file | sha256 |
 | --- | --- |
-| `gcc-2.4.1/CC1PSX` (bare COFF) | `d164b281…afee9548` |
-| `gcc-2.6.0-release-2.5/CC1PSX.EXE` (stub donor) | `e65635ec…d0d6dd3` |
-| `CC24GO.EXE` (frankenbinary) | `016efe5b…8ec724fe` |
+| `$PSYQ_COMPILER/CC1PSX` (bare COFF) | `d164b281…afee9548` |
+| `$PSYQ_COMPILER/CC1PSX.EXE` (stub donor) | `e65635ec…d0d6dd3` |
+| temporary `CC24GO.EXE` | `016efe5b…8ec724fe` |
 
 `ASPSX.EXE` still refuses to run without its hardware/software key
 ("Software Data Key … not found"), so the assembler model stays maspsx and the

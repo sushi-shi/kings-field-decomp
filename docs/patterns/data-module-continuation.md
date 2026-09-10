@@ -79,16 +79,15 @@ The first two left the distant pointer inside the initialized contribution;
 only the last agrees with the reviewed storage classes and native spacing.
 The production owner uses `probe-gcc257-o2-g8` and makes no function-body edits.
 
-Independent native validation preprocesses the combined source with
+The retired composed probe independently preprocessed the combined source with
 `cpppsx-257 -lang-c -undef -nostdinc`, the project headers and `PSYQ_INCLUDE`,
-then uses `cc1psx-257 -quiet -O2 -G8 -mcpu=r2000`. Assemble its CRLF output with
-the pinned original `ASPSX.EXE` (`aspsx -G8 -o MENU.OBJ MENU.S`) through the
-repository DOS runner; inspect with `psyk list --code`. ASPSX 1.07 reports zero
-errors. Its LNK records contain twelve zero bytes in `.sdata`, exported flag
+then used `cc1psx-257 -quiet -O2 -G8 -mcpu=r2000`. It assembled the CRLF output
+with the separate ASPSX 1.07 archive (`aspsx -G8 -o MENU.OBJ MENU.S`) used by
+that experiment. ASPSX reported zero errors. Its LNK records contain twelve zero bytes in `.sdata`, exported flag
 and vector offsets 0/4, and one eight-byte uninitialized `.sbss` allocation
 with a local `current_poly_ft4` at offset zero. No fixed `.bss` content appears.
 This independently supports the small-section/reservation metadata; it does
-not establish an original source filename.
+not establish an original source filename or a coherent SDK build.
 
 The production strict gate agrees on `.rodata` 10, `.sdata` 12, and `.sbss` 8,
 including placement and object widths. No relocation targets, addends or

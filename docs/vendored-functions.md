@@ -10,20 +10,52 @@ KFIII executable contributes to this list.
 
 ## Current result
 
-| image | Release 2.5 exact object | Release 2.5 FID-only | Release 2.5 lineage | GTE lineage | Psy-Q 2.60 signature | total |
+### Object-level audit status
+
+The curated inventory contains **111 distinct `(library, module)` entries**,
+deduplicated across PSX, GAME and OPEN:
+
+| Status | Entries |
+| --- | ---: |
+| Exact code evidence (`exact-release25*`) | 81 |
+| SDK lineage established, exact object match unresolved (`sdk-lineage-supported`) | 29 |
+| Audited but unresolved: audio-dispatcher memcpy ownership | 1 |
+
+The [54-entry audit](sdk-object-audit.md) resolved 53 of the former FID/signature
+entries: 51 gained exact code evidence and two merged into established objects.
+Six of eight ambiguous memcpy copies also gained containing-family attribution.
+Closing every remaining object-level uncertainty requires stronger evidence
+for **29 known object identities**, the lineage modules below. Some have direct
+revision-skew evidence; others lack a complete object-level comparison. The
+audio-dispatcher helper may be contained by a matching `SSCALL.OBJ`; if it
+proves to be a separately linked member, it becomes a 30th identity. The
+per-library inventory and this lower-bound distinction are recorded in the
+[remaining-object audit](sdk-object-audit.md#object-evidence-still-needed).
+
+These are inventory identity entries, not necessarily distinct physical objects.
+Classify an entry as lineage-supported if any of its rows have that status;
+otherwise classify it as exact if any row carries `exact-release25*`. The 29
+lineage entries include known
+retail revision differences; they are not a count of 29 independently proved
+whole-object mismatches. Exact code evidence does not establish data, BSS,
+placement, or complete-object equality. The lineage entries span **LIBCD,
+LIBETC, LIBGPU, LIBGTE, LIBSND and LIBSPU**.
+
+### Function-level attribution
+
+| image | Release 2.5 exact code | Release 2.5 FID-only | Release 2.5 lineage | GTE lineage | Psy-Q 2.60 signature | total |
 |---|---:|---:|---:|---:|---:|---:|
 | `PSX.EXE` | 8 | 0 | 0 | 0 | 0 | 8 |
-| `GAME.EXE` | 186 | 146 | 132 | 58 | 51 | 573 |
-| `OPEN.EXE` | 184 | 145 | 121 | 58 | 37 | 545 |
-| **total** | **378** | **291** | **253** | **116** | **88** | **1,126** |
+| `GAME.EXE` | 238 | 139 | 128 | 66 | 2 | 573 |
+| `OPEN.EXE` | 222 | 139 | 128 | 66 | 2 | 557 |
+| **total** | **468** | **278** | **256** | **132** | **4** | **1,138** |
 
-The 1,126 rows comprise 1,100 named functions and 26 anonymous internal
-functions whose containing Sony object is known. Provider counts are: 275
-`LIBGTE`, 248 `LIBSND`, 214 `LIBGPU`, 146 `LIBCD`, 93 `LIBAPI`, 88 `LIBSPU`,
-48 `LIBETC`, four startup functions attributed to `NONE2.OBJ`, two from
-`LIBSN`, and eight fully fixed `memcpy` copies whose exact member remains
-ambiguous across `LIBCD`, `LIBGPU`, and `LIBSPU`. No zlib or other third-party
-library has been identified, so none is claimed in the TSV.
+The 1,138 provider rows include named and anonymous internal functions whose
+Sony ownership is established. Provider counts are: 282 `LIBGTE`, 253 `LIBSND`,
+216 `LIBGPU`, 148 `LIBCD`, 93 `LIBAPI`, 90 `LIBSPU`, 48 `LIBETC`, four startup
+functions attributed to `NONE2.OBJ`, two from `LIBSN`, and two fully fixed
+`memcpy` copies whose containing member remains ambiguous. No zlib or other
+third-party library has been identified, so none is claimed in the TSV.
 
 These rows are an exclusion boundary as well as attribution evidence.
 `kf-delink` may carve them to preserve the linked executable model and resolve
@@ -39,8 +71,13 @@ Release 2.5 exact evidence is primary. For each preserved object-section match,
 the seeder extracts the named SDK member, joins its interleaved `.text` records,
 masks only bits represented by retained Psy-Q linker relocations, and rechecks
 the retail bytes. It validates object size, compared-bit count, relocation
-count, executable occurrence count, and XDEF offsets. Six `PSX.EXE` `LIBAPI`
-stubs use separately reviewed complete 16-byte object matches.
+count, executable occurrence count, and XDEF offsets. The complete-code lane
+now includes 87 image occurrences of 16-byte `LIBAPI` stubs, including their
+delay slots and padding. It also reads the standalone
+`H2000/LIB2000/NONE2.OBJ` staged from the same medium; its 24-byte text section
+matches GAME and OPEN after masking its three native relocation records.
+The full H2000 directory is retained separately as `$PSYQ_H2000_LIB`; its
+different LIBAPI archive can be censused without overwriting the general one.
 
 The project-owned Release 2.5 function-ID lane does not require Ghidra. It
 extracts every object from the hash-pinned Psy-Q libraries with `psy-k`, splits
@@ -196,7 +233,9 @@ complete instruction-shape match. The seven pairs therefore use
 The preceding 0x30-byte helper exactly matches `memcpy`/`_memcpy`-shaped
 functions from three SDK object identities, and the same body occurs four times
 per retail image. That proves a Sony `memcpy` body while leaving the exact
-archive member ambiguous, so all eight copies use `fid-release25-ambiguous`.
+archive member ambiguous from FIDs alone. The [object audit](sdk-object-audit.md)
+resolves six copies through archive-local call targets and family order; only
+the two SsSeqCalledTbyT helpers retain `fid-release25-ambiguous`.
 
 The four `SsUtAutoVol`/`SsUtAutoPan` rows also use the conservative ambiguous
 FID channel because their seven-instruction bodies are identical. Unlike the

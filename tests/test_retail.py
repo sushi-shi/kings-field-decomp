@@ -5,6 +5,7 @@ import struct
 import tempfile
 import unittest
 from pathlib import Path
+from unittest import mock
 
 from scripts.kf.retail import ImageLayout, _merged_coverage, parse_psx_exe
 from scripts.kf.propose_function_admission import subtract_interval
@@ -13,6 +14,7 @@ from scripts.kf.seed_vendored_functions import (
     SignaturePattern,
     find_masked_bytes,
     find_signature,
+    load_release25_symbols,
     parse_object_symbols,
     parse_signature,
 )
@@ -92,6 +94,27 @@ class RetailTests(unittest.TestCase):
         mask = b"\xff" * 8 + b"\x00" * 4
         payload = b"xxxx" + data[:8] + b"WXYZ"
         self.assertEqual(find_masked_bytes(data, mask, payload), [4])
+
+    def test_release25_loader_accepts_standalone_object(self) -> None:
+        listing = "\n".join((
+            "16 : Section symbol number 1 '.text' in group 0 alignment 8",
+            "6 : Switch to section 1",
+            "2 : Code 8 bytes",
+            "0000: 08 00 e0 03 00 00 00 00",
+            "12 : XDEF symbol number 2 '__main' at offset 0 in section 1",
+        ))
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / "NONE2.OBJ"
+            path.write_bytes(b"LNK\x02")
+            with mock.patch(
+                "scripts.kf.seed_vendored_functions.run_psyk",
+                return_value=listing,
+            ) as run:
+                symbols = load_release25_symbols(
+                    Path("psyk"), Path(directory), (("NONE2.OBJ", "NONE2"),)
+                )
+        self.assertEqual(symbols[("NONE2.OBJ", "NONE2")].text_size, 8)
+        run.assert_called_once_with(Path("psyk"), "list", "--code", str(path))
 
 
 if __name__ == "__main__":

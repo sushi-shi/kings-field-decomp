@@ -1,123 +1,42 @@
-# Compile and link executables with the Psy-Q tools
+# Executable-linking status
 
-Inside `nix develop`, after `kf init`, run:
+The repository does not currently claim a runnable historical executable
+toolchain. Its one SDK is the pinned Psy-Q Release 2.5 media tree. Both
+assembler executables on that medium require the original software key, so the
+coherent source-to-EXE path stops at that boundary.
 
-```sh
-kf link
-```
+The former `kf link` implementation combined a native GCC rebuild with an
+unprotected ASPSX 1.07 copied from a separate archive, then used Release 2.5
+PSYLINK, CPE2X and libraries. That experiment established useful linker and
+layout behavior, but it was a composed probe rather than one historical SDK.
+The external assembler dependency has been removed and normal `kf link` now
+reports the unavailable coherent path instead of making that substitution.
 
-There is one executable build path:
+The reconstruction loop remains available through `kf build`, `kf match` and
+objdiff. Those commands produce ELF comparison objects with pinned analysis
+programs; they do not claim to reproduce the original executable toolchain.
 
-```text
-C source --GCC--> assembly --ASPSX--> Psy-Q objects
-SDK startup source --------ASPSX--> overlay startup object
-                                      + original SDK .LIB files
-                                           |
-                                        PSYLINK
-                                           |
-                                          CPE
-                                           |
-                                         CPE2X
-                                           |
-                                          EXE
-```
-
-GCC uses each unit's source, includes, defines and compiler flags from the
-manifest. ASPSX 1.07 reads that compiler output directly, with DOS text line
-endings. PSYLINK 1.17 consumes the resulting LNK objects and the original
-Psy-Q library files. CPE2X writes the final PS-X EXE. The build does not change
-any bytes in the object, linked CPE or converted EXE.
-
-For PSX the original library inputs are `LIBSN.LIB` and `LIBAPI.LIB`.
-The native linker selects their members and resolves their symbols. Its
-ordinary command file specifies the program's load origin, input objects,
-libraries, BSS groups and entry symbol. It does not place individual game functions or
-rewrite their addresses.
-
-GAME and OPEN additionally assemble `src/sdk/overlay_start.s`, a reconstruction
-of their identified minimal NONE2 SDK startup family. The report records its
-provenance and hashes separately from compiled game units. The entry sets `gp`
-to the start of `.sdata` and jumps to `main`; the preceding `__main` stub returns
-without initialization. This SDK assembly is excluded from game progress.
-An empty `src/sdk/overlay_sdata.s` object precedes all C/library inputs and
-exports the section-start label. The startup code still follows the game
-code. This lets initialized game `.sdata` contributions precede SDK data
-without moving `gp` to the end of the game contribution. Both native objects
-and their source hashes are recorded in the build report. Native controls
-cover multiple G8 inputs and signed low-half carry in the startup address.
-
-The command file places `.sbss` and `.bss` in an uninitialized `bssdata` group.
-Their addresses are allocated, but their contents are not load records. GAME's
-four BIOS-wrapper spellings resolve through native `ALIAS` directives:
-`InitCARD2` → `InitCARD`, `StartCARD2` → `StartCARD`, `StopCARD2` → `StopCARD`,
-and `erase` → `delete`. LIBAPI members A74/A75/A76/A69 contain the matching
-BIOS B0 selectors `4a/4b/4c/45`; no wrapper instructions are added. Both
-directives are documented in the
-[PSYLINK manual, chapter 13](https://psx.arthus.net/sdk/Psy-Q/DOCS/Devrefs/sdevtc.pdf#page=154)
-and tested against the pinned PSYLINK 1.17.
-
-The linker combines each object's code and data and resolves references
-between objects. For example, a C call to `Load` refers to a library symbol;
-the linker finds the implementation in the SDK and encodes the call target.
-
-CPE2X supplies the executable header and rounds its load area to a 2048-byte
-sector boundary. Space after the linked initialized data is **padding**.
-PSX has 560 initialized bytes, so its load sector has 1488 padding bytes.
-The separate 2048-byte header makes the whole executable 4096 bytes.
-
-## Inputs, outputs and failures
-
-`build/link/psx/` contains compiler output (`U0000.I`, `U0000.S`), the native
-object (`U0000.OBJ`), `LINK.LNK`, native tool logs, `PSX.CPE`, `PSX.SYM`,
-`PSX.MAP`, `PSX.EXE` and `comparison.json`. The report lists commands and
-source, object, library and tool hashes. Every CPE load record is checked
-against the converter's unchanged output before the retail comparison.
-
-The verified retail EXE is used **only for comparison**. It does not supply
-header bytes, missing initialized data, missing startup objects or tail bytes.
-Missing source definitions fail the native link. A failed build removes an
-older executable so it cannot be mistaken for the current result.
-
-The custom ELF section rewrite, SDK-to-ELF link adapter, retail-header template,
-inventory data fallback and inferred-padding mode have been removed. The
-existing ELF-based `kf match` analysis remains separate from `kf link`; its
-objects are not executable-build inputs.
-
-`kf link --image game` and `kf link --image open` use the same direct path;
-`kf link` attempts all three. A successful exit means native compilation,
-assembly, linking and conversion succeeded. `comparison.file_equal` reports
-unmasked complete-file equality. Build success alone is not an exactness claim.
-
-All three images now link through the native tools. The missing game storage
-is explicitly defined in C, using the shared types and reviewed initializers.
-There are no unresolved-symbol fallbacks.
-
-| Image | Native EXE bytes | Retail EXE bytes | Differing file bytes |
-| --- | ---: | ---: | ---: |
-| PSX | 4,096 | 4,096 | 66 |
-| OPEN | 153,600 | 155,648 | 133,372 |
-| GAME | 286,720 | 288,768 | 249,268 |
-
-These are complete-file comparisons, including relocated addresses, headers
-and padding. Neither overlay is exact or tested as a running game. Native
-load-record payload verification covers 560 PSX, 150,405 OPEN and 283,660 GAME
-bytes. The next matching work is data ownership/allocation order, section
-layout, remaining function residues and SDK/library ordering.
-
-The full PSX header, padding and converter investigation is consolidated in
-[the executable byte-provenance record](patterns/executable-byte-provenance.md).
-
-## Layout-tolerant executable comparison
-
-`kf link` also compares moved byte regions and refreshes the second generated
-README block, `executable-score`, after linking. To compare existing EXEs and
-refresh that block without rebuilding them, run:
+Existing ignored executable experiments can still be inspected without
+rebuilding them:
 
 ```sh
 kf link --compare-only
 ```
 
-Both forms accept `--image psx|game|open`. The README keeps one row per image
+The Release 2.5 PSYLINK controls remain active because PSYLINK itself runs
+without the assembler key. They use only objects and libraries from the one
+SDK and test link order, section alignment and BSS allocation.
+
+## Layout-tolerant executable comparison
+
+`kf link --compare-only` compares moved byte regions in existing ignored
+experiments and refreshes the second generated README block, `executable-score`:
+
+```sh
+kf link --compare-only
+```
+
+The command accepts `--image psx|game|open`. The README keeps one row per image
 and a byte-weighted total for the available images. It reads saved reports
 only when their candidate hashes match EXEs still on disk and their retail
 hashes match the configured retail identities. Missing, changed or failed
@@ -167,8 +86,8 @@ comparison still covers the complete files and is the only executable
 equality check. Neither island similarity nor island coverage changes
 function scores, banking criteria or the full data-layout gates.
 
-Normal links write the detailed score into each image's `comparison.json`
-and create `comparison.html`. Comparison-only runs write
+Historical experiment runs wrote the detailed score into each image's
+`comparison.json` and created `comparison.html`. Comparison-only runs write
 `fuzzy-comparison.json` and `fuzzy-comparison.html`, preserving the original
 native-build report and executable. The standalone HTML contains a movement
 map, filterable islands with both addresses and sizes, and the largest
@@ -176,7 +95,11 @@ unanchored regions. The JSON retains all islands, complementary unanchored
 ranges, parameters, counts and input hashes. These generated files stay
 under `build/link/{psx,game,open}/` and are not committed.
 
-## Overlay link plan and evidence
+## Evidence retained from the retired composed probe
+
+The remainder of this page records observations from the removed mixed-input
+experiment. These results remain useful for source ownership and linker
+semantics, but they do not describe the active SDK or an available build path.
 
 The initial native runs reported 61 OPEN and 2694 GAME diagnostic references;
 these are repeated uses, not counts of distinct missing objects. OPEN lacked ten
@@ -206,13 +129,12 @@ no function body changed. The rebuilt comparison retained every function score.
 The startup evidence is separate from game progress. GAME `8003ac54` and OPEN
 `8001aa74` contain the eight-byte `__main` return stub; the following sixteen
 bytes set `gp` and tail-jump to `main`, including a `nop` delay slot. The
-`functions_vendored.tsv` NONE2 signature identifies this 24-byte SDK assembly
-family. The present LIBSN supplies a different, larger startup. The preserved
-NONE2 sample and NONE3 object from the later SDK collection also differ and
-cannot be substituted. A source reconstruction of the identified minimal SDK
-assembly retains symbolic `main` and `.sdata` references and remains excluded
-from game matching. The native entry name is `__SN_ENTRY_POINT`, not the
-inventory's address label `start`.
+Release 2.5 floppy medium's overlooked `H2000/LIB2000/NONE2.OBJ`, dated
+1994-10-18, has exactly this 24-byte text section. Its HI16, LO16 and J26 fields
+are the object's three recorded relocations; all other 134 instruction bits
+match once in each overlay. The native entry name is `__SN_ENTRY_POINT`, not
+the inventory's address label `start`. The present LIBSN supplies a different,
+larger startup.
 
 ### GAME storage pass
 
@@ -275,7 +197,7 @@ Each row adds a definition using the existing shared type, without changing a fu
 | `800a0768` | `DAT_800a0768` (4) | `render.c` | render initialization clears the word; retain unresolved semantic identity |
 | `800a0780` | `player_state` (224) | `player_core.c` | save payload copies exactly 0xe0 bytes; shared field family |
 
-The map-object startup clear spans sixteen bytes beyond the currently modeled aggregate, into the neighboring counters/gaps. This existing ownership/layout uncertainty is retained; a successful native link does not prove runtime equivalence or original BSS ordering.
+The map-object startup clear spans sixteen bytes beyond the currently modeled aggregate, into the neighboring counters/gaps. This existing ownership/layout uncertainty is retained; the experiment's successful link did not prove runtime equivalence or original BSS ordering.
 
 The specific gameplay sound selectors belong with `map_object.c` in this WIP
 source organization: its update paths directly use seven selector identities,
@@ -292,11 +214,18 @@ The full rebuild compared 484 functions, including thirteen source-verified vend
 
 All 22 newly defined initialized objects match their retail extents and raw bytes in the freshly compiled objects. This includes every sound selector, the six light matrices, path arrays and initialized state words; it does not establish their linked positions.
 
-The full repository suite passes all 739 tests with local retail/build inputs. `ruff check scripts tests`, `git diff --check` and `nix flake check -L` also pass. The isolated flake test run skips 140 checks that require local retail or build artifacts; those checks run in the full local suite.
+At the time of that experiment, the full repository suite passed all 739 tests
+with local retail/build inputs. `ruff check scripts tests`, `git diff --check`
+and `nix flake check -L` also passed. Those counts record the retired campaign,
+not the current suite.
 
-The executable-island controls cover reordering, small edits, insertions/deletions, duplicate-copy accounting, unrelated content, padding, changed address encodings and malformed EXEs. README controls cover hash freshness, weighted totals, preservation of the function block and repeatable updates. A full native link and subsequent comparison-only pass give identical island reports for all three images; the latter leaves native EXEs and build-provenance reports unchanged. The full build also preserves the generated executable-score block. These integration checks are recorded under `build/link/island-audit/`.
+The executable-island controls cover reordering, small edits, insertions/deletions, duplicate-copy accounting, unrelated content, padding, changed address encodings and malformed EXEs. README controls cover hash freshness, weighted totals, preservation of the function block and repeatable updates. The retired composed probe and a subsequent comparison-only pass gave identical island reports for all three images; the latter left native EXEs and build-provenance reports unchanged. These integration checks are recorded under `build/link/island-audit/`.
 
-The native executable controls check the minimal startup opcodes and symbolic entry, all four BIOS aliases, initialized zero data, exclusion of an 8192-byte BSS buffer, unchanged original archives and rejection of unresolved references/stale output. None executes a complete game image.
+The retired native executable controls checked the minimal startup opcodes and
+symbolic entry, all four BIOS aliases, initialized zero data, exclusion of an
+8192-byte BSS buffer, unchanged original archives and rejection of unresolved
+references or stale output. They were removed with the mixed linker and never
+executed a complete game image.
 
 The existing function oracles now explicitly opt into named-object data bindings where merged modules own data from separate retail regions. Each object keeps its compiled extent and initializer; ambiguous section-relative references, unknown objects, wrong extents and overlapping initialized objects are rejected. The returned program records `data_binding=objects`. This isolates function semantics and does not prove section placement. Default oracle linking still requires a consistent section base. This facility is not used by `kf link`, the delinker or the full data-layout checks.
 

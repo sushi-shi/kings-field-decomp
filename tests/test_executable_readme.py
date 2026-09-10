@@ -90,6 +90,7 @@ class ExecutableReadmeTests(unittest.TestCase):
                        for row in images.values())
             self.assertIn(f'Overall (2/3 images): {200 * matched / size:.2f}%', text)
             self.assertIn('| `GAME.EXE` | — | — | — | — |', text)
+            self.assertIn('## Retired executable experiment', text)
             self.assertIn('The three byte columns show similarity, not differences.', text)
             self.assertIn('`kf link --compare-only`', text)
 

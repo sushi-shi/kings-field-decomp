@@ -58,7 +58,10 @@ The C-to-analysis-ELF path now represents this native constraint in
 accepts only ASPSX 1.07 and its standard allocated sections. It does not consume
 retail claims or change payload bytes, offsets, extents, symbols, relocations or
 COMMON rounding. Every object records the conversion and original GNU values.
-`test_aspsx_sections.py` repeats the original-tool control.
+The now-retired `test_aspsx_sections.py` repeated this control with the
+separate ASPSX archive used by the composed executable experiment. Its result
+is retained here as historical evidence; it is not a control for the active
+Release 2.5 SDK because the medium's assembler is software-key locked.
 
 All **112** rebuilt objects differ from baseline only in these section-header
 fields. Every complete function report remains unchanged. Source data improves
@@ -230,20 +233,18 @@ Work in `nix develop`, initialize the hash-identical retail inputs, then run:
 ```sh
 kf build
 kf verify data --image game --image open --detail --coverage
-python -m unittest discover -s tests -p test_aspsx_sections.py
 python -m unittest discover -s tests -p test_small_data.py
 ruff check scripts tests
 python -m unittest discover -s tests
 nix flake check -L
 ```
 
-The native actor control uses `scripts.kf.executable.compile_unit` with the
-unchanged `game.actor` unit and the `probe-gcc257-o2-g0` and
-`probe-gcc257-o2-g8` profiles. Run each returned `assembler_command` through
-`dos_run`, then inspect the complete objects with `psyk list --code`.
-Assembling the G8 source once more with ASPSX `-G0` gives the same sections.
-Count record-8 zero spans when measuring initialized `.data`; they are not
-missing object bytes. The native G8 payload hashes are:
+The former native actor control used the unchanged `game.actor` unit with the
+`probe-gcc257-o2-g0` and `probe-gcc257-o2-g8` profiles, then passed the output
+to the separate ASPSX archive from the retired composed probe. Assembling the
+G8 source once more with ASPSX `-G0` gave the same sections. Count record-8
+zero spans when reading these retained results; they are not missing object
+bytes. The native G8 payload hashes were:
 
 | Section | Extent | SHA-256 |
 | --- | ---: | --- |

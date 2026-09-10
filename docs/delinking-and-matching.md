@@ -295,7 +295,8 @@ kf-compile \
 ```
 
 Each compiled object receives an adjacent `.o.json` provenance record. The
-default maspsx model is ASPSX 1.07 because that is the Release 2.5 candidate;
+default maspsx model is ASPSX 1.07 because that is the version represented by
+the Release 2.5 baseline;
 `--aspsx-version` remains explicit and overridable during attribution tests.
 
 Translation-unit hypotheses are expressed directly by the sources: a unit

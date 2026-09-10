@@ -115,7 +115,7 @@ def toolchain_identity() -> str:
     for tool in tools:
         resolved = shutil.which(tool)
         rows.append(f"{tool}={os.path.realpath(resolved) if resolved else '-'}")
-    for variable in ("PSYQ_DIR", "PSYQ_INCLUDE", "PSYQ_LIB"):
+    for variable in ("PSYQ_SDK", "PSYQ_INCLUDE", "PSYQ_LIB"):
         rows.append(f"{variable}={os.environ.get(variable) or '-'}")
     return "\n".join(rows) + "\n"
 
