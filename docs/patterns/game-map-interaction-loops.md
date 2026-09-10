@@ -42,8 +42,8 @@ checks. Strict 100% is the only banking criterion.
 
 ## Retained source facts
 
-The final source reaches **99.211440%**, with 2296 compiled bytes. It retains
-six related corrections:
+The first retained source reached **99.211440%**, with 2296 compiled bytes. It
+kept six related corrections:
 
 - Each container case owns its counter and cursor. The first case shares its
   counter between the prescan and later pickup pass. Both emitted traversal
@@ -67,6 +67,23 @@ six related corrections:
   Its top condition and unconditional back edge now agree structurally with
   retail. The compiler still hoists the byte read. No advancing cursor is
   invented for this authored repeated-byte scan.
+
+The strict closure adds three source facts:
+
+- The hinged-container prescan gives its signed end marker its own block-local
+  `s32` identity. The assignment follows the nonempty-item exit, so the loop
+  back edge returns to the byte sample and skips the constant materialization.
+  This preserves the retail local `li a0,-1`, signed comparison, back-edge
+  target, and the distinct s7/s8 lifetimes used for the position pointer and
+  outer sentinel.
+- The item-container case spells the successful search as the break condition
+  and sends failure directly to `notify_default`. The successful break reaches
+  the common outer-object latch at `0x8003562c`, matching the decoded retail
+  jump and delay slot.
+- Hinged-door admission names the two admitted enum values explicitly. The
+  `HINGED_DOOR || HINGED_DOOR_PARTNER` predicate preserves the retail three
+  behavior loads and paired-door validation CFG without volatile access,
+  alias distortion, or a split selection loop.
 
 ## Compiler observations and controls
 
@@ -132,28 +149,43 @@ The source/call/referent audit preserves all fifteen siblings for every row.
 | Compound prescan condition, from gold | 97.866554 | 2300 | Reject; adds post-loop narrowed counter test |
 | Per-iteration prescan sample, from gold | 99.211440 | 2296 | Retained source |
 | Sample plus selection-before-validation | 98.960140 | 2308 | Isolated composition; exact size is insufficient |
+| Explicit hinged-door enum admission | 99.774700 | 2308 | Retain; exact behavior loads, CFG, calls and referents |
+| Inverted item-container exit | 99.783360 | 2308 | Retain decoded common-latch jump |
+| Block-local signed scan end | 100.000000 | 2308 | Retain signed lifetime and exact prescan schedule |
 
-## Remaining differences
+## Closure
 
-The function remains partial and is not banked. The prescan's local
-`li a0,-1` at `0x800351fc` is still a nop, its exhausted test uses the outer
-minus-one register, and its unconditional jump returns to that nop instead of
-the following compare. The trace retains the local constant at CSE1 and
-combines it into the outer constant during LOOP. Position/minus-one retain
-their opposite s7/s8 roles.
+The function is exact and banked at **100.000000%**, with all 2308 retail
+bytes. Its 54 ordered calls, 13 ordered physical references, 72-byte frame,
+delay slots, switch dispatches, and literal words agree. The exact source uses
+no volatile access, dead statement, artificial padding, inline assembly, or
+incompatible SDK type.
 
-The paired-door path still reads its definition byte once into a1, reusing
-it for admission, linked-door rejection and the action argument. Retail reads
-it three times, retains the definition base in v1, and occupies twelve more
-bytes. No intervening store or call justifies adding volatile qualification.
-Ending selection before validation restores the loads but moves the increment
-and back edge ahead of validation and reverses the definition-address add
-operands. That lower-scoring state remains an experiment, not a source fact
-established by its load count.
+The signed scan-end local is a consumed loop value, not an unused allocation
+carrier. Trace controls distinguish it from the outer sentinel: a declaration
+initializer schedules the constant before the item test and misses retail;
+assigning it after the nonempty exit produces the retail constant at
+`0x800351fc`, while the back edge skips that assignment. Reusing existing
+result, neighbor, pickup, or outer-sentinel variables changes the frame or
+counter schedule and does not match. Function-scope, case-scope, and loop-scope
+declarations with the same observed assignment point emit the same exact body;
+the narrowest loop ownership is retained.
 
-No relocation, data identity, SDK type, production compiler/profile or bank
-entry changes. The remaining raw differences stay open without a compiler-wall
-label or a forced source carrier.
+The enum predicate control accounts for the twelve-byte size gap without
+inventing aliasing. A temporary behavior snapshot still emits one load.
+Selection-before-validation emits three loads but has the wrong loop branches.
+Direct repeated table expressions alter referents and address scheduling. The
+explicit two-value predicate alone emits the three retail loads with the
+observed validation in the loop.
+
+An upstream-source search compiled 16,392 unique accepted candidates from the
+explicit enum baseline. Its best result had one word left and introduced a
+one-use temporary, so it was rejected. A second search disabled temporary and
+assignment-chain mutations; 14,425 accepted candidates did not find a simpler
+expression-only route.
+Bounded declaration, scope, counter-width, sentinel, label, latch, neighbor
+access, and compiler-profile controls independently support the retained
+source structure.
 
 ## Verification and unit verdicts
 
@@ -161,8 +193,8 @@ The affected production object was rebuilt by the normal focused match.
 Its resolved words agree with the retained isolated object; all delinked
 targets reconstruct literal retail words. The 54 call targets and 13 ordered
 physical references agree throughout the dispatcher. The four recovered
-pitch/guard/preparation regions are checked as raw words, and all fourteen
-exact siblings remain literal-retail exact across 924 words. The private DATA
+pitch/guard/preparation regions are checked as raw words, and all fifteen
+exact siblings remain literal-retail exact across 960 words. The private DATA
 bytes are unchanged. The existing literal ledger keeps all 211 occurrences,
 expressions and reasons; only this function's line references are updated.
 
@@ -182,18 +214,19 @@ expressions and reasons; only this function's line references are updated.
 | `map_floor5_transition_cutscene` | 100 | Unchanged, raw exact |
 | `map_action_script_floor5` | 100 | Unchanged, raw exact |
 | `map_event_interact` | 100 | Unchanged, raw exact |
-| `map_show_screen_image` | 88.888885 | Unchanged partial, 148 compiled bytes |
-| `map_interaction_dispatch` | 99.211440 | Improved partial, 2296 compiled bytes |
+| `map_show_screen_image` | 100 | Unchanged, raw exact |
+| `map_interaction_dispatch` | 100 | Closed and banked, 2308 bytes |
 
-Ruff, modern type checking and all 725 repository tests pass (121.457 seconds).
-The subsequent full build retains its existing data extent/ownership/addend/
-placement and conflicting-base failures, with no exact-function regression.
-This campaign adds no exact function: current counts are GAME 336/362,
-OPEN 106/108 and PSX 1/1. The independently committed TMD enqueue closure is
-not credited to these interaction changes. No tooling changes require an
-additional flake check.
+The normal focused rebuild reports all 16 `game.map_scripts` functions and its
+516 data bytes exact. `kf sema --image game match map_interaction_dispatch`
+reports strict 100% at `0x80034de4`, and `kf bank` records the exact 2308-byte
+body under `game.map_scripts`. The scoped modern type check, Ruff, and all 781
+repository tests (9212 subtests) pass. The full build retains the repository's
+existing data
+extent/ownership/addend/placement and conflicting-base failures, with no code
+regression. Current source counts are GAME 352/362, OPEN 107/108, and PSX 1/1,
+for 460/471 exact functions overall. No tooling changes require a flake check.
 
-Generated plans, six-view dossiers, isolated objects, traces, debugger paths,
-nine small controls, raw audits and verification logs remain under
-`build/gcc257/game-interaction-revisit/`. The retained source SHA-256 is
-`9088396cd2af5ceb38f581a27ca2b7f2ac8e2cfa921ce793aa8edc939b2a1c28`.
+Generated plans, six-view dossiers, isolated objects, traces, compiler controls,
+upstream-search results, raw audits, and verification logs remain under
+ignored `build/` paths.

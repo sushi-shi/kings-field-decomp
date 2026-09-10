@@ -579,11 +579,13 @@ clear_event_phase:
                 item_index = KF_MAP_CONTAINER_ITEM_COUNT - 1;
                 for (;;) {
                     KfItemId item_parameter = object->link.hinged_container.item_ids[0];
+                    s32 item_scan_end;
 
                     if (item_parameter != KF_ITEM_NONE) {
                         break;
                     }
-                    if (--item_index == -1) {
+                    item_scan_end = -1;
+                    if (--item_index == item_scan_end) {
                         goto notify_default;
                     }
                 }
@@ -664,10 +666,10 @@ notify_linked:
                     }
                     item_id++;
                 }
-                if (found_item == KF_FALSE) {
-                    goto notify_default;
+                if (found_item != KF_FALSE) {
+                    break;
                 }
-                continue;
+                goto notify_default;
 
             }
 
@@ -710,7 +712,8 @@ notify_linked:
                         neighbor = &map_object_state.objects[neighbor_index];
                         neighbor_definition =
                             &map_object_state.definitions.entries[KF_ENUM_ENCODE(u8, neighbor->object_id)];
-                        if (neighbor_definition->behavior_type < KF_MAP_OBJECT_BEHAVIOR_HINGED_DOOR_END) {
+                        if (neighbor_definition->behavior_type == KF_MAP_OBJECT_BEHAVIOR_HINGED_DOOR
+                            || neighbor_definition->behavior_type == KF_MAP_OBJECT_BEHAVIOR_HINGED_DOOR_PARTNER) {
                             if (neighbor->link.fields.link_id != KF_MAP_LINK_NONE
                                 && neighbor_definition->behavior_type == KF_MAP_OBJECT_BEHAVIOR_HINGED_DOOR) {
                                 goto notify_default;
