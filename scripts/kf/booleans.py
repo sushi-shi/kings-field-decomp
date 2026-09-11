@@ -159,7 +159,7 @@ class Extractor:
         self.return_warnings: list[Location] = []
         self.tu = self.cindex.Index.create().parse(
             str(repo / unit.source),
-            args=[*MODES['retail'], *FLAGS, '-I', str(repo / 'include'),
+            args=[*MODES['retail'], *FLAGS, '-I', str(repo / 'include'), '-I', str(repo / 'vendor/include'),
                   '-isystem', str(sdk), *(f'-D{define}' for define in unit.defines)],
             options=self.cindex.TranslationUnit.PARSE_DETAILED_PROCESSING_RECORD,
         )
@@ -169,7 +169,7 @@ class Extractor:
 
     def project(self, cursor: Any) -> bool:
         here = self.location(cursor)
-        return here is not None and here.file.startswith(('src/', 'include/'))
+        return here is not None and here.file.startswith(('src/', 'include/', 'vendor/'))
 
     def ident(self, cursor: Any) -> str:
         if cursor.kind == self.ck.PARM_DECL:
@@ -1011,10 +1011,10 @@ def _classification(slot: Slot, value: int, writes: list[Write], uses: list[Use]
                     hazards: set[str]) -> str:
     if slot.domain:
         return 'already-' + slot.domain
-    if slot.location.file.startswith('src/vendor/'):
-        return 'vendored'
-    if slot.location.file.startswith('include/kf/psyq_') or 'missing-function-body' in hazards:
+    if slot.location.file.startswith('vendor/include/') or 'missing-function-body' in hazards:
         return 'external-boundary'
+    if slot.location.file.startswith('vendor/'):
+        return 'vendored'
     if value & OTHER:
         return 'non-boolean'
     observed = any(write.expression[0] == 'constant' and write.expression[1] in (0, 1)
@@ -1055,9 +1055,9 @@ def collect(*, images: tuple[str, ...] = (), names: tuple[str, ...] = (), jobs: 
     if facts.errors:
         raise RuntimeError('target-C parsing failed:\n' + '\n'.join(facts.errors[:20]))
     sources = {unit.source for unit in selected}
-    missing_sources = sorted(path for path in before if path.startswith('src/')
+    missing_sources = sorted(path for path in before if path.startswith(('src/', 'vendor/'))
                              and path.endswith('.c') and path not in sources)
-    missing_headers = sorted(path for path in before if path.startswith('include/')
+    missing_headers = sorted(path for path in before if path.startswith(('include/', 'vendor/include/'))
                              and path.endswith('.h') and path not in facts.headers)
     if not images and not names and (missing_sources or missing_headers):
         raise RuntimeError(f'incomplete Boolean-audit coverage: sources={missing_sources}; '

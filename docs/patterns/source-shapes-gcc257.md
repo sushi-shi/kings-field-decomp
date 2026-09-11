@@ -100,7 +100,7 @@ and player-death band:
 | Retail signature | Source shape | Witness |
 | --- | --- | --- |
 | `jal __main` as the first call, SNMAIN `start` tail-calls the body | the function is `main`; GCC inserts the hook only for that name | `main` `0x8001428c` |
-| `lui/ori` address formation without relocations | numeric address constants in source (BSS start, heap base) | `main` |
+| `lui/ori` startup address formation | numeric constants reproduce the probe output; original source mechanism unresolved | `main` |
 | store inside a loop that never advances the pointer | plain `int *`; a `volatile` view hoists nothing but changes the loop form | `repeat_store_word` `0x80014268` |
 | `sll/sra` of a divided value before `*100`, `andi 0xffff` at each grid access | `s32 cell = x / 2000 + (s16)(z / 2000) * 100` indexed as `(u16)cell` | `collision_query_world` `0x8001a5ac` |
 | a `bne` to a trailing block for the uncommon case, `j loop` at its end | nested `if`/`else` blocks, not `continue` | `game_main_loop` `0x800146b8` |

@@ -185,9 +185,9 @@ def current_state(
         image_units = [unit for unit in manifest.units if unit.image == image]
         if image_units and any(_base_path(unit).is_file() for unit in image_units):
             if report is None and error is None:
-                failures.append(f"{image}: no report; run `kf build --image {image_key(image)}`")
+                failures.append(f"{image}: no report; run `kf analyze --image {image_key(image)}`")
             elif _report_is_stale(image, manifest):
-                failures.append(f"{image}: report is stale; run `kf build --image {image_key(image)}`")
+                failures.append(f"{image}: report is stale; run `kf analyze --image {image_key(image)}`")
 
     rows: list[Current] = []
     for unit in manifest.units:

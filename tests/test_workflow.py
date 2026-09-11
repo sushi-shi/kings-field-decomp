@@ -53,8 +53,6 @@ class ManifestTests(unittest.TestCase):
         self.assertIn("probe-gcc257-o2-g0", manifest.profiles)
         probe_257 = manifest.profiles["probe-gcc257-o2-g0"]
         self.assertEqual(probe_257.compiler, "gcc257-native")
-        self.assertEqual(probe_257.maspsx_flags, ("--expand-div",))
-        self.assertEqual(manifest.profiles["probe-gcc260-o2-g0"].maspsx_flags, ())
         self.assertGreater(len(manifest.units), 0)
         self.assertEqual(
             len({unit.unit for unit in manifest.units}),

@@ -20,7 +20,7 @@ class BooleanTypeTests(unittest.TestCase):
             path.write_text('#include <kf/bool.h>\n' + source)
             return subprocess.run(
                 [compiler, *FLAGS, *MODES[mode], '-fsyntax-only',
-                 '-I', str(REPO / 'include'), str(path)], capture_output=True, text=True)
+                 '-I', str(REPO / 'include'), '-I', str(REPO / 'vendor/include'), str(path)], capture_output=True, text=True)
 
     def test_target_width_alignment_and_retail_canonical_types(self) -> None:
         aliases = {'KfBool': 'int', 'KfBool32': 's32', 'KfBoolU32': 'u32',

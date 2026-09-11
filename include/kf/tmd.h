@@ -5,7 +5,7 @@
 
 #include <kf/game_types.h>
 #include <kf/enum.h>
-#include <kf/psyq.h>
+#include <psyq/sdk.h>
 
 KF_ENUM_BEGIN(KfTmdSlot, u16)
     KF_TMD_SLOT_MAP = 0,

@@ -5,7 +5,7 @@
 
 #include <kf/bool.h>
 #include <kf/game_types.h>
-#include <kf/psyq.h>
+#include <psyq/sdk.h>
 
 enum {
     KF_FIXED4_BITS = 4,

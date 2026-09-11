@@ -10,7 +10,7 @@
 #include <kf/game_types.h>
 #include <kf/enum.h>
 #include <kf/game_map.h>
-#include <kf/psyq.h>
+#include <psyq/sdk.h>
 #include <kf/audio.h>
 #include <kf/game_math.h>
 

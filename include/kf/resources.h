@@ -4,7 +4,7 @@
 /* Resource-stream helpers shared by the GAME and OPEN overlays. */
 
 #include <kf/game_types.h>
-#include <kf/psyq.h>
+#include <psyq/sdk.h>
 
 enum {
     KF_RESOURCE_CHUNK_HEADER_BYTES = 4,

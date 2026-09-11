@@ -9,11 +9,6 @@
       flake = false;
     };
 
-    maspsx-src = {
-      url = "github:mkst/maspsx/746b895f02929ecd148af7b1f4ff05b69f973878";
-      flake = false;
-    };
-
     objdiff-src = {
       # v3.7.3: both front ends use our tested shared data comparator.
       url = "github:encounter/objdiff/6bcac60df8bb0b4de5b1cb98b033bdedb9ac6aa4";
@@ -27,7 +22,7 @@
     };
   };
 
-  outputs = { self, nixpkgs, psy-k-src, maspsx-src, objdiff-src, ghidra-psx-loader-src }:
+  outputs = { self, nixpkgs, psy-k-src, objdiff-src, ghidra-psx-loader-src }:
     let
       system = "x86_64-linux";
       pkgs = import nixpkgs {
@@ -91,6 +86,30 @@
           --stage-dir "$out"
       '';
 
+      # The Release 2.5 ASPSX executables are software-key protected. This
+      # hash-pinned ASPSX 1.07 assembles all compiler output; its distinct
+      # provenance remains explicit in every build report.
+      aspsxArchive = pkgs.fetchurl {
+        name = "aspsx-binaries.tar.gz";
+        url = "https://github.com/mkst/maspsx/releases/download/aspsx/aspsx-binaries.tar.gz";
+        hash = "sha256-fHU4wq+SMzjdxaevXFfSgLGTBmDpj5xDDm6iq3XlLno=";
+      };
+      aspsxNative = pkgs.runCommand "kings-field-aspsx-1.07" {
+        nativeBuildInputs = [ pkgs.gnutar pkgs.gzip ];
+      } ''
+        mkdir -p "$out"
+        tar -xzf ${aspsxArchive} -C "$out" ./1.07/ASPSX.EXE
+      '';
+
+      # The C assembler lacks named sections, while the Release 2.5 macro
+      # assembler requires a software key. Use this preserved native ASMPSX
+      # solely for zero-byte linker boundary declarations, not game bodies.
+      asmpsxNative = pkgs.fetchurl {
+        name = "kings-field-asmpsx-2.34.exe";
+        url = "https://raw.githubusercontent.com/HighwayFrogs/frogger-psx/fa2d5185b19ae89aaceeb47b2828369e06566edf/sdk/bin/SDK4.0/DOS/ASMPSX.EXE";
+        sha256 = "c27e07db59f29282c837e06204a3a5efe69183dbfd2570c8b0d46f1cb5f760bb";
+      };
+
       psy-k = pkgs.rustPlatform.buildRustPackage {
         pname = "psy-k";
         version = "0.4.0-git";
@@ -100,22 +119,7 @@
         doCheck = false;
       };
 
-      maspsxPatched = pkgs.applyPatches {
-        name = "maspsx-private-bss-source";
-        src = maspsx-src;
-        patches = [
-          ./patches/maspsx-private-bss.patch
-          ./patches/maspsx-107-small-data.patch
-        ];
-      };
 
-      maspsx = pkgs.writeShellApplication {
-        name = "maspsx";
-        runtimeInputs = [ pkgs.python3 ];
-        text = ''
-          exec python3 ${maspsxPatched}/maspsx.py "$@"
-        '';
-      };
 
       cc1psx260 = pkgs.writeShellApplication {
         name = "cc1psx-260";
@@ -138,6 +142,7 @@
       };
 
       gcc257Probe = import ./nix/gcc257.nix { inherit pkgs; };
+      pcsxRedux = import ./nix/pcsx-redux.nix { inherit pkgs; };
 
       ghidraPsxLoader = pkgs.stdenvNoCC.mkDerivation {
         pname = "ghidra-psx-loader";
@@ -388,16 +393,33 @@
           cpppsx260
           cc1psx257
           cpppsx257
-          maspsx
           mipsBinutilsAliases
           pkgs.git
+          pkgs.dosbox-x
         ];
         text = ''
           repo="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+          export PSYQ_ASPSX="${aspsxNative}/1.07/ASPSX.EXE"
+          export PSYQ_INCLUDE="${psyqSdk}/release-2.5/isa board/PSXLIB/INCLUDE"
           cd "$repo"
           exec python3 -m scripts.kf.compile "$@"
         '';
       };
+
+      emulatorCommand = mode: pkgs.writeShellApplication {
+        name = "kf-run-${mode}";
+        runtimeInputs = [ analysisPython pcsxRedux pkgs.git ];
+        text = ''
+          repo="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+          export KINGS_FIELD_DIR="$repo"
+          export PCSX_REDUX_BIN="${pcsxRedux}/bin/pcsx-redux"
+          export PCSX_REDUX_BIOS="${pcsxRedux.openbios}"
+          cd "$repo"
+          exec python3 -m scripts.kf.emulator ${mode} "$@"
+        '';
+      };
+      runRetail = emulatorCommand "retail";
+      runCandidate = emulatorCommand "candidate";
 
       kfCli = pkgs.writeShellApplication {
         name = "kf";
@@ -407,15 +429,22 @@
           cpppsx260
           cc1psx257
           cpppsx257
-          maspsx
           mipsBinutilsAliases
           objdiff-cli
+          pkgs.dosbox-x
           pkgs.llvmPackages.clang-unwrapped
           pkgs.git
           pkgs.ninja
         ];
         text = ''
           repo="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
+          export PSYQ_ASPSX="${aspsxNative}/1.07/ASPSX.EXE"
+          export PSYQ_SDK="${psyqSdk}/release-2.5"
+          export PSYQ_ASMPSX="${asmpsxNative}"
+          export PSYQ_BIN="$PSYQ_SDK/isa board/PSXBIN/BIN"
+          export PSYQ_INCLUDE="$PSYQ_SDK/isa board/PSXLIB/INCLUDE"
+          export PSYQ_LIB="$PSYQ_SDK/isa board/PSXLIB/LIB"
+          export PSYQ_H2000_LIB="$PSYQ_SDK/H2000/LIB2000"
           cd "$repo"
           exec python3 -m scripts.kf.cli "$@"
         '';
@@ -427,7 +456,6 @@
           psyqSdk
           psy-k
           pkgs.dosbox-x
-          maspsx
           cc1psx260
           cpppsx260
           cc1psx257
@@ -447,10 +475,13 @@
           objdiffProject
           objdiffReport
           sourceCompile
+          runRetail
+          runCandidate
           kfCli
           ghidraWithPlugins
           objdiff-cli
           objdiff
+          pcsxRedux
         ] ++ (with pkgs; [
           # Binary analysis and emulation.
           jdk21
@@ -497,7 +528,7 @@
 
         shellHook = ''
           export KINGS_FIELD_DIR="$(git rev-parse --show-toplevel 2>/dev/null || echo "$PWD")"
-          unset PSYQ_DIR PSYQ_ASPSX PSYQ_GCC241_DIR PSYQ_GCC260_RELEASE25_DIR
+          unset PSYQ_DIR PSYQ_GCC241_DIR PSYQ_GCC260_RELEASE25_DIR
           unset PSYQ_GCC260_DISK_DIR PSYQ_GCC260_IMG
           export PSYQ_SDK="${psyqSdk}/release-2.5"
           export PSYQ_BIN="$PSYQ_SDK/isa board/PSXBIN/BIN"
@@ -505,7 +536,9 @@
           export PSYQ_LIB="$PSYQ_SDK/isa board/PSXLIB/LIB"
           export PSYQ_H2000_LIB="$PSYQ_SDK/H2000/LIB2000"
           export PSYQ_COMPILER="$PSYQ_SDK/compiler"
+          export PSYQ_ASPSX="${aspsxNative}/1.07/ASPSX.EXE"
           export KF_GCC260_NATIVE="${gcc260Native}"
+          export PSYQ_ASMPSX="${asmpsxNative}"
           export KF_GCC257_NATIVE="${gcc257Native}"
           export GHIDRA_INSTALL_DIR="${pkgs.ghidra}/lib/ghidra"
           export NIX_GHIDRAHOME="${ghidraWithPlugins}/lib/ghidra/Ghidra"
@@ -518,11 +551,13 @@
           ${kfCli}/bin/kf clangd >&2 || echo "[kings-field] clangd setup failed; run kf clangd after fixing the reported error" >&2
 
           echo "[kings-field] SDK             : Psy-Q Release 2.5; one complete pinned media tree" >&2
-          echo "[kings-field] SDK assembler   : preserved but software-key locked; no substitute" >&2
-          echo "[kings-field] compiler probes : cc1psx-260/cpppsx-260 and cc1psx-257/cpppsx-257 (analysis only)" >&2
+          echo "[kings-field] SDK assembler   : ASPSX 1.07 hash-pinned; Release 2.5 copy remains key-locked" >&2
+          echo "[kings-field] compiler probes : cc1psx-260/cpppsx-260 and cc1psx-257/cpppsx-257" >&2
           echo "[kings-field] analysis        : ghidra + PSX loader, pyghidra, psy-k, radare2, mipsel binutils" >&2
-          echo "[kings-field] executable link : unavailable until the pinned SDK assembler can run" >&2
-          echo "[kings-field] objdiff objects : maspsx + mipsel-linux-gnu-as" >&2
+          echo "[kings-field] PSX emulator    : pcsx-redux ${pcsxRedux.version}" >&2
+          echo "[kings-field] runtime checks  : kf-run-retail / kf-run-candidate" >&2
+          echo "[kings-field] executable chain: source -> ASPSX -> PSYLINK -> CPE2X; run kf build" >&2
+          echo "[kings-field] objdiff views   : native Psy-Q objects -> ELF reader" >&2
           echo "[kings-field] Python RE stack : run 'kf-python-sync' once, then 'splat ...'" >&2
           echo "[kings-field] retail census   : kf-retail-validate; kf-function-audit/propose; kf-fid-census; kf-vendored-seed" >&2
           echo "[kings-field] matching        : kf init/build/match/status/check/bank; objdiff GUI" >&2
@@ -533,7 +568,7 @@
       sdkBuilderTests = pkgs.runCommand "kings-field-sdk-builder-tests" {
         nativeBuildInputs = [
           analysisPython mipsBinutilsAliases psy-k objdiff-cli pkgs.dosbox-x
-          cc1psx257 cpppsx257 maspsx
+          cc1psx257 cpppsx257
           pkgs.llvmPackages.clang-unwrapped
         ];
         GHIDRA_PSX_LOADER = "${ghidraPsxLoader}/lib/ghidra/Ghidra/Extensions/ghidra_psx_ldr";
@@ -542,6 +577,8 @@
         PSYQ_H2000_LIB = "${psyqSdk}/release-2.5/H2000/LIB2000";
         PSYQ_INCLUDE = "${psyqSdk}/release-2.5/isa board/PSXLIB/INCLUDE";
         PSYQ_BIN = "${psyqSdk}/release-2.5/isa board/PSXBIN/BIN";
+        PSYQ_ASPSX = "${aspsxNative}/1.07/ASPSX.EXE";
+        PSYQ_ASMPSX = "${asmpsxNative}";
       } ''
         mkdir project
         cp -r ${./scripts} project/scripts
@@ -549,15 +586,18 @@
         cp -r ${./config} project/config
         cp -r ${./include} project/include
         cp -r ${./src} project/src
+        cp -r ${./vendor} project/vendor
         cd project
         python3 -m unittest discover -s tests -v
         touch "$out"
       '';
 
       gcc257TraceTests = pkgs.runCommand "kings-field-gcc257-trace-tests" {
-        nativeBuildInputs = [
-          analysisPython cc1psx257 cpppsx257 maspsx mipsBinutilsAliases
+        nativeBuildInputs = [ pkgs.dosbox-x
+          analysisPython cc1psx257 cpppsx257 mipsBinutilsAliases
         ];
+
+        PSYQ_ASPSX = "${aspsxNative}/1.07/ASPSX.EXE";
       } ''
         mkdir -p project/tests/fixtures
         cp -r ${./scripts} project/scripts
@@ -589,6 +629,7 @@
         cp -r ${./scripts} project/scripts
         cp -r ${./config} project/config
         cp -r ${./include} project/include
+        cp -r ${./vendor} project/vendor
         cd project
         python3 -m scripts.kf.retail config/retail
         python3 -m scripts.kf.inventory check --config-dir config/retail
@@ -596,7 +637,7 @@
       '';
 
       objdiffMipsTests = pkgs.runCommand "kings-field-objdiff-mips-tests" {
-        nativeBuildInputs = [
+        nativeBuildInputs = [ pkgs.dosbox-x
           analysisPython
           crossBinutils
           mipsBinutilsAliases
@@ -605,8 +646,9 @@
           cpppsx260
           cc1psx257
           cpppsx257
-          maspsx
         ];
+
+        PSYQ_ASPSX = "${aspsxNative}/1.07/ASPSX.EXE";
       } ''
         mkdir project
         cp -r ${./scripts} project/scripts
@@ -662,7 +704,9 @@
         gcc257Debug = gcc257Probe.debug;
         gcc257Instrumented = gcc257Probe.instrumented;
         gcc257Source = gcc257Probe.source;
-        inherit psyqSdk psy-k maspsx gcc260Native cc1psx260 cpppsx260 gcc257Native cc1psx257 cpppsx257 mipsBinutilsAliases ghidraPsxLoader ghidraWithPlugins objdiff-cli objdiff retailValidate retailSeed functionAudit functionPropose vendoredSeed fidCensus retailDelink objdiffProject objdiffReport sourceCompile kfCli;
+        inherit psyqSdk psy-k gcc260Native cc1psx260 cpppsx260 gcc257Native cc1psx257 cpppsx257 mipsBinutilsAliases ghidraPsxLoader ghidraWithPlugins objdiff-cli objdiff retailValidate retailSeed functionAudit functionPropose vendoredSeed fidCensus retailDelink objdiffProject objdiffReport sourceCompile runRetail runCandidate kfCli;
+        aspsx107 = aspsxNative;
+        pcsx-redux = pcsxRedux;
         default = psyqSdk;
       };
 
@@ -686,6 +730,7 @@
         objdiff-mips = objdiffMipsTests;
         psylink-order = psylinkOrderTests;
         codecs = codecTests;
+        pcsx-redux = pcsxRedux;
       };
     };
 }

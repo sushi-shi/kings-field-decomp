@@ -268,7 +268,7 @@ Both supplied assembler executables require the original software key in the
 current DOS environment. No assembler from another archive is substituted.
 
 The exact SDK revision and compiler profile used for King's Field remain
-unproven. Native compiler rebuilds, maspsx, binutils and objdiff in the
+unproven. Native compiler rebuilds, binutils and objdiff in the
 development shell are analysis tools, not members of this SDK. The original
 binaries remain proprietary; this output must not be committed to Git.
 """

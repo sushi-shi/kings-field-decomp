@@ -2,8 +2,8 @@
 #include <kf/address.h>
 #include <kf/game_math.h>
 #include <kf/audio.h>
-#include <kf/psyq_audio.h>
-#include <kf/psyq_libc.h>
+#include <psyq/audio.h>
+#include <psyq/libc.h>
 #include <kf/game.h>
 
 enum {

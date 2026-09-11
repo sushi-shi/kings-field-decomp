@@ -17,7 +17,7 @@
 #include <kf/game_math.h>
 #include <kf/game_state.h>
 #include <kf/game_system.h>
-#include <kf/psyq_pad.h>
+#include <psyq/pad.h>
 #include <kf/game_render.h>
 #include <kf/game_asset.h>
 #include <kf/notify.h>

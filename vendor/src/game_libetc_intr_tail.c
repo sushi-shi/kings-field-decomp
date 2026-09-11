@@ -1,6 +1,6 @@
 #include <kf/address.h>
 #include <kf/game_state.h>
-#include <kf/psyq_kernel.h>
+#include <psyq/kernel.h>
 
 /*
  * Version-skewed Sony LIBETC INTR.OBJ static helper. Its sole GAME caller is

@@ -47,7 +47,7 @@ def unit_arguments(
         raise ValueError(f"invalid Clang mode {mode!r}; use modern or retail")
     return [
         compiler, *MODES[mode], *FLAGS,
-        "-I", str(repo / "include"), "-isystem", str(sdk),
+        "-I", str(repo / "include"), "-I", str(repo / "vendor/include"), "-isystem", str(sdk),
         *(f"-D{define}" for define in unit.defines),
         "-c", str(repo / unit.source),
     ]

@@ -85,7 +85,7 @@ native runtime must not depend on generated MIPS objects or proprietary SDK
 libraries.
 
 Supply portable headers through target-specific include configuration. Existing
-`kf/psyq*.h` wrappers are integration points. Every translation unit must see
+`psyq/*.h` wrappers are integration points. Every translation unit must see
 consistent signatures and structures; arbitrary header shadowing must not
 create incompatible views. `ADDRESS`, `DATA`, and `RODATA` already expand to
 nothing and do not force native storage addresses.

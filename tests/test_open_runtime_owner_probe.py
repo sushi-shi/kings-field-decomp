@@ -23,6 +23,16 @@ FIXTURES = REPO / "tests/fixtures"
 HEADER = REPO / "include/kf/open_render.h"
 
 
+def text_referent(obj, symbol, addend):
+    """Read the native function owning a section-relative text reference."""
+    offset = symbol.value + addend
+    owners = [item for item in obj.symbols if item.kind == 'STT_FUNC'
+              and item.section == '.text' and item.value <= offset < item.value + item.size]
+    assert len(owners) == 1
+    owner = owners[0]
+    return owner.name, offset - owner.value
+
+
 def linked_words(obj, unit, claim, data, functions):
     """Resolve this candidate's text only; do not execute it or mask addends."""
     fn = obj.named_symbol(claim.symbol)
@@ -49,6 +59,12 @@ def linked_words(obj, unit, claim, data, functions):
                 continue
             if symbol.name in functions:
                 base = functions[symbol.name]
+            elif symbol.section == '.text':
+                name, offset = text_referent(obj, symbol, addend)
+                target = functions[name] + offset
+                addresses.append(target)
+                words[high], words[index] = encode_hi_lo_addend(words[high], words[index], target)
+                continue
             elif symbol.kind == "STT_SECTION":
                 base = (unit.rodata[0] if symbol.section == ".rodata"
                         else data[symbol.section]) + symbol.value
@@ -63,9 +79,8 @@ def linked_words(obj, unit, claim, data, functions):
                 target = functions[symbol.name] + addend
             else:
                 assert symbol.section == ".text"
-                offset = symbol.value + addend
-                assert fn.value <= offset < fn.value + fn.size
-                target = claim.va + offset - fn.value
+                name, offset = text_referent(obj, symbol, addend)
+                target = functions[name] + offset
             if words[index] >> 26 == 3:
                 calls.append(target)
             words[index] = words[index] & 0xFC000000 | (target >> 2 & 0x3FFFFFF)
@@ -119,8 +134,8 @@ class OpenRuntimeOwnerProbeTests(unittest.TestCase):
                     compile_source(
                         source, unit.image, output, root / 'delink', profile.optimization,
                         profile.small_data, profile.aspsx_version,
-                        (REPO / 'include', Path(sdk)), profile.cc1_flags,
-                        profile.compiler, profile.maspsx_flags, defines=unit.defines,
+                        (REPO / 'include', REPO / 'vendor/include', Path(sdk)), profile.cc1_flags,
+                        profile.compiler, defines=unit.defines,
                     )
                     obj = _load_object(output)
                     symbol = obj.named_symbol('layout')
@@ -190,8 +205,8 @@ class OpenRuntimeOwnerProbeTests(unittest.TestCase):
             compile_source(
                 candidate, unit.image, output, BUILD / "delink", profile.optimization,
                 profile.small_data, profile.aspsx_version,
-                (REPO / "include", FIXTURES, Path(os.environ["PSYQ_INCLUDE"])),
-                profile.cc1_flags, profile.compiler, profile.maspsx_flags, defines=unit.defines,
+                (REPO / "include", REPO / "vendor/include", FIXTURES, Path(os.environ["PSYQ_INCLUDE"])),
+                profile.cc1_flags, profile.compiler, defines=unit.defines,
             )
             obj = _load_object(output)
             self.assertTrue(controls <= {claim.symbol for claim in unit.functions})
@@ -234,8 +249,8 @@ class OpenRuntimeOwnerProbeTests(unittest.TestCase):
             compile_source(
                 candidate, unit.image, output, BUILD / "delink", profile.optimization,
                 profile.small_data, profile.aspsx_version,
-                (REPO / "include", FIXTURES, Path(os.environ["PSYQ_INCLUDE"])),
-                profile.cc1_flags, profile.compiler, profile.maspsx_flags, defines=unit.defines,
+                (REPO / "include", REPO / "vendor/include", FIXTURES, Path(os.environ["PSYQ_INCLUDE"])),
+                profile.cc1_flags, profile.compiler, defines=unit.defines,
             )
             obj = _load_object(output)
             self.assertEqual({claim.symbol for claim in unit.functions},

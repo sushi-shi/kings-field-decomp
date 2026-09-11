@@ -6,8 +6,8 @@
 #include <kf/game_render.h>
 #include <kf/memory.h>
 #include <kf/pool.h>
-#include <kf/psyq.h>
-#include <kf/psyq_libc.h>
+#include <psyq/sdk.h>
+#include <psyq/libc.h>
 
 enum { MORPH_SCRATCH_OFFSET_IN_PROJECTION_STORAGE = 0x1f40 };
 

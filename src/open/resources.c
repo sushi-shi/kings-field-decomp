@@ -7,8 +7,8 @@
 #include <kf/memory.h>
 #include <kf/open_render.h>
 #include <kf/open_resources.h>
-#include <kf/psyq.h>
-#include <kf/psyq_libc.h>
+#include <psyq/sdk.h>
+#include <psyq/libc.h>
 #include <kf/resources.h>
 
 enum {

@@ -4,7 +4,7 @@
 #include <kf/map_data.h>
 #include <kf/item.h>
 #include <kf/game_cd.h>
-#include <kf/psyq_libc.h>
+#include <psyq/libc.h>
 #include <kf/game.h>
 
 /* Shared menu primitives (frame begin/flush, item draw, input sound, poll). */

@@ -597,6 +597,13 @@ class CandidateProgram:
                 )
             if symbol.special_section == "SHN_ABS":
                 return (symbol.value + addend) & 0xFFFFFFFF
+            if symbol.special_section == "SHN_COMMON":
+                if not bind_data_objects:
+                    raise CandidateLinkError(
+                        f"{owner.obj.path}: COMMON {symbol.name!r} has no section placement; "
+                        "isolated object binding must be explicit"
+                    )
+                return resolve_data_object(owner.obj, symbol, addend, known_data)
             if symbol.section == ".text":
                 if symbol.name in selected_by_name and symbol.kind == "STT_FUNC":
                     target = selected_by_name[symbol.name]

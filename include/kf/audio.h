@@ -12,7 +12,7 @@
 
 #include <kf/game_types.h>
 #include <kf/enum.h>
-#include <kf/psyq.h>
+#include <psyq/sdk.h>
 
 enum {
     KF_AUDIO_VOICE_SLOTS = 10,

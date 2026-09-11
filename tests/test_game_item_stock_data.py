@@ -102,10 +102,14 @@ class GameItemStockDataTests(unittest.TestCase):
                 symbol = symbols[0]
                 self.assertEqual((symbol['st_size'], symbol['st_info']['bind']),
                                  (240, 'STB_GLOBAL'))
-                section = elf.get_section(symbol['st_shndx'])
-                self.assertEqual((section.name, section['sh_type'], section['sh_size']),
-                                 ('.bss', 'SHT_NOBITS', 280))
-                self.assertLessEqual(symbol['st_value'] + symbol['st_size'], section['sh_size'])
+                if path == paths[0]:
+                    section = elf.get_section(symbol['st_shndx'])
+                    self.assertEqual((section.name, section['sh_type'], section['sh_size']),
+                                     ('.bss', 'SHT_NOBITS', 280))
+                    self.assertLessEqual(symbol['st_value'] + symbol['st_size'], section['sh_size'])
+                else:
+                    self.assertEqual((symbol['st_shndx'], symbol['st_value']), ('SHN_COMMON', 4))
+                    self.assertIsNone(elf.get_section_by_name('.bss'))
         metadata = json.loads((BUILD / 'objdiff/game/base' / f'{unit.object_name}.json').read_text())
         self.assertEqual(metadata['data_symbol_sizes']['method'], 'pinned-compiler-sizeof-probe')
         self.assertEqual(metadata['data_symbol_sizes']['sizes']['item_stock'], 240)
@@ -113,18 +117,20 @@ class GameItemStockDataTests(unittest.TestCase):
     def test_native_alignment_does_not_waive_conflicting_allocation_order(self):
         unit, paths = self.built_pair()
         target, source = [Elf(path) for path in paths]
-        # The two newly owned death snapshots expose a different tentative
-        # allocation order; equal section lengths must not hide that failure.
-        self.assertEqual(_diff_bss(target, source).status, 'layout')
+        # Native COMMON requests have no section offsets before linking.
+        # Their alignment does not validate the target's proposed ordering.
+        self.assertEqual(_diff_bss(target, source).status, 'missing')
         with paths[1].open('rb') as stream:
-            section = ELFFile(stream).get_section_by_name('.bss')
-            self.assertEqual(section['sh_addralign'], 4)
-            self.assertEqual(STOCK % section['sh_addralign'], 0)
+            elf = ELFFile(stream)
+            symbol = elf.get_section_by_name('.symtab').get_symbol_by_name('item_stock')[0]
+            self.assertEqual(symbol['st_value'], 4)
+            self.assertEqual(STOCK % symbol['st_value'], 0)
         result = diff_unit(unit, BUILD / 'delink', BUILD / 'objdiff')
         self.assertFalse(result.matches)
         bss = next(diff for diff in result.diffs if diff.name == '.bss')
-        self.assertEqual(bss.status, 'layout')
+        self.assertEqual(bss.status, 'missing')
         self.assertIn('conflicting-section-bases', bss.detail)
+        self.assertIn('unsupported-common-allocation', bss.detail)
 
     def test_all_64_reviewed_pairs_keep_owner_and_interior_addends(self):
         image, ctx, catalog = self.retail(), Context('GAME.EXE'), load_catalog(RETAIL_CONFIG)

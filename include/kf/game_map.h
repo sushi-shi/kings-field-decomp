@@ -10,7 +10,7 @@
 #include <kf/floor.h>
 #include <kf/enum.h>
 #include <kf/notify_types.h>
-#include <kf/psyq.h>
+#include <psyq/sdk.h>
 #include <kf/game_math.h>
 
 struct KfPoolRecord;

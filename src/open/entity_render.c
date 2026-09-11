@@ -5,7 +5,7 @@
 #include <kf/open_opening_render.h>
 #include <kf/open_render.h>
 #include <kf/open_scene0.h>
-#include <kf/psyq.h>
+#include <psyq/sdk.h>
 
 enum {
     OPENING_MODEL_DEPTH_BIAS = -100,

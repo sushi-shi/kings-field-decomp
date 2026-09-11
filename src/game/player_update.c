@@ -3,7 +3,7 @@
 #include <kf/overlay.h>
 #include <kf/game_player.h>
 #include <kf/game_collision.h>
-#include <kf/psyq_libc.h>
+#include <psyq/libc.h>
 #include <kf/game.h>
 
 /* Flash immediately before/on each one-HP poison tick. */

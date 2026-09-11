@@ -84,8 +84,8 @@ def compare(unit_name: str, source: Path | None, context: int) -> int:
     profile = manifest.profiles[unit.profile]
     target = BUILD / "delink" / unit.image_key / "modules" / unit.object_name
     if not target.is_file():
-        raise ValueError(f"{target}: module target is missing; run `kf build` first")
-    includes = [REPO / "include"]
+        raise ValueError(f"{target}: module target is missing; run `kf analyze` first")
+    includes = [REPO / "include", REPO / "vendor/include"]
     idx = index(unit.image)
     if os.environ.get("PSYQ_INCLUDE"):
         includes.append(Path(os.environ["PSYQ_INCLUDE"]))
@@ -102,7 +102,6 @@ def compare(unit_name: str, source: Path | None, context: int) -> int:
             tuple(includes),
             profile.cc1_flags,
             profile.compiler,
-            profile.maspsx_flags,
             defines=unit.defines,
         )
         base_object = _load_object(output)

@@ -3,8 +3,8 @@
 The King's Field delinker needs only a small subset of ELF: one executable
 ``.text`` section, optional ``.data``/``.bss`` sections for the data a module
 claims, function/object/undefined symbols, and MIPS REL relocations.  Keeping
-this writer in-tree makes target objects independent of host assembler quirks;
-reconstructed source objects still come from CC1PSX -> maspsx -> GNU ``as``.
+this writer in-tree makes diagnostic objects independent of host assembler
+quirks. Native source objects remain Psy-Q LNK files; ELF views never link.
 """
 
 from __future__ import annotations
@@ -175,6 +175,8 @@ def write_mips_elf(
     sbss_alignment: int = 4,
     rodata: bytes = b"",
     rodata_relocations: Iterable[MipsRelocation] = (),
+    rodata_symbols: Iterable[DefinedSymbol] = (),
+    common_symbols: Iterable[DefinedSymbol] = (),
 ) -> bytes:
     """Build a deterministic MIPS-I/O32 relocatable object.
 
@@ -189,9 +191,11 @@ def write_mips_elf(
     function_name and an empty text/zero function size; no fake function symbol
     is emitted and no code enters the progress denominator.
     """
+    defined_symbols = tuple(defined_symbols)
+    common_symbols = tuple(common_symbols)
     if function_name is None:
-        if text or function_size:
-            raise ValueError("data-only objects cannot own code")
+        if function_size or (text and not defined_symbols):
+            raise ValueError("data-only objects cannot own code without explicit text symbols")
     elif not function_name:
         raise ValueError("function name must not be empty")
     elif not 0 < function_size <= len(text):
@@ -210,15 +214,16 @@ def write_mips_elf(
     bss_symbols = _check_symbols(bss_symbols, bss_size, ".bss")
     sbss_symbols = _check_symbols(sbss_symbols, sbss_size, ".sbss")
     rodata_relocations = _check_relocations(rodata_relocations, len(rodata), ".rodata")
+    rodata_symbols = _check_symbols(rodata_symbols, len(rodata), ".rodata")
     sdata_relocations = _check_relocations(sdata_relocations, len(sdata), ".sdata")
     sdata_symbols = _check_symbols(sdata_symbols, len(sdata), ".sdata")
     has_sdata = bool(sdata) or bool(sdata_symbols) or bool(sdata_relocations)
     has_data = bool(data) or bool(data_symbols) or bool(data_relocations)
     has_bss = bss_size > 0 or bool(bss_symbols)
     has_sbss = sbss_size > 0 or bool(sbss_symbols)
-    has_rodata = bool(rodata)
-    if function_name is None and (defined_symbols or relocations or not (has_data or has_sdata or has_bss or has_sbss or has_rodata)):
-        raise ValueError("data-only objects require data and cannot define text symbols/relocations")
+    has_rodata = bool(rodata) or bool(rodata_symbols)
+    if function_name is None and not (text or has_data or has_sdata or has_bss or has_sbss or has_rodata or common_symbols):
+        raise ValueError("empty objects require data, code, or COMMON requests")
 
     # Section order: .text, .rel.text, [.data, [.rel.data]], [.bss], .symtab,
     # .strtab, .shstrtab. Indices are assigned as the list is built.
@@ -290,6 +295,8 @@ def write_mips_elf(
         *((symbol, bss_index) for symbol in bss_symbols),
         *((symbol, sbss_index) for symbol in sbss_symbols),
         *((symbol, sdata_index) for symbol in sdata_symbols),
+        *((symbol, rodata_index) for symbol in rodata_symbols),
+        *((symbol, 0xfff2) for symbol in common_symbols),  # SHN_COMMON; value is alignment
     ]
     defined_names = [symbol.name for symbol, _ in placed]
     if any(name in section_symbol_names for name in defined_names):

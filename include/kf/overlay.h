@@ -4,6 +4,18 @@
 #include <kf/enum.h>
 #include <kf/game_types.h>
 
+/* Boundaries supplied by the program's link layout. */
+extern u8 BSS_START[];
+extern u8 BSS_END[];
+
+enum {
+    OVERLAY_RAM_BYTES = 0x200000,
+    OVERLAY_STACK_BYTES = 0x8000
+};
+
+#define OVERLAY_RAM_END (0x80000000u + OVERLAY_RAM_BYTES)
+#define OVERLAY_STACK_BOTTOM (OVERLAY_RAM_END - OVERLAY_STACK_BYTES)
+
 KF_ENUM_BEGIN(KfOpenMode, s32)
     KF_OPEN_MODE_INTRO = 1,
     KF_OPEN_MODE_ENDING = 0xfe

@@ -5,7 +5,7 @@
 #include <kf/game_math.h>
 #include <kf/game_render.h>
 #include <kf/game_state.h>
-#include <kf/psyq.h>
+#include <psyq/sdk.h>
 
 /*
  * Per-entity billboard/model emitters invoked by the frame renderer's pool

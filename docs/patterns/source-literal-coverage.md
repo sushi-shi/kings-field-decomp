@@ -278,9 +278,9 @@ retained literal reasons preserve these limitations without inventing semantics.
 
 | Source | Occurrences | Existing audit references | Scope to check |
 | --- | ---: | --- | --- |
-| [game_libetc_intr_tail.c](../../src/vendor/game_libetc_intr_tail.c) | 0 | [complete small-module ledger](small-module-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
-| [game_libetc_pad.c](../../src/vendor/game_libetc_pad.c) | 7 | [complete small-module ledger](small-module-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
-| [open_libetc_pad.c](../../src/vendor/open_libetc_pad.c) | 7 | [complete small-module ledger](small-module-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
+| [game_libetc_intr_tail.c](../../vendor/src/game_libetc_intr_tail.c) | 0 | [complete small-module ledger](small-module-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
+| [game_libetc_pad.c](../../vendor/src/game_libetc_pad.c) | 7 | [complete small-module ledger](small-module-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
+| [open_libetc_pad.c](../../vendor/src/open_libetc_pad.c) | 7 | [complete small-module ledger](small-module-literal-ledger.md) | Current token/expression coverage verified; every occurrence has a reason. |
 
 ## Completion boundary
 

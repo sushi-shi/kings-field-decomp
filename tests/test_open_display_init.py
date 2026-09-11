@@ -181,7 +181,14 @@ class OpenDisplayInitTests(unittest.TestCase):
                     compiled[high], compiled[index], target)
             elif reloc.kind == 4:
                 if compiled[index] >> 26 == 3:
-                    candidate_calls[offset] = symbol.name
+                    if symbol.section == '.text':
+                        from tests.test_open_runtime_owner_probe import text_referent
+
+                        name, interior = text_referent(obj, symbol, (compiled[index] & 0x3FFFFFF) * 4)
+                        self.assertEqual(interior, 0)
+                        candidate_calls[offset] = name
+                    else:
+                        candidate_calls[offset] = symbol.name
                 else:
                     self.assertEqual(symbol.section, ".text")
                     candidate_jumps[offset] = (

@@ -1,6 +1,6 @@
 #include <kf/game_graphics.h>
 #include <kf/address.h>
-#include <kf/psyq.h>
+#include <psyq/sdk.h>
 #include <kf/game_render.h>
 #include <kf/notify.h>
 #include <kf/game_player.h>

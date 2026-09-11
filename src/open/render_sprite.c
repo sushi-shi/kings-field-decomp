@@ -1,7 +1,7 @@
 #include <kf/address.h>
 #include <kf/gpu_packets.h>
 #include <kf/open_render.h>
-#include <kf/psyq_libc.h>
+#include <psyq/libc.h>
 
 DATA(0x800372fc, 0x8)
 SVECTOR render_sprite_light_normal = {0, 0, KF_FIXED12_ONE, 0};

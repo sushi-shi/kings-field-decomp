@@ -1,17 +1,9 @@
 #include <kf/address.h>
-#include <kf/psyq_cd.h>
+#include <psyq/cd.h>
 #include <kf/overlay.h>
 #include <kf/game_types.h>
 #include <kf/open_controller.h>
-#include <kf/psyq_kernel.h>
-
-#define STARTUP_STORE_ADDRESS 0x800377a0
-#define INITIAL_HEAP_ADDRESS 0x80080100
-
-enum {
-    STARTUP_REPEAT_STORE_COUNT = 0x70218,
-    INITIAL_HEAP_BYTES = 0x177f00
-};
+#include <psyq/kernel.h>
 
 ADDRESS(0x80013734, 0x24)
 void repeat_store_word(int *destination, int count, int value)
@@ -25,9 +17,10 @@ void repeat_store_word(int *destination, int count, int value)
 ADDRESS(0x80013758, 0x6c)
 void main(s32 entry_arg0, KfOverlayArguments *entry_args)
 {
-    repeat_store_word((int *)STARTUP_STORE_ADDRESS, STARTUP_REPEAT_STORE_COUNT, 0);
+    repeat_store_word((int *)BSS_START,
+        (OVERLAY_STACK_BOTTOM - (u32)BSS_START) / sizeof(int), 0);
     CdInit();
-    InitHeap((void *)INITIAL_HEAP_ADDRESS, INITIAL_HEAP_BYTES);
+    InitHeap(BSS_END, OVERLAY_STACK_BOTTOM - (u32)BSS_END);
     ExitCriticalSection();
     opening_run(entry_args->request);
 }

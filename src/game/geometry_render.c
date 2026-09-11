@@ -5,7 +5,7 @@
 #include <kf/game_math.h>
 #include <kf/game_player.h>
 #include <kf/game_render.h>
-#include <kf/psyq.h>
+#include <psyq/sdk.h>
 #include <kf/notify.h>
 #include <kf/game_menu.h>
 

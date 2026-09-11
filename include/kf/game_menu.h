@@ -12,7 +12,7 @@
 #include <kf/game_save.h>
 #include <kf/cd_file.h>
 #include <kf/debug.h>
-#include <kf/psyq.h>
+#include <psyq/sdk.h>
 #include <kf/magic.h>
 #include <kf/render_types.h>
 

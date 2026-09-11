@@ -10,7 +10,7 @@
 #include <kf/open_render.h>
 #include <kf/open_resources.h>
 #include <kf/open_scene0.h>
-#include <kf/psyq_audio.h>
+#include <psyq/audio.h>
 
 enum {
     SCENE0_ROTATION_START_POINT = 8,

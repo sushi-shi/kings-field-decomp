@@ -17,7 +17,6 @@ import os
 from pathlib import Path
 import re
 import shutil
-import subprocess
 import tempfile
 from typing import TYPE_CHECKING
 
@@ -230,37 +229,13 @@ def source_section(contribution: Contribution) -> SdkSection:
 
 def build_base(contribution: Contribution, output: Path) -> None:
     section = source_section(contribution)
-    assembler, objcopy = shutil.which("mipsel-linux-gnu-as"), shutil.which("mipsel-linux-gnu-objcopy")
-    if assembler is None or objcopy is None:
-        raise ValueError("pinned MIPS assembler and objcopy are required")
-    if not re.fullmatch(r"[A-Za-z_][A-Za-z0-9_]*", contribution.identity):
-        raise ValueError("unsupported SDK data identity spelling")
-    with tempfile.TemporaryDirectory(prefix="kf-sdk-data-base-") as temporary:
-        root = Path(temporary)
-        (root / "section.bin").write_bytes(section.data)
-        name = contribution.identity
-        # Mechanical SDK-object conversion, not reconstructed game assembly.
-        linkage = '.globl' if contribution.scope == 'global' else '.local'
-        source = ('.section .kf_sdk_data,"aw",@progbits\n.balign 1\n' + f'{linkage} {name}\n'
-                  + f'.type {name}, @object\n{name}:\n.incbin "section.bin"\n'
-                  + f'.size {name}, .-{name}\n')
-        (root / "section.s").write_text(source)
-        subprocess.run([assembler, "-EL", "-mips1", "-mabi=32", "-o", "section.o", "section.s"],
-                       cwd=root, check=True, capture_output=True)
-        # MIPS GAS rounds its ordinary .data contribution to 16 bytes. A
-        # byte-aligned temporary section preserves the SDK extent. Restore the
-        # original name/alignment only after checking ordinary .data is empty.
-        ordinary = _elf((root / "section.o").read_bytes()).get_section_by_name('.data')
-        if ordinary is not None and ordinary['sh_size']:
-            raise ValueError("SDK conversion emitted unexpected ordinary data")
-        subprocess.run([objcopy, "--remove-section", ".data", "--rename-section", ".kf_sdk_data=.data",
-                        "--set-section-alignment", f".kf_sdk_data={section.alignment}",
-                        "section.o", "base.o"], cwd=root, check=True, capture_output=True)
-        blob = (root / "base.o").read_bytes()
-        validate_object(blob, contribution)
-        if _elf(blob).get_section_by_name(".data").data() != section.data:
-            raise ValueError("SDK conversion changed the complete data contribution")
-        _write_bytes_if_changed(output, blob)
+    blob = write_mips_elf(
+        b"", None, 0, data=section.data,
+        data_symbols=(DefinedSymbol(contribution.identity, 0, len(section.data),
+                                    STT_OBJECT, contribution.binding),),
+        data_alignment=section.alignment)
+    validate_object(blob, contribution)
+    _write_bytes_if_changed(output, blob)
 
 
 def validate_object(blob: bytes, contribution: Contribution) -> None:

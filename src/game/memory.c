@@ -1,8 +1,8 @@
 #include <kf/null.h>
 #include <kf/address.h>
 #include <kf/game_types.h>
-#include <kf/psyq_kernel.h>
-#include <kf/psyq_libc.h>
+#include <psyq/kernel.h>
+#include <psyq/libc.h>
 #include <kf/game.h>
 
 enum {

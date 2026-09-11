@@ -4,7 +4,7 @@
 #include <kf/map_data.h>
 #include <kf/game_player.h>
 #include <kf/game_collision.h>
-#include <kf/psyq_libc.h>
+#include <psyq/libc.h>
 #include <kf/game.h>
 
 /* Motion rates count executions of the player update, not elapsed seconds. */

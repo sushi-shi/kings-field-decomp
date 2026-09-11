@@ -44,7 +44,7 @@ def _configure(args: argparse.Namespace) -> int:
     return 0
 
 
-def _build(args: argparse.Namespace) -> int:
+def _analyze(args: argparse.Namespace) -> int:
     configure_if_needed(
         args.reconfigure or args.retail_dir is not None,
         args.retail_dir,
@@ -128,13 +128,22 @@ def parser() -> argparse.ArgumentParser:
 
     add_boolean_arguments(booleans)
 
-    build = subs.add_parser("build", help="configure if needed and run the Ninja graph")
-    build.add_argument("phase", nargs="?", choices=PHASES, default="all")
+    build = subs.add_parser(
+        "build",
+        help="compile source through ASPSX, PSYLINK, and CPE2X",
+    )
     build.add_argument("--image", action="append", choices=tuple(IMAGE_ALIASES))
-    build.add_argument("-j", "--jobs", type=int)
-    build.add_argument("-v", "--verbose", action="store_true")
-    build.add_argument("--reconfigure", action="store_true")
-    build.add_argument("--retail-dir", type=Path)
+
+    analyze = subs.add_parser(
+        "analyze",
+        help="refresh derived delinked and ELF comparison views",
+    )
+    analyze.add_argument("phase", nargs="?", choices=PHASES, default="all")
+    analyze.add_argument("--image", action="append", choices=tuple(IMAGE_ALIASES))
+    analyze.add_argument("-j", "--jobs", type=int)
+    analyze.add_argument("-v", "--verbose", action="store_true")
+    analyze.add_argument("--reconfigure", action="store_true")
+    analyze.add_argument("--retail-dir", type=Path)
 
     trial = subs.add_parser(
         "try", help="compile one unit and diff it per function against its module target"
@@ -218,7 +227,7 @@ def parser() -> argparse.ArgumentParser:
     verify_parser.add_argument("verify_args", nargs=argparse.REMAINDER)
     link_parser = subs.add_parser(
         "link", add_help=False,
-        help="link executables with supplied libraries and compare complete retail files",
+        help="alias for build; --compare-only inspects existing EXEs",
     )
     link_parser.add_argument("link_args", nargs=argparse.REMAINDER)
     return root
@@ -275,7 +284,12 @@ def main(argv: list[str] | None = None) -> int:
 
             return run_boolean_audit(args)
         if args.command == "build":
-            return _build(args)
+            from scripts.kf.executable import main as executable_main
+
+            link_args = [value for image in args.image or () for value in ("--image", image)]
+            return executable_main(link_args)
+        if args.command == "analyze":
+            return _analyze(args)
         if args.command == "try":
             from scripts.kf.trial import compare
 

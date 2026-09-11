@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import os
+import json
 import re
 import shutil
 import struct
@@ -171,7 +172,7 @@ class GameGraphicsOwnerProbeTests(unittest.TestCase):
                         standalone_source(unit)
 
     def tools(self):
-        if not all(shutil.which(name) for name in ('cpppsx-257', 'cc1psx-257', 'maspsx')):
+        if not all(shutil.which(name) for name in ('cpppsx-257', 'cc1psx-257', 'dosbox-x')):
             self.skipTest('pinned native compiler tools required')
         if not os.environ.get('PSYQ_INCLUDE'):
             self.skipTest('pinned SDK headers required')
@@ -195,8 +196,8 @@ class GameGraphicsOwnerProbeTests(unittest.TestCase):
         index.write_text(f'object\tscope\nmodules/{unit.object_name}\tmodule\n')
         compile_source(path, unit.image, output, delink, profile.optimization,
                        profile.small_data, profile.aspsx_version,
-                       (REPO / 'include', root, HEADER.parent, Path(os.environ['PSYQ_INCLUDE'])),
-                       profile.cc1_flags, profile.compiler, profile.maspsx_flags, defines=unit.defines)
+                       (REPO / 'include', REPO / 'vendor/include', root, HEADER.parent, Path(os.environ['PSYQ_INCLUDE'])),
+                       profile.cc1_flags, profile.compiler, defines=unit.defines)
         return _load_object(output)
 
     def test_clear_extent_and_existing_fields_are_independent_of_candidate(self):
@@ -776,7 +777,11 @@ extern KfMaterialProbe material_probe;
                     addresses = dict(data)
                     for claim in unit.data:
                         symbol = obj.named_symbol(claim.symbol)
-                        self.assertEqual(symbol.size, claim.size)
+                        if symbol.section is None:
+                            metadata = json.loads(obj.path.with_suffix('.o.json').read_text())
+                            self.assertEqual(metadata['data_symbol_sizes']['sizes'][claim.symbol], claim.size)
+                        else:
+                            self.assertEqual(symbol.size, claim.size)
                     # This checks complete function instructions at named
                     # referents. Full section placement is checked separately
                     # by data_match and is not established by a function test.

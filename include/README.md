@@ -1,6 +1,6 @@
 # Shared declarations
 
-Place reconstructed cross-target declarations here. The compiler wrapper also
-adds the hash-pinned Release 2.5 Psy-Q include directory after this project
-directory. Guarded `kf/psyq*.h` wrappers expose the original SDK headers and
-the callable LIBAPI declarations missing from that release.
+Place reconstructed game declarations here. The compiler searches this
+directory, then `vendor/include/`, then the hash-pinned Release 2.5 Psy-Q
+include directory. SDK wrappers, missing API declarations and case-sensitive
+header shims live in [`vendor/include/`](../vendor/include/).

@@ -52,8 +52,8 @@ class MemoryOwnerProbeTests(unittest.TestCase):
                 compile_source(
                     source, unit.image, output, BUILD / "delink",
                     profile.optimization, profile.small_data, profile.aspsx_version,
-                    (REPO / "include", Path(sdk)), profile.cc1_flags,
-                    profile.compiler, profile.maspsx_flags, defines=unit.defines,
+                    (REPO / "include", REPO / "vendor/include", Path(sdk)), profile.cc1_flags,
+                    profile.compiler, defines=unit.defines,
                 )
                 obj = _load_object(output)
                 for claim in unit.functions:

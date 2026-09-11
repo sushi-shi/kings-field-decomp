@@ -100,7 +100,7 @@ Zero-literal modules have no rows; that does not resolve their external identiti
 | `tmd_project_vertices_shift` | 283 | `1` | `for (count--; count != -1; count--) {` | Minus one terminates the count-minus-one vertex loop after its final element. |
 | `tmd_transform_vertices` | 303 | `1` | `for (count--; count != -1; count--) {` | Minus one terminates the count-minus-one vertex loop after its final element. |
 
-## `src/vendor/game_libetc_pad.c`
+## `vendor/src/game_libetc_pad.c`
 
 7 retained occurrences.
 
@@ -114,7 +114,7 @@ Zero-literal modules have no rows; that does not resolve their external identiti
 | `PadRead` | 53 | `0` | `if (PadIdentifier == 0) {` | The attributed Sony front end accepts identifier zero for its legacy driver path; other values enter the diagnostic stub. |
 | `PadStop` | 64 | `0` | `if (PadIdentifier == 0) {` | The attributed Sony front end accepts identifier zero for its legacy driver path; other values enter the diagnostic stub. |
 
-## `src/vendor/open_libetc_pad.c`
+## `vendor/src/open_libetc_pad.c`
 
 7 retained occurrences.
 
@@ -128,6 +128,6 @@ Zero-literal modules have no rows; that does not resolve their external identiti
 | `PadRead` | 48 | `0` | `if (PadIdentifier == 0) {` | The attributed Sony front end accepts identifier zero for its legacy driver path; other values enter the diagnostic stub. |
 | `PadStop` | 59 | `0` | `if (PadIdentifier == 0) {` | The attributed Sony front end accepts identifier zero for its legacy driver path; other values enter the diagnostic stub. |
 
-## `src/vendor/game_libetc_intr_tail.c`
+## `vendor/src/game_libetc_intr_tail.c`
 
 0 retained occurrences.

@@ -5,7 +5,7 @@
 
 #include <kf/game_types.h>
 #include <kf/map_data.h>
-#include <kf/psyq.h>
+#include <psyq/sdk.h>
 
 enum {
     KF_COLLISION_SKIP_TERRAIN = 0x1,

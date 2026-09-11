@@ -296,7 +296,7 @@ class InventoryTests(unittest.TestCase):
                 source = (REPO / f"src/game/{name}.c").read_text()
                 self.assertNotIn("#include <kf/game.h>", source)
                 self.assertIn("#include <kf/game_asset.h>", source)
-                self.assertIn("#include <kf/psyq.h>", source)
+                self.assertIn("#include <psyq/sdk.h>", source)
 
     def test_animation_pool_record_fields_and_complete_owner(self) -> None:
         fields = (
@@ -1385,11 +1385,11 @@ class InventoryTests(unittest.TestCase):
             self.assertEqual({row["status"] for row in references}, {"reviewed"})
 
         sources = (
-            (REPO / "src/vendor/game_libetc_pad.c").read_text(),
-            (REPO / "src/vendor/open_libetc_pad.c").read_text(),
+            (REPO / "vendor/src/game_libetc_pad.c").read_text(),
+            (REPO / "vendor/src/open_libetc_pad.c").read_text(),
         )
         game_state = (REPO / "include/kf/game_state.h").read_text()
-        vendor_header = (REPO / "include/kf/psyq_pad.h").read_text()
+        vendor_header = (REPO / "vendor/include/psyq/pad.h").read_text()
         for source in sources:
             self.assertIn("static u32 pad_buf", source)
             self.assertIn("static u32 pad_status", source)
@@ -1635,14 +1635,18 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(len(campaign_rows), 7)
         self.assertEqual({row["status"] for row in campaign_rows}, {"reviewed"})
         self.assertNotIn("", {row["target_name"] for row in campaign_rows})
-        self.assertNotIn(
-            0x8001376C,
-            {
-                parse_int(row["site_va"])
-                for row in relocation_rows
-                if row["image"] == "OPEN.EXE"
-            },
-        )
+        startup_addresses = {
+            parse_int(row["site_va"]): row
+            for row in relocation_rows
+            if row["image"] == "OPEN.EXE"
+            and parse_int(row["site_va"]) in {0x8001376C, 0x8001378C}
+        }
+        self.assertEqual(set(startup_addresses), {0x8001376C, 0x8001378C})
+        self.assertEqual(startup_addresses[0x8001376C]["target_name"], "cd_search_file")
+        self.assertEqual(startup_addresses[0x8001378C]["target_name"], "initial_heap_start")
+        for row in startup_addresses.values():
+            self.assertEqual(row["status"], "candidate")
+            self.assertEqual(row["opcode"], "lui+ori")
 
     def test_open_opening_render_campaign_matches_curated_evidence(self) -> None:
         evidence_path = CONFIG / "evidence/open_semantic_opening_render.tsv"
@@ -2768,8 +2772,12 @@ class InventoryTests(unittest.TestCase):
         }
         self.assertEqual(
             set(matrix_rows),
-            {0x80015198, 0x8001866C, 0x800186A4},
+            {0x800142A0, 0x80015198, 0x8001866C, 0x800186A4},
         )
+        startup = matrix_rows.pop(0x800142A0)
+        self.assertEqual(startup["target_name"], "player_death_saved_color_matrix")
+        self.assertEqual(startup["status"], "candidate")
+        self.assertEqual(startup["opcode"], "lui+ori")
         for row in matrix_rows.values():
             self.assertEqual(row["target_name"], "player_death_saved_color_matrix")
             self.assertEqual(row["confidence"], "paired-reviewed")

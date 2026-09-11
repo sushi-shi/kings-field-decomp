@@ -29,7 +29,7 @@ class GameWorldStateLayoutTests(unittest.TestCase):
             for expected in (0x2360, 0x235F):
                 with self.subTest(expected=expected):
                     preprocessed = subprocess.run(
-                        [cpp, "-lang-c", "-undef", "-nostdinc", "-I", str(REPO / "include"),
+                        [cpp, "-lang-c", "-undef", "-nostdinc", "-I", str(REPO / "include"), "-I", str(REPO / "vendor/include"),
                          "-I", psyq_include,
                          f"-DEXPECTED_MAP_RUNTIME_SIZE={expected}", str(fixture)],
                         capture_output=True, check=True,

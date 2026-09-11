@@ -2,7 +2,7 @@
 #include <kf/address.h>
 #include <kf/map_data.h>
 #include <kf/game_map.h>
-#include <kf/psyq_libc.h>
+#include <psyq/libc.h>
 #include <kf/game.h>
 
 enum {

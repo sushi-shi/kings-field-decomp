@@ -1,5 +1,5 @@
 #include <kf/address.h>
-#include <kf/psyq_pad.h>
+#include <psyq/pad.h>
 #include <kf/open_render.h>
 #include <LIBETC.H>
 

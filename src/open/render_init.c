@@ -1,5 +1,5 @@
 #include <kf/address.h>
-#include <kf/psyq_libc.h>
+#include <psyq/libc.h>
 #include <kf/overlay.h>
 #include <kf/cd_file.h>
 #include <kf/item.h>

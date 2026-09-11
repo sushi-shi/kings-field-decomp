@@ -1,9 +1,35 @@
 # Build and progress system
 
-The build workflow borrows the portable part of Gruntz: an umbrella command,
-an explicit unit manifest, a generated Ninja graph, content-aware artifacts,
-and a manual high-water ledger. It does not import Gruntz's PE/PDB model,
-COFF normalization, source-label extraction, Windows linker, or C++ gates.
+`kf build` is the source-to-EXE build: the pinned compiler emits assembly,
+ASPSX emits native Psy-Q objects, PSYLINK links those objects with original
+SDK inputs, and CPE2X writes each executable. See
+[the linking guide](executable-linking.md) for outputs and provenance.
+It does not read retail executable bytes, calculate match scores, or update
+the README. Tool failures stop the build; reconstruction checks are separate.
+
+At the command level, the build is a compiler, an assembler, and a linker:
+
+```text
+source files -> compiler -> assembler -> object files
+object files + SDK objects/libraries -> linker -> executable
+```
+
+The SDK linker writes an intermediate CPE file; its CPE2X utility wraps that
+result in the PlayStation EXE format. The small linker command file lists the
+inputs and their order, the executable load origin and entry point, and the
+uninitialized sections. PSYLINK chooses individual symbol addresses and applies
+relocations. `ADDRESS()` and `DATA()` annotations do not control placement.
+
+Before this change, `kf build` drove the matching graph: compiler output passed
+through maspsx and GNU as to ELF, then objdiff compared it with retail-derived
+objects. Executable linking was separate. The active build now uses ASPSX's
+native objects for PSYLINK; the comparison tools translate that same format to
+ELF only because objdiff needs it.
+
+`kf analyze` drives the incremental Ninja graph for inspection. Source
+compilation uses the same native SDK path; ELF objects are read-only views
+of its LNK outputs. Retail delinking and the progress ledger are comparison
+tools and supply no bytes or layout to the executable build.
 
 ## Unit manifest and ADDRESS() claims
 
@@ -86,30 +112,26 @@ through the shared validator; under the safe policy the raw pointer words of
 tables remain withheld (`data:` reasons in `relocations_withheld.tsv`), so a
 pointer table compares by bytes only until its rows are reviewed.
 
-On the compiled side, GCC 2.5.7 prints an uninitialized global as
-`.comm name,size` (size rounded up to 8) and a `static` one as `.lcomm`;
-maspsx's default rewrites both into `.bss` definitions (`--use-comm-section`
-would leave COMMON symbols, which objdiff cannot pair with a section symbol).
-An explicitly initialized global (`= 0` included) is emitted into `.data`,
-which is how retail placed the zero-initialized frame pacer counters in the
-load image. GCC 2.5.7 also prints no `.size` for data, so `kf-compile` appends
-`.type`/`.size` directives for every `DATA()` claim (the curated size, recorded
-in the `.o.json`); without them objdiff would infer the last datum's extent
-from the assembler's 16-byte section padding. objdiff pairs data symbols by
-name inside the unit and reports the `.data`/`.bss` sections next to the
-functions; progress and banking still count functions only.
+On the compiled side, the native assembler preserves initialized storage,
+private BSS, and exported COMMON requests as distinct records. The ELF reader
+preserves those classes: COMMON remains `SHN_COMMON` with its native requested
+extent and has no assigned section offset. An equal request does not establish
+its final address; only PSYLINK supplies executable placement.
 
-Profile names are deliberately non-attributive. `probe-gcc260-o2-g0` keeps
-the older GCC 2.6.0/maspsx analysis route reproducible;
-`probe-gcc257-o2-g0` is the default for new units because the GCC 2.5.7 rebuild
-natively emits the retail framed epilogue and load hoisting, and its
-`maspsx_flags = ["--expand-div"]` selects the checked `div` expansion retail
-contains. Neither name claims that
-the historical compiler, optimization profile, assembler, or linker is proven;
-the evidence and corpus numbers are in
-[`patterns/gcc257-epilogue-and-scheduling.md`](patterns/gcc257-epilogue-and-scheduling.md).
-A profile may set `compiler` to any listed native probe and may pass extra
-`cc1_flags` and `maspsx_flags`; every field is part of the unit fingerprint.
+Native section-relative relocations can also change an objdiff score without
+changing resolved instructions. For example, `player_warp_to_floor_entry`
+currently scores 99.876540%: ASPSX records `.data + 14` where the earlier ELF
+path retained `floor_entry_cells - 2`. The table begins at `.data + 16`, so
+the expressions agree. An independent comparison resolves all 81 words,
+six calls and thirteen address references identically to retail. This does
+not waive the strict 100% banking rule or justify changing the source to
+influence the inspector's symbol choice.
+
+Private names and function records come from SDK debug metadata. Claimed C
+object sizes are measured with the same target compiler and ASPSX in an
+auxiliary sizeof query. That query supplies inspection metadata only: neither
+its table nor `DATA()` expectations alter the actual native object. The reader
+never appends `.size`, `.type`, or allocation directives to game assembly.
 
 ## Incremental graph
 
@@ -157,7 +179,7 @@ hand-written documentation. `scripts/kf/readme.py` renders it from the same
 strict-100% snapshot as `kf status` and replaces only the text between
 `<!-- match-score:start -->` and `<!-- match-score:end -->`.
 
-`kf check` refreshes the block, and `kf build` ends in that check. The check
+`kf check` refreshes the block, and `kf analyze` ends in that check. The check
 also requires every vendored source-verification function to remain 100% and
 compares every owned `.data`, `.rodata`, and `.bss` contribution against the
 retail-delinked object by default. It fails on any byte, exact object-section

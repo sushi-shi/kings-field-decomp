@@ -106,7 +106,7 @@ def _cindex():
 def _source_files(repo: Path) -> tuple[Path, ...]:
     return tuple(sorted(
         path
-        for root in (repo / "src", repo / "include")
+        for root in (repo / "src", repo / "include", repo / "vendor")
         if root.is_dir()
         for path in root.rglob("*")
         if path.is_file() and path.suffix in SOURCE_SUFFIXES
@@ -171,7 +171,7 @@ def _parse_unit(unit: Unit, repo: Path, sdk: Path, cindex: Any) -> _UnitResult:
     path = repo / unit.source
     arguments = [
         *MODES["retail"], *FLAGS,
-        "-I", str(repo / "include"), "-isystem", str(sdk),
+        "-I", str(repo / "include"), "-I", str(repo / "vendor/include"), "-isystem", str(sdk),
         *(f"-D{define}" for define in unit.defines),
     ]
     translation_unit = cindex.Index.create().parse(

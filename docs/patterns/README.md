@@ -5,6 +5,12 @@ about which source shapes reproduce it under the current probes. Each note
 records the retail evidence first and the probe behaviour second; none of them
 promotes a probe to a proven historical toolchain.
 
+- [startup-address-origins.md](startup-address-origins.md): startup literal
+  owners and xrefs, shared RAM/stack policy, SDK section-end expressions,
+  compiler controls and unresolved original definition mechanisms.
+- [startup-sdk-provenance.md](startup-sdk-provenance.md): SDK/BIOS ownership
+  audit of startup and memory code, exact InitHeap trampoline controls,
+  all-source signature screening and limits of negative provenance evidence.
 - [game-upstream-ast-campaign.md](game-upstream-ast-campaign.md): upstream AST
   search of the twelve remaining GAME functions, the exact entity renderer
   through a consumed matrix pointer, reviewed spawn/player improvements and

@@ -2,7 +2,7 @@
 #include <kf/item.h>
 #include <kf/map_data.h>
 #include <kf/open_render.h>
-#include <kf/psyq_libc.h>
+#include <psyq/libc.h>
 
 ADDRESS(0x800197e4, 0x1b0)
 void item_load_floor_placements(KfFloorItemPlacement *placements)

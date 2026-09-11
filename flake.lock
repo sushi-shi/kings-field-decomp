@@ -19,23 +19,6 @@
         "url": "https://github.com/lab313ru/ghidra_psx_ldr.git"
       }
     },
-    "maspsx-src": {
-      "flake": false,
-      "locked": {
-        "lastModified": 1788031316,
-        "narHash": "sha256-B6p/V7zha3hurGjcOfAmbCcmUECj+uB6+O8rMmOEmUY=",
-        "owner": "mkst",
-        "repo": "maspsx",
-        "rev": "746b895f02929ecd148af7b1f4ff05b69f973878",
-        "type": "github"
-      },
-      "original": {
-        "owner": "mkst",
-        "repo": "maspsx",
-        "rev": "746b895f02929ecd148af7b1f4ff05b69f973878",
-        "type": "github"
-      }
-    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1779560665,
@@ -89,7 +72,6 @@
     "root": {
       "inputs": {
         "ghidra-psx-loader-src": "ghidra-psx-loader-src",
-        "maspsx-src": "maspsx-src",
         "nixpkgs": "nixpkgs",
         "objdiff-src": "objdiff-src",
         "psy-k-src": "psy-k-src"

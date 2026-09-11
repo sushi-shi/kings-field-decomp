@@ -1,4 +1,4 @@
-# One SDK and the analysis environment
+# SDK and source-to-EXE toolchain
 
 The repository has one active historical SDK: the complete hash-pinned Psy-Q
 Release 2.5 floppy tree. It is staged without files from another SDK, compiler
@@ -26,19 +26,28 @@ this one distribution; neither pair is staged as a second SDK.
 | `PSYQ_COMPILER` | `compiler` |
 
 Both assembler executables on the medium stop with `Software Data Key not
-present` under DOSBox. The repository no longer substitutes a working ASPSX
-from another archive. A coherent `kf link` is unavailable until the pinned
-SDK's compiler and assembler can run; see [the executable-linking
-status](executable-linking.md).
+present` under DOSBox. The executable chain uses a separately hash-pinned,
+working ASPSX 1.07 (`PSYQ_ASPSX`) alongside the native GCC probe selected by
+each unit's profile. PSYLINK, CPE2X, headers, libraries, and overlay startup
+come from the preserved Release 2.5 tree. Build reports distinguish those
+provenances; none of this proves the exact historical tool versions.
 
-The native `cc1psx` rebuilds, maspsx, GNU MIPS binutils, psy-k and objdiff are
-analysis programs. They compile comparison objects for the reconstruction loop
-but are not members of the SDK and do not support a historical executable-build
-claim. Their versions remain pinned so matching results are reproducible. The
-GCC 2.5.7 and 2.6.0 comparison behavior is documented in
-[`patterns/gcc257-epilogue-and-scheduling.md`](patterns/gcc257-epilogue-and-scheduling.md),
-and the ELF section model is documented in
-[`patterns/assembler-section-extents.md`](patterns/assembler-section-extents.md).
+There is one source compilation path: CPPPSX -> CC1PSX -> ASPSX -> native
+Psy-Q OBJ. `kf build` passes those objects and the SDK libraries to PSYLINK,
+then runs CPE2X without rewriting its output. `kf analyze` and `kf try` use
+the same compiler and assembler, and read the resulting native objects into
+ELF views for objdiff. No maspsx or GNU assembler processes game source.
+Debug metadata is enabled in the compiler and assembler so private symbols
+remain inspectable. It is part of the shared probe flags, not a second
+comparison build configuration.
+
+GNU MIPS binutils, psy-k and objdiff are inspection tools. They neither lay
+out nor emit the candidate executables. The compiler scheduling evidence is
+in [`patterns/gcc257-epilogue-and-scheduling.md`](patterns/gcc257-epilogue-and-scheduling.md).
+Earlier GNU-container calibration in
+[`patterns/assembler-section-extents.md`](patterns/assembler-section-extents.md)
+is historical; current section extents and COMMON requests are read directly
+from native ASPSX objects.
 
 The Ghidra extension's later Psy-Q 2.60 signatures are also an analysis
 corpus. Vendored-function inventory code may use them to propose a name after
@@ -47,7 +56,7 @@ Release 2.5 object evidence and are not SDK inputs.
 
 `tests/psylink_order_smoke.py` can run the Release 2.5 PSYLINK directly because
 that tool does not require the assembler's software key. It tests linker order
-using preserved SDK objects and does not create a mixed executable toolchain.
+using preserved SDK objects.
 
 The initializer verifies and stages the SDK directly:
 
@@ -62,7 +71,7 @@ No generated SDK binary, retail game image, or executable belongs in Git.
 
 `nix develop` provides the single historical SDK and the separate analysis
 programs above, plus Ghidra/PyGhidra, DOSBox, little-endian MIPS GNU
-binutils, maspsx, psy-k, disc-image utilities, objdiff, and the normal
+binutils, psy-k, disc-image utilities, objdiff, and the normal
 C/C++/Python build tools. Ghidra plugin packaging is documented separately in
 [`ghidra.md`](ghidra.md).
 

@@ -7,11 +7,11 @@
  * a TU pulls each in exactly once and gets the real library prototypes and
  * types rather than hand-rolled externs.
  *
- * LIBSND and LIBCD stay in kf/psyq_audio.h so their declarations are limited
+ * LIBSND and LIBCD stay in psyq/audio.h so their declarations are limited
  * to audio/CD users. KERNEL and the BIOS file interfaces stay in
- * kf/psyq_kernel.h, which also supplies the release's missing LIBAPI
+ * psyq/kernel.h, which also supplies the release's missing LIBAPI
  * declarations and case-sensitive include shim. C runtime declarations stay
- * in kf/psyq_libc.h so only their callers include MEMORY.H and MALLOC.H.
+ * in psyq/libc.h so only their callers include MEMORY.H and MALLOC.H.
  */
 #include <sys/types.h>
 #include <LIBGTE.H>

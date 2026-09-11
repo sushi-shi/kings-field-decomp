@@ -3,7 +3,7 @@
 
 /* Guarded entry point for the unguarded Psy-Q Release 2.5 LIBCD.H. */
 
-#include <kf/psyq.h>
+#include <psyq/sdk.h>
 #include <LIBCD.H>
 
 /* CDREAD.OBJ exports this status poll, omitted by Release 2.5 LIBCD.H. */

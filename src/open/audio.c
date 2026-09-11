@@ -3,8 +3,8 @@
 #include <kf/cd_file.h>
 #include <kf/memory.h>
 #include <kf/open_audio.h>
-#include <kf/psyq_audio.h>
-#include <kf/psyq_libc.h>
+#include <psyq/audio.h>
+#include <psyq/libc.h>
 
 enum {
     OPEN_SEQUENCE_BUFFER_BYTES = 0x4800,

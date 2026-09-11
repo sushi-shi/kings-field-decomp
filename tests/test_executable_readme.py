@@ -90,9 +90,9 @@ class ExecutableReadmeTests(unittest.TestCase):
                        for row in images.values())
             self.assertIn(f'Overall (2/3 images): {200 * matched / size:.2f}%', text)
             self.assertIn('| `GAME.EXE` | — | — | — | — |', text)
-            self.assertIn('## Retired executable experiment', text)
+            self.assertIn('## Source-to-EXE status', text)
             self.assertIn('The three byte columns show similarity, not differences.', text)
-            self.assertIn('`kf link --compare-only`', text)
+            self.assertIn('`kf build` rebuilds them', text)
 
     def test_data_counts_are_independent_of_executable_availability(self):
         text = readme.render_executable_block({}, {'game': (29, 41), 'open': (0, 20)})

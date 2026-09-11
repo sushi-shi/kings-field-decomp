@@ -3,8 +3,8 @@
 #include <kf/overlay.h>
 #include <kf/game_player.h>
 #include <kf/game_save.h>
-#include <kf/psyq_kernel.h>
-#include <kf/psyq_libc.h>
+#include <psyq/kernel.h>
+#include <psyq/libc.h>
 #include <kf/game.h>
 
 enum {

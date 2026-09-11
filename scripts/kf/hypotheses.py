@@ -188,13 +188,13 @@ def _compile(
     profile = load_manifest().profiles[unit.profile]
     # Preserve quoted-include lookup from the configured source's directory
     # while compiling the disposable source outside the worktree's src tree.
-    includes = [source_dir, REPO / "include"]
+    includes = [source_dir, REPO / "include", REPO / "vendor/include"]
     if os.environ.get("PSYQ_INCLUDE"):
         includes.append(Path(os.environ["PSYQ_INCLUDE"]))
     compiler.compile_source(
         source, unit.image, output, BUILD / "delink", profile.optimization,
         profile.small_data, profile.aspsx_version, tuple(includes), profile.cc1_flags,
-        profile.compiler, profile.maspsx_flags, defines=unit.defines,
+        profile.compiler, defines=unit.defines,
         cc1_override=trace.compiler if trace else None,
         trace_path=output.with_suffix(".trace.jsonl") if trace else None,
         trace_function=symbol if trace else None,
@@ -312,7 +312,7 @@ def run(
         raise ValueError(f"manifest expands to {combinations} states, above --limit {limit}")
     target = BUILD / "delink" / unit.image_key / "modules" / unit.object_name
     if not target.is_file():
-        raise ValueError(f"{target}: target is missing; run `kf build` first")
+        raise ValueError(f"{target}: target is missing; run `kf analyze` first")
     target_digest = hashlib.sha256(target.read_bytes()).hexdigest()
     stamp = time.strftime("%Y%m%d-%H%M%S")
     output = output or BUILD / "hypotheses" / f"{stamp}-{unit.unit.replace('.', '-')}-{symbol}"

@@ -3,7 +3,7 @@
 #include <kf/address.h>
 #include <kf/game_asset.h>
 #include <kf/game_render.h>
-#include <kf/psyq.h>
+#include <psyq/sdk.h>
 
 /*
  * Map-event model emitter invoked by the frame renderer's pool sweep

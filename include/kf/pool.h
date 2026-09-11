@@ -8,7 +8,7 @@
 #include <kf/animation.h>
 #include <kf/game_types.h>
 #include <kf/enum.h>
-#include <kf/psyq.h>
+#include <psyq/sdk.h>
 #include <kf/tmd.h>
 
 struct KfMorphObject;

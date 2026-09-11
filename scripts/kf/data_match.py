@@ -24,7 +24,7 @@ skipped.
 The target is the delinked object under ``build/delink/<img>/modules`` whose
 ``.data``/``.rodata`` bytes are carved under the curated ownership model; the
 reconstruction is ``build/objdiff/<img>/base/<obj>``. Both are built by
-``kf build``; this reads them, so run a build first.
+``kf analyze``; this reads them, so refresh the derived analysis first.
 
 Explicit config-owned SDK contributions are checked separately through
 ``config_data``: whole provider/target objects, current native data-only reports,

@@ -13,7 +13,7 @@ from scripts.kf.paths import BUILD, REPO
 
 def rebuild_units(names: Iterable[str]) -> None:
     manifest = load()
-    includes = [REPO / "include"]
+    includes = [REPO / "include", REPO / "vendor/include"]
     if os.environ.get("PSYQ_INCLUDE"):
         includes.append(Path(os.environ["PSYQ_INCLUDE"]))
     for name in dict.fromkeys(names):
@@ -23,7 +23,6 @@ def rebuild_units(names: Iterable[str]) -> None:
         compile_source(
             unit.source_path, unit.image, output, BUILD / "delink",
             profile.optimization, profile.small_data, profile.aspsx_version,
-            tuple(includes), profile.cc1_flags, profile.compiler,
-            profile.maspsx_flags, defines=unit.defines,
+            tuple(includes), profile.cc1_flags, profile.compiler, defines=unit.defines,
         )
         print(f"[codec-candidate] rebuilt {name} ({profile.compiler})", flush=True)

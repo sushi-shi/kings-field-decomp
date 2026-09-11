@@ -103,25 +103,34 @@ class GameDisplayEnvironmentDataTests(unittest.TestCase):
                  for prefix in ('delink/game/modules', 'objdiff/game/base')]
         if not all(path.is_file() for path in paths):
             self.skipTest('freshly built GAME render source and target objects required')
-        for path, section_size in zip(paths, (graphics.EXTENT + 8, graphics.EXTENT + 12)):
+        for path in paths:
             with path.open('rb') as stream:
                 elf = ELFFile(stream)
                 section = elf.get_section_by_name('.bss')
-                self.assertEqual((section['sh_type'], section['sh_size']), ('SHT_NOBITS', section_size))
+                if path == paths[0]:
+                    self.assertEqual((section['sh_type'], section['sh_size']),
+                                     ('SHT_NOBITS', graphics.EXTENT + 8))
+                else:
+                    self.assertIsNone(section)
                 for va, name, size, offset in ((graphics.ORIGIN, 'game_graphics_runtime', graphics.EXTENT, 0),):
                     symbols = elf.get_section_by_name('.symtab').get_symbol_by_name(name)
                     self.assertEqual(len(symbols), 1)
                     symbol = symbols[0]
-                    self.assertEqual((symbol['st_value'], symbol['st_size'], symbol['st_info']['bind']),
-                                     (offset, size, 'STB_GLOBAL'))
-                    self.assertEqual(elf.get_section(symbol['st_shndx']).name, '.bss')
+                    if path == paths[0]:
+                        self.assertEqual((symbol['st_value'], symbol['st_size'], symbol['st_info']['bind']),
+                                         (offset, size, 'STB_GLOBAL'))
+                        self.assertEqual(elf.get_section(symbol['st_shndx']).name, '.bss')
+                    else:
+                        self.assertEqual((symbol['st_shndx'], symbol['st_value'], symbol['st_size']),
+                                         ('SHN_COMMON', 4, graphics.EXTENT + 4))
                     self.assertFalse(image.contains(va, size))
         retail, source = [Elf(path) for path in paths]
-        self.assertEqual(_diff_bss(retail, source).status, 'size')
+        self.assertEqual(_diff_bss(retail, source).status, 'missing')
         whole = diff_unit(unit, BUILD / 'delink', BUILD / 'objdiff')
         self.assertFalse(whole.matches)
         sections = {d.name: d for d in whole.diffs}
-        self.assertEqual(sections['.bss'].status, 'size')
+        self.assertEqual(sections['.bss'].status, 'missing')
+        self.assertIn('unsupported-common-allocation', sections['.bss'].detail)
         self.assertIn('conflicting-section-bases', sections['.bss'].detail)
         # Exact display initialization also fixes the later switch-label offsets.
         # Native four-byte alignment also preserves its retail placement.

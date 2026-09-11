@@ -114,6 +114,15 @@
 
 ## Source modeling
 
+- Recover a literal's meaning and origin, not merely a name for its value.
+  For an address-like literal, identify the image, referenced object or memory
+  boundary, all consumers, owning module or SDK component, and the definition
+  or build mechanism that would maintain it. Distinguish fixed hardware and
+  memory-policy constants from object addresses, linker symbols, generated
+  constants, and derived expressions. Linked bytes and a 100% match alone do
+  not prove how the original source spelled or obtained the value; preserve
+  that uncertainty and never compensate by placing individual globals in the
+  build system.
 - Prefer fixed-width project types at binary boundaries and use typed structs
   once a complete-object extent/field family is supported. Add static layout
   checks for proven sizes and offsets.

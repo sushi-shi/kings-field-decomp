@@ -11,7 +11,7 @@
 #include <kf/audio.h>
 #include <kf/game_types.h>
 #include <kf/overlay.h>
-#include <kf/psyq.h>
+#include <psyq/sdk.h>
 
 extern u32 DAT_80057d24;
 extern u32 DAT_800a0768;

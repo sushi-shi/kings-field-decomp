@@ -51,7 +51,7 @@ class EnumTypeTests(unittest.TestCase):
                     path.write_text(source.replace("BODY", body))
                     result = subprocess.run(
                         [compiler, *FLAGS, *MODES["modern"], "-fsyntax-only",
-                         "-I", str(REPO / "include"), "-isystem", sdk, str(path)],
+                         "-I", str(REPO / "include"), "-I", str(REPO / "vendor/include"), "-isystem", sdk, str(path)],
                         capture_output=True, text=True,
                     )
                     if name == "valid":
@@ -83,7 +83,7 @@ class EnumTypeTests(unittest.TestCase):
                     source.write_text(SOURCE.replace("BODY", body))
                     result = subprocess.run(
                         [compiler, *FLAGS, *MODES["modern"], "-fsyntax-only",
-                         "-I", str(REPO / "include"), "-isystem", sdk, str(source)],
+                         "-I", str(REPO / "include"), "-I", str(REPO / "vendor/include"), "-isystem", sdk, str(source)],
                         capture_output=True, text=True,
                     )
                     if name == "valid":

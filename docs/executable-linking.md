@@ -1,31 +1,59 @@
-# Executable-linking status
+# Source-to-EXE build
 
-The repository does not currently claim a runnable historical executable
-toolchain. Its one SDK is the pinned Psy-Q Release 2.5 media tree. Both
-assembler executables on that medium require the original software key, so the
-coherent source-to-EXE path stops at that boundary.
+Inside `nix develop`, run:
 
-The former `kf link` implementation combined a native GCC rebuild with an
-unprotected ASPSX 1.07 copied from a separate archive, then used Release 2.5
-PSYLINK, CPE2X and libraries. That experiment established useful linker and
-layout behavior, but it was a composed probe rather than one historical SDK.
-The external assembler dependency has been removed and normal `kf link` now
-reports the unavailable coherent path instead of making that substitution.
+```sh
+kf build
+```
 
-The reconstruction loop remains available through `kf build`, `kf match` and
-objdiff. Those commands produce ELF comparison objects with pinned analysis
-programs; they do not claim to reproduce the original executable toolchain.
+`kf link` is an alias for the same executable builder. There is one candidate
+artifact chain:
 
-The former experiment did successfully emit PS-X EXE files, so linkability is
-demonstrated. That result is distinct from exactness and playability:
+```text
+C source -> CPPPSX/CC1PSX -> assembly -> ASPSX -> Psy-Q OBJ
+Psy-Q OBJ + original SDK OBJ/LIB -> PSYLINK -> CPE -> CPE2X -> PS-X EXE
+```
+
+The EXE is the unchanged output of CPE2X. Retail bytes are comparison inputs
+only. The build does not synthesize object sections, force addresses from
+`DATA()` claims, rewrite the CPE, patch the EXE, or copy missing retail bytes.
+A failed phase removes the stale EXE.
+
+The pinned Release 2.5 media supplies PSYLINK 1.17, CPE2X, headers, libraries,
+and the exact overlay `NONE2.OBJ` startup. Its ASPSX executables require the
+original software key, so the active chain uses the separately hash-pinned
+ASPSX 1.07 binary. The build report records every tool and input hash. This is
+a reproducible source-to-EXE chain, while exact historical compiler and
+assembler attribution remains open.
+
+Overlay startup uses `BSS_START` and `BSS_END` from zero-byte boundary
+declarations in `config/link/overlay_bounds.asm`. A separately pinned native
+ASMPSX 2.34 assembles those declarations because the C assembler lacks named
+sections and the Release 2.5 macro assembler requires a software key. PSYLINK
+places the labels around `.bss`; their object contains no instructions or
+storage. Startup derives its word count and heap size from RAM/stack settings.
+
+Derived ELF objects, delinked retail modules, objdiff projects, and semantic
+reports are analysis views. Source compilation in `kf analyze` and `kf try`
+uses the same CPPPSX/CC1PSX/ASPSX implementation as `kf build`. The reader
+translates the resulting native LNK objects for objdiff; no GNU assembler
+recompiles game source and no ELF view is an input to PSYLINK.
+
+The shared probe enables native compiler/assembler debug metadata for private
+symbols and function records. The source assembly passes unchanged except for
+DOS line endings. Native COMMON reservations remain unplaced in the ELF view;
+only PSYLINK assigns their executable addresses.
+
+Current source-to-EXE status is distinct from exactness and playability:
 
 | Property | Current status |
 | --- | --- |
-| PSYLINK emits GAME and OPEN | Demonstrated by the saved mixed-tool experiment |
-| Historical source-to-EXE path | Unavailable because the usable assembler and pinned Release 2.5 media do not form one coherent toolchain |
+| PSYLINK emits PSX, GAME, and OPEN | Active through `kf build` |
+| Candidate artifact path | Direct source-to-EXE with no output rewriting |
+| Historical toolchain identity | Open; the usable ASPSX is separately sourced |
 | Byte-identical retail images | Not achieved; SDK-owned code/data, placement, and other closure gaps remain |
 | Boot to the game loading screen | Demonstrated by the smoke test below |
-| Playable runtime | Not demonstrated; the isolated candidate run stalls during loading under OpenBIOS |
+| Playable runtime | Current symbolic startup not run; the earlier saved GAME build had the heap overlap described below |
 
 An SDK mismatch does not by itself prove that an executable is unplayable: a
 different library revision may preserve the public API and runtime behavior.
@@ -46,38 +74,63 @@ the source retail BIN remained hash-identical at
 `ae74beba377d686bfaa292ea40df8ade4454ec3139c2b5152364e02aac90b3d9`.
 
 PCSX-Redux build 236 (`b745534e`) with its bundled OpenBIOS booted the linked
-disc into the game's `loading...` screen at 60 FPS, but an isolated run did
-not advance from that screen. The emulator subsequently began reporting
-repeated reads from invalid addresses, including `0x70000581` and
-`0x02f3b850`. The run was stopped when that diagnostic loop had produced an
-unbounded log. This demonstrates bootstrap, executable loading, and entry
-into game code; it does not demonstrate playable rendering.
+disc into the game's `loading...` screen at 60 FPS. Controlled hybrid discs
+then isolated the failure to the saved candidate `GAME.EXE`: candidate PSX and
+OPEN with retail GAME advance into play, while substituting candidate GAME
+reproduces the stall.
 
-The untouched retail control, run with the same emulator, BIOS, settings, and
-fresh memory cards, also reached `loading...` but remained there for more than
-two minutes. Earlier Mednafen runs with OpenBIOS also failed to produce a
-passing retail control. This environment therefore establishes only a boot
-smoke test. It cannot distinguish a candidate defect from OpenBIOS
-incompatibility at the loading boundary, and it supplies no evidence that the
-saved link plays correctly. Repeat the paired test with a known-compatible
-Japanese retail BIOS before using runtime differences as reconstruction
-evidence.
+The saved candidate GAME map places `.bss` through `0x800a7aef`, but the exact
+GAME startup calls `InitHeap(0x800a0980, 0x157680)`. The ranges overlap by
+`0x7170` bytes. A debugger trace observed LIBSND initialize `_ss_score` at its
+candidate address `0x800a6468` to the valid pointer `0x80057638`. The render
+path then reused heap storage across that address and changed the pointer to
+`0x00057d7d`. `SsSeqCalledTbyT` at candidate PC `0x800425b8` subsequently
+loaded from `0x00057e0d` and raised `LoadAddressError`, leaving the loading
+frame onscreen.
 
-Existing ignored executable experiments can still be inspected without
-rebuilding them:
+A diagnostic-only binary patch moved the initial heap base to `0x800a7b00`
+and reduced its size to preserve the original `0x801f8000` endpoint. That run
+passed the observed fault, completed the opening shimmer, and reached
+`save_file_cleanup_temporary`. The patch is not a source or linker fix; it
+confirms the overlap as the first fatal defect. Retail keeps `_ss_score` at
+`0x800a06e0` and `game_exit_code` at `0x800958f8`, both outside the heap.
+
+This observation does not establish that the original source hardcoded the
+heap address. The reconstruction did at the time of that run. A static source audit found
+four program-specific cached-RAM literals: startup store and initial heap
+addresses in GAME and OPEN. The shared allocator also names three RAM bounds.
+Claims and comments are excluded from this count.
+
+At GAME `800142b8/800142bc`, retail forms `800a0980` with `lui`/`ori`.
+The pinned GCC 2.5.7/ASPSX control reproduces that form for the numeric argument;
+an `extern char heap_start[]` argument instead emits `lui`/`addiu` with native
+HI16/LO16 patches. The curated inventory has no heap-address relocation here.
+This supports the current constant model under the probe, but original
+relocation records are absent and a build-generated constant remains possible.
+It does not justify inventing a linker referent or forcing globals to retail
+addresses. The original mechanism remains unresolved.
+
+PSYLINK produced the saved layout without output rewriting. It placed the
+sections and exported BSS requests supplied by the reconstructed units and
+mixed SDK inputs according to its ordinary ordering and alignment rules. The
+layout mismatch must therefore be corrected through original TU and data
+ownership, section and allocation class, input order, and matching SDK objects.
+Forcing retail addresses or patching the linked executable would conceal that
+missing source and toolchain evidence.
+
+Existing source-to-EXE outputs can be compared again without rebuilding them:
 
 ```sh
 kf link --compare-only
 ```
 
-The Release 2.5 PSYLINK controls remain active because PSYLINK itself runs
-without the assembler key. They use only objects and libraries from the one
-SDK and test link order, section alignment and BSS allocation.
+The Release 2.5 PSYLINK controls use original Psy-Q objects and libraries to
+test link order, section alignment, and BSS allocation.
 
 ## Layout-tolerant executable comparison
 
-`kf link --compare-only` compares moved byte regions in existing ignored
-experiments and refreshes the second generated README block, `executable-score`:
+`kf link --compare-only` compares moved byte regions in existing outputs and
+refreshes the second generated README block, `executable-score`:
 
 ```sh
 kf link --compare-only
@@ -96,7 +149,7 @@ A module counts only when every initialized section, relocation, BSS layout
 and retail section placement passes. Exact functions or equal initializer
 bytes alone do not make its data exact. Separate config-owned SDK contributions
 are excluded; these object checks do not measure the generated EXE's similarity.
-`kf build`/`kf check` and `kf bank` also refresh this column. Missing comparison
+`kf analyze`/`kf check` and `kf bank` also refresh this column. Missing comparison
 artifacts or objects older than their source, headers, inventories or build
 inputs show `—`, independently of executable-score availability.
 
@@ -133,24 +186,25 @@ comparison still covers the complete files and is the only executable
 equality check. Neither island similarity nor island coverage changes
 function scores, banking criteria or the full data-layout gates.
 
-Historical experiment runs wrote the detailed score into each image's
-`comparison.json` and created `comparison.html`. Comparison-only runs write
-`fuzzy-comparison.json` and `fuzzy-comparison.html`, preserving the original
-native-build report and executable. The standalone HTML contains a movement
+Normal builds write tool commands and input hashes into each image's
+`build.json`. They do not load retail EXEs, compare output bytes, or update
+the README. Explicit comparison-only runs write `fuzzy-comparison.json` and
+`fuzzy-comparison.html`, preserving the build report and executable.
+The standalone HTML contains a movement
 map, filterable islands with both addresses and sizes, and the largest
 unanchored regions. The JSON retains all islands, complementary unanchored
 ranges, parameters, counts and input hashes. These generated files stay
 under `build/link/{psx,game,open}/` and are not committed.
 
-## Evidence retained from the retired composed probe
+## Current source-to-EXE evidence
 
-The remainder of this page records observations from the removed mixed-input
-experiment. These results remain useful for source ownership and linker
-semantics, but they do not describe the active SDK or an available build path.
+The current baseline was first produced by the same direct tool sequence before
+it became the active build again. These observations describe its source and
+SDK inputs; they do not prove exact historical tool attribution.
 
 ### Byte attribution of the overlay scores
 
-The saved GAME and OPEN experiments score 74.174997% and 72.352139%,
+The saved GAME and OPEN outputs score 74.174997% and 72.352139%,
 respectively. A symbol- and relocation-aware audit shows that these values do
 not measure the quality of the reconstructed game code directly. The candidate
 symbol files place every reconstructed OPEN function in retail order at a
@@ -337,14 +391,19 @@ with local retail/build inputs. `ruff check scripts tests`, `git diff --check`
 and `nix flake check -L` also passed. Those counts record the retired campaign,
 not the current suite.
 
-The executable-island controls cover reordering, small edits, insertions/deletions, duplicate-copy accounting, unrelated content, padding, changed address encodings and malformed EXEs. README controls cover hash freshness, weighted totals, preservation of the function block and repeatable updates. The retired composed probe and a subsequent comparison-only pass gave identical island reports for all three images; the latter left native EXEs and build-provenance reports unchanged. These integration checks are recorded under `build/link/island-audit/`.
+The executable-island controls cover reordering, small edits, insertions/deletions, duplicate-copy accounting, unrelated content, padding, changed address encodings and malformed EXEs. README controls cover hash freshness, weighted totals, preservation of the function block and repeatable updates. The source-to-EXE build and a subsequent comparison-only pass gave identical island reports for all three images; the latter left native EXEs and build-provenance reports unchanged. These integration checks are recorded under `build/link/island-audit/`.
 
-The retired native executable controls checked the minimal startup opcodes and
+The native executable controls check the minimal startup opcodes and
 symbolic entry, all four BIOS aliases, initialized zero data, exclusion of an
-8192-byte BSS buffer, unchanged original archives and rejection of unresolved
-references or stale output. They were removed with the mixed linker and never
-executed a complete game image.
+8192-byte BSS buffer, unchanged original archives, and rejection of unresolved
+references or stale output. They do not execute a complete game image.
 
 The existing function oracles now explicitly opt into named-object data bindings where merged modules own data from separate retail regions. Each object keeps its compiled extent and initializer; ambiguous section-relative references, unknown objects, wrong extents and overlapping initialized objects are rejected. The returned program records `data_binding=objects`. This isolates function semantics and does not prove section placement. Default oracle linking still requires a consistent section base. This facility is not used by `kf link`, the delinker or the full data-layout checks.
 
-`kf build` still exits unsuccessfully on data layout and incomplete ownership. It reports 0/1 PSX, 3/20 OPEN and 8/44 GAME data-owning units matching; target placement verifies 1/1 PSX, 32/38 OPEN and 63/77 GAME units. Adding complete storage exposes more previously untested allocation-order and section-base differences. Equal bytes or unchanged function scores do not waive these failures. Reports are retained under `build/link/overlay-link-audit/`; native commands and hashes remain in each image's `comparison.json`.
+`kf analyze` still exits unsuccessfully on data layout and incomplete ownership.
+With native LNK-derived views it reports 0/1 PSX, 9/20 OPEN and 23/41 GAME
+data-owning units matching. Unplaced COMMON reservations remain explicit
+failures rather than receiving inferred section offsets. Equal bytes or
+unchanged resolved functions do not waive ownership and placement failures.
+Earlier closure reports remain under `build/link/overlay-link-audit/`; current
+native build commands and input hashes are in each image's `build.json`.

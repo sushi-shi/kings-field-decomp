@@ -40,7 +40,6 @@ class Profile:
     small_data: int
     aspsx_version: str
     cc1_flags: tuple[str, ...]
-    maspsx_flags: tuple[str, ...] = ()
 
 
 # Native probe compilers. Each is a Decompals old-gcc rebuild of a PSX GCC
@@ -127,7 +126,7 @@ def _profile(name: str, row: object) -> Profile:
         raise ValueError(f"profile {name!r} must be a TOML table")
     allowed = {
         "language", "compiler", "optimization", "small_data",
-        "aspsx_version", "cc1_flags", "maspsx_flags",
+        "aspsx_version", "cc1_flags",
     }
     extra = set(row) - allowed
     if extra:
@@ -143,8 +142,8 @@ def _profile(name: str, row: object) -> Profile:
             f"profile {name!r}: C compiler must be one of the explicit probes "
             f"{C_COMPILERS}"
         )
-    if language == "assembly" and compiler != "gnu-as":
-        raise ValueError(f"profile {name!r}: assembly compiler must be gnu-as")
+    if language == "assembly" and compiler != "aspsx":
+        raise ValueError(f"profile {name!r}: assembly compiler must be aspsx")
     optimization = row.get("optimization")
     if language == "c" and optimization not in {"O0", "O1", "O2", "O3"}:
         raise ValueError(f"profile {name!r}: C optimization must be O0..O3")
@@ -156,13 +155,6 @@ def _profile(name: str, row: object) -> Profile:
     flags = row.get("cc1_flags", [])
     if not isinstance(flags, list) or not all(isinstance(flag, str) for flag in flags):
         raise ValueError(f"profile {name!r}: cc1_flags must be an array of strings")
-    maspsx_flags = row.get("maspsx_flags", [])
-    if not isinstance(maspsx_flags, list) or not all(
-        isinstance(flag, str) for flag in maspsx_flags
-    ):
-        raise ValueError(f"profile {name!r}: maspsx_flags must be an array of strings")
-    if language == "assembly" and maspsx_flags:
-        raise ValueError(f"profile {name!r}: assembly profiles do not run maspsx")
     return Profile(
         name=name,
         language=language,
@@ -171,7 +163,6 @@ def _profile(name: str, row: object) -> Profile:
         small_data=small_data,
         aspsx_version=str(row.get("aspsx_version", "1.07")),
         cc1_flags=tuple(flags),
-        maspsx_flags=tuple(maspsx_flags),
     )
 
 

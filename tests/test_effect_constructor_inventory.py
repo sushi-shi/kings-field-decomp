@@ -150,8 +150,8 @@ class EffectConstructorInventoryTests(unittest.TestCase):
             compile_source(
                 unit.source_path, unit.image, output, BUILD / 'delink', profile.optimization,
                 profile.small_data, profile.aspsx_version,
-                (REPO / 'include', REPO / 'tests/fixtures', Path(os.environ['PSYQ_INCLUDE'])),
-                profile.cc1_flags, profile.compiler, profile.maspsx_flags, defines=unit.defines)
+                (REPO / 'include', REPO / 'vendor/include', REPO / 'tests/fixtures', Path(os.environ['PSYQ_INCLUDE'])),
+                profile.cc1_flags, profile.compiler, defines=unit.defines)
             obj = _load_object(output)
             for claim in unit.functions:
                 with self.subTest(function=claim.symbol):

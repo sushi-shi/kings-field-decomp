@@ -3,7 +3,7 @@
 #include <kf/map_data.h>
 #include <kf/game_map.h>
 #include <kf/game_collision.h>
-#include <kf/psyq_libc.h>
+#include <psyq/libc.h>
 #include <kf/game.h>
 
 enum {

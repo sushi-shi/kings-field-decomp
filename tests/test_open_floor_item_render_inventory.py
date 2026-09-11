@@ -42,7 +42,7 @@ class OpenFloorItemRenderTests(unittest.TestCase):
             for expected_size in (12, 13):
                 with self.subTest(expected_size=expected_size):
                     preprocessed = subprocess.run(
-                        [cpp, "-lang-c", "-undef", "-nostdinc", "-I", str(REPO / "include"),
+                        [cpp, "-lang-c", "-undef", "-nostdinc", "-I", str(REPO / "include"), "-I", str(REPO / "vendor/include"),
                          f"-DEXPECTED_SPRITE_SIZE={expected_size}", str(fixture)],
                         capture_output=True, check=True,
                     )

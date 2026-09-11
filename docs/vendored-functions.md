@@ -46,9 +46,14 @@ LIBETC, LIBGPU, LIBGTE, LIBSND and LIBSPU**.
 | image | Release 2.5 exact code | Release 2.5 FID-only | Release 2.5 lineage | GTE lineage | Psy-Q 2.60 signature | total |
 |---|---:|---:|---:|---:|---:|---:|
 | `PSX.EXE` | 8 | 0 | 0 | 0 | 0 | 8 |
-| `GAME.EXE` | 238 | 139 | 128 | 66 | 2 | 573 |
-| `OPEN.EXE` | 222 | 139 | 128 | 66 | 2 | 557 |
-| **total** | **468** | **278** | **256** | **132** | **4** | **1,138** |
+| `GAME.EXE` | 239 | 139 | 128 | 66 | 1 | 573 |
+| `OPEN.EXE` | 223 | 139 | 128 | 66 | 1 | 557 |
+| **total** | **470** | **278** | **256** | **132** | **2** | **1,138** |
+
+The [startup provenance audit](patterns/startup-sdk-provenance.md) upgrades
+both overlay `InitHeap` rows from later signatures to exact Release 2.5 member
+text. It also checks all 471 reconstructed game functions against the general
+and H2000 SDK corpora; no new provider attribution is established.
 
 The 1,138 provider rows include named and anonymous internal functions whose
 Sony ownership is established. Provider counts are: 282 `LIBGTE`, 253 `LIBSND`,
@@ -64,6 +69,9 @@ already exact source reconstruction as a 100%-gated reference, while remaining
 outside progress and banking; ordinary game units still cannot claim provider
 code. Vendored code therefore does not inflate decomp progress or invite new
 source reconstruction work.
+
+The three retained reference sources live under [`vendor/`](../vendor/README.md),
+outside the game-source tree. They are not executable build inputs.
 
 ## Evidence channels
 

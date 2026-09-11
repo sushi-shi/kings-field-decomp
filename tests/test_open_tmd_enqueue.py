@@ -47,7 +47,7 @@ class OpenTmdEnqueueTests(unittest.TestCase):
             for offset in (16, 12):
                 with self.subTest(ft3_x1=offset):
                     preprocessed = subprocess.run(
-                        [cpp, "-lang-c", "-undef", "-nostdinc", "-I", str(REPO / "include"),
+                        [cpp, "-lang-c", "-undef", "-nostdinc", "-I", str(REPO / "include"), "-I", str(REPO / "vendor/include"),
                          "-I", sdk, f"-DEXPECTED_FT3_X1={offset}", str(fixture)],
                         capture_output=True, check=True,
                     )
@@ -185,7 +185,14 @@ class OpenTmdEnqueueTests(unittest.TestCase):
             instruction = struct.unpack_from("<I", obj.sections[".text"], reloc.offset)[0]
             symbol = obj.symbol(reloc.symbol_index)
             if reloc.kind == 4 and instruction >> 26 == 3:
-                candidate_calls[reloc.offset] = symbol.name
+                if symbol.section == '.text':
+                    from tests.test_open_runtime_owner_probe import text_referent
+
+                    name, interior = text_referent(obj, symbol, (instruction & 0x3FFFFFF) * 4)
+                    self.assertEqual(interior, 0)
+                    candidate_calls[reloc.offset] = name
+                else:
+                    candidate_calls[reloc.offset] = symbol.name
             elif reloc.kind == 5:
                 pending.append((instruction, reloc.symbol_index))
             elif reloc.kind == 6:
@@ -193,8 +200,14 @@ class OpenTmdEnqueueTests(unittest.TestCase):
                 high, symbol_index = pending.pop()
                 self.assertEqual(symbol_index, reloc.symbol_index)
                 addend = decode_hi_lo_target(high, instruction)
-                base = SWITCH if symbol.section == ".rodata" else data[symbol.name]
-                actual_targets.append(base + addend)
+                if symbol.section == '.rodata':
+                    actual_targets.append(SWITCH + addend)
+                elif symbol.name in data:
+                    actual_targets.append(data[symbol.name] + addend)
+                else:
+                    from scripts.kf.parser_machine import resolve_data_object
+
+                    actual_targets.append(resolve_data_object(obj, symbol, addend, data))
         self.assertFalse(pending)
         self.assertEqual(list(candidate_calls.values()), list(retail_calls.values()))
         # The accepted-packet OT load is derived from the shared projected base.

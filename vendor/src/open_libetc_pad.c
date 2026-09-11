@@ -1,7 +1,7 @@
 #include <kf/address.h>
-#include <kf/psyq_pad.h>
-#include <kf/psyq_kernel.h>
-#include <kf/psyq_libc.h>
+#include <psyq/pad.h>
+#include <psyq/kernel.h>
+#include <psyq/libc.h>
 
 /* The modern view spells the two ignored K&R arguments. */
 #if defined(__cplusplus)
@@ -13,30 +13,25 @@ static u32 pad_init_bad_identifier(PAD_INIT_IGNORED_ARGS);
 static void pad_read_bad_identifier(void);
 static void pad_stop_bad_identifier(void);
 
-DATA(0x80058020, 0x4)
+DATA(0x80037760, 0x4)
 static u32 pad_buf;
 
-DATA(0x80058028, 0x4)
+DATA(0x80037768, 0x4)
 static u32 pad_status;
 
-DATA(0x8006bd88, 0x4)
+DATA(0x80049528, 0x4)
 int PadIdentifier;
 
-RODATA(0x80013e8c, 0x60)
+RODATA(0x80013358, 0x60)
 
 /*
- * Version-skewed Sony LIBETC PAD.OBJ controller front end. The three PAD entry
- * points dispatch on the stored pad identifier: identifier 0 uses the Sony trampolines
- * (PAD_init2/PAD_dr/StopPAD2); any other identifier falls to a "Bad
- * PadIdentifier" reporting stub. The stubs keep the original K&R shape - they
- * declare no parameters and fall off the end, so PadInit consumes the
- * incidental v0 the same way the retail program does.
- *
- * The init reporting stub retains its K&R parameter list because PadInit
- * passes the low-level call arguments even though the body ignores them.
+ * OPEN links the same version-skewed Sony LIBETC PAD.OBJ source shape as
+ * GAME. Its state and private literals occupy overlay-specific addresses.
+ * The init diagnostic keeps its K&R form because PadInit passes ignored
+ * low-level call arguments and consumes the incidental printf result.
  */
 
-ADDRESS(0x800500b8, 0x74)
+ADDRESS(0x8002fe8c, 0x74)
 u32 PadInit(s32 identifier)
 {
     u32 result;
@@ -53,7 +48,7 @@ u32 PadInit(s32 identifier)
     return result;
 }
 
-ADDRESS(0x8005012c, 0x44)
+ADDRESS(0x8002ff00, 0x44)
 u32 PadRead(void)
 {
     if (PadIdentifier == 0) {
@@ -64,7 +59,7 @@ u32 PadRead(void)
     return ~pad_buf;
 }
 
-ADDRESS(0x80050170, 0x3c)
+ADDRESS(0x8002ff44, 0x3c)
 void PadStop(void)
 {
     if (PadIdentifier == 0) {
@@ -74,19 +69,19 @@ void PadStop(void)
     }
 }
 
-ADDRESS(0x800501ac, 0x30)
+ADDRESS(0x8002ff80, 0x30)
 static u32 pad_init_bad_identifier(PAD_INIT_IGNORED_ARGS)
 {
     printf("PAD_init: Bad PadIdentifier %d\n", PadIdentifier);
 }
 
-ADDRESS(0x800501dc, 0x30)
+ADDRESS(0x8002ffb0, 0x30)
 static void pad_read_bad_identifier(void)
 {
     printf("PAD_dr  : Bad PadIdentifier %d\n", PadIdentifier);
 }
 
-ADDRESS(0x8005020c, 0x30)
+ADDRESS(0x8002ffe0, 0x30)
 static void pad_stop_bad_identifier(void)
 {
     printf("StopPAD : Bad PadIdentifier %d\n", PadIdentifier);

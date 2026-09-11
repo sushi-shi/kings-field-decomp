@@ -3,7 +3,7 @@
 #include <kf/address.h>
 #include <kf/game_menu.h>
 #include <kf/game.h>
-#include <kf/psyq_libc.h>
+#include <psyq/libc.h>
 #include <kf/game_graphics.h>
 
 /* Menu presentation and packet state share this contiguous WIP owner. */

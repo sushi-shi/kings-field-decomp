@@ -1,6 +1,7 @@
 """Complete initialized contributions and private workspace allocation controls."""
 
 import os
+import json
 from pathlib import Path
 import shutil
 import tempfile
@@ -52,8 +53,8 @@ class RemainingOwnerStorageTests(unittest.TestCase):
                 compile_source(
                     unit.source_path, unit.image, output, root / 'delink',
                     profile.optimization, profile.small_data, profile.aspsx_version,
-                    (REPO / 'include', Path(os.environ['PSYQ_INCLUDE'])),
-                    profile.cc1_flags, profile.compiler, profile.maspsx_flags,
+                    (REPO / 'include', REPO / 'vendor/include', Path(os.environ['PSYQ_INCLUDE'])),
+                    profile.cc1_flags, profile.compiler,
                     defines=unit.defines,
                 )
                 with output.open('rb') as stream:
@@ -69,7 +70,11 @@ class RemainingOwnerStorageTests(unittest.TestCase):
                     symbols = elf.get_section_by_name('.symtab')
                     for datum in unit.data:
                         symbol = symbols.get_symbol_by_name(datum.symbol)[0]
-                        self.assertEqual(symbol['st_size'], datum.size, datum.symbol)
+                        if symbol['st_shndx'] == 'SHN_COMMON':
+                            metadata = json.loads(output.with_suffix('.o.json').read_text())
+                            self.assertEqual(metadata['data_symbol_sizes']['sizes'][datum.symbol], datum.size)
+                        else:
+                            self.assertEqual(symbol['st_size'], datum.size, datum.symbol)
                         if datum.scope == 'static':
                             self.assertEqual(symbol['st_info']['bind'], 'STB_LOCAL', datum.symbol)
                     if name == 'open.resources':

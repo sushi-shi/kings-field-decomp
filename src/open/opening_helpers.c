@@ -1,7 +1,7 @@
 #include <kf/address.h>
 #include <kf/game_math.h>
 #include <kf/open_opening_helpers.h>
-#include <kf/psyq_pad.h>
+#include <psyq/pad.h>
 
 DATA(0x80043178, 0x4)
 KfOpeningInputAction opening_input_action;

@@ -5,9 +5,9 @@
 #include <kf/cd_file.h>
 #include <kf/game_save.h>
 #include <kf/game_player.h>
-#include <kf/psyq_audio.h>
-#include <kf/psyq_kernel.h>
-#include <kf/psyq_libc.h>
+#include <psyq/audio.h>
+#include <psyq/kernel.h>
+#include <psyq/libc.h>
 #include <kf/game.h>
 
 /* Direct TIM/Mddd. IDs; menu_load_item_texture instead uses an index plus one. */

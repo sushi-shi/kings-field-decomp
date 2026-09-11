@@ -5,7 +5,7 @@
 
 #include <kf/game_types.h>
 #include <kf/enum.h>
-#include <kf/psyq_cd.h>
+#include <psyq/cd.h>
 
 enum {
     KF_CD_SECTOR_BYTES = 0x800,

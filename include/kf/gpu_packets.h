@@ -1,7 +1,7 @@
 #ifndef KF_GPU_PACKETS_H
 #define KF_GPU_PACKETS_H
 
-#include <kf/psyq.h>
+#include <psyq/sdk.h>
 
 /* Retail uses packed GTE XY words and UV halfwords. Each union retains the
  * authentic SDK packet at API boundaries and an equivalent typed word view.

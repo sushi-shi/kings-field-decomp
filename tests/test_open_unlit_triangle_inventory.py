@@ -28,7 +28,7 @@ class OpenUnlitTriangleTests(unittest.TestCase):
             for expected_size in (32, 36):
                 with self.subTest(expected_size=expected_size):
                     preprocessed = subprocess.run(
-                        [cpp, "-lang-c", "-undef", "-nostdinc", "-I", str(REPO / "include"),
+                        [cpp, "-lang-c", "-undef", "-nostdinc", "-I", str(REPO / "include"), "-I", str(REPO / "vendor/include"),
                          "-I", sdk, f"-DEXPECTED_FT3_SIZE={expected_size}", str(fixture)],
                         capture_output=True, check=True,
                     )

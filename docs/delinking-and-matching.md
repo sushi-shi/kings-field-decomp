@@ -192,6 +192,7 @@ Given a hash-identical extraction containing all three executables:
 nix develop
 kf init --retail-dir /path/to/retail
 kf build
+kf analyze
 kf status
 ```
 
@@ -202,7 +203,8 @@ incremental Ninja graph. The normal commands are:
 
 | Command | Behavior |
 | --- | --- |
-| `kf build [all\|base\|target\|compare\|verify]` | configure if needed, then build all or selected `--image` targets; `--retail-dir` overrides local configuration |
+| `kf analyze [all\|base\|target\|compare\|verify]` | configure if needed, then build all or selected `--image` targets; `--retail-dir` overrides local configuration |
+| `kf build [--image I]` | compile and link the selected source-to-EXE chain with native SDK tools |
 | `kf try --unit ID [--source FILE]` | compile one unit into a scratch object, compare full-extent instruction/relocation listings, and report paired CFG clues for differing functions without updating recorded matches |
 | `kf match [--unit ID]` | build, identify content-changed base objects, and summarize scores |
 | `kf status [--json] [--all]` | report current state without building or writing |
@@ -226,7 +228,7 @@ kf-delink \
   --va 0x80014268
 ```
 
-Use `kf build` to refresh the shared project after focused delinking.
+Use `kf analyze` to refresh the shared project after focused delinking.
 
 The generated objdiff project pairs every target object with:
 
@@ -255,49 +257,25 @@ equal addresses or symbol names in different overlays do not collide.
 `kf status` and the data gates select image-qualified units from the shared
 report; progress continues to exclude vendored functions.
 
-## Reconstructed-source route
+## Native source objects and comparison views
 
-The practical matching path is:
+The executable and matching commands share this compilation path:
 
 ```text
-C source -> candidate CC1PSX -> MIPS assembly -> maspsx -> GNU mipsel-as -> ELF .o
+C source -> CPPPSX/CC1PSX -> ASPSX -> native Psy-Q OBJ
 ```
 
-The exact historical compiler, assembler, linker, and optimization profile are
-not yet proven. The staged compiler candidates therefore remain alternatives
-for code-generation tests. `nix develop` supplies `cc1psx-260` and
-`cpppsx-260`, hash-pinned native PSX-target rebuilds from Decompals old-gcc
-0.17. They make the C loop practical on Linux but are not a new attribution
-claim. The two historical 2.6.0 binaries remain distinct evidence candidates.
-GNU `as` is used here as an object container; it is not a claim that the retail
-game was historically linked from GNU ELF objects.
+`kf build` passes the native objects and original SDK inputs to PSYLINK and
+CPE2X. `kf analyze` reads native objects into ELF inspection views for objdiff.
+Those views preserve actual section payloads, symbols, relocation expressions,
+and unplaced COMMON requests; they do not generate the executable.
 
-`kf-compile` maps a source basename to the corresponding non-vendored carved
-target-object filename and writes the base object directly into the appropriate
-objdiff project. It refuses a basename whose target is provider-owned. Assembly
-reconstructions use the same command shape as C, without an optimization flag:
-
-```sh
-kf-compile \
-  --image GAME.EXE \
-  --source src/game/80014268_func_80014268.s
-```
-
-C experiments must state their optimization profile rather than inheriting an
-unproven default:
-
-```sh
-kf-compile \
-  --image GAME.EXE \
-  --source src/game/80014268_func_80014268.c \
-  --optimization O2 \
-  --small-data 0
-```
-
-Each compiled object receives an adjacent `.o.json` provenance record. The
-default maspsx model is ASPSX 1.07 because that is the version represented by
-the Release 2.5 baseline;
-`--aspsx-version` remains explicit and overridable during attribution tests.
+`kf-compile` exposes the same native compilation primitive for focused tests.
+It writes an adjacent `.OBJ`, `.S`, and `.o.json` alongside the ELF view. A C
+invocation must state its optimization profile. Use `kf try --unit ID` for a
+manifested unit so its compiler flags, include paths and defines are shared
+with the complete executable build. Historical compiler attribution remains
+open; both the GCC 2.5.7 and 2.6.0 profiles are explicit probes.
 
 Translation-unit hypotheses are expressed directly by the sources: a unit
 source claims one contiguous run of functions with `ADDRESS()` and the globals
@@ -376,8 +354,9 @@ addend. No vendored retail routine is presented as decompiled source. The normal
 Python tests also parse the ELF headers, symbols, relocation types, function
 extent, MIPS26 addend, and HI16/LO16 carry behavior.
 `tests/compiler_mips_smoke.py` compiles a simple C function with GCC 2.6.0,
-passes its assembly through maspsx, and verifies the resulting MIPS ELF and
-symbol.
+passes its assembly through native ASPSX, and verifies the real object and
+its ELF inspection view. It also covers widths, private BSS, exported COMMON,
+function order, native division checks and return delay slots.
 
 Run the complete checks with:
 

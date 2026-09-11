@@ -78,6 +78,7 @@ class GameMenuAssetsTests(unittest.TestCase):
         target = BUILD / 'delink/game/modules' / source.name
         if not target.is_file():
             self.skipTest('fresh delinked menu owner required')
+        reservations = dict(zip(BANK_NAMES, (912, 2376, 1600, 184, 320, 320), strict=True))
         for path in (source, target):
             with path.open('rb') as stream:
                 elf = ELFFile(stream)
@@ -86,24 +87,27 @@ class GameMenuAssetsTests(unittest.TestCase):
                     symbols = elf.get_section_by_name('.symtab').get_symbol_by_name(name)
                     self.assertEqual(len(symbols or ()), 1)
                     symbol = symbols[0]
-                    self.assertEqual((symbol['st_value'], symbol['st_size'], symbol['st_info']['bind']),
-                                     (va - ASSETS, size, 'STB_GLOBAL'))
-                    self.assertEqual(elf.get_section(symbol['st_shndx']).name, '.bss')
-                self.assertEqual((section.name, section['sh_type'], section['sh_size']),
-                                 ('.bss', 'SHT_NOBITS', BANK_SPAN))
-        self.assertEqual(_diff_bss(Elf(target), Elf(source)).status, 'match')
+                    if path == target:
+                        self.assertEqual((symbol['st_value'], symbol['st_size'], symbol['st_info']['bind']),
+                                         (va - ASSETS, size, 'STB_GLOBAL'))
+                        self.assertEqual(elf.get_section(symbol['st_shndx']).name, '.bss')
+                    else:
+                        self.assertEqual((symbol['st_shndx'], symbol['st_value'], symbol['st_size']),
+                                         ('SHN_COMMON', 4, reservations[name]))
+                if path == target:
+                    self.assertEqual((section.name, section['sh_type'], section['sh_size']),
+                                     ('.bss', 'SHT_NOBITS', BANK_SPAN))
+                else:
+                    self.assertIsNone(section)
+        self.assertEqual(_diff_bss(Elf(target), Elf(source)).status, 'missing')
         with source.open('rb') as stream:
-            self.assertEqual(read_requests(ELFFile(stream)),
-                             [{'name': name, 'reservation_size': size}
-                              for name, size in zip(BANK_NAMES,
-                                                    (912, 2376, 1600, 184, 320, 320),
-                                                    strict=True)])
+            self.assertEqual(read_requests(ELFFile(stream)), [])
         comparison = diff_unit(load_manifest().by_name()['game.item'],
                                BUILD / 'delink', BUILD / 'objdiff')
         self.assertIsNotNone(comparison)
         self.assertEqual([(d.name, d.status) for d in comparison.diffs],
-                         [('.rodata', 'match'), ('.bss', 'placement')])
-        self.assertIn('unplaced-exported-allocation', comparison.diffs[1].detail)
+                         [('.rodata', 'match'), ('.bss', 'missing')])
+        self.assertIn('unsupported-common-allocation', comparison.diffs[1].detail)
         # The native object ends at the last NUL; the following three bytes
         # belong to linker alignment, not the compiler's literal contribution.
         self.assertEqual((comparison.diffs[0].retail_size, comparison.diffs[0].recon_size),

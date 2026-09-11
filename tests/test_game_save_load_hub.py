@@ -49,8 +49,8 @@ class GameSaveLoadHubTests(unittest.TestCase):
             compile_source(
                 unit.source_path, unit.image, output, BUILD / "delink",
                 profile.optimization, profile.small_data, profile.aspsx_version,
-                (REPO / "include", Path(os.environ["PSYQ_INCLUDE"])),
-                profile.cc1_flags, profile.compiler, profile.maspsx_flags,
+                (REPO / "include", REPO / "vendor/include", Path(os.environ["PSYQ_INCLUDE"])),
+                profile.cc1_flags, profile.compiler,
                 defines=unit.defines,
             )
             obj = _load_object(output)

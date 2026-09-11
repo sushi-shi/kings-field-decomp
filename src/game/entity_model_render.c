@@ -1,7 +1,7 @@
 #include <kf/null.h>
 #include <kf/game_graphics.h>
 #include <kf/address.h>
-#include <kf/psyq.h>
+#include <psyq/sdk.h>
 #include <kf/game_render.h>
 #include <kf/game_math.h>
 #include <kf/game_asset.h>

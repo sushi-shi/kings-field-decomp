@@ -84,7 +84,7 @@ class IncludeScanner:
         result: list[str] = []
         parent = os.path.dirname(relative)
         for include in INCLUDE_RE.findall(text):
-            for base in (parent, "include"):
+            for base in (parent, "include", "vendor/include"):
                 candidate = os.path.normpath(os.path.join(base, include))
                 if not candidate.startswith("..") and (REPO / candidate).is_file():
                     result.append(candidate)
@@ -108,14 +108,14 @@ class IncludeScanner:
 
 def toolchain_identity() -> str:
     tools = (
-        "cc1psx-260", "cpppsx-260", "cc1psx-257", "cpppsx-257", "maspsx",
+        "cc1psx-260", "cpppsx-260", "cc1psx-257", "cpppsx-257", "dosbox-x",
         "mipsel-linux-gnu-as", "mipsel-linux-gnu-ld", "mipsel-linux-gnu-objcopy", "psyk", "objdiff-cli",
     )
     rows = []
     for tool in tools:
         resolved = shutil.which(tool)
         rows.append(f"{tool}={os.path.realpath(resolved) if resolved else '-'}")
-    for variable in ("PSYQ_SDK", "PSYQ_INCLUDE", "PSYQ_LIB"):
+    for variable in ("PSYQ_SDK", "PSYQ_INCLUDE", "PSYQ_LIB", "PSYQ_ASPSX", "PSYQ_BIN"):
         rows.append(f"{variable}={os.environ.get(variable) or '-'}")
     return "\n".join(rows) + "\n"
 
@@ -390,7 +390,7 @@ def edge_compile(unit_name: str, output: Path) -> int:
     if unit is None:
         raise ValueError(f"unknown unit {unit_name!r}")
     profile = manifest.profiles[unit.profile]
-    includes = [REPO / "include"]
+    includes = [REPO / "include", REPO / "vendor/include"]
     if os.environ.get("PSYQ_INCLUDE"):
         includes.append(Path(os.environ["PSYQ_INCLUDE"]))
     compiler.compile_source(
@@ -404,7 +404,6 @@ def edge_compile(unit_name: str, output: Path) -> int:
         tuple(includes),
         profile.cc1_flags,
         profile.compiler,
-        profile.maspsx_flags,
         defines=unit.defines,
     )
     return 0

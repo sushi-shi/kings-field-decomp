@@ -1552,7 +1552,9 @@ GAME.EXE	0x8001425c	0x2a5c		mips32_candidate	raw-word	0x800554b4	load		.word		ra
 GAME.EXE	0x80014260	0x2a60		mips32_candidate	raw-word	0x800554b4	load		.word		range-only	candidate	investigation:relocs.tsv
 GAME.EXE	0x80014264	0x2a64		mips32_candidate	raw-word	0x800552e0	load		.word		range-only	candidate	investigation:relocs.tsv
 GAME.EXE	0x80014298	0x2a98		mips26	reachable-code	0x8003ac54	load		jal		control-flow	candidate	investigation:relocs.tsv
+GAME.EXE	0x800142a0	0x2aa0	0x800142a4	mips_hi16_lo16	reachable-code	0x80058060	bss	player_death_saved_color_matrix	lui+ori	a0	decoded-object-address-unsigned-low	candidate	manual:startup-address-origins
 GAME.EXE	0x800142b0	0x2ab0		mips26	reachable-code	0x80014268	load	repeat_store_word	jal		control-flow-reviewed	reviewed	manual:game_semantic_math_lifecycle
+GAME.EXE	0x800142b8	0x2ab8	0x800142bc	mips_hi16_lo16	reachable-code	0x800a0980	ram	initial_heap_start	lui+ori	a0	heap-start-section-boundary-hypothesis	candidate	manual:startup-address-origins
 GAME.EXE	0x800142c4	0x2ac4		mips26	reachable-code	0x8005040c	load	InitHeap	jal		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x800142cc	0x2acc		mips26	reachable-code	0x8003c570	load		jal		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x800142d4	0x2ad4		mips26	reachable-code	0x800500b8	load	PadInit	jal		control-flow	candidate	investigation:relocs.tsv
@@ -11226,8 +11228,10 @@ OPEN.EXE	0x80013728	0x1f28		mips32_candidate	raw-word	0x80035198	load		.word		ra
 OPEN.EXE	0x8001372c	0x1f2c		mips32_candidate	raw-word	0x80035198	load		.word		range-only	candidate	investigation:relocs.tsv
 OPEN.EXE	0x80013730	0x1f30		mips32_candidate	raw-word	0x80034fc4	load		.word		range-only	candidate	investigation:relocs.tsv
 OPEN.EXE	0x80013764	0x1f64		mips26	reachable-code	0x8001aa74	load	__main	jal		control-flow-reviewed	reviewed	manual:open_semantic_startup
+OPEN.EXE	0x8001376c	0x1f6c	0x80013770	mips_hi16_lo16	reachable-code	0x800377a0	bss	cd_search_file	lui+ori	a0	decoded-object-address-unsigned-low	candidate	manual:startup-address-origins
 OPEN.EXE	0x8001377c	0x1f7c		mips26	reachable-code	0x80013734	load	repeat_store_word	jal		control-flow-reviewed	reviewed	manual:open_semantic_startup
 OPEN.EXE	0x80013784	0x1f84		mips26	reachable-code	0x8001c390	load	CdInit	jal		control-flow-reviewed	reviewed	manual:open_semantic_startup
+OPEN.EXE	0x8001378c	0x1f8c	0x80013790	mips_hi16_lo16	reachable-code	0x80080100	ram	initial_heap_start	lui+ori	a0	heap-start-section-boundary-hypothesis	candidate	manual:startup-address-origins
 OPEN.EXE	0x80013798	0x1f98		mips26	reachable-code	0x80030150	load	InitHeap	jal		control-flow-reviewed	reviewed	manual:open_semantic_startup
 OPEN.EXE	0x800137a0	0x1fa0		mips26	reachable-code	0x800301c0	load	ExitCriticalSection	jal		control-flow-reviewed	reviewed	manual:open_semantic_startup
 OPEN.EXE	0x800137ac	0x1fac		mips26	reachable-code	0x800156bc	load	opening_run	jal		control-flow-reviewed	reviewed	manual:open_semantic_startup;manual:open_semantic_opening_controller

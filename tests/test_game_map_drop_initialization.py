@@ -18,7 +18,7 @@ from scripts.kf.sema.image import RetailImage
 
 class GameMapDropInitializationTests(unittest.TestCase):
     def test_ids_outside_action_bands_still_clear_vertical_velocity(self):
-        if not all(shutil.which(tool) for tool in ('cpppsx-257', 'cc1psx-257', 'maspsx')):
+        if not all(shutil.which(tool) for tool in ('cpppsx-257', 'cc1psx-257', 'dosbox-x')):
             self.skipTest('pinned compiler tools required')
         if not os.environ.get('PSYQ_INCLUDE'):
             self.skipTest('pinned SDK headers required')
@@ -54,8 +54,8 @@ class GameMapDropInitializationTests(unittest.TestCase):
                 compile_source(
                     candidate, unit.image, output, BUILD / 'delink', profile.optimization,
                     profile.small_data, profile.aspsx_version,
-                    (REPO / 'include', Path(os.environ['PSYQ_INCLUDE'])),
-                    profile.cc1_flags, profile.compiler, profile.maspsx_flags, defines=unit.defines,
+                    (REPO / 'include', REPO / 'vendor/include', Path(os.environ['PSYQ_INCLUDE'])),
+                    profile.cc1_flags, profile.compiler, defines=unit.defines,
                 )
                 obj = _load_object(output)
                 function = obj.named_symbol('map_object_spawn_effect')

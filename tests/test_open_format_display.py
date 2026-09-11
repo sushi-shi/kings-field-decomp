@@ -97,7 +97,7 @@ class OpenFormatDisplayTests(unittest.TestCase):
             for dfe_offset in (23, 22):
                 with self.subTest(dfe_offset=dfe_offset):
                     preprocessed = subprocess.run(
-                        [cpp, "-lang-c", "-undef", "-nostdinc", "-I", str(REPO / "include"),
+                        [cpp, "-lang-c", "-undef", "-nostdinc", "-I", str(REPO / "include"), "-I", str(REPO / "vendor/include"),
                          "-I", sdk, f"-DEXPECTED_DFE_OFFSET={dfe_offset}", str(fixture)],
                         capture_output=True, check=True,
                     )

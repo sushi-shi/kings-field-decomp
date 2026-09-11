@@ -125,8 +125,8 @@ class PlayerStatusPathTests(unittest.TestCase):
             compile_source(
                 unit.source_path, unit.image, output, BUILD / 'delink', profile.optimization,
                 profile.small_data, profile.aspsx_version,
-                (REPO / 'include', Path(os.environ['PSYQ_INCLUDE'])),
-                profile.cc1_flags, profile.compiler, profile.maspsx_flags, defines=unit.defines,
+                (REPO / 'include', REPO / 'vendor/include', Path(os.environ['PSYQ_INCLUDE'])),
+                profile.cc1_flags, profile.compiler, defines=unit.defines,
             )
             actual, expected = status_region(output), status_region(target)
             # All three complete status operations, including poison callbacks,

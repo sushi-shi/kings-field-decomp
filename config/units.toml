@@ -11,7 +11,7 @@ cc1_flags = []
 
 # GCC 2.5.7 probe. Its text epilogue (`lw $31; nop; j $31; addu $sp`), load
 # hoisting above the frame allocation, and -O2 schedule reproduce retail forms
-# that the 2.6.0 probe cannot emit. `--expand-div` selects the checked ASPSX
+# that the 2.6.0 probe cannot emit. Native ASPSX supplies the checked
 # div/rem expansion (`break 7`/`break 6`) that retail contains. Still a probe.
 # `-mcpu=r3000` selects the R3000 scheduling model explicitly: the rebuilt
 # cc1 reports Cpu 3000 but schedules with the generic latencies unless the
@@ -24,7 +24,6 @@ optimization = "O2"
 small_data = 0
 aspsx_version = "1.07"
 cc1_flags = ["-mcpu=r2000"]
-maspsx_flags = ["--expand-div"]
 
 # Initialized small-data probe; native actor code remains identical to G0.
 [profiles.probe-gcc257-o2-g8]
@@ -34,7 +33,6 @@ optimization = "O2"
 small_data = 8
 aspsx_version = "1.07"
 cc1_flags = ["-mcpu=r2000"]
-maspsx_flags = ["--expand-div"]
 
 [profiles.probe-gcc257-o2-plain]
 language = "c"
@@ -43,7 +41,6 @@ optimization = "O2"
 small_data = 0
 aspsx_version = "1.07"
 cc1_flags = []
-maspsx_flags = ["--expand-div"]
 
 # Native private-small-BSS probe for the SDK PAD verification sources.
 [profiles.probe-gcc257-o2-plain-g8]
@@ -53,7 +50,6 @@ optimization = "O2"
 small_data = 8
 aspsx_version = "1.07"
 cc1_flags = []
-maspsx_flags = ["--expand-div"]
 
 # Per-TU scheduling-model probes. `-mcpu=r2000` (the default g0) is a per-unit
 # discriminator, not a global truth: some TUs reach byte-exact only under a
@@ -67,11 +63,10 @@ optimization = "O2"
 small_data = 0
 aspsx_version = "1.07"
 cc1_flags = ["-mcpu=r2000", "-fno-schedule-insns"]
-maspsx_flags = ["--expand-div"]
 
 [profiles.asm-r3000-g0]
 language = "assembly"
-compiler = "gnu-as"
+compiler = "aspsx"
 small_data = 0
 aspsx_version = "1.07"
 cc1_flags = []
@@ -455,14 +450,14 @@ profile = "probe-gcc257-o2-g0"
 [[unit]]
 unit = "game.intr_tail"
 image = "GAME.EXE"
-source = "src/vendor/game_libetc_intr_tail.c"
+source = "vendor/src/game_libetc_intr_tail.c"
 profile = "probe-gcc257-o2-plain"
 scope = "vendored"
 
 [[unit]]
 unit = "game.pad"
 image = "GAME.EXE"
-source = "src/vendor/game_libetc_pad.c"
+source = "vendor/src/game_libetc_pad.c"
 profile = "probe-gcc257-o2-plain-g8"
 scope = "vendored"
 
@@ -681,6 +676,6 @@ profile = "probe-gcc257-o2-g0"
 [[unit]]
 unit = "open.pad"
 image = "OPEN.EXE"
-source = "src/vendor/open_libetc_pad.c"
+source = "vendor/src/open_libetc_pad.c"
 profile = "probe-gcc257-o2-plain-g8"
 scope = "vendored"

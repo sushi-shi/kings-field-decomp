@@ -4,7 +4,7 @@
 #include <kf/game_types.h>
 #include <kf/render_types.h>
 #include <kf/open_resources.h>
-#include <kf/psyq.h>
+#include <psyq/sdk.h>
 
 extern void opening_render_frame(
     const VECTOR *position, const SVECTOR *rotation);

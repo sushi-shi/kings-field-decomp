@@ -59,17 +59,17 @@ binary equivalence. Builds, compiler checks and tests were deferred as requested
 | [include/kf/open_scene0.h](../../include/kf/open_scene0.h) | 0 |
 | [include/kf/overlay.h](../../include/kf/overlay.h) | 0 |
 | [include/kf/pool.h](../../include/kf/pool.h) | 0 |
-| [include/kf/psyq.h](../../include/kf/psyq.h) | 0 |
-| [include/kf/psyq_audio.h](../../include/kf/psyq_audio.h) | 0 |
-| [include/kf/psyq_cd.h](../../include/kf/psyq_cd.h) | 0 |
-| [include/kf/psyq_kernel.h](../../include/kf/psyq_kernel.h) | 0 |
-| [include/kf/psyq_libc.h](../../include/kf/psyq_libc.h) | 0 |
-| [include/kf/psyq_pad.h](../../include/kf/psyq_pad.h) | 0 |
+| [vendor/include/psyq/sdk.h](../../vendor/include/psyq/sdk.h) | 0 |
+| [vendor/include/psyq/audio.h](../../vendor/include/psyq/audio.h) | 0 |
+| [vendor/include/psyq/cd.h](../../vendor/include/psyq/cd.h) | 0 |
+| [vendor/include/psyq/kernel.h](../../vendor/include/psyq/kernel.h) | 0 |
+| [vendor/include/psyq/libc.h](../../vendor/include/psyq/libc.h) | 0 |
+| [vendor/include/psyq/pad.h](../../vendor/include/psyq/pad.h) | 0 |
 | [include/kf/render_types.h](../../include/kf/render_types.h) | 0 |
 | [include/kf/resources.h](../../include/kf/resources.h) | 0 |
 | [include/kf/tmd.h](../../include/kf/tmd.h) | 2 |
-| [include/sys/fcntl.h](../../include/sys/fcntl.h) | 0 |
-| [include/sys/types.h](../../include/sys/types.h) | 0 |
+| [vendor/include/sys/fcntl.h](../../vendor/include/sys/fcntl.h) | 0 |
+| [vendor/include/sys/types.h](../../vendor/include/sys/types.h) | 0 |
 
 ## `include/kf/audio.h`
 

@@ -33,7 +33,7 @@ class OpenSpriteRenderTests(unittest.TestCase):
             for expected_size, item_size in ((8, 0x618), (9, 0x618), (8, 0x61C)):
                 with self.subTest(expected_size=expected_size, item_size=item_size):
                     preprocessed = subprocess.run(
-                        [cpp, "-lang-c", "-undef", "-nostdinc", "-I", str(REPO / "include"),
+                        [cpp, "-lang-c", "-undef", "-nostdinc", "-I", str(REPO / "include"), "-I", str(REPO / "vendor/include"),
                          "-I", sdk, f"-DEXPECTED_MATERIAL_SIZE={expected_size}",
                          f"-DEXPECTED_ITEM_STATE_SIZE={item_size}", str(fixture)],
                         capture_output=True, check=True,

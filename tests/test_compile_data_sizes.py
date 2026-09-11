@@ -21,7 +21,7 @@ from scripts.kf.retail import write_tsv
 
 @unittest.skipUnless(all(shutil.which(tool) for tool in (
     'cpppsx-257', 'cc1psx-257', 'cpppsx-260', 'cc1psx-260',
-    'maspsx', 'mipsel-linux-gnu-as',
+    'dosbox-x', 'mipsel-linux-gnu-as',
 )), 'pinned native compiler environment required')
 class CompileDataSizeTests(unittest.TestCase):
     def compile(self, root, content, version, defines=()):
@@ -76,12 +76,15 @@ int witness(void) { return 0; }
             # Both source declarations reserve eight bytes in GCC 2.5.7.
             # Equal total storage and alignment must not hide int versus byte.
             self.assertEqual(Elf(target).sections['.bss'].size, 16)
-            self.assertEqual(Elf(base).sections['.bss'].size, 16)
+            self.assertNotIn('.bss', Elf(base).sections)
+            sizes = json.loads(base.with_suffix('.o.json').read_text())['data_symbol_sizes']['sizes']
+            self.assertEqual(sizes, {'narrow': 4, 'tail': 8})
             result = diff_unit(unit, root / 'delink', root / 'objdiff')
             self.assertFalse(result.matches, result)
             with base.open('rb') as stream:
                 symbol = ELFFile(stream).get_section_by_name('.symtab').get_symbol_by_name('narrow')[0]
-                self.assertEqual(symbol['st_size'], 4)
+                self.assertEqual(symbol['st_shndx'], 'SHN_COMMON')
+                self.assertEqual(symbol['st_size'], 8)
 
     def test_both_compilers_measure_types_without_claim_sizes_or_host_abi(self):
         content = '''#define DATA(va, size)
@@ -104,7 +107,8 @@ int witness(void) { return rows[1].count + text[0]; }
                 root = Path(directory)
                 path = self.compile(root, content, version)
                 symbols = self.symbols(path)
-                self.assertEqual({name: symbols[name][0] for name in expected}, expected)
+                reservations = {**expected, **({'callback': 8, 'narrow': 8} if version == '257' else {})}
+                self.assertEqual({name: symbols[name][0] for name in expected}, reservations)
                 self.assertEqual(symbols['rows'][1], 'STB_LOCAL')
                 for name in ('text', 'callback', 'bounds', 'narrow'):
                     self.assertEqual(symbols[name][1], 'STB_GLOBAL')

@@ -9,9 +9,9 @@
 #include <kf/open_opening_scenes.h>
 #include <kf/open_render.h>
 #include <kf/open_resources.h>
-#include <kf/psyq.h>
-#include <kf/psyq_libc.h>
-#include <kf/psyq_pad.h>
+#include <psyq/sdk.h>
+#include <psyq/libc.h>
+#include <psyq/pad.h>
 #include <kf/resources.h>
 
 /* Retail retains the allocation subobject base across scene calls. */

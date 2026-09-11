@@ -1,7 +1,7 @@
 #include <kf/address.h>
 #include <kf/audio.h>
 #include <kf/open_audio.h>
-#include <kf/psyq_audio.h>
+#include <psyq/audio.h>
 
 ADDRESS(0x8001a268, 0x194)
 void audio_play_voice(

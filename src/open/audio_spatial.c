@@ -3,7 +3,7 @@
 #include <kf/audio.h>
 #include <kf/game_math.h>
 #include <kf/open_audio.h>
-#include <kf/psyq_audio.h>
+#include <psyq/audio.h>
 
 enum {
     OPEN_SOUND_EQUAL_PAN_THRESHOLD = 96

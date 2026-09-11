@@ -5,8 +5,8 @@
 #include <kf/game_cd.h>
 #include <kf/game_render.h>
 #include <kf/notify.h>
-#include <kf/psyq.h>
-#include <kf/psyq_libc.h>
+#include <psyq/sdk.h>
+#include <psyq/libc.h>
 #include <kf/game.h>
 #include <kf/tmd.h>
 

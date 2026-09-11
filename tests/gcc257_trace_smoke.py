@@ -308,7 +308,6 @@ def main() -> None:
     report = []
     for name, source, object_name, delink, defines, unit in corpus:
         assembler_version = manifest.profiles[unit.profile].aspsx_version if unit else "1.07"
-        assembler_flags = manifest.profiles[unit.profile].maspsx_flags if unit else ()
         reference = None
         trace_reference = None
         records = []
@@ -319,7 +318,7 @@ def main() -> None:
             output = args.output / name / mode / object_name
             trace = output.with_suffix(".jsonl") if mode.startswith("enabled") else None
             compile_source(source, "OPEN.EXE", output, delink, "O2", 0, assembler_version,
-                           includes, ("-mcpu=r2000",), "gcc257-native", assembler_flags, defines=defines,
+                           includes, ("-mcpu=r2000",), "gcc257-native", defines=defines,
                            cc1_override=probe, trace_path=trace)
             blob = output.read_bytes()
             if reference is None:
@@ -338,7 +337,7 @@ def main() -> None:
         row = {"unit": name, "object_sha256": hashlib.sha256(reference).hexdigest(),
                "trace_sha256": hashlib.sha256(trace_reference).hexdigest(),
                "events": len(records), "strict_scores": {},
-               "aspsx_version": assembler_version, "maspsx_flags": list(assembler_flags)}
+               "aspsx_version": assembler_version}
         if unit:
             target = delink / "open/modules" / object_name
             for function in unit.functions:
