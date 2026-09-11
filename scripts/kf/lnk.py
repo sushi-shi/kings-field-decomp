@@ -8,6 +8,7 @@ relocation addends; the native object and its instruction bytes stay intact.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
+import re
 import struct
 
 
@@ -179,8 +180,31 @@ def affine(expression: tuple) -> tuple[tuple[str, int] | None, int]:
     raise ValueError('LNK expression cannot be represented by one ELF relocation')
 
 
+def data_referent_spellings(assembly: str) -> frozenset[tuple[str, int]]:
+    """Symbol-plus-addend operands the compiler wrote on instruction lines.
+
+    ASPSX serialises a reference to a symbol defined in the same object as a
+    section-relative expression, which loses the symbol the compiler named.
+    A biased reference such as ``la $3,floor_entry_cells-2`` then reads as
+    ``.data+14`` and no longer resolves to the symbol the retail relocation
+    names. The assembler source still carries the compiler's spelling; this
+    collects every ``symbol+addend`` operand so the view can restore it.
+    Directives, labels and register or local-label operands are ignored.
+    """
+    spellings = set()
+    for line in assembly.splitlines():
+        body = line.split('#', 1)[0].strip()
+        if not body or body.startswith('.') or body.endswith(':'):
+            continue
+        for name, sign, digits in re.findall(
+                r'(?<![\w$.])([A-Za-z_][\w.]*)\s*([+-])\s*(\d+)\b', body):
+            spellings.add((name, int(digits) if sign == '+' else -int(digits)))
+    return frozenset(spellings)
+
+
 def elf_view(data: bytes, *, functions: tuple[str, ...] = (),
-             sizes: dict[str, int] | None = None) -> bytes:
+             sizes: dict[str, int] | None = None,
+             spellings: frozenset[tuple[str, int]] = frozenset()) -> bytes:
     """Build an objdiff view of an actual native object, without retail inputs."""
     from scripts.kf.mips_elf import (
         DefinedSymbol, MipsRelocation, STB_GLOBAL, STB_LOCAL, STT_FUNC,
@@ -235,6 +259,15 @@ def elf_view(data: bytes, *, functions: tuple[str, ...] = (),
                 raise ValueError('absolute native patch is not an ELF relocation')
             symbol = (names[referent[1]] if referent[0] == 'section'
                       else obj.symbols[referent[1]].name)
+            if referent[0] == 'section' and symbol != '.text' and spellings:
+                # Restore the compiler's own symbol+addend spelling for a
+                # reference to a datum defined in this object. The address is
+                # unchanged; only the referent name and addend are.
+                spelled = [(abs(addend - s.value), s.name, addend - s.value)
+                           for s in symbols[symbol]
+                           if (s.name, addend - s.value) in spellings]
+                if spelled:
+                    _, symbol, addend = min(spelled)
             word = struct.unpack_from('<I', payload, offset)[0]
             if kind == 16:
                 relocation, value = 'R_MIPS_32', addend & 0xffffffff

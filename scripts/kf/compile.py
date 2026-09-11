@@ -147,7 +147,7 @@ def compile_source(
     defines: tuple[str, ...] = (), *, cc1_override: Path | None = None,
     trace_path: Path | None = None, trace_function: str | None = None,
 ) -> Path:
-    from scripts.kf.lnk import elf_view
+    from scripts.kf.lnk import data_referent_spellings, elf_view
     from scripts.kf.sdk import assemble, compile_c
 
     source, output = source.resolve(), output.resolve()
@@ -202,7 +202,8 @@ def compile_source(
               else assemble(scratch, 'UNIT', small_data))
     assembly = (scratch / 'UNIT.S').read_text()
     functions = tuple(re.findall(r'^\s*\.ent\s+([\w$]+)', assembly, re.M))
-    view = elf_view(native, functions=functions, sizes=source_sizes)
+    view = elf_view(native, functions=functions, sizes=source_sizes,
+                    spellings=data_referent_spellings(assembly))
     _validate_mips_elf(view, output)
     _write_bytes_if_changed(output.with_suffix('.OBJ'), native)
     _write_bytes_if_changed(output.with_suffix('.S'), (scratch / 'UNIT.S').read_bytes())

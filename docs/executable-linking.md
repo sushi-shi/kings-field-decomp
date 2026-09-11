@@ -39,6 +39,16 @@ uses the same CPPPSX/CC1PSX/ASPSX implementation as `kf build`. The reader
 translates the resulting native LNK objects for objdiff; no GNU assembler
 recompiles game source and no ELF view is an input to PSYLINK.
 
+ASPSX serialises a reference to a datum defined in the same object as a
+section-relative expression, so a biased reference the compiler wrote as
+`floor_entry_cells-2` reaches the object as `.data+14` and no longer names
+the symbol the retail relocation names. The view restores the compiler's
+spelling from the `symbol+addend` operands of the assembler source
+(`data_referent_spellings`): when a section-relative patch equals one of
+those spellings for a datum in that section, the relocation names that
+datum with the signed addend. Bytes and addresses are unchanged; only the
+referent name is, which is what the strict comparison keys on.
+
 The shared probe enables native compiler/assembler debug metadata for private
 symbols and function records. The source assembly passes unchanged except for
 DOS line endings. Native COMMON reservations remain unplaced in the ELF view;
