@@ -253,8 +253,8 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["data"], 2898)
         self.assertGreaterEqual(counts["functions_named"], 240)
         self.assertGreaterEqual(counts["data_named"], 100)
-        self.assertEqual(counts["structures"], 129)
-        self.assertEqual(counts["structure_fields"], 872)
+        self.assertEqual(counts["structures"], 128)
+        self.assertEqual(counts["structure_fields"], 871)
         self.assertEqual(counts["structure_fields_named"], 784)
 
     def test_animation_cache_slots_share_one_pointer_type_without_layout_changes(self) -> None:
@@ -336,7 +336,7 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(unit.functions[-1].va + unit.functions[-1].body_size,
                          0x80020B4C)
 
-    def test_game_tmd_buffer_starts_belong_to_one_owner_without_capacity_claims(self) -> None:
+    def test_game_tmd_buffer_starts_belong_to_one_owner_with_extent_capacities(self) -> None:
         game = index("GAME.EXE")
         datum = game.datum(0x80070E98)
         for base, size in ((0x800911B0, 8), (0x800930F0, 24)):
@@ -344,8 +344,10 @@ class InventoryTests(unittest.TestCase):
                 self.assertIsNone(game.datum(base + offset))
                 self.assertEqual(game.data_owner(base + offset), datum)
         self.assertEqual(_structure_field('KfGraphicsRuntimeGame', 0x20318),
-                         ('unknown_projection_morph_20318', 'u8[16008]', 0x3E88))
-        self.assertIn('subobject extents remain unresolved', datum.note)
+                         ('tmd_projected_vertices', 'KfScreenVertex[1000]', 0x1F40))
+        self.assertEqual(_structure_field('KfGraphicsRuntimeGame', 0x22258),
+                         ('morph_scratch', 'KfPackedSVector[1001]', 0x1F48))
+        self.assertIn('extent-derived capacities', datum.note)
         opening = index("OPEN.EXE").data_owner(0x80069B80)
         self.assertEqual((opening.name, opening.datatype, opening.size),
                          ("open_graphics_runtime", "KfGraphicsRuntimeOpen", 0x24788))

@@ -475,7 +475,7 @@ void tmd_project_vertices(s32 count)
     long depth;
     long unused_depth;
 
-    projected = ((KfScreenVertex *)game_graphics_runtime.unknown_projection_morph_20318);
+    projected = game_graphics_runtime.tmd_projected_vertices;
     vertex = game_graphics_runtime.current_tmd_vertices;
     for (count--; count != -1; count--) {
         RotTransPers(&vertex->vector, &projected->sxy.word, &perspective, &gte_flags);
@@ -497,7 +497,7 @@ void tmd_project_vertices_shift(s32 count, u8 shift)
     long depth;
     long unused_depth;
 
-    projected = ((KfScreenVertex *)game_graphics_runtime.unknown_projection_morph_20318);
+    projected = game_graphics_runtime.tmd_projected_vertices;
     vertex = game_graphics_runtime.current_tmd_vertices;
     for (count--; count != -1; count--) {
         RotTransPers(&vertex->vector, &projected->sxy.word, &perspective, &gte_flags);
@@ -518,7 +518,7 @@ void tmd_transform_vertices(s32 count)
     long gte_flags;
     s32 remaining;
 
-    projected = ((KfScreenVertex *)game_graphics_runtime.unknown_projection_morph_20318);
+    projected = game_graphics_runtime.tmd_projected_vertices;
     vertex = game_graphics_runtime.current_tmd_vertices;
     for (remaining = count - 1; remaining != -1; remaining--) {
         RotTrans(&vertex->vector, &transformed, &gte_flags);

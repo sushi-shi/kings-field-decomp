@@ -11,11 +11,17 @@ CVECTOR tmd_textured_primitive_color = {
 
 RODATA(0x800121c0, 0x74)
 
+/* Prepared vertex indices are byte offsets into the projected array. */
+#define VTX(off) ((KfScreenVertex *)((u8 *)open_graphics_runtime.tmd_projected_vertices + (off)))
+
 ADDRESS(0x8001764c, 0xcf8)
 void render_enqueue_tmd(u16 object_index, s16 depth_bias)
 {
     KfTmdObject *object = tmd_get_object(object_index);
-    s32 vertex_offset_delta;
+    /* Retail reserves one unallocated stack word below its spills that no
+     * live value explains; this never-read local carries it
+     * (docs/patterns/reconstruction-debt-review.md). */
+    u16 unattributed_stack_slot[2];
     u32 header;
     u32 remaining = object->primitive_count;
     u8 *packet = (u8 *)open_graphics_runtime.tmd_state.current_asset +
@@ -30,24 +36,16 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
 
     for (; remaining-- != 0;
          packet += (header >> KF_TMD_ILEN_TO_BYTES_SHIFT) & KF_TMD_BODY_BYTES_MASK) {
-        u32 vertices = (u32)open_graphics_runtime.tmd_projected_vertices;
-
         header = *(u32 *)packet;
         packet += KF_TMD_PACKET_HEADER_BYTES;
         switch (tmd_packet_mode(header)) {
         case KF_TMD_MODE_FT3: {
             KfTmdPrimitive *polygon = (KfTmdPrimitive *)packet;
             KfGpuFT3 *prim;
-            u16 vertex1_offset;
-            u16 vertex2_offset;
 
-            vertex0 = (KfScreenVertex *)(polygon->ft3.v0 + vertices);
-            vertex1_offset = polygon->ft3.v1;
-            vertex1 = (KfScreenVertex *)(vertex1_offset + vertices);
-            vertex2_offset = polygon->ft3.v2;
-            vertex_offset_delta = vertex2_offset - vertex1_offset;
-            vertex2 = (KfScreenVertex *)(vertices + vertex1_offset +
-                vertex_offset_delta);
+            vertex0 = VTX(polygon->ft3.v0);
+            vertex1 = VTX(polygon->ft3.v1);
+            vertex2 = VTX(polygon->ft3.v2);
             if (NormalClip(vertex0->sxy.word, vertex1->sxy.word, vertex2->sxy.word) <= 0) {
                 continue;
             }
@@ -68,11 +66,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             depth = (((vertex0->sz + vertex1->sz + vertex2->sz) / 3)
                 >> KF_GTE_DEPTH_TO_OT_SHIFT) + depth_bias;
             if (depth >= KF_SCENE_MIN_OT_DEPTH) {
-                KfGraphicsRuntimeOpen *graphics = (KfGraphicsRuntimeOpen *)(
-                    vertices - (unsigned long)&((KfGraphicsRuntimeOpen *)NULL)->
-                        tmd_projected_vertices);
                 AddPrim(
-                    &graphics->ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
+                    &open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
                     &prim->sdk);
             }
             break;
@@ -81,13 +76,13 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             KfTmdPrimitive *polygon = (KfTmdPrimitive *)packet;
             KfGpuF4 *prim;
 
-            vertex0 = (KfScreenVertex *)(polygon->f4.v0 + vertices);
-            vertex1 = (KfScreenVertex *)(polygon->f4.v1 + vertices);
-            vertex2 = (KfScreenVertex *)(polygon->f4.v2 + vertices);
+            vertex0 = VTX(polygon->f4.v0);
+            vertex1 = VTX(polygon->f4.v1);
+            vertex2 = VTX(polygon->f4.v2);
             if (NormalClip(vertex0->sxy.word, vertex1->sxy.word, vertex2->sxy.word) <= 0) {
                 continue;
             }
-            vertex3 = (KfScreenVertex *)(polygon->f4.v3 + vertices);
+            vertex3 = VTX(polygon->f4.v3);
             prim = (KfGpuF4 *)primitive_buffer_allocate(sizeof(POLY_F4));
             SetPolyF4(&prim->sdk);
             prim->packed.xy0 = vertex0->sxy.word;
@@ -100,11 +95,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             depth = ((vertex0->sz + vertex1->sz + vertex2->sz + vertex3->sz)
                 >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2)) + depth_bias;
             if (depth >= KF_SCENE_MIN_OT_DEPTH) {
-                KfGraphicsRuntimeOpen *graphics = (KfGraphicsRuntimeOpen *)(
-                    vertices - (unsigned long)&((KfGraphicsRuntimeOpen *)NULL)->
-                        tmd_projected_vertices);
                 AddPrim(
-                    &graphics->ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
+                    &open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
                     &prim->sdk);
             }
             break;
@@ -113,9 +105,9 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             KfTmdPrimitive *polygon = (KfTmdPrimitive *)packet;
             KfGpuG3 *prim;
 
-            vertex0 = (KfScreenVertex *)(polygon->g3.v0 + vertices);
-            vertex1 = (KfScreenVertex *)(polygon->g3.v1 + vertices);
-            vertex2 = (KfScreenVertex *)(polygon->g3.v2 + vertices);
+            vertex0 = VTX(polygon->g3.v0);
+            vertex1 = VTX(polygon->g3.v1);
+            vertex2 = VTX(polygon->g3.v2);
             if (NormalClip(vertex0->sxy.word, vertex1->sxy.word, vertex2->sxy.word) <= 0) {
                 continue;
             }
@@ -132,11 +124,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             depth = (((vertex0->sz + vertex1->sz + vertex2->sz) / 3)
                 >> KF_GTE_DEPTH_TO_OT_SHIFT) + depth_bias;
             if (depth >= KF_SCENE_MIN_OT_DEPTH) {
-                KfGraphicsRuntimeOpen *graphics = (KfGraphicsRuntimeOpen *)(
-                    vertices - (unsigned long)&((KfGraphicsRuntimeOpen *)NULL)->
-                        tmd_projected_vertices);
                 AddPrim(
-                    &graphics->ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
+                    &open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
                     &prim->sdk);
             }
             break;
@@ -145,13 +134,13 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             KfTmdPrimitive *polygon = (KfTmdPrimitive *)packet;
             KfGpuG4 *prim;
 
-            vertex0 = (KfScreenVertex *)(polygon->g4.v0 + vertices);
-            vertex1 = (KfScreenVertex *)(polygon->g4.v1 + vertices);
-            vertex2 = (KfScreenVertex *)(polygon->g4.v2 + vertices);
+            vertex0 = VTX(polygon->g4.v0);
+            vertex1 = VTX(polygon->g4.v1);
+            vertex2 = VTX(polygon->g4.v2);
             if (NormalClip(vertex0->sxy.word, vertex1->sxy.word, vertex2->sxy.word) <= 0) {
                 continue;
             }
-            vertex3 = (KfScreenVertex *)(polygon->g4.v3 + vertices);
+            vertex3 = VTX(polygon->g4.v3);
             prim = (KfGpuG4 *)primitive_buffer_allocate(sizeof(POLY_G4));
             SetPolyG4(&prim->sdk);
             prim->packed.xy0 = vertex0->sxy.word;
@@ -168,11 +157,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             depth = ((vertex0->sz + vertex1->sz + vertex2->sz + vertex3->sz)
                 >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2)) + depth_bias;
             if (depth >= KF_SCENE_MIN_OT_DEPTH) {
-                KfGraphicsRuntimeOpen *graphics = (KfGraphicsRuntimeOpen *)(
-                    vertices - (unsigned long)&((KfGraphicsRuntimeOpen *)NULL)->
-                        tmd_projected_vertices);
                 AddPrim(
-                    &graphics->ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
+                    &open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
                     &prim->sdk);
             }
             break;
@@ -181,9 +167,9 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             KfTmdPrimitive *polygon = (KfTmdPrimitive *)packet;
             KfGpuGT3 *prim;
 
-            vertex0 = (KfScreenVertex *)(polygon->gt3.v0 + vertices);
-            vertex1 = (KfScreenVertex *)(polygon->gt3.v1 + vertices);
-            vertex2 = (KfScreenVertex *)(polygon->gt3.v2 + vertices);
+            vertex0 = VTX(polygon->gt3.v0);
+            vertex1 = VTX(polygon->gt3.v1);
+            vertex2 = VTX(polygon->gt3.v2);
             if (NormalClip(vertex0->sxy.word, vertex1->sxy.word, vertex2->sxy.word) <= 0) {
                 continue;
             }
@@ -206,11 +192,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             depth = (((vertex0->sz + vertex1->sz + vertex2->sz) / 3)
                 >> KF_GTE_DEPTH_TO_OT_SHIFT) + depth_bias;
             if (depth >= KF_SCENE_MIN_OT_DEPTH) {
-                KfGraphicsRuntimeOpen *graphics = (KfGraphicsRuntimeOpen *)(
-                    vertices - (unsigned long)&((KfGraphicsRuntimeOpen *)NULL)->
-                        tmd_projected_vertices);
                 AddPrim(
-                    &graphics->ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
+                    &open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
                     &prim->sdk);
             }
             break;
@@ -219,13 +202,13 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             KfTmdPrimitive *polygon = (KfTmdPrimitive *)packet;
             KfGpuGT4 *prim;
 
-            vertex0 = (KfScreenVertex *)(polygon->gt4.v0 + vertices);
-            vertex1 = (KfScreenVertex *)(polygon->gt4.v1 + vertices);
-            vertex2 = (KfScreenVertex *)(polygon->gt4.v2 + vertices);
+            vertex0 = VTX(polygon->gt4.v0);
+            vertex1 = VTX(polygon->gt4.v1);
+            vertex2 = VTX(polygon->gt4.v2);
             if (NormalClip(vertex0->sxy.word, vertex1->sxy.word, vertex2->sxy.word) <= 0) {
                 continue;
             }
-            vertex3 = (KfScreenVertex *)(polygon->gt4.v3 + vertices);
+            vertex3 = VTX(polygon->gt4.v3);
             prim = (KfGpuGT4 *)primitive_buffer_allocate(sizeof(POLY_GT4));
             SetPolyGT4(&prim->sdk);
             prim->packed.clut = polygon->gt4.cba;
@@ -249,11 +232,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             depth = ((vertex0->sz + vertex1->sz + vertex2->sz + vertex3->sz)
                 >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2)) + depth_bias;
             if (depth >= KF_SCENE_MIN_OT_DEPTH) {
-                KfGraphicsRuntimeOpen *graphics = (KfGraphicsRuntimeOpen *)(
-                    vertices - (unsigned long)&((KfGraphicsRuntimeOpen *)NULL)->
-                        tmd_projected_vertices);
                 AddPrim(
-                    &graphics->ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
+                    &open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
                     &prim->sdk);
             }
             break;
@@ -262,9 +242,9 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             KfTmdPrimitive *polygon = (KfTmdPrimitive *)packet;
             KfGpuG3 *prim;
 
-            vertex0 = (KfScreenVertex *)(polygon->g3.v0 + vertices);
-            vertex1 = (KfScreenVertex *)(polygon->g3.v1 + vertices);
-            vertex2 = (KfScreenVertex *)(polygon->g3.v2 + vertices);
+            vertex0 = VTX(polygon->g3.v0);
+            vertex1 = VTX(polygon->g3.v1);
+            vertex2 = VTX(polygon->g3.v2);
             if (NormalClip(vertex0->sxy.word, vertex1->sxy.word, vertex2->sxy.word) <= 0) {
                 continue;
             }
@@ -282,11 +262,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             depth = (((vertex0->sz + vertex1->sz + vertex2->sz) / 3)
                 >> KF_GTE_DEPTH_TO_OT_SHIFT) + depth_bias;
             if (depth >= KF_SCENE_MIN_OT_DEPTH) {
-                KfGraphicsRuntimeOpen *graphics = (KfGraphicsRuntimeOpen *)(
-                    vertices - (unsigned long)&((KfGraphicsRuntimeOpen *)NULL)->
-                        tmd_projected_vertices);
                 AddPrim(
-                    &graphics->ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
+                    &open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
                     &prim->sdk);
             }
             break;
@@ -295,13 +272,13 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             KfTmdPrimitive *polygon = (KfTmdPrimitive *)packet;
             KfGpuFT4 *prim;
 
-            vertex0 = (KfScreenVertex *)(polygon->ft4.v0 + vertices);
-            vertex1 = (KfScreenVertex *)(polygon->ft4.v1 + vertices);
-            vertex2 = (KfScreenVertex *)(polygon->ft4.v2 + vertices);
+            vertex0 = VTX(polygon->ft4.v0);
+            vertex1 = VTX(polygon->ft4.v1);
+            vertex2 = VTX(polygon->ft4.v2);
             if (NormalClip(vertex0->sxy.word, vertex1->sxy.word, vertex2->sxy.word) <= 0) {
                 continue;
             }
-            vertex3 = (KfScreenVertex *)(polygon->ft4.v3 + vertices);
+            vertex3 = VTX(polygon->ft4.v3);
             prim = (KfGpuFT4 *)primitive_buffer_allocate(sizeof(POLY_FT4));
             SetPolyFT4(&prim->sdk);
             prim->packed.clut = polygon->ft4.cba;
@@ -321,11 +298,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             depth = ((vertex0->sz + vertex1->sz + vertex2->sz + vertex3->sz)
                 >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2)) + depth_bias;
             if (depth >= KF_SCENE_MIN_OT_DEPTH) {
-                KfGraphicsRuntimeOpen *graphics = (KfGraphicsRuntimeOpen *)(
-                    vertices - (unsigned long)&((KfGraphicsRuntimeOpen *)NULL)->
-                        tmd_projected_vertices);
                 AddPrim(
-                    &graphics->ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
+                    &open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
                     &prim->sdk);
             }
             break;
@@ -334,9 +308,9 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             KfTmdPrimitive *polygon = (KfTmdPrimitive *)packet;
             KfGpuF3 *prim;
 
-            vertex0 = (KfScreenVertex *)(polygon->f3.v0 + vertices);
-            vertex1 = (KfScreenVertex *)(polygon->f3.v1 + vertices);
-            vertex2 = (KfScreenVertex *)(polygon->f3.v2 + vertices);
+            vertex0 = VTX(polygon->f3.v0);
+            vertex1 = VTX(polygon->f3.v1);
+            vertex2 = VTX(polygon->f3.v2);
             if (NormalClip(vertex0->sxy.word, vertex1->sxy.word, vertex2->sxy.word) <= 0) {
                 continue;
             }
@@ -351,11 +325,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             depth = (((vertex0->sz + vertex1->sz + vertex2->sz) / 3)
                 >> KF_GTE_DEPTH_TO_OT_SHIFT) + depth_bias;
             if (depth >= KF_SCENE_MIN_OT_DEPTH) {
-                KfGraphicsRuntimeOpen *graphics = (KfGraphicsRuntimeOpen *)(
-                    vertices - (unsigned long)&((KfGraphicsRuntimeOpen *)NULL)->
-                        tmd_projected_vertices);
                 AddPrim(
-                    &graphics->ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
+                    &open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
                     &prim->sdk);
             }
             break;
@@ -364,13 +335,13 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             KfTmdPrimitive *polygon = (KfTmdPrimitive *)packet;
             KfGpuG4 *prim;
 
-            vertex0 = (KfScreenVertex *)(polygon->g4.v0 + vertices);
-            vertex1 = (KfScreenVertex *)(polygon->g4.v1 + vertices);
-            vertex2 = (KfScreenVertex *)(polygon->g4.v2 + vertices);
+            vertex0 = VTX(polygon->g4.v0);
+            vertex1 = VTX(polygon->g4.v1);
+            vertex2 = VTX(polygon->g4.v2);
             if (NormalClip(vertex0->sxy.word, vertex1->sxy.word, vertex2->sxy.word) <= 0) {
                 continue;
             }
-            vertex3 = (KfScreenVertex *)(polygon->g4.v3 + vertices);
+            vertex3 = VTX(polygon->g4.v3);
             prim = (KfGpuG4 *)primitive_buffer_allocate(sizeof(POLY_G4));
             SetPolyG4(&prim->sdk);
             SetSemiTrans(&prim->sdk, 1);
@@ -389,11 +360,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             depth = ((vertex0->sz + vertex1->sz + vertex2->sz + vertex3->sz)
                 >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2)) + depth_bias;
             if (depth >= KF_SCENE_MIN_OT_DEPTH) {
-                KfGraphicsRuntimeOpen *graphics = (KfGraphicsRuntimeOpen *)(
-                    vertices - (unsigned long)&((KfGraphicsRuntimeOpen *)NULL)->
-                        tmd_projected_vertices);
                 AddPrim(
-                    &graphics->ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
+                    &open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
                     &prim->sdk);
             }
             break;
@@ -402,9 +370,9 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             KfTmdPrimitive *polygon = (KfTmdPrimitive *)packet;
             KfGpuF3 *prim;
 
-            vertex0 = (KfScreenVertex *)(polygon->f3.v0 + vertices);
-            vertex1 = (KfScreenVertex *)(polygon->f3.v1 + vertices);
-            vertex2 = (KfScreenVertex *)(polygon->f3.v2 + vertices);
+            vertex0 = VTX(polygon->f3.v0);
+            vertex1 = VTX(polygon->f3.v1);
+            vertex2 = VTX(polygon->f3.v2);
             if (NormalClip(vertex0->sxy.word, vertex1->sxy.word, vertex2->sxy.word) <= 0) {
                 continue;
             }
@@ -420,11 +388,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             depth = (((vertex0->sz + vertex1->sz + vertex2->sz) / 3)
                 >> KF_GTE_DEPTH_TO_OT_SHIFT) + depth_bias;
             if (depth >= KF_SCENE_MIN_OT_DEPTH) {
-                KfGraphicsRuntimeOpen *graphics = (KfGraphicsRuntimeOpen *)(
-                    vertices - (unsigned long)&((KfGraphicsRuntimeOpen *)NULL)->
-                        tmd_projected_vertices);
                 AddPrim(
-                    &graphics->ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
+                    &open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
                     &prim->sdk);
             }
             break;
@@ -433,13 +398,13 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             KfTmdPrimitive *polygon = (KfTmdPrimitive *)packet;
             KfGpuF4 *prim;
 
-            vertex0 = (KfScreenVertex *)(polygon->f4.v0 + vertices);
-            vertex1 = (KfScreenVertex *)(polygon->f4.v1 + vertices);
-            vertex2 = (KfScreenVertex *)(polygon->f4.v2 + vertices);
+            vertex0 = VTX(polygon->f4.v0);
+            vertex1 = VTX(polygon->f4.v1);
+            vertex2 = VTX(polygon->f4.v2);
             if (NormalClip(vertex0->sxy.word, vertex1->sxy.word, vertex2->sxy.word) <= 0) {
                 continue;
             }
-            vertex3 = (KfScreenVertex *)(polygon->f4.v3 + vertices);
+            vertex3 = VTX(polygon->f4.v3);
             prim = (KfGpuF4 *)primitive_buffer_allocate(sizeof(POLY_F4));
             SetPolyF4(&prim->sdk);
             SetSemiTrans(&prim->sdk, 1);
@@ -453,11 +418,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             depth = ((vertex0->sz + vertex1->sz + vertex2->sz + vertex3->sz)
                 >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2)) + depth_bias;
             if (depth >= KF_SCENE_MIN_OT_DEPTH) {
-                KfGraphicsRuntimeOpen *graphics = (KfGraphicsRuntimeOpen *)(
-                    vertices - (unsigned long)&((KfGraphicsRuntimeOpen *)NULL)->
-                        tmd_projected_vertices);
                 AddPrim(
-                    &graphics->ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
+                    &open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
                     &prim->sdk);
             }
             break;
@@ -467,3 +429,5 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
         }
     }
 }
+
+#undef VTX

@@ -9,7 +9,6 @@
 #include <psyq/sdk.h>
 #include <psyq/libc.h>
 
-enum { MORPH_SCRATCH_OFFSET_IN_PROJECTION_STORAGE = 0x1f40 };
 
 /* Cache full-weight keyframe morphs in a pool record; blend into shared scratch. */
 
@@ -175,11 +174,11 @@ update_vertex_cache:
     record->clip_index = clip_index;
     record->keyframe_index = keyframe_index;
 
-    copy_vertices(&((KfPackedSVector *)(game_graphics_runtime.unknown_projection_morph_20318 + MORPH_SCRATCH_OFFSET_IN_PROJECTION_STORAGE))[1], record->cached_vertices, vertex_count);
+    copy_vertices(&game_graphics_runtime.morph_scratch[1], record->cached_vertices, vertex_count);
 
     morph_object = record->rest_morph;
     {
-        KfPackedSVector *scratch_vertex = &((KfPackedSVector *)(game_graphics_runtime.unknown_projection_morph_20318 + MORPH_SCRATCH_OFFSET_IN_PROJECTION_STORAGE))[morph_object->prefix.range.base_vertex];
+        KfPackedSVector *scratch_vertex = &game_graphics_runtime.morph_scratch[morph_object->prefix.range.base_vertex];
         u32 saved_xy_word = scratch_vertex->words[0];
         u32 saved_z_pad_word = scratch_vertex->words[1];
 
@@ -189,7 +188,7 @@ update_vertex_cache:
         scratch_vertex->words[0] = saved_xy_word;
         scratch_vertex->words[1] = saved_z_pad_word;
     }
-    tmd_set_current_vertices(&((KfPackedSVector *)(game_graphics_runtime.unknown_projection_morph_20318 + MORPH_SCRATCH_OFFSET_IN_PROJECTION_STORAGE))[1]);
+    tmd_set_current_vertices(&game_graphics_runtime.morph_scratch[1]);
     record->state = KF_ANIMATION_CACHE_LIVE;
     return record;
 }

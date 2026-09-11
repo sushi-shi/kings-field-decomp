@@ -96,6 +96,10 @@ promotes a probe to a proven historical toolchain.
   or compact local groupings from stack gaps.
 - [open-address-arithmetic-review.md](open-address-arithmetic-review.md): two
   rejected direct vertex lookups and traced unused stack slots; cleanup remains open.
+- [reconstruction-debt-review.md](reconstruction-debt-review.md): owner
+  recovery replaced by CSE-related constant addressing, the stale-pseudo stack
+  slot behind the OPEN vertex arithmetic, load-then-advance stdarg macros,
+  aligned formatter scratch, and typed projection/morph arrays.
 - [game-save-ui-matches.md](game-save-ui-matches.md): status-result and dialogue
   pathname trials, plus delay-slot and unseen-prologue trace controls.
 - [game-status-result-traces.md](game-status-result-traces.md): exact status

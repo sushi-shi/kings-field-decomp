@@ -178,27 +178,14 @@ void actor_initialize(KfActor *actor)
     collision_adjust_cell_occupancy(actor->cell_x, actor->cell_z, 1);
 }
 
-/*
- * Both initializers reuse one temporary for the tile index and then the local
- * offset: retail keeps each local-offset load after the multiply chain that
- * still reads the tile value, which a fresh temporary would not reproduce.
- */
 ADDRESS(0x8002cd28, 0xa4)
 void actor_initialize_current(void)
 {
     KfActor *actor = actor_state.current;
     VECTOR position;
-    s32 coordinate;
-    s32 world;
 
-    coordinate = actor->tile_x;
-    world = coordinate * KF_MAP_TILE_SIZE;
-    coordinate = actor->local_x;
-    position.vx = world + coordinate;
-    coordinate = actor->tile_z;
-    world = coordinate * KF_MAP_TILE_SIZE;
-    coordinate = actor->local_z;
-    position.vz = world + coordinate;
+    position.vx = actor->tile_x * KF_MAP_TILE_SIZE + actor->local_x;
+    position.vz = actor->tile_z * KF_MAP_TILE_SIZE + actor->local_z;
     position.vy = map_floor_height_at_position(&position);
     actor_set_position(actor, &position);
     actor_set_rotation(actor, 0, 0, 0);
@@ -210,18 +197,10 @@ void actor_initialize_slot(u16 actor_index)
 {
     KfActor *actor = &actor_state.actors[actor_index];
     VECTOR position;
-    s32 coordinate;
-    s32 world;
 
     actor->lifecycle = KF_ACTOR_LIFECYCLE_ACTIVE;
-    coordinate = actor->tile_x;
-    world = coordinate * KF_MAP_TILE_SIZE;
-    coordinate = actor->local_x;
-    position.vx = world + coordinate;
-    coordinate = actor->tile_z;
-    world = coordinate * KF_MAP_TILE_SIZE;
-    coordinate = actor->local_z;
-    position.vz = world + coordinate;
+    position.vx = actor->tile_x * KF_MAP_TILE_SIZE + actor->local_x;
+    position.vz = actor->tile_z * KF_MAP_TILE_SIZE + actor->local_z;
     position.vy = map_floor_height_at_position(&position);
     actor_set_position(actor, &position);
     actor_set_rotation(actor, 0, 0, 0);

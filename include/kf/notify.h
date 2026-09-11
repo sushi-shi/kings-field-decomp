@@ -30,15 +30,6 @@ typedef struct KfNotificationSprite {
     KfSpriteQuad sprite;
 } KfNotificationSprite;
 
-/*
- * The menu formatter writes signed glyphs (including -1), while the
- * notification renderer reads the four decimal cells with lhu.
- */
-typedef union KfNotificationDigitBuffer {
-    s16 formatted[KF_NOTIFICATION_DIGIT_CAPACITY];
-    u16 values[KF_NOTIFICATION_DIGIT_CAPACITY];
-} KfNotificationDigitBuffer;
-
 /* The dequeue operation addresses tail and phase through this control base. */
 typedef struct KfNotificationControl {
     u8 queue_tail;

@@ -5,8 +5,8 @@
 #include <kf/notify.h>
 
 /* Candidate view of the complete startup clear, not a production DATA owner.
- * Registry/projection/morph capacities remain unproved; these opaque spans
- * are not used as typed arrays by the pilot consumers. */
+ * The registry capacity remains unproved; the projection/morph arrays mirror
+ * the production extent-derived capacities. */
 typedef struct KfGraphicsOwnerProbe {
     KfDisplayState display_state;
     DRAWENV display_draw_environments[2];
@@ -16,7 +16,8 @@ typedef struct KfGraphicsOwnerProbe {
     u8 unknown_registry_20134[0xf0];
     KfPackedSVector *current_tmd_vertices;
     KfPoolRecord pool_records[12];
-    u8 unknown_projection_morph_20318[0x3e88];
+    KfScreenVertex tmd_projected_vertices[1000];
+    KfPackedSVector morph_scratch[1001];
     u16 effect5_texture_pages[3];
     u8 unknown_241a6[10];
     u16 effect5_texture_cluts[3];

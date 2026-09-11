@@ -1,15 +1,17 @@
 #include <kf/bool.h>
+#include <stdarg.h>
 #include <kf/address.h>
 #include <kf/debug.h>
 #include <kf/game_types.h>
 
 /*
- * The formatter consumes O32 word argument slots and returns a byte count
+ * The formatter walks its va_list argument words and returns a byte count
  * including the terminating NUL. The diagnostic sink currently emits nothing.
- * Left padding writes before the numeric scratch anchor; the enclosing GAME
- * allocation bounds remain unresolved, so the anchor claim is not a proof of
- * backing storage for those preceding bytes.
  */
+
+enum {
+    FORMAT_LEADING_PAD_BYTES = 8
+};
 
 /* "DEBUG STOP !!!" literal owned by this unit in the shared rodata pool. */
 RODATA(0x80012dd4, 0x10)
@@ -17,8 +19,12 @@ RODATA(0x80012dd4, 0x10)
 DATA(0x80057b98, 0x4)
 KfBool32 debug_stop_flag = KF_FALSE;
 
-DATA(0x800598a8, 0x18)
-static char format_number_buffer[24];
+/* Numeric scratch: eight leading bytes receive left padding (at most seven
+ * are written), then a sign, ten decimal digits and NUL from the digit anchor
+ * at 0x800598a8. The claim is the smallest eight-byte-rounded reservation that
+ * covers that span; the original allocation's outer bounds remain unresolved. */
+DATA(0x800598a0, 0x18)
+static char format_number_storage[24];
 
 ADDRESS(0x8003a7dc, 0x40)
 void debug_stop(void)
@@ -31,7 +37,7 @@ ADDRESS(0x8003a81c, 0xe0)
 char *format_int_dec(s32 value)
 {
     s32 divisor = KF_FORMAT_DECIMAL_HIGHEST_PLACE;
-    char *out = format_number_buffer;
+    char *out = format_number_storage + FORMAT_LEADING_PAD_BYTES;
     KfFormatDigitState digit_state = KF_FORMAT_DIGITS_LEADING;
     u8 i;
 
@@ -49,7 +55,7 @@ char *format_int_dec(s32 value)
         divisor /= 10;
     }
     *out = '\0';
-    return format_number_buffer;
+    return format_number_storage + FORMAT_LEADING_PAD_BYTES;
 }
 
 ADDRESS(0x8003a8fc, 0x8c)
@@ -57,7 +63,7 @@ char *format_int_hex(u32 value)
 {
     u32 divisor = KF_FORMAT_HEX_HIGHEST_PLACE;
     KfFormatDigitState digit_state = KF_FORMAT_DIGITS_LEADING;
-    char *out = format_number_buffer;
+    char *out = format_number_storage + FORMAT_LEADING_PAD_BYTES;
     u8 i;
 
     for (i = 0; i < KF_FORMAT_HEX_DIGITS; i++) {
@@ -74,7 +80,7 @@ char *format_int_hex(u32 value)
         divisor >>= 4;
     }
     *out = '\0';
-    return format_number_buffer;
+    return format_number_storage + FORMAT_LEADING_PAD_BYTES;
 }
 
 ADDRESS(0x8003a988, 0x6c)
@@ -98,7 +104,7 @@ char *format_pad_left(char *string, char pad, u8 width)
 }
 
 ADDRESS(0x8003a9f4, 0x240)
-s32 format_vsprintf(u8 *out, u8 *format, s32 *args)
+s32 format_vsprintf(u8 *out, u8 *format, va_list args)
 {
     s32 count = 0;
     KfFormatParserState parser_state = KF_FORMAT_PARSER_TEXT;
@@ -132,7 +138,7 @@ s32 format_vsprintf(u8 *out, u8 *format, s32 *args)
                     break;
                 }
                 parser_state = KF_FORMAT_PARSER_TEXT;
-                s = format_int_dec(*args++);
+                s = format_int_dec(va_arg(args, s32));
             emit_padded:
                 if (width != KF_FORMAT_WIDTH_UNSPECIFIED) {
                     if (padding_mode == KF_FORMAT_PAD_SPACES) {
@@ -153,7 +159,7 @@ s32 format_vsprintf(u8 *out, u8 *format, s32 *args)
                     break;
                 }
                 parser_state = KF_FORMAT_PARSER_TEXT;
-                s = format_int_hex(*args++);
+                s = format_int_hex(va_arg(args, u32));
                 goto emit_padded;
             case 'S':
             case 's':
@@ -161,7 +167,7 @@ s32 format_vsprintf(u8 *out, u8 *format, s32 *args)
                     break;
                 }
                 parser_state = KF_FORMAT_PARSER_TEXT;
-                s = (char *)*args++;
+                s = va_arg(args, char *);
                 goto copy;
             case '\n':
                 *out++ = '\r';

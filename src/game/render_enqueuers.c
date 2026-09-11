@@ -13,7 +13,8 @@ CVECTOR tmd_textured_primitive_color = {
     KF_TEXTURE_BASE_BRIGHTNESS, 0
 };
 
-#define VTX(off) ((KfScreenVertex *)((off) + vertices))
+/* Prepared vertex indices are byte offsets into the projected array. */
+#define VTX(off) ((KfScreenVertex *)((u8 *)game_graphics_runtime.tmd_projected_vertices + (off)))
 
 RODATA(0x8001222c, 0x74)
 
@@ -36,8 +37,6 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
     packet = (u8 *)game_graphics_runtime.tmd_state.current_asset + (object->primitive_offset + KF_TMD_HEADER_BYTES);
     normals = (u8 *)game_graphics_runtime.tmd_state.current_asset + (object->normal_offset + KF_TMD_HEADER_BYTES);
     while (remaining-- != 0) {
-        u32 vertices = (u32)game_graphics_runtime.unknown_projection_morph_20318;
-
         header = *(u32 *)packet;
         packet += KF_TMD_PACKET_HEADER_BYTES;
         switch (tmd_packet_mode(header)) {
@@ -68,10 +67,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                                (va->p2 + vb->p2 + vc->p2) / 3, &prim->packed.color0);
                 otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
-                    KfGraphicsRuntimeGame *graphics = (KfGraphicsRuntimeGame *)(
-                        vertices - (u32)&((KfGraphicsRuntimeGame *)NULL)->unknown_projection_morph_20318);
                     AddPrim(
-                        &graphics->display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
+                        &game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
                         &prim->sdk);
                 }
             }
@@ -100,10 +97,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                                (va->p2 + vb->p2 + vc->p2 + vd->p2) >> 2, &prim->packed.color0);
                 otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
-                    KfGraphicsRuntimeGame *graphics = (KfGraphicsRuntimeGame *)(
-                        vertices - (u32)&((KfGraphicsRuntimeGame *)NULL)->unknown_projection_morph_20318);
                     AddPrim(
-                        &graphics->display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
+                        &game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
                         &prim->sdk);
                 }
             }
@@ -131,10 +126,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                                 &prim->packed.color0, &prim->packed.color1, &prim->packed.color2);
                 otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
-                    KfGraphicsRuntimeGame *graphics = (KfGraphicsRuntimeGame *)(
-                        vertices - (u32)&((KfGraphicsRuntimeGame *)NULL)->unknown_projection_morph_20318);
                     AddPrim(
-                        &graphics->display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
+                        &game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
                         &prim->sdk);
                 }
             }
@@ -166,10 +159,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                                &prim->packed.color3);
                 otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
-                    KfGraphicsRuntimeGame *graphics = (KfGraphicsRuntimeGame *)(
-                        vertices - (u32)&((KfGraphicsRuntimeGame *)NULL)->unknown_projection_morph_20318);
                     AddPrim(
-                        &graphics->display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
+                        &game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
                         &prim->sdk);
                 }
             }
@@ -203,10 +194,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                                 &prim->packed.color0, &prim->packed.color1, &prim->packed.color2);
                 otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
-                    KfGraphicsRuntimeGame *graphics = (KfGraphicsRuntimeGame *)(
-                        vertices - (u32)&((KfGraphicsRuntimeGame *)NULL)->unknown_projection_morph_20318);
                     AddPrim(
-                        &graphics->display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
+                        &game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
                         &prim->sdk);
                 }
             }
@@ -245,10 +234,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                                &prim->packed.color3);
                 otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
-                    KfGraphicsRuntimeGame *graphics = (KfGraphicsRuntimeGame *)(
-                        vertices - (u32)&((KfGraphicsRuntimeGame *)NULL)->unknown_projection_morph_20318);
                     AddPrim(
-                        &graphics->display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
+                        &game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
                         &prim->sdk);
                 }
             }
@@ -277,10 +264,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                                 &prim->packed.color0, &prim->packed.color1, &prim->packed.color2);
                 otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
-                    KfGraphicsRuntimeGame *graphics = (KfGraphicsRuntimeGame *)(
-                        vertices - (u32)&((KfGraphicsRuntimeGame *)NULL)->unknown_projection_morph_20318);
                     AddPrim(
-                        &graphics->display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
+                        &game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
                         &prim->sdk);
                 }
             }
@@ -316,10 +301,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                                (va->p2 + vb->p2 + vc->p2 + vd->p2) >> 2, &prim->packed.color0);
                 otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
-                    KfGraphicsRuntimeGame *graphics = (KfGraphicsRuntimeGame *)(
-                        vertices - (u32)&((KfGraphicsRuntimeGame *)NULL)->unknown_projection_morph_20318);
                     AddPrim(
-                        &graphics->display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
+                        &game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
                         &prim->sdk);
                 }
             }
@@ -346,10 +329,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                                (va->p2 + vb->p2 + vc->p2) / 3, &prim->packed.color0);
                 otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
-                    KfGraphicsRuntimeGame *graphics = (KfGraphicsRuntimeGame *)(
-                        vertices - (u32)&((KfGraphicsRuntimeGame *)NULL)->unknown_projection_morph_20318);
                     AddPrim(
-                        &graphics->display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
+                        &game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
                         &prim->sdk);
                 }
             }
@@ -381,10 +362,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 NormalColorDpq((SVECTOR *)(normals + p->g4.n3), &p->color, va->p2, &prim->packed.color3);
                 otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
-                    KfGraphicsRuntimeGame *graphics = (KfGraphicsRuntimeGame *)(
-                        vertices - (u32)&((KfGraphicsRuntimeGame *)NULL)->unknown_projection_morph_20318);
                     AddPrim(
-                        &graphics->display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
+                        &game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
                         &prim->sdk);
                 }
             }
@@ -412,10 +391,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                                (va->p2 + vb->p2 + vc->p2) / 3, &prim->packed.color0);
                 otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
-                    KfGraphicsRuntimeGame *graphics = (KfGraphicsRuntimeGame *)(
-                        vertices - (u32)&((KfGraphicsRuntimeGame *)NULL)->unknown_projection_morph_20318);
                     AddPrim(
-                        &graphics->display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
+                        &game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
                         &prim->sdk);
                 }
             }
@@ -445,10 +422,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                                (va->p2 + vb->p2 + vc->p2 + vd->p2) >> 2, &prim->packed.color0);
                 otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
-                    KfGraphicsRuntimeGame *graphics = (KfGraphicsRuntimeGame *)(
-                        vertices - (u32)&((KfGraphicsRuntimeGame *)NULL)->unknown_projection_morph_20318);
                     AddPrim(
-                        &graphics->display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
+                        &game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
                         &prim->sdk);
                 }
             }
@@ -491,7 +466,7 @@ void render_enqueue_model(u16 object_index, s16 depth_bias)
     packet = (u8 *)game_graphics_runtime.tmd_state.current_asset + (object->primitive_offset + KF_TMD_HEADER_BYTES);
     normals = (u8 *)game_graphics_runtime.tmd_state.current_asset + (object->normal_offset + KF_TMD_HEADER_BYTES);
     while (remaining-- != 0) {
-        u8 *vertices = game_graphics_runtime.unknown_projection_morph_20318;
+        u8 *vertices = (u8 *)game_graphics_runtime.tmd_projected_vertices;
 
         header = *(u32 *)packet;
         packet += KF_TMD_PACKET_HEADER_BYTES;
@@ -685,7 +660,7 @@ void render_enqueue_map(u16 object_index)
     packet = (u8 *)game_graphics_runtime.tmd_state.current_asset + (object->primitive_offset + KF_TMD_HEADER_BYTES);
     remaining = object->primitive_count;
     while (remaining-- != 0) {
-        u8 *vertices = game_graphics_runtime.unknown_projection_morph_20318;
+        u8 *vertices = (u8 *)game_graphics_runtime.tmd_projected_vertices;
 
         header = *(u32 *)packet;
         packet += KF_TMD_PACKET_HEADER_BYTES;

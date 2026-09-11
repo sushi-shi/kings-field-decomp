@@ -5,11 +5,20 @@
 #include <kf/game_asset.h>
 #include <kf/notify.h>
 
-enum { KF_FLOOR5_ACTOR_TEXTURE_COUNT = 3 };
+enum {
+    KF_FLOOR5_ACTOR_TEXTURE_COUNT = 3,
+    /* Projected screen vertices; OPEN.EXE's independent runtime has the same
+     * capacity. The morph scratch fills the remainder before the texture
+     * pages; its element 0 is the header-sized extra vector that pool.c
+     * blends alongside the object's own vertices. Neither count is a proven
+     * original declaration. */
+    KF_PROJECTED_VERTEX_CAPACITY = 1000,
+    KF_MORPH_SCRATCH_CAPACITY = 1001
+};
 
 /* One startup-cleared graphics region; the original declaration is WIP.
- * Only the accessed registry prefix is typed; its original capacity and the
- * projection/morph subobject extents remain unresolved. */
+ * Only the accessed registry prefix is typed; its original capacity remains
+ * unresolved, and the projection/morph capacities are extents, not proofs. */
 typedef struct KfGraphicsRuntimeGame {
     KfDisplayState display_state;
     DRAWENV display_draw_environments[KF_DISPLAY_BUFFER_COUNT];
@@ -20,7 +29,8 @@ typedef struct KfGraphicsRuntimeGame {
     u8 unknown_201f4[0x30];
     KfPackedSVector *current_tmd_vertices;
     KfPoolRecord pool_records[KF_ANIMATION_CACHE_CAPACITY];
-    u8 unknown_projection_morph_20318[0x3e88];
+    KfScreenVertex tmd_projected_vertices[KF_PROJECTED_VERTEX_CAPACITY];
+    KfPackedSVector morph_scratch[KF_MORPH_SCRATCH_CAPACITY];
     u16 effect5_texture_pages[KF_FLOOR5_ACTOR_TEXTURE_COUNT];
     u8 unknown_241a6[10];
     u16 effect5_texture_cluts[KF_FLOOR5_ACTOR_TEXTURE_COUNT];

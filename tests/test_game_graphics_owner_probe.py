@@ -10,8 +10,6 @@ import struct
 import tempfile
 import unittest
 from pathlib import Path
-from types import SimpleNamespace
-from unittest.mock import patch
 
 from scripts.kf.compile import compile_source
 from scripts.kf.delink import load_catalog
@@ -31,7 +29,7 @@ FIELDS = {
     'display_disp_environments': 0x200E0, 'unknown_20108': 0x20108,
     'tmd_state': 0x20110, 'unknown_registry_20134': 0x20134,
     'current_tmd_vertices': 0x20224, 'pool_records': 0x20228,
-    'unknown_projection_morph_20318': 0x20318,
+    'tmd_projected_vertices': 0x20318, 'morph_scratch': 0x22258,
     'effect5_texture_pages': 0x241A0, 'unknown_241a6': 0x241A6,
     'effect5_texture_cluts': 0x241B0, 'unknown_241b6': 0x241B6,
     'active_render_clut': 0x241C0, 'active_render_tpage': 0x241C2,
@@ -62,7 +60,7 @@ def data_addresses():
     data.update({name: ORIGIN + offset for name, offset in FIELDS.items()
                  if not name.startswith('unknown_')})
     data.update(asset_registry_entries=0x80090FCC, tmd_projected_vertices=0x800911B0,
-                tmd_morph_scratch=0x800930F0)
+                morph_scratch=0x800930F0)
     return data
 
 
@@ -73,45 +71,13 @@ def standalone_source(unit):
     defines one owner and retains no overlapping globals.
     """
     source = unit.source_path.read_text()
-    if unit.unit == 'game.render_enqueue':
-        # Keep the historical owner-only control independent of TMD closure.
-        source = source.replace(
-            '#define VTX(off) ((KfScreenVertex *)((off) + vertices))',
-            '#define VTX(off) ((KfScreenVertex *)((u8 *)vertices + (off)))')
-        source = source.replace(
-            'u32 vertices = (u32)game_graphics_runtime.unknown_projection_morph_20318;',
-            'KfScreenVertex *vertices = '
-            '((KfScreenVertex *)game_graphics_runtime.unknown_projection_morph_20318);')
-        source = source.replace(
-            'u8 *vertices = game_graphics_runtime.unknown_projection_morph_20318;',
-            'KfScreenVertex *vertices = '
-            '((KfScreenVertex *)game_graphics_runtime.unknown_projection_morph_20318);')
-        source = source.replace('(KfScreenVertex *)(vertices +',
-                                '(KfScreenVertex *)((u8 *)vertices +')
-        source = source.replace(
-            '                    KfGraphicsRuntimeGame *graphics = (KfGraphicsRuntimeGame *)(\n'
-            '                        vertices - '
-            '(u32)&((KfGraphicsRuntimeGame *)NULL)->unknown_projection_morph_20318);\n', '')
-        source = source.replace('&graphics->display_state.ordering_table[',
-                                '&game_graphics_runtime.display_state.ordering_table[')
     # Historical separate-owner controls retain their original byte fields.
     for member, old in (('r', 'red'), ('g', 'green'), ('b', 'blue'), ('cd', 'code')):
         source = source.replace('active_render_color.' + member, 'active_render_' + old)
     source = source.replace('&game_graphics_runtime.active_render_color',
                             '(CVECTOR *)(&game_graphics_runtime.active_render_clut + 2)')
-    morph_offset_name = 'MORPH_SCRATCH_OFFSET_IN_PROJECTION_STORAGE'
-    if morph_offset_name in source:
-        definition = re.search(r'\b' + morph_offset_name + r'\s*=\s*(0x[0-9a-fA-F]+|\d+)\s*[,}]', source)
-        if definition is None or int(definition[1], 0) != 0x1f40:
-            raise ValueError('standalone morph control requires the reviewed 0x1f40 offset')
-        source = source.replace(' + ' + morph_offset_name, ' + 0x1f40')
     source = source.replace(
         '((KfAssetHeader **)game_graphics_runtime.unknown_registry_20134)', 'asset_registry_entries')
-    source = source.replace(
-        '((KfScreenVertex *)game_graphics_runtime.unknown_projection_morph_20318)', 'tmd_projected_vertices')
-    source = source.replace(
-        '((KfPackedSVector *)(game_graphics_runtime.unknown_projection_morph_20318 + 0x1f40))',
-        'tmd_morph_scratch')
     source = source.replace('game_graphics_runtime.', '')
     source = source.replace('memset(&game_graphics_runtime, 0, sizeof game_graphics_runtime);',
                             'memset(&display_state.buffer_index, 0, INITIAL_GRAPHICS_CLEAR_BYTES);')
@@ -120,17 +86,6 @@ def standalone_source(unit):
                                 '    KfFloorItem *item;\n    u16 *count = &floor_item_count;\n', 1)
         source = source.replace('    floor_item_count = 0;', '    *count = 0;', 1)
         source = source.replace('        floor_item_count++;', '        (*count)++;', 1)
-    if unit.unit == 'game.render_enqueue':
-        # Preserve the old owner-only probes independently of the later
-        # retail-evidenced header declaration order.
-        source = source.replace(
-            '    u32 header;\n    u32 remaining;\n',
-            '    u32 remaining;\n    u32 header;\n')
-        source = source.replace(
-            '    KfTmdObject *object;\n    u32 header;\n    u8 *normals;\n'
-            '    u8 *packet;\n    u32 remaining;\n    CVECTOR shade;\n',
-            '    KfTmdObject *object;\n    u8 *normals;\n    u8 *packet;\n'
-            '    u32 remaining;\n    u32 header;\n    CVECTOR shade;\n')
     return '#include "game_graphics_standalone.h"\n' + source
 
 
@@ -156,21 +111,6 @@ def candidate_source(unit, selected):
 
 
 class GameGraphicsOwnerProbeTests(unittest.TestCase):
-    def test_named_morph_offset_cannot_hide_a_changed_physical_reference(self):
-        source = '''enum { MORPH_SCRATCH_OFFSET_IN_PROJECTION_STORAGE = 0x1f40 };
-            void control(void) {
-                consume(((KfPackedSVector *)(game_graphics_runtime.unknown_projection_morph_20318 + MORPH_SCRATCH_OFFSET_IN_PROJECTION_STORAGE)));
-            }
-        '''
-        unit = SimpleNamespace(unit='game.pool', source_path=Path('control.c'))
-        with patch.object(Path, 'read_text', return_value=source):
-            self.assertIn('consume(tmd_morph_scratch);', standalone_source(unit))
-        for replacement in ('0x1f44', 'EXTERNAL_OFFSET'):
-            with self.subTest(replacement=replacement):
-                with patch.object(Path, 'read_text', return_value=source.replace('0x1f40', replacement)):
-                    with self.assertRaisesRegex(ValueError, 'reviewed 0x1f40 offset'):
-                        standalone_source(unit)
-
     def tools(self):
         if not all(shutil.which(name) for name in ('cpppsx-257', 'cc1psx-257', 'dosbox-x')):
             self.skipTest('pinned native compiler tools required')
@@ -216,7 +156,8 @@ class GameGraphicsOwnerProbeTests(unittest.TestCase):
         header = (REPO / 'include/kf/game_graphics.h').read_text()
         self.assertIn('KfAssetHeader *asset_registry_entries[KF_ASSET_REGISTRY_KNOWN_ENTRIES];', header)
         self.assertIn('u8 unknown_201f4[0x30];', header)
-        self.assertIn('u8 unknown_projection_morph_20318[0x3e88];', header)
+        self.assertIn('KfScreenVertex tmd_projected_vertices[KF_PROJECTED_VERTEX_CAPACITY];', header)
+        self.assertIn('KfPackedSVector morph_scratch[KF_MORPH_SCRATCH_CAPACITY];', header)
 
     def test_production_registry_prefix_preserves_the_surrounding_layout(self):
         self.tools()
@@ -586,7 +527,7 @@ extern KfMaterialProbe material_probe;
                     self.assertNotEqual(actual[1], expected[1])
                     self.assertEqual(len(addresses), 59)
 
-    def test_scratch_consumers_preserve_typed_accesses_without_capacity_claims(self):
+    def test_scratch_consumers_preserve_typed_accesses_through_the_shared_owner(self):
         self.tools()
         image, manifest = self.retail(), load_manifest()
         data = data_addresses()
@@ -607,12 +548,6 @@ extern KfMaterialProbe material_probe;
                 source = standalone_source(unit)
                 if owner:
                     source = candidate_source(unit, names).replace(
-                        'tmd_projected_vertices',
-                        '(KfScreenVertex *)graphics_owner_probe.unknown_projection_morph_20318')
-                    source = source.replace(
-                        'tmd_morph_scratch',
-                        '((KfPackedSVector *)(graphics_owner_probe.unknown_projection_morph_20318 + 0x1f40))')
-                    source = source.replace(
                         'asset_registry_entries',
                         '((KfAssetHeader **)graphics_owner_probe.unknown_registry_20134)')
                 with self.subTest(unit=unit_name, owner=owner), tempfile.TemporaryDirectory() as directory:
@@ -639,81 +574,50 @@ extern KfMaterialProbe material_probe;
                             wrong[0xD4 // 4] += 1
                             self.assertNotEqual(wrong, expected)
 
-    def test_polygon_owner_recovers_addresses_without_claiming_array_capacity(self):
+    def test_polygon_owner_addresses_projected_vertices_through_the_shared_owner(self):
         self.tools()
         image, manifest = self.retail(), load_manifest()
         unit = manifest.by_name()['game.render_enqueue']
         names = {'render_enqueue_tmd', 'render_enqueue_model', 'render_enqueue_map',
                  'render_enqueue_sprite'}
         source = candidate_source(unit, names)
-        self.assertEqual(source.count('= tmd_projected_vertices;'), 3)
-        source = source.replace(
-            '= tmd_projected_vertices;',
-            '= (KfScreenVertex *)graphics_owner_probe.unknown_projection_morph_20318;')
+        # The file-scope TMD macro sits outside the rewritten function bodies;
+        # route it through the shared owner too, so that the projected base and
+        # the selected-asset field share one symbol as they do in production.
+        macro = '#define VTX(off) ((KfScreenVertex *)((u8 *)tmd_projected_vertices + (off)))'
+        self.assertIn(macro, source)
+        source = source.replace(macro, macro.replace('(u8 *)tmd_projected_vertices',
+                                                     '(u8 *)graphics_owner_probe.tmd_projected_vertices'))
+        # The macro and the two byte cursors address the typed member of the
+        # shared owner; no local recovers the owner from a member address.
+        self.assertEqual(source.count('graphics_owner_probe.tmd_projected_vertices'), 3)
+        self.assertNotIn('NULL)->', source)
         data = data_addresses()
         data['graphics_owner_probe'] = ORIGIN
-        self.assertEqual(ORIGIN + FIELDS['unknown_projection_morph_20318'], 0x800911B0)
+        self.assertEqual(ORIGIN + FIELDS['tmd_projected_vertices'], 0x800911B0)
         functions = {item.symbol: item.va for item in load_catalog(RETAIL_CONFIG).functions['GAME.EXE']}
-        # Observed complete-body residues. These are not permitted masks for banking.
-        spills = {
-            'render_enqueue_model': {
-                0x44: (0xAFA80020, 0xAFA80028), 0x58: (0x8FA30020, 0x8FA30028),
-                0x64: (0xAFA80020, 0xAFA80028), 0xA0: (0xAFA80028, 0xAFA80020),
-                0x68C: (0x8FA80028, 0x8FA80020), 0x6A0: (0x8FA20020, 0x8FA20028),
-                0x6B4: (0xAFA80020, 0xAFA80028),
-            },
-            'render_enqueue_map': {
-                0x58: (0xAFA20018, 0xAFA20020), 0x9C: (0xAFA70020, 0xAFA70018),
-                0x1A8: (0x8FA70018, 0x8FA70020), 0x318: (0x8FA70018, 0x8FA70020),
-                0x3C8: (0x8FA70020, 0x8FA70018),
-            },
-        }
-        pairs = {'render_enqueue_tmd': 36, 'render_enqueue_model': 10,
-                 'render_enqueue_map': 6, 'render_enqueue_sprite': 7}
-        first_pass = {}
-        for loop_local in (False, True):
-            candidate = source
-            if loop_local:
-                self.assertEqual(candidate.count('    u32 header;\n'), 3)
-                candidate = candidate.replace('    u32 header;\n', '').replace(
-                    '        header = *(u32 *)packet;', '        u32 header = *(u32 *)packet;')
-            with self.subTest(loop_local=loop_local), tempfile.TemporaryDirectory() as directory:
-                obj = self.compile(Path(directory), unit, candidate)
-                for claim in unit.functions:
-                    if claim.symbol not in names:
-                        continue
-                    with self.subTest(function=claim.symbol):
-                        actual, calls, addresses = linked_words(obj, unit, claim, data, functions)
-                        expected = list(struct.unpack(f'<{claim.body_size // 4}I',
-                                                     image.require(claim.va, claim.body_size)))
-                        expected_calls = [((claim.va + i * 4 + 4) & 0xF0000000)
-                                          | ((word & 0x3FFFFFF) << 2)
-                                          for i, word in enumerate(expected) if word >> 26 == 3]
-                        self.assertEqual(calls, expected_calls)
-                        self.assertEqual(len(addresses), pairs[claim.symbol])
-                        self.assertEqual(actual[-12:], expected[-12:])
-                        if claim.symbol == 'render_enqueue_sprite':
-                            self.assertEqual(actual, expected)
-                        elif claim.symbol in spills:
-                            self.assertNotEqual(actual, expected)
-                            self.assertEqual(len(actual), len(expected))
-                            differences = {i * 4: (a, b) for i, (a, b) in enumerate(zip(actual, expected))
-                                           if a != b}
-                            self.assertEqual(differences, spills[claim.symbol])
-                        else:
-                            self.assertEqual(len(actual) * 4, 3900)
-                            self.assertEqual(actual[:17], expected[:17])
-                            self.assertEqual((actual[17], expected[17]), (0xAFA80020, 0xAFA80028))
-                            self.assertEqual(addresses[-1], 0x80090EBC)
-                        shifted = dict(data, graphics_owner_probe=ORIGIN + 4)
-                        wrong, same_calls, _ = linked_words(obj, unit, claim, shifted, functions)
-                        self.assertNotEqual(wrong, actual)
-                        self.assertEqual(same_calls, calls)
-                        if loop_local:
-                            self.assertEqual(actual, first_pass[claim.symbol])
-                        else:
-                            first_pass[claim.symbol] = actual
-
+        with tempfile.TemporaryDirectory() as directory:
+            obj = self.compile(Path(directory), unit, source)
+            for claim in unit.functions:
+                if claim.symbol not in names:
+                    continue
+                with self.subTest(function=claim.symbol):
+                    actual, calls, addresses = linked_words(obj, unit, claim, data, functions)
+                    expected = list(struct.unpack(f'<{claim.body_size // 4}I',
+                                                 image.require(claim.va, claim.body_size)))
+                    expected_calls = [((claim.va + i * 4 + 4) & 0xF0000000)
+                                      | ((word & 0x3FFFFFF) << 2)
+                                      for i, word in enumerate(expected) if word >> 26 == 3]
+                    self.assertEqual(calls, expected_calls)
+                    self.assertEqual(actual, expected)
+                    if claim.symbol != 'render_enqueue_sprite':
+                        # The projected base is derived from the selected-asset
+                        # field address; only that member is a relocation target.
+                        self.assertIn(ORIGIN + FIELDS['tmd_state'] + 0x20, addresses)
+                    shifted = dict(data, graphics_owner_probe=ORIGIN + 4)
+                    wrong, same_calls, _ = linked_words(obj, unit, claim, shifted, functions)
+                    self.assertNotEqual(wrong, actual)
+                    self.assertEqual(same_calls, calls)
 
     def test_production_owner_preserves_complete_campaign_functions(self):
         self.tools()

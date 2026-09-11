@@ -76,7 +76,6 @@ KfMemoryArena	0x58	supported	memory.h;asm;typed-memory-owner.md;data-repair-camp
 KfMenuAssets	0x390	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT	complete runtime-loaded menu asset block
 KfMenuList	0x28	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT	existing scrollable list state; menu_list_render byte/halfword/pointer accesses
 KfNotificationControl	0x06	supported	notify.h;asm;notify_effect_update:phase-minus-two;docs/patterns/game-notification-dequeue.md	queue cursors and presentation controls; dequeue addresses tail at zero and phase at plus two; historical nesting remains WIP
-KfNotificationDigitBuffer	0x18	supported	notify.h;menu_format_number;notify_effect_update	union of the existing twelve signed formatter halfwords and unsigned display cells
 KfNotificationSprite	0x0e	supported	notify.h;game_semantic_notification_sprites.tsv;asm;retail-initializers;14-byte-stride	on-screen notification record with an active byte and complete screen-sprite descriptor
 KfNotificationState	0x16	supported	notify.h;game_semantic_notification_state.tsv;asm;head-minus-17;phase-minus-18	notification payload table and animation state; members reached through shared queue-head and phase bases
 KfOpeningEntity	0x28	supported	open_resources.h;open_semantic_resources.tsv;open_semantic_opening_entity_transition.tsv;asm	OPEN runtime entity record initialized by the exact placement loader and refined by the transition helper's full VECTOR copy

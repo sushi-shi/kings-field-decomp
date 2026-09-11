@@ -39,6 +39,6 @@ extern MATRIX light_quadrant_matrices[4];
 extern const KfCellWindow *active_cell_window;
 extern KfAssetHeader *asset_registry_entries[];
 extern KfScreenVertex tmd_projected_vertices[];
-extern KfPackedSVector tmd_morph_scratch[];
+extern KfPackedSVector morph_scratch[];
 
 #endif

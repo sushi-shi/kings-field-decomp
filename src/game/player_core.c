@@ -298,7 +298,8 @@ s32 player_distance_to_point_in_cone(
     return distance;
 }
 
-/* point_height is reused as the vertical tolerance, as retail keeps it in $a3. */
+/* The tolerance local is initialised from point_height at its declaration so
+ * it inherits the parameter's live range and register ($a3), as retail. */
 ADDRESS(0x80017108, 0xf4)
 s32 player_distance_to_point(
     s32 point_x, s32 point_y, s32 point_z, s32 max_distance, s32 point_height)
@@ -308,6 +309,7 @@ s32 player_distance_to_point(
     s32 center;
     s32 dy;
     s32 distance;
+    s32 tolerance = point_height;
 
     switch (0) {
     default:
@@ -321,12 +323,12 @@ s32 player_distance_to_point(
         }
         dx >>= KF_LENGTH_SQUARE_DOWNSHIFT;
         if (point_y != KF_COLLISION_IGNORE_HEIGHT) {
-            point_height >>= 1;
-            center = point_y - point_height;
-            point_height += KF_COLLISION_PLAYER_HEIGHT / 2;
+            tolerance >>= 1;
+            center = point_y - tolerance;
+            tolerance += KF_COLLISION_PLAYER_HEIGHT / 2;
             center += KF_COLLISION_PLAYER_HEIGHT / 2;
             dy = player_state.floor_height - center;
-            if (dy < -point_height || point_height < dy) {
+            if (dy < -tolerance || tolerance < dy) {
                 break;
             }
         }

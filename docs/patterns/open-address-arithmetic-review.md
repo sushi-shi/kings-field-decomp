@@ -34,3 +34,12 @@ two function dossiers. Both banked functions stay unchanged.
 Fresh focused builds reproduce both 100% baselines. The full 99-unit build
 still fails its existing data/placement checks; no new build failure is
 introduced by this documentation-only review.
+
+## Follow-up
+
+The [reconstruction debt review](reconstruction-debt-review.md) attributes
+the extra slot to a pseudo whose reference count `combine.c` leaves stale
+after a three-insn combination re-emits its first insn, shows that an unused
+aggregate local leaves the same slot, and removes the owner recovery around
+the arithmetic; a never-read local now carries the slot and both arms use
+the direct lookup.

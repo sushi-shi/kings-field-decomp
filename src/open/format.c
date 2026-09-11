@@ -1,21 +1,24 @@
+#include <stdarg.h>
 #include <kf/address.h>
 #include <kf/debug.h>
 #include <kf/game_types.h>
 
 enum {
-    FORMAT_LEADING_PAD_BYTES = 7
+    FORMAT_LEADING_PAD_BYTES = 8
 };
 
-/* Minimum accessed span: seven leading pad bytes and twelve number bytes.
- * The original allocation's outer bounds remain unresolved. */
-DATA(0x80037971, 0x13)
-static char format_number_storage[19];
+/* Numeric scratch: eight leading bytes receive left padding (at most seven
+ * are written), then a sign, ten decimal digits and NUL from the digit anchor
+ * at 0x80037978. The claim is the smallest eight-byte-rounded reservation that
+ * covers that span; the original allocation's outer bounds remain unresolved. */
+DATA(0x80037970, 0x18)
+static char format_number_storage[24];
 
 ADDRESS(0x8001a3fc, 0xe0)
 char *format_int_dec(s32 value)
 {
     s32 divisor = KF_FORMAT_DECIMAL_HIGHEST_PLACE;
-    char *out = (format_number_storage + FORMAT_LEADING_PAD_BYTES);
+    char *out = format_number_storage + FORMAT_LEADING_PAD_BYTES;
     KfFormatDigitState digit_state = KF_FORMAT_DIGITS_LEADING;
     u8 i;
 
@@ -33,7 +36,7 @@ char *format_int_dec(s32 value)
         divisor /= 10;
     }
     *out = '\0';
-    return (format_number_storage + FORMAT_LEADING_PAD_BYTES);
+    return format_number_storage + FORMAT_LEADING_PAD_BYTES;
 }
 
 ADDRESS(0x8001a4dc, 0x8c)
@@ -82,7 +85,7 @@ char *format_pad_left(char *string, char pad, u8 width)
 }
 
 ADDRESS(0x8001a5d4, 0x240)
-s32 format_vsprintf(u8 *out, u8 *format, s32 *args)
+s32 format_vsprintf(u8 *out, u8 *format, va_list args)
 {
     s32 count = 0;
     KfFormatParserState parser_state = KF_FORMAT_PARSER_TEXT;
@@ -116,7 +119,7 @@ s32 format_vsprintf(u8 *out, u8 *format, s32 *args)
                     break;
                 }
                 parser_state = KF_FORMAT_PARSER_TEXT;
-                s = format_int_dec(*args++);
+                s = format_int_dec(va_arg(args, s32));
             emit_padded:
                 if (width != KF_FORMAT_WIDTH_UNSPECIFIED) {
                     if (padding_mode == KF_FORMAT_PAD_SPACES) {
@@ -137,7 +140,7 @@ s32 format_vsprintf(u8 *out, u8 *format, s32 *args)
                     break;
                 }
                 parser_state = KF_FORMAT_PARSER_TEXT;
-                s = format_int_hex(*args++);
+                s = format_int_hex(va_arg(args, u32));
                 goto emit_padded;
             case 'S':
             case 's':
@@ -145,7 +148,7 @@ s32 format_vsprintf(u8 *out, u8 *format, s32 *args)
                     break;
                 }
                 parser_state = KF_FORMAT_PARSER_TEXT;
-                s = (char *)*args++;
+                s = va_arg(args, char *);
                 goto copy;
             case '\n':
                 *out++ = '\r';

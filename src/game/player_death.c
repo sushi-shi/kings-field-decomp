@@ -470,24 +470,28 @@ void player_add_experience(s16 amount)
 }
 
 /*
- * The parameters are reused as the working values: retail keeps the
- * threshold in $a0 and the excess in $a1 for the whole body.
+ * The working values are initialised from the parameters at their
+ * declarations so they inherit the argument registers retail keeps them in
+ * ($a0 for the threshold, $a1 for the excess); locals assigned later move.
  */
 ADDRESS(0x8001627c, 0xa8)
 s32 player_calculate_damage_component(s32 base_power, s32 defense, s32 attack)
 {
+    s32 threshold = base_power;
+    s32 excess = defense;
+
     if (attack == 0) {
         return 0;
     }
-    base_power = defense + base_power / PLAYER_DAMAGE_POWER_DIVISOR;
-    defense = attack - base_power;
-    if (defense < 0) {
-        defense = 0;
+    threshold = excess + threshold / PLAYER_DAMAGE_POWER_DIVISOR;
+    excess = attack - threshold;
+    if (excess < 0) {
+        excess = 0;
     }
-    if (base_power == 0) {
-        base_power = 1;
+    if (threshold == 0) {
+        threshold = 1;
     }
-    return defense + (attack * attack) / (base_power * PLAYER_DAMAGE_THRESHOLD_MULTIPLIER);
+    return excess + (attack * attack) / (threshold * PLAYER_DAMAGE_THRESHOLD_MULTIPLIER);
 }
 
 /*

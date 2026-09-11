@@ -1,3 +1,4 @@
+#include <stdarg.h>
 #include <kf/null.h>
 #include <kf/game_graphics.h>
 #include <kf/address.h>
@@ -190,7 +191,7 @@ enum {
  * state machine (notify_effect_update) consumes it a frame later.  Message id 0x13
  * carries a u16 payload stored in a parallel table.
  *
- * The trailing varargs slot carries the id 0x13 payload.
+ * The optional second argument carries the gold-message payload.
  */
 
 ADDRESS(0x8001fa44, 0xa0)
@@ -206,15 +207,10 @@ void notify_enqueue(KfNotificationArgument message_id, ...)
         game_graphics_runtime.notification_message_ids[*head] = message_id;
         if (message_id == KF_NOTIFICATION_GOLD) {
             u16 *payload = game_graphics_runtime.notification_state.message_payloads;
-#if KF_MODERN_TYPES
-            __builtin_va_list arguments;
-            __builtin_va_start(arguments, message_id);
-            payload[*head] = __builtin_va_arg(arguments, s32);
-            __builtin_va_end(arguments);
-#else
-            /* The pinned compiler spills four-byte argument homes. */
-            payload[*head] = *(u16 *)(&message_id + 1);
-#endif
+            va_list arguments;
+            va_start(arguments, message_id);
+            payload[*head] = va_arg(arguments, s32);
+            va_end(arguments);
         }
         *head = (*head + 1) & (KF_NOTIFICATION_CAPACITY - 1);
     }
@@ -277,7 +273,7 @@ void notify_effect_update(void)
         game_graphics_runtime.notification_state.control.hold_frames = NOTIFICATION_HOLD_FRAMES;
         if (id == KF_NOTIFICATION_GOLD) {
             KfNotificationSprite *sprite_records = notification_sprites;
-            KfNotificationDigitBuffer digits;
+            s16 digits[KF_NOTIFICATION_DIGIT_CAPACITY];
             sprite_records[KF_NOTIFICATION_TEXT_SPRITE].active = KF_NOTIFICATION_SPRITE_HIDDEN;
             notification_sprites[KF_NOTIFICATION_GOLD_SPRITE].active = KF_NOTIFICATION_SPRITE_VISIBLE;
             notification_sprites[KF_NOTIFICATION_GOLD_SPRITE].sprite.u =
@@ -286,19 +282,19 @@ void notify_effect_update(void)
                 (KF_ENUM_ENCODE(u8, id) & NOTIFICATION_ATLAS_ROW_MASK) << NOTIFICATION_ATLAS_ROW_SHIFT;
             menu_format_number(
                 game_graphics_runtime.notification_state.message_payloads[tail],
-                NOTIFICATION_GOLD_DIGITS, KF_FORMAT_PAD_SPACES, digits.formatted);
+                NOTIFICATION_GOLD_DIGITS, KF_FORMAT_PAD_SPACES, digits);
             notification_sprites[KF_NOTIFICATION_ONES_SPRITE].active = KF_NOTIFICATION_SPRITE_VISIBLE;
             notification_digit_set_v(
-                &sprite_records[KF_NOTIFICATION_ONES_SPRITE].sprite, digits.values[3]);
+                &sprite_records[KF_NOTIFICATION_ONES_SPRITE].sprite, (u16)digits[3]);
             notification_sprites[KF_NOTIFICATION_TENS_SPRITE].active = KF_NOTIFICATION_SPRITE_VISIBLE;
             notification_digit_set_v(
-                &sprite_records[KF_NOTIFICATION_TENS_SPRITE].sprite, digits.values[2]);
+                &sprite_records[KF_NOTIFICATION_TENS_SPRITE].sprite, (u16)digits[2]);
             notification_sprites[KF_NOTIFICATION_HUNDREDS_SPRITE].active = KF_NOTIFICATION_SPRITE_VISIBLE;
             notification_digit_set_v(
-                &sprite_records[KF_NOTIFICATION_HUNDREDS_SPRITE].sprite, digits.values[1]);
+                &sprite_records[KF_NOTIFICATION_HUNDREDS_SPRITE].sprite, (u16)digits[1]);
             notification_sprites[KF_NOTIFICATION_THOUSANDS_SPRITE].active = KF_NOTIFICATION_SPRITE_VISIBLE;
             notification_digit_set_v(
-                &sprite_records[KF_NOTIFICATION_THOUSANDS_SPRITE].sprite, digits.values[0]);
+                &sprite_records[KF_NOTIFICATION_THOUSANDS_SPRITE].sprite, (u16)digits[0]);
         } else {
             notification_sprites[KF_NOTIFICATION_TEXT_SPRITE].active = KF_NOTIFICATION_SPRITE_VISIBLE;
             notification_sprites[KF_NOTIFICATION_TEXT_SPRITE].sprite.u =

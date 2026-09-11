@@ -32,7 +32,7 @@ class OpenFormatDisplayTests(unittest.TestCase):
             (0x8001A3FC, "format_int_dec", "char *", "s32 value"),
             (0x8001A4DC, "format_int_hex", "char *", "u32 value"),
             (0x8001A568, "format_pad_left", "char *", "char *string;char pad;u8 width"),
-            (0x8001A5D4, "format_vsprintf", "s32", "u8 *out;u8 *format;s32 *args"),
+            (0x8001A5D4, "format_vsprintf", "s32", "u8 *out;u8 *format;va_list args"),
             (0x8001A82C, "display_adjust_vram_view", "void", ""),
         ):
             identity = identities["OPEN.EXE", va]
@@ -42,14 +42,18 @@ class OpenFormatDisplayTests(unittest.TestCase):
         scratch = next(row for row in data if row["image"] == "OPEN.EXE"
                        and row["name"] == "format_number_storage")
         self.assertEqual((parse_int(scratch["va"]), parse_int(scratch["size"])),
-                         (0x80037971, 19))
+                         (0x80037970, 24))
         self.assertEqual((scratch["scope"], scratch["storage"], scratch["confidence"]),
                          ("static", "bss", "candidate"))
-        # Width is limited to eight; even a one-digit number may need seven pad bytes.
+        # Width is limited to eight; even a one-digit number may need seven pad
+        # bytes, so the aligned base is one word before the digit anchor. The
+        # claim is the smallest 8-byte-rounded reservation covering the sign,
+        # ten decimal digits and NUL written from the anchor.
         anchor = 0x80037978
-        self.assertEqual(anchor - (8 - 1), parse_int(scratch["va"]))
-        self.assertEqual(anchor + 1 + 10 + 1,
-                         parse_int(scratch["va"]) + parse_int(scratch["size"]))
+        self.assertEqual(anchor - 8, parse_int(scratch["va"]))
+        self.assertLessEqual(anchor + 1 + 10 + 1,
+                             parse_int(scratch["va"]) + parse_int(scratch["size"]))
+        self.assertEqual(parse_int(scratch["size"]), (8 + 1 + 10 + 1 + 7) // 8 * 8)
 
     def test_ordered_reviewed_referents(self) -> None:
         _, rows = read_tsv(RETAIL_CONFIG / "relocs.tsv")

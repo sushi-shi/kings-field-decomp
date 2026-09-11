@@ -14,11 +14,6 @@
 #include <psyq/pad.h>
 #include <kf/resources.h>
 
-/* Retail retains the allocation subobject base across scene calls. */
-#define OPENING_ARENA_FROM_ALLOCATION(state) \
-    ((KfMemoryArena *)((u8 *)(state) - \
-                       (u32)&((KfMemoryArena *)NULL)->allocation))
-
 DATA(0x800372d4, 0x6)
 char opening_initial_tim_path[KF_OPENING_INITIAL_TIM_PATH_BYTES] = {'B', '0', '\\', 'L', '0', '.'};
 
@@ -28,7 +23,6 @@ ADDRESS(0x800156bc, 0x214)
 void opening_run(KfOpenMode display_mode)
 {
     u8 *tim_data;
-    KfMemoryAllocationState *allocation_state;
     KF_ENUM_STORAGE(KfOpeningInputAction, s32) scene3_action;
     KF_ENUM_STORAGE(KfOpeningInputAction, s32) skip_action;
 
@@ -57,7 +51,6 @@ void opening_run(KfOpenMode display_mode)
         skip_action = KF_OPENING_INPUT_SKIP;
         opening_fade_in();
         cd_file_load_allocated(&tim_data, "B0\\MIX0.");
-        allocation_state = &memory_arena.allocation;
         tim_upload_images(tim_data);
         memory_release_last();
         opening_input_action = KF_OPENING_INPUT_NONE;
@@ -67,9 +60,12 @@ void opening_run(KfOpenMode display_mode)
             if (opening_input_action != scene3_action &&
                 opening_input_action == skip_action) {
 opening_reload:
-                allocation_state->stack[KF_MEMORY_STACK_DEPTH_INDEX] = 0;
-                allocation_state->cursor =
-                    OPENING_ARENA_FROM_ALLOCATION(allocation_state)->start;
+                /* Retail addresses this reload relative to the allocation
+                 * cursor's address: the compiler registerises the store's
+                 * destination first and derives the start and stack slots
+                 * from it, then hoists that address out of the loop. */
+                memory_arena.allocation.cursor = memory_arena.start;
+                memory_arena.allocation.stack[KF_MEMORY_STACK_DEPTH_INDEX] = 0;
                 cd_file_load_allocated(&tim_data, "B0\\MIX3.");
                 tim_upload_images(tim_data);
                 memory_release_last();
