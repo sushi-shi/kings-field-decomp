@@ -143,6 +143,12 @@ class GameCellWindowDataTests(unittest.TestCase):
                     symbol = symbols[0]
                     self.assertEqual((symbol['st_size'], symbol['st_info']['bind']),
                                      (size, 'STB_LOCAL' if scope == 'static' else 'STB_GLOBAL'))
+                    if storage == 'bss' and path == paths[1]:
+                        self.assertEqual((symbol['st_shndx'], symbol['st_value']),
+                                         ('SHN_COMMON', 4))
+                        self.assertIsNone(elf.get_section_by_name('.bss'))
+                        self.assertFalse(image.contains(va, size))
+                        continue
                     section, start = elf.get_section(symbol['st_shndx']), symbol['st_value']
                     self.assertEqual(section.name, '.data' if storage == 'load' else '.bss')
                     if storage == 'load':
@@ -167,11 +173,12 @@ class GameCellWindowDataTests(unittest.TestCase):
                 self.assertNotIn('.bss', sections)
             else:
                 self.assertFalse(diffs.matches)
-                # The resource owner now also defines five map grids. Their
-                # tentative allocation order differs, and remains a failure.
-                self.assertEqual(_diff_bss(retail, source).status, 'layout')
-                self.assertEqual(sections['.bss'].status, 'layout')
+                # Native COMMON requests have no section offsets before linking.
+                # Alignment does not validate the proposed resource allocation order.
+                self.assertEqual(_diff_bss(retail, source).status, 'missing')
+                self.assertEqual(sections['.bss'].status, 'missing')
                 self.assertIn('conflicting-section-bases', sections['.bss'].detail)
+                self.assertIn('unsupported-common-allocation', sections['.bss'].detail)
 
     def test_all_fourteen_reviewed_pairs_round_trip_to_original_words(self):
         image, ctx, catalog = self.retail(), Context('GAME.EXE'), load_catalog(RETAIL_CONFIG)

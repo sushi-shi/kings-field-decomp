@@ -1,4 +1,4 @@
-"""Three-way GAME serialization of live pools into nested floor records."""
+"""Three-way GAME serialization with isolated data binding, not placement proof."""
 
 from __future__ import annotations
 
@@ -110,6 +110,7 @@ def _program(symbols: GameSymbols, candidate: bool):
         return CandidateProgram.link(
             symbols,
             [CandidateFunction("map_world_state_persist", PERSIST_OBJECT)],
+            bind_data_objects=True,
         )
     return RetailProgram.link(symbols, ["map_world_state_persist"])
 
