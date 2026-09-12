@@ -7,7 +7,7 @@
  * alignment arithmetic that retail lacks. These are the classic Unix
  * varargs macros: va_start addresses the word after the last named
  * argument and va_arg loads through the cursor before advancing it, which
- * is the argument-word sequence every retail reader emits (home-slot reads
+ * matches the reviewed retail readers (home-slot reads
  * in menu_enter_mode and notify_enqueue, the cursor walk in
  * format_vsprintf). The header spelling the original used is unresolved.
  * Modern checking compilers use their own builtins so the ABI stays correct

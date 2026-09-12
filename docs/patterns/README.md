@@ -5,6 +5,9 @@ about which source shapes reproduce it under the current probes. Each note
 records the retail evidence first and the probe behaviour second; none of them
 promotes a probe to a proven historical toolchain.
 
+- [effect-constructor-varargs.md](effect-constructor-varargs.md): kind-specific
+  optional argument domains, native `va_arg` controls, and the remaining
+  manual argument walker omitted from the cleanup checklist.
 - [startup-address-origins.md](startup-address-origins.md): startup literal
   owners and xrefs, shared RAM/stack policy, SDK section-end expressions,
   compiler controls and unresolved original definition mechanisms.

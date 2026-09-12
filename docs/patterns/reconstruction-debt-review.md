@@ -84,7 +84,7 @@ outer allocation bounds remain unresolved in both images: the preceding
 identity 80 bytes above each base is an unreferenced byte of unknown owner,
 so neither neighbour bounds the allocation.
 
-## Manual varargs: 3 functions to 0
+## Manual varargs: one remaining function
 
 `vendor/include/stdarg.h` carries the classic Unix `va_start`/`va_arg`
 macros for the pinned compiler (the Release 2.5 media ship no `STDARG.H`;
@@ -97,6 +97,12 @@ compiler accepts, reproduces all three readers: `menu_enter_mode` and
 `format_vsprintf` bodies walk a real `va_list`. Modern checkers take the
 builtin branch; since the pinned preprocessor runs with `-undef`, the branch
 keys on `__has_builtin`, which clang exposes regardless.
+
+That conversion did not cover `effect_pool_construct`, which still walks
+the optional argument slots from `&direction`. The previous zero-count claim
+was incorrect. The [constructor argument audit](effect-constructor-varargs.md)
+records all argument domains, the fresh standard-API candidates, and the
+unresolved cursor initialization and update differences under the native probe.
 
 ## Unrelated variable reuse: 4 functions to 0
 

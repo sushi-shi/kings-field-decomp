@@ -67,8 +67,9 @@ Manually maintained cleanup checklist:
   retail stack word in both OPEN emitters is carried by a never-read local.
 - [x] Review owner recovery from member pointers: **0 sites**.
 - [x] Review out-of-object pointers: **0 cases**.
-- [x] Review manual varargs: **0 functions**; `vendor/include/stdarg.h` carries
-  the classic load-then-advance macros retail's readers match.
+- [ ] Review manual varargs: **1 function**; `effect_pool_construct` still
+  reads argument slots directly. The [argument-access audit](docs/patterns/effect-constructor-varargs.md)
+  records the typed `va_arg` candidate and its remaining non-exact code.
 - [x] Review unrelated variable reuse: **0 functions**; working values are
   named locals initialised from their parameters at declaration.
 - [x] Review stack aggregates and unused members: **0 aggregates**; the
