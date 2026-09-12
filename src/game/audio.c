@@ -44,7 +44,7 @@ void audio_initialize(void)
     SsUtSetReverbType(SS_REV_TYPE_STUDIO_C);
     SsUtReverbOn();
     SsUtSetReverbDepth(GAME_REVERB_DEPTH, GAME_REVERB_DEPTH);
-    audio_state.sequence_buffer = (u_long *)memory_allocate(GAME_SEQUENCE_BUFFER_BYTES);
+    audio_state.sequence_buffer = memory_allocate(GAME_SEQUENCE_BUFFER_BYTES);
     audio_state.sequence_active = KF_AUDIO_SEQUENCE_INACTIVE;
     inactive_voice_id = KF_AUDIO_VOICE_INACTIVE;
     index = KF_AUDIO_VOICE_SLOTS - 1;

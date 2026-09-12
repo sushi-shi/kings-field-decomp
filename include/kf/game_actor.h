@@ -261,9 +261,8 @@ typedef struct KfActorDefinition {
     u16 gold_drop_limit; /* exclusive upper bound of rand-scaled gold drop */
 } KfActorDefinition;
 
-typedef union KfActorDefinitionTable {
+typedef struct KfActorDefinitionTable {
     KfActorDefinition entries[KF_ACTOR_DEFINITION_COUNT];
-    u32 words[KF_ACTOR_DEFINITION_WORD_COUNT];
 } KfActorDefinitionTable;
 
 typedef struct KfActorActionProfile {

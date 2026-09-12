@@ -188,8 +188,8 @@ void map_object_pool_clear(void)
 ADDRESS(0x80030fdc, 0x2c)
 void map_object_definitions_load(const KfMapObjectDefinitionTable *definitions)
 {
-    const u32 *source = definitions->words;
-    u32 *destination = map_object_state.definitions.words;
+    const u32 *source = (const u32 *)definitions;
+    u32 *destination = (u32 *)&map_object_state.definitions;
     s32 count = sizeof map_object_state.definitions / sizeof *source;
 
     do {

@@ -115,7 +115,7 @@ void game_state_initialize(void)
     player_state.poison_timer = KF_PLAYER_STATUS_TIMER_INACTIVE;
     player_state.darkness_timer = KF_PLAYER_STATUS_TIMER_INACTIVE;
     player_state.curse_timer = KF_PLAYER_STATUS_TIMER_INACTIVE;
-    cursor = map_runtime_state.world_state.bytes;
+    cursor = (u8 *)&map_runtime_state.world_state;
     count = sizeof(map_runtime_state.world_state) - 1;
     do {
         *cursor++ = 0;

@@ -153,29 +153,22 @@ KF_ENUM_BEGIN(KfMapOrientation, u8)
     KF_MAP_ORIENT_THREE_QUARTER_TURN = 4
 KF_ENUM_END(KfMapOrientation)
 
-/* Full resource-copy, row/column and linear-cell views of one grid. */
-typedef union KfMapGrid {
+/* Canonical row/column storage. Flat probes and resource copies convert the
+ * complete grid at their access boundaries, preserving the cell domain. */
+typedef struct KfMapGrid {
     u8 cells[KF_MAP_ROWS][KF_MAP_COLUMNS];
-    u8 bytes[KF_MAP_CELL_COUNT];
-    u32 words[KF_MAP_GRID_WORD_COUNT];
 } KfMapGrid;
 
-typedef union KfMapAttributeGrid {
+typedef struct KfMapAttributeGrid {
     KfMapAttribute cells[KF_MAP_ROWS][KF_MAP_COLUMNS];
-    KfMapAttribute bytes[KF_MAP_CELL_COUNT];
-    u32 words[KF_MAP_GRID_WORD_COUNT];
 } KfMapAttributeGrid;
 
-typedef union KfMapCollisionGrid {
+typedef struct KfMapCollisionGrid {
     KfMapCellKind cells[KF_MAP_ROWS][KF_MAP_COLUMNS];
-    KfMapCellKind bytes[KF_MAP_CELL_COUNT];
-    u32 words[KF_MAP_GRID_WORD_COUNT];
 } KfMapCollisionGrid;
 
-typedef union KfMapOrientationGrid {
+typedef struct KfMapOrientationGrid {
     KfMapOrientation cells[KF_MAP_ROWS][KF_MAP_COLUMNS];
-    KfMapOrientation bytes[KF_MAP_CELL_COUNT];
-    u32 words[KF_MAP_GRID_WORD_COUNT];
 } KfMapOrientationGrid;
 
 extern KfMapAttributeGrid map_cell_attribute_grid;

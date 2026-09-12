@@ -228,7 +228,7 @@ void game_initialize_session(void)
     player_state.camera_rotation.vy = 0;
     player_state.camera_rotation.vx = 0;
     setVector(&player_state.camera_position, 0x7918, 0, 0xfa0);
-    player_state.weapon_asset_buffer = (KfAssetHeader *)memory_allocate(KF_WEAPON_ASSET_BUFFER_BYTES);
+    player_state.weapon_asset_buffer = memory_allocate(KF_WEAPON_ASSET_BUFFER_BYTES);
     game_state_initialize();
     player_state.update_state = KF_PLAYER_UPDATE_NORMAL;
     player_state.audio_effects_enabled = KF_PLAYER_OPTION_ON;

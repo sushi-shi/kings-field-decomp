@@ -81,15 +81,13 @@ typedef struct KfWeaponRecord {
     SVECTOR render_rotation;
 } KfWeaponRecord;
 
-/* The resource loaders copy the complete tables in aligned words. */
-typedef union KfWeaponTable {
+/* Canonical records; the loader handles the aligned resource-copy boundary. */
+typedef struct KfWeaponTable {
     KfWeaponRecord entries[KF_WEAPON_RECORD_COUNT];
-    u32 words[KF_WEAPON_TABLE_WORD_COUNT];
 } KfWeaponTable;
 
-typedef union KfArmorTable {
+typedef struct KfArmorTable {
     KfArmorRecord entries[KF_ARMOR_RECORD_COUNT];
-    u32 words[KF_ARMOR_TABLE_WORD_COUNT];
 } KfArmorTable;
 
 extern KfWeaponTable weapon_records;

@@ -83,7 +83,7 @@ KfResourceLoadResult cd_file_load_allocated(
         cd_search_file.size =
             ((cd_search_file.size >> KF_CD_SECTOR_SHIFT) + 1) << KF_CD_SECTOR_SHIFT;
     }
-    *destination = (u8 *)memory_allocate(cd_search_file.size);
+    *destination = memory_allocate(cd_search_file.size);
     cd_read_location.minute = cd_search_file.pos.minute;
     cd_read_location.second = cd_search_file.pos.second;
     cd_read_location.sector = cd_search_file.pos.sector;
@@ -131,7 +131,7 @@ KfResourceLoadResult cd_file_load_into(
         CdControl(CdlSetloc, (u_char *)&cd_read_location, NULL);
         CdRead(
             cd_search_file.size >> KF_CD_SECTOR_SHIFT,
-            (u_long *)destination,
+            destination,
             CdlModeSpeed);
         while ((result = CdReadSync(KF_CD_READ_POLL, NULL)) > 0) {
         }
@@ -148,7 +148,7 @@ void tim_upload_images(void *tim_data)
 {
     TIM_IMAGE image;
 
-    OpenTIM((u_long *)tim_data);
+    OpenTIM(tim_data);
     while (ReadTIM(&image) != NULL) {
         if (image.caddr != NULL) {
             LoadImage(image.crect, image.caddr);
@@ -187,17 +187,17 @@ void opening_resources_load_scene0(void)
         (vab_chunk = STREAM_NEXT(stream)) + KF_RESOURCE_CHUNK_HEADER_BYTES);
     STREAM_NEXT(stream);
     source = resource_stream_copy_words(
-        map_cell_attribute_grid.words,
+        (u32 *)&map_cell_attribute_grid,
         (const u32 *)(stream + KF_RESOURCE_CHUNK_HEADER_BYTES),
         MAP_GRID_WORDS);
     source = resource_stream_copy_words(
-        map_floor_height_grid.words, source, MAP_GRID_WORDS);
+        (u32 *)&map_floor_height_grid, source, MAP_GRID_WORDS);
     source = resource_stream_copy_words(
-        map_cell_orientation_grid.words, source, MAP_GRID_WORDS);
+        (u32 *)&map_cell_orientation_grid, source, MAP_GRID_WORDS);
     source = resource_stream_copy_words(
-        map_collision_flag_grid.words, source, MAP_GRID_WORDS);
+        (u32 *)&map_collision_flag_grid, source, MAP_GRID_WORDS);
     resource_stream_copy_words(
-        map_collision_grid.words, source, MAP_GRID_WORDS);
+        (u32 *)&map_collision_grid, source, MAP_GRID_WORDS);
     item_load_floor_placements(
         (KfFloorItemPlacement *)(STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES));
     opening_entity_pool_load_placements(

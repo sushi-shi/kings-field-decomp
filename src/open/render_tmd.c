@@ -49,7 +49,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             if (NormalClip(vertex0->sxy.word, vertex1->sxy.word, vertex2->sxy.word) <= 0) {
                 continue;
             }
-            prim = (KfGpuFT3 *)primitive_buffer_allocate(sizeof(POLY_FT3));
+            prim = primitive_buffer_allocate(sizeof(POLY_FT3));
             SetPolyFT3(&prim->sdk);
             prim->packed.clut = polygon->ft3.cba;
             prim->packed.tpage = polygon->ft3.tsb;
@@ -83,7 +83,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 continue;
             }
             vertex3 = VTX(polygon->f4.v3);
-            prim = (KfGpuF4 *)primitive_buffer_allocate(sizeof(POLY_F4));
+            prim = primitive_buffer_allocate(sizeof(POLY_F4));
             SetPolyF4(&prim->sdk);
             prim->packed.xy0 = vertex0->sxy.word;
             prim->packed.xy1 = vertex1->sxy.word;
@@ -111,7 +111,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             if (NormalClip(vertex0->sxy.word, vertex1->sxy.word, vertex2->sxy.word) <= 0) {
                 continue;
             }
-            prim = (KfGpuG3 *)primitive_buffer_allocate(sizeof(POLY_G3));
+            prim = primitive_buffer_allocate(sizeof(POLY_G3));
             SetPolyG3(&prim->sdk);
             prim->packed.xy0 = vertex0->sxy.word;
             prim->packed.xy1 = vertex1->sxy.word;
@@ -141,7 +141,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 continue;
             }
             vertex3 = VTX(polygon->g4.v3);
-            prim = (KfGpuG4 *)primitive_buffer_allocate(sizeof(POLY_G4));
+            prim = primitive_buffer_allocate(sizeof(POLY_G4));
             SetPolyG4(&prim->sdk);
             prim->packed.xy0 = vertex0->sxy.word;
             prim->packed.xy1 = vertex1->sxy.word;
@@ -173,7 +173,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             if (NormalClip(vertex0->sxy.word, vertex1->sxy.word, vertex2->sxy.word) <= 0) {
                 continue;
             }
-            prim = (KfGpuGT3 *)primitive_buffer_allocate(sizeof(POLY_GT3));
+            prim = primitive_buffer_allocate(sizeof(POLY_GT3));
             SetPolyGT3(&prim->sdk);
             prim->packed.clut = polygon->gt3.cba;
             prim->packed.tpage = polygon->gt3.tsb;
@@ -209,7 +209,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 continue;
             }
             vertex3 = VTX(polygon->gt4.v3);
-            prim = (KfGpuGT4 *)primitive_buffer_allocate(sizeof(POLY_GT4));
+            prim = primitive_buffer_allocate(sizeof(POLY_GT4));
             SetPolyGT4(&prim->sdk);
             prim->packed.clut = polygon->gt4.cba;
             prim->packed.tpage = polygon->gt4.tsb;
@@ -248,7 +248,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             if (NormalClip(vertex0->sxy.word, vertex1->sxy.word, vertex2->sxy.word) <= 0) {
                 continue;
             }
-            prim = (KfGpuG3 *)primitive_buffer_allocate(sizeof(POLY_G3));
+            prim = primitive_buffer_allocate(sizeof(POLY_G3));
             SetPolyG3(&prim->sdk);
             SetSemiTrans(&prim->sdk, 1);
             prim->packed.xy0 = vertex0->sxy.word;
@@ -279,7 +279,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 continue;
             }
             vertex3 = VTX(polygon->ft4.v3);
-            prim = (KfGpuFT4 *)primitive_buffer_allocate(sizeof(POLY_FT4));
+            prim = primitive_buffer_allocate(sizeof(POLY_FT4));
             SetPolyFT4(&prim->sdk);
             prim->packed.clut = polygon->ft4.cba;
             prim->packed.tpage = polygon->ft4.tsb;
@@ -314,7 +314,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             if (NormalClip(vertex0->sxy.word, vertex1->sxy.word, vertex2->sxy.word) <= 0) {
                 continue;
             }
-            prim = (KfGpuF3 *)primitive_buffer_allocate(sizeof(POLY_F3));
+            prim = primitive_buffer_allocate(sizeof(POLY_F3));
             SetPolyF3(&prim->sdk);
             prim->packed.xy0 = vertex0->sxy.word;
             prim->packed.xy1 = vertex1->sxy.word;
@@ -342,7 +342,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 continue;
             }
             vertex3 = VTX(polygon->g4.v3);
-            prim = (KfGpuG4 *)primitive_buffer_allocate(sizeof(POLY_G4));
+            prim = primitive_buffer_allocate(sizeof(POLY_G4));
             SetPolyG4(&prim->sdk);
             SetSemiTrans(&prim->sdk, 1);
             prim->packed.xy0 = vertex0->sxy.word;
@@ -376,7 +376,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             if (NormalClip(vertex0->sxy.word, vertex1->sxy.word, vertex2->sxy.word) <= 0) {
                 continue;
             }
-            prim = (KfGpuF3 *)primitive_buffer_allocate(sizeof(POLY_F3));
+            prim = primitive_buffer_allocate(sizeof(POLY_F3));
             SetPolyF3(&prim->sdk);
             SetSemiTrans(&prim->sdk, 1);
             prim->packed.xy0 = vertex0->sxy.word;
@@ -405,7 +405,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 continue;
             }
             vertex3 = VTX(polygon->f4.v3);
-            prim = (KfGpuF4 *)primitive_buffer_allocate(sizeof(POLY_F4));
+            prim = primitive_buffer_allocate(sizeof(POLY_F4));
             SetPolyF4(&prim->sdk);
             SetSemiTrans(&prim->sdk, 1);
             prim->packed.xy0 = vertex0->sxy.word;

@@ -404,7 +404,7 @@ KfSaveStatus save_file_write_slot(KfSaveSlotId slot_id)
     }
     memcpy(save_payload_buffer->player_state, &player_state.experience,
            sizeof(save_payload_buffer->player_state));
-    memcpy(save_payload_buffer->world_state.words, &map_world_state_base,
+    memcpy(&save_payload_buffer->world_state, &map_world_state_base,
            sizeof(save_payload_buffer->world_state));
     memcpy(save_payload_buffer->item_stock, item_stock,
            sizeof(save_payload_buffer->item_stock));
@@ -655,7 +655,7 @@ KfSaveStatus save_file_read_slot(KfSaveSlotId slot_id)
     saved_weapon_animation_cache = player_state.weapon_animation_cache;
     memcpy(&player_state.experience, save_payload_buffer->player_state,
            sizeof(save_payload_buffer->player_state));
-    memcpy(&map_world_state_base, save_payload_buffer->world_state.words,
+    memcpy(&map_world_state_base, &save_payload_buffer->world_state,
            sizeof(save_payload_buffer->world_state));
     memcpy(item_stock, save_payload_buffer->item_stock,
            sizeof(save_payload_buffer->item_stock));
@@ -670,7 +670,7 @@ KfSaveStatus save_file_read_slot(KfSaveSlotId slot_id)
 ADDRESS(0x8002c27c, 0x68)
 s32 save_workspace_allocate(void)
 {
-    KfSaveWorkspace *workspace = (KfSaveWorkspace *)memory_allocate(sizeof(KfSaveWorkspace));
+    KfSaveWorkspace *workspace = memory_allocate(sizeof(KfSaveWorkspace));
 
     save_header_buffer = workspace != NULL ? &workspace->header : NULL;
     if (save_header_buffer == NULL) {

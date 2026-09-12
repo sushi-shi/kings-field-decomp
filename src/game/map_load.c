@@ -36,7 +36,7 @@ RODATA(0x80012bfc, 0x14)
 ADDRESS(0x80035e44, 0x69c)
 void map_restore_floor_state(void)
 {
-    u8 *base = map_runtime_state.world_state.bytes;
+    u8 *base = (u8 *)&map_runtime_state.world_state;
     u8 *in;
     KfMapEvent *event;
     KfMapObject *object;

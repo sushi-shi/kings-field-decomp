@@ -62,9 +62,11 @@ Manually maintained cleanup checklist:
 - [ ] Close [SDK object evidence](docs/sdk-object-audit.md): **29 lineage
   module identities**; the last ambiguous audio helper may belong to `SSCALL`.
   Search missing 1994 SDK archives/source before reconstructing them.
-- [ ] Review casts and remove avoidable conversions: **405 written casts**
-  (**322 pointer**, **83 scalar**).
-- [ ] Review unions and simplify avoidable alternate views: **37 union definitions**.
+- [ ] Review casts and remove avoidable conversions: **396 written casts**
+  (**315 pointer**, **81 scalar**). The [cast/union debt campaign](docs/patterns/cast-union-debt.md)
+  removes 35 C++-checker-driven casts and exposes 28 real access boundaries.
+- [ ] Review unions and simplify avoidable alternate views: **27 union definitions**;
+  ten copy/index/serialization-only union owners replaced with canonical structs.
 - [ ] Review gotos: **74 statements** (**68 GAME**, **6 OPEN**).
 - [x] Review artificial address arithmetic: **0 cases**; the unallocated
   retail stack word in both OPEN emitters is carried by a never-read local.
@@ -154,8 +156,11 @@ editor view; `--mode modern` restores scoped-enum checks. The mode also persists
 
 Run `kf check-types` to check every source/image variant, including both
 versions of shared sources. Use `--unit game.actor` or `--image game` to focus
-the check. Diagnostics are saved under `build/clangd/checks/`; any failed
-compilation makes the command fail.
+the check. For implicit C `void *` conversions, the checker derives explicit
+conversions from the target-C AST in a generated VFS view, then requires a
+successful full C++ compilation. It does not suppress diagnostics. Diagnostics
+and generated inputs are saved under `build/clangd/checks/`. The raw modern
+editor view can still flag those C-only conversions; use retail mode for C89.
 
 Run `kf bools --output build/boolean-audit/all.json` to audit integral fields,
 locals, globals, arguments, pointer outputs, arrays, and return values through

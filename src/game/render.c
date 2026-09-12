@@ -106,7 +106,7 @@ void display_show_error_screen(KfSystemScreen stage)
 
         CdControl(CdlSetloc, (u_char *)&cd_read_location, NULL);
         CdRead(cd_search_file.size >> KF_CD_SECTOR_SHIFT,
-               (u_long *)game_graphics_runtime.display_state.asset_load_buffer, CdlModeSpeed);
+               game_graphics_runtime.display_state.asset_load_buffer, CdlModeSpeed);
         while ((result = CdReadSync(KF_CD_READ_POLL, NULL)) > 0) {
         }
         if (result == 0) {
@@ -200,7 +200,7 @@ void render_initialize(void)
     u8 *buffer;
 
     game_graphics_runtime.display_state.buffer_index = KF_DISPLAY_BUFFER_UNINITIALIZED;
-    buffer = (u8 *)memory_allocate(KF_DISPLAY_BUFFER_COUNT * PRIMITIVE_BUFFER_BYTES);
+    buffer = memory_allocate(KF_DISPLAY_BUFFER_COUNT * PRIMITIVE_BUFFER_BYTES);
     game_graphics_runtime.display_state.asset_load_buffer = buffer;
     game_graphics_runtime.display_state.primitive_buffers[0].start = buffer;
     buffer += PRIMITIVE_BUFFER_BYTES;

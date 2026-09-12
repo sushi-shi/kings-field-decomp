@@ -104,7 +104,7 @@ reinitialize_record:
         record->asset_index = asset_index;
         record->owner_slot = owner_slot;
 retry_allocation:
-        record->cached_vertices = (KfPackedSVector *)memory_malloc_checked(
+        record->cached_vertices = memory_malloc_checked(
             vertex_count * sizeof(KfPackedSVector));
         if (record->cached_vertices == NULL) {
             pool_release_all();

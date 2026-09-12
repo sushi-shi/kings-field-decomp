@@ -86,10 +86,8 @@ typedef struct KfMapSavedFloor {
     u8 records[KF_MAP_SAVED_RECORD_BYTES];
 } KfMapSavedFloor;
 
-/* Save I/O copies aligned words; scripts address typed bytes within slots. */
-typedef union KfMapSavedWorld {
-    u32 words[KF_MAP_SAVED_WORLD_WORDS];
-    u8 bytes[KF_MAP_SAVED_WORLD_BYTES];
+/* Five serialized floor records; save I/O addresses the complete owner. */
+typedef struct KfMapSavedWorld {
     KfMapSavedFloor floors[KF_MAP_SAVED_FLOOR_COUNT];
 } KfMapSavedWorld;
 
@@ -330,9 +328,8 @@ typedef struct KfMapObjectDefinition {
     u8 unknown_06[2];
 } KfMapObjectDefinition;
 
-typedef union KfMapObjectDefinitionTable {
+typedef struct KfMapObjectDefinitionTable {
     KfMapObjectDefinition entries[KF_MAP_OBJECT_DEFINITION_COUNT];
-    u32 words[KF_MAP_OBJECT_DEFINITION_WORD_COUNT];
 } KfMapObjectDefinitionTable;
 
 typedef struct KfMapObject {
@@ -509,7 +506,7 @@ extern KfMapRuntimeState map_runtime_state;
 #define map_variant_asset_buffer (map_runtime_state.variant_asset_buffer)
 #define map_dialogue_advance_gate (map_runtime_state.dialogue_advance_gate)
 #define map_ambient_script_countdown (map_runtime_state.ambient_script_countdown)
-#define map_world_state_base (map_runtime_state.world_state.words[0])
+#define map_world_state_base (map_runtime_state.world_state)
 #define map_floor1_script (map_runtime_state.world_state.floors[0].script.floor1)
 #define map_floor3_script (map_runtime_state.world_state.floors[2].script.floor3)
 #define map_floor5_script (map_runtime_state.world_state.floors[4].script.floor5)

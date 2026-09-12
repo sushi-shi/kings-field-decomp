@@ -2565,7 +2565,7 @@ KF_ENUM_PARAM(KfResourceLoadResult, u32) menu_load_item_model(KF_ENUM_PARAM(KfIt
         if (cd_file_load_table_entry(&asset, KF_ENUM_ENCODE(s32, id)) != KF_RESOURCE_LOADED) {
             return KF_RESOURCE_LOAD_FAILED;
         }
-        tmd_register(KF_TMD_SLOT_MENU_ITEM, (KfTmdHeader *)asset);
+        tmd_register(KF_TMD_SLOT_MENU_ITEM, asset);
         menu_item_model_allocation_pending = KF_MENU_MODEL_ALLOCATED;
     }
     menu_item_preview_rotation.vy = 0;

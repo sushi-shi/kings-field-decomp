@@ -53,7 +53,7 @@ void memory_set_allocation_mode(KfMemoryAllocationMode mode)
 {
     switch (mode) {
     case KF_MEMORY_CREATE_ARENA:
-        memory_arena.start = (u8 *)memory_malloc_checked(MEMORY_INITIAL_ARENA_BYTES);
+        memory_arena.start = memory_malloc_checked(MEMORY_INITIAL_ARENA_BYTES);
         memory_arena.end = (u8 *)MEMORY_INITIAL_ARENA_LAST_ADDRESS;
         memory_allocation_reset();
         break;

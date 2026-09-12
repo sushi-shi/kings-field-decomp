@@ -53,7 +53,7 @@ void render_enqueue_map(u16 object_index)
                 continue;
             }
             vertex3 = (KfScreenVertex *)(vertices + primitive->ft4.v3);
-            prim = (KfMapGpuPrimitive *)primitive_buffer_allocate(sizeof(POLY_GT4));
+            prim = primitive_buffer_allocate(sizeof(POLY_GT4));
             SetPolyGT4(&prim->quad.sdk);
             prim->quad.packed.clut = primitive->ft4.cba;
             prim->quad.packed.tpage = primitive->ft4.tsb;
@@ -91,7 +91,7 @@ void render_enqueue_map(u16 object_index)
             if (NormalClip(vertex0->sxy.word, vertex1->sxy.word, vertex2->sxy.word) <= 0) {
                 continue;
             }
-            prim = (KfMapGpuPrimitive *)primitive_buffer_allocate(sizeof(POLY_GT3));
+            prim = primitive_buffer_allocate(sizeof(POLY_GT3));
             SetPolyGT3(&prim->triangle.sdk);
             prim->triangle.packed.clut = primitive->ft3.cba;
             prim->triangle.packed.tpage = primitive->ft3.tsb;

@@ -44,7 +44,7 @@ KfResourceLoadResult cd_file_load_allocated(u8 **destination, const char *relati
         loaded = (cd_search_file.size >> KF_CD_SECTOR_SHIFT) + 1;
         cd_search_file.size = loaded << KF_CD_SECTOR_SHIFT;
     }
-    *destination = (u8 *)memory_allocate(cd_search_file.size);
+    *destination = memory_allocate(cd_search_file.size);
     loaded = 0;
     cd_read_location.minute = cd_search_file.pos.minute;
     cd_read_location.second = cd_search_file.pos.second;
@@ -83,7 +83,7 @@ KfResourceLoadResult cd_file_load_table_entry(void **destination, s32 index)
         s32 result;
 
         CdControl(CdlSetloc, (u_char *)&cd_read_location, NULL);
-        CdRead(cd_file_table[index].size >> KF_CD_SECTOR_SHIFT, (u_long *)*destination, CdlModeSpeed);
+        CdRead(cd_file_table[index].size >> KF_CD_SECTOR_SHIFT, *destination, CdlModeSpeed);
         while ((result = CdReadSync(KF_CD_READ_POLL, NULL)) > 0) {
         }
         if (result == 0) {
@@ -123,7 +123,7 @@ KfResourceLoadResult cd_file_load_into(void *destination, const char *relative_p
         s32 result;
 
         CdControl(CdlSetloc, (u_char *)&cd_read_location, NULL);
-        CdRead(cd_search_file.size >> KF_CD_SECTOR_SHIFT, (u_long *)destination, CdlModeSpeed);
+        CdRead(cd_search_file.size >> KF_CD_SECTOR_SHIFT, destination, CdlModeSpeed);
         while ((result = CdReadSync(KF_CD_READ_POLL, NULL)) > 0) {
         }
         if (result == 0) {

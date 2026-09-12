@@ -20,6 +20,10 @@ not be measured keeps its committed floor rather than being blessed away.
     python3 -m scripts.kf.cleanliness --data      # list unresolved data ownership
     python3 -m scripts.kf.cleanliness --data all  # include owners and their evidence
 
+The byte-array-view syntax count is informational: exposing a complete-object
+serialization boundary can increase it while removing an artificial union.
+The total pointer-cast ratchet still includes these conversions.
+
 The extern-disallow gates inspect translation units, not headers. ``GAME
 extern decls`` counts declarations of curated game identities while
 ``source-local extern decls`` also catches SDK/libc declarations. Driving both
@@ -270,11 +274,12 @@ def count() -> list[tuple[str, int]]:
     return rows
 
 
-#: Source reconstruction regressions are gated; inventory discoveries are not.
-RATCHET = {label for label, _m, _c in SOURCE_METRICS} | {
+#: A spelling count cannot distinguish byte serialization from a false owner.
+#: Do not reward hiding the same access behind an alternate union member.
+INFORMATIONAL = {"unresolved data ownership", "raw DAT_ identities", "byte-array views"}
+RATCHET = ({label for label, _m, _c in SOURCE_METRICS} - INFORMATIONAL) | {
     "unresolved func_ identities",
 }
-INFORMATIONAL = {"unresolved data ownership", "raw DAT_ identities"}
 
 
 def load_baseline() -> dict[str, int]:

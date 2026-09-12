@@ -7,8 +7,7 @@ src func_ refs	3
 src DAT_ refs	12
 GAME extern decls	0
 source-local extern decls	0
-pointer casts	322
+pointer casts	315
 void* views	14
-byte-array views	4
 .c-local aggregates	7
 unresolved func_ identities	3

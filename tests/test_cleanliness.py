@@ -71,6 +71,18 @@ class MetricRegexTest(unittest.TestCase):
 
 
 class GateTest(unittest.TestCase):
+    def test_byte_views_are_visible_but_still_part_of_total_pointer_ratchet(self) -> None:
+        rows = [("pointer casts", 42), ("byte-array views", 4)]
+        with TemporaryDirectory() as td:
+            with mock.patch.object(cleanliness, "BASELINE", Path(td) / "baseline.tsv"):
+                cleanliness.save_baseline(rows)
+                self.assertEqual(cleanliness.load_baseline(), {"pointer casts": 42})
+                exposed = [("pointer casts", 41), ("byte-array views", 8)]
+                self.assertFalse(cleanliness.gate(exposed))
+                self.assertIn("[informational]", cleanliness.report_lines(exposed)[-1])
+                self.assertTrue(cleanliness.gate([("pointer casts", 43),
+                                                  ("byte-array views", 8)]))
+
     def test_inventory_discoveries_are_informational_and_not_saved_as_floors(self) -> None:
         rows = [("pointer casts", 42), ("raw DAT_ identities", 2704),
                 ("unresolved data ownership", 100)]

@@ -59,7 +59,7 @@ void tim_upload_images(void *tim_data)
 {
     TIM_IMAGE image;
 
-    OpenTIM((u_long *)tim_data);
+    OpenTIM(tim_data);
     while (ReadTIM(&image) != NULL) {
         if (image.caddr != NULL) {
             LoadImage(image.crect, image.caddr);
@@ -189,17 +189,17 @@ void map_resources_load(KfFloorId floor, KF_ENUM_PARAM(KfMapVariant, s32) use_va
     STREAM_NEXT(stream);
     audio_play_current_map_sequence();
     source = map_resource_copy_words(
-        map_cell_attribute_grid.words,
+        (u32 *)&map_cell_attribute_grid,
         (u32 *)(stream + KF_RESOURCE_CHUNK_HEADER_BYTES),
         MAP_GRID_WORDS);
     source = map_resource_copy_words(
-        map_floor_height_grid.words, source, MAP_GRID_WORDS);
+        (u32 *)&map_floor_height_grid, source, MAP_GRID_WORDS);
     source = map_resource_copy_words(
-        map_cell_orientation_grid.words, source, MAP_GRID_WORDS);
+        (u32 *)&map_cell_orientation_grid, source, MAP_GRID_WORDS);
     source = map_resource_copy_words(
-        map_collision_flag_grid.words, source, MAP_GRID_WORDS);
+        (u32 *)&map_collision_flag_grid, source, MAP_GRID_WORDS);
     map_resource_copy_words(
-        map_collision_grid.words, source, MAP_GRID_WORDS);
+        (u32 *)&map_collision_grid, source, MAP_GRID_WORDS);
     item_load_floor_placements(
         (KfFloorItemPlacement *)(STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES));
     map_object_pool_load(
@@ -226,7 +226,7 @@ void map_resources_load(KfFloorId floor, KF_ENUM_PARAM(KfMapVariant, s32) use_va
         asset_registry_load_tmd_archive(KF_ASSET_ACTOR_FIRST,
             stream + KF_RESOURCE_CHUNK_HEADER_BYTES);
     } else {
-        map_variant_asset_buffer = (u8 *)memory_allocate(MAP_VARIANT_ASSET_BUFFER_BYTES);
+        map_variant_asset_buffer = memory_allocate(MAP_VARIANT_ASSET_BUFFER_BYTES);
         map_variant_assets_load();
     }
     player_sync_position_to_map();
