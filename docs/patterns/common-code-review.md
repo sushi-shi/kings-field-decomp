@@ -150,7 +150,7 @@ bindings, 522 readings, 90 candidate families, 17 new inline definitions and
 
 ## Stack integration
 
-Review in order: [PR #2](https://github.com/sushi-shi/kings-field-decomp/pull/2)
+Review in order: [PR #6](https://github.com/sushi-shi/kings-field-decomp/pull/6)
 (native referents), [PR #3](https://github.com/sushi-shi/kings-field-decomp/pull/3)
 (shared enums), then [PR #4](https://github.com/sushi-shi/kings-field-decomp/pull/4)
 (these helpers). Each PR targets the preceding branch; the first targets master.
@@ -163,17 +163,17 @@ Resource stream helpers use the shared OPEN placement height, and the overlay
 launch macro keeps the direct shared-mode assignment. A whole-source check
 finds no retired enum aliases reintroduced by clean merges or helper bodies.
 
-Fresh comparison of PR #3 against #2 and PR #4 against #3 finds all 101 objects
+Fresh comparison of PR #3 against #6 and PR #4 against #3 finds all 101 objects
 unchanged at each step: allocated bytes, BSS/COMMON extents, alignments, symbol
 values/sizes and ordered relocations. All three native executable hashes are
 identical across the stack. All 101 modern type checks pass in both source
 refactor layers; the complete enum ledger still covers every current member.
 The combined comparison has 458/471 game functions exact and 13/13 vendored
 verification functions exact. `player_warp_to_floor_entry` is now exact due to
-PR #2; the standalone checklist above preserves its original before/after
+PR #6; the standalone checklist above preserves its original before/after
 snapshot. Existing data ownership and placement gates remain open.
 
-The first PR passes its independent 800-test repository suite; the combined
-stack passes 808 tests. Both local runs skip nine tests. Ruff, whitespace
+The first PR passes its independent 802-test repository suite; the combined
+stack passes 810 tests. Both local runs skip nine tests. Ruff, whitespace
 checks and `nix flake check -L` pass at the first and final layers; the isolated
 flake suites skip 143 checks requiring local retail/build artifacts.
