@@ -47,3 +47,7 @@ values; the semantic decision remains an evidence review.
 The [shared-constant review](patterns/shared-constant-review.md) records the
 value-10 example, both actor angle thresholds, wider cross-TU findings, source
 changes, and binary verification.
+
+The [complete follow-up review](patterns/enum-equality-review.md) accounts for
+all 179 remaining equal-value groups with an explicit membership/decision
+ledger, supported aliases, retained distinctions, and a coverage check.

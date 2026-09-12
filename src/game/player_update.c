@@ -27,7 +27,7 @@ enum {
     PLAYER_NORMAL_TURN_LIMIT = 28,
     PLAYER_SLOWED_TURN_LIMIT = 5,
     PLAYER_DARKNESS_FOG_NEAR = 5000,
-    PLAYER_NORMAL_FOG_NEAR = 11000
+    PLAYER_NORMAL_FOG_NEAR = KF_INITIAL_FOG_NEAR_DISTANCE
 };
 
 /* Fractions of the active limit; signed shifts preserve retail truncation. */
@@ -39,7 +39,7 @@ enum {
     PLAYER_PITCH_ACCEL = 3,
     PLAYER_PITCH_DECEL = 2,
     PLAYER_PITCH_STEP_LIMIT = 10,
-    PLAYER_CAMERA_PITCH_LIMIT = 191
+    PLAYER_CAMERA_PITCH_LIMIT = KF_PLAYER_CAMERA_PITCH_LIMIT
 };
 
 /* Delay counts down to one; zero disables the pending sequence. */

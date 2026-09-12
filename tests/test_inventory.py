@@ -189,6 +189,38 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual((layout.size, layout.alignment), (72, 2))
         self.assertEqual(layout.fields[0].datatype, "u16[9][4]")
 
+    def test_shared_enum_alias_counts_preserve_array_layout(self) -> None:
+        headers = {
+            "combat.h": "enum { PHYSICAL_COUNT = 3, COMPONENT_COUNT = 5 };",
+            "game_actor.h": """
+                enum { ATTACK_COUNT = PHYSICAL_COUNT, NEXT_COUNT,
+                       DEFENSE_COUNT = COMPONENT_COUNT, AGAIN = DEFENSE_COUNT };
+                typedef struct AliasedCounts {
+                    u16 attacks[ATTACK_COUNT];
+                    u16 defenses[AGAIN];
+                    u8 next[NEXT_COUNT];
+                } AliasedCounts;
+            """,
+        }
+        with patch("scripts.kf.inventory.Path.read_text", lambda path: headers.get(path.name, "")):
+            layout = _header_structure_layouts()["AliasedCounts"]
+        self.assertEqual((layout.size, layout.alignment), (20, 2))
+        self.assertEqual([(f.offset, f.size, f.datatype) for f in layout.fields],
+                         [(0, 6, "u16[3]"), (6, 10, "u16[5]"), (16, 4, "u8[4]")])
+
+    def test_unknown_enum_alias_breaks_implicit_counts_without_guessing(self) -> None:
+        for initializer in ("MISSING", "ALIAS", "KNOWN + 1"):
+            for bound in ("ALIAS", "NEXT"):
+                with self.subTest(initializer=initializer, bound=bound):
+                    declarations = f"""
+                        enum {{ KNOWN = 3, ALIAS = {initializer}, NEXT }};
+                        typedef struct UnknownAlias {{ u8 cells[{bound}]; }} UnknownAlias;
+                    """
+                    with patch("scripts.kf.inventory.Path.read_text",
+                               lambda path: declarations if path.name == "combat.h" else ""):
+                        with self.assertRaisesRegex(ValueError, "unresolved array bound"):
+                            _header_structure_layouts()
+
     def test_implicit_enum_bound_does_not_guess_after_unknown_expression_or_overflow(self) -> None:
         for value in ("EXTERNAL + 1", "0x7fffffff"):
             with self.subTest(value=value):

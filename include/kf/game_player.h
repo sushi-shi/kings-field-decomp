@@ -40,6 +40,11 @@ enum {
     KF_PLAYER_CAMERA_HEIGHT = 1500
 };
 
+/* Normal view clamp, also approached by the container-opening camera. */
+enum {
+    KF_PLAYER_CAMERA_PITCH_LIMIT = 191
+};
+
 /* Charge counters share a full value; weapon phase has a separate time base. */
 enum {
     KF_PLAYER_CHARGE_FULL = 5000,

@@ -4,10 +4,11 @@
 #include <psyq/kernel.h>
 #include <psyq/libc.h>
 #include <kf/game.h>
+#include <kf/memory_layout.h>
 
 enum {
     MEMORY_INITIAL_ARENA_BYTES = 0x100000,
-    MEMORY_MAIN_RAM_BYTES = 0x200000,
+    MEMORY_MAIN_RAM_BYTES = KF_MAIN_RAM_BYTES,
     MEMORY_ALLOCATION_ALIGNMENT = 4
 };
 

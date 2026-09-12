@@ -3,13 +3,14 @@
 
 #include <kf/enum.h>
 #include <kf/game_types.h>
+#include <kf/memory_layout.h>
 
 /* Boundaries supplied by the program's link layout. */
 extern u8 BSS_START[];
 extern u8 BSS_END[];
 
 enum {
-    OVERLAY_RAM_BYTES = 0x200000,
+    OVERLAY_RAM_BYTES = KF_MAIN_RAM_BYTES,
     OVERLAY_STACK_BYTES = 0x8000
 };
 
@@ -23,8 +24,8 @@ KF_ENUM_END(KfOpenMode)
 
 KF_ENUM_BEGIN(KfGameExitCode, u32)
     KF_GAME_EXIT_NONE = 0,
-    KF_GAME_EXIT_INTRO = 1,
-    KF_GAME_EXIT_ENDING = 0xfe
+    KF_GAME_EXIT_INTRO = KF_ENUM_ENCODE(s32, KF_OPEN_MODE_INTRO),
+    KF_GAME_EXIT_ENDING = KF_ENUM_ENCODE(s32, KF_OPEN_MODE_ENDING)
 KF_ENUM_END(KfGameExitCode)
 
 /* Shared Exec argument block: OPEN reads request; GAME writes result.

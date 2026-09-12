@@ -1,5 +1,9 @@
 # Shared constant review
 
+This records the first pass. The [complete follow-up](enum-equality-review.md)
+reviews every remaining group and adds explicit value aliases where consumer
+evidence supports them, while retaining the typed domains discussed below.
+
 ## Method and scope
 
 Baseline: `283b3d58`. The [pylibclang comparison](../enum-comparison.md) collected
@@ -122,12 +126,12 @@ uses do not justify tying the values together in this source model.
 | GAME warp shimmer and OPEN entity transition: count 4, duration 48, scale step 256, tall scale 8192, yaw step 512 | Related loop shapes, but separate effect/model owners, mode protocols, frame pacing, and lifetime rules. Keep their animation tuning local; common values alone do not establish a shared configuration. |
 | Actor boss and effect extended audio ranges 20000/60000 | Different sound events and call sites. They do not acquire the target-distance constant merely because their maximum distance is also 20000. |
 | UI marker depths 500 and content depths 1000 | Map markers, shared menu quads, item previews, and text have separate rendering roles. No primitive-identity or common configuration evidence requires unification. |
-| Camera/door angle limits and aim cones near 191/341 | Different tests, limits, and selection APIs. A cone width is not a camera clamp. |
+| Camera/door angle limits and aim cones near 191/341 | A cone width is not a camera clamp. The follow-up connects the two 191 camera limits through their shared player-camera consumer; the 341 aim policies stay separate. |
 | Spell/weapon offsets 200/400, collision radii/heights, and timing phases | Physical units and consumers differ; weapon and spell launches also have different X conventions. |
 | Actor gravity 20, emerging fall acceleration 20, dropped-object gravity 20 | Independent motion models. Player fall acceleration is 40 and bouncing objects use 30, so there is no universal gravity constant supported by these consumers. |
 | Capacities, indices, bit masks and named phase values | Preserve the shared domain names. For example, 4096 is an angle period, fixed-point unity, and several animation periods; 65535 is a collision mask and several unrelated sentinels. |
 | Map-object IDs that equal item IDs; actor effect codes that equal effect kinds | Preserve the existing typed domains and explicit bridges. Equal serialized encodings do not make the caller-facing types interchangeable. |
-| Memory constants at 1 MiB/2 MiB and buffer/sector sizes | Preserve memory-policy, object extent, and SDK meanings. No address identity or individual-global placement is inferred from equality. |
+| Memory constants at 1 MiB/2 MiB and buffer/sector sizes | Preserve memory-policy, object extent, and SDK meanings. The follow-up shares the fixed 2 MiB RAM capacity; no address identity or individual-global placement is inferred. |
 
 ## Verification
 

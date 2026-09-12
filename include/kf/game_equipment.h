@@ -4,6 +4,7 @@
 /* Runtime-loaded weapon, armor, and accessory definitions. */
 
 #include <kf/game_types.h>
+#include <kf/combat.h>
 #include <kf/enum.h>
 #include <kf/item.h>
 #include <kf/game_math.h>
@@ -20,12 +21,12 @@ KF_ENUM_END(KfEquipmentSlot)
 
 /* Halfword positions in the weapon record's attack array. */
 enum {
-    KF_WEAPON_ATTACK_CUTTING = 0,
-    KF_WEAPON_ATTACK_STRIKING = 1,
-    KF_WEAPON_ATTACK_PIERCING = 2,
-    KF_WEAPON_ATTACK_HOLY = 3,
-    KF_WEAPON_ATTACK_FIRE = 4,
-    KF_WEAPON_ATTACK_COMPONENT_COUNT = 5
+    KF_WEAPON_ATTACK_CUTTING = KF_COMBAT_COMPONENT_CUTTING,
+    KF_WEAPON_ATTACK_STRIKING = KF_COMBAT_COMPONENT_STRIKING,
+    KF_WEAPON_ATTACK_PIERCING = KF_COMBAT_COMPONENT_PIERCING,
+    KF_WEAPON_ATTACK_HOLY = KF_COMBAT_COMPONENT_HOLY,
+    KF_WEAPON_ATTACK_FIRE = KF_COMBAT_COMPONENT_FIRE,
+    KF_WEAPON_ATTACK_COMPONENT_COUNT = KF_COMBAT_COMPONENT_COUNT
 };
 
 enum {

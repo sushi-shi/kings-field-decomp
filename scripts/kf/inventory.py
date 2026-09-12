@@ -431,9 +431,12 @@ def _header_structure_layouts() -> dict[str, HeaderStructureLayout]:
         r"KF_ENUM_STORAGE\(\s*([A-Za-z_]\w*)\s*,\s*([A-Za-z_]\w*)\s*\)"
     )
     integer_enumerator = re.compile(r"([A-Za-z_]\w*)\s*=\s*(0x[0-9a-fA-F]+|\d+)")
+    alias_enumerator = re.compile(r"([A-Za-z_]\w*)\s*=\s*([A-Za-z_]\w*)")
     implicit_enumerator = re.compile(r"[A-Za-z_]\w*")
     checked_headers = (
         REPO / "include/kf/game_types.h",
+        REPO / "include/kf/memory_layout.h",
+        REPO / "include/kf/combat.h",
         REPO / "include/kf/overlay.h",
         REPO / "include/kf/animation.h",
         REPO / "include/kf/cd_file.h",
@@ -483,9 +486,9 @@ def _header_structure_layouts() -> dict[str, HeaderStructureLayout]:
             primitive_layouts[name] = primitive_layouts[storage]
             enum_domains.add(name)
             enum_bodies.append(body)
-        # An implicit enumerator starts at zero or follows a known integer.
-        # Unsupported expressions break that chain until an explicit integer
-        # resets it; never guess an inventory's byte extent.
+        # Aliases may use a previously resolved member, including one from a
+        # shared header. Unknown aliases/expressions break the implicit chain;
+        # never guess an inventory's byte extent.
         for body in enum_bodies:
             next_value = 0
             for enumerator in body.split(","):
@@ -493,9 +496,12 @@ def _header_structure_layouts() -> dict[str, HeaderStructureLayout]:
                 if not enumerator:
                     continue
                 constant = integer_enumerator.fullmatch(enumerator)
+                alias = alias_enumerator.fullmatch(enumerator)
                 if constant:
                     constant_name, value = constant.groups()
                     number = int(value, 0)
+                elif alias and alias[2] in constants:
+                    constant_name, number = alias[1], constants[alias[2]]
                 elif implicit_enumerator.fullmatch(enumerator) and next_value is not None:
                     constant_name, number = enumerator, next_value
                 else:

@@ -154,8 +154,8 @@ KF_ENUM_END(KfFloorItemFacing)
  * Construct it from those components, or copy the serialized typed record. */
 KF_ENUM_BEGIN(KfFloorItemAppearance, u8)
     KF_FLOOR_ITEM_APPEARANCE_EMPTY = 0,
-    KF_FLOOR_ITEM_APPEARANCE_FRAME_MASK = 0x0f,
-    KF_FLOOR_ITEM_APPEARANCE_FACING_MASK = 0xf0
+    KF_FLOOR_ITEM_APPEARANCE_FRAME_MASK = KF_FLOOR_ITEM_FRAME_COUNT_MASK,
+    KF_FLOOR_ITEM_APPEARANCE_FACING_MASK = KF_FLOOR_ITEM_FACING_MASK
 KF_ENUM_END(KfFloorItemAppearance)
 KF_ENUM_FLAGS(KfFloorItemAppearance, u8)
 

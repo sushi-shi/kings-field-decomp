@@ -900,3 +900,5 @@ promotes a probe to a proven historical toolchain.
   controls, with preserved exact siblings and no additional exact function.
 - [Shared constant review](shared-constant-review.md): evaluated enum comparison,
   semantic decisions for equal values, and shared definitions across TUs.
+- [Complete enum equality review](enum-equality-review.md): decisions for all
+  179 remaining groups, exact membership coverage, and consumer encoding aliases.
