@@ -4,13 +4,15 @@ The board/data gates adapt the sibling gruntz workflow; ownership and target
 relink checks extend it for King's Field's PS-X ELF / objdiff flow:
 
     kf verify board [--gate|--update|--externs]        source cleanliness ratchet
+    kf verify board --data [all]                    data ownership inventory
     kf verify data  [--image I][--detail][--coverage]  strict data gate vs retail
     kf verify reachability [--image I][--output P]   known-reference ownership audit
     kf verify roundtrip [--image I][--output P]      target relink/placement gate
 
 ``board`` counts the address-derived spellings and ``extern``/cast/view
 crutches in ``src/`` + ``include/`` and the curated identity TSVs against
-committed floors (``down = good``); ``data`` compares each reconstructed unit's
+committed floors (``down = good``). Data ownership and raw DAT-name counts are
+informational and have no floors; ``data`` compares each reconstructed unit's
 owned ``.data``/``.rodata``/``.bss`` against the retail-delinked target,
 including implicit relocation addends, and exits nonzero on any mismatch or
 missing artifact. See the module docstrings for the full contract.

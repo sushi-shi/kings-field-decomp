@@ -56,6 +56,9 @@ for the algorithm, scope and per-image interactive reports.
 
 Manually maintained cleanup checklist:
 
+- Inspect unresolved data ownership with `kf verify board --data`.
+  The board separates ownership candidates from the informational raw `DAT_`
+  count; see [inventory metric rules](docs/function-and-data-inventory.md).
 - [ ] Close [SDK object evidence](docs/sdk-object-audit.md): **29 lineage
   module identities**; the last ambiguous audio helper may belong to `SSCALL`.
   Search missing 1994 SDK archives/source before reconstructing them.

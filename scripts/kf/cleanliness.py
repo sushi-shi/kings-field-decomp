@@ -3,8 +3,9 @@
 Counts the address-derived spellings and the ``extern`` / cast / view crutches
 that a clean King's Field reconstruction should trend to 0, measured
 comment- and string-stripped over ``src/`` + ``include/`` and the curated
-identity TSVs. Each count carries a delta against the committed floor in
-``config/cleanliness/cleanliness-baseline.tsv`` - ``down = good``.
+identity TSVs. Source metrics carry deltas against committed floors in
+``config/cleanliness/cleanliness-baseline.tsv``. Data inventory counts are
+informational: discovering an unknown datum is not a source regression.
 
 Gate semantics (ported from ``gruntz verify board``): a RATCHETED metric may
 never RISE above its committed floor; the gate NEVER writes the floor. A floor
@@ -16,6 +17,8 @@ not be measured keeps its committed floor rather than being blessed away.
     python3 -m scripts.kf.cleanliness --gate     # exit 1 on any ratchet rise
     python3 -m scripts.kf.cleanliness --update    # bless: rewrite the floor file
     python3 -m scripts.kf.cleanliness --externs   # list source-local extern crutches
+    python3 -m scripts.kf.cleanliness --data      # list unresolved data ownership
+    python3 -m scripts.kf.cleanliness --data all  # include owners and their evidence
 
 The extern-disallow gates inspect translation units, not headers. ``GAME
 extern decls`` counts declarations of curated game identities while
@@ -27,10 +30,14 @@ header while allowing those headers to declare their interfaces normally.
 from __future__ import annotations
 
 import argparse
+from dataclasses import dataclass
 import re
 import sys
 from pathlib import Path
+from typing import Iterable
 
+from scripts.kf.inventory import DataIdentity, load_data_identities
+from scripts.kf.manifest import load as load_manifest
 from scripts.kf.paths import CONFIG, REPO, RETAIL_CONFIG
 from scripts.kf.retail import read_tsv
 
@@ -191,6 +198,54 @@ _FUNC_NAME = re.compile(r"func_[0-9a-fA-F]{8}")
 _DAT_NAME = re.compile(r"DAT_[0-9a-fA-F]{8}")
 
 
+@dataclass(frozen=True)
+class DataOwner:
+    image: str
+    va: int
+    size: int
+    storage: str
+    owner: str
+    evidence: str
+
+
+def classify_data_ownership(
+    identities: Iterable[DataIdentity], owners: Iterable[DataOwner],
+) -> list[tuple[DataIdentity, DataOwner | None]]:
+    """Only complete, image-local coverage establishes an identity's owner.
+
+    A semantic name, nearby owner, or pointer into SDK code proves no ownership.
+    Candidate owner annotations remain candidates until supported or proven.
+    """
+    identities = tuple(identities)
+    owners = (
+        *owners,
+        *(DataOwner(row.image, row.va, row.size, row.storage, row.owner, row.evidence)
+          for row in identities
+          if row.owner and row.evidence and row.confidence in {"supported", "proven"}),
+    )
+    return [
+        (row, next((owner for owner in owners
+                    if owner.image == row.image and owner.storage == row.storage
+                    and owner.va <= row.va
+                    and row.va + row.size <= owner.va + owner.size), None))
+        for row in identities
+    ]
+
+
+def data_ownership_rows() -> list[tuple[DataIdentity, DataOwner | None]]:
+    """Use curated identities and validated source claims; no binary heuristics."""
+    owners = []
+    for unit in load_manifest().units:
+        if unit.rodata is not None:
+            va, size = unit.rodata
+            owners.append(DataOwner(unit.image, va, size, "load", unit.unit,
+                                    f"{unit.source}:RODATA"))
+        for datum in unit.data:
+            owners.append(DataOwner(unit.image, datum.va, datum.size, datum.storage,
+                                    unit.unit, f"{unit.source}:DATA({datum.symbol})"))
+    return classify_data_ownership(load_data_identities(RETAIL_CONFIG).values(), owners)
+
+
 def count() -> list[tuple[str, int]]:
     """Every metric's live count, in report order."""
     game = game_symbols()
@@ -208,15 +263,18 @@ def count() -> list[tuple[str, int]]:
     rows = [(label, totals[label]) for label, _m, _c in SOURCE_METRICS]
     rows.append(("unresolved func_ identities",
                  _unresolved_identity_rows("function_identities.tsv", _FUNC_NAME)))
-    rows.append(("unresolved DAT_ identities",
-                 _unresolved_identity_rows("data_identities.tsv", _DAT_NAME)))
+    data = data_ownership_rows()
+    rows.append(("unresolved data ownership", sum(owner is None for _row, owner in data)))
+    rows.append(("raw DAT_ identities", sum(bool(_DAT_NAME.fullmatch(row.name))
+                                            for row, _owner in data)))
     return rows
 
 
-#: every metric is a ratchet - none may rise above its committed floor.
+#: Source reconstruction regressions are gated; inventory discoveries are not.
 RATCHET = {label for label, _m, _c in SOURCE_METRICS} | {
-    "unresolved func_ identities", "unresolved DAT_ identities",
+    "unresolved func_ identities",
 }
+INFORMATIONAL = {"unresolved data ownership", "raw DAT_ identities"}
 
 
 def load_baseline() -> dict[str, int]:
@@ -240,9 +298,10 @@ def save_baseline(rows: list[tuple[str, int]]) -> None:
         "# kf.cleanliness - committed floors for the source cleanliness ratchet.\n"
         "# RATCHET: down-only. Bless a lower number with `kf verify board --update`;\n"
         "# a higher one is a regression and fails `kf verify board --gate`.\n"
+        "# Data inventory counts are informational and have no floors.\n"
         "# Never hand-edit to raise a floor - reconstruct/name the symbol instead.\n"
     )
-    body = "".join(f"{label}\t{value}\n" for label, value in rows)
+    body = "".join(f"{label}\t{value}\n" for label, value in rows if label in RATCHET)
     BASELINE.write_text(header + body)
 
 
@@ -273,9 +332,12 @@ def gate(rows: list[tuple[str, int]] | None = None) -> list[str]:
 def report_lines(rows: list[tuple[str, int]] | None = None) -> list[str]:
     rows = rows if rows is not None else count()
     base = load_baseline()
-    lines = ["cleanliness (down = good; delta vs committed floor):"]
+    lines = ["cleanliness (source deltas vs committed floors; inventory counts are informational):"]
     width = max(len(label) for label, _n in rows)
     for label, n in rows:
+        if label in INFORMATIONAL:
+            lines.append(f"    {label:<{width}}  {n:>6}  [informational]")
+            continue
         delta = n - base[label] if label in base else None
         tag = "" if delta is None else (f"  ({delta:+d})" if delta else "  (=)")
         floor = "" if label in base else "  [NO FLOOR]"
@@ -293,6 +355,8 @@ def main(argv: list[str] | None = None) -> int:
                         help="MANUAL bless: rewrite the committed floor file")
     parser.add_argument("--externs", action="store_true",
                         help="list every source-local extern crutch")
+    parser.add_argument("--data", nargs="?", const="unresolved", choices=("unresolved", "all"),
+                        help="list data ownership candidates, or all identities and their evidence")
     args = parser.parse_args(argv)
 
     if args.externs:
@@ -300,6 +364,15 @@ def main(argv: list[str] | None = None) -> int:
         for path, line, symbol in sites:
             print(f"{path}:{line}\t{symbol}")
         print(f"# {len(sites)} source-local extern declaration(s)")
+        return 0
+
+    if args.data:
+        print("image\tva\tsize\tname\towner\tevidence")
+        for row, owner in data_ownership_rows():
+            if args.data == "unresolved" and owner is not None:
+                continue
+            print(f"{row.image}\t{row.va:#010x}\t{row.size:#x}\t{row.name}\t"
+                  f"{owner.owner if owner else ''}\t{owner.evidence if owner else ''}")
         return 0
 
     rows = count()

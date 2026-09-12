@@ -3,11 +3,13 @@
 from __future__ import annotations
 
 import unittest
+from dataclasses import replace
 from pathlib import Path
 from tempfile import TemporaryDirectory
 from unittest import mock
 
 from scripts.kf import cleanliness
+from scripts.kf.inventory import DataIdentity
 
 
 class StripSourceTest(unittest.TestCase):
@@ -69,6 +71,20 @@ class MetricRegexTest(unittest.TestCase):
 
 
 class GateTest(unittest.TestCase):
+    def test_inventory_discoveries_are_informational_and_not_saved_as_floors(self) -> None:
+        rows = [("pointer casts", 42), ("raw DAT_ identities", 2704),
+                ("unresolved data ownership", 100)]
+        with TemporaryDirectory() as td:
+            with mock.patch.object(cleanliness, "BASELINE", Path(td) / "baseline.tsv"):
+                cleanliness.save_baseline(rows)
+                self.assertEqual(cleanliness.load_baseline(), {"pointer casts": 42})
+                grown = [("pointer casts", 42), ("raw DAT_ identities", 3000),
+                         ("unresolved data ownership", 200)]
+                self.assertFalse(cleanliness.gate(grown))
+                inventory_lines = cleanliness.report_lines(grown)[-2:]
+                self.assertTrue(all("[informational]" in line for line in inventory_lines))
+                self.assertFalse(any("NO FLOOR" in line for line in inventory_lines))
+
     def test_seeded_passes_rise_fails_missing_floor_fails(self) -> None:
         rows = [("src func_ refs", 10), ("GAME extern decls", 5)]
         with TemporaryDirectory() as td:
@@ -96,6 +112,37 @@ class GateTest(unittest.TestCase):
                 self.assertEqual(cleanliness.load_baseline(), {"pointer casts": 42})
 
 
+class DataOwnershipTest(unittest.TestCase):
+    def setUp(self) -> None:
+        self.row = DataIdentity("GAME.EXE", 0x80012004, 4, "DAT_80012004", "unknown",
+                                "load", "pointer", "", "address-only", "seed", "")
+        self.owner = cleanliness.DataOwner("GAME.EXE", 0x80012000, 8, "load",
+                                           "game.example", "src/game/example.c:RODATA")
+
+    def test_table_element_is_owned_only_when_fully_covered_in_the_same_image(self) -> None:
+        other_image = replace(self.row, image="OPEN.EXE")
+        crosses_end = replace(self.row, size=8)
+        at_end = replace(self.row, va=0x80012008)
+        other_storage = replace(self.row, storage="bss")
+        result = cleanliness.classify_data_ownership(
+            [self.row, other_image, crosses_end, at_end, other_storage], [self.owner])
+        self.assertEqual([owner for _row, owner in result], [self.owner, None, None, None, None])
+
+    def test_renaming_or_pointing_at_sdk_code_does_not_establish_an_owner(self) -> None:
+        named = replace(self.row, name="callback", confidence="supported")
+        sdk_target = replace(self.row, note="pointer targets an SDK function")
+        self.assertTrue(all(owner is None for _row, owner in
+                            cleanliness.classify_data_ownership([named, sdk_target], [])))
+
+    def test_supported_owner_requires_evidence_and_candidate_is_not_promoted(self) -> None:
+        known = replace(self.row, owner="libgpu_sys", confidence="supported", evidence="SDK member")
+        candidate = replace(known, confidence="candidate")
+        no_evidence = replace(known, evidence="")
+        for row in [candidate, no_evidence]:
+            self.assertIsNone(cleanliness.classify_data_ownership([row], [])[0][1])
+        self.assertEqual(cleanliness.classify_data_ownership([known], [])[0][1].owner, "libgpu_sys")
+
+
 class LiveCountTest(unittest.TestCase):
     def test_source_has_no_local_extern_declarations(self) -> None:
         self.assertEqual(cleanliness.source_extern_sites(), [])
@@ -107,11 +154,12 @@ class LiveCountTest(unittest.TestCase):
         self.assertFalse(cleanliness.gate(),
                          "committed cleanliness floors are below the live counts")
 
-    def test_every_metric_is_ratcheted_and_floored(self) -> None:
+    def test_every_metric_is_either_informational_or_ratcheted_and_floored(self) -> None:
         labels = {label for label, _n in cleanliness.count()}
-        self.assertEqual(labels, cleanliness.RATCHET)
+        self.assertEqual(labels, cleanliness.RATCHET | cleanliness.INFORMATIONAL)
+        self.assertFalse(cleanliness.RATCHET & cleanliness.INFORMATIONAL)
         base = cleanliness.load_baseline()
-        self.assertTrue(labels.issubset(set(base)),
+        self.assertTrue(cleanliness.RATCHET.issubset(set(base)),
                         "a ratcheted metric has no committed floor")
 
 

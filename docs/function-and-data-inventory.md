@@ -13,6 +13,23 @@ symbols or pretending that WIP names are original symbols:
   target sizes and every field offset/extent, including opaque ranges; and
 - address-derived `func_` and `DAT_` names are stable unresolved identities.
 
+`kf verify board` reports **unresolved data ownership** separately from the
+informational **raw DAT_ identities** count. An identity has an established
+owner when its complete extent is covered by an image- and storage-matching
+source `RODATA`/`DATA` claim, or by a supported/proven identity with an owner
+and recorded evidence. A name alone, a candidate annotation, address proximity,
+or a pointer into SDK code does not establish ownership. SDK-owned data follows
+the same evidence rule. Counts describe inventory candidates, not necessarily
+the number of original C objects.
+
+Both data inventory counts are informational: discovering new data must not
+fail the source cleanliness ratchet. `--update` saves only ratcheted metrics.
+For the remaining work list, run `kf verify board --data`; use
+`kf verify board --data all` to include each accepted owner and its evidence.
+These commands read curated inputs and source claims without binary heuristics
+or changes to the inventory. The historical coverage snapshots below record
+earlier campaigns; the board supplies the current counts.
+
 Current semantic coverage is 240 of 734 functions: 220 GAME, one PSX, and 19
 OPEN identities. The reviewed GAME families now cover the linked lifecycle,
 fixed-point math helpers, memory-card/save-file subsystem, full-screen/TALK
