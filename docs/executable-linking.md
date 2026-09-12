@@ -39,6 +39,39 @@ uses the same CPPPSX/CC1PSX/ASPSX implementation as `kf build`. The reader
 translates the resulting native LNK objects for objdiff; no GNU assembler
 recompiles game source and no ELF view is an input to PSYLINK.
 
+ASPSX can erase an in-object data symbol into a section-relative reference:
+`floor_entry_cells-2` becomes `.data+14` when the table starts at `.data+16`.
+The reviewed `config/native_reloc_referents.tsv` records the image, function,
+exact function-relative HI/LO offsets, data owner, signed addend and evidence
+for exceptions that need their named owner in the comparison view. The first
+row describes the two-byte entry table indexed by one-based `floor - 1`.
+
+The reader applies a row only to its exact pair. Both native patches must
+refer to the same section and address; the named owner must be uniquely
+defined there, and `owner offset + addend` must equal the original native
+target. The instruction pair must be LUI plus a sign-extending low operation
+using its register. Missing, moved or contradictory pairs fail instead of
+choosing another symbol. Identical addresses at other sites remain unchanged.
+No assembly-wide spelling search or nearest-owner selection is performed.
+
+This follows Gruntz's explicit referent-table approach on the native-view side.
+Retail owner evidence remains independently curated in `config/retail/relocs.tsv`;
+the native conversion does not read a retail executable or borrow its bytes.
+Tests reconcile each current manifest row with that independent retail record.
+The TSV is a direct compile dependency and applied rows are recorded in object
+metadata. Only the ELF view's symbol/addend split changes; native LNK objects,
+PSYLINK inputs and executable bytes remain unchanged. These rows are reviewed
+reconstruction evidence, not proof of historical source spelling.
+
+Replacing PR #2's assembly-wide inference with this one row preserves its
+complete objdiff report (458/471 game functions exact, plus 13/13 vendored
+verification functions) and all three native executable hashes. Across 101
+objects, the former heuristic additionally renamed 216 HI/LO relocation rows
+in 20 ELF views. Removing those extra rewrites preserves every resolved
+section-relative address and all other allocated bytes, sizes and alignments;
+native section payloads, patches and symbols also agree. The ELF views are
+therefore not byte-identical to PR #2, although their match results are.
+
 The shared probe enables native compiler/assembler debug metadata for private
 symbols and function records. The source assembly passes unchanged except for
 DOS line endings. Native COMMON reservations remain unplaced in the ELF view;
