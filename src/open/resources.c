@@ -13,7 +13,6 @@
 
 enum {
     OPEN_CD_READ_ATTEMPTS = 100,
-    OPENING_ENTITY_SCENE_BASE_Y = -10000
 };
 
 /*
@@ -251,7 +250,7 @@ void opening_resources_load_scene3(void)
     cd_file_load_allocated(&stream, "B0\\MIXA3.");
     opening_entity_pool_load_placements(
         (const KfMapObjectPlacement *)(stream + KF_RESOURCE_CHUNK_HEADER_BYTES),
-        OPENING_ENTITY_SCENE_BASE_Y);
+        KF_OPENING_SCENE_BASE_Y);
     STREAM_NEXT(stream);
     memory_release_last();
     cd_file_load_allocated(&stream, "B0\\MIXB3.");
@@ -279,7 +278,7 @@ void opening_resources_load_ending(void)
         (vab_chunk = STREAM_NEXT(stream)) + KF_RESOURCE_CHUNK_HEADER_BYTES);
     opening_entity_pool_load_placements(
         (const KfMapObjectPlacement *)(STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES),
-        OPENING_ENTITY_SCENE_BASE_Y);
+        KF_OPENING_SCENE_BASE_Y);
     STREAM_NEXT(stream);
     memory_release_last();
     *arena_cursor = vab_chunk + KF_RESOURCE_REUSE_PREFIX_BYTES;
@@ -300,7 +299,7 @@ void opening_resources_load_ending_entities(void)
     cd_file_load_allocated(&stream, "B0\\MIXAF.");
     opening_entity_pool_load_placements(
         (const KfMapObjectPlacement *)(stream + KF_RESOURCE_CHUNK_HEADER_BYTES),
-        OPENING_ENTITY_SCENE_BASE_Y);
+        KF_OPENING_SCENE_BASE_Y);
     STREAM_NEXT(stream);
     memory_release_last();
 }

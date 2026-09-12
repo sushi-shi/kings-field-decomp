@@ -11,7 +11,6 @@ enum {
     DISPOISON_REQUIRED_BASE_MAGIC = 37,
     FIRE_WALL_REQUIRED_BASE_MAGIC = 70,
     LIGHTNING_BOLT_REQUIRED_BASE_MAGIC = 75,
-    PLAYER_DAMAGE_SUBUNITS_PER_HP = 10,
     PLAYER_POISON_ROLL_BUCKETS = 100,
     PLAYER_POISON_ROLL_SHIFT = 15
 };
@@ -542,27 +541,27 @@ void player_apply_damage(
         player_state.status_effect_flags |= KF_PLAYER_STATUS_SLOWED;
     }
     damage = player_calculate_damage_component(
-        player_state.physical_power * PLAYER_DAMAGE_SUBUNITS_PER_HP,
-        player_state.cutting_defense * PLAYER_DAMAGE_SUBUNITS_PER_HP,
-        component0 * PLAYER_DAMAGE_SUBUNITS_PER_HP);
+        player_state.physical_power * KF_DAMAGE_SUBUNITS_PER_HP,
+        player_state.cutting_defense * KF_DAMAGE_SUBUNITS_PER_HP,
+        component0 * KF_DAMAGE_SUBUNITS_PER_HP);
     damage += player_calculate_damage_component(
-        player_state.physical_power * PLAYER_DAMAGE_SUBUNITS_PER_HP,
-        player_state.striking_defense * PLAYER_DAMAGE_SUBUNITS_PER_HP,
-        component1 * PLAYER_DAMAGE_SUBUNITS_PER_HP);
+        player_state.physical_power * KF_DAMAGE_SUBUNITS_PER_HP,
+        player_state.striking_defense * KF_DAMAGE_SUBUNITS_PER_HP,
+        component1 * KF_DAMAGE_SUBUNITS_PER_HP);
     damage += player_calculate_damage_component(
-        player_state.physical_power * PLAYER_DAMAGE_SUBUNITS_PER_HP,
-        player_state.piercing_defense * PLAYER_DAMAGE_SUBUNITS_PER_HP,
-        component2 * PLAYER_DAMAGE_SUBUNITS_PER_HP);
+        player_state.physical_power * KF_DAMAGE_SUBUNITS_PER_HP,
+        player_state.piercing_defense * KF_DAMAGE_SUBUNITS_PER_HP,
+        component2 * KF_DAMAGE_SUBUNITS_PER_HP);
     damage += player_calculate_damage_component(
-        player_state.physical_power * PLAYER_DAMAGE_SUBUNITS_PER_HP,
-        player_state.magic_defense * PLAYER_DAMAGE_SUBUNITS_PER_HP,
-        component3 * PLAYER_DAMAGE_SUBUNITS_PER_HP);
+        player_state.physical_power * KF_DAMAGE_SUBUNITS_PER_HP,
+        player_state.magic_defense * KF_DAMAGE_SUBUNITS_PER_HP,
+        component3 * KF_DAMAGE_SUBUNITS_PER_HP);
     damage += player_calculate_damage_component(
-        player_state.physical_power * PLAYER_DAMAGE_SUBUNITS_PER_HP,
-        player_state.fire_defense * PLAYER_DAMAGE_SUBUNITS_PER_HP,
-        component4 * PLAYER_DAMAGE_SUBUNITS_PER_HP);
-    damage += PLAYER_DAMAGE_SUBUNITS_PER_HP / 2;
-    damage = (scale_q12 * (damage / PLAYER_DAMAGE_SUBUNITS_PER_HP)) >> KF_FIXED12_BITS;
+        player_state.physical_power * KF_DAMAGE_SUBUNITS_PER_HP,
+        player_state.fire_defense * KF_DAMAGE_SUBUNITS_PER_HP,
+        component4 * KF_DAMAGE_SUBUNITS_PER_HP);
+    damage += KF_DAMAGE_SUBUNITS_PER_HP / 2;
+    damage = (scale_q12 * (damage / KF_DAMAGE_SUBUNITS_PER_HP)) >> KF_FIXED12_BITS;
     loss = (multiplier_tenths * damage) / KF_PLAYER_DAMAGE_MULTIPLIER_ONE;
     if (loss != 0) {
         remaining = player_state.vitals.current_hp - loss;

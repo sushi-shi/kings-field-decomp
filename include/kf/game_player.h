@@ -4,6 +4,7 @@
 /* Player state, shared player data, and player operations. */
 
 #include <kf/bool.h>
+#include <kf/combat.h>
 #include <kf/audio.h>
 #include <kf/enum.h>
 #include <kf/game_equipment.h>

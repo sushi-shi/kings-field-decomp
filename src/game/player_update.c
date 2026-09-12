@@ -55,9 +55,7 @@ enum {
     PLAYER_WEAPON_MAGIC_SPAWN_X = 200,
     PLAYER_WEAPON_MAGIC_SPAWN_Y = 200,
     PLAYER_WEAPON_MAGIC_SPAWN_Z = 400,
-    PLAYER_WEAPON_MAGIC_TARGET_RANGE = 20000,
     PLAYER_WEAPON_MAGIC_BURST_CONE = 0x155,
-    PLAYER_WEAPON_MAGIC_TARGET_CONE = 0x555,
     PLAYER_WEAPON_MAGIC_JITTER_BIAS = 4,
     PLAYER_WEAPON_MAGIC_RANDOM_SHIFT = 9,
     PLAYER_WEAPON_MAGIC_SPEED = 900,
@@ -443,7 +441,7 @@ void player_update(void)
                     if ((effect == KF_EFFECT_KIND_FIRE_BALL || effect == KF_EFFECT_KIND_LIGHT_NEEDLE)
                         && player_state.weapon_magic_shots_remaining != 1) {
                         actor_state.player_target = actor_pool_find_target_in_cone(
-                            origin, player_state.camera_rotation.vy, PLAYER_WEAPON_MAGIC_TARGET_RANGE,
+                            origin, player_state.camera_rotation.vy, KF_EFFECT_ACTOR_TARGET_MAX_DISTANCE,
                             PLAYER_WEAPON_MAGIC_BURST_CONE, &distance);
                         effect_rotation.angles.x -= PLAYER_WEAPON_MAGIC_JITTER_BIAS
                             - (rand() >> PLAYER_WEAPON_MAGIC_RANDOM_SHIFT);
@@ -454,8 +452,8 @@ void player_update(void)
                     } else {
                         target = actor_pool_find_target_in_cone(
                             &player_state.camera_position,
-                            player_state.camera_rotation.vy, PLAYER_WEAPON_MAGIC_TARGET_RANGE,
-                            PLAYER_WEAPON_MAGIC_TARGET_CONE, &distance);
+                            player_state.camera_rotation.vy, KF_EFFECT_ACTOR_TARGET_MAX_DISTANCE,
+                            KF_EFFECT_ACTOR_TARGET_WIDE_CONE, &distance);
                         actor_state.player_target = target;
                         if (target == NULL) {
                             attachment = KF_EFFECT_HOMING_WANDER;

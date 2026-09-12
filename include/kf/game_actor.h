@@ -4,6 +4,7 @@
 /* Actor and combatant layouts, state, and operations. */
 
 #include <kf/bool.h>
+#include <kf/combat.h>
 #include <kf/animation.h>
 #include <kf/game_effect.h>
 #include <kf/player_status.h>
@@ -165,7 +166,6 @@ enum {
 enum {
     KF_ACTOR_MULTI_HIT_FORWARD_MIN_RANGE = 8000,
     KF_ACTOR_MULTI_HIT_MAX_RANGE = 11000,
-    KF_ACTOR_RANDOM_YAW_SHIFT = 3,
     KF_ACTOR_BOSS_DEATH_SOUND_COUNT = 4
 };
 

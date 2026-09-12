@@ -53,8 +53,6 @@ enum {
     HOMING_YAW_RANDOM_BIAS = 512,
     HOMING_WANDER_RANDOM_CUTOFF = 3276,
     HOMING_PLAYER_AIM_Y_OFFSET = 800,
-    HOMING_TARGET_MAX_DISTANCE = 20000,
-    HOMING_TARGET_CONE_ANGLE = 1365,
     HOMING_TURN_STEP = KF_ANGLE_FULL_TURN / 64,
     HOMING_FORWARD_STEP = 650,
     HOMING_ROLL_STEP = 256
@@ -72,7 +70,6 @@ enum {
     GROUND_BRANCH_DAMAGE_PERIOD = 4,
     GROUND_BRANCH_DAMAGE_RADIUS = 1500,
     GROUND_BRANCH_YAW_STEP = 500,
-    GROUND_VISUAL_ANGLE_RANDOM_SHIFT = 3,
     GROUND_VISUAL_RADIUS_RANDOM_SCALE = 325,
     GROUND_VISUAL_RADIUS_RANDOM_SHIFT = 13
 };
@@ -506,7 +503,7 @@ randomize_homing_direction:
             } else {
                 target = actor_pool_find_target_in_cone(
                     &effect->position,
-                    effect->rotation.vector.vy, HOMING_TARGET_MAX_DISTANCE, HOMING_TARGET_CONE_ANGLE, &target_distance);
+                    effect->rotation.vector.vy, KF_EFFECT_ACTOR_TARGET_MAX_DISTANCE, KF_EFFECT_ACTOR_TARGET_WIDE_CONE, &target_distance);
                 if (target != NULL) {
                     KfActorDefinition *definition =
                         &actor_state.definitions.entries[target->definition_id];
@@ -667,7 +664,7 @@ advance_effect_phase:
             if ((KF_ENUM_ENCODE(u8, phase) & (GROUND_BRANCH_DAMAGE_PERIOD - 1)) == 0) {
                 VECTOR spawn_position;
 
-                angle = (u32)rand() >> GROUND_VISUAL_ANGLE_RANDOM_SHIFT;
+                angle = (u32)rand() >> KF_RANDOM_ANGLE_SHIFT;
                 distance = ((u32)rand() * GROUND_VISUAL_RADIUS_RANDOM_SCALE) >> GROUND_VISUAL_RADIUS_RANDOM_SHIFT;
                 spawn_position.vx = effect->position.vx
                     + ((rsin(angle) * distance) >> KF_FIXED12_BITS);

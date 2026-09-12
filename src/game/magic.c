@@ -10,10 +10,6 @@ enum {
     MAGIC_LAUNCH_OFFSET_X = -200,
     MAGIC_LAUNCH_OFFSET_Y = 200,
     MAGIC_LAUNCH_OFFSET_Z = 400,
-    MAGIC_TARGET_MAX_DISTANCE = 20000,
-    MAGIC_DEFAULT_SPEED = 600,
-    LIGHTNING_SPEED = 800,
-    WIND_CUTTER_SPEED = 800,
     LIGHTNING_UNTARGETED_PITCH = -128,
     LIGHTNING_UNTARGETED_UPDATES = 20,
     LIGHTNING_HEIGHT_CLASS_THRESHOLD = -4999,
@@ -77,12 +73,12 @@ void magic_cast(void)
         addVector(&world_pos, &player_state.camera_position);
         target = actor_pool_find_target_in_cone(
             &player_state.camera_position,
-            player_state.camera_rotation.vy, MAGIC_TARGET_MAX_DISTANCE, KF_ACTOR_AIM_TOLERANCE, &distance);
+            player_state.camera_rotation.vy, KF_EFFECT_ACTOR_TARGET_MAX_DISTANCE, KF_ACTOR_AIM_TOLERANCE, &distance);
         actor_state.player_target = target;
         if (target == NULL) {
-            speed = MAGIC_DEFAULT_SPEED;
+            speed = KF_EFFECT_PROJECTILE_DEFAULT_SPEED;
             if (player_state.selected_magic_id == KF_MAGIC_LIGHTNING_BOLT) {
-                speed = LIGHTNING_SPEED;
+                speed = KF_EFFECT_LIGHTNING_SPEED;
                 angles.x = LIGHTNING_UNTARGETED_PITCH;
                 distance = LIGHTNING_UNTARGETED_UPDATES;
             } else {
@@ -90,7 +86,7 @@ void magic_cast(void)
                 angles.x += player_state.camera_rotation.vx;
             }
         } else {
-            speed = MAGIC_DEFAULT_SPEED;
+            speed = KF_EFFECT_PROJECTILE_DEFAULT_SPEED;
             if (player_state.selected_magic_id == KF_MAGIC_LIGHTNING_BOLT) {
                 if (map_cell_attribute_height_table[
                         KF_ENUM_ENCODE(u8, map_cell_attribute_grid.cells[target->cell_z][target->cell_x]) - 1]
@@ -101,14 +97,14 @@ void magic_cast(void)
                     s32 aim_y = world_pos.vy + LIGHTNING_LOWER_HEIGHT_Y_OFFSET;
                     angles.x = vector_xz_to_angle(aim_y - target->position.vy, -distance);
                 }
-                speed = LIGHTNING_SPEED;
+                speed = KF_EFFECT_LIGHTNING_SPEED;
                 distance = distance / speed;
             } else {
                 angles.x = player_state.camera_rotation.vx;
             }
         }
         if (player_state.selected_magic_id == KF_MAGIC_WIND_CUTTER) {
-            speed = WIND_CUTTER_SPEED;
+            speed = KF_EFFECT_WIND_CUTTER_SPEED;
         }
         angles.y = player_state.camera_rotation.vy;
         angles.z = player_state.camera_rotation.vz;
@@ -134,7 +130,7 @@ void magic_cast(void)
 
         target = actor_pool_find_target_in_cone(
             &player_state.camera_position,
-            player_state.camera_rotation.vy, MAGIC_TARGET_MAX_DISTANCE, KF_ACTOR_AIM_TOLERANCE, &distance);
+            player_state.camera_rotation.vy, KF_EFFECT_ACTOR_TARGET_MAX_DISTANCE, KF_ACTOR_AIM_TOLERANCE, &distance);
         if (target != NULL) {
             effect_pool_construct(
                 KF_PLAYER_DAMAGE_MULTIPLIER_ONE, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,

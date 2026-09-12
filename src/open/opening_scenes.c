@@ -39,7 +39,6 @@ enum {
     SCENE3_CLUT_WORK_CAPACITY = 6,
     SCENE_CAMERA_WAVE_SHIFT = 7,
     SCENE_CAMERA_WAVE_ANGLE_STEP = 100,
-    TRANSITION_BASE_Y = -10000,
     PANEL_TPAGE_FIRST_X = 0x1c0,
     PANEL_TPAGE_X_STRIDE = 0x40,
     PANEL_CLUT_FIRST_Y = 0x1ed,
@@ -514,7 +513,7 @@ void opening_scene3_run(void)
 
     setVector(&transition_position,
         opening_camera_path_state.position.vx,
-        TRANSITION_BASE_Y,
+        KF_OPENING_SCENE_BASE_Y,
         opening_camera_path_state.position.vz);
     if (opening_input_action == KF_OPENING_INPUT_NONE) {
         opening_entity_transition(KF_OPENING_TRANSITION_GROW, &transition_position);
@@ -556,7 +555,7 @@ void opening_ending_scene_run(void)
     entity_13->rotation.y = 0;
     opening_camera_path_begin(opening_ending_camera_path);
 
-    transition_position.vy = TRANSITION_BASE_Y;
+    transition_position.vy = KF_OPENING_SCENE_BASE_Y;
     transition_position.vx = opening_camera_path_state.position.vx;
     transition_position.vz = opening_camera_path_state.position.vz;
     SetDispMask(1);
@@ -729,7 +728,7 @@ void opening_ending_scroll_run(void)
     open_graphics_runtime.tmd_projection_shift = ENDING_TMD_PROJECTION_SHIFT;
     /* Retail retains this otherwise unconsumed stack-owned position snapshot. */
     setVector(&transition_position,
-        opening_camera_path_state.position.vx, TRANSITION_BASE_Y,
+        opening_camera_path_state.position.vx, KF_OPENING_SCENE_BASE_Y,
         opening_camera_path_state.position.vz);
     open_graphics_runtime.floor_item_state.material.color.r = 0;
     open_graphics_runtime.floor_item_state.material.color.g = 0;

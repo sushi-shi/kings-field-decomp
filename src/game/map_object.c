@@ -8,7 +8,6 @@
 /* Distances are world units; motion is per action update. */
 enum {
     MAP_DOOR_INTERACTION_LOCAL_Z = 550,
-    MAP_DROP_RANDOM_YAW_SHIFT = 3,
     MAP_GOLD_DROP_SCATTER_RADIUS = 600,
     MAP_GOLD_DROP_INITIAL_VELOCITY_Y = -120,
     MAP_EFFECT_SPAWN_SEQUENCE_MODULUS = 0x10000,
@@ -177,7 +176,7 @@ void map_object_spawn_effect(KfMapObjectDropSource kind, KfMapObjectId object_id
     object->rotation.angles.z = 0;
     object->rotation.angles.x = 0;
     within_drop_range = object_id < KF_MAP_DROP_BOUNCE_ID_END;
-    object->rotation.angles.y = rand() >> MAP_DROP_RANDOM_YAW_SHIFT;
+    object->rotation.angles.y = rand() >> KF_RANDOM_ANGLE_SHIFT;
     object->action = KF_MAP_OBJECT_ACTION_IDLE;
     if (object_id < KF_MAP_DROP_TIP_ID_END) {
         map_object_start_action_if_idle(object, KF_MAP_OBJECT_ACTION_FALL_AND_TIP);
@@ -203,7 +202,7 @@ void map_object_spawn_actor_debris(u16 source, const VECTOR *position, s32 y_off
     object->object_id = KF_MAP_OBJECT_GOLD_COIN;
     /* Gold drops store their amount across the link and parameter bytes. */
     object->link.gold_amount = source;
-    angle = (u32)rand() >> MAP_DROP_RANDOM_YAW_SHIFT;
+    angle = (u32)rand() >> KF_RANDOM_ANGLE_SHIFT;
     setVector(&object->position,
         ((rsin(angle) * MAP_GOLD_DROP_SCATTER_RADIUS) >> KF_FIXED12_BITS) + position->vx,
         y_offset + position->vy,
@@ -212,7 +211,7 @@ void map_object_spawn_actor_debris(u16 source, const VECTOR *position, s32 y_off
     object->cell_z = object->position.vz / KF_MAP_TILE_SIZE;
     object->rotation.angles.z = 0;
     object->rotation.angles.x = 0;
-    object->rotation.angles.y = rand() >> MAP_DROP_RANDOM_YAW_SHIFT;
+    object->rotation.angles.y = rand() >> KF_RANDOM_ANGLE_SHIFT;
     object->action = KF_MAP_OBJECT_ACTION_IDLE;
     map_object_start_action_if_idle(object, KF_MAP_OBJECT_ACTION_BOUNCE);
     object->link.fields.vertical_velocity = MAP_GOLD_DROP_INITIAL_VELOCITY_Y;

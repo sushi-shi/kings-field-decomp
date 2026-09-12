@@ -26,6 +26,13 @@ enum {
     KF_LENGTH_SQUARE_DOWNSHIFT = 3
 };
 
+enum {
+    /* Extract a full-turn angle from the SDK's 15-bit rand() result. */
+    KF_RANDOM_ANGLE_SHIFT = 3,
+    /* Initial signed-halfword ranking error for actor and map-event cones. */
+    KF_CONE_SEARCH_INITIAL_ANGLE_ERROR = 30000
+};
+
 struct KfVecXZs {
     s16 x;
     s16 z;

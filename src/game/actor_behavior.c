@@ -69,9 +69,6 @@ enum {
 enum {
     ACTOR_PAIRED_EFFECT_X_OFFSET = 1500,
     ACTOR_EFFECT_AIM_RANGE = 50000,
-    ACTOR_EFFECT_DEFAULT_SPEED = 600,
-    ACTOR_LIGHTNING_VARIANT_SPEED = 800,
-    ACTOR_WIND_CUTTER_SPEED = 800,
     ACTOR_PROPAGATING_EFFECT_SPEED = 250,
     ACTOR_LIGHTNING_FALLBACK_PITCH = -32,
     ACTOR_EFFECT_FALLBACK_MOVE_COUNT = 20,
@@ -549,7 +546,7 @@ void actor_spawn_action_effect(KF_ENUM_PARAM(KfActorEffectCode, s32) effect_code
             if (distance == -1) {
                 effect_rotation.angles.x = 0;
                 if (effect_code == KF_ACTOR_EFFECT_CODE_LIGHTNING_ALTERNATE) {
-                    speed = ACTOR_LIGHTNING_VARIANT_SPEED;
+                    speed = KF_EFFECT_LIGHTNING_SPEED;
                     effect_rotation.angles.x = ACTOR_LIGHTNING_FALLBACK_PITCH;
                     distance = ACTOR_EFFECT_FALLBACK_MOVE_COUNT;
                 } else if (effect_code == KF_ACTOR_EFFECT_CODE_ACTOR_SPAWNER
@@ -557,7 +554,7 @@ void actor_spawn_action_effect(KF_ENUM_PARAM(KfActorEffectCode, s32) effect_code
                     speed = ACTOR_PROPAGATING_EFFECT_SPEED;
                     distance = ACTOR_EFFECT_FALLBACK_MOVE_COUNT;
                 } else {
-                    speed = ACTOR_EFFECT_DEFAULT_SPEED;
+                    speed = KF_EFFECT_PROJECTILE_DEFAULT_SPEED;
                 }
                 effect_rotation.angles.y = facing;
             } else {
@@ -565,7 +562,7 @@ void actor_spawn_action_effect(KF_ENUM_PARAM(KfActorEffectCode, s32) effect_code
                     actor_state.player_position.vx - position.vx,
                     position.vz - actor_state.player_position.vz);
                 if (effect_code == KF_ACTOR_EFFECT_CODE_LIGHTNING_ALTERNATE) {
-                    speed = ACTOR_LIGHTNING_VARIANT_SPEED;
+                    speed = KF_EFFECT_LIGHTNING_SPEED;
                     effect_rotation.angles.x = vector_xz_to_angle(
                         position.vy - (actor_state.player_position.vy - ACTOR_LIGHTNING_TARGET_Y_OFFSET), -distance);
                     distance = distance / speed;
@@ -587,13 +584,13 @@ void actor_spawn_action_effect(KF_ENUM_PARAM(KfActorEffectCode, s32) effect_code
                         distance -= ACTOR_SPAWNER_TARGET_STANDOFF;
                         goto clamp_steps;
                     } else {
-                        speed = ACTOR_EFFECT_DEFAULT_SPEED;
+                        speed = KF_EFFECT_PROJECTILE_DEFAULT_SPEED;
                     }
                 }
             }
             effect_rotation.angles.z = 0;
             if (effect_code == KF_ACTOR_EFFECT_CODE_WIND_CUTTER) {
-                speed = ACTOR_WIND_CUTTER_SPEED;
+                speed = KF_EFFECT_WIND_CUTTER_SPEED;
             }
             pitch_yaw_to_forward_vector(&effect_rotation.angles, &direction);
             vector3s_scale_shift12(speed, &direction);
@@ -880,9 +877,9 @@ void actor_update_current_action(void)
                 actor->animation_id = definition->action_animations[KF_ACTOR_ANIM_SLOT_MOVE];
                 actor->animation_phase = 0;
             }
-            actor->movement_yaw = rand() >> KF_ACTOR_RANDOM_YAW_SHIFT;
+            actor->movement_yaw = rand() >> KF_RANDOM_ANGLE_SHIFT;
         } else if (actor->collision_state == KF_ACTOR_COLLISION_CLEAR && rand() < ACTOR_WANDER_TURN_RANDOM_LIMIT) {
-            actor->movement_yaw = rand() >> KF_ACTOR_RANDOM_YAW_SHIFT;
+            actor->movement_yaw = rand() >> KF_RANDOM_ANGLE_SHIFT;
         }
         actor_move_along_heading(KF_ACTOR_MOVE_FORWARD, KF_ACTOR_COLLISION_STEER);
         actor_advance_animation_wrapped(actor, definition->action_animation_steps[KF_ACTOR_ANIM_SLOT_MOVE]);

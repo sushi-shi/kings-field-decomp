@@ -1,6 +1,15 @@
 #ifndef KF_GAME_EFFECT_H
 #define KF_GAME_EFFECT_H
 
+/* Shared projectile launch and actor-target acquisition parameters. */
+enum {
+    KF_EFFECT_PROJECTILE_DEFAULT_SPEED = 600,
+    KF_EFFECT_LIGHTNING_SPEED = 800,
+    KF_EFFECT_WIND_CUTTER_SPEED = 800,
+    KF_EFFECT_ACTOR_TARGET_MAX_DISTANCE = 20000,
+    KF_EFFECT_ACTOR_TARGET_WIDE_CONE = 0x555
+};
+
 /*
  * GAME.EXE effect-pool lifecycle, construction, collision, and dispatch.
  * The general constructor has five fixed arguments followed by slots whose
