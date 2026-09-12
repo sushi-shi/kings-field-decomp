@@ -5,6 +5,8 @@ about which source shapes reproduce it under the current probes. Each note
 records the retail evidence first and the probe behaviour second; none of them
 promotes a probe to a proven historical toolchain.
 
+- [sdk-data-ownership.md](sdk-data-ownership.md): complete SDK tables, startup
+  boundaries and reviewed ownership of the remaining data-field candidates.
 - [data-ownership-inventory-cleanup.md](data-ownership-inventory-cleanup.md):
   redundant game RODATA identities and complete LIBSPU dispatch-table owners.
 - [effect-constructor-varargs.md](effect-constructor-varargs.md): kind-specific

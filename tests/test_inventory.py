@@ -17,6 +17,7 @@ from scripts.kf.inventory import (
 from scripts.kf.local_config import configured_retail_dir
 from scripts.kf.manifest import load as load_manifest
 from scripts.kf.paths import CONFIG, REPO, RETAIL_CONFIG
+from scripts.kf.relocations import decode_hi_lo_target
 from scripts.kf.retail import parse_int, read_tsv
 from scripts.kf.sema.index import index
 from scripts.kf.sema.image import RetailImage
@@ -250,12 +251,50 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["signatures_started"], 471)
         self.assertEqual(counts["typed_returns"], 471)
         self.assertEqual(counts["parameterized"], 306)
-        self.assertEqual(counts["data"], 1237)
+        self.assertEqual(counts["data"], 748)
         self.assertGreaterEqual(counts["functions_named"], 240)
         self.assertGreaterEqual(counts["data_named"], 100)
         self.assertEqual(counts["structures"], 128)
         self.assertEqual(counts["structure_fields"], 871)
         self.assertEqual(counts["structure_fields_named"], 784)
+
+    def test_sdk_field_ownership_has_individual_evidence(self) -> None:
+        identities = load_data_identities(RETAIL_CONFIG)
+        _, rows = read_tsv(CONFIG / "evidence" / "sdk_data_owners.tsv")
+        self.assertEqual(len(rows), 523)
+        self.assertEqual(len({(r["image"], r["va"]) for r in rows}), len(rows))
+        for row in rows:
+            with self.subTest(image=row["image"], va=row["va"]):
+                datum = identities[row["image"], parse_int(row["va"])]
+                self.assertEqual((datum.size, datum.owner),
+                                 (parse_int(row["size"]), row["owner"]))
+                self.assertIn("sdk_data_owners.tsv", datum.evidence)
+                self.assertTrue(row["referent"] and row["retail_site"])
+                self.assertTrue(row["consumer_library"] and row["consumer_module"])
+
+    def test_sdk_field_address_evidence_agrees_with_retail(self) -> None:
+        try:
+            retail_dir = configured_retail_dir(validate=False)
+        except ValueError:
+            self.skipTest("retail directory is not configured")
+        if not all((retail_dir / image).is_file() for image in ("GAME.EXE", "OPEN.EXE")):
+            self.skipTest("retail GAME.EXE and OPEN.EXE are required")
+        images = {image: RetailImage.load(image) for image in ("GAME.EXE", "OPEN.EXE")}
+        _, rows = read_tsv(CONFIG / "evidence" / "sdk_data_owners.tsv")
+        checked = 0
+        for row in rows:
+            if not row["paired_site"]:
+                continue
+            with self.subTest(image=row["image"], va=row["va"]):
+                retail = images[row["image"]]
+                high = int.from_bytes(retail.require(parse_int(row["retail_site"]), 4),
+                                      "little")
+                low = int.from_bytes(retail.require(parse_int(row["paired_site"]), 4),
+                                     "little")
+                self.assertEqual(decode_hi_lo_target(high, low),
+                                 parse_int(row["decoded_target"]))
+                checked += 1
+        self.assertEqual(checked, 453)
 
     def test_animation_cache_slots_share_one_pointer_type_without_layout_changes(self) -> None:
         structures = load_structure_identities(RETAIL_CONFIG)
