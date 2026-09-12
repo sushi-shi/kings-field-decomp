@@ -1,7 +1,7 @@
 # Complete enum reuse review
 
 Stack integration: this PR follows the native referent fix in
-[PR #2](https://github.com/sushi-shi/kings-field-decomp/pull/2). A fresh comparison
+[PR #6](https://github.com/sushi-shi/kings-field-decomp/pull/6). A fresh comparison
 against that base preserves all 101 objects, ordered relocations and all three
 native executables. The combined report has 458/471 game functions exact, plus
 13/13 vendored verification functions. The one additional exact game function
