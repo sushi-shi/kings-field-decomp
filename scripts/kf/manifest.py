@@ -439,6 +439,20 @@ def load(
         defines = tuple(raw_defines)
         claims, data_claims = scan_source(source_path)
         rodata_claims = scan_rodata_claims(source_path)
+        image_token = image.removesuffix(".EXE")
+        if any(claim.image is not None for claim in claims):
+            # A shared source spells every image's addresses with ADDRESS_AT();
+            # this unit keeps only the claims for its own image. Plain ADDRESS()
+            # claims (image None) still default to the unit's image.
+            if bind == "name":
+                raise ValueError(
+                    f"{source}: ADDRESS_AT() claims cannot combine with "
+                    'bind = "name"'
+                )
+            claims = tuple(
+                claim for claim in claims
+                if claim.image is None or claim.image == image_token
+            )
         if bind == "name":
             # A shared source carries the claims of its primary image; another
             # image reuses it by resolving every claimed definition through

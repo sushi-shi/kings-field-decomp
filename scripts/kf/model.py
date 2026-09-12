@@ -24,6 +24,10 @@ CLAIM_RE = re.compile(
     r"^\s*(ADDRESS|DATA)\(\s*(0x[0-9A-Fa-f]+)\s*,\s*(0x[0-9A-Fa-f]+|[0-9]+)\s*\)\s*"
     r"(?:/\*.*\*/\s*)?$"
 )
+ADDRESS_AT_RE = re.compile(
+    r'^\s*ADDRESS_AT\(\s*"([A-Z]+)"\s*,\s*(0x[0-9A-Fa-f]+)\s*,\s*'
+    r"(0x[0-9A-Fa-f]+|[0-9]+)\s*\)\s*(?:/\*.*\*/\s*)?$"
+)
 IDENTIFIER_RE = re.compile(r"[A-Za-z_][A-Za-z0-9_]*")
 FUNCTION_POINTER_RE = re.compile(r"\(\s*\*\s*([A-Za-z_][A-Za-z0-9_]*)")
 BINDING_FIELDS = ("image", "va", "kind", "name", "unit", "source", "line", "ordinal")
@@ -35,6 +39,10 @@ class Claim:
     size: int
     name: str
     line: int
+    # Short image token ("GAME"/"OPEN"/"PSX") for an ADDRESS_AT() claim in a
+    # shared source; None for a plain ADDRESS() claim, which binds to the
+    # claiming unit's own image.
+    image: str | None = None
 
 
 @dataclass(frozen=True)
@@ -72,6 +80,10 @@ def _definition_after(lines: list[str], index: int) -> str:
     for following in lines[index + 1:index + 6]:
         stripped = following.strip()
         if not stripped or stripped.startswith(("/*", "//", "*")):
+            continue
+        # A shared function stacks several ADDRESS_AT()/ADDRESS() claims before
+        # its definition; skip sibling claims to reach the declarator.
+        if CLAIM_RE.match(following) or ADDRESS_AT_RE.match(following):
             continue
         return stripped
     return ""
@@ -114,33 +126,63 @@ def _function_name(definition: str) -> str | None:
 
 
 def scan_source(source: Path) -> tuple[tuple[Claim, ...], tuple[DataClaim, ...]]:
-    """Return the ADDRESS() and DATA() claims of one source in file order."""
+    """Return the ADDRESS()/ADDRESS_AT() and DATA() claims in file order.
+
+    Function claims may stack (one ADDRESS_AT() per image before a shared
+    definition); a run of consecutive function-claim lines shares the one
+    definition that follows it. Each ADDRESS_AT() claim carries its image; a
+    plain ADDRESS() claim carries ``image=None`` and binds to its unit's image.
+    """
     lines = source.read_text(encoding="utf-8").splitlines()
     claims: list[Claim] = []
     data_claims: list[DataClaim] = []
-    for index, text in enumerate(lines):
-        match = CLAIM_RE.match(text)
-        if match is None:
-            continue
-        kind = match.group(1)
-        va = int(match.group(2), 16)
-        size = int(match.group(3), 0)
-        definition = _definition_after(lines, index)
-        if kind == "ADDRESS":
-            name = _function_name(definition)
+    index = 0
+    total = len(lines)
+    while index < total:
+        text = lines[index]
+        plain = CLAIM_RE.match(text)
+        at = ADDRESS_AT_RE.match(text)
+        if plain is not None and plain.group(1) == "DATA":
+            va = int(plain.group(2), 16)
+            size = int(plain.group(3), 0)
+            name = _data_name(_definition_after(lines, index))
             if name is None:
                 raise ValueError(
-                    f"{source}:{index + 1}: ADDRESS({va:#x}) is not followed by a "
-                    "function definition"
+                    f"{source}:{index + 1}: DATA({va:#x}) is not followed by a "
+                    "global definition"
                 )
-            claims.append(Claim(va, size, name, index + 1))
+            data_claims.append(DataClaim(va, size, name, index + 1))
+            index += 1
             continue
-        name = _data_name(definition)
+        if at is None and plain is None:
+            index += 1
+            continue
+        # A run of consecutive function claims (ADDRESS()/ADDRESS_AT()) that
+        # share the single definition following the run.
+        run: list[tuple[str | None, int, int, int]] = []
+        first_line = index + 1
+        while index < total:
+            line_at = ADDRESS_AT_RE.match(lines[index])
+            line_plain = CLAIM_RE.match(lines[index])
+            if line_at is not None:
+                run.append((line_at.group(1), int(line_at.group(2), 16),
+                            int(line_at.group(3), 0), index + 1))
+                index += 1
+            elif line_plain is not None and line_plain.group(1) == "ADDRESS":
+                run.append((None, int(line_plain.group(2), 16),
+                            int(line_plain.group(3), 0), index + 1))
+                index += 1
+            else:
+                break
+        name = _function_name(_definition_after(lines, index - 1))
         if name is None:
+            va = run[0][1]
             raise ValueError(
-                f"{source}:{index + 1}: DATA({va:#x}) is not followed by a global definition"
+                f"{source}:{first_line}: ADDRESS({va:#x}) is not followed by a "
+                "function definition"
             )
-        data_claims.append(DataClaim(va, size, name, index + 1))
+        for image, va, size, line in run:
+            claims.append(Claim(va, size, name, line, image))
     return tuple(claims), tuple(data_claims)
 
 

@@ -70,6 +70,25 @@ class ClaimScanTests(unittest.TestCase):
         with self.assertRaises(ValueError):
             self._scan("ADDRESS(0x80010000, 0x10)\nextern int x;\n")
 
+    def test_address_at_stacks_per_image_claims_on_one_definition(self) -> None:
+        claims = self._scan(
+            "#include <kf/address.h>\n\n"
+            'ADDRESS_AT("GAME", 0x800202fc, 0x68)\n'
+            'ADDRESS_AT("OPEN", 0x80019598, 0x68)\n'
+            "void matrix_interpolate(void)\n{\n}\n"
+        )
+        self.assertEqual(
+            claims,
+            (
+                Claim(0x800202FC, 0x68, "matrix_interpolate", 3, "GAME"),
+                Claim(0x80019598, 0x68, "matrix_interpolate", 4, "OPEN"),
+            ),
+        )
+
+    def test_plain_address_carries_no_image(self) -> None:
+        (claim,) = self._scan("ADDRESS(0x80010000, 0x10)\nvoid first(void)\n{\n}\n")
+        self.assertIsNone(claim.image)
+
     def _scan_data(self, text: str) -> tuple[DataClaim, ...]:
         with tempfile.TemporaryDirectory(prefix="kf-model-") as directory:
             source = Path(directory) / "unit.c"

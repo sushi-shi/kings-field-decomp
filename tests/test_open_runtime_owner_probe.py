@@ -171,8 +171,10 @@ class OpenRuntimeOwnerProbeTests(unittest.TestCase):
             "open.opening_controller": {"opening_run"},
             "open.render_sprite": {"render_enqueue_sprite"},
             "open.entity_render": {"opening_entity_render"},
-            "open.matrix": {
+            "open.matrix_lerp": {
                 "matrix_interpolate", "lighting_set_color_matrix", "lighting_set_light_matrix",
+            },
+            "open.matrix": {
                 "fog_set_near", "color_lerp_cvector", "color_lerp_rgb555",
             },
         }

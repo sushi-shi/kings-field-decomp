@@ -18,6 +18,24 @@
 #define ADDRESS(va, size)
 
 /*
+ * Per-image retail claim for a function that one source reconstructs into more
+ * than one linked program. A shared source (under src/shared/) precedes each
+ * definition with one ADDRESS_AT() per image it appears in, spelling that
+ * image's start address and retail body size:
+ *
+ *     ADDRESS_AT("GAME", 0x800202fc, 0x68)
+ *     ADDRESS_AT("OPEN", 0x80019598, 0x68)
+ *     void matrix_interpolate(...)
+ *
+ * The source is listed as one unit per image in config/units.toml; model.py
+ * binds each unit's functions to the ADDRESS_AT() addresses whose image matches
+ * that unit, so the C text is written once while the addresses stay
+ * image-qualified. A source may not mix ADDRESS_AT() with the name-rebinding
+ * bind mode. Claims for a given image still ascend and cover a contiguous run.
+ */
+#define ADDRESS_AT(image, va, size)
+
+/*
  * Retail claim for a global a unit owns: the datum's address and its curated
  * size. It precedes the DEFINITION (never an extern) and binds the declarator
  * to the matching data_identities.tsv row, so the module target object carries

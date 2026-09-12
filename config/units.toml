@@ -255,6 +255,12 @@ source = "src/game/render_frame.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
+unit = "game.matrix_lerp"
+image = "GAME.EXE"
+source = "src/shared/matrix_lerp.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
 unit = "game.matrix"
 image = "GAME.EXE"
 source = "src/game/matrix.c"
@@ -611,6 +617,12 @@ profile = "probe-gcc257-o2-g0"
 unit = "open.opening_render_entities"
 image = "OPEN.EXE"
 source = "src/open/opening_render_entities.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "open.matrix_lerp"
+image = "OPEN.EXE"
+source = "src/shared/matrix_lerp.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]

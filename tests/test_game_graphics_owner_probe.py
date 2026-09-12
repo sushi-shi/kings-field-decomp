@@ -638,6 +638,7 @@ extern KfMaterialProbe material_probe;
             'game.map_load',
             'game.map_scripts',
             'game.matrix',
+            'game.matrix_lerp',
             'game.menu_map_viewer',
             'game.menu_runtime',
             'game.player_core',
