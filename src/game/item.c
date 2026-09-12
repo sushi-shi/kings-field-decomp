@@ -1,6 +1,7 @@
 #include <kf/null.h>
 #include <kf/game_graphics.h>
 #include <kf/address.h>
+#include <kf/input.h>
 #include <kf/map_data.h>
 #include <kf/item.h>
 #include <kf/game_cd.h>
@@ -65,8 +66,8 @@ void item_load_floor_placements(KfFloorItemPlacement *placements)
             item->base_sprite_index = placements->base_sprite_index;
             item->facing_and_frame_count = placements->facing_and_frame_count;
             item->unknown_03 = placements->unknown_03;
-            item->position_x = placements->tile_x * KF_MAP_TILE_SIZE + placements->local_x;
-            item->position_z = placements->tile_z * KF_MAP_TILE_SIZE + placements->local_z;
+            item->position_x = map_placement_axis_position(placements->tile_x, placements->local_x);
+            item->position_z = map_placement_axis_position(placements->tile_z, placements->local_z);
             height = map_floor_height_grid.cells[placements->tile_z][placements->tile_x] * KF_MAP_HEIGHT_STEP;
             item->position_y = placements->local_y - height;
             item->animation_frame =
@@ -183,26 +184,26 @@ void item_menu_root(KF_ENUM_PARAM(KfItemStockBank, s32) shop_id)
         confirm = KF_MENU_CONFIRM_IDLE;
         prev = input;
         input = PadRead(1);
-        if ((input & PADLup) != 0 && (prev & PADLup) == 0) {
+        if (PAD_PRESSED(input, prev, PADLup)) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
             if (cursor != KF_ENUM_ENCODE(s32, KF_TRADE_BUY))
                 cursor--;
             else
                 cursor = KF_SHOP_ROW_RETURN;
-        } else if ((input & PADLdown) != 0 && (prev & PADLdown) == 0) {
+        } else if (PAD_PRESSED(input, prev, PADLdown)) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
             if (cursor != KF_SHOP_ROW_RETURN)
                 cursor++;
             else
                 cursor = KF_ENUM_ENCODE(s32, KF_TRADE_BUY);
-        } else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {
+        } else if (PAD_PRESSED(input, prev, PADRright)) {
             menu_play_input_sound(MENU_SOUND_CONFIRM);
             confirm = KF_MENU_CONFIRM_REQUESTED;
             if (cursor < KF_SHOP_ROW_RETURN)
                 action = KF_ENUM_DECODE(KfTradeMode, cursor);
             else
                 phase = KF_MENU_RESULT_CANCELLED;
-        } else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {
+        } else if (PAD_PRESSED(input, prev, PADRdown)) {
             menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
             phase = KF_MENU_RESULT_CANCELLED;
         }
@@ -293,42 +294,17 @@ void item_menu_buy(KF_ENUM_PARAM(KfItemStockBank, s32) shop_id)
                 menu_play_input_sound(MENU_SOUND_CURSOR);
                 selection = KF_ENUM_ENCODE(s32, KF_MENU_RESULT_CANCELLED);
             }
-        } else if ((input & PADLup) != 0 && (prev & PADLup) == 0) {
+        } else if (PAD_PRESSED(input, prev, PADLup)) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
-            if (ctx.selected_index != 0) {
-                ctx.selected_index--;
-                if (ctx.cursor_row == 0)
-                    ctx.scroll_offset--;
-                else
-                    ctx.cursor_row--;
-            } else {
-                ctx.selected_index = ctx.entry_count - 1;
-                if (ctx.entry_count < ctx.visible_rows) {
-                    ctx.scroll_offset = 0;
-                    ctx.cursor_row = ctx.entry_count - 1;
-                } else {
-                    ctx.scroll_offset = ctx.entry_count - ctx.visible_rows;
-                    ctx.cursor_row = ctx.visible_rows - 1;
-                }
-            }
+            menu_list_previous(&ctx);
             goto load_selected_model;
-        } else if ((input & PADLdown) != 0 && (prev & PADLdown) == 0) {
+        } else if (PAD_PRESSED(input, prev, PADLdown)) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
-            if (ctx.selected_index < ctx.entry_count - 1) {
-                ctx.selected_index++;
-                if (ctx.cursor_row == ctx.visible_rows - 1)
-                    ctx.scroll_offset++;
-                else
-                    ctx.cursor_row++;
-            } else {
-                ctx.selected_index = 0;
-                ctx.scroll_offset = 0;
-                ctx.cursor_row = 0;
-            }
+            menu_list_next(&ctx);
         load_selected_model:
             if (menu_load_item_model(index[ctx.selected_index]) != KF_RESOURCE_LOADED)
                 return;
-        } else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {
+        } else if (PAD_PRESSED(input, prev, PADRright)) {
             if (player_state.gold
                     < item_buy_prices[KF_ENUM_ENCODE(u8, index[ctx.selected_index])][KF_ENUM_ENCODE(s32, shop_id) - KF_ENUM_ENCODE(s32, KF_ITEM_STOCK_FIRST_SHOP)]) {
                 menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
@@ -336,7 +312,7 @@ void item_menu_buy(KF_ENUM_PARAM(KfItemStockBank, s32) shop_id)
                 menu_play_input_sound(MENU_SOUND_CONFIRM);
                 confirm = KF_MENU_CONFIRM_REQUESTED;
             }
-        } else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {
+        } else if (PAD_PRESSED(input, prev, PADRdown)) {
             menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
             selection = KF_ENUM_ENCODE(s32, KF_MENU_RESULT_CANCELLED);
         }
@@ -386,13 +362,7 @@ void item_menu_sell(KF_ENUM_PARAM(KfItemStockBank, s32) shop_id)
     for (slot = 0; slot < KF_ENUM_ENCODE(s32, KF_ITEM_GOLD_CROSS); slot++) {
         if (inv[slot] != 0) {
             available[found] = inv[slot];
-            if (slot == KF_ENUM_ENCODE(u8, player_state.equipped_weapon_id)
-                    || slot == KF_ENUM_ENCODE(u8, player_state.equipped_head_armor_id)
-                    || slot == KF_ENUM_ENCODE(u8, player_state.equipped_body_armor_id)
-                    || slot == KF_ENUM_ENCODE(u8, player_state.equipped_shield_id)
-                    || slot == KF_ENUM_ENCODE(u8, player_state.equipped_arm_armor_id)
-                    || slot == KF_ENUM_ENCODE(u8, player_state.equipped_leg_armor_id)
-                    || slot == KF_ENUM_ENCODE(u8, player_state.equipped_accessory_id))
+            if (PLAYER_ITEM_IS_EQUIPPED(slot))
                 available[found]--;
             if (available[found] != 0) {
                 for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)
@@ -440,45 +410,20 @@ void item_menu_sell(KF_ENUM_PARAM(KfItemStockBank, s32) shop_id)
                 menu_play_input_sound(MENU_SOUND_CURSOR);
                 selection = KF_ENUM_ENCODE(s32, KF_MENU_RESULT_CANCELLED);
             }
-        } else if ((input & PADLup) != 0 && (prev & PADLup) == 0) {
+        } else if (PAD_PRESSED(input, prev, PADLup)) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
-            if (ctx.selected_index != 0) {
-                ctx.selected_index--;
-                if (ctx.cursor_row == 0)
-                    ctx.scroll_offset--;
-                else
-                    ctx.cursor_row--;
-            } else {
-                ctx.selected_index = ctx.entry_count - 1;
-                if (ctx.entry_count < ctx.visible_rows) {
-                    ctx.scroll_offset = 0;
-                    ctx.cursor_row = ctx.entry_count - 1;
-                } else {
-                    ctx.scroll_offset = ctx.entry_count - ctx.visible_rows;
-                    ctx.cursor_row = ctx.visible_rows - 1;
-                }
-            }
+            menu_list_previous(&ctx);
             if (menu_load_item_model(index[ctx.selected_index]) != KF_RESOURCE_LOADED)
                 return;
-        } else if ((input & PADLdown) != 0 && (prev & PADLdown) == 0) {
+        } else if (PAD_PRESSED(input, prev, PADLdown)) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
-            if (ctx.selected_index < ctx.entry_count - 1) {
-                ctx.selected_index++;
-                if (ctx.cursor_row == ctx.visible_rows - 1)
-                    ctx.scroll_offset++;
-                else
-                    ctx.cursor_row++;
-            } else {
-                ctx.selected_index = 0;
-                ctx.scroll_offset = 0;
-                ctx.cursor_row = 0;
-            }
+            menu_list_next(&ctx);
             if (menu_load_item_model(index[ctx.selected_index]) != KF_RESOURCE_LOADED)
                 return;
-        } else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {
+        } else if (PAD_PRESSED(input, prev, PADRright)) {
             menu_play_input_sound(MENU_SOUND_CONFIRM);
             confirm = KF_MENU_CONFIRM_REQUESTED;
-        } else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {
+        } else if (PAD_PRESSED(input, prev, PADRdown)) {
             menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
             selection = KF_ENUM_ENCODE(s32, KF_MENU_RESULT_CANCELLED);
         }
@@ -566,14 +511,14 @@ KfMenuResult item_pickup_confirm(KF_ENUM_PARAM(KfObjectId, s32) item_id)
         menu_frame_begin();
         prev = input;
         input = PadRead(1);
-        if (((input & PADLup) != 0 && (prev & PADLup) == 0)
-                || ((input & PADLdown) != 0 && (prev & PADLdown) == 0)) {
+        if ((PAD_PRESSED(input, prev, PADLup))
+                || (PAD_PRESSED(input, prev, PADLdown))) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
             if (choice != KF_MENU_CHOICE_ACCEPT)
                 choice = KF_MENU_CHOICE_ACCEPT;
             else
                 choice = KF_MENU_CHOICE_DECLINE;
-        } else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {
+        } else if (PAD_PRESSED(input, prev, PADRright)) {
             menu_play_input_sound(MENU_SOUND_CONFIRM);
             confirm = KF_MENU_CONFIRM_REQUESTED;
             if (choice != KF_MENU_CHOICE_ACCEPT) {
@@ -585,7 +530,7 @@ KfMenuResult item_pickup_confirm(KF_ENUM_PARAM(KfObjectId, s32) item_id)
                     result = KF_MENU_RESULT_ACCEPTED;
                 }
             }
-        } else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {
+        } else if (PAD_PRESSED(input, prev, PADRdown)) {
             menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
             result = KF_MENU_RESULT_DECLINED;
         }

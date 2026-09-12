@@ -28,8 +28,7 @@ void camera_path_compute_segment(KfCameraPathState *path)
     dx = point->position.vx - path->position.vx;
     dy = point->position.vy - path->position.vy;
     dz = point->position.vz - path->position.vz;
-    distance = SquareRoot0((dx >> KF_LENGTH_SQUARE_DOWNSHIFT) * (dx >> KF_LENGTH_SQUARE_DOWNSHIFT) + (dy >> KF_LENGTH_SQUARE_DOWNSHIFT) * (dy >> KF_LENGTH_SQUARE_DOWNSHIFT) + (dz >> KF_LENGTH_SQUARE_DOWNSHIFT) * (dz >> KF_LENGTH_SQUARE_DOWNSHIFT))
-        << KF_LENGTH_SQUARE_DOWNSHIFT;
+    distance = fixed_vector3_length(dx, dy, dz);
     setVector(&path->position_delta,
         (dx << KF_FIXED4_BITS) * point->speed / distance,
         (dy << KF_FIXED4_BITS) * point->speed / distance,
@@ -51,14 +50,7 @@ void camera_path_begin(KfCameraPathState *path, const KfCameraPathPoint *points)
     path->position = player_state.camera_position;
     path->rotation = player_state.camera_rotation;
     path->point_index = 0;
-    setVector(&path->position_fixed,
-        path->position.vx << KF_FIXED4_BITS,
-        path->position.vy << KF_FIXED4_BITS,
-        path->position.vz << KF_FIXED4_BITS);
-    setVector(&path->rotation_fixed,
-        path->rotation.vx << KF_FIXED4_BITS,
-        path->rotation.vy << KF_FIXED4_BITS,
-        path->rotation.vz << KF_FIXED4_BITS);
+    camera_path_publish_fixed(path);
     camera_path_compute_segment(path);
 }
 
@@ -75,14 +67,5 @@ void camera_path_step(KfCameraPathState *path, s32 y_offset)
             return;
         }
     }
-    addVector(&path->position_fixed, &path->position_delta);
-    addVector(&path->rotation_fixed, &path->rotation_delta);
-    setVector(&path->position,
-        path->position_fixed.vx >> KF_FIXED4_BITS,
-        (path->position_fixed.vy >> KF_FIXED4_BITS) + y_offset,
-        path->position_fixed.vz >> KF_FIXED4_BITS);
-    setVector(&path->rotation,
-        (path->rotation_fixed.vx >> KF_FIXED4_BITS) & KF_ANGLE_WRAP_MASK,
-        (path->rotation_fixed.vy >> KF_FIXED4_BITS) & KF_ANGLE_WRAP_MASK,
-        (path->rotation_fixed.vz >> KF_FIXED4_BITS) & KF_ANGLE_WRAP_MASK);
+    camera_path_advance_pose(path, y_offset);
 }

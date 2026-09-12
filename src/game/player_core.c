@@ -288,9 +288,7 @@ s32 player_distance_to_point_in_cone(
                      player_state.camera_position.vx - point->vx,
                      point->vz - player_state.camera_position.vz)
                  - facing) & KF_ANGLE_WRAP_MASK;
-        if (delta > KF_ANGLE_HALF_TURN) {
-            delta = KF_ANGLE_FULL_TURN - delta;
-        }
+        delta = angle_error_magnitude(delta);
         if (angle_tolerance < delta) {
             distance = KF_COLLISION_NONE;
         }
@@ -591,9 +589,7 @@ void player_warp_to_floor_entry(void)
     const KfFloorEntryCell *entry;
     KF_ENUM_STORAGE(KfFloorId, u8) floor;
 
-    position.vx = player_state.camera_position.vx;
-    position.vz = player_state.camera_position.vz;
-    position.vy = player_state.floor_height;
+    PLAYER_FLOOR_POSITION(position);
     player_warp_shimmer(KF_WARP_SHIMMER_GROW_REMOVE, &position);
     floor = player_state.progress_state.current_floor;
     entry = &floor_entry_cells[KF_ENUM_ENCODE(u8, floor) - 1];

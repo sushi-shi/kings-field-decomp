@@ -491,8 +491,7 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
     KfMapObjectDefinition *definition;
     KfMapObjectDefinition *neighbor_definition;
 
-    sound_x = position->vx - (rsin(rotation->vy) * MAP_ATTRIBUTE_PROBE_DISTANCE >> KF_FIXED12_BITS);
-    sound_z = position->vz + (rcos(rotation->vy) * MAP_ATTRIBUTE_PROBE_DISTANCE >> KF_FIXED12_BITS);
+    VECTOR_YAW_PROBE_XZ(sound_x, sound_z, *position, *rotation, MAP_ATTRIBUTE_PROBE_DISTANCE);
     switch (map_cell_attribute_grid.cells[sound_z / KF_MAP_TILE_SIZE][sound_x / KF_MAP_TILE_SIZE]) {
     case KF_MAP_ATTRIBUTE_PITFALL:
         notify_enqueue(KF_NOTIFICATION_PITFALL);
@@ -510,8 +509,7 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
         break;
     }
 
-    sound_x = position->vx - (rsin(rotation->vy) * MAP_INTERACTION_PROBE_DISTANCE >> KF_FIXED12_BITS);
-    sound_z = position->vz + (rcos(rotation->vy) * MAP_INTERACTION_PROBE_DISTANCE >> KF_FIXED12_BITS);
+    VECTOR_YAW_PROBE_XZ(sound_x, sound_z, *position, *rotation, MAP_INTERACTION_PROBE_DISTANCE);
     if (game_graphics_runtime.notification_state.control.effect_phase == KF_NOTIFICATION_IDLE
         && (index = map_event_pool_find_overlap(
                 sound_x, sound_z, MAP_INTERACTION_RADIUS_PADDING)) != -1) {

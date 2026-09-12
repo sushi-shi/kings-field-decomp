@@ -329,6 +329,12 @@ typedef struct KfActorState {
 
 extern KfActorActionProfile actor_action_profiles[KF_ACTOR_ACTION_PROFILE_COUNT];
 extern KfActorState actor_state;
+
+/* Side-effect-free actor pointer; signed full-width bearing narrows at callers. */
+#define ACTOR_BEARING_TO_PLAYER(actor) vector_xz_to_angle( \
+    actor_state.player_position.vx - (actor)->position.vx, \
+    actor_state.player_position.vz - (actor)->position.vz)
+
 extern SoundRef boss_death_loop_sound;
 extern SoundRef boss_death_phase_sounds[KF_ACTOR_BOSS_DEATH_SOUND_COUNT];
 

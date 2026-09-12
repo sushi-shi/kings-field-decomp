@@ -174,33 +174,33 @@ void actor_initialize(KfActor *actor)
     collision_adjust_cell_occupancy(actor->cell_x, actor->cell_z, 1);
 }
 
-ADDRESS(0x8002cd28, 0xa4)
-void actor_initialize_current(void)
+static inline void actor_initialize_at_home(KfActor *actor)
 {
-    KfActor *actor = actor_state.current;
     VECTOR position;
 
-    position.vx = actor->tile_x * KF_MAP_TILE_SIZE + actor->local_x;
-    position.vz = actor->tile_z * KF_MAP_TILE_SIZE + actor->local_z;
+    position.vx = map_placement_axis_position(actor->tile_x, actor->local_x);
+    position.vz = map_placement_axis_position(actor->tile_z, actor->local_z);
     position.vy = map_floor_height_at_position(&position);
     actor_set_position(actor, &position);
     actor_set_rotation(actor, 0, 0, 0);
     actor_initialize(actor);
 }
 
+ADDRESS(0x8002cd28, 0xa4)
+void actor_initialize_current(void)
+{
+    KfActor *actor = actor_state.current;
+
+    actor_initialize_at_home(actor);
+}
+
 ADDRESS(0x8002cdcc, 0xbc)
 void actor_initialize_slot(u16 actor_index)
 {
     KfActor *actor = &actor_state.actors[actor_index];
-    VECTOR position;
 
     actor->lifecycle = KF_ACTOR_LIFECYCLE_ACTIVE;
-    position.vx = actor->tile_x * KF_MAP_TILE_SIZE + actor->local_x;
-    position.vz = actor->tile_z * KF_MAP_TILE_SIZE + actor->local_z;
-    position.vy = map_floor_height_at_position(&position);
-    actor_set_position(actor, &position);
-    actor_set_rotation(actor, 0, 0, 0);
-    actor_initialize(actor);
+    actor_initialize_at_home(actor);
 }
 
 ADDRESS(0x8002ce88, 0x40)
@@ -391,18 +391,13 @@ void actor_pool_apply_radial_damage(
     u16 scale,
     KF_ENUM_PARAM(KfEffectType, u16) hit_flags)
 {
-    s32 falloff_value = falloff;
-    s32 remaining;
     KfActor *actor = actor_state.actors;
     KfActorDefinition *definition;
     s16 index;
     s32 distance;
-    u16 ratio;
-    u16 weight;
     u16 damage_scale;
 
     for (index = 0; index < KF_ACTOR_CAPACITY; index++, actor++) {
-        remaining = KF_FIXED12_ONE - falloff_value;
         if (actor->lifecycle != KF_ACTOR_LIFECYCLE_ACTIVE) {
             continue;
         }
@@ -424,10 +419,8 @@ void actor_pool_apply_radial_damage(
         if (distance == -1) {
             continue;
         }
-        if (falloff_value != KF_FIXED12_ONE) {
-            ratio = (distance << KF_FIXED12_BITS) / radius;
-            weight = KF_FIXED12_ONE - ((u32)(ratio * remaining) >> KF_FIXED12_BITS);
-            damage_scale = (u32)(scale * weight) >> KF_FIXED12_BITS;
+        if (falloff != KF_FIXED12_ONE) {
+            damage_scale = radial_damage_attenuated_scale(distance, radius, falloff, scale);
         } else {
             damage_scale = scale;
         }
@@ -471,9 +464,7 @@ void actor_try_attack_player(
     if (distance < minimum_distance) {
         return;
     }
-    angle = vector_xz_to_angle(
-        actor_state.player_position.vx - actor->position.vx,
-        actor_state.player_position.vz - actor->position.vz);
+    angle = ACTOR_BEARING_TO_PLAYER(actor);
     if (!angle_within_tolerance(actor->rotation.angles.y + angle_offset, angle, angle_tolerance)) {
         return;
     }
@@ -527,11 +518,7 @@ KfActor *actor_pool_find_target_in_cone(
         }
         delta = vector_xz_to_angle(
             actor->position.vx - origin->vx, origin->vz - actor->position.vz) - facing;
-        delta &= KF_ANGLE_WRAP_MASK;
-        folded = delta;
-        if (delta > KF_ANGLE_HALF_TURN) {
-            folded = KF_ANGLE_FULL_TURN - delta;
-        }
+        folded = angle_error_magnitude(delta);
         if (angle_tolerance < folded) {
             continue;
         }
@@ -726,9 +713,7 @@ KfActorAction actor_try_select_action_distance_facing(
     }
     if (angle_within_tolerance(
             actor->rotation.angles.y,
-            vector_xz_to_angle(
-                actor_state.player_position.vx - actor->position.vx,
-                actor_state.player_position.vz - actor->position.vz),
+            ACTOR_BEARING_TO_PLAYER(actor),
             ACTOR_SELECTION_ANGLE_TOLERANCE)) {
         return action;
     }
@@ -770,9 +755,7 @@ KfActorAction actor_try_select_ground_action(KfActorAction action, s32 distance,
         }
         if (angle_within_tolerance(
                 actor->rotation.angles.y,
-                vector_xz_to_angle(
-                    actor_state.player_position.vx - actor->position.vx,
-                    actor_state.player_position.vz - actor->position.vz),
+                ACTOR_BEARING_TO_PLAYER(actor),
                 ACTOR_SELECTION_ANGLE_TOLERANCE)) {
             return action;
         }
@@ -802,9 +785,7 @@ KfActorAction actor_try_select_facing_action(KfActorAction action, s32 distance,
     }
     if (angle_within_tolerance(
             actor->rotation.angles.y,
-            vector_xz_to_angle(
-                actor_state.player_position.vx - actor->position.vx,
-                actor_state.player_position.vz - actor->position.vz),
+            ACTOR_BEARING_TO_PLAYER(actor),
             ACTOR_MULTI_HIT_SELECTION_ANGLE_TOLERANCE)) {
         return action;
     }
@@ -842,9 +823,7 @@ KfActorAction actor_try_select_profiled_action(KfActorAction action, s32 distanc
     default:
         if (!angle_within_tolerance(
                 actor->rotation.angles.y,
-                vector_xz_to_angle(
-                    actor_state.player_position.vx - actor->position.vx,
-                    actor_state.player_position.vz - actor->position.vz),
+                ACTOR_BEARING_TO_PLAYER(actor),
                 KF_ACTOR_AIM_TOLERANCE)
             && rand() >= ACTOR_PROFILE_FACING_BYPASS_LIMIT) {
             break;

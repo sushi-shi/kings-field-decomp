@@ -17,9 +17,9 @@ KfAudioPlaybackResult audio_play_spatial(
     s32 max_distance,
     s32 attenuation_distance)
 {
-    s32 delta_x = (position->vx - audio_state.listener_position.vx) >> KF_LENGTH_SQUARE_DOWNSHIFT;
-    s32 delta_y = (position->vy - audio_state.listener_position.vy) >> KF_LENGTH_SQUARE_DOWNSHIFT;
-    s32 delta_z = (position->vz - audio_state.listener_position.vz) >> KF_LENGTH_SQUARE_DOWNSHIFT;
+    s32 delta_x = position->vx - audio_state.listener_position.vx;
+    s32 delta_y = position->vy - audio_state.listener_position.vy;
+    s32 delta_z = position->vz - audio_state.listener_position.vz;
     s32 attenuation;
     s32 level;
     s32 angle;
@@ -27,8 +27,7 @@ KfAudioPlaybackResult audio_play_spatial(
     s32 right;
 
     attenuation =
-        SquareRoot0(delta_x * delta_x + delta_y * delta_y + delta_z * delta_z)
-        << KF_LENGTH_SQUARE_DOWNSHIFT;
+        fixed_vector3_length(delta_x, delta_y, delta_z);
     if (attenuation >= max_distance) {
         return KF_AUDIO_NOT_PLAYED;
     }

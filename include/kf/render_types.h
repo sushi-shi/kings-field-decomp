@@ -144,4 +144,15 @@ typedef struct KfCellWindow {
     KfCellVisibility cells[KF_CELL_WINDOW_CELL_CAPACITY];
 } KfCellWindow;
 
+/* Side-effect-free color pointer; byte wrap precedes the next limit test. */
+#define TRANSITION_COLOR_STEP(color) do { \
+    if ((color)->r < KF_TRANSITION_FADE_LIMIT) { \
+        (color)->r += KF_TRANSITION_FADE_STEP; \
+    } else { \
+        (color)->r = KF_TRANSITION_FADE_LIMIT; \
+    } \
+    (color)->b = (color)->r; \
+    (color)->g = (color)->r; \
+} while (0)
+
 #endif

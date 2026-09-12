@@ -1,5 +1,6 @@
 #include <kf/null.h>
 #include <kf/address.h>
+#include <kf/input.h>
 #include <kf/overlay.h>
 #include <kf/game_player.h>
 #include <kf/game_collision.h>
@@ -132,7 +133,7 @@ void player_update(void)
     if (input & PADk) {
         input = PADRdown;
     }
-    if ((input & PADRdown) && !(player_previous_input & PADRdown)
+    if (PAD_PRESSED(input, player_previous_input, PADRdown)
         && player_state.weapon_attack_phase == KF_WEAPON_ATTACK_INACTIVE) {
         item = menu_enter_mode(KF_MENU_MODE_ROOT);
         if (item >= 0) {
@@ -152,7 +153,7 @@ void player_update(void)
         }
         player_previous_input = input;
     } else {
-        if ((input & PADRright) && !(player_previous_input & PADRright)) {
+        if (PAD_PRESSED(input, player_previous_input, PADRright)) {
             map_interaction_dispatch(&player_state.camera_position, &player_state.camera_rotation);
         }
         if ((player_state.status_effect_flags & KF_PLAYER_STATUS_SLOWED) != KF_PLAYER_STATUS_NONE) {
@@ -308,11 +309,11 @@ void player_update(void)
                 player_state.camera_rotation.vx = -KF_PLAYER_CAMERA_PITCH_LIMIT;
             }
         }
-        if ((input & PADRup) && !(player_previous_input & PADRup)) {
+        if (PAD_PRESSED(input, player_previous_input, PADRup)) {
             player_begin_weapon_attack();
         }
         if (player_state.equipped_body_armor_id != KF_ITEM_SKULL_ARMOR) {
-            if ((input & PADRleft) && !(player_previous_input & PADRleft)) {
+            if (PAD_PRESSED(input, player_previous_input, PADRleft)) {
                 if (player_state.weapon_attack_fully_charged == KF_WEAPON_ATTACK_FULL_CHARGE) {
                     player_state.weapon_attack_fully_charged = KF_WEAPON_ATTACK_NORMAL_CHARGE;
                     switch (player_state.equipped_weapon_id) {

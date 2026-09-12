@@ -52,13 +52,7 @@ void display_play_transition(void)
 
     for (i = 0; i < KF_TRANSITION_FADE_FRAMES; i++) {
         display_begin_frame();
-        if (color.r < KF_TRANSITION_FADE_LIMIT) {
-            color.r += KF_TRANSITION_FADE_STEP;
-        } else {
-            color.r = KF_TRANSITION_FADE_LIMIT;
-        }
-        color.b = color.r;
-        color.g = color.r;
+        TRANSITION_COLOR_STEP(&color);
         sprite_add_ft4(&rect, uv.v, tpage, clut, &color, KF_TRANSITION_OT_DEPTH);
         display_present_frame();
     }

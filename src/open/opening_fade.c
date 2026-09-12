@@ -27,13 +27,7 @@ void opening_fade_in(void)
     frame = 0;
     do {
         display_begin_frame();
-        if (color.r < KF_TRANSITION_FADE_LIMIT) {
-            color.r += KF_TRANSITION_FADE_STEP;
-        } else {
-            color.r = KF_TRANSITION_FADE_LIMIT;
-        }
-        color.b = color.r;
-        color.g = color.r;
+        TRANSITION_COLOR_STEP(&color);
         sprite_add_ft4(
             &opening_fade_rect, opening_fade_uv, tpage, clut, &color, KF_TRANSITION_OT_DEPTH);
         display_present_frame();
