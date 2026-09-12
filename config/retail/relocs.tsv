@@ -8327,7 +8327,7 @@ GAME.EXE	0x8003f410	0x2dc10		mips26	reachable-code	0x8003f438	load		j		control-f
 GAME.EXE	0x8003f418	0x2dc18	0x8003f41c	mips_hi16_lo16	reachable-code	0x80057cc8	load		lui+lw	v0	paired-reachable	candidate	investigation:relocs.tsv
 GAME.EXE	0x8003f45c	0x2dc5c		mips26	instruction-word	0x80040f10	load		jal		range-filtered	candidate	investigation:relocs.tsv
 GAME.EXE	0x8003f478	0x2dc78	0x8003f47c	mips_hi16_lo16	reachable-code	0x80057cc8	load		lui+lw	v0	paired-reachable	candidate	investigation:relocs.tsv
-GAME.EXE	0x8003f4b4	0x2dcb4	0x8003f4b8	mips_hi16_lo16	reachable-code	0x80013320	load		lui+addiu	at	paired-reachable	candidate	investigation:relocs.tsv
+GAME.EXE	0x8003f4b4	0x2dcb4	0x8003f4b8	mips_hi16_lo16	reachable-code	0x80013320	load	spu_ioctl_dispatch_table	lui+addiu	at	paired-reachable	candidate	investigation:relocs.tsv;manual:sdk_spu_ioctl_table
 GAME.EXE	0x8003f4d0	0x2dcd0		mips26	instruction-word	0x8003ec14	load		jal		range-filtered	candidate	investigation:relocs.tsv
 GAME.EXE	0x8003f4d8	0x2dcd8		mips26	instruction-word	0x8003fe90	load		j		range-filtered	candidate	investigation:relocs.tsv
 GAME.EXE	0x8003f4e8	0x2dce8	0x8003f4ec	mips_hi16_lo16	instruction-word	0x80057cc8	load		lui+lw	v1	paired-pattern	candidate	investigation:relocs.tsv
@@ -13143,7 +13143,7 @@ OPEN.EXE	0x8001f230	0xda30		mips26	reachable-code	0x8001f258	load		j		control-fl
 OPEN.EXE	0x8001f238	0xda38	0x8001f23c	mips_hi16_lo16	reachable-code	0x80037438	load		lui+lw	v0	paired-reachable	candidate	investigation:relocs.tsv
 OPEN.EXE	0x8001f27c	0xda7c		mips26	instruction-word	0x80020d30	load		jal		range-filtered	candidate	investigation:relocs.tsv
 OPEN.EXE	0x8001f298	0xda98	0x8001f29c	mips_hi16_lo16	reachable-code	0x80037438	load		lui+lw	v0	paired-reachable	candidate	investigation:relocs.tsv
-OPEN.EXE	0x8001f2d4	0xdad4	0x8001f2d8	mips_hi16_lo16	reachable-code	0x800127ec	load		lui+addiu	at	paired-reachable	candidate	investigation:relocs.tsv
+OPEN.EXE	0x8001f2d4	0xdad4	0x8001f2d8	mips_hi16_lo16	reachable-code	0x800127ec	load	spu_ioctl_dispatch_table	lui+addiu	at	paired-reachable	candidate	investigation:relocs.tsv;manual:sdk_spu_ioctl_table
 OPEN.EXE	0x8001f2f0	0xdaf0		mips26	instruction-word	0x8001ea34	load		jal		range-filtered	candidate	investigation:relocs.tsv
 OPEN.EXE	0x8001f2f8	0xdaf8		mips26	instruction-word	0x8001fcb0	load		j		range-filtered	candidate	investigation:relocs.tsv
 OPEN.EXE	0x8001f308	0xdb08	0x8001f30c	mips_hi16_lo16	instruction-word	0x80037438	load		lui+lw	v1	paired-pattern	candidate	investigation:relocs.tsv
