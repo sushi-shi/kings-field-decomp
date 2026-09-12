@@ -32,20 +32,20 @@ u32 menu_enter_mode(KfMenuMode mode, ...)
         break;
     case KF_MENU_MODE_ITEM_PICKUP: {
         va_list arguments;
-        KfItemId item_id;
+        KfObjectId item_id;
 
         va_start(arguments, mode);
-        item_id = KF_ENUM_DECODE(KfItemId, va_arg(arguments, int));
+        item_id = KF_ENUM_DECODE(KfObjectId, va_arg(arguments, int));
         va_end(arguments);
         result = KF_ENUM_ENCODE(u32, item_pickup_confirm(item_id));
         break;
     }
     case KF_MENU_MODE_SHOP: {
         va_list arguments;
-        KfShopId shop_id;
+        KfItemStockBank shop_id;
 
         va_start(arguments, mode);
-        shop_id = KF_ENUM_DECODE(KfShopId, va_arg(arguments, int));
+        shop_id = KF_ENUM_DECODE(KfItemStockBank, va_arg(arguments, int));
         va_end(arguments);
         item_menu_root(shop_id);
         result = 0;

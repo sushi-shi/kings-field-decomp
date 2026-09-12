@@ -100,12 +100,12 @@ void game_state_initialize(void)
     player_state.base_magic = player_level_growth_table[0].magic_step;
     player_state.next_level_experience = player_level_growth_table[0].experience_threshold;
     player_equip_weapon(KF_ITEM_SHORT_SWORD);
-    player_state.equipped_head_armor_id = KF_ITEM_NONE;
-    player_state.equipped_body_armor_id = KF_ITEM_NONE;
-    player_state.equipped_arm_armor_id = KF_ITEM_NONE;
-    player_state.equipped_leg_armor_id = KF_ITEM_NONE;
-    player_state.equipped_shield_id = KF_ITEM_NONE;
-    player_state.equipped_accessory_id = KF_ITEM_NONE;
+    player_state.equipped_head_armor_id = KF_OBJECT_NONE;
+    player_state.equipped_body_armor_id = KF_OBJECT_NONE;
+    player_state.equipped_arm_armor_id = KF_OBJECT_NONE;
+    player_state.equipped_leg_armor_id = KF_OBJECT_NONE;
+    player_state.equipped_shield_id = KF_OBJECT_NONE;
+    player_state.equipped_accessory_id = KF_OBJECT_NONE;
     player_set_equipment_slot(KF_ITEM_SHORT_SWORD, KF_EQUIPMENT_SLOT_REFRESH_ONLY);
     player_select_magic(KF_MAGIC_LIGHT_NEEDLE);
     player_state.fire_defense_timer = KF_PLAYER_STATUS_TIMER_INACTIVE;
@@ -124,39 +124,39 @@ void game_state_initialize(void)
     do {
         *cursor++ = 0;
     } while (--count != -1);
-    item_stock[KF_ITEM_STOCK_PLAYER][KF_ENUM_ENCODE(u8, KF_ITEM_SHORT_SWORD)] = 1;
-    item_stock[KF_ITEM_STOCK_PLAYER][KF_ENUM_ENCODE(u8, KF_ITEM_MEDICINAL_HERB)] = 1;
-    item_stock[KF_ITEM_STOCK_FIRST_SHOP][KF_ENUM_ENCODE(u8, KF_ITEM_SHORT_SWORD)] = 1;
-    item_stock[KF_ITEM_STOCK_FIRST_SHOP][KF_ENUM_ENCODE(u8, KF_ITEM_BATTLE_AXE)] = 1;
-    item_stock[KF_ITEM_STOCK_FIRST_SHOP][KF_ENUM_ENCODE(u8, KF_ITEM_KNIGHT_SWORD)] = 1;
-    item_stock[KF_ITEM_STOCK_FIRST_SHOP][KF_ENUM_ENCODE(u8, KF_ITEM_IRON_MASK)] = 1;
-    item_stock[KF_ITEM_STOCK_FIRST_SHOP][KF_ENUM_ENCODE(u8, KF_ITEM_KNIGHT_HELM)] = 1;
-    item_stock[KF_ITEM_STOCK_FIRST_SHOP][KF_ENUM_ENCODE(u8, KF_ITEM_KNIGHT_PLATE)] = 1;
-    item_stock[KF_ITEM_STOCK_FIRST_SHOP][KF_ENUM_ENCODE(u8, KF_ITEM_SMALL_SHIELD)] = 1;
-    item_stock[KF_ITEM_STOCK_FIRST_SHOP][KF_ENUM_ENCODE(u8, KF_ITEM_KNIGHT_SHIELD)] = 1;
-    item_stock[KF_ITEM_STOCK_FIRST_SHOP][KF_ENUM_ENCODE(u8, KF_ITEM_GAUNTLET)] = 1;
-    item_stock[KF_ITEM_STOCK_FIRST_SHOP][KF_ENUM_ENCODE(u8, KF_ITEM_IRON_BOOTS)] = 1;
-    item_stock[KF_ITEM_STOCK_FIRST_SHOP][KF_ENUM_ENCODE(u8, KF_ITEM_MEDICINAL_HERB)] = 1;
-    item_stock[KF_ITEM_STOCK_FIRST_SHOP][KF_ENUM_ENCODE(u8, KF_ITEM_ANTIDOTE_HERB)] = 1;
-    item_stock[KF_ITEM_STOCK_FIRST_SHOP][KF_ENUM_ENCODE(u8, KF_ITEM_RECOVERY_MEDICINE)] = 1;
-    item_stock[KF_ITEM_STOCK_FIRST_SHOP][KF_ENUM_ENCODE(u8, KF_ITEM_DRAGON_KING_GRASS_FRUIT)] = 1;
-    item_stock[KF_ITEM_STOCK_SECOND_SHOP][KF_ENUM_ENCODE(u8, KF_ITEM_KNIGHT_SWORD)] = 1;
-    item_stock[KF_ITEM_STOCK_SECOND_SHOP][KF_ENUM_ENCODE(u8, KF_ITEM_COLICHEMARDE)] = 1;
-    item_stock[KF_ITEM_STOCK_SECOND_SHOP][KF_ENUM_ENCODE(u8, KF_ITEM_CRESCENT_AXE)] = 1;
-    item_stock[KF_ITEM_STOCK_SECOND_SHOP][KF_ENUM_ENCODE(u8, KF_ITEM_KNIGHT_HELM)] = 1;
-    item_stock[KF_ITEM_STOCK_SECOND_SHOP][KF_ENUM_ENCODE(u8, KF_ITEM_GREAT_HELM)] = 1;
-    item_stock[KF_ITEM_STOCK_SECOND_SHOP][KF_ENUM_ENCODE(u8, KF_ITEM_BREASTPLATE)] = 1;
-    item_stock[KF_ITEM_STOCK_SECOND_SHOP][KF_ENUM_ENCODE(u8, KF_ITEM_FULL_PLATE)] = 1;
-    item_stock[KF_ITEM_STOCK_SECOND_SHOP][KF_ENUM_ENCODE(u8, KF_ITEM_FIRE_MAIL)] = 1;
-    item_stock[KF_ITEM_STOCK_SECOND_SHOP][KF_ENUM_ENCODE(u8, KF_ITEM_TOWER_SHIELD)] = 1;
-    item_stock[KF_ITEM_STOCK_SECOND_SHOP][KF_ENUM_ENCODE(u8, KF_ITEM_LEG_GUARDS)] = 1;
-    item_stock[KF_ITEM_STOCK_SECOND_SHOP][KF_ENUM_ENCODE(u8, KF_ITEM_MEDICINAL_HERB)] = 1;
-    item_stock[KF_ITEM_STOCK_SECOND_SHOP][KF_ENUM_ENCODE(u8, KF_ITEM_ANTIDOTE_HERB)] = 1;
-    item_stock[KF_ITEM_STOCK_SECOND_SHOP][KF_ENUM_ENCODE(u8, KF_ITEM_RECOVERY_MEDICINE)] = 1;
-    item_stock[KF_ITEM_STOCK_SECOND_SHOP][KF_ENUM_ENCODE(u8, KF_ITEM_DRAGON_KING_GRASS_LEAF)] = 1;
-    item_stock[KF_ITEM_STOCK_SECOND_SHOP][KF_ENUM_ENCODE(u8, KF_ITEM_DRAGON_KING_GRASS_FRUIT)] = 1;
-    item_stock[KF_ITEM_STOCK_SECOND_SHOP][KF_ENUM_ENCODE(u8, KF_ITEM_LIGHT_RING)] = 1;
-    item_stock[KF_ITEM_STOCK_SECOND_SHOP][KF_ENUM_ENCODE(u8, KF_ITEM_GOLD_CROSS)] = 1;
+    item_stock[KF_ENUM_ENCODE(u8, KF_ITEM_STOCK_PLAYER)][KF_ENUM_ENCODE(u8, KF_ITEM_SHORT_SWORD)] = 1;
+    item_stock[KF_ENUM_ENCODE(u8, KF_ITEM_STOCK_PLAYER)][KF_ENUM_ENCODE(u8, KF_ITEM_MEDICINAL_HERB)] = 1;
+    item_stock[KF_ENUM_ENCODE(u8, KF_ITEM_STOCK_FIRST_SHOP)][KF_ENUM_ENCODE(u8, KF_ITEM_SHORT_SWORD)] = 1;
+    item_stock[KF_ENUM_ENCODE(u8, KF_ITEM_STOCK_FIRST_SHOP)][KF_ENUM_ENCODE(u8, KF_ITEM_BATTLE_AXE)] = 1;
+    item_stock[KF_ENUM_ENCODE(u8, KF_ITEM_STOCK_FIRST_SHOP)][KF_ENUM_ENCODE(u8, KF_ITEM_KNIGHT_SWORD)] = 1;
+    item_stock[KF_ENUM_ENCODE(u8, KF_ITEM_STOCK_FIRST_SHOP)][KF_ENUM_ENCODE(u8, KF_ITEM_IRON_MASK)] = 1;
+    item_stock[KF_ENUM_ENCODE(u8, KF_ITEM_STOCK_FIRST_SHOP)][KF_ENUM_ENCODE(u8, KF_ITEM_KNIGHT_HELM)] = 1;
+    item_stock[KF_ENUM_ENCODE(u8, KF_ITEM_STOCK_FIRST_SHOP)][KF_ENUM_ENCODE(u8, KF_ITEM_KNIGHT_PLATE)] = 1;
+    item_stock[KF_ENUM_ENCODE(u8, KF_ITEM_STOCK_FIRST_SHOP)][KF_ENUM_ENCODE(u8, KF_ITEM_SMALL_SHIELD)] = 1;
+    item_stock[KF_ENUM_ENCODE(u8, KF_ITEM_STOCK_FIRST_SHOP)][KF_ENUM_ENCODE(u8, KF_ITEM_KNIGHT_SHIELD)] = 1;
+    item_stock[KF_ENUM_ENCODE(u8, KF_ITEM_STOCK_FIRST_SHOP)][KF_ENUM_ENCODE(u8, KF_ITEM_GAUNTLET)] = 1;
+    item_stock[KF_ENUM_ENCODE(u8, KF_ITEM_STOCK_FIRST_SHOP)][KF_ENUM_ENCODE(u8, KF_ITEM_IRON_BOOTS)] = 1;
+    item_stock[KF_ENUM_ENCODE(u8, KF_ITEM_STOCK_FIRST_SHOP)][KF_ENUM_ENCODE(u8, KF_ITEM_MEDICINAL_HERB)] = 1;
+    item_stock[KF_ENUM_ENCODE(u8, KF_ITEM_STOCK_FIRST_SHOP)][KF_ENUM_ENCODE(u8, KF_ITEM_ANTIDOTE_HERB)] = 1;
+    item_stock[KF_ENUM_ENCODE(u8, KF_ITEM_STOCK_FIRST_SHOP)][KF_ENUM_ENCODE(u8, KF_ITEM_RECOVERY_MEDICINE)] = 1;
+    item_stock[KF_ENUM_ENCODE(u8, KF_ITEM_STOCK_FIRST_SHOP)][KF_ENUM_ENCODE(u8, KF_ITEM_DRAGON_KING_GRASS_FRUIT)] = 1;
+    item_stock[KF_ENUM_ENCODE(u8, KF_ITEM_STOCK_SECOND_SHOP)][KF_ENUM_ENCODE(u8, KF_ITEM_KNIGHT_SWORD)] = 1;
+    item_stock[KF_ENUM_ENCODE(u8, KF_ITEM_STOCK_SECOND_SHOP)][KF_ENUM_ENCODE(u8, KF_ITEM_COLICHEMARDE)] = 1;
+    item_stock[KF_ENUM_ENCODE(u8, KF_ITEM_STOCK_SECOND_SHOP)][KF_ENUM_ENCODE(u8, KF_ITEM_CRESCENT_AXE)] = 1;
+    item_stock[KF_ENUM_ENCODE(u8, KF_ITEM_STOCK_SECOND_SHOP)][KF_ENUM_ENCODE(u8, KF_ITEM_KNIGHT_HELM)] = 1;
+    item_stock[KF_ENUM_ENCODE(u8, KF_ITEM_STOCK_SECOND_SHOP)][KF_ENUM_ENCODE(u8, KF_ITEM_GREAT_HELM)] = 1;
+    item_stock[KF_ENUM_ENCODE(u8, KF_ITEM_STOCK_SECOND_SHOP)][KF_ENUM_ENCODE(u8, KF_ITEM_BREASTPLATE)] = 1;
+    item_stock[KF_ENUM_ENCODE(u8, KF_ITEM_STOCK_SECOND_SHOP)][KF_ENUM_ENCODE(u8, KF_ITEM_FULL_PLATE)] = 1;
+    item_stock[KF_ENUM_ENCODE(u8, KF_ITEM_STOCK_SECOND_SHOP)][KF_ENUM_ENCODE(u8, KF_ITEM_FIRE_MAIL)] = 1;
+    item_stock[KF_ENUM_ENCODE(u8, KF_ITEM_STOCK_SECOND_SHOP)][KF_ENUM_ENCODE(u8, KF_ITEM_TOWER_SHIELD)] = 1;
+    item_stock[KF_ENUM_ENCODE(u8, KF_ITEM_STOCK_SECOND_SHOP)][KF_ENUM_ENCODE(u8, KF_ITEM_LEG_GUARDS)] = 1;
+    item_stock[KF_ENUM_ENCODE(u8, KF_ITEM_STOCK_SECOND_SHOP)][KF_ENUM_ENCODE(u8, KF_ITEM_MEDICINAL_HERB)] = 1;
+    item_stock[KF_ENUM_ENCODE(u8, KF_ITEM_STOCK_SECOND_SHOP)][KF_ENUM_ENCODE(u8, KF_ITEM_ANTIDOTE_HERB)] = 1;
+    item_stock[KF_ENUM_ENCODE(u8, KF_ITEM_STOCK_SECOND_SHOP)][KF_ENUM_ENCODE(u8, KF_ITEM_RECOVERY_MEDICINE)] = 1;
+    item_stock[KF_ENUM_ENCODE(u8, KF_ITEM_STOCK_SECOND_SHOP)][KF_ENUM_ENCODE(u8, KF_ITEM_DRAGON_KING_GRASS_LEAF)] = 1;
+    item_stock[KF_ENUM_ENCODE(u8, KF_ITEM_STOCK_SECOND_SHOP)][KF_ENUM_ENCODE(u8, KF_ITEM_DRAGON_KING_GRASS_FRUIT)] = 1;
+    item_stock[KF_ENUM_ENCODE(u8, KF_ITEM_STOCK_SECOND_SHOP)][KF_ENUM_ENCODE(u8, KF_ITEM_LIGHT_RING)] = 1;
+    item_stock[KF_ENUM_ENCODE(u8, KF_ITEM_STOCK_SECOND_SHOP)][KF_ENUM_ENCODE(u8, KF_ITEM_GOLD_CROSS)] = 1;
 }
 
 ADDRESS(0x800154b0, 0x19c)
@@ -164,8 +164,8 @@ void player_death_restart(void)
 {
     KfFloorId floor = player_state.progress_state.current_floor;
 
-    if (map_floor1_script.revival_enabled == KF_MAP_SCRIPT_SET && item_stock[KF_ITEM_STOCK_PLAYER][KF_ENUM_ENCODE(u8, KF_ITEM_DRAGON_KING_GRASS_FRUIT)] != 0) {
-        item_stock[KF_ITEM_STOCK_PLAYER][KF_ENUM_ENCODE(u8, KF_ITEM_DRAGON_KING_GRASS_FRUIT)]--;
+    if (map_floor1_script.revival_enabled == KF_MAP_SCRIPT_SET && item_stock[KF_ENUM_ENCODE(u8, KF_ITEM_STOCK_PLAYER)][KF_ENUM_ENCODE(u8, KF_ITEM_DRAGON_KING_GRASS_FRUIT)] != 0) {
+        item_stock[KF_ENUM_ENCODE(u8, KF_ITEM_STOCK_PLAYER)][KF_ENUM_ENCODE(u8, KF_ITEM_DRAGON_KING_GRASS_FRUIT)]--;
         map_world_state_persist();
         player_state.camera_position.vx = 0xfa00;
         player_state.vitals.current_hp = player_state.vitals.maximum_hp;
@@ -277,16 +277,16 @@ void player_recalculate_combat_stats(void)
         }
         player_state.physical_power = power;
     }
-    if (player_state.equipped_weapon_id != KF_ITEM_NONE) {
+    if (player_state.equipped_weapon_id != KF_OBJECT_NONE) {
         weapon = &weapon_records.entries[KF_ENUM_ENCODE(u8, player_state.equipped_weapon_id)];
-        player_state.cutting_attack += weapon->attack_components[KF_WEAPON_ATTACK_CUTTING];
-        player_state.striking_attack += weapon->attack_components[KF_WEAPON_ATTACK_STRIKING];
-        player_state.piercing_attack += weapon->attack_components[KF_WEAPON_ATTACK_PIERCING];
-        player_state.holy_attack += weapon->attack_components[KF_WEAPON_ATTACK_HOLY];
-        player_state.fire_attack += weapon->attack_components[KF_WEAPON_ATTACK_FIRE];
+        player_state.cutting_attack += weapon->attack_components[KF_COMBAT_COMPONENT_CUTTING];
+        player_state.striking_attack += weapon->attack_components[KF_COMBAT_COMPONENT_STRIKING];
+        player_state.piercing_attack += weapon->attack_components[KF_COMBAT_COMPONENT_PIERCING];
+        player_state.holy_attack += weapon->attack_components[KF_COMBAT_COMPONENT_HOLY];
+        player_state.fire_attack += weapon->attack_components[KF_COMBAT_COMPONENT_FIRE];
     }
-    if (player_state.equipped_head_armor_id != KF_ITEM_NONE) {
-        armor = &armor_records.entries[KF_ENUM_ENCODE(u8, player_state.equipped_head_armor_id) - KF_ARMOR_ITEM_FIRST];
+    if (player_state.equipped_head_armor_id != KF_OBJECT_NONE) {
+        armor = &armor_records.entries[KF_ENUM_ENCODE(u8, player_state.equipped_head_armor_id) - KF_ENUM_ENCODE(u8, KF_ITEM_IRON_MASK)];
         player_state.cutting_defense += armor->cutting_defense;
         player_state.cutting_defense += armor->cutting_defense;
         player_state.striking_defense += armor->striking_defense;
@@ -295,8 +295,8 @@ void player_recalculate_combat_stats(void)
         player_state.magic_defense += armor->magic_defense;
         player_state.fire_defense += armor->fire_defense;
     }
-    if (player_state.equipped_body_armor_id != KF_ITEM_NONE) {
-        armor = &armor_records.entries[KF_ENUM_ENCODE(u8, player_state.equipped_body_armor_id) - KF_ARMOR_ITEM_FIRST];
+    if (player_state.equipped_body_armor_id != KF_OBJECT_NONE) {
+        armor = &armor_records.entries[KF_ENUM_ENCODE(u8, player_state.equipped_body_armor_id) - KF_ENUM_ENCODE(u8, KF_ITEM_IRON_MASK)];
         player_state.cutting_defense += armor->cutting_defense;
         player_state.cutting_defense += armor->cutting_defense;
         player_state.striking_defense += armor->striking_defense;
@@ -305,8 +305,8 @@ void player_recalculate_combat_stats(void)
         player_state.magic_defense += armor->magic_defense;
         player_state.fire_defense += armor->fire_defense;
     }
-    if (player_state.equipped_arm_armor_id != KF_ITEM_NONE) {
-        armor = &armor_records.entries[KF_ENUM_ENCODE(u8, player_state.equipped_arm_armor_id) - KF_ARMOR_ITEM_FIRST];
+    if (player_state.equipped_arm_armor_id != KF_OBJECT_NONE) {
+        armor = &armor_records.entries[KF_ENUM_ENCODE(u8, player_state.equipped_arm_armor_id) - KF_ENUM_ENCODE(u8, KF_ITEM_IRON_MASK)];
         player_state.cutting_defense += armor->cutting_defense;
         player_state.cutting_defense += armor->cutting_defense;
         player_state.striking_defense += armor->striking_defense;
@@ -315,8 +315,8 @@ void player_recalculate_combat_stats(void)
         player_state.magic_defense += armor->magic_defense;
         player_state.fire_defense += armor->fire_defense;
     }
-    if (player_state.equipped_leg_armor_id != KF_ITEM_NONE) {
-        armor = &armor_records.entries[KF_ENUM_ENCODE(u8, player_state.equipped_leg_armor_id) - KF_ARMOR_ITEM_FIRST];
+    if (player_state.equipped_leg_armor_id != KF_OBJECT_NONE) {
+        armor = &armor_records.entries[KF_ENUM_ENCODE(u8, player_state.equipped_leg_armor_id) - KF_ENUM_ENCODE(u8, KF_ITEM_IRON_MASK)];
         player_state.cutting_defense += armor->cutting_defense;
         player_state.cutting_defense += armor->cutting_defense;
         player_state.striking_defense += armor->striking_defense;
@@ -325,8 +325,8 @@ void player_recalculate_combat_stats(void)
         player_state.magic_defense += armor->magic_defense;
         player_state.fire_defense += armor->fire_defense;
     }
-    if (player_state.equipped_shield_id != KF_ITEM_NONE) {
-        armor = &armor_records.entries[KF_ENUM_ENCODE(u8, player_state.equipped_shield_id) - KF_ARMOR_ITEM_FIRST];
+    if (player_state.equipped_shield_id != KF_OBJECT_NONE) {
+        armor = &armor_records.entries[KF_ENUM_ENCODE(u8, player_state.equipped_shield_id) - KF_ENUM_ENCODE(u8, KF_ITEM_IRON_MASK)];
         player_state.cutting_defense += armor->cutting_defense;
         player_state.cutting_defense += armor->cutting_defense;
         player_state.striking_defense += armor->striking_defense;
@@ -612,7 +612,7 @@ void player_apply_radial_damage(
 }
 
 ADDRESS(0x800167e4, 0x64)
-void player_select_magic(KfMagicId magic_id)
+void player_select_magic(KfEffectKind magic_id)
 {
     player_state.magic_charge = 0;
     player_state.selected_magic_id = magic_id;

@@ -107,12 +107,12 @@ void render_initialize(void)
 }
 
 ADDRESS(0x80016adc, 0x1d8)
-void display_initialize(KfOpenMode mode)
+void display_initialize(KfOverlayMode mode)
 {
     s32 framebuffer_height;
     s16 lower_buffer_y = KF_DISPLAY_HEIGHT;
 
-    if (mode == KF_OPEN_MODE_ENDING) {
+    if (mode == KF_OVERLAY_MODE_ENDING) {
         ResetGraph(KF_GPU_RESET_KEEP_DISPLAY);
     } else {
         ResetGraph(KF_GPU_RESET_FULL);
@@ -143,7 +143,7 @@ void display_initialize(KfOpenMode mode)
     open_graphics_runtime.display_draw_environments[1].isbg = 1;
     setRGB0(&open_graphics_runtime.display_draw_environments[0], 0, 0, 0);
     setRGB0(&open_graphics_runtime.display_draw_environments[1], 0, 0, 0);
-    if (mode == KF_OPEN_MODE_ENDING) {
+    if (mode == KF_OVERLAY_MODE_ENDING) {
         PutDispEnv(&open_graphics_runtime.display_disp_environments[0]);
         SetDispMask(1);
     } else {

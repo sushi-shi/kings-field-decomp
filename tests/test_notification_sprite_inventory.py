@@ -104,7 +104,7 @@ class NotificationSpriteInventoryTests(unittest.TestCase):
         self.assertEqual(
             notification,
             {
-                "active": (0x00, 1, "KfNotificationSpriteState"),
+                "active": (0x00, 1, "KfSpriteState"),
                 "unknown_01": (0x01, 1, "u8"),
                 "sprite": (0x02, 0x0C, "KfSpriteQuad"),
             },

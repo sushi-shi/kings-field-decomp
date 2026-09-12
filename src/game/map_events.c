@@ -225,20 +225,20 @@ void map_world_state_persist(void)
     object = &map_object_state.objects[0];
     definitions = map_object_state.definitions.entries;
     for (i = 0; i < KF_MAP_OBJECT_EFFECT_FIRST; i++, object++) {
-        KfMapObjectId id = object->object_id;
-        KfMapObjectBehavior behavior;
+        KfObjectId id = object->object_id;
+        KfMapObjectOperation behavior;
 
-        if (id == KF_MAP_OBJECT_FREE) {
+        if (id == KF_OBJECT_NONE) {
             continue;
         }
 
         behavior = definitions[KF_ENUM_ENCODE(u8, id)].behavior_type;
-        if ((behavior == KF_MAP_OBJECT_BEHAVIOR_NONE
-                || behavior == KF_MAP_OBJECT_BEHAVIOR_SCREEN_IMAGE
-                || behavior == KF_MAP_OBJECT_BEHAVIOR_ITEM_PICKUP
-                || behavior == KF_MAP_OBJECT_BEHAVIOR_SAVE_POINT
-                || behavior == KF_MAP_OBJECT_BEHAVIOR_GOLD_PICKUP)
-                && object->action == KF_MAP_OBJECT_ACTION_IDLE) {
+        if ((behavior == KF_MAP_OBJECT_OP_NONE
+                || behavior == KF_MAP_OBJECT_OP_SCREEN_IMAGE
+                || behavior == KF_MAP_OBJECT_OP_ITEM_PICKUP
+                || behavior == KF_MAP_OBJECT_OP_SAVE_POINT
+                || behavior == KF_MAP_OBJECT_OP_GOLD_PICKUP)
+                && object->action == KF_MAP_OBJECT_OP_NONE) {
             continue;
         }
 

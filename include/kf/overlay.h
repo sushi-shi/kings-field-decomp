@@ -10,29 +10,25 @@ extern u8 BSS_START[];
 extern u8 BSS_END[];
 
 enum {
-    OVERLAY_RAM_BYTES = KF_MAIN_RAM_BYTES,
     OVERLAY_STACK_BYTES = 0x8000
 };
 
-#define OVERLAY_RAM_END (0x80000000u + OVERLAY_RAM_BYTES)
+#define OVERLAY_RAM_END (0x80000000u + KF_MAIN_RAM_BYTES)
 #define OVERLAY_STACK_BOTTOM (OVERLAY_RAM_END - OVERLAY_STACK_BYTES)
 
-KF_ENUM_BEGIN(KfOpenMode, s32)
-    KF_OPEN_MODE_INTRO = 1,
-    KF_OPEN_MODE_ENDING = 0xfe
-KF_ENUM_END(KfOpenMode)
+KF_ENUM_BEGIN(KfOverlayMode, s32)
+    KF_OVERLAY_MODE_NONE = 0,
+    KF_OVERLAY_MODE_INTRO = 1,
+    KF_OVERLAY_MODE_ENDING = 0xfe
+KF_ENUM_END(KfOverlayMode)
 
-KF_ENUM_BEGIN(KfGameExitCode, u32)
-    KF_GAME_EXIT_NONE = 0,
-    KF_GAME_EXIT_INTRO = KF_ENUM_ENCODE(s32, KF_OPEN_MODE_INTRO),
-    KF_GAME_EXIT_ENDING = KF_ENUM_ENCODE(s32, KF_OPEN_MODE_ENDING)
-KF_ENUM_END(KfGameExitCode)
+typedef KF_ENUM_STORAGE(KfOverlayMode, u32) KfOverlayResultWord;
 
 /* Shared Exec argument block: OPEN reads request; GAME writes result.
- * The loader copies the returned encoding into the next OPEN request. */
+ * The loader passes the result directly as the next OPEN request. */
 typedef struct KfOverlayArguments {
-    KfOpenMode request;
-    KfGameExitCode result;
+    KfOverlayMode request;
+    KfOverlayResultWord result;
 } KfOverlayArguments;
 
 /* The SDK transports this block through Exec's char ** argument. */

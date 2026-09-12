@@ -8,6 +8,6 @@ enum { KF_OPENING_INITIAL_TIM_PATH_BYTES = 6 };
 
 extern char opening_initial_tim_path[KF_OPENING_INITIAL_TIM_PATH_BYTES];
 
-extern void opening_run(KfOpenMode display_mode);
+extern void opening_run(KfOverlayMode display_mode);
 
 #endif

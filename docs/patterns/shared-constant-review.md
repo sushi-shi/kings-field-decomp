@@ -1,5 +1,9 @@
 # Shared constant review
 
+Later naming/retention decisions are superseded by the
+[complete enum reuse review](enum-reuse-review.md); the evidence and verification
+below describe this earlier snapshot.
+
 This records the first pass. The [complete follow-up](enum-equality-review.md)
 reviews every remaining group and adds explicit value aliases where consumer
 evidence supports them, while retaining the typed domains discussed below.

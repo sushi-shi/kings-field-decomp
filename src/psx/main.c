@@ -23,9 +23,9 @@ void main(void)
     KfOverlayArguments entry_args;
 
     _96_remove();
-    entry_args.result = KF_GAME_EXIT_INTRO;
+    entry_args.result = KF_OVERLAY_MODE_INTRO;
     for (;;) {
-        entry_args.request = KF_ENUM_DECODE(KfOpenMode, KF_ENUM_ENCODE(u32, entry_args.result));
+        entry_args.request = entry_args.result;
         _96_init();
         if (Load(overlay_path_table[KF_OVERLAY_OPEN_PATH], &header) == 1) {
             _96_remove();

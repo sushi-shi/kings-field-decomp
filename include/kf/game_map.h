@@ -93,54 +93,33 @@ typedef union KfMapSavedWorld {
     KfMapSavedFloor floors[KF_MAP_SAVED_FLOOR_COUNT];
 } KfMapSavedWorld;
 
-/* Definition behavior and running action are separate byte domains. */
-KF_ENUM_BEGIN(KfMapObjectBehavior, u8)
-    KF_MAP_OBJECT_BEHAVIOR_HINGED_DOOR = 0,
-    KF_MAP_OBJECT_BEHAVIOR_HINGED_DOOR_PARTNER = 1,
-    KF_MAP_OBJECT_BEHAVIOR_LIFT_DOOR = 2,
-    KF_MAP_OBJECT_BEHAVIOR_03 = 3,
-    KF_MAP_OBJECT_BEHAVIOR_HINGED_CONTAINER = 8,
-    KF_MAP_OBJECT_BEHAVIOR_ITEM_CONTAINER = 9,
-    KF_MAP_OBJECT_BEHAVIOR_COPY_REGION = 10,
-    KF_MAP_OBJECT_BEHAVIOR_RESTORE_POINT = 11,
-    KF_MAP_OBJECT_BEHAVIOR_REVEAL_MAP_PIECE = 12,
-    KF_MAP_OBJECT_BEHAVIOR_SCREEN_IMAGE = 13,
-    KF_MAP_OBJECT_BEHAVIOR_SAVE_POINT = 14,
-    KF_MAP_OBJECT_BEHAVIOR_ITEM_PICKUP = 64,
-    KF_MAP_OBJECT_BEHAVIOR_GOLD_PICKUP = 65,
-    KF_MAP_OBJECT_BEHAVIOR_EFFECT_SWITCH = 83,
-    KF_MAP_OBJECT_BEHAVIOR_NONE = 255,
-    KF_MAP_OBJECT_BEHAVIOR_HINGED_DOOR_END = 2,
-    KF_MAP_OBJECT_BEHAVIOR_LINK_TRIGGER_END = 8,
-    KF_MAP_OBJECT_BEHAVIOR_LINK_CLEAR_LAST = 8
-KF_ENUM_END(KfMapObjectBehavior)
-
-KF_ENUM_BEGIN(KfMapObjectAction, u8)
-    KF_MAP_OBJECT_ACTION_SWING_DOOR = KF_ENUM_ENCODE(u8, KF_MAP_OBJECT_BEHAVIOR_HINGED_DOOR),
-    KF_MAP_OBJECT_ACTION_SWING_DOOR_PARTNER = KF_ENUM_ENCODE(u8, KF_MAP_OBJECT_BEHAVIOR_HINGED_DOOR_PARTNER),
-    KF_MAP_OBJECT_ACTION_LIFT_DOOR = KF_ENUM_ENCODE(u8, KF_MAP_OBJECT_BEHAVIOR_LIFT_DOOR),
-    KF_MAP_OBJECT_ACTION_COPY_REGION = KF_ENUM_ENCODE(u8, KF_MAP_OBJECT_BEHAVIOR_COPY_REGION),
-    KF_MAP_OBJECT_ACTION_ENABLE_RESTORE_POINT = KF_ENUM_ENCODE(u8, KF_MAP_OBJECT_BEHAVIOR_RESTORE_POINT),
-    KF_MAP_OBJECT_ACTION_REVEAL_MAP_PIECE = KF_ENUM_ENCODE(u8, KF_MAP_OBJECT_BEHAVIOR_REVEAL_MAP_PIECE),
-    KF_MAP_OBJECT_ACTION_PROJECTILE_EMITTER = 80,
-    KF_MAP_OBJECT_ACTION_RELEASE_ORBIT_OR_SHORT_SWING = 81,
-    KF_MAP_OBJECT_ACTION_RELEASE_LONG_SWING = 82,
-    KF_MAP_OBJECT_ACTION_EFFECT_SWITCH = KF_ENUM_ENCODE(u8, KF_MAP_OBJECT_BEHAVIOR_EFFECT_SWITCH),
-    KF_MAP_OBJECT_ACTION_FALL_AND_TIP = 96,
-    KF_MAP_OBJECT_ACTION_FALL_AND_SPIN = 97,
-    KF_MAP_OBJECT_ACTION_BOUNCE = 98,
-    KF_MAP_OBJECT_ACTION_IDLE = 255
-KF_ENUM_END(KfMapObjectAction)
-
-/* Door/link dispatch reuses the definition's encoded value as an action. */
-#if KF_MODERN_TYPES
-constexpr KfMapObjectAction map_object_action_from_behavior(KfMapObjectBehavior behavior)
-{
-    return KF_ENUM_DECODE(KfMapObjectAction, KF_ENUM_ENCODE(u8, behavior));
-}
-#else
-#define map_object_action_from_behavior(behavior) (behavior)
-#endif
+/* Definitions select operations; the runtime action byte dispatches them. */
+KF_ENUM_BEGIN(KfMapObjectOperation, u8)
+    KF_MAP_OBJECT_OP_HINGED_DOOR = 0,
+    KF_MAP_OBJECT_OP_HINGED_DOOR_PARTNER = 1,
+    KF_MAP_OBJECT_OP_LIFT_DOOR = 2,
+    KF_MAP_OBJECT_OP_03 = 3,
+    KF_MAP_OBJECT_OP_HINGED_CONTAINER = 8,
+    KF_MAP_OBJECT_OP_ITEM_CONTAINER = 9,
+    KF_MAP_OBJECT_OP_COPY_REGION = 10,
+    KF_MAP_OBJECT_OP_RESTORE_POINT = 11,
+    KF_MAP_OBJECT_OP_REVEAL_MAP_PIECE = 12,
+    KF_MAP_OBJECT_OP_SCREEN_IMAGE = 13,
+    KF_MAP_OBJECT_OP_SAVE_POINT = 14,
+    KF_MAP_OBJECT_OP_ITEM_PICKUP = 64,
+    KF_MAP_OBJECT_OP_GOLD_PICKUP = 65,
+    KF_MAP_OBJECT_OP_PROJECTILE_EMITTER = 80,
+    KF_MAP_OBJECT_OP_RELEASE_ORBIT_OR_SHORT_SWING = 81,
+    KF_MAP_OBJECT_OP_RELEASE_LONG_SWING = 82,
+    KF_MAP_OBJECT_OP_EFFECT_SWITCH = 83,
+    KF_MAP_OBJECT_OP_FALL_AND_TIP = 96,
+    KF_MAP_OBJECT_OP_FALL_AND_SPIN = 97,
+    KF_MAP_OBJECT_OP_BOUNCE = 98,
+    KF_MAP_OBJECT_OP_NONE = 255,
+    KF_MAP_OBJECT_OP_HINGED_DOOR_END = 2,
+    KF_MAP_OBJECT_OP_LINK_TRIGGER_END = 8,
+    KF_MAP_OBJECT_OP_LINK_CLEAR_LAST = 8
+KF_ENUM_END(KfMapObjectOperation)
 
 /* Authored groups selected by weapon and boss progress. */
 enum {
@@ -205,49 +184,6 @@ KF_ENUM_BEGIN(KfMapObjectDropSource, u8)
     KF_MAP_OBJECT_DROP_FROM_DEFINITION = 1
 KF_ENUM_END(KfMapObjectDropSource)
 
-/* GAME model/definition IDs; pickup models preserve their item encoding.
- * OPEN's encoded placements use another table. */
-KF_ENUM_BEGIN(KfMapObjectId, u8)
-    KF_MAP_OBJECT_DRAGON_SWORD = KF_ENUM_ENCODE(u8, KF_ITEM_DRAGON_SWORD),
-    KF_MAP_OBJECT_MOONLIGHT_SWORD = KF_ENUM_ENCODE(u8, KF_ITEM_MOONLIGHT_SWORD),
-    KF_MAP_OBJECT_GOLD_COIN = KF_ENUM_ENCODE(u8, KF_ITEM_GOLD_COIN),
-    KF_MAP_OBJECT_DRAGON_CHALICE = KF_ENUM_ENCODE(u8, KF_ITEM_DRAGON_CHALICE),
-    KF_MAP_OBJECT_WATER_SEAL_STONE = KF_ENUM_ENCODE(u8, KF_ITEM_WATER_SEAL_STONE),
-    KF_MAP_OBJECT_EARTH_SEAL_STONE = KF_ENUM_ENCODE(u8, KF_ITEM_EARTH_SEAL_STONE),
-    KF_MAP_OBJECT_FIRE_SEAL_STONE = KF_ENUM_ENCODE(u8, KF_ITEM_FIRE_SEAL_STONE),
-    KF_MAP_OBJECT_WIND_SEAL_STONE = KF_ENUM_ENCODE(u8, KF_ITEM_WIND_SEAL_STONE),
-    KF_MAP_OBJECT_BEVELED_WOODEN_LID = 81,
-    KF_MAP_OBJECT_FLAT_WOODEN_LID = 83,
-    KF_MAP_OBJECT_STONE_CONTAINER_LID = 85,
-    KF_MAP_OBJECT_GRAVESTONE = 89,
-    KF_MAP_OBJECT_BROKEN_STONE_CROSS = 92,
-    KF_MAP_OBJECT_DROP_DISABLED = 99,
-    KF_MAP_OBJECT_DRY_FOUNTAIN = 111,
-    KF_MAP_OBJECT_BOSS_PROJECTILE_EMITTER = 115,
-    KF_MAP_OBJECT_LIFTING_GATE = 117,
-    KF_MAP_OBJECT_PORTCULLIS = 118,
-    KF_MAP_OBJECT_HINGED_DOOR = 119,
-    KF_MAP_OBJECT_HINGED_DOOR_PARTNER = 120,
-    KF_MAP_OBJECT_TALL_HINGED_DOOR = 121,
-    KF_MAP_OBJECT_TALL_HINGED_DOOR_PARTNER = 122,
-    KF_MAP_OBJECT_FILLED_FOUNTAIN = 123,
-    KF_MAP_OBJECT_FIRE_BALL_EMITTER = 124,
-    KF_MAP_OBJECT_WIND_CUTTER_EMITTER = 125,
-    KF_MAP_OBJECT_SIGNBOARD = 130,
-    KF_MAP_OBJECT_INSCRIPTION_PANEL = 131,
-    KF_MAP_OBJECT_EFFECT_SWITCH = 135,
-    KF_MAP_OBJECT_ORBITING_PROJECTILE = 136,
-    KF_MAP_OBJECT_PROJECTILE_EMITTER = 137,
-    KF_MAP_OBJECT_SHORT_SWING = 138,
-    KF_MAP_OBJECT_LONG_SWING = 139,
-    KF_MAP_OBJECT_FREE = 255,
-    /* Exclusive rendering and drop-animation boundaries. */
-    KF_MAP_OBJECT_RENDER_ID_END = 133,
-    KF_MAP_DROP_TIP_ID_END = 43,
-    KF_MAP_DROP_SPIN_ID_END = 48,
-    KF_MAP_DROP_BOUNCE_ID_END = 65
-KF_ENUM_END(KfMapObjectId)
-
 /* Positive Y hides the piece; five settling updates undo the reveal overshoot. */
 enum {
     KF_MAP_OBJECT_REVEAL_DEPTH = 10000,
@@ -297,7 +233,7 @@ typedef struct KfMapObjectLinkFields {
 
 typedef struct KfMapObjectHingedContainer {
     u8 link_id;
-    KfItemId item_ids[KF_MAP_CONTAINER_ITEM_COUNT];
+    KfObjectId item_ids[KF_MAP_CONTAINER_ITEM_COUNT];
 } KfMapObjectHingedContainer;
 
 /* Placements copy two words; saved floors preserve all eight bytes. */
@@ -305,7 +241,7 @@ typedef union KfMapObjectLink {
     KfMapObjectLinkFields fields;
     u16 gold_amount;
     KfMapObjectHingedContainer hinged_container;
-    KfItemId item_ids[KF_MAP_CONTAINER_ITEM_COUNT];
+    KfObjectId item_ids[KF_MAP_CONTAINER_ITEM_COUNT];
     u32 words[2];
     u8 bytes[8];
 } KfMapObjectLink;
@@ -324,7 +260,7 @@ typedef struct KfMapObjectPlacement {
 } KfMapObjectPlacement;
 
 typedef struct KfMapObjectDefinition {
-    KfMapObjectBehavior behavior_type;
+    KfMapObjectOperation behavior_type;
     u8 unknown_01;
     u16 collision_radius;
     u16 interaction_radius;
@@ -337,7 +273,7 @@ typedef union KfMapObjectDefinitionTable {
 } KfMapObjectDefinitionTable;
 
 typedef struct KfMapObject {
-    KfMapObjectId object_id;
+    KfObjectId object_id;
     u8 unknown_01;
     u16 cell_x;
     u16 cell_z;
@@ -345,7 +281,7 @@ typedef struct KfMapObject {
     VECTOR position;
     KfRotation rotation;
     KfMapObjectLink link;
-    KfMapObjectAction action;
+    KfMapObjectOperation action;
     u8 unknown_29;
     KfMapObjectProgress action_timer;
 } KfMapObject;
@@ -559,8 +495,8 @@ extern void map_object_pool_trigger_link(u8 link_id);
 extern void map_object_pool_update(void);
 extern s32 map_object_probe_forward(const KfMapObject *object, u16 yaw);
 extern void map_object_spawn_actor_debris(u16 source, const VECTOR *position, s32 y_offset);
-extern void map_object_spawn_effect(KfMapObjectDropSource kind, KfMapObjectId object_id, const VECTOR *position, s32 y_offset);
-extern void map_object_start_action_if_idle(KfMapObject *object, KfMapObjectAction action);
+extern void map_object_spawn_effect(KfMapObjectDropSource kind, KfObjectId object_id, const VECTOR *position, s32 y_offset);
+extern void map_object_start_action_if_idle(KfMapObject *object, KfMapObjectOperation action);
 extern const u32 *map_resource_copy_words( u32 *destination, const u32 *source, u32 word_count);
 extern u8 *map_resource_load_file(const char *filename);
 extern void map_resource_path_set_floor(KfFloorId floor);

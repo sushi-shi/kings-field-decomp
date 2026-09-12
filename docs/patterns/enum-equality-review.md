@@ -1,5 +1,10 @@
 # Complete enum equality review
 
+This is the historical `bc4127a2` snapshot. The subsequent
+[complete enum reuse review](enum-reuse-review.md) supersedes its alias and
+retention decisions where documented, and owns the current coverage check.
+The census and commands below describe this earlier revision.
+
 This continues the [first shared-constant review](shared-constant-review.md)
 on PR #3. The starting revision is `da7c89a0`: 1,951 declarations, 341 values,
 and **179 duplicate-value groups containing 1,789 declarations** across the

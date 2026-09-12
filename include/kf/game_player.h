@@ -218,10 +218,10 @@ typedef struct KfPlayerState {
     s16 illusion_staff_timer;
     u8 unknown_54[4];
     u32 equipment_effect_ticks;
-    KfMagicId selected_magic_id;
+    KfEffectKind selected_magic_id;
     u8 unknown_5d[3];
     KfMagicRecord *selected_magic_record;
-    KfItemId equipped_weapon_id;
+    KfObjectId equipped_weapon_id;
     u8 unknown_65[3];
     KfWeaponRecord *equipped_weapon_record;
     struct KfAssetHeader *weapon_asset_buffer;
@@ -237,12 +237,12 @@ typedef struct KfPlayerState {
     KfArmorRecord *equipped_shield_record;
     KfArmorRecord *equipped_arm_armor_record;
     KfArmorRecord *equipped_leg_armor_record;
-    KfItemId equipped_head_armor_id;
-    KfItemId equipped_body_armor_id;
-    KfItemId equipped_shield_id;
-    KfItemId equipped_arm_armor_id;
-    KfItemId equipped_leg_armor_id;
-    KfItemId equipped_accessory_id;
+    KfObjectId equipped_head_armor_id;
+    KfObjectId equipped_body_armor_id;
+    KfObjectId equipped_shield_id;
+    KfObjectId equipped_arm_armor_id;
+    KfObjectId equipped_leg_armor_id;
+    KfObjectId equipped_accessory_id;
     KF_ENUM_STORAGE(KfPlayerOption, u8) audio_effects_enabled;
     KF_ENUM_STORAGE(KfPlayerOption, u8) audio_music_enabled;
     KF_ENUM_STORAGE(KfPlayerOption, u8) hud_gauges_enabled;
@@ -309,7 +309,7 @@ extern s32 player_distance_to_point(
 extern s32 player_distance_to_point_in_cone(
     const VECTOR *point, s16 facing, s32 max_distance,
     s32 angle_tolerance);
-extern void player_equip_weapon(KfItemId weapon_id);
+extern void player_equip_weapon(KfObjectId weapon_id);
 extern void game_initialize_session(void);
 extern void game_state_initialize(void);
 extern void player_increment_magic_training(void);
@@ -317,11 +317,11 @@ extern void player_increment_physical_power_training(void);
 extern s32 player_move_horizontal(s32 heading, s32 distance);
 extern void player_recalculate_combat_stats(void);
 extern void player_restore_vitals_with_color_cycle(void);
-extern void player_select_magic(KfMagicId magic_id);
-extern void player_set_equipment_slot(KfItemId item_id, KfEquipmentSlot slot);
+extern void player_select_magic(KfEffectKind magic_id);
+extern void player_set_equipment_slot(KfObjectId item_id, KfEquipmentSlot slot);
 extern void player_apply_fire_defense_boost(void);
 extern void player_sync_position_to_map(void);
-extern void player_use_item(KfItemId item_id);
+extern void player_use_item(KfObjectId item_id);
 extern void player_update(void);
 extern void player_update_transform_snapshot(
     VECTOR *position_out, SVECTOR *rotation_out);

@@ -57,7 +57,7 @@ void map_event_show_person_image(const KfMapEvent *event)
  * the mirror shows the target's picture, and Verdite trains magic.
  */
 ADDRESS(0x80018054, 0x45c)
-void player_use_item(KfItemId item_id)
+void player_use_item(KfObjectId item_id)
 {
     KfMapObject *object;
     KfActor *actor;
@@ -127,11 +127,11 @@ void player_use_item(KfItemId item_id)
                 break;
             }
             object = &map_object_state.objects[index];
-            if (object->object_id == KF_ENUM_DECODE(KfMapObjectId, KF_ENUM_ENCODE(u8, item_id))) {
+            if (object->object_id == KF_ENUM_DECODE(KfObjectId, KF_ENUM_ENCODE(u8, item_id))) {
                 if (object->link.fields.link_id == KF_MAP_LINK_NONE) {
                     notify_enqueue(KF_NOTIFICATION_NOTHING_HAPPENS);
                 } else {
-                    item_stock[KF_ITEM_STOCK_PLAYER][KF_ENUM_ENCODE(u8, object->object_id)] = 0;
+                    item_stock[KF_ENUM_ENCODE(u8, KF_ITEM_STOCK_PLAYER)][KF_ENUM_ENCODE(u8, object->object_id)] = 0;
                     used = KF_TRUE;
                     map_object_pool_trigger_link(object->link.fields.link_id);
                     object->link.fields.link_id = KF_MAP_LINK_NONE;
@@ -178,8 +178,8 @@ void player_use_item(KfItemId item_id)
         return;
     case KF_ITEM_ILLUSION_STAFF:
         player_state.illusion_staff_timer = PLAYER_ILLUSION_STAFF_TIMER_RELOAD;
-        if (item_stock[KF_ITEM_STOCK_PLAYER][KF_ENUM_ENCODE(u8, KF_ITEM_ILLUSION_STAFF)] != 0) {
-            item_stock[KF_ITEM_STOCK_PLAYER][KF_ENUM_ENCODE(u8, KF_ITEM_ILLUSION_STAFF)]--;
+        if (item_stock[KF_ENUM_ENCODE(u8, KF_ITEM_STOCK_PLAYER)][KF_ENUM_ENCODE(u8, KF_ITEM_ILLUSION_STAFF)] != 0) {
+            item_stock[KF_ENUM_ENCODE(u8, KF_ITEM_STOCK_PLAYER)][KF_ENUM_ENCODE(u8, KF_ITEM_ILLUSION_STAFF)]--;
         }
         return;
     case KF_ITEM_MIRROR_OF_TRUTH:

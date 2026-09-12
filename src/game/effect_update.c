@@ -15,7 +15,6 @@ enum {
     EFFECT_HAZARD_SOUND_RANDOM_CUTOFF = (RAND_MAX + 1) / 4,
     EFFECT_SWING_SOUND_MAX_DISTANCE = 3000,
     EFFECT_ORBIT_SOUND_MAX_DISTANCE = 5000,
-    EFFECT_ORBIT_SOUND_RESET_DISTANCE = EFFECT_ORBIT_SOUND_MAX_DISTANCE,
     EFFECT_HAZARD_SOUND_ATTENUATION_DISTANCE = 14000,
     EFFECT_ORBIT_UPDATES_PER_TURN = 64,
     FLOOR_DEFORM_SOUND_PROGRESS = 3900,
@@ -154,7 +153,7 @@ void effect_projectile_update_2d(s32 orbit_radius, KF_ENUM_PARAM(KfEffectPhase, 
             s32 dx = (record->position.vx - player_state.camera_position.vx) >> KF_LENGTH_SQUARE_DOWNSHIFT;
             s32 dy = (record->position.vy - player_state.camera_position.vy) >> KF_LENGTH_SQUARE_DOWNSHIFT;
             s32 dz = (record->position.vz - player_state.camera_position.vz) >> KF_LENGTH_SQUARE_DOWNSHIFT;
-            if ((SquareRoot0(dx * dx + dy * dy + dz * dz) << KF_LENGTH_SQUARE_DOWNSHIFT) >= EFFECT_ORBIT_SOUND_RESET_DISTANCE) {
+            if ((SquareRoot0(dx * dx + dy * dy + dz * dz) << KF_LENGTH_SQUARE_DOWNSHIFT) >= EFFECT_ORBIT_SOUND_MAX_DISTANCE) {
                 record->sound_played = KF_AUDIO_NOT_PLAYED;
             }
         }
@@ -275,6 +274,6 @@ void effect_spawn_ground_branch(u8 id, KfEffectRecord *record, s16 angle_offset,
     cell_z = position.vz / KF_MAP_TILE_SIZE;
     cell_x = position.vx / KF_MAP_TILE_SIZE;
     position.vy = -(map_floor_height_grid.cells[cell_z][cell_x] * KF_MAP_HEIGHT_STEP);
-    effect_pool_construct(id, record->type, KF_EFFECT_KIND_GROUND_BRANCH, &position,
+    effect_pool_construct(id, record->type, KF_MAGIC_FIRE_WALL, &position,
         &record->direction.vector, KF_EFFECT_ARGS_BRANCH(branch_role));
 }

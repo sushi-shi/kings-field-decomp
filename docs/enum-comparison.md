@@ -48,6 +48,8 @@ The [shared-constant review](patterns/shared-constant-review.md) records the
 value-10 example, both actor angle thresholds, wider cross-TU findings, source
 changes, and binary verification.
 
-The [complete follow-up review](patterns/enum-equality-review.md) accounts for
-all 179 remaining equal-value groups with an explicit membership/decision
-ledger, supported aliases, retained distinctions, and a coverage check.
+The [earlier equality review](patterns/enum-equality-review.md) records the
+179-group snapshot. Its alias-preserving decisions are superseded by the
+[complete enum reuse review](patterns/enum-reuse-review.md), which inventories
+all 302 starting enum blocks, consolidates shared types and direct consumers,
+and accounts for every remaining declaration in its per-enum ledger.

@@ -13,11 +13,10 @@ enum {
 enum {
     PROJECTILE_COLLISION_RADIUS = 100,
     EMERGING_COLLISION_RADIUS = 150,
-    FIRE_DARKNESS_ROLL_STEP = 200,
-    LIGHTNING_ROLL_STEP = 200,
+    PROJECTILE_ROLL_STEP = 200,
     EMERGING_ROLL_STEP = 100,
     PROJECTILE_DEFAULT_ROLL_STEP = 600,
-    PROJECTILE_DISSIPATE_SCALE_STEP = 400,
+    EFFECT_DISSIPATE_SCALE_STEP = 400,
     EMERGING_FALL_ACCELERATION = 20,
     EMERGING_RETIRE_DEPTH = 3000,
     STATUS_PROJECTILE_SHRINK_STEP = 384,
@@ -36,7 +35,6 @@ enum {
     MOONLIGHT_FAR_TRAIL_ANGLE = 1824,
     MOONLIGHT_NEAR_TRAIL_DISTANCE = 4000,
     MOONLIGHT_FAR_TRAIL_DISTANCE = 8000,
-    GROUND_TRAIL_SHRINK_STEP = 400,
     GROUND_TRAIL_RENDER_FRAME_COUNT = 3
 };
 
@@ -69,7 +67,7 @@ enum {
     GROUND_BRANCH_SCALE_STEP = KF_FIXED12_ONE / 16,
     GROUND_BRANCH_DAMAGE_PERIOD = 4,
     GROUND_BRANCH_DAMAGE_RADIUS = 1500,
-    GROUND_BRANCH_YAW_STEP = 500,
+    GROUND_EFFECT_YAW_STEP = 500,
     GROUND_VISUAL_RADIUS_RANDOM_SCALE = 325,
     GROUND_VISUAL_RADIUS_RANDOM_SHIFT = 13
 };
@@ -77,7 +75,6 @@ enum {
 enum {
     GROUND_VISUAL_SCALE_STEP = 4000,
     GROUND_VISUAL_RISE_STEP = 1800,
-    GROUND_VISUAL_YAW_STEP = 500
 };
 
 enum {
@@ -137,10 +134,10 @@ void effect_update_dispatch(void)
     switch (kind) {
     case KF_EFFECT_KIND_EMERGING_PROJECTILE:
         radius = EMERGING_COLLISION_RADIUS;
-    case KF_EFFECT_KIND_LIGHTNING_BOLT:
-    case KF_EFFECT_KIND_FIRE_BALL:
-    case KF_EFFECT_KIND_WIND_CUTTER:
-    case KF_EFFECT_KIND_LIGHT_NEEDLE:
+    case KF_MAGIC_LIGHTNING_BOLT:
+    case KF_MAGIC_FIRE_BALL:
+    case KF_MAGIC_WIND_CUTTER:
+    case KF_MAGIC_LIGHT_NEEDLE:
     case KF_EFFECT_KIND_SCATTER_PROJECTILE:
     case KF_EFFECT_KIND_DARKNESS_PROJECTILE:
     case KF_EFFECT_KIND_CURSE_PROJECTILE:
@@ -155,7 +152,7 @@ void effect_update_dispatch(void)
 
                     impact_magic = current_effect_magic_record;
                     collision_kind = collision >> KF_COLLISION_KIND_SHIFT;
-                    if (kind == KF_EFFECT_KIND_LIGHTNING_BOLT) {
+                    if (kind == KF_MAGIC_LIGHTNING_BOLT) {
                         goto lightning_impact;
                     }
                     impact_power = effect_magic_power(effect);
@@ -164,7 +161,7 @@ void effect_update_dispatch(void)
                             &impact_magic->sounds[1], &effect->position, KF_AUDIO_MAX_VOLUME);
                     }
                     if (collision_kind == (KF_COLLISION_ACTOR >> KF_COLLISION_KIND_SHIFT)) {
-                        if (kind == KF_EFFECT_KIND_MAP_EMITTER_PROJECTILE || kind == KF_EFFECT_KIND_PHYSICAL_PROJECTILE || kind == KF_EFFECT_KIND_WIND_CUTTER) {
+                        if (kind == KF_EFFECT_KIND_MAP_EMITTER_PROJECTILE || kind == KF_EFFECT_KIND_PHYSICAL_PROJECTILE || kind == KF_MAGIC_WIND_CUTTER) {
                             actor_apply_damage(
                                 (u16)collision, impact_power,
                                 impact_magic->damage_components[0],
@@ -178,7 +175,7 @@ void effect_update_dispatch(void)
                                 impact_magic->damage_components[1],
                                 KF_ACTOR_DAMAGE_SCALE_ONE, effect->type);
                         }
-                        if (kind == KF_EFFECT_KIND_WIND_CUTTER) {
+                        if (kind == KF_MAGIC_WIND_CUTTER) {
                             break;
                         }
                     } else if (collision_kind == (KF_COLLISION_PLAYER >> KF_COLLISION_KIND_SHIFT)) {
@@ -203,7 +200,7 @@ void effect_update_dispatch(void)
                                 impact_magic->damage_components[1],
                                 KF_FIXED12_ONE, effect->id);
                         }
-                        if (kind == KF_EFFECT_KIND_WIND_CUTTER) {
+                        if (kind == KF_MAGIC_WIND_CUTTER) {
                             break;
                         }
                     }
@@ -222,14 +219,14 @@ void effect_update_dispatch(void)
             }
 
             addVector(&effect->position, &effect->direction.vector);
-            if (kind == KF_EFFECT_KIND_FIRE_BALL || kind == KF_EFFECT_KIND_DARKNESS_PROJECTILE) {
-                effect->rotation.vector.vz = (effect->rotation.vector.vz + FIRE_DARKNESS_ROLL_STEP) & KF_ANGLE_WRAP_MASK;
+            if (kind == KF_MAGIC_FIRE_BALL || kind == KF_EFFECT_KIND_DARKNESS_PROJECTILE) {
+                effect->rotation.vector.vz = (effect->rotation.vector.vz + PROJECTILE_ROLL_STEP) & KF_ANGLE_WRAP_MASK;
                 return;
             }
-            if (kind == KF_EFFECT_KIND_LIGHTNING_BOLT) {
+            if (kind == KF_MAGIC_LIGHTNING_BOLT) {
                 s32 remaining;
 
-                effect->rotation.vector.vz = (effect->rotation.vector.vz + LIGHTNING_ROLL_STEP) & KF_ANGLE_WRAP_MASK;
+                effect->rotation.vector.vz = (effect->rotation.vector.vz + PROJECTILE_ROLL_STEP) & KF_ANGLE_WRAP_MASK;
                 remaining = effect->control.frames_remaining - 1;
                 effect->control.frames_remaining = remaining;
                 if ((u16)remaining == 0) {
@@ -307,20 +304,20 @@ lightning_impact:
                 }
                 return;
             }
-            if (kind == KF_EFFECT_KIND_LIGHT_NEEDLE || kind == KF_EFFECT_KIND_PHYSICAL_PROJECTILE) {
+            if (kind == KF_MAGIC_LIGHT_NEEDLE || kind == KF_EFFECT_KIND_PHYSICAL_PROJECTILE) {
                 return;
             }
             effect->rotation.vector.vz = (effect->rotation.vector.vz + PROJECTILE_DEFAULT_ROLL_STEP) & KF_ANGLE_WRAP_MASK;
             return;
         }
 
-        if (phase < KF_EFFECT_FIRE_BALL_IMPACT_END && kind == KF_EFFECT_KIND_FIRE_BALL) {
+        if (phase < KF_EFFECT_FIRE_BALL_IMPACT_END && kind == KF_MAGIC_FIRE_BALL) {
             effect->render_id.billboard = KF_ENUM_DECODE(KfEffectBillboardId,
                 KF_ENUM_ENCODE(u8, effect->base_render_id.billboard) + KF_ENUM_ENCODE(u8, phase));
         } else if (phase < KF_EFFECT_PROJECTILE_IMPACT_END) {
             goto invalidate_and_advance;
         } else if (phase < KF_EFFECT_PROJECTILE_DISSIPATE_END) {
-            s32 scale = effect->scale_x - PROJECTILE_DISSIPATE_SCALE_STEP;
+            s32 scale = effect->scale_x - EFFECT_DISSIPATE_SCALE_STEP;
 
             effect->scale_x = scale;
             effect->scale_z = scale;
@@ -428,7 +425,7 @@ play_phase_sound:
             }
             break;
         case KF_EFFECT_GROUND_TRAIL_SHRINK: {
-            s32 scale = effect->scale_x - GROUND_TRAIL_SHRINK_STEP;
+            s32 scale = effect->scale_x - EFFECT_DISSIPATE_SCALE_STEP;
 
             effect->scale_x = scale;
             effect->scale_y = effect->scale_z = scale;
@@ -621,7 +618,7 @@ advance_effect_phase:
         effect->phase++;
         break;
 
-    case KF_EFFECT_KIND_GROUND_BRANCH:
+    case KF_MAGIC_FIRE_WALL:
         if (phase < KF_EFFECT_GROUND_BRANCH_GROW_END) {
             if (effect->control.frames_remaining != KF_EFFECT_GROUND_BRANCH_TIMER_DONE) {
                 if (effect->control.frames_remaining-- == 0) {
@@ -691,7 +688,7 @@ advance_effect_phase:
         } else {
             effect->type = KF_EFFECT_SLOT_FREE;
         }
-        effect->rotation.vector.vy = (effect->rotation.vector.vy + GROUND_BRANCH_YAW_STEP) & KF_ANGLE_WRAP_MASK;
+        effect->rotation.vector.vy = (effect->rotation.vector.vy + GROUND_EFFECT_YAW_STEP) & KF_ANGLE_WRAP_MASK;
         effect->phase++;
         break;
 
@@ -704,7 +701,7 @@ advance_effect_phase:
         } else {
             effect->type = KF_EFFECT_SLOT_FREE;
         }
-        effect->rotation.vector.vy = (effect->rotation.vector.vy + GROUND_VISUAL_YAW_STEP) & KF_ANGLE_WRAP_MASK;
+        effect->rotation.vector.vy = (effect->rotation.vector.vy + GROUND_EFFECT_YAW_STEP) & KF_ANGLE_WRAP_MASK;
         effect->phase++;
         break;
 

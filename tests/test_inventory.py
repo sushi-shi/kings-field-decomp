@@ -52,6 +52,29 @@ class FakeReference:
 
 
 class InventoryTests(unittest.TestCase):
+    def test_enum_storage_typedef_preserves_abi_and_rejects_unknown_types(self) -> None:
+        domain = "KF_ENUM_BEGIN(Mode, s16) MODE_FIRST = 1 KF_ENUM_END(Mode)"
+        alias = "typedef KF_ENUM_STORAGE(Mode, u32) ModeWord;"
+        carrier = "typedef struct Carrier { u8 prefix; ModeWord mode; u8 suffix; } Carrier;"
+        source = domain + alias + carrier
+        with patch("pathlib.Path.read_text", lambda path:
+                   source if path.name == "game_types.h" else ""):
+            layout = _header_structure_layouts()["Carrier"]
+        self.assertEqual((layout.size, layout.alignment), (12, 4))
+        self.assertEqual([(f.offset, f.size, f.datatype) for f in layout.fields],
+                         [(0, 1, "u8"), (4, 4, "ModeWord"), (8, 1, "u8")])
+        controls = (
+            (source.replace("(Mode, u32)", "(Missing, u32)"), "undeclared enum domain"),
+            (source.replace("(Mode, u32)", "(Mode, size_t)"), "unsupported enum storage"),
+            (domain + alias + alias + carrier, "duplicate checked type"),
+            (domain + "typedef u32 ModeWord;" + carrier, "unknown field type"),
+        )
+        for source, error in controls:
+            with self.subTest(error=error), patch("pathlib.Path.read_text", lambda path:
+                                                source if path.name == "game_types.h" else ""):
+                with self.assertRaisesRegex(ValueError, error):
+                    _header_structure_layouts()
+
     def test_storage_macro_requires_a_declared_enum_domain(self) -> None:
         declaration = """
             KF_ENUM_BEGIN(Floor, s32)
@@ -3097,7 +3120,7 @@ class InventoryTests(unittest.TestCase):
         exit_code = game.datum(0x800958F8)
         self.assertEqual(
             (exit_code.name, exit_code.datatype, exit_code.owner_type),
-            ("game_exit_code", "KfGameExitCode", "game"),
+            ("game_exit_code", "KfOverlayResultWord", "game"),
         )
         save_writer = game.function(0x8002B73C)
         self.assertEqual(

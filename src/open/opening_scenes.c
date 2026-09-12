@@ -26,12 +26,6 @@ enum {
     SCENE1_SEQUENCE_STOP_FRAME = 600,
     SCENE1_HOLD_FRAMES = 1000,
     TRANSITION_FIRST_ENTITY_SLOT = 24,
-    TRANSITION_ENTITY_COUNT = 4,
-    TRANSITION_TALL_SCALE_Y = 0x2000,
-    TRANSITION_SCALE_STEP = 0x100,
-    TRANSITION_YAW_STEP = 0x200,
-    TRANSITION_ENTITY_DELAY_SHIFT = 3,
-    TRANSITION_FRAMES = 48
 };
 
 enum {
@@ -343,19 +337,19 @@ void opening_entity_transition(KfOpeningTransitionMode mode, const VECTOR *posit
     switch (mode) {
     case KF_OPENING_TRANSITION_GROW:
         initial_scale_y = 0;
-        scale_step = TRANSITION_SCALE_STEP;
+        scale_step = KF_CYLINDER_TRANSITION_SCALE_STEP;
         break;
     case KF_OPENING_TRANSITION_REMOVE:
         goto deactivate;
     case KF_OPENING_TRANSITION_SHRINK:
     case KF_OPENING_TRANSITION_CREATE:
-        initial_scale_y = TRANSITION_TALL_SCALE_Y;
-        scale_step = -TRANSITION_SCALE_STEP;
+        initial_scale_y = KF_CYLINDER_TRANSITION_TALL_SCALE;
+        scale_step = -KF_CYLINDER_TRANSITION_SCALE_STEP;
         break;
     }
 
     entity = &opening_entity_state.entities[TRANSITION_FIRST_ENTITY_SLOT];
-    entity_index = TRANSITION_ENTITY_COUNT - 1;
+    entity_index = KF_CYLINDER_TRANSITION_COUNT - 1;
     /* Retail retains these stack coordinates without a subsequent consumer. */
     transform_snapshot.position.vx = position->vx;
     transform_snapshot.position.vz = position->vz;
@@ -382,22 +376,22 @@ void opening_entity_transition(KfOpeningTransitionMode mode, const VECTOR *posit
         entity = &opening_entity_state.entities[TRANSITION_FIRST_ENTITY_SLOT];
         entity_index = 0;
         do {
-            if ((entity_index << TRANSITION_ENTITY_DELAY_SHIFT) < frame) {
+            if ((entity_index << KF_CYLINDER_TRANSITION_STAGGER_SHIFT) < frame) {
                 u16 scale_y = entity->scale.vy;
 
-                if (scale_y < TRANSITION_TALL_SCALE_Y + 1) {
+                if (scale_y < KF_CYLINDER_TRANSITION_TALL_SCALE + 1) {
                     entity->scale.vy = scale_step + scale_y;
                 }
             }
             entity_index++;
             entity->rotation.y =
-                (entity->rotation.y + TRANSITION_YAW_STEP) & KF_ANGLE_WRAP_MASK;
+                (entity->rotation.y + KF_CYLINDER_TRANSITION_YAW_STEP) & KF_ANGLE_WRAP_MASK;
             entity++;
-        } while (entity_index < TRANSITION_ENTITY_COUNT);
+        } while (entity_index < KF_CYLINDER_TRANSITION_COUNT);
         opening_render_frame(NULL, NULL);
         VSync(0);
         frame++;
-    } while (frame < TRANSITION_FRAMES);
+    } while (frame < KF_CYLINDER_TRANSITION_FRAMES);
 
     if (mode == KF_OPENING_TRANSITION_GROW) {
         return;
@@ -405,7 +399,7 @@ void opening_entity_transition(KfOpeningTransitionMode mode, const VECTOR *posit
 
 deactivate:
     entity = &opening_entity_state.entities[TRANSITION_FIRST_ENTITY_SLOT];
-    entity_index = TRANSITION_ENTITY_COUNT - 1;
+    entity_index = KF_CYLINDER_TRANSITION_COUNT - 1;
     do {
         entity->object_id = KF_OPENING_ENTITY_FREE;
         entity++;

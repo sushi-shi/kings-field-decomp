@@ -136,7 +136,7 @@ void render_floor_item(KfFloorItem *item)
     next_frame = item->animation_frame + 1;
     frame_count = KF_ENUM_ENCODE(u8, item->facing_and_frame_count);
     item->animation_frame = next_frame;
-    if ((next_frame & 0xff) >= (frame_count & KF_FLOOR_ITEM_FRAME_COUNT_MASK)) {
+    if ((next_frame & 0xff) >= (frame_count & KF_ENUM_ENCODE(u8, KF_FLOOR_ITEM_APPEARANCE_FRAME_MASK))) {
         item->animation_frame = 0;
     }
 }

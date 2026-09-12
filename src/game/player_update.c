@@ -27,7 +27,6 @@ enum {
     PLAYER_NORMAL_TURN_LIMIT = 28,
     PLAYER_SLOWED_TURN_LIMIT = 5,
     PLAYER_DARKNESS_FOG_NEAR = 5000,
-    PLAYER_NORMAL_FOG_NEAR = KF_INITIAL_FOG_NEAR_DISTANCE
 };
 
 /* Fractions of the active limit; signed shifts preserve retail truncation. */
@@ -39,7 +38,6 @@ enum {
     PLAYER_PITCH_ACCEL = 3,
     PLAYER_PITCH_DECEL = 2,
     PLAYER_PITCH_STEP_LIMIT = 10,
-    PLAYER_CAMERA_PITCH_LIMIT = KF_PLAYER_CAMERA_PITCH_LIMIT
 };
 
 /* Delay counts down to one; zero disables the pending sequence. */
@@ -116,7 +114,7 @@ void player_update(void)
     MATRIX matrix;
     s32 distance;
     KfMapAttribute attribute;
-    KfMagicId magic_id;
+    KfEffectKind magic_id;
 
     if (player_state.update_state == KF_PLAYER_UPDATE_DYING) {
         player_death_update();
@@ -138,8 +136,8 @@ void player_update(void)
         && player_state.weapon_attack_phase == KF_WEAPON_ATTACK_INACTIVE) {
         item = menu_enter_mode(KF_MENU_MODE_ROOT);
         if (item >= 0) {
-            player_use_item(KF_ENUM_DECODE(KF_ENUM_PROMOTED(KfItemId), item));
-        } else if (item == KF_MENU_ROOT_GAME_LOADED) {
+            player_use_item(KF_ENUM_DECODE(KF_ENUM_PROMOTED(KfObjectId), item));
+        } else if (item == KF_ENUM_ENCODE(s32, KF_MENU_RESULT_GAME_LOADED)) {
             pool_release_all();
             audio_close_vab();
             map_load_floor_wrapper();
@@ -148,8 +146,8 @@ void player_update(void)
             player_state.previous_map_cell.coords.z = player_state.motion_state.fields.map_cell.coords.z;
             player_equip_weapon(player_state.equipped_weapon_id);
             player_select_magic(player_state.selected_magic_id);
-        } else if (item == KF_MENU_ROOT_RETURN_TO_INTRO) {
-            game_exit_code = KF_GAME_EXIT_INTRO;
+        } else if (item == KF_ENUM_ENCODE(s32, KF_MENU_RESULT_RETURN_TO_INTRO)) {
+            game_exit_code = KF_OVERLAY_MODE_INTRO;
             return;
         }
         player_previous_input = input;
@@ -301,13 +299,13 @@ void player_update(void)
         }
         if (player_state.motion_state.fields.pitch_step > 0) {
             player_state.camera_rotation.vx += player_state.motion_state.fields.pitch_step;
-            if (player_state.camera_rotation.vx >= PLAYER_CAMERA_PITCH_LIMIT + 1) {
-                player_state.camera_rotation.vx = PLAYER_CAMERA_PITCH_LIMIT;
+            if (player_state.camera_rotation.vx >= KF_PLAYER_CAMERA_PITCH_LIMIT + 1) {
+                player_state.camera_rotation.vx = KF_PLAYER_CAMERA_PITCH_LIMIT;
             }
         } else if (player_state.motion_state.fields.pitch_step < 0) {
             player_state.camera_rotation.vx += player_state.motion_state.fields.pitch_step;
-            if (player_state.camera_rotation.vx < -PLAYER_CAMERA_PITCH_LIMIT) {
-                player_state.camera_rotation.vx = -PLAYER_CAMERA_PITCH_LIMIT;
+            if (player_state.camera_rotation.vx < -KF_PLAYER_CAMERA_PITCH_LIMIT) {
+                player_state.camera_rotation.vx = -KF_PLAYER_CAMERA_PITCH_LIMIT;
             }
         }
         if ((input & PADRup) && !(player_previous_input & PADRup)) {
@@ -393,7 +391,7 @@ void player_update(void)
                     if (magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_FIRE_BALL)].learned == KF_MAGIC_UNLEARNED) {
                         goto cancel;
                     }
-                    effect = KF_EFFECT_KIND_FIRE_BALL;
+                    effect = KF_MAGIC_FIRE_BALL;
                     record = &magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_FIRE_BALL)];
                     player_state.weapon_magic_delay = PLAYER_FLAME_SWORD_MAGIC_DELAY;
                     break;
@@ -411,7 +409,7 @@ void player_update(void)
                         || player_state.magic < PLAYER_COLICHEMARDE_MAGIC_MIN_POWER) {
                         goto cancel;
                     }
-                    effect = KF_EFFECT_KIND_LIGHT_NEEDLE;
+                    effect = KF_MAGIC_LIGHT_NEEDLE;
                     record = &magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_LIGHT_NEEDLE)];
                     player_state.weapon_magic_delay = PLAYER_WEAPON_MAGIC_READY;
                     break;
@@ -438,7 +436,7 @@ void player_update(void)
                     addVector(&position, &player_state.camera_position);
                     copyVector(&effect_rotation.vector, &player_state.camera_rotation);
                     origin = &player_state.camera_position;
-                    if ((effect == KF_EFFECT_KIND_FIRE_BALL || effect == KF_EFFECT_KIND_LIGHT_NEEDLE)
+                    if ((effect == KF_MAGIC_FIRE_BALL || effect == KF_MAGIC_LIGHT_NEEDLE)
                         && player_state.weapon_magic_shots_remaining != 1) {
                         actor_state.player_target = actor_pool_find_target_in_cone(
                             origin, player_state.camera_rotation.vy, KF_EFFECT_ACTOR_TARGET_MAX_DISTANCE,
@@ -513,7 +511,7 @@ void player_update(void)
             if (fade >= 0) {
                 lighting_set_color_matrix(&player_darkness_color_matrix, color_matrix_table,
                     fade << (KF_FIXED12_BITS - DARKNESS_FADE_BITS));
-                fog_interpolate_near(PLAYER_DARKNESS_FOG_NEAR, PLAYER_NORMAL_FOG_NEAR,
+                fog_interpolate_near(PLAYER_DARKNESS_FOG_NEAR, KF_INITIAL_FOG_NEAR_DISTANCE,
                     fade << (KF_FIXED12_BITS - DARKNESS_FADE_BITS));
             } else {
                 SetColorMatrix(&player_darkness_color_matrix);
@@ -521,7 +519,7 @@ void player_update(void)
             }
         }
     } else {
-        fog_set_near(PLAYER_NORMAL_FOG_NEAR);
+        fog_set_near(KF_INITIAL_FOG_NEAR_DISTANCE);
     }
     if (player_state.update_state != KF_PLAYER_UPDATE_NORMAL
         && player_state.update_state != KF_PLAYER_UPDATE_DYING) {
@@ -537,7 +535,7 @@ void player_update(void)
             player_state.update_state++;
         }
     }
-    if (player_state.equipped_weapon_id != KF_ITEM_NONE) {
+    if (player_state.equipped_weapon_id != KF_OBJECT_NONE) {
         if (player_state.equipped_weapon_record->hp_regen_interval != 0
             && player_state.equipment_effect_ticks % player_state.equipped_weapon_record->hp_regen_interval == 0) {
             player_adjust_hp(1);
@@ -547,7 +545,7 @@ void player_update(void)
             player_adjust_mp(1);
         }
     }
-    if (player_state.equipped_head_armor_id != KF_ITEM_NONE) {
+    if (player_state.equipped_head_armor_id != KF_OBJECT_NONE) {
         if (player_state.equipped_head_armor_record->hp_regen_interval != 0
             && player_state.equipment_effect_ticks % player_state.equipped_head_armor_record->hp_regen_interval == 0) {
             player_adjust_hp(1);
@@ -557,7 +555,7 @@ void player_update(void)
             player_adjust_hp(-1);
         }
     }
-    if (player_state.equipped_body_armor_id != KF_ITEM_NONE) {
+    if (player_state.equipped_body_armor_id != KF_OBJECT_NONE) {
         if (player_state.equipped_body_armor_record->hp_regen_interval != 0
             && player_state.equipment_effect_ticks % player_state.equipped_body_armor_record->hp_regen_interval == 0) {
             player_adjust_hp(1);
@@ -567,7 +565,7 @@ void player_update(void)
             player_adjust_hp(-1);
         }
     }
-    if (player_state.equipped_shield_id != KF_ITEM_NONE) {
+    if (player_state.equipped_shield_id != KF_OBJECT_NONE) {
         if (player_state.equipped_shield_record->hp_regen_interval != 0
             && player_state.equipment_effect_ticks % player_state.equipped_shield_record->hp_regen_interval == 0) {
             player_adjust_hp(1);
@@ -577,7 +575,7 @@ void player_update(void)
             player_adjust_hp(-1);
         }
     }
-    if (player_state.equipped_arm_armor_id != KF_ITEM_NONE) {
+    if (player_state.equipped_arm_armor_id != KF_OBJECT_NONE) {
         if (player_state.equipped_arm_armor_record->hp_regen_interval != 0
             && player_state.equipment_effect_ticks % player_state.equipped_arm_armor_record->hp_regen_interval == 0) {
             player_adjust_hp(1);
@@ -587,7 +585,7 @@ void player_update(void)
             player_adjust_hp(-1);
         }
     }
-    if (player_state.equipped_leg_armor_id != KF_ITEM_NONE) {
+    if (player_state.equipped_leg_armor_id != KF_OBJECT_NONE) {
         if (player_state.equipped_leg_armor_record->hp_regen_interval != 0
             && player_state.equipment_effect_ticks % player_state.equipped_leg_armor_record->hp_regen_interval == 0) {
             player_adjust_hp(1);
