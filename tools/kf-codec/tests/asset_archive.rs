@@ -1,10 +1,10 @@
 use kf_codec::asset_archive::{self, Archive, AssetArchiveError, AssetHeader};
 
-fn asset(animation_data: i32, tmd_offset: u32, tail: &[u8]) -> Vec<u8> {
+fn asset(animation_clip_count: i32, tmd_offset: u32, tail: &[u8]) -> Vec<u8> {
     let size = 20 + tail.len();
     let mut bytes = Vec::with_capacity(size);
     bytes.extend_from_slice(&(size as u32).to_le_bytes());
-    bytes.extend_from_slice(&animation_data.to_le_bytes());
+    bytes.extend_from_slice(&animation_clip_count.to_le_bytes());
     bytes.extend_from_slice(&tmd_offset.to_le_bytes());
     bytes.extend_from_slice(&12u32.to_le_bytes());
     bytes.extend_from_slice(&16u32.to_le_bytes());
@@ -27,7 +27,7 @@ fn reads_count_reserved_bytes_and_self_sized_assets() {
     let decoded: Vec<_> = archive.assets().map(|entry| entry.unwrap()).collect();
     assert_eq!(decoded[0].index, 0);
     assert_eq!(decoded[0].offset, 4);
-    assert_eq!(decoded[0].header.animation_data, -1);
+    assert_eq!(decoded[0].header.animation_clip_count, -1);
     assert_eq!(decoded[0].tmd_data(), Some(&b"TMD0"[..]));
     assert_eq!(decoded[1].header.tmd_data_offset, 22);
     assert_eq!(decoded[1].tmd_data(), Some(&b"TMD1"[..]));
@@ -45,7 +45,7 @@ fn header_parser_is_explicitly_little_endian() {
         AssetHeader::parse(&bytes),
         Some(AssetHeader {
             byte_size: 24,
-            animation_data: -2,
+            animation_clip_count: -2,
             tmd_data_offset: 20,
             object_table_offset: 0x1234_5678,
             clip_table_offset: 0x90ab_cdef,

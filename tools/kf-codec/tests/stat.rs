@@ -100,6 +100,32 @@ fn known_rows_round_trip() {
     assert_eq!(price, encoded);
 }
 
+#[test]
+fn positioned_glyphs_use_signed_coordinates_and_shared_rows() {
+    let mut bytes = [0xff; MENU_GLYPH_STRING_SIZE];
+    bytes[..6].copy_from_slice(&[0, 0x80, 0xfe, 0xff, 0xff, 0x7f]);
+    let mut label = MenuGlyphString::decode(&bytes).unwrap();
+    assert_eq!(label.position, MenuPoint { x: i16::MIN, y: -2 });
+    assert_eq!(label.glyphs.codes[0], i16::MAX);
+    assert_eq!(label.glyphs.codes[1..], [-1; 9]);
+    label.position.x = -1;
+    label.glyphs.codes[9] = i16::MIN;
+    bytes[..2].copy_from_slice(&[0xff, 0xff]);
+    bytes[22..].copy_from_slice(&[0, 0x80]);
+    let mut output = [0x5a; MENU_GLYPH_STRING_SIZE + 2];
+    assert!(label.encode(&mut output));
+    assert_eq!(&output[..MENU_GLYPH_STRING_SIZE], &bytes);
+    assert_eq!(&output[MENU_GLYPH_STRING_SIZE..], &[0x5a; 2]);
+    let mut short = [0xcc; MENU_GLYPH_STRING_SIZE - 1];
+    assert!(!label.encode(&mut short));
+    assert_eq!(short, [0xcc; MENU_GLYPH_STRING_SIZE - 1]);
+    assert!(MenuGlyphString::decode(&short).is_none());
+    assert_eq!(
+        PriceEntry::decode(&[0xff, 0xff, 0, 0x80]).unwrap().by_shop,
+        [u16::MAX, 0x8000]
+    );
+}
+
 #[derive(Default)]
 struct SearchTrace {
     paths: Vec<[u8; ITEM_MODEL_PATH_SIZE]>,

@@ -111,7 +111,7 @@ impl core::error::Error for AssetArchiveError {}
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct AssetHeader {
     pub byte_size: u32,
-    pub animation_data: i32,
+    pub animation_clip_count: i32,
     pub tmd_data_offset: u32,
     pub object_table_offset: u32,
     pub clip_table_offset: u32,
@@ -122,7 +122,7 @@ impl AssetHeader {
         let bytes = bytes.get(..ASSET_HEADER_SIZE)?;
         Some(Self {
             byte_size: read_u32(bytes, 0),
-            animation_data: read_u32(bytes, 4) as i32,
+            animation_clip_count: read_u32(bytes, 4) as i32,
             tmd_data_offset: read_u32(bytes, 8),
             object_table_offset: read_u32(bytes, 12),
             clip_table_offset: read_u32(bytes, 16),

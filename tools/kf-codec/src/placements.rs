@@ -3,6 +3,8 @@
 //! The retail routines initialize only selected fields. These codecs write the
 //! same fields by explicit little-endian offsets and retain all other bytes.
 
+use crate::math::{EulerAngles, Vec3i};
+
 pub const FLOOR_ITEM_PLACEMENT_SIZE: usize = 12;
 pub const FLOOR_ITEM_SIZE: usize = 24;
 pub const FLOOR_ITEM_COUNT: usize = 64;
@@ -46,20 +48,6 @@ pub enum PlacementError {
 pub struct PlacementReport {
     pub active_records: u16,
     pub consumed_bytes: usize,
-}
-
-#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
-pub struct Vec3i {
-    pub x: i32,
-    pub y: i32,
-    pub z: i32,
-}
-
-#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
-pub struct EulerAngles {
-    pub x: i16,
-    pub y: i16,
-    pub z: i16,
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -277,15 +265,21 @@ pub fn load_actor_placements<C: ActorContext>(
     })
 }
 
+/// Last accessible page for each one-based dialogue stage.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct DialoguePageLimits {
+    pub last_page: [u8; 5],
+}
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct MapEventDefinition {
     pub state: u8,
-    pub kind: u8,
-    pub variant: u8,
+    pub character_id: u8,
+    pub model_index: u8,
     pub cell_z: u8,
     pub cell_x: u8,
-    pub tag: [u8; 5],
-    pub image_limit: u8,
+    pub dialogue_pages: DialoguePageLimits,
+    pub dialogue_stage_limit: u8,
     pub unknown_0b: u8,
     pub unknown_0c: u8,
     pub behavior: u8,
@@ -301,12 +295,14 @@ impl MapEventDefinition {
         bytes.get(..MAP_EVENT_DEFINITION_SIZE)?;
         Some(Self {
             state: bytes[0],
-            kind: bytes[1],
-            variant: bytes[2],
+            character_id: bytes[1],
+            model_index: bytes[2],
             cell_z: bytes[3],
             cell_x: bytes[4],
-            tag: copy_array(bytes, 5),
-            image_limit: bytes[10],
+            dialogue_pages: DialoguePageLimits {
+                last_page: copy_array(bytes, 5),
+            },
+            dialogue_stage_limit: bytes[10],
             unknown_0b: bytes[11],
             unknown_0c: bytes[12],
             behavior: bytes[13],
@@ -323,12 +319,12 @@ impl MapEventDefinition {
             return false;
         };
         bytes[0] = self.state;
-        bytes[1] = self.kind;
-        bytes[2] = self.variant;
+        bytes[1] = self.character_id;
+        bytes[2] = self.model_index;
         bytes[3] = self.cell_z;
         bytes[4] = self.cell_x;
-        bytes[5..10].copy_from_slice(&self.tag);
-        bytes[10] = self.image_limit;
+        bytes[5..10].copy_from_slice(&self.dialogue_pages.last_page);
+        bytes[10] = self.dialogue_stage_limit;
         bytes[11] = self.unknown_0b;
         bytes[12] = self.unknown_0c;
         bytes[13] = self.behavior;
@@ -364,10 +360,10 @@ pub fn load_map_event_definitions<C: MapEventContext>(
             &source[index * MAP_EVENT_DEFINITION_SIZE..(index + 1) * MAP_EVENT_DEFINITION_SIZE];
         let definition = MapEventDefinition::decode(input).expect("preflighted definition");
         output[0] = definition.state;
-        output[1] = definition.kind;
-        output[2] = definition.variant;
-        output[3..8].copy_from_slice(&definition.tag);
-        output[8] = definition.image_limit;
+        output[1] = definition.character_id;
+        output[2] = definition.model_index;
+        output[3..8].copy_from_slice(&definition.dialogue_pages.last_page);
+        output[8] = definition.dialogue_stage_limit;
         output[12] = definition.unknown_0b;
         output[13] = definition.unknown_0c;
         output[14] = definition.behavior;

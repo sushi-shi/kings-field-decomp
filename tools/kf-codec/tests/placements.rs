@@ -1,3 +1,4 @@
+use kf_codec::math::Vec3i;
 use kf_codec::placements::*;
 
 fn put<T>(records: &mut Vec<u8>, size: usize, value: T, encode: impl FnOnce(T, &mut [u8])) {
@@ -158,12 +159,14 @@ fn events_preserve_opaque_fields_and_write_only_state_after_sentinel() {
         MAP_EVENT_DEFINITION_SIZE,
         MapEventDefinition {
             state: 1,
-            kind: 2,
-            variant: 3,
+            character_id: 2,
+            model_index: 3,
             cell_z: 4,
             cell_x: 5,
-            tag: [6, 7, 8, 9, 10],
-            image_limit: 11,
+            dialogue_pages: DialoguePageLimits {
+                last_page: [6, 7, 8, 9, 10],
+            },
+            dialogue_stage_limit: 11,
             unknown_0b: 12,
             unknown_0c: 13,
             behavior: 14,
@@ -408,12 +411,14 @@ fn full_capacity_actor_object_and_event_inputs_need_no_sentinel() {
             MAP_EVENT_DEFINITION_SIZE,
             MapEventDefinition {
                 state: 1 + index as u8,
-                kind: 2 + index as u8,
-                variant: 3 + index as u8,
+                character_id: 2 + index as u8,
+                model_index: 3 + index as u8,
                 cell_z: 10 + index as u8,
                 cell_x: 20 + index as u8,
-                tag: [index as u8; 5],
-                image_limit: 30 + index as u8,
+                dialogue_pages: DialoguePageLimits {
+                    last_page: [index as u8; 5],
+                },
+                dialogue_stage_limit: 30 + index as u8,
                 unknown_0b: 40 + index as u8,
                 unknown_0c: 50 + index as u8,
                 behavior: 60 + index as u8,

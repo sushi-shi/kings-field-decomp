@@ -3,6 +3,8 @@
 Only explicitly selected game functions execute. GPU/CD services are bounded
 deterministic hooks; TIM's Sony decoder is an explicitly shared retail provider,
 not a claimed C reconstruction. Rust decodes TIM independently.
+Candidate data uses explicit isolated object bindings, not section-placement
+claims, so native COMMON and initialized objects share the declared fixtures.
 """
 
 from __future__ import annotations
@@ -181,6 +183,9 @@ def compare_records(retail: RetailImage, symbols: GameSymbols, rust: RustCodec, 
         candidate_program = CandidateProgram.link(
             symbols,
             [CandidateFunction(case.function, case.object_path)],
+            # Isolated record semantics use curated objects, including native
+            # COMMON symbols; this does not assert whole-section placement.
+            bind_data_objects=True,
         )
         results = [
             ParserMachine(retail, program).call(
@@ -253,7 +258,7 @@ def compare_archives(retail: RetailImage, symbols: GameSymbols, rust: RustCodec,
         )
         programs = [
             RetailProgram.link(symbols, [item.name for item in functions]),
-            CandidateProgram.link(symbols, functions),
+            CandidateProgram.link(symbols, functions, bind_data_objects=True),
         ]
         captures = [
             MemoryRange("payload", payload_va, len(payload)),
@@ -300,7 +305,8 @@ def compare_common(retail: RetailImage, symbols: GameSymbols, rust: RustCodec, r
         MemoryRange("registry", symbols.datum("game_graphics_runtime")[0] + 0x20134, 256),
         MemoryRange("COM payload", INPUT_VA, len(source)),
         MemoryRange("selected TMD", 0x80090FC8, 4),
-        MemoryRange("arena cursor", symbols.datum("memory_arena_cursor")[0], 4),
+        # KfMemoryArena.allocation.cursor is a PSX pointer at owner +8.
+        MemoryRange("arena cursor", symbols.datum("memory_arena")[0] + 8, 4),
     ]
     initial = [pattern(item.size, i + 11) for i, item in enumerate(captures[:7])]
     functions = [CandidateFunction("common_resources_load", RESOURCES_OBJECT)]
@@ -348,7 +354,7 @@ def compare_common(retail: RetailImage, symbols: GameSymbols, rust: RustCodec, r
             ExternalHook("memory_release_last", release),
         ]
         program = (
-            CandidateProgram.link(symbols, functions, hooks=hooks)
+            CandidateProgram.link(symbols, functions, hooks=hooks, bind_data_objects=True)
             if candidate
             else RetailProgram.link(symbols, [f.name for f in functions], hooks=hooks)
         )
@@ -444,6 +450,7 @@ def compare_tim(retail: RetailImage, symbols: GameSymbols, rust: RustCodec, root
             [CandidateFunction("tim_upload_images", RESOURCES_OBJECT)],
             hooks=hooks,
             providers=providers,
+            bind_data_objects=True,
         ),
     ]
     paths = tim_paths(root)
@@ -514,7 +521,7 @@ def compare_stat(
         raise ValueError("STAT source alignment must be in 0..3")
     source_address = INPUT_VA + source_alignment
     specs = (
-        ("DAT_800580e8", 912),
+        ("menu_assets", 912),
         ("menu_window_layouts", 2376),
         ("item_name_rows", 1600),
         ("magic_name_rows", 180),
@@ -593,6 +600,7 @@ def compare_stat(
                     )
                 ],
                 hooks=hooks,
+                bind_data_objects=True,
             )
             if candidate
             else RetailProgram.link(symbols, ["item_load_database"], hooks=hooks)
@@ -904,7 +912,7 @@ def compare_placements(
                 ExternalHook("map_object_mark_collision_edge", context.mark),
             ]
             program = (
-                CandidateProgram.link(symbols, functions, hooks=hooks)
+                CandidateProgram.link(symbols, functions, hooks=hooks, bind_data_objects=True)
                 if candidate
                 else RetailProgram.link(symbols, [item.name for item in functions], hooks=hooks)
             )

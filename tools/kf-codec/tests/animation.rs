@@ -56,9 +56,9 @@ fn animated_asset() -> Vec<u8> {
         &mut bytes,
         76,
         Vertex {
-            x: 2,
-            y: 4,
-            z: 6,
+            vx: 2,
+            vy: 4,
+            vz: 6,
             pad: 99,
         },
     );
@@ -66,9 +66,9 @@ fn animated_asset() -> Vec<u8> {
         &mut bytes,
         84,
         Vertex {
-            x: 8,
-            y: 10,
-            z: 12,
+            vx: 8,
+            vy: 10,
+            vz: 12,
             pad: 99,
         },
     );
@@ -79,9 +79,9 @@ fn animated_asset() -> Vec<u8> {
         &mut bytes,
         104,
         Vertex {
-            x: 10,
-            y: 20,
-            z: 30,
+            vx: 10,
+            vy: 20,
+            vz: 30,
             pad: 99,
         },
     );
@@ -89,9 +89,9 @@ fn animated_asset() -> Vec<u8> {
         &mut bytes,
         112,
         Vertex {
-            x: 20,
-            y: 40,
-            z: 60,
+            vx: 20,
+            vy: 40,
+            vz: 60,
             pad: 99,
         },
     );
@@ -106,9 +106,9 @@ fn animated_asset() -> Vec<u8> {
         &mut bytes,
         160,
         Vertex {
-            x: 100,
-            y: 200,
-            z: 300,
+            vx: 100,
+            vy: 200,
+            vz: 300,
             pad: 7,
         },
     );
@@ -116,9 +116,9 @@ fn animated_asset() -> Vec<u8> {
         &mut bytes,
         168,
         Vertex {
-            x: -100,
-            y: -200,
-            z: -300,
+            vx: -100,
+            vy: -200,
+            vz: -300,
             pad: 8,
         },
     );
@@ -128,23 +128,23 @@ fn animated_asset() -> Vec<u8> {
 fn record() -> PoolRecord {
     PoolRecord {
         state: 2,
-        asset_id: 7,
-        tag: 3,
+        asset_index: 7,
+        clip_index: 3,
         keyframe_index: 0x1234,
-        rest_object: 0x8006_0040,
-        allocation: 0x800a_0000,
-        backlink: 0x800b_0100,
+        rest_morph: 0x8006_0040,
+        cached_vertices: 0x800a_0000,
+        owner_slot: 0x800b_0100,
     }
 }
 
 fn request(record_present: bool) -> InstanceRequest {
     InstanceRequest {
-        asset_id: 7,
+        asset_index: 7,
         caller_vertex_count: 2,
         record_present,
         pool_record_available: true,
         record_address: 0x800b_0000,
-        anchor_address: 0x800b_0100,
+        owner_slot_address: 0x800b_0100,
     }
 }
 
@@ -164,21 +164,21 @@ fn parses_typed_tables_and_validates_all_references() {
     assert_eq!(first.duration, 2048);
     assert_eq!(first.rest_index, 0);
     assert_eq!(first.morph_indices().collect::<Vec<_>>(), vec![1]);
-    assert_eq!(first.rest_object().unwrap().unknown_00, 0x1111_1111);
-    assert_eq!(animation.morph_object(1).unwrap().delta(1).unwrap().z, 60);
+    assert_eq!(first.rest_morph().unwrap().unknown_00, 0x1111_1111);
+    assert_eq!(animation.morph_object(1).unwrap().delta(1).unwrap().vz, 60);
     assert_eq!(
         animation.base_vertices().unwrap().collect::<Vec<_>>(),
         vec![
             Vertex {
-                x: 100,
-                y: 200,
-                z: 300,
+                vx: 100,
+                vy: 200,
+                vz: 300,
                 pad: 7,
             },
             Vertex {
-                x: -100,
-                y: -200,
-                z: -300,
+                vx: -100,
+                vy: -200,
+                vz: -300,
                 pad: 8,
             },
         ]
@@ -202,7 +202,7 @@ fn selection_exposes_the_uninitialized_retail_cache_index() {
     assert_eq!(
         animation.select_frame(0, 1024, 0x1234),
         Ok(FrameSelection {
-            tag: 0,
+            clip_index: 0,
             keyframe_ordinal: 0,
             keyframe_index: 0x1234,
             fraction: 2048,
@@ -212,7 +212,7 @@ fn selection_exposes_the_uninitialized_retail_cache_index() {
     assert_eq!(
         animation.select_frame(0, 3000, 0x1234),
         Ok(FrameSelection {
-            tag: 0,
+            clip_index: 0,
             keyframe_ordinal: 1,
             keyframe_index: 0x1235,
             fraction: 1904,
@@ -222,7 +222,7 @@ fn selection_exposes_the_uninitialized_retail_cache_index() {
     assert_eq!(
         animation.select_frame(0, 4096, 0x1234),
         Ok(FrameSelection {
-            tag: 0,
+            clip_index: 0,
             keyframe_ordinal: 1,
             keyframe_index: 0x1235,
             fraction: FULL_WEIGHT,
@@ -258,15 +258,15 @@ fn reproduces_full_morph_then_fractional_rest_blend() {
         cache,
         [
             Vertex {
-                x: 110,
-                y: 220,
-                z: 330,
+                vx: 110,
+                vy: 220,
+                vz: 330,
                 pad: 7,
             },
             Vertex {
-                x: -80,
-                y: -160,
-                z: -240,
+                vx: -80,
+                vy: -160,
+                vz: -240,
                 pad: 8,
             },
         ]
@@ -275,15 +275,15 @@ fn reproduces_full_morph_then_fractional_rest_blend() {
         output,
         [
             Vertex {
-                x: 111,
-                y: 222,
-                z: 333,
+                vx: 111,
+                vy: 222,
+                vz: 333,
                 pad: 7,
             },
             Vertex {
-                x: -76,
-                y: -155,
-                z: -234,
+                vx: -76,
+                vy: -155,
+                vz: -234,
                 pad: 8,
             },
         ]
@@ -304,15 +304,15 @@ fn reproduces_full_morph_then_fractional_rest_blend() {
         output,
         [
             Vertex {
-                x: 111,
-                y: 223,
-                z: 334,
+                vx: 111,
+                vy: 223,
+                vz: 334,
                 pad: 7,
             },
             Vertex {
-                x: -74,
-                y: -153,
-                z: -231,
+                vx: -74,
+                vy: -153,
+                vz: -231,
                 pad: 8,
             },
         ]
@@ -362,10 +362,10 @@ fn prepares_null_record_and_retries_vertex_allocation_in_order() {
         ]
     );
     assert_eq!(anchor, 0x800b_0000);
-    assert_eq!(pool_record.asset_id, 7);
-    assert_eq!(pool_record.tag, 0xff);
-    assert_eq!(pool_record.allocation, 0x800a_0000);
-    assert_eq!(pool_record.backlink, 0x800b_0100);
+    assert_eq!(pool_record.asset_index, 7);
+    assert_eq!(pool_record.clip_index, 0xff);
+    assert_eq!(pool_record.cached_vertices, 0x800a_0000);
+    assert_eq!(pool_record.owner_slot, 0x800b_0100);
 }
 
 #[test]
@@ -373,7 +373,7 @@ fn releases_different_or_static_records_and_reports_pool_exhaustion() {
     let bytes = animated_asset();
     let animation = Animation::parse(&bytes).unwrap();
     let mut different = record();
-    different.asset_id = 6;
+    different.asset_index = 6;
     let mut anchor = 0x800b_0000;
     let mut events = [EMPTY_EVENT; 2];
     let report = prepare_instance(
@@ -396,7 +396,7 @@ fn releases_different_or_static_records_and_reports_pool_exhaustion() {
         [
             LifecycleEvent::ReleaseRecord {
                 allocation: 0x800a_0000,
-                backlink: 0x800b_0100,
+                owner_slot: 0x800b_0100,
             },
             LifecycleEvent::AllocateVertices {
                 byte_count: 16,
@@ -405,8 +405,8 @@ fn releases_different_or_static_records_and_reports_pool_exhaustion() {
         ]
     );
     assert_eq!(different.state, 0);
-    assert_eq!(different.asset_id, 7);
-    assert_eq!(different.tag, 0xff);
+    assert_eq!(different.asset_index, 7);
+    assert_eq!(different.clip_index, 0xff);
 
     let mut static_bytes = bytes.clone();
     put_u32(&mut static_bytes, 4, 0);
@@ -426,12 +426,12 @@ fn releases_different_or_static_records_and_reports_pool_exhaustion() {
     assert_eq!(report.outcome, InstanceOutcome::Static);
     assert_eq!(anchor, 0);
     assert_eq!(existing.state, 0);
-    assert_eq!(existing.allocation, 0);
+    assert_eq!(existing.cached_vertices, 0);
     assert_eq!(
         static_events[0],
         LifecycleEvent::ReleaseRecord {
             allocation: 0x800a_0000,
-            backlink: 0x800b_0100,
+            owner_slot: 0x800b_0100,
         }
     );
 
@@ -484,7 +484,7 @@ fn lifecycle_validation_is_transactional() {
     assert_eq!(pool_record, initial_record);
     assert_eq!(anchor, 0x800b_0000);
 
-    pool_record.asset_id = 6;
+    pool_record.asset_index = 6;
     let different = pool_record;
     assert_eq!(
         prepare_instance(
@@ -522,9 +522,9 @@ fn static_assets_do_not_require_animation_table_offsets() {
         &mut bytes,
         60,
         Vertex {
-            x: 1,
-            y: 2,
-            z: 3,
+            vx: 1,
+            vy: 2,
+            vz: 3,
             pad: 4,
         },
     );

@@ -1,5 +1,6 @@
 //! Deterministic service context for the host-only placement oracle.
 
+use kf_codec::math::Vec3i;
 use kf_codec::placements::{self, *};
 
 struct Context {

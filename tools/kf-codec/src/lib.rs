@@ -20,6 +20,7 @@ pub mod chunked;
 pub mod common;
 pub mod game_data;
 pub mod map_resources;
+pub mod math;
 pub mod placements;
 pub mod records;
 pub mod registry;
