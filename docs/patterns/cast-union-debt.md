@@ -6,19 +6,19 @@ This campaign starts from master `cb600b9061ad2211470ff393cd933de6b410c9dd`,
 not the separate helper/enum/native-view PR stack. The target-C AST census
 covers all **101 source/image variants**, deduplicating written locations.
 
-| Measure | Master | After | Explanation |
-| --- | ---: | ---: | --- |
-| Written casts | 403 | 396 | Remove 35 implicit C conversions; expose 28 access boundaries |
-| Pointer casts | 322 | 315 | All changed casts are pointer conversions |
-| Scalar casts | 81 | 81 | 78 source locations and three enum-header macro definitions |
-| Union definitions | 37 | 27 | Five record tables, four grids and one saved-world owner |
-| Curated structure fields | 871 | 856 | Remove 15 alternate members; retain 128 structures |
+| Measure | Master | First pass | Follow-up | Explanation |
+| --- | ---: | ---: | ---: | --- |
+| Written casts | 403 | 396 | 404 | Remove 35 implicit C conversions; expose 36 access boundaries |
+| Pointer casts | 322 | 315 | 323 | All retained cast changes are pointer conversions |
+| Scalar casts | 81 | 81 | 81 | 78 source locations and three enum-header macro definitions |
+| Union definitions | 37 | 27 | 26 | Five record tables, four grids, saved world and SDK vertex wrapper |
+| Curated structure fields | 871 | 856 | 852 | Remove alternate members; 127 structures after deleting the vertex wrapper |
 
 Reproduce the live census with `kf casts --json`; inspect sites with
 `kf casts --list`. The earlier README figure of 405 was stale. Unmerged
 branches have different spelling counts after common-code extraction.
 
-**This is debt reduction, not proof that the remaining 396 casts and 27
+**This is debt reduction, not proof that the remaining 404 casts and 26
 unions are necessary or that all reconstruction debt is closed.** A failed
 deletion experiment establishes only that experiment's output, not the
 original declaration or the impossibility of a better owner/API model.
@@ -50,9 +50,10 @@ Assignment-width casts and the growth-table `memcpy` source cast remain
 type-propagation candidates. The latter also conveys source alignment to
 this compiler; deleting it is not a test of value semantics alone.
 
-The 28 added casts are: ten word-pointer conversions in definition loaders,
+The 36 added casts are: ten word-pointer conversions in definition loaders,
 ten destination word-pointer conversions in GAME/OPEN grid loading, six
-complete-grid linear-index views, and two complete-world byte cursors.
+complete-grid linear-index views, two complete-world byte cursors, three
+aligned SDK vertex word views, and five complete-link copy/serialization views.
 They expose access boundaries previously hidden by alternate arrays.
 These are target-toolchain representation operations, not a claim of
 portable strict-aliasing semantics.
@@ -84,7 +85,49 @@ traversal. The world stays at runtime offset `0x22c`; the runtime owner
 remains `0x2360` bytes. The pinned fixture checks all ten sizes, canonical
 member offsets and containing layout, with a wrong-size negative control.
 
-## Remaining 27 unions
+## SDK vertices and map-link follow-up
+
+`KfPackedSVector` was a wrapper around the authentic eight-byte `SVECTOR`
+solely to supply `u32 words[2]`. It is now deleted, not renamed or replaced
+by another union. The cached vertex pointer, GAME/OPEN current vertex pointer,
+morph scratch array, selectors and projection consumers all use `SVECTOR`
+directly. Both images' public selector signatures and inventories agree.
+
+GAME `render_bind_animated_instance` (`800205d4 / 3a4`) copies each vertex
+with two words in the loops at `800207f8` and `800208c8`. Its scratch save
+at `8002091c/80020920` and restore at `80020930/80020938` preserve both XY
+and Z/padding around `gteMIMefunc`. These operations remain explicit aligned
+word accesses. Asset payloads and the allocated cache are word-aligned; scratch
+starts at `800930f0` (graphics owner + `22258`), advances in eight-byte steps,
+and output begins at element one. This is a buffer contract, not a false claim
+that the SDK's naturally halfword-aligned type has four-byte alignment.
+The unusual extra range-prefix vector and inherited uninitialized incoming
+keyframe register are unchanged. No SDK function body or declaration changes.
+
+`KfMapObjectLink` still has genuine behavior-selected fields, gold and item
+payloads. Its extra `.words` and `.bytes` members are removed. Reset at
+`80030f7c` writes word one before word zero; loading at `80031008` copies two
+words at `80031170..8003117c`. Persistence at `80035b5c` and restoration at
+`80035e44` transfer all eight bytes. The explicit cursors cover the complete
+link, not an individual field. Layout tests retain link size eight, placement
+size twenty/link offset twelve, and runtime object size forty-four/link offset
+thirty-two. No artificial alignment member is retained.
+
+Three additional source experiments were rejected, not counted as reductions:
+
+- Saving the scratch `SVECTOR` by aggregate assignment changes the frame from
+  72 to 80 bytes and emits unaligned merge loads/stores. The retained word save
+  expresses the independently established buffer alignment.
+- Capturing status-panel UV width/height in two `u8` locals eliminates six
+  written casts but changes the frame from 112 to 80 bytes, captures loads
+  before packet writes and changes subsequent instruction sequences. The
+  retail `lbu` UV domain and halfword screen dimensions remain unchanged.
+- Removing the two shade casts in OPEN `opening_scene1_run` (`8001455c / ac`)
+  changes both call delay slots from `andi a0,s0,0xff` to `move a0,s0`, despite
+  the byte-typed callee. Those casts remain. Neither rejected scalar control
+  proves an unavoidable original spelling or rules out future type recovery.
+
+## Remaining 26 unions
 
 These are retention verdicts, not original union declarations recovered from
 bytes. The [earlier audit](type-assertion-and-union-audit.md) contains fuller
@@ -95,12 +138,11 @@ consumer dossiers; its old live totals are superseded here.
 | `KfGpuF3/F4/FT3/FT4/G3/G4/GT3/GT4` | 8 | SDK packet plus packed GTE word/UV views; shared offsets tested. Representation conveniences, not historical syntax proof. |
 | `KfRotation`, `KfEffectDirection` | 2 | SDK-vector/game-field overlap; vector transfers include the fourth halfword. Do not shrink to a six-byte angle prefix. |
 | `KfEffectVisualState/Control/Propagation/RenderId` | 4 | Kind/animation-selected meanings and domains within one effect record. |
-| `KfMapFloorScript`, `KfMapObjectSpawn/Parameter/Link` | 4 | Floor/behavior-selected payloads. Link's extra copy/byte conveniences remain simplification candidates; preserve eight bytes and selected member extents. |
+| `KfMapFloorScript`, `KfMapObjectSpawn/Parameter/Link` | 4 | Floor/behavior-selected payloads. Link's extra copy/byte members are removed; preserve eight bytes and selected member extents. |
 | `KfMapCell`, `KfDialogueState`, `KfPlayerMotionState` | 3 | Packed comparisons/masks overlap byte or halfword fields. Motion's third word spans pitch and cell, not just copying. |
 | `KfTmdPacketHeader`, `KfScreenXY` | 2 | Serialized header byte/word and SDK packed-screen-coordinate overlap. |
 | `KfTmdPrimitive`, `KfMapGpuPrimitive` | 2 | Mode-selected formats; allocation/use follows selected member extent, not maximum union size. |
 | `KfMorphPrefix` | 1 | Rest-morph code passes the range prefix as an extra SDK vector, then restores the scratch entry; preserve that unusual behavior. |
-| `KfPackedSVector` | 1 | Remaining copy-only word view and four-byte alignment over an eight-byte SDK vector. Open: propagate the aligned-buffer contract through pool, morph and both renderers before deleting the wrapper. |
 
 ## SDK CD record: unresolved, not hidden
 
@@ -136,11 +178,15 @@ and an unrelated enum error in another argument (which must remain fatal).
 Raw modern clangd inputs are not rewritten and may still flag C-only
 conversions; retail editor mode remains available.
 
-The `byte-array views` regex measures syntax, not wrong ownership. It rises
-from four to eight because this campaign exposes two grid byte views and
-two world cursors. It is now informational and remains visible; its floor
-was removed, not raised. Total pointer casts remain ratcheted, including
-these sites. Tests ensure an increase in that total still fails.
+The `byte-array views` and `pointer casts` regexes measure syntax, not wrong
+ownership. This narrow byte-view regex rises from four to nine (it omits the
+const-qualified link cursor), and total pointer casts end one
+above master. Enforcing a down-only total would reward retaining the artificial
+vertex wrapper and map-link members. Both counts are now informational and
+remain visible; their floors were removed, not raised or silently exempted by
+site. No conversion is excluded from the AST census. Tests check visible
+increases and ensure unrelated ratcheted regressions still fail. Strict type
+compilation and byte comparison remain independent requirements.
 
 ## Function verdicts and verification
 
@@ -158,6 +204,19 @@ Canonical-owner functions, each retaining strict **100%**:
   `collision_query_world`, `map_restore_floor_state`, `game_state_initialize`,
   `save_file_write_slot`, `save_file_read_slot`.
 - OPEN: `opening_resources_load_scene0`.
+
+Follow-up functions, each retaining strict **100%**:
+
+- GAME: `render_bind_animated_instance`, `pool_reset`, `tmd_set_current_vertices`,
+  `tmd_select_object_vertices`, `tmd_project_vertices`, `tmd_project_vertices_shift`,
+  `tmd_transform_vertices`, `map_object_pool_clear`, `map_object_pool_load`,
+  `map_restore_floor_state`.
+- OPEN: `tmd_set_current_vertices`, `tmd_select_object_vertices`,
+  `tmd_project_vertices`, `tmd_project_vertices_perspective_right`,
+  `tmd_project_vertices_shift`, `tmd_transform_vertices`.
+- GAME `map_world_state_persist` remains **97.52873%**, with its complete object
+  unchanged. Rejected controls leave GAME `menu_status_panel` and OPEN
+  `opening_scene1_run` at **100%**.
 
 Implicit-conversion functions, each retaining strict **100%**:
 

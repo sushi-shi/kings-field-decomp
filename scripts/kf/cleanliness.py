@@ -1,7 +1,6 @@
 """kf.cleanliness - the source cleanliness scoreboard (ported from gruntz).
 
-Counts the address-derived spellings and the ``extern`` / cast / view crutches
-that a clean King's Field reconstruction should trend to 0, measured
+Counts address-derived spellings, ``extern`` declarations and cast/view syntax, measured
 comment- and string-stripped over ``src/`` + ``include/`` and the curated
 identity TSVs. Source metrics carry deltas against committed floors in
 ``config/cleanliness/cleanliness-baseline.tsv``. Data inventory counts are
@@ -20,9 +19,10 @@ not be measured keeps its committed floor rather than being blessed away.
     python3 -m scripts.kf.cleanliness --data      # list unresolved data ownership
     python3 -m scripts.kf.cleanliness --data all  # include owners and their evidence
 
-The byte-array-view syntax count is informational: exposing a complete-object
-serialization boundary can increase it while removing an artificial union.
-The total pointer-cast ratchet still includes these conversions.
+Pointer-cast and byte-array-view syntax counts are informational: exposing a
+complete-object access boundary can increase them while removing an artificial
+union or propagating an authentic SDK type. They remain visible review inputs;
+neither count establishes whether a conversion is avoidable or well-typed.
 
 The extern-disallow gates inspect translation units, not headers. ``GAME
 extern decls`` counts declarations of curated game identities while
@@ -71,9 +71,9 @@ DAT_REF = re.compile(r"\bDAT_[0-9a-fA-F]{8}\b")
 ADDRESS_DERIVED = re.compile(r"\b(?:func|DAT)_[0-9a-fA-F]{8}\b")
 
 # --- cast / view crutches -------------------------------------------------- #
-#: a cast whose target is a pointer type - the byte-array/struct aliasing view
-#: most tied to a wrong data model. Scalar width casts are intentionally not
-#: counted here (they are ordinary width conversions, not view crutches).
+#: A cast whose target is a pointer type. This syntax-only count cannot distinguish
+#: resource parsing, SDK representation boundaries and incorrect object models.
+#: Scalar width casts are reported separately by the target-C AST census.
 POINTER_CAST = re.compile(
     r"(?<![\w>)])\(\s*(?:const\s+|unsigned\s+|signed\s+|volatile\s+|struct\s+)*"
     r"(?:u8|u16|u32|s8|s16|s32|int|char|short|long|void|float|double"
@@ -274,9 +274,11 @@ def count() -> list[tuple[str, int]]:
     return rows
 
 
-#: A spelling count cannot distinguish byte serialization from a false owner.
+#: A spelling count cannot distinguish representation access from a false owner.
 #: Do not reward hiding the same access behind an alternate union member.
-INFORMATIONAL = {"unresolved data ownership", "raw DAT_ identities", "byte-array views"}
+INFORMATIONAL = {
+    "unresolved data ownership", "raw DAT_ identities", "byte-array views", "pointer casts",
+}
 RATCHET = ({label for label, _m, _c in SOURCE_METRICS} - INFORMATIONAL) | {
     "unresolved func_ identities",
 }

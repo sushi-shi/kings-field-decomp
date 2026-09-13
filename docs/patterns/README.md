@@ -5,8 +5,8 @@ about which source shapes reproduce it under the current probes. Each note
 records the retail evidence first and the probe behaviour second; none of them
 promotes a probe to a proven historical toolchain.
 
-- [cast-union-debt.md](cast-union-debt.md): master-based 403-to-396 cast census,
-  ten canonical owner replacements, target-C-aware enum checking, and explicit
+- [cast-union-debt.md](cast-union-debt.md): master-based cast census and qualification,
+  eleven canonical owner/SDK replacements, target-C-aware enum checking, and explicit
   remaining SDK/representation debt. Supersedes older live cast/union totals.
 
 - [sdk-data-ownership.md](sdk-data-ownership.md): complete SDK tables, startup

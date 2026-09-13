@@ -40,7 +40,7 @@ PAIRS = (
     ("GAME.EXE", 0x8001C050, "display_present_frame", "void", ""),
     ("GAME.EXE", 0x8001C0E8, "tmd_select", "void", "KfTmdSlot slot"),
     ("GAME.EXE", 0x8001C114, "tmd_get_object", "KfTmdObject *", "u16 object_index"),
-    ("GAME.EXE", 0x8001C138, "tmd_set_current_vertices", "void", "KfPackedSVector *vertices"),
+    ("GAME.EXE", 0x8001C138, "tmd_set_current_vertices", "void", "SVECTOR *vertices"),
     ("GAME.EXE", 0x8001C148, "tmd_select_object_vertices", "void", "u16 object_index"),
     (
         "GAME.EXE",
@@ -57,7 +57,7 @@ PAIRS = (
     ("OPEN.EXE", 0x80016DD0, "display_present_frame", "void", ""),
     ("OPEN.EXE", 0x80016E68, "tmd_select", "void", "KfTmdSlot slot"),
     ("OPEN.EXE", 0x80016E94, "tmd_get_object", "KfTmdObject *", "u16 object_index"),
-    ("OPEN.EXE", 0x80016EB8, "tmd_set_current_vertices", "void", "KfPackedSVector *vertices"),
+    ("OPEN.EXE", 0x80016EB8, "tmd_set_current_vertices", "void", "SVECTOR *vertices"),
     ("OPEN.EXE", 0x80016EC8, "tmd_select_object_vertices", "void", "u16 object_index"),
     (
         "OPEN.EXE",

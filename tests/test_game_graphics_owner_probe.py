@@ -157,7 +157,7 @@ class GameGraphicsOwnerProbeTests(unittest.TestCase):
         self.assertIn('KfAssetHeader *asset_registry_entries[KF_ASSET_REGISTRY_KNOWN_ENTRIES];', header)
         self.assertIn('u8 unknown_201f4[0x30];', header)
         self.assertIn('KfScreenVertex tmd_projected_vertices[KF_PROJECTED_VERTEX_CAPACITY];', header)
-        self.assertIn('KfPackedSVector morph_scratch[KF_MORPH_SCRATCH_CAPACITY];', header)
+        self.assertIn('SVECTOR morph_scratch[KF_MORPH_SCRATCH_CAPACITY];', header)
 
     def test_production_registry_prefix_preserves_the_surrounding_layout(self):
         self.tools()

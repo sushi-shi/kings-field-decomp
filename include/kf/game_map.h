@@ -297,14 +297,12 @@ typedef struct KfMapObjectHingedContainer {
     KfItemId item_ids[KF_MAP_CONTAINER_ITEM_COUNT];
 } KfMapObjectHingedContainer;
 
-/* Placements copy two words; saved floors preserve all eight bytes. */
+/* Object behavior selects the link payload; serialization preserves all eight bytes. */
 typedef union KfMapObjectLink {
     KfMapObjectLinkFields fields;
     u16 gold_amount;
     KfMapObjectHingedContainer hinged_container;
     KfItemId item_ids[KF_MAP_CONTAINER_ITEM_COUNT];
-    u32 words[2];
-    u8 bytes[8];
 } KfMapObjectLink;
 
 /* Encoded model byte is decoded against the consuming image's model table. */

@@ -85,7 +85,7 @@ void map_restore_floor_state(void)
 
             index = *in++;
             object = &map_object_state.objects[index];
-            link = object->link.bytes;
+            link = (u8 *)&object->link;
             k = sizeof(object->link) - 1;
             do {
                 *link++ = *in++;

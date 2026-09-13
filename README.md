@@ -62,11 +62,13 @@ Manually maintained cleanup checklist:
 - [ ] Close [SDK object evidence](docs/sdk-object-audit.md): **29 lineage
   module identities**; the last ambiguous audio helper may belong to `SSCALL`.
   Search missing 1994 SDK archives/source before reconstructing them.
-- [ ] Review casts and remove avoidable conversions: **396 written casts**
-  (**315 pointer**, **81 scalar**). The [cast/union debt campaign](docs/patterns/cast-union-debt.md)
-  removes 35 C++-checker-driven casts and exposes 28 real access boundaries.
-- [ ] Review unions and simplify avoidable alternate views: **27 union definitions**;
-  ten copy/index/serialization-only union owners replaced with canonical structs.
+- [ ] Review casts and remove avoidable conversions: **404 written casts**
+  (**323 pointer**, **81 scalar**). The [cast/union debt campaign](docs/patterns/cast-union-debt.md)
+  removes 35 C++-checker-driven casts and exposes 36 real access boundaries;
+  raw counts remain review inputs, not a measure of incorrect types.
+- [ ] Review unions and simplify avoidable alternate views: **26 union definitions**;
+  eleven copy/index/serialization wrappers replaced with canonical structs or SDK
+  types, plus two copy/byte members removed from the behavior-selected map link.
 - [ ] Review gotos: **74 statements** (**68 GAME**, **6 OPEN**).
 - [x] Review artificial address arithmetic: **0 cases**; the unallocated
   retail stack word in both OPEN emitters is carried by a never-read local.
