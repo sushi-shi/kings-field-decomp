@@ -32,7 +32,10 @@ proves to be a separately linked member, it becomes a 30th identity. The
 per-library inventory and this lower-bound distinction are recorded in the
 [remaining-object audit](sdk-object-audit.md#object-evidence-still-needed).
 
-For reconstruction planning, those 29 modules cover **332 functions per overlay**
+Plan from [game/startup references and their usage TSV](sdk-object-audit.md#matching-scope-and-function-list):
+607 SDK occurrences have proven/validated paths and 26 have candidate-only paths.
+Do not reconstruct every linked function solely because its object is used.
+For a wholesale replacement estimate, those 29 modules cover **332 functions per overlay**
 (664 image occurrences), with seven paired routines already having exact reference
 source. See the [function-level workload and TSV selection](sdk-object-audit.md#matching-scope-and-function-list)
 and the narrower [18-function INTR scope](sdk-object-audit.md#interrupt-workaround-scope).

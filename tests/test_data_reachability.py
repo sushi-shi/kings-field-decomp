@@ -48,6 +48,29 @@ class ReachabilityTest(unittest.TestCase):
         report = self.audit([function(vendor=True)])
         self.assertIn("no-game-roots", report["summary"]["issues"])
 
+    def test_optional_vendor_entry_traverses_startup_without_changing_game_roots(self):
+        img = RetailImage.synthetic(IMAGE, 0x1000, b"\0" * 0x1000, entry=0x1100)
+        report = audit(IMAGE, (function(), function(0x1100, vendor=True),
+                               function(0x1200, vendor=True)), (),
+                       (ref(0x1100, 0x1200, tier="proven", kind="call"),), img,
+                       include_entry=True)
+        self.assertEqual(report["summary"]["game_roots"], 1)
+        self.assertEqual(report["summary"]["reached_vendor_functions"], 2)
+        self.assertEqual(report["entry_roots"], ["function:00001100"])
+
+    def test_unmodelled_entry_is_an_explicit_gap(self):
+        img = RetailImage.synthetic(IMAGE, 0x1000, b"\0" * 0x1000, entry=0x1800)
+        report = audit(IMAGE, (function(),), (), (), img, include_entry=True)
+        self.assertEqual(report["summary"]["issues"]["entry-owner-not-unique"], 1)
+
+    def test_overlapping_entry_owners_stay_candidate(self):
+        img = RetailImage.synthetic(IMAGE, 0x1000, b"\0" * 0x1000, entry=0x1010)
+        report = audit(IMAGE, (function(0x1800), function(0x1000, vendor=True),
+                               function(0x1010, vendor=True)), (), (), img, include_entry=True)
+        self.assertEqual(report["summary"]["issues"]["entry-owner-not-unique"], 1)
+        vendors = [r for r in report["ranges"] if r.get("provider")]
+        self.assertEqual([r["reachability"] for r in vendors], ["candidate", "candidate"])
+
     def test_bss_is_accounted_without_inventing_initialized_bytes(self):
         report = self.audit([function()], [datum(0x9000, storage="bss")], [
             ref(0x1000, 0x9000),

@@ -89,6 +89,55 @@ function census is unchanged.
 
 ## Matching scope and function list
 
+The matching target is **SDK functions needed by the game**, including internal
+dependencies and startup. Linked object membership alone does not put every
+routine in scope. A conservative reference walk from all admitted game functions
+and each executable's entry gives this current worklist:
+
+| Image | Proven paths | Validated paths | Candidate-only paths | Unreached |
+| --- | ---: | ---: | ---: | ---: |
+| PSX | 8 | 0 | 0 | 0 |
+| GAME | 255 | 54 | 13 | 251 |
+| OPEN | 233 | 57 | 13 | 254 |
+| Total | 496 | 111 | 26 | 505 |
+
+**607 occurrences have proven or validated reference paths; another 26 need
+candidate-path review.** These are image-specific function occurrences, not
+607 distinct implementations to write. Among the 29 version-skewed modules,
+371 have proven/validated paths, 26 have candidate-only paths, and 267 are
+unreached. Prefer this used-function worklist over wholesale reconstruction.
+Existing matching archives/source can already supply some reached functions.
+
+Within those 29 modules, the strong-path worklist spans **187 candidate
+GAME/OPEN routine pairs**; seven already have reference source. That gives a
+planning estimate of **about 180 additional shared bodies**, plus **13 more
+candidate-only pairs** to investigate, instead of the wholesale 325 estimate
+below. Pairing uses corresponding ordered routines with agreeing name, size,
+archive-slot annotation and confidence; it is not source-reuse proof. Each image
+still requires independent matching, and data/relocation closure is additional
+work. Unknown ownership outside those modules remains in the full TSV.
+
+Generate the per-function TSV and its complete reference witnesses with:
+
+```sh
+nix develop -c python3 -m scripts.kf.sdk_usage
+# build/sdk-usage/functions.tsv and build/sdk-usage/witnesses.json
+```
+
+The TSV preserves every canonical inventory row and adds `reference_status`,
+`via_owner`, and `via_reference` (the reference's `id` in that image's JSON report).
+Follow the parent witnesses to recover the root path; `entry` identifies SDK
+startup. Proven means decoded direct control flow, validated means conservative
+reference checks passed, and candidate remains a hypothesis. Entire admitted
+function/data extents are scanned, so even a strong path is not proof that the
+game executes that path. Callback/data references are followed transitively.
+The census still has unresolved indirect control, overlapping code/data models,
+and fragmented function extents. **Unreached does not establish unused:** keep
+those rows for closure review without budgeting all of them as required work.
+Reports stay under `build/`; curated inventory inputs are never overwritten.
+
+### Linked inventory and whole-module upper estimate
+
 The complete per-function list already lives in the canonical
 [`config/retail/functions_vendored.tsv`](../config/retail/functions_vendored.tsv).
 It contains **1,138 identified linked SDK function occurrences**: 573 in GAME,

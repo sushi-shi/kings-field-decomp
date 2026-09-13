@@ -126,6 +126,7 @@ def audit(
     img: RetailImage,
     *,
     config_comparisons: tuple = (),
+    include_entry: bool = False,
 ) -> dict:
     """Lossless reference worklist with weakest-edge reachability witnesses.
 
@@ -133,6 +134,8 @@ def audit(
     fuzzy score. A reached vendor routine is traversed without adding it to the
     game root/progress denominator. Entire admitted function/object extents are
     scanned conservatively; candidate discovery does not assert execution.
+    Optional executable entry roots include SDK startup without changing the
+    game-function denominator.
     """
     if img.image != image:
         raise ValueError("reference audit image does not match retail bytes")
@@ -176,6 +179,11 @@ def audit(
 
     for root in roots:
         visit(root, TIER_RANK["proven"], None, None)
+    entry_roots = tuple(f for f in functions if include_entry and f.contains_body(img.layout.entry))
+    for root in entry_roots:
+        visit(root, TIER_RANK["proven" if len(entry_roots) == 1 else "candidate"], None, None)
+    if include_entry and len(entry_roots) != 1:
+        issue("entry-owner-not-unique", image, entry=img.layout.entry, owners=len(entry_roots))
     if not roots:
         issue("no-game-roots", image)
     while queue:
@@ -292,6 +300,7 @@ def audit(
             "Whole admitted extents are traversed conservatively, not dynamic execution paths.",
         ],
         "roots": [_function_key(f) for f in roots],
+        "entry_roots": [_function_key(f) for f in entry_roots],
         "summary": {
             "game_roots": len(roots),
             "reached_vendor_functions": sum(
