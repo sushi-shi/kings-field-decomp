@@ -1,0 +1,183 @@
+#include <kf/game_math.h>
+#include <kf/open_resources.h>
+#include <kf/map_data.h>
+#include <kf/open_opening_render.h>
+#include <kf/open_render.h>
+#include <kf/open_scene0.h>
+#include <psyq/sdk.h>
+
+enum {
+    OPENING_MODEL_DEPTH_BIAS = -100,
+    OPENING_MODEL_YAW_STEP = 64,
+    ENDING_TRANSLATING_MODEL_DEPTH_BIAS = 1000,
+    ENDING_ROTATING_MODEL_DEPTH_BIAS = 10000,
+};
+
+KfSpriteQuad floor_item_sprites[KF_FLOOR_ITEM_SPRITE_COUNT] = {
+    {0x90, 0x00, 0x20, 0x20, 0xfe00, 0xfc40, 0x400, 0x400},
+    {0xb0, 0x00, 0x20, 0x20, 0xfe00, 0xfc40, 0x400, 0x400},
+    {0xd0, 0x00, 0x20, 0x20, 0xfe00, 0xfc40, 0x400, 0x400},
+    {0xb0, 0x00, 0x20, 0x20, 0xfe00, 0xfc40, 0x400, 0x400},
+    {0x90, 0x20, 0x20, 0x27, 0xfe00, 0xfb40, 0x400, 0x500},
+    {0xb0, 0x20, 0x20, 0x27, 0xfe00, 0xfb40, 0x400, 0x500},
+    {0xd0, 0x20, 0x20, 0x27, 0xfe00, 0xfb40, 0x400, 0x500},
+};
+
+void opening_entity_render(KfOpeningEntity *entity)
+{
+    VECTOR scale;
+    SVECTOR screen;
+    MATRIX model;
+    MATRIX light;
+    long flag;
+    KfEnumStorage<KfOpeningModelId, u16> object_id;
+    s16 depth;
+
+    SetRotMatrix(&open_graphics_runtime.render_state.view_matrix);
+    SetTransMatrix(&open_graphics_runtime.render_state.view_matrix);
+    setVector(&screen,
+        entity->position.vx - open_graphics_runtime.render_state.view_position.vx,
+        entity->position.vy - open_graphics_runtime.render_state.view_position.vy,
+        entity->position.vz - open_graphics_runtime.render_state.view_position.vz);
+
+    RotTrans(&screen, (VECTOR *)&model.t, &flag);
+    matrix_set_rotation_yxz(&entity->rotation, &model);
+    copyVector(&scale, &entity->scale);
+    ScaleMatrix(&model, &scale);
+    MulMatrix0(&open_graphics_runtime.render_state.light_matrix, &model, &light);
+    MulMatrix2(&open_graphics_runtime.render_state.view_matrix, &model);
+    SetRotMatrix(&model);
+    SetTransMatrix(&model);
+    SetLightMatrix(&light);
+
+    object_id = entity->object_id;
+    depth = 0;
+    switch (entity->object_id) {
+    case KF_OPENING_SCENE0_DECREASING_YAW_MODEL:
+    case KF_OPENING_SCENE0_INCREASING_YAW_MODEL:
+    case KF_OPENING_SCENE3_INCREASING_YAW_MODEL:
+    case KF_OPENING_SCENE3_DECREASING_YAW_MODEL:
+    case KF_OPENING_TAPERED_COLUMN:
+        depth = OPENING_MODEL_DEPTH_BIAS;
+        break;
+    case KF_OPENING_GREEN_CRYSTAL_INCREASING_YAW:
+    case KF_OPENING_PINK_CRYSTAL_INCREASING_YAW:
+        entity->rotation.y = (entity->rotation.y + OPENING_MODEL_YAW_STEP) & KF_ANGLE_WRAP_MASK;
+        break;
+    case KF_OPENING_GREEN_CRYSTAL_DECREASING_YAW:
+    case KF_OPENING_PINK_CRYSTAL_DECREASING_YAW:
+        entity->rotation.y = (entity->rotation.y - OPENING_MODEL_YAW_STEP) & KF_ANGLE_WRAP_MASK;
+        break;
+    case KF_OPENING_CASTLE_MOUNTAIN_BACKDROP:
+        tmd_select_object_vertices(kf_enum_encode<u16>(object_id));
+        tmd_project_vertices_perspective_right(
+            tmd_get_object(kf_enum_encode<u16>(object_id))->vertex_count);
+        render_enqueue_tmd(kf_enum_encode<u16>(object_id), 0);
+        return;
+    case KF_OPENING_ENDING_ORANGE_DISK:
+        depth = ENDING_TRANSLATING_MODEL_DEPTH_BIAS;
+        goto render_alternate;
+    case KF_OPENING_ENDING_STARFIELD:
+        depth = ENDING_ROTATING_MODEL_DEPTH_BIAS;
+    render_alternate:
+        tmd_select_object_vertices(kf_enum_encode<u16>(object_id));
+        tmd_project_vertices(tmd_get_object(kf_enum_encode<u16>(object_id))->vertex_count);
+        render_enqueue_unlit_triangles(kf_enum_encode<u16>(object_id), depth);
+        return;
+    default:
+        depth = 0;
+        break;
+    }
+
+    tmd_select_object_vertices(kf_enum_encode<u16>(object_id));
+    tmd_project_vertices(tmd_get_object(kf_enum_encode<u16>(object_id))->vertex_count);
+    render_enqueue_tmd(kf_enum_encode<u16>(object_id), depth);
+}
+
+void render_floor_item(KfFloorItem *item)
+{
+    SVECTOR screen;
+    MATRIX model;
+    long flag;
+    KfFloorItemFacing facing;
+    s16 depth_bias;
+
+    SetRotMatrix(&open_graphics_runtime.render_state.view_matrix);
+    SetTransMatrix(&open_graphics_runtime.render_state.view_matrix);
+    setVector(&screen,
+        item->position_x - open_graphics_runtime.render_state.view_position.vx,
+        item->position_y - open_graphics_runtime.render_state.view_position.vy,
+        item->position_z - open_graphics_runtime.render_state.view_position.vz);
+    RotTrans(&screen, (VECTOR *)&model.t, &flag);
+    facing = floor_item_facing(item->facing_and_frame_count);
+    if (kf_enum_encode<u8>(facing) != kf_enum_encode<u8>(KF_FLOOR_ITEM_FACING_BILLBOARD)) {
+        matrix_set_rotation_y(
+            (kf_enum_encode<u16>(facing) - kf_enum_encode<u8>(KF_FLOOR_ITEM_FACING_ZERO_YAW)) << KF_FLOOR_ITEM_FACING_TO_ANGLE_SHIFT,
+            &model);
+        MulMatrix2(&open_graphics_runtime.render_state.view_matrix, &model);
+        SetRotMatrix(&model);
+        depth_bias = KF_FLOOR_ITEM_FIXED_FACING_DEPTH_BIAS;
+    } else {
+        SetRotMatrix(&open_graphics_runtime.render_state.pitch_matrix);
+        depth_bias = KF_FLOOR_ITEM_BILLBOARD_DEPTH_BIAS;
+    }
+    SetTransMatrix(&model);
+    render_enqueue_sprite(
+        &floor_item_sprites[kf_enum_encode<u16>(item->base_sprite_index) + item->animation_frame], depth_bias, KF_SPRITE_DEPTH_CUE_BOOSTED);
+    floor_item_advance_frame(item);
+}
+
+void opening_render_entities_and_items(void)
+{
+    const KfCellWindow *window = open_graphics_runtime.active_cell_window;
+    u16 origin_z = open_graphics_runtime.render_state.view_cell.z - window->origin_z;
+    u16 origin_x = open_graphics_runtime.render_state.view_cell.x - window->origin_x;
+    KfOpeningEntity *entity;
+    KfFloorItem *item;
+    u16 *material_tpage;
+    u16 row;
+    u16 col;
+    s16 remaining;
+
+    tmd_select(KF_TMD_SLOT_ENTITIES);
+    entity = opening_entity_state.entities;
+    for (remaining = KF_OPENING_ENTITY_CAPACITY - 1; remaining != -1; remaining--) {
+        if (entity->object_id < KF_OPENING_ENTITY_MODEL_LIMIT) {
+            const KfCellWindow *grid = open_graphics_runtime.active_cell_window;
+
+            row = entity->cell_z - origin_z;
+            if (row < grid->height) {
+                col = entity->cell_x - origin_x;
+
+                if (col < grid->width && grid->cells[row * grid->width + col] != KF_CELL_WINDOW_HIDDEN) {
+                    opening_entity_render(entity);
+                }
+            }
+        }
+        entity++;
+    }
+
+    SetLightMatrix(&floor_item_light_matrix);
+    material_tpage = &open_graphics_runtime.floor_item_state.material.tpage;
+    open_graphics_runtime.floor_item_state.material.color.r = open_graphics_runtime.floor_item_state.material.color.g =
+        open_graphics_runtime.floor_item_state.material.color.b = KF_FLOOR_ITEM_RENDER_BRIGHTNESS;
+    *material_tpage = open_graphics_runtime.floor_item_state.texture_tpage;
+    open_graphics_runtime.floor_item_state.material.clut = open_graphics_runtime.floor_item_state.texture_clut;
+    item = open_graphics_runtime.floor_item_state.items;
+    remaining = open_graphics_runtime.floor_item_state.count;
+    while (--remaining != -1) {
+        const KfCellWindow *grid = open_graphics_runtime.active_cell_window;
+
+        row = item->position_z / KF_MAP_TILE_SIZE - origin_z;
+        if (row < grid->height) {
+            col = item->position_x / KF_MAP_TILE_SIZE - origin_x;
+
+            if (col < grid->width
+                    && grid->cells[row * grid->width + col]
+                        != KF_CELL_WINDOW_HIDDEN) {
+                render_floor_item(item);
+            }
+        }
+        item++;
+    }
+}
