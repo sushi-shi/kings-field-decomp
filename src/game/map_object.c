@@ -153,14 +153,14 @@ KfMapObject *map_object_effect_pool_acquire(u16 first_index, u16 count, u16 sequ
  * the 170.. or 180.. effect range, then starts its action by id band.
  */
 ADDRESS(0x80031834, 0x194)
-void map_object_spawn_effect(KfMapObjectDropSource kind, KfObjectId object_id, const VECTOR *position, s32 y_offset)
+void map_object_spawn_effect(KfMapObjectDropSource drop_source, KfObjectId object_id, const VECTOR *position, s32 y_offset)
 {
     KfBool within_drop_range;
     u16 *sequence;
     u16 first_index;
     KfMapObject *object;
 
-    if (kind == KF_MAP_OBJECT_DROP_FROM_PLACEMENT) {
+    if (drop_source == KF_MAP_OBJECT_DROP_FROM_PLACEMENT) {
         sequence = &map_object_state.effect_sequence_180;
         first_index = KF_MAP_OBJECT_PLACEMENT_DROP_FIRST;
     } else {

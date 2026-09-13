@@ -1561,7 +1561,7 @@ GAME.EXE	0x800142d4	0x2ad4		mips26	reachable-code	0x800500b8	load	PadInit	jal		c
 GAME.EXE	0x800142dc	0x2adc		mips26	reachable-code	0x8005037c	load	InitCARD2	jal		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x800142e4	0x2ae4		mips26	reachable-code	0x800504cc	load		jal		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x800142ec	0x2aec		mips26	reachable-code	0x800146b8	load		jal		control-flow	candidate	investigation:relocs.tsv
-GAME.EXE	0x800142f4	0x2af4	0x800142f8	mips_hi16_lo16	reachable-code	0x800958f8	bss	game_exit_code	lui+lw	v0	paired-reviewed	reviewed	manual:game_semantic_math_lifecycle
+GAME.EXE	0x800142f4	0x2af4	0x800142f8	mips_hi16_lo16	reachable-code	0x800958f8	bss	game_next_overlay_mode	lui+lw	v0	paired-reviewed	reviewed	manual:game_semantic_math_lifecycle
 GAME.EXE	0x80014340	0x2b40	0x80014344	mips_hi16_lo16	reachable-code	0x80070eb8	bss	game_graphics_runtime	lui+lw	v1	paired-reviewed	reviewed	manual:game_sprite_add_ft4
 GAME.EXE	0x80014364	0x2b64		mips26	reachable-code	0x800543fc	load	SetPolyFT4	jal		control-flow-reviewed	reviewed	manual:game_sprite_add_ft4
 GAME.EXE	0x80014498	0x2c98	0x8001449c	mips_hi16_lo16	reachable-code	0x80090ebc	bss	game_graphics_runtime	lui+lw	a0	paired-reviewed	reviewed	manual:game_sprite_add_ft4
@@ -1623,12 +1623,12 @@ GAME.EXE	0x800147dc	0x2fdc		mips26	reachable-code	0x8005045c	load	OpenEvent	jal	
 GAME.EXE	0x800147e8	0x2fe8		mips26	reachable-code	0x800502bc	load	EnableEvent	jal		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x800147f0	0x2ff0		mips26	reachable-code	0x80014674	load		jal		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x800147f8	0x2ff8		mips26	reachable-code	0x8002c70c	load		jal		control-flow	candidate	investigation:relocs.tsv
-GAME.EXE	0x8001480c	0x300c		mips26	reachable-code	0x8001b7b0	load	display_show_error_screen	jal		control-flow-reviewed	reviewed	manual:game_semantic_display_tmd
-GAME.EXE	0x80014814	0x3014	0x80014818	mips_hi16_lo16	reachable-code	0x800958f8	bss	game_exit_code	lui+sw	at	paired-reviewed	reviewed	manual:game_semantic_math_lifecycle
+GAME.EXE	0x8001480c	0x300c		mips26	reachable-code	0x8001b7b0	load	display_show_system_screen	jal		control-flow-reviewed	reviewed	manual:game_semantic_display_tmd
+GAME.EXE	0x80014814	0x3014	0x80014818	mips_hi16_lo16	reachable-code	0x800958f8	bss	game_next_overlay_mode	lui+sw	at	paired-reviewed	reviewed	manual:game_semantic_math_lifecycle
 GAME.EXE	0x8001481c	0x301c	0x80014820	mips_hi16_lo16	reachable-code	0x800a078d	bss	player_state	lui+addiu	s0	paired-reviewed	reviewed	manual:game_semantic_math_lifecycle
 GAME.EXE	0x80014824	0x3024	0x80014828	mips_hi16_lo16	reachable-code	0x8009a748	bss	map_cell_attribute_grid	lui+addiu	s2	paired-reviewed	reviewed	manual:game_semantic_math_lifecycle
 GAME.EXE	0x8001482c	0x302c		mips26	reachable-code	0x80018880	load	player_update	jal		control-flow-reviewed	reviewed	manual:game_semantic_player_update
-GAME.EXE	0x80014834	0x3034	0x80014838	mips_hi16_lo16	reachable-code	0x800958f8	bss	game_exit_code	lui+lw	v0	paired-reviewed	reviewed	manual:game_semantic_math_lifecycle
+GAME.EXE	0x80014834	0x3034	0x80014838	mips_hi16_lo16	reachable-code	0x800958f8	bss	game_next_overlay_mode	lui+lw	v0	paired-reviewed	reviewed	manual:game_semantic_math_lifecycle
 GAME.EXE	0x80014848	0x3048	0x8001484c	mips_hi16_lo16	reachable-code	0x800650a0	bss	player_position_snapshot	lui+addiu	a0	paired-reviewed	reviewed	manual:game_semantic_math_lifecycle
 GAME.EXE	0x80014850	0x3050	0x80014854	mips_hi16_lo16	reachable-code	0x80065098	bss	player_rotation_snapshot	lui+addiu	a1	paired-reviewed	reviewed	manual:game_semantic_math_lifecycle
 GAME.EXE	0x80014858	0x3058		mips26	reachable-code	0x80017e3c	load	player_update_transform_snapshot	jal		control-flow-reviewed	reviewed	manual:game_semantic_player_interactions
@@ -1647,7 +1647,7 @@ GAME.EXE	0x800148b8	0x30b8	0x800148bc	mips_hi16_lo16	reachable-code	0x80065098	b
 GAME.EXE	0x800148c0	0x30c0		mips26	reachable-code	0x8001fde4	load		jal		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x800148c8	0x30c8		mips26	reachable-code	0x800149f4	load		jal		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x8001491c	0x311c		mips26	reachable-code	0x80036af0	load		jal		control-flow	candidate	investigation:relocs.tsv
-GAME.EXE	0x8001492c	0x312c	0x80014930	mips_hi16_lo16	reachable-code	0x800958f8	bss	game_exit_code	lui+sw	at	paired-reviewed	reviewed	manual:game_semantic_math_lifecycle
+GAME.EXE	0x8001492c	0x312c	0x80014930	mips_hi16_lo16	reachable-code	0x800958f8	bss	game_next_overlay_mode	lui+sw	at	paired-reviewed	reviewed	manual:game_semantic_math_lifecycle
 GAME.EXE	0x80014934	0x3134		mips26	reachable-code	0x80014674	load		jal		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x8001493c	0x313c		mips26	reachable-code	0x800144d4	load		jal		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x80014944	0x3144		mips26	reachable-code	0x80032bdc	load		jal		control-flow	candidate	investigation:relocs.tsv
@@ -2442,13 +2442,13 @@ GAME.EXE	0x800188e0	0x70e0	0x800188e4	mips_hi16_lo16	reachable-code	0x800a084b	b
 GAME.EXE	0x800188e8	0x70e8	0x800188ec	mips_hi16_lo16	reachable-code	0x800a084a	bss	player_state	lui+lbu	a1	paired-reviewed	reviewed	manual:player_state-aggregate
 GAME.EXE	0x800188f0	0x70f0		mips26	reachable-code	0x8001a4e8	load	collision_adjust_cell_occupancy	jal		control-flow-reviewed	reviewed	manual:game_semantic_collision_grid
 GAME.EXE	0x800188f8	0x70f8		mips26	reachable-code	0x8005012c	load	PadRead	jal		control-flow-reviewed	reviewed	manual:game_semantic_player_update
-GAME.EXE	0x80018910	0x7110		mips26	reachable-code	0x8001b7b0	load	display_show_error_screen	jal		control-flow-reviewed	reviewed	manual:game_semantic_player_update
+GAME.EXE	0x80018910	0x7110		mips26	reachable-code	0x8001b7b0	load	display_show_system_screen	jal		control-flow-reviewed	reviewed	manual:game_semantic_player_update
 GAME.EXE	0x80018934	0x7134	0x80018938	mips_hi16_lo16	reachable-code	0x80057b30	load	player_previous_input	lui+lw	v0	paired-reviewed	reviewed	manual:game_semantic_player_update
 GAME.EXE	0x8001894c	0x714c	0x80018950	mips_hi16_lo16	reachable-code	0x800a07f0	bss	player_state	lui+lh	v1	paired-reviewed	reviewed	manual:player_state-aggregate
 GAME.EXE	0x80018960	0x7160		mips26	reachable-code	0x80036e38	load		jal		control-flow-reviewed	reviewed	manual:game_semantic_player_update
 GAME.EXE	0x80018974	0x7174		mips26	reachable-code	0x80018054	load	player_use_item	jal		control-flow-reviewed	reviewed	manual:game_semantic_player_interactions
 GAME.EXE	0x8001897c	0x717c		mips26	reachable-code	0x80018a04	load		j		control-flow-reviewed	reviewed	manual:game_semantic_player_update
-GAME.EXE	0x80018994	0x7194	0x80018998	mips_hi16_lo16	reachable-code	0x800958f8	bss	game_exit_code	lui+sw	v0	paired-reviewed	reviewed	manual:game_semantic_player_update
+GAME.EXE	0x80018994	0x7194	0x80018998	mips_hi16_lo16	reachable-code	0x800958f8	bss	game_next_overlay_mode	lui+sw	v0	paired-reviewed	reviewed	manual:game_semantic_player_update
 GAME.EXE	0x8001899c	0x719c		mips26	reachable-code	0x8001a274	load		j		control-flow-reviewed	reviewed	manual:game_semantic_player_update
 GAME.EXE	0x800189a4	0x71a4		mips26	reachable-code	0x80020a2c	load		jal		control-flow-reviewed	reviewed	manual:game_semantic_player_update
 GAME.EXE	0x800189ac	0x71ac		mips26	reachable-code	0x80032cb0	load		jal		control-flow-reviewed	reviewed	manual:game_semantic_player_update
@@ -2842,7 +2842,7 @@ GAME.EXE	0x8001ad38	0x9538	0x8001ad3c	mips_hi16_lo16	reachable-code	0x80057b44	l
 GAME.EXE	0x8001ad40	0x9540		mips26	reachable-code	0x8005031c	load	strcat	jal		control-flow	reviewed	investigation:relocs.tsv;manual:cd_file;carved-body-reviewed
 GAME.EXE	0x8001ad48	0x9548	0x8001ad4c	mips_hi16_lo16	reachable-code	0x80058080	bss	cd_search_file	lui+addiu	a0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:cd_file;carved-body-reviewed
 GAME.EXE	0x8001ad50	0x9550		mips26	reachable-code	0x8003c810	load		jal		control-flow	reviewed	investigation:relocs.tsv;manual:cd_file;carved-body-reviewed
-GAME.EXE	0x8001ad60	0x9560		mips26	reachable-code	0x8001b7b0	load	display_show_error_screen	jal		control-flow	reviewed	investigation:relocs.tsv;manual:cd_file;carved-body-reviewed
+GAME.EXE	0x8001ad60	0x9560		mips26	reachable-code	0x8001b7b0	load	display_show_system_screen	jal		control-flow	reviewed	investigation:relocs.tsv;manual:cd_file;carved-body-reviewed
 GAME.EXE	0x8001ad68	0x9568	0x8001ad6c	mips_hi16_lo16	reachable-code	0x80058084	bss	cd_search_file	lui+addiu	a0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:cd_file;carved-body-reviewed
 GAME.EXE	0x8001ad98	0x9598		mips26	reachable-code	0x8001ac0c	load	memory_allocate	jal		control-flow-reviewed	reviewed	manual:game_open_semantic_memory_allocator
 GAME.EXE	0x8001ada4	0x95a4	0x8001ada8	mips_hi16_lo16	reachable-code	0x80058080	bss	cd_search_file	lui+lbu	v0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:cd_file;carved-body-reviewed
@@ -2856,7 +2856,7 @@ GAME.EXE	0x8001ade0	0x95e0		mips26	reachable-code	0x8003aed8	load		jal		control-
 GAME.EXE	0x8001adec	0x95ec	0x8001adf0	mips_hi16_lo16	reachable-code	0x80058084	bss	cd_search_file	lui+lw	a0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:cd_file;carved-body-reviewed
 GAME.EXE	0x8001adf8	0x95f8		mips26	reachable-code	0x8003b034	load		jal		control-flow	reviewed	investigation:relocs.tsv;manual:cd_file;carved-body-reviewed
 GAME.EXE	0x8001ae04	0x9604		mips26	reachable-code	0x8003ad54	load		jal		control-flow	reviewed	investigation:relocs.tsv;manual:cd_file;carved-body-reviewed
-GAME.EXE	0x8001ae3c	0x963c		mips26	reachable-code	0x8001b7b0	load	display_show_error_screen	jal		control-flow	reviewed	investigation:relocs.tsv;manual:cd_file;carved-body-reviewed
+GAME.EXE	0x8001ae3c	0x963c		mips26	reachable-code	0x8001b7b0	load	display_show_system_screen	jal		control-flow	reviewed	investigation:relocs.tsv;manual:cd_file;carved-body-reviewed
 GAME.EXE	0x8001ae8c	0x968c	0x8001ae90	mips_hi16_lo16	reachable-code	0x8006b734	bss	cd_file_table	lui+addiu	at	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:cd_file;carved-body-reviewed
 GAME.EXE	0x8001ae9c	0x969c		mips26	reachable-code	0x8001ac0c	load	memory_allocate	jal		control-flow-reviewed	reviewed	manual:game_open_semantic_memory_allocator
 GAME.EXE	0x8001aea8	0x96a8	0x8001aeac	mips_hi16_lo16	reachable-code	0x8006b730	bss	cd_file_table	lui+addiu	at	paired-reviewed	reviewed	manual:cd_file;carved-body-reviewed
@@ -2870,7 +2870,7 @@ GAME.EXE	0x8001af08	0x9708		mips26	reachable-code	0x8003aed8	load		jal		control-
 GAME.EXE	0x8001af18	0x9718	0x8001af1c	mips_hi16_lo16	reachable-code	0x8006b734	bss	cd_file_table	lui+addiu	at	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:cd_file;carved-body-reviewed
 GAME.EXE	0x8001af2c	0x972c		mips26	reachable-code	0x8003b034	load		jal		control-flow	reviewed	investigation:relocs.tsv;manual:cd_file;carved-body-reviewed
 GAME.EXE	0x8001af38	0x9738		mips26	reachable-code	0x8003ad54	load		jal		control-flow	reviewed	investigation:relocs.tsv;manual:cd_file;carved-body-reviewed
-GAME.EXE	0x8001af70	0x9770		mips26	reachable-code	0x8001b7b0	load	display_show_error_screen	jal		control-flow	reviewed	investigation:relocs.tsv;manual:cd_file;carved-body-reviewed
+GAME.EXE	0x8001af70	0x9770		mips26	reachable-code	0x8001b7b0	load	display_show_system_screen	jal		control-flow	reviewed	investigation:relocs.tsv;manual:cd_file;carved-body-reviewed
 GAME.EXE	0x8001afb4	0x97b4	0x8001afb8	mips_hi16_lo16	reachable-code	0x80058098	bss	cd_path_buffer	lui+addiu	s0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:cd_file;carved-body-reviewed
 GAME.EXE	0x8001afbc	0x97bc	0x8001afc0	mips_hi16_lo16	reachable-code	0x80057b3c	load	cd_path_prefix	lui+addiu	a2	paired-reviewed	reviewed	investigation:relocs.tsv;manual:cd_file;carved-body-reviewed
 GAME.EXE	0x8001afdc	0x97dc		mips26	reachable-code	0x8005031c	load	strcat	jal		control-flow	reviewed	investigation:relocs.tsv;manual:cd_file;carved-body-reviewed
@@ -2878,7 +2878,7 @@ GAME.EXE	0x8001afe4	0x97e4	0x8001afe8	mips_hi16_lo16	reachable-code	0x80057b44	l
 GAME.EXE	0x8001afec	0x97ec		mips26	reachable-code	0x8005031c	load	strcat	jal		control-flow	reviewed	investigation:relocs.tsv;manual:cd_file;carved-body-reviewed
 GAME.EXE	0x8001aff4	0x97f4	0x8001aff8	mips_hi16_lo16	reachable-code	0x80058080	bss	cd_search_file	lui+addiu	a0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:cd_file;carved-body-reviewed
 GAME.EXE	0x8001affc	0x97fc		mips26	reachable-code	0x8003c810	load		jal		control-flow	reviewed	investigation:relocs.tsv;manual:cd_file;carved-body-reviewed
-GAME.EXE	0x8001b00c	0x980c		mips26	reachable-code	0x8001b7b0	load	display_show_error_screen	jal		control-flow	reviewed	investigation:relocs.tsv;manual:cd_file;carved-body-reviewed
+GAME.EXE	0x8001b00c	0x980c		mips26	reachable-code	0x8001b7b0	load	display_show_system_screen	jal		control-flow	reviewed	investigation:relocs.tsv;manual:cd_file;carved-body-reviewed
 GAME.EXE	0x8001b014	0x9814	0x8001b018	mips_hi16_lo16	reachable-code	0x80058084	bss	cd_search_file	lui+addiu	a0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:cd_file;carved-body-reviewed
 GAME.EXE	0x8001b044	0x9844	0x8001b048	mips_hi16_lo16	reachable-code	0x80058080	bss	cd_search_file	lui+lbu	v0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:cd_file;carved-body-reviewed
 GAME.EXE	0x8001b04c	0x984c	0x8001b050	mips_hi16_lo16	reachable-code	0x80058081	bss	cd_search_file	lui+lbu	v1	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:cd_file;carved-body-reviewed
@@ -2891,7 +2891,7 @@ GAME.EXE	0x8001b080	0x9880		mips26	reachable-code	0x8003aed8	load		jal		control-
 GAME.EXE	0x8001b08c	0x988c	0x8001b090	mips_hi16_lo16	reachable-code	0x80058084	bss	cd_search_file	lui+lw	a0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:cd_file;carved-body-reviewed
 GAME.EXE	0x8001b098	0x9898		mips26	reachable-code	0x8003b034	load		jal		control-flow	reviewed	investigation:relocs.tsv;manual:cd_file;carved-body-reviewed
 GAME.EXE	0x8001b0a4	0x98a4		mips26	reachable-code	0x8003ad54	load		jal		control-flow	reviewed	investigation:relocs.tsv;manual:cd_file;carved-body-reviewed
-GAME.EXE	0x8001b0dc	0x98dc		mips26	reachable-code	0x8001b7b0	load	display_show_error_screen	jal		control-flow	reviewed	investigation:relocs.tsv;manual:cd_file;carved-body-reviewed
+GAME.EXE	0x8001b0dc	0x98dc		mips26	reachable-code	0x8001b7b0	load	display_show_system_screen	jal		control-flow	reviewed	investigation:relocs.tsv;manual:cd_file;carved-body-reviewed
 GAME.EXE	0x8001b108	0x9908		mips26	reachable-code	0x800529a0	load	OpenTIM	jal		control-flow-reviewed	reviewed	manual:game_semantic_map_resources
 GAME.EXE	0x8001b110	0x9910		mips26	reachable-code	0x800529b0	load	ReadTIM	jal		control-flow-reviewed	reviewed	manual:game_semantic_map_resources
 GAME.EXE	0x8001b134	0x9934		mips26	reachable-code	0x80050958	load	LoadImage	jal		control-flow-reviewed	reviewed	manual:game_semantic_map_resources
@@ -2984,7 +2984,7 @@ GAME.EXE	0x8001b7e0	0x9fe0		mips26	reachable-code	0x80054348	load		jal		control-
 GAME.EXE	0x8001b844	0xa044		mips26	reachable-code	0x80054170	load		jal		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x8001b85c	0xa05c		mips26	reachable-code	0x800540dc	load		jal		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x8001b868	0xa068	0x8001b86c	mips_hi16_lo16	reachable-code	0x80058098	bss	cd_path_buffer	lui+addiu	a1	mips-hi-lo-data-pair	reviewed	scripts/kf/inventory.py:bss-pair-scan
-GAME.EXE	0x8001b870	0xa070	0x8001b874	mips_hi16_lo16	reachable-code	0x80057b50	load	error_screen_path	lui+addiu	a2	paired-reachable	reviewed	investigation:relocs.tsv
+GAME.EXE	0x8001b870	0xa070	0x8001b874	mips_hi16_lo16	reachable-code	0x80057b50	load	system_screen_path	lui+addiu	a2	paired-reachable	reviewed	investigation:relocs.tsv
 GAME.EXE	0x8001b8a8	0xa0a8	0x8001b8ac	mips_hi16_lo16	reachable-code	0x8005809a	bss	cd_path_buffer	lui+sb	s0	mips-hi-lo-data-pair	reviewed	scripts/kf/inventory.py:bss-pair-scan
 GAME.EXE	0x8001b8b0	0xa0b0	0x8001b8b4	mips_hi16_lo16	reachable-code	0x80058080	bss	cd_search_file	lui+addiu	a0	mips-hi-lo-data-pair	reviewed	scripts/kf/inventory.py:bss-pair-scan
 GAME.EXE	0x8001b8b8	0xa0b8		mips26	reachable-code	0x8003c810	load		jal		control-flow	candidate	investigation:relocs.tsv
@@ -11363,9 +11363,9 @@ OPEN.EXE	0x800145ac	0x2dac		mips26	reachable-code	0x80013c70	load	opening_poll_i
 OPEN.EXE	0x800145b4	0x2db4	0x800145b8	mips_hi16_lo16	reachable-code	0x80043178	bss	opening_input_action	lui+lw	v0	paired-reviewed	reviewed	manual:open_semantic_opening_helpers;manual:open_semantic_opening_scene1
 OPEN.EXE	0x800145d4	0x2dd4		mips26	reachable-code	0x80019e24	load	audio_stop_sequence	jal		control-flow-reviewed	reviewed	manual:open_semantic_opening_scene1
 OPEN.EXE	0x800145e0	0x2de0		mips26	reachable-code	0x800143dc	load	opening_scene1_draw_fade	jal		control-flow-reviewed	reviewed	manual:open_semantic_opening_scene1
-OPEN.EXE	0x80014648	0x2e48		mips26	reachable-code	0x80014674	load	opening_entity_transition+0x6c	j		control-flow-reviewed	reviewed	manual:open_semantic_opening_entity_transition
-OPEN.EXE	0x8001465c	0x2e5c		mips26	reachable-code	0x80014670	load	opening_entity_transition+0x68	j		control-flow-reviewed	reviewed	manual:open_semantic_opening_entity_transition
-OPEN.EXE	0x80014668	0x2e68		mips26	reachable-code	0x80014674	load	opening_entity_transition+0x6c	j		control-flow-reviewed	reviewed	manual:open_semantic_opening_entity_transition
+OPEN.EXE	0x80014648	0x2e48		mips26	reachable-code	0x80014674	load	opening_cylinder_transition+0x6c	j		control-flow-reviewed	reviewed	manual:open_semantic_opening_entity_transition
+OPEN.EXE	0x8001465c	0x2e5c		mips26	reachable-code	0x80014670	load	opening_cylinder_transition+0x68	j		control-flow-reviewed	reviewed	manual:open_semantic_opening_entity_transition
+OPEN.EXE	0x80014668	0x2e68		mips26	reachable-code	0x80014674	load	opening_cylinder_transition+0x6c	j		control-flow-reviewed	reviewed	manual:open_semantic_opening_entity_transition
 OPEN.EXE	0x80014674	0x2e74	0x80014678	mips_hi16_lo16	reachable-code	0x800498f8	bss	opening_entity_state	lui+addiu	a3	paired-reviewed	reviewed	manual:open_semantic_opening_entity_transition
 OPEN.EXE	0x80014720	0x2f20	0x80014724	mips_hi16_lo16	reachable-code	0x80049912	bss	opening_entity_state	lui+addiu	a0	paired-reviewed	reviewed	manual:open_semantic_opening_entity_transition
 OPEN.EXE	0x80014784	0x2f84		mips26	reachable-code	0x800137c4	load	opening_render_frame	jal		control-flow-reviewed	reviewed	manual:open_semantic_opening_render;manual:open_semantic_opening_entity_transition
@@ -11411,13 +11411,13 @@ OPEN.EXE	0x80014a64	0x3264	0x80014a68	mips_hi16_lo16	reachable-code	0x80043178	b
 OPEN.EXE	0x80014a78	0x3278	0x80014a7c	mips_hi16_lo16	reachable-code	0x800757dc	bss	opening_camera_path_state	lui+lw	v1	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_opening_scene3
 OPEN.EXE	0x80014a80	0x3280	0x80014a84	mips_hi16_lo16	reachable-code	0x800757e4	bss	opening_camera_path_state	lui+lw	a0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_opening_scene3
 OPEN.EXE	0x80014a88	0x3288	0x80014a8c	mips_hi16_lo16	reachable-code	0x80043178	bss	opening_input_action	lui+lw	a1	paired-reviewed	reviewed	manual:open_semantic_opening_helpers;manual:open_semantic_opening_scene3
-OPEN.EXE	0x80014aa8	0x32a8		mips26	reachable-code	0x80014608	load	opening_entity_transition	jal		control-flow-reviewed	reviewed	manual:open_semantic_opening_entity_transition;manual:open_semantic_opening_scene3
+OPEN.EXE	0x80014aa8	0x32a8		mips26	reachable-code	0x80014608	load	opening_cylinder_transition	jal		control-flow-reviewed	reviewed	manual:open_semantic_opening_entity_transition;manual:open_semantic_opening_scene3
 OPEN.EXE	0x80014ab4	0x32b4	0x80014ab8	mips_hi16_lo16	reachable-code	0x80035944	load	color_matrix_table	lui+addiu	a0	paired-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_opening_scene3
 OPEN.EXE	0x80014ac4	0x32c4		mips26	reachable-code	0x80019600	load	lighting_set_color_matrix	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_opening_scene3
 OPEN.EXE	0x80014acc	0x32cc	0x80014ad0	mips_hi16_lo16	reachable-code	0x800757dc	bss	opening_camera_path_state	lui+addiu	a0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_opening_scene3
 OPEN.EXE	0x80014ad4	0x32d4		mips26	reachable-code	0x800137c4	load	opening_render_frame	jal		control-flow-reviewed	reviewed	manual:open_semantic_opening_render;manual:open_semantic_opening_scene3
 OPEN.EXE	0x80014af8	0x32f8	0x80014afc	mips_hi16_lo16	reachable-code	0x80043178	bss	opening_input_action	lui+lw	v0	paired-reviewed	reviewed	manual:open_semantic_opening_helpers;manual:open_semantic_opening_scene3
-OPEN.EXE	0x80014b0c	0x330c		mips26	reachable-code	0x80014608	load	opening_entity_transition	jal		control-flow-reviewed	reviewed	manual:open_semantic_opening_entity_transition;manual:open_semantic_opening_scene3
+OPEN.EXE	0x80014b0c	0x330c		mips26	reachable-code	0x80014608	load	opening_cylinder_transition	jal		control-flow-reviewed	reviewed	manual:open_semantic_opening_entity_transition;manual:open_semantic_opening_scene3
 OPEN.EXE	0x80014b58	0x3358		mips26	reachable-code	0x800166b4	load	opening_resources_load_ending	jal		control-flow-reviewed	reviewed	manual:open_semantic_resources;manual:open_semantic_opening_ending_scene
 OPEN.EXE	0x80014b60	0x3360	0x80014b64	mips_hi16_lo16	reachable-code	0x80049538	bss	opening_entity_state	lui+addiu	a0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_opening_ending_scene
 OPEN.EXE	0x80014b68	0x3368		mips26	reachable-code	0x800199e0	load	opening_entity_find_by_object_id	jal		control-flow-reviewed	reviewed	manual:open_semantic_resources;manual:open_semantic_opening_ending_scene
@@ -11428,12 +11428,12 @@ OPEN.EXE	0x80014b94	0x3394		mips26	reachable-code	0x80014004	load	opening_camera
 OPEN.EXE	0x80014ba8	0x33a8	0x80014bac	mips_hi16_lo16	reachable-code	0x800757dc	bss	opening_camera_path_state	lui+lw	v0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_opening_ending_scene
 OPEN.EXE	0x80014bb0	0x33b0	0x80014bb4	mips_hi16_lo16	reachable-code	0x800757e4	bss	opening_camera_path_state	lui+lw	v1	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_opening_ending_scene
 OPEN.EXE	0x80014bc0	0x33c0		mips26	reachable-code	0x80030538	load	SetDispMask	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_opening_ending_scene
-OPEN.EXE	0x80014bcc	0x33cc		mips26	reachable-code	0x80014608	load	opening_entity_transition	jal		control-flow-reviewed	reviewed	manual:open_semantic_opening_entity_transition;manual:open_semantic_opening_ending_scene
+OPEN.EXE	0x80014bcc	0x33cc		mips26	reachable-code	0x80014608	load	opening_cylinder_transition	jal		control-flow-reviewed	reviewed	manual:open_semantic_opening_entity_transition;manual:open_semantic_opening_ending_scene
 OPEN.EXE	0x80014bd4	0x33d4	0x80014bd8	mips_hi16_lo16	reachable-code	0x80035964	load	color_matrix_table	lui+addiu	a0	paired-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_opening_ending_scene
 OPEN.EXE	0x80014be4	0x33e4		mips26	reachable-code	0x80019600	load	lighting_set_color_matrix	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_opening_scene3;manual:open_semantic_opening_ending_scene
 OPEN.EXE	0x80014bec	0x33ec	0x80014bf0	mips_hi16_lo16	reachable-code	0x800757dc	bss	opening_camera_path_state	lui+addiu	a0	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_opening_ending_scene
 OPEN.EXE	0x80014bf4	0x33f4		mips26	reachable-code	0x800137c4	load	opening_render_frame	jal		control-flow-reviewed	reviewed	manual:open_semantic_opening_render;manual:open_semantic_opening_ending_scene
-OPEN.EXE	0x80014c18	0x3418		mips26	reachable-code	0x80014608	load	opening_entity_transition	jal		control-flow-reviewed	reviewed	manual:open_semantic_opening_entity_transition;manual:open_semantic_opening_ending_scene
+OPEN.EXE	0x80014c18	0x3418		mips26	reachable-code	0x80014608	load	opening_cylinder_transition	jal		control-flow-reviewed	reviewed	manual:open_semantic_opening_entity_transition;manual:open_semantic_opening_ending_scene
 OPEN.EXE	0x80014c28	0x3428	0x80014c2c	mips_hi16_lo16	reachable-code	0x80075838	bss	opening_camera_path_state	lui+addiu	s3	paired-reviewed	reviewed	scripts/kf/inventory.py:bss-pair-scan;manual:open_semantic_opening_ending_scene
 OPEN.EXE	0x80014c30	0x3430		mips26	reachable-code	0x8002f050	load	rsin	jal		control-flow-reviewed	reviewed	investigation:relocs.tsv;manual:open_semantic_opening_ending_scene
 OPEN.EXE	0x80014c38	0x3438		mips26	reachable-code	0x80014100	load	opening_camera_path_step	jal		control-flow-reviewed	reviewed	manual:open_semantic_camera_path;manual:open_semantic_opening_ending_scene

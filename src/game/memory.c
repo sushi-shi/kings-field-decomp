@@ -48,9 +48,9 @@ void memory_allocation_reset(void)
 }
 
 ADDRESS(0x8001ab08, 0xa8)
-void memory_set_allocation_mode(KfMemoryAllocationMode mode)
+void memory_set_allocation_mode(KfMemoryAllocationMode allocation_mode)
 {
-    switch (mode) {
+    switch (allocation_mode) {
     case KF_MEMORY_CREATE_ARENA:
         memory_arena.start = (u8 *)memory_malloc_checked(MEMORY_INITIAL_ARENA_BYTES);
         memory_arena.end = (u8 *)MEMORY_INITIAL_ARENA_LAST_ADDRESS;

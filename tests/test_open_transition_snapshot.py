@@ -13,7 +13,7 @@ from scripts.kf.retail import IMAGE_LAYOUTS, parse_int, read_tsv
 
 START = 0x80014608
 SIZE = 0x1FC
-SYMBOL = "opening_entity_transition"
+SYMBOL = "opening_cylinder_transition"
 
 
 class OpenTransitionSnapshotTests(unittest.TestCase):

@@ -37,7 +37,7 @@ extern KfMemoryArena memory_arena;
 extern void *memory_allocate(s32 size);
 extern void memory_allocation_reset(void);
 extern void memory_capture_system_heap_start(void);
-extern void memory_set_allocation_mode(KfMemoryAllocationMode mode);
+extern void memory_set_allocation_mode(KfMemoryAllocationMode allocation_mode);
 extern void *memory_malloc_checked(s32 size);
 extern void memory_release_last(void);
 extern void memory_reset_system_heap(void);

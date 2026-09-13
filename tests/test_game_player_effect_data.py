@@ -28,7 +28,7 @@ FUNCTION = 'player_update'
 # acquiring a permissive game/SDK provider when the input fixture changes.
 CALLEES = (
     'player_death_update', 'player_death_update_reverse_fade',
-    'collision_adjust_cell_occupancy', 'PadRead', 'display_show_error_screen',
+    'collision_adjust_cell_occupancy', 'PadRead', 'display_show_system_screen',
     'menu_enter_mode', 'player_use_item', 'pool_release_all', 'audio_close_vab',
     'map_load_floor_wrapper', 'player_sync_position_to_map', 'player_equip_weapon',
     'player_select_magic', 'map_interaction_dispatch', 'SquareRoot0',

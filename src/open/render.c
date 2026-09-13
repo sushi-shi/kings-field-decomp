@@ -63,17 +63,17 @@ void tmd_select_object_vertices(u16 index)
 
 ADDRESS(0x80016f04, 0x12c)
 void render_set_view_transform(
-    const VECTOR *position, const SVECTOR *rotation)
+    const VECTOR *position_or_null, const SVECTOR *rotation_or_null)
 {
     SVECTOR angles;
 
-    if (position != NULL) {
-        open_graphics_runtime.render_state.view_position = *position;
+    if (position_or_null != NULL) {
+        open_graphics_runtime.render_state.view_position = *position_or_null;
         open_graphics_runtime.render_state.view_cell.x = open_graphics_runtime.render_state.view_position.vx / KF_MAP_TILE_SIZE;
         open_graphics_runtime.render_state.view_cell.z = open_graphics_runtime.render_state.view_position.vz / KF_MAP_TILE_SIZE;
     }
-    if (rotation != NULL) {
-        open_graphics_runtime.render_state.view_rotation = *rotation;
+    if (rotation_or_null != NULL) {
+        open_graphics_runtime.render_state.view_rotation = *rotation_or_null;
     }
     RotMatrix(&open_graphics_runtime.render_state.view_rotation, &open_graphics_runtime.render_state.view_matrix);
     angles.vz = 0;

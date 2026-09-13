@@ -102,7 +102,7 @@ extern CVECTOR map_textured_primitive_color;
 extern KfCellWindow render_cell_windows[KF_CELL_WINDOW_YAW_COUNT];
 extern u32 primitive_allocation_count;
 
-extern void display_initialize(KfOverlayMode mode);
+extern void display_initialize(KfOverlayMode overlay_mode);
 extern void lighting_set_active_color_matrix(KfOpenColorPreset preset);
 extern void matrix_interpolate(
     const MATRIX *from, const MATRIX *to, MATRIX *output, s32 blend);
@@ -120,12 +120,12 @@ extern void render_initialize(void);
 extern void display_begin_frame(void);
 extern void display_present_frame(void);
 extern void sprite_add_f4(
-    const KfScreenRect *position, const CVECTOR *color, u16 ot_index);
-extern void sprite_add_ft4(const KfScreenRect *position, u8 *texcoords, u32 tpage, u32 clut,
+    const KfScreenRect *rectangle, const CVECTOR *color, u16 ot_index);
+extern void sprite_add_ft4(const KfScreenRect *rectangle, u8 *texcoords, u32 tpage, u32 clut,
                            const CVECTOR *color, u16 ot_index);
 extern void opening_fade_in(void);
 extern void render_set_view_transform(
-    const VECTOR *position, const SVECTOR *rotation);
+    const VECTOR *position_or_null, const SVECTOR *rotation_or_null);
 extern void tmd_project_vertices_perspective_right(s32 count);
 extern void tmd_project_vertices_shift(s32 count, u8 shift);
 extern void tmd_transform_vertices(s32 count);
@@ -134,7 +134,7 @@ extern void render_enqueue_unlit_triangles(u16 object_index, s16 depth_bias);
 extern void render_enqueue_sprite(
     KfSpriteQuad *sprite, s16 depth_bias, KfSpriteDepthCueMode depth_cue_mode);
 extern void render_floor_item(KfFloorItem *item);
-extern void render_map_cell(s32 col, s32 row, KfCellVisibility cell);
+extern void render_map_cell(s32 col, s32 row, KfCellVisibility visibility);
 extern void render_enqueue_map(u16 object_index);
 
 #endif

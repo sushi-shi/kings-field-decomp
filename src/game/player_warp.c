@@ -26,7 +26,7 @@ enum {
     (((u32)(x) << WARP_CELL_X_SHIFT) | ((u32)(z) << WARP_CELL_Z_SHIFT))
 
 ADDRESS(0x80036618, 0x238)
-void player_warp_shimmer(KfWarpShimmerMode mode, VECTOR *position)
+void player_warp_shimmer(KfWarpShimmerMode shimmer_mode, VECTOR *position)
 {
     KfEffectRecord *effects[KF_CYLINDER_TRANSITION_COUNT];
     KfEffectRecord **cursor;
@@ -39,7 +39,7 @@ void player_warp_shimmer(KfWarpShimmerMode mode, VECTOR *position)
     s16 scale_y_step;
     s16 frame;
     s16 i;
-    KF_ENUM_STORAGE(KfWarpShimmerMode, s16) mode_value = mode;
+    KF_ENUM_STORAGE(KfWarpShimmerMode, s16) mode_value = shimmer_mode;
 
     switch (mode_value) {
     case KF_WARP_SHIMMER_GROW_REMOVE:
@@ -105,7 +105,7 @@ void player_warp_shimmer(KfWarpShimmerMode mode, VECTOR *position)
 }
 
 ADDRESS(0x80036850, 0x15c)
-void player_warp_change_floor(KfFloorId floor, KF_ENUM_PARAM(KfMapVariant, u32) variant)
+void player_warp_change_floor(KfFloorId floor, KF_ENUM_PARAM(KfMapVariant, u32) map_variant)
 {
     VECTOR position;
 
@@ -113,7 +113,7 @@ void player_warp_change_floor(KfFloorId floor, KF_ENUM_PARAM(KfMapVariant, u32) 
     player_warp_shimmer(KF_WARP_SHIMMER_GROW_REMOVE, &position);
     map_unload_floor();
     player_state.progress_state.current_floor = floor;
-    player_state.map_variant = variant;
+    player_state.map_variant = map_variant;
     if (player_state.progress_state.highest_floor < floor) {
         player_state.progress_state.highest_floor = floor;
     }
@@ -130,7 +130,7 @@ void player_warp_change_floor(KfFloorId floor, KF_ENUM_PARAM(KfMapVariant, u32) 
 }
 
 ADDRESS(0x800369ac, 0x144)
-void player_warp_same_floor(KF_ENUM_PARAM(KfMapVariant, u32) variant, s32 cell_x, s32 cell_z)
+void player_warp_same_floor(KF_ENUM_PARAM(KfMapVariant, u32) map_variant, s32 cell_x, s32 cell_z)
 {
     VECTOR position;
     KfMapVariant previous_variant;
@@ -141,7 +141,7 @@ void player_warp_same_floor(KF_ENUM_PARAM(KfMapVariant, u32) variant, s32 cell_x
                                     player_state.motion_state.fields.map_cell.coords.z, -1);
     pool_release_all();
     previous_variant = player_state.map_variant;
-    player_state.map_variant = variant;
+    player_state.map_variant = map_variant;
     map_variant_assets_load();
     if (player_state.progress_state.current_floor == KF_FLOOR_5) {
         if (player_state.map_variant == KF_FLOOR5_ALTERNATE_MUSIC_VARIANT

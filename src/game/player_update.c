@@ -128,7 +128,7 @@ void player_update(void)
     collision_adjust_cell_occupancy(player_state.motion_state.fields.map_cell.coords.x, player_state.motion_state.fields.map_cell.coords.z, -1);
     input = PadRead(1);
     if (input & PADh) {
-        display_show_error_screen(KF_SYSTEM_SCREEN_PAUSE);
+        display_show_system_screen(KF_SYSTEM_SCREEN_PAUSE);
     }
     if (input & PADk) {
         input = PADRdown;
@@ -148,7 +148,7 @@ void player_update(void)
             player_equip_weapon(player_state.equipped_weapon_id);
             player_select_magic(player_state.selected_magic_id);
         } else if (item == KF_ENUM_ENCODE(s32, KF_MENU_RESULT_RETURN_TO_INTRO)) {
-            game_exit_code = KF_OVERLAY_MODE_INTRO;
+            game_next_overlay_mode = KF_OVERLAY_MODE_INTRO;
             return;
         }
         player_previous_input = input;

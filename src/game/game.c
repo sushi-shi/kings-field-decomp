@@ -23,7 +23,7 @@ DATA(0x80057b10, 0x4)
 u32 frame_pacer_last_vsync = 0;
 
 DATA(0x800958f8, 0x4)
-KfOverlayResultWord game_exit_code;
+KfOverlayResultWord game_next_overlay_mode;
 
 /* Clear the reviewed BSS spans without changing their starting referents. */
 ADDRESS(0x800146b8, 0x2e4)
@@ -57,12 +57,12 @@ void game_main_loop(void)
     EnableEvent(vsync_event);
     player_warp_shimmer_at_player(KF_WARP_SHIMMER_SHRINK_REMOVE);
     if (save_file_cleanup_temporary() == KF_SAVE_CLEANUP_CARD_TIMEOUT) {
-        display_show_error_screen(KF_SYSTEM_SCREEN_NO_MEMORY_CARD);
+        display_show_system_screen(KF_SYSTEM_SCREEN_NO_MEMORY_CARD);
     }
-    game_exit_code = KF_OVERLAY_MODE_NONE;
+    game_next_overlay_mode = KF_OVERLAY_MODE_NONE;
     for (;;) {
         player_update();
-        if (game_exit_code != KF_OVERLAY_MODE_NONE) {
+        if (game_next_overlay_mode != KF_OVERLAY_MODE_NONE) {
             break;
         }
         player_update_transform_snapshot(&player_position_snapshot, &player_rotation_snapshot);
@@ -80,7 +80,7 @@ void game_main_loop(void)
             if (player_state.previous_map_cell.word
                 != player_state.motion_state.fields.map_cell.word) {
                 if (player_warp_trigger_update() != 0) {
-                    game_exit_code = KF_OVERLAY_MODE_ENDING;
+                    game_next_overlay_mode = KF_OVERLAY_MODE_ENDING;
                     player_warp_shimmer_at_player(KF_WARP_SHIMMER_GROW_KEEP);
                     display_play_transition();
                     audio_stop_sequence_master_fade(ENDING_MASTER_FADE_STEP_Q8);

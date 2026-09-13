@@ -1351,7 +1351,7 @@ class InventoryTests(unittest.TestCase):
         ]
         self.assertEqual(
             identity.parameters,
-            "s32 value;s32 count;KF_ENUM_PARAM(KfFormatPaddingMode, s32) pad_zero;s16 *out",
+            "s32 value;s32 count;KF_ENUM_PARAM(KfFormatPaddingMode, s32) padding_mode;s16 *out",
         )
         release = load_function_identities(RETAIL_CONFIG, required=True)[
             ("GAME.EXE", 0x8002AF0C)
@@ -3120,7 +3120,7 @@ class InventoryTests(unittest.TestCase):
         exit_code = game.datum(0x800958F8)
         self.assertEqual(
             (exit_code.name, exit_code.datatype, exit_code.owner_type),
-            ("game_exit_code", "KfOverlayResultWord", "game"),
+            ("game_next_overlay_mode", "KfOverlayResultWord", "game"),
         )
         save_writer = game.function(0x8002B73C)
         self.assertEqual(

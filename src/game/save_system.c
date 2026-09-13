@@ -259,7 +259,7 @@ void memory_card_undeliver_events(void)
 }
 
 ADDRESS(0x8002b4d8, 0xf8)
-KfSaveResult memory_card_check_or_format(KfCardFormatConfirmation confirmation)
+KfSaveResult memory_card_check_or_format(KfCardFormatConfirmation format_confirmation)
 {
     KfSaveStatus status;
     KfSaveResult result;
@@ -270,7 +270,7 @@ KfSaveResult memory_card_check_or_format(KfCardFormatConfirmation confirmation)
         memory_card_acknowledge_new_device();
         status = memory_card_format();
     } else if (status == SAVE_STATUS_OK) {
-        if (confirmation == KF_CARD_FORMAT_UNCONFIRMED) {
+        if (format_confirmation == KF_CARD_FORMAT_UNCONFIRMED) {
             status = SAVE_STATUS_FORMAT_CONFIRMATION;
         } else {
             status = memory_card_format();

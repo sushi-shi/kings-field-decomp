@@ -15,7 +15,7 @@
 
 extern u32 DAT_80057d24;
 extern u32 DAT_800a0768;
-extern KfOverlayResultWord game_exit_code;
+extern KfOverlayResultWord game_next_overlay_mode;
 
 enum { KF_GAMEPLAY_SOUND_COUNT = 13 };
 extern SoundRef gameplay_sound_refs[KF_GAMEPLAY_SOUND_COUNT];
