@@ -8,30 +8,14 @@
  * entry points here so game sources do not reproduce private extern blocks.
  */
 
+/* ASM.H supplies NREGS for KERNEL.H's C layouts. The native preprocessor
+ * does not supply the SDK driver's LANGUAGE_C selection. */
+#ifndef LANGUAGE_C
+#define LANGUAGE_C 1
+#endif
+#include <ASM.H>
 #include <KERNEL.H>
 #include <SYS/FILE.H>
-
-/* KERNEL.H hides its C layouts unless the original Psy-Q driver defines
- * LANGUAGE_C; the pinned native preprocessor does not. */
-#ifndef LANGUAGE_C
-struct EXEC {
-    unsigned long pc0;
-    unsigned long gp0;
-    unsigned long t_addr;
-    unsigned long t_size;
-    unsigned long d_addr;
-    unsigned long d_size;
-    unsigned long b_addr;
-    unsigned long b_size;
-    unsigned long s_addr;
-    unsigned long s_size;
-    unsigned long sp;
-    unsigned long fp;
-    unsigned long gp;
-    unsigned long ret;
-    unsigned long base;
-};
-#endif
 
 extern long OpenEvent(
     unsigned long descriptor, long spec, long mode, void (*handler)(void));

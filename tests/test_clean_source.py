@@ -151,6 +151,12 @@ class ExportControls(unittest.TestCase):
         self.assertFalse(any('/tests/' in path or '/bin/' in path or path.startswith('tests/')
                              for path in first))
         self.assertNotIn('codecs/src/lib.rs', first)
+        for declaration in (b'extern void AddPrim(', b'extern void DrawOTag(',
+                            b'extern void SetSemiTrans('):
+            self.assertNotIn(declaration, first['vendor/include/psyq/sdk.h'])
+        for declaration in (b'extern void *memcpy(', b'extern void *memset(',
+                            b'extern void *malloc(', b'extern void free('):
+            self.assertNotIn(declaration, first['vendor/include/psyq/libc.h'])
         modern = generate(files, modern=True)
         self.assertIn('codecs/src/lib.rs', modern)
         self.assertIn(b'enum class', modern['include/kf/game_menu.h'])
