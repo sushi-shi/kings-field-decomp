@@ -42,7 +42,13 @@ Nix tool definitions are shared, while the generated flake selects only the
 tools required for building and running the game.
 
 `--verify` builds the standalone flake, runs the current reconstruction build,
-and requires all three executable files to agree byte-for-byte. It also builds
+and requires byte-identical native CPE linker outputs. It compares every EXE
+byte, accepting and explicitly reporting differences only in the reserved
+header words at offsets `0x08..0x0f`, which the pinned CPE2X writer leaves
+uninitialized. All other header bytes and the full executable payload must
+agree. Full-file equality is reported separately; no bytes are patched and
+this check does not bank or declare a retail match. The original-writer control
+is `tests/test_cpe2x_header.py`. It also builds
 the exported Rust library. When verifying committed HEAD, commit relevant
 working changes first so that both builds have the same inputs.
 

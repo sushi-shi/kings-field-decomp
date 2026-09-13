@@ -5,6 +5,9 @@ about which source shapes reproduce it under the current probes. Each note
 records the retail evidence first and the probe behaviour second; none of them
 promotes a probe to a proven historical toolchain.
 
+- [cpe2x-reserved-header.md](cpe2x-reserved-header.md): original converter
+  write-mask control and the source export's separate linker/output checks.
+
 - [cast-union-debt.md](cast-union-debt.md): master-based cast census and qualification,
   seven canonical owner/SDK replacements, retained dual-index grids, whole-object
   copying, named TMD decoding, and explicit void-pointer boundaries. Supersedes older

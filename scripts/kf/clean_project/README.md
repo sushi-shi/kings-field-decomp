@@ -13,6 +13,7 @@ nix run . -- --disc "/path/to/King's Field (Japan).cue"
 ```
 
 `nix build` writes `PSX.EXE`, `GAME.EXE`, and `OPEN.EXE` under `result/`.
+Native linker outputs are retained under `result/link/`.
 `nix run` builds those programs, inserts them into a cached copy of your disc,
 and starts PCSX-Redux with its bundled OpenBIOS. The original disc is unchanged.
 The SDK, compiler, assembler, linker and emulator are supplied by the pinned

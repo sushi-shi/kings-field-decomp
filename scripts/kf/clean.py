@@ -132,7 +132,7 @@ def generate(files: dict[str, bytes]) -> dict[str, bytes]:
             text = strip_comments(data.decode(), rust=True)
             if re.search(r'#\s*\[\s*(?:test|cfg\s*\(\s*test\s*\))\s*\]', text):
                 raise ValueError(f'{name}: unexpected inline tests in library source')
-            output[name.replace('tools/kf-codec/', 'codecs/')] = tidy(text).encode()
+            output[name.replace('tools/kf-codec/', 'codecs/')] = tidy(text, rust=True).encode()
     output['scripts/__init__.py'] = b''
     output['LICENSE'] = files['LICENSE']
     for name in ('nix/psx-toolchain.nix', 'nix/pcsx-redux.nix'):
@@ -223,14 +223,36 @@ def write_output(repo: Path, requested: Path, files: dict[str, bytes], commit: s
     return output
 
 
+def compare_program(original: bytes, cleaned: bytes, original_cpe: bytes, cleaned_cpe: bytes) -> list[int]:
+    """Require identical native links and EXEs apart from two reserved header words."""
+    if not original_cpe.startswith(b'CPE\x01') or original_cpe != cleaned_cpe:
+        raise ValueError('native linker output differs')
+    if len(original) < 2048 or original[:8] != b'PS-X EXE':
+        raise ValueError('invalid reference executable')
+    if original[:8] + original[16:] != cleaned[:8] + cleaned[16:]:
+        raise ValueError('executable differs outside reserved header words')
+    return [offset for offset in range(8, 16) if original[offset] != cleaned[offset]]
+
+
 def verify(output: Path, repo: Path, *, compare: bool = True) -> None:
     subprocess.run(['nix', 'build', f'path:{output}', '--out-link', str(output / 'result')], check=True)
     if compare:
         subprocess.run(['kf', 'build'], cwd=repo, check=True)
         for name in ORIGINS:
             original = repo / 'build/link' / name[:-4].lower() / name
-            if original.read_bytes() != (output / 'result' / name).read_bytes():
-                raise ValueError(f'{name}: clean executable differs from the reconstruction build')
+            try:
+                reserved = compare_program(
+                    original.read_bytes(), (output / 'result' / name).read_bytes(),
+                    original.with_suffix('.CPE').read_bytes(),
+                    (output / 'result/link' / name.replace('.EXE', '.CPE')).read_bytes())
+            except ValueError as error:
+                raise ValueError(f'{name}: {error}') from error
+            if reserved:
+                print(f'{name}: native link and executable contents agree; whole-file equality: false; '
+                      f'CPE2X reserved header differences: {[hex(offset) for offset in reserved]}',
+                      flush=True)
+            else:
+                print(f'{name}: native link and complete executable are byte-identical', flush=True)
     subprocess.run(['nix', 'develop', f'path:{output}#codecs', '-c', 'cargo', 'build', '--offline',
                     '--manifest-path', str(output / 'codecs/Cargo.toml')], check=True)
 

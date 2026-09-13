@@ -6,9 +6,10 @@ import tempfile
 import unittest
 
 from scripts.kf.clean import (
-    MARKER, PROVENANCE, clean_c, generate, git, publish, snapshot, validate_output, write_output,
+    MARKER, PROVENANCE, clean_c, compare_program, generate, git, publish, snapshot,
+    validate_output, write_output,
 )
-from scripts.kf.clean_lexer import resolve_conditionals, rewrite_calls, strip_comments
+from scripts.kf.clean_lexer import resolve_conditionals, rewrite_calls, strip_comments, tidy
 
 
 class LexicalControls(unittest.TestCase):
@@ -73,6 +74,11 @@ let c = '/'; /* outer /* inner */ end */ let b = b'\\n'; } // removed
         self.assertNotIn('outer', result)
         self.assertNotIn('removed', result)
 
+    def test_whitespace_cleanup_preserves_multiline_literals(self):
+        literal = 'r#"first  \n\n\nlast  "#'
+        result = tidy(f'\n\nconst TEXT: &str = {literal};  \n\n\n', rust=True)
+        self.assertEqual(result, f'const TEXT: &str = {literal};\n')
+
     def test_bad_macro_and_unterminated_inputs_fail(self):
         rules = {'DROP': (2, lambda args: '')}
         for text in ('DROP(1)', 'DROP(1, (2)', 'DROP(1, [2))', 'DROP'):
@@ -90,6 +96,21 @@ let c = '/'; /* outer /* inner */ end */ let b = b'\\n'; } // removed
 
 
 class ExportControls(unittest.TestCase):
+    def test_verification_separates_reserved_header_bytes_from_link_identity(self):
+        original = b'PS-X EXE' + bytes(2048)
+        link = b'CPE\x01native link'
+        self.assertEqual(compare_program(original, original, link, link), [])
+        changed = bytearray(original)
+        changed[8] = 17
+        self.assertEqual(compare_program(original, changed, link, link), [8])
+        with self.assertRaisesRegex(ValueError, 'native linker'):
+            compare_program(original, changed, link, link + b'changed')
+        for offset in (0, 16, 20, 48, 128, 2048):
+            changed = bytearray(original)
+            changed[offset] ^= 1
+            with self.subTest(offset=offset), self.assertRaisesRegex(ValueError, 'executable differs'):
+                compare_program(original, changed, link, link)
+
     def test_output_replacement_guards(self):
         with tempfile.TemporaryDirectory() as temporary:
             repo = Path(temporary) / 'repo'

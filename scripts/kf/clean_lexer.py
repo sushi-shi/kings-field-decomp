@@ -168,6 +168,17 @@ def resolve_conditionals(text: str) -> str:
     return ''.join(output)
 
 
-def tidy(text: str) -> str:
-    text = '\n'.join(line.rstrip() for line in text.splitlines())
-    return re.sub(r'\n{3,}', '\n\n', text).strip() + '\n'
+def tidy(text: str, *, rust: bool = False) -> str:
+    if '\0' in text:
+        raise ValueError('NUL in source text')
+    literals = []
+    protected = []
+    for kind, spelling in tokens(text, rust=rust):
+        if kind == 'literal':
+            protected.append(f'\0{len(literals)}\0')
+            literals.append(spelling)
+        else:
+            protected.append(spelling)
+    text = '\n'.join(line.rstrip() for line in ''.join(protected).splitlines())
+    text = re.sub(r'\n{3,}', '\n\n', text).strip() + '\n'
+    return re.sub(r'\0(\d+)\0', lambda match: literals[int(match[1])], text)

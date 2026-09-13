@@ -40,6 +40,8 @@
           runHook preInstall
           mkdir -p "$out"
           cp build/psx/PSX.EXE build/game/GAME.EXE build/open/OPEN.EXE "$out/"
+          mkdir -p "$out/link"
+          cp build/psx/PSX.CPE build/game/GAME.CPE build/open/OPEN.CPE "$out/link/"
           runHook postInstall
         '';
       });
