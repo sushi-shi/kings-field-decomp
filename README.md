@@ -5,18 +5,23 @@ This branch is the base for the Linux port. It builds for the PlayStation so
 the game can be exercised before changing platforms.
 
 ```text
-master  (reconstruction)
-    |
-    +--------------------+
-    |                    |
-    v                    v
-source                 classic
-C++ / PS1              C / PS1
-    |                  default branch
-    v
-  port
-Linux, later possibly WASM
+              master
+                 |
+     +-----------+-----------+
+     |                       |
+     v                       v
+  source (you are here)   classic
+     |
+     v
+   port
 ```
+
+| Branch | Purpose |
+| --- | --- |
+| `master` | Reconstruction and matching |
+| `source` | C++ PS1 build, codecs, and base for porting |
+| `classic` | C PS1 build |
+| `port` | Linux port; possibly WASM later |
 
 ## Build and run
 
@@ -28,18 +33,6 @@ nix run . -- --disc "/path/to/King's Field (Japan).cue"
 # Run the original disc instead:
 nix run . -- --retail --disc "/path/to/King's Field (Japan).cue"
 ```
-
-Run the original retail game using the same environment variable and command
-as `master`:
-
-```sh
-export KF_RETAIL_DISC="/path/to/King's Field (Japan).cue"
-nix develop -c kf-run-retail
-# Or:
-nix run .#retail
-```
-
-The retail runner uses the original disc and does not build replacement programs.
 
 Supply your own original Japanese disc image. Game assets are not included.
 The runner creates a cached disc containing the rebuilt executables and starts
