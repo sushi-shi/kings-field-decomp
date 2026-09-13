@@ -339,7 +339,7 @@ void actor_update_awareness(void)
  * rise to the floor starts a jump, fall, or step.  Returns 1 when blocked.
  */
 ADDRESS(0x8002e954, 0x3ac)
-KfActorMoveResult actor_move_xz_with_collision(const struct KfVecXZs *delta, KfActorCollisionPolicy stop_on_collision)
+KfActorMoveResult actor_move_xz_with_collision(const struct KfVecXZs *delta, KfActorCollisionPolicy collision_policy)
 {
     KfActor *actor = actor_state.current;
     KfActorDefinition *definition = actor_state.current_definition;
@@ -360,7 +360,7 @@ KfActorMoveResult actor_move_xz_with_collision(const struct KfVecXZs *delta, KfA
     if (result != KF_COLLISION_NONE
         && (result != KF_COLLISION_BELOW_FLOOR || actor->vertical_state == KF_ACTOR_VERTICAL_LONG_DROP)) {
     blocked:
-        if (stop_on_collision == KF_ACTOR_COLLISION_STEER) {
+        if (collision_policy == KF_ACTOR_COLLISION_STEER) {
             if (actor->collision_state != KF_ACTOR_COLLISION_BLOCKED) {
                 if (collision_query_world(
                         actor->position.vx,
@@ -446,7 +446,7 @@ KfActorMoveResult actor_move_xz_with_collision(const struct KfVecXZs *delta, KfA
 
 
 ADDRESS(0x8002ed00, 0xd4)
-KfActorMoveResult actor_move_along_heading(KfActorMoveDirection direction, KfActorCollisionPolicy stop_on_collision)
+KfActorMoveResult actor_move_along_heading(KfActorMoveDirection direction, KfActorCollisionPolicy collision_policy)
 {
     KfActor *actor = actor_state.current;
     KfActorDefinition *definition = actor_state.current_definition;
@@ -465,7 +465,7 @@ KfActorMoveResult actor_move_along_heading(KfActorMoveDirection direction, KfAct
         delta.x = -delta.x;
         delta.z = -delta.z;
     }
-    return actor_move_xz_with_collision(&delta, stop_on_collision);
+    return actor_move_xz_with_collision(&delta, collision_policy);
 }
 
 /*

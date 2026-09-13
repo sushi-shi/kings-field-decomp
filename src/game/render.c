@@ -14,7 +14,7 @@ enum {
     RENDER_PALETTE_HUD,
     RENDER_PALETTE_NOTIFICATION,
     RENDER_PALETTE_COUNT,
-    ERROR_SCREEN_READ_ATTEMPTS = 50,
+    SYSTEM_SCREEN_READ_ATTEMPTS = 50,
     PRIMITIVE_BUFFER_BYTES = 0x19640,
     INITIAL_BACK_COLOR = 60,
     SYSTEM_SCREEN_BRIGHTNESS = 96,
@@ -49,7 +49,7 @@ MATRIX color_matrix_table[KF_GAME_COLOR_PRESET_COUNT] = {
 
 /* System-message TIM path; byte 2 selects an error or pause screen. */
 DATA(0x80057b50, 0x7)
-char error_screen_path[7] = "\\E0.;1";
+char system_screen_path[7] = "\\E0.;1";
 
 DATA(0x80070e98, 0x249cc)
 KfGraphicsRuntimeGame game_graphics_runtime;
@@ -57,12 +57,9 @@ KfGraphicsRuntimeGame game_graphics_runtime;
 DATA(0x800a0768, 0x4)
 u32 DAT_800a0768;
 
-/* Loads and shows the system-message screen for STAGE as a semi-transparent
- * textured box, then blocks until a controller button is pressed and released.
- * Called by cd_file_load_into on disc failure and by game_main_loop on a save
- * error. */
+/* Displays the selected error or pause image, then waits for press/release. */
 ADDRESS(0x8001b7b0, 0x308)
-void display_show_error_screen(KfSystemScreen stage)
+void display_show_system_screen(KfSystemScreen screen)
 {
     POLY_FT4 prim;
     s32 back;
@@ -83,8 +80,8 @@ void display_show_error_screen(KfSystemScreen stage)
         KF_GPU_TEXTURE_4BIT, KF_GPU_BLEND_AVERAGE,
         KF_SYSTEM_SCREEN_TPAGE_X, KF_TEXTURE_LOWER_PAGE_Y);
 
-    memcpy(cd_path_buffer, error_screen_path, sizeof error_screen_path);
-    cd_path_buffer[SYSTEM_SCREEN_PATH_DIGIT] = KF_ENUM_ENCODE(s32, stage) + '0';
+    memcpy(cd_path_buffer, system_screen_path, sizeof system_screen_path);
+    cd_path_buffer[SYSTEM_SCREEN_PATH_DIGIT] = KF_ENUM_ENCODE(s32, screen) + '0';
     brightness = SYSTEM_SCREEN_BRIGHTNESS;
     if (CdSearchFile(&cd_search_file, cd_path_buffer) == NULL) {
         exit(1);
@@ -94,7 +91,7 @@ void display_show_error_screen(KfSystemScreen stage)
             ((cd_search_file.size >> KF_CD_SECTOR_SHIFT) + 1) << KF_CD_SECTOR_SHIFT;
     }
     CD_LOCATION_COPY(cd_read_location, cd_search_file.pos);
-    for (attempt = 0; attempt < ERROR_SCREEN_READ_ATTEMPTS; attempt++) {
+    for (attempt = 0; attempt < SYSTEM_SCREEN_READ_ATTEMPTS; attempt++) {
         s32 result;
 
         CdControl(CdlSetloc, (u_char *)&cd_read_location, NULL);
@@ -313,17 +310,17 @@ void tmd_select_object_vertices(u16 index)
 
 ADDRESS(0x8001c184, 0x12c)
 void render_set_view_transform(
-    const VECTOR *position, const SVECTOR *rotation)
+    const VECTOR *position_or_null, const SVECTOR *rotation_or_null)
 {
     SVECTOR angles;
 
-    if (position != NULL) {
-        game_graphics_runtime.render_state.view_position = *position;
+    if (position_or_null != NULL) {
+        game_graphics_runtime.render_state.view_position = *position_or_null;
         game_graphics_runtime.render_state.view_cell.x = game_graphics_runtime.render_state.view_position.vx / KF_MAP_TILE_SIZE;
         game_graphics_runtime.render_state.view_cell.z = game_graphics_runtime.render_state.view_position.vz / KF_MAP_TILE_SIZE;
     }
-    if (rotation != NULL) {
-        game_graphics_runtime.render_state.view_rotation = *rotation;
+    if (rotation_or_null != NULL) {
+        game_graphics_runtime.render_state.view_rotation = *rotation_or_null;
     }
     RotMatrix(&game_graphics_runtime.render_state.view_rotation, &game_graphics_runtime.render_state.view_matrix);
     angles.vz = 0;

@@ -7,6 +7,6 @@
 extern void opening_render_map_cells(void);
 extern void opening_render_entities_and_items(void);
 extern void opening_scene0_render_frame(
-    const VECTOR *position, const SVECTOR *rotation);
+    const VECTOR *position_or_null, const SVECTOR *rotation_or_null);
 
 #endif

@@ -144,7 +144,7 @@ KF_ENUM_END(KfMapCellKind)
 
 /* Full-cell floor shapes; diagonal half-cells need their geometric tests.
  * kind is evaluated twice at most and must have no side effects. */
-#define MAP_CELL_HAS_FLOOR(kind) \
+#define MAP_CELL_HAS_FULL_FLOOR(kind) \
     ((kind) == KF_MAP_CELL_FLOOR || (kind) == KF_MAP_CELL_STEP)
 
 enum {

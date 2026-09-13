@@ -525,7 +525,7 @@ KfOpeningEntityState	0x50c	0x02	unknown_control_50c	u16	opaque	open_resources.h;
 KfOpeningEntityState	0x50e	0x02	unknown_control_50e	u16	opaque	open_resources.h;open_semantic_resources.tsv;asm;semantic-field-names.md:unresolved-consumer-audit	OPEN 0x80049a46: individual zero store at 0x800199c4, plus whole-owner clear; exact admitted relocations have no read. GAME pool-tail analogy remains candidate, not a recovered role.
 KfOrderingTable	0x00	0x10000	entries	u32[16384]	supported	render_types.h;asm	ordering table entries
 KfOverlayArguments	0x00	0x04	request	KfOverlayMode	supported	overlay.h;asm;PSX-main;GAME-main;OPEN-main;array-enum-review.md	PSX copies the previous result encoding here; OPEN passes it to opening_run
-KfOverlayArguments	0x04	0x04	result	KfOverlayResultWord	supported	overlay.h;asm;PSX-main;GAME-main;OPEN-main;array-enum-review.md	PSX initializes INTRO; GAME writes game_exit_code on return
+KfOverlayArguments	0x04	0x04	result	KfOverlayResultWord	supported	overlay.h;asm;PSX-main;GAME-main;OPEN-main;array-enum-review.md	PSX initializes INTRO; GAME writes game_next_overlay_mode on return
 KfPackedSVector	0x00	0x08	vector	SVECTOR	supported	tmd.h;asm;typed-animation-vertices.md	alternative view of the complete vertex
 KfPackedSVector	0x00	0x08	words	u32[2]	supported	tmd.h;asm;typed-animation-vertices.md	alternative view of the complete vertex
 KfPlayerAttackChargeState	0x00	0x02	current	u16	supported	game_player.h;asm;xrefs	current POWER charge

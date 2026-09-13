@@ -346,10 +346,10 @@ extern void player_update_vertical_motion(void);
 extern void player_update_view_bob(void);
 extern void player_update_weapon_attack(void);
 /* Warp variant inputs remain full words until the player-state byte store. */
-extern void player_warp_change_floor(KfFloorId floor, KF_ENUM_PARAM(KfMapVariant, u32) variant);
-extern void player_warp_shimmer(KfWarpShimmerMode mode, VECTOR *position);
-extern void player_warp_shimmer_at_player(KF_ENUM_PARAM(KfWarpShimmerMode, u32) mode);
-extern void player_warp_same_floor(KF_ENUM_PARAM(KfMapVariant, u32) variant, s32 cell_x, s32 cell_z);
+extern void player_warp_change_floor(KfFloorId floor, KF_ENUM_PARAM(KfMapVariant, u32) map_variant);
+extern void player_warp_shimmer(KfWarpShimmerMode shimmer_mode, VECTOR *position);
+extern void player_warp_shimmer_at_player(KF_ENUM_PARAM(KfWarpShimmerMode, u32) shimmer_mode);
+extern void player_warp_same_floor(KF_ENUM_PARAM(KfMapVariant, u32) map_variant, s32 cell_x, s32 cell_z);
 extern void player_warp_to_floor_entry(void);
 extern KfBoolU32 player_warp_trigger_update(void);
 

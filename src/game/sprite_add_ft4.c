@@ -3,7 +3,7 @@
 #include <kf/game_render.h>
 
 ADDRESS(0x80014314, 0x1c0)
-void sprite_add_ft4(const KfScreenRect *position, u8 *texcoords, u32 tpage, u32 clut,
+void sprite_add_ft4(const KfScreenRect *rectangle, u8 *texcoords, u32 tpage, u32 clut,
                    const CVECTOR *color, u16 ot_index)
 {
     POLY_FT4 *prim = (POLY_FT4 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
@@ -12,7 +12,7 @@ void sprite_add_ft4(const KfScreenRect *position, u8 *texcoords, u32 tpage, u32 
     SetPolyFT4(prim);
     prim->clut = clut;
     prim->tpage = tpage;
-    setXYWH(prim, position->x, position->y, position->w, position->h);
+    setXYWH(prim, rectangle->x, rectangle->y, rectangle->w, rectangle->h);
     setUVWH(prim, texcoords[KF_QUAD_TEX_U], texcoords[KF_QUAD_TEX_V],
             texcoords[KF_QUAD_TEX_U_SPAN], texcoords[KF_QUAD_TEX_V_SPAN]);
     setRGB0(prim, color->r, color->g, color->b);

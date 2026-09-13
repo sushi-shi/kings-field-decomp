@@ -211,27 +211,27 @@ enum {
 };
 
 ADDRESS(0x800386c4, 0x68)
-void effect_scatter_triple(KfEffectDirectionWords *values)
+void effect_scatter_triple(KfEffectDirectionWords *velocity)
 {
     int random;
     int centered;
 
     random = rand();
-    centered = values->x - SCATTER_VELOCITY_BIAS;
+    centered = velocity->x - SCATTER_VELOCITY_BIAS;
     centered += random >> SCATTER_RANDOM_SHIFT;
-    values->x = centered;
+    velocity->x = centered;
     random = rand();
-    centered = values->y - SCATTER_VELOCITY_BIAS;
+    centered = velocity->y - SCATTER_VELOCITY_BIAS;
     centered += random >> SCATTER_RANDOM_SHIFT;
-    values->y = centered;
+    velocity->y = centered;
     random = rand();
-    centered = values->z - SCATTER_VELOCITY_BIAS;
+    centered = velocity->z - SCATTER_VELOCITY_BIAS;
     centered += random >> SCATTER_RANDOM_SHIFT;
-    values->z = centered;
+    velocity->z = centered;
 }
 
 ADDRESS(0x8003872c, 0x90)
-void effect_rotate_scale_offset_y(SVECTOR *offset, VECTOR *out, s16 angle, s32 scale)
+void effect_rotate_scale_offset_y(SVECTOR *offset, VECTOR *output, s16 angle, s32 scale)
 {
     SVECTOR scaled;
     SVECTOR rotation;
@@ -243,37 +243,37 @@ void effect_rotate_scale_offset_y(SVECTOR *offset, VECTOR *out, s16 angle, s32 s
         (offset->vz * scale) >> KF_FIXED12_BITS);
     setVector(&rotation, 0, angle, 0);
     RotMatrix(&rotation, &matrix);
-    ApplyMatrix(&matrix, &scaled, out);
+    ApplyMatrix(&matrix, &scaled, output);
 }
 
 ADDRESS(0x800387bc, 0xf8)
-void effect_spawn_ground_trail(u8 id, KfEffectRecord *record, s16 angle, s32 distance)
+void effect_spawn_ground_trail(u8 id, KfEffectRecord *parent_effect, s16 angle, s32 distance)
 {
     VECTOR position;
     s32 index;
     s32 scale = (distance << KF_FIXED12_BITS) / TRAIL_UNIT_SCALE_DISTANCE;
 
-    effect_rotate_scale_offset_y(&record->direction.vector, &position, angle, scale);
-    index = record - effect_pool_records;
-    position.vx += record->position.vx;
-    position.vz += record->position.vz;
-    effect_pool_construct(id, record->type, KF_EFFECT_KIND_GROUND_TRAIL, &position,
-        &record->direction.vector, KF_EFFECT_ARGS_PARENT(index));
+    effect_rotate_scale_offset_y(&parent_effect->direction.vector, &position, angle, scale);
+    index = parent_effect - effect_pool_records;
+    position.vx += parent_effect->position.vx;
+    position.vz += parent_effect->position.vz;
+    effect_pool_construct(id, parent_effect->type, KF_EFFECT_KIND_GROUND_TRAIL, &position,
+        &parent_effect->direction.vector, KF_EFFECT_ARGS_PARENT(index));
 }
 
 ADDRESS(0x800388b4, 0x184)
-void effect_spawn_ground_branch(u8 id, KfEffectRecord *record, s16 angle_offset, KF_ENUM_PARAM(KfEffectGroundBranchRole, s32) branch_role)
+void effect_spawn_ground_branch(u8 id, KfEffectRecord *parent_effect, s16 angle_offset, KF_ENUM_PARAM(KfEffectGroundBranchRole, s32) branch_role)
 {
     VECTOR position;
-    s32 angle = -(s16)(record->direction.words.y + angle_offset);
+    s32 angle = -(s16)(parent_effect->direction.words.y + angle_offset);
     s32 cell_x;
     s32 cell_z;
 
-    position.vx = record->position.vx + (GROUND_BRANCH_CHILD_SPACING * rsin(angle) >> KF_FIXED12_BITS);
-    position.vz = record->position.vz + (GROUND_BRANCH_CHILD_SPACING * rcos(angle) >> KF_FIXED12_BITS);
+    position.vx = parent_effect->position.vx + (GROUND_BRANCH_CHILD_SPACING * rsin(angle) >> KF_FIXED12_BITS);
+    position.vz = parent_effect->position.vz + (GROUND_BRANCH_CHILD_SPACING * rcos(angle) >> KF_FIXED12_BITS);
     cell_z = position.vz / KF_MAP_TILE_SIZE;
     cell_x = position.vx / KF_MAP_TILE_SIZE;
     position.vy = -(map_floor_height_grid.cells[cell_z][cell_x] * KF_MAP_HEIGHT_STEP);
-    effect_pool_construct(id, record->type, KF_MAGIC_FIRE_WALL, &position,
-        &record->direction.vector, KF_EFFECT_ARGS_BRANCH(branch_role));
+    effect_pool_construct(id, parent_effect->type, KF_MAGIC_FIRE_WALL, &position,
+        &parent_effect->direction.vector, KF_EFFECT_ARGS_BRANCH(branch_role));
 }

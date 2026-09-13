@@ -73,7 +73,7 @@ void map_apply_copy_region(KfMapCopyRegionId region_id)
 }
 
 ADDRESS(0x80030c7c, 0x23c)
-void map_object_mark_collision_edge(const KfMapObject *object, KfMapCellKind value, u16 yaw)
+void map_object_mark_collision_edge(const KfMapObject *object, KfMapCellKind cell_kind, u16 yaw)
 {
     u8 cell_x = object->cell_x;
     u8 cell_z;
@@ -85,7 +85,7 @@ void map_object_mark_collision_edge(const KfMapObject *object, KfMapCellKind val
     switch (definition->behavior_type) {
     case KF_MAP_OBJECT_OP_LIFT_DOOR:
     case KF_MAP_OBJECT_OP_03:
-        map_collision_grid.cells[cell_z][cell_x] = value;
+        map_collision_grid.cells[cell_z][cell_x] = cell_kind;
         switch (yaw) {
         case 0x000:
             cell_z++;
@@ -100,25 +100,25 @@ void map_object_mark_collision_edge(const KfMapObject *object, KfMapCellKind val
             cell_x--;
             break;
         }
-        map_collision_grid.cells[cell_z][cell_x] = value;
+        map_collision_grid.cells[cell_z][cell_x] = cell_kind;
         break;
     case KF_MAP_OBJECT_OP_HINGED_DOOR:
         switch (yaw) {
         case 0x000:
             map_collision_grid.cells[cell_z][cell_x + 1] =
-                map_collision_grid.cells[cell_z - 1][cell_x + 1] = value;
+                map_collision_grid.cells[cell_z - 1][cell_x + 1] = cell_kind;
             break;
         case KF_ANGLE_QUARTER_TURN:
-            map_collision_grid.cells[cell_z + 1][cell_x] = value;
-            map_collision_grid.cells[cell_z + 1][cell_x + 1] = value;
+            map_collision_grid.cells[cell_z + 1][cell_x] = cell_kind;
+            map_collision_grid.cells[cell_z + 1][cell_x + 1] = cell_kind;
             break;
         case KF_ANGLE_HALF_TURN:
             map_collision_grid.cells[cell_z][cell_x - 1] =
-                map_collision_grid.cells[cell_z + 1][cell_x - 1] = value;
+                map_collision_grid.cells[cell_z + 1][cell_x - 1] = cell_kind;
             break;
         case KF_ANGLE_THREE_QUARTER_TURN:
-            map_collision_grid.cells[cell_z - 1][cell_x] = value;
-            map_collision_grid.cells[cell_z - 1][cell_x - 1] = value;
+            map_collision_grid.cells[cell_z - 1][cell_x] = cell_kind;
+            map_collision_grid.cells[cell_z - 1][cell_x - 1] = cell_kind;
             break;
         }
         break;

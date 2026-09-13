@@ -94,12 +94,12 @@ void audio_play_sequence_file(const char *path)
 }
 
 ADDRESS(0x80019e24, 0x9c)
-void audio_stop_sequence(KfAudioStopMode mode)
+void audio_stop_sequence(KfAudioStopMode stop_mode)
 {
     s32 volume;
 
     if (audio_state.sequence_active == KF_AUDIO_SEQUENCE_ACTIVE) {
-        if (mode == KF_AUDIO_STOP_FADE) {
+        if (stop_mode == KF_AUDIO_STOP_FADE) {
             volume = KF_AUDIO_MAX_VOLUME;
             do {
                 VSync(0);

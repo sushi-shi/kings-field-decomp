@@ -25,7 +25,7 @@ enum {
     SCENE1_SHADE_STEP = 4,
     SCENE1_SEQUENCE_STOP_FRAME = 600,
     SCENE1_HOLD_FRAMES = 1000,
-    TRANSITION_FIRST_ENTITY_SLOT = 24,
+    CYLINDER_TRANSITION_FIRST_ENTITY_SLOT = 24,
 };
 
 enum {
@@ -322,7 +322,7 @@ void opening_scene1_run(void)
 }
 
 ADDRESS(0x80014608, 0x1fc)
-void opening_entity_transition(KfOpeningTransitionMode mode, const VECTOR *position)
+void opening_cylinder_transition(KfOpeningCylinderTransitionMode transition_mode, const VECTOR *position)
 {
     struct KfOpeningTransformSnapshot {
         VECTOR position;
@@ -334,21 +334,21 @@ void opening_entity_transition(KfOpeningTransitionMode mode, const VECTOR *posit
     s16 initial_scale_y;
     s16 scale_step;
 
-    switch (mode) {
-    case KF_OPENING_TRANSITION_GROW:
+    switch (transition_mode) {
+    case KF_OPENING_CYLINDER_TRANSITION_GROW:
         initial_scale_y = 0;
         scale_step = KF_CYLINDER_TRANSITION_SCALE_STEP;
         break;
-    case KF_OPENING_TRANSITION_REMOVE:
+    case KF_OPENING_CYLINDER_TRANSITION_REMOVE:
         goto deactivate;
-    case KF_OPENING_TRANSITION_SHRINK:
-    case KF_OPENING_TRANSITION_CREATE:
+    case KF_OPENING_CYLINDER_TRANSITION_SHRINK:
+    case KF_OPENING_CYLINDER_TRANSITION_CREATE:
         initial_scale_y = KF_CYLINDER_TRANSITION_TALL_SCALE;
         scale_step = -KF_CYLINDER_TRANSITION_SCALE_STEP;
         break;
     }
 
-    entity = &opening_entity_state.entities[TRANSITION_FIRST_ENTITY_SLOT];
+    entity = &opening_entity_state.entities[CYLINDER_TRANSITION_FIRST_ENTITY_SLOT];
     entity_index = KF_CYLINDER_TRANSITION_COUNT - 1;
     /* Retail retains these stack coordinates without a subsequent consumer. */
     transform_snapshot.position.vx = position->vx;
@@ -367,13 +367,13 @@ void opening_entity_transition(KfOpeningTransitionMode mode, const VECTOR *posit
         entity_index--;
     } while (entity_index != -1);
 
-    if (mode == KF_OPENING_TRANSITION_CREATE) {
+    if (transition_mode == KF_OPENING_CYLINDER_TRANSITION_CREATE) {
         return;
     }
 
     frame = 0;
     do {
-        entity = &opening_entity_state.entities[TRANSITION_FIRST_ENTITY_SLOT];
+        entity = &opening_entity_state.entities[CYLINDER_TRANSITION_FIRST_ENTITY_SLOT];
         entity_index = 0;
         do {
             if ((entity_index << KF_CYLINDER_TRANSITION_STAGGER_SHIFT) < frame) {
@@ -393,12 +393,12 @@ void opening_entity_transition(KfOpeningTransitionMode mode, const VECTOR *posit
         frame++;
     } while (frame < KF_CYLINDER_TRANSITION_FRAMES);
 
-    if (mode == KF_OPENING_TRANSITION_GROW) {
+    if (transition_mode == KF_OPENING_CYLINDER_TRANSITION_GROW) {
         return;
     }
 
 deactivate:
-    entity = &opening_entity_state.entities[TRANSITION_FIRST_ENTITY_SLOT];
+    entity = &opening_entity_state.entities[CYLINDER_TRANSITION_FIRST_ENTITY_SLOT];
     entity_index = KF_CYLINDER_TRANSITION_COUNT - 1;
     do {
         entity->object_id = KF_OPENING_ENTITY_FREE;
@@ -510,7 +510,7 @@ void opening_scene3_run(void)
         KF_OPENING_SCENE_BASE_Y,
         opening_camera_path_state.position.vz);
     if (opening_input_action == KF_OPENING_INPUT_NONE) {
-        opening_entity_transition(KF_OPENING_TRANSITION_GROW, &transition_position);
+        opening_cylinder_transition(KF_OPENING_CYLINDER_TRANSITION_GROW, &transition_position);
     }
 
     blend = 0;
@@ -525,7 +525,7 @@ void opening_scene3_run(void)
     } while (blend < KF_FIXED12_ONE + 1);
 
     if (opening_input_action == KF_OPENING_INPUT_NONE) {
-        opening_entity_transition(KF_OPENING_TRANSITION_REMOVE, &transition_position);
+        opening_cylinder_transition(KF_OPENING_CYLINDER_TRANSITION_REMOVE, &transition_position);
     }
 }
 
@@ -554,7 +554,7 @@ void opening_ending_scene_run(void)
     transition_position.vz = opening_camera_path_state.position.vz;
     SetDispMask(1);
     blend = 0;
-    opening_entity_transition(KF_OPENING_TRANSITION_CREATE, &transition_position);
+    opening_cylinder_transition(KF_OPENING_CYLINDER_TRANSITION_CREATE, &transition_position);
 
     do {
         lighting_set_color_matrix(
@@ -566,7 +566,7 @@ void opening_ending_scene_run(void)
         blend += OPENING_COLOR_FADE_STEP;
     } while (blend < KF_FIXED12_ONE + 1);
 
-    opening_entity_transition(KF_OPENING_TRANSITION_SHRINK, &transition_position);
+    opening_cylinder_transition(KF_OPENING_CYLINDER_TRANSITION_SHRINK, &transition_position);
     brightness = 0;
     blend = 0;
     for (;;) {

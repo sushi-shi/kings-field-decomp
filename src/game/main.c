@@ -28,5 +28,5 @@ void main(s32 entry_arg0, KfOverlayArguments *entry_args)
     InitCARD2(1);
     ExitCriticalSection();
     game_main_loop();
-    entry_args->result = game_exit_code;
+    entry_args->result = game_next_overlay_mode;
 }

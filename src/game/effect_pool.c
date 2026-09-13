@@ -400,8 +400,8 @@ KfEffectRecord *effect_pool_spawn_typed(
 }
 
 ADDRESS(0x8003781c, 0x34)
-void effect_pool_set_current(KfEffectRecord *record)
+void effect_pool_set_current(KfEffectRecord *effect)
 {
-    current_effect = record;
-    current_effect_magic_record = &magic_records[KF_ENUM_ENCODE(u8, record->kind)];
+    current_effect = effect;
+    current_effect_magic_record = &magic_records[KF_ENUM_ENCODE(u8, effect->kind)];
 }

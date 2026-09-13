@@ -395,7 +395,7 @@ extern KfEffectRecord *effect_pool_construct(
 extern KfEffectRecord *effect_pool_spawn_typed(
     u16 first_segment, u16 segment_count, u16 progress_per_update, u16 cell_stagger,
     s32 sweep_updates, s32 hold_countdown);
-extern void effect_pool_set_current(KfEffectRecord *record);
+extern void effect_pool_set_current(KfEffectRecord *effect);
 extern void effect_pool_reset(void);
 extern void effect_pool_sweep(void);
 extern void effect_update_dispatch(void);
@@ -403,10 +403,10 @@ extern int effect_magic_power(KfEffectRecord *effect);
 extern void effect_projectile_update_3d(SVECTOR *probe_offset, KF_ENUM_PARAM(KfEffectPhase, s32) phase_limit);
 extern void effect_projectile_update_2d(s32 orbit_radius, KF_ENUM_PARAM(KfEffectPhase, s32) phase_limit);
 extern void effect_floor_deform_line(s32 segment_index, s32 progress_start, s32 progress_step);
-extern void effect_scatter_triple(KfEffectDirectionWords *values);
-extern void effect_rotate_scale_offset_y(SVECTOR *offset, VECTOR *out, s16 angle, s32 scale);
-extern void effect_spawn_ground_trail(u8 id, KfEffectRecord *record, s16 angle, s32 distance);
-extern void effect_spawn_ground_branch(u8 id, KfEffectRecord *record, s16 angle_offset, KF_ENUM_PARAM(KfEffectGroundBranchRole, s32) branch_role);
+extern void effect_scatter_triple(KfEffectDirectionWords *velocity);
+extern void effect_rotate_scale_offset_y(SVECTOR *offset, VECTOR *output, s16 angle, s32 scale);
+extern void effect_spawn_ground_trail(u8 id, KfEffectRecord *parent_effect, s16 angle, s32 distance);
+extern void effect_spawn_ground_branch(u8 id, KfEffectRecord *parent_effect, s16 angle_offset, KF_ENUM_PARAM(KfEffectGroundBranchRole, s32) branch_role);
 extern u32 effect_map_collision(VECTOR *position, s32 radius);
 
 #endif

@@ -5,6 +5,9 @@ about which source shapes reproduce it under the current probes. Each note
 records the retail evidence first and the probe behaviour second; none of them
 promotes a probe to a proven historical toolchain.
 
+- [semantic-consistency-review.md](semantic-consistency-review.md): consumer
+  review of shared domains and retained helpers, cylinder/overlay naming,
+  sprite traversal distinctions and the full-floor predicate boundary.
 - [common-code-review.md](common-code-review.md): completed 522-entry source
   reading and application of all 90 candidate verdicts; 39 retained helpers,
   rejected trials, and unchanged bytes across all 101 comparison objects.
@@ -909,3 +912,7 @@ promotes a probe to a proven historical toolchain.
 - [Complete enum reuse review](enum-reuse-review.md): all 302 starting enum blocks
   reviewed, direct shared domains and constants, complete member/value coverage,
   and preserved bytes and strict results for every reconstructed function.
+
+- [Native COMMON symbol names](native-common-symbol-names.md): a controlled global
+  rename changes native COMMON placement and 221 GAME executable bytes while
+  preserving compiled sections, ordered referents, and strict objdiff results.

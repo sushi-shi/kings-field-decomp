@@ -35,7 +35,7 @@ src/game/player_update.c:74	player_damage_camera_offsets	SVECTOR[8]	numeric_geom
 src/game/player_use_item.c:25	enemy_info_image_path_template	char[14]	encoded_content		Filename, path template, debug text or number-formatting character buffer; byte positions hold character encodings.
 src/game/player_use_item.c:28	person_image_path_template	char[15]	encoded_content		Filename, path template, debug text or number-formatting character buffer; byte positions hold character encodings.
 src/game/player_warp.c:8	actor_transform_color_matrix	MATRIX	numeric_matrix		SDK matrix coefficients/translation; arithmetic interpolation and matrix multiplication accept quantities. KF_FIXED12_ONE names numeric Q12 unity.
-src/game/render.c:39	error_screen_path	char[7]	encoded_content		Filename, path template, debug text or number-formatting character buffer; byte positions hold character encodings.
+src/game/render.c:39	system_screen_path	char[7]	encoded_content		Filename, path template, debug text or number-formatting character buffer; byte positions hold character encodings.
 src/game/render_enqueuers.c:9	tmd_textured_primitive_color	CVECTOR	sdk_record		Numerical RGB intensities and the SDK packed GPU command/padding byte; no game selector field.
 src/game/render_enqueuers.c:463	model_textured_primitive_color	CVECTOR	sdk_record		Numerical RGB intensities and the SDK packed GPU command/padding byte; no game selector field.
 src/game/render_enqueuers.c:649	map_textured_primitive_color	CVECTOR	sdk_record		Numerical RGB intensities and the SDK packed GPU command/padding byte; no game selector field.

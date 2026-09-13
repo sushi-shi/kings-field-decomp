@@ -38,7 +38,7 @@ KfResourceLoadResult cd_file_load_allocated(u8 **destination, const char *relati
     strcat(path, relative_path);
     strcat(path, cd_version_suffix);
     if (CdSearchFile(&cd_search_file, path) == NULL) {
-        display_show_error_screen(KF_SYSTEM_SCREEN_CD_SEARCH_FAILED);
+        display_show_system_screen(KF_SYSTEM_SCREEN_CD_SEARCH_FAILED);
     }
     if (cd_search_file.size & (KF_CD_SECTOR_BYTES - 1)) {
         loaded = (cd_search_file.size >> KF_CD_SECTOR_SHIFT) + 1;
@@ -60,7 +60,7 @@ KfResourceLoadResult cd_file_load_allocated(u8 **destination, const char *relati
         }
     }
     if (loaded == 0) {
-        display_show_error_screen(KF_SYSTEM_SCREEN_CD_READ_FAILED);
+        display_show_system_screen(KF_SYSTEM_SCREEN_CD_READ_FAILED);
     }
     return KF_RESOURCE_LOADED;
 }
@@ -88,7 +88,7 @@ KfResourceLoadResult cd_file_load_table_entry(void **destination, s32 index)
         }
     }
     if (loaded == KF_FALSE) {
-        display_show_error_screen(KF_SYSTEM_SCREEN_CD_READ_FAILED);
+        display_show_system_screen(KF_SYSTEM_SCREEN_CD_READ_FAILED);
     }
     return KF_RESOURCE_LOADED;
 }
@@ -105,7 +105,7 @@ KfResourceLoadResult cd_file_load_into(void *destination, const char *relative_p
     strcat(path, relative_path);
     strcat(path, cd_version_suffix);
     if (CdSearchFile(&cd_search_file, path) == NULL) {
-        display_show_error_screen(KF_SYSTEM_SCREEN_CD_SEARCH_FAILED);
+        display_show_system_screen(KF_SYSTEM_SCREEN_CD_SEARCH_FAILED);
     }
     if (cd_search_file.size & (KF_CD_SECTOR_BYTES - 1)) {
         loaded = (cd_search_file.size >> KF_CD_SECTOR_SHIFT) + 1;
@@ -126,7 +126,7 @@ KfResourceLoadResult cd_file_load_into(void *destination, const char *relative_p
         }
     }
     if (loaded == 0) {
-        display_show_error_screen(KF_SYSTEM_SCREEN_CD_READ_FAILED);
+        display_show_system_screen(KF_SYSTEM_SCREEN_CD_READ_FAILED);
     }
     return KF_RESOURCE_LOADED;
 }

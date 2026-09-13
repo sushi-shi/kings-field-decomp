@@ -163,7 +163,7 @@ void audio_play_current_map_sequence(void)
 }
 
 ADDRESS(0x8001b558, 0x258)
-void map_resources_load(KfFloorId floor, KF_ENUM_PARAM(KfMapVariant, s32) use_variant)
+void map_resources_load(KfFloorId floor, KF_ENUM_PARAM(KfMapVariant, s32) map_variant)
 {
     u8 *stream;
     u8 *block;
@@ -215,7 +215,7 @@ void map_resources_load(KfFloorId floor, KF_ENUM_PARAM(KfMapVariant, s32) use_va
     asset_registry_load_tmd_archive(KF_ASSET_EFFECT_FIRST,
         RESOURCE_STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES);
     RESOURCE_STREAM_NEXT(stream);
-    if (use_variant == KF_MAP_VARIANT_DEFAULT) {
+    if (map_variant == KF_MAP_VARIANT_DEFAULT) {
         asset_registry_load_tmd_archive(KF_ASSET_ACTOR_FIRST,
             stream + KF_RESOURCE_CHUNK_HEADER_BYTES);
     } else {

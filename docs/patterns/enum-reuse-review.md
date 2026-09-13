@@ -1,5 +1,11 @@
 # Complete enum reuse review
 
+The [semantic consistency follow-up](semantic-consistency-review.md) renames
+the OPEN cylinder lifecycle domain and reserved slot without changing values.
+The current ledger has 56 `reuse`, seven `canonical` and 239 `retain` rows,
+with 241 member mappings, including the system-screen retry name; the original
+review figures below describe PR #3.
+
 Stack integration: this PR follows the native referent fix in
 [PR #6](https://github.com/sushi-shi/kings-field-decomp/pull/6). A fresh comparison
 against that base preserves all 101 objects, ordered relocations and all three

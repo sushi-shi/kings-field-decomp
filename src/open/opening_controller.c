@@ -20,7 +20,7 @@ char opening_initial_tim_path[KF_OPENING_INITIAL_TIM_PATH_BYTES] = {'B', '0', '\
 RODATA(0x80012020, 0x15)
 
 ADDRESS(0x800156bc, 0x214)
-void opening_run(KfOverlayMode display_mode)
+void opening_run(KfOverlayMode overlay_mode)
 {
     u8 *tim_data;
     KF_ENUM_STORAGE(KfOpeningInputAction, s32) scene3_action;
@@ -32,13 +32,13 @@ void opening_run(KfOverlayMode display_mode)
     memset(&opening_entity_state, 0, sizeof opening_entity_state);
     memory_set_allocation_mode(KF_MEMORY_CREATE_ARENA);
     audio_initialize();
-    display_initialize(display_mode);
+    display_initialize(overlay_mode);
     opening_entity_pool_reset();
     memory_set_allocation_mode(KF_MEMORY_REBASE_ARENA);
     memory_capture_system_heap_start();
     memory_reset_system_heap();
 
-    switch (display_mode) {
+    switch (overlay_mode) {
     case KF_OVERLAY_MODE_INTRO:
         SetDispMask(1);
         if (cd_file_load_into(
