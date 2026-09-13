@@ -89,6 +89,16 @@ Manually maintained cleanup checklist:
 - [ ] Close [SDK object evidence](docs/sdk-object-audit.md): **29 lineage
   module identities**; the last ambiguous audio helper may belong to `SSCALL`.
   Search missing 1994 SDK archives/source before reconstructing them.
+- [ ] Resolve the [SDK interrupt compatibility workaround](docs/patterns/sdk-interrupt-return.md).
+  Leaving the starting-door plaque open could stop BIOS input and sound updates
+  in rebuilt games under PCSX-Redux/OpenBIOS; retail worked. The build currently
+  applies a hash-guarded, one-instruction patch to the pinned SDK's interrupt
+  dispatcher. It resolves the reproduced failure, but is construction debt,
+  not a proven general SDK fix; original-BIOS/hardware validation remains open.
+  Preserve original game logic in `master` and `classic`: do not change plaque
+  timing, draw synchronization, or callback scheduling to avoid this failure.
+  Resolve the SDK/BIOS compatibility cause with evidence; intentional game-side
+  adaptations belong in `port`.
 - [ ] Review casts and remove avoidable conversions: **430 written casts**
   (**349 pointer**, **81 scalar**). The [cast/union debt campaign](docs/patterns/cast-union-debt.md)
   clarifies grid, copy, and asset-offset access and requires explicit void-pointer boundaries;
