@@ -17,9 +17,9 @@ enum {
 #define RESOURCE_STREAM_NEXT(stream) \
     ((stream) += *(u32 *)(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES)
 
-extern void tim_upload_images(void *tim_data);
-/* Copy into a complete object with word-aligned storage; count is in words. */
+extern void tim_upload_images(u8 *tim_data);
+/* Both spans contain word_count aligned words; returns the advanced source. */
 extern const u32 *resource_stream_copy_words(
-    void *destination, const u32 *source, s32 word_count);
+    u32 *destination, const u32 *source, s32 word_count);
 
 #endif

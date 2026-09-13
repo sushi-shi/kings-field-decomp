@@ -68,7 +68,7 @@ void display_show_system_screen(KfSystemScreen screen)
 
     DrawSync(0);
     SetPolyFT4(&prim);
-    SetSemiTrans(&prim, 1);
+    SetSemiTrans((void *)&prim, 1);
     setXY4(&prim,
         KF_SYSTEM_SCREEN_LEFT, KF_SYSTEM_SCREEN_TOP,
         KF_SYSTEM_SCREEN_RIGHT, KF_SYSTEM_SCREEN_TOP,
@@ -80,7 +80,7 @@ void display_show_system_screen(KfSystemScreen screen)
         KF_GPU_TEXTURE_4BIT, KF_GPU_BLEND_AVERAGE,
         KF_SYSTEM_SCREEN_TPAGE_X, KF_TEXTURE_LOWER_PAGE_Y);
 
-    memcpy(cd_path_buffer, system_screen_path, sizeof system_screen_path);
+    memcpy((void *)cd_path_buffer, (const void *)system_screen_path, sizeof system_screen_path);
     cd_path_buffer[SYSTEM_SCREEN_PATH_DIGIT] = KF_ENUM_ENCODE(s32, screen) + '0';
     brightness = SYSTEM_SCREEN_BRIGHTNESS;
     if (CdSearchFile(&cd_search_file, cd_path_buffer) == NULL) {
@@ -112,7 +112,7 @@ void display_show_system_screen(KfSystemScreen screen)
     game_graphics_runtime.display_state.ordering_table = game_graphics_runtime.display_state.ordering_tables[back].entries;
     setRGB0(&prim, brightness, brightness, brightness);
     ClearOTagR(game_graphics_runtime.display_state.ordering_table, KF_ORDERING_TABLE_LENGTH);
-    AddPrim(game_graphics_runtime.display_state.ordering_table, &prim);
+    AddPrim((void *)game_graphics_runtime.display_state.ordering_table, (void *)&prim);
     DrawSync(0);
     DrawOTag(game_graphics_runtime.display_state.ordering_table + (KF_ORDERING_TABLE_LENGTH - 1));
     while (PadRead(1) == 0) {
@@ -191,7 +191,7 @@ void render_initialize(void)
 
     game_graphics_runtime.display_state.buffer_index = KF_DISPLAY_BUFFER_UNINITIALIZED;
     buffer = (u8 *)memory_allocate(KF_DISPLAY_BUFFER_COUNT * PRIMITIVE_BUFFER_BYTES);
-    game_graphics_runtime.display_state.asset_load_buffer = (void *)buffer;
+    game_graphics_runtime.display_state.asset_load_buffer = buffer;
     game_graphics_runtime.display_state.primitive_buffers[0].start = buffer;
     buffer += PRIMITIVE_BUFFER_BYTES;
     game_graphics_runtime.display_state.primitive_buffers[0].end = buffer;

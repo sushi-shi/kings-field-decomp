@@ -57,9 +57,9 @@ void render_initialize(void)
     u8 *buffer;
 
     open_graphics_runtime.display_state.buffer_index = KF_DISPLAY_BUFFER_UNINITIALIZED;
-    cd_file_load_into((void *)render_cell_windows, "B0\\RTBL.");
+    cd_file_load_into((void *)opening_cell_storage.rtbl_sectors, "B0\\RTBL.");
     buffer = (u8 *)memory_allocate(KF_DISPLAY_BUFFER_COUNT * PRIMITIVE_BUFFER_BYTES);
-    open_graphics_runtime.display_state.asset_load_buffer = (void *)buffer;
+    open_graphics_runtime.display_state.asset_load_buffer = buffer;
     open_graphics_runtime.display_state.primitive_buffers[0].start = buffer;
     buffer += PRIMITIVE_BUFFER_BYTES;
     open_graphics_runtime.display_state.primitive_buffers[0].end = buffer;

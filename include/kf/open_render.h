@@ -4,8 +4,10 @@
 /* OPEN.EXE display, render, and TMD state shared across render units. */
 
 #include <kf/enum.h>
+#include <kf/cd_file.h>
 #include <kf/game_math.h>
 #include <kf/item.h>
+#include <kf/map_data.h>
 #include <kf/overlay.h>
 #include <kf/render_types.h>
 #include <kf/tmd.h>
@@ -27,7 +29,7 @@ enum {
 typedef struct KfDisplayStateOpen {
     KfDisplayBuffer buffer_index;
     u8 unknown_01[3];
-    void *asset_load_buffer;
+    u8 *asset_load_buffer;
     KfPrimitiveBuffer primitive_buffers[KF_DISPLAY_BUFFER_COUNT];
     KfPrimitiveBuffer *primitive_buffer;
     KfOrderingTable ordering_tables[KF_DISPLAY_BUFFER_COUNT];
@@ -99,7 +101,18 @@ extern MATRIX floor_item_light_matrix;
 extern SVECTOR render_sprite_light_normal;
 extern CVECTOR map_textured_primitive_color;
 
-extern KfCellWindow render_cell_windows[KF_CELL_WINDOW_YAW_COUNT];
+/* Startup's two-sector RTBL transfer overlaps the collision grid, which is
+ * initialized later by the scene loader. Keep that writable span in one owner. */
+typedef struct KfOpeningSceneCells {
+    KfCellWindow windows[KF_CELL_WINDOW_YAW_COUNT];
+    u8 unknown_cc0[0x30];
+    KfMapGrid collision_flags;
+} KfOpeningSceneCells;
+typedef union KfOpeningCellStorage {
+    u32 rtbl_sectors[2][KF_CD_SECTOR_WORDS];
+    KfOpeningSceneCells scene;
+} KfOpeningCellStorage;
+extern KfOpeningCellStorage opening_cell_storage;
 extern u32 primitive_allocation_count;
 
 extern void display_initialize(KfOverlayMode overlay_mode);

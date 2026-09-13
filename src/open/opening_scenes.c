@@ -281,8 +281,8 @@ void opening_scene1_draw_fade(u8 shade)
     setRGB0(right, shade, shade, shade);
 
     ordering_table_slot = &open_graphics_runtime.ordering_table;
-    AddPrim(*ordering_table_slot, left);
-    AddPrim(*ordering_table_slot, right);
+    AddPrim((void *)*ordering_table_slot, (void *)left);
+    AddPrim((void *)*ordering_table_slot, (void *)right);
     display_present_frame();
 }
 

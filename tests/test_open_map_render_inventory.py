@@ -53,7 +53,7 @@ class OpenMapRenderTests(unittest.TestCase):
             0x80018C20: (0x80046DF8, "map_cell_orientation_grid"),
             0x80018C88: (0x8006E260, "map_floor_height_grid"),
             0x80018D2C: (0x8006E0C8, "open_graphics_runtime"),
-            0x80018DD4: (0x800439D8, "render_cell_windows"),
+            0x80018DD4: (0x800439D8, "opening_cell_storage"),
             0x80018DE0: (0x8006E1C8, "open_graphics_runtime"),
             0x80018E60: (0x80018BBC, "render_map_cell"),
         }
@@ -83,7 +83,7 @@ class OpenMapRenderTests(unittest.TestCase):
         table = data[("OPEN.EXE", 0x800439D8)]
         self.assertEqual(
             (table.name, table.datatype, table.size, table.storage),
-            ("render_cell_windows", "KfCellWindow[16]", 16 * 0xCC, "bss"),
+            ("opening_cell_storage", "KfOpeningCellStorage", 0x3400, "bss"),
         )
         self.assertNotIn(("OPEN.EXE", 0x8006E1C8), data)
         pointer = next(row for row in load_structure_field_identities(RETAIL_CONFIG)

@@ -17,6 +17,6 @@ void sprite_add_ft4(const KfScreenRect *rectangle, u8 *texcoords, u32 tpage, u32
             texcoords[KF_QUAD_TEX_U_SPAN], texcoords[KF_QUAD_TEX_V_SPAN]);
     setRGB0(prim, color->r, color->g, color->b);
     AddPrim(
-        &game_graphics_runtime.display_state.ordering_table[ot_index & KF_ORDERING_TABLE_INDEX_MASK],
-        prim);
+        (void *)(&game_graphics_runtime.display_state.ordering_table[ot_index & KF_ORDERING_TABLE_INDEX_MASK]),
+        (void *)prim);
 }

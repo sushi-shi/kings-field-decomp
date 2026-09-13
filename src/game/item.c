@@ -97,17 +97,17 @@ void item_load_database(void)
         exit(1);
 
     src = stat_data;
-    memcpy(&menu_assets, src, sizeof menu_assets);
+    memcpy((void *)&menu_assets, (const void *)src, sizeof menu_assets);
     src += sizeof menu_assets;
-    memcpy(menu_window_layouts, src, sizeof menu_window_layouts);
+    memcpy((void *)menu_window_layouts, (const void *)src, sizeof menu_window_layouts);
     src += sizeof menu_window_layouts;
-    memcpy(item_name_rows, src, sizeof(item_name_rows));
+    memcpy((void *)item_name_rows, (const void *)src, sizeof(item_name_rows));
     src += sizeof(item_name_rows);
-    memcpy(magic_name_rows, src, sizeof(magic_name_rows));
+    memcpy((void *)magic_name_rows, (const void *)src, sizeof(magic_name_rows));
     src += sizeof(magic_name_rows);
-    memcpy(item_buy_prices, src, sizeof(item_buy_prices));
+    memcpy((void *)item_buy_prices, (const void *)src, sizeof(item_buy_prices));
     src += sizeof(item_buy_prices);
-    memcpy(item_sell_prices, src, sizeof(item_sell_prices));
+    memcpy((void *)item_sell_prices, (const void *)src, sizeof(item_sell_prices));
 
     memory_release_last();
 

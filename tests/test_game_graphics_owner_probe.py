@@ -79,8 +79,8 @@ def standalone_source(unit):
     source = source.replace(
         '((KfAssetHeader **)game_graphics_runtime.unknown_registry_20134)', 'asset_registry_entries')
     source = source.replace('game_graphics_runtime.', '')
-    source = source.replace('memset(&game_graphics_runtime, 0, sizeof game_graphics_runtime);',
-                            'memset(&display_state.buffer_index, 0, INITIAL_GRAPHICS_CLEAR_BYTES);')
+    source = source.replace('memset((void *)&game_graphics_runtime, 0, sizeof game_graphics_runtime);',
+                            'memset((void *)&display_state.buffer_index, 0, INITIAL_GRAPHICS_CLEAR_BYTES);')
     if unit.unit == 'game.item':
         source = source.replace('    KfFloorItem *item;\n',
                                 '    KfFloorItem *item;\n    u16 *count = &floor_item_count;\n', 1)
@@ -103,10 +103,10 @@ def candidate_source(unit, selected):
     source = re.sub(r'^ADDRESS\((0x[0-9a-f]+),[^\n]+\n.*?(?=^ADDRESS\(|\Z)',
                     rewrite, standalone_source(unit), flags=re.M | re.S)
     if 'game_main_loop' in selected:
-        old = ('memset(&graphics_owner_probe.display_state.buffer_index, 0, '
+        old = ('memset((void *)&graphics_owner_probe.display_state.buffer_index, 0, '
                'INITIAL_GRAPHICS_CLEAR_BYTES);')
         assert source.count(old) == 1
-        source = source.replace(old, 'memset(&graphics_owner_probe, 0, sizeof graphics_owner_probe);')
+        source = source.replace(old, 'memset((void *)&graphics_owner_probe, 0, sizeof graphics_owner_probe);')
     return '#include "game_graphics_owner_probe.h"\n' + source
 
 

@@ -48,7 +48,7 @@ RODATA(0x80012178, 0x39)
 #define MAP_GRID_WORDS (sizeof map_cell_attribute_grid / sizeof(u32))
 
 ADDRESS(0x8001b100, 0x80)
-void tim_upload_images(void *tim_data)
+void tim_upload_images(u8 *tim_data)
 {
     TIM_IMAGE image;
 
@@ -73,13 +73,13 @@ void common_resources_load(void)
     u8 *block;
 
     cd_file_load_allocated(&images, "COM\\MIX.TIM");
-    tim_upload_images((void *)images);
+    tim_upload_images(images);
     memory_release_last();
     cd_file_load_allocated(&stream, "COM\\COM.DAT");
     asset_registry_set(
         KF_ASSET_EFFECT_SPRITES, (KfAssetHeader *)(stream + KF_RESOURCE_CHUNK_HEADER_BYTES));
     block = RESOURCE_STREAM_NEXT(stream);
-    memcpy(render_cell_windows, block + KF_RESOURCE_CHUNK_HEADER_BYTES,
+    memcpy((void *)render_cell_windows, (const void *)(block + KF_RESOURCE_CHUNK_HEADER_BYTES),
         sizeof render_cell_windows);
     weapon_records_load_and_mirror_angles(
         (const KfWeaponTable *)(RESOURCE_STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES));
@@ -90,8 +90,8 @@ void common_resources_load(void)
     map_object_definitions_load(
         (const KfMapObjectDefinitionTable *)(RESOURCE_STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES));
     memcpy(
-        player_level_growth_table,
-        (KfPlayerLevelGrowth *)(RESOURCE_STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES),
+        (void *)player_level_growth_table,
+        (const void *)(const KfPlayerLevelGrowth *)(RESOURCE_STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES),
         sizeof player_level_growth_table);
     memory_release_last();
     memory_arena.allocation.cursor = block + KF_RESOURCE_REUSE_PREFIX_BYTES;
@@ -115,11 +115,11 @@ u8 *map_resource_load_file(const char *filename)
 
 ADDRESS(0x8001b3e4, 0x30)
 const u32 *map_resource_copy_words(
-    void *destination,
+    u32 *destination,
     const u32 *source,
     u32 word_count)
 {
-    u32 *out = (u32 *)destination;
+    u32 *out = destination;
 
     while (word_count-- != 0) {
         *out++ = *source++;
@@ -133,7 +133,7 @@ void map_variant_assets_load(void)
     /* Both retail calls reload the buffer through one saved slot address. */
     u8 **asset_buffer = &map_variant_asset_buffer;
 
-    memcpy(&map_resource_path[3], "CHR0.MIM", sizeof "CHR0.MIM");
+    memcpy((void *)(&map_resource_path[3]), (const void *)("CHR0.MIM"), sizeof "CHR0.MIM");
     map_resource_path[6] = KF_ENUM_ENCODE(u8, player_state.map_variant) + '0';
     cd_file_load_into((void *)*asset_buffer, map_resource_path);
     asset_registry_load_tmd_archive(KF_ASSET_ACTOR_FIRST, *asset_buffer);
@@ -175,7 +175,7 @@ void map_resources_load(KfFloorId floor, KF_ENUM_PARAM(KfMapVariant, s32) map_va
     effect_pool_reset();
     memory_allocation_reset();
     map_resource_path_set_floor(floor);
-    tim_upload_images((void *)map_resource_load_file(map_mix_tim_filename));
+    tim_upload_images(map_resource_load_file(map_mix_tim_filename));
     memory_release_last();
     stream = map_resource_load_file("MIXA.DAT");
     audio_load_vab(stream + KF_RESOURCE_CHUNK_HEADER_BYTES,
@@ -184,17 +184,17 @@ void map_resources_load(KfFloorId floor, KF_ENUM_PARAM(KfMapVariant, s32) map_va
     RESOURCE_STREAM_NEXT(stream);
     audio_play_current_map_sequence();
     source = map_resource_copy_words(
-        (void *)&map_cell_attribute_grid,
+        map_cell_attribute_grid.words,
         (u32 *)(stream + KF_RESOURCE_CHUNK_HEADER_BYTES),
         MAP_GRID_WORDS);
     source = map_resource_copy_words(
-        (void *)&map_floor_height_grid, source, MAP_GRID_WORDS);
+        map_floor_height_grid.words, source, MAP_GRID_WORDS);
     source = map_resource_copy_words(
-        (void *)&map_cell_orientation_grid, source, MAP_GRID_WORDS);
+        map_cell_orientation_grid.words, source, MAP_GRID_WORDS);
     source = map_resource_copy_words(
-        (void *)&map_collision_flag_grid, source, MAP_GRID_WORDS);
+        map_collision_flag_grid.words, source, MAP_GRID_WORDS);
     map_resource_copy_words(
-        (void *)&map_collision_grid, source, MAP_GRID_WORDS);
+        map_collision_grid.words, source, MAP_GRID_WORDS);
     item_load_floor_placements(
         (KfFloorItemPlacement *)(RESOURCE_STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES));
     map_object_pool_load(

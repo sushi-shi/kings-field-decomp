@@ -42,9 +42,6 @@ static CdlFILE cd_search_file;
 DATA(0x800377b8, 0x50)
 static char cd_path_buffer[KF_CD_PATH_BYTES];
 
-DATA(0x800446c8, 0x2710)
-KfMapGrid map_collision_flag_grid;
-
 DATA(0x80046df8, 0x2710)
 KfMapOrientationGrid map_cell_orientation_grid;
 
@@ -69,7 +66,7 @@ KfResourceLoadResult cd_file_load_allocated(
     char *path = cd_path_buffer;
     s32 attempt;
 
-    memcpy(path, cd_path_prefix, sizeof cd_path_prefix);
+    memcpy((void *)path, (const void *)cd_path_prefix, sizeof cd_path_prefix);
     strcat(path, relative_path);
     strcat(path, cd_version_suffix);
     if (CdSearchFile(&cd_search_file, path) == NULL) {
@@ -106,7 +103,7 @@ KfResourceLoadResult cd_file_load_into(
     char *path = cd_path_buffer;
     s32 attempt;
 
-    memcpy(path, cd_path_prefix, sizeof cd_path_prefix);
+    memcpy((void *)path, (const void *)cd_path_prefix, sizeof cd_path_prefix);
     strcat(path, relative_path);
     strcat(path, cd_version_suffix);
     if (CdSearchFile(&cd_search_file, path) == NULL) {
@@ -136,7 +133,7 @@ KfResourceLoadResult cd_file_load_into(
 
 /* Uploads every CLUT and pixel image in a Psy-Q TIM stream. */
 ADDRESS(0x80016298, 0x80)
-void tim_upload_images(void *tim_data)
+void tim_upload_images(u8 *tim_data)
 {
     TIM_IMAGE image;
 
@@ -156,9 +153,9 @@ void tim_upload_images(void *tim_data)
 /* Copies WORD_COUNT words and returns the first unread source word. */
 ADDRESS(0x80016318, 0x30)
 const u32 *resource_stream_copy_words(
-    void *destination, const u32 *source, s32 word_count)
+    u32 *destination, const u32 *source, s32 word_count)
 {
-    u32 *out = (u32 *)destination;
+    u32 *out = destination;
 
     while (word_count-- != 0) {
         *out++ = *source++;
@@ -181,17 +178,17 @@ void opening_resources_load_scene0(void)
         (vab_chunk = RESOURCE_STREAM_NEXT(stream)) + KF_RESOURCE_CHUNK_HEADER_BYTES);
     RESOURCE_STREAM_NEXT(stream);
     source = resource_stream_copy_words(
-        (void *)&map_cell_attribute_grid,
+        map_cell_attribute_grid.words,
         (const u32 *)(stream + KF_RESOURCE_CHUNK_HEADER_BYTES),
         MAP_GRID_WORDS);
     source = resource_stream_copy_words(
-        (void *)&map_floor_height_grid, source, MAP_GRID_WORDS);
+        map_floor_height_grid.words, source, MAP_GRID_WORDS);
     source = resource_stream_copy_words(
-        (void *)&map_cell_orientation_grid, source, MAP_GRID_WORDS);
+        map_cell_orientation_grid.words, source, MAP_GRID_WORDS);
     source = resource_stream_copy_words(
-        (void *)&map_collision_flag_grid, source, MAP_GRID_WORDS);
+        opening_cell_storage.scene.collision_flags.words, source, MAP_GRID_WORDS);
     resource_stream_copy_words(
-        (void *)&map_collision_grid, source, MAP_GRID_WORDS);
+        map_collision_grid.words, source, MAP_GRID_WORDS);
     item_load_floor_placements(
         (KfFloorItemPlacement *)(RESOURCE_STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES));
     opening_entity_pool_load_placements(
@@ -240,7 +237,7 @@ void opening_resources_load_scene3(void)
     memory_arena.allocation.cursor = opening_scene1_arena_cursor;
     audio_play_sequence_file("B0\\OPEN3.");
     cd_file_load_allocated(&tim_stream, "B0\\MIX3.");
-    tim_upload_images((void *)tim_stream);
+    tim_upload_images(tim_stream);
     memory_release_last();
     cd_file_load_allocated(&stream, "B0\\MIXA3.");
     opening_entity_pool_load_placements(
@@ -266,7 +263,7 @@ void opening_resources_load_ending(void)
 
     memory_allocation_reset();
     cd_file_load_allocated(&tim_stream, "B0\\MIX9.");
-    tim_upload_images((void *)tim_stream);
+    tim_upload_images(tim_stream);
     memory_release_last();
     cd_file_load_allocated(&stream, "B0\\MIXAE.");
     audio_load_vab(stream + KF_RESOURCE_CHUNK_HEADER_BYTES,
