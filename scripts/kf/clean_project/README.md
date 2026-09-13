@@ -2,22 +2,25 @@
 
 Source for the original Japanese PlayStation game, SLPS-00017.
 The game builds as three C programs: the loader, main game, and opening.
-This is the default branch. The C++ `source` branch retains typed enums and
-resource codecs and is the base for the Linux port.
 
 ```text
-master  (reconstruction)
-    |
-    +--------------------+
-    |                    |
-    v                    v
-source                 classic
-C++ / PS1              C / PS1
-    |                  default branch
-    v
-  port
-Linux, later possibly WASM
+              master
+                 |
+     +-----------+-----------+
+     |                       |
+     v                       v
+  source                  classic (you are here)
+     |
+     v
+   port
 ```
+
+| Branch | Purpose |
+| --- | --- |
+| `master` | Reconstruction and matching |
+| `source` | C++ PS1 build, codecs, and base for porting |
+| `classic` | C PS1 build |
+| `port` | Linux port; possibly WASM later |
 
 ## Build and run
 
@@ -29,17 +32,6 @@ nix run . -- --disc "/path/to/King's Field (Japan).cue"
 # Run the original disc instead:
 nix run . -- --retail --disc "/path/to/King's Field (Japan).cue"
 ```
-
-To run the original retail game with the same command as `master`:
-
-```sh
-export KF_RETAIL_DISC="/path/to/King's Field (Japan).cue"
-nix develop -c kf-run-retail
-# Or, without entering the build environment:
-nix run .#retail
-```
-
-The retail runner uses the original disc and does not build replacement programs.
 
 `nix build` writes `PSX.EXE`, `GAME.EXE`, and `OPEN.EXE` under `result/`.
 Native linker outputs are retained under `result/link/`.
@@ -69,9 +61,6 @@ source changes there and regenerate with:
 nix develop -c kf clean --classic --out build/clean-classic --verify \
   --publish classic --worktree build/classic
 ```
-
-Use the C++ `source` branch as the base for platform work on `port`.
-Generation provenance is recorded in Git commit messages.
 
 ## License
 

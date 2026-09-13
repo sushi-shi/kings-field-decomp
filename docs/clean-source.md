@@ -6,18 +6,23 @@ The generator and its tests live here; the generated branch contains only
 source, build/run support, licensing and a fresh README.
 
 ```text
-master  (reconstruction)
-    |
-    +--------------------+
-    |                    |
-    v                    v
-source                 classic
-C++ / PS1              C / PS1
-    |                  default branch
-    v
-  port
-Linux, later possibly WASM
+              master (you are here)
+                 |
+     +-----------+-----------+
+     |                       |
+     v                       v
+  source                  classic
+     |
+     v
+   port
 ```
+
+| Branch | Purpose |
+| --- | --- |
+| `master` | Reconstruction and matching |
+| `source` | C++ PS1 build, codecs, and base for porting |
+| `classic` | C PS1 build |
+| `port` | Linux port; possibly WASM later |
 
 Both exports build and run on PS1. `source` is the base for the Linux port;
 `port` owns platform changes and is not overwritten by regeneration.

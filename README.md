@@ -14,18 +14,23 @@ repository. The Nix environment downloads the historical SDK separately; see
 ## Branches
 
 ```text
-master  (reconstruction)
-    |
-    +--------------------+
-    |                    |
-    v                    v
-source                 classic
-C++ / PS1              C / PS1
-    |                  default branch
-    v
-  port
-Linux, later possibly WASM
+              master (you are here)
+                 |
+     +-----------+-----------+
+     |                       |
+     v                       v
+  source                  classic
+     |
+     v
+   port
 ```
+
+| Branch | Purpose |
+| --- | --- |
+| `master` | Reconstruction and matching |
+| `source` | C++ PS1 build, codecs, and base for porting |
+| `classic` | C PS1 build |
+| `port` | Linux port; possibly WASM later |
 
 `source` is the clean C++ base for porting and includes the resource codecs.
 `classic` is the runnable C export without codecs. See [generation](docs/clean-source.md).
