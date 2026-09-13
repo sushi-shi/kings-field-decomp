@@ -1,7 +1,7 @@
 # King's Field — C++ source
 
 Clean C++20 sources for the original Japanese King's Field (SLPS-00017).
-This branch is the base for the Linux port. It builds for the PlayStation so
+This branch is the base for the crossplatform port. It builds for the PlayStation so
 the game can be exercised before changing platforms.
 
 ```text
@@ -21,7 +21,7 @@ the game can be exercised before changing platforms.
 | `master` | Reconstruction and matching |
 | `source` | C++ PS1 build, codecs, and base for porting |
 | `classic` | C PS1 build |
-| `port` | Linux port; possibly WASM later |
+| `port` | Crossplatform port |
 
 ## Build and run
 
