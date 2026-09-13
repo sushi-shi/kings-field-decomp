@@ -20,7 +20,7 @@ The game builds as three C programs: the loader, main game, and opening.
 | `master` | Reconstruction and matching |
 | `source` | C++ PS1 build, codecs, and base for porting |
 | `classic` | C PS1 build |
-| `port` | Linux port; possibly WASM later |
+| `port` | Crossplatform port |
 
 ## Build and run
 

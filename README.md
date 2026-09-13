@@ -30,7 +30,7 @@ repository. The Nix environment downloads the historical SDK separately; see
 | `master` | Reconstruction and matching |
 | `source` | C++ PS1 build, codecs, and base for porting |
 | `classic` | C PS1 build |
-| `port` | Linux port; possibly WASM later |
+| `port` | Crossplatform port |
 
 `source` is the clean C++ base for porting and includes the resource codecs.
 `classic` is the runnable C export without codecs. See [generation](docs/clean-source.md).

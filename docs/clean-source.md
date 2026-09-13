@@ -22,9 +22,9 @@ source, build/run support, licensing and a fresh README.
 | `master` | Reconstruction and matching |
 | `source` | C++ PS1 build, codecs, and base for porting |
 | `classic` | C PS1 build |
-| `port` | Linux port; possibly WASM later |
+| `port` | Crossplatform port |
 
-Both exports build and run on PS1. `source` is the base for the Linux port;
+Both exports build and run on PS1. `source` is the base for the crossplatform port;
 `port` owns platform changes and is not overwritten by regeneration.
 
 ```sh
