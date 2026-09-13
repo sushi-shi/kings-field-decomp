@@ -926,3 +926,6 @@ promotes a probe to a proven historical toolchain.
 - [Unknown-field alias audit](unknown-field-alias-audit.md): scoped floor-item
   and event pointer paths, wide-copy lanes, dialogue-index bounds, persistence
   and animation-cache owner indirection checked against retail instructions.
+- [Equipment unknown-field audit](equipment-unknown-field-audit.md): stored
+  weapon/armor pointers, biased bases, GP uses and resource correlations;
+  checked consumers and counterexamples leave five field ranges unresolved.

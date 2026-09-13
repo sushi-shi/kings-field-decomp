@@ -96,6 +96,17 @@ block-disassembly, caller, callee, string and match views. The verdict is an
 inconclusive width hypothesis with a concrete counterexample, not proof that
 the two bytes are padding or behaviorally irrelevant.
 
+A follow-up checked both generic sprite blitters with the same six evidence
+views. `menu_blit_sprite` and `menu_blit_sprite_translucent` remain strict
+100% with the existing `MenuSpriteDef` halfword coordinates, yet retail loads
+their low bytes with `lbu` at GAME `0x80029d1c` and `0x80029b7c`. These are
+concrete controls against inferring a declared byte width from a narrowed GPU
+write. The reconstructed call sites pass sprite descriptors to those helpers;
+the tile descriptors are consumed by the list/window/status packet expressions.
+No shared descriptor-pointer path between those two families was established
+in this follow-up. The verdict for both blitters is unchanged exact source and
+an inconclusive control for the tile layout, not a new field identification.
+
 ### Floor-item and event alias follow-up
 
 The [scoped raw-access audit](unknown-field-alias-audit.md) follows the
@@ -147,6 +158,11 @@ requested 79 header declarations. Codec owners without a corresponding
 reviewed C owner were not added to the scope.
 
 ## Resource constraints
+
+The [equipment follow-up](equipment-unknown-field-audit.md) checks the stored
+weapon/armor pointers and GP uses, and compares proposed slot, attack-class
+and price interpretations against the authored rows and actual consumers.
+It establishes no new semantic name for the five remaining equipment ranges.
 
 The hash-validated retail corpus provides the following independent controls:
 
