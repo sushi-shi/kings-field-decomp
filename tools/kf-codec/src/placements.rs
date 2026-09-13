@@ -3,6 +3,8 @@
 //! The retail routines initialize only selected fields. These codecs write the
 //! same fields by explicit little-endian offsets and retain all other bytes.
 
+use crate::math::{EulerAngles, Vec3i};
+
 pub const FLOOR_ITEM_PLACEMENT_SIZE: usize = 12;
 pub const FLOOR_ITEM_SIZE: usize = 24;
 pub const FLOOR_ITEM_COUNT: usize = 64;
@@ -46,20 +48,6 @@ pub enum PlacementError {
 pub struct PlacementReport {
     pub active_records: u16,
     pub consumed_bytes: usize,
-}
-
-#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
-pub struct Vec3i {
-    pub x: i32,
-    pub y: i32,
-    pub z: i32,
-}
-
-#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
-pub struct EulerAngles {
-    pub x: i16,
-    pub y: i16,
-    pub z: i16,
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
@@ -175,8 +163,8 @@ pub struct ActorPlacement {
     pub heading_quadrant: u8,
     pub tile_z: u8,
     pub tile_x: u8,
-    pub unknown_05: u8,
-    pub unknown_06: u8,
+    pub spawn_chance: u8,
+    pub death_drop_object_id: u8,
     pub unknown_07: [u8; 3],
     pub local_z: i16,
     pub local_x: i16,
@@ -192,8 +180,8 @@ impl ActorPlacement {
             heading_quadrant: bytes[2],
             tile_z: bytes[3],
             tile_x: bytes[4],
-            unknown_05: bytes[5],
-            unknown_06: bytes[6],
+            spawn_chance: bytes[5],
+            death_drop_object_id: bytes[6],
             unknown_07: copy_array(bytes, 7),
             local_z: read_i16(bytes, 10),
             local_x: read_i16(bytes, 12),
@@ -210,8 +198,8 @@ impl ActorPlacement {
         bytes[2] = self.heading_quadrant;
         bytes[3] = self.tile_z;
         bytes[4] = self.tile_x;
-        bytes[5] = self.unknown_05;
-        bytes[6] = self.unknown_06;
+        bytes[5] = self.spawn_chance;
+        bytes[6] = self.death_drop_object_id;
         bytes[7..10].copy_from_slice(&self.unknown_07);
         write_i16(bytes, 10, self.local_z);
         write_i16(bytes, 12, self.local_x);
@@ -253,8 +241,8 @@ pub fn load_actor_placements<C: ActorContext>(
         output[3] = placement.heading_quadrant;
         output[4] = placement.tile_z;
         output[5] = placement.tile_x;
-        output[7] = placement.unknown_05;
-        output[9] = placement.unknown_06;
+        output[7] = placement.spawn_chance;
+        output[9] = placement.death_drop_object_id;
         write_i16(output, 14, placement.local_z);
         write_i16(output, 16, placement.local_x);
         output[6] = 0;
@@ -277,18 +265,24 @@ pub fn load_actor_placements<C: ActorContext>(
     })
 }
 
+/// Last accessible page for each one-based dialogue stage.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct DialoguePageLimits {
+    pub last_page: [u8; 5],
+}
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct MapEventDefinition {
     pub state: u8,
-    pub kind: u8,
-    pub variant: u8,
+    pub character_id: u8,
+    pub model_index: u8,
     pub cell_z: u8,
     pub cell_x: u8,
-    pub tag: [u8; 5],
-    pub image_limit: u8,
+    pub dialogue_pages: DialoguePageLimits,
+    pub dialogue_stage_limit: u8,
     pub unknown_0b: u8,
     pub unknown_0c: u8,
-    pub unknown_0d: u8,
+    pub behavior: u8,
     pub position_z_offset: i16,
     pub position_x_offset: i16,
     pub initial_rotation: u16,
@@ -301,15 +295,17 @@ impl MapEventDefinition {
         bytes.get(..MAP_EVENT_DEFINITION_SIZE)?;
         Some(Self {
             state: bytes[0],
-            kind: bytes[1],
-            variant: bytes[2],
+            character_id: bytes[1],
+            model_index: bytes[2],
             cell_z: bytes[3],
             cell_x: bytes[4],
-            tag: copy_array(bytes, 5),
-            image_limit: bytes[10],
+            dialogue_pages: DialoguePageLimits {
+                last_page: copy_array(bytes, 5),
+            },
+            dialogue_stage_limit: bytes[10],
             unknown_0b: bytes[11],
             unknown_0c: bytes[12],
-            unknown_0d: bytes[13],
+            behavior: bytes[13],
             position_z_offset: read_i16(bytes, 14),
             position_x_offset: read_i16(bytes, 16),
             initial_rotation: read_u16(bytes, 18),
@@ -323,15 +319,15 @@ impl MapEventDefinition {
             return false;
         };
         bytes[0] = self.state;
-        bytes[1] = self.kind;
-        bytes[2] = self.variant;
+        bytes[1] = self.character_id;
+        bytes[2] = self.model_index;
         bytes[3] = self.cell_z;
         bytes[4] = self.cell_x;
-        bytes[5..10].copy_from_slice(&self.tag);
-        bytes[10] = self.image_limit;
+        bytes[5..10].copy_from_slice(&self.dialogue_pages.last_page);
+        bytes[10] = self.dialogue_stage_limit;
         bytes[11] = self.unknown_0b;
         bytes[12] = self.unknown_0c;
-        bytes[13] = self.unknown_0d;
+        bytes[13] = self.behavior;
         write_i16(bytes, 14, self.position_z_offset);
         write_i16(bytes, 16, self.position_x_offset);
         write_u16(bytes, 18, self.initial_rotation);
@@ -364,13 +360,13 @@ pub fn load_map_event_definitions<C: MapEventContext>(
             &source[index * MAP_EVENT_DEFINITION_SIZE..(index + 1) * MAP_EVENT_DEFINITION_SIZE];
         let definition = MapEventDefinition::decode(input).expect("preflighted definition");
         output[0] = definition.state;
-        output[1] = definition.kind;
-        output[2] = definition.variant;
-        output[3..8].copy_from_slice(&definition.tag);
-        output[8] = definition.image_limit;
+        output[1] = definition.character_id;
+        output[2] = definition.model_index;
+        output[3..8].copy_from_slice(&definition.dialogue_pages.last_page);
+        output[8] = definition.dialogue_stage_limit;
         output[12] = definition.unknown_0b;
         output[13] = definition.unknown_0c;
-        output[14] = definition.unknown_0d;
+        output[14] = definition.behavior;
         let x = world_coordinate(definition.cell_x, definition.position_x_offset);
         let z = world_coordinate(definition.cell_z, definition.position_z_offset);
         write_i32(output, 20, x);

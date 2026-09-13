@@ -1,24 +1,47 @@
+import importlib.util
 import struct
 import unittest
 
 from scripts.kf.map_resource_oracle import (
     ALL_GRIDS_SIZE,
     FILE_VA,
+    RESOURCES_OBJECT,
     SparseResourceFile,
+    compare_floor,
     normalize_trace,
     verify_sparse_layout,
 )
 from scripts.kf.parser_machine import (
     CallRecord,
+    GameSymbols,
     LinkedFunction,
     LinkedProgram,
     MemoryPatch,
     MemoryRange,
 )
+from scripts.kf.local_config import configured_retail_dir
+from scripts.kf.paths import LOCAL_CONFIG
+from scripts.kf.rust_codec import DEFAULT_DRIVER, RustCodec
+from scripts.kf.sema.image import RetailImage
 
 
 def chunks(payloads: list[bytes]) -> bytes:
     return b"".join(struct.pack("<I", len(payload)) + payload for payload in payloads)
+
+
+class MapResourceFixtureIntegrationTests(unittest.TestCase):
+    @unittest.skipUnless(
+        importlib.util.find_spec("unicorn")
+        and LOCAL_CONFIG.is_file()
+        and RESOURCES_OBJECT.is_file()
+        and DEFAULT_DRIVER.is_file(),
+        "local retail, native candidate, Rust driver and Unicorn are required",
+    )
+    def test_outer_walk_binds_native_grids_and_owned_arena_cursor(self) -> None:
+        compare_floor(
+            RetailImage.load("GAME.EXE"), GameSymbols.load(), RustCodec(),
+            configured_retail_dir() / "KF", 5,
+        )
 
 
 def call(index: int, name: str, *args: int) -> CallRecord:

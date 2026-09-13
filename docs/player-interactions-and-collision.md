@@ -28,9 +28,10 @@ at `0x8009ff10` is `KfWeaponRecord weapon_records[16]`, ending exactly where
 `collision_target` begins at `0x800a01d0`. The old `asset_block` identity was
 too large and incorrectly absorbed that separate object.
 
-`mirrored_angle` is only a working field name. Its offset and signed-negation
-operation are directly observed and the refactored C remains a 100% match;
-its gameplay meaning is still `candidate`.
+The original working name `mirrored_angle` has since been resolved as
+`render_rotation.vy`: the renderer passes the complete SDK rotation at +0x24
+to `RotMatrix`. See the [typed weapon review](patterns/typed-weapon-render.md)
+for the independent consumer evidence and byte-preserving verification.
 
 ## Function family
 

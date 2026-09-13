@@ -5,6 +5,30 @@
 //! SEQ uses the MIDI-derived big-endian header and variable-length quantities.
 //! Readers borrow all payloads and writers use caller-owned buffers.
 
+/// Packed game sound selector, shared by actor and magic definitions.
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
+pub struct SoundRef {
+    pub program: u8,
+    pub tone: u8,
+    pub note: u8,
+}
+
+impl SoundRef {
+    pub const BYTE_SIZE: usize = 3;
+
+    pub const fn from_bytes(bytes: [u8; Self::BYTE_SIZE]) -> Self {
+        Self {
+            program: bytes[0],
+            tone: bytes[1],
+            note: bytes[2],
+        }
+    }
+
+    pub const fn to_bytes(self) -> [u8; Self::BYTE_SIZE] {
+        [self.program, self.tone, self.note]
+    }
+}
+
 use core::fmt;
 
 pub const VAB_MAGIC: [u8; 4] = *b"pBAV";

@@ -916,3 +916,21 @@ promotes a probe to a proven historical toolchain.
 - [Native COMMON symbol names](native-common-symbol-names.md): a controlled global
   rename changes native COMMON placement and 221 GAME executable bytes while
   preserving compiled sections, ordered referents, and strict objdiff results.
+
+- [Unknown-field review](unknown-field-review.md): all 79 header declarations
+  accounted for, explicit raw-reference coverage limits, resource negative
+  controls, and Rust codec fields reconciled with proven C meanings.
+- [Unknown-field format provenance](unknown-field-format-provenance.md): all
+  33 owners checked against pinned SDK types and Sony format manuals, with
+  embedded-type boundaries and documentation-version discrepancies recorded.
+- [Unknown-field alias audit](unknown-field-alias-audit.md): scoped floor-item
+  and event pointer paths, wide-copy lanes, dialogue-index bounds, persistence
+  and animation-cache owner indirection checked against retail instructions.
+- [Equipment unknown-field audit](equipment-unknown-field-audit.md): stored
+  weapon/armor pointers, biased bases, GP uses and resource correlations;
+  checked consumers and counterexamples leave five field ranges unresolved.
+- [Three weapon fields: static access report](weapon-unknown-access-report.md):
+  reads, writes, guards and value uses; resolved pointer warnings, bounded
+  switches and conditional reads through misindexed armor records.
+- [Codec type consistency](codec-type-consistency.md): shared vector and sound
+  types, header-backed record models, and explicit encoded-byte boundaries.

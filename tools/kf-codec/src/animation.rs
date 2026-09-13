@@ -17,7 +17,7 @@ pub const KEYFRAME_HEADER_SIZE: usize = 8;
 pub const MORPH_OBJECT_HEADER_SIZE: usize = 12;
 pub const TMD_HEADER_SIZE: usize = 12;
 pub const TMD_OBJECT_SIZE: usize = 28;
-pub const VERTEX_SIZE: usize = 8;
+pub const VERTEX_SIZE: usize = Vertex::BYTE_SIZE;
 pub const FULL_WEIGHT: u16 = 0x1000;
 pub const POOL_RECORD_SIZE: usize = 20;
 
@@ -179,7 +179,7 @@ impl fmt::Display for AnimationError {
             ),
             Self::BacklinkMismatch { record, expected } => write!(
                 f,
-                "pool record backlink {record:#x} differs from caller anchor {expected:#x}"
+                "pool record owner_slot {record:#x} differs from caller anchor {expected:#x}"
             ),
             Self::MissingSuccessfulAllocation => {
                 f.write_str("animation allocation outcomes contain no successful allocation")
@@ -200,56 +200,59 @@ impl core::error::Error for AnimationError {}
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct PoolRecord {
     pub state: i16,
-    pub asset_id: u16,
-    pub tag: u16,
+    pub asset_index: u16,
+    pub clip_index: u16,
     pub keyframe_index: u16,
-    pub rest_object: u32,
-    pub allocation: u32,
-    pub backlink: u32,
+    /// Encoded PSX address of `KfMorphObject`, not a host pointer.
+    pub rest_morph: u32,
+    /// Encoded PSX address of the cached `SVECTOR` array.
+    pub cached_vertices: u32,
+    /// Encoded PSX address of the owner's `KfPoolRecord *` field.
+    pub owner_slot: u32,
 }
 
 impl PoolRecord {
     pub const fn from_le_bytes(bytes: [u8; POOL_RECORD_SIZE]) -> Self {
         Self {
             state: i16::from_le_bytes([bytes[0], bytes[1]]),
-            asset_id: u16::from_le_bytes([bytes[2], bytes[3]]),
-            tag: u16::from_le_bytes([bytes[4], bytes[5]]),
+            asset_index: u16::from_le_bytes([bytes[2], bytes[3]]),
+            clip_index: u16::from_le_bytes([bytes[4], bytes[5]]),
             keyframe_index: u16::from_le_bytes([bytes[6], bytes[7]]),
-            rest_object: u32::from_le_bytes([bytes[8], bytes[9], bytes[10], bytes[11]]),
-            allocation: u32::from_le_bytes([bytes[12], bytes[13], bytes[14], bytes[15]]),
-            backlink: u32::from_le_bytes([bytes[16], bytes[17], bytes[18], bytes[19]]),
+            rest_morph: u32::from_le_bytes([bytes[8], bytes[9], bytes[10], bytes[11]]),
+            cached_vertices: u32::from_le_bytes([bytes[12], bytes[13], bytes[14], bytes[15]]),
+            owner_slot: u32::from_le_bytes([bytes[16], bytes[17], bytes[18], bytes[19]]),
         }
     }
 
     pub const fn to_le_bytes(self) -> [u8; POOL_RECORD_SIZE] {
         let state = self.state.to_le_bytes();
-        let asset_id = self.asset_id.to_le_bytes();
-        let tag = self.tag.to_le_bytes();
+        let asset_index = self.asset_index.to_le_bytes();
+        let clip_index = self.clip_index.to_le_bytes();
         let keyframe_index = self.keyframe_index.to_le_bytes();
-        let rest_object = self.rest_object.to_le_bytes();
-        let allocation = self.allocation.to_le_bytes();
-        let backlink = self.backlink.to_le_bytes();
+        let rest_morph = self.rest_morph.to_le_bytes();
+        let allocation = self.cached_vertices.to_le_bytes();
+        let owner_slot = self.owner_slot.to_le_bytes();
         [
             state[0],
             state[1],
-            asset_id[0],
-            asset_id[1],
-            tag[0],
-            tag[1],
+            asset_index[0],
+            asset_index[1],
+            clip_index[0],
+            clip_index[1],
             keyframe_index[0],
             keyframe_index[1],
-            rest_object[0],
-            rest_object[1],
-            rest_object[2],
-            rest_object[3],
+            rest_morph[0],
+            rest_morph[1],
+            rest_morph[2],
+            rest_morph[3],
             allocation[0],
             allocation[1],
             allocation[2],
             allocation[3],
-            backlink[0],
-            backlink[1],
-            backlink[2],
-            backlink[3],
+            owner_slot[0],
+            owner_slot[1],
+            owner_slot[2],
+            owner_slot[3],
         ]
     }
 }
@@ -257,19 +260,19 @@ impl PoolRecord {
 /// Caller-owned state needed before the animation table walk begins.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct InstanceRequest {
-    pub asset_id: u16,
+    pub asset_index: u16,
     pub caller_vertex_count: u16,
     pub record_present: bool,
     pub pool_record_available: bool,
     pub record_address: u32,
-    pub anchor_address: u32,
+    pub owner_slot_address: u32,
 }
 
 /// Ordered externally visible pool/allocator operations performed by retail.
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum LifecycleEvent {
     AllocateRecord { available: bool },
-    ReleaseRecord { allocation: u32, backlink: u32 },
+    ReleaseRecord { allocation: u32, owner_slot: u32 },
     AllocateVertices { byte_count: u32, result: u32 },
     ReleaseAll,
 }
@@ -306,18 +309,18 @@ pub fn prepare_instance(
     let release = request.record_present;
 
     if !animation.is_animated() {
-        if release && record.backlink != request.anchor_address {
+        if release && record.owner_slot != request.owner_slot_address {
             return Err(AnimationError::BacklinkMismatch {
-                record: record.backlink,
-                expected: request.anchor_address,
+                record: record.owner_slot,
+                expected: request.owner_slot_address,
             });
         }
         let needed = usize::from(release);
         require_event_capacity(events, needed)?;
         if release {
             events[0] = LifecycleEvent::ReleaseRecord {
-                allocation: record.allocation,
-                backlink: record.backlink,
+                allocation: record.cached_vertices,
+                owner_slot: record.owner_slot,
             };
             release_record(anchor, record);
         }
@@ -336,11 +339,11 @@ pub fn prepare_instance(
         });
     }
 
-    let different_asset = request.record_present && record.asset_id != request.asset_id;
-    if different_asset && record.backlink != request.anchor_address {
+    let different_asset = request.record_present && record.asset_index != request.asset_index;
+    if different_asset && record.owner_slot != request.owner_slot_address {
         return Err(AnimationError::BacklinkMismatch {
-            record: record.backlink,
-            expected: request.anchor_address,
+            record: record.owner_slot,
+            expected: request.owner_slot_address,
         });
     }
     let needs_record = !request.record_present;
@@ -378,24 +381,24 @@ pub fn prepare_instance(
         event += 1;
         // `pool_allocate` initializes only this field before returning a free
         // record; all other bytes retain their caller-provided contents.
-        record.tag = 0xff;
+        record.clip_index = 0xff;
     } else {
         events[event] = LifecycleEvent::ReleaseRecord {
-            allocation: record.allocation,
-            backlink: record.backlink,
+            allocation: record.cached_vertices,
+            owner_slot: record.owner_slot,
         };
         event += 1;
         release_record(anchor, record);
-        record.tag = 0xff;
+        record.clip_index = 0xff;
     }
 
-    record.asset_id = request.asset_id;
-    record.backlink = request.anchor_address;
+    record.asset_index = request.asset_index;
+    record.owner_slot = request.owner_slot_address;
     let byte_count = u32::from(request.caller_vertex_count) << 3;
     for &result in &allocation_results[..allocation_attempts] {
         events[event] = LifecycleEvent::AllocateVertices { byte_count, result };
         event += 1;
-        record.allocation = result;
+        record.cached_vertices = result;
         if result == 0 {
             events[event] = LifecycleEvent::ReleaseAll;
             event += 1;
@@ -415,7 +418,7 @@ pub fn prepare_instance(
 fn release_record(anchor: &mut u32, record: &mut PoolRecord) {
     record.state = 0;
     *anchor = 0;
-    record.allocation = 0;
+    record.cached_vertices = 0;
 }
 
 fn require_event_capacity(events: &[LifecycleEvent], need: usize) -> Result<(), AnimationError> {
@@ -429,38 +432,8 @@ fn require_event_capacity(events: &[LifecycleEvent], need: usize) -> Result<(), 
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq, Default)]
-pub struct Vertex {
-    pub x: i16,
-    pub y: i16,
-    pub z: i16,
-    pub pad: i16,
-}
-
-impl Vertex {
-    pub const fn from_le_bytes(bytes: [u8; VERTEX_SIZE]) -> Self {
-        Self {
-            x: i16::from_le_bytes([bytes[0], bytes[1]]),
-            y: i16::from_le_bytes([bytes[2], bytes[3]]),
-            z: i16::from_le_bytes([bytes[4], bytes[5]]),
-            pad: i16::from_le_bytes([bytes[6], bytes[7]]),
-        }
-    }
-
-    pub const fn to_le_bytes(self) -> [u8; VERTEX_SIZE] {
-        let x = self.x.to_le_bytes();
-        let y = self.y.to_le_bytes();
-        let z = self.z.to_le_bytes();
-        let pad = self.pad.to_le_bytes();
-        [x[0], x[1], y[0], y[1], z[0], z[1], pad[0], pad[1]]
-    }
-
-    fn add_scaled(&mut self, delta: Self, weight: u16) {
-        self.x = self.x.wrapping_add(scale_delta(delta.x, weight));
-        self.y = self.y.wrapping_add(scale_delta(delta.y, weight));
-        self.z = self.z.wrapping_add(scale_delta(delta.z, weight));
-    }
-}
+/// Animation vertices and deltas are the SDK's padded signed short vector.
+pub use crate::math::SVector as Vertex;
 
 #[derive(Debug, Clone, Copy)]
 pub struct Animation<'a> {
@@ -491,13 +464,13 @@ impl<'a> Animation<'a> {
                 available: bytes.len(),
             });
         };
-        let clip_count = usize::try_from(header.animation_data).map_err(|_| {
+        let clip_count = usize::try_from(header.animation_clip_count).map_err(|_| {
             AnimationError::NegativeClipCount {
-                count: header.animation_data,
+                count: header.animation_clip_count,
             }
         })?;
         // Static assets do not have a clip table, and retail never reads the
-        // field when animation_data is zero.
+        // field when animation_clip_count is zero.
         if clip_count != 0 {
             let clip_table = offset(header.clip_table_offset, "clip table")?;
             checked_range(bytes, clip_table, clip_count, 4, "clip table")?;
@@ -653,24 +626,24 @@ impl<'a> Animation<'a> {
 
     pub fn select_frame(
         &self,
-        tag: u16,
+        clip_index: u16,
         phase: u16,
         initial_kf_index: u16,
     ) -> Result<FrameSelection, AnimationError> {
-        let clip = self.clip(tag)?;
+        let clip = self.clip(clip_index)?;
         select_frame(clip, phase, initial_kf_index)
     }
 
     pub fn bind_frame(
         &self,
-        tag: u16,
+        clip_index: u16,
         phase: u16,
         initial_kf_index: u16,
         previous: Option<CacheKey>,
         cache: &mut [Vertex],
         output: &mut [Vertex],
     ) -> Result<BindReport, AnimationError> {
-        let selection = self.select_frame(tag, phase, initial_kf_index)?;
+        let selection = self.select_frame(clip_index, phase, initial_kf_index)?;
         self.bind_selected_frame(selection, previous, cache, output)
     }
 
@@ -698,10 +671,10 @@ impl<'a> Animation<'a> {
             });
         }
 
-        let clip = self.clip(selection.tag)?;
+        let clip = self.clip(selection.clip_index)?;
         let selected = clip.keyframe(selection.keyframe_ordinal)?;
         let cache_hit = previous.is_some_and(|key| {
-            key.tag == selection.tag && key.keyframe_index == selection.keyframe_index
+            key.clip_index == selection.clip_index && key.keyframe_index == selection.keyframe_index
         });
         let rest_index;
 
@@ -730,7 +703,7 @@ impl<'a> Animation<'a> {
         )?;
 
         let cache_key = CacheKey {
-            tag: selection.tag,
+            clip_index: selection.clip_index,
             keyframe_index: selection.keyframe_index,
             rest_index,
         };
@@ -896,7 +869,7 @@ impl Keyframe<'_> {
         }
     }
 
-    pub fn rest_object(&self) -> Result<MorphObject<'_>, AnimationError> {
+    pub fn rest_morph(&self) -> Result<MorphObject<'_>, AnimationError> {
         self.animation.morph_object(self.rest_index)
     }
 }
@@ -992,7 +965,7 @@ impl Iterator for BaseVertices<'_> {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct FrameSelection {
-    pub tag: u16,
+    pub clip_index: u16,
     pub keyframe_ordinal: u16,
     pub keyframe_index: u16,
     pub fraction: u16,
@@ -1001,7 +974,7 @@ pub struct FrameSelection {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct CacheKey {
-    pub tag: u16,
+    pub clip_index: u16,
     pub keyframe_index: u16,
     pub rest_index: u16,
 }
@@ -1054,7 +1027,7 @@ pub fn select_frame(
                 FULL_WEIGHT.wrapping_sub(forward)
             };
             return Ok(FrameSelection {
-                tag: clip.index,
+                clip_index: clip.index,
                 keyframe_ordinal: ordinal,
                 keyframe_index: cache_index,
                 fraction,
@@ -1067,7 +1040,7 @@ pub fn select_frame(
 
     let keyframe = last.expect("non-empty clip has a last keyframe");
     Ok(FrameSelection {
-        tag: clip.index,
+        clip_index: clip.index,
         keyframe_ordinal: keyframe.index,
         keyframe_index: cache_index.wrapping_sub(1),
         fraction: FULL_WEIGHT,
@@ -1113,7 +1086,9 @@ fn apply_object(
         });
     };
     for (vertex, delta) in destination.iter_mut().zip(object.deltas()) {
-        vertex.add_scaled(delta, weight);
+        vertex.vx = vertex.vx.wrapping_add(scale_delta(delta.vx, weight));
+        vertex.vy = vertex.vy.wrapping_add(scale_delta(delta.vy, weight));
+        vertex.vz = vertex.vz.wrapping_add(scale_delta(delta.vz, weight));
     }
     Ok(())
 }

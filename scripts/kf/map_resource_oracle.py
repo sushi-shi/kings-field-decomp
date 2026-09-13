@@ -292,7 +292,9 @@ def compare_floor(
     )
     use_external_variant = floor == 5
     path_address, path_size = symbols.datum("map_resource_path")
-    cursor_address, cursor_size = symbols.datum("memory_arena_cursor")
+    # KfMemoryArena.allocation.cursor is a PSX pointer at owner +8.
+    cursor_address = symbols.datum("memory_arena")[0] + 8
+    cursor_size = 4
     variant_address = symbols.datum("map_runtime_state")[0] + 0x224
     variant_size = 4
     grid_names = (
@@ -310,6 +312,8 @@ def compare_floor(
     ]
     initial_grids = _pattern(ALL_GRIDS_SIZE, floor)
     path_initial = b"B0\\" + bytes(path_size - 3)
+    if retail.require(path_address, path_size) != path_initial:
+        raise AssertionError("retail map path initializer differs from the fixture")
     cursor_initial = 0x1357_2468
     variant_initial = 0x2468_1357
     initial_memory = [
@@ -317,7 +321,6 @@ def compare_floor(
             MemoryInput(capture.address, initial_grids[index * GRID_SIZE:(index + 1) * GRID_SIZE])
             for index, capture in enumerate(captures[:5])
         ),
-        MemoryInput(path_address, path_initial),
         MemoryInput(cursor_address, struct.pack("<I", cursor_initial)),
         MemoryInput(variant_address, struct.pack("<I", variant_initial)),
     ]
@@ -388,7 +391,14 @@ def compare_floor(
             ExternalHook("memory_set_allocation_mode", no_op),
         ]
         if candidate:
-            program = CandidateProgram.link(symbols, functions, hooks=hooks)
+            # The sparse fixture binds native COMMON grids by object identity.
+            program = CandidateProgram.link(
+                symbols, functions, hooks=hooks, bind_data_objects=True,
+            )
+            # Use the object's initializer without replacing a protected patch.
+            path_patches = [patch.data for patch in program.patches if patch.address == path_address]
+            if path_patches != [path_initial]:
+                raise AssertionError("candidate map path initializer differs from retail")
             verify_sparse_layout(program, (*mixa.sparse_ranges(), *mixb.sparse_ranges()))
         else:
             program = RetailProgram.link(symbols, [item.name for item in functions], hooks=hooks)

@@ -18,7 +18,7 @@ pub const STAT_DATA_SIZE: usize = MENU_ASSETS_SIZE
     + ITEM_NAMES_SIZE
     + MAGIC_NAMES_SIZE
     + PRICE_TABLE_SIZE * 2;
-/// Game-owned `KfCdFileEntry` stride (12-byte name, u32 size, u32 sector).
+/// Game-owned `KfCdFileEntry` stride (four location bytes, u32 size, 12-byte name).
 pub const CD_FILE_RECORD_SIZE: usize = 20;
 pub const ITEM_MODEL_COUNT: usize = 80;
 pub const ITEM_FILE_TABLE_SIZE: usize = CD_FILE_RECORD_SIZE * ITEM_MODEL_COUNT;
@@ -218,20 +218,28 @@ fn copy_section(source: &[u8], at: &mut usize, destination: &mut [u8], size: usi
     *at += size;
 }
 
+/// Signed screen-space anchor shared by menu labels and sprite blitters.
+#[derive(Clone, Copy, Debug, Eq, PartialEq)]
+pub struct MenuPoint {
+    pub x: i16,
+    pub y: i16,
+}
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct MenuGlyphString {
-    pub x: u16,
-    pub y: u16,
-    pub glyphs: [i16; 10],
+    pub position: MenuPoint,
+    pub glyphs: MenuGlyphRow,
 }
 
 impl MenuGlyphString {
     pub fn decode(bytes: &[u8]) -> Option<Self> {
         bytes.get(..MENU_GLYPH_STRING_SIZE)?;
         Some(Self {
-            x: read_u16(bytes, 0),
-            y: read_u16(bytes, 2),
-            glyphs: read_i16_array(bytes, 4),
+            position: MenuPoint {
+                x: read_u16(bytes, 0) as i16,
+                y: read_u16(bytes, 2) as i16,
+            },
+            glyphs: MenuGlyphRow::decode(&bytes[4..])?,
         })
     }
 
@@ -239,23 +247,22 @@ impl MenuGlyphString {
         let Some(bytes) = bytes.get_mut(..MENU_GLYPH_STRING_SIZE) else {
             return false;
         };
-        write_u16(bytes, 0, self.x);
-        write_u16(bytes, 2, self.y);
-        write_i16_array(bytes, 4, &self.glyphs);
-        true
+        write_u16(bytes, 0, self.position.x as u16);
+        write_u16(bytes, 2, self.position.y as u16);
+        self.glyphs.encode(&mut bytes[4..])
     }
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct MenuGlyphRow {
-    pub glyphs: [i16; 10],
+    pub codes: [i16; 10],
 }
 
 impl MenuGlyphRow {
     pub fn decode(bytes: &[u8]) -> Option<Self> {
         bytes.get(..MENU_GLYPH_ROW_SIZE)?;
         Some(Self {
-            glyphs: read_i16_array(bytes, 0),
+            codes: read_i16_array(bytes, 0),
         })
     }
 
@@ -263,23 +270,22 @@ impl MenuGlyphRow {
         let Some(bytes) = bytes.get_mut(..MENU_GLYPH_ROW_SIZE) else {
             return false;
         };
-        write_i16_array(bytes, 0, &self.glyphs);
+        write_i16_array(bytes, 0, &self.codes);
         true
     }
 }
 
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct PriceEntry {
-    pub value_0: u16,
-    pub value_1: u16,
+    /// Indexed by the game's two shop stock banks.
+    pub by_shop: [u16; 2],
 }
 
 impl PriceEntry {
     pub fn decode(bytes: &[u8]) -> Option<Self> {
         bytes.get(..PRICE_ENTRY_SIZE)?;
         Some(Self {
-            value_0: read_u16(bytes, 0),
-            value_1: read_u16(bytes, 2),
+            by_shop: [read_u16(bytes, 0), read_u16(bytes, 2)],
         })
     }
 
@@ -287,8 +293,8 @@ impl PriceEntry {
         let Some(bytes) = bytes.get_mut(..PRICE_ENTRY_SIZE) else {
             return false;
         };
-        write_u16(bytes, 0, self.value_0);
-        write_u16(bytes, 2, self.value_1);
+        write_u16(bytes, 0, self.by_shop[0]);
+        write_u16(bytes, 2, self.by_shop[1]);
         true
     }
 }
