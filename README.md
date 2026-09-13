@@ -11,6 +11,25 @@ Retail game files must be supplied locally; they are not included in this
 repository. The Nix environment downloads the historical SDK separately; see
 [the toolchain documentation](docs/toolchain.md).
 
+## Branches
+
+```text
+master  (reconstruction)
+    |
+    +--------------------+
+    |                    |
+    v                    v
+source                 classic
+C++ / PS1              C / PS1
+    |                  default branch
+    v
+  port
+Linux, later possibly WASM
+```
+
+`source` is the clean C++ base for porting and includes the resource codecs.
+`classic` is the runnable C export without codecs. See [generation](docs/clean-source.md).
+
 <!-- match-score:start -->
 ## Match status
 

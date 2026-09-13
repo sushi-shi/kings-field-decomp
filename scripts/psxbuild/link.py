@@ -48,7 +48,8 @@ def build_image(name, root, units, compile_one, *, repo, load_address, bounds_so
             raise ValueError(f'{name}: no C source units')
         for index, unit in enumerate(units):
             report['units'].append(compile_one(unit, root, index))
-        assembler_commands = [u['assembler_command'] for u in report['units']]
+        assembler_commands = [u['assembler_command'] for u in report['units']
+                              if 'assembler_command' in u]
         if name != 'PSX.EXE':
             assembler = Path(os.environ['PSYQ_ASMPSX'])
             shutil.copyfile(assembler, root / 'ASMPSX.EXE')
@@ -71,9 +72,13 @@ def build_image(name, root, units, compile_one, *, repo, load_address, bounds_so
                 'provenance': 'exact Release 2.5 H2000/LIB2000 object',
             }
         report['phase'] = 'assemble'
-        dos_run(root, assembler_commands, 'asm')
+        if assembler_commands:
+            dos_run(root, assembler_commands, 'asm')
         for unit in report['units']:
-            tool_succeeded(root, unit['log'], unit['object'], b'LNK\x02')
+            if 'assembler_command' in unit:
+                tool_succeeded(root, unit['log'], unit['object'], b'LNK\x02')
+            elif not (root / unit['object']).read_bytes().startswith(b'LNK\x02'):
+                raise ValueError('compiler produced no native object')
             unit['object_sha256'] = file_hash(root / unit['object'])
         if report['startup'] and not (root / OVERLAY_STARTUP).read_bytes().startswith(b'LNK\x02'):
             raise ValueError(f'{OVERLAY_STARTUP}: expected a Psy-Q LNK object')

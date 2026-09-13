@@ -124,7 +124,7 @@ def disc_path(requested: Path) -> Path:
     return path
 
 
-def iso_files(raw: bytes) -> dict[str, tuple[int, int]]:
+def iso_files(raw: bytes, *, with_records=False) -> dict:
     """Read root file extents from the disc's ISO9660 primary volume descriptor."""
     def payload(lba, size):
         if lba < 0 or size < 0 or (lba + (size + 2047) // 2048) * SECTOR_SIZE > len(raw):
@@ -154,6 +154,10 @@ def iso_files(raw: bytes) -> dict[str, tuple[int, int]]:
                 raise ValueError(f'duplicate ISO9660 file: {name}')
             files[name] = (struct.unpack_from('<I', record, 2)[0],
                            struct.unpack_from('<I', record, 10)[0])
+            if with_records:
+                location = (root_lba + position // PAYLOAD_SIZE) * SECTOR_SIZE + \
+                    PAYLOAD_OFFSET + position % PAYLOAD_SIZE
+                files[name] += (location,)
         position += size
     return files
 
@@ -162,7 +166,7 @@ def prepare(disc: Path, executables: Path, cache: Path) -> Path:
     raw = bytearray(disc.read_bytes())
     if hashlib.sha256(raw).hexdigest() != RETAIL_DISC_SHA256:
         raise ValueError('disc SHA-256 does not match Japanese SLPS-00017')
-    files = iso_files(raw)
+    files = iso_files(raw, with_records=True)
     programs = {}
     digest = hashlib.sha256(raw)
     for name in ('PSX.EXE', 'GAME.EXE', 'OPEN.EXE'):
@@ -174,12 +178,10 @@ def prepare(disc: Path, executables: Path, cache: Path) -> Path:
             raise ValueError(f'{path}: invalid PS-X executable')
         if name not in files:
             raise ValueError(f'{name}: missing from the disc root')
-        lba, capacity = files[name]
-        if len(program) > capacity:
-            raise ValueError(f'{name}: {len(program)} bytes exceed its {capacity}-byte disc extent')
+        lba, capacity, _ = files[name]
         if capacity % PAYLOAD_SIZE or (lba + capacity // PAYLOAD_SIZE) * SECTOR_SIZE > len(raw):
             raise ValueError(f'{name}: invalid executable disc extent')
-        programs[name] = program + bytes(capacity - len(program))
+        programs[name] = program
         digest.update(name.encode())
         digest.update(hashlib.sha256(program).digest())
     # Include framing implementation in the cache key when it changes.
@@ -188,14 +190,47 @@ def prepare(disc: Path, executables: Path, cache: Path) -> Path:
     output.mkdir(parents=True, exist_ok=True)
     target = output / 'game.bin'
     if not target.exists():
+        changed = set()
+        original_sectors = len(raw) // SECTOR_SIZE
         for name, program in programs.items():
-            lba, _ = files[name]
+            lba, capacity, record = files[name]
+            if len(program) > capacity:
+                lba = len(raw) // SECTOR_SIZE
+                capacity = (len(program) + PAYLOAD_SIZE - 1) // PAYLOAD_SIZE * PAYLOAD_SIZE
+                for number in range(lba, lba + capacity // PAYLOAD_SIZE):
+                    minute, remainder = divmod(number + 150, 75 * 60)
+                    second, frame = divmod(remainder, 75)
+                    if minute >= 100:
+                        raise ValueError('rebuilt disc exceeds CD address range')
+                    def bcd(n):
+                        return (n // 10 << 4) | n % 10
+                    sector = bytearray(SECTOR_SIZE)
+                    sector[:12] = b'\0' + b'\xff' * 10 + b'\0'
+                    sector[12:16] = bytes([bcd(minute), bcd(second), bcd(frame), 2])
+                    sector[16:24] = bytes([0, 0, 8, 0]) * 2
+                    raw.extend(sector)
+                struct.pack_into('<I', raw, record + 2, lba)
+                struct.pack_into('>I', raw, record + 6, lba)
+                struct.pack_into('<I', raw, record + 10, len(program))
+                struct.pack_into('>I', raw, record + 14, len(program))
+                changed.add(record // SECTOR_SIZE)
+            program += bytes(capacity - len(program))
             for offset in range(0, len(program), PAYLOAD_SIZE):
                 start = (lba + offset // PAYLOAD_SIZE) * SECTOR_SIZE
                 sector = raw[start:start + SECTOR_SIZE]
                 sector[PAYLOAD_OFFSET:PAYLOAD_OFFSET + PAYLOAD_SIZE] = program[offset:offset + PAYLOAD_SIZE]
-                regenerate_sector(sector)
                 raw[start:start + SECTOR_SIZE] = sector
+                changed.add(start // SECTOR_SIZE)
+        if len(raw) // SECTOR_SIZE != original_sectors:
+            pvd = 16 * SECTOR_SIZE + PAYLOAD_OFFSET
+            struct.pack_into('<I', raw, pvd + 80, len(raw) // SECTOR_SIZE)
+            struct.pack_into('>I', raw, pvd + 84, len(raw) // SECTOR_SIZE)
+            changed.add(16)
+        for number in sorted(changed):
+            start = number * SECTOR_SIZE
+            sector = raw[start:start + SECTOR_SIZE]
+            regenerate_sector(sector)
+            raw[start:start + SECTOR_SIZE] = sector
         temporary = output / f'.game-{os.getpid()}.tmp'
         try:
             temporary.write_bytes(raw)
@@ -205,10 +240,20 @@ def prepare(disc: Path, executables: Path, cache: Path) -> Path:
     return write_cue(output / 'game.cue', target)
 
 
+def prepare_retail(disc: Path, cache: Path) -> Path:
+    if hashlib.sha256(disc.read_bytes()).hexdigest() != RETAIL_DISC_SHA256:
+        raise ValueError('disc SHA-256 does not match Japanese SLPS-00017')
+    output = cache / 'retail' / hashlib.sha256(str(disc).encode()).hexdigest()
+    output.mkdir(parents=True, exist_ok=True)
+    return write_cue(output / 'game.cue', disc)
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--disc', type=Path, default=os.environ.get('KF_RETAIL_DISC'))
-    parser.add_argument('--executables', type=Path, required=True)
+    mode = parser.add_mutually_exclusive_group(required=True)
+    mode.add_argument('--executables', type=Path)
+    mode.add_argument('--retail', action='store_true')
     parser.add_argument('--prepare-only', action='store_true')
     parser.add_argument('emulator_args', nargs=argparse.REMAINDER)
     args = parser.parse_args(argv)
@@ -216,7 +261,8 @@ def main(argv=None):
         if not args.disc:
             raise ValueError('supply --disc PATH or set KF_RETAIL_DISC')
         cache = Path(os.environ.get('XDG_CACHE_HOME', Path.home() / '.cache')) / 'kings-field'
-        cue = prepare(disc_path(args.disc), args.executables, cache)
+        original = disc_path(args.disc)
+        cue = prepare_retail(original, cache) if args.retail else prepare(original, args.executables, cache)
         print(f'Prepared {cue}', flush=True)
         if args.prepare_only:
             return 0

@@ -117,22 +117,24 @@ def rewrite_calls(text: str, rules: dict) -> str:
     return rewrite(stream)
 
 
-def c_condition(expression: str) -> bool | None:
+def c_condition(expression: str, *, modern: bool = False) -> bool | None:
     expression = expression.strip()
     if expression == 'KF_MODERN_TYPES' or re.fullmatch(
             r'KF_MODERN_TYPES\s*&&\s*!defined\(KF_(?:MENU_MODE|MENU_LIST|EFFECT_POOL)_IMPLEMENTATION\)',
             expression):
-        return False
+        return modern
     if expression == '!KF_MODERN_TYPES':
-        return True
+        return not modern
     if expression == 'defined(__cplusplus)':
-        return False
+        return modern
+    if expression == 'defined(__cplusplus) || defined(__has_builtin)':
+        return modern
     if 'KF_MODERN_TYPES' in expression:
         raise ValueError(f'unsupported type conditional: {expression}')
     return None
 
 
-def resolve_conditionals(text: str) -> str:
+def resolve_conditionals(text: str, *, modern: bool = False) -> str:
     """Select C-only type branches; leave other preprocessor decisions in source."""
     stack = []
     output = []
@@ -141,7 +143,7 @@ def resolve_conditionals(text: str) -> str:
         if directive:
             command, expression = directive.groups()
             if command in ('if', 'ifdef', 'ifndef'):
-                condition = c_condition(expression) if command == 'if' else None
+                condition = c_condition(expression, modern=modern) if command == 'if' else None
                 stack.append(None if condition is None else [condition, condition])
                 if condition is not None:
                     continue
@@ -150,7 +152,7 @@ def resolve_conditionals(text: str) -> str:
                     raise ValueError('unmatched conditional arm')
                 if stack[-1] is not None:
                     frame = stack[-1]
-                    condition = True if command == 'else' else c_condition(expression)
+                    condition = True if command == 'else' else c_condition(expression, modern=modern)
                     if condition is None:
                         raise ValueError(f'unsupported conditional arm: {line.strip()}')
                     frame[0] = not frame[1] and condition

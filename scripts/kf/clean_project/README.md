@@ -1,7 +1,23 @@
-# King's Field
+# King's Field — classic C
 
 Source for the original Japanese PlayStation game, SLPS-00017.
 The game builds as three C programs: the loader, main game, and opening.
+This is the default branch. The C++ `source` branch retains typed enums and
+resource codecs and is the base for the Linux port.
+
+```text
+master  (reconstruction)
+    |
+    +--------------------+
+    |                    |
+    v                    v
+source                 classic
+C++ / PS1              C / PS1
+    |                  default branch
+    v
+  port
+Linux, later possibly WASM
+```
 
 ## Build and run
 
@@ -11,6 +27,17 @@ On x86-64 Linux with Nix flakes enabled:
 nix build
 nix run . -- --disc "/path/to/King's Field (Japan).cue"
 ```
+
+To run the original retail game with the same command as `master`:
+
+```sh
+export KF_RETAIL_DISC="/path/to/King's Field (Japan).cue"
+nix develop -c kf-run-retail
+# Or, without entering the build environment:
+nix run .#retail
+```
+
+The retail runner uses the original disc and does not build replacement programs.
 
 `nix build` writes `PSX.EXE`, `GAME.EXE`, and `OPEN.EXE` under `result/`.
 Native linker outputs are retained under `result/link/`.
@@ -41,28 +68,17 @@ The three outputs are under `build/psx`, `build/game`, and `build/open`.
 The build uses GCC 2.5.7, ASPSX 1.07, PSYLINK and CPE2X with the Psy-Q 2.5 SDK.
 Game resources are required only when preparing and running the disc.
 
-## Resource codecs
-
-`codecs/` contains the optional allocation-free, dependency-free `kf-codec`
-Rust library. It provides readers and writers for game assets and saves and
-does not participate in the PlayStation build.
-
-```sh
-nix develop .#codecs -c cargo build --offline --manifest-path codecs/Cargo.toml
-```
-
 ## Development
 
-This `source` branch is generated from the reconstruction branch. Make upstream
+This `classic` branch is generated from `master`. Make upstream
 source changes there and regenerate with:
 
 ```sh
-nix develop -c kf clean --out build/clean-source --verify \
-  --publish source --worktree build/source
+nix develop -c kf clean --classic --out build/clean-classic --verify \
+  --publish classic --worktree build/classic
 ```
 
-Create a separate branch from `source` for Linux or WebAssembly port work.
-This branch currently builds the PlayStation target; it is not a native port.
+Use the C++ `source` branch as the base for platform work on `port`.
 Generation provenance is recorded in Git commit messages.
 
 ## License

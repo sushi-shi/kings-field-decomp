@@ -1,4 +1,4 @@
-"""Generate and publish the standalone C source project."""
+"""Generate and publish the standalone C and C++ source projects."""
 
 from __future__ import annotations
 
@@ -101,7 +101,7 @@ def without_python_comments(text: str) -> str:
     return tokenize.untokenize(token for token in stream if token.type != tokenize.COMMENT)
 
 
-def generate(files: dict[str, bytes]) -> dict[str, bytes]:
+def generate(files: dict[str, bytes], *, modern: bool = False) -> dict[str, bytes]:
     manifest = tomllib.loads(files['config/units.toml'].decode())
     units = [unit for unit in manifest['unit'] if unit.get('scope') != 'vendored']
     source_names = {unit['source'] for unit in units}
@@ -181,6 +181,15 @@ overflow-checks = true
     output['flake.lock'] = (json.dumps({'nodes': {'nixpkgs': nixpkgs,
         'root': {'inputs': {'nixpkgs': 'nixpkgs'}}}, 'root': 'root', 'version': lock['version']},
         indent=2) + '\n').encode()
+    if modern:
+        from scripts.kf.clean_cpp import modernize
+        output = modernize(files, output)
+    else:
+        output = {name: data for name, data in output.items()
+                  if not name.startswith('codecs/') and name not in (
+                      'scripts/psxbuild/clang.py', 'scripts/psxbuild/elf_to_lnk.py')}
+        output['flake.nix'] = output['flake.nix'].replace(
+            b'        codecs = pkgs.mkShell { packages = [ pkgs.cargo pkgs.rustc ]; };\n', b'')
     for name in output:
         if any(part in ('tests', '__pycache__', '.git') for part in Path(name).parts):
             raise ValueError(f'forbidden generated path: {name}')
@@ -253,8 +262,9 @@ def verify(output: Path, repo: Path, *, compare: bool = True) -> None:
                       flush=True)
             else:
                 print(f'{name}: native link and complete executable are byte-identical', flush=True)
-    subprocess.run(['nix', 'develop', f'path:{output}#codecs', '-c', 'cargo', 'build', '--offline',
-                    '--manifest-path', str(output / 'codecs/Cargo.toml')], check=True)
+    if (output / 'codecs/Cargo.toml').exists():
+        subprocess.run(['nix', 'develop', f'path:{output}#codecs', '-c', 'cargo', 'build', '--offline',
+                        '--manifest-path', str(output / 'codecs/Cargo.toml')], check=True)
 
 
 def publish(repo: Path, files: dict[str, bytes], commit: str, branch: str, requested: Path) -> Path:
@@ -307,7 +317,7 @@ def publish(repo: Path, files: dict[str, bytes], commit: str, branch: str, reque
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_bytes(data)
     git(worktree, 'add', '--all', '--', *sorted(files))
-    message = f'source: regenerate from {commit[:12]}\n\n{PROVENANCE}\nSource-Commit: {commit}\n'
+    message = f'{branch}: regenerate from {commit[:12]}\n\n{PROVENANCE}\nSource-Commit: {commit}\n'
     if tip and subprocess.run(['git', '-C', str(repo), 'merge-base', '--is-ancestor', commit, tip],
                               capture_output=True).returncode:
         # Content is the export, while both source and generated ancestry are retained.
@@ -324,6 +334,7 @@ def main(argv=None) -> int:
     parser.add_argument('--out', type=Path, default=Path('build/clean-source'))
     parser.add_argument('--ref', default='HEAD')
     parser.add_argument('--working-tree', action='store_true', help='preview tracked working files')
+    parser.add_argument('--classic', action='store_true', help='export plain C without codecs')
     parser.add_argument('--verify', action='store_true')
     parser.add_argument('--publish', metavar='BRANCH')
     parser.add_argument('--worktree', type=Path, default=Path('build/source'))
@@ -338,13 +349,13 @@ def main(argv=None) -> int:
         if args.verify and args.ref != 'HEAD':
             raise ValueError('--verify compares with current HEAD; check out the requested revision first')
         commit, inputs = snapshot(REPO, args.ref, working=args.working_tree)
-        files = generate(inputs)
+        files = generate(inputs, modern=not args.classic)
         output = write_output(REPO, args.out, files, commit, args.working_tree)
         fingerprint = hashlib.sha256(b''.join(name.encode() + b'\0' + data
                                              for name, data in sorted(files.items()))).hexdigest()
         print(f'Generated {len(files)} files at {output}; SHA-256 {fingerprint}', flush=True)
         if args.verify:
-            verify(output, REPO)
+            verify(output, REPO, compare=args.classic)
         if args.publish:
             worktree = publish(REPO, files, commit, args.publish, args.worktree)
             print(f'{args.publish}: {worktree}', flush=True)

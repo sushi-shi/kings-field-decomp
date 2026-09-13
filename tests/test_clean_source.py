@@ -150,7 +150,11 @@ class ExportControls(unittest.TestCase):
         self.assertNotIn('include/kf/address.h', first)
         self.assertFalse(any('/tests/' in path or '/bin/' in path or path.startswith('tests/')
                              for path in first))
-        self.assertIn('codecs/src/lib.rs', first)
+        self.assertNotIn('codecs/src/lib.rs', first)
+        modern = generate(files, modern=True)
+        self.assertIn('codecs/src/lib.rs', modern)
+        self.assertIn(b'enum class', modern['include/kf/game_menu.h'])
+        self.assertIn('src/game/main.cpp', modern)
         self.assertNotIn('scripts/kf/cli.py', first)
         self.assertEqual(len(json.loads(first['build.json'])['images']), 3)
 

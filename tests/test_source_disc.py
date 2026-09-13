@@ -41,6 +41,22 @@ def synthetic_disc():
 
 
 class SourceDiscControls(unittest.TestCase):
+    def test_retail_mode_uses_environment_disc_without_executables(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            original = synthetic_disc()
+            path = root / 'original.bin'
+            path.write_bytes(original)
+            with mock.patch.dict('os.environ', {'KF_RETAIL_DISC': str(path),
+                                              'XDG_CACHE_HOME': str(root / 'cache')}), \
+                    mock.patch.object(disc, 'RETAIL_DISC_SHA256', hashlib.sha256(original).hexdigest()):
+                self.assertEqual(disc.main(['--retail', '--prepare-only']), 0)
+            cues = list((root / 'cache').rglob('game.cue'))
+            self.assertEqual(len(cues), 1)
+            self.assertEqual(disc._cue_bin(cues[0]), path)
+            self.assertEqual(path.read_bytes(), original)
+            self.assertFalse(list((root / 'cache').rglob('*.bin')))
+
     def test_extents_are_read_from_iso_directory(self):
         self.assertEqual(disc.iso_files(synthetic_disc()), {
             'PSX.EXE': (18, 4096), 'GAME.EXE': (20, 4096), 'OPEN.EXE': (22, 4096),
@@ -75,7 +91,7 @@ class SourceDiscControls(unittest.TestCase):
                 self.assertEqual(rebuilt[next_start + 24:next_start + 2072], bytes(2048))
             self.assertEqual(rebuilt[:18 * disc.SECTOR_SIZE], original[:18 * disc.SECTOR_SIZE])
 
-    def test_rejects_wrong_disc_missing_program_and_oversize(self):
+    def test_rejects_wrong_disc_and_missing_program(self):
         with tempfile.TemporaryDirectory() as temporary:
             root = Path(temporary)
             original = synthetic_disc()
@@ -86,10 +102,41 @@ class SourceDiscControls(unittest.TestCase):
             with mock.patch.object(disc, 'RETAIL_DISC_SHA256', hashlib.sha256(original).hexdigest()):
                 with self.assertRaisesRegex(ValueError, 'missing'):
                     disc.prepare(path, root, root / 'cache')
-                (root / 'PSX.EXE').write_bytes(b'PS-X EXE' + bytes(4096))
-                with self.assertRaisesRegex(ValueError, 'exceed'):
-                    disc.prepare(path, root, root / 'cache')
             self.assertFalse((root / 'cache').exists())
+
+    def test_larger_executable_moves_to_new_sectors_without_moving_assets(self):
+        with tempfile.TemporaryDirectory() as temporary:
+            root = Path(temporary)
+            original = synthetic_disc()
+            path = root / 'input.bin'
+            path.write_bytes(original)
+            for name in ('PSX.EXE', 'GAME.EXE', 'OPEN.EXE'):
+                (root / name).write_bytes(b'PS-X EXE' + bytes(2048 - 8))
+            large = b'PS-X EXE' + b'X' * 5000
+            (root / 'GAME.EXE').write_bytes(large)
+            with mock.patch.object(disc, 'RETAIL_DISC_SHA256', hashlib.sha256(original).hexdigest()):
+                cue = disc.prepare(path, root, root / 'cache')
+            rebuilt = cue.with_suffix('.bin').read_bytes()
+            files = disc.iso_files(rebuilt, with_records=True)
+            lba, size, record = files['GAME.EXE']
+            self.assertEqual((lba, size), (26, len(large)))
+            self.assertEqual(struct.unpack_from('>I', rebuilt, record + 6)[0], lba)
+            self.assertEqual(struct.unpack_from('>I', rebuilt, record + 14)[0], size)
+            self.assertEqual(files['PSX.EXE'][:2], (18, 4096))
+            self.assertEqual(files['OPEN.EXE'][:2], (22, 4096))
+            self.assertEqual(rebuilt[24 * disc.SECTOR_SIZE:26 * disc.SECTOR_SIZE],
+                             original[24 * disc.SECTOR_SIZE:26 * disc.SECTOR_SIZE])
+            payload = b''.join(rebuilt[n * disc.SECTOR_SIZE + 24:n * disc.SECTOR_SIZE + 2072]
+                               for n in range(26, 29))
+            self.assertEqual(payload[:size], large)
+            self.assertEqual(payload[size:], bytes(len(payload) - size))
+            for number in (16, 17, 26, 27, 28):
+                sector = bytearray(rebuilt[number * disc.SECTOR_SIZE:(number + 1) * disc.SECTOR_SIZE])
+                control = bytearray(sector)
+                disc.regenerate_sector(control)
+                self.assertEqual(control, sector)
+            self.assertEqual(struct.unpack_from('<I', rebuilt, 16 * disc.SECTOR_SIZE + 24 + 80)[0], 29)
+            self.assertEqual(path.read_bytes(), original)
 
     def test_cue_relative_path_with_spaces_and_ambiguous_directory(self):
         with tempfile.TemporaryDirectory() as temporary:
