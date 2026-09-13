@@ -40,7 +40,7 @@ void display_play_transition(void)
     PutDrawEnv(&game_graphics_runtime.display_draw_environments[1]);
     DrawSync(0);
 
-    if (cd_file_load_into(game_graphics_runtime.display_state.asset_load_buffer, fade_screen_path) != KF_RESOURCE_LOADED) {
+    if (cd_file_load_into((void *)game_graphics_runtime.display_state.asset_load_buffer, fade_screen_path) != KF_RESOURCE_LOADED) {
         return;
     }
     tim_upload_images(game_graphics_runtime.display_state.asset_load_buffer);

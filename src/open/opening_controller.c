@@ -28,8 +28,8 @@ void opening_run(KfOverlayMode overlay_mode)
 
     PadInit(0);
     /* Retail clears the display state and the contiguous opening runtime BSS. */
-    memset(&open_graphics_runtime, 0, sizeof open_graphics_runtime);
-    memset(&opening_entity_state, 0, sizeof opening_entity_state);
+    memset((void *)&open_graphics_runtime, 0, sizeof open_graphics_runtime);
+    memset((void *)&opening_entity_state, 0, sizeof opening_entity_state);
     memory_set_allocation_mode(KF_MEMORY_CREATE_ARENA);
     audio_initialize();
     display_initialize(overlay_mode);
@@ -42,7 +42,7 @@ void opening_run(KfOverlayMode overlay_mode)
     case KF_OVERLAY_MODE_INTRO:
         SetDispMask(1);
         if (cd_file_load_into(
-                open_graphics_runtime.display_state.asset_load_buffer,
+                (void *)open_graphics_runtime.display_state.asset_load_buffer,
                 opening_initial_tim_path) != KF_RESOURCE_LOADED) {
             return;
         }
@@ -51,7 +51,7 @@ void opening_run(KfOverlayMode overlay_mode)
         skip_action = KF_OPENING_INPUT_SKIP;
         opening_fade_in();
         cd_file_load_allocated(&tim_data, "B0\\MIX0.");
-        tim_upload_images((void *)tim_data);
+        tim_upload_images(tim_data);
         memory_release_last();
         opening_input_action = KF_OPENING_INPUT_NONE;
 
@@ -67,7 +67,7 @@ opening_reload:
                 memory_arena.allocation.cursor = memory_arena.start;
                 memory_arena.allocation.stack[KF_MEMORY_STACK_DEPTH_INDEX] = 0;
                 cd_file_load_allocated(&tim_data, "B0\\MIX3.");
-                tim_upload_images((void *)tim_data);
+                tim_upload_images(tim_data);
                 memory_release_last();
                 audio_stop_sequence(KF_AUDIO_STOP_FADE);
                 break;

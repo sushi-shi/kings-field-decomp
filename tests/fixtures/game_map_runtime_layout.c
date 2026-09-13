@@ -23,7 +23,7 @@ CHECK_OFFSET(KfMapRuntimeState, dialogue_advance_gate, 0x228);
 CHECK_OFFSET(KfMapRuntimeState, ambient_script_countdown, 0x22a);
 CHECK_OFFSET(KfMapRuntimeState, world_state, 0x22c);
 
-/* Canonical owners retain complete extents without alternate copy arrays. */
+/* Canonical owners and the grid's aligned transfer representation. */
 #define CHECK_SIZE(type, size) typedef char type##_size[sizeof(type) == size ? 1 : -1]
 CHECK_SIZE(KfWeaponTable, 704);
 CHECK_SIZE(KfArmorTable, 1176);
@@ -41,6 +41,8 @@ CHECK_SIZE(KfMapObjectPlacement, 20);
 CHECK_SIZE(KfMapObject, 44);
 CHECK_OFFSET(KfMapObjectPlacement, link, 12);
 CHECK_OFFSET(KfMapObject, link, 32);
+CHECK_OFFSET(KfMapObjectLink, words, 0);
+typedef char link_word_alignment[__alignof__(KfMapObjectLink) == 4 ? 1 : -1];
 CHECK_OFFSET(KfWeaponTable, entries, 0);
 CHECK_OFFSET(KfArmorTable, entries, 0);
 CHECK_OFFSET(KfActorDefinitionTable, entries, 0);
@@ -54,4 +56,12 @@ CHECK_OFFSET(KfMapGrid, linear, 0);
 CHECK_OFFSET(KfMapAttributeGrid, linear, 0);
 CHECK_OFFSET(KfMapCollisionGrid, linear, 0);
 CHECK_OFFSET(KfMapOrientationGrid, linear, 0);
+CHECK_OFFSET(KfMapGrid, words, 0);
+CHECK_OFFSET(KfMapAttributeGrid, words, 0);
+CHECK_OFFSET(KfMapCollisionGrid, words, 0);
+CHECK_OFFSET(KfMapOrientationGrid, words, 0);
+typedef char grid_word_alignment[__alignof__(KfMapGrid) == 4 ? 1 : -1];
+typedef char attribute_word_alignment[__alignof__(KfMapAttributeGrid) == 4 ? 1 : -1];
+typedef char collision_word_alignment[__alignof__(KfMapCollisionGrid) == 4 ? 1 : -1];
+typedef char orientation_word_alignment[__alignof__(KfMapOrientationGrid) == 4 ? 1 : -1];
 CHECK_OFFSET(KfMapSavedWorld, floors, 0);

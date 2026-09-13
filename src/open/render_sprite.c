@@ -37,10 +37,10 @@ void render_enqueue_sprite(
     prim->sdk.clut = open_graphics_runtime.floor_item_state.material.clut;
     prim->sdk.tpage = open_graphics_runtime.floor_item_state.material.tpage;
     /* GTE screen coordinates are copied into the GPU packet as packed words. */
-    memcpy(&prim->sdk.x0, &sxy0, sizeof sxy0);
-    memcpy(&prim->sdk.x1, &sxy1, sizeof sxy1);
-    memcpy(&prim->sdk.x2, &sxy2, sizeof sxy2);
-    memcpy(&prim->sdk.x3, &sxy3, sizeof sxy3);
+    memcpy((void *)&prim->sdk.x0, (const void *)&sxy0, sizeof sxy0);
+    memcpy((void *)&prim->sdk.x1, (const void *)&sxy1, sizeof sxy1);
+    memcpy((void *)&prim->sdk.x2, (const void *)&sxy2, sizeof sxy2);
+    memcpy((void *)&prim->sdk.x3, (const void *)&sxy3, sizeof sxy3);
     prim->sdk.u0 = prim->sdk.u2 = sprite->u;
     prim->sdk.u1 = prim->sdk.u3 = sprite->u + sprite->u_span;
     prim->sdk.v0 = prim->sdk.v1 = sprite->v;
@@ -53,7 +53,7 @@ void render_enqueue_sprite(
                    depth_cue, &prim->packed.color0);
     if (otz + depth_bias >= KF_SCENE_MIN_OT_DEPTH) {
         AddPrim(
-            &open_graphics_runtime.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
-            &prim->sdk);
+            (void *)(&open_graphics_runtime.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK]),
+            (void *)&prim->sdk);
     }
 }

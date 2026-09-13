@@ -31,12 +31,12 @@ void game_main_loop(void)
 {
     s32 vsync_event;
 
-    memset(&game_graphics_runtime, 0, sizeof game_graphics_runtime);
-    memset(&actor_state, 0, INITIAL_ACTOR_CLEAR_BYTES);
-    memset(&map_object_state, 0, INITIAL_MAP_OBJECT_CLEAR_BYTES);
-    memset(&effect_state, 0, sizeof(KfEffectState));
-    memset(map_event_pool, 0, INITIAL_MAP_EVENT_CLEAR_BYTES);
-    memset(&player_state, 0, sizeof(KfPlayerState));
+    memset((void *)&game_graphics_runtime, 0, sizeof game_graphics_runtime);
+    memset((void *)&actor_state, 0, INITIAL_ACTOR_CLEAR_BYTES);
+    memset((void *)&map_object_state, 0, INITIAL_MAP_OBJECT_CLEAR_BYTES);
+    memset((void *)&effect_state, 0, sizeof(KfEffectState));
+    memset((void *)map_event_pool, 0, INITIAL_MAP_EVENT_CLEAR_BYTES);
+    memset((void *)&player_state, 0, sizeof(KfPlayerState));
     memory_card_initialize();
     memory_set_allocation_mode(KF_MEMORY_CREATE_ARENA);
     audio_initialize();
