@@ -43,11 +43,11 @@ The output is deterministic. Only marked output directories can be replaced;
 an output inside this checkout must be below `build/`. Publication creates a
 local generated branch and a persistent worktree. It refuses dirty destination
 worktrees, unrelated existing branches, and collisions with ignored files.
-The first export is a root commit. Identical regeneration from the same commit
-is a no-op; later generations retain only the previous export as their parent.
-Master's history is not imported. Provenance stays in commit messages.
-`--reset-history` explicitly replaces a generated branch with one root commit;
-back up its previous tip before using this migration option. No remote push occurs.
+Each generated branch always contains exactly one root commit. Regeneration
+replaces that snapshot; identical regeneration from the same commit is a no-op.
+Older exports with ancestry are collapsed automatically. Provenance stays in
+commit messages. Publication is local; updating GitHub requires a push with an
+explicit expected-tip `--force-with-lease` for each generated branch.
 
 The allowlist retains the C files used by the executable builder, their project
 and SDK wrapper headers, linker boundaries, build support, and the Rust codec

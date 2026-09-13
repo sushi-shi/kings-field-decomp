@@ -158,7 +158,7 @@ class ExportControls(unittest.TestCase):
         self.assertNotIn('scripts/kf/cli.py', first)
         self.assertEqual(len(json.loads(first['build.json'])['images']), 3)
 
-    def test_publish_keeps_only_export_history_and_refuses_local_changes(self):
+    def test_publish_keeps_one_snapshot_and_refuses_local_changes(self):
         with tempfile.TemporaryDirectory() as temporary:
             repo = Path(temporary) / 'repo'
             repo.mkdir()
@@ -187,11 +187,14 @@ class ExportControls(unittest.TestCase):
             second = git(repo, 'rev-parse', 'HEAD')
             publish(repo, {'README.md': b'new generation\n'}, second, 'source', worktree)
             parents = git(repo, 'rev-list', '--parents', '-1', 'source').split()[1:]
-            self.assertEqual(parents, [tip])
-            self.assertEqual(git(repo, 'rev-list', '--count', 'source'), '2')
+            self.assertEqual(parents, [])
+            self.assertEqual(git(repo, 'rev-list', '--count', 'source'), '1')
             tree = git(repo, 'rev-parse', 'source^{tree}')
-            publish(repo, {'README.md': b'new generation\n'}, second, 'source', worktree,
-                    reset_history=True)
+            # Even identical contents must repair an older export with ancestry.
+            message = git(worktree, 'log', '-1', '--format=%B')
+            legacy = git(repo, 'commit-tree', tree, '-p', second, '-m', message)
+            git(repo, 'update-ref', 'refs/heads/source', legacy)
+            publish(repo, {'README.md': b'new generation\n'}, second, 'source', worktree)
             self.assertEqual(git(repo, 'rev-list', '--count', 'source'), '1')
             self.assertEqual(git(repo, 'rev-parse', 'source^{tree}'), tree)
             self.assertEqual(git(worktree, 'status', '--porcelain'), '')
