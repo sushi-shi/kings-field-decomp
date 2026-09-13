@@ -34,7 +34,7 @@ KfResourceLoadResult cd_file_load_allocated(u8 **destination, const char *relati
     s32 attempt;
     s32 loaded; /* also the rounded sector count; retail keeps both in $s1 */
 
-    memcpy(path, cd_path_prefix, sizeof cd_path_prefix);
+    memcpy((void *)path, (const void *)cd_path_prefix, sizeof cd_path_prefix);
     strcat(path, relative_path);
     strcat(path, cd_version_suffix);
     if (CdSearchFile(&cd_search_file, path) == NULL) {
@@ -67,12 +67,12 @@ KfResourceLoadResult cd_file_load_allocated(u8 **destination, const char *relati
 
 /* Loads the file table entry INDEX into a fresh arena allocation. */
 ADDRESS(0x8001ae60, 0x13c)
-KfResourceLoadResult cd_file_load_table_entry(void **destination, s32 index)
+KfResourceLoadResult cd_file_load_table_entry(u8 **destination, s32 index)
 {
     s32 attempt;
     KfBool32 loaded;
 
-    *destination = memory_allocate(cd_file_table[index].size);
+    *destination = (u8 *)memory_allocate(cd_file_table[index].size);
     loaded = KF_FALSE;
     CD_LOCATION_COPY(cd_read_location, cd_file_table[index]);
     for (attempt = 0; attempt < CD_TABLE_READ_ATTEMPTS; attempt++) {
@@ -101,7 +101,7 @@ KfResourceLoadResult cd_file_load_into(void *destination, const char *relative_p
     s32 attempt;
     s32 loaded; /* also the rounded sector count; retail keeps both in $s1 */
 
-    memcpy(path, cd_path_prefix, sizeof cd_path_prefix);
+    memcpy((void *)path, (const void *)cd_path_prefix, sizeof cd_path_prefix);
     strcat(path, relative_path);
     strcat(path, cd_version_suffix);
     if (CdSearchFile(&cd_search_file, path) == NULL) {

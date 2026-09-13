@@ -519,13 +519,13 @@ extern void talk_show_dialogue_page(KF_ENUM_PARAM(KfFloorId, u8) floor, u8 stage
 
 /* Requires the GAME graphics state; preserve reverse primitive insertion order. */
 #define MENU_ENQUEUE_BACKGROUND() ( \
-    AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_BACKGROUND_OT_DEPTH, \
-        &menu_assets.background_quads[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)][3]), \
-    AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_BACKGROUND_OT_DEPTH, \
-        &menu_assets.background_quads[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)][2]), \
-    AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_BACKGROUND_OT_DEPTH, \
-        &menu_assets.background_quads[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)][1]), \
-    AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_BACKGROUND_OT_DEPTH, \
-        &menu_assets.background_quads[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)][0]))
+    AddPrim((void *)(game_graphics_runtime.display_state.ordering_table + MENU_BACKGROUND_OT_DEPTH), \
+        (void *)&menu_assets.background_quads[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)][3]), \
+    AddPrim((void *)(game_graphics_runtime.display_state.ordering_table + MENU_BACKGROUND_OT_DEPTH), \
+        (void *)&menu_assets.background_quads[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)][2]), \
+    AddPrim((void *)(game_graphics_runtime.display_state.ordering_table + MENU_BACKGROUND_OT_DEPTH), \
+        (void *)&menu_assets.background_quads[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)][1]), \
+    AddPrim((void *)(game_graphics_runtime.display_state.ordering_table + MENU_BACKGROUND_OT_DEPTH), \
+        (void *)&menu_assets.background_quads[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)][0]))
 
 #endif

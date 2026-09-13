@@ -3,8 +3,8 @@
 #include <kf/open_render.h>
 #include <kf/open_scene0.h>
 
-DATA(0x800439d8, 0xcc0)
-KfCellWindow render_cell_windows[KF_CELL_WINDOW_YAW_COUNT];
+DATA(0x800439d8, 0x3400)
+KfOpeningCellStorage opening_cell_storage;
 
 ADDRESS(0x80018bbc, 0x1d0)
 void render_map_cell(s32 col, s32 row, KfCellVisibility visibility)
@@ -65,7 +65,7 @@ void opening_render_map_cells(void)
     u8 cols;
 
     open_graphics_runtime.active_cell_window =
-        &render_cell_windows[KF_CELL_WINDOW_YAW_COUNT - 1
+        &opening_cell_storage.scene.windows[KF_CELL_WINDOW_YAW_COUNT - 1
             - (open_graphics_runtime.render_state.view_rotation.vy
                 >> KF_CELL_WINDOW_YAW_SHIFT)];
     cell = open_graphics_runtime.active_cell_window->cells;

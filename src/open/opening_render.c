@@ -29,5 +29,5 @@ void sprite_add_g4(const KfScreenRect *rectangle, const CVECTOR *color0, const C
     setRGB1(prim, color1->r, color1->g, color1->b);
     setRGB2(prim, color2->r, color2->g, color2->b);
     setRGB3(prim, color3->r, color3->g, color3->b);
-    AddPrim(&open_graphics_runtime.ordering_table[ENDING_GRADIENT_OT_DEPTH], prim);
+    AddPrim((void *)(&open_graphics_runtime.ordering_table[ENDING_GRADIENT_OT_DEPTH]), (void *)prim);
 }

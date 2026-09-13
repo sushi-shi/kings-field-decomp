@@ -161,14 +161,14 @@ KfDialogueState	0x00	0x04	fields	KfDialogueFields	supported	game_map.h;asm;xrefs
 KfDialogueState	0x00	0x04	word	u32	supported	game_map.h;asm;xrefs;typed-packed-state.md	script trigger word whose low cap byte is masked away
 KfDisplayState	0x00	0x01	buffer_index	KfDisplayBuffer	supported	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;display_begin_frame;strict-enum-audit.md	member of the display_state aggregate
 KfDisplayState	0x01	0x03	unknown_01	u8[3]	opaque	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;display_begin_frame	member of the display_state aggregate
-KfDisplayState	0x04	0x04	asset_load_buffer	void *	supported	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;display_begin_frame	member of the display_state aggregate
+KfDisplayState	0x04	0x04	asset_load_buffer	u8 *	supported	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;display_begin_frame	member of the display_state aggregate
 KfDisplayState	0x08	0x18	primitive_buffers	KfPrimitiveBuffer[2]	supported	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;display_begin_frame	member of the display_state aggregate
 KfDisplayState	0x20	0x04	primitive_buffer	KfPrimitiveBuffer *	supported	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;display_begin_frame	member of the display_state aggregate
 KfDisplayState	0x24	0x20000	ordering_tables	KfOrderingTable[2]	supported	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;display_begin_frame	member of the display_state aggregate
 KfDisplayState	0x20024	0x04	ordering_table	u32 *	supported	game_render.h;game_semantic_display_tmd.tsv;asm;base-register;display_begin_frame	member of the display_state aggregate
 KfDisplayStateOpen	0x00	0x01	buffer_index	KfDisplayBuffer	supported	open_render.h;asm;base-register;display_begin_frame;render_initialize;strict-enum-audit.md	member of the display_state aggregate
 KfDisplayStateOpen	0x01	0x03	unknown_01	u8[3]	opaque	open_render.h;asm;base-register;display_begin_frame;render_initialize	member of the display_state aggregate
-KfDisplayStateOpen	0x04	0x04	asset_load_buffer	void *	supported	open_render.h;asm;base-register;display_begin_frame;render_initialize	member of the display_state aggregate
+KfDisplayStateOpen	0x04	0x04	asset_load_buffer	u8 *	supported	open_render.h;asm;base-register;display_begin_frame;render_initialize	member of the display_state aggregate
 KfDisplayStateOpen	0x08	0x18	primitive_buffers	KfPrimitiveBuffer[2]	supported	open_render.h;asm;base-register;display_begin_frame;render_initialize	member of the display_state aggregate
 KfDisplayStateOpen	0x20	0x04	primitive_buffer	KfPrimitiveBuffer *	supported	open_render.h;asm;base-register;display_begin_frame;render_initialize	member of the display_state aggregate
 KfDisplayStateOpen	0x24	0x20000	ordering_tables	KfOrderingTable[2]	supported	open_render.h;asm;base-register;display_begin_frame;render_initialize	member of the display_state aggregate
@@ -331,12 +331,14 @@ KfMagicRecord	0x12	0x02	unknown_12	u8[2]	opaque	magic.h;asm	meaning unresolved
 KfMagicTable	0x00	0x1e0	entries	KfMagicRecord[24]	supported	magic.h;asm;typed-record-tables.md	typed records selected by the game consumers
 KfMapAttributeGrid	0x00	0x2710	cells	KfMapAttribute[100][100]	supported	map_data.h;asm;xrefs;enum-field-review.md	100 by 100 enum attribute cells
 KfMapAttributeGrid	0x00	0x2710	linear	KfMapAttribute[10000]	supported	map_data.h;asm;collision_query_world;cast-union-debt.md	same typed row-major cells addressed by a flat collision index; dual-index union is a reconstruction convenience
+KfMapAttributeGrid	0x00	0x2710	words	u32[2500]	supported	map_data.h;asm;map_resource_copy_words;resource_stream_copy_words	aligned word-transfer representation sharing the complete cell-grid extent
 KfMapCell	0x00	0x02	coords	KfMapCellCoordinates	supported	game_map.h;asm;xrefs;typed-packed-state.md	unsigned z/x byte coordinates
 KfMapCell	0x00	0x02	word	u16	supported	game_map.h;asm;xrefs;typed-packed-state.md	unsigned halfword comparison in main loop
 KfMapCellCoordinates	0x00	0x01	z	u8	supported	game_map.h;game_semantic_player_motion_attack.tsv;asm;xrefs	map row derived from world z divided by 2000
 KfMapCellCoordinates	0x01	0x01	x	u8	supported	game_map.h;game_semantic_player_motion_attack.tsv;asm;xrefs	map column derived from world x divided by 2000
 KfMapCollisionGrid	0x00	0x2710	cells	KfMapCellKind[100][100]	supported	map_data.h;strict-enum-audit.md;map_load;map_object_mark_collision_edge;render_map_cells	typed cell selectors share the unchanged 0x2710-byte resource-copy span
 KfMapCollisionGrid	0x00	0x2710	linear	KfMapCellKind[10000]	supported	map_data.h;asm;collision_query_world;map_floor_height_for_cell_position;cast-union-debt.md	same typed row-major cells addressed by a flat collision index; dual-index union is a reconstruction convenience
+KfMapCollisionGrid	0x00	0x2710	words	u32[2500]	supported	map_data.h;asm;map_resource_copy_words;resource_stream_copy_words	aligned word-transfer representation sharing the complete cell-grid extent
 KfMapCopyRegion	0x00	0x01	source_x	u8	supported	game_map.h;asm;xrefs	source x
 KfMapCopyRegion	0x01	0x01	source_z	u8	supported	game_map.h;asm;xrefs	source z
 KfMapCopyRegion	0x02	0x01	destination_x	u8	supported	game_map.h;asm;xrefs	destination x
@@ -396,6 +398,7 @@ KfMapFloorScript	0x0	0x1	floor3	KfMapFloor3Script	supported	game_map.h;asm;game-
 KfMapFloorScript	0x0	0x4	floor5	KfMapFloor5Script	supported	game_map.h;asm;game-map-script-state.md;save-read-write:0x2134;floor-stream-stride:1700	floor 5 interpretation of the first four prefix bytes
 KfMapGrid	0x00	0x2710	cells	u8[100][100]	supported	asm;typed-map-tables.md;cast-union-debt.md	canonical row/column grid
 KfMapGrid	0x00	0x2710	linear	u8[10000]	supported	map_data.h;asm;collision_query_world;map_floor_height_for_cell_position;cast-union-debt.md	same row-major cells addressed by a flat collision index; dual-index union is a reconstruction convenience
+KfMapGrid	0x00	0x2710	words	u32[2500]	supported	map_data.h;asm;map_resource_copy_words;resource_stream_copy_words	aligned word-transfer representation sharing the complete cell-grid extent
 KfMapObject	0x00	0x01	object_id	KfObjectId	supported	game_map.h;asm;xrefs	object definition ID
 KfMapObject	0x01	0x01	unknown_01	u8	opaque	game_map.h;asm;xrefs	meaning unresolved
 KfMapObject	0x02	0x02	cell_x	u16	supported	game_map.h;asm;xrefs	map cell x
@@ -419,6 +422,7 @@ KfMapObjectLink	0x00	0x08	fields	KfMapObjectLinkFields	supported	game_map.h;asm;
 KfMapObjectLink	0x00	0x02	gold_amount	u16	supported	game_map.h;asm;typed-map-links.md	gold-coin amount loaded and stored as one halfword
 KfMapObjectLink	0x00	0x05	hinged_container	KfMapObjectHingedContainer	supported	game_map.h;asm;typed-map-links.md	trigger byte followed by four encoded item IDs
 KfMapObjectLink	0x00	0x04	item_ids	KfObjectId[4]	supported	game_map.h;asm;typed-map-links.md;strict-enum-audit.md	four encoded item IDs for ordinary containers
+KfMapObjectLink	0x00	0x08	words	u32[2]	supported	game_map.h;asm;map_object_pool_load;typed-map-links.md	aligned two-word transfer representation of the complete eight-byte link
 KfMapObjectLinkFields	0x00	0x01	link_id	u8	supported	game_map.h;asm;map_object_pool_load;typed-map-links.md	trigger link id
 KfMapObjectLinkFields	0x01	0x01	action_parameter	KfMapObjectParameter	supported	game_map.h;asm;map_object_pool_load;typed-map-links.md;enum-field-review.md	behavior selects effect-pool index, paired-door object index or typed map-copy region
 KfMapObjectLinkFields	0x02	0x02	spawn	KfMapObjectSpawn	supported	game_map.h;asm;map_object_pool_load;typed-map-links.md	unsigned drop sequence or byte effect ID, selected by object behavior
@@ -447,6 +451,7 @@ KfMapObjectState	0x25b4	0x2	effect_sequence_170	u16	supported	asm;map_object_poo
 KfMapObjectState	0x25b6	0x2	effect_sequence_180	u16	supported	asm;map_object_pool_clear;data-repair-campaign.md	wrapping sequence for reserved slots 180 through 189
 KfMapOrientationGrid	0x00	0x2710	cells	KfMapOrientation[100][100]	supported	map_data.h;strict-enum-audit.md;map_load;map_object_mark_collision_edge;render_map_cells	typed cell selectors share the unchanged 0x2710-byte resource-copy span
 KfMapOrientationGrid	0x00	0x2710	linear	KfMapOrientation[10000]	supported	map_data.h;asm;map_floor_height_for_cell_position;cast-union-debt.md	same typed row-major cells addressed by a flat collision index; dual-index union is a reconstruction convenience
+KfMapOrientationGrid	0x00	0x2710	words	u32[2500]	supported	map_data.h;asm;map_resource_copy_words;resource_stream_copy_words	aligned word-transfer representation sharing the complete cell-grid extent
 KfMapRuntimeState	0x000	0x220	events	KfMapEvent[8]	supported	game_map.h;asm;0x44-stride;8-record-loop	live map-event records
 KfMapRuntimeState	0x220	0x004	current_event	KfMapEvent *	supported	game_map.h;asm;map_event_set_current;spinner-current-minus-544	selected event pointer
 KfMapRuntimeState	0x224	0x004	variant_asset_buffer	u8 *	supported	game_map.h;asm;map_variant_assets_load	persistent CHR variant allocation
@@ -497,6 +502,8 @@ KfNotificationSprite	0x01	0x01	unknown_01	u8	opaque	notify.h;retail-initializers
 KfNotificationSprite	0x02	0x0c	sprite	KfSpriteQuad	supported	notify.h;asm;notify_effect_update;render_frame	complete descriptor passed to render_enqueue_sprite or updated by notification_digit_set_v
 KfNotificationState	0x00	0x10	message_payloads	u16[8]	supported	notify.h;game_semantic_notification_state.tsv;asm;head-minus-17;phase-minus-18	parallel numeric payloads used only by message 0x13
 KfNotificationState	0x10	0x06	control	KfNotificationControl	supported	notify.h;asm;notify_effect_update:phase-minus-two;docs/patterns/game-notification-dequeue.md	shared dequeue and effect controls immediately after the eight numeric payloads
+KfOpeningCellStorage	0x00	0x1000	rtbl_sectors	u32[2][512]	supported	open_render.h;render_initialize;cd_file_load_into;B0-RTBL-resource	two-sector startup write overlaps the later scene view; size follows sector rounding, not logical window count
+KfOpeningCellStorage	0x00	0x3400	scene	KfOpeningSceneCells	supported	open_render.h;asm;opening_resources_load_scene0	persistent scene view initialized after the sector transfer
 KfOpeningEntity	0x00	0x01	object_id	KfOpeningModelId	supported	open_resources.h;open_semantic_resources.tsv;asm	object/model selector; 0xff marks an inactive pool slot
 KfOpeningEntity	0x01	0x01	unknown_01	u8	opaque	open_resources.h;open_semantic_resources.tsv	meaning unresolved
 KfOpeningEntity	0x02	0x02	cell_x	u16	supported	open_resources.h;open_semantic_resources.tsv;asm	map cell x copied from the placement record
@@ -511,6 +518,9 @@ KfOpeningEntityState	0x500	0x0a	unknown_500	u8[10]	opaque	open_resources.h;open_
 KfOpeningEntityState	0x50a	0x02	unknown_control_50a	u16	opaque	open_resources.h;open_semantic_resources.tsv;asm;semantic-field-names.md:unresolved-consumer-audit	OPEN 0x80049a42: individual zero store at 0x800199d4, plus whole-owner clear; exact admitted relocations have no read. GAME pool-tail analogy remains candidate, not a recovered role.
 KfOpeningEntityState	0x50c	0x02	unknown_control_50c	u16	opaque	open_resources.h;open_semantic_resources.tsv;asm;semantic-field-names.md:unresolved-consumer-audit	OPEN 0x80049a44: individual zero store at 0x800199cc, plus whole-owner clear; exact admitted relocations have no read. GAME pool-tail analogy remains candidate, not a recovered role.
 KfOpeningEntityState	0x50e	0x02	unknown_control_50e	u16	opaque	open_resources.h;open_semantic_resources.tsv;asm;semantic-field-names.md:unresolved-consumer-audit	OPEN 0x80049a46: individual zero store at 0x800199c4, plus whole-owner clear; exact admitted relocations have no read. GAME pool-tail analogy remains candidate, not a recovered role.
+KfOpeningSceneCells	0x00	0xcc0	windows	KfCellWindow[16]	supported	open_render.h;opening_render_map_cells;B0-RTBL-resource	logical 3264-byte table at the start of the transfer
+KfOpeningSceneCells	0xcc0	0x30	unknown_cc0	u8[48]	opaque	open_render.h;asm;data_identities.tsv	unclassified bytes between the logical table and the later collision grid
+KfOpeningSceneCells	0xcf0	0x2710	collision_flags	KfMapGrid	supported	open_render.h;opening_resources_load_scene0;asm	fourth scene resource grid at OPEN 0x800446c8, initialized after the overlapping RTBL transfer
 KfOrderingTable	0x00	0x10000	entries	u32[16384]	supported	render_types.h;asm	ordering table entries
 KfOverlayArguments	0x00	0x04	request	KfOverlayMode	supported	overlay.h;asm;PSX-main;GAME-main;OPEN-main;array-enum-review.md	PSX copies the previous result encoding here; OPEN passes it to opening_run
 KfOverlayArguments	0x04	0x04	result	KfOverlayResultWord	supported	overlay.h;asm;PSX-main;GAME-main;OPEN-main;array-enum-review.md	PSX initializes INTRO; GAME writes game_next_overlay_mode on return

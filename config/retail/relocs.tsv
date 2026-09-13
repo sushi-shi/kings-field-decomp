@@ -11714,7 +11714,7 @@ OPEN.EXE	0x800163c8	0x4bc8	0x800163cc	mips_hi16_lo16	reachable-code	0x8006e260	b
 OPEN.EXE	0x800163d4	0x4bd4		mips26	reachable-code	0x80016318	load	resource_stream_copy_words	jal		control-flow-reviewed	reviewed	manual:open_semantic_resources
 OPEN.EXE	0x800163dc	0x4bdc	0x800163e0	mips_hi16_lo16	reachable-code	0x80046df8	bss	map_cell_orientation_grid	lui+addiu	a0	paired-reviewed	reviewed	manual:open_semantic_resources
 OPEN.EXE	0x800163e8	0x4be8		mips26	reachable-code	0x80016318	load	resource_stream_copy_words	jal		control-flow-reviewed	reviewed	manual:open_semantic_resources
-OPEN.EXE	0x800163f0	0x4bf0	0x800163f4	mips_hi16_lo16	reachable-code	0x800446c8	bss	map_collision_flag_grid	lui+addiu	a0	paired-reviewed	reviewed	manual:open_semantic_resources
+OPEN.EXE	0x800163f0	0x4bf0	0x800163f4	mips_hi16_lo16	reachable-code	0x800446c8	bss	opening_cell_storage	lui+addiu	a0	paired-reviewed	reviewed	manual:open_semantic_resources
 OPEN.EXE	0x800163fc	0x4bfc		mips26	reachable-code	0x80016318	load	resource_stream_copy_words	jal		control-flow-reviewed	reviewed	manual:open_semantic_resources
 OPEN.EXE	0x80016404	0x4c04	0x80016408	mips_hi16_lo16	reachable-code	0x80070978	bss	map_collision_grid	lui+addiu	a0	paired-reviewed	reviewed	manual:open_semantic_resources
 OPEN.EXE	0x80016410	0x4c10		mips26	reachable-code	0x80016318	load	resource_stream_copy_words	jal		control-flow-reviewed	reviewed	manual:open_semantic_resources
@@ -11795,7 +11795,7 @@ OPEN.EXE	0x800168c0	0x50c0		mips26	reachable-code	0x80019d50	load	audio_play_seq
 OPEN.EXE	0x800168e8	0x50e8	0x800168ec	mips_hi16_lo16	reachable-code	0x80035944	load	color_matrix_table	lui+addiu	a0	paired-reviewed	reviewed	manual:open_semantic_render_init
 OPEN.EXE	0x800168f0	0x50f0		mips26	reachable-code	0x8002d5b8	load	SetColorMatrix	jal		control-flow-reviewed	reviewed	manual:open_semantic_render_init
 OPEN.EXE	0x80016918	0x5118	0x8001691c	mips_hi16_lo16	reachable-code	0x80049a48	bss	open_graphics_runtime	lui+sb	v0	paired-reviewed	reviewed	manual:game_semantic_display_tmd
-OPEN.EXE	0x80016920	0x5120	0x80016924	mips_hi16_lo16	reachable-code	0x800439d8	bss	render_cell_windows	lui+addiu	a0	paired-reviewed	reviewed	manual:render_initialize;carved-body-reviewed
+OPEN.EXE	0x80016920	0x5120	0x80016924	mips_hi16_lo16	reachable-code	0x800439d8	bss	opening_cell_storage	lui+addiu	a0	paired-reviewed	reviewed	manual:render_initialize;carved-body-reviewed
 OPEN.EXE	0x80016928	0x5128	0x8001692c	mips_hi16_lo16	reachable-code	0x80012110	load		lui+addiu	a1	paired-reviewed	reviewed	manual:game_semantic_display_tmd
 OPEN.EXE	0x80016930	0x5130		mips26	reachable-code	0x8001615c	load	cd_file_load_into	jal		control-flow-reviewed	reviewed	manual:open_cd_file;manual:game_semantic_display_tmd
 OPEN.EXE	0x8001693c	0x513c		mips26	reachable-code	0x80015f30	load	memory_allocate	jal		control-flow-reviewed	reviewed	manual:game_open_semantic_memory_allocator
@@ -12084,7 +12084,7 @@ OPEN.EXE	0x80018d58	0x7558		mips26	reachable-code	0x8002d588	load	SetLightMatrix
 OPEN.EXE	0x80018d64	0x7564		mips26	reachable-code	0x80016ec8	load	tmd_select_object_vertices	jal		control-flow-reviewed	reviewed	manual:game_semantic_display_tmd;manual:open_semantic_map_render
 OPEN.EXE	0x80018d6c	0x756c		mips26	reachable-code	0x800185e8	load	render_enqueue_map	jal		control-flow-reviewed	reviewed	manual:open_semantic_map_render;manual:open_semantic_map_enqueue
 OPEN.EXE	0x80018db0	0x75b0	0x80018db4	mips_hi16_lo16	reachable-code	0x8006e0bf	bss	open_graphics_runtime	lui+lb	v0	paired-reviewed	reviewed	manual:open_semantic_map_render
-OPEN.EXE	0x80018dd4	0x75d4	0x80018dd8	mips_hi16_lo16	reachable-code	0x800439d8	bss	render_cell_windows	lui+addiu	v1	paired-reviewed	reviewed	manual:open_semantic_map_render
+OPEN.EXE	0x80018dd4	0x75d4	0x80018dd8	mips_hi16_lo16	reachable-code	0x800439d8	bss	opening_cell_storage	lui+addiu	v1	paired-reviewed	reviewed	manual:open_semantic_map_render
 OPEN.EXE	0x80018de0	0x75e0	0x80018de4	mips_hi16_lo16	reachable-code	0x8006e1c8	bss	open_graphics_runtime	lui+sw	v0	paired-reviewed	reviewed	manual:open_semantic_map_render
 OPEN.EXE	0x80018dec	0x75ec	0x80018df0	mips_hi16_lo16	reachable-code	0x8006e1c8	bss	open_graphics_runtime	lui+lw	v0	paired-reviewed	reviewed	manual:open_semantic_map_render
 OPEN.EXE	0x80018df4	0x75f4	0x80018df8	mips_hi16_lo16	reachable-code	0x8006e0c6	bss	open_graphics_runtime	lui+lhu	a2	paired-reviewed	reviewed	manual:open_semantic_map_render

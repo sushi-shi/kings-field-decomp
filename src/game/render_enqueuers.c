@@ -68,8 +68,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
                     AddPrim(
-                        &game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
-                        &prim->sdk);
+                        (void *)(&game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK]),
+                        (void *)&prim->sdk);
                 }
             }
             break;
@@ -98,8 +98,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
                     AddPrim(
-                        &game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
-                        &prim->sdk);
+                        (void *)(&game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK]),
+                        (void *)&prim->sdk);
                 }
             }
             break;
@@ -127,8 +127,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
                     AddPrim(
-                        &game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
-                        &prim->sdk);
+                        (void *)(&game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK]),
+                        (void *)&prim->sdk);
                 }
             }
             break;
@@ -160,8 +160,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
                     AddPrim(
-                        &game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
-                        &prim->sdk);
+                        (void *)(&game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK]),
+                        (void *)&prim->sdk);
                 }
             }
             break;
@@ -195,8 +195,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
                     AddPrim(
-                        &game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
-                        &prim->sdk);
+                        (void *)(&game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK]),
+                        (void *)&prim->sdk);
                 }
             }
             break;
@@ -235,8 +235,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
                     AddPrim(
-                        &game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
-                        &prim->sdk);
+                        (void *)(&game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK]),
+                        (void *)&prim->sdk);
                 }
             }
             break;
@@ -255,7 +255,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                     return;
                 }
                 SetPolyG3(&prim->sdk);
-                SetSemiTrans(&prim->sdk, 1);
+                SetSemiTrans((void *)&prim->sdk, 1);
                 prim->packed.xy0 = va->sxy.word;
                 prim->packed.xy1 = vb->sxy.word;
                 prim->packed.xy2 = vc->sxy.word;
@@ -265,8 +265,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
                     AddPrim(
-                        &game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
-                        &prim->sdk);
+                        (void *)(&game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK]),
+                        (void *)&prim->sdk);
                 }
             }
             break;
@@ -302,8 +302,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
                     AddPrim(
-                        &game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
-                        &prim->sdk);
+                        (void *)(&game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK]),
+                        (void *)&prim->sdk);
                 }
             }
             break;
@@ -330,8 +330,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
                     AddPrim(
-                        &game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
-                        &prim->sdk);
+                        (void *)(&game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK]),
+                        (void *)&prim->sdk);
                 }
             }
             break;
@@ -351,7 +351,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                     return;
                 }
                 SetPolyG4(&prim->sdk);
-                SetSemiTrans(&prim->sdk, 1);
+                SetSemiTrans((void *)&prim->sdk, 1);
                 prim->packed.xy0 = va->sxy.word;
                 prim->packed.xy1 = vb->sxy.word;
                 prim->packed.xy2 = vc->sxy.word;
@@ -363,8 +363,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
                     AddPrim(
-                        &game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
-                        &prim->sdk);
+                        (void *)(&game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK]),
+                        (void *)&prim->sdk);
                 }
             }
             break;
@@ -383,7 +383,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                     return;
                 }
                 SetPolyF3(&prim->sdk);
-                SetSemiTrans(&prim->sdk, 1);
+                SetSemiTrans((void *)&prim->sdk, 1);
                 prim->packed.xy0 = va->sxy.word;
                 prim->packed.xy1 = vb->sxy.word;
                 prim->packed.xy2 = vc->sxy.word;
@@ -392,8 +392,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
                     AddPrim(
-                        &game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
-                        &prim->sdk);
+                        (void *)(&game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK]),
+                        (void *)&prim->sdk);
                 }
             }
             break;
@@ -413,7 +413,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                     return;
                 }
                 SetPolyF4(&prim->sdk);
-                SetSemiTrans(&prim->sdk, 1);
+                SetSemiTrans((void *)&prim->sdk, 1);
                 prim->packed.xy0 = va->sxy.word;
                 prim->packed.xy1 = vb->sxy.word;
                 prim->packed.xy2 = vc->sxy.word;
@@ -423,8 +423,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
                     AddPrim(
-                        &game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
-                        &prim->sdk);
+                        (void *)(&game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK]),
+                        (void *)&prim->sdk);
                 }
             }
             break;
@@ -500,8 +500,8 @@ void render_enqueue_model(u16 object_index, s16 depth_bias)
                 otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
                     AddPrim(
-                        &game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
-                        &prim->sdk);
+                        (void *)(&game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK]),
+                        (void *)&prim->sdk);
                 }
             }
             break;
@@ -538,8 +538,8 @@ void render_enqueue_model(u16 object_index, s16 depth_bias)
                 otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
                     AddPrim(
-                        &game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
-                        &prim->sdk);
+                        (void *)(&game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK]),
+                        (void *)&prim->sdk);
                 }
             }
             break;
@@ -570,8 +570,8 @@ void render_enqueue_model(u16 object_index, s16 depth_bias)
                 otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
                     AddPrim(
-                        &game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
-                        &prim->sdk);
+                        (void *)(&game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK]),
+                        (void *)&prim->sdk);
                 }
             }
             break;
@@ -605,8 +605,8 @@ void render_enqueue_model(u16 object_index, s16 depth_bias)
                 otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
                     AddPrim(
-                        &game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
-                        &prim->sdk);
+                        (void *)(&game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK]),
+                        (void *)&prim->sdk);
                 }
             }
             break;
@@ -700,8 +700,8 @@ void render_enqueue_map(u16 object_index)
                         >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2)) + KF_MAP_OT_DEPTH_BIAS;
                     if (otz < KF_ORDERING_TABLE_LENGTH) {
                         AddPrim(
-                            &game_graphics_runtime.display_state.ordering_table[otz & KF_ORDERING_TABLE_INDEX_MASK],
-                            &prim->sdk);
+                            (void *)(&game_graphics_runtime.display_state.ordering_table[otz & KF_ORDERING_TABLE_INDEX_MASK]),
+                            (void *)&prim->sdk);
                     }
                 } else {
                     return;
@@ -740,8 +740,8 @@ void render_enqueue_map(u16 object_index)
                         >> KF_GTE_DEPTH_TO_OT_SHIFT) + KF_MAP_OT_DEPTH_BIAS;
                     if (otz < KF_ORDERING_TABLE_LENGTH) {
                         AddPrim(
-                            &game_graphics_runtime.display_state.ordering_table[otz & KF_ORDERING_TABLE_INDEX_MASK],
-                            &gt3->sdk);
+                            (void *)(&game_graphics_runtime.display_state.ordering_table[otz & KF_ORDERING_TABLE_INDEX_MASK]),
+                            (void *)&gt3->sdk);
                     }
                 } else {
                     return;
@@ -796,10 +796,10 @@ void render_enqueue_sprite(
     prim->sdk.clut = game_graphics_runtime.active_render_clut;
     prim->sdk.tpage = game_graphics_runtime.active_render_tpage;
     /* Each packed GTE word spans the SDK packet's x/y halfwords. */
-    memcpy(&prim->sdk.x0, &sxy0, sizeof sxy0);
-    memcpy(&prim->sdk.x1, &sxy1, sizeof sxy1);
-    memcpy(&prim->sdk.x2, &sxy2, sizeof sxy2);
-    memcpy(&prim->sdk.x3, &sxy3, sizeof sxy3);
+    memcpy((void *)&prim->sdk.x0, (const void *)&sxy0, sizeof sxy0);
+    memcpy((void *)&prim->sdk.x1, (const void *)&sxy1, sizeof sxy1);
+    memcpy((void *)&prim->sdk.x2, (const void *)&sxy2, sizeof sxy2);
+    memcpy((void *)&prim->sdk.x3, (const void *)&sxy3, sizeof sxy3);
     prim->sdk.u0 = prim->sdk.u2 = sprite->u;
     prim->sdk.u1 = prim->sdk.u3 = sprite->u + sprite->u_span;
     prim->sdk.v0 = prim->sdk.v1 = sprite->v;
@@ -812,7 +812,7 @@ void render_enqueue_sprite(
                    &prim->packed.color0);
     if (otz + depth_bias >= KF_SCENE_MIN_OT_DEPTH) {
         AddPrim(
-            &game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
-            &prim->sdk);
+            (void *)(&game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK]),
+            (void *)&prim->sdk);
     }
 }

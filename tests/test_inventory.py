@@ -306,12 +306,12 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["signatures_started"], 471)
         self.assertEqual(counts["typed_returns"], 471)
         self.assertEqual(counts["parameterized"], 306)
-        self.assertEqual(counts["data"], 748)
+        self.assertEqual(counts["data"], 747)
         self.assertGreaterEqual(counts["functions_named"], 240)
         self.assertGreaterEqual(counts["data_named"], 100)
-        self.assertEqual(counts["structures"], 127)
-        self.assertEqual(counts["structure_fields"], 856)
-        self.assertEqual(counts["structure_fields_named"], 769)
+        self.assertEqual(counts["structures"], 129)
+        self.assertEqual(counts["structure_fields"], 866)
+        self.assertEqual(counts["structure_fields_named"], 778)
 
     def test_sdk_field_ownership_has_individual_evidence(self) -> None:
         identities = load_data_identities(RETAIL_CONFIG)
@@ -2583,12 +2583,13 @@ class InventoryTests(unittest.TestCase):
 
         data = load_data_identities(RETAIL_CONFIG)
         expected_grids = {
-            0x800446C8: ("map_collision_flag_grid", "KfMapGrid"),
             0x80046DF8: ("map_cell_orientation_grid", "KfMapOrientationGrid"),
             0x8006E260: ("map_floor_height_grid", "KfMapGrid"),
             0x80070978: ("map_collision_grid", "KfMapCollisionGrid"),
             0x800730A0: ("map_cell_attribute_grid", "KfMapAttributeGrid"),
         }
+        self.assertNotIn(("OPEN.EXE", 0x800446C8), data)
+        self.assertEqual(data["OPEN.EXE", 0x800439D8].name, "opening_cell_storage")
         for va, (name, datatype) in expected_grids.items():
             identity = data[("OPEN.EXE", va)]
             self.assertEqual(

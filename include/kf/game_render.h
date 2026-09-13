@@ -111,7 +111,7 @@ typedef struct KfEffectSprite {
 typedef struct KfDisplayState {
     KfDisplayBuffer buffer_index;
     u8 unknown_01[3];
-    void *asset_load_buffer;
+    u8 *asset_load_buffer;
     KfPrimitiveBuffer primitive_buffers[KF_DISPLAY_BUFFER_COUNT];
     KfPrimitiveBuffer *primitive_buffer;
     KfOrderingTable ordering_tables[KF_DISPLAY_BUFFER_COUNT];

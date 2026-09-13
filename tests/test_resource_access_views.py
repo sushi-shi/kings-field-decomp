@@ -40,6 +40,9 @@ class ResourceAccessViewTests(unittest.TestCase):
         checks = []
         for grid, element in grids.items():
             checks.append(f"typedef char size_{grid}[sizeof({grid}) == 10000 ? 1 : -1];")
+            checks.append(f"typedef char align_{grid}[__alignof__({grid}) == __alignof__(u32) ? 1 : -1];")
+            checks.append(f"typedef char words_size_{grid}[sizeof((({grid} *)0)->words) == 10000 ? 1 : -1];")
+            checks.append(f"u32 *words_{grid}({grid} *grid) {{ return grid->words; }}")
             checks.append(f"typedef char linear_size_{grid}[sizeof((({grid} *)0)->linear) == 10000 ? 1 : -1];")
             for index in (0, 99, 100, 101, 9999):
                 row, col = divmod(index, 100)
@@ -57,15 +60,17 @@ class ResourceAccessViewTests(unittest.TestCase):
             result = self.compile(f"void bad({grid} *grid) {{ grid->linear[100] = 7; }}")
             self.assertNotEqual(result.returncode, 0, grid)
 
-    def test_copy_api_accepts_whole_objects_but_not_const_destinations(self):
+    def test_copy_api_accepts_word_storage_but_not_const_destinations(self):
         for function in ("map_resource_copy_words", "resource_stream_copy_words"):
-            body = f"const u32 *copy(KfMapOrientationGrid *grid, const u32 *source) {{ return {function}((void *)grid, source, 2500); }}"
+            body = f"const u32 *copy(KfMapOrientationGrid *grid, const u32 *source) {{ return {function}(grid->words, source, 2500); }}"
             for mode in ("retail", "modern"):
                 with self.subTest(function=function, mode=mode):
                     result = self.compile(body, mode)
                     self.assertEqual(result.returncode, 0, result.stderr)
                     const_body = body.replace("KfMapOrientationGrid *grid", "const KfMapOrientationGrid *grid")
-                    result = self.compile(const_body.replace("(void *)grid", "(const void *)grid"), mode)
+                    result = self.compile(const_body, mode)
+                    self.assertNotEqual(result.returncode, 0)
+                    result = self.compile(body.replace("grid->words", "grid->linear"), mode)
                     self.assertNotEqual(result.returncode, 0)
 
     def test_tmd_vertices_use_payload_relative_bytes_and_evaluate_once(self):

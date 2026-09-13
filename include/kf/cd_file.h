@@ -9,6 +9,7 @@
 
 enum {
     KF_CD_SECTOR_BYTES = 0x800,
+    KF_CD_SECTOR_WORDS = 512,
     KF_CD_SECTOR_SHIFT = 11,
     KF_CD_PATH_BYTES = 80,
     KF_CD_READ_POLL = 1,

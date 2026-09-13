@@ -74,6 +74,56 @@ class PointerPolicyTests(unittest.TestCase):
             }
         """), ())
 
+    def test_modern_only_libc_prototypes_do_not_hide_erasures(self):
+        sites = self.sites("""
+            #ifdef __cplusplus
+            void *copy(void *out, const void *in, unsigned long size);
+            void release(void *allocation);
+            #else
+            void *copy();
+            void release();
+            #endif
+            void f(int *out, const int *in) {
+                copy(out, in, sizeof(*out));
+                release(out);
+            }
+        """)
+        self.assertEqual(len(sites), 3)
+        self.assertEqual([site.target for site in sites],
+                         ["void *", "const void *", "void *"])
+
+    def test_retail_only_conversion_is_not_lost_or_double_counted(self):
+        sites = self.sites("""
+            #ifdef __cplusplus
+            void consume(int *p);
+            #else
+            void consume(void *p);
+            #endif
+            void shared(void *p);
+            void f(int *p) { consume(p); shared(p); }
+        """)
+        self.assertEqual(len(sites), 2)
+
+    def test_explicit_modern_only_libc_boundaries_pass(self):
+        self.assertEqual(self.sites("""
+            #ifdef __cplusplus
+            void *copy(void *out, const void *in, unsigned long size);
+            #else
+            void *copy();
+            #endif
+            void f(int *out, const int *in) {
+                copy((void *)out, (const void *)in, sizeof(*out));
+            }
+        """), ())
+
+    def test_outer_explicit_cast_does_not_hide_nested_call_argument(self):
+        sites = self.sites("""
+            void *identity(void *p);
+            void *f(int *p) { return (void *)identity(p); }
+        """)
+        self.assertEqual(len(sites), 1)
+        self.assertEqual(sites[0].source, "int *")
+
     def test_reverse_conversion_is_a_native_clang_error_in_both_modes(self):
         with TemporaryDirectory() as directory:
             repo, sdk, unit = self.setup_source(directory, "int *f(void *p) { return p; }")

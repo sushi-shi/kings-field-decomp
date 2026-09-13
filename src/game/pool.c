@@ -228,7 +228,7 @@ void pool_record_release(KfPoolRecord *record)
     record->state = KF_ANIMATION_CACHE_FREE;
     *record->owner_slot = NULL;
     if (record->cached_vertices != NULL) {
-        free(record->cached_vertices);
+        free((void *)record->cached_vertices);
         record->cached_vertices = NULL;
     }
 }
