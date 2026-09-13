@@ -6,6 +6,7 @@ import argparse
 import hashlib
 import io
 import json
+import os
 from pathlib import Path
 import re
 import shutil
@@ -187,7 +188,8 @@ overflow-checks = true
     else:
         output = {name: data for name, data in output.items()
                   if not name.startswith('codecs/') and name not in (
-                      'scripts/psxbuild/clang.py', 'scripts/psxbuild/elf_to_lnk.py')}
+                      'scripts/psxbuild/clang.py', 'scripts/psxbuild/elf_to_lnk.py',
+                      'vendor/include/stdarg.h')}
         output['flake.nix'] = output['flake.nix'].replace(
             b'        codecs = pkgs.mkShell { packages = [ pkgs.cargo pkgs.rustc ]; };\n', b'')
     for name in output:
@@ -243,12 +245,38 @@ def compare_program(original: bytes, cleaned: bytes, original_cpe: bytes, cleane
     return [offset for offset in range(8, 16) if original[offset] != cleaned[offset]]
 
 
+def classic_reference(repo: Path) -> Path:
+    """Build unstripped master sources with classic's original compiler headers."""
+    from scripts.psxbuild.link import build_image
+    from scripts.psxbuild.sdk import compile_classic
+
+    manifest = tomllib.loads((repo / 'config/units.toml').read_text())
+    reference = repo / 'build/clean-reference'
+
+    def compile_one(unit, root, index):
+        profile = manifest['profiles'][unit['profile']]
+        options = {key: profile[key] for key in ('compiler', 'optimization', 'small_data', 'cc1_flags')}
+        return compile_classic(
+            repo / unit['source'], root, f'U{index:04d}',
+            include_dirs=(repo / 'include', repo / 'vendor/include', Path(os.environ['PSYQ_INCLUDE'])),
+            defines=unit.get('defines', ()), **options)
+
+    for name, origin in ORIGINS.items():
+        units = [unit for unit in manifest['unit']
+                 if unit['image'] == name and unit.get('scope') != 'vendored']
+        report = build_image(name, reference / name[:-4].lower(), units, compile_one,
+                             repo=repo, load_address=origin, bounds_source='config/link/overlay_bounds.asm')
+        if not report['linked']:
+            raise ValueError(f'{name}: classic reference build failed: {report["error"]}')
+    return reference
+
+
 def verify(output: Path, repo: Path, *, compare: bool = True) -> None:
     subprocess.run(['nix', 'build', f'path:{output}', '--out-link', str(output / 'result')], check=True)
     if compare:
-        subprocess.run(['kf', 'build'], cwd=repo, check=True)
+        reference = classic_reference(repo)
         for name in ORIGINS:
-            original = repo / 'build/link' / name[:-4].lower() / name
+            original = reference / name[:-4].lower() / name
             try:
                 reserved = compare_program(
                     original.read_bytes(), (output / 'result' / name).read_bytes(),

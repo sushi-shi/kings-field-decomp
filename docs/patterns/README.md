@@ -5,6 +5,9 @@ about which source shapes reproduce it under the current probes. Each note
 records the retail evidence first and the probe behaviour second; none of them
 promotes a probe to a proven historical toolchain.
 
+- [sdk-interrupt-return.md](sdk-interrupt-return.md): reproduced plaque input/audio
+  failure, SDK interrupt starvation, and the guarded native-library correction.
+
 - [cpe2x-reserved-header.md](cpe2x-reserved-header.md): original converter
   write-mask control and the source export's separate linker/output checks.
 

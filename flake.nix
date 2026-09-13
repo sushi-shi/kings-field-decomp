@@ -34,7 +34,7 @@
         inherit pkgs;
         sdkBuilder = ./scripts/create-toolchain.py;
       };
-      inherit (toolchain) psyqSdk gcc257Native gcc260Native cc1psx257 cpppsx257
+      inherit (toolchain) psyqSdk gcc257Native gcc257Headers gcc260Native cc1psx257 cpppsx257
         cc1psx260 cpppsx260 aspsxNative asmpsxNative;
 
       psy-k = pkgs.rustPlatform.buildRustPackage {
@@ -308,6 +308,7 @@
           repo="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
           export PSYQ_ASPSX="${aspsxNative}/1.07/ASPSX.EXE"
           export PSYQ_INCLUDE="${psyqSdk}/release-2.5/isa board/PSXLIB/INCLUDE"
+          export PSYQ_C_INCLUDE="${gcc257Headers}/include"
           cd "$repo"
           exec python3 -m scripts.kf.compile "$@"
         '';
@@ -350,6 +351,7 @@
           export PSYQ_ASMPSX="${asmpsxNative}"
           export PSYQ_BIN="$PSYQ_SDK/isa board/PSXBIN/BIN"
           export PSYQ_INCLUDE="$PSYQ_SDK/isa board/PSXLIB/INCLUDE"
+          export PSYQ_C_INCLUDE="${gcc257Headers}/include"
           export PSYQ_LIB="$PSYQ_SDK/isa board/PSXLIB/LIB"
           export PSYQ_H2000_LIB="$PSYQ_SDK/H2000/LIB2000"
           cd "$repo"
@@ -440,6 +442,7 @@
           export PSYQ_SDK="${psyqSdk}/release-2.5"
           export PSYQ_BIN="$PSYQ_SDK/isa board/PSXBIN/BIN"
           export PSYQ_INCLUDE="$PSYQ_SDK/isa board/PSXLIB/INCLUDE"
+          export PSYQ_C_INCLUDE="${gcc257Headers}/include"
           export PSYQ_LIB="$PSYQ_SDK/isa board/PSXLIB/LIB"
           export PSYQ_H2000_LIB="$PSYQ_SDK/H2000/LIB2000"
           export PSYQ_COMPILER="$PSYQ_SDK/compiler"
@@ -483,6 +486,7 @@
         PSYQ_LIB = "${psyqSdk}/release-2.5/isa board/PSXLIB/LIB";
         PSYQ_H2000_LIB = "${psyqSdk}/release-2.5/H2000/LIB2000";
         PSYQ_INCLUDE = "${psyqSdk}/release-2.5/isa board/PSXLIB/INCLUDE";
+        PSYQ_C_INCLUDE = "${gcc257Headers}/include";
         PSYQ_BIN = "${psyqSdk}/release-2.5/isa board/PSXBIN/BIN";
         PSYQ_ASPSX = "${aspsxNative}/1.07/ASPSX.EXE";
         PSYQ_ASMPSX = "${asmpsxNative}";

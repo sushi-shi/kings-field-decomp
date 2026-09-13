@@ -71,18 +71,30 @@ tools required for building and running the game.
 `--verify` builds the standalone flake and, on source, its Rust library.
 The C++ build uses Clang, combines ELF objects with the MIPS linker and converts
 their relocations to a native Psy-Q linker input. SDK library bodies remain
-ordinary archive inputs. Typed overloads have real implementations; the effect
+ordinary archive inputs, with the documented
+[interrupt-return correction](patterns/sdk-interrupt-return.md) applied by the
+shared builder. Typed overloads have real implementations; the effect
 constructor uses named arguments instead of relying on old compiler stack slots.
 Counted export transformations leave the reconstruction source untouched.
 
-For classic, verification also runs the current reconstruction build
+Classic gets GCC 2.5.7's original `stdarg.h` and `va-mips.h` from Nix;
+the exported tree has no project copy of `stdarg.h`. Its compiler invocation
+supplies the GCC version and little-endian MIPS definitions normally supplied
+by the driver. The matching build on master retains its existing varargs header.
+
+For classic, verification independently builds the unstripped master sources
+with the same original compiler headers, under `build/clean-reference/`,
 and requires byte-identical native CPE linker outputs. It compares every EXE
 byte, accepting and explicitly reporting differences only in the reserved
 header words at offsets `0x08..0x0f`, which the pinned CPE2X writer leaves
 uninitialized. All other header bytes and the full executable payload must
 agree. Full-file equality is reported separately; no bytes are patched and
 this check does not bank or declare a retail match. The original-writer control
-is `tests/test_cpe2x_header.py`. C++ output is not expected to match the classic
+is `tests/test_cpe2x_header.py`. The original varargs implementation can change
+generated instructions relative to master's matching header; that comparison
+is not a cleanup identity check. `tests/test_classic_varargs.py` executes the
+original headers across O32 register, stack, promotion and alignment boundaries.
+C++ output is not expected to match the classic
 compiler's bytes. When verifying committed HEAD, commit relevant
 working changes first so that both builds have the same inputs.
 

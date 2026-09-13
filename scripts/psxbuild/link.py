@@ -8,6 +8,7 @@ import shutil
 import subprocess
 
 from .sdk import dos_run, dos_text, tool_succeeded
+from .sdk_compat import library_input
 
 
 # Ordinary linker inputs. The native linker selects members from these archives.
@@ -88,9 +89,13 @@ def build_image(name, root, units, compile_one, *, repo, load_address, bounds_so
         for library in LIBRARIES[name]:
             filename = library + '.LIB'
             source = Path(os.environ['PSYQ_LIB']) / filename
-            shutil.copyfile(source, root / filename)
-            report['libraries'].append({'file': filename, 'path': str(source),
-                                        'sha256': file_hash(source)})
+            data, corrections = library_input(filename, source.read_bytes())
+            (root / filename).write_bytes(data)
+            report['libraries'].append({
+                'file': filename, 'path': str(source), 'sha256': file_hash(source),
+                'link_input_sha256': hashlib.sha256(data).hexdigest(),
+                'corrections': corrections,
+            })
         report['phase'] = 'link'
         stem = name.removesuffix('.EXE')
         commands = [f'\torg ${load_address:08x}',

@@ -32,8 +32,21 @@ each unit's profile. PSYLINK, CPE2X, headers, libraries, and overlay startup
 come from the preserved Release 2.5 tree. Build reports distinguish those
 provenances; none of this proves the exact historical tool versions.
 
+The native builder applies one guarded correction to its copy of
+`LIBETC.LIB/INTR.OBJ`: return to the BIOS after each interrupt-dispatch pass.
+The original SDK loop can starve controller and audio updates on modal screens.
+Original and corrected archive hashes are recorded separately in build reports;
+the staged SDK and matching reference inputs stay unchanged. See the
+[runtime evidence and regression control](patterns/sdk-interrupt-return.md).
+
 The [classic SDK header audit](sdk-header-audit.md) records which original
 headers are used and why the remaining compatibility declarations are needed.
+
+Classic additionally uses the original GNU GCC 2.5.7 `stdarg.h` and `va-mips.h`,
+packaged separately from the Sony SDK. `PSYQ_C_INCLUDE` points to their Nix
+store directory. `compile_classic` supplies `__GNUC__=2`, `__GNUC_MINOR__=5`,
+`__mips__` and `__MIPSEL__`, which the standalone preprocessor does not define.
+The ordinary matching compiler path keeps its existing preprocessing contract.
 
 There is one source compilation path: CPPPSX -> CC1PSX -> ASPSX -> native
 Psy-Q OBJ. `kf build` passes those objects and the SDK libraries to PSYLINK,

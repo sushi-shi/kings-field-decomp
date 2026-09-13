@@ -151,6 +151,7 @@ class ExportControls(unittest.TestCase):
         self.assertFalse(any('/tests/' in path or '/bin/' in path or path.startswith('tests/')
                              for path in first))
         self.assertNotIn('codecs/src/lib.rs', first)
+        self.assertNotIn('vendor/include/stdarg.h', first)
         for declaration in (b'extern void AddPrim(', b'extern void DrawOTag(',
                             b'extern void SetSemiTrans('):
             self.assertNotIn(declaration, first['vendor/include/psyq/sdk.h'])

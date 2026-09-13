@@ -39,6 +39,7 @@ Native linker outputs are retained under `result/link/`.
 and starts PCSX-Redux with its bundled OpenBIOS. The original disc is unchanged.
 The SDK, compiler, assembler, linker and emulator are supplied by the pinned
 Nix configuration. A graphical desktop is required to launch the emulator.
+Standard varargs headers come from the pinned GCC 2.5.7 source distribution.
 
 Supply the Japanese disc as a CUE with one BIN track, a raw Mode 2/2352 BIN,
 or a directory containing one such disc. Alternatively set `KF_RETAIL_DISC`.

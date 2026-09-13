@@ -12,6 +12,7 @@
       };
       emulator = import ./nix/pcsx-redux.nix { inherit pkgs; };
       environment = {
+        PSYQ_C_INCLUDE = "${sdk.gcc257Headers}/include";
         PSYQ_INCLUDE = "${sdk.psyqSdk}/release-2.5/isa board/PSXLIB/INCLUDE";
         PSYQ_BIN = "${sdk.psyqSdk}/release-2.5/isa board/PSXBIN/BIN";
         PSYQ_LIB = "${sdk.psyqSdk}/release-2.5/isa board/PSXLIB/LIB";

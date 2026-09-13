@@ -7,7 +7,7 @@ from pathlib import Path
 import sys
 
 from scripts.psxbuild.link import build_image
-from scripts.psxbuild.sdk import compile_c
+from scripts.psxbuild.sdk import compile_classic
 
 
 def main():
@@ -15,7 +15,7 @@ def main():
     manifest = json.loads((repo / 'build.json').read_text())
 
     def compile_one(unit, output, index):
-        return compile_c(
+        return compile_classic(
             repo / unit['source'], output, f'U{index:04d}',
             include_dirs=(repo / 'include', repo / 'vendor/include',
                           Path(os.environ['PSYQ_INCLUDE'])),

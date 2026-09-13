@@ -38,5 +38,12 @@ requirement alone is not a reason to add a replacement declaration to classic.
 
 The guarded wrappers prevent repeated definitions in SDK headers without guards.
 `sys/types.h` and `sys/fcntl.h` forward case-sensitive host includes to the SDK's
-uppercase filenames. `stdarg.h` remains the historical-compiler compatibility
-header: the pinned SDK header directory supplies none.
+uppercase filenames.
+
+Classic's `stdarg.h` now comes from GCC 2.5.7, independently of the SDK,
+whose header directory supplies none. Nix extracts the original `gstdarg.h`
+and `va-mips.h` from the pinned GNU source archive, installing `gstdarg.h` as
+`stdarg.h` just as GCC's makefile does. Neither file is copied into the export.
+Classic supplies the GCC/MIPS driver definitions required to select those
+headers. Its build records both header hashes. The matching header remains
+on master; source's C++ view uses compiler builtins.
