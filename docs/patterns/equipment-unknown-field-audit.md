@@ -9,6 +9,12 @@ metadata. **No semantic rename or layout change is supported by this pass.**
 The result is a set of checked paths and rejected simple interpretations,
 not a claim that all possible retail aliases are closed.
 
+The [three-weapon-field access report](weapon-unknown-access-report.md)
+adds a fresh typed census, per-field copy/read/write logic, resolves specific
+proposal warnings and both equipment switches, and enumerates conditional
+weapon-byte reads if a weapon-range item ID reaches an armor slot. The
+ordinary-pointer conclusions below assume the intended equipment ID ranges.
+
 ## Actual equipment pointer paths
 
 `common_resources_load` passes COM.DAT chunk 2 to the weapon loader and

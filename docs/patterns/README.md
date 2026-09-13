@@ -929,5 +929,8 @@ promotes a probe to a proven historical toolchain.
 - [Equipment unknown-field audit](equipment-unknown-field-audit.md): stored
   weapon/armor pointers, biased bases, GP uses and resource correlations;
   checked consumers and counterexamples leave five field ranges unresolved.
+- [Three weapon fields: static access report](weapon-unknown-access-report.md):
+  reads, writes, guards and value uses; resolved pointer warnings, bounded
+  switches and conditional reads through misindexed armor records.
 - [Codec type consistency](codec-type-consistency.md): shared vector and sound
   types, header-backed record models, and explicit encoded-byte boundaries.

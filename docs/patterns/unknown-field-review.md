@@ -140,7 +140,11 @@ control: target `GAME.EXE:800a00dc` lies physically in weapon record 10's
 `armor_records - 13 * sizeof(KfArmorRecord)`. Adding the item-ID stride
 selects armor records beginning at `800a0248`. The equipment/stat consumers
 in `player_core.c` and `player_death.c` establish this bias. Treating the
-interior target as a weapon-field read would be incorrect.
+interior target alone as a weapon-field read would be incorrect. For valid
+armor IDs the final reads address armor records; the
+[three-field access report](weapon-unknown-access-report.md) separately
+enumerates weapon-byte overlaps when IDs outside that range reach an armor
+consumer.
 
 This interval census only covers curated global ownership and admitted
 relocation targets. It does not follow every indirect pointer, dynamic
@@ -163,6 +167,9 @@ The [equipment follow-up](equipment-unknown-field-audit.md) checks the stored
 weapon/armor pointers and GP uses, and compares proposed slot, attack-class
 and price interpretations against the authored rows and actual consumers.
 It establishes no new semantic name for the five remaining equipment ranges.
+The [three-weapon-field report](weapon-unknown-access-report.md) adds explicit
+read/write/guard/value-use results, a fresh typed census, resolved static
+warnings and conditional armor aliases for the three weapon ranges.
 
 The hash-validated retail corpus provides the following independent controls:
 
