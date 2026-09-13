@@ -13,26 +13,23 @@ enum {
     KF_ITEM_STOCK_BANK_COUNT = 3
 };
 
-/* Stock rows distinguish owned quantities from the two shop lists. */
-enum {
+/* Bank zero owns player quantities; banks one and two own shop stock. */
+KF_ENUM_BEGIN(KfItemStockBank, u8)
     KF_ITEM_STOCK_PLAYER = 0,
     KF_ITEM_STOCK_FIRST_SHOP = 1,
     KF_ITEM_STOCK_SECOND_SHOP = 2
-};
-
-/* Shop identity shares the stock-row encoding; zero is the player's bank. */
-KF_ENUM_BEGIN(KfShopId, u8)
-    KF_SHOP_NONE = KF_ITEM_STOCK_PLAYER,
-    KF_SHOP_FIRST = KF_ITEM_STOCK_FIRST_SHOP,
-    KF_SHOP_SECOND = KF_ITEM_STOCK_SECOND_SHOP
-KF_ENUM_END(KfShopId)
+KF_ENUM_END(KfItemStockBank)
 
 enum {
     KF_FLOOR_ITEM_CAPACITY = 64,
+    KF_FLOOR_ITEM_RENDER_BRIGHTNESS = 180,
     KF_ITEM_STACK_CAPACITY = 99
 };
 
-KF_ENUM_BEGIN(KfItemId, u8)
+/* Inventory entries and map pickups share IDs; scenery extends the namespace.
+ * Item table access is restricted to IDs below KF_ITEM_COUNT.
+ * OPEN models use their separate resource namespace. */
+KF_ENUM_BEGIN(KfObjectId, u8)
     KF_ITEM_SHORT_SWORD = 0,
     KF_ITEM_BATTLE_AXE = 1,
     KF_ITEM_KNIGHT_SWORD = 2,
@@ -102,8 +99,37 @@ KF_ENUM_BEGIN(KfItemId, u8)
     KF_ITEM_SORCERER_KEY = 74,
     KF_ITEM_DEMON_KING_HAND = 75,
     KF_ITEM_SALAMANDER_STATUE = 76,
-    KF_ITEM_NONE = 0xff
-KF_ENUM_END(KfItemId)
+    KF_OBJECT_NONE = 0xff,
+    KF_MAP_OBJECT_BEVELED_WOODEN_LID = 81,
+    KF_MAP_OBJECT_FLAT_WOODEN_LID = 83,
+    KF_MAP_OBJECT_STONE_CONTAINER_LID = 85,
+    KF_MAP_OBJECT_GRAVESTONE = 89,
+    KF_MAP_OBJECT_BROKEN_STONE_CROSS = 92,
+    KF_MAP_OBJECT_DROP_DISABLED = 99,
+    KF_MAP_OBJECT_DRY_FOUNTAIN = 111,
+    KF_MAP_OBJECT_BOSS_PROJECTILE_EMITTER = 115,
+    KF_MAP_OBJECT_LIFTING_GATE = 117,
+    KF_MAP_OBJECT_PORTCULLIS = 118,
+    KF_MAP_OBJECT_HINGED_DOOR = 119,
+    KF_MAP_OBJECT_HINGED_DOOR_PARTNER = 120,
+    KF_MAP_OBJECT_TALL_HINGED_DOOR = 121,
+    KF_MAP_OBJECT_TALL_HINGED_DOOR_PARTNER = 122,
+    KF_MAP_OBJECT_FILLED_FOUNTAIN = 123,
+    KF_MAP_OBJECT_FIRE_BALL_EMITTER = 124,
+    KF_MAP_OBJECT_WIND_CUTTER_EMITTER = 125,
+    KF_MAP_OBJECT_SIGNBOARD = 130,
+    KF_MAP_OBJECT_INSCRIPTION_PANEL = 131,
+    KF_MAP_OBJECT_EFFECT_SWITCH = 135,
+    KF_MAP_OBJECT_ORBITING_PROJECTILE = 136,
+    KF_MAP_OBJECT_PROJECTILE_EMITTER = 137,
+    KF_MAP_OBJECT_SHORT_SWING = 138,
+    KF_MAP_OBJECT_LONG_SWING = 139,
+    /* Exclusive rendering and drop-animation boundaries. */
+    KF_MAP_OBJECT_RENDER_ID_END = 133,
+    KF_MAP_DROP_TIP_ID_END = 43,
+    KF_MAP_DROP_SPIN_ID_END = 48,
+    KF_MAP_DROP_BOUNCE_ID_END = 65
+KF_ENUM_END(KfObjectId)
 
 /* Row identities in the fixed seven-descriptor floor sprite bank.
  * Shipped animations start at rows 0 and 4; artwork identities remain WIP. */
@@ -121,9 +147,7 @@ KF_ENUM_END(KfFloorItemSpriteId)
 /* High nibble: zero billboard or biased quarter-turn facing; low: frame count. */
 enum {
     KF_FLOOR_ITEM_SPRITE_COUNT = 7,
-    KF_FLOOR_ITEM_FACING_MASK = 0xf0,
     KF_FLOOR_ITEM_FACING_TO_ANGLE_SHIFT = 6,
-    KF_FLOOR_ITEM_FRAME_COUNT_MASK = 0x0f,
     KF_FLOOR_ITEM_INITIAL_FRAME_RANDOM_BITS = 15,
     KF_FLOOR_ITEM_FIXED_FACING_DEPTH_BIAS = 150,
     KF_FLOOR_ITEM_BILLBOARD_DEPTH_BIAS = 200
@@ -162,17 +186,17 @@ KF_ENUM_FLAGS(KfFloorItemAppearance, u8)
 constexpr KfFloorItemAppearance floor_item_appearance(KfFloorItemFacing facing, u8 frames)
 {
     return KF_ENUM_DECODE(KfFloorItemAppearance,
-        KF_ENUM_ENCODE(u8, facing) | (frames & KF_FLOOR_ITEM_FRAME_COUNT_MASK));
+        KF_ENUM_ENCODE(u8, facing) | (frames & KF_ENUM_ENCODE(u8, KF_FLOOR_ITEM_APPEARANCE_FRAME_MASK)));
 }
 constexpr KfFloorItemFacing floor_item_facing(KfFloorItemAppearance appearance)
 {
     return KF_ENUM_DECODE(KfFloorItemFacing,
-        KF_ENUM_ENCODE(u8, appearance) & KF_FLOOR_ITEM_FACING_MASK);
+        KF_ENUM_ENCODE(u8, appearance) & KF_ENUM_ENCODE(u8, KF_FLOOR_ITEM_APPEARANCE_FACING_MASK));
 }
 #else
 #define floor_item_appearance(facing, frames) \
-    ((facing) | ((frames) & KF_FLOOR_ITEM_FRAME_COUNT_MASK))
-#define floor_item_facing(appearance) ((appearance) & KF_FLOOR_ITEM_FACING_MASK)
+    ((facing) | ((frames) & KF_ENUM_ENCODE(u8, KF_FLOOR_ITEM_APPEARANCE_FRAME_MASK)))
+#define floor_item_facing(appearance) ((appearance) & KF_ENUM_ENCODE(u8, KF_FLOOR_ITEM_APPEARANCE_FACING_MASK))
 #endif
 
 /*
@@ -205,6 +229,19 @@ typedef struct KfFloorItem {
     u8 animation_frame;
     u8 unknown_15[3];
 } KfFloorItem;
+
+static inline void floor_item_advance_frame(KfFloorItem *item)
+{
+    u32 next_frame;
+    u32 frame_count;
+
+    next_frame = item->animation_frame + 1;
+    frame_count = KF_ENUM_ENCODE(u8, item->facing_and_frame_count);
+    item->animation_frame = next_frame;
+    if ((next_frame & 0xff) >= (frame_count & KF_ENUM_ENCODE(u8, KF_FLOOR_ITEM_APPEARANCE_FRAME_MASK))) {
+        item->animation_frame = 0;
+    }
+}
 
 /* GAME: player quantities, followed by two shop-stock/availability banks. */
 extern u8 item_stock[KF_ITEM_STOCK_BANK_COUNT][KF_ITEM_COUNT];

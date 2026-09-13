@@ -44,13 +44,6 @@ KfMapAttributeGrid map_cell_attribute_grid;
 
 RODATA(0x80012178, 0x39)
 
-/*
- * Advances a chunked stream to its next chunk: each chunk is a byte length
- * followed by the payload. The macro assigns so callers can pass
- * the next chunk's payload as an argument.
- */
-#define STREAM_NEXT(stream) \
-    ((stream) += *(u32 *)(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES)
 /* Each map grid chunk holds 100 x 100 bytes, copied as 0x9c4 words. */
 #define MAP_GRID_WORDS (sizeof map_cell_attribute_grid / sizeof(u32))
 
@@ -85,20 +78,20 @@ void common_resources_load(void)
     cd_file_load_allocated(&stream, "COM\\COM.DAT");
     asset_registry_set(
         KF_ASSET_EFFECT_SPRITES, (KfAssetHeader *)(stream + KF_RESOURCE_CHUNK_HEADER_BYTES));
-    block = STREAM_NEXT(stream);
+    block = RESOURCE_STREAM_NEXT(stream);
     memcpy(render_cell_windows, block + KF_RESOURCE_CHUNK_HEADER_BYTES,
         sizeof render_cell_windows);
     weapon_records_load_and_mirror_angles(
-        (const KfWeaponTable *)(STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES));
+        (const KfWeaponTable *)(RESOURCE_STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES));
     armor_records_load(
-        (const KfArmorTable *)(STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES));
+        (const KfArmorTable *)(RESOURCE_STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES));
     magic_load_records(
-        (const KfMagicTable *)(STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES));
+        (const KfMagicTable *)(RESOURCE_STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES));
     map_object_definitions_load(
-        (const KfMapObjectDefinitionTable *)(STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES));
+        (const KfMapObjectDefinitionTable *)(RESOURCE_STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES));
     memcpy(
         player_level_growth_table,
-        (KfPlayerLevelGrowth *)(STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES),
+        (KfPlayerLevelGrowth *)(RESOURCE_STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES),
         sizeof player_level_growth_table);
     memory_release_last();
     memory_arena.allocation.cursor = block + KF_RESOURCE_REUSE_PREFIX_BYTES;
@@ -184,9 +177,9 @@ void map_resources_load(KfFloorId floor, KF_ENUM_PARAM(KfMapVariant, s32) use_va
     memory_release_last();
     stream = map_resource_load_file("MIXA.DAT");
     audio_load_vab(stream + KF_RESOURCE_CHUNK_HEADER_BYTES,
-        STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES);
+        RESOURCE_STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES);
     block = stream;
-    STREAM_NEXT(stream);
+    RESOURCE_STREAM_NEXT(stream);
     audio_play_current_map_sequence();
     source = map_resource_copy_words(
         (u32 *)&map_cell_attribute_grid,
@@ -201,27 +194,27 @@ void map_resources_load(KfFloorId floor, KF_ENUM_PARAM(KfMapVariant, s32) use_va
     map_resource_copy_words(
         (u32 *)&map_collision_grid, source, MAP_GRID_WORDS);
     item_load_floor_placements(
-        (KfFloorItemPlacement *)(STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES));
+        (KfFloorItemPlacement *)(RESOURCE_STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES));
     map_object_pool_load(
-        (KfMapObjectPlacement *)(STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES));
+        (KfMapObjectPlacement *)(RESOURCE_STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES));
     actor_pool_load_placements(
-        (KfActorPlacement *)(STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES));
+        (KfActorPlacement *)(RESOURCE_STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES));
     actor_definitions_load(
-        (const KfActorDefinitionTable *)(STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES));
+        (const KfActorDefinitionTable *)(RESOURCE_STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES));
     map_event_pool_load(
-        (KfMapEventDefinition *)(STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES));
+        (KfMapEventDefinition *)(RESOURCE_STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES));
     memory_release_last();
     memory_arena.allocation.cursor = block + KF_RESOURCE_REUSE_PREFIX_BYTES;
     stream = map_resource_load_file("MIXB.DAT");
     tmd_register(KF_TMD_SLOT_ENTITIES,
         (KfTmdHeader *)(stream + KF_RESOURCE_CHUNK_HEADER_BYTES));
     tmd_register(KF_TMD_SLOT_MAP,
-        (KfTmdHeader *)(STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES));
+        (KfTmdHeader *)(RESOURCE_STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES));
     asset_registry_load_tmd_archive(KF_ASSET_MAP_EVENT_FIRST,
-        STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES);
+        RESOURCE_STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES);
     asset_registry_load_tmd_archive(KF_ASSET_EFFECT_FIRST,
-        STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES);
-    STREAM_NEXT(stream);
+        RESOURCE_STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES);
+    RESOURCE_STREAM_NEXT(stream);
     if (use_variant == KF_MAP_VARIANT_DEFAULT) {
         asset_registry_load_tmd_archive(KF_ASSET_ACTOR_FIRST,
             stream + KF_RESOURCE_CHUNK_HEADER_BYTES);

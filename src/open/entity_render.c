@@ -12,7 +12,6 @@ enum {
     OPENING_MODEL_YAW_STEP = 64,
     ENDING_TRANSLATING_MODEL_DEPTH_BIAS = 1000,
     ENDING_ROTATING_MODEL_DEPTH_BIAS = 10000,
-    FLOOR_ITEM_RENDER_BRIGHTNESS = 180
 };
 
 DATA(0x800358e0, 0x54)
@@ -108,8 +107,6 @@ void render_floor_item(KfFloorItem *item)
     MATRIX model;
     long flag;
     KF_ENUM_PARAM(KfFloorItemFacing, u16) facing;
-    u32 next_frame;
-    u32 frame_count;
     s16 depth_bias;
 
     SetRotMatrix(&open_graphics_runtime.render_state.view_matrix);
@@ -134,12 +131,7 @@ void render_floor_item(KfFloorItem *item)
     SetTransMatrix(&model);
     render_enqueue_sprite(
         &floor_item_sprites[KF_ENUM_ENCODE(u16, item->base_sprite_index) + item->animation_frame], depth_bias, KF_SPRITE_DEPTH_CUE_BOOSTED);
-    next_frame = item->animation_frame + 1;
-    frame_count = KF_ENUM_ENCODE(u8, item->facing_and_frame_count);
-    item->animation_frame = next_frame;
-    if ((next_frame & 0xff) >= (frame_count & KF_FLOOR_ITEM_FRAME_COUNT_MASK)) {
-        item->animation_frame = 0;
-    }
+    floor_item_advance_frame(item);
 }
 
 ADDRESS(0x80019240, 0x298)
@@ -176,7 +168,7 @@ void opening_render_entities_and_items(void)
     SetLightMatrix(&floor_item_light_matrix);
     material_tpage = &open_graphics_runtime.floor_item_state.material.tpage;
     open_graphics_runtime.floor_item_state.material.color.r = open_graphics_runtime.floor_item_state.material.color.g =
-        open_graphics_runtime.floor_item_state.material.color.b = FLOOR_ITEM_RENDER_BRIGHTNESS;
+        open_graphics_runtime.floor_item_state.material.color.b = KF_FLOOR_ITEM_RENDER_BRIGHTNESS;
     *material_tpage = open_graphics_runtime.floor_item_state.texture_tpage;
     open_graphics_runtime.floor_item_state.material.clut = open_graphics_runtime.floor_item_state.texture_clut;
     item = open_graphics_runtime.floor_item_state.items;

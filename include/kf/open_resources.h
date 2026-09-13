@@ -7,7 +7,8 @@
 
 enum {
     KF_OPENING_ENTITY_CAPACITY = 32,
-    KF_OPENING_ENTITY_FLOOR_HEIGHT = 0
+    KF_OPENING_ENTITY_FLOOR_HEIGHT = 0,
+    KF_OPENING_SCENE_BASE_Y = -10000
 };
 
 /* OPEN's entity TMD indices; the serialized placement byte is shared with GAME. */

@@ -80,17 +80,13 @@ static inline u32 effect_collision_in_cell(
 
         switch (map_collision_grid.cells[z][x]) {
         case KF_MAP_CELL_BLOCKED:
-            if (((map_collision_grid.cells[z + 1][x] != KF_MAP_CELL_FLOOR
-                    && map_collision_grid.cells[z + 1][x] != KF_MAP_CELL_STEP)
+            if ((!MAP_CELL_HAS_FLOOR(map_collision_grid.cells[z + 1][x])
                     || position->vz % KF_MAP_TILE_SIZE < KF_MAP_TILE_CENTER) &&
-                ((map_collision_grid.cells[z - 1][x] != KF_MAP_CELL_FLOOR
-                    && map_collision_grid.cells[z - 1][x] != KF_MAP_CELL_STEP)
+                (!MAP_CELL_HAS_FLOOR(map_collision_grid.cells[z - 1][x])
                     || KF_MAP_TILE_CENTER < position->vz % KF_MAP_TILE_SIZE) &&
-                ((map_collision_grid.cells[z][x + 1] != KF_MAP_CELL_FLOOR
-                    && map_collision_grid.cells[z][x + 1] != KF_MAP_CELL_STEP)
+                (!MAP_CELL_HAS_FLOOR(map_collision_grid.cells[z][x + 1])
                     || position->vx % KF_MAP_TILE_SIZE < KF_MAP_TILE_CENTER)) {
-                if (map_collision_grid.cells[z][x - 1] != KF_MAP_CELL_FLOOR
-                        && map_collision_grid.cells[z][x - 1] != KF_MAP_CELL_STEP) {
+                if (!MAP_CELL_HAS_FLOOR(map_collision_grid.cells[z][x - 1])) {
                     return KF_COLLISION_TERRAIN;
                 }
                 if (KF_MAP_TILE_CENTER < position->vx % KF_MAP_TILE_SIZE) {

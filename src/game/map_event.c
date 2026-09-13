@@ -6,10 +6,6 @@
 #include <kf/game_collision.h>
 #include <kf/game.h>
 
-enum {
-    MAP_EVENT_CONE_INITIAL_BEST_ERROR = 30000
-};
-
 ADDRESS(0x8003379c, 0x10)
 void map_event_set_current(KfMapEvent *event)
 {
@@ -129,7 +125,7 @@ KfMapEvent *map_event_pool_find_target_in_cone(
     s32 *distance_out)
 {
     KfMapEvent *found = NULL;
-    s16 best_angle = MAP_EVENT_CONE_INITIAL_BEST_ERROR;
+    s16 best_angle = KF_CONE_SEARCH_INITIAL_ANGLE_ERROR;
     s32 found_distance = 0;
     KfMapEvent *event = map_event_pool;
     u16 count = KF_MAP_EVENT_CAPACITY - 1;
@@ -147,11 +143,7 @@ KfMapEvent *map_event_pool_find_target_in_cone(
         }
         angle = vector_xz_to_angle(
             event->reference_position.vx - origin->vx, origin->vz - event->reference_position.vz) - facing;
-        angle &= KF_ANGLE_WRAP_MASK;
-        folded = angle;
-        if (angle >= KF_ANGLE_HALF_TURN + 1) {
-            folded = KF_ANGLE_FULL_TURN - angle;
-        }
+        folded = angle_error_magnitude(angle);
         if (angle_tolerance < folded) {
             continue;
         }

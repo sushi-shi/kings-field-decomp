@@ -86,7 +86,7 @@ class GameItemStockDataTests(unittest.TestCase):
         }
         seeds = [(item_constants[bank], item_constants[slot])
                  for bank, slot in re.findall(
-                     r'item_stock\[(KF_ITEM_STOCK_\w+)\]'
+                     r'item_stock\[KF_ENUM_ENCODE\(u8, (KF_ITEM_STOCK_\w+)\)\]'
                      r'\[KF_ENUM_ENCODE\(u8, (KF_ITEM_\w+)\)\] = 1;', source)]
         self.assertEqual([bank * 80 + slot for bank, slot in seeds], list(SEEDS))
         self.assertTrue(all(0 <= bank < 3 and 0 <= slot < 80 for bank, slot in seeds))

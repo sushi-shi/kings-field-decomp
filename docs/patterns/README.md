@@ -9,6 +9,9 @@ promotes a probe to a proven historical toolchain.
   eleven canonical owner/SDK replacements, target-C-aware enum checking, and explicit
   remaining SDK/representation debt. Supersedes older live cast/union totals.
 
+- [common-code-review.md](common-code-review.md): completed 522-entry source
+  reading and application of all 90 candidate verdicts; 39 retained helpers,
+  rejected trials, and unchanged bytes across all 101 comparison objects.
 - [sdk-data-ownership.md](sdk-data-ownership.md): complete SDK tables, startup
   boundaries and reviewed ownership of the remaining data-field candidates.
 - [data-ownership-inventory-cleanup.md](data-ownership-inventory-cleanup.md):
@@ -902,3 +905,11 @@ promotes a probe to a proven historical toolchain.
 - [Remaining game source follow-up](game-final-fifteen-followup.md): sequence
   expression, complete filename-owner and nine-function rendering-context
   controls, with preserved exact siblings and no additional exact function.
+- [Shared constant review](shared-constant-review.md): evaluated enum comparison,
+  semantic decisions for equal values, and shared definitions across TUs.
+- [Complete enum equality review](enum-equality-review.md): decisions for all
+  179 remaining groups, exact membership coverage, and consumer encoding aliases.
+
+- [Complete enum reuse review](enum-reuse-review.md): all 302 starting enum blocks
+  reviewed, direct shared domains and constants, complete member/value coverage,
+  and preserved bytes and strict results for every reconstructed function.

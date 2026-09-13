@@ -12,7 +12,7 @@ CVECTOR tmd_textured_primitive_color = {
 RODATA(0x800121c0, 0x74)
 
 /* Prepared vertex indices are byte offsets into the projected array. */
-#define VTX(off) ((KfScreenVertex *)((u8 *)open_graphics_runtime.tmd_projected_vertices + (off)))
+#define VTX(off) TMD_PREPARED_VERTEX(open_graphics_runtime.tmd_projected_vertices, (off))
 
 ADDRESS(0x8001764c, 0xcf8)
 void render_enqueue_tmd(u16 object_index, s16 depth_bias)
@@ -35,9 +35,9 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
     s32 depth;
 
     for (; remaining-- != 0;
-         packet += (header >> KF_TMD_ILEN_TO_BYTES_SHIFT) & KF_TMD_BODY_BYTES_MASK) {
+         packet += TMD_PACKET_BODY_BYTES(header)) {
         header = *(u32 *)packet;
-        packet += KF_TMD_PACKET_HEADER_BYTES;
+        packet = TMD_PACKET_BODY(packet);
         switch (tmd_packet_mode(header)) {
         case KF_TMD_MODE_FT3: {
             KfTmdPrimitive *polygon = (KfTmdPrimitive *)packet;

@@ -35,24 +35,24 @@ void render_enqueue_map(u16 object_index)
     packet = (u8 *)open_graphics_runtime.tmd_state.current_asset +
         (object->primitive_offset + KF_TMD_HEADER_BYTES);
     for (; remaining-- != 0;
-         packet += (header >> KF_TMD_ILEN_TO_BYTES_SHIFT) & KF_TMD_BODY_BYTES_MASK) {
+         packet += TMD_PACKET_BODY_BYTES(header)) {
         u8 *vertices = (u8 *)open_graphics_runtime.tmd_projected_vertices;
         KfMapGpuPrimitive *prim;
 
         header = *(u32 *)packet;
-        packet += KF_TMD_PACKET_HEADER_BYTES;
+        packet = TMD_PACKET_BODY(packet);
         primitive = (KfTmdPrimitive *)packet;
         switch (tmd_packet_mode(header)) {
         case KF_TMD_MODE_FT4: {
             s32 depth;
 
-            vertex0 = (KfScreenVertex *)(vertices + primitive->ft4.v0);
-            vertex1 = (KfScreenVertex *)(vertices + primitive->ft4.v1);
-            vertex2 = (KfScreenVertex *)(vertices + primitive->ft4.v2);
+            vertex0 = TMD_PREPARED_VERTEX(vertices, primitive->ft4.v0);
+            vertex1 = TMD_PREPARED_VERTEX(vertices, primitive->ft4.v1);
+            vertex2 = TMD_PREPARED_VERTEX(vertices, primitive->ft4.v2);
             if (NormalClip(vertex0->sxy.word, vertex1->sxy.word, vertex2->sxy.word) <= 0) {
                 continue;
             }
-            vertex3 = (KfScreenVertex *)(vertices + primitive->ft4.v3);
+            vertex3 = TMD_PREPARED_VERTEX(vertices, primitive->ft4.v3);
             prim = primitive_buffer_allocate(sizeof(POLY_GT4));
             SetPolyGT4(&prim->quad.sdk);
             prim->quad.packed.clut = primitive->ft4.cba;
@@ -85,9 +85,9 @@ void render_enqueue_map(u16 object_index)
         case KF_TMD_MODE_FT3: {
             s32 depth;
 
-            vertex0 = (KfScreenVertex *)(vertices + primitive->ft3.v0);
-            vertex1 = (KfScreenVertex *)(vertices + primitive->ft3.v1);
-            vertex2 = (KfScreenVertex *)(vertices + primitive->ft3.v2);
+            vertex0 = TMD_PREPARED_VERTEX(vertices, primitive->ft3.v0);
+            vertex1 = TMD_PREPARED_VERTEX(vertices, primitive->ft3.v1);
+            vertex2 = TMD_PREPARED_VERTEX(vertices, primitive->ft3.v2);
             if (NormalClip(vertex0->sxy.word, vertex1->sxy.word, vertex2->sxy.word) <= 0) {
                 continue;
             }

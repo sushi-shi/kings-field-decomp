@@ -6,6 +6,20 @@
 #include <kf/game_types.h>
 #include <kf/enum.h>
 
+/* Projected screen vertices in each independent runtime; extent remains WIP. */
+enum { KF_PROJECTED_VERTEX_CAPACITY = 1000 };
+
+/* Shared staggered-cylinder animation; pool ownership and mode codes differ. */
+enum {
+    KF_CYLINDER_TRANSITION_COUNT = 4,
+    KF_CYLINDER_TRANSITION_TALL_SCALE = 0x2000,
+    KF_CYLINDER_TRANSITION_SCALE_STEP = 0x100,
+    KF_CYLINDER_TRANSITION_YAW_STEP = 0x200,
+    KF_CYLINDER_TRANSITION_FRAMES = 48,
+    KF_CYLINDER_TRANSITION_STAGGER_SHIFT = 3,
+    KF_CYLINDER_TRANSITION_STAGGER_FRAMES = 1 << KF_CYLINDER_TRANSITION_STAGGER_SHIFT
+};
+
 /* Boosted sprites add half the signed GTE depth-cue factor before shading. */
 KF_ENUM_BEGIN(KfSpriteDepthCueMode, s32)
     KF_SPRITE_DEPTH_CUE_NORMAL = 0,
@@ -129,5 +143,16 @@ typedef struct KfCellWindow {
     u16 origin_z;
     KfCellVisibility cells[KF_CELL_WINDOW_CELL_CAPACITY];
 } KfCellWindow;
+
+/* Side-effect-free color pointer; byte wrap precedes the next limit test. */
+#define TRANSITION_COLOR_STEP(color) do { \
+    if ((color)->r < KF_TRANSITION_FADE_LIMIT) { \
+        (color)->r += KF_TRANSITION_FADE_STEP; \
+    } else { \
+        (color)->r = KF_TRANSITION_FADE_LIMIT; \
+    } \
+    (color)->b = (color)->r; \
+    (color)->g = (color)->r; \
+} while (0)
 
 #endif

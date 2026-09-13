@@ -20,6 +20,47 @@ void control(KfActor *actor) { BODY }
 
 
 class EnumTypeTests(unittest.TestCase):
+    def test_menu_selection_accepts_controls_and_spells_but_rejects_other_domains(self) -> None:
+        sdk = os.environ.get("PSYQ_INCLUDE")
+        compiler = shutil.which("clang")
+        if not sdk or not compiler:
+            self.skipTest("Clang and pinned SDK headers are required")
+        source = """
+            #include <kf/game_menu.h>
+            void control(void) { BODY }
+        """
+        cases = {
+            "valid": """
+                KfMagicPanelResult selection = KF_MENU_RESULT_PENDING;
+                selection = KF_MAGIC_HEALING;
+                if (selection == KF_MAGIC_HEALING)
+                    selection = KF_MENU_RESULT_CANCELLED;
+                s32 encoded = KF_ENUM_ENCODE(s32, selection);
+                static_assert(KF_ENUM_ENCODE(s32,
+                    KfMagicPanelResult(KF_MENU_RESULT_PENDING)) == -99);
+                static_assert(KF_ENUM_ENCODE(s32,
+                    KfMagicPanelResult(KF_MAGIC_BLESS)) == 3);
+            """,
+            "wrong_payload": "KfMagicPanelResult selection = KF_ITEM_MEDICINAL_HERB;",
+            "raw_integer": "KfMagicPanelResult selection = -99;",
+            "control_as_spell": "KfEffectKind spell = KF_MENU_RESULT_PENDING;",
+        }
+        with TemporaryDirectory(prefix="kf-menu-selection-") as directory:
+            path = Path(directory) / "control.c"
+            for name, body in cases.items():
+                with self.subTest(control=name):
+                    path.write_text(source.replace("BODY", body))
+                    result = subprocess.run(
+                        [compiler, *FLAGS, *MODES["modern"], "-fsyntax-only",
+                         "-I", str(REPO / "include"), "-I", str(REPO / "vendor/include"),
+                         "-isystem", sdk, str(path)],
+                        capture_output=True, text=True,
+                    )
+                    if name == "valid":
+                        self.assertEqual(result.returncode, 0, result.stderr)
+                    else:
+                        self.assertNotEqual(result.returncode, 0, name)
+
     def test_promoted_arguments_keep_distinct_enum_domains(self) -> None:
         sdk = os.environ.get("PSYQ_INCLUDE")
         compiler = shutil.which("clang")

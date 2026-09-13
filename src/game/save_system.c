@@ -92,6 +92,7 @@ RODATA(0x8001235c, 0x176)
  * each magic record's learned flag. Its unused byte ranges remain unresolved. */
 
 void memory_card_clear_events(void);
+KfSaveStatus memory_card_begin_status_check(void);
 KfSaveStatus memory_card_wait_event(void);
 void memory_card_undeliver_events(void);
 KfSaveStatus memory_card_format(void);
@@ -103,6 +104,33 @@ void save_file_initialize_buffers(void);
 s32 memory_card_show_status_message(KF_ENUM_PARAM(KfSaveStatus, s16) status);
 KfBool32 menu_load_message_image(s32 message_id);
 void screen_show_image_until_input(const char *path);
+
+static inline void memory_card_acknowledge_new_device(void)
+{
+    memory_card_clear_events();
+    _new_card();
+    memory_card_begin_status_check();
+    memory_card_clear_events();
+    _new_card();
+    memory_card_begin_status_check();
+}
+
+/* Side-effect-free summary lvalues; ignore padding and keep field order. */
+#define SAVE_SUMMARY_COPY(to, from) ( \
+    (to).experience = (from).experience, \
+    (to).current_floor = (from).current_floor, \
+    (to).current_hp = (from).current_hp, \
+    (to).maximum_hp = (from).maximum_hp, \
+    (to).current_mp = (from).current_mp, \
+    (to).maximum_mp = (from).maximum_mp)
+
+#define SAVE_SUMMARY_EQUAL(a, b) ( \
+    (a).experience == (b).experience && \
+    (a).current_floor == (b).current_floor && \
+    (a).current_hp == (b).current_hp && \
+    (a).maximum_hp == (b).maximum_hp && \
+    (a).current_mp == (b).current_mp && \
+    (a).maximum_mp == (b).maximum_mp)
 
 ADDRESS(0x8002b078, 0xd8)
 KfSaveResult save_system_read_catalog(KfSaveSlotSummary *summaries)
@@ -122,12 +150,7 @@ KfSaveResult save_system_read_catalog(KfSaveSlotSummary *summaries)
             if (slot != KF_SAVE_SLOT_EMPTY && slot != KF_SAVE_SLOT_SPARE) {
                 s32 entry = KF_ENUM_ENCODE(u8, slot) - KF_ENUM_ENCODE(s16, KF_SAVE_SLOT_FIRST);
 
-                summaries[entry].experience = header->directory.summaries[index].experience;
-                summaries[entry].current_floor = header->directory.summaries[index].current_floor;
-                summaries[entry].current_hp = header->directory.summaries[index].current_hp;
-                summaries[entry].maximum_hp = header->directory.summaries[index].maximum_hp;
-                summaries[entry].current_mp = header->directory.summaries[index].current_mp;
-                summaries[entry].maximum_mp = header->directory.summaries[index].maximum_mp;
+                SAVE_SUMMARY_COPY(summaries[entry], header->directory.summaries[index]);
             }
         }
     }
@@ -209,7 +232,7 @@ KfSaveStatus memory_card_wait_event(void)
     for (;;) {
         if (TestEvent(memory_card_io_end_event) == 1) {
             memory_card_undeliver_events();
-            return KF_CARD_STATUS_IO_END;
+            return SAVE_STATUS_OK;
         }
         if (TestEvent(memory_card_timeout_event) == 1) {
             memory_card_undeliver_events();
@@ -244,14 +267,9 @@ KfSaveResult memory_card_check_or_format(KfCardFormatConfirmation confirmation)
     memory_card_clear_events();
     status = memory_card_begin_status_check();
     if (status == KF_CARD_STATUS_NEW_DEVICE) {
-        memory_card_clear_events();
-        _new_card();
-        memory_card_begin_status_check();
-        memory_card_clear_events();
-        _new_card();
-        memory_card_begin_status_check();
+        memory_card_acknowledge_new_device();
         status = memory_card_format();
-    } else if (status == KF_CARD_STATUS_IO_END) {
+    } else if (status == SAVE_STATUS_OK) {
         if (confirmation == KF_CARD_FORMAT_UNCONFIRMED) {
             status = SAVE_STATUS_FORMAT_CONFIRMATION;
         } else {
@@ -276,7 +294,7 @@ KfSaveResult memory_card_check_or_format(KfCardFormatConfirmation confirmation)
         result = KF_SAVE_RESULT_OK;
         break;
     case SAVE_STATUS_FORMAT_CONFIRMATION:
-        result = KF_SAVE_RESULT_FORMAT_CONFIRMATION;
+        result = KF_SAVE_RESULT_FORMAT_REQUIRED;
         break;
     }
     return result;
@@ -313,15 +331,10 @@ KfSaveResult save_system_write_slot(KfSaveSlotId slot_id)
     memory_card_clear_events();
     status = memory_card_begin_status_check();
     if (status == KF_CARD_STATUS_NEW_DEVICE) {
-        memory_card_clear_events();
-        _new_card();
-        memory_card_begin_status_check();
-        memory_card_clear_events();
-        _new_card();
-        memory_card_begin_status_check();
-        status = KF_CARD_STATUS_IO_END;
+        memory_card_acknowledge_new_device();
+        status = SAVE_STATUS_OK;
     }
-    if (status == KF_CARD_STATUS_IO_END) {
+    if (status == SAVE_STATUS_OK) {
         status = save_file_write_slot(slot_id);
     }
     if (status != SAVE_STATUS_OK) {
@@ -473,15 +486,10 @@ KfSaveResult save_system_read_header(void)
     memory_card_clear_events();
     status = memory_card_begin_status_check();
     if (status == KF_CARD_STATUS_NEW_DEVICE) {
-        memory_card_clear_events();
-        _new_card();
-        memory_card_begin_status_check();
-        memory_card_clear_events();
-        _new_card();
-        memory_card_begin_status_check();
-        status = KF_CARD_STATUS_IO_END;
+        memory_card_acknowledge_new_device();
+        status = SAVE_STATUS_OK;
     }
-    if (status == KF_CARD_STATUS_IO_END) {
+    if (status == SAVE_STATUS_OK) {
         status = save_file_read_header();
     }
     if (status != SAVE_STATUS_OK) {
@@ -549,7 +557,7 @@ KfSaveResult save_system_read_slot(KfSaveSlotId slot_id)
         memory_card_show_status_message(SAVE_STATUS_STALE_CATALOG);
         return KF_SAVE_RESULT_FAILED;
     }
-    if (status == KF_CARD_STATUS_IO_END) {
+    if (status == SAVE_STATUS_OK) {
         status = save_file_read_slot(slot_id);
     }
     if (status != SAVE_STATUS_OK) {
@@ -619,18 +627,8 @@ KfSaveStatus save_file_read_slot(KfSaveSlotId slot_id)
         return SAVE_STATUS_READ_FAILED;
     }
     for (index = 0; index < KF_SAVE_DIRECTORY_ENTRIES; index++) {
-        if (save_header_buffer->directory.summaries[index].experience
-                != header.directory.summaries[index].experience
-            || save_header_buffer->directory.summaries[index].current_floor
-                != header.directory.summaries[index].current_floor
-            || save_header_buffer->directory.summaries[index].current_hp
-                != header.directory.summaries[index].current_hp
-            || save_header_buffer->directory.summaries[index].maximum_hp
-                != header.directory.summaries[index].maximum_hp
-            || save_header_buffer->directory.summaries[index].current_mp
-                != header.directory.summaries[index].current_mp
-            || save_header_buffer->directory.summaries[index].maximum_mp
-                != header.directory.summaries[index].maximum_mp) {
+        if (!SAVE_SUMMARY_EQUAL(save_header_buffer->directory.summaries[index],
+                header.directory.summaries[index])) {
             close(file);
             return SAVE_STATUS_STALE_CATALOG;
         }
@@ -775,13 +773,9 @@ KfBool32 menu_load_message_image(s32 message_id)
 {
     char path[16] = "TIM\\M000.";
     void *buffer;
-    s32 remainder;
 
     if (message_id != MESSAGE_IMAGE_SKIP) {
-        remainder = message_id % 100;
-        path[5] = message_id / 100 + '0';
-        path[6] = remainder / 10 + '0';
-        path[7] = remainder % 10 + '0';
+        CD_PATH_WRITE_DECIMAL3(&path[5], message_id);
         buffer = game_graphics_runtime.display_state.primitive_buffer->cursor;
         if (cd_file_load_into(buffer, path) != KF_RESOURCE_LOADED) {
             return KF_TRUE;
@@ -801,7 +795,7 @@ KfSaveCleanupResult save_file_cleanup_temporary(void)
         return KF_SAVE_CLEANUP_CARD_ERROR;
     }
     status = memory_card_wait_event();
-    if (status == KF_CARD_STATUS_IO_END || status == KF_CARD_STATUS_NEW_DEVICE) {
+    if (status == SAVE_STATUS_OK || status == KF_CARD_STATUS_NEW_DEVICE) {
         file = open(save_temporary_file_path, O_CREAT);
         close(file);
         erase(save_temporary_file_path);

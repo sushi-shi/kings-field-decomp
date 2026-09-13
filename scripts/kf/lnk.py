@@ -10,6 +10,9 @@ from __future__ import annotations
 from dataclasses import dataclass, field
 import struct
 
+from scripts.kf.native_referents import NativeReferent
+from scripts.kf.relocations import decode_hi_lo_target, encode_hi_lo_addend
+
 
 @dataclass
 class Section:
@@ -180,7 +183,8 @@ def affine(expression: tuple) -> tuple[tuple[str, int] | None, int]:
 
 
 def elf_view(data: bytes, *, functions: tuple[str, ...] = (),
-             sizes: dict[str, int] | None = None) -> bytes:
+             sizes: dict[str, int] | None = None,
+             referents: tuple[NativeReferent, ...] = ()) -> bytes:
     """Build an objdiff view of an actual native object, without retail inputs."""
     from scripts.kf.mips_elf import (
         DefinedSymbol, MipsRelocation, STB_GLOBAL, STB_LOCAL, STT_FUNC,
@@ -223,6 +227,41 @@ def elf_view(data: bytes, *, functions: tuple[str, ...] = (),
     symbols['.text'] = [replace(s, size=(obj.functions[s.name][2] if s.name in obj.functions else
         next((end for end in boundaries if end > s.value), s.value) - s.value))
         if s.kind == STT_FUNC else s for s in symbols['.text']]
+    overrides = {}
+    for row in referents:
+        matches = [s for s in symbols['.text']
+                   if s.name == row.function and s.kind == STT_FUNC]
+        if len(matches) != 1:
+            raise ValueError(f'{row.function}: native referent function missing or ambiguous')
+        function = matches[0]
+        if not 0 <= row.site_offset < row.paired_site_offset < function.size:
+            raise ValueError(f'{row.function}: native referent outside function')
+        offsets = (function.value + row.site_offset, function.value + row.paired_site_offset)
+        if any(offset % 4 or offset in overrides for offset in offsets):
+            raise ValueError(f'{row.function}: unaligned or duplicate native referent site')
+        patches = []
+        for offset, kind in zip(offsets, (82, 84)):
+            found = [p for p in sections['.text'].patches if p[0] == offset]
+            if len(found) != 1 or found[0][1] != kind:
+                raise ValueError(f'{row.function}: native referent HI/LO patch missing or changed')
+            patches.append(affine(found[0][2]))
+        target, original_addend = patches[0]
+        if patches[0] != patches[1] or target is None or target[0] != 'section':
+            raise ValueError(f'{row.function}: native referent pair is not one section target')
+        owners = [(name, s) for name, entries in symbols.items() for s in entries
+                  if s.name == row.owner]
+        if len(owners) != 1:
+            raise ValueError(f'{row.function}: native referent owner missing or ambiguous')
+        owner_section, owner = owners[0]
+        if owner_section == '.text' or owner_section != names[target[1]]:
+            raise ValueError(f'{row.function}: native referent owner is in another section')
+        if (owner.value + row.addend) & 0xffffffff != original_addend & 0xffffffff:
+            raise ValueError(f'{row.function}: native referent changes the target address')
+        high, low = (struct.unpack_from('<I', sections['.text'].data, offset)[0]
+                     for offset in offsets)
+        decode_hi_lo_target(high, low)
+        encode_hi_lo_addend(high, low, row.addend)
+        overrides.update({offset: (row.owner, row.addend) for offset in offsets})
     payloads, relocations = {}, {}
     for name, section in sections.items():
         payload = bytearray(section.data)
@@ -235,6 +274,8 @@ def elf_view(data: bytes, *, functions: tuple[str, ...] = (),
                 raise ValueError('absolute native patch is not an ELF relocation')
             symbol = (names[referent[1]] if referent[0] == 'section'
                       else obj.symbols[referent[1]].name)
+            if name == '.text' and offset in overrides:
+                symbol, addend = overrides[offset]
             word = struct.unpack_from('<I', payload, offset)[0]
             if kind == 16:
                 relocation, value = 'R_MIPS_32', addend & 0xffffffff

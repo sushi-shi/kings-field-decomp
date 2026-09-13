@@ -3,6 +3,7 @@
 #include <kf/cd_file.h>
 #include <kf/memory.h>
 #include <kf/open_audio.h>
+#include <kf/audio_sequence.h>
 #include <psyq/audio.h>
 #include <psyq/libc.h>
 
@@ -26,9 +27,6 @@ KfAudioState audio_state;
 ADDRESS(0x80019ba4, 0xb8)
 void audio_initialize(void)
 {
-    s32 index;
-    s16 inactive_voice_id;
-
     SsInit();
     SsSetTableSize(audio_sequence_table,
         KF_AUDIO_SEQUENCE_CAPACITY, KF_AUDIO_TRACKS_PER_SEQUENCE);
@@ -40,11 +38,7 @@ void audio_initialize(void)
     SsUtSetReverbDepth(OPEN_REVERB_DEPTH, OPEN_REVERB_DEPTH);
     audio_state.sequence_buffer = memory_allocate(OPEN_SEQUENCE_BUFFER_BYTES);
     audio_state.sequence_active = KF_AUDIO_SEQUENCE_INACTIVE;
-    inactive_voice_id = KF_AUDIO_VOICE_INACTIVE;
-    index = KF_AUDIO_VOICE_SLOTS - 1;
-    do {
-        audio_state.voice_slots.voice_ids[index] = inactive_voice_id;
-    } while (--index >= 0);
+    audio_reset_voice_slots();
     audio_state.active_vab_id = KF_AUDIO_VAB_UNAVAILABLE;
     audio_state.sequence_active = KF_AUDIO_SEQUENCE_INACTIVE;
 }
@@ -115,9 +109,7 @@ void audio_stop_sequence(KfAudioStopMode mode)
         }
         SsSetMVol(0, 0);
         SsSeqSetVol(audio_state.sequence_id, 0, 0);
-        SsSeqStop(audio_state.sequence_id);
-        SsSeqClose(audio_state.sequence_id);
-        audio_state.sequence_active = KF_AUDIO_SEQUENCE_INACTIVE;
+        AUDIO_SEQUENCE_STOP_AND_CLOSE();
     }
 }
 

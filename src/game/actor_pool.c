@@ -73,8 +73,8 @@ void actor_pool_load_placements(const KfActorPlacement *placements)
             actor->local_z = placements->local_z;
             actor->local_x = placements->local_x;
             actor->lifecycle = KF_ACTOR_LIFECYCLE_DORMANT;
-            actor->position.vz = actor->tile_z * KF_MAP_TILE_SIZE + actor->local_z;
-            actor->position.vx = actor->tile_x * KF_MAP_TILE_SIZE + actor->local_x;
+            actor->position.vz = map_placement_axis_position(actor->tile_z, actor->local_z);
+            actor->position.vx = map_placement_axis_position(actor->tile_x, actor->local_x);
             actor->position.vy = map_floor_height_at_position(&actor->position);
             actor->cell_x = actor->tile_x;
             actor->cell_z = actor->tile_z;

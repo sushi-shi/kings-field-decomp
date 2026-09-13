@@ -19,6 +19,11 @@ enum {
     KF_MAP_CELL_COORD_INVALID = 0xff
 };
 
+static inline s32 map_placement_axis_position(u8 tile, s16 local)
+{
+    return tile * KF_MAP_TILE_SIZE + local;
+}
+
 /* Shipped grid IDs also select mesh/height-table rows. Unresolved resource
  * identities retain their encoded names; zero and 255 both occur on disc. */
 KF_ENUM_BEGIN(KfMapAttribute, u8)
@@ -136,6 +141,11 @@ KF_ENUM_BEGIN(KfMapCellKind, u8)
     KF_MAP_CELL_SUM_GE_SIZE = 5,
     KF_MAP_CELL_STEP = 6
 KF_ENUM_END(KfMapCellKind)
+
+/* Full-cell floor shapes; diagonal half-cells need their geometric tests.
+ * kind is evaluated twice at most and must have no side effects. */
+#define MAP_CELL_HAS_FLOOR(kind) \
+    ((kind) == KF_MAP_CELL_FLOOR || (kind) == KF_MAP_CELL_STEP)
 
 enum {
     KF_MAP_HALF_CELL_STEP_HEIGHT = 300,

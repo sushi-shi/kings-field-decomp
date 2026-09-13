@@ -584,13 +584,15 @@ extern KfMaterialProbe material_probe;
         # The file-scope TMD macro sits outside the rewritten function bodies;
         # route it through the shared owner too, so that the projected base and
         # the selected-asset field share one symbol as they do in production.
-        macro = '#define VTX(off) ((KfScreenVertex *)((u8 *)tmd_projected_vertices + (off)))'
+        macro = '#define VTX(off) TMD_PREPARED_VERTEX(tmd_projected_vertices, (off))'
         self.assertIn(macro, source)
-        source = source.replace(macro, macro.replace('(u8 *)tmd_projected_vertices',
-                                                     '(u8 *)graphics_owner_probe.tmd_projected_vertices'))
-        # The macro and the two byte cursors address the typed member of the
-        # shared owner; no local recovers the owner from a member address.
-        self.assertEqual(source.count('graphics_owner_probe.tmd_projected_vertices'), 3)
+        projected_uses = len(re.findall(r'\btmd_projected_vertices\b', source))
+        source = source.replace(macro, macro.replace('tmd_projected_vertices',
+                                                     'graphics_owner_probe.tmd_projected_vertices'))
+        # Route every prepared-vertex access and byte cursor through the typed
+        # owner, including the file-scope alias outside candidate_source's rewrite.
+        self.assertGreaterEqual(projected_uses, 3)
+        self.assertEqual(source.count('graphics_owner_probe.tmd_projected_vertices'), projected_uses)
         self.assertNotIn('NULL)->', source)
         data = data_addresses()
         data['graphics_owner_probe'] = ORIGIN

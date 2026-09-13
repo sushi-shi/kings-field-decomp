@@ -536,3 +536,36 @@ from 82.8% to 90.0%. Strict resolved objdiff remains exactly **97.129630%**:
 all physical targets and code bytes are unchanged. Restore `static`, which
 matches their supported single-TU ownership. Symbol presentation is not the
 remaining camera-setup, phase-join, or register-lifetime source fact.
+
+## Constant-one allocation: attribution of the seven-word residue
+
+The retained 49-block source differs from retail in seven words at
+`+398..+418`, all of them register choices for two pseudos: the lighting
+selector copy (`v0` in retail, `v1` in the probe) and the constant one for
+the case-one compare (`t0` in retail, `v0` in the probe). The later
+`j +0x418` versus `j +0x414` follows from that alone: the delay-slot filler
+steals the sequence dispatch's `move v1,s5; li 1` for the default path and
+skips whatever is already redundant, and only a constant that survived the
+`sll v0` delay slot is redundant there.
+
+Retail materialises every temporary one in this loop in `t0` (the compare,
+the two phase stores and the scroll-state store) while its twos and minus
+ones stay in `v0`/`v1`. That is reload rematerialising an unallocated
+constant pseudo: `local-alloc` would give a block-local constant the first
+free register (`v0`, then `v1`, then the argument registers), and only a
+pseudo with no hard register reaches reload's spill choice. The probe's
+loop pass sees the same candidate. Its dump reports the compare constant
+merged with the sequence dispatch's constant (`savings 2`, `life 2`) but
+"not desirable": `move_movables` moves a merged invariant only when
+`threshold * savings * lifetime >= insn_count`, the loop has 228 real insns,
+and the soft-float profile fixes all 32 FPU registers so the threshold is
+about 24. Compiling the unit with `-mhard-float` raises the threshold enough
+to hoist the two and minus-one groups (and to change other functions in the
+unit), yet the one group still falls short, so no register-count profile
+recovers it without breaking exact siblings.
+
+No natural source adds a third register-borne one inside the loop: every
+other one in the body is an immediate or a store into a variable that
+retail also keeps in a reload slot. The residue is therefore the historical
+compiler's invariant-motion decision for this constant, not a source shape,
+and the function stays unbanked.

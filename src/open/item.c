@@ -25,8 +25,8 @@ void item_load_floor_placements(KfFloorItemPlacement *placements)
             item->base_sprite_index = placements->base_sprite_index;
             item->facing_and_frame_count = placements->facing_and_frame_count;
             item->unknown_03 = placements->unknown_03;
-            item->position_x = placements->tile_x * KF_MAP_TILE_SIZE + placements->local_x;
-            item->position_z = placements->tile_z * KF_MAP_TILE_SIZE + placements->local_z;
+            item->position_x = map_placement_axis_position(placements->tile_x, placements->local_x);
+            item->position_z = map_placement_axis_position(placements->tile_z, placements->local_z);
             height =
                 map_floor_height_grid.cells[placements->tile_z][placements->tile_x] * KF_MAP_HEIGHT_STEP;
             item->position_y = placements->local_y - height;

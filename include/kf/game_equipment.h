@@ -4,6 +4,7 @@
 /* Runtime-loaded weapon, armor, and accessory definitions. */
 
 #include <kf/game_types.h>
+#include <kf/combat.h>
 #include <kf/enum.h>
 #include <kf/item.h>
 #include <kf/game_math.h>
@@ -18,36 +19,11 @@ KF_ENUM_BEGIN(KfEquipmentSlot, u8)
     KF_EQUIPMENT_SLOT_REFRESH_ONLY = 0xff
 KF_ENUM_END(KfEquipmentSlot)
 
-/* Halfword positions in the weapon record's attack array. */
-enum {
-    KF_WEAPON_ATTACK_CUTTING = 0,
-    KF_WEAPON_ATTACK_STRIKING = 1,
-    KF_WEAPON_ATTACK_PIERCING = 2,
-    KF_WEAPON_ATTACK_HOLY = 3,
-    KF_WEAPON_ATTACK_FIRE = 4,
-    KF_WEAPON_ATTACK_COMPONENT_COUNT = 5
-};
-
 enum {
     KF_WEAPON_RECORD_COUNT = 16,
     KF_ARMOR_RECORD_COUNT = 42,
     KF_WEAPON_TABLE_WORD_COUNT = 176,
     KF_ARMOR_TABLE_WORD_COUNT = 294,
-    KF_ARMOR_ITEM_FIRST = KF_ENUM_ENCODE(u8, KF_ITEM_IRON_MASK),
-    KF_WEAPON_ITEM_FIRST = KF_ENUM_ENCODE(u8, KF_ITEM_SHORT_SWORD),
-    KF_WEAPON_ITEM_END = KF_ENUM_ENCODE(u8, KF_ITEM_IRON_MASK),
-    KF_HEAD_ARMOR_ITEM_FIRST = KF_ENUM_ENCODE(u8, KF_ITEM_IRON_MASK),
-    KF_HEAD_ARMOR_ITEM_END = KF_ENUM_ENCODE(u8, KF_ITEM_BREASTPLATE),
-    KF_BODY_ARMOR_ITEM_FIRST = KF_ENUM_ENCODE(u8, KF_ITEM_BREASTPLATE),
-    KF_BODY_ARMOR_ITEM_END = KF_ENUM_ENCODE(u8, KF_ITEM_SMALL_SHIELD),
-    KF_SHIELD_ITEM_FIRST = KF_ENUM_ENCODE(u8, KF_ITEM_SMALL_SHIELD),
-    KF_SHIELD_ITEM_END = KF_ENUM_ENCODE(u8, KF_ITEM_GAUNTLET),
-    KF_ARM_ARMOR_ITEM_FIRST = KF_ENUM_ENCODE(u8, KF_ITEM_GAUNTLET),
-    KF_ARM_ARMOR_ITEM_END = KF_ENUM_ENCODE(u8, KF_ITEM_IRON_BOOTS),
-    KF_LEG_ARMOR_ITEM_FIRST = KF_ENUM_ENCODE(u8, KF_ITEM_IRON_BOOTS),
-    KF_LEG_ARMOR_ITEM_END = KF_ENUM_ENCODE(u8, KF_ITEM_GOLD_COIN),
-    KF_ACCESSORY_ITEM_FIRST = KF_ENUM_ENCODE(u8, KF_ITEM_LIGHT_RING),
-    KF_ACCESSORY_ITEM_END = KF_ENUM_ENCODE(u8, KF_ITEM_GOLD_CROSS)
 };
 
 /* Armor and accessory record (item ids 13..54 index armor_records[id - 13]). */
@@ -70,7 +46,7 @@ typedef struct KfArmorRecord {
 typedef struct KfWeaponRecord {
     u8 unknown_00;
     u8 charge_rate;
-    u16 attack_components[KF_WEAPON_ATTACK_COMPONENT_COUNT];
+    u16 attack_components[KF_COMBAT_COMPONENT_COUNT];
     u16 hp_regen_interval;
     u16 mp_regen_interval;
     u16 projection_distance;

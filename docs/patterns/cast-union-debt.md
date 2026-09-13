@@ -1,6 +1,32 @@
 # Cast and union reconstruction debt
 
-## Measured result and limits
+## Current-master integration
+
+PR #5 incorporates master `4d3dc5b7`, including the enum, common-helper and
+explicit-referent work. Conflict resolutions retain master's `KfObjectId`,
+overlay domains, `TMD_PREPARED_VERTEX` and `CD_LOCATION_COPY` while keeping
+this campaign's canonical owners and removed implicit-conversion casts.
+
+Fresh target-C censuses measure **368 casts on current master** (287 pointer,
+81 scalar) and **369 after integration** (288 pointer, 81 scalar), with
+**26 unions** in the merged source. Shared helpers change the number of
+written locations; the earlier 403/404 figures below describe the original
+baseline and are historical, not live totals.
+
+Both revisions were freshly compiled. All **101 complete reconstructed ELF
+objects** are byte-identical between current master and the merged branch;
+all **484 emitted function rows** retain their sizes and strict scores.
+Current-master exact totals remain **458/471**: GAME 351/362, OPEN 106/108,
+PSX 1/1. This campaign does not claim master's additional exact function as
+new progress. All 101 modern type-check variants pass. The existing data
+and section-placement failures remain unchanged.
+
+The integrated branch builds all three executables. Ruff, the source ratchets,
+`git diff --check` and `nix flake check -L` pass. The full repository suite
+reports **808 passed, 9 skipped, 10,223 subtests passed**; the isolated flake
+suite runs 817 tests with 143 skips.
+
+## Original baseline: measured result and limits
 
 This campaign starts from master `cb600b9061ad2211470ff393cd933de6b410c9dd`,
 not the separate helper/enum/native-view PR stack. The target-C AST census
@@ -188,7 +214,7 @@ site. No conversion is excluded from the AST census. Tests check visible
 increases and ensure unrelated ratcheted regressions still fail. Strict type
 compilation and byte comparison remain independent requirements.
 
-## Function verdicts and verification
+## Pre-integration function verdicts and verification
 
 A forced full rebuild produced **101 complete ELF objects byte-identical
 to the saved master objects**, including instructions, relocations, symbols

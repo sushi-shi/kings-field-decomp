@@ -4,8 +4,6 @@
 #include <kf/game.h>
 
 enum {
-    MENU_MAP_MARKER_OT_DEPTH = 500,
-    MENU_MAP_IMAGE_OT_DEPTH = 1000,
     MENU_MAP_PIXELS_PER_CELL = 2,
     MENU_MAP_MARKER_SPAN = 4,
     MENU_MAP_WATCHMAN_SET = 1,
@@ -26,7 +24,7 @@ RODATA(0x800122e4, 0x9)
 
 /* Display the current-floor map image and player-position marker. */
 ADDRESS(0x80022d7c, 0x400)
-void menu_map_viewer(KF_ENUM_PARAM(KfItemId, s32) item_code)
+void menu_map_viewer(KF_ENUM_PARAM(KfObjectId, s32) item_code)
 {
     s32 frame = 0;
     POLY_FT4 poly_bg[KF_DISPLAY_BUFFER_COUNT];
@@ -73,18 +71,11 @@ void menu_map_viewer(KF_ENUM_PARAM(KfItemId, s32) item_code)
 
     for (;;) {
         menu_frame_begin();
-        AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_MAP_MARKER_OT_DEPTH,
+        AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_MARKER_OT_DEPTH,
                 &poly_marker[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)]);
-        AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_MAP_IMAGE_OT_DEPTH,
+        AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_CONTENT_OT_DEPTH,
                 &poly_bg[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)]);
-        AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_BACKGROUND_OT_DEPTH,
-                &menu_assets.background_quads[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)][3]);
-        AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_BACKGROUND_OT_DEPTH,
-                &menu_assets.background_quads[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)][2]);
-        AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_BACKGROUND_OT_DEPTH,
-                &menu_assets.background_quads[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)][1]);
-        AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_BACKGROUND_OT_DEPTH,
-                &menu_assets.background_quads[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)][0]);
+        MENU_ENQUEUE_BACKGROUND();
         menu_present_frame();
         if (frame < MENU_PANEL_INPUT_RELEASE_FRAME) {
             frame++;

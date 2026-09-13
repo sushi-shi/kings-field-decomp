@@ -11,7 +11,6 @@ enum {
     MAP_EVENT_WANDER_TURN_STEP = 70,
     MAP_EVENT_WANDER_VECTOR_SCALE = 20,
     MAP_EVENT_WANDER_TURN_RANDOM_LIMIT = 1584,
-    MAP_EVENT_RANDOM_YAW_SHIFT = 3,
     MAP_EVENT_LOOP_SOUND_MAX_DISTANCE = 18000,
     MAP_EVENT_LOOP_SOUND_ATTENUATION_DISTANCE = 50000
 };
@@ -73,11 +72,11 @@ void map_event_update_wander(void)
         event->cell_z = point.vz / KF_MAP_TILE_SIZE;
         event->collision_turn_pending = KF_MAP_EVENT_COLLISION_TURN_NONE;
         if (event->rotation.vy == event->rotation_target && rand() < MAP_EVENT_WANDER_TURN_RANDOM_LIMIT) {
-            event->rotation_target = rand() >> MAP_EVENT_RANDOM_YAW_SHIFT;
+            event->rotation_target = rand() >> KF_RANDOM_ANGLE_SHIFT;
         }
     } else {
         if (event->collision_turn_pending == KF_MAP_EVENT_COLLISION_TURN_NONE || event->rotation.vy == event->rotation_target) {
-            event->rotation_target = rand() >> MAP_EVENT_RANDOM_YAW_SHIFT;
+            event->rotation_target = rand() >> KF_RANDOM_ANGLE_SHIFT;
             event->collision_turn_pending = KF_MAP_EVENT_COLLISION_TURN_PENDING;
         }
     }
@@ -226,20 +225,20 @@ void map_world_state_persist(void)
     object = &map_object_state.objects[0];
     definitions = map_object_state.definitions.entries;
     for (i = 0; i < KF_MAP_OBJECT_EFFECT_FIRST; i++, object++) {
-        KfMapObjectId id = object->object_id;
-        KfMapObjectBehavior behavior;
+        KfObjectId id = object->object_id;
+        KfMapObjectOperation behavior;
 
-        if (id == KF_MAP_OBJECT_FREE) {
+        if (id == KF_OBJECT_NONE) {
             continue;
         }
 
         behavior = definitions[KF_ENUM_ENCODE(u8, id)].behavior_type;
-        if ((behavior == KF_MAP_OBJECT_BEHAVIOR_NONE
-                || behavior == KF_MAP_OBJECT_BEHAVIOR_SCREEN_IMAGE
-                || behavior == KF_MAP_OBJECT_BEHAVIOR_ITEM_PICKUP
-                || behavior == KF_MAP_OBJECT_BEHAVIOR_SAVE_POINT
-                || behavior == KF_MAP_OBJECT_BEHAVIOR_GOLD_PICKUP)
-                && object->action == KF_MAP_OBJECT_ACTION_IDLE) {
+        if ((behavior == KF_MAP_OBJECT_OP_NONE
+                || behavior == KF_MAP_OBJECT_OP_SCREEN_IMAGE
+                || behavior == KF_MAP_OBJECT_OP_ITEM_PICKUP
+                || behavior == KF_MAP_OBJECT_OP_SAVE_POINT
+                || behavior == KF_MAP_OBJECT_OP_GOLD_PICKUP)
+                && object->action == KF_MAP_OBJECT_OP_NONE) {
             continue;
         }
 

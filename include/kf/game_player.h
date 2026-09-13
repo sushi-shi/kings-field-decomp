@@ -4,6 +4,7 @@
 /* Player state, shared player data, and player operations. */
 
 #include <kf/bool.h>
+#include <kf/combat.h>
 #include <kf/audio.h>
 #include <kf/enum.h>
 #include <kf/game_equipment.h>
@@ -37,6 +38,11 @@ KF_ENUM_END(KfPlayerVerticalState)
 /* Downward-positive world Y; view bob is added independently. */
 enum {
     KF_PLAYER_CAMERA_HEIGHT = 1500
+};
+
+/* Normal view clamp, also approached by the container-opening camera. */
+enum {
+    KF_PLAYER_CAMERA_PITCH_LIMIT = 191
 };
 
 /* Charge counters share a full value; weapon phase has a separate time base. */
@@ -212,10 +218,10 @@ typedef struct KfPlayerState {
     s16 illusion_staff_timer;
     u8 unknown_54[4];
     u32 equipment_effect_ticks;
-    KfMagicId selected_magic_id;
+    KfEffectKind selected_magic_id;
     u8 unknown_5d[3];
     KfMagicRecord *selected_magic_record;
-    KfItemId equipped_weapon_id;
+    KfObjectId equipped_weapon_id;
     u8 unknown_65[3];
     KfWeaponRecord *equipped_weapon_record;
     struct KfAssetHeader *weapon_asset_buffer;
@@ -231,12 +237,12 @@ typedef struct KfPlayerState {
     KfArmorRecord *equipped_shield_record;
     KfArmorRecord *equipped_arm_armor_record;
     KfArmorRecord *equipped_leg_armor_record;
-    KfItemId equipped_head_armor_id;
-    KfItemId equipped_body_armor_id;
-    KfItemId equipped_shield_id;
-    KfItemId equipped_arm_armor_id;
-    KfItemId equipped_leg_armor_id;
-    KfItemId equipped_accessory_id;
+    KfObjectId equipped_head_armor_id;
+    KfObjectId equipped_body_armor_id;
+    KfObjectId equipped_shield_id;
+    KfObjectId equipped_arm_armor_id;
+    KfObjectId equipped_leg_armor_id;
+    KfObjectId equipped_accessory_id;
     KF_ENUM_STORAGE(KfPlayerOption, u8) audio_effects_enabled;
     KF_ENUM_STORAGE(KfPlayerOption, u8) audio_music_enabled;
     KF_ENUM_STORAGE(KfPlayerOption, u8) hud_gauges_enabled;
@@ -278,6 +284,23 @@ extern VECTOR player_position_snapshot;
 extern SVECTOR player_rotation_snapshot;
 extern KfPlayerState player_state;
 
+/* Side-effect-free VECTOR lvalue; preserves X/Z/floor-Y publication order. */
+#define PLAYER_FLOOR_POSITION(position) ( \
+    (position).vx = player_state.camera_position.vx, \
+    (position).vz = player_state.camera_position.vz, \
+    (position).vy = player_state.floor_height)
+
+/* Inventory table index, evaluated once for each slot until a match.
+ * Supply a side-effect-free expression; magic uses a separate ID domain. */
+#define PLAYER_ITEM_IS_EQUIPPED(item_index) \
+    ((item_index) == KF_ENUM_ENCODE(u8, player_state.equipped_weapon_id) || \
+     (item_index) == KF_ENUM_ENCODE(u8, player_state.equipped_head_armor_id) || \
+     (item_index) == KF_ENUM_ENCODE(u8, player_state.equipped_body_armor_id) || \
+     (item_index) == KF_ENUM_ENCODE(u8, player_state.equipped_shield_id) || \
+     (item_index) == KF_ENUM_ENCODE(u8, player_state.equipped_arm_armor_id) || \
+     (item_index) == KF_ENUM_ENCODE(u8, player_state.equipped_leg_armor_id) || \
+     (item_index) == KF_ENUM_ENCODE(u8, player_state.equipped_accessory_id))
+
 extern void player_add_experience(s16 amount);
 extern void player_adjust_hp(s32 delta);
 extern void player_adjust_mp(s32 delta);
@@ -303,7 +326,7 @@ extern s32 player_distance_to_point(
 extern s32 player_distance_to_point_in_cone(
     const VECTOR *point, s16 facing, s32 max_distance,
     s32 angle_tolerance);
-extern void player_equip_weapon(KfItemId weapon_id);
+extern void player_equip_weapon(KfObjectId weapon_id);
 extern void game_initialize_session(void);
 extern void game_state_initialize(void);
 extern void player_increment_magic_training(void);
@@ -311,11 +334,11 @@ extern void player_increment_physical_power_training(void);
 extern s32 player_move_horizontal(s32 heading, s32 distance);
 extern void player_recalculate_combat_stats(void);
 extern void player_restore_vitals_with_color_cycle(void);
-extern void player_select_magic(KfMagicId magic_id);
-extern void player_set_equipment_slot(KfItemId item_id, KfEquipmentSlot slot);
+extern void player_select_magic(KfEffectKind magic_id);
+extern void player_set_equipment_slot(KfObjectId item_id, KfEquipmentSlot slot);
 extern void player_apply_fire_defense_boost(void);
 extern void player_sync_position_to_map(void);
-extern void player_use_item(KfItemId item_id);
+extern void player_use_item(KfObjectId item_id);
 extern void player_update(void);
 extern void player_update_transform_snapshot(
     VECTOR *position_out, SVECTOR *rotation_out);

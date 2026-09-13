@@ -430,10 +430,17 @@ def _header_structure_layouts() -> dict[str, HeaderStructureLayout]:
     enum_storage_pattern = re.compile(
         r"KF_ENUM_STORAGE\(\s*([A-Za-z_]\w*)\s*,\s*([A-Za-z_]\w*)\s*\)"
     )
+    enum_storage_typedef_pattern = re.compile(
+        r"\btypedef\s+" + enum_storage_pattern.pattern + r"\s+([A-Za-z_]\w*)\s*;"
+    )
+    enum_storage_types = {"s8", "u8", "s16", "u16", "s32", "u32", "long"}
     integer_enumerator = re.compile(r"([A-Za-z_]\w*)\s*=\s*(0x[0-9a-fA-F]+|\d+)")
+    alias_enumerator = re.compile(r"([A-Za-z_]\w*)\s*=\s*([A-Za-z_]\w*)")
     implicit_enumerator = re.compile(r"[A-Za-z_]\w*")
     checked_headers = (
         REPO / "include/kf/game_types.h",
+        REPO / "include/kf/memory_layout.h",
+        REPO / "include/kf/combat.h",
         REPO / "include/kf/overlay.h",
         REPO / "include/kf/animation.h",
         REPO / "include/kf/cd_file.h",
@@ -476,16 +483,25 @@ def _header_structure_layouts() -> dict[str, HeaderStructureLayout]:
         enum_bodies = [enum[1] for enum in enum_pattern.finditer(text)]
         for enum in stored_enum_pattern.finditer(text):
             name, storage, body = enum.groups()
-            if storage not in {"s8", "u8", "s16", "u16", "s32", "u32", "long"}:
+            if storage not in enum_storage_types:
                 raise ValueError(f"{path}: unsupported enum storage {storage!r} for {name}")
             if name in primitive_layouts or name in definitions:
                 raise ValueError(f"{path}: duplicate checked type {name}")
             primitive_layouts[name] = primitive_layouts[storage]
             enum_domains.add(name)
             enum_bodies.append(body)
-        # An implicit enumerator starts at zero or follows a known integer.
-        # Unsupported expressions break that chain until an explicit integer
-        # resets it; never guess an inventory's byte extent.
+        for alias in enum_storage_typedef_pattern.finditer(text):
+            domain, storage, name = alias.groups()
+            if domain not in enum_domains:
+                raise ValueError(f"{path}: undeclared enum domain {domain!r}")
+            if storage not in enum_storage_types:
+                raise ValueError(f"{path}: unsupported enum storage {storage!r}")
+            if name in primitive_layouts or name in definitions:
+                raise ValueError(f"{path}: duplicate checked type {name}")
+            primitive_layouts[name] = primitive_layouts[storage]
+        # Aliases may use a previously resolved member, including one from a
+        # shared header. Unknown aliases/expressions break the implicit chain;
+        # never guess an inventory's byte extent.
         for body in enum_bodies:
             next_value = 0
             for enumerator in body.split(","):
@@ -493,9 +509,12 @@ def _header_structure_layouts() -> dict[str, HeaderStructureLayout]:
                 if not enumerator:
                     continue
                 constant = integer_enumerator.fullmatch(enumerator)
+                alias = alias_enumerator.fullmatch(enumerator)
                 if constant:
                     constant_name, value = constant.groups()
                     number = int(value, 0)
+                elif alias and alias[2] in constants:
+                    constant_name, number = alias[1], constants[alias[2]]
                 elif implicit_enumerator.fullmatch(enumerator) and next_value is not None:
                     constant_name, number = enumerator, next_value
                 else:
@@ -537,7 +556,7 @@ def _header_structure_layouts() -> dict[str, HeaderStructureLayout]:
                     domain, storage = storage_match.groups()
                     if domain not in enum_domains:
                         raise ValueError(f"{path}: undeclared enum domain {domain!r}")
-                    if storage not in {"s8", "u8", "s16", "u16", "s32", "u32", "long"}:
+                    if storage not in enum_storage_types:
                         raise ValueError(f"{path}: unsupported enum storage {storage!r}")
                     base_size, base_alignment = primitive_layouts[storage]
                     display_type = f"KF_ENUM_STORAGE({domain}, {storage})"

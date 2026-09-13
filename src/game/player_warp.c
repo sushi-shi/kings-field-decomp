@@ -12,14 +12,8 @@ static MATRIX actor_transform_color_matrix = {
 };
 
 enum {
-    WARP_SHIMMER_COUNT = 4,
     WARP_SHIMMER_OWNER_ID = 10,
-    WARP_SHIMMER_TALL_SCALE = 0x2000,
-    WARP_SHIMMER_SCALE_STEP = 0x100,
-    WARP_SHIMMER_YAW_STEP = 512,
-    WARP_SHIMMER_FRAMES = 48,
     WARP_SHIMMER_SOUND_FRAME = 8,
-    WARP_SHIMMER_STAGGER_FRAMES = 8,
     WARP_CELL_X_SHIFT = 24,
     WARP_CELL_Z_SHIFT = 16,
     ACTOR_TRANSFORM_RESULT_DEFINITION = 6,
@@ -34,7 +28,7 @@ enum {
 ADDRESS(0x80036618, 0x238)
 void player_warp_shimmer(KfWarpShimmerMode mode, VECTOR *position)
 {
-    KfEffectRecord *effects[WARP_SHIMMER_COUNT];
+    KfEffectRecord *effects[KF_CYLINDER_TRANSITION_COUNT];
     KfEffectRecord **cursor;
     KfEffectRecord *effect;
     struct {
@@ -51,11 +45,11 @@ void player_warp_shimmer(KfWarpShimmerMode mode, VECTOR *position)
     case KF_WARP_SHIMMER_GROW_REMOVE:
     case KF_WARP_SHIMMER_GROW_KEEP:
         scale_y = 0;
-        scale_y_step = WARP_SHIMMER_SCALE_STEP;
+        scale_y_step = KF_CYLINDER_TRANSITION_SCALE_STEP;
         break;
     case KF_WARP_SHIMMER_SHRINK_REMOVE:
-        scale_y = WARP_SHIMMER_TALL_SCALE;
-        scale_y_step = -WARP_SHIMMER_SCALE_STEP;
+        scale_y = KF_CYLINDER_TRANSITION_TALL_SCALE;
+        scale_y_step = -KF_CYLINDER_TRANSITION_SCALE_STEP;
         break;
     }
 
@@ -64,7 +58,7 @@ void player_warp_shimmer(KfWarpShimmerMode mode, VECTOR *position)
     scratch.position.vy = position->vy;
     display_flip_buffer_index();
     cursor = effects;
-    for (i = WARP_SHIMMER_COUNT - 1; i != -1; i--) {
+    for (i = KF_CYLINDER_TRANSITION_COUNT - 1; i != -1; i--) {
         effect = effect_pool_construct(
             WARP_SHIMMER_OWNER_ID,
             KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS,
@@ -78,23 +72,23 @@ void player_warp_shimmer(KfWarpShimmerMode mode, VECTOR *position)
     display_flip_buffer_index();
     render_frame(&player_state.camera_position, &player_state.camera_rotation);
 
-    for (frame = 0; frame < WARP_SHIMMER_FRAMES; frame++) {
+    for (frame = 0; frame < KF_CYLINDER_TRANSITION_FRAMES; frame++) {
         cursor = effects;
         if (frame == WARP_SHIMMER_SOUND_FRAME) {
             sound_ref_play(&gameplay_sound_refs[6], KF_AUDIO_MAX_VOLUME);
         }
-        for (i = 0; i < WARP_SHIMMER_COUNT; i++) {
+        for (i = 0; i < KF_CYLINDER_TRANSITION_COUNT; i++) {
             effect = *cursor++;
 
-            if (i * WARP_SHIMMER_STAGGER_FRAMES < frame) {
+            if (i * KF_CYLINDER_TRANSITION_STAGGER_FRAMES < frame) {
                 u16 current_scale_y = effect->scale_y;
 
-                if (current_scale_y < WARP_SHIMMER_TALL_SCALE + 1) {
+                if (current_scale_y < KF_CYLINDER_TRANSITION_TALL_SCALE + 1) {
                     effect->scale_y = scale_y_step + current_scale_y;
                 }
             }
             effect->rotation.vector.vy =
-                (effect->rotation.vector.vy + WARP_SHIMMER_YAW_STEP)
+                (effect->rotation.vector.vy + KF_CYLINDER_TRANSITION_YAW_STEP)
                 & KF_ANGLE_WRAP_MASK;
         }
         render_frame(&player_state.camera_position, &player_state.camera_rotation);
@@ -103,7 +97,7 @@ void player_warp_shimmer(KfWarpShimmerMode mode, VECTOR *position)
 
     if (mode_value != KF_WARP_SHIMMER_GROW_KEEP) {
         cursor = effects;
-        for (i = WARP_SHIMMER_COUNT - 1; i != -1; i--) {
+        for (i = KF_CYLINDER_TRANSITION_COUNT - 1; i != -1; i--) {
             effect = *cursor++;
             effect->type = KF_EFFECT_SLOT_FREE;
         }
@@ -115,9 +109,7 @@ void player_warp_change_floor(KfFloorId floor, KF_ENUM_PARAM(KfMapVariant, u32) 
 {
     VECTOR position;
 
-    position.vx = player_state.camera_position.vx;
-    position.vz = player_state.camera_position.vz;
-    position.vy = player_state.floor_height;
+    PLAYER_FLOOR_POSITION(position);
     player_warp_shimmer(KF_WARP_SHIMMER_GROW_REMOVE, &position);
     map_unload_floor();
     player_state.progress_state.current_floor = floor;
@@ -143,9 +135,7 @@ void player_warp_same_floor(KF_ENUM_PARAM(KfMapVariant, u32) variant, s32 cell_x
     VECTOR position;
     KfMapVariant previous_variant;
 
-    position.vx = player_state.camera_position.vx;
-    position.vz = player_state.camera_position.vz;
-    position.vy = player_state.floor_height;
+    PLAYER_FLOOR_POSITION(position);
     player_warp_shimmer(KF_WARP_SHIMMER_GROW_REMOVE, &position);
     collision_adjust_cell_occupancy(player_state.motion_state.fields.map_cell.coords.x,
                                     player_state.motion_state.fields.map_cell.coords.z, -1);

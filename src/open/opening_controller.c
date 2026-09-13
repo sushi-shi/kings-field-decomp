@@ -20,7 +20,7 @@ char opening_initial_tim_path[KF_OPENING_INITIAL_TIM_PATH_BYTES] = {'B', '0', '\
 RODATA(0x80012020, 0x15)
 
 ADDRESS(0x800156bc, 0x214)
-void opening_run(KfOpenMode display_mode)
+void opening_run(KfOverlayMode display_mode)
 {
     u8 *tim_data;
     KF_ENUM_STORAGE(KfOpeningInputAction, s32) scene3_action;
@@ -39,7 +39,7 @@ void opening_run(KfOpenMode display_mode)
     memory_reset_system_heap();
 
     switch (display_mode) {
-    case KF_OPEN_MODE_INTRO:
+    case KF_OVERLAY_MODE_INTRO:
         SetDispMask(1);
         if (cd_file_load_into(
                 open_graphics_runtime.display_state.asset_load_buffer,
@@ -91,7 +91,7 @@ opening_reload:
         }
         break;
 
-    case KF_OPEN_MODE_ENDING:
+    case KF_OVERLAY_MODE_ENDING:
         opening_ending_scene_run();
         opening_ending_scroll_run();
         break;

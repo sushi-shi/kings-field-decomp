@@ -13,12 +13,15 @@
 #include <kf/game_types.h>
 #include <kf/enum.h>
 #include <psyq/sdk.h>
+#include <psyq/audio.h>
 
 enum {
     KF_AUDIO_VOICE_SLOTS = 10,
     KF_AUDIO_MAX_VOLUME = 0x7f,
     KF_AUDIO_DEFAULT_MAX_DISTANCE = 16000,
     KF_AUDIO_DEFAULT_ATTENUATION_DISTANCE = 28000,
+    KF_AUDIO_EXTENDED_MAX_DISTANCE = 20000,
+    KF_AUDIO_EXTENDED_ATTENUATION_DISTANCE = 60000,
     KF_AUDIO_SEQUENCE_CAPACITY = 2,
     KF_AUDIO_TRACKS_PER_SEQUENCE = 1,
     KF_AUDIO_VOICE_INACTIVE = -1,
@@ -72,6 +75,41 @@ typedef struct KfAudioState {
 
 extern KfAudioState audio_state;
 extern s32 audio_voice_slot_index;
+
+static inline void audio_reset_voice_slots(void)
+{
+    s32 index;
+    s16 inactive_voice_id;
+
+    inactive_voice_id = KF_AUDIO_VOICE_INACTIVE;
+    index = KF_AUDIO_VOICE_SLOTS - 1;
+    do {
+        audio_state.voice_slots.voice_ids[index] = inactive_voice_id;
+    } while (--index >= 0);
+}
+
+static inline void audio_key_on_next_slot(
+    s16 vab_id, s16 program, s16 tone, s16 note, s16 left_volume, s16 right_volume)
+{
+    audio_voice_slot_index++;
+    if (audio_voice_slot_index == KF_AUDIO_VOICE_SLOTS) {
+        audio_voice_slot_index = 0;
+    }
+    if (audio_state.voice_slots.voice_ids[audio_voice_slot_index] != KF_AUDIO_VOICE_INACTIVE) {
+        SsUtKeyOff(
+            audio_state.voice_slots.voice_ids[audio_voice_slot_index],
+            audio_state.voice_slots.vab_ids[audio_voice_slot_index],
+            audio_state.voice_slots.programs[audio_voice_slot_index],
+            audio_state.voice_slots.tones[audio_voice_slot_index],
+            audio_state.voice_slots.notes[audio_voice_slot_index]);
+    }
+    audio_state.voice_slots.vab_ids[audio_voice_slot_index] = vab_id;
+    audio_state.voice_slots.programs[audio_voice_slot_index] = program;
+    audio_state.voice_slots.tones[audio_voice_slot_index] = tone;
+    audio_state.voice_slots.notes[audio_voice_slot_index] = note;
+    audio_state.voice_slots.voice_ids[audio_voice_slot_index] =
+        SsUtKeyOn(vab_id, program, tone, note, 0, left_volume, right_volume);
+}
 
 extern void audio_initialize(void);
 extern void audio_shutdown(void);

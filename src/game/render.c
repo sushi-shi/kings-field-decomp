@@ -30,11 +30,6 @@ enum {
     NOTIFICATION_DIGIT_TPAGE = 0x1c
 };
 
-/* Object-table records follow the 12-byte TMD header of the selected asset. */
-#define TMD_OBJECTS(asset) ((KfTmdObject *)((asset) + 1))
-/* Packet bodies follow the 4-byte packet header (olen, ilen, flag, mode). */
-#define TMD_PACKET_BODY(packet) ((packet) + KF_TMD_PACKET_HEADER_BYTES)
-
 /* tmd_register primitive-mode dispatch table. */
 RODATA(0x800121b4, 0x74)
 
@@ -98,9 +93,7 @@ void display_show_error_screen(KfSystemScreen stage)
         cd_search_file.size =
             ((cd_search_file.size >> KF_CD_SECTOR_SHIFT) + 1) << KF_CD_SECTOR_SHIFT;
     }
-    cd_read_location.minute = cd_search_file.pos.minute;
-    cd_read_location.second = cd_search_file.pos.second;
-    cd_read_location.sector = cd_search_file.pos.sector;
+    CD_LOCATION_COPY(cd_read_location, cd_search_file.pos);
     for (attempt = 0; attempt < ERROR_SCREEN_READ_ATTEMPTS; attempt++) {
         s32 result;
 

@@ -1,5 +1,6 @@
 #include <kf/null.h>
 #include <kf/address.h>
+#include <kf/input.h>
 #include <kf/game_menu.h>
 #include <kf/game.h>
 
@@ -30,14 +31,14 @@ KfMagicPanelResult menu_magic_panel(void)
 {
     KfMenuList ctx;
     s16 labels[10][MENU_GLYPHS_PER_ROW];
-    KfMagicId codes[16];
+    KfEffectKind codes[16];
     s32 found;
     s32 code;
     s32 j;
     KfMenuConfirmState confirm = KF_MENU_CONFIRM_IDLE;
     s32 input = 0;
     s32 prev;
-    KfMagicPanelResult selection = KF_MAGIC_PANEL_PENDING;
+    KfMagicPanelResult selection = KF_MENU_RESULT_PENDING;
 
     while (PadRead(1) != 0)
         ;
@@ -48,7 +49,7 @@ KfMagicPanelResult menu_magic_panel(void)
         if (magic_records[code].learned == KF_MAGIC_LEARNED) {
             for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)
                 labels[found][j] = magic_name_rows[code].codes[j];
-            codes[found] = KF_ENUM_DECODE(KfMagicId, code);
+            codes[found] = KF_ENUM_DECODE(KfEffectKind, code);
             found++;
         }
     }
@@ -60,7 +61,7 @@ KfMagicPanelResult menu_magic_panel(void)
     menu_frame_begin();
     if (ctx.entry_count != 0) {
         if (menu_load_item_texture(menu_texture_from_magic(codes[ctx.selected_index])) == KF_RESOURCE_LOAD_FAILED)
-            return KF_MAGIC_PANEL_CANCELLED;
+            return KF_MENU_RESULT_CANCELLED;
         menu_add_marker_quad();
     }
     menu_list_render(&ctx);
@@ -69,13 +70,13 @@ KfMagicPanelResult menu_magic_panel(void)
         menu_present_frame();
         if (confirm == KF_MENU_CONFIRM_REQUESTED) {
             if (menu_list_interact(&ctx, KF_MENU_CONFIRM_USE,
-                    KF_MENU_PREVIEW_MAGIC_ICON, codes[ctx.selected_index], KF_SHOP_NONE, KF_ITEM_PRICE_BUY)
-                    == KF_MENU_CONFIRM_CANCELLED)
-                selection = KF_MAGIC_PANEL_PENDING;
+                    KF_MENU_PREVIEW_MAGIC_ICON, codes[ctx.selected_index], KF_ITEM_STOCK_PLAYER, KF_TRADE_BUY)
+                    == KF_MENU_RESULT_CANCELLED)
+                selection = KF_MENU_RESULT_PENDING;
             else
-                selection = KF_ENUM_DECODE(KfMagicPanelResult, KF_ENUM_ENCODE(u8, codes[ctx.selected_index]));
+                selection = codes[ctx.selected_index];
         }
-        if (selection != KF_MAGIC_PANEL_PENDING) {
+        if (selection != KF_MENU_RESULT_PENDING) {
             while (PadRead(1) != 0)
                 ;
             break;
@@ -88,49 +89,24 @@ KfMagicPanelResult menu_magic_panel(void)
         if (ctx.entry_count == 0) {
             if (input != 0) {
                 menu_play_input_sound(MENU_SOUND_CURSOR);
-                selection = KF_MAGIC_PANEL_CANCELLED;
+                selection = KF_MENU_RESULT_CANCELLED;
             }
-        } else if ((input & PADLup) != 0 && (prev & PADLup) == 0) {
+        } else if (PAD_PRESSED(input, prev, PADLup)) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
-            if (ctx.selected_index != 0) {
-                ctx.selected_index--;
-                if (ctx.cursor_row == 0)
-                    ctx.scroll_offset--;
-                else
-                    ctx.cursor_row--;
-            } else {
-                ctx.selected_index = ctx.entry_count - 1;
-                if (ctx.entry_count < ctx.visible_rows) {
-                    ctx.scroll_offset = 0;
-                    ctx.cursor_row = ctx.entry_count - 1;
-                } else {
-                    ctx.scroll_offset = ctx.entry_count - ctx.visible_rows;
-                    ctx.cursor_row = ctx.visible_rows - 1;
-                }
-            }
+            menu_list_previous(&ctx);
             if (menu_load_item_texture(menu_texture_from_magic(codes[ctx.selected_index])) == KF_RESOURCE_LOAD_FAILED)
-                return KF_MAGIC_PANEL_CANCELLED;
-        } else if ((input & PADLdown) != 0 && (prev & PADLdown) == 0) {
+                return KF_MENU_RESULT_CANCELLED;
+        } else if (PAD_PRESSED(input, prev, PADLdown)) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
-            if (ctx.selected_index < ctx.entry_count - 1) {
-                ctx.selected_index++;
-                if (ctx.cursor_row == ctx.visible_rows - 1)
-                    ctx.scroll_offset++;
-                else
-                    ctx.cursor_row++;
-            } else {
-                ctx.selected_index = 0;
-                ctx.scroll_offset = 0;
-                ctx.cursor_row = 0;
-            }
+            menu_list_next(&ctx);
             if (menu_load_item_texture(menu_texture_from_magic(codes[ctx.selected_index])) == KF_RESOURCE_LOAD_FAILED)
-                return KF_MAGIC_PANEL_CANCELLED;
-        } else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {
+                return KF_MENU_RESULT_CANCELLED;
+        } else if (PAD_PRESSED(input, prev, PADRright)) {
             menu_play_input_sound(MENU_SOUND_CONFIRM);
             confirm = KF_MENU_CONFIRM_REQUESTED;
-        } else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {
+        } else if (PAD_PRESSED(input, prev, PADRdown)) {
             menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
-            selection = KF_MAGIC_PANEL_CANCELLED;
+            selection = KF_MENU_RESULT_CANCELLED;
         }
 
         if (ctx.entry_count != 0)
@@ -138,18 +114,18 @@ KfMagicPanelResult menu_magic_panel(void)
         menu_list_render(&ctx);
     }
 
-    if (selection != KF_MAGIC_PANEL_CANCELLED) {
+    if (selection != KF_MENU_RESULT_CANCELLED) {
         if (player_state.vitals.current_mp < magic_records[KF_ENUM_ENCODE(s32, selection)].mp_cost)
             return selection;
         player_state.vitals.current_mp -= magic_records[KF_ENUM_ENCODE(s32, selection)].mp_cost;
-        if (selection == KF_MAGIC_PANEL_HEALING) {
+        if (selection == KF_MAGIC_HEALING) {
             player_state.vitals.current_hp += player_state.magic;
-        } else if (selection == KF_MAGIC_PANEL_DISPOISON) {
+        } else if (selection == KF_MAGIC_DISPOISON) {
             player_state.status_effect_flags &= KF_PLAYER_STATUS_CURSE | KF_PLAYER_STATUS_DARKNESS;
-        } else if (selection == KF_MAGIC_PANEL_RESIST_FIRE) {
+        } else if (selection == KF_MAGIC_RESIST_FIRE) {
             player_state.status_effect_flags |= KF_PLAYER_STATUS_FIRE_DEFENSE_BOOST;
             player_apply_fire_defense_boost();
-        } else if (selection == KF_MAGIC_PANEL_BLESS) {
+        } else if (selection == KF_MAGIC_BLESS) {
             player_state.status_effect_flags &= KF_PLAYER_STATUS_POISON | KF_PLAYER_STATUS_SLOWED;
             player_state.vitals.current_hp += player_state.magic * BLESS_HP_RECOVERY_MAGIC_MULTIPLIER;
         }
@@ -172,7 +148,7 @@ void menu_option_root(void)
     KfMenuConfirmState confirm = KF_MENU_CONFIRM_IDLE;
     s32 input = 0;
     s32 prev;
-    KfMenuPanelPhase phase = KF_MENU_PANEL_OPEN;
+    KfMenuResult phase = KF_MENU_RESULT_PENDING;
     KfEquipmentMenuCategory selection = KF_EQUIP_MENU_NONE;
 
     menu_frame_begin();
@@ -209,34 +185,34 @@ void menu_option_root(void)
             break;
         }
         selection = KF_EQUIP_MENU_NONE;
-        if (phase != KF_MENU_PANEL_OPEN)
+        if (phase != KF_MENU_RESULT_PENDING)
             return;
         menu_frame_begin();
         confirm = KF_MENU_CONFIRM_IDLE;
         prev = input;
         input = PadRead(1);
-        if ((input & PADLup) != 0 && (prev & PADLup) == 0) {
+        if (PAD_PRESSED(input, prev, PADLup)) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
             if (cursor != 0)
                 cursor--;
             else
                 cursor = KF_MENU_EQUIPMENT_RETURN_ROW;
-        } else if ((input & PADLdown) != 0 && (prev & PADLdown) == 0) {
+        } else if (PAD_PRESSED(input, prev, PADLdown)) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
             if (cursor != KF_MENU_EQUIPMENT_RETURN_ROW)
                 cursor++;
             else
                 cursor = 0;
-        } else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {
+        } else if (PAD_PRESSED(input, prev, PADRright)) {
             menu_play_input_sound(MENU_SOUND_CONFIRM);
             confirm = KF_MENU_CONFIRM_REQUESTED;
             if (cursor < KF_MENU_EQUIPMENT_RETURN_ROW)
                 selection = KF_ENUM_DECODE(KfEquipmentMenuCategory, cursor);
             else
-                phase = KF_MENU_PANEL_CLOSED;
-        } else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {
+                phase = KF_MENU_RESULT_CANCELLED;
+        } else if (PAD_PRESSED(input, prev, PADRdown)) {
             menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
-            phase = KF_MENU_PANEL_CLOSED;
+            phase = KF_MENU_RESULT_CANCELLED;
         }
         menu_draw_name_list();
         menu_draw_window(KF_MENU_WINDOW_EQUIPMENT, KF_MENU_EQUIPMENT_ROW_COUNT, cursor, confirm);

@@ -7,12 +7,8 @@
 
 enum {
     KF_FLOOR5_ACTOR_TEXTURE_COUNT = 3,
-    /* Projected screen vertices; OPEN.EXE's independent runtime has the same
-     * capacity. The morph scratch fills the remainder before the texture
-     * pages; its element 0 is the header-sized extra vector that pool.c
-     * blends alongside the object's own vertices. Neither count is a proven
-     * original declaration. */
-    KF_PROJECTED_VERTEX_CAPACITY = 1000,
+    /* Morph scratch includes the extra header-sized vector blended by pool.c;
+     * its extent remains WIP. */
     KF_MORPH_SCRATCH_CAPACITY = 1001
 };
 

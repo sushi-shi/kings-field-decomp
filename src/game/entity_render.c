@@ -67,8 +67,6 @@ void render_floor_item(KfFloorItem *item)
     MATRIX model;
     long flag;
     KF_ENUM_PARAM(KfFloorItemFacing, u16) facing;
-    u32 next_frame;
-    u32 frame_count;
     s16 depth_bias;
 
     SetRotMatrix(&game_graphics_runtime.render_state.view_matrix);
@@ -94,12 +92,7 @@ void render_floor_item(KfFloorItem *item)
     render_enqueue_sprite(
         &floor_item_sprites[KF_ENUM_ENCODE(u16, item->base_sprite_index) + item->animation_frame],
         depth_bias, KF_SPRITE_DEPTH_CUE_BOOSTED);
-    next_frame = item->animation_frame + 1;
-    frame_count = KF_ENUM_ENCODE(u8, item->facing_and_frame_count);
-    item->animation_frame = next_frame;
-    if ((next_frame & 0xff) >= (frame_count & KF_FLOOR_ITEM_FRAME_COUNT_MASK)) {
-        item->animation_frame = 0;
-    }
+    floor_item_advance_frame(item);
 }
 
 /*

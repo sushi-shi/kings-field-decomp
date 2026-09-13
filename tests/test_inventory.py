@@ -52,6 +52,29 @@ class FakeReference:
 
 
 class InventoryTests(unittest.TestCase):
+    def test_enum_storage_typedef_preserves_abi_and_rejects_unknown_types(self) -> None:
+        domain = "KF_ENUM_BEGIN(Mode, s16) MODE_FIRST = 1 KF_ENUM_END(Mode)"
+        alias = "typedef KF_ENUM_STORAGE(Mode, u32) ModeWord;"
+        carrier = "typedef struct Carrier { u8 prefix; ModeWord mode; u8 suffix; } Carrier;"
+        source = domain + alias + carrier
+        with patch("pathlib.Path.read_text", lambda path:
+                   source if path.name == "game_types.h" else ""):
+            layout = _header_structure_layouts()["Carrier"]
+        self.assertEqual((layout.size, layout.alignment), (12, 4))
+        self.assertEqual([(f.offset, f.size, f.datatype) for f in layout.fields],
+                         [(0, 1, "u8"), (4, 4, "ModeWord"), (8, 1, "u8")])
+        controls = (
+            (source.replace("(Mode, u32)", "(Missing, u32)"), "undeclared enum domain"),
+            (source.replace("(Mode, u32)", "(Mode, size_t)"), "unsupported enum storage"),
+            (domain + alias + alias + carrier, "duplicate checked type"),
+            (domain + "typedef u32 ModeWord;" + carrier, "unknown field type"),
+        )
+        for source, error in controls:
+            with self.subTest(error=error), patch("pathlib.Path.read_text", lambda path:
+                                                source if path.name == "game_types.h" else ""):
+                with self.assertRaisesRegex(ValueError, error):
+                    _header_structure_layouts()
+
     def test_storage_macro_requires_a_declared_enum_domain(self) -> None:
         declaration = """
             KF_ENUM_BEGIN(Floor, s32)
@@ -188,6 +211,38 @@ class InventoryTests(unittest.TestCase):
             layout = _header_structure_layouts()["TileGrid"]
         self.assertEqual((layout.size, layout.alignment), (72, 2))
         self.assertEqual(layout.fields[0].datatype, "u16[9][4]")
+
+    def test_shared_enum_alias_counts_preserve_array_layout(self) -> None:
+        headers = {
+            "combat.h": "enum { PHYSICAL_COUNT = 3, COMPONENT_COUNT = 5 };",
+            "game_actor.h": """
+                enum { ATTACK_COUNT = PHYSICAL_COUNT, NEXT_COUNT,
+                       DEFENSE_COUNT = COMPONENT_COUNT, AGAIN = DEFENSE_COUNT };
+                typedef struct AliasedCounts {
+                    u16 attacks[ATTACK_COUNT];
+                    u16 defenses[AGAIN];
+                    u8 next[NEXT_COUNT];
+                } AliasedCounts;
+            """,
+        }
+        with patch("scripts.kf.inventory.Path.read_text", lambda path: headers.get(path.name, "")):
+            layout = _header_structure_layouts()["AliasedCounts"]
+        self.assertEqual((layout.size, layout.alignment), (20, 2))
+        self.assertEqual([(f.offset, f.size, f.datatype) for f in layout.fields],
+                         [(0, 6, "u16[3]"), (6, 10, "u16[5]"), (16, 4, "u8[4]")])
+
+    def test_unknown_enum_alias_breaks_implicit_counts_without_guessing(self) -> None:
+        for initializer in ("MISSING", "ALIAS", "KNOWN + 1"):
+            for bound in ("ALIAS", "NEXT"):
+                with self.subTest(initializer=initializer, bound=bound):
+                    declarations = f"""
+                        enum {{ KNOWN = 3, ALIAS = {initializer}, NEXT }};
+                        typedef struct UnknownAlias {{ u8 cells[{bound}]; }} UnknownAlias;
+                    """
+                    with patch("scripts.kf.inventory.Path.read_text",
+                               lambda path: declarations if path.name == "combat.h" else ""):
+                        with self.assertRaisesRegex(ValueError, "unresolved array bound"):
+                            _header_structure_layouts()
 
     def test_implicit_enum_bound_does_not_guess_after_unknown_expression_or_overflow(self) -> None:
         for value in ("EXTERNAL + 1", "0x7fffffff"):
@@ -3065,7 +3120,7 @@ class InventoryTests(unittest.TestCase):
         exit_code = game.datum(0x800958F8)
         self.assertEqual(
             (exit_code.name, exit_code.datatype, exit_code.owner_type),
-            ("game_exit_code", "KfGameExitCode", "game"),
+            ("game_exit_code", "KfOverlayResultWord", "game"),
         )
         save_writer = game.function(0x8002B73C)
         self.assertEqual(

@@ -7,7 +7,6 @@
 enum {
     ACTOR_CULL_SQUARE_HALF_WIDTH = 12,
     ACTOR_CULL_SQUARE_WIDTH = 2 * ACTOR_CULL_SQUARE_HALF_WIDTH,
-    FLOOR_ITEM_RENDER_BRIGHTNESS = 180
 };
 
 /* Cull each pool against the active cell window before dispatching its emitter. */
@@ -89,9 +88,9 @@ void render_entities(void)
     /* Floor items. */
     SetLightMatrix(&render_light_matrices[KF_RENDER_LIGHT_FLOOR_ITEM]);
     active_tpage = &game_graphics_runtime.active_render_tpage;
-    game_graphics_runtime.active_render_color.b = FLOOR_ITEM_RENDER_BRIGHTNESS;
-    game_graphics_runtime.active_render_color.g = FLOOR_ITEM_RENDER_BRIGHTNESS;
-    game_graphics_runtime.active_render_color.r = FLOOR_ITEM_RENDER_BRIGHTNESS;
+    game_graphics_runtime.active_render_color.b = KF_FLOOR_ITEM_RENDER_BRIGHTNESS;
+    game_graphics_runtime.active_render_color.g = KF_FLOOR_ITEM_RENDER_BRIGHTNESS;
+    game_graphics_runtime.active_render_color.r = KF_FLOOR_ITEM_RENDER_BRIGHTNESS;
     i = game_graphics_runtime.floor_item_count;
     *active_tpage = game_graphics_runtime.floor_item_tpage;
     effect_light_matrix = &render_light_matrices[KF_RENDER_LIGHT_EFFECT];
