@@ -194,6 +194,7 @@ attribution live under `config/retail/`.
 
 ## Documentation
 
+- [Generate the standalone source branch](docs/clean-source.md)
 - [Linux and WebAssembly port guide](docs/port-guide.md)
 - [Build, commands, and progress ledger](docs/build-system.md)
 - [Three-target layout](docs/decompilation-layout.md)

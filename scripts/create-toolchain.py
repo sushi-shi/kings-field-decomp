@@ -1,17 +1,5 @@
 #!/usr/bin/env python3
-"""Stage the single hash-pinned Psy-Q Release 2.5 SDK.
-
-The exact SDK revision used for King's Field is not proven.  Release 2.5 is the
-repository's one active historical SDK baseline, preserved as one source-media
-tree.  Compiler and assembler replacements used for matching are analysis
-tools and never enter this staged SDK.
-
-Entry point:
-
-    nix develop
-
-`flake.nix` supplies the source media and invokes this verifier/stager directly.
-"""
+"""Stage and verify the hash-pinned Psy-Q Release 2.5 SDK media."""
 
 from __future__ import annotations
 
@@ -267,10 +255,9 @@ inside that directory are both files from this one medium, not separate SDKs.
 Both supplied assembler executables require the original software key in the
 current DOS environment. No assembler from another archive is substituted.
 
-The exact SDK revision and compiler profile used for King's Field remain
-unproven. Native compiler rebuilds, binutils and objdiff in the
-development shell are analysis tools, not members of this SDK. The original
-binaries remain proprietary; this output must not be committed to Git.
+The build supplies its native C compiler and replacement assemblers separately.
+The original SDK binaries remain proprietary; this output must not be committed
+to Git.
 """
     (stage / "ATTRIBUTION.md").write_text(text, encoding="utf-8", newline="\n")
 

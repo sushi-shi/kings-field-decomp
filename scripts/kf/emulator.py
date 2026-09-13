@@ -9,6 +9,16 @@ import re
 from pathlib import Path
 
 from scripts.kf.local_config import configured_retail_dir, validate_retail_dir
+from scripts.psxbuild.disc import (
+    _tables as _tables,
+    _edc as _edc,
+    _ecc as _ecc,
+    regenerate_sector as regenerate_sector,
+    write_cue as write_cue,
+    EDC_TABLE as EDC_TABLE,
+    ECC_FORWARD as ECC_FORWARD,
+    ECC_BACKWARD as ECC_BACKWARD,
+)
 
 
 RETAIL_DISC_SHA256 = "ae74beba377d686bfaa292ea40df8ade4454ec3139c2b5152364e02aac90b3d9"
@@ -77,82 +87,6 @@ def retail_resources(disc: Path) -> Path:
         return configured_retail_dir()
     except ValueError:
         return validate_retail_dir(disc.parent / "disc")
-
-
-def _tables() -> tuple[list[int], list[int], list[int]]:
-    edc: list[int] = []
-    for value in range(256):
-        result = value
-        for _ in range(8):
-            result = (result >> 1) ^ (0xD8018001 if result & 1 else 0)
-        edc.append(result)
-
-    forward: list[int] = []
-    backward = [0] * 256
-    for value in range(256):
-        result = value << 1
-        if result & 0x100:
-            result ^= 0x11D
-        forward.append(result)
-        backward[value ^ result] = value
-    return edc, forward, backward
-
-
-EDC_TABLE, ECC_FORWARD, ECC_BACKWARD = _tables()
-
-
-def _edc(data: bytes | bytearray) -> bytes:
-    result = 0
-    for value in data:
-        result = (result >> 8) ^ EDC_TABLE[(result ^ value) & 0xFF]
-    return result.to_bytes(4, "little")
-
-
-def _ecc(
-    source: bytes | bytearray,
-    major_count: int,
-    minor_count: int,
-    major_multiplier: int,
-    minor_increment: int,
-) -> bytes:
-    size = major_count * minor_count
-    output = bytearray(major_count * 2)
-    for major in range(major_count):
-        index = (major >> 1) * major_multiplier + (major & 1)
-        first = second = 0
-        for _ in range(minor_count):
-            value = source[index]
-            index = (index + minor_increment) % size
-            first ^= value
-            second ^= value
-            first = ECC_FORWARD[first]
-        first = ECC_BACKWARD[ECC_FORWARD[first] ^ second]
-        output[major] = first
-        output[major + major_count] = first ^ second
-    return bytes(output)
-
-
-def regenerate_sector(sector: bytearray) -> None:
-    if len(sector) != SECTOR_SIZE or sector[15] != 2 or sector[18] & 0x20:
-        raise ValueError("candidate patch requires a raw Mode 2 Form 1 sector")
-    sector[2072:2076] = _edc(sector[16:2072])
-    header = sector[12:16]
-    sector[12:16] = bytes(4)
-    sector[2076:2248] = _ecc(sector[12:2248], 86, 24, 2, 86)
-    sector[2248:2352] = _ecc(sector[12:2248], 52, 43, 86, 88)
-    sector[12:16] = header
-
-
-def write_cue(path: Path, binary: Path) -> Path:
-    if '"' in str(binary):
-        raise ValueError(f"{binary}: quotes are not supported in cue paths")
-    path.write_text(
-        f'FILE "{binary}" BINARY\n'
-        "  TRACK 01 MODE2/2352\n"
-        "    INDEX 01 00:00:00\n",
-        encoding="utf-8",
-    )
-    return path
 
 
 def build_candidate(repo: Path, disc: Path, output: Path) -> Path:

@@ -102,6 +102,9 @@ def parser() -> argparse.ArgumentParser:
     init_parser = subs.add_parser("init", help="record and validate local retail files")
     init_parser.add_argument("--retail-dir", required=True, type=Path)
 
+    subs.add_parser("clean", help="generate and publish the standalone source project",
+                    add_help=False)
+
     configure = subs.add_parser("configure", help="generate build/build.ninja")
     configure.add_argument("--retail-dir", type=Path)
 
@@ -252,6 +255,10 @@ def parser() -> argparse.ArgumentParser:
 
 def main(argv: list[str] | None = None) -> int:
     raw = list(sys.argv[1:] if argv is None else argv)
+    if raw and raw[0] == "clean":
+        from scripts.kf.clean import main as clean_main
+
+        return clean_main(raw[1:])
     if raw and raw[0] == "sema":
         from scripts.kf.sema import main as sema_main
 

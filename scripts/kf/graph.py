@@ -146,7 +146,9 @@ def _build_line(
 
 
 def _script_inputs() -> list[str]:
-    return sorted(str(path.relative_to(REPO)) for path in (REPO / "scripts/kf").rglob("*.py"))
+    return sorted(str(path.relative_to(REPO))
+                  for directory in ("scripts/kf", "scripts/psxbuild")
+                  for path in (REPO / directory).rglob("*.py"))
 
 
 def _base_path(unit: Unit) -> str:
