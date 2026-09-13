@@ -32,6 +32,11 @@ proves to be a separately linked member, it becomes a 30th identity. The
 per-library inventory and this lower-bound distinction are recorded in the
 [remaining-object audit](sdk-object-audit.md#object-evidence-still-needed).
 
+For reconstruction planning, those 29 modules cover **332 functions per overlay**
+(664 image occurrences), with seven paired routines already having exact reference
+source. See the [function-level workload and TSV selection](sdk-object-audit.md#matching-scope-and-function-list)
+and the narrower [18-function INTR scope](sdk-object-audit.md#interrupt-workaround-scope).
+
 These are inventory identity entries, not necessarily distinct physical objects.
 Classify an entry as lineage-supported if any of its rows have that status;
 otherwise classify it as exact if any row carries `exact-release25*`. The 29

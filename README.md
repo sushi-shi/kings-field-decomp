@@ -88,6 +88,10 @@ Manually maintained cleanup checklist:
   count; see [inventory metric rules](docs/function-and-data-inventory.md).
 - [ ] Close [SDK object evidence](docs/sdk-object-audit.md): **29 lineage
   module identities**; the last ambiguous audio helper may belong to `SSCALL`.
+  These modules contain **332 functions per overlay (664 image occurrences)**;
+  see the [matching scope](docs/sdk-object-audit.md#matching-scope-and-function-list).
+  The [complete SDK function TSV](config/retail/functions_vendored.tsv) lists all
+  **1,138** known linked SDK occurrences, including those with exact code evidence.
   Search missing 1994 SDK archives/source before reconstructing them.
 - [ ] Resolve the [SDK interrupt compatibility workaround](docs/patterns/sdk-interrupt-return.md).
   Leaving the starting-door plaque open could stop BIOS input and sound updates
@@ -99,6 +103,9 @@ Manually maintained cleanup checklist:
   timing, draw synchronization, or callback scheduling to avoid this failure.
   Resolve the SDK/BIOS compatibility cause with evidence; intentional game-side
   adaptations belong in `port`.
+  Replacing the containing `INTR` object would cover **18 functions per overlay**;
+  its [matching scope](docs/sdk-object-audit.md#interrupt-workaround-scope) is smaller
+  than rebuilding all unresolved SDK modules.
 - [ ] Review casts and remove avoidable conversions: **430 written casts**
   (**349 pointer**, **81 scalar**). The [cast/union debt campaign](docs/patterns/cast-union-debt.md)
   clarifies grid, copy, and asset-offset access and requires explicit void-pointer boundaries;

@@ -38,6 +38,14 @@ records, symbols and all other instructions remain intact. Pending interrupts
 return through the BIOS normally instead of being consumed by another SDK pass.
 The Nix SDK package and matching reference objects remain original.
 
+The [function-level scope](../sdk-object-audit.md#interrupt-workaround-scope)
+records the size of a potential retail-object replacement: INTR contains 18
+inventoried routines in each overlay, with one existing exact source reference
+and a separate SDK function match for `stopInit`. The full image/address list
+is maintained in [functions_vendored.tsv](../../config/retail/functions_vendored.tsv);
+filter `library = LIBETC.LIB` and `module = INTR`. The behavioral difference is
+within `intInit`; matching the complete containing object is a broader campaign.
+
 Every executable build report records the original archive hash, actual linker
 input hash, member, offset, before/after bytes and reason. The shared native
 builder applies the correction to GAME and OPEN for master, classic and source.

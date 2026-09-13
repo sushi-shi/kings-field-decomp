@@ -87,6 +87,104 @@ They do not establish complete data, BSS, linked placement, or every masked data
 referent. Only the relevant existing provider rows were promoted; the admitted
 function census is unchanged.
 
+## Matching scope and function list
+
+The complete per-function list already lives in the canonical
+[`config/retail/functions_vendored.tsv`](../config/retail/functions_vendored.tsv).
+It contains **1,138 identified linked SDK function occurrences**: 573 in GAME,
+557 in OPEN, and eight in PSX. Each row retains its image, retail address,
+size, name where known, library/member attribution, confidence, and evidence.
+This includes linked routines without a currently confirmed caller. It is not
+a list of all functions shipped in the SDK, nor a list of 1,138 distinct bodies
+that must be written from scratch.
+
+The 29 lineage module identities above contain **664 occurrences: 332 in GAME
+and 332 in OPEN**. Their ordered function metadata agrees between overlays
+(names, sizes, archive-slot annotations, and confidence), giving **332 candidate
+GAME/OPEN pairs** for a whole-module reconstruction campaign.
+Each image still needs independent instruction, call, relocation, and data checks.
+
+| Library | Unresolved module identities | GAME functions | OPEN functions |
+| --- | ---: | ---: | ---: |
+| LIBCD | 2 | 24 | 24 |
+| LIBETC | 2 | 24 | 24 |
+| LIBGPU | 2 | 53 | 53 |
+| LIBGTE | 4 | 83 | 83 |
+| LIBSND | 16 | 121 | 121 |
+| LIBSPU | 3 | 27 | 27 |
+| Total | 29 | 332 | 332 |
+
+Seven paired routines already have exact reference source under `vendor/src`: six
+PAD routines in each overlay and GAME's `critical_section_set` interrupt tail
+(13 compiled image/function references). Thus a wholesale source replacement
+would budget **about 325 additional bodies**, assuming the paired routines can
+share source; OPEN's interrupt tail still needs its own source binding and
+verification. This is a work estimate, not proof of the original function/TU
+boundaries or a requirement to reconstruct every body manually. A matching
+archive can replace reconstruction work, and existing function matches provide
+reuse candidates and comparison anchors.
+
+Of the 664 occurrences, **388 have lineage evidence, 274 have function-ID
+evidence (including four with ambiguous member attribution), and two have exact
+Release 2.5 section evidence**. These are SDK attribution/code-evidence categories,
+not objdiff source scores. In particular, the 13 exact reference-source rows
+still carry their SDK-lineage classification. Exact functions inside a module
+do not close that module's remaining code, data, BSS, or relocations.
+
+The audio-dispatcher `memcpy` adds **one helper/two image occurrences**
+outside those 29 named identities. Its function bytes are already known; its
+containing object is unresolved. Keep it visible in the workload without
+assuming it requires another body reconstruction or a separate 30th object.
+
+The broader 1,138-row inventory also preserves uncertainties outside this
+29-module filter. For example, `LIBAPI/C114` has exact PSX evidence, while GAME
+and OPEN's `_96_remove` rows retain later-signature evidence and a different
+admitted extent. An exact member identity in one image does not certify every
+other occurrence. The TSV, rather than the 29-module subtotal, is the full
+SDK closure checklist.
+
+To select the whole-module workload from the authoritative TSV:
+
+```sh
+nix develop -c python3 - <<'PY'
+from collections import Counter
+from pathlib import Path
+from scripts.kf.retail import read_tsv
+
+rows = read_tsv(Path("config/retail/functions_vendored.tsv"))[1]
+modules = {(r["library"], r["module"]) for r in rows
+           if r["confidence"] == "sdk-lineage-supported"}
+scope = [r for r in rows if (r["library"], r["module"]) in modules]
+print(len(modules), "modules;", len(scope), "image/function occurrences")
+print(dict(Counter(r["image"] for r in scope)))
+for r in scope:
+    print(r["image"], r["va"], r["library"], r["module"], r["name"], sep="\t")
+PY
+```
+
+Do not deduplicate solely by `member_offset`: some retail-only routines record
+an insertion boundary in the supplied archive, so several distinct routines
+can have the same slot. INTR, PAD, and SPU contain such cases. The primary
+identity remains `(image, va)`; these pairs are only a planning aid.
+
+### Interrupt workaround scope
+
+The [plaque/interrupt debt](patterns/sdk-interrupt-return.md) is specifically in
+`LIBETC/INTR`. The current inventory has **18 routines per overlay, 36 occurrences**.
+Seventeen routines have lineage evidence; `stopInit` has a Release 2.5 function
+match. One of the 17, GAME's `critical_section_set`, already has exact reference
+source. Reconstructing the entire containing object would therefore mean roughly
+**17 additional source bodies**, plus verification of both images and recovery
+of the object's associated storage and relocations.
+
+The observed behavioral difference is inside the single `intInit` inventory
+extent, GAME `0x8004fd30` / OPEN `0x8002fb04`. Matching that dispatcher is a
+focused starting point, not a reason to reconstruct all 332 routines before
+investigating the workaround. A matching historical `INTR.OBJ` is preferable to
+reconstruction; neither route removes the need to validate BIOS interaction and
+the resulting behavior. The existing controller and other SDK functions remain
+part of integration verification, not automatically new reconstruction targets.
+
 ## Call-target ambiguity and shared data
 
 PLAY and SCNON each have 326 fixed bits and one masked J26 relocation in the
