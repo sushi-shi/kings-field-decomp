@@ -29,6 +29,19 @@ let
         tar -xzf ${gcc257NativeArchive} -C "$out/bin"
         chmod +x "$out/bin"/*
       '';
+
+      gcc257SourceArchive = pkgs.fetchurl {
+        url = "https://www.nic.funet.fi/index/gnu/funet/historical-funet-gnu-area-from-early-1990s/gcc-2.5.7.tar.gz";
+        hash = "sha256-Y0W+QiNeXsTESNZYflUoPaPuV3YdtdINegpI1jmH/I4=";
+      };
+      gcc257Headers = pkgs.runCommand "gcc-2.5.7-mips-headers" {
+        nativeBuildInputs = [ pkgs.gnutar pkgs.gzip ];
+      } ''
+        mkdir -p "$out/include"
+        tar -xzf ${gcc257SourceArchive} --strip-components=1 -C "$out/include" \
+          gcc-2.5.7/gstdarg.h gcc-2.5.7/va-mips.h
+        mv "$out/include/gstdarg.h" "$out/include/stdarg.h"
+      '';
       psyqSdk = pkgs.runCommand "kings-field-psyq-release-2.5-sdk" {
         nativeBuildInputs = with pkgs; [
           binutils
@@ -82,6 +95,6 @@ let
       };
 
 in {
-  inherit psyqSdk gcc257Native gcc260Native cc1psx257 cpppsx257 cc1psx260 cpppsx260
+  inherit psyqSdk gcc257Native gcc257Headers gcc260Native cc1psx257 cpppsx257 cc1psx260 cpppsx260
     aspsxNative asmpsxNative;
 }

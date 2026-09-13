@@ -74,6 +74,21 @@ def compile_c(source: Path, root: Path, stem: str, *, compiler: str,
             'assembly_sha256': hashlib.sha256(assembly.read_bytes()).hexdigest()}
 
 
+def compile_classic(source: Path, root: Path, stem: str, *, include_dirs: tuple[Path, ...],
+                    defines: tuple[str, ...] = (), **options) -> dict:
+    """Use GCC's original MIPS headers and the driver definitions they require."""
+    if options.get('compiler') != 'gcc257-native':
+        raise ValueError('classic requires GCC 2.5.7 and its original headers')
+    headers = Path(os.environ['PSYQ_C_INCLUDE'])
+    provenance = {name: hashlib.sha256((headers / name).read_bytes()).hexdigest()
+                  for name in ('stdarg.h', 'va-mips.h')}
+    # gcc.c supplies the version; config/mips/psx.h selects little-endian MIPS.
+    driver_defines = ('__GNUC__=2', '__GNUC_MINOR__=5', '__mips__', '__MIPSEL__')
+    result = compile_c(source, root, stem, include_dirs=(headers, *include_dirs),
+                       defines=(*driver_defines, *defines), **options)
+    return {**result, 'compiler_headers': provenance}
+
+
 def assemble(root: Path, stem: str, small_data: int) -> bytes:
     return assemble_many(root, (stem,), small_data)[stem]
 
