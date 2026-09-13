@@ -49,7 +49,8 @@ Older exports with ancestry are collapsed automatically. Provenance stays in
 commit messages. Publication is local; updating GitHub requires a push with an
 explicit expected-tip `--force-with-lease` for each generated branch.
 
-The allowlist retains the C files used by the executable builder, their project
+The allowlist retains the C files used by the executable builder, shared `.inc`
+implementation fragments, their project
 and SDK wrapper headers, linker boundaries, build support, and the Rust codec
 library. Vendored verification bodies are excluded because the executable
 builder uses the SDK libraries. Codec oracle executables and all tests are

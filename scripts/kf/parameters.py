@@ -218,6 +218,7 @@ def collect(units, compiler: str, sdk: Path, *, root: Path = REPO) -> dict:
         parameters.append(row)
     headers = {str(path.relative_to(root)) for base in ("include", "vendor/include")
                for path in (root / base).rglob("*.h")}
+    headers.update(str(path.relative_to(root)) for path in (root / "src").rglob("*.inc"))
     sources = {str(path.relative_to(root)) for base in ("src", "vendor/src")
                for path in (root / base).rglob("*.c")}
     unowned = {(row["file"], row["offset"], row["name"], row["type"]): row

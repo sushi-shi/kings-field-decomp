@@ -749,7 +749,7 @@ class Extractor:
                 path = Path(str(inclusion.include)).resolve().relative_to(self.repo)
             except ValueError:
                 continue
-            if path.parts and path.parts[0] == 'include':
+            if path.parts and (path.parts[0] == 'include' or path.suffix == '.inc'):
                 self.facts.headers.add(str(path))
         for node in self.tu.cursor.get_children():
             if node.kind != self.ck.MACRO_INSTANTIATION:
@@ -1054,9 +1054,9 @@ def collect(*, images: tuple[str, ...] = (), names: tuple[str, ...] = (), jobs: 
     facts = _merge(results)
     if facts.errors:
         raise RuntimeError('target-C parsing failed:\n' + '\n'.join(facts.errors[:20]))
-    sources = {unit.source for unit in selected}
+    sources = {unit.source for unit in selected} | set(facts.headers)
     missing_sources = sorted(path for path in before if path.startswith(('src/', 'vendor/'))
-                             and path.endswith('.c') and path not in sources)
+                             and path.endswith(('.c', '.inc')) and path not in sources)
     missing_headers = sorted(path for path in before if path.startswith(('include/', 'vendor/include/'))
                              and path.endswith('.h') and path not in facts.headers)
     if not images and not names and (missing_sources or missing_headers):

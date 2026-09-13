@@ -64,13 +64,39 @@ def data_addresses():
     return data
 
 
+def unit_source(unit):
+    """Expand implementation fragments for source-mutating negative controls."""
+    from scripts.kf.model import ADDRESS_AT_RE, source_lines
+
+    lines = []
+    for text, _path, _line in source_lines(unit.source_path):
+        claim = ADDRESS_AT_RE.match(text)
+        if claim:
+            if claim[1] != unit.image.removesuffix('.EXE'):
+                continue
+            text = f'ADDRESS({claim[2]}, {claim[3]})'
+        lines.append(text)
+    source = '\n'.join(lines) + '\n'
+    # Resolve the production aliases before the historical owner substitutions.
+    aliases = {
+        'KF_GRAPHICS_RUNTIME': 'game_graphics_runtime',
+        'KF_ACTIVE_ORDERING_TABLE': 'game_graphics_runtime.display_state.ordering_table',
+        'KF_FLOOR_ITEM_COUNT': 'game_graphics_runtime.floor_item_count',
+        'KF_FLOOR_ITEMS': 'game_graphics_runtime.floor_items',
+        'KfActiveColorPreset': 'KfGameColorPreset',
+    }
+    for name, value in aliases.items():
+        source = re.sub(r'\b' + name + r'\b', value, source)
+    return source
+
+
 def standalone_source(unit):
     """Recreate the rejected separate declarations from the current whole owner.
 
     These extern views exist only in temporary negative controls. Production
     defines one owner and retains no overlapping globals.
     """
-    source = unit.source_path.read_text()
+    source = unit_source(unit)
     # Historical separate-owner controls retain their original byte fields.
     for member, old in (('r', 'red'), ('g', 'green'), ('b', 'blue'), ('cd', 'code')):
         source = source.replace('active_render_color.' + member, 'active_render_' + old)
@@ -124,8 +150,14 @@ class GameGraphicsOwnerProbeTests(unittest.TestCase):
             self.skipTest('hash-checked local GAME.EXE required')
 
     def compile(self, root, unit, source):
+        from scripts.kf.model import SHARED_INCLUDE_RE
+
         profile = load_manifest().profiles[unit.profile]
         path = root / unit.source_path.name
+        source = '\n'.join(
+            f'#include "{(unit.source_path.parent / match[1]).resolve()}"'
+            if (match := SHARED_INCLUDE_RE.fullmatch(line)) else line
+            for line in source.splitlines()) + '\n'
         path.write_text(source)
         output = root / unit.object_name
         # Layout-only probes need no retail target; register their scratch output
@@ -136,7 +168,8 @@ class GameGraphicsOwnerProbeTests(unittest.TestCase):
         index.write_text(f'object\tscope\nmodules/{unit.object_name}\tmodule\n')
         compile_source(path, unit.image, output, delink, profile.optimization,
                        profile.small_data, profile.aspsx_version,
-                       (REPO / 'include', REPO / 'vendor/include', root, HEADER.parent, Path(os.environ['PSYQ_INCLUDE'])),
+                       (REPO / 'include', REPO / 'vendor/include', root,
+                        HEADER.parent, Path(os.environ['PSYQ_INCLUDE'])),
                        profile.cc1_flags, profile.compiler, defines=unit.defines)
         return _load_object(output)
 

@@ -6,6 +6,7 @@
 #include <kf/open_render.h>
 #include <kf/open_scene0.h>
 #include <psyq/sdk.h>
+#include <kf/shared_graphics.h>
 
 enum {
     OPENING_MODEL_DEPTH_BIAS = -100,
@@ -100,39 +101,7 @@ void opening_entity_render(KfOpeningEntity *entity)
     render_enqueue_tmd(KF_ENUM_ENCODE(u16, object_id), depth);
 }
 
-ADDRESS(0x800190f4, 0x14c)
-void render_floor_item(KfFloorItem *item)
-{
-    SVECTOR screen;
-    MATRIX model;
-    long flag;
-    KF_ENUM_PARAM(KfFloorItemFacing, u16) facing;
-    s16 depth_bias;
-
-    SetRotMatrix(&open_graphics_runtime.render_state.view_matrix);
-    SetTransMatrix(&open_graphics_runtime.render_state.view_matrix);
-    setVector(&screen,
-        item->position_x - open_graphics_runtime.render_state.view_position.vx,
-        item->position_y - open_graphics_runtime.render_state.view_position.vy,
-        item->position_z - open_graphics_runtime.render_state.view_position.vz);
-    RotTrans(&screen, (VECTOR *)&model.t, &flag);
-    facing = floor_item_facing(item->facing_and_frame_count);
-    if (KF_ENUM_ENCODE(u8, facing) != KF_ENUM_ENCODE(u8, KF_FLOOR_ITEM_FACING_BILLBOARD)) {
-        matrix_set_rotation_y(
-            (KF_ENUM_ENCODE(u16, facing) - KF_ENUM_ENCODE(u8, KF_FLOOR_ITEM_FACING_ZERO_YAW)) << KF_FLOOR_ITEM_FACING_TO_ANGLE_SHIFT,
-            &model);
-        MulMatrix2(&open_graphics_runtime.render_state.view_matrix, &model);
-        SetRotMatrix(&model);
-        depth_bias = KF_FLOOR_ITEM_FIXED_FACING_DEPTH_BIAS;
-    } else {
-        SetRotMatrix(&open_graphics_runtime.render_state.pitch_matrix);
-        depth_bias = KF_FLOOR_ITEM_BILLBOARD_DEPTH_BIAS;
-    }
-    SetTransMatrix(&model);
-    render_enqueue_sprite(
-        &floor_item_sprites[KF_ENUM_ENCODE(u16, item->base_sprite_index) + item->animation_frame], depth_bias, KF_SPRITE_DEPTH_CUE_BOOSTED);
-    floor_item_advance_frame(item);
-}
+#include "../shared/floor_item_render.inc"
 
 ADDRESS(0x80019240, 0x298)
 void opening_render_entities_and_items(void)

@@ -43,6 +43,7 @@ class Claim:
     # shared source; None for a plain ADDRESS() claim, which binds to the
     # claiming unit's own image.
     image: str | None = None
+    source: Path | None = None
 
 
 @dataclass(frozen=True)
@@ -64,6 +65,26 @@ RODATA_RE = re.compile(
     r"^\s*RODATA\(\s*(0x[0-9A-Fa-f]+)\s*,\s*(0x[0-9A-Fa-f]+|[0-9]+)\s*\)\s*"
     r"(?:/\*.*\*/\s*)?$"
 )
+
+
+SHARED_INCLUDE_RE = re.compile(r'^\s*#\s*include\s+"([^"\n]+\.inc)"\s*$')
+
+
+def source_lines(source: Path, parents: tuple[Path, ...] = ()):
+    """Read literal C implementation includes in order, retaining claim locations.
+
+    Headers and preprocessor conditions are not interpreted. Shared fragments
+    carry ADDRESS_AT claims for every image, just like standalone shared C.
+    """
+    if source.resolve() in parents:
+        raise ValueError(f'{source}: cyclic implementation include')
+    parents = (*parents, source.resolve())
+    for line, text in enumerate(source.read_text(encoding='utf-8').splitlines(), 1):
+        match = SHARED_INCLUDE_RE.fullmatch(text)
+        if match:
+            yield from source_lines(source.parent / match[1], parents)
+        else:
+            yield text, source, line
 
 
 def scan_rodata_claims(source: Path) -> tuple[RodataClaim, ...]:
@@ -133,13 +154,17 @@ def scan_source(source: Path) -> tuple[tuple[Claim, ...], tuple[DataClaim, ...]]
     definition that follows it. Each ADDRESS_AT() claim carries its image; a
     plain ADDRESS() claim carries ``image=None`` and binds to its unit's image.
     """
-    lines = source.read_text(encoding="utf-8").splitlines()
+    located = list(source_lines(source))
+    lines = [text for text, _path, _line in located]
     claims: list[Claim] = []
     data_claims: list[DataClaim] = []
     index = 0
     total = len(lines)
     while index < total:
         text = lines[index]
+        if RODATA_RE.match(text) and located[index][1] != source:
+            raise ValueError(f'{located[index][1]}:{located[index][2]}: '
+                             'shared fragments must not own rodata')
         plain = CLAIM_RE.match(text)
         at = ADDRESS_AT_RE.match(text)
         if plain is not None and plain.group(1) == "DATA":
@@ -151,7 +176,10 @@ def scan_source(source: Path) -> tuple[tuple[Claim, ...], tuple[DataClaim, ...]]
                     f"{source}:{index + 1}: DATA({va:#x}) is not followed by a "
                     "global definition"
                 )
-            data_claims.append(DataClaim(va, size, name, index + 1))
+            _text, owner, owner_line = located[index]
+            if owner != source:
+                raise ValueError(f'{owner}:{owner_line}: shared fragments must not own data')
+            data_claims.append(DataClaim(va, size, name, owner_line))
             index += 1
             continue
         if at is None and plain is None:
@@ -182,7 +210,9 @@ def scan_source(source: Path) -> tuple[tuple[Claim, ...], tuple[DataClaim, ...]]
                 "function definition"
             )
         for image, va, size, line in run:
-            claims.append(Claim(va, size, name, line, image))
+            _text, owner, owner_line = located[line - 1]
+            claims.append(Claim(va, size, name, owner_line, image,
+                                owner if owner != source else None))
     return tuple(claims), tuple(data_claims)
 
 
@@ -213,7 +243,8 @@ def stale_address_names(
     """
     stale: list[tuple[str, str]] = []
     seen: set[str] = set()
-    for match in ADDRESS_NAME_RE.finditer(source.read_text(encoding="utf-8")):
+    text = '\n'.join(text for text, _path, _line in source_lines(source))
+    for match in ADDRESS_NAME_RE.finditer(text):
         token = match.group(0)
         if token in seen:
             continue

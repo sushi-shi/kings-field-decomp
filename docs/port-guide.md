@@ -157,7 +157,7 @@ pointer-bearing records or SDK uses of `long`.
 - Define every required global and initialize actual owners. Replace clears
   that span adjacent retail objects with explicit native resets.
 - Replace fixed RAM heap endpoints and pointer/integer allocation-stack entries
-  in [memory.c](../src/game/memory.c) with owned storage and bookkeeping.
+  in [memory.c](../src/shared/memory.c) with owned storage and bookkeeping.
 - Retain persistence only where the transition audit establishes it.
 
 Maintain a native dependency inventory: each external symbol resolves to game

@@ -43,6 +43,18 @@ def slot(audit: dict, name: str, *, kind: str = 'return', owner: str | None = No
 
 
 class BooleanAuditTests(unittest.TestCase):
+    def test_shared_body_is_audited_and_unincluded_fragment_fails_coverage(self):
+        sources = {
+            'src/probe.c': '#include "shared.inc"\n',
+            'src/shared.inc': 'int predicate(int value) { return value != 0; }\n',
+        }
+        audit = audit_sources(sources, variants=True)
+        for image in ('GAME.EXE', 'OPEN.EXE'):
+            self.assertEqual(slot(audit, 'predicate', image=image)['classification'], 'candidate')
+        sources['src/unseen.inc'] = 'int other(void) { return 2; }\n'
+        with self.assertRaisesRegex(RuntimeError, 'src/unseen.inc'):
+            audit_sources(sources)
+
     def test_value_flow_joins_fields_parameters_locals_and_returns_across_units(self) -> None:
         audit = audit_sources({
             'include/probe.h': '''

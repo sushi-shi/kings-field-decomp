@@ -28,7 +28,7 @@ from scripts.kf.paths import REPO
 
 
 IMAGE_NAMES = {"psx": "PSX.EXE", "game": "GAME.EXE", "open": "OPEN.EXE"}
-SOURCE_SUFFIXES = {".c", ".h"}
+SOURCE_SUFFIXES = {".c", ".h", ".inc"}
 
 
 @dataclass(frozen=True, order=True)
@@ -192,7 +192,7 @@ def _parse_unit(unit: Unit, repo: Path, sdk: Path, cindex: Any) -> _UnitResult:
             relative = Path(str(inclusion.include)).resolve().relative_to(repo)
         except ValueError:
             continue
-        if relative.parts and relative.parts[0] == "include":
+        if relative.parts and (relative.parts[0] == "include" or relative.suffix == ".inc"):
             headers.add(str(relative))
 
     casts: list[_RawCast] = []
@@ -334,7 +334,8 @@ def collect(
     headers = tuple(sorted({header for result in results for header in result.headers}))
     if not images and not names:
         expected_headers = {
-            path for path in before if path.startswith("include/") and path.endswith(".h")
+            path for path in before if (path.startswith("include/") and path.endswith(".h"))
+            or path.endswith(".inc")
         }
         missing = sorted(expected_headers - set(headers))
         if missing:

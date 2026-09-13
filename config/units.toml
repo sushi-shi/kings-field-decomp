@@ -112,7 +112,7 @@ profile = "probe-gcc257-o2-g8"
 [[unit]]
 unit = "game.matrix_rotation"
 image = "GAME.EXE"
-source = "src/game/matrix_rotation.c"
+source = "src/shared/matrix_rotation.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
@@ -178,7 +178,7 @@ profile = "probe-gcc257-o2-g0"
 [[unit]]
 unit = "game.memory"
 image = "GAME.EXE"
-source = "src/game/memory.c"
+source = "src/shared/memory.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
@@ -484,6 +484,7 @@ unit = "open.sprite_add_ft4"
 image = "OPEN.EXE"
 source = "src/open/sprite_add_ft4.c"
 profile = "probe-gcc257-o2-g0"
+defines = ["KF_OPEN"]
 
 [[unit]]
 unit = "open.opening_helpers"
@@ -548,7 +549,7 @@ profile = "probe-gcc257-o2-g0"
 [[unit]]
 unit = "open.memory"
 image = "OPEN.EXE"
-source = "src/game/memory.c"
+source = "src/shared/memory.c"
 profile = "probe-gcc257-o2-g0"
 bind = "name"
 defines = ["KF_OPEN"]
@@ -558,18 +559,21 @@ unit = "open.resources"
 image = "OPEN.EXE"
 source = "src/open/resources.c"
 profile = "probe-gcc257-o2-g8"
+defines = ["KF_OPEN"]
 
 [[unit]]
 unit = "open.render_init"
 image = "OPEN.EXE"
 source = "src/open/render_init.c"
 profile = "probe-gcc257-o2-g0"
+defines = ["KF_OPEN"]
 
 [[unit]]
 unit = "open.render"
 image = "OPEN.EXE"
 source = "src/open/render.c"
 profile = "probe-gcc257-o2-g0"
+defines = ["KF_OPEN"]
 
 [[unit]]
 unit = "open.render_tmd"
@@ -606,6 +610,7 @@ unit = "open.entity_render"
 image = "OPEN.EXE"
 source = "src/open/entity_render.c"
 profile = "probe-gcc257-o2-g0"
+defines = ["KF_OPEN"]
 
 [[unit]]
 unit = "open.opening_scene0_render"
@@ -630,12 +635,14 @@ unit = "open.matrix"
 image = "OPEN.EXE"
 source = "src/open/matrix.c"
 profile = "probe-gcc257-o2-g0"
+defines = ["KF_OPEN"]
 
 [[unit]]
 unit = "open.item"
 image = "OPEN.EXE"
 source = "src/open/item.c"
 profile = "probe-gcc257-o2-g0"
+defines = ["KF_OPEN"]
 
 [[unit]]
 unit = "open.opening_entity_pool"

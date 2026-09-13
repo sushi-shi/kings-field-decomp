@@ -47,7 +47,7 @@ from scripts.kf.retail import read_tsv
 
 
 SOURCE_ROOTS = ("src", "include")
-SOURCE_EXTS = {".c", ".h"}
+SOURCE_EXTS = {".c", ".h", ".inc"}
 BASELINE = CONFIG / "cleanliness" / "cleanliness-baseline.tsv"
 
 _BLOCK_COMMENT = re.compile(r"/\*.*?\*/", re.S)
@@ -132,7 +132,7 @@ def source_extern_sites() -> list[tuple[str, int, str]]:
     """Every source-local ``extern`` as ``(relative path, line, symbol)``."""
     sites: list[tuple[str, int, str]] = []
     for path in _source_files():
-        if path.suffix != ".c":
+        if path.suffix not in {".c", ".inc"}:
             continue
         raw = path.read_text(errors="ignore")
         code = strip_source(raw)
@@ -255,7 +255,7 @@ def count() -> list[tuple[str, int]]:
     game = game_symbols()
     totals = {label: 0 for label, _matcher, _c in SOURCE_METRICS}
     for path in _source_files():
-        is_c = path.suffix == ".c"
+        is_c = path.suffix in {".c", ".inc"}
         code = strip_source(path.read_text(errors="ignore"))
         for label, matcher, c_only in SOURCE_METRICS:
             if c_only and not is_c:

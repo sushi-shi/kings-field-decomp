@@ -5,6 +5,10 @@ about which source shapes reproduce it under the current probes. Each note
 records the retail evidence first and the probe behaviour second; none of them
 promotes a probe to a proven historical toolchain.
 
+- [shared-game-open-code.md](shared-game-open-code.md): complete GAME/OPEN function
+  accounting, common implementations, reusable single-image helpers, and retained
+  behavior differences with unchanged compiler and linker outputs.
+
 - [sdk-interrupt-return.md](sdk-interrupt-return.md): reproduced plaque input/audio
   failure, SDK interrupt starvation, and the guarded native-library correction.
 

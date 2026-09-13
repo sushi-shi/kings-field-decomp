@@ -113,13 +113,7 @@ void audio_stop_sequence(KfAudioStopMode stop_mode)
     }
 }
 
-ADDRESS(0x80019ec0, 0x38)
-void audio_shutdown(void)
-{
-    audio_close_vab();
-    SsSeqClose(audio_state.sequence_id);
-    SsEnd();
-}
+#include "../shared/audio_shutdown.inc"
 
 ADDRESS(0x80019ef8, 0x4c)
 void audio_close_vab(void)

@@ -117,13 +117,7 @@ void audio_stop_sequence_master_fade(s32 fade_step)
     }
 }
 
-ADDRESS(0x80032c78, 0x38)
-void audio_shutdown(void)
-{
-    audio_close_vab();
-    SsSeqClose(audio_state.sequence_id);
-    SsEnd();
-}
+#include "../shared/audio_shutdown.inc"
 
 ADDRESS(0x80032cb0, 0x40)
 void audio_close_vab(void)
@@ -201,63 +195,9 @@ KfAudioPlaybackResult audio_play_spatial(
     return KF_AUDIO_PLAYED;
 }
 
-ADDRESS(0x80032fb8, 0x30)
-KfAudioPlaybackResult audio_play_spatial_default_range(
-    const SoundRef *sound,
-    const VECTOR *position,
-    s16 volume)
-{
-    return audio_play_spatial(sound, position, volume,
-        KF_AUDIO_DEFAULT_MAX_DISTANCE, KF_AUDIO_DEFAULT_ATTENUATION_DISTANCE);
-}
+#include "../shared/audio_spatial_helpers.inc"
 
-ADDRESS(0x80032fe8, 0x2c)
-KfAudioPlaybackResult audio_play_spatial_range(
-    const SoundRef *sound,
-    const VECTOR *position,
-    s16 volume,
-    s32 max_distance,
-    s32 attenuation_distance)
-{
-    return audio_play_spatial(
-        sound,
-        position,
-        volume,
-        max_distance,
-        attenuation_distance);
-}
-
-ADDRESS(0x80033014, 0x28)
-void sound_ref_key_off_bank0(const SoundRef *sound)
-{
-    /* Bank 0; note occupies the upper byte, with zero fine pitch. */
-    SsVoKeyOff(sound->program, sound->note << KF_SOUND_PACKED_NOTE_SHIFT);
-}
-
-ADDRESS(0x8003303c, 0x70)
-void audio_set_listener_transform(
-    const VECTOR *position_or_null,
-    const SVECTOR *rotation_or_null)
-{
-    if (position_or_null != NULL) {
-        audio_state.listener_position = *position_or_null;
-    }
-    if (rotation_or_null != NULL) {
-        audio_state.listener_rotation = *rotation_or_null;
-    }
-}
-
-ADDRESS(0x800330ac, 0x48)
-void sound_ref_play(const SoundRef *sound, s16 volume)
-{
-    audio_play_voice(
-        audio_state.active_vab_id,
-        sound->program,
-        sound->tone,
-        sound->note,
-        volume,
-        volume);
-}
+#include "../shared/sound_ref.inc"
 
 ADDRESS(0x800330f4, 0x1a8)
 void audio_play_voice(
@@ -272,21 +212,4 @@ void audio_play_voice(
     audio_key_on_next_slot(vab_id, program, tone, note, left_volume, right_volume);
 }
 
-ADDRESS(0x8003329c, 0x48)
-s16 angle_shortest_delta(s32 first, s32 second)
-{
-    s32 difference;
-    s16 signed_difference;
-
-    first &= KF_ANGLE_WRAP_MASK;
-    second &= KF_ANGLE_WRAP_MASK;
-    difference = second - first;
-    signed_difference = difference;
-    if (signed_difference >= KF_ANGLE_HALF_TURN) {
-        return difference - KF_ANGLE_FULL_TURN;
-    }
-    if (signed_difference < -KF_ANGLE_HALF_TURN + 1) {
-        return difference + KF_ANGLE_FULL_TURN;
-    }
-    return signed_difference;
-}
+#include "../shared/angle_shortest_delta.inc"

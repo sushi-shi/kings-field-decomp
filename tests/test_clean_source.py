@@ -164,6 +164,14 @@ class ExportControls(unittest.TestCase):
         self.assertIn('src/game/main.cpp', modern)
         self.assertNotIn('scripts/kf/cli.py', first)
         self.assertEqual(len(json.loads(first['build.json'])['images']), 3)
+        fragments = {name for name in files if name.startswith('src/shared/')
+                     and name.endswith('.inc')}
+        self.assertTrue(fragments)
+        for output in (first, modern):
+            for name in fragments:
+                self.assertIn(name, output)
+                self.assertNotIn(b'ADDRESS', output[name])
+                self.assertNotIn(b'KF_ENUM_', output[name])
 
     def test_publish_keeps_one_snapshot_and_refuses_local_changes(self):
         with tempfile.TemporaryDirectory() as temporary:

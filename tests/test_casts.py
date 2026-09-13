@@ -37,6 +37,8 @@ class CastAuditTest(unittest.TestCase):
             )
             (repo / "src/probe.c").write_text(
                 "#include <casts.h>\n"
+                '#include "body.inc"\n', encoding="utf-8")
+            (repo / "src/body.inc").write_text(
                 "void *probe(long value, void *pointer)\n"
                 "{\n"
                 "    unsigned long word = (unsigned short)value;\n"
@@ -57,8 +59,9 @@ class CastAuditTest(unittest.TestCase):
             })
             self.assertEqual(
                 {site.location.file for site in audit.sites},
-                {"src/probe.c", "include/casts.h"},
+                {"src/body.inc", "include/casts.h"},
             )
+            self.assertIn('src/body.inc', audit.headers_seen)
             macro = next(site for site in audit.sites
                          if site.location.file == "include/casts.h"
                          and site.category == "pointer")

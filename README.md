@@ -35,6 +35,9 @@ repository. The Nix environment downloads the historical SDK separately; see
 `source` is the clean C++ base for porting and includes the resource codecs.
 `classic` is the runnable C export without codecs. See [generation](docs/clean-source.md).
 
+Reusable math, memory, rendering, and audio helpers live in `src/shared`, including
+utilities used by only one image. See the [complete GAME/OPEN accounting](docs/patterns/shared-game-open-code.md).
+
 <!-- match-score:start -->
 ## Match status
 

@@ -6,6 +6,7 @@
 #include <kf/memory.h>
 #include <kf/open_render.h>
 #include <kf/open_resources.h>
+#include <kf/shared_graphics.h>
 
 enum {
     PRIMITIVE_BUFFER_BYTES = 0x26160,
@@ -44,11 +45,7 @@ u32 primitive_allocation_count;
 
 RODATA(0x80012110, 0x25)
 
-ADDRESS(0x800168dc, 0x2c)
-void lighting_set_active_color_matrix(KfOpenColorPreset preset)
-{
-    SetColorMatrix(&color_matrix_table[KF_ENUM_ENCODE(s32, preset)]);
-}
+#include "../shared/lighting_color.inc"
 
 ADDRESS(0x80016908, 0x1d4)
 void render_initialize(void)

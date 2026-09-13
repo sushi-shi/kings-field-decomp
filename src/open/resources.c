@@ -132,36 +132,10 @@ KfResourceLoadResult cd_file_load_into(
 }
 
 /* Uploads every CLUT and pixel image in a Psy-Q TIM stream. */
-ADDRESS(0x80016298, 0x80)
-void tim_upload_images(u8 *tim_data)
-{
-    TIM_IMAGE image;
-
-    OpenTIM((u_long *)tim_data);
-    while (ReadTIM(&image) != NULL) {
-        if (image.caddr != NULL) {
-            LoadImage(image.crect, image.caddr);
-            DrawSync(0);
-        }
-        if (image.paddr != NULL) {
-            LoadImage(image.prect, image.paddr);
-            DrawSync(0);
-        }
-    }
-}
+#include "../shared/tim_upload_images.inc"
 
 /* Copies WORD_COUNT words and returns the first unread source word. */
-ADDRESS(0x80016318, 0x30)
-const u32 *resource_stream_copy_words(
-    u32 *destination, const u32 *source, s32 word_count)
-{
-    u32 *out = destination;
-
-    while (word_count-- != 0) {
-        *out++ = *source++;
-    }
-    return source;
-}
+#include "../shared/resource_copy_words.inc"
 
 ADDRESS(0x80016348, 0x1c8)
 void opening_resources_load_scene0(void)

@@ -201,7 +201,7 @@ image reuses it with a unit that binds by name:
 [[unit]]
 unit = "open.memory"
 image = "OPEN.EXE"
-source = "src/game/memory.c"
+source = "src/shared/memory.c"
 profile = "probe-gcc257-o2-g0"
 bind = "name"
 defines = ["KF_OPEN"]

@@ -5,14 +5,7 @@
 #include <kf/open_controller.h>
 #include <psyq/kernel.h>
 
-ADDRESS(0x80013734, 0x24)
-void repeat_store_word(int *destination, int count, int value)
-{
-    /* Retail stores to the same word on every iteration. */
-    while (count-- != 0) {
-        *destination = value;
-    }
-}
+#include "../shared/repeat_store_word.inc"
 
 ADDRESS(0x80013758, 0x6c)
 void main(s32 entry_arg0, KfOverlayArguments *entry_args)

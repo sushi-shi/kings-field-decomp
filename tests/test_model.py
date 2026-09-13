@@ -89,6 +89,48 @@ class ClaimScanTests(unittest.TestCase):
         (claim,) = self._scan("ADDRESS(0x80010000, 0x10)\nvoid first(void)\n{\n}\n")
         self.assertIsNone(claim.image)
 
+    def test_shared_fragment_preserves_order_image_and_source_location(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="kf-shared-") as directory:
+            root = Path(directory)
+            shared = root / "shared.inc"
+            shared.write_text(
+                'ADDRESS_AT("GAME", 0x80010010, 0x10)\n'
+                'ADDRESS_AT("OPEN", 0x80020010, 0x10)\n'
+                'void common(void) {}\n')
+            source = root / "unit.c"
+            source.write_text(
+                'ADDRESS(0x80010000, 0x10)\nvoid first(void) {}\n'
+                '#include "shared.inc"\n'
+                'ADDRESS(0x80010020, 0x10)\nvoid last(void) {}\n'
+                'DATA(0x80030000, 4)\nint datum;\n')
+            claims, data = scan_source(source)
+            self.assertEqual([c.name for c in claims], ['first', 'common', 'common', 'last'])
+            self.assertEqual([c.image for c in claims], [None, 'GAME', 'OPEN', None])
+            self.assertEqual([c.line for c in claims], [1, 1, 2, 4])
+            self.assertEqual(claims[1].source, shared)
+            self.assertEqual(data[0].line, 6)
+
+    def test_missing_or_cyclic_shared_fragment_is_rejected(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="kf-shared-") as directory:
+            source = Path(directory) / "unit.inc"
+            source.write_text('#include "missing.inc"\n')
+            with self.assertRaises(FileNotFoundError):
+                scan_claims(source)
+            source.write_text('#include "unit.inc"\n')
+            with self.assertRaisesRegex(ValueError, 'cyclic'):
+                scan_claims(source)
+
+    def test_fragment_cannot_take_unit_data_ownership(self) -> None:
+        with tempfile.TemporaryDirectory(prefix="kf-shared-") as directory:
+            root = Path(directory)
+            source = root / 'unit.c'
+            source.write_text('#include "shared.inc"\n')
+            for declaration in ('DATA(0x80030000, 4)\nint datum;\n',
+                                'RODATA(0x80030000, 4)\n'):
+                (root / 'shared.inc').write_text(declaration)
+                with self.assertRaisesRegex(ValueError, 'must not own'):
+                    scan_source(source)
+
     def _scan_data(self, text: str) -> tuple[DataClaim, ...]:
         with tempfile.TemporaryDirectory(prefix="kf-model-") as directory:
             source = Path(directory) / "unit.c"

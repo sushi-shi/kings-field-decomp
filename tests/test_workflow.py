@@ -47,6 +47,24 @@ def sample_current(percent: float | None) -> Current:
 
 
 class ManifestTests(unittest.TestCase):
+    def test_shared_body_is_a_transitive_build_and_progress_dependency(self):
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            (root / 'src/game').mkdir(parents=True)
+            (root / 'src/shared').mkdir()
+            (root / 'src/game/sample.c').write_text('#include "../shared/body.inc"\n')
+            body = root / 'src/shared/body.inc'
+            body.write_text('int sample(void) { return 1; }\n')
+            manifest = load_manifest()
+            with mock.patch.object(graph, 'REPO', root), \
+                    mock.patch.object(progress, 'REPO', root), \
+                    mock.patch.object(progress, 'toolchain_identity', return_value='test'):
+                self.assertEqual(graph.IncludeScanner().headers('src/game/sample.c'),
+                                 ['src/shared/body.inc'])
+                before = progress.input_hash(sample_current(100).unit, manifest)
+                body.write_text('int sample(void) { return 2; }\n')
+                self.assertNotEqual(before, progress.input_hash(sample_current(100).unit, manifest))
+
     def test_repository_manifest_has_valid_reconstruction_units(self) -> None:
         manifest = load_manifest()
         self.assertIn("probe-gcc260-o2-g0", manifest.profiles)

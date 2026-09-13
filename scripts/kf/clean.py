@@ -106,6 +106,8 @@ def generate(files: dict[str, bytes], *, modern: bool = False) -> dict[str, byte
     manifest = tomllib.loads(files['config/units.toml'].decode())
     units = [unit for unit in manifest['unit'] if unit.get('scope') != 'vendored']
     source_names = {unit['source'] for unit in units}
+    source_names.update(name for name in files
+                        if name.startswith('src/shared/') and name.endswith('.inc'))
     source_names.update(name for name in files if name.endswith('.h') and (
         name.startswith('include/') or name.startswith('vendor/include/')))
     source_names -= {'include/kf/address.h', 'include/kf/enum.h'}

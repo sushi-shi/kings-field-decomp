@@ -193,7 +193,9 @@ class OpenRuntimeOwnerProbeTests(unittest.TestCase):
         if not (BUILD / "delink/open/modules" / unit.object_name).is_file():
             self.skipTest(f"delinked {unit_name} target is required")
         profile = manifest.profiles[unit.profile]
-        source = unit.source_path.read_text()
+        from scripts.kf.model import source_lines
+
+        source = '\n'.join(line for line, _path, _line in source_lines(unit.source_path)) + '\n'
         data = {item.name: item.va for (image, _), item in
                 load_data_identities(RETAIL_CONFIG).items() if image == "OPEN.EXE"}
         data["open_graphics_runtime"] = 0x80049A48

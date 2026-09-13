@@ -156,7 +156,7 @@ KfMenuResult menu_list_interact(
 def modernize(files, output):
     rules, support = enum_support(files['include/kf/enum.h'].decode())
     for name in list(output):
-        if name.endswith(('.c', '.h')):
+        if name.endswith(('.c', '.h', '.inc')):
             text = clean_cpp(prepare(name, files[name].decode()), rules)
             if name == 'vendor/include/psyq/sdk.h':
                 text = text.replace('#include <LIBGPU.H>',

@@ -181,7 +181,7 @@ def _bind_claims(
     functions: list[Function] = []
     starts = catalog.function_starts[image]
     for claim in claims:
-        where = f"{source}:{claim.line}"
+        where = f"{claim.source or source}:{claim.line}"
         function = starts.get(claim.va)
         if function is None:
             raise ValueError(f"{where}: ADDRESS({claim.va:#x}) is not an admitted {image} function")
@@ -524,7 +524,8 @@ def load(
                 "kind": "function",
                 "name": function.symbol,
                 "unit": name,
-                "source": source.as_posix(),
+                "source": (claim.source.resolve().relative_to(REPO).as_posix()
+                           if claim.source else source.as_posix()),
                 "line": claim.line,
                 "ordinal": ordinal,
             })

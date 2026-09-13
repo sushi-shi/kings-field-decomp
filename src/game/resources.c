@@ -47,23 +47,7 @@ RODATA(0x80012178, 0x39)
 /* Each map grid chunk holds 100 x 100 bytes, copied as 0x9c4 words. */
 #define MAP_GRID_WORDS (sizeof map_cell_attribute_grid / sizeof(u32))
 
-ADDRESS(0x8001b100, 0x80)
-void tim_upload_images(u8 *tim_data)
-{
-    TIM_IMAGE image;
-
-    OpenTIM((u_long *)tim_data);
-    while (ReadTIM(&image) != NULL) {
-        if (image.caddr != NULL) {
-            LoadImage(image.crect, image.caddr);
-            DrawSync(0);
-        }
-        if (image.paddr != NULL) {
-            LoadImage(image.prect, image.paddr);
-            DrawSync(0);
-        }
-    }
-}
+#include "../shared/tim_upload_images.inc"
 
 ADDRESS(0x8001b180, 0x210)
 void common_resources_load(void)
@@ -113,19 +97,7 @@ u8 *map_resource_load_file(const char *filename)
     return data;
 }
 
-ADDRESS(0x8001b3e4, 0x30)
-const u32 *map_resource_copy_words(
-    u32 *destination,
-    const u32 *source,
-    u32 word_count)
-{
-    u32 *out = destination;
-
-    while (word_count-- != 0) {
-        *out++ = *source++;
-    }
-    return source;
-}
+#include "../shared/resource_copy_words.inc"
 
 ADDRESS(0x8001b414, 0x88)
 void map_variant_assets_load(void)

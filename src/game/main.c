@@ -4,14 +4,7 @@
 #include <psyq/kernel.h>
 #include <kf/game.h>
 
-ADDRESS(0x80014268, 0x24)
-void repeat_store_word(int *destination, int count, int value)
-{
-    /* Retail stores to the same word on every iteration. */
-    while (count-- != 0) {
-        *destination = value;
-    }
-}
+#include "../shared/repeat_store_word.inc"
 
 /*
  * GCC inserts the `__main` hook call for a function named main; the SDK
