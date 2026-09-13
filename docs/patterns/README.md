@@ -920,3 +920,9 @@ promotes a probe to a proven historical toolchain.
 - [Unknown-field review](unknown-field-review.md): all 79 header declarations
   accounted for, explicit raw-reference coverage limits, resource negative
   controls, and Rust codec fields reconciled with proven C meanings.
+- [Unknown-field format provenance](unknown-field-format-provenance.md): all
+  33 owners checked against pinned SDK types and Sony format manuals, with
+  embedded-type boundaries and documentation-version discrepancies recorded.
+- [Unknown-field alias audit](unknown-field-alias-audit.md): scoped floor-item
+  and event pointer paths, wide-copy lanes, dialogue-index bounds, persistence
+  and animation-cache owner indirection checked against retail instructions.

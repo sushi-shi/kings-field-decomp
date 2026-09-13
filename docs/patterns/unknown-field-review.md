@@ -11,6 +11,104 @@ C fields, but does **not** establish semantic closure for the remaining
 unknowns. In particular, no field is renamed `padding`, `reserved`, or
 `unused` from alignment, zero values, or absence of named C uses.
 
+## What an unresolved field means
+
+`retain_unresolved` means preserve the modeled bytes and leave their purpose
+open. It does not mean the field is unnecessary, padding, unused, or free to
+remove. The unchanged count of 79 is not a completed semantic reconstruction.
+Some declarations may eventually become parts of wider fields or known
+subobjects; others may prove to be spare storage. Those changes need evidence
+about the actual owner and its consumers.
+
+The ledger now records `storage_origin`, `disk_source`, `transport_paths` and
+`alias_audit` for every field. Resource files, initialized EXE data, saved
+runtime state, and runtime-only objects are distinguished. "No serialized
+source established" is an audit limit, not proof that none exists. Chunk
+indices in the ledger are zero-based, and filenames retain their retail
+spelling. A value census covering B1–B5 does not also cover OPEN's B0 files.
+
+## Disk and bulk-copy provenance
+
+The following paths establish storage and transport without establishing a
+behavioral meaning for every byte:
+
+| Storage | Path and effect on unknown fields |
+| --- | --- |
+| `COM/COM.DAT` | [`common_resources_load`](../../src/game/resources.c) passes cast chunk pointers to the weapon, armor, magic and map-object definition loaders. Their `u32` table views copy unknown lanes alongside known fields. The armor and object-definition copy extents cross nominal chunk boundaries. |
+| `B1..B5/MIXA.DAT` | [`map_resources_load`](../../src/game/resources.c) passes cast payload pointers to placement/definition expanders. [`actor_definitions_load`](../../src/game/actor_pool.c) copies all definition words. Source placement bytes may be present in the loaded file without an established runtime destination. Floor-item +3 and the two event bytes have explicit source/destination mappings. |
+| OPEN scene resources | [`opening_resources_load_scene0`](../../src/open/resources.c) reads floor-item placements from `B0/MIXA0.`; entity loaders also consume placement chunks in `MIXA3.`, `MIXAE.` and `MIXAF.`. These are additional source populations, not automatically included in the floor-resource census. |
+| `COM/STAT.DAT` | [`item_load_database`](../../src/game/item.c) copies the complete menu-assets bank, including the five `MenuTileSprite` records. The two unknown coordinate-adjacent bytes therefore come from the disc even though individual GPU output stores are bytes. |
+| Linked `GAME.EXE`/`OPEN.EXE` data | Camera points and HUD/notification/effect descriptors have modeled initializers in the executables. They are distinct from separately loaded resource records and from runtime BSS. |
+| Memory-card slot payload | [`save_file_write_slot` and `save_file_read_slot`](../../src/game/save_system.c) copy the complete 0xe0-byte player state through a word-array view, including all its unknown ranges and nested progress byte. They also write/read the entire payload, including both payload gaps. Saved-world transport separately preserves event +0x0d. This is game payload data, not the standard PlayStation header. |
+
+## Casts, arithmetic and access coverage
+
+A named-member search misses accesses through another representation. The
+review must account for casts, unions, byte-pointer arithmetic, indexed
+interior pointers, stack spills, GP-relative references, wide loads/stores,
+bulk copies and pointers passed to helpers. A relocation to a nearby known
+field can also be the base of arithmetic that reaches an unknown interval.
+The weapon/armor bias example below shows why physical overlap alone is not
+enough to identify the logical object being accessed.
+
+For each such path, record the image, original owner, pointer displacement,
+access width/range, callee and evidence tier. Distinguish copying or clearing
+bytes from interpreting them. Follow the callee's actual reads/writes:
+passing an SDK pointer does not by itself prove that every byte in the SDK
+type is used, and passing an interior subobject does not imply access to the
+surrounding unknown fields. The ledger's `alias_audit` column explicitly
+marks paths without that coverage as open.
+
+Similarly, a retail byte load can result from narrowing a wider source value
+into a GPU byte field. Width recovery must include the input format and all
+consumers; the load opcode alone does not always determine the original C
+member width. A compile probe can test a proposed representation but cannot
+prove its semantic origin merely by preserving bytes.
+
+Standard SDK ownership is checked separately in the
+[format-provenance review](unknown-field-format-provenance.md). An embedded
+`SVECTOR`, `VECTOR`, `DRAWENV` or other SDK member does not make the enclosing
+game record an SDK format. Check documentation-version discrepancies against
+the pinned headers and retail layout before adopting field names or
+reserved-byte rules.
+
+### Menu coordinate-width control
+
+`MenuTileSprite` has the same twelve-byte extent and field positions as the
+nearby `MenuSpriteDef`, whose texture coordinates are halfwords. A scratch
+header therefore tested replacing `u8 u; unknown_05; u8 v; unknown_07` with
+`u16 u; u16 v`, without changing the production header or packet expressions.
+Using the unit's pinned compiler/profile, 34 of 35 `game.menu_runtime`
+function instruction/ordered-relocation listings stayed identical, including
+`menu_list_render` and `menu_draw_window_backdrop`. This demonstrates that
+their narrowed outputs alone cannot discriminate the two input layouts.
+
+`menu_status_panel` is a counterexample: its first changed instruction loads
+the tile's `u` at descriptor +4 with `lhu` instead of `lbu`. Retail GAME
+`0x800243f0` uses `lbu` at `menu_assets +0x31c`, and the production function is
+strict 100%. Widening the fields without further source evidence would
+therefore regress a banked function. No widening is retained, and no extra
+cast is added to force that result back. The original descriptor width still
+needs evidence beyond matching size, zero high bytes and the output packet.
+
+The three witness functions received fresh image-qualified address, raw
+block-disassembly, caller, callee, string and match views. The verdict is an
+inconclusive width hypothesis with a concrete counterexample, not proof that
+the two bytes are padding or behaviorally irrelevant.
+
+### Floor-item and event alias follow-up
+
+The [scoped raw-access audit](unknown-field-alias-audit.md) follows the
+floor-item/event families beyond named members, including pointer arithmetic,
+unaligned word-copy lanes, restored dialogue indices and the animation-cache
+owner pointer. Normal authored dialogue stages are 1–5, but unchecked restored
+indices let page accesses reach all five unknown event ranges: stages 10/11
+select +0x0c/+0x0d, 15 selects +0x11, 32/33 select the two bytes at +0x22,
+and 64/65 select the two bytes at +0x42. These conditional byte reads/writes
+prevent an "unread" verdict; they do not establish that the bytes were intended
+as extra page entries. The supplement records the exact instructions and
+remaining limits.
+
 ## Coverage and limits
 
 A Clang member-reference pass covered 101 configured retail translation
@@ -36,8 +134,10 @@ interior target as a weapon-field read would be incorrect.
 This interval census only covers curated global ownership and admitted
 relocation targets. It does not follow every indirect pointer, dynamic
 base-plus-offset access, GP-relative address, stack view, unreconstructed
-body, or unadmitted relocation candidate. Dedicated raw dossiers cover the
-34 functions below; other ledger rows explicitly say when they only have
+body, or unadmitted relocation candidate. The initial raw dossiers cover the
+34 functions below, with the menu-width and scoped alias follow-ups documented
+separately above;
+other ledger rows explicitly say when they only have
 source/curated-owner coverage. Thus **the whole-binary behavioral audit is
 still incomplete**. An unresolved row records the next evidence needed,
 not a claim that the field has been proved meaningless.
@@ -68,8 +168,10 @@ The hash-validated retail corpus provides the following independent controls:
   on B1–B5. Actor-definition +0x38 is zero in 59 of the 60 loaded rows;
   one B5 row contains bytes `68 f7`. A claim that this field is uniformly
   zero would be false.
-- The 117 active floor-item placements have +3 values 8, 28, 32 and 64.
-  GAME and OPEN copy that byte without an established behavioral meaning.
+- The 117 active B1–B5 floor-item placements have +3 values 8, 28, 32 and 64.
+  OPEN's `B0/MIXA0.` adds 14 records, all with +3 equal to 64, for 131 authored
+  records across the two populations. GAME and OPEN copy that byte without
+  an established behavioral meaning.
 - Event-definition +0x0b/+0x0c/+0x16 are zero in all eight source rows on
   each of five floors, including inactive rows. Runtime event +0x0d is
   persisted and restored; transport and persistence do not identify meaning.
