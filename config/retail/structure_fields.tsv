@@ -330,11 +330,13 @@ KfMagicRecord	0x10	0x02	mp_cost	u16	supported	magic.h;asm;player_update	compared
 KfMagicRecord	0x12	0x02	unknown_12	u8[2]	opaque	magic.h;asm	meaning unresolved
 KfMagicTable	0x00	0x1e0	entries	KfMagicRecord[24]	supported	magic.h;asm;typed-record-tables.md	typed records selected by the game consumers
 KfMapAttributeGrid	0x00	0x2710	cells	KfMapAttribute[100][100]	supported	map_data.h;asm;xrefs;enum-field-review.md	100 by 100 enum attribute cells
+KfMapAttributeGrid	0x00	0x2710	linear	KfMapAttribute[10000]	supported	map_data.h;asm;collision_query_world;cast-union-debt.md	same typed row-major cells addressed by a flat collision index; dual-index union is a reconstruction convenience
 KfMapCell	0x00	0x02	coords	KfMapCellCoordinates	supported	game_map.h;asm;xrefs;typed-packed-state.md	unsigned z/x byte coordinates
 KfMapCell	0x00	0x02	word	u16	supported	game_map.h;asm;xrefs;typed-packed-state.md	unsigned halfword comparison in main loop
 KfMapCellCoordinates	0x00	0x01	z	u8	supported	game_map.h;game_semantic_player_motion_attack.tsv;asm;xrefs	map row derived from world z divided by 2000
 KfMapCellCoordinates	0x01	0x01	x	u8	supported	game_map.h;game_semantic_player_motion_attack.tsv;asm;xrefs	map column derived from world x divided by 2000
 KfMapCollisionGrid	0x00	0x2710	cells	KfMapCellKind[100][100]	supported	map_data.h;strict-enum-audit.md;map_load;map_object_mark_collision_edge;render_map_cells	typed cell selectors share the unchanged 0x2710-byte resource-copy span
+KfMapCollisionGrid	0x00	0x2710	linear	KfMapCellKind[10000]	supported	map_data.h;asm;collision_query_world;map_floor_height_for_cell_position;cast-union-debt.md	same typed row-major cells addressed by a flat collision index; dual-index union is a reconstruction convenience
 KfMapCopyRegion	0x00	0x01	source_x	u8	supported	game_map.h;asm;xrefs	source x
 KfMapCopyRegion	0x01	0x01	source_z	u8	supported	game_map.h;asm;xrefs	source z
 KfMapCopyRegion	0x02	0x01	destination_x	u8	supported	game_map.h;asm;xrefs	destination x
@@ -393,6 +395,7 @@ KfMapFloorScript	0x0	0x4	floor1	KfMapFloor1Script	supported	game_map.h;asm;game-
 KfMapFloorScript	0x0	0x1	floor3	KfMapFloor3Script	supported	game_map.h;asm;game-map-script-state.md;save-read-write:0x2134;floor-stream-stride:1700	floor 3 interpretation of the first prefix byte
 KfMapFloorScript	0x0	0x4	floor5	KfMapFloor5Script	supported	game_map.h;asm;game-map-script-state.md;save-read-write:0x2134;floor-stream-stride:1700	floor 5 interpretation of the first four prefix bytes
 KfMapGrid	0x00	0x2710	cells	u8[100][100]	supported	asm;typed-map-tables.md;cast-union-debt.md	canonical row/column grid
+KfMapGrid	0x00	0x2710	linear	u8[10000]	supported	map_data.h;asm;collision_query_world;map_floor_height_for_cell_position;cast-union-debt.md	same row-major cells addressed by a flat collision index; dual-index union is a reconstruction convenience
 KfMapObject	0x00	0x01	object_id	KfObjectId	supported	game_map.h;asm;xrefs	object definition ID
 KfMapObject	0x01	0x01	unknown_01	u8	opaque	game_map.h;asm;xrefs	meaning unresolved
 KfMapObject	0x02	0x02	cell_x	u16	supported	game_map.h;asm;xrefs	map cell x
@@ -443,6 +446,7 @@ KfMapObjectState	0x25b2	0x2	effect_sequence_160	u16	supported	asm;map_object_poo
 KfMapObjectState	0x25b4	0x2	effect_sequence_170	u16	supported	asm;map_object_pool_clear;data-repair-campaign.md	wrapping sequence for reserved slots 170 through 179
 KfMapObjectState	0x25b6	0x2	effect_sequence_180	u16	supported	asm;map_object_pool_clear;data-repair-campaign.md	wrapping sequence for reserved slots 180 through 189
 KfMapOrientationGrid	0x00	0x2710	cells	KfMapOrientation[100][100]	supported	map_data.h;strict-enum-audit.md;map_load;map_object_mark_collision_edge;render_map_cells	typed cell selectors share the unchanged 0x2710-byte resource-copy span
+KfMapOrientationGrid	0x00	0x2710	linear	KfMapOrientation[10000]	supported	map_data.h;asm;map_floor_height_for_cell_position;cast-union-debt.md	same typed row-major cells addressed by a flat collision index; dual-index union is a reconstruction convenience
 KfMapRuntimeState	0x000	0x220	events	KfMapEvent[8]	supported	game_map.h;asm;0x44-stride;8-record-loop	live map-event records
 KfMapRuntimeState	0x220	0x004	current_event	KfMapEvent *	supported	game_map.h;asm;map_event_set_current;spinner-current-minus-544	selected event pointer
 KfMapRuntimeState	0x224	0x004	variant_asset_buffer	u8 *	supported	game_map.h;asm;map_variant_assets_load	persistent CHR variant allocation

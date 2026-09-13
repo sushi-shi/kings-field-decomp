@@ -57,8 +57,8 @@ ADDRESS(0x80016ec8, 0x3c)
 void tmd_select_object_vertices(u16 index)
 {
     open_graphics_runtime.current_tmd_vertices =
-        (SVECTOR *)((u8 *)open_graphics_runtime.tmd_state.current_asset
-            + KF_TMD_HEADER_BYTES + tmd_get_object(index)->vertex_offset);
+        TMD_OBJECT_VERTICES(open_graphics_runtime.tmd_state.current_asset,
+            tmd_get_object(index));
 }
 
 ADDRESS(0x80016f04, 0x12c)

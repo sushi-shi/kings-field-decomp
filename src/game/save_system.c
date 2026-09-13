@@ -772,7 +772,7 @@ ADDRESS(0x8002c5e0, 0x12c)
 KfBool32 menu_load_message_image(s32 message_id)
 {
     char path[16] = "TIM\\M000.";
-    void *buffer;
+    u8 *buffer;
 
     if (message_id != MESSAGE_IMAGE_SKIP) {
         CD_PATH_WRITE_DECIMAL3(&path[5], message_id);

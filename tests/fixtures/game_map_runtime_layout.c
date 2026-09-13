@@ -50,4 +50,8 @@ CHECK_OFFSET(KfMapGrid, cells, 0);
 CHECK_OFFSET(KfMapAttributeGrid, cells, 0);
 CHECK_OFFSET(KfMapCollisionGrid, cells, 0);
 CHECK_OFFSET(KfMapOrientationGrid, cells, 0);
+CHECK_OFFSET(KfMapGrid, linear, 0);
+CHECK_OFFSET(KfMapAttributeGrid, linear, 0);
+CHECK_OFFSET(KfMapCollisionGrid, linear, 0);
+CHECK_OFFSET(KfMapOrientationGrid, linear, 0);
 CHECK_OFFSET(KfMapSavedWorld, floors, 0);

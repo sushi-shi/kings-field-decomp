@@ -67,7 +67,7 @@ u32 collision_query_world(
     u16 query_flags = flags;
 
     if ((query_flags & KF_COLLISION_SKIP_TERRAIN) == 0) {
-        hit = KF_ENUM_ENCODE(u8, ((KfMapCellKind *)&map_collision_grid)[(u16)cell]);
+        hit = KF_ENUM_ENCODE(u8, map_collision_grid.linear[(u16)cell]);
 
         if (!MAP_CELL_HAS_FLOOR(KF_ENUM_DECODE(KF_ENUM_PARAM(KfMapCellKind, s32), hit))) {
             return hit | KF_COLLISION_TERRAIN;
@@ -78,7 +78,7 @@ u32 collision_query_world(
             if (floor_height < point_y) {
                 return KF_COLLISION_BELOW_FLOOR;
             }
-            attribute = ((KfMapAttribute *)&map_cell_attribute_grid)[(u16)cell];
+            attribute = map_cell_attribute_grid.linear[(u16)cell];
             if (attribute == KF_MAP_ATTRIBUTE_NONE) {
                 return KF_COLLISION_MISSING_ATTRIBUTE;
             }
@@ -88,7 +88,7 @@ u32 collision_query_world(
             }
         }
     }
-    cell_flags = ((u8 *)&map_collision_flag_grid)[(u16)cell];
+    cell_flags = map_collision_flag_grid.linear[(u16)cell];
     rejection_mask = (query_flags >> KF_COLLISION_CELL_FLAG_SHIFT) & KF_COLLISION_CELL_FLAG_MASK;
     hit = cell_flags & rejection_mask;
     if (hit != 0) {

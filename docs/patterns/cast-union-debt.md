@@ -1,13 +1,89 @@
 # Cast and union reconstruction debt
 
-## Current-master integration
+## Readability follow-up
+
+The first cleanup made several callers harder to read. This follow-up to
+`4f2940c5` corrects that tradeoff; fewer union declarations alone were not a
+sufficient verdict. Current counts are **351 casts** (270 pointer, 81 scalar)
+and **30 unions**. The integration snapshot below is historical.
+
+- Grid queries now spell `map_floor_height_grid.linear[cell_index]`, with
+  corresponding typed attribute, collision-kind and orientation views. Four
+  grids retain `.cells[z][x]` and `.linear[index]` over the same 10000-byte
+  extent. Their `.words` members remain removed. These dual-index unions are
+  deliberate reconstruction conveniences, not recovered original declarations
+  or proof that no better union-free model exists.
+- GAME `map_resource_copy_words` and OPEN `resource_stream_copy_words` accept
+  complete destination objects through `void *`, converting to a word cursor
+  inside the implementation. Callers pass `&map_cell_orientation_grid` without
+  a word-pointer cast. Both buffers must remain word-aligned; count and return
+  value remain a word count and advanced source cursor. No SDK prototype changes.
+- `TMD_OBJECT_VERTICES(asset, object)` names the shared payload-relative decoding
+  in both renderers. Its two casts remain visible in the shared definition;
+  this is API clarification and deduplication, not elimination of serialized
+  offset interpretation. Each argument occurs once. The offset is in bytes
+  from the end of the 12-byte TMD header, not from the object record.
+- The two TIM-loading locals in `menu_load_item_texture` and
+  `menu_load_message_image` retain the existing primitive-buffer cursor's
+  `u8 *` type rather than discarding it to `void *`. This is independent type
+  propagation at the same resource boundary. The source `void*` count stays
+  14; all previously ratcheted metrics remain enforced without exclusions.
+
+The 18 fewer written casts comprise six replaced grid casts, ten eliminated
+destination casts and two deduplicated TMD casts. Four union definitions return:
+the original 37 are now 30, so the net owner/SDK wrapper removal is seven, not
+eleven. Cast counting does not measure whether the remaining interfaces are
+historically original or portable under every aliasing model.
+
+Two union-free grid experiments were rejected after inspecting the first raw
+divergence. Typed `.cells[index / 100][index % 100]` accessors introduce a
+`divu`/quotient/remainder sequence before the first floor-grid load; the floor
+query falls to 83.379630% and the world query to 87.149536%. Flat canonical
+arrays with a cast-free row-address macro change 25 coordinate consumers in
+19 objects: OPEN `render_map_cell` first loses the `move a3,a0` at +0x14 and
+computes the combined index before selecting the grid base. All those source
+experiments are reverted. Neither result establishes an unavoidable codegen
+limit. The inline TMD experiment using `(u8 *)(asset + 1)` changes the final
+`addu` and stored register at GAME +0x20 / OPEN +0x20; the retained named macro
+uses the existing shared-header style and reproduces the original expression.
+
+Final verdicts for changed functions (all strict **100%**, unchanged):
+
+| Image | Address | Function |
+| --- | --- | --- |
+| GAME | `8001a29c` | `map_floor_height_for_cell_position` |
+| GAME | `8001a5ac` | `collision_query_world` |
+| GAME | `8001b3e4` | `map_resource_copy_words` |
+| GAME | `8001b558` | `map_resources_load` |
+| GAME | `8001c148` | `tmd_select_object_vertices` |
+| GAME | `8002af48` | `menu_load_item_texture` |
+| GAME | `8002c5e0` | `menu_load_message_image` |
+| OPEN | `80016318` | `resource_stream_copy_words` |
+| OPEN | `80016348` | `opening_resources_load_scene0` |
+| OPEN | `80016ec8` | `tmd_select_object_vertices` |
+
+All 101 complete objects and all 484 emitted function rows equal the saved
+master `4d3dc5b7` baseline. Strict totals remain **458/471**, with no new banking
+or vendored progress. All three executables build and all 101 modern type-check
+variants pass. Data/allocation gates retain the same pre-existing failures.
+New controls check grid row transitions and endpoints, matching enum domains,
+const-destination rejection, TMD payload offset 28 resolving to asset byte 40,
+and single evaluation of both macro arguments. The pinned layout fixture also
+checks the four linear members at offset zero.
+
+Final validation: `ruff check scripts tests`, `git diff --check`, and
+`kf verify board --gate` pass. The full repository suite reports **811 passed,
+9 skipped, 10,229 subtests passed**; `nix flake check -L` passes with 820 tests
+and 143 skips in the isolated environment.
+
+## Master integration snapshot (before readability follow-up)
 
 PR #5 incorporates master `4d3dc5b7`, including the enum, common-helper and
 explicit-referent work. Conflict resolutions retain master's `KfObjectId`,
 overlay domains, `TMD_PREPARED_VERTEX` and `CD_LOCATION_COPY` while keeping
 this campaign's canonical owners and removed implicit-conversion casts.
 
-Fresh target-C censuses measure **368 casts on current master** (287 pointer,
+Fresh target-C censuses measured **368 casts on current master** (287 pointer,
 81 scalar) and **369 after integration** (288 pointer, 81 scalar), with
 **26 unions** in the merged source. Shared helpers change the number of
 written locations; the earlier 403/404 figures below describe the original
@@ -99,10 +175,10 @@ or containing-object offsets. The new natural C type alignment need not be
 four: actual storage and call boundaries carry that precondition. No
 alignment padding or per-global linker placement was added.
 
-Each grid owns only `.cells[100][100]`, preserving its byte/enum domain.
-Linear accesses convert the complete grid, not `.cells[0]` followed by
-traversal beyond that row. Each loader copies 2500 words into the same
-complete 10000-byte destination as retail.
+At first each grid owned only `.cells[100][100]`, preserving its byte/enum
+domain. The readability follow-up above restores the explicit typed linear
+view. Each loader still copies 2500 words into the same complete 10000-byte
+destination as retail, now through the whole-object copy API.
 
 `KfMapSavedWorld` owns five 1700-byte floors. Save I/O passes the whole
 8500-byte object. Reset/restore cursors convert that owner to bytes, not
@@ -153,9 +229,10 @@ Three additional source experiments were rejected, not counted as reductions:
   the byte-typed callee. Those casts remain. Neither rejected scalar control
   proves an unavoidable original spelling or rules out future type recovery.
 
-## Remaining 26 unions
+## Retained 26 non-grid unions
 
-These are retention verdicts, not original union declarations recovered from
+Together with the four dual-index grids above these give 30 unions. These are
+retention verdicts, not original union declarations recovered from
 bytes. The [earlier audit](type-assertion-and-union-audit.md) contains fuller
 consumer dossiers; its old live totals are superseded here.
 

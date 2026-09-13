@@ -307,8 +307,8 @@ ADDRESS(0x8001c148, 0x3c)
 void tmd_select_object_vertices(u16 index)
 {
     game_graphics_runtime.current_tmd_vertices =
-        (SVECTOR *)((u8 *)game_graphics_runtime.tmd_state.current_asset
-            + KF_TMD_HEADER_BYTES + tmd_get_object(index)->vertex_offset);
+        TMD_OBJECT_VERTICES(game_graphics_runtime.tmd_state.current_asset,
+            tmd_get_object(index));
 }
 
 ADDRESS(0x8001c184, 0x12c)

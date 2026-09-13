@@ -2355,7 +2355,7 @@ ADDRESS(0x8002af48, 0x130)
 KF_ENUM_PARAM(KfResourceLoadResult, u32) menu_load_item_texture(KfMenuTextureId id)
 {
     char name[16] = "TIM\\M000.";
-    void *destination;
+    u8 *destination;
     s32 number;
 
     if (id != KF_MENU_TEXTURE_NONE) {

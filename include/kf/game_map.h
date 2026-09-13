@@ -518,7 +518,8 @@ extern s32 map_object_probe_forward(const KfMapObject *object, u16 yaw);
 extern void map_object_spawn_actor_debris(u16 source, const VECTOR *position, s32 y_offset);
 extern void map_object_spawn_effect(KfMapObjectDropSource kind, KfObjectId object_id, const VECTOR *position, s32 y_offset);
 extern void map_object_start_action_if_idle(KfMapObject *object, KfMapObjectOperation action);
-extern const u32 *map_resource_copy_words( u32 *destination, const u32 *source, u32 word_count);
+/* Copy into a complete object with word-aligned storage; count is in words. */
+extern const u32 *map_resource_copy_words(void *destination, const u32 *source, u32 word_count);
 extern u8 *map_resource_load_file(const char *filename);
 extern void map_resource_path_set_floor(KfFloorId floor);
 extern void map_resources_load(KfFloorId floor, KF_ENUM_PARAM(KfMapVariant, s32) map_variant);

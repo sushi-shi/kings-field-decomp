@@ -6,8 +6,9 @@ records the retail evidence first and the probe behaviour second; none of them
 promotes a probe to a proven historical toolchain.
 
 - [cast-union-debt.md](cast-union-debt.md): master-based cast census and qualification,
-  eleven canonical owner/SDK replacements, target-C-aware enum checking, and explicit
-  remaining SDK/representation debt. Supersedes older live cast/union totals.
+  seven canonical owner/SDK replacements, retained dual-index grids, whole-object
+  copying, named TMD decoding, and target-C-aware enum checking. Supersedes older
+  live cast/union totals; remaining SDK/representation debt is explicit.
 
 - [common-code-review.md](common-code-review.md): completed 522-entry source
   reading and application of all 90 candidate verdicts; 39 retained helpers,

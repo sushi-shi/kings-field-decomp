@@ -115,12 +115,14 @@ u8 *map_resource_load_file(const char *filename)
 
 ADDRESS(0x8001b3e4, 0x30)
 const u32 *map_resource_copy_words(
-    u32 *destination,
+    void *destination,
     const u32 *source,
     u32 word_count)
 {
+    u32 *out = destination;
+
     while (word_count-- != 0) {
-        *destination++ = *source++;
+        *out++ = *source++;
     }
     return source;
 }
@@ -182,17 +184,17 @@ void map_resources_load(KfFloorId floor, KF_ENUM_PARAM(KfMapVariant, s32) use_va
     RESOURCE_STREAM_NEXT(stream);
     audio_play_current_map_sequence();
     source = map_resource_copy_words(
-        (u32 *)&map_cell_attribute_grid,
+        &map_cell_attribute_grid,
         (u32 *)(stream + KF_RESOURCE_CHUNK_HEADER_BYTES),
         MAP_GRID_WORDS);
     source = map_resource_copy_words(
-        (u32 *)&map_floor_height_grid, source, MAP_GRID_WORDS);
+        &map_floor_height_grid, source, MAP_GRID_WORDS);
     source = map_resource_copy_words(
-        (u32 *)&map_cell_orientation_grid, source, MAP_GRID_WORDS);
+        &map_cell_orientation_grid, source, MAP_GRID_WORDS);
     source = map_resource_copy_words(
-        (u32 *)&map_collision_flag_grid, source, MAP_GRID_WORDS);
+        &map_collision_flag_grid, source, MAP_GRID_WORDS);
     map_resource_copy_words(
-        (u32 *)&map_collision_grid, source, MAP_GRID_WORDS);
+        &map_collision_grid, source, MAP_GRID_WORDS);
     item_load_floor_placements(
         (KfFloorItemPlacement *)(RESOURCE_STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES));
     map_object_pool_load(

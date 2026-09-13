@@ -156,10 +156,12 @@ void tim_upload_images(void *tim_data)
 /* Copies WORD_COUNT words and returns the first unread source word. */
 ADDRESS(0x80016318, 0x30)
 const u32 *resource_stream_copy_words(
-    u32 *destination, const u32 *source, s32 word_count)
+    void *destination, const u32 *source, s32 word_count)
 {
+    u32 *out = destination;
+
     while (word_count-- != 0) {
-        *destination++ = *source++;
+        *out++ = *source++;
     }
     return source;
 }
@@ -179,17 +181,17 @@ void opening_resources_load_scene0(void)
         (vab_chunk = RESOURCE_STREAM_NEXT(stream)) + KF_RESOURCE_CHUNK_HEADER_BYTES);
     RESOURCE_STREAM_NEXT(stream);
     source = resource_stream_copy_words(
-        (u32 *)&map_cell_attribute_grid,
+        &map_cell_attribute_grid,
         (const u32 *)(stream + KF_RESOURCE_CHUNK_HEADER_BYTES),
         MAP_GRID_WORDS);
     source = resource_stream_copy_words(
-        (u32 *)&map_floor_height_grid, source, MAP_GRID_WORDS);
+        &map_floor_height_grid, source, MAP_GRID_WORDS);
     source = resource_stream_copy_words(
-        (u32 *)&map_cell_orientation_grid, source, MAP_GRID_WORDS);
+        &map_cell_orientation_grid, source, MAP_GRID_WORDS);
     source = resource_stream_copy_words(
-        (u32 *)&map_collision_flag_grid, source, MAP_GRID_WORDS);
+        &map_collision_flag_grid, source, MAP_GRID_WORDS);
     resource_stream_copy_words(
-        (u32 *)&map_collision_grid, source, MAP_GRID_WORDS);
+        &map_collision_grid, source, MAP_GRID_WORDS);
     item_load_floor_placements(
         (KfFloorItemPlacement *)(RESOURCE_STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES));
     opening_entity_pool_load_placements(

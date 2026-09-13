@@ -73,6 +73,11 @@ typedef struct KfTmdObject {
     s32 scale;
 } KfTmdObject;
 
+/* Unlinked object offsets are bytes from the end of the asset header.
+ * The asset must contain the object's aligned SVECTOR array. */
+#define TMD_OBJECT_VERTICES(asset, object) \
+    ((SVECTOR *)((u8 *)(asset) + KF_TMD_HEADER_BYTES + (object)->vertex_offset))
+
 /* Object records follow a KfTmdHeader; packet bodies follow four header bytes.
  * Pass a KfTmdHeader* to TMD_OBJECTS and a byte pointer to TMD_PACKET_BODY. */
 #define TMD_OBJECTS(asset) ((KfTmdObject *)((asset) + 1))
