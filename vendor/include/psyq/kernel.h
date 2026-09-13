@@ -2,28 +2,12 @@ extern "C" {
 #ifndef KF_PSYQ_KERNEL_H
 #define KF_PSYQ_KERNEL_H
 
+#ifndef LANGUAGE_C
+#define LANGUAGE_C 1
+#endif
+#include <ASM.H>
 #include <KERNEL.H>
 #include <SYS/FILE.H>
-
-#ifndef LANGUAGE_C
-struct EXEC {
-    unsigned long pc0;
-    unsigned long gp0;
-    unsigned long t_addr;
-    unsigned long t_size;
-    unsigned long d_addr;
-    unsigned long d_size;
-    unsigned long b_addr;
-    unsigned long b_size;
-    unsigned long s_addr;
-    unsigned long s_size;
-    unsigned long sp;
-    unsigned long fp;
-    unsigned long gp;
-    unsigned long ret;
-    unsigned long base;
-};
-#endif
 
 extern long OpenEvent(
     unsigned long descriptor, long spec, long mode, void (*handler)(void));
