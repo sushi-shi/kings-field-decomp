@@ -5,6 +5,9 @@ about which source shapes reproduce it under the current probes. Each note
 records the retail evidence first and the probe behaviour second; none of them
 promotes a probe to a proven historical toolchain.
 
+- [void-pointer-boundary-audit.md](void-pointer-boundary-audit.md): every one of
+  PR #5's 79 void-pointer casts reviewed in both directions; sector-read capacity,
+  incomplete GPU union, grid representation, and narrower-interface findings.
 - [cast-union-debt.md](cast-union-debt.md): master-based cast census and qualification,
   seven canonical owner/SDK replacements, retained dual-index grids, whole-object
   copying, named TMD decoding, and explicit void-pointer boundaries. Supersedes older
