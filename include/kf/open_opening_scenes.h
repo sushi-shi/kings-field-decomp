@@ -14,12 +14,13 @@ enum {
     KF_OPENING_ENDING_CAMERA_POINT_COUNT = 9
 };
 
-KF_ENUM_BEGIN(KfOpeningTransitionMode, s16)
-    KF_OPENING_TRANSITION_GROW = 0,
-    KF_OPENING_TRANSITION_REMOVE = 1,
-    KF_OPENING_TRANSITION_SHRINK = 2,
-    KF_OPENING_TRANSITION_CREATE = 3
-KF_ENUM_END(KfOpeningTransitionMode)
+/* GROW keeps the cylinders; SHRINK removes them; CREATE starts them tall. */
+KF_ENUM_BEGIN(KfOpeningCylinderTransitionMode, s16)
+    KF_OPENING_CYLINDER_TRANSITION_GROW = 0,
+    KF_OPENING_CYLINDER_TRANSITION_REMOVE = 1,
+    KF_OPENING_CYLINDER_TRANSITION_SHRINK = 2,
+    KF_OPENING_CYLINDER_TRANSITION_CREATE = 3
+KF_ENUM_END(KfOpeningCylinderTransitionMode)
 
 extern KfCameraPathPoint opening_scene0_camera_path[KF_OPENING_SCENE0_CAMERA_POINT_COUNT];
 extern KfCameraPathPoint opening_scene3_camera_path[KF_OPENING_SCENE3_CAMERA_POINT_COUNT];
@@ -32,7 +33,7 @@ extern CVECTOR opening_scene3_overlay_color;
 extern void opening_scene0_run(void);
 extern void opening_scene1_draw_fade(u8 shade);
 extern void opening_scene1_run(void);
-extern void opening_entity_transition(KfOpeningTransitionMode mode, const VECTOR *position);
+extern void opening_cylinder_transition(KfOpeningCylinderTransitionMode transition_mode, const VECTOR *position);
 extern void opening_scene3_run(void);
 extern void opening_ending_scene_run(void);
 extern void opening_ending_scroll_run(void);

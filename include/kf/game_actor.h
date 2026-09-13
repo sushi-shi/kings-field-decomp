@@ -350,8 +350,8 @@ extern void actor_definitions_load(const KfActorDefinitionTable *definitions);
 extern void actor_initialize(KfActor *actor);
 extern void actor_initialize_current(void);
 extern void actor_initialize_slot(u16 actor_index);
-extern KfActorMoveResult actor_move_along_heading(KfActorMoveDirection direction, KfActorCollisionPolicy stop_on_collision);
-extern KfActorMoveResult actor_move_xz_with_collision(const struct KfVecXZs *delta, KfActorCollisionPolicy stop_on_collision);
+extern KfActorMoveResult actor_move_along_heading(KfActorMoveDirection direction, KfActorCollisionPolicy collision_policy);
+extern KfActorMoveResult actor_move_xz_with_collision(const struct KfVecXZs *delta, KfActorCollisionPolicy collision_policy);
 extern void actor_play_sound_at_phase(const SoundRef *sound, u16 phase);
 extern void actor_pool_begin_death_by_definition(u16 definition_id);
 extern void actor_pool_clear(void);
@@ -375,7 +375,7 @@ extern s32 actor_distance_to_point(
 extern void actor_prepare_charge_toward_player(void);
 extern void actor_select_next_action(s32 player_distance);
 extern void actor_set_action(KfActor *actor, KfActorAction action);
-extern void actor_set_player_transform( const VECTOR *position, const SVECTOR *rotation);
+extern void actor_set_player_transform( const VECTOR *position_or_null, const SVECTOR *rotation_or_null);
 extern KfActorAction actor_try_select_action_distance_facing(
     KfActorAction action, s32 distance, u16 chance, u16 distance_scale);
 extern KfActorAction actor_try_select_facing_action(
@@ -383,7 +383,7 @@ extern KfActorAction actor_try_select_facing_action(
 extern KfActorAction actor_try_select_ground_action(
     KfActorAction action, s32 distance, u16 chance);
 extern KfActorAction actor_try_select_profiled_action(
-    KfActorAction action, s32 distance, KF_ENUM_PARAM(KfActorEffectCode, u16) profile_index, u16 chance);
+    KfActorAction action, s32 distance, KF_ENUM_PARAM(KfActorEffectCode, u16) effect_code, u16 chance);
 extern void actor_try_attack_player(
     u16 minimum_distance, u16 maximum_distance,
     s16 angle_offset, s16 angle_tolerance);

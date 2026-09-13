@@ -36,7 +36,7 @@ void audio_initialize(void)
     SsUtSetReverbType(SS_REV_TYPE_HALL);
     SsUtReverbOn();
     SsUtSetReverbDepth(OPEN_REVERB_DEPTH, OPEN_REVERB_DEPTH);
-    audio_state.sequence_buffer = memory_allocate(OPEN_SEQUENCE_BUFFER_BYTES);
+    audio_state.sequence_buffer = (u_long *)memory_allocate(OPEN_SEQUENCE_BUFFER_BYTES);
     audio_state.sequence_active = KF_AUDIO_SEQUENCE_INACTIVE;
     audio_reset_voice_slots();
     audio_state.active_vab_id = KF_AUDIO_VAB_UNAVAILABLE;
@@ -75,7 +75,7 @@ void audio_play_sequence_file(const char *path)
     s32 volume;
 
     audio_stop_sequence(KF_AUDIO_STOP_IMMEDIATE);
-    if (cd_file_load_into(audio_state.sequence_buffer, path) != KF_RESOURCE_LOADED) {
+    if (cd_file_load_into((void *)audio_state.sequence_buffer, path) != KF_RESOURCE_LOADED) {
         return;
     }
     audio_state.sequence_id = SsSeqOpen(
@@ -94,12 +94,12 @@ void audio_play_sequence_file(const char *path)
 }
 
 ADDRESS(0x80019e24, 0x9c)
-void audio_stop_sequence(KfAudioStopMode mode)
+void audio_stop_sequence(KfAudioStopMode stop_mode)
 {
     s32 volume;
 
     if (audio_state.sequence_active == KF_AUDIO_SEQUENCE_ACTIVE) {
-        if (mode == KF_AUDIO_STOP_FADE) {
+        if (stop_mode == KF_AUDIO_STOP_FADE) {
             volume = KF_AUDIO_MAX_VOLUME;
             do {
                 VSync(0);

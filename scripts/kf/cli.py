@@ -126,6 +126,18 @@ def parser() -> argparse.ArgumentParser:
 
     add_enum_arguments(enums)
 
+    parameters = subs.add_parser("parameters", help="inventory enum/record parameter names")
+    from scripts.kf.parameters import add_arguments as add_parameter_arguments
+
+    add_parameter_arguments(parameters)
+
+    resources = subs.add_parser("resources", help="inspect explicitly identified resource layouts")
+    resource_commands = resources.add_subparsers(dest="resource_command", required=True)
+    census = resource_commands.add_parser("census", help="count a fixed-record integer field")
+    from scripts.kf.resource_census import add_arguments as add_resource_census_arguments
+
+    add_resource_census_arguments(census)
+
     booleans = subs.add_parser(
         "bools", help="audit Boolean candidates and value flow with target-C Clang"
     )
@@ -288,6 +300,14 @@ def main(argv: list[str] | None = None) -> int:
             from scripts.kf.enums import run as run_enum_audit
 
             return run_enum_audit(args)
+        if args.command == "parameters":
+            from scripts.kf.parameters import run as run_parameter_audit
+
+            return run_parameter_audit(args)
+        if args.command == "resources":
+            from scripts.kf.resource_census import run as run_resource_census
+
+            return run_resource_census(args)
         if args.command == "bools":
             from scripts.kf.booleans import run as run_boolean_audit
 

@@ -41,7 +41,7 @@ static KfCellWindow render_fixed_cell_window = {
  * writes MATRIX.t before MulMatrix0 fills its rotation.
  */
 ADDRESS(0x8001e5ec, 0x250)
-void render_map_cell(s32 col, s32 row, KF_ENUM_PARAM(KfCellVisibility, char) cell)
+void render_map_cell(s32 col, s32 row, KF_ENUM_PARAM(KfCellVisibility, char) visibility)
 {
     MATRIX cell_matrix;
     SVECTOR position;
@@ -75,7 +75,7 @@ void render_map_cell(s32 col, s32 row, KF_ENUM_PARAM(KfCellVisibility, char) cel
         return;
     }
     orient = KF_ENUM_ENCODE(u8, map_cell_orientation_grid.cells[row][col]) - 1;
-    if (cell == KF_CELL_WINDOW_DISTANT) {
+    if (visibility == KF_CELL_WINDOW_DISTANT) {
         object_index += KF_MAP_MESHES_PER_BANK;
     }
     setVector(&position,

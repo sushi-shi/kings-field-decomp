@@ -37,7 +37,7 @@ MATRIX render_light_matrices[KF_RENDER_LIGHT_COUNT] = {
 };
 
 ADDRESS(0x8001fde4, 0x518)
-void render_frame(const VECTOR *position, const SVECTOR *rotation)
+void render_frame(const VECTOR *position_or_null, const SVECTOR *rotation_or_null)
 {
     MATRIX model;
     SVECTOR spin;
@@ -46,7 +46,7 @@ void render_frame(const VECTOR *position, const SVECTOR *rotation)
     KfNotificationSprite *record;
     s16 i;
 
-    render_set_view_transform(position, rotation);
+    render_set_view_transform(position_or_null, rotation_or_null);
     display_begin_frame();
     pool_mark_allocated();
     SetGeomScreen(KF_DEFAULT_PROJECTION_DISTANCE);

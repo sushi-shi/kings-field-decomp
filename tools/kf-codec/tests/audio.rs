@@ -1,6 +1,15 @@
 #[path = "../src/audio.rs"]
 mod audio;
 
+#[test]
+fn game_sound_refs_preserve_all_three_unsigned_bytes() {
+    let sound = audio::SoundRef::from_bytes([0xff, 0x80, 0x7f]);
+    assert_eq!(sound.program, 0xff);
+    assert_eq!(sound.tone, 0x80);
+    assert_eq!(sound.note, 0x7f);
+    assert_eq!(sound.to_bytes(), [0xff, 0x80, 0x7f]);
+}
+
 use audio::{
     apply_sequence_event, apply_successful_game_sequence_open, encode_variable_length,
     initialize_sequence_score, read_variable_length, ChannelMessage, SeqCallback, SeqError,

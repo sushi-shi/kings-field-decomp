@@ -55,8 +55,8 @@ fn encode_events(events: &[LifecycleEvent]) -> Vec<u8> {
             LifecycleEvent::AllocateRecord { available } => [1, u32::from(available), 0, 0],
             LifecycleEvent::ReleaseRecord {
                 allocation,
-                backlink,
-            } => [2, allocation, backlink, 0],
+                owner_slot,
+            } => [2, allocation, owner_slot, 0],
             LifecycleEvent::AllocateVertices { byte_count, result } => [3, byte_count, result, 0],
             LifecycleEvent::ReleaseAll => [4, 0, 0, 0],
         };
@@ -78,8 +78,8 @@ pub fn execute(mut blocks: Vec<Vec<u8>>) -> Result<Vec<Vec<u8>>, String> {
     let mut record = blocks.remove(0);
     let mut cache = decode_vertices(&blocks.remove(0))?;
 
-    let asset_id = u16_at(&parameters, 0);
-    let tag = u16_at(&parameters, 2);
+    let asset_index = u16_at(&parameters, 0);
+    let clip_index = u16_at(&parameters, 2);
     let phase = u16_at(&parameters, 4);
     let initial_kf_index = u16_at(&parameters, 6);
     let previous_present = u16_at(&parameters, 8);
@@ -87,7 +87,7 @@ pub fn execute(mut blocks: Vec<Vec<u8>>) -> Result<Vec<Vec<u8>>, String> {
     if previous_present > 1 {
         return Err("animation previous-present parameter must be zero or one".into());
     }
-    if u16_at(&record, 2) != asset_id {
+    if u16_at(&record, 2) != asset_index {
         return Err("animation driver only models an existing same-asset pool record".into());
     }
 
@@ -104,14 +104,14 @@ pub fn execute(mut blocks: Vec<Vec<u8>>) -> Result<Vec<Vec<u8>>, String> {
         ));
     }
     let previous = (previous_present != 0).then(|| CacheKey {
-        tag: u16_at(&record, 4),
+        clip_index: u16_at(&record, 4),
         keyframe_index: u16_at(&record, 6),
         rest_index: previous_rest_index,
     });
     let mut output = vec![Vertex::default(); vertex_count];
     let report = animation
         .bind_frame(
-            tag,
+            clip_index,
             phase,
             initial_kf_index,
             previous,
@@ -121,7 +121,7 @@ pub fn execute(mut blocks: Vec<Vec<u8>>) -> Result<Vec<Vec<u8>>, String> {
         .map_err(|error| error.to_string())?;
 
     put_u16(&mut record, 0, 2);
-    put_u16(&mut record, 4, report.cache_key.tag);
+    put_u16(&mut record, 4, report.cache_key.clip_index);
     put_u16(&mut record, 6, report.cache_key.keyframe_index);
     let rest = animation
         .morph_object(report.cache_key.rest_index)
@@ -144,7 +144,7 @@ pub fn execute_static(blocks: Vec<Vec<u8>>) -> Result<Vec<Vec<u8>>, String> {
     };
     let animation = Animation::parse(asset).map_err(|error| error.to_string())?;
     if animation.is_animated() {
-        return Err("animation-static requires animation_data == 0".into());
+        return Err("animation-static requires animation_clip_count == 0".into());
     }
     let offset = u32::try_from(
         animation
@@ -187,8 +187,8 @@ pub fn execute_instance(mut blocks: Vec<Vec<u8>>) -> Result<Vec<Vec<u8>>, String
         .map(|bytes| u32::from_le_bytes(bytes.try_into().unwrap()))
         .collect();
 
-    let asset_id = u16_at(&parameters, 0);
-    let tag = u16_at(&parameters, 2);
+    let asset_index = u16_at(&parameters, 0);
+    let clip_index = u16_at(&parameters, 2);
     let phase = u16_at(&parameters, 4);
     let initial_kf_index = u16_at(&parameters, 6);
     let caller_vertex_count = u16_at(&parameters, 8);
@@ -210,12 +210,12 @@ pub fn execute_instance(mut blocks: Vec<Vec<u8>>) -> Result<Vec<Vec<u8>>, String
         &mut anchor,
         &mut record,
         InstanceRequest {
-            asset_id,
+            asset_index,
             caller_vertex_count,
             record_present: record_present != 0,
             pool_record_available: pool_record_available != 0,
             record_address: RECORD_VA,
-            anchor_address: ANCHOR_VA,
+            owner_slot_address: ANCHOR_VA,
         },
         &allocation_results,
         &mut events,
@@ -248,14 +248,14 @@ pub fn execute_instance(mut blocks: Vec<Vec<u8>>) -> Result<Vec<Vec<u8>>, String
         InstanceOutcome::PoolUnavailable => 0,
         InstanceOutcome::Ready { reinitialized } => {
             let previous = (!reinitialized).then(|| CacheKey {
-                tag: record.tag,
+                clip_index: record.clip_index,
                 keyframe_index: record.keyframe_index,
                 rest_index: previous_rest_index,
             });
             let mut output = decode_vertices(&scratch[VERTEX_SIZE..])?;
             let bind = animation
                 .bind_frame(
-                    tag,
+                    clip_index,
                     phase,
                     initial_kf_index,
                     previous,
@@ -265,12 +265,12 @@ pub fn execute_instance(mut blocks: Vec<Vec<u8>>) -> Result<Vec<Vec<u8>>, String
                 .map_err(|error| error.to_string())?;
             scratch[VERTEX_SIZE..].copy_from_slice(&encode_vertices(&output));
             record.state = 2;
-            record.tag = bind.cache_key.tag;
+            record.clip_index = bind.cache_key.clip_index;
             record.keyframe_index = bind.cache_key.keyframe_index;
             let rest = animation
                 .morph_object(bind.cache_key.rest_index)
                 .map_err(|error| error.to_string())?;
-            record.rest_object = ASSET_VA
+            record.rest_morph = ASSET_VA
                 .checked_add(u32::try_from(rest.offset).map_err(|_| "rest pointer overflow")?)
                 .ok_or("rest pointer overflow")?;
             if bind.cache_rebuilt {

@@ -306,14 +306,14 @@ class GameGraphicsOwnerProbeTests(unittest.TestCase):
         functions = {item.symbol: item.va for item in load_catalog(RETAIL_CONFIG).functions['GAME.EXE']}
         expected = list(struct.unpack(f'<{claim.body_size // 4}I',
                                      image.require(claim.va, claim.body_size)))
-        correct = '''    if (rotation != NULL) {
-        render_state.view_rotation = *rotation;
+        correct = '''    if (rotation_or_null != NULL) {
+        render_state.view_rotation = *rotation_or_null;
     }
     RotMatrix(&render_state.view_rotation, &render_state.view_matrix);
     angles.vz = 0;
     angles.vy = 0;'''
-        old_bug = '''    if (rotation != NULL) {
-        render_state.view_rotation = *rotation;
+        old_bug = '''    if (rotation_or_null != NULL) {
+        render_state.view_rotation = *rotation_or_null;
         RotMatrix(&render_state.view_rotation, &render_state.view_matrix);
         angles.vz = 0;
         angles.vy = 0;
@@ -341,7 +341,7 @@ class GameGraphicsOwnerProbeTests(unittest.TestCase):
         functions = {item.symbol: item.va for item in load_catalog(RETAIL_CONFIG).functions['GAME.EXE']}
         selected = {
             'game.render': {
-                'display_show_error_screen', 'lighting_set_active_color_matrix',
+                'display_show_system_screen', 'lighting_set_active_color_matrix',
                 'effect5_texture_cache_prepare', 'display_initialize', 'display_begin_frame',
                 'display_present_frame', 'tmd_select', 'tmd_get_object', 'tmd_set_current_vertices',
                 'tmd_select_object_vertices', 'tmd_prepare_primitive_indices', 'tmd_register',

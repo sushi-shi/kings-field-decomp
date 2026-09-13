@@ -59,12 +59,13 @@ class ResourceAccessViewTests(unittest.TestCase):
 
     def test_copy_api_accepts_whole_objects_but_not_const_destinations(self):
         for function in ("map_resource_copy_words", "resource_stream_copy_words"):
-            body = f"const u32 *copy(KfMapOrientationGrid *grid, const u32 *source) {{ return {function}(grid, source, 2500); }}"
+            body = f"const u32 *copy(KfMapOrientationGrid *grid, const u32 *source) {{ return {function}((void *)grid, source, 2500); }}"
             for mode in ("retail", "modern"):
                 with self.subTest(function=function, mode=mode):
                     result = self.compile(body, mode)
                     self.assertEqual(result.returncode, 0, result.stderr)
-                    result = self.compile(body.replace("KfMapOrientationGrid *grid", "const KfMapOrientationGrid *grid"), mode)
+                    const_body = body.replace("KfMapOrientationGrid *grid", "const KfMapOrientationGrid *grid")
+                    result = self.compile(const_body.replace("(void *)grid", "(const void *)grid"), mode)
                     self.assertNotEqual(result.returncode, 0)
 
     def test_tmd_vertices_use_payload_relative_bytes_and_evaluate_once(self):

@@ -112,14 +112,14 @@ void func_8002cab4(void)
 
 ADDRESS(0x8002cad4, 0x70)
 void actor_set_player_transform(
-    const VECTOR *position,
-    const SVECTOR *rotation)
+    const VECTOR *position_or_null,
+    const SVECTOR *rotation_or_null)
 {
-    if (position != NULL) {
-        actor_state.player_position = *position;
+    if (position_or_null != NULL) {
+        actor_state.player_position = *position_or_null;
     }
-    if (rotation != NULL) {
-        actor_state.player_rotation = *rotation;
+    if (rotation_or_null != NULL) {
+        actor_state.player_rotation = *rotation_or_null;
     }
 }
 
@@ -793,9 +793,9 @@ KfActorAction actor_try_select_facing_action(KfActorAction action, s32 distance,
 }
 
 ADDRESS(0x8002e0f0, 0x1f8)
-KfActorAction actor_try_select_profiled_action(KfActorAction action, s32 distance, KF_ENUM_PARAM(KfActorEffectCode, u16) profile_index, u16 chance)
+KfActorAction actor_try_select_profiled_action(KfActorAction action, s32 distance, KF_ENUM_PARAM(KfActorEffectCode, u16) effect_code, u16 chance)
 {
-    KF_ENUM_PARAM(KfEffectKind, u16) profile = KF_ENUM_DECODE(KF_ENUM_PARAM(KfEffectKind, u16), KF_ENUM_ENCODE(u16, profile_index & KF_ACTOR_EFFECT_KIND_MASK));
+    KF_ENUM_PARAM(KfEffectKind, u16) profile = KF_ENUM_DECODE(KF_ENUM_PARAM(KfEffectKind, u16), KF_ENUM_ENCODE(u16, effect_code & KF_ACTOR_EFFECT_KIND_MASK));
     KfActorActionProfile *weights = &actor_action_profiles[KF_ENUM_ENCODE(u16, profile)];
     KfActor *actor = actor_state.current;
     s32 odds;

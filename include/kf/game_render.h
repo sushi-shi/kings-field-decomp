@@ -63,6 +63,7 @@ enum {
     KF_HUD_TABLE_ROWS = 14 /* Thirteen sprites and the terminating row. */
 };
 
+/* Row visibility; each table owns its traversal and end-marker rules. */
 KF_ENUM_BEGIN(KfSpriteState, u8)
     KF_SPRITE_HIDDEN = 0,
     KF_SPRITE_VISIBLE = 1,
@@ -150,7 +151,7 @@ extern void display_flip_buffer_index(void);
 extern void display_initialize(void);
 extern void display_play_transition(void);
 extern void display_present_frame(void);
-extern void display_show_error_screen(KfSystemScreen stage);
+extern void display_show_system_screen(KfSystemScreen screen);
 extern void effect5_texture_cache_prepare(KfFloorId floor);
 extern void fog_interpolate_near(s32 start, s32 end, s32 ratio);
 extern void fog_set_near(s32 distance);
@@ -178,7 +179,7 @@ extern void render_frame(
 extern void render_hud_gauges(KfHudSprite *table);
 extern void render_initialize(void);
 extern void render_map_cell(
-    s32 col, s32 row, KF_ENUM_PARAM(KfCellVisibility, char) cell);
+    s32 col, s32 row, KF_ENUM_PARAM(KfCellVisibility, char) visibility);
 extern void render_map_cells(void);
 extern void render_map_event(KfMapEvent *event);
 extern void render_map_object(KfMapObject *object);
@@ -187,7 +188,7 @@ extern void render_set_view_transform(
     const VECTOR *position_or_null, const SVECTOR *rotation_or_null);
 extern void render_weapon(void);
 extern void screen_show_image_until_input(const char *path);
-extern void sprite_add_ft4(const KfScreenRect *position, u8 *texcoords, u32 tpage, u32 clut, const CVECTOR *color, u16 ot_index);
+extern void sprite_add_ft4(const KfScreenRect *rectangle, u8 *texcoords, u32 tpage, u32 clut, const CVECTOR *color, u16 ot_index);
 extern void tmd_project_vertices_shift(s32 count, u8 shift);
 extern void tmd_transform_vertices(s32 count);
 

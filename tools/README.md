@@ -11,6 +11,13 @@ save files, and nested world-state records. The complete scope and verification
 status are tracked in [the parser census](../docs/game-resource-parser-coverage.md).
 An implemented reader or a roundtrip test is not by itself retail agreement.
 
+Shared vectors live in [`math`](kf-codec/src/math.rs); packed game sound
+selectors use `audio::SoundRef`. Decoded records compose these values with
+their established field types. Encoded PS1 addresses remain `u32`, and all
+serialization uses explicit byte order. The
+[type audit](../docs/patterns/codec-type-consistency.md) records the source
+models and the byte-buffer interfaces used to preserve partial writes.
+
 ```sh
 nix develop --command cargo check --offline --manifest-path tools/Cargo.toml --lib
 nix develop --command cargo test --offline --manifest-path tools/Cargo.toml

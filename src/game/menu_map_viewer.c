@@ -24,7 +24,7 @@ RODATA(0x800122e4, 0x9)
 
 /* Display the current-floor map image and player-position marker. */
 ADDRESS(0x80022d7c, 0x400)
-void menu_map_viewer(KF_ENUM_PARAM(KfObjectId, s32) item_code)
+void menu_map_viewer(KF_ENUM_PARAM(KfObjectId, s32) item_id)
 {
     s32 frame = 0;
     POLY_FT4 poly_bg[KF_DISPLAY_BUFFER_COUNT];
@@ -34,15 +34,15 @@ void menu_map_viewer(KF_ENUM_PARAM(KfObjectId, s32) item_code)
     s32 map_number;
 
     map_number = MENU_MAP_DEFAULT_SET;
-    if (item_code == KF_ITEM_WATCHMAN_MAP)
+    if (item_id == KF_ITEM_WATCHMAN_MAP)
         map_number = MENU_MAP_WATCHMAN_SET;
     path[5] = map_number + '0';
     path[6] = KF_ENUM_ENCODE(u8, player_state.progress_state.current_floor) + '0';
 
     buffer = game_graphics_runtime.display_state.primitive_buffer->cursor;
-    if (cd_file_load_into(buffer, path) != KF_RESOURCE_LOADED)
+    if (cd_file_load_into((void *)buffer, path) != KF_RESOURCE_LOADED)
         return;
-    tim_upload_images(buffer);
+    tim_upload_images((void *)buffer);
 
     SetPolyFT4(&poly_bg[0]);
     SetSemiTrans(&poly_bg[0], 1);

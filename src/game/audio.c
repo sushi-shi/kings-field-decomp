@@ -42,7 +42,7 @@ void audio_initialize(void)
     SsUtSetReverbType(SS_REV_TYPE_STUDIO_C);
     SsUtReverbOn();
     SsUtSetReverbDepth(GAME_REVERB_DEPTH, GAME_REVERB_DEPTH);
-    audio_state.sequence_buffer = memory_allocate(GAME_SEQUENCE_BUFFER_BYTES);
+    audio_state.sequence_buffer = (u_long *)memory_allocate(GAME_SEQUENCE_BUFFER_BYTES);
     audio_state.sequence_active = KF_AUDIO_SEQUENCE_INACTIVE;
     audio_reset_voice_slots();
 }
@@ -74,7 +74,7 @@ void audio_play_map_sequence(u8 sequence_id)
     if (player_state.audio_music_enabled != KF_PLAYER_OPTION_OFF) {
         path[6] = sequence_id + '0';
         path[1] = KF_ENUM_ENCODE(u8, player_state.progress_state.current_floor) + '0';
-        if (cd_file_load_into(audio_state.sequence_buffer, path) == KF_RESOURCE_LOADED) {
+        if (cd_file_load_into((void *)audio_state.sequence_buffer, path) == KF_RESOURCE_LOADED) {
             audio_state.sequence_id = SsSeqOpen(
                 audio_state.sequence_buffer, audio_state.active_vab_id);
             SsSeqSetVol(audio_state.sequence_id, GAME_SEQUENCE_VOLUME, GAME_SEQUENCE_VOLUME);

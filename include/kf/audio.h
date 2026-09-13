@@ -134,6 +134,6 @@ extern void audio_set_listener_transform(
     const VECTOR *position_or_null, const SVECTOR *rotation_or_null);
 extern void audio_stop_sequence_fade(void);
 extern void audio_stop_sequence_master_fade(s32 fade_step);
-extern void audio_stop_sequence(KfAudioStopMode mode);
+extern void audio_stop_sequence(KfAudioStopMode stop_mode);
 
 #endif

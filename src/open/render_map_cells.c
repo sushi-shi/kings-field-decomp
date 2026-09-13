@@ -7,7 +7,7 @@ DATA(0x800439d8, 0xcc0)
 KfCellWindow render_cell_windows[KF_CELL_WINDOW_YAW_COUNT];
 
 ADDRESS(0x80018bbc, 0x1d0)
-void render_map_cell(s32 col, s32 row, KfCellVisibility cell)
+void render_map_cell(s32 col, s32 row, KfCellVisibility visibility)
 {
     MATRIX cell_matrix;
     SVECTOR position;
@@ -24,7 +24,7 @@ void render_map_cell(s32 col, s32 row, KfCellVisibility cell)
         return;
     }
     orientation = KF_ENUM_ENCODE(u8, map_cell_orientation_grid.cells[row][col]) - 1;
-    if (cell == KF_CELL_WINDOW_DISTANT) {
+    if (visibility == KF_CELL_WINDOW_DISTANT) {
         object_index += KF_MAP_MESHES_PER_BANK;
     }
     setVector(&position,

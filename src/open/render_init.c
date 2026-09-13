@@ -57,9 +57,9 @@ void render_initialize(void)
     u8 *buffer;
 
     open_graphics_runtime.display_state.buffer_index = KF_DISPLAY_BUFFER_UNINITIALIZED;
-    cd_file_load_into(render_cell_windows, "B0\\RTBL.");
-    buffer = memory_allocate(KF_DISPLAY_BUFFER_COUNT * PRIMITIVE_BUFFER_BYTES);
-    open_graphics_runtime.display_state.asset_load_buffer = buffer;
+    cd_file_load_into((void *)render_cell_windows, "B0\\RTBL.");
+    buffer = (u8 *)memory_allocate(KF_DISPLAY_BUFFER_COUNT * PRIMITIVE_BUFFER_BYTES);
+    open_graphics_runtime.display_state.asset_load_buffer = (void *)buffer;
     open_graphics_runtime.display_state.primitive_buffers[0].start = buffer;
     buffer += PRIMITIVE_BUFFER_BYTES;
     open_graphics_runtime.display_state.primitive_buffers[0].end = buffer;
@@ -107,12 +107,12 @@ void render_initialize(void)
 }
 
 ADDRESS(0x80016adc, 0x1d8)
-void display_initialize(KfOverlayMode mode)
+void display_initialize(KfOverlayMode overlay_mode)
 {
     s32 framebuffer_height;
     s16 lower_buffer_y = KF_DISPLAY_HEIGHT;
 
-    if (mode == KF_OVERLAY_MODE_ENDING) {
+    if (overlay_mode == KF_OVERLAY_MODE_ENDING) {
         ResetGraph(KF_GPU_RESET_KEEP_DISPLAY);
     } else {
         ResetGraph(KF_GPU_RESET_FULL);
@@ -143,7 +143,7 @@ void display_initialize(KfOverlayMode mode)
     open_graphics_runtime.display_draw_environments[1].isbg = 1;
     setRGB0(&open_graphics_runtime.display_draw_environments[0], 0, 0, 0);
     setRGB0(&open_graphics_runtime.display_draw_environments[1], 0, 0, 0);
-    if (mode == KF_OVERLAY_MODE_ENDING) {
+    if (overlay_mode == KF_OVERLAY_MODE_ENDING) {
         PutDispEnv(&open_graphics_runtime.display_disp_environments[0]);
         SetDispMask(1);
     } else {
@@ -177,5 +177,5 @@ void *primitive_buffer_allocate(u16 byte_count)
         }
     }
     primitive_allocation_count++;
-    return allocation;
+    return (void *)allocation;
 }

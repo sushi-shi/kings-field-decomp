@@ -1,6 +1,55 @@
 # Cast and union reconstruction debt
 
-## Readability follow-up
+## Explicit pointer boundaries and final integration
+
+The final policy requires explicit conversions in both directions between
+typed pointers and `void *`. The earlier removal of C-only conversion casts
+and its generated checker adapter are superseded: both clangd and the modern
+CLI checker now read the actual source, with no VFS rewriting or diagnostic
+suppression. C++ rejects implicit restoration of typed pointers; the retail
+editor enables `-Werror=implicit-void-ptr-cast`. Clang 21.1.8 still accepts
+typed-pointer erasure silently under `-Weverything`, so `kf check-types` also
+runs the read-only target-C `pointer_policy.py` audit for that direction.
+The [Clang diagnostic](https://clang.llvm.org/docs/DiagnosticsReference.html#wimplicit-void-ptr-cast)
+only covers conversions not permitted in C++.
+
+Thirty-seven explicit typed conversions are restored or added, including the
+two copy implementations. Forty-two erasures are explicitly spelled as
+`(void *)` or `(const void *)`, preserving qualification at read-only save
+boundaries. Current totals are **430 written casts** (349 pointer, 81 scalar)
+and **30 unions**. The raw source `void* views` gate moves from 14 to 56 solely
+for these 42 requested casts; no void-typed owner, variable or parameter is
+added. This is an explicit baseline adjustment, not a disabled gate or an
+exclusion from the cast census. Requiring the conversions is a project review
+policy, not evidence that the original C source necessarily spelled them.
+
+The useful `.linear[index]` grid views and named TMD decoding remain. The
+whole-object copy API now spells `(void *)&grid` at callers and converts to
+`u32 *` explicitly inside; alignment and capacity remain preconditions. The
+former auxiliary source adapter and its tests are removed (recoverable from
+git history), replaced by positive and negative enforcement tests covering
+assignment, argument, return, conditional, array decay, macros, const pointers,
+null pointers, varargs, and unrelated enum errors.
+
+Integration includes master **`2e7fdd06`**, including PRs #7 and #8. The two
+text conflicts retain `game_next_overlay_mode` evidence while leaving the
+obsolete `KfPackedSVector` rows deleted, and preserve both patterns-index
+entries. All **101 complete objects** and **484 function rows** are byte/report
+identical to that master baseline after the explicit-pointer edits. Strict
+totals remain **458/471**; no new functions are banked and no vendored progress
+is claimed. Existing data/allocation failures remain separate from executable
+build success.
+
+Final checks: `kf build` builds all three images; `kf check-types` passes
+101/101 variants with no source adaptation; the full repository suite passes
+**825 tests, 12 skips, 10,245 subtests**. `nix flake check -L` passes (isolated
+Python suite: 837 tests, 146 skips), as do Ruff, both diff checks and the
+cleanliness gate. Clangd parses the formerly failing `game.resources` unit
+with zero errors. Its optional whole-file refactoring smoke test still reports
+unrelated macro-overlap/extraction failures; limiting feature probes to line
+one retains the full-file parse and avoids those refactoring exercises.
+
+## Readability follow-up snapshot (before explicit-pointer policy)
 
 The first cleanup made several callers harder to read. This follow-up to
 `4f2940c5` corrects that tradeoff; fewer union declarations alone were not a
@@ -267,9 +316,9 @@ is in [sony-sdk-july-1994.md](sony-sdk-july-1994.md). Closure needs an
 appropriate early header/source or separately evidenced compatibility
 boundary. Moving the cast into a wrapper would merely relocate the debt.
 
-## Checker and metric corrections
+## Earlier checker and metric corrections (adapter now removed)
 
-The game is C89; the auxiliary C++ enum checker must not force redundant C
+The initial approach treated the game as C89 and avoided forcing redundant C
 casts into it. After a failed modern check, `c_compat.py` parses target C,
 identifies valid implicit `void *` to object-pointer expressions and inserts
 explicit conversions only in a generated VFS view. The **entire modern

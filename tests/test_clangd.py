@@ -24,6 +24,11 @@ def manifest() -> Manifest:
 
 
 class ClangdTests(unittest.TestCase):
+    def test_retail_editor_rejects_implicit_void_pointer_restoration(self) -> None:
+        entries = commands(manifest(), Path("/checkout"), "/tools/clang", Path("/sdk"),
+                           "game", mode="retail")
+        self.assertTrue(all("-Werror=implicit-void-ptr-cast" in e["arguments"] for e in entries))
+
     def test_context_selects_shared_variant_and_preserves_other_images(self) -> None:
         for image in ("game", "open"):
             entries = commands(manifest(), Path("/checkout"), "/toolchain/clang", Path("/sdk"), image)

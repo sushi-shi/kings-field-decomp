@@ -25,17 +25,17 @@ enum {
     MENU_STATUS_BACKDROP_RIGHT_X = MENU_STATUS_BACKDROP_LEFT_X + MENU_BACKDROP_COLUMN_STEP
 };
 
-static inline void menu_preview_light_source(MATRIX *light)
+static inline void menu_preview_light_source(MATRIX *light_source)
 {
-    light->m[0][0] = -KF_FIXED12_ONE;
-    light->m[0][1] = -KF_FIXED12_ONE;
-    light->m[0][2] = -KF_FIXED12_ONE;
-    light->m[1][0] = -KF_FIXED12_ONE;
-    light->m[1][1] = -KF_FIXED12_ONE;
-    light->m[1][2] = -KF_FIXED12_ONE;
-    light->m[2][0] = 0;
-    light->m[2][1] = 0;
-    light->m[2][2] = 0;
+    light_source->m[0][0] = -KF_FIXED12_ONE;
+    light_source->m[0][1] = -KF_FIXED12_ONE;
+    light_source->m[0][2] = -KF_FIXED12_ONE;
+    light_source->m[1][0] = -KF_FIXED12_ONE;
+    light_source->m[1][1] = -KF_FIXED12_ONE;
+    light_source->m[1][2] = -KF_FIXED12_ONE;
+    light_source->m[2][0] = 0;
+    light_source->m[2][1] = 0;
+    light_source->m[2][2] = 0;
 }
 
 /* Simple coordinate/flip expressions; preserve the full-width UV arithmetic. */
@@ -602,7 +602,7 @@ enum {
 
 /* The two labels are private by-value copies; only their Y positions advance. */
 void menu_config_panel_draw(
-    MenuGlyphString option_a, MenuGlyphString option_b, KfPlayerOption *values);
+    MenuGlyphString on_label, MenuGlyphString off_label, KfPlayerOption *option_states);
 
 /*
  * Four editable config rows and an exit row. Both exit inputs publish the
@@ -722,32 +722,32 @@ void menu_config_panel(void)
  */
 ADDRESS(0x80025da0, 0x198)
 void menu_config_panel_draw(
-    MenuGlyphString option_a, MenuGlyphString option_b, KfPlayerOption *values)
+    MenuGlyphString on_label, MenuGlyphString off_label, KfPlayerOption *option_states)
 {
     s32 i;
     KfPlayerOption *states;
     const MenuSpriteDef *box_b;
 
     current_poly_ft4 = (POLY_FT4 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
-    states = values;
+    states = option_states;
     for (i = 0; i < KF_MENU_CONFIG_SETTING_COUNT; i++) {
         if (*states == KF_PLAYER_OPTION_ON) {
-            menu_blit_sprite_translucent(&menu_assets.option_highlight, &option_a.position);
+            menu_blit_sprite_translucent(&menu_assets.option_highlight, &on_label.position);
             box_b = &menu_assets.option_background;
         } else {
-            menu_blit_sprite_translucent(&menu_assets.option_background, &option_a.position);
+            menu_blit_sprite_translucent(&menu_assets.option_background, &on_label.position);
             box_b = &menu_assets.option_highlight;
         }
-        menu_blit_sprite_translucent(box_b, &option_b.position);
+        menu_blit_sprite_translucent(box_b, &off_label.position);
         menu_draw_string(
             &menu_assets.glyph_atlas,
-            &option_a);
+            &on_label);
         menu_draw_string(
             &menu_assets.glyph_atlas,
-            &option_b);
+            &off_label);
         states++;
-        option_a.position.y += CONFIG_OPTION_ROW_STEP;
-        option_b.position.y += CONFIG_OPTION_ROW_STEP;
+        on_label.position.y += CONFIG_OPTION_ROW_STEP;
+        off_label.position.y += CONFIG_OPTION_ROW_STEP;
     }
     MENU_ENQUEUE_BACKGROUND();
 }
@@ -1397,11 +1397,11 @@ enum {
  * Draw the selected inventory item's detail: a spinning 3D TMD preview (built
  * from the GTE rotation and a fixed local light matrix), the item name, its
  * price for the active shop column/table, the held quantity, and the player's
- * gold.  `item_id` selects the item and `shop_id` the one-based price column.
+ * gold.  `item_id` selects the item and `shop_bank` the one-based price column.
  * `price_mode` selects buy prices at zero and sell prices for any nonzero value.
  */
 ADDRESS(0x80027b7c, 0x2dc)
-void menu_draw_item_detail(KF_ENUM_PARAM(KfObjectId, s32) item_id, KF_ENUM_PARAM(KfItemStockBank, s32) shop_id, KfTradeMode price_mode)
+void menu_draw_item_detail(KF_ENUM_PARAM(KfObjectId, s32) item_id, KF_ENUM_PARAM(KfItemStockBank, s32) shop_bank, KfTradeMode price_mode)
 {
     MenuGlyphString gs;
     MATRIX rot;
@@ -1450,10 +1450,10 @@ void menu_draw_item_detail(KF_ENUM_PARAM(KfObjectId, s32) item_id, KF_ENUM_PARAM
     gs.position.y += MENU_ITEM_PREVIEW_LINE_HEIGHT;
     if (price_mode == KF_TRADE_BUY) {
         price = item_buy_prices[KF_ENUM_ENCODE(s32, item_id)]
-            [KF_ENUM_ENCODE(s32, shop_id) - KF_ENUM_ENCODE(s32, KF_ITEM_STOCK_FIRST_SHOP)];
+            [KF_ENUM_ENCODE(s32, shop_bank) - KF_ENUM_ENCODE(s32, KF_ITEM_STOCK_FIRST_SHOP)];
     } else {
         price = item_sell_prices[KF_ENUM_ENCODE(s32, item_id)]
-            [KF_ENUM_ENCODE(s32, shop_id) - KF_ENUM_ENCODE(s32, KF_ITEM_STOCK_FIRST_SHOP)];
+            [KF_ENUM_ENCODE(s32, shop_bank) - KF_ENUM_ENCODE(s32, KF_ITEM_STOCK_FIRST_SHOP)];
     }
     menu_format_number(price, MENU_ITEM_DETAIL_PRICE_DIGITS, KF_FORMAT_PAD_SPACES, gs.glyphs.codes);
     menu_draw_number(&menu_assets.number_atlas, &gs);
@@ -1521,32 +1521,32 @@ void menu_add_frame_quad(void)
  * confirmation, and the two-option confirm dialog.
  */
 ADDRESS(0x80027ee4, 0x49c)
-void menu_draw_dialog_frame(const KfSaveSlotSummary *rows, KfSaveSlotOverlay overlay)
+void menu_draw_dialog_frame(const KfSaveSlotSummary *summaries, KfSaveSlotOverlay slot_overlay)
 {
     MenuGlyphString gs;
     s32 i;
 
     current_poly_ft4 = (POLY_FT4 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
-    if (overlay == KF_SAVE_OVERLAY_SKIP_FIRST) {
+    if (slot_overlay == KF_SAVE_OVERLAY_SKIP_FIRST) {
         AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_CONTENT_OT_DEPTH,
                 &menu_assets.dialog_quads[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)][MENU_SAVE_SLOT1_QUAD]);
         AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_CONTENT_OT_DEPTH,
                 &menu_assets.dialog_quads[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)][MENU_SAVE_SLOT2_QUAD]);
     }
-    if (overlay == KF_SAVE_OVERLAY_SKIP_SECOND) {
+    if (slot_overlay == KF_SAVE_OVERLAY_SKIP_SECOND) {
         AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_CONTENT_OT_DEPTH,
                 &menu_assets.dialog_quads[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)][MENU_SAVE_SLOT0_QUAD]);
         AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_CONTENT_OT_DEPTH,
                 &menu_assets.dialog_quads[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)][MENU_SAVE_SLOT2_QUAD]);
     }
-    if (overlay == KF_SAVE_OVERLAY_SKIP_THIRD) {
+    if (slot_overlay == KF_SAVE_OVERLAY_SKIP_THIRD) {
         AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_CONTENT_OT_DEPTH,
                 &menu_assets.dialog_quads[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)][MENU_SAVE_SLOT0_QUAD]);
         AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_CONTENT_OT_DEPTH,
                 &menu_assets.dialog_quads[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)][MENU_SAVE_SLOT1_QUAD]);
     }
-    if (overlay >= KF_SAVE_OVERLAY_ALL) {
+    if (slot_overlay >= KF_SAVE_OVERLAY_ALL) {
         AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_CONTENT_OT_DEPTH,
                 &menu_assets.dialog_quads[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)][MENU_SAVE_SLOT0_QUAD]);
         AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_CONTENT_OT_DEPTH,
@@ -1555,13 +1555,13 @@ void menu_draw_dialog_frame(const KfSaveSlotSummary *rows, KfSaveSlotOverlay ove
                 &menu_assets.dialog_quads[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)][MENU_SAVE_SLOT2_QUAD]);
     }
 
-    if (rows == NULL) {
+    if (summaries == NULL) {
         return;
     }
 
     for (i = 0; i < KF_SAVE_SLOT_COUNT; i++) {
         gs.position.y = i * MENU_SAVE_SUMMARY_ROW_HEIGHT + 30;
-        if ((s32)rows[i].current_hp > 0) {
+        if ((s32)summaries[i].current_hp > 0) {
             gs.position.x = MENU_SAVE_SUMMARY_LABEL_X;
             gs.glyphs.codes[0] = 0x82;
             gs.glyphs.codes[1] = 0x83;
@@ -1570,7 +1570,7 @@ void menu_draw_dialog_frame(const KfSaveSlotSummary *rows, KfSaveSlotOverlay ove
             menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
             gs.position.x = 251;
-            menu_format_number(rows[i].experience, 6, KF_FORMAT_PAD_SPACES, gs.glyphs.codes);
+            menu_format_number(summaries[i].experience, 6, KF_FORMAT_PAD_SPACES, gs.glyphs.codes);
             menu_draw_number(&menu_assets.number_atlas, &gs);
 
             gs.position.x = MENU_SAVE_SUMMARY_LABEL_X;
@@ -1581,7 +1581,7 @@ void menu_draw_dialog_frame(const KfSaveSlotSummary *rows, KfSaveSlotOverlay ove
             menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
             gs.position.x = 286;
-            menu_format_number(KF_ENUM_ENCODE(u32, rows[i].current_floor), 1, KF_FORMAT_PAD_SPACES, gs.glyphs.codes);
+            menu_format_number(KF_ENUM_ENCODE(u32, summaries[i].current_floor), 1, KF_FORMAT_PAD_SPACES, gs.glyphs.codes);
             menu_draw_number(&menu_assets.number_atlas, &gs);
 
             gs.position.x = MENU_SAVE_SUMMARY_LABEL_X;
@@ -1592,8 +1592,8 @@ void menu_draw_dialog_frame(const KfSaveSlotSummary *rows, KfSaveSlotOverlay ove
             menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
             gs.position.x = MENU_SAVE_SUMMARY_VALUE_X;
-            MENU_DRAW_VITAL_FRACTION(gs, rows[i].current_hp,
-                rows[i].maximum_hp, MENU_SAVE_STATUS_DIGITS);
+            MENU_DRAW_VITAL_FRACTION(gs, summaries[i].current_hp,
+                summaries[i].maximum_hp, MENU_SAVE_STATUS_DIGITS);
 
             gs.position.x = MENU_SAVE_SUMMARY_LABEL_X;
             gs.glyphs.codes[0] = 0xf1;
@@ -1603,8 +1603,8 @@ void menu_draw_dialog_frame(const KfSaveSlotSummary *rows, KfSaveSlotOverlay ove
             menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
             gs.position.x = MENU_SAVE_SUMMARY_VALUE_X;
-            MENU_DRAW_VITAL_FRACTION(gs, rows[i].current_mp,
-                rows[i].maximum_mp, MENU_SAVE_STATUS_DIGITS);
+            MENU_DRAW_VITAL_FRACTION(gs, summaries[i].current_mp,
+                summaries[i].maximum_mp, MENU_SAVE_STATUS_DIGITS);
         }
     }
 }
@@ -1622,8 +1622,8 @@ enum {
  */
 ADDRESS(0x80028380, 0x354)
 KfMenuResult menu_list_interact(
-    const KfMenuList *list, KfMenuConfirmKind kind, KfMenuPreviewMode preview_mode,
-    s32 item_id, KF_ENUM_PARAM(KfItemStockBank, u32) shop_id, KfTradeMode price_mode)
+    const KfMenuList *list, KfMenuConfirmKind confirm_kind, KfMenuPreviewMode preview_mode,
+    s32 preview_id, KF_ENUM_PARAM(KfItemStockBank, u32) shop_bank, KfTradeMode price_mode)
 {
     MenuGlyphString opt0;
     MenuGlyphString opt1;
@@ -1644,24 +1644,24 @@ KfMenuResult menu_list_interact(
     opt0.position.y = MENU_LIST_CONFIRM_ACCEPT_Y;
     opt1.position.x = MENU_CONFIRM_TEXT_X;
     opt1.position.y = MENU_LIST_CONFIRM_DECLINE_Y;
-    if (kind == KF_MENU_CONFIRM_USE) {
+    if (confirm_kind == KF_MENU_CONFIRM_USE) {
         opt0.glyphs.codes[0] = 0x72;
         opt0.glyphs.codes[1] = 0x42;
         opt0.glyphs.codes[2] = MENU_TEXT_END;
-    } else if (kind == KF_MENU_CONFIRM_DROP) {
+    } else if (confirm_kind == KF_MENU_CONFIRM_DROP) {
         opt0.glyphs.codes[0] = 0x75;
         opt0.glyphs.codes[1] = 0x52;
         opt0.glyphs.codes[2] = 0x6a;
         opt0.glyphs.codes[3] = MENU_TEXT_END;
-    } else if (kind == KF_MENU_CONFIRM_YES_NO) {
+    } else if (confirm_kind == KF_MENU_CONFIRM_YES_NO) {
         opt0.glyphs.codes[0] = 0x59;
         opt0.glyphs.codes[1] = 0x41;
         opt0.glyphs.codes[2] = MENU_TEXT_END;
-    } else if (kind == KF_MENU_CONFIRM_BUY) {
+    } else if (confirm_kind == KF_MENU_CONFIRM_BUY) {
         opt0.glyphs.codes[0] = 0x74;
         opt0.glyphs.codes[1] = 0x42;
         opt0.glyphs.codes[2] = MENU_TEXT_END;
-    } else if (kind == KF_MENU_CONFIRM_SELL) {
+    } else if (confirm_kind == KF_MENU_CONFIRM_SELL) {
         opt0.glyphs.codes[0] = 0x73;
         opt0.glyphs.codes[1] = 0x6a;
         opt0.glyphs.codes[2] = MENU_TEXT_END;
@@ -1670,7 +1670,7 @@ KfMenuResult menu_list_interact(
         opt0.glyphs.codes[1] = 0x71;
         opt0.glyphs.codes[2] = MENU_TEXT_END;
     }
-    if (kind == KF_MENU_CONFIRM_YES_NO) {
+    if (confirm_kind == KF_MENU_CONFIRM_YES_NO) {
         opt1.glyphs.codes[0] = 0x41;
         opt1.glyphs.codes[1] = 0x41;
         opt1.glyphs.codes[2] = 0x43;
@@ -1683,11 +1683,11 @@ KfMenuResult menu_list_interact(
 
     menu_frame_begin();
     if (preview_mode == KF_MENU_PREVIEW_ITEM_MODEL) {
-        menu_item_model_preview(KF_ENUM_DECODE(KF_ENUM_PARAM(KfObjectId, s32), item_id));
+        menu_item_model_preview(KF_ENUM_DECODE(KF_ENUM_PARAM(KfObjectId, s32), preview_id));
     } else if (preview_mode == KF_MENU_PREVIEW_ITEM_DETAIL) {
-        menu_draw_item_detail(KF_ENUM_DECODE(KF_ENUM_PARAM(KfObjectId, s32), item_id), shop_id, price_mode);
+        menu_draw_item_detail(KF_ENUM_DECODE(KF_ENUM_PARAM(KfObjectId, s32), preview_id), shop_bank, price_mode);
     } else if (preview_mode == KF_MENU_PREVIEW_MAGIC_ICON
-            && item_id != KF_ENUM_ENCODE(s32, KF_MAGIC_NONE)) {
+            && preview_id != KF_ENUM_ENCODE(s32, KF_MAGIC_NONE)) {
         menu_add_marker_quad();
     }
     menu_list_render(list);
@@ -1697,11 +1697,11 @@ KfMenuResult menu_list_interact(
         if (result != KF_MENU_RESULT_PENDING) {
             menu_frame_begin();
             if (preview_mode == KF_MENU_PREVIEW_ITEM_MODEL) {
-                menu_item_model_preview(KF_ENUM_DECODE(KF_ENUM_PARAM(KfObjectId, s32), item_id));
+                menu_item_model_preview(KF_ENUM_DECODE(KF_ENUM_PARAM(KfObjectId, s32), preview_id));
             } else if (preview_mode == KF_MENU_PREVIEW_ITEM_DETAIL) {
-                menu_draw_item_detail(KF_ENUM_DECODE(KF_ENUM_PARAM(KfObjectId, s32), item_id), shop_id, price_mode);
+                menu_draw_item_detail(KF_ENUM_DECODE(KF_ENUM_PARAM(KfObjectId, s32), preview_id), shop_bank, price_mode);
             } else if (preview_mode == KF_MENU_PREVIEW_MAGIC_ICON
-                    && item_id != KF_ENUM_ENCODE(s32, KF_MAGIC_NONE)) {
+                    && preview_id != KF_ENUM_ENCODE(s32, KF_MAGIC_NONE)) {
                 menu_add_marker_quad();
             }
             menu_list_render(list);
@@ -1733,11 +1733,11 @@ KfMenuResult menu_list_interact(
             result = KF_MENU_RESULT_CANCELLED;
         }
         if (preview_mode == KF_MENU_PREVIEW_ITEM_MODEL) {
-            menu_item_model_preview(KF_ENUM_DECODE(KF_ENUM_PARAM(KfObjectId, s32), item_id));
+            menu_item_model_preview(KF_ENUM_DECODE(KF_ENUM_PARAM(KfObjectId, s32), preview_id));
         } else if (preview_mode == KF_MENU_PREVIEW_ITEM_DETAIL) {
-            menu_draw_item_detail(KF_ENUM_DECODE(KF_ENUM_PARAM(KfObjectId, s32), item_id), shop_id, price_mode);
+            menu_draw_item_detail(KF_ENUM_DECODE(KF_ENUM_PARAM(KfObjectId, s32), preview_id), shop_bank, price_mode);
         } else if (preview_mode == KF_MENU_PREVIEW_MAGIC_ICON
-                && item_id != KF_ENUM_ENCODE(s32, KF_MAGIC_NONE)) {
+                && preview_id != KF_ENUM_ENCODE(s32, KF_MAGIC_NONE)) {
             menu_add_marker_quad();
         }
         menu_list_render(list);
@@ -1760,7 +1760,7 @@ enum {
  */
 ADDRESS(0x800286d4, 0x240)
 KfMenuResult menu_two_option_prompt(
-    KfMenuWindowKind kind, s32 count, s32 highlight_row,
+    KfMenuWindowKind window_kind, s32 count, s32 highlight_row,
     const KfSaveSlotSummary *summaries)
 {
     MenuGlyphString label_a;
@@ -1775,7 +1775,7 @@ KfMenuResult menu_two_option_prompt(
     while (PadRead(1) != 0)
         ;
 
-    if (kind == KF_MENU_WINDOW_SAVE || kind == KF_MENU_WINDOW_LOAD)
+    if (window_kind == KF_MENU_WINDOW_SAVE || window_kind == KF_MENU_WINDOW_LOAD)
         overlay = KF_ENUM_DECODE(KfSaveSlotOverlay, highlight_row);
 
     label_a.position.x = MENU_CONFIRM_TEXT_X;
@@ -1794,7 +1794,7 @@ KfMenuResult menu_two_option_prompt(
         if (result != KF_MENU_RESULT_PENDING) {
             menu_frame_begin();
             menu_draw_dialog_frame(summaries, overlay);
-            menu_draw_window(kind, count, highlight_row, KF_MENU_CONFIRM_REQUESTED);
+            menu_draw_window(window_kind, count, highlight_row, KF_MENU_CONFIRM_REQUESTED);
             menu_draw_two_option(&label_a, &label_b, selected, highlight);
             menu_present_frame();
             while (PadRead(1) != 0)
@@ -1823,7 +1823,7 @@ KfMenuResult menu_two_option_prompt(
 
         menu_frame_begin();
         menu_draw_dialog_frame(summaries, overlay);
-        menu_draw_window(kind, count, highlight_row, KF_MENU_CONFIRM_REQUESTED);
+        menu_draw_window(window_kind, count, highlight_row, KF_MENU_CONFIRM_REQUESTED);
         menu_draw_two_option(&label_a, &label_b, selected, highlight);
         menu_present_frame();
     }
@@ -1838,12 +1838,12 @@ KfMenuResult menu_two_option_prompt(
  * MenuGlyphString per step starting at the record's first row.
  */
 ADDRESS(0x80028914, 0x15c)
-void menu_draw_window(KfMenuWindowKind kind, s32 count, s32 highlight, KfMenuConfirmState confirmation)
+void menu_draw_window(KfMenuWindowKind window_kind, s32 count, s32 highlight, KfMenuConfirmState confirmation)
 {
     const MenuWindowLayout *layout;
     s32 row;
 
-    layout = &menu_window_layouts[KF_ENUM_ENCODE(s32, kind)];
+    layout = &menu_window_layouts[KF_ENUM_ENCODE(s32, window_kind)];
     current_poly_ft4 = (POLY_FT4 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
     if (layout->title.position.x != 0) {
         menu_blit_sprite_translucent(
@@ -1867,7 +1867,7 @@ void menu_draw_window(KfMenuWindowKind kind, s32 count, s32 highlight, KfMenuCon
             row++;
         } while (row < count);
     }
-    if (kind != KF_MENU_WINDOW_CONFIG) {
+    if (window_kind != KF_MENU_WINDOW_CONFIG) {
         menu_draw_window_backdrop();
     }
 }
@@ -2007,35 +2007,35 @@ enum {
  */
 ADDRESS(0x800291ec, 0x10c)
 void menu_draw_two_option(
-    const MenuGlyphString *option0, const MenuGlyphString *option1,
-    KfMenuConfirmChoice selected, KfMenuConfirmState highlight)
+    const MenuGlyphString *accept_label, const MenuGlyphString *decline_label,
+    KfMenuConfirmChoice selected_choice, KfMenuConfirmState confirmation)
 {
     current_poly_ft4 = (POLY_FT4 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
-    if (selected == KF_MENU_CHOICE_ACCEPT) {
-        menu_blit_sprite(&menu_assets.selection_cursor, &option0->position);
+    if (selected_choice == KF_MENU_CHOICE_ACCEPT) {
+        menu_blit_sprite(&menu_assets.selection_cursor, &accept_label->position);
     } else {
-        menu_blit_sprite(&menu_assets.selection_cursor, &option1->position);
+        menu_blit_sprite(&menu_assets.selection_cursor, &decline_label->position);
     }
-    if (highlight == KF_MENU_CONFIRM_REQUESTED) {
-        if (selected == KF_MENU_CHOICE_ACCEPT) {
+    if (confirmation == KF_MENU_CONFIRM_REQUESTED) {
+        if (selected_choice == KF_MENU_CHOICE_ACCEPT) {
             menu_blit_sprite_translucent(
-                &menu_assets.option_highlight, &option0->position);
+                &menu_assets.option_highlight, &accept_label->position);
             menu_blit_sprite_translucent(
-                &menu_assets.option_background, &option1->position);
+                &menu_assets.option_background, &decline_label->position);
         } else {
             menu_blit_sprite_translucent(
-                &menu_assets.option_background, &option0->position);
+                &menu_assets.option_background, &accept_label->position);
             menu_blit_sprite_translucent(
-                &menu_assets.option_highlight, &option1->position);
+                &menu_assets.option_highlight, &decline_label->position);
         }
     } else {
         menu_blit_sprite_translucent(
-            &menu_assets.option_background, &option0->position);
+            &menu_assets.option_background, &accept_label->position);
         menu_blit_sprite_translucent(
-            &menu_assets.option_background, &option1->position);
+            &menu_assets.option_background, &decline_label->position);
     }
-    menu_draw_string(&menu_assets.glyph_atlas, option0);
-    menu_draw_string(&menu_assets.glyph_atlas, option1);
+    menu_draw_string(&menu_assets.glyph_atlas, accept_label);
+    menu_draw_string(&menu_assets.glyph_atlas, decline_label);
 }
 
 /*
@@ -2184,9 +2184,9 @@ void menu_draw_string(
  */
 ADDRESS(0x8002a310, 0x200)
 void menu_draw_number(
-    const MenuSpriteDef *atlas, const MenuGlyphString *string)
+    const MenuSpriteDef *font, const MenuGlyphString *string)
 {
-    const MenuSpriteDef *font = atlas;
+    const MenuSpriteDef *atlas = font;
     const MenuGlyphString *label = string;
     s32 i;
     s32 xoff;
@@ -2194,18 +2194,18 @@ void menu_draw_number(
     for (i = 0; label->glyphs.codes[i] != MENU_TEXT_END; i++) {
         xoff = i * MENU_NUMBER_ADVANCE;
         primitive_buffer_begin_poly_ft4();
-        current_poly_ft4->tpage = font->tpage;
-        current_poly_ft4->clut = font->clut;
+        current_poly_ft4->tpage = atlas->tpage;
+        current_poly_ft4->clut = atlas->clut;
         setXYWH(current_poly_ft4,
             label->position.x + xoff,
             label->position.y,
-            font->width,
-            font->height);
+            atlas->width,
+            atlas->height);
         setUVWH(current_poly_ft4,
-            font->u,
+            atlas->u,
             label->glyphs.codes[i] * MENU_NUMBER_CELL_HEIGHT,
-            font->width,
-            font->height);
+            atlas->width,
+            atlas->height);
         primitive_buffer_commit_poly_ft4(MENU_CONTENT_OT_DEPTH);
     }
 }
@@ -2283,14 +2283,14 @@ void primitive_buffer_commit_poly_ft4(s32 depth)
 
 /* Initialize a menu list header and copy its label glyphs from the table. */
 ADDRESS(0x8002ad6c, 0x8c)
-void menu_list_init(KfMenuList *list, KfMenuWindowKind kind, s32 row)
+void menu_list_init(KfMenuList *list, KfMenuWindowKind window_kind, s32 row)
 {
     s32 i;
 
     list->title.position.x = 12;
     list->title.position.y = 19;
     for (i = 0; i < MENU_GLYPHS_PER_ROW; i++) {
-        list->title.glyphs.codes[i] = menu_window_layouts[KF_ENUM_ENCODE(s32, kind)].rows[row].glyphs.codes[i];
+        list->title.glyphs.codes[i] = menu_window_layouts[KF_ENUM_ENCODE(s32, window_kind)].rows[row].glyphs.codes[i];
     }
     list->list_x = 0x16;
     list->list_y = 0x26;
@@ -2304,12 +2304,12 @@ void menu_list_init(KfMenuList *list, KfMenuWindowKind kind, s32 row)
 
 /* Expand a signed value into decimal glyphs and a trailing -1 sentinel. */
 ADDRESS(0x8002adf8, 0xac)
-void menu_format_number(s32 value, s32 count, KF_ENUM_PARAM(KfFormatPaddingMode, s32) pad_zero, s16 *out)
+void menu_format_number(s32 value, s32 count, KF_ENUM_PARAM(KfFormatPaddingMode, s32) padding_mode, s16 *out)
 {
     s32 i = 0;
     s32 blank;
 
-    blank = (pad_zero == KF_FORMAT_PAD_SPACES) ? MENU_NUMBER_BLANK : 0;
+    blank = (padding_mode == KF_FORMAT_PAD_SPACES) ? MENU_NUMBER_BLANK : 0;
     for (; i < count; i++) {
         out[i] = blank;
     }
@@ -2325,16 +2325,16 @@ void menu_format_number(s32 value, s32 count, KF_ENUM_PARAM(KfFormatPaddingMode,
 
 /* Release the previous item model, then load and register the selection. */
 ADDRESS(0x8002aea4, 0x68)
-KF_ENUM_PARAM(KfResourceLoadResult, u32) menu_load_item_model(KF_ENUM_PARAM(KfObjectId, s32) id)
+KF_ENUM_PARAM(KfResourceLoadResult, u32) menu_load_item_model(KF_ENUM_PARAM(KfObjectId, s32) item_id)
 {
     void *asset;
 
     menu_release_item_model();
-    if (id != KF_OBJECT_NONE) {
-        if (cd_file_load_table_entry(&asset, KF_ENUM_ENCODE(s32, id)) != KF_RESOURCE_LOADED) {
+    if (item_id != KF_OBJECT_NONE) {
+        if (cd_file_load_table_entry(&asset, KF_ENUM_ENCODE(s32, item_id)) != KF_RESOURCE_LOADED) {
             return KF_RESOURCE_LOAD_FAILED;
         }
-        tmd_register(KF_TMD_SLOT_MENU_ITEM, asset);
+        tmd_register(KF_TMD_SLOT_MENU_ITEM, (KfTmdHeader *)asset);
         menu_item_model_allocation_pending = KF_MENU_MODEL_ALLOCATED;
     }
     menu_item_preview_rotation.vy = 0;
@@ -2352,20 +2352,20 @@ void menu_release_item_model(void)
 
 /* Load the numbered item TIM into the active primitive buffer and VRAM. */
 ADDRESS(0x8002af48, 0x130)
-KF_ENUM_PARAM(KfResourceLoadResult, u32) menu_load_item_texture(KfMenuTextureId id)
+KF_ENUM_PARAM(KfResourceLoadResult, u32) menu_load_item_texture(KfMenuTextureId texture_id)
 {
     char name[16] = "TIM\\M000.";
     u8 *destination;
     s32 number;
 
-    if (id != KF_MENU_TEXTURE_NONE) {
-        number = KF_ENUM_ENCODE(s32, id) + 1;
+    if (texture_id != KF_MENU_TEXTURE_NONE) {
+        number = KF_ENUM_ENCODE(s32, texture_id) + 1;
         CD_PATH_WRITE_DECIMAL3(&name[5], number);
         destination = game_graphics_runtime.display_state.primitive_buffer->cursor;
-        if (cd_file_load_into(destination, name) != KF_RESOURCE_LOADED) {
+        if (cd_file_load_into((void *)destination, name) != KF_RESOURCE_LOADED) {
             return KF_RESOURCE_LOAD_FAILED;
         }
-        tim_upload_images(destination);
+        tim_upload_images((void *)destination);
     }
     return KF_RESOURCE_LOADED;
 }

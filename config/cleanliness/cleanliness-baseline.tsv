@@ -7,6 +7,6 @@ src func_ refs	3
 src DAT_ refs	12
 GAME extern decls	0
 source-local extern decls	0
-void* views	14
+void* views	56
 .c-local aggregates	7
 unresolved func_ identities	3

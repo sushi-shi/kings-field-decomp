@@ -24,7 +24,7 @@ RODATA(0x80012310, 0x40)
  * chosen, since it occupies those equipment categories too.
  */
 ADDRESS(0x800238d8, 0x5c4)
-void menu_equip_select(KfEquipmentMenuCategory category)
+void menu_equip_select(KfEquipmentMenuCategory equipment_category)
 {
     KfMenuList ctx;
     s16 labels[20][MENU_GLYPHS_PER_ROW];
@@ -45,7 +45,7 @@ void menu_equip_select(KfEquipmentMenuCategory category)
         ;
 
     owned = item_stock[KF_ENUM_ENCODE(u8, KF_ITEM_STOCK_PLAYER)];
-    switch (category) {
+    switch (equipment_category) {
     case KF_EQUIP_MENU_WEAPON:
         start = KF_ENUM_ENCODE(u8, KF_ITEM_SHORT_SWORD);
         end = KF_ENUM_ENCODE(u8, KF_ITEM_IRON_MASK);
@@ -93,7 +93,7 @@ void menu_equip_select(KfEquipmentMenuCategory category)
     codes[k] = KF_OBJECT_NONE;
     k++;
 
-    menu_list_init(&ctx, KF_MENU_WINDOW_EQUIPMENT, KF_ENUM_ENCODE(s32, category));
+    menu_list_init(&ctx, KF_MENU_WINDOW_EQUIPMENT, KF_ENUM_ENCODE(s32, equipment_category));
     ctx.entry_count = k;
     ctx.glyphs_per_entry = MENU_GLYPHS_PER_ROW;
     ctx.glyph_rows = &labels[0][0];
@@ -154,7 +154,7 @@ void menu_equip_select(KfEquipmentMenuCategory category)
 
     menu_release_item_model();
     if (selection != KF_ENUM_ENCODE(s32, KF_MENU_RESULT_CANCELLED)) {
-        switch (category) {
+        switch (equipment_category) {
         case KF_EQUIP_MENU_WEAPON:
             player_state.equipped_weapon_id = KF_ENUM_DECODE(KfObjectId, selection);
             player_equip_weapon(KF_ENUM_DECODE(KfObjectId, selection));

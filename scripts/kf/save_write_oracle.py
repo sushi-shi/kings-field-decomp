@@ -132,8 +132,9 @@ def compare_write_slots(retail: RetailImage, symbols: GameSymbols, rust: RustCod
         machine = []
         for candidate in (False, True):
             service = WriteSink(bytearray(disk), opens.copy(), results.copy(), icons.copy())
+            # Bind native COMMON save buffers to the isolated fixture addresses.
             program = (CandidateProgram.link(symbols, [CandidateFunction(name, SAVE_OBJECT) for name in names],
-                                             hooks=service.hooks()) if candidate else
+                                             hooks=service.hooks(), bind_data_objects=True) if candidate else
                        RetailProgram.link(symbols, names, hooks=service.hooks()))
             output = ParserMachine(retail, program).call("save_file_write_slot", (slot,), memory=[
                 *_pointer_memory(symbols), MemoryInput(HEADER_VA, bytes(header)),

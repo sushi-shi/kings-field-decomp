@@ -51,26 +51,19 @@ def check(
         result = subprocess.run(
             args, cwd=repo, text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
         )
-        if result.returncode:
-            from scripts.kf.c_compat import void_conversions, write_overlay
+        from scripts.kf.pointer_policy import implicit_void_erasures
 
-            try:
-                conversions = void_conversions(unit, repo.resolve(), sdk)
-                if conversions:
-                    overlay = write_overlay(conversions, repo.resolve(), logs / unit.unit)
-                    checked = subprocess.run(
-                        [*args, "-ivfsoverlay", str(overlay)], cwd=repo, text=True,
-                        stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
-                    )
-                    checked.stdout = (
-                        result.stdout
-                        + f"\n[types] target-C view: {len(conversions)} implicit void-pointer "
-                        f"conversion(s); checking generated view {overlay}\n"
-                        + checked.stdout
-                    )
-                    result = checked
-            except ValueError as error:
-                result.stdout += f"\n[types] {error}\n"
+        try:
+            for site in implicit_void_erasures(unit, repo, sdk):
+                result.stdout += (
+                    f"{site.file}:{site.line}:{site.column}: error: implicit conversion "
+                    f"from '{site.source}' to '{site.target}'; spell the pointer "
+                    "boundary explicitly [kf-implicit-void-erasure]\n"
+                )
+                result.returncode = 1
+        except ValueError as error:
+            result.stdout += f"\n[types] {error}\n"
+            result.returncode = 1
         return unit, result
 
     failures = 0

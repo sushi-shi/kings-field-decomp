@@ -7,9 +7,9 @@
 #include <psyq/sdk.h>
 
 extern void opening_render_frame(
-    const VECTOR *position, const SVECTOR *rotation);
+    const VECTOR *position_or_null, const SVECTOR *rotation_or_null);
 extern void sprite_add_g4(
-    const KfScreenRect *position, const CVECTOR *color0, const CVECTOR *color1,
+    const KfScreenRect *rectangle, const CVECTOR *color0, const CVECTOR *color1,
     const CVECTOR *color2, const CVECTOR *color3);
 extern void opening_entity_render(KfOpeningEntity *entity);
 extern void opening_render_entities(void);

@@ -62,9 +62,9 @@ Manually maintained cleanup checklist:
 - [ ] Close [SDK object evidence](docs/sdk-object-audit.md): **29 lineage
   module identities**; the last ambiguous audio helper may belong to `SSCALL`.
   Search missing 1994 SDK archives/source before reconstructing them.
-- [ ] Review casts and remove avoidable conversions: **351 written casts**
-  (**270 pointer**, **81 scalar**). The [cast/union debt campaign](docs/patterns/cast-union-debt.md)
-  removes checker-driven casts and clarifies grid, copy, and asset-offset access;
+- [ ] Review casts and remove avoidable conversions: **430 written casts**
+  (**349 pointer**, **81 scalar**). The [cast/union debt campaign](docs/patterns/cast-union-debt.md)
+  clarifies grid, copy, and asset-offset access and requires explicit void-pointer boundaries;
   raw counts remain review inputs, not a measure of incorrect types.
 - [ ] Review unions and simplify avoidable alternate views: **30 union definitions**;
   seven wrappers replaced with canonical structs or SDK types. Four grids retain
@@ -158,11 +158,12 @@ editor view; `--mode modern` restores scoped-enum checks. The mode also persists
 
 Run `kf check-types` to check every source/image variant, including both
 versions of shared sources. Use `--unit game.actor` or `--image game` to focus
-the check. For implicit C `void *` conversions, the checker derives explicit
-conversions from the target-C AST in a generated VFS view, then requires a
-successful full C++ compilation. It does not suppress diagnostics. Diagnostics
-and generated inputs are saved under `build/clangd/checks/`. The raw modern
-editor view can still flag those C-only conversions; use retail mode for C89.
+the check. Conversions between typed pointers and `void *` must be explicit
+in source, in both directions. Modern C++ checking rejects implicit restoration
+of a typed pointer; the retail editor enables `-Werror=implicit-void-ptr-cast`.
+A read-only target-C AST check additionally rejects implicit erasure to `void *`,
+which Clang otherwise accepts silently. The checker does not rewrite source or
+suppress diagnostics. Logs are saved under `build/clangd/checks/`.
 
 Run `kf bools --output build/boolean-audit/all.json` to audit integral fields,
 locals, globals, arguments, pointer outputs, arrays, and return values through

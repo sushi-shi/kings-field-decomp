@@ -7,9 +7,12 @@ promotes a probe to a proven historical toolchain.
 
 - [cast-union-debt.md](cast-union-debt.md): master-based cast census and qualification,
   seven canonical owner/SDK replacements, retained dual-index grids, whole-object
-  copying, named TMD decoding, and target-C-aware enum checking. Supersedes older
+  copying, named TMD decoding, and explicit void-pointer boundaries. Supersedes older
   live cast/union totals; remaining SDK/representation debt is explicit.
 
+- [semantic-consistency-review.md](semantic-consistency-review.md): consumer
+  review of shared domains and retained helpers, cylinder/overlay naming,
+  sprite traversal distinctions and the full-floor predicate boundary.
 - [common-code-review.md](common-code-review.md): completed 522-entry source
   reading and application of all 90 candidate verdicts; 39 retained helpers,
   rejected trials, and unchanged bytes across all 101 comparison objects.
@@ -914,3 +917,25 @@ promotes a probe to a proven historical toolchain.
 - [Complete enum reuse review](enum-reuse-review.md): all 302 starting enum blocks
   reviewed, direct shared domains and constants, complete member/value coverage,
   and preserved bytes and strict results for every reconstructed function.
+
+- [Native COMMON symbol names](native-common-symbol-names.md): a controlled global
+  rename changes native COMMON placement and 221 GAME executable bytes while
+  preserving compiled sections, ordered referents, and strict objdiff results.
+
+- [Unknown-field review](unknown-field-review.md): all 79 header declarations
+  accounted for, explicit raw-reference coverage limits, resource negative
+  controls, and Rust codec fields reconciled with proven C meanings.
+- [Unknown-field format provenance](unknown-field-format-provenance.md): all
+  33 owners checked against pinned SDK types and Sony format manuals, with
+  embedded-type boundaries and documentation-version discrepancies recorded.
+- [Unknown-field alias audit](unknown-field-alias-audit.md): scoped floor-item
+  and event pointer paths, wide-copy lanes, dialogue-index bounds, persistence
+  and animation-cache owner indirection checked against retail instructions.
+- [Equipment unknown-field audit](equipment-unknown-field-audit.md): stored
+  weapon/armor pointers, biased bases, GP uses and resource correlations;
+  checked consumers and counterexamples leave five field ranges unresolved.
+- [Three weapon fields: static access report](weapon-unknown-access-report.md):
+  reads, writes, guards and value uses; resolved pointer warnings, bounded
+  switches and conditional reads through misindexed armor records.
+- [Codec type consistency](codec-type-consistency.md): shared vector and sound
+  types, header-backed record models, and explicit encoded-byte boundaries.

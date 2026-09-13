@@ -148,7 +148,7 @@ extern char save_main_file_path[];
 extern KfSavePayload *save_payload_buffer;
 extern char save_temporary_file_path[];
 
-extern KfSaveResult memory_card_check_or_format(KfCardFormatConfirmation confirmation);
+extern KfSaveResult memory_card_check_or_format(KfCardFormatConfirmation format_confirmation);
 extern void memory_card_initialize(void);
 extern void memory_card_shutdown_events(void);
 extern KfSaveCleanupResult save_file_cleanup_temporary(void);

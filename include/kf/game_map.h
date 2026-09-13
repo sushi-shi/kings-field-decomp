@@ -505,7 +505,7 @@ extern void map_load_floor(void);
 extern void map_object_definitions_load(const KfMapObjectDefinitionTable *definitions);
 extern s32 map_object_distance_to_point( const KfMapObject *object, s32 point_x, s32 point_z, s32 max_distance);
 extern KfMapObject *map_object_effect_pool_acquire(u16 first_index, u16 count, u16 sequence);
-extern void map_object_mark_collision_edge(const KfMapObject *object, KfMapCellKind value, u16 yaw);
+extern void map_object_mark_collision_edge(const KfMapObject *object, KfMapCellKind cell_kind, u16 yaw);
 extern void map_object_pool_clear(void);
 extern void map_object_pool_clear_link(u8 link_id);
 extern s32 map_object_pool_find_interaction_from(
@@ -516,7 +516,7 @@ extern void map_object_pool_trigger_link(u8 link_id);
 extern void map_object_pool_update(void);
 extern s32 map_object_probe_forward(const KfMapObject *object, u16 yaw);
 extern void map_object_spawn_actor_debris(u16 source, const VECTOR *position, s32 y_offset);
-extern void map_object_spawn_effect(KfMapObjectDropSource kind, KfObjectId object_id, const VECTOR *position, s32 y_offset);
+extern void map_object_spawn_effect(KfMapObjectDropSource drop_source, KfObjectId object_id, const VECTOR *position, s32 y_offset);
 extern void map_object_start_action_if_idle(KfMapObject *object, KfMapObjectOperation action);
 /* Copy into a complete object with word-aligned storage; count is in words. */
 extern const u32 *map_resource_copy_words(void *destination, const u32 *source, u32 word_count);
