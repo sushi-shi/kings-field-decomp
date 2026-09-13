@@ -41,7 +41,7 @@ class GameMapDropInitializationTests(unittest.TestCase):
         self.assertEqual(body.count(reset), 1)
         old_body = body.replace(reset, '')
         for action in ('FALL_AND_TIP', 'FALL_AND_SPIN', 'BOUNCE'):
-            call = f'        map_object_start_action_if_idle(object, KF_MAP_OBJECT_ACTION_{action});\n'
+            call = f'        map_object_start_action_if_idle(object, KF_MAP_OBJECT_OP_{action});\n'
             self.assertEqual(old_body.count(call), 1)
             old_body = old_body.replace(call, call + '    ' + reset)
 

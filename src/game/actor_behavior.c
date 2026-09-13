@@ -69,9 +69,6 @@ enum {
 enum {
     ACTOR_PAIRED_EFFECT_X_OFFSET = 1500,
     ACTOR_EFFECT_AIM_RANGE = 50000,
-    ACTOR_EFFECT_DEFAULT_SPEED = 600,
-    ACTOR_LIGHTNING_VARIANT_SPEED = 800,
-    ACTOR_WIND_CUTTER_SPEED = 800,
     ACTOR_PROPAGATING_EFFECT_SPEED = 250,
     ACTOR_LIGHTNING_FALLBACK_PITCH = -32,
     ACTOR_EFFECT_FALLBACK_MOVE_COUNT = 20,
@@ -514,18 +511,18 @@ void actor_spawn_action_effect(KF_ENUM_PARAM(KfActorEffectCode, s32) effect_code
     }
     effect_code &= KF_ACTOR_EFFECT_KIND_MASK;
     for (i = 0; i < repeat; i++) {
-        switch (effect_code) {
-        case KF_ACTOR_EFFECT_CODE_FIRE_BALL:
-        case KF_ACTOR_EFFECT_CODE_WIND_CUTTER:
-        case KF_ACTOR_EFFECT_CODE_LIGHT_NEEDLE:
-        case KF_ACTOR_EFFECT_CODE_ACTOR_SPAWNER:
-        case KF_ACTOR_EFFECT_CODE_SCATTER_PROJECTILE:
-        case KF_ACTOR_EFFECT_CODE_DARKNESS_PROJECTILE:
-        case KF_ACTOR_EFFECT_CODE_CURSE_PROJECTILE:
-        case KF_ACTOR_EFFECT_CODE_EMERGING_PROJECTILE:
-        case KF_ACTOR_EFFECT_CODE_PHYSICAL_PROJECTILE:
-        case KF_ACTOR_EFFECT_CODE_LIGHTNING_ALTERNATE:
-        case KF_ACTOR_EFFECT_CODE_HOMING_ALTERNATE:
+        switch (actor_effect_kind_from_payload(effect_code)) {
+        case KF_MAGIC_FIRE_BALL:
+        case KF_MAGIC_WIND_CUTTER:
+        case KF_MAGIC_LIGHT_NEEDLE:
+        case KF_EFFECT_KIND_ACTOR_SPAWNER:
+        case KF_EFFECT_KIND_SCATTER_PROJECTILE:
+        case KF_EFFECT_KIND_DARKNESS_PROJECTILE:
+        case KF_EFFECT_KIND_CURSE_PROJECTILE:
+        case KF_EFFECT_KIND_EMERGING_PROJECTILE:
+        case KF_EFFECT_KIND_PHYSICAL_PROJECTILE:
+        case KF_EFFECT_KIND_LIGHTNING_BOLT_ALTERNATE:
+        case KF_EFFECT_KIND_HOMING_PROJECTILE_ALTERNATE:
             setVector(&offset,
                 definition->attachment_offsets[KF_ENUM_ENCODE(s32, effect_slot)].x,
                 definition->attachment_offsets[KF_ENUM_ENCODE(s32, effect_slot)].y,
@@ -548,31 +545,31 @@ void actor_spawn_action_effect(KF_ENUM_PARAM(KfActorEffectCode, s32) effect_code
                 &position, facing, ACTOR_EFFECT_AIM_RANGE, KF_ACTOR_AIM_TOLERANCE);
             if (distance == -1) {
                 effect_rotation.angles.x = 0;
-                if (effect_code == KF_ACTOR_EFFECT_CODE_LIGHTNING_ALTERNATE) {
-                    speed = ACTOR_LIGHTNING_VARIANT_SPEED;
+                if (actor_effect_kind_from_payload(effect_code) == KF_EFFECT_KIND_LIGHTNING_BOLT_ALTERNATE) {
+                    speed = KF_EFFECT_LIGHTNING_SPEED;
                     effect_rotation.angles.x = ACTOR_LIGHTNING_FALLBACK_PITCH;
                     distance = ACTOR_EFFECT_FALLBACK_MOVE_COUNT;
-                } else if (effect_code == KF_ACTOR_EFFECT_CODE_ACTOR_SPAWNER
-                           || effect_code == KF_ACTOR_EFFECT_CODE_SCATTER_PROJECTILE) {
+                } else if (actor_effect_kind_from_payload(effect_code) == KF_EFFECT_KIND_ACTOR_SPAWNER
+                           || actor_effect_kind_from_payload(effect_code) == KF_EFFECT_KIND_SCATTER_PROJECTILE) {
                     speed = ACTOR_PROPAGATING_EFFECT_SPEED;
                     distance = ACTOR_EFFECT_FALLBACK_MOVE_COUNT;
                 } else {
-                    speed = ACTOR_EFFECT_DEFAULT_SPEED;
+                    speed = KF_EFFECT_PROJECTILE_DEFAULT_SPEED;
                 }
                 effect_rotation.angles.y = facing;
             } else {
                 effect_rotation.angles.y = vector_xz_to_angle(
                     actor_state.player_position.vx - position.vx,
                     position.vz - actor_state.player_position.vz);
-                if (effect_code == KF_ACTOR_EFFECT_CODE_LIGHTNING_ALTERNATE) {
-                    speed = ACTOR_LIGHTNING_VARIANT_SPEED;
+                if (actor_effect_kind_from_payload(effect_code) == KF_EFFECT_KIND_LIGHTNING_BOLT_ALTERNATE) {
+                    speed = KF_EFFECT_LIGHTNING_SPEED;
                     effect_rotation.angles.x = vector_xz_to_angle(
                         position.vy - (actor_state.player_position.vy - ACTOR_LIGHTNING_TARGET_Y_OFFSET), -distance);
                     distance = distance / speed;
                 } else {
                     effect_rotation.angles.x = vector_xz_to_angle(
                         position.vy - actor_state.player_position.vy, -distance);
-                    if (effect_code == KF_ACTOR_EFFECT_CODE_SCATTER_PROJECTILE) {
+                    if (actor_effect_kind_from_payload(effect_code) == KF_EFFECT_KIND_SCATTER_PROJECTILE) {
                         speed = ACTOR_PROPAGATING_EFFECT_SPEED;
                         distance -= ACTOR_SCATTER_TARGET_STANDOFF;
                     /* Retail shares one step-count clamp between codes 10 and 9. */
@@ -582,40 +579,40 @@ void actor_spawn_action_effect(KF_ENUM_PARAM(KfActorEffectCode, s32) effect_code
                         } else {
                             distance = distance / speed;
                         }
-                    } else if (effect_code == KF_ACTOR_EFFECT_CODE_ACTOR_SPAWNER) {
+                    } else if (actor_effect_kind_from_payload(effect_code) == KF_EFFECT_KIND_ACTOR_SPAWNER) {
                         speed = ACTOR_PROPAGATING_EFFECT_SPEED;
                         distance -= ACTOR_SPAWNER_TARGET_STANDOFF;
                         goto clamp_steps;
                     } else {
-                        speed = ACTOR_EFFECT_DEFAULT_SPEED;
+                        speed = KF_EFFECT_PROJECTILE_DEFAULT_SPEED;
                     }
                 }
             }
             effect_rotation.angles.z = 0;
-            if (effect_code == KF_ACTOR_EFFECT_CODE_WIND_CUTTER) {
-                speed = ACTOR_WIND_CUTTER_SPEED;
+            if (actor_effect_kind_from_payload(effect_code) == KF_MAGIC_WIND_CUTTER) {
+                speed = KF_EFFECT_WIND_CUTTER_SPEED;
             }
             pitch_yaw_to_forward_vector(&effect_rotation.angles, &direction);
             vector3s_scale_shift12(speed, &direction);
-            if (effect_code == KF_ACTOR_EFFECT_CODE_LIGHT_NEEDLE || effect_code == KF_ACTOR_EFFECT_CODE_PHYSICAL_PROJECTILE) {
+            if (actor_effect_kind_from_payload(effect_code) == KF_MAGIC_LIGHT_NEEDLE || actor_effect_kind_from_payload(effect_code) == KF_EFFECT_KIND_PHYSICAL_PROJECTILE) {
                 effect_pool_construct(
                     definition->effect_owner_id, KF_EFFECT_CLASS_20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
-                    KF_ENUM_DECODE(KfEffectKindArgument, KF_ENUM_ENCODE(s32, effect_code)), &position, &direction, KF_EFFECT_ARGS_ROTATION_SOUND(&effect_rotation.vector, KF_EFFECT_SOUND_PLAY));
-            } else if (effect_code == KF_ACTOR_EFFECT_CODE_HOMING_ALTERNATE) {
+                    actor_effect_kind_from_payload(effect_code), &position, &direction, KF_EFFECT_ARGS_ROTATION_SOUND(&effect_rotation.vector, KF_EFFECT_SOUND_PLAY));
+            } else if (actor_effect_kind_from_payload(effect_code) == KF_EFFECT_KIND_HOMING_PROJECTILE_ALTERNATE) {
                 burst_rotation.angles.x = actor->rotation.angles.x;
                 burst_rotation.angles.y = facing;
                 burst_rotation.angles.z = actor->rotation.angles.z;
                 effect_pool_construct(
                     definition->effect_owner_id, KF_EFFECT_CLASS_20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER, KF_EFFECT_KIND_HOMING_PROJECTILE_ALTERNATE,
                     &position, &direction, KF_EFFECT_ARGS_HOMING(&burst_rotation.vector, KF_EFFECT_HOMING_PLAYER, KF_EFFECT_SOUND_PLAY));
-            } else if (effect_code == KF_ACTOR_EFFECT_CODE_SCATTER_PROJECTILE) {
+            } else if (actor_effect_kind_from_payload(effect_code) == KF_EFFECT_KIND_SCATTER_PROJECTILE) {
                 effect_pool_construct(
                     definition->effect_owner_id, KF_EFFECT_CLASS_20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
                     KF_EFFECT_KIND_SCATTER_PROJECTILE, &position, &direction, KF_EFFECT_ARGS_SCATTER(ACTOR_SCATTER_GENERATIONS, distance, ACTOR_SCATTER_INITIAL_SCALE));
             } else {
                 effect_pool_construct(
                     definition->effect_owner_id, KF_EFFECT_CLASS_20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
-                    KF_ENUM_DECODE(KfEffectKindArgument, KF_ENUM_ENCODE(s32, effect_code)), &position, &direction, KF_EFFECT_ARGS_DURATION_SOUND(distance, KF_EFFECT_SOUND_PLAY));
+                    actor_effect_kind_from_payload(effect_code), &position, &direction, KF_EFFECT_ARGS_DURATION_SOUND(distance, KF_EFFECT_SOUND_PLAY));
             }
             break;
         }
@@ -880,9 +877,9 @@ void actor_update_current_action(void)
                 actor->animation_id = definition->action_animations[KF_ACTOR_ANIM_SLOT_MOVE];
                 actor->animation_phase = 0;
             }
-            actor->movement_yaw = rand() >> KF_ACTOR_RANDOM_YAW_SHIFT;
+            actor->movement_yaw = rand() >> KF_RANDOM_ANGLE_SHIFT;
         } else if (actor->collision_state == KF_ACTOR_COLLISION_CLEAR && rand() < ACTOR_WANDER_TURN_RANDOM_LIMIT) {
-            actor->movement_yaw = rand() >> KF_ACTOR_RANDOM_YAW_SHIFT;
+            actor->movement_yaw = rand() >> KF_RANDOM_ANGLE_SHIFT;
         }
         actor_move_along_heading(KF_ACTOR_MOVE_FORWARD, KF_ACTOR_COLLISION_STEER);
         actor_advance_animation_wrapped(actor, definition->action_animation_steps[KF_ACTOR_ANIM_SLOT_MOVE]);
@@ -962,7 +959,7 @@ void actor_update_current_action(void)
                     debris, &actor->position, -(definition->collision_height >> 1));
             }
             if (actor->slot_state == KF_ACTOR_SLOT_DYNAMIC || actor->slot_state == KF_ACTOR_SLOT_RESPAWNING) {
-                if (definition->action_parameters.drop_object != KF_MAP_OBJECT_DROP_DISABLED && definition->action_parameters.drop_object != KF_MAP_OBJECT_FREE
+                if (definition->action_parameters.drop_object != KF_MAP_OBJECT_DROP_DISABLED && definition->action_parameters.drop_object != KF_OBJECT_NONE
                     && (rand() >> ACTOR_DROP_CHANCE_RANDOM_SHIFT) <= definition->action_parameters.drop_chance) {
                     map_object_spawn_effect(
                         KF_MAP_OBJECT_DROP_FROM_DEFINITION,

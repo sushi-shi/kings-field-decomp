@@ -78,7 +78,7 @@ void render_map_object(KfMapObject *object)
     MATRIX model;
     MATRIX light;
     long flag;
-    KF_ENUM_STORAGE(KfMapObjectId, u16) id;
+    KF_ENUM_STORAGE(KfObjectId, u16) id;
     s16 depth;
 
     SetRotMatrix(&game_graphics_runtime.render_state.view_matrix);
@@ -99,12 +99,12 @@ void render_map_object(KfMapObject *object)
 
     id = object->object_id;
     switch (map_object_state.definitions.entries[KF_ENUM_ENCODE(u8, object->object_id)].behavior_type) {
-    case KF_MAP_OBJECT_BEHAVIOR_LIFT_DOOR:
-    case KF_MAP_OBJECT_BEHAVIOR_03:
+    case KF_MAP_OBJECT_OP_LIFT_DOOR:
+    case KF_MAP_OBJECT_OP_03:
         depth = MAP_LIFT_DOOR_DEPTH_BIAS;
         break;
-    case KF_MAP_OBJECT_BEHAVIOR_HINGED_DOOR:
-    case KF_MAP_OBJECT_BEHAVIOR_HINGED_DOOR_PARTNER:
+    case KF_MAP_OBJECT_OP_HINGED_DOOR:
+    case KF_MAP_OBJECT_OP_HINGED_DOOR_PARTNER:
         depth = MAP_HINGED_DOOR_DEPTH_BIAS;
         break;
     default:

@@ -3,10 +3,6 @@
 #include <kf/debug.h>
 #include <kf/game_types.h>
 
-enum {
-    FORMAT_LEADING_PAD_BYTES = 8
-};
-
 /* Numeric scratch: eight leading bytes receive left padding (at most seven
  * are written), then a sign, ten decimal digits and NUL from the digit anchor
  * at 0x80037978. The claim is the smallest eight-byte-rounded reservation that
@@ -18,7 +14,7 @@ ADDRESS(0x8001a3fc, 0xe0)
 char *format_int_dec(s32 value)
 {
     s32 divisor = KF_FORMAT_DECIMAL_HIGHEST_PLACE;
-    char *out = format_number_storage + FORMAT_LEADING_PAD_BYTES;
+    char *out = format_number_storage + KF_FORMAT_LEADING_PAD_BYTES;
     KfFormatDigitState digit_state = KF_FORMAT_DIGITS_LEADING;
     u8 i;
 
@@ -36,7 +32,7 @@ char *format_int_dec(s32 value)
         divisor /= 10;
     }
     *out = '\0';
-    return format_number_storage + FORMAT_LEADING_PAD_BYTES;
+    return format_number_storage + KF_FORMAT_LEADING_PAD_BYTES;
 }
 
 ADDRESS(0x8001a4dc, 0x8c)
@@ -44,7 +40,7 @@ char *format_int_hex(u32 value)
 {
     u32 divisor = KF_FORMAT_HEX_HIGHEST_PLACE;
     KfFormatDigitState digit_state = KF_FORMAT_DIGITS_LEADING;
-    char *out = format_number_storage + FORMAT_LEADING_PAD_BYTES;
+    char *out = format_number_storage + KF_FORMAT_LEADING_PAD_BYTES;
     u8 i;
 
     for (i = 0; i < KF_FORMAT_HEX_DIGITS; i++) {
@@ -61,7 +57,7 @@ char *format_int_hex(u32 value)
         divisor >>= 4;
     }
     *out = '\0';
-    return format_number_storage + FORMAT_LEADING_PAD_BYTES;
+    return format_number_storage + KF_FORMAT_LEADING_PAD_BYTES;
 }
 
 ADDRESS(0x8001a568, 0x6c)

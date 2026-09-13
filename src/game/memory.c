@@ -4,10 +4,10 @@
 #include <psyq/kernel.h>
 #include <psyq/libc.h>
 #include <kf/game.h>
+#include <kf/memory_layout.h>
 
 enum {
     MEMORY_INITIAL_ARENA_BYTES = 0x100000,
-    MEMORY_MAIN_RAM_BYTES = 0x200000,
     MEMORY_ALLOCATION_ALIGNMENT = 4
 };
 
@@ -26,7 +26,6 @@ DATA(0x800a01f0, 0x58)
 KfMemoryArena memory_arena;
 
 
-
 /* Element 0 is the depth; elements 1..16 hold each allocation's size or malloc block. */
 
 /* Allocations must land in the 2 MiB of RAM mirrored at 0x80000000. */
@@ -35,7 +34,7 @@ void *memory_malloc_checked(s32 size)
 {
     void *block = malloc(size);
 
-    if ((u32)block + MEMORY_CACHED_RAM_BASE > MEMORY_MAIN_RAM_BYTES - 1) {
+    if ((u32)block + MEMORY_CACHED_RAM_BASE > KF_MAIN_RAM_BYTES - 1) {
         return NULL;
     }
     return block;

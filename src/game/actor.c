@@ -9,7 +9,6 @@
 #include <kf/game.h>
 
 enum {
-    ACTOR_DAMAGE_SUBUNITS_PER_HP = 10,
     ACTOR_SELECTION_ANGLE_TOLERANCE = 0x18e,
     ACTOR_MULTI_HIT_SELECTION_ANGLE_TOLERANCE = 0x1c7
 };
@@ -19,9 +18,6 @@ enum {
     COMBAT_DEFENSE_DENOMINATOR_MULTIPLIER = 2,
     ACTOR_DYING_DAMAGE_CUTOFF_PHASE = 1548,
     ACTOR_STATUS_CHANCE_RANDOM_SHIFT = 7,
-    ACTOR_CONE_INITIAL_BEST_ERROR = 30000,
-    ACTOR_BOSS_SOUND_MAX_DISTANCE = 20000,
-    ACTOR_BOSS_SOUND_ATTENUATION_DISTANCE = 60000,
     ACTOR_SELECTION_RANDOM_SHIFT = 4,
     ACTOR_SELECTION_FACING_BYPASS_LIMIT = 1638,
     ACTOR_PROFILE_FACING_BYPASS_LIMIT = 819,
@@ -173,7 +169,7 @@ void actor_initialize(KfActor *actor)
         || actor->slot_state == KF_ACTOR_SLOT_PERSISTENT) {
         actor->rotation.angles.y = KF_ENUM_ENCODE(u8, actor->heading_quadrant) * KF_ANGLE_QUARTER_TURN;
     } else {
-        actor->rotation.angles.y = rand() >> KF_ACTOR_RANDOM_YAW_SHIFT;
+        actor->rotation.angles.y = rand() >> KF_RANDOM_ANGLE_SHIFT;
     }
     collision_adjust_cell_occupancy(actor->cell_x, actor->cell_z, 1);
 }
@@ -327,27 +323,27 @@ void actor_apply_damage(
         return;
     }
     damage = combat_calculate_damage_component(
-        base_power * ACTOR_DAMAGE_SUBUNITS_PER_HP,
-        component0 * ACTOR_DAMAGE_SUBUNITS_PER_HP,
-        definition->defenses[KF_ACTOR_DEFENSE_CUTTING] * ACTOR_DAMAGE_SUBUNITS_PER_HP);
+        base_power * KF_DAMAGE_SUBUNITS_PER_HP,
+        component0 * KF_DAMAGE_SUBUNITS_PER_HP,
+        definition->defenses[KF_COMBAT_COMPONENT_CUTTING] * KF_DAMAGE_SUBUNITS_PER_HP);
     damage += combat_calculate_damage_component(
-        base_power * ACTOR_DAMAGE_SUBUNITS_PER_HP,
-        component1 * ACTOR_DAMAGE_SUBUNITS_PER_HP,
-        definition->defenses[KF_ACTOR_DEFENSE_STRIKING] * ACTOR_DAMAGE_SUBUNITS_PER_HP);
+        base_power * KF_DAMAGE_SUBUNITS_PER_HP,
+        component1 * KF_DAMAGE_SUBUNITS_PER_HP,
+        definition->defenses[KF_COMBAT_COMPONENT_STRIKING] * KF_DAMAGE_SUBUNITS_PER_HP);
     damage += combat_calculate_damage_component(
-        base_power * ACTOR_DAMAGE_SUBUNITS_PER_HP,
-        component2 * ACTOR_DAMAGE_SUBUNITS_PER_HP,
-        definition->defenses[KF_ACTOR_DEFENSE_PIERCING] * ACTOR_DAMAGE_SUBUNITS_PER_HP);
+        base_power * KF_DAMAGE_SUBUNITS_PER_HP,
+        component2 * KF_DAMAGE_SUBUNITS_PER_HP,
+        definition->defenses[KF_COMBAT_COMPONENT_PIERCING] * KF_DAMAGE_SUBUNITS_PER_HP);
     damage += combat_calculate_damage_component(
-        base_power * ACTOR_DAMAGE_SUBUNITS_PER_HP,
-        component3 * ACTOR_DAMAGE_SUBUNITS_PER_HP,
-        definition->defenses[KF_ACTOR_DEFENSE_HOLY] * ACTOR_DAMAGE_SUBUNITS_PER_HP);
+        base_power * KF_DAMAGE_SUBUNITS_PER_HP,
+        component3 * KF_DAMAGE_SUBUNITS_PER_HP,
+        definition->defenses[KF_COMBAT_COMPONENT_HOLY] * KF_DAMAGE_SUBUNITS_PER_HP);
     damage += combat_calculate_damage_component(
-        base_power * ACTOR_DAMAGE_SUBUNITS_PER_HP,
-        component4 * ACTOR_DAMAGE_SUBUNITS_PER_HP,
-        definition->defenses[KF_ACTOR_DEFENSE_FIRE] * ACTOR_DAMAGE_SUBUNITS_PER_HP);
-    damage += ACTOR_DAMAGE_SUBUNITS_PER_HP / 2;
-    damage = (damage / ACTOR_DAMAGE_SUBUNITS_PER_HP) * scale / KF_ACTOR_DAMAGE_SCALE_ONE;
+        base_power * KF_DAMAGE_SUBUNITS_PER_HP,
+        component4 * KF_DAMAGE_SUBUNITS_PER_HP,
+        definition->defenses[KF_COMBAT_COMPONENT_FIRE] * KF_DAMAGE_SUBUNITS_PER_HP);
+    damage += KF_DAMAGE_SUBUNITS_PER_HP / 2;
+    damage = (damage / KF_DAMAGE_SUBUNITS_PER_HP) * scale / KF_ACTOR_DAMAGE_SCALE_ONE;
     hit_flags &= KF_ACTOR_DAMAGE_CREDIT_MASK;
     if (damage == 0) {
         return;
@@ -487,9 +483,9 @@ void actor_try_attack_player(
         status_effect = definition->status_effect;
     }
     player_apply_damage(
-        definition->attack_components[KF_ACTOR_ATTACK_CUTTING],
-        definition->attack_components[KF_ACTOR_ATTACK_STRIKING],
-        definition->attack_components[KF_ACTOR_ATTACK_PIERCING],
+        definition->attack_components[KF_COMBAT_COMPONENT_CUTTING],
+        definition->attack_components[KF_COMBAT_COMPONENT_STRIKING],
+        definition->attack_components[KF_COMBAT_COMPONENT_PIERCING],
         status_effect,
         0,
         0,
@@ -506,7 +502,7 @@ KfActor *actor_pool_find_target_in_cone(
     s32 *distance_out)
 {
     KfActor *best = NULL;
-    s16 best_difference = ACTOR_CONE_INITIAL_BEST_ERROR;
+    s16 best_difference = KF_CONE_SEARCH_INITIAL_ANGLE_ERROR;
     s32 best_distance = 0;
     KfActor *actor = actor_state.actors;
     u16 count = KF_ACTOR_CAPACITY - 1;
@@ -689,7 +685,7 @@ void actor_play_sound_at_phase(const SoundRef *sound, u16 phase)
     }
     if (player_state.progress_state.current_floor == KF_FLOOR_5 && actor->definition_id == 7) {
         audio_play_spatial_range(
-            sound, &actor->position, KF_AUDIO_MAX_VOLUME, ACTOR_BOSS_SOUND_MAX_DISTANCE, ACTOR_BOSS_SOUND_ATTENUATION_DISTANCE);
+            sound, &actor->position, KF_AUDIO_MAX_VOLUME, KF_AUDIO_EXTENDED_MAX_DISTANCE, KF_AUDIO_EXTENDED_ATTENUATION_DISTANCE);
     } else {
         audio_play_spatial_default_range(
             sound, &actor->position, KF_AUDIO_MAX_VOLUME);

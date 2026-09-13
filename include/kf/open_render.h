@@ -19,7 +19,6 @@ KF_ENUM_BEGIN(KfOpenColorPreset, s32)
 KF_ENUM_END(KfOpenColorPreset)
 
 enum {
-    KF_OPEN_PROJECTED_VERTEX_CAPACITY = 1000,
     KF_OPEN_COLOR_PRESET_COUNT = 5,
     KF_OPEN_TMD_SLOT_COUNT = 2,
 };
@@ -81,7 +80,7 @@ typedef struct KfGraphicsRuntimeOpen {
     u8 unknown_2011c[4];
     KfPackedSVector *current_tmd_vertices;
     u8 unknown_20124[0x14];
-    KfScreenVertex tmd_projected_vertices[KF_OPEN_PROJECTED_VERTEX_CAPACITY];
+    KfScreenVertex tmd_projected_vertices[KF_PROJECTED_VERTEX_CAPACITY];
     u8 unknown_22078[0x1f68];
     KfFloorItemStateOpen floor_item_state;
     u32 DAT_8006e040;
@@ -103,7 +102,7 @@ extern CVECTOR map_textured_primitive_color;
 extern KfCellWindow render_cell_windows[KF_CELL_WINDOW_YAW_COUNT];
 extern u32 primitive_allocation_count;
 
-extern void display_initialize(KfOpenMode mode);
+extern void display_initialize(KfOverlayMode mode);
 extern void lighting_set_active_color_matrix(KfOpenColorPreset preset);
 extern void matrix_interpolate(
     const MATRIX *from, const MATRIX *to, MATRIX *output, s32 blend);

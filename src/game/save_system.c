@@ -209,7 +209,7 @@ KfSaveStatus memory_card_wait_event(void)
     for (;;) {
         if (TestEvent(memory_card_io_end_event) == 1) {
             memory_card_undeliver_events();
-            return KF_CARD_STATUS_IO_END;
+            return SAVE_STATUS_OK;
         }
         if (TestEvent(memory_card_timeout_event) == 1) {
             memory_card_undeliver_events();
@@ -251,7 +251,7 @@ KfSaveResult memory_card_check_or_format(KfCardFormatConfirmation confirmation)
         _new_card();
         memory_card_begin_status_check();
         status = memory_card_format();
-    } else if (status == KF_CARD_STATUS_IO_END) {
+    } else if (status == SAVE_STATUS_OK) {
         if (confirmation == KF_CARD_FORMAT_UNCONFIRMED) {
             status = SAVE_STATUS_FORMAT_CONFIRMATION;
         } else {
@@ -276,7 +276,7 @@ KfSaveResult memory_card_check_or_format(KfCardFormatConfirmation confirmation)
         result = KF_SAVE_RESULT_OK;
         break;
     case SAVE_STATUS_FORMAT_CONFIRMATION:
-        result = KF_SAVE_RESULT_FORMAT_CONFIRMATION;
+        result = KF_SAVE_RESULT_FORMAT_REQUIRED;
         break;
     }
     return result;
@@ -319,9 +319,9 @@ KfSaveResult save_system_write_slot(KfSaveSlotId slot_id)
         memory_card_clear_events();
         _new_card();
         memory_card_begin_status_check();
-        status = KF_CARD_STATUS_IO_END;
+        status = SAVE_STATUS_OK;
     }
-    if (status == KF_CARD_STATUS_IO_END) {
+    if (status == SAVE_STATUS_OK) {
         status = save_file_write_slot(slot_id);
     }
     if (status != SAVE_STATUS_OK) {
@@ -479,9 +479,9 @@ KfSaveResult save_system_read_header(void)
         memory_card_clear_events();
         _new_card();
         memory_card_begin_status_check();
-        status = KF_CARD_STATUS_IO_END;
+        status = SAVE_STATUS_OK;
     }
-    if (status == KF_CARD_STATUS_IO_END) {
+    if (status == SAVE_STATUS_OK) {
         status = save_file_read_header();
     }
     if (status != SAVE_STATUS_OK) {
@@ -549,7 +549,7 @@ KfSaveResult save_system_read_slot(KfSaveSlotId slot_id)
         memory_card_show_status_message(SAVE_STATUS_STALE_CATALOG);
         return KF_SAVE_RESULT_FAILED;
     }
-    if (status == KF_CARD_STATUS_IO_END) {
+    if (status == SAVE_STATUS_OK) {
         status = save_file_read_slot(slot_id);
     }
     if (status != SAVE_STATUS_OK) {
@@ -801,7 +801,7 @@ KfSaveCleanupResult save_file_cleanup_temporary(void)
         return KF_SAVE_CLEANUP_CARD_ERROR;
     }
     status = memory_card_wait_event();
-    if (status == KF_CARD_STATUS_IO_END || status == KF_CARD_STATUS_NEW_DEVICE) {
+    if (status == SAVE_STATUS_OK || status == KF_CARD_STATUS_NEW_DEVICE) {
         file = open(save_temporary_file_path, O_CREAT);
         close(file);
         erase(save_temporary_file_path);

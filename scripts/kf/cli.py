@@ -121,6 +121,11 @@ def parser() -> argparse.ArgumentParser:
 
     add_cast_arguments(casts)
 
+    enums = subs.add_parser("enums", help="compare evaluated enum names across C variants")
+    from scripts.kf.enums import add_arguments as add_enum_arguments
+
+    add_enum_arguments(enums)
+
     booleans = subs.add_parser(
         "bools", help="audit Boolean candidates and value flow with target-C Clang"
     )
@@ -279,6 +284,10 @@ def main(argv: list[str] | None = None) -> int:
             from scripts.kf.casts import run as run_cast_audit
 
             return run_cast_audit(args)
+        if args.command == "enums":
+            from scripts.kf.enums import run as run_enum_audit
+
+            return run_enum_audit(args)
         if args.command == "bools":
             from scripts.kf.booleans import run as run_boolean_audit
 

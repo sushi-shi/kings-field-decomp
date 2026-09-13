@@ -63,18 +63,11 @@ enum {
     KF_HUD_TABLE_ROWS = 14 /* Thirteen sprites and the terminating row. */
 };
 
-KF_ENUM_BEGIN(KfHudSpriteState, u8)
-    KF_HUD_HIDDEN = 0,
-    KF_HUD_VISIBLE = 1,
-    KF_HUD_END = 0xff
-KF_ENUM_END(KfHudSpriteState)
-
-/* Every non-active effect state stops traversal, including hidden zero. */
-KF_ENUM_BEGIN(KfEffectSpriteState, u8)
-    KF_EFFECT_SPRITE_HIDDEN = 0,
-    KF_EFFECT_SPRITE_ACTIVE = 1,
-    KF_EFFECT_SPRITE_END = 0xff
-KF_ENUM_END(KfEffectSpriteState)
+KF_ENUM_BEGIN(KfSpriteState, u8)
+    KF_SPRITE_HIDDEN = 0,
+    KF_SPRITE_VISIBLE = 1,
+    KF_SPRITE_END = 0xff
+KF_ENUM_END(KfSpriteState)
 
 enum {
     KF_EFFECT_SPRITE_COMPASS = 0,
@@ -93,14 +86,14 @@ enum {
 
 /* One row of the sentinel-terminated HUD gauge and status-sprite table. */
 typedef struct KfHudSprite {
-    KfHudSpriteState state;
+    KfSpriteState state;
     u8 unknown_01;
     KfSpriteQuad sprite;
 } KfHudSprite;
 
-/* Animated screen-facing model entry; only ACTIVE continues traversal. */
+/* Animated screen-facing model entry; only VISIBLE continues traversal. */
 typedef struct KfEffectSprite {
-    KfEffectSpriteState state;
+    KfSpriteState state;
     KfAnimationClip animation_clip;
     u16 asset_variant;
     u16 scale;

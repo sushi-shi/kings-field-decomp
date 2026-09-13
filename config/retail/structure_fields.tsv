@@ -10,7 +10,7 @@ KfActor	0x05	0x01	tile_x	u8	supported	game_actor.h;asm;xrefs;actor_pool_load_pla
 KfActor	0x06	0x01	lifecycle	KfActorLifecycle	supported	game_actor.h;asm;xrefs;game-actor-states.md	lifecycle: dormant 0, active 1, waiting for range exit 2, disabled 3; disabled is also used for scripted hiding
 KfActor	0x07	0x01	spawn_chance	u8	supported	game_actor.h;asm;xrefs;semantic-field-names.md;asm;CFG;callers;callees;xrefs	placement chance shifted by 7 and compared with rand in actor awareness
 KfActor	0x08	0x01	action	KfActorAction	supported	game_actor.h;asm;xrefs;game-actor-states.md	behavior action ID (KF_ACTOR_ACTION_*), distinct from animation-table slots and resource animation IDs
-KfActor	0x09	0x01	death_drop_object_id	KfMapObjectId	supported	game_actor.h;asm;xrefs;semantic-field-names.md;asm;CFG;callers;callees;xrefs	actor death passes this object ID to map_object_spawn_effect; 0x63 suppresses the drop
+KfActor	0x09	0x01	death_drop_object_id	KfObjectId	supported	game_actor.h;asm;xrefs;semantic-field-names.md;asm;CFG;callers;callees;xrefs	actor death passes this object ID to map_object_spawn_effect; 0x63 suppresses the drop
 KfActor	0x0a	0x01	animation_id	KfAnimationClip	supported	game_actor.h;asm;xrefs;strict-enum-audit.md	animation selector
 KfActor	0x0b	0x01	vertical_state	KfActorVerticalState	supported	game_actor.h;asm;xrefs;game-actor-states.md	vertical movement policy: none 0, step-up 1, fall 2, long drop 3, jump attack 4
 KfActor	0x0c	0x02	unknown_0c	u8[2]	opaque	game_actor.h;asm;xrefs	meaning unresolved
@@ -35,7 +35,7 @@ KfActor	0x44	0x02	movement_y	s16	supported	game_actor.h;asm;xrefs	y movement com
 KfActor	0x46	0x02	unknown_46	u8[2]	opaque	game_actor.h;asm;xrefs	meaning unresolved
 KfActorActionParameters	0x00	0x03	effect_codes	KfActorEffectCode[3]	supported	game_actor.h;asm;xrefs;enum-field-review.md	low five bits select effect/action profile; bit 5 emits a pair; 0xff is observed unset storage
 KfActorActionParameters	0x03	0x03	effect_chances	u8[3]	supported	game_actor.h;asm;xrefs;enum-field-review.md	per-slot probability compared with rand() >> 7
-KfActorActionParameters	0x06	0x01	drop_object	KfMapObjectId	supported	game_actor.h;asm;xrefs;enum-field-review.md	existing map-object domain; disabled and unset encodings retained
+KfActorActionParameters	0x06	0x01	drop_object	KfObjectId	supported	game_actor.h;asm;xrefs;enum-field-review.md	existing map-object domain; disabled and unset encodings retained
 KfActorActionParameters	0x07	0x01	drop_chance	u8	supported	game_actor.h;asm;xrefs;enum-field-review.md	death-drop probability compared with rand() >> 7
 KfActorActionProfile	0x00	0x02	far_distance	s16	supported	game_actor.h;asm;xrefs	far distance threshold
 KfActorActionProfile	0x02	0x02	far_weight	s16	supported	game_actor.h;asm;xrefs	far action weight
@@ -75,7 +75,7 @@ KfActorPlacement	0x02	0x01	heading_quadrant	KfActorHeadingQuadrant	supported	gam
 KfActorPlacement	0x03	0x01	tile_z	u8	supported	game_actor.h;asm;actor_pool_load_placements	map tile z
 KfActorPlacement	0x04	0x01	tile_x	u8	supported	game_actor.h;asm;actor_pool_load_placements	map tile x
 KfActorPlacement	0x05	0x01	spawn_chance	u8	supported	game_actor.h;asm;actor_pool_load_placements;semantic-field-names.md;asm;CFG;callers;callees;xrefs	copied to KfActor.spawn_chance
-KfActorPlacement	0x06	0x01	death_drop_object_id	KfMapObjectId	supported	game_actor.h;asm;actor_pool_load_placements;semantic-field-names.md;asm;CFG;callers;callees;xrefs	copied to KfActor.death_drop_object_id
+KfActorPlacement	0x06	0x01	death_drop_object_id	KfObjectId	supported	game_actor.h;asm;actor_pool_load_placements;semantic-field-names.md;asm;CFG;callers;callees;xrefs	copied to KfActor.death_drop_object_id
 KfActorPlacement	0x07	0x03	unknown_07	u8[3]	opaque	game_actor.h;asm;actor_pool_load_placements	not read by the loader
 KfActorPlacement	0x0a	0x02	local_z	s16	supported	game_actor.h;asm;actor_pool_load_placements	local offset along z
 KfActorPlacement	0x0c	0x02	local_x	s16	supported	game_actor.h;asm;actor_pool_load_placements	local offset along x
@@ -211,7 +211,7 @@ KfEffectRecord	0x38	0x02	control	KfEffectControl	supported	game_effect.h;asm;eff
 KfEffectRecord	0x3a	0x02	propagation	KfEffectPropagation	supported	game_effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed;semantic-field-names.md;asm;CFG;callers;callees;xrefs	kind 10 generation count or kind 6 branch selector
 KfEffectRenderId	0x00	0x01	billboard	KfEffectBillboardId	supported	game_effect.h;asm;xrefs;enum-field-review.md	billboard bank ID, including animation frames and NONE sentinel
 KfEffectRenderId	0x00	0x01	model	KfEffectModelId	supported	game_effect.h;asm;xrefs;enum-field-review.md	model bank ID and NONE sentinel
-KfEffectSprite	0x00	0x01	state	KfEffectSpriteState	supported	game_render.h;asm;render_effect_sprites;render_frame	1 is active; every other value stops traversal, including hidden 0 and the authored 0xff end row
+KfEffectSprite	0x00	0x01	state	KfSpriteState	supported	game_render.h;asm;render_effect_sprites;render_frame	1 is active; every other value stops traversal, including hidden 0 and the authored 0xff end row
 KfEffectSprite	0x01	0x01	animation_clip	KfAnimationClip	supported	game_render.h;asm;render_effect_sprites;strict-enum-audit.md	animation clip passed directly to the shared vertex cache binder
 KfEffectSprite	0x02	0x02	asset_variant	u16	supported	game_render.h;asm;render_effect_sprites	asset variant passed to render_bind_animated_instance
 KfEffectSprite	0x04	0x02	scale	u16	supported	game_render.h;asm;render_effect_sprites	uniform X/Y fixed-point scale numerator
@@ -321,7 +321,7 @@ KfGraphicsRuntimeOpen	0x24700	0x80	light_quadrant_matrices	MATRIX[4]	supported	o
 KfGraphicsRuntimeOpen	0x24780	0x4	active_cell_window	KfCellWindow *	supported	open_render.h;asm;docs/patterns/open-graphics-runtime-owner.md	preserved subobject or field at its reviewed physical offset; source pointer is const-qualified
 KfGraphicsRuntimeOpen	0x24784	0x2	tmd_projection_shift	s16	supported	open_render.h;asm;docs/patterns/open-graphics-runtime-owner.md	preserved subobject or field at its reviewed physical offset
 KfGraphicsRuntimeOpen	0x24786	0x2	unknown_24786	u8[2]	opaque	open_render.h;asm;docs/patterns/open-graphics-runtime-owner.md	unclassified interval within the independently cleared region
-KfHudSprite	0x00	0x01	state	KfHudSpriteState	supported	game_render.h;asm;render_hud_gauges;render_frame	1 emits the row, 0 hides it, and 0xff terminates the table
+KfHudSprite	0x00	0x01	state	KfSpriteState	supported	game_render.h;asm;render_hud_gauges;render_frame	1 emits the row, 0 hides it, and 0xff terminates the table
 KfHudSprite	0x01	0x01	unknown_01	u8	opaque	game_render.h;retail-initializers	unread byte before the sprite descriptor
 KfHudSprite	0x02	0x0c	sprite	KfSpriteQuad	supported	game_render.h;asm;render_hud_gauges;render_frame	complete descriptor passed to render_screen_sprite; gauge widths are updated in place
 KfMagicRecord	0x00	0x01	learned	KfMagicLearningState	supported	magic.h;asm;player_recalculate_combat_stats;player_update;game-magic-learning-state.md;save_file_write_slot;save_file_read_slot	byte learning state: unlearned0/learned1; menus require exactly1 while progression and Flame Sword preserve nonzero tests; saved verbatim for all24 records
@@ -402,7 +402,7 @@ KfMapFloorScript	0x0	0x4	floor5	KfMapFloor5Script	supported	game_map.h;asm;game-
 KfMapGrid	0x00	0x2710	cells	u8[100][100]	supported	asm;typed-map-tables.md	complete alternate table view
 KfMapGrid	0x00	0x2710	bytes	u8[10000]	supported	asm;typed-map-tables.md	complete alternate table view
 KfMapGrid	0x00	0x2710	words	u32[2500]	supported	asm;typed-map-tables.md	complete alternate table view
-KfMapObject	0x00	0x01	object_id	KfMapObjectId	supported	game_map.h;asm;xrefs	object definition ID
+KfMapObject	0x00	0x01	object_id	KfObjectId	supported	game_map.h;asm;xrefs	object definition ID
 KfMapObject	0x01	0x01	unknown_01	u8	opaque	game_map.h;asm;xrefs	meaning unresolved
 KfMapObject	0x02	0x02	cell_x	u16	supported	game_map.h;asm;xrefs	map cell x
 KfMapObject	0x04	0x02	cell_z	u16	supported	game_map.h;asm;xrefs	map cell z
@@ -410,10 +410,10 @@ KfMapObject	0x06	0x02	unknown_06	u8[2]	opaque	game_map.h;asm;xrefs	meaning unres
 KfMapObject	0x08	0x10	position	VECTOR	supported	game_map.h;asm;xrefs;collision_query_world;typed-world-transforms.md	complete world position including the fourth lane copied by collision and effect construction
 KfMapObject	0x18	0x08	rotation	KfRotation	supported	game_map.h;asm;xrefs;collision_query_world;typed-world-transforms.md	SDK/Euler rotation; collision and effect construction copy all eight bytes
 KfMapObject	0x20	0x08	link	KfMapObjectLink	supported	game_map.h;asm;map_object_pool_load	link block copied verbatim from the placement record
-KfMapObject	0x28	0x01	action	KfMapObjectAction	supported	game_map.h;asm;xrefs	action dispatcher selector
+KfMapObject	0x28	0x01	action	KfMapObjectOperation	supported	game_map.h;asm;xrefs	action dispatcher selector
 KfMapObject	0x29	0x01	unknown_29	u8	opaque	game_map.h;asm;xrefs	meaning unresolved
 KfMapObject	0x2a	0x02	action_timer	KfMapObjectProgress	supported	game_map.h;asm;xrefs;strict-enum-audit.md	action timer
-KfMapObjectDefinition	0x00	0x01	behavior_type	KfMapObjectBehavior	supported	game_map.h;asm;xrefs	behavior selector
+KfMapObjectDefinition	0x00	0x01	behavior_type	KfMapObjectOperation	supported	game_map.h;asm;xrefs	behavior selector
 KfMapObjectDefinition	0x01	0x01	unknown_01	u8	opaque	game_map.h;asm;xrefs	meaning unresolved
 KfMapObjectDefinition	0x02	0x02	collision_radius	u16	supported	game_map.h;asm;xrefs	collision radius
 KfMapObjectDefinition	0x04	0x02	interaction_radius	u16	supported	game_map.h;asm;xrefs	interaction radius
@@ -421,11 +421,11 @@ KfMapObjectDefinition	0x06	0x02	unknown_06	u8[2]	opaque	game_map.h;asm;xrefs	mea
 KfMapObjectDefinitionTable	0x00	0x500	entries	KfMapObjectDefinition[160]	supported	asm;typed-map-tables.md	complete alternate table view
 KfMapObjectDefinitionTable	0x00	0x500	words	u32[320]	supported	asm;typed-map-tables.md	complete alternate table view
 KfMapObjectHingedContainer	0x00	0x01	link_id	u8	supported	game_map.h;asm;typed-map-links.md	trigger link byte
-KfMapObjectHingedContainer	0x01	0x04	item_ids	KfItemId[4]	supported	game_map.h;asm;typed-map-links.md;strict-enum-audit.md	four encoded item IDs
+KfMapObjectHingedContainer	0x01	0x04	item_ids	KfObjectId[4]	supported	game_map.h;asm;typed-map-links.md;strict-enum-audit.md	four encoded item IDs
 KfMapObjectLink	0x00	0x08	fields	KfMapObjectLinkFields	supported	game_map.h;asm;typed-map-links.md	behavior-dependent byte and halfword fields
 KfMapObjectLink	0x00	0x02	gold_amount	u16	supported	game_map.h;asm;typed-map-links.md	gold-coin amount loaded and stored as one halfword
 KfMapObjectLink	0x00	0x05	hinged_container	KfMapObjectHingedContainer	supported	game_map.h;asm;typed-map-links.md	trigger byte followed by four encoded item IDs
-KfMapObjectLink	0x00	0x04	item_ids	KfItemId[4]	supported	game_map.h;asm;typed-map-links.md;strict-enum-audit.md	four encoded item IDs for ordinary containers
+KfMapObjectLink	0x00	0x04	item_ids	KfObjectId[4]	supported	game_map.h;asm;typed-map-links.md;strict-enum-audit.md	four encoded item IDs for ordinary containers
 KfMapObjectLink	0x00	0x08	words	u32[2]	supported	game_map.h;asm;typed-map-links.md	aligned placement copies and pool resets
 KfMapObjectLink	0x00	0x08	bytes	u8[8]	supported	game_map.h;asm;typed-map-links.md	complete saved-floor byte serialization
 KfMapObjectLinkFields	0x00	0x01	link_id	u8	supported	game_map.h;asm;map_object_pool_load;typed-map-links.md	trigger link id
@@ -504,7 +504,7 @@ KfNotificationControl	0x01	0x01	queue_head	u8	supported	notify.h;game_semantic_n
 KfNotificationControl	0x02	0x01	effect_phase	KfNotificationPhase	supported	notify.h;game_semantic_notification_state.tsv;asm;notify_effect_update;map_interaction_dispatch;game-notification-identities.md	byte phase domain: idle0, hold2, rotate-out3; phase1 has no observed handler
 KfNotificationControl	0x03	0x01	hold_frames	u8	supported	notify.h;game_semantic_notification_state.tsv;asm;notify_effect_update	countdown seeded with fifteen frames
 KfNotificationControl	0x04	0x02	effect_angle_x	u16	supported	notify.h;game_semantic_notification_state.tsv;asm;notify_effect_update;render_frame	notification sprite X rotation advanced by 128 up to 512
-KfNotificationSprite	0x00	0x01	active	KfNotificationSpriteState	supported	notify.h;asm;notify_effect_update;render_frame	1 emits the row; notify_effect_update clears it when inactive
+KfNotificationSprite	0x00	0x01	active	KfSpriteState	supported	notify.h;asm;notify_effect_update;render_frame	1 emits the row; notify_effect_update clears it when inactive
 KfNotificationSprite	0x01	0x01	unknown_01	u8	opaque	notify.h;retail-initializers	unread byte before the sprite descriptor
 KfNotificationSprite	0x02	0x0c	sprite	KfSpriteQuad	supported	notify.h;asm;notify_effect_update;render_frame	complete descriptor passed to render_enqueue_sprite or updated by notification_digit_set_v
 KfNotificationState	0x00	0x10	message_payloads	u16[8]	supported	notify.h;game_semantic_notification_state.tsv;asm;head-minus-17;phase-minus-18	parallel numeric payloads used only by message 0x13
@@ -524,8 +524,8 @@ KfOpeningEntityState	0x50a	0x02	unknown_control_50a	u16	opaque	open_resources.h;
 KfOpeningEntityState	0x50c	0x02	unknown_control_50c	u16	opaque	open_resources.h;open_semantic_resources.tsv;asm;semantic-field-names.md:unresolved-consumer-audit	OPEN 0x80049a44: individual zero store at 0x800199cc, plus whole-owner clear; exact admitted relocations have no read. GAME pool-tail analogy remains candidate, not a recovered role.
 KfOpeningEntityState	0x50e	0x02	unknown_control_50e	u16	opaque	open_resources.h;open_semantic_resources.tsv;asm;semantic-field-names.md:unresolved-consumer-audit	OPEN 0x80049a46: individual zero store at 0x800199c4, plus whole-owner clear; exact admitted relocations have no read. GAME pool-tail analogy remains candidate, not a recovered role.
 KfOrderingTable	0x00	0x10000	entries	u32[16384]	supported	render_types.h;asm	ordering table entries
-KfOverlayArguments	0x00	0x04	request	KfOpenMode	supported	overlay.h;asm;PSX-main;GAME-main;OPEN-main;array-enum-review.md	PSX copies the previous result encoding here; OPEN passes it to opening_run
-KfOverlayArguments	0x04	0x04	result	KfGameExitCode	supported	overlay.h;asm;PSX-main;GAME-main;OPEN-main;array-enum-review.md	PSX initializes INTRO; GAME writes game_exit_code on return
+KfOverlayArguments	0x00	0x04	request	KfOverlayMode	supported	overlay.h;asm;PSX-main;GAME-main;OPEN-main;array-enum-review.md	PSX copies the previous result encoding here; OPEN passes it to opening_run
+KfOverlayArguments	0x04	0x04	result	KfOverlayResultWord	supported	overlay.h;asm;PSX-main;GAME-main;OPEN-main;array-enum-review.md	PSX initializes INTRO; GAME writes game_exit_code on return
 KfPackedSVector	0x00	0x08	vector	SVECTOR	supported	tmd.h;asm;typed-animation-vertices.md	alternative view of the complete vertex
 KfPackedSVector	0x00	0x08	words	u32[2]	supported	tmd.h;asm;typed-animation-vertices.md	alternative view of the complete vertex
 KfPlayerAttackChargeState	0x00	0x02	current	u16	supported	game_player.h;asm;xrefs	current POWER charge
@@ -585,10 +585,10 @@ KfPlayerState	0x50	0x02	fire_defense_timer	s16	supported	game_player.h;data_iden
 KfPlayerState	0x52	0x02	illusion_staff_timer	s16	supported	game_player.h;data_identities.tsv;game_semantic_player_update.tsv;COM/STAT.DAT-item57;game-item-special-identities.md	signed Illusion Staff timer: item57 sets1000; player update decrements through zero and applies green lighting; map-cell renderer alternates mesh substitutions
 KfPlayerState	0x54	0x04	unknown_54	u8[4]	opaque	game_player.h;data_identities.tsv	unresolved bytes
 KfPlayerState	0x58	0x04	equipment_effect_ticks	u32	supported	game_player.h;data_identities.tsv;semantic-field-names.md;asm;CFG;callers;callees;xrefs	frame counter modulo equipment HP/MP regeneration and drain intervals; reset by position sync
-KfPlayerState	0x5c	0x01	selected_magic_id	KfMagicId	supported	game_player.h;data_identities.tsv;game-selected-magic-types.md;player_select_magic;menu_spell_select;strict-enum-audit.md	byte selected-ranged-spell domain: Lightning Bolt through Light Needle (4..8), or none255; raw save-prefix copies preserve storage
+KfPlayerState	0x5c	0x01	selected_magic_id	KfEffectKind	supported	game_player.h;data_identities.tsv;game-selected-magic-types.md;player_select_magic;menu_spell_select;strict-enum-audit.md	byte selected-ranged-spell domain: Lightning Bolt through Light Needle (4..8), or none255; raw save-prefix copies preserve storage
 KfPlayerState	0x5d	0x03	unknown_5d	u8[3]	opaque	game_player.h;data_identities.tsv	unresolved bytes
 KfPlayerState	0x60	0x04	selected_magic_record	KfMagicRecord *	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x64	0x01	equipped_weapon_id	KfItemId	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x64	0x01	equipped_weapon_id	KfObjectId	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0x65	0x03	unknown_65	u8[3]	opaque	game_player.h;data_identities.tsv	unresolved bytes
 KfPlayerState	0x68	0x04	equipped_weapon_record	KfWeaponRecord *	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0x6c	0x04	weapon_asset_buffer	KfAssetHeader *	supported	game_player.h;data_identities.tsv;game-asset-animation-layout.md	49152-byte weapon asset allocation; loaded header passed to asset_registry_set and pointer preserved across save restoration
@@ -604,12 +604,12 @@ KfPlayerState	0x80	0x04	equipped_body_armor_record	KfArmorRecord *	supported	gam
 KfPlayerState	0x84	0x04	equipped_shield_record	KfArmorRecord *	supported	game_player.h;data_identities.tsv;COM/STAT.DAT-item-and-equipment-labels;retail-switch-tables;game-item-equipment-identities.md	shield record pointer resolved from item IDs26..31; menu row2 and player slot4
 KfPlayerState	0x88	0x04	equipped_arm_armor_record	KfArmorRecord *	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0x8c	0x04	equipped_leg_armor_record	KfArmorRecord *	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x90	0x01	equipped_head_armor_id	KfItemId	supported	game_player.h;data_identities.tsv;COM/STAT.DAT-item-and-equipment-labels;retail-switch-tables;game-item-equipment-identities.md	head-armor item ID; retail menu row3 selects13..18 and passes player slot0
-KfPlayerState	0x91	0x01	equipped_body_armor_id	KfItemId	supported	game_player.h;data_identities.tsv;COM/STAT.DAT-item-and-equipment-labels;retail-switch-tables;game-item-equipment-identities.md	body-armor item ID; retail menu row4 selects19..25 and passes player slot1; Full Plate21 and Skull Armor23 controls
-KfPlayerState	0x92	0x01	equipped_shield_id	KfItemId	supported	game_player.h;data_identities.tsv;COM/STAT.DAT-item-and-equipment-labels;retail-switch-tables;game-item-equipment-identities.md	shield item ID; retail menu row2 selects26..31 and passes player slot4
-KfPlayerState	0x93	0x01	equipped_arm_armor_id	KfItemId	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x94	0x01	equipped_leg_armor_id	KfItemId	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0x95	0x01	equipped_accessory_id	KfItemId	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x90	0x01	equipped_head_armor_id	KfObjectId	supported	game_player.h;data_identities.tsv;COM/STAT.DAT-item-and-equipment-labels;retail-switch-tables;game-item-equipment-identities.md	head-armor item ID; retail menu row3 selects13..18 and passes player slot0
+KfPlayerState	0x91	0x01	equipped_body_armor_id	KfObjectId	supported	game_player.h;data_identities.tsv;COM/STAT.DAT-item-and-equipment-labels;retail-switch-tables;game-item-equipment-identities.md	body-armor item ID; retail menu row4 selects19..25 and passes player slot1; Full Plate21 and Skull Armor23 controls
+KfPlayerState	0x92	0x01	equipped_shield_id	KfObjectId	supported	game_player.h;data_identities.tsv;COM/STAT.DAT-item-and-equipment-labels;retail-switch-tables;game-item-equipment-identities.md	shield item ID; retail menu row2 selects26..31 and passes player slot4
+KfPlayerState	0x93	0x01	equipped_arm_armor_id	KfObjectId	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x94	0x01	equipped_leg_armor_id	KfObjectId	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0x95	0x01	equipped_accessory_id	KfObjectId	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0x96	0x01	audio_effects_enabled	KF_ENUM_STORAGE(KfPlayerOption, u8)	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0x97	0x01	audio_music_enabled	KF_ENUM_STORAGE(KfPlayerOption, u8)	supported	game_player.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0x98	0x01	hud_gauges_enabled	KF_ENUM_STORAGE(KfPlayerOption, u8)	supported	game_player.h;data_identities.tsv;semantic-field-names.md;asm;CFG;callers;callees;xrefs	config row 2; controls HP/MP/charge/status sprites

@@ -225,7 +225,7 @@ void tmd_project_vertices(s32 count)
     long depth;
     long unused_depth;
 
-    if (count >= KF_OPEN_PROJECTED_VERTEX_CAPACITY) {
+    if (count >= KF_PROJECTED_VERTEX_CAPACITY) {
         debug_printf_sink("POINT OVER !!!!!!\n");
         return;
     }

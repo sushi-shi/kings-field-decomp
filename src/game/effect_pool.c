@@ -12,8 +12,6 @@ enum {
     EFFECT_SHORT_SWING_SCALE = 2600,
     EFFECT_ORBIT_SCALE = 2800,
     EFFECT_WARP_HORIZONTAL_SCALE = 0x1800,
-    EFFECT_EXTENDED_SOUND_MAX_DISTANCE = 20000,
-    EFFECT_EXTENDED_SOUND_ATTENUATION_DISTANCE = 60000
 };
 
 DATA(0x8009ce60, 0xd28)
@@ -64,7 +62,7 @@ KfEffectRecord *effect_pool_construct(
         magic = &magic_records[KF_ENUM_ENCODE(u8, record->kind)];
 
         switch (record->kind) {
-        case KF_EFFECT_KIND_FIRE_BALL:
+        case KF_MAGIC_FIRE_BALL:
             record->animation_clip = KF_ANIMATION_CLIP_NONE;
             record->base_render_id.billboard = KF_EFFECT_BILLBOARD_FIRE_BALL;
             record->render_id.billboard = KF_EFFECT_BILLBOARD_FIRE_BALL;
@@ -72,7 +70,7 @@ KfEffectRecord *effect_pool_construct(
             audio_play_spatial_default_range(&magic->sounds[0],
                                              &record->position, KF_AUDIO_MAX_VOLUME);
             break;
-        case KF_EFFECT_KIND_WIND_CUTTER:
+        case KF_MAGIC_WIND_CUTTER:
             record->animation_clip = KF_ANIMATION_CLIP_NONE;
             record->base_render_id.billboard = KF_EFFECT_BILLBOARD_WIND_CUTTER;
             record->render_id.billboard = KF_EFFECT_BILLBOARD_WIND_CUTTER;
@@ -85,9 +83,9 @@ KfEffectRecord *effect_pool_construct(
         case KF_EFFECT_KIND_LIGHTNING_BOLT_ALTERNATE:
             record->base_render_id.billboard = KF_EFFECT_BILLBOARD_LIGHTNING_BOLT_ALTERNATE;
             record->render_id.billboard = KF_EFFECT_BILLBOARD_LIGHTNING_BOLT_ALTERNATE;
-            record->kind = KF_EFFECT_KIND_LIGHTNING_BOLT;
+            record->kind = KF_MAGIC_LIGHTNING_BOLT;
             goto initialize_lightning_bolt;
-        case KF_EFFECT_KIND_LIGHTNING_BOLT:
+        case KF_MAGIC_LIGHTNING_BOLT:
             record->base_render_id.billboard = KF_EFFECT_BILLBOARD_LIGHTNING_BOLT;
             record->render_id.billboard = KF_EFFECT_BILLBOARD_LIGHTNING_BOLT;
         initialize_lightning_bolt:
@@ -98,8 +96,8 @@ KfEffectRecord *effect_pool_construct(
                 audio_play_spatial_range(
                     &magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_LIGHTNING_BOLT)].sounds[0],
                     &record->position, KF_AUDIO_MAX_VOLUME,
-                    EFFECT_EXTENDED_SOUND_MAX_DISTANCE,
-                    EFFECT_EXTENDED_SOUND_ATTENUATION_DISTANCE);
+                    KF_AUDIO_EXTENDED_MAX_DISTANCE,
+                    KF_AUDIO_EXTENDED_ATTENUATION_DISTANCE);
             }
             break;
         case KF_EFFECT_KIND_LIGHTNING_IMPACT_ALTERNATE:
@@ -116,8 +114,8 @@ KfEffectRecord *effect_pool_construct(
             audio_play_spatial_range(
                 &magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_LIGHTNING_BOLT)].sounds[1],
                 &record->position, KF_AUDIO_MAX_VOLUME,
-                EFFECT_EXTENDED_SOUND_MAX_DISTANCE,
-                EFFECT_EXTENDED_SOUND_ATTENUATION_DISTANCE);
+                KF_AUDIO_EXTENDED_MAX_DISTANCE,
+                KF_AUDIO_EXTENDED_ATTENUATION_DISTANCE);
             break;
         case KF_EFFECT_KIND_LIGHTNING_RADIAL_BLAST_ALTERNATE:
             record->base_render_id.model = KF_EFFECT_MODEL_LIGHTNING_RADIAL_BLAST_ALTERNATE;
@@ -132,7 +130,7 @@ KfEffectRecord *effect_pool_construct(
             record->animation_clip = KF_ANIMATION_CLIP_FIRST;
             setVector(&record->rotation.vector, 0, 0, 0);
             break;
-        case KF_EFFECT_KIND_GROUND_BRANCH:
+        case KF_MAGIC_FIRE_WALL:
             record->animation_clip = KF_ANIMATION_CLIP_FIRST;
             record->base_render_id.model = KF_EFFECT_MODEL_GROUND_BRANCH;
             record->render_id.model = KF_EFFECT_MODEL_GROUND_BRANCH;
@@ -217,7 +215,7 @@ KfEffectRecord *effect_pool_construct(
             record->render_id.model = KF_EFFECT_MODEL_MAP_SWITCH;
             record->rotation.vector = *(const SVECTOR *)va[1];
             break;
-        case KF_EFFECT_KIND_LIGHT_NEEDLE:
+        case KF_MAGIC_LIGHT_NEEDLE:
             record->animation_clip = KF_ANIMATION_CLIP_FIRST;
             record->base_render_id.model = KF_EFFECT_MODEL_LIGHT_NEEDLE;
             record->render_id.model = KF_EFFECT_MODEL_LIGHT_NEEDLE;
@@ -288,8 +286,8 @@ KfEffectRecord *effect_pool_construct(
             audio_play_spatial_range(
                 &magic_records[KF_ENUM_ENCODE(u8, KF_EFFECT_KIND_RADIAL_BLAST)].sounds[1],
                 &record->position, KF_AUDIO_MAX_VOLUME,
-                EFFECT_EXTENDED_SOUND_MAX_DISTANCE,
-                EFFECT_EXTENDED_SOUND_ATTENUATION_DISTANCE);
+                KF_AUDIO_EXTENDED_MAX_DISTANCE,
+                KF_AUDIO_EXTENDED_ATTENUATION_DISTANCE);
             break;
         case KF_EFFECT_KIND_GROUND_TRAIL:
             record->animation_clip = KF_ANIMATION_CLIP_NONE;
@@ -312,8 +310,8 @@ KfEffectRecord *effect_pool_construct(
                 audio_play_spatial_range(
                     &magic_records[KF_ENUM_ENCODE(u8, KF_EFFECT_KIND_RADIAL_BLAST)].sounds[0],
                     &record->position, KF_AUDIO_MAX_VOLUME,
-                    EFFECT_EXTENDED_SOUND_MAX_DISTANCE,
-                    EFFECT_EXTENDED_SOUND_ATTENUATION_DISTANCE);
+                    KF_AUDIO_EXTENDED_MAX_DISTANCE,
+                    KF_AUDIO_EXTENDED_ATTENUATION_DISTANCE);
             }
             break;
         case KF_EFFECT_KIND_RADIAL_BLAST:
@@ -324,8 +322,8 @@ KfEffectRecord *effect_pool_construct(
                 audio_play_spatial_range(
                     &magic_records[KF_ENUM_ENCODE(u8, KF_EFFECT_KIND_RADIAL_BLAST)].sounds[0],
                     &record->position, KF_AUDIO_MAX_VOLUME,
-                    EFFECT_EXTENDED_SOUND_MAX_DISTANCE,
-                    EFFECT_EXTENDED_SOUND_ATTENUATION_DISTANCE);
+                    KF_AUDIO_EXTENDED_MAX_DISTANCE,
+                    KF_AUDIO_EXTENDED_ATTENUATION_DISTANCE);
             }
             break;
         case KF_EFFECT_KIND_HOMING_PROJECTILE_ALTERNATE:

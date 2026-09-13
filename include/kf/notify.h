@@ -18,14 +18,9 @@ enum {
     KF_NOTIFICATION_THOUSANDS_SPRITE = 5
 };
 
-KF_ENUM_BEGIN(KfNotificationSpriteState, u8)
-    KF_NOTIFICATION_SPRITE_HIDDEN = 0,
-    KF_NOTIFICATION_SPRITE_VISIBLE = 1
-KF_ENUM_END(KfNotificationSpriteState)
-
 /* One row of the six-sprite on-screen notification display. */
 typedef struct KfNotificationSprite {
-    KfNotificationSpriteState active;
+    KfSpriteState active;
     u8 unknown_01;
     KfSpriteQuad sprite;
 } KfNotificationSprite;

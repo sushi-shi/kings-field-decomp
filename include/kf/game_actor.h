@@ -4,6 +4,7 @@
 /* Actor and combatant layouts, state, and operations. */
 
 #include <kf/bool.h>
+#include <kf/combat.h>
 #include <kf/animation.h>
 #include <kf/game_effect.h>
 #include <kf/player_status.h>
@@ -144,28 +145,10 @@ enum {
     KF_ACTOR_SOUND_COUNT = 3
 };
 
-/* Halfword positions in the actor definition's attack and defense arrays. */
-enum {
-    KF_ACTOR_ATTACK_CUTTING = 0,
-    KF_ACTOR_ATTACK_STRIKING = 1,
-    KF_ACTOR_ATTACK_PIERCING = 2,
-    KF_ACTOR_ATTACK_COMPONENT_COUNT = 3
-};
-
-enum {
-    KF_ACTOR_DEFENSE_CUTTING = 0,
-    KF_ACTOR_DEFENSE_STRIKING = 1,
-    KF_ACTOR_DEFENSE_PIERCING = 2,
-    KF_ACTOR_DEFENSE_HOLY = 3,
-    KF_ACTOR_DEFENSE_FIRE = 4,
-    KF_ACTOR_DEFENSE_COMPONENT_COUNT = 5
-};
-
 /* Shared actor selection/action ranges and random-angle extraction. */
 enum {
     KF_ACTOR_MULTI_HIT_FORWARD_MIN_RANGE = 8000,
     KF_ACTOR_MULTI_HIT_MAX_RANGE = 11000,
-    KF_ACTOR_RANDOM_YAW_SHIFT = 3,
     KF_ACTOR_BOSS_DEATH_SOUND_COUNT = 4
 };
 
@@ -190,31 +173,28 @@ KF_ENUM_END(KfActorEffectSlot)
 /* The low five bits are a kind/profile ID; bit 5 requests paired emission. */
 KF_ENUM_BEGIN(KfActorEffectCode, u8)
     KF_ACTOR_EFFECT_CODE_NONE = 0,
-    KF_ACTOR_EFFECT_CODE_LIGHTNING_BOLT = KF_ENUM_ENCODE(u8, KF_EFFECT_KIND_LIGHTNING_BOLT),
-    KF_ACTOR_EFFECT_CODE_FIRE_BALL = KF_ENUM_ENCODE(u8, KF_EFFECT_KIND_FIRE_BALL),
-    KF_ACTOR_EFFECT_CODE_GROUND_BRANCH = KF_ENUM_ENCODE(u8, KF_EFFECT_KIND_GROUND_BRANCH),
-    KF_ACTOR_EFFECT_CODE_WIND_CUTTER = KF_ENUM_ENCODE(u8, KF_EFFECT_KIND_WIND_CUTTER),
-    KF_ACTOR_EFFECT_CODE_LIGHT_NEEDLE = KF_ENUM_ENCODE(u8, KF_EFFECT_KIND_LIGHT_NEEDLE),
-    KF_ACTOR_EFFECT_CODE_ACTOR_SPAWNER = KF_ENUM_ENCODE(u8, KF_EFFECT_KIND_ACTOR_SPAWNER),
-    KF_ACTOR_EFFECT_CODE_SCATTER_PROJECTILE = KF_ENUM_ENCODE(u8, KF_EFFECT_KIND_SCATTER_PROJECTILE),
-    KF_ACTOR_EFFECT_CODE_DARKNESS_PROJECTILE = KF_ENUM_ENCODE(u8, KF_EFFECT_KIND_DARKNESS_PROJECTILE),
-    KF_ACTOR_EFFECT_CODE_CURSE_PROJECTILE = KF_ENUM_ENCODE(u8, KF_EFFECT_KIND_CURSE_PROJECTILE),
-    KF_ACTOR_EFFECT_CODE_EMERGING_PROJECTILE = KF_ENUM_ENCODE(u8, KF_EFFECT_KIND_EMERGING_PROJECTILE),
-    KF_ACTOR_EFFECT_CODE_PHYSICAL_PROJECTILE = KF_ENUM_ENCODE(u8, KF_EFFECT_KIND_PHYSICAL_PROJECTILE),
-    KF_ACTOR_EFFECT_CODE_LIGHTNING_ALTERNATE = KF_ENUM_ENCODE(u8, KF_EFFECT_KIND_LIGHTNING_BOLT_ALTERNATE),
-    KF_ACTOR_EFFECT_CODE_HOMING_ALTERNATE = KF_ENUM_ENCODE(u8, KF_EFFECT_KIND_HOMING_PROJECTILE_ALTERNATE),
     KF_ACTOR_EFFECT_KIND_MASK = 0x1f,
     KF_ACTOR_EFFECT_PAIRED = 0x20,
     KF_ACTOR_EFFECT_CODE_UNSET = 0xff
 KF_ENUM_END(KfActorEffectCode)
 KF_ENUM_FLAGS(KfActorEffectCode, u8)
 
+/* The caller has already removed the paired-emission flag with the kind mask. */
+#if KF_MODERN_TYPES
+constexpr KfEffectKind actor_effect_kind_from_payload(KfActorEffectCode payload)
+{
+    return KF_ENUM_DECODE(KfEffectKind, KF_ENUM_ENCODE(u8, payload));
+}
+#else
+#define actor_effect_kind_from_payload(payload) (payload)
+#endif
+
 enum { KF_ACTOR_EFFECT_PARAMETER_COUNT = 3 };
 
 typedef struct KfActorActionParameters {
     KfActorEffectCode effect_codes[KF_ACTOR_EFFECT_PARAMETER_COUNT];
     u8 effect_chances[KF_ACTOR_EFFECT_PARAMETER_COUNT];
-    KfMapObjectId drop_object;
+    KfObjectId drop_object;
     u8 drop_chance;
 } KfActorActionParameters;
 
@@ -256,8 +236,8 @@ typedef struct KfActorDefinition {
     u16 initial_health;
     u16 effect_owner_id;
     u16 experience_reward;
-    u16 attack_components[KF_ACTOR_ATTACK_COMPONENT_COUNT];
-    u16 defenses[KF_ACTOR_DEFENSE_COMPONENT_COUNT];
+    u16 attack_components[KF_COMBAT_PHYSICAL_COMPONENT_COUNT];
+    u16 defenses[KF_COMBAT_COMPONENT_COUNT];
     u16 gold_drop_limit; /* exclusive upper bound of rand-scaled gold drop */
 } KfActorDefinition;
 
@@ -289,7 +269,7 @@ typedef struct KfActorPlacement {
     u8 tile_z;
     u8 tile_x;
     u8 spawn_chance;
-    KfMapObjectId death_drop_object_id;
+    KfObjectId death_drop_object_id;
     u8 unknown_07[3];
     s16 local_z;
     s16 local_x;
@@ -306,7 +286,7 @@ typedef struct KfActor {
     KfActorLifecycle lifecycle;
     u8 spawn_chance;
     KfActorAction action;
-    KfMapObjectId death_drop_object_id;
+    KfObjectId death_drop_object_id;
     KfAnimationClip animation_id;
     KfActorVerticalState vertical_state;
     u8 unknown_0c[2];

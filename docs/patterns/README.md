@@ -898,3 +898,11 @@ promotes a probe to a proven historical toolchain.
 - [Remaining game source follow-up](game-final-fifteen-followup.md): sequence
   expression, complete filename-owner and nine-function rendering-context
   controls, with preserved exact siblings and no additional exact function.
+- [Shared constant review](shared-constant-review.md): evaluated enum comparison,
+  semantic decisions for equal values, and shared definitions across TUs.
+- [Complete enum equality review](enum-equality-review.md): decisions for all
+  179 remaining groups, exact membership coverage, and consumer encoding aliases.
+
+- [Complete enum reuse review](enum-reuse-review.md): all 302 starting enum blocks
+  reviewed, direct shared domains and constants, complete member/value coverage,
+  and preserved bytes and strict results for every reconstructed function.
