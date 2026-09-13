@@ -599,8 +599,9 @@
 
         PSYQ_ASPSX = "${aspsxNative}/1.07/ASPSX.EXE";
       } ''
-        mkdir -p project/tests/fixtures
+        mkdir -p project/tests/fixtures project/config
         cp -r ${./scripts} project/scripts
+        cp ${./config/native_reloc_referents.tsv} project/config/native_reloc_referents.tsv
         cp ${./tests/gcc257_trace_smoke.py} project/tests/gcc257_trace_smoke.py
         cp ${./tests/fixtures/gcc257_trace_controls.c} project/tests/fixtures/gcc257_trace_controls.c
         cd project
@@ -652,6 +653,8 @@
       } ''
         mkdir project
         cp -r ${./scripts} project/scripts
+        mkdir project/config
+        cp ${./config/native_reloc_referents.tsv} project/config/native_reloc_referents.tsv
         cp ${./tests/objdiff_mips_smoke.py} project/objdiff_mips_smoke.py
         cp ${./tests/objdiff_data_smoke.py} project/objdiff_data_smoke.py
         cp ${./tests/compiler_mips_smoke.py} project/compiler_mips_smoke.py

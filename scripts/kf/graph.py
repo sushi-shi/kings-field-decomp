@@ -17,6 +17,7 @@ from scripts.kf.clangd import generate as generate_clangd
 from scripts.kf.delink import delink, image_key
 from scripts.kf.local_config import configured_retail_dir
 from scripts.kf.manifest import Manifest, Unit, load as load_manifest
+from scripts.kf.native_referents import MANIFEST as NATIVE_REFERENTS
 from scripts.kf.objdiff import generate_projects, generate_report
 from scripts.kf.paths import (
     BASELINE,
@@ -287,6 +288,7 @@ def emit(out: Path = NINJA, retail_dir: Path | None = None) -> tuple[int, int]:
                 inputs=[unit.source],
                 implicit=[
                     *headers[unit.unit],
+                    str(NATIVE_REFERENTS.relative_to(REPO)),
                     delink_stamp,
                     str(UNITS_MANIFEST.relative_to(REPO)),
                     str(TOOLCHAIN_ID.relative_to(REPO)),

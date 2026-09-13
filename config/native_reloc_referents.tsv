@@ -1,0 +1,6 @@
+# MANUALLY REVIEWED - native comparison-view referents; never linker inputs.
+# Offsets are bytes from the named native function. Every row requires an existing
+# LUI/signed-low patch pair and an unchanged section-relative target address.
+# Retail referent evidence remains independently curated in retail/relocs.tsv.
+image	function	site_offset	paired_site_offset	owner	addend	provenance
+GAME.EXE	player_warp_to_floor_entry	0x48	0x4c	floor_entry_cells	-2	retail GAME 0x80017d40/44 targets 0x8005582a; owner 0x8005582c; two-byte cells indexed by floor-1; GCC UNIT.S names floor_entry_cells-2; ASPSX stores .data+14

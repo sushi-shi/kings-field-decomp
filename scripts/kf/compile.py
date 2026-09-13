@@ -148,6 +148,7 @@ def compile_source(
     trace_path: Path | None = None, trace_function: str | None = None,
 ) -> Path:
     from scripts.kf.lnk import elf_view
+    from scripts.kf.native_referents import load as load_native_referents
     from scripts.kf.sdk import assemble, compile_c
 
     source, output = source.resolve(), output.resolve()
@@ -202,7 +203,9 @@ def compile_source(
               else assemble(scratch, 'UNIT', small_data))
     assembly = (scratch / 'UNIT.S').read_text()
     functions = tuple(re.findall(r'^\s*\.ent\s+([\w$]+)', assembly, re.M))
-    view = elf_view(native, functions=functions, sizes=source_sizes)
+    referents = tuple(row for row in load_native_referents()
+                      if row.image == image and row.function in functions)
+    view = elf_view(native, functions=functions, sizes=source_sizes, referents=referents)
     _validate_mips_elf(view, output)
     _write_bytes_if_changed(output.with_suffix('.OBJ'), native)
     _write_bytes_if_changed(output.with_suffix('.S'), (scratch / 'UNIT.S').read_bytes())
@@ -216,6 +219,11 @@ def compile_source(
         'assembler_model': 'native ASPSX 1.07; LNK object -> ELF inspection view',
         'native_object': str(output.with_suffix('.OBJ')),
         'native_object_sha256': hashlib.sha256(native).hexdigest(),
+        'native_referents': [
+            {'function': row.function, 'site_offset': row.site_offset,
+             'paired_site_offset': row.paired_site_offset, 'owner': row.owner,
+             'addend': row.addend, 'provenance': row.provenance}
+            for row in referents],
         'assembler_sha256': hashlib.sha256(Path(os.environ['PSYQ_ASPSX']).read_bytes()).hexdigest(),
         'attribution': 'candidate probe; exact retail compiler/profile unproven',
         'data_claims': [{'name': claim.name, 'va': f'{claim.va:#x}', 'size': claim.size}
