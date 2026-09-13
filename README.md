@@ -10,10 +10,10 @@ the game can be exercised before changing platforms.
      +-----------+-----------+
      |                       |
      v                       v
-  source (you are here)   classic
+  source                  classic
      |
      v
-   port
+   port (you are here)
 ```
 
 | Branch | Purpose |
