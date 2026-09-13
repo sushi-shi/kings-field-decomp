@@ -38,9 +38,11 @@ The output is deterministic. Only marked output directories can be replaced;
 an output inside this checkout must be below `build/`. Publication creates a
 local generated branch and a persistent worktree. It refuses dirty destination
 worktrees, unrelated existing branches, and collisions with ignored files.
-Identical regeneration from the same commit is a no-op. Later generations retain
-the previous source tip and the new reconstruction commit as ancestry.
-Provenance stays in commit messages. No remote push occurs.
+The first export is a root commit. Identical regeneration from the same commit
+is a no-op; later generations retain only the previous export as their parent.
+Master's history is not imported. Provenance stays in commit messages.
+`--reset-history` explicitly replaces a generated branch with one root commit;
+back up its previous tip before using this migration option. No remote push occurs.
 
 The allowlist retains the C files used by the executable builder, their project
 and SDK wrapper headers, linker boundaries, build support, and the Rust codec
@@ -84,6 +86,7 @@ From the generated worktree:
 ```sh
 nix build
 nix run . -- --disc "/path/to/King's Field (Japan).cue"
+nix run . -- --retail --disc "/path/to/King's Field (Japan).cue"
 ```
 
 Both generated branches also retain master's retail-run command:

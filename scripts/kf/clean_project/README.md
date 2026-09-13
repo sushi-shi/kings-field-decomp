@@ -26,6 +26,8 @@ On x86-64 Linux with Nix flakes enabled:
 ```sh
 nix build
 nix run . -- --disc "/path/to/King's Field (Japan).cue"
+# Run the original disc instead:
+nix run . -- --retail --disc "/path/to/King's Field (Japan).cue"
 ```
 
 To run the original retail game with the same command as `master`:
@@ -58,17 +60,7 @@ Use PCSX-Redux's settings to configure controllers and memory cards.
 Use `--prepare-only` to prepare the disc without launching; arguments after `--`
 are forwarded to PCSX-Redux.
 
-For local C development:
-
-```sh
-nix develop -c python3 build.py
-```
-
-The three outputs are under `build/psx`, `build/game`, and `build/open`.
-The build uses GCC 2.5.7, ASPSX 1.07, PSYLINK and CPE2X with the Psy-Q 2.5 SDK.
-Game resources are required only when preparing and running the disc.
-
-## Development
+## Regeneration
 
 This `classic` branch is generated from `master`. Make upstream
 source changes there and regenerate with:

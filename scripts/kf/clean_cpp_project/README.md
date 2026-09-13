@@ -25,6 +25,8 @@ On x86_64 Linux with Nix flakes enabled:
 ```sh
 nix build
 nix run . -- --disc "/path/to/King's Field (Japan).cue"
+# Run the original disc instead:
+nix run . -- --retail --disc "/path/to/King's Field (Japan).cue"
 ```
 
 Run the original retail game using the same environment variable and command

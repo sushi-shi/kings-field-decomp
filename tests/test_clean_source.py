@@ -158,7 +158,7 @@ class ExportControls(unittest.TestCase):
         self.assertNotIn('scripts/kf/cli.py', first)
         self.assertEqual(len(json.loads(first['build.json'])['images']), 3)
 
-    def test_publish_keeps_ancestry_and_refuses_local_changes(self):
+    def test_publish_keeps_only_export_history_and_refuses_local_changes(self):
         with tempfile.TemporaryDirectory() as temporary:
             repo = Path(temporary) / 'repo'
             repo.mkdir()
@@ -173,6 +173,7 @@ class ExportControls(unittest.TestCase):
             files = {'README.md': b'generated\n', '.gitignore': b'/build/\n'}
             publish(repo, files, commit, 'source', worktree)
             tip = git(repo, 'rev-parse', 'source')
+            self.assertEqual(git(repo, 'rev-list', '--count', 'source'), '1')
             self.assertIn(PROVENANCE, git(worktree, 'log', '-1', '--format=%B'))
             self.assertEqual(git(worktree, 'status', '--porcelain'), '')
             publish(repo, files, commit, 'source', worktree)
@@ -186,7 +187,13 @@ class ExportControls(unittest.TestCase):
             second = git(repo, 'rev-parse', 'HEAD')
             publish(repo, {'README.md': b'new generation\n'}, second, 'source', worktree)
             parents = git(repo, 'rev-list', '--parents', '-1', 'source').split()[1:]
-            self.assertEqual(parents, [tip, second])
+            self.assertEqual(parents, [tip])
+            self.assertEqual(git(repo, 'rev-list', '--count', 'source'), '2')
+            tree = git(repo, 'rev-parse', 'source^{tree}')
+            publish(repo, {'README.md': b'new generation\n'}, second, 'source', worktree,
+                    reset_history=True)
+            self.assertEqual(git(repo, 'rev-list', '--count', 'source'), '1')
+            self.assertEqual(git(repo, 'rev-parse', 'source^{tree}'), tree)
             self.assertEqual(git(worktree, 'status', '--porcelain'), '')
             git(repo, 'branch', 'unrelated')
             with self.assertRaisesRegex(ValueError, 'not generated'):

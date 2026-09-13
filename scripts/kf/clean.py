@@ -267,7 +267,8 @@ def verify(output: Path, repo: Path, *, compare: bool = True) -> None:
                         '--manifest-path', str(output / 'codecs/Cargo.toml')], check=True)
 
 
-def publish(repo: Path, files: dict[str, bytes], commit: str, branch: str, requested: Path) -> Path:
+def publish(repo: Path, files: dict[str, bytes], commit: str, branch: str, requested: Path,
+            *, reset_history: bool = False) -> Path:
     git(repo, 'check-ref-format', '--branch', branch)
     ref = f'refs/heads/{branch}'
     current = git(repo, 'branch', '--show-current')
@@ -308,7 +309,8 @@ def publish(repo: Path, files: dict[str, bytes], commit: str, branch: str, reque
     # Verify the full tracked contents before treating a previous export as a no-op.
     same = tracked == set(files) and all((worktree / name).read_bytes() == data
                                         for name, data in files.items())
-    if same and f'Source-Commit: {commit}' in git(worktree, 'log', '-1', '--format=%B').splitlines():
+    if not reset_history and same and f'Source-Commit: {commit}' in git(
+            worktree, 'log', '-1', '--format=%B').splitlines():
         return worktree
     for name in sorted(tracked - set(files)):
         git(worktree, 'rm', '--', name)
@@ -318,14 +320,10 @@ def publish(repo: Path, files: dict[str, bytes], commit: str, branch: str, reque
         target.write_bytes(data)
     git(worktree, 'add', '--all', '--', *sorted(files))
     message = f'{branch}: regenerate from {commit[:12]}\n\n{PROVENANCE}\nSource-Commit: {commit}\n'
-    if tip and subprocess.run(['git', '-C', str(repo), 'merge-base', '--is-ancestor', commit, tip],
-                              capture_output=True).returncode:
-        # Content is the export, while both source and generated ancestry are retained.
-        tree = git(worktree, 'write-tree')
-        new_tip = git(repo, 'commit-tree', tree, '-p', tip, '-p', commit, '-m', message)
-        git(repo, 'update-ref', ref, new_tip, tip)
-    else:
-        git(worktree, 'commit', '--allow-empty', '-m', message)
+    tree = git(worktree, 'write-tree')
+    parents = ('-p', tip) if tip and not reset_history else ()
+    new_tip = git(repo, 'commit-tree', tree, *parents, '-m', message)
+    git(repo, 'update-ref', ref, new_tip, tip or commit)
     return worktree
 
 
@@ -337,9 +335,13 @@ def main(argv=None) -> int:
     parser.add_argument('--classic', action='store_true', help='export plain C without codecs')
     parser.add_argument('--verify', action='store_true')
     parser.add_argument('--publish', metavar='BRANCH')
+    parser.add_argument('--reset-history', action='store_true',
+                        help='replace a generated branch with a single root commit')
     parser.add_argument('--worktree', type=Path, default=Path('build/source'))
     args = parser.parse_args(argv)
     try:
+        if args.reset_history and not args.publish:
+            raise ValueError('--reset-history requires --publish')
         if args.publish and args.working_tree:
             raise ValueError('publication requires a committed revision, not --working-tree')
         if args.publish:
@@ -357,7 +359,8 @@ def main(argv=None) -> int:
         if args.verify:
             verify(output, REPO, compare=args.classic)
         if args.publish:
-            worktree = publish(REPO, files, commit, args.publish, args.worktree)
+            worktree = publish(REPO, files, commit, args.publish, args.worktree,
+                               reset_history=args.reset_history)
             print(f'{args.publish}: {worktree}', flush=True)
         return 0
     except (OSError, ValueError, KeyError, subprocess.CalledProcessError) as error:

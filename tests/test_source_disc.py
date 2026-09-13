@@ -51,6 +51,8 @@ class SourceDiscControls(unittest.TestCase):
                                               'XDG_CACHE_HOME': str(root / 'cache')}), \
                     mock.patch.object(disc, 'RETAIL_DISC_SHA256', hashlib.sha256(original).hexdigest()):
                 self.assertEqual(disc.main(['--retail', '--prepare-only']), 0)
+                self.assertEqual(disc.main(['--executables', str(root / 'missing-build'),
+                                            '--retail', '--prepare-only']), 0)
             cues = list((root / 'cache').rglob('game.cue'))
             self.assertEqual(len(cues), 1)
             self.assertEqual(disc._cue_bin(cues[0]), path)

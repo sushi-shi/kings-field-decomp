@@ -251,13 +251,15 @@ def prepare_retail(disc: Path, cache: Path) -> Path:
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument('--disc', type=Path, default=os.environ.get('KF_RETAIL_DISC'))
-    mode = parser.add_mutually_exclusive_group(required=True)
-    mode.add_argument('--executables', type=Path)
-    mode.add_argument('--retail', action='store_true')
+    parser.add_argument('--executables', type=Path)
+    parser.add_argument('--retail', action='store_true',
+                        help='run the original disc, ignoring replacement executables')
     parser.add_argument('--prepare-only', action='store_true')
     parser.add_argument('emulator_args', nargs=argparse.REMAINDER)
     args = parser.parse_args(argv)
     try:
+        if not args.retail and not args.executables:
+            raise ValueError('supply --executables DIR or --retail')
         if not args.disc:
             raise ValueError('supply --disc PATH or set KF_RETAIL_DISC')
         cache = Path(os.environ.get('XDG_CACHE_HOME', Path.home() / '.cache')) / 'kings-field'
