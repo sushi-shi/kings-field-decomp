@@ -6,7 +6,7 @@
 
 enum {
     ACTOR_CULL_SQUARE_HALF_WIDTH = 12,
-    ACTOR_CULL_SQUARE_WIDTH = 2 * ACTOR_CULL_SQUARE_HALF_WIDTH,
+    ACTOR_CULL_SQUARE_WIDTH = 2 * ACTOR_CULL_SQUARE_HALF_WIDTH
 };
 
 /* Cull each pool against the active cell window before dispatching its emitter. */

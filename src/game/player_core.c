@@ -362,7 +362,6 @@ s32 player_move_horizontal(s32 heading, s32 distance)
     s32 remainder_z;
     s32 remainder_x;
     s32 half;
-    s32 step;
     u32 cell_z;
     u32 cell_x;
     SVECTOR delta;

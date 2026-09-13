@@ -39,7 +39,7 @@ enum {
     ACTOR_WANDER_TURN_RANDOM_LIMIT = 2048,
     ACTOR_PURSUIT_TURN_RANDOM_LIMIT = 4096,
     ACTOR_HOME_TURN_RANDOM_LIMIT = 2048,
-    ACTOR_PURSUIT_BACKOFF_RANDOM_SHIFT = 11,
+    ACTOR_PURSUIT_BACKOFF_RANDOM_SHIFT = 11
 };
 
 /* Heights/distances are world units; Y velocity is world units per update. */

@@ -22,7 +22,7 @@ KF_ENUM_END(KfOpenColorPreset)
 
 enum {
     KF_OPEN_COLOR_PRESET_COUNT = 5,
-    KF_OPEN_TMD_SLOT_COUNT = 2,
+    KF_OPEN_TMD_SLOT_COUNT = 2
 };
 
 /* OPEN.EXE display subobject; the active OT pointer follows this record. */

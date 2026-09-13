@@ -88,10 +88,12 @@ Manually maintained cleanup checklist:
   count; see [inventory metric rules](docs/function-and-data-inventory.md).
 - [ ] Close [SDK object evidence](docs/sdk-object-audit.md): **29 lineage
   module identities**; the last ambiguous audio helper may belong to `SSCALL`.
-  These modules contain **332 functions per overlay (664 image occurrences)**;
-  see the [matching scope](docs/sdk-object-audit.md#matching-scope-and-function-list).
+  Match the functions the game needs: **607 SDK occurrences** have proven or
+  validated reference paths, with **26 candidate-only** occurrences to review;
+  see the [usage TSV command and scope](docs/sdk-object-audit.md#matching-scope-and-function-list).
   The [complete SDK function TSV](config/retail/functions_vendored.tsv) lists all
-  **1,138** known linked SDK occurrences, including those with exact code evidence.
+  **1,138** known linked SDK occurrences; the **505 unreached** rows are not
+  automatically required reconstruction work or proven unused code.
   Search missing 1994 SDK archives/source before reconstructing them.
 - [ ] Resolve the [SDK interrupt compatibility workaround](docs/patterns/sdk-interrupt-return.md).
   Leaving the starting-door plaque open could stop BIOS input and sound updates
@@ -129,10 +131,14 @@ Manually maintained cleanup checklist:
   buffers are claimed as the aligned 24-byte reservation their code
   accesses and match the data gate; the original declaration extents are
   unknowable from the image and are noted in source.
-- [ ] Review compiler warnings: **3,576 Clang C++20**, **2,581 Clang C89**,
-  **505 GCC** unique diagnostic lines; includes SDK/compatibility warnings.
-- [ ] Review [warning triage](docs/patterns/compiler-warning-triage.md):
-  **3 inherited uninitialized reads**, **2 open data preconditions**.
+- [x] [Triage compiler warning families](docs/patterns/compiler-warning-triage.md):
+  15 safe cleanup sites retain identical code/data; **3,845 Clang C++20**,
+  **2,719 Clang C89**, **631 GCC** unique diagnostic lines remain, including
+  SDK/compatibility diagnostics. Per-site type/buffer work remains open.
+- [ ] Resolve five resource-cursor sequencing sites and **2 data preconditions**
+  narrowed by shipped-data checks. Preserve **4 inherited scalar uninitialized
+  reads** and three passed-buffer warnings on decomp; intentional behavior repairs
+  belong in `port`.
 - [x] Search for inline functions and apply the review; see the [39 retained helpers](docs/patterns/common-code-review.md).
 - [x] Search for macros for common code and apply the review; [522 function entries read](docs/common-code-functions.tsv), [90 candidate verdicts](docs/common-code-candidates.tsv).
 

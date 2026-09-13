@@ -23,7 +23,7 @@ enum {
     KF_WEAPON_RECORD_COUNT = 16,
     KF_ARMOR_RECORD_COUNT = 42,
     KF_WEAPON_TABLE_WORD_COUNT = 176,
-    KF_ARMOR_TABLE_WORD_COUNT = 294,
+    KF_ARMOR_TABLE_WORD_COUNT = 294
 };
 
 /* Armor and accessory record (item ids 13..54 index armor_records[id - 13]). */

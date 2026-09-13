@@ -1997,7 +1997,7 @@ enum {
     /* Kana marks occupy columns 14/15 of row 2 in the text atlas. */
     MENU_DAKUTEN_U = 14 * MENU_FONT_CELL_WIDTH,
     MENU_HANDAKUTEN_U = 15 * MENU_FONT_CELL_WIDTH,
-    MENU_KANA_MARK_V = 2 * MENU_FONT_CELL_HEIGHT,
+    MENU_KANA_MARK_V = 2 * MENU_FONT_CELL_HEIGHT
 };
 
 /*

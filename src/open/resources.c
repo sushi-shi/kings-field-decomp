@@ -12,7 +12,7 @@
 #include <kf/resources.h>
 
 enum {
-    OPEN_CD_READ_ATTEMPTS = 100,
+    OPEN_CD_READ_ATTEMPTS = 100
 };
 
 /*

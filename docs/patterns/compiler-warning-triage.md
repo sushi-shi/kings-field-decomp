@@ -1,4 +1,106 @@
-# Uninitialized-local and missing-return warning triage
+# Compiler warning triage
+
+## Current review
+
+The refreshed audit on `6158b383` covers **101 image/TU variants** (including two
+vendored PAD references). The older README counts came from 99 variants and
+predate shared fragments and the current compatibility headers. Deduplication
+uses complete diagnostic lines per compiler mode, so shared includes reached
+through GAME and OPEN paths can appear twice. Counts are not distinct defects.
+
+| Mode | Before cleanup | After cleanup | Compiler failures |
+| --- | ---: | ---: | ---: |
+| Clang C++20 | 3,860 | 3,845 | 0 |
+| Clang C89 | 2,734 | 2,719 | 0 |
+| Pinned GCC | 646 | 631 | 0 |
+
+Reproduce all flags, per-unit logs and the deduplicated diagnostic TSV:
+
+```sh
+nix develop -c python3 -m scripts.kf.warnings --output-dir build/warning-review/current
+# report.json, diagnostics.tsv, and per-mode/unit logs under that directory
+```
+
+The command retains `-Weverything`, `-Wsystem-headers` and `-pedantic` for Clang,
+and the supported maximal warning set for the pinned GCC front ends. No warning
+is suppressed to lower the totals. It does not change the normal build flags.
+
+### Safe cleanup and remaining priorities
+
+Removed 13 trailing enum commas, the unused `step` local in
+`GAME:800171fc player_move_horizontal`, and the unreferenced
+`invalidate_and_return` label in `GAME:80038a38 effect_update_dispatch`.
+All 100 GAME/OPEN ELF base objects and all three native CPE outputs are
+byte-identical to the verified pre-cleanup baseline. All 101 units retain their
+function, DATA and RODATA claims. Fresh full build and analysis retain
+**458/471 exact game functions** (PSX 1/1, GAME 351/362, OPEN 106/108) and all
+13 exact vendor references. The existing data/closure audit failures remain.
+
+The remaining categories have these dispositions. This is a family-level
+triage, not a claim to have individually resolved every conversion or buffer
+access diagnostic.
+
+| Diagnostics | Disposition on decomp |
+| --- | --- |
+| C++98/pre-C++14/pre-C++20 compatibility; C89 GNU `typeof` extensions | Expected language-view differences. Keep C++20 enum/type checking and the historical C ABI view. |
+| SDK invalid UTF-8 comments, CRLF, old-style/non-prototype declarations, redundant declarations, traditional macro spelling | Preserve original SDK headers. Do not replace them with guessed externs or rewrite archived headers to make the audit quiet. |
+| Reserved/dollar identifiers, ABI padding | Check ownership; SDK names and compiler/linker spellings are not ordinary application identifiers. Do not pack SDK types or rename binary identities for warning counts. |
+| Cast alignment, unsafe buffer/libc access, pointer arithmetic | Alignment and complete-object/buffer contracts need per-site evidence. A cast or a bounds guard alone does not settle the warning. Keep the existing cast/ownership campaigns as the worklist. |
+| Narrowing, signedness, enum-domain conversions, old-style casts, zero null constants | Candidate type/spelling fixes after inspecting callers and retail extension/truncation instructions. Keep intentional packed-field narrowing and historical parameter promotions. Do not add casts just to suppress diagnostics. |
+| Missing function/variable declarations | Candidate shared-owner header work. Establish linkage and authentic signatures first; adding a local extern, `static`, or a guessed SDK prototype can change ABI/relocations. |
+| Missing field initializers | Implicit zero initialization is defined; explicit field values are possible after layout/data comparison. Do not add artificial members or change constructor/enum-storage semantics. |
+| Missing/covered switch cases, default labels, fallthrough, comma operator | Inspect selector domain and control flow. Partial selectors and intentional fallthrough are not grounds for adding behavior. Comma-expression expansion is a focused match candidate. |
+| Shadowed names | Straight renaming is a promising source cleanup; scope-specific use/identity review and object comparison are still required. |
+| Unused parameters/macros/locals | Keep ABI parameters, C++-only configuration macros, and the two documented OPEN stack-slot locals. The genuinely unused local/label above were removed. |
+| Missing `noreturn`, missed NRVO | Optional annotation/modern optimization diagnostics. Adding attributes can change caller control flow and code generation; no decomp requirement to eliminate them. |
+| Uninitialized reads/passed buffers and missing returns | See the instruction- and caller-based verdicts below. Keep inherited behavior visible; intentional repairs belong in `port`. |
+| Tautological comparisons / unreachable code | Evidence-review candidates: reconstructed spatial audio's `(tone & 0x80) == 1`, actor's high-half/low-half ceiling-code comparison, and the unsigned charge clamp's lower bound. Dead source spelling cannot be recovered just from bytes that omit it. Do not claim these are all original C bugs or change predicates based on host diagnostics alone. |
+| Unsequenced resource cursor access | Five loader sites: GAME `map_resources_load`; OPEN scene0, scene1, ending and ending-sequence loaders. The C arguments read and modify `stream` without sequencing. C++20 sequences parameter initializations but leaves their order unspecified, so the intended header/body pairing is still not guaranteed by the source. Requires a matching source repair. |
+
+For the resource warning, a controlled GAME candidate saved the first chunk
+pointer, advanced `stream` in a separate statement, then passed the two payload
+pointers. Retail proves the intended pair at `8001b5c4..8001b5d8`. The candidate
+adds `move a0,s2` before loading the chunk size and moves the audio call from
+function offset `0x7c` to `0x80` (body `0x258` becomes `0x25c`). It was reverted;
+the five warnings remain open, and no equivalent OPEN rewrite was applied.
+This is a concrete rejected source spelling, not evidence that every properly
+sequenced implementation must fail to match.
+
+### Expanded uninitialized-read and data review
+
+The three inherited scalar reads below are the historical **GCC** subset.
+Clang also identifies `target_distance` in GAME's `effect_update_dispatch`:
+the player-homing path loads stack `sp+120` at `80039760` before negating it for
+the pitch call at `8003976c`; only the alternative actor-search path passes that
+slot to `actor_pool_find_target_in_cone` at `8003978c`. That makes **four known
+inherited scalar reads** across the two compiler reports. Clang C also warns
+about three uninitialized direction buffers passed to the effect constructor
+from `actor_spawn_action_effect`, `map_object_pool_load`, and
+`map_object_pool_update`. Their construction paths are documented in the
+[actor constant](game-actor-constants.md),
+[map-object constant](game-map-object-constants.md), and
+[script/motion](game-map-script-motion-constants.md) reviews. These are separate
+buffer warnings, not three more proved scalar reads or a reason to zero memory.
+
+The two open data preconditions now have shipped-data checks:
+
+- The existing GAME asset corpus (`tmd_oracle.shipped_cases`, decoded with
+  `animation_oracle.parse_asset`) contains **214 clips across 70 animated assets**;
+  none has zero keyframes. This removes the empty-clip concern for the enumerated
+  serialized clips. It does not prove all runtime clip selectors, cache states,
+  or alternate resource paths valid. The inherited keyframe-index read remains.
+- The five `B1..B5/MIXA.DAT` object-placement lists contain **51 door placements**,
+  including **14 hinged doors**; every hinged placement has a cardinal masked
+  initial yaw. Definitions come from chunk 5 of `COM/COM.DAT` (141 serialized
+  eight-byte entries); placements are chunk 4, 20-byte records through the
+  `0xff` terminator. This checks initial orientation, not every runtime action,
+  paired-door mutation, or save-restored state. The action/definition consistency
+  requirement in `map_object_probe_forward` remains open.
+
+No default result or initialization was added to game logic. Fresh image-specific
+evidence and the before/after reports are under `build/warning-review/`.
+
+## Historical GCC local/return audit
 
 The maximum-warning audit at `d158ac60` found **18 potentially uninitialized
 locals**, not eight, and **three missing-return diagnostics** in GCC 2.5.7.

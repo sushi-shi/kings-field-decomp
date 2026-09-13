@@ -74,7 +74,7 @@ enum {
 
 enum {
     GROUND_VISUAL_SCALE_STEP = 4000,
-    GROUND_VISUAL_RISE_STEP = 1800,
+    GROUND_VISUAL_RISE_STEP = 1800
 };
 
 enum {
@@ -817,7 +817,6 @@ advance_effect_phase:
             remaining = effect->direction.words.x - 1;
             effect->direction.words.x = remaining;
             if ((s16)remaining == -1) {
-invalidate_and_return:
                 effect->type = KF_EFFECT_SLOT_FREE;
                 return;
             }

@@ -27,7 +27,7 @@ enum {
     PLAYER_SLOWED_MOVEMENT_LIMIT = PLAYER_NORMAL_MOVEMENT_LIMIT / 5,
     PLAYER_NORMAL_TURN_LIMIT = 28,
     PLAYER_SLOWED_TURN_LIMIT = 5,
-    PLAYER_DARKNESS_FOG_NEAR = 5000,
+    PLAYER_DARKNESS_FOG_NEAR = 5000
 };
 
 /* Fractions of the active limit; signed shifts preserve retail truncation. */
@@ -38,7 +38,7 @@ enum {
     PLAYER_YAW_ACCEL_DECEL_SHIFT = 2,
     PLAYER_PITCH_ACCEL = 3,
     PLAYER_PITCH_DECEL = 2,
-    PLAYER_PITCH_STEP_LIMIT = 10,
+    PLAYER_PITCH_STEP_LIMIT = 10
 };
 
 /* Delay counts down to one; zero disables the pending sequence. */
