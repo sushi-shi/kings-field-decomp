@@ -54,10 +54,11 @@ typedef struct KfMorphObject {
  */
 
 static inline void copy_vertices(
-    KfPackedSVector *output, const KfPackedSVector *input, u16 count)
+    SVECTOR *output, const SVECTOR *input, u16 count)
 {
-    const u32 *source = input->words;
-    u32 *destination = output->words;
+    /* These asset, heap and scratch buffers are word-aligned; include SVECTOR.pad. */
+    const u32 *source = (const u32 *)input;
+    u32 *destination = (u32 *)output;
 
     do {
         *destination++ = *source++;
@@ -104,8 +105,8 @@ reinitialize_record:
         record->asset_index = asset_index;
         record->owner_slot = owner_slot;
 retry_allocation:
-        record->cached_vertices = (KfPackedSVector *)memory_malloc_checked(
-            vertex_count * sizeof(KfPackedSVector));
+        record->cached_vertices = (SVECTOR *)memory_malloc_checked(
+            vertex_count * sizeof(SVECTOR));
         if (record->cached_vertices == NULL) {
             pool_release_all();
             goto retry_allocation;
@@ -162,7 +163,7 @@ update_vertex_cache:
                 morph_object = (KfMorphObject *)(
                     (char *)asset_header + object_table[*morph_indices]);
                 morph_indices++;
-                gteMIMefunc(&record->cached_vertices[morph_object->prefix.range.base_vertex].vector,
+                gteMIMefunc(&record->cached_vertices[morph_object->prefix.range.base_vertex],
                             morph_object->deltas, morph_object->prefix.range.vertex_count, KF_FIXED12_ONE);
             }
         }
@@ -178,15 +179,16 @@ update_vertex_cache:
 
     morph_object = record->rest_morph;
     {
-        KfPackedSVector *scratch_vertex = &game_graphics_runtime.morph_scratch[morph_object->prefix.range.base_vertex];
-        u32 saved_xy_word = scratch_vertex->words[0];
-        u32 saved_z_pad_word = scratch_vertex->words[1];
+        SVECTOR *scratch_vertex = &game_graphics_runtime.morph_scratch[morph_object->prefix.range.base_vertex];
+        u32 *scratch_words = (u32 *)scratch_vertex;
+        u32 saved_xy_word = scratch_words[0];
+        u32 saved_z_pad_word = scratch_words[1];
 
         /* Blend the header-sized extra vector too, then restore its scratch entry. */
-        gteMIMefunc(&scratch_vertex->vector, &morph_object->prefix.vector,
+        gteMIMefunc(scratch_vertex, &morph_object->prefix.vector,
                     morph_object->prefix.range.vertex_count + 1, blend_fraction);
-        scratch_vertex->words[0] = saved_xy_word;
-        scratch_vertex->words[1] = saved_z_pad_word;
+        scratch_words[0] = saved_xy_word;
+        scratch_words[1] = saved_z_pad_word;
     }
     tmd_set_current_vertices(&game_graphics_runtime.morph_scratch[1]);
     record->state = KF_ANIMATION_CACHE_LIVE;

@@ -48,9 +48,23 @@ def check(
         args = unit_arguments(unit, repo, compiler, sdk)
         args[args.index("-c")] = "-fsyntax-only"
         args.insert(1, "-ferror-limit=0")
-        return unit, subprocess.run(
+        result = subprocess.run(
             args, cwd=repo, text=True, stdout=subprocess.PIPE, stderr=subprocess.STDOUT,
         )
+        from scripts.kf.pointer_policy import implicit_void_erasures
+
+        try:
+            for site in implicit_void_erasures(unit, repo, sdk):
+                result.stdout += (
+                    f"{site.file}:{site.line}:{site.column}: error: implicit conversion "
+                    f"from '{site.source}' to '{site.target}'; spell the pointer "
+                    "boundary explicitly [kf-implicit-void-erasure]\n"
+                )
+                result.returncode = 1
+        except ValueError as error:
+            result.stdout += f"\n[types] {error}\n"
+            result.returncode = 1
+        return unit, result
 
     failures = 0
     with ThreadPoolExecutor(max_workers=jobs) as pool:

@@ -9,7 +9,7 @@ extern KfDisplayState display_state;
 extern DRAWENV display_draw_environments[2];
 extern DISPENV display_disp_environments[2];
 extern KfTmdState tmd_state;
-extern KfPackedSVector *current_tmd_vertices;
+extern SVECTOR *current_tmd_vertices;
 extern KfPoolRecord pool_records[12];
 extern u16 effect5_texture_pages[3];
 extern u16 effect5_texture_cluts[3];
@@ -39,6 +39,6 @@ extern MATRIX light_quadrant_matrices[4];
 extern const KfCellWindow *active_cell_window;
 extern KfAssetHeader *asset_registry_entries[];
 extern KfScreenVertex tmd_projected_vertices[];
-extern KfPackedSVector morph_scratch[];
+extern SVECTOR morph_scratch[];
 
 #endif

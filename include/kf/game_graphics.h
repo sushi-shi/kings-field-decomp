@@ -23,10 +23,10 @@ typedef struct KfGraphicsRuntimeGame {
     KfTmdState tmd_state;
     KfAssetHeader *asset_registry_entries[KF_ASSET_REGISTRY_KNOWN_ENTRIES];
     u8 unknown_201f4[0x30];
-    KfPackedSVector *current_tmd_vertices;
+    SVECTOR *current_tmd_vertices;
     KfPoolRecord pool_records[KF_ANIMATION_CACHE_CAPACITY];
     KfScreenVertex tmd_projected_vertices[KF_PROJECTED_VERTEX_CAPACITY];
-    KfPackedSVector morph_scratch[KF_MORPH_SCRATCH_CAPACITY];
+    SVECTOR morph_scratch[KF_MORPH_SCRATCH_CAPACITY];
     u16 effect5_texture_pages[KF_FLOOR5_ACTOR_TEXTURE_COUNT];
     u8 unknown_241a6[10];
     u16 effect5_texture_cluts[KF_FLOOR5_ACTOR_TEXTURE_COUNT];

@@ -5,6 +5,11 @@ about which source shapes reproduce it under the current probes. Each note
 records the retail evidence first and the probe behaviour second; none of them
 promotes a probe to a proven historical toolchain.
 
+- [cast-union-debt.md](cast-union-debt.md): master-based cast census and qualification,
+  seven canonical owner/SDK replacements, retained dual-index grids, whole-object
+  copying, named TMD decoding, and explicit void-pointer boundaries. Supersedes older
+  live cast/union totals; remaining SDK/representation debt is explicit.
+
 - [semantic-consistency-review.md](semantic-consistency-review.md): consumer
   review of shared domains and retained helpers, cylinder/overlay naming,
   sprite traversal distinctions and the full-floor predicate boundary.

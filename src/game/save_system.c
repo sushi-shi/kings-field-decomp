@@ -417,7 +417,7 @@ KfSaveStatus save_file_write_slot(KfSaveSlotId slot_id)
     }
     memcpy(save_payload_buffer->player_state, &player_state.experience,
            sizeof(save_payload_buffer->player_state));
-    memcpy(save_payload_buffer->world_state.words, &map_world_state_base,
+    memcpy(&save_payload_buffer->world_state, &map_world_state_base,
            sizeof(save_payload_buffer->world_state));
     memcpy(save_payload_buffer->item_stock, item_stock,
            sizeof(save_payload_buffer->item_stock));
@@ -435,7 +435,7 @@ KfSaveStatus save_file_write_slot(KfSaveSlotId slot_id)
         memory_card_clear_events();
         lseek(file, header_size + offset, SEEK_SET);
         memory_card_clear_events();
-        written = write(file, save_payload_buffer, payload_size);
+        written = write(file, (const void *)save_payload_buffer, payload_size);
         if (written == payload_size) {
             break;
         }
@@ -464,7 +464,7 @@ KfSaveStatus save_file_write_slot(KfSaveSlotId slot_id)
         memory_card_clear_events();
         lseek(file, 0, SEEK_SET);
         memory_card_clear_events();
-        written = write(file, save_header_buffer, header_size);
+        written = write(file, (const void *)save_header_buffer, header_size);
         if (written == header_size) {
             break;
         }
@@ -531,7 +531,7 @@ KfSaveStatus save_file_read_header(void)
         memory_card_clear_events();
         lseek(file, 0, SEEK_SET);
         memory_card_clear_events();
-        count = read(file, save_header_buffer, length);
+        count = read(file, (void *)save_header_buffer, length);
         if (count == length) {
             break;
         }
@@ -616,7 +616,7 @@ KfSaveStatus save_file_read_slot(KfSaveSlotId slot_id)
         memory_card_clear_events();
         lseek(file, 0, SEEK_SET);
         memory_card_clear_events();
-        count = read(file, &header, header_size);
+        count = read(file, (void *)&header, header_size);
         if (count == header_size) {
             break;
         }
@@ -639,7 +639,7 @@ KfSaveStatus save_file_read_slot(KfSaveSlotId slot_id)
         memory_card_clear_events();
         lseek(file, header_size + offset, SEEK_SET);
         memory_card_clear_events();
-        count = read(file, save_payload_buffer, payload_size);
+        count = read(file, (void *)save_payload_buffer, payload_size);
         if (count == payload_size) {
             break;
         }
@@ -653,7 +653,7 @@ KfSaveStatus save_file_read_slot(KfSaveSlotId slot_id)
     saved_weapon_animation_cache = player_state.weapon_animation_cache;
     memcpy(&player_state.experience, save_payload_buffer->player_state,
            sizeof(save_payload_buffer->player_state));
-    memcpy(&map_world_state_base, save_payload_buffer->world_state.words,
+    memcpy(&map_world_state_base, &save_payload_buffer->world_state,
            sizeof(save_payload_buffer->world_state));
     memcpy(item_stock, save_payload_buffer->item_stock,
            sizeof(save_payload_buffer->item_stock));
@@ -697,15 +697,15 @@ void save_file_initialize_buffers(void)
     save_header_buffer->playstation_header.icon_type = KF_SAVE_ICON_THREE_FRAMES;
     save_header_buffer->playstation_header.block_count = SAVE_FILE_BLOCKS;
     memcpy(save_header_buffer->playstation_header.title, SAVE_TITLE_TEXT, sizeof(SAVE_TITLE_TEXT));
-    cd_file_load_into(image, "TIM\\ICO1.TIM");
+    cd_file_load_into((void *)image, "TIM\\ICO1.TIM");
     memcpy(save_header_buffer->playstation_header.clut, &image[SAVE_ICON_TIM_CLUT_OFFSET],
            sizeof(save_header_buffer->playstation_header.clut));
     memcpy(save_header_buffer->playstation_header.icon_frames[0], &image[SAVE_ICON_TIM_PIXELS_OFFSET],
            sizeof(save_header_buffer->playstation_header.icon_frames[0]));
-    cd_file_load_into(image, "TIM\\ICO2.TIM");
+    cd_file_load_into((void *)image, "TIM\\ICO2.TIM");
     memcpy(save_header_buffer->playstation_header.icon_frames[1], &image[SAVE_ICON_TIM_PIXELS_OFFSET],
            sizeof(save_header_buffer->playstation_header.icon_frames[1]));
-    cd_file_load_into(image, "TIM\\ICO3.TIM");
+    cd_file_load_into((void *)image, "TIM\\ICO3.TIM");
     memcpy(save_header_buffer->playstation_header.icon_frames[2], &image[SAVE_ICON_TIM_PIXELS_OFFSET],
            sizeof(save_header_buffer->playstation_header.icon_frames[2]));
     memset(save_payload_buffer, 0, sizeof(KfSavePayload));
@@ -772,15 +772,15 @@ ADDRESS(0x8002c5e0, 0x12c)
 KfBool32 menu_load_message_image(s32 message_id)
 {
     char path[16] = "TIM\\M000.";
-    void *buffer;
+    u8 *buffer;
 
     if (message_id != MESSAGE_IMAGE_SKIP) {
         CD_PATH_WRITE_DECIMAL3(&path[5], message_id);
         buffer = game_graphics_runtime.display_state.primitive_buffer->cursor;
-        if (cd_file_load_into(buffer, path) != KF_RESOURCE_LOADED) {
+        if (cd_file_load_into((void *)buffer, path) != KF_RESOURCE_LOADED) {
             return KF_TRUE;
         }
-        tim_upload_images(buffer);
+        tim_upload_images((void *)buffer);
     }
     return KF_FALSE;
 }

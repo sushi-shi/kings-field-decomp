@@ -131,7 +131,7 @@ void player_equip_weapon(KfObjectId weapon_id)
         player_state.equipped_weapon_record = &weapon_records.entries[KF_ENUM_ENCODE(u8, weapon_id)];
         weapon_image_path_template[9] = '0' + KF_ENUM_ENCODE(u32, weapon_id) / 10;
         weapon_image_path_template[10] = '0' + KF_ENUM_ENCODE(u32, weapon_id) % 10;
-        if (cd_file_load_into(player_state.weapon_asset_buffer, weapon_image_path_template) != KF_RESOURCE_LOADED) {
+        if (cd_file_load_into((void *)player_state.weapon_asset_buffer, weapon_image_path_template) != KF_RESOURCE_LOADED) {
             exit(1);
         }
         asset_registry_set(KF_ASSET_WEAPON, player_state.weapon_asset_buffer);
@@ -228,7 +228,7 @@ void game_initialize_session(void)
     player_state.camera_rotation.vy = 0;
     player_state.camera_rotation.vx = 0;
     setVector(&player_state.camera_position, 0x7918, 0, 0xfa0);
-    player_state.weapon_asset_buffer = (KfAssetHeader *)memory_allocate(KF_WEAPON_ASSET_BUFFER_BYTES);
+    player_state.weapon_asset_buffer = (struct KfAssetHeader *)memory_allocate(KF_WEAPON_ASSET_BUFFER_BYTES);
     game_state_initialize();
     player_state.update_state = KF_PLAYER_UPDATE_NORMAL;
     player_state.audio_effects_enabled = KF_PLAYER_OPTION_ON;

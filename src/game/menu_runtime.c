@@ -2355,17 +2355,17 @@ ADDRESS(0x8002af48, 0x130)
 KF_ENUM_PARAM(KfResourceLoadResult, u32) menu_load_item_texture(KfMenuTextureId texture_id)
 {
     char name[16] = "TIM\\M000.";
-    void *destination;
+    u8 *destination;
     s32 number;
 
     if (texture_id != KF_MENU_TEXTURE_NONE) {
         number = KF_ENUM_ENCODE(s32, texture_id) + 1;
         CD_PATH_WRITE_DECIMAL3(&name[5], number);
         destination = game_graphics_runtime.display_state.primitive_buffer->cursor;
-        if (cd_file_load_into(destination, name) != KF_RESOURCE_LOADED) {
+        if (cd_file_load_into((void *)destination, name) != KF_RESOURCE_LOADED) {
             return KF_RESOURCE_LOAD_FAILED;
         }
-        tim_upload_images(destination);
+        tim_upload_images((void *)destination);
     }
     return KF_RESOURCE_LOADED;
 }

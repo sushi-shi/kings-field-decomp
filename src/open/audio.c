@@ -75,7 +75,7 @@ void audio_play_sequence_file(const char *path)
     s32 volume;
 
     audio_stop_sequence(KF_AUDIO_STOP_IMMEDIATE);
-    if (cd_file_load_into(audio_state.sequence_buffer, path) != KF_RESOURCE_LOADED) {
+    if (cd_file_load_into((void *)audio_state.sequence_buffer, path) != KF_RESOURCE_LOADED) {
         return;
     }
     audio_state.sequence_id = SsSeqOpen(

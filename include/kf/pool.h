@@ -30,7 +30,7 @@ typedef struct KfPoolRecord {
     KF_ENUM_STORAGE(KfAnimationClip, u16) clip_index;
     u16 keyframe_index;
     struct KfMorphObject *rest_morph;
-    KfPackedSVector *cached_vertices;
+    SVECTOR *cached_vertices;
     struct KfPoolRecord **owner_slot;
 } KfPoolRecord;
 

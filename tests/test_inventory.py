@@ -309,9 +309,9 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(counts["data"], 748)
         self.assertGreaterEqual(counts["functions_named"], 240)
         self.assertGreaterEqual(counts["data_named"], 100)
-        self.assertEqual(counts["structures"], 128)
-        self.assertEqual(counts["structure_fields"], 871)
-        self.assertEqual(counts["structure_fields_named"], 784)
+        self.assertEqual(counts["structures"], 127)
+        self.assertEqual(counts["structure_fields"], 856)
+        self.assertEqual(counts["structure_fields_named"], 769)
 
     def test_sdk_field_ownership_has_individual_evidence(self) -> None:
         identities = load_data_identities(RETAIL_CONFIG)
@@ -399,7 +399,7 @@ class InventoryTests(unittest.TestCase):
             (0x04, "clip_index", "KF_ENUM_STORAGE(KfAnimationClip, u16)", 2),
             (0x06, "keyframe_index", "u16", 2),
             (0x08, "rest_morph", "KfMorphObject *", 4),
-            (0x0C, "cached_vertices", "KfPackedSVector *", 4),
+            (0x0C, "cached_vertices", "SVECTOR *", 4),
             (0x10, "owner_slot", "KfPoolRecord **", 4),
         )
         for offset, name, datatype, size in fields:
@@ -440,7 +440,7 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(_structure_field('KfGraphicsRuntimeGame', 0x20318),
                          ('tmd_projected_vertices', 'KfScreenVertex[1000]', 0x1F40))
         self.assertEqual(_structure_field('KfGraphicsRuntimeGame', 0x22258),
-                         ('morph_scratch', 'KfPackedSVector[1001]', 0x1F48))
+                         ('morph_scratch', 'SVECTOR[1001]', 0x1F48))
         self.assertIn('extent-derived capacities', datum.note)
         opening = index("OPEN.EXE").data_owner(0x80069B80)
         self.assertEqual((opening.name, opening.datatype, opening.size),
@@ -683,7 +683,7 @@ class InventoryTests(unittest.TestCase):
             "tmd_release_last_allocation": ("void", "KF_ENUM_PARAM(KfTmdSlot, s32) slot"),
             "tmd_select": ("void", "KfTmdSlot slot"),
             "tmd_select_object_vertices": ("void", "u16 object_index"),
-            "tmd_set_current_vertices": ("void", "KfPackedSVector *vertices"),
+            "tmd_set_current_vertices": ("void", "SVECTOR *vertices"),
         }
         identities = load_function_identities(RETAIL_CONFIG, required=True)
         common = (REPO / "include/kf/tmd.h").read_text()

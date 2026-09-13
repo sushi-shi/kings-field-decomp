@@ -51,7 +51,7 @@ void opening_run(KfOverlayMode overlay_mode)
         skip_action = KF_OPENING_INPUT_SKIP;
         opening_fade_in();
         cd_file_load_allocated(&tim_data, "B0\\MIX0.");
-        tim_upload_images(tim_data);
+        tim_upload_images((void *)tim_data);
         memory_release_last();
         opening_input_action = KF_OPENING_INPUT_NONE;
 
@@ -67,7 +67,7 @@ opening_reload:
                 memory_arena.allocation.cursor = memory_arena.start;
                 memory_arena.allocation.stack[KF_MEMORY_STACK_DEPTH_INDEX] = 0;
                 cd_file_load_allocated(&tim_data, "B0\\MIX3.");
-                tim_upload_images(tim_data);
+                tim_upload_images((void *)tim_data);
                 memory_release_last();
                 audio_stop_sequence(KF_AUDIO_STOP_FADE);
                 break;

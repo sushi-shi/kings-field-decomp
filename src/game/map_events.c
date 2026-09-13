@@ -245,7 +245,7 @@ void map_world_state_persist(void)
         active++;
         *out++ = i;
         {
-            u8 *link = object->link.bytes;
+            const u8 *link = (const u8 *)&object->link;
             s32 k = sizeof(object->link) - 1;
 
             for (; k != -1; k--) {

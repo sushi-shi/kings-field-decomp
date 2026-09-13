@@ -45,10 +45,10 @@ KfGraphicsRuntimeOpen	0x24788	supported	open_render.h;asm;opening_run-memset;doc
 KfHudSprite	0x0e	supported	game_render.h;game_semantic_hud_sprites.tsv;asm;retail-initializers;14-byte-stride	HUD table row with state byte and complete screen-sprite descriptor; state 0xff terminates the array
 KfMagicRecord	0x14	supported	magic.h;asm;player_select_magic;player_update;player_recalculate_combat_stats	20-byte magic record; magic_records[24] is indexed by selected_magic_id and by weapon-bound spell indices 5/8/18/20
 KfMagicTable	0x1e0	supported	magic.h;asm;typed-record-tables.md	24 magic records and complete 120-word resource copy inside effect_state
-KfMapAttributeGrid	0x2710	supported	map_data.h;asm;xrefs;enum-field-review.md	typed map attributes with complete linear and word-copy views
+KfMapAttributeGrid	0x2710	supported	map_data.h;asm;xrefs;cast-union-debt.md	100 by 100 typed map attributes; complete-owner word-copy boundary
 KfMapCell	0x02	supported	game_map.h;game_semantic_player_motion_attack.tsv;asm;xrefs;typed-packed-state.md	packed player map-cell coordinates and unsigned halfword comparison view
 KfMapCellCoordinates	0x02	supported	game_map.h;asm;xrefs;typed-packed-state.md	map row z then column x bytes
-KfMapCollisionGrid	0x2710	supported	map_data.h;strict-enum-audit.md;map_load;render_map_cells	100 by 100 typed byte grid with an aligned 2500-word resource-copy view
+KfMapCollisionGrid	0x2710	supported	map_data.h;strict-enum-audit.md;map_load;render_map_cells	100 by 100 typed byte grid; aligned 2500-word resource-copy boundary
 KfMapCopyRegion	0x06	supported	game_map.h;game_semantic_map_runtime.tsv;asm;xrefs	packed source/destination rectangle
 KfMapEvent	0x44	supported	game_map.h;game_semantic_camera_events.tsv;asm;xrefs	live map event record
 KfMapEventDefinition	0x18	supported	game_map.h;game_semantic_camera_events.tsv;asm;xrefs	serialized map event definition
@@ -56,7 +56,7 @@ KfMapFloor1Script	0x4	supported	game_map.h;asm;game-map-script-state.md;save-rea
 KfMapFloor3Script	0x1	supported	game_map.h;asm;game-map-script-state.md;save-read-write:0x2134;floor-stream-stride:1700	floor-3 reveal completion counter
 KfMapFloor5Script	0x4	supported	game_map.h;asm;game-map-script-state.md;save-read-write:0x2134;floor-stream-stride:1700	floor-5 persistent character, weapon and boss progression
 KfMapFloorScript	0xa	supported	game_map.h;asm;game-map-script-state.md;save-read-write:0x2134;floor-stream-stride:1700	floor-selected interpretations of the ten-byte saved script prefix
-KfMapGrid	0x2710	supported	map_data.h;asm;typed-map-tables.md	10000 cells with row/column, flat byte and 2500-word views
+KfMapGrid	0x2710	supported	map_data.h;asm;cast-union-debt.md	100 by 100 byte cells; complete-owner linear access and 2500-word copy boundary
 KfMapObject	0x2c	supported	game_map.h;game_semantic_map_objects.tsv;asm;xrefs	live map object record
 KfMapObjectDefinition	0x08	supported	game_map.h;game_semantic_map_objects.tsv;asm;xrefs	loaded map object definition
 KfMapObjectDefinitionTable	0x500	supported	game_map.h;asm;typed-map-tables.md	160 complete map object definitions and 320 copy words
@@ -67,10 +67,10 @@ KfMapObjectParameter	0x01	supported	game_map.h;asm;xrefs;enum-field-review.md	be
 KfMapObjectPlacement	0x14	supported	game_map.h;game_semantic_map_objects.tsv;runtime-stride	placement record extent; fields remain opaque
 KfMapObjectSpawn	0x02	supported	game_map.h;asm;typed-map-links.md	behavior-dependent sequence halfword or effect-ID byte
 KfMapObjectState	0x25b8	supported	game_map.h;asm;base-register;game_main_loop;opening_entity_pool_reset;data-repair-campaign.md	complete startup-cleared definitions, live pool and control tail
-KfMapOrientationGrid	0x2710	supported	map_data.h;strict-enum-audit.md;map_load;render_map_cells	100 by 100 typed byte grid with an aligned 2500-word resource-copy view
+KfMapOrientationGrid	0x2710	supported	map_data.h;strict-enum-audit.md;map_load;render_map_cells	100 by 100 typed byte grid; aligned 2500-word resource-copy boundary
 KfMapRuntimeState	0x2360	supported	game_map.h;game_main_loop:0x2360-clear;world-state-pool-relative-addresses;spinner-current-minus-544	eight map events, two pointers, two halfword timers and the complete saved world region
 KfMapSavedFloor	0x6a4	supported	game_map.h;asm;game-map-script-state.md;save-read-write:0x2134;floor-stream-stride:1700	one 1700-byte saved floor slot
-KfMapSavedWorld	0x2134	supported	game_map.h;asm;game-map-script-state.md;save-read-write:0x2134;floor-stream-stride:1700	five saved floors sharing the word-aligned save I/O representation
+KfMapSavedWorld	0x2134	supported	game_map.h;asm;game-map-script-state.md;save-read-write:0x2134;floor-stream-stride:1700	five saved floors; byte serialization addresses the complete owner
 KfMemoryAllocationState	0x48	supported	memory.h;asm;open_semantic_opening_controller.tsv;typed-memory-owner.md	arena cursor and existing 17-word depth/allocation stack
 KfMemoryArena	0x58	supported	memory.h;asm;typed-memory-owner.md;data-repair-campaign.md	shared arena and fallback system-heap bookkeeping; original typedef spelling remains WIP
 KfMenuAssets	0x390	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT	complete runtime-loaded menu asset block
@@ -82,7 +82,6 @@ KfOpeningEntity	0x28	supported	open_resources.h;open_semantic_resources.tsv;open
 KfOpeningEntityState	0x510	supported	open_resources.h;open_semantic_resources.tsv;asm;controller-memset-0x510	OPEN opening entity aggregate: 32 records followed by an unresolved gap and three halfword controls
 KfOrderingTable	0x10000	supported	render_types.h;asm;ClearOTagR-0x4000	one reversed ordering table; display_begin_frame clears 0x4000 entries and display_present_frame draws from entry 0x3fff
 KfOverlayArguments	0x08	supported	overlay.h;PSX-main;GAME-main;OPEN-main;asm;Exec-shared-argument-block;array-enum-review.md	shared input OPEN mode and writable GAME exit result, one word each
-KfPackedSVector	0x08	supported	tmd.h;asm;typed-animation-vertices.md	eight-byte vertex with authentic SDK and aligned word-copy views
 KfPlayerAttackChargeState	0x04	supported	game_player.h;game_semantic_player_stats.tsv;asm;xrefs	POWER charge and committed attack snapshot
 KfPlayerLevelGrowth	0x0c	supported	game_player.h;game_semantic_player_stats.tsv;asm;xrefs;runtime-stride	loaded player level-growth record
 KfPlayerMotionFields	0x0c	supported	game_player.h;asm;xrefs;typed-packed-state.md	motion halfwords followed by current map-cell bytes

@@ -191,7 +191,7 @@ void render_initialize(void)
 
     game_graphics_runtime.display_state.buffer_index = KF_DISPLAY_BUFFER_UNINITIALIZED;
     buffer = (u8 *)memory_allocate(KF_DISPLAY_BUFFER_COUNT * PRIMITIVE_BUFFER_BYTES);
-    game_graphics_runtime.display_state.asset_load_buffer = buffer;
+    game_graphics_runtime.display_state.asset_load_buffer = (void *)buffer;
     game_graphics_runtime.display_state.primitive_buffers[0].start = buffer;
     buffer += PRIMITIVE_BUFFER_BYTES;
     game_graphics_runtime.display_state.primitive_buffers[0].end = buffer;
@@ -295,7 +295,7 @@ KfTmdObject *tmd_get_object(u16 index)
 }
 
 ADDRESS(0x8001c138, 0x10)
-void tmd_set_current_vertices(KfPackedSVector *vertices)
+void tmd_set_current_vertices(SVECTOR *vertices)
 {
     game_graphics_runtime.current_tmd_vertices = vertices;
 }
@@ -304,8 +304,8 @@ ADDRESS(0x8001c148, 0x3c)
 void tmd_select_object_vertices(u16 index)
 {
     game_graphics_runtime.current_tmd_vertices =
-        (KfPackedSVector *)((u8 *)game_graphics_runtime.tmd_state.current_asset
-            + KF_TMD_HEADER_BYTES + tmd_get_object(index)->vertex_offset);
+        TMD_OBJECT_VERTICES(game_graphics_runtime.tmd_state.current_asset,
+            tmd_get_object(index));
 }
 
 ADDRESS(0x8001c184, 0x12c)
@@ -459,7 +459,7 @@ ADDRESS(0x8001c60c, 0x9c)
 void tmd_project_vertices(s32 count)
 {
     KfScreenVertex *projected;
-    KfPackedSVector *vertex;
+    SVECTOR *vertex;
     long perspective;
     long gte_flags;
     long depth;
@@ -468,7 +468,7 @@ void tmd_project_vertices(s32 count)
     projected = game_graphics_runtime.tmd_projected_vertices;
     vertex = game_graphics_runtime.current_tmd_vertices;
     for (count--; count != -1; count--) {
-        RotTransPers(&vertex->vector, &projected->sxy.word, &perspective, &gte_flags);
+        RotTransPers(vertex, &projected->sxy.word, &perspective, &gte_flags);
         projected->p2 = perspective << KF_TMD_DEFAULT_PERSPECTIVE_SHIFT;
         ReadSZ2(&depth, &unused_depth);
         projected->sz = depth;
@@ -481,7 +481,7 @@ ADDRESS(0x8001c6a8, 0xac)
 void tmd_project_vertices_shift(s32 count, u8 shift)
 {
     KfScreenVertex *projected;
-    KfPackedSVector *vertex;
+    SVECTOR *vertex;
     long perspective;
     long gte_flags;
     long depth;
@@ -490,7 +490,7 @@ void tmd_project_vertices_shift(s32 count, u8 shift)
     projected = game_graphics_runtime.tmd_projected_vertices;
     vertex = game_graphics_runtime.current_tmd_vertices;
     for (count--; count != -1; count--) {
-        RotTransPers(&vertex->vector, &projected->sxy.word, &perspective, &gte_flags);
+        RotTransPers(vertex, &projected->sxy.word, &perspective, &gte_flags);
         projected->p2 = perspective << KF_TMD_DEFAULT_PERSPECTIVE_SHIFT;
         ReadSZ2(&depth, &unused_depth);
         projected->sz = depth >> shift;
@@ -503,7 +503,7 @@ ADDRESS(0x8001c754, 0xa4)
 void tmd_transform_vertices(s32 count)
 {
     KfScreenVertex *projected;
-    KfPackedSVector *vertex;
+    SVECTOR *vertex;
     VECTOR transformed;
     long gte_flags;
     s32 remaining;
@@ -511,7 +511,7 @@ void tmd_transform_vertices(s32 count)
     projected = game_graphics_runtime.tmd_projected_vertices;
     vertex = game_graphics_runtime.current_tmd_vertices;
     for (remaining = count - 1; remaining != -1; remaining--) {
-        RotTrans(&vertex->vector, &transformed, &gte_flags);
+        RotTrans(vertex, &transformed, &gte_flags);
         projected->sxy.vector.vx = transformed.vx;
         projected->sxy.vector.vy = transformed.vy;
         projected->p2 = transformed.vz;

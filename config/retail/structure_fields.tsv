@@ -67,8 +67,7 @@ KfActorDefinition	0x84	0x02	experience_reward	u16	supported	game_actor.h;asm;xre
 KfActorDefinition	0x86	0x06	attack_components	u16[3]	supported	game_actor.h;asm;xrefs	three attack components
 KfActorDefinition	0x8c	0x0a	defenses	u16[5]	supported	game_actor.h;asm;xrefs	five defense components
 KfActorDefinition	0x96	0x02	gold_drop_limit	u16	supported	game_actor.h;asm;xrefs;semantic-field-names.md;asm;CFG;callers;callees;xrefs	exclusive upper bound of randomized gold amount: rand * limit >> 15; object 39 behavior 0x41 credits player gold
-KfActorDefinitionTable	0x00	0x720	entries	KfActorDefinition[12]	supported	asm;typed-map-tables.md	complete alternate table view
-KfActorDefinitionTable	0x00	0x720	words	u32[456]	supported	asm;typed-map-tables.md	complete alternate table view
+KfActorDefinitionTable	0x00	0x720	entries	KfActorDefinition[12]	supported	asm;typed-map-tables.md;cast-union-debt.md	canonical twelve-record table
 KfActorPlacement	0x00	0x01	slot_state	KfActorSlotState	supported	game_actor.h;asm;actor_pool_load_placements	copied to KfActor.slot_state; 0xff ends the placement list
 KfActorPlacement	0x01	0x01	definition_flags	u8	supported	game_actor.h;asm;actor_pool_load_placements;render_entities;actor-culling-domain.md	low five bits are the definition id; bit 5 selects near-square actor culling instead of the active visibility grid
 KfActorPlacement	0x02	0x01	heading_quadrant	KfActorHeadingQuadrant	supported	game_actor.h;asm;actor_pool_load_placements;strict-enum-audit.md	copied to KfActor.heading_quadrant
@@ -100,7 +99,6 @@ KfArmorRecord	0x0e	0x02	hp_regen_interval	u16	supported	game_equipment.h;asm;pla
 KfArmorRecord	0x10	0x02	hp_drain_interval	u16	supported	game_equipment.h;asm;player_update	nonzero: player_adjust_hp(-1) every N frames of player_state.unknown_58
 KfArmorRecord	0x12	0x0a	unknown_12	u8[10]	opaque	game_equipment.h;asm;player_recalculate_combat_stats	meaning unresolved
 KfArmorTable	0x00	0x498	entries	KfArmorRecord[42]	supported	game_equipment.h;asm;typed-record-tables.md	typed records selected by the game consumers
-KfArmorTable	0x00	0x498	words	u32[294]	supported	game_equipment.h;asm;typed-record-tables.md	complete aligned resource-copy span
 KfAssetHeader	0x00	0x04	byte_size	u32	supported	game_asset.h;asm;asset_registry_load_tmd_archive	byte extent used to advance to the next packed asset
 KfAssetHeader	0x04	0x04	animation_clip_count	s32	supported	game_asset.h;asm;game-asset-animation-layout.md	clip-table entry count agrees with independent table extents in all 70 animated assets; zero in 99 static assets; retail retains a signed comparison below two
 KfAssetHeader	0x08	0x04	tmd_data_offset	u32	supported	game_asset.h;asm;asset_registry_select	byte offset from header to TMD payload
@@ -271,10 +269,10 @@ KfGraphicsRuntimeGame	0x20108	0x8	unknown_20108	u8[8]	opaque	game_graphics.h;asm
 KfGraphicsRuntimeGame	0x20110	0x24	tmd_state	KfTmdState	supported	game_semantic_display_tmd.tsv;asm;base-register;tmd_register;game-graphics-runtime-owner.md	registered TMD slots and the selected asset: tmd_register stores the slot from the current-asset address minus 32 through one base register
 KfGraphicsRuntimeGame	0x20134	0xc0	asset_registry_entries	KfAssetHeader *[48]	supported	game_graphics.h;asm;four-byte-index-stride;shipped-archive-census;KfEffectModelId;cast-owner-reduction.md	known accessed registry prefix through effect-model slot 47; original complete capacity remains unresolved
 KfGraphicsRuntimeGame	0x201f4	0x30	unknown_201f4	u8[48]	opaque	game_graphics.h;shipped-archive-census;cast-owner-reduction.md	unresolved remainder after the known registry prefix; neither a padding role nor additional pointer entries are asserted
-KfGraphicsRuntimeGame	0x20224	0x4	current_tmd_vertices	KfPackedSVector *	supported	game_semantic_display_tmd.tsv;asm;xrefs;game-graphics-runtime-owner.md;typed-animation-vertices.md	current TMD vertex-array pointer; consumers scale indices by the eight-byte element width
+KfGraphicsRuntimeGame	0x20224	0x4	current_tmd_vertices	SVECTOR *	supported	game_semantic_display_tmd.tsv;asm;xrefs;game-graphics-runtime-owner.md;typed-animation-vertices.md	current TMD vertex-array pointer; consumers scale indices by the eight-byte element width
 KfGraphicsRuntimeGame	0x20228	0xf0	pool_records	KfPoolRecord[12]	supported	game_semantic_animation_pool.tsv;reviewed-reloc;asm;game-graphics-runtime-owner.md	complete animation cache: five lifecycle scans visit 12 records of stride 20
 KfGraphicsRuntimeGame	0x20318	0x1f40	tmd_projected_vertices	KfScreenVertex[1000]	candidate	game_graphics.h;asm;pool.c-morph-scratch-start;open_render.h-sibling-capacity	projected screen vertices; the 1000-entry extent is the reviewed morph-scratch start and matches OPEN's independent runtime, not a proven original declaration
-KfGraphicsRuntimeGame	0x22258	0x1f48	morph_scratch	KfPackedSVector[1001]	candidate	game_graphics.h;asm;pool.c;neighbor-field-extents	animated-vertex blend scratch; element 0 is the header-sized extra vector and the 1001-entry extent is the remainder before the texture pages, not a proven original capacity
+KfGraphicsRuntimeGame	0x22258	0x1f48	morph_scratch	SVECTOR[1001]	candidate	game_graphics.h;asm;pool.c;neighbor-field-extents	animated-vertex blend scratch; element 0 is the header-sized extra vector and the 1001-entry extent is the remainder before the texture pages, not a proven original capacity
 KfGraphicsRuntimeGame	0x241a0	0x6	effect5_texture_pages	u16[3]	supported	game_semantic_effect5_texture_tables.tsv;asm;three-contiguous-stores;indexed-read;game-graphics-runtime-owner.md	three texture-page IDs prepared for floor mode five and indexed by the actor descriptor high nibble
 KfGraphicsRuntimeGame	0x241a6	0xa	unknown_241a6	u8[10]	opaque	game_graphics.h;asm;neighbor-field-extents;game-graphics-runtime-owner.md	unresolved storage interval; no original array capacity or padding role claimed
 KfGraphicsRuntimeGame	0x241b0	0x6	effect5_texture_cluts	u16[3]	supported	game_semantic_effect5_texture_tables.tsv;asm;three-contiguous-stores;paired-index;game-graphics-runtime-owner.md	three CLUT IDs paired with effect5_texture_pages
@@ -309,7 +307,7 @@ KfGraphicsRuntimeOpen	0x200e0	0x28	display_disp_environments	DISPENV[2]	supporte
 KfGraphicsRuntimeOpen	0x20108	0x8	unknown_20108	u8[8]	opaque	open_render.h;asm;docs/patterns/open-graphics-runtime-owner.md	unclassified interval within the independently cleared region
 KfGraphicsRuntimeOpen	0x20110	0xc	tmd_state	KfTmdStateOpen	supported	open_render.h;asm;docs/patterns/open-graphics-runtime-owner.md	preserved subobject or field at its reviewed physical offset
 KfGraphicsRuntimeOpen	0x2011c	0x4	unknown_2011c	u8[4]	opaque	open_render.h;asm;docs/patterns/open-graphics-runtime-owner.md	unclassified interval within the independently cleared region
-KfGraphicsRuntimeOpen	0x20120	0x4	current_tmd_vertices	KfPackedSVector *	supported	open_render.h;asm;docs/patterns/open-graphics-runtime-owner.md;typed-animation-vertices.md	preserved subobject or field at its reviewed physical offset
+KfGraphicsRuntimeOpen	0x20120	0x4	current_tmd_vertices	SVECTOR *	supported	open_render.h;asm;docs/patterns/open-graphics-runtime-owner.md;typed-animation-vertices.md	preserved subobject or field at its reviewed physical offset
 KfGraphicsRuntimeOpen	0x20124	0x14	unknown_20124	u8[20]	opaque	open_render.h;asm;docs/patterns/open-graphics-runtime-owner.md	unclassified interval within the independently cleared region
 KfGraphicsRuntimeOpen	0x20138	0x1f40	tmd_projected_vertices	KfScreenVertex[1000]	supported	open_render.h;asm;docs/patterns/open-graphics-runtime-owner.md	preserved subobject or field at its reviewed physical offset
 KfGraphicsRuntimeOpen	0x22078	0x1f68	unknown_22078	u8[8040]	opaque	open_render.h;asm;docs/patterns/open-graphics-runtime-owner.md	unclassified interval within the independently cleared region
@@ -331,17 +329,14 @@ KfMagicRecord	0x08	0x08	damage_components	u16[4]	supported	magic.h;asm;effect_up
 KfMagicRecord	0x10	0x02	mp_cost	u16	supported	magic.h;asm;player_update	compared with and subtracted from vitals.current_mp when casting
 KfMagicRecord	0x12	0x02	unknown_12	u8[2]	opaque	magic.h;asm	meaning unresolved
 KfMagicTable	0x00	0x1e0	entries	KfMagicRecord[24]	supported	magic.h;asm;typed-record-tables.md	typed records selected by the game consumers
-KfMagicTable	0x00	0x1e0	words	u32[120]	supported	magic.h;asm;typed-record-tables.md	complete aligned resource-copy span
 KfMapAttributeGrid	0x00	0x2710	cells	KfMapAttribute[100][100]	supported	map_data.h;asm;xrefs;enum-field-review.md	100 by 100 enum attribute cells
-KfMapAttributeGrid	0x00	0x2710	bytes	KfMapAttribute[10000]	supported	map_data.h;asm;xrefs;enum-field-review.md	complete linear enum attribute view
-KfMapAttributeGrid	0x00	0x2710	words	u32[2500]	supported	map_data.h;asm;xrefs;enum-field-review.md	raw complete-table copy view; no numeric selector API
+KfMapAttributeGrid	0x00	0x2710	linear	KfMapAttribute[10000]	supported	map_data.h;asm;collision_query_world;cast-union-debt.md	same typed row-major cells addressed by a flat collision index; dual-index union is a reconstruction convenience
 KfMapCell	0x00	0x02	coords	KfMapCellCoordinates	supported	game_map.h;asm;xrefs;typed-packed-state.md	unsigned z/x byte coordinates
 KfMapCell	0x00	0x02	word	u16	supported	game_map.h;asm;xrefs;typed-packed-state.md	unsigned halfword comparison in main loop
 KfMapCellCoordinates	0x00	0x01	z	u8	supported	game_map.h;game_semantic_player_motion_attack.tsv;asm;xrefs	map row derived from world z divided by 2000
 KfMapCellCoordinates	0x01	0x01	x	u8	supported	game_map.h;game_semantic_player_motion_attack.tsv;asm;xrefs	map column derived from world x divided by 2000
 KfMapCollisionGrid	0x00	0x2710	cells	KfMapCellKind[100][100]	supported	map_data.h;strict-enum-audit.md;map_load;map_object_mark_collision_edge;render_map_cells	typed cell selectors share the unchanged 0x2710-byte resource-copy span
-KfMapCollisionGrid	0x00	0x2710	bytes	KfMapCellKind[10000]	supported	map_data.h;strict-enum-audit.md;map_load;map_object_mark_collision_edge;render_map_cells	typed cell selectors share the unchanged 0x2710-byte resource-copy span
-KfMapCollisionGrid	0x00	0x2710	words	u32[2500]	supported	map_data.h;strict-enum-audit.md;map_load;map_object_mark_collision_edge;render_map_cells	aligned full-grid load and copy view
+KfMapCollisionGrid	0x00	0x2710	linear	KfMapCellKind[10000]	supported	map_data.h;asm;collision_query_world;map_floor_height_for_cell_position;cast-union-debt.md	same typed row-major cells addressed by a flat collision index; dual-index union is a reconstruction convenience
 KfMapCopyRegion	0x00	0x01	source_x	u8	supported	game_map.h;asm;xrefs	source x
 KfMapCopyRegion	0x01	0x01	source_z	u8	supported	game_map.h;asm;xrefs	source z
 KfMapCopyRegion	0x02	0x01	destination_x	u8	supported	game_map.h;asm;xrefs	destination x
@@ -399,9 +394,8 @@ KfMapFloorScript	0x0	0xa	bytes	u8[10]	supported	game_map.h;asm;game-map-script-s
 KfMapFloorScript	0x0	0x4	floor1	KfMapFloor1Script	supported	game_map.h;asm;game-map-script-state.md;save-read-write:0x2134;floor-stream-stride:1700	floor 1 interpretation of the first four prefix bytes
 KfMapFloorScript	0x0	0x1	floor3	KfMapFloor3Script	supported	game_map.h;asm;game-map-script-state.md;save-read-write:0x2134;floor-stream-stride:1700	floor 3 interpretation of the first prefix byte
 KfMapFloorScript	0x0	0x4	floor5	KfMapFloor5Script	supported	game_map.h;asm;game-map-script-state.md;save-read-write:0x2134;floor-stream-stride:1700	floor 5 interpretation of the first four prefix bytes
-KfMapGrid	0x00	0x2710	cells	u8[100][100]	supported	asm;typed-map-tables.md	complete alternate table view
-KfMapGrid	0x00	0x2710	bytes	u8[10000]	supported	asm;typed-map-tables.md	complete alternate table view
-KfMapGrid	0x00	0x2710	words	u32[2500]	supported	asm;typed-map-tables.md	complete alternate table view
+KfMapGrid	0x00	0x2710	cells	u8[100][100]	supported	asm;typed-map-tables.md;cast-union-debt.md	canonical row/column grid
+KfMapGrid	0x00	0x2710	linear	u8[10000]	supported	map_data.h;asm;collision_query_world;map_floor_height_for_cell_position;cast-union-debt.md	same row-major cells addressed by a flat collision index; dual-index union is a reconstruction convenience
 KfMapObject	0x00	0x01	object_id	KfObjectId	supported	game_map.h;asm;xrefs	object definition ID
 KfMapObject	0x01	0x01	unknown_01	u8	opaque	game_map.h;asm;xrefs	meaning unresolved
 KfMapObject	0x02	0x02	cell_x	u16	supported	game_map.h;asm;xrefs	map cell x
@@ -418,16 +412,13 @@ KfMapObjectDefinition	0x01	0x01	unknown_01	u8	opaque	game_map.h;asm;xrefs	meanin
 KfMapObjectDefinition	0x02	0x02	collision_radius	u16	supported	game_map.h;asm;xrefs	collision radius
 KfMapObjectDefinition	0x04	0x02	interaction_radius	u16	supported	game_map.h;asm;xrefs	interaction radius
 KfMapObjectDefinition	0x06	0x02	unknown_06	u8[2]	opaque	game_map.h;asm;xrefs	meaning unresolved
-KfMapObjectDefinitionTable	0x00	0x500	entries	KfMapObjectDefinition[160]	supported	asm;typed-map-tables.md	complete alternate table view
-KfMapObjectDefinitionTable	0x00	0x500	words	u32[320]	supported	asm;typed-map-tables.md	complete alternate table view
+KfMapObjectDefinitionTable	0x00	0x500	entries	KfMapObjectDefinition[160]	supported	asm;typed-map-tables.md;cast-union-debt.md	canonical 160-record table
 KfMapObjectHingedContainer	0x00	0x01	link_id	u8	supported	game_map.h;asm;typed-map-links.md	trigger link byte
 KfMapObjectHingedContainer	0x01	0x04	item_ids	KfObjectId[4]	supported	game_map.h;asm;typed-map-links.md;strict-enum-audit.md	four encoded item IDs
 KfMapObjectLink	0x00	0x08	fields	KfMapObjectLinkFields	supported	game_map.h;asm;typed-map-links.md	behavior-dependent byte and halfword fields
 KfMapObjectLink	0x00	0x02	gold_amount	u16	supported	game_map.h;asm;typed-map-links.md	gold-coin amount loaded and stored as one halfword
 KfMapObjectLink	0x00	0x05	hinged_container	KfMapObjectHingedContainer	supported	game_map.h;asm;typed-map-links.md	trigger byte followed by four encoded item IDs
 KfMapObjectLink	0x00	0x04	item_ids	KfObjectId[4]	supported	game_map.h;asm;typed-map-links.md;strict-enum-audit.md	four encoded item IDs for ordinary containers
-KfMapObjectLink	0x00	0x08	words	u32[2]	supported	game_map.h;asm;typed-map-links.md	aligned placement copies and pool resets
-KfMapObjectLink	0x00	0x08	bytes	u8[8]	supported	game_map.h;asm;typed-map-links.md	complete saved-floor byte serialization
 KfMapObjectLinkFields	0x00	0x01	link_id	u8	supported	game_map.h;asm;map_object_pool_load;typed-map-links.md	trigger link id
 KfMapObjectLinkFields	0x01	0x01	action_parameter	KfMapObjectParameter	supported	game_map.h;asm;map_object_pool_load;typed-map-links.md;enum-field-review.md	behavior selects effect-pool index, paired-door object index or typed map-copy region
 KfMapObjectLinkFields	0x02	0x02	spawn	KfMapObjectSpawn	supported	game_map.h;asm;map_object_pool_load;typed-map-links.md	unsigned drop sequence or byte effect ID, selected by object behavior
@@ -455,8 +446,7 @@ KfMapObjectState	0x25b2	0x2	effect_sequence_160	u16	supported	asm;map_object_poo
 KfMapObjectState	0x25b4	0x2	effect_sequence_170	u16	supported	asm;map_object_pool_clear;data-repair-campaign.md	wrapping sequence for reserved slots 170 through 179
 KfMapObjectState	0x25b6	0x2	effect_sequence_180	u16	supported	asm;map_object_pool_clear;data-repair-campaign.md	wrapping sequence for reserved slots 180 through 189
 KfMapOrientationGrid	0x00	0x2710	cells	KfMapOrientation[100][100]	supported	map_data.h;strict-enum-audit.md;map_load;map_object_mark_collision_edge;render_map_cells	typed cell selectors share the unchanged 0x2710-byte resource-copy span
-KfMapOrientationGrid	0x00	0x2710	bytes	KfMapOrientation[10000]	supported	map_data.h;strict-enum-audit.md;map_load;map_object_mark_collision_edge;render_map_cells	typed cell selectors share the unchanged 0x2710-byte resource-copy span
-KfMapOrientationGrid	0x00	0x2710	words	u32[2500]	supported	map_data.h;strict-enum-audit.md;map_load;map_object_mark_collision_edge;render_map_cells	aligned full-grid load and copy view
+KfMapOrientationGrid	0x00	0x2710	linear	KfMapOrientation[10000]	supported	map_data.h;asm;map_floor_height_for_cell_position;cast-union-debt.md	same typed row-major cells addressed by a flat collision index; dual-index union is a reconstruction convenience
 KfMapRuntimeState	0x000	0x220	events	KfMapEvent[8]	supported	game_map.h;asm;0x44-stride;8-record-loop	live map-event records
 KfMapRuntimeState	0x220	0x004	current_event	KfMapEvent *	supported	game_map.h;asm;map_event_set_current;spinner-current-minus-544	selected event pointer
 KfMapRuntimeState	0x224	0x004	variant_asset_buffer	u8 *	supported	game_map.h;asm;map_variant_assets_load	persistent CHR variant allocation
@@ -465,8 +455,6 @@ KfMapRuntimeState	0x22a	0x002	ambient_script_countdown	u16	supported	game_map.h;
 KfMapRuntimeState	0x22c	0x2134	world_state	KfMapSavedWorld	supported	game_map.h;save-read-write:0x2134-copy;game_state_initialize:0x2134-clear;game-map-script-state.md	word-aligned saved world: five 1700-byte slots with typed floor-script prefixes
 KfMapSavedFloor	0x0	0xa	script	KfMapFloorScript	supported	game_map.h;asm;game-map-script-state.md;save-read-write:0x2134;floor-stream-stride:1700	ten-byte persistent prefix before the sparse runtime stream
 KfMapSavedFloor	0xa	0x69a	records	u8[1690]	supported	game_map.h;asm;game-map-script-state.md;save-read-write:0x2134;floor-stream-stride:1700	1690-byte capacity for variable-length saved event, actor and object records
-KfMapSavedWorld	0x0	0x2134	words	u32[2125]	supported	game_map.h;asm;game-map-script-state.md;save-read-write:0x2134;floor-stream-stride:1700	2125 aligned words copied verbatim to and from the save payload
-KfMapSavedWorld	0x00	0x2134	bytes	u8[8500]	supported	asm;typed-map-tables.md	complete alternate table view
 KfMapSavedWorld	0x0	0x2134	floors	KfMapSavedFloor[5]	supported	game_map.h;asm;game-map-script-state.md;save-read-write:0x2134;floor-stream-stride:1700	five 1700-byte saved slots selected by one-based current floor minus one
 KfMemoryAllocationState	0x0	0x4	cursor	u8 *	supported	memory.h;asm;typed-memory-owner.md	null selects heap allocations; otherwise next arena byte
 KfMemoryAllocationState	0x4	0x44	stack	u32[17]	supported	memory.h;asm;typed-memory-owner.md	depth at index zero and generic size-or-heap-pointer entries after it
@@ -526,8 +514,6 @@ KfOpeningEntityState	0x50e	0x02	unknown_control_50e	u16	opaque	open_resources.h;
 KfOrderingTable	0x00	0x10000	entries	u32[16384]	supported	render_types.h;asm	ordering table entries
 KfOverlayArguments	0x00	0x04	request	KfOverlayMode	supported	overlay.h;asm;PSX-main;GAME-main;OPEN-main;array-enum-review.md	PSX copies the previous result encoding here; OPEN passes it to opening_run
 KfOverlayArguments	0x04	0x04	result	KfOverlayResultWord	supported	overlay.h;asm;PSX-main;GAME-main;OPEN-main;array-enum-review.md	PSX initializes INTRO; GAME writes game_next_overlay_mode on return
-KfPackedSVector	0x00	0x08	vector	SVECTOR	supported	tmd.h;asm;typed-animation-vertices.md	alternative view of the complete vertex
-KfPackedSVector	0x00	0x08	words	u32[2]	supported	tmd.h;asm;typed-animation-vertices.md	alternative view of the complete vertex
 KfPlayerAttackChargeState	0x00	0x02	current	u16	supported	game_player.h;asm;xrefs	current POWER charge
 KfPlayerAttackChargeState	0x02	0x02	committed	u16	supported	game_player.h;asm;xrefs	attack-time POWER snapshot
 KfPlayerLevelGrowth	0x00	0x02	maximum_hp	u16	supported	game_player.h;asm;xrefs	level maximum HP
@@ -639,7 +625,7 @@ KfPoolRecord	0x02	0x02	asset_index	u16	supported	pool.h;game_semantic_animation_
 KfPoolRecord	0x04	0x02	clip_index	KF_ENUM_STORAGE(KfAnimationClip, u16)	supported	pool.h;game_semantic_animation_pool.tsv;GAME:0x800207ac;GAME:0x800208c0;strict-enum-audit.md	cached clip index; allocator and asset reinitialization invalidate it with 0xff
 KfPoolRecord	0x06	0x02	keyframe_index	u16	supported	pool.h;game_semantic_animation_pool.tsv;GAME:0x800207c0;GAME:0x800208ac	cached keyframe index compared with the binder selection
 KfPoolRecord	0x08	0x04	rest_morph	KfMorphObject *	supported	pool.h;game_semantic_animation_pool.tsv;GAME:0x800208a4;GAME:0x800208f8	asset-relative object-table target selected by the keyframe rest index
-KfPoolRecord	0x0c	0x04	cached_vertices	KfPackedSVector *	supported	pool.h;game_semantic_animation_pool.tsv;GAME:0x80020690;GAME:0x80020870;typed-animation-vertices.md	vertex_count times 8-byte allocation; full-weight morph cache passed to gteMIMefunc
+KfPoolRecord	0x0c	0x04	cached_vertices	SVECTOR *	supported	pool.h;game_semantic_animation_pool.tsv;GAME:0x80020690;GAME:0x80020870;typed-animation-vertices.md	vertex_count times 8-byte allocation; full-weight morph cache passed to gteMIMefunc
 KfPoolRecord	0x10	0x04	owner_slot	KfPoolRecord **	supported	pool.h;game_semantic_animation_pool.tsv;GAME:0x80020688;GAME:0x800209f4	address of the instance record-pointer slot; release clears the pointed-to slot
 KfPrimitiveBuffer	0x00	0x04	start	u8 *	supported	render_types.h;game_semantic_display_tmd.tsv;asm;xrefs	first byte of the primitive allocation range
 KfPrimitiveBuffer	0x04	0x04	end	u8 *	supported	render_types.h;game_semantic_display_tmd.tsv;asm;xrefs	one-past-end boundary initialized from start plus the overlay-specific buffer span
@@ -847,7 +833,6 @@ KfWeaponRecord	0x1c	0x06	render_translation	KfVec3s	supported	game_equipment.h;a
 KfWeaponRecord	0x22	0x02	unknown_22	u16	opaque	game_equipment.h;asm;typed-weapon-render.md	unresolved halfword between translation and rotation
 KfWeaponRecord	0x24	0x08	render_rotation	SVECTOR	supported	game_equipment.h;asm;typed-weapon-render.md	SDK RotMatrix input; resource loader negates its Y component at record+0x26
 KfWeaponTable	0x00	0x2c0	entries	KfWeaponRecord[16]	supported	game_equipment.h;asm;typed-record-tables.md	typed records selected by the game consumers
-KfWeaponTable	0x00	0x2c0	words	u32[176]	supported	game_equipment.h;asm;typed-record-tables.md	complete aligned resource-copy span
 MenuGlyphRow	0x0	0x14	codes	s16[10]	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT	ten glyph codes; item/name copy and indexed 20-byte stride
 MenuGlyphString	0x0	0x4	position	MenuPoint	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT;typed-menu-records.md	shared signed screen point passed to sprite blitters; retail title guard uses lh; complete label stride remains 24 bytes
 MenuGlyphString	0x4	0x14	glyphs	MenuGlyphRow	supported	game_menu.h;game_menu_assets.md;asm;STAT.DAT;typed-menu-records.md	complete ten-code row copied from item and magic tables; halfword alignment preserves retail unaligned word-copy sequences

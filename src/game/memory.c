@@ -77,7 +77,7 @@ ADDRESS(0x8001abd0, 0x3c)
 void memory_reset_system_heap(void)
 {
     memory_arena.system_heap_size = (u8 *)MEMORY_SYSTEM_HEAP_END_ADDRESS - memory_arena.system_heap_start;
-    InitHeap(memory_arena.system_heap_start, memory_arena.system_heap_size);
+    InitHeap((void *)memory_arena.system_heap_start, memory_arena.system_heap_size);
 }
 
 /*
@@ -95,7 +95,7 @@ void *memory_allocate(s32 size)
         block = memory_malloc_checked(size);
         size = (s32)block;
     } else {
-        block = *cursor;
+        block = (void *)*cursor;
         size = (size + (MEMORY_ALLOCATION_ALIGNMENT - 1))
             & ~(MEMORY_ALLOCATION_ALIGNMENT - 1);
         *cursor += size;

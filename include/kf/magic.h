@@ -74,10 +74,9 @@ typedef struct KfMagicRecord {
     u8 unknown_12[0x02];
 } KfMagicRecord;
 
-/* Entry access and the complete resource-copy word span share one owner. */
-typedef union KfMagicTable {
+/* Canonical records; word copying is confined to the resource loader. */
+typedef struct KfMagicTable {
     KfMagicRecord entries[KF_MAGIC_RECORD_COUNT];
-    u32 words[KF_MAGIC_TABLE_WORD_COUNT];
 } KfMagicTable;
 
 extern void magic_load_records(const KfMagicTable *table);

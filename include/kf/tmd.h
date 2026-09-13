@@ -55,12 +55,6 @@ constexpr KfTmdMode tmd_packet_kind(u32 word)
 #define tmd_packet_kind(word) (((word) >> KF_TMD_MODE_SHIFT) & KF_TMD_MODE_MASK)
 #endif
 
-/* Eight-byte vertex copied as aligned words and passed to the SDK as SVECTOR. */
-typedef union KfPackedSVector {
-    SVECTOR vector;
-    u32 words[2];
-} KfPackedSVector;
-
 /* On-disk counts are words; individual consumers may narrow them. */
 typedef struct KfTmdHeader {
     u32 id;
@@ -78,6 +72,11 @@ typedef struct KfTmdObject {
     u32 primitive_count;
     s32 scale;
 } KfTmdObject;
+
+/* Unlinked object offsets are bytes from the end of the asset header.
+ * The asset must contain the object's aligned SVECTOR array. */
+#define TMD_OBJECT_VERTICES(asset, object) \
+    ((SVECTOR *)((u8 *)(asset) + KF_TMD_HEADER_BYTES + (object)->vertex_offset))
 
 /* Object records follow a KfTmdHeader; packet bodies follow four header bytes.
  * Pass a KfTmdHeader* to TMD_OBJECTS and a byte pointer to TMD_PACKET_BODY. */
@@ -281,6 +280,6 @@ extern void tmd_register(KfTmdSlot slot, KfTmdHeader *tmd);
 extern void tmd_release_last_allocation(KF_ENUM_PARAM(KfTmdSlot, s32) slot);
 extern void tmd_select(KfTmdSlot slot);
 extern void tmd_select_object_vertices(u16 object_index);
-extern void tmd_set_current_vertices(KfPackedSVector *vertices);
+extern void tmd_set_current_vertices(SVECTOR *vertices);
 
 #endif

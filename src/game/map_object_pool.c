@@ -171,7 +171,7 @@ void map_object_pool_clear(void)
     u16 index = KF_MAP_OBJECT_CAPACITY - 1;
 
     do {
-        u32 *link_words = object->link.words;
+        u32 *link_words = (u32 *)&object->link;
 
         object->object_id = KF_OBJECT_NONE;
         object->action = KF_MAP_OBJECT_OP_NONE;
@@ -188,8 +188,8 @@ void map_object_pool_clear(void)
 ADDRESS(0x80030fdc, 0x2c)
 void map_object_definitions_load(const KfMapObjectDefinitionTable *definitions)
 {
-    const u32 *source = definitions->words;
-    u32 *destination = map_object_state.definitions.words;
+    const u32 *source = (const u32 *)definitions;
+    u32 *destination = (u32 *)&map_object_state.definitions;
     s32 count = sizeof map_object_state.definitions / sizeof *source;
 
     do {
@@ -233,7 +233,7 @@ void map_object_pool_load(const KfMapObjectPlacement *placements)
                 - map_floor_height_grid.cells[placement->tile_z][placement->tile_x] * KF_MAP_HEIGHT_STEP;
             object->action = KF_MAP_OBJECT_OP_NONE;
             /* The link block moves as two aligned words. */
-            memcpy(object->link.words, placement->link.words, sizeof object->link);
+            memcpy((u32 *)&object->link, (const u32 *)&placement->link, sizeof object->link);
             definition = &map_object_state.definitions.entries[KF_ENUM_ENCODE(u8, object->object_id)];
             if (definition->collision_radius != 0) {
                 collision_adjust_cell_occupancy(object->cell_x, object->cell_z, 1);

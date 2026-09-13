@@ -71,14 +71,28 @@ class MetricRegexTest(unittest.TestCase):
 
 
 class GateTest(unittest.TestCase):
+    def test_representation_counts_are_visible_without_rewarding_union_views(self) -> None:
+        rows = [("GAME extern decls", 0), ("pointer casts", 42), ("byte-array views", 4)]
+        with TemporaryDirectory() as td:
+            with mock.patch.object(cleanliness, "BASELINE", Path(td) / "baseline.tsv"):
+                cleanliness.save_baseline(rows)
+                self.assertEqual(cleanliness.load_baseline(), {"GAME extern decls": 0})
+                exposed = [("GAME extern decls", 0), ("pointer casts", 50), ("byte-array views", 8)]
+                self.assertFalse(cleanliness.gate(exposed))
+                lines = cleanliness.report_lines(exposed)
+                self.assertTrue(all("[informational]" in line for line in lines[-2:]))
+                self.assertIn("50", lines[-2])
+                self.assertIn("8", lines[-1])
+                self.assertTrue(cleanliness.gate([("GAME extern decls", 1), *exposed[1:]]))
+
     def test_inventory_discoveries_are_informational_and_not_saved_as_floors(self) -> None:
-        rows = [("pointer casts", 42), ("raw DAT_ identities", 2704),
+        rows = [("GAME extern decls", 0), ("raw DAT_ identities", 2704),
                 ("unresolved data ownership", 100)]
         with TemporaryDirectory() as td:
             with mock.patch.object(cleanliness, "BASELINE", Path(td) / "baseline.tsv"):
                 cleanliness.save_baseline(rows)
-                self.assertEqual(cleanliness.load_baseline(), {"pointer casts": 42})
-                grown = [("pointer casts", 42), ("raw DAT_ identities", 3000),
+                self.assertEqual(cleanliness.load_baseline(), {"GAME extern decls": 0})
+                grown = [("GAME extern decls", 0), ("raw DAT_ identities", 3000),
                          ("unresolved data ownership", 200)]
                 self.assertFalse(cleanliness.gate(grown))
                 inventory_lines = cleanliness.report_lines(grown)[-2:]
@@ -107,9 +121,9 @@ class GateTest(unittest.TestCase):
         with TemporaryDirectory() as td:
             baseline = Path(td) / "cleanliness-baseline.tsv"
             with mock.patch.object(cleanliness, "BASELINE", baseline):
-                cleanliness.save_baseline([("pointer casts", 42)])
+                cleanliness.save_baseline([("GAME extern decls", 0)])
                 self.assertTrue(baseline.read_text().startswith("#"))
-                self.assertEqual(cleanliness.load_baseline(), {"pointer casts": 42})
+                self.assertEqual(cleanliness.load_baseline(), {"GAME extern decls": 0})
 
 
 class DataOwnershipTest(unittest.TestCase):

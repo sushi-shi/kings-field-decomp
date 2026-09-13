@@ -7,10 +7,10 @@ ADDRESS(0x8001a29c, 0x1b0)
 s32 map_floor_height_for_cell_position(
     u16 cell_index, s32 point_x, s32 point_z)
 {
-    s32 floor_height = -(map_floor_height_grid.bytes[cell_index] * KF_MAP_HEIGHT_STEP);
+    s32 floor_height = -(map_floor_height_grid.linear[cell_index] * KF_MAP_HEIGHT_STEP);
 
-    if (map_collision_grid.bytes[cell_index] == KF_MAP_CELL_STEP) {
-        switch (map_cell_orientation_grid.bytes[cell_index]) {
+    if (map_collision_grid.linear[cell_index] == KF_MAP_CELL_STEP) {
+        switch (map_cell_orientation_grid.linear[cell_index]) {
         case KF_MAP_ORIENT_UNROTATED:
             if (point_x % KF_MAP_TILE_SIZE > KF_MAP_TILE_CENTER) {
                 floor_height += KF_MAP_HALF_CELL_STEP_HEIGHT;

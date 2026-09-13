@@ -86,10 +86,8 @@ typedef struct KfMapSavedFloor {
     u8 records[KF_MAP_SAVED_RECORD_BYTES];
 } KfMapSavedFloor;
 
-/* Save I/O copies aligned words; scripts address typed bytes within slots. */
-typedef union KfMapSavedWorld {
-    u32 words[KF_MAP_SAVED_WORLD_WORDS];
-    u8 bytes[KF_MAP_SAVED_WORLD_BYTES];
+/* Five serialized floor records; save I/O addresses the complete owner. */
+typedef struct KfMapSavedWorld {
     KfMapSavedFloor floors[KF_MAP_SAVED_FLOOR_COUNT];
 } KfMapSavedWorld;
 
@@ -236,14 +234,12 @@ typedef struct KfMapObjectHingedContainer {
     KfObjectId item_ids[KF_MAP_CONTAINER_ITEM_COUNT];
 } KfMapObjectHingedContainer;
 
-/* Placements copy two words; saved floors preserve all eight bytes. */
+/* Object behavior selects the link payload; serialization preserves all eight bytes. */
 typedef union KfMapObjectLink {
     KfMapObjectLinkFields fields;
     u16 gold_amount;
     KfMapObjectHingedContainer hinged_container;
     KfObjectId item_ids[KF_MAP_CONTAINER_ITEM_COUNT];
-    u32 words[2];
-    u8 bytes[8];
 } KfMapObjectLink;
 
 /* Encoded model byte is decoded against the consuming image's model table. */
@@ -267,9 +263,8 @@ typedef struct KfMapObjectDefinition {
     u8 unknown_06[2];
 } KfMapObjectDefinition;
 
-typedef union KfMapObjectDefinitionTable {
+typedef struct KfMapObjectDefinitionTable {
     KfMapObjectDefinition entries[KF_MAP_OBJECT_DEFINITION_COUNT];
-    u32 words[KF_MAP_OBJECT_DEFINITION_WORD_COUNT];
 } KfMapObjectDefinitionTable;
 
 typedef struct KfMapObject {
@@ -472,7 +467,7 @@ extern KfMapRuntimeState map_runtime_state;
 #define map_variant_asset_buffer (map_runtime_state.variant_asset_buffer)
 #define map_dialogue_advance_gate (map_runtime_state.dialogue_advance_gate)
 #define map_ambient_script_countdown (map_runtime_state.ambient_script_countdown)
-#define map_world_state_base (map_runtime_state.world_state.words[0])
+#define map_world_state_base (map_runtime_state.world_state)
 #define map_floor1_script (map_runtime_state.world_state.floors[0].script.floor1)
 #define map_floor3_script (map_runtime_state.world_state.floors[2].script.floor3)
 #define map_floor5_script (map_runtime_state.world_state.floors[4].script.floor5)
@@ -523,7 +518,8 @@ extern s32 map_object_probe_forward(const KfMapObject *object, u16 yaw);
 extern void map_object_spawn_actor_debris(u16 source, const VECTOR *position, s32 y_offset);
 extern void map_object_spawn_effect(KfMapObjectDropSource drop_source, KfObjectId object_id, const VECTOR *position, s32 y_offset);
 extern void map_object_start_action_if_idle(KfMapObject *object, KfMapObjectOperation action);
-extern const u32 *map_resource_copy_words( u32 *destination, const u32 *source, u32 word_count);
+/* Copy into a complete object with word-aligned storage; count is in words. */
+extern const u32 *map_resource_copy_words(void *destination, const u32 *source, u32 word_count);
 extern u8 *map_resource_load_file(const char *filename);
 extern void map_resource_path_set_floor(KfFloorId floor);
 extern void map_resources_load(KfFloorId floor, KF_ENUM_PARAM(KfMapVariant, s32) map_variant);
