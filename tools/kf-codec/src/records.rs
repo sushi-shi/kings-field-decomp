@@ -93,6 +93,23 @@ pub fn load_actor_definitions(source: &[u8], destination: &mut [u8]) -> Result<(
     copy_prefix(source, destination, ACTOR_DEFINITIONS_SIZE)
 }
 
+/// Signed three-component vector, corresponding to the game's KfVec3s.
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
+pub struct Vec3s {
+    pub x: i16,
+    pub y: i16,
+    pub z: i16,
+}
+
+/// Decoded SDK SVECTOR fields; the stored pad halfword is preserved.
+#[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
+pub struct SVector {
+    pub vx: i16,
+    pub vy: i16,
+    pub vz: i16,
+    pub pad: i16,
+}
+
 #[derive(Clone, Copy, Debug, Eq, PartialEq)]
 pub struct WeaponRecord {
     pub unknown_00: u8,
@@ -103,10 +120,9 @@ pub struct WeaponRecord {
     pub projection_distance: u16,
     pub attack_z_offset: u16,
     pub unknown_14: [u8; 8],
-    pub render_translation: [i16; 3],
+    pub render_translation: Vec3s,
     pub unknown_22: u16,
-    /// SDK SVECTOR storage: X, Y, Z, then the preserved pad halfword.
-    pub render_rotation: [i16; 4],
+    pub render_rotation: SVector,
 }
 
 impl WeaponRecord {
@@ -121,9 +137,18 @@ impl WeaponRecord {
             projection_distance: read_u16(bytes, 0x10),
             attack_z_offset: read_u16(bytes, 0x12),
             unknown_14: copy_array(bytes, 0x14),
-            render_translation: read_u16_array::<3>(bytes, 0x1c).map(|value| value as i16),
+            render_translation: Vec3s {
+                x: read_u16(bytes, 0x1c) as i16,
+                y: read_u16(bytes, 0x1e) as i16,
+                z: read_u16(bytes, 0x20) as i16,
+            },
             unknown_22: read_u16(bytes, 0x22),
-            render_rotation: read_u16_array::<4>(bytes, 0x24).map(|value| value as i16),
+            render_rotation: SVector {
+                vx: read_u16(bytes, 0x24) as i16,
+                vy: read_u16(bytes, 0x26) as i16,
+                vz: read_u16(bytes, 0x28) as i16,
+                pad: read_u16(bytes, 0x2a) as i16,
+            },
         })
     }
 
@@ -139,13 +164,14 @@ impl WeaponRecord {
         write_u16(bytes, 0x10, self.projection_distance);
         write_u16(bytes, 0x12, self.attack_z_offset);
         bytes[0x14..0x1c].copy_from_slice(&self.unknown_14);
-        write_u16_array(
-            bytes,
-            0x1c,
-            &self.render_translation.map(|value| value as u16),
-        );
+        write_u16(bytes, 0x1c, self.render_translation.x as u16);
+        write_u16(bytes, 0x1e, self.render_translation.y as u16);
+        write_u16(bytes, 0x20, self.render_translation.z as u16);
         write_u16(bytes, 0x22, self.unknown_22);
-        write_u16_array(bytes, 0x24, &self.render_rotation.map(|value| value as u16));
+        write_u16(bytes, 0x24, self.render_rotation.vx as u16);
+        write_u16(bytes, 0x26, self.render_rotation.vy as u16);
+        write_u16(bytes, 0x28, self.render_rotation.vz as u16);
+        write_u16(bytes, 0x2a, self.render_rotation.pad as u16);
         true
     }
 }

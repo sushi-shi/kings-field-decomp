@@ -96,8 +96,8 @@ not expose these models as SDK FFI structures.
 | Rust field | Retail witness in GAME.EXE | Kept representation |
 | --- | --- | --- |
 | Weapon `unknown_10` | `render_weapon` loads unsigned +0x10 at 8001f7dc and calls `SetGeomScreen` | `projection_distance: u16` |
-| Weapon portion of `unknown_14` | Signed loads at 8001f7f4/8001f800/8001f80c read +0x1c/+0x1e/+0x20 | `render_translation: [i16; 3]`; opaque prefix stays eight bytes |
-| Weapon `mirrored_angle` and surrounding opaque bytes | 8001f814/8001f818 supply record +0x24 to SDK `RotMatrix`; loader negates the +0x26 Y lane | `render_rotation: [i16; 4]`, including preserved SDK pad; +0x22 stays unresolved |
+| Weapon portion of `unknown_14` | Signed loads at 8001f7f4/8001f800/8001f80c read +0x1c/+0x1e/+0x20 | `render_translation: Vec3s` (`x`, `y`, `z`); opaque prefix stays eight bytes |
+| Weapon `mirrored_angle` and surrounding opaque bytes | 8001f814/8001f818 supply record +0x24 to SDK `RotMatrix`; loader negates the +0x26 Y lane | `render_rotation: SVector` (`vx`, `vy`, `vz`, `pad`), including preserved SDK pad; +0x22 stays unresolved |
 | Actor-placement `unknown_05` | Loader copies source +5 to actor +7; awareness at 8002e760/8002e810 compares it shifted by seven with `rand` | `spawn_chance: u8` |
 | Actor-placement `unknown_06` | Loader copies source +6 to actor +9; death at 8002fdd4 supplies it to `map_object_spawn_effect`, except sentinel 99 | `death_drop_object_id: u8` |
 | Event-definition `unknown_0d` | 80033994/8003399c copy source +0x0d to runtime +0x0e; updater dispatches behaviors 1 and 2 | `behavior: u8` |

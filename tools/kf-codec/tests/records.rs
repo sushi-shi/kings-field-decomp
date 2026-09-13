@@ -121,11 +121,26 @@ fn weapon_render_fields_follow_retail_offsets_and_preserve_sdk_pad() {
     let mut record = WeaponRecord::decode(&bytes).unwrap();
     assert_eq!(record.projection_distance, 0x8123);
     assert_eq!(record.unknown_14, [0x5a; 8]);
-    assert_eq!(record.render_translation, [-1, i16::MIN, i16::MAX]);
+    assert_eq!(
+        record.render_translation,
+        Vec3s {
+            x: -1,
+            y: i16::MIN,
+            z: i16::MAX
+        }
+    );
     assert_eq!(record.unknown_22, 0x1234);
-    assert_eq!(record.render_rotation, [-32767, -254, 3, -21555]);
-    record.render_translation[1] = -2;
-    record.render_rotation[1] = 254;
+    assert_eq!(
+        record.render_rotation,
+        SVector {
+            vx: -32767,
+            vy: -254,
+            vz: 3,
+            pad: -21555
+        }
+    );
+    record.render_translation.y = -2;
+    record.render_rotation.vy = 254;
     let mut output = [0xcc; WEAPON_RECORD_SIZE + 2];
     assert!(record.encode(&mut output));
     bytes[0x1e..0x20].copy_from_slice(&[0xfe, 0xff]);
