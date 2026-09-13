@@ -98,13 +98,15 @@ pub struct WeaponRecord {
     pub unknown_00: u8,
     pub charge_rate: u8,
     pub attack_components: [u16; 5],
-    pub hp_interval: u16,
-    pub mp_interval: u16,
-    pub unknown_10: [u8; 2],
+    pub hp_regen_interval: u16,
+    pub mp_regen_interval: u16,
+    pub projection_distance: u16,
     pub attack_z_offset: u16,
-    pub unknown_14: [u8; 18],
-    pub mirrored_angle: u16,
-    pub unknown_28: [u8; 4],
+    pub unknown_14: [u8; 8],
+    pub render_translation: [i16; 3],
+    pub unknown_22: u16,
+    /// SDK SVECTOR storage: X, Y, Z, then the preserved pad halfword.
+    pub render_rotation: [i16; 4],
 }
 
 impl WeaponRecord {
@@ -114,13 +116,14 @@ impl WeaponRecord {
             unknown_00: bytes[0],
             charge_rate: bytes[1],
             attack_components: read_u16_array::<5>(bytes, 2),
-            hp_interval: read_u16(bytes, 0x0c),
-            mp_interval: read_u16(bytes, 0x0e),
-            unknown_10: copy_array(bytes, 0x10),
+            hp_regen_interval: read_u16(bytes, 0x0c),
+            mp_regen_interval: read_u16(bytes, 0x0e),
+            projection_distance: read_u16(bytes, 0x10),
             attack_z_offset: read_u16(bytes, 0x12),
             unknown_14: copy_array(bytes, 0x14),
-            mirrored_angle: read_u16(bytes, 0x26),
-            unknown_28: copy_array(bytes, 0x28),
+            render_translation: read_u16_array::<3>(bytes, 0x1c).map(|value| value as i16),
+            unknown_22: read_u16(bytes, 0x22),
+            render_rotation: read_u16_array::<4>(bytes, 0x24).map(|value| value as i16),
         })
     }
 
@@ -131,13 +134,18 @@ impl WeaponRecord {
         bytes[0] = self.unknown_00;
         bytes[1] = self.charge_rate;
         write_u16_array(bytes, 2, &self.attack_components);
-        write_u16(bytes, 0x0c, self.hp_interval);
-        write_u16(bytes, 0x0e, self.mp_interval);
-        bytes[0x10..0x12].copy_from_slice(&self.unknown_10);
+        write_u16(bytes, 0x0c, self.hp_regen_interval);
+        write_u16(bytes, 0x0e, self.mp_regen_interval);
+        write_u16(bytes, 0x10, self.projection_distance);
         write_u16(bytes, 0x12, self.attack_z_offset);
-        bytes[0x14..0x26].copy_from_slice(&self.unknown_14);
-        write_u16(bytes, 0x26, self.mirrored_angle);
-        bytes[0x28..0x2c].copy_from_slice(&self.unknown_28);
+        bytes[0x14..0x1c].copy_from_slice(&self.unknown_14);
+        write_u16_array(
+            bytes,
+            0x1c,
+            &self.render_translation.map(|value| value as u16),
+        );
+        write_u16(bytes, 0x22, self.unknown_22);
+        write_u16_array(bytes, 0x24, &self.render_rotation.map(|value| value as u16));
         true
     }
 }

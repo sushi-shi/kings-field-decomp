@@ -916,3 +916,7 @@ promotes a probe to a proven historical toolchain.
 - [Native COMMON symbol names](native-common-symbol-names.md): a controlled global
   rename changes native COMMON placement and 221 GAME executable bytes while
   preserving compiled sections, ordered referents, and strict objdiff results.
+
+- [Unknown-field review](unknown-field-review.md): all 79 header declarations
+  accounted for, explicit raw-reference coverage limits, resource negative
+  controls, and Rust codec fields reconciled with proven C meanings.

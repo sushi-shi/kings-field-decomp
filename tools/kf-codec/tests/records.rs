@@ -109,3 +109,27 @@ fn typed_records_round_trip_every_byte() {
         .encode(&mut encoded));
     assert_eq!(actor, encoded);
 }
+
+#[test]
+fn weapon_render_fields_follow_retail_offsets_and_preserve_sdk_pad() {
+    let mut bytes = [0x5a; WEAPON_RECORD_SIZE];
+    bytes[0x10..0x12].copy_from_slice(&0x8123u16.to_le_bytes());
+    bytes[0x1c..0x2c].copy_from_slice(&[
+        0xff, 0xff, 0x00, 0x80, 0xff, 0x7f, 0x34, 0x12, 0x01, 0x80, 0x02, 0xff, 0x03, 0x00, 0xcd,
+        0xab,
+    ]);
+    let mut record = WeaponRecord::decode(&bytes).unwrap();
+    assert_eq!(record.projection_distance, 0x8123);
+    assert_eq!(record.unknown_14, [0x5a; 8]);
+    assert_eq!(record.render_translation, [-1, i16::MIN, i16::MAX]);
+    assert_eq!(record.unknown_22, 0x1234);
+    assert_eq!(record.render_rotation, [-32767, -254, 3, -21555]);
+    record.render_translation[1] = -2;
+    record.render_rotation[1] = 254;
+    let mut output = [0xcc; WEAPON_RECORD_SIZE + 2];
+    assert!(record.encode(&mut output));
+    bytes[0x1e..0x20].copy_from_slice(&[0xfe, 0xff]);
+    bytes[0x26..0x28].copy_from_slice(&[0xfe, 0x00]);
+    assert_eq!(&output[..WEAPON_RECORD_SIZE], &bytes);
+    assert_eq!(&output[WEAPON_RECORD_SIZE..], &[0xcc; 2]);
+}

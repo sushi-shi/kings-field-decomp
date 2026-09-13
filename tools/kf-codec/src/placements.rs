@@ -175,8 +175,8 @@ pub struct ActorPlacement {
     pub heading_quadrant: u8,
     pub tile_z: u8,
     pub tile_x: u8,
-    pub unknown_05: u8,
-    pub unknown_06: u8,
+    pub spawn_chance: u8,
+    pub death_drop_object_id: u8,
     pub unknown_07: [u8; 3],
     pub local_z: i16,
     pub local_x: i16,
@@ -192,8 +192,8 @@ impl ActorPlacement {
             heading_quadrant: bytes[2],
             tile_z: bytes[3],
             tile_x: bytes[4],
-            unknown_05: bytes[5],
-            unknown_06: bytes[6],
+            spawn_chance: bytes[5],
+            death_drop_object_id: bytes[6],
             unknown_07: copy_array(bytes, 7),
             local_z: read_i16(bytes, 10),
             local_x: read_i16(bytes, 12),
@@ -210,8 +210,8 @@ impl ActorPlacement {
         bytes[2] = self.heading_quadrant;
         bytes[3] = self.tile_z;
         bytes[4] = self.tile_x;
-        bytes[5] = self.unknown_05;
-        bytes[6] = self.unknown_06;
+        bytes[5] = self.spawn_chance;
+        bytes[6] = self.death_drop_object_id;
         bytes[7..10].copy_from_slice(&self.unknown_07);
         write_i16(bytes, 10, self.local_z);
         write_i16(bytes, 12, self.local_x);
@@ -253,8 +253,8 @@ pub fn load_actor_placements<C: ActorContext>(
         output[3] = placement.heading_quadrant;
         output[4] = placement.tile_z;
         output[5] = placement.tile_x;
-        output[7] = placement.unknown_05;
-        output[9] = placement.unknown_06;
+        output[7] = placement.spawn_chance;
+        output[9] = placement.death_drop_object_id;
         write_i16(output, 14, placement.local_z);
         write_i16(output, 16, placement.local_x);
         output[6] = 0;
@@ -288,7 +288,7 @@ pub struct MapEventDefinition {
     pub image_limit: u8,
     pub unknown_0b: u8,
     pub unknown_0c: u8,
-    pub unknown_0d: u8,
+    pub behavior: u8,
     pub position_z_offset: i16,
     pub position_x_offset: i16,
     pub initial_rotation: u16,
@@ -309,7 +309,7 @@ impl MapEventDefinition {
             image_limit: bytes[10],
             unknown_0b: bytes[11],
             unknown_0c: bytes[12],
-            unknown_0d: bytes[13],
+            behavior: bytes[13],
             position_z_offset: read_i16(bytes, 14),
             position_x_offset: read_i16(bytes, 16),
             initial_rotation: read_u16(bytes, 18),
@@ -331,7 +331,7 @@ impl MapEventDefinition {
         bytes[10] = self.image_limit;
         bytes[11] = self.unknown_0b;
         bytes[12] = self.unknown_0c;
-        bytes[13] = self.unknown_0d;
+        bytes[13] = self.behavior;
         write_i16(bytes, 14, self.position_z_offset);
         write_i16(bytes, 16, self.position_x_offset);
         write_u16(bytes, 18, self.initial_rotation);
@@ -370,7 +370,7 @@ pub fn load_map_event_definitions<C: MapEventContext>(
         output[8] = definition.image_limit;
         output[12] = definition.unknown_0b;
         output[13] = definition.unknown_0c;
-        output[14] = definition.unknown_0d;
+        output[14] = definition.behavior;
         let x = world_coordinate(definition.cell_x, definition.position_x_offset);
         let z = world_coordinate(definition.cell_z, definition.position_z_offset);
         write_i32(output, 20, x);
