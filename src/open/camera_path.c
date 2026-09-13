@@ -26,10 +26,7 @@ void opening_camera_path_compute_segment(void)
     dx = point->position.vx - opening_camera_path_state.position.vx;
     dy = point->position.vy - opening_camera_path_state.position.vy;
     dz = point->position.vz - opening_camera_path_state.position.vz;
-    distance = SquareRoot0(
-        (dx >> KF_LENGTH_SQUARE_DOWNSHIFT) * (dx >> KF_LENGTH_SQUARE_DOWNSHIFT) +
-        (dy >> KF_LENGTH_SQUARE_DOWNSHIFT) * (dy >> KF_LENGTH_SQUARE_DOWNSHIFT) +
-        (dz >> KF_LENGTH_SQUARE_DOWNSHIFT) * (dz >> KF_LENGTH_SQUARE_DOWNSHIFT)) << KF_LENGTH_SQUARE_DOWNSHIFT;
+    distance = fixed_vector3_length(dx, dy, dz);
     setVector(&opening_camera_path_state.position_delta,
         (dx << KF_FIXED4_BITS) * point->speed / distance,
         (dy << KF_FIXED4_BITS) * point->speed / distance,
@@ -54,14 +51,7 @@ void opening_camera_path_begin(const KfCameraPathPoint *points)
     opening_camera_path_state.position = points[0].position;
     opening_camera_path_state.rotation = points[0].rotation;
     opening_camera_path_state.point_index = 0;
-    setVector(&opening_camera_path_state.position_fixed,
-        opening_camera_path_state.position.vx << KF_FIXED4_BITS,
-        opening_camera_path_state.position.vy << KF_FIXED4_BITS,
-        opening_camera_path_state.position.vz << KF_FIXED4_BITS);
-    setVector(&opening_camera_path_state.rotation_fixed,
-        opening_camera_path_state.rotation.vx << KF_FIXED4_BITS,
-        opening_camera_path_state.rotation.vy << KF_FIXED4_BITS,
-        opening_camera_path_state.rotation.vz << KF_FIXED4_BITS);
+    camera_path_publish_fixed(&opening_camera_path_state);
     opening_camera_path_compute_segment();
 }
 
@@ -78,14 +68,5 @@ void opening_camera_path_step(s32 y_offset)
             return;
         }
     }
-    addVector(&opening_camera_path_state.position_fixed, &opening_camera_path_state.position_delta);
-    addVector(&opening_camera_path_state.rotation_fixed, &opening_camera_path_state.rotation_delta);
-    setVector(&opening_camera_path_state.position,
-        opening_camera_path_state.position_fixed.vx >> KF_FIXED4_BITS,
-        (opening_camera_path_state.position_fixed.vy >> KF_FIXED4_BITS) + y_offset,
-        opening_camera_path_state.position_fixed.vz >> KF_FIXED4_BITS);
-    setVector(&opening_camera_path_state.rotation,
-        (opening_camera_path_state.rotation_fixed.vx >> KF_FIXED4_BITS) & KF_ANGLE_WRAP_MASK,
-        (opening_camera_path_state.rotation_fixed.vy >> KF_FIXED4_BITS) & KF_ANGLE_WRAP_MASK,
-        (opening_camera_path_state.rotation_fixed.vz >> KF_FIXED4_BITS) & KF_ANGLE_WRAP_MASK);
+    camera_path_advance_pose(&opening_camera_path_state, y_offset);
 }

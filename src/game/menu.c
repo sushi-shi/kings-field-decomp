@@ -1,5 +1,6 @@
 #include <kf/null.h>
 #include <kf/address.h>
+#include <kf/input.h>
 #include <kf/game_menu.h>
 #include <kf/game.h>
 
@@ -114,26 +115,26 @@ s32 menu_root(void)
         confirm = KF_MENU_CONFIRM_IDLE;
         prev = input;
         input = PadRead(1);
-        if ((input & PADLup) != 0 && (prev & PADLup) == 0) {
+        if (PAD_PRESSED(input, prev, PADLup)) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
             if (cursor != 0)
                 cursor--;
             else
                 cursor = KF_MENU_ROOT_RETURN_ROW;
-        } else if ((input & PADLdown) != 0 && (prev & PADLdown) == 0) {
+        } else if (PAD_PRESSED(input, prev, PADLdown)) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
             if (cursor != KF_MENU_ROOT_RETURN_ROW)
                 cursor++;
             else
                 cursor = 0;
-        } else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {
+        } else if (PAD_PRESSED(input, prev, PADRright)) {
             menu_play_input_sound(MENU_SOUND_CONFIRM);
             confirm = KF_MENU_CONFIRM_REQUESTED;
             if (cursor < KF_MENU_ROOT_RETURN_ROW)
                 selection = KF_ENUM_DECODE(KfMenuRootChoice, cursor);
             else
                 result = KF_ENUM_ENCODE(s32, KF_MENU_RESULT_CANCELLED);
-        } else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {
+        } else if (PAD_PRESSED(input, prev, PADRdown)) {
             menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
             result = KF_ENUM_ENCODE(s32, KF_MENU_RESULT_CANCELLED);
         }
@@ -250,42 +251,17 @@ s32 menu_use_item_panel(void)
                 menu_play_input_sound(MENU_SOUND_CURSOR);
                 selection = KF_ENUM_ENCODE(s32, KF_MENU_RESULT_CANCELLED);
             }
-        } else if ((input & PADLup) != 0 && (prev & PADLup) == 0) {
+        } else if (PAD_PRESSED(input, prev, PADLup)) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
-            if (ctx.selected_index != 0) {
-                ctx.selected_index--;
-                if (ctx.cursor_row == 0)
-                    ctx.scroll_offset--;
-                else
-                    ctx.cursor_row--;
-            } else {
-                ctx.selected_index = ctx.entry_count - 1;
-                if (ctx.entry_count < ctx.visible_rows) {
-                    ctx.scroll_offset = 0;
-                    ctx.cursor_row = ctx.entry_count - 1;
-                } else {
-                    ctx.scroll_offset = ctx.entry_count - ctx.visible_rows;
-                    ctx.cursor_row = ctx.visible_rows - 1;
-                }
-            }
+            menu_list_previous(&ctx);
             if (menu_load_item_model(codes[ctx.selected_index]) != KF_RESOURCE_LOADED)
                 return KF_ENUM_ENCODE(s32, KF_MENU_RESULT_CANCELLED);
-        } else if ((input & PADLdown) != 0 && (prev & PADLdown) == 0) {
+        } else if (PAD_PRESSED(input, prev, PADLdown)) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
-            if (ctx.selected_index < ctx.entry_count - 1) {
-                ctx.selected_index++;
-                if (ctx.cursor_row == ctx.visible_rows - 1)
-                    ctx.scroll_offset++;
-                else
-                    ctx.cursor_row++;
-            } else {
-                ctx.selected_index = 0;
-                ctx.scroll_offset = 0;
-                ctx.cursor_row = 0;
-            }
+            menu_list_next(&ctx);
             if (menu_load_item_model(codes[ctx.selected_index]) != KF_RESOURCE_LOADED)
                 return KF_ENUM_ENCODE(s32, KF_MENU_RESULT_CANCELLED);
-        } else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {
+        } else if (PAD_PRESSED(input, prev, PADRright)) {
             menu_play_input_sound(MENU_SOUND_CONFIRM);
             if (codes[ctx.selected_index] == KF_ITEM_WATCHMAN_MAP || codes[ctx.selected_index] == KF_ITEM_SORCERER_MAP) {
                 menu_release_item_model();
@@ -296,7 +272,7 @@ s32 menu_use_item_panel(void)
             } else {
                 confirm = KF_MENU_CONFIRM_REQUESTED;
             }
-        } else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {
+        } else if (PAD_PRESSED(input, prev, PADRdown)) {
             menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
             selection = KF_ENUM_ENCODE(s32, KF_MENU_RESULT_CANCELLED);
         }

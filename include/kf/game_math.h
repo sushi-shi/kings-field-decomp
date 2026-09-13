@@ -56,6 +56,39 @@ typedef union KfRotation {
     struct KfEulerAngles angles;
 } KfRotation;
 
+static inline s16 angle_error_magnitude(s16 difference)
+{
+    s16 folded;
+    difference &= KF_ANGLE_WRAP_MASK;
+    folded = difference;
+    if (difference > KF_ANGLE_HALF_TURN) {
+        folded = KF_ANGLE_FULL_TURN - difference;
+    }
+    return folded;
+}
+
+static inline u32 radial_damage_attenuated_scale(
+    s32 distance, u32 radius, u16 falloff, u16 scale)
+{
+    u16 ratio = (distance << KF_FIXED12_BITS) / radius;
+    u16 weight = KF_FIXED12_ONE
+        - ((u32)(ratio * (KF_FIXED12_ONE - falloff)) >> KF_FIXED12_BITS);
+    return (u32)(scale * weight) >> KF_FIXED12_BITS;
+}
+
+static inline s32 fixed_vector3_length(s32 x, s32 y, s32 z)
+{
+    x >>= KF_LENGTH_SQUARE_DOWNSHIFT;
+    y >>= KF_LENGTH_SQUARE_DOWNSHIFT;
+    z >>= KF_LENGTH_SQUARE_DOWNSHIFT;
+    return SquareRoot0(x * x + y * y + z * z) << KF_LENGTH_SQUARE_DOWNSHIFT;
+}
+
+/* Side-effect-free output and pose lvalues; caller owns the probe height. */
+#define VECTOR_YAW_PROBE_XZ(x, z, position, rotation, reach) ( \
+    (x) = (position).vx - ((rsin((rotation).vy) * (reach)) >> KF_FIXED12_BITS), \
+    (z) = (position).vz + ((rcos((rotation).vy) * (reach)) >> KF_FIXED12_BITS))
+
 extern s16 angle_approach(s16 current, s16 target, s32 step);
 extern KfBool angle_mod_delta_le_half_turn(int lhs, int rhs);
 extern s16 angle_shortest_delta(s32 first, s32 second);

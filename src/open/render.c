@@ -12,11 +12,6 @@
  * lineage; OPEN-specific state layouts and call paths remain explicit.
  */
 
-/* Object-table records follow the 12-byte TMD header of the selected asset. */
-#define TMD_OBJECTS(asset) ((KfTmdObject *)((asset) + 1))
-/* Packet bodies follow the 4-byte packet header (olen, ilen, flag, mode). */
-#define TMD_PACKET_BODY(packet) ((packet) + KF_TMD_PACKET_HEADER_BYTES)
-
 ADDRESS(0x80016d38, 0x98)
 void display_begin_frame(void)
 {

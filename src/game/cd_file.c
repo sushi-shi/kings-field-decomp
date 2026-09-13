@@ -46,9 +46,7 @@ KfResourceLoadResult cd_file_load_allocated(u8 **destination, const char *relati
     }
     *destination = (u8 *)memory_allocate(cd_search_file.size);
     loaded = 0;
-    cd_read_location.minute = cd_search_file.pos.minute;
-    cd_read_location.second = cd_search_file.pos.second;
-    cd_read_location.sector = cd_search_file.pos.sector;
+    CD_LOCATION_COPY(cd_read_location, cd_search_file.pos);
     for (attempt = 0; attempt < CD_PATH_READ_ATTEMPTS; attempt++) {
         s32 result;
 
@@ -76,9 +74,7 @@ KfResourceLoadResult cd_file_load_table_entry(void **destination, s32 index)
 
     *destination = memory_allocate(cd_file_table[index].size);
     loaded = KF_FALSE;
-    cd_read_location.minute = cd_file_table[index].minute;
-    cd_read_location.second = cd_file_table[index].second;
-    cd_read_location.sector = cd_file_table[index].sector;
+    CD_LOCATION_COPY(cd_read_location, cd_file_table[index]);
     for (attempt = 0; attempt < CD_TABLE_READ_ATTEMPTS; attempt++) {
         s32 result;
 
@@ -116,9 +112,7 @@ KfResourceLoadResult cd_file_load_into(void *destination, const char *relative_p
         cd_search_file.size = loaded << KF_CD_SECTOR_SHIFT;
     }
     loaded = 0;
-    cd_read_location.minute = cd_search_file.pos.minute;
-    cd_read_location.second = cd_search_file.pos.second;
-    cd_read_location.sector = cd_search_file.pos.sector;
+    CD_LOCATION_COPY(cd_read_location, cd_search_file.pos);
     for (attempt = 0; attempt < CD_PATH_READ_ATTEMPTS; attempt++) {
         s32 result;
 

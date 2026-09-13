@@ -284,6 +284,23 @@ extern VECTOR player_position_snapshot;
 extern SVECTOR player_rotation_snapshot;
 extern KfPlayerState player_state;
 
+/* Side-effect-free VECTOR lvalue; preserves X/Z/floor-Y publication order. */
+#define PLAYER_FLOOR_POSITION(position) ( \
+    (position).vx = player_state.camera_position.vx, \
+    (position).vz = player_state.camera_position.vz, \
+    (position).vy = player_state.floor_height)
+
+/* Inventory table index, evaluated once for each slot until a match.
+ * Supply a side-effect-free expression; magic uses a separate ID domain. */
+#define PLAYER_ITEM_IS_EQUIPPED(item_index) \
+    ((item_index) == KF_ENUM_ENCODE(u8, player_state.equipped_weapon_id) || \
+     (item_index) == KF_ENUM_ENCODE(u8, player_state.equipped_head_armor_id) || \
+     (item_index) == KF_ENUM_ENCODE(u8, player_state.equipped_body_armor_id) || \
+     (item_index) == KF_ENUM_ENCODE(u8, player_state.equipped_shield_id) || \
+     (item_index) == KF_ENUM_ENCODE(u8, player_state.equipped_arm_armor_id) || \
+     (item_index) == KF_ENUM_ENCODE(u8, player_state.equipped_leg_armor_id) || \
+     (item_index) == KF_ENUM_ENCODE(u8, player_state.equipped_accessory_id))
+
 extern void player_add_experience(s16 amount);
 extern void player_adjust_hp(s32 delta);
 extern void player_adjust_mp(s32 delta);

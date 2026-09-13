@@ -591,18 +591,13 @@ void player_apply_radial_damage(
 {
     s32 distance;
     u16 attenuation;
-    u32 value;
 
     distance = player_distance_to_point(origin->vx, origin->vy, origin->vz, radius, radius);
     if (distance == -1) {
         return;
     }
     if (falloff_q12 != KF_FIXED12_ONE) {
-        attenuation = (distance << KF_FIXED12_BITS) / radius;
-        value = attenuation * (KF_FIXED12_ONE - falloff_q12);
-        attenuation = KF_FIXED12_ONE - (value >> KF_FIXED12_BITS);
-        value = scale_q12 * attenuation;
-        attenuation = value >> KF_FIXED12_BITS;
+        attenuation = radial_damage_attenuated_scale(distance, radius, falloff_q12, scale_q12);
     } else {
         attenuation = scale_q12;
     }

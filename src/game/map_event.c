@@ -143,11 +143,7 @@ KfMapEvent *map_event_pool_find_target_in_cone(
         }
         angle = vector_xz_to_angle(
             event->reference_position.vx - origin->vx, origin->vz - event->reference_position.vz) - facing;
-        angle &= KF_ANGLE_WRAP_MASK;
-        folded = angle;
-        if (angle >= KF_ANGLE_HALF_TURN + 1) {
-            folded = KF_ANGLE_FULL_TURN - angle;
-        }
+        folded = angle_error_magnitude(angle);
         if (angle_tolerance < folded) {
             continue;
         }

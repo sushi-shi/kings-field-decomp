@@ -150,10 +150,10 @@ void effect_projectile_update_2d(s32 orbit_radius, KF_ENUM_PARAM(KfEffectPhase, 
                     EFFECT_HAZARD_SOUND_ATTENUATION_DISTANCE);
             }
         } else {
-            s32 dx = (record->position.vx - player_state.camera_position.vx) >> KF_LENGTH_SQUARE_DOWNSHIFT;
-            s32 dy = (record->position.vy - player_state.camera_position.vy) >> KF_LENGTH_SQUARE_DOWNSHIFT;
-            s32 dz = (record->position.vz - player_state.camera_position.vz) >> KF_LENGTH_SQUARE_DOWNSHIFT;
-            if ((SquareRoot0(dx * dx + dy * dy + dz * dz) << KF_LENGTH_SQUARE_DOWNSHIFT) >= EFFECT_ORBIT_SOUND_MAX_DISTANCE) {
+            s32 dx = record->position.vx - player_state.camera_position.vx;
+            s32 dy = record->position.vy - player_state.camera_position.vy;
+            s32 dz = record->position.vz - player_state.camera_position.vz;
+            if ((fixed_vector3_length(dx, dy, dz)) >= EFFECT_ORBIT_SOUND_MAX_DISTANCE) {
                 record->sound_played = KF_AUDIO_NOT_PLAYED;
             }
         }

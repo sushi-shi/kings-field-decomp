@@ -85,8 +85,8 @@ Manually maintained cleanup checklist:
   **505 GCC** unique diagnostic lines; includes SDK/compatibility warnings.
 - [ ] Review [warning triage](docs/patterns/compiler-warning-triage.md):
   **3 inherited uninitialized reads**, **2 open data preconditions**.
-- [ ] Search for inline functions.
-- [ ] Search for macros for common code.
+- [x] Search for inline functions and apply the review; see the [39 retained helpers](docs/patterns/common-code-review.md).
+- [x] Search for macros for common code and apply the review; [522 function entries read](docs/common-code-functions.tsv), [90 candidate verdicts](docs/common-code-candidates.tsv).
 
 Preserve banked matches. Cast/union/goto counts cover the tree; other counts
 cover audited cases. See the

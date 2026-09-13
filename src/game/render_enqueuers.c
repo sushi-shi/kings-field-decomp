@@ -14,7 +14,7 @@ CVECTOR tmd_textured_primitive_color = {
 };
 
 /* Prepared vertex indices are byte offsets into the projected array. */
-#define VTX(off) ((KfScreenVertex *)((u8 *)game_graphics_runtime.tmd_projected_vertices + (off)))
+#define VTX(off) TMD_PREPARED_VERTEX(game_graphics_runtime.tmd_projected_vertices, (off))
 
 RODATA(0x8001222c, 0x74)
 
@@ -38,7 +38,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
     normals = (u8 *)game_graphics_runtime.tmd_state.current_asset + (object->normal_offset + KF_TMD_HEADER_BYTES);
     while (remaining-- != 0) {
         header = *(u32 *)packet;
-        packet += KF_TMD_PACKET_HEADER_BYTES;
+        packet = TMD_PACKET_BODY(packet);
         switch (tmd_packet_mode(header)) {
         case KF_TMD_MODE_FT3: {
             KfTmdPrimitive *p = (KfTmdPrimitive *)packet;
@@ -430,7 +430,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             break;
         }
         }
-        packet += (header >> KF_TMD_ILEN_TO_BYTES_SHIFT) & KF_TMD_BODY_BYTES_MASK;
+        packet += TMD_PACKET_BODY_BYTES(header);
     }
 }
 
@@ -469,14 +469,14 @@ void render_enqueue_model(u16 object_index, s16 depth_bias)
         u8 *vertices = (u8 *)game_graphics_runtime.tmd_projected_vertices;
 
         header = *(u32 *)packet;
-        packet += KF_TMD_PACKET_HEADER_BYTES;
+        packet = TMD_PACKET_BODY(packet);
         primitive = (KfTmdPrimitive *)packet;
         type = tmd_packet_mode(header);
         switch (type) {
         case KF_TMD_MODE_GT3: {
-            va = (KfScreenVertex *)(vertices + primitive->gt3.v0);
-            vb = (KfScreenVertex *)(vertices + primitive->gt3.v1);
-            vc = (KfScreenVertex *)(vertices + primitive->gt3.v2);
+            va = TMD_PREPARED_VERTEX(vertices, primitive->gt3.v0);
+            vb = TMD_PREPARED_VERTEX(vertices, primitive->gt3.v1);
+            vc = TMD_PREPARED_VERTEX(vertices, primitive->gt3.v2);
             if (NormalClip(va->sxy.word, vb->sxy.word, vc->sxy.word) > 0) {
                 KfGpuGT3 *prim = (KfGpuGT3 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
@@ -507,13 +507,13 @@ void render_enqueue_model(u16 object_index, s16 depth_bias)
             break;
         }
         case KF_TMD_MODE_GT4: {
-            va = (KfScreenVertex *)(vertices + primitive->gt4.v0);
-            vb = (KfScreenVertex *)(vertices + primitive->gt4.v1);
-            vc = (KfScreenVertex *)(vertices + primitive->gt4.v2);
+            va = TMD_PREPARED_VERTEX(vertices, primitive->gt4.v0);
+            vb = TMD_PREPARED_VERTEX(vertices, primitive->gt4.v1);
+            vc = TMD_PREPARED_VERTEX(vertices, primitive->gt4.v2);
             if (NormalClip(va->sxy.word, vb->sxy.word, vc->sxy.word) > 0) {
                 KfGpuGT4 *prim = (KfGpuGT4 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
-                vd = (KfScreenVertex *)(vertices + primitive->gt4.v3);
+                vd = TMD_PREPARED_VERTEX(vertices, primitive->gt4.v3);
                 game_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_GT4);
                 if (game_graphics_runtime.display_state.primitive_buffer->cursor > game_graphics_runtime.display_state.primitive_buffer->end) {
                     return;
@@ -545,9 +545,9 @@ void render_enqueue_model(u16 object_index, s16 depth_bias)
             break;
         }
         case KF_TMD_MODE_FT3: {
-            va = (KfScreenVertex *)(vertices + primitive->ft3.v0);
-            vb = (KfScreenVertex *)(vertices + primitive->ft3.v1);
-            vc = (KfScreenVertex *)(vertices + primitive->ft3.v2);
+            va = TMD_PREPARED_VERTEX(vertices, primitive->ft3.v0);
+            vb = TMD_PREPARED_VERTEX(vertices, primitive->ft3.v1);
+            vc = TMD_PREPARED_VERTEX(vertices, primitive->ft3.v2);
             if (NormalClip(va->sxy.word, vb->sxy.word, vc->sxy.word) > 0) {
                 KfGpuFT3 *prim = (KfGpuFT3 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
@@ -577,13 +577,13 @@ void render_enqueue_model(u16 object_index, s16 depth_bias)
             break;
         }
         case KF_TMD_MODE_FT4: {
-            va = (KfScreenVertex *)(vertices + primitive->ft4.v0);
-            vb = (KfScreenVertex *)(vertices + primitive->ft4.v1);
-            vc = (KfScreenVertex *)(vertices + primitive->ft4.v2);
+            va = TMD_PREPARED_VERTEX(vertices, primitive->ft4.v0);
+            vb = TMD_PREPARED_VERTEX(vertices, primitive->ft4.v1);
+            vc = TMD_PREPARED_VERTEX(vertices, primitive->ft4.v2);
             if (NormalClip(va->sxy.word, vb->sxy.word, vc->sxy.word) > 0) {
                 KfGpuFT4 *prim = (KfGpuFT4 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
-                vd = (KfScreenVertex *)(vertices + primitive->ft4.v3);
+                vd = TMD_PREPARED_VERTEX(vertices, primitive->ft4.v3);
                 game_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_FT4);
                 if (game_graphics_runtime.display_state.primitive_buffer->cursor > game_graphics_runtime.display_state.primitive_buffer->end) {
                     return;
@@ -612,7 +612,7 @@ void render_enqueue_model(u16 object_index, s16 depth_bias)
             break;
         }
         }
-        packet += (header >> KF_TMD_ILEN_TO_BYTES_SHIFT) & KF_TMD_BODY_BYTES_MASK;
+        packet += TMD_PACKET_BODY_BYTES(header);
     }
 }
 
@@ -663,18 +663,18 @@ void render_enqueue_map(u16 object_index)
         u8 *vertices = (u8 *)game_graphics_runtime.tmd_projected_vertices;
 
         header = *(u32 *)packet;
-        packet += KF_TMD_PACKET_HEADER_BYTES;
+        packet = TMD_PACKET_BODY(packet);
         primitive = (KfTmdPrimitive *)packet;
         switch (tmd_packet_mode(header)) {
         case KF_TMD_MODE_FT4: {
             s32 otz;
 
-            va = (KfScreenVertex *)(vertices + primitive->ft4.v0);
-            vb = (KfScreenVertex *)(vertices + primitive->ft4.v1);
-            vc = (KfScreenVertex *)(vertices + primitive->ft4.v2);
+            va = TMD_PREPARED_VERTEX(vertices, primitive->ft4.v0);
+            vb = TMD_PREPARED_VERTEX(vertices, primitive->ft4.v1);
+            vc = TMD_PREPARED_VERTEX(vertices, primitive->ft4.v2);
             if (NormalClip(va->sxy.word, vb->sxy.word, vc->sxy.word) > 0) {
                 prim = (KfGpuGT4 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
-                vd = (KfScreenVertex *)(vertices + primitive->ft4.v3);
+                vd = TMD_PREPARED_VERTEX(vertices, primitive->ft4.v3);
                 game_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_GT4);
                 if (game_graphics_runtime.display_state.primitive_buffer->cursor <=
                     game_graphics_runtime.display_state.primitive_buffer->end) {
@@ -712,9 +712,9 @@ void render_enqueue_map(u16 object_index)
         case KF_TMD_MODE_FT3: {
             s32 otz;
 
-            va = (KfScreenVertex *)(vertices + primitive->ft3.v0);
-            vb = (KfScreenVertex *)(vertices + primitive->ft3.v1);
-            vc = (KfScreenVertex *)(vertices + primitive->ft3.v2);
+            va = TMD_PREPARED_VERTEX(vertices, primitive->ft3.v0);
+            vb = TMD_PREPARED_VERTEX(vertices, primitive->ft3.v1);
+            vc = TMD_PREPARED_VERTEX(vertices, primitive->ft3.v2);
             if (NormalClip(va->sxy.word, vb->sxy.word, vc->sxy.word) > 0) {
                 KfGpuGT3 *gt3 = (KfGpuGT3 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
@@ -750,7 +750,7 @@ void render_enqueue_map(u16 object_index)
             break;
         }
         }
-        packet += (header >> KF_TMD_ILEN_TO_BYTES_SHIFT) & KF_TMD_BODY_BYTES_MASK;
+        packet += TMD_PACKET_BODY_BYTES(header);
     }
 }
 

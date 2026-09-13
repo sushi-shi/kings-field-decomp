@@ -79,6 +79,13 @@ typedef struct KfTmdObject {
     s32 scale;
 } KfTmdObject;
 
+/* Object records follow a KfTmdHeader; packet bodies follow four header bytes.
+ * Pass a KfTmdHeader* to TMD_OBJECTS and a byte pointer to TMD_PACKET_BODY. */
+#define TMD_OBJECTS(asset) ((KfTmdObject *)((asset) + 1))
+#define TMD_PACKET_BODY(packet) ((packet) + KF_TMD_PACKET_HEADER_BYTES)
+#define TMD_PACKET_BODY_BYTES(header) \
+    (((header) >> KF_TMD_ILEN_TO_BYTES_SHIFT) & KF_TMD_BODY_BYTES_MASK)
+
 /* Four-byte primitive header, viewed both as its packed word and disk bytes. */
 typedef union KfTmdPacketHeader {
     u32 word;
@@ -261,6 +268,10 @@ typedef struct KfScreenVertex {
     s16 sz;
     s16 p2;
 } KfScreenVertex;
+
+/* Prepared TMD indices are byte offsets, not array subscripts. */
+#define TMD_PREPARED_VERTEX(vertices, byte_offset) \
+    ((KfScreenVertex *)((u8 *)(vertices) + (byte_offset)))
 
 /* GAME.EXE and OPEN.EXE implement this interface with separate state. */
 extern KfTmdObject *tmd_get_object(u16 object_index);

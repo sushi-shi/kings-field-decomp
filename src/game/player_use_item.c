@@ -70,8 +70,8 @@ void player_use_item(KfObjectId item_id)
     s16 slot;
     KfBool8 used = KF_FALSE;
 
-    reach_x = player_state.camera_position.vx - ((rsin(player_state.camera_rotation.vy) * MAP_INTERACTION_PROBE_DISTANCE) >> KF_FIXED12_BITS);
-    reach_z = player_state.camera_position.vz + ((rcos(player_state.camera_rotation.vy) * MAP_INTERACTION_PROBE_DISTANCE) >> KF_FIXED12_BITS);
+    VECTOR_YAW_PROBE_XZ(reach_x, reach_z, player_state.camera_position,
+        player_state.camera_rotation, MAP_INTERACTION_PROBE_DISTANCE);
     index = 0;
     switch (item_id) {
     case KF_ITEM_KEY_OF_THE_DEAD:

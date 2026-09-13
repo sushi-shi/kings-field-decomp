@@ -227,8 +227,8 @@ void map_object_pool_load(const KfMapObjectPlacement *placements)
             object->rotation.angles.z = 0;
             object->rotation.angles.x = 0;
             object->rotation.angles.y = placement->yaw & KF_ANGLE_WRAP_MASK;
-            object->position.vx = placement->tile_x * KF_MAP_TILE_SIZE + placement->local_x;
-            object->position.vz = placement->tile_z * KF_MAP_TILE_SIZE + placement->local_z;
+            object->position.vx = map_placement_axis_position(placement->tile_x, placement->local_x);
+            object->position.vz = map_placement_axis_position(placement->tile_z, placement->local_z);
             object->position.vy = placement->local_y
                 - map_floor_height_grid.cells[placement->tile_z][placement->tile_x] * KF_MAP_HEIGHT_STEP;
             object->action = KF_MAP_OBJECT_OP_NONE;

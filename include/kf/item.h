@@ -230,6 +230,19 @@ typedef struct KfFloorItem {
     u8 unknown_15[3];
 } KfFloorItem;
 
+static inline void floor_item_advance_frame(KfFloorItem *item)
+{
+    u32 next_frame;
+    u32 frame_count;
+
+    next_frame = item->animation_frame + 1;
+    frame_count = KF_ENUM_ENCODE(u8, item->facing_and_frame_count);
+    item->animation_frame = next_frame;
+    if ((next_frame & 0xff) >= (frame_count & KF_ENUM_ENCODE(u8, KF_FLOOR_ITEM_APPEARANCE_FRAME_MASK))) {
+        item->animation_frame = 0;
+    }
+}
+
 /* GAME: player quantities, followed by two shop-stock/availability banks. */
 extern u8 item_stock[KF_ITEM_STOCK_BANK_COUNT][KF_ITEM_COUNT];
 

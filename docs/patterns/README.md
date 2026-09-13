@@ -5,6 +5,9 @@ about which source shapes reproduce it under the current probes. Each note
 records the retail evidence first and the probe behaviour second; none of them
 promotes a probe to a proven historical toolchain.
 
+- [common-code-review.md](common-code-review.md): completed 522-entry source
+  reading and application of all 90 candidate verdicts; 39 retained helpers,
+  rejected trials, and unchanged bytes across all 101 comparison objects.
 - [sdk-data-ownership.md](sdk-data-ownership.md): complete SDK tables, startup
   boundaries and reviewed ownership of the remaining data-field candidates.
 - [data-ownership-inventory-cleanup.md](data-ownership-inventory-cleanup.md):

@@ -65,9 +65,9 @@ void opening_entity_pool_load_placements(
                 entity->rotation.x = 0;
                 entity->rotation.y = placement->yaw & KF_ANGLE_WRAP_MASK;
                 entity->position.vx =
-                    placement->tile_x * KF_MAP_TILE_SIZE + placement->local_x;
+                    map_placement_axis_position(placement->tile_x, placement->local_x);
                 entity->position.vz =
-                    placement->tile_z * KF_MAP_TILE_SIZE + placement->local_z;
+                    map_placement_axis_position(placement->tile_z, placement->local_z);
                 entity->scale.vz = KF_FIXED12_ONE;
                 entity->scale.vy = KF_FIXED12_ONE;
                 entity->scale.vx = KF_FIXED12_ONE;

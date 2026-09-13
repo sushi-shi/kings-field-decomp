@@ -75,14 +75,7 @@ void menu_map_viewer(KF_ENUM_PARAM(KfObjectId, s32) item_code)
                 &poly_marker[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)]);
         AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_CONTENT_OT_DEPTH,
                 &poly_bg[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)]);
-        AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_BACKGROUND_OT_DEPTH,
-                &menu_assets.background_quads[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)][3]);
-        AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_BACKGROUND_OT_DEPTH,
-                &menu_assets.background_quads[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)][2]);
-        AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_BACKGROUND_OT_DEPTH,
-                &menu_assets.background_quads[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)][1]);
-        AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_BACKGROUND_OT_DEPTH,
-                &menu_assets.background_quads[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)][0]);
+        MENU_ENQUEUE_BACKGROUND();
         menu_present_frame();
         if (frame < MENU_PANEL_INPUT_RELEASE_FRAME) {
             frame++;

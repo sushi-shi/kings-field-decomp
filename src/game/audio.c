@@ -2,6 +2,7 @@
 #include <kf/address.h>
 #include <kf/game_math.h>
 #include <kf/audio.h>
+#include <kf/audio_sequence.h>
 #include <psyq/audio.h>
 #include <psyq/libc.h>
 #include <kf/game.h>
@@ -32,9 +33,6 @@ RODATA(0x80012a14, 0x40)
 ADDRESS(0x800328e0, 0xa4)
 void audio_initialize(void)
 {
-    s32 index;
-    s16 inactive_voice_id;
-
     SsInit();
     SsSetTableSize(audio_sequence_table,
         KF_AUDIO_SEQUENCE_CAPACITY, KF_AUDIO_TRACKS_PER_SEQUENCE);
@@ -46,11 +44,7 @@ void audio_initialize(void)
     SsUtSetReverbDepth(GAME_REVERB_DEPTH, GAME_REVERB_DEPTH);
     audio_state.sequence_buffer = (u_long *)memory_allocate(GAME_SEQUENCE_BUFFER_BYTES);
     audio_state.sequence_active = KF_AUDIO_SEQUENCE_INACTIVE;
-    inactive_voice_id = KF_AUDIO_VOICE_INACTIVE;
-    index = KF_AUDIO_VOICE_SLOTS - 1;
-    do {
-        audio_state.voice_slots.voice_ids[index] = inactive_voice_id;
-    } while (--index >= 0);
+    audio_reset_voice_slots();
 }
 
 ADDRESS(0x80032984, 0xc8)
@@ -101,9 +95,7 @@ void audio_stop_sequence_fade(void)
             VSync(0);
             SsSeqSetVol(audio_state.sequence_id, volume, volume);
         } while (--volume >= 0);
-        SsSeqStop(audio_state.sequence_id);
-        SsSeqClose(audio_state.sequence_id);
-        audio_state.sequence_active = KF_AUDIO_SEQUENCE_INACTIVE;
+        AUDIO_SEQUENCE_STOP_AND_CLOSE();
     }
 }
 
@@ -121,9 +113,7 @@ void audio_stop_sequence_master_fade(s32 fade_step)
         } while (volume > 0);
         SsSetMVol(0, 0);
         SsSeqSetVol(audio_state.sequence_id, 0, 0);
-        SsSeqStop(audio_state.sequence_id);
-        SsSeqClose(audio_state.sequence_id);
-        audio_state.sequence_active = KF_AUDIO_SEQUENCE_INACTIVE;
+        AUDIO_SEQUENCE_STOP_AND_CLOSE();
     }
 }
 
@@ -153,20 +143,16 @@ KfAudioPlaybackResult audio_play_spatial(
     s32 max_distance,
     s32 attenuation_distance)
 {
-    s32 delta_x = (position->vx - audio_state.listener_position.vx)
-        >> KF_LENGTH_SQUARE_DOWNSHIFT;
-    s32 delta_y = (position->vy - audio_state.listener_position.vy)
-        >> KF_LENGTH_SQUARE_DOWNSHIFT;
-    s32 delta_z = (position->vz - audio_state.listener_position.vz)
-        >> KF_LENGTH_SQUARE_DOWNSHIFT;
+    s32 delta_x = position->vx - audio_state.listener_position.vx;
+    s32 delta_y = position->vy - audio_state.listener_position.vy;
+    s32 delta_z = position->vz - audio_state.listener_position.vz;
     s32 attenuation;
     s32 level;
     s32 angle;
     s32 left;
     s32 right;
 
-    attenuation = SquareRoot0(delta_x * delta_x + delta_y * delta_y + delta_z * delta_z)
-        << KF_LENGTH_SQUARE_DOWNSHIFT;
+    attenuation = fixed_vector3_length(delta_x, delta_y, delta_z);
     if (attenuation >= max_distance) {
         return KF_AUDIO_NOT_PLAYED;
     }
@@ -283,24 +269,7 @@ void audio_play_voice(
     if (player_state.audio_effects_enabled == KF_PLAYER_OPTION_OFF) {
         return;
     }
-    audio_voice_slot_index++;
-    if (audio_voice_slot_index == KF_AUDIO_VOICE_SLOTS) {
-        audio_voice_slot_index = 0;
-    }
-    if (audio_state.voice_slots.voice_ids[audio_voice_slot_index] != KF_AUDIO_VOICE_INACTIVE) {
-        SsUtKeyOff(
-            audio_state.voice_slots.voice_ids[audio_voice_slot_index],
-            audio_state.voice_slots.vab_ids[audio_voice_slot_index],
-            audio_state.voice_slots.programs[audio_voice_slot_index],
-            audio_state.voice_slots.tones[audio_voice_slot_index],
-            audio_state.voice_slots.notes[audio_voice_slot_index]);
-    }
-    audio_state.voice_slots.vab_ids[audio_voice_slot_index] = vab_id;
-    audio_state.voice_slots.programs[audio_voice_slot_index] = program;
-    audio_state.voice_slots.tones[audio_voice_slot_index] = tone;
-    audio_state.voice_slots.notes[audio_voice_slot_index] = note;
-    audio_state.voice_slots.voice_ids[audio_voice_slot_index] =
-        SsUtKeyOn(vab_id, program, tone, note, 0, left_volume, right_volume);
+    audio_key_on_next_slot(vab_id, program, tone, note, left_volume, right_volume);
 }
 
 ADDRESS(0x8003329c, 0x48)

@@ -1,5 +1,6 @@
 #include <kf/null.h>
 #include <kf/address.h>
+#include <kf/input.h>
 #include <kf/game_menu.h>
 #include <kf/game.h>
 
@@ -126,45 +127,20 @@ void menu_equip_select(KfEquipmentMenuCategory category)
                 menu_play_input_sound(MENU_SOUND_CURSOR);
                 selection = KF_ENUM_ENCODE(s32, KF_MENU_RESULT_CANCELLED);
             }
-        } else if ((input & PADLup) != 0 && (prev & PADLup) == 0) {
+        } else if (PAD_PRESSED(input, prev, PADLup)) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
-            if (ctx.selected_index != 0) {
-                ctx.selected_index--;
-                if (ctx.cursor_row == 0)
-                    ctx.scroll_offset--;
-                else
-                    ctx.cursor_row--;
-            } else {
-                ctx.selected_index = ctx.entry_count - 1;
-                if (ctx.entry_count < ctx.visible_rows) {
-                    ctx.scroll_offset = 0;
-                    ctx.cursor_row = ctx.entry_count - 1;
-                } else {
-                    ctx.scroll_offset = ctx.entry_count - ctx.visible_rows;
-                    ctx.cursor_row = ctx.visible_rows - 1;
-                }
-            }
+            menu_list_previous(&ctx);
             if (menu_load_item_model(codes[ctx.selected_index]) != KF_RESOURCE_LOADED)
                 return;
-        } else if ((input & PADLdown) != 0 && (prev & PADLdown) == 0) {
+        } else if (PAD_PRESSED(input, prev, PADLdown)) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
-            if (ctx.selected_index < ctx.entry_count - 1) {
-                ctx.selected_index++;
-                if (ctx.cursor_row == ctx.visible_rows - 1)
-                    ctx.scroll_offset++;
-                else
-                    ctx.cursor_row++;
-            } else {
-                ctx.selected_index = 0;
-                ctx.scroll_offset = 0;
-                ctx.cursor_row = 0;
-            }
+            menu_list_next(&ctx);
             if (menu_load_item_model(codes[ctx.selected_index]) != KF_RESOURCE_LOADED)
                 return;
-        } else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {
+        } else if (PAD_PRESSED(input, prev, PADRright)) {
             menu_play_input_sound(MENU_SOUND_CONFIRM);
             confirm = KF_MENU_CONFIRM_REQUESTED;
-        } else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {
+        } else if (PAD_PRESSED(input, prev, PADRdown)) {
             menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
             selection = KF_ENUM_ENCODE(s32, KF_MENU_RESULT_CANCELLED);
         }
@@ -295,45 +271,20 @@ void menu_spell_select(void)
                 menu_play_input_sound(MENU_SOUND_CURSOR);
                 selection = KF_ENUM_ENCODE(s32, KF_MENU_RESULT_CANCELLED);
             }
-        } else if ((input & PADLup) != 0 && (prev & PADLup) == 0) {
+        } else if (PAD_PRESSED(input, prev, PADLup)) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
-            if (ctx.selected_index != 0) {
-                ctx.selected_index--;
-                if (ctx.cursor_row == 0)
-                    ctx.scroll_offset--;
-                else
-                    ctx.cursor_row--;
-            } else {
-                ctx.selected_index = ctx.entry_count - 1;
-                if (ctx.entry_count < ctx.visible_rows) {
-                    ctx.scroll_offset = 0;
-                    ctx.cursor_row = ctx.entry_count - 1;
-                } else {
-                    ctx.scroll_offset = ctx.entry_count - ctx.visible_rows;
-                    ctx.cursor_row = ctx.visible_rows - 1;
-                }
-            }
+            menu_list_previous(&ctx);
             if (menu_load_item_texture(menu_texture_from_magic(codes[ctx.selected_index])) == KF_RESOURCE_LOAD_FAILED)
                 return;
-        } else if ((input & PADLdown) != 0 && (prev & PADLdown) == 0) {
+        } else if (PAD_PRESSED(input, prev, PADLdown)) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
-            if (ctx.selected_index < ctx.entry_count - 1) {
-                ctx.selected_index++;
-                if (ctx.cursor_row == ctx.visible_rows - 1)
-                    ctx.scroll_offset++;
-                else
-                    ctx.cursor_row++;
-            } else {
-                ctx.selected_index = 0;
-                ctx.scroll_offset = 0;
-                ctx.cursor_row = 0;
-            }
+            menu_list_next(&ctx);
             if (menu_load_item_texture(menu_texture_from_magic(codes[ctx.selected_index])) == KF_RESOURCE_LOAD_FAILED)
                 return;
-        } else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {
+        } else if (PAD_PRESSED(input, prev, PADRright)) {
             menu_play_input_sound(MENU_SOUND_CONFIRM);
             confirm = KF_MENU_CONFIRM_REQUESTED;
-        } else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {
+        } else if (PAD_PRESSED(input, prev, PADRdown)) {
             menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
             selection = KF_ENUM_ENCODE(s32, KF_MENU_RESULT_CANCELLED);
         }

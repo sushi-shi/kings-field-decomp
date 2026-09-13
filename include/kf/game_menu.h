@@ -373,6 +373,42 @@ typedef struct KfMenuList {
     u8 *quantities;
 } KfMenuList;
 
+/* Navigation callers handle empty lists before stepping. */
+static inline void menu_list_previous(KfMenuList *list)
+{
+    if (list->selected_index != 0) {
+        list->selected_index--;
+        if (list->cursor_row == 0)
+            list->scroll_offset--;
+        else
+            list->cursor_row--;
+    } else {
+        list->selected_index = list->entry_count - 1;
+        if (list->entry_count < list->visible_rows) {
+            list->scroll_offset = 0;
+            list->cursor_row = list->entry_count - 1;
+        } else {
+            list->scroll_offset = list->entry_count - list->visible_rows;
+            list->cursor_row = list->visible_rows - 1;
+        }
+    }
+}
+
+static inline void menu_list_next(KfMenuList *list)
+{
+    if (list->selected_index < list->entry_count - 1) {
+        list->selected_index++;
+        if (list->cursor_row == list->visible_rows - 1)
+            list->scroll_offset++;
+        else
+            list->cursor_row++;
+    } else {
+        list->selected_index = 0;
+        list->scroll_offset = 0;
+        list->cursor_row = 0;
+    }
+}
+
 /* Angle units per preview draw; a full revolution is 4096 units. */
 enum {
     MENU_ITEM_PREVIEW_YAW_STEP = 16,
@@ -480,5 +516,16 @@ extern KfMenuResult menu_two_option_prompt(
     KfMenuWindowKind kind, s32 count, s32 highlight,
     const KfSaveSlotSummary *summaries);
 extern void talk_show_dialogue_page(KF_ENUM_PARAM(KfFloorId, u8) floor, u8 stage, KF_ENUM_PARAM(KfCharacterId, s32) character_id, u8 page);
+
+/* Requires the GAME graphics state; preserve reverse primitive insertion order. */
+#define MENU_ENQUEUE_BACKGROUND() ( \
+    AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_BACKGROUND_OT_DEPTH, \
+        &menu_assets.background_quads[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)][3]), \
+    AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_BACKGROUND_OT_DEPTH, \
+        &menu_assets.background_quads[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)][2]), \
+    AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_BACKGROUND_OT_DEPTH, \
+        &menu_assets.background_quads[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)][1]), \
+    AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_BACKGROUND_OT_DEPTH, \
+        &menu_assets.background_quads[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)][0]))
 
 #endif
