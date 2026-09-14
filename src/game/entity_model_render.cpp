@@ -1,0 +1,120 @@
+#include <kf/lib/null.h>
+#include <kf/game/graphics.h>
+
+#include <psyq/sdk.h>
+#include <kf/game/render.h>
+#include <kf/lib/math.h>
+#include <kf/game/asset.h>
+
+enum {
+    ACTOR_MODEL_ASSET_MASK = 0xf,
+    ACTOR_MODEL_TEXTURE_SHIFT = 4,
+    MAP_LIFT_DOOR_DEPTH_BIAS = 180,
+    MAP_HINGED_DOOR_DEPTH_BIAS = 15,
+    MENU_ITEM_DEPTH_BIAS = 1000
+};
+
+void render_actor(KfActor *actor)
+{
+    SVECTOR screen;
+    MATRIX rot_y;
+    MATRIX model;
+    MATRIX light;
+    long flag;
+    KfTmdObject *object;
+    u8 descriptor;
+    u16 asset;
+
+    SetRotMatrix(&game_graphics_runtime.render_state.view_matrix);
+    SetTransMatrix(&game_graphics_runtime.render_state.view_matrix);
+    setVector(&screen,
+        actor->position.vx - game_graphics_runtime.render_state.view_position.vx,
+        actor->position.vy - game_graphics_runtime.render_state.view_position.vy,
+        actor->position.vz - game_graphics_runtime.render_state.view_position.vz);
+    RotTrans(&screen, (VECTOR *)&model.t, &flag);
+    matrix_set_rotation_x(actor->rotation.angles.x, &model);
+    matrix_set_rotation_y(-actor->rotation.angles.y, &rot_y);
+    MulMatrix2(&rot_y, &model);
+    MulMatrix0(&render_light_matrices[KF_RENDER_LIGHT_ACTOR], &model, &light);
+    MulMatrix2(&game_graphics_runtime.render_state.view_matrix, &model);
+    SetRotMatrix(&model);
+    SetTransMatrix(&model);
+    SetLightMatrix(&light);
+
+    descriptor = actor_state.definitions.entries[actor->definition_id].model_and_texture;
+    asset = descriptor & ACTOR_MODEL_ASSET_MASK;
+    asset_registry_select(asset);
+    object = tmd_get_object(0);
+    if (render_bind_animated_instance(
+            &actor->animation_cache, asset, actor->animation_id,
+            actor->animation_phase, object->vertex_count) == NULL) {
+        tmd_select_object_vertices(0);
+        tmd_project_vertices(tmd_get_object(0)->vertex_count);
+    } else {
+        tmd_project_vertices(object->vertex_count);
+    }
+
+    descriptor >>= ACTOR_MODEL_TEXTURE_SHIFT;
+    if (descriptor-- == 0) {
+        render_enqueue_tmd(0, 0);
+    } else {
+        game_graphics_runtime.active_render_tpage = game_graphics_runtime.effect5_texture_pages[descriptor];
+        game_graphics_runtime.active_render_clut = game_graphics_runtime.effect5_texture_cluts[descriptor];
+        render_enqueue_model(0, 0);
+    }
+}
+
+void render_map_object(KfMapObject *object)
+{
+    SVECTOR screen;
+    MATRIX rot_x;
+    MATRIX model;
+    MATRIX light;
+    long flag;
+    KfEnumStorage<KfObjectId, u16> id;
+    s16 depth;
+
+    SetRotMatrix(&game_graphics_runtime.render_state.view_matrix);
+    SetTransMatrix(&game_graphics_runtime.render_state.view_matrix);
+    setVector(&screen,
+        object->position.vx - game_graphics_runtime.render_state.view_position.vx,
+        object->position.vy - game_graphics_runtime.render_state.view_position.vy,
+        object->position.vz - game_graphics_runtime.render_state.view_position.vz);
+    RotTrans(&screen, (VECTOR *)&model.t, &flag);
+    matrix_set_rotation_x(object->rotation.angles.x, &rot_x);
+    matrix_set_rotation_y(object->rotation.angles.y, &model);
+    MulMatrix(&model, &rot_x);
+    MulMatrix0(&game_graphics_runtime.render_state.light_matrix, &model, &light);
+    MulMatrix2(&game_graphics_runtime.render_state.view_matrix, &model);
+    SetRotMatrix(&model);
+    SetTransMatrix(&model);
+    SetLightMatrix(&light);
+
+    id = object->object_id;
+    switch (map_object_state.definitions.entries[kf_enum_encode<u8>(object->object_id)].behavior_type) {
+    case KF_MAP_OBJECT_OP_LIFT_DOOR:
+    case KF_MAP_OBJECT_OP_03:
+        depth = MAP_LIFT_DOOR_DEPTH_BIAS;
+        break;
+    case KF_MAP_OBJECT_OP_HINGED_DOOR:
+    case KF_MAP_OBJECT_OP_HINGED_DOOR_PARTNER:
+        depth = MAP_HINGED_DOOR_DEPTH_BIAS;
+        break;
+    default:
+        depth = 0;
+        break;
+    }
+    tmd_select_object_vertices(kf_enum_encode<u16>(id));
+    tmd_project_vertices(tmd_get_object(kf_enum_encode<u16>(id))->vertex_count);
+    render_enqueue_tmd(kf_enum_encode<u16>(id), depth);
+}
+
+void menu_render_item_model(void)
+{
+    lighting_set_active_color_matrix(KF_GAME_COLOR_DEFAULT);
+    SetGeomScreen(KF_DEFAULT_PROJECTION_DISTANCE);
+    tmd_select(KF_TMD_SLOT_MENU_ITEM);
+    tmd_select_object_vertices(0);
+    tmd_project_vertices(tmd_get_object(0)->vertex_count);
+    render_enqueue_tmd(0, MENU_ITEM_DEPTH_BIAS);
+}
