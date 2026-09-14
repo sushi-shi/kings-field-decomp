@@ -1,3 +1,12 @@
+#include <kf/address.h>
+#include <kf/debug.h>
+#include <kf/game_math.h>
+#include <kf/open_render.h>
+
+RODATA(0x80012038, 0x24)
+
+static const char debug_matrix_label[16] = "Dump Matrix\n";
+
 ADDRESS(0x80015a88, 0x84)
 void debug_dump_matrix(const MATRIX *matrix)
 {

@@ -88,7 +88,7 @@ profile = "probe-gcc257-o2-g0"
 [[unit]]
 unit = "game.sprite_add_ft4"
 image = "GAME.EXE"
-source = "src/game/sprite_add_ft4.c"
+source = "src/shared/sprite_add.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
@@ -113,6 +113,12 @@ profile = "probe-gcc257-o2-g8"
 unit = "game.matrix_rotation"
 image = "GAME.EXE"
 source = "src/shared/matrix_rotation.c"
+profile = "probe-gcc257-o2-g0"
+
+[[unit]]
+unit = "game.vector_math"
+image = "GAME.EXE"
+source = "src/shared/vector_math.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
@@ -258,18 +264,6 @@ profile = "probe-gcc257-o2-g0"
 unit = "game.matrix_lerp"
 image = "GAME.EXE"
 source = "src/shared/matrix_lerp.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.matrix"
-image = "GAME.EXE"
-source = "src/game/matrix.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "game.color_lerp_rgb555"
-image = "GAME.EXE"
-source = "src/game/color_lerp_rgb555.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
@@ -482,7 +476,7 @@ profile = "probe-gcc257-o2-g0"
 [[unit]]
 unit = "open.sprite_add_ft4"
 image = "OPEN.EXE"
-source = "src/open/sprite_add_ft4.c"
+source = "src/shared/sprite_add.c"
 profile = "probe-gcc257-o2-g0"
 defines = ["KF_OPEN"]
 
@@ -519,32 +513,22 @@ profile = "probe-gcc257-o2-g0"
 [[unit]]
 unit = "open.matrix_rotation"
 image = "OPEN.EXE"
-source = "src/open/matrix_rotation.c"
+source = "src/shared/matrix_rotation.c"
+profile = "probe-gcc257-o2-g0"
+defines = ["KF_OPEN"]
+
+[[unit]]
+unit = "open.debug_matrix"
+image = "OPEN.EXE"
+source = "src/open/debug_matrix.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
 unit = "open.vector_math"
 image = "OPEN.EXE"
-source = "src/open/vector_math.c"
+source = "src/shared/vector_math.c"
 profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "open.angle_mod_delta"
-image = "OPEN.EXE"
-source = "src/open/angle_mod_delta.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "open.vector_xz_to_angle"
-image = "OPEN.EXE"
-source = "src/open/vector_xz_to_angle.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "open.fixed_vector2_length"
-image = "OPEN.EXE"
-source = "src/open/fixed_vector2_length.c"
-profile = "probe-gcc257-o2-g0"
+defines = ["KF_OPEN"]
 
 [[unit]]
 unit = "open.memory"
@@ -628,12 +612,6 @@ profile = "probe-gcc257-o2-g0"
 unit = "open.matrix_lerp"
 image = "OPEN.EXE"
 source = "src/shared/matrix_lerp.c"
-profile = "probe-gcc257-o2-g0"
-
-[[unit]]
-unit = "open.matrix"
-image = "OPEN.EXE"
-source = "src/open/matrix.c"
 profile = "probe-gcc257-o2-g0"
 defines = ["KF_OPEN"]
 

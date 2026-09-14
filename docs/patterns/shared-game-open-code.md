@@ -27,19 +27,19 @@ absent from an image.
 
 ## Source organization
 
-The allocator was already compiled for both images from `src/game/memory.c`;
-it now lives in `src/shared/memory.c`. The complete GAME math unit also moves
-to `src/shared/matrix_rotation.c`, keeping its GAME-only functions with their
-family. Existing matrix interpolation remains in `src/shared/matrix_lerp.c`.
+The allocator lives in `src/shared/memory.c`. Rotation builders, direction and
+angle helpers, matrix/fog/color interpolation, and sprite builders now compile
+as ordinary shared translation units. Image-only members of those contiguous
+families use image-selected compilation. OPEN's matrix diagnostic remains a
+separate source because its string block is an OPEN RODATA owner.
 
-The other shared bodies use literal `.inc` implementation includes at their
-original positions. This preserves the original compilation units, function
-order, pooled strings, globals, compiler profiles, and link membership. Splitting
-these into new linked modules would change those properties. Each shared function
-retains its image-qualified `ADDRESS_AT` claims; the manifest still enforces a
-contiguous function run per unit. DATA and RODATA ownership stays in the including
-unit. The scanner rejects storage claims in fragments and records the fragment's
-actual file and line in `build/gen/bindings.tsv`.
+Sixteen shared bodies still use literal `.inc` implementation includes at
+their existing positions. In at least one image each body is interleaved with
+image-specific functions or storage, so moving it now would assert an
+unsupported TU boundary. [The review ledger](../shared-fragment-review.tsv)
+records every remaining fragment and its current includers. Each shared
+function retains image-qualified claims, and DATA and RODATA ownership stays
+in the source that defines it.
 
 `include/kf/shared_graphics.h` selects the corresponding GAME or OPEN state
 members and color-preset type. It adds no runtime dispatch, pointer indirection,
@@ -91,15 +91,14 @@ references, current matches, and source history. Names or equal virtual addresse
 were not treated as evidence of equivalent behavior. SDK calls remain library
 boundaries; no vendored body was reconstructed or counted as new game work.
 
-Verification compares pre-refactor and rebuilt whole ELF objects, including raw
-instructions, symbol tables, data, and ordered relocations, then compares native
-CPE linker outputs. All **100 GAME/OPEN objects and three CPE outputs are
-byte-identical**. No gameplay correction or new retail-exact claim is part of
-this refactor. The existing data-owner/section-placement failures reported by
-`kf analyze` remain separate from executable build success.
-All 101 units retain their function, DATA, and RODATA claims. Strict function
-scores remain **458/471 exact**, including PSX; this campaign adds no matched
-functions and regresses none.
+The 44 function occurrences moved by the TU follow-up are strict 100% in all
+nine affected units. Converting saved pre-refactor and rebuilt CPEs with the
+pinned CPE2X produces byte-identical executable payloads for GAME and OPEN; only
+reserved PS-X EXE header bytes differ. No gameplay correction or new
+retail-exact claim is part of this refactor. The existing data-owner and section
+placement failures reported by `kf analyze` remain separate from executable
+build success. All 471 reconstructed functions remain compiled and scored, with
+**458/471 exact** including PSX; this campaign regresses none.
 
 The C export is independently compared against the corresponding unstripped
 historical-compiler build; the C++ export is compiled and linked for PS1 and its

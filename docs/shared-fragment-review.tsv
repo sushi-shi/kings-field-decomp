@@ -1,0 +1,17 @@
+fragment	current_includers	status	reason
+angle_shortest_delta.inc	src/game/audio.c|src/open/opening_helpers.c	deferred	Interleaved with different image-specific function families.
+audio_shutdown.inc	src/game/audio.c|src/open/audio.c	deferred	Both audio units own additional image-specific functions and storage.
+audio_spatial_helpers.inc	src/game/audio.c|src/open/audio_spatial.c	deferred	The surrounding audio ownership differs between images.
+debug_sink.inc	src/game/debug_text.c|src/open/debug.c	deferred	GAME and OPEN place the sink in different diagnostic families.
+display_frame.inc	src/game/render.c|src/open/render.c	deferred	Both render units own image-specific functions and graphics storage.
+floor_item_load.inc	src/game/item.c|src/open/item.c	deferred	Both item units continue into image-specific item behavior.
+floor_item_render.inc	src/game/entity_render.c|src/open/entity_render.c	deferred	Both entity units contain image-specific neighboring render functions.
+format.inc	src/game/debug_text.c|src/open/format.c	deferred	GAME embeds formatting with debug text while OPEN has a distinct format unit.
+lighting_color.inc	src/game/render.c|src/open/render_init.c	deferred	The function belongs to different surrounding render families in each image.
+repeat_store_word.inc	src/game/main.c|src/open/main.c	deferred	The helper precedes each image-specific entry point.
+resource_copy_words.inc	src/game/resources.c|src/open/resources.c	deferred	The two entry points retain different names and signed count types.
+sound_ref.inc	src/game/audio.c|src/open/sound_ref.c	deferred	GAME embeds the body in audio while OPEN links a distinct unit.
+tim_upload_images.inc	src/game/resources.c|src/open/resources.c	deferred	Both resource units contain image-specific neighboring functions and storage.
+tmd.inc	src/game/render.c|src/open/render.c	deferred	The shared run is embedded in larger image-specific render units.
+tmd_perspective_right.inc	src/open/render.c	deferred	Single-image helper is embedded in OPEN's render sequence.
+tmd_transform.inc	src/game/render.c|src/open/render.c	deferred	The shared transforms follow different image-specific projection functions.

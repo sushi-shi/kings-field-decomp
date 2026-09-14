@@ -672,7 +672,6 @@ extern KfMaterialProbe material_probe;
             'game.map_event_render',
             'game.map_load',
             'game.map_scripts',
-            'game.matrix',
             'game.matrix_lerp',
             'game.menu_map_viewer',
             'game.menu_runtime',
@@ -745,7 +744,7 @@ extern KfMaterialProbe material_probe;
                                         {**addresses, 'game_graphics_runtime': ORIGIN + 4}, functions)
                                     self.assertNotEqual(wrong, expected, claim.symbol)
                                     self.assertEqual(same_calls, calls)
-        self.assertEqual((checked, exact), (180, 166))
+        self.assertEqual((checked, exact), (181, 167))
 
 
 if __name__ == '__main__':

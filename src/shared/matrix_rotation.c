@@ -4,9 +4,8 @@
 
 
 /*
- * Fixed-point matrix and vector math, one contiguous run
- * 0x80014a64..0x800150a8 (GAME.EXE): axis rotation-matrix builders and the
- * vector/scalar fixed-point helpers. Module boundary is WIP.
+ * Fixed-point angle and rotation-matrix builders. The following direction and
+ * angle helpers continue in vector_math.c; the module boundary remains WIP.
  */
 
 
@@ -23,7 +22,8 @@
  * way and the wrapped value is clamped only while it stays on the target's
  * side of the half-turn boundary.
  */
-ADDRESS(0x80014a64, 0xc8)
+#ifndef KF_OPEN
+ADDRESS_AT("GAME", 0x80014a64, 0xc8)
 s16 angle_approach(s16 current, s16 target, s32 step)
 {
     s16 result;
@@ -59,65 +59,77 @@ s16 angle_approach(s16 current, s16 target, s32 step)
     return result;
 }
 
-ADDRESS(0x80014b2c, 0x50)
+ADDRESS_AT("GAME", 0x80014b2c, 0x50)
 void angle_to_forward_xz(s16 angle, struct KfVecXZs *direction)
 {
     direction->x = -rsin(angle);
     direction->z = -rcos(angle);
 }
+#endif
 
-#include "matrix_rotation.inc"
-
-/*
- * Rotates the unit forward vector (0, 0, 0x1000) by pitch then yaw. ApplyMatrix
- * writes a VECTOR of longs; only their low halves are carried on.
- */
-#include "pitch_yaw_to_forward_vector.inc"
-
-
-ADDRESS(0x80014e08, 0x40)
-void vector2s_scale_shift11(s16 scale, struct KfVecXZs *vector)
+ADDRESS_AT("GAME", 0x80014b7c, 0x70)
+ADDRESS_AT("OPEN", 0x800158d0, 0x70)
+void matrix_set_rotation_x(s16 angle, MATRIX *matrix)
 {
-    s32 x = vector->x * scale;
-    s32 z = vector->z * scale;
+    s32 sin = rsin(angle);
+    s32 cos = rcos(angle);
 
-    vector->x = x >> KF_FIXED11_BITS;
-    vector->z = z >> KF_FIXED11_BITS;
+    matrix->m[0][0] = KF_FIXED12_ONE;
+    matrix->m[0][1] = 0;
+    matrix->m[0][2] = 0;
+    matrix->m[1][0] = 0;
+    matrix->m[1][1] = cos;
+    matrix->m[1][2] = -sin;
+    matrix->m[2][0] = 0;
+    matrix->m[2][1] = sin;
+    matrix->m[2][2] = cos;
 }
 
-#include "vector3s_scale_shift12.inc"
-
-ADDRESS(0x80014ea4, 0x40)
-void vector2s_scale_shift12(s16 scale, s16 *vector)
+ADDRESS_AT("GAME", 0x80014bec, 0x70)
+ADDRESS_AT("OPEN", 0x80015940, 0x70)
+void matrix_set_rotation_y(s16 angle, MATRIX *matrix)
 {
-    s32 x = vector[0] * scale;
-    s32 y = vector[1] * scale;
+    s32 sin = rsin(angle);
+    s32 cos = rcos(angle);
 
-    vector[0] = x >> KF_FIXED12_BITS;
-    vector[1] = y >> KF_FIXED12_BITS;
+    matrix->m[0][0] = cos;
+    matrix->m[0][1] = 0;
+    matrix->m[0][2] = -sin;
+    matrix->m[1][0] = 0;
+    matrix->m[1][1] = KF_FIXED12_ONE;
+    matrix->m[1][2] = 0;
+    matrix->m[2][0] = sin;
+    matrix->m[2][1] = 0;
+    matrix->m[2][2] = cos;
 }
 
-#include "vector3s_scale_shift12_alt.inc"
-
-ADDRESS(0x80014f40, 0x2c)
-void vector3i_add_xz(
-    VECTOR *destination, const struct KfVecXZs *delta)
+ADDRESS_AT("GAME", 0x80014c5c, 0x70)
+ADDRESS_AT("OPEN", 0x800159b0, 0x70)
+void matrix_set_rotation_z(s16 angle, MATRIX *matrix)
 {
-    destination->vx += delta->x;
-    destination->vz += delta->z;
+    s32 sin = rsin(angle);
+    s32 cos = rcos(angle);
+
+    matrix->m[0][0] = cos;
+    matrix->m[0][1] = -sin;
+    matrix->m[0][2] = 0;
+    matrix->m[1][0] = sin;
+    matrix->m[1][1] = cos;
+    matrix->m[1][2] = 0;
+    matrix->m[2][0] = 0;
+    matrix->m[2][1] = 0;
+    matrix->m[2][2] = KF_FIXED12_ONE;
 }
 
-#include "angle_within_tolerance.inc"
+ADDRESS_AT("GAME", 0x80014ccc, 0x68)
+ADDRESS_AT("OPEN", 0x80015a20, 0x68)
+void matrix_set_rotation_yxz(const struct KfEulerAngles *angles, MATRIX *matrix)
+{
+    MATRIX temporary;
 
-#include "angle_mod_delta.inc"
-
-/* Psy-Q LIBGTE: catan(long) returns a 12-bit angle for a 12-bit fixed ratio. */
-
-/*
- * Heading of the (x, z) offset as a 12-bit angle; the division carries the
- * checked expansion retail keeps for both signs of z.
- */
-#include "vector_xz_to_angle.inc"
-
-
-#include "fixed_vector2_length.inc"
+    matrix_set_rotation_z(angles->z, &temporary);
+    matrix_set_rotation_x(angles->x, matrix);
+    MulMatrix(matrix, &temporary);
+    matrix_set_rotation_y(angles->y, &temporary);
+    MulMatrix2(&temporary, matrix);
+}

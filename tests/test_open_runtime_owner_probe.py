@@ -173,9 +173,8 @@ class OpenRuntimeOwnerProbeTests(unittest.TestCase):
             "open.entity_render": {"opening_entity_render"},
             "open.matrix_lerp": {
                 "matrix_interpolate", "lighting_set_color_matrix", "lighting_set_light_matrix",
-            },
-            "open.matrix": {
-                "fog_set_near", "color_lerp_cvector", "color_lerp_rgb555",
+                "fog_interpolate_near", "fog_set_near", "color_lerp_cvector",
+                "color_lerp_rgb555",
             },
         }
         for unit_name, functions in controls.items():

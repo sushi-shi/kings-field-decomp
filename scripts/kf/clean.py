@@ -42,12 +42,14 @@ def git(repo: Path, *arguments: str) -> str:
 def snapshot(repo: Path, revision: str, *, working: bool = False) -> tuple[str, dict[str, bytes]]:
     commit = git(repo, 'rev-parse', '--verify', f'{revision}^{{commit}}')
     if working:
-        names = git(repo, 'ls-files', '-z').split('\0')
+        names = git(
+            repo, 'ls-files', '-z', '--cached', '--others', '--exclude-standard'
+        ).split('\0')
         files = {}
         for name in names:
             if name:
                 path = repo / name
-                if path.is_symlink():
+                if path.is_symlink() or not path.is_file():
                     continue
                 files[name] = path.read_bytes()
         return commit, files
