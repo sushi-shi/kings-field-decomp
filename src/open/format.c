@@ -1,7 +1,7 @@
 #include <stdarg.h>
-#include <kf/address.h>
-#include <kf/debug.h>
-#include <kf/game_types.h>
+#include <kf/lib/address.h>
+#include <kf/lib/debug.h>
+#include <kf/lib/types.h>
 
 /* Numeric scratch: eight leading bytes receive left padding (at most seven
  * are written), then a sign, ten decimal digits and NUL from the digit anchor
@@ -10,4 +10,4 @@
 DATA(0x80037970, 0x18)
 static char format_number_storage[24];
 
-#include "../shared/format.inc"
+#include "../lib/format.inc"

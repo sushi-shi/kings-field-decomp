@@ -1,12 +1,12 @@
-#include <kf/null.h>
-#include <kf/game_graphics.h>
-#include <kf/address.h>
-#include <kf/game_asset.h>
-#include <kf/game_math.h>
-#include <kf/game_render.h>
-#include <kf/game_state.h>
+#include <kf/lib/null.h>
+#include <kf/game/graphics.h>
+#include <kf/lib/address.h>
+#include <kf/game/asset.h>
+#include <kf/lib/math.h>
+#include <kf/game/render.h>
+#include <kf/game/state.h>
 #include <psyq/sdk.h>
-#include <kf/shared_graphics.h>
+#include <kf/lib/graphics.h>
 
 /*
  * Per-entity billboard/model emitters invoked by the frame renderer's pool
@@ -61,7 +61,7 @@ KfSpriteQuad effect_billboard_sprites[KF_EFFECT_BILLBOARD_SPRITE_COUNT] = {
  * pitch matrix is used verbatim.  The sprite frame advances and wraps against
  * the low nibble of the packed facing/frame-count byte.
  */
-#include "../shared/floor_item_render.inc"
+#include "../lib/floor_item_render.inc"
 
 /*
  * Emits one pooled effect sprite. Entries with render id 0xff are skipped.

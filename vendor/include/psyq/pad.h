@@ -3,7 +3,7 @@
 
 /* Version-skewed LIBETC PAD.OBJ public interface recovered from retail. */
 
-#include <kf/game_types.h>
+#include <kf/lib/types.h>
 #include <LIBETC.H>
 
 extern u32 PadInit(s32 identifier);

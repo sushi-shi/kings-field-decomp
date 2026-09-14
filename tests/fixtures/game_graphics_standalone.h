@@ -2,7 +2,7 @@
 #define KF_GAME_GRAPHICS_STANDALONE_CONTROL_H
 
 /* Rejected separate declarations for compiler controls only. */
-#include <kf/game_graphics.h>
+#include <kf/game/graphics.h>
 #define INITIAL_GRAPHICS_CLEAR_BYTES 0x249cc
 
 extern KfDisplayState display_state;

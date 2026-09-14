@@ -30,7 +30,7 @@ statics used by one original translation unit. The reviewed HI16/LO16 pair at
 `0x800328f0/0x800328f4` admits the previously missing sequence-table owner;
 interior addresses were not modeled as separate globals.
 
-`include/kf/audio.h` owns the packed `SoundRef`, the voice-slot lanes, the
+`include/kf/lib/audio.h` owns the packed `SoundRef`, the voice-slot lanes, the
 complete `KfAudioState` layout, and declarations for the three audio-owned
 globals. Vendor calls remain declared by the Psy-Q headers; this header models
 only the game's state and policy boundary.

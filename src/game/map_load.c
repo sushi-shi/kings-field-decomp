@@ -1,9 +1,9 @@
-#include <kf/game_graphics.h>
-#include <kf/address.h>
-#include <kf/map_data.h>
-#include <kf/game_map.h>
+#include <kf/game/graphics.h>
+#include <kf/lib/address.h>
+#include <kf/lib/map_data.h>
+#include <kf/lib/map.h>
 #include <psyq/libc.h>
-#include <kf/game.h>
+#include <kf/game/game.h>
 
 enum {
     MAP_RESTORE_POSITION_RANDOM_BITS = 15

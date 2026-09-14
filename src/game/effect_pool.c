@@ -1,8 +1,8 @@
-#include <kf/null.h>
-#include <kf/address.h>
+#include <kf/lib/null.h>
+#include <kf/lib/address.h>
 #define KF_EFFECT_POOL_IMPLEMENTATION
-#include <kf/game_effect.h>
-#include <kf/game.h>
+#include <kf/game/effect.h>
+#include <kf/game/game.h>
 
 enum {
     EFFECT_WIND_CUTTER_PITCH = 850,

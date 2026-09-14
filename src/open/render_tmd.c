@@ -1,7 +1,7 @@
-#include <kf/null.h>
-#include <kf/address.h>
-#include <kf/gpu_packets.h>
-#include <kf/open_render.h>
+#include <kf/lib/null.h>
+#include <kf/lib/address.h>
+#include <kf/lib/gpu_packets.h>
+#include <kf/open/render.h>
 
 DATA(0x800372f0, 0x4)
 CVECTOR tmd_textured_primitive_color = {

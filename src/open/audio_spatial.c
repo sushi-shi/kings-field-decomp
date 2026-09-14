@@ -1,8 +1,8 @@
-#include <kf/null.h>
-#include <kf/address.h>
-#include <kf/audio.h>
-#include <kf/game_math.h>
-#include <kf/open_audio.h>
+#include <kf/lib/null.h>
+#include <kf/lib/address.h>
+#include <kf/lib/audio.h>
+#include <kf/lib/math.h>
+#include <kf/open/audio.h>
 #include <psyq/audio.h>
 
 enum {
@@ -59,4 +59,4 @@ KfAudioPlaybackResult audio_play_spatial(
     return KF_AUDIO_PLAYED;
 }
 
-#include "../shared/audio_spatial_helpers.inc"
+#include "../lib/audio_spatial_helpers.inc"

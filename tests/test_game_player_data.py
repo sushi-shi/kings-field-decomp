@@ -73,8 +73,8 @@ class GamePlayerDataTests(unittest.TestCase):
             self.assertIsNotNone(definition)
             self.assertEqual(int(definition[1]), len(payload))
             self.assertEqual(ast.literal_eval(definition[2]).encode('ascii') + b'\0', payload)
-            self.assertNotIn(name, (REPO / 'include/kf/game_state.h').read_text())
-        header = (REPO / 'include/kf/game_player.h').read_text()
+            self.assertNotIn(name, (REPO / 'include/kf/game/state.h').read_text())
+        header = (REPO / 'include/kf/game/player.h').read_text()
         self.assertRegex(header, r'typedef struct KfFloorEntryCell\s*\{\s*u8 x;\s*u8 z;\s*\}')
 
     def test_curated_relocation_sites_and_signed_addends_are_unchanged(self):

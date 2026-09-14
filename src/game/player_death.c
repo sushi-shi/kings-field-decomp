@@ -1,9 +1,9 @@
-#include <kf/null.h>
-#include <kf/game_graphics.h>
-#include <kf/address.h>
-#include <kf/game_player.h>
+#include <kf/lib/null.h>
+#include <kf/game/graphics.h>
+#include <kf/lib/address.h>
+#include <kf/game/player.h>
 #include <psyq/libc.h>
-#include <kf/game.h>
+#include <kf/game/game.h>
 
 enum {
     CURSE_PHYSICAL_POWER_PENALTY = 20,

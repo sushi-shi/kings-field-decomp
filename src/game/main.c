@@ -1,10 +1,10 @@
-#include <kf/address.h>
-#include <kf/overlay.h>
-#include <kf/game_types.h>
+#include <kf/lib/address.h>
+#include <kf/lib/overlay.h>
+#include <kf/lib/types.h>
 #include <psyq/kernel.h>
-#include <kf/game.h>
+#include <kf/game/game.h>
 
-#include "../shared/repeat_store_word.inc"
+#include "../lib/repeat_store_word.inc"
 
 /*
  * GCC inserts the `__main` hook call for a function named main; the SDK

@@ -1,7 +1,7 @@
-#include <kf/game_graphics.h>
-#include <kf/address.h>
+#include <kf/game/graphics.h>
+#include <kf/lib/address.h>
 #include <psyq/sdk.h>
-#include <kf/game_render.h>
+#include <kf/game/render.h>
 
 /* Emit a HUD quad in screen space using the current material. */
 

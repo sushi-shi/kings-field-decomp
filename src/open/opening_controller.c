@@ -1,18 +1,18 @@
-#include <kf/null.h>
-#include <kf/address.h>
-#include <kf/overlay.h>
-#include <kf/audio.h>
-#include <kf/cd_file.h>
-#include <kf/memory.h>
-#include <kf/open_controller.h>
-#include <kf/open_opening_helpers.h>
-#include <kf/open_opening_scenes.h>
-#include <kf/open_render.h>
-#include <kf/open_resources.h>
+#include <kf/lib/null.h>
+#include <kf/lib/address.h>
+#include <kf/lib/overlay.h>
+#include <kf/lib/audio.h>
+#include <kf/lib/cd_file.h>
+#include <kf/lib/memory.h>
+#include <kf/open/controller.h>
+#include <kf/open/opening_helpers.h>
+#include <kf/open/opening_scenes.h>
+#include <kf/open/render.h>
+#include <kf/open/resources.h>
 #include <psyq/sdk.h>
 #include <psyq/libc.h>
 #include <psyq/pad.h>
-#include <kf/resources.h>
+#include <kf/lib/resources.h>
 
 DATA(0x800372d4, 0x6)
 char opening_initial_tim_path[KF_OPENING_INITIAL_TIM_PATH_BYTES] = {'B', '0', '\\', 'L', '0', '.'};

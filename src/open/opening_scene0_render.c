@@ -1,6 +1,6 @@
-#include <kf/address.h>
-#include <kf/open_render.h>
-#include <kf/open_scene0.h>
+#include <kf/lib/address.h>
+#include <kf/open/render.h>
+#include <kf/open/scene0.h>
 
 ADDRESS(0x800194d8, 0x48)
 void opening_scene0_render_frame(

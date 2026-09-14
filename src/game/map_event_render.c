@@ -1,8 +1,8 @@
-#include <kf/null.h>
-#include <kf/game_graphics.h>
-#include <kf/address.h>
-#include <kf/game_asset.h>
-#include <kf/game_render.h>
+#include <kf/lib/null.h>
+#include <kf/game/graphics.h>
+#include <kf/lib/address.h>
+#include <kf/game/asset.h>
+#include <kf/game/render.h>
 #include <psyq/sdk.h>
 
 /*

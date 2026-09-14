@@ -1,11 +1,11 @@
-#include <kf/null.h>
-#include <kf/game_graphics.h>
-#include <kf/address.h>
+#include <kf/lib/null.h>
+#include <kf/game/graphics.h>
+#include <kf/lib/address.h>
 #include <psyq/sdk.h>
 #include <psyq/libc.h>
-#include <kf/game_render.h>
-#include <kf/tmd.h>
-#include <kf/gpu_packets.h>
+#include <kf/game/render.h>
+#include <kf/lib/tmd.h>
+#include <kf/lib/gpu_packets.h>
 
 DATA(0x80057b58, 0x4)
 CVECTOR tmd_textured_primitive_color = {

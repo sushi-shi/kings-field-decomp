@@ -1,11 +1,11 @@
-#include <kf/null.h>
-#include <kf/game_graphics.h>
-#include <kf/address.h>
-#include <kf/game_math.h>
-#include <kf/game_asset.h>
-#include <kf/game_render.h>
-#include <kf/memory.h>
-#include <kf/pool.h>
+#include <kf/lib/null.h>
+#include <kf/game/graphics.h>
+#include <kf/lib/address.h>
+#include <kf/lib/math.h>
+#include <kf/game/asset.h>
+#include <kf/game/render.h>
+#include <kf/lib/memory.h>
+#include <kf/game/pool.h>
 #include <psyq/sdk.h>
 #include <psyq/libc.h>
 

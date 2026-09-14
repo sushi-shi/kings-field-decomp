@@ -229,7 +229,7 @@ restoring fixed startup addresses.
 
 Both `main.c` files now use `BSS_START` for the repeated store and `BSS_END`
 for the initial heap. They derive the repeat count and heap size from the
-shared RAM/stack policy in `include/kf/overlay.h`. No per-image startup address
+shared RAM/stack policy in `include/kf/lib/overlay.h`. No per-image startup address
 or length is supplied to the build. These are reconstruction names for section
 boundaries, not a claim to have recovered the original header spelling.
 

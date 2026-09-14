@@ -56,7 +56,7 @@
   retail. The final kept source must be humane and must not regress a banked
   function.
 - A unit source claims each function with `ADDRESS(0xVA, body_size)` (see
-  `include/kf/address.h`), spells labelled functions and data by their curated
+  `include/kf/lib/address.h`), spells labelled functions and data by their curated
   identities, lists claims in ascending address order, and owns the whole
   contiguous run between its first and last claim. Combine functions into
   such modules as gaps are filled; module names stay WIP because contiguity

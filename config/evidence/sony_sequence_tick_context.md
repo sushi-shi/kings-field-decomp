@@ -92,7 +92,7 @@ these private data symbols, source linkage, alternate-stack extent or an exact
 provider match. The SDK archive is a revision negative control, not a replacement
 for the retail body.
 
-Seven unused vendor-only declarations are removed from `game_state.h`, including
+Seven unused vendor-only declarations are removed from `game/state.h`, including
 the incorrect handler descriptions. None has a reconstructed C consumer, so no
 replacement game-header extern is warranted. No source DATA claims or SDK data
 contributions are fabricated for these eight config-owned objects.

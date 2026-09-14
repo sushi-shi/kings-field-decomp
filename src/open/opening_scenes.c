@@ -1,15 +1,15 @@
-#include <kf/null.h>
-#include <kf/address.h>
-#include <kf/audio.h>
-#include <kf/game_math.h>
-#include <kf/open_audio.h>
-#include <kf/open_camera_path.h>
-#include <kf/open_opening_helpers.h>
-#include <kf/open_opening_render.h>
-#include <kf/open_opening_scenes.h>
-#include <kf/open_render.h>
-#include <kf/open_resources.h>
-#include <kf/open_scene0.h>
+#include <kf/lib/null.h>
+#include <kf/lib/address.h>
+#include <kf/lib/audio.h>
+#include <kf/lib/math.h>
+#include <kf/open/audio.h>
+#include <kf/open/camera_path.h>
+#include <kf/open/opening_helpers.h>
+#include <kf/open/opening_render.h>
+#include <kf/open/opening_scenes.h>
+#include <kf/open/render.h>
+#include <kf/open/resources.h>
+#include <kf/open/scene0.h>
 #include <psyq/audio.h>
 
 enum {

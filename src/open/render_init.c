@@ -1,12 +1,12 @@
-#include <kf/address.h>
+#include <kf/lib/address.h>
 #include <psyq/libc.h>
-#include <kf/overlay.h>
-#include <kf/cd_file.h>
-#include <kf/item.h>
-#include <kf/memory.h>
-#include <kf/open_render.h>
-#include <kf/open_resources.h>
-#include <kf/shared_graphics.h>
+#include <kf/lib/overlay.h>
+#include <kf/lib/cd_file.h>
+#include <kf/lib/item.h>
+#include <kf/lib/memory.h>
+#include <kf/open/render.h>
+#include <kf/open/resources.h>
+#include <kf/lib/graphics.h>
 
 enum {
     PRIMITIVE_BUFFER_BYTES = 0x26160,
@@ -45,7 +45,7 @@ u32 primitive_allocation_count;
 
 RODATA(0x80012110, 0x25)
 
-#include "../shared/lighting_color.inc"
+#include "../lib/lighting_color.inc"
 
 ADDRESS(0x80016908, 0x1d4)
 void render_initialize(void)

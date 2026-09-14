@@ -1,8 +1,8 @@
-#include <kf/address.h>
-#include <kf/item.h>
-#include <kf/map_data.h>
-#include <kf/open_render.h>
+#include <kf/lib/address.h>
+#include <kf/lib/item.h>
+#include <kf/lib/map_data.h>
+#include <kf/open/render.h>
 #include <psyq/libc.h>
-#include <kf/shared_graphics.h>
+#include <kf/lib/graphics.h>
 
-#include "../shared/floor_item_load.inc"
+#include "../lib/floor_item_load.inc"

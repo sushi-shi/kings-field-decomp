@@ -43,8 +43,8 @@ in full. An on-disk field must not encode one consumer's narrowing policy.
 ## Header ownership
 
 The eight common TMD function declarations now live beside their shared
-types in `tmd.h`, instead of being duplicated in `game_render.h` and
-`open_render.h`. The signatures agree with both image-qualified identity
+types in `tmd.h`, instead of being duplicated in `game/render.h` and
+`open/render.h`. The signatures agree with both image-qualified identity
 inventories. Declaration parameters use the curated `slot` and
 `object_index` names. This is a shared interface, not merged executable
 state: the different GAME/OPEN state layouts remain in their respective

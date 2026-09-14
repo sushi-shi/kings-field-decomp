@@ -1,6 +1,6 @@
-#include <kf/address.h>
-#include <kf/overlay.h>
-#include <kf/game_types.h>
+#include <kf/lib/address.h>
+#include <kf/lib/overlay.h>
+#include <kf/lib/types.h>
 #include <psyq/kernel.h>
 
 RODATA(0x80010000, 0x28)

@@ -377,7 +377,7 @@ explicitly stored enum domains from C++20 language support and provide
 storage wrappers for domains appearing at different field widths. Their
 strict compiler pass checks consumers as well as declarations.
 
-King's Field already follows that model in [enum.h](../../include/kf/enum.h).
+King's Field already follows that model in [enum.h](../../include/kf/lib/enum.h).
 The retail C expansion retains integer storage and promoted expression types;
 modern Clang sees scoped enums and domain-preserving field wrappers. Gruntz's
 retail C++ branch can use ordinary enums for some domains; that compiler and

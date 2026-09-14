@@ -1,5 +1,5 @@
-#include <kf/address.h>
-#include <kf/game_player.h>
+#include <kf/lib/address.h>
+#include <kf/game/player.h>
 
 ADDRESS(0x80014674, 0x44)
 void player_warp_shimmer_at_player(KF_ENUM_PARAM(KfWarpShimmerMode, u32) shimmer_mode)

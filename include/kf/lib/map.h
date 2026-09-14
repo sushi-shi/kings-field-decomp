@@ -1,0 +1,531 @@
+#ifndef KF_LIB_MAP_H
+#define KF_LIB_MAP_H
+
+/* Map, floor, map-object, event, and camera layouts and operations. */
+
+#include <kf/lib/animation.h>
+#include <kf/lib/types.h>
+#include <kf/lib/map_data.h>
+#include <kf/lib/item.h>
+#include <kf/lib/floor.h>
+#include <kf/lib/enum.h>
+#include <kf/lib/notify_types.h>
+#include <psyq/sdk.h>
+#include <kf/lib/math.h>
+
+struct KfPoolRecord;
+
+/* Shared forward probe and door-facing policy for interaction and item use. */
+enum {
+    MAP_INTERACTION_PROBE_DISTANCE = 1000,
+    MAP_INTERACTION_RADIUS_PADDING = 800,
+    MAP_DOOR_FACING_TOLERANCE = KF_ANGLE_FULL_TURN / 12
+};
+
+enum {
+    KF_MAP_OBJECT_DEFINITION_COUNT = 160,
+    KF_MAP_OBJECT_DEFINITION_WORD_COUNT = 320,
+    KF_MAP_RESOURCE_PATH_BYTES = 12,
+    KF_MAP_OBJECT_CAPACITY = 190,
+    KF_MAP_CONTAINER_ITEM_COUNT = 4,
+    KF_MAP_OBJECT_EFFECT_FIRST = 160,
+    KF_MAP_EVENT_CAPACITY = 8
+};
+
+/* Each saved floor slot starts with script bytes before its runtime records. */
+enum {
+    KF_MAP_SAVED_FLOOR_COUNT = 5,
+    KF_MAP_SAVED_FLOOR_BYTES = 1700,
+    KF_MAP_SAVED_RECORDS_OFFSET = 10,
+    KF_MAP_SAVED_RECORD_BYTES = 1690,
+    KF_MAP_SAVED_WORLD_WORDS = 2125,
+    KF_MAP_SAVED_WORLD_BYTES = 8500,
+    KF_MAP_SAVED_YAW_SHIFT = 4,
+    KF_MAP_FLOOR3_REQUIRED_REVEALS = 4
+};
+
+KF_ENUM_BEGIN(KfMapScriptFlag, u8)
+    KF_MAP_SCRIPT_UNSET = 0,
+    KF_MAP_SCRIPT_SET = 1
+KF_ENUM_END(KfMapScriptFlag)
+
+KF_ENUM_BEGIN(KfMapAreaTriggerStage, u8)
+    KF_MAP_TRIGGER_AWAIT_ENTRY = 0,
+    KF_MAP_TRIGGER_AWAIT_EXIT = 1,
+    KF_MAP_TRIGGER_COMPLETE = 2
+KF_ENUM_END(KfMapAreaTriggerStage)
+
+typedef struct KfMapFloor1Script {
+    KfMapAreaTriggerStage object_removal_stage;
+    KfMapAreaTriggerStage actor_activation_stage;
+    KfMapScriptFlag passage_opened;
+    KfMapScriptFlag revival_enabled;
+} KfMapFloor1Script;
+
+typedef struct KfMapFloor3Script {
+    u8 revealed_piece_count;
+} KfMapFloor3Script;
+
+typedef struct KfMapFloor5Script {
+    KfMapScriptFlag character_arrived;
+    KfMapScriptFlag weapon_transformed;
+    KfMapScriptFlag boss_encounter_started;
+    KfMapScriptFlag boss_defeat;
+} KfMapFloor5Script;
+
+/* The floor selects the prefix interpretation; other bytes stay serialized. */
+typedef union KfMapFloorScript {
+    u8 bytes[KF_MAP_SAVED_RECORDS_OFFSET];
+    KfMapFloor1Script floor1;
+    KfMapFloor3Script floor3;
+    KfMapFloor5Script floor5;
+} KfMapFloorScript;
+
+typedef struct KfMapSavedFloor {
+    KfMapFloorScript script;
+    u8 records[KF_MAP_SAVED_RECORD_BYTES];
+} KfMapSavedFloor;
+
+/* Five serialized floor records; save I/O addresses the complete owner. */
+typedef struct KfMapSavedWorld {
+    KfMapSavedFloor floors[KF_MAP_SAVED_FLOOR_COUNT];
+} KfMapSavedWorld;
+
+/* Definitions select operations; the runtime action byte dispatches them. */
+KF_ENUM_BEGIN(KfMapObjectOperation, u8)
+    KF_MAP_OBJECT_OP_HINGED_DOOR = 0,
+    KF_MAP_OBJECT_OP_HINGED_DOOR_PARTNER = 1,
+    KF_MAP_OBJECT_OP_LIFT_DOOR = 2,
+    KF_MAP_OBJECT_OP_03 = 3,
+    KF_MAP_OBJECT_OP_HINGED_CONTAINER = 8,
+    KF_MAP_OBJECT_OP_ITEM_CONTAINER = 9,
+    KF_MAP_OBJECT_OP_COPY_REGION = 10,
+    KF_MAP_OBJECT_OP_RESTORE_POINT = 11,
+    KF_MAP_OBJECT_OP_REVEAL_MAP_PIECE = 12,
+    KF_MAP_OBJECT_OP_SCREEN_IMAGE = 13,
+    KF_MAP_OBJECT_OP_SAVE_POINT = 14,
+    KF_MAP_OBJECT_OP_ITEM_PICKUP = 64,
+    KF_MAP_OBJECT_OP_GOLD_PICKUP = 65,
+    KF_MAP_OBJECT_OP_PROJECTILE_EMITTER = 80,
+    KF_MAP_OBJECT_OP_RELEASE_ORBIT_OR_SHORT_SWING = 81,
+    KF_MAP_OBJECT_OP_RELEASE_LONG_SWING = 82,
+    KF_MAP_OBJECT_OP_EFFECT_SWITCH = 83,
+    KF_MAP_OBJECT_OP_FALL_AND_TIP = 96,
+    KF_MAP_OBJECT_OP_FALL_AND_SPIN = 97,
+    KF_MAP_OBJECT_OP_BOUNCE = 98,
+    KF_MAP_OBJECT_OP_NONE = 255,
+    KF_MAP_OBJECT_OP_HINGED_DOOR_END = 2,
+    KF_MAP_OBJECT_OP_LINK_TRIGGER_END = 8,
+    KF_MAP_OBJECT_OP_LINK_CLEAR_LAST = 8
+KF_ENUM_END(KfMapObjectOperation)
+
+/* Authored groups selected by weapon and boss progress. */
+enum {
+    KF_MAP_LINK_BOSS_EMITTERS = 13,
+    KF_MAP_LINK_WEAPON_TRANSFORM_DOORS = 51,
+    KF_MAP_LINK_FLOOR5_SWORD_DOOR = 52
+};
+
+KF_ENUM_BEGIN(KfMapCopyRegionId, u8)
+    KF_MAP_COPY_FLOOR1_GRAVESTONE = 0,
+    KF_MAP_COPY_FLOOR1_PASSAGE = 1,
+    KF_MAP_COPY_FLOOR3_REVEAL_FIRST = 2,
+    KF_MAP_COPY_FLOOR3_REVEAL_SECOND = 3,
+    KF_MAP_COPY_FLOOR5_BOSS_ENCOUNTER = 4,
+    KF_MAP_COPY_REGION_NONE = 255
+KF_ENUM_END(KfMapCopyRegionId)
+
+/* Link IDs 128..254 permit repeated switch/door activation; 255 is absent. */
+enum {
+    KF_MAP_COPY_REGION_COUNT = 5,
+    KF_MAP_LINK_NONE = 255,
+    KF_MAP_OBJECT_PARAMETER_NONE = 255,
+    KF_MAP_LINK_REUSABLE_FIRST = 128,
+    KF_MAP_OBJECT_EFFECT_GROUP_CAPACITY = 10,
+    KF_MAP_OBJECT_GOLD_DROP_FIRST = 160,
+    KF_MAP_OBJECT_DEFINITION_DROP_FIRST = 170,
+    KF_MAP_OBJECT_PLACEMENT_DROP_FIRST = 180
+};
+
+/* Switch states and door/reveal ages reuse the action-selected halfword. */
+KF_ENUM_BEGIN(KfMapObjectProgress, u16)
+    KF_MAP_OBJECT_PROGRESS_INIT = 0,
+    KF_MAP_OBJECT_PROGRESS_RUNNING = 1,
+    KF_MAP_OBJECT_SWING_OPEN_LAST = 31,
+    KF_MAP_OBJECT_SWING_OPEN_END = 32,
+    KF_MAP_OBJECT_LIFT_OPEN_LAST = 40,
+    KF_MAP_OBJECT_LIFT_OPEN_END = 41,
+    KF_MAP_OBJECT_DOOR_HOLD_FIRST = 250,
+    KF_MAP_OBJECT_DOOR_CLOSE_FIRST = 300,
+    KF_MAP_OBJECT_SWING_CLOSE_END = 332,
+    KF_MAP_OBJECT_LIFT_CLOSE_END = 341,
+    KF_MAP_OBJECT_REVEAL_SETTLE_END = 6,
+    KF_MAP_OBJECT_SWITCH_READY = 0,
+    KF_MAP_OBJECT_SWITCH_FORWARD = 1,
+    KF_MAP_OBJECT_SWITCH_DISABLED = 2,
+    KF_MAP_OBJECT_SWITCH_REVERSE = 3
+KF_ENUM_END(KfMapObjectProgress)
+KF_ENUM_COUNTER(KfMapObjectProgress, u16)
+
+#if KF_MODERN_TYPES
+constexpr KfMapObjectProgress map_object_toggle_progress(KfMapObjectProgress progress)
+{
+    return progress == KF_MAP_OBJECT_PROGRESS_INIT
+        ? KF_MAP_OBJECT_PROGRESS_RUNNING : KF_MAP_OBJECT_PROGRESS_INIT;
+}
+#else
+#define map_object_toggle_progress(progress) ((progress) == 0)
+#endif
+
+KF_ENUM_BEGIN(KfMapObjectDropSource, u8)
+    KF_MAP_OBJECT_DROP_FROM_PLACEMENT = 0,
+    KF_MAP_OBJECT_DROP_FROM_DEFINITION = 1
+KF_ENUM_END(KfMapObjectDropSource)
+
+/* Positive Y hides the piece; five settling updates undo the reveal overshoot. */
+enum {
+    KF_MAP_OBJECT_REVEAL_DEPTH = 10000,
+    KF_MAP_OBJECT_REVEAL_SETTLE_STEP = 40
+};
+
+typedef struct KfMapCellCoordinates {
+    u8 z;
+    u8 x;
+} KfMapCellCoordinates;
+
+/* Little-endian z/x bytes are also compared as a packed halfword. */
+typedef union KfMapCell {
+    KfMapCellCoordinates coords;
+    u16 word;
+} KfMapCell;
+
+typedef struct KfMapCopyRegion {
+    u8 source_x;
+    u8 source_z;
+    u8 destination_x;
+    u8 destination_z;
+    u8 width;
+    u8 height;
+} KfMapCopyRegion;
+
+typedef union KfMapObjectSpawn {
+    u16 sequence;
+    u8 effect_id;
+} KfMapObjectSpawn;
+
+/* Behavior selects an effect slot, a paired object, or a map-copy region. */
+typedef union KfMapObjectParameter {
+    u8 effect_index;
+    u8 object_index;
+    KfMapCopyRegionId copy_region;
+} KfMapObjectParameter;
+
+typedef struct KfMapObjectLinkFields {
+    u8 link_id;
+    KfMapObjectParameter action_parameter;
+    KfMapObjectSpawn spawn;
+    s16 vertical_velocity;
+    KfNotificationId linked_notification;
+    KfNotificationId default_notification;
+} KfMapObjectLinkFields;
+
+typedef struct KfMapObjectHingedContainer {
+    u8 link_id;
+    KfObjectId item_ids[KF_MAP_CONTAINER_ITEM_COUNT];
+} KfMapObjectHingedContainer;
+
+/* Object behavior selects the link payload; serialization preserves all eight bytes. */
+typedef union KfMapObjectLink {
+    KfMapObjectLinkFields fields;
+    u16 gold_amount;
+    KfMapObjectHingedContainer hinged_container;
+    KfObjectId item_ids[KF_MAP_CONTAINER_ITEM_COUNT];
+    u32 words[2];
+} KfMapObjectLink;
+
+/* Encoded model byte is decoded against the consuming image's model table. */
+typedef struct KfMapObjectPlacement {
+    u8 object_id;
+    u8 unknown_01;
+    u8 tile_z;
+    u8 tile_x;
+    u16 yaw;
+    s16 local_z;
+    s16 local_x;
+    s16 local_y;
+    KfMapObjectLink link;
+} KfMapObjectPlacement;
+
+typedef struct KfMapObjectDefinition {
+    KfMapObjectOperation behavior_type;
+    u8 unknown_01;
+    u16 collision_radius;
+    u16 interaction_radius;
+    u8 unknown_06[2];
+} KfMapObjectDefinition;
+
+typedef struct KfMapObjectDefinitionTable {
+    KfMapObjectDefinition entries[KF_MAP_OBJECT_DEFINITION_COUNT];
+} KfMapObjectDefinitionTable;
+
+typedef struct KfMapObject {
+    KfObjectId object_id;
+    u8 unknown_01;
+    u16 cell_x;
+    u16 cell_z;
+    u8 unknown_06[2];
+    VECTOR position;
+    KfRotation rotation;
+    KfMapObjectLink link;
+    KfMapObjectOperation action;
+    u8 unknown_29;
+    KfMapObjectProgress action_timer;
+} KfMapObject;
+
+/*
+ * Cutscene camera paths use 0x1c-byte serialized points and a 0x64-byte
+ * runtime interpolator. The fourth vector lane and two trailing halfwords
+ * remain unresolved.
+ */
+enum {
+    KF_CAMERA_PATH_END_X = -1,
+    KF_CAMERA_PATH_FINISHED = -1
+};
+
+typedef struct KfCameraPathPoint {
+    VECTOR position;
+    SVECTOR rotation;
+    s16 speed;
+    s16 unknown_1a;
+} KfCameraPathPoint;
+
+typedef struct KfCameraPathState {
+    const KfCameraPathPoint *points;
+    VECTOR position;
+    SVECTOR rotation;
+    VECTOR position_fixed;
+    VECTOR rotation_fixed;
+    VECTOR position_delta;
+    VECTOR rotation_delta;
+    s16 point_index;
+    s16 unknown_5e;
+    s32 frames_remaining;
+} KfCameraPathState;
+
+static inline void camera_path_publish_fixed(KfCameraPathState *path)
+{
+    setVector(&path->position_fixed,
+        path->position.vx << KF_FIXED4_BITS,
+        path->position.vy << KF_FIXED4_BITS,
+        path->position.vz << KF_FIXED4_BITS);
+    setVector(&path->rotation_fixed,
+        path->rotation.vx << KF_FIXED4_BITS,
+        path->rotation.vy << KF_FIXED4_BITS,
+        path->rotation.vz << KF_FIXED4_BITS);
+}
+
+static inline void camera_path_advance_pose(KfCameraPathState *path, s32 y_offset)
+{
+    addVector(&path->position_fixed, &path->position_delta);
+    addVector(&path->rotation_fixed, &path->rotation_delta);
+    setVector(&path->position,
+        path->position_fixed.vx >> KF_FIXED4_BITS,
+        (path->position_fixed.vy >> KF_FIXED4_BITS) + y_offset,
+        path->position_fixed.vz >> KF_FIXED4_BITS);
+    setVector(&path->rotation,
+        (path->rotation_fixed.vx >> KF_FIXED4_BITS) & KF_ANGLE_WRAP_MASK,
+        (path->rotation_fixed.vy >> KF_FIXED4_BITS) & KF_ANGLE_WRAP_MASK,
+        (path->rotation_fixed.vz >> KF_FIXED4_BITS) & KF_ANGLE_WRAP_MASK);
+}
+
+/* Role identities established by interaction and placement evidence. */
+KF_ENUM_BEGIN(KfCharacterId, u8)
+    KF_CHARACTER_KEY_OF_THE_DEAD_EXCHANGE = 3,
+    KF_CHARACTER_HARP_EXCHANGE = 7,
+    KF_CHARACTER_HEALING_EXCHANGE = 8,
+    KF_CHARACTER_FLOOR3_DOOR_UNLOCKER = 12
+KF_ENUM_END(KfCharacterId)
+
+KF_ENUM_BEGIN(KfMapEventState, u8)
+    KF_MAP_EVENT_INACTIVE = 0,
+    KF_MAP_EVENT_ACTIVE = 1,
+    KF_MAP_EVENT_DISABLED = 3,
+    KF_MAP_EVENT_FREE = 255
+KF_ENUM_END(KfMapEventState)
+
+KF_ENUM_BEGIN(KfMapEventBehavior, u8)
+    KF_MAP_EVENT_BEHAVIOR_SHOP = 0,
+    KF_MAP_EVENT_BEHAVIOR_WANDER = 1,
+    KF_MAP_EVENT_BEHAVIOR_ANIMATION_LOOP = 2
+KF_ENUM_END(KfMapEventBehavior)
+
+KF_ENUM_BEGIN(KfMapEventCollisionTurn, u8)
+    KF_MAP_EVENT_COLLISION_TURN_NONE = 0,
+    KF_MAP_EVENT_COLLISION_TURN_PENDING = 1
+KF_ENUM_END(KfMapEventCollisionTurn)
+
+enum {
+    KF_DIALOGUE_STAGE_COUNT = 5,
+    KF_DIALOGUE_FIRST_STAGE = 1,
+    KF_DIALOGUE_FIRST_PAGE = 1,
+    KF_DIALOGUE_GATE_RELOAD = 3,
+    KF_DIALOGUE_PAGE_DELAY_TICKS = 40,
+    KF_MAP_EVENT_ANIMATION_PHASE_MASK = 4095,
+    KF_MAP_EVENT_ANIMATION_TALK_POSE = 2048,
+    KF_MAP_EVENT_ANIMATION_WANDER_STEP = 110,
+    KF_MAP_EVENT_ANIMATION_LOOP_STEP = 200,
+    KF_MAP_EVENT_ANIMATION_TALK_STEP = 200,
+    KF_MAP_EVENT_ANIMATION_FINISH_STEP = 400
+};
+
+/* Last accessible page for each one-based dialogue stage; copied as a block. */
+typedef struct KfDialoguePageLimits {
+    u8 last_page[KF_DIALOGUE_STAGE_COUNT];
+} KfDialoguePageLimits;
+
+typedef struct KfMapEventDefinition {
+    KfMapEventState state;
+    KfCharacterId character_id;
+    u8 model_index;
+    u8 cell_z;
+    u8 cell_x;
+    KfDialoguePageLimits dialogue_pages;
+    u8 dialogue_stage_limit;
+    u8 unknown_0b;
+    u8 unknown_0c;
+    KfMapEventBehavior behavior;
+    s16 position_z_offset;
+    s16 position_x_offset;
+    u16 initial_rotation;
+    u16 radius;
+    u16 unknown_16;
+} KfMapEventDefinition;
+
+typedef struct KfDialogueFields {
+    u8 stage_limit;
+    u8 stage;
+    u8 page;
+    u8 page_delay;
+} KfDialogueFields;
+
+/* Script triggers compare stage, page and delay with one masked word load. */
+typedef union KfDialogueState {
+    KfDialogueFields fields;
+    u32 word;
+} KfDialogueState;
+
+typedef struct KfMapEvent {
+    KfMapEventState state;
+    KfCharacterId character_id;
+    u8 model_index;
+    KfDialoguePageLimits dialogue_pages;
+    KfDialogueState dialogue;
+    u8 unknown_0c;
+    u8 unknown_0d;
+    KfMapEventBehavior behavior;
+    KfAnimationClip animation_clip;
+    KfMapEventCollisionTurn collision_turn_pending;
+    u8 unknown_11;
+    u16 animation_phase;
+    s32 position_x;
+    s32 position_z;
+    u16 cell_x;
+    u16 cell_z;
+    u16 radius;
+    u16 unknown_22;
+    VECTOR reference_position;
+    SVECTOR rotation;
+    struct KfPoolRecord *animation_cache;
+    s16 rotation_target;
+    u16 unknown_42;
+} KfMapEvent;
+
+/* Startup clears the definitions, live pool and shared 16-byte control tail. */
+typedef struct KfMapObjectState {
+    KfMapObjectDefinitionTable definitions;
+    KfMapObject objects[KF_MAP_OBJECT_CAPACITY];
+    u8 unknown_25a8[10];
+    u16 effect_sequence_160;
+    u16 effect_sequence_170;
+    u16 effect_sequence_180;
+} KfMapObjectState;
+
+/* Cleared as 0x2360 bytes; the final 0x2134 bytes are copied by save I/O. */
+typedef struct KfMapRuntimeState {
+    KfMapEvent events[KF_MAP_EVENT_CAPACITY];
+    KfMapEvent *current_event;
+    u8 *variant_asset_buffer;
+    u16 dialogue_advance_gate;
+    u16 ambient_script_countdown;
+    KfMapSavedWorld world_state;
+} KfMapRuntimeState;
+
+extern KfMapCopyRegion map_copy_regions[KF_MAP_COPY_REGION_COUNT];
+extern KfMapRuntimeState map_runtime_state;
+/* Member spellings used by consumers, not independently owned globals. */
+#define map_event_pool (map_runtime_state.events)
+#define current_map_event (map_runtime_state.current_event)
+#define map_variant_asset_buffer (map_runtime_state.variant_asset_buffer)
+#define map_dialogue_advance_gate (map_runtime_state.dialogue_advance_gate)
+#define map_ambient_script_countdown (map_runtime_state.ambient_script_countdown)
+#define map_world_state_base (map_runtime_state.world_state)
+#define map_floor1_script (map_runtime_state.world_state.floors[0].script.floor1)
+#define map_floor3_script (map_runtime_state.world_state.floors[2].script.floor3)
+#define map_floor5_script (map_runtime_state.world_state.floors[4].script.floor5)
+#define boss_defeat_complete (map_floor5_script.boss_defeat)
+extern KfMapObjectState map_object_state;
+extern char map_resource_path[KF_MAP_RESOURCE_PATH_BYTES];
+
+extern void camera_path_begin(KfCameraPathState *path, const KfCameraPathPoint *points);
+extern void camera_path_compute_segment(KfCameraPathState *path);
+extern void camera_path_step(KfCameraPathState *path, s32 y_offset);
+extern void map_apply_copy_region(KfMapCopyRegionId region_id);
+extern void map_ambient_script_floor1(void);
+extern void map_ambient_script_floor2(void);
+extern void map_ambient_script_floor3(void);
+extern void map_ambient_script_floor4(void);
+extern void map_ambient_script_floor5(void);
+extern void map_action_script_floor1(void);
+extern void map_action_script_floor2(void);
+extern void map_action_script_floor3(void);
+extern void map_action_script_floor4(void);
+extern void map_action_script_floor5(void);
+extern void map_event_advance_animation_blocking(KfMapEvent *event, u16 target, s16 step);
+extern s32 map_event_distance_to_point( const KfMapEvent *event, s32 point_x, s32 point_z, s32 max_distance);
+extern s32 map_event_pool_find_overlap(s32 point_x, s32 point_z, s32 radius_padding);
+extern KfMapEvent *map_event_pool_find_target_in_cone( const VECTOR *origin, s16 facing, s32 max_distance, s32 angle_tolerance, s32 *distance_out);
+extern void map_event_pool_load(const KfMapEventDefinition *definitions);
+extern void map_event_pool_update(void);
+extern void map_event_refresh_dialogue_stage(KfMapEvent *event);
+extern void map_event_set_current(KfMapEvent *event);
+extern void map_event_timers_reset(void);
+extern void map_interaction_dispatch(
+    const VECTOR *position, SVECTOR *rotation);
+extern void map_load_floor_wrapper(void);
+extern void map_load_floor(void);
+extern void map_object_definitions_load(const KfMapObjectDefinitionTable *definitions);
+extern s32 map_object_distance_to_point( const KfMapObject *object, s32 point_x, s32 point_z, s32 max_distance);
+extern KfMapObject *map_object_effect_pool_acquire(u16 first_index, u16 count, u16 sequence);
+extern void map_object_mark_collision_edge(const KfMapObject *object, KfMapCellKind cell_kind, u16 yaw);
+extern void map_object_pool_clear(void);
+extern void map_object_pool_clear_link(u8 link_id);
+extern s32 map_object_pool_find_interaction_from(
+    s32 start_index, s32 point_x, s32 point_z, s32 radius_padding);
+extern s32 map_object_pool_find_near_point(s32 point_x, s32 point_z, s32 radius_padding);
+extern void map_object_pool_load(const KfMapObjectPlacement *placements);
+extern void map_object_pool_trigger_link(u8 link_id);
+extern void map_object_pool_update(void);
+extern s32 map_object_probe_forward(const KfMapObject *object, u16 yaw);
+extern void map_object_spawn_actor_debris(u16 source, const VECTOR *position, s32 y_offset);
+extern void map_object_spawn_effect(KfMapObjectDropSource drop_source, KfObjectId object_id, const VECTOR *position, s32 y_offset);
+extern void map_object_start_action_if_idle(KfMapObject *object, KfMapObjectOperation action);
+/* Copy into a complete object with word-aligned storage; count is in words. */
+extern const u32 *map_resource_copy_words(u32 *destination, const u32 *source, u32 word_count);
+extern u8 *map_resource_load_file(const char *filename);
+extern void map_resource_path_set_floor(KfFloorId floor);
+extern void map_resources_load(KfFloorId floor, KF_ENUM_PARAM(KfMapVariant, s32) map_variant);
+extern void map_unload_floor(void);
+extern void map_variant_assets_load(void);
+extern void map_world_state_persist(void);
+
+#endif

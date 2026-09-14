@@ -1,13 +1,13 @@
-#include <kf/null.h>
-#include <kf/game_graphics.h>
-#include <kf/address.h>
-#include <kf/input.h>
-#include <kf/map_data.h>
-#include <kf/item.h>
-#include <kf/game_cd.h>
+#include <kf/lib/null.h>
+#include <kf/game/graphics.h>
+#include <kf/lib/address.h>
+#include <kf/game/input.h>
+#include <kf/lib/map_data.h>
+#include <kf/lib/item.h>
+#include <kf/game/cd.h>
 #include <psyq/libc.h>
-#include <kf/game.h>
-#include <kf/shared_graphics.h>
+#include <kf/game/game.h>
+#include <kf/lib/graphics.h>
 
 /* Shared menu primitives (frame begin/flush, item draw, input sound, poll). */
 
@@ -46,7 +46,7 @@ u16 item_sell_prices[KF_ITEM_COUNT][KF_ITEM_SHOP_COUNT];
  * terminator; the second pass converts each tile/offset pair into a world
  * position sunk onto the floor and seeds a random starting animation frame.
  */
-#include "../shared/floor_item_load.inc"
+#include "../lib/floor_item_load.inc"
 
 RODATA(0x800122a0, 0x25)
 

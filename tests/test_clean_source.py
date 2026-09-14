@@ -23,7 +23,7 @@ class LexicalControls(unittest.TestCase):
                          '((int)(call(1, 2)))\n')
 
     def test_c_type_representation(self):
-        source = '''#include <kf/enum.h>
+        source = '''#include <kf/lib/enum.h>
 KF_ENUM_BEGIN(Id, u8)
     A = 1, B = 2
 KF_ENUM_END(Id)
@@ -147,7 +147,7 @@ class ExportControls(unittest.TestCase):
         first, second = generate(files), generate(files)
         self.assertEqual(first, second)
         self.assertNotIn('checks', first['flake.nix'].decode())
-        self.assertNotIn('include/kf/address.h', first)
+        self.assertNotIn('include/kf/lib/address.h', first)
         self.assertFalse(any('/tests/' in path or '/bin/' in path or path.startswith('tests/')
                              for path in first))
         self.assertNotIn('codecs/src/lib.rs', first)
@@ -160,11 +160,14 @@ class ExportControls(unittest.TestCase):
             self.assertNotIn(declaration, first['vendor/include/psyq/libc.h'])
         modern = generate(files, modern=True)
         self.assertIn('codecs/src/lib.rs', modern)
-        self.assertIn(b'enum class', modern['include/kf/game_menu.h'])
+        self.assertFalse(any(
+            b'#include <kf/lib/address.h>' in data for data in modern.values()
+        ))
+        self.assertIn(b'enum class', modern['include/kf/game/menu.h'])
         self.assertIn('src/game/main.cpp', modern)
         self.assertNotIn('scripts/kf/cli.py', first)
         self.assertEqual(len(json.loads(first['build.json'])['images']), 3)
-        fragments = {name for name in files if name.startswith('src/shared/')
+        fragments = {name for name in files if name.startswith('src/lib/')
                      and name.endswith('.inc')}
         self.assertTrue(fragments)
         for output in (first, modern):

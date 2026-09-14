@@ -51,16 +51,16 @@ class ManifestTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as directory:
             root = Path(directory)
             (root / 'src/game').mkdir(parents=True)
-            (root / 'src/shared').mkdir()
-            (root / 'src/game/sample.c').write_text('#include "../shared/body.inc"\n')
-            body = root / 'src/shared/body.inc'
+            (root / 'src/lib').mkdir()
+            (root / 'src/game/sample.c').write_text('#include "../lib/body.inc"\n')
+            body = root / 'src/lib/body.inc'
             body.write_text('int sample(void) { return 1; }\n')
             manifest = load_manifest()
             with mock.patch.object(graph, 'REPO', root), \
                     mock.patch.object(progress, 'REPO', root), \
                     mock.patch.object(progress, 'toolchain_identity', return_value='test'):
                 self.assertEqual(graph.IncludeScanner().headers('src/game/sample.c'),
-                                 ['src/shared/body.inc'])
+                                 ['src/lib/body.inc'])
                 before = progress.input_hash(sample_current(100).unit, manifest)
                 body.write_text('int sample(void) { return 2; }\n')
                 self.assertNotEqual(before, progress.input_hash(sample_current(100).unit, manifest))

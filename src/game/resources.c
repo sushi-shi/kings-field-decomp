@@ -1,14 +1,14 @@
-#include <kf/null.h>
-#include <kf/address.h>
-#include <kf/game_resources.h>
-#include <kf/resources.h>
-#include <kf/game_equipment.h>
-#include <kf/game_map.h>
-#include <kf/game_player.h>
-#include <kf/game_render.h>
+#include <kf/lib/null.h>
+#include <kf/lib/address.h>
+#include <kf/game/resources.h>
+#include <kf/lib/resources.h>
+#include <kf/game/equipment.h>
+#include <kf/lib/map.h>
+#include <kf/game/player.h>
+#include <kf/game/render.h>
 #include <psyq/sdk.h>
 #include <psyq/libc.h>
-#include <kf/game.h>
+#include <kf/game/game.h>
 
 enum {
     MAP_VARIANT_ASSET_BUFFER_BYTES = 0x5a000,
@@ -47,7 +47,7 @@ RODATA(0x80012178, 0x39)
 /* Each map grid chunk holds 100 x 100 bytes, copied as 0x9c4 words. */
 #define MAP_GRID_WORDS (sizeof map_cell_attribute_grid / sizeof(u32))
 
-#include "../shared/tim_upload_images.inc"
+#include "../lib/tim_upload_images.inc"
 
 ADDRESS(0x8001b180, 0x210)
 void common_resources_load(void)
@@ -97,7 +97,7 @@ u8 *map_resource_load_file(const char *filename)
     return data;
 }
 
-#include "../shared/resource_copy_words.inc"
+#include "../lib/resource_copy_words.inc"
 
 ADDRESS(0x8001b414, 0x88)
 void map_variant_assets_load(void)

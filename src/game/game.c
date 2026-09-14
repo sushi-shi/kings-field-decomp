@@ -1,11 +1,11 @@
-#include <kf/game_graphics.h>
-#include <kf/address.h>
-#include <kf/overlay.h>
-#include <kf/game_player.h>
-#include <kf/game_save.h>
+#include <kf/game/graphics.h>
+#include <kf/lib/address.h>
+#include <kf/lib/overlay.h>
+#include <kf/game/player.h>
+#include <kf/game/save.h>
 #include <psyq/kernel.h>
 #include <psyq/libc.h>
-#include <kf/game.h>
+#include <kf/game/game.h>
 
 enum {
     INITIAL_ACTOR_CLEAR_BYTES = 0x2b48,

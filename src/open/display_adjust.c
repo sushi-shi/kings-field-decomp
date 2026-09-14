@@ -1,6 +1,6 @@
-#include <kf/address.h>
+#include <kf/lib/address.h>
 #include <psyq/pad.h>
-#include <kf/open_render.h>
+#include <kf/open/render.h>
 #include <LIBETC.H>
 
 enum {

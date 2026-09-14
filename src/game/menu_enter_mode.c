@@ -1,8 +1,8 @@
 #include <stdarg.h>
-#include <kf/address.h>
+#include <kf/lib/address.h>
 #define KF_MENU_MODE_IMPLEMENTATION
-#include <kf/game_menu.h>
-#include <kf/game.h>
+#include <kf/game/menu.h>
+#include <kf/game/game.h>
 
 /*
  * menu_enter_mode (GAME.EXE): tear down and re-establish the system heap around a

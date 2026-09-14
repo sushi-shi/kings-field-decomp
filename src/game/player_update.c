@@ -1,11 +1,11 @@
-#include <kf/null.h>
-#include <kf/address.h>
-#include <kf/input.h>
-#include <kf/overlay.h>
-#include <kf/game_player.h>
-#include <kf/game_collision.h>
+#include <kf/lib/null.h>
+#include <kf/lib/address.h>
+#include <kf/game/input.h>
+#include <kf/lib/overlay.h>
+#include <kf/game/player.h>
+#include <kf/game/collision.h>
 #include <psyq/libc.h>
-#include <kf/game.h>
+#include <kf/game/game.h>
 
 /* Flash immediately before/on each one-HP poison tick. */
 enum {

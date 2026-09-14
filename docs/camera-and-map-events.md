@@ -14,7 +14,7 @@ path, steps it while rendering, and copies the final transform back to the live
 camera.
 
 The camera-path and map-event layouts and their public operations are owned by
-`include/kf/game_map.h`, rather than the semantic catch-all.
+`include/kf/lib/map.h`, rather than the semantic catch-all.
 
 The state retains a pointer to `0x1c`-byte `KfCameraPathPoint` records. A point
 whose x coordinate is `-1` terminates the path. Segment setup computes a

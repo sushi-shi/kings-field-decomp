@@ -1,5 +1,5 @@
-#include <kf/address.h>
-#include <kf/audio.h>
-#include <kf/open_audio.h>
+#include <kf/lib/address.h>
+#include <kf/lib/audio.h>
+#include <kf/open/audio.h>
 
-#include "../shared/sound_ref.inc"
+#include "../lib/sound_ref.inc"

@@ -58,7 +58,7 @@ class InventoryTests(unittest.TestCase):
         carrier = "typedef struct Carrier { u8 prefix; ModeWord mode; u8 suffix; } Carrier;"
         source = domain + alias + carrier
         with patch("pathlib.Path.read_text", lambda path:
-                   source if path.name == "game_types.h" else ""):
+                   source if path.name == "types.h" else ""):
             layout = _header_structure_layouts()["Carrier"]
         self.assertEqual((layout.size, layout.alignment), (12, 4))
         self.assertEqual([(f.offset, f.size, f.datatype) for f in layout.fields],
@@ -71,7 +71,7 @@ class InventoryTests(unittest.TestCase):
         )
         for source, error in controls:
             with self.subTest(error=error), patch("pathlib.Path.read_text", lambda path:
-                                                source if path.name == "game_types.h" else ""):
+                                                source if path.name == "types.h" else ""):
                 with self.assertRaisesRegex(ValueError, error):
                     _header_structure_layouts()
 
@@ -83,11 +83,11 @@ class InventoryTests(unittest.TestCase):
         """
         carrier = "typedef struct Carrier { KF_ENUM_STORAGE(Floor, u8) floor; } Carrier;"
         with patch("pathlib.Path.read_text", lambda path:
-                   declaration + carrier if path.name == "game_types.h" else ""):
+                   declaration + carrier if path.name == "types.h" else ""):
             field = _header_structure_layouts()["Carrier"].fields[0]
             self.assertEqual(field.datatype, "KF_ENUM_STORAGE(Floor, u8)")
         with patch("pathlib.Path.read_text", lambda path:
-                   carrier if path.name == "game_types.h" else ""):
+                   carrier if path.name == "types.h" else ""):
             with self.assertRaisesRegex(ValueError, "undeclared enum domain 'Floor'"):
                 _header_structure_layouts()
 
@@ -106,7 +106,7 @@ class InventoryTests(unittest.TestCase):
             } EnumCarrier;
         """
         with patch("pathlib.Path.read_text",
-                   lambda path: source if path.name == "game_types.h" else ""):
+                   lambda path: source if path.name == "types.h" else ""):
             carrier = _header_structure_layouts()["EnumCarrier"]
         self.assertEqual((carrier.size, carrier.alignment), (8, 2))
         self.assertEqual([(f.name, f.datatype, f.offset, f.size) for f in carrier.fields], [
@@ -122,7 +122,7 @@ class InventoryTests(unittest.TestCase):
             typedef struct BadCarrier { BadState state; } BadCarrier;
         """
         with patch("pathlib.Path.read_text",
-                   lambda path: source if path.name == "game_types.h" else ""):
+                   lambda path: source if path.name == "types.h" else ""):
             with self.assertRaisesRegex(ValueError, "unsupported enum storage"):
                 _header_structure_layouts()
 
@@ -136,7 +136,7 @@ class InventoryTests(unittest.TestCase):
             } LayoutCarrier;
         """
         def header(path):
-            return source if path.name == "game_types.h" else ""
+            return source if path.name == "types.h" else ""
 
         with patch("pathlib.Path.read_text", header):
             layouts = _header_structure_layouts()
@@ -151,7 +151,7 @@ class InventoryTests(unittest.TestCase):
     def test_named_union_rejects_unknown_member_type(self) -> None:
         def header(path):
             return ("typedef union BadLayout { Missing value; } BadLayout;"
-                    if path.name == "game_types.h" else "")
+                    if path.name == "types.h" else "")
 
         with patch("pathlib.Path.read_text", header):
             with self.assertRaisesRegex(ValueError, "unknown field type 'Missing'"):
@@ -184,7 +184,7 @@ class InventoryTests(unittest.TestCase):
         """
 
         def read_header(path):
-            return declarations if path.name == "game_types.h" else ""
+            return declarations if path.name == "types.h" else ""
 
         with patch("scripts.kf.inventory.Path.read_text", read_header):
             layout = _header_structure_layouts()["ExampleGrid"]
@@ -196,7 +196,7 @@ class InventoryTests(unittest.TestCase):
             with self.subTest(bound=bound):
                 broken = declarations.replace("cells[ROWS]", f"cells[{bound}]")
                 with patch("scripts.kf.inventory.Path.read_text",
-                           lambda path: broken if path.name == "game_types.h" else ""):
+                           lambda path: broken if path.name == "types.h" else ""):
                     with self.assertRaisesRegex(ValueError, error + " array bound"):
                         _header_structure_layouts()
 
@@ -207,7 +207,7 @@ class InventoryTests(unittest.TestCase):
             typedef struct TileGrid { u16 tiles[ROW_COUNT][TILE_COUNT]; } TileGrid;
         """
         with patch("scripts.kf.inventory.Path.read_text",
-                   lambda path: declarations if path.name == "game_types.h" else ""):
+                   lambda path: declarations if path.name == "types.h" else ""):
             layout = _header_structure_layouts()["TileGrid"]
         self.assertEqual((layout.size, layout.alignment), (72, 2))
         self.assertEqual(layout.fields[0].datatype, "u16[9][4]")
@@ -215,7 +215,7 @@ class InventoryTests(unittest.TestCase):
     def test_shared_enum_alias_counts_preserve_array_layout(self) -> None:
         headers = {
             "combat.h": "enum { PHYSICAL_COUNT = 3, COMPONENT_COUNT = 5 };",
-            "game_actor.h": """
+            "actor.h": """
                 enum { ATTACK_COUNT = PHYSICAL_COUNT, NEXT_COUNT,
                        DEFENSE_COUNT = COMPONENT_COUNT, AGAIN = DEFENSE_COUNT };
                 typedef struct AliasedCounts {
@@ -252,12 +252,12 @@ class InventoryTests(unittest.TestCase):
                     typedef struct UnknownGrid {{ u8 cells[UNKNOWN_COUNT]; }} UnknownGrid;
                 """
                 with patch("scripts.kf.inventory.Path.read_text",
-                           lambda path: declarations if path.name == "game_types.h" else ""):
+                           lambda path: declarations if path.name == "types.h" else ""):
                     with self.assertRaisesRegex(ValueError, "unresolved array bound 'UNKNOWN_COUNT'"):
                         _header_structure_layouts()
                 declarations = declarations.replace("cells[UNKNOWN_COUNT]", "cells[KNOWN_COUNT]")
                 with patch("scripts.kf.inventory.Path.read_text",
-                           lambda path: declarations if path.name == "game_types.h" else ""):
+                           lambda path: declarations if path.name == "types.h" else ""):
                     self.assertEqual(_header_structure_layouts()["UnknownGrid"].size, 3)
 
     def test_union_storage_overlaps_and_rounds_up_for_enclosing_struct(self) -> None:
@@ -279,7 +279,7 @@ class InventoryTests(unittest.TestCase):
         """
 
         def read_header(path):
-            return declarations if path.name == "game_types.h" else ""
+            return declarations if path.name == "types.h" else ""
 
         with patch("scripts.kf.inventory.Path.read_text", read_header):
             layouts = _header_structure_layouts()
@@ -377,19 +377,19 @@ class InventoryTests(unittest.TestCase):
                          "KfPoolRecord **owner_slot;u16 asset_index;"
                          "KF_ENUM_PARAM(KfAnimationClip, u16) clip_index;"
                          "u16 phase;u16 vertex_count")
-        pool_header = (REPO / "include/kf/pool.h").read_text()
-        render_header = (REPO / "include/kf/game_render.h").read_text()
+        pool_header = (REPO / "include/kf/game/pool.h").read_text()
+        render_header = (REPO / "include/kf/game/render.h").read_text()
         self.assertIn("extern KfPoolRecord *render_bind_animated_instance(\n"
                       "    KfPoolRecord **owner_slot", pool_header)
         self.assertNotIn("extern u16 *render_bind_animated_instance", render_header)
-        self.assertIn("#include <kf/pool.h>", render_header)
+        self.assertIn("#include <kf/game/pool.h>", render_header)
 
     def test_animation_slot_renderers_use_direct_internal_and_vendor_headers(self) -> None:
         for name in ("entity_render", "map_event_render", "geometry_render"):
             with self.subTest(unit=name):
                 source = (REPO / f"src/game/{name}.c").read_text()
-                self.assertNotIn("#include <kf/game.h>", source)
-                self.assertIn("#include <kf/game_asset.h>", source)
+                self.assertNotIn("#include <kf/game/game.h>", source)
+                self.assertIn("#include <kf/game/asset.h>", source)
                 self.assertIn("#include <psyq/sdk.h>", source)
 
     def test_animation_pool_record_fields_and_complete_owner(self) -> None:
@@ -639,7 +639,7 @@ class InventoryTests(unittest.TestCase):
             self.assertIn(evidence_path.name, identity.evidence)
 
     def test_save_layouts_live_in_the_save_owner_header(self) -> None:
-        save_header = (REPO / "include/kf/game_save.h").read_text()
+        save_header = (REPO / "include/kf/game/save.h").read_text()
         for structure in (
             "KfPsxSaveHeader",
             "KfSaveSlotSummary",
@@ -652,12 +652,12 @@ class InventoryTests(unittest.TestCase):
             self.assertIn(declaration, save_header)
 
     def test_game_cd_layout_lives_in_the_game_cd_header(self) -> None:
-        game_cd = (REPO / "include/kf/game_cd.h").read_text()
+        game_cd = (REPO / "include/kf/game/cd.h").read_text()
         declaration = "typedef struct KfCdFileEntry"
         self.assertIn(declaration, game_cd)
 
     def test_tmd_layouts_live_in_the_shared_tmd_header(self) -> None:
-        tmd_header = (REPO / "include/kf/tmd.h").read_text()
+        tmd_header = (REPO / "include/kf/lib/tmd.h").read_text()
         for structure in (
             "KfTmdHeader",
             "KfTmdObject",
@@ -686,13 +686,13 @@ class InventoryTests(unittest.TestCase):
             "tmd_set_current_vertices": ("void", "SVECTOR *vertices"),
         }
         identities = load_function_identities(RETAIL_CONFIG, required=True)
-        common = (REPO / "include/kf/tmd.h").read_text()
+        common = (REPO / "include/kf/lib/tmd.h").read_text()
         for image, filename in (
-            ("GAME.EXE", "game_render.h"),
-            ("OPEN.EXE", "open_render.h"),
+            ("GAME.EXE", "game/render.h"),
+            ("OPEN.EXE", "open/render.h"),
         ):
             header = (REPO / "include/kf" / filename).read_text()
-            self.assertIn("#include <kf/tmd.h>", header)
+            self.assertIn("#include <kf/lib/tmd.h>", header)
             functions = {
                 row.name: row for (owner_image, _va), row in identities.items()
                 if owner_image == image
@@ -709,7 +709,7 @@ class InventoryTests(unittest.TestCase):
                     self.assertNotIn(f"{name}(", header)
 
     def test_audio_layouts_live_in_the_audio_owner_header(self) -> None:
-        audio_header = (REPO / "include/kf/audio.h").read_text()
+        audio_header = (REPO / "include/kf/lib/audio.h").read_text()
         for structure in (
             "SoundRef",
             "KfAudioVoiceSlots",
@@ -719,7 +719,7 @@ class InventoryTests(unittest.TestCase):
             self.assertIn(declaration, audio_header)
 
     def test_math_layouts_live_in_the_game_math_header(self) -> None:
-        math_header = (REPO / "include/kf/game_math.h").read_text()
+        math_header = (REPO / "include/kf/lib/math.h").read_text()
         for structure in (
             "KfVecXZs",
             "KfVec3s",
@@ -729,7 +729,7 @@ class InventoryTests(unittest.TestCase):
             self.assertIn(declaration, math_header)
 
     def test_actor_layouts_live_in_the_actor_owner_header(self) -> None:
-        actor_header = (REPO / "include/kf/game_actor.h").read_text()
+        actor_header = (REPO / "include/kf/game/actor.h").read_text()
         for structure in (
             "KfActorDefinition",
             "KfActorActionProfile",
@@ -741,7 +741,7 @@ class InventoryTests(unittest.TestCase):
             self.assertIn(declaration, actor_header)
 
     def test_map_layouts_live_in_the_map_owner_header(self) -> None:
-        map_header = (REPO / "include/kf/game_map.h").read_text()
+        map_header = (REPO / "include/kf/lib/map.h").read_text()
         for structure in (
             "KfMapCell",
             "KfMapCopyRegion",
@@ -764,32 +764,32 @@ class InventoryTests(unittest.TestCase):
             self.assertIn(f"typedef union {union}", map_header)
 
     def test_floor_item_layouts_live_in_the_item_owner_header(self) -> None:
-        item_header = (REPO / "include/kf/item.h").read_text()
+        item_header = (REPO / "include/kf/lib/item.h").read_text()
         for structure in ("KfFloorItemPlacement", "KfFloorItem"):
             declaration = f"typedef struct {structure}"
             self.assertIn(declaration, item_header)
 
     def test_magic_layout_lives_in_the_magic_owner_header(self) -> None:
-        magic_header = (REPO / "include/kf/magic.h").read_text()
+        magic_header = (REPO / "include/kf/game/magic.h").read_text()
         declaration = "typedef struct KfMagicRecord"
         self.assertIn(declaration, magic_header)
 
     def test_effect_layouts_live_in_the_effect_owner_header(self) -> None:
-        effect_header = (REPO / "include/kf/game_effect.h").read_text()
+        effect_header = (REPO / "include/kf/game/effect.h").read_text()
         for structure in ("KfEffectRecord", "KfEffectState"):
             declaration = f"typedef struct {structure}"
             self.assertIn(declaration, effect_header)
 
     def test_equipment_layouts_live_in_the_equipment_owner_header(self) -> None:
         equipment_header = (
-            REPO / "include/kf/game_equipment.h"
+            REPO / "include/kf/game/equipment.h"
         ).read_text()
         for structure in ("KfWeaponRecord", "KfArmorRecord"):
             declaration = f"typedef struct {structure}"
             self.assertIn(declaration, equipment_header)
 
     def test_player_layouts_live_in_the_player_owner_header(self) -> None:
-        player_header = (REPO / "include/kf/game_player.h").read_text()
+        player_header = (REPO / "include/kf/game/player.h").read_text()
         self.assertNotIn("#include <kf/semantic_types.h>", player_header)
         for structure in (
             "KfPlayerProgressState",
@@ -806,7 +806,7 @@ class InventoryTests(unittest.TestCase):
 
     def test_collision_layout_lives_in_the_collision_owner_header(self) -> None:
         collision_header = (
-            REPO / "include/kf/game_collision.h"
+            REPO / "include/kf/game/collision.h"
         ).read_text()
         declaration = "typedef struct KfCollisionTarget"
         self.assertIn(declaration, collision_header)
@@ -814,19 +814,19 @@ class InventoryTests(unittest.TestCase):
 
     def test_render_layouts_live_in_their_owner_headers(self) -> None:
         owners = {
-            "render_types.h": (
+            "lib/render_types.h": (
                 "KfPrimitiveBuffer", "KfOrderingTable", "KfCellWindow", "KfSpriteQuad",
             ),
-            "game_asset.h": ("KfAssetHeader",),
-            "game_render.h": (
+            "game/asset.h": ("KfAssetHeader",),
+            "game/render.h": (
                 "KfHudSprite",
                 "KfEffectSprite",
                 "KfDisplayState",
                 "KfTmdState",
                 "KfRenderState",
             ),
-            "notify.h": ("KfNotificationSprite",),
-            "open_render.h": (
+            "game/notify.h": ("KfNotificationSprite",),
+            "open/render.h": (
                 "KfDisplayStateOpen",
                 "KfTmdStateOpen",
                 "KfRenderStateOpen",
@@ -1484,7 +1484,7 @@ class InventoryTests(unittest.TestCase):
             (REPO / "vendor/src/game_libetc_pad.c").read_text(),
             (REPO / "vendor/src/open_libetc_pad.c").read_text(),
         )
-        game_state = (REPO / "include/kf/game_state.h").read_text()
+        game_state = (REPO / "include/kf/game/state.h").read_text()
         vendor_header = (REPO / "vendor/include/psyq/pad.h").read_text()
         for source in sources:
             self.assertIn("static u32 pad_buf", source)

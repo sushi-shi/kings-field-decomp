@@ -29,7 +29,7 @@ the command. Focused runs explicitly mark partial coverage.
 
 ## Representation
 
-`include/kf/bool.h` keeps the existing retail storage type:
+`include/kf/lib/bool.h` keeps the existing retail storage type:
 
 | Alias | Retail C type | O32 size |
 | --- | --- | --- |

@@ -1,7 +1,7 @@
-#include <kf/game_graphics.h>
-#include <kf/address.h>
-#include <kf/game_menu.h>
-#include <kf/game.h>
+#include <kf/game/graphics.h>
+#include <kf/lib/address.h>
+#include <kf/game/menu.h>
+#include <kf/game/game.h>
 
 enum {
     MENU_MAP_PIXELS_PER_CELL = 2,

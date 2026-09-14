@@ -43,7 +43,12 @@ def clean_cpp(text, rules):
     from scripts.kf.clean import CLAIMS, EFFECT_ARGUMENTS, IMPLEMENTATION
 
     text = resolve_conditionals(strip_comments(text), modern=True)
-    text = re.sub(r'^\s*#\s*include\s*[<"]kf/address\.h[>"]\s*$', '', text, flags=re.M)
+    text = re.sub(
+        r'^\s*#\s*include\s*[<"]kf/lib/address\.h[>"]\s*$',
+        '',
+        text,
+        flags=re.M,
+    )
     for name in IMPLEMENTATION:
         text = re.sub(rf'^\s*#\s*define\s+{name}\s*$', '', text, flags=re.M)
     lines = iter(text.splitlines(keepends=True))
@@ -154,7 +159,7 @@ KfMenuResult menu_list_interact(
 
 
 def modernize(files, output):
-    rules, support = enum_support(files['include/kf/enum.h'].decode())
+    rules, support = enum_support(files['include/kf/lib/enum.h'].decode())
     for name in list(output):
         if name.endswith(('.c', '.h', '.inc')):
             text = clean_cpp(prepare(name, files[name].decode()), rules)
@@ -180,7 +185,7 @@ def modernize(files, output):
             output[name] = text.encode()
             if name.endswith('.c'):
                 output[name[:-2] + '.cpp'] = output.pop(name)
-    output['include/kf/enum.h'] = support.encode()
+    output['include/kf/lib/enum.h'] = support.encode()
     manifest = json.loads(output['build.json'])
     for image in manifest['images']:
         for unit in image['units']:

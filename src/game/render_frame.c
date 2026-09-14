@@ -1,12 +1,12 @@
-#include <kf/game_graphics.h>
-#include <kf/address.h>
+#include <kf/game/graphics.h>
+#include <kf/lib/address.h>
 #include <psyq/sdk.h>
-#include <kf/game_render.h>
-#include <kf/notify.h>
-#include <kf/game_player.h>
-#include <kf/game_math.h>
-#include <kf/game_state.h>
-#include <kf/pool.h>
+#include <kf/game/render.h>
+#include <kf/game/notify.h>
+#include <kf/game/player.h>
+#include <kf/lib/math.h>
+#include <kf/game/state.h>
+#include <kf/game/pool.h>
 
 enum {
     HUD_GAUGE_WIDTH = 50,

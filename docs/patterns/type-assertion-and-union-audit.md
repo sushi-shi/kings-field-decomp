@@ -31,7 +31,7 @@ accesses genuinely overlap. Preserve those facts while reassessing syntax.
 The audited source/header snapshot contains **77 `typedef char` declaration spelling
 sites**, including assertion macro definitions. This is not an expanded
 assertion count. It excludes `tests/fixtures` and the separate modern
-`static_assert` declarations in `game_actor.h`.
+`static_assert` declarations in `game/actor.h`.
 
 An isolated compiler comparison preprocessed all **112 C build variants**
 with their manifest compiler, flags and defines. For each variant it compiled
@@ -92,10 +92,10 @@ Every declaration is accounted for once.
 
 | Union / source | Finding and next source hypothesis |
 | --- | --- |
-| `KfResourcePointer`, [`resources.h`](../../include/kf/resources.h) | `void *`, byte cursor and SDK TIM pointer views were introduced explicitly to accommodate the editor's C++ checks. Review the allocator output and typed consumer conversions. Pointer representation equality does not establish a union owner. |
-| `KfNotificationDigitBuffer`, [`notify.h`](../../include/kf/notify.h) | Signed formatter output and unsigned digit reads are one halfword buffer. Test one storage declaration with numeric conversion at the consumer; unsigned loads alone do not establish two array members. Preserve the formatter's sentinel and all widths. |
-| `KfRotation`, [`game_math.h`](../../include/kf/game_math.h) | SDK `SVECTOR` and a six-byte Euler prefix provide two interfaces to the same rotation. Review the storage/API boundary. Real six-byte Euler objects elsewhere prevent blindly widening every helper argument to an eight-byte object. |
-| `KfPlayerMotionState`, [`game_player.h`](../../include/kf/game_player.h) | The motion aggregate was extended through the current cell so `words[2]` could expose an aligned pitch/cell load. That access does not establish the new aggregate boundary. Review the packed access without making the cell a motion field solely for this view. |
+| `KfResourcePointer`, [`resources.h`](../../include/kf/lib/resources.h) | `void *`, byte cursor and SDK TIM pointer views were introduced explicitly to accommodate the editor's C++ checks. Review the allocator output and typed consumer conversions. Pointer representation equality does not establish a union owner. |
+| `KfNotificationDigitBuffer`, [`notify.h`](../../include/kf/game/notify.h) | Signed formatter output and unsigned digit reads are one halfword buffer. Test one storage declaration with numeric conversion at the consumer; unsigned loads alone do not establish two array members. Preserve the formatter's sentinel and all widths. |
+| `KfRotation`, [`lib/math.h`](../../include/kf/lib/math.h) | SDK `SVECTOR` and a six-byte Euler prefix provide two interfaces to the same rotation. Review the storage/API boundary. Real six-byte Euler objects elsewhere prevent blindly widening every helper argument to an eight-byte object. |
+| `KfPlayerMotionState`, [`game/player.h`](../../include/kf/game/player.h) | The motion aggregate was extended through the current cell so `words[2]` could expose an aligned pitch/cell load. That access does not establish the new aggregate boundary. Review the packed access without making the cell a motion field solely for this view. |
 | `MenuGlyphWorkspace`, [`menu_item_detail.c`](../../src/game/menu_item_detail.c) | Adds a complete halfword-array view so a cursor starts at the workspace base and stores glyphs at offset four. Retail proves that addressing; it does not prove the union. Review the shared glyph-buffer/API model. The union improved a partial match but did not close it. |
 | Local `status`, [`menu_item_drop.c`](../../src/game/menu_item_drop.c) | Save-operation and cleanup results were united after a direct condition changed generated code. A reused return-value register does not establish an original union. Review the historical integer result local and the modern enum boundary. |
 | Local `selection`, [`GAME render_map_cells.c`](../../src/game/render_map_cells.c) | Attribute-to-index arithmetic on one byte was wrapped in a union after separate enum/index locals changed register use. Preserve the arithmetic and byte truncation while reviewing the enum-to-index boundary. |
@@ -127,7 +127,7 @@ establish the copy extent and record layout, not a table-union declaration.
 
 | Unions | Finding |
 | --- | --- |
-| `KfGpuF3`, `KfGpuF4`, `KfGpuFT3`, `KfGpuFT4`, `KfGpuG3`, `KfGpuG4`, `KfGpuGT3`, `KfGpuGT4` (eight), [`gpu_packets.h`](../../include/kf/gpu_packets.h) | The mixed word XY, halfword UV and byte color operations are supported. The parallel `sdk`/`packed` structures are reconstruction wrappers around authentic SDK packet types. Review SDK-typed storage and evidenced packed accessors; do not assume the corresponding SDK macros emit the required operations. |
+| `KfGpuF3`, `KfGpuF4`, `KfGpuFT3`, `KfGpuFT4`, `KfGpuG3`, `KfGpuG4`, `KfGpuGT3`, `KfGpuGT4` (eight), [`gpu_packets.h`](../../include/kf/lib/gpu_packets.h) | The mixed word XY, halfword UV and byte color operations are supported. The parallel `sdk`/`packed` structures are reconstruction wrappers around authentic SDK packet types. Review SDK-typed storage and evidenced packed accessors; do not assume the corresponding SDK macros emit the required operations. |
 | `KfTmdPacketHeader` | Serialized four-byte header viewed as a word and its input-length byte. Packed representation access is real; the union syntax is open. |
 | `KfScreenXY` | GTE packed screen word and signed `DVECTOR` coordinates. Preserve both access widths and the real SDK boundary. |
 | `KfMapCell` | Byte z/x coordinates and halfword comparisons. Preserve packed comparison semantics when reviewing the representation. |

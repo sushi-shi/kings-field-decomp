@@ -39,7 +39,7 @@ named complete profile. It carries no address: every function a source
 reconstructs claims its retail address in the source itself,
 
 ```c
-#include <kf/address.h>
+#include <kf/lib/address.h>
 
 ADDRESS(0x8001499c, 0x38)
 void game_shutdown(void)
@@ -201,7 +201,7 @@ image reuses it with a unit that binds by name:
 [[unit]]
 unit = "open.memory"
 image = "OPEN.EXE"
-source = "src/shared/memory.c"
+source = "src/lib/memory.c"
 profile = "probe-gcc257-o2-g0"
 bind = "name"
 defines = ["KF_OPEN"]

@@ -1,10 +1,10 @@
-#include <kf/null.h>
-#include <kf/bool.h>
-#include <kf/address.h>
-#include <kf/map_data.h>
-#include <kf/game_map.h>
-#include <kf/game_collision.h>
-#include <kf/game.h>
+#include <kf/lib/null.h>
+#include <kf/lib/bool.h>
+#include <kf/lib/address.h>
+#include <kf/lib/map_data.h>
+#include <kf/lib/map.h>
+#include <kf/game/collision.h>
+#include <kf/game/game.h>
 
 ADDRESS(0x8003379c, 0x10)
 void map_event_set_current(KfMapEvent *event)

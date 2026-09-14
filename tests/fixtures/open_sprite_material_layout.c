@@ -1,4 +1,4 @@
-#include <kf/open_render.h>
+#include <kf/open/render.h>
 
 #ifndef EXPECTED_MATERIAL_SIZE
 #define EXPECTED_MATERIAL_SIZE 8

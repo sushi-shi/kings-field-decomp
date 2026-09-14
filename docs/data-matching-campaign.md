@@ -704,7 +704,7 @@ derive the background quads from the later backdrop descriptor's base. The
 shared type contains authentic SDK packets, font atlases, menu descriptors and
 list tiles; two opaque bytes and the previously missing confirmed-row sprite
 are now accounted for. There are no overlapping interior globals or invented
-executable initializers. Types and the extern declaration live in game_menu.h.
+executable initializers. Types and the extern declaration live in game/menu.h.
 
 All 380 reviewed address pairs restore the original retail targets, and the
 complete 912-byte source/target BSS allocations match. Bounded retail/source
@@ -867,7 +867,7 @@ All 580 local tests pass without skips, and Ruff, diff and flake checks pass
 
 The GAME selector now owns its complete private 204-byte fixed window and
 four-byte selected-window pointer; resources owns the 3264-byte runtime window
-table. The existing shared GAME/OPEN record and game_render.h declarations are
+table. The existing shared GAME/OPEN record and game/render.h declarations are
 retained. COM.DAT independently supplies sixteen complete records identical to
 OPEN's RTBL. The fixed mask uses a 13-by-13 active grid within that shared
 capacity. Six interior aliases disappear, with no lost census bytes or invented

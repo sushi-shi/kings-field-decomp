@@ -464,57 +464,57 @@ src/open/vector_math.c	OPEN.EXE	0x80015c3c	vector3s_scale_shift12_alt	read	fixed
 src/open/vector_math.c	OPEN.EXE	0x80015c98	angle_within_tolerance	read	existing	Existing wrapped-angle predicate already supplies the useful abstraction.		kept-existing-source	100.0	100.0
 src/open/vector_xz_to_angle.c	OPEN.EXE	0x80015ce4	vector_xz_to_angle	read	existing	Existing heading helper keeps zero-Z and half-turn cases explicit.		kept-existing-source	100.0	100.0
 src/psx/main.c	PSX.EXE	0x80010028	main	read	overlay-load	Two identical Load/Exec sequences in this TU only; candidate local inline, with request/result exchange kept outside.	OVERLAY_LAUNCH	retained-exact	100.0	100.0
-src/shared/matrix_lerp.c	GAME.EXE	0x800202fc	matrix_interpolate	read	existing	Already shared across images; keep unsigned loads and explicit signed differences, so a generic lerp is not justified.		kept-existing-source	100.0	100.0
-src/shared/matrix_lerp.c	GAME.EXE	0x80020364	lighting_set_color_matrix	read	existing	Already shared interpolation and SDK publication wrapper.		kept-existing-source	100.0	100.0
-src/shared/matrix_lerp.c	GAME.EXE	0x80020390	lighting_set_light_matrix	read	existing	Already shared interpolation and SDK publication wrapper.		kept-existing-source	100.0	100.0
-src/shared/matrix_lerp.c	OPEN.EXE	0x80019598	matrix_interpolate	read	existing	Already shared across images; keep unsigned loads and explicit signed differences, so a generic lerp is not justified.		kept-existing-source	100.0	100.0
-src/shared/matrix_lerp.c	OPEN.EXE	0x80019600	lighting_set_color_matrix	read	existing	Already shared interpolation and SDK publication wrapper.		kept-existing-source	100.0	100.0
-src/shared/matrix_lerp.c	OPEN.EXE	0x8001962c	lighting_set_light_matrix	read	existing	Already shared interpolation and SDK publication wrapper.		kept-existing-source	100.0	100.0
+src/lib/matrix_lerp.c	GAME.EXE	0x800202fc	matrix_interpolate	read	existing	Already shared across images; keep unsigned loads and explicit signed differences, so a generic lerp is not justified.		kept-existing-source	100.0	100.0
+src/lib/matrix_lerp.c	GAME.EXE	0x80020364	lighting_set_color_matrix	read	existing	Already shared interpolation and SDK publication wrapper.		kept-existing-source	100.0	100.0
+src/lib/matrix_lerp.c	GAME.EXE	0x80020390	lighting_set_light_matrix	read	existing	Already shared interpolation and SDK publication wrapper.		kept-existing-source	100.0	100.0
+src/lib/matrix_lerp.c	OPEN.EXE	0x80019598	matrix_interpolate	read	existing	Already shared across images; keep unsigned loads and explicit signed differences, so a generic lerp is not justified.		kept-existing-source	100.0	100.0
+src/lib/matrix_lerp.c	OPEN.EXE	0x80019600	lighting_set_color_matrix	read	existing	Already shared interpolation and SDK publication wrapper.		kept-existing-source	100.0	100.0
+src/lib/matrix_lerp.c	OPEN.EXE	0x8001962c	lighting_set_light_matrix	read	existing	Already shared interpolation and SDK publication wrapper.		kept-existing-source	100.0	100.0
 src/game/effect_map_collision.c	GAME.EXE		effect_collision_in_cell	read	map-cell-passable;collision-targets	Existing local validated-cell helper; repeated FLOOR-or-STEP predicate and target-specific query flags are wider collision candidates.		support-body-reviewed	n/a	n/a
 src/game/geometry_render.c	GAME.EXE		notify_dequeue_group	read	existing	Existing local queue-group helper; gold payloads intentionally prevent grouping, so no generic ring-pop macro.		support-body-reviewed	n/a	n/a
 src/game/menu_runtime.c	GAME.EXE		menu_status_draw_backdrop_quad	read	existing-sdk	Existing local reflected-backdrop helper composes SDK UV/XY operations; narrower UV dimensions and global current packet are local constraints.		support-body-reviewed	n/a	n/a
 src/game/pool.c	GAME.EXE		copy_vertices	read	existing	Local two-word packed-vertex copy helper; nonzero u16 count and alignment differ from generic word-copy API.		support-body-reviewed	n/a	n/a
-include/kf/game_effect.h	header		effect_sound_request	read	existing	Existing sound-request domain conversion supports typed constructor argument macros.		support-body-reviewed	n/a	n/a
-include/kf/game_map.h	header		map_object_action_from_behavior	read	existing	Existing shared behavior-to-action domain conversion; retain C identity and modern enum check.		support-body-reviewed	n/a	n/a
-include/kf/game_map.h	header		map_object_toggle_progress	read	existing	Existing semantic toggle; arbitrary nonzero progress maps to zero, unlike XOR.		support-body-reviewed	n/a	n/a
-include/kf/game_menu.h	header		menu_confirm_result_from_choice	read	existing	Existing inline conversion from choice to signed result; do not mix with generic negation.		support-body-reviewed	n/a	n/a
-include/kf/game_menu.h	header		menu_texture_from_magic	read	existing	Existing semantic artwork-index conversion; no additional wrapper.		support-body-reviewed	n/a	n/a
-include/kf/item.h	header		floor_item_appearance	read	existing	Existing packed-facing/frame constructor masks numeric frame count and retains facing domain.		support-body-reviewed	n/a	n/a
-include/kf/item.h	header		floor_item_facing	read	existing	Existing packed-facing extraction is the useful shared abstraction.		support-body-reviewed	n/a	n/a
-include/kf/render_types.h	header		display_next_buffer	read	existing	Existing shared equality toggle includes the uninitialized sentinel; do not substitute XOR.		support-body-reviewed	n/a	n/a
-include/kf/tmd.h	header		tmd_packet_mode	read	existing	Existing typed high-byte extraction preserves semitransparency bit.		support-body-reviewed	n/a	n/a
-include/kf/tmd.h	header		tmd_packet_kind	read	existing	Existing typed dispatch extraction masks only the semitransparency bit.		support-body-reviewed	n/a	n/a
-include/kf/enum.h	modern-checker		KF_ENUM_COUNTER::operator++(prefix)	read	existing	Shared enum checking infrastructure; no retail body and no additional gameplay helper.		support-body-reviewed	n/a	n/a
-include/kf/enum.h	modern-checker		KF_ENUM_COUNTER::operator++(postfix)	read	existing	Shared enum checking infrastructure; no retail body and no additional gameplay helper.		support-body-reviewed	n/a	n/a
-include/kf/enum.h	modern-checker		KF_ENUM_COUNTER::operator--(prefix)	read	existing	Shared enum checking infrastructure; no retail body and no additional gameplay helper.		support-body-reviewed	n/a	n/a
-include/kf/enum.h	modern-checker		KF_ENUM_COUNTER::operator--(postfix)	read	existing	Shared enum checking infrastructure; no retail body and no additional gameplay helper.		support-body-reviewed	n/a	n/a
-include/kf/enum.h	modern-checker		KF_ENUM_FLAGS::operator|	read	existing	Shared enum checking infrastructure; no retail body and no additional gameplay helper.		support-body-reviewed	n/a	n/a
-include/kf/enum.h	modern-checker		KF_ENUM_FLAGS::operator&	read	existing	Shared enum checking infrastructure; no retail body and no additional gameplay helper.		support-body-reviewed	n/a	n/a
-include/kf/enum.h	modern-checker		KF_ENUM_FLAGS::operator^	read	existing	Shared enum checking infrastructure; no retail body and no additional gameplay helper.		support-body-reviewed	n/a	n/a
-include/kf/enum.h	modern-checker		KF_ENUM_FLAGS::operator~	read	existing	Shared enum checking infrastructure; no retail body and no additional gameplay helper.		support-body-reviewed	n/a	n/a
-include/kf/enum.h	modern-checker		KF_ENUM_FLAGS::operator|=	read	existing	Shared enum checking infrastructure; no retail body and no additional gameplay helper.		support-body-reviewed	n/a	n/a
-include/kf/enum.h	modern-checker		KF_ENUM_FLAGS::operator&=	read	existing	Shared enum checking infrastructure; no retail body and no additional gameplay helper.		support-body-reviewed	n/a	n/a
-include/kf/enum.h	modern-checker		KF_ENUM_FLAGS::operator^=	read	existing	Shared enum checking infrastructure; no retail body and no additional gameplay helper.		support-body-reviewed	n/a	n/a
-include/kf/enum.h	modern-checker		KfEnumStorage::KfEnumStorage(default)	read	existing	Shared enum checking infrastructure; no retail body and no additional gameplay helper.		support-body-reviewed	n/a	n/a
-include/kf/enum.h	modern-checker		KfEnumStorage::KfEnumStorage(Enum)	read	existing	Shared enum checking infrastructure; no retail body and no additional gameplay helper.		support-body-reviewed	n/a	n/a
-include/kf/enum.h	modern-checker		KfEnumStorage::operator Enum	read	existing	Shared enum checking infrastructure; no retail body and no additional gameplay helper.		support-body-reviewed	n/a	n/a
-include/kf/enum.h	modern-checker		KfEnumStorage::encoded_value	read	existing	Shared enum checking infrastructure; no retail body and no additional gameplay helper.		support-body-reviewed	n/a	n/a
-include/kf/enum.h	modern-checker		KfEnumStorage::operator=	read	existing	Shared enum checking infrastructure; no retail body and no additional gameplay helper.		support-body-reviewed	n/a	n/a
-include/kf/enum.h	modern-checker		operator==(KfEnumStorage,KfEnumStorage)	read	existing	Shared enum checking infrastructure; no retail body and no additional gameplay helper.		support-body-reviewed	n/a	n/a
-include/kf/enum.h	modern-checker		kf_enum_decode	read	existing	Shared enum checking infrastructure; no retail body and no additional gameplay helper.		support-body-reviewed	n/a	n/a
-include/kf/enum.h	modern-checker		kf_enum_encode(Enum)	read	existing	Shared enum checking infrastructure; no retail body and no additional gameplay helper.		support-body-reviewed	n/a	n/a
-include/kf/enum.h	modern-checker		kf_enum_encode(KfEnumStorage)	read	existing	Shared enum checking infrastructure; no retail body and no additional gameplay helper.		support-body-reviewed	n/a	n/a
-include/kf/audio.h	header		audio_reset_voice_slots	read	audio-voice-reset	Retained extraction; typed body and all consumer comparisons reviewed. See candidate verdict.		support-body-reviewed	n/a	n/a
-include/kf/audio.h	header		audio_key_on_next_slot	read	audio-voice-slot	Retained extraction; typed body and all consumer comparisons reviewed. See candidate verdict.		support-body-reviewed	n/a	n/a
-include/kf/game_map.h	header		camera_path_publish_fixed	read	camera-fixed-state	Retained extraction; typed body and all consumer comparisons reviewed. See candidate verdict.		support-body-reviewed	n/a	n/a
-include/kf/game_map.h	header		camera_path_advance_pose	read	camera-step	Retained extraction; typed body and all consumer comparisons reviewed. See candidate verdict.		support-body-reviewed	n/a	n/a
-include/kf/game_math.h	header		fixed_vector3_length	read	distance3	Retained extraction; typed body and all consumer comparisons reviewed. See candidate verdict.		support-body-reviewed	n/a	n/a
-include/kf/game_math.h	header		angle_error_magnitude	read	cone-angle-error	Retained extraction; typed body and all consumer comparisons reviewed. See candidate verdict.		support-body-reviewed	n/a	n/a
-include/kf/game_math.h	header		radial_damage_attenuated_scale	read	radial-falloff	Retained extraction; typed body and all consumer comparisons reviewed. See candidate verdict.		support-body-reviewed	n/a	n/a
-include/kf/game_menu.h	header		menu_list_previous	read	menu-list-step	Retained extraction; typed body and all consumer comparisons reviewed. See candidate verdict.		support-body-reviewed	n/a	n/a
-include/kf/game_menu.h	header		menu_list_next	read	menu-list-step	Retained extraction; typed body and all consumer comparisons reviewed. See candidate verdict.		support-body-reviewed	n/a	n/a
-include/kf/item.h	header		floor_item_advance_frame	read	floor-item-frame	Retained extraction; typed body and all consumer comparisons reviewed. See candidate verdict.		support-body-reviewed	n/a	n/a
-include/kf/map_data.h	header		map_placement_axis_position	read	placement-position	Retained extraction; typed body and all consumer comparisons reviewed. See candidate verdict.		support-body-reviewed	n/a	n/a
+include/kf/game/effect.h	header		effect_sound_request	read	existing	Existing sound-request domain conversion supports typed constructor argument macros.		support-body-reviewed	n/a	n/a
+include/kf/lib/map.h	header		map_object_action_from_behavior	read	existing	Existing shared behavior-to-action domain conversion; retain C identity and modern enum check.		support-body-reviewed	n/a	n/a
+include/kf/lib/map.h	header		map_object_toggle_progress	read	existing	Existing semantic toggle; arbitrary nonzero progress maps to zero, unlike XOR.		support-body-reviewed	n/a	n/a
+include/kf/game/menu.h	header		menu_confirm_result_from_choice	read	existing	Existing inline conversion from choice to signed result; do not mix with generic negation.		support-body-reviewed	n/a	n/a
+include/kf/game/menu.h	header		menu_texture_from_magic	read	existing	Existing semantic artwork-index conversion; no additional wrapper.		support-body-reviewed	n/a	n/a
+include/kf/lib/item.h	header		floor_item_appearance	read	existing	Existing packed-facing/frame constructor masks numeric frame count and retains facing domain.		support-body-reviewed	n/a	n/a
+include/kf/lib/item.h	header		floor_item_facing	read	existing	Existing packed-facing extraction is the useful shared abstraction.		support-body-reviewed	n/a	n/a
+include/kf/lib/render_types.h	header		display_next_buffer	read	existing	Existing shared equality toggle includes the uninitialized sentinel; do not substitute XOR.		support-body-reviewed	n/a	n/a
+include/kf/lib/tmd.h	header		tmd_packet_mode	read	existing	Existing typed high-byte extraction preserves semitransparency bit.		support-body-reviewed	n/a	n/a
+include/kf/lib/tmd.h	header		tmd_packet_kind	read	existing	Existing typed dispatch extraction masks only the semitransparency bit.		support-body-reviewed	n/a	n/a
+include/kf/lib/enum.h	modern-checker		KF_ENUM_COUNTER::operator++(prefix)	read	existing	Shared enum checking infrastructure; no retail body and no additional gameplay helper.		support-body-reviewed	n/a	n/a
+include/kf/lib/enum.h	modern-checker		KF_ENUM_COUNTER::operator++(postfix)	read	existing	Shared enum checking infrastructure; no retail body and no additional gameplay helper.		support-body-reviewed	n/a	n/a
+include/kf/lib/enum.h	modern-checker		KF_ENUM_COUNTER::operator--(prefix)	read	existing	Shared enum checking infrastructure; no retail body and no additional gameplay helper.		support-body-reviewed	n/a	n/a
+include/kf/lib/enum.h	modern-checker		KF_ENUM_COUNTER::operator--(postfix)	read	existing	Shared enum checking infrastructure; no retail body and no additional gameplay helper.		support-body-reviewed	n/a	n/a
+include/kf/lib/enum.h	modern-checker		KF_ENUM_FLAGS::operator|	read	existing	Shared enum checking infrastructure; no retail body and no additional gameplay helper.		support-body-reviewed	n/a	n/a
+include/kf/lib/enum.h	modern-checker		KF_ENUM_FLAGS::operator&	read	existing	Shared enum checking infrastructure; no retail body and no additional gameplay helper.		support-body-reviewed	n/a	n/a
+include/kf/lib/enum.h	modern-checker		KF_ENUM_FLAGS::operator^	read	existing	Shared enum checking infrastructure; no retail body and no additional gameplay helper.		support-body-reviewed	n/a	n/a
+include/kf/lib/enum.h	modern-checker		KF_ENUM_FLAGS::operator~	read	existing	Shared enum checking infrastructure; no retail body and no additional gameplay helper.		support-body-reviewed	n/a	n/a
+include/kf/lib/enum.h	modern-checker		KF_ENUM_FLAGS::operator|=	read	existing	Shared enum checking infrastructure; no retail body and no additional gameplay helper.		support-body-reviewed	n/a	n/a
+include/kf/lib/enum.h	modern-checker		KF_ENUM_FLAGS::operator&=	read	existing	Shared enum checking infrastructure; no retail body and no additional gameplay helper.		support-body-reviewed	n/a	n/a
+include/kf/lib/enum.h	modern-checker		KF_ENUM_FLAGS::operator^=	read	existing	Shared enum checking infrastructure; no retail body and no additional gameplay helper.		support-body-reviewed	n/a	n/a
+include/kf/lib/enum.h	modern-checker		KfEnumStorage::KfEnumStorage(default)	read	existing	Shared enum checking infrastructure; no retail body and no additional gameplay helper.		support-body-reviewed	n/a	n/a
+include/kf/lib/enum.h	modern-checker		KfEnumStorage::KfEnumStorage(Enum)	read	existing	Shared enum checking infrastructure; no retail body and no additional gameplay helper.		support-body-reviewed	n/a	n/a
+include/kf/lib/enum.h	modern-checker		KfEnumStorage::operator Enum	read	existing	Shared enum checking infrastructure; no retail body and no additional gameplay helper.		support-body-reviewed	n/a	n/a
+include/kf/lib/enum.h	modern-checker		KfEnumStorage::encoded_value	read	existing	Shared enum checking infrastructure; no retail body and no additional gameplay helper.		support-body-reviewed	n/a	n/a
+include/kf/lib/enum.h	modern-checker		KfEnumStorage::operator=	read	existing	Shared enum checking infrastructure; no retail body and no additional gameplay helper.		support-body-reviewed	n/a	n/a
+include/kf/lib/enum.h	modern-checker		operator==(KfEnumStorage,KfEnumStorage)	read	existing	Shared enum checking infrastructure; no retail body and no additional gameplay helper.		support-body-reviewed	n/a	n/a
+include/kf/lib/enum.h	modern-checker		kf_enum_decode	read	existing	Shared enum checking infrastructure; no retail body and no additional gameplay helper.		support-body-reviewed	n/a	n/a
+include/kf/lib/enum.h	modern-checker		kf_enum_encode(Enum)	read	existing	Shared enum checking infrastructure; no retail body and no additional gameplay helper.		support-body-reviewed	n/a	n/a
+include/kf/lib/enum.h	modern-checker		kf_enum_encode(KfEnumStorage)	read	existing	Shared enum checking infrastructure; no retail body and no additional gameplay helper.		support-body-reviewed	n/a	n/a
+include/kf/lib/audio.h	header		audio_reset_voice_slots	read	audio-voice-reset	Retained extraction; typed body and all consumer comparisons reviewed. See candidate verdict.		support-body-reviewed	n/a	n/a
+include/kf/lib/audio.h	header		audio_key_on_next_slot	read	audio-voice-slot	Retained extraction; typed body and all consumer comparisons reviewed. See candidate verdict.		support-body-reviewed	n/a	n/a
+include/kf/lib/map.h	header		camera_path_publish_fixed	read	camera-fixed-state	Retained extraction; typed body and all consumer comparisons reviewed. See candidate verdict.		support-body-reviewed	n/a	n/a
+include/kf/lib/map.h	header		camera_path_advance_pose	read	camera-step	Retained extraction; typed body and all consumer comparisons reviewed. See candidate verdict.		support-body-reviewed	n/a	n/a
+include/kf/lib/math.h	header		fixed_vector3_length	read	distance3	Retained extraction; typed body and all consumer comparisons reviewed. See candidate verdict.		support-body-reviewed	n/a	n/a
+include/kf/lib/math.h	header		angle_error_magnitude	read	cone-angle-error	Retained extraction; typed body and all consumer comparisons reviewed. See candidate verdict.		support-body-reviewed	n/a	n/a
+include/kf/lib/math.h	header		radial_damage_attenuated_scale	read	radial-falloff	Retained extraction; typed body and all consumer comparisons reviewed. See candidate verdict.		support-body-reviewed	n/a	n/a
+include/kf/game/menu.h	header		menu_list_previous	read	menu-list-step	Retained extraction; typed body and all consumer comparisons reviewed. See candidate verdict.		support-body-reviewed	n/a	n/a
+include/kf/game/menu.h	header		menu_list_next	read	menu-list-step	Retained extraction; typed body and all consumer comparisons reviewed. See candidate verdict.		support-body-reviewed	n/a	n/a
+include/kf/lib/item.h	header		floor_item_advance_frame	read	floor-item-frame	Retained extraction; typed body and all consumer comparisons reviewed. See candidate verdict.		support-body-reviewed	n/a	n/a
+include/kf/lib/map_data.h	header		map_placement_axis_position	read	placement-position	Retained extraction; typed body and all consumer comparisons reviewed. See candidate verdict.		support-body-reviewed	n/a	n/a
 src/game/actor.c	GAME.EXE		actor_initialize_at_home	read	actor-home-init	Retained extraction; typed body and all consumer comparisons reviewed. See candidate verdict.		support-body-reviewed	n/a	n/a
 src/game/actor_behavior.c	GAME.EXE		actor_player_distance	read	actor-player-distance	Retained extraction; typed body and all consumer comparisons reviewed. See candidate verdict.		support-body-reviewed	n/a	n/a
 src/game/lighting_presets.c	GAME.EXE		lighting_blend_current_color	read	current-color-blend	Retained extraction; typed body and all consumer comparisons reviewed. See candidate verdict.		support-body-reviewed	n/a	n/a

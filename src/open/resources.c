@@ -1,15 +1,15 @@
-#include <kf/null.h>
-#include <kf/address.h>
-#include <kf/audio.h>
-#include <kf/cd_file.h>
-#include <kf/item.h>
-#include <kf/map_data.h>
-#include <kf/memory.h>
-#include <kf/open_render.h>
-#include <kf/open_resources.h>
+#include <kf/lib/null.h>
+#include <kf/lib/address.h>
+#include <kf/lib/audio.h>
+#include <kf/lib/cd_file.h>
+#include <kf/lib/item.h>
+#include <kf/lib/map_data.h>
+#include <kf/lib/memory.h>
+#include <kf/open/render.h>
+#include <kf/open/resources.h>
 #include <psyq/sdk.h>
 #include <psyq/libc.h>
-#include <kf/resources.h>
+#include <kf/lib/resources.h>
 
 enum {
     OPEN_CD_READ_ATTEMPTS = 100
@@ -132,10 +132,10 @@ KfResourceLoadResult cd_file_load_into(
 }
 
 /* Uploads every CLUT and pixel image in a Psy-Q TIM stream. */
-#include "../shared/tim_upload_images.inc"
+#include "../lib/tim_upload_images.inc"
 
 /* Copies WORD_COUNT words and returns the first unread source word. */
-#include "../shared/resource_copy_words.inc"
+#include "../lib/resource_copy_words.inc"
 
 ADDRESS(0x80016348, 0x1c8)
 void opening_resources_load_scene0(void)

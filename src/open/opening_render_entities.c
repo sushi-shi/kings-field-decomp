@@ -1,7 +1,7 @@
-#include <kf/address.h>
-#include <kf/open_opening_render.h>
-#include <kf/open_render.h>
-#include <kf/open_resources.h>
+#include <kf/lib/address.h>
+#include <kf/open/opening_render.h>
+#include <kf/open/render.h>
+#include <kf/open/resources.h>
 
 ADDRESS(0x80019520, 0x78)
 void opening_render_entities(void)

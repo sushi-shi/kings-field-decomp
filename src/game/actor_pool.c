@@ -1,8 +1,8 @@
-#include <kf/null.h>
-#include <kf/address.h>
-#include <kf/map_data.h>
-#include <kf/game_actor.h>
-#include <kf/game.h>
+#include <kf/lib/null.h>
+#include <kf/lib/address.h>
+#include <kf/lib/map_data.h>
+#include <kf/game/actor.h>
+#include <kf/game/game.h>
 
 KF_ENUM_BEGIN(KfActorPlacementStreamState, s32)
     KF_ACTOR_PLACEMENTS_READING = 0,

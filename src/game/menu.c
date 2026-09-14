@@ -1,8 +1,8 @@
-#include <kf/null.h>
-#include <kf/address.h>
-#include <kf/input.h>
-#include <kf/game_menu.h>
-#include <kf/game.h>
+#include <kf/lib/null.h>
+#include <kf/lib/address.h>
+#include <kf/game/input.h>
+#include <kf/game/menu.h>
+#include <kf/game/game.h>
 
 /* Menu sub-panels dispatched by the hub menu. */
 s32 menu_use_item_panel(void);

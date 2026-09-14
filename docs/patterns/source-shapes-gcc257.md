@@ -1015,7 +1015,7 @@ Follow-up in `game.menu_select`:
 `src/game/func_80036f44.c` reconstructs the effect-pool spawn band. The
 KfEffectRecord layout (60-byte stride: header bytes, a `VECTOR position` at
 0x0c, and rotation/scale/direction 16-bit triples at 0x1c/0x24/0x2c) is proven
-from the two constructors and modelled in `kf/game_effect.h`; the default
+from the two constructors and modelled in `kf/game/effect.h`; the default
 scale is 0x1000 and the direction triple is copied from the SVECTOR argument.
 
 `func_80037770` is exact: a specialised constructor (`player_use_item` caller)

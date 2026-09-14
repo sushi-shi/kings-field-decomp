@@ -18,7 +18,7 @@ shop entry as a finite quantity. Item IDs remain numeric, without guessed lore.
 
 The initialization function clears all 240 bytes and seeds all three banks.
 It supports reconstruction ownership in `game.player_death`, not proof of an
-original TU boundary. Move the shared declaration from `game_state.h` to
+original TU boundary. Move the shared declaration from `game/state.h` to
 `item.h`, and give the complete save field the same two-dimensional byte type.
 No overlapping interior globals, explicit BSS initializer, alignment override,
 new size assertion, or compiler-shaping statement is justified.

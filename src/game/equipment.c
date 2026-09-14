@@ -1,6 +1,6 @@
-#include <kf/address.h>
-#include <kf/game_equipment.h>
-#include <kf/game_math.h>
+#include <kf/lib/address.h>
+#include <kf/game/equipment.h>
+#include <kf/lib/math.h>
 
 DATA(0x8009ff10, 0x2c0)
 KfWeaponTable weapon_records;

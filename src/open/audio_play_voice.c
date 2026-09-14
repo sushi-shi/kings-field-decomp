@@ -1,6 +1,6 @@
-#include <kf/address.h>
-#include <kf/audio.h>
-#include <kf/open_audio.h>
+#include <kf/lib/address.h>
+#include <kf/lib/audio.h>
+#include <kf/open/audio.h>
 #include <psyq/audio.h>
 
 ADDRESS(0x8001a268, 0x194)

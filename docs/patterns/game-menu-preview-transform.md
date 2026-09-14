@@ -21,7 +21,7 @@ halfword inventory into this one owner; keep every numeric relocation target
 at 80057b72, represented as owner+2. Do not keep an overlapping yaw global.
 
 Define the shared initialized vector in the model-preview module and declare
-it in game_menu.h. This is a logical source owner; the original TU boundary
+it in game/menu.h. This is a logical source owner; the original TU boundary
 is still WIP. Propagate SDK field/pointer types through all three readers and
 the loader reset, eliminating backwards casts. Name the angle wrapping and
 Q12 light coefficients using existing mathematical domains, and share the

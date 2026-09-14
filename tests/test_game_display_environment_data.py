@@ -63,7 +63,7 @@ class GameDisplayEnvironmentDataTests(unittest.TestCase):
         self.assertEqual(OWNERS[-1][0] + OWNERS[-1][2], 0x80090FA0)
         self.assertNotIn(('GAME.EXE', 0x80090FA8), identities)
         source = manifest.by_name()['game.render'].source_path.read_text()
-        header = (REPO / 'include/kf/game_graphics.h').read_text()
+        header = (REPO / 'include/kf/game/graphics.h').read_text()
         self.assertIn('KfGraphicsRuntimeGame game_graphics_runtime;', source)
         for declaration in ('DRAWENV display_draw_environments[KF_DISPLAY_BUFFER_COUNT];',
                             'DISPENV display_disp_environments[KF_DISPLAY_BUFFER_COUNT];'):
@@ -76,7 +76,7 @@ class GameDisplayEnvironmentDataTests(unittest.TestCase):
         image = probe.retail()
         unit = load_manifest().by_name()['game.render']
         fields = ('dtd', 'dfe', 'isbg', 'r0', 'g0', 'b0', 'dr_env')
-        query = ('#include <kf/game_graphics.h>\nunsigned long layout[] = {\n'
+        query = ('#include <kf/game/graphics.h>\nunsigned long layout[] = {\n'
                  'sizeof(DRAWENV), sizeof(DISPENV), sizeof(DR_ENV),\n'
                  'sizeof(game_graphics_runtime.display_draw_environments), '
                  'sizeof(game_graphics_runtime.display_disp_environments),\n'
@@ -143,7 +143,7 @@ class GameDisplayEnvironmentDataTests(unittest.TestCase):
         probe = self.probe()
         probe.tools()
         unit = load_manifest().by_name()['game.render']
-        header = (REPO / 'include/kf/game_graphics.h').read_text()
+        header = (REPO / 'include/kf/game/graphics.h').read_text()
         declarations = ('DRAWENV display_draw_environments[KF_DISPLAY_BUFFER_COUNT];',
                         'DISPENV display_disp_environments[KF_DISPLAY_BUFFER_COUNT];')
         for wrong in (False, True):
@@ -261,7 +261,7 @@ class GameDisplayEnvironmentDataTests(unittest.TestCase):
             # Reuse the bounded function-only rewrite, but test a smaller owner
             # than the complete-clear pilot. Both authentic array types remain.
             selected = selected.replace('#include "game_graphics_owner_probe.h"',
-                                        '#include <kf/game_render.h>\n'
+                                        '#include <kf/game/render.h>\n'
                                         'typedef struct { DRAWENV draw[2]; DISPENV disp[2]; } '
                                         'DisplayEnvironmentsProbe;\n'
                                         'extern DisplayEnvironmentsProbe display_environments_probe;')

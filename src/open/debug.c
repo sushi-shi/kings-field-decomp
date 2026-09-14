@@ -1,4 +1,4 @@
-#include <kf/address.h>
-#include <kf/debug.h>
+#include <kf/lib/address.h>
+#include <kf/lib/debug.h>
 
-#include "../shared/debug_sink.inc"
+#include "../lib/debug_sink.inc"

@@ -14,7 +14,7 @@ from scripts.kf.paths import REPO
 
 
 SOURCE = """
-#include <kf/game_actor.h>
+#include <kf/game/actor.h>
 void control(KfActor *actor) { BODY }
 """
 
@@ -26,7 +26,7 @@ class EnumTypeTests(unittest.TestCase):
         if not sdk or not compiler:
             self.skipTest("Clang and pinned SDK headers are required")
         source = """
-            #include <kf/game_menu.h>
+            #include <kf/game/menu.h>
             void control(void) { BODY }
         """
         cases = {
@@ -67,8 +67,8 @@ class EnumTypeTests(unittest.TestCase):
         if not sdk or not compiler:
             self.skipTest("Clang and pinned SDK headers are required")
         source = """
-            #include <kf/game_save.h>
-            #include <kf/game_effect.h>
+            #include <kf/game/save.h>
+            #include <kf/game/effect.h>
             void control(int value) { BODY }
         """
         cases = {

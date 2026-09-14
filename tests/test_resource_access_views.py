@@ -21,8 +21,8 @@ class ResourceAccessViewTests(unittest.TestCase):
         with TemporaryDirectory(prefix="kf-resource-views-") as directory:
             path = Path(directory) / "control.c"
             path.write_text(
-                "#include <kf/map_data.h>\n#include <kf/tmd.h>\n"
-                "#include <kf/game_map.h>\n#include <kf/resources.h>\n" + source
+                "#include <kf/lib/map_data.h>\n#include <kf/lib/tmd.h>\n"
+                "#include <kf/lib/map.h>\n#include <kf/lib/resources.h>\n" + source
             )
             output = ["-O1", "-S", "-emit-llvm", "-o", "-"] if ir else ["-fsyntax-only"]
             return subprocess.run(

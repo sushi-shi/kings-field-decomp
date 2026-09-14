@@ -1,6 +1,6 @@
-#include <kf/address.h>
-#include <kf/gpu_packets.h>
-#include <kf/open_render.h>
+#include <kf/lib/address.h>
+#include <kf/lib/gpu_packets.h>
+#include <kf/open/render.h>
 #include <psyq/libc.h>
 
 DATA(0x800372fc, 0x8)

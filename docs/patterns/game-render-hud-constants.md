@@ -41,7 +41,7 @@ exact result is expected or banked.
 ## Named roles and retail evidence
 
 The identities describe observed uses. The original design reasons for tuning
-most magnitudes are not known. Shared definitions live in `game_render.h`;
+most magnitudes are not known. Shared definitions live in `game/render.h`;
 module-specific tuning stays beside its consumers.
 
 | HUD row | Name/consumer | Atlas evidence |

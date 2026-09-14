@@ -25,8 +25,8 @@ overlap tests and owns a separate cell-height table. That is a semantic
 boundary from these map-grid lookup and occupancy primitives.
 
 Both collision units expose their shared result layout, data, and operations
-through `include/kf/game_collision.h`; map-owned layouts and operations remain
-in `include/kf/game_map.h`.
+through `include/kf/game/collision.h`; map-owned layouts and operations remain
+in `include/kf/lib/map.h`.
 
 The wrapper's initial reconstruction incorrectly truncated the flat cell
 index to `s16`. Retail passes the two division results directly, and removing

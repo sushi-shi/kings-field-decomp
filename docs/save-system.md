@@ -30,7 +30,7 @@ save_payload_buffer +0x0280  KfSavePayload  (0x2580 bytes)
 ```
 
 These file-layout types, the shared workspace declarations, and the public
-cross-TU save API are owned by `include/kf/game_save.h`. Internal card and file
+cross-TU save API are owned by `include/kf/game/save.h`. Internal card and file
 helpers remain declared inside `save_system.c`.
 
 Each summary contains six named 32-bit fields: experience, current floor,
@@ -114,7 +114,7 @@ selecting a result. `memory_card_begin_status_check` returns zero when
 constants describe that BIOS-event contract.
 
 The file/UI layer reuses this number space. The shared `KfSaveStatus` domain
-in `game_save.h` contains both card-event and `SAVE_STATUS_*` policy names,
+in `game/save.h` contains both card-event and `SAVE_STATUS_*` policy names,
 with success also equal to one. Producers and status locals carry that type;
 the message dispatcher retains its signed-halfword storage. The
 [domain review](patterns/game-save-status-domain.md) records the conversions

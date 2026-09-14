@@ -45,7 +45,7 @@ inventory; this campaign does not invent their capacities.
 
 `pool.h` owns the shared record, binder and lifecycle API and imports the SDK's
 `SVECTOR`. The morph object is forward-declared there, with its private format
-definition in the owner source. `game_render.h` includes the pool interface;
+definition in the owner source. `game/render.h` includes the pool interface;
 it no longer owns a duplicate binder declaration. The caller-slot campaign
 below recovers the five object families and the typed `KfPoolRecord **` API.
 The implementation includes the asset, rendering, memory, pool and vendor
@@ -159,7 +159,7 @@ storage claim or inferred array capacity is introduced.
 `entity_render`, `map_event_render` and `geometry_render` now import their
 asset/render/math/player/state dependencies and Psy-Q interface directly,
 without `game.h` or local extern replacements. The unresolved sprite table
-still uses its existing `game_state.h` declaration; no owner is invented.
+still uses its existing `game/state.h` declaration; no owner is invented.
 
 Additional vendor controls compare twelve unmasked bytes at each Release 2.5
 `LIBAPI.LIB` XDEF offset zero: `open` (`GAME:0x800504dc`, `A50.OBJ`), `lseek`

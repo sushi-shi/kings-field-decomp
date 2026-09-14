@@ -1,6 +1,6 @@
-#include <kf/address.h>
-#include <kf/open_opening_render.h>
-#include <kf/open_render.h>
+#include <kf/lib/address.h>
+#include <kf/open/opening_render.h>
+#include <kf/open/render.h>
 
 enum {
     ENDING_GRADIENT_OT_DEPTH = 0x3fef

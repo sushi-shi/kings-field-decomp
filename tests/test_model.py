@@ -38,7 +38,7 @@ class ClaimScanTests(unittest.TestCase):
 
     def test_claim_binds_the_definition_that_follows(self) -> None:
         claims = self._scan(
-            "#include <kf/address.h>\n\n"
+            "#include <kf/lib/address.h>\n\n"
             "ADDRESS(0x80010000, 0x10)\n"
             "void first(void)\n{\n}\n\n"
             "ADDRESS(0x80010010, 32) /* second */\n"
@@ -72,7 +72,7 @@ class ClaimScanTests(unittest.TestCase):
 
     def test_address_at_stacks_per_image_claims_on_one_definition(self) -> None:
         claims = self._scan(
-            "#include <kf/address.h>\n\n"
+            "#include <kf/lib/address.h>\n\n"
             'ADDRESS_AT("GAME", 0x800202fc, 0x68)\n'
             'ADDRESS_AT("OPEN", 0x80019598, 0x68)\n'
             "void matrix_interpolate(void)\n{\n}\n"
@@ -320,7 +320,7 @@ class RodataClaimTests(unittest.TestCase):
         with tempfile.TemporaryDirectory(prefix="kf-model-") as directory:
             source = Path(directory) / "unit.c"
             source.write_text(
-                "#include <kf/address.h>\n\nRODATA(0x8001235c, 0x178)\n\n"
+                "#include <kf/lib/address.h>\n\nRODATA(0x8001235c, 0x178)\n\n"
                 "ADDRESS(0x80010000, 0x10)\nvoid first(void)\n{\n}\n",
                 encoding="utf-8",
             )

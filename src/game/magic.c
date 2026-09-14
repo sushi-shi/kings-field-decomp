@@ -1,10 +1,10 @@
-#include <kf/null.h>
-#include <kf/address.h>
-#include <kf/map_data.h>
-#include <kf/game_collision.h>
-#include <kf/game_player.h>
-#include <kf/game.h>
-#include <kf/magic.h>
+#include <kf/lib/null.h>
+#include <kf/lib/address.h>
+#include <kf/lib/map_data.h>
+#include <kf/game/collision.h>
+#include <kf/game/player.h>
+#include <kf/game/game.h>
+#include <kf/game/magic.h>
 
 enum {
     MAGIC_LAUNCH_OFFSET_X = -200,

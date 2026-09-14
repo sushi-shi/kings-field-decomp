@@ -1,8 +1,8 @@
-#include <kf/null.h>
-#include <kf/bool.h>
-#include <kf/address.h>
-#include <kf/game_player.h>
-#include <kf/game.h>
+#include <kf/lib/null.h>
+#include <kf/lib/bool.h>
+#include <kf/lib/address.h>
+#include <kf/game/player.h>
+#include <kf/game/game.h>
 
 enum {
     PLAYER_KEY_UNLOCK_VOLUME = 110,

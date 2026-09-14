@@ -1,7 +1,7 @@
-#include <kf/game_map.h>
-#include <kf/game_actor.h>
-#include <kf/game_equipment.h>
-#include <kf/magic.h>
+#include <kf/lib/map.h>
+#include <kf/game/actor.h>
+#include <kf/game/equipment.h>
+#include <kf/game/magic.h>
 
 #ifndef EXPECTED_MAP_RUNTIME_SIZE
 #define EXPECTED_MAP_RUNTIME_SIZE 0x2360

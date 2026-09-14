@@ -27,7 +27,7 @@ absent from an image.
 
 ## Source organization
 
-The allocator lives in `src/shared/memory.c`. Rotation builders, direction and
+The allocator lives in `src/lib/memory.c`. Rotation builders, direction and
 angle helpers, matrix/fog/color interpolation, and sprite builders now compile
 as ordinary shared translation units. Image-only members of those contiguous
 families use image-selected compilation. OPEN's matrix diagnostic remains a
@@ -41,7 +41,7 @@ records every remaining fragment and its current includers. Each shared
 function retains image-qualified claims, and DATA and RODATA ownership stays
 in the source that defines it.
 
-`include/kf/shared_graphics.h` selects the corresponding GAME or OPEN state
+`include/kf/lib/graphics.h` selects the corresponding GAME or OPEN state
 members and color-preset type. It adds no runtime dispatch, pointer indirection,
 casts, or replacement structures. The display frame code also retains the
 different unidentified per-image counters explicitly. Source sharing does not
@@ -77,7 +77,7 @@ The whole-source comparison also checked differently named candidates. Camera
 paths have different start/advance semantics; map windows, entity pools, resource
 loaders, fades, and sequence lifecycles belong to their respective scene/gameplay
 owners. The TSV records these analogues in both directions. Common camera-path
-advance/publish operations already have shared inline definitions in `game_map.h`.
+advance/publish operations already have shared inline definitions in `lib/map.h`.
 OPEN's gradient quad fixes the ending scene's ordering depth, and its checked
 primitive allocator retains the diagnostic loop and allocation counter. These
 remain with their existing owners.

@@ -16,7 +16,7 @@ pointer, at `80036fb0`. Optional values then use offsets 4, 8 and 12 from
 `s1`. These offsets select argument positions; they are not object fields.
 
 The existing GAME signature has five fixed arguments: id, type, kind,
-position pointer, direction pointer. Caller macros in `game_effect.h` group
+position pointer, direction pointer. Caller macros in `game/effect.h` group
 the optional tail by kind for modern checking and expand to ordinary arguments
 for the target compiler. The optional contract is:
 

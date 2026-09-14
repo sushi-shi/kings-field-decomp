@@ -65,11 +65,11 @@ typedef struct KfTmdObject {
 ```
 
 `KfPrimitiveBuffer` is shared by the two overlays through
-`include/kf/render_types.h`. `KfTmdObject`, the TMD header and primitive packet
+`include/kf/lib/render_types.h`. `KfTmdObject`, the TMD header and primitive packet
 bodies, and the shared projected-vertex record are checked definitions in
-`include/kf/tmd.h`, not inferred names in prose. Overlay-specific display,
-TMD-registration, and render-state aggregates live in `game_render.h` and
-`open_render.h`.
+`include/kf/lib/tmd.h`, not inferred names in prose. Overlay-specific display,
+TMD-registration, and render-state aggregates live in `game/render.h` and
+`open/render.h`.
 `config/retail/structures.tsv` records the complete sizes and
 `structure_fields.tsv` records every field offset, size, type, confidence, and
 evidence.

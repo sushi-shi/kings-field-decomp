@@ -30,7 +30,7 @@ The common GAME/OPEN `KfCellWindow` layout is already supported: four unsigned
 halfwords at offsets 0, 2, 4 and 6 are width, height, origin X and origin Z;
 196 byte cells follow at offset 8. The complete record stride is 204 bytes.
 The shared structure remains in render_types.h and shared extern declarations
-remain in game_render.h. The fixed window has one direct reference, in its
+remain in game/render.h. The fixed window has one direct reference, in its
 own selector, so its working source scope is private. The table and pointer
 cross existing module boundaries and require shared declarations. These are
 curated source-ownership choices, not recovered original linkage symbols.

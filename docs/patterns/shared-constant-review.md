@@ -65,7 +65,7 @@ The header candidates also retain their identities:
 | `KF_HUD_ATTACK_PANEL` | HUD record selector. |
 | `KF_ITEM_DRAGON_SWORD`, `KF_MAP_OBJECT_DRAGON_SWORD` | Inventory item and map-object domains. The object-to-item mapping is real, but the APIs and serialized fields remain distinct. |
 | `KF_MAP_ATTRIBUTE_0A` | Unresolved map-attribute encoding; numerical equality adds no meaning. |
-| `KF_MAP_OBJECT_ACTION_COPY_REGION`, `KF_MAP_OBJECT_BEHAVIOR_COPY_REGION` | Definition behavior selects an action in `map_object_pool_update`. They belong to separate state/definition domains, already shared through `game_map.h`. |
+| `KF_MAP_OBJECT_ACTION_COPY_REGION`, `KF_MAP_OBJECT_BEHAVIOR_COPY_REGION` | Definition behavior selects an action in `map_object_pool_update`. They belong to separate state/definition domains, already shared through `lib/map.h`. |
 | `KF_NOTIFICATION_SCHOLAR_BONES` | Notification/message selector. |
 | `SAVE_STATUS_10` | Save-status encoding; no connection to the quantities above. |
 
@@ -98,16 +98,16 @@ combat header. No runtime globals or per-object linker placements are added.
 
 | Old definitions | Shared definition and semantic connection |
 | --- | --- |
-| `ACTOR_EFFECT_DEFAULT_SPEED`, `MAGIC_DEFAULT_SPEED` (600) | `KF_EFFECT_PROJECTILE_DEFAULT_SPEED` in `game_effect.h`: both launch paths scale the same forward direction vector before passing it to `effect_pool_construct`. |
+| `ACTOR_EFFECT_DEFAULT_SPEED`, `MAGIC_DEFAULT_SPEED` (600) | `KF_EFFECT_PROJECTILE_DEFAULT_SPEED` in `game/effect.h`: both launch paths scale the same forward direction vector before passing it to `effect_pool_construct`. |
 | `ACTOR_LIGHTNING_VARIANT_SPEED`, `LIGHTNING_SPEED` (800) | `KF_EFFECT_LIGHTNING_SPEED`: lightning and its alternate visual variant use the same speed to scale velocity and convert target distance to travel updates. |
 | `ACTOR_WIND_CUTTER_SPEED`, `WIND_CUTTER_SPEED` (800) | `KF_EFFECT_WIND_CUTTER_SPEED`: the wind-cutter case overrides the default in both launch paths. Keep it distinct from lightning despite equal speed. |
 | `MAGIC_TARGET_MAX_DISTANCE`, `PLAYER_WEAPON_MAGIC_TARGET_RANGE`, `HOMING_TARGET_MAX_DISTANCE` (20000) | `KF_EFFECT_ACTOR_TARGET_MAX_DISTANCE`: all bound actor acquisition through `actor_pool_find_target_in_cone`; weapon launch stores the selected actor index in the homing control domain, and homing tracking repeats the query. |
 | `PLAYER_WEAPON_MAGIC_TARGET_CONE`, `HOMING_TARGET_CONE_ANGLE` (1365) | `KF_EFFECT_ACTOR_TARGET_WIDE_CONE`: the wide actor acquisition cone at weapon launch and during homing tracking. Burst/ordinary spell aim cones remain separate. |
-| `ACTOR_CONE_INITIAL_BEST_ERROR`, `MAP_EVENT_CONE_INITIAL_BEST_ERROR` (30000) | `KF_CONE_SEARCH_INITIAL_ANGLE_ERROR` in `game_math.h`: both cone searches seed a signed-halfword angular-error ranking before choosing the best candidate. This is not a world-distance limit. |
-| `KF_ACTOR_RANDOM_YAW_SHIFT`, `MAP_DROP_RANDOM_YAW_SHIFT`, `MAP_EVENT_RANDOM_YAW_SHIFT`, `GROUND_VISUAL_ANGLE_RANDOM_SHIFT` (3) | `KF_RANDOM_ANGLE_SHIFT` in `game_math.h`: each extracts a complete 12-bit angle from the SDK's 15-bit `rand()` result. Actor initialization/wandering, map-object drops/debris, map-event wandering, and radial ground visuals use the same representation conversion. |
+| `ACTOR_CONE_INITIAL_BEST_ERROR`, `MAP_EVENT_CONE_INITIAL_BEST_ERROR` (30000) | `KF_CONE_SEARCH_INITIAL_ANGLE_ERROR` in `lib/math.h`: both cone searches seed a signed-halfword angular-error ranking before choosing the best candidate. This is not a world-distance limit. |
+| `KF_ACTOR_RANDOM_YAW_SHIFT`, `MAP_DROP_RANDOM_YAW_SHIFT`, `MAP_EVENT_RANDOM_YAW_SHIFT`, `GROUND_VISUAL_ANGLE_RANDOM_SHIFT` (3) | `KF_RANDOM_ANGLE_SHIFT` in `lib/math.h`: each extracts a complete 12-bit angle from the SDK's 15-bit `rand()` result. Actor initialization/wandering, map-object drops/debris, map-event wandering, and radial ground visuals use the same representation conversion. |
 | `FLOOR_ITEM_RENDER_BRIGHTNESS` in GAME and OPEN (180) | `KF_FLOOR_ITEM_RENDER_BRIGHTNESS` in `item.h`: both floor-item render sweeps initialize all three material color channels before rendering the shared floor-item family. |
 | `FORMAT_LEADING_PAD_BYTES` in GAME and OPEN (8) | `KF_FORMAT_LEADING_PAD_BYTES` in `debug.h`: the same decimal/hex formatter buffer convention reserves eight bytes before the digit anchor. Keep separate storage objects for the two images. |
-| `OPENING_ENTITY_SCENE_BASE_Y`, `TRANSITION_BASE_Y` (-10000) | `KF_OPENING_SCENE_BASE_Y` in `open_resources.h`: the loaders position scene-3/ending entities at the same scene plane used by their transition placement in the scene runners. |
+| `OPENING_ENTITY_SCENE_BASE_Y`, `TRANSITION_BASE_Y` (-10000) | `KF_OPENING_SCENE_BASE_Y` in `open/resources.h`: the loaders position scene-3/ending entities at the same scene plane used by their transition placement in the scene runners. |
 
 The projectile speed loads are explicit in GAME at `0x8002ef98`,
 `0x8002efc4`, `0x8003a3cc`, and `0x8003a3d0`. The common query arguments are

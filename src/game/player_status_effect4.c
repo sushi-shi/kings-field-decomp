@@ -1,5 +1,5 @@
-#include <kf/address.h>
-#include <kf/game_player.h>
+#include <kf/lib/address.h>
+#include <kf/game/player.h>
 
 ADDRESS(0x80018858, 0x28)
 void player_apply_fire_defense_boost(void)

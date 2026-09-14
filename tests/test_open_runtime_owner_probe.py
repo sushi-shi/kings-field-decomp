@@ -20,7 +20,7 @@ from scripts.kf.retail import IMAGE_LAYOUTS
 
 
 FIXTURES = REPO / "tests/fixtures"
-HEADER = REPO / "include/kf/open_render.h"
+HEADER = REPO / "include/kf/open/render.h"
 
 
 def text_referent(obj, symbol, addend):

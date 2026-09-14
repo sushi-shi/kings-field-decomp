@@ -118,7 +118,7 @@ Both images now obtain this array's declaration and `current_tmd_vertices`
 from `tmd.h`. OPEN retains its existing 1000-entry definition and DATA claim.
 
 `GAME.EXE:0x800930f0` is `tmd_morph_scratch`, an `SVECTOR` array declared in
-`game_render.h`. The binder copies two words per vertex to `0x800930f8`,
+`game/render.h`. The binder copies two words per vertex to `0x800930f8`,
 then installs that same address as the current vertex cursor. The final
 blend starts at scratch plus the morph object's `base_vertex * 8`. It
 includes the eight bytes at the object's `base_vertex` and `vertex_count`

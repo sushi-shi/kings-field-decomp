@@ -1,5 +1,5 @@
-#include <kf/address.h>
-#include <kf/open_render.h>
+#include <kf/lib/address.h>
+#include <kf/open/render.h>
 
 DATA(0x800372c0, 0x8)
 KfScreenRect opening_fade_rect = {

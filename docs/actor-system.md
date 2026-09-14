@@ -31,10 +31,10 @@ globals therefore form one contiguous actor subsystem. The old Ghidra-derived
 identities for addresses inside the two arrays were fields/elements, not
 separate C globals; curation replaces them with the owning array extents.
 
-`include/kf/game_actor.h` owns `KfActorDefinition`, `KfActorActionProfile`,
+`include/kf/game/actor.h` owns `KfActorDefinition`, `KfActorActionProfile`,
 `KfActorPlacement`, `KfActor`, the complete `KfActorState` aggregate, and the
 actor-owned globals and operations. The packed `SoundRef` embedded by actor
-definitions remains owned by `include/kf/audio.h`. The structure inventory
+definitions remains owned by `include/kf/lib/audio.h`. The structure inventory
 validates all of these layouts; unknown bytes remain explicitly opaque. The
 currently supported actor fields include the slot/free
 marker, definition ID, tile/local/world positions, lifecycle,

@@ -1,15 +1,15 @@
-#include <kf/null.h>
-#include <kf/game_graphics.h>
-#include <kf/address.h>
-#include <kf/map_data.h>
-#include <kf/game_cd.h>
-#include <kf/game_render.h>
-#include <kf/notify.h>
+#include <kf/lib/null.h>
+#include <kf/game/graphics.h>
+#include <kf/lib/address.h>
+#include <kf/lib/map_data.h>
+#include <kf/game/cd.h>
+#include <kf/game/render.h>
+#include <kf/game/notify.h>
 #include <psyq/sdk.h>
 #include <psyq/libc.h>
-#include <kf/game.h>
-#include <kf/tmd.h>
-#include <kf/shared_graphics.h>
+#include <kf/game/game.h>
+#include <kf/lib/tmd.h>
+#include <kf/lib/graphics.h>
 
 enum {
     RENDER_PALETTE_HUD,
@@ -125,7 +125,7 @@ void display_show_system_screen(KfSystemScreen screen)
     DrawSync(0);
 }
 
-#include "../shared/lighting_color.inc"
+#include "../lib/lighting_color.inc"
 
 ADDRESS(0x8001bae4, 0xb0)
 void effect5_texture_cache_prepare(KfFloorId floor)
@@ -255,9 +255,9 @@ void render_initialize(void)
     pool_reset();
 }
 
-#include "../shared/display_frame.inc"
+#include "../lib/display_frame.inc"
 
-#include "../shared/tmd.inc"
+#include "../lib/tmd.inc"
 
 /* Store the full GTE depth; RotTransPers returns depth divided by four. */
 ADDRESS(0x8001c60c, 0x9c)
@@ -282,4 +282,4 @@ void tmd_project_vertices(s32 count)
     }
 }
 
-#include "../shared/tmd_transform.inc"
+#include "../lib/tmd_transform.inc"

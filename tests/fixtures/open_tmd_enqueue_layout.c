@@ -1,5 +1,5 @@
-#include <kf/gpu_packets.h>
-#include <kf/tmd.h>
+#include <kf/lib/gpu_packets.h>
+#include <kf/lib/tmd.h>
 
 void (*gt3_constructor)(POLY_GT3 *) = SetPolyGT3;
 

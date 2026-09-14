@@ -1,4 +1,4 @@
-#include <kf/open_render.h>
+#include <kf/open/render.h>
 
 #ifndef EXPECTED_GT4_SIZE
 #define EXPECTED_GT4_SIZE 52

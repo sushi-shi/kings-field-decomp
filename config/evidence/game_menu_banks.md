@@ -4,7 +4,7 @@
 
 Baseline `b02ff37`, GAME.EXE, `probe-gcc257-o2-g0`. Define the five remaining
 STAT.DAT destinations in `item.c`, retaining their independently established
-types, extents and BSS storage. Keep their shared declarations in game_menu.h.
+types, extents and BSS storage. Keep their shared declarations in game/menu.h.
 Replace menu_list_init's obsolete interior-global view with the real window
 row's glyph field. Do not change the loader, other item function bodies,
 signatures, copy lengths, or banked functions to accommodate a data score.

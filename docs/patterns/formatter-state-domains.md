@@ -59,7 +59,7 @@ preserving all source storage claims and evidence confidence levels.
 
 ## Implemented domains and grammar
 
-`include/kf/debug.h` now separates `KfFormatDigitState`,
+`include/kf/lib/debug.h` now separates `KfFormatDigitState`,
 `KfFormatParserState` and `KfFormatPaddingMode`. Each uses byte storage in
 the legacy build and a scoped byte enum in modern checking. Both images
 propagate the types through declarations, initialization, assignment and

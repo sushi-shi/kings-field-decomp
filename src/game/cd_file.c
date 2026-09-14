@@ -1,9 +1,9 @@
-#include <kf/null.h>
-#include <kf/bool.h>
-#include <kf/address.h>
-#include <kf/game_cd.h>
+#include <kf/lib/null.h>
+#include <kf/lib/bool.h>
+#include <kf/lib/address.h>
+#include <kf/game/cd.h>
 #include <psyq/libc.h>
-#include <kf/game.h>
+#include <kf/game/game.h>
 
 enum {
     CD_PATH_READ_ATTEMPTS = 3,

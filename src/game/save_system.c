@@ -1,14 +1,14 @@
-#include <kf/null.h>
-#include <kf/bool.h>
-#include <kf/game_graphics.h>
-#include <kf/address.h>
-#include <kf/cd_file.h>
-#include <kf/game_save.h>
-#include <kf/game_player.h>
+#include <kf/lib/null.h>
+#include <kf/lib/bool.h>
+#include <kf/game/graphics.h>
+#include <kf/lib/address.h>
+#include <kf/lib/cd_file.h>
+#include <kf/game/save.h>
+#include <kf/game/player.h>
 #include <psyq/audio.h>
 #include <psyq/kernel.h>
 #include <psyq/libc.h>
-#include <kf/game.h>
+#include <kf/game/game.h>
 
 /* Direct TIM/Mddd. IDs; menu_load_item_texture instead uses an index plus one. */
 enum {

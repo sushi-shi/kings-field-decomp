@@ -1,7 +1,7 @@
-#include <kf/null.h>
-#include <kf/address.h>
-#include <kf/gpu_packets.h>
-#include <kf/open_render.h>
+#include <kf/lib/null.h>
+#include <kf/lib/address.h>
+#include <kf/lib/gpu_packets.h>
+#include <kf/open/render.h>
 
 /* Prepared vertex indices are byte offsets into the projected array. */
 #define VTX(off) TMD_PREPARED_VERTEX(open_graphics_runtime.tmd_projected_vertices, (off))

@@ -1,7 +1,7 @@
-#include <kf/address.h>
-#include <kf/map_data.h>
-#include <kf/open_render.h>
-#include <kf/open_scene0.h>
+#include <kf/lib/address.h>
+#include <kf/lib/map_data.h>
+#include <kf/open/render.h>
+#include <kf/open/scene0.h>
 
 DATA(0x800439d8, 0x3400)
 KfOpeningCellStorage opening_cell_storage;

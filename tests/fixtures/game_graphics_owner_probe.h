@@ -1,8 +1,8 @@
 #ifndef KF_GAME_GRAPHICS_OWNER_PROBE_H
 #define KF_GAME_GRAPHICS_OWNER_PROBE_H
 
-#include <kf/game_render.h>
-#include <kf/notify.h>
+#include <kf/game/render.h>
+#include <kf/game/notify.h>
 
 /* Candidate view of the complete startup clear, not a production DATA owner.
  * The registry capacity remains unproved; the projection/morph arrays mirror

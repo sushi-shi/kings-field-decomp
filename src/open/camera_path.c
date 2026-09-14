@@ -1,7 +1,7 @@
-#include <kf/address.h>
-#include <kf/game_math.h>
-#include <kf/open_camera_path.h>
-#include <kf/open_opening_helpers.h>
+#include <kf/lib/address.h>
+#include <kf/lib/math.h>
+#include <kf/open/camera_path.h>
+#include <kf/open/opening_helpers.h>
 
 DATA(0x800757d8, 0x64)
 KfCameraPathState opening_camera_path_state;

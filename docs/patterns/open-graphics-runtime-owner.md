@@ -306,7 +306,7 @@ services; PAD, rand and audio services remain vendored, not new game bodies.
 | `80014e28 opening_ending_scroll_run` | `798`; 97.129630% | Forty calls, eight jumps, 31 pairs, 264-byte frame, infinite frame loop with retained epilogue. No-argument controller call; signed phase/blend halfwords, nine pages/CLUTs, live shared RGB bytes and shift=2. Owner-only change; no phase or stack steering. |
 
 Compare these alternate units, then adopt one `KfGraphicsRuntimeOpen` in
-`open_render.h` throughout all seventeen OPEN consumers. Define its BSS
+`open/render.h` throughout all seventeen OPEN consumers. Define its BSS
 storage in the render-initialization module, remove the three old interior
 DATA claims and fourteen interior global identities, and retain every raw
 relocation site and numerical destination. This is a supported WIP ownership
@@ -322,7 +322,7 @@ definition in `render_init.c`. All 170 affected relocation rows retain their
 sites, instruction forms, numeric destinations and evidence status; only the
 owner name changes. Fourteen global identities become nineteen typed fields
 (including five opaque intervals), with no overlapping interior definitions.
-The common TMD header now leaves GAME's two globals in `game_render.h`;
+The common TMD header now leaves GAME's two globals in `game/render.h`;
 GAME source bodies and identities are unchanged. The inventory checker knows
 the authentic LIBGPU DRAWENV/DISPENV layouts and reads the shared vertex type
 before the enclosing OPEN type. The former alternate fixture is retired.

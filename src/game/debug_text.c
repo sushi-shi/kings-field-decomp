@@ -1,8 +1,8 @@
-#include <kf/bool.h>
+#include <kf/lib/bool.h>
 #include <stdarg.h>
-#include <kf/address.h>
-#include <kf/debug.h>
-#include <kf/game_types.h>
+#include <kf/lib/address.h>
+#include <kf/lib/debug.h>
+#include <kf/lib/types.h>
 
 /*
  * The formatter walks its va_list argument words and returns a byte count
@@ -29,9 +29,9 @@ void debug_stop(void)
     debug_stop_flag = debug_stop_flag == KF_FALSE;
 }
 
-#include "../shared/format.inc"
+#include "../lib/format.inc"
 
-#include "../shared/debug_sink.inc"
+#include "../lib/debug_sink.inc"
 
 ADDRESS(0x8003ac4c, 0x8)
 void func_8003ac4c(void)

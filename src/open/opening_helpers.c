@@ -1,6 +1,6 @@
-#include <kf/address.h>
-#include <kf/game_math.h>
-#include <kf/open_opening_helpers.h>
+#include <kf/lib/address.h>
+#include <kf/lib/math.h>
+#include <kf/open/opening_helpers.h>
 #include <psyq/pad.h>
 
 DATA(0x80043178, 0x4)
@@ -20,4 +20,4 @@ void opening_poll_input(void)
     }
 }
 
-#include "../shared/angle_shortest_delta.inc"
+#include "../lib/angle_shortest_delta.inc"

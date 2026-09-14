@@ -94,10 +94,10 @@ class GameCellWindowDataTests(unittest.TestCase):
                   and int(r['va'], 0) + int(r['size'], 0) > 0x80055E9C]
         self.assertEqual([(int(r['va'], 0), int(r['size'], 0)) for r in census],
                          [(0x80055E9C, 204)])
-        header = (REPO / 'include/kf/game_render.h').read_text()
+        header = (REPO / 'include/kf/game/render.h').read_text()
         self.assertIn(
             'extern KfCellWindow render_cell_windows[KF_CELL_WINDOW_YAW_COUNT];', header)
-        graphics_header = (REPO / 'include/kf/game_graphics.h').read_text()
+        graphics_header = (REPO / 'include/kf/game/graphics.h').read_text()
         self.assertIn('const KfCellWindow *active_cell_window;', graphics_header)
         self.assertNotIn(('GAME.EXE', 0x80095860), identities)
         self.assertEqual(identities['GAME.EXE', 0x80070E98].name, 'game_graphics_runtime')

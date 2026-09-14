@@ -1,9 +1,9 @@
-#include <kf/null.h>
-#include <kf/address.h>
-#include <kf/cd_file.h>
-#include <kf/memory.h>
-#include <kf/open_audio.h>
-#include <kf/audio_sequence.h>
+#include <kf/lib/null.h>
+#include <kf/lib/address.h>
+#include <kf/lib/cd_file.h>
+#include <kf/lib/memory.h>
+#include <kf/open/audio.h>
+#include <kf/lib/audio_sequence.h>
 #include <psyq/audio.h>
 #include <psyq/libc.h>
 
@@ -113,7 +113,7 @@ void audio_stop_sequence(KfAudioStopMode stop_mode)
     }
 }
 
-#include "../shared/audio_shutdown.inc"
+#include "../lib/audio_shutdown.inc"
 
 ADDRESS(0x80019ef8, 0x4c)
 void audio_close_vab(void)

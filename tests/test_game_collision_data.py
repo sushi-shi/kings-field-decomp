@@ -91,7 +91,7 @@ class GameCollisionDataTests(unittest.TestCase):
         self.assertNotIn(('GAME.EXE', 0x80055AB6), identities)
 
     def test_shared_record_type_and_literal_initializers(self):
-        header = (REPO / 'include/kf/game_collision.h').read_text()
+        header = (REPO / 'include/kf/game/collision.h').read_text()
         self.assertRegex(header, r'typedef struct KfCellHeightRecord\s*\{\s*s16 x_min;\s*'
                          r's16 y_min;\s*s16 x_max;\s*s16 y_max;\s*\}')
         self.assertEqual(load_structure_identities(RETAIL_CONFIG)['KfCellHeightRecord'].size, 8)
@@ -114,7 +114,7 @@ class GameCollisionDataTests(unittest.TestCase):
                 self.assertEqual(set(v for v in values if v >= 0), set(range(7)))
         magic = (REPO / 'src/game/magic.c').read_text()
         self.assertNotIn('DAT_80055878', magic)
-        self.assertIn('#include <kf/game_collision.h>', magic)
+        self.assertIn('#include <kf/game/collision.h>', magic)
 
     def test_corrected_named_referents_delink_and_restore_raw_pairs(self):
         image = self.retail()

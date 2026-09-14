@@ -64,7 +64,12 @@ def snapshot(repo: Path, revision: str, *, working: bool = False) -> tuple[str, 
 
 def clean_c(text: str, promoted: dict[str, str]) -> str:
     text = resolve_conditionals(strip_comments(text))
-    text = re.sub(r'^\s*#\s*include\s*[<"]kf/(?:address|enum)\.h[>"]\s*$', '', text, flags=re.M)
+    text = re.sub(
+        r'^\s*#\s*include\s*[<"]kf/lib/(?:address|enum)\.h[>"]\s*$',
+        '',
+        text,
+        flags=re.M,
+    )
     for name in IMPLEMENTATION:
         text = re.sub(rf'^\s*#\s*define\s+{name}\s*$', '', text, flags=re.M)
     lines = iter(text.splitlines(keepends=True))
@@ -109,10 +114,10 @@ def generate(files: dict[str, bytes], *, modern: bool = False) -> dict[str, byte
     units = [unit for unit in manifest['unit'] if unit.get('scope') != 'vendored']
     source_names = {unit['source'] for unit in units}
     source_names.update(name for name in files
-                        if name.startswith('src/shared/') and name.endswith('.inc'))
+                        if name.startswith('src/lib/') and name.endswith('.inc'))
     source_names.update(name for name in files if name.endswith('.h') and (
         name.startswith('include/') or name.startswith('vendor/include/')))
-    source_names -= {'include/kf/address.h', 'include/kf/enum.h'}
+    source_names -= {'include/kf/lib/address.h', 'include/kf/lib/enum.h'}
     promoted = {}
     promotions = {'s8': 'int', 'u8': 'int', 's16': 'int', 'u16': 'int',
                   's32': 's32', 'u32': 'u32', 'int': 'int'}

@@ -29,7 +29,7 @@ unclassified before the independent camera path at `0x800561d0`. See the
 [copy-region evidence](patterns/game-map-copy-region-source.md). No safety
 for arbitrary non-255 indices is inferred.
 
-`include/kf/game_map.h` owns the copy-region, map-object, map-event, and
+`include/kf/lib/map.h` owns the copy-region, map-object, map-event, and
 camera-path layouts, their complete runtime aggregates, and the map-owned
 global declarations. The separate `map_data.h` retains ownership of the five
 100-by-100 cell grids.

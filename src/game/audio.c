@@ -1,11 +1,11 @@
-#include <kf/null.h>
-#include <kf/address.h>
-#include <kf/game_math.h>
-#include <kf/audio.h>
-#include <kf/audio_sequence.h>
+#include <kf/lib/null.h>
+#include <kf/lib/address.h>
+#include <kf/lib/math.h>
+#include <kf/lib/audio.h>
+#include <kf/lib/audio_sequence.h>
 #include <psyq/audio.h>
 #include <psyq/libc.h>
-#include <kf/game.h>
+#include <kf/game/game.h>
 
 enum {
     GAME_SEQUENCE_BUFFER_BYTES = 0x3000,
@@ -117,7 +117,7 @@ void audio_stop_sequence_master_fade(s32 fade_step)
     }
 }
 
-#include "../shared/audio_shutdown.inc"
+#include "../lib/audio_shutdown.inc"
 
 ADDRESS(0x80032cb0, 0x40)
 void audio_close_vab(void)
@@ -195,9 +195,9 @@ KfAudioPlaybackResult audio_play_spatial(
     return KF_AUDIO_PLAYED;
 }
 
-#include "../shared/audio_spatial_helpers.inc"
+#include "../lib/audio_spatial_helpers.inc"
 
-#include "../shared/sound_ref.inc"
+#include "../lib/sound_ref.inc"
 
 ADDRESS(0x800330f4, 0x1a8)
 void audio_play_voice(
@@ -212,4 +212,4 @@ void audio_play_voice(
     audio_key_on_next_slot(vab_id, program, tone, note, left_volume, right_volume);
 }
 
-#include "../shared/angle_shortest_delta.inc"
+#include "../lib/angle_shortest_delta.inc"

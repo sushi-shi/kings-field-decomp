@@ -63,7 +63,7 @@ expected or banked.
 | Projection | OPEN `800137e0` and `800194f4` pass 200 in SetGeomScreen call delay slots; both now reuse `KF_DEFAULT_PROJECTION_DISTANCE`. |
 | Ending gradient | The sole G4 caller is the ending scroll at OPEN `800153ec`. The emitter adds byte offset `0xffbc` to the active ordering-table pointer, selecting index `0x3fef` (16367). Its private name describes this use; the original reason for choosing that exact slot remains unknown. |
 
-Six existing scene constants move into `open_resources.h` with shared prefixes;
+Six existing scene constants move into `open/resources.h` with shared prefixes;
 all nine scene-side uses and six renderer case labels use the shared identities.
 Six new private rendering constants name the remaining tuning/placement roles.
 The four renderer files contain **110 retained numeric/character occurrences**,

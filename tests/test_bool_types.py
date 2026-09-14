@@ -17,7 +17,7 @@ class BooleanTypeTests(unittest.TestCase):
             self.skipTest('target Clang required')
         with TemporaryDirectory(prefix='kf-bool-types-') as directory:
             path = Path(directory) / 'control.c'
-            path.write_text('#include <kf/bool.h>\n' + source)
+            path.write_text('#include <kf/lib/bool.h>\n' + source)
             return subprocess.run(
                 [compiler, *FLAGS, *MODES[mode], '-fsyntax-only',
                  '-I', str(REPO / 'include'), '-I', str(REPO / 'vendor/include'), str(path)], capture_output=True, text=True)

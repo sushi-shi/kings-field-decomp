@@ -1,9 +1,9 @@
-#include <kf/null.h>
-#include <kf/bool.h>
-#include <kf/address.h>
-#include <kf/map_data.h>
-#include <kf/game_math.h>
-#include <kf/open_resources.h>
+#include <kf/lib/null.h>
+#include <kf/lib/bool.h>
+#include <kf/lib/address.h>
+#include <kf/lib/map_data.h>
+#include <kf/lib/math.h>
+#include <kf/open/resources.h>
 
 DATA(0x80049538, 0x510)
 KfOpeningEntityState opening_entity_state;

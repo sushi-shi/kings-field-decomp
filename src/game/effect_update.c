@@ -1,10 +1,10 @@
-#include <kf/address.h>
-#include <kf/audio.h>
-#include <kf/map_data.h>
-#include <kf/game_collision.h>
-#include <kf/game_effect.h>
+#include <kf/lib/address.h>
+#include <kf/lib/audio.h>
+#include <kf/lib/map_data.h>
+#include <kf/game/collision.h>
+#include <kf/game/effect.h>
 #include <psyq/libc.h>
-#include <kf/game.h>
+#include <kf/game/game.h>
 
 enum {
     EFFECT_FIXED_MAGIC_POWER = 5,

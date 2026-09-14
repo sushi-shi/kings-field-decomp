@@ -1,5 +1,5 @@
-#include <kf/item.h>
-#include <kf/render_types.h>
+#include <kf/lib/item.h>
+#include <kf/lib/render_types.h>
 
 #ifndef EXPECTED_SPRITE_SIZE
 #define EXPECTED_SPRITE_SIZE 12

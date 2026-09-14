@@ -1,5 +1,5 @@
-#include <kf/address.h>
-#include <kf/game_state.h>
+#include <kf/lib/address.h>
+#include <kf/game/state.h>
 #include <psyq/kernel.h>
 
 /*

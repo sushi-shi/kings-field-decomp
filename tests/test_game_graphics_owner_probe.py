@@ -186,7 +186,7 @@ class GameGraphicsOwnerProbeTests(unittest.TestCase):
                           if image == 'GAME.EXE' and ORIGIN < va < ORIGIN + EXTENT], [])
         self.assertEqual(identities['GAME.EXE', ORIGIN + EXTENT + 4].name, 'audio_state')
         # Type only the observed registry prefix; keep the remaining spans opaque.
-        header = (REPO / 'include/kf/game_graphics.h').read_text()
+        header = (REPO / 'include/kf/game/graphics.h').read_text()
         self.assertIn('KfAssetHeader *asset_registry_entries[KF_ASSET_REGISTRY_KNOWN_ENTRIES];', header)
         self.assertIn('u8 unknown_201f4[0x30];', header)
         self.assertIn('KfScreenVertex tmd_projected_vertices[KF_PROJECTED_VERTEX_CAPACITY];', header)
@@ -195,7 +195,7 @@ class GameGraphicsOwnerProbeTests(unittest.TestCase):
     def test_production_registry_prefix_preserves_the_surrounding_layout(self):
         self.tools()
         unit = load_manifest().by_name()['game.game']
-        source = '''#include <kf/game_graphics.h>
+        source = '''#include <kf/game/graphics.h>
             unsigned long registry_layout[] = {
                 (unsigned long)&((KfGraphicsRuntimeGame *)0)->asset_registry_entries,
                 sizeof(((KfGraphicsRuntimeGame *)0)->asset_registry_entries),
@@ -529,7 +529,7 @@ class GameGraphicsOwnerProbeTests(unittest.TestCase):
             'active_render_blue': 'color.b', 'active_render_code': 'color.cd',
         }
         canonical = standalone_source(unit)
-        narrow = '''#include <kf/game_render.h>
+        narrow = '''#include <kf/game/render.h>
 typedef struct KfMaterialProbe {
     u16 clut;
     u16 tpage;

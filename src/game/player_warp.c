@@ -1,10 +1,10 @@
-#include <kf/null.h>
-#include <kf/bool.h>
-#include <kf/address.h>
-#include <kf/map_data.h>
-#include <kf/game_player.h>
-#include <kf/game_collision.h>
-#include <kf/game.h>
+#include <kf/lib/null.h>
+#include <kf/lib/bool.h>
+#include <kf/lib/address.h>
+#include <kf/lib/map_data.h>
+#include <kf/game/player.h>
+#include <kf/game/collision.h>
+#include <kf/game/game.h>
 
 DATA(0x80056248, 0x20)
 static MATRIX actor_transform_color_matrix = {

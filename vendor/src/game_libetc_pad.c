@@ -1,4 +1,4 @@
-#include <kf/address.h>
+#include <kf/lib/address.h>
 #include <psyq/pad.h>
 #include <psyq/kernel.h>
 #include <psyq/libc.h>

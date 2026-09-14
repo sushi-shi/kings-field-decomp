@@ -41,7 +41,7 @@ The two recovered timers are fields of the checked `0xe0`-byte
 | `0x50` | `player_state.fire_defense_timer` | `s16` | Initialized to `-1`, set to 500 with status bit 4, decremented by `player_update`, and clears the bit at zero. |
 | `0x52` | `player_state.illusion_staff_timer` | `s16` | Initialized to `-1`, set to 1000 by Illusion Staff use, decremented by `player_update` with a green lighting blend, and sampled by map-cell mesh remapping. |
 
-The complete structure is declared in `include/kf/game_player.h`; every field
+The complete structure is declared in `include/kf/game/player.h`; every field
 extent is checked against `config/retail/structures.tsv` and
 `config/retail/structure_fields.tsv` by `kf inventory check`. Reconstructed
 sources use the `player_state` aggregate. The delinker must preserve the

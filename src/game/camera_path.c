@@ -1,7 +1,7 @@
-#include <kf/address.h>
-#include <kf/game_math.h>
-#include <kf/game_map.h>
-#include <kf/game_player.h>
+#include <kf/lib/address.h>
+#include <kf/lib/math.h>
+#include <kf/lib/map.h>
+#include <kf/game/player.h>
 
 /* Psy-Q LIBGTE: SquareRoot0. */
 

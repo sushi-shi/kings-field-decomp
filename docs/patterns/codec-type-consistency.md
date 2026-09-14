@@ -33,11 +33,11 @@ byte sequences without narrowing their accepted values.
 
 | Record family | Established source model used by the codec |
 | --- | --- |
-| Weapon, armor, magic and level growth | [Equipment](../../include/kf/game_equipment.h), [magic](../../include/kf/magic.h) and [player-stat](../../include/kf/game_player.h) field widths and names; unknown ranges remain encoded verbatim. |
-| Actor definitions | [KfActorDefinition](../../include/kf/game_actor.h): action parameters, sound references, signed attachment offsets and special-attack values, animation tables, combat values and the unknown +0x38 range. The former opaque whole-record array becomes an explicit decoded record. |
-| Map events | [KfMapEventDefinition](../../include/kf/game_map.h): character/model identifiers, dialogue-page limits and stage limit replace generic kind/variant/tag/image-limit names. |
-| Menu text | [MenuPoint, MenuGlyphRow and MenuGlyphString](../../include/kf/game_menu.h): signed screen coordinates and shared glyph-row grouping. |
-| Animation assets and cache | [KfAssetHeader](../../include/kf/game_asset.h) and [KfPoolRecord](../../include/kf/pool.h): clip counts, clip indices, cached vertices and owner-slot identity. |
+| Weapon, armor, magic and level growth | [Equipment](../../include/kf/game/equipment.h), [magic](../../include/kf/game/magic.h) and [player-stat](../../include/kf/game/player.h) field widths and names; unknown ranges remain encoded verbatim. |
+| Actor definitions | [KfActorDefinition](../../include/kf/game/actor.h): action parameters, sound references, signed attachment offsets and special-attack values, animation tables, combat values and the unknown +0x38 range. The former opaque whole-record array becomes an explicit decoded record. |
+| Map events | [KfMapEventDefinition](../../include/kf/lib/map.h): character/model identifiers, dialogue-page limits and stage limit replace generic kind/variant/tag/image-limit names. |
+| Menu text | [MenuPoint, MenuGlyphRow and MenuGlyphString](../../include/kf/game/menu.h): signed screen coordinates and shared glyph-row grouping. |
+| Animation assets and cache | [KfAssetHeader](../../include/kf/game/asset.h) and [KfPoolRecord](../../include/kf/game/pool.h): clip counts, clip indices, cached vertices and owner-slot identity. |
 
 Decoded resource identifiers and flags retain their full encoded integer
 domain. A known enum vocabulary does not justify rejecting other bit patterns

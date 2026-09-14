@@ -15,7 +15,7 @@ not an inferred historical TU boundary or complete graphics-owner migration.
 
 First define the two complete environment arrays in their initializer's
 existing `game.render` module, preserving the shared declarations in
-`game_render.h`. Validate missing references before changing the screen
+`game/render.h`. Validate missing references before changing the screen
 function's conditional RGB stores. Require raw instruction/referent checks,
 strict function matching and complete BSS extent/identity/placement checks.
 Do not count zero-filled BSS as retail initialized bytes. Preserve the

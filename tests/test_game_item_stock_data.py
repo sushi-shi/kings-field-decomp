@@ -71,10 +71,10 @@ class GameItemStockDataTests(unittest.TestCase):
         self.assertEqual([address for image, address in identities
                           if image == 'GAME.EXE' and STOCK < address < STOCK + 240], [])
         self.assertIn('extern u8 item_stock[KF_ITEM_STOCK_BANK_COUNT][KF_ITEM_COUNT];',
-                      (REPO / 'include/kf/item.h').read_text())
-        self.assertNotIn('item_stock', (REPO / 'include/kf/game_state.h').read_text())
+                      (REPO / 'include/kf/lib/item.h').read_text())
+        self.assertNotIn('item_stock', (REPO / 'include/kf/game/state.h').read_text())
         self.assertIn('u8 item_stock[KF_ITEM_STOCK_BANK_COUNT][KF_ITEM_COUNT];',
-                      (REPO / 'include/kf/game_save.h').read_text())
+                      (REPO / 'include/kf/game/save.h').read_text())
         self.assertIn('KfSavePayload\t0x2440\t0xf0\titem_stock\tu8[3][80]\t',
                       (RETAIL_CONFIG / 'structure_fields.tsv').read_text())
         source = manifest.by_name()[owner].source_path.read_text()
@@ -82,7 +82,7 @@ class GameItemStockDataTests(unittest.TestCase):
         item_constants = {
             name: int(value, 0) for name, value in re.findall(
                 r'\b(KF_ITEM_\w+)\s*=\s*(0x[0-9a-f]+|\d+)\b',
-                (REPO / 'include/kf/item.h').read_text())
+                (REPO / 'include/kf/lib/item.h').read_text())
         }
         seeds = [(item_constants[bank], item_constants[slot])
                  for bank, slot in re.findall(

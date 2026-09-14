@@ -1,5 +1,5 @@
-#include <kf/open_render.h>
-#include <kf/gpu_packets.h>
+#include <kf/open/render.h>
+#include <kf/lib/gpu_packets.h>
 
 #define OFFSET(type, field) ((unsigned long)&((type *)0)->field)
 #define CHECK(name, condition) typedef char name[(condition) ? 1 : -1]

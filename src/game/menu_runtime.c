@@ -1,11 +1,11 @@
-#include <kf/null.h>
-#include <kf/bool.h>
-#include <kf/address.h>
-#include <kf/input.h>
-#include <kf/game_menu.h>
-#include <kf/game.h>
+#include <kf/lib/null.h>
+#include <kf/lib/bool.h>
+#include <kf/lib/address.h>
+#include <kf/game/input.h>
+#include <kf/game/menu.h>
+#include <kf/game/game.h>
 #include <psyq/libc.h>
-#include <kf/game_graphics.h>
+#include <kf/game/graphics.h>
 
 /* Menu presentation and packet state share this contiguous WIP owner. */
 RODATA(0x80012350, 0xa)

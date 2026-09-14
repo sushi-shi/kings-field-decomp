@@ -1,8 +1,8 @@
-#include <kf/null.h>
-#include <kf/address.h>
-#include <kf/game_math.h>
-#include <kf/game_render.h>
-#include <kf/game.h>
+#include <kf/lib/null.h>
+#include <kf/lib/address.h>
+#include <kf/lib/math.h>
+#include <kf/game/render.h>
+#include <kf/game/game.h>
 
 enum {
     LIGHTING_COLOR_BLEND_STEP = 0x400,

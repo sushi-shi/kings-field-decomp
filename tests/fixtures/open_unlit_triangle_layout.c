@@ -1,4 +1,4 @@
-#include <kf/open_render.h>
+#include <kf/open/render.h>
 
 #ifndef EXPECTED_FT3_SIZE
 #define EXPECTED_FT3_SIZE 32

@@ -20,7 +20,7 @@ It parses all 111 project C files, walks every project `FIELD_DECL`, records
 member references by declaration identity, and separately parses project headers
 that contribute no declarations to those translation units. All 54 project
 headers are accounted for; there are no parse errors. Four headers contain no
-field-bearing declarations: `kf/address.h`, `kf/game.h`, `sys/fcntl.h`, and
+field-bearing declarations: `kf/lib/address.h`, `kf/game/game.h`, `sys/fcntl.h`, and
 `sys/types.h`.
 
 There are **1,030 unique field declarations in 165 record definitions**, counting
@@ -88,7 +88,7 @@ synthetic reverse oracle case is not retail evidence.
 
 **`KfActorDefinition.action_parameters[8]`: an enum hidden inside a mixed array.**
 
-All eight positions already have named roles in `game_actor.h`:
+All eight positions already have named roles in `game/actor.h`:
 
 - 0–2: effect code, combining the existing `KfEffectKind` with the paired flag;
 - 3–5: their chance values;
@@ -122,7 +122,7 @@ copy-region enum.
 
 **`KfEffectRecord.base_render_id` and `render_id`: untyped named resource domains.**
 
-`game_effect.h` already declares named billboard and model IDs, plus `0xff` for
+`game/effect.h` already declares named billboard and model IDs, plus `0xff` for
 no rendering, in anonymous enums. The constructor assigns them to raw bytes;
 the dispatcher compares named IDs and advances billboard frames. Rendering
 chooses the interpretation using `animation_clip`.

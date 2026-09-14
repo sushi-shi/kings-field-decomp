@@ -17,74 +17,74 @@ binary equivalence. Builds, compiler checks and tests were deferred as requested
 
 | Header | Retained occurrences |
 | --- | ---: |
-| [include/kf/address.h](../../include/kf/address.h) | 0 |
-| [include/kf/audio.h](../../include/kf/audio.h) | 2 |
-| [include/kf/cd_file.h](../../include/kf/cd_file.h) | 0 |
-| [include/kf/debug.h](../../include/kf/debug.h) | 0 |
-| [include/kf/enum.h](../../include/kf/enum.h) | 1 |
-| [include/kf/floor.h](../../include/kf/floor.h) | 0 |
-| [include/kf/game.h](../../include/kf/game.h) | 0 |
-| [include/kf/game_actor.h](../../include/kf/game_actor.h) | 11 |
-| [include/kf/game_asset.h](../../include/kf/game_asset.h) | 0 |
-| [include/kf/game_cd.h](../../include/kf/game_cd.h) | 0 |
-| [include/kf/game_collision.h](../../include/kf/game_collision.h) | 1 |
-| [include/kf/game_effect.h](../../include/kf/game_effect.h) | 16 |
-| [include/kf/game_equipment.h](../../include/kf/game_equipment.h) | 4 |
-| [include/kf/game_graphics.h](../../include/kf/game_graphics.h) | 48 |
-| [include/kf/game_map.h](../../include/kf/game_map.h) | 13 |
-| [include/kf/game_math.h](../../include/kf/game_math.h) | 0 |
-| [include/kf/game_menu.h](../../include/kf/game_menu.h) | 11 |
-| [include/kf/game_player.h](../../include/kf/game_player.h) | 8 |
-| [include/kf/game_render.h](../../include/kf/game_render.h) | 3 |
-| [include/kf/game_resources.h](../../include/kf/game_resources.h) | 0 |
-| [include/kf/game_save.h](../../include/kf/game_save.h) | 17 |
-| [include/kf/game_state.h](../../include/kf/game_state.h) | 0 |
-| [include/kf/game_system.h](../../include/kf/game_system.h) | 0 |
-| [include/kf/game_types.h](../../include/kf/game_types.h) | 0 |
-| [include/kf/gpu_packets.h](../../include/kf/gpu_packets.h) | 0 |
-| [include/kf/item.h](../../include/kf/item.h) | 2 |
-| [include/kf/magic.h](../../include/kf/magic.h) | 1 |
-| [include/kf/map_data.h](../../include/kf/map_data.h) | 0 |
-| [include/kf/memory.h](../../include/kf/memory.h) | 0 |
-| [include/kf/notify.h](../../include/kf/notify.h) | 0 |
-| [include/kf/notify_types.h](../../include/kf/notify_types.h) | 0 |
-| [include/kf/open_audio.h](../../include/kf/open_audio.h) | 0 |
-| [include/kf/open_camera_path.h](../../include/kf/open_camera_path.h) | 0 |
-| [include/kf/open_controller.h](../../include/kf/open_controller.h) | 0 |
-| [include/kf/open_opening_helpers.h](../../include/kf/open_opening_helpers.h) | 0 |
-| [include/kf/open_opening_render.h](../../include/kf/open_opening_render.h) | 0 |
-| [include/kf/open_opening_scenes.h](../../include/kf/open_opening_scenes.h) | 0 |
-| [include/kf/open_render.h](../../include/kf/open_render.h) | 27 |
-| [include/kf/open_resources.h](../../include/kf/open_resources.h) | 2 |
-| [include/kf/open_scene0.h](../../include/kf/open_scene0.h) | 0 |
-| [include/kf/overlay.h](../../include/kf/overlay.h) | 0 |
-| [include/kf/pool.h](../../include/kf/pool.h) | 0 |
+| [include/kf/lib/address.h](../../include/kf/lib/address.h) | 0 |
+| [include/kf/lib/audio.h](../../include/kf/lib/audio.h) | 2 |
+| [include/kf/lib/cd_file.h](../../include/kf/lib/cd_file.h) | 0 |
+| [include/kf/lib/debug.h](../../include/kf/lib/debug.h) | 0 |
+| [include/kf/lib/enum.h](../../include/kf/lib/enum.h) | 1 |
+| [include/kf/lib/floor.h](../../include/kf/lib/floor.h) | 0 |
+| [include/kf/game/game.h](../../include/kf/game/game.h) | 0 |
+| [include/kf/game/actor.h](../../include/kf/game/actor.h) | 11 |
+| [include/kf/game/asset.h](../../include/kf/game/asset.h) | 0 |
+| [include/kf/game/cd.h](../../include/kf/game/cd.h) | 0 |
+| [include/kf/game/collision.h](../../include/kf/game/collision.h) | 1 |
+| [include/kf/game/effect.h](../../include/kf/game/effect.h) | 16 |
+| [include/kf/game/equipment.h](../../include/kf/game/equipment.h) | 4 |
+| [include/kf/game/graphics.h](../../include/kf/game/graphics.h) | 48 |
+| [include/kf/lib/map.h](../../include/kf/lib/map.h) | 13 |
+| [include/kf/lib/math.h](../../include/kf/lib/math.h) | 0 |
+| [include/kf/game/menu.h](../../include/kf/game/menu.h) | 11 |
+| [include/kf/game/player.h](../../include/kf/game/player.h) | 8 |
+| [include/kf/game/render.h](../../include/kf/game/render.h) | 3 |
+| [include/kf/game/resources.h](../../include/kf/game/resources.h) | 0 |
+| [include/kf/game/save.h](../../include/kf/game/save.h) | 17 |
+| [include/kf/game/state.h](../../include/kf/game/state.h) | 0 |
+| [include/kf/game/system.h](../../include/kf/game/system.h) | 0 |
+| [include/kf/lib/types.h](../../include/kf/lib/types.h) | 0 |
+| [include/kf/lib/gpu_packets.h](../../include/kf/lib/gpu_packets.h) | 0 |
+| [include/kf/lib/item.h](../../include/kf/lib/item.h) | 2 |
+| [include/kf/game/magic.h](../../include/kf/game/magic.h) | 1 |
+| [include/kf/lib/map_data.h](../../include/kf/lib/map_data.h) | 0 |
+| [include/kf/lib/memory.h](../../include/kf/lib/memory.h) | 0 |
+| [include/kf/game/notify.h](../../include/kf/game/notify.h) | 0 |
+| [include/kf/lib/notify_types.h](../../include/kf/lib/notify_types.h) | 0 |
+| [include/kf/open/audio.h](../../include/kf/open/audio.h) | 0 |
+| [include/kf/open/camera_path.h](../../include/kf/open/camera_path.h) | 0 |
+| [include/kf/open/controller.h](../../include/kf/open/controller.h) | 0 |
+| [include/kf/open/opening_helpers.h](../../include/kf/open/opening_helpers.h) | 0 |
+| [include/kf/open/opening_render.h](../../include/kf/open/opening_render.h) | 0 |
+| [include/kf/open/opening_scenes.h](../../include/kf/open/opening_scenes.h) | 0 |
+| [include/kf/open/render.h](../../include/kf/open/render.h) | 27 |
+| [include/kf/open/resources.h](../../include/kf/open/resources.h) | 2 |
+| [include/kf/open/scene0.h](../../include/kf/open/scene0.h) | 0 |
+| [include/kf/lib/overlay.h](../../include/kf/lib/overlay.h) | 0 |
+| [include/kf/game/pool.h](../../include/kf/game/pool.h) | 0 |
 | [vendor/include/psyq/sdk.h](../../vendor/include/psyq/sdk.h) | 0 |
 | [vendor/include/psyq/audio.h](../../vendor/include/psyq/audio.h) | 0 |
 | [vendor/include/psyq/cd.h](../../vendor/include/psyq/cd.h) | 0 |
 | [vendor/include/psyq/kernel.h](../../vendor/include/psyq/kernel.h) | 0 |
 | [vendor/include/psyq/libc.h](../../vendor/include/psyq/libc.h) | 0 |
 | [vendor/include/psyq/pad.h](../../vendor/include/psyq/pad.h) | 0 |
-| [include/kf/render_types.h](../../include/kf/render_types.h) | 0 |
-| [include/kf/resources.h](../../include/kf/resources.h) | 0 |
-| [include/kf/tmd.h](../../include/kf/tmd.h) | 2 |
+| [include/kf/lib/render_types.h](../../include/kf/lib/render_types.h) | 0 |
+| [include/kf/lib/resources.h](../../include/kf/lib/resources.h) | 0 |
+| [include/kf/lib/tmd.h](../../include/kf/lib/tmd.h) | 2 |
 | [vendor/include/sys/fcntl.h](../../vendor/include/sys/fcntl.h) | 0 |
 | [vendor/include/sys/types.h](../../vendor/include/sys/types.h) | 0 |
 
-## `include/kf/audio.h`
+## `include/kf/lib/audio.h`
 
 | Line | Token | Expression | Reason |
 | ---: | --- | --- | --- |
 | 58 | `2` | `u8 unknown_06[2];` | Byte extent of the explicitly opaque `unknown_06` region, preserving the next modeled field or object end. Its purpose is unresolved; an invented domain name would obscure that limitation. |
 | 61 | `2` | `u8 unknown_0e[2];` | Byte extent of the explicitly opaque `unknown_0e` region, preserving the next modeled field or object end. Its purpose is unresolved; an invented domain name would obscure that limitation. |
 
-## `include/kf/enum.h`
+## `include/kf/lib/enum.h`
 
 | Line | Token | Expression | Reason |
 | ---: | --- | --- | --- |
 | 5 | `202002L` | `#if defined(__cplusplus) && __cplusplus >= 202002L` | Standard C++20 feature-test value supplied by the compiler language-version contract; the adjacent comparison states its role directly. |
 
-## `include/kf/game_actor.h`
+## `include/kf/game/actor.h`
 
 | Line | Token | Expression | Reason |
 | ---: | --- | --- | --- |
@@ -100,13 +100,13 @@ binary equivalence. Builds, compiler checks and tests were deferred as requested
 | 283 | `0x0b` | `static_assert(__builtin_offsetof(KfActor, vertical_state) == 0x0b);` | Independent byte-offset witness for `vertical_state`; zero denotes the object origin where present. |
 | 284 | `0x39` | `static_assert(__builtin_offsetof(KfActor, collision_state) == 0x39);` | Independent byte-offset witness for `collision_state`; zero denotes the object origin where present. |
 
-## `include/kf/game_collision.h`
+## `include/kf/game/collision.h`
 
 | Line | Token | Expression | Reason |
 | ---: | --- | --- | --- |
 | 53 | `0x06` | `u8 unknown_1a[0x06];` | Byte extent of the explicitly opaque `unknown_1a` region, preserving the next modeled field or object end. Its purpose is unresolved; an invented domain name would obscure that limitation. |
 
-## `include/kf/game_effect.h`
+## `include/kf/game/effect.h`
 
 | Line | Token | Expression | Reason |
 | ---: | --- | --- | --- |
@@ -127,7 +127,7 @@ binary equivalence. Builds, compiler checks and tests were deferred as requested
 | 300 | `10` | `u8 unknown_2a[10];` | Byte extent of the explicitly opaque `unknown_2a` region, preserving the next modeled field or object end. Its purpose is unresolved; an invented domain name would obscure that limitation. |
 | 302 | `4` | `u8 unknown_38[4];` | Byte extent of the explicitly opaque `unknown_38` region, preserving the next modeled field or object end. Its purpose is unresolved; an invented domain name would obscure that limitation. |
 
-## `include/kf/game_equipment.h`
+## `include/kf/game/equipment.h`
 
 | Line | Token | Expression | Reason |
 | ---: | --- | --- | --- |
@@ -136,7 +136,7 @@ binary equivalence. Builds, compiler checks and tests were deferred as requested
 | 77 | `0x12` | `u8 unknown_14[0x12];` | Byte extent of the explicitly opaque `unknown_14` region, preserving the next modeled field or object end. Its purpose is unresolved; an invented domain name would obscure that limitation. |
 | 79 | `0x04` | `u8 unknown_28[0x04];` | Byte extent of the explicitly opaque `unknown_28` region, preserving the next modeled field or object end. Its purpose is unresolved; an invented domain name would obscure that limitation. |
 
-## `include/kf/game_graphics.h`
+## `include/kf/game/graphics.h`
 
 | Line | Token | Expression | Reason |
 | ---: | --- | --- | --- |
@@ -189,7 +189,7 @@ binary equivalence. Builds, compiler checks and tests were deferred as requested
 | 100 | `1` | `typedef char check_game_graphics_size[sizeof(KfGraphicsRuntimeGame) == 0x249cc ? 1 : -1];` | Independent total byte-size witness 0x249cc for the graphics owner; +1/-1 are the compile-time assertion success/failure extents. |
 | 100 | `1` | `typedef char check_game_graphics_size[sizeof(KfGraphicsRuntimeGame) == 0x249cc ? 1 : -1];` | Independent total byte-size witness 0x249cc for the graphics owner; +1/-1 are the compile-time assertion success/failure extents. |
 
-## `include/kf/game_map.h`
+## `include/kf/lib/map.h`
 
 | Line | Token | Expression | Reason |
 | ---: | --- | --- | --- |
@@ -207,7 +207,7 @@ binary equivalence. Builds, compiler checks and tests were deferred as requested
 | 411 | `4` | `u8 unknown_30[4];` | Byte extent of the explicitly opaque `unknown_30` region, preserving the next modeled field or object end. Its purpose is unresolved; an invented domain name would obscure that limitation. |
 | 415 | `2` | `u8 unknown_3a[2];` | Byte extent of the explicitly opaque `unknown_3a` region, preserving the next modeled field or object end. Its purpose is unresolved; an invented domain name would obscure that limitation. |
 
-## `include/kf/game_menu.h`
+## `include/kf/game/menu.h`
 
 | Line | Token | Expression | Reason |
 | ---: | --- | --- | --- |
@@ -223,7 +223,7 @@ binary equivalence. Builds, compiler checks and tests were deferred as requested
 | 271 | `1` | `(unsigned long)&((MenuGlyphString *)0)->codes == 4 ? 1 : -1];` | Menu glyph layout witness: halfword alignment 2, x/y/code offsets 0/2/4. Null-pointer member-address syntax measures offsets; +1/-1 are compile-time assertion extents. |
 | 271 | `1` | `(unsigned long)&((MenuGlyphString *)0)->codes == 4 ? 1 : -1];` | Menu glyph layout witness: halfword alignment 2, x/y/code offsets 0/2/4. Null-pointer member-address syntax measures offsets; +1/-1 are compile-time assertion extents. |
 
-## `include/kf/game_player.h`
+## `include/kf/game/player.h`
 
 | Line | Token | Expression | Reason |
 | ---: | --- | --- | --- |
@@ -236,7 +236,7 @@ binary equivalence. Builds, compiler checks and tests were deferred as requested
 | 233 | `6` | `u8 unknown_ce[6];` | Byte extent of the explicitly opaque `unknown_ce` region, preserving the next modeled field or object end. Its purpose is unresolved; an invented domain name would obscure that limitation. |
 | 240 | `1` | `u8 unknown_df[1];` | Byte extent of the explicitly opaque `unknown_df` region, preserving the next modeled field or object end. Its purpose is unresolved; an invented domain name would obscure that limitation. |
 
-## `include/kf/game_render.h`
+## `include/kf/game/render.h`
 
 | Line | Token | Expression | Reason |
 | ---: | --- | --- | --- |
@@ -244,7 +244,7 @@ binary equivalence. Builds, compiler checks and tests were deferred as requested
 | 112 | `2` | `u8 unknown_16[2];` | Byte extent of the explicitly opaque `unknown_16` region, preserving the next modeled field or object end. Its purpose is unresolved; an invented domain name would obscure that limitation. |
 | 119 | `3` | `u8 unknown_01[3];` | Byte extent of the explicitly opaque `unknown_01` region, preserving the next modeled field or object end. Its purpose is unresolved; an invented domain name would obscure that limitation. |
 
-## `include/kf/game_save.h`
+## `include/kf/game/save.h`
 
 | Line | Token | Expression | Reason |
 | ---: | --- | --- | --- |
@@ -266,20 +266,20 @@ binary equivalence. Builds, compiler checks and tests were deferred as requested
 | 156 | `0x10` | `KF_SAVE_SUMMARY_OFFSET_CHECK(current_mp, 0x10);` | Independent byte-offset witness for `current_mp` in this image-specific layout; keep the expected offset literal instead of deriving it from the declaration being checked. |
 | 157 | `0x14` | `KF_SAVE_SUMMARY_OFFSET_CHECK(maximum_mp, 0x14);` | Independent byte-offset witness for `maximum_mp` in this image-specific layout; keep the expected offset literal instead of deriving it from the declaration being checked. |
 
-## `include/kf/item.h`
+## `include/kf/lib/item.h`
 
 | Line | Token | Expression | Reason |
 | ---: | --- | --- | --- |
 | 147 | `4` | `u8 unknown_10[4];` | Byte extent of the explicitly opaque `unknown_10` region, preserving the next modeled field or object end. Its purpose is unresolved; an invented domain name would obscure that limitation. |
 | 149 | `3` | `u8 unknown_15[3];` | Byte extent of the explicitly opaque `unknown_15` region, preserving the next modeled field or object end. Its purpose is unresolved; an invented domain name would obscure that limitation. |
 
-## `include/kf/magic.h`
+## `include/kf/game/magic.h`
 
 | Line | Token | Expression | Reason |
 | ---: | --- | --- | --- |
 | 46 | `0x02` | `u8 unknown_12[0x02];` | Byte extent of the explicitly opaque `unknown_12` region, preserving the next modeled field or object end. Its purpose is unresolved; an invented domain name would obscure that limitation. |
 
-## `include/kf/open_render.h`
+## `include/kf/open/render.h`
 
 | Line | Token | Expression | Reason |
 | ---: | --- | --- | --- |
@@ -311,14 +311,14 @@ binary equivalence. Builds, compiler checks and tests were deferred as requested
 | 116 | `0x24784` | `KF_OPEN_GRAPHICS_OFFSET_CHECK(tmd_projection_shift, 0x24784);` | Independent byte-offset witness for `tmd_projection_shift` in this image-specific layout; keep the expected offset literal instead of deriving it from the declaration being checked. |
 | 117 | `0x24786` | `KF_OPEN_GRAPHICS_OFFSET_CHECK(unknown_24786, 0x24786);` | Independent byte-offset witness for `unknown_24786` in this image-specific layout; keep the expected offset literal instead of deriving it from the declaration being checked. |
 
-## `include/kf/open_resources.h`
+## `include/kf/open/resources.h`
 
 | Line | Token | Expression | Reason |
 | ---: | --- | --- | --- |
 | 38 | `2` | `u8 unknown_06[2];` | Byte extent of the explicitly opaque `unknown_06` region, preserving the next modeled field or object end. Its purpose is unresolved; an invented domain name would obscure that limitation. |
 | 47 | `10` | `u8 unknown_500[10];` | Byte extent of the explicitly opaque `unknown_500` region, preserving the next modeled field or object end. Its purpose is unresolved; an invented domain name would obscure that limitation. |
 
-## `include/kf/tmd.h`
+## `include/kf/lib/tmd.h`
 
 | Line | Token | Expression | Reason |
 | ---: | --- | --- | --- |

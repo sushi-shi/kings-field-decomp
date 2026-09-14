@@ -20,7 +20,7 @@ the colour span and its relationship to the CLUT; it does not by itself prove
 the original complete C object boundary.
 
 The retained change names all six values and moves their declarations from
-the global-state catch-all to `game_render.h`. All 27 existing relocation rows
+the global-state catch-all to `game/render.h`. All 27 existing relocation rows
 retain their sites, targets, opcodes, classifications and provenance; only
 their identity spelling changes. No computed offset is promoted to a new
 relocation. No new BSS definition or completed aggregate is claimed.

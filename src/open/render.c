@@ -1,11 +1,11 @@
-#include <kf/null.h>
-#include <kf/address.h>
-#include <kf/map_data.h>
-#include <kf/memory.h>
-#include <kf/debug.h>
-#include <kf/open_render.h>
-#include <kf/tmd.h>
-#include <kf/shared_graphics.h>
+#include <kf/lib/null.h>
+#include <kf/lib/address.h>
+#include <kf/lib/map_data.h>
+#include <kf/lib/memory.h>
+#include <kf/lib/debug.h>
+#include <kf/open/render.h>
+#include <kf/lib/tmd.h>
+#include <kf/lib/graphics.h>
 
 /*
  * OPEN.EXE display, TMD, and projection bodies following render initialization.
@@ -13,11 +13,11 @@
  * lineage; OPEN-specific state layouts and call paths remain explicit.
  */
 
-#include "../shared/display_frame.inc"
+#include "../lib/display_frame.inc"
 
 RODATA(0x80012138, 0x87)
 
-#include "../shared/tmd.inc"
+#include "../lib/tmd.inc"
 
 ADDRESS(0x8001738c, 0xcc)
 void tmd_project_vertices(s32 count)
@@ -45,6 +45,6 @@ void tmd_project_vertices(s32 count)
     }
 }
 
-#include "../shared/tmd_perspective_right.inc"
+#include "../lib/tmd_perspective_right.inc"
 
-#include "../shared/tmd_transform.inc"
+#include "../lib/tmd_transform.inc"
