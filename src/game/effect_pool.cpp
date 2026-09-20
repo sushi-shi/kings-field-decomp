@@ -1,7 +1,7 @@
-#include <kf/null.h>
+#include <kf/lib/null.h>
 
-#include <kf/game_effect.h>
-#include <kf/game.h>
+#include <kf/game/effect.h>
+#include <kf/game/game.h>
 
 enum {
     EFFECT_WIND_CUTTER_PITCH = 850,
@@ -10,7 +10,7 @@ enum {
     EFFECT_EMERGING_INITIAL_SCALE = 1500,
     EFFECT_SHORT_SWING_SCALE = 2600,
     EFFECT_ORBIT_SCALE = 2800,
-    EFFECT_WARP_HORIZONTAL_SCALE = 0x1800,
+    EFFECT_WARP_HORIZONTAL_SCALE = 0x1800
 };
 
 KfEffectState effect_state;
@@ -60,7 +60,9 @@ static KfEffectRecord *effect_pool_construct_impl(u8 id, KfEffectType type, KfEf
         record->visual.animation_phase = 0;
         record->sound_played = KF_AUDIO_NOT_PLAYED;
 
-        magic = &magic_records[kf_enum_encode<u8>(record->kind)];
+        // Non-magic effects share this constructor but have no magic record.
+        magic = kf_enum_encode<u8>(record->kind) < KF_MAGIC_RECORD_COUNT
+            ? &magic_records[kf_enum_encode<u8>(record->kind)] : nullptr;
 
         switch (record->kind) {
         case KF_MAGIC_FIRE_BALL:
@@ -402,7 +404,8 @@ KfEffectRecord *effect_pool_spawn_typed(
 void effect_pool_set_current(KfEffectRecord *effect)
 {
     current_effect = effect;
-    current_effect_magic_record = &magic_records[kf_enum_encode<u8>(effect->kind)];
+    current_effect_magic_record = kf_enum_encode<u8>(effect->kind) < KF_MAGIC_RECORD_COUNT
+        ? &magic_records[kf_enum_encode<u8>(effect->kind)] : nullptr;
 }
 
 KfEffectRecord *effect_pool_construct(u8 id, KfEffectType type, KfEffectKind kind, const VECTOR *position,
@@ -480,4 +483,10 @@ KfEffectRecord *effect_pool_construct(u8 id, KfEffectType type, KfEffectKind kin
     EffectArguments arguments;
     arguments.parent_index = value.parent_index;
     return effect_pool_construct_impl(id, type, kind, position, direction, arguments);
+}
+
+
+void effect_pool_reset_module_state(void)
+{
+    kf::restore_initial_value<effect_state>();
 }

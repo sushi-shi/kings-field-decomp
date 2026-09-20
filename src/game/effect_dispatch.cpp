@@ -1,10 +1,13 @@
-#include <kf/null.h>
+#include <kf/lib/random.hpp>
+#include <kf/lib/null.h>
 
-#include <kf/map_data.h>
-#include <kf/game_collision.h>
-#include <kf/game_effect.h>
-#include <psyq/libc.h>
-#include <kf/game.h>
+#include <kf/lib/map_data.h>
+#include <kf/game/collision.h>
+#include <kf/game/effect.h>
+#include <cstdlib>
+#include <cstdio>
+#include <cstring>
+#include <kf/game/game.h>
 
 enum {
     EFFECT_ORBIT_RADIUS = 6500
@@ -23,7 +26,7 @@ enum {
     SCATTER_FINAL_COUNTDOWN = 15,
     SCATTER_BRANCH_COUNTDOWN = 5,
     SCATTER_PULSE_ANGLE_SHIFT = 9,
-    MAP_EMITTER_SOUND_RANDOM_CUTOFF = (RAND_MAX + 1) / 4,
+    MAP_EMITTER_SOUND_RANDOM_CUTOFF = (kf::random_max + 1) / 4,
     MAP_EMITTER_SOUND_MAX_DISTANCE = 4000,
     MAP_EMITTER_SOUND_ATTENUATION_DISTANCE = 12000
 };
@@ -74,7 +77,7 @@ enum {
 
 enum {
     GROUND_VISUAL_SCALE_STEP = 4000,
-    GROUND_VISUAL_RISE_STEP = 1800,
+    GROUND_VISUAL_RISE_STEP = 1800
 };
 
 enum {
@@ -271,12 +274,12 @@ lightning_impact:
                     }
                 }
                 pulse_angle = effect->control.frames_remaining << SCATTER_PULSE_ANGLE_SHIFT;
-                value = rsin(pulse_angle);
+                value = kf::angle_sine(pulse_angle);
                 value = (effect->visual.pulse_base_scale * value) >> (KF_FIXED12_BITS + 1);
                 next = effect->visual.pulse_base_scale + value;
                 effect->scale_z = next;
                 effect->scale_x = next;
-                value = rcos(pulse_angle);
+                value = kf::angle_cosine(pulse_angle);
                 effect->scale_y = effect->visual.pulse_base_scale
                     + ((effect->visual.pulse_base_scale * value) >> (KF_FIXED12_BITS + 1));
                 return;
@@ -286,7 +289,7 @@ lightning_impact:
                 return;
             }
             if (kind == KF_EFFECT_KIND_MAP_EMITTER_PROJECTILE) {
-                if (rand() < MAP_EMITTER_SOUND_RANDOM_CUTOFF && effect->sound_played == KF_AUDIO_NOT_PLAYED) {
+                if (kf::random_next() < MAP_EMITTER_SOUND_RANDOM_CUTOFF && effect->sound_played == KF_AUDIO_NOT_PLAYED) {
                     effect->sound_played = audio_play_spatial_range(
                         &magic->sounds[0], &effect->position, KF_AUDIO_MAX_VOLUME,
                         MAP_EMITTER_SOUND_MAX_DISTANCE, MAP_EMITTER_SOUND_ATTENUATION_DISTANCE);
@@ -459,21 +462,24 @@ play_phase_sound:
         SVECTOR local_motion;
         VECTOR movement;
         MATRIX matrix;
-        s32 target_distance;
 
         if (phase == KF_EFFECT_PHASE_INIT) {
 randomize_homing_direction:
             effect->direction.words.x =
-                (effect->direction.words.x + (rand() >> HOMING_PITCH_RANDOM_SHIFT) - HOMING_PITCH_RANDOM_BIAS) & KF_ANGLE_WRAP_MASK;
+                (effect->direction.words.x + (kf::random_next() >> HOMING_PITCH_RANDOM_SHIFT) - HOMING_PITCH_RANDOM_BIAS) & KF_ANGLE_WRAP_MASK;
             effect->direction.words.y =
-                (effect->direction.words.y + (rand() >> HOMING_YAW_RANDOM_SHIFT) - HOMING_YAW_RANDOM_BIAS) & KF_ANGLE_WRAP_MASK;
+                (effect->direction.words.y + (kf::random_next() >> HOMING_YAW_RANDOM_SHIFT) - HOMING_YAW_RANDOM_BIAS) & KF_ANGLE_WRAP_MASK;
         } else if (phase > KF_EFFECT_HOMING_INITIAL_PHASE_LAST) {
             if (effect->control.target_mode == KF_EFFECT_HOMING_WANDER) {
-                if (rand() < HOMING_WANDER_RANDOM_CUTOFF) {
+                if (kf::random_next() < HOMING_WANDER_RANDOM_CUTOFF) {
                     goto randomize_homing_direction;
                 }
             } else if (effect->control.target_mode == KF_EFFECT_HOMING_PLAYER) {
                 s32 aim_height;
+                // Pitch uses horizontal distance; the height difference is separate.
+                const s32 target_distance = fixed_vector2_length(
+                    player_state.camera_position.vx - effect->position.vx,
+                    player_state.camera_position.vz - effect->position.vz);
 
                 effect->direction.words.y = vector_xz_to_angle(
                     player_state.camera_position.vx - effect->position.vx,
@@ -481,10 +487,10 @@ randomize_homing_direction:
                 aim_height = effect->position.vy - HOMING_PLAYER_AIM_Y_OFFSET;
                 desired_pitch = vector_xz_to_angle(
                     aim_height - player_state.camera_position.vy,
-
                     -target_distance);
                 effect->direction.words.x = -desired_pitch & KF_ANGLE_WRAP_MASK;
             } else {
+                s32 target_distance;
                 target = actor_pool_find_target_in_cone(
                     &effect->position,
                     effect->rotation.vector.vy, KF_EFFECT_ACTOR_TARGET_MAX_DISTANCE, KF_EFFECT_ACTOR_TARGET_WIDE_CONE, &target_distance);
@@ -516,10 +522,10 @@ randomize_homing_direction:
         local_motion.vx = 0;
         local_motion.vz = HOMING_FORWARD_STEP;
         matrix_set_rotation_x(effect->rotation.vector.vx, &matrix);
-        ApplyMatrix(&matrix, &local_motion, &movement);
+        movement = kf::matrix_apply_rotation(matrix, local_motion);
         copyVector(&local_motion, &movement);
         matrix_set_rotation_y(effect->rotation.vector.vy, &matrix);
-        ApplyMatrix(&matrix, &local_motion, &movement);
+        movement = kf::matrix_apply_rotation(matrix, local_motion);
         addVector(&effect->position, &movement);
         effect->phase++;
         effect->rotation.vector.vz = (effect->rotation.vector.vz + HOMING_ROLL_STEP) & KF_ANGLE_WRAP_MASK;
@@ -648,12 +654,12 @@ advance_effect_phase:
             if ((kf_enum_encode<u8>(phase) & (GROUND_BRANCH_DAMAGE_PERIOD - 1)) == 0) {
                 VECTOR spawn_position;
 
-                angle = (u32)rand() >> KF_RANDOM_ANGLE_SHIFT;
-                distance = ((u32)rand() * GROUND_VISUAL_RADIUS_RANDOM_SCALE) >> GROUND_VISUAL_RADIUS_RANDOM_SHIFT;
+                angle = (u32)kf::random_next() >> KF_RANDOM_ANGLE_SHIFT;
+                distance = ((u32)kf::random_next() * GROUND_VISUAL_RADIUS_RANDOM_SCALE) >> GROUND_VISUAL_RADIUS_RANDOM_SHIFT;
                 spawn_position.vx = effect->position.vx
-                    + ((rsin(angle) * distance) >> KF_FIXED12_BITS);
+                    + ((kf::angle_sine(angle) * distance) >> KF_FIXED12_BITS);
                 spawn_position.vz = effect->position.vz
-                    + ((rcos(angle) * distance) >> KF_FIXED12_BITS);
+                    + ((kf::angle_cosine(angle) * distance) >> KF_FIXED12_BITS);
                 spawn_position.vy = effect->position.vy;
                 effect_pool_construct(
                     effect->id, effect->type, KF_EFFECT_KIND_GROUND_BRANCH_VISUAL,
@@ -737,10 +743,10 @@ advance_effect_phase:
                 actor_rotation.y = vector_xz_to_angle(
                     player_state.camera_position.vx - position.vx,
                     player_state.camera_position.vz - position.vz);
-                value = rand();
+                value = kf::random_next();
                 if (value < ACTOR_SPAWNER_SELECTION_RANDOM_CUTOFF) {
                     actor_pool_spawn(2, &position, &actor_rotation);
-                } else if (rand() < ACTOR_SPAWNER_SELECTION_RANDOM_CUTOFF) {
+                } else if (kf::random_next() < ACTOR_SPAWNER_SELECTION_RANDOM_CUTOFF) {
                     actor_pool_spawn(4, &position, &actor_rotation);
                 } else {
                     actor_pool_spawn(0, &position, &actor_rotation);
@@ -804,7 +810,6 @@ advance_effect_phase:
             remaining = effect->direction.words.x - 1;
             effect->direction.words.x = remaining;
             if ((s16)remaining == -1) {
-invalidate_and_return:
                 effect->type = KF_EFFECT_SLOT_FREE;
                 return;
             }
@@ -827,4 +832,10 @@ invalidate_and_return:
     default:
         break;
     }
+}
+
+
+void effect_dispatch_reset_module_state(void)
+{
+    kf::restore_initial_value<effect_swing_probe_offsets>();
 }

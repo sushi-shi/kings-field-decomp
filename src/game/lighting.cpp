@@ -1,8 +1,9 @@
-#include <kf/null.h>
+#include <kf/lib/null.h>
+#include <kf/game/graphics.h>
 
-#include <kf/game_math.h>
-#include <kf/game_render.h>
-#include <kf/game.h>
+#include <kf/lib/math.h>
+#include <kf/game/render.h>
+#include <kf/game/game.h>
 
 enum {
     LIGHTING_COLOR_BLEND_STEP = 0x400,
@@ -11,14 +12,15 @@ enum {
 
 void lighting_transition_color_matrix(const MATRIX *from, const MATRIX *to)
 {
+    const auto input_context = kf::host_set_input_context(kf::InputContext::Scripted);
     s32 blend = 0;
 
     do {
         lighting_set_color_matrix(from, to, blend);
         render_frame(NULL, NULL);
-        frame_pacer_wait();
         blend += LIGHTING_COLOR_BLEND_STEP;
     } while (blend <= KF_FIXED12_ONE);
+    kf::host_set_input_context(input_context);
 }
 
 void color_matrix_set_rgb(s16 red, s16 green, s16 blue, MATRIX *matrix)
@@ -40,7 +42,7 @@ void player_restore_vitals_with_color_cycle(void)
     MATRIX first;
     MATRIX second;
 
-    ReadColorMatrix(&saved);
+    saved = game_graphics_runtime.render_state.lighting.color_matrix;
     color_matrix_set_rgb(0, VITAL_RESTORE_COLOR_LEVEL, 0, &first);
     lighting_transition_color_matrix(&saved, &first);
     color_matrix_set_rgb(

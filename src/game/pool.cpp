@@ -1,13 +1,15 @@
-#include <kf/null.h>
-#include <kf/game_graphics.h>
+#include <kf/lib/null.h>
+#include <kf/game/graphics.h>
 
-#include <kf/game_math.h>
-#include <kf/game_asset.h>
-#include <kf/game_render.h>
-#include <kf/memory.h>
-#include <kf/pool.h>
-#include <psyq/sdk.h>
-#include <psyq/libc.h>
+#include <kf/lib/math.h>
+#include <kf/game/asset.h>
+#include <kf/game/render.h>
+#include <kf/lib/memory.h>
+#include <kf/game/pool.h>
+#include <kf/lib/geometry_types.h>
+#include <cstdlib>
+#include <cstdio>
+#include <cstring>
 
 typedef struct KfAnimClip {
     u16 keyframe_count;
@@ -28,34 +30,46 @@ typedef struct KfMorphRange {
     u32 vertex_count;
 } KfMorphRange;
 
-typedef union KfMorphPrefix {
-    KfMorphRange range;
-    SVECTOR vector;
-} KfMorphPrefix;
-
 typedef struct KfMorphObject {
     u32 tmd_object_index;
-    KfMorphPrefix prefix;
+    KfMorphRange range;
     SVECTOR deltas[1];
 } KfMorphObject;
 
-static inline void copy_vertices(
-    SVECTOR *output, const SVECTOR *input, u16 count)
+static_assert(sizeof(KfMorphRange) == 8 && offsetof(KfMorphObject, deltas) == 12);
+
+static void morph_add_deltas(SVECTOR *vertices, u32 vertex_count,
+    const KfMorphObject *morph, u16 blend)
 {
+    const auto &range = morph->range;
+    if (range.base_vertex > vertex_count || range.vertex_count > vertex_count - range.base_vertex)
+        kf::host_fail("Animation morph exceeds model vertex range.");
+    const auto add = [blend](s16 value, s16 delta) {
+        const s32 scaled = (s32(delta) * s16(blend)) >> KF_FIXED12_BITS;
+        // Delta scaling saturates first; adding it to the base vertex wraps.
+        return static_cast<s16>(value + std::clamp(scaled, -32768, 32767));
+    };
+    for (u32 i = 0; i < range.vertex_count; ++i) {
+        SVECTOR &vertex = vertices[range.base_vertex + i];
+        const SVECTOR &delta = morph->deltas[i];
+        vertex.vx = add(vertex.vx, delta.vx);
+        vertex.vy = add(vertex.vy, delta.vy);
+        vertex.vz = add(vertex.vz, delta.vz);
+    }
+}
 
-    const u32 *source = (const u32 *)input;
-    u32 *destination = (u32 *)output;
-
-    do {
-        *destination++ = *source++;
-        *destination++ = *source++;
-    } while (--count != 0);
+static inline void copy_vertices(
+    SVECTOR *output, const SVECTOR *input, u32 count)
+{
+    memcpy(output, input, std::size_t(count) * sizeof *output);
 }
 
 KfPoolRecord *render_bind_animated_instance(
     KfPoolRecord **owner_slot, u16 asset_index, KfAnimationClip clip_index, u16 phase,
-    u16 vertex_count)
+    u32 vertex_count)
 {
+    if (vertex_count > KF_PROJECTED_VERTEX_CAPACITY)
+        kf::host_fail("Animated model exceeds vertex capacity.");
     KfPoolRecord *record = *owner_slot;
     KfAssetHeader *asset_header = game_graphics_runtime.asset_registry_entries[asset_index];
     KfAnimClip *clip;
@@ -67,7 +81,7 @@ KfPoolRecord *render_bind_animated_instance(
     u16 phase_end;
     u16 phase_start;
 
-    u16 keyframe_index;
+    u16 keyframe_index = 0;
     u16 blend_fraction;
     u16 keyframes_left;
 
@@ -79,6 +93,8 @@ KfPoolRecord *render_bind_animated_instance(
         tmd_select_object_vertices(0);
         return (KfPoolRecord *)KF_ANIMATION_BIND_STATIC;
     }
+    if (vertex_count == 0)
+        kf::host_fail("Animated model has no vertices.");
 
     if (record == NULL) {
         record = pool_allocate();
@@ -148,8 +164,7 @@ update_vertex_cache:
                 morph_object = (KfMorphObject *)(
                     (char *)asset_header + object_table[*morph_indices]);
                 morph_indices++;
-                gteMIMefunc(&record->cached_vertices[morph_object->prefix.range.base_vertex],
-                            morph_object->deltas, morph_object->prefix.range.vertex_count, KF_FIXED12_ONE);
+                morph_add_deltas(record->cached_vertices, vertex_count, morph_object, KF_FIXED12_ONE);
             }
         }
 
@@ -160,21 +175,9 @@ update_vertex_cache:
     record->clip_index = clip_index;
     record->keyframe_index = keyframe_index;
 
-    copy_vertices(&game_graphics_runtime.morph_scratch[1], record->cached_vertices, vertex_count);
-
-    morph_object = record->rest_morph;
-    {
-        SVECTOR *scratch_vertex = &game_graphics_runtime.morph_scratch[morph_object->prefix.range.base_vertex];
-        u32 *scratch_words = (u32 *)scratch_vertex;
-        u32 saved_xy_word = scratch_words[0];
-        u32 saved_z_pad_word = scratch_words[1];
-
-        gteMIMefunc(scratch_vertex, &morph_object->prefix.vector,
-                    morph_object->prefix.range.vertex_count + 1, blend_fraction);
-        scratch_words[0] = saved_xy_word;
-        scratch_words[1] = saved_z_pad_word;
-    }
-    tmd_set_current_vertices(&game_graphics_runtime.morph_scratch[1]);
+    copy_vertices(game_graphics_runtime.morph_scratch, record->cached_vertices, vertex_count);
+    morph_add_deltas(game_graphics_runtime.morph_scratch, vertex_count, record->rest_morph, blend_fraction);
+    tmd_set_current_vertices(game_graphics_runtime.morph_scratch);
     record->state = KF_ANIMATION_CACHE_LIVE;
     return record;
 }

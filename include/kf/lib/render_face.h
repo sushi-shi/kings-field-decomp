@@ -1,0 +1,79 @@
+#ifndef KF_LIB_RENDER_FACE_H
+#define KF_LIB_RENDER_FACE_H
+#include <kf/renderer/renderer.hpp>
+#include <kf/platform/host.hpp>
+#include <kf/lib/tmd.h>
+
+using KfFaceShading = kf::FaceShading;
+
+inline std::int64_t render_face_winding(const KfScreenVertex *a,
+    const KfScreenVertex *b, const KfScreenVertex *c)
+{
+    // Retail tests the projected coordinates, including their saturation.
+    const std::int64_t ab_x = b->sxy.vector.vx - a->sxy.vector.vx;
+    const std::int64_t ab_y = b->sxy.vector.vy - a->sxy.vector.vy;
+    const std::int64_t ac_x = c->sxy.vector.vx - a->sxy.vector.vx;
+    const std::int64_t ac_y = c->sxy.vector.vy - a->sxy.vector.vy;
+    return ab_x * ac_y - ab_y * ac_x;
+}
+
+inline kf::BlendMode render_texture_blend(u16 page)
+{
+    constexpr kf::BlendMode modes[] = {kf::BlendMode::average, kf::BlendMode::add,
+        kf::BlendMode::subtract, kf::BlendMode::add_quarter};
+    return modes[(page >> 5) & 3];
+}
+
+inline kf::FaceMaterial render_texture_material(u16 page, u16 palette)
+{
+    return {kf::SurfaceKind::Texture,
+        {static_cast<u16>((page & 15) * 64), static_cast<u16>((page & 16) * 16),
+         static_cast<u16>((palette & 63) * 16), static_cast<u16>((palette >> 6) & 511),
+         static_cast<kf::TextureFormat>((page >> 7) & 3)}, render_texture_blend(page)};
+}
+
+inline void render_face_vertex(kf::DrawFace *face, unsigned index, const KfScreenVertex *vertex)
+{
+    face->vertices[index].x = vertex->sxy.vector.vx;
+    face->vertices[index].y = vertex->sxy.vector.vy;
+}
+
+inline void render_face_uv(kf::DrawFace *face, unsigned index, u16 uv)
+{
+    face->vertices[index].u = (uv & 255) / 256.0f;
+    face->vertices[index].v = (uv >> 8) / 256.0f;
+}
+
+inline void render_face_submit(kf::DrawFace *face, const CVECTOR *colors,
+    KfFaceShading shading, s32 depth)
+{
+    const float divisor = face->material.kind == kf::SurfaceKind::Texture ? 128.0f : 255.0f;
+    for (unsigned i = 0; i < static_cast<unsigned>(face->shape); ++i) {
+        const auto &color = colors[shading == KfFaceShading::Flat ? 0 : i];
+        face->vertices[i].r = color.r / divisor;
+        face->vertices[i].g = color.g / divisor;
+        face->vertices[i].b = color.b / divisor;
+        face->vertices[i].a = 1;
+    }
+    face->depth = depth;
+    face->shading = shading;
+    kf::host_enqueue_face(*face);
+}
+
+inline void render_face_rectangle(kf::DrawFace *face, s16 x, s16 y, s16 right, s16 bottom)
+{
+    face->shape = kf::FaceShape::Quad;
+    face->vertices[0].x = face->vertices[2].x = x;
+    face->vertices[1].x = face->vertices[3].x = right;
+    face->vertices[0].y = face->vertices[1].y = y;
+    face->vertices[2].y = face->vertices[3].y = bottom;
+}
+
+inline void render_face_uv_rectangle(kf::DrawFace *face, u8 u, u8 v, u8 right, u8 bottom)
+{
+    face->vertices[0].u = face->vertices[2].u = u / 256.0f;
+    face->vertices[1].u = face->vertices[3].u = right / 256.0f;
+    face->vertices[0].v = face->vertices[1].v = v / 256.0f;
+    face->vertices[2].v = face->vertices[3].v = bottom / 256.0f;
+}
+#endif

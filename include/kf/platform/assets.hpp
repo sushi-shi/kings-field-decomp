@@ -1,0 +1,83 @@
+#pragma once
+#include <kf/lib/codec.h>
+#include <kf/lib/types.h>
+#include <cstddef>
+
+namespace kf {
+struct ByteBuffer {
+    u8 *data;
+    std::size_t size, capacity;
+};
+bool buffer_resize(ByteBuffer *buffer, std::size_t size);
+void buffer_release(ByteBuffer *buffer);
+
+struct Image {
+    u32 width, height;
+    ByteBuffer rgba;
+};
+bool image_decode_tim(Image *image, const u8 *data, std::size_t size, std::size_t offset = 0,
+                      u32 palette = 0);
+void image_release(Image *image);
+bool asset_path(char *output, std::size_t capacity, const char *input);
+
+struct Sha256 {
+    u32 state[8];
+    u8 pending[64];
+    std::uint64_t length;
+    std::size_t used;
+};
+void sha256_init(Sha256 *hash);
+void sha256_update(Sha256 *hash, const u8 *bytes, std::size_t size);
+void sha256_finish(const Sha256 *hash, char output[65]);
+
+struct Asset {
+    char path[128];
+    ByteBuffer bytes;
+};
+struct AssetTable {
+    Asset *entries;
+    std::size_t count, capacity;
+};
+bool assets_append(AssetTable *table, const char *path, ByteBuffer *bytes);
+const Asset *assets_find(const AssetTable *table, const char *path);
+void assets_release(AssetTable *table);
+
+inline constexpr std::size_t disc_import_limit = 128 * 1024 * 1024;
+
+enum class ImportState : u8 { idle, layout, volume, directory, file, complete, failed };
+struct ReadRequest {
+    std::uint64_t offset;
+    u32 length;
+};
+struct DiscExtent {
+    char path[128];
+    u32 sector, length;
+};
+struct DiscImporter {
+    ImportState state;
+    ReadRequest request;
+    std::uint64_t disc_size;
+    u32 sector_size, volume_sectors;
+    std::size_t file_bytes;
+    char message[256];
+    DiscExtent directories[128];
+    std::size_t directory_count;
+    u32 visited_directories[128];
+    std::size_t visited_count;
+    DiscExtent files[4096];
+    std::size_t file_count, file_index;
+    DiscExtent current;
+    AssetTable assets;
+};
+// Sorted paths: LE32 path length, LE32 file length, path bytes, then file bytes.
+// Identity metadata only; extracted resources remain ordinary, unchanged files.
+inline constexpr const char *retail_files_sha256 =
+    "450b9f09ca34bedc1c8bc150e01b79bfe108c700dad2b2783246b926953deee2";
+bool assets_match_retail(AssetTable *table);
+void disc_import_start(DiscImporter *importer, std::uint64_t disc_size);
+bool disc_import_waiting(const DiscImporter *importer);
+void disc_import_supply(DiscImporter *importer, const u8 *bytes, std::size_t size);
+void disc_import_fail(DiscImporter *importer, const char *message);
+double disc_import_progress(const DiscImporter *importer);
+void disc_import_release(DiscImporter *importer);
+} // namespace kf

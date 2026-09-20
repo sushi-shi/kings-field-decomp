@@ -1,5 +1,3 @@
-#include <kf/debug.h>
+#include <kf/lib/debug.h>
 
-void debug_printf_sink(const char *format, ...)
-{
-}
+#include "../lib/debug_sink.inc"

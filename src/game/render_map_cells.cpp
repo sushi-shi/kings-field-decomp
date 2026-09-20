@@ -1,8 +1,8 @@
-#include <kf/game_graphics.h>
+#include <kf/game/graphics.h>
 
-#include <kf/map_data.h>
-#include <kf/game_render.h>
-#include <kf/game.h>
+#include <kf/lib/map_data.h>
+#include <kf/game/render.h>
+#include <kf/game/game.h>
 
 enum {
     ILLUSION_STAFF_REMAP_PHASE_MASK = 3,
@@ -39,7 +39,6 @@ void render_map_cell(s32 col, s32 row, KfCellVisibility visibility)
 {
     MATRIX cell_matrix;
     SVECTOR position;
-    long flag;
     s32 orient;
     u8 object_index;
     s16 staff_timer;
@@ -86,16 +85,10 @@ void render_map_cell(s32 col, s32 row, KfCellVisibility visibility)
         position.vx += KF_MAP_TILE_SIZE;
     }
 
-    SetRotMatrix(&game_graphics_runtime.render_state.view_matrix);
-    SetTransMatrix(&game_graphics_runtime.render_state.view_matrix);
-    RotTrans(&position, (VECTOR *)&cell_matrix.t, &flag);
-    MulMatrix0(&game_graphics_runtime.render_state.view_matrix,
-               &game_graphics_runtime.render_state.quadrant_matrices[orient], &cell_matrix);
-    SetRotMatrix(&cell_matrix);
-    SetTransMatrix(&cell_matrix);
-    SetLightMatrix(&game_graphics_runtime.light_quadrant_matrices[orient]);
+    kf::render_place_model(cell_matrix, game_graphics_runtime.render_state.view_matrix, position);
+    kf::matrix_multiply_rotation(game_graphics_runtime.render_state.view_matrix, game_graphics_runtime.render_state.quadrant_matrices[orient], cell_matrix);
     tmd_select_object_vertices(object_index);
-    render_enqueue_map(object_index);
+    render_enqueue_map(object_index, &game_graphics_runtime.light_quadrant_matrices[orient], &cell_matrix, game_graphics_runtime.render_state.projection);
 }
 
 void render_map_cells(void)
@@ -140,4 +133,10 @@ void render_map_cells(void)
         row++;
         rows--;
     } while (rows != 0);
+}
+
+
+void render_map_cells_reset_module_state(void)
+{
+    kf::restore_initial_value<render_fixed_cell_window>();
 }

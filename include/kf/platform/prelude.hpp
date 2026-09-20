@@ -1,0 +1,26 @@
+#pragma once
+// System and portable interfaces live outside the original modules' namespaces.
+#include <cstddef>
+#include <cstdint>
+#include <bit>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <algorithm>
+#include <cmath>
+#include <limits>
+#include <type_traits>
+#include <kf/lib/types.h>
+#include <kf/lib/fixed_math.hpp>
+#include <kf/lib/random.hpp>
+#include <kf/audio/sound.hpp>
+#include <kf/platform/files.hpp>
+#include <kf/platform/saves.hpp>
+#include <kf/platform/host.hpp>
+#include <kf/platform/module_state.hpp>
+#include <kf/platform/input.hpp>
+#include <kf/lib/codec.h>
+#include <kf/renderer/renderer.hpp>
+#include <kf/renderer/lighting.hpp>
+#include <kf/renderer/projection.hpp>
+#include <kf/lib/geometry_types.h>

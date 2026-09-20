@@ -1,6 +1,6 @@
-#include <kf/game_math.h>
-#include <kf/game_map.h>
-#include <kf/game_player.h>
+#include <kf/lib/math.h>
+#include <kf/lib/map.h>
+#include <kf/game/player.h>
 
 void camera_path_compute_segment(KfCameraPathState *path)
 {

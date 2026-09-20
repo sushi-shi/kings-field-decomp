@@ -1,4 +1,4 @@
-#include <kf/game_player.h>
+#include <kf/game/player.h>
 
 void player_apply_fire_defense_boost(void)
 {

@@ -1,7 +1,7 @@
-#include <kf/map_data.h>
-#include <kf/game_collision.h>
-#include <kf/game_effect.h>
-#include <kf/game.h>
+#include <kf/lib/map_data.h>
+#include <kf/game/collision.h>
+#include <kf/game/effect.h>
+#include <kf/game/game.h>
 
 KfCellHeightRecord map_cell_height_records[KF_MAP_CELL_HEIGHT_RECORD_COUNT] = {
     {500, -2000, 1500, -1250},
@@ -155,4 +155,10 @@ u32 effect_map_collision(VECTOR *position, s32 radius)
         return KF_COLLISION_TERRAIN;
     }
     return effect_collision_in_cell(position, radius, x, z, subz, effect);
+}
+
+
+void effect_map_collision_reset_module_state(void)
+{
+    kf::restore_initial_value<map_cell_height_records>();
 }

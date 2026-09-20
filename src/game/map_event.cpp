@@ -1,10 +1,10 @@
-#include <kf/null.h>
-#include <kf/bool.h>
+#include <kf/lib/null.h>
+#include <kf/lib/bool.h>
 
-#include <kf/map_data.h>
-#include <kf/game_map.h>
-#include <kf/game_collision.h>
-#include <kf/game.h>
+#include <kf/lib/map_data.h>
+#include <kf/lib/map.h>
+#include <kf/game/collision.h>
+#include <kf/game/game.h>
 
 void map_event_set_current(KfMapEvent *event)
 {
@@ -30,13 +30,14 @@ void map_event_refresh_dialogue_stage(KfMapEvent *event)
 
 void map_event_advance_animation_blocking(KfMapEvent *event, u16 target, s16 step)
 {
+    const auto input_context = kf::host_set_input_context(kf::InputContext::Scripted);
     while (event->animation_phase < target) {
         event->animation_phase += step;
         render_frame(NULL, NULL);
-        frame_pacer_wait();
     }
     event->animation_phase = target;
     render_frame(NULL, NULL);
+    kf::host_set_input_context(input_context);
 }
 
 void map_event_pool_load(const KfMapEventDefinition *definitions)
@@ -101,7 +102,7 @@ s32 map_event_distance_to_point(
         if (delta_z >= -max_distance && delta_z <= max_distance) {
             delta_x >>= KF_LENGTH_SQUARE_DOWNSHIFT;
             delta_z >>= KF_LENGTH_SQUARE_DOWNSHIFT;
-            distance = SquareRoot0(delta_x * delta_x + delta_z * delta_z)
+            distance = kf::length_square_root(delta_x * delta_x + delta_z * delta_z)
                 << KF_LENGTH_SQUARE_DOWNSHIFT;
             if (distance <= max_distance) {
                 return distance;

@@ -1,9 +1,12 @@
-#include <kf/null.h>
-#include <kf/game_graphics.h>
+#include <kf/lib/random.hpp>
+#include <kf/lib/null.h>
+#include <kf/game/graphics.h>
 
-#include <kf/game_player.h>
-#include <psyq/libc.h>
-#include <kf/game.h>
+#include <kf/game/player.h>
+#include <cstdlib>
+#include <cstdio>
+#include <cstring>
+#include <kf/game/game.h>
 
 enum {
     CURSE_PHYSICAL_POWER_PENALTY = 20,
@@ -47,7 +50,7 @@ void player_death_begin(void)
     player_state.death_camera_pitch_step = 0;
     player_state.death_visual_blend = 0;
     sound_ref_play(&player_sound_refs[KF_PLAYER_SOUND_DEATH], KF_AUDIO_MAX_VOLUME);
-    ReadColorMatrix(&player_death_saved_color_matrix);
+    player_death_saved_color_matrix = game_graphics_runtime.render_state.lighting.color_matrix;
     player_death_saved_fog_near = game_graphics_runtime.render_state.fog_near_distance;
 }
 
@@ -81,13 +84,14 @@ void game_state_initialize(void)
     player_state.base_physical_power = player_level_growth_table[0].physical_power_step;
     player_state.base_magic = player_level_growth_table[0].magic_step;
     player_state.next_level_experience = player_level_growth_table[0].experience_threshold;
-    player_equip_weapon(KF_ITEM_SHORT_SWORD);
     player_state.equipped_head_armor_id = KF_OBJECT_NONE;
     player_state.equipped_body_armor_id = KF_OBJECT_NONE;
     player_state.equipped_arm_armor_id = KF_OBJECT_NONE;
     player_state.equipped_leg_armor_id = KF_OBJECT_NONE;
     player_state.equipped_shield_id = KF_OBJECT_NONE;
     player_state.equipped_accessory_id = KF_OBJECT_NONE;
+    // Equipping recalculates armor stats too; zeroed IDs are not "no armor".
+    player_equip_weapon(KF_ITEM_SHORT_SWORD);
     player_set_equipment_slot(KF_ITEM_SHORT_SWORD, KF_EQUIPMENT_SLOT_REFRESH_ONLY);
     player_select_magic(KF_MAGIC_LIGHT_NEEDLE);
     player_state.fire_defense_timer = KF_PLAYER_STATUS_TIMER_INACTIVE;
@@ -483,7 +487,7 @@ void player_apply_damage(
     }
     if ((status_effect_flags & KF_PLAYER_STATUS_POISON) != KF_PLAYER_STATUS_NONE) {
         if (player_state.poison_resistance
-            < (rand() * PLAYER_POISON_ROLL_BUCKETS) >> PLAYER_POISON_ROLL_SHIFT) {
+            < (kf::random_next() * PLAYER_POISON_ROLL_BUCKETS) >> PLAYER_POISON_ROLL_SHIFT) {
             player_state.poison_timer = KF_POISON_DURATION_UPDATES;
             player_state.status_effect_flags |= KF_PLAYER_STATUS_POISON;
         }
@@ -567,4 +571,13 @@ void player_select_magic(KfEffectKind magic_id)
         player_state.selected_magic_record =
             &magic_records[kf_enum_encode<u8>(player_state.selected_magic_id)];
     }
+}
+
+
+void player_death_reset_module_state(void)
+{
+    kf::restore_initial_value<player_sound_refs>();
+    kf::restore_initial_value<player_death_saved_fog_near>();
+    kf::restore_initial_value<player_death_saved_color_matrix>();
+    kf::restore_initial_value<item_stock>();
 }

@@ -1,9 +1,12 @@
-#include <kf/game_actor.h>
-#include <kf/map_data.h>
-#include <kf/game_map.h>
-#include <kf/game_collision.h>
-#include <psyq/libc.h>
-#include <kf/game.h>
+#include <kf/lib/random.hpp>
+#include <kf/game/actor.h>
+#include <kf/lib/map_data.h>
+#include <kf/lib/map.h>
+#include <kf/game/collision.h>
+#include <cstdlib>
+#include <cstdio>
+#include <cstring>
+#include <kf/game/game.h>
 
 enum {
     MAP_AMBIENT_COUNTDOWN_RELOAD = 10,
@@ -48,12 +51,12 @@ void map_event_update_wander(void)
         event->cell_x = point.vx / KF_MAP_TILE_SIZE;
         event->cell_z = point.vz / KF_MAP_TILE_SIZE;
         event->collision_turn_pending = KF_MAP_EVENT_COLLISION_TURN_NONE;
-        if (event->rotation.vy == event->rotation_target && rand() < MAP_EVENT_WANDER_TURN_RANDOM_LIMIT) {
-            event->rotation_target = rand() >> KF_RANDOM_ANGLE_SHIFT;
+        if (event->rotation.vy == event->rotation_target && kf::random_next() < MAP_EVENT_WANDER_TURN_RANDOM_LIMIT) {
+            event->rotation_target = kf::random_next() >> KF_RANDOM_ANGLE_SHIFT;
         }
     } else {
         if (event->collision_turn_pending == KF_MAP_EVENT_COLLISION_TURN_NONE || event->rotation.vy == event->rotation_target) {
-            event->rotation_target = rand() >> KF_RANDOM_ANGLE_SHIFT;
+            event->rotation_target = kf::random_next() >> KF_RANDOM_ANGLE_SHIFT;
             event->collision_turn_pending = KF_MAP_EVENT_COLLISION_TURN_PENDING;
         }
     }
@@ -147,6 +150,20 @@ void map_event_pool_update(void)
     }
 }
 
+static u8 *map_saved_reserve(u8 *&out, const u8 *end, std::size_t count)
+{
+    if (count > static_cast<std::size_t>(end - out))
+        kf::host_fail("Persisted floor records exceed their capacity");
+    u8 *result = out;
+    out += count;
+    return result;
+}
+
+static void map_saved_put(u8 *&out, const u8 *end, u8 value)
+{
+    *map_saved_reserve(out, end, 1) = value;
+}
+
 void map_world_state_persist(void)
 {
     u8 *out;
@@ -160,30 +177,34 @@ void map_world_state_persist(void)
 
     out = map_runtime_state.world_state.floors[
         kf_enum_encode<u8>(player_state.progress_state.current_floor) - 1].records;
-    *out++ = 1;
+    u8 *const end = out + KF_MAP_SAVED_RECORD_BYTES;
+    map_saved_put(out, end, 1);
 
     event = map_runtime_state.events;
     for (i = 0; i < KF_MAP_EVENT_CAPACITY; i++, event++) {
-        *out++ = kf_enum_encode<u8>(event->state);
-        *out++ = event->dialogue.fields.stage_limit;
-        *out++ = event->dialogue.fields.stage;
-        *out++ = event->dialogue.fields.page;
-        *out++ = event->dialogue_pages.last_page[event->dialogue.fields.stage - 1];
-        *out++ = event->dialogue.fields.page_delay;
-        *out++ = event->unknown_0d;
+        map_saved_put(out, end, kf_enum_encode<u8>(event->state));
+        map_saved_put(out, end, event->dialogue.fields.stage_limit);
+        map_saved_put(out, end, event->dialogue.fields.stage);
+        map_saved_put(out, end, event->dialogue.fields.page);
+        const auto stage = event->dialogue.fields.stage;
+        if (stage > KF_DIALOGUE_STAGE_COUNT)
+            kf::host_fail("Invalid persisted dialogue stage");
+        map_saved_put(out, end, stage ? event->dialogue_pages.last_page[stage - 1] : 0);
+        map_saved_put(out, end, event->dialogue.fields.page_delay);
+        map_saved_put(out, end, event->unknown_0d);
     }
 
-    count_slot = out++;
+    count_slot = map_saved_reserve(out, end, 1);
     active = 0;
     actor = &actor_state.actors[0];
     for (i = 0; i < KF_ACTOR_CAPACITY; i++, actor++) {
         if (actor->slot_state == KF_ACTOR_SLOT_PERSISTENT || actor->slot_state == KF_ACTOR_SLOT_HOMEBOUND) {
             active++;
-            *out++ = i;
+            map_saved_put(out, end, i);
             if (actor->lifecycle == KF_ACTOR_LIFECYCLE_DISABLED) {
-                *out++ = kf_enum_encode<u8>(KF_ACTOR_LIFECYCLE_DISABLED);
+                map_saved_put(out, end, kf_enum_encode<u8>(KF_ACTOR_LIFECYCLE_DISABLED));
             } else {
-                *out++ = kf_enum_encode<u8>(KF_ACTOR_LIFECYCLE_DORMANT);
+                map_saved_put(out, end, kf_enum_encode<u8>(KF_ACTOR_LIFECYCLE_DORMANT));
             }
         }
     }
@@ -191,10 +212,10 @@ void map_world_state_persist(void)
 
     object = &map_object_state.objects[0];
     for (i = 0; i < KF_MAP_OBJECT_CAPACITY; i++, object++) {
-        *out++ = kf_enum_encode<u8>(object->object_id);
+        map_saved_put(out, end, kf_enum_encode<u8>(object->object_id));
     }
 
-    count_slot = out++;
+    count_slot = map_saved_reserve(out, end, 1);
     active = 0;
     object = &map_object_state.objects[0];
     definitions = map_object_state.definitions.entries;
@@ -217,13 +238,13 @@ void map_world_state_persist(void)
         }
 
         active++;
-        *out++ = i;
+        map_saved_put(out, end, i);
         {
             const u8 *link = (const u8 *)&object->link;
             s32 k = sizeof(object->link) - 1;
 
             for (; k != -1; k--) {
-                *out++ = *link++;
+                map_saved_put(out, end, *link++);
             }
         }
     }
@@ -231,17 +252,17 @@ void map_world_state_persist(void)
 
     object = &map_object_state.objects[KF_MAP_OBJECT_GOLD_DROP_FIRST];
     for (i = 0; i < KF_MAP_OBJECT_EFFECT_GROUP_CAPACITY; i++, object++) {
-        *out++ = object->cell_x;
-        *out++ = object->cell_z;
-        *out++ = object->link.fields.link_id;
-        *out++ = object->link.gold_amount >> 8;
+        map_saved_put(out, end, object->cell_x);
+        map_saved_put(out, end, object->cell_z);
+        map_saved_put(out, end, object->link.fields.link_id);
+        map_saved_put(out, end, object->link.gold_amount >> 8);
     }
 
     object = &map_object_state.objects[KF_MAP_OBJECT_DEFINITION_DROP_FIRST];
     for (i = 0; i < 2 * KF_MAP_OBJECT_EFFECT_GROUP_CAPACITY; i++, object++) {
-        *out++ = object->cell_x;
-        *out++ = object->cell_z;
-        *out++ = (u16)object->rotation.angles.y >> KF_MAP_SAVED_YAW_SHIFT;
+        map_saved_put(out, end, object->cell_x);
+        map_saved_put(out, end, object->cell_z);
+        map_saved_put(out, end, (u16)object->rotation.angles.y >> KF_MAP_SAVED_YAW_SHIFT);
     }
 }
 
@@ -250,4 +271,10 @@ void map_unload_floor(void)
     pool_release_all();
     audio_close_vab();
     map_world_state_persist();
+}
+
+
+void map_events_reset_module_state(void)
+{
+    kf::restore_initial_value<map_runtime_state>();
 }

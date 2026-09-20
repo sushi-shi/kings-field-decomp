@@ -1,10 +1,10 @@
-#include <kf/null.h>
+#include <kf/lib/null.h>
 
-#include <kf/map_data.h>
-#include <kf/game_collision.h>
-#include <kf/game_player.h>
-#include <kf/game.h>
-#include <kf/magic.h>
+#include <kf/lib/map_data.h>
+#include <kf/game/collision.h>
+#include <kf/game/player.h>
+#include <kf/game/game.h>
+#include <kf/game/magic.h>
 
 enum {
     MAGIC_LAUNCH_OFFSET_X = -200,
@@ -61,7 +61,7 @@ void magic_cast(void)
         angles.y = player_state.camera_rotation.vy;
         angles.z = -player_state.camera_rotation.vz;
         matrix_set_rotation_yxz(&angles, &matrix);
-        ApplyMatrix(&matrix, &offset, &world_pos);
+        world_pos = kf::matrix_apply_rotation(matrix, offset);
         addVector(&world_pos, &player_state.camera_position);
         target = actor_pool_find_target_in_cone(
             &player_state.camera_position,

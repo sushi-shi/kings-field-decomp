@@ -1,14 +1,17 @@
-#include <kf/null.h>
-#include <kf/bool.h>
-#include <kf/game_graphics.h>
+#include <kf/lib/random.hpp>
+#include <kf/lib/null.h>
+#include <kf/lib/bool.h>
+#include <kf/game/graphics.h>
 
-#include <kf/game_actor.h>
-#include <kf/map_data.h>
-#include <kf/game_map.h>
-#include <kf/game_collision.h>
-#include <kf/notify.h>
-#include <psyq/libc.h>
-#include <kf/game.h>
+#include <kf/game/actor.h>
+#include <kf/lib/map_data.h>
+#include <kf/lib/map.h>
+#include <kf/game/collision.h>
+#include <kf/game/notify.h>
+#include <cstdlib>
+#include <cstdio>
+#include <cstring>
+#include <kf/game/game.h>
 
 enum class KfMapWeaponTransformPhase : s32 {
     MAP_WEAPON_TRANSFORM_SPIN_UP = 0,
@@ -66,7 +69,7 @@ static MATRIX map_reveal_light_matrix = {
     {{0, -KF_FIXED12_ONE, 0}, {0, -KF_FIXED12_ONE, 0}, {0, -KF_FIXED12_ONE, 0}}, {0, 0, 0}
 };
 
-static char map_screen_image_path[16] = "KAN\\B0\\K000.TIM";
+static char map_screen_image_path[16] = "KAN/B0/K000.TIM";
 
 s32 actor_pool_find_at_tile(u8 tile_x, u8 tile_z)
 {
@@ -108,7 +111,7 @@ void map_ambient_script_floor1(void)
                 actor_state.actors[actor_index].lifecycle = KF_ACTOR_LIFECYCLE_DORMANT;
                 actor_initialize_slot(actor_index);
             }
-            object_index = map_object_pool_find_near_point(0x5208, 0x105b8, MAP_SCRIPT_OBJECT_SEARCH_PADDING);
+            object_index = map_floor1_cross_index();
             if (object_index != -1) {
                 map_object_state.objects[object_index].object_id = KF_MAP_OBJECT_BROKEN_STONE_CROSS;
             }
@@ -138,10 +141,15 @@ void map_ambient_script_floor1(void)
     }
 }
 
+s32 map_floor1_cross_index(void)
+{
+    return map_object_pool_find_near_point(0x5208, 0x105b8, MAP_SCRIPT_OBJECT_SEARCH_PADDING);
+}
+
 void map_ambient_script_floor2(void)
 {
     if (map_event_pool[1].dialogue.fields.stage == 2 && map_event_pool[1].dialogue.fields.page < 3
-        && rand() < MAP_FLOOR2_AMBIENT_RANDOM_LIMIT) {
+        && kf::random_next() < MAP_FLOOR2_AMBIENT_RANDOM_LIMIT) {
         audio_play_spatial_default_range(
             &gameplay_sound_refs[8], &map_event_pool[1].reference_position, KF_AUDIO_MAX_VOLUME);
     }
@@ -173,10 +181,10 @@ void map_ambient_script_floor5(void)
         && (u16)player_state.camera_rotation.vy >= MAP_BOSS_REVEAL_YAW_MIN
         && (u16)player_state.camera_rotation.vy < MAP_BOSS_REVEAL_YAW_END) {
         *encounter_started = KF_MAP_SCRIPT_SET;
-        screen_show_image_until_input("TALK\\C17\\T55171.TIM");
+        screen_show_image_until_input("TALK/C17/T55171.TIM");
         render_frame(NULL, NULL);
         render_frame(NULL, NULL);
-        screen_show_image_until_input("TALK\\C17\\T55172.TIM");
+        screen_show_image_until_input("TALK/C17/T55172.TIM");
         actor_state.definitions.entries[7].action_animations[KF_ACTOR_ANIM_SLOT_MELEE] = KF_ANIMATION_CLIP_THIRD;
         actor_state.definitions.entries[7].action_animations[KF_ACTOR_ANIM_SLOT_EFFECT0] = KF_ANIMATION_CLIP_FOURTH;
         actor_state.definitions.entries[7].action_animations[KF_ACTOR_ANIM_SLOT_EFFECT1] = KF_ANIMATION_CLIP_FOURTH;
@@ -198,6 +206,7 @@ void map_action_script_floor1(void)
 
 void map_reveal_fade(void)
 {
+    const auto input_context = kf::host_set_input_context(kf::InputContext::Scripted);
     MATRIX saved;
     s32 blend;
 
@@ -213,7 +222,6 @@ void map_reveal_fade(void)
                                &game_graphics_runtime.render_state.light_matrix_copy, blend << MAP_REVEAL_LIGHT_BLEND_SHIFT);
         }
         render_frame(NULL, NULL);
-        frame_pacer_wait();
     }
 
     map_event_pool[3].state = KF_MAP_EVENT_DISABLED;
@@ -222,11 +230,11 @@ void map_reveal_fade(void)
     for (blend = KF_FIXED12_ONE; blend >= 0; blend -= MAP_REVEAL_FADE_OUT_STEP) {
         lighting_set_color_matrix(&color_matrix_table[kf_enum_encode<s32>(KF_GAME_COLOR_DEFAULT)], &color_matrix_table[kf_enum_encode<s32>(KF_GAME_COLOR_WHITE)], blend);
         render_frame(NULL, NULL);
-        frame_pacer_wait();
     }
 
     lighting_set_active_color_matrix(KF_GAME_COLOR_DEFAULT);
     game_graphics_runtime.render_state.light_matrix_copy = saved;
+    kf::host_set_input_context(input_context);
 }
 
 void map_action_script_floor2(void)
@@ -261,6 +269,7 @@ void map_action_script_floor4(void)
 
 void map_floor5_transition_cutscene(void)
 {
+    const auto input_context = kf::host_set_input_context(kf::InputContext::Scripted);
     MATRIX color_matrix;
     KfCameraPathState path;
     KfMapObject *effect;
@@ -292,7 +301,7 @@ void map_floor5_transition_cutscene(void)
     player_state.motion_state.fields.map_cell.coords.z = player_state.camera_position.vz / KF_MAP_TILE_SIZE;
     collision_adjust_cell_occupancy(player_state.motion_state.fields.map_cell.coords.x, player_state.motion_state.fields.map_cell.coords.z, 1);
 
-    ReadColorMatrix(&color_matrix);
+    color_matrix = game_graphics_runtime.render_state.lighting.color_matrix;
     effect = map_object_effect_pool_acquire(
         KF_MAP_OBJECT_PLACEMENT_DROP_FIRST, KF_MAP_OBJECT_EFFECT_GROUP_CAPACITY, map_object_state.effect_sequence_180);
     effect->object_id = KF_ITEM_DRAGON_SWORD;
@@ -339,6 +348,7 @@ void map_floor5_transition_cutscene(void)
             } else {
                 map_object_start_action_if_idle(effect, KF_MAP_OBJECT_OP_FALL_AND_TIP);
                 effect->link.fields.vertical_velocity = 0;
+                kf::host_set_input_context(input_context);
                 return;
             }
             break;
@@ -439,6 +449,7 @@ void map_show_screen_image(KfMapImageGroup group, s32 index)
 
 void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
 {
+    const auto input_context = kf::host_set_input_context(kf::InputContext::Scripted);
     s32 sound_x;
     s32 sound_z;
     s32 index;
@@ -562,7 +573,6 @@ clear_event_phase:
                     }
                     object->rotation.angles.x -= MAP_CONTAINER_OPEN_PITCH_STEP;
                     render_frame(position, rotation);
-                    frame_pacer_wait();
                 }
 
                 item_id = object->link.hinged_container.item_ids;
@@ -739,6 +749,7 @@ start_paired_door:
                     image_group = MAP_IMAGE_GROUP_SIGNBOARD;
                 } else {
                     if (object->object_id != KF_MAP_OBJECT_INSCRIPTION_PANEL) {
+                        kf::host_set_input_context(input_context);
                         return;
                     }
                     image_group = MAP_IMAGE_GROUP_INSCRIPTION;
@@ -780,4 +791,14 @@ notify_default:
     default:
         break;
     }
+    kf::host_set_input_context(input_context);
+}
+
+
+void map_scripts_reset_module_state(void)
+{
+    kf::restore_initial_value<map_floor5_camera_path>();
+    kf::restore_initial_value<map_floor1_sound_position>();
+    kf::restore_initial_value<map_reveal_light_matrix>();
+    kf::restore_initial_value<map_screen_image_path>();
 }

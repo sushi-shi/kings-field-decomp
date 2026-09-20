@@ -1,10 +1,12 @@
-#include <kf/bool.h>
+#include <kf/lib/bool.h>
 
-#include <kf/map_data.h>
-#include <kf/game_map.h>
-#include <kf/game_collision.h>
-#include <psyq/libc.h>
-#include <kf/game.h>
+#include <kf/lib/map_data.h>
+#include <kf/lib/map.h>
+#include <kf/game/collision.h>
+#include <cstdlib>
+#include <cstdio>
+#include <cstring>
+#include <kf/game/game.h>
 
 enum {
     MAP_DOOR_CLOSING_PROBE_RADIUS = 3000
@@ -301,7 +303,7 @@ s32 map_object_distance_to_point(
         if (delta_z >= -max_distance && delta_z <= max_distance) {
             delta_x >>= KF_LENGTH_SQUARE_DOWNSHIFT;
             delta_z >>= KF_LENGTH_SQUARE_DOWNSHIFT;
-            distance = SquareRoot0(delta_x * delta_x + delta_z * delta_z) << KF_LENGTH_SQUARE_DOWNSHIFT;
+            distance = kf::length_square_root(delta_x * delta_x + delta_z * delta_z) << KF_LENGTH_SQUARE_DOWNSHIFT;
             if (distance <= max_distance) {
                 return distance;
             }
@@ -330,4 +332,11 @@ s32 map_object_pool_find_near_point(s32 point_x, s32 point_z, s32 radius_padding
         }
     }
     return -1;
+}
+
+
+void map_object_pool_reset_module_state(void)
+{
+    kf::restore_initial_value<map_copy_regions>();
+    kf::restore_initial_value<map_object_state>();
 }

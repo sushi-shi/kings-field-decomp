@@ -1,9 +1,9 @@
-#include <kf/null.h>
-#include <kf/game_graphics.h>
+#include <kf/lib/null.h>
+#include <kf/game/graphics.h>
 
-#include <kf/game_math.h>
-#include <kf/game_player.h>
-#include <kf/game.h>
+#include <kf/lib/math.h>
+#include <kf/game/player.h>
+#include <kf/game/game.h>
 
 enum {
     PLAYER_DEATH_BOB_THRESHOLD = 1000,

@@ -1,9 +1,12 @@
-#include <kf/audio.h>
-#include <kf/map_data.h>
-#include <kf/game_collision.h>
-#include <kf/game_effect.h>
-#include <psyq/libc.h>
-#include <kf/game.h>
+#include <kf/lib/random.hpp>
+#include <kf/lib/audio.h>
+#include <kf/lib/map_data.h>
+#include <kf/game/collision.h>
+#include <kf/game/effect.h>
+#include <cstdlib>
+#include <cstdio>
+#include <cstring>
+#include <kf/game/game.h>
 
 enum {
     EFFECT_FIXED_MAGIC_POWER = 5,
@@ -11,7 +14,7 @@ enum {
     EFFECT_ORBIT_COLLISION_RADIUS = 150,
     EFFECT_SWING_ANGULAR_ACCEL = 10,
     EFFECT_HAZARD_RISE_STEP = 60,
-    EFFECT_HAZARD_SOUND_RANDOM_CUTOFF = (RAND_MAX + 1) / 4,
+    EFFECT_HAZARD_SOUND_RANDOM_CUTOFF = (kf::random_max + 1) / 4,
     EFFECT_SWING_SOUND_MAX_DISTANCE = 3000,
     EFFECT_ORBIT_SOUND_MAX_DISTANCE = 5000,
     EFFECT_HAZARD_SOUND_ATTENUATION_DISTANCE = 14000,
@@ -51,11 +54,11 @@ void effect_projectile_update_3d(SVECTOR *probe_offset, KfEffectPhase phase_limi
     s16 next_pitch;
 
     if (kf_enum_encode<u8>(life) < kf_enum_encode<u8>(KF_EFFECT_HAZARD_RELEASE_REQUEST) + 1u) {
-        RotMatrix(&record->rotation.vector, &rotation_matrix);
+        kf::matrix_set_rotation_xyz(record->rotation.vector, rotation_matrix);
         matrix_set_rotation_x(record->rotation.vector.vx, &rotation_matrix);
         matrix_set_rotation_y(record->rotation.vector.vy, &yaw_matrix);
-        MulMatrix2(&yaw_matrix, &rotation_matrix);
-        ApplyMatrix(&rotation_matrix, probe_offset, &world);
+        kf::matrix_multiply_rotation(yaw_matrix, rotation_matrix, rotation_matrix);
+        world = kf::matrix_apply_rotation(rotation_matrix, *probe_offset);
         addVector(&world, &record->position);
         collision = effect_map_collision(&world, EFFECT_SWING_COLLISION_RADIUS);
         if (collision != KF_COLLISION_NONE) {
@@ -71,7 +74,7 @@ void effect_projectile_update_3d(SVECTOR *probe_offset, KfEffectPhase phase_limi
             record->direction.words.x = -record->direction.words.x;
         }
         if (record->sound_played == KF_AUDIO_NOT_PLAYED) {
-            if (rand() < EFFECT_HAZARD_SOUND_RANDOM_CUTOFF) {
+            if (kf::random_next() < EFFECT_HAZARD_SOUND_RANDOM_CUTOFF) {
                 record->sound_played = audio_play_spatial_range(
                     &magic->sounds[0], &world, KF_AUDIO_MAX_VOLUME,
                     EFFECT_SWING_SOUND_MAX_DISTANCE, EFFECT_HAZARD_SOUND_ATTENUATION_DISTANCE);
@@ -115,11 +118,11 @@ void effect_projectile_update_2d(s32 orbit_radius, KfEffectPhase phase_limit)
 
     if ((kf_enum_encode<u32>(life) & 0xff) < kf_enum_encode<u8>(KF_EFFECT_HAZARD_RELEASE_REQUEST) + 1) {
         record->position.vx = (record->direction.vector.vx << KF_EFFECT_ORBIT_CENTER_SHIFT)
-            + (rsin((s16)record->control.orbit_angle) * orbit_radius >> KF_FIXED12_BITS);
+            + (kf::angle_sine((s16)record->control.orbit_angle) * orbit_radius >> KF_FIXED12_BITS);
         record->position.vz = (record->direction.vector.vz << KF_EFFECT_ORBIT_CENTER_SHIFT)
-            + (rcos((s16)record->control.orbit_angle) * orbit_radius >> KF_FIXED12_BITS);
+            + (kf::angle_cosine((s16)record->control.orbit_angle) * orbit_radius >> KF_FIXED12_BITS);
         record->position.vy = record->direction.vector.vy
-            + (rsin((s16)record->control.orbit_angle << 1) >> 2);
+            + (kf::angle_sine((s16)record->control.orbit_angle << 1) >> 2);
         record->control.orbit_angle = (record->control.orbit_angle
             + KF_ANGLE_FULL_TURN / EFFECT_ORBIT_UPDATES_PER_TURN) & KF_ANGLE_WRAP_MASK;
         collision = effect_map_collision(&record->position, EFFECT_ORBIT_COLLISION_RADIUS);
@@ -135,7 +138,7 @@ void effect_projectile_update_2d(s32 orbit_radius, KfEffectPhase phase_limit)
             }
         }
         if (record->sound_played == KF_AUDIO_NOT_PLAYED) {
-            if (rand() < EFFECT_HAZARD_SOUND_RANDOM_CUTOFF) {
+            if (kf::random_next() < EFFECT_HAZARD_SOUND_RANDOM_CUTOFF) {
                 record->sound_played = audio_play_spatial_range(
                     &magic->sounds[0], &record->position,
                     KF_AUDIO_MAX_VOLUME, EFFECT_ORBIT_SOUND_MAX_DISTANCE,
@@ -195,7 +198,7 @@ void effect_floor_deform_line(s32 segment_index, s32 progress_start, s32 progres
 
 enum {
     SCATTER_RANDOM_SHIFT = 8,
-    SCATTER_VELOCITY_BIAS = ((RAND_MAX >> SCATTER_RANDOM_SHIFT) + 1) / 2
+    SCATTER_VELOCITY_BIAS = ((kf::random_max >> SCATTER_RANDOM_SHIFT) + 1) / 2
 };
 
 void effect_scatter_triple(KfEffectDirectionWords *velocity)
@@ -203,15 +206,15 @@ void effect_scatter_triple(KfEffectDirectionWords *velocity)
     int random;
     int centered;
 
-    random = rand();
+    random = kf::random_next();
     centered = velocity->x - SCATTER_VELOCITY_BIAS;
     centered += random >> SCATTER_RANDOM_SHIFT;
     velocity->x = centered;
-    random = rand();
+    random = kf::random_next();
     centered = velocity->y - SCATTER_VELOCITY_BIAS;
     centered += random >> SCATTER_RANDOM_SHIFT;
     velocity->y = centered;
-    random = rand();
+    random = kf::random_next();
     centered = velocity->z - SCATTER_VELOCITY_BIAS;
     centered += random >> SCATTER_RANDOM_SHIFT;
     velocity->z = centered;
@@ -228,8 +231,8 @@ void effect_rotate_scale_offset_y(SVECTOR *offset, VECTOR *output, s16 angle, s3
         0,
         (offset->vz * scale) >> KF_FIXED12_BITS);
     setVector(&rotation, 0, angle, 0);
-    RotMatrix(&rotation, &matrix);
-    ApplyMatrix(&matrix, &scaled, output);
+    kf::matrix_set_rotation_xyz(rotation, matrix);
+    *output = kf::matrix_apply_rotation(matrix, scaled);
 }
 
 void effect_spawn_ground_trail(u8 id, KfEffectRecord *parent_effect, s16 angle, s32 distance)
@@ -253,11 +256,17 @@ void effect_spawn_ground_branch(u8 id, KfEffectRecord *parent_effect, s16 angle_
     s32 cell_x;
     s32 cell_z;
 
-    position.vx = parent_effect->position.vx + (GROUND_BRANCH_CHILD_SPACING * rsin(angle) >> KF_FIXED12_BITS);
-    position.vz = parent_effect->position.vz + (GROUND_BRANCH_CHILD_SPACING * rcos(angle) >> KF_FIXED12_BITS);
+    position.vx = parent_effect->position.vx + (GROUND_BRANCH_CHILD_SPACING * kf::angle_sine(angle) >> KF_FIXED12_BITS);
+    position.vz = parent_effect->position.vz + (GROUND_BRANCH_CHILD_SPACING * kf::angle_cosine(angle) >> KF_FIXED12_BITS);
     cell_z = position.vz / KF_MAP_TILE_SIZE;
     cell_x = position.vx / KF_MAP_TILE_SIZE;
     position.vy = -(map_floor_height_grid.cells[cell_z][cell_x] * KF_MAP_HEIGHT_STEP);
     effect_pool_construct(id, parent_effect->type, KF_MAGIC_FIRE_WALL, &position,
         &parent_effect->direction.vector, KfEffectBranchArguments{branch_role});
+}
+
+
+void effect_update_reset_module_state(void)
+{
+    kf::restore_initial_value<floor_deform_segments>();
 }

@@ -1,16 +1,17 @@
-#include <kf/game_math.h>
-#include <kf/open_resources.h>
-#include <kf/map_data.h>
-#include <kf/open_opening_render.h>
-#include <kf/open_render.h>
-#include <kf/open_scene0.h>
-#include <psyq/sdk.h>
+#include <kf/lib/math.h>
+#include <kf/open/resources.h>
+#include <kf/lib/map_data.h>
+#include <kf/open/opening_render.h>
+#include <kf/open/render.h>
+#include <kf/open/scene0.h>
+#include <kf/lib/geometry_types.h>
+#include <kf/lib/graphics.h>
 
 enum {
     OPENING_MODEL_DEPTH_BIAS = -100,
     OPENING_MODEL_YAW_STEP = 64,
     ENDING_TRANSLATING_MODEL_DEPTH_BIAS = 1000,
-    ENDING_ROTATING_MODEL_DEPTH_BIAS = 10000,
+    ENDING_ROTATING_MODEL_DEPTH_BIAS = 10000
 };
 
 KfSpriteQuad floor_item_sprites[KF_FLOOR_ITEM_SPRITE_COUNT] = {
@@ -29,26 +30,20 @@ void opening_entity_render(KfOpeningEntity *entity)
     SVECTOR screen;
     MATRIX model;
     MATRIX light;
-    long flag;
     KfEnumStorage<KfOpeningModelId, u16> object_id;
     s16 depth;
 
-    SetRotMatrix(&open_graphics_runtime.render_state.view_matrix);
-    SetTransMatrix(&open_graphics_runtime.render_state.view_matrix);
     setVector(&screen,
         entity->position.vx - open_graphics_runtime.render_state.view_position.vx,
         entity->position.vy - open_graphics_runtime.render_state.view_position.vy,
         entity->position.vz - open_graphics_runtime.render_state.view_position.vz);
 
-    RotTrans(&screen, (VECTOR *)&model.t, &flag);
+    kf::render_place_model(model, open_graphics_runtime.render_state.view_matrix, screen);
     matrix_set_rotation_yxz(&entity->rotation, &model);
     copyVector(&scale, &entity->scale);
-    ScaleMatrix(&model, &scale);
-    MulMatrix0(&open_graphics_runtime.render_state.light_matrix, &model, &light);
-    MulMatrix2(&open_graphics_runtime.render_state.view_matrix, &model);
-    SetRotMatrix(&model);
-    SetTransMatrix(&model);
-    SetLightMatrix(&light);
+    kf::matrix_scale_axes(model, scale);
+    kf::matrix_multiply_rotation(open_graphics_runtime.render_state.light_matrix, model, light);
+    kf::matrix_multiply_rotation(open_graphics_runtime.render_state.view_matrix, model, model);
 
     object_id = entity->object_id;
     depth = 0;
@@ -70,9 +65,8 @@ void opening_entity_render(KfOpeningEntity *entity)
         break;
     case KF_OPENING_CASTLE_MOUNTAIN_BACKDROP:
         tmd_select_object_vertices(kf_enum_encode<u16>(object_id));
-        tmd_project_vertices_perspective_right(
-            tmd_get_object(kf_enum_encode<u16>(object_id))->vertex_count);
-        render_enqueue_tmd(kf_enum_encode<u16>(object_id), 0);
+        tmd_project_vertices_perspective_right(tmd_get_object(kf_enum_encode<u16>(object_id))->vertex_count, &model, open_graphics_runtime.render_state.projection);
+        render_enqueue_tmd(kf_enum_encode<u16>(object_id), 0, &light);
         return;
     case KF_OPENING_ENDING_ORANGE_DISK:
         depth = ENDING_TRANSLATING_MODEL_DEPTH_BIAS;
@@ -81,7 +75,7 @@ void opening_entity_render(KfOpeningEntity *entity)
         depth = ENDING_ROTATING_MODEL_DEPTH_BIAS;
     render_alternate:
         tmd_select_object_vertices(kf_enum_encode<u16>(object_id));
-        tmd_project_vertices(tmd_get_object(kf_enum_encode<u16>(object_id))->vertex_count);
+        tmd_project_vertices(tmd_get_object(kf_enum_encode<u16>(object_id))->vertex_count, &model, open_graphics_runtime.render_state.projection);
         render_enqueue_unlit_triangles(kf_enum_encode<u16>(object_id), depth);
         return;
     default:
@@ -90,42 +84,11 @@ void opening_entity_render(KfOpeningEntity *entity)
     }
 
     tmd_select_object_vertices(kf_enum_encode<u16>(object_id));
-    tmd_project_vertices(tmd_get_object(kf_enum_encode<u16>(object_id))->vertex_count);
-    render_enqueue_tmd(kf_enum_encode<u16>(object_id), depth);
+    tmd_project_vertices(tmd_get_object(kf_enum_encode<u16>(object_id))->vertex_count, &model, open_graphics_runtime.render_state.projection);
+    render_enqueue_tmd(kf_enum_encode<u16>(object_id), depth, &light);
 }
 
-void render_floor_item(KfFloorItem *item)
-{
-    SVECTOR screen;
-    MATRIX model;
-    long flag;
-    KfFloorItemFacing facing;
-    s16 depth_bias;
-
-    SetRotMatrix(&open_graphics_runtime.render_state.view_matrix);
-    SetTransMatrix(&open_graphics_runtime.render_state.view_matrix);
-    setVector(&screen,
-        item->position_x - open_graphics_runtime.render_state.view_position.vx,
-        item->position_y - open_graphics_runtime.render_state.view_position.vy,
-        item->position_z - open_graphics_runtime.render_state.view_position.vz);
-    RotTrans(&screen, (VECTOR *)&model.t, &flag);
-    facing = floor_item_facing(item->facing_and_frame_count);
-    if (kf_enum_encode<u8>(facing) != kf_enum_encode<u8>(KF_FLOOR_ITEM_FACING_BILLBOARD)) {
-        matrix_set_rotation_y(
-            (kf_enum_encode<u16>(facing) - kf_enum_encode<u8>(KF_FLOOR_ITEM_FACING_ZERO_YAW)) << KF_FLOOR_ITEM_FACING_TO_ANGLE_SHIFT,
-            &model);
-        MulMatrix2(&open_graphics_runtime.render_state.view_matrix, &model);
-        SetRotMatrix(&model);
-        depth_bias = KF_FLOOR_ITEM_FIXED_FACING_DEPTH_BIAS;
-    } else {
-        SetRotMatrix(&open_graphics_runtime.render_state.pitch_matrix);
-        depth_bias = KF_FLOOR_ITEM_BILLBOARD_DEPTH_BIAS;
-    }
-    SetTransMatrix(&model);
-    render_enqueue_sprite(
-        &floor_item_sprites[kf_enum_encode<u16>(item->base_sprite_index) + item->animation_frame], depth_bias, KF_SPRITE_DEPTH_CUE_BOOSTED);
-    floor_item_advance_frame(item);
-}
+#include "../lib/floor_item_render.inc"
 
 void opening_render_entities_and_items(void)
 {
@@ -134,7 +97,6 @@ void opening_render_entities_and_items(void)
     u16 origin_x = open_graphics_runtime.render_state.view_cell.x - window->origin_x;
     KfOpeningEntity *entity;
     KfFloorItem *item;
-    u16 *material_tpage;
     u16 row;
     u16 col;
     s16 remaining;
@@ -157,12 +119,9 @@ void opening_render_entities_and_items(void)
         entity++;
     }
 
-    SetLightMatrix(&floor_item_light_matrix);
-    material_tpage = &open_graphics_runtime.floor_item_state.material.tpage;
     open_graphics_runtime.floor_item_state.material.color.r = open_graphics_runtime.floor_item_state.material.color.g =
         open_graphics_runtime.floor_item_state.material.color.b = KF_FLOOR_ITEM_RENDER_BRIGHTNESS;
-    *material_tpage = open_graphics_runtime.floor_item_state.texture_tpage;
-    open_graphics_runtime.floor_item_state.material.clut = open_graphics_runtime.floor_item_state.texture_clut;
+    open_graphics_runtime.floor_item_state.material.surface = open_graphics_runtime.floor_item_state.texture;
     item = open_graphics_runtime.floor_item_state.items;
     remaining = open_graphics_runtime.floor_item_state.count;
     while (--remaining != -1) {
@@ -175,9 +134,15 @@ void opening_render_entities_and_items(void)
             if (col < grid->width
                     && grid->cells[row * grid->width + col]
                         != KF_CELL_WINDOW_HIDDEN) {
-                render_floor_item(item);
+                render_floor_item(item, &floor_item_light_matrix);
             }
         }
         item++;
     }
+}
+
+
+void entity_render_reset_module_state(void)
+{
+    kf::restore_initial_value<floor_item_sprites>();
 }

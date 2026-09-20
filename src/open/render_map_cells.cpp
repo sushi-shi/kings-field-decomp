@@ -1,6 +1,6 @@
-#include <kf/map_data.h>
-#include <kf/open_render.h>
-#include <kf/open_scene0.h>
+#include <kf/lib/map_data.h>
+#include <kf/open/render.h>
+#include <kf/open/scene0.h>
 
 KfOpeningCellStorage opening_cell_storage;
 
@@ -8,7 +8,6 @@ void render_map_cell(s32 col, s32 row, KfCellVisibility visibility)
 {
     MATRIX cell_matrix;
     SVECTOR position;
-    long flag;
     s32 orientation;
     u8 object_index;
 
@@ -38,17 +37,11 @@ void render_map_cell(s32 col, s32 row, KfCellVisibility visibility)
         position.vx += KF_MAP_TILE_SIZE;
     }
 
-    SetRotMatrix(&open_graphics_runtime.render_state.view_matrix);
-    SetTransMatrix(&open_graphics_runtime.render_state.view_matrix);
 
-    RotTrans(&position, (VECTOR *)&cell_matrix.t, &flag);
-    MulMatrix0(&open_graphics_runtime.render_state.view_matrix,
-        &open_graphics_runtime.render_state.quadrant_matrices[orientation], &cell_matrix);
-    SetRotMatrix(&cell_matrix);
-    SetTransMatrix(&cell_matrix);
-    SetLightMatrix(&open_graphics_runtime.light_quadrant_matrices[orientation]);
+    kf::render_place_model(cell_matrix, open_graphics_runtime.render_state.view_matrix, position);
+    kf::matrix_multiply_rotation(open_graphics_runtime.render_state.view_matrix, open_graphics_runtime.render_state.quadrant_matrices[orientation], cell_matrix);
     tmd_select_object_vertices(object_index);
-    render_enqueue_map(object_index);
+    render_enqueue_map(object_index, &open_graphics_runtime.light_quadrant_matrices[orientation], &cell_matrix, open_graphics_runtime.render_state.projection);
 }
 
 void opening_render_map_cells(void)
@@ -88,4 +81,10 @@ void opening_render_map_cells(void)
         row++;
         rows--;
     } while (rows != 0);
+}
+
+
+void render_map_cells_reset_module_state(void)
+{
+    kf::restore_initial_value<opening_cell_storage>();
 }

@@ -2,7 +2,10 @@
 /result
 /result-*
 /codecs/target/
+/codec-bridge/target/
+*.kfpack
 __pycache__/
 *.pyc
 *.bin
 *.cue
+*.iso

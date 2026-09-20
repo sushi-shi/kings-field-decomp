@@ -1,4 +1,4 @@
-#include <kf/game_player.h>
+#include <kf/game/player.h>
 
 void player_warp_shimmer_at_player(KfWarpShimmerMode shimmer_mode)
 {

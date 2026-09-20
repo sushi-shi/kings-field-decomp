@@ -1,11 +1,13 @@
-#include <kf/null.h>
-#include <kf/game_graphics.h>
+#include <kf/lib/null.h>
+#include <kf/game/graphics.h>
 
-#include <kf/map_data.h>
-#include <kf/game_player.h>
-#include <kf/game_collision.h>
-#include <psyq/libc.h>
-#include <kf/game.h>
+#include <kf/lib/map_data.h>
+#include <kf/game/player.h>
+#include <kf/game/collision.h>
+#include <cstdlib>
+#include <cstdio>
+#include <cstring>
+#include <kf/game/game.h>
 
 enum {
     PLAYER_FATAL_DROP_DISTANCE = 3000,
@@ -33,7 +35,7 @@ enum {
     PLAYER_DIAGONAL_COMPONENT_Q12 = 2896
 };
 
-char weapon_image_path_template[16] = "WEPON\\WEP00.MIM";
+char weapon_image_path_template[16] = "WEPON/WEP00.MIM";
 
 KfFloorEntryCell floor_entry_cells[KF_PLAYER_FLOOR_ENTRY_COUNT] = {
     {15, 2}, {29, 56}, {28, 18}, {7, 22}, {39, 69}
@@ -111,10 +113,12 @@ void player_equip_weapon(KfObjectId weapon_id)
         player_state.equipped_weapon_record = &weapon_records.entries[kf_enum_encode<u8>(weapon_id)];
         weapon_image_path_template[9] = '0' + kf_enum_encode<u32>(weapon_id) / 10;
         weapon_image_path_template[10] = '0' + kf_enum_encode<u32>(weapon_id) % 10;
-        if (cd_file_load_into((void *)player_state.weapon_asset_buffer, weapon_image_path_template) != KF_RESOURCE_LOADED) {
+        std::size_t loaded_size;
+        if (resource_file_load_into(player_state.weapon_asset_buffer, KF_WEAPON_ASSET_BUFFER_BYTES,
+                weapon_image_path_template, &loaded_size) != KF_RESOURCE_LOADED) {
             exit(1);
         }
-        asset_registry_set(KF_ASSET_WEAPON, player_state.weapon_asset_buffer);
+        asset_registry_set(KF_ASSET_WEAPON, player_state.weapon_asset_buffer, loaded_size);
     }
     player_state.weapon_attack_phase = KF_WEAPON_ATTACK_INACTIVE;
     player_state.weapon_animation_cache = NULL;
@@ -160,8 +164,8 @@ void player_update_weapon_attack(void)
                 PLAYER_WEAPON_HIT_Y_OFFSET,
                 player_state.equipped_weapon_record->attack_z_offset);
             setVector(&rotation, 0, -player_state.camera_rotation.vy, 0);
-            RotMatrix(&rotation, &matrix);
-            ApplyMatrix(&matrix, &offset, &result);
+            kf::matrix_set_rotation_xyz(rotation, matrix);
+            result = kf::matrix_apply_rotation(matrix, offset);
             addVector(&result, &player_state.camera_position);
             actor = actor_pool_find_overlap(result.vx, result.vy, result.vz,
                 PLAYER_WEAPON_HIT_RADIUS, PLAYER_WEAPON_HIT_HEIGHT);
@@ -297,7 +301,7 @@ s32 player_distance_to_point(
             }
         }
         dz >>= KF_LENGTH_SQUARE_DOWNSHIFT;
-        distance = SquareRoot0(dx * dx + dz * dz) << KF_LENGTH_SQUARE_DOWNSHIFT;
+        distance = kf::length_square_root(dx * dx + dz * dz) << KF_LENGTH_SQUARE_DOWNSHIFT;
         if (max_distance < distance) {
             break;
         }
@@ -319,15 +323,14 @@ s32 player_move_horizontal(s32 heading, s32 distance)
     s32 remainder_z;
     s32 remainder_x;
     s32 half;
-    s32 step;
     u32 cell_z;
     u32 cell_x;
     SVECTOR delta;
     s16 attempt = 1;
     KfMapCellKind type;
 
-    dz = (rcos(heading) * distance) >> KF_FIXED12_BITS;
-    dx = (-rsin(heading) * distance) >> KF_FIXED12_BITS;
+    dz = (kf::angle_cosine(heading) * distance) >> KF_FIXED12_BITS;
+    dx = (-kf::angle_sine(heading) * distance) >> KF_FIXED12_BITS;
     new_z = dz + player_state.camera_position.vz;
     new_x = dx + player_state.camera_position.vx;
     for (;;) {
@@ -347,8 +350,8 @@ s32 player_move_horizontal(s32 heading, s32 distance)
             & KF_ANGLE_WRAP_MASK;
         radius = collision_target.radius
             + (KF_COLLISION_PLAYER_RADIUS + PLAYER_COLLISION_SLIDE_CLEARANCE);
-        delta.vz = (rcos(angle) * radius) >> KF_FIXED12_BITS;
-        delta.vx = (-rsin(angle) * radius) >> KF_FIXED12_BITS;
+        delta.vz = (kf::angle_cosine(angle) * radius) >> KF_FIXED12_BITS;
+        delta.vx = (-kf::angle_sine(angle) * radius) >> KF_FIXED12_BITS;
         attempt--;
         new_z = collision_target.position.vz + delta.vz;
         dz = new_z - player_state.camera_position.vz;
@@ -470,7 +473,7 @@ void player_update_view_bob(void)
             + player_state.motion_state.fields.movement_speed * PLAYER_BOB_PHASE_PER_SPEED)
             & KF_ANGLE_WRAP_MASK;
         player_state.view_bob_phase = phase;
-        player_state.view_bob_offset = rsin(phase) >> PLAYER_BOB_SINE_DOWNSHIFT;
+        player_state.view_bob_offset = kf::angle_sine(phase) >> PLAYER_BOB_SINE_DOWNSHIFT;
     }
 }
 
@@ -571,4 +574,15 @@ void player_update_transform_snapshot(VECTOR *position_out, SVECTOR *rotation_ou
     *position_out = player_state.camera_position;
     *rotation_out = player_state.camera_rotation;
     addVector(rotation_out, &player_state.view_rotation_offset);
+}
+
+
+void player_core_reset_module_state(void)
+{
+    kf::restore_initial_value<weapon_image_path_template>();
+    kf::restore_initial_value<floor_entry_cells>();
+    kf::restore_initial_value<player_rotation_snapshot>();
+    kf::restore_initial_value<player_position_snapshot>();
+    kf::restore_initial_value<player_level_growth_table>();
+    kf::restore_initial_value<player_state>();
 }

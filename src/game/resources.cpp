@@ -1,14 +1,16 @@
-#include <kf/null.h>
+#include <kf/lib/null.h>
 
-#include <kf/game_resources.h>
-#include <kf/resources.h>
-#include <kf/game_equipment.h>
-#include <kf/game_map.h>
-#include <kf/game_player.h>
-#include <kf/game_render.h>
-#include <psyq/sdk.h>
-#include <psyq/libc.h>
-#include <kf/game.h>
+#include <kf/game/resources.h>
+#include <kf/lib/resources.h>
+#include <kf/game/equipment.h>
+#include <kf/lib/map.h>
+#include <kf/game/player.h>
+#include <kf/game/render.h>
+#include <kf/lib/geometry_types.h>
+#include <cstdlib>
+#include <cstdio>
+#include <cstring>
+#include <kf/game/game.h>
 
 enum {
     MAP_VARIANT_ASSET_BUFFER_BYTES = 0x5a000,
@@ -18,7 +20,7 @@ enum {
     MAP_FLOOR2_ALTERNATE_MUSIC_PROGRESS = 25
 };
 
-char map_resource_path[KF_MAP_RESOURCE_PATH_BYTES] = "B0\\";
+char map_resource_path[KF_MAP_RESOURCE_PATH_BYTES] = "B0/";
 
 char map_mix_tim_filename[8] = "MIX.TIM";
 
@@ -36,36 +38,25 @@ KfMapAttributeGrid map_cell_attribute_grid;
 
 #define MAP_GRID_WORDS (sizeof map_cell_attribute_grid / sizeof(u32))
 
-void tim_upload_images(u8 *tim_data)
-{
-    TIM_IMAGE image;
-
-    OpenTIM((u_long *)tim_data);
-    while (ReadTIM(&image) != NULL) {
-        if (image.caddr != NULL) {
-            LoadImage(image.crect, image.caddr);
-            DrawSync(0);
-        }
-        if (image.paddr != NULL) {
-            LoadImage(image.prect, image.paddr);
-            DrawSync(0);
-        }
-    }
-}
+#include "../lib/tim_upload_images.inc"
 
 void common_resources_load(void)
 {
     u8 *images;
+    std::size_t image_size;
     u8 *stream;
     u8 *block;
 
-    cd_file_load_allocated(&images, "COM\\MIX.TIM");
-    tim_upload_images(images);
+    resource_file_load_allocated(&images, "COM/MIX.TIM", &image_size);
+    tim_upload_images(images, image_size);
     memory_release_last();
-    cd_file_load_allocated(&stream, "COM\\COM.DAT");
+    std::size_t resource_size;
+    resource_file_load_allocated(&stream, "COM/COM.DAT", &resource_size);
+    const u8 *resource_end = stream + resource_size;
+    const auto effect_asset = resource_chunk_view(stream, resource_end);
     asset_registry_set(
-        KF_ASSET_EFFECT_SPRITES, (KfAssetHeader *)(stream + KF_RESOURCE_CHUNK_HEADER_BYTES));
-    block = RESOURCE_STREAM_NEXT(stream);
+        KF_ASSET_EFFECT_SPRITES, stream + KF_RESOURCE_CHUNK_HEADER_BYTES, effect_asset.size);
+    block = stream = resource_stream_next(stream, resource_end);
     memcpy((void *)render_cell_windows, (const void *)(block + KF_RESOURCE_CHUNK_HEADER_BYTES),
         sizeof render_cell_windows);
     weapon_records_load_and_mirror_angles(
@@ -89,27 +80,16 @@ void map_resource_path_set_floor(KfFloorId floor)
     map_resource_path[1] = kf_enum_encode<s32>(floor) + '0';
 }
 
-u8 *map_resource_load_file(const char *filename)
+u8 *map_resource_load_file(const char *filename, std::size_t *loaded_size)
 {
     u8 *data;
 
     strcpy(&map_resource_path[3], filename);
-    cd_file_load_allocated(&data, map_resource_path);
+    resource_file_load_allocated(&data, map_resource_path, loaded_size);
     return data;
 }
 
-const u32 *map_resource_copy_words(
-    u32 *destination,
-    const u32 *source,
-    u32 word_count)
-{
-    u32 *out = destination;
-
-    while (word_count-- != 0) {
-        *out++ = *source++;
-    }
-    return source;
-}
+#include "../lib/resource_copy_words.inc"
 
 void map_variant_assets_load(void)
 {
@@ -118,8 +98,10 @@ void map_variant_assets_load(void)
 
     memcpy((void *)(&map_resource_path[3]), (const void *)("CHR0.MIM"), sizeof "CHR0.MIM");
     map_resource_path[6] = kf_enum_encode<u8>(player_state.map_variant) + '0';
-    cd_file_load_into((void *)*asset_buffer, map_resource_path);
-    asset_registry_load_tmd_archive(KF_ASSET_ACTOR_FIRST, *asset_buffer);
+    std::size_t loaded_size;
+    if (resource_file_load_into(*asset_buffer, MAP_VARIANT_ASSET_BUFFER_BYTES, map_resource_path, &loaded_size) != KF_RESOURCE_LOADED)
+        exit(1);
+    asset_registry_load_tmd_archive(KF_ASSET_ACTOR_FIRST, *asset_buffer, loaded_size);
 }
 
 void audio_play_current_map_sequence(void)
@@ -156,14 +138,22 @@ void map_resources_load(KfFloorId floor, KfMapVariant map_variant)
     effect_pool_reset();
     memory_allocation_reset();
     map_resource_path_set_floor(floor);
-    tim_upload_images(map_resource_load_file(map_mix_tim_filename));
+    std::size_t image_size;
+    u8 *images = map_resource_load_file(map_mix_tim_filename, &image_size);
+    tim_upload_images(images, image_size);
     memory_release_last();
-    stream = map_resource_load_file("MIXA.DAT");
-    audio_load_vab(stream + KF_RESOURCE_CHUNK_HEADER_BYTES,
-        RESOURCE_STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES);
+    std::size_t resource_size;
+    stream = map_resource_load_file("MIXA.DAT", &resource_size);
+    const u8 *resource_end = stream + resource_size;
+    audio_load_vab_resource(stream, resource_size);
     block = stream;
-    RESOURCE_STREAM_NEXT(stream);
+    stream = resource_stream_next(stream, resource_end);
+    block = stream;
+    stream = resource_stream_next(stream, resource_end);
     audio_play_current_map_sequence();
+    const auto map_grids = resource_chunk_view(stream, resource_end);
+    if (map_grids.size < 5 * sizeof map_cell_attribute_grid)
+        kf::host_fail("Truncated map grids");
     source = map_resource_copy_words(
         map_cell_attribute_grid.words,
         (u32 *)(stream + KF_RESOURCE_CHUNK_HEADER_BYTES),
@@ -176,35 +166,66 @@ void map_resources_load(KfFloorId floor, KfMapVariant map_variant)
         map_collision_flag_grid.words, source, MAP_GRID_WORDS);
     map_resource_copy_words(
         map_collision_grid.words, source, MAP_GRID_WORDS);
-    item_load_floor_placements(
-        (KfFloorItemPlacement *)(RESOURCE_STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES));
+    stream = resource_stream_next(stream, resource_end);
+    const auto floor_items = resource_chunk_view(stream, resource_end);
+    item_load_floor_placements(floor_items.data, floor_items.size);
+    stream = resource_stream_next(stream, resource_end);
+    resource_chunk_view(stream, resource_end);
     map_object_pool_load(
-        (KfMapObjectPlacement *)(RESOURCE_STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES));
+        (KfMapObjectPlacement *)(stream + KF_RESOURCE_CHUNK_HEADER_BYTES));
+    stream = resource_stream_next(stream, resource_end);
+    resource_chunk_view(stream, resource_end);
     actor_pool_load_placements(
-        (KfActorPlacement *)(RESOURCE_STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES));
+        (KfActorPlacement *)(stream + KF_RESOURCE_CHUNK_HEADER_BYTES));
+    stream = resource_stream_next(stream, resource_end);
+    resource_chunk_view(stream, resource_end);
     actor_definitions_load(
-        (const KfActorDefinitionTable *)(RESOURCE_STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES));
+        (const KfActorDefinitionTable *)(stream + KF_RESOURCE_CHUNK_HEADER_BYTES));
+    stream = resource_stream_next(stream, resource_end);
+    resource_chunk_view(stream, resource_end);
     map_event_pool_load(
-        (KfMapEventDefinition *)(RESOURCE_STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES));
+        (KfMapEventDefinition *)(stream + KF_RESOURCE_CHUNK_HEADER_BYTES));
     memory_release_last();
     memory_arena.allocation.cursor = block + KF_RESOURCE_REUSE_PREFIX_BYTES;
-    stream = map_resource_load_file("MIXB.DAT");
+    stream = map_resource_load_file("MIXB.DAT", &resource_size);
+    resource_end = stream + resource_size;
+    const auto entity_tmd = resource_chunk_view(stream, resource_end);
     tmd_register(KF_TMD_SLOT_ENTITIES,
-        (KfTmdHeader *)(stream + KF_RESOURCE_CHUNK_HEADER_BYTES));
+        stream + KF_RESOURCE_CHUNK_HEADER_BYTES, entity_tmd.size);
+    stream = resource_stream_next(stream, resource_end);
+    const auto map_tmd = resource_chunk_view(stream, resource_end);
     tmd_register(KF_TMD_SLOT_MAP,
-        (KfTmdHeader *)(RESOURCE_STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES));
+        stream + KF_RESOURCE_CHUNK_HEADER_BYTES, map_tmd.size);
+    stream = resource_stream_next(stream, resource_end);
+    const auto event_models = resource_chunk_view(stream, resource_end);
     asset_registry_load_tmd_archive(KF_ASSET_MAP_EVENT_FIRST,
-        RESOURCE_STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES);
+        stream + KF_RESOURCE_CHUNK_HEADER_BYTES, event_models.size);
+    stream = resource_stream_next(stream, resource_end);
+    const auto effect_models = resource_chunk_view(stream, resource_end);
     asset_registry_load_tmd_archive(KF_ASSET_EFFECT_FIRST,
-        RESOURCE_STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES);
-    RESOURCE_STREAM_NEXT(stream);
+        stream + KF_RESOURCE_CHUNK_HEADER_BYTES, effect_models.size);
+    stream = resource_stream_next(stream, resource_end);
     if (map_variant == KF_MAP_VARIANT_DEFAULT) {
+        const auto actor_models = resource_chunk_view(stream, resource_end);
         asset_registry_load_tmd_archive(KF_ASSET_ACTOR_FIRST,
-            stream + KF_RESOURCE_CHUNK_HEADER_BYTES);
+            stream + KF_RESOURCE_CHUNK_HEADER_BYTES, actor_models.size);
     } else {
         map_variant_asset_buffer = (u8 *)memory_allocate(MAP_VARIANT_ASSET_BUFFER_BYTES);
         map_variant_assets_load();
     }
     player_sync_position_to_map();
     memory_set_allocation_mode(KF_MEMORY_USE_HEAP);
+}
+
+
+void resources_reset_module_state(void)
+{
+    kf::restore_initial_value<map_resource_path>();
+    kf::restore_initial_value<map_mix_tim_filename>();
+    kf::restore_initial_value<render_cell_windows>();
+    kf::restore_initial_value<map_collision_flag_grid>();
+    kf::restore_initial_value<map_cell_orientation_grid>();
+    kf::restore_initial_value<map_floor_height_grid>();
+    kf::restore_initial_value<map_collision_grid>();
+    kf::restore_initial_value<map_cell_attribute_grid>();
 }

@@ -1,6 +1,6 @@
-#include <kf/game_graphics.h>
+#include <kf/game/graphics.h>
 
-#include <kf/game_render.h>
+#include <kf/game/render.h>
 
 enum {
     SHADOW_BLADE_COLOR_BLEND = 2500,
@@ -11,15 +11,14 @@ static inline void lighting_blend_current_color(const MATRIX *target, s32 amount
 {
     MATRIX current;
 
-    ReadColorMatrix(&current);
+    current = game_graphics_runtime.render_state.lighting.color_matrix;
     lighting_set_color_matrix(&current, target, amount);
 }
 
 void lighting_apply_weapon9_environment(void)
 {
     lighting_blend_current_color(&color_matrix_table[kf_enum_encode<s32>(KF_GAME_COLOR_BLACK)], SHADOW_BLADE_COLOR_BLEND);
-    SetFogNear(game_graphics_runtime.render_state.fog_near_distance - (game_graphics_runtime.render_state.fog_near_distance >> 1),
-        KF_DEFAULT_PROJECTION_DISTANCE);
+    game_graphics_runtime.render_state.projection.fog_near = game_graphics_runtime.render_state.fog_near_distance - (game_graphics_runtime.render_state.fog_near_distance >> 1);
 }
 
 void lighting_apply_timed_player_effect(void)

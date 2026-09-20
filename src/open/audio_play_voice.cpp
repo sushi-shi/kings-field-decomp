@@ -1,14 +1,19 @@
-#include <kf/audio.h>
-#include <kf/open_audio.h>
-#include <psyq/audio.h>
+#include <kf/lib/audio.h>
+#include <kf/open/audio.h>
 
 void audio_play_voice(
-    s16 vab_id, s16 program, s16 tone, s16 note, s16 left_volume, s16 right_volume)
+    kf::SoundBank *bank, s16 program, s16 tone, s16 note, s16 left_volume, s16 right_volume)
 {
     if (program == 0 && tone == 0 && note == 0) {
         return;
     }
-    audio_key_on_next_slot(vab_id, program, tone, note, left_volume, right_volume);
+    audio_key_on_next_slot(bank, program, tone, note, left_volume, right_volume);
 }
 
 s32 audio_voice_slot_index = KF_AUDIO_VOICE_SLOTS - 1;
+
+
+void audio_play_voice_reset_module_state(void)
+{
+    kf::restore_initial_value<audio_voice_slot_index>();
+}

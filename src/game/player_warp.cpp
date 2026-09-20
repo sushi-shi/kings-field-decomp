@@ -1,10 +1,11 @@
-#include <kf/null.h>
-#include <kf/bool.h>
+#include <kf/lib/null.h>
+#include <kf/game/graphics.h>
+#include <kf/lib/bool.h>
 
-#include <kf/map_data.h>
-#include <kf/game_player.h>
-#include <kf/game_collision.h>
-#include <kf/game.h>
+#include <kf/lib/map_data.h>
+#include <kf/game/player.h>
+#include <kf/game/collision.h>
+#include <kf/game/game.h>
 
 static MATRIX actor_transform_color_matrix = {
     {{250, 100, 500}, {250, 100, 500}, {250, 100, 500}}, {0, 0, 0}
@@ -26,6 +27,7 @@ enum {
 
 void player_warp_shimmer(KfWarpShimmerMode shimmer_mode, VECTOR *position)
 {
+    const auto input_context = kf::host_set_input_context(kf::InputContext::Scripted);
     KfEffectRecord *effects[KF_CYLINDER_TRANSITION_COUNT];
     KfEffectRecord **cursor;
     KfEffectRecord *effect;
@@ -90,7 +92,6 @@ void player_warp_shimmer(KfWarpShimmerMode shimmer_mode, VECTOR *position)
                 & KF_ANGLE_WRAP_MASK;
         }
         render_frame(&player_state.camera_position, &player_state.camera_rotation);
-        frame_pacer_wait();
     }
 
     if (mode_value != KF_WARP_SHIMMER_GROW_KEEP) {
@@ -100,6 +101,7 @@ void player_warp_shimmer(KfWarpShimmerMode shimmer_mode, VECTOR *position)
             effect->type = KF_EFFECT_SLOT_FREE;
         }
     }
+    kf::host_set_input_context(input_context);
 }
 
 void player_warp_change_floor(KfFloorId floor, KfMapVariant map_variant)
@@ -247,19 +249,19 @@ change_to_floor4:
 
 void actor_transform_definition5_to6(KfActor *actor)
 {
+    const auto input_context = kf::host_set_input_context(kf::InputContext::Scripted);
     MATRIX saved;
     s32 blend;
 
     map_event_pool[1].state = KF_MAP_EVENT_DISABLED;
     map_event_pool[2].state = KF_MAP_EVENT_DISABLED;
-    ReadColorMatrix(&saved);
+    saved = game_graphics_runtime.render_state.lighting.color_matrix;
 
     for (blend = 0; blend < KF_FIXED12_ONE + 1; blend += KF_FIXED12_ONE / ACTOR_TRANSFORM_BLEND_INTERVALS) {
         lighting_set_color_matrix(&saved, &actor_transform_color_matrix, blend);
         actor->position.vy += ACTOR_TRANSFORM_Y_STEP;
         actor->rotation.angles.y += KF_ANGLE_FULL_TURN / ACTOR_TRANSFORM_BLEND_INTERVALS;
         render_frame(NULL, NULL);
-        frame_pacer_wait();
     }
     actor->definition_id = ACTOR_TRANSFORM_RESULT_DEFINITION;
     for (blend = KF_FIXED12_ONE; blend >= 0; blend -= KF_FIXED12_ONE / ACTOR_TRANSFORM_BLEND_INTERVALS) {
@@ -267,7 +269,13 @@ void actor_transform_definition5_to6(KfActor *actor)
         actor->position.vy -= ACTOR_TRANSFORM_Y_STEP;
         actor->rotation.angles.y -= KF_ANGLE_FULL_TURN / ACTOR_TRANSFORM_BLEND_INTERVALS;
         render_frame(NULL, NULL);
-        frame_pacer_wait();
     }
     lighting_set_active_color_matrix(KF_GAME_COLOR_DEFAULT);
+    kf::host_set_input_context(input_context);
+}
+
+
+void player_warp_reset_module_state(void)
+{
+    kf::restore_initial_value<actor_transform_color_matrix>();
 }

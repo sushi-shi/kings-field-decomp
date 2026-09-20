@@ -1,0 +1,20 @@
+#pragma once
+#include <kf/lib/types.h>
+
+enum class KfEquipmentSlot : u8 {
+    KF_EQUIPMENT_SLOT_HEAD = 0,
+    KF_EQUIPMENT_SLOT_BODY = 1,
+    KF_EQUIPMENT_SLOT_ARM = 2,
+    KF_EQUIPMENT_SLOT_LEG = 3,
+    KF_EQUIPMENT_SLOT_SHIELD = 4,
+    KF_EQUIPMENT_SLOT_ACCESSORY = 5,
+    KF_EQUIPMENT_SLOT_REFRESH_ONLY = 0xff
+};
+using enum KfEquipmentSlot;
+
+enum {
+    KF_WEAPON_RECORD_COUNT = 16,
+    KF_ARMOR_RECORD_COUNT = 42,
+    KF_WEAPON_TABLE_WORD_COUNT = 176,
+    KF_ARMOR_TABLE_WORD_COUNT = 294
+};

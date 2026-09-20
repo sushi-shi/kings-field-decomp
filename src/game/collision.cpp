@@ -1,6 +1,6 @@
-#include <kf/map_data.h>
-#include <kf/game_collision.h>
-#include <kf/game.h>
+#include <kf/lib/map_data.h>
+#include <kf/game/collision.h>
+#include <kf/game/game.h>
 
 s16 map_cell_attribute_height_table[KF_MAP_ATTRIBUTE_COUNT] = {
     -25000, -3000, -3000, -3000, -3000, -3000, -3000, -3000,
@@ -137,4 +137,11 @@ u32 collision_query_world(
         return hit | KF_COLLISION_MAP_EVENT;
     }
     return KF_COLLISION_NONE;
+}
+
+
+void collision_reset_module_state(void)
+{
+    kf::restore_initial_value<map_cell_attribute_height_table>();
+    kf::restore_initial_value<collision_target>();
 }

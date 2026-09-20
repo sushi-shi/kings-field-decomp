@@ -1,8 +1,8 @@
-#include <kf/null.h>
-#include <kf/bool.h>
+#include <kf/lib/null.h>
+#include <kf/lib/bool.h>
 
-#include <kf/game_player.h>
-#include <kf/game.h>
+#include <kf/game/player.h>
+#include <kf/game/game.h>
 
 enum {
     PLAYER_KEY_UNLOCK_VOLUME = 110,
@@ -21,9 +21,9 @@ enum {
     PLAYER_HARP_FLOOR3_HOLD_COUNTDOWN = 270
 };
 
-char enemy_info_image_path_template[14] = "ENE0\\EI00.TIM";
+char enemy_info_image_path_template[14] = "ENE0/EI00.TIM";
 
-char person_image_path_template[15] = "PRSN\\PER00.TIM";
+char person_image_path_template[15] = "PRSN/PER00.TIM";
 
 void actor_show_info_image(const KfActor *actor)
 {
@@ -201,4 +201,11 @@ done:
     if (!used) {
         notify_enqueue(KF_NOTIFICATION_NOTHING_HAPPENS);
     }
+}
+
+
+void player_use_item_reset_module_state(void)
+{
+    kf::restore_initial_value<enemy_info_image_path_template>();
+    kf::restore_initial_value<person_image_path_template>();
 }

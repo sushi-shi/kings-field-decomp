@@ -1,9 +1,12 @@
-#include <kf/null.h>
+#include <kf/lib/random.hpp>
+#include <kf/lib/null.h>
 
-#include <kf/map_data.h>
-#include <kf/game_map.h>
-#include <psyq/libc.h>
-#include <kf/game.h>
+#include <kf/lib/map_data.h>
+#include <kf/lib/map.h>
+#include <cstdlib>
+#include <cstdio>
+#include <cstring>
+#include <kf/game/game.h>
 
 enum {
     MAP_DOOR_INTERACTION_LOCAL_Z = 550,
@@ -31,7 +34,7 @@ enum {
     MAP_BOSS_EMITTER_X_OFFSET = 1100,
     MAP_BOSS_EMITTER_Z_OFFSET = 1000,
     MAP_BOSS_EMITTER_Y_OFFSET = -1000,
-    MAP_BOSS_EMITTER_SOUND_RANDOM_LIMIT = (RAND_MAX + 1) / 8,
+    MAP_BOSS_EMITTER_SOUND_RANDOM_LIMIT = (kf::random_max + 1) / 8,
     MAP_EFFECT_SWITCH_PHASE_STEP = 128,
     MAP_REVEAL_LIFT = KF_MAP_OBJECT_REVEAL_DEPTH
         + (kf_enum_encode<u16>(KF_MAP_OBJECT_REVEAL_SETTLE_END) - 1) * KF_MAP_OBJECT_REVEAL_SETTLE_STEP,
@@ -75,7 +78,7 @@ s32 map_object_pool_find_interaction_from(s32 start_index, s32 x, s32 z, s32 ext
         if (definition->behavior_type == KF_MAP_OBJECT_OP_HINGED_DOOR) {
             setVector(&offset, -KF_MAP_TILE_SIZE, 0, MAP_DOOR_INTERACTION_LOCAL_Z);
             matrix_set_rotation_y(object->rotation.angles.y, &matrix);
-            ApplyMatrix(&matrix, &offset, &point);
+            point = kf::matrix_apply_rotation(matrix, offset);
             point.vx += x;
             point.vz += z;
             if (map_object_distance_to_point(
@@ -86,7 +89,7 @@ s32 map_object_pool_find_interaction_from(s32 start_index, s32 x, s32 z, s32 ext
         } else if (definition->behavior_type == KF_MAP_OBJECT_OP_HINGED_DOOR_PARTNER) {
             setVector(&offset, KF_MAP_TILE_SIZE, 0, MAP_DOOR_INTERACTION_LOCAL_Z);
             matrix_set_rotation_y(object->rotation.angles.y, &matrix);
-            ApplyMatrix(&matrix, &offset, &point);
+            point = kf::matrix_apply_rotation(matrix, offset);
             point.vx += x;
             point.vz += z;
             if (map_object_distance_to_point(
@@ -158,7 +161,7 @@ void map_object_spawn_effect(KfMapObjectDropSource drop_source, KfObjectId objec
     object->rotation.angles.z = 0;
     object->rotation.angles.x = 0;
     within_drop_range = object_id < KF_MAP_DROP_BOUNCE_ID_END;
-    object->rotation.angles.y = rand() >> KF_RANDOM_ANGLE_SHIFT;
+    object->rotation.angles.y = kf::random_next() >> KF_RANDOM_ANGLE_SHIFT;
     object->action = KF_MAP_OBJECT_OP_NONE;
     if (object_id < KF_MAP_DROP_TIP_ID_END) {
         map_object_start_action_if_idle(object, KF_MAP_OBJECT_OP_FALL_AND_TIP);
@@ -182,16 +185,16 @@ void map_object_spawn_actor_debris(u16 source, const VECTOR *position, s32 y_off
     object->object_id = KF_ITEM_GOLD_COIN;
 
     object->link.gold_amount = source;
-    angle = (u32)rand() >> KF_RANDOM_ANGLE_SHIFT;
+    angle = (u32)kf::random_next() >> KF_RANDOM_ANGLE_SHIFT;
     setVector(&object->position,
-        ((rsin(angle) * MAP_GOLD_DROP_SCATTER_RADIUS) >> KF_FIXED12_BITS) + position->vx,
+        ((kf::angle_sine(angle) * MAP_GOLD_DROP_SCATTER_RADIUS) >> KF_FIXED12_BITS) + position->vx,
         y_offset + position->vy,
-        ((rcos(angle) * MAP_GOLD_DROP_SCATTER_RADIUS) >> KF_FIXED12_BITS) + position->vz);
+        ((kf::angle_cosine(angle) * MAP_GOLD_DROP_SCATTER_RADIUS) >> KF_FIXED12_BITS) + position->vz);
     object->cell_x = object->position.vx / KF_MAP_TILE_SIZE;
     object->cell_z = object->position.vz / KF_MAP_TILE_SIZE;
     object->rotation.angles.z = 0;
     object->rotation.angles.x = 0;
-    object->rotation.angles.y = rand() >> KF_RANDOM_ANGLE_SHIFT;
+    object->rotation.angles.y = kf::random_next() >> KF_RANDOM_ANGLE_SHIFT;
     object->action = KF_MAP_OBJECT_OP_NONE;
     map_object_start_action_if_idle(object, KF_MAP_OBJECT_OP_BOUNCE);
     object->link.fields.vertical_velocity = MAP_GOLD_DROP_INITIAL_VELOCITY_Y;
@@ -411,8 +414,8 @@ void map_object_pool_update(void)
                 switch (object->object_id) {
             case KF_MAP_OBJECT_PROJECTILE_EMITTER:
                 direction.vy = 0;
-                direction.vx = (rsin(object->rotation.angles.y) * MAP_EMITTER_VELOCITY_NUMERATOR) >> MAP_EMITTER_VELOCITY_SHIFT;
-                direction.vz = (-rcos(object->rotation.angles.y) * MAP_EMITTER_VELOCITY_NUMERATOR) >> MAP_EMITTER_VELOCITY_SHIFT;
+                direction.vx = (kf::angle_sine(object->rotation.angles.y) * MAP_EMITTER_VELOCITY_NUMERATOR) >> MAP_EMITTER_VELOCITY_SHIFT;
+                direction.vz = (-kf::angle_cosine(object->rotation.angles.y) * MAP_EMITTER_VELOCITY_NUMERATOR) >> MAP_EMITTER_VELOCITY_SHIFT;
                 effect_pool_construct(
                     object->link.fields.spawn.effect_id,
                     KF_EFFECT_CLASS_20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
@@ -420,12 +423,12 @@ void map_object_pool_update(void)
                     &object->position,
                     &direction,
                     KfEffectRotationArguments{&object->rotation.vector});
-                object->action_timer = kf_enum_decode<KfMapObjectProgress>((rand() >> MAP_EMITTER_COUNTDOWN_RANDOM_SHIFT) + MAP_EMITTER_COUNTDOWN_BASE);
+                object->action_timer = kf_enum_decode<KfMapObjectProgress>((kf::random_next() >> MAP_EMITTER_COUNTDOWN_RANDOM_SHIFT) + MAP_EMITTER_COUNTDOWN_BASE);
                 break;
             case KF_MAP_OBJECT_FIRE_BALL_EMITTER:
                 direction.vy = 0;
-                direction.vx = (rsin(object->rotation.angles.y) * MAP_FIRE_BALL_EMITTER_VELOCITY_NUMERATOR) >> MAP_FIRE_BALL_EMITTER_VELOCITY_SHIFT;
-                direction.vz = (-rcos(object->rotation.angles.y) * MAP_FIRE_BALL_EMITTER_VELOCITY_NUMERATOR) >> MAP_FIRE_BALL_EMITTER_VELOCITY_SHIFT;
+                direction.vx = (kf::angle_sine(object->rotation.angles.y) * MAP_FIRE_BALL_EMITTER_VELOCITY_NUMERATOR) >> MAP_FIRE_BALL_EMITTER_VELOCITY_SHIFT;
+                direction.vz = (-kf::angle_cosine(object->rotation.angles.y) * MAP_FIRE_BALL_EMITTER_VELOCITY_NUMERATOR) >> MAP_FIRE_BALL_EMITTER_VELOCITY_SHIFT;
                 point.vx = object->position.vx;
                 point.vz = object->position.vz;
                 point.vy = object->position.vy + MAP_FIRE_BALL_EMITTER_Y_OFFSET;
@@ -436,12 +439,12 @@ void map_object_pool_update(void)
                     &point,
                     &direction,
                     KfEffectRotationArguments{&object->rotation.vector});
-                object->action_timer = kf_enum_decode<KfMapObjectProgress>((rand() >> MAP_EMITTER_COUNTDOWN_RANDOM_SHIFT) + MAP_EMITTER_COUNTDOWN_BASE);
+                object->action_timer = kf_enum_decode<KfMapObjectProgress>((kf::random_next() >> MAP_EMITTER_COUNTDOWN_RANDOM_SHIFT) + MAP_EMITTER_COUNTDOWN_BASE);
                 break;
             case KF_MAP_OBJECT_WIND_CUTTER_EMITTER:
                 direction.vy = 0;
-                direction.vx = (rsin(object->rotation.angles.y) * MAP_EMITTER_VELOCITY_NUMERATOR) >> MAP_EMITTER_VELOCITY_SHIFT;
-                direction.vz = (-rcos(object->rotation.angles.y) * MAP_EMITTER_VELOCITY_NUMERATOR) >> MAP_EMITTER_VELOCITY_SHIFT;
+                direction.vx = (kf::angle_sine(object->rotation.angles.y) * MAP_EMITTER_VELOCITY_NUMERATOR) >> MAP_EMITTER_VELOCITY_SHIFT;
+                direction.vz = (-kf::angle_cosine(object->rotation.angles.y) * MAP_EMITTER_VELOCITY_NUMERATOR) >> MAP_EMITTER_VELOCITY_SHIFT;
                 point.vx = object->position.vx;
                 point.vz = object->position.vz;
                 point.vy = object->position.vy + MAP_WIND_CUTTER_EMITTER_Y_OFFSET;
@@ -452,15 +455,15 @@ void map_object_pool_update(void)
                     &point,
                     &direction,
                     KfEffectRotationSoundArguments{&object->rotation.vector, KF_EFFECT_SOUND_PLAY});
-                object->action_timer = kf_enum_decode<KfMapObjectProgress>((rand() >> MAP_EMITTER_COUNTDOWN_RANDOM_SHIFT) + MAP_EMITTER_COUNTDOWN_BASE);
+                object->action_timer = kf_enum_decode<KfMapObjectProgress>((kf::random_next() >> MAP_EMITTER_COUNTDOWN_RANDOM_SHIFT) + MAP_EMITTER_COUNTDOWN_BASE);
                 break;
             case KF_MAP_OBJECT_BOSS_PROJECTILE_EMITTER:
                 if (map_floor5_script.boss_encounter_started == KF_MAP_SCRIPT_UNSET) {
                     break;
                 }
                 direction.vy = 0;
-                direction.vx = (rsin(object->rotation.angles.y + KF_ANGLE_QUARTER_TURN) * MAP_BOSS_EMITTER_VELOCITY_NUMERATOR) >> MAP_EMITTER_VELOCITY_SHIFT;
-                direction.vz = (-rcos(object->rotation.angles.y + KF_ANGLE_QUARTER_TURN) * MAP_BOSS_EMITTER_VELOCITY_NUMERATOR) >> MAP_EMITTER_VELOCITY_SHIFT;
+                direction.vx = (kf::angle_sine(object->rotation.angles.y + KF_ANGLE_QUARTER_TURN) * MAP_BOSS_EMITTER_VELOCITY_NUMERATOR) >> MAP_EMITTER_VELOCITY_SHIFT;
+                direction.vz = (-kf::angle_cosine(object->rotation.angles.y + KF_ANGLE_QUARTER_TURN) * MAP_BOSS_EMITTER_VELOCITY_NUMERATOR) >> MAP_EMITTER_VELOCITY_SHIFT;
                 switch (object->rotation.angles.y) {
                 case 0:
                     point.vx = object->position.vx + MAP_BOSS_EMITTER_X_OFFSET;
@@ -478,8 +481,8 @@ void map_object_pool_update(void)
                     KF_MAGIC_WIND_CUTTER,
                     &point,
                     &direction,
-                    KfEffectRotationSoundArguments{&object->rotation.vector, effect_sound_request(rand() < MAP_BOSS_EMITTER_SOUND_RANDOM_LIMIT)});
-                object->action_timer = kf_enum_decode<KfMapObjectProgress>((rand() >> MAP_EMITTER_COUNTDOWN_RANDOM_SHIFT) + MAP_BOSS_EMITTER_COUNTDOWN_BASE);
+                    KfEffectRotationSoundArguments{&object->rotation.vector, effect_sound_request(kf::random_next() < MAP_BOSS_EMITTER_SOUND_RANDOM_LIMIT)});
+                object->action_timer = kf_enum_decode<KfMapObjectProgress>((kf::random_next() >> MAP_EMITTER_COUNTDOWN_RANDOM_SHIFT) + MAP_BOSS_EMITTER_COUNTDOWN_BASE);
                 break;
             }
             } else {
@@ -581,4 +584,10 @@ void map_object_pool_update(void)
             break;
         }
     }
+}
+
+
+void map_object_reset_module_state(void)
+{
+    kf::restore_initial_value<gameplay_sound_refs>();
 }

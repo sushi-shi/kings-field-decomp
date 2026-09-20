@@ -1,11 +1,12 @@
-#include <kf/null.h>
+#include <kf/lib/null.h>
 
-#include <kf/game_math.h>
-#include <kf/audio.h>
-#include <kf/audio_sequence.h>
-#include <psyq/audio.h>
-#include <psyq/libc.h>
-#include <kf/game.h>
+#include <kf/lib/math.h>
+#include <kf/lib/audio.h>
+#include <kf/lib/audio_sequence.h>
+#include <cstdlib>
+#include <cstdio>
+#include <cstring>
+#include <kf/game/game.h>
 
 enum {
     GAME_SEQUENCE_BUFFER_BYTES = 0x3000,
@@ -18,56 +19,46 @@ enum {
 
 s32 audio_voice_slot_index = 9;
 
-static char audio_sequence_table[SS_SEQ_TABSIZ * KF_AUDIO_SEQUENCE_CAPACITY];
-
 KfAudioState audio_state;
 
 void audio_initialize(void)
 {
-    SsInit();
-    SsSetTableSize(audio_sequence_table,
-        KF_AUDIO_SEQUENCE_CAPACITY, KF_AUDIO_TRACKS_PER_SEQUENCE);
-    SsSetTickMode(SS_TICK60);
-    SsStart();
-    SsSetMVol(KF_AUDIO_MAX_VOLUME, KF_AUDIO_MAX_VOLUME);
-    SsUtSetReverbType(SS_REV_TYPE_STUDIO_C);
-    SsUtReverbOn();
-    SsUtSetReverbDepth(GAME_REVERB_DEPTH, GAME_REVERB_DEPTH);
-    audio_state.sequence_buffer = (u_long *)memory_allocate(GAME_SEQUENCE_BUFFER_BYTES);
+    kf::sound_reset(kf::ReverbPreset::Studio, GAME_REVERB_DEPTH, GAME_REVERB_DEPTH);
+    kf::sound_master_volume(KF_AUDIO_MAX_VOLUME, KF_AUDIO_MAX_VOLUME);
+    audio_state.bank = nullptr;
+    audio_state.sequence = nullptr;
+    audio_voice_slot_index = KF_AUDIO_VOICE_SLOTS - 1;
+    audio_state.sequence_buffer = (u8 *)memory_allocate(GAME_SEQUENCE_BUFFER_BYTES);
     audio_state.sequence_active = KF_AUDIO_SEQUENCE_INACTIVE;
     audio_reset_voice_slots();
 }
 
-void audio_load_vab(u8 *vab_header, u8 *vab_body)
+#include "../lib/audio_bank_load.inc"
+
+void audio_load_vab(const u8 *header, std::size_t header_size, const u8 *body, std::size_t body_size)
 {
     audio_stop_sequence_fade();
-    audio_state.active_vab_id = SsVabOpenHead(vab_header, KF_AUDIO_VAB_AUTO);
-    if (audio_state.active_vab_id == KF_AUDIO_VAB_UNAVAILABLE) {
-        printf("VAB headder open failed\n");
-        return;
-    }
-    audio_state.vab_header = vab_header;
-    audio_state.active_vab_id = SsVabTransBody(vab_body, audio_state.active_vab_id);
-    if (audio_state.active_vab_id == KF_AUDIO_VAB_UNAVAILABLE) {
-        printf("VAB body open failed\n");
-        return;
-    }
-    SsVabTransCompleted(SS_WAIT_COMPLETED);
+    audio_close_vab();
+    audio_state.bank = kf::sound_bank_load(header, header_size, body, body_size);
+    if (!audio_state.bank)
+        kf::host_fail("Cannot decode sound bank");
 }
 
 void audio_play_map_sequence(u8 sequence_id)
 {
-    char path[20] = "B0\\SND0.SEQ";
+    char path[20] = "B0/SND0.SEQ";
+    std::size_t sequence_size;
 
     audio_stop_sequence_fade();
     if (player_state.audio_music_enabled != KF_PLAYER_OPTION_OFF) {
         path[6] = sequence_id + '0';
         path[1] = kf_enum_encode<u8>(player_state.progress_state.current_floor) + '0';
-        if (cd_file_load_into((void *)audio_state.sequence_buffer, path) == KF_RESOURCE_LOADED) {
-            audio_state.sequence_id = SsSeqOpen(
-                audio_state.sequence_buffer, audio_state.active_vab_id);
-            SsSeqSetVol(audio_state.sequence_id, GAME_SEQUENCE_VOLUME, GAME_SEQUENCE_VOLUME);
-            SsSeqPlay(audio_state.sequence_id, SSPLAY_PLAY, SSPLAY_INFINITY);
+        if (resource_file_load_into(audio_state.sequence_buffer, GAME_SEQUENCE_BUFFER_BYTES, path, &sequence_size) == KF_RESOURCE_LOADED) {
+            audio_state.sequence = kf::sound_sequence_load(audio_state.sequence_buffer, sequence_size, audio_state.bank);
+            if (!audio_state.sequence)
+                kf::host_fail("Cannot decode music sequence");
+            kf::sound_sequence_volume(audio_state.sequence, GAME_SEQUENCE_VOLUME, GAME_SEQUENCE_VOLUME);
+            kf::sound_sequence_play(audio_state.sequence);
             audio_state.sequence_active = KF_AUDIO_SEQUENCE_ACTIVE;
         }
     }
@@ -80,8 +71,8 @@ void audio_stop_sequence_fade(void)
     if (audio_state.sequence_active == KF_AUDIO_SEQUENCE_ACTIVE) {
         volume = GAME_SEQUENCE_VOLUME;
         do {
-            VSync(0);
-            SsSeqSetVol(audio_state.sequence_id, volume, volume);
+            kf::host_wait_frame();
+            kf::sound_sequence_volume(audio_state.sequence, volume, volume);
         } while (--volume >= 0);
         AUDIO_SEQUENCE_STOP_AND_CLOSE();
     }
@@ -94,30 +85,23 @@ void audio_stop_sequence_master_fade(s32 fade_step)
     if (audio_state.sequence_active == KF_AUDIO_SEQUENCE_ACTIVE) {
         volume = GAME_SEQUENCE_VOLUME << KF_FIXED8_BITS;
         do {
-            VSync(0);
-            SsSetMVol(volume >> KF_FIXED8_BITS, volume >> KF_FIXED8_BITS);
+            kf::host_wait_frame();
+            kf::sound_master_volume(volume >> KF_FIXED8_BITS, volume >> KF_FIXED8_BITS);
             volume -= fade_step;
         } while (volume > 0);
-        SsSetMVol(0, 0);
-        SsSeqSetVol(audio_state.sequence_id, 0, 0);
+        kf::sound_master_volume(0, 0);
+        kf::sound_sequence_volume(audio_state.sequence, 0, 0);
         AUDIO_SEQUENCE_STOP_AND_CLOSE();
     }
 }
 
-void audio_shutdown(void)
-{
-    audio_close_vab();
-    SsSeqClose(audio_state.sequence_id);
-    SsEnd();
-}
+#include "../lib/audio_shutdown.inc"
 
 void audio_close_vab(void)
 {
-    s16 *vab_id = &audio_state.active_vab_id;
-
-    SsVabClose(*vab_id);
-    *vab_id = KF_AUDIO_VAB_UNAVAILABLE;
-    audio_state.vab_header = NULL;
+    AUDIO_SEQUENCE_STOP_AND_CLOSE();
+    kf::sound_bank_release(audio_state.bank);
+    audio_state.bank = nullptr;
 }
 
 KfAudioPlaybackResult audio_play_spatial(
@@ -167,16 +151,16 @@ KfAudioPlaybackResult audio_play_spatial(
             * (KF_FIXED7_ONE * 2 - attenuation * 2)) >> KF_FIXED7_BITS)
             + KF_ANGLE_EIGHTH_TURN;
     }
-    left = (level * rsin(angle)) / GAME_SOUND_PAN_DIVISOR;
+    left = (level * kf::angle_sine(angle)) / GAME_SOUND_PAN_DIVISOR;
     if (left >= KF_AUDIO_MAX_VOLUME + 1) {
         left = KF_AUDIO_MAX_VOLUME;
     }
-    right = (level * rcos(angle)) / GAME_SOUND_PAN_DIVISOR;
+    right = (level * kf::angle_cosine(angle)) / GAME_SOUND_PAN_DIVISOR;
     if (right >= KF_AUDIO_MAX_VOLUME + 1) {
         right = KF_AUDIO_MAX_VOLUME;
     }
     audio_play_voice(
-        audio_state.active_vab_id,
+        audio_state.bank,
         sound->program,
         sound->tone & KF_SOUND_TONE_INDEX_MASK,
         sound->note,
@@ -185,61 +169,12 @@ KfAudioPlaybackResult audio_play_spatial(
     return KF_AUDIO_PLAYED;
 }
 
-KfAudioPlaybackResult audio_play_spatial_default_range(
-    const SoundRef *sound,
-    const VECTOR *position,
-    s16 volume)
-{
-    return audio_play_spatial(sound, position, volume,
-        KF_AUDIO_DEFAULT_MAX_DISTANCE, KF_AUDIO_DEFAULT_ATTENUATION_DISTANCE);
-}
+#include "../lib/audio_spatial_helpers.inc"
 
-KfAudioPlaybackResult audio_play_spatial_range(
-    const SoundRef *sound,
-    const VECTOR *position,
-    s16 volume,
-    s32 max_distance,
-    s32 attenuation_distance)
-{
-    return audio_play_spatial(
-        sound,
-        position,
-        volume,
-        max_distance,
-        attenuation_distance);
-}
-
-void sound_ref_key_off_bank0(const SoundRef *sound)
-{
-
-    SsVoKeyOff(sound->program, sound->note << KF_SOUND_PACKED_NOTE_SHIFT);
-}
-
-void audio_set_listener_transform(
-    const VECTOR *position_or_null,
-    const SVECTOR *rotation_or_null)
-{
-    if (position_or_null != NULL) {
-        audio_state.listener_position = *position_or_null;
-    }
-    if (rotation_or_null != NULL) {
-        audio_state.listener_rotation = *rotation_or_null;
-    }
-}
-
-void sound_ref_play(const SoundRef *sound, s16 volume)
-{
-    audio_play_voice(
-        audio_state.active_vab_id,
-        sound->program,
-        sound->tone,
-        sound->note,
-        volume,
-        volume);
-}
+#include "../lib/sound_ref.inc"
 
 void audio_play_voice(
-    s16 vab_id, s16 program, s16 tone, s16 note, s16 left_volume, s16 right_volume)
+    kf::SoundBank *bank, s16 program, s16 tone, s16 note, s16 left_volume, s16 right_volume)
 {
     if (program == 0 && tone == 0 && note == 0) {
         return;
@@ -247,23 +182,14 @@ void audio_play_voice(
     if (player_state.audio_effects_enabled == KF_PLAYER_OPTION_OFF) {
         return;
     }
-    audio_key_on_next_slot(vab_id, program, tone, note, left_volume, right_volume);
+    audio_key_on_next_slot(bank, program, tone, note, left_volume, right_volume);
 }
 
-s16 angle_shortest_delta(s32 first, s32 second)
-{
-    s32 difference;
-    s16 signed_difference;
+#include "../lib/angle_shortest_delta.inc"
 
-    first &= KF_ANGLE_WRAP_MASK;
-    second &= KF_ANGLE_WRAP_MASK;
-    difference = second - first;
-    signed_difference = difference;
-    if (signed_difference >= KF_ANGLE_HALF_TURN) {
-        return difference - KF_ANGLE_FULL_TURN;
-    }
-    if (signed_difference < -KF_ANGLE_HALF_TURN + 1) {
-        return difference + KF_ANGLE_FULL_TURN;
-    }
-    return signed_difference;
+
+void audio_reset_module_state(void)
+{
+    kf::restore_initial_value<audio_voice_slot_index>();
+    kf::restore_initial_value<audio_state>();
 }

@@ -1,5 +1,5 @@
-#include <kf/game_equipment.h>
-#include <kf/game_math.h>
+#include <kf/game/equipment.h>
+#include <kf/lib/math.h>
 
 KfWeaponTable weapon_records;
 
@@ -38,4 +38,11 @@ void armor_records_load(const KfArmorTable *source)
 s32 fixed6_ratio_step(s32 value, s32 span)
 {
     return (value << KF_FIXED6_BITS) / (span + 1) + 1;
+}
+
+
+void equipment_reset_module_state(void)
+{
+    kf::restore_initial_value<weapon_records>();
+    kf::restore_initial_value<armor_records>();
 }

@@ -1,0 +1,647 @@
+#include <kf/audio/sound.hpp>
+#include <kf/audio/codec.h>
+#include <kf/platform/host.hpp>
+#include <SDL3/SDL.h>
+#include <algorithm>
+#include <cmath>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+#include <limits>
+
+namespace kf {
+constexpr unsigned sample_rate = 44100;
+constexpr unsigned voice_count = 24;
+constexpr unsigned channel_count = 16;
+constexpr unsigned buffered_frames = 4096;
+
+struct SoundBank {
+    KfAudioBankData data;
+    KfAudioSampleInfo samples[KF_AUDIO_SAMPLE_COUNT];
+    u8 *body;
+    unsigned references;
+    SoundBank *next;
+};
+struct MusicChannel { u8 program, volume; };
+struct MusicSequence {
+    KfMusicInfo info;
+    KfMusicEvent *events;
+    SoundBank *bank;
+    MusicSequence *next;
+    MusicChannel channels[channel_count];
+    std::size_t cursor;
+    double frames_until_event;
+    u32 tempo;
+    float left, right;
+    bool playing;
+};
+enum class EnvelopePhase : u8 { Off, Attack, Decay, Sustain, Release };
+struct Envelope {
+    EnvelopePhase phase;
+    s32 level;
+    u32 counter;
+};
+struct Voice {
+    SoundVoice id;
+    SoundBank *bank;
+    MusicSequence *sequence;
+    const KfAudioTone *tone;
+    Envelope envelope;
+    KfAudioPredictor predictor;
+    s16 decoded[28];
+    unsigned decoded_cursor, block_offset;
+    float current_sample, next_sample;
+    double fraction, rate;
+    float left, right;
+    u8 program, note, velocity, priority;
+    bool current_valid, next_valid;
+    std::uint64_t age;
+};
+struct Comb {
+    float values[2048];
+    unsigned cursor, length;
+    float filtered;
+};
+struct Diffuser {
+    float values[600];
+    unsigned cursor, length;
+};
+struct Reverb {
+    Comb combs[2][4];
+    Diffuser diffusers[2][2];
+    float feedback, damping, left, right;
+};
+struct SoundState {
+    SDL_AudioStream *stream;
+    SoundBank *banks;
+    MusicSequence *sequences;
+    Voice voices[voice_count];
+    SoundVoice next_voice;
+    std::uint64_t age;
+    std::uint64_t rendered_frame;
+    Reverb reverb;
+    float master_left, master_right;
+    bool failed, paused;
+};
+static SoundState sound;
+
+static float volume(s16 value) { return std::clamp<int>(value, 0, 127) / 127.0f; }
+static void pan_levels(float &left, float &right, u8 pan) {
+    if (pan < 64)
+        right *= pan / 64.0f;
+    else
+        left *= (127 - pan) / 64.0f;
+}
+static void bank_unref(SoundBank *bank) {
+    if (--bank->references != 0)
+        return;
+    auto **link = &sound.banks;
+    while (*link && *link != bank)
+        link = &(*link)->next;
+    if (*link)
+        *link = bank->next;
+    std::free(bank->body);
+    std::free(bank);
+}
+
+static void release(Voice &voice) {
+    if (voice.envelope.phase != EnvelopePhase::Off && voice.envelope.phase != EnvelopePhase::Release) {
+        voice.envelope.phase = EnvelopePhase::Release;
+        voice.envelope.counter = 0;
+    }
+}
+
+static float envelope_frame(Voice &voice) {
+    auto &state = voice.envelope;
+    const auto &parameters = voice.tone->envelope;
+    unsigned shift = 0, step_bits = 0;
+    bool exponential = false, decreasing = false, infinite = false;
+    switch (state.phase) {
+    case EnvelopePhase::Off: return 0;
+    case EnvelopePhase::Attack:
+        shift = parameters.attack_shift;
+        step_bits = parameters.attack_step;
+        exponential = parameters.attack_exponential;
+        infinite = shift == 31 && step_bits == 3;
+        break;
+    case EnvelopePhase::Decay:
+        shift = parameters.decay_shift;
+        exponential = decreasing = true;
+        break;
+    case EnvelopePhase::Sustain:
+        shift = parameters.sustain_shift;
+        step_bits = parameters.sustain_step;
+        exponential = parameters.sustain_exponential;
+        decreasing = parameters.sustain_decreasing;
+        infinite = shift == 31 && step_bits == 3;
+        break;
+    case EnvelopePhase::Release:
+        shift = parameters.release_shift;
+        exponential = parameters.release_exponential;
+        decreasing = true;
+        infinite = shift == 31;
+        break;
+    }
+    s32 step = decreasing ? -8 + static_cast<s32>(step_bits) : 7 - static_cast<s32>(step_bits);
+    step *= 1 << (shift < 11 ? 11 - shift : 0);
+    u32 increment = 32768u >> (shift > 11 ? shift - 11 : 0);
+    if (exponential && !decreasing && state.level > 0x6000) {
+        if (shift < 10)
+            step >>= 2;
+        else if (shift >= 11)
+            increment >>= 2;
+        else {
+            step >>= 1;
+            increment >>= 1;
+        }
+    } else if (exponential && decreasing) {
+        step = (step * state.level) >> 15;
+    }
+    if (!infinite)
+        increment = std::max(increment, 1u);
+    state.counter += increment;
+    if (state.counter >= 32768) {
+        state.counter &= 32767;
+        state.level = std::clamp(state.level + step, 0, 32767);
+        if (state.phase == EnvelopePhase::Attack && state.level == 32767) {
+            state.phase = EnvelopePhase::Decay;
+            state.counter = 0;
+        } else if (state.phase == EnvelopePhase::Decay && state.level <= parameters.sustain_level) {
+            state.phase = EnvelopePhase::Sustain;
+            state.counter = 0;
+        } else if (state.phase == EnvelopePhase::Release && state.level == 0) {
+            state.phase = EnvelopePhase::Off;
+        }
+    }
+    return state.level / 32768.0f;
+}
+
+static bool read_sample(Voice &voice, float &sample) {
+    const auto index = voice.tone->sample_index;
+    const auto &info = voice.bank->samples[index];
+    const auto &range = voice.bank->data.samples[index];
+    if (voice.decoded_cursor == 28) {
+        if (voice.block_offset == info.frames / 28 * 16) {
+            if (!info.loop_end)
+                return false;
+            voice.block_offset = info.loop_begin / 28 * 16;
+        }
+        // The validated, immutable block remains owned by the bank. Only the
+        // voice's position jumps at a repeat; its two-sample history continues.
+        if (kf_audio_decode_block(voice.bank->body + range.offset + voice.block_offset,
+                16, &voice.predictor, voice.decoded, 28) != KF_CODEC_OK) {
+            sound.failed = true;
+            return false;
+        }
+        voice.block_offset += 16;
+        voice.decoded_cursor = 0;
+    }
+    sample = voice.decoded[voice.decoded_cursor++] / 32768.0f;
+    return true;
+}
+
+static void voice_pitch(Voice &voice, int bend = 64) {
+    double semitones = static_cast<int>(voice.note) - voice.tone->center_note
+        + voice.tone->center_shift / 128.0;
+    bend -= 64;
+    semitones += bend * (bend < 0 ? voice.tone->bend_down : voice.tone->bend_up) / 64.0;
+    voice.rate = std::clamp(std::exp2(semitones / 12.0), 0.0, 4.0);
+}
+
+static SoundVoice play_tone(SoundBank *bank, unsigned program, unsigned tone_index, unsigned note,
+    float left, float right, MusicSequence *sequence = nullptr, u8 velocity = 127) {
+    if (!bank || program >= KF_AUDIO_PROGRAM_COUNT || note > 127
+            || tone_index >= bank->data.programs[program].tone_count)
+        return no_sound_voice;
+    const auto &program_data = bank->data.programs[program];
+    const auto &tone = program_data.tones[tone_index];
+    Voice *chosen = nullptr;
+    for (auto &voice : sound.voices) {
+        if (voice.envelope.phase == EnvelopePhase::Off) {
+            chosen = &voice;
+            break;
+        }
+        if (!chosen || voice.priority < chosen->priority
+                || (voice.priority == chosen->priority && voice.age < chosen->age))
+            chosen = &voice;
+    }
+    auto &voice = *chosen;
+    voice = {};
+    do { ++sound.next_voice; } while (!sound.next_voice);
+    voice.id = sound.next_voice;
+    voice.bank = bank;
+    voice.sequence = sequence;
+    voice.tone = &tone;
+    voice.program = program;
+    voice.note = note;
+    voice.velocity = velocity;
+    voice.priority = std::max(tone.priority, program_data.priority);
+    voice.age = ++sound.age;
+    voice.envelope.phase = EnvelopePhase::Attack;
+    voice.decoded_cursor = 28;
+    voice.current_valid = read_sample(voice, voice.current_sample);
+    voice.next_valid = read_sample(voice, voice.next_sample);
+    voice_pitch(voice);
+    const float gain = bank->data.volume / 127.0f * program_data.volume / 127.0f * tone.volume / 127.0f;
+    voice.left = left * gain;
+    voice.right = right * gain;
+    // Authored tone and program pans attenuate in series; opposing pans do
+    // not cancel into a centered, full-volume voice. The VAB header pan is unused.
+    pan_levels(voice.left, voice.right, tone.pan);
+    pan_levels(voice.left, voice.right, program_data.pan);
+    if (sequence)
+        pan_levels(voice.left, voice.right, 64);
+    return voice.id;
+}
+
+static void play_note(SoundBank *bank, unsigned program, unsigned note, float left, float right,
+    MusicSequence *sequence = nullptr, u8 velocity = 127) {
+    if (!bank || program >= KF_AUDIO_PROGRAM_COUNT || note > 127)
+        return;
+    const auto &program_data = bank->data.programs[program];
+    for (unsigned i = 0; i < program_data.tone_count; ++i) {
+        const auto &tone = program_data.tones[i];
+        if (note >= tone.minimum_note && note <= tone.maximum_note)
+            play_tone(bank, program, i, note, left, right, sequence, velocity);
+    }
+}
+
+static double event_frames(const MusicSequence &sequence, u32 delta) {
+    return static_cast<double>(delta) * sequence.tempo * sample_rate / (sequence.info.resolution * 1000000.0);
+}
+
+static void sequence_defaults(MusicSequence &sequence) {
+    for (unsigned i = 0; i < channel_count; ++i)
+        sequence.channels[i] = {static_cast<u8>(i), 127};
+    sequence.tempo = sequence.info.tempo;
+}
+
+static void sequence_frame(MusicSequence &sequence) {
+    if (!sequence.playing)
+        return;
+    unsigned processed = 0;
+    while (sequence.frames_until_event <= 0) {
+        if (++processed > sequence.info.event_count + 1) {
+            sound.failed = true;
+            sequence.playing = false;
+            return;
+        }
+        const auto &event = sequence.events[sequence.cursor++];
+        auto &channel = sequence.channels[event.channel];
+        switch (event.kind) {
+        case KfMusicEventKind::NoteOff:
+            for (auto &voice : sound.voices)
+                if (voice.sequence == &sequence
+                        && voice.program == channel.program && voice.note == event.note)
+                    release(voice);
+            break;
+        case KfMusicEventKind::NoteOn:
+            play_note(sequence.bank, channel.program, event.note, 1, 1, &sequence,
+                event.velocity * channel.volume / 127);
+            break;
+        case KfMusicEventKind::Volume: channel.volume = event.value; break;
+        case KfMusicEventKind::Program: channel.program = event.value; break;
+        case KfMusicEventKind::PitchBend:
+            for (auto &voice : sound.voices)
+                if (voice.sequence == &sequence && voice.program == channel.program)
+                    voice_pitch(voice, event.value >> 7);
+            break;
+        case KfMusicEventKind::Tempo: sequence.tempo = event.value; break;
+        case KfMusicEventKind::End:
+            // The original callers request indefinite playback of the score.
+            sequence.cursor = 0;
+            break;
+        }
+        sequence.frames_until_event += event_frames(sequence, sequence.events[sequence.cursor].delta);
+    }
+    sequence.frames_until_event -= 1;
+}
+
+static float reverb_channel(unsigned channel, float input) {
+    auto &effect = sound.reverb;
+    float sum = 0;
+    for (auto &comb : effect.combs[channel]) {
+        const float delayed = comb.values[comb.cursor];
+        comb.filtered = delayed * (1 - effect.damping) + comb.filtered * effect.damping;
+        comb.values[comb.cursor] = input + comb.filtered * effect.feedback;
+        comb.cursor = (comb.cursor + 1) % comb.length;
+        sum += delayed * 0.25f;
+    }
+    for (auto &diffuser : effect.diffusers[channel]) {
+        const float delayed = diffuser.values[diffuser.cursor];
+        diffuser.values[diffuser.cursor] = sum + delayed * 0.5f;
+        sum = delayed - sum;
+        diffuser.cursor = (diffuser.cursor + 1) % diffuser.length;
+    }
+    return sum;
+}
+
+static void mix_frame(float &left, float &right) {
+    left = right = 0;
+    if (sound.paused || sound.failed)
+        return;
+    for (auto *sequence = sound.sequences; sequence; sequence = sequence->next)
+        sequence_frame(*sequence);
+    float send_left = 0, send_right = 0;
+    for (auto &voice : sound.voices) {
+        if (voice.envelope.phase == EnvelopePhase::Off)
+            continue;
+        if (!voice.current_valid) {
+            voice.envelope.phase = EnvelopePhase::Off;
+            continue;
+        }
+        const float source = voice.current_sample + (voice.next_sample - voice.current_sample) * voice.fraction;
+        const float gain = envelope_frame(voice);
+        float voice_left = voice.left, voice_right = voice.right;
+        if (voice.sequence) {
+            voice_left *= voice.sequence->left * (voice.velocity / 127.0f);
+            voice_right *= voice.sequence->right * (voice.velocity / 127.0f);
+        }
+        // The authored volume scale is quadratic, with full voice level 0x3fff.
+        // Master volume remains a separate linear gain after the voice mix.
+        constexpr float voice_level = 16383.0f / 32768.0f;
+        const float out_left = source * gain * voice_left * voice_left * voice_level;
+        const float out_right = source * gain * voice_right * voice_right * voice_level;
+        left += out_left;
+        right += out_right;
+        if (voice.tone->reverb) {
+            send_left += out_left;
+            send_right += out_right;
+        }
+        voice.fraction += voice.rate;
+        while (voice.fraction >= 1) {
+            voice.fraction -= 1;
+            voice.current_sample = voice.next_sample;
+            voice.current_valid = voice.next_valid;
+            voice.next_sample = 0;
+            voice.next_valid = read_sample(voice, voice.next_sample);
+        }
+    }
+    left = std::clamp((left + reverb_channel(0, send_left) * sound.reverb.left) * sound.master_left, -1.0f, 1.0f);
+    right = std::clamp((right + reverb_channel(1, send_right) * sound.reverb.right) * sound.master_right, -1.0f, 1.0f);
+}
+
+static std::uint64_t clock_frame() {
+    const auto ns = host_clock_ns();
+    return ns / 1000000000 * sample_rate + ns % 1000000000 * sample_rate / 1000000000;
+}
+
+static void render_elapsed() {
+    if (sound.paused || sound.failed)
+        return;
+    const auto target = clock_frame();
+    const auto keep_from = target > buffered_frames ? target - buffered_frames : 0;
+    const auto queued = SDL_GetAudioStreamQueued(sound.stream);
+    if (queued < 0) {
+        sound.failed = true;
+        return;
+    }
+    // A stalled main thread must not leave playback permanently seconds behind.
+    // Advance all elapsed state, but retain only recent samples after starvation.
+    if (sound.rendered_frame < keep_from || queued > static_cast<int>(buffered_frames * 2 * sizeof(float) * 2)) {
+        if (!SDL_ClearAudioStream(sound.stream)) {
+            sound.failed = true;
+            return;
+        }
+    }
+    float frames[256 * 2];
+    while (sound.rendered_frame < target) {
+        const unsigned count = std::min<std::uint64_t>(target - sound.rendered_frame, 256);
+        for (unsigned i = 0; i < count; ++i)
+            mix_frame(frames[i * 2], frames[i * 2 + 1]);
+        const auto skip = sound.rendered_frame < keep_from
+            ? std::min<std::uint64_t>(keep_from - sound.rendered_frame, count) : 0;
+        const int bytes = (count - skip) * sizeof(float) * 2;
+        if (bytes && !SDL_PutAudioStreamData(sound.stream, frames + skip * 2, bytes)) {
+            sound.failed = true;
+            return;
+        }
+        sound.rendered_frame += count;
+    }
+}
+
+static bool prime_stream() {
+    // Device consumption trails the shared clock; never mix future game state.
+    // Normal host waits service the stream at most eight milliseconds apart.
+    static const float silence[buffered_frames * 2]{};
+    sound.rendered_frame = clock_frame();
+    return SDL_PutAudioStreamData(sound.stream, silence, sizeof silence);
+}
+
+static void configure_reverb(ReverbPreset preset, s16 left, s16 right) {
+    std::memset(&sound.reverb, 0, sizeof sound.reverb);
+    constexpr unsigned studio[] = {970, 1116, 1277, 1356};
+    constexpr unsigned hall[] = {1557, 1617, 1491, 1422};
+    for (unsigned side = 0; side < 2; ++side) {
+        for (unsigned i = 0; i < 4; ++i)
+            sound.reverb.combs[side][i].length = (preset == ReverbPreset::Hall ? hall[i] : studio[i]) + side * 23;
+        sound.reverb.diffusers[side][0].length = 225 + side * 23;
+        sound.reverb.diffusers[side][1].length = 556 + side * 23;
+    }
+    sound.reverb.feedback = preset == ReverbPreset::Hall ? 0.82f : 0.7f;
+    sound.reverb.damping = 0.3f;
+    sound.reverb.left = volume(left);
+    sound.reverb.right = volume(right);
+}
+
+bool sound_start() {
+    const SDL_AudioSpec spec{SDL_AUDIO_F32, 2, sample_rate};
+    configure_reverb(ReverbPreset::Studio, 0, 0);
+    sound.master_left = sound.master_right = 1;
+    sound.failed = sound.paused = false;
+    // The main thread renders elapsed samples before applying each command.
+    // Device-sized demand callbacks can otherwise swallow a one-frame note gate.
+    sound.stream = SDL_OpenAudioDeviceStream(SDL_AUDIO_DEVICE_DEFAULT_PLAYBACK, &spec, nullptr, nullptr);
+    if (!sound.stream || !prime_stream() || !SDL_ResumeAudioStreamDevice(sound.stream)) {
+        std::fprintf(stderr, "Audio: %s\n", SDL_GetError());
+        if (sound.stream)
+            SDL_DestroyAudioStream(sound.stream);
+        sound.stream = nullptr;
+        return false;
+    }
+    return true;
+}
+
+static void sequence_release(MusicSequence *sequence) {
+    for (auto &voice : sound.voices)
+        if (voice.sequence == sequence)
+            voice = {};
+    auto **link = &sound.sequences;
+    while (*link && *link != sequence)
+        link = &(*link)->next;
+    if (*link)
+        *link = sequence->next;
+    bank_unref(sequence->bank);
+    std::free(sequence->events);
+    std::free(sequence);
+}
+
+static void clear() {
+    for (auto &voice : sound.voices)
+        voice = {};
+    while (sound.sequences)
+        sequence_release(sound.sequences);
+    while (sound.banks)
+        bank_unref(sound.banks);
+    SDL_ClearAudioStream(sound.stream);
+}
+
+void sound_shutdown() {
+    if (!sound.stream)
+        return;
+    clear();
+    SDL_DestroyAudioStream(sound.stream);
+    sound.stream = nullptr;
+}
+
+void sound_poll() {
+    if (!sound.stream)
+        return;
+    render_elapsed();
+    if (sound.failed)
+        host_fail("Audio playback failed");
+}
+
+void sound_set_paused(bool paused) {
+    if (!sound.stream)
+        return;
+    sound_poll();
+    sound.paused = paused;
+    if (!(paused ? SDL_PauseAudioStreamDevice(sound.stream) : SDL_ResumeAudioStreamDevice(sound.stream)))
+        host_fail("Cannot pause or resume audio playback");
+}
+
+void sound_reset(ReverbPreset preset, s16 depth_left, s16 depth_right) {
+    sound_poll();
+    clear();
+    configure_reverb(preset, depth_left, depth_right);
+    sound.master_left = sound.master_right = 1;
+    if (!prime_stream())
+        host_fail("Cannot initialize audio playback");
+}
+
+void sound_master_volume(s16 left, s16 right) {
+    sound_poll();
+    sound.master_left = volume(left);
+    sound.master_right = volume(right);
+}
+
+SoundBank *sound_bank_load(const u8 *header, std::size_t header_size, const u8 *body, std::size_t body_size) {
+    auto *bank = static_cast<SoundBank *>(std::calloc(1, sizeof(SoundBank)));
+    if (!bank)
+        return nullptr;
+    if (kf_audio_bank_decode(header, header_size, body, body_size, &bank->data) != KF_CODEC_OK) {
+        std::free(bank);
+        return nullptr;
+    }
+    for (unsigned i = 0; i < bank->data.sample_count; ++i) {
+        const auto &range = bank->data.samples[i];
+        if (kf_audio_sample_info(body + range.offset, range.size, &bank->samples[i]) != KF_CODEC_OK) {
+            std::free(bank);
+            return nullptr;
+        }
+    }
+    bank->body = static_cast<u8 *>(std::malloc(body_size));
+    if (!bank->body) {
+        std::free(bank);
+        return nullptr;
+    }
+    std::memcpy(bank->body, body, body_size);
+    bank->references = 1;
+    sound_poll();
+    bank->next = sound.banks;
+    sound.banks = bank;
+    return bank;
+}
+
+void sound_bank_release(SoundBank *bank) {
+    if (!bank)
+        return;
+    sound_poll();
+    for (auto &voice : sound.voices)
+        if (voice.bank == bank)
+            voice = {};
+    for (auto *sequence = sound.sequences; sequence; sequence = sequence->next)
+        if (sequence->bank == bank)
+            sequence->playing = false;
+    bank_unref(bank);
+}
+
+SoundVoice sound_voice_play(SoundBank *bank, s16 program, s16 tone, s16 note, s16 left, s16 right) {
+    sound_poll();
+    const auto id = play_tone(bank, program, tone, note, volume(left), volume(right));
+    return id;
+}
+
+void sound_voice_release(SoundVoice id) {
+    if (!id)
+        return;
+    sound_poll();
+    for (auto &voice : sound.voices)
+        if (voice.id == id)
+            release(voice);
+}
+
+void sound_note_play(SoundBank *bank, s16 program, s16 note, s16 left, s16 right) {
+    sound_poll();
+    play_note(bank, program, note, volume(left), volume(right));
+}
+
+void sound_note_release(SoundBank *bank, s16 program, s16 note) {
+    sound_poll();
+    for (auto &voice : sound.voices)
+        if (!voice.sequence && voice.bank == bank && voice.program == program && voice.note == note)
+            release(voice);
+}
+
+MusicSequence *sound_sequence_load(const u8 *data, std::size_t size, SoundBank *bank) {
+    KfMusicInfo info{};
+    if (!bank || kf_music_decode(data, size, nullptr, 0, &info) != KF_CODEC_OK
+            || static_cast<std::size_t>(info.event_count) > std::numeric_limits<std::size_t>::max() / sizeof(KfMusicEvent))
+        return nullptr;
+    auto *sequence = static_cast<MusicSequence *>(std::calloc(1, sizeof(MusicSequence)));
+    if (!sequence)
+        return nullptr;
+    sequence->events = static_cast<KfMusicEvent *>(std::malloc(info.event_count * sizeof(KfMusicEvent)));
+    if (!sequence->events || kf_music_decode(data, size, sequence->events, info.event_count, &sequence->info) != KF_CODEC_OK) {
+        std::free(sequence->events);
+        std::free(sequence);
+        return nullptr;
+    }
+    sequence->bank = bank;
+    sequence->left = sequence->right = 1;
+    sound_poll();
+    ++bank->references;
+    sequence->next = sound.sequences;
+    sound.sequences = sequence;
+    return sequence;
+}
+
+void sound_sequence_play(MusicSequence *sequence) {
+    if (!sequence)
+        return;
+    sound_poll();
+    for (auto &voice : sound.voices)
+        if (voice.sequence == sequence)
+            voice = {};
+    sequence_defaults(*sequence);
+    sequence->cursor = 0;
+    sequence->frames_until_event = event_frames(*sequence, sequence->events[0].delta);
+    sequence->playing = true;
+}
+
+void sound_sequence_volume(MusicSequence *sequence, s16 left, s16 right) {
+    if (!sequence)
+        return;
+    sound_poll();
+    sequence->left = volume(left);
+    sequence->right = volume(right);
+}
+
+void sound_sequence_release(MusicSequence *sequence) {
+    if (!sequence)
+        return;
+    sound_poll();
+    sequence_release(sequence);
+}
+}

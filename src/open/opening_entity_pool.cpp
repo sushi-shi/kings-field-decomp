@@ -1,9 +1,9 @@
-#include <kf/null.h>
-#include <kf/bool.h>
+#include <kf/lib/null.h>
+#include <kf/lib/bool.h>
 
-#include <kf/map_data.h>
-#include <kf/game_math.h>
-#include <kf/open_resources.h>
+#include <kf/lib/map_data.h>
+#include <kf/lib/math.h>
+#include <kf/open/resources.h>
 
 KfOpeningEntityState opening_entity_state;
 
@@ -82,4 +82,10 @@ void opening_entity_pool_load_placements(
         }
         entity++;
     } while (remaining-- != 0);
+}
+
+
+void opening_entity_pool_reset_module_state(void)
+{
+    kf::restore_initial_value<opening_entity_state>();
 }

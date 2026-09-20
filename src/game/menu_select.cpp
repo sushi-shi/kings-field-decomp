@@ -1,8 +1,8 @@
-#include <kf/null.h>
+#include <kf/lib/null.h>
 
-#include <kf/input.h>
-#include <kf/game_menu.h>
-#include <kf/game.h>
+#include <kf/game/input.h>
+#include <kf/game/menu.h>
+#include <kf/game/game.h>
 
 void menu_equip_select(KfEquipmentMenuCategory equipment_category)
 {
@@ -21,8 +21,7 @@ void menu_equip_select(KfEquipmentMenuCategory equipment_category)
     s32 prev;
     s32 selection = kf_enum_encode<s32>(KF_MENU_RESULT_PENDING);
 
-    while (PadRead(1) != 0)
-        ;
+    kf::host_wait_buttons_released();
 
     owned = item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)];
     switch (equipment_category) {
@@ -95,32 +94,31 @@ void menu_equip_select(KfEquipmentMenuCategory equipment_category)
         }
         confirm = KF_MENU_CONFIRM_IDLE;
         if (selection != kf_enum_encode<s32>(KF_MENU_RESULT_PENDING)) {
-            while (PadRead(1) != 0)
-                ;
+            kf::host_wait_buttons_released();
             break;
         }
 
         prev = input;
-        input = PadRead(1);
+        input = kf::host_read_buttons();
         if (ctx.entry_count == 0) {
             if (input != 0) {
                 menu_play_input_sound(MENU_SOUND_CURSOR);
                 selection = kf_enum_encode<s32>(KF_MENU_RESULT_CANCELLED);
             }
-        } else if (PAD_PRESSED(input, prev, PADLup)) {
+        } else if (BUTTON_PRESSED(input, prev, kf::Button::Up)) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
             menu_list_previous(&ctx);
             if (menu_load_item_model(codes[ctx.selected_index]) != KF_RESOURCE_LOADED)
                 return;
-        } else if (PAD_PRESSED(input, prev, PADLdown)) {
+        } else if (BUTTON_PRESSED(input, prev, kf::Button::Down)) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
             menu_list_next(&ctx);
             if (menu_load_item_model(codes[ctx.selected_index]) != KF_RESOURCE_LOADED)
                 return;
-        } else if (PAD_PRESSED(input, prev, PADRright)) {
+        } else if (BUTTON_PRESSED(input, prev, kf::Button::Confirm)) {
             menu_play_input_sound(MENU_SOUND_CONFIRM);
             confirm = KF_MENU_CONFIRM_REQUESTED;
-        } else if (PAD_PRESSED(input, prev, PADRdown)) {
+        } else if (BUTTON_PRESSED(input, prev, kf::Button::Back)) {
             menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
             selection = kf_enum_encode<s32>(KF_MENU_RESULT_CANCELLED);
         }
@@ -186,8 +184,7 @@ void menu_spell_select(void)
     s32 prev;
     s32 selection = kf_enum_encode<s32>(KF_MENU_RESULT_PENDING);
 
-    while (PadRead(1) != 0)
-        ;
+    kf::host_wait_buttons_released();
 
     k = 0;
     for (code = kf_enum_encode<s32>(KF_MAGIC_LIGHTNING_BOLT); code < KF_MAGIC_PLAYER_COUNT; code++) {
@@ -231,34 +228,33 @@ void menu_spell_select(void)
                 selection = ctx.selected_index;
         }
         if (selection != kf_enum_encode<s32>(KF_MENU_RESULT_PENDING)) {
-            while (PadRead(1) != 0)
-                ;
+            kf::host_wait_buttons_released();
             break;
         }
 
         menu_frame_begin();
         confirm = KF_MENU_CONFIRM_IDLE;
         prev = input;
-        input = PadRead(1);
+        input = kf::host_read_buttons();
         if (ctx.entry_count == 0) {
             if (input != 0) {
                 menu_play_input_sound(MENU_SOUND_CURSOR);
                 selection = kf_enum_encode<s32>(KF_MENU_RESULT_CANCELLED);
             }
-        } else if (PAD_PRESSED(input, prev, PADLup)) {
+        } else if (BUTTON_PRESSED(input, prev, kf::Button::Up)) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
             menu_list_previous(&ctx);
             if (menu_load_item_texture(menu_texture_from_magic(codes[ctx.selected_index])) == KF_RESOURCE_LOAD_FAILED)
                 return;
-        } else if (PAD_PRESSED(input, prev, PADLdown)) {
+        } else if (BUTTON_PRESSED(input, prev, kf::Button::Down)) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
             menu_list_next(&ctx);
             if (menu_load_item_texture(menu_texture_from_magic(codes[ctx.selected_index])) == KF_RESOURCE_LOAD_FAILED)
                 return;
-        } else if (PAD_PRESSED(input, prev, PADRright)) {
+        } else if (BUTTON_PRESSED(input, prev, kf::Button::Confirm)) {
             menu_play_input_sound(MENU_SOUND_CONFIRM);
             confirm = KF_MENU_CONFIRM_REQUESTED;
-        } else if (PAD_PRESSED(input, prev, PADRdown)) {
+        } else if (BUTTON_PRESSED(input, prev, kf::Button::Back)) {
             menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
             selection = kf_enum_encode<s32>(KF_MENU_RESULT_CANCELLED);
         }

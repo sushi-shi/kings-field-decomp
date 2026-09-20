@@ -1,31 +1,55 @@
-#include <kf/game_graphics.h>
+#include <kf/lib/random.hpp>
+#include <kf/game/graphics.h>
 
-#include <kf/map_data.h>
-#include <kf/game_map.h>
-#include <psyq/libc.h>
-#include <kf/game.h>
+#include <kf/lib/map_data.h>
+#include <kf/lib/map.h>
+#include <cstdlib>
+#include <cstdio>
+#include <cstring>
+#include <kf/game/game.h>
 
 enum {
     MAP_RESTORE_POSITION_RANDOM_BITS = 15
 };
 
+bool map_saved_link_valid(KfMapObjectOperation operation, const KfMapObjectLink &link)
+{
+    const KfObjectId *items = nullptr;
+    switch (operation) {
+    case KF_MAP_OBJECT_OP_HINGED_CONTAINER: items = link.hinged_container.item_ids; break;
+    case KF_MAP_OBJECT_OP_ITEM_CONTAINER: items = link.item_ids; break;
+    case KF_MAP_OBJECT_OP_HINGED_DOOR:
+    case KF_MAP_OBJECT_OP_HINGED_DOOR_PARTNER:
+        return link.fields.action_parameter.object_index == KF_MAP_OBJECT_PARAMETER_NONE
+            || link.fields.action_parameter.object_index < KF_MAP_OBJECT_CAPACITY;
+    case KF_MAP_OBJECT_OP_COPY_REGION:
+        return link.fields.action_parameter.copy_region == KF_MAP_COPY_REGION_NONE
+            || kf_enum_encode<u8>(link.fields.action_parameter.copy_region) < KF_MAP_COPY_REGION_COUNT;
+    case KF_MAP_OBJECT_OP_RELEASE_ORBIT_OR_SHORT_SWING:
+    case KF_MAP_OBJECT_OP_RELEASE_LONG_SWING:
+    case KF_MAP_OBJECT_OP_EFFECT_SWITCH:
+        return link.fields.action_parameter.effect_index < KF_EFFECT_CAPACITY;
+    default: break;
+    }
+    if (items)
+        for (unsigned i = 0; i < KF_MAP_CONTAINER_ITEM_COUNT; ++i)
+            if (items[i] != KF_OBJECT_NONE && kf_enum_encode<u8>(items[i]) >= KF_ITEM_COUNT)
+                return false;
+    return true;
+}
+
 void map_restore_floor_state(void)
 {
-    u8 *base = (u8 *)&map_runtime_state.world_state;
     u8 *in;
     KfMapEvent *event;
     KfMapObject *object;
     s32 i;
     s32 index;
 
-    {
-        s32 floor_offset = KF_MAP_SAVED_FLOOR_BYTES
-            * kf_enum_encode<u8>(player_state.progress_state.current_floor);
-        u8 *records_base =
-            base - (KF_MAP_SAVED_FLOOR_BYTES - KF_MAP_SAVED_RECORDS_OFFSET);
-
-        in = records_base + floor_offset;
-    }
+    const auto floor = kf_enum_encode<u8>(player_state.progress_state.current_floor);
+    if (floor < 1 || floor > KF_MAP_SAVED_FLOOR_COUNT)
+        kf::host_fail("Invalid restored floor");
+    in = map_runtime_state.world_state.floors[floor - 1].records;
     if (*in++ == 1) {
         event = map_runtime_state.events;
         for (i = 0; i < KF_MAP_EVENT_CAPACITY; i++, event++) {
@@ -33,7 +57,12 @@ void map_restore_floor_state(void)
             event->dialogue.fields.stage_limit = *in++;
             event->dialogue.fields.stage = *in++;
             event->dialogue.fields.page = *in++;
-            event->dialogue_pages.last_page[event->dialogue.fields.stage - 1] = *in++;
+            const u8 last_page = *in++;
+            const auto stage = event->dialogue.fields.stage;
+            if (stage > KF_DIALOGUE_STAGE_COUNT)
+                kf::host_fail("Invalid restored dialogue stage");
+            if (stage)
+                event->dialogue_pages.last_page[stage - 1] = last_page;
             event->dialogue.fields.page_delay = *in++;
             event->unknown_0d = *in++;
         }
@@ -48,23 +77,39 @@ void map_restore_floor_state(void)
             } while (--i != -1);
         }
 
+        const s32 cross_index = floor == 1 ? map_floor1_cross_index() : -1;
         object = &map_object_state.objects[0];
         for (i = 0; i < KF_MAP_OBJECT_CAPACITY; i++, object++) {
-            object->object_id = kf_enum_decode<KfObjectId>(*in++);
+            const auto saved_id = kf_enum_decode<KfObjectId>(*in++);
+            if (i < KF_MAP_OBJECT_EFFECT_FIRST && saved_id != KF_OBJECT_NONE && saved_id != object->object_id) {
+                const bool fountain = object->object_id == KF_MAP_OBJECT_DRY_FOUNTAIN
+                    && saved_id == KF_MAP_OBJECT_FILLED_FOUNTAIN;
+                const bool cross = i == cross_index && saved_id == KF_MAP_OBJECT_BROKEN_STONE_CROSS
+                    && map_floor1_script.actor_activation_stage == KF_MAP_TRIGGER_COMPLETE;
+                if (object->object_id == KF_OBJECT_NONE || (!fountain && !cross))
+                    kf::host_fail("Saved object identity is incompatible with the loaded floor");
+            }
+            object->object_id = saved_id;
         }
 
         i = *in++;
         while (--i != -1) {
-            u8 *link;
-            s32 k;
-
             index = *in++;
             object = &map_object_state.objects[index];
-            link = (u8 *)&object->link;
-            k = sizeof(object->link) - 1;
-            do {
-                *link++ = *in++;
-            } while (--k != -1);
+            KfMapObjectLink restored;
+            std::memcpy(&restored, in, sizeof restored);
+            in += sizeof restored;
+            // Floor construction has already rebuilt effects. Their pool indexes
+            // are transient references, not persistent game state.
+            switch (object->action) {
+            case KF_MAP_OBJECT_OP_RELEASE_ORBIT_OR_SHORT_SWING:
+            case KF_MAP_OBJECT_OP_RELEASE_LONG_SWING:
+            case KF_MAP_OBJECT_OP_EFFECT_SWITCH:
+                restored.fields.action_parameter.effect_index = object->link.fields.action_parameter.effect_index;
+                break;
+            default: break;
+            }
+            object->link = restored;
         }
 
         object = &map_object_state.objects[KF_MAP_OBJECT_GOLD_DROP_FIRST];
@@ -72,9 +117,9 @@ void map_restore_floor_state(void)
             object->cell_x = *in++;
             object->cell_z = *in++;
             object->position.vx =
-                object->cell_x * KF_MAP_TILE_SIZE + ((rand() * KF_MAP_TILE_SIZE) >> MAP_RESTORE_POSITION_RANDOM_BITS);
+                object->cell_x * KF_MAP_TILE_SIZE + ((kf::random_next() * KF_MAP_TILE_SIZE) >> MAP_RESTORE_POSITION_RANDOM_BITS);
             object->position.vz =
-                object->cell_z * KF_MAP_TILE_SIZE + ((rand() * KF_MAP_TILE_SIZE) >> MAP_RESTORE_POSITION_RANDOM_BITS);
+                object->cell_z * KF_MAP_TILE_SIZE + ((kf::random_next() * KF_MAP_TILE_SIZE) >> MAP_RESTORE_POSITION_RANDOM_BITS);
             object->position.vy =
                 -(map_floor_height_grid.cells[object->cell_z][object->cell_x] * KF_MAP_HEIGHT_STEP);
             object->rotation.angles.z = 0;
@@ -91,9 +136,9 @@ void map_restore_floor_state(void)
             object->cell_x = *in++;
             object->cell_z = *in++;
             object->position.vx =
-                object->cell_x * KF_MAP_TILE_SIZE + ((rand() * KF_MAP_TILE_SIZE) >> MAP_RESTORE_POSITION_RANDOM_BITS);
+                object->cell_x * KF_MAP_TILE_SIZE + ((kf::random_next() * KF_MAP_TILE_SIZE) >> MAP_RESTORE_POSITION_RANDOM_BITS);
             object->position.vz =
-                object->cell_z * KF_MAP_TILE_SIZE + ((rand() * KF_MAP_TILE_SIZE) >> MAP_RESTORE_POSITION_RANDOM_BITS);
+                object->cell_z * KF_MAP_TILE_SIZE + ((kf::random_next() * KF_MAP_TILE_SIZE) >> MAP_RESTORE_POSITION_RANDOM_BITS);
             object->position.vy =
                 -(map_floor_height_grid.cells[object->cell_z][object->cell_x] * KF_MAP_HEIGHT_STEP);
             if (object->object_id < KF_MAP_DROP_TIP_ID_END) {
@@ -107,6 +152,17 @@ void map_restore_floor_state(void)
             object->link.fields.spawn.sequence = 0;
             object->link.fields.vertical_velocity = 0;
         }
+    }
+
+    // Saved IDs can change the interpretation of links even when the optional
+    // link record is absent. Validate the resulting objects, not just records.
+    for (const auto &restored : map_object_state.objects) {
+        if (restored.object_id == KF_OBJECT_NONE)
+            continue;
+        if (!map_saved_link_valid(restored.action, restored.link) ||
+                !map_saved_link_valid(map_object_state.definitions.entries[
+                    kf_enum_encode<u8>(restored.object_id)].behavior_type, restored.link))
+            kf::host_fail("Saved object link is incompatible with the loaded floor");
     }
 
     switch (player_state.progress_state.current_floor) {

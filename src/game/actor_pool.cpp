@@ -1,8 +1,8 @@
-#include <kf/null.h>
+#include <kf/lib/null.h>
 
-#include <kf/map_data.h>
-#include <kf/game_actor.h>
-#include <kf/game.h>
+#include <kf/lib/map_data.h>
+#include <kf/game/actor.h>
+#include <kf/game/game.h>
 
 enum class KfActorPlacementStreamState : s32 {
     KF_ACTOR_PLACEMENTS_READING = 0,
@@ -81,4 +81,10 @@ void actor_definitions_load(const KfActorDefinitionTable *definitions)
     do {
         *destination++ = *source++;
     } while (--count != 0);
+}
+
+
+void actor_pool_reset_module_state(void)
+{
+    kf::restore_initial_value<actor_state>();
 }

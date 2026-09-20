@@ -1,6 +1,6 @@
-#include <kf/open_opening_render.h>
-#include <kf/open_render.h>
-#include <kf/open_resources.h>
+#include <kf/open/opening_render.h>
+#include <kf/open/render.h>
+#include <kf/open/resources.h>
 
 void opening_render_entities(void)
 {

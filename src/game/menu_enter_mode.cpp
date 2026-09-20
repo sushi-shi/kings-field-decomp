@@ -1,7 +1,7 @@
 #include <stdarg.h>
 
-#include <kf/game_menu.h>
-#include <kf/game.h>
+#include <kf/game/menu.h>
+#include <kf/game/game.h>
 
 void func_80036e30(void)
 {
@@ -11,10 +11,9 @@ void func_80036e30(void)
 static u32 menu_enter_mode_impl(KfMenuMode menu_mode, int argument)
 {
     u32 result;
+    const auto input_context = kf::host_set_input_context(kf::InputContext::Menu);
 
-    DrawSync(0);
     pool_release_all();
-    memory_reset_system_heap();
     switch (menu_mode) {
     case KF_MENU_MODE_ROOT:
         result = menu_root();
@@ -35,8 +34,8 @@ static u32 menu_enter_mode_impl(KfMenuMode menu_mode, int argument)
         break;
     }
     }
-    memory_reset_system_heap();
     player_clear_motion();
+    kf::host_set_input_context(input_context);
     return result;
 }
 

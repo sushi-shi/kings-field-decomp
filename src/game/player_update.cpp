@@ -1,11 +1,15 @@
-#include <kf/null.h>
+#include <kf/lib/random.hpp>
+#include <kf/lib/null.h>
+#include <kf/game/graphics.h>
 
-#include <kf/input.h>
-#include <kf/overlay.h>
-#include <kf/game_player.h>
-#include <kf/game_collision.h>
-#include <psyq/libc.h>
-#include <kf/game.h>
+#include <kf/game/input.h>
+#include <kf/lib/overlay.h>
+#include <kf/game/player.h>
+#include <kf/game/collision.h>
+#include <cstdlib>
+#include <cstdio>
+#include <cstring>
+#include <kf/game/game.h>
 
 enum {
     POISON_DAMAGE_INTERVAL_UPDATES = 20,
@@ -26,7 +30,7 @@ enum {
     PLAYER_SLOWED_MOVEMENT_LIMIT = PLAYER_NORMAL_MOVEMENT_LIMIT / 5,
     PLAYER_NORMAL_TURN_LIMIT = 28,
     PLAYER_SLOWED_TURN_LIMIT = 5,
-    PLAYER_DARKNESS_FOG_NEAR = 5000,
+    PLAYER_DARKNESS_FOG_NEAR = 5000
 };
 
 enum {
@@ -36,7 +40,7 @@ enum {
     PLAYER_YAW_ACCEL_DECEL_SHIFT = 2,
     PLAYER_PITCH_ACCEL = 3,
     PLAYER_PITCH_DECEL = 2,
-    PLAYER_PITCH_STEP_LIMIT = 10,
+    PLAYER_PITCH_STEP_LIMIT = 10
 };
 
 enum {
@@ -108,6 +112,8 @@ void player_update(void)
     KfMapAttribute attribute;
     KfEffectKind magic_id;
 
+    input = kf::host_read_buttons();
+    const auto look = kf::host_take_look();
     if (player_state.update_state == KF_PLAYER_UPDATE_DYING) {
         player_death_update();
         return;
@@ -117,14 +123,18 @@ void player_update(void)
         return;
     }
     collision_adjust_cell_occupancy(player_state.motion_state.fields.map_cell.coords.x, player_state.motion_state.fields.map_cell.coords.z, -1);
-    input = PadRead(1);
-    if (input & PADh) {
+    player_state.camera_rotation.vy =
+        (player_state.camera_rotation.vy + look.yaw) & KF_ANGLE_WRAP_MASK;
+    player_state.camera_rotation.vx = std::clamp<s32>(
+        player_state.camera_rotation.vx + look.pitch,
+        -KF_PLAYER_CAMERA_PITCH_LIMIT, KF_PLAYER_CAMERA_PITCH_LIMIT);
+    if (input & kf::Button::Select) {
         display_show_system_screen(KF_SYSTEM_SCREEN_PAUSE);
     }
-    if (input & PADk) {
-        input = PADRdown;
+    if (input & kf::Button::Start) {
+        input = kf::button_mask(kf::Button::Back);
     }
-    if (PAD_PRESSED(input, player_previous_input, PADRdown)
+    if (BUTTON_PRESSED(input, player_previous_input, kf::Button::Back)
         && player_state.weapon_attack_phase == KF_WEAPON_ATTACK_INACTIVE) {
         item = menu_enter_mode(KF_MENU_MODE_ROOT);
         if (item >= 0) {
@@ -144,7 +154,7 @@ void player_update(void)
         }
         player_previous_input = input;
     } else {
-        if (PAD_PRESSED(input, player_previous_input, PADRright)) {
+        if (BUTTON_PRESSED(input, player_previous_input, kf::Button::Confirm)) {
             map_interaction_dispatch(&player_state.camera_position, &player_state.camera_rotation);
         }
         if ((player_state.status_effect_flags & KF_PLAYER_STATUS_SLOWED) != KF_PLAYER_STATUS_NONE) {
@@ -154,7 +164,7 @@ void player_update(void)
             player_movement_velocity_limit = PLAYER_NORMAL_MOVEMENT_LIMIT;
             player_turn_step_limit = PLAYER_NORMAL_TURN_LIMIT;
         }
-        if (input & PADLup) {
+        if (input & kf::Button::Up) {
             forward = player_state.motion_state.fields.forward_velocity
                 + (player_movement_velocity_limit >> PLAYER_FORWARD_ACCEL_SHIFT);
             if (forward > player_movement_velocity_limit) {
@@ -162,7 +172,7 @@ void player_update(void)
             } else {
                 player_state.motion_state.fields.forward_velocity = forward;
             }
-        } else if (input & PADLdown) {
+        } else if (input & kf::Button::Down) {
             forward = player_state.motion_state.fields.forward_velocity
                 - (player_movement_velocity_limit >> PLAYER_FORWARD_ACCEL_SHIFT);
             if (forward >= -player_movement_velocity_limit) {
@@ -183,7 +193,7 @@ void player_update(void)
                 player_state.motion_state.fields.forward_velocity = 0;
             }
         }
-        if (input & PADl) {
+        if (input & kf::Button::StrafeRight) {
             strafe = player_state.motion_state.fields.strafe_velocity
                 + (player_movement_velocity_limit >> PLAYER_STRAFE_ACCEL_DECEL_SHIFT);
             if (strafe > player_movement_velocity_limit) {
@@ -191,7 +201,7 @@ void player_update(void)
             } else {
                 player_state.motion_state.fields.strafe_velocity = strafe;
             }
-        } else if (input & PADn) {
+        } else if (input & kf::Button::StrafeLeft) {
             strafe = player_state.motion_state.fields.strafe_velocity
                 - (player_movement_velocity_limit >> PLAYER_STRAFE_ACCEL_DECEL_SHIFT);
             if (strafe >= -player_movement_velocity_limit) {
@@ -216,7 +226,7 @@ void player_update(void)
         strafe_sq *= strafe_sq;
         forward_sq = player_state.motion_state.fields.forward_velocity;
         forward_sq *= forward_sq;
-        magnitude = SquareRoot0(strafe_sq + forward_sq);
+        magnitude = kf::length_square_root(strafe_sq + forward_sq);
         if (magnitude == 0) {
             forward = 0;
             strafe = 0;
@@ -230,7 +240,7 @@ void player_update(void)
                 forward = -(forward_sq / magnitude);
             }
         }
-        player_state.motion_state.fields.movement_speed = SquareRoot0(strafe * strafe + forward * forward);
+        player_state.motion_state.fields.movement_speed = kf::length_square_root(strafe * strafe + forward * forward);
         if (forward > 0) {
             player_move_horizontal(player_state.camera_rotation.vy, forward);
         } else if (forward < 0) {
@@ -245,12 +255,12 @@ void player_update(void)
                 (player_state.camera_rotation.vy + KF_ANGLE_QUARTER_TURN) & KF_ANGLE_WRAP_MASK, -strafe);
         }
         player_update_view_bob();
-        if (input & PADLleft) {
+        if (input & kf::Button::Left) {
             player_state.motion_state.fields.yaw_step += player_turn_step_limit >> PLAYER_YAW_ACCEL_DECEL_SHIFT;
             if (player_state.motion_state.fields.yaw_step > player_turn_step_limit) {
                 player_state.motion_state.fields.yaw_step = player_turn_step_limit;
             }
-        } else if (input & PADLright) {
+        } else if (input & kf::Button::Right) {
             player_state.motion_state.fields.yaw_step -= player_turn_step_limit >> PLAYER_YAW_ACCEL_DECEL_SHIFT;
             if (player_state.motion_state.fields.yaw_step < -player_turn_step_limit) {
                 player_state.motion_state.fields.yaw_step = -player_turn_step_limit;
@@ -268,12 +278,12 @@ void player_update(void)
         }
         player_state.camera_rotation.vy =
             (player_state.camera_rotation.vy + player_state.motion_state.fields.yaw_step) & KF_ANGLE_WRAP_MASK;
-        if (input & PADm) {
+        if (input & kf::Button::LookDown) {
             player_state.motion_state.fields.pitch_step += PLAYER_PITCH_ACCEL;
             if (player_state.motion_state.fields.pitch_step >= PLAYER_PITCH_STEP_LIMIT + 1) {
                 player_state.motion_state.fields.pitch_step = PLAYER_PITCH_STEP_LIMIT;
             }
-        } else if (input & PADo) {
+        } else if (input & kf::Button::LookUp) {
             player_state.motion_state.fields.pitch_step -= PLAYER_PITCH_ACCEL;
             if (player_state.motion_state.fields.pitch_step < -PLAYER_PITCH_STEP_LIMIT) {
                 player_state.motion_state.fields.pitch_step = -PLAYER_PITCH_STEP_LIMIT;
@@ -300,11 +310,11 @@ void player_update(void)
                 player_state.camera_rotation.vx = -KF_PLAYER_CAMERA_PITCH_LIMIT;
             }
         }
-        if (PAD_PRESSED(input, player_previous_input, PADRup)) {
+        if (BUTTON_PRESSED(input, player_previous_input, kf::Button::Attack)) {
             player_begin_weapon_attack();
         }
         if (player_state.equipped_body_armor_id != KF_ITEM_SKULL_ARMOR) {
-            if (PAD_PRESSED(input, player_previous_input, PADRleft)) {
+            if (BUTTON_PRESSED(input, player_previous_input, kf::Button::Magic)) {
                 if (player_state.weapon_attack_fully_charged == KF_WEAPON_ATTACK_FULL_CHARGE) {
                     player_state.weapon_attack_fully_charged = KF_WEAPON_ATTACK_NORMAL_CHARGE;
                     switch (player_state.equipped_weapon_id) {
@@ -424,7 +434,7 @@ void player_update(void)
                         player_state.camera_rotation.vy,
                         -player_state.camera_rotation.vz);
                     matrix_set_rotation_yxz(&effect_rotation.angles, &matrix);
-                    ApplyMatrix(&matrix, &spawn_offset, &position);
+                    position = kf::matrix_apply_rotation(matrix, spawn_offset);
                     addVector(&position, &player_state.camera_position);
                     copyVector(&effect_rotation.vector, &player_state.camera_rotation);
                     origin = &player_state.camera_position;
@@ -434,9 +444,9 @@ void player_update(void)
                             origin, player_state.camera_rotation.vy, KF_EFFECT_ACTOR_TARGET_MAX_DISTANCE,
                             PLAYER_WEAPON_MAGIC_BURST_CONE, &distance);
                         effect_rotation.angles.x -= PLAYER_WEAPON_MAGIC_JITTER_BIAS
-                            - (rand() >> PLAYER_WEAPON_MAGIC_RANDOM_SHIFT);
+                            - (kf::random_next() >> PLAYER_WEAPON_MAGIC_RANDOM_SHIFT);
                         effect_rotation.angles.y -= PLAYER_WEAPON_MAGIC_JITTER_BIAS
-                            - (rand() >> PLAYER_WEAPON_MAGIC_RANDOM_SHIFT);
+                            - (kf::random_next() >> PLAYER_WEAPON_MAGIC_RANDOM_SHIFT);
                         attachment = kf_enum_decode<KfEffectHomingMode>(player_state.weapon_magic_shots_remaining & 1);
                     } else {
                         target = actor_pool_find_target_in_cone(
@@ -504,7 +514,8 @@ void player_update(void)
                 fog_interpolate_near(PLAYER_DARKNESS_FOG_NEAR, KF_INITIAL_FOG_NEAR_DISTANCE,
                     fade << (KF_FIXED12_BITS - DARKNESS_FADE_BITS));
             } else {
-                SetColorMatrix(&player_darkness_color_matrix);
+                memcpy(game_graphics_runtime.render_state.lighting.color_matrix.m, (player_darkness_color_matrix).m,
+                    sizeof game_graphics_runtime.render_state.lighting.color_matrix.m);
                 fog_set_near(PLAYER_DARKNESS_FOG_NEAR);
             }
         }
@@ -660,4 +671,14 @@ void player_update(void)
         player_state.illusion_staff_timer--;
         lighting_apply_timed_player_effect();
     }
+}
+
+
+void player_update_reset_module_state(void)
+{
+    kf::restore_initial_value<player_darkness_color_matrix>();
+    kf::restore_initial_value<player_damage_camera_offsets>();
+    kf::restore_initial_value<player_previous_input>();
+    kf::restore_initial_value<player_movement_velocity_limit>();
+    kf::restore_initial_value<player_turn_step_limit>();
 }

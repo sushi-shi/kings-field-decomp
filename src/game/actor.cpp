@@ -1,12 +1,15 @@
-#include <kf/null.h>
-#include <kf/bool.h>
+#include <kf/lib/random.hpp>
+#include <kf/lib/null.h>
+#include <kf/lib/bool.h>
 
-#include <kf/game_effect.h>
-#include <kf/map_data.h>
-#include <kf/game_actor.h>
-#include <kf/game_collision.h>
-#include <psyq/libc.h>
-#include <kf/game.h>
+#include <kf/game/effect.h>
+#include <kf/lib/map_data.h>
+#include <kf/game/actor.h>
+#include <kf/game/collision.h>
+#include <cstdlib>
+#include <cstdio>
+#include <cstring>
+#include <kf/game/game.h>
 
 enum {
     ACTOR_SELECTION_ANGLE_TOLERANCE = 0x18e,
@@ -149,7 +152,7 @@ void actor_initialize(KfActor *actor)
         || actor->slot_state == KF_ACTOR_SLOT_PERSISTENT) {
         actor->rotation.angles.y = kf_enum_encode<u8>(actor->heading_quadrant) * KF_ANGLE_QUARTER_TURN;
     } else {
-        actor->rotation.angles.y = rand() >> KF_RANDOM_ANGLE_SHIFT;
+        actor->rotation.angles.y = kf::random_next() >> KF_RANDOM_ANGLE_SHIFT;
     }
     collision_adjust_cell_occupancy(actor->cell_x, actor->cell_z, 1);
 }
@@ -440,7 +443,7 @@ void actor_try_attack_player(
     }
     status_effect = KF_PLAYER_STATUS_NONE;
     if (definition->status_effect_chance != 0
-        && (rand() >> ACTOR_STATUS_CHANCE_RANDOM_SHIFT) < definition->status_effect_chance) {
+        && (kf::random_next() >> ACTOR_STATUS_CHANCE_RANDOM_SHIFT) < definition->status_effect_chance) {
         status_effect = definition->status_effect;
     }
     player_apply_damage(
@@ -537,7 +540,7 @@ s32 actor_distance_to_point(
             }
         }
         point_z >>= KF_LENGTH_SQUARE_DOWNSHIFT;
-        distance = SquareRoot0(point_x * point_x + point_z * point_z) << KF_LENGTH_SQUARE_DOWNSHIFT;
+        distance = kf::length_square_root(point_x * point_x + point_z * point_z) << KF_LENGTH_SQUARE_DOWNSHIFT;
         if (max_distance < distance) {
             break;
         }
@@ -585,10 +588,10 @@ void actor_bind_current(KfActor *actor)
     s32 index;
 
     actor_state.current = actor;
-    index = actor - actor_state.actors;
-    actor_state.current_definition = &actor_state.definitions.entries[actor->definition_id];
+    index = actor ? actor - actor_state.actors : -1;
+    actor_state.current_definition = actor ? &actor_state.definitions.entries[actor->definition_id] : nullptr;
     actor_state.current_index = index;
-    actor_state.current_definition_id = actor->definition_id;
+    actor_state.current_definition_id = actor ? actor->definition_id : 0;
 }
 
 void actor_advance_animation_wrapped(KfActor *actor, s16 delta)
@@ -666,10 +669,10 @@ KfActorAction actor_try_select_action_distance_facing(
     } else {
         odds >>= ACTOR_SELECTION_OUTER_CHANCE_SHIFT;
     }
-    if (!((rand() >> ACTOR_SELECTION_RANDOM_SHIFT) < odds)) {
+    if (!((kf::random_next() >> ACTOR_SELECTION_RANDOM_SHIFT) < odds)) {
         return KF_ACTOR_ACTION_NONE;
     }
-    if (rand() < ACTOR_SELECTION_FACING_BYPASS_LIMIT) {
+    if (kf::random_next() < ACTOR_SELECTION_FACING_BYPASS_LIMIT) {
         return action;
     }
     if (angle_within_tolerance(
@@ -707,10 +710,10 @@ KfActorAction actor_try_select_ground_action(KfActorAction action, s32 distance,
     }
     switch (0) {
     default:
-        if (!((rand() >> ACTOR_SELECTION_RANDOM_SHIFT) < odds)) {
+        if (!((kf::random_next() >> ACTOR_SELECTION_RANDOM_SHIFT) < odds)) {
             break;
         }
-        if (rand() < ACTOR_SELECTION_FACING_BYPASS_LIMIT) {
+        if (kf::random_next() < ACTOR_SELECTION_FACING_BYPASS_LIMIT) {
             return action;
         }
         if (angle_within_tolerance(
@@ -739,7 +742,7 @@ KfActorAction actor_try_select_facing_action(KfActorAction action, s32 distance,
         }
         odds <<= ACTOR_MULTI_HIT_NEAR_CHANCE_SHIFT;
     }
-    if (!((rand() >> ACTOR_SELECTION_RANDOM_SHIFT) < odds)) {
+    if (!((kf::random_next() >> ACTOR_SELECTION_RANDOM_SHIFT) < odds)) {
         return KF_ACTOR_ACTION_NONE;
     }
     if (angle_within_tolerance(
@@ -774,7 +777,7 @@ KfActorAction actor_try_select_profiled_action(KfActorAction action, s32 distanc
         }
     }
     odds = (chance * odds) >> KF_FIXED8_BITS;
-    if (!((rand() >> ACTOR_SELECTION_RANDOM_SHIFT) < odds)) {
+    if (!((kf::random_next() >> ACTOR_SELECTION_RANDOM_SHIFT) < odds)) {
         return KF_ACTOR_ACTION_NONE;
     }
     switch (0) {
@@ -783,7 +786,7 @@ KfActorAction actor_try_select_profiled_action(KfActorAction action, s32 distanc
                 actor->rotation.angles.y,
                 ACTOR_BEARING_TO_PLAYER(actor),
                 KF_ACTOR_AIM_TOLERANCE)
-            && rand() >= ACTOR_PROFILE_FACING_BYPASS_LIMIT) {
+            && kf::random_next() >= ACTOR_PROFILE_FACING_BYPASS_LIMIT) {
             break;
         }
         switch (0) {
@@ -817,4 +820,12 @@ KfActorAction actor_try_select_profiled_action(KfActorAction action, s32 distanc
         return action;
     }
     return KF_ACTOR_ACTION_NONE;
+}
+
+
+void actor_reset_module_state(void)
+{
+    kf::restore_initial_value<actor_action_profiles>();
+    kf::restore_initial_value<boss_death_phase_sounds>();
+    kf::restore_initial_value<boss_death_loop_sound>();
 }

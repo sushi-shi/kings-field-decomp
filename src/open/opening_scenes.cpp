@@ -1,18 +1,19 @@
-#include <kf/null.h>
+#include <kf/lib/null.h>
 
-#include <kf/audio.h>
-#include <kf/game_math.h>
-#include <kf/open_audio.h>
-#include <kf/open_camera_path.h>
-#include <kf/open_opening_helpers.h>
-#include <kf/open_opening_render.h>
-#include <kf/open_opening_scenes.h>
-#include <kf/open_render.h>
-#include <kf/open_resources.h>
-#include <kf/open_scene0.h>
-#include <psyq/audio.h>
+#include <kf/lib/audio.h>
+#include <kf/lib/math.h>
+#include <kf/lib/render_face.h>
+#include <kf/open/audio.h>
+#include <kf/open/camera_path.h>
+#include <kf/open/opening_helpers.h>
+#include <kf/open/opening_render.h>
+#include <kf/open/opening_scenes.h>
+#include <kf/open/render.h>
+#include <kf/open/resources.h>
+#include <kf/open/scene0.h>
 
 enum {
+    SCENE0_UPDATES_PER_SECOND = 22,
     SCENE0_ROTATION_START_POINT = 8,
     SCENE0_FADE_OUT_START_POINT = 15,
     SCENE0_YAW_STEP = 40,
@@ -25,12 +26,11 @@ enum {
     SCENE1_SHADE_STEP = 4,
     SCENE1_SEQUENCE_STOP_FRAME = 600,
     SCENE1_HOLD_FRAMES = 1000,
-    CYLINDER_TRANSITION_FIRST_ENTITY_SLOT = 24,
+    CYLINDER_TRANSITION_FIRST_ENTITY_SLOT = 24
 };
 
 enum {
     SCENE3_YAW_STEP = 0x10,
-    SCENE3_CLUT_WORK_CAPACITY = 6,
     SCENE_CAMERA_WAVE_SHIFT = 7,
     SCENE_CAMERA_WAVE_ANGLE_STEP = 100,
     PANEL_TPAGE_FIRST_X = 0x1c0,
@@ -185,6 +185,8 @@ void opening_scene0_run(void)
     entity_12->rotation.y = KF_ANGLE_THREE_QUARTER_TURN;
     entity_11->rotation.y = KF_ANGLE_THREE_QUARTER_TURN;
     opening_camera_path_begin(opening_scene0_camera_path);
+    // Stable port cadence calibrated from the measured retail flythrough.
+    auto pacer = kf::host_begin_update_pacer(SCENE0_UPDATES_PER_SECOND);
 
     for (;;) {
         opening_poll_input();
@@ -221,6 +223,7 @@ void opening_scene0_run(void)
         opening_scene0_render_frame(
             &opening_camera_path_state.position,
             &opening_camera_path_state.rotation);
+        kf::host_wait_update(pacer);
     }
 
     audio_stop_sequence(KF_AUDIO_STOP_FADE);
@@ -228,39 +231,23 @@ void opening_scene0_run(void)
 
 void opening_scene1_draw_fade(u8 shade)
 {
-    POLY_FT4 *left;
-    POLY_FT4 *right;
-    u32 **ordering_table_slot;
+    kf::DrawFace left {}, right {};
+    const CVECTOR color = {shade, shade, shade, 0};
 
     display_begin_frame();
-    left = (POLY_FT4 *)open_graphics_runtime.display_state.primitive_buffer->cursor;
-    open_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_FT4);
-    right = (POLY_FT4 *)open_graphics_runtime.display_state.primitive_buffer->cursor;
-    open_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_FT4);
-
-    SetPolyFT4(left);
-    SetPolyFT4(right);
-    left->tpage = GetTPage(
-        KF_GPU_TEXTURE_16BIT, KF_GPU_BLEND_AVERAGE,
-        SCENE1_LEFT_TPAGE_X, KF_TEXTURE_LOWER_PAGE_Y);
-    right->tpage = GetTPage(
-        KF_GPU_TEXTURE_16BIT, KF_GPU_BLEND_AVERAGE,
-        SCENE1_RIGHT_TPAGE_X, KF_TEXTURE_LOWER_PAGE_Y);
-
-    setXYWH(left, 0, 0, SCENE1_PANEL_WIDTH, KF_DISPLAY_HEIGHT);
-
-    setXYWH(right, SCENE1_RIGHT_PANEL_X, 0, SCENE1_PANEL_WIDTH, KF_DISPLAY_HEIGHT);
-
-    setUVWH(left, 0, 0, SCENE1_PANEL_WIDTH, KF_DISPLAY_HEIGHT);
-
-    setUVWH(right, 0, 0, SCENE1_PANEL_WIDTH, KF_DISPLAY_HEIGHT);
-
-    setRGB0(left, shade, shade, shade);
-    setRGB0(right, shade, shade, shade);
-
-    ordering_table_slot = &open_graphics_runtime.ordering_table;
-    AddPrim((void *)*ordering_table_slot, (void *)left);
-    AddPrim((void *)*ordering_table_slot, (void *)right);
+    left.material = {kf::SurfaceKind::Texture,
+        {SCENE1_LEFT_TPAGE_X, KF_TEXTURE_LOWER_PAGE_Y, 0, 0, kf::TextureFormat::Direct16},
+        kf::BlendMode::average};
+    right.material = {kf::SurfaceKind::Texture,
+        {SCENE1_RIGHT_TPAGE_X, KF_TEXTURE_LOWER_PAGE_Y, 0, 0, kf::TextureFormat::Direct16},
+        kf::BlendMode::average};
+    render_face_rectangle(&left, 0, 0, SCENE1_PANEL_WIDTH, KF_DISPLAY_HEIGHT);
+    render_face_rectangle(&right, SCENE1_RIGHT_PANEL_X, 0,
+        SCENE1_RIGHT_PANEL_X + SCENE1_PANEL_WIDTH, KF_DISPLAY_HEIGHT);
+    render_face_uv_rectangle(&left, 0, 0, SCENE1_PANEL_WIDTH, KF_DISPLAY_HEIGHT);
+    render_face_uv_rectangle(&right, 0, 0, SCENE1_PANEL_WIDTH, KF_DISPLAY_HEIGHT);
+    render_face_submit(&left, &color, KfFaceShading::Flat, 0);
+    render_face_submit(&right, &color, KfFaceShading::Flat, 0);
     display_present_frame();
 }
 
@@ -282,7 +269,7 @@ void opening_scene1_run(void)
         if (frame == SCENE1_SEQUENCE_STOP_FRAME) {
             audio_stop_sequence(KF_AUDIO_STOP_IMMEDIATE);
         }
-        VSync(0);
+        kf::host_wait_frame();
         opening_poll_input();
         if (opening_input_action != KF_OPENING_INPUT_NONE) {
             break;
@@ -365,7 +352,7 @@ void opening_cylinder_transition(KfOpeningCylinderTransitionMode transition_mode
             entity++;
         } while (entity_index < KF_CYLINDER_TRANSITION_COUNT);
         opening_render_frame(NULL, NULL);
-        VSync(0);
+        kf::host_wait_frame();
         frame++;
     } while (frame < KF_CYLINDER_TRANSITION_FRAMES);
 
@@ -388,9 +375,7 @@ void opening_scene3_run(void)
     KfOpeningEntity *entity_13;
     KfOpeningEntity *entity_14;
     VECTOR transition_position;
-    u32 texture_pages[KF_OPENING_SCENE3_OVERLAY_COUNT];
-
-    u32 cluts[SCENE3_CLUT_WORK_CAPACITY];
+    kf::FaceMaterial materials[KF_OPENING_SCENE3_OVERLAY_COUNT];
     KfScreenRect *overlay_rect;
     s16 *overlay_y;
     s16 blend;
@@ -399,14 +384,11 @@ void opening_scene3_run(void)
 
     wave_angle = 0;
     opening_resources_load_scene3();
-    texture_pages[0] = GetTPage(
-        KF_GPU_TEXTURE_4BIT, KF_GPU_BLEND_AVERAGE,
-        PANEL_TPAGE_FIRST_X, KF_TEXTURE_LOWER_PAGE_Y);
-    cluts[0] = GetClut(0, PANEL_CLUT_FIRST_Y);
-    texture_pages[1] = GetTPage(
-        KF_GPU_TEXTURE_4BIT, KF_GPU_BLEND_AVERAGE,
-        PANEL_TPAGE_FIRST_X + PANEL_TPAGE_X_STRIDE, KF_TEXTURE_LOWER_PAGE_Y);
-    cluts[1] = GetClut(0, PANEL_CLUT_FIRST_Y + 1);
+    for (unsigned i = 0; i < KF_OPENING_SCENE3_OVERLAY_COUNT; ++i)
+        materials[i] = {kf::SurfaceKind::Texture,
+            {static_cast<u16>(PANEL_TPAGE_FIRST_X + i * PANEL_TPAGE_X_STRIDE),
+             KF_TEXTURE_LOWER_PAGE_Y, 0, static_cast<u16>(PANEL_CLUT_FIRST_Y + i),
+             kf::TextureFormat::Indexed4}, kf::BlendMode::average};
 
     entity_13 = opening_entity_find_by_object_id(
         opening_entity_state.entities, KF_OPENING_SCENE3_INCREASING_YAW_MODEL);
@@ -447,7 +429,7 @@ void opening_scene3_run(void)
     }
 
     do {
-        opening_camera_path_step(rsin(wave_angle) >> SCENE_CAMERA_WAVE_SHIFT);
+        opening_camera_path_step(kf::angle_sine(wave_angle) >> SCENE_CAMERA_WAVE_SHIFT);
         if (opening_camera_path_state.frames_remaining == KF_CAMERA_PATH_FINISHED) {
             break;
         }
@@ -456,7 +438,6 @@ void opening_scene3_run(void)
             &opening_camera_path_state.position,
             &opening_camera_path_state.rotation);
         display_begin_frame();
-        SetGeomScreen(KF_DEFAULT_PROJECTION_DISTANCE);
         opening_render_entities();
         overlay_index = 0;
         overlay_rect = opening_scene3_overlay_rects;
@@ -467,8 +448,7 @@ void opening_scene3_run(void)
                 sprite_add_ft4(
                     overlay_rect,
                     opening_scene3_overlay_uv,
-                    texture_pages[overlay_index],
-                    cluts[overlay_index],
+                    materials[overlay_index],
                     &opening_scene3_overlay_color,
                     PANEL_OT_DEPTH);
             }
@@ -526,7 +506,6 @@ void opening_ending_scene_run(void)
     transition_position.vy = KF_OPENING_SCENE_BASE_Y;
     transition_position.vx = opening_camera_path_state.position.vx;
     transition_position.vz = opening_camera_path_state.position.vz;
-    SetDispMask(1);
     blend = 0;
     opening_cylinder_transition(KF_OPENING_CYLINDER_TRANSITION_CREATE, &transition_position);
 
@@ -544,7 +523,7 @@ void opening_ending_scene_run(void)
     brightness = 0;
     blend = 0;
     for (;;) {
-        opening_camera_path_step(rsin(wave_angle) >> SCENE_CAMERA_WAVE_SHIFT);
+        opening_camera_path_step(kf::angle_sine(wave_angle) >> SCENE_CAMERA_WAVE_SHIFT);
         if (opening_camera_path_state.frames_remaining == KF_CAMERA_PATH_FINISHED) {
             break;
         }
@@ -558,18 +537,12 @@ void opening_ending_scene_run(void)
                 opening_render_frame(
                     &opening_camera_path_state.position,
                     &opening_camera_path_state.rotation);
-                SetBackColor(brightness, brightness, brightness);
-                SetFarColor(brightness, brightness, brightness);
-                setRGB0(
-                    &open_graphics_runtime.display_draw_environments[0],
-                    brightness,
-                    brightness,
-                    brightness);
-                setRGB0(
-                    &open_graphics_runtime.display_draw_environments[1],
-                    brightness,
-                    brightness,
-                    brightness);
+                open_graphics_runtime.render_state.lighting.ambient = {brightness, brightness, brightness};
+                open_graphics_runtime.render_state.lighting.fog = {brightness, brightness, brightness};
+                open_graphics_runtime.display_state.frame_style.red =
+                    open_graphics_runtime.display_state.frame_style.green =
+                    open_graphics_runtime.display_state.frame_style.blue =
+                    static_cast<u8>(brightness) / 255.0f;
                 if (brightness >= ENDING_MAX_BRIGHTNESS) {
                     brightness = ENDING_MAX_BRIGHTNESS;
                 } else {
@@ -595,14 +568,12 @@ void opening_ending_scene_run(void)
         if (brightness < 0) {
             brightness = 0;
         }
-        SetBackColor(brightness, brightness, brightness);
-        SetFarColor(brightness, brightness, brightness);
-        setRGB0(
-            &open_graphics_runtime.display_draw_environments[0],
-            brightness, brightness, brightness);
-        setRGB0(
-            &open_graphics_runtime.display_draw_environments[1],
-            brightness, brightness, brightness);
+        open_graphics_runtime.render_state.lighting.ambient = {brightness, brightness, brightness};
+        open_graphics_runtime.render_state.lighting.fog = {brightness, brightness, brightness};
+        open_graphics_runtime.display_state.frame_style.red =
+            open_graphics_runtime.display_state.frame_style.green =
+            open_graphics_runtime.display_state.frame_style.blue =
+            static_cast<u8>(brightness) / 255.0f;
         lighting_set_color_matrix(
             &color_matrix_table[kf_enum_encode<s32>(KF_OPEN_COLOR_DEFAULT)],
             &color_matrix_table[kf_enum_encode<s32>(KF_OPEN_COLOR_BLACK)], blend);
@@ -620,8 +591,7 @@ void opening_ending_scroll_run(void)
     MATRIX light_matrix = {
         {{0, 0, -4095}, {4095, 0, -2048}, {-4095, 0, -2048}}, {0, 0, 0}
     };
-    u32 texture_pages[ENDING_PANEL_COUNT];
-    u32 cluts[ENDING_PANEL_COUNT];
+    kf::FaceMaterial materials[ENDING_PANEL_COUNT];
     CVECTOR top_color;
     CVECTOR bottom_color;
     KfOpeningEntity *entity_26;
@@ -640,42 +610,11 @@ void opening_ending_scroll_run(void)
     open_graphics_runtime.render_state.light_matrix = light_matrix;
     lighting_blend = 0;
     opening_resources_load_ending_entities();
-    texture_pages[0] = GetTPage(
-        KF_GPU_TEXTURE_4BIT, KF_GPU_BLEND_AVERAGE,
-        PANEL_TPAGE_FIRST_X, KF_TEXTURE_LOWER_PAGE_Y);
-    cluts[0] = GetClut(0, PANEL_CLUT_FIRST_Y);
-    texture_pages[1] = GetTPage(
-        KF_GPU_TEXTURE_4BIT, KF_GPU_BLEND_AVERAGE,
-        PANEL_TPAGE_FIRST_X + PANEL_TPAGE_X_STRIDE, KF_TEXTURE_LOWER_PAGE_Y);
-    cluts[1] = GetClut(0, PANEL_CLUT_FIRST_Y + 1);
-    texture_pages[2] = GetTPage(
-        KF_GPU_TEXTURE_4BIT, KF_GPU_BLEND_AVERAGE,
-        PANEL_TPAGE_FIRST_X + 2 * PANEL_TPAGE_X_STRIDE, KF_TEXTURE_LOWER_PAGE_Y);
-    cluts[2] = GetClut(0, PANEL_CLUT_FIRST_Y + 2);
-    texture_pages[3] = GetTPage(
-        KF_GPU_TEXTURE_4BIT, KF_GPU_BLEND_AVERAGE,
-        PANEL_TPAGE_FIRST_X + 3 * PANEL_TPAGE_X_STRIDE, KF_TEXTURE_LOWER_PAGE_Y);
-    cluts[3] = GetClut(0, PANEL_CLUT_FIRST_Y + 3);
-    texture_pages[4] = GetTPage(
-        KF_GPU_TEXTURE_4BIT, KF_GPU_BLEND_AVERAGE,
-        PANEL_TPAGE_FIRST_X + 4 * PANEL_TPAGE_X_STRIDE, KF_TEXTURE_LOWER_PAGE_Y);
-    cluts[4] = GetClut(0, PANEL_CLUT_FIRST_Y + 4);
-    texture_pages[5] = GetTPage(
-        KF_GPU_TEXTURE_4BIT, KF_GPU_BLEND_AVERAGE,
-        PANEL_TPAGE_FIRST_X + 5 * PANEL_TPAGE_X_STRIDE, KF_TEXTURE_LOWER_PAGE_Y);
-    cluts[5] = GetClut(0, PANEL_CLUT_FIRST_Y + 5);
-    texture_pages[6] = GetTPage(
-        KF_GPU_TEXTURE_4BIT, KF_GPU_BLEND_AVERAGE,
-        PANEL_TPAGE_FIRST_X + 6 * PANEL_TPAGE_X_STRIDE, KF_TEXTURE_LOWER_PAGE_Y);
-    cluts[6] = GetClut(0, PANEL_CLUT_FIRST_Y + 6);
-    texture_pages[7] = GetTPage(
-        KF_GPU_TEXTURE_4BIT, KF_GPU_BLEND_AVERAGE,
-        PANEL_TPAGE_FIRST_X + 7 * PANEL_TPAGE_X_STRIDE, KF_TEXTURE_LOWER_PAGE_Y);
-    cluts[7] = GetClut(0, PANEL_CLUT_FIRST_Y + 7);
-    texture_pages[8] = GetTPage(
-        KF_GPU_TEXTURE_4BIT, KF_GPU_BLEND_AVERAGE,
-        PANEL_TPAGE_FIRST_X + 8 * PANEL_TPAGE_X_STRIDE, KF_TEXTURE_LOWER_PAGE_Y);
-    cluts[8] = GetClut(0, PANEL_CLUT_FIRST_Y + 8);
+    for (unsigned i = 0; i < ENDING_PANEL_COUNT; ++i)
+        materials[i] = {kf::SurfaceKind::Texture,
+            {static_cast<u16>(PANEL_TPAGE_FIRST_X + i * PANEL_TPAGE_X_STRIDE),
+             KF_TEXTURE_LOWER_PAGE_Y, 0, static_cast<u16>(PANEL_CLUT_FIRST_Y + i),
+             kf::TextureFormat::Indexed4}, kf::BlendMode::average};
 
     entity_26 = opening_entity_find_by_object_id(
         opening_entity_state.entities, KF_OPENING_ENDING_ORANGE_DISK);
@@ -689,9 +628,9 @@ void opening_ending_scroll_run(void)
     sequence_phase = ENDING_SEQUENCE_WAIT_SCROLL;
     scroll_state = ENDING_SCROLL_WAIT_DISK;
     scroll_tick = ENDING_SCROLL_TICK_STARFIELD_AND_PANELS;
-    SetFogNear(KF_INITIAL_FOG_NEAR_DISTANCE, KF_DEFAULT_PROJECTION_DISTANCE);
-    SetBackColor(0, 0, 0);
-    SetFarColor(0, 0, 0);
+    open_graphics_runtime.render_state.projection.fog_near = KF_INITIAL_FOG_NEAR_DISTANCE;
+    open_graphics_runtime.render_state.lighting.ambient = {0, 0, 0};
+    open_graphics_runtime.render_state.lighting.fog = {0, 0, 0};
     open_graphics_runtime.tmd_projection_shift = ENDING_TMD_PROJECTION_SHIFT;
 
     setVector(&transition_position,
@@ -739,7 +678,7 @@ void opening_ending_scroll_run(void)
             break;
         case ENDING_SEQUENCE_FADE:
             --sequence_volume;
-            SsSetMVol(sequence_volume / ENDING_SEQUENCE_VOLUME_DIVISOR,
+            kf::sound_master_volume(sequence_volume / ENDING_SEQUENCE_VOLUME_DIVISOR,
                       sequence_volume / ENDING_SEQUENCE_VOLUME_DIVISOR);
             if (sequence_volume == 0) {
                 sequence_phase = ENDING_SEQUENCE_REPLACED;
@@ -760,7 +699,6 @@ void opening_ending_scroll_run(void)
         render_set_view_transform(
             &opening_camera_path_state.position, &opening_camera_path_state.rotation);
         display_begin_frame();
-        SetGeomScreen(KF_DEFAULT_PROJECTION_DISTANCE);
         opening_render_entities();
 
         background_blend += ENDING_BACKGROUND_BLEND_STEP;
@@ -803,7 +741,7 @@ void opening_ending_scroll_run(void)
                 }
                 if ((u16)(panel->y + PANEL_CLIP_Y_BIAS) < PANEL_CLIP_SPAN) {
                     sprite_add_ft4(panel, opening_ending_scroll_uv,
-                                   texture_pages[panel_index], cluts[panel_index],
+                                   materials[panel_index],
                                    &opening_ending_scroll_panel_color, PANEL_OT_DEPTH);
                 }
                 ++panel_index;
@@ -816,4 +754,26 @@ void opening_ending_scroll_run(void)
         }
         display_present_frame();
     }
+}
+
+
+void opening_scenes_reset_module_state(void)
+{
+    kf::restore_initial_value<opening_scene0_camera_path>();
+    kf::restore_initial_value<opening_scene3_camera_path>();
+    kf::restore_initial_value<opening_ending_camera_path>();
+    kf::restore_initial_value<opening_ending_scroll_camera_path>();
+    kf::restore_initial_value<opening_scene0_sound>();
+    kf::restore_initial_value<opening_scene3_overlay_rects>();
+    kf::restore_initial_value<opening_ending_scroll_panels>();
+    kf::restore_initial_value<opening_scene3_overlay_uv>();
+    kf::restore_initial_value<opening_scene3_overlay_color>();
+    kf::restore_initial_value<opening_ending_scroll_backgrounds>();
+    kf::restore_initial_value<opening_ending_scroll_top_start>();
+    kf::restore_initial_value<opening_ending_scroll_bottom_start>();
+    kf::restore_initial_value<opening_ending_scroll_top_end>();
+    kf::restore_initial_value<opening_ending_scroll_bottom_end>();
+    kf::restore_initial_value<opening_ending_scroll_panel_color>();
+    kf::restore_initial_value<opening_ending_scroll_background_color>();
+    kf::restore_initial_value<opening_ending_scroll_uv>();
 }

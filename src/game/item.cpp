@@ -1,12 +1,16 @@
-#include <kf/null.h>
-#include <kf/game_graphics.h>
+#include <kf/lib/null.h>
+#include <kf/game/graphics.h>
 
-#include <kf/input.h>
-#include <kf/map_data.h>
-#include <kf/item.h>
-#include <kf/game_cd.h>
-#include <psyq/libc.h>
-#include <kf/game.h>
+#include <kf/game/input.h>
+#include <kf/lib/map_data.h>
+#include <kf/lib/item.h>
+#include <kf/game/resource_file.h>
+#include <cstdlib>
+#include <cstdio>
+#include <cstring>
+#include <kf/game/game.h>
+#include <kf/lib/graphics.h>
+#include <kf/lib/render_face.h>
 
 void item_menu_buy(KfItemStockBank shop_bank);
 void item_menu_sell(KfItemStockBank shop_bank);
@@ -30,78 +34,158 @@ u16 item_buy_prices[KF_ITEM_COUNT][KF_ITEM_SHOP_COUNT];
 
 u16 item_sell_prices[KF_ITEM_COUNT][KF_ITEM_SHOP_COUNT];
 
-void item_load_floor_placements(KfFloorItemPlacement *placements)
+#include "../lib/floor_item_load.inc"
+
+// STAT.DAT stores little-endian words and authored GPU templates. Only this
+// loading boundary knows that layout; menus retain copied native descriptions.
+struct MenuDataReader {
+    const u8 *cursor;
+    std::size_t remaining;
+};
+
+static const u8 *menu_data_take(MenuDataReader *reader, std::size_t size)
 {
-    KfFloorItemPlacement *first_placement;
-    KfFloorItem *item;
+    if (size > reader->remaining)
+        kf::host_fail("Truncated COM/STAT.DAT");
+    const u8 *data = reader->cursor;
+    reader->cursor += size;
+    reader->remaining -= size;
+    return data;
+}
 
-    game_graphics_runtime.floor_item_count = 0;
-    first_placement = placements;
-    while (placements++->base_sprite_index != KF_FLOOR_ITEM_END) {
-        game_graphics_runtime.floor_item_count++;
+static u16 menu_data_u16(const u8 *data)
+{
+    return data[0] | (static_cast<u16>(data[1]) << 8);
+}
+
+static u16 menu_data_word(MenuDataReader *reader)
+{
+    return menu_data_u16(menu_data_take(reader, 2));
+}
+
+enum class MenuTemplateKind : u8 { Textured, Solid };
+
+static kf::DrawFace menu_data_face(MenuDataReader *reader, MenuTemplateKind kind)
+{
+    const bool textured = kind == MenuTemplateKind::Textured;
+    const std::size_t size = textured ? 40 : 24;
+    const u8 *data = menu_data_take(reader, size);
+    kf::DrawFace face{};
+    face.shape = kf::FaceShape::Quad;
+    // The second bank's first dialog template is empty in the original file.
+    if (data[3] == 0) {
+        for (std::size_t i = 0; i < size; ++i)
+            if (data[i] != 0)
+                kf::host_fail("Invalid empty menu template in COM/STAT.DAT");
+        return face;
     }
-
-    item = game_graphics_runtime.floor_items;
-    placements = first_placement;
-    if (placements->base_sprite_index != KF_FLOOR_ITEM_END) {
-        do {
-            s32 height;
-
-            item->base_sprite_index = placements->base_sprite_index;
-            item->facing_and_frame_count = placements->facing_and_frame_count;
-            item->unknown_03 = placements->unknown_03;
-            item->position_x = map_placement_axis_position(placements->tile_x, placements->local_x);
-            item->position_z = map_placement_axis_position(placements->tile_z, placements->local_z);
-            height = map_floor_height_grid.cells[placements->tile_z][placements->tile_x] * KF_MAP_HEIGHT_STEP;
-            item->position_y = placements->local_y - height;
-            item->animation_frame =
-                (rand() * kf_enum_encode<u8>(item->facing_and_frame_count)) >> KF_FLOOR_ITEM_INITIAL_FRAME_RANDOM_BITS;
-            item++;
-            placements++;
-        } while (placements->base_sprite_index != KF_FLOOR_ITEM_END);
+    const u8 command = data[7];
+    if (data[3] != size / 4 - 1 || (command & 0xfc) != (textured ? 0x2c : 0x28))
+        kf::host_fail("Unsupported menu template in COM/STAT.DAT");
+    if (textured)
+        face.material = render_texture_material(menu_data_u16(data + 22), menu_data_u16(data + 14));
+    else
+        face.material.kind = kf::SurfaceKind::Solid;
+    face.transparency = command & 2 ? kf::FaceTransparency::Blend : kf::FaceTransparency::Opaque;
+    face.material.color_mode = textured && (command & 1)
+        ? kf::TextureColorMode::Raw : kf::TextureColorMode::Modulated;
+    for (unsigned i = 0; i < 4; ++i) {
+        auto &vertex = face.vertices[i];
+        const u8 *corner = data + 8 + i * (textured ? 8 : 4);
+        vertex.x = static_cast<s16>(menu_data_u16(corner));
+        vertex.y = static_cast<s16>(menu_data_u16(corner + 2));
+        if (textured) {
+            vertex.u = corner[4] / 256.0f;
+            vertex.v = corner[5] / 256.0f;
+        }
+        const float divisor = textured ? 128.0f : 255.0f;
+        const bool raw_texture = textured && (command & 1);
+        vertex.r = raw_texture ? 1.0f : data[4] / divisor;
+        vertex.g = raw_texture ? 1.0f : data[5] / divisor;
+        vertex.b = raw_texture ? 1.0f : data[6] / divisor;
+        vertex.a = 1;
     }
+    return face;
+}
+
+static MenuSpriteDef menu_data_sprite(MenuDataReader *reader)
+{
+    const u8 *data = menu_data_take(reader, 12);
+    return {render_texture_material(menu_data_u16(data), menu_data_u16(data + 2)),
+        menu_data_u16(data + 4), menu_data_u16(data + 6),
+        static_cast<s16>(menu_data_u16(data + 8)), static_cast<s16>(menu_data_u16(data + 10))};
+}
+
+static MenuTileSprite menu_data_tile(MenuDataReader *reader)
+{
+    const u8 *data = menu_data_take(reader, 12);
+    return {render_texture_material(menu_data_u16(data), menu_data_u16(data + 2)),
+        data[4], data[6], menu_data_u16(data + 8), menu_data_u16(data + 10)};
+}
+
+static void menu_data_glyphs(MenuDataReader *reader, MenuGlyphRow *row)
+{
+    for (s16 &code : row->codes)
+        code = static_cast<s16>(menu_data_word(reader));
+}
+
+static void menu_data_string(MenuDataReader *reader, MenuGlyphString *string)
+{
+    string->position.x = static_cast<s16>(menu_data_word(reader));
+    string->position.y = static_cast<s16>(menu_data_word(reader));
+    menu_data_glyphs(reader, &string->glyphs);
 }
 
 void item_load_database(void)
 {
-    char name[40] = "\\KF\\ITEM0\\I000.TMD;1";
     u8 *stat_data;
-    u8 *src;
-    s32 i;
+    std::size_t stat_size;
+    resource_file_load_allocated(&stat_data, "COM/STAT.DAT", &stat_size);
+    MenuDataReader reader{stat_data, stat_size};
 
-    if (cd_file_load_allocated(&stat_data, "COM\\STAT.DAT") != KF_RESOURCE_LOADED)
-        exit(1);
-
-    src = stat_data;
-    memcpy((void *)&menu_assets, (const void *)src, sizeof menu_assets);
-    src += sizeof menu_assets;
-    memcpy((void *)menu_window_layouts, (const void *)src, sizeof menu_window_layouts);
-    src += sizeof menu_window_layouts;
-    memcpy((void *)item_name_rows, (const void *)src, sizeof(item_name_rows));
-    src += sizeof(item_name_rows);
-    memcpy((void *)magic_name_rows, (const void *)src, sizeof(magic_name_rows));
-    src += sizeof(magic_name_rows);
-    memcpy((void *)item_buy_prices, (const void *)src, sizeof(item_buy_prices));
-    src += sizeof(item_buy_prices);
-    memcpy((void *)item_sell_prices, (const void *)src, sizeof(item_sell_prices));
+    for (auto &bank : menu_assets.background_quads)
+        for (auto &face : bank)
+            face = menu_data_face(&reader, MenuTemplateKind::Textured);
+    for (auto &face : menu_assets.mid_depth_quads)
+        face = menu_data_face(&reader, MenuTemplateKind::Textured);
+    for (auto &face : menu_assets.foreground_quads)
+        face = menu_data_face(&reader, MenuTemplateKind::Textured);
+    for (auto &bank : menu_assets.dialog_quads)
+        for (auto &face : bank)
+            face = menu_data_face(&reader, MenuTemplateKind::Solid);
+    menu_assets.number_atlas = menu_data_sprite(&reader);
+    menu_assets.glyph_atlas = menu_data_sprite(&reader);
+    menu_assets.window_backdrop = menu_data_tile(&reader);
+    menu_assets.option_background = menu_data_sprite(&reader);
+    menu_assets.option_highlight = menu_data_sprite(&reader);
+    menu_assets.row_background = menu_data_sprite(&reader);
+    menu_assets.row_confirmed_background = menu_data_sprite(&reader);
+    for (auto &tile : menu_assets.list_tiles)
+        tile = menu_data_tile(&reader);
+    menu_assets.selection_cursor = menu_data_sprite(&reader);
+    for (auto &layout : menu_window_layouts) {
+        menu_data_string(&reader, &layout.title);
+        for (auto &row : layout.rows)
+            menu_data_string(&reader, &row);
+    }
+    // Ordinary save files have no format-card action. Keep the authored return
+    // label, moved into that removed row in the native menu description.
+    auto &save_layout = menu_window_layouts[kf_enum_encode<s32>(KF_MENU_WINDOW_SAVE)];
+    save_layout.rows[KF_MENU_SAVE_RETURN_ROW].glyphs = save_layout.rows[4].glyphs;
+    for (auto &row : item_name_rows)
+        menu_data_glyphs(&reader, &row);
+    for (auto &row : magic_name_rows)
+        menu_data_glyphs(&reader, &row);
+    for (auto &item : item_buy_prices)
+        for (u16 &price : item)
+            price = menu_data_word(&reader);
+    for (auto &item : item_sell_prices)
+        for (u16 &price : item)
+            price = menu_data_word(&reader);
 
     memory_release_last();
 
-    for (i = 0; i < KF_ITEM_COUNT; i++) {
-        s32 n = i + 1;
-        s32 rem;
-
-        name[8] = i / 30 + '1';
-        name[11] = n / 100 + '0';
-        rem = n % 100;
-        name[12] = rem / 10 + '0';
-        name[13] = rem % 10 + '0';
-        if (CdSearchFile((CdlFILE *)&cd_file_table[i], name) != NULL) {
-            if ((cd_file_table[i].size & (KF_CD_SECTOR_BYTES - 1)) != 0)
-                cd_file_table[i].size =
-                    ((cd_file_table[i].size >> KF_CD_SECTOR_SHIFT) + 1) << KF_CD_SECTOR_SHIFT;
-        }
-    }
+    resource_file_index_item_models();
 }
 
 void item_menu_root(KfItemStockBank shop_bank)
@@ -122,8 +206,7 @@ void item_menu_root(KfItemStockBank shop_bank)
     menu_frame_begin();
     menu_draw_window(KF_MENU_WINDOW_SHOP, KF_SHOP_CHOICE_COUNT, kf_enum_encode<s32>(KF_TRADE_BUY), KF_MENU_CONFIRM_IDLE);
     menu_play_input_sound(MENU_SOUND_CURSOR);
-    while (PadRead(1) != 0)
-        ;
+    kf::host_wait_buttons_released();
 
     for (;;) {
         menu_present_frame();
@@ -132,8 +215,7 @@ void item_menu_root(KfItemStockBank shop_bank)
             menu_frame_begin();
             menu_draw_window(KF_MENU_WINDOW_SHOP, KF_SHOP_CHOICE_COUNT, cursor, confirm);
             menu_present_frame();
-            while (PadRead(1) != 0)
-                ;
+            kf::host_wait_buttons_released();
         }
         switch (action) {
         case KF_TRADE_BUY:
@@ -145,35 +227,34 @@ void item_menu_root(KfItemStockBank shop_bank)
         }
         action = KF_TRADE_NONE;
         if (phase != KF_MENU_RESULT_PENDING) {
-            while (PadRead(1) != 0)
-                ;
+            kf::host_wait_buttons_released();
             return;
         }
 
         menu_frame_begin();
         confirm = KF_MENU_CONFIRM_IDLE;
         prev = input;
-        input = PadRead(1);
-        if (PAD_PRESSED(input, prev, PADLup)) {
+        input = kf::host_read_buttons();
+        if (BUTTON_PRESSED(input, prev, kf::Button::Up)) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
             if (cursor != kf_enum_encode<s32>(KF_TRADE_BUY))
                 cursor--;
             else
                 cursor = KF_SHOP_ROW_RETURN;
-        } else if (PAD_PRESSED(input, prev, PADLdown)) {
+        } else if (BUTTON_PRESSED(input, prev, kf::Button::Down)) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
             if (cursor != KF_SHOP_ROW_RETURN)
                 cursor++;
             else
                 cursor = kf_enum_encode<s32>(KF_TRADE_BUY);
-        } else if (PAD_PRESSED(input, prev, PADRright)) {
+        } else if (BUTTON_PRESSED(input, prev, kf::Button::Confirm)) {
             menu_play_input_sound(MENU_SOUND_CONFIRM);
             confirm = KF_MENU_CONFIRM_REQUESTED;
             if (cursor < KF_SHOP_ROW_RETURN)
                 action = kf_enum_decode<KfTradeMode>(cursor);
             else
                 phase = KF_MENU_RESULT_CANCELLED;
-        } else if (PAD_PRESSED(input, prev, PADRdown)) {
+        } else if (BUTTON_PRESSED(input, prev, kf::Button::Back)) {
             menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
             phase = KF_MENU_RESULT_CANCELLED;
         }
@@ -196,8 +277,7 @@ void item_menu_buy(KfItemStockBank shop_bank)
     s32 prev;
     s32 selection = kf_enum_encode<s32>(KF_MENU_RESULT_PENDING);
 
-    while (PadRead(1) != 0)
-        ;
+    kf::host_wait_buttons_released();
     menu_list_init(&ctx, KF_MENU_WINDOW_SHOP, kf_enum_encode<s32>(KF_TRADE_BUY));
 
     inv = item_stock[kf_enum_encode<s32>(shop_bank)];
@@ -246,29 +326,28 @@ void item_menu_buy(KfItemStockBank shop_bank)
         }
         confirm = KF_MENU_CONFIRM_IDLE;
         if (selection != kf_enum_encode<s32>(KF_MENU_RESULT_PENDING)) {
-            while (PadRead(1) != 0)
-                ;
+            kf::host_wait_buttons_released();
             break;
         }
 
         prev = input;
-        input = PadRead(1);
+        input = kf::host_read_buttons();
         if (ctx.entry_count == 0) {
             if (input != 0) {
                 menu_play_input_sound(MENU_SOUND_CURSOR);
                 selection = kf_enum_encode<s32>(KF_MENU_RESULT_CANCELLED);
             }
-        } else if (PAD_PRESSED(input, prev, PADLup)) {
+        } else if (BUTTON_PRESSED(input, prev, kf::Button::Up)) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
             menu_list_previous(&ctx);
             goto load_selected_model;
-        } else if (PAD_PRESSED(input, prev, PADLdown)) {
+        } else if (BUTTON_PRESSED(input, prev, kf::Button::Down)) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
             menu_list_next(&ctx);
         load_selected_model:
             if (menu_load_item_model(index[ctx.selected_index]) != KF_RESOURCE_LOADED)
                 return;
-        } else if (PAD_PRESSED(input, prev, PADRright)) {
+        } else if (BUTTON_PRESSED(input, prev, kf::Button::Confirm)) {
             if (player_state.gold
                     < item_buy_prices[kf_enum_encode<u8>(index[ctx.selected_index])][kf_enum_encode<s32>(shop_bank) - kf_enum_encode<s32>(KF_ITEM_STOCK_FIRST_SHOP)]) {
                 menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
@@ -276,7 +355,7 @@ void item_menu_buy(KfItemStockBank shop_bank)
                 menu_play_input_sound(MENU_SOUND_CONFIRM);
                 confirm = KF_MENU_CONFIRM_REQUESTED;
             }
-        } else if (PAD_PRESSED(input, prev, PADRdown)) {
+        } else if (BUTTON_PRESSED(input, prev, kf::Button::Back)) {
             menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
             selection = kf_enum_encode<s32>(KF_MENU_RESULT_CANCELLED);
         }
@@ -311,8 +390,7 @@ void item_menu_sell(KfItemStockBank shop_bank)
     s32 prev;
     s32 selection = kf_enum_encode<s32>(KF_MENU_RESULT_PENDING);
 
-    while (PadRead(1) != 0)
-        ;
+    kf::host_wait_buttons_released();
     menu_list_init(&ctx, KF_MENU_WINDOW_SHOP, kf_enum_encode<s32>(KF_TRADE_SELL));
 
     inv = item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)];
@@ -356,32 +434,31 @@ void item_menu_sell(KfItemStockBank shop_bank)
         }
         confirm = KF_MENU_CONFIRM_IDLE;
         if (selection != kf_enum_encode<s32>(KF_MENU_RESULT_PENDING)) {
-            while (PadRead(1) != 0)
-                ;
+            kf::host_wait_buttons_released();
             break;
         }
 
         prev = input;
-        input = PadRead(1);
+        input = kf::host_read_buttons();
         if (ctx.entry_count == 0) {
             if (input != 0) {
                 menu_play_input_sound(MENU_SOUND_CURSOR);
                 selection = kf_enum_encode<s32>(KF_MENU_RESULT_CANCELLED);
             }
-        } else if (PAD_PRESSED(input, prev, PADLup)) {
+        } else if (BUTTON_PRESSED(input, prev, kf::Button::Up)) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
             menu_list_previous(&ctx);
             if (menu_load_item_model(index[ctx.selected_index]) != KF_RESOURCE_LOADED)
                 return;
-        } else if (PAD_PRESSED(input, prev, PADLdown)) {
+        } else if (BUTTON_PRESSED(input, prev, kf::Button::Down)) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
             menu_list_next(&ctx);
             if (menu_load_item_model(index[ctx.selected_index]) != KF_RESOURCE_LOADED)
                 return;
-        } else if (PAD_PRESSED(input, prev, PADRright)) {
+        } else if (BUTTON_PRESSED(input, prev, kf::Button::Confirm)) {
             menu_play_input_sound(MENU_SOUND_CONFIRM);
             confirm = KF_MENU_CONFIRM_REQUESTED;
-        } else if (PAD_PRESSED(input, prev, PADRdown)) {
+        } else if (BUTTON_PRESSED(input, prev, kf::Button::Back)) {
             menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
             selection = kf_enum_encode<s32>(KF_MENU_RESULT_CANCELLED);
         }
@@ -444,8 +521,7 @@ KfMenuResult item_pickup_confirm(KfObjectId item_id)
         &accept_label,
         &decline_label, KF_MENU_CHOICE_ACCEPT, KF_MENU_CONFIRM_IDLE);
     menu_play_input_sound(MENU_SOUND_CURSOR);
-    while (PadRead(1) != 0)
-        ;
+    kf::host_wait_buttons_released();
 
     for (;;) {
         menu_present_frame();
@@ -456,22 +532,21 @@ KfMenuResult item_pickup_confirm(KfObjectId item_id)
                 &accept_label,
                 &decline_label, choice, confirm);
             menu_present_frame();
-            while (PadRead(1) != 0)
-                ;
+            kf::host_wait_buttons_released();
             break;
         }
 
         menu_frame_begin();
         prev = input;
-        input = PadRead(1);
-        if ((PAD_PRESSED(input, prev, PADLup))
-                || (PAD_PRESSED(input, prev, PADLdown))) {
+        input = kf::host_read_buttons();
+        if ((BUTTON_PRESSED(input, prev, kf::Button::Up))
+                || (BUTTON_PRESSED(input, prev, kf::Button::Down))) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
             if (choice != KF_MENU_CHOICE_ACCEPT)
                 choice = KF_MENU_CHOICE_ACCEPT;
             else
                 choice = KF_MENU_CHOICE_DECLINE;
-        } else if (PAD_PRESSED(input, prev, PADRright)) {
+        } else if (BUTTON_PRESSED(input, prev, kf::Button::Confirm)) {
             menu_play_input_sound(MENU_SOUND_CONFIRM);
             confirm = KF_MENU_CONFIRM_REQUESTED;
             if (choice != KF_MENU_CHOICE_ACCEPT) {
@@ -483,7 +558,7 @@ KfMenuResult item_pickup_confirm(KfObjectId item_id)
                     result = KF_MENU_RESULT_ACCEPTED;
                 }
             }
-        } else if (PAD_PRESSED(input, prev, PADRdown)) {
+        } else if (BUTTON_PRESSED(input, prev, kf::Button::Back)) {
             menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
             result = KF_MENU_RESULT_DECLINED;
         }
@@ -495,4 +570,15 @@ KfMenuResult item_pickup_confirm(KfObjectId item_id)
 
     menu_release_item_model();
     return result;
+}
+
+
+void item_reset_module_state(void)
+{
+    kf::restore_initial_value<menu_assets>();
+    kf::restore_initial_value<menu_window_layouts>();
+    kf::restore_initial_value<item_name_rows>();
+    kf::restore_initial_value<magic_name_rows>();
+    kf::restore_initial_value<item_buy_prices>();
+    kf::restore_initial_value<item_sell_prices>();
 }

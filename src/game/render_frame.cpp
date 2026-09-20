@@ -1,12 +1,13 @@
-#include <kf/game_graphics.h>
+#include <kf/game/graphics.h>
 
-#include <psyq/sdk.h>
-#include <kf/game_render.h>
-#include <kf/notify.h>
-#include <kf/game_player.h>
-#include <kf/game_math.h>
-#include <kf/game_state.h>
-#include <kf/pool.h>
+#include <kf/lib/geometry_types.h>
+#include <kf/game/render.h>
+#include <kf/game/notify.h>
+#include <kf/game/player.h>
+#include <kf/lib/math.h>
+#include <kf/game/state.h>
+#include <kf/game/pool.h>
+#include <kf/game/system.h>
 
 enum {
     HUD_GAUGE_WIDTH = 50,
@@ -37,9 +38,7 @@ void render_frame(const VECTOR *position_or_null, const SVECTOR *rotation_or_nul
     render_set_view_transform(position_or_null, rotation_or_null);
     display_begin_frame();
     pool_mark_allocated();
-    SetGeomScreen(KF_DEFAULT_PROJECTION_DISTANCE);
     render_map_cells();
-    SetLightMatrix(&render_light_matrices[KF_RENDER_LIGHT_HUD]);
     status_sprite = &hud_sprites[KF_HUD_POISON_ICON];
     status_sprite->state = KF_SPRITE_HIDDEN;
     hud_sprites[KF_HUD_SLOWED_ICON].state = KF_SPRITE_HIDDEN;
@@ -88,16 +87,14 @@ void render_frame(const VECTOR *position_or_null, const SVECTOR *rotation_or_nul
     auxiliary_sprite->state = kf_enum_decode<KfSpriteState>(kf_enum_encode<u8>(player_state.compass_enabled));
     effect_sprites[KF_EFFECT_SPRITE_COMPASS].state = kf_enum_decode<KfSpriteState>(kf_enum_encode<u8>(player_state.compass_enabled));
     effect_sprites[KF_EFFECT_SPRITE_COMPASS].rotation.vz = -game_graphics_runtime.render_state.view_rotation.vy & KF_ANGLE_WRAP_MASK;
-    render_effect_sprites();
+    render_effect_sprites(&render_light_matrices[KF_RENDER_LIGHT_HUD]);
 
-    game_graphics_runtime.active_render_tpage = game_graphics_runtime.hud_tpage;
-    game_graphics_runtime.active_render_clut = game_graphics_runtime.hud_clut;
+    game_graphics_runtime.active_render_material = game_graphics_runtime.hud_material;
     game_graphics_runtime.active_render_color.b = game_graphics_runtime.hud_brightness;
     game_graphics_runtime.active_render_color.g = game_graphics_runtime.hud_brightness;
     game_graphics_runtime.active_render_color.r = game_graphics_runtime.hud_brightness;
     render_hud_gauges(auxiliary_sprite - KF_HUD_COMPASS);
 
-    SetLightMatrix(&render_light_matrices[KF_RENDER_LIGHT_NOTIFICATION]);
     notify_effect_update();
 
     game_graphics_runtime.active_render_color.r = NOTIFICATION_RENDER_BRIGHTNESS;
@@ -109,25 +106,21 @@ void render_frame(const VECTOR *position_or_null, const SVECTOR *rotation_or_nul
     spin.vz = 0;
     spin.vy = 0;
     spin.vx = game_graphics_runtime.notification_state.control.effect_angle_x;
-    RotMatrix(&spin, &model);
-    SetRotMatrix(&model);
-    SetTransMatrix(&model);
+    kf::matrix_set_rotation_xyz(spin, model);
 
-    game_graphics_runtime.active_render_tpage = game_graphics_runtime.notification_text_tpage;
-    game_graphics_runtime.active_render_clut = game_graphics_runtime.notification_text_clut;
+    game_graphics_runtime.active_render_material = game_graphics_runtime.notification_text_material;
     record = notification_sprites;
     if (record[KF_NOTIFICATION_TEXT_SPRITE].active == KF_SPRITE_VISIBLE) {
-        render_enqueue_sprite(&record[KF_NOTIFICATION_TEXT_SPRITE].sprite, 0, KF_SPRITE_DEPTH_CUE_NORMAL);
+        render_enqueue_sprite(&record[KF_NOTIFICATION_TEXT_SPRITE].sprite, 0, KF_SPRITE_DEPTH_CUE_NORMAL, &render_light_matrices[KF_RENDER_LIGHT_NOTIFICATION], &model, game_graphics_runtime.render_state.projection);
     }
     if (notification_sprites[KF_NOTIFICATION_GOLD_SPRITE].active == KF_SPRITE_VISIBLE) {
-        render_enqueue_sprite(&record[KF_NOTIFICATION_GOLD_SPRITE].sprite, 0, KF_SPRITE_DEPTH_CUE_NORMAL);
+        render_enqueue_sprite(&record[KF_NOTIFICATION_GOLD_SPRITE].sprite, 0, KF_SPRITE_DEPTH_CUE_NORMAL, &render_light_matrices[KF_RENDER_LIGHT_NOTIFICATION], &model, game_graphics_runtime.render_state.projection);
     }
     record += KF_NOTIFICATION_ONES_SPRITE;
-    game_graphics_runtime.active_render_tpage = game_graphics_runtime.notification_digit_tpage;
-    game_graphics_runtime.active_render_clut = game_graphics_runtime.notification_digit_clut;
+    game_graphics_runtime.active_render_material = game_graphics_runtime.notification_digit_material;
     for (i = KF_NOTIFICATION_THOUSANDS_SPRITE - KF_NOTIFICATION_ONES_SPRITE; i != -1; i--) {
         if (record->active == KF_SPRITE_VISIBLE) {
-            render_enqueue_sprite(&record->sprite, 0, KF_SPRITE_DEPTH_CUE_NORMAL);
+            render_enqueue_sprite(&record->sprite, 0, KF_SPRITE_DEPTH_CUE_NORMAL, &render_light_matrices[KF_RENDER_LIGHT_NOTIFICATION], &model, game_graphics_runtime.render_state.projection);
         }
         record++;
     }
@@ -136,4 +129,13 @@ void render_frame(const VECTOR *position_or_null, const SVECTOR *rotation_or_nul
     render_weapon();
     display_present_frame();
     pool_release_stale();
+    // World rendering also advances floor sprites and notifications. Pace every
+    // caller, including blocking scripts; presentation consumes this deadline.
+    frame_pacer_wait();
+}
+
+
+void render_frame_reset_module_state(void)
+{
+    kf::restore_initial_value<render_light_matrices>();
 }

@@ -1,6 +1,6 @@
-#include <kf/map_data.h>
-#include <kf/game_collision.h>
-#include <kf/game.h>
+#include <kf/lib/map_data.h>
+#include <kf/game/collision.h>
+#include <kf/game/game.h>
 
 s32 map_floor_height_for_cell_position(
     u16 cell_index, s32 point_x, s32 point_z)
@@ -47,33 +47,20 @@ s32 map_floor_height_at_position(const VECTOR *position)
 
 void collision_adjust_cell_occupancy(u16 cell_x, u16 cell_z, s32 delta)
 {
-    u16 first_x;
-    s16 rows;
-    u8 *next_row;
-
-    cell_x -= KF_OCCUPANCY_CELL_RADIUS;
-    first_x = cell_x;
-    cell_z -= KF_OCCUPANCY_CELL_RADIUS;
-    next_row = &map_collision_flag_grid.cells[(s16)cell_z][(s16)cell_x];
-    rows = KF_OCCUPANCY_CELL_SPAN;
-
-    do {
-        u8 *cell = next_row;
-
-        next_row = cell + KF_MAP_COLUMNS;
-
-        if (cell_z < KF_MAP_ROWS) {
-            u16 x = first_x;
-            s16 columns = KF_OCCUPANCY_CELL_SPAN;
-
-            do {
-                if (x < KF_MAP_COLUMNS) {
-                    *cell = (*cell & KF_CELL_PRESERVED_FLAGS_MASK) | ((*cell + delta) & KF_CELL_OCCUPANT_COUNT_MASK);
-                }
-                x++;
-                cell++;
-            } while (--columns != 0);
+    // The original unsigned bounds checks exclude off-map cells. Form each
+    // pointer only after that check, including at maps' outer two rows/columns.
+    const s32 first_x = static_cast<s32>(cell_x) - KF_OCCUPANCY_CELL_RADIUS;
+    const s32 first_z = static_cast<s32>(cell_z) - KF_OCCUPANCY_CELL_RADIUS;
+    for (s32 row = 0; row < KF_OCCUPANCY_CELL_SPAN; ++row) {
+        const u16 z = static_cast<u16>(first_z + row);
+        if (z >= KF_MAP_ROWS)
+            continue;
+        for (s32 column = 0; column < KF_OCCUPANCY_CELL_SPAN; ++column) {
+            const u16 x = static_cast<u16>(first_x + column);
+            if (x >= KF_MAP_COLUMNS)
+                continue;
+            u8 &cell = map_collision_flag_grid.cells[z][x];
+            cell = (cell & KF_CELL_PRESERVED_FLAGS_MASK) | ((cell + delta) & KF_CELL_OCCUPANT_COUNT_MASK);
         }
-        cell_z++;
-    } while (--rows != 0);
+    }
 }

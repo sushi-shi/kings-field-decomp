@@ -1,6 +1,6 @@
-#include <kf/game_math.h>
-#include <kf/open_camera_path.h>
-#include <kf/open_opening_helpers.h>
+#include <kf/lib/math.h>
+#include <kf/open/camera_path.h>
+#include <kf/open/opening_helpers.h>
 
 KfCameraPathState opening_camera_path_state;
 
@@ -64,4 +64,10 @@ void opening_camera_path_step(s32 y_offset)
         }
     }
     camera_path_advance_pose(&opening_camera_path_state, y_offset);
+}
+
+
+void camera_path_reset_module_state(void)
+{
+    kf::restore_initial_value<opening_camera_path_state>();
 }
