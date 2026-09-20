@@ -18,6 +18,17 @@
 
 char opening_initial_tim_path[KF_OPENING_INITIAL_TIM_PATH_BYTES] = "B0/L0.";
 
+static void opening_load_skip_assets(void)
+{
+    u8 *tim_data;
+    std::size_t tim_size;
+    memory_allocation_reset();
+    resource_file_load_allocated(&tim_data, "B0/MIX3.", &tim_size);
+    tim_upload_images(tim_data, tim_size);
+    memory_release_last();
+    audio_stop_sequence(KF_AUDIO_STOP_FADE);
+}
+
 void opening_run(KfOverlayMode overlay_mode)
 {
     u8 *tim_data;
@@ -54,13 +65,7 @@ void opening_run(KfOverlayMode overlay_mode)
             opening_scene0_run();
             if (opening_input_action != scene3_action &&
                 opening_input_action == skip_action) {
-opening_reload:
-
-                memory_allocation_reset();
-                resource_file_load_allocated(&tim_data, "B0/MIX3.", &tim_size);
-                tim_upload_images(tim_data, tim_size);
-                memory_release_last();
-                audio_stop_sequence(KF_AUDIO_STOP_FADE);
+                opening_load_skip_assets();
                 break;
             }
 
@@ -68,7 +73,8 @@ opening_reload:
             opening_scene1_run();
             if (opening_input_action != scene3_action) {
                 if (opening_input_action == skip_action) {
-                    goto opening_reload;
+                    opening_load_skip_assets();
+                    break;
                 }
                 continue;
             }

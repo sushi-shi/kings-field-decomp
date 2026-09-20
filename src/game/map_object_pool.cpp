@@ -193,10 +193,11 @@ void map_object_pool_load(const KfMapObjectPlacement *placements)
 
     remaining = KF_MAP_OBJECT_CAPACITY - 1;
     for (;;) {
-        if (ended == KF_TRUE) {
-        fill:
+        if (ended == KF_TRUE
+            || kf_enum_decode<KfObjectId>(placement->object_id) == KF_OBJECT_NONE) {
+            ended = KF_TRUE;
             object->object_id = KF_OBJECT_NONE;
-        } else if (kf_enum_decode<KfObjectId>(placement->object_id) != KF_OBJECT_NONE) {
+        } else {
             object_id = kf_enum_decode<KfObjectId>(placement->object_id);
             object->object_id = object_id;
             object->cell_x = placement->tile_x;
@@ -280,9 +281,6 @@ void map_object_pool_load(const KfMapObjectPlacement *placements)
             }
             map_object_mark_collision_edge(object, KF_MAP_CELL_BLOCKED, object->rotation.angles.y);
             placement++;
-        } else {
-            ended = KF_TRUE;
-            goto fill;
         }
         object++;
         if (remaining-- == 0) {
