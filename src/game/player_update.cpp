@@ -234,14 +234,15 @@ static void player_update_weapon_magic()
                     PLAYER_WEAPON_MAGIC_SPAWN_X,
                     PLAYER_WEAPON_MAGIC_SPAWN_Y,
                     PLAYER_WEAPON_MAGIC_SPAWN_Z);
-                vector_set_xyz(effect_rotation.vector,
-                    -player_state.camera_rotation.vx,
-                    player_state.camera_rotation.vy,
-                    -player_state.camera_rotation.vz);
+                effect_rotation.vector.vx = -player_state.camera_rotation.vx;
+                effect_rotation.vector.vy = player_state.camera_rotation.vy;
+                effect_rotation.vector.vz = -player_state.camera_rotation.vz;
                 matrix_set_rotation_yxz(&effect_rotation.angles, &matrix);
                 position = kf::matrix_apply_rotation(matrix, spawn_offset);
                 vector_add_xyz(position, player_state.camera_position);
-                vector_copy_xyz(effect_rotation.vector, player_state.camera_rotation);
+                effect_rotation.vector.vx = player_state.camera_rotation.vx;
+                effect_rotation.vector.vy = player_state.camera_rotation.vy;
+                effect_rotation.vector.vz = player_state.camera_rotation.vz;
                 origin = &player_state.camera_position;
                 if ((effect == KF_MAGIC_FIRE_BALL || effect == KF_MAGIC_LIGHT_NEEDLE)
                     && player_state.weapon_magic_shots_remaining != 1) {
@@ -273,10 +274,9 @@ static void player_update_weapon_magic()
                     &position, launch_direction, KfEffectHomingArguments{&player_state.camera_rotation, attachment, KF_EFFECT_SOUND_PLAY});
                 if (effect == KF_EFFECT_KIND_HOMING_PROJECTILE) {
                     position.vy += PLAYER_TRIPLE_FANG_Y_OFFSET;
-                    vector_set_xyz(effect_rotation.vector,
-                        player_state.camera_rotation.vx + PLAYER_TRIPLE_FANG_PITCH_OFFSET,
-                        player_state.camera_rotation.vy,
-                        player_state.camera_rotation.vz);
+                    effect_rotation.vector.vx = player_state.camera_rotation.vx + PLAYER_TRIPLE_FANG_PITCH_OFFSET;
+                    effect_rotation.vector.vy = player_state.camera_rotation.vy;
+                    effect_rotation.vector.vz = player_state.camera_rotation.vz;
                     effect_pool_construct(
                         KF_PLAYER_DAMAGE_MULTIPLIER_ONE, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS,
                         KF_EFFECT_KIND_HOMING_PROJECTILE, &position, launch_direction, KfEffectHomingArguments{&effect_rotation.vector, attachment, KF_EFFECT_SOUND_SILENT});

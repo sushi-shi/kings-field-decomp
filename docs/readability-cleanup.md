@@ -115,8 +115,10 @@ it behind a confidently named but inaccurate predicate.
 
 ### Stacked pass: typed XYZ operations
 
-All `setVector`, `copyVector` and `addVector` callers now use small overloads for
-the actual `VECTOR`/`SVECTOR` combinations. They write X/Y/Z in order and leave
+`setVector`, `copyVector` and `addVector` have been removed. Ordinary-vector
+callers use small overloads for the actual `VECTOR`/`SVECTOR` combinations;
+union-backed rotations use explicit component assignments naming the owning
+union. Both forms write X/Y/Z in order and leave
 padding alone; copy/add read each source component immediately before its write.
 The audited setter arguments contain no RNG calls or increment side effects and
 do not depend on preceding component writes. Keep future setter arguments free
