@@ -1,3 +1,4 @@
+#include <kf/game/menu_glyphs.h>
 #include <kf/lib/null.h>
 #include <kf/lib/bool.h>
 
@@ -9,6 +10,8 @@
 #include <cstring>
 #include <kf/game/graphics.h>
 #include <kf/lib/render_face.h>
+
+static constexpr s32 pickup_preview_translation[] = {220, 140, 1500};
 
 KfMenuModelAllocation menu_item_model_allocation_pending = KF_MENU_MODEL_RELEASED;
 
@@ -40,7 +43,7 @@ static kf::DrawFace menu_textured_quad(const kf::FaceMaterial &material,
     face.material = material;
     render_face_rectangle(&face, x, y, x + width, y + height);
     for (auto &vertex : face.vertices) {
-        vertex.r = vertex.g = vertex.b = MENU_PRIMITIVE_BRIGHTNESS / 128.0f;
+        vertex.r = vertex.g = vertex.b = MENU_PRIMITIVE_BRIGHTNESS / kf::texture_color_unity;
         vertex.a = 1;
     }
     return face;
@@ -525,14 +528,14 @@ void menu_config_panel(void)
 
     option_a.position.x = CONFIG_OPTION_ON_X;
     option_a.position.y = CONFIG_OPTION_FIRST_Y;
-    option_a.glyphs.codes[0] = 0xf9;
-    option_a.glyphs.codes[1] = 0xfa;
+    option_a.glyphs.codes[0] = menu_glyphs::on[0];
+    option_a.glyphs.codes[1] = menu_glyphs::on[1];
     option_a.glyphs.codes[2] = MENU_TEXT_END;
     option_b.position.x = CONFIG_OPTION_OFF_X;
     option_b.position.y = CONFIG_OPTION_FIRST_Y;
-    option_b.glyphs.codes[0] = 0xf9;
-    option_b.glyphs.codes[1] = 0xfb;
-    option_b.glyphs.codes[2] = 0xfb;
+    option_b.glyphs.codes[0] = menu_glyphs::off[0];
+    option_b.glyphs.codes[1] = menu_glyphs::off[1];
+    option_b.glyphs.codes[2] = menu_glyphs::off[2];
     option_b.glyphs.codes[3] = MENU_TEXT_END;
     states[KF_MENU_CONFIG_EFFECTS_ROW] = player_state.audio_effects_enabled;
     states[KF_MENU_CONFIG_MUSIC_ROW] = player_state.audio_music_enabled;
@@ -663,52 +666,52 @@ void menu_draw_stats_header(void)
 
     gs.position.x = 0xb5;
     gs.position.y = 0x24;
-    gs.glyphs.codes[0] = 0x82;
-    gs.glyphs.codes[1] = 0x83;
-    gs.glyphs.codes[2] = 0x84;
+    gs.glyphs.codes[0] = menu_glyphs::experience[0];
+    gs.glyphs.codes[1] = menu_glyphs::experience[1];
+    gs.glyphs.codes[2] = menu_glyphs::experience[2];
     gs.glyphs.codes[3] = MENU_TEXT_END;
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
-    gs.glyphs.codes[0] = 0x2b;
-    gs.glyphs.codes[1] = MENU_TEXT_DAKUTEN | 0x1c;
-    gs.glyphs.codes[2] = 0x2a;
-    gs.glyphs.codes[3] = MENU_TEXT_END;
-    gs.position.y += row_step;
-    menu_draw_string(&menu_assets.glyph_atlas, &gs);
-
-    gs.glyphs.codes[0] = 7;
-    gs.glyphs.codes[1] = 0x28;
-    gs.glyphs.codes[2] = 0xc;
+    gs.glyphs.codes[0] = menu_glyphs::level[0];
+    gs.glyphs.codes[1] = menu_glyphs::level[1];
+    gs.glyphs.codes[2] = menu_glyphs::level[2];
     gs.glyphs.codes[3] = MENU_TEXT_END;
     gs.position.y += row_step;
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
-    gs.glyphs.codes[0] = 0xcc;
-    gs.glyphs.codes[1] = 0xcd;
+    gs.glyphs.codes[0] = menu_glyphs::character_class[0];
+    gs.glyphs.codes[1] = menu_glyphs::character_class[1];
+    gs.glyphs.codes[2] = menu_glyphs::character_class[2];
+    gs.glyphs.codes[3] = MENU_TEXT_END;
+    gs.position.y += row_step;
+    menu_draw_string(&menu_assets.glyph_atlas, &gs);
+
+    gs.glyphs.codes[0] = menu_glyphs::floor[0];
+    gs.glyphs.codes[1] = menu_glyphs::floor[1];
     gs.glyphs.codes[2] = MENU_TEXT_END;
     gs.position.y += row_step;
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
-    gs.glyphs.codes[0] = 0xf0;
-    gs.glyphs.codes[1] = 0xf2;
+    gs.glyphs.codes[0] = menu_glyphs::hp[0];
+    gs.glyphs.codes[1] = menu_glyphs::hp[1];
     gs.glyphs.codes[2] = MENU_TEXT_END;
     gs.position.y += row_step;
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
-    gs.glyphs.codes[0] = 0xf1;
+    gs.glyphs.codes[0] = menu_glyphs::mp[0];
     gs.position.y += row_step;
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
-    gs.glyphs.codes[0] = 0x85;
-    gs.glyphs.codes[1] = 0x86;
+    gs.glyphs.codes[0] = menu_glyphs::status[0];
+    gs.glyphs.codes[1] = menu_glyphs::status[1];
     gs.glyphs.codes[2] = MENU_TEXT_END;
     gs.position.y += row_step;
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
-    gs.glyphs.codes[0] = MENU_TEXT_DAKUTEN | 0x9;
-    gs.glyphs.codes[1] = 0x2d;
-    gs.glyphs.codes[2] = 0x2a;
-    gs.glyphs.codes[3] = MENU_TEXT_DAKUTEN | 0x13;
+    gs.glyphs.codes[0] = menu_glyphs::gold[0];
+    gs.glyphs.codes[1] = menu_glyphs::gold[1];
+    gs.glyphs.codes[2] = menu_glyphs::gold[2];
+    gs.glyphs.codes[3] = menu_glyphs::gold[3];
     gs.glyphs.codes[4] = MENU_TEXT_END;
     gs.position.y += row_step;
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
@@ -771,24 +774,24 @@ void menu_draw_stats_header(void)
     gs.glyphs.codes[5] = MENU_TEXT_END;
     gs.position.y += row_step;
     if (player_state.status_effect_flags == KF_PLAYER_STATUS_NONE) {
-        gs.glyphs.codes[3] = 0xc5;
-        gs.glyphs.codes[4] = 0xc6;
+        gs.glyphs.codes[3] = menu_glyphs::healthy[0];
+        gs.glyphs.codes[4] = menu_glyphs::healthy[1];
     }
     glyph_index = 4;
     if ((player_state.status_effect_flags & KF_PLAYER_STATUS_SLOWED) != KF_PLAYER_STATUS_NONE) {
-        gs.glyphs.codes[4] = 0xc9;
+        gs.glyphs.codes[4] = menu_glyphs::slowed[0];
         glyph_index = 3;
     }
     if ((player_state.status_effect_flags & KF_PLAYER_STATUS_POISON) != KF_PLAYER_STATUS_NONE) {
-        gs.glyphs.codes[glyph_index] = 0x88;
+        gs.glyphs.codes[glyph_index] = menu_glyphs::poison[0];
         glyph_index--;
     }
     if ((player_state.status_effect_flags & KF_PLAYER_STATUS_DARKNESS) != KF_PLAYER_STATUS_NONE) {
-        gs.glyphs.codes[glyph_index] = 199;
+        gs.glyphs.codes[glyph_index] = menu_glyphs::darkness[0];
         glyph_index--;
     }
     if ((player_state.status_effect_flags & KF_PLAYER_STATUS_CURSE) != KF_PLAYER_STATUS_NONE) {
-        gs.glyphs.codes[glyph_index] = 200;
+        gs.glyphs.codes[glyph_index] = menu_glyphs::curse[0];
     }
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
@@ -825,72 +828,72 @@ void menu_draw_status_details(void)
     summary_y_origin = 0x23;
     gs.position.x = 0x15;
     gs.position.y = summary_y_origin;
-    gs.glyphs.codes[0] = 0x82;
-    gs.glyphs.codes[1] = 0x83;
-    gs.glyphs.codes[2] = 0x84;
+    gs.glyphs.codes[0] = menu_glyphs::experience[0];
+    gs.glyphs.codes[1] = menu_glyphs::experience[1];
+    gs.glyphs.codes[2] = menu_glyphs::experience[2];
     gs.glyphs.codes[3] = MENU_TEXT_END;
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
-    gs.glyphs.codes[0] = 0x2b;
-    gs.glyphs.codes[1] = MENU_TEXT_DAKUTEN | 0x1c;
-    gs.glyphs.codes[2] = 0x2a;
-    gs.glyphs.codes[3] = MENU_TEXT_END;
-    gs.position.y += STATUS_SUMMARY_ROW_STEP;
-    menu_draw_string(&menu_assets.glyph_atlas, &gs);
-
-    gs.glyphs.codes[0] = 7;
-    gs.glyphs.codes[1] = 0x28;
-    gs.glyphs.codes[2] = 0xc;
+    gs.glyphs.codes[0] = menu_glyphs::level[0];
+    gs.glyphs.codes[1] = menu_glyphs::level[1];
+    gs.glyphs.codes[2] = menu_glyphs::level[2];
     gs.glyphs.codes[3] = MENU_TEXT_END;
     gs.position.y += STATUS_SUMMARY_ROW_STEP;
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
-    gs.glyphs.codes[0] = 0xf0;
-    gs.glyphs.codes[1] = 0xf2;
+    gs.glyphs.codes[0] = menu_glyphs::character_class[0];
+    gs.glyphs.codes[1] = menu_glyphs::character_class[1];
+    gs.glyphs.codes[2] = menu_glyphs::character_class[2];
+    gs.glyphs.codes[3] = MENU_TEXT_END;
+    gs.position.y += STATUS_SUMMARY_ROW_STEP;
+    menu_draw_string(&menu_assets.glyph_atlas, &gs);
+
+    gs.glyphs.codes[0] = menu_glyphs::hp[0];
+    gs.glyphs.codes[1] = menu_glyphs::hp[1];
     gs.glyphs.codes[2] = MENU_TEXT_END;
     gs.position.y += STATUS_SUMMARY_ROW_STEP;
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
-    gs.glyphs.codes[0] = 0xf1;
+    gs.glyphs.codes[0] = menu_glyphs::mp[0];
     gs.position.y += STATUS_SUMMARY_ROW_STEP;
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
-    gs.glyphs.codes[0] = 0x85;
-    gs.glyphs.codes[1] = 0x86;
+    gs.glyphs.codes[0] = menu_glyphs::status[0];
+    gs.glyphs.codes[1] = menu_glyphs::status[1];
     gs.glyphs.codes[2] = MENU_TEXT_END;
     gs.position.y += STATUS_SUMMARY_ROW_STEP;
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
-    gs.glyphs.codes[0] = MENU_TEXT_DAKUTEN | 0x9;
-    gs.glyphs.codes[1] = 0x2d;
-    gs.glyphs.codes[2] = 0x2a;
-    gs.glyphs.codes[3] = MENU_TEXT_DAKUTEN | 0x13;
+    gs.glyphs.codes[0] = menu_glyphs::gold[0];
+    gs.glyphs.codes[1] = menu_glyphs::gold[1];
+    gs.glyphs.codes[2] = menu_glyphs::gold[2];
+    gs.glyphs.codes[3] = menu_glyphs::gold[3];
     gs.glyphs.codes[4] = MENU_TEXT_END;
     gs.position.y += STATUS_SUMMARY_ROW_STEP;
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
-    gs.glyphs.codes[0] = 0x8c;
-    gs.glyphs.codes[1] = 0x8b;
+    gs.glyphs.codes[0] = menu_glyphs::physical_power[0];
+    gs.glyphs.codes[1] = menu_glyphs::physical_power[1];
     gs.glyphs.codes[2] = MENU_TEXT_END;
     gs.position.y += STATUS_SUMMARY_ROW_STEP;
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
-    gs.glyphs.codes[0] = 0x78;
+    gs.glyphs.codes[0] = menu_glyphs::magic_power[0];
     gs.glyphs.codes[2] = MENU_TEXT_END;
     gs.position.y += STATUS_SUMMARY_ROW_STEP;
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
-    gs.glyphs.codes[0] = 0xce;
-    gs.glyphs.codes[1] = 0xcf;
-    gs.glyphs.codes[2] = 0x89;
-    gs.glyphs.codes[3] = 0x8a;
-    gs.glyphs.codes[4] = 0x8b;
+    gs.glyphs.codes[0] = menu_glyphs::total_attack[0];
+    gs.glyphs.codes[1] = menu_glyphs::total_attack[1];
+    gs.glyphs.codes[2] = menu_glyphs::total_attack[2];
+    gs.glyphs.codes[3] = menu_glyphs::total_attack[3];
+    gs.glyphs.codes[4] = menu_glyphs::total_attack[4];
     gs.glyphs.codes[5] = MENU_TEXT_END;
     gs.position.y += STATUS_SUMMARY_ROW_STEP;
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
-    gs.glyphs.codes[2] = 0x7a;
-    gs.glyphs.codes[3] = 0xd0;
+    gs.glyphs.codes[2] = menu_glyphs::total_defense[2];
+    gs.glyphs.codes[3] = menu_glyphs::total_defense[3];
     gs.glyphs.codes[5] = MENU_TEXT_END;
     gs.position.y += STATUS_SUMMARY_ROW_STEP;
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
@@ -951,24 +954,24 @@ void menu_draw_status_details(void)
         gs.glyphs.codes[5] = MENU_TEXT_END;
         gs.position.y += summary_row_step;
         if (player_state.status_effect_flags == KF_PLAYER_STATUS_NONE) {
-            gs.glyphs.codes[3] = 0xc5;
-            gs.glyphs.codes[4] = 0xc6;
+            gs.glyphs.codes[3] = menu_glyphs::healthy[0];
+            gs.glyphs.codes[4] = menu_glyphs::healthy[1];
         }
         glyph_index = 4;
         if ((player_state.status_effect_flags & KF_PLAYER_STATUS_SLOWED) != KF_PLAYER_STATUS_NONE) {
-            gs.glyphs.codes[4] = 0xc9;
+            gs.glyphs.codes[4] = menu_glyphs::slowed[0];
             glyph_index = 3;
         }
         if ((player_state.status_effect_flags & KF_PLAYER_STATUS_POISON) != KF_PLAYER_STATUS_NONE) {
-            gs.glyphs.codes[glyph_index] = 0x88;
+            gs.glyphs.codes[glyph_index] = menu_glyphs::poison[0];
             glyph_index--;
         }
         if ((player_state.status_effect_flags & KF_PLAYER_STATUS_DARKNESS) != KF_PLAYER_STATUS_NONE) {
-            gs.glyphs.codes[glyph_index] = 199;
+            gs.glyphs.codes[glyph_index] = menu_glyphs::darkness[0];
             glyph_index--;
         }
         if ((player_state.status_effect_flags & KF_PLAYER_STATUS_CURSE) != KF_PLAYER_STATUS_NONE) {
-            gs.glyphs.codes[glyph_index] = 200;
+            gs.glyphs.codes[glyph_index] = menu_glyphs::curse[0];
         }
         menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
@@ -1002,79 +1005,79 @@ void menu_draw_status_details(void)
     }
     gs.position.x = 0xb5;
     gs.position.y = 0x1e;
-    gs.glyphs.codes[0] = 0x89;
-    gs.glyphs.codes[1] = 0x8a;
-    gs.glyphs.codes[2] = 0x8b;
+    gs.glyphs.codes[0] = menu_glyphs::attack[0];
+    gs.glyphs.codes[1] = menu_glyphs::attack[1];
+    gs.glyphs.codes[2] = menu_glyphs::attack[2];
     gs.glyphs.codes[3] = MENU_TEXT_END;
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
     gs.glyphs.codes[0] = MENU_TEXT_BLANK;
-    gs.glyphs.codes[1] = 0xd1;
-    gs.glyphs.codes[2] = 0x6a;
+    gs.glyphs.codes[1] = menu_glyphs::cutting[1];
+    gs.glyphs.codes[2] = menu_glyphs::cutting[2];
     gs.glyphs.codes[3] = MENU_TEXT_END;
     gs.position.y += STATUS_COMPONENT_ROW_STEP;
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
-    gs.glyphs.codes[1] = 0xd2;
-    gs.glyphs.codes[2] = 0x51;
+    gs.glyphs.codes[1] = menu_glyphs::striking[1];
+    gs.glyphs.codes[2] = menu_glyphs::striking[2];
     gs.position.y += STATUS_COMPONENT_ROW_STEP;
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
-    gs.glyphs.codes[1] = 0xd3;
-    gs.glyphs.codes[2] = 0x4c;
+    gs.glyphs.codes[1] = menu_glyphs::piercing[1];
+    gs.glyphs.codes[2] = menu_glyphs::piercing[2];
     gs.position.y += STATUS_COMPONENT_ROW_STEP;
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
-    gs.glyphs.codes[1] = 0xbf;
-    gs.glyphs.codes[2] = 0x58;
-    gs.glyphs.codes[3] = 0x78;
-    gs.glyphs.codes[4] = 0x79;
+    gs.glyphs.codes[1] = menu_glyphs::holy[1];
+    gs.glyphs.codes[2] = menu_glyphs::holy[2];
+    gs.glyphs.codes[3] = menu_glyphs::holy[3];
+    gs.glyphs.codes[4] = menu_glyphs::holy[4];
     gs.glyphs.codes[5] = MENU_TEXT_END;
     gs.position.y += STATUS_COMPONENT_ROW_STEP;
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
-    gs.glyphs.codes[1] = 0xd4;
+    gs.glyphs.codes[1] = menu_glyphs::fire[1];
     gs.position.y += STATUS_COMPONENT_ROW_STEP;
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
-    gs.glyphs.codes[0] = 0x7a;
-    gs.glyphs.codes[1] = 0xd0;
-    gs.glyphs.codes[2] = 0x8b;
+    gs.glyphs.codes[0] = menu_glyphs::defense[0];
+    gs.glyphs.codes[1] = menu_glyphs::defense[1];
+    gs.glyphs.codes[2] = menu_glyphs::defense[2];
     gs.glyphs.codes[3] = MENU_TEXT_END;
     gs.position.y += STATUS_SUMMARY_ROW_STEP;
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
     gs.glyphs.codes[0] = MENU_TEXT_BLANK;
-    gs.glyphs.codes[1] = 0xd1;
-    gs.glyphs.codes[2] = 0x6a;
+    gs.glyphs.codes[1] = menu_glyphs::cutting[1];
+    gs.glyphs.codes[2] = menu_glyphs::cutting[2];
     gs.glyphs.codes[3] = MENU_TEXT_END;
     gs.position.y += STATUS_COMPONENT_ROW_STEP;
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
-    gs.glyphs.codes[1] = 0xd2;
-    gs.glyphs.codes[2] = 0x51;
+    gs.glyphs.codes[1] = menu_glyphs::striking[1];
+    gs.glyphs.codes[2] = menu_glyphs::striking[2];
     gs.position.y += STATUS_COMPONENT_ROW_STEP;
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
-    gs.glyphs.codes[1] = 0xd3;
-    gs.glyphs.codes[2] = 0x4c;
+    gs.glyphs.codes[1] = menu_glyphs::piercing[1];
+    gs.glyphs.codes[2] = menu_glyphs::piercing[2];
     gs.position.y += STATUS_COMPONENT_ROW_STEP;
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
-    gs.glyphs.codes[1] = 0x88;
+    gs.glyphs.codes[1] = menu_glyphs::poison_resistance[1];
     gs.glyphs.codes[2] = MENU_TEXT_END;
     gs.position.y += STATUS_COMPONENT_ROW_STEP;
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
-    gs.glyphs.codes[1] = 0x78;
-    gs.glyphs.codes[2] = 0x58;
-    gs.glyphs.codes[3] = 0x78;
-    gs.glyphs.codes[4] = 0x79;
+    gs.glyphs.codes[1] = menu_glyphs::magic_defense[1];
+    gs.glyphs.codes[2] = menu_glyphs::magic_defense[2];
+    gs.glyphs.codes[3] = menu_glyphs::magic_defense[3];
+    gs.glyphs.codes[4] = menu_glyphs::magic_defense[4];
     gs.glyphs.codes[5] = MENU_TEXT_END;
     gs.position.y += STATUS_COMPONENT_ROW_STEP;
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
-    gs.glyphs.codes[1] = 0xd4;
+    gs.glyphs.codes[1] = menu_glyphs::fire[1];
     gs.position.y += STATUS_COMPONENT_ROW_STEP;
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
@@ -1214,8 +1217,8 @@ void menu_item_model_preview(KfObjectId item_id)
         menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
         gs.position.x = MENU_INVENTORY_QUANTITY_LABEL_X;
-        gs.glyphs.codes[0] = 0xca;
-        gs.glyphs.codes[1] = 0xcb;
+        gs.glyphs.codes[0] = menu_glyphs::quantity[0];
+        gs.glyphs.codes[1] = menu_glyphs::quantity[1];
         gs.glyphs.codes[2] = MENU_TEXT_END;
         gs.position.y += MENU_ITEM_PREVIEW_LINE_HEIGHT;
         menu_draw_string(&menu_assets.glyph_atlas, &gs);
@@ -1297,16 +1300,16 @@ void menu_draw_item_detail(KfObjectId item_id, KfItemStockBank shop_bank, KfTrad
     menu_draw_number(&menu_assets.number_atlas, &gs);
 
     gs.position.x = MENU_ITEM_DETAIL_LABEL_X;
-    gs.glyphs.codes[0] = MENU_TEXT_DAKUTEN | 0x9;
-    gs.glyphs.codes[1] = 0x2d;
-    gs.glyphs.codes[2] = 0x2a;
-    gs.glyphs.codes[3] = MENU_TEXT_DAKUTEN | 0x13;
+    gs.glyphs.codes[0] = menu_glyphs::gold[0];
+    gs.glyphs.codes[1] = menu_glyphs::gold[1];
+    gs.glyphs.codes[2] = menu_glyphs::gold[2];
+    gs.glyphs.codes[3] = menu_glyphs::gold[3];
     gs.glyphs.codes[4] = MENU_TEXT_END;
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
     gs.position.x = MENU_ITEM_DETAIL_LABEL_X;
-    gs.glyphs.codes[0] = 0xca;
-    gs.glyphs.codes[1] = 0xcb;
+    gs.glyphs.codes[0] = menu_glyphs::quantity[0];
+    gs.glyphs.codes[1] = menu_glyphs::quantity[1];
     gs.glyphs.codes[2] = MENU_TEXT_END;
     gs.position.y += MENU_ITEM_PREVIEW_LINE_HEIGHT;
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
@@ -1381,9 +1384,9 @@ void menu_draw_dialog_frame(const KfSaveSlotSummary *summaries, KfSaveSlotOverla
             }
         } else if (summaries[i].state == KfSaveSlotState::Ready) {
             gs.position.x = MENU_SAVE_SUMMARY_LABEL_X;
-            gs.glyphs.codes[0] = 0x82;
-            gs.glyphs.codes[1] = 0x83;
-            gs.glyphs.codes[2] = 0x84;
+            gs.glyphs.codes[0] = menu_glyphs::experience[0];
+            gs.glyphs.codes[1] = menu_glyphs::experience[1];
+            gs.glyphs.codes[2] = menu_glyphs::experience[2];
             gs.glyphs.codes[3] = MENU_TEXT_END;
             menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
@@ -1392,8 +1395,8 @@ void menu_draw_dialog_frame(const KfSaveSlotSummary *summaries, KfSaveSlotOverla
             menu_draw_number(&menu_assets.number_atlas, &gs);
 
             gs.position.x = MENU_SAVE_SUMMARY_LABEL_X;
-            gs.glyphs.codes[0] = 0xcc;
-            gs.glyphs.codes[1] = 0xcd;
+            gs.glyphs.codes[0] = menu_glyphs::floor[0];
+            gs.glyphs.codes[1] = menu_glyphs::floor[1];
             gs.glyphs.codes[2] = MENU_TEXT_END;
             gs.position.y += MENU_SAVE_SUMMARY_LINE_HEIGHT;
             menu_draw_string(&menu_assets.glyph_atlas, &gs);
@@ -1403,8 +1406,8 @@ void menu_draw_dialog_frame(const KfSaveSlotSummary *summaries, KfSaveSlotOverla
             menu_draw_number(&menu_assets.number_atlas, &gs);
 
             gs.position.x = MENU_SAVE_SUMMARY_LABEL_X;
-            gs.glyphs.codes[0] = 0xf0;
-            gs.glyphs.codes[1] = 242;
+            gs.glyphs.codes[0] = menu_glyphs::hp[0];
+            gs.glyphs.codes[1] = menu_glyphs::hp[1];
             gs.glyphs.codes[2] = MENU_TEXT_END;
             gs.position.y += MENU_SAVE_SUMMARY_LINE_HEIGHT;
             menu_draw_string(&menu_assets.glyph_atlas, &gs);
@@ -1414,8 +1417,8 @@ void menu_draw_dialog_frame(const KfSaveSlotSummary *summaries, KfSaveSlotOverla
                 summaries[i].maximum_hp, MENU_SAVE_STATUS_DIGITS);
 
             gs.position.x = MENU_SAVE_SUMMARY_LABEL_X;
-            gs.glyphs.codes[0] = 0xf1;
-            gs.glyphs.codes[1] = 242;
+            gs.glyphs.codes[0] = menu_glyphs::mp[0];
+            gs.glyphs.codes[1] = menu_glyphs::mp[1];
             gs.glyphs.codes[2] = MENU_TEXT_END;
             gs.position.y += MENU_SAVE_SUMMARY_LINE_HEIGHT;
             menu_draw_string(&menu_assets.glyph_atlas, &gs);
@@ -1455,39 +1458,39 @@ static KfMenuResult menu_list_interact_impl(
     opt1.position.x = MENU_CONFIRM_TEXT_X;
     opt1.position.y = MENU_LIST_CONFIRM_DECLINE_Y;
     if (confirm_kind == KF_MENU_CONFIRM_USE) {
-        opt0.glyphs.codes[0] = 0x72;
-        opt0.glyphs.codes[1] = 0x42;
+        opt0.glyphs.codes[0] = menu_glyphs::use[0];
+        opt0.glyphs.codes[1] = menu_glyphs::use[1];
         opt0.glyphs.codes[2] = MENU_TEXT_END;
     } else if (confirm_kind == KF_MENU_CONFIRM_DROP) {
-        opt0.glyphs.codes[0] = 0x75;
-        opt0.glyphs.codes[1] = 0x52;
-        opt0.glyphs.codes[2] = 0x6a;
+        opt0.glyphs.codes[0] = menu_glyphs::drop[0];
+        opt0.glyphs.codes[1] = menu_glyphs::drop[1];
+        opt0.glyphs.codes[2] = menu_glyphs::drop[2];
         opt0.glyphs.codes[3] = MENU_TEXT_END;
     } else if (confirm_kind == KF_MENU_CONFIRM_YES_NO) {
-        opt0.glyphs.codes[0] = 0x59;
-        opt0.glyphs.codes[1] = 0x41;
+        opt0.glyphs.codes[0] = menu_glyphs::yes[0];
+        opt0.glyphs.codes[1] = menu_glyphs::yes[1];
         opt0.glyphs.codes[2] = MENU_TEXT_END;
     } else if (confirm_kind == KF_MENU_CONFIRM_BUY) {
-        opt0.glyphs.codes[0] = 0x74;
-        opt0.glyphs.codes[1] = 0x42;
+        opt0.glyphs.codes[0] = menu_glyphs::buy[0];
+        opt0.glyphs.codes[1] = menu_glyphs::buy[1];
         opt0.glyphs.codes[2] = MENU_TEXT_END;
     } else if (confirm_kind == KF_MENU_CONFIRM_SELL) {
-        opt0.glyphs.codes[0] = 0x73;
-        opt0.glyphs.codes[1] = 0x6a;
+        opt0.glyphs.codes[0] = menu_glyphs::sell[0];
+        opt0.glyphs.codes[1] = menu_glyphs::sell[1];
         opt0.glyphs.codes[2] = MENU_TEXT_END;
     } else {
-        opt0.glyphs.codes[0] = 0x70;
-        opt0.glyphs.codes[1] = 0x71;
+        opt0.glyphs.codes[0] = menu_glyphs::equip[0];
+        opt0.glyphs.codes[1] = menu_glyphs::equip[1];
         opt0.glyphs.codes[2] = MENU_TEXT_END;
     }
     if (confirm_kind == KF_MENU_CONFIRM_YES_NO) {
-        opt1.glyphs.codes[0] = 0x41;
-        opt1.glyphs.codes[1] = 0x41;
-        opt1.glyphs.codes[2] = 0x43;
+        opt1.glyphs.codes[0] = menu_glyphs::no[0];
+        opt1.glyphs.codes[1] = menu_glyphs::no[1];
+        opt1.glyphs.codes[2] = menu_glyphs::no[2];
     } else {
-        opt1.glyphs.codes[0] = 99;
-        opt1.glyphs.codes[1] = 0x61;
-        opt1.glyphs.codes[2] = 0x6a;
+        opt1.glyphs.codes[0] = menu_glyphs::cancel[0];
+        opt1.glyphs.codes[1] = menu_glyphs::cancel[1];
+        opt1.glyphs.codes[2] = menu_glyphs::cancel[2];
     }
     opt1.glyphs.codes[3] = MENU_TEXT_END;
 
@@ -1580,14 +1583,14 @@ KfMenuResult menu_two_option_prompt(
 
     label_a.position.x = MENU_CONFIRM_TEXT_X;
     label_a.position.y = count * MENU_CONFIRM_ROW_STEP + MENU_PROMPT_ACCEPT_Y_OFFSET;
-    label_a.glyphs.codes[0] = 0x59;
-    label_a.glyphs.codes[1] = 0x41;
+    label_a.glyphs.codes[0] = menu_glyphs::yes[0];
+    label_a.glyphs.codes[1] = menu_glyphs::yes[1];
     label_a.glyphs.codes[2] = MENU_TEXT_END;
     label_b.position.x = MENU_CONFIRM_TEXT_X;
     label_b.position.y = count * MENU_CONFIRM_ROW_STEP + MENU_PROMPT_DECLINE_Y_OFFSET;
-    label_b.glyphs.codes[0] = 0x41;
-    label_b.glyphs.codes[1] = 0x41;
-    label_b.glyphs.codes[2] = 0x43;
+    label_b.glyphs.codes[0] = menu_glyphs::no[0];
+    label_b.glyphs.codes[1] = menu_glyphs::no[1];
+    label_b.glyphs.codes[2] = menu_glyphs::no[2];
     label_b.glyphs.codes[3] = MENU_TEXT_END;
 
     for (;;) {
@@ -1818,9 +1821,9 @@ void menu_draw_item_name_frame(KfObjectId item_id)
     const MenuGlyphRow *name;
     s32 i;
 
-    rotation.t[0] = 0xdc;
-    rotation.t[1] = 0x8c;
-    rotation.t[2] = 0x5dc;
+    rotation.t[0] = pickup_preview_translation[0];
+    rotation.t[1] = pickup_preview_translation[1];
+    rotation.t[2] = pickup_preview_translation[2];
     menu_item_preview_rotation.vy =
         (menu_item_preview_rotation.vy + MENU_PICKUP_PREVIEW_YAW_STEP)
         & KF_ANGLE_WRAP_MASK;
@@ -2018,13 +2021,13 @@ void menu_release_item_model(void)
 
 KfResourceLoadResult menu_load_item_texture(KfMenuTextureId texture_id)
 {
-    char name[16] = "TIM/M000.";
+    char name[menu_image_path_capacity] = "TIM/M000.";
     u8 *destination;
     s32 number;
 
     if (texture_id != KF_MENU_TEXTURE_NONE) {
         number = kf_enum_encode<s32>(texture_id) + 1;
-        RESOURCE_PATH_WRITE_DECIMAL3(&name[5], number);
+        RESOURCE_PATH_WRITE_DECIMAL3(&name[menu_image_number_offset], number);
         destination = game_graphics_runtime.display_state.asset_load_buffer;
         std::size_t image_size;
         if (resource_file_load_into(destination,

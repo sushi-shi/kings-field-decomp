@@ -1,5 +1,7 @@
 #include <kf/lib/audio.h>
 
+static constexpr std::size_t sound_chunk_header_bytes = 4;
+
 static u32 audio_chunk_size(const u8 *data)
 {
     return static_cast<u32>(data[0]) | (static_cast<u32>(data[1]) << 8)
@@ -8,16 +10,16 @@ static u32 audio_chunk_size(const u8 *data)
 
 void audio_load_vab_resource(const u8 *data, std::size_t size)
 {
-    if (size < 4)
+    if (size < sound_chunk_header_bytes)
         kf::host_fail("Truncated sound-bank resource");
     const std::size_t header_size = audio_chunk_size(data);
-    if (header_size > size - 4 || size - 4 - header_size < 4)
+    if (header_size > size - sound_chunk_header_bytes || size - sound_chunk_header_bytes - header_size < sound_chunk_header_bytes)
         kf::host_fail("Truncated sound-bank header");
-    const u8 *body_chunk = data + 4 + header_size;
+    const u8 *body_chunk = data + sound_chunk_header_bytes + header_size;
     const std::size_t body_size = audio_chunk_size(body_chunk);
-    if (body_size > size - 8 - header_size)
+    if (body_size > size - 2 * sound_chunk_header_bytes - header_size)
         kf::host_fail("Truncated sound-bank samples");
-    audio_load_vab(data + 4, header_size, body_chunk + 4, body_size);
+    audio_load_vab(data + sound_chunk_header_bytes, header_size, body_chunk + sound_chunk_header_bytes, body_size);
 }
 
 void audio_shutdown(void)
@@ -72,7 +74,7 @@ void sound_ref_play(const SoundRef *sound, s16 volume)
     audio_play_voice(
         audio_state.bank,
         sound->program,
-        sound->tone,
+        sound->tone_and_flags,
         sound->note,
         volume,
         volume);

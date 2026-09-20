@@ -283,7 +283,7 @@ void actor_apply_damage(
     s32 health;
     s32 remaining;
 
-    if (player_state.progress_state.current_floor == KF_FLOOR_5 && actor->definition_id == 7) {
+    if (player_state.progress_state.current_floor == KF_FLOOR_5 && actor->definition_id == KF_FLOOR5_BOSS_DEFINITION) {
         if (map_floor5_script.boss_encounter_started == KF_MAP_SCRIPT_UNSET) {
             return;
         }
@@ -635,7 +635,7 @@ void actor_play_sound_at_phase(const SoundRef *sound, u16 phase)
     if (!actor_animation_crossed_phase(actor, phase)) {
         return;
     }
-    if (player_state.progress_state.current_floor == KF_FLOOR_5 && actor->definition_id == 7) {
+    if (player_state.progress_state.current_floor == KF_FLOOR_5 && actor->definition_id == KF_FLOOR5_BOSS_DEFINITION) {
         audio_play_spatial_range(
             sound, &actor->position, KF_AUDIO_MAX_VOLUME, KF_AUDIO_EXTENDED_MAX_DISTANCE, KF_AUDIO_EXTENDED_ATTENUATION_DISTANCE);
     } else {

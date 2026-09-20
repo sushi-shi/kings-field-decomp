@@ -3,9 +3,12 @@
 #include <kf/lib/map_data.h>
 #include <kf/game/collision.h>
 #include <kf/game/effect.h>
+
 #include <cstdlib>
 #include <cstdio>
 #include <cstring>
+
+static constexpr u32 EFFECT_PHASE_BYTE_MASK = 0xff;
 #include <kf/game/game.h>
 
 enum {
@@ -116,7 +119,7 @@ void effect_projectile_update_2d(s32 orbit_radius, KfEffectPhase phase_limit)
     KfEnumStorage<KfEffectPhase, u32> life = record->phase;
     u32 collision;
 
-    if ((kf_enum_encode<u32>(life) & 0xff) < kf_enum_encode<u8>(KF_EFFECT_HAZARD_RELEASE_REQUEST) + 1) {
+    if ((kf_enum_encode<u32>(life) & EFFECT_PHASE_BYTE_MASK) < kf_enum_encode<u8>(KF_EFFECT_HAZARD_RELEASE_REQUEST) + 1) {
         record->position.vx = (record->direction.vector.vx << KF_EFFECT_ORBIT_CENTER_SHIFT)
             + (kf::angle_sine((s16)record->control.orbit_angle) * orbit_radius >> KF_FIXED12_BITS);
         record->position.vz = (record->direction.vector.vz << KF_EFFECT_ORBIT_CENTER_SHIFT)
@@ -152,7 +155,7 @@ void effect_projectile_update_2d(s32 orbit_radius, KfEffectPhase phase_limit)
                 record->sound_played = KF_AUDIO_NOT_PLAYED;
             }
         }
-    } else if ((kf_enum_encode<u32>(life) & 0xff) != kf_enum_encode<u8>(KF_EFFECT_HAZARD_RUNNING) && kf_enum_encode<s16>(phase_limit) >= (int)(kf_enum_encode<u32>(life) & 0xff)) {
+    } else if ((kf_enum_encode<u32>(life) & EFFECT_PHASE_BYTE_MASK) != kf_enum_encode<u8>(KF_EFFECT_HAZARD_RUNNING) && kf_enum_encode<s16>(phase_limit) >= (int)(kf_enum_encode<u32>(life) & EFFECT_PHASE_BYTE_MASK)) {
         record->position.vy -= EFFECT_HAZARD_RISE_STEP;
         record->phase++;
     }
@@ -186,7 +189,7 @@ void effect_floor_deform_line(s32 segment_index, s32 progress_start, s32 progres
         } else if (progress >= FLOOR_DEFORM_SOUND_PROGRESS && progress < range + FLOOR_DEFORM_SOUND_PROGRESS) {
             sound_position.vx = KF_MAP_TILE_SIZE * col + KF_MAP_TILE_CENTER;
             sound_position.vz = KF_MAP_TILE_SIZE * row + KF_MAP_TILE_CENTER;
-            audio_play_spatial_default_range(&gameplay_sound_refs[4],
+            audio_play_spatial_default_range(&gameplay_sound_refs[KF_GAMEPLAY_SOUND_FLOOR_DEFORM],
                 &sound_position, KF_AUDIO_MAX_VOLUME);
         }
         map_floor_height_grid.cells[row][col] =

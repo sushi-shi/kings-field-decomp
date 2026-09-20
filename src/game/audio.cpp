@@ -12,7 +12,7 @@ enum {
     GAME_SEQUENCE_BUFFER_BYTES = 0x3000,
     GAME_SEQUENCE_VOLUME = 0x4b,
     GAME_REVERB_DEPTH = 0x10,
-    GAME_SOUND_ATTENUATION_BOOST = 36,
+    GAME_SOUND_PAN_NARROWING_GAIN_BOOST = 36,
     GAME_SOUND_PAN_NARROW_THRESHOLD = 64,
     GAME_SOUND_PAN_DIVISOR = 3000
 };
@@ -42,15 +42,18 @@ void audio_load_vab(const u8 *header, std::size_t header_size, const u8 *body, s
         kf::host_fail("Cannot decode sound bank");
 }
 
+static constexpr unsigned sequence_path_capacity = 20;
+static constexpr unsigned sequence_number_offset = 6, sequence_floor_offset = 1;
+
 void audio_play_map_sequence(u8 sequence_id)
 {
-    char path[20] = "B0/SND0.SEQ";
+    char path[sequence_path_capacity] = "B0/SND0.SEQ";
     std::size_t sequence_size;
 
     audio_stop_sequence_fade();
     if (player_state.audio_music_enabled != KF_PLAYER_OPTION_OFF) {
-        path[6] = sequence_id + '0';
-        path[1] = kf_enum_encode<u8>(player_state.progress_state.current_floor) + '0';
+        path[sequence_number_offset] = sequence_id + '0';
+        path[sequence_floor_offset] = kf_enum_encode<u8>(player_state.progress_state.current_floor) + '0';
         if (resource_file_load_into(audio_state.sequence_buffer, GAME_SEQUENCE_BUFFER_BYTES, path, &sequence_size) == KF_RESOURCE_LOADED) {
             audio_state.sequence = kf::sound_sequence_load(audio_state.sequence_buffer, sequence_size, audio_state.bank);
             if (!audio_state.sequence)
@@ -110,22 +113,22 @@ KfAudioPlaybackResult audio_play_spatial(
     s32 delta_x = position->vx - audio_state.listener_position.vx;
     s32 delta_y = position->vy - audio_state.listener_position.vy;
     s32 delta_z = position->vz - audio_state.listener_position.vz;
-    s32 attenuation;
-    s32 level;
+    s32 distance_gain_q7;
+    s32 attenuated_volume;
     s32 angle;
     s32 left;
     s32 right;
 
-    attenuation = fixed_vector3_length(delta_x, delta_y, delta_z);
-    if (attenuation >= max_distance) {
+    const s32 listener_distance = fixed_vector3_length(delta_x, delta_y, delta_z);
+    if (listener_distance >= max_distance) {
         return KF_AUDIO_NOT_PLAYED;
     }
-    attenuation = ((attenuation_distance - attenuation) << KF_FIXED7_BITS) / attenuation_distance;
-    level = (attenuation * volume) >> KF_FIXED7_BITS;
-    if (level < 0) {
-        level = 0;
-    } else if (level >= KF_AUDIO_MAX_VOLUME + 1) {
-        level = KF_AUDIO_MAX_VOLUME;
+    distance_gain_q7 = ((attenuation_distance - listener_distance) << KF_FIXED7_BITS) / attenuation_distance;
+    attenuated_volume = (distance_gain_q7 * volume) >> KF_FIXED7_BITS;
+    if (attenuated_volume < 0) {
+        attenuated_volume = 0;
+    } else if (attenuated_volume >= KF_AUDIO_MAX_VOLUME + 1) {
+        attenuated_volume = KF_AUDIO_MAX_VOLUME;
     }
     angle = vector_xz_to_angle(
         position->vx - audio_state.listener_position.vx,
@@ -136,29 +139,31 @@ KfAudioPlaybackResult audio_play_spatial(
         angle = KF_ANGLE_FULL_TURN - angle;
     }
     angle >>= 1;
-    if ((sound->tone & 0x80) == 1) {
-        attenuation += GAME_SOUND_ATTENUATION_BOOST;
-        if (attenuation >= KF_AUDIO_MAX_VOLUME + 1) {
-            attenuation = KF_AUDIO_MAX_VOLUME;
+    // Retail compares the masked high bit to 1, so this branch never runs.
+    // Preserve that quirk; changing it to a nonzero test changes panning.
+    if ((sound->tone_and_flags & KF_SOUND_PAN_NARROWING_FLAG) == 1) {
+        distance_gain_q7 += GAME_SOUND_PAN_NARROWING_GAIN_BOOST;
+        if (distance_gain_q7 >= KF_AUDIO_MAX_VOLUME + 1) {
+            distance_gain_q7 = KF_AUDIO_MAX_VOLUME;
         }
     }
-    if (attenuation >= GAME_SOUND_PAN_NARROW_THRESHOLD) {
+    if (distance_gain_q7 >= GAME_SOUND_PAN_NARROW_THRESHOLD) {
         angle = (((angle - KF_ANGLE_EIGHTH_TURN)
-            * (KF_FIXED7_ONE * 2 - attenuation * 2)) >> KF_FIXED7_BITS)
+            * (KF_FIXED7_ONE * 2 - distance_gain_q7 * 2)) >> KF_FIXED7_BITS)
             + KF_ANGLE_EIGHTH_TURN;
     }
-    left = (level * kf::angle_sine(angle)) / GAME_SOUND_PAN_DIVISOR;
+    left = (attenuated_volume * kf::angle_sine(angle)) / GAME_SOUND_PAN_DIVISOR;
     if (left >= KF_AUDIO_MAX_VOLUME + 1) {
         left = KF_AUDIO_MAX_VOLUME;
     }
-    right = (level * kf::angle_cosine(angle)) / GAME_SOUND_PAN_DIVISOR;
+    right = (attenuated_volume * kf::angle_cosine(angle)) / GAME_SOUND_PAN_DIVISOR;
     if (right >= KF_AUDIO_MAX_VOLUME + 1) {
         right = KF_AUDIO_MAX_VOLUME;
     }
     audio_play_voice(
         audio_state.bank,
         sound->program,
-        sound->tone & KF_SOUND_TONE_INDEX_MASK,
+        sound->tone_and_flags & KF_SOUND_TONE_INDEX_MASK,
         sound->note,
         left,
         right);

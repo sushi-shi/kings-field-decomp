@@ -8,6 +8,11 @@
 #include <cstring>
 #include <kf/game/game.h>
 
+static constexpr s32 PLAYER_REVIVAL_POSITION_X = 64000;
+static constexpr s32 PLAYER_REVIVAL_POSITION_Z = 20000;
+static constexpr s32 PLAYER_RESTART_POSITION_X = 31000;
+static constexpr s32 PLAYER_RESTART_POSITION_Z = 5000;
+
 enum {
     CURSE_PHYSICAL_POWER_PENALTY = 20,
     FIRE_DEFENSE_STATUS_BONUS = 10,
@@ -152,14 +157,14 @@ void player_death_restart(void)
     if (map_floor1_script.revival_enabled == KF_MAP_SCRIPT_SET && item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)][kf_enum_encode<u8>(KF_ITEM_DRAGON_KING_GRASS_FRUIT)] != 0) {
         item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)][kf_enum_encode<u8>(KF_ITEM_DRAGON_KING_GRASS_FRUIT)]--;
         map_world_state_persist();
-        player_state.camera_position.vx = 0xfa00;
+        player_state.camera_position.vx = PLAYER_REVIVAL_POSITION_X;
         player_state.vitals.current_hp = player_state.vitals.maximum_hp;
         player_state.vitals.current_mp = player_state.vitals.maximum_mp;
-        player_state.camera_position.vz = 0x4e20;
+        player_state.camera_position.vz = PLAYER_REVIVAL_POSITION_Z;
         player_state.camera_rotation.vy = 0;
     } else {
-        player_state.camera_position.vx = 0x7918;
-        player_state.camera_position.vz = 0x1388;
+        player_state.camera_position.vx = PLAYER_RESTART_POSITION_X;
+        player_state.camera_position.vz = PLAYER_RESTART_POSITION_Z;
         player_state.camera_rotation.vy = 0;
         game_state_initialize();
         floor = KF_FLOOR_FORCE_RELOAD;

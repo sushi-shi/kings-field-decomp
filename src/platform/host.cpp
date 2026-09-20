@@ -38,6 +38,18 @@ struct HostState {
 };
 static HostState host;
 static constexpr Uint64 ns_per_second = 1000000000;
+static constexpr Uint64 ns_per_millisecond = 1000000;
+static constexpr Uint64 clock_ticks_per_second = 60;
+static constexpr Uint64 unfocused_poll_interval_ns = 16 * ns_per_millisecond;
+static constexpr Uint64 maximum_wait_slice_ns = 8 * ns_per_millisecond;
+static constexpr u32 gamepad_axis_control_first = 100;
+static constexpr u32 gamepad_axis_positive_first = gamepad_axis_control_first + 1;
+static constexpr int gamepad_axis_deadzone = 16000;
+static constexpr std::size_t initial_face_capacity = 512;
+static constexpr std::size_t renderer_error_capacity = 2048;
+static constexpr double mouse_degrees_per_pixel = 0.12;
+static constexpr double angle_units_per_turn = 4096;
+static constexpr double degrees_per_turn = 360;
 
 static void present_retained_frame() {
     int width = 0, height = 0;
@@ -50,7 +62,7 @@ static void present_retained_frame() {
 
 static void platform_yield(Uint64 nanoseconds) {
 #ifdef __EMSCRIPTEN__
-    emscripten_sleep(static_cast<unsigned>((nanoseconds + 999999) / 1000000));
+    emscripten_sleep(static_cast<unsigned>((nanoseconds + ns_per_millisecond - 1) / ns_per_millisecond));
 #else
     SDL_DelayNS(nanoseconds);
 #endif
@@ -85,12 +97,12 @@ static void bind_inputs() {
     for (const auto &button : buttons)
         input_bind(input, {InputDevice::gamepad, static_cast<u32>(button.code)}, button.action);
     // Axis directions use distinct controls so releasing a stick cannot release a held D-pad.
-    input_bind(input, {InputDevice::gamepad, 100 + SDL_GAMEPAD_AXIS_LEFTX * 2}, Action::turn_left);
-    input_bind(input, {InputDevice::gamepad, 101 + SDL_GAMEPAD_AXIS_LEFTX * 2}, Action::turn_right);
-    input_bind(input, {InputDevice::gamepad, 100 + SDL_GAMEPAD_AXIS_LEFTY * 2}, Action::forward);
-    input_bind(input, {InputDevice::gamepad, 101 + SDL_GAMEPAD_AXIS_LEFTY * 2}, Action::backward);
-    input_bind(input, {InputDevice::gamepad, 101 + SDL_GAMEPAD_AXIS_LEFT_TRIGGER * 2}, Action::look_up);
-    input_bind(input, {InputDevice::gamepad, 101 + SDL_GAMEPAD_AXIS_RIGHT_TRIGGER * 2}, Action::look_down);
+    input_bind(input, {InputDevice::gamepad, gamepad_axis_control_first + SDL_GAMEPAD_AXIS_LEFTX * 2}, Action::turn_left);
+    input_bind(input, {InputDevice::gamepad, gamepad_axis_positive_first + SDL_GAMEPAD_AXIS_LEFTX * 2}, Action::turn_right);
+    input_bind(input, {InputDevice::gamepad, gamepad_axis_control_first + SDL_GAMEPAD_AXIS_LEFTY * 2}, Action::forward);
+    input_bind(input, {InputDevice::gamepad, gamepad_axis_positive_first + SDL_GAMEPAD_AXIS_LEFTY * 2}, Action::backward);
+    input_bind(input, {InputDevice::gamepad, gamepad_axis_positive_first + SDL_GAMEPAD_AXIS_LEFT_TRIGGER * 2}, Action::look_up);
+    input_bind(input, {InputDevice::gamepad, gamepad_axis_positive_first + SDL_GAMEPAD_AXIS_RIGHT_TRIGGER * 2}, Action::look_down);
 }
 
 static void open_available_gamepad() {
@@ -119,7 +131,7 @@ bool host_start() {
     }
     // All frame pacing uses the absolute clock below, not a second swap-interval wait.
     SDL_GL_SetSwapInterval(0);
-    char error[2048] {};
+    char error[renderer_error_capacity] {};
     if (!renderer_init(&host.renderer, error, sizeof error)) {
         std::fprintf(stderr, "%s\n", error);
         host_shutdown();
@@ -266,8 +278,8 @@ static void process_event(const SDL_Event &event) {
         break;
     case SDL_EVENT_GAMEPAD_AXIS_MOTION:
         if (host.focused && host.gamepad && event.gaxis.which == SDL_GetGamepadID(host.gamepad)) {
-            input_button(&host.input, {InputDevice::gamepad, 100u + event.gaxis.axis * 2u}, event.gaxis.value < -16000);
-            input_button(&host.input, {InputDevice::gamepad, 101u + event.gaxis.axis * 2u}, event.gaxis.value > 16000);
+            input_button(&host.input, {InputDevice::gamepad, gamepad_axis_control_first + event.gaxis.axis * 2u}, event.gaxis.value < -gamepad_axis_deadzone);
+            input_button(&host.input, {InputDevice::gamepad, gamepad_axis_positive_first + event.gaxis.axis * 2u}, event.gaxis.value > gamepad_axis_deadzone);
         }
         break;
     case SDL_EVENT_WINDOW_FOCUS_LOST:
@@ -312,7 +324,7 @@ void host_poll() {
         sound_poll();
         if (host.focused)
             return;
-        platform_yield(16000000);
+        platform_yield(unfocused_poll_interval_ns);
     }
 }
 
@@ -323,7 +335,7 @@ std::uint64_t host_clock_ns() {
 
 std::uint64_t host_clock_tick() {
     const auto elapsed = host_clock_ns();
-    return elapsed / ns_per_second * 60 + elapsed % ns_per_second * 60 / ns_per_second;
+    return elapsed / ns_per_second * clock_ticks_per_second + elapsed % ns_per_second * clock_ticks_per_second / ns_per_second;
 }
 
 static void wait_until_ns(std::uint64_t target) {
@@ -332,13 +344,13 @@ static void wait_until_ns(std::uint64_t target) {
         const auto now = host_clock_ns();
         if (now >= target)
             return;
-        platform_yield(std::min<Uint64>(target - now, 8000000));
+        platform_yield(std::min<Uint64>(target - now, maximum_wait_slice_ns));
     }
 }
 
 void host_wait_until_tick(std::uint64_t deadline) {
-    const auto target = deadline / 60 * ns_per_second +
-                        (deadline % 60 * ns_per_second + 59) / 60;
+    const auto target = deadline / clock_ticks_per_second * ns_per_second +
+                        (deadline % clock_ticks_per_second * ns_per_second + clock_ticks_per_second - 1) / clock_ticks_per_second;
     wait_until_ns(target);
 }
 
@@ -429,7 +441,7 @@ InputContext host_set_input_context(InputContext context) {
 }
 
 LookDelta host_take_look() {
-    constexpr double angle_units_per_pixel = 0.12 * 4096 / 360;
+    constexpr double angle_units_per_pixel = mouse_degrees_per_pixel * angle_units_per_turn / degrees_per_turn;
     const double x = host.input.pending.look_x * angle_units_per_pixel + host.look_remainder_x;
     const double y = host.input.pending.look_y * angle_units_per_pixel + host.look_remainder_y;
     const s32 dx = static_cast<s32>(std::trunc(x));
@@ -450,7 +462,7 @@ void host_enqueue_face(const DrawFace &face) {
     if (host.frame_count == host.frame_capacity) {
         if (host.frame_capacity > std::numeric_limits<std::size_t>::max() / 2 / sizeof(DrawFace))
             host_fail("Render command allocation is too large.");
-        const auto capacity = host.frame_capacity ? host.frame_capacity * 2 : 512;
+        const auto capacity = host.frame_capacity ? host.frame_capacity * 2 : initial_face_capacity;
         auto *faces = static_cast<DrawFace *>(std::realloc(host.frame_faces, capacity * sizeof(DrawFace)));
         if (!faces)
             host_fail("Cannot allocate render commands.");

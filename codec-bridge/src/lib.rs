@@ -3,6 +3,19 @@ mod audio;
 mod texture;
 use core::{panic::PanicInfo, slice};
 use kf_codec::tim::{Image, Images};
+use kf_codec::tim::{
+    TIM_DIRECT16, TIM_DIRECT24, TIM_FLAGS_MASK, TIM_FORMAT_MASK, TIM_INDEXED4, TIM_INDEXED8,
+};
+const INDEXED4_PALETTE_COLORS: usize = 16;
+const INDEXED4_BITS: usize = 4;
+const INDEXED4_MASK: u8 = 15;
+const INDEXED8_PALETTE_COLORS: usize = 256;
+const RGB5_BITS: u32 = 5;
+const RGB5_MASK: u16 = 31;
+const RGB5_RGB8_SHIFT: u32 = 3;
+const RGB5_REPLICATION_SHIFT: u32 = 2;
+const ALPHA_OPAQUE: u8 = 255;
+
 extern "C" {
     fn abort() -> !;
 }
@@ -39,14 +52,14 @@ fn parse(bytes: &[u8], offset: usize) -> Result<Image<'_>, i32> {
 fn dimensions(image: &Image<'_>) -> Result<(usize, usize), i32> {
     let words = image.image.rectangle.width as usize;
     let height = image.image.rectangle.height as usize;
-    let width = match image.mode & 7 {
-        0 => words * 4,
-        1 => words * 2,
-        2 => words,
-        3 if words * 2 % 3 == 0 => words * 2 / 3,
+    let width = match image.mode & TIM_FORMAT_MASK {
+        TIM_INDEXED4 => words * 4,
+        TIM_INDEXED8 => words * 2,
+        TIM_DIRECT16 => words,
+        TIM_DIRECT24 if words * 2 % 3 == 0 => words * 2 / 3,
         _ => return Err(INVALID),
     };
-    if width == 0 || height == 0 || image.mode & !0xf != 0 {
+    if width == 0 || height == 0 || image.mode & !TIM_FLAGS_MASK != 0 {
         return Err(INVALID);
     }
     Ok((width, height))
@@ -115,13 +128,17 @@ pub unsafe extern "C" fn kf_tim_rgba(
     if capacity < needed {
         return OUTPUT_FULL;
     }
-    let mode = image.mode & 7;
-    let palette = if mode < 2 {
+    let mode = image.mode & TIM_FORMAT_MASK;
+    let palette = if mode < TIM_DIRECT16 {
         let clut = match image.clut {
             Some(c) => c,
             None => return INVALID,
         };
-        let count = if mode == 0 { 16 } else { 256 };
+        let count = if mode == TIM_INDEXED4 {
+            INDEXED4_PALETTE_COLORS
+        } else {
+            INDEXED8_PALETTE_COLORS
+        };
         let at = match (palette_row as usize).checked_mul(count * 2) {
             Some(at) => at,
             None => return INVALID,
@@ -135,30 +152,34 @@ pub unsafe extern "C" fn kf_tim_rgba(
     };
     let output = slice::from_raw_parts_mut(rgba, needed);
     for (index, destination) in output.chunks_exact_mut(4).enumerate() {
-        if mode == 3 {
+        if mode == TIM_DIRECT24 {
             let at = index * 3;
             destination[..3].copy_from_slice(&image.image.pixels[at..at + 3]);
-            destination[3] = 255;
+            destination[3] = ALPHA_OPAQUE;
             continue;
         }
-        let word = if mode == 2 {
+        let word = if mode == TIM_DIRECT16 {
             u16::from_le_bytes([
                 image.image.pixels[index * 2],
                 image.image.pixels[index * 2 + 1],
             ])
         } else {
-            let entry = if mode == 0 {
-                ((image.image.pixels[index / 2] >> ((index % 2) * 4)) & 15) as usize
+            let entry = if mode == TIM_INDEXED4 {
+                ((image.image.pixels[index / 2] >> ((index % 2) * INDEXED4_BITS)) & INDEXED4_MASK)
+                    as usize
             } else {
                 image.image.pixels[index] as usize
             };
             u16::from_le_bytes([palette[entry * 2], palette[entry * 2 + 1]])
         };
-        for (channel, shift) in destination[..3].iter_mut().zip([0, 5, 10]) {
-            let value = ((word >> shift) & 31) as u8;
-            *channel = (value << 3) | (value >> 2);
+        for (channel, shift) in destination[..3]
+            .iter_mut()
+            .zip([0, RGB5_BITS, 2 * RGB5_BITS])
+        {
+            let value = ((word >> shift) & RGB5_MASK) as u8;
+            *channel = (value << RGB5_RGB8_SHIFT) | (value >> RGB5_REPLICATION_SHIFT);
         }
-        destination[3] = if word == 0 { 0 } else { 255 };
+        destination[3] = if word == 0 { 0 } else { ALPHA_OPAQUE };
     }
     OK
 }

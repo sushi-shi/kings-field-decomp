@@ -1,6 +1,56 @@
 use crate::{INVALID, OK, OUTPUT_FULL};
 use core::{mem::align_of, ptr, slice};
+use kf_codec::audio::midi;
 use kf_codec::audio::{ChannelMessage, SeqEventKind, Sequence, VabBank};
+use kf_codec::audio::{VAB_OFFSET_ENTRIES, VAB_PROGRAM_SLOTS, VAB_TONES_PER_PROGRAM};
+
+const SUPPORTED_SEQ_VERSION: u32 = 1;
+const TONE_REVERB_FLAG: u8 = 4;
+const ADSR_ATTACK_SHIFT_OFFSET: u32 = 10;
+const ADSR_ATTACK_STEP_OFFSET: u32 = 8;
+const ADSR_DECAY_SHIFT_OFFSET: u32 = 4;
+const ADSR_SUSTAIN_SHIFT_OFFSET: u32 = 8;
+const ADSR_SUSTAIN_STEP_OFFSET: u32 = 6;
+const ADSR_RATE_SHIFT_MASK: u16 = 31;
+const ADSR_STEP_MASK: u16 = 3;
+const ADSR_DECAY_SHIFT_MASK: u16 = 15;
+const ADSR_SUSTAIN_LEVEL_MASK: u32 = 15;
+const ADSR_SUSTAIN_LEVEL_STEP: u32 = 2048;
+const ENVELOPE_LEVEL_MAX: u32 = 32767;
+const ADSR_EXPONENTIAL_OFFSET: u32 = 15;
+const ADSR_SUSTAIN_DIRECTION_OFFSET: u32 = 14;
+const ADSR_RELEASE_EXPONENTIAL_OFFSET: u32 = 5;
+const ADPCM_BLOCK_BYTES: usize = 16;
+const ADPCM_BLOCK_FRAMES: usize = 28;
+const ADPCM_HEADER_BYTES: usize = 2;
+const ADPCM_FILTER_OFFSET: u32 = 4;
+const ADPCM_FILTER_LAST: u8 = 4;
+const ADPCM_FLAGS_MASK: u8 = 7;
+const ADPCM_LOOP_START: u8 = 4;
+const ADPCM_END: u8 = 1;
+const ADPCM_REPEAT: u8 = 2;
+const ADPCM_SHIFT_MASK: u8 = 15;
+const ADPCM_MAX_SHIFT: u8 = 12;
+const ADPCM_RESERVED_SHIFT: u8 = 9;
+const ADPCM_NIBBLE_BITS: usize = 4;
+const ADPCM_NIBBLE_MASK: u8 = 15;
+const ADPCM_NIBBLE_SIGN_BIT: i32 = 8;
+const ADPCM_NIBBLE_MODULUS: i32 = 16;
+const ADPCM_SAMPLE_SCALE: i32 = 4096;
+const ADPCM_PREDICTOR_ROUNDING: i32 = 32;
+const ADPCM_PREDICTOR_FRACTION_BITS: u32 = 6;
+
+// Wire values match KfMusicEventKind in include/kf/audio/codec.h.
+#[repr(u32)]
+enum MusicEventKind {
+    NoteOff = 0,
+    NoteOn = 1,
+    Volume = 2,
+    Program = 3,
+    PitchBend = 4,
+    Tempo = 5,
+    End = 6,
+}
 
 #[repr(C)]
 struct Envelope {
@@ -41,7 +91,7 @@ struct Program {
     volume: u8,
     pan: u8,
     priority: u8,
-    tones: [Tone; 16],
+    tones: [Tone; VAB_TONES_PER_PROGRAM],
 }
 #[repr(C)]
 struct SampleRange {
@@ -53,8 +103,8 @@ pub struct BankData {
     volume: u8,
     pan: u8,
     sample_count: u16,
-    programs: [Program; 128],
-    samples: [SampleRange; 256],
+    programs: [Program; VAB_PROGRAM_SLOTS],
+    samples: [SampleRange; VAB_OFFSET_ENTRIES],
 }
 #[repr(C)]
 pub struct SampleInfo {
@@ -104,7 +154,7 @@ pub unsafe extern "C" fn kf_audio_bank_decode(
         Ok(bank) => bank,
         Err(_) => return INVALID,
     };
-    if bank.header.master_volume > 127 || bank.header.pan > 127 {
+    if bank.header.master_volume > midi::DATA_MASK || bank.header.pan > midi::DATA_MASK {
         return INVALID;
     }
     // Initialize the caller's allocation directly: this bank is too large for
@@ -115,12 +165,15 @@ pub unsafe extern "C" fn kf_audio_bank_decode(
     result.pan = bank.header.pan;
     result.sample_count = bank.header.sample_count;
     let mut packed_program = 0;
-    for slot in 0..128 {
+    for slot in 0..VAB_PROGRAM_SLOTS {
         let program = bank.program_slot(slot).unwrap();
         if program.tone_count == 0 {
             continue;
         }
-        if program.tone_count > 16 || program.master_volume > 127 || program.pan > 127 {
+        if usize::from(program.tone_count) > VAB_TONES_PER_PROGRAM
+            || program.master_volume > midi::DATA_MASK
+            || program.pan > midi::DATA_MASK
+        {
             return INVALID;
         }
         let target = &mut result.programs[slot];
@@ -137,18 +190,18 @@ pub unsafe extern "C" fn kf_audio_bank_decode(
             if tone.program != slot as i16
                 || tone.sample < 1
                 || tone.sample as u16 > bank.header.sample_count
-                || tone.volume > 127
-                || tone.pan > 127
-                || tone.center_shift > 127
+                || tone.volume > midi::DATA_MASK
+                || tone.pan > midi::DATA_MASK
+                || tone.center_shift > midi::DATA_MASK
                 || tone.minimum_note > tone.maximum_note
-                || tone.maximum_note > 127
-                || tone.mode & !4 != 0
+                || tone.maximum_note > midi::DATA_MASK
+                || tone.mode & !TONE_REVERB_FLAG != 0
             {
                 return INVALID;
             }
             target.tones[ordinal] = Tone {
                 priority: tone.priority,
-                reverb: u8::from(tone.mode & 4 != 0),
+                reverb: u8::from(tone.mode & TONE_REVERB_FLAG != 0),
                 volume: tone.volume,
                 pan: tone.pan,
                 // This is a pitch reference, not a MIDI note-on. Retail banks
@@ -165,17 +218,23 @@ pub unsafe extern "C" fn kf_audio_bank_decode(
                 bend_up: tone.pitch_bend_maximum,
                 sample_index: tone.sample as u16 - 1,
                 envelope: Envelope {
-                    attack_shift: ((tone.adsr1 >> 10) & 31) as u8,
-                    attack_step: ((tone.adsr1 >> 8) & 3) as u8,
-                    decay_shift: ((tone.adsr1 >> 4) & 15) as u8,
-                    sustain_shift: ((tone.adsr2 >> 8) & 31) as u8,
-                    sustain_step: ((tone.adsr2 >> 6) & 3) as u8,
-                    release_shift: (tone.adsr2 & 31) as u8,
-                    sustain_level: (((u32::from(tone.adsr1) & 15) + 1) * 2048).min(32767) as u16,
-                    attack_exponential: (tone.adsr1 >> 15) as u8,
-                    sustain_exponential: (tone.adsr2 >> 15) as u8,
-                    sustain_decreasing: ((tone.adsr2 >> 14) & 1) as u8,
-                    release_exponential: ((tone.adsr2 >> 5) & 1) as u8,
+                    attack_shift: ((tone.adsr1 >> ADSR_ATTACK_SHIFT_OFFSET) & ADSR_RATE_SHIFT_MASK)
+                        as u8,
+                    attack_step: ((tone.adsr1 >> ADSR_ATTACK_STEP_OFFSET) & ADSR_STEP_MASK) as u8,
+                    decay_shift: ((tone.adsr1 >> ADSR_DECAY_SHIFT_OFFSET) & ADSR_DECAY_SHIFT_MASK)
+                        as u8,
+                    sustain_shift: ((tone.adsr2 >> ADSR_SUSTAIN_SHIFT_OFFSET)
+                        & ADSR_RATE_SHIFT_MASK) as u8,
+                    sustain_step: ((tone.adsr2 >> ADSR_SUSTAIN_STEP_OFFSET) & ADSR_STEP_MASK) as u8,
+                    release_shift: (tone.adsr2 & ADSR_RATE_SHIFT_MASK) as u8,
+                    sustain_level: (((u32::from(tone.adsr1) & ADSR_SUSTAIN_LEVEL_MASK) + 1)
+                        * ADSR_SUSTAIN_LEVEL_STEP)
+                        .min(ENVELOPE_LEVEL_MAX) as u16,
+                    attack_exponential: (tone.adsr1 >> ADSR_EXPONENTIAL_OFFSET) as u8,
+                    sustain_exponential: (tone.adsr2 >> ADSR_EXPONENTIAL_OFFSET) as u8,
+                    sustain_decreasing: ((tone.adsr2 >> ADSR_SUSTAIN_DIRECTION_OFFSET) & 1) as u8,
+                    release_exponential: ((tone.adsr2 >> ADSR_RELEASE_EXPONENTIAL_OFFSET) & 1)
+                        as u8,
                 },
             };
         }
@@ -207,27 +266,32 @@ pub unsafe extern "C" fn kf_audio_sample_info(
 ) -> i32 {
     if !input(data, size)
         || size == 0
-        || size % 16 != 0
-        || size / 16 > u32::MAX as usize / 28
+        || size % ADPCM_BLOCK_BYTES != 0
+        || size / ADPCM_BLOCK_BYTES > u32::MAX as usize / ADPCM_BLOCK_FRAMES
         || !output(info)
     {
         return INVALID;
     }
     let mut frames = 0;
     let mut loop_begin = 0;
-    for block in slice::from_raw_parts(data, size).chunks_exact(16) {
-        if block[0] >> 4 > 4 || block[1] & !7 != 0 {
+    for block in slice::from_raw_parts(data, size).chunks_exact(ADPCM_BLOCK_BYTES) {
+        if block[0] >> ADPCM_FILTER_OFFSET > ADPCM_FILTER_LAST || block[1] & !ADPCM_FLAGS_MASK != 0
+        {
             return INVALID;
         }
-        if block[1] & 4 != 0 {
+        if block[1] & ADPCM_LOOP_START != 0 {
             loop_begin = frames;
         }
-        frames += 28;
-        if block[1] & 1 != 0 {
+        frames += ADPCM_BLOCK_FRAMES as u32;
+        if block[1] & ADPCM_END != 0 {
             info.write(SampleInfo {
                 frames,
                 loop_begin,
-                loop_end: if block[1] & 2 != 0 { frames } else { 0 },
+                loop_end: if block[1] & ADPCM_REPEAT != 0 {
+                    frames
+                } else {
+                    0
+                },
             });
             return OK;
         }
@@ -248,33 +312,41 @@ pub unsafe extern "C" fn kf_audio_decode_block(
     pcm: *mut i16,
     capacity: usize,
 ) -> i32 {
-    if !input(data, size) || size != 16 || !output(predictor) || !output(pcm) {
+    if !input(data, size) || size != ADPCM_BLOCK_BYTES || !output(predictor) || !output(pcm) {
         return INVALID;
     }
-    if capacity < 28 {
+    if capacity < ADPCM_BLOCK_FRAMES {
         return OUTPUT_FULL;
     }
-    let block = slice::from_raw_parts(data, 16);
+    let block = slice::from_raw_parts(data, ADPCM_BLOCK_BYTES);
     const FILTERS: [(i32, i32); 5] = [(0, 0), (60, 0), (115, -52), (98, -55), (122, -60)];
-    let filter = usize::from(block[0] >> 4);
-    if filter >= FILTERS.len() || block[1] & !7 != 0 {
+    let filter = usize::from(block[0] >> ADPCM_FILTER_OFFSET);
+    if filter >= FILTERS.len() || block[1] & !ADPCM_FLAGS_MASK != 0 {
         return INVALID;
     }
-    let shift = match block[0] & 15 {
-        0..=12 => block[0] & 15,
-        _ => 9,
+    let shift = match block[0] & ADPCM_SHIFT_MASK {
+        0..=ADPCM_MAX_SHIFT => block[0] & ADPCM_SHIFT_MASK,
+        _ => ADPCM_RESERVED_SHIFT,
     };
     let state = &mut *predictor;
-    if !(-32768..=32767).contains(&state.previous) || !(-32768..=32767).contains(&state.older) {
+    if !(i32::from(i16::MIN)..=i32::from(i16::MAX)).contains(&state.previous)
+        || !(i32::from(i16::MIN)..=i32::from(i16::MAX)).contains(&state.older)
+    {
         return INVALID;
     }
     let (positive, negative) = FILTERS[filter];
-    for n in 0..28 {
-        let nibble = ((block[2 + n / 2] >> ((n & 1) * 4)) & 15) as i32;
-        let signed = if nibble < 8 { nibble } else { nibble - 16 };
-        let value = ((signed * 4096) >> shift)
-            + ((state.previous * positive + state.older * negative + 32) >> 6);
-        let value = value.clamp(-32768, 32767);
+    for n in 0..ADPCM_BLOCK_FRAMES {
+        let nibble = ((block[ADPCM_HEADER_BYTES + n / 2] >> ((n & 1) * ADPCM_NIBBLE_BITS))
+            & ADPCM_NIBBLE_MASK) as i32;
+        let signed = if nibble < ADPCM_NIBBLE_SIGN_BIT {
+            nibble
+        } else {
+            nibble - ADPCM_NIBBLE_MODULUS
+        };
+        let value = ((signed * ADPCM_SAMPLE_SCALE) >> shift)
+            + ((state.previous * positive + state.older * negative + ADPCM_PREDICTOR_ROUNDING)
+                >> ADPCM_PREDICTOR_FRACTION_BITS);
+        let value = value.clamp(i32::from(i16::MIN), i32::from(i16::MAX));
         pcm.add(n).write(value as i16);
         state.older = state.previous;
         state.previous = value;
@@ -302,7 +374,9 @@ pub unsafe extern "C" fn kf_music_decode(
         Ok(sequence) => sequence,
         Err(_) => return INVALID,
     };
-    if sequence.header.version != 1 || sequence.header.resolution == 0 || sequence.header.tempo == 0
+    if sequence.header.version != SUPPORTED_SEQ_VERSION
+        || sequence.header.resolution == 0
+        || sequence.header.tempo == 0
     {
         return INVALID;
     }
@@ -315,7 +389,7 @@ pub unsafe extern "C" fn kf_music_decode(
         };
         let mut result = MusicEvent {
             delta: event.delta,
-            kind: 0,
+            kind: MusicEventKind::NoteOff as u32,
             value: 0,
             channel: 0,
             note: 0,
@@ -329,32 +403,35 @@ pub unsafe extern "C" fn kf_music_decode(
                 match channel.message {
                     ChannelMessage::NoteOff | ChannelMessage::NoteOn => {
                         result.velocity = channel.data2.unwrap_or(0);
-                        result.kind = u32::from(
-                            channel.message == ChannelMessage::NoteOn && result.velocity != 0,
-                        );
+                        result.kind =
+                            if channel.message == ChannelMessage::NoteOn && result.velocity != 0 {
+                                MusicEventKind::NoteOn as u32
+                            } else {
+                                MusicEventKind::NoteOff as u32
+                            };
                         result.note = channel.data1;
                     }
-                    ChannelMessage::ControlChange if channel.data1 == 7 => {
-                        result.kind = 2;
+                    ChannelMessage::ControlChange if channel.data1 == midi::CHANNEL_VOLUME => {
+                        result.kind = MusicEventKind::Volume as u32;
                         result.value = u32::from(channel.data2.unwrap_or(0));
                     }
                     ChannelMessage::ProgramChange => {
-                        result.kind = 3;
+                        result.kind = MusicEventKind::Program as u32;
                         result.value = u32::from(channel.data1);
                     }
                     ChannelMessage::PitchBend => {
-                        result.kind = 4;
-                        result.value =
-                            u32::from(channel.data1) | (u32::from(channel.data2.unwrap_or(0)) << 7);
+                        result.kind = MusicEventKind::PitchBend as u32;
+                        result.value = u32::from(channel.data1)
+                            | (u32::from(channel.data2.unwrap_or(0)) << midi::DATA_BITS);
                     }
                     _ => return INVALID,
                 }
             }
             SeqEventKind::Meta {
-                meta_type: 0x51,
+                meta_type: midi::META_TEMPO,
                 data,
             } if data.len() == 3 => {
-                result.kind = 5;
+                result.kind = MusicEventKind::Tempo as u32;
                 result.value =
                     (u32::from(data[0]) << 16) | (u32::from(data[1]) << 8) | u32::from(data[2]);
                 if result.value == 0 {
@@ -362,10 +439,10 @@ pub unsafe extern "C" fn kf_music_decode(
                 }
             }
             SeqEventKind::Meta {
-                meta_type: 0x2f,
+                meta_type: midi::META_END,
                 data,
             } if data.is_empty() => {
-                result.kind = 6;
+                result.kind = MusicEventKind::End as u32;
             }
             _ => return INVALID,
         }
@@ -379,7 +456,7 @@ pub unsafe extern "C" fn kf_music_decode(
         if matches!(
             event.kind,
             SeqEventKind::Meta {
-                meta_type: 0x2f,
+                meta_type: midi::META_END,
                 ..
             }
         ) {

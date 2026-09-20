@@ -1,6 +1,10 @@
 #ifndef KF_GAME_ACTOR_H
 #define KF_GAME_ACTOR_H
 
+inline constexpr unsigned KF_FLOOR5_BOSS_DEFINITION = 7;
+inline constexpr unsigned KF_FLOOR4_TRANSFORM_SOURCE_DEFINITION = 5;
+inline constexpr unsigned KF_FLOOR4_TRANSFORM_RESULT_DEFINITION = 6;
+
 #include <kf/lib/bool.h>
 #include <kf/game/combat.h>
 #include <kf/lib/animation.h>

@@ -44,7 +44,7 @@ void map_event_update_wander(void)
 
     if (collision_query_world(
             point.vx, KF_COLLISION_IGNORE_HEIGHT, point.vz, event->radius, 0,
-            KF_COLLISION_SKIP_MAP_EVENTS | (0x80 << KF_COLLISION_CELL_FLAG_SHIFT))
+            KF_COLLISION_SKIP_MAP_EVENTS | (KF_COLLISION_CELL_BLOCKS_WANDER << KF_COLLISION_CELL_FLAG_SHIFT))
             == KF_COLLISION_NONE) {
         event->reference_position.vx = point.vx;
         event->reference_position.vz = point.vz;
@@ -78,7 +78,7 @@ void map_event_update_animation_loop(void)
     if (player_state.progress_state.current_floor == KF_FLOOR_5
             && event == &map_event_pool[0]
             && map_event_pool[0].animation_phase < KF_MAP_EVENT_ANIMATION_LOOP_STEP) {
-        audio_play_spatial_range(&gameplay_sound_refs[10],
+        audio_play_spatial_range(&gameplay_sound_refs[KF_GAMEPLAY_SOUND_FLOOR5_EVENT_LOOP],
             &map_event_pool[0].reference_position,
             KF_AUDIO_MAX_VOLUME, MAP_EVENT_LOOP_SOUND_MAX_DISTANCE, MAP_EVENT_LOOP_SOUND_ATTENUATION_DISTANCE);
     }

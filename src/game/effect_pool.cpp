@@ -3,6 +3,9 @@
 #include <kf/game/effect.h>
 #include <kf/game/game.h>
 
+// These bytes are initialized by retail but have no modeled moonlight consumer.
+static constexpr u8 EFFECT_MOONLIGHT_INITIAL_CONTROL_BYTE = 0xff;
+
 enum {
     EFFECT_WIND_CUTTER_PITCH = 850,
     EFFECT_GROUND_BRANCH_DELAY = 6,
@@ -283,8 +286,8 @@ static KfEffectRecord *effect_pool_construct_impl(u8 id, KfEffectType type, KfEf
             record->base_render_id.model = KF_EFFECT_MODEL_MOONLIGHT_PROJECTILE;
             record->render_id.model = KF_EFFECT_MODEL_MOONLIGHT_PROJECTILE;
             record->rotation.vector = *arguments.rotation;
-            record->control.bytes.high = 0xff;
-            record->control.bytes.low = 0xff;
+            record->control.bytes.high = EFFECT_MOONLIGHT_INITIAL_CONTROL_BYTE;
+            record->control.bytes.low = EFFECT_MOONLIGHT_INITIAL_CONTROL_BYTE;
             record->rotation.vector.vx = -record->rotation.vector.vx;
             audio_play_spatial_range(
                 &magic_records[kf_enum_encode<u8>(KF_EFFECT_KIND_RADIAL_BLAST)].sounds[1],

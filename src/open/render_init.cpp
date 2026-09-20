@@ -50,15 +50,13 @@ void render_initialize(void)
     kf::matrix_set_rotation_xyz(angles, open_graphics_runtime.render_state.quadrant_matrices[2]);
     angles.vy = KF_ANGLE_QUARTER_TURN;
     kf::matrix_set_rotation_xyz(angles, open_graphics_runtime.render_state.quadrant_matrices[1]);
-    open_graphics_runtime.render_state.light_matrix.m[0][0] = 3800;
-    open_graphics_runtime.render_state.light_matrix.m[0][1] = -2800;
-    open_graphics_runtime.render_state.light_matrix.m[0][2] = 0;
-    open_graphics_runtime.render_state.light_matrix.m[1][0] = -3000;
-    open_graphics_runtime.render_state.light_matrix.m[1][1] = -3600;
-    open_graphics_runtime.render_state.light_matrix.m[1][2] = -3400;
-    open_graphics_runtime.render_state.light_matrix.m[2][0] = -1300;
-    open_graphics_runtime.render_state.light_matrix.m[2][1] = 2700;
-    open_graphics_runtime.render_state.light_matrix.m[2][2] = 800;
+    static constexpr s16 initial_light_directions[3][3] = {
+        {3800, -2800, 0},
+        {-3000, -3600, -3400},
+        {-1300, 2700, 800},
+    };
+    memcpy(open_graphics_runtime.render_state.light_matrix.m,
+        initial_light_directions, sizeof initial_light_directions);
     kf::matrix_multiply_rotation(open_graphics_runtime.render_state.light_matrix, open_graphics_runtime.render_state.quadrant_matrices[0], open_graphics_runtime.light_quadrant_matrices[0]);
     kf::matrix_multiply_rotation(open_graphics_runtime.render_state.light_matrix, open_graphics_runtime.render_state.quadrant_matrices[1], open_graphics_runtime.light_quadrant_matrices[1]);
     kf::matrix_multiply_rotation(open_graphics_runtime.render_state.light_matrix, open_graphics_runtime.render_state.quadrant_matrices[2], open_graphics_runtime.light_quadrant_matrices[2]);

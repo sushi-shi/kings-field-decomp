@@ -6,9 +6,10 @@
 #include <emscripten.h>
 
 EM_ASYNC_JS(int, browser_saves_open, (), {
+    const saveSchemaVersion = 1;
     try {
         const db = await new Promise((resolve, reject) => {
-            const request = indexedDB.open('kings-field-saves', 1);
+            const request = indexedDB.open('kings-field-saves', saveSchemaVersion);
             let failed = false;
             request.onupgradeneeded = () => request.result.createObjectStore('files');
             request.onblocked = () => { failed = true; reject(new Error('Save database upgrade is blocked')); };
@@ -33,8 +34,10 @@ EM_JS(void, browser_saves_close, (), {
 });
 
 EM_ASYNC_JS(int, browser_save_read, (int slot, u8 *output, unsigned capacity, unsigned *size), {
+    // Wire values mirror kf::SaveFileResult.
+    const Result = {Ok: 0, Missing: 1, Invalid: 2, IoError: 3, NoSpace: 4, Unavailable: 5};
     const db = Module['kfSaveDb'];
-    if (!db) return 5;
+    if (!db) return Result.Unavailable;
     try {
         const data = await new Promise((resolve, reject) => {
             const transaction = db.transaction('files', 'readonly');
@@ -42,20 +45,22 @@ EM_ASYNC_JS(int, browser_save_read, (int slot, u8 *output, unsigned capacity, un
             transaction.onabort = () => reject(transaction.error);
             transaction.oncomplete = () => resolve(request.result);
         });
-        if (data === undefined) return 1;
-        if (!(data instanceof Uint8Array) || !data.length || data.length > capacity) return 2;
+        if (data === undefined) return Result.Missing;
+        if (!(data instanceof Uint8Array) || !data.length || data.length > capacity) return Result.Invalid;
         HEAPU8.set(data, output);
         HEAPU32[size >> 2] = data.length;
-        return 0;
+        return Result.Ok;
     } catch (error) {
         console.error('Read save:', error);
-        return 3;
+        return Result.IoError;
     }
 });
 
 EM_ASYNC_JS(int, browser_save_write, (int slot, const u8 *input, unsigned size), {
+    // Wire values mirror kf::SaveFileResult.
+    const Result = {Ok: 0, Missing: 1, Invalid: 2, IoError: 3, NoSpace: 4, Unavailable: 5};
     const db = Module['kfSaveDb'];
-    if (!db) return 5;
+    if (!db) return Result.Unavailable;
     try {
         const data = HEAPU8.slice(input, input + size);
         await new Promise((resolve, reject) => {
@@ -69,10 +74,10 @@ EM_ASYNC_JS(int, browser_save_write, (int slot, const u8 *input, unsigned size),
             }
             transaction.objectStore('files').put(data, 'slot' + slot + '.kfs');
         });
-        return 0;
+        return Result.Ok;
     } catch (error) {
         console.error('Write save:', error);
-        return error && error.name === 'QuotaExceededError' ? 4 : 3;
+        return error && error.name === 'QuotaExceededError' ? Result.NoSpace : Result.IoError;
     }
 });
 #else
@@ -84,6 +89,9 @@ EM_ASYNC_JS(int, browser_save_write, (int slot, const u8 *input, unsigned size),
 
 namespace kf {
 #ifndef __EMSCRIPTEN__
+static constexpr unsigned save_name_capacity = 16;
+static constexpr unsigned pending_name_capacity = 64;
+static constexpr unsigned pending_name_attempts = 8;
 static int save_directory = -1;
 static unsigned pending_serial;
 static SaveFileResult io_error() {
@@ -168,7 +176,7 @@ SaveFileResult save_file_read(SaveSlot slot, u8 *data, std::size_t capacity, std
 #else
     if (save_directory < 0)
         return SaveFileResult::Unavailable;
-    char name[16];
+    char name[save_name_capacity];
     std::snprintf(name, sizeof name, "slot%u.kfs", static_cast<unsigned>(slot));
     const int file = ::openat(save_directory, name, O_RDONLY | O_CLOEXEC | O_NOFOLLOW | O_NONBLOCK);
     if (file < 0)
@@ -210,13 +218,13 @@ SaveFileResult save_file_write(SaveSlot slot, const u8 *data, std::size_t size) 
 #else
     if (save_directory < 0)
         return SaveFileResult::Unavailable;
-    char name[16], pending[64];
+    char name[save_name_capacity], pending[pending_name_capacity];
     std::snprintf(name, sizeof name, "slot%u.kfs", static_cast<unsigned>(slot));
     int file = -1;
-    for (unsigned attempt = 0; attempt < 8 && file < 0; ++attempt) {
+    for (unsigned attempt = 0; attempt < pending_name_attempts && file < 0; ++attempt) {
         std::snprintf(pending, sizeof pending, ".slot%u.%llx.%u.tmp", static_cast<unsigned>(slot),
             static_cast<unsigned long long>(SDL_GetTicksNS()), ++pending_serial);
-        file = ::openat(save_directory, pending, O_WRONLY | O_CREAT | O_EXCL | O_CLOEXEC, 0600);
+        file = ::openat(save_directory, pending, O_WRONLY | O_CREAT | O_EXCL | O_CLOEXEC, S_IRUSR | S_IWUSR);
         if (file < 0 && errno != EEXIST)
             return io_error();
     }

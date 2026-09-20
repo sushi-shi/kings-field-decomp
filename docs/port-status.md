@@ -12,6 +12,13 @@ inputs and the general Linux visual check are also user-confirmed.
 Browser/ending checks remain verification gaps; MAGIC is deferred until the user
 reproduces it. Additional cast cleanup is separate maintenance, not an active bug.
 
+Semantic naming cleanup is recorded in [semantic-naming.md](semantic-naming.md):
+game/script identities, menu glyphs, resource fields, rendering/audio scales and
+platform/browser encodings now have names at their owners. Original values and
+retail quirks are preserved; unresolved meanings remain explicit. Linux/WASM and
+native package/launcher builds passed. This does not close the runtime
+verification gaps below or the separate compiler-warning/type cleanup.
+
 Source organization cleanup: all 24 `.inc` fragments have been consolidated into
 ordinary translation units or their single owning source files. Shared functions
 live under `src/lib`; entry/reset coordination lives under `src/game` and

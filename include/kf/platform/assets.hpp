@@ -4,6 +4,14 @@
 #include <cstddef>
 
 namespace kf {
+inline constexpr std::size_t asset_path_capacity = 128;
+inline constexpr std::size_t sha256_state_words = 8;
+inline constexpr std::size_t sha256_block_bytes = 64;
+inline constexpr std::size_t sha256_hex_capacity = 65;
+inline constexpr std::size_t disc_directory_capacity = 128;
+inline constexpr std::size_t disc_file_capacity = 4096;
+inline constexpr std::size_t disc_status_capacity = 256;
+inline constexpr std::size_t retail_resource_file_count = 428;
 struct ByteBuffer {
     u8 *data;
     std::size_t size, capacity;
@@ -21,17 +29,17 @@ void image_release(Image *image);
 bool asset_path(char *output, std::size_t capacity, const char *input);
 
 struct Sha256 {
-    u32 state[8];
-    u8 pending[64];
+    u32 state[sha256_state_words];
+    u8 pending[sha256_block_bytes];
     std::uint64_t length;
     std::size_t used;
 };
 void sha256_init(Sha256 *hash);
 void sha256_update(Sha256 *hash, const u8 *bytes, std::size_t size);
-void sha256_finish(const Sha256 *hash, char output[65]);
+void sha256_finish(const Sha256 *hash, char output[sha256_hex_capacity]);
 
 struct Asset {
-    char path[128];
+    char path[asset_path_capacity];
     ByteBuffer bytes;
 };
 struct AssetTable {
@@ -50,7 +58,7 @@ struct ReadRequest {
     u32 length;
 };
 struct DiscExtent {
-    char path[128];
+    char path[asset_path_capacity];
     u32 sector, length;
 };
 struct DiscImporter {
@@ -59,12 +67,12 @@ struct DiscImporter {
     std::uint64_t disc_size;
     u32 sector_size, volume_sectors;
     std::size_t file_bytes;
-    char message[256];
-    DiscExtent directories[128];
+    char message[disc_status_capacity];
+    DiscExtent directories[disc_directory_capacity];
     std::size_t directory_count;
-    u32 visited_directories[128];
+    u32 visited_directories[disc_directory_capacity];
     std::size_t visited_count;
-    DiscExtent files[4096];
+    DiscExtent files[disc_file_capacity];
     std::size_t file_count, file_index;
     DiscExtent current;
     AssetTable assets;

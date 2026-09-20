@@ -11,6 +11,10 @@
 #include <unistd.h>
 
 namespace kf {
+static constexpr unsigned cue_line_capacity = 1024;
+static constexpr unsigned disc_path_capacity = 4096;
+static constexpr std::size_t cue_file_capacity = 65536;
+static constexpr unsigned ascii_first_printable = 32;
 bool disc_cue_image(const char *text, char *filename, std::size_t capacity) {
     bool file = false, track = false, index = false;
     while (*text) {
@@ -22,7 +26,7 @@ bool disc_cue_image(const char *text, char *filename, std::size_t capacity) {
         const char *tail = end;
         while (tail > text && std::isspace(static_cast<unsigned char>(tail[-1])))
             --tail;
-        char line[1024];
+        char line[cue_line_capacity];
         const auto length = static_cast<std::size_t>(tail - text);
         if (length >= sizeof line)
             return false;
@@ -54,7 +58,7 @@ bool disc_cue_image(const char *text, char *filename, std::size_t capacity) {
             // Only a sibling file: never resolve absolute paths or traversal.
             for (const char *at = name; at != name_end; ++at)
                 if (*at == '/' || *at == '\\' || *at == ':' ||
-                    static_cast<unsigned char>(*at) < 32)
+                    static_cast<unsigned char>(*at) < ascii_first_printable)
                     return false;
             std::memcpy(filename, name, name_size);
             filename[name_size] = 0;
@@ -107,7 +111,7 @@ static FILE *open_disc(const char *source, std::size_t *size) {
     FILE *file = open_image(source, size);
     if (!file || !ends_with_cue(source))
         return file;
-    if (*size > 65536) {
+    if (*size > cue_file_capacity) {
         std::fclose(file);
         return nullptr;
     }
@@ -115,7 +119,7 @@ static FILE *open_disc(const char *source, std::size_t *size) {
     bool ok = buffer_resize(&cue, *size + 1) && std::fread(cue.data, 1, *size, file) == *size;
     if (std::fclose(file) != 0)
         ok = false;
-    char name[1024];
+    char name[cue_line_capacity];
     if (ok) {
         cue.data[*size] = 0;
         ok = !std::memchr(cue.data, 0, *size) &&
@@ -128,7 +132,7 @@ static FILE *open_disc(const char *source, std::size_t *size) {
     }
     const char *slash = std::strrchr(source, '/');
     const auto prefix = slash ? static_cast<std::size_t>(slash + 1 - source) : 0;
-    char path[4096];
+    char path[disc_path_capacity];
     if (prefix + std::strlen(name) >= sizeof path)
         return nullptr;
     std::memcpy(path, source, prefix);
@@ -145,7 +149,7 @@ static bool write_asset(int root, const Asset &asset) {
     char *name = path;
     while (char *slash = std::strchr(name, '/')) {
         *slash = 0;
-        if (::mkdirat(directory, name, 0700) != 0 && errno != EEXIST) {
+        if (::mkdirat(directory, name, S_IRWXU) != 0 && errno != EEXIST) {
             ::close(directory);
             return false;
         }
@@ -156,7 +160,7 @@ static bool write_asset(int root, const Asset &asset) {
         directory = next;
         name = slash + 1;
     }
-    const int file = ::openat(directory, name, O_WRONLY | O_CREAT | O_EXCL | O_NOFOLLOW | O_CLOEXEC, 0600);
+    const int file = ::openat(directory, name, O_WRONLY | O_CREAT | O_EXCL | O_NOFOLLOW | O_CLOEXEC, S_IRUSR | S_IWUSR);
     ::close(directory);
     if (file < 0)
         return false;
@@ -203,7 +207,7 @@ bool disc_extract(const char *source, const char *destination) {
         ok = false;
     if (!ok)
         std::fprintf(stderr, "%s\n", importer->message);
-    if (ok && ::mkdir(destination, 0700) != 0) {
+    if (ok && ::mkdir(destination, S_IRWXU) != 0) {
         std::fprintf(stderr, "Cannot create %s: %s. Extraction requires a new directory; use --data to reuse one.\n",
                      destination, std::strerror(errno));
         ok = false;

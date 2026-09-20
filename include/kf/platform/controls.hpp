@@ -4,6 +4,7 @@
 #include <cstddef>
 
 namespace kf {
+inline constexpr unsigned input_binding_capacity = 96;
 enum class Action : u8 {
     forward,
     backward,
@@ -38,7 +39,7 @@ struct InputBinding {
     bool down;
 };
 struct InputState {
-    InputBinding bindings[96];
+    InputBinding bindings[input_binding_capacity];
     std::size_t binding_count;
     InputFrame pending;
 };

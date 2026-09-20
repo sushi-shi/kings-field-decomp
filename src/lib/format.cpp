@@ -1,7 +1,8 @@
 #include <stdarg.h>
 #include <kf/lib/debug.h>
 
-static char format_number_storage[24];
+static constexpr unsigned format_number_capacity = 24;
+static char format_number_storage[format_number_capacity];
 
 char *format_int_dec(s32 value)
 {

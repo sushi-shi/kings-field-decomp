@@ -8,6 +8,13 @@
 #include <cstdio>
 #include <cstring>
 #include <kf/game/game.h>
+static constexpr unsigned weapon_image_number_offset = 9;
+static constexpr unsigned weapon_image_path_capacity = 16;
+
+
+static constexpr s32 PLAYER_INITIAL_POSITION_X = 31000;
+static constexpr s32 PLAYER_INITIAL_POSITION_Z = 4000;
+static constexpr s32 PLAYER_ATTRIBUTE_52_FATAL_HEIGHT = -6999;
 
 enum {
     PLAYER_FATAL_DROP_DISTANCE = 3000,
@@ -35,7 +42,7 @@ enum {
     PLAYER_DIAGONAL_COMPONENT_Q12 = 2896
 };
 
-char weapon_image_path_template[16] = "WEPON/WEP00.MIM";
+char weapon_image_path_template[weapon_image_path_capacity] = "WEPON/WEP00.MIM";
 
 KfFloorEntryCell floor_entry_cells[KF_PLAYER_FLOOR_ENTRY_COUNT] = {
     {15, 2}, {29, 56}, {28, 18}, {7, 22}, {39, 69}
@@ -111,8 +118,8 @@ void player_equip_weapon(KfObjectId weapon_id)
     player_state.equipped_weapon_id = weapon_id;
     if (weapon_id != KF_OBJECT_NONE) {
         player_state.equipped_weapon_record = &weapon_records.entries[kf_enum_encode<u8>(weapon_id)];
-        weapon_image_path_template[9] = '0' + kf_enum_encode<u32>(weapon_id) / 10;
-        weapon_image_path_template[10] = '0' + kf_enum_encode<u32>(weapon_id) % 10;
+        weapon_image_path_template[weapon_image_number_offset] = '0' + kf_enum_encode<u32>(weapon_id) / 10;
+        weapon_image_path_template[weapon_image_number_offset + 1] = '0' + kf_enum_encode<u32>(weapon_id) % 10;
         std::size_t loaded_size;
         if (resource_file_load_into(player_state.weapon_asset_buffer, KF_WEAPON_ASSET_BUFFER_BYTES,
                 weapon_image_path_template, &loaded_size) != KF_RESOURCE_LOADED) {
@@ -206,7 +213,7 @@ void game_initialize_session(void)
     player_state.camera_rotation.vz = 0;
     player_state.camera_rotation.vy = 0;
     player_state.camera_rotation.vx = 0;
-    setVector(&player_state.camera_position, 0x7918, 0, 0xfa0);
+    setVector(&player_state.camera_position, PLAYER_INITIAL_POSITION_X, 0, PLAYER_INITIAL_POSITION_Z);
     player_state.weapon_asset_buffer = (struct KfAssetHeader *)memory_allocate(KF_WEAPON_ASSET_BUFFER_BYTES);
     game_state_initialize();
     player_state.update_state = KF_PLAYER_UPDATE_NORMAL;
@@ -493,7 +500,7 @@ void player_update_vertical_motion(void)
                     break;
                 }
                 player_death_begin();
-            } else if (target >= -6999
+            } else if (target >= PLAYER_ATTRIBUTE_52_FATAL_HEIGHT
                        && map_cell_attribute_grid.cells[player_state.motion_state.fields.map_cell.coords.z][player_state.motion_state.fields.map_cell.coords.x]
                            == KF_MAP_ATTRIBUTE_52) {
                 player_death_begin();
