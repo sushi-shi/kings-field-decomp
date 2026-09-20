@@ -386,9 +386,6 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias, const MATRIX *lights)
     }
 }
 
-#undef VTX
-
-
 void render_tmd_reset_module_state(void)
 {
     kf::restore_initial_value<tmd_textured_primitive_color>();
