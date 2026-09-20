@@ -85,7 +85,7 @@ u32 collision_query_world(
     if ((query_flags & KF_COLLISION_SKIP_PLAYER) == 0) {
         hit = player_distance_to_point(
             point_x, point_y, point_z, radius + KF_COLLISION_PLAYER_RADIUS, height);
-        if (hit != KF_COLLISION_NONE) {
+        if (hit != KF_PROXIMITY_NONE) {
             if (query_flags & KF_COLLISION_CAPTURE_TARGET) {
                 collision_target.position = player_state.camera_position;
                 collision_target.rotation = player_state.camera_rotation;
@@ -96,7 +96,7 @@ u32 collision_query_world(
     }
     if ((query_flags & KF_COLLISION_SKIP_ACTORS) == 0) {
         hit = actor_pool_find_overlap(point_x, point_y, point_z, radius, height);
-        if (hit != KF_COLLISION_NONE) {
+        if (hit != KF_PROXIMITY_NONE) {
             if (query_flags & KF_COLLISION_CAPTURE_TARGET) {
                 KfActor *actor = &actor_state.actors[hit];
                 KfActorDefinition *definition = &actor_state.definitions.entries[actor->definition_id];
@@ -110,7 +110,7 @@ u32 collision_query_world(
     }
     if ((query_flags & KF_COLLISION_SKIP_MAP_OBJECTS) == 0) {
         hit = map_object_pool_find_near_point(point_x, point_z, radius);
-        if (hit != KF_COLLISION_NONE) {
+        if (hit != KF_PROXIMITY_NONE) {
             if (query_flags & KF_COLLISION_CAPTURE_TARGET) {
                 KfMapObject *object = &map_object_state.objects[hit];
                 KfMapObjectDefinition *definition = &map_object_state.definitions.entries[kf_enum_encode<u8>(object->object_id)];
@@ -126,7 +126,7 @@ u32 collision_query_world(
         return KF_COLLISION_NONE;
     }
     hit = map_event_pool_find_overlap(point_x, point_z, radius);
-    if (hit != KF_COLLISION_NONE) {
+    if (hit != KF_PROXIMITY_NONE) {
         if (query_flags & KF_COLLISION_CAPTURE_TARGET) {
             KfMapEvent *event = &map_event_pool[hit];
 

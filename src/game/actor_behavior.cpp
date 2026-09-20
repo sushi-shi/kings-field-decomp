@@ -326,7 +326,7 @@ KfActorMoveResult actor_move_xz_with_collision(const struct KfVecXZs *delta, KfA
     KfActor *actor = actor_state.current;
     KfActorDefinition *definition = actor_state.current_definition;
     VECTOR target;
-    s32 result;
+    u32 result;
     s32 drop;
     s32 threshold;
 
@@ -602,7 +602,7 @@ void actor_apply_horizontal_movement(void)
     KfActor *actor = actor_state.current;
     KfActorDefinition *definition;
     VECTOR target;
-    s32 result;
+    u32 result;
 
     target.vx = actor->movement_x + actor->position.vx;
     target.vz = actor->movement_z + actor->position.vz;
@@ -656,7 +656,7 @@ void actor_apply_random_movement(s16 step, s16 limit)
     KfActor *actor = actor_state.current;
     KfActorDefinition *definition = actor_state.current_definition;
     VECTOR target;
-    s32 result;
+    u32 result;
 
     if (kf::random_next() < (kf::random_max + 1) / 2) {
         actor->movement_x += step;
@@ -781,8 +781,8 @@ void actor_update_current_action(void)
     KfActorDefinition *definition = actor_state.current_definition;
     struct KfVecXZs direction;
     VECTOR target;
-    s32 result;
-    s32 hit;
+    u32 result;
+    u32 hit;
     s32 floor_height;
     s32 next_y;
     u16 debris;
