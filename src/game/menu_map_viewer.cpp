@@ -4,22 +4,20 @@
 #include <kf/game/game.h>
 #include <kf/lib/render_face.h>
 
-enum {
-    MENU_MAP_PIXELS_PER_CELL = 2,
-    MENU_MAP_MARKER_SPAN = 4,
-    MENU_MAP_WATCHMAN_SET = 1,
-    MENU_MAP_DEFAULT_SET = 2,
-    MENU_MAP_BRIGHTNESS = 64,
-    MENU_MAP_IMAGE_CLUT = 0x7d40,
-    MENU_MAP_IMAGE_TPAGE = 0x1f,
-    MENU_MAP_MARKER_CLUT = 0x7c40,
-    MENU_MAP_MARKER_TPAGE = 0x1b,
-    MENU_MAP_IMAGE_SPAN = 219,
-    MENU_MAP_IMAGE_LEFT_X = 50,
-    MENU_MAP_IMAGE_TOP_Y = 10,
-    MENU_MAP_MARKER_ORIGIN_X = 58,
-    MENU_MAP_MARKER_ORIGIN_Y = 216
-};
+static constexpr int MENU_MAP_PIXELS_PER_CELL = 2;
+static constexpr int MENU_MAP_MARKER_SPAN = 4;
+static constexpr int MENU_MAP_WATCHMAN_SET = 1;
+static constexpr int MENU_MAP_DEFAULT_SET = 2;
+static constexpr int MENU_MAP_BRIGHTNESS = 64;
+static constexpr int MENU_MAP_IMAGE_CLUT = 0x7d40;
+static constexpr int MENU_MAP_IMAGE_TPAGE = 0x1f;
+static constexpr int MENU_MAP_MARKER_CLUT = 0x7c40;
+static constexpr int MENU_MAP_MARKER_TPAGE = 0x1b;
+static constexpr int MENU_MAP_IMAGE_SPAN = 219;
+static constexpr int MENU_MAP_IMAGE_LEFT_X = 50;
+static constexpr int MENU_MAP_IMAGE_TOP_Y = 10;
+static constexpr int MENU_MAP_MARKER_ORIGIN_X = 58;
+static constexpr int MENU_MAP_MARKER_ORIGIN_Y = 216;
 
 static constexpr unsigned map_image_path_capacity = 16;
 static constexpr unsigned map_image_set_offset = 5, map_image_floor_offset = 6;

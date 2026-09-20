@@ -7,14 +7,12 @@
 #include <kf/lib/geometry_types.h>
 #include <kf/audio/sound.hpp>
 
-enum {
-    KF_AUDIO_VOICE_SLOTS = 10,
-    KF_AUDIO_MAX_VOLUME = 0x7f,
-    KF_AUDIO_DEFAULT_MAX_DISTANCE = 16000,
-    KF_AUDIO_DEFAULT_ATTENUATION_DISTANCE = 28000,
-    KF_AUDIO_EXTENDED_MAX_DISTANCE = 20000,
-    KF_AUDIO_EXTENDED_ATTENUATION_DISTANCE = 60000
-};
+inline constexpr int KF_AUDIO_VOICE_SLOTS = 10;
+inline constexpr int KF_AUDIO_MAX_VOLUME = 0x7f;
+inline constexpr int KF_AUDIO_DEFAULT_MAX_DISTANCE = 16000;
+inline constexpr int KF_AUDIO_DEFAULT_ATTENUATION_DISTANCE = 28000;
+inline constexpr int KF_AUDIO_EXTENDED_MAX_DISTANCE = 20000;
+inline constexpr int KF_AUDIO_EXTENDED_ATTENUATION_DISTANCE = 60000;
 
 enum class KfAudioSequenceState : s32 {
     KF_AUDIO_SEQUENCE_INACTIVE = 0,

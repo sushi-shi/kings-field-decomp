@@ -6,31 +6,26 @@
 #include <kf/lib/fixed_math.hpp>
 #include <kf/lib/geometry_types.h>
 
-enum {
-    KF_FIXED4_BITS = 4,
-    KF_FIXED6_BITS = 6,
-    KF_FIXED7_BITS = 7,
-    KF_FIXED7_ONE = 128,
-    KF_FIXED8_BITS = 8,
-    KF_FIXED11_BITS = 11,
-    KF_FIXED12_BITS = 12,
-    KF_FIXED12_ONE = 0x1000,
-    KF_ANGLE_EIGHTH_TURN = 0x200,
-    KF_ANGLE_QUARTER_TURN = 0x400,
-    KF_ANGLE_HALF_TURN = 0x800,
-    KF_ANGLE_THREE_QUARTER_TURN = 0xc00,
-    KF_ANGLE_FULL_TURN = 0x1000,
-    KF_ANGLE_WRAP_MASK = 0xfff,
-    KF_MATRIX_ROTATION_ELEMENTS = 9,
-    KF_LENGTH_SQUARE_DOWNSHIFT = 3
-};
+inline constexpr int KF_FIXED4_BITS = 4;
+inline constexpr int KF_FIXED6_BITS = 6;
+inline constexpr int KF_FIXED7_BITS = 7;
+inline constexpr int KF_FIXED7_ONE = 128;
+inline constexpr int KF_FIXED8_BITS = 8;
+inline constexpr int KF_FIXED11_BITS = 11;
+inline constexpr int KF_FIXED12_BITS = 12;
+inline constexpr int KF_FIXED12_ONE = 0x1000;
+inline constexpr int KF_ANGLE_EIGHTH_TURN = 0x200;
+inline constexpr int KF_ANGLE_QUARTER_TURN = 0x400;
+inline constexpr int KF_ANGLE_HALF_TURN = 0x800;
+inline constexpr int KF_ANGLE_THREE_QUARTER_TURN = 0xc00;
+inline constexpr int KF_ANGLE_FULL_TURN = 0x1000;
+inline constexpr int KF_ANGLE_WRAP_MASK = 0xfff;
+inline constexpr int KF_MATRIX_ROTATION_ELEMENTS = 9;
+inline constexpr int KF_LENGTH_SQUARE_DOWNSHIFT = 3;
 
-enum {
+inline constexpr int KF_RANDOM_ANGLE_SHIFT = 3;
 
-    KF_RANDOM_ANGLE_SHIFT = 3,
-
-    KF_CONE_SEARCH_INITIAL_ANGLE_ERROR = 30000
-};
+inline constexpr int KF_CONE_SEARCH_INITIAL_ANGLE_ERROR = 30000;
 
 struct KfVecXZs {
     s16 x;

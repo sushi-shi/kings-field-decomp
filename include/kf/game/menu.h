@@ -174,22 +174,18 @@ enum class KfMenuSoundCue : s32 {
     MENU_SOUND_CANCEL_OR_ERROR = 2
 }; using enum KfMenuSoundCue;
 
-enum {
-    MENU_TEXT_END = -1,
-    MENU_TEXT_BLANK = 0xff,
-    MENU_TEXT_GLYPH_MASK = 0x0fff,
-    MENU_TEXT_DAKUTEN = 0x1000,
-    MENU_TEXT_HANDAKUTEN = 0x2000,
-    MENU_NUMBER_BLANK = 10,
-    MENU_NUMBER_SLASH = 11,
+inline constexpr int MENU_TEXT_END = -1;
+inline constexpr int MENU_TEXT_BLANK = 0xff;
+inline constexpr int MENU_TEXT_GLYPH_MASK = 0x0fff;
+inline constexpr int MENU_TEXT_DAKUTEN = 0x1000;
+inline constexpr int MENU_TEXT_HANDAKUTEN = 0x2000;
+inline constexpr int MENU_NUMBER_BLANK = 10;
+inline constexpr int MENU_NUMBER_SLASH = 11;
 
-    MENU_NUMBER_ADVANCE = 7
-};
+inline constexpr int MENU_NUMBER_ADVANCE = 7;
 
-enum {
-    MENU_STATS_VITAL_DIGITS = 4,
-    MENU_STATS_VALUE_DIGITS = 6
-};
+inline constexpr int MENU_STATS_VITAL_DIGITS = 4;
+inline constexpr int MENU_STATS_VALUE_DIGITS = 6;
 
 enum {
     MENU_CLASS_MIDDLE_STAT_MIN = 40,
