@@ -94,7 +94,7 @@ lighting setup, and visible-only floor-item animation updates are unchanged.
 GAME/OPEN entity arrays use forward iteration; floor items use the loader-validated
 active count. No renderer backend or face sorting changes.
 
-### Typed xyz operations
+### Typed XYZ operations
 
 `setVector`, `copyVector` and `addVector` have been removed. Ordinary-vector
 callers use small overloads for the actual `VECTOR`/`SVECTOR` combinations;
@@ -112,8 +112,9 @@ increment/narrowing, preserving that operation's value range and ordering.
 Map/effect aliases now name their owning state objects directly. Floor-script
 storage has a typed reference-returning accessor; member writes still name the
 owning script union. No duplicate globals or copied snapshots were introduced.
-Shared GAME/OPEN code selects its graphics owner through a typed function, and the floor-item loader
-uses a small view of the live count and fixed array. Projected-vertex lookup is
+Shared GAME/OPEN code selects its graphics owner through a typed function, and
+the floor-item loader uses a small view of the live count and fixed array.
+Projected-vertex lookup is
 a typed OPEN helper. Boolean/word-count/emitter constants are `constexpr`.
 Compile-time module selection, include guards and schema/resource macros remain
 distinct from runtime state aliases.
