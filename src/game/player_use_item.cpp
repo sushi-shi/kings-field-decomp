@@ -132,7 +132,7 @@ void player_use_item(KfObjectId item_id)
         }
         break;
     case KF_ITEM_HARP:
-        record = effect_pool_records;
+        record = effect_state.records;
         for (slot = KF_EFFECT_CAPACITY - 1; slot != -1; slot--, record++) {
             if (record->type == KF_EFFECT_SLOT_FREE) {
                 continue;

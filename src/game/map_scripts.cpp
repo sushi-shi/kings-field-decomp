@@ -120,15 +120,15 @@ s32 actor_pool_find_at_tile(u8 tile_x, u8 tile_z)
 void map_ambient_script_floor1(void)
 {
     const auto &cell = player_state.motion_state.map_cell;
-    if (map_floor1_script.revival_enabled == KF_MAP_SCRIPT_SET) {
+    if (map_floor_script(KF_FLOOR_1).floor1.revival_enabled == KF_MAP_SCRIPT_SET) {
         audio_play_spatial_default_range(
             &gameplay_sound_refs[KF_GAMEPLAY_SOUND_FLOOR1_REVIVAL], &map_floor1_sound_position, MAP_FLOOR1_AMBIENT_VOLUME);
     }
 
-    switch (map_floor1_script.actor_activation_stage) {
+    switch (map_floor_script(KF_FLOOR_1).floor1.actor_activation_stage) {
     case KF_MAP_TRIGGER_AWAIT_ENTRY:
         if (script_region_contains_cell(floor1_actor_entry, cell)) {
-            map_floor1_script.actor_activation_stage = KF_MAP_TRIGGER_AWAIT_EXIT;
+            map_floor_script(KF_FLOOR_1).floor1.actor_activation_stage = KF_MAP_TRIGGER_AWAIT_EXIT;
         }
         break;
     case KF_MAP_TRIGGER_AWAIT_EXIT:
@@ -136,7 +136,7 @@ void map_ambient_script_floor1(void)
             s32 actor_index;
             s32 object_index;
 
-            map_floor1_script.actor_activation_stage = KF_MAP_TRIGGER_COMPLETE;
+            map_floor_script(KF_FLOOR_1).floor1.actor_activation_stage = KF_MAP_TRIGGER_COMPLETE;
             actor_index = actor_pool_find_at_tile(KF_FLOOR1_TRIGGER_ACTOR_TILE_X, KF_FLOOR1_TRIGGER_ACTOR_TILE_Z);
             if (actor_index != -1) {
                 actor_state.actors[actor_index].lifecycle = KF_ACTOR_LIFECYCLE_DORMANT;
@@ -150,17 +150,17 @@ void map_ambient_script_floor1(void)
         break;
     }
 
-    switch (map_floor1_script.object_removal_stage) {
+    switch (map_floor_script(KF_FLOOR_1).floor1.object_removal_stage) {
     case KF_MAP_TRIGGER_AWAIT_ENTRY:
         if (script_region_contains_cell(floor1_removal_entry, cell)) {
-            map_floor1_script.object_removal_stage = KF_MAP_TRIGGER_AWAIT_EXIT;
+            map_floor_script(KF_FLOOR_1).floor1.object_removal_stage = KF_MAP_TRIGGER_AWAIT_EXIT;
         }
         break;
     case KF_MAP_TRIGGER_AWAIT_EXIT:
         if (!script_region_contains_cell(floor1_removal_exit, cell)) {
             s32 object_index;
 
-            map_floor1_script.object_removal_stage = KF_MAP_TRIGGER_COMPLETE;
+            map_floor_script(KF_FLOOR_1).floor1.object_removal_stage = KF_MAP_TRIGGER_COMPLETE;
             object_index = map_object_pool_find_near_point(floor1_removed_object.x, floor1_removed_object.z, MAP_SCRIPT_OBJECT_SEARCH_PADDING);
             if (object_index != -1) {
                 map_object_state.objects[object_index].object_id = KF_OBJECT_NONE;
@@ -177,10 +177,10 @@ s32 map_floor1_cross_index(void)
 
 void map_ambient_script_floor2(void)
 {
-    if (map_event_pool[KF_FLOOR2_HARP_EVENT].dialogue.stage == floor2_harp_ambient_stage && map_event_pool[KF_FLOOR2_HARP_EVENT].dialogue.page < floor2_harp_ambient_page_end
+    if (map_runtime_state.events[KF_FLOOR2_HARP_EVENT].dialogue.stage == floor2_harp_ambient_stage && map_runtime_state.events[KF_FLOOR2_HARP_EVENT].dialogue.page < floor2_harp_ambient_page_end
         && kf::random_next() < MAP_FLOOR2_AMBIENT_RANDOM_LIMIT) {
         audio_play_spatial_default_range(
-            &gameplay_sound_refs[KF_GAMEPLAY_SOUND_HARP], &map_event_pool[KF_FLOOR2_HARP_EVENT].reference_position, KF_AUDIO_MAX_VOLUME);
+            &gameplay_sound_refs[KF_GAMEPLAY_SOUND_HARP], &map_runtime_state.events[KF_FLOOR2_HARP_EVENT].reference_position, KF_AUDIO_MAX_VOLUME);
     }
 }
 
@@ -190,9 +190,9 @@ void map_ambient_script_floor3(void)
     if (cell.x >= floor3_healing_x_min && cell.x < floor3_healing_x_end
         && cell.z == floor3_healing_z) {
         player_restore_vitals_with_color_cycle();
-        if (magic_records[kf_enum_encode<u8>(KF_MAGIC_RESIST_FIRE)].learned == KF_MAGIC_UNLEARNED || magic_records[kf_enum_encode<u8>(KF_MAGIC_BLESS)].learned == KF_MAGIC_UNLEARNED) {
-            magic_records[kf_enum_encode<u8>(KF_MAGIC_RESIST_FIRE)].learned = KF_MAGIC_LEARNED;
-            magic_records[kf_enum_encode<u8>(KF_MAGIC_BLESS)].learned = KF_MAGIC_LEARNED;
+        if (effect_state.magic.entries[kf_enum_encode<u8>(KF_MAGIC_RESIST_FIRE)].learned == KF_MAGIC_UNLEARNED || effect_state.magic.entries[kf_enum_encode<u8>(KF_MAGIC_BLESS)].learned == KF_MAGIC_UNLEARNED) {
+            effect_state.magic.entries[kf_enum_encode<u8>(KF_MAGIC_RESIST_FIRE)].learned = KF_MAGIC_LEARNED;
+            effect_state.magic.entries[kf_enum_encode<u8>(KF_MAGIC_BLESS)].learned = KF_MAGIC_LEARNED;
             notify_enqueue(KF_NOTIFICATION_MAGIC_LEARNED);
         }
     }
@@ -205,7 +205,7 @@ void map_ambient_script_floor4(void)
 void map_ambient_script_floor5(void)
 {
     const auto &cell = player_state.motion_state.map_cell;
-    KfMapScriptFlag *encounter_started = &map_floor5_script.boss_encounter_started;
+    KfMapScriptFlag *encounter_started = &map_floor_script(KF_FLOOR_5).floor5.boss_encounter_started;
 
     if (*encounter_started == KF_MAP_SCRIPT_UNSET && cell.x >= floor5_boss_trigger_x_min
         && cell.x < floor5_boss_trigger_x_end && cell.z == floor5_boss_trigger_z
@@ -228,8 +228,8 @@ void map_ambient_script_floor5(void)
 void map_action_script_floor1(void)
 {
     if (item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)][kf_enum_encode<u8>(KF_ITEM_DRAGON_CHALICE)] != 0
-        && map_floor1_script.passage_opened == KF_MAP_SCRIPT_UNSET) {
-        map_floor1_script.passage_opened = KF_MAP_SCRIPT_SET;
+        && map_floor_script(KF_FLOOR_1).floor1.passage_opened == KF_MAP_SCRIPT_UNSET) {
+        map_floor_script(KF_FLOOR_1).floor1.passage_opened = KF_MAP_SCRIPT_SET;
         map_apply_copy_region(KF_MAP_COPY_FLOOR1_PASSAGE);
         sound_ref_play(&gameplay_sound_refs[KF_GAMEPLAY_SOUND_STONE_PASSAGE], MAP_PASSAGE_OPEN_SOUND_VOLUME);
     }
@@ -246,8 +246,8 @@ void map_reveal_fade(void)
     for (blend = 0; blend < KF_FIXED12_ONE + 1; blend += MAP_REVEAL_FADE_IN_STEP) {
         lighting_set_color_matrix(&color_matrix_table[kf_enum_encode<s32>(KF_GAME_COLOR_DEFAULT)], &color_matrix_table[kf_enum_encode<s32>(KF_GAME_COLOR_WHITE)], blend);
         if (blend >= KF_FIXED12_ONE / 4 + 1) {
-            map_event_pool[KF_FLOOR2_REVEAL_EVENT].reference_position.vy -= MAP_REVEAL_RISE_STEP;
-            map_event_pool[KF_FLOOR2_REVEAL_EVENT].rotation.vy += MAP_REVEAL_YAW_STEP;
+            map_runtime_state.events[KF_FLOOR2_REVEAL_EVENT].reference_position.vy -= MAP_REVEAL_RISE_STEP;
+            map_runtime_state.events[KF_FLOOR2_REVEAL_EVENT].rotation.vy += MAP_REVEAL_YAW_STEP;
         } else {
             matrix_interpolate(&saved, &map_reveal_light_matrix,
                                &game_graphics_runtime.render_state.light_matrix_copy, blend << MAP_REVEAL_LIGHT_BLEND_SHIFT);
@@ -255,8 +255,8 @@ void map_reveal_fade(void)
         render_frame(NULL, NULL);
     }
 
-    map_event_pool[KF_FLOOR2_REVEAL_EVENT].state = KF_MAP_EVENT_DISABLED;
-    map_floor5_script.character_arrived = KF_MAP_SCRIPT_SET;
+    map_runtime_state.events[KF_FLOOR2_REVEAL_EVENT].state = KF_MAP_EVENT_DISABLED;
+    map_floor_script(KF_FLOOR_5).floor5.character_arrived = KF_MAP_SCRIPT_SET;
 
     for (blend = KF_FIXED12_ONE; blend >= 0; blend -= MAP_REVEAL_FADE_OUT_STEP) {
         lighting_set_color_matrix(&color_matrix_table[kf_enum_encode<s32>(KF_GAME_COLOR_DEFAULT)], &color_matrix_table[kf_enum_encode<s32>(KF_GAME_COLOR_WHITE)], blend);
@@ -270,8 +270,8 @@ void map_reveal_fade(void)
 
 void map_action_script_floor2(void)
 {
-    if (map_dialogue_just_started(map_event_pool[KF_FLOOR2_REVEAL_EVENT].dialogue, floor2_reveal_stage)
-        && map_event_pool[KF_FLOOR2_REVEAL_EVENT].state == KF_MAP_EVENT_ACTIVE) {
+    if (map_dialogue_just_started(map_runtime_state.events[KF_FLOOR2_REVEAL_EVENT].dialogue, floor2_reveal_stage)
+        && map_runtime_state.events[KF_FLOOR2_REVEAL_EVENT].state == KF_MAP_EVENT_ACTIVE) {
         map_reveal_fade();
     }
 }
@@ -279,14 +279,14 @@ void map_action_script_floor2(void)
 void map_action_script_floor3(void)
 {
     if (item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)][kf_enum_encode<u8>(KF_ITEM_WIND_BLADE_BRACELET)] != 0) {
-        if (magic_records[kf_enum_encode<u8>(KF_MAGIC_WIND_CUTTER)].learned == KF_MAGIC_UNLEARNED) {
-            magic_records[kf_enum_encode<u8>(KF_MAGIC_WIND_CUTTER)].learned = KF_MAGIC_LEARNED;
+        if (effect_state.magic.entries[kf_enum_encode<u8>(KF_MAGIC_WIND_CUTTER)].learned == KF_MAGIC_UNLEARNED) {
+            effect_state.magic.entries[kf_enum_encode<u8>(KF_MAGIC_WIND_CUTTER)].learned = KF_MAGIC_LEARNED;
             notify_enqueue(KF_NOTIFICATION_MAGIC_LEARNED);
         }
     }
-    if (map_dialogue_just_started(map_event_pool[KF_FLOOR3_FIRE_BALL_EVENT].dialogue, floor3_fire_ball_stage)) {
-        if (magic_records[kf_enum_encode<u8>(KF_MAGIC_FIRE_BALL)].learned == KF_MAGIC_UNLEARNED) {
-            magic_records[kf_enum_encode<u8>(KF_MAGIC_FIRE_BALL)].learned = KF_MAGIC_LEARNED;
+    if (map_dialogue_just_started(map_runtime_state.events[KF_FLOOR3_FIRE_BALL_EVENT].dialogue, floor3_fire_ball_stage)) {
+        if (effect_state.magic.entries[kf_enum_encode<u8>(KF_MAGIC_FIRE_BALL)].learned == KF_MAGIC_UNLEARNED) {
+            effect_state.magic.entries[kf_enum_encode<u8>(KF_MAGIC_FIRE_BALL)].learned = KF_MAGIC_LEARNED;
             notify_enqueue(KF_NOTIFICATION_MAGIC_LEARNED);
         }
     }
@@ -391,9 +391,9 @@ void map_floor5_transition_cutscene(void)
 
 void map_action_script_floor5(void)
 {
-    if (map_dialogue_just_started(map_event_pool[KF_FLOOR5_WEAPON_TRANSFORM_EVENT].dialogue, floor5_weapon_transform_stage)) {
+    if (map_dialogue_just_started(map_runtime_state.events[KF_FLOOR5_WEAPON_TRANSFORM_EVENT].dialogue, floor5_weapon_transform_stage)) {
         map_floor5_transition_cutscene();
-        map_floor5_script.weapon_transformed = KF_MAP_SCRIPT_SET;
+        map_floor_script(KF_FLOOR_5).floor5.weapon_transformed = KF_MAP_SCRIPT_SET;
     }
 }
 
@@ -401,48 +401,48 @@ void map_event_interact(KfMapEvent *event)
 {
     switch (event->character_id) {
     case KF_CHARACTER_KEY_OF_THE_DEAD_EXCHANGE:
-        if (item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)][kf_enum_encode<u8>(KF_ITEM_GOLD_CROSS)] != 0 && map_event_pool[key_exchange.event_slot].dialogue.stage == key_exchange.stage
-            && map_event_pool[key_exchange.event_slot].dialogue.page < key_exchange.page_end) {
+        if (item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)][kf_enum_encode<u8>(KF_ITEM_GOLD_CROSS)] != 0 && map_runtime_state.events[key_exchange.event_slot].dialogue.stage == key_exchange.stage
+            && map_runtime_state.events[key_exchange.event_slot].dialogue.page < key_exchange.page_end) {
             item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)][kf_enum_encode<u8>(KF_ITEM_KEY_OF_THE_DEAD)] = 1;
-            map_event_pool[key_exchange.event_slot].dialogue_pages.last_page[key_exchange.last_page_slot] = key_exchange.last_page;
+            map_runtime_state.events[key_exchange.event_slot].dialogue_pages.last_page[key_exchange.last_page_slot] = key_exchange.last_page;
             item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)][kf_enum_encode<u8>(KF_ITEM_GOLD_CROSS)]--;
             talk_show_dialogue_page(player_state.progress_state.current_floor,
                                     event->dialogue.stage, event->character_id, key_exchange.response_page);
-            map_event_pool[key_exchange.event_slot].dialogue.page = key_exchange.next_page;
-            map_event_pool[key_exchange.event_slot].dialogue.page_delay = 0;
-            map_event_pool[key_exchange.event_slot].dialogue.stage_limit = key_exchange.stage_limit;
-            map_event_refresh_dialogue_stage(&map_event_pool[key_exchange.event_slot]);
+            map_runtime_state.events[key_exchange.event_slot].dialogue.page = key_exchange.next_page;
+            map_runtime_state.events[key_exchange.event_slot].dialogue.page_delay = 0;
+            map_runtime_state.events[key_exchange.event_slot].dialogue.stage_limit = key_exchange.stage_limit;
+            map_event_refresh_dialogue_stage(&map_runtime_state.events[key_exchange.event_slot]);
             return;
         }
         break;
     case KF_CHARACTER_HEALING_EXCHANGE:
-        if (item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)][kf_enum_encode<u8>(KF_ITEM_MIRROR_OF_TRUTH)] != 0 && map_event_pool[healing_exchange.event_slot].dialogue.stage == healing_exchange.stage
-            && map_event_pool[healing_exchange.event_slot].dialogue.page < healing_exchange.page_end) {
-            magic_records[kf_enum_encode<u8>(KF_MAGIC_HEALING)].learned = KF_MAGIC_LEARNED;
+        if (item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)][kf_enum_encode<u8>(KF_ITEM_MIRROR_OF_TRUTH)] != 0 && map_runtime_state.events[healing_exchange.event_slot].dialogue.stage == healing_exchange.stage
+            && map_runtime_state.events[healing_exchange.event_slot].dialogue.page < healing_exchange.page_end) {
+            effect_state.magic.entries[kf_enum_encode<u8>(KF_MAGIC_HEALING)].learned = KF_MAGIC_LEARNED;
             item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)][kf_enum_encode<u8>(KF_ITEM_MIRROR_OF_TRUTH)]--;
             notify_enqueue(KF_NOTIFICATION_MAGIC_LEARNED);
-            map_event_pool[healing_exchange.event_slot].dialogue_pages.last_page[healing_exchange.last_page_slot] = healing_exchange.last_page;
+            map_runtime_state.events[healing_exchange.event_slot].dialogue_pages.last_page[healing_exchange.last_page_slot] = healing_exchange.last_page;
             talk_show_dialogue_page(player_state.progress_state.current_floor,
                                     event->dialogue.stage, event->character_id, healing_exchange.response_page);
-            map_event_pool[healing_exchange.event_slot].dialogue.page = healing_exchange.next_page;
-            map_event_pool[healing_exchange.event_slot].dialogue.page_delay = 0;
-            map_event_pool[healing_exchange.event_slot].dialogue.stage_limit = healing_exchange.stage_limit;
-            map_event_refresh_dialogue_stage(&map_event_pool[healing_exchange.event_slot]);
+            map_runtime_state.events[healing_exchange.event_slot].dialogue.page = healing_exchange.next_page;
+            map_runtime_state.events[healing_exchange.event_slot].dialogue.page_delay = 0;
+            map_runtime_state.events[healing_exchange.event_slot].dialogue.stage_limit = healing_exchange.stage_limit;
+            map_event_refresh_dialogue_stage(&map_runtime_state.events[healing_exchange.event_slot]);
             return;
         }
         break;
     case KF_CHARACTER_HARP_EXCHANGE:
-        if (item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)][kf_enum_encode<u8>(KF_ITEM_DRAGON_KING_GRASS_FRUIT)] != 0 && map_event_pool[harp_exchange.event_slot].dialogue.stage == harp_exchange.stage
-            && map_event_pool[harp_exchange.event_slot].dialogue.page < harp_exchange.page_end) {
+        if (item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)][kf_enum_encode<u8>(KF_ITEM_DRAGON_KING_GRASS_FRUIT)] != 0 && map_runtime_state.events[harp_exchange.event_slot].dialogue.stage == harp_exchange.stage
+            && map_runtime_state.events[harp_exchange.event_slot].dialogue.page < harp_exchange.page_end) {
             item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)][kf_enum_encode<u8>(KF_ITEM_HARP)] = 1;
-            map_event_pool[harp_exchange.event_slot].dialogue_pages.last_page[harp_exchange.last_page_slot] = harp_exchange.last_page;
+            map_runtime_state.events[harp_exchange.event_slot].dialogue_pages.last_page[harp_exchange.last_page_slot] = harp_exchange.last_page;
             item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)][kf_enum_encode<u8>(KF_ITEM_DRAGON_KING_GRASS_FRUIT)]--;
             talk_show_dialogue_page(player_state.progress_state.current_floor,
                                     event->dialogue.stage, event->character_id, harp_exchange.response_page);
-            map_event_pool[harp_exchange.event_slot].dialogue.page = harp_exchange.next_page;
-            map_event_pool[harp_exchange.event_slot].dialogue.page_delay = 0;
-            map_event_pool[harp_exchange.event_slot].dialogue.stage_limit = harp_exchange.stage_limit;
-            map_event_refresh_dialogue_stage(&map_event_pool[harp_exchange.event_slot]);
+            map_runtime_state.events[harp_exchange.event_slot].dialogue.page = harp_exchange.next_page;
+            map_runtime_state.events[harp_exchange.event_slot].dialogue.page_delay = 0;
+            map_runtime_state.events[harp_exchange.event_slot].dialogue.stage_limit = harp_exchange.stage_limit;
+            map_event_refresh_dialogue_stage(&map_runtime_state.events[harp_exchange.event_slot]);
             return;
         }
         break;
@@ -628,7 +628,7 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
     if (game_graphics_runtime.notification_state.control.effect_phase == KF_NOTIFICATION_IDLE
         && (index = map_event_pool_find_overlap(
                 interaction_probe.x, interaction_probe.z, MAP_INTERACTION_RADIUS_PADDING)) != -1) {
-        event = &map_event_pool[index];
+        event = &map_runtime_state.events[index];
         switch (event->behavior) {
             case KF_MAP_EVENT_BEHAVIOR_SHOP:
                 event->animation_phase = 0;

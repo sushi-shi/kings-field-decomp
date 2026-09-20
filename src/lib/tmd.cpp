@@ -5,7 +5,7 @@
 
 static KfTmdResource &tmd_slot(KfTmdSlot slot)
 {
-    auto &slots = KF_GRAPHICS_RUNTIME.tmd_state.slots;
+    auto &slots = graphics_runtime().tmd_state.slots;
     const auto index = kf_enum_encode<u16>(slot);
     if (index >= sizeof slots / sizeof slots[0])
         kf::host_fail("Invalid TMD slot");
@@ -30,12 +30,12 @@ void tmd_select(KfTmdSlot slot)
     const auto resource = tmd_slot(slot);
     if (!resource.data)
         kf::host_fail("Unregistered TMD slot");
-    KF_GRAPHICS_RUNTIME.tmd_state.current_asset = resource;
+    graphics_runtime().tmd_state.current_asset = resource;
 }
 
 static u8 *tmd_object_bytes(u16 index)
 {
-    const auto resource = KF_GRAPHICS_RUNTIME.tmd_state.current_asset;
+    const auto resource = graphics_runtime().tmd_state.current_asset;
     if (!resource.data || resource.size < KF_TMD_HEADER_BYTES)
         kf::host_fail("No selected TMD resource");
     auto *bytes = reinterpret_cast<u8 *>(resource.data);
@@ -64,7 +64,7 @@ KfTmdObject tmd_read_object(u16 index)
 
 static KfTmdBytes tmd_payload_from(std::size_t offset)
 {
-    const auto resource = KF_GRAPHICS_RUNTIME.tmd_state.current_asset;
+    const auto resource = graphics_runtime().tmd_state.current_asset;
     if (!resource.data || resource.size < KF_TMD_HEADER_BYTES ||
         offset > resource.size - KF_TMD_HEADER_BYTES)
         kf::host_fail("TMD offset exceeds its resource");
@@ -179,13 +179,13 @@ SVECTOR tmd_read_normal(KfTmdBytes normals, u16 index)
 
 void tmd_set_current_vertices(SVECTOR *vertices)
 {
-    KF_GRAPHICS_RUNTIME.current_tmd_vertices = vertices;
+    graphics_runtime().current_tmd_vertices = vertices;
 }
 
 void tmd_select_object_vertices(u16 index)
 {
     const auto *object = tmd_get_object(index);
-    const auto resource = KF_GRAPHICS_RUNTIME.tmd_state.current_asset;
+    const auto resource = graphics_runtime().tmd_state.current_asset;
     const std::size_t offset = object->vertex_offset;
     const auto payload_size = resource.size - KF_TMD_HEADER_BYTES;
     if (offset > payload_size || object->vertex_count > (payload_size - offset) / sizeof(SVECTOR))
@@ -193,7 +193,7 @@ void tmd_select_object_vertices(u16 index)
     auto *vertices = reinterpret_cast<u8 *>(resource.data) + KF_TMD_HEADER_BYTES + offset;
     if (reinterpret_cast<std::uintptr_t>(vertices) % alignof(SVECTOR))
         kf::host_fail("Unaligned TMD vertices");
-    KF_GRAPHICS_RUNTIME.current_tmd_vertices = reinterpret_cast<SVECTOR *>(vertices);
+    graphics_runtime().current_tmd_vertices = reinterpret_cast<SVECTOR *>(vertices);
 }
 
 void render_set_view_transform(
@@ -202,33 +202,33 @@ void render_set_view_transform(
     SVECTOR angles;
 
     if (position_or_null != NULL) {
-        KF_GRAPHICS_RUNTIME.render_state.view_position = *position_or_null;
-        KF_GRAPHICS_RUNTIME.render_state.view_cell.x = KF_GRAPHICS_RUNTIME.render_state.view_position.vx / KF_MAP_TILE_SIZE;
-        KF_GRAPHICS_RUNTIME.render_state.view_cell.z = KF_GRAPHICS_RUNTIME.render_state.view_position.vz / KF_MAP_TILE_SIZE;
+        graphics_runtime().render_state.view_position = *position_or_null;
+        graphics_runtime().render_state.view_cell.x = graphics_runtime().render_state.view_position.vx / KF_MAP_TILE_SIZE;
+        graphics_runtime().render_state.view_cell.z = graphics_runtime().render_state.view_position.vz / KF_MAP_TILE_SIZE;
     }
     if (rotation_or_null != NULL) {
-        KF_GRAPHICS_RUNTIME.render_state.view_rotation = *rotation_or_null;
+        graphics_runtime().render_state.view_rotation = *rotation_or_null;
     }
-    kf::matrix_set_rotation_xyz(KF_GRAPHICS_RUNTIME.render_state.view_rotation, KF_GRAPHICS_RUNTIME.render_state.view_matrix);
+    kf::matrix_set_rotation_xyz(graphics_runtime().render_state.view_rotation, graphics_runtime().render_state.view_matrix);
     angles.vz = 0;
     angles.vy = 0;
-    angles.vx = KF_GRAPHICS_RUNTIME.render_state.view_rotation.vx;
-    kf::matrix_set_rotation_xyz(angles, KF_GRAPHICS_RUNTIME.render_state.pitch_matrix);
+    angles.vx = graphics_runtime().render_state.view_rotation.vx;
+    kf::matrix_set_rotation_xyz(angles, graphics_runtime().render_state.pitch_matrix);
 }
 
 void tmd_register(KfTmdSlot slot, u8 *data, std::size_t size)
 {
     const auto resource = tmd_resource_view(data, size);
     tmd_slot(slot) = resource;
-    KF_GRAPHICS_RUNTIME.tmd_state.current_asset = resource;
+    graphics_runtime().tmd_state.current_asset = resource;
 }
 
 void tmd_release_last_allocation(KfTmdSlot slot)
 {
     auto &resource = tmd_slot(slot);
-    if (KF_GRAPHICS_RUNTIME.tmd_state.current_asset.data == resource.data) {
-        KF_GRAPHICS_RUNTIME.tmd_state.current_asset = {};
-        KF_GRAPHICS_RUNTIME.current_tmd_vertices = NULL;
+    if (graphics_runtime().tmd_state.current_asset.data == resource.data) {
+        graphics_runtime().tmd_state.current_asset = {};
+        graphics_runtime().current_tmd_vertices = NULL;
     }
     resource = {};
     memory_release_last();
@@ -241,8 +241,8 @@ void tmd_project_vertices_shift(s32 count, u8 shift, const MATRIX *model, const 
     KfScreenVertex *projected;
     SVECTOR *vertex;
 
-    projected = KF_GRAPHICS_RUNTIME.tmd_projected_vertices;
-    vertex = KF_GRAPHICS_RUNTIME.current_tmd_vertices;
+    projected = graphics_runtime().tmd_projected_vertices;
+    vertex = graphics_runtime().current_tmd_vertices;
     for (count--; count != -1; count--) {
         const auto point = kf::render_project_point(*model, projection, *vertex);
         projected->sxy.vector = {point.x, point.y};
@@ -262,8 +262,8 @@ void tmd_transform_vertices(s32 count, const MATRIX *model)
     VECTOR transformed;
     s32 remaining;
 
-    projected = KF_GRAPHICS_RUNTIME.tmd_projected_vertices;
-    vertex = KF_GRAPHICS_RUNTIME.current_tmd_vertices;
+    projected = graphics_runtime().tmd_projected_vertices;
+    vertex = graphics_runtime().current_tmd_vertices;
     for (remaining = count - 1; remaining != -1; remaining--) {
         transformed = kf::render_transform_point(*model, *vertex);
         projected->sxy.vector.vx = transformed.vx;

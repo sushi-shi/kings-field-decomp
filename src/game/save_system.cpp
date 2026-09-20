@@ -318,7 +318,7 @@ static void save_state_apply(const SavedGameState &state) {
     player_state.weapon_asset_buffer = asset;
     player_state.weapon_animation_cache = cache;
     player_state.selected_magic_record = player_state.selected_magic_id == KF_MAGIC_NONE ? nullptr
-        : &magic_records[kf_enum_encode<u8>(player_state.selected_magic_id)];
+        : &effect_state.magic.entries[kf_enum_encode<u8>(player_state.selected_magic_id)];
     player_state.equipped_weapon_record = player_state.equipped_weapon_id == KF_OBJECT_NONE ? nullptr
         : &weapon_records.entries[kf_enum_encode<u8>(player_state.equipped_weapon_id)];
     player_state.equipped_head_armor_record = saved_armor(player_state.equipped_head_armor_id);
@@ -329,7 +329,7 @@ static void save_state_apply(const SavedGameState &state) {
     map_runtime_state.world_state = state.world;
     std::memcpy(item_stock, state.stock, sizeof state.stock);
     for (unsigned i = 0; i < KF_MAGIC_RECORD_COUNT; ++i)
-        magic_records[i].learned = state.learned[i];
+        effect_state.magic.entries[i].learned = state.learned[i];
     // The existing load-return path reloads the floor, weapon and selected magic.
 }
 
@@ -433,7 +433,7 @@ KfSaveResult save_system_write_slot(KfSaveSlotId slot) {
     state.world = map_runtime_state.world_state;
     std::memcpy(state.stock, item_stock, sizeof state.stock);
     for (unsigned i = 0; i < KF_MAGIC_RECORD_COUNT; ++i)
-        state.learned[i] = magic_records[i].learned;
+        state.learned[i] = effect_state.magic.entries[i].learned;
     if (!save_state_valid(state))
         return save_failure(kf::SaveFileResult::Invalid, true);
     u8 data[kf::save_file_capacity];

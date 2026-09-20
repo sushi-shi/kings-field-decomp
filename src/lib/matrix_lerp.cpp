@@ -29,22 +29,22 @@ void lighting_set_color_matrix(
     MATRIX matrix;
 
     matrix_interpolate(from, to, &matrix, blend);
-    memcpy(KF_GRAPHICS_RUNTIME.render_state.lighting.color_matrix.m, (matrix).m,
-        sizeof KF_GRAPHICS_RUNTIME.render_state.lighting.color_matrix.m);
+    memcpy(graphics_runtime().render_state.lighting.color_matrix.m, (matrix).m,
+        sizeof graphics_runtime().render_state.lighting.color_matrix.m);
 }
 
 void fog_interpolate_near(s32 start, s32 end, s32 ratio)
 {
     s32 distance = (((end - start) * ratio) >> KF_FIXED12_BITS) + start;
 
-    KF_GRAPHICS_RUNTIME.render_state.fog_near_distance = distance;
-    KF_GRAPHICS_RUNTIME.render_state.projection.fog_near = distance;
+    graphics_runtime().render_state.fog_near_distance = distance;
+    graphics_runtime().render_state.projection.fog_near = distance;
 }
 
 void fog_set_near(s32 distance)
 {
-    KF_GRAPHICS_RUNTIME.render_state.fog_near_distance = distance;
-    KF_GRAPHICS_RUNTIME.render_state.projection.fog_near = distance;
+    graphics_runtime().render_state.fog_near_distance = distance;
+    graphics_runtime().render_state.projection.fog_near = distance;
 }
 
 #ifdef KF_OPEN

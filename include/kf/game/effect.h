@@ -277,11 +277,6 @@ typedef struct KfEffectState {
 extern SVECTOR effect_swing_probe_offsets[KF_EFFECT_SWING_PROBE_COUNT];
 extern KfEffectState effect_state;
 
-#define magic_records (effect_state.magic.entries)
-#define effect_pool_records (effect_state.records)
-#define current_effect_magic_record (effect_state.current_magic)
-#define current_effect (effect_state.current_record)
-
 enum class KfEffectSoundRequest : s32 {
     KF_EFFECT_SOUND_SILENT = 0,
     KF_EFFECT_SOUND_PLAY = 1

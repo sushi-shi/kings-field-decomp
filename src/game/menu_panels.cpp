@@ -29,7 +29,7 @@ KfMagicPanelResult menu_magic_panel(void)
 
     found = 0;
     for (code = kf_enum_encode<s32>(KF_MAGIC_HEALING); code < kf_enum_encode<s32>(KF_MAGIC_LIGHTNING_BOLT); code++) {
-        if (magic_records[code].learned == KF_MAGIC_LEARNED) {
+        if (effect_state.magic.entries[code].learned == KF_MAGIC_LEARNED) {
             for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)
                 labels[found][j] = magic_name_rows[code].codes[j];
             codes[found] = kf_enum_decode<KfEffectKind>(code);
@@ -97,9 +97,9 @@ KfMagicPanelResult menu_magic_panel(void)
     }
 
     if (selection != KF_MENU_RESULT_CANCELLED) {
-        if (player_state.vitals.current_mp < magic_records[kf_enum_encode<s32>(selection)].mp_cost)
+        if (player_state.vitals.current_mp < effect_state.magic.entries[kf_enum_encode<s32>(selection)].mp_cost)
             return selection;
-        player_state.vitals.current_mp -= magic_records[kf_enum_encode<s32>(selection)].mp_cost;
+        player_state.vitals.current_mp -= effect_state.magic.entries[kf_enum_encode<s32>(selection)].mp_cost;
         if (selection == KF_MAGIC_HEALING) {
             player_state.vitals.current_hp += player_state.magic;
         } else if (selection == KF_MAGIC_DISPOISON) {

@@ -3,17 +3,27 @@
 
 #ifdef KF_OPEN
 #include <kf/open/render.h>
-typedef KfOpenColorPreset KfActiveColorPreset;
-#define KF_GRAPHICS_RUNTIME open_graphics_runtime
-#define KF_FLOOR_ITEM_COUNT open_graphics_runtime.floor_item_state.count
-#define KF_FLOOR_ITEMS open_graphics_runtime.floor_item_state.items
+using KfActiveColorPreset = KfOpenColorPreset;
+inline KfGraphicsRuntimeOpen &graphics_runtime() { return open_graphics_runtime; }
 #else
 #include <kf/game/graphics.h>
 #include <kf/game/render.h>
-typedef KfGameColorPreset KfActiveColorPreset;
-#define KF_GRAPHICS_RUNTIME game_graphics_runtime
-#define KF_FLOOR_ITEM_COUNT game_graphics_runtime.floor_item_count
-#define KF_FLOOR_ITEMS game_graphics_runtime.floor_items
+using KfActiveColorPreset = KfGameColorPreset;
+inline KfGraphicsRuntimeGame &graphics_runtime() { return game_graphics_runtime; }
 #endif
+
+struct KfFloorItemStorage {
+    u16 &count;
+    KfFloorItem (&items)[KF_FLOOR_ITEM_CAPACITY];
+};
+
+inline KfFloorItemStorage floor_item_storage()
+{
+#ifdef KF_OPEN
+    return {open_graphics_runtime.floor_item_state.count, open_graphics_runtime.floor_item_state.items};
+#else
+    return {game_graphics_runtime.floor_item_count, game_graphics_runtime.floor_items};
+#endif
+}
 
 #endif

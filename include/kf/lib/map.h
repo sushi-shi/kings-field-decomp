@@ -391,16 +391,11 @@ typedef struct KfMapRuntimeState {
 extern KfMapCopyRegion map_copy_regions[KF_MAP_COPY_REGION_COUNT];
 extern KfMapRuntimeState map_runtime_state;
 
-#define map_event_pool (map_runtime_state.events)
-#define current_map_event (map_runtime_state.current_event)
-#define map_variant_asset_buffer (map_runtime_state.variant_asset_buffer)
-#define map_dialogue_advance_gate (map_runtime_state.dialogue_advance_gate)
-#define map_ambient_script_countdown (map_runtime_state.ambient_script_countdown)
-#define map_world_state_base (map_runtime_state.world_state)
-#define map_floor1_script (map_runtime_state.world_state.floors[0].script.floor1)
-#define map_floor3_script (map_runtime_state.world_state.floors[2].script.floor3)
-#define map_floor5_script (map_runtime_state.world_state.floors[4].script.floor5)
-#define boss_defeat_complete (map_floor5_script.boss_defeat)
+inline KfMapFloorScript &map_floor_script(KfFloorId floor)
+{
+    return map_runtime_state.world_state.floors[kf_enum_encode<u8>(floor) - 1].script;
+}
+
 extern KfMapObjectState map_object_state;
 extern char map_resource_path[KF_MAP_RESOURCE_PATH_BYTES];
 

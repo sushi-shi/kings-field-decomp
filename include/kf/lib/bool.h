@@ -46,7 +46,7 @@ typedef KfBoolStorage<s32> KfBool32;
 typedef KfBoolStorage<u32> KfBoolU32;
 typedef KfBoolStorage<u8> KfBool8;
 typedef KfBoolStorage<u16> KfBool16;
-#define KF_FALSE false
-#define KF_TRUE true
+inline constexpr bool KF_FALSE = false;
+inline constexpr bool KF_TRUE = true;
 
 #endif

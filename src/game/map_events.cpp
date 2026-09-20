@@ -21,13 +21,13 @@ KfMapRuntimeState map_runtime_state;
 
 void map_event_timers_reset(void)
 {
-    map_dialogue_advance_gate = KF_DIALOGUE_GATE_RELOAD;
-    map_ambient_script_countdown = MAP_AMBIENT_COUNTDOWN_RELOAD;
+    map_runtime_state.dialogue_advance_gate = KF_DIALOGUE_GATE_RELOAD;
+    map_runtime_state.ambient_script_countdown = MAP_AMBIENT_COUNTDOWN_RELOAD;
 }
 
 void map_event_update_wander(void)
 {
-    KfMapEvent *event = current_map_event;
+    KfMapEvent *event = map_runtime_state.current_event;
     struct KfVecXZs forward;
     VECTOR point;
     s16 heading;
@@ -69,24 +69,24 @@ void map_event_update_wander(void)
 
 void map_event_update_animation_loop(void)
 {
-    KfMapEvent *event = current_map_event;
+    KfMapEvent *event = map_runtime_state.current_event;
 
     event->animation_phase =
         (event->animation_phase + KF_MAP_EVENT_ANIMATION_LOOP_STEP)
         & KF_MAP_EVENT_ANIMATION_PHASE_MASK;
 
     if (player_state.progress_state.current_floor == KF_FLOOR_5
-            && event == &map_event_pool[0]
-            && map_event_pool[0].animation_phase < KF_MAP_EVENT_ANIMATION_LOOP_STEP) {
+            && event == &map_runtime_state.events[0]
+            && map_runtime_state.events[0].animation_phase < KF_MAP_EVENT_ANIMATION_LOOP_STEP) {
         audio_play_spatial_range(&gameplay_sound_refs[KF_GAMEPLAY_SOUND_FLOOR5_EVENT_LOOP],
-            &map_event_pool[0].reference_position,
+            &map_runtime_state.events[0].reference_position,
             KF_AUDIO_MAX_VOLUME, MAP_EVENT_LOOP_SOUND_MAX_DISTANCE, MAP_EVENT_LOOP_SOUND_ATTENUATION_DISTANCE);
     }
 }
 
 void map_event_pool_update(void)
 {
-    for (auto &event : map_event_pool) {
+    for (auto &event : map_runtime_state.events) {
         KfMapEventState state = event.state;
 
         if (state == KF_MAP_EVENT_ACTIVE) {
@@ -100,7 +100,7 @@ void map_event_pool_update(void)
                 map_event_update_animation_loop();
                 break;
             }
-            if (map_dialogue_advance_gate == 0 && event.dialogue.page_delay != 0) {
+            if (map_runtime_state.dialogue_advance_gate == 0 && event.dialogue.page_delay != 0) {
                 event.dialogue.page_delay--;
                 if (event.dialogue.page_delay == 0) {
                     s32 limit = event.dialogue_pages.last_page[event.dialogue.stage - 1];
@@ -114,7 +114,7 @@ void map_event_pool_update(void)
     }
 
     {
-        u16 *gate = &map_dialogue_advance_gate;
+        u16 *gate = &map_runtime_state.dialogue_advance_gate;
         u16 current = *gate;
 
         *gate = current - 1;
@@ -123,8 +123,8 @@ void map_event_pool_update(void)
         }
     }
 
-    if (map_ambient_script_countdown-- == 0) {
-        map_ambient_script_countdown = MAP_AMBIENT_COUNTDOWN_RELOAD;
+    if (map_runtime_state.ambient_script_countdown-- == 0) {
+        map_runtime_state.ambient_script_countdown = MAP_AMBIENT_COUNTDOWN_RELOAD;
         switch (player_state.progress_state.current_floor) {
         case KF_FLOOR_1:
             map_ambient_script_floor1();

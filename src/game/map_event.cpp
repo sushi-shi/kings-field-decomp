@@ -8,7 +8,7 @@
 
 void map_event_set_current(KfMapEvent *event)
 {
-    current_map_event = event;
+    map_runtime_state.current_event = event;
 }
 
 void map_event_refresh_dialogue_stage(KfMapEvent *event)
@@ -41,7 +41,7 @@ void map_event_pool_load(const KfMapEventDefinition *definitions)
 {
     KfBool8 exhausted = KF_FALSE;
 
-    for (auto &event : map_event_pool) {
+    for (auto &event : map_runtime_state.events) {
         if (exhausted == KF_TRUE || definitions->state == KF_MAP_EVENT_FREE) {
             exhausted = KF_TRUE;
             event.state = KF_MAP_EVENT_FREE;
@@ -115,7 +115,7 @@ KfMapEvent *map_event_pool_find_target_in_cone(
     s16 angle;
     s16 folded;
 
-    for (auto &event : map_event_pool) {
+    for (auto &event : map_runtime_state.events) {
         if (event.state != KF_MAP_EVENT_ACTIVE) {
             continue;
         }
@@ -141,7 +141,7 @@ KfMapEvent *map_event_pool_find_target_in_cone(
 
 s32 map_event_pool_find_overlap(s32 point_x, s32 point_z, s32 radius_padding)
 {
-    KfMapEvent *event = map_event_pool;
+    KfMapEvent *event = map_runtime_state.events;
     s16 index = 0;
 
     do {

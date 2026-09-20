@@ -135,7 +135,7 @@ static bool effect_handle_projectile_collision(KfEffectRecord *effect, KfMagicRe
     if (collision != KF_COLLISION_NONE) {
         u16 impact_power;
 
-        impact_magic = current_effect_magic_record;
+        impact_magic = effect_state.current_magic;
         collision_kind = collision >> KF_COLLISION_KIND_SHIFT;
         if (kind == KF_MAGIC_LIGHTNING_BOLT) {
             effect_begin_lightning_impact(effect, magic);
@@ -270,8 +270,8 @@ static void effect_update_homing_direction(KfEffectRecord *effect, KfEffectPhase
 
 void effect_update_dispatch(void)
 {
-    KfEffectRecord *effect = current_effect;
-    KfMagicRecord *magic = current_effect_magic_record;
+    KfEffectRecord *effect = effect_state.current_record;
+    KfMagicRecord *magic = effect_state.current_magic;
     KfEffectPhase phase;
     KfEffectKind kind;
     u32 radius;
@@ -429,7 +429,7 @@ void effect_update_dispatch(void)
                 effect->render_id.model = KF_EFFECT_MODEL_NONE;
                 effect->phase = KF_EFFECT_MOONLIGHT_IMPACT_FIRST;
                 audio_play_spatial_default_range(
-                    &magic_records[kf_enum_encode<u8>(KF_EFFECT_KIND_RADIAL_BLAST)].sounds[1], &effect->position, KF_AUDIO_MAX_VOLUME);
+                    &effect_state.magic.entries[kf_enum_encode<u8>(KF_EFFECT_KIND_RADIAL_BLAST)].sounds[1], &effect->position, KF_AUDIO_MAX_VOLUME);
                 return;
             }
             vector_add_xyz(effect->position, effect->direction.vector);
@@ -466,7 +466,7 @@ void effect_update_dispatch(void)
         u16 collision_kind;
         u16 power;
 
-        linked_effect = &effect_pool_records[effect->control.parent_effect_index];
+        linked_effect = &effect_state.records[effect->control.parent_effect_index];
         collision = effect_map_collision(&effect->position, radius);
         if (collision != KF_COLLISION_NONE) {
             collision_kind = collision >> KF_COLLISION_KIND_SHIFT;
@@ -588,7 +588,7 @@ void effect_update_dispatch(void)
                 }
                 if (phase == KF_EFFECT_LIGHTNING_IMPACT_EMIT_FIRST) {
                     audio_play_spatial_default_range(
-                        &magic_records[kf_enum_encode<u8>(KF_MAGIC_LIGHTNING_BOLT)].sounds[1],
+                        &effect_state.magic.entries[kf_enum_encode<u8>(KF_MAGIC_LIGHTNING_BOLT)].sounds[1],
                         &effect->position, KF_AUDIO_MAX_VOLUME);
                 }
             }
@@ -615,7 +615,7 @@ void effect_update_dispatch(void)
                     effect->position.vz);
                 damage_radius = kf_enum_encode<u8>(phase) * LIGHTNING_BLAST_RADIUS_STEP;
                 power = effect_magic_power(effect);
-                lightning_magic = &magic_records[kf_enum_encode<u8>(KF_MAGIC_LIGHTNING_BOLT)];
+                lightning_magic = &effect_state.magic.entries[kf_enum_encode<u8>(KF_MAGIC_LIGHTNING_BOLT)];
                 actor_pool_apply_radial_damage(
                     &position, damage_radius, KF_FIXED12_ONE, power, 0, 0, 0,
                     lightning_magic->damage_components[0],

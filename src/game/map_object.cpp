@@ -41,9 +41,9 @@ enum {
     MAP_RESTORE_POINT_YAW_STEP = 8
 };
 
-#define MAP_EMITTER_VELOCITY_NUMERATOR 175u
-#define MAP_FIRE_BALL_EMITTER_VELOCITY_NUMERATOR 25u
-#define MAP_BOSS_EMITTER_VELOCITY_NUMERATOR 225u
+static constexpr u32 MAP_EMITTER_VELOCITY_NUMERATOR = 175u;
+static constexpr u32 MAP_FIRE_BALL_EMITTER_VELOCITY_NUMERATOR = 25u;
+static constexpr u32 MAP_BOSS_EMITTER_VELOCITY_NUMERATOR = 225u;
 
 SoundRef gameplay_sound_refs[KF_GAMEPLAY_SOUND_COUNT] = {
     {9, 0, 72},
@@ -450,7 +450,7 @@ void map_object_pool_update(void)
                 object->action_timer = kf_enum_decode<KfMapObjectProgress>((kf::random_next() >> MAP_EMITTER_COUNTDOWN_RANDOM_SHIFT) + MAP_EMITTER_COUNTDOWN_BASE);
                 break;
             case KF_MAP_OBJECT_BOSS_PROJECTILE_EMITTER:
-                if (map_floor5_script.boss_encounter_started == KF_MAP_SCRIPT_UNSET) {
+                if (map_floor_script(KF_FLOOR_5).floor5.boss_encounter_started == KF_MAP_SCRIPT_UNSET) {
                     break;
                 }
                 direction.vy = 0;
@@ -484,7 +484,7 @@ void map_object_pool_update(void)
         case KF_MAP_OBJECT_OP_RELEASE_ORBIT_OR_SHORT_SWING:
         case KF_MAP_OBJECT_OP_RELEASE_LONG_SWING:
             if (object->link.fields.link_id == KF_MAP_LINK_NONE && object->action_timer == KF_MAP_OBJECT_PROGRESS_INIT) {
-                effect_pool_records[object->link.fields.action_parameter.effect_index].phase = KF_EFFECT_HAZARD_RELEASE_REQUEST;
+                effect_state.records[object->link.fields.action_parameter.effect_index].phase = KF_EFFECT_HAZARD_RELEASE_REQUEST;
                 object->action_timer = KF_MAP_OBJECT_PROGRESS_RUNNING;
             }
             break;
@@ -493,12 +493,12 @@ void map_object_pool_update(void)
                 break;
             }
             if (object->link.fields.link_id == KF_MAP_LINK_NONE) {
-                effect_pool_records[object->link.fields.action_parameter.effect_index].visual.animation_phase = (KF_FIXED12_ONE - 1);
+                effect_state.records[object->link.fields.action_parameter.effect_index].visual.animation_phase = (KF_FIXED12_ONE - 1);
                 object->action_timer = KF_MAP_OBJECT_SWITCH_DISABLED;
                 break;
             }
             if (object->action_timer == KF_MAP_OBJECT_SWITCH_FORWARD) {
-                record = &effect_pool_records[object->link.fields.action_parameter.effect_index];
+                record = &effect_state.records[object->link.fields.action_parameter.effect_index];
                 if (record->visual.animation_phase == 0) {
                     audio_play_spatial_default_range(
                         &gameplay_sound_refs[KF_GAMEPLAY_SOUND_EFFECT_SWITCH], &object->position, KF_AUDIO_MAX_VOLUME);
@@ -514,7 +514,7 @@ void map_object_pool_update(void)
                     }
                 }
             } else if (object->action_timer == KF_MAP_OBJECT_SWITCH_REVERSE) {
-                record = &effect_pool_records[object->link.fields.action_parameter.effect_index];
+                record = &effect_state.records[object->link.fields.action_parameter.effect_index];
                 if (record->visual.animation_phase == (KF_FIXED12_ONE - 1)) {
                     audio_play_spatial_default_range(
                         &gameplay_sound_refs[KF_GAMEPLAY_SOUND_EFFECT_SWITCH], &object->position, KF_AUDIO_MAX_VOLUME);
@@ -548,7 +548,7 @@ void map_object_pool_update(void)
                 if (player_state.progress_state.current_floor == KF_FLOOR_3) {
                     audio_play_spatial_default_range(
                         &gameplay_sound_refs[KF_GAMEPLAY_SOUND_MAP_PIECE_REVEAL], &object->position, KF_AUDIO_MAX_VOLUME);
-                    counter = &map_floor3_script.revealed_piece_count;
+                    counter = &map_floor_script(KF_FLOOR_3).floor3.revealed_piece_count;
                     if (*counter != KF_MAP_FLOOR3_REQUIRED_REVEALS) {
                         (*counter)++;
                         if (*counter >= KF_MAP_FLOOR3_REQUIRED_REVEALS) {
@@ -559,10 +559,10 @@ void map_object_pool_update(void)
                         }
                     }
                 } else if (player_state.progress_state.current_floor == KF_FLOOR_1) {
-                    if (map_floor1_script.revival_enabled == KF_MAP_SCRIPT_UNSET) {
+                    if (map_floor_script(KF_FLOOR_1).floor1.revival_enabled == KF_MAP_SCRIPT_UNSET) {
                         audio_play_spatial_default_range(
                             &gameplay_sound_refs[KF_GAMEPLAY_SOUND_FLOOR1_REVIVAL], &object->position, KF_AUDIO_MAX_VOLUME);
-                        map_floor1_script.revival_enabled = KF_MAP_SCRIPT_SET;
+                        map_floor_script(KF_FLOOR_1).floor1.revival_enabled = KF_MAP_SCRIPT_SET;
                     }
                 }
                 object->action_timer++;

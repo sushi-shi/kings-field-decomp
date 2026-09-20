@@ -87,7 +87,7 @@ void map_restore_floor_state(void)
                 const bool fountain = object->object_id == KF_MAP_OBJECT_DRY_FOUNTAIN
                     && saved_id == KF_MAP_OBJECT_FILLED_FOUNTAIN;
                 const bool cross = i == cross_index && saved_id == KF_MAP_OBJECT_BROKEN_STONE_CROSS
-                    && map_floor1_script.actor_activation_stage == KF_MAP_TRIGGER_COMPLETE;
+                    && map_floor_script(KF_FLOOR_1).floor1.actor_activation_stage == KF_MAP_TRIGGER_COMPLETE;
                 if (object->object_id == KF_OBJECT_NONE || (!fountain && !cross))
                     kf::host_fail("Saved object identity is incompatible with the loaded floor");
             }
@@ -169,32 +169,32 @@ void map_restore_floor_state(void)
 
     switch (player_state.progress_state.current_floor) {
     case KF_FLOOR_1:
-        if (map_floor1_script.passage_opened == KF_MAP_SCRIPT_SET) {
+        if (map_floor_script(KF_FLOOR_1).floor1.passage_opened == KF_MAP_SCRIPT_SET) {
             map_apply_copy_region(KF_MAP_COPY_FLOOR1_PASSAGE);
         }
-        if (map_floor1_script.actor_activation_stage != KF_MAP_TRIGGER_COMPLETE) {
+        if (map_floor_script(KF_FLOOR_1).floor1.actor_activation_stage != KF_MAP_TRIGGER_COMPLETE) {
             index = actor_pool_find_at_tile(KF_FLOOR1_TRIGGER_ACTOR_TILE_X, KF_FLOOR1_TRIGGER_ACTOR_TILE_Z);
             if (index != -1) {
                 actor_state.actors[index].lifecycle = KF_ACTOR_LIFECYCLE_DISABLED;
             }
         }
-        if (map_floor5_script.weapon_transformed == KF_MAP_SCRIPT_SET) {
+        if (map_floor_script(KF_FLOOR_5).floor5.weapon_transformed == KF_MAP_SCRIPT_SET) {
             map_object_pool_clear_link(KF_MAP_LINK_WEAPON_TRANSFORM_DOORS);
         }
         break;
     case KF_FLOOR_2:
-        if (map_floor5_script.weapon_transformed == KF_MAP_SCRIPT_SET) {
+        if (map_floor_script(KF_FLOOR_5).floor5.weapon_transformed == KF_MAP_SCRIPT_SET) {
             map_object_pool_clear_link(KF_MAP_LINK_WEAPON_TRANSFORM_DOORS);
         }
         if (player_state.progress_state.highest_floor >= KF_FLOOR_3) {
-            map_event_pool[KF_FLOOR2_DEPARTING_EVENT].state = KF_MAP_EVENT_DISABLED;
+            map_runtime_state.events[KF_FLOOR2_DEPARTING_EVENT].state = KF_MAP_EVENT_DISABLED;
         }
         break;
     case KF_FLOOR_3:
-        if (map_floor5_script.weapon_transformed == KF_MAP_SCRIPT_SET) {
+        if (map_floor_script(KF_FLOOR_5).floor5.weapon_transformed == KF_MAP_SCRIPT_SET) {
             map_object_pool_clear_link(KF_MAP_LINK_WEAPON_TRANSFORM_DOORS);
         }
-        if (map_floor3_script.revealed_piece_count == KF_MAP_FLOOR3_REQUIRED_REVEALS) {
+        if (map_floor_script(KF_FLOOR_3).floor3.revealed_piece_count == KF_MAP_FLOOR3_REQUIRED_REVEALS) {
             map_apply_copy_region(KF_MAP_COPY_FLOOR3_REVEAL_FIRST);
             map_apply_copy_region(KF_MAP_COPY_FLOOR3_REVEAL_SECOND);
         }
@@ -202,10 +202,10 @@ void map_restore_floor_state(void)
     case KF_FLOOR_4:
         break;
     case KF_FLOOR_5:
-        if (map_floor5_script.character_arrived == KF_MAP_SCRIPT_SET) {
-            map_event_pool[KF_FLOOR5_WEAPON_TRANSFORM_EVENT].state = KF_MAP_EVENT_ACTIVE;
+        if (map_floor_script(KF_FLOOR_5).floor5.character_arrived == KF_MAP_SCRIPT_SET) {
+            map_runtime_state.events[KF_FLOOR5_WEAPON_TRANSFORM_EVENT].state = KF_MAP_EVENT_ACTIVE;
         }
-        if (map_floor5_script.boss_encounter_started == KF_MAP_SCRIPT_UNSET) {
+        if (map_floor_script(KF_FLOOR_5).floor5.boss_encounter_started == KF_MAP_SCRIPT_UNSET) {
             actor_state.definitions.entries[KF_FLOOR5_BOSS_DEFINITION].action_animations[KF_ACTOR_ANIM_SLOT_MELEE] = KF_ANIMATION_CLIP_NONE;
             actor_state.definitions.entries[KF_FLOOR5_BOSS_DEFINITION].action_animations[KF_ACTOR_ANIM_SLOT_EFFECT0] = KF_ANIMATION_CLIP_NONE;
             actor_state.definitions.entries[KF_FLOOR5_BOSS_DEFINITION].action_animations[KF_ACTOR_ANIM_SLOT_EFFECT1] = KF_ANIMATION_CLIP_NONE;
@@ -215,10 +215,10 @@ void map_restore_floor_state(void)
             map_apply_copy_region(KF_MAP_COPY_FLOOR5_BOSS_ENCOUNTER);
         }
         if (item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)][kf_enum_encode<u8>(KF_ITEM_DRAGON_SWORD)] != 0 || item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)][kf_enum_encode<u8>(KF_ITEM_MOONLIGHT_SWORD)] != 0
-                || map_floor5_script.weapon_transformed == KF_MAP_SCRIPT_SET) {
+                || map_floor_script(KF_FLOOR_5).floor5.weapon_transformed == KF_MAP_SCRIPT_SET) {
             map_object_pool_clear_link(KF_MAP_LINK_FLOOR5_SWORD_DOOR);
         }
-        if (boss_defeat_complete != KF_MAP_SCRIPT_UNSET) {
+        if (map_floor_script(KF_FLOOR_5).floor5.boss_defeat != KF_MAP_SCRIPT_UNSET) {
             map_object_pool_trigger_link(KF_MAP_LINK_BOSS_EMITTERS);
             actor_pool_begin_death_by_definition(floor5_boss_death_cleanup_definitions[0]);
             actor_pool_begin_death_by_definition(floor5_boss_death_cleanup_definitions[1]);
@@ -233,7 +233,7 @@ void map_restore_floor_state(void)
 
 void map_refresh_dialogue_stages(void)
 {
-    KfMapEvent *event = map_event_pool;
+    KfMapEvent *event = map_runtime_state.events;
     u16 index = KF_MAP_EVENT_CAPACITY - 1;
 
     do {
