@@ -63,6 +63,18 @@ state machine or blanket macro-to-function rewrite is needed.
 These are concrete cleanup candidates from the whole-function survey, not new
 gameplay features or prerequisites for using the current Linux client.
 
+### Stacked pass: pools and object copies
+
+Actor/effect free-slot searches, resets, death selection and effect/event/object
+updates now use forward array traversal. Index-returning actor searches retain
+explicit indices. Opening lookup is a conventional sentinel-terminated loop,
+not a fixed-capacity scan. Current-object bindings and live iteration are unchanged.
+
+Five definition/equipment table loaders now assign their complete typed objects;
+weapon yaw mirroring remains a separate ordered pass. Object links are explicitly
+cleared over their eight-byte object extent. This removes word-pointer aliasing
+without changing resource decoding or resetting other fields in a reused slot.
+
 ### 1. Finish ordinary container operations
 
 Review the remaining actor/event/effect searches and sweeps for range loops,

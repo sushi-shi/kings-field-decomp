@@ -86,16 +86,13 @@ void map_event_update_animation_loop(void)
 
 void map_event_pool_update(void)
 {
-    KfMapEvent *event = map_event_pool;
-    u16 index = KF_MAP_EVENT_CAPACITY - 1;
-
-    do {
-        KfMapEventState state = event->state;
+    for (auto &event : map_event_pool) {
+        KfMapEventState state = event.state;
 
         if (state == KF_MAP_EVENT_ACTIVE) {
-            map_event_set_current(event);
+            map_event_set_current(&event);
 
-            switch (event->behavior) {
+            switch (event.behavior) {
             case KF_MAP_EVENT_BEHAVIOR_WANDER:
                 map_event_update_wander();
                 break;
@@ -103,20 +100,18 @@ void map_event_pool_update(void)
                 map_event_update_animation_loop();
                 break;
             }
-            if (map_dialogue_advance_gate == 0 && event->dialogue.page_delay != 0) {
-                event->dialogue.page_delay--;
-                if (event->dialogue.page_delay == 0) {
-                    s32 limit = event->dialogue_pages.last_page[event->dialogue.stage - 1];
-                    event->dialogue.page++;
-                    if (event->dialogue.page >= limit) {
-                        event->dialogue.page = limit;
+            if (map_dialogue_advance_gate == 0 && event.dialogue.page_delay != 0) {
+                event.dialogue.page_delay--;
+                if (event.dialogue.page_delay == 0) {
+                    s32 limit = event.dialogue_pages.last_page[event.dialogue.stage - 1];
+                    event.dialogue.page++;
+                    if (event.dialogue.page >= limit) {
+                        event.dialogue.page = limit;
                     }
                 }
             }
         }
-
-        event++;
-    } while (index-- != 0);
+    }
 
     {
         u16 *gate = &map_dialogue_advance_gate;

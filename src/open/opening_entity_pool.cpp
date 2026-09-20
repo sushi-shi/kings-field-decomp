@@ -9,13 +9,9 @@ KfOpeningEntityState opening_entity_state;
 
 void opening_entity_pool_reset(void)
 {
-    KfOpeningEntity *entity = opening_entity_state.entities;
-    u16 remaining = KF_OPENING_ENTITY_CAPACITY - 1;
-
-    do {
-        entity->object_id = KF_OPENING_ENTITY_FREE;
-        entity++;
-    } while (remaining-- != 0);
+    for (auto &entity : opening_entity_state.entities) {
+        entity.object_id = KF_OPENING_ENTITY_FREE;
+    }
 
     opening_entity_state.unknown_control_50e = 0;
     opening_entity_state.unknown_control_50c = 0;
@@ -25,16 +21,11 @@ void opening_entity_pool_reset(void)
 KfOpeningEntity *opening_entity_find_by_object_id(
     KfOpeningEntity *entities, KfOpeningModelId object_id)
 {
-    KfOpeningEntity *entity = entities;
-
-    if (entity->object_id != KF_OPENING_ENTITY_FREE) {
-        do {
-            if (entity->object_id == object_id)
-                return entity;
-            entity++;
-        } while (entity->object_id != KF_OPENING_ENTITY_FREE);
+    for (auto *entity = entities; entity->object_id != KF_OPENING_ENTITY_FREE; entity++) {
+        if (entity->object_id == object_id) {
+            return entity;
+        }
     }
-
     return NULL;
 }
 

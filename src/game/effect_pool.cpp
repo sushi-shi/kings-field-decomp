@@ -20,15 +20,11 @@ KfEffectState effect_state;
 
 KfEffectRecord *effect_pool_find_free(void)
 {
-    KfEffectRecord *record = effect_pool_records;
-    u16 i = KF_EFFECT_CAPACITY;
-
-    do {
-        if (record->type == KF_EFFECT_SLOT_FREE) {
-            return record;
+    for (auto &record : effect_pool_records) {
+        if (record.type == KF_EFFECT_SLOT_FREE) {
+            return &record;
         }
-        record++;
-    } while (--i != 0);
+    }
     return NULL;
 }
 
