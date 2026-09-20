@@ -29,12 +29,6 @@ KfMapAttributeGrid map_cell_attribute_grid;
 
 #define MAP_GRID_WORDS (sizeof map_cell_attribute_grid / sizeof(u32))
 
-#include "../lib/resource_file.inc"
-
-#include "../lib/tim_upload_images.inc"
-
-#include "../lib/resource_copy_words.inc"
-
 void opening_resources_load_scene0(void)
 {
     u8 *stream;
@@ -203,7 +197,6 @@ void opening_resources_load_ending_sequence(void)
     *arena_cursor = vab_chunk + KF_RESOURCE_REUSE_PREFIX_BYTES;
     audio_play_sequence_file("B0/ENDG.");
 }
-
 
 void resources_reset_module_state(void)
 {

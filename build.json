@@ -61,7 +61,15 @@
         "src/game/effect_update.cpp",
         "src/game/effect_dispatch.cpp",
         "src/game/magic.cpp",
-        "src/game/debug_text.cpp"
+        "src/game/debug_text.cpp",
+        "src/lib/audio.cpp",
+        "src/lib/display.cpp",
+        "src/lib/tmd.cpp",
+        "src/lib/floor_item.cpp",
+        "src/lib/format.cpp",
+        "src/lib/resource_file.cpp",
+        "src/lib/resources.cpp",
+        "src/game/entry.cpp"
       ]
     },
     {
@@ -90,14 +98,18 @@
         "src/open/opening_scene0_render.cpp",
         "src/open/opening_render_entities.cpp",
         "src/lib/matrix_lerp.cpp",
-        "src/open/item.cpp",
         "src/open/opening_entity_pool.cpp",
         "src/open/audio.cpp",
         "src/open/audio_spatial.cpp",
-        "src/open/sound_ref.cpp",
         "src/open/audio_play_voice.cpp",
-        "src/open/format.cpp",
-        "src/open/debug.cpp"
+        "src/lib/audio.cpp",
+        "src/lib/display.cpp",
+        "src/lib/tmd.cpp",
+        "src/lib/floor_item.cpp",
+        "src/lib/format.cpp",
+        "src/lib/resource_file.cpp",
+        "src/lib/resources.cpp",
+        "src/open/entry.cpp"
       ]
     }
   ]

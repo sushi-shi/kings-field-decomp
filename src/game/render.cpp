@@ -87,8 +87,6 @@ void display_present_system_screen(s32 color)
     kf::host_present_faces(&draws);
 }
 
-#include "../lib/lighting_color.inc"
-
 void effect5_texture_cache_prepare(KfFloorId floor)
 {
     if (floor == KF_FLOOR_5) {
@@ -170,10 +168,6 @@ void render_initialize(void)
     pool_reset();
 }
 
-#include "../lib/display_frame.inc"
-
-#include "../lib/tmd.inc"
-
 void tmd_project_vertices(s32 count, const MATRIX *model, const kf::Projection &projection)
 {
     if (count < 0 || count > KF_PROJECTED_VERTEX_CAPACITY)
@@ -192,9 +186,6 @@ void tmd_project_vertices(s32 count, const MATRIX *model, const kf::Projection &
         vertex++;
     }
 }
-
-#include "../lib/tmd_transform.inc"
-
 
 void render_reset_module_state(void)
 {

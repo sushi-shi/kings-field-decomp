@@ -38,8 +38,6 @@ KfMapAttributeGrid map_cell_attribute_grid;
 
 #define MAP_GRID_WORDS (sizeof map_cell_attribute_grid / sizeof(u32))
 
-#include "../lib/tim_upload_images.inc"
-
 void common_resources_load(void)
 {
     u8 *images;
@@ -88,8 +86,6 @@ u8 *map_resource_load_file(const char *filename, std::size_t *loaded_size)
     resource_file_load_allocated(&data, map_resource_path, loaded_size);
     return data;
 }
-
-#include "../lib/resource_copy_words.inc"
 
 void map_variant_assets_load(void)
 {
@@ -216,7 +212,6 @@ void map_resources_load(KfFloorId floor, KfMapVariant map_variant)
     player_sync_position_to_map();
     memory_set_allocation_mode(KF_MEMORY_USE_HEAP);
 }
-
 
 void resources_reset_module_state(void)
 {

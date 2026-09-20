@@ -173,7 +173,7 @@ this expression in `src/game/item.cpp:item_load_floor_placements`:
     >> KF_FLOOR_ITEM_INITIAL_FRAME_RANDOM_BITS
 ```
 
-The current shared loader is `src/lib/floor_item_load.inc`. Before the fix,
+The current shared loader is `src/lib/floor_item.cpp`. Before the fix,
 its equivalent expression used `kf::random_next()` but still multiplied by the
 entire packed byte. Thus the unmasked expression predates the shared port loader;
 this does not establish that it accurately reconstructs the retail function.
@@ -840,7 +840,7 @@ world rendering and closes the unpaced GAME paths listed here:
 These are source-level timing dependencies, not measured rates for every row or
 a complete gameplay-speed audit. Sources: `src/game/{game,render_frame,
 render_scene,map_scripts,player_warp,lighting,menu_runtime}.cpp`,
-`src/lib/floor_item_render.inc`, `src/open/opening_scenes.cpp`, and
+`src/lib/floor_item.cpp`, `src/open/opening_scenes.cpp`, and
 `src/platform/host.cpp`. Audio mixing and sequence scheduling remain based on
 elapsed sample time; game-loop sound-trigger decisions can still move in time
 when their owning update rate changes.

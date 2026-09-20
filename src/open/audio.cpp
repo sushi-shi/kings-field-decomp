@@ -31,8 +31,6 @@ void audio_initialize(void)
     audio_reset_voice_slots();
 }
 
-#include "../lib/audio_bank_load.inc"
-
 void audio_load_vab(const u8 *header, std::size_t header_size, const u8 *body, std::size_t body_size)
 {
     audio_stop_sequence(KF_AUDIO_STOP_IMMEDIATE);
@@ -91,15 +89,12 @@ void audio_stop_sequence(KfAudioStopMode stop_mode)
     }
 }
 
-#include "../lib/audio_shutdown.inc"
-
 void audio_close_vab(void)
 {
     AUDIO_SEQUENCE_STOP_AND_CLOSE();
     kf::sound_bank_release(audio_state.bank);
     audio_state.bank = nullptr;
 }
-
 
 void audio_reset_module_state(void)
 {

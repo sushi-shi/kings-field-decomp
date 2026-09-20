@@ -88,8 +88,6 @@ void opening_entity_render(KfOpeningEntity *entity)
     render_enqueue_tmd(kf_enum_encode<u16>(object_id), depth, &light);
 }
 
-#include "../lib/floor_item_render.inc"
-
 void opening_render_entities_and_items(void)
 {
     const KfCellWindow *window = open_graphics_runtime.active_cell_window;
@@ -140,7 +138,6 @@ void opening_render_entities_and_items(void)
         item++;
     }
 }
-
 
 void entity_render_reset_module_state(void)
 {

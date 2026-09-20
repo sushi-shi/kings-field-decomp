@@ -7,10 +7,6 @@
 #include <kf/lib/tmd.h>
 #include <kf/lib/graphics.h>
 
-#include "../lib/display_frame.inc"
-
-#include "../lib/tmd.inc"
-
 void tmd_project_vertices(s32 count, const MATRIX *model, const kf::Projection &projection)
 {
     KfScreenVertex *out;
@@ -30,6 +26,21 @@ void tmd_project_vertices(s32 count, const MATRIX *model, const kf::Projection &
     }
 }
 
-#include "../lib/tmd_perspective_right.inc"
+void tmd_project_vertices_perspective_right(s32 count, const MATRIX *model, const kf::Projection &projection)
+{
+    if (count < 0 || count > KF_PROJECTED_VERTEX_CAPACITY)
+        kf::host_fail("Model exceeds projected vertex capacity.");
+    KfScreenVertex *out;
+    SVECTOR *vertex;
 
-#include "../lib/tmd_transform.inc"
+    out = KF_GRAPHICS_RUNTIME.tmd_projected_vertices;
+    vertex = KF_GRAPHICS_RUNTIME.current_tmd_vertices;
+    for (count--; count != -1; count--) {
+        const auto point = kf::render_project_point(*model, projection, *vertex);
+        out->sxy.vector = {point.x, point.y};
+        out->p2 = point.fog >> KF_GRAPHICS_RUNTIME.tmd_projection_shift;
+        out->sz = point.depth;
+        out++;
+        vertex++;
+    }
+}

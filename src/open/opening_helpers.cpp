@@ -17,9 +17,6 @@ void opening_poll_input(void)
     }
 }
 
-#include "../lib/angle_shortest_delta.inc"
-
-
 void opening_helpers_reset_module_state(void)
 {
     kf::restore_initial_value<opening_input_action>();

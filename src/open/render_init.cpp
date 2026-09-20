@@ -29,9 +29,6 @@ MATRIX floor_item_light_matrix = {
 
 KfGraphicsRuntimeOpen open_graphics_runtime;
 
-
-#include "../lib/lighting_color.inc"
-
 void render_initialize(void)
 {
     SVECTOR angles;
@@ -88,7 +85,6 @@ void display_initialize(KfOverlayMode overlay_mode)
     open_graphics_runtime.tmd_projection_shift = KF_TMD_DEFAULT_PERSPECTIVE_SHIFT;
     render_initialize();
 }
-
 
 void render_init_reset_module_state(void)
 {

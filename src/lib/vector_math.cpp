@@ -103,3 +103,21 @@ s32 fixed_vector2_length(s32 x, s32 y)
     y >>= KF_LENGTH_SQUARE_DOWNSHIFT;
     return kf::length_square_root(x * x + y * y) << KF_LENGTH_SQUARE_DOWNSHIFT;
 }
+
+s16 angle_shortest_delta(s32 first, s32 second)
+{
+    s32 difference;
+    s16 signed_difference;
+
+    first &= KF_ANGLE_WRAP_MASK;
+    second &= KF_ANGLE_WRAP_MASK;
+    difference = second - first;
+    signed_difference = difference;
+    if (signed_difference >= KF_ANGLE_HALF_TURN) {
+        return difference - KF_ANGLE_FULL_TURN;
+    }
+    if (signed_difference < -KF_ANGLE_HALF_TURN + 1) {
+        return difference + KF_ANGLE_FULL_TURN;
+    }
+    return signed_difference;
+}
