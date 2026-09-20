@@ -463,7 +463,7 @@ void opening_scene3_run(void)
         opening_poll_input();
     } while (opening_input_action == KF_OPENING_INPUT_NONE);
 
-    setVector(&transition_position,
+    vector_set_xyz(transition_position,
         opening_camera_path_state.position.vx,
         KF_OPENING_SCENE_BASE_Y,
         opening_camera_path_state.position.vz);
@@ -636,7 +636,7 @@ void opening_ending_scroll_run(void)
     open_graphics_runtime.render_state.lighting.fog = {0, 0, 0};
     open_graphics_runtime.tmd_projection_shift = ENDING_TMD_PROJECTION_SHIFT;
 
-    setVector(&transition_position,
+    vector_set_xyz(transition_position,
         opening_camera_path_state.position.vx, KF_OPENING_SCENE_BASE_Y,
         opening_camera_path_state.position.vz);
     open_graphics_runtime.floor_item_state.material.color.r = 0;

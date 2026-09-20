@@ -113,13 +113,16 @@ uniform bitset. Some existing actor checks compare a high word to a detail
 constant; retain that behavior until its meaning is established. Do not conceal
 it behind a confidently named but inaccurate predicate.
 
-### 3. Replace generic vector macros by audited operation families
+### Stacked pass: typed XYZ operations
 
-Audit `setVector`, `copyVector`, `addVector` and `limitRange` at every caller.
-Track sequential writes, aliasing, narrow destinations, and random calls before
-choosing overloads or explicit statements. A normal function eagerly evaluates
-arguments; a macro may interleave evaluation with destination writes. Avoid a
-large template abstraction merely to reproduce that behavior.
+All `setVector`, `copyVector` and `addVector` callers now use small overloads for
+the actual `VECTOR`/`SVECTOR` combinations. They write X/Y/Z in order and leave
+padding alone; copy/add read each source component immediately before its write.
+The audited setter arguments contain no RNG calls or increment side effects and
+do not depend on preceding component writes. Keep future setter arguments free
+of such dependencies. No generic vector template framework is introduced.
+The sole `limitRange` caller uses `std::clamp<s32>` after the original charge
+increment/narrowing, preserving that operation's value range and ordering.
 
 ### 4. Shorten rendering around shared visibility decisions
 

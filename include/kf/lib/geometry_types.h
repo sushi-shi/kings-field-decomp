@@ -10,8 +10,60 @@ struct CVECTOR { u8 r, g, b, cd; };
 struct DVECTOR { s16 vx, vy; };
 static_assert(sizeof(SVECTOR) == 8 && sizeof(VECTOR) == 16 && sizeof(MATRIX) == 32);
 
-// Coordinate operations preserve the original fixed-point expressions.
-#define setVector(p,x,y,z) ((p)->vx=(x),(p)->vy=(y),(p)->vz=(z))
-#define limitRange(x,l,h) ((x)=((x)<(l)?(l):(x)>(h)?(h):(x)))
-#define copyVector(p,q) setVector(p,(q)->vx,(q)->vy,(q)->vz)
-#define addVector(p,q) ((p)->vx+=(q)->vx,(p)->vy+=(q)->vy,(p)->vz+=(q)->vz)
+// XYZ operations leave padding untouched. Copy/add retain sequential component
+// reads and writes, including when source and destination alias.
+constexpr void vector_set_xyz(VECTOR &vector, s32 x, s32 y, s32 z)
+{
+    vector.vx = x;
+    vector.vy = y;
+    vector.vz = z;
+}
+
+constexpr void vector_set_xyz(SVECTOR &vector, s32 x, s32 y, s32 z)
+{
+    vector.vx = x;
+    vector.vy = y;
+    vector.vz = z;
+}
+
+constexpr void vector_copy_xyz(VECTOR &destination, const SVECTOR &source)
+{
+    destination.vx = source.vx;
+    destination.vy = source.vy;
+    destination.vz = source.vz;
+}
+
+constexpr void vector_copy_xyz(SVECTOR &destination, const SVECTOR &source)
+{
+    destination.vx = source.vx;
+    destination.vy = source.vy;
+    destination.vz = source.vz;
+}
+
+constexpr void vector_copy_xyz(SVECTOR &destination, const VECTOR &source)
+{
+    destination.vx = source.vx;
+    destination.vy = source.vy;
+    destination.vz = source.vz;
+}
+
+constexpr void vector_add_xyz(VECTOR &destination, const VECTOR &source)
+{
+    destination.vx += source.vx;
+    destination.vy += source.vy;
+    destination.vz += source.vz;
+}
+
+constexpr void vector_add_xyz(VECTOR &destination, const SVECTOR &source)
+{
+    destination.vx += source.vx;
+    destination.vy += source.vy;
+    destination.vz += source.vz;
+}
+
+constexpr void vector_add_xyz(SVECTOR &destination, const SVECTOR &source)
+{
+    destination.vx += source.vx;
+    destination.vy += source.vy;
+    destination.vz += source.vz;
+}

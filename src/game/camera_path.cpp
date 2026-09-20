@@ -20,7 +20,7 @@ void camera_path_compute_segment(KfCameraPathState *path)
     dy = point->position.vy - path->position.vy;
     dz = point->position.vz - path->position.vz;
     distance = fixed_vector3_length(dx, dy, dz);
-    setVector(&path->position_delta,
+    vector_set_xyz(path->position_delta,
         (dx << KF_FIXED4_BITS) * point->speed / distance,
         (dy << KF_FIXED4_BITS) * point->speed / distance,
         (dz << KF_FIXED4_BITS) * point->speed / distance);
@@ -28,7 +28,7 @@ void camera_path_compute_segment(KfCameraPathState *path)
     dx = angle_shortest_delta(path->rotation.vx, point->rotation.vx);
     dy = angle_shortest_delta(path->rotation.vy, point->rotation.vy);
     az = angle_shortest_delta(path->rotation.vz, point->rotation.vz);
-    setVector(&path->rotation_delta,
+    vector_set_xyz(path->rotation_delta,
         (dx << KF_FIXED4_BITS) / path->frames_remaining,
         (dy << KF_FIXED4_BITS) / path->frames_remaining,
         (az << KF_FIXED4_BITS) / path->frames_remaining);

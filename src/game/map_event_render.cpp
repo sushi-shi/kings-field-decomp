@@ -13,7 +13,7 @@ void render_map_event(KfMapEvent *event, const MATRIX *lights)
     u16 asset;
     KfTmdObject *object;
 
-    setVector(&screen,
+    vector_set_xyz(screen,
         event->reference_position.vx - game_graphics_runtime.render_state.view_position.vx,
         event->reference_position.vy - game_graphics_runtime.render_state.view_position.vy,
         event->reference_position.vz - game_graphics_runtime.render_state.view_position.vz);

@@ -24,7 +24,7 @@ void render_actor(KfActor *actor)
     u8 descriptor;
     u16 asset;
 
-    setVector(&screen,
+    vector_set_xyz(screen,
         actor->position.vx - game_graphics_runtime.render_state.view_position.vx,
         actor->position.vy - game_graphics_runtime.render_state.view_position.vy,
         actor->position.vz - game_graphics_runtime.render_state.view_position.vz);
@@ -66,7 +66,7 @@ void render_map_object(KfMapObject *object)
     KfEnumStorage<KfObjectId, u16> id;
     s16 depth;
 
-    setVector(&screen,
+    vector_set_xyz(screen,
         object->position.vx - game_graphics_runtime.render_state.view_position.vx,
         object->position.vy - game_graphics_runtime.render_state.view_position.vy,
         object->position.vz - game_graphics_runtime.render_state.view_position.vz);

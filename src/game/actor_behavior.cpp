@@ -498,7 +498,7 @@ void actor_spawn_action_effect(KfActorEffectCode effect_code, KfActorEffectSlot 
         case KF_EFFECT_KIND_PHYSICAL_PROJECTILE:
         case KF_EFFECT_KIND_LIGHTNING_BOLT_ALTERNATE:
         case KF_EFFECT_KIND_HOMING_PROJECTILE_ALTERNATE:
-            setVector(&offset,
+            vector_set_xyz(offset,
                 definition->attachment_offsets[kf_enum_encode<s32>(effect_slot)].x,
                 definition->attachment_offsets[kf_enum_encode<s32>(effect_slot)].y,
                 definition->attachment_offsets[kf_enum_encode<s32>(effect_slot)].z);
@@ -514,7 +514,7 @@ void actor_spawn_action_effect(KfActorEffectCode effect_code, KfActorEffectSlot 
             effect_rotation.angles.z = actor->rotation.angles.z;
             matrix_set_rotation_yxz(&effect_rotation.angles, &matrix);
             position = kf::matrix_apply_rotation(matrix, offset);
-            addVector(&position, &actor->position);
+            vector_add_xyz(position, actor->position);
             facing = (KF_ANGLE_HALF_TURN - actor->rotation.angles.y) & KF_ANGLE_WRAP_MASK;
             distance = player_distance_to_point_in_cone(
                 &position, facing, ACTOR_EFFECT_AIM_RANGE, KF_ACTOR_AIM_TOLERANCE);

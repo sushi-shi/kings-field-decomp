@@ -164,14 +164,14 @@ void player_update_weapon_attack(void)
         if (player_state.equipped_weapon_id == KF_ITEM_COLICHEMARDE
                 ? (u16)(window - PLAYER_COLICHEMARDE_HIT_PHASE) < PLAYER_WEAPON_HIT_WINDOW
                 : (u16)(window - PLAYER_WEAPON_HIT_PHASE) < PLAYER_WEAPON_HIT_WINDOW) {
-            setVector(&offset,
+            vector_set_xyz(offset,
                 0,
                 PLAYER_WEAPON_HIT_Y_OFFSET,
                 player_state.equipped_weapon_record->attack_z_offset);
-            setVector(&rotation, 0, -player_state.camera_rotation.vy, 0);
+            vector_set_xyz(rotation, 0, -player_state.camera_rotation.vy, 0);
             kf::matrix_set_rotation_xyz(rotation, matrix);
             result = kf::matrix_apply_rotation(matrix, offset);
-            addVector(&result, &player_state.camera_position);
+            vector_add_xyz(result, player_state.camera_position);
             actor = actor_pool_find_overlap(result.vx, result.vy, result.vz,
                 PLAYER_WEAPON_HIT_RADIUS, PLAYER_WEAPON_HIT_HEIGHT);
             if (actor != -1) {
@@ -211,7 +211,7 @@ void game_initialize_session(void)
     player_state.camera_rotation.vz = 0;
     player_state.camera_rotation.vy = 0;
     player_state.camera_rotation.vx = 0;
-    setVector(&player_state.camera_position, PLAYER_INITIAL_POSITION_X, 0, PLAYER_INITIAL_POSITION_Z);
+    vector_set_xyz(player_state.camera_position, PLAYER_INITIAL_POSITION_X, 0, PLAYER_INITIAL_POSITION_Z);
     player_state.weapon_asset_buffer = (struct KfAssetHeader *)memory_allocate(KF_WEAPON_ASSET_BUFFER_BYTES);
     game_state_initialize();
     player_state.update_state = KF_PLAYER_UPDATE_NORMAL;
@@ -602,7 +602,7 @@ void player_update_transform_snapshot(VECTOR *position_out, SVECTOR *rotation_ou
 {
     *position_out = player_state.camera_position;
     *rotation_out = player_state.camera_rotation;
-    addVector(rotation_out, &player_state.view_rotation_offset);
+    vector_add_xyz(*rotation_out, player_state.view_rotation_offset);
 }
 
 

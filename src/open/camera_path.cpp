@@ -24,7 +24,7 @@ void opening_camera_path_compute_segment(void)
     dy = point->position.vy - opening_camera_path_state.position.vy;
     dz = point->position.vz - opening_camera_path_state.position.vz;
     distance = fixed_vector3_length(dx, dy, dz);
-    setVector(&opening_camera_path_state.position_delta,
+    vector_set_xyz(opening_camera_path_state.position_delta,
         (dx << KF_FIXED4_BITS) * point->speed / distance,
         (dy << KF_FIXED4_BITS) * point->speed / distance,
         (dz << KF_FIXED4_BITS) * point->speed / distance);
@@ -35,7 +35,7 @@ void opening_camera_path_compute_segment(void)
         opening_camera_path_state.rotation.vy, point->rotation.vy);
     az = angle_shortest_delta(
         opening_camera_path_state.rotation.vz, point->rotation.vz);
-    setVector(&opening_camera_path_state.rotation_delta,
+    vector_set_xyz(opening_camera_path_state.rotation_delta,
         (dx << KF_FIXED4_BITS) / opening_camera_path_state.frames_remaining,
         (dy << KF_FIXED4_BITS) / opening_camera_path_state.frames_remaining,
         (az << KF_FIXED4_BITS) / opening_camera_path_state.frames_remaining);

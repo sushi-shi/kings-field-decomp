@@ -71,7 +71,7 @@ void render_map_cell(s32 col, s32 row, KfCellVisibility visibility)
     if (visibility == KF_CELL_WINDOW_DISTANT) {
         object_index += KF_MAP_MESHES_PER_BANK;
     }
-    setVector(&position,
+    vector_set_xyz(position,
         col * KF_MAP_TILE_SIZE - game_graphics_runtime.render_state.view_position.vx,
         map_floor_height_grid.cells[row][col] * -KF_MAP_HEIGHT_STEP
             - game_graphics_runtime.render_state.view_position.vy,

@@ -62,7 +62,7 @@ void render_floor_item(KfFloorItem *item, const MATRIX *lights)
     KfFloorItemFacing facing;
     s16 depth_bias;
 
-    setVector(&screen,
+    vector_set_xyz(screen,
         item->position_x - KF_GRAPHICS_RUNTIME.render_state.view_position.vx,
         item->position_y - KF_GRAPHICS_RUNTIME.render_state.view_position.vy,
         item->position_z - KF_GRAPHICS_RUNTIME.render_state.view_position.vz);

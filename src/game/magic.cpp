@@ -46,13 +46,13 @@ void magic_cast(void)
         KfActor *target;
         s32 speed;
 
-        setVector(&offset, MAGIC_LAUNCH_OFFSET_X, MAGIC_LAUNCH_OFFSET_Y, MAGIC_LAUNCH_OFFSET_Z);
+        vector_set_xyz(offset, MAGIC_LAUNCH_OFFSET_X, MAGIC_LAUNCH_OFFSET_Y, MAGIC_LAUNCH_OFFSET_Z);
         angles.x = -player_state.camera_rotation.vx;
         angles.y = player_state.camera_rotation.vy;
         angles.z = -player_state.camera_rotation.vz;
         matrix_set_rotation_yxz(&angles, &matrix);
         world_pos = kf::matrix_apply_rotation(matrix, offset);
-        addVector(&world_pos, &player_state.camera_position);
+        vector_add_xyz(world_pos, player_state.camera_position);
         target = actor_pool_find_target_in_cone(
             &player_state.camera_position,
             player_state.camera_rotation.vy, KF_EFFECT_ACTOR_TARGET_MAX_DISTANCE, KF_ACTOR_AIM_TOLERANCE, &distance);
@@ -95,7 +95,7 @@ void magic_cast(void)
         if (player_state.selected_magic_id == KF_MAGIC_LIGHT_NEEDLE) {
             SVECTOR rotation;
 
-            copyVector(&rotation, &player_state.camera_rotation);
+            vector_copy_xyz(rotation, player_state.camera_rotation);
             effect_pool_construct(
                 KF_PLAYER_DAMAGE_MULTIPLIER_ONE, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS,
                 player_state.selected_magic_id, &world_pos, &direction, KfEffectRotationSoundArguments{&rotation, KF_EFFECT_SOUND_PLAY});

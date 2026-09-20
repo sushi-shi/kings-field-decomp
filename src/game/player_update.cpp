@@ -6,6 +6,7 @@
 #include <kf/lib/overlay.h>
 #include <kf/game/player.h>
 #include <kf/game/collision.h>
+#include <algorithm>
 #include <cstdlib>
 #include <cstdio>
 #include <cstring>
@@ -151,7 +152,8 @@ static void player_handle_magic_input(u32 input)
                 player_state.magic_charge +=
                     fixed6_ratio_step(player_state.magic, player_state.selected_magic_record->charge_rate)
                     * KF_PLAYER_CHARGE_GAIN_MULTIPLIER;
-                limitRange(player_state.magic_charge, 0, KF_PLAYER_CHARGE_FULL);
+                player_state.magic_charge =
+                    std::clamp<s32>(player_state.magic_charge, 0, KF_PLAYER_CHARGE_FULL);
             }
         }
     }
@@ -228,18 +230,18 @@ static void player_update_weapon_magic()
                 if (player_state.weapon_magic_shots_remaining == 1) {
                     player_state.vitals.current_mp -= record->mp_cost;
                 }
-                setVector(&spawn_offset,
+                vector_set_xyz(spawn_offset,
                     PLAYER_WEAPON_MAGIC_SPAWN_X,
                     PLAYER_WEAPON_MAGIC_SPAWN_Y,
                     PLAYER_WEAPON_MAGIC_SPAWN_Z);
-                setVector(&effect_rotation.vector,
+                vector_set_xyz(effect_rotation.vector,
                     -player_state.camera_rotation.vx,
                     player_state.camera_rotation.vy,
                     -player_state.camera_rotation.vz);
                 matrix_set_rotation_yxz(&effect_rotation.angles, &matrix);
                 position = kf::matrix_apply_rotation(matrix, spawn_offset);
-                addVector(&position, &player_state.camera_position);
-                copyVector(&effect_rotation.vector, &player_state.camera_rotation);
+                vector_add_xyz(position, player_state.camera_position);
+                vector_copy_xyz(effect_rotation.vector, player_state.camera_rotation);
                 origin = &player_state.camera_position;
                 if ((effect == KF_MAGIC_FIRE_BALL || effect == KF_MAGIC_LIGHT_NEEDLE)
                     && player_state.weapon_magic_shots_remaining != 1) {
@@ -271,7 +273,7 @@ static void player_update_weapon_magic()
                     &position, launch_direction, KfEffectHomingArguments{&player_state.camera_rotation, attachment, KF_EFFECT_SOUND_PLAY});
                 if (effect == KF_EFFECT_KIND_HOMING_PROJECTILE) {
                     position.vy += PLAYER_TRIPLE_FANG_Y_OFFSET;
-                    setVector(&effect_rotation.vector,
+                    vector_set_xyz(effect_rotation.vector,
                         player_state.camera_rotation.vx + PLAYER_TRIPLE_FANG_PITCH_OFFSET,
                         player_state.camera_rotation.vy,
                         player_state.camera_rotation.vz);
