@@ -69,11 +69,9 @@ void opening_entity_render(KfOpeningEntity *entity)
         render_enqueue_tmd(kf_enum_encode<u16>(object_id), 0, &light);
         return;
     case KF_OPENING_ENDING_ORANGE_DISK:
-        depth = ENDING_TRANSLATING_MODEL_DEPTH_BIAS;
-        goto render_alternate;
     case KF_OPENING_ENDING_STARFIELD:
-        depth = ENDING_ROTATING_MODEL_DEPTH_BIAS;
-    render_alternate:
+        depth = object_id == KF_OPENING_ENDING_ORANGE_DISK
+            ? ENDING_TRANSLATING_MODEL_DEPTH_BIAS : ENDING_ROTATING_MODEL_DEPTH_BIAS;
         tmd_select_object_vertices(kf_enum_encode<u16>(object_id));
         tmd_project_vertices(tmd_get_object(kf_enum_encode<u16>(object_id))->vertex_count, &model, open_graphics_runtime.render_state.projection);
         render_enqueue_unlit_triangles(kf_enum_encode<u16>(object_id), depth);

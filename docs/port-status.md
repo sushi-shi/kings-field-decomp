@@ -27,6 +27,19 @@ is based on `port`, separate from the concurrent cast-cleanup work. Fresh Linux
 package/launcher checks and a WASM build passed. An eight-second no-input native
 opening run reached its scheduled timeout without a reported startup failure.
 
+Control-flow cleanup: 68 of 72 `goto` statements and all ten `switch (0)` blocks
+have been replaced by focused helpers, guard clauses and ordinary loops. Static
+retail CFG checks guided the boundaries; same-tick transitions, random-call order,
+common update tails and resource ownership remain part of the original logic.
+An empty animation clip now fails explicitly instead of using an uninitialized
+keyframe pointer. Fresh Linux/WASM builds linked, with no new compiler warnings.
+A clean-context review covered all 20 changed source files, caught an accidentally
+removed free-actor-slot guard, and verified its restoration; no findings remain
+unresolved. No gameplay run was performed for this cleanup. The four remaining
+jumps are all in `map_object_probe_forward`: defer that function's refactor until
+the overlapping switch/signedness PRs #14/#15 are resolved. This is port-only
+maintenance, not a decomp backport or closure of the runtime gaps below.
+
 ### 1. Update cadence — opening corrected, GAME pacing bypasses closed; flame report resolved
 
 - Evidence: the user reports both running too fast. The normal game loop has a

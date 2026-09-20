@@ -138,7 +138,8 @@ void player_use_item(KfObjectId item_id)
                 continue;
             }
             if (record->kind == KF_EFFECT_KIND_FLOOR_DEFORMATION) {
-                goto done;
+                notify_enqueue(KF_NOTIFICATION_NOTHING_HAPPENS);
+                return;
             }
         }
         if (player_state.progress_state.current_floor == KF_FLOOR_2) {
@@ -201,7 +202,6 @@ void player_use_item(KfObjectId item_id)
         player_increment_magic_training();
         break;
     }
-done:
     if (!used) {
         notify_enqueue(KF_NOTIFICATION_NOTHING_HAPPENS);
     }

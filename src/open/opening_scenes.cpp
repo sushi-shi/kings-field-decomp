@@ -287,6 +287,13 @@ void opening_scene1_run(void)
     } while (shade >= 0);
 }
 
+static void opening_remove_transition_cylinders(void)
+{
+    auto *entity = &opening_entity_state.entities[CYLINDER_TRANSITION_FIRST_ENTITY_SLOT];
+    for (s16 i = 0; i < KF_CYLINDER_TRANSITION_COUNT; ++i, ++entity)
+        entity->object_id = KF_OPENING_ENTITY_FREE;
+}
+
 void opening_cylinder_transition(KfOpeningCylinderTransitionMode transition_mode, const VECTOR *position)
 {
     struct KfOpeningTransformSnapshot {
@@ -305,7 +312,8 @@ void opening_cylinder_transition(KfOpeningCylinderTransitionMode transition_mode
         scale_step = KF_CYLINDER_TRANSITION_SCALE_STEP;
         break;
     case KF_OPENING_CYLINDER_TRANSITION_REMOVE:
-        goto deactivate;
+        opening_remove_transition_cylinders();
+        return;
     case KF_OPENING_CYLINDER_TRANSITION_SHRINK:
     case KF_OPENING_CYLINDER_TRANSITION_CREATE:
         initial_scale_y = KF_CYLINDER_TRANSITION_TALL_SCALE;
@@ -362,14 +370,7 @@ void opening_cylinder_transition(KfOpeningCylinderTransitionMode transition_mode
         return;
     }
 
-deactivate:
-    entity = &opening_entity_state.entities[CYLINDER_TRANSITION_FIRST_ENTITY_SLOT];
-    entity_index = KF_CYLINDER_TRANSITION_COUNT - 1;
-    do {
-        entity->object_id = KF_OPENING_ENTITY_FREE;
-        entity++;
-        entity_index--;
-    } while (entity_index != -1);
+    opening_remove_transition_cylinders();
 }
 
 void opening_scene3_run(void)

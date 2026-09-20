@@ -87,18 +87,84 @@ static s32 player_movement_velocity_limit;
 
 static s32 player_turn_step_limit;
 
-void player_update(void)
+static void player_handle_magic_input(u32 input)
 {
-    u32 input;
-    s32 item;
-    s16 forward;
-    s16 strafe;
-    s32 strafe_sq;
-    s32 forward_sq;
-    s16 magnitude;
-    s32 fade;
-    u16 phase;
     s32 cost;
+    KfEffectKind magic_id;
+
+    if (player_state.equipped_body_armor_id != KF_ITEM_SKULL_ARMOR) {
+        if (BUTTON_PRESSED(input, player_previous_input, kf::Button::Magic)) {
+            if (player_state.weapon_attack_fully_charged == KF_WEAPON_ATTACK_FULL_CHARGE) {
+                player_state.weapon_attack_fully_charged = KF_WEAPON_ATTACK_NORMAL_CHARGE;
+                switch (player_state.equipped_weapon_id) {
+                case KF_ITEM_FLAME_SWORD:
+                    if (player_state.weapon_attack_phase >= PLAYER_WEAPON_MAGIC_PHASE_FIRST
+                        && player_state.weapon_attack_phase <= PLAYER_WEAPON_MAGIC_PHASE_LAST) {
+                        player_state.weapon_magic_delay = PLAYER_WEAPON_MAGIC_READY;
+                        player_state.weapon_magic_shots_remaining =
+                            (PLAYER_WEAPON_MAGIC_PHASE_LAST - player_state.weapon_attack_phase)
+                            / KF_WEAPON_ATTACK_PHASE_STEP + 1;
+                        return;
+                    }
+                    break;
+                case KF_ITEM_TRIPLE_FANG:
+                case KF_ITEM_MOONLIGHT_SWORD:
+                    if (player_state.weapon_attack_phase >= PLAYER_WEAPON_MAGIC_PHASE_FIRST
+                        && player_state.weapon_attack_phase <= PLAYER_WEAPON_MAGIC_PHASE_LAST) {
+                        player_state.weapon_magic_shots_remaining = 1;
+                        player_state.weapon_magic_delay = PLAYER_WEAPON_MAGIC_READY;
+                        return;
+                    }
+                    break;
+                case KF_ITEM_COLICHEMARDE:
+                    if (player_state.weapon_attack_phase >= PLAYER_COLICHEMARDE_MAGIC_PHASE_FIRST
+                        && player_state.weapon_attack_phase <= PLAYER_COLICHEMARDE_MAGIC_PHASE_LAST) {
+                        player_state.weapon_magic_delay = PLAYER_WEAPON_MAGIC_READY;
+                        player_state.weapon_magic_shots_remaining =
+                            ((PLAYER_WEAPON_MAGIC_PHASE_LAST - player_state.weapon_attack_phase)
+                             / KF_WEAPON_ATTACK_PHASE_STEP + 1)
+                            * PLAYER_COLICHEMARDE_SHOTS_PER_PHASE;
+                        return;
+                    }
+                    break;
+                }
+            }
+            if (player_state.selected_magic_id != KF_MAGIC_NONE
+                && player_state.magic_charge == KF_PLAYER_CHARGE_FULL) {
+                player_state.weapon_magic_delay = 0;
+                player_state.weapon_magic_shots_remaining = 0;
+                if (player_state.equipped_accessory_id == KF_ITEM_WIND_BLADE_BRACELET && player_state.selected_magic_id == KF_MAGIC_WIND_CUTTER) {
+                    cost = player_state.selected_magic_record->mp_cost >> 1;
+                } else {
+                    cost = player_state.selected_magic_record->mp_cost;
+                }
+                if (player_state.vitals.current_mp >= cost) {
+                    player_state.vitals.current_mp -= cost;
+                    magic_cast();
+                    player_state.magic_charge = 0;
+                }
+            }
+            player_state.weapon_attack_fully_charged = KF_WEAPON_ATTACK_NORMAL_CHARGE;
+        } else {
+            magic_id = player_state.selected_magic_id;
+            if (magic_id != KF_MAGIC_NONE) {
+                player_state.magic_charge +=
+                    fixed6_ratio_step(player_state.magic, player_state.selected_magic_record->charge_rate)
+                    * KF_PLAYER_CHARGE_GAIN_MULTIPLIER;
+                limitRange(player_state.magic_charge, 0, KF_PLAYER_CHARGE_FULL);
+            }
+        }
+    }
+}
+
+static void player_cancel_weapon_magic()
+{
+    player_state.weapon_magic_shots_remaining = 0;
+    player_state.weapon_magic_delay = PLAYER_WEAPON_MAGIC_READY + 1;
+}
+
+static void player_update_weapon_magic()
+{
     KfEffectKind effect;
     KfEffectHomingMode attachment;
     KfMagicRecord *record;
@@ -111,8 +177,133 @@ void player_update(void)
     VECTOR position;
     MATRIX matrix;
     s32 distance;
+
+    if (player_state.weapon_magic_delay == PLAYER_WEAPON_MAGIC_READY) {
+        if (player_state.weapon_magic_shots_remaining != 0) {
+            switch (player_state.equipped_weapon_id) {
+            case KF_ITEM_TRIPLE_FANG:
+                if (player_state.physical_power < PLAYER_TRIPLE_FANG_MAGIC_MIN_POWER
+                    || player_state.magic < PLAYER_TRIPLE_FANG_MAGIC_MIN_POWER) {
+                    player_cancel_weapon_magic();
+                    return;
+                }
+                effect = KF_EFFECT_KIND_HOMING_PROJECTILE;
+                record = &magic_records[kf_enum_encode<u8>(KF_EFFECT_KIND_HOMING_PROJECTILE)];
+                player_state.weapon_magic_delay = PLAYER_TRIPLE_FANG_MAGIC_DELAY;
+                break;
+            case KF_ITEM_FLAME_SWORD:
+                if (magic_records[kf_enum_encode<u8>(KF_MAGIC_FIRE_BALL)].learned == KF_MAGIC_UNLEARNED) {
+                    player_cancel_weapon_magic();
+                    return;
+                }
+                effect = KF_MAGIC_FIRE_BALL;
+                record = &magic_records[kf_enum_encode<u8>(KF_MAGIC_FIRE_BALL)];
+                player_state.weapon_magic_delay = PLAYER_FLAME_SWORD_MAGIC_DELAY;
+                break;
+            case KF_ITEM_MOONLIGHT_SWORD:
+                if (player_state.physical_power < PLAYER_MOONLIGHT_SWORD_MAGIC_MIN_POWER
+                    || player_state.magic < PLAYER_MOONLIGHT_SWORD_MAGIC_MIN_POWER) {
+                    player_cancel_weapon_magic();
+                    return;
+                }
+                effect = KF_EFFECT_KIND_MOONLIGHT_PROJECTILE;
+                record = &magic_records[kf_enum_encode<u8>(KF_EFFECT_KIND_RADIAL_BLAST)];
+                player_state.weapon_magic_delay = PLAYER_MOONLIGHT_SWORD_MAGIC_DELAY;
+                break;
+            case KF_ITEM_COLICHEMARDE:
+                if (player_state.physical_power < PLAYER_COLICHEMARDE_MAGIC_MIN_POWER
+                    || player_state.magic < PLAYER_COLICHEMARDE_MAGIC_MIN_POWER) {
+                    player_cancel_weapon_magic();
+                    return;
+                }
+                effect = KF_MAGIC_LIGHT_NEEDLE;
+                record = &magic_records[kf_enum_encode<u8>(KF_MAGIC_LIGHT_NEEDLE)];
+                player_state.weapon_magic_delay = PLAYER_WEAPON_MAGIC_READY;
+                break;
+            default:
+                player_cancel_weapon_magic();
+                return;
+            }
+            if (player_state.vitals.current_mp >= record->mp_cost) {
+                if (player_state.weapon_magic_shots_remaining == 1) {
+                    player_state.vitals.current_mp -= record->mp_cost;
+                }
+                setVector(&spawn_offset,
+                    PLAYER_WEAPON_MAGIC_SPAWN_X,
+                    PLAYER_WEAPON_MAGIC_SPAWN_Y,
+                    PLAYER_WEAPON_MAGIC_SPAWN_Z);
+                setVector(&effect_rotation.vector,
+                    -player_state.camera_rotation.vx,
+                    player_state.camera_rotation.vy,
+                    -player_state.camera_rotation.vz);
+                matrix_set_rotation_yxz(&effect_rotation.angles, &matrix);
+                position = kf::matrix_apply_rotation(matrix, spawn_offset);
+                addVector(&position, &player_state.camera_position);
+                copyVector(&effect_rotation.vector, &player_state.camera_rotation);
+                origin = &player_state.camera_position;
+                if ((effect == KF_MAGIC_FIRE_BALL || effect == KF_MAGIC_LIGHT_NEEDLE)
+                    && player_state.weapon_magic_shots_remaining != 1) {
+                    actor_state.player_target = actor_pool_find_target_in_cone(
+                        origin, player_state.camera_rotation.vy, KF_EFFECT_ACTOR_TARGET_MAX_DISTANCE,
+                        PLAYER_WEAPON_MAGIC_BURST_CONE, &distance);
+                    effect_rotation.angles.x -= PLAYER_WEAPON_MAGIC_JITTER_BIAS
+                        - (kf::random_next() >> PLAYER_WEAPON_MAGIC_RANDOM_SHIFT);
+                    effect_rotation.angles.y -= PLAYER_WEAPON_MAGIC_JITTER_BIAS
+                        - (kf::random_next() >> PLAYER_WEAPON_MAGIC_RANDOM_SHIFT);
+                    attachment = kf_enum_decode<KfEffectHomingMode>(player_state.weapon_magic_shots_remaining & 1);
+                } else {
+                    target = actor_pool_find_target_in_cone(
+                        &player_state.camera_position,
+                        player_state.camera_rotation.vy, KF_EFFECT_ACTOR_TARGET_MAX_DISTANCE,
+                        KF_EFFECT_ACTOR_TARGET_WIDE_CONE, &distance);
+                    actor_state.player_target = target;
+                    if (target == NULL) {
+                        attachment = KF_EFFECT_HOMING_WANDER;
+                    } else {
+                        attachment = kf_enum_decode<KfEffectHomingMode>(target - actor_state.actors);
+                    }
+                }
+                launch_direction = &direction;
+                pitch_yaw_to_forward_vector(&effect_rotation.angles, launch_direction);
+                vector3s_scale_shift12(PLAYER_WEAPON_MAGIC_SPEED, launch_direction);
+                effect_pool_construct(
+                    KF_PLAYER_DAMAGE_MULTIPLIER_ONE, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS, effect,
+                    &position, launch_direction, KfEffectHomingArguments{&player_state.camera_rotation, attachment, KF_EFFECT_SOUND_PLAY});
+                if (effect == KF_EFFECT_KIND_HOMING_PROJECTILE) {
+                    position.vy += PLAYER_TRIPLE_FANG_Y_OFFSET;
+                    setVector(&effect_rotation.vector,
+                        player_state.camera_rotation.vx + PLAYER_TRIPLE_FANG_PITCH_OFFSET,
+                        player_state.camera_rotation.vy,
+                        player_state.camera_rotation.vz);
+                    effect_pool_construct(
+                        KF_PLAYER_DAMAGE_MULTIPLIER_ONE, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS,
+                        KF_EFFECT_KIND_HOMING_PROJECTILE, &position, launch_direction, KfEffectHomingArguments{&effect_rotation.vector, attachment, KF_EFFECT_SOUND_SILENT});
+                    effect_rotation.angles.x -= 2 * PLAYER_TRIPLE_FANG_PITCH_OFFSET;
+                    position.vy -= 2 * PLAYER_TRIPLE_FANG_Y_OFFSET;
+                    effect_pool_construct(
+                        KF_PLAYER_DAMAGE_MULTIPLIER_ONE, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS,
+                        KF_EFFECT_KIND_HOMING_PROJECTILE, &position, launch_direction, KfEffectHomingArguments{&effect_rotation.vector, attachment, KF_EFFECT_SOUND_SILENT});
+                }
+            }
+            player_state.weapon_magic_shots_remaining--;
+        }
+    } else if (player_state.weapon_magic_delay != 0) {
+        player_state.weapon_magic_delay--;
+    }
+}
+
+void player_update(void)
+{
+    u32 input;
+    s32 item;
+    s16 forward;
+    s16 strafe;
+    s32 strafe_sq;
+    s32 forward_sq;
+    s16 magnitude;
+    s32 fade;
+    u16 phase;
     KfMapAttribute attribute;
-    KfEffectKind magic_id;
 
     input = kf::host_read_buttons();
     const auto look = kf::host_take_look();
@@ -315,181 +506,8 @@ void player_update(void)
         if (BUTTON_PRESSED(input, player_previous_input, kf::Button::Attack)) {
             player_begin_weapon_attack();
         }
-        if (player_state.equipped_body_armor_id != KF_ITEM_SKULL_ARMOR) {
-            if (BUTTON_PRESSED(input, player_previous_input, kf::Button::Magic)) {
-                if (player_state.weapon_attack_fully_charged == KF_WEAPON_ATTACK_FULL_CHARGE) {
-                    player_state.weapon_attack_fully_charged = KF_WEAPON_ATTACK_NORMAL_CHARGE;
-                    switch (player_state.equipped_weapon_id) {
-                    case KF_ITEM_FLAME_SWORD:
-                        if (player_state.weapon_attack_phase >= PLAYER_WEAPON_MAGIC_PHASE_FIRST
-                            && player_state.weapon_attack_phase <= PLAYER_WEAPON_MAGIC_PHASE_LAST) {
-                            player_state.weapon_magic_delay = PLAYER_WEAPON_MAGIC_READY;
-                            player_state.weapon_magic_shots_remaining =
-                                (PLAYER_WEAPON_MAGIC_PHASE_LAST - player_state.weapon_attack_phase)
-                                / KF_WEAPON_ATTACK_PHASE_STEP + 1;
-                            goto magic_done;
-                        }
-                        break;
-                    case KF_ITEM_TRIPLE_FANG:
-                    case KF_ITEM_MOONLIGHT_SWORD:
-                        if (player_state.weapon_attack_phase >= PLAYER_WEAPON_MAGIC_PHASE_FIRST
-                            && player_state.weapon_attack_phase <= PLAYER_WEAPON_MAGIC_PHASE_LAST) {
-                            player_state.weapon_magic_shots_remaining = 1;
-                            player_state.weapon_magic_delay = PLAYER_WEAPON_MAGIC_READY;
-                            goto magic_done;
-                        }
-                        break;
-                    case KF_ITEM_COLICHEMARDE:
-                        if (player_state.weapon_attack_phase >= PLAYER_COLICHEMARDE_MAGIC_PHASE_FIRST
-                            && player_state.weapon_attack_phase <= PLAYER_COLICHEMARDE_MAGIC_PHASE_LAST) {
-                            player_state.weapon_magic_delay = PLAYER_WEAPON_MAGIC_READY;
-                            player_state.weapon_magic_shots_remaining =
-                                ((PLAYER_WEAPON_MAGIC_PHASE_LAST - player_state.weapon_attack_phase)
-                                 / KF_WEAPON_ATTACK_PHASE_STEP + 1)
-                                * PLAYER_COLICHEMARDE_SHOTS_PER_PHASE;
-                            goto magic_done;
-                        }
-                        break;
-                    }
-                }
-                if (player_state.selected_magic_id != KF_MAGIC_NONE
-                    && player_state.magic_charge == KF_PLAYER_CHARGE_FULL) {
-                    player_state.weapon_magic_delay = 0;
-                    player_state.weapon_magic_shots_remaining = 0;
-                    if (player_state.equipped_accessory_id == KF_ITEM_WIND_BLADE_BRACELET && player_state.selected_magic_id == KF_MAGIC_WIND_CUTTER) {
-                        cost = player_state.selected_magic_record->mp_cost >> 1;
-                    } else {
-                        cost = player_state.selected_magic_record->mp_cost;
-                    }
-                    if (player_state.vitals.current_mp >= cost) {
-                        player_state.vitals.current_mp -= cost;
-                        magic_cast();
-                        player_state.magic_charge = 0;
-                    }
-                }
-                player_state.weapon_attack_fully_charged = KF_WEAPON_ATTACK_NORMAL_CHARGE;
-            } else {
-                magic_id = player_state.selected_magic_id;
-                if (magic_id != KF_MAGIC_NONE) {
-                    player_state.magic_charge +=
-                        fixed6_ratio_step(player_state.magic, player_state.selected_magic_record->charge_rate)
-                        * KF_PLAYER_CHARGE_GAIN_MULTIPLIER;
-                    limitRange(player_state.magic_charge, 0, KF_PLAYER_CHARGE_FULL);
-                }
-            }
-        }
-    magic_done:
-        if (player_state.weapon_magic_delay == PLAYER_WEAPON_MAGIC_READY) {
-            if (player_state.weapon_magic_shots_remaining != 0) {
-                switch (player_state.equipped_weapon_id) {
-                case KF_ITEM_TRIPLE_FANG:
-                    if (player_state.physical_power < PLAYER_TRIPLE_FANG_MAGIC_MIN_POWER
-                        || player_state.magic < PLAYER_TRIPLE_FANG_MAGIC_MIN_POWER) {
-                        goto cancel;
-                    }
-                    effect = KF_EFFECT_KIND_HOMING_PROJECTILE;
-                    record = &magic_records[kf_enum_encode<u8>(KF_EFFECT_KIND_HOMING_PROJECTILE)];
-                    player_state.weapon_magic_delay = PLAYER_TRIPLE_FANG_MAGIC_DELAY;
-                    break;
-                case KF_ITEM_FLAME_SWORD:
-                    if (magic_records[kf_enum_encode<u8>(KF_MAGIC_FIRE_BALL)].learned == KF_MAGIC_UNLEARNED) {
-                        goto cancel;
-                    }
-                    effect = KF_MAGIC_FIRE_BALL;
-                    record = &magic_records[kf_enum_encode<u8>(KF_MAGIC_FIRE_BALL)];
-                    player_state.weapon_magic_delay = PLAYER_FLAME_SWORD_MAGIC_DELAY;
-                    break;
-                case KF_ITEM_MOONLIGHT_SWORD:
-                    if (player_state.physical_power < PLAYER_MOONLIGHT_SWORD_MAGIC_MIN_POWER
-                        || player_state.magic < PLAYER_MOONLIGHT_SWORD_MAGIC_MIN_POWER) {
-                        goto cancel;
-                    }
-                    effect = KF_EFFECT_KIND_MOONLIGHT_PROJECTILE;
-                    record = &magic_records[kf_enum_encode<u8>(KF_EFFECT_KIND_RADIAL_BLAST)];
-                    player_state.weapon_magic_delay = PLAYER_MOONLIGHT_SWORD_MAGIC_DELAY;
-                    break;
-                case KF_ITEM_COLICHEMARDE:
-                    if (player_state.physical_power < PLAYER_COLICHEMARDE_MAGIC_MIN_POWER
-                        || player_state.magic < PLAYER_COLICHEMARDE_MAGIC_MIN_POWER) {
-                        goto cancel;
-                    }
-                    effect = KF_MAGIC_LIGHT_NEEDLE;
-                    record = &magic_records[kf_enum_encode<u8>(KF_MAGIC_LIGHT_NEEDLE)];
-                    player_state.weapon_magic_delay = PLAYER_WEAPON_MAGIC_READY;
-                    break;
-                default:
-                cancel:
-                    player_state.weapon_magic_shots_remaining = 0;
-                    player_state.weapon_magic_delay = PLAYER_WEAPON_MAGIC_READY + 1;
-                    goto store_input;
-                }
-                if (player_state.vitals.current_mp >= record->mp_cost) {
-                    if (player_state.weapon_magic_shots_remaining == 1) {
-                        player_state.vitals.current_mp -= record->mp_cost;
-                    }
-                    setVector(&spawn_offset,
-                        PLAYER_WEAPON_MAGIC_SPAWN_X,
-                        PLAYER_WEAPON_MAGIC_SPAWN_Y,
-                        PLAYER_WEAPON_MAGIC_SPAWN_Z);
-                    setVector(&effect_rotation.vector,
-                        -player_state.camera_rotation.vx,
-                        player_state.camera_rotation.vy,
-                        -player_state.camera_rotation.vz);
-                    matrix_set_rotation_yxz(&effect_rotation.angles, &matrix);
-                    position = kf::matrix_apply_rotation(matrix, spawn_offset);
-                    addVector(&position, &player_state.camera_position);
-                    copyVector(&effect_rotation.vector, &player_state.camera_rotation);
-                    origin = &player_state.camera_position;
-                    if ((effect == KF_MAGIC_FIRE_BALL || effect == KF_MAGIC_LIGHT_NEEDLE)
-                        && player_state.weapon_magic_shots_remaining != 1) {
-                        actor_state.player_target = actor_pool_find_target_in_cone(
-                            origin, player_state.camera_rotation.vy, KF_EFFECT_ACTOR_TARGET_MAX_DISTANCE,
-                            PLAYER_WEAPON_MAGIC_BURST_CONE, &distance);
-                        effect_rotation.angles.x -= PLAYER_WEAPON_MAGIC_JITTER_BIAS
-                            - (kf::random_next() >> PLAYER_WEAPON_MAGIC_RANDOM_SHIFT);
-                        effect_rotation.angles.y -= PLAYER_WEAPON_MAGIC_JITTER_BIAS
-                            - (kf::random_next() >> PLAYER_WEAPON_MAGIC_RANDOM_SHIFT);
-                        attachment = kf_enum_decode<KfEffectHomingMode>(player_state.weapon_magic_shots_remaining & 1);
-                    } else {
-                        target = actor_pool_find_target_in_cone(
-                            &player_state.camera_position,
-                            player_state.camera_rotation.vy, KF_EFFECT_ACTOR_TARGET_MAX_DISTANCE,
-                            KF_EFFECT_ACTOR_TARGET_WIDE_CONE, &distance);
-                        actor_state.player_target = target;
-                        if (target == NULL) {
-                            attachment = KF_EFFECT_HOMING_WANDER;
-                        } else {
-                            attachment = kf_enum_decode<KfEffectHomingMode>(target - actor_state.actors);
-                        }
-                    }
-                    launch_direction = &direction;
-                    pitch_yaw_to_forward_vector(&effect_rotation.angles, launch_direction);
-                    vector3s_scale_shift12(PLAYER_WEAPON_MAGIC_SPEED, launch_direction);
-                    effect_pool_construct(
-                        KF_PLAYER_DAMAGE_MULTIPLIER_ONE, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS, effect,
-                        &position, launch_direction, KfEffectHomingArguments{&player_state.camera_rotation, attachment, KF_EFFECT_SOUND_PLAY});
-                    if (effect == KF_EFFECT_KIND_HOMING_PROJECTILE) {
-                        position.vy += PLAYER_TRIPLE_FANG_Y_OFFSET;
-                        setVector(&effect_rotation.vector,
-                            player_state.camera_rotation.vx + PLAYER_TRIPLE_FANG_PITCH_OFFSET,
-                            player_state.camera_rotation.vy,
-                            player_state.camera_rotation.vz);
-                        effect_pool_construct(
-                            KF_PLAYER_DAMAGE_MULTIPLIER_ONE, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS,
-                            KF_EFFECT_KIND_HOMING_PROJECTILE, &position, launch_direction, KfEffectHomingArguments{&effect_rotation.vector, attachment, KF_EFFECT_SOUND_SILENT});
-                        effect_rotation.angles.x -= 2 * PLAYER_TRIPLE_FANG_PITCH_OFFSET;
-                        position.vy -= 2 * PLAYER_TRIPLE_FANG_Y_OFFSET;
-                        effect_pool_construct(
-                            KF_PLAYER_DAMAGE_MULTIPLIER_ONE, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS,
-                            KF_EFFECT_KIND_HOMING_PROJECTILE, &position, launch_direction, KfEffectHomingArguments{&effect_rotation.vector, attachment, KF_EFFECT_SOUND_SILENT});
-                    }
-                }
-                player_state.weapon_magic_shots_remaining--;
-            }
-        } else if (player_state.weapon_magic_delay != 0) {
-            player_state.weapon_magic_delay--;
-        }
-    store_input:
+        player_handle_magic_input(input);
+        player_update_weapon_magic();
         player_previous_input = input;
         player_update_vertical_motion();
     }
@@ -626,19 +644,17 @@ void player_update(void)
     if (player_state.poison_timer != KF_PLAYER_STATUS_TIMER_INACTIVE) {
         if (!((player_state.status_effect_flags & KF_PLAYER_STATUS_POISON) != KF_PLAYER_STATUS_NONE)) {
             player_state.poison_timer = KF_PLAYER_STATUS_TIMER_INACTIVE;
-            goto clear_poison;
         } else {
             player_state.poison_timer--;
-            if (player_state.poison_timer == KF_PLAYER_STATUS_TIMER_INACTIVE) {
-            clear_poison:
-                player_state.status_effect_flags &= ~KF_PLAYER_STATUS_POISON;
-            } else {
-                phase = player_state.poison_timer % POISON_DAMAGE_INTERVAL_UPDATES;
-                if (phase < POISON_FLASH_UPDATES) {
-                    lighting_set_active_color_matrix(KF_GAME_COLOR_DAMAGE);
-                    if (phase == 0) {
-                        player_adjust_hp(-1);
-                    }
+        }
+        if (player_state.poison_timer == KF_PLAYER_STATUS_TIMER_INACTIVE) {
+            player_state.status_effect_flags &= ~KF_PLAYER_STATUS_POISON;
+        } else {
+            phase = player_state.poison_timer % POISON_DAMAGE_INTERVAL_UPDATES;
+            if (phase < POISON_FLASH_UPDATES) {
+                lighting_set_active_color_matrix(KF_GAME_COLOR_DAMAGE);
+                if (phase == 0) {
+                    player_adjust_hp(-1);
                 }
             }
         }
@@ -646,9 +662,8 @@ void player_update(void)
     if (player_state.curse_timer != KF_PLAYER_STATUS_TIMER_INACTIVE) {
         if (!((player_state.status_effect_flags & KF_PLAYER_STATUS_CURSE) != KF_PLAYER_STATUS_NONE)) {
             player_state.curse_timer = 0;
-            goto clear_curse;
-        } else if (player_state.curse_timer == 0) {
-        clear_curse:
+        }
+        if (player_state.curse_timer == 0) {
             player_state.status_effect_flags &= ~KF_PLAYER_STATUS_CURSE;
             player_recalculate_combat_stats();
         } else if (player_state.curse_timer == KF_CURSE_DURATION_UPDATES) {

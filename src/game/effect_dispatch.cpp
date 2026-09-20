@@ -100,16 +100,178 @@ SVECTOR effect_swing_probe_offsets[KF_EFFECT_SWING_PROBE_COUNT] = {
     {0, LONG_SWING_PROBE_LENGTH, 0, 0},
 };
 
+static void effect_begin_lightning_impact(KfEffectRecord *effect, const KfMagicRecord *magic)
+{
+    VECTOR impact_position;
+
+    audio_play_spatial_default_range(
+        &magic->sounds[1], &effect->position, KF_AUDIO_MAX_VOLUME);
+    effect->phase = KF_EFFECT_PROJECTILE_DISSIPATE_FIRST;
+    impact_position.vx = effect->position.vx;
+    impact_position.vz = effect->position.vz;
+    impact_position.vy =
+        -(map_floor_height_grid.cells[effect->position.vz / KF_MAP_TILE_SIZE]
+                               [effect->position.vx / KF_MAP_TILE_SIZE] * KF_MAP_HEIGHT_STEP);
+    if (effect->base_render_id.billboard == KF_EFFECT_BILLBOARD_LIGHTNING_BOLT) {
+        effect_pool_construct(
+            effect->id, effect->type, KF_EFFECT_KIND_LIGHTNING_IMPACT,
+            &impact_position, &effect->rotation.vector);
+    } else {
+        effect_pool_construct(
+            effect->id, effect->type, KF_EFFECT_KIND_LIGHTNING_IMPACT_ALTERNATE,
+            &impact_position, &effect->rotation.vector);
+    }
+}
+
+// False leaves the projectile traveling, including Wind Cutter's piercing hits.
+static bool effect_handle_projectile_collision(KfEffectRecord *effect, KfMagicRecord *magic,
+    KfEffectKind kind, u32 radius)
+{
+    u32 collision;
+    u16 collision_kind;
+    KfMagicRecord *impact_magic;
+
+    collision = effect_map_collision(&effect->position, radius);
+    if (collision != KF_COLLISION_NONE) {
+        u16 impact_power;
+
+        impact_magic = current_effect_magic_record;
+        collision_kind = collision >> KF_COLLISION_KIND_SHIFT;
+        if (kind == KF_MAGIC_LIGHTNING_BOLT) {
+            effect_begin_lightning_impact(effect, magic);
+            return true;
+        }
+        impact_power = effect_magic_power(effect);
+        if (kind != KF_EFFECT_KIND_SCATTER_PROJECTILE) {
+            audio_play_spatial_default_range(
+                &impact_magic->sounds[1], &effect->position, KF_AUDIO_MAX_VOLUME);
+        }
+        if (collision_kind == (KF_COLLISION_ACTOR >> KF_COLLISION_KIND_SHIFT)) {
+            if (kind == KF_EFFECT_KIND_MAP_EMITTER_PROJECTILE || kind == KF_EFFECT_KIND_PHYSICAL_PROJECTILE || kind == KF_MAGIC_WIND_CUTTER) {
+                actor_apply_damage(
+                    (u16)collision, impact_power,
+                    impact_magic->damage_components[0],
+                    impact_magic->damage_components[2],
+                    impact_magic->damage_components[1],
+                    0, 0, KF_ACTOR_DAMAGE_SCALE_ONE, effect->type);
+            } else if (kind != KF_EFFECT_KIND_EMERGING_PROJECTILE) {
+                actor_apply_damage(
+                    (u16)collision, impact_power,
+                    0, 0, 0, impact_magic->damage_components[0],
+                    impact_magic->damage_components[1],
+                    KF_ACTOR_DAMAGE_SCALE_ONE, effect->type);
+            }
+            if (kind == KF_MAGIC_WIND_CUTTER) {
+                return false;
+            }
+        } else if (collision_kind == (KF_COLLISION_PLAYER >> KF_COLLISION_KIND_SHIFT)) {
+            if (kind == KF_EFFECT_KIND_EMERGING_PROJECTILE || kind == KF_EFFECT_KIND_MAP_EMITTER_PROJECTILE || kind == KF_EFFECT_KIND_PHYSICAL_PROJECTILE) {
+                player_apply_damage(
+                    impact_magic->damage_components[0],
+                    impact_magic->damage_components[2],
+                    impact_magic->damage_components[1],
+                    KF_PLAYER_STATUS_NONE, 0, 0, KF_FIXED12_ONE, effect->id);
+            } else if (kind == KF_EFFECT_KIND_DARKNESS_PROJECTILE) {
+                player_apply_damage(
+                    0, 0, 0, KF_PLAYER_STATUS_DARKNESS, 0, 0, KF_FIXED12_ONE, effect->id);
+            } else if (kind == KF_EFFECT_KIND_SCATTER_PROJECTILE) {
+                player_apply_damage(
+                    0, 0, 0, KF_PLAYER_STATUS_POISON, 0, 0, KF_FIXED12_ONE, effect->id);
+            } else if (kind == KF_EFFECT_KIND_CURSE_PROJECTILE) {
+                player_apply_damage(0, 0, 0, KF_PLAYER_STATUS_CURSE, 0, 0, KF_FIXED12_ONE, effect->id);
+            } else {
+                player_apply_damage(
+                    0, 0, 0, KF_PLAYER_STATUS_NONE,
+                    impact_magic->damage_components[0],
+                    impact_magic->damage_components[1],
+                    KF_FIXED12_ONE, effect->id);
+            }
+            if (kind == KF_MAGIC_WIND_CUTTER) {
+                return false;
+            }
+        }
+
+        if (kind == KF_EFFECT_KIND_EMERGING_PROJECTILE) {
+            effect->direction.words.y = 0;
+            effect->phase = KF_EFFECT_PROJECTILE_FALL;
+        } else if (kind == KF_EFFECT_KIND_DARKNESS_PROJECTILE
+                   || kind == KF_EFFECT_KIND_CURSE_PROJECTILE) {
+            effect->phase = KF_EFFECT_PROJECTILE_SHRINK;
+        } else {
+            effect->phase = KF_EFFECT_PROJECTILE_IMPACT_FIRST;
+        }
+        return true;
+    }
+    return false;
+}
+
+static void effect_randomize_homing_direction(KfEffectRecord *effect)
+{
+    effect->direction.words.x =
+        (effect->direction.words.x + (kf::random_next() >> HOMING_PITCH_RANDOM_SHIFT) - HOMING_PITCH_RANDOM_BIAS) & KF_ANGLE_WRAP_MASK;
+    effect->direction.words.y =
+        (effect->direction.words.y + (kf::random_next() >> HOMING_YAW_RANDOM_SHIFT) - HOMING_YAW_RANDOM_BIAS) & KF_ANGLE_WRAP_MASK;
+}
+
+static void effect_update_homing_direction(KfEffectRecord *effect, KfEffectPhase phase)
+{
+    KfActor *target;
+    s16 desired_pitch;
+
+    if (phase == KF_EFFECT_PHASE_INIT) {
+        effect_randomize_homing_direction(effect);
+    } else if (phase > KF_EFFECT_HOMING_INITIAL_PHASE_LAST) {
+        if (effect->control.target_mode == KF_EFFECT_HOMING_WANDER) {
+            if (kf::random_next() < HOMING_WANDER_RANDOM_CUTOFF) {
+                effect_randomize_homing_direction(effect);
+                // A wandering turn skips the tracking-phase reset, but not movement.
+                return;
+            }
+        } else if (effect->control.target_mode == KF_EFFECT_HOMING_PLAYER) {
+            s32 aim_height;
+            // Pitch uses horizontal distance; the height difference is separate.
+            const s32 target_distance = fixed_vector2_length(
+                player_state.camera_position.vx - effect->position.vx,
+                player_state.camera_position.vz - effect->position.vz);
+
+            effect->direction.words.y = vector_xz_to_angle(
+                player_state.camera_position.vx - effect->position.vx,
+                effect->position.vz - player_state.camera_position.vz);
+            aim_height = effect->position.vy - HOMING_PLAYER_AIM_Y_OFFSET;
+            desired_pitch = vector_xz_to_angle(
+                aim_height - player_state.camera_position.vy,
+                -target_distance);
+            effect->direction.words.x = -desired_pitch & KF_ANGLE_WRAP_MASK;
+        } else {
+            s32 target_distance;
+            target = actor_pool_find_target_in_cone(
+                &effect->position,
+                effect->rotation.vector.vy, KF_EFFECT_ACTOR_TARGET_MAX_DISTANCE, KF_EFFECT_ACTOR_TARGET_WIDE_CONE, &target_distance);
+            if (target != NULL) {
+                KfActorDefinition *definition =
+                    &actor_state.definitions.entries[target->definition_id];
+
+                effect->direction.words.y = vector_xz_to_angle(
+                    target->position.vx - effect->position.vx,
+                    effect->position.vz - target->position.vz);
+                desired_pitch = vector_xz_to_angle(
+                    effect->position.vy
+                        - (target->position.vy
+                           - (definition->collision_height >> 1)),
+                    -target_distance);
+                effect->direction.words.x = -desired_pitch & KF_ANGLE_WRAP_MASK;
+            } else {
+                effect->direction.words.x = 0;
+            }
+        }
+        effect->phase = KF_EFFECT_HOMING_TRACKING_PHASE;
+    }
+}
+
 void effect_update_dispatch(void)
 {
     KfEffectRecord *effect = current_effect;
     KfMagicRecord *magic = current_effect_magic_record;
-    KfMagicRecord *impact_magic;
-    KfActor *target;
-    const SoundRef *phase_sound;
-    VECTOR impact_position;
-    u32 collision;
-    u16 collision_kind;
     KfEffectPhase phase;
     KfEffectKind kind;
     u32 radius;
@@ -117,7 +279,6 @@ void effect_update_dispatch(void)
     u16 distance;
     u16 power;
     u16 next;
-    s16 desired_pitch;
     s32 value;
 
     kind = effect->kind;
@@ -137,78 +298,8 @@ void effect_update_dispatch(void)
     case KF_EFFECT_KIND_MAP_EMITTER_PROJECTILE:
     case KF_EFFECT_KIND_PHYSICAL_PROJECTILE:
         if (phase == KF_EFFECT_PROJECTILE_TRAVEL) {
-            switch (0) {
-            default:
-                collision = effect_map_collision(&effect->position, radius);
-                if (collision != KF_COLLISION_NONE) {
-                    u16 impact_power;
-
-                    impact_magic = current_effect_magic_record;
-                    collision_kind = collision >> KF_COLLISION_KIND_SHIFT;
-                    if (kind == KF_MAGIC_LIGHTNING_BOLT) {
-                        goto lightning_impact;
-                    }
-                    impact_power = effect_magic_power(effect);
-                    if (kind != KF_EFFECT_KIND_SCATTER_PROJECTILE) {
-                        audio_play_spatial_default_range(
-                            &impact_magic->sounds[1], &effect->position, KF_AUDIO_MAX_VOLUME);
-                    }
-                    if (collision_kind == (KF_COLLISION_ACTOR >> KF_COLLISION_KIND_SHIFT)) {
-                        if (kind == KF_EFFECT_KIND_MAP_EMITTER_PROJECTILE || kind == KF_EFFECT_KIND_PHYSICAL_PROJECTILE || kind == KF_MAGIC_WIND_CUTTER) {
-                            actor_apply_damage(
-                                (u16)collision, impact_power,
-                                impact_magic->damage_components[0],
-                                impact_magic->damage_components[2],
-                                impact_magic->damage_components[1],
-                                0, 0, KF_ACTOR_DAMAGE_SCALE_ONE, effect->type);
-                        } else if (kind != KF_EFFECT_KIND_EMERGING_PROJECTILE) {
-                            actor_apply_damage(
-                                (u16)collision, impact_power,
-                                0, 0, 0, impact_magic->damage_components[0],
-                                impact_magic->damage_components[1],
-                                KF_ACTOR_DAMAGE_SCALE_ONE, effect->type);
-                        }
-                        if (kind == KF_MAGIC_WIND_CUTTER) {
-                            break;
-                        }
-                    } else if (collision_kind == (KF_COLLISION_PLAYER >> KF_COLLISION_KIND_SHIFT)) {
-                        if (kind == KF_EFFECT_KIND_EMERGING_PROJECTILE || kind == KF_EFFECT_KIND_MAP_EMITTER_PROJECTILE || kind == KF_EFFECT_KIND_PHYSICAL_PROJECTILE) {
-                            player_apply_damage(
-                                impact_magic->damage_components[0],
-                                impact_magic->damage_components[2],
-                                impact_magic->damage_components[1],
-                                KF_PLAYER_STATUS_NONE, 0, 0, KF_FIXED12_ONE, effect->id);
-                        } else if (kind == KF_EFFECT_KIND_DARKNESS_PROJECTILE) {
-                            player_apply_damage(
-                                0, 0, 0, KF_PLAYER_STATUS_DARKNESS, 0, 0, KF_FIXED12_ONE, effect->id);
-                        } else if (kind == KF_EFFECT_KIND_SCATTER_PROJECTILE) {
-                            player_apply_damage(
-                                0, 0, 0, KF_PLAYER_STATUS_POISON, 0, 0, KF_FIXED12_ONE, effect->id);
-                        } else if (kind == KF_EFFECT_KIND_CURSE_PROJECTILE) {
-                            player_apply_damage(0, 0, 0, KF_PLAYER_STATUS_CURSE, 0, 0, KF_FIXED12_ONE, effect->id);
-                        } else {
-                            player_apply_damage(
-                                0, 0, 0, KF_PLAYER_STATUS_NONE,
-                                impact_magic->damage_components[0],
-                                impact_magic->damage_components[1],
-                                KF_FIXED12_ONE, effect->id);
-                        }
-                        if (kind == KF_MAGIC_WIND_CUTTER) {
-                            break;
-                        }
-                    }
-
-                    if (kind == KF_EFFECT_KIND_EMERGING_PROJECTILE) {
-                        effect->direction.words.y = 0;
-                        effect->phase = KF_EFFECT_PROJECTILE_FALL;
-                    } else if (kind == KF_EFFECT_KIND_DARKNESS_PROJECTILE
-                               || kind == KF_EFFECT_KIND_CURSE_PROJECTILE) {
-                        effect->phase = KF_EFFECT_PROJECTILE_SHRINK;
-                    } else {
-                        effect->phase = KF_EFFECT_PROJECTILE_IMPACT_FIRST;
-                    }
-                    return;
-                }
+            if (effect_handle_projectile_collision(effect, magic, kind, radius)) {
+                return;
             }
 
             addVector(&effect->position, &effect->direction.vector);
@@ -223,24 +314,7 @@ void effect_update_dispatch(void)
                 remaining = effect->control.frames_remaining - 1;
                 effect->control.frames_remaining = remaining;
                 if ((u16)remaining == 0) {
-lightning_impact:
-                    audio_play_spatial_default_range(
-                        &magic->sounds[1], &effect->position, KF_AUDIO_MAX_VOLUME);
-                    effect->phase = KF_EFFECT_PROJECTILE_DISSIPATE_FIRST;
-                    impact_position.vx = effect->position.vx;
-                    impact_position.vz = effect->position.vz;
-                    impact_position.vy =
-                        -(map_floor_height_grid.cells[effect->position.vz / KF_MAP_TILE_SIZE]
-                                               [effect->position.vx / KF_MAP_TILE_SIZE] * KF_MAP_HEIGHT_STEP);
-                    if (effect->base_render_id.billboard == KF_EFFECT_BILLBOARD_LIGHTNING_BOLT) {
-                        effect_pool_construct(
-                            effect->id, effect->type, KF_EFFECT_KIND_LIGHTNING_IMPACT,
-                            &impact_position, &effect->rotation.vector);
-                    } else {
-                        effect_pool_construct(
-                            effect->id, effect->type, KF_EFFECT_KIND_LIGHTNING_IMPACT_ALTERNATE,
-                            &impact_position, &effect->rotation.vector);
-                    }
+                    effect_begin_lightning_impact(effect, magic);
                 } else {
                     effect->render_id.billboard = kf_enum_decode<KfEffectBillboardId>(kf_enum_encode<u8>(effect->base_render_id.billboard) + (effect->control.frames_remaining & 1));
                 }
@@ -306,7 +380,7 @@ lightning_impact:
         if (phase < KF_EFFECT_FIRE_BALL_IMPACT_END && kind == KF_MAGIC_FIRE_BALL) {
             effect->render_id.billboard = kf_enum_decode<KfEffectBillboardId>(kf_enum_encode<u8>(effect->base_render_id.billboard) + kf_enum_encode<u8>(phase));
         } else if (phase < KF_EFFECT_PROJECTILE_IMPACT_END) {
-            goto invalidate_and_advance;
+            effect->type = KF_EFFECT_SLOT_FREE;
         } else if (phase < KF_EFFECT_PROJECTILE_DISSIPATE_END) {
             s32 scale = effect->scale_x - EFFECT_DISSIPATE_SCALE_STEP;
 
@@ -319,10 +393,8 @@ lightning_impact:
             effect->position.vy -= KF_EFFECT_EMERGE_Y_STEP;
             if (phase == KF_EFFECT_PROJECTILE_EMERGE_LAST) {
                 effect->phase = KF_EFFECT_PROJECTILE_LAUNCH_WRAP;
-                phase_sound = &magic->sounds[0];
-play_phase_sound:
                 audio_play_spatial_default_range(
-                    phase_sound, &effect->position, KF_AUDIO_MAX_VOLUME);
+                    &magic->sounds[0], &effect->position, KF_AUDIO_MAX_VOLUME);
             }
         } else if (phase == KF_EFFECT_PROJECTILE_FALL) {
             effect->direction.words.y += EMERGING_FALL_ACCELERATION;
@@ -346,7 +418,8 @@ play_phase_sound:
         } else {
             effect->type = KF_EFFECT_SLOT_FREE;
         }
-        goto advance_effect_phase;
+        effect->phase++;
+        break;
 
     case KF_EFFECT_KIND_MOONLIGHT_PROJECTILE:
         if (kf_enum_encode<u8>(phase) < kf_enum_encode<u8>(KF_EFFECT_MOONLIGHT_TRAVEL_LAST) + 1) {
@@ -463,56 +536,7 @@ play_phase_sound:
         VECTOR movement;
         MATRIX matrix;
 
-        if (phase == KF_EFFECT_PHASE_INIT) {
-randomize_homing_direction:
-            effect->direction.words.x =
-                (effect->direction.words.x + (kf::random_next() >> HOMING_PITCH_RANDOM_SHIFT) - HOMING_PITCH_RANDOM_BIAS) & KF_ANGLE_WRAP_MASK;
-            effect->direction.words.y =
-                (effect->direction.words.y + (kf::random_next() >> HOMING_YAW_RANDOM_SHIFT) - HOMING_YAW_RANDOM_BIAS) & KF_ANGLE_WRAP_MASK;
-        } else if (phase > KF_EFFECT_HOMING_INITIAL_PHASE_LAST) {
-            if (effect->control.target_mode == KF_EFFECT_HOMING_WANDER) {
-                if (kf::random_next() < HOMING_WANDER_RANDOM_CUTOFF) {
-                    goto randomize_homing_direction;
-                }
-            } else if (effect->control.target_mode == KF_EFFECT_HOMING_PLAYER) {
-                s32 aim_height;
-                // Pitch uses horizontal distance; the height difference is separate.
-                const s32 target_distance = fixed_vector2_length(
-                    player_state.camera_position.vx - effect->position.vx,
-                    player_state.camera_position.vz - effect->position.vz);
-
-                effect->direction.words.y = vector_xz_to_angle(
-                    player_state.camera_position.vx - effect->position.vx,
-                    effect->position.vz - player_state.camera_position.vz);
-                aim_height = effect->position.vy - HOMING_PLAYER_AIM_Y_OFFSET;
-                desired_pitch = vector_xz_to_angle(
-                    aim_height - player_state.camera_position.vy,
-                    -target_distance);
-                effect->direction.words.x = -desired_pitch & KF_ANGLE_WRAP_MASK;
-            } else {
-                s32 target_distance;
-                target = actor_pool_find_target_in_cone(
-                    &effect->position,
-                    effect->rotation.vector.vy, KF_EFFECT_ACTOR_TARGET_MAX_DISTANCE, KF_EFFECT_ACTOR_TARGET_WIDE_CONE, &target_distance);
-                if (target != NULL) {
-                    KfActorDefinition *definition =
-                        &actor_state.definitions.entries[target->definition_id];
-
-                    effect->direction.words.y = vector_xz_to_angle(
-                        target->position.vx - effect->position.vx,
-                        effect->position.vz - target->position.vz);
-                    desired_pitch = vector_xz_to_angle(
-                        effect->position.vy
-                            - (target->position.vy
-                               - (definition->collision_height >> 1)),
-                        -target_distance);
-                    effect->direction.words.x = -desired_pitch & KF_ANGLE_WRAP_MASK;
-                } else {
-                    effect->direction.words.x = 0;
-                }
-            }
-            effect->phase = KF_EFFECT_HOMING_TRACKING_PHASE;
-        }
+        effect_update_homing_direction(effect, phase);
 
         effect->rotation.vector.vx = angle_approach(
             effect->rotation.vector.vx, effect->direction.vector.vx, HOMING_TURN_STEP);
@@ -563,8 +587,9 @@ randomize_homing_direction:
                         &effect->position, &effect->rotation.vector);
                 }
                 if (phase == KF_EFFECT_LIGHTNING_IMPACT_EMIT_FIRST) {
-                    phase_sound = &magic_records[kf_enum_encode<u8>(KF_MAGIC_LIGHTNING_BOLT)].sounds[1];
-                    goto play_phase_sound;
+                    audio_play_spatial_default_range(
+                        &magic_records[kf_enum_encode<u8>(KF_MAGIC_LIGHTNING_BOLT)].sounds[1],
+                        &effect->position, KF_AUDIO_MAX_VOLUME);
                 }
             }
         }
@@ -604,12 +629,6 @@ randomize_homing_direction:
         effect->phase++;
         break;
     }
-
-invalidate_and_advance:
-        effect->type = KF_EFFECT_SLOT_FREE;
-advance_effect_phase:
-        effect->phase++;
-        break;
 
     case KF_MAGIC_FIRE_WALL:
         if (phase < KF_EFFECT_GROUND_BRANCH_GROW_END) {

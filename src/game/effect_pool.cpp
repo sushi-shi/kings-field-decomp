@@ -87,14 +87,11 @@ static KfEffectRecord *effect_pool_construct_impl(u8 id, KfEffectType type, KfEf
             }
             break;
         case KF_EFFECT_KIND_LIGHTNING_BOLT_ALTERNATE:
-            record->base_render_id.billboard = KF_EFFECT_BILLBOARD_LIGHTNING_BOLT_ALTERNATE;
-            record->render_id.billboard = KF_EFFECT_BILLBOARD_LIGHTNING_BOLT_ALTERNATE;
-            record->kind = KF_MAGIC_LIGHTNING_BOLT;
-            goto initialize_lightning_bolt;
         case KF_MAGIC_LIGHTNING_BOLT:
-            record->base_render_id.billboard = KF_EFFECT_BILLBOARD_LIGHTNING_BOLT;
-            record->render_id.billboard = KF_EFFECT_BILLBOARD_LIGHTNING_BOLT;
-        initialize_lightning_bolt:
+            record->base_render_id.billboard = record->kind == KF_EFFECT_KIND_LIGHTNING_BOLT_ALTERNATE
+                ? KF_EFFECT_BILLBOARD_LIGHTNING_BOLT_ALTERNATE : KF_EFFECT_BILLBOARD_LIGHTNING_BOLT;
+            record->render_id.billboard = record->base_render_id.billboard;
+            record->kind = KF_MAGIC_LIGHTNING_BOLT;
             record->animation_clip = KF_ANIMATION_CLIP_NONE;
             setVector(&record->rotation.vector, 0, 0, 0);
             record->control.frames_remaining = arguments.duration;
@@ -107,14 +104,11 @@ static KfEffectRecord *effect_pool_construct_impl(u8 id, KfEffectType type, KfEf
             }
             break;
         case KF_EFFECT_KIND_LIGHTNING_IMPACT_ALTERNATE:
-            record->base_render_id.billboard = KF_EFFECT_BILLBOARD_LIGHTNING_IMPACT_ALTERNATE;
-            record->render_id.billboard = KF_EFFECT_BILLBOARD_LIGHTNING_IMPACT_ALTERNATE;
-            record->kind = KF_EFFECT_KIND_LIGHTNING_IMPACT;
-            goto initialize_lightning_impact;
         case KF_EFFECT_KIND_LIGHTNING_IMPACT:
-            record->base_render_id.billboard = KF_EFFECT_BILLBOARD_LIGHTNING_IMPACT;
-            record->render_id.billboard = KF_EFFECT_BILLBOARD_LIGHTNING_IMPACT;
-        initialize_lightning_impact:
+            record->base_render_id.billboard = record->kind == KF_EFFECT_KIND_LIGHTNING_IMPACT_ALTERNATE
+                ? KF_EFFECT_BILLBOARD_LIGHTNING_IMPACT_ALTERNATE : KF_EFFECT_BILLBOARD_LIGHTNING_IMPACT;
+            record->render_id.billboard = record->base_render_id.billboard;
+            record->kind = KF_EFFECT_KIND_LIGHTNING_IMPACT;
             record->animation_clip = KF_ANIMATION_CLIP_NONE;
             setVector(&record->rotation.vector, 0, 0, 0);
             audio_play_spatial_range(

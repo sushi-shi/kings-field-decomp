@@ -367,14 +367,14 @@ void item_menu_buy(KfItemStockBank shop_bank)
                 menu_play_input_sound(MENU_SOUND_CURSOR);
                 selection = kf_enum_encode<s32>(KF_MENU_RESULT_CANCELLED);
             }
-        } else if (BUTTON_PRESSED(input, prev, kf::Button::Up)) {
+        } else if (BUTTON_PRESSED(input, prev, kf::Button::Up)
+                   || BUTTON_PRESSED(input, prev, kf::Button::Down)) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
-            menu_list_previous(&ctx);
-            goto load_selected_model;
-        } else if (BUTTON_PRESSED(input, prev, kf::Button::Down)) {
-            menu_play_input_sound(MENU_SOUND_CURSOR);
-            menu_list_next(&ctx);
-        load_selected_model:
+            if (BUTTON_PRESSED(input, prev, kf::Button::Up)) {
+                menu_list_previous(&ctx);
+            } else {
+                menu_list_next(&ctx);
+            }
             if (menu_load_item_model(index[ctx.selected_index]) != KF_RESOURCE_LOADED)
                 return;
         } else if (BUTTON_PRESSED(input, prev, kf::Button::Confirm)) {

@@ -178,21 +178,16 @@ void player_warp_same_floor(KfMapVariant map_variant, s32 cell_x, s32 cell_z)
 KfBoolU32 player_warp_trigger_update(void)
 {
     u32 cell;
-    KfFloorId destination_floor;
-    KfMapVariant destination_variant = KF_MAP_VARIANT_DEFAULT;
 
     switch (player_state.progress_state.current_floor) {
     case KF_FLOOR_1:
         cell = player_state.motion_state.words[2] & WARP_CELL_KEY_MASK;
         if (cell == floor1_floor2_cell) {
-            destination_floor = KF_FLOOR_2;
-change_floor:
-            player_warp_change_floor(destination_floor, destination_variant);
+            player_warp_change_floor(KF_FLOOR_2, KF_MAP_VARIANT_DEFAULT);
         } else if (cell == floor1_floor3_cell) {
-            destination_floor = KF_FLOOR_3;
-            goto change_floor;
+            player_warp_change_floor(KF_FLOOR_3, KF_MAP_VARIANT_DEFAULT);
         } else if (cell == floor1_floor4_cell) {
-            goto change_to_floor4;
+            player_warp_change_floor(KF_FLOOR_4, KF_MAP_VARIANT_DEFAULT);
         } else if (cell == floor1_exit_cell) {
             if (boss_defeat_complete != KF_MAP_SCRIPT_UNSET) {
                 return KF_TRUE;
@@ -202,48 +197,37 @@ change_floor:
     case KF_FLOOR_2:
         cell = player_state.motion_state.words[2] & WARP_CELL_KEY_MASK;
         if (cell == floor1_floor2_cell) {
-            destination_floor = KF_FLOOR_1;
-            goto change_floor;
+            player_warp_change_floor(KF_FLOOR_1, KF_MAP_VARIANT_DEFAULT);
         } else if (cell == floor2_floor3_cell) {
-            destination_floor = KF_FLOOR_3;
-            goto change_floor;
+            player_warp_change_floor(KF_FLOOR_3, KF_MAP_VARIANT_DEFAULT);
         }
         break;
     case KF_FLOOR_3:
         cell = player_state.motion_state.words[2] & WARP_CELL_KEY_MASK;
         if (cell == floor1_floor3_cell) {
-            destination_floor = KF_FLOOR_1;
-            goto change_floor;
+            player_warp_change_floor(KF_FLOOR_1, KF_MAP_VARIANT_DEFAULT);
         } else if (cell == floor2_floor3_cell) {
-            destination_floor = KF_FLOOR_2;
-            goto change_floor;
+            player_warp_change_floor(KF_FLOOR_2, KF_MAP_VARIANT_DEFAULT);
         } else if (cell == floor3_floor4_cell || cell == floor3_floor4_alternate_cell) {
-change_to_floor4:
-            destination_floor = KF_FLOOR_4;
-            goto change_floor;
+            player_warp_change_floor(KF_FLOOR_4, KF_MAP_VARIANT_DEFAULT);
         }
         break;
     case KF_FLOOR_4:
         cell = player_state.motion_state.words[2] & WARP_CELL_KEY_MASK;
         if (cell == floor1_floor4_cell) {
-            destination_floor = KF_FLOOR_1;
-            goto change_floor;
+            player_warp_change_floor(KF_FLOOR_1, KF_MAP_VARIANT_DEFAULT);
         } else if (cell == floor3_floor4_cell) {
-            destination_floor = KF_FLOOR_3;
-            goto change_floor;
+            player_warp_change_floor(KF_FLOOR_3, KF_MAP_VARIANT_DEFAULT);
         } else if (cell == floor4_floor5_cell) {
-            destination_floor = KF_FLOOR_5;
-            destination_variant = KF_FLOOR5_ENTRY_VARIANT;
-            goto change_floor;
+            player_warp_change_floor(KF_FLOOR_5, KF_FLOOR5_ENTRY_VARIANT);
         } else if (cell == floor3_floor4_alternate_cell) {
-            destination_floor = KF_FLOOR_3;
-            goto change_floor;
+            player_warp_change_floor(KF_FLOOR_3, KF_MAP_VARIANT_DEFAULT);
         }
         break;
     case KF_FLOOR_5:
         cell = player_state.motion_state.words[2] & WARP_CELL_KEY_MASK;
         if (cell == floor4_floor5_cell) {
-            goto change_to_floor4;
+            player_warp_change_floor(KF_FLOOR_4, KF_MAP_VARIANT_DEFAULT);
         } else if (cell == WARP_CELL_KEY(floor5_entry_gate.x, floor5_entry_gate.z)) {
             player_warp_same_floor(KF_MAP_VARIANT_2, floor5_inner_gate.x, floor5_inner_gate.z);
         } else if (cell == WARP_CELL_KEY(floor5_inner_gate.x, floor5_inner_gate.z)) {

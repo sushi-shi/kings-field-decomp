@@ -71,6 +71,18 @@ char *format_pad_left(char *string, char pad, u8 width)
     return string;
 }
 
+static s32 format_copy_string(u8 *&out, const char *string)
+{
+    s32 count = 0;
+    u8 c;
+
+    while ((c = *string++) != 0) {
+        *out++ = c;
+        count++;
+    }
+    return count;
+}
+
 s32 format_vsprintf(u8 *out, u8 *format, va_list args)
 {
     s32 count = 0;
@@ -101,12 +113,15 @@ s32 format_vsprintf(u8 *out, u8 *format, va_list args)
                 continue;
             case 'D':
             case 'd':
+            case 'X':
+            case 'x':
                 if (parser_state == KF_FORMAT_PARSER_TEXT) {
                     break;
                 }
                 parser_state = KF_FORMAT_PARSER_TEXT;
-                s = format_int_dec(va_arg(args, s32));
-            emit_padded:
+                s = (c == 'D' || c == 'd')
+                    ? format_int_dec(va_arg(args, s32))
+                    : format_int_hex(va_arg(args, u32));
                 if (width != KF_FORMAT_WIDTH_UNSPECIFIED) {
                     if (padding_mode == KF_FORMAT_PAD_SPACES) {
                         s = format_pad_left(s, ' ', width);
@@ -114,20 +129,8 @@ s32 format_vsprintf(u8 *out, u8 *format, va_list args)
                         s = format_pad_left(s, '0', width);
                     }
                 }
-            copy:
-                while ((c = *s++) != 0) {
-                    *out++ = c;
-                    count++;
-                }
+                count += format_copy_string(out, s);
                 continue;
-            case 'X':
-            case 'x':
-                if (parser_state == KF_FORMAT_PARSER_TEXT) {
-                    break;
-                }
-                parser_state = KF_FORMAT_PARSER_TEXT;
-                s = format_int_hex(va_arg(args, u32));
-                goto emit_padded;
             case 'S':
             case 's':
                 if (parser_state == KF_FORMAT_PARSER_TEXT) {
@@ -135,7 +138,8 @@ s32 format_vsprintf(u8 *out, u8 *format, va_list args)
                 }
                 parser_state = KF_FORMAT_PARSER_TEXT;
                 s = va_arg(args, char *);
-                goto copy;
+                count += format_copy_string(out, s);
+                continue;
             case '\n':
                 *out++ = '\r';
                 count++;
