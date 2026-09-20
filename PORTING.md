@@ -162,8 +162,11 @@ reporting success. PS1 memory-card interchange is not required.
    scaffold and old overlay mains/fixed-address startup are removed. The value-only
    vector macros keep their original expressions in geometry_types.h; no SDK
    runtime is implemented. build.json now lists portable source modules, and CMake
-   watches it for regeneration. All 90 previously compiled original translation
-   units remain in their original order. The retired PlayStation build.py, linker
+   watches it for regeneration. Shared implementations own separate translation
+   units under `src/lib`, compiled in the game/opening namespaces where needed.
+   Entry/reset coordination lives in each module's `entry.cpp`; save serialization
+   and numeric tables live in their single owning source files. No source `.inc`
+   fragments remain. The retired PlayStation build.py, linker
    helpers and overlay-bounds assembly are also removed from this worktree.
 2. Files/memory: original game/opening resource loaders now read ordinary files.
    Item models use paths/lengths; all existing-buffer reads supply capacities.
@@ -443,7 +446,7 @@ Port findings that may warrant reconstruction follow-up are recorded in
 [docs/port-findings.md](docs/port-findings.md). They are not automatic decomp
 corrections; the floor-item initial-frame issue still needs retail attribution.
 
-The fixed-point sine samples in `src/lib/sine_table.inc` come from the supplied
+The fixed-point sine samples in `src/lib/fixed_math.cpp` come from the supplied
 Release 2.5 `LIBGTE.LIB` / `GEO.OBJ` quarter-wave data, also identified in both
 original game/opening images. Its 2048-byte little-endian payload SHA-256 is
 `74743e361fc4d78cbd41bd99b2acf5c75c9b5b0268ccd753ed282ec4394fb25a`.

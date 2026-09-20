@@ -1,3 +1,8 @@
+#include <stdarg.h>
+#include <kf/lib/debug.h>
+
+static char format_number_storage[24];
+
 char *format_int_dec(s32 value)
 {
     s32 divisor = KF_FORMAT_DECIMAL_HIGHEST_PLACE;
@@ -141,4 +146,13 @@ s32 format_vsprintf(u8 *out, u8 *format, va_list args)
     }
     *out = '\0';
     return count + 1;
+}
+
+void debug_printf_sink(const char *format, ...)
+{
+}
+
+void format_reset_module_state(void)
+{
+    kf::restore_initial_value<format_number_storage>();
 }

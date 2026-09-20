@@ -2,6 +2,7 @@
 #define KF_RESOURCE_FILE_H
 
 #include <kf/lib/types.h>
+#include <kf/platform/files.hpp>
 #include <cstddef>
 
 enum class KfResourceLoadResult : s32 {
@@ -15,6 +16,9 @@ enum class KfResourceLoadResult : s32 {
     (digits)[2] = ((number) % 100) % 10 + '0')
 
 // Resource paths are relative to the extracted KF directory.
+kf::FileResult resource_file_open(kf::DataFile *file, const char *relative_path);
+KfResourceLoadResult resource_file_try_load_allocated(u8 **destination, const char *relative_path,
+                                                    std::size_t *loaded_size = nullptr);
 void resource_file_load_allocated(u8 **destination, const char *relative_path,
                                  std::size_t *loaded_size = nullptr);
 KfResourceLoadResult resource_file_load_into(

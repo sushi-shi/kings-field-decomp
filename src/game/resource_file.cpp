@@ -1,5 +1,4 @@
 #include <kf/game/resource_file.h>
-#include "../lib/resource_file.inc"
 
 KfItemModelFile item_model_files[KF_ITEM_COUNT];
 
@@ -27,7 +26,6 @@ KfResourceLoadResult resource_file_load_item_model(u8 **destination, s32 index, 
         return KF_RESOURCE_LOAD_FAILED;
     return resource_file_try_load_allocated(destination, item_model_files[index].path, loaded_size);
 }
-
 
 void resource_file_reset_module_state(void)
 {

@@ -33,8 +33,6 @@ void audio_initialize(void)
     audio_reset_voice_slots();
 }
 
-#include "../lib/audio_bank_load.inc"
-
 void audio_load_vab(const u8 *header, std::size_t header_size, const u8 *body, std::size_t body_size)
 {
     audio_stop_sequence_fade();
@@ -94,8 +92,6 @@ void audio_stop_sequence_master_fade(s32 fade_step)
         AUDIO_SEQUENCE_STOP_AND_CLOSE();
     }
 }
-
-#include "../lib/audio_shutdown.inc"
 
 void audio_close_vab(void)
 {
@@ -169,10 +165,6 @@ KfAudioPlaybackResult audio_play_spatial(
     return KF_AUDIO_PLAYED;
 }
 
-#include "../lib/audio_spatial_helpers.inc"
-
-#include "../lib/sound_ref.inc"
-
 void audio_play_voice(
     kf::SoundBank *bank, s16 program, s16 tone, s16 note, s16 left_volume, s16 right_volume)
 {
@@ -184,9 +176,6 @@ void audio_play_voice(
     }
     audio_key_on_next_slot(bank, program, tone, note, left_volume, right_volume);
 }
-
-#include "../lib/angle_shortest_delta.inc"
-
 
 void audio_reset_module_state(void)
 {

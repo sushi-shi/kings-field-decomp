@@ -2,7 +2,7 @@
 #include <kf/lib/memory.h>
 #include <kf/platform/files.hpp>
 
-static kf::FileResult resource_file_open(kf::DataFile *file, const char *relative_path)
+kf::FileResult resource_file_open(kf::DataFile *file, const char *relative_path)
 {
     char path[128];
     const int count = snprintf(path, sizeof path, "KF/%s", relative_path);
@@ -11,8 +11,8 @@ static kf::FileResult resource_file_open(kf::DataFile *file, const char *relativ
     return kf::data_file_open(file, path);
 }
 
-static KfResourceLoadResult resource_file_try_load_allocated(u8 **destination, const char *relative_path,
-                                                           std::size_t *loaded_size = nullptr)
+KfResourceLoadResult resource_file_try_load_allocated(u8 **destination, const char *relative_path,
+                                                    std::size_t *loaded_size)
 {
     *destination = NULL;
     if (loaded_size)

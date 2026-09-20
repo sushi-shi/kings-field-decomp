@@ -45,8 +45,6 @@ KfSpriteQuad effect_billboard_sprites[KF_EFFECT_BILLBOARD_SPRITE_COUNT] = {
     {0xc8, 0xa2, 0x17, 0x5c, 0xff38, 0xec78, 0x190, 0x1388},
 };
 
-#include "../lib/floor_item_render.inc"
-
 void render_actor_sprite(KfEffectRecord *sprite, const MATRIX *lights)
 {
     SVECTOR screen;
@@ -85,7 +83,6 @@ void render_actor_sprite(KfEffectRecord *sprite, const MATRIX *lights)
         render_enqueue_tmd(0, EFFECT_MODEL_DEPTH_BIAS, lights);
     }
 }
-
 
 void entity_render_reset_module_state(void)
 {

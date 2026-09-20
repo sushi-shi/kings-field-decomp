@@ -56,5 +56,3 @@ KfAudioPlaybackResult audio_play_spatial(
         right);
     return KF_AUDIO_PLAYED;
 }
-
-#include "../lib/audio_spatial_helpers.inc"

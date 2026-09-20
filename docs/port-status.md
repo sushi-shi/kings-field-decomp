@@ -12,6 +12,14 @@ inputs and the general Linux visual check are also user-confirmed.
 Browser/ending checks remain verification gaps; MAGIC is deferred until the user
 reproduces it. Additional cast cleanup is separate maintenance, not an active bug.
 
+Source organization cleanup: all 24 `.inc` fragments have been consolidated into
+ordinary translation units or their single owning source files. Shared functions
+live under `src/lib`; entry/reset coordination lives under `src/game` and
+`src/open`. No source fragments or empty `src` directories remain. This refactor
+is based on `port`, separate from the concurrent cast-cleanup work. Fresh Linux
+package/launcher checks and a WASM build passed. An eight-second no-input native
+opening run reached its scheduled timeout without a reported startup failure.
+
 ### 1. Update cadence — opening corrected, GAME pacing bypasses closed; flame report resolved
 
 - Evidence: the user reports both running too fast. The normal game loop has a

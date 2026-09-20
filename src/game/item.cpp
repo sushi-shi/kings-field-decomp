@@ -34,8 +34,6 @@ u16 item_buy_prices[KF_ITEM_COUNT][KF_ITEM_SHOP_COUNT];
 
 u16 item_sell_prices[KF_ITEM_COUNT][KF_ITEM_SHOP_COUNT];
 
-#include "../lib/floor_item_load.inc"
-
 // STAT.DAT stores little-endian words and authored GPU templates. Only this
 // loading boundary knows that layout; menus retain copied native descriptions.
 struct MenuDataReader {
@@ -571,7 +569,6 @@ KfMenuResult item_pickup_confirm(KfObjectId item_id)
     menu_release_item_model();
     return result;
 }
-
 
 void item_reset_module_state(void)
 {
