@@ -112,12 +112,12 @@ void map_object_mark_collision_edge(const KfMapObject *object, KfMapCellKind cel
     }
 }
 
-s32 map_object_probe_forward(const KfMapObject *object, u16 yaw)
+u32 map_object_probe_forward(const KfMapObject *object, u16 yaw)
 {
     const KfMapObjectDefinition *definition = &map_object_state.definitions.entries[kf_enum_encode<u8>(object->object_id)];
     s32 point_x = object->position.vx;
     s32 point_z = object->position.vz;
-    s32 result;
+    u32 result;
     s32 probe_radius;
 
     yaw &= KF_ANGLE_WRAP_MASK;

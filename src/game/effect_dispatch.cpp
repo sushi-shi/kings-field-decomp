@@ -716,10 +716,10 @@ advance_effect_phase:
             position.vx = effect->position.vx + effect->direction.vector.vx;
             position.vz = effect->position.vz + effect->direction.vector.vz;
             position.vy = effect->position.vy;
-            value = collision_query_world(
+            collision = collision_query_world(
                 position.vx, position.vy, position.vz, ACTOR_SPAWNER_COLLISION_RADIUS, 0,
                 KF_COLLISION_SKIP_MAP_OBJECTS | KF_COLLISION_SKIP_MAP_EVENTS);
-            if ((phase == KF_EFFECT_ACTOR_SPAWNER_TRAVEL_LAST && value != KF_COLLISION_NONE) || effect->control.frames_remaining == 0) {
+            if ((phase == KF_EFFECT_ACTOR_SPAWNER_TRAVEL_LAST && collision != KF_COLLISION_NONE) || effect->control.frames_remaining == 0) {
                 effect->phase = KF_EFFECT_ACTOR_SPAWNER_WAIT_FIRST;
             } else {
                 effect->position.vx = position.vx;

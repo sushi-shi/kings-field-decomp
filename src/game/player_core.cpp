@@ -263,14 +263,14 @@ s32 player_distance_to_point_in_cone(
     s16 delta;
 
     distance = player_distance_to_point(point->vx, KF_COLLISION_IGNORE_HEIGHT, point->vz, max_distance, 0);
-    if (distance != KF_COLLISION_NONE) {
+    if (distance != KF_PROXIMITY_NONE) {
         delta = (vector_xz_to_angle(
                      player_state.camera_position.vx - point->vx,
                      point->vz - player_state.camera_position.vz)
                  - facing) & KF_ANGLE_WRAP_MASK;
         delta = angle_error_magnitude(delta);
         if (angle_tolerance < delta) {
-            distance = KF_COLLISION_NONE;
+            distance = KF_PROXIMITY_NONE;
         }
     }
     return distance;
@@ -290,11 +290,11 @@ s32 player_distance_to_point(
     default:
         dx = player_state.camera_position.vx - point_x;
         if (dx < -max_distance || max_distance < dx) {
-            return KF_COLLISION_NONE;
+            return KF_PROXIMITY_NONE;
         }
         dz = player_state.camera_position.vz - point_z;
         if (dz < -max_distance || max_distance < dz) {
-            return KF_COLLISION_NONE;
+            return KF_PROXIMITY_NONE;
         }
         dx >>= KF_LENGTH_SQUARE_DOWNSHIFT;
         if (point_y != KF_COLLISION_IGNORE_HEIGHT) {
@@ -314,7 +314,7 @@ s32 player_distance_to_point(
         }
         return distance;
     }
-    return KF_COLLISION_NONE;
+    return KF_PROXIMITY_NONE;
 }
 
 s32 player_move_horizontal(s32 heading, s32 distance)
