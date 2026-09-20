@@ -313,6 +313,9 @@ void player_recalculate_combat_stats(void)
         player_state.fire_defense += armor->fire_defense;
     }
     switch (player_state.equipped_accessory_id) {
+    default:
+        // Other items (including no accessory) grant no accessory-specific bonus.
+        break;
     case KF_ITEM_LIGHT_RING:
         player_state.holy_attack += LIGHT_RING_HOLY_ATTACK_BONUS;
         break;

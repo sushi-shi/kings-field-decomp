@@ -410,6 +410,9 @@ play_phase_sound:
             -(map_floor_height_grid.cells[effect->position.vz / KF_MAP_TILE_SIZE]
                                    [effect->position.vx / KF_MAP_TILE_SIZE] * KF_MAP_HEIGHT_STEP);
         switch (phase) {
+        default:
+            // Other phase values have no ground-trail transition.
+            break;
         case KF_EFFECT_GROUND_TRAIL_WAIT_FOR_PARENT:
             if (kf_enum_encode<u8>(linked_effect->phase) > kf_enum_encode<u8>(KF_EFFECT_MOONLIGHT_IMPACT_FIRST) - 1) {
                 effect->phase = KF_EFFECT_GROUND_TRAIL_SHRINK;
@@ -616,6 +619,9 @@ advance_effect_phase:
             if (effect->control.frames_remaining != KF_EFFECT_GROUND_BRANCH_TIMER_DONE) {
                 if (effect->control.frames_remaining-- == 0) {
                     switch (effect->propagation.branch) {
+                    case KF_EFFECT_GROUND_BRANCH_LEAF:
+                        // A leaf emits no further branches.
+                        break;
                     case KF_EFFECT_GROUND_BRANCH_ROOT:
                         effect_spawn_ground_branch(
                             effect->id, effect, KF_ANGLE_QUARTER_TURN, KF_EFFECT_GROUND_BRANCH_QUARTER_TURN);
@@ -783,6 +789,9 @@ advance_effect_phase:
         s32 remaining;
 
         switch (phase) {
+        default:
+            // Only advance, hold and reverse drive floor deformation.
+            break;
         case KF_EFFECT_FLOOR_DEFORM_ADVANCE:
             remaining = effect->direction.words.x - 1;
             effect->direction.words.x = remaining;

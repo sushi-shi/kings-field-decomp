@@ -119,6 +119,8 @@ void map_ambient_script_floor1(void)
     }
 
     switch (map_floor1_script.actor_activation_stage) {
+    case KF_MAP_TRIGGER_COMPLETE:
+        break;
     case KF_MAP_TRIGGER_AWAIT_ENTRY:
         if (player_state.motion_state.fields.map_cell.coords.x >= floor1_actor_entry.x_min && player_state.motion_state.fields.map_cell.coords.z >= floor1_actor_entry.z_min
             && player_state.motion_state.fields.map_cell.coords.x < floor1_actor_entry.x_end && player_state.motion_state.fields.map_cell.coords.z < floor1_actor_entry.z_end) {
@@ -146,6 +148,8 @@ void map_ambient_script_floor1(void)
     }
 
     switch (map_floor1_script.object_removal_stage) {
+    case KF_MAP_TRIGGER_COMPLETE:
+        break;
     case KF_MAP_TRIGGER_AWAIT_ENTRY:
         if (player_state.motion_state.fields.map_cell.coords.x >= floor1_removal_entry.x_min && player_state.motion_state.fields.map_cell.coords.z >= floor1_removal_entry.z_min
             && player_state.motion_state.fields.map_cell.coords.x < floor1_removal_entry.x_end && player_state.motion_state.fields.map_cell.coords.z < floor1_removal_entry.z_end) {

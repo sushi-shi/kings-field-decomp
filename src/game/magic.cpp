@@ -43,6 +43,9 @@ void magic_load_records(const KfMagicTable *table)
 void magic_cast(void)
 {
     switch (player_state.selected_magic_id) {
+    default:
+        // Only the listed attack spells launch a world effect here.
+        break;
     case KF_MAGIC_LIGHTNING_BOLT:
     case KF_MAGIC_FIRE_BALL:
     case KF_MAGIC_WIND_CUTTER:

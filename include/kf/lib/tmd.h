@@ -23,29 +23,30 @@ enum {
     KF_TMD_DEFAULT_PERSPECTIVE_SHIFT = 1
 };
 
+// Whole encoded polygon modes, not combinable flags.
 enum class KfTmdMode : u8 {
-    KF_TMD_MODE_NONE = 0,
-    KF_TMD_MODE_SEMITRANS = 0x02,
     KF_TMD_MODE_F3 = 0x20,
+    KF_TMD_MODE_F3_SEMITRANS = 0x22,
     KF_TMD_MODE_FT3 = 0x24,
+    KF_TMD_MODE_FT3_SEMITRANS = 0x26,
     KF_TMD_MODE_F4 = 0x28,
+    KF_TMD_MODE_F4_SEMITRANS = 0x2a,
     KF_TMD_MODE_FT4 = 0x2c,
+    KF_TMD_MODE_FT4_SEMITRANS = 0x2e,
     KF_TMD_MODE_G3 = 0x30,
+    KF_TMD_MODE_G3_SEMITRANS = 0x32,
     KF_TMD_MODE_GT3 = 0x34,
+    KF_TMD_MODE_GT3_SEMITRANS = 0x36,
     KF_TMD_MODE_G4 = 0x38,
-    KF_TMD_MODE_GT4 = 0x3c
+    KF_TMD_MODE_G4_SEMITRANS = 0x3a,
+    KF_TMD_MODE_GT4 = 0x3c,
+    KF_TMD_MODE_GT4_SEMITRANS = 0x3e
 }; using enum KfTmdMode;
-constexpr KfTmdMode operator|(KfTmdMode lhs, KfTmdMode rhs)
-    { return static_cast<KfTmdMode>(static_cast<u8>(lhs) | static_cast<u8>(rhs)); }
-    constexpr KfTmdMode operator&(KfTmdMode lhs, KfTmdMode rhs)
-    { return static_cast<KfTmdMode>(static_cast<u8>(lhs) & static_cast<u8>(rhs)); }
-    constexpr KfTmdMode operator^(KfTmdMode lhs, KfTmdMode rhs)
-    { return static_cast<KfTmdMode>(static_cast<u8>(lhs) ^ static_cast<u8>(rhs)); }
-    constexpr KfTmdMode operator~(KfTmdMode value)
-    { return static_cast<KfTmdMode>(~static_cast<u8>(value)); }
-    inline KfTmdMode& operator|=(KfTmdMode& lhs, KfTmdMode rhs) { return lhs = lhs | rhs; }
-    inline KfTmdMode& operator&=(KfTmdMode& lhs, KfTmdMode rhs) { return lhs = lhs & rhs; }
-    inline KfTmdMode& operator^=(KfTmdMode& lhs, KfTmdMode rhs) { return lhs = lhs ^ rhs; }
+
+constexpr KfTmdMode tmd_opaque_mode(KfTmdMode mode)
+{
+    return kf_enum_decode<KfTmdMode>(kf_enum_encode<u8>(mode) & KF_TMD_MODE_MASK);
+}
 
 constexpr KfTmdMode tmd_packet_mode(u32 word)
 {
@@ -53,7 +54,7 @@ constexpr KfTmdMode tmd_packet_mode(u32 word)
 }
 constexpr KfTmdMode tmd_packet_kind(u32 word)
 {
-    return kf_enum_decode<KfTmdMode>((word >> KF_TMD_MODE_SHIFT) & KF_TMD_MODE_MASK);
+    return tmd_opaque_mode(tmd_packet_mode(word));
 }
 
 typedef struct KfTmdHeader {

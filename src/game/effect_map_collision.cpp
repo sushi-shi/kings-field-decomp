@@ -73,6 +73,10 @@ static inline u32 effect_collision_in_cell(
         }
 
         switch (map_collision_grid.cells[z][x]) {
+        case KF_MAP_CELL_FLOOR:
+        case KF_MAP_CELL_STEP:
+            // Full-floor cells need no diagonal/corner rejection.
+            break;
         case KF_MAP_CELL_BLOCKED:
             if ((!MAP_CELL_HAS_FULL_FLOOR(map_collision_grid.cells[z + 1][x])
                     || position->vz % KF_MAP_TILE_SIZE < KF_MAP_TILE_CENTER) &&

@@ -648,6 +648,8 @@ void opening_ending_scroll_run(void)
         CVECTOR *top = &top_color;
 
         switch (lighting_phase) {
+        case ENDING_LIGHT_FINISHED:
+            break;
         case ENDING_LIGHT_TO_MIDPOINT:
             if (lighting_blend <= KF_FIXED12_ONE) {
                 lighting_set_color_matrix(
@@ -672,6 +674,9 @@ void opening_ending_scroll_run(void)
             break;
         }
         switch (sequence_phase) {
+        case ENDING_SEQUENCE_WAIT_SCROLL:
+        case ENDING_SEQUENCE_REPLACED:
+            break;
         case ENDING_SEQUENCE_DELAY:
             if (--sequence_delay == -1) {
                 sequence_phase = ENDING_SEQUENCE_FADE;

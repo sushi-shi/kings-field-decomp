@@ -322,6 +322,9 @@ void player_update(void)
                 if (player_state.weapon_attack_fully_charged == KF_WEAPON_ATTACK_FULL_CHARGE) {
                     player_state.weapon_attack_fully_charged = KF_WEAPON_ATTACK_NORMAL_CHARGE;
                     switch (player_state.equipped_weapon_id) {
+                    default:
+                        // Other weapons do not arm a weapon-magic attack.
+                        break;
                     case KF_ITEM_FLAME_SWORD:
                         if (player_state.weapon_attack_phase >= PLAYER_WEAPON_MAGIC_PHASE_FIRST
                             && player_state.weapon_attack_phase <= PLAYER_WEAPON_MAGIC_PHASE_LAST) {
@@ -603,6 +606,9 @@ void player_update(void)
     player_state.equipment_effect_ticks++;
     attribute = map_cell_attribute_grid.cells[player_state.motion_state.fields.map_cell.coords.z][player_state.motion_state.fields.map_cell.coords.x];
     switch (attribute) {
+    default:
+        // Only these two attributes apply contact damage here.
+        break;
     case KF_MAP_ATTRIBUTE_PITFALL:
         if (player_state.update_state == KF_PLAYER_UPDATE_NORMAL) {
             player_apply_damage(PLAYER_PITFALL_CUTTING_DAMAGE, PLAYER_PITFALL_STRIKING_DAMAGE, PLAYER_PITFALL_PIERCING_DAMAGE, KF_PLAYER_STATUS_NONE, 0, 0, KF_FIXED12_ONE, KF_PLAYER_DAMAGE_MULTIPLIER_ONE);

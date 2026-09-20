@@ -34,6 +34,8 @@ void opening_run(KfOverlayMode overlay_mode)
     memory_set_allocation_mode(KF_MEMORY_REBASE_ARENA);
 
     switch (overlay_mode) {
+    case KF_OVERLAY_MODE_NONE:
+        break;
     case KF_OVERLAY_MODE_INTRO:
         if (resource_file_load_into(
                 (void *)open_graphics_runtime.display_state.asset_load_buffer,

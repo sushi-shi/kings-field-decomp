@@ -29,6 +29,9 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias, const MATRIX *lights)
     while (stream.remaining != 0) {
         const auto packet = tmd_next_packet(stream);
         switch (packet.mode) {
+        default:
+            // Preserve the original enqueuer's supported packet subset.
+            break;
         case KF_TMD_MODE_FT3: {
             const auto p = tmd_decode_face(packet, object.vertex_count);
             va = &vertices[p.vertices[0]];
@@ -200,7 +203,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias, const MATRIX *lights)
             }
             break;
         }
-        case (KF_TMD_MODE_G3 | KF_TMD_MODE_SEMITRANS): {
+        case KF_TMD_MODE_G3_SEMITRANS: {
             const auto p = tmd_decode_face(packet, object.vertex_count);
             va = &vertices[p.vertices[0]];
             vb = &vertices[p.vertices[1]];
@@ -278,7 +281,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias, const MATRIX *lights)
             }
             break;
         }
-        case (KF_TMD_MODE_G4 | KF_TMD_MODE_SEMITRANS): {
+        case KF_TMD_MODE_G4_SEMITRANS: {
             const auto p = tmd_decode_face(packet, object.vertex_count);
             va = &vertices[p.vertices[0]];
             vb = &vertices[p.vertices[1]];
@@ -309,7 +312,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias, const MATRIX *lights)
             }
             break;
         }
-        case (KF_TMD_MODE_F3 | KF_TMD_MODE_SEMITRANS): {
+        case KF_TMD_MODE_F3_SEMITRANS: {
             const auto p = tmd_decode_face(packet, object.vertex_count);
             va = &vertices[p.vertices[0]];
             vb = &vertices[p.vertices[1]];
@@ -332,7 +335,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias, const MATRIX *lights)
             }
             break;
         }
-        case (KF_TMD_MODE_F4 | KF_TMD_MODE_SEMITRANS): {
+        case KF_TMD_MODE_F4_SEMITRANS: {
             const auto p = tmd_decode_face(packet, object.vertex_count);
             va = &vertices[p.vertices[0]];
             vb = &vertices[p.vertices[1]];
@@ -381,6 +384,9 @@ void render_enqueue_model(u16 object_index, s16 depth_bias, const MATRIX *lights
     while (stream.remaining != 0) {
         const auto packet = tmd_next_packet(stream);
         switch (packet.mode) {
+        default:
+            // This pass only draws opaque textured faces.
+            break;
         case KF_TMD_MODE_GT3: {
             const auto p = tmd_decode_face(packet, object.vertex_count);
             va = &vertices[p.vertices[0]];
@@ -524,6 +530,9 @@ void render_enqueue_map(u16 object_index, const MATRIX *lights, const MATRIX *mo
     while (stream.remaining != 0) {
         const auto packet = tmd_next_packet(stream);
         switch (packet.mode) {
+        default:
+            // Map cells only submit flat-shaded opaque textured faces.
+            break;
         case KF_TMD_MODE_FT4: {
             const auto p = tmd_decode_face(packet, object.vertex_count);
             s32 otz;

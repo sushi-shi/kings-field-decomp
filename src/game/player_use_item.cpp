@@ -65,6 +65,9 @@ void player_use_item(KfObjectId item_id)
         player_state.camera_rotation, MAP_INTERACTION_PROBE_DISTANCE);
     index = 0;
     switch (item_id) {
+    default:
+        // Unusable items reach the existing "nothing happens" notification.
+        break;
     case KF_ITEM_KEY_OF_THE_DEAD:
     case KF_ITEM_RAITO_FAMILY_KEY:
     case KF_ITEM_DUNGEON_KEY:
@@ -76,6 +79,9 @@ void player_use_item(KfObjectId item_id)
             }
             object = &map_object_state.objects[index];
             switch (object->object_id) {
+            default:
+                // Only the listed doors and lids accept keys.
+                break;
             case KF_MAP_OBJECT_BEVELED_WOODEN_LID:
             case KF_MAP_OBJECT_FLAT_WOODEN_LID:
             case KF_MAP_OBJECT_STONE_CONTAINER_LID:

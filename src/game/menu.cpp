@@ -58,6 +58,8 @@ s32 menu_root(void)
             kf::host_wait_buttons_released();
         }
         switch (selection) {
+        case KF_ROOT_CHOICE_NONE:
+            break;
         case KF_ROOT_CHOICE_USE_ITEM:
             result = menu_use_item_panel();
             if (result == kf_enum_encode<s32>(KF_MENU_RESULT_CANCELLED))
