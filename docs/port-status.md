@@ -40,6 +40,17 @@ jumps are all in `map_object_probe_forward`: defer that function's refactor unti
 the overlapping switch/signedness PRs #14/#15 are resolved. This is port-only
 maintenance, not a decomp backport or closure of the runtime gaps below.
 
+Helpers/readability cleanup: domain macros now have typed operations, player
+motion/map coordinates/dialogue no longer need runtime word views, and seven
+fixed-pool traversals use ordinary forward range loops. Player movement uses
+live references and named cell queries; armor periodic effects share a helper
+without combining or reordering HP adjustments. The rationale, behavior-sensitive
+boundaries and concrete follow-up queue are in
+[readability-cleanup.md](readability-cleanup.md). This is source-port maintenance,
+not a claim about original source spelling or a new gameplay implementation.
+Fresh Linux/WASM builds linked with unchanged compiler diagnostics; a separate
+clean-context review found no actionable regressions. No gameplay run was made.
+
 ### 1. Update cadence — opening corrected, GAME pacing bypasses closed; flame report resolved
 
 - Evidence: the user reports both running too fast. The normal game loop has a

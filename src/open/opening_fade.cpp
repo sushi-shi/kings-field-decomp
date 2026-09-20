@@ -21,7 +21,7 @@ void opening_fade_in(void)
     frame = 0;
     do {
         display_begin_frame();
-        TRANSITION_COLOR_STEP(&color);
+        transition_advance_color(color);
         sprite_add_ft4(
             &opening_fade_rect, opening_fade_uv, material, &color, KF_TRANSITION_OT_DEPTH);
         display_present_frame();

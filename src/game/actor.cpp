@@ -94,6 +94,13 @@ void func_8002cab4(void)
     actor_pool_find_free();
 }
 
+s32 actor_bearing_to_player(const KfActor *actor)
+{
+    return vector_xz_to_angle(
+        actor_state.player_position.vx - actor->position.vx,
+        actor_state.player_position.vz - actor->position.vz);
+}
+
 void actor_set_player_transform(
     const VECTOR *position_or_null,
     const SVECTOR *rotation_or_null)
@@ -425,7 +432,7 @@ void actor_try_attack_player(
     if (distance < minimum_distance) {
         return;
     }
-    angle = ACTOR_BEARING_TO_PLAYER(actor);
+    angle = actor_bearing_to_player(actor);
     if (!angle_within_tolerance(actor->rotation.angles.y + angle_offset, angle, angle_tolerance)) {
         return;
     }
@@ -455,39 +462,37 @@ KfActor *actor_pool_find_target_in_cone(
     KfActor *best = NULL;
     s16 best_difference = KF_CONE_SEARCH_INITIAL_ANGLE_ERROR;
     s32 best_distance = 0;
-    KfActor *actor = actor_state.actors;
-    u16 count = KF_ACTOR_CAPACITY - 1;
     s32 distance;
     s16 delta;
     s16 folded;
 
-    do {
-        if (actor->lifecycle != KF_ACTOR_LIFECYCLE_ACTIVE) {
+    for (auto &actor : actor_state.actors) {
+        if (actor.lifecycle != KF_ACTOR_LIFECYCLE_ACTIVE) {
             continue;
         }
-        if (actor->action == KF_ACTOR_ACTION_POST_DEATH) {
+        if (actor.action == KF_ACTOR_ACTION_POST_DEATH) {
             continue;
         }
-        if (actor == actor_state.current) {
+        if (&actor == actor_state.current) {
             continue;
         }
         distance = actor_distance_to_point(
-            actor, origin->vx, KF_COLLISION_IGNORE_HEIGHT, origin->vz, max_distance, 0, 0);
+            &actor, origin->vx, KF_COLLISION_IGNORE_HEIGHT, origin->vz, max_distance, 0, 0);
         if (distance == -1) {
             continue;
         }
         delta = vector_xz_to_angle(
-            actor->position.vx - origin->vx, origin->vz - actor->position.vz) - facing;
+            actor.position.vx - origin->vx, origin->vz - actor.position.vz) - facing;
         folded = angle_error_magnitude(delta);
         if (angle_tolerance < folded) {
             continue;
         }
         if (folded < best_difference) {
             best_difference = folded;
-            best = actor;
+            best = &actor;
             best_distance = distance;
         }
-    } while (actor++, count-- != 0);
+    }
     *distance_out = best_distance;
     return best;
 }
@@ -661,7 +666,7 @@ KfActorAction actor_try_select_action_distance_facing(
     }
     if (angle_within_tolerance(
             actor->rotation.angles.y,
-            ACTOR_BEARING_TO_PLAYER(actor),
+            actor_bearing_to_player(actor),
             ACTOR_SELECTION_ANGLE_TOLERANCE)) {
         return action;
     }
@@ -700,7 +705,7 @@ KfActorAction actor_try_select_ground_action(KfActorAction action, s32 distance,
     }
     if (angle_within_tolerance(
             actor->rotation.angles.y,
-            ACTOR_BEARING_TO_PLAYER(actor),
+            actor_bearing_to_player(actor),
             ACTOR_SELECTION_ANGLE_TOLERANCE)) {
         return action;
     }
@@ -728,7 +733,7 @@ KfActorAction actor_try_select_facing_action(KfActorAction action, s32 distance,
     }
     if (angle_within_tolerance(
             actor->rotation.angles.y,
-            ACTOR_BEARING_TO_PLAYER(actor),
+            actor_bearing_to_player(actor),
             ACTOR_MULTI_HIT_SELECTION_ANGLE_TOLERANCE)) {
         return action;
     }
@@ -763,7 +768,7 @@ KfActorAction actor_try_select_profiled_action(KfActorAction action, s32 distanc
     }
     if (!angle_within_tolerance(
             actor->rotation.angles.y,
-            ACTOR_BEARING_TO_PLAYER(actor),
+            actor_bearing_to_player(actor),
             KF_ACTOR_AIM_TOLERANCE)
         && kf::random_next() >= ACTOR_PROFILE_FACING_BYPASS_LIMIT) {
         return KF_ACTOR_ACTION_NONE;

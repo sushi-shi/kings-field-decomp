@@ -56,16 +56,16 @@ void map_restore_floor_state(void)
         event = map_runtime_state.events;
         for (i = 0; i < KF_MAP_EVENT_CAPACITY; i++, event++) {
             event->state = kf_enum_decode<KfMapEventState>(*in++);
-            event->dialogue.fields.stage_limit = *in++;
-            event->dialogue.fields.stage = *in++;
-            event->dialogue.fields.page = *in++;
+            event->dialogue.stage_limit = *in++;
+            event->dialogue.stage = *in++;
+            event->dialogue.page = *in++;
             const u8 last_page = *in++;
-            const auto stage = event->dialogue.fields.stage;
+            const auto stage = event->dialogue.stage;
             if (stage > KF_DIALOGUE_STAGE_COUNT)
                 kf::host_fail("Invalid restored dialogue stage");
             if (stage)
                 event->dialogue_pages.last_page[stage - 1] = last_page;
-            event->dialogue.fields.page_delay = *in++;
+            event->dialogue.page_delay = *in++;
             event->unknown_0d = *in++;
         }
 

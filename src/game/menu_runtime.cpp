@@ -2,7 +2,7 @@
 #include <kf/lib/null.h>
 #include <kf/lib/bool.h>
 
-#include <kf/game/input.h>
+#include <kf/platform/input.hpp>
 #include <kf/game/menu.h>
 #include <kf/game/game.h>
 #include <cstdlib>
@@ -136,7 +136,7 @@ void menu_drop_item(void)
     for (; code < KF_ITEM_COUNT; code++) {
         if (inv[code] != 0) {
             counts[found] = inv[code];
-            if (PLAYER_ITEM_IS_EQUIPPED(code))
+            if (player_item_is_equipped(kf_enum_decode<KfObjectId>(code)))
                 counts[found]--;
             if (counts[found] != 0) {
                 for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)
@@ -183,20 +183,20 @@ void menu_drop_item(void)
                 menu_play_input_sound(MENU_SOUND_CURSOR);
                 selection = kf_enum_encode<s32>(KF_MENU_RESULT_CANCELLED);
             }
-        } else if (BUTTON_PRESSED(input, prev, kf::Button::Up)) {
+        } else if (kf::button_pressed(input, prev, kf::Button::Up)) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
             menu_list_previous(&ctx);
             if (menu_load_item_model(codes[ctx.selected_index]) != KF_RESOURCE_LOADED)
                 return;
-        } else if (BUTTON_PRESSED(input, prev, kf::Button::Down)) {
+        } else if (kf::button_pressed(input, prev, kf::Button::Down)) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
             menu_list_next(&ctx);
             if (menu_load_item_model(codes[ctx.selected_index]) != KF_RESOURCE_LOADED)
                 return;
-        } else if (BUTTON_PRESSED(input, prev, kf::Button::Confirm)) {
+        } else if (kf::button_pressed(input, prev, kf::Button::Confirm)) {
             menu_play_input_sound(MENU_SOUND_CONFIRM);
             confirm = KF_MENU_CONFIRM_REQUESTED;
-        } else if (BUTTON_PRESSED(input, prev, kf::Button::Back)) {
+        } else if (kf::button_pressed(input, prev, kf::Button::Back)) {
             menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
             selection = kf_enum_encode<s32>(KF_MENU_RESULT_CANCELLED);
         }
@@ -262,19 +262,19 @@ KfMenuResult menu_save_load_hub(void)
         confirm = KF_MENU_CONFIRM_IDLE;
         prev = input;
         input = kf::host_read_buttons();
-        if (BUTTON_PRESSED(input, prev, kf::Button::Up)) {
+        if (kf::button_pressed(input, prev, kf::Button::Up)) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
             if (cursor != 0)
                 cursor--;
             else
                 cursor = KF_MENU_SYSTEM_RETURN_ROW;
-        } else if (BUTTON_PRESSED(input, prev, kf::Button::Down)) {
+        } else if (kf::button_pressed(input, prev, kf::Button::Down)) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
             if (cursor != KF_MENU_SYSTEM_RETURN_ROW)
                 cursor++;
             else
                 cursor = kf_enum_encode<s32>(KF_MENU_SYSTEM_ACTION_LOAD);
-        } else if (BUTTON_PRESSED(input, prev, kf::Button::Confirm)) {
+        } else if (kf::button_pressed(input, prev, kf::Button::Confirm)) {
             menu_play_input_sound(MENU_SOUND_CONFIRM);
             confirm = KF_MENU_CONFIRM_REQUESTED;
             if (cursor == KF_MENU_SYSTEM_RETURN_ROW) {
@@ -282,7 +282,7 @@ KfMenuResult menu_save_load_hub(void)
             } else {
                 action = kf_enum_decode<KfMenuSystemAction>(cursor);
             }
-        } else if (BUTTON_PRESSED(input, prev, kf::Button::Back)) {
+        } else if (kf::button_pressed(input, prev, kf::Button::Back)) {
             menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
             result = KF_MENU_RESULT_CANCELLED;
         }
@@ -367,24 +367,24 @@ KfMenuResult menu_save_panel(void)
 
         prev = input;
         input = kf::host_read_buttons();
-        if (BUTTON_PRESSED(input, prev, kf::Button::Up)) {
+        if (kf::button_pressed(input, prev, kf::Button::Up)) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
             if (cursor != 0)
                 cursor--;
             else
                 cursor = KF_MENU_SAVE_RETURN_ROW;
-        } else if (BUTTON_PRESSED(input, prev, kf::Button::Down)) {
+        } else if (kf::button_pressed(input, prev, kf::Button::Down)) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
             if (cursor != KF_MENU_SAVE_RETURN_ROW)
                 cursor++;
             else
                 cursor = 0;
-        } else if (BUTTON_PRESSED(input, prev, kf::Button::Confirm)) {
+        } else if (kf::button_pressed(input, prev, kf::Button::Confirm)) {
             menu_play_input_sound(MENU_SOUND_CONFIRM);
             confirm = KF_MENU_CONFIRM_REQUESTED;
             if (cursor == KF_MENU_SAVE_RETURN_ROW)
                 result = KF_MENU_RESULT_CANCELLED;
-        } else if (BUTTON_PRESSED(input, prev, kf::Button::Back)) {
+        } else if (kf::button_pressed(input, prev, kf::Button::Back)) {
             menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
             result = KF_MENU_RESULT_CANCELLED;
         }
@@ -464,19 +464,19 @@ KfMenuResult menu_load_panel(void)
 
         prev = input;
         input = kf::host_read_buttons();
-        if (BUTTON_PRESSED(input, prev, kf::Button::Up)) {
+        if (kf::button_pressed(input, prev, kf::Button::Up)) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
             if (cursor != 0)
                 cursor--;
             else
                 cursor = KF_MENU_LOAD_RETURN_ROW;
-        } else if (BUTTON_PRESSED(input, prev, kf::Button::Down)) {
+        } else if (kf::button_pressed(input, prev, kf::Button::Down)) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
             if (cursor != KF_MENU_LOAD_RETURN_ROW)
                 cursor++;
             else
                 cursor = 0;
-        } else if (BUTTON_PRESSED(input, prev, kf::Button::Confirm)) {
+        } else if (kf::button_pressed(input, prev, kf::Button::Confirm)) {
             if (cursor == KF_MENU_LOAD_RETURN_ROW) {
                 menu_play_input_sound(MENU_SOUND_CONFIRM);
                 confirm = KF_MENU_CONFIRM_REQUESTED;
@@ -487,7 +487,7 @@ KfMenuResult menu_load_panel(void)
                 menu_play_input_sound(MENU_SOUND_CONFIRM);
                 confirm = KF_MENU_CONFIRM_REQUESTED;
             }
-        } else if (BUTTON_PRESSED(input, prev, kf::Button::Back)) {
+        } else if (kf::button_pressed(input, prev, kf::Button::Back)) {
             menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
             result = KF_MENU_RESULT_CANCELLED;
         }
@@ -560,27 +560,27 @@ void menu_config_panel(void)
         menu_frame_begin();
         prev = pad;
         pad = kf::host_read_buttons();
-        if (BUTTON_PRESSED(pad, prev, kf::Button::Up)) {
+        if (kf::button_pressed(pad, prev, kf::Button::Up)) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
             if (row != 0) {
                 row--;
             } else {
                 row = KF_MENU_CONFIG_RETURN_ROW;
             }
-        } else if (BUTTON_PRESSED(pad, prev, kf::Button::Down)) {
+        } else if (kf::button_pressed(pad, prev, kf::Button::Down)) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
             if (row != KF_MENU_CONFIG_RETURN_ROW) {
                 row++;
             } else {
                 row = 0;
             }
-        } else if ((BUTTON_PRESSED(pad, prev, kf::Button::Right)) ||
-                   (BUTTON_PRESSED(pad, prev, kf::Button::Left))) {
+        } else if ((kf::button_pressed(pad, prev, kf::Button::Right)) ||
+                   (kf::button_pressed(pad, prev, kf::Button::Left))) {
             if (row != KF_MENU_CONFIG_RETURN_ROW) {
                 menu_play_input_sound(MENU_SOUND_CONFIRM);
                 states[row] = kf_enum_decode<KfPlayerOption>(states[row] == KF_PLAYER_OPTION_OFF);
             }
-        } else if (BUTTON_PRESSED(pad, prev, kf::Button::Confirm)) {
+        } else if (kf::button_pressed(pad, prev, kf::Button::Confirm)) {
             menu_play_input_sound(MENU_SOUND_CONFIRM);
             if (row == KF_MENU_CONFIG_RETURN_ROW) {
                 confirm = KF_MENU_CONFIRM_REQUESTED;
@@ -588,7 +588,7 @@ void menu_config_panel(void)
             } else {
                 states[row] = kf_enum_decode<KfPlayerOption>(states[row] == KF_PLAYER_OPTION_OFF);
             }
-        } else if (BUTTON_PRESSED(pad, prev, kf::Button::Back)) {
+        } else if (kf::button_pressed(pad, prev, kf::Button::Back)) {
             menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
             phase = KF_MENU_RESULT_CANCELLED;
         }
@@ -644,16 +644,18 @@ enum {
     STATS_HEADER_ROW_STEP = 23
 };
 
-#define MENU_DRAW_VITAL_FRACTION(string, current, maximum, digits) ( \
-    menu_format_number((current), (digits), KF_FORMAT_PAD_SPACES, (string).glyphs.codes), \
-    menu_draw_number(&menu_assets.number_atlas, &(string)), \
-    (string).glyphs.codes[0] = MENU_NUMBER_SLASH, \
-    (string).glyphs.codes[1] = MENU_TEXT_END, \
-    (string).position.x += (digits) * MENU_NUMBER_ADVANCE, \
-    menu_draw_number(&menu_assets.number_atlas, &(string)), \
-    (string).position.x += MENU_NUMBER_ADVANCE, \
-    menu_format_number((maximum), (digits), KF_FORMAT_PAD_SPACES, (string).glyphs.codes), \
-    menu_draw_number(&menu_assets.number_atlas, &(string)))
+static void menu_draw_vital_fraction(MenuGlyphString &string, s32 current, s32 maximum, s32 digits)
+{
+    menu_format_number(current, digits, KF_FORMAT_PAD_SPACES, string.glyphs.codes);
+    menu_draw_number(&menu_assets.number_atlas, &string);
+    string.glyphs.codes[0] = MENU_NUMBER_SLASH;
+    string.glyphs.codes[1] = MENU_TEXT_END;
+    string.position.x += digits * MENU_NUMBER_ADVANCE;
+    menu_draw_number(&menu_assets.number_atlas, &string);
+    string.position.x += MENU_NUMBER_ADVANCE;
+    menu_format_number(maximum, digits, KF_FORMAT_PAD_SPACES, string.glyphs.codes);
+    menu_draw_number(&menu_assets.number_atlas, &string);
+}
 
 void menu_draw_stats_header(void)
 {
@@ -755,12 +757,12 @@ void menu_draw_stats_header(void)
 
     gs.position.x = 0xe6;
     gs.position.y += row_step;
-    MENU_DRAW_VITAL_FRACTION(gs, player_state.vitals.current_hp,
+    menu_draw_vital_fraction(gs, player_state.vitals.current_hp,
         player_state.vitals.maximum_hp, MENU_STATS_VITAL_DIGITS);
 
     gs.position.x = 0xe6;
     gs.position.y += row_step;
-    MENU_DRAW_VITAL_FRACTION(gs, player_state.vitals.current_mp,
+    menu_draw_vital_fraction(gs, player_state.vitals.current_mp,
         player_state.vitals.maximum_mp, MENU_STATS_VITAL_DIGITS);
 
     gs.position.x = 0xdf;
@@ -935,12 +937,12 @@ void menu_draw_status_details(void)
 
         gs.position.x = 0x46;
         gs.position.y += summary_row_step;
-        MENU_DRAW_VITAL_FRACTION(gs, player_state.vitals.current_hp,
+        menu_draw_vital_fraction(gs, player_state.vitals.current_hp,
             player_state.vitals.maximum_hp, MENU_STATS_VITAL_DIGITS);
 
         gs.position.x = 0x46;
         gs.position.y += summary_row_step;
-        MENU_DRAW_VITAL_FRACTION(gs, player_state.vitals.current_mp,
+        menu_draw_vital_fraction(gs, player_state.vitals.current_mp,
             player_state.vitals.maximum_mp, MENU_STATS_VITAL_DIGITS);
 
         gs.position.x = 0x3f;
@@ -1411,7 +1413,7 @@ void menu_draw_dialog_frame(const KfSaveSlotSummary *summaries, KfSaveSlotOverla
             menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
             gs.position.x = MENU_SAVE_SUMMARY_VALUE_X;
-            MENU_DRAW_VITAL_FRACTION(gs, summaries[i].current_hp,
+            menu_draw_vital_fraction(gs, summaries[i].current_hp,
                 summaries[i].maximum_hp, MENU_SAVE_STATUS_DIGITS);
 
             gs.position.x = MENU_SAVE_SUMMARY_LABEL_X;
@@ -1422,7 +1424,7 @@ void menu_draw_dialog_frame(const KfSaveSlotSummary *summaries, KfSaveSlotOverla
             menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
             gs.position.x = MENU_SAVE_SUMMARY_VALUE_X;
-            MENU_DRAW_VITAL_FRACTION(gs, summaries[i].current_mp,
+            menu_draw_vital_fraction(gs, summaries[i].current_mp,
                 summaries[i].maximum_mp, MENU_SAVE_STATUS_DIGITS);
         }
     }
@@ -1526,19 +1528,19 @@ static KfMenuResult menu_list_interact_impl(
         menu_frame_begin();
         prev_pad = pad;
         pad = kf::host_read_buttons();
-        if ((BUTTON_PRESSED(pad, prev_pad, kf::Button::Up)) ||
-            (BUTTON_PRESSED(pad, prev_pad, kf::Button::Down))) {
+        if ((kf::button_pressed(pad, prev_pad, kf::Button::Up)) ||
+            (kf::button_pressed(pad, prev_pad, kf::Button::Down))) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
             if (selected == KF_MENU_CHOICE_ACCEPT) {
                 selected = KF_MENU_CHOICE_DECLINE;
             } else {
                 selected = KF_MENU_CHOICE_ACCEPT;
             }
-        } else if (BUTTON_PRESSED(pad, prev_pad, kf::Button::Confirm)) {
+        } else if (kf::button_pressed(pad, prev_pad, kf::Button::Confirm)) {
             menu_play_input_sound(MENU_SOUND_CONFIRM);
             highlight = KF_MENU_CONFIRM_REQUESTED;
             result = menu_confirm_result_from_choice(selected);
-        } else if (BUTTON_PRESSED(pad, prev_pad, kf::Button::Back)) {
+        } else if (kf::button_pressed(pad, prev_pad, kf::Button::Back)) {
             menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
             result = KF_MENU_RESULT_CANCELLED;
         }
@@ -1605,18 +1607,18 @@ KfMenuResult menu_two_option_prompt(
         highlight = KF_MENU_CONFIRM_IDLE;
         prev = input;
         input = kf::host_read_buttons();
-        if ((BUTTON_PRESSED(input, prev, kf::Button::Up)) ||
-            (BUTTON_PRESSED(input, prev, kf::Button::Down))) {
+        if ((kf::button_pressed(input, prev, kf::Button::Up)) ||
+            (kf::button_pressed(input, prev, kf::Button::Down))) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
             if (selected != KF_MENU_CHOICE_ACCEPT)
                 selected = KF_MENU_CHOICE_ACCEPT;
             else
                 selected = KF_MENU_CHOICE_DECLINE;
-        } else if (BUTTON_PRESSED(input, prev, kf::Button::Confirm)) {
+        } else if (kf::button_pressed(input, prev, kf::Button::Confirm)) {
             menu_play_input_sound(MENU_SOUND_CONFIRM);
             highlight = KF_MENU_CONFIRM_REQUESTED;
             result = menu_confirm_result_from_choice(selected);
-        } else if (BUTTON_PRESSED(input, prev, kf::Button::Back)) {
+        } else if (kf::button_pressed(input, prev, kf::Button::Back)) {
             menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
             result = KF_MENU_RESULT_CANCELLED;
         }
@@ -2025,7 +2027,7 @@ KfResourceLoadResult menu_load_item_texture(KfMenuTextureId texture_id)
 
     if (texture_id != KF_MENU_TEXTURE_NONE) {
         number = kf_enum_encode<s32>(texture_id) + 1;
-        RESOURCE_PATH_WRITE_DECIMAL3(&name[menu_image_number_offset], number);
+        resource_path_write_decimal3(&name[menu_image_number_offset], number);
         destination = game_graphics_runtime.display_state.asset_load_buffer;
         std::size_t image_size;
         if (resource_file_load_into(destination,

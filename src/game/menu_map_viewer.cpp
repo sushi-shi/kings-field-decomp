@@ -54,8 +54,8 @@ void menu_map_viewer(KfObjectId item_id)
     marker.material = render_texture_material(MENU_MAP_MARKER_TPAGE, MENU_MAP_MARKER_CLUT);
     marker.depth = MENU_MARKER_OT_DEPTH;
     render_face_uv_rectangle(&marker, 0, 0, MENU_MAP_MARKER_SPAN, MENU_MAP_MARKER_SPAN);
-    const s32 marker_x = player_state.motion_state.fields.map_cell.coords.x * MENU_MAP_PIXELS_PER_CELL + MENU_MAP_MARKER_ORIGIN_X;
-    const s32 marker_y = MENU_MAP_MARKER_ORIGIN_Y - player_state.motion_state.fields.map_cell.coords.z * MENU_MAP_PIXELS_PER_CELL;
+    const s32 marker_x = player_state.motion_state.map_cell.x * MENU_MAP_PIXELS_PER_CELL + MENU_MAP_MARKER_ORIGIN_X;
+    const s32 marker_y = MENU_MAP_MARKER_ORIGIN_Y - player_state.motion_state.map_cell.z * MENU_MAP_PIXELS_PER_CELL;
     render_face_rectangle(&marker, marker_x, marker_y,
         marker_x + MENU_MAP_MARKER_SPAN, marker_y + MENU_MAP_MARKER_SPAN);
     for (unsigned i = 0; i < 4; ++i) {

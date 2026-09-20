@@ -595,7 +595,7 @@ void actor_prepare_charge_toward_player(void)
     struct KfVecXZs delta;
     s32 length;
 
-    actor->movement_yaw = ACTOR_BEARING_TO_PLAYER(actor);
+    actor->movement_yaw = actor_bearing_to_player(actor);
     if (angle_within_tolerance(actor->rotation.angles.y, actor->movement_yaw, KF_ACTOR_AIM_TOLERANCE) == 0) {
         actor->movement_yaw = actor->rotation.angles.y;
     }
@@ -795,7 +795,7 @@ static void actor_update_pursuit(KfActor *actor, const KfActorDefinition *defini
             actor->animation_id = definition->action_animations[KF_ACTOR_ANIM_SLOT_MOVE];
             actor->animation_phase = 0;
         }
-        actor->movement_yaw = ACTOR_BEARING_TO_PLAYER(actor);
+        actor->movement_yaw = actor_bearing_to_player(actor);
         break;
     case KF_ACTOR_PROGRESS_RUNNING:
         if (actor_move_along_heading(KF_ACTOR_MOVE_FORWARD, KF_ACTOR_COLLISION_STOP) != KF_ACTOR_MOVE_SUCCEEDED) {
@@ -805,7 +805,7 @@ static void actor_update_pursuit(KfActor *actor, const KfActorDefinition *defini
             return;
         }
         if (kf::random_next() < ACTOR_PURSUIT_TURN_RANDOM_LIMIT) {
-            actor->movement_yaw = ACTOR_BEARING_TO_PLAYER(actor);
+            actor->movement_yaw = actor_bearing_to_player(actor);
         }
         break;
     default:
@@ -999,7 +999,7 @@ void actor_update_current_action(void)
                 actor->animation_id = definition->action_animations[KF_ACTOR_ANIM_SLOT_MOVE];
                 actor->animation_phase = 0;
             }
-            actor->movement_yaw = ACTOR_BEARING_TO_PLAYER(actor);
+            actor->movement_yaw = actor_bearing_to_player(actor);
         }
         if (actor_move_along_heading(KF_ACTOR_MOVE_BACKWARD, KF_ACTOR_COLLISION_STOP) != KF_ACTOR_MOVE_SUCCEEDED) {
             actor->action = KF_ACTOR_ACTION_NONE;

@@ -10,10 +10,12 @@ enum class KfResourceLoadResult : s32 {
     KF_RESOURCE_LOAD_FAILED = 1
 }; using enum KfResourceLoadResult;
 
-#define RESOURCE_PATH_WRITE_DECIMAL3(digits, number) ( \
-    (digits)[0] = (number) / 100 + '0', \
-    (digits)[1] = ((number) % 100) / 10 + '0', \
-    (digits)[2] = ((number) % 100) % 10 + '0')
+constexpr void resource_path_write_decimal3(char *digits, s32 number)
+{
+    digits[0] = static_cast<char>(number / 100 + '0');
+    digits[1] = static_cast<char>((number % 100) / 10 + '0');
+    digits[2] = static_cast<char>((number % 100) % 10 + '0');
+}
 
 // Resource paths are relative to the extracted KF directory.
 kf::FileResult resource_file_open(kf::DataFile *file, const char *relative_path);

@@ -183,108 +183,101 @@ void map_object_definitions_load(const KfMapObjectDefinitionTable *definitions)
 
 void map_object_pool_load(const KfMapObjectPlacement *placements)
 {
-    u16 remaining;
     KfBool16 ended = KF_FALSE;
     const KfMapObjectPlacement *placement = placements;
-    KfMapObject *object = map_object_state.objects;
     KfMapObjectDefinition *definition;
     SVECTOR effect_direction;
     KfObjectId object_id;
 
-    remaining = KF_MAP_OBJECT_CAPACITY - 1;
-    for (;;) {
+    for (auto &object : map_object_state.objects) {
         if (ended == KF_TRUE
             || kf_enum_decode<KfObjectId>(placement->object_id) == KF_OBJECT_NONE) {
             ended = KF_TRUE;
-            object->object_id = KF_OBJECT_NONE;
+            object.object_id = KF_OBJECT_NONE;
         } else {
             object_id = kf_enum_decode<KfObjectId>(placement->object_id);
-            object->object_id = object_id;
-            object->cell_x = placement->tile_x;
-            object->cell_z = placement->tile_z;
-            object->rotation.angles.z = 0;
-            object->rotation.angles.x = 0;
-            object->rotation.angles.y = placement->yaw & KF_ANGLE_WRAP_MASK;
-            object->position.vx = map_placement_axis_position(placement->tile_x, placement->local_x);
-            object->position.vz = map_placement_axis_position(placement->tile_z, placement->local_z);
-            object->position.vy = placement->local_y
+            object.object_id = object_id;
+            object.cell_x = placement->tile_x;
+            object.cell_z = placement->tile_z;
+            object.rotation.angles.z = 0;
+            object.rotation.angles.x = 0;
+            object.rotation.angles.y = placement->yaw & KF_ANGLE_WRAP_MASK;
+            object.position.vx = map_placement_axis_position(placement->tile_x, placement->local_x);
+            object.position.vz = map_placement_axis_position(placement->tile_z, placement->local_z);
+            object.position.vy = placement->local_y
                 - map_floor_height_grid.cells[placement->tile_z][placement->tile_x] * KF_MAP_HEIGHT_STEP;
-            object->action = KF_MAP_OBJECT_OP_NONE;
+            object.action = KF_MAP_OBJECT_OP_NONE;
 
-            object->link = placement->link;
-            definition = &map_object_state.definitions.entries[kf_enum_encode<u8>(object->object_id)];
+            object.link = placement->link;
+            definition = &map_object_state.definitions.entries[kf_enum_encode<u8>(object.object_id)];
             if (definition->collision_radius != 0) {
-                collision_adjust_cell_occupancy(object->cell_x, object->cell_z, 1);
+                collision_adjust_cell_occupancy(object.cell_x, object.cell_z, 1);
             }
             switch (object_id) {
             case KF_MAP_OBJECT_ORBITING_PROJECTILE:
-                object->link.fields.action_parameter.effect_index = effect_pool_construct(
-                                                    object->link.fields.spawn.effect_id,
+                object.link.fields.action_parameter.effect_index = effect_pool_construct(
+                                                    object.link.fields.spawn.effect_id,
                                                     KF_EFFECT_CLASS_20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
                                                     KF_EFFECT_KIND_ORBITING_PROJECTILE,
-                                                    &object->position,
+                                                    &object.position,
                                                     &effect_direction)
                     - effect_pool_records;
-                map_object_start_action_if_idle(object, KF_MAP_OBJECT_OP_RELEASE_ORBIT_OR_SHORT_SWING);
+                map_object_start_action_if_idle(&object, KF_MAP_OBJECT_OP_RELEASE_ORBIT_OR_SHORT_SWING);
                 break;
             case KF_MAP_OBJECT_BOSS_PROJECTILE_EMITTER:
             case KF_MAP_OBJECT_FIRE_BALL_EMITTER:
             case KF_MAP_OBJECT_WIND_CUTTER_EMITTER:
             case KF_MAP_OBJECT_PROJECTILE_EMITTER:
-                map_object_start_action_if_idle(object, KF_MAP_OBJECT_OP_PROJECTILE_EMITTER);
+                map_object_start_action_if_idle(&object, KF_MAP_OBJECT_OP_PROJECTILE_EMITTER);
                 break;
             case KF_MAP_OBJECT_SHORT_SWING:
-                object->link.fields.action_parameter.effect_index = effect_pool_construct(
-                                                    object->link.fields.spawn.effect_id,
+                object.link.fields.action_parameter.effect_index = effect_pool_construct(
+                                                    object.link.fields.spawn.effect_id,
                                                     KF_EFFECT_CLASS_20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
                                                     KF_EFFECT_KIND_SWINGING_HAZARD_SHORT,
-                                                    &object->position,
+                                                    &object.position,
                                                     &effect_direction,
-                                                    KfEffectRotationArguments{&object->rotation.vector})
+                                                    KfEffectRotationArguments{&object.rotation.vector})
                     - effect_pool_records;
-                map_object_start_action_if_idle(object, KF_MAP_OBJECT_OP_RELEASE_ORBIT_OR_SHORT_SWING);
+                map_object_start_action_if_idle(&object, KF_MAP_OBJECT_OP_RELEASE_ORBIT_OR_SHORT_SWING);
                 break;
             case KF_MAP_OBJECT_LONG_SWING:
-                object->link.fields.action_parameter.effect_index = effect_pool_construct(
-                                                    object->link.fields.spawn.effect_id,
+                object.link.fields.action_parameter.effect_index = effect_pool_construct(
+                                                    object.link.fields.spawn.effect_id,
                                                     KF_EFFECT_CLASS_20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
                                                     KF_EFFECT_KIND_SWINGING_HAZARD_LONG,
-                                                    &object->position,
+                                                    &object.position,
                                                     &effect_direction,
-                                                    KfEffectRotationArguments{&object->rotation.vector})
+                                                    KfEffectRotationArguments{&object.rotation.vector})
                     - effect_pool_records;
-                map_object_start_action_if_idle(object, KF_MAP_OBJECT_OP_RELEASE_LONG_SWING);
+                map_object_start_action_if_idle(&object, KF_MAP_OBJECT_OP_RELEASE_LONG_SWING);
                 break;
             case KF_MAP_OBJECT_EFFECT_SWITCH:
-                object->link.fields.action_parameter.effect_index =
+                object.link.fields.action_parameter.effect_index =
                     effect_pool_construct(
-                        0, KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER, KF_EFFECT_KIND_MAP_SWITCH, &object->position,
-                        &effect_direction, KfEffectRotationArguments{&object->rotation.vector})
+                        0, KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER, KF_EFFECT_KIND_MAP_SWITCH, &object.position,
+                        &effect_direction, KfEffectRotationArguments{&object.rotation.vector})
                     - effect_pool_records;
-                map_object_start_action_if_idle(object, KF_MAP_OBJECT_OP_EFFECT_SWITCH);
+                map_object_start_action_if_idle(&object, KF_MAP_OBJECT_OP_EFFECT_SWITCH);
                 break;
             case KF_ITEM_DRAGON_CHALICE:
             case KF_ITEM_WATER_SEAL_STONE:
             case KF_ITEM_EARTH_SEAL_STONE:
             case KF_ITEM_FIRE_SEAL_STONE:
             case KF_ITEM_WIND_SEAL_STONE:
-                map_object_start_action_if_idle(object, KF_MAP_OBJECT_OP_REVEAL_MAP_PIECE);
-                object->position.vy += KF_MAP_OBJECT_REVEAL_DEPTH;
+                map_object_start_action_if_idle(&object, KF_MAP_OBJECT_OP_REVEAL_MAP_PIECE);
+                object.position.vy += KF_MAP_OBJECT_REVEAL_DEPTH;
                 break;
             case KF_MAP_OBJECT_DRY_FOUNTAIN:
             case KF_MAP_OBJECT_FILLED_FOUNTAIN:
-                map_object_start_action_if_idle(object, KF_MAP_OBJECT_OP_RESTORE_POINT);
+                map_object_start_action_if_idle(&object, KF_MAP_OBJECT_OP_RESTORE_POINT);
                 break;
             }
             if (definition->behavior_type == KF_MAP_OBJECT_OP_COPY_REGION) {
-                map_object_start_action_if_idle(object, KF_MAP_OBJECT_OP_COPY_REGION);
+                map_object_start_action_if_idle(&object, KF_MAP_OBJECT_OP_COPY_REGION);
             }
-            map_object_mark_collision_edge(object, KF_MAP_CELL_BLOCKED, object->rotation.angles.y);
+            map_object_mark_collision_edge(&object, KF_MAP_CELL_BLOCKED, object.rotation.angles.y);
             placement++;
-        }
-        object++;
-        if (remaining-- == 0) {
-            break;
         }
     }
 }
