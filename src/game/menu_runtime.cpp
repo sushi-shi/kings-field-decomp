@@ -17,11 +17,9 @@ KfMenuModelAllocation menu_item_model_allocation_pending = KF_MENU_MODEL_RELEASE
 
 SVECTOR menu_item_preview_rotation = {0, 0, 0, 0};
 
-enum {
-    MENU_PRIMITIVE_BRIGHTNESS = 96,
-    MENU_STATUS_BACKDROP_LEFT_X = 6,
-    MENU_STATUS_BACKDROP_RIGHT_X = MENU_STATUS_BACKDROP_LEFT_X + MENU_BACKDROP_COLUMN_STEP
-};
+static constexpr int MENU_PRIMITIVE_BRIGHTNESS = 96;
+static constexpr int MENU_STATUS_BACKDROP_LEFT_X = 6;
+static constexpr int MENU_STATUS_BACKDROP_RIGHT_X = MENU_STATUS_BACKDROP_LEFT_X + MENU_BACKDROP_COLUMN_STEP;
 
 static inline void menu_preview_light_source(MATRIX *light_source)
 {
