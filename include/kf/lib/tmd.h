@@ -104,6 +104,11 @@ typedef struct KfTmdObject {
 } KfTmdObject;
 
 static_assert(sizeof(KfTmdHeader) == KF_TMD_HEADER_BYTES && sizeof(KfTmdObject) == 28);
+static_assert(offsetof(KfTmdHeader, object_count) == 8);
+static_assert(offsetof(KfTmdObject, vertex_offset) == 0 && offsetof(KfTmdObject, vertex_count) == 4);
+static_assert(offsetof(KfTmdObject, normal_offset) == 8 && offsetof(KfTmdObject, normal_count) == 12);
+static_assert(offsetof(KfTmdObject, primitive_offset) == 16 && offsetof(KfTmdObject, primitive_count) == 20);
+static_assert(offsetof(KfTmdObject, scale) == 24);
 
 inline u32 tmd_read_word(const u8 *bytes)
 {

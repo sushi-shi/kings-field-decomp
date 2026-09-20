@@ -71,9 +71,9 @@ void display_present_system_screen(s32 color)
         {KF_SYSTEM_SCREEN_TPAGE_X, KF_TEXTURE_LOWER_PAGE_Y, 0, KF_SYSTEM_SCREEN_CLUT_Y,
          kf::TextureFormat::Indexed4}, kf::BlendMode::average};
     face.transparency = kf::FaceTransparency::Blend;
-    const float brightness = color / 128.0f;
-    constexpr float right_u = static_cast<float>(KF_SYSTEM_SCREEN_U_SPAN) / 256.0f;
-    constexpr float bottom_v = static_cast<float>(KF_SYSTEM_SCREEN_V_SPAN) / 256.0f;
+    const float brightness = color / kf::texture_color_unity;
+    constexpr float right_u = static_cast<float>(KF_SYSTEM_SCREEN_U_SPAN) / kf::texture_uv_scale;
+    constexpr float bottom_v = static_cast<float>(KF_SYSTEM_SCREEN_V_SPAN) / kf::texture_uv_scale;
     face.vertices[0] = {KF_SYSTEM_SCREEN_LEFT, KF_SYSTEM_SCREEN_TOP, 0, 0,
                        brightness, brightness, brightness, 1};
     face.vertices[1] = {KF_SYSTEM_SCREEN_RIGHT, KF_SYSTEM_SCREEN_TOP, right_u, 0,
@@ -131,15 +131,13 @@ void render_initialize(void)
     kf::matrix_set_rotation_xyz(angles, game_graphics_runtime.render_state.quadrant_matrices[2]);
     angles.vy = KF_ANGLE_QUARTER_TURN;
     kf::matrix_set_rotation_xyz(angles, game_graphics_runtime.render_state.quadrant_matrices[1]);
-    game_graphics_runtime.render_state.light_matrix.m[0][0] = 3800;
-    game_graphics_runtime.render_state.light_matrix.m[0][1] = -2800;
-    game_graphics_runtime.render_state.light_matrix.m[0][2] = 0;
-    game_graphics_runtime.render_state.light_matrix.m[1][0] = -3000;
-    game_graphics_runtime.render_state.light_matrix.m[1][1] = -3600;
-    game_graphics_runtime.render_state.light_matrix.m[1][2] = -3400;
-    game_graphics_runtime.render_state.light_matrix.m[2][0] = -1300;
-    game_graphics_runtime.render_state.light_matrix.m[2][1] = 2700;
-    game_graphics_runtime.render_state.light_matrix.m[2][2] = 800;
+    static constexpr s16 initial_light_directions[3][3] = {
+        {3800, -2800, 0},
+        {-3000, -3600, -3400},
+        {-1300, 2700, 800},
+    };
+    memcpy(game_graphics_runtime.render_state.light_matrix.m,
+        initial_light_directions, sizeof initial_light_directions);
     game_graphics_runtime.render_state.light_matrix_copy = game_graphics_runtime.render_state.light_matrix;
     kf::matrix_multiply_rotation(game_graphics_runtime.render_state.light_matrix, game_graphics_runtime.render_state.quadrant_matrices[0], game_graphics_runtime.light_quadrant_matrices[0]);
     kf::matrix_multiply_rotation(game_graphics_runtime.render_state.light_matrix, game_graphics_runtime.render_state.quadrant_matrices[1], game_graphics_runtime.light_quadrant_matrices[1]);

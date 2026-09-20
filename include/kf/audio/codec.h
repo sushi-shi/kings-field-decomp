@@ -5,6 +5,7 @@ extern "C" {
 #endif
 
 enum { KF_AUDIO_PROGRAM_COUNT = 128, KF_AUDIO_TONE_COUNT = 16, KF_AUDIO_SAMPLE_COUNT = 256 };
+enum { KF_AUDIO_ADPCM_BLOCK_BYTES = 16, KF_AUDIO_ADPCM_BLOCK_FRAMES = 28 };
 typedef struct KfAudioEnvelope {
     uint8_t attack_shift, attack_step, decay_shift, sustain_shift, sustain_step, release_shift;
     uint16_t sustain_level;

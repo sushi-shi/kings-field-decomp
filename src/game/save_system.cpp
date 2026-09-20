@@ -10,6 +10,26 @@
 #include <cstring>
 #include <kf/game/game.h>
 
+namespace {
+constexpr int save_no_equipment_id = 255;
+constexpr u32 crc32_reflected_polynomial = 0xedb88320u;
+// Compact floor stream emitted by map_world_state_persist and read by map_restore_floor_state.
+constexpr unsigned saved_event_bytes = 7, saved_actor_bytes = 2;
+constexpr unsigned saved_event_stage_limit_offset = 1, saved_event_stage_offset = 2;
+constexpr unsigned saved_gold_drop_bytes = 4, saved_item_drop_bytes = 3;
+struct MenuSoundNote { u8 program, note; };
+constexpr MenuSoundNote menu_cursor_note = {14, 68};
+constexpr MenuSoundNote menu_confirm_note = {13, 60};
+constexpr MenuSoundNote menu_cancel_note = {15, 63};
+constexpr unsigned talk_directory_character_offset = 6;
+constexpr unsigned talk_floor_offset = 10;
+constexpr unsigned talk_stage_offset = 11;
+constexpr unsigned talk_character_tens_offset = 12;
+constexpr unsigned talk_character_ones_offset = 13;
+constexpr unsigned talk_page_offset = 14;
+}
+
+
 enum {
     SAVE_MESSAGE_NO_SPACE = 102,
     SAVE_MESSAGE_STALE_CATALOG = 103,
@@ -21,7 +41,7 @@ enum {
     IMAGE_WAIT_INITIAL_BRIGHTNESS = 32,
     IMAGE_WAIT_MAX_BRIGHTNESS = 127
 };
-char talk_image_path_template[20] = "TALK/C00/T00000.TIM";
+char talk_image_path_template[talk_image_path_capacity] = "TALK/C00/T00000.TIM";
 KfBool32 menu_load_message_image(s32 message_id);
 void screen_show_image_until_input(const char *path);
 
@@ -191,7 +211,7 @@ static u32 save_checksum(const u8 *data, std::size_t size) {
     for (std::size_t i = 0; i < size; ++i) {
         crc ^= data[i];
         for (unsigned bit = 0; bit < 8; ++bit)
-            crc = (crc >> 1) ^ (0xedb88320u & (0u - (crc & 1)));
+            crc = (crc >> 1) ^ (crc32_reflected_polynomial & (0u - (crc & 1)));
     }
     return ~crc;
 }
@@ -204,17 +224,17 @@ static bool save_world_valid(const KfMapSavedWorld &world) {
         if (floor.records[0] != 1)
             return false;
         std::size_t position = 1;
-        for (unsigned i = 0; i < KF_MAP_EVENT_CAPACITY; ++i, position += 7) {
+        for (unsigned i = 0; i < KF_MAP_EVENT_CAPACITY; ++i, position += saved_event_bytes) {
             const auto state = kf_enum_decode<KfMapEventState>(floor.records[position]);
-            const auto stage = floor.records[position + 2];
-            if (floor.records[position + 1] > KF_DIALOGUE_STAGE_COUNT || stage > KF_DIALOGUE_STAGE_COUNT
+            const auto stage = floor.records[position + saved_event_stage_offset];
+            if (floor.records[position + saved_event_stage_limit_offset] > KF_DIALOGUE_STAGE_COUNT || stage > KF_DIALOGUE_STAGE_COUNT
                     || (state != KF_MAP_EVENT_FREE && stage == 0))
                 return false;
         }
         const unsigned actors = floor.records[position++];
         if (actors > KF_ACTOR_CAPACITY)
             return false;
-        for (unsigned i = 0; i < actors; ++i, position += 2)
+        for (unsigned i = 0; i < actors; ++i, position += saved_actor_bytes)
             if (floor.records[position] >= KF_ACTOR_CAPACITY)
                 return false;
         const u8 *object_ids = floor.records + position;
@@ -230,7 +250,7 @@ static bool save_world_valid(const KfMapSavedWorld &world) {
         const unsigned objects = floor.records[position++];
         // Eight serialized link bytes, preceded by the original object index.
         constexpr unsigned link_record_bytes = 9;
-        constexpr unsigned drop_bytes = KF_MAP_OBJECT_EFFECT_GROUP_CAPACITY * (4 + 2 * 3);
+        constexpr unsigned drop_bytes = KF_MAP_OBJECT_EFFECT_GROUP_CAPACITY * (saved_gold_drop_bytes + 2 * saved_item_drop_bytes);
         if (objects > KF_MAP_OBJECT_EFFECT_FIRST || objects * link_record_bytes + drop_bytes > sizeof floor.records - position)
             return false;
         for (unsigned i = 0; i < objects; ++i, position += link_record_bytes) {
@@ -249,7 +269,7 @@ static bool save_world_valid(const KfMapSavedWorld &world) {
             for (unsigned i = 0; i < KF_MAP_OBJECT_EFFECT_GROUP_CAPACITY; ++i) {
                 if (floor.records[position] >= KF_MAP_COLUMNS || floor.records[position + 1] >= KF_MAP_ROWS)
                     return false;
-                position += group == 0 ? 4 : 3;
+                position += group == 0 ? saved_gold_drop_bytes : saved_item_drop_bytes;
             }
         }
     }
@@ -264,8 +284,8 @@ static bool save_state_valid(const SavedGameState &state) {
     const auto magic = kf_enum_encode<u8>(p.selected_magic_id);
     if (p.vitals.maximum_hp == 0 || p.vitals.maximum_mp == 0
             || floor < 1 || floor > KF_MAP_SAVED_FLOOR_COUNT || highest < 1 || highest > KF_MAP_SAVED_FLOOR_COUNT
-            || (weapon != 255 && weapon >= KF_WEAPON_RECORD_COUNT)
-            || (magic != 255 && magic >= KF_MAGIC_PLAYER_COUNT)
+            || (weapon != save_no_equipment_id && weapon >= KF_WEAPON_RECORD_COUNT)
+            || (magic != save_no_equipment_id && magic >= KF_MAGIC_PLAYER_COUNT)
             || p.camera_position.vx < 0 || p.camera_position.vx >= KF_MAP_COLUMNS * KF_MAP_TILE_SIZE
             || p.camera_position.vz < 0 || p.camera_position.vz >= KF_MAP_ROWS * KF_MAP_TILE_SIZE
             || p.motion_state.fields.map_cell.coords.x >= KF_MAP_COLUMNS
@@ -279,7 +299,7 @@ static bool save_state_valid(const SavedGameState &state) {
             return false;
     }
     const auto accessory = kf_enum_encode<u8>(p.equipped_accessory_id);
-    if (accessory != 255 && accessory >= KF_ITEM_COUNT)
+    if (accessory != save_no_equipment_id && accessory >= KF_ITEM_COUNT)
         return false;
     for (const auto flag : state.learned)
         if (flag != KF_MAGIC_UNLEARNED && flag != KF_MAGIC_LEARNED)
@@ -441,14 +461,14 @@ void menu_play_input_sound(KfMenuSoundCue cue)
     SoundRef sound;
 
     if (cue == MENU_SOUND_CURSOR) {
-        sound.program = 0xe;
-        sound.note = 0x44;
+        sound.program = menu_cursor_note.program;
+        sound.note = menu_cursor_note.note;
     } else if (cue == MENU_SOUND_CONFIRM) {
-        sound.program = 0xd;
-        sound.note = 0x3c;
+        sound.program = menu_confirm_note.program;
+        sound.note = menu_confirm_note.note;
     } else {
-        sound.program = 0xf;
-        sound.note = 0x3f;
+        sound.program = menu_cancel_note.program;
+        sound.note = menu_cancel_note.note;
     }
 
     kf::sound_note_play(audio_state.bank, sound.program, sound.note, MENU_INPUT_SOUND_VOLUME, MENU_INPUT_SOUND_VOLUME);
@@ -458,11 +478,11 @@ void menu_play_input_sound(KfMenuSoundCue cue)
 
 KfBool32 menu_load_message_image(s32 message_id)
 {
-    char path[16] = "TIM/M000.";
+    char path[menu_image_path_capacity] = "TIM/M000.";
     u8 *buffer;
 
     if (message_id != MESSAGE_IMAGE_SKIP) {
-        RESOURCE_PATH_WRITE_DECIMAL3(&path[5], message_id);
+        RESOURCE_PATH_WRITE_DECIMAL3(&path[menu_image_number_offset], message_id);
         buffer = game_graphics_runtime.display_state.asset_load_buffer;
         std::size_t image_size;
         if (resource_file_load_into(buffer,
@@ -505,16 +525,16 @@ void screen_show_image_until_input(const char *path)
 
 void talk_show_dialogue_page(KfFloorId floor, u8 stage, KfCharacterId character_id, u8 page)
 {
-    char *directory_character = &talk_image_path_template[6];
+    char *directory_character = &talk_image_path_template[talk_directory_character_offset];
 
-    talk_image_path_template[0xc] = kf_enum_encode<s32>(character_id) / 10 + '0';
+    talk_image_path_template[talk_character_tens_offset] = kf_enum_encode<s32>(character_id) / 10 + '0';
     directory_character[0] = kf_enum_encode<s32>(character_id) / 10 + '0';
-    talk_image_path_template[0xa] = kf_enum_encode<u8>(floor) + '0';
-    directory_character[1] = talk_image_path_template[0xd] =
+    talk_image_path_template[talk_floor_offset] = kf_enum_encode<u8>(floor) + '0';
+    directory_character[1] = talk_image_path_template[talk_character_ones_offset] =
         kf_enum_encode<s32>(character_id) % 10 + '0';
-    talk_image_path_template[0xb] = stage + '0';
-    talk_image_path_template[0xe] = page + '0';
-    screen_show_image_until_input(directory_character - 6);
+    talk_image_path_template[talk_stage_offset] = stage + '0';
+    talk_image_path_template[talk_page_offset] = page + '0';
+    screen_show_image_until_input(directory_character - talk_directory_character_offset);
 }
 
 void save_system_reset_module_state(void)

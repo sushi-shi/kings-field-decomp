@@ -14,6 +14,39 @@ constexpr unsigned sample_rate = 44100;
 constexpr unsigned voice_count = 24;
 constexpr unsigned channel_count = 16;
 constexpr unsigned buffered_frames = 4096;
+constexpr unsigned mixer_batch_frames = 256;
+constexpr unsigned reverb_comb_capacity = 2048;
+constexpr unsigned reverb_diffuser_capacity = 600;
+constexpr unsigned reverb_stereo_spread_frames = 23;
+constexpr unsigned reverb_first_diffuser_frames = 225;
+constexpr unsigned reverb_second_diffuser_frames = 556;
+constexpr float reverb_comb_mix_gain = 0.25f;
+constexpr float reverb_diffuser_feedback = 0.5f;
+constexpr float reverb_hall_feedback = 0.82f;
+constexpr float reverb_studio_feedback = 0.7f;
+constexpr float reverb_damping = 0.3f;
+constexpr int midi_value_max = 127;
+constexpr float midi_value_scale = 127.0f;
+constexpr int pan_center = 64;
+constexpr float pan_half_range = 64.0f;
+constexpr int pitch_bend_center = 64;
+constexpr double pitch_bend_half_range = 64.0;
+constexpr double pitch_shift_units_per_semitone = 128.0;
+constexpr double semitones_per_octave = 12.0;
+constexpr double maximum_playback_rate = 4.0;
+constexpr double microseconds_per_second = 1000000.0;
+constexpr std::uint64_t nanoseconds_per_second = 1000000000;
+constexpr unsigned envelope_infinite_shift = 31;
+constexpr unsigned envelope_infinite_step = 3;
+constexpr unsigned envelope_rate_shift_pivot = 11;
+constexpr s32 envelope_rising_step_base = 7;
+constexpr s32 envelope_falling_step_base = -8;
+constexpr s32 envelope_exponential_attack_threshold = 0x6000;
+constexpr unsigned envelope_fraction_bits = 15;
+constexpr u32 envelope_counter_period = 32768;
+constexpr s32 envelope_level_max = 32767;
+constexpr float envelope_level_scale = 32768.0f;
+constexpr float pcm16_scale = 32768.0f;
 
 struct SoundBank {
     KfAudioBankData data;
@@ -48,7 +81,7 @@ struct Voice {
     const KfAudioTone *tone;
     Envelope envelope;
     KfAudioPredictor predictor;
-    s16 decoded[28];
+    s16 decoded[KF_AUDIO_ADPCM_BLOCK_FRAMES];
     unsigned decoded_cursor, block_offset;
     float current_sample, next_sample;
     double fraction, rate;
@@ -58,12 +91,12 @@ struct Voice {
     std::uint64_t age;
 };
 struct Comb {
-    float values[2048];
+    float values[reverb_comb_capacity];
     unsigned cursor, length;
     float filtered;
 };
 struct Diffuser {
-    float values[600];
+    float values[reverb_diffuser_capacity];
     unsigned cursor, length;
 };
 struct Reverb {
@@ -85,12 +118,12 @@ struct SoundState {
 };
 static SoundState sound;
 
-static float volume(s16 value) { return std::clamp<int>(value, 0, 127) / 127.0f; }
+static float volume(s16 value) { return std::clamp<int>(value, 0, midi_value_max) / midi_value_scale; }
 static void pan_levels(float &left, float &right, u8 pan) {
-    if (pan < 64)
-        right *= pan / 64.0f;
+    if (pan < pan_center)
+        right *= pan / pan_half_range;
     else
-        left *= (127 - pan) / 64.0f;
+        left *= (midi_value_max - pan) / pan_half_range;
 }
 static void bank_unref(SoundBank *bank) {
     if (--bank->references != 0)
@@ -122,7 +155,7 @@ static float envelope_frame(Voice &voice) {
         shift = parameters.attack_shift;
         step_bits = parameters.attack_step;
         exponential = parameters.attack_exponential;
-        infinite = shift == 31 && step_bits == 3;
+        infinite = shift == envelope_infinite_shift && step_bits == envelope_infinite_step;
         break;
     case EnvelopePhase::Decay:
         shift = parameters.decay_shift;
@@ -133,37 +166,37 @@ static float envelope_frame(Voice &voice) {
         step_bits = parameters.sustain_step;
         exponential = parameters.sustain_exponential;
         decreasing = parameters.sustain_decreasing;
-        infinite = shift == 31 && step_bits == 3;
+        infinite = shift == envelope_infinite_shift && step_bits == envelope_infinite_step;
         break;
     case EnvelopePhase::Release:
         shift = parameters.release_shift;
         exponential = parameters.release_exponential;
         decreasing = true;
-        infinite = shift == 31;
+        infinite = shift == envelope_infinite_shift;
         break;
     }
-    s32 step = decreasing ? -8 + static_cast<s32>(step_bits) : 7 - static_cast<s32>(step_bits);
-    step *= 1 << (shift < 11 ? 11 - shift : 0);
-    u32 increment = 32768u >> (shift > 11 ? shift - 11 : 0);
-    if (exponential && !decreasing && state.level > 0x6000) {
-        if (shift < 10)
+    s32 step = decreasing ? envelope_falling_step_base + static_cast<s32>(step_bits) : envelope_rising_step_base - static_cast<s32>(step_bits);
+    step *= 1 << (shift < envelope_rate_shift_pivot ? envelope_rate_shift_pivot - shift : 0);
+    u32 increment = envelope_counter_period >> (shift > envelope_rate_shift_pivot ? shift - envelope_rate_shift_pivot : 0);
+    if (exponential && !decreasing && state.level > envelope_exponential_attack_threshold) {
+        if (shift < envelope_rate_shift_pivot - 1)
             step >>= 2;
-        else if (shift >= 11)
+        else if (shift >= envelope_rate_shift_pivot)
             increment >>= 2;
         else {
             step >>= 1;
             increment >>= 1;
         }
     } else if (exponential && decreasing) {
-        step = (step * state.level) >> 15;
+        step = (step * state.level) >> envelope_fraction_bits;
     }
     if (!infinite)
         increment = std::max(increment, 1u);
     state.counter += increment;
-    if (state.counter >= 32768) {
-        state.counter &= 32767;
-        state.level = std::clamp(state.level + step, 0, 32767);
-        if (state.phase == EnvelopePhase::Attack && state.level == 32767) {
+    if (state.counter >= envelope_counter_period) {
+        state.counter &= envelope_counter_period - 1;
+        state.level = std::clamp(state.level + step, 0, envelope_level_max);
+        if (state.phase == EnvelopePhase::Attack && state.level == envelope_level_max) {
             state.phase = EnvelopePhase::Decay;
             state.counter = 0;
         } else if (state.phase == EnvelopePhase::Decay && state.level <= parameters.sustain_level) {
@@ -173,44 +206,44 @@ static float envelope_frame(Voice &voice) {
             state.phase = EnvelopePhase::Off;
         }
     }
-    return state.level / 32768.0f;
+    return state.level / envelope_level_scale;
 }
 
 static bool read_sample(Voice &voice, float &sample) {
     const auto index = voice.tone->sample_index;
     const auto &info = voice.bank->samples[index];
     const auto &range = voice.bank->data.samples[index];
-    if (voice.decoded_cursor == 28) {
-        if (voice.block_offset == info.frames / 28 * 16) {
+    if (voice.decoded_cursor == KF_AUDIO_ADPCM_BLOCK_FRAMES) {
+        if (voice.block_offset == info.frames / KF_AUDIO_ADPCM_BLOCK_FRAMES * KF_AUDIO_ADPCM_BLOCK_BYTES) {
             if (!info.loop_end)
                 return false;
-            voice.block_offset = info.loop_begin / 28 * 16;
+            voice.block_offset = info.loop_begin / KF_AUDIO_ADPCM_BLOCK_FRAMES * KF_AUDIO_ADPCM_BLOCK_BYTES;
         }
         // The validated, immutable block remains owned by the bank. Only the
         // voice's position jumps at a repeat; its two-sample history continues.
         if (kf_audio_decode_block(voice.bank->body + range.offset + voice.block_offset,
-                16, &voice.predictor, voice.decoded, 28) != KF_CODEC_OK) {
+                KF_AUDIO_ADPCM_BLOCK_BYTES, &voice.predictor, voice.decoded, KF_AUDIO_ADPCM_BLOCK_FRAMES) != KF_CODEC_OK) {
             sound.failed = true;
             return false;
         }
-        voice.block_offset += 16;
+        voice.block_offset += KF_AUDIO_ADPCM_BLOCK_BYTES;
         voice.decoded_cursor = 0;
     }
-    sample = voice.decoded[voice.decoded_cursor++] / 32768.0f;
+    sample = voice.decoded[voice.decoded_cursor++] / pcm16_scale;
     return true;
 }
 
-static void voice_pitch(Voice &voice, int bend = 64) {
+static void voice_pitch(Voice &voice, int bend = pitch_bend_center) {
     double semitones = static_cast<int>(voice.note) - voice.tone->center_note
-        + voice.tone->center_shift / 128.0;
-    bend -= 64;
-    semitones += bend * (bend < 0 ? voice.tone->bend_down : voice.tone->bend_up) / 64.0;
-    voice.rate = std::clamp(std::exp2(semitones / 12.0), 0.0, 4.0);
+        + voice.tone->center_shift / pitch_shift_units_per_semitone;
+    bend -= pitch_bend_center;
+    semitones += bend * (bend < 0 ? voice.tone->bend_down : voice.tone->bend_up) / pitch_bend_half_range;
+    voice.rate = std::clamp(std::exp2(semitones / semitones_per_octave), 0.0, maximum_playback_rate);
 }
 
 static SoundVoice play_tone(SoundBank *bank, unsigned program, unsigned tone_index, unsigned note,
-    float left, float right, MusicSequence *sequence = nullptr, u8 velocity = 127) {
-    if (!bank || program >= KF_AUDIO_PROGRAM_COUNT || note > 127
+    float left, float right, MusicSequence *sequence = nullptr, u8 velocity = midi_value_max) {
+    if (!bank || program >= KF_AUDIO_PROGRAM_COUNT || note > midi_value_max
             || tone_index >= bank->data.programs[program].tone_count)
         return no_sound_voice;
     const auto &program_data = bank->data.programs[program];
@@ -238,11 +271,11 @@ static SoundVoice play_tone(SoundBank *bank, unsigned program, unsigned tone_ind
     voice.priority = std::max(tone.priority, program_data.priority);
     voice.age = ++sound.age;
     voice.envelope.phase = EnvelopePhase::Attack;
-    voice.decoded_cursor = 28;
+    voice.decoded_cursor = KF_AUDIO_ADPCM_BLOCK_FRAMES;
     voice.current_valid = read_sample(voice, voice.current_sample);
     voice.next_valid = read_sample(voice, voice.next_sample);
     voice_pitch(voice);
-    const float gain = bank->data.volume / 127.0f * program_data.volume / 127.0f * tone.volume / 127.0f;
+    const float gain = bank->data.volume / midi_value_scale * program_data.volume / midi_value_scale * tone.volume / midi_value_scale;
     voice.left = left * gain;
     voice.right = right * gain;
     // Authored tone and program pans attenuate in series; opposing pans do
@@ -250,13 +283,13 @@ static SoundVoice play_tone(SoundBank *bank, unsigned program, unsigned tone_ind
     pan_levels(voice.left, voice.right, tone.pan);
     pan_levels(voice.left, voice.right, program_data.pan);
     if (sequence)
-        pan_levels(voice.left, voice.right, 64);
+        pan_levels(voice.left, voice.right, pan_center);
     return voice.id;
 }
 
 static void play_note(SoundBank *bank, unsigned program, unsigned note, float left, float right,
-    MusicSequence *sequence = nullptr, u8 velocity = 127) {
-    if (!bank || program >= KF_AUDIO_PROGRAM_COUNT || note > 127)
+    MusicSequence *sequence = nullptr, u8 velocity = midi_value_max) {
+    if (!bank || program >= KF_AUDIO_PROGRAM_COUNT || note > midi_value_max)
         return;
     const auto &program_data = bank->data.programs[program];
     for (unsigned i = 0; i < program_data.tone_count; ++i) {
@@ -267,12 +300,12 @@ static void play_note(SoundBank *bank, unsigned program, unsigned note, float le
 }
 
 static double event_frames(const MusicSequence &sequence, u32 delta) {
-    return static_cast<double>(delta) * sequence.tempo * sample_rate / (sequence.info.resolution * 1000000.0);
+    return static_cast<double>(delta) * sequence.tempo * sample_rate / (sequence.info.resolution * microseconds_per_second);
 }
 
 static void sequence_defaults(MusicSequence &sequence) {
     for (unsigned i = 0; i < channel_count; ++i)
-        sequence.channels[i] = {static_cast<u8>(i), 127};
+        sequence.channels[i] = {static_cast<u8>(i), midi_value_max};
     sequence.tempo = sequence.info.tempo;
 }
 
@@ -297,7 +330,7 @@ static void sequence_frame(MusicSequence &sequence) {
             break;
         case KfMusicEventKind::NoteOn:
             play_note(sequence.bank, channel.program, event.note, 1, 1, &sequence,
-                event.velocity * channel.volume / 127);
+                event.velocity * channel.volume / midi_value_max);
             break;
         case KfMusicEventKind::Volume: channel.volume = event.value; break;
         case KfMusicEventKind::Program: channel.program = event.value; break;
@@ -325,11 +358,11 @@ static float reverb_channel(unsigned channel, float input) {
         comb.filtered = delayed * (1 - effect.damping) + comb.filtered * effect.damping;
         comb.values[comb.cursor] = input + comb.filtered * effect.feedback;
         comb.cursor = (comb.cursor + 1) % comb.length;
-        sum += delayed * 0.25f;
+        sum += delayed * reverb_comb_mix_gain;
     }
     for (auto &diffuser : effect.diffusers[channel]) {
         const float delayed = diffuser.values[diffuser.cursor];
-        diffuser.values[diffuser.cursor] = sum + delayed * 0.5f;
+        diffuser.values[diffuser.cursor] = sum + delayed * reverb_diffuser_feedback;
         sum = delayed - sum;
         diffuser.cursor = (diffuser.cursor + 1) % diffuser.length;
     }
@@ -354,8 +387,8 @@ static void mix_frame(float &left, float &right) {
         const float gain = envelope_frame(voice);
         float voice_left = voice.left, voice_right = voice.right;
         if (voice.sequence) {
-            voice_left *= voice.sequence->left * (voice.velocity / 127.0f);
-            voice_right *= voice.sequence->right * (voice.velocity / 127.0f);
+            voice_left *= voice.sequence->left * (voice.velocity / midi_value_scale);
+            voice_right *= voice.sequence->right * (voice.velocity / midi_value_scale);
         }
         // The authored volume scale is quadratic, with full voice level 0x3fff.
         // Master volume remains a separate linear gain after the voice mix.
@@ -383,7 +416,7 @@ static void mix_frame(float &left, float &right) {
 
 static std::uint64_t clock_frame() {
     const auto ns = host_clock_ns();
-    return ns / 1000000000 * sample_rate + ns % 1000000000 * sample_rate / 1000000000;
+    return ns / nanoseconds_per_second * sample_rate + ns % nanoseconds_per_second * sample_rate / nanoseconds_per_second;
 }
 
 static void render_elapsed() {
@@ -404,9 +437,9 @@ static void render_elapsed() {
             return;
         }
     }
-    float frames[256 * 2];
+    float frames[mixer_batch_frames * 2];
     while (sound.rendered_frame < target) {
-        const unsigned count = std::min<std::uint64_t>(target - sound.rendered_frame, 256);
+        const unsigned count = std::min<std::uint64_t>(target - sound.rendered_frame, mixer_batch_frames);
         for (unsigned i = 0; i < count; ++i)
             mix_frame(frames[i * 2], frames[i * 2 + 1]);
         const auto skip = sound.rendered_frame < keep_from
@@ -434,12 +467,12 @@ static void configure_reverb(ReverbPreset preset, s16 left, s16 right) {
     constexpr unsigned hall[] = {1557, 1617, 1491, 1422};
     for (unsigned side = 0; side < 2; ++side) {
         for (unsigned i = 0; i < 4; ++i)
-            sound.reverb.combs[side][i].length = (preset == ReverbPreset::Hall ? hall[i] : studio[i]) + side * 23;
-        sound.reverb.diffusers[side][0].length = 225 + side * 23;
-        sound.reverb.diffusers[side][1].length = 556 + side * 23;
+            sound.reverb.combs[side][i].length = (preset == ReverbPreset::Hall ? hall[i] : studio[i]) + side * reverb_stereo_spread_frames;
+        sound.reverb.diffusers[side][0].length = reverb_first_diffuser_frames + side * reverb_stereo_spread_frames;
+        sound.reverb.diffusers[side][1].length = reverb_second_diffuser_frames + side * reverb_stereo_spread_frames;
     }
-    sound.reverb.feedback = preset == ReverbPreset::Hall ? 0.82f : 0.7f;
-    sound.reverb.damping = 0.3f;
+    sound.reverb.feedback = preset == ReverbPreset::Hall ? reverb_hall_feedback : reverb_studio_feedback;
+    sound.reverb.damping = reverb_damping;
     sound.reverb.left = volume(left);
     sound.reverb.right = volume(right);
 }

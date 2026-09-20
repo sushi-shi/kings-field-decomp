@@ -1,6 +1,7 @@
 #pragma once
 #include <kf/platform/assets.hpp>
 #include <kf/renderer/textures.hpp>
+#include <kf/renderer/constants.hpp>
 
 namespace kf {
 using TextureId = u32;
@@ -15,7 +16,7 @@ struct FrameStyle {
     FrameClear clear = FrameClear::Clear;
     BlendMode initial_blend = BlendMode::average;
     float red = 0, green = 0, blue = 0;
-    int clip_x = 0, clip_y = 0, clip_width = 320, clip_height = 240;
+    int clip_x = 0, clip_y = 0, clip_width = render_width, clip_height = render_height;
 };
 enum class FaceShape : u8 { Triangle = 3, Quad = 4 };
 enum class SurfaceKind : u8 { Solid, Texture };

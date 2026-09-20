@@ -74,7 +74,7 @@ void map_object_mark_collision_edge(const KfMapObject *object, KfMapCellKind cel
     case KF_MAP_OBJECT_OP_03:
         map_collision_grid.cells[cell_z][cell_x] = cell_kind;
         switch (yaw) {
-        case 0x000:
+        case 0:
             cell_z++;
             break;
         case KF_ANGLE_QUARTER_TURN:
@@ -91,7 +91,7 @@ void map_object_mark_collision_edge(const KfMapObject *object, KfMapCellKind cel
         break;
     case KF_MAP_OBJECT_OP_HINGED_DOOR:
         switch (yaw) {
-        case 0x000:
+        case 0:
             map_collision_grid.cells[cell_z][cell_x + 1] =
                 map_collision_grid.cells[cell_z - 1][cell_x + 1] = cell_kind;
             break;
@@ -132,7 +132,7 @@ s32 map_object_probe_forward(const KfMapObject *object, u16 yaw)
     case KF_MAP_OBJECT_OP_HINGED_DOOR:
         probe_radius = MAP_DOOR_CLOSING_PROBE_RADIUS;
         switch (yaw) {
-        case 0x000:
+        case 0:
             point_x += KF_MAP_TILE_SIZE;
             goto probe;
         case KF_ANGLE_QUARTER_TURN:

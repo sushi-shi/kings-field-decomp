@@ -1,3 +1,4 @@
+#include <kf/game/menu_glyphs.h>
 #include <kf/lib/null.h>
 #include <kf/game/graphics.h>
 
@@ -36,6 +37,37 @@ u16 item_sell_prices[KF_ITEM_COUNT][KF_ITEM_SHOP_COUNT];
 
 // STAT.DAT stores little-endian words and authored GPU templates. Only this
 // loading boundary knows that layout; menus retain copied native descriptions.
+namespace {
+constexpr std::size_t stat_textured_quad_bytes = 40;
+constexpr std::size_t stat_solid_quad_bytes = 24;
+constexpr std::size_t stat_packet_word_bytes = 4;
+constexpr unsigned stat_packet_length_offset = 3;
+constexpr unsigned stat_packet_red_offset = 4;
+constexpr unsigned stat_packet_green_offset = 5;
+constexpr unsigned stat_packet_blue_offset = 6;
+constexpr unsigned stat_packet_command_offset = 7;
+constexpr u8 stat_packet_kind_mask = 0xfc;
+constexpr u8 stat_textured_quad_command = 0x2c;
+constexpr u8 stat_solid_quad_command = 0x28;
+constexpr u8 stat_packet_blend_flag = 2;
+constexpr u8 stat_packet_raw_texture_flag = 1;
+constexpr unsigned stat_quad_page_offset = 22;
+constexpr unsigned stat_quad_palette_offset = 14;
+constexpr unsigned stat_quad_corners_offset = 8;
+constexpr unsigned stat_textured_corner_bytes = 8;
+constexpr unsigned stat_solid_corner_bytes = 4;
+constexpr unsigned stat_corner_y_offset = 2;
+constexpr unsigned stat_corner_u_offset = 4;
+constexpr unsigned stat_corner_v_offset = 5;
+constexpr std::size_t stat_sprite_bytes = 12;
+constexpr unsigned stat_sprite_palette_offset = 2;
+constexpr unsigned stat_sprite_u_offset = 4;
+constexpr unsigned stat_sprite_v_offset = 6;
+constexpr unsigned stat_sprite_x_or_width_offset = 8;
+constexpr unsigned stat_sprite_y_or_height_offset = 10;
+constexpr unsigned stat_save_return_row = 4;
+}
+
 struct MenuDataReader {
     const u8 *cursor;
     std::size_t remaining;
@@ -66,41 +98,41 @@ enum class MenuTemplateKind : u8 { Textured, Solid };
 static kf::DrawFace menu_data_face(MenuDataReader *reader, MenuTemplateKind kind)
 {
     const bool textured = kind == MenuTemplateKind::Textured;
-    const std::size_t size = textured ? 40 : 24;
+    const std::size_t size = textured ? stat_textured_quad_bytes : stat_solid_quad_bytes;
     const u8 *data = menu_data_take(reader, size);
     kf::DrawFace face{};
     face.shape = kf::FaceShape::Quad;
     // The second bank's first dialog template is empty in the original file.
-    if (data[3] == 0) {
+    if (data[stat_packet_length_offset] == 0) {
         for (std::size_t i = 0; i < size; ++i)
             if (data[i] != 0)
                 kf::host_fail("Invalid empty menu template in COM/STAT.DAT");
         return face;
     }
-    const u8 command = data[7];
-    if (data[3] != size / 4 - 1 || (command & 0xfc) != (textured ? 0x2c : 0x28))
+    const u8 command = data[stat_packet_command_offset];
+    if (data[stat_packet_length_offset] != size / stat_packet_word_bytes - 1 || (command & stat_packet_kind_mask) != (textured ? stat_textured_quad_command : stat_solid_quad_command))
         kf::host_fail("Unsupported menu template in COM/STAT.DAT");
     if (textured)
-        face.material = render_texture_material(menu_data_u16(data + 22), menu_data_u16(data + 14));
+        face.material = render_texture_material(menu_data_u16(data + stat_quad_page_offset), menu_data_u16(data + stat_quad_palette_offset));
     else
         face.material.kind = kf::SurfaceKind::Solid;
-    face.transparency = command & 2 ? kf::FaceTransparency::Blend : kf::FaceTransparency::Opaque;
-    face.material.color_mode = textured && (command & 1)
+    face.transparency = command & stat_packet_blend_flag ? kf::FaceTransparency::Blend : kf::FaceTransparency::Opaque;
+    face.material.color_mode = textured && (command & stat_packet_raw_texture_flag)
         ? kf::TextureColorMode::Raw : kf::TextureColorMode::Modulated;
     for (unsigned i = 0; i < 4; ++i) {
         auto &vertex = face.vertices[i];
-        const u8 *corner = data + 8 + i * (textured ? 8 : 4);
+        const u8 *corner = data + stat_quad_corners_offset + i * (textured ? stat_textured_corner_bytes : stat_solid_corner_bytes);
         vertex.x = static_cast<s16>(menu_data_u16(corner));
-        vertex.y = static_cast<s16>(menu_data_u16(corner + 2));
+        vertex.y = static_cast<s16>(menu_data_u16(corner + stat_corner_y_offset));
         if (textured) {
-            vertex.u = corner[4] / 256.0f;
-            vertex.v = corner[5] / 256.0f;
+            vertex.u = corner[stat_corner_u_offset] / kf::texture_uv_scale;
+            vertex.v = corner[stat_corner_v_offset] / kf::texture_uv_scale;
         }
-        const float divisor = textured ? 128.0f : 255.0f;
-        const bool raw_texture = textured && (command & 1);
-        vertex.r = raw_texture ? 1.0f : data[4] / divisor;
-        vertex.g = raw_texture ? 1.0f : data[5] / divisor;
-        vertex.b = raw_texture ? 1.0f : data[6] / divisor;
+        const float divisor = textured ? kf::texture_color_unity : kf::color8_scale;
+        const bool raw_texture = textured && (command & stat_packet_raw_texture_flag);
+        vertex.r = raw_texture ? 1.0f : data[stat_packet_red_offset] / divisor;
+        vertex.g = raw_texture ? 1.0f : data[stat_packet_green_offset] / divisor;
+        vertex.b = raw_texture ? 1.0f : data[stat_packet_blue_offset] / divisor;
         vertex.a = 1;
     }
     return face;
@@ -108,17 +140,17 @@ static kf::DrawFace menu_data_face(MenuDataReader *reader, MenuTemplateKind kind
 
 static MenuSpriteDef menu_data_sprite(MenuDataReader *reader)
 {
-    const u8 *data = menu_data_take(reader, 12);
-    return {render_texture_material(menu_data_u16(data), menu_data_u16(data + 2)),
-        menu_data_u16(data + 4), menu_data_u16(data + 6),
-        static_cast<s16>(menu_data_u16(data + 8)), static_cast<s16>(menu_data_u16(data + 10))};
+    const u8 *data = menu_data_take(reader, stat_sprite_bytes);
+    return {render_texture_material(menu_data_u16(data), menu_data_u16(data + stat_sprite_palette_offset)),
+        menu_data_u16(data + stat_sprite_u_offset), menu_data_u16(data + stat_sprite_v_offset),
+        static_cast<s16>(menu_data_u16(data + stat_sprite_x_or_width_offset)), static_cast<s16>(menu_data_u16(data + stat_sprite_y_or_height_offset))};
 }
 
 static MenuTileSprite menu_data_tile(MenuDataReader *reader)
 {
-    const u8 *data = menu_data_take(reader, 12);
-    return {render_texture_material(menu_data_u16(data), menu_data_u16(data + 2)),
-        data[4], data[6], menu_data_u16(data + 8), menu_data_u16(data + 10)};
+    const u8 *data = menu_data_take(reader, stat_sprite_bytes);
+    return {render_texture_material(menu_data_u16(data), menu_data_u16(data + stat_sprite_palette_offset)),
+        data[stat_sprite_u_offset], data[stat_sprite_v_offset], menu_data_u16(data + stat_sprite_x_or_width_offset), menu_data_u16(data + stat_sprite_y_or_height_offset)};
 }
 
 static void menu_data_glyphs(MenuDataReader *reader, MenuGlyphRow *row)
@@ -169,7 +201,7 @@ void item_load_database(void)
     // Ordinary save files have no format-card action. Keep the authored return
     // label, moved into that removed row in the native menu description.
     auto &save_layout = menu_window_layouts[kf_enum_encode<s32>(KF_MENU_WINDOW_SAVE)];
-    save_layout.rows[KF_MENU_SAVE_RETURN_ROW].glyphs = save_layout.rows[4].glyphs;
+    save_layout.rows[KF_MENU_SAVE_RETURN_ROW].glyphs = save_layout.rows[stat_save_return_row].glyphs;
     for (auto &row : item_name_rows)
         menu_data_glyphs(&reader, &row);
     for (auto &row : magic_name_rows)
@@ -491,14 +523,14 @@ KfMenuResult item_pickup_confirm(KfObjectId item_id)
 
     accept_label.position.x = MENU_PICKUP_CONFIRM_TEXT_X;
     accept_label.position.y = MENU_PICKUP_CONFIRM_ACCEPT_Y;
-    accept_label.glyphs.codes[0] = 0x53;
-    accept_label.glyphs.codes[1] = 0x6a;
+    accept_label.glyphs.codes[0] = menu_glyphs::pickup[0];
+    accept_label.glyphs.codes[1] = menu_glyphs::pickup[1];
     accept_label.glyphs.codes[2] = MENU_TEXT_END;
     decline_label.position.x = MENU_PICKUP_CONFIRM_TEXT_X;
     decline_label.position.y = MENU_PICKUP_CONFIRM_DECLINE_Y;
-    decline_label.glyphs.codes[0] = 0x63;
-    decline_label.glyphs.codes[1] = 0x61;
-    decline_label.glyphs.codes[2] = 0x6a;
+    decline_label.glyphs.codes[0] = menu_glyphs::cancel[0];
+    decline_label.glyphs.codes[1] = menu_glyphs::cancel[1];
+    decline_label.glyphs.codes[2] = menu_glyphs::cancel[2];
     decline_label.glyphs.codes[3] = MENU_TEXT_END;
 
     menu_frame_begin();

@@ -3,6 +3,9 @@
 #include <kf/game/input.h>
 #include <kf/game/menu.h>
 #include <kf/game/game.h>
+static constexpr unsigned MENU_MAGIC_LABEL_CAPACITY = 10;
+static constexpr unsigned MENU_MAGIC_ENTRY_CAPACITY = 16;
+
 
 enum {
     BLESS_HP_RECOVERY_MAGIC_MULTIPLIER = 3
@@ -11,8 +14,8 @@ enum {
 KfMagicPanelResult menu_magic_panel(void)
 {
     KfMenuList ctx;
-    s16 labels[10][MENU_GLYPHS_PER_ROW];
-    KfEffectKind codes[16];
+    s16 labels[MENU_MAGIC_LABEL_CAPACITY][MENU_GLYPHS_PER_ROW];
+    KfEffectKind codes[MENU_MAGIC_ENTRY_CAPACITY];
     s32 found;
     s32 code;
     s32 j;

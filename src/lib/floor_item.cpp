@@ -5,6 +5,19 @@
 
 #include <kf/lib/random.hpp>
 
+namespace {
+constexpr std::size_t placement_bytes = 12;
+constexpr std::size_t placement_terminator_bytes = 2;
+constexpr unsigned placement_animation_offset = 2;
+constexpr unsigned placement_cell_z_offset = 4;
+constexpr unsigned placement_cell_x_offset = 5;
+constexpr unsigned placement_local_z_offset = 6;
+constexpr unsigned placement_local_x_offset = 8;
+constexpr unsigned placement_local_y_offset = 10;
+constexpr u8 placement_frame_count_mask = 0x0f;
+constexpr u8 placement_facing_mask = 0xf0;
+}
+
 static u16 floor_item_read_u16(const u8 *data)
 {
     return static_cast<u16>(data[0] | (static_cast<u16>(data[1]) << 8));
@@ -12,28 +25,27 @@ static u16 floor_item_read_u16(const u8 *data)
 
 void item_load_floor_placements(const u8 *data, std::size_t size)
 {
-    constexpr std::size_t placement_bytes = 12;
     KF_FLOOR_ITEM_COUNT = 0;
-    for (std::size_t offset = 0; offset <= size && size - offset >= 2; offset += placement_bytes) {
+    for (std::size_t offset = 0; offset <= size && size - offset >= placement_terminator_bytes; offset += placement_bytes) {
         const u8 *placement = data + offset;
         const auto base = floor_item_read_u16(placement);
         if (base == kf_enum_encode<u16>(KF_FLOOR_ITEM_END))
             return;
         if (size - offset < placement_bytes || KF_FLOOR_ITEM_COUNT == KF_FLOOR_ITEM_CAPACITY)
             kf::host_fail("Truncated or oversized floor-item placement list");
-        const u8 frame_count = placement[2] & 0x0f;
-        const u8 cell_z = placement[4], cell_x = placement[5];
+        const u8 frame_count = placement[placement_animation_offset] & placement_frame_count_mask;
+        const u8 cell_z = placement[placement_cell_z_offset], cell_x = placement[placement_cell_x_offset];
         if (base >= KF_FLOOR_ITEM_SPRITE_COUNT || frame_count > KF_FLOOR_ITEM_SPRITE_COUNT - base
                 || cell_z >= KF_MAP_ROWS || cell_x >= KF_MAP_COLUMNS)
             kf::host_fail("Invalid floor-item sprite range or position");
 
         auto &item = KF_FLOOR_ITEMS[KF_FLOOR_ITEM_COUNT++];
         item.base_sprite_index = static_cast<KfFloorItemSpriteId>(base);
-        item.facing = static_cast<KfFloorItemFacing>(placement[2] & 0xf0);
+        item.facing = static_cast<KfFloorItemFacing>(placement[placement_animation_offset] & placement_facing_mask);
         item.frame_count = frame_count;
-        const auto local_z = static_cast<s16>(floor_item_read_u16(placement + 6));
-        const auto local_x = static_cast<s16>(floor_item_read_u16(placement + 8));
-        const auto local_y = static_cast<s16>(floor_item_read_u16(placement + 10));
+        const auto local_z = static_cast<s16>(floor_item_read_u16(placement + placement_local_z_offset));
+        const auto local_x = static_cast<s16>(floor_item_read_u16(placement + placement_local_x_offset));
+        const auto local_y = static_cast<s16>(floor_item_read_u16(placement + placement_local_y_offset));
         item.position_x = map_placement_axis_position(cell_x, local_x);
         item.position_z = map_placement_axis_position(cell_z, local_z);
         const s32 height = map_floor_height_grid.cells[cell_z][cell_x] * KF_MAP_HEIGHT_STEP;

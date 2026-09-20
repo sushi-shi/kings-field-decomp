@@ -6,6 +6,7 @@
 #include <sys/stat.h>
 
 namespace kf {
+static constexpr unsigned ascii_first_printable = 32;
 static char *data_root;
 
 bool data_files_set_root(const char *directory) {
@@ -31,7 +32,7 @@ static bool valid_relative_path(const char *path) {
     for (const char *at = path;; ++at) {
         if (*at == '\\' || *at == ':' || *at == ';')
             return false;
-        if (*at && static_cast<unsigned char>(*at) < 32)
+        if (*at && static_cast<unsigned char>(*at) < ascii_first_printable)
             return false;
         if (*at && *at != '/')
             continue;

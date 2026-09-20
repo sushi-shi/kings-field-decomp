@@ -3,6 +3,9 @@
 #include <kf/game/input.h>
 #include <kf/game/menu.h>
 #include <kf/game/game.h>
+static constexpr unsigned MENU_INVENTORY_LABEL_CAPACITY = 50;
+static constexpr unsigned MENU_INVENTORY_ENTRY_CAPACITY = 56;
+
 
 s32 menu_use_item_panel(void);
 
@@ -135,9 +138,9 @@ enum {
 s32 menu_use_item_panel(void)
 {
     KfMenuList ctx;
-    s16 labels[50][MENU_GLYPHS_PER_ROW];
-    u8 counts[56];
-    KfObjectId codes[56];
+    s16 labels[MENU_INVENTORY_LABEL_CAPACITY][MENU_GLYPHS_PER_ROW];
+    u8 counts[MENU_INVENTORY_ENTRY_CAPACITY];
+    KfObjectId codes[MENU_INVENTORY_ENTRY_CAPACITY];
     u8 *inv;
     s32 found;
     s32 code;

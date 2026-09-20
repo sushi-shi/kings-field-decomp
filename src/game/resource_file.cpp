@@ -1,12 +1,14 @@
 #include <kf/game/resource_file.h>
 
+static constexpr s32 item_models_per_directory = 30;
+
 KfItemModelFile item_model_files[KF_ITEM_COUNT];
 
 void resource_file_index_item_models()
 {
     for (s32 i = 0; i < KF_ITEM_COUNT; ++i) {
         auto *entry = &item_model_files[i];
-        snprintf(entry->path, sizeof entry->path, "ITEM%d/I%03d.TMD", i / 30 + 1, i + 1);
+        snprintf(entry->path, sizeof entry->path, "ITEM%d/I%03d.TMD", i / item_models_per_directory + 1, i + 1);
         entry->size = 0;
         kf::DataFile file {};
         const auto result = resource_file_open(&file, entry->path);

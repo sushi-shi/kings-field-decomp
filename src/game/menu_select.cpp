@@ -1,14 +1,17 @@
+#include <kf/game/menu_glyphs.h>
 #include <kf/lib/null.h>
 
 #include <kf/game/input.h>
 #include <kf/game/menu.h>
 #include <kf/game/game.h>
+static constexpr unsigned MENU_SELECTION_LIST_CAPACITY = 20;
+
 
 void menu_equip_select(KfEquipmentMenuCategory equipment_category)
 {
     KfMenuList ctx;
-    s16 labels[20][MENU_GLYPHS_PER_ROW];
-    KfObjectId codes[20];
+    s16 labels[MENU_SELECTION_LIST_CAPACITY][MENU_GLYPHS_PER_ROW];
+    KfObjectId codes[MENU_SELECTION_LIST_CAPACITY];
     s16 *name;
     u8 *owned;
     s32 i;
@@ -65,9 +68,9 @@ void menu_equip_select(KfEquipmentMenuCategory equipment_category)
             k++;
         }
     }
-    labels[k][0] = 0x59;
-    labels[k][1] = MENU_TEXT_DAKUTEN | 0x4c;
-    labels[k][2] = 0x4c;
+    labels[k][0] = menu_glyphs::unequip[0];
+    labels[k][1] = menu_glyphs::unequip[1];
+    labels[k][2] = menu_glyphs::unequip[2];
     labels[k][3] = MENU_TEXT_END;
     codes[k] = KF_OBJECT_NONE;
     k++;
@@ -174,8 +177,8 @@ void menu_equip_select(KfEquipmentMenuCategory equipment_category)
 void menu_spell_select(void)
 {
     KfMenuList ctx;
-    s16 labels[20][MENU_GLYPHS_PER_ROW];
-    KfEffectKind codes[20];
+    s16 labels[MENU_SELECTION_LIST_CAPACITY][MENU_GLYPHS_PER_ROW];
+    KfEffectKind codes[MENU_SELECTION_LIST_CAPACITY];
     s32 code;
     s32 j;
     s32 k;
@@ -195,9 +198,9 @@ void menu_spell_select(void)
             k++;
         }
     }
-    labels[k][0] = 0x59;
-    labels[k][1] = MENU_TEXT_DAKUTEN | 0x4c;
-    labels[k][2] = 0x4c;
+    labels[k][0] = menu_glyphs::unequip[0];
+    labels[k][1] = menu_glyphs::unequip[1];
+    labels[k][2] = menu_glyphs::unequip[2];
     labels[k][3] = MENU_TEXT_END;
     codes[k] = KF_MAGIC_NONE;
     k++;

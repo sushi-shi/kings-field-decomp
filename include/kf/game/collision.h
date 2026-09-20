@@ -5,6 +5,9 @@
 #include <kf/lib/map_data.h>
 #include <kf/lib/geometry_types.h>
 
+// Original actors and wandering events reject cells carrying this authored bit.
+inline constexpr int KF_COLLISION_CELL_BLOCKS_WANDER = 0x80;
+
 enum {
     KF_COLLISION_SKIP_TERRAIN = 0x1,
     KF_COLLISION_SKIP_ACTORS = 0x10,

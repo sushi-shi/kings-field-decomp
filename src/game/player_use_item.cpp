@@ -3,6 +3,10 @@
 
 #include <kf/game/player.h>
 #include <kf/game/game.h>
+static constexpr unsigned enemy_image_number_offset = 7;
+static constexpr unsigned enemy_image_path_capacity = 14, person_image_path_capacity = 15;
+static constexpr unsigned person_image_number_offset = 8;
+
 
 enum {
     PLAYER_KEY_UNLOCK_VOLUME = 110,
@@ -21,17 +25,17 @@ enum {
     PLAYER_HARP_FLOOR3_HOLD_COUNTDOWN = 270
 };
 
-char enemy_info_image_path_template[14] = "ENE0/EI00.TIM";
+char enemy_info_image_path_template[enemy_image_path_capacity] = "ENE0/EI00.TIM";
 
-char person_image_path_template[15] = "PRSN/PER00.TIM";
+char person_image_path_template[person_image_path_capacity] = "PRSN/PER00.TIM";
 
 void actor_show_info_image(const KfActor *actor)
 {
     render_frame(NULL, NULL);
     render_frame(NULL, NULL);
     enemy_info_image_path_template[3] = '0' + kf_enum_encode<u8>(player_state.progress_state.current_floor);
-    enemy_info_image_path_template[7] = '0' + actor->definition_id / 10;
-    enemy_info_image_path_template[8] = '0' + actor->definition_id % 10;
+    enemy_info_image_path_template[enemy_image_number_offset] = '0' + actor->definition_id / 10;
+    enemy_info_image_path_template[enemy_image_number_offset + 1] = '0' + actor->definition_id % 10;
     screen_show_image_until_input(enemy_info_image_path_template);
 }
 
@@ -39,8 +43,8 @@ void map_event_show_person_image(const KfMapEvent *event)
 {
     render_frame(NULL, NULL);
     render_frame(NULL, NULL);
-    person_image_path_template[8] = '0' + kf_enum_encode<u8>(event->character_id) / 10;
-    person_image_path_template[9] = '0' + kf_enum_encode<u8>(event->character_id) % 10;
+    person_image_path_template[person_image_number_offset] = '0' + kf_enum_encode<u8>(event->character_id) / 10;
+    person_image_path_template[person_image_number_offset + 1] = '0' + kf_enum_encode<u8>(event->character_id) % 10;
     screen_show_image_until_input(person_image_path_template);
 }
 
@@ -90,9 +94,9 @@ void player_use_item(KfObjectId item_id)
                     used = KF_TRUE;
                     if (object->link.fields.link_id == kf_enum_encode<u8>(item_id)) {
                         object->link.fields.link_id = KF_MAP_LINK_NONE;
-                        sound_ref_play(&gameplay_sound_refs[12], PLAYER_KEY_UNLOCK_VOLUME);
+                        sound_ref_play(&gameplay_sound_refs[KF_GAMEPLAY_SOUND_KEY_UNLOCK], PLAYER_KEY_UNLOCK_VOLUME);
                         if (object->object_id == KF_MAP_OBJECT_GRAVESTONE) {
-                            sound_ref_play(&gameplay_sound_refs[7], KF_AUDIO_MAX_VOLUME);
+                            sound_ref_play(&gameplay_sound_refs[KF_GAMEPLAY_SOUND_STONE_PASSAGE], KF_AUDIO_MAX_VOLUME);
                         }
                     } else {
                         notify_enqueue(KF_NOTIFICATION_KEY_DOES_NOT_FIT);
@@ -150,7 +154,7 @@ void player_use_item(KfObjectId item_id)
         } else {
             break;
         }
-        sound_ref_play(&gameplay_sound_refs[8], KF_AUDIO_MAX_VOLUME);
+        sound_ref_play(&gameplay_sound_refs[KF_GAMEPLAY_SOUND_HARP], KF_AUDIO_MAX_VOLUME);
         used = KF_TRUE;
         break;
     case KF_ITEM_MEDICINAL_HERB:

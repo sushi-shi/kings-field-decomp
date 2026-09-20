@@ -47,7 +47,7 @@ static void morph_add_deltas(SVECTOR *vertices, u32 vertex_count,
     const auto add = [blend](s16 value, s16 delta) {
         const s32 scaled = (s32(delta) * s16(blend)) >> KF_FIXED12_BITS;
         // Delta scaling saturates first; adding it to the base vertex wraps.
-        return static_cast<s16>(value + std::clamp(scaled, -32768, 32767));
+        return static_cast<s16>(value + std::clamp<s32>(scaled, std::numeric_limits<s16>::min(), std::numeric_limits<s16>::max()));
     };
     for (u32 i = 0; i < range.vertex_count; ++i) {
         SVECTOR &vertex = vertices[range.base_vertex + i];

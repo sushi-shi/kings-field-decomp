@@ -21,20 +21,23 @@ enum {
     MENU_MAP_MARKER_ORIGIN_Y = 216
 };
 
+static constexpr unsigned map_image_path_capacity = 16;
+static constexpr unsigned map_image_set_offset = 5, map_image_floor_offset = 6;
+
 void menu_map_viewer(KfObjectId item_id)
 {
     s32 frame = 0;
     kf::DrawFace background{};
     kf::DrawFace marker{};
-    char path[16] = "MAP/M00.";
+    char path[map_image_path_capacity] = "MAP/M00.";
     u8 *buffer;
     s32 map_number;
 
     map_number = MENU_MAP_DEFAULT_SET;
     if (item_id == KF_ITEM_WATCHMAN_MAP)
         map_number = MENU_MAP_WATCHMAN_SET;
-    path[5] = map_number + '0';
-    path[6] = kf_enum_encode<u8>(player_state.progress_state.current_floor) + '0';
+    path[map_image_set_offset] = map_number + '0';
+    path[map_image_floor_offset] = kf_enum_encode<u8>(player_state.progress_state.current_floor) + '0';
 
     buffer = game_graphics_runtime.display_state.asset_load_buffer;
     std::size_t image_size;
@@ -60,8 +63,8 @@ void menu_map_viewer(KfObjectId item_id)
     for (unsigned i = 0; i < 4; ++i) {
         auto &image_vertex = background.vertices[i];
         auto &marker_vertex = marker.vertices[i];
-        image_vertex.r = image_vertex.g = image_vertex.b = MENU_MAP_BRIGHTNESS / 128.0f;
-        marker_vertex.r = marker_vertex.g = marker_vertex.b = MENU_MAP_BRIGHTNESS / 128.0f;
+        image_vertex.r = image_vertex.g = image_vertex.b = MENU_MAP_BRIGHTNESS / kf::texture_color_unity;
+        marker_vertex.r = marker_vertex.g = marker_vertex.b = MENU_MAP_BRIGHTNESS / kf::texture_color_unity;
         image_vertex.a = marker_vertex.a = 1;
     }
 

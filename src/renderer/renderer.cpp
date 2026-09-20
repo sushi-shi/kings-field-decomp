@@ -8,6 +8,15 @@
 #include <limits>
 
 namespace kf {
+namespace {
+constexpr int display_aspect_width = 4;
+constexpr int display_aspect_height = 3;
+// Uniform encoding shared with the shader-local names below.
+constexpr GLint shader_texture_solid = 0;
+constexpr GLint shader_texture_modulated = 1;
+constexpr GLint shader_texture_raw = 2;
+}
+
 // Triangles are backend-private: original producers submit whole faces, which
 // are sorted before this representation is constructed.
 struct DrawTriangle {
@@ -45,10 +54,13 @@ layout(location=1) in vec2 texcoord;
 layout(location=2) in vec4 color;
 uniform int texture_mode;
 out vec2 uv; out vec4 tint;
+const int texture_solid=0;
+const float rgb8_max=255.0;
+const float modulation_unity=128.0;
 void main() {
     gl_Position=vec4(position.x/160.0-1.0,1.0-position.y/120.0,0.0,1.0);
     uv=texcoord;
-    tint=vec4(floor(color.rgb*(texture_mode==0 ? 255.0 : 128.0)+0.5),color.a);
+    tint=vec4(floor(color.rgb*(texture_mode==texture_solid ? rgb8_max : modulation_unity)+0.5),color.a);
 }
 )",
                                error, size);
@@ -64,33 +76,44 @@ uniform int dither_enabled;
 uniform int blend_mode;
 in vec2 uv; in vec4 tint;
 out vec4 pixel;
-const int dither_offsets[16]=int[16](
+// BlendMode and the texture-mode uniform use these integer encodings.
+const int texture_solid=0, texture_modulated=1, texture_raw=2;
+const int blend_opaque=0, blend_average=1, blend_add=2,
+    blend_subtract=3, blend_add_quarter=4;
+const float rgb8_max=255.0;
+const int rgb5_max=31, rgb_expansion_shift=3, rgb_replication_shift=2;
+const int modulation_shift=4;
+const int dither_period=4, dither_mask=dither_period-1;
+const int last_framebuffer_row=239;
+// Texture uploads mark STP texels with alpha 128 and opaque texels with 255.
+const float stp_alpha_threshold=0.75;
+const int dither_offsets[dither_period*dither_period]=int[dither_period*dither_period](
     -4,0,-3,1, 2,-2,3,-1, -3,1,-4,0, 3,-1,2,-2);
 void main() {
     vec4 sample_color=texture(image,uv);
     if(sample_color.a==0.0) discard;
-    ivec3 shade=ivec3(clamp(floor(tint.rgb),0.0,255.0));
-    ivec3 texel=ivec3(floor(sample_color.rgb*31.0+0.5));
+    ivec3 shade=ivec3(clamp(floor(tint.rgb),0.0,rgb8_max));
+    ivec3 texel=ivec3(floor(sample_color.rgb*float(rgb5_max)+0.5));
     ivec3 foreground=shade;
-    if(texture_mode==1) foreground=(texel*shade)>>4;
-    if(texture_mode==2) foreground=texel<<3;
+    if(texture_mode==texture_modulated) foreground=(texel*shade)>>modulation_shift;
+    if(texture_mode==texture_raw) foreground=texel<<rgb_expansion_shift;
     ivec2 destination=ivec2(gl_FragCoord.xy);
     int offset=0;
     if(dither_enabled!=0)
-        offset=dither_offsets[((239-destination.y)&3)*4+(destination.x&3)];
-    foreground=clamp((foreground+ivec3(offset))>>3,ivec3(0),ivec3(31));
+        offset=dither_offsets[((last_framebuffer_row-destination.y)&dither_mask)*dither_period+(destination.x&dither_mask)];
+    foreground=clamp((foreground+ivec3(offset))>>rgb_expansion_shift,ivec3(0),ivec3(rgb5_max));
     // A textured face blends only its STP texels. Black texels with STP are
     // visible; only a zero texture word was discarded above.
-    if(blend_mode!=0 && (texture_mode==0 || sample_color.a<0.75)) {
-        ivec3 background=ivec3(floor(texelFetch(backdrop,destination,0).rgb*31.0+0.5));
-        if(blend_mode==1) foreground=(background+foreground)>>1;
-        if(blend_mode==2) foreground=background+foreground;
-        if(blend_mode==3) foreground=background-foreground;
-        if(blend_mode==4) foreground=background+(foreground>>2);
-        foreground=clamp(foreground,ivec3(0),ivec3(31));
+    if(blend_mode!=blend_opaque && (texture_mode==texture_solid || sample_color.a<stp_alpha_threshold)) {
+        ivec3 background=ivec3(floor(texelFetch(backdrop,destination,0).rgb*float(rgb5_max)+0.5));
+        if(blend_mode==blend_average) foreground=(background+foreground)>>1;
+        if(blend_mode==blend_add) foreground=background+foreground;
+        if(blend_mode==blend_subtract) foreground=background-foreground;
+        if(blend_mode==blend_add_quarter) foreground=background+(foreground>>2);
+        foreground=clamp(foreground,ivec3(0),ivec3(rgb5_max));
     }
-    ivec3 expanded=(foreground<<3)|(foreground>>2);
-    pixel=vec4(vec3(expanded)/255.0,1.0);
+    ivec3 expanded=(foreground<<rgb_expansion_shift)|(foreground>>rgb_replication_shift);
+    pixel=vec4(vec3(expanded)/rgb8_max,1.0);
 }
 )",
                                  error, size);
@@ -125,7 +148,7 @@ void main() {
                           reinterpret_cast<void *>(offsetof(Vertex, r)));
     glGenTextures(1, &renderer->color_texture);
     glBindTexture(GL_TEXTURE_2D, renderer->color_texture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 320, 240, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, render_width, render_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
     glGenFramebuffers(1, &renderer->framebuffer);
@@ -142,10 +165,10 @@ void main() {
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     glGenTextures(1, &renderer->blend_texture);
     glBindTexture(GL_TEXTURE_2D, renderer->blend_texture);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, 320, 240, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, render_width, render_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    u8 white[] = {255, 255, 255, 255};
+    u8 white[] = {color8_max, color8_max, color8_max, color8_max};
     const Image solid{1, 1, {white, sizeof white, sizeof white}};
     renderer->white_texture = renderer_upload(&solid);
     if (!renderer->white_texture) {
@@ -190,19 +213,19 @@ void renderer_delete_texture(TextureId texture) {
     glDeleteTextures(1, &texture);
 }
 static float clear_channel(float value) {
-    const auto channel = static_cast<u32>(std::clamp(std::round(value * 255), 0.0f, 255.0f)) >> 3;
-    return static_cast<float>((channel << 3) | (channel >> 2)) / 255.0f;
+    const auto channel = static_cast<u32>(std::clamp(std::round(value * color8_max), 0.0f, color8_scale)) >> color5_color8_shift;
+    return static_cast<float>((channel << color5_color8_shift) | (channel >> color5_replication_shift)) / color8_scale;
 }
 static void renderer_draw(const Renderer *renderer, const DrawList *draws, int width, int height) {
     glBindFramebuffer(GL_FRAMEBUFFER, renderer->framebuffer);
-    glViewport(0, 0, 320, 240);
+    glViewport(0, 0, render_width, render_height);
     const auto &style = draws->style;
-    const auto left = std::clamp<std::int64_t>(style.clip_x, 0, 320);
-    const auto top = std::clamp<std::int64_t>(style.clip_y, 0, 240);
-    const auto right = std::clamp<std::int64_t>(std::int64_t(style.clip_x) + style.clip_width, left, 320);
-    const auto bottom = std::clamp<std::int64_t>(std::int64_t(style.clip_y) + style.clip_height, top, 240);
+    const auto left = std::clamp<std::int64_t>(style.clip_x, 0, render_width);
+    const auto top = std::clamp<std::int64_t>(style.clip_y, 0, render_height);
+    const auto right = std::clamp<std::int64_t>(std::int64_t(style.clip_x) + style.clip_width, left, render_width);
+    const auto bottom = std::clamp<std::int64_t>(std::int64_t(style.clip_y) + style.clip_height, top, render_height);
     glEnable(GL_SCISSOR_TEST);
-    glScissor(left, 240 - bottom, right - left, bottom - top);
+    glScissor(left, render_height - bottom, right - left, bottom - top);
     glDisable(GL_DITHER);
     glDisable(GL_BLEND);
     if (style.clear == FrameClear::Clear) {
@@ -240,13 +263,13 @@ static void renderer_draw(const Renderer *renderer, const DrawList *draws, int w
             // Snapshot only this triangle's clipped bounds. Reading the attached
             // color target directly in a shader is undefined on GLES/WebGL.
             glActiveTexture(GL_TEXTURE1);
-            glCopyTexSubImage2D(GL_TEXTURE_2D, 0, x0, 240 - y1, x0, 240 - y1, x1 - x0, y1 - y0);
+            glCopyTexSubImage2D(GL_TEXTURE_2D, 0, x0, render_height - y1, x0, render_height - y1, x1 - x0, y1 - y0);
         }
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, draws->textures[draw->material]);
         glBufferData(GL_ARRAY_BUFFER, sizeof draw->vertices, draw->vertices, GL_STREAM_DRAW);
-        glUniform1i(texture_mode, draw->surface == SurfaceKind::Solid ? 0 :
-            draw->color_mode == TextureColorMode::Modulated ? 1 : 2);
+        glUniform1i(texture_mode, draw->surface == SurfaceKind::Solid ? shader_texture_solid :
+            draw->color_mode == TextureColorMode::Modulated ? shader_texture_modulated : shader_texture_raw);
         glUniform1i(dither_enabled, draw->dither ? 1 : 0);
         glUniform1i(blend_mode, static_cast<GLint>(draw->blend));
         glDrawArrays(GL_TRIANGLES, 0, 3);
@@ -264,14 +287,14 @@ void renderer_present_retained(const Renderer *renderer, int width, int height) 
     glViewport(0, 0, width, height);
     glClearColor(0, 0, 0, 1);
     glClear(GL_COLOR_BUFFER_BIT);
-    int target_width = width, target_height = width * 3 / 4;
+    int target_width = width, target_height = width * display_aspect_height / display_aspect_width;
     if (target_height > height) {
         target_height = height;
-        target_width = height * 4 / 3;
+        target_width = height * display_aspect_width / display_aspect_height;
     }
     const int x = (width - target_width) / 2, y = (height - target_height) / 2;
     glBindFramebuffer(GL_READ_FRAMEBUFFER, renderer->framebuffer);
-    glBlitFramebuffer(0, 0, 320, 240, x, y, x + target_width, y + target_height,
+    glBlitFramebuffer(0, 0, render_width, render_height, x, y, x + target_width, y + target_height,
                       GL_COLOR_BUFFER_BIT, GL_NEAREST);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }

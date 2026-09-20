@@ -13,6 +13,8 @@
 #include <kf/open/scene0.h>
 
 enum {
+    ENDING_SCROLL_BLEND_LAST = 0xfff,
+    ENDING_SCROLL_BLEND_STEP = 0x40,
     SCENE0_UPDATES_PER_SECOND = 22,
     SCENE0_ROTATION_START_POINT = 8,
     SCENE0_FADE_OUT_START_POINT = 15,
@@ -542,16 +544,16 @@ void opening_ending_scene_run(void)
                 open_graphics_runtime.display_state.frame_style.red =
                     open_graphics_runtime.display_state.frame_style.green =
                     open_graphics_runtime.display_state.frame_style.blue =
-                    static_cast<u8>(brightness) / 255.0f;
+                    static_cast<u8>(brightness) / kf::color8_scale;
                 if (brightness >= ENDING_MAX_BRIGHTNESS) {
                     brightness = ENDING_MAX_BRIGHTNESS;
                 } else {
                     brightness += ENDING_BRIGHTEN_STEP;
                 }
-                if (blend < 0xfff) {
-                    blend += 0x40;
+                if (blend < ENDING_SCROLL_BLEND_LAST) {
+                    blend += ENDING_SCROLL_BLEND_STEP;
                 } else {
-                    blend = 0xfff;
+                    blend = ENDING_SCROLL_BLEND_LAST;
                 }
             }
         } else {
@@ -573,7 +575,7 @@ void opening_ending_scene_run(void)
         open_graphics_runtime.display_state.frame_style.red =
             open_graphics_runtime.display_state.frame_style.green =
             open_graphics_runtime.display_state.frame_style.blue =
-            static_cast<u8>(brightness) / 255.0f;
+            static_cast<u8>(brightness) / kf::color8_scale;
         lighting_set_color_matrix(
             &color_matrix_table[kf_enum_encode<s32>(KF_OPEN_COLOR_DEFAULT)],
             &color_matrix_table[kf_enum_encode<s32>(KF_OPEN_COLOR_BLACK)], blend);

@@ -11,6 +11,10 @@
 #include <cstring>
 #include <kf/game/game.h>
 
+static constexpr u16 PLAYER_PITFALL_CUTTING_DAMAGE = 5;
+static constexpr u16 PLAYER_PITFALL_STRIKING_DAMAGE = 3;
+static constexpr u16 PLAYER_PITFALL_PIERCING_DAMAGE = 5;
+
 enum {
     POISON_DAMAGE_INTERVAL_UPDATES = 20,
     POISON_FLASH_UPDATES = 2
@@ -464,7 +468,7 @@ void player_update(void)
                     pitch_yaw_to_forward_vector(&effect_rotation.angles, launch_direction);
                     vector3s_scale_shift12(PLAYER_WEAPON_MAGIC_SPEED, launch_direction);
                     effect_pool_construct(
-                        10, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS, effect,
+                        KF_PLAYER_DAMAGE_MULTIPLIER_ONE, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS, effect,
                         &position, launch_direction, KfEffectHomingArguments{&player_state.camera_rotation, attachment, KF_EFFECT_SOUND_PLAY});
                     if (effect == KF_EFFECT_KIND_HOMING_PROJECTILE) {
                         position.vy += PLAYER_TRIPLE_FANG_Y_OFFSET;
@@ -473,12 +477,12 @@ void player_update(void)
                             player_state.camera_rotation.vy,
                             player_state.camera_rotation.vz);
                         effect_pool_construct(
-                            10, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS,
+                            KF_PLAYER_DAMAGE_MULTIPLIER_ONE, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS,
                             KF_EFFECT_KIND_HOMING_PROJECTILE, &position, launch_direction, KfEffectHomingArguments{&effect_rotation.vector, attachment, KF_EFFECT_SOUND_SILENT});
                         effect_rotation.angles.x -= 2 * PLAYER_TRIPLE_FANG_PITCH_OFFSET;
                         position.vy -= 2 * PLAYER_TRIPLE_FANG_Y_OFFSET;
                         effect_pool_construct(
-                            10, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS,
+                            KF_PLAYER_DAMAGE_MULTIPLIER_ONE, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS,
                             KF_EFFECT_KIND_HOMING_PROJECTILE, &position, launch_direction, KfEffectHomingArguments{&effect_rotation.vector, attachment, KF_EFFECT_SOUND_SILENT});
                     }
                 }
@@ -601,7 +605,7 @@ void player_update(void)
     switch (attribute) {
     case KF_MAP_ATTRIBUTE_PITFALL:
         if (player_state.update_state == KF_PLAYER_UPDATE_NORMAL) {
-            player_apply_damage(5, 3, 5, KF_PLAYER_STATUS_NONE, 0, 0, KF_FIXED12_ONE, KF_PLAYER_DAMAGE_MULTIPLIER_ONE);
+            player_apply_damage(PLAYER_PITFALL_CUTTING_DAMAGE, PLAYER_PITFALL_STRIKING_DAMAGE, PLAYER_PITFALL_PIERCING_DAMAGE, KF_PLAYER_STATUS_NONE, 0, 0, KF_FIXED12_ONE, KF_PLAYER_DAMAGE_MULTIPLIER_ONE);
         }
         break;
     case KF_MAP_ATTRIBUTE_POISON_HOLE:

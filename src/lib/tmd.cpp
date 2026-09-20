@@ -19,7 +19,7 @@ KfTmdResource tmd_resource_view(u8 *data, std::size_t size)
     if (!data || size < KF_TMD_HEADER_BYTES ||
         reinterpret_cast<std::uintptr_t>(data) % alignof(KfTmdHeader))
         kf::host_fail("Truncated or unaligned TMD header");
-    const auto objects = tmd_read_word(data + 8);
+    const auto objects = tmd_read_word(data + offsetof(KfTmdHeader, object_count));
     if (objects > (size - KF_TMD_HEADER_BYTES) / sizeof(KfTmdObject))
         kf::host_fail("Truncated TMD object table");
     return {reinterpret_cast<KfTmdHeader *>(data), size};
@@ -39,7 +39,7 @@ static u8 *tmd_object_bytes(u16 index)
     if (!resource.data || resource.size < KF_TMD_HEADER_BYTES)
         kf::host_fail("No selected TMD resource");
     auto *bytes = reinterpret_cast<u8 *>(resource.data);
-    if (index >= tmd_read_word(bytes + 8) ||
+    if (index >= tmd_read_word(bytes + offsetof(KfTmdHeader, object_count)) ||
         index >= (resource.size - KF_TMD_HEADER_BYTES) / sizeof(KfTmdObject))
         kf::host_fail("TMD object index exceeds its resource");
     return bytes + KF_TMD_HEADER_BYTES + sizeof(KfTmdObject) * index;
@@ -53,10 +53,13 @@ KfTmdObject *tmd_get_object(u16 index)
 KfTmdObject tmd_read_object(u16 index)
 {
     const auto *bytes = tmd_object_bytes(index);
-    return {tmd_read_word(bytes), tmd_read_word(bytes + 4),
-        tmd_read_word(bytes + 8), tmd_read_word(bytes + 12),
-        tmd_read_word(bytes + 16), tmd_read_word(bytes + 20),
-        std::bit_cast<s32>(tmd_read_word(bytes + 24))};
+    return {tmd_read_word(bytes + offsetof(KfTmdObject, vertex_offset)),
+        tmd_read_word(bytes + offsetof(KfTmdObject, vertex_count)),
+        tmd_read_word(bytes + offsetof(KfTmdObject, normal_offset)),
+        tmd_read_word(bytes + offsetof(KfTmdObject, normal_count)),
+        tmd_read_word(bytes + offsetof(KfTmdObject, primitive_offset)),
+        tmd_read_word(bytes + offsetof(KfTmdObject, primitive_count)),
+        std::bit_cast<s32>(tmd_read_word(bytes + offsetof(KfTmdObject, scale)))};
 }
 
 static KfTmdBytes tmd_payload_from(std::size_t offset)

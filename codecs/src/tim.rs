@@ -1,5 +1,23 @@
 use core::fmt;
 
+pub const TIM_MAGIC: u32 = 0x10;
+pub const TIM_HEADER_BYTES: usize = 8;
+pub const TIM_MODE_OFFSET: usize = 4;
+pub const TIM_FORMAT_MASK: u32 = 7;
+pub const TIM_CLUT_FLAG: u32 = 8;
+pub const TIM_FLAGS_MASK: u32 = 15;
+pub const TIM_INDEXED4: u32 = 0;
+pub const TIM_INDEXED8: u32 = 1;
+pub const TIM_DIRECT16: u32 = 2;
+pub const TIM_DIRECT24: u32 = 3;
+const BLOCK_SIZE_LOW_BITS: u32 = 3;
+const BLOCK_HEADER_BYTES: usize = 12;
+const BLOCK_RECTANGLE_X_OFFSET: usize = 4;
+const BLOCK_RECTANGLE_Y_OFFSET: usize = 6;
+const BLOCK_RECTANGLE_WIDTH_OFFSET: usize = 8;
+const BLOCK_RECTANGLE_HEIGHT_OFFSET: usize = 10;
+
+
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum TimError {
     Truncated {
@@ -131,14 +149,14 @@ impl<'a> Images<'a> {
     }
 
     fn parse_next(&mut self) -> Result<Option<Image<'a>>, TimError> {
-        if self.bytes.len() - self.at < 4 || u32_at(self.bytes, self.at)? != 0x10 {
+        if self.bytes.len() - self.at < 4 || u32_at(self.bytes, self.at)? != TIM_MAGIC {
             self.stopped = true;
             return Ok(None);
         }
         let start = self.at;
-        let mode = u32_at(self.bytes, start + 4)?;
-        let mut cursor = start + 8;
-        let clut = if mode & 8 != 0 {
+        let mode = u32_at(self.bytes, start + TIM_MODE_OFFSET)?;
+        let mut cursor = start + TIM_HEADER_BYTES;
+        let clut = if mode & TIM_CLUT_FLAG != 0 {
             Some(block(self.bytes, &mut cursor)?)
         } else {
             None
@@ -191,17 +209,17 @@ fn block<'a>(bytes: &'a [u8], cursor: &mut usize) -> Result<ImageBlock<'a>, TimE
     let at = *cursor;
     let declared = u32_at(bytes, at)?;
     let size =
-        usize::try_from(declared & !3).map_err(|_| TimError::InvalidBlockSize { at, declared })?;
-    if size < 12 {
+        usize::try_from(declared & !BLOCK_SIZE_LOW_BITS).map_err(|_| TimError::InvalidBlockSize { at, declared })?;
+    if size < BLOCK_HEADER_BYTES {
         return Err(TimError::InvalidBlockSize { at, declared });
     }
     let encoded = span(bytes, at, size)?;
     let half = |offset| i16::from_le_bytes([encoded[offset], encoded[offset + 1]]);
     let rectangle = Rect {
-        x: half(4),
-        y: half(6),
-        width: half(8),
-        height: half(10),
+        x: half(BLOCK_RECTANGLE_X_OFFSET),
+        y: half(BLOCK_RECTANGLE_Y_OFFSET),
+        width: half(BLOCK_RECTANGLE_WIDTH_OFFSET),
+        height: half(BLOCK_RECTANGLE_HEIGHT_OFFSET),
     };
     if rectangle.width < 0 || rectangle.height < 0 {
         return Err(TimError::InvalidRectangle {
@@ -218,13 +236,13 @@ fn block<'a>(bytes: &'a [u8], cursor: &mut usize) -> Result<ImageBlock<'a>, TimE
             width: rectangle.width,
             height: rectangle.height,
         })?;
-    let pixels = span(encoded, 12, count)?;
+    let pixels = span(encoded, BLOCK_HEADER_BYTES, count)?;
     *cursor = at + size;
     Ok(ImageBlock {
         rectangle,
-        rectangle_offset: at + 4,
-        data_offset: at + 12,
+        rectangle_offset: at + BLOCK_RECTANGLE_X_OFFSET,
+        data_offset: at + BLOCK_HEADER_BYTES,
         pixels,
-        payload: &encoded[12..],
+        payload: &encoded[BLOCK_HEADER_BYTES..],
     })
 }

@@ -33,6 +33,42 @@ pub const VAB_OFFSET_ENTRIES: usize = 256;
 pub const VAB_OFFSET_TABLE_SIZE: usize = VAB_OFFSET_ENTRIES * 2;
 pub const VAB_SAMPLE_UNIT: usize = 8;
 
+
+// MIDI status and variable-length encodings used by the SEQ parser/bridge.
+pub mod midi {
+    pub const STATUS_BIT: u8 = 0x80;
+    pub const CHANNEL_STATUS_FIRST: u8 = 0x80;
+    pub const CHANNEL_STATUS_LAST: u8 = 0xef;
+    pub const MESSAGE_SHIFT: u32 = 4;
+    pub const CHANNEL_MASK: u8 = 15;
+    pub const NOTE_OFF: u8 = 8;
+    pub const NOTE_ON: u8 = 9;
+    pub const POLYPHONIC_PRESSURE: u8 = 10;
+    pub const CONTROL_CHANGE: u8 = 11;
+    pub const PROGRAM_CHANGE: u8 = 12;
+    pub const CHANNEL_PRESSURE: u8 = 13;
+    pub const PITCH_BEND: u8 = 14;
+    pub const META: u8 = 0xff;
+    pub const SYSEX_START: u8 = 0xf0;
+    pub const SYSEX_END: u8 = 0xf7;
+    pub const TIME_CODE: u8 = 0xf1;
+    pub const SONG_POSITION: u8 = 0xf2;
+    pub const SONG_SELECT: u8 = 0xf3;
+    pub const TUNE_REQUEST: u8 = 0xf6;
+    pub const TIMING_CLOCK: u8 = 0xf8;
+    pub const START: u8 = 0xfa;
+    pub const CONTINUE: u8 = 0xfb;
+    pub const STOP: u8 = 0xfc;
+    pub const ACTIVE_SENSING: u8 = 0xfe;
+    pub const DATA_BITS: usize = 7;
+    pub const DATA_MASK: u8 = 127;
+    pub const VLQ_BYTES_MAX: usize = 4;
+    pub const VLQ_CONTINUATION: u8 = 0x80;
+    pub const CHANNEL_VOLUME: u8 = 7;
+    pub const META_TEMPO: u8 = 0x51;
+    pub const META_END: u8 = 0x2f;
+}
+
 pub const SEQ_MAGIC: [u8; 4] = *b"pQES";
 pub const SEQ_HEADER_SIZE: usize = 15;
 pub const MIDI_VLQ_MAX: u32 = 0x0fff_ffff;
@@ -1091,7 +1127,7 @@ impl<'a> SeqEvents<'a> {
         let (delta, delta_len) = read_variable_length_at(self.bytes, &mut self.at)?;
         let status_at = self.at;
         let first = take(self.bytes, &mut self.at)?;
-        let (status, first_data, used_running_status) = if first < 0x80 {
+        let (status, first_data, used_running_status) = if first < midi::STATUS_BIT {
             let status = self.running_status.ok_or(SeqError::MissingRunningStatus {
                 at: status_at,
                 byte: first,
@@ -1101,16 +1137,16 @@ impl<'a> SeqEvents<'a> {
             (first, None, false)
         };
         let kind = match status {
-            0x80..=0xef => {
+            midi::CHANNEL_STATUS_FIRST..=midi::CHANNEL_STATUS_LAST => {
                 self.running_status = Some(status);
-                let message = match status >> 4 {
-                    0x8 => ChannelMessage::NoteOff,
-                    0x9 => ChannelMessage::NoteOn,
-                    0xa => ChannelMessage::PolyphonicKeyPressure,
-                    0xb => ChannelMessage::ControlChange,
-                    0xc => ChannelMessage::ProgramChange,
-                    0xd => ChannelMessage::ChannelPressure,
-                    0xe => ChannelMessage::PitchBend,
+                let message = match status >> midi::MESSAGE_SHIFT {
+                    midi::NOTE_OFF => ChannelMessage::NoteOff,
+                    midi::NOTE_ON => ChannelMessage::NoteOn,
+                    midi::POLYPHONIC_PRESSURE => ChannelMessage::PolyphonicKeyPressure,
+                    midi::CONTROL_CHANGE => ChannelMessage::ControlChange,
+                    midi::PROGRAM_CHANGE => ChannelMessage::ProgramChange,
+                    midi::CHANNEL_PRESSURE => ChannelMessage::ChannelPressure,
+                    midi::PITCH_BEND => ChannelMessage::PitchBend,
                     _ => unreachable!(),
                 };
                 let count = if matches!(
@@ -1132,14 +1168,14 @@ impl<'a> SeqEvents<'a> {
                 };
                 SeqEventKind::Channel(ChannelEvent {
                     status,
-                    channel: status & 15,
+                    channel: status & midi::CHANNEL_MASK,
                     message,
                     data1,
                     data2,
                     used_running_status,
                 })
             }
-            0xff => {
+            midi::META => {
                 self.running_status = None;
                 let meta_type = take(self.bytes, &mut self.at)?;
                 let (length, _) = read_variable_length_at(self.bytes, &mut self.at)?;
@@ -1149,7 +1185,7 @@ impl<'a> SeqEvents<'a> {
                 self.at += size;
                 SeqEventKind::Meta { meta_type, data }
             }
-            0xf0 | 0xf7 => {
+            midi::SYSEX_START | midi::SYSEX_END => {
                 self.running_status = None;
                 let (length, _) = read_variable_length_at(self.bytes, &mut self.at)?;
                 let size = usize::try_from(length)
@@ -1158,18 +1194,18 @@ impl<'a> SeqEvents<'a> {
                 self.at += size;
                 SeqEventKind::SystemExclusive { status, data }
             }
-            0xf1 | 0xf2 | 0xf3 | 0xf6 | 0xf8 | 0xfa | 0xfb | 0xfc | 0xfe => {
-                if status < 0xf8 {
+            midi::TIME_CODE | midi::SONG_POSITION | midi::SONG_SELECT | midi::TUNE_REQUEST | midi::TIMING_CLOCK | midi::START | midi::CONTINUE | midi::STOP | midi::ACTIVE_SENSING => {
+                if status < midi::TIMING_CLOCK {
                     self.running_status = None;
                 }
                 let size = match status {
-                    0xf1 | 0xf3 => 1,
-                    0xf2 => 2,
+                    midi::TIME_CODE | midi::SONG_SELECT => 1,
+                    midi::SONG_POSITION => 2,
                     _ => 0,
                 };
                 let data = seq_span(self.bytes, self.at, size)?;
                 for (index, byte) in data.iter().copied().enumerate() {
-                    if byte >= 0x80 {
+                    if byte >= midi::STATUS_BIT {
                         return Err(SeqError::InvalidDataByte {
                             at: self.at + index,
                             byte,
@@ -1226,10 +1262,10 @@ pub fn read_variable_length(bytes: &[u8]) -> Result<(u32, usize), SeqError> {
 fn read_variable_length_at(bytes: &[u8], at: &mut usize) -> Result<(u32, usize), SeqError> {
     let start = *at;
     let mut value = 0u32;
-    for index in 0..4 {
+    for index in 0..midi::VLQ_BYTES_MAX {
         let byte = take(bytes, at)?;
-        value = (value << 7) | u32::from(byte & 0x7f);
-        if byte & 0x80 == 0 {
+        value = (value << midi::DATA_BITS) | u32::from(byte & midi::DATA_MASK);
+        if byte & midi::VLQ_CONTINUATION == 0 {
             return Ok((value, index + 1));
         }
     }
@@ -1240,11 +1276,11 @@ pub fn encode_variable_length(value: u32, output: &mut [u8]) -> Result<usize, Se
     if value > MIDI_VLQ_MAX {
         return Err(SeqError::VariableLengthOutOfRange(value));
     }
-    let size = if value >= 1 << 21 {
+    let size = if value >= 1 << (3 * midi::DATA_BITS) {
         4
-    } else if value >= 1 << 14 {
+    } else if value >= 1 << (2 * midi::DATA_BITS) {
         3
-    } else if value >= 1 << 7 {
+    } else if value >= 1 << midi::DATA_BITS {
         2
     } else {
         1
@@ -1256,10 +1292,10 @@ pub fn encode_variable_length(value: u32, output: &mut [u8]) -> Result<usize, Se
         });
     }
     for (index, destination) in output[..size].iter_mut().enumerate() {
-        let shift = (size - index - 1) * 7;
-        *destination = ((value >> shift) & 0x7f) as u8;
+        let shift = (size - index - 1) * midi::DATA_BITS;
+        *destination = ((value >> shift) & u32::from(midi::DATA_MASK)) as u8;
         if index + 1 != size {
-            *destination |= 0x80;
+            *destination |= midi::VLQ_CONTINUATION;
         }
     }
     Ok(size)
@@ -1278,7 +1314,7 @@ fn take(bytes: &[u8], at: &mut usize) -> Result<u8, SeqError> {
 fn take_data(bytes: &[u8], at: &mut usize) -> Result<u8, SeqError> {
     let offset = *at;
     let value = take(bytes, at)?;
-    if value >= 0x80 {
+    if value >= midi::STATUS_BIT {
         return Err(SeqError::InvalidDataByte {
             at: offset,
             byte: value,

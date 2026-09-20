@@ -1,9 +1,18 @@
 use crate::{INVALID, OK, OUTPUT_FULL};
 use core::{mem::align_of, slice};
 use kf_codec::tim::{ImageBlock, Images};
+use kf_codec::tim::{TIM_DIRECT16, TIM_FLAGS_MASK, TIM_FORMAT_MASK};
+const TEXTURE_WIDTH: usize = 1024;
+const TEXTURE_HEIGHT: usize = 512;
+
 fn rectangle_valid(block: &ImageBlock<'_>) -> bool {
     let r = block.rectangle;
-    r.x >= 0 && r.y >= 0 && r.x < 1024 && r.y < 512 && r.width <= 1024 && r.height <= 512
+    r.x >= 0
+        && r.y >= 0
+        && r.x < TEXTURE_WIDTH as i16
+        && r.y < TEXTURE_HEIGHT as i16
+        && r.width <= TEXTURE_WIDTH as i16
+        && r.height <= TEXTURE_HEIGHT as i16
 }
 fn copy_block(block: &ImageBlock<'_>, words: &mut [u16]) {
     let r = block.rectangle;
@@ -12,7 +21,8 @@ fn copy_block(block: &ImageBlock<'_>, words: &mut [u16]) {
             let at = (y * r.width as usize + x) * 2;
             // Common CLUT rectangles cross row 511. Authored transfers wrap at
             // the image edges; retain this only during material conversion.
-            words[((r.y as usize + y) & 511) * 1024 + ((r.x as usize + x) & 1023)] =
+            words[((r.y as usize + y) & (TEXTURE_HEIGHT - 1)) * TEXTURE_WIDTH
+                + ((r.x as usize + x) & (TEXTURE_WIDTH - 1))] =
                 u16::from_le_bytes([block.pixels[at], block.pixels[at + 1]]);
         }
     }
@@ -32,7 +42,7 @@ pub unsafe extern "C" fn kf_tim_compose(
     {
         return INVALID;
     }
-    if capacity < 1024 * 512 {
+    if capacity < TEXTURE_WIDTH * TEXTURE_HEIGHT {
         return OUTPUT_FULL;
     }
     let bytes = slice::from_raw_parts(bytes, length);
@@ -42,8 +52,8 @@ pub unsafe extern "C" fn kf_tim_compose(
             Ok(i) => i,
             Err(_) => return INVALID,
         };
-        if image.mode & 7 > 2
-            || image.mode & !15 != 0
+        if image.mode & TIM_FORMAT_MASK > TIM_DIRECT16
+            || image.mode & !TIM_FLAGS_MASK != 0
             || !rectangle_valid(&image.image)
             || image.clut.is_some_and(|c| !rectangle_valid(&c))
         {
@@ -54,7 +64,7 @@ pub unsafe extern "C" fn kf_tim_compose(
     if count == 0 {
         return INVALID;
     }
-    let words = slice::from_raw_parts_mut(words, 1024 * 512);
+    let words = slice::from_raw_parts_mut(words, TEXTURE_WIDTH * TEXTURE_HEIGHT);
     for image in Images::new(bytes) {
         let image = image.expect("preflighted TIM stream");
         if let Some(clut) = image.clut {

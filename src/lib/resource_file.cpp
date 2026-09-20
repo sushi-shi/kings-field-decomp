@@ -1,10 +1,13 @@
 #include <kf/lib/resource_file.h>
+
 #include <kf/lib/memory.h>
 #include <kf/platform/files.hpp>
 
+static constexpr std::size_t resource_path_capacity = 128;
+
 kf::FileResult resource_file_open(kf::DataFile *file, const char *relative_path)
 {
-    char path[128];
+    char path[resource_path_capacity];
     const int count = snprintf(path, sizeof path, "KF/%s", relative_path);
     if (count < 0 || static_cast<std::size_t>(count) >= sizeof path)
         return kf::FileResult::InvalidPath;
