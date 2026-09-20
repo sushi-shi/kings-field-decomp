@@ -449,7 +449,7 @@ play_phase_sound:
                     magic->damage_components[1], KF_ACTOR_DAMAGE_SCALE_ONE, effect->type);
                 player_apply_radial_damage(
                     &effect->position,
-                    damage_radius, KF_FIXED12_ONE, power,
+                    damage_radius, KF_FIXED12_ONE,
                     0, 0, 0, magic->damage_components[0],
                     magic->damage_components[1], EFFECT_PLAYER_RADIAL_SCALE_Q12, effect->id);
             }
@@ -596,7 +596,7 @@ randomize_homing_direction:
                     lightning_magic->damage_components[0],
                     lightning_magic->damage_components[1], KF_ACTOR_DAMAGE_SCALE_ONE, effect->type);
                 player_apply_radial_damage(
-                    &position, damage_radius, KF_FIXED12_ONE, power, 0, 0, 0,
+                    &position, damage_radius, KF_FIXED12_ONE, 0, 0, 0,
                     lightning_magic->damage_components[0],
                     lightning_magic->damage_components[1], EFFECT_PLAYER_RADIAL_SCALE_Q12, effect->id);
             }
@@ -672,7 +672,7 @@ advance_effect_phase:
                     magic->damage_components[1], KF_ACTOR_DAMAGE_SCALE_ONE, effect->type);
                 player_apply_radial_damage(
                     &effect->position,
-                    GROUND_BRANCH_DAMAGE_RADIUS, KF_FIXED12_ONE, power, 0, 0, 0,
+                    GROUND_BRANCH_DAMAGE_RADIUS, KF_FIXED12_ONE, 0, 0, 0,
                     magic->damage_components[0],
                     magic->damage_components[1], EFFECT_PLAYER_RADIAL_SCALE_Q12, effect->id);
             }

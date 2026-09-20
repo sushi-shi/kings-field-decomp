@@ -540,7 +540,6 @@ void player_apply_radial_damage(
     const VECTOR *origin,
     u32 radius,
     u16 falloff_q12,
-    u16 base_power,
     u16 component0,
     u16 component1,
     u16 component2,

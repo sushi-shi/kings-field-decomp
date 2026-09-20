@@ -38,7 +38,7 @@ KfNotificationSprite notification_sprites[KF_NOTIFICATION_SPRITE_COUNT] = {
 
 KfEffectSprite effect_sprites[KF_EFFECT_SPRITE_TABLE_ROWS] = {
     {KF_SPRITE_VISIBLE, KF_ANIMATION_CLIP_FIRST, 0, 0x33, 0x11e, 0x22, 0xc8, {0, 0}, {0, 0, 0, 0}, {0, 0}, NULL},
-    {KF_SPRITE_END},
+    {KF_SPRITE_END, {}, 0, 0, 0, 0, 0, {}, {}, {}, nullptr},
 };
 
 enum {

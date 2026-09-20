@@ -227,7 +227,7 @@ extern void player_apply_damage(
     u16 scale_q12, u16 multiplier_tenths);
 extern void player_begin_weapon_attack(void);
 extern void player_apply_radial_damage(
-    const VECTOR *origin, u32 radius, u16 falloff_q12, u16 base_power,
+    const VECTOR *origin, u32 radius, u16 falloff_q12,
     u16 component0, u16 component1, u16 component2, u16 component3, u16 component4,
     u16 scale_q12, u16 multiplier_tenths);
 extern s32 player_calculate_damage_component(s32 base_power, s32 defense, s32 attack);

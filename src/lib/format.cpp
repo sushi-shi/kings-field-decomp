@@ -149,7 +149,8 @@ s32 format_vsprintf(u8 *out, u8 *format, va_list args)
     return count + 1;
 }
 
-void debug_printf_sink(const char *format, ...)
+// Retail intentionally discards these variadic diagnostics.
+void debug_printf_sink(const char *, ...)
 {
 }
 
