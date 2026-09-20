@@ -153,7 +153,16 @@ unchecked cursor is not a sufficient cleanup. OPEN's TMD packet macros still
 have callers; separate file-format decoding from runtime draw construction when
 addressing them, rather than deleting them as obsolete SDK leftovers.
 
-### 6. Extract smaller camera/menu operations where behavior agrees
+### Stacked pass: menu navigation and dialogue exchanges
+
+List movement and its shared input/sound operation live in `src/game/menu_list.cpp`.
+Seven callers retain their empty-list and cancel branches, Up-before-Down
+priority, preview reload failures and independent menu loops. Dialogue exchanges
+share eligibility and response/advance operations, but retain each exchange's
+grant/consume/notification order. The speaking event and the event whose dialogue
+is advanced remain separate identities, including across the blocking dialogue.
+
+### 6. Extract smaller camera operations where behavior agrees
 
 Consider segment setup helpers shared by GAME/OPEN camera paths, but retain their
 different fetch/increment order and initial poses. In menus and scripts, prefer

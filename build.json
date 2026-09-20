@@ -37,6 +37,7 @@
         "src/game/pool.cpp",
         "src/game/item.cpp",
         "src/game/menu.cpp",
+        "src/game/menu_list.cpp",
         "src/game/menu_map_viewer.cpp",
         "src/game/menu_panels.cpp",
         "src/game/menu_select.cpp",
