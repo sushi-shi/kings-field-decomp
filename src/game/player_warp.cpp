@@ -182,6 +182,9 @@ KfBoolU32 player_warp_trigger_update(void)
     KfMapVariant destination_variant = KF_MAP_VARIANT_DEFAULT;
 
     switch (player_state.progress_state.current_floor) {
+    case KF_FLOOR_FORCE_RELOAD:
+        // This resource-load sentinel identifies no floor exit.
+        break;
     case KF_FLOOR_1:
         cell = player_state.motion_state.words[2] & WARP_CELL_KEY_MASK;
         if (cell == floor1_floor2_cell) {

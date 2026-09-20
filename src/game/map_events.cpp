@@ -96,6 +96,9 @@ void map_event_pool_update(void)
             map_event_set_current(event);
 
             switch (event->behavior) {
+            case KF_MAP_EVENT_BEHAVIOR_SHOP:
+                // Shop interaction is handled outside the ambient animation update.
+                break;
             case KF_MAP_EVENT_BEHAVIOR_WANDER:
                 map_event_update_wander();
                 break;
@@ -131,6 +134,9 @@ void map_event_pool_update(void)
     if (map_ambient_script_countdown-- == 0) {
         map_ambient_script_countdown = MAP_AMBIENT_COUNTDOWN_RELOAD;
         switch (player_state.progress_state.current_floor) {
+        case KF_FLOOR_FORCE_RELOAD:
+            // This resource-load sentinel has no ambient floor script.
+            break;
         case KF_FLOOR_1:
             map_ambient_script_floor1();
             break;

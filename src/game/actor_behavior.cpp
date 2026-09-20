@@ -256,6 +256,8 @@ void actor_update_awareness(void)
     KfActorSlotState spawn_policy;
 
     switch (actor->lifecycle) {
+    case KF_ACTOR_LIFECYCLE_DISABLED:
+        break;
     case KF_ACTOR_LIFECYCLE_DORMANT:
         distance = actor_player_distance(actor, ACTOR_ACTIVATION_RANGE);
         if (distance == -1) {
@@ -471,6 +473,9 @@ void actor_spawn_action_effect(KfActorEffectCode effect_code, KfActorEffectSlot 
     effect_code &= KF_ACTOR_EFFECT_KIND_MASK;
     for (i = 0; i < repeat; i++) {
         switch (actor_effect_kind_from_payload(effect_code)) {
+        default:
+            // Other effect kinds have no actor-launch recipe here.
+            break;
         case KF_MAGIC_FIRE_BALL:
         case KF_MAGIC_WIND_CUTTER:
         case KF_MAGIC_LIGHT_NEEDLE:
@@ -790,6 +795,9 @@ void actor_update_current_action(void)
 
     collision_adjust_cell_occupancy(actor->cell_x, actor->cell_z, -1);
     switch (actor->action) {
+    case KF_ACTOR_ACTION_NONE:
+        // Vertical movement and occupancy maintenance still run below.
+        break;
     case KF_ACTOR_ACTION_IDLE:
         if (actor->action_progress == KF_ACTOR_PROGRESS_INIT) {
             actor->action_progress = KF_ACTOR_PROGRESS_RUNNING;
@@ -972,6 +980,9 @@ void actor_update_current_action(void)
         }
         actor_play_sound_at_phase(&definition->sounds[KF_ACTOR_SOUND_ATTACK], definition->action_animation_phases[KF_ACTOR_ANIM_SLOT_JUMP_ATTACK]);
         switch (actor->action_progress) {
+        default:
+            // Only the jump-attack progress markers transition in this action.
+            break;
         case KF_ACTOR_PROGRESS_JUMP_RISING:
             if (actor->vertical_velocity >= 0) {
                 actor_prepare_charge_toward_player();

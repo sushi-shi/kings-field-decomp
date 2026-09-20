@@ -248,6 +248,8 @@ void item_menu_root(KfItemStockBank shop_bank)
             kf::host_wait_buttons_released();
         }
         switch (action) {
+        case KF_TRADE_NONE:
+            break;
         case KF_TRADE_BUY:
             item_menu_buy(shop_bank);
             break;

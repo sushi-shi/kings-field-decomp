@@ -59,6 +59,9 @@ KfPlayerState player_state;
 void player_set_equipment_slot(KfObjectId item_id, KfEquipmentSlot slot)
 {
     switch (slot) {
+    case KF_EQUIPMENT_SLOT_REFRESH_ONLY:
+        // Rebuild equipment references and stats without changing a slot.
+        break;
     case KF_EQUIPMENT_SLOT_HEAD:
         player_state.equipped_head_armor_id = item_id;
         break;

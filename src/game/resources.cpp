@@ -105,6 +105,11 @@ void audio_play_current_map_sequence(void)
     s32 sequence_id = MAP_SEQUENCE_DEFAULT;
 
     switch (player_state.progress_state.current_floor) {
+    case KF_FLOOR_3:
+    case KF_FLOOR_4:
+    case KF_FLOOR_FORCE_RELOAD:
+        // These selectors retain the default map sequence.
+        break;
     case KF_FLOOR_1:
         if (player_state.progress_state.level >= MAP_FLOOR1_ALTERNATE_MUSIC_PROGRESS) {
             sequence_id = MAP_SEQUENCE_ALTERNATE;

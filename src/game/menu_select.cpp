@@ -28,6 +28,10 @@ void menu_equip_select(KfEquipmentMenuCategory equipment_category)
 
     owned = item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)];
     switch (equipment_category) {
+    case KF_EQUIP_MENU_NONE:
+    case KF_EQUIP_MENU_MAGIC:
+        // No item range exists for these; magic has its own selector.
+        return;
     case KF_EQUIP_MENU_WEAPON:
         start = kf_enum_encode<u8>(KF_ITEM_SHORT_SWORD);
         end = kf_enum_encode<u8>(KF_ITEM_IRON_MASK);
@@ -136,6 +140,10 @@ void menu_equip_select(KfEquipmentMenuCategory equipment_category)
     menu_release_item_model();
     if (selection != kf_enum_encode<s32>(KF_MENU_RESULT_CANCELLED)) {
         switch (equipment_category) {
+        case KF_EQUIP_MENU_NONE:
+        case KF_EQUIP_MENU_MAGIC:
+            // Excluded by the item-range selection above.
+            break;
         case KF_EQUIP_MENU_WEAPON:
             player_state.equipped_weapon_id = kf_enum_decode<KfObjectId>(selection);
             player_equip_weapon(kf_enum_decode<KfObjectId>(selection));
