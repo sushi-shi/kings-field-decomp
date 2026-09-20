@@ -51,6 +51,14 @@ not a claim about original source spelling or a new gameplay implementation.
 Fresh Linux/WASM builds linked with unchanged compiler diagnostics; a separate
 clean-context review found no actionable regressions. No gameplay run was made.
 
+The stacked follow-up passes cover pool searches/copies, player-update helpers,
+rendering visibility, typed XYZ operations, explicit state ownership, menu/dialogue
+operations and shared camera-path math. Shared stateful operations have ordinary
+translation units; no gameplay framework or replacement controller was introduced.
+The complete stack links in clean Linux/WASM builds with the same 57 compiler
+diagnostics on each target. Collision-result modeling and bounded resource loading
+remain separate work; see the cleanup document for their boundaries.
+
 ### 1. Update cadence — opening corrected, GAME pacing bypasses closed; flame report resolved
 
 - Evidence: the user reports both running too fast. The normal game loop has a
