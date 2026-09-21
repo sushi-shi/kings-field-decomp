@@ -75,7 +75,16 @@ weapon yaw mirroring remains a separate ordered pass. Object links are explicitl
 cleared over their eight-byte object extent. This removes word-pointer aliasing
 without changing resource decoding or resetting other fields in a reused slot.
 
-### 1. Finish ordinary container operations
+### Stacked pass: player update operations
+
+`player_update` now coordinates named, module-local movement, view, darkness,
+damage-reaction, equipment, floor-hazard and status-effect operations. Loaded-game
+restoration has its own operation. The extracted bodies retain their original
+widths, comparisons and side-effect order; movement remains forward then strafe,
+and view bob remains before button-driven turning. Death/menu early returns,
+occupancy changes and the common post-menu tail remain in the coordinator.
+
+### Remaining container candidates
 
 Review the remaining actor/event/effect searches and sweeps for range loops,
 local references and first-match helpers. Keep current-object binding and live
