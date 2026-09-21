@@ -46,8 +46,8 @@ int effect_magic_power(KfEffectRecord *effect)
 
 void effect_projectile_update_3d(SVECTOR *probe_offset, KfEffectPhase phase_limit)
 {
-    KfEffectRecord *record = current_effect;
-    KfMagicRecord *magic = current_effect_magic_record;
+    KfEffectRecord *record = effect_state.current_record;
+    KfMagicRecord *magic = effect_state.current_magic;
     KfEffectPhase life = record->phase;
     MATRIX rotation_matrix;
     MATRIX yaw_matrix;
@@ -114,8 +114,8 @@ void effect_projectile_update_3d(SVECTOR *probe_offset, KfEffectPhase phase_limi
 
 void effect_projectile_update_2d(s32 orbit_radius, KfEffectPhase phase_limit)
 {
-    KfEffectRecord *record = current_effect;
-    KfMagicRecord *magic = current_effect_magic_record;
+    KfEffectRecord *record = effect_state.current_record;
+    KfMagicRecord *magic = effect_state.current_magic;
     KfEnumStorage<KfEffectPhase, u32> life = record->phase;
     u32 collision;
 
@@ -245,7 +245,7 @@ void effect_spawn_ground_trail(u8 id, KfEffectRecord *parent_effect, s16 angle, 
     s32 scale = (distance << KF_FIXED12_BITS) / TRAIL_UNIT_SCALE_DISTANCE;
 
     effect_rotate_scale_offset_y(&parent_effect->direction.vector, &position, angle, scale);
-    index = parent_effect - effect_pool_records;
+    index = parent_effect - effect_state.records;
     position.vx += parent_effect->position.vx;
     position.vz += parent_effect->position.vz;
     effect_pool_construct(id, parent_effect->type, KF_EFFECT_KIND_GROUND_TRAIL, &position,

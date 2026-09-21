@@ -79,7 +79,7 @@ void render_entities(void)
         }
     }
 
-    for (auto &sprite : effect_pool_records) {
+    for (auto &sprite : effect_state.records) {
         if (sprite.type == KF_EFFECT_SLOT_FREE || sprite.render_id.model == KF_EFFECT_MODEL_NONE) {
             continue;
         }
@@ -89,7 +89,7 @@ void render_entities(void)
         }
     }
 
-    for (auto &event : map_event_pool) {
+    for (auto &event : map_runtime_state.events) {
         if (event.state == KF_MAP_EVENT_ACTIVE
             && render_cell_is_visible(event.cell_x, event.cell_z, origin)) {
             render_map_event(&event, &game_graphics_runtime.render_state.light_matrix_copy);

@@ -8,8 +8,6 @@ CVECTOR tmd_textured_primitive_color = {
     KF_TEXTURE_BASE_BRIGHTNESS, 0
 };
 
-#define VTX(index) (&open_graphics_runtime.tmd_projected_vertices[(index)])
-
 void render_enqueue_tmd(u16 object_index, s16 depth_bias, const MATRIX *lights)
 {
     KfTmdObject *object = tmd_get_object(object_index);
@@ -33,9 +31,9 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias, const MATRIX *lights)
         case KF_TMD_MODE_FT3: {
             KfTmdPrimitive *polygon = (KfTmdPrimitive *)packet;
 
-            vertex0 = VTX(polygon->ft3.v0);
-            vertex1 = VTX(polygon->ft3.v1);
-            vertex2 = VTX(polygon->ft3.v2);
+            vertex0 = tmd_projected_vertex(polygon->ft3.v0);
+            vertex1 = tmd_projected_vertex(polygon->ft3.v1);
+            vertex2 = tmd_projected_vertex(polygon->ft3.v2);
             if (render_face_winding(vertex0, vertex1, vertex2) <= 0) {
                 continue;
             }
@@ -61,13 +59,13 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias, const MATRIX *lights)
         case KF_TMD_MODE_F4: {
             KfTmdPrimitive *polygon = (KfTmdPrimitive *)packet;
 
-            vertex0 = VTX(polygon->f4.v0);
-            vertex1 = VTX(polygon->f4.v1);
-            vertex2 = VTX(polygon->f4.v2);
+            vertex0 = tmd_projected_vertex(polygon->f4.v0);
+            vertex1 = tmd_projected_vertex(polygon->f4.v1);
+            vertex2 = tmd_projected_vertex(polygon->f4.v2);
             if (render_face_winding(vertex0, vertex1, vertex2) <= 0) {
                 continue;
             }
-            vertex3 = VTX(polygon->f4.v3);
+            vertex3 = tmd_projected_vertex(polygon->f4.v3);
             kf::DrawFace face {};
             CVECTOR colors[4] {};
             face.shape = kf::FaceShape::Quad;
@@ -87,9 +85,9 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias, const MATRIX *lights)
         case KF_TMD_MODE_G3: {
             KfTmdPrimitive *polygon = (KfTmdPrimitive *)packet;
 
-            vertex0 = VTX(polygon->g3.v0);
-            vertex1 = VTX(polygon->g3.v1);
-            vertex2 = VTX(polygon->g3.v2);
+            vertex0 = tmd_projected_vertex(polygon->g3.v0);
+            vertex1 = tmd_projected_vertex(polygon->g3.v1);
+            vertex2 = tmd_projected_vertex(polygon->g3.v2);
             if (render_face_winding(vertex0, vertex1, vertex2) <= 0) {
                 continue;
             }
@@ -115,13 +113,13 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias, const MATRIX *lights)
         case KF_TMD_MODE_G4: {
             KfTmdPrimitive *polygon = (KfTmdPrimitive *)packet;
 
-            vertex0 = VTX(polygon->g4.v0);
-            vertex1 = VTX(polygon->g4.v1);
-            vertex2 = VTX(polygon->g4.v2);
+            vertex0 = tmd_projected_vertex(polygon->g4.v0);
+            vertex1 = tmd_projected_vertex(polygon->g4.v1);
+            vertex2 = tmd_projected_vertex(polygon->g4.v2);
             if (render_face_winding(vertex0, vertex1, vertex2) <= 0) {
                 continue;
             }
-            vertex3 = VTX(polygon->g4.v3);
+            vertex3 = tmd_projected_vertex(polygon->g4.v3);
             kf::DrawFace face {};
             CVECTOR colors[4] {};
             face.shape = kf::FaceShape::Quad;
@@ -147,9 +145,9 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias, const MATRIX *lights)
         case KF_TMD_MODE_GT3: {
             KfTmdPrimitive *polygon = (KfTmdPrimitive *)packet;
 
-            vertex0 = VTX(polygon->gt3.v0);
-            vertex1 = VTX(polygon->gt3.v1);
-            vertex2 = VTX(polygon->gt3.v2);
+            vertex0 = tmd_projected_vertex(polygon->gt3.v0);
+            vertex1 = tmd_projected_vertex(polygon->gt3.v1);
+            vertex2 = tmd_projected_vertex(polygon->gt3.v2);
             if (render_face_winding(vertex0, vertex1, vertex2) <= 0) {
                 continue;
             }
@@ -179,13 +177,13 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias, const MATRIX *lights)
         case KF_TMD_MODE_GT4: {
             KfTmdPrimitive *polygon = (KfTmdPrimitive *)packet;
 
-            vertex0 = VTX(polygon->gt4.v0);
-            vertex1 = VTX(polygon->gt4.v1);
-            vertex2 = VTX(polygon->gt4.v2);
+            vertex0 = tmd_projected_vertex(polygon->gt4.v0);
+            vertex1 = tmd_projected_vertex(polygon->gt4.v1);
+            vertex2 = tmd_projected_vertex(polygon->gt4.v2);
             if (render_face_winding(vertex0, vertex1, vertex2) <= 0) {
                 continue;
             }
-            vertex3 = VTX(polygon->gt4.v3);
+            vertex3 = tmd_projected_vertex(polygon->gt4.v3);
             kf::DrawFace face {};
             CVECTOR colors[4] {};
             face.shape = kf::FaceShape::Quad;
@@ -216,9 +214,9 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias, const MATRIX *lights)
         case (KF_TMD_MODE_G3 | KF_TMD_MODE_SEMITRANS): {
             KfTmdPrimitive *polygon = (KfTmdPrimitive *)packet;
 
-            vertex0 = VTX(polygon->g3.v0);
-            vertex1 = VTX(polygon->g3.v1);
-            vertex2 = VTX(polygon->g3.v2);
+            vertex0 = tmd_projected_vertex(polygon->g3.v0);
+            vertex1 = tmd_projected_vertex(polygon->g3.v1);
+            vertex2 = tmd_projected_vertex(polygon->g3.v2);
             if (render_face_winding(vertex0, vertex1, vertex2) <= 0) {
                 continue;
             }
@@ -245,13 +243,13 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias, const MATRIX *lights)
         case KF_TMD_MODE_FT4: {
             KfTmdPrimitive *polygon = (KfTmdPrimitive *)packet;
 
-            vertex0 = VTX(polygon->ft4.v0);
-            vertex1 = VTX(polygon->ft4.v1);
-            vertex2 = VTX(polygon->ft4.v2);
+            vertex0 = tmd_projected_vertex(polygon->ft4.v0);
+            vertex1 = tmd_projected_vertex(polygon->ft4.v1);
+            vertex2 = tmd_projected_vertex(polygon->ft4.v2);
             if (render_face_winding(vertex0, vertex1, vertex2) <= 0) {
                 continue;
             }
-            vertex3 = VTX(polygon->ft4.v3);
+            vertex3 = tmd_projected_vertex(polygon->ft4.v3);
             kf::DrawFace face {};
             CVECTOR colors[4] {};
             face.shape = kf::FaceShape::Quad;
@@ -276,9 +274,9 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias, const MATRIX *lights)
         case KF_TMD_MODE_F3: {
             KfTmdPrimitive *polygon = (KfTmdPrimitive *)packet;
 
-            vertex0 = VTX(polygon->f3.v0);
-            vertex1 = VTX(polygon->f3.v1);
-            vertex2 = VTX(polygon->f3.v2);
+            vertex0 = tmd_projected_vertex(polygon->f3.v0);
+            vertex1 = tmd_projected_vertex(polygon->f3.v1);
+            vertex2 = tmd_projected_vertex(polygon->f3.v2);
             if (render_face_winding(vertex0, vertex1, vertex2) <= 0) {
                 continue;
             }
@@ -300,13 +298,13 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias, const MATRIX *lights)
         case (KF_TMD_MODE_G4 | KF_TMD_MODE_SEMITRANS): {
             KfTmdPrimitive *polygon = (KfTmdPrimitive *)packet;
 
-            vertex0 = VTX(polygon->g4.v0);
-            vertex1 = VTX(polygon->g4.v1);
-            vertex2 = VTX(polygon->g4.v2);
+            vertex0 = tmd_projected_vertex(polygon->g4.v0);
+            vertex1 = tmd_projected_vertex(polygon->g4.v1);
+            vertex2 = tmd_projected_vertex(polygon->g4.v2);
             if (render_face_winding(vertex0, vertex1, vertex2) <= 0) {
                 continue;
             }
-            vertex3 = VTX(polygon->g4.v3);
+            vertex3 = tmd_projected_vertex(polygon->g4.v3);
             kf::DrawFace face {};
             CVECTOR colors[4] {};
             face.shape = kf::FaceShape::Quad;
@@ -333,9 +331,9 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias, const MATRIX *lights)
         case (KF_TMD_MODE_F3 | KF_TMD_MODE_SEMITRANS): {
             KfTmdPrimitive *polygon = (KfTmdPrimitive *)packet;
 
-            vertex0 = VTX(polygon->f3.v0);
-            vertex1 = VTX(polygon->f3.v1);
-            vertex2 = VTX(polygon->f3.v2);
+            vertex0 = tmd_projected_vertex(polygon->f3.v0);
+            vertex1 = tmd_projected_vertex(polygon->f3.v1);
+            vertex2 = tmd_projected_vertex(polygon->f3.v2);
             if (render_face_winding(vertex0, vertex1, vertex2) <= 0) {
                 continue;
             }
@@ -358,13 +356,13 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias, const MATRIX *lights)
         case (KF_TMD_MODE_F4 | KF_TMD_MODE_SEMITRANS): {
             KfTmdPrimitive *polygon = (KfTmdPrimitive *)packet;
 
-            vertex0 = VTX(polygon->f4.v0);
-            vertex1 = VTX(polygon->f4.v1);
-            vertex2 = VTX(polygon->f4.v2);
+            vertex0 = tmd_projected_vertex(polygon->f4.v0);
+            vertex1 = tmd_projected_vertex(polygon->f4.v1);
+            vertex2 = tmd_projected_vertex(polygon->f4.v2);
             if (render_face_winding(vertex0, vertex1, vertex2) <= 0) {
                 continue;
             }
-            vertex3 = VTX(polygon->f4.v3);
+            vertex3 = tmd_projected_vertex(polygon->f4.v3);
             kf::DrawFace face {};
             CVECTOR colors[4] {};
             face.shape = kf::FaceShape::Quad;
@@ -387,9 +385,6 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias, const MATRIX *lights)
         }
     }
 }
-
-#undef VTX
-
 
 void render_tmd_reset_module_state(void)
 {

@@ -186,8 +186,8 @@ KfBoolU32 player_warp_trigger_update(void)
         } else if (warp_cell_matches(cell, floor1_floor4_cell)) {
             player_warp_change_floor(KF_FLOOR_4, KF_MAP_VARIANT_DEFAULT);
         } else if (warp_cell_matches(cell, floor1_exit_cell)) {
-            if (boss_defeat_complete != KF_MAP_SCRIPT_UNSET) {
-                return KF_TRUE;
+            if (map_floor_script(KF_FLOOR_5).floor5.boss_defeat != KF_MAP_SCRIPT_UNSET) {
+                return true;
             }
         }
         break;
@@ -228,10 +228,10 @@ KfBoolU32 player_warp_trigger_update(void)
         } else if (warp_cell_matches(cell, floor5_ending_gate)) {
             player_warp_same_floor(KF_FLOOR5_ALTERNATE_MUSIC_VARIANT, floor5_ending_arrival.x, floor5_ending_arrival.z);
         } else if (warp_cell_matches(cell, floor5_ending_arrival)) {
-            if (boss_defeat_complete == KF_MAP_SCRIPT_UNSET) {
+            if (map_floor_script(KF_FLOOR_5).floor5.boss_defeat == KF_MAP_SCRIPT_UNSET) {
                 player_warp_same_floor(KF_MAP_VARIANT_2, floor5_ending_return.x, floor5_ending_return.z);
             } else {
-                return KF_TRUE;
+                return true;
             }
         } else if (warp_cell_matches(cell, floor5_inner_return)) {
             player_warp_same_floor(KF_FLOOR5_ENTRY_VARIANT, floor5_entry_return.x, floor5_entry_return.z);
@@ -240,7 +240,7 @@ KfBoolU32 player_warp_trigger_update(void)
         }
         break;
     }
-    return KF_FALSE;
+    return false;
 }
 
 static constexpr unsigned floor4_transform_hidden_events[] = {1, 2};
@@ -251,8 +251,8 @@ void actor_transform_definition5_to6(KfActor *actor)
     MATRIX saved;
     s32 blend;
 
-    map_event_pool[floor4_transform_hidden_events[0]].state = KF_MAP_EVENT_DISABLED;
-    map_event_pool[floor4_transform_hidden_events[1]].state = KF_MAP_EVENT_DISABLED;
+    map_runtime_state.events[floor4_transform_hidden_events[0]].state = KF_MAP_EVENT_DISABLED;
+    map_runtime_state.events[floor4_transform_hidden_events[1]].state = KF_MAP_EVENT_DISABLED;
     saved = game_graphics_runtime.render_state.lighting.color_matrix;
 
     for (blend = 0; blend < KF_FIXED12_ONE + 1; blend += KF_FIXED12_ONE / ACTOR_TRANSFORM_BLEND_INTERVALS) {

@@ -36,7 +36,7 @@ KfMapCollisionGrid map_collision_grid;
 
 KfMapAttributeGrid map_cell_attribute_grid;
 
-#define MAP_GRID_WORDS (sizeof map_cell_attribute_grid / sizeof(u32))
+static constexpr auto map_grid_word_count = sizeof map_cell_attribute_grid / sizeof(u32);
 
 void common_resources_load(void)
 {
@@ -90,7 +90,7 @@ u8 *map_resource_load_file(const char *filename, std::size_t *loaded_size)
 void map_variant_assets_load(void)
 {
 
-    u8 **asset_buffer = &map_variant_asset_buffer;
+    u8 **asset_buffer = &map_runtime_state.variant_asset_buffer;
 
     memcpy((void *)(&map_resource_path[3]), (const void *)("CHR0.MIM"), sizeof "CHR0.MIM");
     map_resource_path[6] = kf_enum_encode<u8>(player_state.map_variant) + '0';
@@ -153,15 +153,15 @@ void map_resources_load(KfFloorId floor, KfMapVariant map_variant)
     source = map_resource_copy_words(
         map_cell_attribute_grid.words,
         (u32 *)(stream + KF_RESOURCE_CHUNK_HEADER_BYTES),
-        MAP_GRID_WORDS);
+        map_grid_word_count);
     source = map_resource_copy_words(
-        map_floor_height_grid.words, source, MAP_GRID_WORDS);
+        map_floor_height_grid.words, source, map_grid_word_count);
     source = map_resource_copy_words(
-        map_cell_orientation_grid.words, source, MAP_GRID_WORDS);
+        map_cell_orientation_grid.words, source, map_grid_word_count);
     source = map_resource_copy_words(
-        map_collision_flag_grid.words, source, MAP_GRID_WORDS);
+        map_collision_flag_grid.words, source, map_grid_word_count);
     map_resource_copy_words(
-        map_collision_grid.words, source, MAP_GRID_WORDS);
+        map_collision_grid.words, source, map_grid_word_count);
     stream = resource_stream_next(stream, resource_end);
     const auto floor_items = resource_chunk_view(stream, resource_end);
     item_load_floor_placements(floor_items.data, floor_items.size);
@@ -206,7 +206,7 @@ void map_resources_load(KfFloorId floor, KfMapVariant map_variant)
         asset_registry_load_tmd_archive(KF_ASSET_ACTOR_FIRST,
             stream + KF_RESOURCE_CHUNK_HEADER_BYTES, actor_models.size);
     } else {
-        map_variant_asset_buffer = (u8 *)memory_allocate(MAP_VARIANT_ASSET_BUFFER_BYTES);
+        map_runtime_state.variant_asset_buffer = (u8 *)memory_allocate(MAP_VARIANT_ASSET_BUFFER_BYTES);
         map_variant_assets_load();
     }
     player_sync_position_to_map();

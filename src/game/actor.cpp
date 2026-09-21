@@ -269,7 +269,7 @@ void actor_apply_damage(
     s32 remaining;
 
     if (player_state.progress_state.current_floor == KF_FLOOR_5 && actor->definition_id == KF_FLOOR5_BOSS_DEFINITION) {
-        if (map_floor5_script.boss_encounter_started == KF_MAP_SCRIPT_UNSET) {
+        if (map_floor_script(KF_FLOOR_5).floor5.boss_encounter_started == KF_MAP_SCRIPT_UNSET) {
             return;
         }
         if (actor->health == 0) {
@@ -772,7 +772,7 @@ KfActorAction actor_try_select_profiled_action(KfActorAction action, s32 distanc
             }
             candidate++;
         } while (--index != -1);
-        record = effect_pool_records;
+        record = effect_state.records;
         index = KF_EFFECT_CAPACITY - 1;
         do {
             if (record->type != KF_EFFECT_SLOT_FREE

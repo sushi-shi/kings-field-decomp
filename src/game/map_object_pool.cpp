@@ -169,16 +169,16 @@ void map_object_definitions_load(const KfMapObjectDefinitionTable *definitions)
 
 void map_object_pool_load(const KfMapObjectPlacement *placements)
 {
-    KfBool16 ended = KF_FALSE;
+    KfBool16 ended = false;
     const KfMapObjectPlacement *placement = placements;
     KfMapObjectDefinition *definition;
     SVECTOR effect_direction;
     KfObjectId object_id;
 
     for (auto &object : map_object_state.objects) {
-        if (ended == KF_TRUE
+        if (ended == true
             || kf_enum_decode<KfObjectId>(placement->object_id) == KF_OBJECT_NONE) {
-            ended = KF_TRUE;
+            ended = true;
             object.object_id = KF_OBJECT_NONE;
         } else {
             object_id = kf_enum_decode<KfObjectId>(placement->object_id);
@@ -207,7 +207,7 @@ void map_object_pool_load(const KfMapObjectPlacement *placements)
                                                     KF_EFFECT_KIND_ORBITING_PROJECTILE,
                                                     &object.position,
                                                     &effect_direction)
-                    - effect_pool_records;
+                    - effect_state.records;
                 map_object_start_action_if_idle(&object, KF_MAP_OBJECT_OP_RELEASE_ORBIT_OR_SHORT_SWING);
                 break;
             case KF_MAP_OBJECT_BOSS_PROJECTILE_EMITTER:
@@ -224,7 +224,7 @@ void map_object_pool_load(const KfMapObjectPlacement *placements)
                                                     &object.position,
                                                     &effect_direction,
                                                     KfEffectRotationArguments{&object.rotation.vector})
-                    - effect_pool_records;
+                    - effect_state.records;
                 map_object_start_action_if_idle(&object, KF_MAP_OBJECT_OP_RELEASE_ORBIT_OR_SHORT_SWING);
                 break;
             case KF_MAP_OBJECT_LONG_SWING:
@@ -235,7 +235,7 @@ void map_object_pool_load(const KfMapObjectPlacement *placements)
                                                     &object.position,
                                                     &effect_direction,
                                                     KfEffectRotationArguments{&object.rotation.vector})
-                    - effect_pool_records;
+                    - effect_state.records;
                 map_object_start_action_if_idle(&object, KF_MAP_OBJECT_OP_RELEASE_LONG_SWING);
                 break;
             case KF_MAP_OBJECT_EFFECT_SWITCH:
@@ -243,7 +243,7 @@ void map_object_pool_load(const KfMapObjectPlacement *placements)
                     effect_pool_construct(
                         0, KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER, KF_EFFECT_KIND_MAP_SWITCH, &object.position,
                         &effect_direction, KfEffectRotationArguments{&object.rotation.vector})
-                    - effect_pool_records;
+                    - effect_state.records;
                 map_object_start_action_if_idle(&object, KF_MAP_OBJECT_OP_EFFECT_SWITCH);
                 break;
             case KF_ITEM_DRAGON_CHALICE:

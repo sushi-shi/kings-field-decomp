@@ -20,7 +20,7 @@ enum {
 
 void effect_pool_reset(void)
 {
-    for (auto &record : effect_pool_records) {
+    for (auto &record : effect_state.records) {
         record.type = KF_EFFECT_SLOT_FREE;
     }
 }
@@ -142,7 +142,7 @@ void magic_cast(void)
 
 void effect_pool_sweep(void)
 {
-    for (auto &record : effect_pool_records) {
+    for (auto &record : effect_state.records) {
         if (record.type != KF_EFFECT_SLOT_FREE) {
             effect_pool_set_current(&record);
             effect_update_dispatch();

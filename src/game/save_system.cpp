@@ -318,7 +318,7 @@ static void save_state_apply(const SavedGameState &state) {
     player_state.weapon_asset_buffer = asset;
     player_state.weapon_animation_cache = cache;
     player_state.selected_magic_record = player_state.selected_magic_id == KF_MAGIC_NONE ? nullptr
-        : &magic_records[kf_enum_encode<u8>(player_state.selected_magic_id)];
+        : &effect_state.magic.entries[kf_enum_encode<u8>(player_state.selected_magic_id)];
     player_state.equipped_weapon_record = player_state.equipped_weapon_id == KF_OBJECT_NONE ? nullptr
         : &weapon_records.entries[kf_enum_encode<u8>(player_state.equipped_weapon_id)];
     player_state.equipped_head_armor_record = saved_armor(player_state.equipped_head_armor_id);
@@ -329,7 +329,7 @@ static void save_state_apply(const SavedGameState &state) {
     map_runtime_state.world_state = state.world;
     std::memcpy(item_stock, state.stock, sizeof state.stock);
     for (unsigned i = 0; i < KF_MAGIC_RECORD_COUNT; ++i)
-        magic_records[i].learned = state.learned[i];
+        effect_state.magic.entries[i].learned = state.learned[i];
     // The existing load-return path reloads the floor, weapon and selected magic.
 }
 
@@ -433,7 +433,7 @@ KfSaveResult save_system_write_slot(KfSaveSlotId slot) {
     state.world = map_runtime_state.world_state;
     std::memcpy(state.stock, item_stock, sizeof state.stock);
     for (unsigned i = 0; i < KF_MAGIC_RECORD_COUNT; ++i)
-        state.learned[i] = magic_records[i].learned;
+        state.learned[i] = effect_state.magic.entries[i].learned;
     if (!save_state_valid(state))
         return save_failure(kf::SaveFileResult::Invalid, true);
     u8 data[kf::save_file_capacity];
@@ -487,17 +487,17 @@ KfBool32 menu_load_message_image(s32 message_id)
         std::size_t image_size;
         if (resource_file_load_into(buffer,
                 game_graphics_runtime.display_state.asset_load_capacity, path, &image_size) != KF_RESOURCE_LOADED) {
-            return KF_TRUE;
+            return true;
         }
         tim_upload_images(buffer, image_size);
     }
-    return KF_FALSE;
+    return false;
 }
 
 void screen_show_image_until_input(const char *path)
 {
     s32 brightness = IMAGE_WAIT_INITIAL_BRIGHTNESS;
-    KfBool8 pressed = KF_FALSE;
+    KfBool8 pressed = false;
     std::size_t image_size;
     if (resource_file_load_into(game_graphics_runtime.display_state.asset_load_buffer,
             game_graphics_runtime.display_state.asset_load_capacity, path, &image_size) != KF_RESOURCE_LOADED) {
@@ -511,9 +511,9 @@ void screen_show_image_until_input(const char *path)
         }
         display_present_system_screen(brightness);
         kf::host_wait_frame();
-        if (pressed == KF_FALSE) {
+        if (pressed == false) {
             if (kf::host_read_buttons() == 0) {
-                pressed = KF_TRUE;
+                pressed = true;
             }
         } else if (kf::host_read_buttons() != 0) {
             kf::host_wait_buttons_released();

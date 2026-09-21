@@ -190,16 +190,16 @@ static void player_update_weapon_magic()
                     return;
                 }
                 effect = KF_EFFECT_KIND_HOMING_PROJECTILE;
-                record = &magic_records[kf_enum_encode<u8>(KF_EFFECT_KIND_HOMING_PROJECTILE)];
+                record = &effect_state.magic.entries[kf_enum_encode<u8>(KF_EFFECT_KIND_HOMING_PROJECTILE)];
                 player_state.weapon_magic_delay = PLAYER_TRIPLE_FANG_MAGIC_DELAY;
                 break;
             case KF_ITEM_FLAME_SWORD:
-                if (magic_records[kf_enum_encode<u8>(KF_MAGIC_FIRE_BALL)].learned == KF_MAGIC_UNLEARNED) {
+                if (effect_state.magic.entries[kf_enum_encode<u8>(KF_MAGIC_FIRE_BALL)].learned == KF_MAGIC_UNLEARNED) {
                     player_cancel_weapon_magic();
                     return;
                 }
                 effect = KF_MAGIC_FIRE_BALL;
-                record = &magic_records[kf_enum_encode<u8>(KF_MAGIC_FIRE_BALL)];
+                record = &effect_state.magic.entries[kf_enum_encode<u8>(KF_MAGIC_FIRE_BALL)];
                 player_state.weapon_magic_delay = PLAYER_FLAME_SWORD_MAGIC_DELAY;
                 break;
             case KF_ITEM_MOONLIGHT_SWORD:
@@ -209,7 +209,7 @@ static void player_update_weapon_magic()
                     return;
                 }
                 effect = KF_EFFECT_KIND_MOONLIGHT_PROJECTILE;
-                record = &magic_records[kf_enum_encode<u8>(KF_EFFECT_KIND_RADIAL_BLAST)];
+                record = &effect_state.magic.entries[kf_enum_encode<u8>(KF_EFFECT_KIND_RADIAL_BLAST)];
                 player_state.weapon_magic_delay = PLAYER_MOONLIGHT_SWORD_MAGIC_DELAY;
                 break;
             case KF_ITEM_COLICHEMARDE:
@@ -219,7 +219,7 @@ static void player_update_weapon_magic()
                     return;
                 }
                 effect = KF_MAGIC_LIGHT_NEEDLE;
-                record = &magic_records[kf_enum_encode<u8>(KF_MAGIC_LIGHT_NEEDLE)];
+                record = &effect_state.magic.entries[kf_enum_encode<u8>(KF_MAGIC_LIGHT_NEEDLE)];
                 player_state.weapon_magic_delay = PLAYER_WEAPON_MAGIC_READY;
                 break;
             default:

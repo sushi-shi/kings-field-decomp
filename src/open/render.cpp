@@ -33,12 +33,12 @@ void tmd_project_vertices_perspective_right(s32 count, const MATRIX *model, cons
     KfScreenVertex *out;
     SVECTOR *vertex;
 
-    out = KF_GRAPHICS_RUNTIME.tmd_projected_vertices;
-    vertex = KF_GRAPHICS_RUNTIME.current_tmd_vertices;
+    out = graphics_runtime().tmd_projected_vertices;
+    vertex = graphics_runtime().current_tmd_vertices;
     for (count--; count != -1; count--) {
         const auto point = kf::render_project_point(*model, projection, *vertex);
         out->sxy.vector = {point.x, point.y};
-        out->p2 = point.fog >> KF_GRAPHICS_RUNTIME.tmd_projection_shift;
+        out->p2 = point.fog >> graphics_runtime().tmd_projection_shift;
         out->sz = point.depth;
         out++;
         vertex++;

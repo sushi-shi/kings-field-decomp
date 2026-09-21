@@ -23,7 +23,7 @@ void game_main_loop(void)
     memset((void *)&actor_state, 0, sizeof actor_state);
     memset((void *)&map_object_state, 0, sizeof map_object_state);
     memset((void *)&effect_state, 0, sizeof(KfEffectState));
-    memset((void *)map_event_pool, 0, sizeof map_event_pool);
+    memset((void *)map_runtime_state.events, 0, sizeof map_runtime_state.events);
     memset((void *)&player_state, 0, sizeof(KfPlayerState));
     memory_set_allocation_mode(KF_MEMORY_CREATE_ARENA);
     audio_initialize();

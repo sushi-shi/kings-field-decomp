@@ -83,6 +83,11 @@ typedef struct KfGraphicsRuntimeOpen {
 } KfGraphicsRuntimeOpen;
 extern KfGraphicsRuntimeOpen open_graphics_runtime;
 
+inline KfScreenVertex *tmd_projected_vertex(u16 index)
+{
+    return &open_graphics_runtime.tmd_projected_vertices[index];
+}
+
 extern MATRIX color_matrix_table[KF_OPEN_COLOR_PRESET_COUNT];
 extern KfSpriteQuad floor_item_sprites[KF_FLOOR_ITEM_SPRITE_COUNT];
 extern MATRIX floor_item_light_matrix;

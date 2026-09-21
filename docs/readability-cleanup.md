@@ -94,6 +94,19 @@ lighting setup, and visible-only floor-item animation updates are unchanged.
 GAME/OPEN entity arrays use forward iteration; floor items use the loader-validated
 active count. No renderer backend or face sorting changes.
 
+### Stacked pass: explicit state access
+
+Map/effect aliases now name their owning state objects directly. Floor-script
+storage has a typed reference-returning accessor; member writes still name the
+owning script union. No duplicate globals or copied snapshots were introduced. Shared GAME/OPEN code
+selects its graphics owner through a typed function, and the floor-item loader
+uses a small view of the live count and fixed array. Projected-vertex lookup is
+a typed OPEN helper. Word-count/emitter constants are `constexpr`; boolean
+aliases are removed in favor of `true`/`false`. Preset selection lives at each
+palette owner with its actual enum type, without a conditional type alias.
+Compile-time module selection, include guards and schema/resource macros remain
+distinct from runtime state aliases.
+
 ### Remaining container candidates
 
 Review the remaining actor/event/effect searches and sweeps for range loops,
@@ -154,6 +167,50 @@ local formatting, selection and interaction helpers over a common controller:
 input contexts, waits, retained frames and resource lifetimes differ. Continue
 shortening repetitive nested access using references and meaningful operations,
 not generic accessors for every field.
+
+## Review follow-ups and ownership boundaries
+
+PR #23 also names the floor-item sprite-range check and the trained-spell unlock
+operation. The range check keeps zero-frame records valid, bounds the first
+sprite before subtraction, and leaves error handling and allocation order alone.
+Spell checks retain the Healing prerequisite for Dispoison, base-magic thresholds,
+Dispoison/Fire Wall/Lightning Bolt order, and one notification per new spell.
+
+The following work belongs above the current stack rather than expanding #23's
+state-alias review into an application/rendering rewrite:
+
+1. **One-program shared-code ownership.** Remove `KF_OPEN` as an executable-mode
+   selector, not merely rename it or replace it with a global mode check.
+   Opening, gameplay and ending remain application phases with explicit state
+   lifetimes. Compile common math/resource operations once. Give stateful common
+   operations explicit typed state/arguments; their callers choose the relevant
+   scene state. Preserve initialization/re-entry resets and resource lifetimes.
+   `graphics_runtime()` currently returns different types because shared sources
+   are compiled twice; replacing that arrangement includes display reset fields,
+   TMD slots (two versus eight), floor-item storage and rendering contexts.
+   Do not pretend the opening/game palette indices have identical meanings.
+   Function-presence guards in vector/matrix math and sprite helpers are also
+   obsolete once the common source ownership is established.
+2. **Projected-face operations.** Group the repeated projected-vertex lookup,
+   winding check and face-coordinate construction in the opening renderers.
+   Preserve the fourth-vertex lookup after triangle winding rejection, flat
+   versus Gouraud fog inputs (including existing vertex-zero uses), depth
+   arithmetic, packet traversal and submission order. A helper should express
+   a face operation, not just rename three pointer assignments.
+3. **Arithmetic operations.** Replace straightforward bounds with `std::min`,
+   `std::max` or `std::clamp` only when narrowing, side effects and comparison
+   semantics agree. Existing repeated distance calculations are candidates for
+   explicit fixed-point length operations: `fixed_vector2_length` and
+   `fixed_vector3_length` shift components before squaring, while movement code
+   also has deliberately unshifted square-root inputs. The shared
+   `kf::length_square_root` is a quantized mantissa lookup, not host `std::sqrt`;
+   preserve that numeric contract. Angle wrapping/approach and damage attenuation
+   also have rounding/width rules that ordinary clamp or floating math do not
+   express. Keep useful fixed-width aliases; remove aliases that only hide an
+   identical native type as those callers are converted (for example face shading).
+
+This is an implementation queue, not a claim that the build-mode split or all
+rendering/math boilerplate has already been removed.
 
 ## Verification scope
 

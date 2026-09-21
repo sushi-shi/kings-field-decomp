@@ -27,7 +27,7 @@ KfMapCollisionGrid map_collision_grid;
 
 KfMapAttributeGrid map_cell_attribute_grid;
 
-#define MAP_GRID_WORDS (sizeof map_cell_attribute_grid / sizeof(u32))
+static constexpr auto map_grid_word_count = sizeof map_cell_attribute_grid / sizeof(u32);
 
 void opening_resources_load_scene0(void)
 {
@@ -51,15 +51,15 @@ void opening_resources_load_scene0(void)
     source = resource_stream_copy_words(
         map_cell_attribute_grid.words,
         (const u32 *)(stream + KF_RESOURCE_CHUNK_HEADER_BYTES),
-        MAP_GRID_WORDS);
+        map_grid_word_count);
     source = resource_stream_copy_words(
-        map_floor_height_grid.words, source, MAP_GRID_WORDS);
+        map_floor_height_grid.words, source, map_grid_word_count);
     source = resource_stream_copy_words(
-        map_cell_orientation_grid.words, source, MAP_GRID_WORDS);
+        map_cell_orientation_grid.words, source, map_grid_word_count);
     source = resource_stream_copy_words(
-        opening_cell_storage.scene.collision_flags.words, source, MAP_GRID_WORDS);
+        opening_cell_storage.scene.collision_flags.words, source, map_grid_word_count);
     resource_stream_copy_words(
-        map_collision_grid.words, source, MAP_GRID_WORDS);
+        map_collision_grid.words, source, map_grid_word_count);
     stream = resource_stream_next(stream, resource_end);
     const auto floor_items = resource_chunk_view(stream, resource_end);
     item_load_floor_placements(floor_items.data, floor_items.size);
