@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <kf/game/audio.h>
 #include <kf/lib/random.hpp>
 #include <kf/lib/bool.h>
@@ -672,36 +673,24 @@ void actor_apply_random_movement(s16 step, s16 limit)
 
     if (kf::random_next() < (kf::random_max + 1) / 2) {
         actor->movement_x += step;
-        if (actor->movement_x > limit) {
-            actor->movement_x = limit;
-        }
+        actor->movement_x = std::min<s32>(actor->movement_x, limit);
     } else {
         actor->movement_x -= step;
-        if (actor->movement_x < -limit) {
-            actor->movement_x = -limit;
-        }
+        actor->movement_x = std::max<s32>(actor->movement_x, -limit);
     }
     if (kf::random_next() < (kf::random_max + 1) / 2) {
         actor->movement_z += step;
-        if (actor->movement_z > limit) {
-            actor->movement_z = limit;
-        }
+        actor->movement_z = std::min<s32>(actor->movement_z, limit);
     } else {
         actor->movement_z -= step;
-        if (actor->movement_z < -limit) {
-            actor->movement_z = -limit;
-        }
+        actor->movement_z = std::max<s32>(actor->movement_z, -limit);
     }
     if (kf::random_next() < (kf::random_max + 1) / 2) {
         actor->movement_y += step;
-        if (actor->movement_y > limit) {
-            actor->movement_y = limit;
-        }
+        actor->movement_y = std::min<s32>(actor->movement_y, limit);
     } else {
         actor->movement_y -= step;
-        if (actor->movement_y < -limit) {
-            actor->movement_y = -limit;
-        }
+        actor->movement_y = std::max<s32>(actor->movement_y, -limit);
     }
     target.vx = actor->movement_x + actor->position.vx;
     target.vz = actor->movement_z + actor->position.vz;
@@ -1061,9 +1050,7 @@ void actor_update_current_action(void)
         }
         actor_apply_horizontal_movement();
         actor->animation_phase += actor->animation_step;
-        if (actor->animation_phase >= KF_ACTOR_ANIMATION_PHASE_MAX) {
-            actor->animation_phase = KF_ACTOR_ANIMATION_PHASE_MAX;
-        }
+        actor->animation_phase = std::min<s32>(actor->animation_phase, KF_ACTOR_ANIMATION_PHASE_MAX);
         actor_play_sound_at_phase(&definition->sounds[KF_ACTOR_SOUND_ATTACK], definition->action_animation_phases[KF_ACTOR_ANIM_SLOT_JUMP_ATTACK]);
         switch (actor->action_progress) {
         case KF_ACTOR_PROGRESS_JUMP_RISING:
@@ -1156,14 +1143,10 @@ void actor_update_current_action(void)
         actor_apply_random_movement(ACTOR_DRIFT_AXIS_ACCELERATION, ACTOR_DRIFT_AXIS_SPEED_LIMIT);
         if (kf::random_next() < (kf::random_max + 1) / 2) {
             actor->movement_yaw++;
-            if (actor->movement_yaw > ACTOR_DRIFT_YAW_SPEED_LIMIT) {
-                actor->movement_yaw = ACTOR_DRIFT_YAW_SPEED_LIMIT;
-            }
+            actor->movement_yaw = std::min<s32>(actor->movement_yaw, ACTOR_DRIFT_YAW_SPEED_LIMIT);
         } else {
             actor->movement_yaw--;
-            if (actor->movement_yaw < -ACTOR_DRIFT_YAW_SPEED_LIMIT) {
-                actor->movement_yaw = -ACTOR_DRIFT_YAW_SPEED_LIMIT;
-            }
+            actor->movement_yaw = std::max<s32>(actor->movement_yaw, -ACTOR_DRIFT_YAW_SPEED_LIMIT);
         }
         actor->rotation.angles.y = (actor->rotation.angles.y + actor->movement_yaw) & KF_ANGLE_WRAP_MASK;
         actor_advance_animation_wrapped(actor, definition->action_animation_steps[KF_ACTOR_ANIM_SLOT_DRIFT]);

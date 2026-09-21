@@ -198,6 +198,34 @@ Linux/WASM builds retain the baseline's 57 warnings. A fresh independent review
 covered all 34 converted cases and the new helper, with no actionable findings.
 This is source-level review, not a visual or performance measurement.
 
+### Numeric bounds and quantized lengths
+
+Straightforward bounds now use `std::min`, `std::max` or `std::clamp` in movement,
+view control, actor animation, audio gain, combat stats/vitals, dialogue paging
+and opening fades. Integer comparisons retain their promoted signed width.
+Movement, charge, animation and page increments still narrow into their original
+fields/locals before bounds are applied; directional limits remain one-sided.
+HP depletion still invokes death before returning, and training-notification
+branches remain explicit. Taking the absolute value of an `s16` animation step
+uses integer promotion before storing the result, including the minimum `s16`.
+
+Four actor/player/event/object distance queries now call the existing
+`fixed_vector2_length` after their original range and height guards. Its signed
+downshifts, squared sum, quantized integer square-root lookup and result shift
+are unchanged. `fixed_vector3_length` has the same body in the shared vector-math
+TU. Player movement's deliberately unshifted root inputs and derived components
+are not replaced with conventional vector normalization or floating-point math.
+
+The audit deliberately leaves numeric-looking state transitions alone: training
+notifications at a cap, floor-deformation sound gates, animation wrap/reset,
+zero-denominator fallbacks, angle folds and opening brightness/blend overshoot
+are not ordinary clamps. This pass introduces no new progression or timing policy.
+
+Linux and WASM link with exactly the baseline's 57 diagnostics per target after
+normalizing worktree paths and source locations. Independent review covered all
+changed functions, their types and callers, with no actionable findings. This is
+static review and build verification, not a gameplay comparison.
+
 ## Remaining cleanup boundaries
 
 These need their own behavior/type or loader-boundary work, not cosmetic wrappers.
@@ -245,20 +273,11 @@ state-alias review into an application/rendering rewrite:
    phase state and no executable-mode selector.
 2. **Projected-face operations:** implemented above, retaining per-producer
    culling, fog, depth and submission policy.
-3. **Arithmetic operations.** Replace straightforward bounds with `std::min`,
-   `std::max` or `std::clamp` only when narrowing, side effects and comparison
-   semantics agree. Existing repeated distance calculations are candidates for
-   explicit fixed-point length operations: `fixed_vector2_length` and
-   `fixed_vector3_length` shift components before squaring, while movement code
-   also has deliberately unshifted square-root inputs. The shared
-   `kf::length_square_root` is a quantized mantissa lookup, not host `std::sqrt`;
-   preserve that numeric contract. Angle wrapping/approach and damage attenuation
-   also have rounding/width rules that ordinary clamp or floating math do not
-   express. Keep useful fixed-width aliases; remove aliases that only hide an
-   identical native type as those callers are converted (for example face shading).
+3. **Arithmetic operations:** implemented above for the audited bounds and
+   repeated distance calculations, preserving numeric widths and side effects.
 
-The arithmetic entry remains an implementation queue, not a claim that all
-boilerplate has already been removed.
+These three follow-ups address the review's identified families, not a claim
+that all remaining type, resource-boundary or source-readability debt is gone.
 
 ## Verification scope
 

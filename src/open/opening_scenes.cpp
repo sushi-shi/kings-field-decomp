@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <kf/lib/null.h>
 
 #include <kf/open/audio.h>
@@ -561,9 +562,7 @@ void opening_ending_scene_run(void)
     brightness = ENDING_MAX_BRIGHTNESS;
     blend = 0;
     do {
-        if (brightness < 0) {
-            brightness = 0;
-        }
+        brightness = std::max<s32>(brightness, 0);
         open_graphics_runtime.render_state.lighting.ambient = {brightness, brightness, brightness};
         open_graphics_runtime.render_state.lighting.fog = {brightness, brightness, brightness};
         open_graphics_runtime.display_state.frame_style.red =
@@ -699,9 +698,7 @@ void opening_ending_scroll_run(void)
         opening_render_entities();
 
         background_blend += ENDING_BACKGROUND_BLEND_STEP;
-        if (background_blend > KF_FIXED12_ONE) {
-            background_blend = KF_FIXED12_ONE;
-        }
+        background_blend = std::min<s32>(background_blend, KF_FIXED12_ONE);
         color_lerp_cvector(&opening_ending_scroll_top_start,
                           &opening_ending_scroll_top_end, top, background_blend);
         color_lerp_cvector(&opening_ending_scroll_bottom_start,

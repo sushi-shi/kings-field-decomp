@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <kf/game/audio.h>
 #include <kf/lib/random.hpp>
 #include <kf/lib/null.h>
@@ -203,11 +204,7 @@ void player_adjust_hp(s32 delta)
         player_death_begin();
         return;
     }
-    if (player_state.vitals.maximum_hp < value) {
-        player_state.vitals.current_hp = player_state.vitals.maximum_hp;
-    } else {
-        player_state.vitals.current_hp = value;
-    }
+    player_state.vitals.current_hp = std::min<s32>(value, player_state.vitals.maximum_hp);
 }
 
 void player_adjust_mp(s32 delta)
@@ -220,11 +217,7 @@ void player_adjust_mp(s32 delta)
         player_state.vitals.current_mp = 0;
         return;
     }
-    if (player_state.vitals.maximum_mp < value) {
-        player_state.vitals.current_mp = player_state.vitals.maximum_mp;
-    } else {
-        player_state.vitals.current_mp = value;
-    }
+    player_state.vitals.current_mp = std::min<s32>(value, player_state.vitals.maximum_mp);
 }
 
 static void player_learn_trained_magic(KfEffectKind spell, s32 required_base_magic)
@@ -260,9 +253,7 @@ void player_recalculate_combat_stats(void)
     player_state.magic = player_state.base_magic;
     if ((player_state.status_effect_flags & KF_PLAYER_STATUS_CURSE) != KF_PLAYER_STATUS_NONE) {
         power = player_state.physical_power - CURSE_PHYSICAL_POWER_PENALTY;
-        if (power < 0) {
-            power = 0;
-        }
+        power = std::max<s32>(power, 0);
         player_state.physical_power = power;
     }
     if (player_state.equipped_weapon_id != KF_OBJECT_NONE) {
@@ -355,12 +346,8 @@ void player_recalculate_combat_stats(void)
     }
     player_learn_trained_magic(KF_MAGIC_FIRE_WALL, FIRE_WALL_REQUIRED_BASE_MAGIC);
     player_learn_trained_magic(KF_MAGIC_LIGHTNING_BOLT, LIGHTNING_BOLT_REQUIRED_BASE_MAGIC);
-    if (player_state.physical_power >= KF_PLAYER_POWER_MAX + 1) {
-        player_state.physical_power = KF_PLAYER_POWER_MAX;
-    }
-    if (player_state.magic >= KF_PLAYER_POWER_MAX + 1) {
-        player_state.magic = KF_PLAYER_POWER_MAX;
-    }
+    player_state.physical_power = std::min<s32>(player_state.physical_power, KF_PLAYER_POWER_MAX);
+    player_state.magic = std::min<s32>(player_state.magic, KF_PLAYER_POWER_MAX);
 }
 
 void player_increment_physical_power_training(void)
@@ -399,9 +386,7 @@ void player_add_experience(s16 amount)
     u8 level;
 
     player_state.experience += amount;
-    if (player_state.experience > KF_PLAYER_EXPERIENCE_MAX) {
-        player_state.experience = KF_PLAYER_EXPERIENCE_MAX;
-    }
+    player_state.experience = std::min<s32>(player_state.experience, KF_PLAYER_EXPERIENCE_MAX);
     while (player_state.experience >= player_state.next_level_experience) {
         level = player_state.progress_state.level;
         if (player_state.progress_state.level >= KF_PLAYER_LEVEL_MAX) {
@@ -429,18 +414,11 @@ void player_add_experience(s16 amount)
             player_state.base_magic += growth->magic_step;
             player_state.next_level_experience = growth->experience_threshold;
         }
-        if (player_state.vitals.maximum_hp >= KF_PLAYER_VITAL_MAX + 1) {
-            player_state.vitals.maximum_hp = KF_PLAYER_VITAL_MAX;
-        }
-        if (player_state.vitals.maximum_mp >= KF_PLAYER_VITAL_MAX + 1) {
-            player_state.vitals.maximum_mp = KF_PLAYER_VITAL_MAX;
-        }
-        if (player_state.base_physical_power >= KF_PLAYER_POWER_MAX + 1) {
-            player_state.base_physical_power = KF_PLAYER_POWER_MAX;
-        }
-        if (player_state.base_magic >= KF_PLAYER_POWER_MAX + 1) {
-            player_state.base_magic = KF_PLAYER_POWER_MAX;
-        }
+        player_state.vitals.maximum_hp = std::min<s32>(player_state.vitals.maximum_hp, KF_PLAYER_VITAL_MAX);
+        player_state.vitals.maximum_mp = std::min<s32>(player_state.vitals.maximum_mp, KF_PLAYER_VITAL_MAX);
+        player_state.base_physical_power =
+            std::min<s32>(player_state.base_physical_power, KF_PLAYER_POWER_MAX);
+        player_state.base_magic = std::min<s32>(player_state.base_magic, KF_PLAYER_POWER_MAX);
         player_recalculate_combat_stats();
         notify_enqueue(KF_NOTIFICATION_LEVEL_UP);
         sound_ref_play(audio_playback(), &player_sound_refs[KF_PLAYER_SOUND_LEVEL_UP], KF_AUDIO_MAX_VOLUME);
@@ -457,9 +435,7 @@ s32 player_calculate_damage_component(s32 base_power, s32 defense, s32 attack)
     }
     threshold = excess + threshold / PLAYER_DAMAGE_POWER_DIVISOR;
     excess = attack - threshold;
-    if (excess < 0) {
-        excess = 0;
-    }
+    excess = std::max<s32>(excess, 0);
     if (threshold == 0) {
         threshold = 1;
     }
@@ -487,9 +463,8 @@ void player_apply_damage(
     if (((status_effect_flags & KF_PLAYER_STATUS_DARKNESS) != KF_PLAYER_STATUS_NONE)
         && player_state.equipped_accessory_id != KF_ITEM_MOON_AMULET) {
         if (player_state.darkness_timer != KF_PLAYER_STATUS_TIMER_INACTIVE) {
-            if (player_state.darkness_timer < KF_DARKNESS_REAPPLY_TIMER) {
-                player_state.darkness_timer = KF_DARKNESS_REAPPLY_TIMER;
-            }
+            player_state.darkness_timer =
+                std::max<s32>(player_state.darkness_timer, KF_DARKNESS_REAPPLY_TIMER);
         } else {
             player_state.darkness_timer = KF_DARKNESS_DURATION_UPDATES;
         }
@@ -531,9 +506,7 @@ void player_apply_damage(
     loss = (multiplier_tenths * damage) / KF_PLAYER_DAMAGE_MULTIPLIER_ONE;
     if (loss != 0) {
         remaining = player_state.vitals.current_hp - loss;
-        if (remaining <= 0) {
-            remaining = 0;
-        }
+        remaining = std::max<s32>(remaining, 0);
         player_state.vitals.current_hp = remaining;
         if (player_state.update_state != KF_PLAYER_UPDATE_DYING) {
             player_state.update_state = KF_PLAYER_DAMAGE_FRAME_FIRST;

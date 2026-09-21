@@ -74,13 +74,10 @@ static inline u32 radial_damage_attenuated_scale(
     return (u32)(scale * weight) >> KF_FIXED12_BITS;
 }
 
-static inline s32 fixed_vector3_length(s32 x, s32 y, s32 z)
-{
-    x >>= KF_LENGTH_SQUARE_DOWNSHIFT;
-    y >>= KF_LENGTH_SQUARE_DOWNSHIFT;
-    z >>= KF_LENGTH_SQUARE_DOWNSHIFT;
-    return kf::length_square_root(x * x + y * y + z * z) << KF_LENGTH_SQUARE_DOWNSHIFT;
-}
+// World lengths discard three low coordinate bits before squaring, then use
+// the quantized integer lookup. Do not substitute floating-point sqrt/hypot.
+extern s32 fixed_vector2_length(s32 x, s32 y);
+extern s32 fixed_vector3_length(s32 x, s32 y, s32 z);
 
 inline KfVecXZ vector_yaw_probe_xz(const VECTOR &position, s16 yaw, s32 reach)
 {
@@ -96,7 +93,6 @@ extern KfBool angle_mod_delta_le_half_turn(int lhs, int rhs);
 extern s16 angle_shortest_delta(s32 first, s32 second);
 extern void angle_to_forward_xz(s16 angle, struct KfVecXZs *direction);
 extern KfBool angle_within_tolerance(int lhs, int rhs, s16 range);
-extern s32 fixed_vector2_length(s32 x, s32 y);
 extern void matrix_interpolate(
     const MATRIX *from, const MATRIX *to, MATRIX *output, s32 blend);
 extern void matrix_set_rotation_x(s16 angle, MATRIX *matrix);

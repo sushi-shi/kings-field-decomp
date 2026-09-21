@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <kf/game/audio.h>
 #include <kf/lib/random.hpp>
 #include <kf/game/actor.h>
@@ -106,9 +107,7 @@ void map_event_pool_update(void)
                 if (event.dialogue.page_delay == 0) {
                     s32 limit = event.dialogue_pages.last_page[event.dialogue.stage - 1];
                     event.dialogue.page++;
-                    if (event.dialogue.page >= limit) {
-                        event.dialogue.page = limit;
-                    }
+                    event.dialogue.page = std::min<s32>(event.dialogue.page, limit);
                 }
             }
         }
