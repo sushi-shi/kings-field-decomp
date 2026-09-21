@@ -278,9 +278,7 @@ s32 map_object_distance_to_point(
     if (delta_x >= -max_distance && delta_x <= max_distance) {
         delta_z = object->position.vz - point_z;
         if (delta_z >= -max_distance && delta_z <= max_distance) {
-            delta_x >>= KF_LENGTH_SQUARE_DOWNSHIFT;
-            delta_z >>= KF_LENGTH_SQUARE_DOWNSHIFT;
-            distance = kf::length_square_root(delta_x * delta_x + delta_z * delta_z) << KF_LENGTH_SQUARE_DOWNSHIFT;
+            distance = fixed_vector2_length(delta_x, delta_z);
             if (distance <= max_distance) {
                 return distance;
             }

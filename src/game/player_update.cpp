@@ -326,60 +326,36 @@ static void player_update_movement_input(u32 input)
     if (input & kf::Button::Up) {
         forward = motion.forward_velocity
             + (player_movement_velocity_limit >> PLAYER_FORWARD_ACCEL_SHIFT);
-        if (forward > player_movement_velocity_limit) {
-            motion.forward_velocity = player_movement_velocity_limit;
-        } else {
-            motion.forward_velocity = forward;
-        }
+        motion.forward_velocity = std::min<s32>(forward, player_movement_velocity_limit);
     } else if (input & kf::Button::Down) {
         forward = motion.forward_velocity
             - (player_movement_velocity_limit >> PLAYER_FORWARD_ACCEL_SHIFT);
-        if (forward >= -player_movement_velocity_limit) {
-            motion.forward_velocity = forward;
-        } else {
-            motion.forward_velocity = -player_movement_velocity_limit;
-        }
+        motion.forward_velocity = std::max<s32>(forward, -player_movement_velocity_limit);
     } else if (motion.forward_velocity > 0) {
         motion.forward_velocity -=
             player_movement_velocity_limit >> PLAYER_FORWARD_DECEL_SHIFT;
-        if (motion.forward_velocity < 0) {
-            motion.forward_velocity = 0;
-        }
+        motion.forward_velocity = std::max<s32>(motion.forward_velocity, 0);
     } else if (motion.forward_velocity < 0) {
         motion.forward_velocity +=
             player_movement_velocity_limit >> PLAYER_FORWARD_DECEL_SHIFT;
-        if (motion.forward_velocity > 0) {
-            motion.forward_velocity = 0;
-        }
+        motion.forward_velocity = std::min<s32>(motion.forward_velocity, 0);
     }
     if (input & kf::Button::StrafeRight) {
         strafe = motion.strafe_velocity
             + (player_movement_velocity_limit >> PLAYER_STRAFE_ACCEL_DECEL_SHIFT);
-        if (strafe > player_movement_velocity_limit) {
-            motion.strafe_velocity = player_movement_velocity_limit;
-        } else {
-            motion.strafe_velocity = strafe;
-        }
+        motion.strafe_velocity = std::min<s32>(strafe, player_movement_velocity_limit);
     } else if (input & kf::Button::StrafeLeft) {
         strafe = motion.strafe_velocity
             - (player_movement_velocity_limit >> PLAYER_STRAFE_ACCEL_DECEL_SHIFT);
-        if (strafe >= -player_movement_velocity_limit) {
-            motion.strafe_velocity = strafe;
-        } else {
-            motion.strafe_velocity = -player_movement_velocity_limit;
-        }
+        motion.strafe_velocity = std::max<s32>(strafe, -player_movement_velocity_limit);
     } else if (motion.strafe_velocity > 0) {
         motion.strafe_velocity -=
             player_movement_velocity_limit >> PLAYER_STRAFE_ACCEL_DECEL_SHIFT;
-        if (motion.strafe_velocity < 0) {
-            motion.strafe_velocity = 0;
-        }
+        motion.strafe_velocity = std::max<s32>(motion.strafe_velocity, 0);
     } else if (motion.strafe_velocity < 0) {
         motion.strafe_velocity +=
             player_movement_velocity_limit >> PLAYER_STRAFE_ACCEL_DECEL_SHIFT;
-        if (motion.strafe_velocity > 0) {
-            motion.strafe_velocity = 0;
-        }
+        motion.strafe_velocity = std::min<s32>(motion.strafe_velocity, 0);
     }
     strafe_sq = motion.strafe_velocity;
     strafe_sq *= strafe_sq;
@@ -422,58 +398,40 @@ static void player_update_view_input(u32 input)
 
     if (input & kf::Button::Left) {
         motion.yaw_step += player_turn_step_limit >> PLAYER_YAW_ACCEL_DECEL_SHIFT;
-        if (motion.yaw_step > player_turn_step_limit) {
-            motion.yaw_step = player_turn_step_limit;
-        }
+        motion.yaw_step = std::min<s32>(motion.yaw_step, player_turn_step_limit);
     } else if (input & kf::Button::Right) {
         motion.yaw_step -= player_turn_step_limit >> PLAYER_YAW_ACCEL_DECEL_SHIFT;
-        if (motion.yaw_step < -player_turn_step_limit) {
-            motion.yaw_step = -player_turn_step_limit;
-        }
+        motion.yaw_step = std::max<s32>(motion.yaw_step, -player_turn_step_limit);
     } else if (motion.yaw_step > 0) {
         motion.yaw_step -= player_turn_step_limit >> PLAYER_YAW_ACCEL_DECEL_SHIFT;
-        if (motion.yaw_step < 0) {
-            motion.yaw_step = 0;
-        }
+        motion.yaw_step = std::max<s32>(motion.yaw_step, 0);
     } else if (motion.yaw_step < 0) {
         motion.yaw_step += player_turn_step_limit >> PLAYER_YAW_ACCEL_DECEL_SHIFT;
-        if (motion.yaw_step > 0) {
-            motion.yaw_step = 0;
-        }
+        motion.yaw_step = std::min<s32>(motion.yaw_step, 0);
     }
     player_state.camera_rotation.vy =
         (player_state.camera_rotation.vy + motion.yaw_step) & KF_ANGLE_WRAP_MASK;
     if (input & kf::Button::LookDown) {
         motion.pitch_step += PLAYER_PITCH_ACCEL;
-        if (motion.pitch_step >= PLAYER_PITCH_STEP_LIMIT + 1) {
-            motion.pitch_step = PLAYER_PITCH_STEP_LIMIT;
-        }
+        motion.pitch_step = std::min<s32>(motion.pitch_step, PLAYER_PITCH_STEP_LIMIT);
     } else if (input & kf::Button::LookUp) {
         motion.pitch_step -= PLAYER_PITCH_ACCEL;
-        if (motion.pitch_step < -PLAYER_PITCH_STEP_LIMIT) {
-            motion.pitch_step = -PLAYER_PITCH_STEP_LIMIT;
-        }
+        motion.pitch_step = std::max<s32>(motion.pitch_step, -PLAYER_PITCH_STEP_LIMIT);
     } else if (motion.pitch_step > 0) {
         motion.pitch_step -= PLAYER_PITCH_DECEL;
-        if (motion.pitch_step < 0) {
-            motion.pitch_step = 0;
-        }
+        motion.pitch_step = std::max<s32>(motion.pitch_step, 0);
     } else if (motion.pitch_step < 0) {
         motion.pitch_step += PLAYER_PITCH_DECEL;
-        if (motion.pitch_step > 0) {
-            motion.pitch_step = 0;
-        }
+        motion.pitch_step = std::min<s32>(motion.pitch_step, 0);
     }
     if (motion.pitch_step > 0) {
         player_state.camera_rotation.vx += motion.pitch_step;
-        if (player_state.camera_rotation.vx >= KF_PLAYER_CAMERA_PITCH_LIMIT + 1) {
-            player_state.camera_rotation.vx = KF_PLAYER_CAMERA_PITCH_LIMIT;
-        }
+        player_state.camera_rotation.vx =
+            std::min<s32>(player_state.camera_rotation.vx, KF_PLAYER_CAMERA_PITCH_LIMIT);
     } else if (motion.pitch_step < 0) {
         player_state.camera_rotation.vx += motion.pitch_step;
-        if (player_state.camera_rotation.vx < -KF_PLAYER_CAMERA_PITCH_LIMIT) {
-            player_state.camera_rotation.vx = -KF_PLAYER_CAMERA_PITCH_LIMIT;
-        }
+        player_state.camera_rotation.vx =
+            std::max<s32>(player_state.camera_rotation.vx, -KF_PLAYER_CAMERA_PITCH_LIMIT);
     }
 }
 

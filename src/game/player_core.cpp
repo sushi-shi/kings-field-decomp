@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <kf/game/audio.h>
 #include <kf/game/resources.h>
 #include <kf/lib/null.h>
@@ -199,9 +200,8 @@ void player_update_weapon_attack(void)
             fixed6_ratio_step(
                 player_state.physical_power,
                 player_state.equipped_weapon_record->charge_rate) * KF_PLAYER_CHARGE_GAIN_MULTIPLIER;
-        if (player_state.attack_charge_state.current >= KF_PLAYER_CHARGE_FULL + 1) {
-            player_state.attack_charge_state.current = KF_PLAYER_CHARGE_FULL;
-        }
+        player_state.attack_charge_state.current =
+            std::min<s32>(player_state.attack_charge_state.current, KF_PLAYER_CHARGE_FULL);
     } else {
         player_state.weapon_charge_delay--;
     }
@@ -316,7 +316,6 @@ s32 player_distance_to_point(
     if (dz < -max_distance || max_distance < dz) {
         return KF_COLLISION_NONE;
     }
-    dx >>= KF_LENGTH_SQUARE_DOWNSHIFT;
     if (point_y != KF_COLLISION_IGNORE_HEIGHT) {
         tolerance >>= 1;
         center = point_y - tolerance;
@@ -327,8 +326,7 @@ s32 player_distance_to_point(
             return KF_COLLISION_NONE;
         }
     }
-    dz >>= KF_LENGTH_SQUARE_DOWNSHIFT;
-    distance = kf::length_square_root(dx * dx + dz * dz) << KF_LENGTH_SQUARE_DOWNSHIFT;
+    distance = fixed_vector2_length(dx, dz);
     if (max_distance < distance) {
         return KF_COLLISION_NONE;
     }
