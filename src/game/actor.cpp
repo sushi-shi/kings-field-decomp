@@ -77,15 +77,11 @@ SoundRef boss_death_loop_sound = {70, 0, 65};
 
 KfActor *actor_pool_find_free(void)
 {
-    KfActor *actor = actor_state.actors;
-    s32 count = KF_ACTOR_CAPACITY - 1;
-
-    do {
-        if (actor->slot_state == KF_ACTOR_SLOT_FREE) {
-            return actor;
+    for (auto &actor : actor_state.actors) {
+        if (actor.slot_state == KF_ACTOR_SLOT_FREE) {
+            return &actor;
         }
-        actor++;
-    } while (--count != -1);
+    }
     return NULL;
 }
 
@@ -189,13 +185,10 @@ void actor_initialize_slot(u16 actor_index)
 
 void actor_pool_clear(void)
 {
-    KfActor *actor = actor_state.actors;
-    u16 index;
-
-    for (index = 0; index < KF_ACTOR_CAPACITY; index++, actor++) {
-        actor->slot_state = KF_ACTOR_SLOT_FREE;
-        actor->lifecycle = KF_ACTOR_LIFECYCLE_DORMANT;
-        actor->animation_cache = NULL;
+    for (auto &actor : actor_state.actors) {
+        actor.slot_state = KF_ACTOR_SLOT_FREE;
+        actor.lifecycle = KF_ACTOR_LIFECYCLE_DORMANT;
+        actor.animation_cache = NULL;
     }
 }
 
@@ -226,21 +219,18 @@ void actor_pool_spawn(
 
 void actor_pool_begin_death_by_definition(u16 definition_id)
 {
-    KfActor *actor = actor_state.actors;
     KfActorDefinition *definition = &actor_state.definitions.entries[definition_id];
-    s16 count = KF_ACTOR_CAPACITY - 1;
 
-    do {
-        if (actor->slot_state != KF_ACTOR_SLOT_FREE && actor->definition_id == definition_id) {
-            if (actor->lifecycle == KF_ACTOR_LIFECYCLE_ACTIVE
+    for (auto &actor : actor_state.actors) {
+        if (actor.slot_state != KF_ACTOR_SLOT_FREE && actor.definition_id == definition_id) {
+            if (actor.lifecycle == KF_ACTOR_LIFECYCLE_ACTIVE
                 && definition->action_animations[KF_ACTOR_ANIM_SLOT_DEATH] != KF_ANIMATION_CLIP_NONE) {
-                actor_set_action(actor, KF_ACTOR_ACTION_DYING);
+                actor_set_action(&actor, KF_ACTOR_ACTION_DYING);
             } else {
-                actor->lifecycle = KF_ACTOR_LIFECYCLE_DISABLED;
+                actor.lifecycle = KF_ACTOR_LIFECYCLE_DISABLED;
             }
         }
-        actor++;
-    } while (--count != -1);
+    }
 }
 
 s32 combat_calculate_damage_component(s32 base_power, s32 attack, s32 defense)
@@ -360,13 +350,12 @@ void actor_pool_apply_radial_damage(
     u16 scale,
     KfEffectType hit_flags)
 {
-    KfActor *actor = actor_state.actors;
     KfActorDefinition *definition;
-    s16 index;
     s32 distance;
     u16 damage_scale;
 
-    for (index = 0; index < KF_ACTOR_CAPACITY; index++, actor++) {
+    for (s16 index = 0; index < KF_ACTOR_CAPACITY; index++) {
+        KfActor *actor = &actor_state.actors[index];
         if (actor->lifecycle != KF_ACTOR_LIFECYCLE_ACTIVE) {
             continue;
         }
@@ -540,11 +529,10 @@ s32 actor_distance_to_point(
 
 s32 actor_pool_find_overlap(s32 x, s32 y, s32 z, s32 extra_radius, s32 point_height)
 {
-    KfActor *actor = actor_state.actors;
     KfActorDefinition *definition;
-    s16 index;
 
-    for (index = 0; index < KF_ACTOR_CAPACITY; index++, actor++) {
+    for (s16 index = 0; index < KF_ACTOR_CAPACITY; index++) {
+        KfActor *actor = &actor_state.actors[index];
         if (actor->lifecycle != KF_ACTOR_LIFECYCLE_ACTIVE) {
             continue;
         }

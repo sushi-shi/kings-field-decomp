@@ -152,19 +152,11 @@ s32 map_object_probe_forward(const KfMapObject *object, u16 yaw)
 
 void map_object_pool_clear(void)
 {
-    KfMapObject *object = map_object_state.objects;
-    u16 index = KF_MAP_OBJECT_CAPACITY - 1;
-
-    do {
-        u32 *link_words = (u32 *)&object->link;
-
-        object->object_id = KF_OBJECT_NONE;
-        object->action = KF_MAP_OBJECT_OP_NONE;
-
-        link_words[1] = 0;
-        link_words[0] = 0;
-        object++;
-    } while (index-- != 0);
+    for (auto &object : map_object_state.objects) {
+        object.object_id = KF_OBJECT_NONE;
+        object.action = KF_MAP_OBJECT_OP_NONE;
+        std::memset(&object.link, 0, sizeof object.link);
+    }
     map_object_state.effect_sequence_180 = 0;
     map_object_state.effect_sequence_170 = 0;
     map_object_state.effect_sequence_160 = 0;
@@ -172,13 +164,7 @@ void map_object_pool_clear(void)
 
 void map_object_definitions_load(const KfMapObjectDefinitionTable *definitions)
 {
-    const u32 *source = (const u32 *)definitions;
-    u32 *destination = (u32 *)&map_object_state.definitions;
-    s32 count = sizeof map_object_state.definitions / sizeof *source;
-
-    do {
-        *destination++ = *source++;
-    } while (--count != 0);
+    map_object_state.definitions = *definitions;
 }
 
 void map_object_pool_load(const KfMapObjectPlacement *placements)

@@ -63,13 +63,7 @@ void actor_pool_load_placements(const KfActorPlacement *placements)
 
 void actor_definitions_load(const KfActorDefinitionTable *definitions)
 {
-    const u32 *source = (const u32 *)definitions;
-    u32 *destination = (u32 *)&actor_state.definitions;
-    s32 count = sizeof actor_state.definitions / sizeof *source;
-
-    do {
-        *destination++ = *source++;
-    } while (--count != 0);
+    actor_state.definitions = *definitions;
 }
 
 

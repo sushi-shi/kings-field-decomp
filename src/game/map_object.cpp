@@ -202,62 +202,54 @@ void map_object_spawn_actor_debris(u16 source, const VECTOR *position, s32 y_off
 
 void map_object_pool_trigger_link(u8 link_id)
 {
-    KfMapObject *object = map_object_state.objects;
-    u16 count = KF_MAP_OBJECT_CAPACITY - 1;
-
-    do {
-        switch (object->action) {
+    for (auto &object : map_object_state.objects) {
+        switch (object.action) {
         case KF_MAP_OBJECT_OP_RESTORE_POINT:
         case KF_MAP_OBJECT_OP_PROJECTILE_EMITTER:
         case KF_MAP_OBJECT_OP_RELEASE_ORBIT_OR_SHORT_SWING:
         case KF_MAP_OBJECT_OP_RELEASE_LONG_SWING:
-            if (object->link.fields.link_id == link_id) {
-                object->link.fields.link_id = KF_MAP_LINK_NONE;
+            if (object.link.fields.link_id == link_id) {
+                object.link.fields.link_id = KF_MAP_LINK_NONE;
             }
             break;
         default:
-            if (map_object_state.definitions.entries[kf_enum_encode<u8>(object->object_id)].behavior_type < KF_MAP_OBJECT_OP_LINK_TRIGGER_END
-                && !(object->link.fields.link_id < KF_MAP_LINK_REUSABLE_FIRST) && object->link.fields.link_id == link_id) {
+            if (map_object_state.definitions.entries[kf_enum_encode<u8>(object.object_id)].behavior_type < KF_MAP_OBJECT_OP_LINK_TRIGGER_END
+                && !(object.link.fields.link_id < KF_MAP_LINK_REUSABLE_FIRST) && object.link.fields.link_id == link_id) {
                 map_object_start_action_if_idle(
-                    object, map_object_state.definitions.entries[kf_enum_encode<u8>(object->object_id)].behavior_type);
+                    &object, map_object_state.definitions.entries[kf_enum_encode<u8>(object.object_id)].behavior_type);
             }
             break;
         }
-        object++;
-    } while (count-- != 0);
+    }
 }
 
 void map_object_pool_clear_link(u8 link_id)
 {
-    KfMapObject *object = map_object_state.objects;
-    u16 count = KF_MAP_OBJECT_CAPACITY - 1;
     KfMapObjectDefinition *definitions = map_object_state.definitions.entries;
 
-    do {
-        if ((definitions[kf_enum_encode<u8>(object->object_id)].behavior_type < KF_MAP_OBJECT_OP_LINK_CLEAR_LAST
-             || definitions[kf_enum_encode<u8>(object->object_id)].behavior_type == KF_MAP_OBJECT_OP_LINK_CLEAR_LAST)
-            && object->link.fields.link_id == link_id) {
-            object->link.fields.link_id = KF_MAP_LINK_NONE;
+    for (auto &object : map_object_state.objects) {
+        if ((definitions[kf_enum_encode<u8>(object.object_id)].behavior_type < KF_MAP_OBJECT_OP_LINK_CLEAR_LAST
+             || definitions[kf_enum_encode<u8>(object.object_id)].behavior_type == KF_MAP_OBJECT_OP_LINK_CLEAR_LAST)
+            && object.link.fields.link_id == link_id) {
+            object.link.fields.link_id = KF_MAP_LINK_NONE;
         }
-        object++;
-    } while (count-- != 0);
+    }
 }
 
 void map_object_pool_update(void)
 {
-    KfMapObject *object = map_object_state.objects;
     KfMapObject *pair;
     KfEffectRecord *record;
     u8 *counter;
     SVECTOR direction;
     VECTOR point;
-    s16 count;
     KfMapObjectProgress timer;
     KfMapObjectProgress elapsed;
     s32 floor;
     s32 tilt;
 
-    for (count = KF_MAP_OBJECT_CAPACITY; count != 0; object++, count--) {
+    for (auto &slot : map_object_state.objects) {
+        KfMapObject *object = &slot;
         if (object->action == KF_MAP_OBJECT_OP_NONE) {
             continue;
         }

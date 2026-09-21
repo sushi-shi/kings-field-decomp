@@ -20,24 +20,14 @@ enum {
 
 void effect_pool_reset(void)
 {
-    KfEffectRecord *record = effect_pool_records;
-    u16 i;
-
-    for (i = 0; i < KF_EFFECT_CAPACITY; i++) {
-        record->type = KF_EFFECT_SLOT_FREE;
-        record++;
+    for (auto &record : effect_pool_records) {
+        record.type = KF_EFFECT_SLOT_FREE;
     }
 }
 
 void magic_load_records(const KfMagicTable *table)
 {
-    const u32 *source = (const u32 *)table;
-    u32 *destination = (u32 *)&effect_state.magic;
-    s32 count;
-
-    for (count = sizeof effect_state.magic / sizeof *source; count != 0; count--) {
-        *destination++ = *source++;
-    }
+    effect_state.magic = *table;
 }
 
 void magic_cast(void)
@@ -152,14 +142,10 @@ void magic_cast(void)
 
 void effect_pool_sweep(void)
 {
-    KfEffectRecord *record = effect_pool_records;
-    u16 i = KF_EFFECT_CAPACITY - 1;
-
-    do {
-        if (record->type != KF_EFFECT_SLOT_FREE) {
-            effect_pool_set_current(record);
+    for (auto &record : effect_pool_records) {
+        if (record.type != KF_EFFECT_SLOT_FREE) {
+            effect_pool_set_current(&record);
             effect_update_dispatch();
         }
-        record++;
-    } while (i-- != 0);
+    }
 }
