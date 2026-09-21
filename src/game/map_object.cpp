@@ -76,7 +76,7 @@ s32 map_object_pool_find_interaction_from(s32 start_index, s32 x, s32 z, s32 ext
         }
         definition = &map_object_state.definitions.entries[kf_enum_encode<u8>(object->object_id)];
         if (definition->behavior_type == KF_MAP_OBJECT_OP_HINGED_DOOR) {
-            vector_set_xyz(offset, -KF_MAP_TILE_SIZE, 0, MAP_DOOR_INTERACTION_LOCAL_Z);
+            offset = {-KF_MAP_TILE_SIZE, 0, MAP_DOOR_INTERACTION_LOCAL_Z};
             matrix_set_rotation_y(object->rotation.angles.y, &matrix);
             point = kf::matrix_apply_rotation(matrix, offset);
             point.vx += x;
@@ -87,7 +87,7 @@ s32 map_object_pool_find_interaction_from(s32 start_index, s32 x, s32 z, s32 ext
                 return index;
             }
         } else if (definition->behavior_type == KF_MAP_OBJECT_OP_HINGED_DOOR_PARTNER) {
-            vector_set_xyz(offset, KF_MAP_TILE_SIZE, 0, MAP_DOOR_INTERACTION_LOCAL_Z);
+            offset = {KF_MAP_TILE_SIZE, 0, MAP_DOOR_INTERACTION_LOCAL_Z};
             matrix_set_rotation_y(object->rotation.angles.y, &matrix);
             point = kf::matrix_apply_rotation(matrix, offset);
             point.vx += x;
@@ -155,7 +155,7 @@ void map_object_spawn_effect(KfMapObjectDropSource drop_source, KfObjectId objec
     object = map_object_effect_pool_acquire(first_index, KF_MAP_OBJECT_EFFECT_GROUP_CAPACITY, *sequence);
     object->link.fields.spawn.sequence = (*sequence)++;
     object->object_id = object_id;
-    vector_set_xyz(object->position, position->vx, y_offset + position->vy, position->vz);
+    object->position = {position->vx, y_offset + position->vy, position->vz};
     object->cell_x = object->position.vx / KF_MAP_TILE_SIZE;
     object->cell_z = object->position.vz / KF_MAP_TILE_SIZE;
     object->rotation.angles.z = 0;
@@ -186,10 +186,10 @@ void map_object_spawn_actor_debris(u16 source, const VECTOR *position, s32 y_off
 
     object->link.gold_amount = source;
     angle = (u32)kf::random_next() >> KF_RANDOM_ANGLE_SHIFT;
-    vector_set_xyz(object->position,
+    object->position = {
         ((kf::angle_sine(angle) * MAP_GOLD_DROP_SCATTER_RADIUS) >> KF_FIXED12_BITS) + position->vx,
         y_offset + position->vy,
-        ((kf::angle_cosine(angle) * MAP_GOLD_DROP_SCATTER_RADIUS) >> KF_FIXED12_BITS) + position->vz);
+        ((kf::angle_cosine(angle) * MAP_GOLD_DROP_SCATTER_RADIUS) >> KF_FIXED12_BITS) + position->vz};
     object->cell_x = object->position.vx / KF_MAP_TILE_SIZE;
     object->cell_z = object->position.vz / KF_MAP_TILE_SIZE;
     object->rotation.angles.z = 0;

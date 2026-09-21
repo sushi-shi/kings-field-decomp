@@ -185,9 +185,7 @@ void player_death_restart(void)
     player_state.death_camera_pitch_step = 0;
     player_state.death_visual_blend = 0;
     game_graphics_runtime.hud_brightness = 0;
-    player_state.view_rotation_offset.vz = 0;
-    player_state.view_rotation_offset.vy = 0;
-    player_state.view_rotation_offset.vx = 0;
+    player_state.view_rotation_offset = {};
     player_state.previous_map_cell.x = player_state.motion_state.map_cell.x;
     player_state.previous_map_cell.z = player_state.motion_state.map_cell.z;
     player_state.camera_position.vy = player_state.floor_height - KF_PLAYER_CAMERA_HEIGHT;

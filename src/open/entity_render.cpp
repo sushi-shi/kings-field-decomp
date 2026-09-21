@@ -33,14 +33,14 @@ void opening_entity_render(KfOpeningEntity *entity)
     KfEnumStorage<KfOpeningModelId, u16> object_id;
     s16 depth;
 
-    vector_set_xyz(screen,
+    screen = VECTOR{
         entity->position.vx - open_graphics_runtime.render_state.view_position.vx,
         entity->position.vy - open_graphics_runtime.render_state.view_position.vy,
-        entity->position.vz - open_graphics_runtime.render_state.view_position.vz);
+        entity->position.vz - open_graphics_runtime.render_state.view_position.vz}.narrowed();
 
     kf::render_place_model(model, open_graphics_runtime.render_state.view_matrix, screen);
     matrix_set_rotation_yxz(&entity->rotation, &model);
-    vector_copy_xyz(scale, entity->scale);
+    scale = entity->scale.widened();
     kf::matrix_scale_axes(model, scale);
     kf::matrix_multiply_rotation(open_graphics_runtime.render_state.light_matrix, model, light);
     kf::matrix_multiply_rotation(open_graphics_runtime.render_state.view_matrix, model, model);

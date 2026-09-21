@@ -62,10 +62,10 @@ void render_floor_item(KfFloorItem *item, const MATRIX *lights)
     KfFloorItemFacing facing;
     s16 depth_bias;
 
-    vector_set_xyz(screen,
+    screen = VECTOR{
         item->position_x - KF_GRAPHICS_RUNTIME.render_state.view_position.vx,
         item->position_y - KF_GRAPHICS_RUNTIME.render_state.view_position.vy,
-        item->position_z - KF_GRAPHICS_RUNTIME.render_state.view_position.vz);
+        item->position_z - KF_GRAPHICS_RUNTIME.render_state.view_position.vz}.narrowed();
     kf::render_place_model(model, KF_GRAPHICS_RUNTIME.render_state.view_matrix, screen);
     facing = item->facing;
     if (facing != KF_FLOOR_ITEM_FACING_BILLBOARD) {

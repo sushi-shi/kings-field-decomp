@@ -103,9 +103,7 @@ void render_frame(const VECTOR *position_or_null, const SVECTOR *rotation_or_nul
     model.t[0] = 0;
     model.t[1] = NOTIFICATION_MODEL_Y;
     model.t[2] = NOTIFICATION_MODEL_Z;
-    spin.vz = 0;
-    spin.vy = 0;
-    spin.vx = game_graphics_runtime.notification_state.control.effect_angle_x;
+    spin = VECTOR{game_graphics_runtime.notification_state.control.effect_angle_x, 0, 0}.narrowed();
     kf::matrix_set_rotation_xyz(spin, model);
 
     game_graphics_runtime.active_render_material = game_graphics_runtime.notification_text_material;
