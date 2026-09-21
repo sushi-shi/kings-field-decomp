@@ -175,15 +175,15 @@ static void save_state_fields(SaveCodec &io, SavedGameState &state) {
     SAVE_FIELD(s16, camera_rotation.vx);
     SAVE_FIELD(s16, camera_rotation.vy);
     SAVE_FIELD(s16, camera_rotation.vz);
-    SAVE_FIELD(s16, motion_state.fields.strafe_velocity);
-    SAVE_FIELD(s16, motion_state.fields.forward_velocity);
-    SAVE_FIELD(u16, motion_state.fields.movement_speed);
-    SAVE_FIELD(s16, motion_state.fields.yaw_step);
-    SAVE_FIELD(s16, motion_state.fields.pitch_step);
-    SAVE_FIELD(u8, motion_state.fields.map_cell.coords.x);
-    SAVE_FIELD(u8, motion_state.fields.map_cell.coords.z);
-    SAVE_FIELD(u8, previous_map_cell.coords.x);
-    SAVE_FIELD(u8, previous_map_cell.coords.z);
+    SAVE_FIELD(s16, motion_state.strafe_velocity);
+    SAVE_FIELD(s16, motion_state.forward_velocity);
+    SAVE_FIELD(u16, motion_state.movement_speed);
+    SAVE_FIELD(s16, motion_state.yaw_step);
+    SAVE_FIELD(s16, motion_state.pitch_step);
+    SAVE_FIELD(u8, motion_state.map_cell.x);
+    SAVE_FIELD(u8, motion_state.map_cell.z);
+    SAVE_FIELD(u8, previous_map_cell.x);
+    SAVE_FIELD(u8, previous_map_cell.z);
     SAVE_BYTES(unknown_ce);
     SAVE_FIELD(s16, view_bob_offset);
     SAVE_FIELD(u16, view_bob_phase);
@@ -288,8 +288,8 @@ static bool save_state_valid(const SavedGameState &state) {
             || (magic != save_no_equipment_id && magic >= KF_MAGIC_PLAYER_COUNT)
             || p.camera_position.vx < 0 || p.camera_position.vx >= KF_MAP_COLUMNS * KF_MAP_TILE_SIZE
             || p.camera_position.vz < 0 || p.camera_position.vz >= KF_MAP_ROWS * KF_MAP_TILE_SIZE
-            || p.motion_state.fields.map_cell.coords.x >= KF_MAP_COLUMNS
-            || p.motion_state.fields.map_cell.coords.z >= KF_MAP_ROWS)
+            || p.motion_state.map_cell.x >= KF_MAP_COLUMNS
+            || p.motion_state.map_cell.z >= KF_MAP_ROWS)
         return false;
     const KfObjectId armor[] = {p.equipped_head_armor_id, p.equipped_body_armor_id,
         p.equipped_shield_id, p.equipped_arm_armor_id, p.equipped_leg_armor_id};
@@ -482,7 +482,7 @@ KfBool32 menu_load_message_image(s32 message_id)
     u8 *buffer;
 
     if (message_id != MESSAGE_IMAGE_SKIP) {
-        RESOURCE_PATH_WRITE_DECIMAL3(&path[menu_image_number_offset], message_id);
+        resource_path_write_decimal3(&path[menu_image_number_offset], message_id);
         buffer = game_graphics_runtime.display_state.asset_load_buffer;
         std::size_t image_size;
         if (resource_file_load_into(buffer,

@@ -103,13 +103,13 @@ void map_event_pool_update(void)
                 map_event_update_animation_loop();
                 break;
             }
-            if (map_dialogue_advance_gate == 0 && event->dialogue.fields.page_delay != 0) {
-                event->dialogue.fields.page_delay--;
-                if (event->dialogue.fields.page_delay == 0) {
-                    s32 limit = event->dialogue_pages.last_page[event->dialogue.fields.stage - 1];
-                    event->dialogue.fields.page++;
-                    if (event->dialogue.fields.page >= limit) {
-                        event->dialogue.fields.page = limit;
+            if (map_dialogue_advance_gate == 0 && event->dialogue.page_delay != 0) {
+                event->dialogue.page_delay--;
+                if (event->dialogue.page_delay == 0) {
+                    s32 limit = event->dialogue_pages.last_page[event->dialogue.stage - 1];
+                    event->dialogue.page++;
+                    if (event->dialogue.page >= limit) {
+                        event->dialogue.page = limit;
                     }
                 }
             }
@@ -183,14 +183,14 @@ void map_world_state_persist(void)
     event = map_runtime_state.events;
     for (i = 0; i < KF_MAP_EVENT_CAPACITY; i++, event++) {
         map_saved_put(out, end, kf_enum_encode<u8>(event->state));
-        map_saved_put(out, end, event->dialogue.fields.stage_limit);
-        map_saved_put(out, end, event->dialogue.fields.stage);
-        map_saved_put(out, end, event->dialogue.fields.page);
-        const auto stage = event->dialogue.fields.stage;
+        map_saved_put(out, end, event->dialogue.stage_limit);
+        map_saved_put(out, end, event->dialogue.stage);
+        map_saved_put(out, end, event->dialogue.page);
+        const auto stage = event->dialogue.stage;
         if (stage > KF_DIALOGUE_STAGE_COUNT)
             kf::host_fail("Invalid persisted dialogue stage");
         map_saved_put(out, end, stage ? event->dialogue_pages.last_page[stage - 1] : 0);
-        map_saved_put(out, end, event->dialogue.fields.page_delay);
+        map_saved_put(out, end, event->dialogue.page_delay);
         map_saved_put(out, end, event->unknown_0d);
     }
 

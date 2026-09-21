@@ -54,10 +54,9 @@ void game_main_loop(void)
         map_event_pool_update();
         render_frame(&player_position_snapshot, &player_rotation_snapshot);
         player_state.allow_near_actor_spawn = KF_ACTOR_NEAR_SPAWN_FORBIDDEN;
-        if (map_cell_attribute_grid.cells[player_state.motion_state.fields.map_cell.coords.z][player_state.motion_state.fields.map_cell.coords.x]
+        if (player_current_map_attribute()
             == KF_MAP_ATTRIBUTE_WARP) {
-            if (player_state.previous_map_cell.word
-                != player_state.motion_state.fields.map_cell.word) {
+            if (!map_cells_equal(player_state.previous_map_cell, player_state.motion_state.map_cell)) {
                 if (player_warp_trigger_update() != 0) {
                     game_next_overlay_mode = KF_OVERLAY_MODE_ENDING;
                     player_warp_shimmer_at_player(KF_WARP_SHIMMER_GROW_KEEP);
@@ -65,12 +64,12 @@ void game_main_loop(void)
                     audio_stop_sequence_master_fade(ENDING_MASTER_FADE_STEP_Q8);
                     break;
                 }
-                player_state.previous_map_cell.coords.x = player_state.motion_state.fields.map_cell.coords.x;
-                player_state.previous_map_cell.coords.z = player_state.motion_state.fields.map_cell.coords.z;
+                player_state.previous_map_cell.x = player_state.motion_state.map_cell.x;
+                player_state.previous_map_cell.z = player_state.motion_state.map_cell.z;
             }
         } else {
-            player_state.previous_map_cell.coords.z = KF_MAP_CELL_COORD_INVALID;
-            player_state.previous_map_cell.coords.x = KF_MAP_CELL_COORD_INVALID;
+            player_state.previous_map_cell.z = KF_MAP_CELL_COORD_INVALID;
+            player_state.previous_map_cell.x = KF_MAP_CELL_COORD_INVALID;
         }
     }
     game_shutdown();

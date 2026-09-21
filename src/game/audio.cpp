@@ -2,7 +2,6 @@
 
 #include <kf/lib/math.h>
 #include <kf/lib/audio.h>
-#include <kf/lib/audio_sequence.h>
 #include <cstdlib>
 #include <cstdio>
 #include <cstring>
@@ -75,7 +74,7 @@ void audio_stop_sequence_fade(void)
             kf::host_wait_frame();
             kf::sound_sequence_volume(audio_state.sequence, volume, volume);
         } while (--volume >= 0);
-        AUDIO_SEQUENCE_STOP_AND_CLOSE();
+        audio_release_sequence();
     }
 }
 
@@ -92,13 +91,13 @@ void audio_stop_sequence_master_fade(s32 fade_step)
         } while (volume > 0);
         kf::sound_master_volume(0, 0);
         kf::sound_sequence_volume(audio_state.sequence, 0, 0);
-        AUDIO_SEQUENCE_STOP_AND_CLOSE();
+        audio_release_sequence();
     }
 }
 
 void audio_close_vab(void)
 {
-    AUDIO_SEQUENCE_STOP_AND_CLOSE();
+    audio_release_sequence();
     kf::sound_bank_release(audio_state.bank);
     audio_state.bank = nullptr;
 }

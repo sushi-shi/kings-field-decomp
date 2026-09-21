@@ -90,18 +90,13 @@ typedef struct KfPlayerProgressState {
     KfEnumStorage<KfFloorId, u8> highest_floor;
 } KfPlayerProgressState;
 
-typedef struct KfPlayerMotionFields {
+typedef struct KfPlayerMotionState {
     s16 strafe_velocity;
     s16 forward_velocity;
     u16 movement_speed;
     s16 yaw_step;
     s16 pitch_step;
-    KfMapCell map_cell;
-} KfPlayerMotionFields;
-
-typedef union KfPlayerMotionState {
-    KfPlayerMotionFields fields;
-    u32 words[3];
+    KfMapCellCoordinates map_cell;
 } KfPlayerMotionState;
 
 typedef struct KfPlayerState {
@@ -179,7 +174,7 @@ typedef struct KfPlayerState {
     s32 floor_height;
     SVECTOR camera_rotation;
     KfPlayerMotionState motion_state;
-    KfMapCell previous_map_cell;
+    KfMapCellCoordinates previous_map_cell;
     u8 unknown_ce[6];
     s16 view_bob_offset;
     u16 view_bob_phase;
@@ -204,19 +199,10 @@ extern VECTOR player_position_snapshot;
 extern SVECTOR player_rotation_snapshot;
 extern KfPlayerState player_state;
 
-#define PLAYER_FLOOR_POSITION(position) ( \
-    (position).vx = player_state.camera_position.vx, \
-    (position).vz = player_state.camera_position.vz, \
-    (position).vy = player_state.floor_height)
+extern void player_get_floor_position(VECTOR &position);
 
-#define PLAYER_ITEM_IS_EQUIPPED(item_index) \
-    ((item_index) == kf_enum_encode<u8>(player_state.equipped_weapon_id) || \
-     (item_index) == kf_enum_encode<u8>(player_state.equipped_head_armor_id) || \
-     (item_index) == kf_enum_encode<u8>(player_state.equipped_body_armor_id) || \
-     (item_index) == kf_enum_encode<u8>(player_state.equipped_shield_id) || \
-     (item_index) == kf_enum_encode<u8>(player_state.equipped_arm_armor_id) || \
-     (item_index) == kf_enum_encode<u8>(player_state.equipped_leg_armor_id) || \
-     (item_index) == kf_enum_encode<u8>(player_state.equipped_accessory_id))
+extern bool player_item_is_equipped(KfObjectId item_id);
+extern KfMapAttribute player_current_map_attribute(void);
 
 extern void player_add_experience(s16 amount);
 extern void player_adjust_hp(s32 delta);

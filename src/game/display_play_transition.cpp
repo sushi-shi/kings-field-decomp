@@ -44,7 +44,7 @@ void display_play_transition(void)
 
     for (i = 0; i < KF_TRANSITION_FADE_FRAMES; i++) {
         display_begin_frame();
-        TRANSITION_COLOR_STEP(&color);
+        transition_advance_color(color);
         sprite_add_ft4(&rect, uv.v, material, &color, KF_TRANSITION_OT_DEPTH);
         display_present_frame();
     }

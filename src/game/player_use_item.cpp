@@ -56,13 +56,11 @@ void player_use_item(KfObjectId item_id)
     KfEffectRecord *record;
     s32 distance;
     s32 index;
-    s32 reach_x;
-    s32 reach_z;
     s16 slot;
     KfBool8 used = KF_FALSE;
 
-    VECTOR_YAW_PROBE_XZ(reach_x, reach_z, player_state.camera_position,
-        player_state.camera_rotation, MAP_INTERACTION_PROBE_DISTANCE);
+    const auto reach = vector_yaw_probe_xz(player_state.camera_position,
+        player_state.camera_rotation.vy, MAP_INTERACTION_PROBE_DISTANCE);
     index = 0;
     switch (item_id) {
     case KF_ITEM_KEY_OF_THE_DEAD:
@@ -70,7 +68,8 @@ void player_use_item(KfObjectId item_id)
     case KF_ITEM_DUNGEON_KEY:
     case KF_ITEM_SORCERER_KEY:
         for (;;) {
-            index = map_object_pool_find_interaction_from(index, reach_x, reach_z, MAP_INTERACTION_RADIUS_PADDING);
+            index = map_object_pool_find_interaction_from(
+                index, reach.x, reach.z, MAP_INTERACTION_RADIUS_PADDING);
             if (index == -1) {
                 break;
             }
@@ -113,7 +112,8 @@ void player_use_item(KfObjectId item_id)
     case KF_ITEM_FIRE_SEAL_STONE:
     case KF_ITEM_WIND_SEAL_STONE:
         for (;;) {
-            index = map_object_pool_find_interaction_from(index, reach_x, reach_z, MAP_INTERACTION_RADIUS_PADDING);
+            index = map_object_pool_find_interaction_from(
+                index, reach.x, reach.z, MAP_INTERACTION_RADIUS_PADDING);
             if (index == -1) {
                 break;
             }

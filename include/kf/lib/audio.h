@@ -72,6 +72,7 @@ static inline void audio_key_on_next_slot(
 
 extern void audio_initialize(void);
 extern void audio_shutdown(void);
+extern void audio_release_sequence(void);
 extern void audio_load_vab(const u8 *header, std::size_t header_size, const u8 *body, std::size_t body_size);
 extern void audio_load_vab_resource(const u8 *data, std::size_t size);
 extern void audio_close_vab(void);

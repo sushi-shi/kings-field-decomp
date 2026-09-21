@@ -133,8 +133,10 @@ void magic_cast(void)
             s32 cell_x;
             s32 cell_z;
 
-            VECTOR_YAW_PROBE_XZ(spawn.vx, spawn.vz, player_state.camera_position,
-                player_state.camera_rotation, FIRE_WALL_UNTARGETED_DISTANCE);
+            const auto probe = vector_yaw_probe_xz(player_state.camera_position,
+                player_state.camera_rotation.vy, FIRE_WALL_UNTARGETED_DISTANCE);
+            spawn.vx = probe.x;
+            spawn.vz = probe.z;
             cell_z = spawn.vz / KF_MAP_TILE_SIZE;
             cell_x = spawn.vx / KF_MAP_TILE_SIZE;
             spawn.vy = -(map_floor_height_grid.cells[cell_z][cell_x] * KF_MAP_HEIGHT_STEP);

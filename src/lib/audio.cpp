@@ -22,6 +22,13 @@ void audio_load_vab_resource(const u8 *data, std::size_t size)
     audio_load_vab(data + sound_chunk_header_bytes, header_size, body_chunk + sound_chunk_header_bytes, body_size);
 }
 
+void audio_release_sequence(void)
+{
+    kf::sound_sequence_release(audio_state.sequence);
+    audio_state.sequence = nullptr;
+    audio_state.sequence_active = KF_AUDIO_SEQUENCE_INACTIVE;
+}
+
 void audio_shutdown(void)
 {
     audio_close_vab();

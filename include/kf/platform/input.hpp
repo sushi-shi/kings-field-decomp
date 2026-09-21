@@ -13,6 +13,11 @@ constexpr u32 button_mask(Button button) { return static_cast<u32>(button); }
 constexpr u32 operator&(u32 buttons, Button button) { return buttons & button_mask(button); }
 constexpr u32 operator|(Button a, Button b) { return button_mask(a) | button_mask(b); }
 
+constexpr bool button_pressed(u32 current, u32 previous, Button button)
+{
+    return (current & button) != 0 && (previous & button) == 0;
+}
+
 enum class InputContext : u8 { Opening, Gameplay, Menu, Scripted };
 struct LookDelta { s32 yaw, pitch; };
 

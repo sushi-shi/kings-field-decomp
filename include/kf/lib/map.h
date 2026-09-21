@@ -151,10 +151,10 @@ typedef struct KfMapCellCoordinates {
     u8 x;
 } KfMapCellCoordinates;
 
-typedef union KfMapCell {
-    KfMapCellCoordinates coords;
-    u16 word;
-} KfMapCell;
+constexpr bool map_cells_equal(KfMapCellCoordinates left, KfMapCellCoordinates right)
+{
+    return left.x == right.x && left.z == right.z;
+}
 
 typedef struct KfMapCopyRegion {
     u8 source_x;
@@ -337,16 +337,11 @@ typedef struct KfMapEventDefinition {
     u16 unknown_16;
 } KfMapEventDefinition;
 
-typedef struct KfDialogueFields {
+typedef struct KfDialogueState {
     u8 stage_limit;
     u8 stage;
     u8 page;
     u8 page_delay;
-} KfDialogueFields;
-
-typedef union KfDialogueState {
-    KfDialogueFields fields;
-    u32 word;
 } KfDialogueState;
 
 typedef struct KfMapEvent {

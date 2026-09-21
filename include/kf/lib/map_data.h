@@ -138,8 +138,10 @@ enum class KfMapCellKind : u8 {
     KF_MAP_CELL_STEP = 6
 }; using enum KfMapCellKind;
 
-#define MAP_CELL_HAS_FULL_FLOOR(kind) \
-    ((kind) == KF_MAP_CELL_FLOOR || (kind) == KF_MAP_CELL_STEP)
+constexpr bool map_cell_has_full_floor(KfMapCellKind kind)
+{
+    return kind == KF_MAP_CELL_FLOOR || kind == KF_MAP_CELL_STEP;
+}
 
 enum {
     KF_MAP_HALF_CELL_STEP_HEIGHT = 300,
@@ -185,5 +187,15 @@ extern KfMapOrientationGrid map_cell_orientation_grid;
 extern KfMapGrid map_collision_flag_grid;
 extern KfMapCollisionGrid map_collision_grid;
 extern KfMapGrid map_floor_height_grid;
+
+inline s32 map_base_floor_height(s32 x, s32 z)
+{
+    return -(map_floor_height_grid.cells[z][x] * KF_MAP_HEIGHT_STEP);
+}
+
+inline KfMapAttribute map_attribute_at_cell(s32 x, s32 z)
+{
+    return map_cell_attribute_grid.cells[z][x];
+}
 
 #endif
