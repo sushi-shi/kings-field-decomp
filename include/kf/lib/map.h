@@ -252,28 +252,28 @@ typedef struct KfCameraPathState {
 
 static inline void camera_path_publish_fixed(KfCameraPathState *path)
 {
-    vector_set_xyz(path->position_fixed,
+    path->position_fixed = {
         path->position.vx << KF_FIXED4_BITS,
         path->position.vy << KF_FIXED4_BITS,
-        path->position.vz << KF_FIXED4_BITS);
-    vector_set_xyz(path->rotation_fixed,
+        path->position.vz << KF_FIXED4_BITS};
+    path->rotation_fixed = {
         path->rotation.vx << KF_FIXED4_BITS,
         path->rotation.vy << KF_FIXED4_BITS,
-        path->rotation.vz << KF_FIXED4_BITS);
+        path->rotation.vz << KF_FIXED4_BITS};
 }
 
 static inline void camera_path_advance_pose(KfCameraPathState *path, s32 y_offset)
 {
-    vector_add_xyz(path->position_fixed, path->position_delta);
-    vector_add_xyz(path->rotation_fixed, path->rotation_delta);
-    vector_set_xyz(path->position,
+    path->position_fixed += path->position_delta;
+    path->rotation_fixed += path->rotation_delta;
+    path->position = {
         path->position_fixed.vx >> KF_FIXED4_BITS,
         (path->position_fixed.vy >> KF_FIXED4_BITS) + y_offset,
-        path->position_fixed.vz >> KF_FIXED4_BITS);
-    vector_set_xyz(path->rotation,
+        path->position_fixed.vz >> KF_FIXED4_BITS};
+    path->rotation = VECTOR{
         (path->rotation_fixed.vx >> KF_FIXED4_BITS) & KF_ANGLE_WRAP_MASK,
         (path->rotation_fixed.vy >> KF_FIXED4_BITS) & KF_ANGLE_WRAP_MASK,
-        (path->rotation_fixed.vz >> KF_FIXED4_BITS) & KF_ANGLE_WRAP_MASK);
+        (path->rotation_fixed.vz >> KF_FIXED4_BITS) & KF_ANGLE_WRAP_MASK}.narrowed();
 }
 
 enum class KfCharacterId : u8 {
