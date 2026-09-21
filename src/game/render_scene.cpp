@@ -49,7 +49,7 @@ void render_entities(void)
     const u16 window_origin_x = game_graphics_runtime.render_state.view_cell.x - grid->origin_x;
     const RenderCellOrigin origin = {window_origin_x, window_origin_z};
 
-    tmd_select(KF_TMD_SLOT_ENTITIES);
+    tmd_select(tmd_context(), KF_TMD_SLOT_ENTITIES);
 
     for (auto &object : map_object_state.objects) {
         if (object.object_id < KF_MAP_OBJECT_RENDER_ID_END
@@ -75,7 +75,8 @@ void render_entities(void)
         auto &item = items[index];
         if (render_cell_is_visible(
                 item.position_x / KF_MAP_TILE_SIZE, item.position_z / KF_MAP_TILE_SIZE, origin)) {
-            render_floor_item(&item, &render_light_matrices[KF_RENDER_LIGHT_FLOOR_ITEM]);
+            render_floor_item(game_graphics_runtime.render_state, floor_item_sprites,
+                render_enqueue_sprite, &item, &render_light_matrices[KF_RENDER_LIGHT_FLOOR_ITEM]);
         }
     }
 
@@ -92,7 +93,7 @@ void render_entities(void)
     for (auto &event : map_runtime_state.events) {
         if (event.state == KF_MAP_EVENT_ACTIVE
             && render_cell_is_visible(event.cell_x, event.cell_z, origin)) {
-            render_map_event(&event, &game_graphics_runtime.render_state.light_matrix_copy);
+            render_map_event(&event, &game_graphics_runtime.light_matrix_copy);
         }
     }
 }

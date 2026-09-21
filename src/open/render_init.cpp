@@ -7,7 +7,6 @@
 #include <kf/lib/memory.h>
 #include <kf/open/render.h>
 #include <kf/open/resources.h>
-#include <kf/lib/graphics.h>
 
 enum {
     DISPLAY_ASSET_BUFFER_BYTES = 2 * 0x26160,
@@ -38,7 +37,7 @@ void render_initialize(void)
     if (resource_file_load_into(opening_cell_storage.rtbl_sectors,
             sizeof opening_cell_storage.rtbl_sectors, "B0/RTBL.") != KF_RESOURCE_LOADED)
         exit(1);
-    buffer = (u8 *)memory_allocate(DISPLAY_ASSET_BUFFER_BYTES);
+    buffer = (u8 *)memory_allocate(memory_arena, DISPLAY_ASSET_BUFFER_BYTES);
     open_graphics_runtime.display_state.asset_load_buffer = buffer;
     open_graphics_runtime.display_state.asset_load_capacity = DISPLAY_ASSET_BUFFER_BYTES;
     open_graphics_runtime.floor_item_state.count = 0;

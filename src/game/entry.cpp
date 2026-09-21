@@ -1,3 +1,4 @@
+#include <kf/game/resources.h>
 #include <kf/game/game.h>
 #include <kf/lib/overlay.h>
 void display_play_transition_reset_module_state(void);
@@ -8,7 +9,6 @@ void player_core_reset_module_state(void);
 void player_use_item_reset_module_state(void);
 void player_update_reset_module_state(void);
 void collision_reset_module_state(void);
-void memory_reset_module_state(void);
 void resource_file_reset_module_state(void);
 void resources_reset_module_state(void);
 void render_reset_module_state(void);
@@ -33,7 +33,6 @@ void effect_map_collision_reset_module_state(void);
 void effect_update_reset_module_state(void);
 void effect_dispatch_reset_module_state(void);
 void debug_text_reset_module_state(void);
-void format_reset_module_state(void);
 
 static void restore_module_initial_state()
 {
@@ -45,7 +44,7 @@ static void restore_module_initial_state()
     player_use_item_reset_module_state();
     player_update_reset_module_state();
     collision_reset_module_state();
-    memory_reset_module_state();
+    memory_destroy_arena(memory_arena);
     resource_file_reset_module_state();
     resources_reset_module_state();
     render_reset_module_state();
@@ -77,10 +76,12 @@ extern "C" kf::AppMode kf_run_game() {
     restore_module_initial_state();
     game_main_loop();
     pool_release_all();
-    memory_destroy_arena();
+    memory_destroy_arena(memory_arena);
     switch (static_cast<KfOverlayMode>(game_next_overlay_mode)) {
     case KF_OVERLAY_MODE_INTRO: return kf::AppMode::Opening;
     case KF_OVERLAY_MODE_ENDING: return kf::AppMode::Ending;
     default: kf::host_fail("Game returned without a valid application transition.");
     }
 }
+
+KfMemoryArena memory_arena;

@@ -1,6 +1,8 @@
 #ifndef KF_GAME_RENDER_H
 #define KF_GAME_RENDER_H
 
+#include <kf/lib/graphics.h>
+
 #include <kf/lib/enum.h>
 #include <kf/game/actor.h>
 #include <kf/game/effect.h>
@@ -102,33 +104,10 @@ typedef struct KfEffectSprite {
     KfPoolRecord *animation_cache;
 } KfEffectSprite;
 
-typedef struct KfDisplayState {
-    kf::FrameStyle frame_style;
-    KfDisplayBuffer buffer_index;
-    u8 unknown_01[3];
-    u8 *asset_load_buffer;
-    std::size_t asset_load_capacity;
-} KfDisplayState;
-
 typedef struct KfTmdState {
     KfTmdResource slots[KF_GAME_TMD_SLOT_COUNT];
     KfTmdResource current_asset;
 } KfTmdState;
-
-typedef struct KfRenderState {
-    kf::LightingEnvironment lighting;
-    kf::Projection projection;
-    MATRIX view_matrix;
-    MATRIX pitch_matrix;
-    MATRIX light_matrix;
-    MATRIX light_matrix_copy;
-    MATRIX effect_color_matrix;
-    s32 fog_near_distance;
-    VECTOR view_position;
-    SVECTOR view_rotation;
-    struct KfVecXZs view_cell;
-    MATRIX quadrant_matrices[KF_VIEW_QUADRANT_COUNT];
-} KfRenderState;
 
 extern MATRIX color_matrix_table[KF_GAME_COLOR_PRESET_COUNT];
 extern KfCellWindow render_cell_windows[KF_CELL_WINDOW_YAW_COUNT];
@@ -138,27 +117,20 @@ extern KfEffectSprite effect_sprites[KF_EFFECT_SPRITE_TABLE_ROWS];
 extern KfHudSprite hud_sprites[KF_HUD_TABLE_ROWS];
 extern MATRIX render_light_matrices[KF_RENDER_LIGHT_COUNT];
 
-extern void display_begin_frame(void);
 extern void display_flip_buffer_index(void);
 extern void display_initialize(void);
 extern void display_play_transition(void);
-extern void display_present_frame(void);
 extern void display_show_system_screen(KfSystemScreen screen);
 extern void display_present_system_screen(s32 brightness);
 extern void effect5_texture_cache_prepare(KfFloorId floor);
-extern void fog_interpolate_near(s32 start, s32 end, s32 ratio);
-extern void fog_set_near(s32 distance);
 extern void lighting_apply_color_preset6(void);
 extern void lighting_apply_timed_player_effect(void);
 extern void lighting_apply_weapon9_environment(void);
 extern void lighting_set_active_color_matrix(KfGameColorPreset preset);
-extern void lighting_set_color_matrix(
-    const MATRIX *from, const MATRIX *to, s32 blend);
 extern void menu_render_item_model(const MATRIX *lights, const MATRIX *model);
 extern void render_actor(KfActor *actor);
 extern void render_actor_sprite(KfEffectRecord *sprite, const MATRIX *lights);
 extern void render_effect_sprites(const MATRIX *lights);
-extern void render_floor_item(KfFloorItem *item, const MATRIX *lights);
 extern void render_enqueue_map(u16 object_index, const MATRIX *lights, const MATRIX *model, const kf::Projection &projection);
 extern void render_enqueue_model(u16 object_index, s16 depth_bias, const MATRIX *lights);
 extern void render_enqueue_sprite(KfSpriteQuad *sprite, s16 depth_bias, KfSpriteDepthCueMode depth_cue_mode, const MATRIX *lights, const MATRIX *model, const kf::Projection &projection);
@@ -176,12 +148,9 @@ extern void render_map_cells(void);
 extern void render_map_event(KfMapEvent *event, const MATRIX *lights);
 extern void render_map_object(KfMapObject *object);
 extern void render_screen_sprite(KfSpriteQuad *sprite);
-extern void render_set_view_transform(
-    const VECTOR *position_or_null, const SVECTOR *rotation_or_null);
 extern void render_weapon(void);
 extern void screen_show_image_until_input(const char *path);
-extern void sprite_add_ft4(const KfScreenRect *rectangle, const u8 *texcoords, const kf::FaceMaterial &material, const CVECTOR *color, u16 ot_index);
-extern void tmd_project_vertices_shift(s32 count, u8 shift, const MATRIX *model, const kf::Projection &projection);
-extern void tmd_transform_vertices(s32 count, const MATRIX *model);
+
+extern void tmd_project_vertices(s32 count, const MATRIX *model, const kf::Projection &projection);
 
 #endif

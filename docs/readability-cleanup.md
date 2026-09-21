@@ -116,14 +116,13 @@ increment/narrowing, preserving that operation's value range and ordering.
 Map/effect aliases now name their owning state objects directly. Floor-script
 storage has a typed reference-returning accessor; member writes still name the
 owning script union. No duplicate globals or copied snapshots were introduced.
-Shared GAME/OPEN code selects its graphics owner through a typed function, and
-the floor-item loader uses a small view of the live count and fixed array.
+The floor-item loader uses a small view of the live count and fixed array.
 Projected-vertex lookup is
 a typed OPEN helper. Word-count/emitter constants are `constexpr`; boolean
 aliases are removed in favor of `true`/`false`. Preset selection lives at each
 palette owner with its actual enum type, without a conditional type alias.
-Compile-time module selection, include guards and schema/resource macros remain
-distinct from runtime state aliases.
+Include guards and schema/resource macros remain distinct from runtime state
+aliases; the later ownership pass removes compile-time module selection.
 
 ### Menu navigation and dialogue exchanges
 
@@ -137,11 +136,46 @@ is advanced remain separate identities, including across the blocking dialogue.
 ### Shared camera-path operations
 
 Segment calculations and fixed-point pose publication/advancement now live in
-`src/lib/camera_path.cpp`, compiled in both module namespaces. GAME still fetches
+`src/lib/camera_path.cpp`, compiled once by the later ownership pass. GAME still fetches
 then increments its point cursor and starts at the player's camera; OPEN still
 increments then fetches and starts at path point zero. Sentinel handling,
 frame decrement/transition order, arithmetic widths and offsets are unchanged.
 Scene pacing and camera-path data are not changed.
+
+### One-program shared-code ownership
+
+`KF_OPEN` and all its function-presence guards are removed. `build.json` lists
+common sources once, separately from opening/gameplay scene policy. Common
+camera, math, file, memory, formatting, display, TMD and audio operations have
+one compiled implementation. Shared types are declared outside phase namespaces;
+the menu-specific enum encoder explicitly extends the common overload set.
+
+Stateful calls supply their actual owner. TMD contexts borrow the selected
+phase's slots, current resource/vertices and fixed projected array; opening still
+has two slots, gameplay eight. Contexts are call-local views, not persistent
+references that survive re-entry. Render state and display types are shared;
+gameplay-only lighting matrices remain in gameplay storage. Five unused packet
+counters with no readers or increments are removed. Frame waits, buffer-index
+changes and presentation order are unchanged.
+
+Each phase keeps its own arena, including its backing allocation. Resource
+loads and rewinds take that arena explicitly; re-entry and exit destroy the same
+owner as before. Floor-item loading receives its own count/array and height grid;
+drawing receives the view, sprites and phase-specific sprite producer. Animation
+still advances only after a visible item is submitted.
+
+Audio resource decoding, sequence/bank release and voice-slot operations are
+shared. A call-local playback view supplies the voice owner and current effects
+option (always enabled for opening). Phase-owned panning, sequence fades, bank
+settling, palette tables and initialization values remain distinct. Formatting
+scratch storage is shared and reset at each phase entry; no caller retains its
+results across a phase transition. No global active-phase selector replaces the
+removed preprocessor flag.
+
+Linux and WASM link after this pass. Linked-symbol inspection confirms single
+definitions of the inspected shared operations. Independent review covered the
+full ownership diff, its callers and reset chains; its header self-include
+finding is fixed. No gameplay or timing comparison was performed for this pass.
 
 ## Remaining cleanup boundaries
 
@@ -186,18 +220,8 @@ Dispoison/Fire Wall/Lightning Bolt order, and one notification per new spell.
 The following work belongs above the current stack rather than expanding #23's
 state-alias review into an application/rendering rewrite:
 
-1. **One-program shared-code ownership.** Remove `KF_OPEN` as an executable-mode
-   selector, not merely rename it or replace it with a global mode check.
-   Opening, gameplay and ending remain application phases with explicit state
-   lifetimes. Compile common math/resource operations once. Give stateful common
-   operations explicit typed state/arguments; their callers choose the relevant
-   scene state. Preserve initialization/re-entry resets and resource lifetimes.
-   `graphics_runtime()` currently returns different types because shared sources
-   are compiled twice; replacing that arrangement includes display reset fields,
-   TMD slots (two versus eight), floor-item storage and rendering contexts.
-   Do not pretend the opening/game palette indices have identical meanings.
-   Function-presence guards in vector/matrix math and sprite helpers are also
-   obsolete once the common source ownership is established.
+1. **One-program shared-code ownership:** implemented above, with explicit
+   phase state and no executable-mode selector.
 2. **Projected-face operations.** Group the repeated projected-vertex lookup,
    winding check and face-coordinate construction in the opening renderers.
    Preserve the fourth-vertex lookup after triangle winding rejection, flat
@@ -216,8 +240,8 @@ state-alias review into an application/rendering rewrite:
    express. Keep useful fixed-width aliases; remove aliases that only hide an
    identical native type as those callers are converted (for example face shading).
 
-This is an implementation queue, not a claim that the build-mode split or all
-rendering/math boilerplate has already been removed.
+The rendering/math entries remain an implementation queue, not a claim that all
+boilerplate has already been removed.
 
 ## Verification scope
 

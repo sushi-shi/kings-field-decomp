@@ -1,9 +1,8 @@
 #include <kf/lib/null.h>
 
-#include <kf/lib/audio.h>
+#include <kf/open/audio.h>
 #include <kf/lib/math.h>
 #include <kf/lib/render_face.h>
-#include <kf/open/audio.h>
 #include <kf/open/camera_path.h>
 #include <kf/open/opening_helpers.h>
 #include <kf/open/opening_render.h>
@@ -195,7 +194,7 @@ void opening_scene0_run(void)
         opening_camera_path_step(0);
         if (opening_camera_path_state.point_index >= SCENE0_ROTATION_START_POINT) {
             if (entity_11->rotation.y == KF_ANGLE_THREE_QUARTER_TURN) {
-                sound_ref_play(&opening_scene0_sound, SCENE0_SOUND_VOLUME);
+                sound_ref_play(audio_playback(), &opening_scene0_sound, SCENE0_SOUND_VOLUME);
             }
             entity_11->rotation.y -= SCENE0_YAW_STEP;
             entity_12->rotation.y += SCENE0_YAW_STEP;
@@ -208,18 +207,18 @@ void opening_scene0_run(void)
             }
             next_blend = blend - OPENING_COLOR_FADE_STEP;
             blend = next_blend;
-            lighting_set_color_matrix(
+            lighting_set_color_matrix(open_graphics_runtime.render_state,
                 &color_matrix_table[kf_enum_encode<s32>(KF_OPEN_COLOR_BLACK)],
                 &color_matrix_table[kf_enum_encode<s32>(KF_OPEN_COLOR_DEFAULT)], next_blend);
         } else if (blend < KF_FIXED12_ONE) {
             next_blend = blend + OPENING_COLOR_FADE_STEP;
             blend = next_blend;
-            lighting_set_color_matrix(
+            lighting_set_color_matrix(open_graphics_runtime.render_state,
                 &color_matrix_table[kf_enum_encode<s32>(KF_OPEN_COLOR_BLACK)],
                 &color_matrix_table[kf_enum_encode<s32>(KF_OPEN_COLOR_DEFAULT)], next_blend);
         }
 
-        audio_set_listener_transform(
+        audio_set_listener_transform(audio_state,
             &opening_camera_path_state.position,
             &opening_camera_path_state.rotation);
         opening_scene0_render_frame(
@@ -236,7 +235,7 @@ void opening_scene1_draw_fade(u8 shade)
     kf::DrawFace left {}, right {};
     const CVECTOR color = {shade, shade, shade, 0};
 
-    display_begin_frame();
+    display_begin_frame(open_graphics_runtime.display_state);
     left.material = {kf::SurfaceKind::Texture,
         {SCENE1_LEFT_TPAGE_X, KF_TEXTURE_LOWER_PAGE_Y, 0, 0, kf::TextureFormat::Direct16},
         kf::BlendMode::average};
@@ -250,7 +249,7 @@ void opening_scene1_draw_fade(u8 shade)
     render_face_uv_rectangle(&right, 0, 0, SCENE1_PANEL_WIDTH, KF_DISPLAY_HEIGHT);
     render_face_submit(&left, &color, KfFaceShading::Flat, 0);
     render_face_submit(&right, &color, KfFaceShading::Flat, 0);
-    display_present_frame();
+    display_present_frame(open_graphics_runtime.display_state);
 }
 
 void opening_scene1_run(void)
@@ -399,7 +398,7 @@ void opening_scene3_run(void)
 
     blend = 0;
     for (;;) {
-        lighting_set_color_matrix(
+        lighting_set_color_matrix(open_graphics_runtime.render_state,
             &color_matrix_table[kf_enum_encode<s32>(KF_OPEN_COLOR_BLACK)],
             &color_matrix_table[kf_enum_encode<s32>(KF_OPEN_COLOR_DEFAULT)], blend);
         opening_render_frame(
@@ -415,7 +414,7 @@ void opening_scene3_run(void)
     while (entity_13->rotation.y < KF_ANGLE_QUARTER_TURN) {
         entity_13->rotation.y += SCENE3_YAW_STEP;
         entity_14->rotation.y -= SCENE3_YAW_STEP;
-        audio_set_listener_transform(
+        audio_set_listener_transform(audio_state,
             &opening_camera_path_state.position,
             &opening_camera_path_state.rotation);
         opening_render_frame(
@@ -433,16 +432,15 @@ void opening_scene3_run(void)
             break;
         }
         wave_angle = (wave_angle + SCENE_CAMERA_WAVE_ANGLE_STEP) & KF_ANGLE_WRAP_MASK;
-        render_set_view_transform(
+        render_set_view_transform(open_graphics_runtime.render_state,
             &opening_camera_path_state.position,
             &opening_camera_path_state.rotation);
-        display_begin_frame();
+        display_begin_frame(open_graphics_runtime.display_state);
         opening_render_entities();
         overlay_index = 0;
         overlay_rect = opening_scene3_overlay_rects;
         overlay_y = &overlay_rect->y;
         do {
-
             if ((u16)(--*overlay_y + PANEL_CLIP_Y_BIAS) < PANEL_CLIP_SPAN) {
                 sprite_add_ft4(
                     overlay_rect,
@@ -455,7 +453,7 @@ void opening_scene3_run(void)
             overlay_y += sizeof(*overlay_rect) / sizeof(*overlay_y);
             overlay_rect++;
         } while (overlay_index < KF_OPENING_SCENE3_OVERLAY_COUNT);
-        display_present_frame();
+        display_present_frame(open_graphics_runtime.display_state);
         opening_poll_input();
     } while (opening_input_action == KF_OPENING_INPUT_NONE);
 
@@ -469,7 +467,7 @@ void opening_scene3_run(void)
 
     blend = 0;
     do {
-        lighting_set_color_matrix(
+        lighting_set_color_matrix(open_graphics_runtime.render_state,
             &color_matrix_table[kf_enum_encode<s32>(KF_OPEN_COLOR_DEFAULT)],
             &color_matrix_table[kf_enum_encode<s32>(KF_OPEN_COLOR_BLACK)], blend);
         opening_render_frame(
@@ -508,7 +506,7 @@ void opening_ending_scene_run(void)
     opening_cylinder_transition(KF_OPENING_CYLINDER_TRANSITION_CREATE, &transition_position);
 
     do {
-        lighting_set_color_matrix(
+        lighting_set_color_matrix(open_graphics_runtime.render_state,
             &color_matrix_table[kf_enum_encode<s32>(KF_OPEN_COLOR_BLACK)],
             &color_matrix_table[kf_enum_encode<s32>(KF_OPEN_COLOR_DEFAULT)], blend);
         opening_render_frame(
@@ -529,7 +527,7 @@ void opening_ending_scene_run(void)
             if (entity_13->rotation.y < KF_ANGLE_QUARTER_TURN) {
                 entity_13->rotation.y += SCENE3_YAW_STEP;
                 entity_14->rotation.y -= SCENE3_YAW_STEP;
-                audio_set_listener_transform(
+                audio_set_listener_transform(audio_state,
                     &opening_camera_path_state.position,
                     &opening_camera_path_state.rotation);
                 opening_render_frame(
@@ -572,7 +570,7 @@ void opening_ending_scene_run(void)
             open_graphics_runtime.display_state.frame_style.green =
             open_graphics_runtime.display_state.frame_style.blue =
             static_cast<u8>(brightness) / kf::color8_scale;
-        lighting_set_color_matrix(
+        lighting_set_color_matrix(open_graphics_runtime.render_state,
             &color_matrix_table[kf_enum_encode<s32>(KF_OPEN_COLOR_DEFAULT)],
             &color_matrix_table[kf_enum_encode<s32>(KF_OPEN_COLOR_BLACK)], blend);
         opening_render_frame(
@@ -647,7 +645,7 @@ void opening_ending_scroll_run(void)
         switch (lighting_phase) {
         case ENDING_LIGHT_TO_MIDPOINT:
             if (lighting_blend <= KF_FIXED12_ONE) {
-                lighting_set_color_matrix(
+                lighting_set_color_matrix(open_graphics_runtime.render_state,
                     &color_matrix_table[kf_enum_encode<s32>(KF_OPEN_COLOR_BLACK)],
                     &color_matrix_table[kf_enum_encode<s32>(KF_OPEN_COLOR_ENDING_MIDPOINT)], lighting_blend);
                 lighting_blend += ENDING_LIGHT_MIDPOINT_STEP;
@@ -658,7 +656,7 @@ void opening_ending_scroll_run(void)
             break;
         case ENDING_LIGHT_TO_GREEN:
             if (lighting_blend <= KF_FIXED12_ONE) {
-                lighting_set_color_matrix(
+                lighting_set_color_matrix(open_graphics_runtime.render_state,
                     &color_matrix_table[kf_enum_encode<s32>(KF_OPEN_COLOR_ENDING_MIDPOINT)],
                     &color_matrix_table[kf_enum_encode<s32>(KF_OPEN_COLOR_ENDING_GREEN)], lighting_blend);
                 lighting_blend += ENDING_LIGHT_GREEN_STEP;
@@ -695,9 +693,9 @@ void opening_ending_scroll_run(void)
             scroll_state = ENDING_SCROLL_ACTIVE;
             entity_27->object_id = KF_OPENING_ENDING_STARFIELD;
         }
-        render_set_view_transform(
+        render_set_view_transform(open_graphics_runtime.render_state,
             &opening_camera_path_state.position, &opening_camera_path_state.rotation);
-        display_begin_frame();
+        display_begin_frame(open_graphics_runtime.display_state);
         opening_render_entities();
 
         background_blend += ENDING_BACKGROUND_BLEND_STEP;
@@ -751,10 +749,9 @@ void opening_ending_scroll_run(void)
                 scroll_tick = ENDING_SCROLL_TICK_HOLD_AFTER_STARFIELD;
             }
         }
-        display_present_frame();
+        display_present_frame(open_graphics_runtime.display_state);
     }
 }
-
 
 void opening_scenes_reset_module_state(void)
 {

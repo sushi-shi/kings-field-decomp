@@ -1,3 +1,4 @@
+#include <kf/game/audio.h>
 #include <kf/lib/random.hpp>
 #include <kf/game/actor.h>
 #include <kf/lib/map_data.h>
@@ -264,10 +265,9 @@ void map_world_state_persist(void)
 void map_unload_floor(void)
 {
     pool_release_all();
-    audio_close_vab();
+    audio_close_vab(audio_state);
     map_world_state_persist();
 }
-
 
 void map_events_reset_module_state(void)
 {

@@ -1,3 +1,4 @@
+#include <kf/game/graphics.h>
 #include <kf/lib/null.h>
 
 #include <kf/game/resources.h>
@@ -45,11 +46,11 @@ void common_resources_load(void)
     u8 *stream;
     u8 *block;
 
-    resource_file_load_allocated(&images, "COM/MIX.TIM", &image_size);
+    resource_file_load_allocated(memory_arena, &images, "COM/MIX.TIM", &image_size);
     tim_upload_images(images, image_size);
-    memory_release_last();
+    memory_release_last(memory_arena);
     std::size_t resource_size;
-    resource_file_load_allocated(&stream, "COM/COM.DAT", &resource_size);
+    resource_file_load_allocated(memory_arena, &stream, "COM/COM.DAT", &resource_size);
     const u8 *resource_end = stream + resource_size;
     const auto effect_asset = resource_chunk_view(stream, resource_end);
     asset_registry_set(
@@ -69,7 +70,7 @@ void common_resources_load(void)
         (void *)player_level_growth_table,
         (const void *)(const KfPlayerLevelGrowth *)(RESOURCE_STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES),
         sizeof player_level_growth_table);
-    memory_release_last();
+    memory_release_last(memory_arena);
     memory_arena.allocation.cursor = block + KF_RESOURCE_REUSE_PREFIX_BYTES;
 }
 
@@ -83,13 +84,12 @@ u8 *map_resource_load_file(const char *filename, std::size_t *loaded_size)
     u8 *data;
 
     strcpy(&map_resource_path[3], filename);
-    resource_file_load_allocated(&data, map_resource_path, loaded_size);
+    resource_file_load_allocated(memory_arena, &data, map_resource_path, loaded_size);
     return data;
 }
 
 void map_variant_assets_load(void)
 {
-
     u8 **asset_buffer = &map_runtime_state.variant_asset_buffer;
 
     memcpy((void *)(&map_resource_path[3]), (const void *)("CHR0.MIM"), sizeof "CHR0.MIM");
@@ -132,16 +132,16 @@ void map_resources_load(KfFloorId floor, KfMapVariant map_variant)
 
     audio_stop_sequence_fade();
     effect_pool_reset();
-    memory_allocation_reset();
+    memory_allocation_reset(memory_arena);
     map_resource_path_set_floor(floor);
     std::size_t image_size;
     u8 *images = map_resource_load_file(map_mix_tim_filename, &image_size);
     tim_upload_images(images, image_size);
-    memory_release_last();
+    memory_release_last(memory_arena);
     std::size_t resource_size;
     stream = map_resource_load_file("MIXA.DAT", &resource_size);
     const u8 *resource_end = stream + resource_size;
-    audio_load_vab_resource(stream, resource_size);
+    audio_load_vab(audio_bank_resource(stream, resource_size));
     block = stream;
     stream = resource_stream_next(stream, resource_end);
     block = stream;
@@ -150,21 +150,21 @@ void map_resources_load(KfFloorId floor, KfMapVariant map_variant)
     const auto map_grids = resource_chunk_view(stream, resource_end);
     if (map_grids.size < 5 * sizeof map_cell_attribute_grid)
         kf::host_fail("Truncated map grids");
-    source = map_resource_copy_words(
+    source = resource_stream_copy_words(
         map_cell_attribute_grid.words,
         (u32 *)(stream + KF_RESOURCE_CHUNK_HEADER_BYTES),
         map_grid_word_count);
-    source = map_resource_copy_words(
+    source = resource_stream_copy_words(
         map_floor_height_grid.words, source, map_grid_word_count);
-    source = map_resource_copy_words(
+    source = resource_stream_copy_words(
         map_cell_orientation_grid.words, source, map_grid_word_count);
-    source = map_resource_copy_words(
+    source = resource_stream_copy_words(
         map_collision_flag_grid.words, source, map_grid_word_count);
-    map_resource_copy_words(
+    resource_stream_copy_words(
         map_collision_grid.words, source, map_grid_word_count);
     stream = resource_stream_next(stream, resource_end);
     const auto floor_items = resource_chunk_view(stream, resource_end);
-    item_load_floor_placements(floor_items.data, floor_items.size);
+    item_load_floor_placements(floor_item_storage(), map_floor_height_grid, floor_items.data, floor_items.size);
     stream = resource_stream_next(stream, resource_end);
     resource_chunk_view(stream, resource_end);
     map_object_pool_load(
@@ -181,16 +181,16 @@ void map_resources_load(KfFloorId floor, KfMapVariant map_variant)
     resource_chunk_view(stream, resource_end);
     map_event_pool_load(
         (KfMapEventDefinition *)(stream + KF_RESOURCE_CHUNK_HEADER_BYTES));
-    memory_release_last();
+    memory_release_last(memory_arena);
     memory_arena.allocation.cursor = block + KF_RESOURCE_REUSE_PREFIX_BYTES;
     stream = map_resource_load_file("MIXB.DAT", &resource_size);
     resource_end = stream + resource_size;
     const auto entity_tmd = resource_chunk_view(stream, resource_end);
-    tmd_register(KF_TMD_SLOT_ENTITIES,
+    tmd_register(tmd_context(), KF_TMD_SLOT_ENTITIES,
         stream + KF_RESOURCE_CHUNK_HEADER_BYTES, entity_tmd.size);
     stream = resource_stream_next(stream, resource_end);
     const auto map_tmd = resource_chunk_view(stream, resource_end);
-    tmd_register(KF_TMD_SLOT_MAP,
+    tmd_register(tmd_context(), KF_TMD_SLOT_MAP,
         stream + KF_RESOURCE_CHUNK_HEADER_BYTES, map_tmd.size);
     stream = resource_stream_next(stream, resource_end);
     const auto event_models = resource_chunk_view(stream, resource_end);
@@ -206,11 +206,11 @@ void map_resources_load(KfFloorId floor, KfMapVariant map_variant)
         asset_registry_load_tmd_archive(KF_ASSET_ACTOR_FIRST,
             stream + KF_RESOURCE_CHUNK_HEADER_BYTES, actor_models.size);
     } else {
-        map_runtime_state.variant_asset_buffer = (u8 *)memory_allocate(MAP_VARIANT_ASSET_BUFFER_BYTES);
+        map_runtime_state.variant_asset_buffer = (u8 *)memory_allocate(memory_arena, MAP_VARIANT_ASSET_BUFFER_BYTES);
         map_variant_assets_load();
     }
     player_sync_position_to_map();
-    memory_set_allocation_mode(KF_MEMORY_USE_HEAP);
+    memory_set_allocation_mode(memory_arena, KF_MEMORY_USE_HEAP);
 }
 
 void resources_reset_module_state(void)

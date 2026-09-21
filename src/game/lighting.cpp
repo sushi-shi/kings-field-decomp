@@ -16,7 +16,7 @@ void lighting_transition_color_matrix(const MATRIX *from, const MATRIX *to)
     s32 blend = 0;
 
     do {
-        lighting_set_color_matrix(from, to, blend);
+        lighting_set_color_matrix(game_graphics_runtime.render_state, from, to, blend);
         render_frame(NULL, NULL);
         blend += LIGHTING_COLOR_BLEND_STEP;
     } while (blend <= KF_FIXED12_ONE);

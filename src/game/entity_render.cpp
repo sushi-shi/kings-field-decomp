@@ -6,7 +6,6 @@
 #include <kf/game/render.h>
 #include <kf/game/state.h>
 #include <kf/lib/geometry_types.h>
-#include <kf/lib/graphics.h>
 
 enum { EFFECT_MODEL_DEPTH_BIAS = 100 };
 
@@ -71,12 +70,12 @@ void render_actor_sprite(KfEffectRecord *sprite, const MATRIX *lights)
         kf::matrix_multiply_rotation(game_graphics_runtime.render_state.view_matrix, model, model);
         asset = kf_enum_encode<u8>(sprite->render_id.model) + KF_ASSET_EFFECT_FIRST;
         asset_registry_select(asset);
-        object = tmd_get_object(0);
+        object = tmd_get_object(tmd_context(), 0);
         if (render_bind_animated_instance(
                 &sprite->animation_cache, asset, sprite->animation_clip, sprite->visual.animation_phase,
                 object->vertex_count) == NULL) {
-            tmd_select_object_vertices(0);
-            tmd_project_vertices(tmd_get_object(0)->vertex_count, &model, game_graphics_runtime.render_state.projection);
+            tmd_select_object_vertices(tmd_context(), 0);
+            tmd_project_vertices(tmd_get_object(tmd_context(), 0)->vertex_count, &model, game_graphics_runtime.render_state.projection);
         } else {
             tmd_project_vertices(object->vertex_count, &model, game_graphics_runtime.render_state.projection);
         }

@@ -1,3 +1,4 @@
+#include <kf/game/audio.h>
 #include <kf/lib/random.hpp>
 #include <kf/lib/null.h>
 
@@ -554,7 +555,7 @@ void map_object_pool_update(void)
                         if (*counter >= KF_MAP_FLOOR3_REQUIRED_REVEALS) {
                             map_apply_copy_region(KF_MAP_COPY_FLOOR3_REVEAL_FIRST);
                             map_apply_copy_region(KF_MAP_COPY_FLOOR3_REVEAL_SECOND);
-                            sound_ref_play(&gameplay_sound_refs[KF_GAMEPLAY_SOUND_STONE_PASSAGE], KF_AUDIO_MAX_VOLUME);
+                            sound_ref_play(audio_playback(), &gameplay_sound_refs[KF_GAMEPLAY_SOUND_STONE_PASSAGE], KF_AUDIO_MAX_VOLUME);
                             *counter = KF_MAP_FLOOR3_REQUIRED_REVEALS;
                         }
                     }
@@ -577,7 +578,6 @@ void map_object_pool_update(void)
         }
     }
 }
-
 
 void map_object_reset_module_state(void)
 {

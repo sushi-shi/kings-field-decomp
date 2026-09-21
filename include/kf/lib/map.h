@@ -20,7 +20,6 @@ enum {
     MAP_DOOR_FACING_TOLERANCE = KF_ANGLE_FULL_TURN / 12
 };
 
-
 enum {
     KF_MAP_SAVED_FLOOR_COUNT = 5,
     KF_MAP_SAVED_FLOOR_BYTES = 1700,
@@ -76,7 +75,6 @@ typedef struct KfMapSavedFloor {
 typedef struct KfMapSavedWorld {
     KfMapSavedFloor floors[KF_MAP_SAVED_FLOOR_COUNT];
 } KfMapSavedWorld;
-
 
 enum {
     KF_MAP_LINK_BOSS_EMITTERS = 13,
@@ -210,7 +208,6 @@ typedef struct KfMapObjectPlacement {
     KfMapObjectLink link;
 } KfMapObjectPlacement;
 
-
 typedef struct KfMapObject {
     KfObjectId object_id;
     u8 unknown_01;
@@ -225,34 +222,7 @@ typedef struct KfMapObject {
     KfMapObjectProgress action_timer;
 } KfMapObject;
 
-enum {
-    KF_CAMERA_PATH_END_X = -1,
-    KF_CAMERA_PATH_FINISHED = -1
-};
-
-typedef struct KfCameraPathPoint {
-    VECTOR position;
-    SVECTOR rotation;
-    s16 speed;
-    s16 unknown_1a;
-} KfCameraPathPoint;
-
-typedef struct KfCameraPathState {
-    const KfCameraPathPoint *points;
-    VECTOR position;
-    SVECTOR rotation;
-    VECTOR position_fixed;
-    VECTOR rotation_fixed;
-    VECTOR position_delta;
-    VECTOR rotation_delta;
-    s16 point_index;
-    s16 unknown_5e;
-    s32 frames_remaining;
-} KfCameraPathState;
-
-extern void camera_path_prepare_segment(KfCameraPathState *path, const KfCameraPathPoint *point);
-extern void camera_path_publish_fixed(KfCameraPathState *path);
-extern void camera_path_advance_pose(KfCameraPathState *path, s32 y_offset);
+#include <kf/lib/camera_path.h>
 
 enum class KfCharacterId : u8 {
     KF_CHARACTER_KEY_OF_THE_DEAD_EXCHANGE = 3,
@@ -421,7 +391,6 @@ extern void map_object_spawn_actor_debris(u16 source, const VECTOR *position, s3
 extern void map_object_spawn_effect(KfMapObjectDropSource drop_source, KfObjectId object_id, const VECTOR *position, s32 y_offset);
 extern void map_object_start_action_if_idle(KfMapObject *object, KfMapObjectOperation action);
 
-extern const u32 *map_resource_copy_words(u32 *destination, const u32 *source, u32 word_count);
 extern u8 *map_resource_load_file(const char *filename, std::size_t *loaded_size = nullptr);
 extern void map_resource_path_set_floor(KfFloorId floor);
 extern void map_resources_load(KfFloorId floor, KfMapVariant map_variant);

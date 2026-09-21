@@ -65,12 +65,12 @@ void render_weapon(void)
     model.t[2] = weapon->render_translation.z;
     kf::matrix_set_rotation_xyz(weapon->render_rotation, model);
     asset_registry_select(KF_ASSET_WEAPON);
-    object = tmd_get_object(0);
+    object = tmd_get_object(tmd_context(), 0);
     if (render_bind_animated_instance(
             &player_state.weapon_animation_cache, KF_ASSET_WEAPON, KF_ANIMATION_CLIP_FIRST,
             player_state.weapon_attack_phase,
             object->vertex_count) != NULL) {
-        tmd_project_vertices_shift(object->vertex_count, WEAPON_PROJECTED_DEPTH_SHIFT, &model, projection);
+        tmd_project_vertices_shift(tmd_context(), object->vertex_count, WEAPON_PROJECTED_DEPTH_SHIFT, &model, projection);
         depth_bias =
             player_state.equipped_weapon_record->render_translation.z >> WEAPON_DEPTH_BIAS_SHIFT;
         render_enqueue_tmd(0, -depth_bias + WEAPON_BASE_DEPTH_BIAS, &render_light_matrices[KF_RENDER_LIGHT_WEAPON]);
@@ -87,7 +87,7 @@ void render_effect_sprites(const MATRIX *lights)
     u16 scale_numerator;
 
     saved_color_matrix = game_graphics_runtime.render_state.lighting.color_matrix;
-    memcpy(game_graphics_runtime.render_state.lighting.color_matrix.m, (game_graphics_runtime.render_state.effect_color_matrix).m,
+    memcpy(game_graphics_runtime.render_state.lighting.color_matrix.m, (game_graphics_runtime.effect_color_matrix).m,
         sizeof game_graphics_runtime.render_state.lighting.color_matrix.m);
     scale.vz = KF_FIXED12_ONE;
     entry = effect_sprites;
@@ -101,12 +101,12 @@ void render_effect_sprites(const MATRIX *lights)
         scale.vx = scale_numerator;
         kf::matrix_scale_axes(model, scale);
         asset_registry_select(KF_ASSET_EFFECT_SPRITES);
-        object = tmd_get_object(0);
+        object = tmd_get_object(tmd_context(), 0);
         if (render_bind_animated_instance(
                 &entry->animation_cache, KF_ASSET_EFFECT_SPRITES,
                 entry->animation_clip, entry->asset_variant,
                 object->vertex_count) != NULL) {
-            tmd_transform_vertices(object->vertex_count, &model);
+            tmd_transform_vertices(tmd_context(), object->vertex_count, &model);
             render_enqueue_tmd(0, 0, lights);
         }
         entry++;
@@ -265,7 +265,6 @@ void display_flip_buffer_index(void)
 {
     game_graphics_runtime.display_state.buffer_index = display_next_buffer(game_graphics_runtime.display_state.buffer_index);
 }
-
 
 void geometry_render_reset_module_state(void)
 {

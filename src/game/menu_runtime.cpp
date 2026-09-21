@@ -1,3 +1,4 @@
+#include <kf/game/resources.h>
 #include <kf/game/menu_glyphs.h>
 #include <kf/lib/null.h>
 #include <kf/lib/bool.h>
@@ -656,7 +657,6 @@ void menu_draw_stats_header(void)
     s32 glyph_index;
     s32 row_step = STATS_HEADER_ROW_STEP;
 
-
     gs.position.x = 0xb5;
     gs.position.y = 0x24;
     gs.glyphs.codes[0] = menu_glyphs::experience[0];
@@ -816,7 +816,6 @@ void menu_draw_status_details(void)
     s32 glyph_index;
     s32 rating;
     s32 summary_y_origin;
-
 
     summary_y_origin = 0x23;
     gs.position.x = 0x15;
@@ -1118,7 +1117,6 @@ enum {
 void menu_draw_name_list(void)
 {
     MenuGlyphString gs;
-
 
     gs.position.x = MENU_ITEM_NAME_X;
     gs.position.y = EQUIPMENT_NAME_FIRST_Y;
@@ -1997,7 +1995,7 @@ KfResourceLoadResult menu_load_item_model(KfObjectId item_id)
         if (resource_file_load_item_model(&asset, kf_enum_encode<s32>(item_id), &asset_size) != KF_RESOURCE_LOADED) {
             return KF_RESOURCE_LOAD_FAILED;
         }
-        tmd_register(KF_TMD_SLOT_MENU_ITEM, asset, asset_size);
+        tmd_register(tmd_context(), KF_TMD_SLOT_MENU_ITEM, asset, asset_size);
         menu_item_model_allocation_pending = KF_MENU_MODEL_ALLOCATED;
     }
     menu_item_preview_rotation.vy = 0;
@@ -2007,7 +2005,7 @@ KfResourceLoadResult menu_load_item_model(KfObjectId item_id)
 void menu_release_item_model(void)
 {
     if (menu_item_model_allocation_pending == KF_MENU_MODEL_ALLOCATED) {
-        tmd_release_last_allocation(KF_TMD_SLOT_MENU_ITEM);
+        tmd_release_last_allocation(tmd_context(), memory_arena, KF_TMD_SLOT_MENU_ITEM);
         menu_item_model_allocation_pending = KF_MENU_MODEL_RELEASED;
     }
 }
@@ -2045,7 +2043,6 @@ KfMenuResult menu_list_interact(
 {
     return menu_list_interact_impl(list, confirmation, preview, static_cast<s32>(id), bank, trade);
 }
-
 
 void menu_runtime_reset_module_state(void)
 {

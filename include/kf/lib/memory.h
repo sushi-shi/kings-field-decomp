@@ -28,18 +28,17 @@ typedef struct KfMemoryAllocationState {
 } KfMemoryAllocationState;
 
 typedef struct KfMemoryArena {
+    u8 *storage;
     u8 *start;
     u8 *end;
     KfMemoryAllocationState allocation;
 } KfMemoryArena;
 
-extern KfMemoryArena memory_arena;
-
-extern void *memory_allocate(std::size_t size);
-extern void memory_allocation_reset(void);
-extern void memory_destroy_arena(void);
-extern void memory_set_allocation_mode(KfMemoryAllocationMode allocation_mode);
+extern void *memory_allocate(KfMemoryArena &arena, std::size_t size);
+extern void memory_allocation_reset(KfMemoryArena &arena);
+extern void memory_destroy_arena(KfMemoryArena &arena);
+extern void memory_set_allocation_mode(KfMemoryArena &arena, KfMemoryAllocationMode allocation_mode);
 extern void *memory_malloc_checked(std::size_t size);
-extern void memory_release_last(void);
+extern void memory_release_last(KfMemoryArena &arena);
 
 #endif

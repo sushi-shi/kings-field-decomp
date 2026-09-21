@@ -1,3 +1,4 @@
+#include <kf/platform/prelude.hpp>
 #include <kf/lib/resource_file.h>
 
 #include <kf/lib/memory.h>
@@ -14,7 +15,7 @@ kf::FileResult resource_file_open(kf::DataFile *file, const char *relative_path)
     return kf::data_file_open(file, path);
 }
 
-KfResourceLoadResult resource_file_try_load_allocated(u8 **destination, const char *relative_path,
+KfResourceLoadResult resource_file_try_load_allocated(KfMemoryArena &arena, u8 **destination, const char *relative_path,
                                                     std::size_t *loaded_size)
 {
     *destination = NULL;
@@ -26,7 +27,7 @@ KfResourceLoadResult resource_file_try_load_allocated(u8 **destination, const ch
         if (!file.size) {
             result = kf::FileResult::IoError;
         } else {
-            auto *data = static_cast<u8 *>(memory_allocate(file.size));
+            auto *data = static_cast<u8 *>(memory_allocate(arena, file.size));
             if (!data) {
                 result = kf::FileResult::OutOfMemory;
             } else {
@@ -36,7 +37,7 @@ KfResourceLoadResult resource_file_try_load_allocated(u8 **destination, const ch
                     if (loaded_size)
                         *loaded_size = file.size;
                 } else
-                    memory_release_last();
+                    memory_release_last(arena);
             }
         }
     }
@@ -47,10 +48,10 @@ KfResourceLoadResult resource_file_try_load_allocated(u8 **destination, const ch
     return KF_RESOURCE_LOAD_FAILED;
 }
 
-void resource_file_load_allocated(u8 **destination, const char *relative_path, std::size_t *loaded_size)
+void resource_file_load_allocated(KfMemoryArena &arena, u8 **destination, const char *relative_path, std::size_t *loaded_size)
 {
     // These callers immediately parse required resources. Do not continue with stale data.
-    if (resource_file_try_load_allocated(destination, relative_path, loaded_size) != KF_RESOURCE_LOADED)
+    if (resource_file_try_load_allocated(arena, destination, relative_path, loaded_size) != KF_RESOURCE_LOADED)
         exit(1);
 }
 

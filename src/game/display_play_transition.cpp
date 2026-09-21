@@ -43,14 +43,13 @@ void display_play_transition(void)
          kf::TextureFormat::Indexed4}, kf::BlendMode::average};
 
     for (i = 0; i < KF_TRANSITION_FADE_FRAMES; i++) {
-        display_begin_frame();
+        display_begin_frame(game_graphics_runtime.display_state);
         transition_advance_color(color);
         sprite_add_ft4(&rect, uv.v, material, &color, KF_TRANSITION_OT_DEPTH);
-        display_present_frame();
+        display_present_frame(game_graphics_runtime.display_state);
     }
     kf::host_set_input_context(input_context);
 }
-
 
 void display_play_transition_reset_module_state(void)
 {

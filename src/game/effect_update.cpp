@@ -1,5 +1,5 @@
 #include <kf/lib/random.hpp>
-#include <kf/lib/audio.h>
+#include <kf/game/audio.h>
 #include <kf/lib/map_data.h>
 #include <kf/game/collision.h>
 #include <kf/game/effect.h>
@@ -267,7 +267,6 @@ void effect_spawn_ground_branch(u8 id, KfEffectRecord *parent_effect, s16 angle_
     effect_pool_construct(id, parent_effect->type, KF_MAGIC_FIRE_WALL, &position,
         &parent_effect->direction.vector, KfEffectBranchArguments{branch_role});
 }
-
 
 void effect_update_reset_module_state(void)
 {

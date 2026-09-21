@@ -38,12 +38,12 @@ void render_actor(KfActor *actor)
     descriptor = actor_state.definitions.entries[actor->definition_id].model_and_texture;
     asset = descriptor & ACTOR_MODEL_ASSET_MASK;
     asset_registry_select(asset);
-    object = tmd_get_object(0);
+    object = tmd_get_object(tmd_context(), 0);
     if (render_bind_animated_instance(
             &actor->animation_cache, asset, actor->animation_id,
             actor->animation_phase, object->vertex_count) == NULL) {
-        tmd_select_object_vertices(0);
-        tmd_project_vertices(tmd_get_object(0)->vertex_count, &model, game_graphics_runtime.render_state.projection);
+        tmd_select_object_vertices(tmd_context(), 0);
+        tmd_project_vertices(tmd_get_object(tmd_context(), 0)->vertex_count, &model, game_graphics_runtime.render_state.projection);
     } else {
         tmd_project_vertices(object->vertex_count, &model, game_graphics_runtime.render_state.projection);
     }
@@ -91,16 +91,16 @@ void render_map_object(KfMapObject *object)
         depth = 0;
         break;
     }
-    tmd_select_object_vertices(kf_enum_encode<u16>(id));
-    tmd_project_vertices(tmd_get_object(kf_enum_encode<u16>(id))->vertex_count, &model, game_graphics_runtime.render_state.projection);
+    tmd_select_object_vertices(tmd_context(), kf_enum_encode<u16>(id));
+    tmd_project_vertices(tmd_get_object(tmd_context(), kf_enum_encode<u16>(id))->vertex_count, &model, game_graphics_runtime.render_state.projection);
     render_enqueue_tmd(kf_enum_encode<u16>(id), depth, &light);
 }
 
 void menu_render_item_model(const MATRIX *lights, const MATRIX *model)
 {
     lighting_set_active_color_matrix(KF_GAME_COLOR_DEFAULT);
-    tmd_select(KF_TMD_SLOT_MENU_ITEM);
-    tmd_select_object_vertices(0);
-    tmd_project_vertices(tmd_get_object(0)->vertex_count, model, game_graphics_runtime.render_state.projection);
+    tmd_select(tmd_context(), KF_TMD_SLOT_MENU_ITEM);
+    tmd_select_object_vertices(tmd_context(), 0);
+    tmd_project_vertices(tmd_get_object(tmd_context(), 0)->vertex_count, model, game_graphics_runtime.render_state.projection);
     render_enqueue_tmd(0, MENU_ITEM_DEPTH_BIAS, lights);
 }

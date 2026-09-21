@@ -36,13 +36,24 @@ typedef struct KfGraphicsRuntimeGame {
     u16 floor_item_count;
     u8 unknown_241fa[6];
     KfFloorItem floor_items[KF_FLOOR_ITEM_CAPACITY];
-    u32 DAT_80095698;
-    u32 DAT_8009569c;
     KfRenderState render_state;
+    MATRIX light_matrix_copy;
+    MATRIX effect_color_matrix;
     MATRIX light_quadrant_matrices[KF_VIEW_QUADRANT_COUNT];
     const KfCellWindow *active_cell_window;
 } KfGraphicsRuntimeGame;
 
 extern KfGraphicsRuntimeGame game_graphics_runtime;
+
+inline KfTmdContext tmd_context()
+{
+    return {game_graphics_runtime.tmd_state.slots, game_graphics_runtime.tmd_state.current_asset,
+        game_graphics_runtime.current_tmd_vertices, game_graphics_runtime.tmd_projected_vertices};
+}
+
+inline KfFloorItemStorage floor_item_storage()
+{
+    return {game_graphics_runtime.floor_item_count, game_graphics_runtime.floor_items};
+}
 
 #endif

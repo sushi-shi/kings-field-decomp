@@ -1,7 +1,7 @@
 #ifndef KF_OPEN_OPENING_SCENES_H
 #define KF_OPEN_OPENING_SCENES_H
 
-#include <kf/lib/audio.h>
+#include <kf/open/audio.h>
 #include <kf/lib/map.h>
 #include <kf/lib/render_types.h>
 

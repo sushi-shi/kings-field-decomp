@@ -30,4 +30,6 @@ enum {
 
 extern void debug_printf_sink(const char *format, ...);
 
+void format_reset_module_state(void);
+
 #endif

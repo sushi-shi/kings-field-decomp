@@ -3,7 +3,7 @@
 
 #include <kf/lib/bool.h>
 #include <kf/game/combat.h>
-#include <kf/lib/audio.h>
+#include <kf/game/audio.h>
 #include <kf/lib/enum.h>
 #include <kf/game/equipment.h>
 #include <kf/game/effect.h>
@@ -255,5 +255,7 @@ extern void player_warp_shimmer_at_player(KfWarpShimmerMode shimmer_mode);
 extern void player_warp_same_floor(KfMapVariant map_variant, s32 cell_x, s32 cell_z);
 extern void player_warp_to_floor_entry(void);
 extern KfBoolU32 player_warp_trigger_update(void);
+
+extern s32 fixed6_ratio_step(s32 value, s32 span);
 
 #endif

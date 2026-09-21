@@ -38,6 +38,6 @@ inline u8 *resource_stream_next(u8 *chunk, const u8 *end)
 extern void tim_upload_images(const u8 *tim_data, std::size_t size);
 
 extern const u32 *resource_stream_copy_words(
-    u32 *destination, const u32 *source, s32 word_count);
+    u32 *destination, const u32 *source, std::size_t word_count);
 
 #endif

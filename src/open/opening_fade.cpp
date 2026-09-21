@@ -20,15 +20,14 @@ void opening_fade_in(void)
          kf::TextureFormat::Indexed4}, kf::BlendMode::average};
     frame = 0;
     do {
-        display_begin_frame();
+        display_begin_frame(open_graphics_runtime.display_state);
         transition_advance_color(color);
         sprite_add_ft4(
             &opening_fade_rect, opening_fade_uv, material, &color, KF_TRANSITION_OT_DEPTH);
-        display_present_frame();
+        display_present_frame(open_graphics_runtime.display_state);
         frame++;
     } while (frame < KF_TRANSITION_FADE_FRAMES);
 }
-
 
 void opening_fade_reset_module_state(void)
 {

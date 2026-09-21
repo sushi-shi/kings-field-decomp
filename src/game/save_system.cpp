@@ -1,3 +1,4 @@
+#include <kf/game/audio.h>
 #include <kf/lib/null.h>
 #include <kf/lib/bool.h>
 #include <kf/game/graphics.h>
@@ -28,7 +29,6 @@ constexpr unsigned talk_character_tens_offset = 12;
 constexpr unsigned talk_character_ones_offset = 13;
 constexpr unsigned talk_page_offset = 14;
 }
-
 
 enum {
     SAVE_MESSAGE_NO_SPACE = 102,

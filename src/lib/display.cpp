@@ -1,24 +1,14 @@
+#include <kf/platform/prelude.hpp>
 #include <kf/lib/graphics.h>
-#ifndef KF_OPEN
-#include <kf/game/state.h>
-#endif
 
-void display_begin_frame(void)
+void display_begin_frame(KfDisplayState &display)
 {
-    graphics_runtime().display_state.buffer_index = display_next_buffer(graphics_runtime().display_state.buffer_index);
+    display.buffer_index = display_next_buffer(display.buffer_index);
     kf::host_begin_frame();
-#ifdef KF_OPEN
-    graphics_runtime().DAT_8006e044 = 0;
-    graphics_runtime().DAT_8006e040 = 0;
-#else
-    DAT_800a0768 = 0;
-    graphics_runtime().DAT_8009569c = 0;
-    graphics_runtime().DAT_80095698 = 0;
-#endif
 }
 
-void display_present_frame(void)
+void display_present_frame(const KfDisplayState &display)
 {
     kf::host_wait_frame();
-    kf::host_present_frame(graphics_runtime().display_state.frame_style);
+    kf::host_present_frame(display.frame_style);
 }

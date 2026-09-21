@@ -1,3 +1,4 @@
+#include <kf/platform/prelude.hpp>
 #include <kf/lib/math.h>
 #include <kf/lib/render_types.h>
 #include <kf/lib/graphics.h>
@@ -21,7 +22,7 @@ void matrix_interpolate(
     } while (--count != -1);
 }
 
-void lighting_set_color_matrix(
+void lighting_set_color_matrix(KfRenderState &view,
     const MATRIX *from,
     const MATRIX *to,
     s32 blend)
@@ -29,25 +30,23 @@ void lighting_set_color_matrix(
     MATRIX matrix;
 
     matrix_interpolate(from, to, &matrix, blend);
-    memcpy(graphics_runtime().render_state.lighting.color_matrix.m, (matrix).m,
-        sizeof graphics_runtime().render_state.lighting.color_matrix.m);
+    memcpy(view.lighting.color_matrix.m, (matrix).m,
+        sizeof view.lighting.color_matrix.m);
 }
 
-void fog_interpolate_near(s32 start, s32 end, s32 ratio)
+void fog_interpolate_near(KfRenderState &view, s32 start, s32 end, s32 ratio)
 {
     s32 distance = (((end - start) * ratio) >> KF_FIXED12_BITS) + start;
 
-    graphics_runtime().render_state.fog_near_distance = distance;
-    graphics_runtime().render_state.projection.fog_near = distance;
+    view.fog_near_distance = distance;
+    view.projection.fog_near = distance;
 }
 
-void fog_set_near(s32 distance)
+void fog_set_near(KfRenderState &view, s32 distance)
 {
-    graphics_runtime().render_state.fog_near_distance = distance;
-    graphics_runtime().render_state.projection.fog_near = distance;
+    view.fog_near_distance = distance;
+    view.projection.fog_near = distance;
 }
-
-#ifdef KF_OPEN
 
 void color_lerp_cvector(
     const CVECTOR *from,
@@ -59,7 +58,6 @@ void color_lerp_cvector(
     output->g = (((to->g - from->g) * blend) >> KF_FIXED12_BITS) + from->g;
     output->b = (((to->b - from->b) * blend) >> KF_FIXED12_BITS) + from->b;
 }
-#endif
 
 u16 color_lerp_rgb555(u16 color0, u16 color1, s32 blend)
 {

@@ -1,3 +1,5 @@
+#include <kf/game/audio.h>
+#include <kf/game/resources.h>
 #include <kf/game/graphics.h>
 
 #include <kf/lib/overlay.h>
@@ -25,7 +27,7 @@ void game_main_loop(void)
     memset((void *)&effect_state, 0, sizeof(KfEffectState));
     memset((void *)map_runtime_state.events, 0, sizeof map_runtime_state.events);
     memset((void *)&player_state, 0, sizeof(KfPlayerState));
-    memory_set_allocation_mode(KF_MEMORY_CREATE_ARENA);
+    memory_set_allocation_mode(memory_arena, KF_MEMORY_CREATE_ARENA);
     audio_initialize();
     display_initialize();
     item_load_database();
@@ -35,7 +37,7 @@ void game_main_loop(void)
     map_event_timers_reset();
     common_resources_load();
     game_initialize_session();
-    memory_set_allocation_mode(KF_MEMORY_REBASE_ARENA);
+    memory_set_allocation_mode(memory_arena, KF_MEMORY_REBASE_ARENA);
     map_load_floor_wrapper();
     frame_pacer_last_tick = kf::host_clock_tick();
     player_warp_shimmer_at_player(KF_WARP_SHIMMER_SHRINK_REMOVE);
@@ -46,7 +48,7 @@ void game_main_loop(void)
             break;
         }
         player_update_transform_snapshot(&player_position_snapshot, &player_rotation_snapshot);
-        audio_set_listener_transform(&player_position_snapshot, &player_rotation_snapshot);
+        audio_set_listener_transform(audio_state, &player_position_snapshot, &player_rotation_snapshot);
         actor_set_player_transform(&player_position_snapshot, &player_rotation_snapshot);
         actor_pool_update();
         map_object_pool_update();
@@ -77,7 +79,7 @@ void game_main_loop(void)
 
 void game_shutdown(void)
 {
-    audio_shutdown();
+    audio_close_vab(audio_state);
 }
 
 void frame_pacer_wait(void)
@@ -85,7 +87,6 @@ void frame_pacer_wait(void)
     kf::host_wait_until_tick(frame_pacer_last_tick + FRAME_PACER_INTERVAL_TICKS);
     frame_pacer_last_tick = kf::host_clock_tick();
 }
-
 
 void game_reset_module_state(void)
 {
