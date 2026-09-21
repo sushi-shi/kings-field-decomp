@@ -9,7 +9,7 @@ SVECTOR render_sprite_light_normal = {0, 0, KF_FIXED12_ONE, 0};
 void render_enqueue_sprite(KfSpriteQuad *sprite, s16 depth_bias, KfSpriteDepthCueMode depth_cue_mode, const MATRIX *lights, const MATRIX *model, const kf::Projection &projection)
 {
     SVECTOR corners[4];
-    SVECTOR anchor;
+    SVECTOR anchor{};
     s32 depth_cue;
     s32 otz;
 
@@ -18,7 +18,6 @@ void render_enqueue_sprite(KfSpriteQuad *sprite, s16 depth_bias, KfSpriteDepthCu
     corners[0].vy = corners[1].vy = sprite->y;
     corners[2].vy = corners[3].vy = sprite->y + sprite->h;
     corners[0].vz = corners[1].vz = corners[2].vz = corners[3].vz = 0;
-    anchor.vx = anchor.vy = anchor.vz = 0;
     otz = kf::render_project_point(*model, projection, anchor).depth >> KF_GTE_DEPTH_TO_OT_SHIFT;
     kf::ProjectedPoint positions[4];
     for (unsigned i = 0; i < 4; ++i)

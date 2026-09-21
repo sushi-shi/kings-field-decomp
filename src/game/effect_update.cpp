@@ -62,7 +62,7 @@ void effect_projectile_update_3d(SVECTOR *probe_offset, KfEffectPhase phase_limi
         matrix_set_rotation_y(record->rotation.vector.vy, &yaw_matrix);
         kf::matrix_multiply_rotation(yaw_matrix, rotation_matrix, rotation_matrix);
         world = kf::matrix_apply_rotation(rotation_matrix, *probe_offset);
-        vector_add_xyz(world, record->position);
+        world += record->position;
         collision = effect_map_collision(&world, EFFECT_SWING_COLLISION_RADIUS);
         if (collision != KF_COLLISION_NONE) {
             if ((collision >> KF_COLLISION_KIND_SHIFT) == (KF_COLLISION_ACTOR >> KF_COLLISION_KIND_SHIFT)) {
@@ -229,11 +229,11 @@ void effect_rotate_scale_offset_y(SVECTOR *offset, VECTOR *output, s16 angle, s3
     SVECTOR rotation;
     MATRIX matrix;
 
-    vector_set_xyz(scaled,
+    scaled = VECTOR{
         (offset->vx * scale) >> KF_FIXED12_BITS,
         0,
-        (offset->vz * scale) >> KF_FIXED12_BITS);
-    vector_set_xyz(rotation, 0, angle, 0);
+        (offset->vz * scale) >> KF_FIXED12_BITS}.narrowed();
+    rotation = {0, angle, 0};
     kf::matrix_set_rotation_xyz(rotation, matrix);
     *output = kf::matrix_apply_rotation(matrix, scaled);
 }
