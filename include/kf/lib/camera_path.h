@@ -29,4 +29,3 @@ typedef struct KfCameraPathState {
 extern void camera_path_prepare_segment(KfCameraPathState *path, const KfCameraPathPoint *point);
 extern void camera_path_publish_fixed(KfCameraPathState *path);
 extern void camera_path_advance_pose(KfCameraPathState *path, s32 y_offset);
-
