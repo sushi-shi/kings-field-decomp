@@ -397,52 +397,58 @@ void map_action_script_floor5(void)
     }
 }
 
+static bool map_exchange_is_available(const ExchangeDialogue &exchange, KfObjectId offered_item)
+{
+    const auto &inventory = item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)];
+    const auto &dialogue = map_runtime_state.events[exchange.event_slot].dialogue;
+    return inventory[kf_enum_encode<u8>(offered_item)] != 0
+        && dialogue.stage == exchange.stage && dialogue.page < exchange.page_end;
+}
+
+static void map_finish_exchange_dialogue(KfMapEvent &speaker, const ExchangeDialogue &exchange)
+{
+    talk_show_dialogue_page(player_state.progress_state.current_floor,
+        speaker.dialogue.stage, speaker.character_id, exchange.response_page);
+    auto &target = map_runtime_state.events[exchange.event_slot];
+    target.dialogue.page = exchange.next_page;
+    target.dialogue.page_delay = 0;
+    target.dialogue.stage_limit = exchange.stage_limit;
+    map_event_refresh_dialogue_stage(&target);
+}
+
 void map_event_interact(KfMapEvent *event)
 {
+    auto &inventory = item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)];
+
     switch (event->character_id) {
     case KF_CHARACTER_KEY_OF_THE_DEAD_EXCHANGE:
-        if (item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)][kf_enum_encode<u8>(KF_ITEM_GOLD_CROSS)] != 0 && map_runtime_state.events[key_exchange.event_slot].dialogue.stage == key_exchange.stage
-            && map_runtime_state.events[key_exchange.event_slot].dialogue.page < key_exchange.page_end) {
-            item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)][kf_enum_encode<u8>(KF_ITEM_KEY_OF_THE_DEAD)] = 1;
-            map_runtime_state.events[key_exchange.event_slot].dialogue_pages.last_page[key_exchange.last_page_slot] = key_exchange.last_page;
-            item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)][kf_enum_encode<u8>(KF_ITEM_GOLD_CROSS)]--;
-            talk_show_dialogue_page(player_state.progress_state.current_floor,
-                                    event->dialogue.stage, event->character_id, key_exchange.response_page);
-            map_runtime_state.events[key_exchange.event_slot].dialogue.page = key_exchange.next_page;
-            map_runtime_state.events[key_exchange.event_slot].dialogue.page_delay = 0;
-            map_runtime_state.events[key_exchange.event_slot].dialogue.stage_limit = key_exchange.stage_limit;
-            map_event_refresh_dialogue_stage(&map_runtime_state.events[key_exchange.event_slot]);
+        if (map_exchange_is_available(key_exchange, KF_ITEM_GOLD_CROSS)) {
+            inventory[kf_enum_encode<u8>(KF_ITEM_KEY_OF_THE_DEAD)] = 1;
+            map_runtime_state.events[key_exchange.event_slot].dialogue_pages
+                .last_page[key_exchange.last_page_slot] = key_exchange.last_page;
+            inventory[kf_enum_encode<u8>(KF_ITEM_GOLD_CROSS)]--;
+            map_finish_exchange_dialogue(*event, key_exchange);
             return;
         }
         break;
     case KF_CHARACTER_HEALING_EXCHANGE:
-        if (item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)][kf_enum_encode<u8>(KF_ITEM_MIRROR_OF_TRUTH)] != 0 && map_runtime_state.events[healing_exchange.event_slot].dialogue.stage == healing_exchange.stage
-            && map_runtime_state.events[healing_exchange.event_slot].dialogue.page < healing_exchange.page_end) {
+        if (map_exchange_is_available(healing_exchange, KF_ITEM_MIRROR_OF_TRUTH)) {
             effect_state.magic.entries[kf_enum_encode<u8>(KF_MAGIC_HEALING)].learned = KF_MAGIC_LEARNED;
-            item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)][kf_enum_encode<u8>(KF_ITEM_MIRROR_OF_TRUTH)]--;
+            inventory[kf_enum_encode<u8>(KF_ITEM_MIRROR_OF_TRUTH)]--;
             notify_enqueue(KF_NOTIFICATION_MAGIC_LEARNED);
-            map_runtime_state.events[healing_exchange.event_slot].dialogue_pages.last_page[healing_exchange.last_page_slot] = healing_exchange.last_page;
-            talk_show_dialogue_page(player_state.progress_state.current_floor,
-                                    event->dialogue.stage, event->character_id, healing_exchange.response_page);
-            map_runtime_state.events[healing_exchange.event_slot].dialogue.page = healing_exchange.next_page;
-            map_runtime_state.events[healing_exchange.event_slot].dialogue.page_delay = 0;
-            map_runtime_state.events[healing_exchange.event_slot].dialogue.stage_limit = healing_exchange.stage_limit;
-            map_event_refresh_dialogue_stage(&map_runtime_state.events[healing_exchange.event_slot]);
+            map_runtime_state.events[healing_exchange.event_slot].dialogue_pages
+                .last_page[healing_exchange.last_page_slot] = healing_exchange.last_page;
+            map_finish_exchange_dialogue(*event, healing_exchange);
             return;
         }
         break;
     case KF_CHARACTER_HARP_EXCHANGE:
-        if (item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)][kf_enum_encode<u8>(KF_ITEM_DRAGON_KING_GRASS_FRUIT)] != 0 && map_runtime_state.events[harp_exchange.event_slot].dialogue.stage == harp_exchange.stage
-            && map_runtime_state.events[harp_exchange.event_slot].dialogue.page < harp_exchange.page_end) {
-            item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)][kf_enum_encode<u8>(KF_ITEM_HARP)] = 1;
-            map_runtime_state.events[harp_exchange.event_slot].dialogue_pages.last_page[harp_exchange.last_page_slot] = harp_exchange.last_page;
-            item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)][kf_enum_encode<u8>(KF_ITEM_DRAGON_KING_GRASS_FRUIT)]--;
-            talk_show_dialogue_page(player_state.progress_state.current_floor,
-                                    event->dialogue.stage, event->character_id, harp_exchange.response_page);
-            map_runtime_state.events[harp_exchange.event_slot].dialogue.page = harp_exchange.next_page;
-            map_runtime_state.events[harp_exchange.event_slot].dialogue.page_delay = 0;
-            map_runtime_state.events[harp_exchange.event_slot].dialogue.stage_limit = harp_exchange.stage_limit;
-            map_event_refresh_dialogue_stage(&map_runtime_state.events[harp_exchange.event_slot]);
+        if (map_exchange_is_available(harp_exchange, KF_ITEM_DRAGON_KING_GRASS_FRUIT)) {
+            inventory[kf_enum_encode<u8>(KF_ITEM_HARP)] = 1;
+            map_runtime_state.events[harp_exchange.event_slot].dialogue_pages
+                .last_page[harp_exchange.last_page_slot] = harp_exchange.last_page;
+            inventory[kf_enum_encode<u8>(KF_ITEM_DRAGON_KING_GRASS_FRUIT)]--;
+            map_finish_exchange_dialogue(*event, harp_exchange);
             return;
         }
         break;

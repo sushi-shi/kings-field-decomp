@@ -183,14 +183,7 @@ void menu_drop_item(void)
                 menu_play_input_sound(MENU_SOUND_CURSOR);
                 selection = kf_enum_encode<s32>(KF_MENU_RESULT_CANCELLED);
             }
-        } else if (kf::button_pressed(input, prev, kf::Button::Up)) {
-            menu_play_input_sound(MENU_SOUND_CURSOR);
-            menu_list_previous(&ctx);
-            if (menu_load_item_model(codes[ctx.selected_index]) != KF_RESOURCE_LOADED)
-                return;
-        } else if (kf::button_pressed(input, prev, kf::Button::Down)) {
-            menu_play_input_sound(MENU_SOUND_CURSOR);
-            menu_list_next(&ctx);
+        } else if (menu_list_handle_navigation(ctx, input, prev)) {
             if (menu_load_item_model(codes[ctx.selected_index]) != KF_RESOURCE_LOADED)
                 return;
         } else if (kf::button_pressed(input, prev, kf::Button::Confirm)) {
