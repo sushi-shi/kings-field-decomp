@@ -187,7 +187,7 @@ KfBoolU32 player_warp_trigger_update(void)
             player_warp_change_floor(KF_FLOOR_4, KF_MAP_VARIANT_DEFAULT);
         } else if (warp_cell_matches(cell, floor1_exit_cell)) {
             if (map_floor_script(KF_FLOOR_5).floor5.boss_defeat != KF_MAP_SCRIPT_UNSET) {
-                return KF_TRUE;
+                return true;
             }
         }
         break;
@@ -231,7 +231,7 @@ KfBoolU32 player_warp_trigger_update(void)
             if (map_floor_script(KF_FLOOR_5).floor5.boss_defeat == KF_MAP_SCRIPT_UNSET) {
                 player_warp_same_floor(KF_MAP_VARIANT_2, floor5_ending_return.x, floor5_ending_return.z);
             } else {
-                return KF_TRUE;
+                return true;
             }
         } else if (warp_cell_matches(cell, floor5_inner_return)) {
             player_warp_same_floor(KF_FLOOR5_ENTRY_VARIANT, floor5_entry_return.x, floor5_entry_return.z);
@@ -240,7 +240,7 @@ KfBoolU32 player_warp_trigger_update(void)
         }
         break;
     }
-    return KF_FALSE;
+    return false;
 }
 
 static constexpr unsigned floor4_transform_hidden_events[] = {1, 2};

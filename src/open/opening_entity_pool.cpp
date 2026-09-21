@@ -32,13 +32,13 @@ KfOpeningEntity *opening_entity_find_by_object_id(
 void opening_entity_pool_load_placements(
     const KfMapObjectPlacement *placements, s32 base_y)
 {
-    KfBool16 exhausted = KF_FALSE;
+    KfBool16 exhausted = false;
     const KfMapObjectPlacement *placement = placements;
 
     for (auto &entity : opening_entity_state.entities) {
-        if (exhausted == KF_TRUE
+        if (exhausted == true
             || kf_enum_decode<KfOpeningModelId>(placement->object_id) == KF_OPENING_ENTITY_FREE) {
-            exhausted = KF_TRUE;
+            exhausted = true;
             entity.object_id = KF_OPENING_ENTITY_FREE;
         } else {
             entity.object_id = kf_enum_decode<KfOpeningModelId>(placement->object_id);
