@@ -9,132 +9,90 @@ enum {
     ACTOR_CULL_SQUARE_WIDTH = 2 * ACTOR_CULL_SQUARE_HALF_WIDTH
 };
 
+struct RenderCellOrigin {
+    u16 x;
+    u16 z;
+};
+
+static bool render_cell_is_visible(s32 cell_x, s32 cell_z, RenderCellOrigin origin)
+{
+    // Narrow before checking bounds, including cells before the window origin.
+    const u16 row = cell_z - origin.z;
+    const auto *grid = game_graphics_runtime.active_cell_window;
+    if (row >= grid->height) {
+        return false;
+    }
+    const u16 col = cell_x - origin.x;
+    return col < grid->width && grid->cells[row * grid->width + col] != KF_CELL_WINDOW_HIDDEN;
+}
+
+static bool render_actor_is_visible(const KfActor &actor, RenderCellOrigin origin)
+{
+    if (actor.culling_mode == KF_ACTOR_CULL_VISIBILITY_GRID) {
+        return render_cell_is_visible(actor.cell_x, actor.cell_z, origin);
+    }
+
+    u16 row = actor.cell_z + ACTOR_CULL_SQUARE_HALF_WIDTH;
+    row -= game_graphics_runtime.render_state.view_cell.z;
+    if (row >= ACTOR_CULL_SQUARE_WIDTH) {
+        return false;
+    }
+    u16 col = actor.cell_x + ACTOR_CULL_SQUARE_HALF_WIDTH;
+    col -= game_graphics_runtime.render_state.view_cell.x;
+    return col < ACTOR_CULL_SQUARE_WIDTH;
+}
+
 void render_entities(void)
 {
-    const KfCellWindow *grid = game_graphics_runtime.active_cell_window;
-    u16 window_origin_z = game_graphics_runtime.render_state.view_cell.z - grid->origin_z;
-    u16 window_origin_x = game_graphics_runtime.render_state.view_cell.x - grid->origin_x;
-    KfMapObject *object;
-    KfActor *actor;
-    KfMapEvent *event;
-    KfEffectRecord *sprite;
-    s16 i;
-    MATRIX *effect_light_matrix;
-    u16 row;
-    u16 col;
+    const auto *grid = game_graphics_runtime.active_cell_window;
+    const u16 window_origin_z = game_graphics_runtime.render_state.view_cell.z - grid->origin_z;
+    const u16 window_origin_x = game_graphics_runtime.render_state.view_cell.x - grid->origin_x;
+    const RenderCellOrigin origin = {window_origin_x, window_origin_z};
 
     tmd_select(KF_TMD_SLOT_ENTITIES);
 
-    object = map_object_state.objects;
-    for (i = KF_MAP_OBJECT_CAPACITY - 1; i != -1; i--) {
-        if (object->object_id < KF_MAP_OBJECT_RENDER_ID_END) {
-            const KfCellWindow *g;
-
-            row = object->cell_z - window_origin_z;
-            g = game_graphics_runtime.active_cell_window;
-            if (row < g->height) {
-                col = object->cell_x - window_origin_x;
-                if (col < g->width && g->cells[row * g->width + col] != KF_CELL_WINDOW_HIDDEN) {
-                    render_map_object(object);
-                }
-            }
+    for (auto &object : map_object_state.objects) {
+        if (object.object_id < KF_MAP_OBJECT_RENDER_ID_END
+            && render_cell_is_visible(object.cell_x, object.cell_z, origin)) {
+            render_map_object(&object);
         }
-        object++;
     }
 
-    actor = actor_state.actors;
-    for (i = KF_ACTOR_CAPACITY - 1; i != -1; actor++, i--) {
-        u8 visible;
-        if (actor->lifecycle != KF_ACTOR_LIFECYCLE_ACTIVE) {
-            continue;
-        }
-        if (actor->culling_mode == KF_ACTOR_CULL_VISIBILITY_GRID) {
-            const KfCellWindow *g;
-
-            row = actor->cell_z - window_origin_z;
-            g = game_graphics_runtime.active_cell_window;
-            if (row >= g->height) {
-                continue;
-            }
-            {
-                col = actor->cell_x - window_origin_x;
-                if (col >= g->width) {
-                    continue;
-                }
-
-                visible = kf_enum_encode<u8>(g->cells[row * g->width + col]);
-            }
-        } else {
-            row = actor->cell_z + ACTOR_CULL_SQUARE_HALF_WIDTH;
-            row -= game_graphics_runtime.render_state.view_cell.z;
-            if (row >= ACTOR_CULL_SQUARE_WIDTH) {
-                continue;
-            }
-            col = actor->cell_x + ACTOR_CULL_SQUARE_HALF_WIDTH;
-            col -= game_graphics_runtime.render_state.view_cell.x;
-            visible = col < ACTOR_CULL_SQUARE_WIDTH;
-        }
-        if (visible != 0) {
-            render_actor(actor);
+    for (auto &actor : actor_state.actors) {
+        if (actor.lifecycle == KF_ACTOR_LIFECYCLE_ACTIVE
+            && render_actor_is_visible(actor, origin)) {
+            render_actor(&actor);
         }
     }
 
     game_graphics_runtime.active_render_color.b = KF_FLOOR_ITEM_RENDER_BRIGHTNESS;
     game_graphics_runtime.active_render_color.g = KF_FLOOR_ITEM_RENDER_BRIGHTNESS;
     game_graphics_runtime.active_render_color.r = KF_FLOOR_ITEM_RENDER_BRIGHTNESS;
-    i = game_graphics_runtime.floor_item_count;
+    const s16 item_count = game_graphics_runtime.floor_item_count;
     game_graphics_runtime.active_render_material = game_graphics_runtime.floor_item_material;
-    effect_light_matrix = &render_light_matrices[KF_RENDER_LIGHT_EFFECT];
-    {
-        KfFloorItem *items = game_graphics_runtime.floor_items;
-        for (i--; i != -1; i--) {
-            const KfCellWindow *g;
-
-            row = (items->position_z / KF_MAP_TILE_SIZE) - window_origin_z;
-            g = game_graphics_runtime.active_cell_window;
-            if (row < g->height) {
-                col = (items->position_x / KF_MAP_TILE_SIZE) - window_origin_x;
-                if (col < g->width && g->cells[row * g->width + col] != KF_CELL_WINDOW_HIDDEN) {
-                    render_floor_item(items, &render_light_matrices[KF_RENDER_LIGHT_FLOOR_ITEM]);
-                }
-            }
-            items++;
+    auto *items = game_graphics_runtime.floor_items;
+    for (s16 index = 0; index < item_count; index++) {
+        auto &item = items[index];
+        if (render_cell_is_visible(
+                item.position_x / KF_MAP_TILE_SIZE, item.position_z / KF_MAP_TILE_SIZE, origin)) {
+            render_floor_item(&item, &render_light_matrices[KF_RENDER_LIGHT_FLOOR_ITEM]);
         }
     }
 
-    sprite = effect_pool_records;
-    for (i = KF_EFFECT_CAPACITY - 1; i != -1; sprite++, i--) {
-        if (sprite->type == KF_EFFECT_SLOT_FREE || sprite->render_id.model == KF_EFFECT_MODEL_NONE) {
+    for (auto &sprite : effect_pool_records) {
+        if (sprite.type == KF_EFFECT_SLOT_FREE || sprite.render_id.model == KF_EFFECT_MODEL_NONE) {
             continue;
         }
-        {
-            const KfCellWindow *g;
-
-            row = (sprite->position.vz / KF_MAP_TILE_SIZE) - window_origin_z;
-            g = game_graphics_runtime.active_cell_window;
-            if (row < g->height) {
-                col = (sprite->position.vx / KF_MAP_TILE_SIZE) - window_origin_x;
-                if (col < g->width && g->cells[row * g->width + col] != KF_CELL_WINDOW_HIDDEN) {
-                    render_actor_sprite(sprite, effect_light_matrix);
-                }
-            }
+        if (render_cell_is_visible(
+                sprite.position.vx / KF_MAP_TILE_SIZE, sprite.position.vz / KF_MAP_TILE_SIZE, origin)) {
+            render_actor_sprite(&sprite, &render_light_matrices[KF_RENDER_LIGHT_EFFECT]);
         }
     }
 
-    event = map_event_pool;
-    for (i = KF_MAP_EVENT_CAPACITY - 1; i != -1; i--) {
-        if (event->state == KF_MAP_EVENT_ACTIVE) {
-            const KfCellWindow *g;
-
-            row = event->cell_z - window_origin_z;
-            g = game_graphics_runtime.active_cell_window;
-            if (row < g->height) {
-                col = event->cell_x - window_origin_x;
-                if (col < g->width && g->cells[row * g->width + col] != KF_CELL_WINDOW_HIDDEN) {
-                    render_map_event(event, &game_graphics_runtime.render_state.light_matrix_copy);
-                }
-            }
+    for (auto &event : map_event_pool) {
+        if (event.state == KF_MAP_EVENT_ACTIVE
+            && render_cell_is_visible(event.cell_x, event.cell_z, origin)) {
+            render_map_event(&event, &game_graphics_runtime.render_state.light_matrix_copy);
         }
-        event++;
     }
 }

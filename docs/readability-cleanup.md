@@ -84,6 +84,16 @@ widths, comparisons and side-effect order; movement remains forward then strafe,
 and view bob remains before button-driven turning. Death/menu early returns,
 occupancy changes and the common post-menu tail remain in the coordinator.
 
+### Stacked pass: rendering visibility
+
+GAME's five entity passes now share a cell-window predicate, with a separate
+actor square-culling predicate. Cell subtraction still narrows to `u16` before
+bounds checks. The active window is consulted at each check while the frame's
+origin stays fixed. Object/actor/floor-item/effect/event ordering, material and
+lighting setup, and visible-only floor-item animation updates are unchanged.
+GAME/OPEN entity arrays use forward iteration; floor items use the loader-validated
+active count. No renderer backend or face sorting changes.
+
 ### Remaining container candidates
 
 Review the remaining actor/event/effect searches and sweeps for range loops,
