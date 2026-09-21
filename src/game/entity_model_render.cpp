@@ -24,10 +24,10 @@ void render_actor(KfActor *actor)
     u8 descriptor;
     u16 asset;
 
-    setVector(&screen,
+    screen = VECTOR{
         actor->position.vx - game_graphics_runtime.render_state.view_position.vx,
         actor->position.vy - game_graphics_runtime.render_state.view_position.vy,
-        actor->position.vz - game_graphics_runtime.render_state.view_position.vz);
+        actor->position.vz - game_graphics_runtime.render_state.view_position.vz}.narrowed();
     kf::render_place_model(model, game_graphics_runtime.render_state.view_matrix, screen);
     matrix_set_rotation_x(actor->rotation.angles.x, &model);
     matrix_set_rotation_y(-actor->rotation.angles.y, &rot_y);
@@ -66,10 +66,10 @@ void render_map_object(KfMapObject *object)
     KfEnumStorage<KfObjectId, u16> id;
     s16 depth;
 
-    setVector(&screen,
+    screen = VECTOR{
         object->position.vx - game_graphics_runtime.render_state.view_position.vx,
         object->position.vy - game_graphics_runtime.render_state.view_position.vy,
-        object->position.vz - game_graphics_runtime.render_state.view_position.vz);
+        object->position.vz - game_graphics_runtime.render_state.view_position.vz}.narrowed();
     kf::render_place_model(model, game_graphics_runtime.render_state.view_matrix, screen);
     matrix_set_rotation_x(object->rotation.angles.x, &rot_x);
     matrix_set_rotation_y(object->rotation.angles.y, &model);

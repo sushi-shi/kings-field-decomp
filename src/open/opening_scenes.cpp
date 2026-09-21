@@ -324,18 +324,14 @@ void opening_cylinder_transition(KfOpeningCylinderTransitionMode transition_mode
     entity = &opening_entity_state.entities[CYLINDER_TRANSITION_FIRST_ENTITY_SLOT];
     entity_index = KF_CYLINDER_TRANSITION_COUNT - 1;
 
-    transform_snapshot.position.vx = position->vx;
-    transform_snapshot.position.vz = position->vz;
-    transform_snapshot.position.vy = position->vy;
+    transform_snapshot.position = *position;
     do {
         entity->object_id = KF_OPENING_TRANSITION_CYLINDER;
         entity->position = *position;
         entity->rotation.z = 0;
         entity->rotation.y = 0;
         entity->rotation.x = 0;
-        entity->scale.vz = KF_FIXED12_ONE;
-        entity->scale.vx = KF_FIXED12_ONE;
-        entity->scale.vy = initial_scale_y;
+        entity->scale = VECTOR{KF_FIXED12_ONE, initial_scale_y, KF_FIXED12_ONE}.narrowed();
         entity++;
         entity_index--;
     } while (entity_index != -1);
@@ -463,10 +459,10 @@ void opening_scene3_run(void)
         opening_poll_input();
     } while (opening_input_action == KF_OPENING_INPUT_NONE);
 
-    setVector(&transition_position,
+    transition_position = {
         opening_camera_path_state.position.vx,
         KF_OPENING_SCENE_BASE_Y,
-        opening_camera_path_state.position.vz);
+        opening_camera_path_state.position.vz};
     if (opening_input_action == KF_OPENING_INPUT_NONE) {
         opening_cylinder_transition(KF_OPENING_CYLINDER_TRANSITION_GROW, &transition_position);
     }
@@ -506,9 +502,8 @@ void opening_ending_scene_run(void)
     entity_13->rotation.y = 0;
     opening_camera_path_begin(opening_ending_camera_path);
 
-    transition_position.vy = KF_OPENING_SCENE_BASE_Y;
-    transition_position.vx = opening_camera_path_state.position.vx;
-    transition_position.vz = opening_camera_path_state.position.vz;
+    transition_position = {opening_camera_path_state.position.vx, KF_OPENING_SCENE_BASE_Y,
+        opening_camera_path_state.position.vz};
     blend = 0;
     opening_cylinder_transition(KF_OPENING_CYLINDER_TRANSITION_CREATE, &transition_position);
 
@@ -636,9 +631,10 @@ void opening_ending_scroll_run(void)
     open_graphics_runtime.render_state.lighting.fog = {0, 0, 0};
     open_graphics_runtime.tmd_projection_shift = ENDING_TMD_PROJECTION_SHIFT;
 
-    setVector(&transition_position,
-        opening_camera_path_state.position.vx, KF_OPENING_SCENE_BASE_Y,
-        opening_camera_path_state.position.vz);
+    transition_position = {
+        opening_camera_path_state.position.vx,
+        KF_OPENING_SCENE_BASE_Y,
+        opening_camera_path_state.position.vz};
     open_graphics_runtime.floor_item_state.material.color.r = 0;
     open_graphics_runtime.floor_item_state.material.color.g = 0;
     open_graphics_runtime.floor_item_state.material.color.b = 0;

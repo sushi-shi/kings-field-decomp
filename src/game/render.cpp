@@ -123,7 +123,7 @@ void render_initialize(void)
     game_graphics_runtime.display_state.asset_load_buffer = buffer;
     game_graphics_runtime.display_state.asset_load_capacity = DISPLAY_ASSET_BUFFER_BYTES;
     game_graphics_runtime.floor_item_count = 0;
-    setVector(&angles, 0, 0, 0);
+    angles = {0, 0, 0};
     kf::matrix_set_rotation_xyz(angles, game_graphics_runtime.render_state.quadrant_matrices[0]);
     angles.vy = KF_ANGLE_THREE_QUARTER_TURN;
     kf::matrix_set_rotation_xyz(angles, game_graphics_runtime.render_state.quadrant_matrices[3]);

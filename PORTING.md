@@ -160,7 +160,7 @@ reporting success. PS1 memory-card interchange is not required.
    extraction/input utilities live under platform, drawing under renderer, and
    shared file-codec declarations under lib. The temporary Psy-Q declaration
    scaffold and old overlay mains/fixed-address startup are removed. The value-only
-   vector macros keep their original expressions in geometry_types.h; no SDK
+   vector value types retain binary layouts and explicit width conversion in geometry_types.h; no SDK
    runtime is implemented. build.json now lists portable source modules, and CMake
    watches it for regeneration. Shared implementations own separate translation
    units under `src/lib`, compiled in the game/opening namespaces where needed.

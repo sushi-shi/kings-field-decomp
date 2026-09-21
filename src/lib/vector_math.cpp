@@ -9,13 +9,13 @@ void pitch_yaw_to_forward_vector(const struct KfEulerAngles *angles, SVECTOR *di
     SVECTOR source;
     VECTOR result;
 
-    setVector(&source, 0, 0, KF_FIXED12_ONE);
+    source = {0, 0, KF_FIXED12_ONE};
     matrix_set_rotation_x(-angles->x & KF_ANGLE_WRAP_MASK, &pitch_matrix);
     result = kf::matrix_apply_rotation(pitch_matrix, source);
-    copyVector(&source, &result);
+    source = result.narrowed();
     matrix_set_rotation_y(angles->y, &yaw_matrix);
     result = kf::matrix_apply_rotation(yaw_matrix, source);
-    copyVector(direction, &result);
+    *direction = result.narrowed();
 }
 
 #ifndef KF_OPEN
@@ -36,7 +36,7 @@ void vector3s_scale_shift12(s16 scale, SVECTOR *vector)
     s32 y = vector->vy * scale;
     s32 z = vector->vz * scale;
 
-    setVector(vector, x >> KF_FIXED12_BITS, y >> KF_FIXED12_BITS, z >> KF_FIXED12_BITS);
+    *vector = VECTOR{x >> KF_FIXED12_BITS, y >> KF_FIXED12_BITS, z >> KF_FIXED12_BITS}.narrowed();
 }
 
 #ifndef KF_OPEN

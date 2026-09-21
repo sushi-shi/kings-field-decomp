@@ -48,8 +48,8 @@ state machine or blanket macro-to-function rewrite is needed.
   clamping and death side effects make combining the deltas incorrect. Increment
   the equipment timer and read the current map attribute afterward, as before.
 - Yaw probes subtract the already-shifted sine product. Negating before the
-  signed shift changes rounding. Vector helpers only write the original fields;
-  the floor-position operation does not initialize vector padding.
+  signed shift changes rounding. Vector value assignment initializes unused
+  layout padding; partial updates still change only their intended components.
 - Transition colors retain byte addition and wrap behavior, not a new saturating
   clamp. Path formatting writes exactly three characters, without a terminator.
   Sequence release also clears the sequence pointer and active state. Vital
@@ -113,13 +113,22 @@ uniform bitset. Some existing actor checks compare a high word to a detail
 constant; retain that behavior until its meaning is established. Do not conceal
 it behind a confidently named but inaccurate predicate.
 
-### 3. Replace generic vector macros by audited operation families
+### Stacked pass: vector value types
 
-Audit `setVector`, `copyVector`, `addVector` and `limitRange` at every caller.
-Track sequential writes, aliasing, narrow destinations, and random calls before
-choosing overloads or explicit statements. A normal function eagerly evaluates
-arguments; a macro may interleave evaluation with destination writes. Avoid a
-large template abstraction merely to reproduce that behavior.
+`setVector`, `copyVector`, `addVector` and the interim set/copy/add wrappers have
+been removed. `VECTOR`/`SVECTOR` are small value types: initialization and copies
+use direct assignment, addition uses `+=`, and `narrowed()`/`widened()` make
+16/32-bit conversion explicit. Narrowing retains truncation, not saturation.
+Constructors initialize the unused fourth field; copying copies it. The fourth
+field has no gameplay, rendering or save consumer in the audited source. Packed
+sizes/offsets, standard layout, trivial copying and trivial default construction
+are checked in the type definitions. Union-member assignments name the owner.
+Whole-vector rewrites are limited to independent component expressions; partial
+updates, dependent assignments and RNG ordering remain explicit. Addition still
+reads and writes components in XYZ order. No inheritance or generic vector
+framework is introduced.
+The sole `limitRange` caller uses `std::clamp<s32>` after the original charge
+increment/narrowing, preserving that operation's value range and ordering.
 
 ### 4. Shorten rendering around shared visibility decisions
 
