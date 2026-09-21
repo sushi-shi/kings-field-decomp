@@ -1,3 +1,4 @@
+#include <kf/game/resources.h>
 #include <kf/game/menu_glyphs.h>
 #include <kf/lib/null.h>
 #include <kf/game/graphics.h>
@@ -10,7 +11,6 @@
 #include <cstdio>
 #include <cstring>
 #include <kf/game/game.h>
-#include <kf/lib/graphics.h>
 #include <kf/lib/render_face.h>
 
 void item_menu_buy(KfItemStockBank shop_bank);
@@ -170,7 +170,7 @@ void item_load_database(void)
 {
     u8 *stat_data;
     std::size_t stat_size;
-    resource_file_load_allocated(&stat_data, "COM/STAT.DAT", &stat_size);
+    resource_file_load_allocated(memory_arena, &stat_data, "COM/STAT.DAT", &stat_size);
     MenuDataReader reader{stat_data, stat_size};
 
     for (auto &bank : menu_assets.background_quads)
@@ -213,7 +213,7 @@ void item_load_database(void)
         for (u16 &price : item)
             price = menu_data_word(&reader);
 
-    memory_release_last();
+    memory_release_last(memory_arena);
 
     resource_file_index_item_models();
 }

@@ -1,3 +1,4 @@
+#include <kf/game/audio.h>
 #include <kf/lib/null.h>
 #include <kf/game/graphics.h>
 #include <kf/lib/bool.h>
@@ -87,7 +88,7 @@ void player_warp_shimmer(KfWarpShimmerMode shimmer_mode, VECTOR *position)
     for (frame = 0; frame < KF_CYLINDER_TRANSITION_FRAMES; frame++) {
         cursor = effects;
         if (frame == WARP_SHIMMER_SOUND_FRAME) {
-            sound_ref_play(&gameplay_sound_refs[KF_GAMEPLAY_SOUND_WARP_SHIMMER], KF_AUDIO_MAX_VOLUME);
+            sound_ref_play(audio_playback(), &gameplay_sound_refs[KF_GAMEPLAY_SOUND_WARP_SHIMMER], KF_AUDIO_MAX_VOLUME);
         }
         for (i = 0; i < KF_CYLINDER_TRANSITION_COUNT; i++) {
             effect = *cursor++;
@@ -256,14 +257,14 @@ void actor_transform_definition5_to6(KfActor *actor)
     saved = game_graphics_runtime.render_state.lighting.color_matrix;
 
     for (blend = 0; blend < KF_FIXED12_ONE + 1; blend += KF_FIXED12_ONE / ACTOR_TRANSFORM_BLEND_INTERVALS) {
-        lighting_set_color_matrix(&saved, &actor_transform_color_matrix, blend);
+        lighting_set_color_matrix(game_graphics_runtime.render_state, &saved, &actor_transform_color_matrix, blend);
         actor->position.vy += ACTOR_TRANSFORM_Y_STEP;
         actor->rotation.angles.y += KF_ANGLE_FULL_TURN / ACTOR_TRANSFORM_BLEND_INTERVALS;
         render_frame(NULL, NULL);
     }
     actor->definition_id = KF_FLOOR4_TRANSFORM_RESULT_DEFINITION;
     for (blend = KF_FIXED12_ONE; blend >= 0; blend -= KF_FIXED12_ONE / ACTOR_TRANSFORM_BLEND_INTERVALS) {
-        lighting_set_color_matrix(&saved, &actor_transform_color_matrix, blend);
+        lighting_set_color_matrix(game_graphics_runtime.render_state, &saved, &actor_transform_color_matrix, blend);
         actor->position.vy -= ACTOR_TRANSFORM_Y_STEP;
         actor->rotation.angles.y -= KF_ANGLE_FULL_TURN / ACTOR_TRANSFORM_BLEND_INTERVALS;
         render_frame(NULL, NULL);
@@ -271,7 +272,6 @@ void actor_transform_definition5_to6(KfActor *actor)
     lighting_set_active_color_matrix(KF_GAME_COLOR_DEFAULT);
     kf::host_set_input_context(input_context);
 }
-
 
 void player_warp_reset_module_state(void)
 {

@@ -1,3 +1,4 @@
+#include <kf/game/audio.h>
 #include <kf/lib/null.h>
 
 #include <kf/game/effect.h>
@@ -42,7 +43,6 @@ struct EffectArguments {
 static KfEffectRecord *effect_pool_construct_impl(u8 id, KfEffectType type, KfEffectKind kind, const VECTOR *position,
     const SVECTOR *direction, const EffectArguments& arguments)
 {
-
     KfEffectRecord *record = effect_pool_find_free();
     KfMagicRecord *magic;
 
@@ -138,7 +138,7 @@ static KfEffectRecord *effect_pool_construct_impl(u8 id, KfEffectType type, KfEf
                 record->propagation.branch = branch_role;
             }
             if (record->propagation.branch != KF_EFFECT_GROUND_BRANCH_LEAF) {
-                sound_ref_play(&magic->sounds[0], EFFECT_GROUND_BRANCH_SOUND_VOLUME);
+                sound_ref_play(audio_playback(), &magic->sounds[0], EFFECT_GROUND_BRANCH_SOUND_VOLUME);
             }
             break;
         case KF_EFFECT_KIND_GROUND_BRANCH_VISUAL:
@@ -473,7 +473,6 @@ KfEffectRecord *effect_pool_construct(u8 id, KfEffectType type, KfEffectKind kin
     arguments.parent_index = value.parent_index;
     return effect_pool_construct_impl(id, type, kind, position, direction, arguments);
 }
-
 
 void effect_pool_reset_module_state(void)
 {

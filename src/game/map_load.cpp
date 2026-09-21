@@ -251,11 +251,10 @@ void map_load_floor(void)
     map_restore_floor_state();
     map_refresh_dialogue_stages();
     effect5_texture_cache_prepare(player_state.progress_state.current_floor);
-    game_graphics_runtime.render_state.effect_color_matrix = color_matrix_table[kf_enum_encode<s32>(KF_GAME_COLOR_WHITE)];
+    game_graphics_runtime.effect_color_matrix = color_matrix_table[kf_enum_encode<s32>(KF_GAME_COLOR_WHITE)];
 }
 
 void map_load_floor_wrapper(void)
 {
-
     map_load_floor();
 }

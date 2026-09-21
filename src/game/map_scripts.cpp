@@ -1,3 +1,4 @@
+#include <kf/game/audio.h>
 #include <kf/lib/random.hpp>
 #include <kf/lib/null.h>
 #include <kf/lib/bool.h>
@@ -34,7 +35,6 @@ constexpr int floor3_healing_x_min = 15, floor3_healing_x_end = 18, floor3_heali
 constexpr int floor5_boss_trigger_x_min = 38, floor5_boss_trigger_x_end = 41, floor5_boss_trigger_z = 7;
 constexpr ScriptPointXZ weapon_transform_effect_cell = {85, 40};
 }
-
 
 enum class KfMapWeaponTransformPhase : s32 {
     MAP_WEAPON_TRANSFORM_SPIN_UP = 0,
@@ -231,7 +231,7 @@ void map_action_script_floor1(void)
         && map_floor_script(KF_FLOOR_1).floor1.passage_opened == KF_MAP_SCRIPT_UNSET) {
         map_floor_script(KF_FLOOR_1).floor1.passage_opened = KF_MAP_SCRIPT_SET;
         map_apply_copy_region(KF_MAP_COPY_FLOOR1_PASSAGE);
-        sound_ref_play(&gameplay_sound_refs[KF_GAMEPLAY_SOUND_STONE_PASSAGE], MAP_PASSAGE_OPEN_SOUND_VOLUME);
+        sound_ref_play(audio_playback(), &gameplay_sound_refs[KF_GAMEPLAY_SOUND_STONE_PASSAGE], MAP_PASSAGE_OPEN_SOUND_VOLUME);
     }
 }
 
@@ -241,16 +241,16 @@ void map_reveal_fade(void)
     MATRIX saved;
     s32 blend;
 
-    saved = game_graphics_runtime.render_state.light_matrix_copy;
+    saved = game_graphics_runtime.light_matrix_copy;
 
     for (blend = 0; blend < KF_FIXED12_ONE + 1; blend += MAP_REVEAL_FADE_IN_STEP) {
-        lighting_set_color_matrix(&color_matrix_table[kf_enum_encode<s32>(KF_GAME_COLOR_DEFAULT)], &color_matrix_table[kf_enum_encode<s32>(KF_GAME_COLOR_WHITE)], blend);
+        lighting_set_color_matrix(game_graphics_runtime.render_state, &color_matrix_table[kf_enum_encode<s32>(KF_GAME_COLOR_DEFAULT)], &color_matrix_table[kf_enum_encode<s32>(KF_GAME_COLOR_WHITE)], blend);
         if (blend >= KF_FIXED12_ONE / 4 + 1) {
             map_runtime_state.events[KF_FLOOR2_REVEAL_EVENT].reference_position.vy -= MAP_REVEAL_RISE_STEP;
             map_runtime_state.events[KF_FLOOR2_REVEAL_EVENT].rotation.vy += MAP_REVEAL_YAW_STEP;
         } else {
             matrix_interpolate(&saved, &map_reveal_light_matrix,
-                               &game_graphics_runtime.render_state.light_matrix_copy, blend << MAP_REVEAL_LIGHT_BLEND_SHIFT);
+                               &game_graphics_runtime.light_matrix_copy, blend << MAP_REVEAL_LIGHT_BLEND_SHIFT);
         }
         render_frame(NULL, NULL);
     }
@@ -259,12 +259,12 @@ void map_reveal_fade(void)
     map_floor_script(KF_FLOOR_5).floor5.character_arrived = KF_MAP_SCRIPT_SET;
 
     for (blend = KF_FIXED12_ONE; blend >= 0; blend -= MAP_REVEAL_FADE_OUT_STEP) {
-        lighting_set_color_matrix(&color_matrix_table[kf_enum_encode<s32>(KF_GAME_COLOR_DEFAULT)], &color_matrix_table[kf_enum_encode<s32>(KF_GAME_COLOR_WHITE)], blend);
+        lighting_set_color_matrix(game_graphics_runtime.render_state, &color_matrix_table[kf_enum_encode<s32>(KF_GAME_COLOR_DEFAULT)], &color_matrix_table[kf_enum_encode<s32>(KF_GAME_COLOR_WHITE)], blend);
         render_frame(NULL, NULL);
     }
 
     lighting_set_active_color_matrix(KF_GAME_COLOR_DEFAULT);
-    game_graphics_runtime.render_state.light_matrix_copy = saved;
+    game_graphics_runtime.light_matrix_copy = saved;
     kf::host_set_input_context(input_context);
 }
 
@@ -844,7 +844,6 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
     }
     kf::host_set_input_context(input_context);
 }
-
 
 void map_scripts_reset_module_state(void)
 {

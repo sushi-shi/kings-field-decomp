@@ -12,7 +12,7 @@ static inline void lighting_blend_current_color(const MATRIX *target, s32 amount
     MATRIX current;
 
     current = game_graphics_runtime.render_state.lighting.color_matrix;
-    lighting_set_color_matrix(&current, target, amount);
+    lighting_set_color_matrix(game_graphics_runtime.render_state, &current, target, amount);
 }
 
 void lighting_apply_weapon9_environment(void)

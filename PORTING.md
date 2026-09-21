@@ -163,7 +163,11 @@ reporting success. PS1 memory-card interchange is not required.
    vector value types retain binary layouts and explicit width conversion in geometry_types.h; no SDK
    runtime is implemented. build.json now lists portable source modules, and CMake
    watches it for regeneration. Shared implementations own separate translation
-   units under `src/lib`, compiled in the game/opening namespaces where needed.
+   units under `src/lib`, compiled once in the common object library. Shared
+   types have one identity; stateful operations receive the phase's arena,
+   rendering state, TMD context or audio state explicitly. `KF_OPEN` build-mode
+   selection is gone. Phase namespaces retain their distinct scene policies,
+   palettes, panning and reset ownership, not duplicate common implementations.
    Entry/reset coordination lives in each module's `entry.cpp`; save serialization
    and numeric tables live in their single owning source files. No source `.inc`
    fragments remain. The retired PlayStation build.py, linker

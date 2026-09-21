@@ -14,7 +14,7 @@ inline constexpr unsigned KF_FLOOR4_TRANSFORM_RESULT_DEFINITION = 6;
 #include <kf/lib/enum.h>
 #include <kf/lib/map.h>
 #include <kf/lib/geometry_types.h>
-#include <kf/lib/audio.h>
+#include <kf/game/audio.h>
 #include <kf/lib/math.h>
 
 struct KfPoolRecord;

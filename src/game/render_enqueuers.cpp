@@ -16,9 +16,9 @@ CVECTOR tmd_textured_primitive_color = {
 
 void render_enqueue_tmd(u16 object_index, s16 depth_bias, const MATRIX *lights)
 {
-    const auto object = tmd_read_object(object_index);
-    auto stream = tmd_primitive_stream(object);
-    const auto normals = tmd_normal_bytes(object);
+    const auto object = tmd_read_object(tmd_context(), object_index);
+    auto stream = tmd_primitive_stream(tmd_context(), object);
+    const auto normals = tmd_normal_bytes(tmd_context(), object);
     const auto *vertices = game_graphics_runtime.tmd_projected_vertices;
     s32 otz;
     const KfScreenVertex *va;
@@ -368,9 +368,9 @@ CVECTOR model_textured_primitive_color = {
 
 void render_enqueue_model(u16 object_index, s16 depth_bias, const MATRIX *lights)
 {
-    const auto object = tmd_read_object(object_index);
-    auto stream = tmd_primitive_stream(object);
-    const auto normals = tmd_normal_bytes(object);
+    const auto object = tmd_read_object(tmd_context(), object_index);
+    auto stream = tmd_primitive_stream(tmd_context(), object);
+    const auto normals = tmd_normal_bytes(tmd_context(), object);
     const auto *vertices = game_graphics_runtime.tmd_projected_vertices;
     s32 otz;
     const KfScreenVertex *va;
@@ -510,9 +510,9 @@ SVECTOR render_sprite_light_normal = {0, 0, KF_FIXED12_ONE, 0};
 
 void render_enqueue_map(u16 object_index, const MATRIX *lights, const MATRIX *model, const kf::Projection &projection)
 {
-    const auto object = tmd_read_object(object_index);
-    auto stream = tmd_primitive_stream(object);
-    const auto normals = tmd_normal_bytes(object);
+    const auto object = tmd_read_object(tmd_context(), object_index);
+    auto stream = tmd_primitive_stream(tmd_context(), object);
+    const auto normals = tmd_normal_bytes(tmd_context(), object);
     const auto *vertices = game_graphics_runtime.tmd_projected_vertices;
     CVECTOR shade;
     const KfScreenVertex *va;
@@ -633,7 +633,6 @@ void render_enqueue_sprite(KfSpriteQuad *sprite, s16 depth_bias, KfSpriteDepthCu
             (otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK);
     }
 }
-
 
 void render_enqueuers_reset_module_state(void)
 {

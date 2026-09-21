@@ -1,7 +1,7 @@
 #include <kf/lib/null.h>
 
 #include <kf/lib/overlay.h>
-#include <kf/lib/audio.h>
+#include <kf/open/audio.h>
 #include <kf/lib/resource_file.h>
 #include <kf/lib/memory.h>
 #include <kf/open/controller.h>
@@ -22,10 +22,10 @@ static void opening_load_skip_assets(void)
 {
     u8 *tim_data;
     std::size_t tim_size;
-    memory_allocation_reset();
-    resource_file_load_allocated(&tim_data, "B0/MIX3.", &tim_size);
+    memory_allocation_reset(memory_arena);
+    resource_file_load_allocated(memory_arena, &tim_data, "B0/MIX3.", &tim_size);
     tim_upload_images(tim_data, tim_size);
-    memory_release_last();
+    memory_release_last(memory_arena);
     audio_stop_sequence(KF_AUDIO_STOP_FADE);
 }
 
@@ -38,11 +38,11 @@ void opening_run(KfOverlayMode overlay_mode)
 
     memset((void *)&open_graphics_runtime, 0, sizeof open_graphics_runtime);
     memset((void *)&opening_entity_state, 0, sizeof opening_entity_state);
-    memory_set_allocation_mode(KF_MEMORY_CREATE_ARENA);
+    memory_set_allocation_mode(memory_arena, KF_MEMORY_CREATE_ARENA);
     audio_initialize();
     display_initialize(overlay_mode);
     opening_entity_pool_reset();
-    memory_set_allocation_mode(KF_MEMORY_REBASE_ARENA);
+    memory_set_allocation_mode(memory_arena, KF_MEMORY_REBASE_ARENA);
 
     switch (overlay_mode) {
     case KF_OVERLAY_MODE_INTRO:
@@ -56,9 +56,9 @@ void opening_run(KfOverlayMode overlay_mode)
         tim_upload_images(open_graphics_runtime.display_state.asset_load_buffer, tim_size);
         skip_action = KF_OPENING_INPUT_SKIP;
         opening_fade_in();
-        resource_file_load_allocated(&tim_data, "B0/MIX0.", &tim_size);
+        resource_file_load_allocated(memory_arena, &tim_data, "B0/MIX0.", &tim_size);
         tim_upload_images(tim_data, tim_size);
-        memory_release_last();
+        memory_release_last(memory_arena);
         opening_input_action = KF_OPENING_INPUT_NONE;
 
         for (;;) {
@@ -95,9 +95,8 @@ void opening_run(KfOverlayMode overlay_mode)
     }
 
     opening_fade_in();
-    audio_shutdown();
+    audio_close_vab(audio_state);
 }
-
 
 void opening_controller_reset_module_state(void)
 {

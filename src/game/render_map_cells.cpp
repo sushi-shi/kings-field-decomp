@@ -87,7 +87,7 @@ void render_map_cell(s32 col, s32 row, KfCellVisibility visibility)
 
     kf::render_place_model(cell_matrix, game_graphics_runtime.render_state.view_matrix, position);
     kf::matrix_multiply_rotation(game_graphics_runtime.render_state.view_matrix, game_graphics_runtime.render_state.quadrant_matrices[orient], cell_matrix);
-    tmd_select_object_vertices(object_index);
+    tmd_select_object_vertices(tmd_context(), object_index);
     render_enqueue_map(object_index, &game_graphics_runtime.light_quadrant_matrices[orient], &cell_matrix, game_graphics_runtime.render_state.projection);
 }
 
@@ -112,7 +112,7 @@ void render_map_cells(void)
     row = (u16)game_graphics_runtime.render_state.view_cell.z - game_graphics_runtime.active_cell_window->origin_z;
     col_base = (u16)game_graphics_runtime.render_state.view_cell.x - game_graphics_runtime.active_cell_window->origin_x;
     cell = game_graphics_runtime.active_cell_window->cells;
-    tmd_select(KF_TMD_SLOT_MAP);
+    tmd_select(tmd_context(), KF_TMD_SLOT_MAP);
 
     rows = game_graphics_runtime.active_cell_window->height;
     do {
@@ -134,7 +134,6 @@ void render_map_cells(void)
         rows--;
     } while (rows != 0);
 }
-
 
 void render_map_cells_reset_module_state(void)
 {

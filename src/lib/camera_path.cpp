@@ -1,4 +1,5 @@
-#include <kf/lib/map.h>
+#include <kf/platform/prelude.hpp>
+#include <kf/lib/camera_path.h>
 #include <kf/lib/math.h>
 
 void camera_path_prepare_segment(KfCameraPathState *path, const KfCameraPathPoint *point)

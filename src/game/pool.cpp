@@ -144,7 +144,7 @@ KfPoolRecord *render_bind_animated_instance(
             pool_record_release(record);
         }
         asset_registry_select(asset_index);
-        tmd_select_object_vertices(0);
+        tmd_select_object_vertices(tmd_context(), 0);
         return (KfPoolRecord *)KF_ANIMATION_BIND_STATIC;
     }
     if (vertex_count == 0)
@@ -172,7 +172,7 @@ KfPoolRecord *render_bind_animated_instance(
     if (record->clip_index != clip_index || record->keyframe_index != keyframe_index) {
         object_table = (u32 *)((char *)asset_header + asset_header->object_table_offset);
         asset_registry_select(asset_index);
-        tmd_select_object_vertices(0);
+        tmd_select_object_vertices(tmd_context(), 0);
 
         copy_vertices(record->cached_vertices, game_graphics_runtime.current_tmd_vertices, vertex_count);
 
@@ -197,7 +197,7 @@ KfPoolRecord *render_bind_animated_instance(
 
     copy_vertices(game_graphics_runtime.morph_scratch, record->cached_vertices, vertex_count);
     morph_add_deltas(game_graphics_runtime.morph_scratch, vertex_count, record->rest_morph, blend_fraction);
-    tmd_set_current_vertices(game_graphics_runtime.morph_scratch);
+    tmd_set_current_vertices(tmd_context(), game_graphics_runtime.morph_scratch);
     record->state = KF_ANIMATION_CACHE_LIVE;
     return record;
 }

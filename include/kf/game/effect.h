@@ -1,6 +1,6 @@
 #ifndef KF_GAME_EFFECT_H
 #define KF_GAME_EFFECT_H
-#include <kf/lib/audio.h>
+#include <kf/game/audio.h>
 
 enum {
     KF_EFFECT_PROJECTILE_DEFAULT_SPEED = 600,

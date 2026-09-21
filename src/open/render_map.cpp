@@ -9,7 +9,7 @@ CVECTOR map_textured_primitive_color = {
 void render_enqueue_map(u16 object_index, const MATRIX *lights, const MATRIX *model, const kf::Projection &projection)
 {
     KfTmdPrimitive *primitive;
-    KfTmdObject *object = tmd_get_object(object_index);
+    KfTmdObject *object = tmd_get_object(tmd_context(), object_index);
     u32 header;
     SVECTOR *normals = (SVECTOR *)((u8 *)open_graphics_runtime.tmd_state.current_asset.data +
         (object->normal_offset + KF_TMD_HEADER_BYTES));
@@ -105,7 +105,6 @@ void render_enqueue_map(u16 object_index, const MATRIX *lights, const MATRIX *mo
         }
     }
 }
-
 
 void render_map_reset_module_state(void)
 {

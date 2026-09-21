@@ -1,3 +1,4 @@
+#include <kf/game/audio.h>
 #include <kf/lib/random.hpp>
 #include <kf/lib/null.h>
 #include <kf/game/graphics.h>
@@ -54,7 +55,7 @@ void player_death_begin(void)
     player_state.update_state = KF_PLAYER_UPDATE_DYING;
     player_state.death_camera_pitch_step = 0;
     player_state.death_visual_blend = 0;
-    sound_ref_play(&player_sound_refs[KF_PLAYER_SOUND_DEATH], KF_AUDIO_MAX_VOLUME);
+    sound_ref_play(audio_playback(), &player_sound_refs[KF_PLAYER_SOUND_DEATH], KF_AUDIO_MAX_VOLUME);
     player_death_saved_color_matrix = game_graphics_runtime.render_state.lighting.color_matrix;
     player_death_saved_fog_near = game_graphics_runtime.render_state.fog_near_distance;
 }
@@ -176,7 +177,7 @@ void player_death_restart(void)
         player_state.progress_state.current_floor = KF_FLOOR_1;
         player_state.map_variant = KF_MAP_VARIANT_DEFAULT;
         pool_release_all();
-        audio_close_vab();
+        audio_close_vab(audio_state);
         map_load_floor_wrapper();
     }
     player_sync_position_to_map();
@@ -442,7 +443,7 @@ void player_add_experience(s16 amount)
         }
         player_recalculate_combat_stats();
         notify_enqueue(KF_NOTIFICATION_LEVEL_UP);
-        sound_ref_play(&player_sound_refs[KF_PLAYER_SOUND_LEVEL_UP], KF_AUDIO_MAX_VOLUME);
+        sound_ref_play(audio_playback(), &player_sound_refs[KF_PLAYER_SOUND_LEVEL_UP], KF_AUDIO_MAX_VOLUME);
     }
 }
 
@@ -580,7 +581,6 @@ void player_select_magic(KfEffectKind magic_id)
             &effect_state.magic.entries[kf_enum_encode<u8>(player_state.selected_magic_id)];
     }
 }
-
 
 void player_death_reset_module_state(void)
 {

@@ -35,8 +35,8 @@ void render_frame(const VECTOR *position_or_null, const SVECTOR *rotation_or_nul
     KfNotificationSprite *record;
     s16 i;
 
-    render_set_view_transform(position_or_null, rotation_or_null);
-    display_begin_frame();
+    render_set_view_transform(game_graphics_runtime.render_state, position_or_null, rotation_or_null);
+    display_begin_frame(game_graphics_runtime.display_state);
     pool_mark_allocated();
     render_map_cells();
     status_sprite = &hud_sprites[KF_HUD_POISON_ICON];
@@ -125,13 +125,12 @@ void render_frame(const VECTOR *position_or_null, const SVECTOR *rotation_or_nul
 
     render_entities();
     render_weapon();
-    display_present_frame();
+    display_present_frame(game_graphics_runtime.display_state);
     pool_release_stale();
     // World rendering also advances floor sprites and notifications. Pace every
     // caller, including blocking scripts; presentation consumes this deadline.
     frame_pacer_wait();
 }
-
 
 void render_frame_reset_module_state(void)
 {

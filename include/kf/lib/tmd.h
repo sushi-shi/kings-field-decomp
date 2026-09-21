@@ -1,9 +1,13 @@
 #ifndef KF_TMD_H
 #define KF_TMD_H
 
+#include <kf/lib/memory.h>
+#include <kf/lib/render_types.h>
+
 #include <kf/lib/types.h>
 #include <kf/lib/enum.h>
 #include <kf/renderer/projection.hpp>
+#include <span>
 
 enum class KfTmdSlot : u16 {
     KF_TMD_SLOT_MAP = 0,
@@ -293,22 +297,32 @@ typedef struct KfScreenVertex {
     s16 p2;
 } KfScreenVertex;
 
+struct KfTmdContext {
+    std::span<KfTmdResource> slots;
+    KfTmdResource &current_asset;
+    SVECTOR *&current_vertices;
+    std::span<KfScreenVertex, KF_PROJECTED_VERTEX_CAPACITY> projected_vertices;
+};
+
 // TMD vertex/normal indices remain file element indices; projected storage may
 // change independently without rewriting the loaded resource.
 
-extern KfTmdObject *tmd_get_object(u16 object_index);
-extern KfTmdObject tmd_read_object(u16 object_index);
-extern KfTmdPrimitiveStream tmd_primitive_stream(const KfTmdObject &object);
+extern KfTmdObject *tmd_get_object(KfTmdContext context, u16 object_index);
+extern KfTmdObject tmd_read_object(KfTmdContext context, u16 object_index);
+extern KfTmdPrimitiveStream tmd_primitive_stream(KfTmdContext context, const KfTmdObject &object);
 extern KfTmdPacket tmd_next_packet(KfTmdPrimitiveStream &stream);
 extern KfTmdFaceData tmd_decode_face(const KfTmdPacket &packet, u32 vertex_count);
-extern KfTmdBytes tmd_normal_bytes(const KfTmdObject &object);
+extern KfTmdBytes tmd_normal_bytes(KfTmdContext context, const KfTmdObject &object);
 extern SVECTOR tmd_read_normal(KfTmdBytes normals, u16 index);
-extern void tmd_project_vertices(s32 count, const MATRIX *model, const kf::Projection &projection);
 extern KfTmdResource tmd_resource_view(u8 *data, std::size_t size);
-extern void tmd_register(KfTmdSlot slot, u8 *data, std::size_t size);
-extern void tmd_release_last_allocation(KfTmdSlot slot);
-extern void tmd_select(KfTmdSlot slot);
-extern void tmd_select_object_vertices(u16 object_index);
-extern void tmd_set_current_vertices(SVECTOR *vertices);
+extern void tmd_register(KfTmdContext context, KfTmdSlot slot, u8 *data, std::size_t size);
+extern void tmd_release_last_allocation(KfTmdContext context, KfMemoryArena &arena, KfTmdSlot slot);
+extern void tmd_select(KfTmdContext context, KfTmdSlot slot);
+extern void tmd_select_object_vertices(KfTmdContext context, u16 object_index);
+extern void tmd_set_current_vertices(KfTmdContext context, SVECTOR *vertices);
+
+extern void tmd_project_vertices_shift(KfTmdContext context, s32 count, u8 shift,
+    const MATRIX *model, const kf::Projection &projection);
+extern void tmd_transform_vertices(KfTmdContext context, s32 count, const MATRIX *model);
 
 #endif

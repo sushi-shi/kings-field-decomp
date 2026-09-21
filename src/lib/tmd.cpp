@@ -1,13 +1,13 @@
+#include <kf/platform/prelude.hpp>
 #include <kf/lib/tmd.h>
 #include <kf/lib/graphics.h>
-#include <kf/lib/map_data.h>
 #include <kf/lib/memory.h>
 
-static KfTmdResource &tmd_slot(KfTmdSlot slot)
+static KfTmdResource &tmd_slot(KfTmdContext context, KfTmdSlot slot)
 {
-    auto &slots = graphics_runtime().tmd_state.slots;
+    const auto slots = context.slots;
     const auto index = kf_enum_encode<u16>(slot);
-    if (index >= sizeof slots / sizeof slots[0])
+    if (index >= slots.size())
         kf::host_fail("Invalid TMD slot");
     return slots[index];
 }
@@ -25,17 +25,17 @@ KfTmdResource tmd_resource_view(u8 *data, std::size_t size)
     return {reinterpret_cast<KfTmdHeader *>(data), size};
 }
 
-void tmd_select(KfTmdSlot slot)
+void tmd_select(KfTmdContext context, KfTmdSlot slot)
 {
-    const auto resource = tmd_slot(slot);
+    const auto resource = tmd_slot(context, slot);
     if (!resource.data)
         kf::host_fail("Unregistered TMD slot");
-    graphics_runtime().tmd_state.current_asset = resource;
+    context.current_asset = resource;
 }
 
-static u8 *tmd_object_bytes(u16 index)
+static u8 *tmd_object_bytes(KfTmdContext context, u16 index)
 {
-    const auto resource = graphics_runtime().tmd_state.current_asset;
+    const auto resource = context.current_asset;
     if (!resource.data || resource.size < KF_TMD_HEADER_BYTES)
         kf::host_fail("No selected TMD resource");
     auto *bytes = reinterpret_cast<u8 *>(resource.data);
@@ -45,14 +45,14 @@ static u8 *tmd_object_bytes(u16 index)
     return bytes + KF_TMD_HEADER_BYTES + sizeof(KfTmdObject) * index;
 }
 
-KfTmdObject *tmd_get_object(u16 index)
+KfTmdObject *tmd_get_object(KfTmdContext context, u16 index)
 {
-    return reinterpret_cast<KfTmdObject *>(tmd_object_bytes(index));
+    return reinterpret_cast<KfTmdObject *>(tmd_object_bytes(context, index));
 }
 
-KfTmdObject tmd_read_object(u16 index)
+KfTmdObject tmd_read_object(KfTmdContext context, u16 index)
 {
-    const auto *bytes = tmd_object_bytes(index);
+    const auto *bytes = tmd_object_bytes(context, index);
     return {tmd_read_word(bytes + offsetof(KfTmdObject, vertex_offset)),
         tmd_read_word(bytes + offsetof(KfTmdObject, vertex_count)),
         tmd_read_word(bytes + offsetof(KfTmdObject, normal_offset)),
@@ -62,9 +62,9 @@ KfTmdObject tmd_read_object(u16 index)
         std::bit_cast<s32>(tmd_read_word(bytes + offsetof(KfTmdObject, scale)))};
 }
 
-static KfTmdBytes tmd_payload_from(std::size_t offset)
+static KfTmdBytes tmd_payload_from(KfTmdContext context, std::size_t offset)
 {
-    const auto resource = graphics_runtime().tmd_state.current_asset;
+    const auto resource = context.current_asset;
     if (!resource.data || resource.size < KF_TMD_HEADER_BYTES ||
         offset > resource.size - KF_TMD_HEADER_BYTES)
         kf::host_fail("TMD offset exceeds its resource");
@@ -72,11 +72,11 @@ static KfTmdBytes tmd_payload_from(std::size_t offset)
         resource.size - KF_TMD_HEADER_BYTES - offset};
 }
 
-KfTmdPrimitiveStream tmd_primitive_stream(const KfTmdObject &object)
+KfTmdPrimitiveStream tmd_primitive_stream(KfTmdContext context, const KfTmdObject &object)
 {
     if (!object.primitive_count)
         return {};
-    const auto bytes = tmd_payload_from(object.primitive_offset);
+    const auto bytes = tmd_payload_from(context, object.primitive_offset);
     if (object.primitive_count > bytes.size / KF_TMD_PACKET_HEADER_BYTES)
         kf::host_fail("TMD primitive count exceeds its resource");
     return {bytes, object.primitive_count};
@@ -153,11 +153,11 @@ KfTmdFaceData tmd_decode_face(const KfTmdPacket &packet, u32 vertex_count)
     return face;
 }
 
-KfTmdBytes tmd_normal_bytes(const KfTmdObject &object)
+KfTmdBytes tmd_normal_bytes(KfTmdContext context, const KfTmdObject &object)
 {
     if (!object.normal_count)
         return {};
-    auto bytes = tmd_payload_from(object.normal_offset);
+    auto bytes = tmd_payload_from(context, object.normal_offset);
     constexpr unsigned normal_bytes = 8;
     if (object.normal_count > bytes.size / normal_bytes)
         kf::host_fail("TMD normals exceed their resource");
@@ -177,15 +177,15 @@ SVECTOR tmd_read_normal(KfTmdBytes normals, u16 index)
         std::bit_cast<s16>(tmd_read_halfword(bytes + 6))};
 }
 
-void tmd_set_current_vertices(SVECTOR *vertices)
+void tmd_set_current_vertices(KfTmdContext context, SVECTOR *vertices)
 {
-    graphics_runtime().current_tmd_vertices = vertices;
+    context.current_vertices = vertices;
 }
 
-void tmd_select_object_vertices(u16 index)
+void tmd_select_object_vertices(KfTmdContext context, u16 index)
 {
-    const auto *object = tmd_get_object(index);
-    const auto resource = graphics_runtime().tmd_state.current_asset;
+    const auto *object = tmd_get_object(context, index);
+    const auto resource = context.current_asset;
     const std::size_t offset = object->vertex_offset;
     const auto payload_size = resource.size - KF_TMD_HEADER_BYTES;
     if (offset > payload_size || object->vertex_count > (payload_size - offset) / sizeof(SVECTOR))
@@ -193,56 +193,36 @@ void tmd_select_object_vertices(u16 index)
     auto *vertices = reinterpret_cast<u8 *>(resource.data) + KF_TMD_HEADER_BYTES + offset;
     if (reinterpret_cast<std::uintptr_t>(vertices) % alignof(SVECTOR))
         kf::host_fail("Unaligned TMD vertices");
-    graphics_runtime().current_tmd_vertices = reinterpret_cast<SVECTOR *>(vertices);
+    context.current_vertices = reinterpret_cast<SVECTOR *>(vertices);
 }
 
-void render_set_view_transform(
-    const VECTOR *position_or_null, const SVECTOR *rotation_or_null)
-{
-    SVECTOR angles;
-
-    if (position_or_null != NULL) {
-        graphics_runtime().render_state.view_position = *position_or_null;
-        graphics_runtime().render_state.view_cell.x = graphics_runtime().render_state.view_position.vx / KF_MAP_TILE_SIZE;
-        graphics_runtime().render_state.view_cell.z = graphics_runtime().render_state.view_position.vz / KF_MAP_TILE_SIZE;
-    }
-    if (rotation_or_null != NULL) {
-        graphics_runtime().render_state.view_rotation = *rotation_or_null;
-    }
-    kf::matrix_set_rotation_xyz(graphics_runtime().render_state.view_rotation, graphics_runtime().render_state.view_matrix);
-    angles.vz = 0;
-    angles.vy = 0;
-    angles.vx = graphics_runtime().render_state.view_rotation.vx;
-    kf::matrix_set_rotation_xyz(angles, graphics_runtime().render_state.pitch_matrix);
-}
-
-void tmd_register(KfTmdSlot slot, u8 *data, std::size_t size)
+void tmd_register(KfTmdContext context, KfTmdSlot slot, u8 *data, std::size_t size)
 {
     const auto resource = tmd_resource_view(data, size);
-    tmd_slot(slot) = resource;
-    graphics_runtime().tmd_state.current_asset = resource;
+    tmd_slot(context, slot) = resource;
+    context.current_asset = resource;
 }
 
-void tmd_release_last_allocation(KfTmdSlot slot)
+void tmd_release_last_allocation(KfTmdContext context, KfMemoryArena &arena, KfTmdSlot slot)
 {
-    auto &resource = tmd_slot(slot);
-    if (graphics_runtime().tmd_state.current_asset.data == resource.data) {
-        graphics_runtime().tmd_state.current_asset = {};
-        graphics_runtime().current_tmd_vertices = NULL;
+    auto &resource = tmd_slot(context, slot);
+    if (context.current_asset.data == resource.data) {
+        context.current_asset = {};
+        context.current_vertices = NULL;
     }
     resource = {};
-    memory_release_last();
+    memory_release_last(arena);
 }
 
-void tmd_project_vertices_shift(s32 count, u8 shift, const MATRIX *model, const kf::Projection &projection)
+void tmd_project_vertices_shift(KfTmdContext context, s32 count, u8 shift, const MATRIX *model, const kf::Projection &projection)
 {
     if (count < 0 || count > KF_PROJECTED_VERTEX_CAPACITY)
         kf::host_fail("Model exceeds projected vertex capacity.");
     KfScreenVertex *projected;
     SVECTOR *vertex;
 
-    projected = graphics_runtime().tmd_projected_vertices;
-    vertex = graphics_runtime().current_tmd_vertices;
+    projected = context.projected_vertices.data();
+    vertex = context.current_vertices;
     for (count--; count != -1; count--) {
         const auto point = kf::render_project_point(*model, projection, *vertex);
         projected->sxy.vector = {point.x, point.y};
@@ -253,7 +233,7 @@ void tmd_project_vertices_shift(s32 count, u8 shift, const MATRIX *model, const 
     }
 }
 
-void tmd_transform_vertices(s32 count, const MATRIX *model)
+void tmd_transform_vertices(KfTmdContext context, s32 count, const MATRIX *model)
 {
     if (count < 0 || count > KF_PROJECTED_VERTEX_CAPACITY)
         kf::host_fail("Model exceeds projected vertex capacity.");
@@ -262,8 +242,8 @@ void tmd_transform_vertices(s32 count, const MATRIX *model)
     VECTOR transformed;
     s32 remaining;
 
-    projected = graphics_runtime().tmd_projected_vertices;
-    vertex = graphics_runtime().current_tmd_vertices;
+    projected = context.projected_vertices.data();
+    vertex = context.current_vertices;
     for (remaining = count - 1; remaining != -1; remaining--) {
         transformed = kf::render_transform_point(*model, *vertex);
         projected->sxy.vector.vx = transformed.vx;

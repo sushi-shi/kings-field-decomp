@@ -1,3 +1,4 @@
+#include <kf/game/audio.h>
 #include <kf/lib/random.hpp>
 #include <kf/lib/bool.h>
 
@@ -715,7 +716,6 @@ void actor_apply_random_movement(s16 step, s16 limit)
     if (result == KF_COLLISION_NONE) {
         actor->position = target;
     } else {
-
         actor->action_progress = KF_ACTOR_PROGRESS_DRIFT_COLLIDED;
         result = collision_query_world(
             target.vx,
@@ -781,7 +781,7 @@ void actor_update_boss_death_sequence(void)
             0, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER, KF_EFFECT_KIND_RADIAL_BLAST_ALTERNATE,
             &position, &direction, KfEffectSoundArguments{KF_EFFECT_SOUND_SILENT});
         if (actor->animation_phase % (definition->action_animation_steps[KF_ACTOR_ANIM_SLOT_DEATH] * ACTOR_BOSS_DEATH_SOUND_PERIOD) == 0) {
-            sound_ref_play(&boss_death_loop_sound, ACTOR_BOSS_DEATH_LOOP_VOLUME);
+            sound_ref_play(audio_playback(), &boss_death_loop_sound, ACTOR_BOSS_DEATH_LOOP_VOLUME);
         }
     }
 }
@@ -799,7 +799,6 @@ static void actor_update_pursuit(KfActor *actor, const KfActorDefinition *defini
         break;
     case KF_ACTOR_PROGRESS_RUNNING:
         if (actor_move_along_heading(KF_ACTOR_MOVE_FORWARD, KF_ACTOR_COLLISION_STOP) != KF_ACTOR_MOVE_SUCCEEDED) {
-
             actor->action_progress = kf_enum_decode<KfActorActionProgress>((kf::random_next() >> ACTOR_PURSUIT_BACKOFF_RANDOM_SHIFT)
                 + kf_enum_encode<u8>(KF_ACTOR_PROGRESS_BACKOFF_BASE));
             return;

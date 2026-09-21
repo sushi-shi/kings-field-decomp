@@ -55,7 +55,7 @@ target_include_directories(kf_host PUBLIC include)
 target_link_libraries(kf_host PUBLIC kf_support SDL3::SDL3)
 target_compile_options(kf_host PRIVATE -Wall -Wextra -Wpedantic -Werror)
 add_executable(kings-field src/platform/entry.cpp
-  $<TARGET_OBJECTS:kf_game> $<TARGET_OBJECTS:kf_opening>)
+  $<TARGET_OBJECTS:kf_game> $<TARGET_OBJECTS:kf_opening> $<TARGET_OBJECTS:kf_common>)
 target_link_libraries(kings-field PRIVATE kf_host)
 target_compile_options(kings-field PRIVATE -Wall -Wextra)
 if(EMSCRIPTEN)

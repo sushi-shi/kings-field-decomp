@@ -17,7 +17,6 @@ enum class KfMenuMode : s32 {
     KF_MENU_MODE_SHOP = 2
 }; using enum KfMenuMode;
 
-
 enum class KfMenuRootChoice : s32 {
     KF_ROOT_CHOICE_NONE = -1,
     KF_ROOT_CHOICE_USE_ITEM = 0,
@@ -89,7 +88,6 @@ enum class KfMenuWindowKind : s32 {
 }; using enum KfMenuWindowKind;
 
 enum {
-
     KF_MENU_WINDOW_LAYOUT_COUNT = 9
 };
 
@@ -98,8 +96,6 @@ enum {
     KF_SHOP_ROW_GOLD = 3,
     KF_SHOP_CHOICE_COUNT = KF_SHOP_ROW_RETURN + 1
 };
-
-
 
 static inline KfMenuResult menu_confirm_result_from_choice(KfMenuConfirmChoice choice)
 {
@@ -124,6 +120,8 @@ public:
 private:
     s32 value_;
 };
+
+using ::kf_enum_encode;
 
 template <typename Integer, typename Value>
 constexpr Integer kf_enum_encode(KfMenuSelection<Value> selection)
@@ -196,7 +194,6 @@ enum {
 };
 
 enum {
-
     MENU_BACKDROP_COLUMN_STEP = 71,
     MENU_BACKDROP_ROW_STEP = 104,
     MENU_BACKDROP_TOP_Y = 16,

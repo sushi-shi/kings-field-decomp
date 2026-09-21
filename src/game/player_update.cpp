@@ -1,3 +1,4 @@
+#include <kf/game/audio.h>
 #include <kf/lib/random.hpp>
 #include <kf/lib/null.h>
 #include <kf/game/graphics.h>
@@ -495,18 +496,18 @@ static void player_update_darkness()
                 fade = (s16)(DARKNESS_FADE_STEPS - player_state.darkness_timer);
             }
             if (fade >= 0) {
-                lighting_set_color_matrix(&player_darkness_color_matrix, color_matrix_table,
+                lighting_set_color_matrix(game_graphics_runtime.render_state, &player_darkness_color_matrix, color_matrix_table,
                     fade << (KF_FIXED12_BITS - DARKNESS_FADE_BITS));
-                fog_interpolate_near(PLAYER_DARKNESS_FOG_NEAR, KF_INITIAL_FOG_NEAR_DISTANCE,
+                fog_interpolate_near(game_graphics_runtime.render_state, PLAYER_DARKNESS_FOG_NEAR, KF_INITIAL_FOG_NEAR_DISTANCE,
                     fade << (KF_FIXED12_BITS - DARKNESS_FADE_BITS));
             } else {
                 memcpy(game_graphics_runtime.render_state.lighting.color_matrix.m, (player_darkness_color_matrix).m,
                     sizeof game_graphics_runtime.render_state.lighting.color_matrix.m);
-                fog_set_near(PLAYER_DARKNESS_FOG_NEAR);
+                fog_set_near(game_graphics_runtime.render_state, PLAYER_DARKNESS_FOG_NEAR);
             }
         }
     } else {
-        fog_set_near(KF_INITIAL_FOG_NEAR_DISTANCE);
+        fog_set_near(game_graphics_runtime.render_state, KF_INITIAL_FOG_NEAR_DISTANCE);
     }
 }
 
@@ -644,7 +645,7 @@ static void player_update_status_effects()
 static void player_restore_loaded_game()
 {
     pool_release_all();
-    audio_close_vab();
+    audio_close_vab(audio_state);
     map_load_floor_wrapper();
     player_sync_position_to_map();
     player_state.previous_map_cell.x = player_state.motion_state.map_cell.x;
@@ -716,7 +717,6 @@ void player_update(void)
     player_apply_current_floor_hazard();
     player_update_status_effects();
 }
-
 
 void player_update_reset_module_state(void)
 {

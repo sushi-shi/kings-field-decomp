@@ -1,6 +1,8 @@
 #ifndef KF_RESOURCE_FILE_H
 #define KF_RESOURCE_FILE_H
 
+#include <kf/lib/memory.h>
+
 #include <kf/lib/types.h>
 #include <kf/platform/files.hpp>
 #include <cstddef>
@@ -19,9 +21,9 @@ constexpr void resource_path_write_decimal3(char *digits, s32 number)
 
 // Resource paths are relative to the extracted KF directory.
 kf::FileResult resource_file_open(kf::DataFile *file, const char *relative_path);
-KfResourceLoadResult resource_file_try_load_allocated(u8 **destination, const char *relative_path,
+KfResourceLoadResult resource_file_try_load_allocated(KfMemoryArena &arena, u8 **destination, const char *relative_path,
                                                     std::size_t *loaded_size = nullptr);
-void resource_file_load_allocated(u8 **destination, const char *relative_path,
+void resource_file_load_allocated(KfMemoryArena &arena, u8 **destination, const char *relative_path,
                                  std::size_t *loaded_size = nullptr);
 KfResourceLoadResult resource_file_load_into(
     void *destination, std::size_t capacity, const char *relative_path,

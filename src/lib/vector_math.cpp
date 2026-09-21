@@ -1,3 +1,4 @@
+#include <kf/platform/prelude.hpp>
 #include <kf/lib/bool.h>
 
 #include <kf/lib/math.h>
@@ -18,8 +19,6 @@ void pitch_yaw_to_forward_vector(const struct KfEulerAngles *angles, SVECTOR *di
     *direction = result.narrowed();
 }
 
-#ifndef KF_OPEN
-
 void vector2s_scale_shift11(s16 scale, struct KfVecXZs *vector)
 {
     s32 x = vector->x * scale;
@@ -28,7 +27,6 @@ void vector2s_scale_shift11(s16 scale, struct KfVecXZs *vector)
     vector->x = x >> KF_FIXED11_BITS;
     vector->z = z >> KF_FIXED11_BITS;
 }
-#endif
 
 void vector3s_scale_shift12(s16 scale, SVECTOR *vector)
 {
@@ -39,8 +37,6 @@ void vector3s_scale_shift12(s16 scale, SVECTOR *vector)
     *vector = VECTOR{x >> KF_FIXED12_BITS, y >> KF_FIXED12_BITS, z >> KF_FIXED12_BITS}.narrowed();
 }
 
-#ifndef KF_OPEN
-
 void vector2s_scale_shift12(s16 scale, s16 *vector)
 {
     s32 x = vector[0] * scale;
@@ -49,7 +45,6 @@ void vector2s_scale_shift12(s16 scale, s16 *vector)
     vector[0] = x >> KF_FIXED12_BITS;
     vector[1] = y >> KF_FIXED12_BITS;
 }
-#endif
 
 void vector3s_scale_shift12_alt(s16 scale, s16 *vector)
 {
@@ -62,14 +57,11 @@ void vector3s_scale_shift12_alt(s16 scale, s16 *vector)
     vector[2] = z >> KF_FIXED12_BITS;
 }
 
-#ifndef KF_OPEN
-
 void vector3i_add_xz(VECTOR *destination, const struct KfVecXZs *delta)
 {
     destination->vx += delta->x;
     destination->vz += delta->z;
 }
-#endif
 
 KfBool angle_within_tolerance(int lhs, int rhs, s16 range)
 {

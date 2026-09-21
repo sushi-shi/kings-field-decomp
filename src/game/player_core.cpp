@@ -1,3 +1,5 @@
+#include <kf/game/audio.h>
+#include <kf/game/resources.h>
 #include <kf/lib/null.h>
 #include <kf/game/graphics.h>
 
@@ -10,7 +12,6 @@
 #include <kf/game/game.h>
 static constexpr unsigned weapon_image_number_offset = 9;
 static constexpr unsigned weapon_image_path_capacity = 16;
-
 
 static constexpr s32 PLAYER_INITIAL_POSITION_X = 31000;
 static constexpr s32 PLAYER_INITIAL_POSITION_Z = 4000;
@@ -135,7 +136,7 @@ void player_begin_weapon_attack(void)
     if (player_state.weapon_attack_phase == KF_WEAPON_ATTACK_INACTIVE
         && player_state.equipped_weapon_id != KF_OBJECT_NONE) {
         player_state.weapon_attack_phase = 0;
-        sound_ref_play(&player_sound_refs[KF_PLAYER_SOUND_WEAPON_ATTACK], KF_AUDIO_MAX_VOLUME);
+        sound_ref_play(audio_playback(), &player_sound_refs[KF_PLAYER_SOUND_WEAPON_ATTACK], KF_AUDIO_MAX_VOLUME);
         player_state.attack_charge_state.committed = player_state.attack_charge_state.current;
         if (player_state.attack_charge_state.current == KF_PLAYER_CHARGE_FULL) {
             player_state.weapon_attack_fully_charged = KF_WEAPON_ATTACK_FULL_CHARGE;
@@ -210,7 +211,7 @@ void game_initialize_session(void)
 {
     player_state.camera_rotation = {};
     player_state.camera_position = {PLAYER_INITIAL_POSITION_X, 0, PLAYER_INITIAL_POSITION_Z};
-    player_state.weapon_asset_buffer = (struct KfAssetHeader *)memory_allocate(KF_WEAPON_ASSET_BUFFER_BYTES);
+    player_state.weapon_asset_buffer = (struct KfAssetHeader *)memory_allocate(memory_arena, KF_WEAPON_ASSET_BUFFER_BYTES);
     game_state_initialize();
     player_state.update_state = KF_PLAYER_UPDATE_NORMAL;
     player_state.audio_effects_enabled = KF_PLAYER_OPTION_ON;
@@ -601,7 +602,6 @@ void player_update_transform_snapshot(VECTOR *position_out, SVECTOR *rotation_ou
     *rotation_out = player_state.camera_rotation;
     *rotation_out += player_state.view_rotation_offset;
 }
-
 
 void player_core_reset_module_state(void)
 {

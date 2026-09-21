@@ -10,7 +10,7 @@ CVECTOR tmd_textured_primitive_color = {
 
 void render_enqueue_tmd(u16 object_index, s16 depth_bias, const MATRIX *lights)
 {
-    KfTmdObject *object = tmd_get_object(object_index);
+    KfTmdObject *object = tmd_get_object(tmd_context(), object_index);
     u32 header;
     u32 remaining = object->primitive_count;
     u8 *packet = (u8 *)open_graphics_runtime.tmd_state.current_asset.data +

@@ -1,3 +1,4 @@
+#include <kf/platform/prelude.hpp>
 #include <kf/lib/audio.h>
 
 static constexpr std::size_t sound_chunk_header_bytes = 4;
@@ -8,7 +9,7 @@ static u32 audio_chunk_size(const u8 *data)
         | (static_cast<u32>(data[2]) << 16) | (static_cast<u32>(data[3]) << 24);
 }
 
-void audio_load_vab_resource(const u8 *data, std::size_t size)
+KfAudioBankResource audio_bank_resource(const u8 *data, std::size_t size)
 {
     if (size < sound_chunk_header_bytes)
         kf::host_fail("Truncated sound-bank resource");
@@ -19,70 +20,68 @@ void audio_load_vab_resource(const u8 *data, std::size_t size)
     const std::size_t body_size = audio_chunk_size(body_chunk);
     if (body_size > size - 2 * sound_chunk_header_bytes - header_size)
         kf::host_fail("Truncated sound-bank samples");
-    audio_load_vab(data + sound_chunk_header_bytes, header_size, body_chunk + sound_chunk_header_bytes, body_size);
+    return {data + sound_chunk_header_bytes, header_size, body_chunk + sound_chunk_header_bytes, body_size};
 }
 
-void audio_release_sequence(void)
+void audio_release_sequence(KfAudioState &state)
 {
-    kf::sound_sequence_release(audio_state.sequence);
-    audio_state.sequence = nullptr;
-    audio_state.sequence_active = KF_AUDIO_SEQUENCE_INACTIVE;
+    kf::sound_sequence_release(state.sequence);
+    state.sequence = nullptr;
+    state.sequence_active = KF_AUDIO_SEQUENCE_INACTIVE;
 }
 
-void audio_shutdown(void)
+void sound_ref_key_off_bank0(KfAudioState &state, const SoundRef *sound)
 {
-    audio_close_vab();
+    kf::sound_note_release(state.bank, sound->program, sound->note);
 }
 
-KfAudioPlaybackResult audio_play_spatial_default_range(
-    const SoundRef *sound,
-    const VECTOR *position,
-    s16 volume)
-{
-    return audio_play_spatial(sound, position, volume,
-        KF_AUDIO_DEFAULT_MAX_DISTANCE, KF_AUDIO_DEFAULT_ATTENUATION_DISTANCE);
-}
-
-KfAudioPlaybackResult audio_play_spatial_range(
-    const SoundRef *sound,
-    const VECTOR *position,
-    s16 volume,
-    s32 max_distance,
-    s32 attenuation_distance)
-{
-    return audio_play_spatial(
-        sound,
-        position,
-        volume,
-        max_distance,
-        attenuation_distance);
-}
-
-void sound_ref_key_off_bank0(const SoundRef *sound)
-{
-
-    kf::sound_note_release(audio_state.bank, sound->program, sound->note);
-}
-
-void audio_set_listener_transform(
+void audio_set_listener_transform(KfAudioState &state,
     const VECTOR *position_or_null,
     const SVECTOR *rotation_or_null)
 {
     if (position_or_null != NULL) {
-        audio_state.listener_position = *position_or_null;
+        state.listener_position = *position_or_null;
     }
     if (rotation_or_null != NULL) {
-        audio_state.listener_rotation = *rotation_or_null;
+        state.listener_rotation = *rotation_or_null;
     }
 }
 
-void sound_ref_play(const SoundRef *sound, s16 volume)
+void sound_ref_play(KfAudioPlayback playback, const SoundRef *sound, s16 volume)
 {
-    audio_play_voice(
-        audio_state.bank,
+    audio_play_voice(playback,
+        playback.state.bank,
         sound->program,
         sound->tone_and_flags,
         sound->note,
         volume,
         volume);
+}
+
+void audio_close_vab(KfAudioState &state)
+{
+    audio_release_sequence(state);
+    kf::sound_bank_release(state.bank);
+    state.bank = nullptr;
+}
+
+void audio_reset_voice_slots(KfAudioState &state)
+{
+    for (auto &voice : state.voice_slots.voice_ids)
+        voice = kf::no_sound_voice;
+}
+
+void audio_play_voice(KfAudioPlayback playback,
+    kf::SoundBank *bank, s16 program, s16 tone, s16 note, s16 left_volume, s16 right_volume)
+{
+    if (program == 0 && tone == 0 && note == 0)
+        return;
+    if (!playback.effects_enabled)
+        return;
+    auto &index = playback.voice_slot_index;
+    if (++index == KF_AUDIO_VOICE_SLOTS)
+        index = 0;
+    auto &voice = playback.state.voice_slots.voice_ids[index];
+    kf::sound_voice_release(voice);
+    voice = kf::sound_voice_play(bank, program, tone, note, left_volume, right_volume);
 }

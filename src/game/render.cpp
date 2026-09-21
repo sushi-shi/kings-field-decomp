@@ -1,3 +1,4 @@
+#include <kf/game/resources.h>
 #include <kf/lib/null.h>
 #include <kf/game/graphics.h>
 
@@ -11,7 +12,6 @@
 #include <cstring>
 #include <kf/game/game.h>
 #include <kf/lib/tmd.h>
-#include <kf/lib/graphics.h>
 
 enum {
     DISPLAY_ASSET_BUFFER_BYTES = 2 * 0x19640,
@@ -41,8 +41,6 @@ MATRIX color_matrix_table[KF_GAME_COLOR_PRESET_COUNT] = {
 };
 
 KfGraphicsRuntimeGame game_graphics_runtime;
-
-u32 DAT_800a0768;
 
 void display_show_system_screen(KfSystemScreen screen)
 {
@@ -119,7 +117,7 @@ void render_initialize(void)
     u8 *buffer;
 
     game_graphics_runtime.display_state.buffer_index = KF_DISPLAY_BUFFER_UNINITIALIZED;
-    buffer = (u8 *)memory_allocate(DISPLAY_ASSET_BUFFER_BYTES);
+    buffer = (u8 *)memory_allocate(memory_arena, DISPLAY_ASSET_BUFFER_BYTES);
     game_graphics_runtime.display_state.asset_load_buffer = buffer;
     game_graphics_runtime.display_state.asset_load_capacity = DISPLAY_ASSET_BUFFER_BYTES;
     game_graphics_runtime.floor_item_count = 0;
@@ -138,7 +136,7 @@ void render_initialize(void)
     };
     memcpy(game_graphics_runtime.render_state.light_matrix.m,
         initial_light_directions, sizeof initial_light_directions);
-    game_graphics_runtime.render_state.light_matrix_copy = game_graphics_runtime.render_state.light_matrix;
+    game_graphics_runtime.light_matrix_copy = game_graphics_runtime.render_state.light_matrix;
     kf::matrix_multiply_rotation(game_graphics_runtime.render_state.light_matrix, game_graphics_runtime.render_state.quadrant_matrices[0], game_graphics_runtime.light_quadrant_matrices[0]);
     kf::matrix_multiply_rotation(game_graphics_runtime.render_state.light_matrix, game_graphics_runtime.render_state.quadrant_matrices[1], game_graphics_runtime.light_quadrant_matrices[1]);
     kf::matrix_multiply_rotation(game_graphics_runtime.render_state.light_matrix, game_graphics_runtime.render_state.quadrant_matrices[2], game_graphics_runtime.light_quadrant_matrices[2]);
@@ -189,5 +187,4 @@ void render_reset_module_state(void)
 {
     kf::restore_initial_value<color_matrix_table>();
     kf::restore_initial_value<game_graphics_runtime>();
-    kf::restore_initial_value<DAT_800a0768>();
 }

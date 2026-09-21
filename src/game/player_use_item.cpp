@@ -1,3 +1,4 @@
+#include <kf/game/audio.h>
 #include <kf/lib/null.h>
 #include <kf/lib/bool.h>
 
@@ -6,7 +7,6 @@
 static constexpr unsigned enemy_image_number_offset = 7;
 static constexpr unsigned enemy_image_path_capacity = 14, person_image_path_capacity = 15;
 static constexpr unsigned person_image_number_offset = 8;
-
 
 enum {
     PLAYER_KEY_UNLOCK_VOLUME = 110,
@@ -93,9 +93,9 @@ void player_use_item(KfObjectId item_id)
                     used = true;
                     if (object->link.fields.link_id == kf_enum_encode<u8>(item_id)) {
                         object->link.fields.link_id = KF_MAP_LINK_NONE;
-                        sound_ref_play(&gameplay_sound_refs[KF_GAMEPLAY_SOUND_KEY_UNLOCK], PLAYER_KEY_UNLOCK_VOLUME);
+                        sound_ref_play(audio_playback(), &gameplay_sound_refs[KF_GAMEPLAY_SOUND_KEY_UNLOCK], PLAYER_KEY_UNLOCK_VOLUME);
                         if (object->object_id == KF_MAP_OBJECT_GRAVESTONE) {
-                            sound_ref_play(&gameplay_sound_refs[KF_GAMEPLAY_SOUND_STONE_PASSAGE], KF_AUDIO_MAX_VOLUME);
+                            sound_ref_play(audio_playback(), &gameplay_sound_refs[KF_GAMEPLAY_SOUND_STONE_PASSAGE], KF_AUDIO_MAX_VOLUME);
                         }
                     } else {
                         notify_enqueue(KF_NOTIFICATION_KEY_DOES_NOT_FIT);
@@ -155,7 +155,7 @@ void player_use_item(KfObjectId item_id)
         } else {
             break;
         }
-        sound_ref_play(&gameplay_sound_refs[KF_GAMEPLAY_SOUND_HARP], KF_AUDIO_MAX_VOLUME);
+        sound_ref_play(audio_playback(), &gameplay_sound_refs[KF_GAMEPLAY_SOUND_HARP], KF_AUDIO_MAX_VOLUME);
         used = true;
         break;
     case KF_ITEM_MEDICINAL_HERB:
@@ -206,7 +206,6 @@ void player_use_item(KfObjectId item_id)
         notify_enqueue(KF_NOTIFICATION_NOTHING_HAPPENS);
     }
 }
-
 
 void player_use_item_reset_module_state(void)
 {

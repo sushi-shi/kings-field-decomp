@@ -1,5 +1,6 @@
-#include <kf/lib/item.h>
-#include <kf/lib/map_data.h>
+#include <kf/platform/prelude.hpp>
+#include <kf/lib/item_types.h>
+#include <kf/lib/map_types.h>
 #include <kf/lib/math.h>
 #include <kf/lib/graphics.h>
 
@@ -29,9 +30,9 @@ static u16 floor_item_read_u16(const u8 *data)
     return static_cast<u16>(data[0] | (static_cast<u16>(data[1]) << 8));
 }
 
-void item_load_floor_placements(const u8 *data, std::size_t size)
+void item_load_floor_placements(KfFloorItemStorage storage, const KfMapGrid &heights,
+    const u8 *data, std::size_t size)
 {
-    const auto storage = floor_item_storage();
     storage.count = 0;
     for (std::size_t offset = 0; offset <= size && size - offset >= placement_terminator_bytes; offset += placement_bytes) {
         const u8 *placement = data + offset;
@@ -55,14 +56,15 @@ void item_load_floor_placements(const u8 *data, std::size_t size)
         const auto local_y = static_cast<s16>(floor_item_read_u16(placement + placement_local_y_offset));
         item.position_x = map_placement_axis_position(cell_x, local_x);
         item.position_z = map_placement_axis_position(cell_z, local_z);
-        const s32 height = map_floor_height_grid.cells[cell_z][cell_x] * KF_MAP_HEIGHT_STEP;
+        const s32 height = heights.cells[cell_z][cell_x] * KF_MAP_HEIGHT_STEP;
         item.position_y = local_y - height;
         item.animation_frame = (kf::random_next() * item.frame_count) >> KF_FLOOR_ITEM_INITIAL_FRAME_RANDOM_BITS;
     }
     kf::host_fail("Floor-item placement list has no terminator");
 }
 
-void render_floor_item(KfFloorItem *item, const MATRIX *lights)
+void render_floor_item(const KfRenderState &view, KfSpriteQuad *sprites,
+    KfSpriteEnqueue enqueue_sprite, KfFloorItem *item, const MATRIX *lights)
 {
     SVECTOR screen;
     MATRIX model;
@@ -70,21 +72,21 @@ void render_floor_item(KfFloorItem *item, const MATRIX *lights)
     s16 depth_bias;
 
     screen = VECTOR{
-        item->position_x - graphics_runtime().render_state.view_position.vx,
-        item->position_y - graphics_runtime().render_state.view_position.vy,
-        item->position_z - graphics_runtime().render_state.view_position.vz}.narrowed();
-    kf::render_place_model(model, graphics_runtime().render_state.view_matrix, screen);
+        item->position_x - view.view_position.vx,
+        item->position_y - view.view_position.vy,
+        item->position_z - view.view_position.vz}.narrowed();
+    kf::render_place_model(model, view.view_matrix, screen);
     facing = item->facing;
     if (facing != KF_FLOOR_ITEM_FACING_BILLBOARD) {
         matrix_set_rotation_y(
             (kf_enum_encode<u16>(facing) - kf_enum_encode<u8>(KF_FLOOR_ITEM_FACING_ZERO_YAW)) << KF_FLOOR_ITEM_FACING_TO_ANGLE_SHIFT,
             &model);
-        kf::matrix_multiply_rotation(graphics_runtime().render_state.view_matrix, model, model);
+        kf::matrix_multiply_rotation(view.view_matrix, model, model);
         depth_bias = KF_FLOOR_ITEM_FIXED_FACING_DEPTH_BIAS;
     } else {
-        memcpy(model.m, graphics_runtime().render_state.pitch_matrix.m, sizeof model.m);
+        memcpy(model.m, view.pitch_matrix.m, sizeof model.m);
         depth_bias = KF_FLOOR_ITEM_BILLBOARD_DEPTH_BIAS;
     }
-    render_enqueue_sprite(&floor_item_sprites[kf_enum_encode<u16>(item->base_sprite_index) + item->animation_frame], depth_bias, KF_SPRITE_DEPTH_CUE_BOOSTED, lights, &model, graphics_runtime().render_state.projection);
+    enqueue_sprite(&sprites[kf_enum_encode<u16>(item->base_sprite_index) + item->animation_frame], depth_bias, KF_SPRITE_DEPTH_CUE_BOOSTED, lights, &model, view.projection);
     floor_item_advance_frame(item);
 }
