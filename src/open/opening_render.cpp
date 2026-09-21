@@ -21,5 +21,5 @@ void sprite_add_g4(const KfScreenRect *rectangle, const CVECTOR *color0, const C
     const CVECTOR colors[] = {*color0, *color1, *color2, *color3};
     render_face_rectangle(&face, rectangle->x, rectangle->y,
         rectangle->x + rectangle->w, rectangle->y + rectangle->h);
-    render_face_submit(&face, colors, KfFaceShading::Gouraud, ENDING_GRADIENT_OT_DEPTH);
+    render_face_submit(&face, colors, kf::FaceShading::Gouraud, ENDING_GRADIENT_OT_DEPTH);
 }

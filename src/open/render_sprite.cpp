@@ -40,7 +40,7 @@ void render_enqueue_sprite(KfSpriteQuad *sprite, s16 depth_bias, KfSpriteDepthCu
     color = kf::render_light_normal(open_graphics_runtime.render_state.lighting, *lights,
         render_sprite_light_normal, open_graphics_runtime.floor_item_state.material.color, depth_cue);
     if (otz + depth_bias >= KF_SCENE_MIN_OT_DEPTH) {
-        render_face_submit(&face, &color, KfFaceShading::Flat,
+        render_face_submit(&face, &color, kf::FaceShading::Flat,
             (otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK);
     }
 }
