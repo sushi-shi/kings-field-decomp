@@ -3,12 +3,10 @@
 
 #ifdef KF_OPEN
 #include <kf/open/render.h>
-using KfActiveColorPreset = KfOpenColorPreset;
 inline KfGraphicsRuntimeOpen &graphics_runtime() { return open_graphics_runtime; }
 #else
 #include <kf/game/graphics.h>
 #include <kf/game/render.h>
-using KfActiveColorPreset = KfGameColorPreset;
 inline KfGraphicsRuntimeGame &graphics_runtime() { return game_graphics_runtime; }
 #endif
 

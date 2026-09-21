@@ -4,12 +4,12 @@
 #include <kf/lib/debug.h>
 #include <kf/lib/types.h>
 
-KfBool32 debug_stop_flag = KF_FALSE;
+KfBool32 debug_stop_flag = false;
 
 void debug_stop(void)
 {
     debug_printf_sink("DEBUG STOP !!!\n");
-    debug_stop_flag = debug_stop_flag == KF_FALSE;
+    debug_stop_flag = debug_stop_flag == false;
 }
 
 void func_8003ac4c(void)

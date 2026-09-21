@@ -226,6 +226,18 @@ void player_adjust_mp(s32 delta)
     }
 }
 
+static void player_learn_trained_magic(KfEffectKind spell, s32 required_base_magic)
+{
+    if (player_state.base_magic < required_base_magic) {
+        return;
+    }
+    auto &magic = effect_state.magic.entries[kf_enum_encode<u8>(spell)];
+    if (magic.learned == KF_MAGIC_UNLEARNED) {
+        magic.learned = KF_MAGIC_LEARNED;
+        notify_enqueue(KF_NOTIFICATION_MAGIC_LEARNED);
+    }
+}
+
 void player_recalculate_combat_stats(void)
 {
     const KfWeaponRecord *weapon;
@@ -336,18 +348,12 @@ void player_recalculate_combat_stats(void)
     if ((player_state.status_effect_flags & KF_PLAYER_STATUS_FIRE_DEFENSE_BOOST) != KF_PLAYER_STATUS_NONE) {
         player_state.fire_defense += FIRE_DEFENSE_STATUS_BONUS;
     }
-    if (player_state.base_magic >= DISPOISON_REQUIRED_BASE_MAGIC && effect_state.magic.entries[kf_enum_encode<u8>(KF_MAGIC_HEALING)].learned != KF_MAGIC_UNLEARNED && effect_state.magic.entries[kf_enum_encode<u8>(KF_MAGIC_DISPOISON)].learned == KF_MAGIC_UNLEARNED) {
-        effect_state.magic.entries[kf_enum_encode<u8>(KF_MAGIC_DISPOISON)].learned = KF_MAGIC_LEARNED;
-        notify_enqueue(KF_NOTIFICATION_MAGIC_LEARNED);
+    const auto &healing = effect_state.magic.entries[kf_enum_encode<u8>(KF_MAGIC_HEALING)];
+    if (healing.learned != KF_MAGIC_UNLEARNED) {
+        player_learn_trained_magic(KF_MAGIC_DISPOISON, DISPOISON_REQUIRED_BASE_MAGIC);
     }
-    if (player_state.base_magic >= FIRE_WALL_REQUIRED_BASE_MAGIC && effect_state.magic.entries[kf_enum_encode<u8>(KF_MAGIC_FIRE_WALL)].learned == KF_MAGIC_UNLEARNED) {
-        effect_state.magic.entries[kf_enum_encode<u8>(KF_MAGIC_FIRE_WALL)].learned = KF_MAGIC_LEARNED;
-        notify_enqueue(KF_NOTIFICATION_MAGIC_LEARNED);
-    }
-    if (player_state.base_magic >= LIGHTNING_BOLT_REQUIRED_BASE_MAGIC && effect_state.magic.entries[kf_enum_encode<u8>(KF_MAGIC_LIGHTNING_BOLT)].learned == KF_MAGIC_UNLEARNED) {
-        effect_state.magic.entries[kf_enum_encode<u8>(KF_MAGIC_LIGHTNING_BOLT)].learned = KF_MAGIC_LEARNED;
-        notify_enqueue(KF_NOTIFICATION_MAGIC_LEARNED);
-    }
+    player_learn_trained_magic(KF_MAGIC_FIRE_WALL, FIRE_WALL_REQUIRED_BASE_MAGIC);
+    player_learn_trained_magic(KF_MAGIC_LIGHTNING_BOLT, LIGHTNING_BOLT_REQUIRED_BASE_MAGIC);
     if (player_state.physical_power >= KF_PLAYER_POWER_MAX + 1) {
         player_state.physical_power = KF_PLAYER_POWER_MAX;
     }

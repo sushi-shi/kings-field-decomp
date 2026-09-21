@@ -22,9 +22,3 @@ void display_present_frame(void)
     kf::host_wait_frame();
     kf::host_present_frame(graphics_runtime().display_state.frame_style);
 }
-
-void lighting_set_active_color_matrix(KfActiveColorPreset preset)
-{
-    memcpy(graphics_runtime().render_state.lighting.color_matrix.m, (color_matrix_table[kf_enum_encode<s32>(preset)]).m,
-        sizeof graphics_runtime().render_state.lighting.color_matrix.m);
-}

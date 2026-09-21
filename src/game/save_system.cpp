@@ -487,17 +487,17 @@ KfBool32 menu_load_message_image(s32 message_id)
         std::size_t image_size;
         if (resource_file_load_into(buffer,
                 game_graphics_runtime.display_state.asset_load_capacity, path, &image_size) != KF_RESOURCE_LOADED) {
-            return KF_TRUE;
+            return true;
         }
         tim_upload_images(buffer, image_size);
     }
-    return KF_FALSE;
+    return false;
 }
 
 void screen_show_image_until_input(const char *path)
 {
     s32 brightness = IMAGE_WAIT_INITIAL_BRIGHTNESS;
-    KfBool8 pressed = KF_FALSE;
+    KfBool8 pressed = false;
     std::size_t image_size;
     if (resource_file_load_into(game_graphics_runtime.display_state.asset_load_buffer,
             game_graphics_runtime.display_state.asset_load_capacity, path, &image_size) != KF_RESOURCE_LOADED) {
@@ -511,9 +511,9 @@ void screen_show_image_until_input(const char *path)
         }
         display_present_system_screen(brightness);
         kf::host_wait_frame();
-        if (pressed == KF_FALSE) {
+        if (pressed == false) {
             if (kf::host_read_buttons() == 0) {
-                pressed = KF_TRUE;
+                pressed = true;
             }
         } else if (kf::host_read_buttons() != 0) {
             kf::host_wait_buttons_released();

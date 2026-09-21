@@ -18,6 +18,12 @@ constexpr u8 placement_frame_count_mask = 0x0f;
 constexpr u8 placement_facing_mask = 0xf0;
 }
 
+static constexpr bool floor_item_sprite_range_is_valid(u16 first, u8 frame_count)
+{
+    return first < KF_FLOOR_ITEM_SPRITE_COUNT
+        && frame_count <= KF_FLOOR_ITEM_SPRITE_COUNT - first;
+}
+
 static u16 floor_item_read_u16(const u8 *data)
 {
     return static_cast<u16>(data[0] | (static_cast<u16>(data[1]) << 8));
@@ -36,8 +42,8 @@ void item_load_floor_placements(const u8 *data, std::size_t size)
             kf::host_fail("Truncated or oversized floor-item placement list");
         const u8 frame_count = placement[placement_animation_offset] & placement_frame_count_mask;
         const u8 cell_z = placement[placement_cell_z_offset], cell_x = placement[placement_cell_x_offset];
-        if (base >= KF_FLOOR_ITEM_SPRITE_COUNT || frame_count > KF_FLOOR_ITEM_SPRITE_COUNT - base
-                || cell_z >= KF_MAP_ROWS || cell_x >= KF_MAP_COLUMNS)
+        const bool cell_in_map = cell_z < KF_MAP_ROWS && cell_x < KF_MAP_COLUMNS;
+        if (!floor_item_sprite_range_is_valid(base, frame_count) || !cell_in_map)
             kf::host_fail("Invalid floor-item sprite range or position");
 
         auto &item = storage.items[storage.count++];

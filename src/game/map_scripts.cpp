@@ -685,11 +685,11 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
                 KfObjectId *item_id;
 
                 item_id = object->link.item_ids;
-                found_item = KF_FALSE;
+                found_item = false;
                 item_index = KF_MAP_CONTAINER_ITEM_COUNT - 1;
                 for (;;) {
                     if (*item_id != KF_OBJECT_NONE) {
-                        found_item = KF_TRUE;
+                        found_item = true;
                         pickup_result = kf_enum_decode<KfMenuResult>(menu_enter_mode(KF_MENU_MODE_ITEM_PICKUP, *item_id));
                         switch (pickup_result) {
                         case KF_MENU_RESULT_ACCEPTED:
@@ -708,7 +708,7 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
                     }
                     item_id++;
                 }
-                if (found_item != KF_FALSE) {
+                if (found_item != false) {
                     break;
                 }
                 notify_enqueue(object->link.fields.default_notification);
