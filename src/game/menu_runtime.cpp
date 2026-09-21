@@ -84,13 +84,13 @@ void menu_status_panel(void)
         menu_frame_begin();
         menu_draw_status_details();
 
-        menu_draw_backdrop_tile(MENU_STATUS_BACKDROP_LEFT_X, MENU_BACKDROP_TOP_Y, KF_FALSE, KF_FALSE);
+        menu_draw_backdrop_tile(MENU_STATUS_BACKDROP_LEFT_X, MENU_BACKDROP_TOP_Y, false, false);
 
-        menu_draw_backdrop_tile(MENU_STATUS_BACKDROP_RIGHT_X, MENU_BACKDROP_TOP_Y, KF_TRUE, KF_FALSE);
+        menu_draw_backdrop_tile(MENU_STATUS_BACKDROP_RIGHT_X, MENU_BACKDROP_TOP_Y, true, false);
 
-        menu_draw_backdrop_tile(MENU_STATUS_BACKDROP_LEFT_X, MENU_BACKDROP_BOTTOM_Y, KF_FALSE, KF_TRUE);
+        menu_draw_backdrop_tile(MENU_STATUS_BACKDROP_LEFT_X, MENU_BACKDROP_BOTTOM_Y, false, true);
 
-        menu_draw_backdrop_tile(MENU_STATUS_BACKDROP_RIGHT_X, MENU_BACKDROP_BOTTOM_Y, KF_TRUE, KF_TRUE);
+        menu_draw_backdrop_tile(MENU_STATUS_BACKDROP_RIGHT_X, MENU_BACKDROP_BOTTOM_Y, true, true);
 
         menu_draw_window_backdrop();
         menu_present_frame();
@@ -1835,13 +1835,13 @@ void menu_draw_item_name_frame(KfObjectId item_id)
     }
     menu_draw_string(&menu_assets.glyph_atlas, &string);
 
-    menu_draw_backdrop_tile(MENU_PICKUP_BACKDROP_LEFT_X, MENU_BACKDROP_TOP_Y, KF_FALSE, KF_FALSE);
+    menu_draw_backdrop_tile(MENU_PICKUP_BACKDROP_LEFT_X, MENU_BACKDROP_TOP_Y, false, false);
 
-    menu_draw_backdrop_tile(MENU_PICKUP_BACKDROP_RIGHT_X, MENU_BACKDROP_TOP_Y, KF_TRUE, KF_FALSE);
+    menu_draw_backdrop_tile(MENU_PICKUP_BACKDROP_RIGHT_X, MENU_BACKDROP_TOP_Y, true, false);
 
-    menu_draw_backdrop_tile(MENU_PICKUP_BACKDROP_LEFT_X, MENU_BACKDROP_BOTTOM_Y, KF_FALSE, KF_TRUE);
+    menu_draw_backdrop_tile(MENU_PICKUP_BACKDROP_LEFT_X, MENU_BACKDROP_BOTTOM_Y, false, true);
 
-    menu_draw_backdrop_tile(MENU_PICKUP_BACKDROP_RIGHT_X, MENU_BACKDROP_BOTTOM_Y, KF_TRUE, KF_TRUE);
+    menu_draw_backdrop_tile(MENU_PICKUP_BACKDROP_RIGHT_X, MENU_BACKDROP_BOTTOM_Y, true, true);
 
     menu_enqueue_background();
 }
@@ -1926,13 +1926,13 @@ void menu_draw_number(
 
 void menu_draw_window_backdrop(void)
 {
-    menu_draw_backdrop_tile(MENU_BACKDROP_LEFT_X, MENU_BACKDROP_TOP_Y, KF_FALSE, KF_FALSE);
+    menu_draw_backdrop_tile(MENU_BACKDROP_LEFT_X, MENU_BACKDROP_TOP_Y, false, false);
 
-    menu_draw_backdrop_tile(MENU_BACKDROP_RIGHT_X, MENU_BACKDROP_TOP_Y, KF_TRUE, KF_FALSE);
+    menu_draw_backdrop_tile(MENU_BACKDROP_RIGHT_X, MENU_BACKDROP_TOP_Y, true, false);
 
-    menu_draw_backdrop_tile(MENU_BACKDROP_LEFT_X, MENU_BACKDROP_BOTTOM_Y, KF_FALSE, KF_TRUE);
+    menu_draw_backdrop_tile(MENU_BACKDROP_LEFT_X, MENU_BACKDROP_BOTTOM_Y, false, true);
 
-    menu_draw_backdrop_tile(MENU_BACKDROP_RIGHT_X, MENU_BACKDROP_BOTTOM_Y, KF_TRUE, KF_TRUE);
+    menu_draw_backdrop_tile(MENU_BACKDROP_RIGHT_X, MENU_BACKDROP_BOTTOM_Y, true, true);
 
     menu_enqueue_background();
 }

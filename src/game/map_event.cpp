@@ -39,11 +39,11 @@ void map_event_advance_animation_blocking(KfMapEvent *event, u16 target, s16 ste
 
 void map_event_pool_load(const KfMapEventDefinition *definitions)
 {
-    KfBool8 exhausted = KF_FALSE;
+    KfBool8 exhausted = false;
 
     for (auto &event : map_runtime_state.events) {
-        if (exhausted == KF_TRUE || definitions->state == KF_MAP_EVENT_FREE) {
-            exhausted = KF_TRUE;
+        if (exhausted == true || definitions->state == KF_MAP_EVENT_FREE) {
+            exhausted = true;
             event.state = KF_MAP_EVENT_FREE;
         } else {
             event.state = definitions->state;

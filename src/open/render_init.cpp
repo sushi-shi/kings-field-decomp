@@ -66,6 +66,13 @@ void render_initialize(void)
         kf::BlendMode::average};
 }
 
+void lighting_set_active_color_matrix(KfOpenColorPreset preset)
+{
+    auto &destination = open_graphics_runtime.render_state.lighting.color_matrix;
+    const auto &source = color_matrix_table[kf_enum_encode<s32>(preset)];
+    memcpy(destination.m, source.m, sizeof destination.m);
+}
+
 void display_initialize(KfOverlayMode overlay_mode)
 {
     open_graphics_runtime.display_state.frame_style = {};

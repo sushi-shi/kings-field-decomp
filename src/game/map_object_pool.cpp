@@ -169,16 +169,16 @@ void map_object_definitions_load(const KfMapObjectDefinitionTable *definitions)
 
 void map_object_pool_load(const KfMapObjectPlacement *placements)
 {
-    KfBool16 ended = KF_FALSE;
+    KfBool16 ended = false;
     const KfMapObjectPlacement *placement = placements;
     KfMapObjectDefinition *definition;
     SVECTOR effect_direction;
     KfObjectId object_id;
 
     for (auto &object : map_object_state.objects) {
-        if (ended == KF_TRUE
+        if (ended == true
             || kf_enum_decode<KfObjectId>(placement->object_id) == KF_OBJECT_NONE) {
-            ended = KF_TRUE;
+            ended = true;
             object.object_id = KF_OBJECT_NONE;
         } else {
             object_id = kf_enum_decode<KfObjectId>(placement->object_id);
