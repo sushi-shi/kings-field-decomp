@@ -56,13 +56,13 @@ void render_actor_sprite(KfEffectRecord *sprite, const MATRIX *lights)
     if (sprite->render_id.model == KF_EFFECT_MODEL_NONE) {
         return;
     }
-    vector_set_xyz(screen,
+    screen = VECTOR{
         sprite->position.vx - game_graphics_runtime.render_state.view_position.vx,
         sprite->position.vy - game_graphics_runtime.render_state.view_position.vy,
-        sprite->position.vz - game_graphics_runtime.render_state.view_position.vz);
+        sprite->position.vz - game_graphics_runtime.render_state.view_position.vz}.narrowed();
     kf::render_place_model(model, game_graphics_runtime.render_state.view_matrix, screen);
     matrix_set_rotation_yxz(&sprite->rotation.angles, &model);
-    vector_set_xyz(scale, (s16)sprite->scale_x, (s16)sprite->scale_y, (s16)sprite->scale_z);
+    scale = {(s16)sprite->scale_x, (s16)sprite->scale_y, (s16)sprite->scale_z};
     kf::matrix_scale_axes(model, scale);
     if (sprite->animation_clip == KF_ANIMATION_CLIP_NONE) {
         kf::matrix_multiply_rotation(game_graphics_runtime.render_state.pitch_matrix, model, model);

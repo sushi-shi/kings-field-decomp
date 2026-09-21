@@ -51,9 +51,7 @@ void opening_entity_pool_load_placements(
                 map_placement_axis_position(placement->tile_x, placement->local_x);
             entity.position.vz =
                 map_placement_axis_position(placement->tile_z, placement->local_z);
-            entity.scale.vz = KF_FIXED12_ONE;
-            entity.scale.vy = KF_FIXED12_ONE;
-            entity.scale.vx = KF_FIXED12_ONE;
+            entity.scale = {KF_FIXED12_ONE, KF_FIXED12_ONE, KF_FIXED12_ONE};
             if (base_y == KF_OPENING_ENTITY_FLOOR_HEIGHT) {
                 entity.position.vy = placement->local_y -
                     map_floor_height_grid.cells[placement->tile_z]

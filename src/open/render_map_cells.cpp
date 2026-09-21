@@ -23,11 +23,11 @@ void render_map_cell(s32 col, s32 row, KfCellVisibility visibility)
     if (visibility == KF_CELL_WINDOW_DISTANT) {
         object_index += KF_MAP_MESHES_PER_BANK;
     }
-    vector_set_xyz(position,
+    position = VECTOR{
         col * KF_MAP_TILE_SIZE - open_graphics_runtime.render_state.view_position.vx,
         map_floor_height_grid.cells[row][col] * -KF_MAP_HEIGHT_STEP -
             open_graphics_runtime.render_state.view_position.vy,
-        row * KF_MAP_TILE_SIZE - open_graphics_runtime.render_state.view_position.vz);
+        row * KF_MAP_TILE_SIZE - open_graphics_runtime.render_state.view_position.vz}.narrowed();
     if (orientation == kf_enum_encode<u8>(KF_MAP_ORIENT_QUARTER_TURN) - 1) {
         position.vz += KF_MAP_TILE_SIZE;
     } else if (orientation == kf_enum_encode<u8>(KF_MAP_ORIENT_HALF_TURN) - 1) {
