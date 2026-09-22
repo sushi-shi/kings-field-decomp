@@ -218,3 +218,43 @@ forms identical to their respective canonical baselines: 440 / 732 bytes,
 98.181816% / 98.579230%, with first raw differences at `+0xc4` / `+0xd4`.
 The detail siblings remain exact. No helper control closes either function;
 canonical source is unchanged.
+
+## Typed item-name row selection in `game.menu_runtime`
+
+At `5a3469b3`, GAME `menu_draw_item_detail` (`80027b7c`, 732 bytes) starts
+at strict 97.808750% in the combined `game.menu_runtime` unit. The loaded
+name table contains eighty 20-byte `MenuGlyphRow` records. The exact preview
+and pickup-name functions select a complete row before publishing the
+primitive cursor, and the detail renderer's retail address sequence supports
+the same ordering.
+
+Select a read-only `MenuGlyphRow` before primitive-cursor publication and copy
+its ten glyphs with `gs.glyphs.codes[i] = name->codes[i]`. This replaces the
+interior halfword pointer and separate advancing destination pointer with the
+existing shared row type and an ordinary indexed loop. It introduces no
+storage, helper, whole-object assignment, or interface change.
+
+Fresh baseline/candidate compilation with the unchanged
+`probe-gcc257-o2-g8` profile gives **97.808750% -> 99.672134%**. The retained
+form recovers retail's label-base cursor at `sp+16` with offset-four stores,
+instead of the interior cursor at `sp+20` with offset-zero stores, and restores
+the setup order. The split item-times-twenty calculation remains correct. Both
+objects remain 732 bytes with a 160-byte frame. All seventeen ordered calls
+and the candidate's twenty ordered data referents agree with retail; all
+34 exact siblings retain every resolved retail instruction and referent.
+
+The remaining nine unequal words are at `+e0`, `+ec`, `+f4`, `+110`, `+114`,
+`+118`, `+11c`, `+120`, and `+128`. Only GPR operands differ: source/count/
+destination use `a1/a2/a0`, while retail uses `a2/a0/a1`. Instruction order,
+non-register operands, loop count, halfword copies, label position and later
+formatting agree. The baseline has three unequal words affecting cursor setup
+and store displacement; the candidate has nine unequal words affecting only
+register assignment. The higher strict score is not a reduction in the raw
+unequal-word count. This remains an unattributed residue, not an exact function
+or proof of historical source spelling. Nothing is newly banked.
+
+The PR checkout independently verifies both complete menu objects against
+retail, runs the menu type check, Ruff, repository Python and Rust tests, and
+the full three-image `kf build`. Canonical `kf match --unit game.menu_runtime`
+still exits nonzero at the existing data-ownership/reference checks; the
+function improvement does not close those gates.
