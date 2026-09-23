@@ -98,14 +98,15 @@ void player_use_item(KfObjectId item_id)
                 if (object->link.fields.link_id == KF_MAP_LINK_NONE) {
                     notify_enqueue(KF_NOTIFICATION_NOTHING_HAPPENS);
                 } else if (object->object_id != KF_MAP_OBJECT_GRAVESTONE
-                           || angle_within_tolerance(
-                               player_state.camera_rotation.vy, KF_ANGLE_HALF_TURN - object->rotation.angles.y, MAP_DOOR_FACING_TOLERANCE)) {
+                    || angle_within_tolerance(player_state.camera_rotation.vy,
+                        KF_ANGLE_HALF_TURN - object->rotation.angles.y,
+                        MAP_DOOR_FACING_TOLERANCE)) {
                     used = KF_TRUE;
                     if (object->link.fields.link_id == KF_ENUM_ENCODE(u8, item_id)) {
                         object->link.fields.link_id = KF_MAP_LINK_NONE;
-                        sound_ref_play(&gameplay_sound_refs[12], PLAYER_KEY_UNLOCK_VOLUME);
+                        sound_ref_play(&gameplay_sound_refs[KF_GAMEPLAY_SOUND_KEY_UNLOCK], PLAYER_KEY_UNLOCK_VOLUME);
                         if (object->object_id == KF_MAP_OBJECT_GRAVESTONE) {
-                            sound_ref_play(&gameplay_sound_refs[7], KF_AUDIO_MAX_VOLUME);
+                            sound_ref_play(&gameplay_sound_refs[KF_GAMEPLAY_SOUND_STONE_PASSAGE], KF_AUDIO_MAX_VOLUME);
                         }
                     } else {
                         notify_enqueue(KF_NOTIFICATION_KEY_DOES_NOT_FIT);
@@ -141,7 +142,7 @@ void player_use_item(KfObjectId item_id)
         }
         break;
     case KF_ITEM_HARP:
-        record = effect_pool_records;
+        record = effect_state.records;
         for (slot = KF_EFFECT_CAPACITY - 1; slot != -1; slot--, record++) {
             if (record->type == KF_EFFECT_SLOT_FREE) {
                 continue;
@@ -163,7 +164,7 @@ void player_use_item(KfObjectId item_id)
         } else {
             break;
         }
-        sound_ref_play(&gameplay_sound_refs[8], KF_AUDIO_MAX_VOLUME);
+        sound_ref_play(&gameplay_sound_refs[KF_GAMEPLAY_SOUND_HARP], KF_AUDIO_MAX_VOLUME);
         used = KF_TRUE;
         break;
     case KF_ITEM_MEDICINAL_HERB:

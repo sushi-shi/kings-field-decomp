@@ -19,11 +19,11 @@ enum {
  * Map-event runtime band 0x80035708..0x80035e14 (GAME.EXE).
  *
  * map_event_pool_update is the per-frame driver called by game_main_loop: it walks the
- * eight-record map_event_pool, dispatches each active event on its behavior
+ * eight-record map_runtime_state.events pool, dispatches each active event on its behavior
  * (wander or looping animation), advances dialogue page delays on a gated tick,
  * then runs the per-floor ambient scripts on their own countdown.
  * map_world_state_persist serialises the live event, actor,
- * and map-object state into the map_world_state_base world-state block per floor and is
+ * and map-object state into map_runtime_state.world_state per floor and is
  * invoked on death restart, floor teleport, and from map_unload_floor.
  *
  * map_runtime_state owns the events, current-event pointer, timers and saved
@@ -40,14 +40,14 @@ RODATA(0x80012be4, 0x14)
 ADDRESS(0x800356e8, 0x20)
 void map_event_timers_reset(void)
 {
-    map_dialogue_advance_gate = KF_DIALOGUE_GATE_RELOAD;
-    map_ambient_script_countdown = MAP_AMBIENT_COUNTDOWN_RELOAD;
+    map_runtime_state.dialogue_advance_gate = KF_DIALOGUE_GATE_RELOAD;
+    map_runtime_state.ambient_script_countdown = MAP_AMBIENT_COUNTDOWN_RELOAD;
 }
 
 ADDRESS(0x80035708, 0x1d8)
 void map_event_update_wander(void)
 {
-    KfMapEvent *event = current_map_event;
+    KfMapEvent *event = map_runtime_state.current_event;
     struct KfVecXZs forward;
     VECTOR point;
     s16 heading;
@@ -64,7 +64,8 @@ void map_event_update_wander(void)
 
     if (collision_query_world(
             point.vx, KF_COLLISION_IGNORE_HEIGHT, point.vz, event->radius, 0,
-            KF_COLLISION_SKIP_MAP_EVENTS | (0x80 << KF_COLLISION_CELL_FLAG_SHIFT))
+            KF_COLLISION_SKIP_MAP_EVENTS
+                | (KF_COLLISION_CELL_BLOCKS_WANDER << KF_COLLISION_CELL_FLAG_SHIFT))
             == KF_COLLISION_NONE) {
         event->reference_position.vx = point.vx;
         event->reference_position.vz = point.vz;
@@ -75,7 +76,8 @@ void map_event_update_wander(void)
             event->rotation_target = rand() >> KF_RANDOM_ANGLE_SHIFT;
         }
     } else {
-        if (event->collision_turn_pending == KF_MAP_EVENT_COLLISION_TURN_NONE || event->rotation.vy == event->rotation_target) {
+        if (event->collision_turn_pending == KF_MAP_EVENT_COLLISION_TURN_NONE
+            || event->rotation.vy == event->rotation_target) {
             event->rotation_target = rand() >> KF_RANDOM_ANGLE_SHIFT;
             event->collision_turn_pending = KF_MAP_EVENT_COLLISION_TURN_PENDING;
         }
@@ -90,17 +92,17 @@ void map_event_update_wander(void)
 ADDRESS(0x800358e0, 0x8c)
 void map_event_update_animation_loop(void)
 {
-    KfMapEvent *event = current_map_event;
+    KfMapEvent *event = map_runtime_state.current_event;
 
     event->animation_phase =
         (event->animation_phase + KF_MAP_EVENT_ANIMATION_LOOP_STEP)
         & KF_MAP_EVENT_ANIMATION_PHASE_MASK;
 
     if (player_state.progress_state.current_floor == KF_FLOOR_5
-            && event == &map_event_pool[0]
-            && map_event_pool[0].animation_phase < KF_MAP_EVENT_ANIMATION_LOOP_STEP) {
-        audio_play_spatial_range(&gameplay_sound_refs[10],
-            &map_event_pool[0].reference_position,
+            && event == &map_runtime_state.events[0]
+            && map_runtime_state.events[0].animation_phase < KF_MAP_EVENT_ANIMATION_LOOP_STEP) {
+        audio_play_spatial_range(&gameplay_sound_refs[KF_GAMEPLAY_SOUND_FLOOR5_EVENT_LOOP],
+            &map_runtime_state.events[0].reference_position,
             KF_AUDIO_MAX_VOLUME, MAP_EVENT_LOOP_SOUND_MAX_DISTANCE, MAP_EVENT_LOOP_SOUND_ATTENUATION_DISTANCE);
     }
 }
@@ -108,7 +110,7 @@ void map_event_update_animation_loop(void)
 ADDRESS(0x8003596c, 0x1f0)
 void map_event_pool_update(void)
 {
-    KfMapEvent *event = map_event_pool;
+    KfMapEvent *event = map_runtime_state.events;
     u16 index = KF_MAP_EVENT_CAPACITY - 1;
 
     do {
@@ -125,7 +127,7 @@ void map_event_pool_update(void)
                 map_event_update_animation_loop();
                 break;
             }
-            if (map_dialogue_advance_gate == 0 && event->dialogue.fields.page_delay != 0) {
+            if (map_runtime_state.dialogue_advance_gate == 0 && event->dialogue.fields.page_delay != 0) {
                 event->dialogue.fields.page_delay--;
                 if (event->dialogue.fields.page_delay == 0) {
                     s32 limit = event->dialogue_pages.last_page[event->dialogue.fields.stage - 1];
@@ -141,7 +143,7 @@ void map_event_pool_update(void)
     } while (index-- != 0);
 
     {
-        u16 *gate = &map_dialogue_advance_gate;
+        u16 *gate = &map_runtime_state.dialogue_advance_gate;
         u16 current = *gate;
 
         *gate = current - 1;
@@ -150,8 +152,8 @@ void map_event_pool_update(void)
         }
     }
 
-    if (map_ambient_script_countdown-- == 0) {
-        map_ambient_script_countdown = MAP_AMBIENT_COUNTDOWN_RELOAD;
+    if (map_runtime_state.ambient_script_countdown-- == 0) {
+        map_runtime_state.ambient_script_countdown = MAP_AMBIENT_COUNTDOWN_RELOAD;
         switch (player_state.progress_state.current_floor) {
         case KF_FLOOR_1:
             map_ambient_script_floor1();

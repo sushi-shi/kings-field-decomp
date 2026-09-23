@@ -5,6 +5,10 @@ about which source shapes reproduce it under the current probes. Each note
 records the retail evidence first and the probe behaviour second; none of them
 promotes a probe to a proven historical toolchain.
 
+- [port-readability-backport.md](port-readability-backport.md): port cleanup
+  transferred back to retail C, unchanged-object checks, and rejected natural
+  helper/loop/copy trials with strict per-function results.
+
 - [shared-game-open-code.md](shared-game-open-code.md): complete GAME/OPEN function
   accounting, common implementations, reusable single-image helpers, and retained
   behavior differences with unchanged compiler and linker outputs.

@@ -6,6 +6,13 @@
 #include <kf/game/game.h>
 
 enum {
+    PLAYER_REVIVAL_POSITION_X = 64000,
+    PLAYER_REVIVAL_POSITION_Z = 20000,
+    PLAYER_RESTART_POSITION_X = 31000,
+    PLAYER_RESTART_POSITION_Z = 5000
+};
+
+enum {
     CURSE_PHYSICAL_POWER_PENALTY = 20,
     FIRE_DEFENSE_STATUS_BONUS = 10,
     DISPOISON_REQUIRED_BASE_MAGIC = 37,
@@ -164,17 +171,20 @@ void player_death_restart(void)
 {
     KfFloorId floor = player_state.progress_state.current_floor;
 
-    if (map_floor1_script.revival_enabled == KF_MAP_SCRIPT_SET && item_stock[KF_ENUM_ENCODE(u8, KF_ITEM_STOCK_PLAYER)][KF_ENUM_ENCODE(u8, KF_ITEM_DRAGON_KING_GRASS_FRUIT)] != 0) {
+    if (map_runtime_state.world_state.floors[0].script.floor1.revival_enabled == KF_MAP_SCRIPT_SET
+        && item_stock[KF_ENUM_ENCODE(u8, KF_ITEM_STOCK_PLAYER)]
+                     [KF_ENUM_ENCODE(u8, KF_ITEM_DRAGON_KING_GRASS_FRUIT)]
+            != 0) {
         item_stock[KF_ENUM_ENCODE(u8, KF_ITEM_STOCK_PLAYER)][KF_ENUM_ENCODE(u8, KF_ITEM_DRAGON_KING_GRASS_FRUIT)]--;
         map_world_state_persist();
-        player_state.camera_position.vx = 0xfa00;
+        player_state.camera_position.vx = PLAYER_REVIVAL_POSITION_X;
         player_state.vitals.current_hp = player_state.vitals.maximum_hp;
         player_state.vitals.current_mp = player_state.vitals.maximum_mp;
-        player_state.camera_position.vz = 0x4e20;
+        player_state.camera_position.vz = PLAYER_REVIVAL_POSITION_Z;
         player_state.camera_rotation.vy = 0;
     } else {
-        player_state.camera_position.vx = 0x7918;
-        player_state.camera_position.vz = 0x1388;
+        player_state.camera_position.vx = PLAYER_RESTART_POSITION_X;
+        player_state.camera_position.vz = PLAYER_RESTART_POSITION_Z;
         player_state.camera_rotation.vy = 0;
         game_state_initialize();
         floor = KF_FLOOR_FORCE_RELOAD;
@@ -286,7 +296,8 @@ void player_recalculate_combat_stats(void)
         player_state.fire_attack += weapon->attack_components[KF_COMBAT_COMPONENT_FIRE];
     }
     if (player_state.equipped_head_armor_id != KF_OBJECT_NONE) {
-        armor = &armor_records.entries[KF_ENUM_ENCODE(u8, player_state.equipped_head_armor_id) - KF_ENUM_ENCODE(u8, KF_ITEM_IRON_MASK)];
+        armor = &armor_records.entries[KF_ENUM_ENCODE(u8, player_state.equipped_head_armor_id)
+            - KF_ENUM_ENCODE(u8, KF_ITEM_IRON_MASK)];
         player_state.cutting_defense += armor->cutting_defense;
         player_state.cutting_defense += armor->cutting_defense;
         player_state.striking_defense += armor->striking_defense;
@@ -296,7 +307,8 @@ void player_recalculate_combat_stats(void)
         player_state.fire_defense += armor->fire_defense;
     }
     if (player_state.equipped_body_armor_id != KF_OBJECT_NONE) {
-        armor = &armor_records.entries[KF_ENUM_ENCODE(u8, player_state.equipped_body_armor_id) - KF_ENUM_ENCODE(u8, KF_ITEM_IRON_MASK)];
+        armor = &armor_records.entries[KF_ENUM_ENCODE(u8, player_state.equipped_body_armor_id)
+            - KF_ENUM_ENCODE(u8, KF_ITEM_IRON_MASK)];
         player_state.cutting_defense += armor->cutting_defense;
         player_state.cutting_defense += armor->cutting_defense;
         player_state.striking_defense += armor->striking_defense;
@@ -306,7 +318,8 @@ void player_recalculate_combat_stats(void)
         player_state.fire_defense += armor->fire_defense;
     }
     if (player_state.equipped_arm_armor_id != KF_OBJECT_NONE) {
-        armor = &armor_records.entries[KF_ENUM_ENCODE(u8, player_state.equipped_arm_armor_id) - KF_ENUM_ENCODE(u8, KF_ITEM_IRON_MASK)];
+        armor = &armor_records.entries[KF_ENUM_ENCODE(u8, player_state.equipped_arm_armor_id)
+            - KF_ENUM_ENCODE(u8, KF_ITEM_IRON_MASK)];
         player_state.cutting_defense += armor->cutting_defense;
         player_state.cutting_defense += armor->cutting_defense;
         player_state.striking_defense += armor->striking_defense;
@@ -316,7 +329,8 @@ void player_recalculate_combat_stats(void)
         player_state.fire_defense += armor->fire_defense;
     }
     if (player_state.equipped_leg_armor_id != KF_OBJECT_NONE) {
-        armor = &armor_records.entries[KF_ENUM_ENCODE(u8, player_state.equipped_leg_armor_id) - KF_ENUM_ENCODE(u8, KF_ITEM_IRON_MASK)];
+        armor = &armor_records.entries[KF_ENUM_ENCODE(u8, player_state.equipped_leg_armor_id)
+            - KF_ENUM_ENCODE(u8, KF_ITEM_IRON_MASK)];
         player_state.cutting_defense += armor->cutting_defense;
         player_state.cutting_defense += armor->cutting_defense;
         player_state.striking_defense += armor->striking_defense;
@@ -326,7 +340,8 @@ void player_recalculate_combat_stats(void)
         player_state.fire_defense += armor->fire_defense;
     }
     if (player_state.equipped_shield_id != KF_OBJECT_NONE) {
-        armor = &armor_records.entries[KF_ENUM_ENCODE(u8, player_state.equipped_shield_id) - KF_ENUM_ENCODE(u8, KF_ITEM_IRON_MASK)];
+        armor = &armor_records.entries[KF_ENUM_ENCODE(u8, player_state.equipped_shield_id)
+            - KF_ENUM_ENCODE(u8, KF_ITEM_IRON_MASK)];
         player_state.cutting_defense += armor->cutting_defense;
         player_state.cutting_defense += armor->cutting_defense;
         player_state.striking_defense += armor->striking_defense;
@@ -361,16 +376,24 @@ void player_recalculate_combat_stats(void)
     if ((player_state.status_effect_flags & KF_PLAYER_STATUS_FIRE_DEFENSE_BOOST) != KF_PLAYER_STATUS_NONE) {
         player_state.fire_defense += FIRE_DEFENSE_STATUS_BONUS;
     }
-    if (player_state.base_magic >= DISPOISON_REQUIRED_BASE_MAGIC && magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_HEALING)].learned != KF_MAGIC_UNLEARNED && magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_DISPOISON)].learned == KF_MAGIC_UNLEARNED) {
-        magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_DISPOISON)].learned = KF_MAGIC_LEARNED;
+    if (player_state.base_magic >= DISPOISON_REQUIRED_BASE_MAGIC
+        && effect_state.magic.entries[KF_ENUM_ENCODE(u8, KF_MAGIC_HEALING)].learned
+            != KF_MAGIC_UNLEARNED
+        && effect_state.magic.entries[KF_ENUM_ENCODE(u8, KF_MAGIC_DISPOISON)].learned
+            == KF_MAGIC_UNLEARNED) {
+        effect_state.magic.entries[KF_ENUM_ENCODE(u8, KF_MAGIC_DISPOISON)].learned = KF_MAGIC_LEARNED;
         notify_enqueue(KF_NOTIFICATION_MAGIC_LEARNED);
     }
-    if (player_state.base_magic >= FIRE_WALL_REQUIRED_BASE_MAGIC && magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_FIRE_WALL)].learned == KF_MAGIC_UNLEARNED) {
-        magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_FIRE_WALL)].learned = KF_MAGIC_LEARNED;
+    if (player_state.base_magic >= FIRE_WALL_REQUIRED_BASE_MAGIC
+        && effect_state.magic.entries[KF_ENUM_ENCODE(u8, KF_MAGIC_FIRE_WALL)].learned
+            == KF_MAGIC_UNLEARNED) {
+        effect_state.magic.entries[KF_ENUM_ENCODE(u8, KF_MAGIC_FIRE_WALL)].learned = KF_MAGIC_LEARNED;
         notify_enqueue(KF_NOTIFICATION_MAGIC_LEARNED);
     }
-    if (player_state.base_magic >= LIGHTNING_BOLT_REQUIRED_BASE_MAGIC && magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_LIGHTNING_BOLT)].learned == KF_MAGIC_UNLEARNED) {
-        magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_LIGHTNING_BOLT)].learned = KF_MAGIC_LEARNED;
+    if (player_state.base_magic >= LIGHTNING_BOLT_REQUIRED_BASE_MAGIC
+        && effect_state.magic.entries[KF_ENUM_ENCODE(u8, KF_MAGIC_LIGHTNING_BOLT)].learned
+            == KF_MAGIC_UNLEARNED) {
+        effect_state.magic.entries[KF_ENUM_ENCODE(u8, KF_MAGIC_LIGHTNING_BOLT)].learned = KF_MAGIC_LEARNED;
         notify_enqueue(KF_NOTIFICATION_MAGIC_LEARNED);
     }
     if (player_state.physical_power >= KF_PLAYER_POWER_MAX + 1) {
@@ -615,6 +638,6 @@ void player_select_magic(KfEffectKind magic_id)
         player_state.selected_magic_record = NULL;
     } else {
         player_state.selected_magic_record =
-            &magic_records[KF_ENUM_ENCODE(u8, player_state.selected_magic_id)];
+            &effect_state.magic.entries[KF_ENUM_ENCODE(u8, player_state.selected_magic_id)];
     }
 }

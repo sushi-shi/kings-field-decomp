@@ -75,7 +75,7 @@ void player_warp_shimmer(KfWarpShimmerMode shimmer_mode, VECTOR *position)
     for (frame = 0; frame < KF_CYLINDER_TRANSITION_FRAMES; frame++) {
         cursor = effects;
         if (frame == WARP_SHIMMER_SOUND_FRAME) {
-            sound_ref_play(&gameplay_sound_refs[6], KF_AUDIO_MAX_VOLUME);
+            sound_ref_play(&gameplay_sound_refs[KF_GAMEPLAY_SOUND_WARP_SHIMMER], KF_AUDIO_MAX_VOLUME);
         }
         for (i = 0; i < KF_CYLINDER_TRANSITION_COUNT; i++) {
             effect = *cursor++;
@@ -182,7 +182,7 @@ change_floor:
         } else if (cell == WARP_CELL_KEY(39, 35)) {
             goto change_to_floor4;
         } else if (cell == WARP_CELL_KEY(15, 2)) {
-            if (boss_defeat_complete != KF_MAP_SCRIPT_UNSET) {
+            if (map_runtime_state.world_state.floors[4].script.floor5.boss_defeat != KF_MAP_SCRIPT_UNSET) {
                 return KF_TRUE;
             }
         }
@@ -239,7 +239,7 @@ change_to_floor4:
         } else if (cell == WARP_CELL_KEY(5, 24)) {
             player_warp_same_floor(KF_FLOOR5_ALTERNATE_MUSIC_VARIANT, 39, 47);
         } else if (cell == WARP_CELL_KEY(39, 47)) {
-            if (boss_defeat_complete == KF_MAP_SCRIPT_UNSET) {
+            if (map_runtime_state.world_state.floors[4].script.floor5.boss_defeat == KF_MAP_SCRIPT_UNSET) {
                 player_warp_same_floor(KF_MAP_VARIANT_2, 5, 25);
             } else {
                 return KF_TRUE;
@@ -260,8 +260,8 @@ void actor_transform_definition5_to6(KfActor *actor)
     MATRIX saved;
     s32 blend;
 
-    map_event_pool[1].state = KF_MAP_EVENT_DISABLED;
-    map_event_pool[2].state = KF_MAP_EVENT_DISABLED;
+    map_runtime_state.events[1].state = KF_MAP_EVENT_DISABLED;
+    map_runtime_state.events[2].state = KF_MAP_EVENT_DISABLED;
     ReadColorMatrix(&saved);
     /* Both blend endpoints execute: 65 motion updates per phase.
      * Y moves 40 world units per update; its design rationale is unresolved.

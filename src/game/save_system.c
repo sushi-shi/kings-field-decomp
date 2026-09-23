@@ -173,7 +173,10 @@ void menu_play_input_sound(KfMenuSoundCue cue)
         sound.note = 0x3f;
     }
     /* Bank 0, zero fine pitch; equal channels at 64/127 volume. */
-    SsVoKeyOn(sound.program, sound.note << KF_SOUND_PACKED_NOTE_SHIFT, MENU_INPUT_SOUND_VOLUME, MENU_INPUT_SOUND_VOLUME);
+    SsVoKeyOn(sound.program,
+        sound.note << KF_SOUND_PACKED_NOTE_SHIFT,
+        MENU_INPUT_SOUND_VOLUME,
+        MENU_INPUT_SOUND_VOLUME);
     VSync(0);
     SsVoKeyOff(sound.program, sound.note << KF_SOUND_PACKED_NOTE_SHIFT);
 }
@@ -417,12 +420,12 @@ KfSaveStatus save_file_write_slot(KfSaveSlotId slot_id)
     }
     memcpy((void *)save_payload_buffer->player_state, (const void *)&player_state.experience,
            sizeof(save_payload_buffer->player_state));
-    memcpy((void *)&save_payload_buffer->world_state, (const void *)&map_world_state_base,
+    memcpy((void *)&save_payload_buffer->world_state, (const void *)&map_runtime_state.world_state,
            sizeof(save_payload_buffer->world_state));
     memcpy((void *)save_payload_buffer->item_stock, (const void *)item_stock,
            sizeof(save_payload_buffer->item_stock));
     for (index = 0; index < KF_MAGIC_RECORD_COUNT; index++) {
-        save_payload_buffer->magic_flags[index] = magic_records[index].learned;
+        save_payload_buffer->magic_flags[index] = effect_state.magic.entries[index].learned;
     }
     memory_card_clear_events();
     file = open(save_main_file_path, O_WRONLY);
@@ -653,12 +656,12 @@ KfSaveStatus save_file_read_slot(KfSaveSlotId slot_id)
     saved_weapon_animation_cache = player_state.weapon_animation_cache;
     memcpy((void *)&player_state.experience, (const void *)save_payload_buffer->player_state,
            sizeof(save_payload_buffer->player_state));
-    memcpy((void *)&map_world_state_base, (const void *)&save_payload_buffer->world_state,
+    memcpy((void *)&map_runtime_state.world_state, (const void *)&save_payload_buffer->world_state,
            sizeof(save_payload_buffer->world_state));
     memcpy((void *)item_stock, (const void *)save_payload_buffer->item_stock,
            sizeof(save_payload_buffer->item_stock));
     for (index = 0; index < KF_MAGIC_RECORD_COUNT; index++) {
-        magic_records[index].learned = save_payload_buffer->magic_flags[index];
+        effect_state.magic.entries[index].learned = save_payload_buffer->magic_flags[index];
     }
     player_state.weapon_asset_buffer = weapon_asset_buffer;
     player_state.weapon_animation_cache = saved_weapon_animation_cache;
@@ -696,18 +699,23 @@ void save_file_initialize_buffers(void)
     save_header_buffer->playstation_header.magic[1] = 'C';
     save_header_buffer->playstation_header.icon_type = KF_SAVE_ICON_THREE_FRAMES;
     save_header_buffer->playstation_header.block_count = SAVE_FILE_BLOCKS;
-    memcpy((void *)save_header_buffer->playstation_header.title, (const void *)SAVE_TITLE_TEXT, sizeof(SAVE_TITLE_TEXT));
+    memcpy((void *)save_header_buffer->playstation_header.title,
+        (const void *)SAVE_TITLE_TEXT,
+        sizeof(SAVE_TITLE_TEXT));
     cd_file_load_into((void *)image, "TIM\\ICO1.TIM");
     memcpy((void *)save_header_buffer->playstation_header.clut, (const void *)(&image[SAVE_ICON_TIM_CLUT_OFFSET]),
            sizeof(save_header_buffer->playstation_header.clut));
-    memcpy((void *)(save_header_buffer->playstation_header.icon_frames[0]), (const void *)(&image[SAVE_ICON_TIM_PIXELS_OFFSET]),
-           sizeof(save_header_buffer->playstation_header.icon_frames[0]));
+    memcpy((void *)(save_header_buffer->playstation_header.icon_frames[0]),
+        (const void *)(&image[SAVE_ICON_TIM_PIXELS_OFFSET]),
+        sizeof(save_header_buffer->playstation_header.icon_frames[0]));
     cd_file_load_into((void *)image, "TIM\\ICO2.TIM");
-    memcpy((void *)(save_header_buffer->playstation_header.icon_frames[1]), (const void *)(&image[SAVE_ICON_TIM_PIXELS_OFFSET]),
-           sizeof(save_header_buffer->playstation_header.icon_frames[1]));
+    memcpy((void *)(save_header_buffer->playstation_header.icon_frames[1]),
+        (const void *)(&image[SAVE_ICON_TIM_PIXELS_OFFSET]),
+        sizeof(save_header_buffer->playstation_header.icon_frames[1]));
     cd_file_load_into((void *)image, "TIM\\ICO3.TIM");
-    memcpy((void *)(save_header_buffer->playstation_header.icon_frames[2]), (const void *)(&image[SAVE_ICON_TIM_PIXELS_OFFSET]),
-           sizeof(save_header_buffer->playstation_header.icon_frames[2]));
+    memcpy((void *)(save_header_buffer->playstation_header.icon_frames[2]),
+        (const void *)(&image[SAVE_ICON_TIM_PIXELS_OFFSET]),
+        sizeof(save_header_buffer->playstation_header.icon_frames[2]));
     memset((void *)save_payload_buffer, 0, sizeof(KfSavePayload));
 }
 
@@ -833,7 +841,8 @@ void screen_show_image_until_input(const char *path)
     game_graphics_runtime.display_draw_environments[index].isbg = 0;
     game_graphics_runtime.display_draw_environments[index].dfe = 0;
     PutDrawEnv(&game_graphics_runtime.display_draw_environments[index]);
-    game_graphics_runtime.display_state.ordering_table = game_graphics_runtime.display_state.ordering_tables[index].entries;
+    game_graphics_runtime.display_state.ordering_table
+        = game_graphics_runtime.display_state.ordering_tables[index].entries;
     for (;;) {
         if (brightness < IMAGE_WAIT_MAX_BRIGHTNESS) {
             brightness++;
@@ -859,7 +868,10 @@ void screen_show_image_until_input(const char *path)
 }
 
 ADDRESS(0x8002c9d4, 0xa4)
-void talk_show_dialogue_page(KF_ENUM_PARAM(KfFloorId, u8) floor, u8 stage, KF_ENUM_PARAM(KfCharacterId, s32) character_id, u8 page)
+void talk_show_dialogue_page(KF_ENUM_PARAM(KfFloorId, u8) floor,
+    u8 stage,
+    KF_ENUM_PARAM(KfCharacterId, s32) character_id,
+    u8 page)
 {
     char *directory_character = &talk_image_path_template[6];
 

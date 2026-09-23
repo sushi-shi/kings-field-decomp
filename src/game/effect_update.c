@@ -47,8 +47,8 @@ int effect_magic_power(KfEffectRecord *effect)
 ADDRESS(0x80037fe0, 0x2b8)
 void effect_projectile_update_3d(SVECTOR *probe_offset, KF_ENUM_PARAM(KfEffectPhase, s32) phase_limit)
 {
-    KfEffectRecord *record = current_effect;
-    KfMagicRecord *magic = current_effect_magic_record;
+    KfEffectRecord *record = effect_state.current_record;
+    KfMagicRecord *magic = effect_state.current_magic;
     KfEffectPhase life = record->phase;
     MATRIX rotation_matrix;
     MATRIX yaw_matrix;
@@ -107,7 +107,8 @@ void effect_projectile_update_3d(SVECTOR *probe_offset, KF_ENUM_PARAM(KfEffectPh
             }
         }
         record->rotation.vector.vx = next_pitch;
-    } else if (KF_ENUM_ENCODE(u8, life) >= KF_ENUM_ENCODE(u8, KF_EFFECT_HAZARD_RISE_FIRST) && KF_ENUM_ENCODE(s16, phase_limit) >= KF_ENUM_ENCODE(u8, life)) {
+    } else if (KF_ENUM_ENCODE(u8, life) >= KF_ENUM_ENCODE(u8, KF_EFFECT_HAZARD_RISE_FIRST)
+        && KF_ENUM_ENCODE(s16, phase_limit) >= KF_ENUM_ENCODE(u8, life)) {
         record->position.vy -= EFFECT_HAZARD_RISE_STEP;
         record->phase++;
     }
@@ -116,8 +117,8 @@ void effect_projectile_update_3d(SVECTOR *probe_offset, KF_ENUM_PARAM(KfEffectPh
 ADDRESS(0x80038298, 0x260)
 void effect_projectile_update_2d(s32 orbit_radius, KF_ENUM_PARAM(KfEffectPhase, s32) phase_limit)
 {
-    KfEffectRecord *record = current_effect;
-    KfMagicRecord *magic = current_effect_magic_record;
+    KfEffectRecord *record = effect_state.current_record;
+    KfMagicRecord *magic = effect_state.current_magic;
     KF_ENUM_STORAGE(KfEffectPhase, u32) life = record->phase;
     u32 collision;
 
@@ -157,7 +158,8 @@ void effect_projectile_update_2d(s32 orbit_radius, KF_ENUM_PARAM(KfEffectPhase, 
                 record->sound_played = KF_AUDIO_NOT_PLAYED;
             }
         }
-    } else if ((KF_ENUM_ENCODE(u32, life) & 0xff) != KF_ENUM_ENCODE(u8, KF_EFFECT_HAZARD_RUNNING) && KF_ENUM_ENCODE(s16, phase_limit) >= (int)(KF_ENUM_ENCODE(u32, life) & 0xff)) {
+    } else if ((KF_ENUM_ENCODE(u32, life) & 0xff) != KF_ENUM_ENCODE(u8, KF_EFFECT_HAZARD_RUNNING)
+        && KF_ENUM_ENCODE(s16, phase_limit) >= (int)(KF_ENUM_ENCODE(u32, life) & 0xff)) {
         record->position.vy -= EFFECT_HAZARD_RISE_STEP;
         record->phase++;
     }
@@ -192,7 +194,7 @@ void effect_floor_deform_line(s32 segment_index, s32 progress_start, s32 progres
         } else if (progress >= FLOOR_DEFORM_SOUND_PROGRESS && progress < range + FLOOR_DEFORM_SOUND_PROGRESS) {
             sound_position.vx = KF_MAP_TILE_SIZE * col + KF_MAP_TILE_CENTER;
             sound_position.vz = KF_MAP_TILE_SIZE * row + KF_MAP_TILE_CENTER;
-            audio_play_spatial_default_range(&gameplay_sound_refs[4],
+            audio_play_spatial_default_range(&gameplay_sound_refs[KF_GAMEPLAY_SOUND_FLOOR_DEFORM],
                 &sound_position, KF_AUDIO_MAX_VOLUME);
         }
         map_floor_height_grid.cells[row][col] =
@@ -254,7 +256,7 @@ void effect_spawn_ground_trail(u8 id, KfEffectRecord *parent_effect, s16 angle, 
     s32 scale = (distance << KF_FIXED12_BITS) / TRAIL_UNIT_SCALE_DISTANCE;
 
     effect_rotate_scale_offset_y(&parent_effect->direction.vector, &position, angle, scale);
-    index = parent_effect - effect_pool_records;
+    index = parent_effect - effect_state.records;
     position.vx += parent_effect->position.vx;
     position.vz += parent_effect->position.vz;
     effect_pool_construct(id, parent_effect->type, KF_EFFECT_KIND_GROUND_TRAIL, &position,
@@ -262,7 +264,10 @@ void effect_spawn_ground_trail(u8 id, KfEffectRecord *parent_effect, s16 angle, 
 }
 
 ADDRESS(0x800388b4, 0x184)
-void effect_spawn_ground_branch(u8 id, KfEffectRecord *parent_effect, s16 angle_offset, KF_ENUM_PARAM(KfEffectGroundBranchRole, s32) branch_role)
+void effect_spawn_ground_branch(u8 id,
+    KfEffectRecord *parent_effect,
+    s16 angle_offset,
+    KF_ENUM_PARAM(KfEffectGroundBranchRole, s32) branch_role)
 {
     VECTOR position;
     s32 angle = -(s16)(parent_effect->direction.words.y + angle_offset);

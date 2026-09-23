@@ -14,7 +14,7 @@ enum {
  *
  * map_restore_floor_state is the per-floor world-state RESTORE routine: the exact inverse
  * of map_world_state_persist (map_events.c), which serialises the live event, actor, and
- * map-object state into the map_world_state_base world-state block. It reads the same
+ * map-object state into map_runtime_state.world_state. It reads the same
  * 1700-byte per-floor record (base - 1690 + 1700 * current_floor), and when its
  * marker byte is 1 it rebuilds the eight map events, the live-actor lifecycle
  * overrides, the 190 map-object ids, the linked-object payloads, and the two
@@ -136,32 +136,33 @@ void map_restore_floor_state(void)
 
     switch (player_state.progress_state.current_floor) {
     case KF_FLOOR_1:
-        if (map_floor1_script.passage_opened == KF_MAP_SCRIPT_SET) {
+        if (map_runtime_state.world_state.floors[0].script.floor1.passage_opened == KF_MAP_SCRIPT_SET) {
             map_apply_copy_region(KF_MAP_COPY_FLOOR1_PASSAGE);
         }
-        if (map_floor1_script.actor_activation_stage != KF_MAP_TRIGGER_COMPLETE) {
+        if (map_runtime_state.world_state.floors[0].script.floor1.actor_activation_stage != KF_MAP_TRIGGER_COMPLETE) {
             index = actor_pool_find_at_tile(7, 0x28);
             if (index != -1) {
                 actor_state.actors[index].lifecycle = KF_ACTOR_LIFECYCLE_DISABLED;
             }
         }
-        if (map_floor5_script.weapon_transformed == KF_MAP_SCRIPT_SET) {
+        if (map_runtime_state.world_state.floors[4].script.floor5.weapon_transformed == KF_MAP_SCRIPT_SET) {
             map_object_pool_clear_link(KF_MAP_LINK_WEAPON_TRANSFORM_DOORS);
         }
         break;
     case KF_FLOOR_2:
-        if (map_floor5_script.weapon_transformed == KF_MAP_SCRIPT_SET) {
+        if (map_runtime_state.world_state.floors[4].script.floor5.weapon_transformed == KF_MAP_SCRIPT_SET) {
             map_object_pool_clear_link(KF_MAP_LINK_WEAPON_TRANSFORM_DOORS);
         }
         if (player_state.progress_state.highest_floor >= KF_FLOOR_3) {
-            map_event_pool[0].state = KF_MAP_EVENT_DISABLED;
+            map_runtime_state.events[0].state = KF_MAP_EVENT_DISABLED;
         }
         break;
     case KF_FLOOR_3:
-        if (map_floor5_script.weapon_transformed == KF_MAP_SCRIPT_SET) {
+        if (map_runtime_state.world_state.floors[4].script.floor5.weapon_transformed == KF_MAP_SCRIPT_SET) {
             map_object_pool_clear_link(KF_MAP_LINK_WEAPON_TRANSFORM_DOORS);
         }
-        if (map_floor3_script.revealed_piece_count == KF_MAP_FLOOR3_REQUIRED_REVEALS) {
+        if (map_runtime_state.world_state.floors[2].script.floor3.revealed_piece_count
+            == KF_MAP_FLOOR3_REQUIRED_REVEALS) {
             map_apply_copy_region(KF_MAP_COPY_FLOOR3_REVEAL_FIRST);
             map_apply_copy_region(KF_MAP_COPY_FLOOR3_REVEAL_SECOND);
         }
@@ -169,23 +170,31 @@ void map_restore_floor_state(void)
     case KF_FLOOR_4:
         break;
     case KF_FLOOR_5:
-        if (map_floor5_script.character_arrived == KF_MAP_SCRIPT_SET) {
-            map_event_pool[1].state = KF_MAP_EVENT_ACTIVE;
+        if (map_runtime_state.world_state.floors[4].script.floor5.character_arrived == KF_MAP_SCRIPT_SET) {
+            map_runtime_state.events[1].state = KF_MAP_EVENT_ACTIVE;
         }
-        if (map_floor5_script.boss_encounter_started == KF_MAP_SCRIPT_UNSET) {
+        if (map_runtime_state.world_state.floors[4].script.floor5.boss_encounter_started == KF_MAP_SCRIPT_UNSET) {
             actor_state.definitions.entries[7].action_animations[KF_ACTOR_ANIM_SLOT_MELEE] = KF_ANIMATION_CLIP_NONE;
             actor_state.definitions.entries[7].action_animations[KF_ACTOR_ANIM_SLOT_EFFECT0] = KF_ANIMATION_CLIP_NONE;
             actor_state.definitions.entries[7].action_animations[KF_ACTOR_ANIM_SLOT_EFFECT1] = KF_ANIMATION_CLIP_NONE;
             actor_state.definitions.entries[7].action_animations[KF_ACTOR_ANIM_SLOT_EFFECT2] = KF_ANIMATION_CLIP_NONE;
-            actor_state.definitions.entries[7].action_animations[KF_ACTOR_ANIM_SLOT_MULTI_HIT_ATTACK] = KF_ANIMATION_CLIP_NONE;
+            actor_state.definitions.entries[7]
+                .action_animations[KF_ACTOR_ANIM_SLOT_MULTI_HIT_ATTACK]
+                = KF_ANIMATION_CLIP_NONE;
         } else {
             map_apply_copy_region(KF_MAP_COPY_FLOOR5_BOSS_ENCOUNTER);
         }
-        if (item_stock[KF_ENUM_ENCODE(u8, KF_ITEM_STOCK_PLAYER)][KF_ENUM_ENCODE(u8, KF_ITEM_DRAGON_SWORD)] != 0 || item_stock[KF_ENUM_ENCODE(u8, KF_ITEM_STOCK_PLAYER)][KF_ENUM_ENCODE(u8, KF_ITEM_MOONLIGHT_SWORD)] != 0
-                || map_floor5_script.weapon_transformed == KF_MAP_SCRIPT_SET) {
+        if (item_stock[KF_ENUM_ENCODE(u8, KF_ITEM_STOCK_PLAYER)]
+                      [KF_ENUM_ENCODE(u8, KF_ITEM_DRAGON_SWORD)]
+                != 0
+            || item_stock[KF_ENUM_ENCODE(u8, KF_ITEM_STOCK_PLAYER)]
+                         [KF_ENUM_ENCODE(u8, KF_ITEM_MOONLIGHT_SWORD)]
+                != 0
+            || map_runtime_state.world_state.floors[4].script.floor5.weapon_transformed
+                == KF_MAP_SCRIPT_SET) {
             map_object_pool_clear_link(KF_MAP_LINK_FLOOR5_SWORD_DOOR);
         }
-        if (boss_defeat_complete != KF_MAP_SCRIPT_UNSET) {
+        if (map_runtime_state.world_state.floors[4].script.floor5.boss_defeat != KF_MAP_SCRIPT_UNSET) {
             map_object_pool_trigger_link(KF_MAP_LINK_BOSS_EMITTERS);
             actor_pool_begin_death_by_definition(0);
             actor_pool_begin_death_by_definition(2);
@@ -201,7 +210,7 @@ void map_restore_floor_state(void)
 ADDRESS(0x800364e0, 0x74)
 void map_refresh_dialogue_stages(void)
 {
-    KfMapEvent *event = map_event_pool;
+    KfMapEvent *event = map_runtime_state.events;
     u16 index = KF_MAP_EVENT_CAPACITY - 1;
 
     do {
@@ -220,7 +229,8 @@ void map_load_floor(void)
     map_restore_floor_state();
     map_refresh_dialogue_stages();
     effect5_texture_cache_prepare(player_state.progress_state.current_floor);
-    game_graphics_runtime.render_state.effect_color_matrix = color_matrix_table[KF_ENUM_ENCODE(s32, KF_GAME_COLOR_WHITE)];
+    game_graphics_runtime.render_state.effect_color_matrix
+        = color_matrix_table[KF_ENUM_ENCODE(s32, KF_GAME_COLOR_WHITE)];
 }
 
 ADDRESS(0x800365f8, 0x20)

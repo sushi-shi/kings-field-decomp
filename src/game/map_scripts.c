@@ -54,10 +54,17 @@ enum {
 };
 
 /* Word at event+8: ignored stage cap, stage, page, gated delay (little endian). */
+enum {
+    MAP_DIALOGUE_STAGE_SHIFT = 8,
+    MAP_DIALOGUE_PAGE_SHIFT = 16,
+    MAP_DIALOGUE_DELAY_SHIFT = 24
+};
+
 #define MAP_DIALOGUE_TRIGGER_MASK 0xffffff00
 #define MAP_DIALOGUE_STARTED(stage) \
-    ((KF_DIALOGUE_PAGE_DELAY_TICKS << 24) | (KF_DIALOGUE_FIRST_PAGE << 16) \
-     | ((stage) << 8))
+    ((KF_DIALOGUE_PAGE_DELAY_TICKS << MAP_DIALOGUE_DELAY_SHIFT) \
+     | (KF_DIALOGUE_FIRST_PAGE << MAP_DIALOGUE_PAGE_SHIFT) \
+     | ((stage) << MAP_DIALOGUE_STAGE_SHIFT))
 
 DATA(0x800561d0, 0x38)
 static KfCameraPathPoint map_floor5_camera_path[2] = {
@@ -99,25 +106,30 @@ s32 actor_pool_find_at_tile(u8 tile_x, u8 tile_z)
 ADDRESS(0x80033f64, 0x288)
 void map_ambient_script_floor1(void)
 {
-    if (map_floor1_script.revival_enabled == KF_MAP_SCRIPT_SET) {
-        audio_play_spatial_default_range(
-            &gameplay_sound_refs[5], &map_floor1_sound_position, MAP_FLOOR1_AMBIENT_VOLUME);
+    if (map_runtime_state.world_state.floors[0].script.floor1.revival_enabled == KF_MAP_SCRIPT_SET) {
+        audio_play_spatial_default_range(&gameplay_sound_refs[KF_GAMEPLAY_SOUND_FLOOR1_REVIVAL],
+            &map_floor1_sound_position,
+            MAP_FLOOR1_AMBIENT_VOLUME);
     }
 
-    switch (map_floor1_script.actor_activation_stage) {
+    switch (map_runtime_state.world_state.floors[0].script.floor1.actor_activation_stage) {
     case KF_MAP_TRIGGER_AWAIT_ENTRY:
-        if (player_state.motion_state.fields.map_cell.coords.x >= 7 && player_state.motion_state.fields.map_cell.coords.z >= 31
-            && player_state.motion_state.fields.map_cell.coords.x < 12 && player_state.motion_state.fields.map_cell.coords.z < 41) {
-            map_floor1_script.actor_activation_stage = KF_MAP_TRIGGER_AWAIT_EXIT;
+        if (player_state.motion_state.fields.map_cell.coords.x >= 7
+            && player_state.motion_state.fields.map_cell.coords.z >= 31
+            && player_state.motion_state.fields.map_cell.coords.x < 12
+            && player_state.motion_state.fields.map_cell.coords.z < 41) {
+            map_runtime_state.world_state.floors[0].script.floor1.actor_activation_stage = KF_MAP_TRIGGER_AWAIT_EXIT;
         }
         break;
     case KF_MAP_TRIGGER_AWAIT_EXIT:
-        if (player_state.motion_state.fields.map_cell.coords.x < 2 || player_state.motion_state.fields.map_cell.coords.z < 25
-            || player_state.motion_state.fields.map_cell.coords.x >= 14 || player_state.motion_state.fields.map_cell.coords.z >= 46) {
+        if (player_state.motion_state.fields.map_cell.coords.x < 2
+            || player_state.motion_state.fields.map_cell.coords.z < 25
+            || player_state.motion_state.fields.map_cell.coords.x >= 14
+            || player_state.motion_state.fields.map_cell.coords.z >= 46) {
             s32 actor_index;
             s32 object_index;
 
-            map_floor1_script.actor_activation_stage = KF_MAP_TRIGGER_COMPLETE;
+            map_runtime_state.world_state.floors[0].script.floor1.actor_activation_stage = KF_MAP_TRIGGER_COMPLETE;
             actor_index = actor_pool_find_at_tile(7, 0x28);
             if (actor_index != -1) {
                 actor_state.actors[actor_index].lifecycle = KF_ACTOR_LIFECYCLE_DORMANT;
@@ -131,19 +143,23 @@ void map_ambient_script_floor1(void)
         break;
     }
 
-    switch (map_floor1_script.object_removal_stage) {
+    switch (map_runtime_state.world_state.floors[0].script.floor1.object_removal_stage) {
     case KF_MAP_TRIGGER_AWAIT_ENTRY:
-        if (player_state.motion_state.fields.map_cell.coords.x >= 2 && player_state.motion_state.fields.map_cell.coords.z >= 27
-            && player_state.motion_state.fields.map_cell.coords.x < 5 && player_state.motion_state.fields.map_cell.coords.z < 30) {
-            map_floor1_script.object_removal_stage = KF_MAP_TRIGGER_AWAIT_EXIT;
+        if (player_state.motion_state.fields.map_cell.coords.x >= 2
+            && player_state.motion_state.fields.map_cell.coords.z >= 27
+            && player_state.motion_state.fields.map_cell.coords.x < 5
+            && player_state.motion_state.fields.map_cell.coords.z < 30) {
+            map_runtime_state.world_state.floors[0].script.floor1.object_removal_stage = KF_MAP_TRIGGER_AWAIT_EXIT;
         }
         break;
     case KF_MAP_TRIGGER_AWAIT_EXIT:
-        if (player_state.motion_state.fields.map_cell.coords.x < 2 || player_state.motion_state.fields.map_cell.coords.z < 11
-            || player_state.motion_state.fields.map_cell.coords.x >= 28 || player_state.motion_state.fields.map_cell.coords.z >= 41) {
+        if (player_state.motion_state.fields.map_cell.coords.x < 2
+            || player_state.motion_state.fields.map_cell.coords.z < 11
+            || player_state.motion_state.fields.map_cell.coords.x >= 28
+            || player_state.motion_state.fields.map_cell.coords.z >= 41) {
             s32 object_index;
 
-            map_floor1_script.object_removal_stage = KF_MAP_TRIGGER_COMPLETE;
+            map_runtime_state.world_state.floors[0].script.floor1.object_removal_stage = KF_MAP_TRIGGER_COMPLETE;
             object_index = map_object_pool_find_near_point(0x2328, 0xdea8, MAP_SCRIPT_OBJECT_SEARCH_PADDING);
             if (object_index != -1) {
                 map_object_state.objects[object_index].object_id = KF_OBJECT_NONE;
@@ -157,10 +173,11 @@ void map_ambient_script_floor1(void)
 ADDRESS(0x800341ec, 0x70)
 void map_ambient_script_floor2(void)
 {
-    if (map_event_pool[1].dialogue.fields.stage == 2 && map_event_pool[1].dialogue.fields.page < 3
+    if (map_runtime_state.events[1].dialogue.fields.stage == 2 && map_runtime_state.events[1].dialogue.fields.page < 3
         && rand() < MAP_FLOOR2_AMBIENT_RANDOM_LIMIT) {
-        audio_play_spatial_default_range(
-            &gameplay_sound_refs[8], &map_event_pool[1].reference_position, KF_AUDIO_MAX_VOLUME);
+        audio_play_spatial_default_range(&gameplay_sound_refs[KF_GAMEPLAY_SOUND_HARP],
+            &map_runtime_state.events[1].reference_position,
+            KF_AUDIO_MAX_VOLUME);
     }
 }
 
@@ -168,12 +185,16 @@ void map_ambient_script_floor2(void)
 ADDRESS(0x8003425c, 0x88)
 void map_ambient_script_floor3(void)
 {
-    if (player_state.motion_state.fields.map_cell.coords.x >= 15 && player_state.motion_state.fields.map_cell.coords.x < 18
+    if (player_state.motion_state.fields.map_cell.coords.x >= 15
+        && player_state.motion_state.fields.map_cell.coords.x < 18
         && player_state.motion_state.fields.map_cell.coords.z == 0x40) {
         player_restore_vitals_with_color_cycle();
-        if (magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_RESIST_FIRE)].learned == KF_MAGIC_UNLEARNED || magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_BLESS)].learned == KF_MAGIC_UNLEARNED) {
-            magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_RESIST_FIRE)].learned = KF_MAGIC_LEARNED;
-            magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_BLESS)].learned = KF_MAGIC_LEARNED;
+        if (effect_state.magic.entries[KF_ENUM_ENCODE(u8, KF_MAGIC_RESIST_FIRE)].learned
+                == KF_MAGIC_UNLEARNED
+            || effect_state.magic.entries[KF_ENUM_ENCODE(u8, KF_MAGIC_BLESS)].learned
+                == KF_MAGIC_UNLEARNED) {
+            effect_state.magic.entries[KF_ENUM_ENCODE(u8, KF_MAGIC_RESIST_FIRE)].learned = KF_MAGIC_LEARNED;
+            effect_state.magic.entries[KF_ENUM_ENCODE(u8, KF_MAGIC_BLESS)].learned = KF_MAGIC_LEARNED;
             notify_enqueue(KF_NOTIFICATION_MAGIC_LEARNED);
         }
     }
@@ -189,10 +210,12 @@ void map_ambient_script_floor4(void)
 ADDRESS(0x800342ec, 0xf4)
 void map_ambient_script_floor5(void)
 {
-    KfMapScriptFlag *encounter_started = &map_floor5_script.boss_encounter_started;
+    KfMapScriptFlag *encounter_started = &map_runtime_state.world_state.floors[4].script.floor5.boss_encounter_started;
 
-    if (*encounter_started == KF_MAP_SCRIPT_UNSET && player_state.motion_state.fields.map_cell.coords.x >= 38
-        && player_state.motion_state.fields.map_cell.coords.x < 41 && player_state.motion_state.fields.map_cell.coords.z == 7
+    if (*encounter_started == KF_MAP_SCRIPT_UNSET
+        && player_state.motion_state.fields.map_cell.coords.x >= 38
+        && player_state.motion_state.fields.map_cell.coords.x < 41
+        && player_state.motion_state.fields.map_cell.coords.z == 7
         && (u16)player_state.camera_rotation.vy >= MAP_BOSS_REVEAL_YAW_MIN
         && (u16)player_state.camera_rotation.vy < MAP_BOSS_REVEAL_YAW_END) {
         *encounter_started = KF_MAP_SCRIPT_SET;
@@ -204,7 +227,8 @@ void map_ambient_script_floor5(void)
         actor_state.definitions.entries[7].action_animations[KF_ACTOR_ANIM_SLOT_EFFECT0] = KF_ANIMATION_CLIP_FOURTH;
         actor_state.definitions.entries[7].action_animations[KF_ACTOR_ANIM_SLOT_EFFECT1] = KF_ANIMATION_CLIP_FOURTH;
         actor_state.definitions.entries[7].action_animations[KF_ACTOR_ANIM_SLOT_EFFECT2] = KF_ANIMATION_CLIP_FOURTH;
-        actor_state.definitions.entries[7].action_animations[KF_ACTOR_ANIM_SLOT_MULTI_HIT_ATTACK] = KF_ANIMATION_CLIP_SECOND;
+        actor_state.definitions.entries[7].action_animations[KF_ACTOR_ANIM_SLOT_MULTI_HIT_ATTACK]
+            = KF_ANIMATION_CLIP_SECOND;
         map_apply_copy_region(KF_MAP_COPY_FLOOR5_BOSS_ENCOUNTER);
     }
 }
@@ -214,10 +238,10 @@ ADDRESS(0x800343e0, 0x58)
 void map_action_script_floor1(void)
 {
     if (item_stock[KF_ENUM_ENCODE(u8, KF_ITEM_STOCK_PLAYER)][KF_ENUM_ENCODE(u8, KF_ITEM_DRAGON_CHALICE)] != 0
-        && map_floor1_script.passage_opened == KF_MAP_SCRIPT_UNSET) {
-        map_floor1_script.passage_opened = KF_MAP_SCRIPT_SET;
+        && map_runtime_state.world_state.floors[0].script.floor1.passage_opened == KF_MAP_SCRIPT_UNSET) {
+        map_runtime_state.world_state.floors[0].script.floor1.passage_opened = KF_MAP_SCRIPT_SET;
         map_apply_copy_region(KF_MAP_COPY_FLOOR1_PASSAGE);
-        sound_ref_play(&gameplay_sound_refs[7], MAP_PASSAGE_OPEN_SOUND_VOLUME);
+        sound_ref_play(&gameplay_sound_refs[KF_GAMEPLAY_SOUND_STONE_PASSAGE], MAP_PASSAGE_OPEN_SOUND_VOLUME);
     }
 }
 
@@ -231,23 +255,29 @@ void map_reveal_fade(void)
     saved = game_graphics_runtime.render_state.light_matrix_copy;
 
     for (blend = 0; blend < KF_FIXED12_ONE + 1; blend += MAP_REVEAL_FADE_IN_STEP) {
-        lighting_set_color_matrix(&color_matrix_table[KF_ENUM_ENCODE(s32, KF_GAME_COLOR_DEFAULT)], &color_matrix_table[KF_ENUM_ENCODE(s32, KF_GAME_COLOR_WHITE)], blend);
+        lighting_set_color_matrix(&color_matrix_table[KF_ENUM_ENCODE(s32, KF_GAME_COLOR_DEFAULT)],
+            &color_matrix_table[KF_ENUM_ENCODE(s32, KF_GAME_COLOR_WHITE)],
+            blend);
         if (blend >= KF_FIXED12_ONE / 4 + 1) {
-            map_event_pool[3].reference_position.vy -= MAP_REVEAL_RISE_STEP;
-            map_event_pool[3].rotation.vy += MAP_REVEAL_YAW_STEP;
+            map_runtime_state.events[3].reference_position.vy -= MAP_REVEAL_RISE_STEP;
+            map_runtime_state.events[3].rotation.vy += MAP_REVEAL_YAW_STEP;
         } else {
-            matrix_interpolate(&saved, &map_reveal_light_matrix,
-                               &game_graphics_runtime.render_state.light_matrix_copy, blend << MAP_REVEAL_LIGHT_BLEND_SHIFT);
+            matrix_interpolate(&saved,
+                &map_reveal_light_matrix,
+                &game_graphics_runtime.render_state.light_matrix_copy,
+                blend << MAP_REVEAL_LIGHT_BLEND_SHIFT);
         }
         render_frame(NULL, NULL);
         frame_pacer_wait();
     }
 
-    map_event_pool[3].state = KF_MAP_EVENT_DISABLED;
-    map_floor5_script.character_arrived = KF_MAP_SCRIPT_SET;
+    map_runtime_state.events[3].state = KF_MAP_EVENT_DISABLED;
+    map_runtime_state.world_state.floors[4].script.floor5.character_arrived = KF_MAP_SCRIPT_SET;
 
     for (blend = KF_FIXED12_ONE; blend >= 0; blend -= MAP_REVEAL_FADE_OUT_STEP) {
-        lighting_set_color_matrix(&color_matrix_table[KF_ENUM_ENCODE(s32, KF_GAME_COLOR_DEFAULT)], &color_matrix_table[KF_ENUM_ENCODE(s32, KF_GAME_COLOR_WHITE)], blend);
+        lighting_set_color_matrix(&color_matrix_table[KF_ENUM_ENCODE(s32, KF_GAME_COLOR_DEFAULT)],
+            &color_matrix_table[KF_ENUM_ENCODE(s32, KF_GAME_COLOR_WHITE)],
+            blend);
         render_frame(NULL, NULL);
         frame_pacer_wait();
     }
@@ -260,9 +290,9 @@ void map_reveal_fade(void)
 ADDRESS(0x800345bc, 0x54)
 void map_action_script_floor2(void)
 {
-    if ((map_event_pool[3].dialogue.word & MAP_DIALOGUE_TRIGGER_MASK)
+    if ((map_runtime_state.events[3].dialogue.word & MAP_DIALOGUE_TRIGGER_MASK)
             == MAP_DIALOGUE_STARTED(2)
-        && map_event_pool[3].state == KF_MAP_EVENT_ACTIVE) {
+        && map_runtime_state.events[3].state == KF_MAP_EVENT_ACTIVE) {
         map_reveal_fade();
     }
 }
@@ -272,15 +302,15 @@ ADDRESS(0x80034610, 0x90)
 void map_action_script_floor3(void)
 {
     if (item_stock[KF_ENUM_ENCODE(u8, KF_ITEM_STOCK_PLAYER)][KF_ENUM_ENCODE(u8, KF_ITEM_WIND_BLADE_BRACELET)] != 0) {
-        if (magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_WIND_CUTTER)].learned == KF_MAGIC_UNLEARNED) {
-            magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_WIND_CUTTER)].learned = KF_MAGIC_LEARNED;
+        if (effect_state.magic.entries[KF_ENUM_ENCODE(u8, KF_MAGIC_WIND_CUTTER)].learned == KF_MAGIC_UNLEARNED) {
+            effect_state.magic.entries[KF_ENUM_ENCODE(u8, KF_MAGIC_WIND_CUTTER)].learned = KF_MAGIC_LEARNED;
             notify_enqueue(KF_NOTIFICATION_MAGIC_LEARNED);
         }
     }
-    if ((map_event_pool[1].dialogue.word & MAP_DIALOGUE_TRIGGER_MASK)
+    if ((map_runtime_state.events[1].dialogue.word & MAP_DIALOGUE_TRIGGER_MASK)
             == MAP_DIALOGUE_STARTED(3)) {
-        if (magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_FIRE_BALL)].learned == KF_MAGIC_UNLEARNED) {
-            magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_FIRE_BALL)].learned = KF_MAGIC_LEARNED;
+        if (effect_state.magic.entries[KF_ENUM_ENCODE(u8, KF_MAGIC_FIRE_BALL)].learned == KF_MAGIC_UNLEARNED) {
+            effect_state.magic.entries[KF_ENUM_ENCODE(u8, KF_MAGIC_FIRE_BALL)].learned = KF_MAGIC_LEARNED;
             notify_enqueue(KF_NOTIFICATION_MAGIC_LEARNED);
         }
     }
@@ -309,7 +339,9 @@ void map_floor5_transition_cutscene(void)
         player_equip_weapon(KF_OBJECT_NONE);
     }
     item_stock[KF_ENUM_ENCODE(u8, KF_ITEM_STOCK_PLAYER)][KF_ENUM_ENCODE(u8, KF_ITEM_DRAGON_SWORD)] = 0;
-    collision_adjust_cell_occupancy(player_state.motion_state.fields.map_cell.coords.x, player_state.motion_state.fields.map_cell.coords.z, -1);
+    collision_adjust_cell_occupancy(player_state.motion_state.fields.map_cell.coords.x,
+        player_state.motion_state.fields.map_cell.coords.z,
+        -1);
 
     camera_path_begin(&path, map_floor5_camera_path);
     for (;;) {
@@ -324,7 +356,9 @@ void map_floor5_transition_cutscene(void)
     player_state.camera_rotation = path.rotation;
     player_state.motion_state.fields.map_cell.coords.x = player_state.camera_position.vx / KF_MAP_TILE_SIZE;
     player_state.motion_state.fields.map_cell.coords.z = player_state.camera_position.vz / KF_MAP_TILE_SIZE;
-    collision_adjust_cell_occupancy(player_state.motion_state.fields.map_cell.coords.x, player_state.motion_state.fields.map_cell.coords.z, 1);
+    collision_adjust_cell_occupancy(player_state.motion_state.fields.map_cell.coords.x,
+        player_state.motion_state.fields.map_cell.coords.z,
+        1);
 
     ReadColorMatrix(&color_matrix);
     effect = map_object_effect_pool_acquire(
@@ -387,10 +421,10 @@ void map_floor5_transition_cutscene(void)
 ADDRESS(0x80034a34, 0x4c)
 void map_action_script_floor5(void)
 {
-    if ((map_event_pool[1].dialogue.word & MAP_DIALOGUE_TRIGGER_MASK)
+    if ((map_runtime_state.events[1].dialogue.word & MAP_DIALOGUE_TRIGGER_MASK)
             == MAP_DIALOGUE_STARTED(5)) {
         map_floor5_transition_cutscene();
-        map_floor5_script.weapon_transformed = KF_MAP_SCRIPT_SET;
+        map_runtime_state.world_state.floors[4].script.floor5.weapon_transformed = KF_MAP_SCRIPT_SET;
     }
 }
 
@@ -399,48 +433,57 @@ void map_event_interact(KfMapEvent *event)
 {
     switch (event->character_id) {
     case KF_CHARACTER_KEY_OF_THE_DEAD_EXCHANGE:
-        if (item_stock[KF_ENUM_ENCODE(u8, KF_ITEM_STOCK_PLAYER)][KF_ENUM_ENCODE(u8, KF_ITEM_GOLD_CROSS)] != 0 && map_event_pool[2].dialogue.fields.stage == 1
-            && map_event_pool[2].dialogue.fields.page < 3) {
+        if (item_stock[KF_ENUM_ENCODE(u8, KF_ITEM_STOCK_PLAYER)]
+                      [KF_ENUM_ENCODE(u8, KF_ITEM_GOLD_CROSS)]
+                != 0
+            && map_runtime_state.events[2].dialogue.fields.stage == 1
+            && map_runtime_state.events[2].dialogue.fields.page < 3) {
             item_stock[KF_ENUM_ENCODE(u8, KF_ITEM_STOCK_PLAYER)][KF_ENUM_ENCODE(u8, KF_ITEM_KEY_OF_THE_DEAD)] = 1;
-            map_event_pool[2].dialogue_pages.last_page[0] = 7;
+            map_runtime_state.events[2].dialogue_pages.last_page[0] = 7;
             item_stock[KF_ENUM_ENCODE(u8, KF_ITEM_STOCK_PLAYER)][KF_ENUM_ENCODE(u8, KF_ITEM_GOLD_CROSS)]--;
             talk_show_dialogue_page(player_state.progress_state.current_floor,
                                     event->dialogue.fields.stage, event->character_id, 3);
-            map_event_pool[2].dialogue.fields.page = 4;
-            map_event_pool[2].dialogue.fields.page_delay = 0;
-            map_event_pool[2].dialogue.fields.stage_limit = 5;
-            map_event_refresh_dialogue_stage(&map_event_pool[2]);
+            map_runtime_state.events[2].dialogue.fields.page = 4;
+            map_runtime_state.events[2].dialogue.fields.page_delay = 0;
+            map_runtime_state.events[2].dialogue.fields.stage_limit = 5;
+            map_event_refresh_dialogue_stage(&map_runtime_state.events[2]);
             return;
         }
         break;
     case KF_CHARACTER_HEALING_EXCHANGE:
-        if (item_stock[KF_ENUM_ENCODE(u8, KF_ITEM_STOCK_PLAYER)][KF_ENUM_ENCODE(u8, KF_ITEM_MIRROR_OF_TRUTH)] != 0 && map_event_pool[2].dialogue.fields.stage == 2
-            && map_event_pool[2].dialogue.fields.page < 2) {
-            magic_records[KF_ENUM_ENCODE(u8, KF_MAGIC_HEALING)].learned = KF_MAGIC_LEARNED;
+        if (item_stock[KF_ENUM_ENCODE(u8, KF_ITEM_STOCK_PLAYER)]
+                      [KF_ENUM_ENCODE(u8, KF_ITEM_MIRROR_OF_TRUTH)]
+                != 0
+            && map_runtime_state.events[2].dialogue.fields.stage == 2
+            && map_runtime_state.events[2].dialogue.fields.page < 2) {
+            effect_state.magic.entries[KF_ENUM_ENCODE(u8, KF_MAGIC_HEALING)].learned = KF_MAGIC_LEARNED;
             item_stock[KF_ENUM_ENCODE(u8, KF_ITEM_STOCK_PLAYER)][KF_ENUM_ENCODE(u8, KF_ITEM_MIRROR_OF_TRUTH)]--;
             notify_enqueue(KF_NOTIFICATION_MAGIC_LEARNED);
-            map_event_pool[2].dialogue_pages.last_page[1] = 7;
+            map_runtime_state.events[2].dialogue_pages.last_page[1] = 7;
             talk_show_dialogue_page(player_state.progress_state.current_floor,
                                     event->dialogue.fields.stage, event->character_id, 2);
-            map_event_pool[2].dialogue.fields.page = 3;
-            map_event_pool[2].dialogue.fields.page_delay = 0;
-            map_event_pool[2].dialogue.fields.stage_limit = 5;
-            map_event_refresh_dialogue_stage(&map_event_pool[2]);
+            map_runtime_state.events[2].dialogue.fields.page = 3;
+            map_runtime_state.events[2].dialogue.fields.page_delay = 0;
+            map_runtime_state.events[2].dialogue.fields.stage_limit = 5;
+            map_event_refresh_dialogue_stage(&map_runtime_state.events[2]);
             return;
         }
         break;
     case KF_CHARACTER_HARP_EXCHANGE:
-        if (item_stock[KF_ENUM_ENCODE(u8, KF_ITEM_STOCK_PLAYER)][KF_ENUM_ENCODE(u8, KF_ITEM_DRAGON_KING_GRASS_FRUIT)] != 0 && map_event_pool[1].dialogue.fields.stage == 2
-            && map_event_pool[1].dialogue.fields.page < 2) {
+        if (item_stock[KF_ENUM_ENCODE(u8, KF_ITEM_STOCK_PLAYER)]
+                      [KF_ENUM_ENCODE(u8, KF_ITEM_DRAGON_KING_GRASS_FRUIT)]
+                != 0
+            && map_runtime_state.events[1].dialogue.fields.stage == 2
+            && map_runtime_state.events[1].dialogue.fields.page < 2) {
             item_stock[KF_ENUM_ENCODE(u8, KF_ITEM_STOCK_PLAYER)][KF_ENUM_ENCODE(u8, KF_ITEM_HARP)] = 1;
-            map_event_pool[1].dialogue_pages.last_page[1] = 5;
+            map_runtime_state.events[1].dialogue_pages.last_page[1] = 5;
             item_stock[KF_ENUM_ENCODE(u8, KF_ITEM_STOCK_PLAYER)][KF_ENUM_ENCODE(u8, KF_ITEM_DRAGON_KING_GRASS_FRUIT)]--;
             talk_show_dialogue_page(player_state.progress_state.current_floor,
                                     event->dialogue.fields.stage, event->character_id, 2);
-            map_event_pool[1].dialogue.fields.page = 3;
-            map_event_pool[1].dialogue.fields.page_delay = 0;
-            map_event_pool[1].dialogue.fields.stage_limit = 2;
-            map_event_refresh_dialogue_stage(&map_event_pool[1]);
+            map_runtime_state.events[1].dialogue.fields.page = 3;
+            map_runtime_state.events[1].dialogue.fields.page_delay = 0;
+            map_runtime_state.events[1].dialogue.fields.stage_limit = 2;
+            map_event_refresh_dialogue_stage(&map_runtime_state.events[1]);
             return;
         }
         break;
@@ -513,31 +556,37 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
     if (game_graphics_runtime.notification_state.control.effect_phase == KF_NOTIFICATION_IDLE
         && (index = map_event_pool_find_overlap(
                 sound_x, sound_z, MAP_INTERACTION_RADIUS_PADDING)) != -1) {
-        event = &map_event_pool[index];
+        event = &map_runtime_state.events[index];
         switch (event->behavior) {
             case KF_MAP_EVENT_BEHAVIOR_SHOP:
                 event->animation_phase = 0;
                 event->animation_clip = KF_ANIMATION_CLIP_FIRST;
-                map_event_advance_animation_blocking(event, KF_MAP_EVENT_ANIMATION_TALK_POSE, KF_MAP_EVENT_ANIMATION_TALK_STEP);
+                map_event_advance_animation_blocking(
+                    event, KF_MAP_EVENT_ANIMATION_TALK_POSE, KF_MAP_EVENT_ANIMATION_TALK_STEP);
                 audio_play_map_sequence(MAP_SHOP_SEQUENCE_INDEX);
                 map_event_interact(event);
-                menu_enter_mode(KF_MENU_MODE_SHOP, KF_ENUM_DECODE(KfItemStockBank, KF_ENUM_ENCODE(u8, event->character_id)));
+                menu_enter_mode(KF_MENU_MODE_SHOP,
+                    KF_ENUM_DECODE(KfItemStockBank, KF_ENUM_ENCODE(u8, event->character_id)));
                 audio_play_current_map_sequence();
-                map_event_advance_animation_blocking(event, KF_MAP_EVENT_ANIMATION_PHASE_MASK, KF_MAP_EVENT_ANIMATION_TALK_STEP);
+                map_event_advance_animation_blocking(
+                    event, KF_MAP_EVENT_ANIMATION_PHASE_MASK, KF_MAP_EVENT_ANIMATION_TALK_STEP);
                 goto clear_event_phase;
             case KF_MAP_EVENT_BEHAVIOR_ANIMATION_LOOP:
                 result = game_graphics_runtime.asset_registry_entries[
                     event->model_index + KF_ASSET_MAP_EVENT_FIRST]->animation_clip_count;
-                map_event_advance_animation_blocking(event, KF_MAP_EVENT_ANIMATION_PHASE_MASK, KF_MAP_EVENT_ANIMATION_FINISH_STEP);
+                map_event_advance_animation_blocking(
+                    event, KF_MAP_EVENT_ANIMATION_PHASE_MASK, KF_MAP_EVENT_ANIMATION_FINISH_STEP);
                 result = result < 2;
                 if (result == 0) {
                     event->animation_phase = 0;
                     event->animation_clip = KF_ANIMATION_CLIP_SECOND;
-                    map_event_advance_animation_blocking(event, KF_MAP_EVENT_ANIMATION_TALK_POSE, KF_MAP_EVENT_ANIMATION_TALK_STEP);
+                    map_event_advance_animation_blocking(
+                        event, KF_MAP_EVENT_ANIMATION_TALK_POSE, KF_MAP_EVENT_ANIMATION_TALK_STEP);
                 }
                 map_event_interact(event);
                 if (result == 0) {
-                    map_event_advance_animation_blocking(event, KF_MAP_EVENT_ANIMATION_PHASE_MASK, KF_MAP_EVENT_ANIMATION_TALK_STEP);
+                    map_event_advance_animation_blocking(
+                        event, KF_MAP_EVENT_ANIMATION_PHASE_MASK, KF_MAP_EVENT_ANIMATION_TALK_STEP);
                 }
                 event->animation_clip = KF_ANIMATION_CLIP_FIRST;
 clear_event_phase:
@@ -589,7 +638,7 @@ clear_event_phase:
 
                 saved_pitch = rotation->vx;
                 audio_play_spatial_default_range(
-                    &gameplay_sound_refs[2], &object->position, KF_AUDIO_MAX_VOLUME);
+                    &gameplay_sound_refs[KF_GAMEPLAY_SOUND_CONTAINER_OPEN], &object->position, KF_AUDIO_MAX_VOLUME);
                 while (object->rotation.angles.x >= -(KF_ANGLE_QUARTER_TURN - 1)) {
                     u16 current_pitch = rotation->vx;
                     u16 relative_pitch = current_pitch;
@@ -607,7 +656,8 @@ clear_event_phase:
                 item_index = KF_MAP_CONTAINER_ITEM_COUNT - 1;
                 for (;;) {
                     if (*item_id != KF_OBJECT_NONE) {
-                        pickup_result = KF_ENUM_DECODE(KfMenuResult, menu_enter_mode(KF_MENU_MODE_ITEM_PICKUP, *item_id));
+                        pickup_result = KF_ENUM_DECODE(
+                            KfMenuResult, menu_enter_mode(KF_MENU_MODE_ITEM_PICKUP, *item_id));
                         switch (pickup_result) {
                         case KF_MENU_RESULT_ACCEPTED:
                             *item_id = KF_OBJECT_NONE;
@@ -645,7 +695,8 @@ notify_linked:
                 for (;;) {
                     if (*item_id != KF_OBJECT_NONE) {
                         found_item = KF_TRUE;
-                        pickup_result = KF_ENUM_DECODE(KfMenuResult, menu_enter_mode(KF_MENU_MODE_ITEM_PICKUP, *item_id));
+                        pickup_result = KF_ENUM_DECODE(
+                            KfMenuResult, menu_enter_mode(KF_MENU_MODE_ITEM_PICKUP, *item_id));
                         switch (pickup_result) {
                         case KF_MENU_RESULT_ACCEPTED:
                             *item_id = KF_OBJECT_NONE;
@@ -693,7 +744,8 @@ notify_linked:
                         rotation->vy, object->rotation.angles.y + KF_ANGLE_HALF_TURN, MAP_DOOR_FACING_TOLERANCE)) {
                     break;
                 }
-                if (object->link.fields.link_id != KF_MAP_LINK_NONE && definition->behavior_type == KF_MAP_OBJECT_OP_HINGED_DOOR) {
+                if (object->link.fields.link_id != KF_MAP_LINK_NONE
+                    && definition->behavior_type == KF_MAP_OBJECT_OP_HINGED_DOOR) {
                     notify_enqueue(object->link.fields.default_notification);
                     break;
                 }
@@ -730,7 +782,8 @@ start_paired_door:
                 continue;
 
             case KF_MAP_OBJECT_OP_ITEM_PICKUP:
-                pickup_result = KF_ENUM_DECODE(KfMenuResult, menu_enter_mode(KF_MENU_MODE_ITEM_PICKUP, object->object_id));
+                pickup_result = KF_ENUM_DECODE(
+                    KfMenuResult, menu_enter_mode(KF_MENU_MODE_ITEM_PICKUP, object->object_id));
                 switch (pickup_result) {
                 case KF_MENU_RESULT_ACCEPTED:
                     object->object_id = KF_OBJECT_NONE;

@@ -114,7 +114,7 @@ void render_entities(void)
 
     /* Actor sprites. */
     SetLightMatrix(effect_light_matrix);
-    sprite = effect_pool_records;
+    sprite = effect_state.records;
     for (i = KF_EFFECT_CAPACITY - 1; i != -1; sprite++, i--) {
         if (sprite->type == KF_EFFECT_SLOT_FREE || sprite->render_id.model == KF_EFFECT_MODEL_NONE) {
             continue;
@@ -135,7 +135,7 @@ void render_entities(void)
 
     /* Map events. */
     SetLightMatrix(&game_graphics_runtime.render_state.light_matrix_copy);
-    event = map_event_pool;
+    event = map_runtime_state.events;
     for (i = KF_MAP_EVENT_CAPACITY - 1; i != -1; i--) {
         if (event->state == KF_MAP_EVENT_ACTIVE) {
             const KfCellWindow *g;

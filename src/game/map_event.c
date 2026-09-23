@@ -9,7 +9,7 @@
 ADDRESS(0x8003379c, 0x10)
 void map_event_set_current(KfMapEvent *event)
 {
-    current_map_event = event;
+    map_runtime_state.current_event = event;
 }
 
 ADDRESS(0x800337ac, 0x74)
@@ -46,7 +46,7 @@ ADDRESS(0x800338b8, 0x22c)
 void map_event_pool_load(const KfMapEventDefinition *definitions)
 {
     KfBool8 exhausted = KF_FALSE;
-    KfMapEvent *event = map_event_pool;
+    KfMapEvent *event = map_runtime_state.events;
     u16 count = KF_MAP_EVENT_CAPACITY - 1;
 
     do {
@@ -127,7 +127,7 @@ KfMapEvent *map_event_pool_find_target_in_cone(
     KfMapEvent *found = NULL;
     s16 best_angle = KF_CONE_SEARCH_INITIAL_ANGLE_ERROR;
     s32 found_distance = 0;
-    KfMapEvent *event = map_event_pool;
+    KfMapEvent *event = map_runtime_state.events;
     u16 count = KF_MAP_EVENT_CAPACITY - 1;
     s32 distance;
     s16 angle;
@@ -160,7 +160,7 @@ KfMapEvent *map_event_pool_find_target_in_cone(
 ADDRESS(0x80033cd0, 0xb0)
 s32 map_event_pool_find_overlap(s32 point_x, s32 point_z, s32 radius_padding)
 {
-    KfMapEvent *event = map_event_pool;
+    KfMapEvent *event = map_runtime_state.events;
     s16 index = 0;
 
     do {

@@ -167,7 +167,7 @@ u32 effect_map_collision(VECTOR *position, s32 radius)
     x = position->vx / KF_MAP_TILE_SIZE;
     z = position->vz / KF_MAP_TILE_SIZE;
     subz = position->vz % KF_MAP_TILE_SIZE;
-    effect = current_effect;
+    effect = effect_state.current_record;
     if (x < 0 || x >= KF_MAP_COLUMNS || z < 0 || z >= KF_MAP_ROWS) {
         return KF_COLLISION_TERRAIN;
     }
