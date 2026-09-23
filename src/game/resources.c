@@ -103,7 +103,7 @@ ADDRESS(0x8001b414, 0x88)
 void map_variant_assets_load(void)
 {
     /* Both retail calls reload the buffer through one saved slot address. */
-    u8 **asset_buffer = &map_variant_asset_buffer;
+    u8 **asset_buffer = &map_runtime_state.variant_asset_buffer;
 
     memcpy((void *)(&map_resource_path[3]), (const void *)("CHR0.MIM"), sizeof "CHR0.MIM");
     map_resource_path[6] = KF_ENUM_ENCODE(u8, player_state.map_variant) + '0';
@@ -193,7 +193,7 @@ void map_resources_load(KfFloorId floor, KF_ENUM_PARAM(KfMapVariant, s32) map_va
         asset_registry_load_tmd_archive(KF_ASSET_ACTOR_FIRST,
             stream + KF_RESOURCE_CHUNK_HEADER_BYTES);
     } else {
-        map_variant_asset_buffer = (u8 *)memory_allocate(MAP_VARIANT_ASSET_BUFFER_BYTES);
+        map_runtime_state.variant_asset_buffer = (u8 *)memory_allocate(MAP_VARIANT_ASSET_BUFFER_BYTES);
         map_variant_assets_load();
     }
     player_sync_position_to_map();

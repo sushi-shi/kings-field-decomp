@@ -21,7 +21,7 @@ enum {
 ADDRESS(0x8003a244, 0x30)
 void effect_pool_reset(void)
 {
-    KfEffectRecord *record = effect_pool_records;
+    KfEffectRecord *record = effect_state.records;
     u16 i;
 
     for (i = 0; i < KF_EFFECT_CAPACITY; i++) {
@@ -114,13 +114,19 @@ void magic_cast(void)
             SVECTOR rotation;
 
             copyVector(&rotation, &player_state.camera_rotation);
-            effect_pool_construct(
-                KF_PLAYER_DAMAGE_MULTIPLIER_ONE, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS,
-                player_state.selected_magic_id, &world_pos, &direction, KF_EFFECT_ARGS_ROTATION_SOUND(&rotation, KF_EFFECT_SOUND_PLAY));
+            effect_pool_construct(KF_PLAYER_DAMAGE_MULTIPLIER_ONE,
+                KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS,
+                player_state.selected_magic_id,
+                &world_pos,
+                &direction,
+                KF_EFFECT_ARGS_ROTATION_SOUND(&rotation, KF_EFFECT_SOUND_PLAY));
         } else {
-            effect_pool_construct(
-                KF_PLAYER_DAMAGE_MULTIPLIER_ONE, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS,
-                player_state.selected_magic_id, &world_pos, &direction, KF_EFFECT_ARGS_DURATION_SOUND(distance, KF_EFFECT_SOUND_PLAY));
+            effect_pool_construct(KF_PLAYER_DAMAGE_MULTIPLIER_ONE,
+                KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS,
+                player_state.selected_magic_id,
+                &world_pos,
+                &direction,
+                KF_EFFECT_ARGS_DURATION_SOUND(distance, KF_EFFECT_SOUND_PLAY));
         }
         break;
     }
@@ -132,10 +138,12 @@ void magic_cast(void)
             &player_state.camera_position,
             player_state.camera_rotation.vy, KF_EFFECT_ACTOR_TARGET_MAX_DISTANCE, KF_ACTOR_AIM_TOLERANCE, &distance);
         if (target != NULL) {
-            effect_pool_construct(
-                KF_PLAYER_DAMAGE_MULTIPLIER_ONE, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
-                player_state.selected_magic_id, &target->position,
-                &player_state.camera_rotation, KF_EFFECT_ARGS_BRANCH(KF_EFFECT_GROUND_BRANCH_ROOT));
+            effect_pool_construct(KF_PLAYER_DAMAGE_MULTIPLIER_ONE,
+                KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
+                player_state.selected_magic_id,
+                &target->position,
+                &player_state.camera_rotation,
+                KF_EFFECT_ARGS_BRANCH(KF_EFFECT_GROUND_BRANCH_ROOT));
         } else {
             VECTOR spawn;
             s32 cell_x;
@@ -146,9 +154,11 @@ void magic_cast(void)
             cell_z = spawn.vz / KF_MAP_TILE_SIZE;
             cell_x = spawn.vx / KF_MAP_TILE_SIZE;
             spawn.vy = -(map_floor_height_grid.cells[cell_z][cell_x] * KF_MAP_HEIGHT_STEP);
-            effect_pool_construct(
-                KF_PLAYER_DAMAGE_MULTIPLIER_ONE, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
-                player_state.selected_magic_id, &spawn, &player_state.camera_rotation,
+            effect_pool_construct(KF_PLAYER_DAMAGE_MULTIPLIER_ONE,
+                KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
+                player_state.selected_magic_id,
+                &spawn,
+                &player_state.camera_rotation,
                 KF_EFFECT_ARGS_BRANCH(KF_EFFECT_GROUND_BRANCH_ROOT));
         }
         break;
@@ -159,7 +169,7 @@ void magic_cast(void)
 ADDRESS(0x8003a760, 0x7c)
 void effect_pool_sweep(void)
 {
-    KfEffectRecord *record = effect_pool_records;
+    KfEffectRecord *record = effect_state.records;
     u16 i = KF_EFFECT_CAPACITY - 1;
 
     do {

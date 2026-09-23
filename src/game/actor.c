@@ -309,7 +309,7 @@ void actor_apply_damage(
     s32 remaining;
 
     if (player_state.progress_state.current_floor == KF_FLOOR_5 && actor->definition_id == 7) {
-        if (map_floor5_script.boss_encounter_started == KF_MAP_SCRIPT_UNSET) {
+        if (map_runtime_state.world_state.floors[4].script.floor5.boss_encounter_started == KF_MAP_SCRIPT_UNSET) {
             return;
         }
         if (actor->health == 0) {
@@ -671,8 +671,11 @@ void actor_play_sound_at_phase(const SoundRef *sound, u16 phase)
         return;
     }
     if (player_state.progress_state.current_floor == KF_FLOOR_5 && actor->definition_id == 7) {
-        audio_play_spatial_range(
-            sound, &actor->position, KF_AUDIO_MAX_VOLUME, KF_AUDIO_EXTENDED_MAX_DISTANCE, KF_AUDIO_EXTENDED_ATTENUATION_DISTANCE);
+        audio_play_spatial_range(sound,
+            &actor->position,
+            KF_AUDIO_MAX_VOLUME,
+            KF_AUDIO_EXTENDED_MAX_DISTANCE,
+            KF_AUDIO_EXTENDED_ATTENUATION_DISTANCE);
     } else {
         audio_play_spatial_default_range(
             sound, &actor->position, KF_AUDIO_MAX_VOLUME);
@@ -793,9 +796,14 @@ KfActorAction actor_try_select_facing_action(KfActorAction action, s32 distance,
 }
 
 ADDRESS(0x8002e0f0, 0x1f8)
-KfActorAction actor_try_select_profiled_action(KfActorAction action, s32 distance, KF_ENUM_PARAM(KfActorEffectCode, u16) effect_code, u16 chance)
+KfActorAction actor_try_select_profiled_action(KfActorAction action,
+    s32 distance,
+    KF_ENUM_PARAM(KfActorEffectCode, u16) effect_code,
+    u16 chance)
 {
-    KF_ENUM_PARAM(KfEffectKind, u16) profile = KF_ENUM_DECODE(KF_ENUM_PARAM(KfEffectKind, u16), KF_ENUM_ENCODE(u16, effect_code & KF_ACTOR_EFFECT_KIND_MASK));
+    KF_ENUM_PARAM(KfEffectKind, u16)
+    profile = KF_ENUM_DECODE(KF_ENUM_PARAM(KfEffectKind, u16),
+        KF_ENUM_ENCODE(u16, effect_code & KF_ACTOR_EFFECT_KIND_MASK));
     KfActorActionProfile *weights = &actor_action_profiles[KF_ENUM_ENCODE(u16, profile)];
     KfActor *actor = actor_state.current;
     s32 odds;
@@ -843,7 +851,7 @@ KfActorAction actor_try_select_profiled_action(KfActorAction action, s32 distanc
                 }
                 candidate++;
             } while (--index != -1);
-            record = effect_pool_records;
+            record = effect_state.records;
             index = KF_EFFECT_CAPACITY - 1;
             do {
                 if (record->type != KF_EFFECT_SLOT_FREE

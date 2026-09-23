@@ -17,7 +17,22 @@ extern u32 DAT_80057d24;
 extern u32 DAT_800a0768;
 extern KfOverlayResultWord game_next_overlay_mode;
 
-enum { KF_GAMEPLAY_SOUND_COUNT = 13 };
+/* Named by their game consumers; sound slot 9 has no identified caller. */
+enum {
+    KF_GAMEPLAY_SOUND_LIFT_DOOR = 0,
+    KF_GAMEPLAY_SOUND_HINGED_DOOR = 1,
+    KF_GAMEPLAY_SOUND_CONTAINER_OPEN = 2,
+    KF_GAMEPLAY_SOUND_EFFECT_SWITCH = 3,
+    KF_GAMEPLAY_SOUND_FLOOR_DEFORM = 4,
+    KF_GAMEPLAY_SOUND_FLOOR1_REVIVAL = 5,
+    KF_GAMEPLAY_SOUND_WARP_SHIMMER = 6,
+    KF_GAMEPLAY_SOUND_STONE_PASSAGE = 7,
+    KF_GAMEPLAY_SOUND_HARP = 8,
+    KF_GAMEPLAY_SOUND_FLOOR5_EVENT_LOOP = 10,
+    KF_GAMEPLAY_SOUND_MAP_PIECE_REVEAL = 11,
+    KF_GAMEPLAY_SOUND_KEY_UNLOCK = 12,
+    KF_GAMEPLAY_SOUND_COUNT = 13
+};
 extern SoundRef gameplay_sound_refs[KF_GAMEPLAY_SOUND_COUNT];
 extern char talk_image_path_template[];
 

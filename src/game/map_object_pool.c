@@ -60,10 +60,12 @@ void map_apply_copy_region(KfMapCopyRegionId region_id)
                 map_cell_attribute_grid.cells[source_z][source_x];
             map_floor_height_grid.cells[destination_z][destination_x] =
                 map_floor_height_grid.cells[source_z][source_x];
-            map_cell_orientation_grid.cells[destination_z][destination_x] = map_cell_orientation_grid.cells[source_z][source_x];
+            map_cell_orientation_grid.cells[destination_z][destination_x]
+                = map_cell_orientation_grid.cells[source_z][source_x];
             map_collision_grid.cells[destination_z][destination_x] =
                 map_collision_grid.cells[source_z][source_x];
-            map_collision_flag_grid.cells[destination_z][destination_x] = map_collision_flag_grid.cells[source_z][source_x];
+            map_collision_flag_grid.cells[destination_z][destination_x]
+                = map_collision_flag_grid.cells[source_z][source_x];
             source_x++;
             destination_x++;
         }
@@ -128,7 +130,8 @@ void map_object_mark_collision_edge(const KfMapObject *object, KfMapCellKind cel
 ADDRESS(0x80030eb8, 0xc4)
 s32 map_object_probe_forward(const KfMapObject *object, u16 yaw)
 {
-    const KfMapObjectDefinition *definition = &map_object_state.definitions.entries[KF_ENUM_ENCODE(u8, object->object_id)];
+    const KfMapObjectDefinition* definition
+        = &map_object_state.definitions.entries[KF_ENUM_ENCODE(u8, object->object_id)];
     s32 point_x = object->position.vx;
     s32 point_z = object->position.vz;
     s32 result;
@@ -246,7 +249,7 @@ void map_object_pool_load(const KfMapObjectPlacement *placements)
                                                     KF_EFFECT_KIND_ORBITING_PROJECTILE,
                                                     &object->position,
                                                     &effect_direction)
-                    - effect_pool_records;
+                    - effect_state.records;
                 map_object_start_action_if_idle(object, KF_MAP_OBJECT_OP_RELEASE_ORBIT_OR_SHORT_SWING);
                 break;
             case KF_MAP_OBJECT_BOSS_PROJECTILE_EMITTER:
@@ -263,7 +266,7 @@ void map_object_pool_load(const KfMapObjectPlacement *placements)
                                                     &object->position,
                                                     &effect_direction,
                                                     KF_EFFECT_ARGS_ROTATION(&object->rotation.vector))
-                    - effect_pool_records;
+                    - effect_state.records;
                 map_object_start_action_if_idle(object, KF_MAP_OBJECT_OP_RELEASE_ORBIT_OR_SHORT_SWING);
                 break;
             case KF_MAP_OBJECT_LONG_SWING:
@@ -274,7 +277,7 @@ void map_object_pool_load(const KfMapObjectPlacement *placements)
                                                     &object->position,
                                                     &effect_direction,
                                                     KF_EFFECT_ARGS_ROTATION(&object->rotation.vector))
-                    - effect_pool_records;
+                    - effect_state.records;
                 map_object_start_action_if_idle(object, KF_MAP_OBJECT_OP_RELEASE_LONG_SWING);
                 break;
             case KF_MAP_OBJECT_EFFECT_SWITCH:
@@ -282,7 +285,7 @@ void map_object_pool_load(const KfMapObjectPlacement *placements)
                     effect_pool_construct(
                         0, KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER, KF_EFFECT_KIND_MAP_SWITCH, &object->position,
                         &effect_direction, KF_EFFECT_ARGS_ROTATION(&object->rotation.vector))
-                    - effect_pool_records;
+                    - effect_state.records;
                 map_object_start_action_if_idle(object, KF_MAP_OBJECT_OP_EFFECT_SWITCH);
                 break;
             case KF_ITEM_DRAGON_CHALICE:

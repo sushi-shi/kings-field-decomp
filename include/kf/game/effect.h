@@ -237,9 +237,9 @@ typedef struct KfFloorDeformSegment {
 } KfFloorDeformSegment;
 
 /*
- * Effect pool record (60-byte stride, pool in effect_pool_records). The pool
+ * Effect pool record (60-byte stride, pool in effect_state.records). The pool
  * constructors establish the field layout: byte 0 is the type tag (0xff marks
- * a free slot), byte 1 the dispatch/magic_records index, byte 6 the owning id,
+ * a free slot), byte 1 the dispatch/magic-table index, byte 6 the owning id,
  * a VECTOR world position at 0x0c, and three SVECTOR-shaped 16-bit triples
  * (rotation, scale, direction) that individual effect kinds reuse. The default
  * scale is 0x1000 (1.0 fixed point); the direction triple is copied from the
@@ -286,11 +286,6 @@ typedef struct KfEffectState {
 
 extern SVECTOR effect_swing_probe_offsets[KF_EFFECT_SWING_PROBE_COUNT];
 extern KfEffectState effect_state;
-/* Consumer spellings are members, not separately owned globals. */
-#define magic_records (effect_state.magic.entries)
-#define effect_pool_records (effect_state.records)
-#define current_effect_magic_record (effect_state.current_magic)
-#define current_effect (effect_state.current_record)
 
 /* The variadic tail is selected by kind. In strict checking, named groups
  * prevent integer/foreign-enum arguments from entering enum-valued slots.

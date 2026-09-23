@@ -21,7 +21,7 @@ enum {
 };
 
 /*
- * Magic panel: builds the list of learned spells (magic_records[0..3]) with
+ * Magic panel: builds the list of learned spells (effect_state.magic.entries[0..3]) with
  * their names, runs the windowed cursor, and on confirm deducts the spell's
  * MP cost and applies its effect.  Returns the cast spell index, or -1 when
  * the panel is cancelled.
@@ -46,7 +46,7 @@ KfMagicPanelResult menu_magic_panel(void)
 
     found = 0;
     for (code = KF_ENUM_ENCODE(s32, KF_MAGIC_HEALING); code < KF_ENUM_ENCODE(s32, KF_MAGIC_LIGHTNING_BOLT); code++) {
-        if (magic_records[code].learned == KF_MAGIC_LEARNED) {
+        if (effect_state.magic.entries[code].learned == KF_MAGIC_LEARNED) {
             for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)
                 labels[found][j] = magic_name_rows[code].codes[j];
             codes[found] = KF_ENUM_DECODE(KfEffectKind, code);
@@ -115,9 +115,9 @@ KfMagicPanelResult menu_magic_panel(void)
     }
 
     if (selection != KF_MENU_RESULT_CANCELLED) {
-        if (player_state.vitals.current_mp < magic_records[KF_ENUM_ENCODE(s32, selection)].mp_cost)
+        if (player_state.vitals.current_mp < effect_state.magic.entries[KF_ENUM_ENCODE(s32, selection)].mp_cost)
             return selection;
-        player_state.vitals.current_mp -= magic_records[KF_ENUM_ENCODE(s32, selection)].mp_cost;
+        player_state.vitals.current_mp -= effect_state.magic.entries[KF_ENUM_ENCODE(s32, selection)].mp_cost;
         if (selection == KF_MAGIC_HEALING) {
             player_state.vitals.current_hp += player_state.magic;
         } else if (selection == KF_MAGIC_DISPOISON) {

@@ -7,6 +7,12 @@
 #include <psyq/libc.h>
 #include <kf/game/game.h>
 
+enum {
+    PLAYER_INITIAL_POSITION_X = 31000,
+    PLAYER_INITIAL_POSITION_Z = 4000,
+    PLAYER_ATTRIBUTE_52_FATAL_HEIGHT = -6999
+};
+
 /* Motion rates count executions of the player update, not elapsed seconds. */
 enum {
     PLAYER_FATAL_DROP_DISTANCE = 3000,
@@ -88,31 +94,37 @@ void player_set_equipment_slot(KfObjectId item_id, KfEquipmentSlot slot)
         break;
     }
     if (player_state.equipped_head_armor_id != KF_OBJECT_NONE) {
-        player_state.equipped_head_armor_record = &armor_records.entries[KF_ENUM_ENCODE(u8, player_state.equipped_head_armor_id) - KF_ENUM_ENCODE(u8, KF_ITEM_IRON_MASK)];
+        player_state.equipped_head_armor_record
+            = &armor_records.entries[KF_ENUM_ENCODE(u8, player_state.equipped_head_armor_id)
+                - KF_ENUM_ENCODE(u8, KF_ITEM_IRON_MASK)];
     } else {
         player_state.equipped_head_armor_record = NULL;
     }
     if (player_state.equipped_body_armor_id != KF_OBJECT_NONE) {
-        player_state.equipped_body_armor_record =
-            &armor_records.entries[KF_ENUM_ENCODE(u8, player_state.equipped_body_armor_id) - KF_ENUM_ENCODE(u8, KF_ITEM_IRON_MASK)];
+        player_state.equipped_body_armor_record
+            = &armor_records.entries[KF_ENUM_ENCODE(u8, player_state.equipped_body_armor_id)
+                - KF_ENUM_ENCODE(u8, KF_ITEM_IRON_MASK)];
     } else {
         player_state.equipped_body_armor_record = NULL;
     }
     if (player_state.equipped_arm_armor_id != KF_OBJECT_NONE) {
-        player_state.equipped_arm_armor_record =
-            &armor_records.entries[KF_ENUM_ENCODE(u8, player_state.equipped_arm_armor_id) - KF_ENUM_ENCODE(u8, KF_ITEM_IRON_MASK)];
+        player_state.equipped_arm_armor_record
+            = &armor_records.entries[KF_ENUM_ENCODE(u8, player_state.equipped_arm_armor_id)
+                - KF_ENUM_ENCODE(u8, KF_ITEM_IRON_MASK)];
     } else {
         player_state.equipped_arm_armor_record = NULL;
     }
     if (player_state.equipped_leg_armor_id != KF_OBJECT_NONE) {
-        player_state.equipped_leg_armor_record =
-            &armor_records.entries[KF_ENUM_ENCODE(u8, player_state.equipped_leg_armor_id) - KF_ENUM_ENCODE(u8, KF_ITEM_IRON_MASK)];
+        player_state.equipped_leg_armor_record
+            = &armor_records.entries[KF_ENUM_ENCODE(u8, player_state.equipped_leg_armor_id)
+                - KF_ENUM_ENCODE(u8, KF_ITEM_IRON_MASK)];
     } else {
         player_state.equipped_leg_armor_record = NULL;
     }
     if (player_state.equipped_shield_id != KF_OBJECT_NONE) {
-        player_state.equipped_shield_record =
-            &armor_records.entries[KF_ENUM_ENCODE(u8, player_state.equipped_shield_id) - KF_ENUM_ENCODE(u8, KF_ITEM_IRON_MASK)];
+        player_state.equipped_shield_record
+            = &armor_records.entries[KF_ENUM_ENCODE(u8, player_state.equipped_shield_id)
+                - KF_ENUM_ENCODE(u8, KF_ITEM_IRON_MASK)];
     } else {
         player_state.equipped_shield_record = NULL;
     }
@@ -131,7 +143,8 @@ void player_equip_weapon(KfObjectId weapon_id)
         player_state.equipped_weapon_record = &weapon_records.entries[KF_ENUM_ENCODE(u8, weapon_id)];
         weapon_image_path_template[9] = '0' + KF_ENUM_ENCODE(u32, weapon_id) / 10;
         weapon_image_path_template[10] = '0' + KF_ENUM_ENCODE(u32, weapon_id) % 10;
-        if (cd_file_load_into((void *)player_state.weapon_asset_buffer, weapon_image_path_template) != KF_RESOURCE_LOADED) {
+        if (cd_file_load_into((void *)player_state.weapon_asset_buffer, weapon_image_path_template)
+            != KF_RESOURCE_LOADED) {
             exit(1);
         }
         asset_registry_set(KF_ASSET_WEAPON, player_state.weapon_asset_buffer);
@@ -227,7 +240,7 @@ void game_initialize_session(void)
     player_state.camera_rotation.vz = 0;
     player_state.camera_rotation.vy = 0;
     player_state.camera_rotation.vx = 0;
-    setVector(&player_state.camera_position, 0x7918, 0, 0xfa0);
+    setVector(&player_state.camera_position, PLAYER_INITIAL_POSITION_X, 0, PLAYER_INITIAL_POSITION_Z);
     player_state.weapon_asset_buffer = (struct KfAssetHeader *)memory_allocate(KF_WEAPON_ASSET_BUFFER_BYTES);
     game_state_initialize();
     player_state.update_state = KF_PLAYER_UPDATE_NORMAL;
@@ -259,14 +272,17 @@ void player_sync_position_to_map(void)
     player_state.equipment_effect_ticks = 0;
     player_state.motion_state.fields.map_cell.coords.x = cell_x;
     player_state.motion_state.fields.map_cell.coords.z = cell_z;
-    floor = map_floor_height_grid.cells[player_state.motion_state.fields.map_cell.coords.z][player_state.motion_state.fields.map_cell.coords.x];
+    floor = map_floor_height_grid.cells[player_state.motion_state.fields.map_cell.coords.z]
+                                       [player_state.motion_state.fields.map_cell.coords.x];
     player_state.allow_near_actor_spawn = KF_ACTOR_NEAR_SPAWN_ALLOWED;
     floor_height = -(floor * KF_MAP_HEIGHT_STEP);
     view_offset = player_state.view_bob_offset - KF_PLAYER_CAMERA_HEIGHT;
     player_state.floor_height = floor_height;
     player_state.camera_position.vy = view_offset + floor_height;
     player_clear_motion();
-    collision_adjust_cell_occupancy(player_state.motion_state.fields.map_cell.coords.x, player_state.motion_state.fields.map_cell.coords.z, 1);
+    collision_adjust_cell_occupancy(player_state.motion_state.fields.map_cell.coords.x,
+        player_state.motion_state.fields.map_cell.coords.z,
+        1);
     game_graphics_runtime.hud_brightness = KF_HUD_DEFAULT_BRIGHTNESS;
     player_state.vertical_state = KF_PLAYER_VERTICAL_GROUNDED;
     player_state.vertical_velocity = 0;
@@ -401,22 +417,31 @@ s32 player_move_horizontal(s32 heading, s32 distance)
         }
     }
     cell_z = new_z / KF_MAP_TILE_SIZE;
-    if (cell_z < KF_MAP_ROWS && map_collision_grid.cells[cell_z][player_state.motion_state.fields.map_cell.coords.x] != KF_MAP_CELL_BLOCKED
-        && -(map_floor_height_grid.cells[cell_z][player_state.motion_state.fields.map_cell.coords.x] * KF_MAP_HEIGHT_STEP) - player_state.floor_height
-               >= -PLAYER_MAX_STEP_RISE) {
+    if (cell_z < KF_MAP_ROWS
+        && map_collision_grid.cells[cell_z][player_state.motion_state.fields.map_cell.coords.x]
+            != KF_MAP_CELL_BLOCKED
+        && -(map_floor_height_grid.cells[cell_z][player_state.motion_state.fields.map_cell.coords.x]
+               * KF_MAP_HEIGHT_STEP)
+                - player_state.floor_height
+            >= -PLAYER_MAX_STEP_RISE) {
         player_state.camera_position.vz = new_z;
         player_state.motion_state.fields.map_cell.coords.z = cell_z;
     }
     cell_x = new_x / KF_MAP_TILE_SIZE;
-    if (cell_x < KF_MAP_COLUMNS && map_collision_grid.cells[player_state.motion_state.fields.map_cell.coords.z][cell_x] != KF_MAP_CELL_BLOCKED
-        && -(map_floor_height_grid.cells[player_state.motion_state.fields.map_cell.coords.z][cell_x] * KF_MAP_HEIGHT_STEP) - player_state.floor_height
-               >= -PLAYER_MAX_STEP_RISE) {
+    if (cell_x < KF_MAP_COLUMNS
+        && map_collision_grid.cells[player_state.motion_state.fields.map_cell.coords.z][cell_x]
+            != KF_MAP_CELL_BLOCKED
+        && -(map_floor_height_grid.cells[player_state.motion_state.fields.map_cell.coords.z][cell_x]
+               * KF_MAP_HEIGHT_STEP)
+                - player_state.floor_height
+            >= -PLAYER_MAX_STEP_RISE) {
         player_state.camera_position.vx = new_x;
         player_state.motion_state.fields.map_cell.coords.x = cell_x;
     }
     type = map_collision_grid.cells[cell_z0][cell_x0];
     if (type >= KF_MAP_CELL_X_GE_Z && type <= KF_MAP_CELL_SUM_GE_SIZE) {
-        if (player_state.motion_state.fields.map_cell.coords.x == cell_x0 && player_state.motion_state.fields.map_cell.coords.z == cell_z0) {
+        if (player_state.motion_state.fields.map_cell.coords.x == cell_x0
+            && player_state.motion_state.fields.map_cell.coords.z == cell_z0) {
             remainder_z = player_state.camera_position.vz % KF_MAP_TILE_SIZE;
             remainder_x = player_state.camera_position.vx % KF_MAP_TILE_SIZE;
             if (type == KF_MAP_CELL_X_GE_Z) {
@@ -454,7 +479,8 @@ s32 player_move_horizontal(s32 heading, s32 distance)
             if (dx < 0) {
                 dx = -dx;
             }
-            type = map_collision_grid.cells[player_state.motion_state.fields.map_cell.coords.z][player_state.motion_state.fields.map_cell.coords.x];
+            type = map_collision_grid.cells[player_state.motion_state.fields.map_cell.coords.z]
+                                           [player_state.motion_state.fields.map_cell.coords.x];
             if (type == KF_MAP_CELL_X_GE_Z) {
                 if (dz < dx) {
                     dx = -(distance * PLAYER_DIAGONAL_COMPONENT_Q12) >> KF_FIXED12_BITS;
@@ -492,7 +518,8 @@ s32 player_move_horizontal(s32 heading, s32 distance)
             cell_z = new_z / KF_MAP_TILE_SIZE;
             new_x = dx + player_state.camera_position.vx;
             cell_x = new_x / KF_MAP_TILE_SIZE;
-            if (cell_z < KF_MAP_ROWS && cell_x < KF_MAP_COLUMNS && map_collision_grid.cells[cell_z][cell_x] != KF_MAP_CELL_BLOCKED) {
+            if (cell_z < KF_MAP_ROWS && cell_x < KF_MAP_COLUMNS
+                && map_collision_grid.cells[cell_z][cell_x] != KF_MAP_CELL_BLOCKED) {
                 player_state.camera_position.vz = new_z;
                 player_state.camera_position.vx = new_x;
                 player_state.motion_state.fields.map_cell.coords.z = cell_z;
@@ -523,20 +550,24 @@ void player_update_vertical_motion(void)
     s32 target;
     s32 view_offset;
 
-    target = -(map_floor_height_grid.cells[player_state.motion_state.fields.map_cell.coords.z][player_state.motion_state.fields.map_cell.coords.x] * KF_MAP_HEIGHT_STEP);
+    target = -(map_floor_height_grid.cells[player_state.motion_state.fields.map_cell.coords.z]
+                                          [player_state.motion_state.fields.map_cell.coords.x]
+        * KF_MAP_HEIGHT_STEP);
     switch (0) {
     default:
         if (player_state.update_state != KF_PLAYER_UPDATE_DYING) {
             if (player_state.floor_height - target < -PLAYER_FATAL_DROP_DISTANCE) {
                 if (player_state.equipped_leg_armor_id == KF_ITEM_FEATHER_BOOTS
-                    && map_cell_attribute_grid.cells[player_state.motion_state.fields.map_cell.coords.z][player_state.motion_state.fields.map_cell.coords.x]
+                    && map_cell_attribute_grid.cells[player_state.motion_state.fields.map_cell
+                               .coords.z][player_state.motion_state.fields.map_cell.coords.x]
                         == KF_MAP_ATTRIBUTE_BOTTOMLESS_PIT) {
                     break;
                 }
                 player_death_begin();
-            } else if (target >= -6999
-                       && map_cell_attribute_grid.cells[player_state.motion_state.fields.map_cell.coords.z][player_state.motion_state.fields.map_cell.coords.x]
-                           == KF_MAP_ATTRIBUTE_52) {
+            } else if (target >= PLAYER_ATTRIBUTE_52_FATAL_HEIGHT
+                && map_cell_attribute_grid.cells[player_state.motion_state.fields.map_cell.coords.z]
+                                                [player_state.motion_state.fields.map_cell.coords.x]
+                    == KF_MAP_ATTRIBUTE_52) {
                 player_death_begin();
             }
         }

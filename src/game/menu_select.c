@@ -217,7 +217,7 @@ void menu_spell_select(void)
 
     k = 0;
     for (code = KF_ENUM_ENCODE(s32, KF_MAGIC_LIGHTNING_BOLT); code < KF_MAGIC_PLAYER_COUNT; code++) {
-        if (magic_records[code].learned == KF_MAGIC_LEARNED) {
+        if (effect_state.magic.entries[code].learned == KF_MAGIC_LEARNED) {
             for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)
                 labels[k][j] = magic_name_rows[code].codes[j];
             codes[k] = KF_ENUM_DECODE(KfEffectKind, code);

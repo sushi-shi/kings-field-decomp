@@ -128,7 +128,8 @@ u32 collision_query_world(
         if (hit != KF_COLLISION_NONE) {
             if (query_flags & KF_COLLISION_CAPTURE_TARGET) {
                 KfMapObject *object = &map_object_state.objects[hit];
-                KfMapObjectDefinition *definition = &map_object_state.definitions.entries[KF_ENUM_ENCODE(u8, object->object_id)];
+                KfMapObjectDefinition *definition
+                    = &map_object_state.definitions.entries[KF_ENUM_ENCODE(u8, object->object_id)];
 
                 collision_target.position = object->position;
                 collision_target.rotation = object->rotation.vector;
@@ -143,7 +144,7 @@ u32 collision_query_world(
     hit = map_event_pool_find_overlap(point_x, point_z, radius);
     if (hit != KF_COLLISION_NONE) {
         if (query_flags & KF_COLLISION_CAPTURE_TARGET) {
-            KfMapEvent *event = &map_event_pool[hit];
+            KfMapEvent *event = &map_runtime_state.events[hit];
 
             collision_target.position = event->reference_position;
             collision_target.rotation = event->rotation;

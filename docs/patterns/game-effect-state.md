@@ -44,8 +44,9 @@ cleared map-runtime owner begins. The exact magic loader copies 120 words
 
 There are no gaps or unexplained padding fields in this interval. All four
 former global xref views and all 55 curated address-pair rows were read,
-including candidates. Source aliases may retain consumer spellings, but
-there must be one shared type, one BSS definition and one curated identity.
+including candidates. Consumers now access `effect_state` members directly;
+the previous-global column above records historical identities, not live aliases.
+There is one shared type, one BSS definition and one curated identity.
 The existing claims are configuration-only; this campaign adds the actual
 source owner in `game.effect_pool`.
 
