@@ -1,0 +1,277 @@
+#include <kf/lib/null.h>
+
+#include <kf/game/input.h>
+#include <kf/game/menu.h>
+#include <kf/game/game.h>
+
+void menu_equip_select(KfEquipmentMenuCategory equipment_category)
+{
+    KfMenuList ctx;
+    s16 labels[20][MENU_GLYPHS_PER_ROW];
+    KfObjectId codes[20];
+    s16 *name;
+    u8 *owned;
+    s32 i;
+    s32 j;
+    s32 k;
+    s32 start;
+    s32 end;
+    KfMenuConfirmState confirm = KF_MENU_CONFIRM_IDLE;
+    s32 input = 0;
+    s32 prev;
+    s32 selection = ((s32)(KF_MENU_RESULT_PENDING));
+
+    while (PadRead(1) != 0)
+        ;
+
+    owned = item_stock[((u8)(KF_ITEM_STOCK_PLAYER))];
+    switch (equipment_category) {
+    case KF_EQUIP_MENU_WEAPON:
+        start = ((u8)(KF_ITEM_SHORT_SWORD));
+        end = ((u8)(KF_ITEM_IRON_MASK));
+        break;
+    case KF_EQUIP_MENU_SHIELD:
+        start = ((u8)(KF_ITEM_SMALL_SHIELD));
+        end = ((u8)(KF_ITEM_GAUNTLET));
+        break;
+    case KF_EQUIP_MENU_HEAD:
+        start = ((u8)(KF_ITEM_IRON_MASK));
+        end = ((u8)(KF_ITEM_BREASTPLATE));
+        break;
+    case KF_EQUIP_MENU_BODY:
+        start = ((u8)(KF_ITEM_BREASTPLATE));
+        end = ((u8)(KF_ITEM_SMALL_SHIELD));
+        break;
+    case KF_EQUIP_MENU_ARM:
+        start = ((u8)(KF_ITEM_GAUNTLET));
+        end = ((u8)(KF_ITEM_IRON_BOOTS));
+        break;
+    case KF_EQUIP_MENU_LEG:
+        start = ((u8)(KF_ITEM_IRON_BOOTS));
+        end = ((u8)(KF_ITEM_GOLD_COIN));
+        break;
+    case KF_EQUIP_MENU_ACCESSORY:
+        start = ((u8)(KF_ITEM_LIGHT_RING));
+        end = ((u8)(KF_ITEM_GOLD_CROSS));
+        break;
+    }
+
+    k = 0;
+    for (i = start; i < end; i++) {
+        if (owned[i] != 0) {
+            name = item_name_rows[i].codes;
+            for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)
+                labels[k][j] = name[j];
+            codes[k] = ((KfObjectId)(i));
+            k++;
+        }
+    }
+    labels[k][0] = 0x59;
+    labels[k][1] = MENU_TEXT_DAKUTEN | 0x4c;
+    labels[k][2] = 0x4c;
+    labels[k][3] = MENU_TEXT_END;
+    codes[k] = KF_OBJECT_NONE;
+    k++;
+
+    menu_list_init(&ctx, KF_MENU_WINDOW_EQUIPMENT, ((s32)(equipment_category)));
+    ctx.entry_count = k;
+    ctx.glyphs_per_entry = MENU_GLYPHS_PER_ROW;
+    ctx.glyph_rows = &labels[0][0];
+    ctx.quantities = NULL;
+
+    if (ctx.entry_count != 0) {
+        if (menu_load_item_model(codes[ctx.selected_index]) != KF_RESOURCE_LOADED)
+            return;
+    }
+
+    for (;;) {
+        if (confirm == KF_MENU_CONFIRM_REQUESTED) {
+            if (menu_list_interact(&ctx, KF_MENU_CONFIRM_EQUIP,
+                    KF_MENU_PREVIEW_ITEM_MODEL, codes[ctx.selected_index], KF_ITEM_STOCK_PLAYER, KF_TRADE_BUY)
+                    == KF_MENU_RESULT_CANCELLED)
+                selection = ((s32)(KF_MENU_RESULT_PENDING));
+            else
+                selection = ((u8)(codes[ctx.selected_index]));
+        }
+        confirm = KF_MENU_CONFIRM_IDLE;
+        if (selection != ((s32)(KF_MENU_RESULT_PENDING))) {
+            while (PadRead(1) != 0)
+                ;
+            break;
+        }
+
+        prev = input;
+        input = PadRead(1);
+        if (ctx.entry_count == 0) {
+            if (input != 0) {
+                menu_play_input_sound(MENU_SOUND_CURSOR);
+                selection = ((s32)(KF_MENU_RESULT_CANCELLED));
+            }
+        } else if (PAD_PRESSED(input, prev, PADLup)) {
+            menu_play_input_sound(MENU_SOUND_CURSOR);
+            menu_list_previous(&ctx);
+            if (menu_load_item_model(codes[ctx.selected_index]) != KF_RESOURCE_LOADED)
+                return;
+        } else if (PAD_PRESSED(input, prev, PADLdown)) {
+            menu_play_input_sound(MENU_SOUND_CURSOR);
+            menu_list_next(&ctx);
+            if (menu_load_item_model(codes[ctx.selected_index]) != KF_RESOURCE_LOADED)
+                return;
+        } else if (PAD_PRESSED(input, prev, PADRright)) {
+            menu_play_input_sound(MENU_SOUND_CONFIRM);
+            confirm = KF_MENU_CONFIRM_REQUESTED;
+        } else if (PAD_PRESSED(input, prev, PADRdown)) {
+            menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
+            selection = ((s32)(KF_MENU_RESULT_CANCELLED));
+        }
+
+        menu_frame_begin();
+        if (ctx.entry_count != 0)
+            menu_item_model_preview(codes[ctx.selected_index]);
+        menu_list_render(&ctx);
+        menu_present_frame();
+    }
+
+    menu_release_item_model();
+    if (selection != ((s32)(KF_MENU_RESULT_CANCELLED))) {
+        switch (equipment_category) {
+        case KF_EQUIP_MENU_WEAPON:
+            player_state.equipped_weapon_id = ((KfObjectId)(selection));
+            player_equip_weapon(((KfObjectId)(selection)));
+            break;
+        case KF_EQUIP_MENU_SHIELD:
+            player_state.equipped_shield_id = ((KfObjectId)(selection));
+            player_set_equipment_slot(((KfObjectId)(selection)), KF_EQUIPMENT_SLOT_SHIELD);
+            break;
+        case KF_EQUIP_MENU_HEAD:
+            player_state.equipped_head_armor_id = ((KfObjectId)(selection));
+            player_set_equipment_slot(((KfObjectId)(selection)), KF_EQUIPMENT_SLOT_HEAD);
+            break;
+        case KF_EQUIP_MENU_BODY:
+            player_state.equipped_body_armor_id = ((KfObjectId)(selection));
+            player_set_equipment_slot(((KfObjectId)(selection)), KF_EQUIPMENT_SLOT_BODY);
+            if (selection == ((s32)(KF_ITEM_FULL_PLATE))) {
+                player_state.equipped_arm_armor_id = KF_OBJECT_NONE;
+                player_state.equipped_leg_armor_id = KF_OBJECT_NONE;
+                player_set_equipment_slot(KF_OBJECT_NONE, KF_EQUIPMENT_SLOT_ARM);
+                player_set_equipment_slot(KF_OBJECT_NONE, KF_EQUIPMENT_SLOT_LEG);
+            }
+            break;
+        case KF_EQUIP_MENU_ARM:
+            player_state.equipped_arm_armor_id = ((KfObjectId)(selection));
+            player_set_equipment_slot(((KfObjectId)(selection)), KF_EQUIPMENT_SLOT_ARM);
+            break;
+        case KF_EQUIP_MENU_LEG:
+            player_state.equipped_leg_armor_id = ((KfObjectId)(selection));
+            player_set_equipment_slot(((KfObjectId)(selection)), KF_EQUIPMENT_SLOT_LEG);
+            break;
+        case KF_EQUIP_MENU_ACCESSORY:
+            player_state.equipped_accessory_id = ((KfObjectId)(selection));
+            player_set_equipment_slot(((KfObjectId)(selection)), KF_EQUIPMENT_SLOT_ACCESSORY);
+            break;
+        }
+    }
+}
+
+void menu_spell_select(void)
+{
+    KfMenuList ctx;
+    s16 labels[20][MENU_GLYPHS_PER_ROW];
+    KfEffectKind codes[20];
+    s32 code;
+    s32 j;
+    s32 k;
+    KfMenuConfirmState confirm = KF_MENU_CONFIRM_IDLE;
+    s32 input = 0;
+    s32 prev;
+    s32 selection = ((s32)(KF_MENU_RESULT_PENDING));
+
+    while (PadRead(1) != 0)
+        ;
+
+    k = 0;
+    for (code = ((s32)(KF_MAGIC_LIGHTNING_BOLT)); code < KF_MAGIC_PLAYER_COUNT; code++) {
+        if (effect_state.magic.entries[code].learned == KF_MAGIC_LEARNED) {
+            for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)
+                labels[k][j] = magic_name_rows[code].codes[j];
+            codes[k] = ((KfEffectKind)(code));
+            k++;
+        }
+    }
+    labels[k][0] = 0x59;
+    labels[k][1] = MENU_TEXT_DAKUTEN | 0x4c;
+    labels[k][2] = 0x4c;
+    labels[k][3] = MENU_TEXT_END;
+    codes[k] = KF_MAGIC_NONE;
+    k++;
+
+    menu_list_init(&ctx, KF_MENU_WINDOW_EQUIPMENT, ((s32)(KF_EQUIP_MENU_MAGIC)));
+    ctx.entry_count = k;
+    ctx.glyphs_per_entry = MENU_GLYPHS_PER_ROW;
+    ctx.glyph_rows = &labels[0][0];
+    ctx.quantities = NULL;
+
+    menu_frame_begin();
+    if (ctx.entry_count != 0) {
+        if (menu_load_item_texture(menu_texture_from_magic(codes[ctx.selected_index])) == KF_RESOURCE_LOAD_FAILED)
+            return;
+        if (codes[ctx.selected_index] != KF_MAGIC_NONE)
+            menu_add_marker_quad();
+    }
+    menu_list_render(&ctx);
+
+    for (;;) {
+        menu_present_frame();
+        if (confirm == KF_MENU_CONFIRM_REQUESTED) {
+            selection = ((s32)(menu_list_interact(&ctx, KF_MENU_CONFIRM_EQUIP,
+                    KF_MENU_PREVIEW_MAGIC_ICON, codes[ctx.selected_index], KF_ITEM_STOCK_PLAYER, KF_TRADE_BUY)));
+            if (selection == ((s32)(KF_MENU_RESULT_CANCELLED)))
+                selection = ((s32)(KF_MENU_RESULT_PENDING));
+            else
+                selection = ctx.selected_index;
+        }
+        if (selection != ((s32)(KF_MENU_RESULT_PENDING))) {
+            while (PadRead(1) != 0)
+                ;
+            break;
+        }
+
+        menu_frame_begin();
+        confirm = KF_MENU_CONFIRM_IDLE;
+        prev = input;
+        input = PadRead(1);
+        if (ctx.entry_count == 0) {
+            if (input != 0) {
+                menu_play_input_sound(MENU_SOUND_CURSOR);
+                selection = ((s32)(KF_MENU_RESULT_CANCELLED));
+            }
+        } else if (PAD_PRESSED(input, prev, PADLup)) {
+            menu_play_input_sound(MENU_SOUND_CURSOR);
+            menu_list_previous(&ctx);
+            if (menu_load_item_texture(menu_texture_from_magic(codes[ctx.selected_index])) == KF_RESOURCE_LOAD_FAILED)
+                return;
+        } else if (PAD_PRESSED(input, prev, PADLdown)) {
+            menu_play_input_sound(MENU_SOUND_CURSOR);
+            menu_list_next(&ctx);
+            if (menu_load_item_texture(menu_texture_from_magic(codes[ctx.selected_index])) == KF_RESOURCE_LOAD_FAILED)
+                return;
+        } else if (PAD_PRESSED(input, prev, PADRright)) {
+            menu_play_input_sound(MENU_SOUND_CONFIRM);
+            confirm = KF_MENU_CONFIRM_REQUESTED;
+        } else if (PAD_PRESSED(input, prev, PADRdown)) {
+            menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
+            selection = ((s32)(KF_MENU_RESULT_CANCELLED));
+        }
+
+        if (ctx.entry_count != 0) {
+            if (codes[ctx.selected_index] != KF_MAGIC_NONE)
+                menu_add_marker_quad();
+        }
+        menu_list_render(&ctx);
+    }
+
+    if (selection != ((s32)(KF_MENU_RESULT_CANCELLED))) {
+        player_state.selected_magic_id = codes[selection];
+        player_select_magic(codes[selection]);
+    }
+}

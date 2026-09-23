@@ -1,0 +1,1171 @@
+{
+  "images": [
+    {
+      "name": "PSX.EXE",
+      "load_address": 2147549184,
+      "units": [
+        {
+          "source": "src/psx/main.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        }
+      ]
+    },
+    {
+      "name": "GAME.EXE",
+      "load_address": 2147557376,
+      "units": [
+        {
+          "source": "src/game/main.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/lib/sprite_add.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/display_play_transition.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/player_warp_shimmer_at_player.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/game.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 8,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/lib/matrix_rotation.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/lib/vector_math.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/equipment.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/player_death.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/player_core.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/player_use_item.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/player_death_fade.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/lighting_presets.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/player_status_effect4.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/player_update.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 8,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/collision_grid.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/collision.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/lib/memory.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/cd_file.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 8,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/resources.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 8,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/render.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 8,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/render_enqueuers.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/render_sprite.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000",
+              "-fno-schedule-insns"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/render_map_cells.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/entity_model_render.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/entity_render.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/map_event_render.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/render_scene.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/geometry_render.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/render_frame.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/lib/matrix_lerp.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/asset_registry.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/pool.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/item.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/menu.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/menu_map_viewer.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/menu_panels.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/menu_select.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/menu_runtime.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 8,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/save_system.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 8,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/actor.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 8,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/actor_behavior.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/actor_pool.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/map_object_pool.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/map_object.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/audio.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 8,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/camera_path.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/map_event.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/lighting.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/map_scripts.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/map_events.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/map_load.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/player_warp.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/menu_enter_mode.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/effect_pool.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/effect_map_collision.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/effect_update.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/effect_dispatch.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/magic.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/debug_text.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        }
+      ]
+    },
+    {
+      "name": "OPEN.EXE",
+      "load_address": 2147557376,
+      "units": [
+        {
+          "source": "src/open/main.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/open/opening_render.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/lib/sprite_add.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": [
+              "KF_OPEN"
+            ]
+          }
+        },
+        {
+          "source": "src/open/opening_helpers.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/open/camera_path.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/open/opening_scenes.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/open/opening_fade.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/open/opening_controller.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/lib/matrix_rotation.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": [
+              "KF_OPEN"
+            ]
+          }
+        },
+        {
+          "source": "src/lib/debug_matrix.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/lib/vector_math.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": [
+              "KF_OPEN"
+            ]
+          }
+        },
+        {
+          "source": "src/lib/memory.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": [
+              "KF_OPEN"
+            ]
+          }
+        },
+        {
+          "source": "src/open/resources.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 8,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": [
+              "KF_OPEN"
+            ]
+          }
+        },
+        {
+          "source": "src/open/render_init.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": [
+              "KF_OPEN"
+            ]
+          }
+        },
+        {
+          "source": "src/open/render.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": [
+              "KF_OPEN"
+            ]
+          }
+        },
+        {
+          "source": "src/open/render_tmd.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/open/render_unlit.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/open/render_map.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/open/render_sprite.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/open/render_map_cells.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/open/entity_render.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": [
+              "KF_OPEN"
+            ]
+          }
+        },
+        {
+          "source": "src/open/opening_scene0_render.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/open/opening_render_entities.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/lib/matrix_lerp.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": [
+              "KF_OPEN"
+            ]
+          }
+        },
+        {
+          "source": "src/open/item.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": [
+              "KF_OPEN"
+            ]
+          }
+        },
+        {
+          "source": "src/open/opening_entity_pool.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/open/audio.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/open/audio_spatial.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/open/sound_ref.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/open/audio_play_voice.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/open/format.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/open/debug.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        },
+        {
+          "source": "src/open/display_adjust.c",
+          "options": {
+            "compiler": "gcc257-native",
+            "optimization": "O2",
+            "small_data": 0,
+            "cc1_flags": [
+              "-mcpu=r2000"
+            ],
+            "defines": []
+          }
+        }
+      ]
+    }
+  ]
+}
