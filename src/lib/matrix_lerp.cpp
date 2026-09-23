@@ -27,11 +27,7 @@ void lighting_set_color_matrix(KfRenderState &view,
     const MATRIX *to,
     s32 blend)
 {
-    MATRIX matrix;
-
-    matrix_interpolate(from, to, &matrix, blend);
-    memcpy(view.lighting.color_matrix.m, (matrix).m,
-        sizeof view.lighting.color_matrix.m);
+    matrix_interpolate(from, to, &view.lighting.color_matrix, blend);
 }
 
 void fog_interpolate_near(KfRenderState &view, s32 start, s32 end, s32 ratio)

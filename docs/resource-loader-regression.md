@@ -34,7 +34,7 @@ the two COM tables with required/available byte counts.
 
 ## Verification
 
-Run the seven synthetic regression tests without retail files:
+Run the ten synthetic regression tests without retail files:
 
 ```sh
 nix develop --command python3 -m unittest discover -s tests -v
@@ -54,3 +54,6 @@ A separate client using the real `host_fail` verified the visible dialog, stderr
 message, and exit status 1 after dismissal. Captures and logs are local ignored
 `build/resource-fix-*` artifacts. These checks do not establish full playthrough
 or English/browser runtime coverage.
+
+The [broader cleanup audit](cleanup-runtime-audit.md) adds lighting and required
+file-error regressions plus repeatable floor, input, save and lifecycle scenarios.

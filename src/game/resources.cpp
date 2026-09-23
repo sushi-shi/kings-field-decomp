@@ -106,7 +106,7 @@ void map_variant_assets_load(void)
     map_resource_path[6] = kf_enum_encode<u8>(player_state.map_variant) + '0';
     std::size_t loaded_size;
     if (resource_file_load_into(*asset_buffer, MAP_VARIANT_ASSET_BUFFER_BYTES, map_resource_path, &loaded_size) != KF_RESOURCE_LOADED)
-        exit(1);
+        resource_file_fail(map_resource_path);
     asset_registry_load_tmd_archive(KF_ASSET_ACTOR_FIRST, *asset_buffer, loaded_size);
 }
 

@@ -14,17 +14,38 @@ class NativeRegressions(unittest.TestCase):
     def setUpClass(cls):
         cls.directory = tempfile.TemporaryDirectory(prefix="kf-native-regressions-")
         cls.addClassCleanup(cls.directory.cleanup)
-        cls.binary = Path(cls.directory.name) / "native-regressions"
-        subprocess.run(
-            [
-                "clang++", "-std=c++20", "-O1", "-g", "-fno-exceptions", "-fno-rtti",
-                "-ffunction-sections", "-fdata-sections",
-                "-Wl,--gc-sections", "-fsanitize=address,undefined",
-                "-I", str(ROOT / "include"), str(ROOT / "tests/native_regressions.cpp"),
-                "-o", str(cls.binary),
-            ],
-            check=True, text=True,
+        for name in ["native_regressions", "lighting_regressions", "resource_failures"]:
+            subprocess.run(
+                [
+                    "clang++", "-std=c++20", "-O1", "-g", "-fno-exceptions", "-fno-rtti",
+                    "-ffunction-sections", "-fdata-sections", "-Wl,--gc-sections",
+                    "-fsanitize=address,undefined", "-ftrivial-auto-var-init=pattern",
+                    "-I", str(ROOT / "include"), str(ROOT / "tests" / f"{name}.cpp"),
+                    "-o", str(Path(cls.directory.name) / name),
+                ],
+                check=True, text=True,
+            )
+        cls.binary = Path(cls.directory.name) / "native_regressions"
+
+    def test_lighting_preserves_translation_and_supports_aliasing(self):
+        subprocess.run([Path(self.directory.name) / "lighting_regressions"], check=True)
+
+    def test_required_file_failure_reaches_host_error_handler(self):
+        result = subprocess.run(
+            [Path(self.directory.name) / "resource_failures", "required", self.directory.name],
+            capture_output=True, text=True, timeout=10,
         )
+        self.assertEqual(result.returncode, 77, result.stderr)
+        self.assertEqual(result.stderr, "Resource missing.dat: not found\n"
+                         "Cannot load required resource KF/missing.dat.\n")
+
+    def test_optional_file_failure_still_returns_to_caller(self):
+        result = subprocess.run(
+            [Path(self.directory.name) / "resource_failures", "optional", self.directory.name],
+            capture_output=True, text=True, timeout=10,
+        )
+        self.assertEqual(result.returncode, 0, result.stderr)
+        self.assertEqual(result.stderr, "Resource missing.dat: not found\n")
 
     def run_case(self, mode, code, message=""):
         result = subprocess.run([self.binary, mode], capture_output=True, text=True, timeout=10)
