@@ -1,0 +1,606 @@
+{
+  "images": [
+    {
+      "name": "PSX.EXE",
+      "load_address": 2147549184,
+      "units": [
+        {
+          "source": "src/psx/main.cpp",
+          "options": {
+            "defines": []
+          }
+        }
+      ]
+    },
+    {
+      "name": "GAME.EXE",
+      "load_address": 2147557376,
+      "units": [
+        {
+          "source": "src/game/main.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/lib/sprite_add.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/display_play_transition.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/player_warp_shimmer_at_player.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/game.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/lib/matrix_rotation.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/lib/vector_math.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/equipment.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/player_death.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/player_core.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/player_use_item.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/player_death_fade.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/lighting_presets.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/player_status_effect4.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/player_update.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/collision_grid.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/collision.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/lib/memory.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/cd_file.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/resources.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/render.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/render_enqueuers.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/render_sprite.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/render_map_cells.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/entity_model_render.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/entity_render.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/map_event_render.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/render_scene.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/geometry_render.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/render_frame.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/lib/matrix_lerp.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/asset_registry.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/pool.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/item.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/menu.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/menu_map_viewer.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/menu_panels.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/menu_select.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/menu_runtime.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/save_system.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/actor.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/actor_behavior.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/actor_pool.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/map_object_pool.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/map_object.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/audio.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/camera_path.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/map_event.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/lighting.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/map_scripts.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/map_events.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/map_load.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/player_warp.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/menu_enter_mode.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/effect_pool.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/effect_map_collision.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/effect_update.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/effect_dispatch.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/magic.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/game/debug_text.cpp",
+          "options": {
+            "defines": []
+          }
+        }
+      ]
+    },
+    {
+      "name": "OPEN.EXE",
+      "load_address": 2147557376,
+      "units": [
+        {
+          "source": "src/open/main.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/open/opening_render.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/lib/sprite_add.cpp",
+          "options": {
+            "defines": [
+              "KF_OPEN"
+            ]
+          }
+        },
+        {
+          "source": "src/open/opening_helpers.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/open/camera_path.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/open/opening_scenes.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/open/opening_fade.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/open/opening_controller.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/lib/matrix_rotation.cpp",
+          "options": {
+            "defines": [
+              "KF_OPEN"
+            ]
+          }
+        },
+        {
+          "source": "src/lib/debug_matrix.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/lib/vector_math.cpp",
+          "options": {
+            "defines": [
+              "KF_OPEN"
+            ]
+          }
+        },
+        {
+          "source": "src/lib/memory.cpp",
+          "options": {
+            "defines": [
+              "KF_OPEN"
+            ]
+          }
+        },
+        {
+          "source": "src/open/resources.cpp",
+          "options": {
+            "defines": [
+              "KF_OPEN"
+            ]
+          }
+        },
+        {
+          "source": "src/open/render_init.cpp",
+          "options": {
+            "defines": [
+              "KF_OPEN"
+            ]
+          }
+        },
+        {
+          "source": "src/open/render.cpp",
+          "options": {
+            "defines": [
+              "KF_OPEN"
+            ]
+          }
+        },
+        {
+          "source": "src/open/render_tmd.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/open/render_unlit.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/open/render_map.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/open/render_sprite.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/open/render_map_cells.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/open/entity_render.cpp",
+          "options": {
+            "defines": [
+              "KF_OPEN"
+            ]
+          }
+        },
+        {
+          "source": "src/open/opening_scene0_render.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/open/opening_render_entities.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/lib/matrix_lerp.cpp",
+          "options": {
+            "defines": [
+              "KF_OPEN"
+            ]
+          }
+        },
+        {
+          "source": "src/open/item.cpp",
+          "options": {
+            "defines": [
+              "KF_OPEN"
+            ]
+          }
+        },
+        {
+          "source": "src/open/opening_entity_pool.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/open/audio.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/open/audio_spatial.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/open/sound_ref.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/open/audio_play_voice.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/open/format.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/open/debug.cpp",
+          "options": {
+            "defines": []
+          }
+        },
+        {
+          "source": "src/open/display_adjust.cpp",
+          "options": {
+            "defines": []
+          }
+        }
+      ]
+    }
+  ]
+}
