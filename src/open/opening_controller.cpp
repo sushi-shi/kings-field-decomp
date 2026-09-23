@@ -50,7 +50,7 @@ void opening_run(KfOverlayMode overlay_mode)
                 (void *)open_graphics_runtime.display_state.asset_load_buffer,
                 open_graphics_runtime.display_state.asset_load_capacity,
                 opening_initial_tim_path, &tim_size) != KF_RESOURCE_LOADED) {
-            exit(1);
+            resource_file_fail(opening_initial_tim_path);
         }
         scene3_action = KF_OPENING_INPUT_ADVANCE;
         tim_upload_images(open_graphics_runtime.display_state.asset_load_buffer, tim_size);

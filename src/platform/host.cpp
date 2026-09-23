@@ -166,8 +166,15 @@ void host_shutdown() {
 
 [[noreturn]] void host_fail(const char *message) {
     std::fprintf(stderr, "%s\n", message);
+    std::fflush(stderr);
 #ifdef __EMSCRIPTEN__
     host_browser_status(message);
+#else
+    if (host.window) {
+        SDL_SetWindowRelativeMouseMode(host.window, false);
+        sound_set_paused(true);
+        SDL_ShowSimpleMessageBox(SDL_MESSAGEBOX_ERROR, "King's Field — Error", message, host.window);
+    }
 #endif
     host_shutdown();
     std::exit(1);

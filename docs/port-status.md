@@ -4,6 +4,12 @@ This is the prioritized work queue. [PORTING.md](../PORTING.md) is the source-po
 contract; [port-findings.md](port-findings.md) holds the detailed evidence and
 history. Update this queue when an item's status changes, not just the history.
 
+The common-resource loader preserves its original cross-chunk table copies with
+file-bound checks. Fatal native errors remain visible in a dialog. See the
+[resource loader regression and checks](resource-loader-regression.md).
+The [broader cleanup audit](cleanup-runtime-audit.md) records the lighting fix,
+remaining error-handler coverage, cross-version runtime comparisons and limits.
+
 ## Priority order
 
 No reported problem remains under active investigation. The user reproduced

@@ -48,11 +48,18 @@ KfResourceLoadResult resource_file_try_load_allocated(KfMemoryArena &arena, u8 *
     return KF_RESOURCE_LOAD_FAILED;
 }
 
+[[noreturn]] void resource_file_fail(const char *relative_path)
+{
+    char message[192];
+    std::snprintf(message, sizeof message, "Cannot load required resource KF/%s.", relative_path);
+    kf::host_fail(message);
+}
+
 void resource_file_load_allocated(KfMemoryArena &arena, u8 **destination, const char *relative_path, std::size_t *loaded_size)
 {
     // These callers immediately parse required resources. Do not continue with stale data.
     if (resource_file_try_load_allocated(arena, destination, relative_path, loaded_size) != KF_RESOURCE_LOADED)
-        exit(1);
+        resource_file_fail(relative_path);
 }
 
 KfResourceLoadResult resource_file_load_into(void *destination, std::size_t capacity, const char *relative_path,

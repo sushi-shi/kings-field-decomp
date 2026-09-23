@@ -122,7 +122,7 @@ void player_equip_weapon(KfObjectId weapon_id)
         std::size_t loaded_size;
         if (resource_file_load_into(player_state.weapon_asset_buffer, KF_WEAPON_ASSET_BUFFER_BYTES,
                 weapon_image_path_template, &loaded_size) != KF_RESOURCE_LOADED) {
-            exit(1);
+            resource_file_fail(weapon_image_path_template);
         }
         asset_registry_set(KF_ASSET_WEAPON, player_state.weapon_asset_buffer, loaded_size);
     }
