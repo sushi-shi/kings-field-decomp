@@ -5,6 +5,10 @@ about which source shapes reproduce it under the current probes. Each note
 records the retail evidence first and the probe behaviour second; none of them
 promotes a probe to a proven historical toolchain.
 
+- [game-exact-followup.md](game-exact-followup.md): matching follow-up to the
+  readability backport; three corrected item-name cursor instructions,
+  rejected helper boundaries and unchanged exact-function count.
+
 - [port-readability-backport.md](port-readability-backport.md): port cleanup
   transferred back to retail C, unchanged-object checks, and rejected natural
   helper/loop/copy trials with strict per-function results.
