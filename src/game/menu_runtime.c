@@ -1409,7 +1409,7 @@ void menu_draw_item_detail(KF_ENUM_PARAM(KfObjectId, s32) item_id, KF_ENUM_PARAM
     MATRIX lres;
     s32 price;
     const MenuGlyphRow *rows;
-    const MenuGlyphRow *name;
+    const s16 *glyph;
     s32 i;
 
     if (item_id == KF_OBJECT_NONE) {
@@ -1432,12 +1432,12 @@ void menu_draw_item_detail(KF_ENUM_PARAM(KfObjectId, s32) item_id, KF_ENUM_PARAM
     menu_render_item_model();
 
     rows = item_name_rows;
-    name = &rows[KF_ENUM_ENCODE(s32, item_id)];
+    glyph = rows[KF_ENUM_ENCODE(s32, item_id)].codes;
     current_poly_ft4 = (POLY_FT4 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
     gs.position.x = MENU_ITEM_NAME_X;
     gs.position.y = MENU_ITEM_PREVIEW_NAME_Y;
     for (i = 0; i < MENU_GLYPHS_PER_ROW; i++) {
-        gs.glyphs.codes[i] = name->codes[i];
+        gs.glyphs.codes[i] = *glyph++;
     }
     menu_draw_string(&menu_assets.glyph_atlas, &gs);
 
