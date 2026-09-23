@@ -56,20 +56,30 @@ void common_resources_load(void)
     asset_registry_set(
         KF_ASSET_EFFECT_SPRITES, stream + KF_RESOURCE_CHUNK_HEADER_BYTES, effect_asset.size);
     block = stream = resource_stream_next(stream, resource_end);
-    memcpy((void *)render_cell_windows, (const void *)(block + KF_RESOURCE_CHUNK_HEADER_BYTES),
-        sizeof render_cell_windows);
+    const auto cell_windows = resource_chunk_view(stream, resource_end);
+    if (cell_windows.size < sizeof render_cell_windows)
+        kf::host_fail("Truncated cell windows");
+    memcpy(render_cell_windows, cell_windows.data, sizeof render_cell_windows);
+    stream = resource_stream_next(stream, resource_end);
     weapon_records_load_and_mirror_angles(
-        (const KfWeaponTable *)(RESOURCE_STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES));
+        resource_chunk_data<KfWeaponTable>(resource_chunk_view(stream, resource_end)));
+    stream = resource_stream_next(stream, resource_end);
+    // The original copy includes the next chunk's header and 416 magic bytes.
     armor_records_load(
-        (const KfArmorTable *)(RESOURCE_STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES));
+        resource_chunk_data<KfArmorTable>(resource_stream_tail(stream, resource_end),
+                                         "COM/COM.DAT armor table"));
+    stream = resource_stream_next(stream, resource_end);
     magic_load_records(
-        (const KfMagicTable *)(RESOURCE_STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES));
-    map_object_definitions_load(
-        (const KfMapObjectDefinitionTable *)(RESOURCE_STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES));
-    memcpy(
-        (void *)player_level_growth_table,
-        (const void *)(const KfPlayerLevelGrowth *)(RESOURCE_STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES),
-        sizeof player_level_growth_table);
+        resource_chunk_data<KfMagicTable>(resource_chunk_view(stream, resource_end)));
+    stream = resource_stream_next(stream, resource_end);
+    // The original copy includes the next chunk's header and 148 growth bytes.
+    map_object_definitions_load(resource_chunk_data<KfMapObjectDefinitionTable>(
+        resource_stream_tail(stream, resource_end), "COM/COM.DAT map-object table"));
+    stream = resource_stream_next(stream, resource_end);
+    const auto level_growth = resource_chunk_view(stream, resource_end);
+    if (level_growth.size < sizeof player_level_growth_table)
+        kf::host_fail("Truncated player level growth table");
+    memcpy(player_level_growth_table, level_growth.data, sizeof player_level_growth_table);
     memory_release_last(memory_arena);
     memory_arena.allocation.cursor = block + KF_RESOURCE_REUSE_PREFIX_BYTES;
 }
