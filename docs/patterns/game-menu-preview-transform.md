@@ -51,8 +51,8 @@ commit. No size assertions or compiler steering are part of this change.
 | `0x800279c4 / 440` | `menu_item_model_preview` | 98.181816 | Signed item ID, shared yaw halfword, SDK vector base two bytes earlier; Q12 light rows and fixed translation. |
 | `0x8001ed38 / 88` | `menu_render_item_model` | 100.0 | Reviewed caller/callee control; call sites, data referents and delay slots retained in its six-view dossier. |
 | `0x80028380 / 852` | `menu_list_interact` | 87.24413 | Reviewed caller/callee control; call sites, data referents and delay slots retained in its six-view dossier. |
-| `0x80021538 / 1476` | `item_menu_buy` | 97.20054 | Reviewed caller/callee control; call sites, data referents and delay slots retained in its six-view dossier. |
-| `0x80021afc / 1280` | `item_menu_sell` | 96.77187 | Reviewed caller/callee control; call sites, data referents and delay slots retained in its six-view dossier. |
+| `0x80021538 / 1476` | `shop_menu_buy` | 97.20054 | Reviewed caller/callee control; call sites, data referents and delay slots retained in its six-view dossier. |
+| `0x80021afc / 1280` | `shop_menu_sell` | 96.77187 | Reviewed caller/callee control; call sites, data referents and delay slots retained in its six-view dossier. |
 | `0x80021ffc / 696` | `item_pickup_confirm` | 100.0 | Reviewed caller/callee control; call sites, data referents and delay slots retained in its six-view dossier. |
 | `0x800238d8 / 1476` | `menu_equip_select` | 97.89973 | Reviewed caller/callee control; call sites, data referents and delay slots retained in its six-view dossier. |
 | `0x80022608 / 1908` | `menu_use_item_panel` | 92.8218 | Reviewed caller/callee control; call sites, data referents and delay slots retained in its six-view dossier. |
@@ -133,8 +133,8 @@ implementation or flake are added or changed.
 | `0x800279c4` | `menu_item_model_preview` | 98.181816 | Unchanged linked code; partial |
 | `0x8001ed38` | `menu_render_item_model` | 100.0 | Exact; 22 complete retail words |
 | `0x80028380` | `menu_list_interact` | 87.24413 | Unchanged linked code; partial |
-| `0x80021538` | `item_menu_buy` | 97.20054 | Unchanged linked code; partial |
-| `0x80021afc` | `item_menu_sell` | 96.77187 | Unchanged linked code; partial |
+| `0x80021538` | `shop_menu_buy` | 97.20054 | Unchanged linked code; partial |
+| `0x80021afc` | `shop_menu_sell` | 96.77187 | Unchanged linked code; partial |
 | `0x80021ffc` | `item_pickup_confirm` | 100.0 | Exact; 174 complete retail words |
 | `0x800238d8` | `menu_equip_select` | 97.89973 | Unchanged linked code; partial |
 | `0x80022608` | `menu_use_item_panel` | 92.8218 | Unchanged linked code; partial |

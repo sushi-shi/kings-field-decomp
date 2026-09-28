@@ -62,13 +62,13 @@ TRACE_ALLOCATE_VERTICES = 3
 TRACE_RELEASE_ALL = 4
 
 SHARED_HELPERS = (
-    "pool_record_release",
+    "animation_cache_release",
     "asset_registry_select",
     "tmd_select_object_vertices",
     "tmd_get_object",
-    "pool_allocate",
+    "animation_cache_allocate",
     "memory_malloc_checked",
-    "pool_release_all",
+    "animation_cache_release_all",
     "tmd_set_current_vertices",
 )
 
@@ -677,10 +677,10 @@ def _lifecycle_programs(
         lifecycle = LifecycleService()
         hooks = (
             ExternalHook("gteMIMefunc", gte),
-            ExternalHook("pool_allocate", lifecycle.allocate_record),
+            ExternalHook("animation_cache_allocate", lifecycle.allocate_record),
             ExternalHook("malloc", lifecycle.allocate_vertices),
-            ExternalHook("pool_record_release", lifecycle.release_record),
-            ExternalHook("pool_release_all", lifecycle.release_all),
+            ExternalHook("animation_cache_release", lifecycle.release_record),
+            ExternalHook("animation_cache_release_all", lifecycle.release_all),
         )
         if candidate:
             program = CandidateProgram.link(

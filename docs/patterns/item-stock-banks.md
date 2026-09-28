@@ -24,8 +24,8 @@ item-detail panels have one each.
 
 | Function | Address / extent | Occurrences | Stock reference snapshot |
 | --- | --- | ---: | --- |
-| `item_menu_buy` | `0x80021538 / 0x5c4` | 3 | `8002159c: 06 80 03 3c lui v1,0x8006 ` |
-| `item_menu_sell` | `0x80021afc / 0x500` | 1 | `80021b64: 06 80 16 3c lui s6,0x8006 ` |
+| `shop_menu_buy` | `0x80021538 / 0x5c4` | 3 | `8002159c: 06 80 03 3c lui v1,0x8006 ` |
+| `shop_menu_sell` | `0x80021afc / 0x500` | 1 | `80021b64: 06 80 16 3c lui s6,0x8006 ` |
 | `item_pickup_confirm` | `0x80021ffc / 0x2b8` | 2 | `80022030: 06 80 01 3c lui at,0x8006 ` |
 | `map_restore_floor_state` | `0x80035e44 / 0x69c` | 2 | `80036440: 06 80 02 3c lui v0,0x8006 ` |
 | `map_action_script_floor1` | `0x800343e0 / 0x58` | 1 | `800343e0: 06 80 02 3c lui v0,0x8006 ` |

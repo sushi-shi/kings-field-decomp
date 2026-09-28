@@ -8,6 +8,7 @@ KfActorDefinition	0x98	supported	game/actor.h;game_semantic_actor_core.tsv;asm;x
 KfActorDefinitionTable	0x720	supported	game/actor.h;asm;typed-map-tables.md	twelve complete actor definitions and 456 copy words
 KfActorPlacement	0x10	supported	game/actor.h;game_semantic_actor_core.tsv;runtime-stride	placement record extent; fields remain opaque
 KfActorState	0x2b48	supported	game/actor.h;game_semantic_actor_core.tsv;asm;pool-relative-definition-and-current-actor-addresses	actor system state: definitions, live actors, player transform snapshot, current and target actor pointers
+KfAnimationCacheRecord	0x14	supported	pool.h;game_semantic_animation_pool.tsv;asm;xrefs	animation vertex-cache record; twelve records with a 20-byte stride
 KfArmorRecord	0x1c	supported	game/equipment.h;asm;player_recalculate_combat_stats;player_set_equipment_slot	28-byte armor/accessory record; armor_records[42] holds item ids 13..54
 KfArmorTable	0x498	supported	game/equipment.h;asm;typed-record-tables.md	42 armor/accessory records; complete 294-word resource copy
 KfAssetHeader	0x14	supported	game/asset.h;asm;asset_registry;render_bind_animated_instance	model asset header shared by static and animated registry entries
@@ -91,7 +92,6 @@ KfPlayerMotionState	0x0c	supported	game/player.h;game_semantic_player_motion_att
 KfPlayerProgressState	0x04	supported	game/player.h;game_semantic_player_stats.tsv;game_semantic_camera_events.tsv;asm;xrefs	level and floor progress bytes
 KfPlayerState	0xe0	supported	game/player.h;data_identities.tsv;game_main_loop-base-register;0xe0-memset	player state block; one aggregate (player_state) in the original source
 KfPlayerVitals	0x08	supported	game/player.h;game_semantic_player_death.tsv;asm;xrefs	maximum/current HP and MP halfwords
-KfPoolRecord	0x14	supported	pool.h;game_semantic_animation_pool.tsv;asm;xrefs	animation vertex-cache record; twelve records with a 20-byte stride
 KfPrimitiveBuffer	0x0c	supported	render_types.h;game_semantic_display_tmd.tsv;asm;xrefs;complete-double-buffer-init	primitive allocation range and current cursor; two complete records exist in each overlay
 KfPsxSaveHeader	0x200	supported	game/save.h;save_file_initialize_buffers;asm;ICO1.TIM;ICO2.TIM;ICO3.TIM;Sony-LIBOVR46-tables-5-6-and-5-7	PlayStation memory-card header with the three icon frames used by this game
 KfRenderState	0x140	supported	game/render.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	view and lighting matrices with the view position, rotation, cell, and fog distance: render_set_view_transform addresses the view and pitch matrices 180 and 148 bytes below the rotation, and render_initialize addresses the quadrant matrices from the light matrix, through one base register

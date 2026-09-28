@@ -11,7 +11,7 @@ Before editing, the six semantic views, source history and surrounding functions
 were captured under `build/constant-names/map-dialogue-state/`. Retail files were
 hash-verified with `kf init`. The functions consume game-owned map records,
 progress, TALK paths, item exchanges and rendering policy; none is a vendored
-body. SDK calls remain SDK calls. Supplemental inspection of `item_menu_root`
+body. SDK calls remain SDK calls. Supplemental inspection of `shop_menu_root`
 at `0x800212d8` confirms that menu mode 2 enters the buy/sell interface.
 
 | VA | Bytes | Function before rename | Initial strict % | Evidence / intended change | Final strict % / verdict |

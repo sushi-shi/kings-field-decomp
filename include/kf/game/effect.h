@@ -21,7 +21,7 @@ enum {
 #include <kf/lib/math.h>
 #include <kf/game/magic.h>
 
-struct KfPoolRecord;
+struct KfAnimationCacheRecord;
 
 enum {
     KF_EFFECT_CAPACITY = 48
@@ -270,7 +270,7 @@ typedef struct KfEffectRecord {
     u16 scale_z;         /* 0x28 */
     u16 unknown_2a;      /* 0x2a */
     KfEffectDirection direction; /* 0x2c */
-    struct KfPoolRecord *animation_cache; /* 0x34 */
+    struct KfAnimationCacheRecord *animation_cache; /* 0x34 */
     KfEffectControl control; /* 0x38: countdown, orbit, parent, or homing selector */
     KfEffectPropagation propagation; /* 0x3a: kind-10 generations or kind-6 branch */
 } KfEffectRecord;

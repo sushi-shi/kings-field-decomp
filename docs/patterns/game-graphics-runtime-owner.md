@@ -145,11 +145,11 @@ Percentages are strict objdiff results; every row below 100% remains open.
 | `8002055c` | `asset_registry_set` | 100.000000 | 100.000000 | Exact preserved |
 | `8002059c` | `asset_registry_select` | 100.000000 | 100.000000 | Exact preserved |
 | `800205d4` | `render_bind_animated_instance` | 100.000000 | 100.000000 | Exact preserved |
-| `80020978` | `pool_reset` | 100.000000 | 100.000000 | Exact preserved |
-| `800209a8` | `pool_mark_allocated` | 100.000000 | 100.000000 | Exact preserved |
-| `80020a2c` | `pool_release_all` | 100.000000 | 100.000000 | Exact preserved |
-| `80020a98` | `pool_release_stale` | 100.000000 | 100.000000 | Exact preserved |
-| `80020b04` | `pool_allocate` | 100.000000 | 100.000000 | Exact preserved |
+| `80020978` | `animation_cache_reset` | 100.000000 | 100.000000 | Exact preserved |
+| `800209a8` | `animation_cache_mark_stale` | 100.000000 | 100.000000 | Exact preserved |
+| `80020a2c` | `animation_cache_release_all` | 100.000000 | 100.000000 | Exact preserved |
+| `80020a98` | `animation_cache_release_stale` | 100.000000 | 100.000000 | Exact preserved |
+| `80020b04` | `animation_cache_allocate` | 100.000000 | 100.000000 | Exact preserved |
 | `80020b4c` | `item_load_floor_placements` | 98.888885 | 100.000000 | New exact |
 | `80022d7c` | `menu_map_viewer` | 100.000000 | 100.000000 | Exact preserved |
 | `80025da0` | `menu_config_panel_draw` | 100.000000 | 100.000000 | Exact preserved |

@@ -141,7 +141,7 @@ void player_update(void)
         if (item >= 0) {
             player_use_item(KF_ENUM_DECODE(KF_ENUM_PROMOTED(KfObjectId), item));
         } else if (item == KF_ENUM_ENCODE(s32, KF_MENU_RESULT_GAME_LOADED)) {
-            pool_release_all();
+            animation_cache_release_all();
             audio_close_vab();
             map_load_floor_wrapper();
             player_sync_position_to_map();

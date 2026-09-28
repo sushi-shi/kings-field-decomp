@@ -48,7 +48,7 @@ void render_frame(const VECTOR *position_or_null, const SVECTOR *rotation_or_nul
 
     render_set_view_transform(position_or_null, rotation_or_null);
     display_begin_frame();
-    pool_mark_allocated();
+    animation_cache_mark_stale();
     SetGeomScreen(KF_DEFAULT_PROJECTION_DISTANCE);
     render_map_cells();
     SetLightMatrix(&render_light_matrices[KF_RENDER_LIGHT_HUD]);
@@ -149,5 +149,5 @@ void render_frame(const VECTOR *position_or_null, const SVECTOR *rotation_or_nul
     render_entities();
     render_weapon();
     display_present_frame();
-    pool_release_stale();
+    animation_cache_release_stale();
 }

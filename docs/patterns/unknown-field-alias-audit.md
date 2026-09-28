@@ -123,14 +123,14 @@ meanings for the target bytes.
 `render_map_event` forms `event +0x3c` at `0x8001f19c` and calls
 `render_bind_animated_instance` at `0x8001f1b4`. The binder loads the cache
 pointer through that address at `0x80020604`, stores the address itself in
-`KfPoolRecord.owner_slot` at `0x80020688`, and writes the allocated cache
+`KfAnimationCacheRecord.owner_slot` at `0x80020688`, and writes the allocated cache
 pointer back through it at `0x800206b4`. This is a real persistent interior
 pointer and must not disappear from a member-name-only census.
 
-The consuming `pool_record_release` loads `owner_slot` at `0x800209f4`
+The consuming `animation_cache_release` loads `owner_slot` at `0x800209f4`
 and writes a zero word through it at `0x800209fc`. For the selected event
 caller, that store covers exactly event +0x3c through +0x3f, not +0x0c/+0x0d.
-Release paths from the binder, `pool_release_all` and `pool_release_stale`
+Release paths from the binder, `animation_cache_release_all` and `animation_cache_release_stale`
 share this operation. The event rotation passed to SDK `RotMatrix` begins
 at +0x34, another distinct interior range. These checked paths do not justify
 closing other retained pointers or other callers with different owners.
@@ -208,10 +208,10 @@ miss the unknown bytes; it does not close unrelated indirect consumers.
 | GAME | `map_restore_floor_state` | Direct +0x0d transport and unchecked dynamic byte store; final +0x0d restoration overwrites the stage-11 indexed store. |
 | GAME | `map_floor2_event_transfer_fade` | Checked nonoverlap: state +0, reference-position Y +0x28 and rotation Y +0x36. |
 | GAME | `map_world_state_persist` | Direct +0x0d transport plus indexed stage alias; stage 11 copies that byte into two saved positions. |
-| GAME | `pool_allocate` | Cache-owner provenance: allocator supplies a pool record to the binder; allocation itself gives no field interpretation. |
-| GAME | `pool_record_release` | Retained-pointer consumer: selected event owner_slot clears only +0x3c..+0x3f. |
-| GAME | `pool_release_all` | Release transport: iterates pool records and invokes the checked owner_slot release operation. |
-| GAME | `pool_release_stale` | Release transport: selects stale pool records and invokes the checked owner_slot release operation. |
+| GAME | `animation_cache_allocate` | Cache-owner provenance: allocator supplies a pool record to the binder; allocation itself gives no field interpretation. |
+| GAME | `animation_cache_release` | Retained-pointer consumer: selected event owner_slot clears only +0x3c..+0x3f. |
+| GAME | `animation_cache_release_all` | Release transport: iterates pool records and invokes the checked owner_slot release operation. |
+| GAME | `animation_cache_release_stale` | Release transport: selects stale pool records and invokes the checked owner_slot release operation. |
 | GAME | `rand` | SDK/BIOS boundary: declared zero-argument wrapper jumps to BIOS A0/0x2f; BIOS body unexamined. |
 | GAME | `render_bind_animated_instance` | Retained interior pointer: reads/writes event cache +0x3c and stores its address in pool owner_slot. |
 | GAME | `render_entities` | Pointer transport: derives event/item row pointers; inspected state/cell/item-coordinate reads miss the unknowns. |

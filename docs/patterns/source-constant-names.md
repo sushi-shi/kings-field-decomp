@@ -1964,9 +1964,9 @@ feedback styles, not a rule that every caller uses the same button mapping.
 | GAME 80033014 `audio_key_off_mask` | 100% | Two byte loads; exact-FID `SsVoKeyOff` at 8004b6a4; rename and use program/note fields. |
 | OPEN 8001a188 `audio_key_off_mask` | 100% | Same ten-word wrapper; exact-FID `SsVoKeyOff` at 8002b478; same typed contract. |
 | GAME 8002b150 `menu_play_input_sound` | 100% | 33 retail words; cue compares 0/1, catch-all third recipe, equal channel volume 64 and one vertical-sync wait. |
-| GAME 800212d8 `item_menu_root` | 100% | Five cue calls: opening/navigation, confirmation and cancellation. |
-| GAME 80021538 `item_menu_buy` | 97.200540% | Six cue calls, including insufficient-gold rejection. |
-| GAME 80021afc `item_menu_sell` | 96.771870% | Five cue calls: empty-list exit, navigation, confirmation and cancellation. |
+| GAME 800212d8 `shop_menu_root` | 100% | Five cue calls: opening/navigation, confirmation and cancellation. |
+| GAME 80021538 `shop_menu_buy` | 97.200540% | Six cue calls, including insufficient-gold rejection. |
+| GAME 80021afc `shop_menu_sell` | 96.771870% | Five cue calls: empty-list exit, navigation, confirmation and cancellation. |
 | GAME 80021ffc `item_use_confirm` | 100% | Four cue calls: opening, choice toggle, confirmation and cancellation. |
 | GAME 800222b4 `menu_save_confirm` | 100% | One opening cue. |
 | GAME 80022348 `menu_root` | 96.863640% | Five opening/navigation/confirmation/cancellation calls. |

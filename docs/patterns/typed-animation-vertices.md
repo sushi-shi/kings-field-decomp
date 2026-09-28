@@ -28,9 +28,9 @@ start and variable trailing vector convention. Save and restore both words
 of the affected scratch entry around the same SDK call. Preserve its +1
 count and the scratch publication at +8.
 
-The binder returns its live KfPoolRecord pointer, null on exhaustion, or the
+The binder returns its live KfAnimationCacheRecord pointer, null on exhaustion, or the
 existing integer-one static-success sentinel. All five callers branch only
-on zero/nonzero; no halfword pointer is dereferenced. Use `KfPoolRecord *`
+on zero/nonzero; no halfword pointer is dereferenced. Use `KfAnimationCacheRecord *`
 for the shared return type, preserve the explicit sentinel conversion and
 return the actual record directly. Keep the retail uninitialized incoming
 keyframe-index behavior and every existing branch, argument width and delay
@@ -51,8 +51,8 @@ slot; no correctness claim is made for that pre-existing runtime defect.
 | GAME.EXE `asset_registry_set` | `8002055c / 40` | 100 | 1/2/1 | 100%; raw unchanged |
 | GAME.EXE `asset_registry_select` | `8002059c / 38` | 100 | 1/0/1 | 100%; raw unchanged |
 | GAME.EXE `render_bind_animated_instance` | `800205d4 / 3a4` | 100 | 34/12/1 | 100%; raw unchanged |
-| GAME.EXE `pool_record_release` | `800209e4 / 48` | 100 | 3/1/1 | 100%; raw unchanged |
-| GAME.EXE `pool_allocate` | `80020b04 / 48` | 100 | 6/0/1 | 100%; raw unchanged |
+| GAME.EXE `animation_cache_release` | `800209e4 / 48` | 100 | 3/1/1 | 100%; raw unchanged |
+| GAME.EXE `animation_cache_allocate` | `80020b04 / 48` | 100 | 6/0/1 | 100%; raw unchanged |
 | OPEN.EXE `tmd_set_current_vertices` | `80016eb8 / 10` | 100 | 1/0/1 | 100%; raw unchanged |
 | OPEN.EXE `tmd_select_object_vertices` | `80016ec8 / 3c` | 100 | 1/1/1 | 100%; raw unchanged |
 | OPEN.EXE `tmd_project_vertices` | `8001738c / cc` | 100 | 5/3/1 | 100%; raw unchanged |

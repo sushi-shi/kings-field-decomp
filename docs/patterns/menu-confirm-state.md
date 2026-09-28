@@ -35,9 +35,9 @@ external. Neighbors in each selected module are included as unchanged controls.
 |---|---|---:|---|
 | `80020b4c / 0x1b0` | `item_load_floor_placements` | 98.888885 | Unchanged contiguous-module control. |
 | `80020cfc / 0x5dc` | `item_load_database` | 99.746666 | Unchanged contiguous-module control. |
-| `800212d8 / 0x260` | `item_menu_root` | 100.0 | Type confirmation flow; retain every branch, frame and call. |
-| `80021538 / 0x5c4` | `item_menu_buy` | 99.769646 | Type confirmation flow; retain every branch, frame and call. |
-| `80021afc / 0x500` | `item_menu_sell` | 99.609375 | Type confirmation flow; retain every branch, frame and call. |
+| `800212d8 / 0x260` | `shop_menu_root` | 100.0 | Type confirmation flow; retain every branch, frame and call. |
+| `80021538 / 0x5c4` | `shop_menu_buy` | 99.769646 | Type confirmation flow; retain every branch, frame and call. |
+| `80021afc / 0x500` | `shop_menu_sell` | 99.609375 | Type confirmation flow; retain every branch, frame and call. |
 | `80021ffc / 0x2b8` | `item_pickup_confirm` | 100.0 | Type confirmation flow; retain every branch, frame and call. |
 | `800222b4 / 0x94` | `menu_save_confirm` | 100.0 | Type confirmation flow; retain every branch, frame and call. |
 | `80022348 / 0x2c0` | `menu_root` | 96.86364 | Type confirmation flow; retain every branch, frame and call. |
@@ -110,9 +110,9 @@ address references. Twenty-six exact functions also agree with the complete
 |---|---|---:|---:|---|
 | `80020b4c` | `item_load_floor_placements` | 98.888885 | 107 / 1 / 3 | Unchanged partial |
 | `80020cfc` | `item_load_database` | 99.746666 | 375 / 5 / 10 | Unchanged partial |
-| `800212d8` | `item_menu_root` | 100.0 | 152 / 25 / 0 | Exact retained |
-| `80021538` | `item_menu_buy` | 99.769646 | 369 / 21 / 11 | Unchanged partial |
-| `80021afc` | `item_menu_sell` | 99.609375 | 320 / 20 / 5 | Unchanged partial |
+| `800212d8` | `shop_menu_root` | 100.0 | 152 / 25 / 0 | Exact retained |
+| `80021538` | `shop_menu_buy` | 99.769646 | 369 / 21 / 11 | Unchanged partial |
+| `80021afc` | `shop_menu_sell` | 99.609375 | 320 / 20 / 5 | Unchanged partial |
 | `80021ffc` | `item_pickup_confirm` | 100.0 | 174 / 28 / 3 | Exact retained |
 | `800222b4` | `menu_save_confirm` | 100.0 | 37 / 7 / 2 | Exact retained |
 | `80022348` | `menu_root` | 96.86364 | 175 / 28 / 1 | Unchanged partial |

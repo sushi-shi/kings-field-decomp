@@ -104,7 +104,7 @@ typedef struct KfEffectSprite {
     u8 unknown_0c[2];
     SVECTOR rotation;
     u8 unknown_16[2];
-    KfPoolRecord *animation_cache;
+    KfAnimationCacheRecord *animation_cache;
 } KfEffectSprite;
 
 /* Double-buffered GAME.EXE display state. */

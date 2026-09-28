@@ -134,102 +134,102 @@ Other documented retained selectors may still need a future semantic domain.
 | `item_load_database` | 122 | `1` | `if ((cd_file_table[i].size & (KF_CD_SECTOR_BYTES - 1)) != 0)` | Subtract one from the power-of-two sector size to form its low-byte-count mask. Zero masked bits mean already aligned; only partial sectors enter the round-up path. |
 | `item_load_database` | 122 | `0` | `if ((cd_file_table[i].size & (KF_CD_SECTOR_BYTES - 1)) != 0)` | Subtract one from the power-of-two sector size to form its low-byte-count mask. Zero masked bits mean already aligned; only partial sectors enter the round-up path. |
 | `item_load_database` | 124 | `1` | `((cd_file_table[i].size >> KF_CD_SECTOR_SHIFT) + 1) << KF_CD_SECTOR_SHIFT;` | Add one to the truncated complete-sector count before shifting back to bytes; the preceding partial-sector guard prevents rounding an aligned size up unnecessarily. |
-| `item_menu_root` | 139 | `0` | `s32 input = 0;` | No prior pressed button bits at entry; used for input edge detection. |
-| `item_menu_root` | 153 | `1` | `while (PadRead(1) != 0)` | Preserve the ignored retail PadRead argument 1 and wait until no buttons remain pressed; the linked SDK uses global PadIdentifier. |
-| `item_menu_root` | 153 | `0` | `while (PadRead(1) != 0)` | Preserve the ignored retail PadRead argument 1 and wait until no buttons remain pressed; the linked SDK uses global PadIdentifier. |
-| `item_menu_root` | 163 | `1` | `while (PadRead(1) != 0)` | Preserve the ignored retail PadRead argument 1 and wait until no buttons remain pressed; the linked SDK uses global PadIdentifier. |
-| `item_menu_root` | 163 | `0` | `while (PadRead(1) != 0)` | Preserve the ignored retail PadRead argument 1 and wait until no buttons remain pressed; the linked SDK uses global PadIdentifier. |
-| `item_menu_root` | 176 | `1` | `while (PadRead(1) != 0)` | Preserve the ignored retail PadRead argument 1 and wait until no buttons remain pressed; the linked SDK uses global PadIdentifier. |
-| `item_menu_root` | 176 | `0` | `while (PadRead(1) != 0)` | Preserve the ignored retail PadRead argument 1 and wait until no buttons remain pressed; the linked SDK uses global PadIdentifier. |
-| `item_menu_root` | 184 | `1` | `input = PadRead(1);` | Ignored retail call-site argument; this is not a controller-port selector. |
-| `item_menu_root` | 185 | `0` | `if ((input & PADLup) != 0 && (prev & PADLup) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
-| `item_menu_root` | 185 | `0` | `if ((input & PADLup) != 0 && (prev & PADLup) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
-| `item_menu_root` | 191 | `0` | `} else if ((input & PADLdown) != 0 && (prev & PADLdown) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
-| `item_menu_root` | 191 | `0` | `} else if ((input & PADLdown) != 0 && (prev & PADLdown) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
-| `item_menu_root` | 197 | `0` | `} else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
-| `item_menu_root` | 197 | `0` | `} else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
-| `item_menu_root` | 204 | `0` | `} else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
-| `item_menu_root` | 204 | `0` | `} else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
-| `item_menu_buy` | 229 | `0` | `s32 input = 0;` | No prior pressed button bits at entry; used for input edge detection. |
-| `item_menu_buy` | 233 | `1` | `while (PadRead(1) != 0)` | Preserve the ignored retail PadRead argument 1 and wait until no buttons remain pressed; the linked SDK uses global PadIdentifier. |
-| `item_menu_buy` | 233 | `0` | `while (PadRead(1) != 0)` | Preserve the ignored retail PadRead argument 1 and wait until no buttons remain pressed; the linked SDK uses global PadIdentifier. |
-| `item_menu_buy` | 238 | `0` | `found = 0;` | Start appending displayed entries at the first workspace row. |
-| `item_menu_buy` | 240 | `0` | `if (inv[slot] != 0 && item_stock[KF_ITEM_STOCK_PLAYER][slot] < KF_ITEM_STACK_CAPACITY) {` | Any nonzero shop availability includes an item if the player-owned bank zero is below its named stack cap. |
-| `item_menu_buy` | 241 | `0` | `for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)` | Copy all ten glyph halfwords, starting at zero, from the shared item-name row. |
-| `item_menu_buy` | 248 | `0` | `for (slot = 0; slot < KF_ENUM_ENCODE(s32, KF_ITEM_VERDITE); slot++) {` | Append the remaining database IDs 0..41 after the 42..79 band; preserve retail display order. |
-| `item_menu_buy` | 249 | `0` | `if (inv[slot] != 0 && item_stock[KF_ITEM_STOCK_PLAYER][slot] < KF_ITEM_STACK_CAPACITY) {` | Any nonzero shop availability includes an item if the player-owned bank zero is below its named stack cap. |
-| `item_menu_buy` | 250 | `0` | `for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)` | Copy all ten glyph halfwords, starting at zero, from the shared item-name row. |
-| `item_menu_buy` | 260 | `0` | `ctx.glyph_rows = &entries[0][0];` | Flat renderer input begins at the first glyph of the first row. |
-| `item_menu_buy` | 260 | `0` | `ctx.glyph_rows = &entries[0][0];` | Flat renderer input begins at the first glyph of the first row. |
-| `item_menu_buy` | 261 | `0` | `ctx.quantities = 0;` | Null quantity source disables count rendering in this shop list; availability still controls inclusion. |
-| `item_menu_buy` | 264 | `0` | `if (ctx.entry_count != 0) {` | Only load/render a preview when the constructed list has an entry. |
-| `item_menu_buy` | 265 | `0` | `if (menu_load_item_model(index[ctx.selected_index]) != 0)` | Any nonzero model-load result aborts the panel; retain the complete failure predicate. |
-| `item_menu_buy` | 283 | `1` | `while (PadRead(1) != 0)` | Preserve the ignored retail PadRead argument 1 and wait until no buttons remain pressed; the linked SDK uses global PadIdentifier. |
-| `item_menu_buy` | 283 | `0` | `while (PadRead(1) != 0)` | Preserve the ignored retail PadRead argument 1 and wait until no buttons remain pressed; the linked SDK uses global PadIdentifier. |
-| `item_menu_buy` | 289 | `1` | `input = PadRead(1);` | Ignored retail call-site argument; this is not a controller-port selector. |
-| `item_menu_buy` | 290 | `0` | `if (ctx.entry_count == 0) {` | Handle an empty list without reading a selected item. |
-| `item_menu_buy` | 291 | `0` | `if (input != 0) {` | Any button press acknowledges an empty list and exits its panel. |
-| `item_menu_buy` | 295 | `0` | `} else if ((input & PADLup) != 0 && (prev & PADLup) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
-| `item_menu_buy` | 295 | `0` | `} else if ((input & PADLup) != 0 && (prev & PADLup) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
-| `item_menu_buy` | 297 | `0` | `if (ctx.selected_index != 0) {` | Upward movement has not reached the first zero-based entry. |
-| `item_menu_buy` | 299 | `0` | `if (ctx.cursor_row == 0)` | At the first visible row, scroll upward; otherwise move the cursor. Retail lays out the scroll arm first. |
-| `item_menu_buy` | 304 | `1` | `ctx.selected_index = ctx.entry_count - 1;` | Wrap to the last zero-based entry before choosing the short-list or full-viewport arm; required for long lists too. |
-| `item_menu_buy` | 306 | `0` | `ctx.scroll_offset = 0;` | Reset the viewport to start at the first entry. |
-| `item_menu_buy` | 307 | `1` | `ctx.cursor_row = ctx.entry_count - 1;` | Bottom row of a list shorter than the viewport. |
-| `item_menu_buy` | 310 | `1` | `ctx.cursor_row = ctx.visible_rows - 1;` | Last zero-based row of the full viewport. |
-| `item_menu_buy` | 315 | `0` | `} else if ((input & PADLdown) != 0 && (prev & PADLdown) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
-| `item_menu_buy` | 315 | `0` | `} else if ((input & PADLdown) != 0 && (prev & PADLdown) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
-| `item_menu_buy` | 317 | `1` | `if (ctx.selected_index < ctx.entry_count - 1) {` | Test the last-entry boundary before moving downward or wrapping. |
-| `item_menu_buy` | 319 | `1` | `if (ctx.cursor_row == ctx.visible_rows - 1)` | At the bottom visible row, scroll downward; otherwise move the cursor. Retail lays out the scroll arm first. |
-| `item_menu_buy` | 324 | `0` | `ctx.selected_index = 0;` | Wrap to the first item in the list. |
-| `item_menu_buy` | 325 | `0` | `ctx.scroll_offset = 0;` | Reset the viewport to start at the first entry. |
-| `item_menu_buy` | 326 | `0` | `ctx.cursor_row = 0;` | Place the visible cursor on the first row after wrapping. |
-| `item_menu_buy` | 328 | `0` | `if (menu_load_item_model(index[ctx.selected_index]) != 0)` | Any nonzero model-load result aborts the panel; retain the complete failure predicate. |
-| `item_menu_buy` | 330 | `0` | `} else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
-| `item_menu_buy` | 330 | `0` | `} else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
-| `item_menu_buy` | 338 | `0` | `} else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
-| `item_menu_buy` | 338 | `0` | `} else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
-| `item_menu_buy` | 344 | `0` | `if (ctx.entry_count != 0)` | Only render a preview when the constructed list has an entry. |
-| `item_menu_sell` | 375 | `0` | `s32 input = 0;` | No prior pressed button bits at entry; used for input edge detection. |
-| `item_menu_sell` | 379 | `1` | `while (PadRead(1) != 0)` | Preserve the ignored retail PadRead argument 1 and wait until no buttons remain pressed; the linked SDK uses global PadIdentifier. |
-| `item_menu_sell` | 379 | `0` | `while (PadRead(1) != 0)` | Preserve the ignored retail PadRead argument 1 and wait until no buttons remain pressed; the linked SDK uses global PadIdentifier. |
-| `item_menu_sell` | 384 | `0` | `found = 0;` | Start appending displayed entries at the first workspace row. |
-| `item_menu_sell` | 385 | `0` | `for (slot = 0; slot < KF_ENUM_ENCODE(s32, KF_ITEM_GOLD_CROSS); slot++) {` | Start with item zero and stop before Gold Cross ID 52; the Gold Cross and later key/quest-item band is excluded from selling. |
-| `item_menu_sell` | 386 | `0` | `if (inv[slot] != 0) {` | Only possessed player items can become sale candidates. |
-| `item_menu_sell` | 396 | `0` | `if (available[found] != 0) {` | After subtracting an equipped copy, retain the row only if another copy remains available. |
-| `item_menu_sell` | 397 | `0` | `for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)` | Copy all ten glyph halfwords, starting at zero, from the shared item-name row. |
-| `item_menu_sell` | 407 | `0` | `ctx.glyph_rows = &entries[0][0];` | Flat renderer input begins at the first glyph of the first row. |
-| `item_menu_sell` | 407 | `0` | `ctx.glyph_rows = &entries[0][0];` | Flat renderer input begins at the first glyph of the first row. |
-| `item_menu_sell` | 408 | `0` | `ctx.quantities = 0;` | Null quantity source disables count rendering in this shop list; availability still controls inclusion. |
-| `item_menu_sell` | 411 | `0` | `if (ctx.entry_count != 0) {` | Only load/render a preview when the constructed list has an entry. |
-| `item_menu_sell` | 412 | `0` | `if (menu_load_item_model(index[ctx.selected_index]) != 0)` | Any nonzero model-load result aborts the panel; retain the complete failure predicate. |
-| `item_menu_sell` | 430 | `1` | `while (PadRead(1) != 0)` | Preserve the ignored retail PadRead argument 1 and wait until no buttons remain pressed; the linked SDK uses global PadIdentifier. |
-| `item_menu_sell` | 430 | `0` | `while (PadRead(1) != 0)` | Preserve the ignored retail PadRead argument 1 and wait until no buttons remain pressed; the linked SDK uses global PadIdentifier. |
-| `item_menu_sell` | 436 | `1` | `input = PadRead(1);` | Ignored retail call-site argument; this is not a controller-port selector. |
-| `item_menu_sell` | 437 | `0` | `if (ctx.entry_count == 0) {` | Handle an empty list without reading a selected item. |
-| `item_menu_sell` | 438 | `0` | `if (input != 0) {` | Any button press acknowledges an empty list and exits its panel. |
-| `item_menu_sell` | 442 | `0` | `} else if ((input & PADLup) != 0 && (prev & PADLup) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
-| `item_menu_sell` | 442 | `0` | `} else if ((input & PADLup) != 0 && (prev & PADLup) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
-| `item_menu_sell` | 444 | `0` | `if (ctx.selected_index != 0) {` | Upward movement has not reached the first zero-based entry. |
-| `item_menu_sell` | 446 | `0` | `if (ctx.cursor_row == 0)` | At the first visible row, scroll upward; otherwise move the cursor. Retail lays out the scroll arm first. |
-| `item_menu_sell` | 451 | `1` | `ctx.selected_index = ctx.entry_count - 1;` | Wrap to the last zero-based entry before choosing the short-list or full-viewport arm; required for long lists too. |
-| `item_menu_sell` | 453 | `0` | `ctx.scroll_offset = 0;` | Reset the viewport to start at the first entry. |
-| `item_menu_sell` | 454 | `1` | `ctx.cursor_row = ctx.entry_count - 1;` | Bottom row of a list shorter than the viewport. |
-| `item_menu_sell` | 457 | `1` | `ctx.cursor_row = ctx.visible_rows - 1;` | Last zero-based row of the full viewport. |
-| `item_menu_sell` | 460 | `0` | `if (menu_load_item_model(index[ctx.selected_index]) != 0)` | Any nonzero model-load result aborts the panel; retain the complete failure predicate. |
-| `item_menu_sell` | 462 | `0` | `} else if ((input & PADLdown) != 0 && (prev & PADLdown) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
-| `item_menu_sell` | 462 | `0` | `} else if ((input & PADLdown) != 0 && (prev & PADLdown) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
-| `item_menu_sell` | 464 | `1` | `if (ctx.selected_index < ctx.entry_count - 1) {` | Test the last-entry boundary before moving downward or wrapping. |
-| `item_menu_sell` | 466 | `1` | `if (ctx.cursor_row == ctx.visible_rows - 1)` | At the bottom visible row, scroll downward; otherwise move the cursor. Retail lays out the scroll arm first. |
-| `item_menu_sell` | 471 | `0` | `ctx.selected_index = 0;` | Wrap to the first item in the list. |
-| `item_menu_sell` | 472 | `0` | `ctx.scroll_offset = 0;` | Reset the viewport to start at the first entry. |
-| `item_menu_sell` | 473 | `0` | `ctx.cursor_row = 0;` | Place the visible cursor on the first row after wrapping. |
-| `item_menu_sell` | 475 | `0` | `if (menu_load_item_model(index[ctx.selected_index]) != 0)` | Any nonzero model-load result aborts the panel; retain the complete failure predicate. |
-| `item_menu_sell` | 477 | `0` | `} else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
-| `item_menu_sell` | 477 | `0` | `} else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
-| `item_menu_sell` | 480 | `0` | `} else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
-| `item_menu_sell` | 480 | `0` | `} else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
-| `item_menu_sell` | 486 | `0` | `if (ctx.entry_count != 0)` | Only render a preview when the constructed list has an entry. |
+| `shop_menu_root` | 139 | `0` | `s32 input = 0;` | No prior pressed button bits at entry; used for input edge detection. |
+| `shop_menu_root` | 153 | `1` | `while (PadRead(1) != 0)` | Preserve the ignored retail PadRead argument 1 and wait until no buttons remain pressed; the linked SDK uses global PadIdentifier. |
+| `shop_menu_root` | 153 | `0` | `while (PadRead(1) != 0)` | Preserve the ignored retail PadRead argument 1 and wait until no buttons remain pressed; the linked SDK uses global PadIdentifier. |
+| `shop_menu_root` | 163 | `1` | `while (PadRead(1) != 0)` | Preserve the ignored retail PadRead argument 1 and wait until no buttons remain pressed; the linked SDK uses global PadIdentifier. |
+| `shop_menu_root` | 163 | `0` | `while (PadRead(1) != 0)` | Preserve the ignored retail PadRead argument 1 and wait until no buttons remain pressed; the linked SDK uses global PadIdentifier. |
+| `shop_menu_root` | 176 | `1` | `while (PadRead(1) != 0)` | Preserve the ignored retail PadRead argument 1 and wait until no buttons remain pressed; the linked SDK uses global PadIdentifier. |
+| `shop_menu_root` | 176 | `0` | `while (PadRead(1) != 0)` | Preserve the ignored retail PadRead argument 1 and wait until no buttons remain pressed; the linked SDK uses global PadIdentifier. |
+| `shop_menu_root` | 184 | `1` | `input = PadRead(1);` | Ignored retail call-site argument; this is not a controller-port selector. |
+| `shop_menu_root` | 185 | `0` | `if ((input & PADLup) != 0 && (prev & PADLup) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
+| `shop_menu_root` | 185 | `0` | `if ((input & PADLup) != 0 && (prev & PADLup) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
+| `shop_menu_root` | 191 | `0` | `} else if ((input & PADLdown) != 0 && (prev & PADLdown) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
+| `shop_menu_root` | 191 | `0` | `} else if ((input & PADLdown) != 0 && (prev & PADLdown) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
+| `shop_menu_root` | 197 | `0` | `} else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
+| `shop_menu_root` | 197 | `0` | `} else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
+| `shop_menu_root` | 204 | `0` | `} else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
+| `shop_menu_root` | 204 | `0` | `} else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
+| `shop_menu_buy` | 229 | `0` | `s32 input = 0;` | No prior pressed button bits at entry; used for input edge detection. |
+| `shop_menu_buy` | 233 | `1` | `while (PadRead(1) != 0)` | Preserve the ignored retail PadRead argument 1 and wait until no buttons remain pressed; the linked SDK uses global PadIdentifier. |
+| `shop_menu_buy` | 233 | `0` | `while (PadRead(1) != 0)` | Preserve the ignored retail PadRead argument 1 and wait until no buttons remain pressed; the linked SDK uses global PadIdentifier. |
+| `shop_menu_buy` | 238 | `0` | `found = 0;` | Start appending displayed entries at the first workspace row. |
+| `shop_menu_buy` | 240 | `0` | `if (inv[slot] != 0 && item_stock[KF_ITEM_STOCK_PLAYER][slot] < KF_ITEM_STACK_CAPACITY) {` | Any nonzero shop availability includes an item if the player-owned bank zero is below its named stack cap. |
+| `shop_menu_buy` | 241 | `0` | `for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)` | Copy all ten glyph halfwords, starting at zero, from the shared item-name row. |
+| `shop_menu_buy` | 248 | `0` | `for (slot = 0; slot < KF_ENUM_ENCODE(s32, KF_ITEM_VERDITE); slot++) {` | Append the remaining database IDs 0..41 after the 42..79 band; preserve retail display order. |
+| `shop_menu_buy` | 249 | `0` | `if (inv[slot] != 0 && item_stock[KF_ITEM_STOCK_PLAYER][slot] < KF_ITEM_STACK_CAPACITY) {` | Any nonzero shop availability includes an item if the player-owned bank zero is below its named stack cap. |
+| `shop_menu_buy` | 250 | `0` | `for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)` | Copy all ten glyph halfwords, starting at zero, from the shared item-name row. |
+| `shop_menu_buy` | 260 | `0` | `ctx.glyph_rows = &entries[0][0];` | Flat renderer input begins at the first glyph of the first row. |
+| `shop_menu_buy` | 260 | `0` | `ctx.glyph_rows = &entries[0][0];` | Flat renderer input begins at the first glyph of the first row. |
+| `shop_menu_buy` | 261 | `0` | `ctx.quantities = 0;` | Null quantity source disables count rendering in this shop list; availability still controls inclusion. |
+| `shop_menu_buy` | 264 | `0` | `if (ctx.entry_count != 0) {` | Only load/render a preview when the constructed list has an entry. |
+| `shop_menu_buy` | 265 | `0` | `if (menu_load_item_model(index[ctx.selected_index]) != 0)` | Any nonzero model-load result aborts the panel; retain the complete failure predicate. |
+| `shop_menu_buy` | 283 | `1` | `while (PadRead(1) != 0)` | Preserve the ignored retail PadRead argument 1 and wait until no buttons remain pressed; the linked SDK uses global PadIdentifier. |
+| `shop_menu_buy` | 283 | `0` | `while (PadRead(1) != 0)` | Preserve the ignored retail PadRead argument 1 and wait until no buttons remain pressed; the linked SDK uses global PadIdentifier. |
+| `shop_menu_buy` | 289 | `1` | `input = PadRead(1);` | Ignored retail call-site argument; this is not a controller-port selector. |
+| `shop_menu_buy` | 290 | `0` | `if (ctx.entry_count == 0) {` | Handle an empty list without reading a selected item. |
+| `shop_menu_buy` | 291 | `0` | `if (input != 0) {` | Any button press acknowledges an empty list and exits its panel. |
+| `shop_menu_buy` | 295 | `0` | `} else if ((input & PADLup) != 0 && (prev & PADLup) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
+| `shop_menu_buy` | 295 | `0` | `} else if ((input & PADLup) != 0 && (prev & PADLup) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
+| `shop_menu_buy` | 297 | `0` | `if (ctx.selected_index != 0) {` | Upward movement has not reached the first zero-based entry. |
+| `shop_menu_buy` | 299 | `0` | `if (ctx.cursor_row == 0)` | At the first visible row, scroll upward; otherwise move the cursor. Retail lays out the scroll arm first. |
+| `shop_menu_buy` | 304 | `1` | `ctx.selected_index = ctx.entry_count - 1;` | Wrap to the last zero-based entry before choosing the short-list or full-viewport arm; required for long lists too. |
+| `shop_menu_buy` | 306 | `0` | `ctx.scroll_offset = 0;` | Reset the viewport to start at the first entry. |
+| `shop_menu_buy` | 307 | `1` | `ctx.cursor_row = ctx.entry_count - 1;` | Bottom row of a list shorter than the viewport. |
+| `shop_menu_buy` | 310 | `1` | `ctx.cursor_row = ctx.visible_rows - 1;` | Last zero-based row of the full viewport. |
+| `shop_menu_buy` | 315 | `0` | `} else if ((input & PADLdown) != 0 && (prev & PADLdown) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
+| `shop_menu_buy` | 315 | `0` | `} else if ((input & PADLdown) != 0 && (prev & PADLdown) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
+| `shop_menu_buy` | 317 | `1` | `if (ctx.selected_index < ctx.entry_count - 1) {` | Test the last-entry boundary before moving downward or wrapping. |
+| `shop_menu_buy` | 319 | `1` | `if (ctx.cursor_row == ctx.visible_rows - 1)` | At the bottom visible row, scroll downward; otherwise move the cursor. Retail lays out the scroll arm first. |
+| `shop_menu_buy` | 324 | `0` | `ctx.selected_index = 0;` | Wrap to the first item in the list. |
+| `shop_menu_buy` | 325 | `0` | `ctx.scroll_offset = 0;` | Reset the viewport to start at the first entry. |
+| `shop_menu_buy` | 326 | `0` | `ctx.cursor_row = 0;` | Place the visible cursor on the first row after wrapping. |
+| `shop_menu_buy` | 328 | `0` | `if (menu_load_item_model(index[ctx.selected_index]) != 0)` | Any nonzero model-load result aborts the panel; retain the complete failure predicate. |
+| `shop_menu_buy` | 330 | `0` | `} else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
+| `shop_menu_buy` | 330 | `0` | `} else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
+| `shop_menu_buy` | 338 | `0` | `} else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
+| `shop_menu_buy` | 338 | `0` | `} else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
+| `shop_menu_buy` | 344 | `0` | `if (ctx.entry_count != 0)` | Only render a preview when the constructed list has an entry. |
+| `shop_menu_sell` | 375 | `0` | `s32 input = 0;` | No prior pressed button bits at entry; used for input edge detection. |
+| `shop_menu_sell` | 379 | `1` | `while (PadRead(1) != 0)` | Preserve the ignored retail PadRead argument 1 and wait until no buttons remain pressed; the linked SDK uses global PadIdentifier. |
+| `shop_menu_sell` | 379 | `0` | `while (PadRead(1) != 0)` | Preserve the ignored retail PadRead argument 1 and wait until no buttons remain pressed; the linked SDK uses global PadIdentifier. |
+| `shop_menu_sell` | 384 | `0` | `found = 0;` | Start appending displayed entries at the first workspace row. |
+| `shop_menu_sell` | 385 | `0` | `for (slot = 0; slot < KF_ENUM_ENCODE(s32, KF_ITEM_GOLD_CROSS); slot++) {` | Start with item zero and stop before Gold Cross ID 52; the Gold Cross and later key/quest-item band is excluded from selling. |
+| `shop_menu_sell` | 386 | `0` | `if (inv[slot] != 0) {` | Only possessed player items can become sale candidates. |
+| `shop_menu_sell` | 396 | `0` | `if (available[found] != 0) {` | After subtracting an equipped copy, retain the row only if another copy remains available. |
+| `shop_menu_sell` | 397 | `0` | `for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)` | Copy all ten glyph halfwords, starting at zero, from the shared item-name row. |
+| `shop_menu_sell` | 407 | `0` | `ctx.glyph_rows = &entries[0][0];` | Flat renderer input begins at the first glyph of the first row. |
+| `shop_menu_sell` | 407 | `0` | `ctx.glyph_rows = &entries[0][0];` | Flat renderer input begins at the first glyph of the first row. |
+| `shop_menu_sell` | 408 | `0` | `ctx.quantities = 0;` | Null quantity source disables count rendering in this shop list; availability still controls inclusion. |
+| `shop_menu_sell` | 411 | `0` | `if (ctx.entry_count != 0) {` | Only load/render a preview when the constructed list has an entry. |
+| `shop_menu_sell` | 412 | `0` | `if (menu_load_item_model(index[ctx.selected_index]) != 0)` | Any nonzero model-load result aborts the panel; retain the complete failure predicate. |
+| `shop_menu_sell` | 430 | `1` | `while (PadRead(1) != 0)` | Preserve the ignored retail PadRead argument 1 and wait until no buttons remain pressed; the linked SDK uses global PadIdentifier. |
+| `shop_menu_sell` | 430 | `0` | `while (PadRead(1) != 0)` | Preserve the ignored retail PadRead argument 1 and wait until no buttons remain pressed; the linked SDK uses global PadIdentifier. |
+| `shop_menu_sell` | 436 | `1` | `input = PadRead(1);` | Ignored retail call-site argument; this is not a controller-port selector. |
+| `shop_menu_sell` | 437 | `0` | `if (ctx.entry_count == 0) {` | Handle an empty list without reading a selected item. |
+| `shop_menu_sell` | 438 | `0` | `if (input != 0) {` | Any button press acknowledges an empty list and exits its panel. |
+| `shop_menu_sell` | 442 | `0` | `} else if ((input & PADLup) != 0 && (prev & PADLup) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
+| `shop_menu_sell` | 442 | `0` | `} else if ((input & PADLup) != 0 && (prev & PADLup) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
+| `shop_menu_sell` | 444 | `0` | `if (ctx.selected_index != 0) {` | Upward movement has not reached the first zero-based entry. |
+| `shop_menu_sell` | 446 | `0` | `if (ctx.cursor_row == 0)` | At the first visible row, scroll upward; otherwise move the cursor. Retail lays out the scroll arm first. |
+| `shop_menu_sell` | 451 | `1` | `ctx.selected_index = ctx.entry_count - 1;` | Wrap to the last zero-based entry before choosing the short-list or full-viewport arm; required for long lists too. |
+| `shop_menu_sell` | 453 | `0` | `ctx.scroll_offset = 0;` | Reset the viewport to start at the first entry. |
+| `shop_menu_sell` | 454 | `1` | `ctx.cursor_row = ctx.entry_count - 1;` | Bottom row of a list shorter than the viewport. |
+| `shop_menu_sell` | 457 | `1` | `ctx.cursor_row = ctx.visible_rows - 1;` | Last zero-based row of the full viewport. |
+| `shop_menu_sell` | 460 | `0` | `if (menu_load_item_model(index[ctx.selected_index]) != 0)` | Any nonzero model-load result aborts the panel; retain the complete failure predicate. |
+| `shop_menu_sell` | 462 | `0` | `} else if ((input & PADLdown) != 0 && (prev & PADLdown) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
+| `shop_menu_sell` | 462 | `0` | `} else if ((input & PADLdown) != 0 && (prev & PADLdown) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
+| `shop_menu_sell` | 464 | `1` | `if (ctx.selected_index < ctx.entry_count - 1) {` | Test the last-entry boundary before moving downward or wrapping. |
+| `shop_menu_sell` | 466 | `1` | `if (ctx.cursor_row == ctx.visible_rows - 1)` | At the bottom visible row, scroll downward; otherwise move the cursor. Retail lays out the scroll arm first. |
+| `shop_menu_sell` | 471 | `0` | `ctx.selected_index = 0;` | Wrap to the first item in the list. |
+| `shop_menu_sell` | 472 | `0` | `ctx.scroll_offset = 0;` | Reset the viewport to start at the first entry. |
+| `shop_menu_sell` | 473 | `0` | `ctx.cursor_row = 0;` | Place the visible cursor on the first row after wrapping. |
+| `shop_menu_sell` | 475 | `0` | `if (menu_load_item_model(index[ctx.selected_index]) != 0)` | Any nonzero model-load result aborts the panel; retain the complete failure predicate. |
+| `shop_menu_sell` | 477 | `0` | `} else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
+| `shop_menu_sell` | 477 | `0` | `} else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
+| `shop_menu_sell` | 480 | `0` | `} else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
+| `shop_menu_sell` | 480 | `0` | `} else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {` | A named current button bit is set and its previous bit is clear: zero/nonzero tests detect one rising edge. |
+| `shop_menu_sell` | 486 | `0` | `if (ctx.entry_count != 0)` | Only render a preview when the constructed list has an entry. |
 | `item_pickup_confirm` | 509 | `0` | `s32 input = 0;` | Initial button word has no pressed bits for subsequent edge detection. |
 | `item_pickup_confirm` | 515 | `0` | `if (menu_load_item_model(item_id) != 0)` | Any nonzero model-loader status aborts pickup with the existing not-acquired result. |
 | `item_pickup_confirm` | 520 | `0` | `accept_label.codes[0] = 0x53;` | Consecutive glyph/terminator position in the take (とる) or cancel (やめる) label, decoded in the retail font audit; numeric codes remain text asset data. |

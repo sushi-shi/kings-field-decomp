@@ -444,7 +444,7 @@ KF_ENUM_END(KfMenuModelAllocation)
 extern KfMenuModelAllocation menu_item_model_allocation_pending;
 
 extern void item_load_database(void);
-extern void item_menu_root(KF_ENUM_PARAM(KfItemStockBank, s32) shop_bank);
+extern void shop_menu_root(KF_ENUM_PARAM(KfItemStockBank, s32) shop_bank);
 extern KfMenuResult item_pickup_confirm(KF_ENUM_PARAM(KfObjectId, s32) item_id);
 extern void menu_add_frame_quad(void);
 extern void menu_add_marker_quad(void);

@@ -103,8 +103,8 @@ native/traced parity; root and pickup reproduce all 326 retail words.
 
 | GAME function | Retail bytes / strict baseline | References and first difference |
 | --- | --- | --- |
-| `80021538 item_menu_buy` | 1476 / 99.769646% | 21 direct calls, 12 internal jumps, 11 address pairs; +30 selects s2 instead of s1 for the pending selection. |
-| `80021afc item_menu_sell` | 1280 / 99.609375% | 20 direct calls, 11 internal jumps, 5 address pairs; +2c initializes input in s2 instead of s3. |
+| `80021538 shop_menu_buy` | 1476 / 99.769646% | 21 direct calls, 12 internal jumps, 11 address pairs; +30 selects s2 instead of s1 for the pending selection. |
+| `80021afc shop_menu_sell` | 1280 / 99.609375% | 20 direct calls, 11 internal jumps, 5 address pairs; +2c initializes input in s2 instead of s3. |
 
 Both frames are 1856 bytes with seven saved S registers and ra. They retain
 signed-word shop arguments from the root's a0 delay slots, byte stock and item

@@ -48,9 +48,9 @@ per-field tests are introduced.
 | GAME address / bytes | Function | Starting strict % | Constraint |
 | --- | --- | --- | --- |
 | `0x80020cfc / 1500` | `item_load_database` | 99.746666 | Preserve captured input edges, call/return delay slots, ordered referents and signed/unsigned storage; named constants do not alter values. |
-| `0x800212d8 / 608` | `item_menu_root` | 100.0 | Preserve captured input edges, call/return delay slots, ordered referents and signed/unsigned storage; named constants do not alter values. |
-| `0x80021538 / 1476` | `item_menu_buy` | 97.20054 | Preserve captured input edges, call/return delay slots, ordered referents and signed/unsigned storage; named constants do not alter values. |
-| `0x80021afc / 1280` | `item_menu_sell` | 96.77187 | Preserve captured input edges, call/return delay slots, ordered referents and signed/unsigned storage; named constants do not alter values. |
+| `0x800212d8 / 608` | `shop_menu_root` | 100.0 | Preserve captured input edges, call/return delay slots, ordered referents and signed/unsigned storage; named constants do not alter values. |
+| `0x80021538 / 1476` | `shop_menu_buy` | 97.20054 | Preserve captured input edges, call/return delay slots, ordered referents and signed/unsigned storage; named constants do not alter values. |
+| `0x80021afc / 1280` | `shop_menu_sell` | 96.77187 | Preserve captured input edges, call/return delay slots, ordered referents and signed/unsigned storage; named constants do not alter values. |
 | `0x80027b7c / 732` | `menu_draw_item_detail` | 91.28416 | Full-word price flag; zero buys and nonzero sells; item*4 plus (shop-1)*2 selects an unsigned halfword. |
 | `0x80028380 / 852` | `menu_list_interact` | 87.24413 | Preserve captured input edges, call/return delay slots, ordered referents and signed/unsigned storage; named constants do not alter values. |
 | `0x80036e38 / 200` | `menu_enter_mode` | 100.0 | Preserve captured input edges, call/return delay slots, ordered referents and signed/unsigned storage; named constants do not alter values. |
@@ -132,9 +132,9 @@ owner added a data-owning unit. No tooling implementation or flake changed.
 | GAME address | Function | Final strict % | Verdict |
 | --- | --- | --- | --- |
 | `0x80020cfc` | `item_load_database` | 99.746666 | Unchanged partial match |
-| `0x800212d8` | `item_menu_root` | 100.0 | Exact; 152 raw retail words |
-| `0x80021538` | `item_menu_buy` | 97.20054 | Unchanged partial match |
-| `0x80021afc` | `item_menu_sell` | 96.77187 | Unchanged partial match |
+| `0x800212d8` | `shop_menu_root` | 100.0 | Exact; 152 raw retail words |
+| `0x80021538` | `shop_menu_buy` | 97.20054 | Unchanged partial match |
+| `0x80021afc` | `shop_menu_sell` | 96.77187 | Unchanged partial match |
 | `0x80027b7c` | `menu_draw_item_detail` | 91.28416 | Unchanged partial match |
 | `0x80028380` | `menu_list_interact` | 87.24413 | Unchanged partial match |
 | `0x80036e38` | `menu_enter_mode` | 100.0 | Exact; 50 raw retail words |

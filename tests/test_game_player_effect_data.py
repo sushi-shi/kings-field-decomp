@@ -29,7 +29,7 @@ FUNCTION = 'player_update'
 CALLEES = (
     'player_death_update', 'player_death_update_reverse_fade',
     'collision_adjust_cell_occupancy', 'PadRead', 'display_show_system_screen',
-    'menu_enter_mode', 'player_use_item', 'pool_release_all', 'audio_close_vab',
+    'menu_enter_mode', 'player_use_item', 'animation_cache_release_all', 'audio_close_vab',
     'map_load_floor_wrapper', 'player_sync_position_to_map', 'player_equip_weapon',
     'player_select_magic', 'map_interaction_dispatch', 'SquareRoot0',
     'player_move_horizontal', 'player_update_view_bob', 'player_begin_weapon_attack',

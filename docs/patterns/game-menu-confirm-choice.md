@@ -48,9 +48,9 @@ dialog files and update the changed renderer/pickup accounting.
 | --- | --- | ---: |
 | `0x80020b4c / 432` | `item_load_floor_placements` | 98.888885% |
 | `0x80020cfc / 1500` | `item_load_database` | 99.746666% |
-| `0x800212d8 / 608` | `item_menu_root` | 100.000000% |
-| `0x80021538 / 1476` | `item_menu_buy` | 99.769646% |
-| `0x80021afc / 1280` | `item_menu_sell` | 99.609375% |
+| `0x800212d8 / 608` | `shop_menu_root` | 100.000000% |
+| `0x80021538 / 1476` | `shop_menu_buy` | 99.769646% |
+| `0x80021afc / 1280` | `shop_menu_sell` | 99.609375% |
 | `0x80021ffc / 696` | `item_pickup_confirm` | 100.000000% |
 | `0x80022608 / 1908` | `menu_use_item_panel` | 99.482180% |
 | `0x8002317c / 1328` | `menu_magic_panel` | 100.000000% |
@@ -103,8 +103,8 @@ symptoms of existing differences, without assigning an optimizer cause.
 | --- | --- | --- |
 | `item_load_floor_placements` | `0x80020b84` | `beq v1,v0,80020bb0` / `beq v1,v0,80020bb4` |
 | `item_load_database` | `0x800211b8` | `ori v1,zero,0x1e` / `ori a2,zero,0x1e` |
-| `item_menu_buy` | `0x80021568` | `addiu s2,zero,-99` / `addiu s1,zero,-99` |
-| `item_menu_sell` | `0x80021b28` | `move s2,zero` / `move s3,zero` |
+| `shop_menu_buy` | `0x80021568` | `addiu s2,zero,-99` / `addiu s1,zero,-99` |
+| `shop_menu_sell` | `0x80021b28` | `move s2,zero` / `move s3,zero` |
 | `menu_use_item_panel` | `0x80022ccc` | `lhu v0,0x792(v0)` / `addiu v0,v0,0x792` |
 | `menu_spell_select` | `0x80023ec0` | `move s3,zero` / `move s4,zero` |
 | `menu_drop_item` | `0x800249cc` | `move s2,zero` / `move s3,zero` |

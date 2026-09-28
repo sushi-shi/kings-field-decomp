@@ -86,9 +86,9 @@ their existing residues; no function is newly exact or banked.
 | GAME VA / retail bytes | Function | Before = after % | Source words / calls / address pairs |
 | --- | --- | --- | --- |
 | `0x80020cfc / 1500` | `item_load_database` | 99.7467 | 375 / 5 / 10 |
-| `0x800212d8 / 608` | `item_menu_root` | 100 | 152 / 25 / 0 |
-| `0x80021538 / 1476` | `item_menu_buy` | 99.7696 | 369 / 21 / 11 |
-| `0x80021afc / 1280` | `item_menu_sell` | 99.6094 | 320 / 20 / 5 |
+| `0x800212d8 / 608` | `shop_menu_root` | 100 | 152 / 25 / 0 |
+| `0x80021538 / 1476` | `shop_menu_buy` | 99.7696 | 369 / 21 / 11 |
+| `0x80021afc / 1280` | `shop_menu_sell` | 99.6094 | 320 / 20 / 5 |
 | `0x800222b4 / 148` | `menu_save_confirm` | 100 | 37 / 7 / 2 |
 | `0x80022348 / 704` | `menu_root` | 96.8636 | 175 / 28 / 1 |
 | `0x80022608 / 1908` | `menu_use_item_panel` | 99.4822 | 477 / 24 / 27 |

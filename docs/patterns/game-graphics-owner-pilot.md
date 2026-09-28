@@ -528,12 +528,12 @@ source, DATA claim, signature, profile or relocation inventory changes.
 
 | GAME function | Retail bytes; frame; calls | Preserved evidence |
 | --- | --- | --- |
-| `80020978 pool_reset` | 48; leaf; 0 | Clear state and cached-vertex pointer across twelve 20-byte records; unsigned-halfword countdown, pointer step in branch slot. |
-| `800209a8 pool_mark_allocated` | 60; leaf; 0 | Signed-halfword state read; change every nonzero state to stale 1, retaining the twelve-record scan and delay slots. |
-| `80020a2c pool_release_all` | 108; 32; 1 | Signed-halfword 11-to-minus-one loop, release nonzero states, preserve repeated decrement and record argument in call slot. |
-| `80020a98 pool_release_stale` | 108; 40; 1 | Unsigned-halfword twelve-count loop, release only state 1; decrement in predicate slot and record step in backedge slot. |
-| `80020b04 pool_allocate` | 72; leaf; 0 | Return first free record after setting clip=255; do not mark it live. Exhaustion returns null through the validated internal jump. |
-| `800209e4 pool_record_release` | 72; 24; 1 | Independent control: clear state and caller's slot, free a nonnull vertex allocation, then clear that pointer. |
+| `80020978 animation_cache_reset` | 48; leaf; 0 | Clear state and cached-vertex pointer across twelve 20-byte records; unsigned-halfword countdown, pointer step in branch slot. |
+| `800209a8 animation_cache_mark_stale` | 60; leaf; 0 | Signed-halfword state read; change every nonzero state to stale 1, retaining the twelve-record scan and delay slots. |
+| `80020a2c animation_cache_release_all` | 108; 32; 1 | Signed-halfword 11-to-minus-one loop, release nonzero states, preserve repeated decrement and record argument in call slot. |
+| `80020a98 animation_cache_release_stale` | 108; 40; 1 | Unsigned-halfword twelve-count loop, release only state 1; decrement in predicate slot and record step in backedge slot. |
+| `80020b04 animation_cache_allocate` | 72; leaf; 0 | Return first free record after setting clip=255; do not mark it live. Exhaustion returns null through the validated internal jump. |
+| `800209e4 animation_cache_release` | 72; 24; 1 | Independent control: clear state and caller's slot, free a nonnull vertex allocation, then clear that pointer. |
 
 All scans have one validated pool address pair; only allocation has an internal
 J relocation. None has strings, candidate outgoing references or unresolved

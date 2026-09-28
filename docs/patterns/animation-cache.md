@@ -10,7 +10,7 @@ The binder starts at 90.793990% objdiff; the six lifecycle functions start at
 100%. The plan is to recover record semantics and storage first, compare that
 change independently, then test consolidation of the contiguous run.
 
-The binder is the only proven caller of `pool_allocate` and the only writer of
+The binder is the only proven caller of `animation_cache_allocate` and the only writer of
 the asset, clip, keyframe and rest-object metadata. It owns the vertex
 allocation and installs its record in a caller-provided slot. Release clears
 that same slot before freeing the cached vertices. This shared state and
@@ -34,10 +34,10 @@ the record by changing state.
 | `0x06` | `u16 keyframe_index` | Compared with and updated from the selected keyframe index |
 | `0x08` | `struct KfMorphObject *rest_morph` | Asset base plus the keyframe's rest-object table entry |
 | `0x0c` | `SVECTOR *cached_vertices` | Allocation size is `vertex_count << 3`; passed to `gteMIMefunc` |
-| `0x10` | `struct KfPoolRecord **owner_slot` | Binder stores the anchor address; release clears the pointer there |
+| `0x10` | `struct KfAnimationCacheRecord **owner_slot` | Binder stores the anchor address; release clears the pointer there |
 
 Five lifecycle scans visit twelve records at a 20-byte stride. The last field
-ends at byte 20. Thus `GAME.EXE:0x800910c0` owns a complete `KfPoolRecord[12]`,
+ends at byte 20. Thus `GAME.EXE:0x800910c0` owns a complete `KfAnimationCacheRecord[12]`,
 size `0xf0`, ending at `0x800911b0`. This is direct loop/field evidence, not an
 extent inferred solely from the next global. The adjacent projected-vertex
 and morph-scratch arrays still have only referenced-prefix extents in the
@@ -47,7 +47,7 @@ inventory; this campaign does not invent their capacities.
 `SVECTOR`. The morph object is forward-declared there, with its private format
 definition in the owner source. `game/render.h` includes the pool interface;
 it no longer owns a duplicate binder declaration. The caller-slot campaign
-below recovers the five object families and the typed `KfPoolRecord **` API.
+below recovers the five object families and the typed `KfAnimationCacheRecord **` API.
 The implementation includes the asset, rendering, memory, pool and vendor
 interfaces directly, without the umbrella `game.h`.
 
@@ -61,7 +61,7 @@ uninitialized incoming `$s5` keyframe index visible in retail.
 
 The two word-copy statements per vertex are retained, together with the
 scratch-array plus-eight referent and the extra-vector save/blend/restore.
-The lifecycle counters remain `u16`, except `pool_release_all`, whose
+The lifecycle counters remain `u16`, except `animation_cache_release_all`, whose
 11-to-minus-one loop has explicit signed-halfword extension in retail.
 Record advances in branch delay slots and framed return delay slots remain
 part of the comparison, not detached padding.
@@ -130,10 +130,10 @@ changing record extents, argument widths, control flow, constants or returns.
 | `KfPlayerState` | `0x74` | `weapon_animation_cache` |
 | `KfEffectSprite` | `0x18` | `animation_cache` |
 
-Every field is a `KfPoolRecord *`, and each binder call passes its address.
+Every field is a `KfAnimationCacheRecord *`, and each binder call passes its address.
 The binder loads the record pointer from that slot, stores the slot address
 in `record->owner_slot`, and installs the new record through the slot.
-`pool_record_release` clears it through the saved slot address. Thus these
+`animation_cache_release` clears it through the saved slot address. Thus these
 are not private byte buffers, integers or pointers directly to vertex data.
 The zero/one/record binder return remains unchanged; this campaign does not
 pretend the tagged result is always a dereferenceable record pointer.
@@ -142,7 +142,7 @@ The two effect views retain the same field type and offset. Map events split
 the old six-byte `unknown_3a` span into two opaque bytes and the pointer at
 `0x3c`. The eight-byte rotation view at `0x34` ends exactly before that pointer;
 `rotation_target` remains at `0x40`. All six structure sizes are unchanged.
-Headers needing only the pointer forward-declare `struct KfPoolRecord`.
+Headers needing only the pointer forward-declare `struct KfAnimationCacheRecord`.
 
 `player_equip_weapon` clears the weapon slot, and `actor_pool_clear` clears
 each actor slot. `save_file_read_slot` preserves the live weapon buffer and

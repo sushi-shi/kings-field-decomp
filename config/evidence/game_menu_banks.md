@@ -21,9 +21,9 @@ game_semantic_menu_window_layouts.tsv. Source history includes `110ec5b`,
 | --- | --- | ---: | --- |
 | 80020b4c / 1b0 | item_load_floor_placements | 98.888885 | Unchanged placement-pointer input, ffff sentinel, 12-byte source and 24-byte destination records; rand remains an external provider. |
 | 80020cfc / 5dc | item_load_database | 99.746666 | No arguments; one game_main_loop caller; six exact copy extents and two resource strings prove the separately addressed banks. |
-| 800212d8 / 260 | item_menu_root | 100 | Unchanged integer context; window 7 / three-row selector and buy/sell dispatch. Exact unit control. |
-| 80021538 / 5c4 | item_menu_buy | 97.200540 | Unchanged shop context; item*20 names and unsigned halfword prices at item*4+column*2. |
-| 80021afc / 500 | item_menu_sell | 96.771870 | Unchanged shop context; inventory filtering and the separate sell-price bank. |
+| 800212d8 / 260 | shop_menu_root | 100 | Unchanged integer context; window 7 / three-row selector and buy/sell dispatch. Exact unit control. |
+| 80021538 / 5c4 | shop_menu_buy | 97.200540 | Unchanged shop context; item*20 names and unsigned halfword prices at item*4+column*2. |
+| 80021afc / 500 | shop_menu_sell | 96.771870 | Unchanged shop context; inventory filtering and the separate sell-price bank. |
 | 80021ffc / 2b8 | item_use_confirm | 100 | Unchanged item input and integer outcome; yes/no menu. Exact unit control. |
 | 8002ad6c / 8c | menu_list_init | 93.000000 | Leaf, no strings/calls; a0=list, a1=window, a2=row. Twenty glyph bytes begin at window*264+row*24+28. |
 

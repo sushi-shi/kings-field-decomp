@@ -13,7 +13,7 @@
 #include <psyq/sdk.h>
 #include <kf/lib/math.h>
 
-struct KfPoolRecord;
+struct KfAnimationCacheRecord;
 
 /* Shared forward probe and door-facing policy for interaction and item use. */
 enum {
@@ -435,7 +435,7 @@ typedef struct KfMapEvent {
     u16 unknown_22;
     VECTOR reference_position;
     SVECTOR rotation;
-    struct KfPoolRecord *animation_cache;
+    struct KfAnimationCacheRecord *animation_cache;
     s16 rotation_target;
     u16 unknown_42;
 } KfMapEvent;

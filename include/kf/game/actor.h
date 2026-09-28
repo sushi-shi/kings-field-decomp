@@ -15,7 +15,7 @@
 #include <kf/lib/audio.h>
 #include <kf/lib/math.h>
 
-struct KfPoolRecord;
+struct KfAnimationCacheRecord;
 
 enum {
     KF_ACTOR_DEFINITION_COUNT = 12,
@@ -298,7 +298,7 @@ typedef struct KfActor {
     s16 unknown_1a;
     VECTOR position;
     KfRotation rotation;
-    struct KfPoolRecord *animation_cache;
+    struct KfAnimationCacheRecord *animation_cache;
     KfActorActionProgress action_progress;
     KfActorCollisionState collision_state;
     s16 movement_yaw;

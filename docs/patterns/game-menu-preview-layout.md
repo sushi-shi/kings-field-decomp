@@ -54,8 +54,8 @@ refresh the existing complete detail ledger and source-wide accounting.
 | GAME VA / bytes | Function | Strict baseline | Calls / branches |
 | --- | --- | ---: | --- |
 | `0x8001ed38 / 88` | `menu_render_item_model` | 100.000000% | 7 / 0 |
-| `0x80021538 / 1476` | `item_menu_buy` | 99.769646% | 21 / 35 |
-| `0x80021afc / 1280` | `item_menu_sell` | 99.609375% | 20 / 36 |
+| `0x80021538 / 1476` | `shop_menu_buy` | 99.769646% | 21 / 35 |
+| `0x80021afc / 1280` | `shop_menu_sell` | 99.609375% | 20 / 36 |
 | `0x80022608 / 1908` | `menu_use_item_panel` | 99.482180% | 24 / 48 |
 | `0x800249a8 / 1212` | `menu_drop_item` | 99.547850% | 20 / 36 |
 | `0x800279c4 / 440` | `menu_item_model_preview` | 98.181816% | 10 / 2 |
@@ -107,8 +107,8 @@ The six partial GAME controls keep their first raw difference:
 
 | Function | GAME site | Candidate / retail |
 | --- | --- | --- |
-| `item_menu_buy` | `80021568` | `li s2,-99` / `li s1,-99` |
-| `item_menu_sell` | `80021b28` | `move s2,zero` / `move s3,zero` |
+| `shop_menu_buy` | `80021568` | `li s2,-99` / `li s1,-99` |
+| `shop_menu_sell` | `80021b28` | `move s2,zero` / `move s3,zero` |
 | `menu_use_item_panel` | `80022ccc` | `lhu v0,0x792(v0)` / `addiu v0,v0,0x792` |
 | `menu_drop_item` | `800249cc` | `move s2,zero` / `move s3,zero` |
 | `menu_item_model_preview` | `80027a88` | `sll v0,v0,2` / `lui v1,0x8006` |
@@ -127,8 +127,8 @@ artifact failures. No compiler-control tests or size assertions were added.
 | Function | Final strict score | Verdict |
 | --- | ---: | --- |
 | `menu_render_item_model` | 100.000000% | Exact, unchanged |
-| `item_menu_buy` | 99.769646% | Partial, unchanged |
-| `item_menu_sell` | 99.609375% | Partial, unchanged |
+| `shop_menu_buy` | 99.769646% | Partial, unchanged |
+| `shop_menu_sell` | 99.609375% | Partial, unchanged |
 | `menu_use_item_panel` | 99.482180% | Partial, unchanged |
 | `menu_drop_item` | 99.547850% | Partial, unchanged |
 | `menu_item_model_preview` | 98.181816% | Partial, unchanged |

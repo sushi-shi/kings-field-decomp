@@ -9,13 +9,13 @@ hypothesis, not permission to transplant its distinct frame loop.
 
 | GAME function | Extent | Starting strict objdiff | Retail reference snapshot |
 | --- | --- | --- | --- |
-| `80021538 item_menu_buy` | 1476 bytes | 97.200540% | 21 proven calls, 12 validated internal jumps, 11 validated HI16/LO16 pairs |
-| `80021afc item_menu_sell` | 1280 bytes | 96.771870% | 20 proven calls, 11 validated internal jumps, 5 validated HI16/LO16 pairs |
+| `80021538 shop_menu_buy` | 1476 bytes | 97.200540% | 21 proven calls, 12 validated internal jumps, 11 validated HI16/LO16 pairs |
+| `80021afc shop_menu_sell` | 1280 bytes | 96.771870% | 20 proven calls, 11 validated internal jumps, 5 validated HI16/LO16 pairs |
 
 Both are claims in `game.item`, whose four other functions are controls:
 `80020b4c item_load_floor_placements` 98.888885%,
 `80020cfc item_load_database` 99.746666%,
-`800212d8 item_menu_root` 100%, and `80021ffc item_pickup_confirm` 100%.
+`800212d8 shop_menu_root` 100%, and `80021ffc item_pickup_confirm` 100%.
 Do not change their source, module data owners or existing RODATA claim.
 The six semantic views and baseline comparison are in `build/shop-*.log`.
 Source history `14298ac`, the source-shapes note and the subsequent
@@ -76,8 +76,8 @@ needs a fake local, forced register, inline assembly or compiler-profile change.
 
 | GAME function | Final strict objdiff | Complete words | Remaining differing words | Verdict |
 | --- | --- | --- | --- | --- |
-| `80021538 item_menu_buy` | 99.769646% | 369 / 369 | 17 | Non-exact; not banked |
-| `80021afc item_menu_sell` | 99.609375% | 320 / 320 | 25 | Non-exact; not banked |
+| `80021538 shop_menu_buy` | 99.769646% | 369 / 369 | 17 | Non-exact; not banked |
+| `80021afc shop_menu_sell` | 99.609375% | 320 / 320 | 25 | Non-exact; not banked |
 
 Fresh compilation followed by explicit numeric relocation resolution reproduces
 all other retail words. The delinked target itself was independently resolved

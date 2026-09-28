@@ -207,7 +207,7 @@ pub struct PoolRecord {
     pub rest_morph: u32,
     /// Encoded PSX address of the cached `SVECTOR` array.
     pub cached_vertices: u32,
-    /// Encoded PSX address of the owner's `KfPoolRecord *` field.
+    /// Encoded PSX address of the owner's `KfAnimationCacheRecord *` field.
     pub owner_slot: u32,
 }
 
@@ -379,7 +379,7 @@ pub fn prepare_instance(
     if needs_record {
         events[event] = LifecycleEvent::AllocateRecord { available: true };
         event += 1;
-        // `pool_allocate` initializes only this field before returning a free
+        // `animation_cache_allocate` initializes only this field before returning a free
         // record; all other bytes retain their caller-provided contents.
         record.clip_index = 0xff;
     } else {

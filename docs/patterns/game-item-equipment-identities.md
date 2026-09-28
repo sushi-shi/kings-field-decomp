@@ -39,8 +39,8 @@ explain retained special-item timing/bonus values without inventing tuning.
 | GAME address / bytes | Function | Starting strict % | Constraint |
 | --- | --- | --- | --- |
 | `0x80020cfc / 1500` | `item_load_database` | 99.746666 | STAT.DAT loader fixes the 80-name row origin and 20-byte stride; item labels and menu labels are independent resource views. |
-| `0x80021538 / 1476` | `item_menu_buy` | 97.20054 | Control: shop ordering and availability reads must remain unchanged. |
-| `0x80021afc / 1280` | `item_menu_sell` | 96.77187 | Propagate corrected equipped-ID field identities through exclusion tests; preserve byte quantities and all sold-item rules. |
+| `0x80021538 / 1476` | `shop_menu_buy` | 97.20054 | Control: shop ordering and availability reads must remain unchanged. |
+| `0x80021afc / 1280` | `shop_menu_sell` | 96.77187 | Propagate corrected equipped-ID field identities through exclusion tests; preserve byte quantities and all sold-item rules. |
 | `0x80021ffc / 696` | `item_pickup_confirm` | 100.0 | Control: generic item-ID handling and stack-capacity protocol remain unchanged. |
 | `0x800236ac / 556` | `menu_option_root` | 100.0 | Retail menu row2=shield,row3=head,row4=body; Full Plate21 blocks arm/leg rows, not a special helmet. |
 | `0x800238d8 / 1476` | `menu_equip_select` | 97.89973 | Correct category names/range constants/slot calls together. Raw rows2/3/4 store to player+92/+90/+91 and pass slot4/0/1. Full Plate clears arms/legs. |

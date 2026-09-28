@@ -359,7 +359,7 @@ Canonical-owner functions, each retaining strict **100%**:
 
 Follow-up functions, each retaining strict **100%**:
 
-- GAME: `render_bind_animated_instance`, `pool_reset`, `tmd_set_current_vertices`,
+- GAME: `render_bind_animated_instance`, `animation_cache_reset`, `tmd_set_current_vertices`,
   `tmd_select_object_vertices`, `tmd_project_vertices`, `tmd_project_vertices_shift`,
   `tmd_transform_vertices`, `map_object_pool_clear`, `map_object_pool_load`,
   `map_restore_floor_state`.

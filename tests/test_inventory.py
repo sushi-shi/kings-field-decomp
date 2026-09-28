@@ -364,7 +364,7 @@ class InventoryTests(unittest.TestCase):
             with self.subTest(structure=structure):
                 self.assertEqual(structures[structure].size, size)
                 self.assertEqual(_structure_field(structure, offset),
-                                 (name, "KfPoolRecord *", 4))
+                                 (name, "KfAnimationCacheRecord *", 4))
         # The rotation view occupies 0x34..0x3b, not the cache pointer.
         self.assertEqual(_structure_field("KfMapEvent", 0x34),
                          ("rotation", "SVECTOR", 8))
@@ -374,13 +374,13 @@ class InventoryTests(unittest.TestCase):
     def test_animation_binder_slot_api_belongs_to_pool_header(self) -> None:
         identity = load_function_identities(RETAIL_CONFIG)[("GAME.EXE", 0x800205D4)]
         self.assertEqual(identity.parameters,
-                         "KfPoolRecord **owner_slot;u16 asset_index;"
+                         "KfAnimationCacheRecord **owner_slot;u16 asset_index;"
                          "KF_ENUM_PARAM(KfAnimationClip, u16) clip_index;"
                          "u16 phase;u16 vertex_count")
         pool_header = (REPO / "include/kf/game/pool.h").read_text()
         render_header = (REPO / "include/kf/game/render.h").read_text()
-        self.assertIn("extern KfPoolRecord *render_bind_animated_instance(\n"
-                      "    KfPoolRecord **owner_slot", pool_header)
+        self.assertIn("extern KfAnimationCacheRecord *render_bind_animated_instance(\n"
+                      "    KfAnimationCacheRecord **owner_slot", pool_header)
         self.assertNotIn("extern u16 *render_bind_animated_instance", render_header)
         self.assertIn("#include <kf/game/pool.h>", render_header)
 
@@ -400,17 +400,17 @@ class InventoryTests(unittest.TestCase):
             (0x06, "keyframe_index", "u16", 2),
             (0x08, "rest_morph", "KfMorphObject *", 4),
             (0x0C, "cached_vertices", "SVECTOR *", 4),
-            (0x10, "owner_slot", "KfPoolRecord **", 4),
+            (0x10, "owner_slot", "KfAnimationCacheRecord **", 4),
         )
         for offset, name, datatype, size in fields:
-            self.assertEqual(_structure_field("KfPoolRecord", offset),
+            self.assertEqual(_structure_field("KfAnimationCacheRecord", offset),
                              (name, datatype, size))
         game = index("GAME.EXE")
         datum = game.data_owner(0x800910C0)
         self.assertEqual((datum.name, datum.datatype, datum.size),
                          ("game_graphics_runtime", "KfGraphicsRuntimeGame", 0x249CC))
         self.assertEqual(_structure_field('KfGraphicsRuntimeGame', 0x20228),
-                         ('pool_records', 'KfPoolRecord[12]', 0xF0))
+                         ('pool_records', 'KfAnimationCacheRecord[12]', 0xF0))
         claims = load_manifest().by_name()["game.pool"].data
         self.assertEqual(claims, ())
         self.assertEqual(game.data_owner(0x800911AF), datum)

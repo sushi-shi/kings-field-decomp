@@ -34,8 +34,8 @@ fixed word parameters remain word parameters in the retail C view.
 
 | Function | Address / extent | Retail frame bytes | Intended scope |
 | --- | --- | ---: | --- |
-| `item_menu_buy` | `0x80021538 / 0x5c4` | 1856 | Byte item-list storage; integer iteration and mixed result boundaries; typed item calls. |
-| `item_menu_sell` | `0x80021afc / 0x500` | 1856 | Byte item-list storage; integer iteration and mixed result boundaries; typed item calls. |
+| `shop_menu_buy` | `0x80021538 / 0x5c4` | 1856 | Byte item-list storage; integer iteration and mixed result boundaries; typed item calls. |
+| `shop_menu_sell` | `0x80021afc / 0x500` | 1856 | Byte item-list storage; integer iteration and mixed result boundaries; typed item calls. |
 | `item_pickup_confirm` | `0x80021ffc / 0x2b8` | 96 | Typed item argument with unchanged legacy signed-word ABI; numeric table/resource boundary. |
 | `map_restore_floor_state` | `0x80035e44 / 0x69c` | 40 | Shared item constants/fields; encode table indices where consumed. |
 | `map_action_script_floor1` | `0x800343e0 / 0x58` | 24 | Shared item constants/fields; encode table indices where consumed. |

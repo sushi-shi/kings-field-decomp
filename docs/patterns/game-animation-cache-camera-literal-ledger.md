@@ -41,17 +41,17 @@ Named definitions and ADDRESS/DATA/RODATA claims are excluded. Every row represe
 | `render_bind_animated_instance` | 186 | `0` | `((u32 *)scratch_vertex)[0] = saved_xy_word;` | Restore the first X/Y word after the blend; zero is the ordinary vector-lane index. |
 | `render_bind_animated_instance` | 187 | `1` | `((u32 *)scratch_vertex)[1] = saved_z_pad_word;` | Restore the second Z/alignment word after the blend; one is the ordinary vector-lane index. |
 | `render_bind_animated_instance` | 189 | `1` | `tmd_set_current_vertices(&((SVECTOR *)(game_graphics_runtime.unknown_projection_morph_20318 + MORPH_SCRATCH_OFFSET_IN_PROJECTION_STORAGE))[1]);` | Publish vertices after the extra leading vector; the same one-vector displacement is used by the initial scratch copy. |
-| `pool_reset` | 202 | `0` | `record->cached_vertices = 0;` | Clear an owned vertex pointer after reset or release; zero denotes null rather than a cache state. |
-| `pool_reset` | 204 | `0` | `} while (--records_left != 0);` | Exhaust the named twelve-record capacity with the existing pre-decrement loop. |
-| `pool_mark_allocated` | 218 | `0` | `} while (--records_left != 0);` | Exhaust the named twelve-record capacity with the existing pre-decrement loop. |
-| `pool_record_release` | 225 | `0` | `*record->owner_slot = 0;` | Clear the owning instance cache pointer on release. |
-| `pool_record_release` | 226 | `0` | `if (record->cached_vertices != 0) {` | Free only a nonnull owned vertex allocation. |
-| `pool_record_release` | 228 | `0` | `record->cached_vertices = 0;` | Clear an owned vertex pointer after reset or release; zero denotes null rather than a cache state. |
-| `pool_release_all` | 243 | `1` | `for (records_left = KF_ANIMATION_CACHE_CAPACITY - 1; records_left != -1; records_left--) {` | Capacity minus one initializes the signed countdown; minus one terminates after all twelve records. These are loop bounds, not lifecycle values. |
-| `pool_release_all` | 243 | `1` | `for (records_left = KF_ANIMATION_CACHE_CAPACITY - 1; records_left != -1; records_left--) {` | Capacity minus one initializes the signed countdown; minus one terminates after all twelve records. These are loop bounds, not lifecycle values. |
-| `pool_release_stale` | 267 | `0` | `} while (--records_left != 0);` | Exhaust the named twelve-record capacity with the existing pre-decrement loop. |
-| `pool_allocate` | 282 | `0` | `} while (--records_left != 0);` | Exhaust the named twelve-record capacity with the existing pre-decrement loop. |
-| `pool_allocate` | 283 | `0` | `return 0;` | Return a null record pointer when the entire pool scan finds no free record. |
+| `animation_cache_reset` | 202 | `0` | `record->cached_vertices = 0;` | Clear an owned vertex pointer after reset or release; zero denotes null rather than a cache state. |
+| `animation_cache_reset` | 204 | `0` | `} while (--records_left != 0);` | Exhaust the named twelve-record capacity with the existing pre-decrement loop. |
+| `animation_cache_mark_stale` | 218 | `0` | `} while (--records_left != 0);` | Exhaust the named twelve-record capacity with the existing pre-decrement loop. |
+| `animation_cache_release` | 225 | `0` | `*record->owner_slot = 0;` | Clear the owning instance cache pointer on release. |
+| `animation_cache_release` | 226 | `0` | `if (record->cached_vertices != 0) {` | Free only a nonnull owned vertex allocation. |
+| `animation_cache_release` | 228 | `0` | `record->cached_vertices = 0;` | Clear an owned vertex pointer after reset or release; zero denotes null rather than a cache state. |
+| `animation_cache_release_all` | 243 | `1` | `for (records_left = KF_ANIMATION_CACHE_CAPACITY - 1; records_left != -1; records_left--) {` | Capacity minus one initializes the signed countdown; minus one terminates after all twelve records. These are loop bounds, not lifecycle values. |
+| `animation_cache_release_all` | 243 | `1` | `for (records_left = KF_ANIMATION_CACHE_CAPACITY - 1; records_left != -1; records_left--) {` | Capacity minus one initializes the signed countdown; minus one terminates after all twelve records. These are loop bounds, not lifecycle values. |
+| `animation_cache_release_stale` | 267 | `0` | `} while (--records_left != 0);` | Exhaust the named twelve-record capacity with the existing pre-decrement loop. |
+| `animation_cache_allocate` | 282 | `0` | `} while (--records_left != 0);` | Exhaust the named twelve-record capacity with the existing pre-decrement loop. |
+| `animation_cache_allocate` | 283 | `0` | `return 0;` | Return a null record pointer when the entire pool scan finds no free record. |
 
 ## `src/game/camera_path.c`
 

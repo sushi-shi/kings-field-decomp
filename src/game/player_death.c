@@ -195,7 +195,7 @@ void player_death_restart(void)
     if (floor != KF_FLOOR_1) {
         player_state.progress_state.current_floor = KF_FLOOR_1;
         player_state.map_variant = KF_MAP_VARIANT_DEFAULT;
-        pool_release_all();
+        animation_cache_release_all();
         audio_close_vab();
         map_load_floor_wrapper();
     }

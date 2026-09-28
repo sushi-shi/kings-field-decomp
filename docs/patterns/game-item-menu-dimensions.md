@@ -49,8 +49,8 @@ and shift, retaining the partial-sector guard and its unsigned shift sequence.
 | GAME address | Function | Bytes | Strict match (before = after) | Per-function evidence and hypothesis |
 | --- | --- | --- | --- | --- |
 | `0x80020cfc` | `item_load_database` | 1500 | 99.746666% | Copy endpoints: 912 assets, 2376 windows, 1600 item names, 180 spell names, 320 bytes per price bank; model-search loop has exclusive bound 80. |
-| `0x80021538` | `item_menu_buy` | 1476 | 99.769646% | Two item-order bands cover IDs 42..79 then 0..41; ten signed halfwords per name; eighty-row workspaces and two-column halfword prices. |
-| `0x80021afc` | `item_menu_sell` | 1280 | 99.609375% | Eighty-row workspace; only allowed unequipped stock rows appended; ten-halfword copies and two-column sale prices. |
+| `0x80021538` | `shop_menu_buy` | 1476 | 99.769646% | Two item-order bands cover IDs 42..79 then 0..41; ten signed halfwords per name; eighty-row workspaces and two-column halfword prices. |
+| `0x80021afc` | `shop_menu_sell` | 1280 | 99.609375% | Eighty-row workspace; only allowed unequipped stock rows appended; ten-halfword copies and two-column sale prices. |
 | `0x800151cc` | `game_state_initialize` | 740 | 100.0% | Raw count 0xef at 8001537c clears all 240 bytes by decrementing through zero; all player/shop seeds stay unchanged. |
 | `0x80022608` | `menu_use_item_panel` | 1908 | 99.48218% | Fifty label rows and two 56-byte workspaces remain distinct; only name width and exclusive item bound 80 change spelling. |
 | `0x8002317c` | `menu_magic_panel` | 1328 | 100.0% | Ten-row label workspace and sixteen code bytes remain; copy/stride uses the shared ten-halfword name format. |

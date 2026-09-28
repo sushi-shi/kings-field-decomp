@@ -152,9 +152,9 @@ are retained for adjacent and caller/callee controls as well as changed bodies.
 | `0x80018880 / 6684` | `player_update` | 96.94554 → same | Caller control; code unchanged |
 | `0x80020b4c / 432` | `item_load_floor_placements` | 98.888885 → same | Adjacent control; code unchanged |
 | `0x80020cfc / 1500` | `item_load_database` | 99.746666 → same | Adjacent control; code unchanged |
-| `0x800212d8 / 608` | `item_menu_root` | 100 → same | Exact / 152 retail words |
-| `0x80021538 / 1476` | `item_menu_buy` | 97.20054 → same | Shared stack limit; code unchanged |
-| `0x80021afc / 1280` | `item_menu_sell` | 96.77187 → same | Adjacent control; code unchanged |
+| `0x800212d8 / 608` | `shop_menu_root` | 100 → same | Exact / 152 retail words |
+| `0x80021538 / 1476` | `shop_menu_buy` | 97.20054 → same | Shared stack limit; code unchanged |
+| `0x80021afc / 1280` | `shop_menu_sell` | 96.77187 → same | Adjacent control; code unchanged |
 | `0x80021ffc / 696` | `item_pickup_confirm` | 100 → same | Renamed/typed; exact / 174 retail words |
 | `0x800222b4 / 148` | `menu_save_confirm` | 100 → same | Adjacent control; exact / 37 retail words |
 | `0x80022348 / 704` | `menu_root` | 96.86364 → same | Other return-domain control; code unchanged |

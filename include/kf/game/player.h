@@ -13,7 +13,7 @@
 #include <kf/game/magic.h>
 #include <kf/game/player_status.h>
 
-struct KfPoolRecord;
+struct KfAnimationCacheRecord;
 struct KfAssetHeader;
 
 enum {
@@ -227,7 +227,7 @@ typedef struct KfPlayerState {
     struct KfAssetHeader *weapon_asset_buffer;
     s16 weapon_attack_phase;
     u8 unknown_72[2];
-    struct KfPoolRecord *weapon_animation_cache;
+    struct KfAnimationCacheRecord *weapon_animation_cache;
     u8 weapon_magic_shots_remaining;
     u8 weapon_magic_delay;
     KfWeaponAttackCharge weapon_attack_fully_charged;

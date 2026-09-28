@@ -633,7 +633,7 @@ void player_warp_to_floor_entry(void)
         if (player_state.map_variant == KF_FLOOR5_ALTERNATE_MUSIC_VARIANT) {
             audio_play_current_map_sequence();
         }
-        pool_release_all();
+        animation_cache_release_all();
         player_state.map_variant = KF_FLOOR5_ENTRY_VARIANT;
         map_variant_assets_load();
     }

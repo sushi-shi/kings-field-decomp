@@ -252,7 +252,7 @@ void render_initialize(void)
     do {
         *flag++ = KF_NOTIFICATION_NONE;
     } while (count-- != 0);
-    pool_reset();
+    animation_cache_reset();
 }
 
 #include "../lib/display_frame.inc"

@@ -763,7 +763,7 @@ Residues recorded in the same module (not steered):
   quotient. Every division, dividend order and named-local variant tried keeps
   the same class assignment. Everything else (the `memcpy` stat-bank loader, the
   sector rounding) matches.
-- `item_menu_buy` `0x80021538` and `item_menu_sell` `0x80021afc`: the earlier
+- `shop_menu_buy` `0x80021538` and `shop_menu_sell` `0x80021afc`: the earlier
   assertion of correct control flow was wrong. The
   [shop-panel flow audit](game-shop-panel-flow.md) restores unconditional
   confirmation reset, long-list upward wrap, post-call cancellation handling,

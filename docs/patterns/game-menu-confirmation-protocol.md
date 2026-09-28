@@ -32,8 +32,8 @@ repository tests, whitespace checks and the full build before commit.
 | GAME address / bytes | Function | Starting strict % | Constraint |
 | --- | --- | --- | --- |
 | `0x80028380 / 852` | `menu_list_interact` | 87.07981 | Full-width a1/a2 label/preview enums; -99 pending, 0 accepted, -1 cancelled; 104-byte frame, two redraw sites, ordered PadRead/render/sound calls. |
-| `0x80021538 / 1476` | `item_menu_buy` | 97.20054 | Direct widget caller; named label/preview arguments, compares result against -1; outer selection remains a separate integer domain. |
-| `0x80021afc / 1280` | `item_menu_sell` | 96.77187 | Direct widget caller; named label/preview arguments, compares result against -1; outer selection remains a separate integer domain. |
+| `0x80021538 / 1476` | `shop_menu_buy` | 97.20054 | Direct widget caller; named label/preview arguments, compares result against -1; outer selection remains a separate integer domain. |
+| `0x80021afc / 1280` | `shop_menu_sell` | 96.77187 | Direct widget caller; named label/preview arguments, compares result against -1; outer selection remains a separate integer domain. |
 | `0x80022608 / 1908` | `menu_use_item_panel` | 92.8218 | Direct widget caller; named label/preview arguments, compares result against -1; outer selection remains a separate integer domain. |
 | `0x8002317c / 1328` | `menu_magic_panel` | 95.89759 | Direct widget caller; named label/preview arguments, compares result against -1; outer selection remains a separate integer domain. |
 | `0x800238d8 / 1476` | `menu_equip_select` | 97.89973 | Direct widget caller; named label/preview arguments, compares result against -1; outer selection remains a separate integer domain. |
@@ -164,8 +164,8 @@ section-base conflicts. No tooling/flake implementation changed.
 | GAME address | Function | Final strict % | Verdict |
 | --- | --- | --- | --- |
 | `0x80028380` | `menu_list_interact` | 87.24413 | Typed protocol and corrected label storage; partial |
-| `0x80021538` | `item_menu_buy` | 97.20054 | Code and score unchanged; partial |
-| `0x80021afc` | `item_menu_sell` | 96.77187 | Code and score unchanged; partial |
+| `0x80021538` | `shop_menu_buy` | 97.20054 | Code and score unchanged; partial |
+| `0x80021afc` | `shop_menu_sell` | 96.77187 | Code and score unchanged; partial |
 | `0x80022608` | `menu_use_item_panel` | 92.8218 | Code and score unchanged; partial |
 | `0x8002317c` | `menu_magic_panel` | 95.89759 | Code and score unchanged; partial |
 | `0x800238d8` | `menu_equip_select` | 97.89973 | Code and score unchanged; partial |

@@ -34,7 +34,7 @@ raw reversal/duration values are retained in the ignored evidence report.
 
 ## Retained contracts
 
-The cache's free/stale/live values are already enum-typed. `pool_allocate`
+The cache's free/stale/live values are already enum-typed. `animation_cache_allocate`
 finds a free record and invalidates its clip without marking it live; successful
 binding performs that transition. Null pointers, loop exhaustion and accumulated
 phase zero are separate from that lifecycle. The signed release-all loop starts
@@ -81,12 +81,12 @@ remain outstanding.
 | GAME.EXE | `0x8002055c / 64` | `asset_registry_set` | 100% / 100% | Exact, unchanged |
 | GAME.EXE | `0x8002059c / 56` | `asset_registry_select` | 100% / 100% | Exact, unchanged |
 | GAME.EXE | `0x800205d4 / 932` | `render_bind_animated_instance` | 100% / 100% | Exact, unchanged |
-| GAME.EXE | `0x80020978 / 48` | `pool_reset` | 100% / 100% | Exact, unchanged |
-| GAME.EXE | `0x800209a8 / 60` | `pool_mark_allocated` | 100% / 100% | Exact, unchanged |
-| GAME.EXE | `0x800209e4 / 72` | `pool_record_release` | 100% / 100% | Exact, unchanged |
-| GAME.EXE | `0x80020a2c / 108` | `pool_release_all` | 100% / 100% | Exact, unchanged |
-| GAME.EXE | `0x80020a98 / 108` | `pool_release_stale` | 100% / 100% | Exact, unchanged |
-| GAME.EXE | `0x80020b04 / 72` | `pool_allocate` | 100% / 100% | Exact, unchanged |
+| GAME.EXE | `0x80020978 / 48` | `animation_cache_reset` | 100% / 100% | Exact, unchanged |
+| GAME.EXE | `0x800209a8 / 60` | `animation_cache_mark_stale` | 100% / 100% | Exact, unchanged |
+| GAME.EXE | `0x800209e4 / 72` | `animation_cache_release` | 100% / 100% | Exact, unchanged |
+| GAME.EXE | `0x80020a2c / 108` | `animation_cache_release_all` | 100% / 100% | Exact, unchanged |
+| GAME.EXE | `0x80020a98 / 108` | `animation_cache_release_stale` | 100% / 100% | Exact, unchanged |
+| GAME.EXE | `0x80020b04 / 72` | `animation_cache_allocate` | 100% / 100% | Exact, unchanged |
 | GAME.EXE | `0x800332e4 / 732` | `camera_path_compute_segment` | 100% / 100% | Exact, unchanged |
 | GAME.EXE | `0x800335c0 / 192` | `camera_path_begin` | 100% / 100% | Exact, unchanged |
 | GAME.EXE | `0x80033680 / 284` | `camera_path_step` | 100% / 100% | Exact, unchanged |

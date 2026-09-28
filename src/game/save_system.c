@@ -595,7 +595,7 @@ KfSaveStatus save_file_read_slot(KfSaveSlotId slot_id)
     s32 payload_size;
     s32 header_size;
     KfAssetHeader *weapon_asset_buffer;
-    struct KfPoolRecord *saved_weapon_animation_cache;
+    struct KfAnimationCacheRecord *saved_weapon_animation_cache;
 
     payload_size = sizeof(KfSavePayload);
     header_size = sizeof(KfSaveHeader);
@@ -817,7 +817,7 @@ void screen_show_image_until_input(const char *path)
 {
     POLY_FT4 polygon;
     s32 brightness = IMAGE_WAIT_INITIAL_BRIGHTNESS;
-    KfBool8 pressed = KF_FALSE;
+    KfBool8 released = KF_FALSE;
     s32 index;
 
     DrawSync(0);
@@ -852,9 +852,9 @@ void screen_show_image_until_input(const char *path)
         AddPrim((void *)game_graphics_runtime.display_state.ordering_table, (void *)&polygon);
         DrawSync(0);
         DrawOTag(&game_graphics_runtime.display_state.ordering_table[KF_ORDERING_TABLE_LENGTH - 1]);
-        if (pressed == KF_FALSE) {
+        if (released == KF_FALSE) {
             if (PadRead(1) == 0) {
-                pressed = KF_TRUE;
+                released = KF_TRUE;
             }
         } else if (PadRead(1) != 0) {
             while (PadRead(1) != 0) {

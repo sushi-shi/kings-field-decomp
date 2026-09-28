@@ -138,17 +138,17 @@ GAME.EXE	0x800204c0	asset_registry_load_tmd_archive			src/game/asset_registry.c	
 GAME.EXE	0x8002055c	asset_registry_set			src/game/asset_registry.c	src/game/asset_registry.c	game.asset_registry	image-specific	GAME gameplay/state implementation with no equivalent OPEN body in the complete source comparison.
 GAME.EXE	0x8002059c	asset_registry_select			src/game/asset_registry.c	src/game/asset_registry.c	game.asset_registry	image-specific	GAME gameplay/state implementation with no equivalent OPEN body in the complete source comparison.
 GAME.EXE	0x800205d4	render_bind_animated_instance			src/game/pool.c	src/game/pool.c	game.pool	image-specific	GAME gameplay/state implementation with no equivalent OPEN body in the complete source comparison.
-GAME.EXE	0x80020978	pool_reset			src/game/pool.c	src/game/pool.c	game.pool	image-specific	GAME gameplay/state implementation with no equivalent OPEN body in the complete source comparison.
-GAME.EXE	0x800209a8	pool_mark_allocated			src/game/pool.c	src/game/pool.c	game.pool	image-specific	GAME gameplay/state implementation with no equivalent OPEN body in the complete source comparison.
-GAME.EXE	0x800209e4	pool_record_release			src/game/pool.c	src/game/pool.c	game.pool	image-specific	GAME gameplay/state implementation with no equivalent OPEN body in the complete source comparison.
-GAME.EXE	0x80020a2c	pool_release_all			src/game/pool.c	src/game/pool.c	game.pool	image-specific	GAME gameplay/state implementation with no equivalent OPEN body in the complete source comparison.
-GAME.EXE	0x80020a98	pool_release_stale			src/game/pool.c	src/game/pool.c	game.pool	image-specific	GAME gameplay/state implementation with no equivalent OPEN body in the complete source comparison.
-GAME.EXE	0x80020b04	pool_allocate			src/game/pool.c	src/game/pool.c	game.pool	image-specific	GAME gameplay/state implementation with no equivalent OPEN body in the complete source comparison.
+GAME.EXE	0x80020978	animation_cache_reset			src/game/pool.c	src/game/pool.c	game.pool	image-specific	GAME gameplay/state implementation with no equivalent OPEN body in the complete source comparison.
+GAME.EXE	0x800209a8	animation_cache_mark_stale			src/game/pool.c	src/game/pool.c	game.pool	image-specific	GAME gameplay/state implementation with no equivalent OPEN body in the complete source comparison.
+GAME.EXE	0x800209e4	animation_cache_release			src/game/pool.c	src/game/pool.c	game.pool	image-specific	GAME gameplay/state implementation with no equivalent OPEN body in the complete source comparison.
+GAME.EXE	0x80020a2c	animation_cache_release_all			src/game/pool.c	src/game/pool.c	game.pool	image-specific	GAME gameplay/state implementation with no equivalent OPEN body in the complete source comparison.
+GAME.EXE	0x80020a98	animation_cache_release_stale			src/game/pool.c	src/game/pool.c	game.pool	image-specific	GAME gameplay/state implementation with no equivalent OPEN body in the complete source comparison.
+GAME.EXE	0x80020b04	animation_cache_allocate			src/game/pool.c	src/game/pool.c	game.pool	image-specific	GAME gameplay/state implementation with no equivalent OPEN body in the complete source comparison.
 GAME.EXE	0x80020b4c	item_load_floor_placements	OPEN.EXE	item_load_floor_placements	src/game/item.c	src/lib/floor_item_load.inc	game.item	consolidated	One implementation with per-image bindings; original TU, profile, data owners, and instruction behavior retained.
 GAME.EXE	0x80020cfc	item_load_database			src/game/item.c	src/game/item.c	game.item	image-specific	GAME gameplay/state implementation with no equivalent OPEN body in the complete source comparison.
-GAME.EXE	0x800212d8	item_menu_root			src/game/item.c	src/game/item.c	game.item	image-specific	GAME gameplay/state implementation with no equivalent OPEN body in the complete source comparison.
-GAME.EXE	0x80021538	item_menu_buy			src/game/item.c	src/game/item.c	game.item	image-specific	GAME gameplay/state implementation with no equivalent OPEN body in the complete source comparison.
-GAME.EXE	0x80021afc	item_menu_sell			src/game/item.c	src/game/item.c	game.item	image-specific	GAME gameplay/state implementation with no equivalent OPEN body in the complete source comparison.
+GAME.EXE	0x800212d8	shop_menu_root			src/game/item.c	src/game/item.c	game.item	image-specific	GAME gameplay/state implementation with no equivalent OPEN body in the complete source comparison.
+GAME.EXE	0x80021538	shop_menu_buy			src/game/item.c	src/game/item.c	game.item	image-specific	GAME gameplay/state implementation with no equivalent OPEN body in the complete source comparison.
+GAME.EXE	0x80021afc	shop_menu_sell			src/game/item.c	src/game/item.c	game.item	image-specific	GAME gameplay/state implementation with no equivalent OPEN body in the complete source comparison.
 GAME.EXE	0x80021ffc	item_pickup_confirm			src/game/item.c	src/game/item.c	game.item	image-specific	GAME gameplay/state implementation with no equivalent OPEN body in the complete source comparison.
 GAME.EXE	0x800222b4	menu_save_confirm			src/game/menu.c	src/game/menu.c	game.menu	image-specific	GAME gameplay/state implementation with no equivalent OPEN body in the complete source comparison.
 GAME.EXE	0x80022348	menu_root			src/game/menu.c	src/game/menu.c	game.menu	image-specific	GAME gameplay/state implementation with no equivalent OPEN body in the complete source comparison.

@@ -139,7 +139,7 @@ void player_warp_same_floor(KF_ENUM_PARAM(KfMapVariant, u32) map_variant, s32 ce
     player_warp_shimmer(KF_WARP_SHIMMER_GROW_REMOVE, &position);
     collision_adjust_cell_occupancy(player_state.motion_state.fields.map_cell.coords.x,
                                     player_state.motion_state.fields.map_cell.coords.z, -1);
-    pool_release_all();
+    animation_cache_release_all();
     previous_variant = player_state.map_variant;
     player_state.map_variant = map_variant;
     map_variant_assets_load();

@@ -32,9 +32,9 @@ before committing. No new size assertions or per-item tests are needed.
 | GAME address / bytes | Function | Starting strict % | Evidence and constraint |
 | --- | --- | --- | --- |
 | `0x80020cfc / 1500` | `item_load_database` | 99.746666 | Control: reads COM/STAT.DAT and copies 80 ten-halfword item-name rows after the 0xcd8-byte prefix. |
-| `0x800212d8 / 608` | `item_menu_root` | 100.0 | Control: full-word shop index dispatches buy/sell; input edges and delay slots remain unchanged. |
-| `0x80021538 / 1476` | `item_menu_buy` | 97.20054 | Name the first item in the authored 42..79 then 0..41 ordering; keep byte stock and signed row indices. |
-| `0x80021afc / 1280` | `item_menu_sell` | 96.77187 | Control: accessory IDs remain below the exclusive Gold Cross boundary. |
+| `0x800212d8 / 608` | `shop_menu_root` | 100.0 | Control: full-word shop index dispatches buy/sell; input edges and delay slots remain unchanged. |
+| `0x80021538 / 1476` | `shop_menu_buy` | 97.20054 | Name the first item in the authored 42..79 then 0..41 ordering; keep byte stock and signed row indices. |
+| `0x80021afc / 1280` | `shop_menu_sell` | 96.77187 | Control: accessory IDs remain below the exclusive Gold Cross boundary. |
 | `0x80022348 / 704` | `menu_root` | 96.86364 | Control: passes selected full-word item code or negative sentinel up to menu_enter_mode. |
 | `0x80022608 / 1908` | `menu_use_item_panel` | 92.8218 | Preserve unsigned (selection-42)<6, byte stock decrement, u16 HP/MP stores, exact AND masks 0xb/0x3 and call slots. |
 | `0x80018054 / 1116` | `player_use_item` | 100.0 | u8 dispatch from player_update; 43..47 acknowledge effects already applied by menu; 42 adds 100 to u16 training before its increment call. |
@@ -159,9 +159,9 @@ pre-existing ownership/data mismatches.
 | GAME address | Function | Final strict % | Verdict |
 | --- | --- | --- | --- |
 | `0x80020cfc` | `item_load_database` | 99.746666 | Unchanged partial match |
-| `0x800212d8` | `item_menu_root` | 100.0 | Exact; 152 complete retail words |
-| `0x80021538` | `item_menu_buy` | 97.20054 | Unchanged partial match |
-| `0x80021afc` | `item_menu_sell` | 96.77187 | Unchanged partial match |
+| `0x800212d8` | `shop_menu_root` | 100.0 | Exact; 152 complete retail words |
+| `0x80021538` | `shop_menu_buy` | 97.20054 | Unchanged partial match |
+| `0x80021afc` | `shop_menu_sell` | 96.77187 | Unchanged partial match |
 | `0x80022348` | `menu_root` | 96.86364 | Unchanged partial match |
 | `0x80022608` | `menu_use_item_panel` | 92.8218 | Unchanged partial match |
 | `0x80018054` | `player_use_item` | 100.0 | Exact; 279 complete retail words |

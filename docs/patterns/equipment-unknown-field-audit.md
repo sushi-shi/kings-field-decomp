@@ -168,8 +168,8 @@ The GP sweep reports are `build/equipment-gp-sites.json` and
 | `RotMatrix` | Vendored boundary: selected rotation XYZ reads; not game reconstruction progress. |
 | `menu_equip_select` | Independent hardcoded slot arguments; does not prove armor +0 as the controlling field. |
 | `item_load_database` | Independent STAT buy/sell table provenance. |
-| `item_menu_buy` | Operative buy-price table used for affordability and gold deduction. |
-| `item_menu_sell` | Operative sell-price table used for gold credit. |
+| `shop_menu_buy` | Operative buy-price table used for affordability and gold deduction. |
+| `shop_menu_sell` | Operative sell-price table used for gold credit. |
 | `menu_draw_item_detail` | Displays the independent buy/sell prices; no COM-pair derivation established. |
 | `save_file_write_slot` | Copies player aggregate, including pointer values; no pointed-to unknown-field read implied. |
 | `save_file_read_slot` | Restores player aggregate; arbitrary saved pointer values remain outside intended-consumer closure. |

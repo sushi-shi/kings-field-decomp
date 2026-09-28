@@ -388,14 +388,14 @@ class GameGraphicsOwnerProbeTests(unittest.TestCase):
                 'render_weapon', 'render_effect_sprites', 'render_hud_gauges',
             },
             'game.pool': {
-                'pool_reset', 'pool_mark_allocated', 'pool_release_all',
-                'pool_release_stale', 'pool_allocate',
+                'animation_cache_reset', 'animation_cache_mark_stale', 'animation_cache_release_all',
+                'animation_cache_release_stale', 'animation_cache_allocate',
             },
         }
-        controls = {'game.pool': {'render_bind_animated_instance', 'pool_record_release'}}
+        controls = {'game.pool': {'render_bind_animated_instance', 'animation_cache_release'}}
         pool_base_lows = {
-            'pool_reset': 0x4, 'pool_mark_allocated': 0x4, 'pool_release_all': 0x18,
-            'pool_release_stale': 0x1C, 'pool_allocate': 0x4,
+            'animation_cache_reset': 0x4, 'animation_cache_mark_stale': 0x4, 'animation_cache_release_all': 0x18,
+            'animation_cache_release_stale': 0x1C, 'animation_cache_allocate': 0x4,
         }
         for name, names in selected.items():
             unit = manifest.by_name()[name]
