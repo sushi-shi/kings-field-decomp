@@ -112,25 +112,25 @@ static KfAnimationSample animation_sample_keyframe(KfAssetHeader *asset_header, 
     return {keyframe, keyframe_index, blend_fraction};
 }
 
-static void animation_allocate_vertex_cache(KfPoolRecord *record, KfPoolRecord **owner_slot,
+static void animation_allocate_vertex_cache(KfAnimationCacheRecord *record, KfAnimationCacheRecord **owner_slot,
     u16 asset_index, u32 vertex_count)
 {
     record->asset_index = asset_index;
     record->owner_slot = owner_slot;
     while ((record->cached_vertices = (SVECTOR *)memory_malloc_checked(
                 vertex_count * sizeof(SVECTOR))) == NULL) {
-        pool_release_all();
+        animation_cache_release_all();
     }
     *owner_slot = record;
 }
 
-KfPoolRecord *render_bind_animated_instance(
-    KfPoolRecord **owner_slot, u16 asset_index, KfAnimationClip clip_index, u16 phase,
+KfAnimationCacheRecord *render_bind_animated_instance(
+    KfAnimationCacheRecord **owner_slot, u16 asset_index, KfAnimationClip clip_index, u16 phase,
     u32 vertex_count)
 {
     if (vertex_count > KF_PROJECTED_VERTEX_CAPACITY)
         kf::host_fail("Animated model exceeds vertex capacity.");
-    KfPoolRecord *record = *owner_slot;
+    KfAnimationCacheRecord *record = *owner_slot;
     KfAssetHeader *asset_header = game_graphics_runtime.asset_registry_entries[asset_index];
     KfAnimClip *clip;
     KfAnimKeyframe *keyframe;
@@ -141,23 +141,23 @@ KfPoolRecord *render_bind_animated_instance(
 
     if (asset_header->animation_clip_count == 0) {
         if (record != NULL) {
-            pool_record_release(record);
+            animation_cache_release(record);
         }
         asset_registry_select(asset_index);
         tmd_select_object_vertices(tmd_context(), 0);
-        return (KfPoolRecord *)KF_ANIMATION_BIND_STATIC;
+        return (KfAnimationCacheRecord *)KF_ANIMATION_BIND_STATIC;
     }
     if (vertex_count == 0)
         kf::host_fail("Animated model has no vertices.");
 
     if (record == NULL) {
-        record = pool_allocate();
+        record = animation_cache_allocate();
         if (record == NULL) {
             return NULL;
         }
         animation_allocate_vertex_cache(record, owner_slot, asset_index, vertex_count);
     } else if (record->asset_index != asset_index) {
-        pool_record_release(record);
+        animation_cache_release(record);
         record->clip_index = KF_ANIMATION_CLIP_NONE;
         animation_allocate_vertex_cache(record, owner_slot, asset_index, vertex_count);
     }
@@ -202,9 +202,9 @@ KfPoolRecord *render_bind_animated_instance(
     return record;
 }
 
-void pool_reset(void)
+void animation_cache_reset(void)
 {
-    KfPoolRecord *record = game_graphics_runtime.pool_records;
+    KfAnimationCacheRecord *record = game_graphics_runtime.animation_cache_records;
     u16 records_left = KF_ANIMATION_CACHE_CAPACITY;
 
     do {
@@ -214,9 +214,9 @@ void pool_reset(void)
     } while (--records_left != 0);
 }
 
-void pool_mark_allocated(void)
+void animation_cache_mark_stale(void)
 {
-    KfPoolRecord *record = game_graphics_runtime.pool_records;
+    KfAnimationCacheRecord *record = game_graphics_runtime.animation_cache_records;
     u16 records_left = KF_ANIMATION_CACHE_CAPACITY;
 
     do {
@@ -227,7 +227,7 @@ void pool_mark_allocated(void)
     } while (--records_left != 0);
 }
 
-void pool_record_release(KfPoolRecord *record)
+void animation_cache_release(KfAnimationCacheRecord *record)
 {
     record->state = KF_ANIMATION_CACHE_FREE;
     *record->owner_slot = NULL;
@@ -237,35 +237,35 @@ void pool_record_release(KfPoolRecord *record)
     }
 }
 
-void pool_release_all(void)
+void animation_cache_release_all(void)
 {
-    KfPoolRecord *record = game_graphics_runtime.pool_records;
+    KfAnimationCacheRecord *record = game_graphics_runtime.animation_cache_records;
     s16 records_left;
 
     for (records_left = KF_ANIMATION_CACHE_CAPACITY - 1; records_left != -1; records_left--) {
         if (record->state != KF_ANIMATION_CACHE_FREE) {
-            pool_record_release(record);
+            animation_cache_release(record);
         }
         record++;
     }
 }
 
-void pool_release_stale(void)
+void animation_cache_release_stale(void)
 {
-    KfPoolRecord *record = game_graphics_runtime.pool_records;
+    KfAnimationCacheRecord *record = game_graphics_runtime.animation_cache_records;
     u16 records_left = KF_ANIMATION_CACHE_CAPACITY;
 
     do {
         if (record->state == KF_ANIMATION_CACHE_STALE) {
-            pool_record_release(record);
+            animation_cache_release(record);
         }
         record++;
     } while (--records_left != 0);
 }
 
-KfPoolRecord *pool_allocate(void)
+KfAnimationCacheRecord *animation_cache_allocate(void)
 {
-    KfPoolRecord *record = game_graphics_runtime.pool_records;
+    KfAnimationCacheRecord *record = game_graphics_runtime.animation_cache_records;
     u16 records_left = KF_ANIMATION_CACHE_CAPACITY;
 
     do {

@@ -36,7 +36,7 @@ KfNotificationSprite notification_sprites[KF_NOTIFICATION_SPRITE_COUNT] = {
     {KF_SPRITE_HIDDEN, 0, {0xf0, 0, 7, 0x0b, 0xffa6, 0xffa3, 7, 0x0b}},
 };
 
-KfEffectSprite effect_sprites[KF_EFFECT_SPRITE_TABLE_ROWS] = {
+KfHudModel hud_models[KF_HUD_MODEL_TABLE_ROWS] = {
     {KF_SPRITE_VISIBLE, KF_ANIMATION_CLIP_FIRST, 0, 0x33, 0x11e, 0x22, 0xc8, {0, 0}, {0, 0, 0, 0}, {0, 0}, NULL},
     {KF_SPRITE_END, {}, 0, 0, 0, 0, 0, {}, {}, {}, nullptr},
 };
@@ -70,27 +70,27 @@ void render_weapon(void)
             &player_state.weapon_animation_cache, KF_ASSET_WEAPON, KF_ANIMATION_CLIP_FIRST,
             player_state.weapon_attack_phase,
             object->vertex_count) != NULL) {
-        tmd_project_vertices_shift(tmd_context(), object->vertex_count, WEAPON_PROJECTED_DEPTH_SHIFT, &model, projection);
+        tmd_project_vertices_depth_shift(tmd_context(), object->vertex_count, WEAPON_PROJECTED_DEPTH_SHIFT, &model, projection);
         depth_bias =
             player_state.equipped_weapon_record->render_translation.z >> WEAPON_DEPTH_BIAS_SHIFT;
         render_enqueue_tmd(0, -depth_bias + WEAPON_BASE_DEPTH_BIAS, &render_light_matrices[KF_RENDER_LIGHT_WEAPON]);
     }
 }
 
-void render_effect_sprites(const MATRIX *lights)
+void render_hud_models(const MATRIX *lights)
 {
     MATRIX model;
     VECTOR scale;
     MATRIX saved_color_matrix;
-    KfEffectSprite *entry;
+    KfHudModel *entry;
     KfTmdObject *object;
     u16 scale_numerator;
 
     saved_color_matrix = game_graphics_runtime.render_state.lighting.color_matrix;
-    memcpy(game_graphics_runtime.render_state.lighting.color_matrix.m, (game_graphics_runtime.effect_color_matrix).m,
+    memcpy(game_graphics_runtime.render_state.lighting.color_matrix.m, (game_graphics_runtime.hud_model_color_matrix).m,
         sizeof game_graphics_runtime.render_state.lighting.color_matrix.m);
     scale.vz = KF_FIXED12_ONE;
-    entry = effect_sprites;
+    entry = hud_models;
     while (entry->state == KF_SPRITE_VISIBLE) {
         model.t[0] = entry->translation_x;
         model.t[1] = entry->translation_y;
@@ -100,11 +100,11 @@ void render_effect_sprites(const MATRIX *lights)
         scale.vy = scale_numerator;
         scale.vx = scale_numerator;
         kf::matrix_scale_axes(model, scale);
-        asset_registry_select(KF_ASSET_EFFECT_SPRITES);
+        asset_registry_select(KF_ASSET_HUD_MODELS);
         object = tmd_get_object(tmd_context(), 0);
         if (render_bind_animated_instance(
-                &entry->animation_cache, KF_ASSET_EFFECT_SPRITES,
-                entry->animation_clip, entry->asset_variant,
+                &entry->animation_cache, KF_ASSET_HUD_MODELS,
+                entry->animation_clip, entry->animation_phase,
                 object->vertex_count) != NULL) {
             tmd_transform_vertices(tmd_context(), object->vertex_count, &model);
             render_enqueue_tmd(0, 0, lights);
@@ -115,7 +115,7 @@ void render_effect_sprites(const MATRIX *lights)
         sizeof game_graphics_runtime.render_state.lighting.color_matrix.m);
 }
 
-void render_hud_gauges(KfHudSprite *table)
+void render_hud_sprites(KfHudSprite *table)
 {
     KfHudSprite *entry;
 
@@ -270,5 +270,5 @@ void geometry_render_reset_module_state(void)
 {
     kf::restore_initial_value<hud_sprites>();
     kf::restore_initial_value<notification_sprites>();
-    kf::restore_initial_value<effect_sprites>();
+    kf::restore_initial_value<hud_models>();
 }

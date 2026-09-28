@@ -30,12 +30,12 @@ void tmd_select(KfTmdContext context, KfTmdSlot slot)
     const auto resource = tmd_slot(context, slot);
     if (!resource.data)
         kf::host_fail("Unregistered TMD slot");
-    context.current_asset = resource;
+    context.current_tmd = resource;
 }
 
 static u8 *tmd_object_bytes(KfTmdContext context, u16 index)
 {
-    const auto resource = context.current_asset;
+    const auto resource = context.current_tmd;
     if (!resource.data || resource.size < KF_TMD_HEADER_BYTES)
         kf::host_fail("No selected TMD resource");
     auto *bytes = reinterpret_cast<u8 *>(resource.data);
@@ -64,7 +64,7 @@ KfTmdObject tmd_read_object(KfTmdContext context, u16 index)
 
 static KfTmdBytes tmd_payload_from(KfTmdContext context, std::size_t offset)
 {
-    const auto resource = context.current_asset;
+    const auto resource = context.current_tmd;
     if (!resource.data || resource.size < KF_TMD_HEADER_BYTES ||
         offset > resource.size - KF_TMD_HEADER_BYTES)
         kf::host_fail("TMD offset exceeds its resource");
@@ -185,7 +185,7 @@ void tmd_set_current_vertices(KfTmdContext context, SVECTOR *vertices)
 void tmd_select_object_vertices(KfTmdContext context, u16 index)
 {
     const auto *object = tmd_get_object(context, index);
-    const auto resource = context.current_asset;
+    const auto resource = context.current_tmd;
     const std::size_t offset = object->vertex_offset;
     const auto payload_size = resource.size - KF_TMD_HEADER_BYTES;
     if (offset > payload_size || object->vertex_count > (payload_size - offset) / sizeof(SVECTOR))
@@ -200,21 +200,21 @@ void tmd_register(KfTmdContext context, KfTmdSlot slot, u8 *data, std::size_t si
 {
     const auto resource = tmd_resource_view(data, size);
     tmd_slot(context, slot) = resource;
-    context.current_asset = resource;
+    context.current_tmd = resource;
 }
 
 void tmd_release_last_allocation(KfTmdContext context, KfMemoryArena &arena, KfTmdSlot slot)
 {
     auto &resource = tmd_slot(context, slot);
-    if (context.current_asset.data == resource.data) {
-        context.current_asset = {};
+    if (context.current_tmd.data == resource.data) {
+        context.current_tmd = {};
         context.current_vertices = NULL;
     }
     resource = {};
     memory_release_last(arena);
 }
 
-void tmd_project_vertices_shift(KfTmdContext context, s32 count, u8 shift, const MATRIX *model, const kf::Projection &projection)
+void tmd_project_vertices_depth_shift(KfTmdContext context, s32 count, u8 depth_shift, const MATRIX *model, const kf::Projection &projection)
 {
     if (count < 0 || count > KF_PROJECTED_VERTEX_CAPACITY)
         kf::host_fail("Model exceeds projected vertex capacity.");
@@ -227,7 +227,7 @@ void tmd_project_vertices_shift(KfTmdContext context, s32 count, u8 shift, const
         const auto point = kf::render_project_point(*model, projection, *vertex);
         projected->sxy.vector = {point.x, point.y};
         projected->p2 = point.fog << KF_TMD_DEFAULT_PERSPECTIVE_SHIFT;
-        projected->sz = point.depth >> shift;
+        projected->sz = point.depth >> depth_shift;
         projected++;
         vertex++;
     }

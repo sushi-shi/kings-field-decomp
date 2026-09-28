@@ -44,7 +44,7 @@ int effect_magic_power(KfEffectRecord *effect)
     return EFFECT_FIXED_MAGIC_POWER;
 }
 
-void effect_projectile_update_3d(SVECTOR *probe_offset, KfEffectPhase phase_limit)
+void effect_update_swinging_hazard(SVECTOR *probe_offset, KfEffectPhase phase_limit)
 {
     KfEffectRecord *record = effect_state.current_record;
     KfMagicRecord *magic = effect_state.current_magic;
@@ -112,7 +112,7 @@ void effect_projectile_update_3d(SVECTOR *probe_offset, KfEffectPhase phase_limi
     }
 }
 
-void effect_projectile_update_2d(s32 orbit_radius, KfEffectPhase phase_limit)
+void effect_update_orbiting_projectile(s32 orbit_radius, KfEffectPhase phase_limit)
 {
     KfEffectRecord *record = effect_state.current_record;
     KfMagicRecord *magic = effect_state.current_magic;

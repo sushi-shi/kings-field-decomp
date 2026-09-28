@@ -30,17 +30,17 @@ void render_frame(const VECTOR *position_or_null, const SVECTOR *rotation_or_nul
 {
     MATRIX model;
     SVECTOR spin;
-    KfHudSprite *status_sprite;
-    KfHudSprite *auxiliary_sprite;
+    KfHudSprite *poison_icon;
+    KfHudSprite *compass_sprite;
     KfNotificationSprite *record;
     s16 i;
 
     render_set_view_transform(game_graphics_runtime.render_state, position_or_null, rotation_or_null);
     display_begin_frame(game_graphics_runtime.display_state);
-    pool_mark_allocated();
+    animation_cache_mark_stale();
     render_map_cells();
-    status_sprite = &hud_sprites[KF_HUD_POISON_ICON];
-    status_sprite->state = KF_SPRITE_HIDDEN;
+    poison_icon = &hud_sprites[KF_HUD_POISON_ICON];
+    poison_icon->state = KF_SPRITE_HIDDEN;
     hud_sprites[KF_HUD_SLOWED_ICON].state = KF_SPRITE_HIDDEN;
     hud_sprites[KF_HUD_DARKNESS_ICON].state = KF_SPRITE_HIDDEN;
     hud_sprites[KF_HUD_CURSE_ICON].state = KF_SPRITE_HIDDEN;
@@ -68,7 +68,7 @@ void render_frame(const VECTOR *position_or_null, const SVECTOR *rotation_or_nul
         } else if ((flags & KF_PLAYER_STATUS_DARKNESS) != KF_PLAYER_STATUS_NONE) {
             hud_sprites[KF_HUD_DARKNESS_ICON].state = KF_SPRITE_VISIBLE;
         } else if ((flags & KF_PLAYER_STATUS_POISON) != KF_PLAYER_STATUS_NONE) {
-            status_sprite->state = KF_SPRITE_VISIBLE;
+            poison_icon->state = KF_SPRITE_VISIBLE;
         } else if ((flags & KF_PLAYER_STATUS_SLOWED) != KF_PLAYER_STATUS_NONE) {
             hud_sprites[KF_HUD_SLOWED_ICON].state = KF_SPRITE_VISIBLE;
         }
@@ -83,17 +83,17 @@ void render_frame(const VECTOR *position_or_null, const SVECTOR *rotation_or_nul
         hud_sprites[KF_HUD_MAGIC_PANEL].state = KF_SPRITE_HIDDEN;
     }
 
-    auxiliary_sprite = &hud_sprites[KF_HUD_COMPASS];
-    auxiliary_sprite->state = kf_enum_decode<KfSpriteState>(kf_enum_encode<u8>(player_state.compass_enabled));
-    effect_sprites[KF_EFFECT_SPRITE_COMPASS].state = kf_enum_decode<KfSpriteState>(kf_enum_encode<u8>(player_state.compass_enabled));
-    effect_sprites[KF_EFFECT_SPRITE_COMPASS].rotation.vz = -game_graphics_runtime.render_state.view_rotation.vy & KF_ANGLE_WRAP_MASK;
-    render_effect_sprites(&render_light_matrices[KF_RENDER_LIGHT_HUD]);
+    compass_sprite = &hud_sprites[KF_HUD_COMPASS];
+    compass_sprite->state = kf_enum_decode<KfSpriteState>(kf_enum_encode<u8>(player_state.compass_enabled));
+    hud_models[KF_HUD_MODEL_COMPASS].state = kf_enum_decode<KfSpriteState>(kf_enum_encode<u8>(player_state.compass_enabled));
+    hud_models[KF_HUD_MODEL_COMPASS].rotation.vz = -game_graphics_runtime.render_state.view_rotation.vy & KF_ANGLE_WRAP_MASK;
+    render_hud_models(&render_light_matrices[KF_RENDER_LIGHT_HUD]);
 
     game_graphics_runtime.active_render_material = game_graphics_runtime.hud_material;
     game_graphics_runtime.active_render_color.b = game_graphics_runtime.hud_brightness;
     game_graphics_runtime.active_render_color.g = game_graphics_runtime.hud_brightness;
     game_graphics_runtime.active_render_color.r = game_graphics_runtime.hud_brightness;
-    render_hud_gauges(auxiliary_sprite - KF_HUD_COMPASS);
+    render_hud_sprites(compass_sprite - KF_HUD_COMPASS);
 
     notify_effect_update();
 
@@ -126,7 +126,7 @@ void render_frame(const VECTOR *position_or_null, const SVECTOR *rotation_or_nul
     render_entities();
     render_weapon();
     display_present_frame(game_graphics_runtime.display_state);
-    pool_release_stale();
+    animation_cache_release_stale();
     // World rendering also advances floor sprites and notifications. Pace every
     // caller, including blocking scripts; presentation consumes this deadline.
     frame_pacer_wait();

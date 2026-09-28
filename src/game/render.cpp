@@ -17,10 +17,10 @@ enum {
     DISPLAY_ASSET_BUFFER_BYTES = 2 * 0x19640,
     INITIAL_BACK_COLOR = 60,
     SYSTEM_SCREEN_BRIGHTNESS = 96,
-    EFFECT_TEXTURE_FIRST_PAGE_X = 320,
-    EFFECT_TEXTURE_SECOND_PAGE_X = 384,
-    EFFECT_TEXTURE_THIRD_PAGE_X = 832,
-    EFFECT_TEXTURE_CLUT_Y = 491,
+    ACTOR_TEXTURE_FIRST_PAGE_X = 320,
+    ACTOR_TEXTURE_SECOND_PAGE_X = 384,
+    ACTOR_TEXTURE_THIRD_PAGE_X = 832,
+    ACTOR_TEXTURE_CLUT_Y = 491,
     FLOOR_ITEM_TPAGE_X = 896,
     FLOOR_ITEM_PALETTE_Y = 489,
     HUD_TPAGE_X = 896,
@@ -85,14 +85,14 @@ void display_present_system_screen(s32 color)
     kf::host_present_faces(&draws);
 }
 
-void effect5_texture_cache_prepare(KfFloorId floor)
+void render_prepare_actor_textures(KfFloorId floor)
 {
     if (floor == KF_FLOOR_5) {
         constexpr u16 page_x[KF_FLOOR5_ACTOR_TEXTURE_COUNT] = {
-            EFFECT_TEXTURE_FIRST_PAGE_X, EFFECT_TEXTURE_SECOND_PAGE_X, EFFECT_TEXTURE_THIRD_PAGE_X};
+            ACTOR_TEXTURE_FIRST_PAGE_X, ACTOR_TEXTURE_SECOND_PAGE_X, ACTOR_TEXTURE_THIRD_PAGE_X};
         for (unsigned i = 0; i < KF_FLOOR5_ACTOR_TEXTURE_COUNT; ++i)
             game_graphics_runtime.effect5_materials[i] = {kf::SurfaceKind::Texture,
-                {page_x[i], KF_TEXTURE_LOWER_PAGE_Y, 0, EFFECT_TEXTURE_CLUT_Y,
+                {page_x[i], KF_TEXTURE_LOWER_PAGE_Y, 0, ACTOR_TEXTURE_CLUT_Y,
                  kf::TextureFormat::Indexed8}, kf::BlendMode::average};
     }
 }
@@ -112,7 +112,7 @@ void display_initialize(void)
 void render_initialize(void)
 {
     SVECTOR angles;
-    KfNotificationId *flag;
+    KfNotificationId *message_id;
     u8 count;
     u8 *buffer;
 
@@ -136,7 +136,7 @@ void render_initialize(void)
     };
     memcpy(game_graphics_runtime.render_state.light_matrix.m,
         initial_light_directions, sizeof initial_light_directions);
-    game_graphics_runtime.light_matrix_copy = game_graphics_runtime.render_state.light_matrix;
+    game_graphics_runtime.map_event_light_matrix = game_graphics_runtime.render_state.light_matrix;
     kf::matrix_multiply_rotation(game_graphics_runtime.render_state.light_matrix, game_graphics_runtime.render_state.quadrant_matrices[0], game_graphics_runtime.light_quadrant_matrices[0]);
     kf::matrix_multiply_rotation(game_graphics_runtime.render_state.light_matrix, game_graphics_runtime.render_state.quadrant_matrices[1], game_graphics_runtime.light_quadrant_matrices[1]);
     kf::matrix_multiply_rotation(game_graphics_runtime.render_state.light_matrix, game_graphics_runtime.render_state.quadrant_matrices[2], game_graphics_runtime.light_quadrant_matrices[2]);
@@ -156,12 +156,12 @@ void render_initialize(void)
     game_graphics_runtime.notification_state.control.effect_phase = KF_NOTIFICATION_IDLE;
     game_graphics_runtime.notification_state.control.queue_tail = 0;
     game_graphics_runtime.notification_state.control.queue_head = 0;
-    flag = game_graphics_runtime.notification_message_ids;
+    message_id = game_graphics_runtime.notification_message_ids;
     count = KF_NOTIFICATION_CAPACITY - 1;
     do {
-        *flag++ = KF_NOTIFICATION_NONE;
+        *message_id++ = KF_NOTIFICATION_NONE;
     } while (count-- != 0);
-    pool_reset();
+    animation_cache_reset();
 }
 
 void tmd_project_vertices(s32 count, const MATRIX *model, const kf::Projection &projection)
