@@ -43,7 +43,7 @@ Neither the call count nor runtime behavior changes.
 
 Fresh `kf try` gives seven identical listings in the eight-function unit;
 canonical `kf match` confirms seven strict-exact functions. The remaining
-`map_object_spawn_effect` stays 94.504950%. Independent numeric relocation
+`map_object_spawn_drop` stays 94.504950%. Independent numeric relocation
 resolution checks all 1222 source words, 52 calls and 32 address
 materializations: the seven exact functions equal retail, and every sibling
 is identical to a fresh pre-change compile. The updater's 774 words equal

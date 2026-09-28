@@ -126,7 +126,7 @@ No candidate relocation or vendored identity was promoted.
 All six exact siblings remain raw-word exact. The complete `.data` is
 **30 bytes**, with no invented tail padding; all 84 relocated `.rodata`
 switch entries still agree with retail. The unit is now **7/8 exact**;
-`map_object_probe_forward` remains unchanged and non-exact at 93.755104%.
+`map_object_probe_door_closing` remains unchanged and non-exact at 93.755104%.
 The missing fifth descriptor was a real source extent error independently
 of the text mismatch. Extending it alone did not move the function score;
 the final column-advance order supplies the text closure.

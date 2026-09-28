@@ -156,8 +156,8 @@ as new progress by this naming review.
 | GAME.EXE | `actor_pool_find_target_in_cone` | `0x8002d7f8 / 0x184` | 100% exact, preserved |
 | GAME.EXE | `actor_spawn_action_effect` | `0x8002edd4 / 0x454` | 100% exact, preserved |
 | GAME.EXE | `actor_update_current_action` | `0x8002fa88 / 0xd90` | 100% exact, preserved |
-| GAME.EXE | `map_object_spawn_effect` | `0x80031834 / 0x194` | 97.128716%, preserved residue |
-| GAME.EXE | `map_object_spawn_actor_debris` | `0x800319c8 / 0x18c` | 100% exact, preserved |
+| GAME.EXE | `map_object_spawn_drop` | `0x80031834 / 0x194` | 97.128716%, preserved residue |
+| GAME.EXE | `map_object_spawn_gold_drop` | `0x800319c8 / 0x18c` | 100% exact, preserved |
 | GAME.EXE | `map_event_pool_find_target_in_cone` | `0x80033b8c / 0x144` | 100% exact, preserved |
 | GAME.EXE | `map_event_update_wander` | `0x80035708 / 0x1d8` | 100% exact, preserved |
 | GAME.EXE | `effect_update_dispatch` | `0x80038a38 / 0x180c` | 99.827810%, preserved residue |
@@ -184,7 +184,7 @@ instruction/relocation differences:
 | Function | Retail | Compiled |
 | --- | --- | --- |
 | GAME `player_update`, `0x80018880` | `addiu sp,sp,-224` | `addiu sp,sp,-216` |
-| GAME `map_object_spawn_effect`, `0x80031854` | `move s4,a3` | `move s3,a3` |
+| GAME `map_object_spawn_drop`, `0x80031854` | `move s4,a3` | `move s3,a3` |
 | GAME `effect_update_dispatch`, `0x80038a70` | `lui s3,0` | `lui s6,0` |
 | OPEN `opening_ending_scroll_run`, `0x800150c0` | HI16 names `opening_ending_scroll_camera_path` | HI16 names `.data` |
 

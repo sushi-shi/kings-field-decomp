@@ -28,7 +28,7 @@ at `0x800212d8` confirms that menu mode 2 enters the buy/sell interface.
 | 80033b8c | 324 | map_event_pool_find_target_in_cone | 100 | active-state filter, distance and angle calls | 100 / exact, unchanged |
 | 80033cd0 | 176 | map_event_pool_find_overlap | 100 | active-state filter over eight slots | 100 / exact, unchanged |
 | 800341ec | 112 | map_ambient_script_floor2 | 100 | sound conditional on stage 2 and page below 3 | 100 / exact, unchanged |
-| 80034438 | 388 | map_reveal_fade | 100 | moves/rotates event then disables state 3; sets transfer flag | 100 / exact, unchanged |
+| 80034438 | 388 | map_floor2_event_transfer_fade | 100 | moves/rotates event then disables state 3; sets transfer flag | 100 / exact, unchanged |
 | 800345bc | 84 | map_action_script_floor2 | 100 | packed stage 2/page 1/delay 40 trigger and active state | 100 / exact, unchanged |
 | 80034610 | 144 | map_action_script_floor3 | 100 | packed stage 3/page 1/delay 40 spell trigger | 100 / exact, unchanged |
 | 80034a34 | 76 | map_action_script_floor5 | 100 | packed stage 5/page 1/delay 40 cutscene trigger | 100 / exact, unchanged |

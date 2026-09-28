@@ -21,7 +21,7 @@ src/game/lighting.c:16	color_matrix_table	MATRIX[7]	numeric_matrix		SDK matrix c
 src/game/map_object_pool.c:24	map_copy_regions	KfMapCopyRegion[5]	numeric_geometry		Rectangle coordinates and extents; selecting a row uses the existing KfMapCopyRegionId API.
 src/game/map_scripts.c:62	map_floor5_camera_path	KfCameraPathPoint[2]	numeric_geometry		Timed camera positions/rotations are interpolated; record components are numerical motion data.
 src/game/map_scripts.c:68	map_floor1_sound_position	VECTOR	numeric_geometry		SDK position/vector components and padding; numerical world-space coordinates.
-src/game/map_scripts.c:71	map_reveal_light_matrix	MATRIX	numeric_matrix		SDK matrix coefficients/translation; arithmetic interpolation and matrix multiplication accept quantities. KF_FIXED12_ONE names numeric Q12 unity.
+src/game/map_scripts.c:71	map_transfer_light_matrix	MATRIX	numeric_matrix		SDK matrix coefficients/translation; arithmetic interpolation and matrix multiplication accept quantities. KF_FIXED12_ONE names numeric Q12 unity.
 src/game/map_scripts.c:76	map_screen_image_path	char[16]	encoded_content		Filename, path template, debug text or number-formatting character buffer; byte positions hold character encodings.
 src/game/menu_item_model_preview.c:12	menu_item_preview_rotation	SVECTOR	numeric_geometry		SDK vector coordinates/rotation/displacements and padding; quantitative geometry.
 src/game/menu_map_viewer.c:34	path	char[16]	encoded_content		Filename, path template, debug text or number-formatting character buffer; byte positions hold character encodings.

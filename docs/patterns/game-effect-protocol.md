@@ -46,7 +46,7 @@ decoded behavior, not recovered Japanese spell names or original C symbols.
 | `0x8002f8cc / 1bc` | `actor_update_boss_death_sequence` | 100.000000 | 13 / 16 | 111 / 7 |
 | `0x80031008 / 448` | `map_object_pool_load` | 100.000000 | 11 / 43 | 274 / 8 |
 | `0x80031cc8 / c18` | `map_object_pool_update` | 98.966410 | 35 / 118 | Unchanged residue |
-| `0x800346a8 / 38c` | `map_floor5_transition_cutscene` | 100.000000 | 12 / 32 | 227 / 14 |
+| `0x800346a8 / 38c` | `map_floor5_weapon_transform_cutscene` | 100.000000 | 12 / 32 | 227 / 14 |
 | `0x80036f00 / 44` | `effect_pool_find_free` | 100.000000 | 0 / 6 | 17 / 1 |
 | `0x80036f44 / 82c` | `effect_pool_construct` | 100.000000 | 7 / 52 | 523 / 8 |
 | `0x80037770 / ac` | `effect_pool_spawn_floor_deformation` | 100.000000 | 1 / 3 | 43 / 0 |

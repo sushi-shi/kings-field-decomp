@@ -172,7 +172,7 @@ Percentages are strict objdiff results; every row below 100% remains open.
 | `8002af48` | `menu_load_item_texture` | 100.000000 | 100.000000 | Exact preserved |
 | `8002c5e0` | `menu_load_message_image` | 100.000000 | 100.000000 | Exact preserved |
 | `8002c794` | `screen_show_image_until_input` | 100.000000 | 100.000000 | Exact preserved |
-| `80034438` | `map_reveal_fade` | 100.000000 | 100.000000 | Exact preserved |
+| `80034438` | `map_floor2_event_transfer_fade` | 100.000000 | 100.000000 | Exact preserved |
 | `80034de4` | `map_interaction_dispatch` | 95.585785 | 96.490470 | Open |
 | `80036554` | `map_load_floor` | 100.000000 | 100.000000 | Exact preserved |
 

@@ -63,10 +63,10 @@ void map_event_pool_load(const KfMapEventDefinition *definitions)
                 event->unknown_0c = definitions->unknown_0b;
                 event->unknown_0d = definitions->unknown_0c;
                 event->behavior = definitions->behavior;
-                event->position_x = definitions->cell_x * KF_MAP_TILE_SIZE + definitions->position_x_offset;
-                event->reference_position.vx = event->position_x;
-                event->position_z = definitions->cell_z * KF_MAP_TILE_SIZE + definitions->position_z_offset;
-                event->reference_position.vz = event->position_z;
+                event->home_x = definitions->cell_x * KF_MAP_TILE_SIZE + definitions->position_x_offset;
+                event->reference_position.vx = event->home_x;
+                event->home_z = definitions->cell_z * KF_MAP_TILE_SIZE + definitions->position_z_offset;
+                event->reference_position.vz = event->home_z;
                 event->cell_x = definitions->cell_x;
                 event->cell_z = definitions->cell_z;
                 event->radius = definitions->radius;

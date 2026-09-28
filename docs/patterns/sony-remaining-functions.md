@@ -36,7 +36,7 @@ helper. New copy controls compare the actual emitted loops and access widths.
 | GAME `800292f8` | `menu_draw_item_name_frame` | 99.97571 | Glyph memory copy, reflected UV rectangles and matrix initialization. |
 | GAME `8002a510` | `menu_draw_window_backdrop` | 99.97176 | Reflected UV rectangle macros and genuine RECT inputs. |
 | GAME `8002c9d4` | `talk_show_dialogue_page` | 98.78049 | Decimal ASCII digits versus SDK BCD and character helpers; existing screen call. |
-| GAME `80031834` | `map_object_spawn_effect` | 94.50495 | Existing position setter and the already tested rotation setter's pre-random store dependency. |
+| GAME `80031834` | `map_object_spawn_drop` | 94.50495 | Existing position setter and the already tested rotation setter's pre-random store dependency. |
 | GAME `80034d54` | `map_show_screen_image` | 88.888885 | Decimal ASCII digits versus BCD helpers; global floor read and real screen call. |
 | GAME `80034de4` | `map_interaction_dispatch` | 99.202774 | Two-axis probes, angle predicates and call-preserving SDK boundaries. |
 | GAME `80035b5c` | `map_world_state_persist` | 97.52873 | Eight-byte complete link copy versus SDK `memcpy`; sparse and packed records retain their game serialization. |
@@ -130,7 +130,7 @@ Unchanged rows remain non-exact; a rejected control is not banked.
 | `menu_draw_item_name_frame` | **100** | `+0x0`: composing the three reflected SDK rectangles removes the frame difference. Glyph-copy and matrix-zero alternatives are rejected; the retained glyph loop and matrix setup already agree with retail. |
 | `menu_draw_window_backdrop` | **100** | `+0x0`: the same three reflected SDK rectangles remove the frame difference. No new local RECT is needed. |
 | `talk_show_dialogue_page` | 98.78049 | `+0x30`: decimal remainder register/order differs. Four byte-valued caller arguments feed ASCII filename digits and one game screen call. `btoi`/`itob` and character classification/case macros do not implement these digit stores. No source change. |
-| `map_object_spawn_effect` | 94.50495 | `+0x4`: saved RA offset differs and source omits retail's S4 save; the body is four bytes short. Its position already uses `setVector`. The previous rotation-setter control moves the required pre-`rand` Z clear past the call; that rejected evidence still applies. No new compatible helper. |
+| `map_object_spawn_drop` | 94.50495 | `+0x4`: saved RA offset differs and source omits retail's S4 save; the body is four bytes short. Its position already uses `setVector`. The previous rotation-setter control moves the required pre-`rand` Z clear past the call; that rejected evidence still applies. No new compatible helper. |
 | `map_show_screen_image` | 88.888885 | `+0x30`: remainder register differs; the floor load and filename-address materialization also exchange order. The only call is the existing game screen API. ASCII decimal stores have no matching BCD/character helper. No source change. |
 | `map_interaction_dispatch` | 99.202774 | `+0x2c`: position pointer uses S8 instead of retail S7, with later branch/layout differences. Both probe pairs consume only X/Z and already call `rsin`/`rcos` in retail order. The modular pitch and game angle predicates are not SDK vector construction or saturation. No supported missing helper. |
 | `map_world_state_persist` | 97.52873 | `+0x16c`: definition-base setup appears early; later type predicates differ. A complete eight-byte link `memcpy` changes the retail byte-loop shape and is rejected. Sparse records and packed flags remain explicit game serialization. |

@@ -136,4 +136,4 @@ contains initial signatures, widths, CFG, delay slots, calls and referents.
 | `0x80027ee4 / 1180` | `menu_draw_dialog_frame` | 100 | Exact / 295 |
 | `0x800279c4 / 440` | `menu_item_model_preview` | 98.1818 | Partial, unchanged |
 | `0x80028380 / 852` | `menu_list_interact` | 87.0798 | Partial, unchanged |
-| `0x800346a8 / 908` | `map_floor5_transition_cutscene` | 100 | Exact / 227 |
+| `0x800346a8 / 908` | `map_floor5_weapon_transform_cutscene` | 100 | Exact / 227 |

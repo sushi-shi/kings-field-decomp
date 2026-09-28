@@ -957,7 +957,7 @@ void actor_update_current_action(void)
         if (actor_animation_crossed_phase(actor, ACTOR_DEATH_DROP_PHASE)) {
             gold_amount = ((u32)rand() * definition->gold_drop_limit) >> ACTOR_GOLD_RANDOM_SHIFT;
             if (gold_amount != 0) {
-                map_object_spawn_actor_debris(
+                map_object_spawn_gold_drop(
                     gold_amount, &actor->position, -(definition->collision_height >> 1));
             }
             if (actor->slot_state == KF_ACTOR_SLOT_DYNAMIC || actor->slot_state == KF_ACTOR_SLOT_RESPAWNING) {
@@ -965,14 +965,14 @@ void actor_update_current_action(void)
                     && definition->action_parameters.drop_object != KF_OBJECT_NONE
                     && (rand() >> ACTOR_DROP_CHANCE_RANDOM_SHIFT)
                         <= definition->action_parameters.drop_chance) {
-                    map_object_spawn_effect(
+                    map_object_spawn_drop(
                         KF_MAP_OBJECT_DROP_FROM_DEFINITION,
                         definition->action_parameters.drop_object,
                         &actor->position,
                         -(definition->collision_height >> 1));
                 }
             } else if (actor->death_drop_object_id != KF_MAP_OBJECT_DROP_DISABLED) {
-                map_object_spawn_effect(
+                map_object_spawn_drop(
                     KF_MAP_OBJECT_DROP_FROM_PLACEMENT,
                     actor->death_drop_object_id,
                     &actor->position,

@@ -52,7 +52,7 @@ the eight non-exact bodies' existing code-generation residues are not targets.
 | 2beb0 / 3cc | save_file_read_slot | 100 | Signed-16-bit slot, s32 result, save-system caller. SDK read/path branches unchanged. Destination 2c16c/170; source payload +2440, end +2530 in branch delay slot. Same complete byte-aligned save field. | Exact retained (100%) |
 | 343e0 / 58 | map_action_script_floor1 | 100 | No args, floor dispatch caller; bank-0 item 56 read gates world flag, copy-region and sound calls. | Exact retained (100%) |
 | 34610 / 90 | map_action_script_floor3 | 100 | No args, floor dispatch caller; bank-0 item 50 gates magic record 7 and notification; other world/magic branch untouched. | Exact retained (100%) |
-| 346a8 / 38c | map_floor5_transition_cutscene | 100 | No args, floor-5 script caller; unequip weapon 10 if selected, clear bank-0 item 10, then existing camera/effect sequence. | Exact retained (100%) |
+| 346a8 / 38c | map_floor5_weapon_transform_cutscene | 100 | No args, floor-5 script caller; unequip weapon 10 if selected, clear bank-0 item 10, then existing camera/effect sequence. | Exact retained (100%) |
 | 34a80 / 2d4 | map_event_interact | 100 | Existing event-pointer argument from dispatch; item 52 -> 53, item 59 consumption, item 47 -> 62. Retain three event branches, post-decrements, notification and delay-slot stores. | Exact retained (100%) |
 | 35e44 / 69c | map_restore_floor_state | 99.96454 | No args, floor-load caller; restore loops and unresolved floor dispatch unchanged. Bank-0 items 10/11 gate clearing link 52. | Non-exact, score and bytes unchanged |
 

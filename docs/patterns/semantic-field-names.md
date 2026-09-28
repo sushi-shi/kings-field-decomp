@@ -42,7 +42,7 @@ All addresses in this table refer to GAME.EXE.
 | Actor definition +0x82 | `effect_owner_id` | Halfword loads at 8002f10c/8002f164/8002f19c/8002f1c4 supply the constructor's owning-ID argument. |
 | Actor definition +0x96 | `gold_drop_limit` | Actor death at 8002fd3c computes `rand() * limit >> 15`. The callee at 800319c8 places object 39 and stores the resulting amount in the two link bytes. COM.DAT defines object 39 as behavior 0x41; `map_interaction_dispatch` reconstructs that amount, notifies it, credits `player_state.gold`, and frees the object. The bound is exclusive. |
 | Placement +5 / Actor +7 | `spawn_chance` | Copied by actor_pool_load_placements; awareness at 8002e760 and 8002e810 compares the byte shifted by 7 against rand. |
-| Placement +6 / Actor +9 | `death_drop_object_id` | Copied by placement loader; 8002fdd4 passes it as object ID to map_object_spawn_effect during death, except sentinel 0x63. |
+| Placement +6 / Actor +9 | `death_drop_object_id` | Copied by placement loader; 8002fdd4 passes it as object ID to map_object_spawn_drop during death, except sentinel 0x63. |
 | Object link +6/+7 | `linked_notification`, `default_notification` | map_interaction_dispatch passes the first to notify_enqueue for behavior 8 with a live link; the second is its default notification. Reset clears both. |
 | Event definition +0x0d / Event +0x0e | `behavior` | Pool load copies the byte; update dispatches 1 to wander and 2 to spinner; interaction also switches on it. |
 | Event +0x0f | `animation_clip` | Third argument to render_bind_animated_instance; interaction selects 0/1 while advancing animation phase. |

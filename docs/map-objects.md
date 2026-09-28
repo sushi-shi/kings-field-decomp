@@ -62,7 +62,7 @@ world-state indices.
   map layers.
 - `map_object_mark_collision_edge` marks the current or neighboring collision
   cell according to object metadata and cardinal yaw.
-- `map_object_probe_forward` probes the cardinal cell in front of an object.
+- `map_object_probe_door_closing` probes the cardinal cell in front of an object.
 - `map_object_pool_clear`, `map_object_definitions_load`, and
   `map_object_pool_load` initialize the 190 live objects and their definitions.
 

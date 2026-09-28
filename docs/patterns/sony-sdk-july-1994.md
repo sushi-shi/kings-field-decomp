@@ -62,7 +62,7 @@ No source or header change is retained. **456/471 remains exact.**
 | GAME | `item_load_database` | 99.746666 |
 | GAME | `menu_draw_item_detail` | 97.80875 |
 | GAME | `talk_show_dialogue_page` | 98.78049 |
-| GAME | `map_object_spawn_effect` | 94.50495 |
+| GAME | `map_object_spawn_drop` | 94.50495 |
 | GAME | `map_show_screen_image` | 88.888885 |
 | GAME | `map_interaction_dispatch` | 99.202774 |
 | GAME | `map_world_state_persist` | 97.52873 |

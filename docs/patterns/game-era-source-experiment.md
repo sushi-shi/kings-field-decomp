@@ -95,7 +95,7 @@ unit/source owner, reference evidence tiers and history.
 | `menu_draw_item_name_frame` / `0x800292f8` | 8 | 99.570850 | 99.570850 | 99.570850 | no gain |
 | `menu_draw_window_backdrop` / `0x8002a510` | 6 | 99.971760 | 99.971760 | 99.971760 | no gain |
 | `talk_show_dialogue_page` / `0x8002c9d4` | 5 | 98.780490 | 98.780490 | 98.780490 | no gain |
-| `map_object_spawn_effect` / `0x80031834` | 5 | 94.504950 | 94.504950 | 94.504950 | no gain |
+| `map_object_spawn_drop` / `0x80031834` | 5 | 94.504950 | 94.504950 | 94.504950 | no gain |
 | `map_show_screen_image` / `0x80034d54` | 5 | 88.888885 | 88.888885 | 88.888885 | no gain |
 | `map_interaction_dispatch` / `0x80034de4` | 7 | 99.202774 | 99.202774 | 99.202774 | no gain |
 | `map_world_state_persist` / `0x80035b5c` | 6 | 97.528730 | 97.528730 | 97.528730 | same bytes; typed owner |
@@ -131,7 +131,7 @@ unit/source owner, reference evidence tiers and history.
 
 **14. `talk_show_dialogue_page`** — No gain. Decimal digit locals, separate stores and pathname cursors retain or worsen the eight register-word differences. Calls, ordered referents and the complete 164-byte extent agree.
 
-**15. `map_object_spawn_effect`** — No gain. SDK vector setup, coordinate grouping, sequence publication and angle chaining do not close the four-byte-shorter body. Baseline has a different saved-register set and sequence-count schedule, while calls and ordered referents agree.
+**15. `map_object_spawn_drop`** — No gain. SDK vector setup, coordinate grouping, sequence publication and angle chaining do not close the four-byte-shorter body. Baseline has a different saved-register set and sequence-count schedule, while calls and ordered referents agree.
 
 **16. `map_show_screen_image`** — No gain. Direct pathname access, decimal expressions/characters and real string cursors do not close the four-byte-longer body. The first difference is remainder register use at +0x30; floor/path address order and a load-delay nop also differ.
 

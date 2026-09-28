@@ -206,7 +206,7 @@ miss the unknown bytes; it does not close unrelated indirect consumers.
 | GAME | `map_refresh_dialogue_stages` | Pointer transport: checks state +0 and passes each selected row to the stage-refresh helper. |
 | GAME | `map_resources_load` | Disc provenance: obtains MIXA chunks and passes cast item/event placement pointers to their loaders. |
 | GAME | `map_restore_floor_state` | Direct +0x0d transport and unchecked dynamic byte store; final +0x0d restoration overwrites the stage-11 indexed store. |
-| GAME | `map_reveal_fade` | Checked nonoverlap: state +0, reference-position Y +0x28 and rotation Y +0x36. |
+| GAME | `map_floor2_event_transfer_fade` | Checked nonoverlap: state +0, reference-position Y +0x28 and rotation Y +0x36. |
 | GAME | `map_world_state_persist` | Direct +0x0d transport plus indexed stage alias; stage 11 copies that byte into two saved positions. |
 | GAME | `pool_allocate` | Cache-owner provenance: allocator supplies a pool record to the binder; allocation itself gives no field interpretation. |
 | GAME | `pool_record_release` | Retained-pointer consumer: selected event owner_slot clears only +0x3c..+0x3f. |

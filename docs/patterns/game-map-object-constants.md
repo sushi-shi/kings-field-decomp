@@ -51,7 +51,7 @@ claim. All partial functions retain their complete pre-campaign emitted code.
 | `0x8002fa88 / d90` | `actor_update_current_action` | 98.938940 | — |
 | `0x80030a98 / 1e4` | `map_apply_copy_region` | 100.000000 | 121 / 0 / 8 |
 | `0x80030c7c / 23c` | `map_object_mark_collision_edge` | 100.000000 | 143 / 0 / 7 |
-| `0x80030eb8 / c4` | `map_object_probe_forward` | 93.755104 | — |
+| `0x80030eb8 / c4` | `map_object_probe_door_closing` | 93.755104 | — |
 | `0x80030f7c / 60` | `map_object_pool_clear` | 100.000000 | 24 / 0 / 4 |
 | `0x80030fdc / 2c` | `map_object_definitions_load` | 100.000000 | 11 / 0 / 1 |
 | `0x80031008 / 448` | `map_object_pool_load` | 100.000000 | 274 / 11 / 8 |
@@ -60,13 +60,13 @@ claim. All partial functions retain their complete pre-campaign emitted code.
 | `0x800315c4 / 1c0` | `map_object_pool_find_interaction_from` | 100.000000 | 112 / 5 / 2 |
 | `0x80031784 / 20` | `map_object_start_action_if_idle` | 100.000000 | 8 / 0 / 0 |
 | `0x800317a4 / 90` | `map_object_effect_pool_acquire` | 100.000000 | 36 / 0 / 1 |
-| `0x80031834 / 194` | `map_object_spawn_effect` | 94.455444 | — |
-| `0x800319c8 / 18c` | `map_object_spawn_actor_debris` | 100.000000 | 99 / 6 / 1 |
+| `0x80031834 / 194` | `map_object_spawn_drop` | 94.455444 | — |
+| `0x800319c8 / 18c` | `map_object_spawn_gold_drop` | 100.000000 | 99 / 6 / 1 |
 | `0x80031b54 / f0` | `map_object_pool_trigger_link` | 100.000000 | 60 / 1 / 2 |
 | `0x80031c44 / 84` | `map_object_pool_clear_link` | 100.000000 | 33 / 0 / 1 |
 | `0x80031cc8 / c18` | `map_object_pool_update` | 98.966410 | — |
 | `0x80033f64 / 288` | `map_ambient_script_floor1` | 100.000000 | 162 / 5 / 19 |
-| `0x800346a8 / 38c` | `map_floor5_transition_cutscene` | 100.000000 | 227 / 12 / 14 |
+| `0x800346a8 / 38c` | `map_floor5_weapon_transform_cutscene` | 100.000000 | 227 / 12 / 14 |
 | `0x80034de4 / 904` | `map_interaction_dispatch` | 83.012130 | — |
 | `0x80035b5c / 2b8` | `map_world_state_persist` | 94.821840 | — |
 | `0x80035e44 / 69c` | `map_restore_floor_state` | 99.964540 | — |
@@ -186,8 +186,8 @@ listed above; their unrelated literals remain in the wider audit.
 | `map_object_pool_find_interaction_from` | 8 |
 | `map_object_start_action_if_idle` | 1 |
 | `map_object_effect_pool_acquire` | 5 |
-| `map_object_spawn_effect` | 9 |
-| `map_object_spawn_actor_debris` | 8 |
+| `map_object_spawn_drop` | 9 |
+| `map_object_spawn_gold_drop` | 8 |
 | `map_object_pool_trigger_link` | 2 |
 | `map_object_pool_clear_link` | 2 |
 | `map_object_pool_update` | 127 |
@@ -195,7 +195,7 @@ listed above; their unrelated literals remain in the wider audit.
 | Map-copy initializer | 30 |
 | `map_apply_copy_region` | 2 |
 | `map_object_mark_collision_edge` | 15 |
-| `map_object_probe_forward` | 3 |
+| `map_object_probe_door_closing` | 3 |
 | `map_object_pool_clear` | 9 |
 | `map_object_definitions_load` | 1 |
 | `map_object_pool_load` | 32 |

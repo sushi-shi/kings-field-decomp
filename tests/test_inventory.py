@@ -3279,9 +3279,9 @@ class InventoryTests(unittest.TestCase):
             data_identities[("GAME.EXE", 0x8006E8E0)].scope,
             "global",
         )
-        for va, field in ((0x80070E92, "effect_sequence_160"),
-                          (0x80070E94, "effect_sequence_170"),
-                          (0x80070E96, "effect_sequence_180")):
+        for va, field in ((0x80070E92, "gold_drop_sequence"),
+                          (0x80070E94, "definition_drop_sequence"),
+                          (0x80070E96, "placement_drop_sequence")):
             self.assertNotIn(("GAME.EXE", va), data_identities)
             self.assertEqual(game.data_owner(va).name, "map_object_state")
             self.assertEqual(_structure_field("KfMapObjectState", va - 0x8006E8E0)[0], field)

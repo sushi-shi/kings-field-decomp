@@ -57,7 +57,7 @@ Both early exits share the normal restore tail. The 32-byte frame saves
 `s0/s1/s2/ra` at 16/20/24/28; the decrement is stored in a branch delay slot,
 and the return slot releases the frame.
 
-The sole caller, `map_floor5_transition_cutscene`, passes its 100-byte stack
+The sole caller, `map_floor5_weapon_transform_cutscene`, passes its 100-byte stack
 state at sp+56 and zero height offset at `80034718/1c`. It tests state+96
 after the call and sends position/rotation to the renderer. Segment/begin
 siblings prove the shared VECTOR position, SVECTOR rotation, word-sized Q4

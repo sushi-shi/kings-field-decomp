@@ -50,7 +50,7 @@ inventory. The existing MATRIX layout and table ownership are retained.
 | GAME `lighting_apply_timed_player_effect`, `0x800187f0`, `0x34` | 100% | Green (+0xa0), blend 3072; incoming call from the illusion-staff timer path. |
 | GAME `lighting_apply_color_preset6`, `0x80018824`, `0x34` | 100% | Blue (+0xc0), blend 3072; no admitted incoming references establish an additional gameplay purpose. |
 | GAME `lighting_set_active_color_matrix`, `0x8001bab8`, `0x2c` | 100% | a0 shifted by five, GAME table at `0x80055dbc`, one SDK call; eight direct callers select default, damage or defense-effect entries. |
-| GAME `map_reveal_fade`, `0x80034438`, `0x184` | 100% | Both loops blend default to white (+0x60); final selector call restores default. Event movement, loop bounds and saved light-matrix copy are untouched. |
+| GAME `map_floor2_event_transfer_fade`, `0x80034438`, `0x184` | 100% | Both loops blend default to white (+0x60); final selector call restores default. Event movement, loop bounds and saved light-matrix copy are untouched. |
 | GAME `map_load_floor`, `0x80036554`, `0xa4` | 100% | After resource/state/texture setup, copies the complete white MATRIX at +0x60 into the effect matrix. |
 | OPEN `opening_scene0_run`, `0x80014268`, `0x174` | 100% | Black (+0x20) to default; a1 is derived by subtracting 32. Halfword blend is sign-extended in the interpolation call's delay slot. |
 | OPEN `opening_scene3_run`, `0x80014804`, `0x330` | 100% | First loop uses black to default, last loop default to black; retain the scene traversal between those loops. |

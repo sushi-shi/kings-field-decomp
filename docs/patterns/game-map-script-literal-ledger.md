@@ -99,43 +99,43 @@ explicit numeric boundaries.
 | `map_ambient_script_floor5` | 200 | `7` | `actor_state.definitions[7].action_animations[KF_ACTOR_ANIM_SLOT_MULTI_HIT_ATTACK] = 1;` | Actor definition 7 receives authored melee/effect/multi-hit clip IDs 2/3/3/3/1; these are resource clips, not action states. |
 | `map_ambient_script_floor5` | 200 | `1` | `actor_state.definitions[7].action_animations[KF_ACTOR_ANIM_SLOT_MULTI_HIT_ATTACK] = 1;` | Actor definition 7 receives authored melee/effect/multi-hit clip IDs 2/3/3/3/1; these are resource clips, not action states. |
 | `map_action_script_floor1` | 209 | `0` | `if (item_stock[KF_ITEM_STOCK_PLAYER][KF_ENUM_ENCODE(u8, KF_ITEM_DRAGON_CHALICE)] != 0` | Player stock bank zero and a nonzero possession test for the authored item: the Dragon Chalice opens the passage; the Wind Blade Bracelet teaches Wind Cutter. |
-| `map_reveal_fade` | 226 | `0` | `for (blend = 0; blend < KF_FIXED12_ONE + 1; blend += MAP_REVEAL_FADE_IN_STEP) {` | Include both Q12 endpoints, starting at zero and stepping by 1/32 blend: 33 render/wait samples. |
-| `map_reveal_fade` | 226 | `1` | `for (blend = 0; blend < KF_FIXED12_ONE + 1; blend += MAP_REVEAL_FADE_IN_STEP) {` | Include both Q12 endpoints, starting at zero and stepping by 1/32 blend: 33 render/wait samples. |
-| `map_reveal_fade` | 228 | `4` | `if (blend >= KF_FIXED12_ONE / 4 + 1) {` | Strictly above one-quarter blend begins movement; +1 preserves the exclusive boundary. |
-| `map_reveal_fade` | 228 | `1` | `if (blend >= KF_FIXED12_ONE / 4 + 1) {` | Strictly above one-quarter blend begins movement; +1 preserves the exclusive boundary. |
-| `map_reveal_fade` | 229 | `3` | `map_event_pool[3].position_y -= MAP_REVEAL_RISE_STEP;` | Event slot 3 rises 130 world units on each of 24 movement samples, totaling 3120; original speed rationale unknown. |
-| `map_reveal_fade` | 230 | `3` | `map_event_pool[3].rotation += MAP_REVEAL_YAW_STEP;` | Event slot 3 turns 128/4096 revolution per movement sample; 24 samples total 270 degrees. |
-| `map_reveal_fade` | 235 | `0` | `render_frame(0, 0);` | Null camera overrides use the current player position and rotation. |
-| `map_reveal_fade` | 235 | `0` | `render_frame(0, 0);` | Null camera overrides use the current player position and rotation. |
-| `map_reveal_fade` | 239 | `3` | `map_event_pool[3].state = KF_MAP_EVENT_DISABLED;` | Disable the authored source event slot 3 after its transfer fade. |
-| `map_reveal_fade` | 242 | `0` | `for (blend = KF_FIXED12_ONE; blend >= 0; blend -= MAP_REVEAL_FADE_OUT_STEP) {` | Return fade includes zero, decrementing by 1/16 Q12 blend for 17 render/wait samples. |
-| `map_reveal_fade` | 244 | `0` | `render_frame(0, 0);` | Null camera overrides use the current player position and rotation. |
-| `map_reveal_fade` | 244 | `0` | `render_frame(0, 0);` | Null camera overrides use the current player position and rotation. |
+| `map_floor2_event_transfer_fade` | 226 | `0` | `for (blend = 0; blend < KF_FIXED12_ONE + 1; blend += MAP_TRANSFER_FADE_IN_STEP) {` | Include both Q12 endpoints, starting at zero and stepping by 1/32 blend: 33 render/wait samples. |
+| `map_floor2_event_transfer_fade` | 226 | `1` | `for (blend = 0; blend < KF_FIXED12_ONE + 1; blend += MAP_TRANSFER_FADE_IN_STEP) {` | Include both Q12 endpoints, starting at zero and stepping by 1/32 blend: 33 render/wait samples. |
+| `map_floor2_event_transfer_fade` | 228 | `4` | `if (blend >= KF_FIXED12_ONE / 4 + 1) {` | Strictly above one-quarter blend begins movement; +1 preserves the exclusive boundary. |
+| `map_floor2_event_transfer_fade` | 228 | `1` | `if (blend >= KF_FIXED12_ONE / 4 + 1) {` | Strictly above one-quarter blend begins movement; +1 preserves the exclusive boundary. |
+| `map_floor2_event_transfer_fade` | 229 | `3` | `map_event_pool[3].position_y -= MAP_TRANSFER_RISE_STEP;` | Event slot 3 rises 130 world units on each of 24 movement samples, totaling 3120; original speed rationale unknown. |
+| `map_floor2_event_transfer_fade` | 230 | `3` | `map_event_pool[3].rotation += MAP_TRANSFER_YAW_STEP;` | Event slot 3 turns 128/4096 revolution per movement sample; 24 samples total 270 degrees. |
+| `map_floor2_event_transfer_fade` | 235 | `0` | `render_frame(0, 0);` | Null camera overrides use the current player position and rotation. |
+| `map_floor2_event_transfer_fade` | 235 | `0` | `render_frame(0, 0);` | Null camera overrides use the current player position and rotation. |
+| `map_floor2_event_transfer_fade` | 239 | `3` | `map_event_pool[3].state = KF_MAP_EVENT_DISABLED;` | Disable the authored source event slot 3 after its transfer fade. |
+| `map_floor2_event_transfer_fade` | 242 | `0` | `for (blend = KF_FIXED12_ONE; blend >= 0; blend -= MAP_TRANSFER_FADE_OUT_STEP) {` | Return fade includes zero, decrementing by 1/16 Q12 blend for 17 render/wait samples. |
+| `map_floor2_event_transfer_fade` | 244 | `0` | `render_frame(0, 0);` | Null camera overrides use the current player position and rotation. |
+| `map_floor2_event_transfer_fade` | 244 | `0` | `render_frame(0, 0);` | Null camera overrides use the current player position and rotation. |
 | `map_action_script_floor2` | 256 | `3` | `if ((*(u32 *)&map_event_pool[3].dialogue_stage_limit & MAP_DIALOGUE_TRIGGER_MASK)` | Authored event slot: floor-2 slot 3 or floor-3/floor-5 slot 1 supplies the dialogue trigger. |
 | `map_action_script_floor2` | 257 | `2` | `== MAP_DIALOGUE_STARTED(2)` | Authored dialogue stage selects this script: stage 2 transfers the character, stage 3 teaches magic, stage 5 transforms the weapon. |
 | `map_action_script_floor2` | 258 | `3` | `&& map_event_pool[3].state == KF_MAP_EVENT_ACTIVE) {` | Authored event slot: floor-2 slot 3 or floor-3/floor-5 slot 1 supplies the dialogue trigger. |
 | `map_action_script_floor3` | 267 | `0` | `if (item_stock[KF_ITEM_STOCK_PLAYER][KF_ENUM_ENCODE(u8, KF_ITEM_WIND_BLADE_BRACELET)] != 0) {` | Player stock bank zero and a nonzero possession test for the authored item: the Dragon Chalice opens the passage; the Wind Blade Bracelet teaches Wind Cutter. |
 | `map_action_script_floor3` | 273 | `1` | `if ((*(u32 *)&map_event_pool[1].dialogue_stage_limit & MAP_DIALOGUE_TRIGGER_MASK)` | Authored event slot: floor-2 slot 3 or floor-3/floor-5 slot 1 supplies the dialogue trigger. |
 | `map_action_script_floor3` | 274 | `3` | `== MAP_DIALOGUE_STARTED(3)) {` | Authored dialogue stage selects this script: stage 2 transfers the character, stage 3 teaches magic, stage 5 transforms the weapon. |
-| `map_floor5_transition_cutscene` | 304 | `0` | `item_stock[KF_ITEM_STOCK_PLAYER][KF_ENUM_ENCODE(u8, KF_ITEM_DRAGON_SWORD)] = 0;` | Clear all player-owned copies of the Dragon Sword; stock bank zero is the player bank. |
-| `map_floor5_transition_cutscene` | 305 | `1` | `collision_adjust_cell_occupancy(player_state.map_cell.x, player_state.map_cell.z, -1);` | Remove one player occupancy contribution before moving, then add one at the destination; the sign selects the operation. |
-| `map_floor5_transition_cutscene` | 309 | `0` | `camera_path_step(&path, 0);` | No extra vertical offset on this authored camera path. |
-| `map_floor5_transition_cutscene` | 320 | `1` | `collision_adjust_cell_occupancy(player_state.map_cell.x, player_state.map_cell.z, 1);` | Remove one player occupancy contribution before moving, then add one at the destination; the sign selects the operation. |
-| `map_floor5_transition_cutscene` | 326 | `85` | `effect->cell_x = 85;` | Authored output object tile X=85. |
-| `map_floor5_transition_cutscene` | 327 | `40` | `effect->cell_z = 40;` | Authored output object tile Z=40; separate from the countdown also encoded as 40. |
-| `map_floor5_transition_cutscene` | 331 | `0` | `effect->rotation.z = 0;` | Angular origin for the indicated pitch/roll lane; restore the container to closed pitch after pickup. |
-| `map_floor5_transition_cutscene` | 332 | `0` | `effect->rotation.x = 0;` | Angular origin for the indicated pitch/roll lane; restore the container to closed pitch after pickup. |
-| `map_floor5_transition_cutscene` | 337 | `0` | `spin = 0;` | Start with zero angular velocity. |
-| `map_floor5_transition_cutscene` | 338 | `0` | `hold = 0;` | No hold countdown until acceleration reaches peak speed. |
-| `map_floor5_transition_cutscene` | 344 | `0` | `if (hold != 0) {` | A nonzero countdown selects the hold portion of the first phase. |
-| `map_floor5_transition_cutscene` | 345 | `1` | `hold -= 1;` | Consume one rendered update of the hold countdown. |
-| `map_floor5_transition_cutscene` | 346 | `1` | `if (hold == 1) {` | Enter deceleration when the decremented hold reaches one; do not change this to a zero endpoint. |
-| `map_floor5_transition_cutscene` | 352 | `0` | `0, KF_EFFECT_USE_PLAYER_MAGIC \| KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,` | Owner/source index zero passed with the player-magic flag; preserve the effect-construction argument. |
-| `map_floor5_transition_cutscene` | 353 | `1` | `KF_EFFECT_KIND_RADIAL_BLAST, &spawn, &direction, 1);` | True optional sound-request argument for the radial blast; its direction input remains unused by this kind. |
-| `map_floor5_transition_cutscene` | 364 | `0` | `if (spin > 0) {` | Continue deceleration until angular velocity reaches zero. |
-| `map_floor5_transition_cutscene` | 368 | `0` | `effect->link.vertical_velocity = 0;` | Begin the subsequent falling action from zero vertical velocity. |
-| `map_floor5_transition_cutscene` | 376 | `0` | `render_frame(0, 0);` | Null camera overrides use the current player position and rotation. |
-| `map_floor5_transition_cutscene` | 376 | `0` | `render_frame(0, 0);` | Null camera overrides use the current player position and rotation. |
+| `map_floor5_weapon_transform_cutscene` | 304 | `0` | `item_stock[KF_ITEM_STOCK_PLAYER][KF_ENUM_ENCODE(u8, KF_ITEM_DRAGON_SWORD)] = 0;` | Clear all player-owned copies of the Dragon Sword; stock bank zero is the player bank. |
+| `map_floor5_weapon_transform_cutscene` | 305 | `1` | `collision_adjust_cell_occupancy(player_state.map_cell.x, player_state.map_cell.z, -1);` | Remove one player occupancy contribution before moving, then add one at the destination; the sign selects the operation. |
+| `map_floor5_weapon_transform_cutscene` | 309 | `0` | `camera_path_step(&path, 0);` | No extra vertical offset on this authored camera path. |
+| `map_floor5_weapon_transform_cutscene` | 320 | `1` | `collision_adjust_cell_occupancy(player_state.map_cell.x, player_state.map_cell.z, 1);` | Remove one player occupancy contribution before moving, then add one at the destination; the sign selects the operation. |
+| `map_floor5_weapon_transform_cutscene` | 326 | `85` | `effect->cell_x = 85;` | Authored output object tile X=85. |
+| `map_floor5_weapon_transform_cutscene` | 327 | `40` | `effect->cell_z = 40;` | Authored output object tile Z=40; separate from the countdown also encoded as 40. |
+| `map_floor5_weapon_transform_cutscene` | 331 | `0` | `effect->rotation.z = 0;` | Angular origin for the indicated pitch/roll lane; restore the container to closed pitch after pickup. |
+| `map_floor5_weapon_transform_cutscene` | 332 | `0` | `effect->rotation.x = 0;` | Angular origin for the indicated pitch/roll lane; restore the container to closed pitch after pickup. |
+| `map_floor5_weapon_transform_cutscene` | 337 | `0` | `spin = 0;` | Start with zero angular velocity. |
+| `map_floor5_weapon_transform_cutscene` | 338 | `0` | `hold = 0;` | No hold countdown until acceleration reaches peak speed. |
+| `map_floor5_weapon_transform_cutscene` | 344 | `0` | `if (hold != 0) {` | A nonzero countdown selects the hold portion of the first phase. |
+| `map_floor5_weapon_transform_cutscene` | 345 | `1` | `hold -= 1;` | Consume one rendered update of the hold countdown. |
+| `map_floor5_weapon_transform_cutscene` | 346 | `1` | `if (hold == 1) {` | Enter deceleration when the decremented hold reaches one; do not change this to a zero endpoint. |
+| `map_floor5_weapon_transform_cutscene` | 352 | `0` | `0, KF_EFFECT_USE_PLAYER_MAGIC \| KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,` | Owner/source index zero passed with the player-magic flag; preserve the effect-construction argument. |
+| `map_floor5_weapon_transform_cutscene` | 353 | `1` | `KF_EFFECT_KIND_RADIAL_BLAST, &spawn, &direction, 1);` | True optional sound-request argument for the radial blast; its direction input remains unused by this kind. |
+| `map_floor5_weapon_transform_cutscene` | 364 | `0` | `if (spin > 0) {` | Continue deceleration until angular velocity reaches zero. |
+| `map_floor5_weapon_transform_cutscene` | 368 | `0` | `effect->link.vertical_velocity = 0;` | Begin the subsequent falling action from zero vertical velocity. |
+| `map_floor5_weapon_transform_cutscene` | 376 | `0` | `render_frame(0, 0);` | Null camera overrides use the current player position and rotation. |
+| `map_floor5_weapon_transform_cutscene` | 376 | `0` | `render_frame(0, 0);` | Null camera overrides use the current player position and rotation. |
 | `map_action_script_floor5` | 385 | `1` | `if ((*(u32 *)&map_event_pool[1].dialogue_stage_limit & MAP_DIALOGUE_TRIGGER_MASK)` | Authored event slot: floor-2 slot 3 or floor-3/floor-5 slot 1 supplies the dialogue trigger. |
 | `map_action_script_floor5` | 386 | `5` | `== MAP_DIALOGUE_STARTED(5)) {` | Authored dialogue stage selects this script: stage 2 transfers the character, stage 3 teaches magic, stage 5 transforms the weapon. |
 | `map_event_interact` | 397 | `0` | `if (item_stock[KF_ITEM_STOCK_PLAYER][KF_ENUM_ENCODE(u8, KF_ITEM_GOLD_CROSS)] != 0 && map_event_pool[2].dialogue_stage == 1` | Authored exchange on player stock bank zero: character 3 consumes Gold Cross for Key of the Dead, character 8 consumes Mirror of Truth to learn Healing, character 7 consumes Dragon King Grass Fruit for the harp. Nonzero means possessed; assigning one grants a copy. |

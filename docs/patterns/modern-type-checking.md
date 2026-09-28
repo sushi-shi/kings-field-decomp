@@ -239,7 +239,7 @@ their unattributed differences. No exact-count movement or banking.
 | `80030818` | `actor_pool_update` | 100 | Unchanged exact |
 | `800308c0` | `actor_pool_load_placements` | 100 | Unchanged exact |
 | `80033f64` | `map_ambient_script_floor1` | 100 | Unchanged exact |
-| `800346a8` | `map_floor5_transition_cutscene` | 100 | Unchanged exact |
+| `800346a8` | `map_floor5_weapon_transform_cutscene` | 100 | Unchanged exact |
 | `80035b5c` | `map_world_state_persist` | 94.821840 | Unchanged partial |
 | `80035e44` | `map_restore_floor_state` | 99.964540 | Unchanged partial |
 | `80036f44` | `effect_pool_construct` | 100 | Unchanged exact |

@@ -1094,7 +1094,7 @@ Final verification passes the focused compile, complete 739-test / 9183-subtest
 suite, Ruff and whitespace checks. The full build raises GAME to 341/362 exact
 at 99.787% aggregate and the repository total to 448/471 exact. It reaches the
 existing data ownership and section-placement failures with zero artifact
-failures. `map_object_probe_forward` is banked at strict 100%.
+failures. `map_object_probe_door_closing` is banked at strict 100%.
 
 ## Statistics header: shared row-step value
 

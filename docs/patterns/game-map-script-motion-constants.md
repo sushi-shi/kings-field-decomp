@@ -38,11 +38,11 @@ retains a separate final verdict. No new exact function is expected or banked.
 | 0x800342e4 / 8 | `map_ambient_script_floor4` | 100.000000 |
 | 0x800342ec / 244 | `map_ambient_script_floor5` | 100.000000 |
 | 0x800343e0 / 88 | `map_action_script_floor1` | 100.000000 |
-| 0x80034438 / 388 | `map_reveal_fade` | 100.000000 |
+| 0x80034438 / 388 | `map_floor2_event_transfer_fade` | 100.000000 |
 | 0x800345bc / 84 | `map_action_script_floor2` | 100.000000 |
 | 0x80034610 / 144 | `map_action_script_floor3` | 100.000000 |
 | 0x800346a0 / 8 | `map_action_script_floor4` | 100.000000 |
-| 0x800346a8 / 908 | `map_floor5_transition_cutscene` | 100.000000 |
+| 0x800346a8 / 908 | `map_floor5_weapon_transform_cutscene` | 100.000000 |
 | 0x80034a34 / 76 | `map_action_script_floor5` | 100.000000 |
 | 0x80034a80 / 724 | `map_event_interact` | 100.000000 |
 | 0x80034d54 / 144 | `map_show_screen_image` | 88.888885 |
@@ -106,11 +106,11 @@ the plan above. No additional function is banked.
 | `map_ambient_script_floor4` | 2 / 0 / 0 | Exact, unchanged |
 | `map_ambient_script_floor5` | 61 / 5 / 11 | Exact, unchanged |
 | `map_action_script_floor1` | 22 / 2 / 3 | Exact, unchanged |
-| `map_reveal_fade` | 97 / 8 / 9 | Exact, unchanged |
+| `map_floor2_event_transfer_fade` | 97 / 8 / 9 | Exact, unchanged |
 | `map_action_script_floor2` | 21 / 1 / 2 | Exact, unchanged |
 | `map_action_script_floor3` | 36 / 2 / 4 | Exact, unchanged |
 | `map_action_script_floor4` | 2 / 0 / 0 | Exact, unchanged |
-| `map_floor5_transition_cutscene` | 227 / 12 / 14 | Exact, unchanged |
+| `map_floor5_weapon_transform_cutscene` | 227 / 12 / 14 | Exact, unchanged |
 | `map_action_script_floor5` | 19 / 1 / 2 | Exact, unchanged |
 | `map_event_interact` | 181 / 7 / 28 | Exact, unchanged |
 | `map_show_screen_image` | 37 / 1 / 5 | Partial, unchanged |

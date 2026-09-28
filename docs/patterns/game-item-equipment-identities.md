@@ -57,7 +57,7 @@ explain retained special-item timing/bonus values without inventing tuning.
 | `0x80018880 / 6684` | `player_update` | 96.94554 | Correct equipped fields; Skull Armor23 gates cast/charge block. Name weapon switch IDs3/7/8/11 and Shadow Blade9 environment condition without changing timing or queued effects. |
 | `0x800343e0 / 88` | `map_action_script_floor1` | 100.0 | Control: named Dragon Chalice possession and passage flag remain unchanged. |
 | `0x80034610 / 144` | `map_action_script_floor3` | 100.0 | Control: named bracelet possession and learned flags remain unchanged. |
-| `0x800346a8 / 908` | `map_floor5_transition_cutscene` | 100.0 | Dragon Sword10 becomes displayed Moonlight Sword11; inventory and displayed object IDs align in this explicit transformation path. |
+| `0x800346a8 / 908` | `map_floor5_weapon_transform_cutscene` | 100.0 | Dragon Sword10 becomes displayed Moonlight Sword11; inventory and displayed object IDs align in this explicit transformation path. |
 | `0x80034a80 / 724` | `map_event_interact` | 100.0 | Control: named item exchanges and dialogue sequence unchanged. |
 | `0x80035e44 / 1692` | `map_restore_floor_state` | 99.96454 | Named Dragon Sword/Moonlight Sword stock checks gate floor5 link clearing; preserve unrelated link52 domain. |
 | `0x800150a8 / 84` | `weapon_records_load_and_mirror_angles` | 100.0 | Control: sixteen 44-byte records; selectable weapon band still includes blank row12 and stops before Iron Mask13. |

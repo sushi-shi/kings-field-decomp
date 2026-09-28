@@ -2,7 +2,7 @@
 
 ## Function Match Plan
 
-GAME `80031834`, 404 retail bytes, `map_object_spawn_effect` is
+GAME `80031834`, 404 retail bytes, `map_object_spawn_drop` is
 94.504950% at b9f0b5f. Refresh all six semantic views, both argument paths
 in `actor_update_current_action`, adjacent allocator/action/debris bodies,
 source history and prior twelve spawn controls before editing. The caller
@@ -34,7 +34,7 @@ All five call targets and both global address pairs are unchanged. Independent
 fresh compiles and relocation resolution confirm all seven siblings unchanged,
 including the six exact controls. No source, identity or bank change is kept.
 
-Generated results: `build/hypotheses/20260908-204437-game-map_object-map_object_spawn_effect`.
+Generated results: `build/hypotheses/20260908-204437-game-map_object-map_object_spawn_drop`.
 The JSON manifest, independent compile script and raw verifier are
 `build/spawn-inline-hypotheses.json`, `build/spawn-inline-inspect.py` and
 `build/verify-spawn-inline.py`. These generated artifacts are not committed.
@@ -77,7 +77,7 @@ Every one of the seven sibling functions reproduces its complete raw retail
 body and ordered references in all four independent builds. This includes
 the now-exact object-pool updater. All manifest baselines match the current
 source. Results are in
-`build/hypotheses/20260908-215303-game-map_object-map_object_spawn_effect`;
+`build/hypotheses/20260908-215303-game-map_object-map_object_spawn_drop`;
 the manifest, six-view dossier and independently compiled objects use the
 `spawn-init-inline` prefix under `build/`.
 

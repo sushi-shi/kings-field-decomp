@@ -427,8 +427,8 @@ typedef struct KfMapEvent {
     KfMapEventCollisionTurn collision_turn_pending;
     u8 unknown_11;
     u16 animation_phase;
-    s32 position_x;
-    s32 position_z;
+    s32 home_x;
+    s32 home_z;
     u16 cell_x;
     u16 cell_z;
     u16 radius;
@@ -445,9 +445,9 @@ typedef struct KfMapObjectState {
     KfMapObjectDefinitionTable definitions;
     KfMapObject objects[KF_MAP_OBJECT_CAPACITY];
     u8 unknown_25a8[10];
-    u16 effect_sequence_160;
-    u16 effect_sequence_170;
-    u16 effect_sequence_180;
+    u16 gold_drop_sequence;
+    u16 definition_drop_sequence;
+    u16 placement_drop_sequence;
 } KfMapObjectState;
 
 /* Cleared as 0x2360 bytes; the final 0x2134 bytes are copied by save I/O. */
@@ -504,9 +504,9 @@ extern s32 map_object_pool_find_near_point(s32 point_x, s32 point_z, s32 radius_
 extern void map_object_pool_load(const KfMapObjectPlacement *placements);
 extern void map_object_pool_trigger_link(u8 link_id);
 extern void map_object_pool_update(void);
-extern s32 map_object_probe_forward(const KfMapObject *object, u16 yaw);
-extern void map_object_spawn_actor_debris(u16 source, const VECTOR *position, s32 y_offset);
-extern void map_object_spawn_effect(KfMapObjectDropSource drop_source, KfObjectId object_id, const VECTOR *position, s32 y_offset);
+extern s32 map_object_probe_door_closing(const KfMapObject *object, u16 yaw);
+extern void map_object_spawn_gold_drop(u16 gold_amount, const VECTOR *position, s32 y_offset);
+extern void map_object_spawn_drop(KfMapObjectDropSource drop_source, KfObjectId object_id, const VECTOR *position, s32 y_offset);
 extern void map_object_start_action_if_idle(KfMapObject *object, KfMapObjectOperation action);
 /* Copy into a complete object with word-aligned storage; count is in words. */
 extern const u32 *map_resource_copy_words(u32 *destination, const u32 *source, u32 word_count);

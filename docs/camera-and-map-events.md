@@ -9,7 +9,7 @@ does not prove that these functions belonged to one original translation unit.
 
 `camera_path_begin`, `camera_path_compute_segment`, and `camera_path_step`
 operate on a caller-owned `0x64`-byte `KfCameraPathState`.
-`map_floor5_transition_cutscene` allocates that state on its stack, begins a
+`map_floor5_weapon_transform_cutscene` allocates that state on its stack, begins a
 path, steps it while rendering, and copies the final transform back to the live
 camera.
 
@@ -26,7 +26,7 @@ unnamed.
 
 ## Floor-5 transition cutscene
 
-`map_floor5_transition_cutscene` is the sole proven consumer of the camera-path
+`map_floor5_weapon_transform_cutscene` is the sole proven consumer of the camera-path
 interface. Its only proven external caller is `map_action_script_floor5`. It
 follows the path to relocate the player, creates a map-object effect at the
 fixed floor-5 cell `(85, 40)`, spins the object up and down while emitting a

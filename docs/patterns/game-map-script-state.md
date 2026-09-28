@@ -115,11 +115,11 @@ Partial rows retain complete emitted objects, without a new closure claim.
 | `0x800342e4 / 8` | `map_ambient_script_floor4` | 100 | Exact / 2 |
 | `0x800342ec / 244` | `map_ambient_script_floor5` | 100 | Exact / 61 |
 | `0x800343e0 / 88` | `map_action_script_floor1` | 100 | Exact / 22 |
-| `0x80034438 / 388` | `map_reveal_fade` | 100 | Exact / 97 |
+| `0x80034438 / 388` | `map_floor2_event_transfer_fade` | 100 | Exact / 97 |
 | `0x800345bc / 84` | `map_action_script_floor2` | 100 | Exact / 21 |
 | `0x80034610 / 144` | `map_action_script_floor3` | 100 | Exact / 36 |
 | `0x800346a0 / 8` | `map_action_script_floor4` | 100 | Exact / 2 |
-| `0x800346a8 / 908` | `map_floor5_transition_cutscene` | 100 | Exact / 227 |
+| `0x800346a8 / 908` | `map_floor5_weapon_transform_cutscene` | 100 | Exact / 227 |
 | `0x80034a34 / 76` | `map_action_script_floor5` | 100 | Exact / 19 |
 | `0x80034a80 / 724` | `map_event_interact` | 100 | Exact / 181 |
 | `0x80034d54 / 144` | `map_show_screen_image` | 88.8889 | Partial, unchanged |

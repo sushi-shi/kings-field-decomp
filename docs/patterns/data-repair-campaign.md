@@ -251,8 +251,8 @@ partial; every score and all 484 function-report entries remain unchanged.
 | GAME.EXE | `menu_draw_item_name_frame` | 1976/1976 | 99.570850% |
 | GAME.EXE | `menu_draw_window_backdrop` | 1700/1700 | 99.971760% |
 | GAME.EXE | `talk_show_dialogue_page` | 164/164 | 98.780490% |
-| GAME.EXE | `map_object_probe_forward` | 196/196 | 93.755104% |
-| GAME.EXE | `map_object_spawn_effect` | 404/400 | 94.504950% |
+| GAME.EXE | `map_object_probe_door_closing` | 196/196 | 93.755104% |
+| GAME.EXE | `map_object_spawn_drop` | 404/400 | 94.504950% |
 | GAME.EXE | `map_show_screen_image` | 144/148 | 88.888885% |
 | GAME.EXE | `map_interaction_dispatch` | 2308/2296 | 99.202774% |
 | GAME.EXE | `map_world_state_persist` | 696/700 | 97.528730% |

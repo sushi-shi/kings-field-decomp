@@ -224,7 +224,7 @@ object boundary establishes the allocation start; the GAME anchor's own
 explicit rather than converting the common distance into a fabricated array.
 
 The remaining instruction-related data failures reproduce earlier controlled
-residues. `map_object_spawn_effect` is 400/404 source/retail bytes, first
+residues. `map_object_spawn_drop` is 400/404 source/retail bytes, first
 differing at +4 (`sw ra,32(sp)` versus `sw ra,36(sp)`), with five identical
 calls and the same sequence-object referents. Acquisition/publication helpers,
 post-sequence initialization scopes and SDK-vector controls already failed
@@ -342,8 +342,8 @@ and lighting owners also preserve their complete raw retail bodies.
 | game.map_object | `800315c4` | `map_object_pool_find_interaction_from` | 448/448 | 100.000000 |
 | game.map_object | `80031784` | `map_object_start_action_if_idle` | 32/32 | 100.000000 |
 | game.map_object | `800317a4` | `map_object_effect_pool_acquire` | 144/144 | 100.000000 |
-| game.map_object | `80031834` | `map_object_spawn_effect` | 404/400 | 94.504950 |
-| game.map_object | `800319c8` | `map_object_spawn_actor_debris` | 396/396 | 100.000000 |
+| game.map_object | `80031834` | `map_object_spawn_drop` | 404/400 | 94.504950 |
+| game.map_object | `800319c8` | `map_object_spawn_gold_drop` | 396/396 | 100.000000 |
 | game.map_object | `80031b54` | `map_object_pool_trigger_link` | 240/240 | 100.000000 |
 | game.map_object | `80031c44` | `map_object_pool_clear_link` | 132/132 | 100.000000 |
 | game.map_object | `80031cc8` | `map_object_pool_update` | 3096/3096 | 100.000000 |
@@ -369,11 +369,11 @@ and lighting owners also preserve their complete raw retail bodies.
 | game.map_scripts | `800342e4` | `map_ambient_script_floor4` | 8/8 | 100.000000 |
 | game.map_scripts | `800342ec` | `map_ambient_script_floor5` | 244/244 | 100.000000 |
 | game.map_scripts | `800343e0` | `map_action_script_floor1` | 88/88 | 100.000000 |
-| game.map_scripts | `80034438` | `map_reveal_fade` | 388/388 | 100.000000 |
+| game.map_scripts | `80034438` | `map_floor2_event_transfer_fade` | 388/388 | 100.000000 |
 | game.map_scripts | `800345bc` | `map_action_script_floor2` | 84/84 | 100.000000 |
 | game.map_scripts | `80034610` | `map_action_script_floor3` | 144/144 | 100.000000 |
 | game.map_scripts | `800346a0` | `map_action_script_floor4` | 8/8 | 100.000000 |
-| game.map_scripts | `800346a8` | `map_floor5_transition_cutscene` | 908/908 | 100.000000 |
+| game.map_scripts | `800346a8` | `map_floor5_weapon_transform_cutscene` | 908/908 | 100.000000 |
 | game.map_scripts | `80034a34` | `map_action_script_floor5` | 76/76 | 100.000000 |
 | game.map_scripts | `80034a80` | `map_event_interact` | 724/724 | 100.000000 |
 | game.map_scripts | `80034d54` | `map_show_screen_image` | 144/148 | 88.888885 |

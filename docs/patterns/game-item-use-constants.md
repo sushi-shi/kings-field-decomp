@@ -20,11 +20,11 @@ These are game item/floor consumers of external SDK sine/cosine and rendering AP
 | `map_ambient_script_floor4` | `0x800342e4 / 8` | 100.000000% | 0 / 0 / 1 | Unchanged function control for the rebuilt unit. |
 | `map_ambient_script_floor5` | `0x800342ec / 244` | 100.000000% | 5 / 4 / 1 | Unchanged function control for the rebuilt unit. |
 | `map_action_script_floor1` | `0x800343e0 / 88` | 100.000000% | 2 / 2 / 1 | Unchanged function control for the rebuilt unit. |
-| `map_reveal_fade` | `0x80034438 / 388` | 100.000000% | 8 / 3 / 1 | Unchanged function control for the rebuilt unit. |
+| `map_floor2_event_transfer_fade` | `0x80034438 / 388` | 100.000000% | 8 / 3 / 1 | Unchanged function control for the rebuilt unit. |
 | `map_action_script_floor2` | `0x800345bc / 84` | 100.000000% | 1 / 2 / 1 | Unchanged function control for the rebuilt unit. |
 | `map_action_script_floor3` | `0x80034610 / 144` | 100.000000% | 2 / 4 / 1 | Unchanged function control for the rebuilt unit. |
 | `map_action_script_floor4` | `0x800346a0 / 8` | 100.000000% | 0 / 0 / 1 | Unchanged function control for the rebuilt unit. |
-| `map_floor5_transition_cutscene` | `0x800346a8 / 908` | 100.000000% | 12 / 15 / 1 | Unchanged function control for the rebuilt unit. |
+| `map_floor5_weapon_transform_cutscene` | `0x800346a8 / 908` | 100.000000% | 12 / 15 / 1 | Unchanged function control for the rebuilt unit. |
 | `map_action_script_floor5` | `0x80034a34 / 76` | 100.000000% | 1 / 1 / 1 | Unchanged function control for the rebuilt unit. |
 | `map_event_interact` | `0x80034a80 / 724` | 100.000000% | 7 / 17 / 1 | Unchanged function control for the rebuilt unit. |
 | `map_show_screen_image` | `0x80034d54 / 144` | 88.888885% | 1 / 3 / 1 | Unchanged function control for the rebuilt unit. |
@@ -116,11 +116,11 @@ function scores remain unchanged. The 19 function controls preserve
 | `map_ambient_script_floor4` | 100.000000% | Exact, unchanged |
 | `map_ambient_script_floor5` | 100.000000% | Exact, unchanged |
 | `map_action_script_floor1` | 100.000000% | Exact, unchanged |
-| `map_reveal_fade` | 100.000000% | Exact, unchanged |
+| `map_floor2_event_transfer_fade` | 100.000000% | Exact, unchanged |
 | `map_action_script_floor2` | 100.000000% | Exact, unchanged |
 | `map_action_script_floor3` | 100.000000% | Exact, unchanged |
 | `map_action_script_floor4` | 100.000000% | Exact, unchanged |
-| `map_floor5_transition_cutscene` | 100.000000% | Exact, unchanged |
+| `map_floor5_weapon_transform_cutscene` | 100.000000% | Exact, unchanged |
 | `map_action_script_floor5` | 100.000000% | Exact, unchanged |
 | `map_event_interact` | 100.000000% | Exact, unchanged |
 | `map_show_screen_image` | 88.888885% | Partial, unchanged |

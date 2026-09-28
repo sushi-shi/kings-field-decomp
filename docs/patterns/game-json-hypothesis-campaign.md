@@ -245,7 +245,7 @@ strict/raw results; no padding, fake locals or forced registers are allowed.
 
 ## GAME map-object spawn: function match plan
 
-At f954711, GAME `80031834` / 404 bytes, `map_object_spawn_effect`
+At f954711, GAME `80031834` / 404 bytes, `map_object_spawn_drop`
 is strict 94.504950%; six of eight unit functions are exact. All six semantic
 views, the sole caller's two argument paths, adjacent allocator/action/debris
 bodies, prior initialization dossier, identity/vendor rows and history were
@@ -280,7 +280,7 @@ saved register and changed the call setup (93.712870%). Moving X-cell
 initialization earlier ranged 82.485146–84.930695%; no candidate is retained.
 The original source remains the strongest model; the pointer reuse symptom
 alone supplies no further source fact. Results and raw controls are under
-`build/hypotheses/20260908-162358-game-map_object-map_object_spawn_effect`
+`build/hypotheses/20260908-162358-game-map_object-map_object_spawn_drop`
 and `build/spawn-controls-compare.txt`.
 
 ## GAME map-object pool update: function match plan
@@ -565,7 +565,7 @@ Results: `build/hypotheses/20260908-172920-game-player_update-player_update`.
 
 ## Forward-probe cardinal dispatch controls
 
-GAME `map_object_probe_forward` at `80030eb8` (196 bytes) remains
+GAME `map_object_probe_door_closing` at `80030eb8` (196 bytes) remains
 93.755104% in `game.map_object_pool`. The refreshed six semantic views,
 complete CFG, both caller windows, collision callee, adjacent functions,
 source history and prior forward-probe dossier were read before generating
@@ -600,5 +600,5 @@ The original switch source is unchanged; all seven sibling listings remain
 identical to retail in the focused canonical compile. These results reject
 the tested predicate forms and leave the existing residue unattributed.
 Generated manifests, sources and scores are in
-`build/hypotheses/20260908-173732-game-map_object_pool-map_object_probe_forward`;
+`build/hypotheses/20260908-173732-game-map_object_pool-map_object_probe_door_closing`;
 raw candidate listings are in `build/forward-dispatch-objects`.

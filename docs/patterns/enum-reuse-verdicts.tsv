@@ -262,7 +262,7 @@ GAME.EXE	actor_pool_load_placements	0x800308c0	0x1ac	game.actor_pool	100	exact-p
 GAME.EXE	actor_definitions_load	0x80030a6c	0x2c	game.actor_pool	100	exact-preserved
 GAME.EXE	map_apply_copy_region	0x80030a98	0x1e4	game.map_object_pool	100	exact-preserved
 GAME.EXE	map_object_mark_collision_edge	0x80030c7c	0x23c	game.map_object_pool	100	exact-preserved
-GAME.EXE	map_object_probe_forward	0x80030eb8	0xc4	game.map_object_pool	100	exact-preserved
+GAME.EXE	map_object_probe_door_closing	0x80030eb8	0xc4	game.map_object_pool	100	exact-preserved
 GAME.EXE	map_object_pool_clear	0x80030f7c	0x60	game.map_object_pool	100	exact-preserved
 GAME.EXE	map_object_definitions_load	0x80030fdc	0x2c	game.map_object_pool	100	exact-preserved
 GAME.EXE	map_object_pool_load	0x80031008	0x448	game.map_object_pool	100	exact-preserved
@@ -271,8 +271,8 @@ GAME.EXE	map_object_pool_find_near_point	0x800314f8	0xcc	game.map_object_pool	10
 GAME.EXE	map_object_pool_find_interaction_from	0x800315c4	0x1c0	game.map_object	100	exact-preserved
 GAME.EXE	map_object_start_action_if_idle	0x80031784	0x20	game.map_object	100	exact-preserved
 GAME.EXE	map_object_effect_pool_acquire	0x800317a4	0x90	game.map_object	100	exact-preserved
-GAME.EXE	map_object_spawn_effect	0x80031834	0x194	game.map_object	97.128716	partial-preserved
-GAME.EXE	map_object_spawn_actor_debris	0x800319c8	0x18c	game.map_object	100	exact-preserved
+GAME.EXE	map_object_spawn_drop	0x80031834	0x194	game.map_object	97.128716	partial-preserved
+GAME.EXE	map_object_spawn_gold_drop	0x800319c8	0x18c	game.map_object	100	exact-preserved
 GAME.EXE	map_object_pool_trigger_link	0x80031b54	0xf0	game.map_object	100	exact-preserved
 GAME.EXE	map_object_pool_clear_link	0x80031c44	0x84	game.map_object	100	exact-preserved
 GAME.EXE	map_object_pool_update	0x80031cc8	0xc18	game.map_object	100	exact-preserved
@@ -311,11 +311,11 @@ GAME.EXE	map_ambient_script_floor3	0x8003425c	0x88	game.map_scripts	100	exact-pr
 GAME.EXE	map_ambient_script_floor4	0x800342e4	0x8	game.map_scripts	100	exact-preserved
 GAME.EXE	map_ambient_script_floor5	0x800342ec	0xf4	game.map_scripts	100	exact-preserved
 GAME.EXE	map_action_script_floor1	0x800343e0	0x58	game.map_scripts	100	exact-preserved
-GAME.EXE	map_reveal_fade	0x80034438	0x184	game.map_scripts	100	exact-preserved
+GAME.EXE	map_floor2_event_transfer_fade	0x80034438	0x184	game.map_scripts	100	exact-preserved
 GAME.EXE	map_action_script_floor2	0x800345bc	0x54	game.map_scripts	100	exact-preserved
 GAME.EXE	map_action_script_floor3	0x80034610	0x90	game.map_scripts	100	exact-preserved
 GAME.EXE	map_action_script_floor4	0x800346a0	0x8	game.map_scripts	100	exact-preserved
-GAME.EXE	map_floor5_transition_cutscene	0x800346a8	0x38c	game.map_scripts	100	exact-preserved
+GAME.EXE	map_floor5_weapon_transform_cutscene	0x800346a8	0x38c	game.map_scripts	100	exact-preserved
 GAME.EXE	map_action_script_floor5	0x80034a34	0x4c	game.map_scripts	100	exact-preserved
 GAME.EXE	map_event_interact	0x80034a80	0x2d4	game.map_scripts	100	exact-preserved
 GAME.EXE	map_show_screen_image	0x80034d54	0x90	game.map_scripts	100	exact-preserved

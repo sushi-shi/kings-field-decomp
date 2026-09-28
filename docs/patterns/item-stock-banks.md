@@ -30,7 +30,7 @@ item-detail panels have one each.
 | `map_restore_floor_state` | `0x80035e44 / 0x69c` | 2 | `80036440: 06 80 02 3c lui v0,0x8006 ` |
 | `map_action_script_floor1` | `0x800343e0 / 0x58` | 1 | `800343e0: 06 80 02 3c lui v0,0x8006 ` |
 | `map_action_script_floor3` | `0x80034610 / 0x90` | 1 | `80034610: 06 80 02 3c lui v0,0x8006 ` |
-| `map_floor5_transition_cutscene` | `0x800346a8 / 0x38c` | 1 | `800346e0: 06 80 01 3c lui at,0x8006 ` |
+| `map_floor5_weapon_transform_cutscene` | `0x800346a8 / 0x38c` | 1 | `800346e0: 06 80 01 3c lui at,0x8006 ` |
 | `map_event_interact` | `0x80034a80 / 0x2d4` | 8 | `80034ad8: 06 80 05 3c lui a1,0x8006 ` |
 | `menu_use_item_panel` | `0x80022608 / 0x774` | 1 | `80022650: 06 80 02 3c lui v0,0x8006 ` |
 | `menu_draw_item_detail` | `0x80027b7c / 0x2dc` | 1 | `80027d9c: 06 80 01 3c lui at,0x8006 ` |

@@ -162,10 +162,10 @@ baseline. No additional function is banked.
 | GAME.EXE | `actor_apply_damage` | `0x8002d120 / 0x388` | 100% exact, preserved |
 | GAME.EXE | `actor_try_attack_player` | `0x8002d6a0 / 0x158` | 100% exact, preserved |
 | GAME.EXE | `map_object_pool_load` | `0x80031008 / 0x448` | 100% exact, preserved |
-| GAME.EXE | `map_object_spawn_actor_debris` | `0x800319c8 / 0x18c` | 100% exact, preserved |
+| GAME.EXE | `map_object_spawn_gold_drop` | `0x800319c8 / 0x18c` | 100% exact, preserved |
 | GAME.EXE | `map_object_pool_trigger_link` | `0x80031b54 / 0xf0` | 100% exact, preserved |
 | GAME.EXE | `map_object_pool_update` | `0x80031cc8 / 0xc18` | 100% exact, preserved |
-| GAME.EXE | `map_floor5_transition_cutscene` | `0x800346a8 / 0x38c` | 100% exact, preserved |
+| GAME.EXE | `map_floor5_weapon_transform_cutscene` | `0x800346a8 / 0x38c` | 100% exact, preserved |
 | GAME.EXE | `map_interaction_dispatch` | `0x80034de4 / 0x904` | 100% exact, preserved |
 | GAME.EXE | `effect_update_orbiting_projectile` | `0x80038298 / 0x260` | 99.934210%, preserved residue |
 | OPEN.EXE | `opening_ending_scroll_run` | `0x80014e28 / 0x798` | 99.917694%, preserved residue |

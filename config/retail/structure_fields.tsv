@@ -10,7 +10,7 @@ KfActor	0x05	0x01	tile_x	u8	supported	game/actor.h;asm;xrefs;actor_pool_load_pla
 KfActor	0x06	0x01	lifecycle	KfActorLifecycle	supported	game/actor.h;asm;xrefs;game-actor-states.md	lifecycle: dormant 0, active 1, waiting for range exit 2, disabled 3; disabled is also used for scripted hiding
 KfActor	0x07	0x01	spawn_chance	u8	supported	game/actor.h;asm;xrefs;semantic-field-names.md;asm;CFG;callers;callees;xrefs	placement chance shifted by 7 and compared with rand in actor awareness
 KfActor	0x08	0x01	action	KfActorAction	supported	game/actor.h;asm;xrefs;game-actor-states.md	behavior action ID (KF_ACTOR_ACTION_*), distinct from animation-table slots and resource animation IDs
-KfActor	0x09	0x01	death_drop_object_id	KfObjectId	supported	game/actor.h;asm;xrefs;semantic-field-names.md;asm;CFG;callers;callees;xrefs	actor death passes this object ID to map_object_spawn_effect; 0x63 suppresses the drop
+KfActor	0x09	0x01	death_drop_object_id	KfObjectId	supported	game/actor.h;asm;xrefs;semantic-field-names.md;asm;CFG;callers;callees;xrefs	actor death passes this object ID to map_object_spawn_drop; 0x63 suppresses the drop
 KfActor	0x0a	0x01	animation_id	KfAnimationClip	supported	game/actor.h;asm;xrefs;strict-enum-audit.md	animation selector
 KfActor	0x0b	0x01	vertical_state	KfActorVerticalState	supported	game/actor.h;asm;xrefs;game-actor-states.md	vertical movement policy: none 0, step-up 1, fall 2, long drop 3, jump attack 4
 KfActor	0x0c	0x02	unknown_0c	u8[2]	opaque	game/actor.h;asm;xrefs	meaning unresolved
@@ -357,8 +357,8 @@ KfMapEvent	0x0f	0x01	animation_clip	KfAnimationClip	supported	lib/map.h;map-even
 KfMapEvent	0x10	0x01	collision_turn_pending	KfMapEventCollisionTurn	supported	lib/map.h;map-event-animation-turn-domains.md;asm;xrefs;semantic-field-names.md;asm;CFG;callers;callees;xrefs	collision selected a yaw; suppresses another random heading until the turn completes
 KfMapEvent	0x11	0x01	unknown_11	u8	opaque	lib/map.h;asm;xrefs	meaning unresolved
 KfMapEvent	0x12	0x02	animation_phase	u16	supported	lib/map.h;asm;xrefs;game-map-dialogue-state.md	u16 animation keyframe phase, modulo 4096 during continuous playback; separate from yaw
-KfMapEvent	0x14	0x04	position_x	s32	supported	lib/map.h;asm;xrefs	world x
-KfMapEvent	0x18	0x04	position_z	s32	supported	lib/map.h;asm;xrefs	world z
+KfMapEvent	0x14	0x04	home_x	s32	supported	lib/map.h;asm;xrefs	authored home world x; copied into reference_position at load and never updated
+KfMapEvent	0x18	0x04	home_z	s32	supported	lib/map.h;asm;xrefs	authored home world z; copied into reference_position at load and never updated
 KfMapEvent	0x1c	0x02	cell_x	u16	supported	lib/map.h;asm;xrefs	map cell x
 KfMapEvent	0x1e	0x02	cell_z	u16	supported	lib/map.h;asm;xrefs	map cell z
 KfMapEvent	0x20	0x02	radius	u16	supported	lib/map.h;asm;xrefs	interaction radius
@@ -446,9 +446,9 @@ KfMapObjectSpawn	0x00	0x01	effect_id	u8	supported	lib/map.h;asm;typed-map-links.
 KfMapObjectState	0x00	0x500	definitions	KfMapObjectDefinitionTable	supported	lib/map.h;asm;base-register;map_object_pool_clear_link;typed-map-tables.md	member of the map_object_state aggregate
 KfMapObjectState	0x500	0x20a8	objects	KfMapObject[190]	supported	lib/map.h;asm;base-register;map_object_pool_clear_link	member of the map_object_state aggregate
 KfMapObjectState	0x25a8	0xa	unknown_25a8	u8[10]	opaque	game_main_loop;OPEN-pool-tail-lineage;data-repair-campaign.md	within complete startup clear; no identified nonzero consumer
-KfMapObjectState	0x25b2	0x2	effect_sequence_160	u16	supported	asm;map_object_pool_clear;data-repair-campaign.md	wrapping sequence for reserved slots 160 through 169
-KfMapObjectState	0x25b4	0x2	effect_sequence_170	u16	supported	asm;map_object_pool_clear;data-repair-campaign.md	wrapping sequence for reserved slots 170 through 179
-KfMapObjectState	0x25b6	0x2	effect_sequence_180	u16	supported	asm;map_object_pool_clear;data-repair-campaign.md	wrapping sequence for reserved slots 180 through 189
+KfMapObjectState	0x25b2	0x2	gold_drop_sequence	u16	supported	asm;map_object_pool_clear;data-repair-campaign.md	wrapping sequence for reserved slots 160 through 169
+KfMapObjectState	0x25b4	0x2	definition_drop_sequence	u16	supported	asm;map_object_pool_clear;data-repair-campaign.md	wrapping sequence for reserved slots 170 through 179
+KfMapObjectState	0x25b6	0x2	placement_drop_sequence	u16	supported	asm;map_object_pool_clear;data-repair-campaign.md	wrapping sequence for reserved slots 180 through 189
 KfMapOrientationGrid	0x00	0x2710	cells	KfMapOrientation[100][100]	supported	map_data.h;strict-enum-audit.md;map_load;map_object_mark_collision_edge;render_map_cells	typed cell selectors share the unchanged 0x2710-byte resource-copy span
 KfMapOrientationGrid	0x00	0x2710	linear	KfMapOrientation[10000]	supported	map_data.h;asm;map_floor_height_for_cell_position;cast-union-debt.md	same typed row-major cells addressed by a flat collision index; dual-index union is a reconstruction convenience
 KfMapOrientationGrid	0x00	0x2710	words	u32[2500]	supported	map_data.h;asm;map_resource_copy_words;resource_stream_copy_words	aligned word-transfer representation sharing the complete cell-grid extent

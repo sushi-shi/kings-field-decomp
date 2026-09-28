@@ -27,7 +27,7 @@ The first related family comprises the remaining frame-only differences:
 The full campaign retains these other twelve targets and their image identity:
 GAME `player_move_horizontal` (`800171fc`), `render_entities` (`8001f218`),
 `item_load_database` (`80020cfc`), `menu_draw_item_detail` (`80027b7c`),
-`talk_show_dialogue_page` (`8002c9d4`), `map_object_spawn_effect` (`80031834`),
+`talk_show_dialogue_page` (`8002c9d4`), `map_object_spawn_drop` (`80031834`),
 `map_show_screen_image` (`80034d54`), `map_interaction_dispatch` (`80034de4`),
 `map_world_state_persist` (`80035b5c`), `effect_map_collision` (`80037850`),
 `effect_update_dispatch` (`80038a38`), and OPEN `opening_ending_scroll_run`
@@ -75,7 +75,7 @@ the strict count, and all fifteen targets remain unfinished.**
 | Triple Fang inputs as unsigned halfwords | `player_update` | 99.96709 | 6684 | Whole object unchanged |
 | Complete Triple Fang pitch expression converted to SDK `short` | `player_update` | 99.96709 | 6684 | Whole object unchanged |
 | Existing two-component collision delta in `DVECTOR` | `player_move_horizontal` | 96.56322 | 2128 | Three local offsets change; retail's Z slot is lost; reject |
-| SDK copy of spawn position, then vertical offset | `map_object_spawn_effect` | 89.95049 | 408 | Two instructions added and register roles changed; reject |
+| SDK copy of spawn position, then vertical offset | `map_object_spawn_drop` | 89.95049 | 408 | Two instructions added and register roles changed; reject |
 | Complete typed glyph-row assignment | `menu_draw_item_detail` | 73.39891 | 892 | Halfword loop replaced by unrolled copy; reject |
 | SDK `long` distance components | `effect_update_orbiting_projectile` | 99.93421 | 608 | Whole object unchanged |
 | Complete squared-distance expression at `SquareRoot0` argument | `effect_update_orbiting_projectile` | 99.93421 | 608 | Whole object unchanged |
@@ -144,7 +144,7 @@ does not justify adding an unused matrix or padding to another function.
 | GAME `item_load_database` | 99.746666 | Same decimal-division registers. Existing memory helpers are present; ASCII digits are not BCD. Preserve the established 20-byte CD-file entry and complete call set. |
 | GAME `menu_draw_item_detail` | 97.80875 | Three glyph-cursor/setup words remain. Typed whole-row assignment changes the ten-halfword loop into an unrolled copy. Preserve the established glyph object and raw store width. |
 | GAME `talk_show_dialogue_page` | 98.78049 | Same decimal remainder/register sequence. The supplied character/BCD helpers do not express the required ASCII digit stores. |
-| GAME `map_object_spawn_effect` | 94.50495 | Same saved-register, instruction and four-byte extent deficit. SDK copy-plus-offset adds two instructions; rotation setter still conflicts with pre-rand clears. |
+| GAME `map_object_spawn_drop` | 94.50495 | Same saved-register, instruction and four-byte extent deficit. SDK copy-plus-offset adds two instructions; rotation setter still conflicts with pre-rand clears. |
 | GAME `map_show_screen_image` | 88.888885 | Same remainder register, floor/path ordering and extra load-delay nop. Its only call remains the game screen API. |
 | GAME `map_interaction_dispatch` | 99.202774 | Same pointer, reload and branch residue. Both trig probes consume only X/Z; the modular pitch predicate is not a saturation clamp. |
 | GAME `map_world_state_persist` | 97.52873 | Same definition-base and type-predicate residue. Sparse byte serialization has no supported SDK replacement; the earlier memcpy control changes its byte loop. |

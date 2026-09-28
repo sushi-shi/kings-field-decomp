@@ -27,7 +27,7 @@ Ruff, the existing suite, whitespace checking and full `kf build`.
 | 8001eedc / 488 | render_actor_sprite | 100 |
 | 8001f218 / 1408 | render_entities | 97.380684 |
 | 80031008 / 1096 | map_object_pool_load | 100 |
-| 80031834 / 404 | map_object_spawn_effect | 94.455444 |
+| 80031834 / 404 | map_object_spawn_drop | 94.455444 |
 | 80031cc8 / 3096 | map_object_pool_update | 98.966410 |
 | 80035e44 / 1692 | map_restore_floor_state | 99.964540 |
 | 80036f44 / 2092 | effect_pool_construct | 100 |
@@ -90,7 +90,7 @@ match retail and the delinked targets, including delay slots.
 | render_actor_sprite | Exact, unchanged | 122 / 20 / 6 |
 | render_entities | Partial, unchanged | 354 / 9 / 25 |
 | map_object_pool_load | Exact, unchanged | 274 / 11 / 8 |
-| map_object_spawn_effect | Partial, unchanged | 100 / 5 / 2 |
+| map_object_spawn_drop | Partial, unchanged | 100 / 5 / 2 |
 | map_object_pool_update | Partial, unchanged | 774 / 35 / 23 |
 | map_restore_floor_state | Partial, unchanged | 423 / 18 / 32 |
 | effect_pool_construct | Exact, unchanged | 523 / 7 / 8 |
@@ -102,7 +102,7 @@ The unchanged first retail differences are:
 | GAME instruction | Function | Source versus retail |
 | --- | --- | --- |
 | 8001f274 | render_entities | `move s5,v1` versus `move s6,v1` |
-| 80031838 | map_object_spawn_effect | Save `$ra` at stack +0x20 versus +0x24 |
+| 80031838 | map_object_spawn_drop | Save `$ra` at stack +0x20 versus +0x24 |
 | 80031dcc | map_object_pool_update | `lui a0,0x8005` versus `lbu v1,0(s3)` |
 | 80035e8c | map_restore_floor_state | `addiu v0,v0,-0x69a` versus `addiu v1,a0,-0x69a` |
 | 80038a68 | effect_update_dispatch | `lui s5,0x800a` versus `lui s4,0x800a` |

@@ -40,7 +40,7 @@ fixed word parameters remain word parameters in the retail C view.
 | `map_restore_floor_state` | `0x80035e44 / 0x69c` | 40 | Shared item constants/fields; encode table indices where consumed. |
 | `map_action_script_floor1` | `0x800343e0 / 0x58` | 24 | Shared item constants/fields; encode table indices where consumed. |
 | `map_action_script_floor3` | `0x80034610 / 0x90` | 24 | Shared item constants/fields; encode table indices where consumed. |
-| `map_floor5_transition_cutscene` | `0x800346a8 / 0x38c` | 208 | Shared item constants/fields; encode table indices where consumed. |
+| `map_floor5_weapon_transform_cutscene` | `0x800346a8 / 0x38c` | 208 | Shared item constants/fields; encode table indices where consumed. |
 | `map_event_interact` | `0x80034a80 / 0x2d4` | 32 | Shared item constants/fields; encode table indices where consumed. |
 | `menu_use_item_panel` | `0x80022608 / 0x774` | 1208 | Byte item-list storage; integer iteration and mixed result boundaries; typed item calls. |
 | `menu_draw_name_list` | `0x8002718c / 0x838` | 48 | Shared item constants/fields; encode table indices where consumed. |

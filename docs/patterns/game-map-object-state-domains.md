@@ -57,17 +57,17 @@ table are documented in [the initial map-object audit](game-map-object-constants
 | --- | --- | ---: |
 | `0x8001ebb8 / 384` | `render_map_object` | 100.000000% |
 | `0x80030c7c / 572` | `map_object_mark_collision_edge` | 100.000000% |
-| `0x80030eb8 / 196` | `map_object_probe_forward` | 93.755104% |
+| `0x80030eb8 / 196` | `map_object_probe_door_closing` | 93.755104% |
 | `0x80030f7c / 96` | `map_object_pool_clear` | 100.000000% |
 | `0x80031008 / 1096` | `map_object_pool_load` | 100.000000% |
 | `0x800315c4 / 448` | `map_object_pool_find_interaction_from` | 100.000000% |
 | `0x80031784 / 32` | `map_object_start_action_if_idle` | 100.000000% |
-| `0x80031834 / 404` | `map_object_spawn_effect` | 94.455444% |
-| `0x800319c8 / 396` | `map_object_spawn_actor_debris` | 100.000000% |
+| `0x80031834 / 404` | `map_object_spawn_drop` | 94.455444% |
+| `0x800319c8 / 396` | `map_object_spawn_gold_drop` | 100.000000% |
 | `0x80031b54 / 240` | `map_object_pool_trigger_link` | 100.000000% |
 | `0x80031c44 / 132` | `map_object_pool_clear_link` | 100.000000% |
 | `0x80031cc8 / 3096` | `map_object_pool_update` | 98.966410% |
-| `0x800346a8 / 908` | `map_floor5_transition_cutscene` | 100.000000% |
+| `0x800346a8 / 908` | `map_floor5_weapon_transform_cutscene` | 100.000000% |
 | `0x80034de4 / 2308` | `map_interaction_dispatch` | 83.436745% |
 | `0x80035b5c / 696` | `map_world_state_persist` | 94.821840% |
 
@@ -91,8 +91,8 @@ words, including every delay slot. No new exact result or banking is claimed.
 
 | Partial function / GAME site | Unchanged candidate / retail first divergence |
 | --- | --- |
-| `map_object_probe_forward` / `80030ec4` | `lw a3,8(a0)` / `lw t0,8(a0)` |
-| `map_object_spawn_effect` / `80031838` | `sw ra,32(sp)` / `sw ra,36(sp)` |
+| `map_object_probe_door_closing` / `80030ec4` | `lw a3,8(a0)` / `lw t0,8(a0)` |
+| `map_object_spawn_drop` / `80031838` | `sw ra,32(sp)` / `sw ra,36(sp)` |
 | `map_object_pool_update` / `80031dcc` | `lui a0,0x8005` / `lbu v1,0(s3)` |
 | `map_interaction_dispatch` / `80034de4` | `addiu sp,sp,-80` / `addiu sp,sp,-72` |
 | `map_world_state_persist` / `80035b6c` | `lui v1,0x800a` / `addiu a1,a0,-543` |

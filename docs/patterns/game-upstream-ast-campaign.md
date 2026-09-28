@@ -18,7 +18,7 @@ function extent.
 
 | GAME function | VA | Starting strict % | Retail bytes | Starting raw word differences |
 | --- | --- | ---: | ---: | ---: |
-| `map_object_spawn_effect` | `80031834` | 94.50495 | 404 | 55 |
+| `map_object_spawn_drop` | `80031834` | 94.50495 | 404 | 55 |
 | `player_move_horizontal` | `800171fc` | 96.56896 | 2088 | 468 |
 | `map_world_state_persist` | `80035b5c` | 97.52873 | 696 | 84 |
 | `menu_draw_item_detail` | `80027b7c` | 97.80875 | 732 | 3 |
@@ -201,7 +201,7 @@ attributions or proof of historical source form.
 
 | Function | First differing GAME address | Observed baseline difference |
 | --- | --- | --- |
-| `map_object_spawn_effect` | `0x80031838` | Saved-register set and offsets differ; body is 400 versus 404 bytes. |
+| `map_object_spawn_drop` | `0x80031838` | Saved-register set and offsets differ; body is 400 versus 404 bytes. |
 | `player_move_horizontal` | `0x80017228` | Argument register assignment differs; body is 2,128 versus 2,088 bytes. |
 | `map_world_state_persist` | `0x80035cc8` | Address setup, zero initialization and constant setup differ in order. |
 | `menu_draw_item_detail` | `0x80027c68` | Three words differ in stack-interior-pointer setup and the corresponding halfword-store offset. |
@@ -231,7 +231,7 @@ These counts describe sampled source states, not exhaustive C-program coverage.
 
 | Function | First-round new states | Typed follow-up new states | Kept strict % | Final verdict |
 | --- | ---: | ---: | ---: | --- |
-| `map_object_spawn_effect` | 2049 | 2050 | 97.128716 | Reviewed partial improvement |
+| `map_object_spawn_drop` | 2049 | 2050 | 97.128716 | Reviewed partial improvement |
 | `player_move_horizontal` | 2051 | 2049 | 96.56896 | Unchanged partial |
 | `map_world_state_persist` | 2051 | 2048 | 97.52873 | Unchanged partial |
 | `menu_draw_item_detail` | 2049 | 2050 | 97.80875 | Unchanged partial |

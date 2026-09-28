@@ -207,11 +207,11 @@ expressions and reasons; only this function's line references are updated.
 | `map_ambient_script_floor4` | 100 | Unchanged, raw exact |
 | `map_ambient_script_floor5` | 100 | Unchanged, raw exact |
 | `map_action_script_floor1` | 100 | Unchanged, raw exact |
-| `map_reveal_fade` | 100 | Unchanged, raw exact |
+| `map_floor2_event_transfer_fade` | 100 | Unchanged, raw exact |
 | `map_action_script_floor2` | 100 | Unchanged, raw exact |
 | `map_action_script_floor3` | 100 | Unchanged, raw exact |
 | `map_action_script_floor4` | 100 | Unchanged, raw exact |
-| `map_floor5_transition_cutscene` | 100 | Unchanged, raw exact |
+| `map_floor5_weapon_transform_cutscene` | 100 | Unchanged, raw exact |
 | `map_action_script_floor5` | 100 | Unchanged, raw exact |
 | `map_event_interact` | 100 | Unchanged, raw exact |
 | `map_show_screen_image` | 100 | Unchanged, raw exact |

@@ -496,14 +496,14 @@ the later frame/register-allocation residue remains unattributed.
 | `beq a,11; slti a,11; slti a,83; slti a,80` ladder | `switch (action) { case 11: case 80: case 81: case 82: ... default: ... }`; the `&&` spelling folds `>= 11 && < 83` into one unsigned range test | `map_object_pool_trigger_link` `0x80031b54` |
 | `beq id,0xff` whose delay slot holds the index increment from the loop tail | `for (; index < N; index++, object++) { if (id == 0xff) continue; ... }`; a `while` with the body under `if (id != 0xff)` fills the slot from the fall-through instead | `map_object_pool_find_interaction_from` `0x800315c4` |
 | `-1` hoisted into `s7` for the distance compare | compare the call result inline in each branch (`if (f(...) != -1) return index;`); one compare after a `distance` join loads `-1` per iteration | same |
-| `sw x; ...; lw x` reload of a field just stored | store x, y, z first and compute the cells afterwards: any later store through the object pointer invalidates the CSE entry, so the cell reads reload | `map_object_spawn_effect` `0x80031834`, `map_object_spawn_actor_debris` `0x800319c8` |
+| `sw x; ...; lw x` reload of a field just stored | store x, y, z first and compute the cells afterwards: any later store through the object pointer invalidates the CSE entry, so the cell reads reload | `map_object_spawn_drop` `0x80031834`, `map_object_spawn_gold_drop` `0x800319c8` |
 | `lui s0,&counter` kept in a saved register across the acquire call, `lhu; addiu; sh` then the old value stored | `u16 *sequence = &counter; ... object->spawn_sequence = (*sequence)++;` | same |
-| `srl s1,v0,3; andi s1,0xffff` with the parameter's register reused | a separate short-lived `u16 angle = (u32)rand() >> 3;` (the parameter is dead, so the angle inherits its register); reusing the parameter itself keeps it live and swaps the argument registers | `map_object_spawn_actor_debris` |
+| `srl s1,v0,3; andi s1,0xffff` with the parameter's register reused | a separate short-lived `u16 angle = (u32)rand() >> 3;` (the parameter is dead, so the angle inherits its register); reusing the parameter itself keeps it live and swaps the argument registers | `map_object_spawn_gold_drop` |
 | `addiu t3,a2,-1280` (definitions from the pool base) in a leaf loop | a local `definitions = map_object_state.definitions;` pointer hoisted by loop.c and folded by the second CSE pass; indexing the array directly keeps the absolute form | `map_object_pool_clear_link` `0x80031c44` |
 
 Residues left in the module:
 
-- `map_object_spawn_effect`: retail keeps the sequence pointer in `s0` and the
+- `map_object_spawn_drop`: retail keeps the sequence pointer in `s0` and the
   acquired object in `s1` with the return copy scheduled before the counter
   store; every tried spelling reuses `s0` for the object.
   The later [velocity-initialization audit](game-map-drop-initialization.md)
@@ -696,13 +696,13 @@ Witnesses come from `src/game/map_interaction.c` (`game.map_interaction`, the
 contiguous band `0x800346a8..0x800356e8` bracketed by the `func_800346a0` and
 `func_800356e8` stubs). This is the per-frame nearby-event/object interaction
 dispatcher `func_80034de4` called by `player_update`, plus its scripted
-transition cutscene (`map_floor5_transition_cutscene`), a trigger latch
+transition cutscene (`map_floor5_weapon_transform_cutscene`), a trigger latch
 (`func_80034a34`), a talk/progress-image dispatcher (`func_80034a80`), and a
 floor-image loader (`func_80034d54`).
 
 | Retail signature | Source shape | Witness |
 | --- | --- | --- |
-| `lw v0,8; lw v1,12; lw a0,16; lw a1,20; sw x4` then `lw v0,172(sp); addiu -600; sw` (the field reloads after the block store) | `struct KfVec4i spawn = *(struct KfVec4i *)&effect->position_x; spawn.y -= 600;` — the aligned 16-byte struct copy leaves the members in memory, so the later `spawn.y` read reloads; four separate `words[k] = field` assignments keep the value in a register and subtract in place | `map_floor5_transition_cutscene` `0x800346a8` |
+| `lw v0,8; lw v1,12; lw a0,16; lw a1,20; sw x4` then `lw v0,172(sp); addiu -600; sw` (the field reloads after the block store) | `struct KfVec4i spawn = *(struct KfVec4i *)&effect->position_x; spawn.y -= 600;` — the aligned 16-byte struct copy leaves the members in memory, so the later `spawn.y` read reloads; four separate `words[k] = field` assignments keep the value in a register and subtract in place | `map_floor5_weapon_transform_cutscene` `0x800346a8` |
 | `beqz stage,A; beq stage,s4,B; j C` three-way dispatch with `A`,`B` laid out after the test and `C` the common tail | `switch (stage) { case 0: A; break; case 1: B; break; }` then the shared tail `C`; an `if (stage==0)…else if (stage==1)` inverts the first test (`bnez`) and inlines `A` | same |
 | `lbu v1,grid; sll v0,v1,1; …` with no `andi 0xff` before the `*100` chain | read a `u8` grid byte into an `s32` local; a `u8` local re-masks with `andi` before the multiply | same |
 | `lw v1,map_event_pool+0x4c; li a0,-256; and; lui/ori 0x28010500; bne` (one masked word compare of four adjacent bytes) | `(*(u32 *)&map_event_pool[1].image_limit & 0xffffff00) == 0x28010500` — a word pun of the image_limit/index/dirty/delay bytes; three byte compares never fold to one `lw` | `func_80034a34` `0x80034a34` |

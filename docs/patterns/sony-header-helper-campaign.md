@@ -161,8 +161,8 @@ trials leave that body byte-identical, not that it is banked or closed.
 | GAME / `8003a2a0` / `4c0` | `magic_cast` | S039, S040, S041 | 100 → 100 |
 | GAME / `8001f0c4` / `154` | `render_map_event` | S042 | 100 → 100 |
 | GAME / `800315c4` / `1c0` | `map_object_pool_find_interaction_from` | S043, S044 | 100 → 100 |
-| GAME / `80031834` / `194` | `map_object_spawn_effect` | S045 | 94.504950 → 94.504950 |
-| GAME / `800319c8` / `18c` | `map_object_spawn_actor_debris` | S046 | 100 → 100 |
+| GAME / `80031834` / `194` | `map_object_spawn_drop` | S045 | 94.504950 → 94.504950 |
+| GAME / `800319c8` / `18c` | `map_object_spawn_gold_drop` | S046 | 100 → 100 |
 | GAME / `80014d34` / `d4` | `pitch_yaw_to_forward_vector` | S047, S048, S049 | 100 → 100 |
 | GAME / `80014e48` / `5c` | `vector3s_scale_shift12` | S050 | 100 → 100 |
 | GAME / `80028a70` / `77c` | `menu_list_render` | S051, S052, S053, S054, S055, S056 | 100 → 100 |
@@ -207,7 +207,7 @@ residues; the helper trials do not establish compiler causes:
 | Function | Retained residue |
 | --- | --- |
 | GAME `effect_update_dispatch` | First difference at `+38`: s3/s6 roles for the current magic record and effect kind are exchanged; the seven helper sites leave the whole object unchanged. |
-| GAME `map_object_spawn_effect` | Saved-register placement differs from `+4`; the body remains 400 versus 404 retail bytes. S045 preserves its call/reference/control-flow model. |
+| GAME `map_object_spawn_drop` | Saved-register placement differs from `+4`; the body remains 400 versus 404 retail bytes. S045 preserves its call/reference/control-flow model. |
 | GAME `menu_draw_item_name_frame` | 160-byte frame versus retail 224, plus the existing item-name index instruction order; all eight rectangle sites remain neutral. |
 | GAME `menu_draw_window_backdrop` | 40-byte frame versus retail 104; all eight rectangle sites preserve the complete body. |
 | GAME `menu_status_panel` | 48-byte frame versus retail 112; both inline XY/UV sites preserve the body. |

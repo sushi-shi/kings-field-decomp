@@ -1932,7 +1932,7 @@ GAME.EXE	0x800561b0	0x449b0	0x1e	data	direct-references	map_copy_regions	KfMapCo
 GAME.EXE	0x800561ce	0x449ce	0x2	unclassified	coverage-gap			payload-complement	uninterpreted nonzero bytes 01 01 between the fifth copy descriptor and floor-5 camera path
 GAME.EXE	0x800561d0	0x449d0	0x38	data	reviewed	map_floor5_camera_path	KfCameraPathPoint[2]	manual:game_map_script_data	one camera point and its complete terminating record
 GAME.EXE	0x80056208	0x44a08	0x10	data	reviewed	map_floor1_sound_position	VECTOR	manual:game_map_script_data	complete SDK vector passed to spatial sound in floor-1 script
-GAME.EXE	0x80056218	0x44a18	0x20	data	reviewed	map_reveal_light_matrix	MATRIX	manual:game_map_script_data	complete SDK light matrix used by the reveal fade
+GAME.EXE	0x80056218	0x44a18	0x20	data	reviewed	map_transfer_light_matrix	MATRIX	manual:game_map_script_data	complete SDK light matrix used by the reveal fade
 GAME.EXE	0x80056238	0x44a38	0x10	data	reviewed	map_screen_image_path	char[16]	manual:game_map_script_data	mutable KAN path including terminating NUL at 0x80056247
 GAME.EXE	0x80056248	0x44a48	0x20	data	reviewed	actor_transform_color_matrix	MATRIX	manual:game_map_script_data	complete SDK color matrix for actor definition 5-to-6 transition
 GAME.EXE	0x80056268	0x44a68	0x23	data	reviewed	floor_deform_segments	KfFloorDeformSegment[5]	manual:game_map_script_data	five seven-byte floor lines selected by item-62 constructor ranges (0,4) and (4,1)

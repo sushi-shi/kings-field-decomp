@@ -37,10 +37,10 @@ GAME.EXE	0x8002f558	game.actor_behavior	actor_apply_random_movement	indirect-nam
 GAME.EXE	0x8002f8cc	game.actor_behavior	actor_update_boss_death_sequence	explicit-state	100.0	100.0	retained; complete allocated object unchanged
 GAME.EXE	0x8002fa88	game.actor_behavior	actor_update_current_action	layout+indirect-named-constants	100.0	100.0	retained; complete allocated object unchanged
 GAME.EXE	0x80030a98	game.map_object_pool	map_apply_copy_region	layout-only	100.0	100.0	retained; complete allocated object unchanged
-GAME.EXE	0x80030eb8	game.map_object_pool	map_object_probe_forward	layout-only	100.0	100.0	retained; complete allocated object unchanged
+GAME.EXE	0x80030eb8	game.map_object_pool	map_object_probe_door_closing	layout-only	100.0	100.0	retained; complete allocated object unchanged
 GAME.EXE	0x80031008	game.map_object_pool	map_object_pool_load	explicit-state	100.0	100.0	retained; complete allocated object unchanged
-GAME.EXE	0x80031834	game.map_object	map_object_spawn_effect	layout-only	97.128716	97.128716	retained; complete allocated object unchanged
-GAME.EXE	0x800319c8	game.map_object	map_object_spawn_actor_debris	layout-only	100.0	100.0	retained; complete allocated object unchanged
+GAME.EXE	0x80031834	game.map_object	map_object_spawn_drop	layout-only	97.128716	97.128716	retained; complete allocated object unchanged
+GAME.EXE	0x800319c8	game.map_object	map_object_spawn_gold_drop	layout-only	100.0	100.0	retained; complete allocated object unchanged
 GAME.EXE	0x80031b54	game.map_object	map_object_pool_trigger_link	layout-only	100.0	100.0	retained; complete allocated object unchanged
 GAME.EXE	0x80031cc8	game.map_object	map_object_pool_update	explicit-state+named-constants	100.0	100.0	retained; complete allocated object unchanged
 GAME.EXE	0x8003379c	game.map_event	map_event_set_current	explicit-state	100.0	100.0	retained; complete allocated object unchanged
@@ -52,10 +52,10 @@ GAME.EXE	0x800341ec	game.map_scripts	map_ambient_script_floor2	explicit-state+na
 GAME.EXE	0x8003425c	game.map_scripts	map_ambient_script_floor3	explicit-state	100.0	100.0	retained; complete allocated object unchanged
 GAME.EXE	0x800342ec	game.map_scripts	map_ambient_script_floor5	explicit-state	100.0	100.0	retained; complete allocated object unchanged
 GAME.EXE	0x800343e0	game.map_scripts	map_action_script_floor1	explicit-state+named-constants	100.0	100.0	retained; complete allocated object unchanged
-GAME.EXE	0x80034438	game.map_scripts	map_reveal_fade	explicit-state	100.0	100.0	retained; complete allocated object unchanged
+GAME.EXE	0x80034438	game.map_scripts	map_floor2_event_transfer_fade	explicit-state	100.0	100.0	retained; complete allocated object unchanged
 GAME.EXE	0x800345bc	game.map_scripts	map_action_script_floor2	explicit-state+indirect-named-constants	100.0	100.0	retained; complete allocated object unchanged
 GAME.EXE	0x80034610	game.map_scripts	map_action_script_floor3	explicit-state+indirect-named-constants	100.0	100.0	retained; complete allocated object unchanged
-GAME.EXE	0x800346a8	game.map_scripts	map_floor5_transition_cutscene	layout-only	100.0	100.0	retained; complete allocated object unchanged
+GAME.EXE	0x800346a8	game.map_scripts	map_floor5_weapon_transform_cutscene	layout-only	100.0	100.0	retained; complete allocated object unchanged
 GAME.EXE	0x80034a34	game.map_scripts	map_action_script_floor5	explicit-state+indirect-named-constants	100.0	100.0	retained; complete allocated object unchanged
 GAME.EXE	0x80034a80	game.map_scripts	map_event_interact	explicit-state	100.0	100.0	retained; complete allocated object unchanged
 GAME.EXE	0x80034de4	game.map_scripts	map_interaction_dispatch	explicit-state+named-constants	100.0	100.0	retained; complete allocated object unchanged
