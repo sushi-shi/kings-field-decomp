@@ -63,11 +63,11 @@ void vector3i_add_xz(VECTOR *destination, const struct KfVecXZs *delta)
     destination->vz += delta->z;
 }
 
-KfBool angle_within_tolerance(int lhs, int rhs, s16 range)
+KfBool angle_within_tolerance(int lhs, int rhs, s16 tolerance)
 {
     int delta = (lhs - rhs) & KF_ANGLE_WRAP_MASK;
 
-    return delta <= range || KF_ANGLE_FULL_TURN - range <= delta;
+    return delta <= tolerance || KF_ANGLE_FULL_TURN - tolerance <= delta;
 }
 
 KfBool angle_mod_delta_le_half_turn(int lhs, int rhs)

@@ -112,7 +112,7 @@ void map_object_mark_collision_edge(const KfMapObject *object, KfMapCellKind cel
     }
 }
 
-s32 map_object_probe_forward(const KfMapObject *object, u16 yaw)
+s32 map_object_probe_door_closing(const KfMapObject *object, u16 yaw)
 {
     const KfMapObjectDefinition *definition = &map_object_state.definitions.entries[kf_enum_encode<u8>(object->object_id)];
     s32 point_x = object->position.vx;
@@ -157,9 +157,9 @@ void map_object_pool_clear(void)
         object.action = KF_MAP_OBJECT_OP_NONE;
         std::memset(&object.link, 0, sizeof object.link);
     }
-    map_object_state.effect_sequence_180 = 0;
-    map_object_state.effect_sequence_170 = 0;
-    map_object_state.effect_sequence_160 = 0;
+    map_object_state.placement_drop_sequence = 0;
+    map_object_state.definition_drop_sequence = 0;
+    map_object_state.gold_drop_sequence = 0;
 }
 
 void map_object_definitions_load(const KfMapObjectDefinitionTable *definitions)

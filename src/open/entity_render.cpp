@@ -26,18 +26,18 @@ KfSpriteQuad floor_item_sprites[KF_FLOOR_ITEM_SPRITE_COUNT] = {
 void opening_entity_render(KfOpeningEntity *entity)
 {
     VECTOR scale;
-    SVECTOR screen;
+    SVECTOR relative_position;
     MATRIX model;
     MATRIX light;
     KfEnumStorage<KfOpeningModelId, u16> object_id;
     s16 depth;
 
-    screen = VECTOR{
+    relative_position = VECTOR{
         entity->position.vx - open_graphics_runtime.render_state.view_position.vx,
         entity->position.vy - open_graphics_runtime.render_state.view_position.vy,
         entity->position.vz - open_graphics_runtime.render_state.view_position.vz}.narrowed();
 
-    kf::render_place_model(model, open_graphics_runtime.render_state.view_matrix, screen);
+    kf::render_place_model(model, open_graphics_runtime.render_state.view_matrix, relative_position);
     matrix_set_rotation_yxz(&entity->rotation, &model);
     scale = entity->scale.widened();
     kf::matrix_scale_axes(model, scale);

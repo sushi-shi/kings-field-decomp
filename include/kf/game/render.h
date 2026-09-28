@@ -70,8 +70,8 @@ enum class KfSpriteState : u8 {
 }; using enum KfSpriteState;
 
 enum {
-    KF_EFFECT_SPRITE_COMPASS = 0,
-    KF_EFFECT_SPRITE_TABLE_ROWS = 2
+    KF_HUD_MODEL_COMPASS = 0,
+    KF_HUD_MODEL_TABLE_ROWS = 2
 };
 
 enum {
@@ -90,10 +90,10 @@ typedef struct KfHudSprite {
     KfSpriteQuad sprite;
 } KfHudSprite;
 
-typedef struct KfEffectSprite {
+typedef struct KfHudModel {
     KfSpriteState state;
     KfAnimationClip animation_clip;
-    u16 asset_variant;
+    u16 animation_phase;
     u16 scale;
     s16 translation_x;
     s16 translation_y;
@@ -101,19 +101,19 @@ typedef struct KfEffectSprite {
     u8 unknown_0c[2];
     SVECTOR rotation;
     u8 unknown_16[2];
-    KfPoolRecord *animation_cache;
-} KfEffectSprite;
+    KfAnimationCacheRecord *animation_cache;
+} KfHudModel;
 
 typedef struct KfTmdState {
     KfTmdResource slots[KF_GAME_TMD_SLOT_COUNT];
-    KfTmdResource current_asset;
+    KfTmdResource current_tmd;
 } KfTmdState;
 
 extern MATRIX color_matrix_table[KF_GAME_COLOR_PRESET_COUNT];
 extern KfCellWindow render_cell_windows[KF_CELL_WINDOW_YAW_COUNT];
 extern KfSpriteQuad floor_item_sprites[KF_FLOOR_ITEM_SPRITE_COUNT];
 extern KfSpriteQuad effect_billboard_sprites[KF_EFFECT_BILLBOARD_SPRITE_COUNT];
-extern KfEffectSprite effect_sprites[KF_EFFECT_SPRITE_TABLE_ROWS];
+extern KfHudModel hud_models[KF_HUD_MODEL_TABLE_ROWS];
 extern KfHudSprite hud_sprites[KF_HUD_TABLE_ROWS];
 extern MATRIX render_light_matrices[KF_RENDER_LIGHT_COUNT];
 
@@ -122,25 +122,25 @@ extern void display_initialize(void);
 extern void display_play_transition(void);
 extern void display_show_system_screen(KfSystemScreen screen);
 extern void display_present_system_screen(s32 brightness);
-extern void effect5_texture_cache_prepare(KfFloorId floor);
-extern void lighting_apply_color_preset6(void);
-extern void lighting_apply_timed_player_effect(void);
-extern void lighting_apply_weapon9_environment(void);
+extern void render_prepare_actor_textures(KfFloorId floor);
+extern void lighting_apply_blue_tint(void);
+extern void lighting_apply_illusion_staff_effect(void);
+extern void lighting_apply_shadow_blade_environment(void);
 extern void lighting_set_active_color_matrix(KfGameColorPreset preset);
 extern void menu_render_item_model(const MATRIX *lights, const MATRIX *model);
 extern void render_actor(KfActor *actor);
-extern void render_actor_sprite(KfEffectRecord *sprite, const MATRIX *lights);
-extern void render_effect_sprites(const MATRIX *lights);
+extern void render_effect(KfEffectRecord *effect, const MATRIX *lights);
+extern void render_hud_models(const MATRIX *lights);
 extern void render_enqueue_map(u16 object_index, const MATRIX *lights, const MATRIX *model, const kf::Projection &projection);
-extern void render_enqueue_model(u16 object_index, s16 depth_bias, const MATRIX *lights);
-extern void render_enqueue_sprite(KfSpriteQuad *sprite, s16 depth_bias, KfSpriteDepthCueMode depth_cue_mode, const MATRIX *lights, const MATRIX *model, const kf::Projection &projection);
+extern void render_enqueue_tmd_retextured(u16 object_index, s16 depth_bias, const MATRIX *lights);
+extern void render_enqueue_sprite(KfSpriteQuad *effect, s16 depth_bias, KfSpriteDepthCueMode depth_cue_mode, const MATRIX *lights, const MATRIX *model, const kf::Projection &projection);
 extern void render_enqueue_tmd(u16 object_index, s16 depth_bias, const MATRIX *lights);
 extern void render_entities(void);
 // Advances and presents one world frame, including the shared three-tick wait.
 // Callers must not add another gameplay interval; menus/retained frames are separate.
 extern void render_frame(
     const VECTOR *position_or_null, const SVECTOR *rotation_or_null);
-extern void render_hud_gauges(KfHudSprite *table);
+extern void render_hud_sprites(KfHudSprite *table);
 extern void render_initialize(void);
 extern void render_map_cell(
     s32 col, s32 row, KfCellVisibility visibility);

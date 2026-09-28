@@ -7,7 +7,7 @@ KfAudioPlayback audio_playback();
 
 extern void audio_initialize(void);
 extern void audio_load_vab(KfAudioBankResource resource);
-extern void audio_play_map_sequence(u8 sequence_id);
+extern void audio_play_map_sequence(u8 sequence_index);
 extern void audio_play_current_map_sequence(void);
 extern KfAudioPlaybackResult audio_play_spatial(
     const SoundRef *sound, const VECTOR *position, s16 volume, s32 max_distance,

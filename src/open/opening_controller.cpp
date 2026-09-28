@@ -33,7 +33,7 @@ void opening_run(KfOverlayMode overlay_mode)
 {
     u8 *tim_data;
     std::size_t tim_size;
-    KfEnumStorage<KfOpeningInputAction, s32> scene3_action;
+    KfEnumStorage<KfOpeningInputAction, s32> advance_action;
     KfEnumStorage<KfOpeningInputAction, s32> skip_action;
 
     memset((void *)&open_graphics_runtime, 0, sizeof open_graphics_runtime);
@@ -50,9 +50,9 @@ void opening_run(KfOverlayMode overlay_mode)
                 (void *)open_graphics_runtime.display_state.asset_load_buffer,
                 open_graphics_runtime.display_state.asset_load_capacity,
                 opening_initial_tim_path, &tim_size) != KF_RESOURCE_LOADED) {
-            exit(1);
+            resource_file_fail(opening_initial_tim_path);
         }
-        scene3_action = KF_OPENING_INPUT_ADVANCE;
+        advance_action = KF_OPENING_INPUT_ADVANCE;
         tim_upload_images(open_graphics_runtime.display_state.asset_load_buffer, tim_size);
         skip_action = KF_OPENING_INPUT_SKIP;
         opening_fade_in();
@@ -63,7 +63,7 @@ void opening_run(KfOverlayMode overlay_mode)
 
         for (;;) {
             opening_scene0_run();
-            if (opening_input_action != scene3_action &&
+            if (opening_input_action != advance_action &&
                 opening_input_action == skip_action) {
                 opening_load_skip_assets();
                 break;
@@ -71,7 +71,7 @@ void opening_run(KfOverlayMode overlay_mode)
 
             opening_input_action = KF_OPENING_INPUT_NONE;
             opening_scene1_run();
-            if (opening_input_action != scene3_action) {
+            if (opening_input_action != advance_action) {
                 if (opening_input_action == skip_action) {
                     opening_load_skip_assets();
                     break;

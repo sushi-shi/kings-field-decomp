@@ -18,7 +18,7 @@ void menu_save_confirm(void)
     do {
         i++;
         menu_frame_begin();
-        menu_draw_dialog_frame(NULL, KF_SAVE_OVERLAY_ALL);
+        menu_draw_save_slots(NULL, KF_SAVE_OVERLAY_ALL);
         menu_draw_window(KF_MENU_WINDOW_SAVE, KF_MENU_SAVE_ROW_COUNT, 0, KF_MENU_CONFIRM_IDLE);
         menu_present_frame();
     } while (i < 3);
@@ -42,7 +42,7 @@ s32 menu_root(void)
     do {
         i++;
         menu_frame_begin();
-        menu_draw_stats_header();
+        menu_draw_status_summary();
         menu_draw_window(KF_MENU_WINDOW_ROOT, KF_MENU_ROOT_ROW_COUNT, cursor, confirm);
         menu_present_frame();
     } while (i < 3);
@@ -52,7 +52,7 @@ s32 menu_root(void)
     for (;;) {
         if (selection != KF_ROOT_CHOICE_NONE || result == kf_enum_encode<s32>(selection)) {
             menu_frame_begin();
-            menu_draw_stats_header();
+            menu_draw_status_summary();
             menu_draw_window(KF_MENU_WINDOW_ROOT, KF_MENU_ROOT_ROW_COUNT, cursor, confirm);
             menu_present_frame();
             kf::host_wait_buttons_released();
@@ -71,16 +71,16 @@ s32 menu_root(void)
                 result = kf_enum_encode<s32>(KF_MENU_RESULT_CANCELLED);
             break;
         case KF_ROOT_CHOICE_EQUIPMENT:
-            menu_option_root();
+            menu_equipment_root();
             break;
         case KF_ROOT_CHOICE_STATUS:
             menu_status_panel();
             break;
         case KF_ROOT_CHOICE_DROP_ITEM:
-            menu_drop_item();
+            menu_drop_item_panel();
             break;
         case KF_ROOT_CHOICE_SYSTEM:
-            result = kf_enum_encode<s32>(menu_save_load_hub());
+            result = kf_enum_encode<s32>(menu_system_panel());
             if (result == kf_enum_encode<s32>(KF_MENU_RESULT_CANCELLED))
                 result = kf_enum_encode<s32>(KF_MENU_RESULT_PENDING);
             break;
@@ -121,7 +121,7 @@ s32 menu_root(void)
             result = kf_enum_encode<s32>(KF_MENU_RESULT_CANCELLED);
         }
         menu_frame_begin();
-        menu_draw_stats_header();
+        menu_draw_status_summary();
         menu_draw_window(KF_MENU_WINDOW_ROOT, KF_MENU_ROOT_ROW_COUNT, cursor, confirm);
         menu_present_frame();
     }
@@ -139,11 +139,11 @@ s32 menu_use_item_panel(void)
 {
     KfMenuList ctx;
     s16 labels[MENU_INVENTORY_LABEL_CAPACITY][MENU_GLYPHS_PER_ROW];
-    u8 counts[MENU_INVENTORY_ENTRY_CAPACITY];
-    KfObjectId codes[MENU_INVENTORY_ENTRY_CAPACITY];
-    u8 *inv;
+    u8 quantities[MENU_INVENTORY_ENTRY_CAPACITY];
+    KfObjectId item_ids[MENU_INVENTORY_ENTRY_CAPACITY];
+    u8 *player_stock;
     s32 found;
-    s32 code;
+    s32 item_id;
     s32 j;
     KfMenuConfirmState confirm = KF_MENU_CONFIRM_IDLE;
     s32 input = 0;
@@ -153,62 +153,62 @@ s32 menu_use_item_panel(void)
     kf::host_wait_buttons_released();
     menu_list_init(&ctx, KF_MENU_WINDOW_ROOT, kf_enum_encode<s32>(KF_ROOT_CHOICE_USE_ITEM));
 
-    inv = item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)];
+    player_stock = item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)];
     found = 0;
-    if (inv[kf_enum_encode<u8>(KF_ITEM_WATCHMAN_MAP)] != 0) {
+    if (player_stock[kf_enum_encode<u8>(KF_ITEM_WATCHMAN_MAP)] != 0) {
         for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)
             labels[found][j] = item_name_rows[kf_enum_encode<u8>(KF_ITEM_WATCHMAN_MAP)].codes[j];
-        counts[found] = inv[kf_enum_encode<u8>(KF_ITEM_WATCHMAN_MAP)];
-        codes[found] = KF_ITEM_WATCHMAN_MAP;
+        quantities[found] = player_stock[kf_enum_encode<u8>(KF_ITEM_WATCHMAN_MAP)];
+        item_ids[found] = KF_ITEM_WATCHMAN_MAP;
         found++;
     }
-    if (inv[kf_enum_encode<u8>(KF_ITEM_SORCERER_MAP)] != 0) {
+    if (player_stock[kf_enum_encode<u8>(KF_ITEM_SORCERER_MAP)] != 0) {
         for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)
             labels[found][j] = item_name_rows[kf_enum_encode<u8>(KF_ITEM_SORCERER_MAP)].codes[j];
-        counts[found] = inv[kf_enum_encode<u8>(KF_ITEM_SORCERER_MAP)];
-        codes[found] = KF_ITEM_SORCERER_MAP;
+        quantities[found] = player_stock[kf_enum_encode<u8>(KF_ITEM_SORCERER_MAP)];
+        item_ids[found] = KF_ITEM_SORCERER_MAP;
         found++;
     }
-    for (code = kf_enum_encode<s32>(KF_ITEM_VERDITE); code < kf_enum_encode<s32>(KF_ITEM_LIGHT_RING); code++) {
-        if (code != kf_enum_encode<s32>(KF_ITEM_WATCHMAN_MAP) && code != kf_enum_encode<s32>(KF_ITEM_SORCERER_MAP) && inv[code] != 0) {
+    for (item_id = kf_enum_encode<s32>(KF_ITEM_VERDITE); item_id < kf_enum_encode<s32>(KF_ITEM_LIGHT_RING); item_id++) {
+        if (item_id != kf_enum_encode<s32>(KF_ITEM_WATCHMAN_MAP) && item_id != kf_enum_encode<s32>(KF_ITEM_SORCERER_MAP) && player_stock[item_id] != 0) {
             for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)
-                labels[found][j] = item_name_rows[code].codes[j];
-            counts[found] = inv[code];
-            codes[found] = kf_enum_decode<KfObjectId>(code);
+                labels[found][j] = item_name_rows[item_id].codes[j];
+            quantities[found] = player_stock[item_id];
+            item_ids[found] = kf_enum_decode<KfObjectId>(item_id);
             found++;
         }
     }
-    for (code = kf_enum_encode<s32>(KF_ITEM_GOLD_CROSS); code < KF_ITEM_COUNT; code++) {
-        if (code != kf_enum_encode<s32>(KF_ITEM_WATCHMAN_MAP) && code != kf_enum_encode<s32>(KF_ITEM_SORCERER_MAP) && inv[code] != 0) {
+    for (item_id = kf_enum_encode<s32>(KF_ITEM_GOLD_CROSS); item_id < KF_ITEM_COUNT; item_id++) {
+        if (item_id != kf_enum_encode<s32>(KF_ITEM_WATCHMAN_MAP) && item_id != kf_enum_encode<s32>(KF_ITEM_SORCERER_MAP) && player_stock[item_id] != 0) {
             for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)
-                labels[found][j] = item_name_rows[code].codes[j];
-            counts[found] = inv[code];
-            codes[found] = kf_enum_decode<KfObjectId>(code);
+                labels[found][j] = item_name_rows[item_id].codes[j];
+            quantities[found] = player_stock[item_id];
+            item_ids[found] = kf_enum_decode<KfObjectId>(item_id);
             found++;
         }
     }
     ctx.entry_count = found;
     ctx.glyphs_per_entry = MENU_GLYPHS_PER_ROW;
     ctx.glyph_rows = &labels[0][0];
-    ctx.quantities = counts;
+    ctx.quantities = quantities;
 
     menu_frame_begin();
     if (ctx.entry_count != 0) {
-        if (menu_load_item_model(codes[ctx.selected_index]) != KF_RESOURCE_LOADED)
+        if (menu_load_item_model(item_ids[ctx.selected_index]) != KF_RESOURCE_LOADED)
             return kf_enum_encode<s32>(KF_MENU_RESULT_CANCELLED);
-        menu_item_model_preview(codes[ctx.selected_index]);
+        menu_item_model_preview(item_ids[ctx.selected_index]);
     }
     menu_list_render(&ctx);
     menu_present_frame();
 
     for (;;) {
         if (confirm == KF_MENU_CONFIRM_REQUESTED) {
-            if (menu_list_interact(&ctx, KF_MENU_CONFIRM_USE,
-                    KF_MENU_PREVIEW_ITEM_MODEL, codes[ctx.selected_index], KF_ITEM_STOCK_PLAYER, KF_TRADE_BUY)
+            if (menu_list_confirm(&ctx, KF_MENU_CONFIRM_USE,
+                    KF_MENU_PREVIEW_ITEM_MODEL, item_ids[ctx.selected_index], KF_ITEM_STOCK_PLAYER, KF_TRADE_BUY)
                     == KF_MENU_RESULT_CANCELLED)
                 selection = kf_enum_encode<s32>(KF_MENU_RESULT_PENDING);
             else
-                selection = kf_enum_encode<u8>(codes[ctx.selected_index]);
+                selection = kf_enum_encode<u8>(item_ids[ctx.selected_index]);
         }
         confirm = KF_MENU_CONFIRM_IDLE;
         if (selection != kf_enum_encode<s32>(KF_MENU_RESULT_PENDING)) {
@@ -224,15 +224,15 @@ s32 menu_use_item_panel(void)
                 selection = kf_enum_encode<s32>(KF_MENU_RESULT_CANCELLED);
             }
         } else if (menu_list_handle_navigation(ctx, input, prev)) {
-            if (menu_load_item_model(codes[ctx.selected_index]) != KF_RESOURCE_LOADED)
+            if (menu_load_item_model(item_ids[ctx.selected_index]) != KF_RESOURCE_LOADED)
                 return kf_enum_encode<s32>(KF_MENU_RESULT_CANCELLED);
         } else if (kf::button_pressed(input, prev, kf::Button::Confirm)) {
             menu_play_input_sound(MENU_SOUND_CONFIRM);
-            if (codes[ctx.selected_index] == KF_ITEM_WATCHMAN_MAP || codes[ctx.selected_index] == KF_ITEM_SORCERER_MAP) {
+            if (item_ids[ctx.selected_index] == KF_ITEM_WATCHMAN_MAP || item_ids[ctx.selected_index] == KF_ITEM_SORCERER_MAP) {
                 menu_release_item_model();
-                menu_map_viewer(codes[ctx.selected_index]);
+                menu_map_viewer(item_ids[ctx.selected_index]);
                 menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
-                if (menu_load_item_model(codes[ctx.selected_index]) != KF_RESOURCE_LOADED)
+                if (menu_load_item_model(item_ids[ctx.selected_index]) != KF_RESOURCE_LOADED)
                     return kf_enum_encode<s32>(KF_MENU_RESULT_CANCELLED);
             } else {
                 confirm = KF_MENU_CONFIRM_REQUESTED;
@@ -244,14 +244,14 @@ s32 menu_use_item_panel(void)
 
         menu_frame_begin();
         if (ctx.entry_count != 0)
-            menu_item_model_preview(codes[ctx.selected_index]);
+            menu_item_model_preview(item_ids[ctx.selected_index]);
         menu_list_render(&ctx);
         menu_present_frame();
     }
 
     menu_release_item_model();
     if ((u32)(selection - kf_enum_encode<s32>(KF_ITEM_VERDITE)) < kf_enum_encode<s32>(KF_ITEM_LIGHT_RING) - kf_enum_encode<s32>(KF_ITEM_VERDITE)) {
-        inv[selection]--;
+        player_stock[selection]--;
         if (selection == kf_enum_encode<s32>(KF_ITEM_MEDICINAL_HERB)) {
             player_state.vitals.current_hp += MEDICINAL_HERB_HP_RECOVERY;
         } else if (selection == kf_enum_encode<s32>(KF_ITEM_ANTIDOTE_HERB)) {

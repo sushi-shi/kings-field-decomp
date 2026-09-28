@@ -140,7 +140,7 @@ void magic_cast(void)
     }
 }
 
-void effect_pool_sweep(void)
+void effect_pool_update(void)
 {
     for (auto &record : effect_state.records) {
         if (record.type != KF_EFFECT_SLOT_FREE) {

@@ -42,7 +42,7 @@ static constexpr int PLAYER_COLLISION_DEFLECTION_ANGLE = 64;
 static constexpr int PLAYER_MAX_STEP_RISE = 699;
 static constexpr int PLAYER_DIAGONAL_COMPONENT_Q12 = 2896;
 
-char weapon_image_path_template[weapon_image_path_capacity] = "WEPON/WEP00.MIM";
+char weapon_asset_path_template[weapon_image_path_capacity] = "WEPON/WEP00.MIM";
 
 KfFloorEntryCell floor_entry_cells[KF_PLAYER_FLOOR_ENTRY_COUNT] = {
     {15, 2}, {29, 56}, {28, 18}, {7, 22}, {39, 69}
@@ -118,12 +118,12 @@ void player_equip_weapon(KfObjectId weapon_id)
     player_state.equipped_weapon_id = weapon_id;
     if (weapon_id != KF_OBJECT_NONE) {
         player_state.equipped_weapon_record = &weapon_records.entries[kf_enum_encode<u8>(weapon_id)];
-        weapon_image_path_template[weapon_image_number_offset] = '0' + kf_enum_encode<u32>(weapon_id) / 10;
-        weapon_image_path_template[weapon_image_number_offset + 1] = '0' + kf_enum_encode<u32>(weapon_id) % 10;
+        weapon_asset_path_template[weapon_image_number_offset] = '0' + kf_enum_encode<u32>(weapon_id) / 10;
+        weapon_asset_path_template[weapon_image_number_offset + 1] = '0' + kf_enum_encode<u32>(weapon_id) % 10;
         std::size_t loaded_size;
         if (resource_file_load_into(player_state.weapon_asset_buffer, KF_WEAPON_ASSET_BUFFER_BYTES,
-                weapon_image_path_template, &loaded_size) != KF_RESOURCE_LOADED) {
-            exit(1);
+                weapon_asset_path_template, &loaded_size) != KF_RESOURCE_LOADED) {
+            resource_file_fail(weapon_asset_path_template);
         }
         asset_registry_set(KF_ASSET_WEAPON, player_state.weapon_asset_buffer, loaded_size);
     }
@@ -155,7 +155,7 @@ void player_update_weapon_attack(void)
     VECTOR result;
     MATRIX matrix;
     u16 window;
-    s32 actor;
+    s32 actor_index;
 
     if (player_state.equipped_weapon_id == KF_OBJECT_NONE) {
         return;
@@ -174,11 +174,11 @@ void player_update_weapon_attack(void)
             kf::matrix_set_rotation_xyz(rotation, matrix);
             result = kf::matrix_apply_rotation(matrix, offset);
             result += player_state.camera_position;
-            actor = actor_pool_find_overlap(result.vx, result.vy, result.vz,
+            actor_index = actor_pool_find_overlap(result.vx, result.vy, result.vz,
                 PLAYER_WEAPON_HIT_RADIUS, PLAYER_WEAPON_HIT_HEIGHT);
-            if (actor != -1) {
+            if (actor_index != -1) {
                 actor_apply_damage(
-                    actor,
+                    actor_index,
                     player_state.physical_power,
                     player_state.cutting_attack,
                     player_state.striking_attack,
@@ -222,7 +222,7 @@ void game_initialize_session(void)
 
 void player_get_floor_position(VECTOR &position)
 {
-    position = {player_state.camera_position.vx, player_state.floor_height,
+    position = {player_state.camera_position.vx, player_state.foot_height,
         player_state.camera_position.vz};
 }
 
@@ -269,7 +269,7 @@ void player_sync_position_to_map(void)
     player_state.allow_near_actor_spawn = KF_ACTOR_NEAR_SPAWN_ALLOWED;
     floor_height = -(floor * KF_MAP_HEIGHT_STEP);
     view_offset = player_state.view_bob_offset - KF_PLAYER_CAMERA_HEIGHT;
-    player_state.floor_height = floor_height;
+    player_state.foot_height = floor_height;
     player_state.camera_position.vy = view_offset + floor_height;
     player_clear_motion();
     collision_adjust_cell_occupancy(cell.x, cell.z, 1);
@@ -321,7 +321,7 @@ s32 player_distance_to_point(
         center = point_y - tolerance;
         tolerance += KF_COLLISION_PLAYER_HEIGHT / 2;
         center += KF_COLLISION_PLAYER_HEIGHT / 2;
-        dy = player_state.floor_height - center;
+        dy = player_state.foot_height - center;
         if (dy < -tolerance || tolerance < dy) {
             return KF_COLLISION_NONE;
         }
@@ -358,7 +358,7 @@ s32 player_move_horizontal(s32 heading, s32 distance)
     new_z = dz + player_state.camera_position.vz;
     new_x = dx + player_state.camera_position.vx;
     for (;;) {
-        if (collision_query_world(new_x, player_state.floor_height, new_z,
+        if (collision_query_world(new_x, player_state.foot_height, new_z,
                 KF_COLLISION_PLAYER_RADIUS, KF_COLLISION_PLAYER_HEIGHT,
                 KF_COLLISION_SKIP_TERRAIN | KF_COLLISION_SKIP_PLAYER | KF_COLLISION_CAPTURE_TARGET)
             == KF_COLLISION_NONE) {
@@ -387,14 +387,14 @@ s32 player_move_horizontal(s32 heading, s32 distance)
     }
     cell_z = new_z / KF_MAP_TILE_SIZE;
     if (cell_z < KF_MAP_ROWS && map_collision_grid.cells[cell_z][cell.x] != KF_MAP_CELL_BLOCKED
-        && map_base_floor_height(cell.x, cell_z) - player_state.floor_height
+        && map_base_floor_height(cell.x, cell_z) - player_state.foot_height
                >= -PLAYER_MAX_STEP_RISE) {
         player_state.camera_position.vz = new_z;
         cell.z = cell_z;
     }
     cell_x = new_x / KF_MAP_TILE_SIZE;
     if (cell_x < KF_MAP_COLUMNS && map_collision_grid.cells[cell.z][cell_x] != KF_MAP_CELL_BLOCKED
-        && map_base_floor_height(cell_x, cell.z) - player_state.floor_height
+        && map_base_floor_height(cell_x, cell.z) - player_state.foot_height
                >= -PLAYER_MAX_STEP_RISE) {
         player_state.camera_position.vx = new_x;
         cell.x = cell_x;
@@ -504,7 +504,7 @@ void player_update_view_bob(void)
 static void player_update_floor_motion(s32 target)
 {
     if (player_state.update_state != KF_PLAYER_UPDATE_DYING) {
-        if (player_state.floor_height - target < -PLAYER_FATAL_DROP_DISTANCE) {
+        if (player_state.foot_height - target < -PLAYER_FATAL_DROP_DISTANCE) {
             if (player_state.equipped_leg_armor_id == KF_ITEM_FEATHER_BOOTS
                 && player_current_map_attribute() == KF_MAP_ATTRIBUTE_BOTTOMLESS_PIT) {
                 return;
@@ -517,14 +517,14 @@ static void player_update_floor_motion(s32 target)
     }
 
     if (player_state.vertical_state == KF_PLAYER_VERTICAL_GROUNDED) {
-        if (target < player_state.floor_height) {
+        if (target < player_state.foot_height) {
             player_state.vertical_state = KF_PLAYER_VERTICAL_STEP_UP;
             if ((s16)player_state.motion_state.movement_speed >= PLAYER_FAST_STEP_MIN_SPEED) {
                 player_state.vertical_velocity = PLAYER_FAST_STEP_UP_VELOCITY;
             } else {
                 player_state.vertical_velocity = PLAYER_SLOW_STEP_UP_VELOCITY;
             }
-        } else if (player_state.floor_height < target) {
+        } else if (player_state.foot_height < target) {
             player_state.vertical_state = KF_PLAYER_VERTICAL_FALLING;
             player_state.vertical_velocity = 0;
         }
@@ -533,18 +533,18 @@ static void player_update_floor_motion(s32 target)
     // A new fall or step begins moving on this same update.
     switch (player_state.vertical_state) {
     case KF_PLAYER_VERTICAL_FALLING:
-        player_state.floor_height += player_state.vertical_velocity;
+        player_state.foot_height += player_state.vertical_velocity;
         player_state.vertical_velocity += PLAYER_FALL_ACCELERATION;
-        if (target + PLAYER_FALL_LANDING_OVERSHOOT < player_state.floor_height) {
-            player_state.floor_height = target;
+        if (target + PLAYER_FALL_LANDING_OVERSHOOT < player_state.foot_height) {
+            player_state.foot_height = target;
             player_state.vertical_state = KF_PLAYER_VERTICAL_GROUNDED;
         }
         break;
     case KF_PLAYER_VERTICAL_STEP_UP:
-        player_state.floor_height += player_state.vertical_velocity;
+        player_state.foot_height += player_state.vertical_velocity;
         player_state.vertical_velocity += PLAYER_STEP_UP_ACCELERATION;
-        if (player_state.floor_height <= target) {
-            player_state.floor_height = target;
+        if (player_state.foot_height <= target) {
+            player_state.foot_height = target;
             player_state.vertical_state = KF_PLAYER_VERTICAL_GROUNDED;
         }
         break;
@@ -562,7 +562,7 @@ void player_update_vertical_motion(void)
     target = map_base_floor_height(cell.x, cell.z);
     player_update_floor_motion(target);
     view_offset = player_state.view_bob_offset - KF_PLAYER_CAMERA_HEIGHT;
-    player_state.camera_position.vy = view_offset + player_state.floor_height;
+    player_state.camera_position.vy = view_offset + player_state.foot_height;
 }
 
 void player_warp_to_floor_entry(void)
@@ -585,12 +585,12 @@ void player_warp_to_floor_entry(void)
         if (player_state.map_variant == KF_FLOOR5_ALTERNATE_MUSIC_VARIANT) {
             audio_play_current_map_sequence();
         }
-        pool_release_all();
+        animation_cache_release_all();
         player_state.map_variant = KF_FLOOR5_ENTRY_VARIANT;
         map_variant_assets_load();
     }
     player_sync_position_to_map();
-    position.vy = player_state.floor_height;
+    position.vy = player_state.foot_height;
     player_warp_shimmer(KF_WARP_SHIMMER_SHRINK_REMOVE, &position);
 }
 
@@ -603,7 +603,7 @@ void player_update_transform_snapshot(VECTOR *position_out, SVECTOR *rotation_ou
 
 void player_core_reset_module_state(void)
 {
-    kf::restore_initial_value<weapon_image_path_template>();
+    kf::restore_initial_value<weapon_asset_path_template>();
     kf::restore_initial_value<floor_entry_cells>();
     kf::restore_initial_value<player_rotation_snapshot>();
     kf::restore_initial_value<player_position_snapshot>();

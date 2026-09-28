@@ -4,6 +4,12 @@ This is the prioritized work queue. [PORTING.md](../PORTING.md) is the source-po
 contract; [port-findings.md](port-findings.md) holds the detailed evidence and
 history. Update this queue when an item's status changes, not just the history.
 
+The common-resource loader preserves its original cross-chunk table copies with
+file-bound checks. Fatal native errors remain visible in a dialog. See the
+[resource loader regression and checks](resource-loader-regression.md).
+The [broader cleanup audit](cleanup-runtime-audit.md) records the lighting fix,
+remaining error-handler coverage, cross-version runtime comparisons and limits.
+
 ## Priority order
 
 No reported problem remains under active investigation. The user reproduced
@@ -36,7 +42,7 @@ keyframe pointer. Fresh Linux/WASM builds linked, with no new compiler warnings.
 A clean-context review covered all 20 changed source files, caught an accidentally
 removed free-actor-slot guard, and verified its restoration; no findings remain
 unresolved. No gameplay run was performed for this cleanup. The four remaining
-jumps are all in `map_object_probe_forward`: defer that function's refactor until
+jumps are all in `map_object_probe_door_closing`: defer that function's refactor until
 the overlapping switch/signedness PRs #14/#15 are resolved. This is port-only
 maintenance, not a decomp backport or closure of the runtime gaps below.
 

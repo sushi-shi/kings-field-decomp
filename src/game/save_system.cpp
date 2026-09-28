@@ -171,7 +171,7 @@ static void save_state_fields(SaveCodec &io, SavedGameState &state) {
     SAVE_FIELD(s32, camera_position.vx);
     SAVE_FIELD(s32, camera_position.vy);
     SAVE_FIELD(s32, camera_position.vz);
-    SAVE_FIELD(s32, floor_height);
+    SAVE_FIELD(s32, foot_height);
     SAVE_FIELD(s16, camera_rotation.vx);
     SAVE_FIELD(s16, camera_rotation.vy);
     SAVE_FIELD(s16, camera_rotation.vz);
@@ -497,7 +497,7 @@ KfBool32 menu_load_message_image(s32 message_id)
 void screen_show_image_until_input(const char *path)
 {
     s32 brightness = IMAGE_WAIT_INITIAL_BRIGHTNESS;
-    KfBool8 pressed = false;
+    KfBool8 released = false;
     std::size_t image_size;
     if (resource_file_load_into(game_graphics_runtime.display_state.asset_load_buffer,
             game_graphics_runtime.display_state.asset_load_capacity, path, &image_size) != KF_RESOURCE_LOADED) {
@@ -511,9 +511,9 @@ void screen_show_image_until_input(const char *path)
         }
         display_present_system_screen(brightness);
         kf::host_wait_frame();
-        if (pressed == false) {
+        if (released == false) {
             if (kf::host_read_buttons() == 0) {
-                pressed = true;
+                released = true;
             }
         } else if (kf::host_read_buttons() != 0) {
             kf::host_wait_buttons_released();

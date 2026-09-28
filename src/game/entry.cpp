@@ -75,7 +75,7 @@ static void restore_module_initial_state()
 extern "C" kf::AppMode kf_run_game() {
     restore_module_initial_state();
     game_main_loop();
-    pool_release_all();
+    animation_cache_release_all();
     memory_destroy_arena(memory_arena);
     switch (static_cast<KfOverlayMode>(game_next_overlay_mode)) {
     case KF_OVERLAY_MODE_INTRO: return kf::AppMode::Opening;

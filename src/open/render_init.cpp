@@ -36,7 +36,7 @@ void render_initialize(void)
     open_graphics_runtime.display_state.buffer_index = KF_DISPLAY_BUFFER_UNINITIALIZED;
     if (resource_file_load_into(opening_cell_storage.rtbl_sectors,
             sizeof opening_cell_storage.rtbl_sectors, "B0/RTBL.") != KF_RESOURCE_LOADED)
-        exit(1);
+        resource_file_fail("B0/RTBL.");
     buffer = (u8 *)memory_allocate(memory_arena, DISPLAY_ASSET_BUFFER_BYTES);
     open_graphics_runtime.display_state.asset_load_buffer = buffer;
     open_graphics_runtime.display_state.asset_load_capacity = DISPLAY_ASSET_BUFFER_BYTES;

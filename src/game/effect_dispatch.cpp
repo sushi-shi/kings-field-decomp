@@ -788,11 +788,11 @@ void effect_update_dispatch(void)
     }
 
     case KF_EFFECT_KIND_SWINGING_HAZARD_SHORT:
-        effect_projectile_update_3d(&effect_swing_probe_offsets[KF_EFFECT_SWING_PROBE_SHORT], KF_EFFECT_SHORT_SWING_PHASE_LIMIT);
+        effect_update_swinging_hazard(&effect_swing_probe_offsets[KF_EFFECT_SWING_PROBE_SHORT], KF_EFFECT_SHORT_SWING_PHASE_LIMIT);
         break;
 
     case KF_EFFECT_KIND_SWINGING_HAZARD_LONG:
-        effect_projectile_update_3d(&effect_swing_probe_offsets[KF_EFFECT_SWING_PROBE_LONG], KF_EFFECT_LONG_SWING_PHASE_LIMIT);
+        effect_update_swinging_hazard(&effect_swing_probe_offsets[KF_EFFECT_SWING_PROBE_LONG], KF_EFFECT_LONG_SWING_PHASE_LIMIT);
         break;
 
     case KF_EFFECT_KIND_FLOOR_DEFORMATION: {
@@ -843,7 +843,7 @@ void effect_update_dispatch(void)
     }
 
     case KF_EFFECT_KIND_ORBITING_PROJECTILE:
-        effect_projectile_update_2d(EFFECT_ORBIT_RADIUS, KF_EFFECT_ORBIT_PHASE_LIMIT);
+        effect_update_orbiting_projectile(EFFECT_ORBIT_RADIUS, KF_EFFECT_ORBIT_PHASE_LIMIT);
         break;
 
     default:

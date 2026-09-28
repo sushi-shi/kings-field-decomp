@@ -13,9 +13,9 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias, const MATRIX *lights)
     KfTmdObject *object = tmd_get_object(tmd_context(), object_index);
     u32 header;
     u32 remaining = object->primitive_count;
-    u8 *packet = (u8 *)open_graphics_runtime.tmd_state.current_asset.data +
+    u8 *packet = (u8 *)open_graphics_runtime.tmd_state.current_tmd.data +
         (object->primitive_offset + KF_TMD_HEADER_BYTES);
-    SVECTOR *normals = (SVECTOR *)((u8 *)open_graphics_runtime.tmd_state.current_asset.data +
+    SVECTOR *normals = (SVECTOR *)((u8 *)open_graphics_runtime.tmd_state.current_tmd.data +
         (object->normal_offset + KF_TMD_HEADER_BYTES));
     s32 depth;
 
