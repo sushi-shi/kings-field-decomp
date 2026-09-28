@@ -497,9 +497,9 @@ void player_add_experience(s16 amount)
  * ($a0 for the threshold, $a1 for the excess); locals assigned later move.
  */
 ADDRESS(0x8001627c, 0xa8)
-s32 player_calculate_damage_component(s32 base_power, s32 defense, s32 attack)
+s32 player_calculate_damage_component(s32 defender_power, s32 defense, s32 attack)
 {
-    s32 threshold = base_power;
+    s32 threshold = defender_power;
     s32 excess = defense;
 
     if (attack == 0) {
