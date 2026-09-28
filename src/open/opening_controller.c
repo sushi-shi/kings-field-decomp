@@ -23,7 +23,7 @@ ADDRESS(0x800156bc, 0x214)
 void opening_run(KfOverlayMode overlay_mode)
 {
     u8 *tim_data;
-    KF_ENUM_STORAGE(KfOpeningInputAction, s32) scene3_action;
+    KF_ENUM_STORAGE(KfOpeningInputAction, s32) advance_action;
     KF_ENUM_STORAGE(KfOpeningInputAction, s32) skip_action;
 
     PadInit(0);
@@ -46,7 +46,7 @@ void opening_run(KfOverlayMode overlay_mode)
                 opening_initial_tim_path) != KF_RESOURCE_LOADED) {
             return;
         }
-        scene3_action = KF_OPENING_INPUT_ADVANCE;
+        advance_action = KF_OPENING_INPUT_ADVANCE;
         tim_upload_images(open_graphics_runtime.display_state.asset_load_buffer);
         skip_action = KF_OPENING_INPUT_SKIP;
         opening_fade_in();
@@ -57,7 +57,7 @@ void opening_run(KfOverlayMode overlay_mode)
 
         for (;;) {
             opening_scene0_run();
-            if (opening_input_action != scene3_action &&
+            if (opening_input_action != advance_action &&
                 opening_input_action == skip_action) {
 opening_reload:
                 /* Retail addresses this reload relative to the allocation
@@ -75,7 +75,7 @@ opening_reload:
 
             opening_input_action = KF_OPENING_INPUT_NONE;
             opening_scene1_run();
-            if (opening_input_action != scene3_action) {
+            if (opening_input_action != advance_action) {
                 if (opening_input_action == skip_action) {
                     goto opening_reload;
                 }

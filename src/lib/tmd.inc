@@ -7,9 +7,9 @@ void tmd_select(KfTmdSlot slot)
 
 ADDRESS_AT("GAME", 0x8001c114, 0x24)
 ADDRESS_AT("OPEN", 0x80016e94, 0x24)
-KfTmdObject *tmd_get_object(u16 index)
+KfTmdObject *tmd_get_object(u16 object_index)
 {
-    return TMD_OBJECTS(KF_GRAPHICS_RUNTIME.tmd_state.current_asset) + index;
+    return TMD_OBJECTS(KF_GRAPHICS_RUNTIME.tmd_state.current_asset) + object_index;
 }
 
 ADDRESS_AT("GAME", 0x8001c138, 0x10)
@@ -21,11 +21,11 @@ void tmd_set_current_vertices(SVECTOR *vertices)
 
 ADDRESS_AT("GAME", 0x8001c148, 0x3c)
 ADDRESS_AT("OPEN", 0x80016ec8, 0x3c)
-void tmd_select_object_vertices(u16 index)
+void tmd_select_object_vertices(u16 object_index)
 {
     KF_GRAPHICS_RUNTIME.current_tmd_vertices =
         TMD_OBJECT_VERTICES(KF_GRAPHICS_RUNTIME.tmd_state.current_asset,
-            tmd_get_object(index));
+            tmd_get_object(object_index));
 }
 
 ADDRESS_AT("GAME", 0x8001c184, 0x12c)

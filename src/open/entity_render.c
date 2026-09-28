@@ -33,7 +33,7 @@ ADDRESS(0x80018ecc, 0x228)
 void opening_entity_render(KfOpeningEntity *entity)
 {
     VECTOR scale;
-    SVECTOR screen;
+    SVECTOR relative_position;
     MATRIX model;
     MATRIX light;
     long flag;
@@ -42,12 +42,12 @@ void opening_entity_render(KfOpeningEntity *entity)
 
     SetRotMatrix(&open_graphics_runtime.render_state.view_matrix);
     SetTransMatrix(&open_graphics_runtime.render_state.view_matrix);
-    setVector(&screen,
+    setVector(&relative_position,
         entity->position.vx - open_graphics_runtime.render_state.view_position.vx,
         entity->position.vy - open_graphics_runtime.render_state.view_position.vy,
         entity->position.vz - open_graphics_runtime.render_state.view_position.vz);
     /* RotTrans writes the three translation words, not a VECTOR pad word. */
-    RotTrans(&screen, (VECTOR *)&model.t, &flag);
+    RotTrans(&relative_position, (VECTOR *)&model.t, &flag);
     matrix_set_rotation_yxz(&entity->rotation, &model);
     copyVector(&scale, &entity->scale);
     ScaleMatrix(&model, &scale);

@@ -464,7 +464,7 @@ KfMapSavedWorld	0x0	0x2134	floors	KfMapSavedFloor[5]	supported	lib/map.h;asm;gam
 KfMemoryAllocationState	0x0	0x4	cursor	u8 *	supported	memory.h;asm;typed-memory-owner.md	null selects heap allocations; otherwise next arena byte
 KfMemoryAllocationState	0x4	0x44	stack	u32[17]	supported	memory.h;asm;typed-memory-owner.md	depth at index zero and generic size-or-heap-pointer entries after it
 KfMemoryArena	0x0	0x4	start	u8 *	supported	memory.h;asm;typed-memory-owner.md	base restored by allocation reset
-KfMemoryArena	0x4	0x4	end	u8 *	supported	memory.h;asm;typed-memory-owner.md	inclusive arena end
+KfMemoryArena	0x4	0x4	last	u8 *	supported	memory.h;asm;typed-memory-owner.md;memory_capture_system_heap_start	inclusive last arena byte; the system heap starts at last + 1
 KfMemoryArena	0x8	0x48	allocation	KfMemoryAllocationState	supported	memory.h;asm;typed-memory-owner.md	cursor-relative retail reset accesses start at -8 and stack depth at +4
 KfMemoryArena	0x50	0x4	system_heap_start	u8 *	supported	asm;cross-overlay-lineage;memory_capture_system_heap_start;data-repair-campaign.md	first system-heap byte captured after the inclusive arena end
 KfMemoryArena	0x54	0x4	system_heap_size	s32	supported	asm;cross-overlay-lineage;memory_reset_system_heap;data-repair-campaign.md	byte extent passed to InitHeap
