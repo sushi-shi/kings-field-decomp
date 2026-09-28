@@ -28,7 +28,7 @@ function extent.
 | `effect_update_dispatch` | `80038a38` | 99.82781 | 6156 | 42 |
 | `effect_map_collision` | `80037850` | 99.87369 | 1900 | 1 |
 | `render_map_cell` | `8001e5ec` | 99.87838 | 592 | 18 |
-| `effect_projectile_update_2d` | `80038298` | 99.93421 | 608 | 10 |
+| `effect_update_orbiting_projectile` | `80038298` | 99.93421 | 608 | 10 |
 | `player_update` | `80018880` | 99.96709 | 6684 | 55 |
 
 Raw counts compare words at the same offsets, including unequal-length tails;
@@ -210,7 +210,7 @@ attributions or proof of historical source form.
 | `effect_update_dispatch` | `0x80038a70` | Registers carrying a global load and the effect byte differ. |
 | `effect_map_collision` | `0x80037f68` | Sole word difference: generated `li v0,1` versus retail `nop`. |
 | `render_map_cell` | `0x8001e5ec` | Frame is 88 versus 120 bytes, with corresponding stack offsets. |
-| `effect_projectile_update_2d` | `0x80038298` | Frame is 56 versus 120 bytes, with corresponding stack offsets. |
+| `effect_update_orbiting_projectile` | `0x80038298` | Frame is 56 versus 120 bytes, with corresponding stack offsets. |
 | `player_update` | `0x80018880` | Frame is 216 versus 224 bytes; other differences remain in the body. |
 
 Every baseline preserves the ordered calls. All except horizontal movement
@@ -241,7 +241,7 @@ These counts describe sampled source states, not exhaustive C-program coverage.
 | `effect_update_dispatch` | 2050 | — | 99.82781 | Unchanged partial |
 | `effect_map_collision` | 2052 | — | 99.87369 | Unchanged partial |
 | `render_map_cell` | 2052 | — | 99.87838 | Unchanged partial |
-| `effect_projectile_update_2d` | 2051 | — | 99.93421 | Unchanged partial |
+| `effect_update_orbiting_projectile` | 2051 | — | 99.93421 | Unchanged partial |
 | `player_update` | 2049 | — | 99.96948 | Reviewed partial improvement |
 
 All affected sources pass fresh focused compilation and modern type checks.

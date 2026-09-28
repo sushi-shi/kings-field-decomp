@@ -76,7 +76,7 @@ retain their prior documented meanings; no enum identity is invented.
 | `8003a244` | `effect_pool_reset` | 100 | Exact, raw retail and target agree |
 | `8003a274` | `magic_load_records` | 100 | Exact, raw retail and target agree |
 | `8003a2a0` | `magic_cast` | 98.89145 | Unchanged partial |
-| `8003a760` | `effect_pool_sweep` | 100 | Exact, raw retail and target agree |
+| `8003a760` | `effect_pool_update` | 100 | Exact, raw retail and target agree |
 
 The four units were forced to rebuild. Allocated sections, runtime symbols
 and ordered relocations agree with the captured objects. All nine functions

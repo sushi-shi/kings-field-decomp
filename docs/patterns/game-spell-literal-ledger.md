@@ -88,5 +88,5 @@ extents and glyph-row width while preserving local workspace capacities.
 | `magic_cast` | 127, 143 | `0xa × 2` | `0xa, KF_EFFECT_USE_PLAYER_MAGIC \| KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,` | Effect ID10 supplies unity to the downstream player-damage tenths multiplier on Fire Wall paths; it is separate from the collision-target flags. |
 | `magic_cast` | 136 | `6000` | `- (rsin(player_state.camera_rotation.vy) * 6000 >> KF_FIXED12_BITS);` | Untargeted Fire Wall X offset projects 6000 world units, three tiles, through the Q12 direction; integer rounding remains. Original range rationale unknown. |
 | `magic_cast` | 138 | `6000` | `+ (rcos(player_state.camera_rotation.vy) * 6000 >> KF_FIXED12_BITS);` | Matching Z projection of the same 6000-world-unit Fire Wall placement distance. |
-| `effect_pool_sweep` | 156 | `1` | `u16 i = KF_EFFECT_CAPACITY - 1;` | Inclusive post-decrement traversal begins at count minus one and visits all 48 effect records. |
-| `effect_pool_sweep` | 164 | `0` | `} while (i-- != 0);` | Post-decrement test processes the last record when the old countdown is zero. |
+| `effect_pool_update` | 156 | `1` | `u16 i = KF_EFFECT_CAPACITY - 1;` | Inclusive post-decrement traversal begins at count minus one and visits all 48 effect records. |
+| `effect_pool_update` | 164 | `0` | `} while (i-- != 0);` | Post-decrement test processes the last record when the old countdown is zero. |

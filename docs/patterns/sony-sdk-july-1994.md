@@ -67,7 +67,7 @@ No source or header change is retained. **456/471 remains exact.**
 | GAME | `map_interaction_dispatch` | 99.202774 |
 | GAME | `map_world_state_persist` | 97.52873 |
 | GAME | `effect_map_collision` | 99.87369 |
-| GAME | `effect_projectile_update_2d` | 99.93421 |
+| GAME | `effect_update_orbiting_projectile` | 99.93421 |
 | GAME | `effect_update_dispatch` | 99.82781 |
 | OPEN | `opening_ending_scroll_run` | 99.917694 |
 | GAME | `menu_status_panel` (UV control) | 100 |

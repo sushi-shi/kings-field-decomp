@@ -256,7 +256,7 @@ partial; every score and all 484 function-report entries remain unchanged.
 | GAME.EXE | `map_show_screen_image` | 144/148 | 88.888885% |
 | GAME.EXE | `map_interaction_dispatch` | 2308/2296 | 99.202774% |
 | GAME.EXE | `map_world_state_persist` | 696/700 | 97.528730% |
-| GAME.EXE | `effect_projectile_update_2d` | 608/608 | 99.934210% |
+| GAME.EXE | `effect_update_orbiting_projectile` | 608/608 | 99.934210% |
 | OPEN.EXE | `opening_ending_scroll_run` | 1944/1944 | 99.917694% |
 | OPEN.EXE | `display_initialize` | 472/476 | 96.652540% |
 

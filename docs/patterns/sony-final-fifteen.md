@@ -22,7 +22,7 @@ The first related family comprises the remaining frame-only differences:
 | --- | --- | ---: | --- |
 | GAME `80018880` | `player_update` | 99.96709 | SDK SVECTOR launch/effect construction and explicit component widths; frame 216 versus retail 224. |
 | GAME `8001e5ec` | `render_map_cell` | 99.87838 | `setVector` inputs in the halfword domain proved by retail camera-coordinate `lhu` reads; frame 88 versus retail 120. |
-| GAME `80038298` | `effect_projectile_update_2d` | 99.93421 | Authentic vector/scalar boundaries around orbital coordinates and distance calculations, preserving sin/cos/sin call order; frame 56 versus retail 120. |
+| GAME `80038298` | `effect_update_orbiting_projectile` | 99.93421 | Authentic vector/scalar boundaries around orbital coordinates and distance calculations, preserving sin/cos/sin call order; frame 56 versus retail 120. |
 
 The full campaign retains these other twelve targets and their image identity:
 GAME `player_move_horizontal` (`800171fc`), `render_entities` (`8001f218`),
@@ -77,8 +77,8 @@ the strict count, and all fifteen targets remain unfinished.**
 | Existing two-component collision delta in `DVECTOR` | `player_move_horizontal` | 96.56322 | 2128 | Three local offsets change; retail's Z slot is lost; reject |
 | SDK copy of spawn position, then vertical offset | `map_object_spawn_effect` | 89.95049 | 408 | Two instructions added and register roles changed; reject |
 | Complete typed glyph-row assignment | `menu_draw_item_detail` | 73.39891 | 892 | Halfword loop replaced by unrolled copy; reject |
-| SDK `long` distance components | `effect_projectile_update_2d` | 99.93421 | 608 | Whole object unchanged |
-| Complete squared-distance expression at `SquareRoot0` argument | `effect_projectile_update_2d` | 99.93421 | 608 | Whole object unchanged |
+| SDK `long` distance components | `effect_update_orbiting_projectile` | 99.93421 | 608 | Whole object unchanged |
+| Complete squared-distance expression at `SquareRoot0` argument | `effect_update_orbiting_projectile` | 99.93421 | 608 | Whole object unchanged |
 
 The clamp controls use the supplied `LIBGPU.H` definition and `LIMITS.H` type
 bounds. `limitRange(x, SHRT_MIN, upper)` and
@@ -149,7 +149,7 @@ does not justify adding an unused matrix or padding to another function.
 | GAME `map_interaction_dispatch` | 99.202774 | Same pointer, reload and branch residue. Both trig probes consume only X/Z; the modular pitch predicate is not a saturation clamp. |
 | GAME `map_world_state_persist` | 97.52873 | Same definition-base and type-predicate residue. Sparse byte serialization has no supported SDK replacement; the earlier memcpy control changes its byte loop. |
 | GAME `effect_map_collision` | 99.87369 | One unequal delay-slot word remains at +0x718. It belongs to masked game collision dispatch; no missing SDK call or expression has been established. |
-| GAME `effect_projectile_update_2d` | 99.93421 | Still only stack operands: 56 versus 120 bytes. SDK word types and direct squared-distance argument are whole-object neutral. The actual vector aggregate and captured trig inputs remain rejected by extra instructions. |
+| GAME `effect_update_orbiting_projectile` | 99.93421 | Still only stack operands: 56 versus 120 bytes. SDK word types and direct squared-distance argument are whole-object neutral. The actual vector aggregate and captured trig inputs remain rejected by extra instructions. |
 | GAME `effect_update_dispatch` | 99.82781 | Same entry/type and later register residue. Existing compatible vector helpers remain; previous reordered setters, complete memcpy and clamp controls disagree with retail. |
 | OPEN `opening_ending_scroll_run` | 99.917694 | Same phase-dispatch registers and join target. Its transition setter is already retained; the signed blend is not equivalent to a new two-sided clamp. |
 
@@ -222,7 +222,7 @@ the actual local objects from reload allocations:
 | --- | --- | --- |
 | `player_update` | Three 8-byte aggregates, one 16-byte aggregate, one 32-byte aggregate, one 4-byte word | Nine 8-byte slots, SI mode |
 | `render_map_cell` | One 32-byte aggregate, one 8-byte aggregate, one 4-byte word | One 8-byte slot, SI mode |
-| `effect_projectile_update_2d` | None | None |
+| `effect_update_orbiting_projectile` | None | None |
 | Each rejected cell capture | The cell objects plus one 16-byte aggregate | One 8-byte slot, SI mode |
 
 The cell matrix starts at `sp+16` in both retail and current output. The input

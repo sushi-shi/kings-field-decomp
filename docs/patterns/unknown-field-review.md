@@ -276,7 +276,7 @@ nor claims a new exact function.
 | OPEN | opening_camera_path_compute_segment | Known segment arithmetic; no new unknown-field meaning. |
 | OPEN | opening_camera_path_step | Known path stepping; no new unknown-field meaning. |
 | GAME | effect_pool_construct | Known effect fields and SDK vectors; +0x0a/+0x2a unresolved. |
-| GAME | effect_pool_spawn_typed | Known spawn arguments; opaque effect lanes unresolved. |
+| GAME | effect_pool_spawn_floor_deformation | Known spawn arguments; opaque effect lanes unresolved. |
 | GAME | audio_initialize | Known SDK initialization; adjacent unknown halfwords unresolved. |
 | OPEN | audio_initialize | Same limitation for OPEN audio state. |
 | GAME | save_file_write_slot | Save transport confirmed; payload gaps/player opaque bytes unresolved. |

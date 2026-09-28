@@ -41,7 +41,7 @@ helper. New copy controls compare the actual emitted loops and access widths.
 | GAME `80034de4` | `map_interaction_dispatch` | 99.202774 | Two-axis probes, angle predicates and call-preserving SDK boundaries. |
 | GAME `80035b5c` | `map_world_state_persist` | 97.52873 | Eight-byte complete link copy versus SDK `memcpy`; sparse and packed records retain their game serialization. |
 | GAME `80037850` | `effect_map_collision` | 99.87369 | Signed cell bounds, geometry predicates, effect-mask extraction and the real collision call. |
-| GAME `80038298` | `effect_projectile_update_2d` | 99.93421 | VECTOR distance components and setter input capture preserving sin/cos/sin call order. |
+| GAME `80038298` | `effect_update_orbiting_projectile` | 99.93421 | VECTOR distance components and setter input capture preserving sin/cos/sin call order. |
 | GAME `80038a38` | `effect_update_dispatch` | 99.82781 | Existing helpers, complete padded vector copy versus `memcpy`, and scalar scale bounds; reuse previous ordered-vector controls. |
 | OPEN `80014e28` | `opening_ending_scroll_run` | 99.917694 | Transition vector, bounded blend clamp, full MATRIX copy and genuine color/material types. |
 
@@ -135,7 +135,7 @@ Unchanged rows remain non-exact; a rejected control is not banked.
 | `map_interaction_dispatch` | 99.202774 | `+0x2c`: position pointer uses S8 instead of retail S7, with later branch/layout differences. Both probe pairs consume only X/Z and already call `rsin`/`rcos` in retail order. The modular pitch and game angle predicates are not SDK vector construction or saturation. No supported missing helper. |
 | `map_world_state_persist` | 97.52873 | `+0x16c`: definition-base setup appears early; later type predicates differ. A complete eight-byte link `memcpy` changes the retail byte-loop shape and is rejected. Sparse records and packed flags remain explicit game serialization. |
 | `effect_map_collision` | 99.87369 | `+0x718`: source puts `li v0,1` in a branch delay slot where retail has `nop`; it is the only differing word. The branch belongs to game effect-mask/collision handling. Bounds are predicates, not clamps; no Sony helper explains this remaining instruction. |
-| `effect_projectile_update_2d` | 99.93421 | `+0x0`: 56-byte frame versus retail 120; only stack operands differ. A genuine VECTOR for all three distance components adds instructions. Capturing orbit coordinates in sin/cos/sin order before `setVector` preserves calls but adds instructions too. Both rejected. |
+| `effect_update_orbiting_projectile` | 99.93421 | `+0x0`: 56-byte frame versus retail 120; only stack operands differ. A genuine VECTOR for all three distance components adds instructions. Capturing orbit coordinates in sin/cos/sin order before `setVector` preserves calls but adds instructions too. Both rejected. |
 | `effect_update_dispatch` | 99.82781 | `+0x38`: global-address register differs. Complete padded SVECTOR `memcpy` and the unsigned scale `limitRange` controls change body length/instructions. Previous ordered component-setter controls also disagree with retail. Existing compatible helpers are retained. |
 | `opening_ending_scroll_run` | 99.917694 | `+0x398`: phase dispatch uses different registers; one join target also differs. Transition `setVector` is whole-object identical and retained. Full MATRIX `memcpy` is identical but less direct than assignment, so not retained. Adding the blend clamp's lower-bound arm changes branches and is rejected. |
 

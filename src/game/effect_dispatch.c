@@ -103,7 +103,7 @@ SVECTOR effect_swing_probe_offsets[KF_EFFECT_SWING_PROBE_COUNT] = {
 
 /*
  * Per-frame behavior dispatcher for the current effect.  The constructor and
- * effect_pool_sweep publish the active record and its magic definition through
+ * effect_pool_update publish the active record and its magic definition through
  * effect_state.current_record/current_magic before entering here.
  */
 ADDRESS(0x80038a38, 0x180c)
@@ -806,12 +806,12 @@ advance_effect_phase:
     }
 
     case KF_EFFECT_KIND_SWINGING_HAZARD_SHORT:
-        effect_projectile_update_3d(&effect_swing_probe_offsets[KF_EFFECT_SWING_PROBE_SHORT],
+        effect_update_swinging_hazard(&effect_swing_probe_offsets[KF_EFFECT_SWING_PROBE_SHORT],
             KF_EFFECT_SHORT_SWING_PHASE_LIMIT);
         break;
 
     case KF_EFFECT_KIND_SWINGING_HAZARD_LONG:
-        effect_projectile_update_3d(&effect_swing_probe_offsets[KF_EFFECT_SWING_PROBE_LONG],
+        effect_update_swinging_hazard(&effect_swing_probe_offsets[KF_EFFECT_SWING_PROBE_LONG],
             KF_EFFECT_LONG_SWING_PHASE_LIMIT);
         break;
 
@@ -863,7 +863,7 @@ advance_effect_phase:
     }
 
     case KF_EFFECT_KIND_ORBITING_PROJECTILE:
-        effect_projectile_update_2d(EFFECT_ORBIT_RADIUS, KF_EFFECT_ORBIT_PHASE_LIMIT);
+        effect_update_orbiting_projectile(EFFECT_ORBIT_RADIUS, KF_EFFECT_ORBIT_PHASE_LIMIT);
         break;
 
     default:

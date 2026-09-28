@@ -339,12 +339,12 @@ GAME.EXE	func_80036e30	0x80036e30	0x8	game.menu_enter_mode	100	exact-preserved
 GAME.EXE	menu_enter_mode	0x80036e38	0xc8	game.menu_enter_mode	100	exact-preserved
 GAME.EXE	effect_pool_find_free	0x80036f00	0x44	game.effect_pool	100	exact-preserved
 GAME.EXE	effect_pool_construct	0x80036f44	0x82c	game.effect_pool	100	exact-preserved
-GAME.EXE	effect_pool_spawn_typed	0x80037770	0xac	game.effect_pool	100	exact-preserved
+GAME.EXE	effect_pool_spawn_floor_deformation	0x80037770	0xac	game.effect_pool	100	exact-preserved
 GAME.EXE	effect_pool_set_current	0x8003781c	0x34	game.effect_pool	100	exact-preserved
 GAME.EXE	effect_map_collision	0x80037850	0x76c	game.effect_map_collision	99.87369	partial-preserved
 GAME.EXE	effect_magic_power	0x80037fbc	0x24	game.effect_update	100	exact-preserved
-GAME.EXE	effect_projectile_update_3d	0x80037fe0	0x2b8	game.effect_update	100	exact-preserved
-GAME.EXE	effect_projectile_update_2d	0x80038298	0x260	game.effect_update	99.93421	partial-preserved
+GAME.EXE	effect_update_swinging_hazard	0x80037fe0	0x2b8	game.effect_update	100	exact-preserved
+GAME.EXE	effect_update_orbiting_projectile	0x80038298	0x260	game.effect_update	99.93421	partial-preserved
 GAME.EXE	effect_floor_deform_line	0x800384f8	0x1cc	game.effect_update	100	exact-preserved
 GAME.EXE	effect_scatter_triple	0x800386c4	0x68	game.effect_update	100	exact-preserved
 GAME.EXE	effect_rotate_scale_offset_y	0x8003872c	0x90	game.effect_update	100	exact-preserved
@@ -354,7 +354,7 @@ GAME.EXE	effect_update_dispatch	0x80038a38	0x180c	game.effect_dispatch	99.82781	
 GAME.EXE	effect_pool_reset	0x8003a244	0x30	game.magic	100	exact-preserved
 GAME.EXE	magic_load_records	0x8003a274	0x2c	game.magic	100	exact-preserved
 GAME.EXE	magic_cast	0x8003a2a0	0x4c0	game.magic	100	exact-preserved
-GAME.EXE	effect_pool_sweep	0x8003a760	0x7c	game.magic	100	exact-preserved
+GAME.EXE	effect_pool_update	0x8003a760	0x7c	game.magic	100	exact-preserved
 GAME.EXE	debug_stop	0x8003a7dc	0x40	game.debug_text	100	exact-preserved
 GAME.EXE	format_int_dec	0x8003a81c	0xe0	game.debug_text	100	exact-preserved
 GAME.EXE	format_int_hex	0x8003a8fc	0x8c	game.debug_text	100	exact-preserved

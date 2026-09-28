@@ -26,8 +26,8 @@ vendored controls.
 | `render_entities` | `8001f218 / 580` | 96.667610 | 61 / 9 / 41 / 1 | Effect cursor is `effect_state+1e0`, advances 60 bytes; full signed position words feed division by 2000 |
 | `player_warp_shimmer` | `80036618 / 238` | 100 | 23 / 9 / 14 / 1 | Constructor result supplies the shared record; yaw +1e is wrapped by 0xfff and stored in the loop delay slot |
 | `effect_pool_construct` | `80036f44 / 82c` | 100 | 52 / 7 / 38 / 1 | All 29 callers constrain byte header inputs, full VECTOR position and stack SVECTOR arguments; optional rotation copies include pad |
-| `effect_pool_spawn_typed` | `80037770 / ac` | 100 | 3 / 1 / 1 / 1 | Four initial halfword arguments and two caller-stack words; +1c/+1e/+20 are real halfword stores into reused rotation storage |
-| `effect_projectile_update_3d` | `80037fe0 / 2b8` | 100 | 28 / 10 / 20 / 1 | `RotMatrix` receives +1c; signed pitch/yaw loads feed angle helpers and comparisons |
+| `effect_pool_spawn_floor_deformation` | `80037770 / ac` | 100 | 3 / 1 / 1 / 1 | Four initial halfword arguments and two caller-stack words; +1c/+1e/+20 are real halfword stores into reused rotation storage |
+| `effect_update_swinging_hazard` | `80037fe0 / 2b8` | 100 | 28 / 10 / 20 / 1 | `RotMatrix` receives +1c; signed pitch/yaw loads feed angle helpers and comparisons |
 | `effect_scatter_triple` | `800386c4 / 68` | 100 | 1 / 3 / 0 / 1 | Both callers supply an eight-byte direction object; only unsigned halves +0/+2/+4 are mutated; pad is untouched |
 | `effect_update_dispatch` | `80038a38 / 180c` | 96.939570 | 257 / 69 / 204 / 1 | Copies eight direction bytes to the scatter local; supplies its SDK vector to construction and the live direction fields to scatter |
 
@@ -78,8 +78,8 @@ new first divergence or new code-generation residue in this stage.
 | `render_entities` | 96.667610 | Every pre-edit linked word unchanged; existing partial match |
 | `player_warp_shimmer` | 100 | All 142 linked words unchanged and retail-exact |
 | `effect_pool_construct` | 100 | All 523 linked words unchanged and retail-exact |
-| `effect_pool_spawn_typed` | 100 | All 43 linked words unchanged and retail-exact |
-| `effect_projectile_update_3d` | 100 | All 174 linked words unchanged and retail-exact |
+| `effect_pool_spawn_floor_deformation` | 100 | All 43 linked words unchanged and retail-exact |
+| `effect_update_swinging_hazard` | 100 | All 174 linked words unchanged and retail-exact |
 | `effect_scatter_triple` | 100 | All 26 linked words unchanged and retail-exact |
 | `effect_update_dispatch` | 96.939570 | Every pre-edit linked word unchanged; existing partial match |
 

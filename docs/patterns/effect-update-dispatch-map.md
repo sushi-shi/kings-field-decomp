@@ -13,7 +13,7 @@ remaining 42 register-field differences.
 
 - Identity: GAME.EXE `0x80038a38`, body/extent `0x180c` (6,156 bytes),
   `void effect_update_dispatch(void)`. Its sole proven incoming call is
-  `effect_pool_sweep` at `0x8003a7a4`, after publishing the current record;
+  `effect_pool_update` at `0x8003a7a4`, after publishing the current record;
   no argument or result is consumed there. The adjacent functions are
   `effect_spawn_ground_kind6` and `effect_pool_reset`, not evidence of a TU.
 - Baseline: strict objdiff **37.901886%**, source `0x16f0` (1,468 words)
@@ -88,7 +88,7 @@ falls into the common handler. `s5` starts at 0x64 and is overwritten with
 
 effect_map_collision, effect_magic_power, effect_pool_construct,
 effect_spawn_trail_kind13, effect_spawn_ground_kind6, effect_scatter_triple,
-effect_projectile_update_3d/2d, effect_floor_deform_line, vector_xz_to_angle,
+effect_update_swinging_hazard/2d, effect_floor_deform_line, vector_xz_to_angle,
 angle_approach, rsin, rcos, matrix_set_rotation_x/y, ApplyMatrix, player_apply_damage,
 player_apply_radial_damage, actor_apply_damage, actor_pool_apply_radial_damage,
 actor_pool_spawn, actor_pool_find_target_in_cone, collision_query_world,

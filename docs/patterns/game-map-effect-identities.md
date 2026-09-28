@@ -32,7 +32,7 @@ Ruff, the existing suite, whitespace checking and full `kf build`.
 | 80035e44 / 1692 | map_restore_floor_state | 99.964540 |
 | 80036f44 / 2092 | effect_pool_construct | 100 |
 | 80038a38 / 6156 | effect_update_dispatch | 96.939570 |
-| 8003a760 / 124 | effect_pool_sweep | 100 |
+| 8003a760 / 124 | effect_pool_update | 100 |
 
 ## Identity evidence
 
@@ -95,7 +95,7 @@ match retail and the delinked targets, including delay slots.
 | map_restore_floor_state | Partial, unchanged | 423 / 18 / 32 |
 | effect_pool_construct | Exact, unchanged | 523 / 7 / 8 |
 | effect_update_dispatch | Partial, unchanged | 1539 / 69 / 21 |
-| effect_pool_sweep | Exact, unchanged | 31 / 2 / 1 |
+| effect_pool_update | Exact, unchanged | 31 / 2 / 1 |
 
 The unchanged first retail differences are:
 

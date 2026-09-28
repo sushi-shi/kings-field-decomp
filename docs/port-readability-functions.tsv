@@ -73,12 +73,12 @@ GAME.EXE	0x80036f00	game.effect_pool	effect_pool_find_free	explicit-state	100.0	
 GAME.EXE	0x80036f44	game.effect_pool	effect_pool_construct	explicit-state+named-constants	100.0	100.0	retained; complete allocated object unchanged
 GAME.EXE	0x8003781c	game.effect_pool	effect_pool_set_current	explicit-state	100.0	100.0	retained; complete allocated object unchanged
 GAME.EXE	0x80037850	game.effect_map_collision	effect_map_collision	explicit-state	99.87369	99.87369	retained; complete allocated object unchanged
-GAME.EXE	0x80037fe0	game.effect_update	effect_projectile_update_3d	explicit-state	100.0	100.0	retained; complete allocated object unchanged
-GAME.EXE	0x80038298	game.effect_update	effect_projectile_update_2d	explicit-state	99.93421	99.93421	retained; complete allocated object unchanged
+GAME.EXE	0x80037fe0	game.effect_update	effect_update_swinging_hazard	explicit-state	100.0	100.0	retained; complete allocated object unchanged
+GAME.EXE	0x80038298	game.effect_update	effect_update_orbiting_projectile	explicit-state	99.93421	99.93421	retained; complete allocated object unchanged
 GAME.EXE	0x800384f8	game.effect_update	effect_floor_deform_line	named-constants	100.0	100.0	retained; complete allocated object unchanged
 GAME.EXE	0x800387bc	game.effect_update	effect_spawn_ground_trail	explicit-state	100.0	100.0	retained; complete allocated object unchanged
 GAME.EXE	0x800388b4	game.effect_update	effect_spawn_ground_branch	layout-only	100.0	100.0	retained; complete allocated object unchanged
 GAME.EXE	0x80038a38	game.effect_dispatch	effect_update_dispatch	explicit-state	99.82781	99.82781	retained; complete allocated object unchanged
 GAME.EXE	0x8003a244	game.magic	effect_pool_reset	explicit-state	100.0	100.0	retained; complete allocated object unchanged
 GAME.EXE	0x8003a2a0	game.magic	magic_cast	layout-only	100.0	100.0	retained; complete allocated object unchanged
-GAME.EXE	0x8003a760	game.magic	effect_pool_sweep	explicit-state	100.0	100.0	retained; complete allocated object unchanged
+GAME.EXE	0x8003a760	game.magic	effect_pool_update	explicit-state	100.0	100.0	retained; complete allocated object unchanged

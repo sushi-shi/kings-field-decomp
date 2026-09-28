@@ -110,7 +110,7 @@ four retain their existing full-project results:
 
 | GAME function | Before and after |
 | --- | ---: |
-| `effect_projectile_update_2d` | 99.93421% |
+| `effect_update_orbiting_projectile` | 99.93421% |
 | `menu_draw_item_detail` | 97.80875% |
 | `player_warp_to_floor_entry` | 99.87654% |
 | `player_update` | 99.96948% |

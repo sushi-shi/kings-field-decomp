@@ -6,7 +6,7 @@ increase. Already exact functions meet the requested byte-match outcome.
 The remaining selected functions are `player_update`, `render_map_cell`,
 `menu_draw_status_details`, `menu_draw_item_detail`,
 `menu_draw_window_backdrop`, `map_interaction_dispatch`,
-`effect_map_collision`, and `effect_projectile_update_2d`.
+`effect_map_collision`, and `effect_update_orbiting_projectile`.
 
 The recorded counts are a lower bound on work: they omit manual source
 edits, compiler trace controls and verification recompilations. Six trials
@@ -964,7 +964,7 @@ residue are under `build/player-motion-owner/` and
 All eight frozen functions received their own evidence snapshot and multiple
 semantic source controls. `menu_draw_status_details` reached strict 100% and
 is banked. `effect_map_collision` is one word short; `menu_draw_item_detail`
-is two words short; `effect_projectile_update_2d`, `render_map_cell` and
+is two words short; `effect_update_orbiting_projectile`, `render_map_cell` and
 `menu_draw_window_backdrop` retain unexplained stack-frame differences;
 `map_interaction_dispatch` retains unsupported reload/lifetime differences;
 and `player_update` retains an eight-byte frame difference after exact call,
@@ -1366,7 +1366,7 @@ source change or bank is made; results and retained traces are under
 
 Follow-up Function Match Plan: GAME `80038a38`, 6156 bytes / strict
 99.827810%, unit `game.effect_dispatch`. Hash-identical retail and all six
-fresh semantic views confirm the sole `effect_pool_sweep` caller, 69 direct
+fresh semantic views confirm the sole `effect_pool_update` caller, 69 direct
 calls, 22 validated address pairs, 257 CFG blocks, 135 conditional branches,
 36 return frontiers, a 168-byte frame and 49 candidate switch-table rows. The
 complete effect-kind policies remain game code around separately identified

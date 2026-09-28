@@ -16,7 +16,7 @@ The existing [dispatcher map](effect-update-dispatch-map.md) and
 [constant review](game-effect-dispatch-constants.md) remain the semantic
 baseline. Generated plans were recorded before each isolated source edit.
 
-Preserve `void(void)`. `effect_pool_sweep` publishes the current effect and
+Preserve `void(void)`. `effect_pool_update` publishes the current effect and
 magic record, then calls at `0x8003a7a4` without consuming a return value.
 The dispatcher has a 168-byte frame, 69 ordered direct calls, 135 conditional
 branches, 69 internal jumps, one table-dispatch `jr`, twelve division traps,

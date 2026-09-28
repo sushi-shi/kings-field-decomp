@@ -16,7 +16,7 @@ retain their existing tier.
 | 8003a244 / 48 | effect_pool_reset | 100 | Forty-eight tagged slots; retain initial loop ordinal with a specific ledger reason. |
 | 8003a274 / 44 | magic_load_records | 100 | Copy the existing magic owner by words; retain zero exhaustion and existing sizeof-derived count. |
 | 8003a2a0 / 1216 | magic_cast | 98.891450 | Player-view launch offset, cone range, spell-dependent speed, Lightning pitch/countdown/height choices and Fire Wall placement. Rename speed local and reuse the existing player-damage unity multiplier. |
-| 8003a760 / 124 | effect_pool_sweep | 100 | Select each live effect's context before dispatch; retain countdown arithmetic and visitation order. |
+| 8003a760 / 124 | effect_pool_update | 100 | Select each live effect's context before dispatch; retain countdown arithmetic and visitation order. |
 
 Preserve the Lightning attribute-minus-one lookup, threshold -4999, signed
 height additions, division order, variadic argument positions and all

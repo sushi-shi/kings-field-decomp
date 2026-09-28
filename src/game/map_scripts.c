@@ -413,7 +413,7 @@ void map_floor5_transition_cutscene(void)
         default:
             break;
         }
-        effect_pool_sweep();
+        effect_pool_update();
         render_frame(NULL, NULL);
     }
 }

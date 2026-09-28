@@ -100,7 +100,7 @@ unit/source owner, reference evidence tiers and history.
 | `map_interaction_dispatch` / `0x80034de4` | 7 | 99.202774 | 99.202774 | 99.202774 | no gain |
 | `map_world_state_persist` / `0x80035b5c` | 6 | 97.528730 | 97.528730 | 97.528730 | same bytes; typed owner |
 | `effect_map_collision` / `0x80037850` | 6 | 99.873690 | 99.873690 | 99.873690 | no gain |
-| `effect_projectile_update_2d` / `0x80038298` | 5 | 99.934210 | 99.934210 | 99.934210 | no gain |
+| `effect_update_orbiting_projectile` / `0x80038298` | 5 | 99.934210 | 99.934210 | 99.934210 | no gain |
 | `effect_update_dispatch` / `0x80038a38` | 7 | 99.827810 | 99.827810 | 99.827810 | no gain |
 
 **01. `player_add_experience`** — Exact with one growth-row cursor reused in both level ranges; the last row and `growth[-1]` supply extension increments. Twelve alternatives include the productive two-pointer intermediate (92.036500%) and explicit deltas (98.357666%).
@@ -141,7 +141,7 @@ unit/source owner, reference evidence tiers and history.
 
 **19. `effect_map_collision`** — No gain. Result initialization, direct case returns, explicit zero case, unsigned cell guards and merging the inline helper do not close the single differing word at +0x718: retail nop versus an extra fallback result load in an unreachable masked-switch path. No return value is invented to eliminate it.
 
-**20. `effect_projectile_update_2d`** — No gain. Authentic byte phase, shared collision kind, one orbit angle, a real distance VECTOR and a position pointer do not close the ten frame/save differences. Baseline frame is 64 bytes smaller; trigonometric call order is preserved.
+**20. `effect_update_orbiting_projectile`** — No gain. Authentic byte phase, shared collision kind, one orbit angle, a real distance VECTOR and a position pointer do not close the ten frame/save differences. Baseline frame is 64 bytes smaller; trigonometric call order is preserved.
 
 **21. `effect_update_dispatch`** — No gain. Homing SDK operations individually and together, lightning countdown and shared scale publication do not close the baseline 42 register-word differences. Calls, complete size and ordered referents agree. The existing uninitialized homing-distance read is preserved rather than repaired as unrelated gameplay work.
 

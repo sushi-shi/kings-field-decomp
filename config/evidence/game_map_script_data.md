@@ -93,14 +93,14 @@ The full eight-function six-view dossier `build/effect-data-owner-evidence.log`
 was read with source/history and all constraining caller instructions. None is
 vendored: these are effect-record policies calling SDK math/audio providers.
 All helpers are reached by the dispatcher except rotate-scale, reached by the
-trail helper. The dispatcher has one proven caller, effect_pool_sweep, with no
+trail helper. The dispatcher has one proven caller, effect_pool_update, with no
 arguments. Its 49 switch pointers and unresolved indirect jump are not promoted.
 
 | VA / extent | Function | Before % | Individual evidence / split hypothesis | Final verdict |
 | --- | --- | ---: | --- | --- |
 | 37fbc / 24 | effect_magic_power | 100 | Record pointer in a0 at all five calls; byte type mask16, player magic lhu or5; leaf jr/nop. Keep helper. | Exact retained: 100% |
-| 37fe0 / 2b8 | effect_projectile_update_3d | 96.75288 | Two dispatcher calls pass the two velocity pointers and limits40/60; frame144, ten calls, projectile/impact/pitch CFG. Keep source signature and body. | Non-exact, score unchanged |
-| 38298 / 260 | effect_projectile_update_2d | 99.93421 | Dispatcher passes speed6500/limit40; frame120, nine calls, signed velocity and unsigned life loads. Keep helper unchanged. | Non-exact, score unchanged |
+| 37fe0 / 2b8 | effect_update_swinging_hazard | 96.75288 | Two dispatcher calls pass the two velocity pointers and limits40/60; frame144, ten calls, projectile/impact/pitch CFG. Keep source signature and body. | Non-exact, score unchanged |
+| 38298 / 260 | effect_update_orbiting_projectile | 99.93421 | Dispatcher passes speed6500/limit40; frame120, nine calls, signed velocity and unsigned life loads. Keep helper unchanged. | Non-exact, score unchanged |
 | 386c4 / 68 | effect_scatter_triple | 76.92308 | Dispatcher passes stack triple/current direction; three rand calls, lhu/sh at0/2/4, frame24. No signedness/codegen change. | Non-exact, score unchanged |
 | 3872c / 90 | effect_rotate_scale_offset_y | 100 | Trail caller supplies two pointers, sign-extended angle and scale; lh offsets0/4, multiply/shift12, RotMatrix/ApplyMatrix, frame80. Keep helper. | Exact retained: 100% |
 | 387bc / f8 | effect_spawn_trail_kind13 | 100 | Four dispatcher calls, byte ID and angles +/-1774,+/-1824 with distances4000/8000. Divide by800 and record stride60; frame56, rotate/construct calls. Keep helper. | Exact retained: 100% |

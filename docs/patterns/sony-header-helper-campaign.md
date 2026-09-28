@@ -151,8 +151,8 @@ trials leave that body byte-identical, not that it is banked or closed.
 | GAME / `80033680` / `11c` | `camera_path_step` | S007, S008 | 100 → 100 |
 | GAME / `80038a38` / `180c` | `effect_update_dispatch` | S009, S010, S011, S012, S013, S014, S015 | 99.827810 → 99.827810 |
 | GAME / `80036f44` / `82c` | `effect_pool_construct` | S016, S017, S018, S019, S020, S021, S022, S023, S024, S025, S026, S027, S028, S029 | 100 → 100 |
-| GAME / `80037770` / `ac` | `effect_pool_spawn_typed` | S030 | 100 → 100 |
-| GAME / `80037fe0` / `2b8` | `effect_projectile_update_3d` | S031 | 100 → 100 |
+| GAME / `80037770` / `ac` | `effect_pool_spawn_floor_deformation` | S030 | 100 → 100 |
+| GAME / `80037fe0` / `2b8` | `effect_update_swinging_hazard` | S031 | 100 → 100 |
 | GAME / `8003872c` / `90` | `effect_rotate_scale_offset_y` | S032, S033 | 100 → 100 |
 | GAME / `8001e9a4` / `214` | `render_actor` | S034 | 100 → 100 |
 | GAME / `8001ebb8` / `180` | `render_map_object` | S035 | 100 → 100 |

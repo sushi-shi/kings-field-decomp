@@ -70,7 +70,7 @@ void game_main_loop(void)
         actor_set_player_transform(&player_position_snapshot, &player_rotation_snapshot);
         actor_pool_update();
         map_object_pool_update();
-        effect_pool_sweep();
+        effect_pool_update();
         map_event_pool_update();
         render_frame(&player_position_snapshot, &player_rotation_snapshot);
         player_state.allow_near_actor_spawn = KF_ACTOR_NEAR_SPAWN_FORBIDDEN;

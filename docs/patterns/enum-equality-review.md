@@ -48,7 +48,7 @@ value rather than independently repeating its literal.
 | Save format result | The two format-result names already occupy the same `KfSaveResult` channel. The confirmation spelling now aliases format-required. Card event/status codes remain separate, with their existing explicit mappings. |
 | Camera pitch limit | GAME `player_update` clamps the shared camera to ±191 (`0x800190c4`, `0x800190fc..0x8001910c`). It passes that camera to `map_interaction_dispatch`; the container path approaches the same lower bound with an unsigned subtraction and 1,858-value span (`0x80035264`). Both local policy names now derive from `KF_PLAYER_CAMERA_PITCH_LIMIT`. |
 | Normal fog | GAME display initialization sets `render_state.fog_near_distance` and the GTE fog parameter to the shared initial distance. `player_update` restores 11,000, or interpolates toward it after darkness (`0x800199dc`, `0x80019a14`). Its normal-fog name now aliases the existing shared distance. Actor attack range remains separate. |
-| Orbit sound radius | GAME `effect_projectile_update_2d` supplies 5,000 as the audible radius in the call delay slot at `0x8003841c`; the same record's sound latch clears when distance reaches 5,000 at `0x8003849c..0x800384ac`. The reset radius now derives from the audible radius. Other equal sound ranges, damage scales and charge values retain separate owners. |
+| Orbit sound radius | GAME `effect_update_orbiting_projectile` supplies 5,000 as the audible radius in the call delay slot at `0x8003841c`; the same record's sound latch clears when distance reaches 5,000 at `0x8003849c..0x800384ac`. The reset radius now derives from the audible radius. Other equal sound ranges, damage scales and charge values retain separate owners. |
 | Main RAM capacity | GAME/OPEN `memory_malloc_checked` tests an allocation against offset `0x1fffff`; overlay stack arithmetic uses the same 2 MiB RAM capacity. `memory_layout.h` owns `KF_MAIN_RAM_BYTES`, with allocator and overlay aliases. This is a fixed capacity, not an object address, linker placement or assertion about the heap/stack split. |
 
 The semantic evidence includes retail disassembly/CFG, callers, callees,
@@ -167,7 +167,7 @@ baseline. No additional function is banked.
 | GAME.EXE | `map_object_pool_update` | `0x80031cc8 / 0xc18` | 100% exact, preserved |
 | GAME.EXE | `map_floor5_transition_cutscene` | `0x800346a8 / 0x38c` | 100% exact, preserved |
 | GAME.EXE | `map_interaction_dispatch` | `0x80034de4 / 0x904` | 100% exact, preserved |
-| GAME.EXE | `effect_projectile_update_2d` | `0x80038298 / 0x260` | 99.934210%, preserved residue |
+| GAME.EXE | `effect_update_orbiting_projectile` | `0x80038298 / 0x260` | 99.934210%, preserved residue |
 | OPEN.EXE | `opening_ending_scroll_run` | `0x80014e28 / 0x798` | 99.917694%, preserved residue |
 | OPEN.EXE | `opening_run` | `0x800156bc / 0x214` | 100% exact, preserved |
 | OPEN.EXE | `memory_malloc_checked` | `0x80015dd4 / 0x38` | 100% exact, preserved |
@@ -179,7 +179,7 @@ The first remaining normalized differences are unchanged:
 | Consumer | First difference |
 | --- | --- |
 | GAME `player_update` | At +0, target stack allocation is 224 bytes; compiled allocation is 216. |
-| GAME `effect_projectile_update_2d` | At +0, target stack allocation is 120 bytes; compiled allocation is 56. |
+| GAME `effect_update_orbiting_projectile` | At +0, target stack allocation is 120 bytes; compiled allocation is 56. |
 | OPEN `opening_ending_scroll_run` | At +0x29c, target HI16 names `opening_ending_scroll_camera_path`; compiled HI16 names `.data` with the existing section-relative addend. |
 
 These observations retain the existing unattributed residues and relocation

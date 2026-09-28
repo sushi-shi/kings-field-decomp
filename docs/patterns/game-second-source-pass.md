@@ -288,7 +288,7 @@ higher fuzzy percentage does not resolve either issue.
 | `map_interaction_dispatch` / `80034de4` | 3 | 99.202774 | 2308/2296 | `0x2c` | 166 |
 | `map_world_state_persist` / `80035b5c` | 3 | 97.528730 | 696/700 | `0x16c` | 84 |
 | `effect_map_collision` / `80037850` | 0 | 99.873690 | 1900/1900 | `0x718` | 1 |
-| `effect_projectile_update_2d` / `80038298` | 0 | 99.934210 | 608/608 | `0x0` | 10 |
+| `effect_update_orbiting_projectile` / `80038298` | 0 | 99.934210 | 608/608 | `0x0` | 10 |
 | `effect_update_dispatch` / `80038a38` | 0 | 99.827810 | 6156/6156 | `0x38` | 42 |
 
 ## Additional source attempt ledger

@@ -13,8 +13,8 @@ SDK matrix, random, trigonometry and audio bodies remain external.
 | --- | --- | --- | --- |
 | 800166b4 / 304 | player_apply_radial_damage | 100 | Match shared declaration to existing typed definition; preserve unused base-power slot and eleven argument positions. |
 | 80037fbc / 36 | effect_magic_power | 100 | Type flag selects player magic or fixed power five; align declaration/inventory with existing int return and effect pointer. |
-| 80037fe0 / 696 | effect_projectile_update_3d | 100 | Rotated collision probe, signed pitch acceleration, sound cutoff and upward withdrawal; name parameters without changing yaw-tested negative clamp or zero-crossing order. |
-| 80038298 / 608 | effect_projectile_update_2d | 99.934210 | Sine/cosine multiply radius, not speed; name orbit period, collision and sound distances, retain phase masks and signed limit consumption. |
+| 80037fe0 / 696 | effect_update_swinging_hazard | 100 | Rotated collision probe, signed pitch acceleration, sound cutoff and upward withdrawal; name parameters without changing yaw-tested negative clamp or zero-crossing order. |
+| 80038298 / 608 | effect_update_orbiting_projectile | 99.934210 | Sine/cosine multiply radius, not speed; name orbit period, collision and sound distances, retain phase masks and signed limit consumption. |
 | 800384f8 / 460 | effect_floor_deform_line | 100 | Five seven-byte segments; sound interval starts at progress 3900 and ends at 3900+abs(step), after clamp branches. |
 | 800386c4 / 104 | effect_scatter_triple | 100 | Three halfword lanes receive existing [-64,63] jitter; expose existing typed declaration, retain lane indices. |
 | 8003872c / 144 | effect_rotate_scale_offset_y | 100 | SDK SVECTOR input/VECTOR output; scale X/Z, force Y zero, rotate around signed-halfword yaw. |

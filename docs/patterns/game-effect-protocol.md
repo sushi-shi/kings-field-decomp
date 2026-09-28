@@ -49,12 +49,12 @@ decoded behavior, not recovered Japanese spell names or original C symbols.
 | `0x800346a8 / 38c` | `map_floor5_transition_cutscene` | 100.000000 | 12 / 32 | 227 / 14 |
 | `0x80036f00 / 44` | `effect_pool_find_free` | 100.000000 | 0 / 6 | 17 / 1 |
 | `0x80036f44 / 82c` | `effect_pool_construct` | 100.000000 | 7 / 52 | 523 / 8 |
-| `0x80037770 / ac` | `effect_pool_spawn_typed` | 100.000000 | 1 / 3 | 43 / 0 |
+| `0x80037770 / ac` | `effect_pool_spawn_floor_deformation` | 100.000000 | 1 / 3 | 43 / 0 |
 | `0x8003781c / 34` | `effect_pool_set_current` | 100.000000 | 0 / 1 | 13 / 2 |
 | `0x80037850 / 76c` | `effect_map_collision` | 97.452630 | 1 / 126 | Unchanged residue |
 | `0x80037fbc / 24` | `effect_magic_power` | 100.000000 | 0 / 3 | 9 / 1 |
-| `0x80037fe0 / 2b8` | `effect_projectile_update_3d` | 100.000000 | 10 / 28 | 174 / 2 |
-| `0x80038298 / 260` | `effect_projectile_update_2d` | 99.934210 | 9 / 15 | Unchanged residue |
+| `0x80037fe0 / 2b8` | `effect_update_swinging_hazard` | 100.000000 | 10 / 28 | 174 / 2 |
+| `0x80038298 / 260` | `effect_update_orbiting_projectile` | 99.934210 | 9 / 15 | Unchanged residue |
 | `0x800384f8 / 1cc` | `effect_floor_deform_line` | 100.000000 | 1 / 13 | 115 / 3 |
 | `0x800386c4 / 68` | `effect_scatter_triple` | 100.000000 | 3 / 1 | 26 / 0 |
 | `0x8003872c / 90` | `effect_rotate_scale_offset_y` | 100.000000 | 2 / 1 | 36 / 0 |
@@ -64,7 +64,7 @@ decoded behavior, not recovered Japanese spell names or original C symbols.
 | `0x8003a244 / 30` | `effect_pool_reset` | 100.000000 | 0 / 3 | 12 / 1 |
 | `0x8003a274 / 2c` | `magic_load_records` | 100.000000 | 0 / 3 | 11 / 1 |
 | `0x8003a2a0 / 4c0` | `magic_cast` | 98.875000 | 13 / 37 | Unchanged residue |
-| `0x8003a760 / 7c` | `effect_pool_sweep` | 100.000000 | 2 / 5 | 31 / 1 |
+| `0x8003a760 / 7c` | `effect_pool_update` | 100.000000 | 2 / 5 | 31 / 1 |
 
 ## Named domains
 

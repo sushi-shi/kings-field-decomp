@@ -148,5 +148,5 @@ its Y-scale and yaw consumers; its model asset remains unidentified.
 | `effect_pool_construct` | 399 | `0` | `record->scale_y = 0;` | This branch begins the indicated visual scale at zero for its later growth. Scale zero is a numeric origin, independently of pool liveness. |
 | `effect_pool_construct` | 402 | `0` | `record->rotation.vx = 0;` | Zero the indicated Euler angle in this branch. These are neutral orientation components; other branches copy supplied angles or camera yaw. |
 | `effect_pool_construct` | 404 | `0` | `record->rotation.vz = 0;` | Zero the indicated Euler angle in this branch. These are neutral orientation components; other branches copy supplied angles or camera yaw. |
-| `effect_pool_spawn_typed` | 421 | `0` | `if (record != 0) {` | Only a non-null result from the free-slot scan may be initialized; zero is the allocation-miss pointer. |
-| `effect_pool_spawn_typed` | 434 | `0` | `record->direction.words.z = 0;` | Start the floor-controller progress accumulator at zero before forward interpolation. The same union serves motion for other effect kinds. |
+| `effect_pool_spawn_floor_deformation` | 421 | `0` | `if (record != 0) {` | Only a non-null result from the free-slot scan may be initialized; zero is the allocation-miss pointer. |
+| `effect_pool_spawn_floor_deformation` | 434 | `0` | `record->direction.words.z = 0;` | Start the floor-controller progress accumulator at zero before forward interpolation. The same union serves motion for other effect kinds. |
