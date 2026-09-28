@@ -9,7 +9,7 @@ than historical compiler attribution.
 
 | GAME function | Extent | Initial strict match | Retail control snapshot |
 | --- | --- | ---: | --- |
-| `menu_draw_stats_header` | `0x80025f38/0x5a0` | 97.686110% | 360 words, 28 calls, nine conditional branches, two direct jumps, one return; 72-byte frame. |
+| `menu_draw_status_summary` | `0x80025f38/0x5a0` | 97.686110% | 360 words, 28 calls, nine conditional branches, two direct jumps, one return; 72-byte frame. |
 | `menu_draw_status_details` | `0x800264d8/0xcb4` | 95.110700% | 813 words, 72 calls, 16 conditional branches, two direct jumps, one return; 80-byte frame. |
 
 Hash-identical retail files and all six semantic views were refreshed before
@@ -17,7 +17,7 @@ editing. `menu_root` calls the header at `0x8002238c`, `0x800223ec`, and
 `0x800225b4`; `menu_status_panel` calls details at `0x80024350`. All four
 sites supply no arguments and ignore the result. The two functions are
 adjacent, preceded by configuration-panel code and followed by
-`menu_draw_name_list` at `0x8002718c`. The shared formatter and glyph renderer,
+`menu_draw_equipment_names` at `0x8002718c`. The shared formatter and glyph renderer,
 their typed assets and source histories were inspected. Earlier changes
 named glyph flags, recovered menu ownership, and identified player statuses
 and combat fields; they left the local `color` interpretation in place.

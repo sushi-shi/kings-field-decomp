@@ -101,8 +101,8 @@ and menu boundaries. Broader source-domain review remains open.
 | `menu_spell_select` | 260 | `0` | `ctx.glyph_rows = &labels[0][0];` | Base address of the first glyph in the first row for the flat list-render API. |
 | `menu_spell_select` | 261 | `0` | `ctx.quantities = 0;` | Null quantity list: selection panels display names without stock counts. |
 | `menu_spell_select` | 264 | `0` | `if (ctx.entry_count != 0) {` | Only preview/render an item when the list has entries. |
-| `menu_spell_select` | 265 | `1` | `if (menu_load_item_texture(KF_ENUM_ENCODE(u8, codes[ctx.selected_index])) == 1)` | Numbered-texture loader returns 1 on load failure; retain the equality check. |
-| `menu_spell_select` | 276 | `0` | `KF_MENU_PREVIEW_MAGIC_ICON, KF_ENUM_ENCODE(s32, codes[ctx.selected_index]), 0, KF_ITEM_PRICE_BUY));` | The shop index is an unused zero for model/icon previews; the named BUY price mode is also unused on these paths. |
+| `menu_spell_select` | 265 | `1` | `if (menu_load_texture(KF_ENUM_ENCODE(u8, codes[ctx.selected_index])) == 1)` | Numbered-texture loader returns 1 on load failure; retain the equality check. |
+| `menu_spell_select` | 276 | `0` | `KF_MENU_PREVIEW_MAGIC_ARTWORK, KF_ENUM_ENCODE(s32, codes[ctx.selected_index]), 0, KF_ITEM_PRICE_BUY));` | The shop index is an unused zero for model/icon previews; the named BUY price mode is also unused on these paths. |
 | `menu_spell_select` | 283 | `1` | `while (PadRead(1) != 0)` | Preserve the ignored PadRead call-site argument 1 and wait until the returned button bits are zero; the linked SDK uses global PadIdentifier, not this argument as a port. |
 | `menu_spell_select` | 283 | `0` | `while (PadRead(1) != 0)` | Preserve the ignored PadRead call-site argument 1 and wait until the returned button bits are zero; the linked SDK uses global PadIdentifier, not this argument as a port. |
 | `menu_spell_select` | 291 | `1` | `input = PadRead(1);` | Ignored retail PadRead call-site argument; the linked routine uses its global pad identifier. |
@@ -116,7 +116,7 @@ and menu boundaries. Broader source-domain review remains open.
 | `menu_spell_select` | 308 | `0` | `ctx.scroll_offset = 0;` | Reset the scroll window to its first entry. |
 | `menu_spell_select` | 309 | `1` | `ctx.cursor_row = ctx.entry_count - 1;` | Bottom row of a list shorter than the visible window. |
 | `menu_spell_select` | 312 | `1` | `ctx.cursor_row = ctx.visible_rows - 1;` | Last zero-based visible cursor row. |
-| `menu_spell_select` | 315 | `1` | `if (menu_load_item_texture(KF_ENUM_ENCODE(u8, codes[ctx.selected_index])) == 1)` | Numbered-texture loader returns 1 on load failure; retain the equality check. |
+| `menu_spell_select` | 315 | `1` | `if (menu_load_texture(KF_ENUM_ENCODE(u8, codes[ctx.selected_index])) == 1)` | Numbered-texture loader returns 1 on load failure; retain the equality check. |
 | `menu_spell_select` | 317 | `0` | `} else if ((input & PADLdown) != 0 && (prev & PADLdown) == 0) {` | Current named button bit set and previous bit clear form a rising edge; zero tests Boolean absence. |
 | `menu_spell_select` | 317 | `0` | `} else if ((input & PADLdown) != 0 && (prev & PADLdown) == 0) {` | Current named button bit set and previous bit clear form a rising edge; zero tests Boolean absence. |
 | `menu_spell_select` | 319 | `1` | `if (ctx.selected_index < ctx.entry_count - 1) {` | Downward movement stops at the last zero-based entry before wrapping. |
@@ -124,7 +124,7 @@ and menu boundaries. Broader source-domain review remains open.
 | `menu_spell_select` | 326 | `0` | `ctx.selected_index = 0;` | Wrap selection back to the first entry. |
 | `menu_spell_select` | 327 | `0` | `ctx.scroll_offset = 0;` | Reset the scroll window to its first entry. |
 | `menu_spell_select` | 328 | `0` | `ctx.cursor_row = 0;` | Reset the visible cursor to the top row. |
-| `menu_spell_select` | 330 | `1` | `if (menu_load_item_texture(KF_ENUM_ENCODE(u8, codes[ctx.selected_index])) == 1)` | Numbered-texture loader returns 1 on load failure; retain the equality check. |
+| `menu_spell_select` | 330 | `1` | `if (menu_load_texture(KF_ENUM_ENCODE(u8, codes[ctx.selected_index])) == 1)` | Numbered-texture loader returns 1 on load failure; retain the equality check. |
 | `menu_spell_select` | 332 | `0` | `} else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {` | Current named button bit set and previous bit clear form a rising edge; zero tests Boolean absence. |
 | `menu_spell_select` | 332 | `0` | `} else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {` | Current named button bit set and previous bit clear form a rising edge; zero tests Boolean absence. |
 | `menu_spell_select` | 335 | `0` | `} else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {` | Current named button bit set and previous bit clear form a rising edge; zero tests Boolean absence. |

@@ -115,26 +115,26 @@ calls, retained as unattributed codegen residues.
 | GAME VA | Function | Bytes | Calls / refs | Final verdict |
 | --- | --- | ---: | ---: | --- |
 | `8002430c` | `menu_status_panel` | `0x69c` | 20 / 105 | 99.962170%, unchanged residue |
-| `800249a8` | `menu_drop_item` | `0x4bc` | 20 / 3 | 100% exact, unchanged |
-| `80024e64` | `menu_save_load_hub` | `0x260` | 20 / 2 | 100% exact, unchanged |
+| `800249a8` | `menu_drop_item_panel` | `0x4bc` | 20 / 3 | 100% exact, unchanged |
+| `80024e64` | `menu_system_panel` | `0x260` | 20 / 2 | 100% exact, unchanged |
 | `800250c4` | `menu_save_panel` | `0x468` | 58 / 0 | 100% exact, unchanged |
 | `8002552c` | `menu_load_panel` | `0x370` | 42 / 0 | 100% exact, unchanged |
 | `8002589c` | `menu_config_panel` | `0x504` | 19 / 9 | 100% exact, unchanged |
 | `80025da0` | `menu_config_panel_draw` | `0x198` | 9 / 11 | 100% exact, unchanged |
-| `80025f38` | `menu_draw_stats_header` | `0x5a0` | 28 / 36 | 100% exact, unchanged |
+| `80025f38` | `menu_draw_status_summary` | `0x5a0` | 28 / 36 | 100% exact, unchanged |
 | `800264d8` | `menu_draw_status_details` | `0xcb4` | 72 / 89 | 100% exact, unchanged |
-| `8002718c` | `menu_draw_name_list` | `0x838` | 8 / 98 | 100% exact, unchanged |
+| `8002718c` | `menu_draw_equipment_names` | `0x838` | 8 / 98 | 100% exact, unchanged |
 | `800279c4` | `menu_item_model_preview` | `0x1b8` | 10 / 8 | 100% exact, unchanged |
 | `80027b7c` | `menu_draw_item_detail` | `0x2dc` | 17 / 20 | 97.814210%, unchanged residue |
-| `80027e58` | `menu_add_marker_quad` | `0x48` | 1 / 3 | 100% exact, unchanged |
-| `80027ea0` | `menu_add_frame_quad` | `0x44` | 1 / 3 | 100% exact, unchanged |
-| `80027ee4` | `menu_draw_dialog_frame` | `0x49c` | 27 / 26 | 100% exact, unchanged |
-| `80028380` | `menu_list_interact` | `0x354` | 21 / 0 | 100% exact, unchanged |
+| `80027e58` | `menu_add_magic_artwork_quad` | `0x48` | 1 / 3 | 100% exact, unchanged |
+| `80027ea0` | `menu_add_message_image_quad` | `0x44` | 1 / 3 | 100% exact, unchanged |
+| `80027ee4` | `menu_draw_save_slots` | `0x49c` | 27 / 26 | 100% exact, unchanged |
+| `80028380` | `menu_list_confirm` | `0x354` | 21 / 0 | 100% exact, unchanged |
 | `800286d4` | `menu_two_option_prompt` | `0x240` | 16 / 0 | 100% exact, unchanged |
 | `80028914` | `menu_draw_window` | `0x15c` | 6 / 9 | 100% exact, unchanged |
 | `80028a70` | `menu_list_render` | `0x77c` | 14 / 70 | 100% exact, unchanged |
 | `800291ec` | `menu_draw_two_option` | `0x10c` | 7 / 11 | 100% exact, unchanged |
-| `800292f8` | `menu_draw_item_name_frame` | `0x7b8` | 23 / 112 | 99.975710%, unchanged residue |
+| `800292f8` | `menu_draw_pickup_preview` | `0x7b8` | 23 / 112 | 99.975710%, unchanged residue |
 | `80029ab0` | `menu_blit_sprite_translucent` | `0x1a0` | 3 / 9 | 100% exact, unchanged |
 | `80029c50` | `menu_blit_sprite` | `0x190` | 2 / 8 | 100% exact, unchanged |
 | `80029de0` | `menu_draw_string` | `0x530` | 6 / 24 | 100% exact, unchanged |
@@ -148,7 +148,7 @@ calls, retained as unattributed codegen residues.
 | `8002adf8` | `menu_format_number` | `0xac` | 0 / 0 | 100% exact, unchanged |
 | `8002aea4` | `menu_load_item_model` | `0x68` | 3 / 2 | 100% exact, unchanged |
 | `8002af0c` | `menu_release_item_model` | `0x3c` | 1 / 2 | 100% exact, unchanged |
-| `8002af48` | `menu_load_item_texture` | `0x130` | 3 / 2 | 100% exact, unchanged |
+| `8002af48` | `menu_load_texture` | `0x130` | 3 / 2 | 100% exact, unchanged |
 
 ## Coverage accounting
 

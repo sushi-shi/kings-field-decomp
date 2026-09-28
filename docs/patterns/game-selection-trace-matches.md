@@ -11,7 +11,7 @@ The configured GCC 2.5.7 target flags and compiler attribution remain unchanged.
 
 | GAME function | Snapshot | First hypothesis |
 | --- | --- | --- |
-| `800249a8 menu_drop_item` | 1212 bytes, 99.547850%; frame 1856 with s0..s5/ra, twenty calls, eleven internal jumps, three address pairs, no strings/candidates/indirect transfers. Sole no-argument caller `80022494` ignores the result. | Consume the signed confirmation return through the existing numeric selection channel before its pending/item-ID remapping. Independently replace the local whole-player pointer with direct references to the same seven named fields. |
+| `800249a8 menu_drop_item_panel` | 1212 bytes, 99.547850%; frame 1856 with s0..s5/ra, twenty calls, eleven internal jumps, three address pairs, no strings/candidates/indirect transfers. Sole no-argument caller `80022494` ignores the result. | Consume the signed confirmation return through the existing numeric selection channel before its pending/item-ID remapping. Independently replace the local whole-player pointer with direct references to the same seven named fields. |
 | `80023e9c menu_spell_select` | 1136 bytes, 99.542250%; frame 520 with s0..s5/ra, twenty calls, eleven internal jumps, three address pairs, no strings/candidates/indirect transfers. Sole no-argument caller `800237b8` ignores the result. | Consume the signed confirmation return through the existing numeric selection channel before its pending/selected-row remapping. |
 
 These are game inventory/UI policies. The external PadRead at GAME `8005012c`

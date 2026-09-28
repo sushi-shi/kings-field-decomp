@@ -1972,16 +1972,16 @@ feedback styles, not a rule that every caller uses the same button mapping.
 | GAME 80022348 `menu_root` | 96.863640% | Five opening/navigation/confirmation/cancellation calls. |
 | GAME 80022608 `menu_use_item_panel` | 92.821800% | Five calls, including the cue on return from the map viewer. |
 | GAME 8002317c `menu_magic_panel` | 95.897590% | Five empty-list/navigation/confirmation/cancellation calls. |
-| GAME 800236ac `menu_option_root` | 100% | Five calls, including equipment-dependent rejection. |
+| GAME 800236ac `menu_equipment_root` | 100% | Five calls, including equipment-dependent rejection. |
 | GAME 800238d8 `menu_equip_select` | 97.899730% | Five empty-list/navigation/confirmation/cancellation calls. |
 | GAME 80023e9c `menu_spell_select` | 98.063380% | Five empty-list/navigation/confirmation/cancellation calls. |
 | GAME 8002430c `menu_status_panel` | 78.468090% | One dismissal cue. |
-| GAME 800249a8 `menu_drop_item` | 98.854780% | Five empty-list/navigation/confirmation/cancellation calls. |
-| GAME 80024e64 `menu_save_load_hub` | 93.611840% | Four navigation/confirmation/cancellation calls. |
+| GAME 800249a8 `menu_drop_item_panel` | 98.854780% | Five empty-list/navigation/confirmation/cancellation calls. |
+| GAME 80024e64 `menu_system_panel` | 93.611840% | Four navigation/confirmation/cancellation calls. |
 | GAME 800250c4 `menu_save_panel` | 96.797874% | Eight calls, including status-image entry and dismissal. |
 | GAME 8002552c `menu_load_panel` | 92.613640% | Nine calls, including empty-slot rejection and status-image dismissal. |
 | GAME 8002589c `menu_config_panel` | 30.713396% | The old reconstruction used five cue-0 calls. Retail uses 0/0/1/1/2; the configuration-panel reconciliation below corrects this earlier source-derived assertion. |
-| GAME 80028380 `menu_list_interact` | 87.079810% | Three choice-toggle/confirmation/cancellation calls. |
+| GAME 80028380 `menu_list_confirm` | 87.079810% | Three choice-toggle/confirmation/cancellation calls. |
 | GAME 800286d4 `menu_two_option_prompt` | 100% | Three choice-toggle/confirmation/cancellation calls. |
 
 Program IDs 14/13/15 and MIDI note numbers 68/60/63 remain the observed
@@ -2177,12 +2177,12 @@ the same score and all raw source-object sections outside debug line tables:
 | 800238d8 | menu_equip_select | 97.899730% |
 | 80023e9c | menu_spell_select | 98.063380% |
 | 8002589c | menu_config_panel | 30.713396% |
-| 80025f38 | menu_draw_stats_header | 97.686110% |
+| 80025f38 | menu_draw_status_summary | 97.686110% |
 | 800264d8 | menu_draw_status_details | 95.110700% |
 | 800279c4 | menu_item_model_preview | 98.181816% |
 | 80027b7c | menu_draw_item_detail | 91.284160% |
-| 80027ee4 | menu_draw_dialog_frame | 100% |
-| 80028380 | menu_list_interact | 87.079810% |
+| 80027ee4 | menu_draw_save_slots | 100% |
+| 80028380 | menu_list_confirm | 87.079810% |
 | 800286d4 | menu_two_option_prompt | 100% |
 | 80028a70 | menu_list_render | 88.252610% |
 | 80029de0 | menu_draw_string | 99.987950% |

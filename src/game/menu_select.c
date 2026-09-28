@@ -16,7 +16,7 @@
 RODATA(0x80012310, 0x40)
 
 /*
- * Equipment-selection panel dispatched by the option menu.  The object index
+ * Equipment-selection panel dispatched by the equipment menu.  The object index
  * chooses one equipment category: it selects the item-id range to list from
  * the owned-item block, runs the windowed cursor, and on confirm writes the
  * chosen id into the matching player slot and recomputes combat stats.  The
@@ -28,7 +28,7 @@ void menu_equip_select(KfEquipmentMenuCategory equipment_category)
 {
     KfMenuList ctx;
     s16 labels[20][MENU_GLYPHS_PER_ROW];
-    KfObjectId codes[20];
+    KfObjectId item_ids[20];
     s16 *name;
     u8 *owned;
     s32 i;
@@ -82,7 +82,7 @@ void menu_equip_select(KfEquipmentMenuCategory equipment_category)
             name = item_name_rows[i].codes;
             for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)
                 labels[k][j] = name[j];
-            codes[k] = KF_ENUM_DECODE(KfObjectId, i);
+            item_ids[k] = KF_ENUM_DECODE(KfObjectId, i);
             k++;
         }
     }
@@ -90,7 +90,7 @@ void menu_equip_select(KfEquipmentMenuCategory equipment_category)
     labels[k][1] = MENU_TEXT_DAKUTEN | 0x4c;
     labels[k][2] = 0x4c;
     labels[k][3] = MENU_TEXT_END;
-    codes[k] = KF_OBJECT_NONE;
+    item_ids[k] = KF_OBJECT_NONE;
     k++;
 
     menu_list_init(&ctx, KF_MENU_WINDOW_EQUIPMENT, KF_ENUM_ENCODE(s32, equipment_category));
@@ -100,18 +100,18 @@ void menu_equip_select(KfEquipmentMenuCategory equipment_category)
     ctx.quantities = NULL;
 
     if (ctx.entry_count != 0) {
-        if (menu_load_item_model(codes[ctx.selected_index]) != KF_RESOURCE_LOADED)
+        if (menu_load_item_model(item_ids[ctx.selected_index]) != KF_RESOURCE_LOADED)
             return;
     }
 
     for (;;) {
         if (confirm == KF_MENU_CONFIRM_REQUESTED) {
-            if (menu_list_interact(&ctx, KF_MENU_CONFIRM_EQUIP,
-                    KF_MENU_PREVIEW_ITEM_MODEL, codes[ctx.selected_index], KF_ITEM_STOCK_PLAYER, KF_TRADE_BUY)
+            if (menu_list_confirm(&ctx, KF_MENU_CONFIRM_EQUIP,
+                    KF_MENU_PREVIEW_ITEM_MODEL, item_ids[ctx.selected_index], KF_ITEM_STOCK_PLAYER, KF_TRADE_BUY)
                     == KF_MENU_RESULT_CANCELLED)
                 selection = KF_ENUM_ENCODE(s32, KF_MENU_RESULT_PENDING);
             else
-                selection = KF_ENUM_ENCODE(u8, codes[ctx.selected_index]);
+                selection = KF_ENUM_ENCODE(u8, item_ids[ctx.selected_index]);
         }
         confirm = KF_MENU_CONFIRM_IDLE;
         if (selection != KF_ENUM_ENCODE(s32, KF_MENU_RESULT_PENDING)) {
@@ -130,12 +130,12 @@ void menu_equip_select(KfEquipmentMenuCategory equipment_category)
         } else if (PAD_PRESSED(input, prev, PADLup)) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
             menu_list_previous(&ctx);
-            if (menu_load_item_model(codes[ctx.selected_index]) != KF_RESOURCE_LOADED)
+            if (menu_load_item_model(item_ids[ctx.selected_index]) != KF_RESOURCE_LOADED)
                 return;
         } else if (PAD_PRESSED(input, prev, PADLdown)) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
             menu_list_next(&ctx);
-            if (menu_load_item_model(codes[ctx.selected_index]) != KF_RESOURCE_LOADED)
+            if (menu_load_item_model(item_ids[ctx.selected_index]) != KF_RESOURCE_LOADED)
                 return;
         } else if (PAD_PRESSED(input, prev, PADRright)) {
             menu_play_input_sound(MENU_SOUND_CONFIRM);
@@ -147,7 +147,7 @@ void menu_equip_select(KfEquipmentMenuCategory equipment_category)
 
         menu_frame_begin();
         if (ctx.entry_count != 0)
-            menu_item_model_preview(codes[ctx.selected_index]);
+            menu_item_model_preview(item_ids[ctx.selected_index]);
         menu_list_render(&ctx);
         menu_present_frame();
     }
@@ -194,7 +194,7 @@ void menu_equip_select(KfEquipmentMenuCategory equipment_category)
 }
 
 /*
- * Spell-selection panel dispatched by the option menu (slot 1).  Lists the
+ * Spell-selection panel dispatched by the equipment menu (slot 1).  Lists the
  * learned attack spells (magic records 4..8), runs the windowed cursor, and on
  * confirm stores the chosen spell as the active magic and resolves its record.
  */
@@ -203,8 +203,8 @@ void menu_spell_select(void)
 {
     KfMenuList ctx;
     s16 labels[20][MENU_GLYPHS_PER_ROW];
-    KfEffectKind codes[20];
-    s32 code;
+    KfEffectKind magic_ids[20];
+    s32 magic_id;
     s32 j;
     s32 k;
     KfMenuConfirmState confirm = KF_MENU_CONFIRM_IDLE;
@@ -216,11 +216,11 @@ void menu_spell_select(void)
         ;
 
     k = 0;
-    for (code = KF_ENUM_ENCODE(s32, KF_MAGIC_LIGHTNING_BOLT); code < KF_MAGIC_PLAYER_COUNT; code++) {
-        if (effect_state.magic.entries[code].learned == KF_MAGIC_LEARNED) {
+    for (magic_id = KF_ENUM_ENCODE(s32, KF_MAGIC_LIGHTNING_BOLT); magic_id < KF_MAGIC_PLAYER_COUNT; magic_id++) {
+        if (effect_state.magic.entries[magic_id].learned == KF_MAGIC_LEARNED) {
             for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)
-                labels[k][j] = magic_name_rows[code].codes[j];
-            codes[k] = KF_ENUM_DECODE(KfEffectKind, code);
+                labels[k][j] = magic_name_rows[magic_id].codes[j];
+            magic_ids[k] = KF_ENUM_DECODE(KfEffectKind, magic_id);
             k++;
         }
     }
@@ -228,7 +228,7 @@ void menu_spell_select(void)
     labels[k][1] = MENU_TEXT_DAKUTEN | 0x4c;
     labels[k][2] = 0x4c;
     labels[k][3] = MENU_TEXT_END;
-    codes[k] = KF_MAGIC_NONE;
+    magic_ids[k] = KF_MAGIC_NONE;
     k++;
 
     menu_list_init(&ctx, KF_MENU_WINDOW_EQUIPMENT, KF_ENUM_ENCODE(s32, KF_EQUIP_MENU_MAGIC));
@@ -239,18 +239,18 @@ void menu_spell_select(void)
 
     menu_frame_begin();
     if (ctx.entry_count != 0) {
-        if (menu_load_item_texture(menu_texture_from_magic(codes[ctx.selected_index])) == KF_RESOURCE_LOAD_FAILED)
+        if (menu_load_texture(menu_texture_from_magic(magic_ids[ctx.selected_index])) == KF_RESOURCE_LOAD_FAILED)
             return;
-        if (codes[ctx.selected_index] != KF_MAGIC_NONE)
-            menu_add_marker_quad();
+        if (magic_ids[ctx.selected_index] != KF_MAGIC_NONE)
+            menu_add_magic_artwork_quad();
     }
     menu_list_render(&ctx);
 
     for (;;) {
         menu_present_frame();
         if (confirm == KF_MENU_CONFIRM_REQUESTED) {
-            selection = KF_ENUM_ENCODE(s32, menu_list_interact(&ctx, KF_MENU_CONFIRM_EQUIP,
-                    KF_MENU_PREVIEW_MAGIC_ICON, codes[ctx.selected_index], KF_ITEM_STOCK_PLAYER, KF_TRADE_BUY));
+            selection = KF_ENUM_ENCODE(s32, menu_list_confirm(&ctx, KF_MENU_CONFIRM_EQUIP,
+                    KF_MENU_PREVIEW_MAGIC_ARTWORK, magic_ids[ctx.selected_index], KF_ITEM_STOCK_PLAYER, KF_TRADE_BUY));
             if (selection == KF_ENUM_ENCODE(s32, KF_MENU_RESULT_CANCELLED))
                 selection = KF_ENUM_ENCODE(s32, KF_MENU_RESULT_PENDING);
             else
@@ -274,12 +274,12 @@ void menu_spell_select(void)
         } else if (PAD_PRESSED(input, prev, PADLup)) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
             menu_list_previous(&ctx);
-            if (menu_load_item_texture(menu_texture_from_magic(codes[ctx.selected_index])) == KF_RESOURCE_LOAD_FAILED)
+            if (menu_load_texture(menu_texture_from_magic(magic_ids[ctx.selected_index])) == KF_RESOURCE_LOAD_FAILED)
                 return;
         } else if (PAD_PRESSED(input, prev, PADLdown)) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
             menu_list_next(&ctx);
-            if (menu_load_item_texture(menu_texture_from_magic(codes[ctx.selected_index])) == KF_RESOURCE_LOAD_FAILED)
+            if (menu_load_texture(menu_texture_from_magic(magic_ids[ctx.selected_index])) == KF_RESOURCE_LOAD_FAILED)
                 return;
         } else if (PAD_PRESSED(input, prev, PADRright)) {
             menu_play_input_sound(MENU_SOUND_CONFIRM);
@@ -290,14 +290,14 @@ void menu_spell_select(void)
         }
 
         if (ctx.entry_count != 0) {
-            if (codes[ctx.selected_index] != KF_MAGIC_NONE)
-                menu_add_marker_quad();
+            if (magic_ids[ctx.selected_index] != KF_MAGIC_NONE)
+                menu_add_magic_artwork_quad();
         }
         menu_list_render(&ctx);
     }
 
     if (selection != KF_ENUM_ENCODE(s32, KF_MENU_RESULT_CANCELLED)) {
-        player_state.selected_magic_id = codes[selection];
-        player_select_magic(codes[selection]);
+        player_state.selected_magic_id = magic_ids[selection];
+        player_select_magic(magic_ids[selection]);
     }
 }

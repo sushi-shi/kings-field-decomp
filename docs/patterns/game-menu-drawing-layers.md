@@ -17,7 +17,7 @@ bytes. The selected functions use `probe-gcc257-o2-g0`; this remains a probe.
 | `menu_map_viewer` | `80022d7c / 1024` | 100 | 256 / 17 / 9 / 1 |
 | `menu_status_panel` | `8002430c / 1692` | 81.900710 | 423 / 20 / 5 / 1 |
 | `menu_list_render` | `80028a70 / 1916` | 88.252610 | 479 / 14 / 13 / 0 |
-| `menu_draw_item_name_frame` | `800292f8 / 1976` | 95.376520 | 494 / 23 / 1 / 0 |
+| `menu_draw_pickup_preview` | `800292f8 / 1976` | 95.376520 | 494 / 23 / 1 / 0 |
 | `menu_blit_sprite_translucent` | `80029ab0 / 416` | 88.269230 | 104 / 3 / 0 / 0 |
 | `menu_blit_sprite` | `80029c50 / 400` | 87.8 | 100 / 2 / 0 / 0 |
 | `menu_draw_window_backdrop` | `8002a510 / 1700` | 99.971760 | 425 / 16 / 0 / 0 |
@@ -136,7 +136,7 @@ ordered calls/address pairs were independently compared:
 | `menu_status_panel` | 355 / 20 / 37 |
 | `menu_map_viewer` | 256 / 17 / 8 |
 | `menu_list_render` | 495 / 14 / 70 |
-| `menu_draw_item_name_frame` | 498 / 23 / 112 |
+| `menu_draw_pickup_preview` | 498 / 23 / 112 |
 | `menu_blit_sprite_translucent` | 104 / 3 / 9 |
 | `menu_blit_sprite` | 100 / 2 / 8 |
 | `menu_draw_window_backdrop` | 425 / 16 / 107 |

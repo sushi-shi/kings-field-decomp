@@ -43,20 +43,20 @@ external. Neighbors in each selected module are included as unchanged controls.
 | `80022348 / 0x2c0` | `menu_root` | 96.86364 | Type confirmation flow; retain every branch, frame and call. |
 | `80022608 / 0x774` | `menu_use_item_panel` | 99.48218 | Type confirmation flow; retain every branch, frame and call. |
 | `8002317c / 0x530` | `menu_magic_panel` | 100.0 | Type confirmation flow; retain every branch, frame and call. |
-| `800236ac / 0x22c` | `menu_option_root` | 100.0 | Type confirmation flow; retain every branch, frame and call. |
+| `800236ac / 0x22c` | `menu_equipment_root` | 100.0 | Type confirmation flow; retain every branch, frame and call. |
 | `800238d8 / 0x5c4` | `menu_equip_select` | 100.0 | Type confirmation flow; retain every branch, frame and call. |
 | `80023e9c / 0x470` | `menu_spell_select` | 99.54225 | Type confirmation flow; retain every branch, frame and call. |
-| `800249a8 / 0x4bc` | `menu_drop_item` | 99.54785 | Type confirmation flow; retain every branch, frame and call. |
-| `80024e64 / 0x260` | `menu_save_load_hub` | 100.0 | Type confirmation flow; retain every branch, frame and call. |
+| `800249a8 / 0x4bc` | `menu_drop_item_panel` | 99.54785 | Type confirmation flow; retain every branch, frame and call. |
+| `80024e64 / 0x260` | `menu_system_panel` | 100.0 | Type confirmation flow; retain every branch, frame and call. |
 | `800250c4 / 0x468` | `menu_save_panel` | 100.0 | Type confirmation flow; retain every branch, frame and call. |
 | `8002552c / 0x370` | `menu_load_panel` | 100.0 | Type confirmation flow; retain every branch, frame and call. |
 | `8002589c / 0x504` | `menu_config_panel` | 99.85981 | Type confirmation flow; retain every branch, frame and call. |
 | `80025da0 / 0x198` | `menu_config_panel_draw` | 100.0 | Unchanged contiguous-module control. |
-| `80028380 / 0x354` | `menu_list_interact` | 100.0 | Type confirmation flow; retain every branch, frame and call. |
+| `80028380 / 0x354` | `menu_list_confirm` | 100.0 | Type confirmation flow; retain every branch, frame and call. |
 | `800286d4 / 0x240` | `menu_two_option_prompt` | 100.0 | Type confirmation flow; retain every branch, frame and call. |
 | `80028914 / 0x15c` | `menu_draw_window` | 87.54023 | Type confirmation flow; retain every branch, frame and call. |
 | `800291ec / 0x10c` | `menu_draw_two_option` | 100.0 | Type confirmation flow; retain every branch, frame and call. |
-| `800292f8 / 0x7b8` | `menu_draw_item_name_frame` | 95.37652 | Unchanged contiguous-module control. |
+| `800292f8 / 0x7b8` | `menu_draw_pickup_preview` | 95.37652 | Unchanged contiguous-module control. |
 | `80029ab0 / 0x1a0` | `menu_blit_sprite_translucent` | 100.0 | Unchanged contiguous-module control. |
 | `80029c50 / 0x190` | `menu_blit_sprite` | 100.0 | Unchanged contiguous-module control. |
 | `80029de0 / 0x530` | `menu_draw_string` | 100.0 | Unchanged contiguous-module control. |
@@ -70,7 +70,7 @@ external. Neighbors in each selected module are included as unchanged controls.
 | `8002adf8 / 0xac` | `menu_format_number` | 100.0 | Unchanged contiguous-module control. |
 | `8002aea4 / 0x68` | `menu_load_item_model` | 100.0 | Unchanged contiguous-module control. |
 | `8002af0c / 0x3c` | `menu_release_item_model` | 100.0 | Unchanged contiguous-module control. |
-| `8002af48 / 0x130` | `menu_load_item_texture` | 100.0 | Unchanged contiguous-module control. |
+| `8002af48 / 0x130` | `menu_load_texture` | 100.0 | Unchanged contiguous-module control. |
 
 ## Result and verification
 
@@ -118,20 +118,20 @@ address references. Twenty-six exact functions also agree with the complete
 | `80022348` | `menu_root` | 96.86364 | 175 / 28 / 1 | Unchanged partial |
 | `80022608` | `menu_use_item_panel` | 99.48218 | 477 / 24 / 27 | Unchanged partial |
 | `8002317c` | `menu_magic_panel` | 100.0 | 332 / 20 / 20 | Exact retained |
-| `800236ac` | `menu_option_root` | 100.0 | 139 / 20 / 2 | Exact retained |
+| `800236ac` | `menu_equipment_root` | 100.0 | 139 / 20 / 2 | Exact retained |
 | `800238d8` | `menu_equip_select` | 100.0 | 369 / 25 / 13 | Exact retained |
 | `80023e9c` | `menu_spell_select` | 99.54225 | 284 / 20 / 3 | Unchanged partial |
-| `800249a8` | `menu_drop_item` | 99.54785 | 303 / 20 / 3 | Unchanged partial |
-| `80024e64` | `menu_save_load_hub` | 100.0 | 152 / 20 / 2 | Exact retained |
+| `800249a8` | `menu_drop_item_panel` | 99.54785 | 303 / 20 / 3 | Unchanged partial |
+| `80024e64` | `menu_system_panel` | 100.0 | 152 / 20 / 2 | Exact retained |
 | `800250c4` | `menu_save_panel` | 100.0 | 282 / 58 / 0 | Exact retained |
 | `8002552c` | `menu_load_panel` | 100.0 | 220 / 42 / 0 | Exact retained |
 | `8002589c` | `menu_config_panel` | 99.85981 | 321 / 19 / 9 | Unchanged partial |
 | `80025da0` | `menu_config_panel_draw` | 100.0 | 102 / 9 / 11 | Exact retained |
-| `80028380` | `menu_list_interact` | 100.0 | 213 / 21 / 0 | Exact retained |
+| `80028380` | `menu_list_confirm` | 100.0 | 213 / 21 / 0 | Exact retained |
 | `800286d4` | `menu_two_option_prompt` | 100.0 | 144 / 16 / 0 | Exact retained |
 | `80028914` | `menu_draw_window` | 87.54023 | 88 / 6 / 8 | Unchanged partial |
 | `800291ec` | `menu_draw_two_option` | 100.0 | 67 / 7 / 11 | Exact retained |
-| `800292f8` | `menu_draw_item_name_frame` | 95.37652 | 498 / 23 / 112 | Unchanged partial |
+| `800292f8` | `menu_draw_pickup_preview` | 95.37652 | 498 / 23 / 112 | Unchanged partial |
 | `80029ab0` | `menu_blit_sprite_translucent` | 100.0 | 104 / 3 / 9 | Exact retained |
 | `80029c50` | `menu_blit_sprite` | 100.0 | 100 / 2 / 8 | Exact retained |
 | `80029de0` | `menu_draw_string` | 100.0 | 332 / 6 / 24 | Exact retained |
@@ -145,7 +145,7 @@ address references. Twenty-six exact functions also agree with the complete
 | `8002adf8` | `menu_format_number` | 100.0 | 43 / 0 / 0 | Exact retained |
 | `8002aea4` | `menu_load_item_model` | 100.0 | 26 / 3 / 2 | Exact retained |
 | `8002af0c` | `menu_release_item_model` | 100.0 | 15 / 1 / 2 | Exact retained |
-| `8002af48` | `menu_load_item_texture` | 100.0 | 76 / 3 / 2 | Exact retained |
+| `8002af48` | `menu_load_texture` | 100.0 | 76 / 3 / 2 | Exact retained |
 
 The twelve partials keep their first raw divergence:
 

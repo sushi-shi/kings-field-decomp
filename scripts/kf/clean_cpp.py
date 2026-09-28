@@ -142,15 +142,15 @@ u32 menu_enter_mode(KfMenuMode mode, KfItemStockBank bank)
 { return menu_enter_mode_impl(mode, static_cast<int>(bank)); }
 '''
     elif name == 'src/game/menu_runtime.c':
-        text = replace(text, 'KfMenuResult menu_list_interact(\n',
-                       'static KfMenuResult menu_list_interact_impl(\n')
+        text = replace(text, 'KfMenuResult menu_list_confirm(\n',
+                       'static KfMenuResult menu_list_confirm_impl(\n')
         for domain in ('KfObjectId', 'KfEffectKind'):
             text += f'''
-KfMenuResult menu_list_interact(
+KfMenuResult menu_list_confirm(
     const KfMenuList *list, KfMenuConfirmKind confirmation, KfMenuPreviewMode preview,
     {domain} id, KfItemStockBank bank, KfTradeMode trade)
 {{
-    return menu_list_interact_impl(list, confirmation, preview, static_cast<s32>(id), bank, trade);
+    return menu_list_confirm_impl(list, confirmation, preview, static_cast<s32>(id), bank, trade);
 }}
 '''
     if name in ('src/psx/main.c', 'src/game/main.c', 'src/open/main.c'):

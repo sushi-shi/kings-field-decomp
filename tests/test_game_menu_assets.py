@@ -268,7 +268,7 @@ class GameMenuAssetsTests(unittest.TestCase):
         passive = ('RotMatrix', 'MulMatrix0', 'SetLightMatrix', 'SetRotMatrix',
                    'SetTransMatrix', 'menu_render_item_model')
         for function, origin_x in (('menu_draw_window_backdrop', 166),
-                                   ('menu_draw_item_name_frame', 118)):
+                                   ('menu_draw_pickup_preview', 118)):
             for buffer_index in (0, 1):
                 state = {'next': PACKETS}
                 labels = []
@@ -293,7 +293,7 @@ class GameMenuAssetsTests(unittest.TestCase):
 
                 names = ('primitive_buffer_begin_poly_ft4', 'primitive_buffer_commit_poly_ft4',
                          'SetSemiTrans', 'AddPrim')
-                if function == 'menu_draw_item_name_frame':
+                if function == 'menu_draw_pickup_preview':
                     names += (*passive, 'menu_draw_string')
                 hooks = [ExternalHook(name, service) for name in names]
                 programs = (RetailProgram.link(symbols, [function], hooks=hooks),
@@ -344,7 +344,7 @@ class GameMenuAssetsTests(unittest.TestCase):
                         self.assertEqual(enqueues, [(ORDERING_TABLE + 3000 * 4,
                                                      ASSETS + buffer_index * 160 + i * 40)
                                                     for i in (3, 2, 1, 0)])
-                        if function == 'menu_draw_item_name_frame':
+                        if function == 'menu_draw_pickup_preview':
                             self.assertEqual(labels, [(ASSETS + 0x30C, struct.pack('<2H', 128, 36) + glyphs)])
                             self.assertEqual(result.memory_by_name()['spin'], b'\x04\0')
 

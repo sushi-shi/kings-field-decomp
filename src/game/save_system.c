@@ -10,7 +10,7 @@
 #include <psyq/libc.h>
 #include <kf/game/game.h>
 
-/* Direct TIM/Mddd. IDs; menu_load_item_texture instead uses an index plus one. */
+/* Direct TIM/Mddd. IDs; menu_load_texture instead uses an index plus one. */
 enum {
     SAVE_MESSAGE_NO_CARD = 101,
     SAVE_MESSAGE_NO_SPACE = 102,

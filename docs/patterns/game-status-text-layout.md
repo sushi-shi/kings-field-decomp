@@ -57,7 +57,7 @@ or formula weights remains unknown; document authored values honestly.
 
 | GAME VA / bytes | Function | Strict baseline |
 | --- | --- | ---: |
-| `80025f38 / 1440` | `menu_draw_stats_header` | 97.991670% |
+| `80025f38 / 1440` | `menu_draw_status_summary` | 97.991670% |
 | `800264d8 / 3252` | `menu_draw_status_details` | 98.296430% |
 
 The source hypothesis is identical runtime objects and ordered referents

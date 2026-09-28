@@ -36,14 +36,14 @@ repository tests, whitespace and full build before the focused commit.
 | `fixed6_ratio_step` | `80015128 / 60` | 100% | Signed division after the six-bit shift and span increment; final increment occupies the return delay slot. |
 | `menu_equip_select` | `800238d8 / 1476` | 100% | Full-width category argument; the local confirmation register begins at zero, compares to one, clears before exit testing and becomes one on the confirm edge. |
 | `menu_spell_select` | `80023e9c / 1136` | 99.542250% | No argument; same local request domain, but clear occurs in the frame-begin call delay slot after selection/exit testing. |
-| `menu_draw_name_list` | `8002718c / 2104` | 100% | Halfword screen coordinates begin at 174,40; seven unconditional increments of twenty retain fixed category positions. |
+| `menu_draw_equipment_names` | `8002718c / 2104` | 100% | Halfword screen coordinates begin at 174,40; seven unconditional increments of twenty retain fixed category positions. |
 
 The request values occupy `$s5` in both retail panels. Equipment initializes
 at `80023900`, compares at `80023acc`, clears at `80023b1c` and sets one at
 `80023cec`. Spell selection uses `80023ebc`, `8002403c`, `800240a0` and
 `80024258` respectively. Their widget calls at `80023af0` and `80024060`
 return a separate signed result; neither stores that result into the request
-local. Both are called by `menu_option_root`, which supplies the category only
+local. Both are called by `menu_equipment_root`, which supplies the category only
 to equipment selection. Call edges remain proven, data references validated,
 and indirect jump-table successors retain the navigator's current evidence
 classification.
@@ -97,7 +97,7 @@ unattributed residue; no partial body was promoted or newly banked.
 | `fixed6_ratio_step` | 100% | Exact; words and referents unchanged. |
 | `menu_equip_select` | 100% | Exact; words and referents unchanged. |
 | `menu_spell_select` | 99.542250% | Existing partial; words and referents unchanged. |
-| `menu_draw_name_list` | 100% | Exact; words and referents unchanged. |
+| `menu_draw_equipment_names` | 100% | Exact; words and referents unchanged. |
 
 Of 484 global scores, 483 remain unchanged. Separate concurrent edits to GAME
 `map_interaction_dispatch` move its score from 89.927210% to 93.020800%; its

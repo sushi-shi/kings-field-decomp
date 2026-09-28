@@ -56,8 +56,8 @@ and shift, retaining the partial-sector guard and its unsigned shift sequence.
 | `0x8002317c` | `menu_magic_panel` | 1328 | 100.0% | Ten-row label workspace and sixteen code bytes remain; copy/stride uses the shared ten-halfword name format. |
 | `0x800238d8` | `menu_equip_select` | 1476 | 100.0% | Twenty-row workspace remains; category/type boundary and all equipment stores remain; name copy/stride is ten halfwords. |
 | `0x80023e9c` | `menu_spell_select` | 1136 | 99.54225% | Twenty-row workspace and typed selected-spell byte array remain; name copy/stride is ten halfwords. |
-| `0x800249a8` | `menu_drop_item` | 1212 | 99.54785% | Full eighty-entry stock scan and parallel workspace extents; ten glyphs per copied row. |
-| `0x800292f8` | `menu_draw_item_name_frame` | 1976 | 95.37652% | Copies ten name halfwords to a positioned label; keep model/GTE call set and transforms. |
+| `0x800249a8` | `menu_drop_item_panel` | 1212 | 99.54785% | Full eighty-entry stock scan and parallel workspace extents; ten glyphs per copied row. |
+| `0x800292f8` | `menu_draw_pickup_preview` | 1976 | 95.37652% | Copies ten name halfwords to a positioned label; keep model/GTE call set and transforms. |
 | `0x8002ad6c` | `menu_list_init` | 140 | 100.0% | Copies ten title halfwords from the loaded window row, then retains its distinct default stride eight in the return slot. |
 | `0x800279c4` | `menu_item_model_preview` | 440 | 98.181816% | Item-name copy uses ten signed halfwords; quantity formatting remains width two. |
 | `0x80027b7c` | `menu_draw_item_detail` | 732 | 91.28416% | Ten-halfword name copy; pointer to a two-column price row remains u16 with the named shop dimension. |

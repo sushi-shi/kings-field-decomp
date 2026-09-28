@@ -54,7 +54,7 @@ mark flags. MIX.TIM SHA-256:
 | --- | --- | --- |
 | 0 | ROOT | No title; use item, use magic, equipment, status, discard, system, options, return. `menu_root` dispatch agrees. |
 | 1 | EQUIPMENT | 装備 title; weapon, magic, shield, head, torso, arm, leg, other, return. Equipment and spell lists copy their respective row labels. |
-| 2 | SYSTEM | システム title; load, quit game, return. `menu_save_load_hub` uses this record despite its older function name. |
+| 2 | SYSTEM | システム title; load, quit game, return. `menu_system_panel` uses this record despite its older function name. |
 | 3 | SAVE_LOAD | セーブ・ロード title; save, load, quit game, return. Resource identity is decoded, but no confirmed selector call uses this record. |
 | 4 | SAVE | セーブ title; three area slots, card initialization, return. The save panel writes slots or formats the card. |
 | 5 | LOAD | ロード title; three area slots and return. The load panel reads a selected slot. |
@@ -93,11 +93,11 @@ their existing residues; no function is newly exact or banked.
 | `0x80022348 / 704` | `menu_root` | 96.8636 | 175 / 28 / 1 |
 | `0x80022608 / 1908` | `menu_use_item_panel` | 99.4822 | 477 / 24 / 27 |
 | `0x8002317c / 1328` | `menu_magic_panel` | 100 | 332 / 20 / 20 |
-| `0x800236ac / 556` | `menu_option_root` | 100 | 139 / 20 / 2 |
+| `0x800236ac / 556` | `menu_equipment_root` | 100 | 139 / 20 / 2 |
 | `0x800238d8 / 1476` | `menu_equip_select` | 100 | 369 / 25 / 13 |
 | `0x80023e9c / 1136` | `menu_spell_select` | 99.5422 | 284 / 20 / 3 |
-| `0x800249a8 / 1212` | `menu_drop_item` | 99.5478 | 303 / 20 / 3 |
-| `0x80024e64 / 608` | `menu_save_load_hub` | 100 | 152 / 20 / 2 |
+| `0x800249a8 / 1212` | `menu_drop_item_panel` | 99.5478 | 303 / 20 / 3 |
+| `0x80024e64 / 608` | `menu_system_panel` | 100 | 152 / 20 / 2 |
 | `0x800250c4 / 1128` | `menu_save_panel` | 100 | 282 / 58 / 0 |
 | `0x8002552c / 880` | `menu_load_panel` | 100 | 220 / 42 / 0 |
 | `0x8002589c / 1284` | `menu_config_panel` | 99.8598 | 321 / 19 / 9 |

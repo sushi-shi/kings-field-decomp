@@ -696,7 +696,7 @@ extern KfMaterialProbe material_probe;
             'map_show_screen_image',
             'menu_status_panel',
             'menu_draw_item_detail',
-            'menu_draw_item_name_frame',
+            'menu_draw_pickup_preview',
             'menu_draw_status_details',
             'menu_draw_window',
             'menu_draw_window_backdrop',

@@ -20,7 +20,7 @@ source to an older representation.
 | GAME function | VA / retail bytes | Before strict % | Integrated strict % |
 | --- | --- | ---: | ---: |
 | `menu_status_panel` | `8002430c` / 1692 | 81.900710 | 99.962170 |
-| `menu_draw_item_name_frame` | `800292f8` / 1976 | 95.376520 | 99.570850 |
+| `menu_draw_pickup_preview` | `800292f8` / 1976 | 95.376520 | 99.570850 |
 | `map_world_state_persist` | `80035b5c` / 696 | 96.005745 | 97.528730 |
 | `player_update` | `80018880` / 6684 | 96.903650 | 96.939560 |
 

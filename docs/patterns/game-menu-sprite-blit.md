@@ -204,7 +204,7 @@ All call sites were inspected with their argument setup and delay slots:
 | opaque | `menu_draw_window` | `0x80028a00` | `DAT_8005846c`; selected row |
 | opaque | `menu_draw_two_option` | `0x80029238`, `0x80029250` | `DAT_8005846c`; either option label |
 
-The preceding `menu_draw_item_name_frame` also uses the primitive cursor and
+The preceding `menu_draw_pickup_preview` also uses the primitive cursor and
 SDK helpers, returning at `0x80029aa8` with its 224-byte frame restoration at
 `0x80029aac`. The following `menu_draw_string` starts at `0x80029de0` and uses
 the same descriptor and positioned-label family. Neither boundary overlaps.

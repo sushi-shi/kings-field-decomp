@@ -31,20 +31,20 @@ repository tests, whitespace checks and the full build before commit.
 
 | GAME address / bytes | Function | Starting strict % | Constraint |
 | --- | --- | --- | --- |
-| `0x80028380 / 852` | `menu_list_interact` | 87.07981 | Full-width a1/a2 label/preview enums; -99 pending, 0 accepted, -1 cancelled; 104-byte frame, two redraw sites, ordered PadRead/render/sound calls. |
+| `0x80028380 / 852` | `menu_list_confirm` | 87.07981 | Full-width a1/a2 label/preview enums; -99 pending, 0 accepted, -1 cancelled; 104-byte frame, two redraw sites, ordered PadRead/render/sound calls. |
 | `0x80021538 / 1476` | `item_menu_buy` | 97.20054 | Direct widget caller; named label/preview arguments, compares result against -1; outer selection remains a separate integer domain. |
 | `0x80021afc / 1280` | `item_menu_sell` | 96.77187 | Direct widget caller; named label/preview arguments, compares result against -1; outer selection remains a separate integer domain. |
 | `0x80022608 / 1908` | `menu_use_item_panel` | 92.8218 | Direct widget caller; named label/preview arguments, compares result against -1; outer selection remains a separate integer domain. |
 | `0x8002317c / 1328` | `menu_magic_panel` | 95.89759 | Direct widget caller; named label/preview arguments, compares result against -1; outer selection remains a separate integer domain. |
 | `0x800238d8 / 1476` | `menu_equip_select` | 97.89973 | Direct widget caller; named label/preview arguments, compares result against -1; outer selection remains a separate integer domain. |
 | `0x80023e9c / 1136` | `menu_spell_select` | 98.06338 | Direct widget caller; named label/preview arguments, compares result against -1; outer selection remains a separate integer domain. |
-| `0x800249a8 / 1212` | `menu_drop_item` | 98.85478 | Direct widget caller; named label/preview arguments, compares result against -1; outer selection remains a separate integer domain. |
+| `0x800249a8 / 1212` | `menu_drop_item_panel` | 98.85478 | Direct widget caller; named label/preview arguments, compares result against -1; outer selection remains a separate integer domain. |
 | `0x800291ec / 268` | `menu_draw_two_option` | 100.0 | Unedited callee/adjacency control; signed glyph streams, detail price table, quad enqueue or model-preview behavior constrains the widget interface. |
 | `0x80029de0 / 1328` | `menu_draw_string` | 99.98795 | Unedited callee/adjacency control; signed glyph streams, detail price table, quad enqueue or model-preview behavior constrains the widget interface. |
 | `0x80027b7c / 732` | `menu_draw_item_detail` | 91.28416 | Unedited callee/adjacency control; signed glyph streams, detail price table, quad enqueue or model-preview behavior constrains the widget interface. |
-| `0x80027e58 / 72` | `menu_add_marker_quad` | 100.0 | Unedited callee/adjacency control; signed glyph streams, detail price table, quad enqueue or model-preview behavior constrains the widget interface. |
-| `0x80027ea0 / 68` | `menu_add_frame_quad` | 100.0 | Unedited callee/adjacency control; signed glyph streams, detail price table, quad enqueue or model-preview behavior constrains the widget interface. |
-| `0x80027ee4 / 1180` | `menu_draw_dialog_frame` | 100.0 | Unedited callee/adjacency control; signed glyph streams, detail price table, quad enqueue or model-preview behavior constrains the widget interface. |
+| `0x80027e58 / 72` | `menu_add_magic_artwork_quad` | 100.0 | Unedited callee/adjacency control; signed glyph streams, detail price table, quad enqueue or model-preview behavior constrains the widget interface. |
+| `0x80027ea0 / 68` | `menu_add_message_image_quad` | 100.0 | Unedited callee/adjacency control; signed glyph streams, detail price table, quad enqueue or model-preview behavior constrains the widget interface. |
+| `0x80027ee4 / 1180` | `menu_draw_save_slots` | 100.0 | Unedited callee/adjacency control; signed glyph streams, detail price table, quad enqueue or model-preview behavior constrains the widget interface. |
 | `0x800279c4 / 440` | `menu_item_model_preview` | 98.181816 | Unedited callee/adjacency control; signed glyph streams, detail price table, quad enqueue or model-preview behavior constrains the widget interface. |
 
 ## Protocol and labels
@@ -163,18 +163,18 @@ section-base conflicts. No tooling/flake implementation changed.
 
 | GAME address | Function | Final strict % | Verdict |
 | --- | --- | --- | --- |
-| `0x80028380` | `menu_list_interact` | 87.24413 | Typed protocol and corrected label storage; partial |
+| `0x80028380` | `menu_list_confirm` | 87.24413 | Typed protocol and corrected label storage; partial |
 | `0x80021538` | `item_menu_buy` | 97.20054 | Code and score unchanged; partial |
 | `0x80021afc` | `item_menu_sell` | 96.77187 | Code and score unchanged; partial |
 | `0x80022608` | `menu_use_item_panel` | 92.8218 | Code and score unchanged; partial |
 | `0x8002317c` | `menu_magic_panel` | 95.89759 | Code and score unchanged; partial |
 | `0x800238d8` | `menu_equip_select` | 97.89973 | Code and score unchanged; partial |
 | `0x80023e9c` | `menu_spell_select` | 98.06338 | Code and score unchanged; partial |
-| `0x800249a8` | `menu_drop_item` | 98.85478 | Code and score unchanged; partial |
+| `0x800249a8` | `menu_drop_item_panel` | 98.85478 | Code and score unchanged; partial |
 | `0x800291ec` | `menu_draw_two_option` | 100.0 | Exact control; 67 raw retail words |
 | `0x80029de0` | `menu_draw_string` | 99.98795 | Code and score unchanged; partial |
 | `0x80027b7c` | `menu_draw_item_detail` | 91.28416 | Code and score unchanged; partial |
-| `0x80027e58` | `menu_add_marker_quad` | 100.0 | Exact control; 18 raw retail words |
-| `0x80027ea0` | `menu_add_frame_quad` | 100.0 | Exact control; 17 raw retail words |
-| `0x80027ee4` | `menu_draw_dialog_frame` | 100.0 | Exact control; 295 raw retail words |
+| `0x80027e58` | `menu_add_magic_artwork_quad` | 100.0 | Exact control; 18 raw retail words |
+| `0x80027ea0` | `menu_add_message_image_quad` | 100.0 | Exact control; 17 raw retail words |
+| `0x80027ee4` | `menu_draw_save_slots` | 100.0 | Exact control; 295 raw retail words |
 | `0x800279c4` | `menu_item_model_preview` | 98.181816 | Code and score unchanged; partial |

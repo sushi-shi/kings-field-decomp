@@ -2,7 +2,7 @@
 
 ## Function Match Plan
 
-GAME `80025f38 menu_draw_stats_header` owns 1,440 retail bytes and starts at
+GAME `80025f38 menu_draw_status_summary` owns 1,440 retail bytes and starts at
 strict 97.686110% under the unchanged `probe-gcc257-o2-g0`. Before editing,
 refresh the six image-qualified semantic views against hash-verified retail,
 the complete CFG/disassembly, all three caller sites, adjacent functions,
@@ -216,9 +216,9 @@ The source SHA256 remains
 Dossiers, manifests, independently compiled objects and verification logs use
 `stats-row-inline` and `stats-value-inline` prefixes under `build/`.
 JSON results are
-`build/hypotheses/20260908-222227-game-menu_draw_stats_header-menu_draw_stats_header`
+`build/hypotheses/20260908-222227-game-menu_draw_status_summary-menu_draw_status_summary`
 and
-`build/hypotheses/20260908-222411-game-menu_draw_stats_header-menu_draw_stats_header`.
+`build/hypotheses/20260908-222411-game-menu_draw_status_summary-menu_draw_status_summary`.
 
 Full `kf build` retains GAME 337/362 exact / 99.428% aggregate, with zero
 artifact failures. Data matches remain GAME 11/41, OPEN 3/19 and PSX 0/1;

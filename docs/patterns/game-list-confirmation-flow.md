@@ -2,8 +2,8 @@
 
 ## Function Match Plan
 
-GAME `0x80028380 menu_list_interact`, 852 bytes / 213 words, is the sole
-claim in `game.menu_list_interact`, using `probe-gcc257-o2-g0`. Starting
+GAME `0x80028380 menu_list_confirm`, 852 bytes / 213 words, is the sole
+claim in `game.menu_list_confirm`, using `probe-gcc257-o2-g0`. Starting
 strict objdiff is 87.244130%; the candidate has 206 words. The six semantic
 views, complete raw disassembly, all seven caller windows, adjacent
 boundaries, shared types, render interfaces and source history precede edits.

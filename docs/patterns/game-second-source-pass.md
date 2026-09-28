@@ -280,7 +280,7 @@ higher fuzzy percentage does not resolve either issue.
 | `item_load_database` / `80020cfc` | 3 | 99.746666 | 1500/1500 | `0x4bc` | 16 |
 | `menu_status_panel` / `8002430c` | 3 | 99.962170 | 1692/1692 | `0x0` | 16 |
 | `menu_draw_item_detail` / `80027b7c` | 6 | 97.814210 | 732/732 | `0xec` | 2 |
-| `menu_draw_item_name_frame` / `800292f8` | 3 | 99.975710 | 1976/1976 | `0x0` | 12 |
+| `menu_draw_pickup_preview` / `800292f8` | 3 | 99.975710 | 1976/1976 | `0x0` | 12 |
 | `menu_draw_window_backdrop` / `8002a510` | 3 | 99.971760 | 1700/1700 | `0x0` | 12 |
 | `talk_show_dialogue_page` / `8002c9d4` | 3 | 98.780490 | 164/164 | `0x30` | 8 |
 | `map_object_spawn_effect` / `80031834` | 3 | 94.504950 | 404/400 | `0x4` | 55 |

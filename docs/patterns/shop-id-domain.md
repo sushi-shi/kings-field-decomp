@@ -27,7 +27,7 @@ only. Builds, compiler checks, tests and post-edit matches remain deferred.
 | `item_menu_buy` | `0x80021538 / 0x5c4` | Frame 1856 bytes; the sequence at `0x80021588..a4` computes shop ID times 80 into `item_stock`. Encode that index and two price-column origins; preserve the word stored for the widget at `0x80021798`. |
 | `item_menu_sell` | `0x80021afc / 0x500` | Frame 1856 bytes; stock remains the player's bank, while the shop word selects a price column and is forwarded to detail drawing and the widget (`0x80021d1c`). |
 | `menu_draw_item_detail` | `0x80027b7c / 0x2dc` | Frame 160 bytes; retains a1 as a word at `0x80027b9c`, then uses the one-based shop ID for the selected price table. Type the argument and encode its price-index arithmetic. |
-| `menu_list_interact` | `0x80028380 / 0x354` | Frame 104 bytes; loads the unsigned word payload at `0x800283cc` and forwards its bits in a1 to item detail. Decode only in the three source detail branches. Non-shop previews ignore this parameter. |
+| `menu_list_confirm` | `0x80028380 / 0x354` | Frame 104 bytes; loads the unsigned word payload at `0x800283cc` and forwards its bits in a1 to item detail. Decode only in the three source detail branches. Non-shop previews ignore this parameter. |
 | `menu_enter_mode` | `0x80036e38 / 0xc8` | Frame 24 bytes; spills argument homes and loads the optional byte at `0x80036ed0` before the root call. Type that byte in both legacy and modern branches; retain promoted-int variadic reading in modern mode. |
 
 ## Domain boundaries

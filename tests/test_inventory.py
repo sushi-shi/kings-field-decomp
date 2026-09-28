@@ -1363,7 +1363,7 @@ class InventoryTests(unittest.TestCase):
         ]
         self.assertEqual(
             (pending.name, pending.datatype, pending.owner),
-            ("menu_item_model_allocation_pending", "KfMenuModelAllocation", "menu"),
+            ("menu_item_model_allocation", "KfMenuModelAllocation", "menu"),
         )
 
         _, relocations = read_tsv(RETAIL_CONFIG / "relocs.tsv")
@@ -1387,7 +1387,7 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(len(state_references), 3)
         self.assertEqual(
             {row["target_name"] for row in state_references},
-            {"menu_item_model_allocation_pending"},
+            {"menu_item_model_allocation"},
         )
         self.assertEqual(
             {row["status"] for row in state_references},

@@ -72,7 +72,7 @@ and **30 unions**. The integration snapshot below is historical.
   this is API clarification and deduplication, not elimination of serialized
   offset interpretation. Each argument occurs once. The offset is in bytes
   from the end of the 12-byte TMD header, not from the object record.
-- The two TIM-loading locals in `menu_load_item_texture` and
+- The two TIM-loading locals in `menu_load_texture` and
   `menu_load_message_image` retain the existing primitive-buffer cursor's
   `u8 *` type rather than discarding it to `void *`. This is independent type
   propagation at the same resource boundary. The source `void*` count stays
@@ -105,7 +105,7 @@ Final verdicts for changed functions (all strict **100%**, unchanged):
 | GAME | `8001b3e4` | `map_resource_copy_words` |
 | GAME | `8001b558` | `map_resources_load` |
 | GAME | `8001c148` | `tmd_select_object_vertices` |
-| GAME | `8002af48` | `menu_load_item_texture` |
+| GAME | `8002af48` | `menu_load_texture` |
 | GAME | `8002c5e0` | `menu_load_message_image` |
 | OPEN | `80016318` | `resource_stream_copy_words` |
 | OPEN | `80016348` | `opening_resources_load_scene0` |

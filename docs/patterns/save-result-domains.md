@@ -47,8 +47,8 @@ slot handling, default branches, complete data referents and delay slots.
 | `8001499c / 0x38` | `game_shutdown` | 100.0 | Unchanged contiguous-module control. |
 | `800149d4 / 0x20` | `frame_pacer_vsync_callback` | 100.0 | Unchanged contiguous-module control. |
 | `800149f4 / 0x70` | `frame_pacer_wait` | 100.0 | Unchanged contiguous-module control. |
-| `800249a8 / 0x4bc` | `menu_drop_item` | 99.54785 | Unchanged contiguous-module control. |
-| `80024e64 / 0x260` | `menu_save_load_hub` | 100.0 | Unchanged contiguous-module control. |
+| `800249a8 / 0x4bc` | `menu_drop_item_panel` | 99.54785 | Unchanged contiguous-module control. |
+| `80024e64 / 0x260` | `menu_system_panel` | 100.0 | Unchanged contiguous-module control. |
 | `800250c4 / 0x468` | `menu_save_panel` | 100.0 | Keep the shared storage as a typed operation/cleanup union; preserve the extra encoded catalogue acceptance at three. |
 | `8002552c / 0x370` | `menu_load_panel` | 100.0 | Compare catalogue/slot results with the named operation OK value. |
 | `8002b078 / 0xd8` | `save_system_read_catalog` | 100.0 | Propagate the wrapper result through its local, OK guard and return. |
@@ -159,8 +159,8 @@ words, calls and address references.
 | `8001499c` | `game_shutdown` | 100.0 | 14 / 4 / 0 | Exact retained |
 | `800149d4` | `frame_pacer_vsync_callback` | 100.0 | 8 / 0 / 2 | Exact retained |
 | `800149f4` | `frame_pacer_wait` | 100.0 | 28 / 3 / 3 | Exact retained |
-| `800249a8` | `menu_drop_item` | 99.54785 | 303 / 20 / 3 | Unchanged partial |
-| `80024e64` | `menu_save_load_hub` | 100.0 | 152 / 20 / 2 | Exact retained |
+| `800249a8` | `menu_drop_item_panel` | 99.54785 | 303 / 20 / 3 | Unchanged partial |
+| `80024e64` | `menu_system_panel` | 100.0 | 152 / 20 / 2 | Exact retained |
 | `800250c4` | `menu_save_panel` | 100.0 | 282 / 58 / 0 | Exact retained |
 | `8002552c` | `menu_load_panel` | 100.0 | 220 / 42 / 0 | Exact retained |
 | `8002b078` | `save_system_read_catalog` | 100.0 | 54 / 2 / 1 | Exact retained |

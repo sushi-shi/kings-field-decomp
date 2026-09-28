@@ -43,8 +43,8 @@ including delay slots, with no promotion of partial functions to exact.
 | `map_resources_load` | `0x8001b558 / 600` | 100.000000% | 31 / 1 | Propagate the floor domain at existing fields/API boundaries; preserve instructions and referents. |
 | `effect5_texture_cache_prepare` | `0x8001bae4 / 176` | 100.000000% | 6 / 1 | Propagate the floor domain at existing fields/API boundaries; preserve instructions and referents. |
 | `menu_map_viewer` | `0x80022d7c / 1024` | 100.000000% | 17 / 9 | Propagate the floor domain at existing fields/API boundaries; preserve instructions and referents. |
-| `menu_draw_stats_header` | `0x80025f38 / 1440` | 97.991670% | 28 / 9 | Propagate the floor domain at existing fields/API boundaries; preserve instructions and referents. |
-| `menu_draw_dialog_frame` | `0x80027ee4 / 1180` | 100.000000% | 27 / 7 | Propagate the floor domain at existing fields/API boundaries; preserve instructions and referents. |
+| `menu_draw_status_summary` | `0x80025f38 / 1440` | 97.991670% | 28 / 9 | Propagate the floor domain at existing fields/API boundaries; preserve instructions and referents. |
+| `menu_draw_save_slots` | `0x80027ee4 / 1180` | 100.000000% | 27 / 7 | Propagate the floor domain at existing fields/API boundaries; preserve instructions and referents. |
 | `save_system_read_catalog` | `0x8002b078 / 216` | 100.000000% | 2 / 4 | Propagate the floor domain at existing fields/API boundaries; preserve instructions and referents. |
 | `save_file_write_slot` | `0x8002b73c / 1268` | 100.000000% | 24 / 24 | Propagate the floor domain at existing fields/API boundaries; preserve instructions and referents. |
 | `save_file_read_slot` | `0x8002beb0 / 972` | 100.000000% | 13 / 22 | Propagate the floor domain at existing fields/API boundaries; preserve instructions and referents. |
@@ -119,8 +119,8 @@ direct calls and 465 address materializations. The 26 exact controls retain
 | `map_resources_load` | 100.000000% | Exact, unchanged |
 | `effect5_texture_cache_prepare` | 100.000000% | Exact, unchanged |
 | `menu_map_viewer` | 100.000000% | Exact, unchanged |
-| `menu_draw_stats_header` | 97.991670% | Partial, unchanged |
-| `menu_draw_dialog_frame` | 100.000000% | Exact, unchanged |
+| `menu_draw_status_summary` | 97.991670% | Partial, unchanged |
+| `menu_draw_save_slots` | 100.000000% | Exact, unchanged |
 | `save_system_read_catalog` | 100.000000% | Exact, unchanged |
 | `save_file_write_slot` | 100.000000% | Exact, unchanged |
 | `save_file_read_slot` | 100.000000% | Exact, unchanged |
@@ -147,7 +147,7 @@ The seven partial controls keep their first raw divergence:
 
 | Function | GAME site | Candidate / retail |
 | --- | --- | --- |
-| menu_draw_stats_header | `80025f38` | Frame allocation 64 / 72 bytes. |
+| menu_draw_status_summary | `80025f38` | Frame allocation 64 / 72 bytes. |
 | talk_show_dialogue_page | `8002ca04` | `mfhi v1` / `mfhi v0`. |
 | map_object_pool_update | `80031dcc` | `lui a0,0x8005` / `lbu v1,0(s3)`. |
 | map_show_screen_image | `80034d84` | `mfhi a2` / `mfhi v1`. |

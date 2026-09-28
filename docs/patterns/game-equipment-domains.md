@@ -126,14 +126,14 @@ contains initial signatures, widths, CFG, delay slots, calls and referents.
 | `0x80018880 / 6684` | `player_update` | 96.9455 | Partial, unchanged |
 | `0x800238d8 / 1476` | `menu_equip_select` | 97.8997 | Partial, unchanged |
 | `0x80023e9c / 1136` | `menu_spell_select` | 98.0634 | Partial, unchanged |
-| `0x800236ac / 556` | `menu_option_root` | 100 | Exact / 139 |
-| `0x8002718c / 2104` | `menu_draw_name_list` | 100 | Exact / 526 |
+| `0x800236ac / 556` | `menu_equipment_root` | 100 | Exact / 139 |
+| `0x8002718c / 2104` | `menu_draw_equipment_names` | 100 | Exact / 526 |
 | `0x8002aea4 / 104` | `menu_load_item_model` | 100 | Exact / 26 |
-| `0x8002af48 / 304` | `menu_load_item_texture` | 100 | Exact / 76 |
+| `0x8002af48 / 304` | `menu_load_texture` | 100 | Exact / 76 |
 | `0x80027b7c / 732` | `menu_draw_item_detail` | 91.2842 | Partial, unchanged |
-| `0x80027e58 / 72` | `menu_add_marker_quad` | 100 | Exact / 18 |
-| `0x80027ea0 / 68` | `menu_add_frame_quad` | 100 | Exact / 17 |
-| `0x80027ee4 / 1180` | `menu_draw_dialog_frame` | 100 | Exact / 295 |
+| `0x80027e58 / 72` | `menu_add_magic_artwork_quad` | 100 | Exact / 18 |
+| `0x80027ea0 / 68` | `menu_add_message_image_quad` | 100 | Exact / 17 |
+| `0x80027ee4 / 1180` | `menu_draw_save_slots` | 100 | Exact / 295 |
 | `0x800279c4 / 440` | `menu_item_model_preview` | 98.1818 | Partial, unchanged |
-| `0x80028380 / 852` | `menu_list_interact` | 87.0798 | Partial, unchanged |
+| `0x80028380 / 852` | `menu_list_confirm` | 87.0798 | Partial, unchanged |
 | `0x800346a8 / 908` | `map_floor5_transition_cutscene` | 100 | Exact / 227 |

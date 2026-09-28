@@ -365,7 +365,7 @@ Each row adds a definition using the existing shared type, without changing a fu
 | `800561a6` | `gameplay_sound_ref_10` (3) | `map_object.c` | independently addressed packed program/tone/note selector; raw three-byte initializer verified |
 | `800561a9` | `gameplay_sound_ref_11` (3) | `map_object.c` | independently addressed packed program/tone/note selector; raw three-byte initializer verified |
 | `800561ac` | `gameplay_sound_ref_12` (3) | `map_object.c` | independently addressed packed program/tone/note selector; raw three-byte initializer verified |
-| `80057b6c` | `menu_item_model_allocation_pending` (4) | `menu_runtime.c` | native zero word before BSS boundary; load/release functions assign enum states |
+| `80057b6c` | `menu_item_model_allocation` (4) | `menu_runtime.c` | native zero word before BSS boundary; load/release functions assign enum states |
 | `80057b78` | `memory_card_root_path` (6) | `save_system.c` | named global path in the initialized-data band; literal bytes including NUL verified |
 | `80057b80` | `boss_death_loop_sound` (3) | `actor.c` | boss death loop passes this three-byte selector to audio |
 | `80057b84` | `audio_voice_slot_index` (4) | `audio.c` | retail starts managed voice ring at index nine |

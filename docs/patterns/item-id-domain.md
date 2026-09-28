@@ -43,15 +43,15 @@ fixed word parameters remain word parameters in the retail C view.
 | `map_floor5_transition_cutscene` | `0x800346a8 / 0x38c` | 208 | Shared item constants/fields; encode table indices where consumed. |
 | `map_event_interact` | `0x80034a80 / 0x2d4` | 32 | Shared item constants/fields; encode table indices where consumed. |
 | `menu_use_item_panel` | `0x80022608 / 0x774` | 1208 | Byte item-list storage; integer iteration and mixed result boundaries; typed item calls. |
-| `menu_draw_name_list` | `0x8002718c / 0x838` | 48 | Shared item constants/fields; encode table indices where consumed. |
+| `menu_draw_equipment_names` | `0x8002718c / 0x838` | 48 | Shared item constants/fields; encode table indices where consumed. |
 | `menu_enter_mode` | `0x80036e38 / 0xc8` | 24 | Decode optional pickup byte after mode dispatch; retain shop and root payloads. |
 | `menu_draw_item_detail` | `0x80027b7c / 0x2dc` | 160 | Typed item argument with unchanged legacy signed-word ABI; numeric table/resource boundary. |
-| `menu_drop_item` | `0x800249a8 / 0x4bc` | 1856 | Byte item-list storage; integer iteration and mixed result boundaries; typed item calls. |
+| `menu_drop_item_panel` | `0x800249a8 / 0x4bc` | 1856 | Byte item-list storage; integer iteration and mixed result boundaries; typed item calls. |
 | `menu_item_model_preview` | `0x800279c4 / 0x1b8` | 152 | Typed item argument with unchanged legacy signed-word ABI; numeric table/resource boundary. |
-| `menu_list_interact` | `0x80028380 / 0x354` | 104 | Decode the shared preview payload in item branches; retain magic-icon and integer widget protocol. |
+| `menu_list_confirm` | `0x80028380 / 0x354` | 104 | Decode the shared preview payload in item branches; retain magic-icon and integer widget protocol. |
 | `menu_map_viewer` | `0x80022d7c / 0x400` | 224 | Typed item argument with unchanged legacy signed-word ABI; numeric table/resource boundary. |
-| `menu_option_root` | `0x800236ac / 0x22c` | 48 | Shared item constants/fields; encode table indices where consumed. |
-| `menu_draw_item_name_frame` | `0x800292f8 / 0x7b8` | 224 | Typed item argument with unchanged legacy signed-word ABI; numeric table/resource boundary. |
+| `menu_equipment_root` | `0x800236ac / 0x22c` | 48 | Shared item constants/fields; encode table indices where consumed. |
+| `menu_draw_pickup_preview` | `0x800292f8 / 0x7b8` | 224 | Typed item argument with unchanged legacy signed-word ABI; numeric table/resource boundary. |
 | `menu_load_item_model` | `0x8002aea4 / 0x68` | 32 | Typed item argument with unchanged legacy signed-word ABI; numeric table/resource boundary. |
 | `menu_equip_select` | `0x800238d8 / 0x5c4` | 520 | Byte item-list storage; integer iteration and mixed result boundaries; typed item calls. |
 | `player_set_equipment_slot` | `0x80016848 / 0x1e8` | 24 | Byte item argument; typed equipment or use dispatch; numeric resource/filename/link boundaries. |
@@ -90,7 +90,7 @@ changed boundary in source; do not claim byte matching from that accounting.
 
 The seventy existing names now form `KfItemId`. All seven equipped-item fields,
 five item-list byte arrays and nine item-specific interfaces carry that domain.
-Seventeen C files need explicit edits; `menu_option_root` inherits the typed
+Seventeen C files need explicit edits; `menu_equipment_root` inherits the typed
 equipment comparison through its shared header. Field offsets, enum values,
 stock contents and identity evidence tiers are unchanged.
 

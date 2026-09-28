@@ -248,7 +248,7 @@ partial; every score and all 484 function-report entries remain unchanged.
 | GAME.EXE | `player_move_horizontal` | 2088/2128 | 96.568960% |
 | GAME.EXE | `player_update` | 6684/6684 | 99.476960% |
 | GAME.EXE | `display_initialize` | 332/336 | 98.421684% |
-| GAME.EXE | `menu_draw_item_name_frame` | 1976/1976 | 99.570850% |
+| GAME.EXE | `menu_draw_pickup_preview` | 1976/1976 | 99.570850% |
 | GAME.EXE | `menu_draw_window_backdrop` | 1700/1700 | 99.971760% |
 | GAME.EXE | `talk_show_dialogue_page` | 164/164 | 98.780490% |
 | GAME.EXE | `map_object_probe_forward` | 196/196 | 93.755104% |

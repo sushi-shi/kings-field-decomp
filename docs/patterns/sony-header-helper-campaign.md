@@ -167,7 +167,7 @@ trials leave that body byte-identical, not that it is banked or closed.
 | GAME / `80014e48` / `5c` | `vector3s_scale_shift12` | S050 | 100 → 100 |
 | GAME / `80028a70` / `77c` | `menu_list_render` | S051, S052, S053, S054, S055, S056 | 100 → 100 |
 | GAME / `80022d7c` / `400` | `menu_map_viewer` | S057, S058, S059, S060, S061, S062 | 100 → 100 |
-| GAME / `800292f8` / `7b8` | `menu_draw_item_name_frame` | S064, S065, S066, S067, S076, S077, S078, S079 | 99.570850 → 99.570850 |
+| GAME / `800292f8` / `7b8` | `menu_draw_pickup_preview` | S064, S065, S066, S067, S076, S077, S078, S079 | 99.570850 → 99.570850 |
 | GAME / `80029ab0` / `1a0` | `menu_blit_sprite_translucent` | S080 | 100 → 100 |
 | GAME / `80029c50` / `190` | `menu_blit_sprite` | S081 | 100 → 100 |
 | GAME / `80029de0` / `530` | `menu_draw_string` | S068, S069, S070, S082, S083, S084 | 100 → 100 |
@@ -208,7 +208,7 @@ residues; the helper trials do not establish compiler causes:
 | --- | --- |
 | GAME `effect_update_dispatch` | First difference at `+38`: s3/s6 roles for the current magic record and effect kind are exchanged; the seven helper sites leave the whole object unchanged. |
 | GAME `map_object_spawn_effect` | Saved-register placement differs from `+4`; the body remains 400 versus 404 retail bytes. S045 preserves its call/reference/control-flow model. |
-| GAME `menu_draw_item_name_frame` | 160-byte frame versus retail 224, plus the existing item-name index instruction order; all eight rectangle sites remain neutral. |
+| GAME `menu_draw_pickup_preview` | 160-byte frame versus retail 224, plus the existing item-name index instruction order; all eight rectangle sites remain neutral. |
 | GAME `menu_draw_window_backdrop` | 40-byte frame versus retail 104; all eight rectangle sites preserve the complete body. |
 | GAME `menu_status_panel` | 48-byte frame versus retail 112; both inline XY/UV sites preserve the body. |
 | GAME `player_update` | 216-byte frame versus retail 224. Also retain the known representation/ownership issue: source references `.data+0x60` for `player_previous_input`, target names the independently claimed `80057b30` datum. Neither vector site repairs that data-section model. |

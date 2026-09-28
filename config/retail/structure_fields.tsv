@@ -469,8 +469,8 @@ KfMemoryArena	0x8	0x48	allocation	KfMemoryAllocationState	supported	memory.h;asm
 KfMemoryArena	0x50	0x4	system_heap_start	u8 *	supported	asm;cross-overlay-lineage;memory_capture_system_heap_start;data-repair-campaign.md	first system-heap byte captured after the inclusive arena end
 KfMemoryArena	0x54	0x4	system_heap_size	s32	supported	asm;cross-overlay-lineage;memory_reset_system_heap;data-repair-campaign.md	byte extent passed to InitHeap
 KfMenuAssets	0x0	0x140	background_quads	POLY_FT4[2][4]	supported	game/menu.h;game_menu_assets.md;asm;STAT.DAT	complete runtime-loaded menu asset block
-KfMenuAssets	0x140	0x50	mid_depth_quads	POLY_FT4[2]	supported	game/menu.h;game_menu_assets.md;asm;STAT.DAT	complete runtime-loaded menu asset block
-KfMenuAssets	0x190	0x50	foreground_quads	POLY_FT4[2]	supported	game/menu.h;game_menu_assets.md;asm;STAT.DAT	complete runtime-loaded menu asset block
+KfMenuAssets	0x140	0x50	magic_artwork_quads	POLY_FT4[2]	supported	game/menu.h;game_menu_assets.md;asm;STAT.DAT;menu_add_magic_artwork_quad	126x192 right-panel picture quad per buffer (x174..300, y24..216, tpage 0x1f); linked only for spell artwork at OT depth 500
+KfMenuAssets	0x190	0x50	message_image_quads	POLY_FT4[2]	supported	game/menu.h;game_menu_assets.md;asm;STAT.DAT;menu_add_message_image_quad	204x100 centred picture quad per buffer (x58..262, y70..170, tpage 0x1f); linked at OT depth 0 for save/load/power-off message images
 KfMenuAssets	0x1e0	0x120	dialog_quads	POLY_F4[2][6]	supported	game/menu.h;game_menu_assets.md;asm;STAT.DAT	complete runtime-loaded menu asset block
 KfMenuAssets	0x300	0xc	number_atlas	MenuSpriteDef	supported	game/menu.h;game_menu_assets.md;asm;STAT.DAT	complete runtime-loaded menu asset block
 KfMenuAssets	0x30c	0xc	glyph_atlas	MenuSpriteDef	supported	game/menu.h;game_menu_assets.md;asm;STAT.DAT	complete runtime-loaded menu asset block
@@ -678,12 +678,12 @@ KfSavePayload	0x30c	0x2134	world_state	KfMapSavedWorld	supported	game/save.h;sav
 KfSavePayload	0x2440	0xf0	item_stock	u8[3][80]	supported	game/save.h;game_state_initialize;item_menu_buy;save_file_write_slot;save_file_read_slot;alignment-checked-copy	complete copy of the three 80-byte item_stock banks; player quantities followed by two shop-stock/availability banks
 KfSavePayload	0x2530	0x18	magic_flags	KfMagicLearningState[24]	supported	game/save.h;save_file_write_slot;save_file_read_slot;20-byte-record-stride;game-magic-learning-state.md	24 learning-state bytes copied directly from/to byte0 of each20-byte runtime magic record; enum storage preserves unnamed encoded values
 KfSavePayload	0x2548	0x38	unknown_2548	u8[56]	opaque	game/save.h;asm	not touched by the write/read pair
-KfSaveSlotSummary	0x00	0x04	experience	u32	supported	game/save.h;save_file_write_slot;save_file_read_slot;menu_draw_dialog_frame;asm	serialized player experience word; stored and copied as a word
-KfSaveSlotSummary	0x04	0x04	current_floor	KF_ENUM_STORAGE(KfFloorId, u32)	supported	game/save.h;save_file_write_slot;save_file_read_slot;menu_draw_dialog_frame;asm;game-floor-enum-domain.md	serialized player unsigned current-floor byte; stored and copied as a word
-KfSaveSlotSummary	0x08	0x04	current_hp	u32	supported	game/save.h;save_file_write_slot;save_file_read_slot;menu_draw_dialog_frame;asm	serialized player unsigned current-HP halfword; stored and copied as a word
-KfSaveSlotSummary	0x0c	0x04	maximum_hp	u32	supported	game/save.h;save_file_write_slot;save_file_read_slot;menu_draw_dialog_frame;asm	serialized player unsigned maximum-HP halfword; stored and copied as a word
-KfSaveSlotSummary	0x10	0x04	current_mp	u32	supported	game/save.h;save_file_write_slot;save_file_read_slot;menu_draw_dialog_frame;asm	serialized player unsigned current-MP halfword; stored and copied as a word
-KfSaveSlotSummary	0x14	0x04	maximum_mp	u32	supported	game/save.h;save_file_write_slot;save_file_read_slot;menu_draw_dialog_frame;asm	serialized player unsigned maximum-MP halfword; stored and copied as a word
+KfSaveSlotSummary	0x00	0x04	experience	u32	supported	game/save.h;save_file_write_slot;save_file_read_slot;menu_draw_save_slots;asm	serialized player experience word; stored and copied as a word
+KfSaveSlotSummary	0x04	0x04	current_floor	KF_ENUM_STORAGE(KfFloorId, u32)	supported	game/save.h;save_file_write_slot;save_file_read_slot;menu_draw_save_slots;asm;game-floor-enum-domain.md	serialized player unsigned current-floor byte; stored and copied as a word
+KfSaveSlotSummary	0x08	0x04	current_hp	u32	supported	game/save.h;save_file_write_slot;save_file_read_slot;menu_draw_save_slots;asm	serialized player unsigned current-HP halfword; stored and copied as a word
+KfSaveSlotSummary	0x0c	0x04	maximum_hp	u32	supported	game/save.h;save_file_write_slot;save_file_read_slot;menu_draw_save_slots;asm	serialized player unsigned maximum-HP halfword; stored and copied as a word
+KfSaveSlotSummary	0x10	0x04	current_mp	u32	supported	game/save.h;save_file_write_slot;save_file_read_slot;menu_draw_save_slots;asm	serialized player unsigned current-MP halfword; stored and copied as a word
+KfSaveSlotSummary	0x14	0x04	maximum_mp	u32	supported	game/save.h;save_file_write_slot;save_file_read_slot;menu_draw_save_slots;asm	serialized player unsigned maximum-MP halfword; stored and copied as a word
 KfSaveWorkspace	0x00	0x280	header	KfSaveHeader	supported	game/save.h;asm;save_workspace_allocate	first 0x280 bytes of the successful 0x2800-byte allocation
 KfSaveWorkspace	0x280	0x2580	payload	KfSavePayload	supported	game/save.h;asm;save_workspace_allocate	remainder of the allocation; separately published and cleared
 KfScreenRect	0x00	0x02	x	u16	supported	render_types.h;quad-rectangle-types.md;GAME:sprite_add_ft4;OPEN:sprite_add_g4;asm;lhu	screen X origin

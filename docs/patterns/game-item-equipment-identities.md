@@ -42,9 +42,9 @@ explain retained special-item timing/bonus values without inventing tuning.
 | `0x80021538 / 1476` | `item_menu_buy` | 97.20054 | Control: shop ordering and availability reads must remain unchanged. |
 | `0x80021afc / 1280` | `item_menu_sell` | 96.77187 | Propagate corrected equipped-ID field identities through exclusion tests; preserve byte quantities and all sold-item rules. |
 | `0x80021ffc / 696` | `item_pickup_confirm` | 100.0 | Control: generic item-ID handling and stack-capacity protocol remain unchanged. |
-| `0x800236ac / 556` | `menu_option_root` | 100.0 | Retail menu row2=shield,row3=head,row4=body; Full Plate21 blocks arm/leg rows, not a special helmet. |
+| `0x800236ac / 556` | `menu_equipment_root` | 100.0 | Retail menu row2=shield,row3=head,row4=body; Full Plate21 blocks arm/leg rows, not a special helmet. |
 | `0x800238d8 / 1476` | `menu_equip_select` | 97.89973 | Correct category names/range constants/slot calls together. Raw rows2/3/4 store to player+92/+90/+91 and pass slot4/0/1. Full Plate clears arms/legs. |
-| `0x8002718c / 2104` | `menu_draw_name_list` | 100.0 | Label-row order and reads match shield+92,head+90,body+91; preserve twenty-pixel row stride and empty-name handling. |
+| `0x8002718c / 2104` | `menu_draw_equipment_names` | 100.0 | Label-row order and reads match shield+92,head+90,body+91; preserve twenty-pixel row stride and empty-name handling. |
 | `0x80016848 / 488` | `player_set_equipment_slot` | 100.0 | Slot0/1/4 store byte IDs at+90/+91/+92 and resolve pointers+7c/+80/+84: head/body/shield. Correct names only, never rearrange fields. |
 | `0x80016a30 / 244` | `player_equip_weapon` | 100.0 | Control: byte ID and 44-byte record stride; path formatting and stale-pointer-on-empty behavior unchanged. |
 | `0x80016b24 / 156` | `player_begin_weapon_attack` | 100.0 | Control: weapon-none gate, animation and charging remain unchanged. |
