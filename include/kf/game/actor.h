@@ -286,7 +286,7 @@ typedef struct KfActor {
     u8 spawn_chance;
     KfActorAction action;
     KfObjectId death_drop_object_id;
-    KfAnimationClip animation_id;
+    KfAnimationClip animation_clip;
     KfActorVerticalState vertical_state;
     u8 unknown_0c[2];
     s16 local_z;

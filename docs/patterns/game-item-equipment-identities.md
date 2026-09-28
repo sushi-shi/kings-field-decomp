@@ -62,7 +62,7 @@ explain retained special-item timing/bonus values without inventing tuning.
 | `0x80035e44 / 1692` | `map_restore_floor_state` | 99.96454 | Named Dragon Sword/Moonlight Sword stock checks gate floor5 link clearing; preserve unrelated link52 domain. |
 | `0x800150a8 / 84` | `weapon_records_load_and_mirror_angles` | 100.0 | Control: sixteen 44-byte records; selectable weapon band still includes blank row12 and stops before Iron Mask13. |
 | `0x800150fc / 44` | `armor_records_load` | 100.0 | Control:42 records with item origin13; capacity is not the count of named equipment. |
-| `0x800187a4 / 76` | `lighting_apply_weapon9_environment` | 100.0 | Control: Shadow Blade caller uses existing function symbol, blend2500/4096 and half fog-near; no symbol or instruction changes. |
+| `0x800187a4 / 76` | `lighting_apply_shadow_blade_environment` | 100.0 | Control: Shadow Blade caller uses existing function symbol, blend2500/4096 and half fog-near; no symbol or instruction changes. |
 
 ## Resource evidence and names
 
@@ -168,7 +168,7 @@ recalculation; the existing unsigned storage and later cap remain significant.
 The original balance rationale for eight is unknown.
 
 Feather Boots (38) bypass the fatal-drop branch only when the cell attribute
-is 93 and `floor_height - target < -3000`. The attribute remains numeric
+is 93 and `foot_height - target < -3000`. The attribute remains numeric
 because its general meaning is unproven. This is a specific exception, not
 general fall or hazard immunity; the separate attribute-82 death check remains.
 
@@ -188,7 +188,7 @@ triples remain 20/20/3, 36/18/3, 8/8/1, and 5/5/2 respectively. Effect and
 magic-record numbers are separate domains from item IDs. No wall-clock timing
 or reason for the authored thresholds is inferred.
 
-Shadow Blade (9) selects the existing `lighting_apply_weapon9_environment`
+Shadow Blade (9) selects the existing `lighting_apply_shadow_blade_environment`
 symbol: a 2500/4096 (61.03515625%) Q12 color blend and half fog-near distance.
 The precise blend's artistic rationale remains unknown. The floor-5 cutscene
 removes the Dragon Sword (10), displays its model and replaces that display

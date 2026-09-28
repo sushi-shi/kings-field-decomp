@@ -690,7 +690,7 @@ void actor_update_effect_action(KfActorEffectSlot effect_slot)
 
     if (actor->action_progress == KF_ACTOR_PROGRESS_INIT) {
         actor->action_progress = KF_ACTOR_PROGRESS_LOCKED;
-        actor->animation_id = definition->action_animations[index];
+        actor->animation_clip = definition->action_animations[index];
         actor->animation_phase = 0;
     }
     actor_advance_animation_clamped(actor, definition->action_animation_steps[index]);
@@ -874,7 +874,7 @@ void actor_update_current_action(void)
     case KF_ACTOR_ACTION_IDLE:
         if (actor->action_progress == KF_ACTOR_PROGRESS_INIT) {
             actor->action_progress = KF_ACTOR_PROGRESS_RUNNING;
-            actor->animation_id = definition->action_animations[KF_ACTOR_ANIM_SLOT_IDLE];
+            actor->animation_clip = definition->action_animations[KF_ACTOR_ANIM_SLOT_IDLE];
             actor->animation_phase = 0;
         }
         actor_advance_animation_wrapped(actor, definition->action_animation_steps[KF_ACTOR_ANIM_SLOT_IDLE]);
@@ -882,8 +882,8 @@ void actor_update_current_action(void)
     case KF_ACTOR_ACTION_WANDER:
         if (actor->action_progress == KF_ACTOR_PROGRESS_INIT) {
             actor->action_progress = KF_ACTOR_PROGRESS_RUNNING;
-            if (actor->animation_id != definition->action_animations[KF_ACTOR_ANIM_SLOT_MOVE]) {
-                actor->animation_id = definition->action_animations[KF_ACTOR_ANIM_SLOT_MOVE];
+            if (actor->animation_clip != definition->action_animations[KF_ACTOR_ANIM_SLOT_MOVE]) {
+                actor->animation_clip = definition->action_animations[KF_ACTOR_ANIM_SLOT_MOVE];
                 actor->animation_phase = 0;
             }
             actor->movement_yaw = rand() >> KF_RANDOM_ANGLE_SHIFT;
@@ -897,8 +897,8 @@ void actor_update_current_action(void)
         switch (actor->action_progress) {
         case KF_ACTOR_PROGRESS_INIT:
             actor->action_progress = KF_ACTOR_PROGRESS_RUNNING;
-            if (actor->animation_id != definition->action_animations[KF_ACTOR_ANIM_SLOT_MOVE]) {
-                actor->animation_id = definition->action_animations[KF_ACTOR_ANIM_SLOT_MOVE];
+            if (actor->animation_clip != definition->action_animations[KF_ACTOR_ANIM_SLOT_MOVE]) {
+                actor->animation_clip = definition->action_animations[KF_ACTOR_ANIM_SLOT_MOVE];
                 actor->animation_phase = 0;
             }
             actor->movement_yaw = ACTOR_BEARING_TO_PLAYER(actor);
@@ -930,7 +930,7 @@ void actor_update_current_action(void)
     case KF_ACTOR_ACTION_HIT_REACTION:
         if (actor->action_progress == KF_ACTOR_PROGRESS_INIT) {
             actor->action_progress = KF_ACTOR_PROGRESS_RUNNING;
-            actor->animation_id = definition->action_animations[KF_ACTOR_ANIM_SLOT_HIT_REACTION];
+            actor->animation_clip = definition->action_animations[KF_ACTOR_ANIM_SLOT_HIT_REACTION];
             actor->animation_phase = 0;
         }
         actor_advance_animation_clamped(actor, definition->action_animation_steps[KF_ACTOR_ANIM_SLOT_HIT_REACTION]);
@@ -944,7 +944,7 @@ void actor_update_current_action(void)
     case KF_ACTOR_ACTION_DYING:
         if (actor->action_progress == KF_ACTOR_PROGRESS_INIT) {
             actor->action_progress = KF_ACTOR_PROGRESS_RUNNING;
-            actor->animation_id = definition->action_animations[KF_ACTOR_ANIM_SLOT_DEATH];
+            actor->animation_clip = definition->action_animations[KF_ACTOR_ANIM_SLOT_DEATH];
             actor->animation_phase = 0;
         }
         actor_advance_animation_clamped(actor, definition->action_animation_steps[KF_ACTOR_ANIM_SLOT_DEATH]);
@@ -988,8 +988,8 @@ void actor_update_current_action(void)
     case KF_ACTOR_ACTION_RETREAT:
         if (actor->action_progress == KF_ACTOR_PROGRESS_INIT) {
             actor->action_progress = KF_ACTOR_PROGRESS_RUNNING;
-            if (actor->animation_id != definition->action_animations[KF_ACTOR_ANIM_SLOT_MOVE]) {
-                actor->animation_id = definition->action_animations[KF_ACTOR_ANIM_SLOT_MOVE];
+            if (actor->animation_clip != definition->action_animations[KF_ACTOR_ANIM_SLOT_MOVE]) {
+                actor->animation_clip = definition->action_animations[KF_ACTOR_ANIM_SLOT_MOVE];
                 actor->animation_phase = 0;
             }
             actor->movement_yaw = ACTOR_BEARING_TO_PLAYER(actor);
@@ -1004,7 +1004,7 @@ void actor_update_current_action(void)
     case KF_ACTOR_ACTION_MELEE_ATTACK:
         if (actor->action_progress == KF_ACTOR_PROGRESS_INIT) {
             actor->action_progress = KF_ACTOR_PROGRESS_LOCKED;
-            actor->animation_id = definition->action_animations[KF_ACTOR_ANIM_SLOT_MELEE];
+            actor->animation_clip = definition->action_animations[KF_ACTOR_ANIM_SLOT_MELEE];
             actor->animation_phase = 0;
         }
         actor_advance_animation_clamped(actor, definition->action_animation_steps[KF_ACTOR_ANIM_SLOT_MELEE]);
@@ -1041,7 +1041,7 @@ void actor_update_current_action(void)
     case KF_ACTOR_ACTION_JUMP_ATTACK:
         if (actor->action_progress == KF_ACTOR_PROGRESS_INIT) {
             actor->action_progress = KF_ACTOR_PROGRESS_JUMP_RISING;
-            actor->animation_id = definition->action_animations[KF_ACTOR_ANIM_SLOT_JUMP_ATTACK];
+            actor->animation_clip = definition->action_animations[KF_ACTOR_ANIM_SLOT_JUMP_ATTACK];
             actor->animation_phase = 0;
             attribute = map_cell_attribute_grid.cells[actor->cell_z][actor->cell_x];
             if (map_cell_attribute_height_table[KF_ENUM_ENCODE(u8, attribute) - 1] > ACTOR_JUMP_HEIGHT_THRESHOLD) {
@@ -1100,7 +1100,7 @@ void actor_update_current_action(void)
     case KF_ACTOR_ACTION_SPECIAL_ATTACK:
         if (actor->action_progress == KF_ACTOR_PROGRESS_INIT) {
             actor->action_progress = KF_ACTOR_PROGRESS_LOCKED;
-            actor->animation_id = definition->action_animations[KF_ACTOR_ANIM_SLOT_SPECIAL_ATTACK];
+            actor->animation_clip = definition->action_animations[KF_ACTOR_ANIM_SLOT_SPECIAL_ATTACK];
             actor->animation_phase = 0;
         }
         actor_advance_animation_clamped(actor, definition->action_animation_steps[KF_ACTOR_ANIM_SLOT_SPECIAL_ATTACK]);
@@ -1120,7 +1120,7 @@ void actor_update_current_action(void)
     case KF_ACTOR_ACTION_EXIT_BLOCKED_PLACEMENT:
         if (actor->action_progress == KF_ACTOR_PROGRESS_INIT) {
             actor->action_progress = KF_ACTOR_PROGRESS_RUNNING;
-            actor->animation_id = definition->action_animations[KF_ACTOR_ANIM_SLOT_MOVE];
+            actor->animation_clip = definition->action_animations[KF_ACTOR_ANIM_SLOT_MOVE];
             actor->animation_phase = 0;
         }
         result = collision_query_world(actor->position.vx,
@@ -1152,7 +1152,7 @@ void actor_update_current_action(void)
     case KF_ACTOR_ACTION_DRIFT:
         if (actor->action_progress == KF_ACTOR_PROGRESS_INIT) {
             actor->action_progress = KF_ACTOR_PROGRESS_RUNNING;
-            actor->animation_id = definition->action_animations[KF_ACTOR_ANIM_SLOT_DRIFT];
+            actor->animation_clip = definition->action_animations[KF_ACTOR_ANIM_SLOT_DRIFT];
             actor->animation_phase = 0;
             actor->movement_y = 0;
             actor->movement_z = 0;
@@ -1188,8 +1188,8 @@ void actor_update_current_action(void)
     case KF_ACTOR_ACTION_RETURN_HOME:
         if (actor->action_progress == KF_ACTOR_PROGRESS_INIT) {
             actor->action_progress = KF_ACTOR_PROGRESS_RUNNING;
-            if (actor->animation_id != definition->action_animations[KF_ACTOR_ANIM_SLOT_MOVE]) {
-                actor->animation_id = definition->action_animations[KF_ACTOR_ANIM_SLOT_MOVE];
+            if (actor->animation_clip != definition->action_animations[KF_ACTOR_ANIM_SLOT_MOVE]) {
+                actor->animation_clip = definition->action_animations[KF_ACTOR_ANIM_SLOT_MOVE];
                 actor->animation_phase = 0;
             }
             /* Retail reads the home position before this branch assigns it. */
@@ -1208,13 +1208,13 @@ void actor_update_current_action(void)
                 actor->movement_yaw = KF_ENUM_ENCODE(u8, actor->heading_quadrant) * KF_ANGLE_QUARTER_TURN;
                 actor->rotation.angles.y = angle_approach(
                     actor->rotation.angles.y, actor->movement_yaw, definition->turn_rate);
-                if (actor->animation_id != definition->action_animations[KF_ACTOR_ANIM_SLOT_MELEE]) {
+                if (actor->animation_clip != definition->action_animations[KF_ACTOR_ANIM_SLOT_MELEE]) {
                     break;
                 }
                 if (actor->movement_yaw == actor->rotation.angles.y
                     && actor_animation_crossed_phase(actor, ACTOR_HOME_ANIMATION_RESET_PHASE)) {
                     actor->animation_phase = 0;
-                    actor->animation_id = definition->action_animations[KF_ACTOR_ANIM_SLOT_MELEE];
+                    actor->animation_clip = definition->action_animations[KF_ACTOR_ANIM_SLOT_MELEE];
                     break;
                 }
                 actor_advance_animation_wrapped(actor, definition->action_animation_steps[KF_ACTOR_ANIM_SLOT_MOVE]);
@@ -1231,7 +1231,7 @@ void actor_update_current_action(void)
     case KF_ACTOR_ACTION_MULTI_HIT_ATTACK:
         if (actor->action_progress == KF_ACTOR_PROGRESS_INIT) {
             actor->action_progress = KF_ACTOR_PROGRESS_LOCKED;
-            actor->animation_id = definition->action_animations[KF_ACTOR_ANIM_SLOT_MULTI_HIT_ATTACK];
+            actor->animation_clip = definition->action_animations[KF_ACTOR_ANIM_SLOT_MULTI_HIT_ATTACK];
             actor->animation_phase = 0;
         }
         actor_advance_animation_clamped(actor, definition->action_animation_steps[KF_ACTOR_ANIM_SLOT_MULTI_HIT_ATTACK]);

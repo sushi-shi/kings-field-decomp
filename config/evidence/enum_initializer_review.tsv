@@ -27,11 +27,11 @@ src/game/menu_item_model_preview.c:12	menu_item_preview_rotation	SVECTOR	numeric
 src/game/menu_map_viewer.c:34	path	char[16]	encoded_content		Filename, path template, debug text or number-formatting character buffer; byte positions hold character encodings.
 src/game/menu_runtime.c:641	name	char[16]	encoded_content		Filename, path template, debug text or number-formatting character buffer; byte positions hold character encodings.
 src/game/notify_queue.c:32	notification_sprites	KfNotificationSprite[6]	typed_record		Each row already carries KfNotificationSpriteState; sprite coordinates and UVs remain quantities.
-src/game/player_core.c:46	weapon_image_path_template	char[16]	encoded_content		Filename, path template, debug text or number-formatting character buffer; byte positions hold character encodings.
+src/game/player_core.c:46	weapon_asset_path_template	char[16]	encoded_content		Filename, path template, debug text or number-formatting character buffer; byte positions hold character encodings.
 src/game/player_core.c:49	floor_entry_cells	KfFloorEntryCell[5]	numeric_geometry		Tile X/Z coordinates selected by the existing floor domain.
 src/game/player_death.c:33	player_sound_refs	SoundRef[3]	sdk_audio		SDK program, tone and note numbers passed to sound APIs; numerical handles/pitch, not game selectors.
 src/game/player_update.c:68	player_darkness_color_matrix	MATRIX	numeric_matrix		SDK matrix coefficients/translation; arithmetic interpolation and matrix multiplication accept quantities. KF_FIXED12_ONE names numeric Q12 unity.
-src/game/player_update.c:74	player_damage_camera_offsets	SVECTOR[8]	numeric_geometry		SDK vector coordinates/rotation/displacements and padding; quantitative geometry.
+src/game/player_update.c:74	player_damage_view_rotation_offsets	SVECTOR[8]	numeric_geometry		SDK vector coordinates/rotation/displacements and padding; quantitative geometry.
 src/game/player_use_item.c:25	enemy_info_image_path_template	char[14]	encoded_content		Filename, path template, debug text or number-formatting character buffer; byte positions hold character encodings.
 src/game/player_use_item.c:28	person_image_path_template	char[15]	encoded_content		Filename, path template, debug text or number-formatting character buffer; byte positions hold character encodings.
 src/game/player_warp.c:8	actor_transform_color_matrix	MATRIX	numeric_matrix		SDK matrix coefficients/translation; arithmetic interpolation and matrix multiplication accept quantities. KF_FIXED12_ONE names numeric Q12 unity.

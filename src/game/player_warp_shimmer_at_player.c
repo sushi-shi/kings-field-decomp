@@ -8,6 +8,6 @@ void player_warp_shimmer_at_player(KF_ENUM_PARAM(KfWarpShimmerMode, u32) shimmer
 
     position.vx = player_state.camera_position.vx;
     position.vz = player_state.camera_position.vz;
-    position.vy = player_state.floor_height;
+    position.vy = player_state.foot_height;
     player_warp_shimmer(shimmer_mode, &position);
 }

@@ -156,7 +156,7 @@ ADDRESS(0x8002cc64, 0xc4)
 void actor_initialize(KfActor *actor)
 {
     actor->lifecycle = KF_ACTOR_LIFECYCLE_ACTIVE;
-    actor->animation_id = KF_ANIMATION_CLIP_FIRST;
+    actor->animation_clip = KF_ANIMATION_CLIP_FIRST;
     actor->animation_phase = 0;
     actor->collision_state = KF_ACTOR_COLLISION_CLEAR;
     actor->vertical_velocity = 0;

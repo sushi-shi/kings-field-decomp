@@ -37,7 +37,7 @@ vendored; no library body is reconstructed here.
 
 | Owner | GAME VA | Size | Source definition / payload |
 | --- | --- | --- | --- |
-| `weapon_image_path_template` | `8005581c` | 16 | player_core; `WEPON\WEP00.MIM` plus NUL |
+| `weapon_asset_path_template` | `8005581c` | 16 | player_core; `WEPON\WEP00.MIM` plus NUL |
 | `floor_entry_cells` | `8005582c` | 10 | player_core; `(15,2), (29,56), (28,18), (7,22), (39,69)` as five x-then-z byte records |
 | `enemy_info_image_path_template` | `80055838` | 14 | player_use_item; `ENE0\EI00.TIM` plus NUL |
 | `person_image_path_template` | `80055848` | 15 | player_use_item; `PRSN\PER00.TIM` plus NUL |

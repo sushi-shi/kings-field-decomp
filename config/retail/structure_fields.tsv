@@ -11,7 +11,7 @@ KfActor	0x06	0x01	lifecycle	KfActorLifecycle	supported	game/actor.h;asm;xrefs;ga
 KfActor	0x07	0x01	spawn_chance	u8	supported	game/actor.h;asm;xrefs;semantic-field-names.md;asm;CFG;callers;callees;xrefs	placement chance shifted by 7 and compared with rand in actor awareness
 KfActor	0x08	0x01	action	KfActorAction	supported	game/actor.h;asm;xrefs;game-actor-states.md	behavior action ID (KF_ACTOR_ACTION_*), distinct from animation-table slots and resource animation IDs
 KfActor	0x09	0x01	death_drop_object_id	KfObjectId	supported	game/actor.h;asm;xrefs;semantic-field-names.md;asm;CFG;callers;callees;xrefs	actor death passes this object ID to map_object_spawn_drop; 0x63 suppresses the drop
-KfActor	0x0a	0x01	animation_id	KfAnimationClip	supported	game/actor.h;asm;xrefs;strict-enum-audit.md	animation selector
+KfActor	0x0a	0x01	animation_clip	KfAnimationClip	supported	game/actor.h;asm;xrefs;strict-enum-audit.md	animation selector
 KfActor	0x0b	0x01	vertical_state	KfActorVerticalState	supported	game/actor.h;asm;xrefs;game-actor-states.md	vertical movement policy: none 0, step-up 1, fall 2, long drop 3, jump attack 4
 KfActor	0x0c	0x02	unknown_0c	u8[2]	opaque	game/actor.h;asm;xrefs	meaning unresolved
 KfActor	0x0e	0x02	local_z	s16	supported	game/actor.h;asm;xrefs;actor_pool_load_placements;axis-from-position	local offset along z added to tile_z * 2000
@@ -614,7 +614,7 @@ KfPlayerState	0x9a	0x08	view_rotation_offset	SVECTOR	supported	game/player.h;dat
 KfPlayerState	0xa2	0x01	update_state	KfPlayerUpdateState	supported	game/player.h;data_identities.tsv;strict-enum-audit.md	member of the player_state aggregate
 KfPlayerState	0xa3	0x01	unknown_a3	u8	opaque	game/player.h;data_identities.tsv	unresolved bytes
 KfPlayerState	0xa4	0x10	camera_position	VECTOR	supported	game/player.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0xb4	0x04	floor_height	s32	supported	game/player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0xb4	0x04	foot_height	s32	supported	game/player.h;data_identities.tsv	Y of the player feet: set to the cell floor height on sync/landing, integrated by vertical velocity while stepping or falling; camera Y and collision queries derive from it
 KfPlayerState	0xb8	0x08	camera_rotation	SVECTOR	supported	game/player.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0xc0	0x0c	motion_state	KfPlayerMotionState	supported	game/player.h;data_identities.tsv;typed-packed-state.md	member of the player_state aggregate
 KfPlayerState	0xcc	0x02	previous_map_cell	KfMapCell	supported	game/player.h;data_identities.tsv	member of the player_state aggregate

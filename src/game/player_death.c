@@ -210,7 +210,7 @@ void player_death_restart(void)
     player_state.view_rotation_offset.vx = 0;
     player_state.previous_map_cell.coords.x = player_state.motion_state.fields.map_cell.coords.x;
     player_state.previous_map_cell.coords.z = player_state.motion_state.fields.map_cell.coords.z;
-    player_state.camera_position.vy = player_state.floor_height - KF_PLAYER_CAMERA_HEIGHT;
+    player_state.camera_position.vy = player_state.foot_height - KF_PLAYER_CAMERA_HEIGHT;
 }
 
 ADDRESS(0x8001564c, 0x70)

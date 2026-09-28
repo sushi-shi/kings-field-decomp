@@ -2833,7 +2833,7 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(by_site[0x800160E4]["target_name"], "player_level_growth_table")
         self.assertEqual(by_site[0x80016864]["target_name"], "player_equipment_slot_jump_table")
         self.assertEqual(by_site[0x80016B0C]["target_name"], "player_recalculate_combat_stats")
-        self.assertEqual(by_site[0x80016AAC]["target_name"], "weapon_image_path_template")
+        self.assertEqual(by_site[0x80016AAC]["target_name"], "weapon_asset_path_template")
         self.assertEqual(by_site[0x80012000]["confidence"], "pointer-reviewed")
 
     def test_player_combat_relocations_are_reviewed(self) -> None:

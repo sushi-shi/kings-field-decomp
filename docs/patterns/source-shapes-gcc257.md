@@ -553,7 +553,7 @@ See [the awareness trace controls](game-actor-awareness.md).
 
 | Retail evidence | Source shape | Function |
 | --- | --- | --- |
-| `lbu; sh zero,18; sb v0,10` init idiom | `timer = 1; animation_id = a[k]; animation_phase = 0;` in that order: the scheduler fills the load delay with the independent halfword store. Phase first leaves `sh; lbu; nop; sb`, because a load cannot move above a store through a different base pointer (alias analysis assumes a conflict) | `actor_update_current_action` `0x8002fa88` |
+| `lbu; sh zero,18; sb v0,10` init idiom | `timer = 1; animation_clip = a[k]; animation_phase = 0;` in that order: the scheduler fills the load delay with the independent halfword store. Phase first leaves `sh; lbu; nop; sb`, because a load cannot move above a store through a different base pointer (alias analysis assumes a conflict) | `actor_update_current_action` `0x8002fa88` |
 | `lbu v0,21(s1)` hoisted above seven zero stores, `sb v0,10` last | the animation assignment is the second statement; the dependent `sb` becomes ready last and trails the independent stores | same |
 | case 2: `beqz -> L0; beq 1 -> L1; j default` with bodies after | a nested `switch (actor->action_timer)` with `case 0`, `case 1`, `default`; the single `actor_advance_animation_wrapped` call sits after the inner switch and the blocked path leaves with `goto` to the vertical section. Duplicating the call per case merges the copies first and the compiler-made label then hides the shared aim call from cross-jumping (`jump_chain` only covers original labels) | same |
 | case 33's timer==0 path jumps into the far branch's aim call | one `move(1, 0); wrapped(steps[1])` tail after the if/else chain; the near-home branch leaves with `break` | same |

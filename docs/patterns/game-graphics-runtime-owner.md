@@ -104,7 +104,7 @@ Percentages are strict objdiff results; every row below 100% remains open.
 | `80016ee8` | `player_sync_position_to_map` | 100.000000 | 100.000000 | Exact preserved |
 | `800184b0` | `player_death_apply_visual_fade` | 100.000000 | 100.000000 | Exact preserved |
 | `800186c4` | `player_death_update_reverse_fade` | 100.000000 | 100.000000 | Exact preserved |
-| `800187a4` | `lighting_apply_weapon9_environment` | 100.000000 | 100.000000 | Exact preserved |
+| `800187a4` | `lighting_apply_shadow_blade_environment` | 100.000000 | 100.000000 | Exact preserved |
 | `8001b7b0` | `display_show_error_screen` | 100.000000 | 100.000000 | Exact preserved |
 | `8001bae4` | `effect5_texture_cache_prepare` | 100.000000 | 100.000000 | Exact preserved |
 | `8001bb94` | `display_initialize` | 94.253010 | 98.421684 | Open |

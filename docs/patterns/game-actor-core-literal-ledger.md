@@ -110,7 +110,7 @@ culling policy; the earlier asset-variant description was incorrect.
 | `actor_pool_find_free` | 99 | `0` | `found = 0;` | Null pointer: no free/selected actor, cleared animation cache, or consumed player target. |
 | `actor_set_player_transform` | 116 | `0` | `if (position != 0) {` | Null input leaves that player-transform component unchanged. |
 | `actor_set_player_transform` | 119 | `0` | `if (rotation != 0) {` | Null input leaves that player-transform component unchanged. |
-| `actor_initialize` | 157 | `0` | `actor->animation_id = 0;` | Initial animation resource ordinal, before action selection installs its configured clip. |
+| `actor_initialize` | 157 | `0` | `actor->animation_clip = 0;` | Initial animation resource ordinal, before action selection installs its configured clip. |
 | `actor_initialize` | 158 | `0` | `actor->animation_phase = 0;` | Initial/lower animation phase coordinate. |
 | `actor_initialize` | 160 | `0` | `actor->vertical_velocity = 0;` | Start vertical motion from rest. |
 | `actor_initialize` | 172 | `1` | `collision_adjust_cell_occupancy(actor->cell_x, actor->cell_z, 1);` | Add one initialized actor to its cell occupancy. |

@@ -155,9 +155,9 @@ extern void display_show_system_screen(KfSystemScreen screen);
 extern void effect5_texture_cache_prepare(KfFloorId floor);
 extern void fog_interpolate_near(s32 start, s32 end, s32 ratio);
 extern void fog_set_near(s32 distance);
-extern void lighting_apply_color_preset6(void);
-extern void lighting_apply_timed_player_effect(void);
-extern void lighting_apply_weapon9_environment(void);
+extern void lighting_apply_blue_tint(void);
+extern void lighting_apply_illusion_staff_effect(void);
+extern void lighting_apply_shadow_blade_environment(void);
 extern void lighting_set_active_color_matrix(KfGameColorPreset preset);
 extern void lighting_set_color_matrix(
     const MATRIX *from, const MATRIX *to, s32 blend);

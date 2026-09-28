@@ -125,7 +125,7 @@ void player_warp_change_floor(KfFloorId floor, KF_ENUM_PARAM(KfMapVariant, u32) 
         player_state.camera_position.vz / KF_MAP_TILE_SIZE * KF_MAP_TILE_SIZE + KF_MAP_TILE_CENTER;
     position.vz = player_state.camera_position.vz;
     player_sync_position_to_map();
-    position.vy = player_state.floor_height;
+    position.vy = player_state.foot_height;
     player_warp_shimmer(KF_WARP_SHIMMER_SHRINK_REMOVE, &position);
 }
 
@@ -154,7 +154,7 @@ void player_warp_same_floor(KF_ENUM_PARAM(KfMapVariant, u32) map_variant, s32 ce
     player_state.camera_position.vz = cell_z * KF_MAP_TILE_SIZE + KF_MAP_TILE_CENTER;
     position.vz = player_state.camera_position.vz;
     player_sync_position_to_map();
-    position.vy = player_state.floor_height;
+    position.vy = player_state.foot_height;
     player_warp_shimmer(KF_WARP_SHIMMER_SHRINK_REMOVE, &position);
 }
 
