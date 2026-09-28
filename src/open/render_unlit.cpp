@@ -8,7 +8,7 @@ void render_enqueue_unlit_triangles(u16 object_index, s16 depth_bias)
     KfTmdPrimitive *polygon;
     KfTmdObject *object = tmd_get_object(tmd_context(), object_index);
     u32 remaining = object->primitive_count;
-    u8 *packet = (u8 *)open_graphics_runtime.tmd_state.current_asset.data +
+    u8 *packet = (u8 *)open_graphics_runtime.tmd_state.current_tmd.data +
         (object->primitive_offset + KF_TMD_HEADER_BYTES);
     u32 header;
     s32 depth;

@@ -143,12 +143,12 @@ void player_use_item(KfObjectId item_id)
             }
         }
         if (player_state.progress_state.current_floor == KF_FLOOR_2) {
-            effect_pool_spawn_typed(
+            effect_pool_spawn_floor_deformation(
                 PLAYER_HARP_FLOOR2_FIRST_SEGMENT, PLAYER_HARP_FLOOR2_SEGMENT_COUNT,
                 PLAYER_HARP_PROGRESS_PER_UPDATE, PLAYER_HARP_CELL_STAGGER,
                 PLAYER_HARP_FLOOR2_SWEEP_UPDATES, PLAYER_HARP_FLOOR2_HOLD_COUNTDOWN);
         } else if (player_state.progress_state.current_floor == KF_FLOOR_3) {
-            effect_pool_spawn_typed(
+            effect_pool_spawn_floor_deformation(
                 PLAYER_HARP_FLOOR3_FIRST_SEGMENT, PLAYER_HARP_FLOOR3_SEGMENT_COUNT,
                 PLAYER_HARP_PROGRESS_PER_UPDATE, PLAYER_HARP_CELL_STAGGER,
                 PLAYER_HARP_FLOOR3_SWEEP_UPDATES, PLAYER_HARP_FLOOR3_HOLD_COUNTDOWN);

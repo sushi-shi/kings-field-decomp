@@ -264,7 +264,7 @@ void map_world_state_persist(void)
 
 void map_unload_floor(void)
 {
-    pool_release_all();
+    animation_cache_release_all();
     audio_close_vab(audio_state);
     map_world_state_persist();
 }

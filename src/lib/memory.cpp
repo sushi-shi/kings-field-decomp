@@ -46,8 +46,7 @@ void memory_set_allocation_mode(KfMemoryArena &arena, KfMemoryAllocationMode all
         memory_destroy_arena(arena);
         arena.storage = static_cast<u8 *>(memory_malloc_checked(MEMORY_INITIAL_ARENA_BYTES));
         if (!arena.storage) {
-            fprintf(stderr, "Cannot allocate the resource arena.\n");
-            exit(1);
+            kf::host_fail("Cannot allocate the resource arena.");
         }
         arena.start = arena.storage;
         arena.end = arena.storage + MEMORY_INITIAL_ARENA_BYTES;

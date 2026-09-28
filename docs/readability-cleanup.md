@@ -206,7 +206,7 @@ They are not prerequisites for using the current Linux client.
 ### Collision result modeling
 
 After the overlapping switch/signedness work, tackle
-`map_object_probe_forward` and its four remaining jumps together with the result
+`map_object_probe_door_closing` and its four remaining jumps together with the result
 representation. Inventory producers and consumers first: high-word kind/detail,
 shifted rejection flags, all-ones no-hit and literal-one results are not one
 uniform bitset. Some existing actor checks compare a high word to a detail

@@ -7,17 +7,17 @@
 
 void render_map_event(KfMapEvent *event, const MATRIX *lights)
 {
-    SVECTOR screen;
+    SVECTOR relative_position;
     MATRIX model;
     MATRIX composed;
     u16 asset;
     KfTmdObject *object;
 
-    screen = VECTOR{
+    relative_position = VECTOR{
         event->reference_position.vx - game_graphics_runtime.render_state.view_position.vx,
         event->reference_position.vy - game_graphics_runtime.render_state.view_position.vy,
         event->reference_position.vz - game_graphics_runtime.render_state.view_position.vz}.narrowed();
-    kf::render_place_model(composed, game_graphics_runtime.render_state.view_matrix, screen);
+    kf::render_place_model(composed, game_graphics_runtime.render_state.view_matrix, relative_position);
     kf::matrix_set_rotation_xyz(event->rotation, model);
     kf::matrix_multiply_rotation(game_graphics_runtime.render_state.view_matrix, model, composed);
     asset = event->model_index + KF_ASSET_MAP_EVENT_FIRST;

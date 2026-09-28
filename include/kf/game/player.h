@@ -13,7 +13,7 @@
 #include <kf/game/player_motion.h>
 #include <kf/lib/player_stats_types.h>
 
-struct KfPoolRecord;
+struct KfAnimationCacheRecord;
 struct KfAssetHeader;
 
 enum {
@@ -147,7 +147,7 @@ typedef struct KfPlayerState {
     struct KfAssetHeader *weapon_asset_buffer;
     s16 weapon_attack_phase;
     u8 unknown_72[2];
-    struct KfPoolRecord *weapon_animation_cache;
+    struct KfAnimationCacheRecord *weapon_animation_cache;
     u8 weapon_magic_shots_remaining;
     u8 weapon_magic_delay;
     KfWeaponAttackCharge weapon_attack_fully_charged;
@@ -171,7 +171,7 @@ typedef struct KfPlayerState {
     KfPlayerUpdateState update_state;
     u8 unknown_a3;
     VECTOR camera_position;
-    s32 floor_height;
+    s32 foot_height;
     SVECTOR camera_rotation;
     KfPlayerMotionState motion_state;
     KfMapCellCoordinates previous_map_cell;
@@ -216,7 +216,7 @@ extern void player_apply_radial_damage(
     const VECTOR *origin, u32 radius, u16 falloff_q12,
     u16 component0, u16 component1, u16 component2, u16 component3, u16 component4,
     u16 scale_q12, u16 multiplier_tenths);
-extern s32 player_calculate_damage_component(s32 base_power, s32 defense, s32 attack);
+extern s32 player_calculate_damage_component(s32 defender_power, s32 defense, s32 attack);
 extern void player_clear_motion(void);
 extern void player_death_apply_visual_fade(const MATRIX *color_from, s32 blend);
 extern void player_death_begin(void);

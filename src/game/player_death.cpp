@@ -176,7 +176,7 @@ void player_death_restart(void)
     if (floor != KF_FLOOR_1) {
         player_state.progress_state.current_floor = KF_FLOOR_1;
         player_state.map_variant = KF_MAP_VARIANT_DEFAULT;
-        pool_release_all();
+        animation_cache_release_all();
         audio_close_vab(audio_state);
         map_load_floor_wrapper();
     }
@@ -189,7 +189,7 @@ void player_death_restart(void)
     player_state.view_rotation_offset = {};
     player_state.previous_map_cell.x = player_state.motion_state.map_cell.x;
     player_state.previous_map_cell.z = player_state.motion_state.map_cell.z;
-    player_state.camera_position.vy = player_state.floor_height - KF_PLAYER_CAMERA_HEIGHT;
+    player_state.camera_position.vy = player_state.foot_height - KF_PLAYER_CAMERA_HEIGHT;
 }
 
 void player_adjust_hp(s32 delta)
@@ -447,9 +447,9 @@ void player_add_experience(s16 amount)
     }
 }
 
-s32 player_calculate_damage_component(s32 base_power, s32 defense, s32 attack)
+s32 player_calculate_damage_component(s32 defender_power, s32 defense, s32 attack)
 {
-    s32 threshold = base_power;
+    s32 threshold = defender_power;
     s32 excess = defense;
 
     if (attack == 0) {

@@ -95,7 +95,7 @@ extern s16 angle_approach(s16 current, s16 target, s32 step);
 extern KfBool angle_mod_delta_le_half_turn(int lhs, int rhs);
 extern s16 angle_shortest_delta(s32 first, s32 second);
 extern void angle_to_forward_xz(s16 angle, struct KfVecXZs *direction);
-extern KfBool angle_within_tolerance(int lhs, int rhs, s16 range);
+extern KfBool angle_within_tolerance(int lhs, int rhs, s16 tolerance);
 extern s32 fixed_vector2_length(s32 x, s32 y);
 extern void matrix_interpolate(
     const MATRIX *from, const MATRIX *to, MATRIX *output, s32 blend);
@@ -115,6 +115,6 @@ extern void vector3s_scale_shift12_alt(s16 scale, s16 *vector);
 extern s32 vector_xz_to_angle(s32 x, s32 z);
 
 extern void color_lerp_cvector(const CVECTOR *from, const CVECTOR *to, CVECTOR *output, s32 blend);
-extern u16 color_lerp_rgb555(u16 color0, u16 color1, s32 blend);
+extern u16 color_lerp_rgb555(u16 from, u16 to, s32 blend);
 
 #endif

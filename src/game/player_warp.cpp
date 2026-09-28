@@ -137,7 +137,7 @@ void player_warp_change_floor(KfFloorId floor, KfMapVariant map_variant)
         player_state.camera_position.vz / KF_MAP_TILE_SIZE * KF_MAP_TILE_SIZE + KF_MAP_TILE_CENTER;
     position.vz = player_state.camera_position.vz;
     player_sync_position_to_map();
-    position.vy = player_state.floor_height;
+    position.vy = player_state.foot_height;
     player_warp_shimmer(KF_WARP_SHIMMER_SHRINK_REMOVE, &position);
 }
 
@@ -150,7 +150,7 @@ void player_warp_same_floor(KfMapVariant map_variant, s32 cell_x, s32 cell_z)
     player_warp_shimmer(KF_WARP_SHIMMER_GROW_REMOVE, &position);
     collision_adjust_cell_occupancy(player_state.motion_state.map_cell.x,
                                     player_state.motion_state.map_cell.z, -1);
-    pool_release_all();
+    animation_cache_release_all();
     previous_variant = player_state.map_variant;
     player_state.map_variant = map_variant;
     map_variant_assets_load();
@@ -165,7 +165,7 @@ void player_warp_same_floor(KfMapVariant map_variant, s32 cell_x, s32 cell_z)
     player_state.camera_position.vz = cell_z * KF_MAP_TILE_SIZE + KF_MAP_TILE_CENTER;
     position.vz = player_state.camera_position.vz;
     player_sync_position_to_map();
-    position.vy = player_state.floor_height;
+    position.vy = player_state.foot_height;
     player_warp_shimmer(KF_WARP_SHIMMER_SHRINK_REMOVE, &position);
 }
 

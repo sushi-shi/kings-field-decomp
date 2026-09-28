@@ -66,7 +66,7 @@ enum class KfMenuConfirmKind : s32 {
 enum class KfMenuPreviewMode : s32 {
     KF_MENU_PREVIEW_ITEM_MODEL = 0,
     KF_MENU_PREVIEW_ITEM_DETAIL = 1,
-    KF_MENU_PREVIEW_MAGIC_ICON = 2
+    KF_MENU_PREVIEW_MAGIC_ARTWORK = 2
 }; using enum KfMenuPreviewMode;
 
 enum class KfTradeMode : s32 {
@@ -201,7 +201,7 @@ enum {
 };
 
 enum {
-    MENU_MARKER_OT_DEPTH = 500,
+    MENU_OVERLAY_OT_DEPTH = 500,
     MENU_CONTENT_OT_DEPTH = 1000,
     MENU_WIDGET_OT_DEPTH = 2000,
     MENU_WINDOW_OT_DEPTH = 2900,
@@ -265,8 +265,8 @@ enum {
 
 typedef struct KfMenuAssets {
     kf::DrawFace background_quads[KF_DISPLAY_BUFFER_COUNT][MENU_BACKGROUND_QUAD_COUNT];
-    kf::DrawFace mid_depth_quads[KF_DISPLAY_BUFFER_COUNT];
-    kf::DrawFace foreground_quads[KF_DISPLAY_BUFFER_COUNT];
+    kf::DrawFace magic_artwork_quads[KF_DISPLAY_BUFFER_COUNT];
+    kf::DrawFace message_image_quads[KF_DISPLAY_BUFFER_COUNT];
     kf::DrawFace dialog_quads[KF_DISPLAY_BUFFER_COUNT][MENU_DIALOG_QUAD_COUNT];
     MenuSpriteDef number_atlas;
     MenuSpriteDef glyph_atlas;
@@ -326,69 +326,69 @@ enum class KfMenuModelAllocation : s32 {
     KF_MENU_MODEL_RELEASED = 0,
     KF_MENU_MODEL_ALLOCATED = 1
 }; using enum KfMenuModelAllocation;
-extern KfMenuModelAllocation menu_item_model_allocation_pending;
+extern KfMenuModelAllocation menu_item_model_allocation;
 
 extern void item_load_database(void);
-extern void item_menu_root(KfItemStockBank shop_bank);
+extern void shop_menu_root(KfItemStockBank shop_bank);
 extern KfMenuResult item_pickup_confirm(KfObjectId item_id);
-extern void menu_add_frame_quad(void);
-extern void menu_add_marker_quad(void);
+extern void menu_add_message_image_quad(void);
+extern void menu_add_magic_artwork_quad(void);
 extern void menu_blit_sprite(
     const MenuSpriteDef *sprite, const MenuPoint *position);
 extern void menu_blit_sprite_translucent(
     const MenuSpriteDef *sprite, const MenuPoint *position);
 extern void menu_config_panel(void);
-extern void menu_draw_dialog_frame(
+extern void menu_draw_save_slots(
     const KfSaveSlotSummary *summaries, KfSaveSlotOverlay slot_overlay);
 extern void menu_draw_item_detail(
     KfObjectId item_id, KfItemStockBank shop_bank, KfTradeMode price_mode);
-extern void menu_draw_item_name_frame(KfObjectId item_id);
+extern void menu_draw_pickup_preview(KfObjectId item_id);
 extern void menu_draw_number(
     const MenuSpriteDef *font, const MenuGlyphString *string);
 extern void menu_draw_string(
     const MenuSpriteDef *font, const MenuGlyphString *string);
-extern void menu_draw_name_list(void);
-extern void menu_draw_stats_header(void);
+extern void menu_draw_equipment_names(void);
+extern void menu_draw_status_summary(void);
 extern void menu_draw_status_details(void);
 extern void menu_draw_two_option(
     const MenuGlyphString *accept_label, const MenuGlyphString *decline_label,
     KfMenuConfirmChoice selected_choice, KfMenuConfirmState confirmation);
-extern void menu_draw_window(KfMenuWindowKind window_kind, s32 count, s32 highlight, KfMenuConfirmState confirmation);
+extern void menu_draw_window(KfMenuWindowKind window_kind, s32 row_count, s32 highlight_row, KfMenuConfirmState confirmation);
 extern void menu_draw_window_backdrop(void);
 extern void menu_format_number(
-    s32 value, s32 count, KfFormatPaddingMode padding_mode, s16 *out);
-extern void menu_drop_item(void);
+    s32 value, s32 digit_count, KfFormatPaddingMode padding_mode, s16 *out);
+extern void menu_drop_item_panel(void);
 extern u32 menu_enter_mode(KfMenuMode menu_mode);
 extern u32 menu_enter_mode(KfMenuMode menu_mode, KfObjectId item_id);
 extern u32 menu_enter_mode(KfMenuMode menu_mode, KfItemStockBank shop_bank);
 extern void menu_equip_select(KfEquipmentMenuCategory equipment_category);
 extern void menu_frame_begin(void);
 extern void menu_item_model_preview(KfObjectId item_id);
-extern void menu_list_init(KfMenuList *list, KfMenuWindowKind window_kind, s32 row);
-extern KfMenuResult menu_list_interact(
+extern void menu_list_init(KfMenuList *list, KfMenuWindowKind window_kind, s32 title_row);
+extern KfMenuResult menu_list_confirm(
     const KfMenuList *list, KfMenuConfirmKind confirm_kind, KfMenuPreviewMode preview_mode,
     KfObjectId item_id, KfItemStockBank shop_bank, KfTradeMode price_mode);
-extern KfMenuResult menu_list_interact(
+extern KfMenuResult menu_list_confirm(
     const KfMenuList *list, KfMenuConfirmKind confirm_kind, KfMenuPreviewMode preview_mode,
     KfEffectKind magic_id, KfItemStockBank shop_bank, KfTradeMode price_mode);
 extern void menu_list_render(const KfMenuList *list);
 extern KfResourceLoadResult menu_load_item_model(KfObjectId item_id);
-extern KfResourceLoadResult menu_load_item_texture(KfMenuTextureId texture_id);
+extern KfResourceLoadResult menu_load_texture(KfMenuTextureId texture_id);
 extern void menu_release_item_model(void);
 extern KfMenuResult menu_load_panel(void);
 extern KfMagicPanelResult menu_magic_panel(void);
 extern void menu_map_viewer(KfObjectId item_id);
-extern void menu_option_root(void);
+extern void menu_equipment_root(void);
 extern void menu_play_input_sound(KfMenuSoundCue cue);
 extern void menu_present_frame(void);
 extern s32 menu_root(void);
 extern void menu_save_confirm(void);
-extern KfMenuResult menu_save_load_hub(void);
+extern KfMenuResult menu_system_panel(void);
 extern KfMenuResult menu_save_panel(void);
 extern void menu_spell_select(void);
 extern void menu_status_panel(void);
 extern KfMenuResult menu_two_option_prompt(
-    KfMenuWindowKind window_kind, s32 count, s32 highlight,
+    KfMenuWindowKind window_kind, s32 row_count, s32 highlight_row,
     const KfSaveSlotSummary *summaries);
 extern void talk_show_dialogue_page(KfFloorId floor, u8 stage, KfCharacterId character_id, u8 page);
 

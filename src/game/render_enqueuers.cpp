@@ -269,12 +269,12 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias, const MATRIX *lights)
     }
 }
 
-CVECTOR model_textured_primitive_color = {
+CVECTOR retextured_primitive_color = {
     KF_TEXTURE_BASE_BRIGHTNESS, KF_TEXTURE_BASE_BRIGHTNESS,
     KF_TEXTURE_BASE_BRIGHTNESS, 0
 };
 
-void render_enqueue_model(u16 object_index, s16 depth_bias, const MATRIX *lights)
+void render_enqueue_tmd_retextured(u16 object_index, s16 depth_bias, const MATRIX *lights)
 {
     const auto object = tmd_read_object(tmd_context(), object_index);
     auto stream = tmd_primitive_stream(tmd_context(), object);
@@ -295,11 +295,11 @@ void render_enqueue_model(u16 object_index, s16 depth_bias, const MATRIX *lights
                 face.material = game_graphics_runtime.active_render_material;
                 render_face_uvs(face, {p.uv[0], p.uv[1], p.uv[2]});
                 colors[0] = kf::render_light_normal(game_graphics_runtime.render_state.lighting, *lights,
-                    tmd_read_normal(normals, p.normals[0]), model_textured_primitive_color, projected->fog(0));
+                    tmd_read_normal(normals, p.normals[0]), retextured_primitive_color, projected->fog(0));
                 colors[1] = kf::render_light_normal(game_graphics_runtime.render_state.lighting, *lights,
-                    tmd_read_normal(normals, p.normals[1]), model_textured_primitive_color, projected->fog(0));
+                    tmd_read_normal(normals, p.normals[1]), retextured_primitive_color, projected->fog(0));
                 colors[2] = kf::render_light_normal(game_graphics_runtime.render_state.lighting, *lights,
-                    tmd_read_normal(normals, p.normals[2]), model_textured_primitive_color, projected->fog(0));
+                    tmd_read_normal(normals, p.normals[2]), retextured_primitive_color, projected->fog(0));
                 otz = projected->ordering_depth();
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
                     render_face_submit(&face, colors, kf::FaceShading::Gouraud, (otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK);
@@ -318,13 +318,13 @@ void render_enqueue_model(u16 object_index, s16 depth_bias, const MATRIX *lights
                 face.material = game_graphics_runtime.active_render_material;
                 render_face_uvs(face, {p.uv[0], p.uv[1], p.uv[2], p.uv[3]});
                 colors[0] = kf::render_light_normal(game_graphics_runtime.render_state.lighting, *lights,
-                    tmd_read_normal(normals, p.normals[0]), model_textured_primitive_color, projected->fog(0));
+                    tmd_read_normal(normals, p.normals[0]), retextured_primitive_color, projected->fog(0));
                 colors[1] = kf::render_light_normal(game_graphics_runtime.render_state.lighting, *lights,
-                    tmd_read_normal(normals, p.normals[1]), model_textured_primitive_color, projected->fog(0));
+                    tmd_read_normal(normals, p.normals[1]), retextured_primitive_color, projected->fog(0));
                 colors[2] = kf::render_light_normal(game_graphics_runtime.render_state.lighting, *lights,
-                    tmd_read_normal(normals, p.normals[2]), model_textured_primitive_color, projected->fog(0));
+                    tmd_read_normal(normals, p.normals[2]), retextured_primitive_color, projected->fog(0));
                 colors[3] = kf::render_light_normal(game_graphics_runtime.render_state.lighting, *lights,
-                    tmd_read_normal(normals, p.normals[3]), model_textured_primitive_color, projected->fog(0));
+                    tmd_read_normal(normals, p.normals[3]), retextured_primitive_color, projected->fog(0));
                 otz = projected->ordering_depth();
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
                     render_face_submit(&face, colors, kf::FaceShading::Gouraud, (otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK);
@@ -342,7 +342,7 @@ void render_enqueue_model(u16 object_index, s16 depth_bias, const MATRIX *lights
                 face.material = game_graphics_runtime.active_render_material;
                 render_face_uvs(face, {p.uv[0], p.uv[1], p.uv[2]});
                 colors[0] = kf::render_light_normal(game_graphics_runtime.render_state.lighting, *lights,
-                    tmd_read_normal(normals, p.normals[0]), model_textured_primitive_color, projected->average_fog());
+                    tmd_read_normal(normals, p.normals[0]), retextured_primitive_color, projected->average_fog());
                 otz = projected->ordering_depth();
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
                     render_face_submit(&face, colors, kf::FaceShading::Flat, (otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK);
@@ -361,7 +361,7 @@ void render_enqueue_model(u16 object_index, s16 depth_bias, const MATRIX *lights
                 face.material = game_graphics_runtime.active_render_material;
                 render_face_uvs(face, {p.uv[0], p.uv[1], p.uv[2], p.uv[3]});
                 colors[0] = kf::render_light_normal(game_graphics_runtime.render_state.lighting, *lights,
-                    tmd_read_normal(normals, p.normals[0]), model_textured_primitive_color, projected->average_fog());
+                    tmd_read_normal(normals, p.normals[0]), retextured_primitive_color, projected->average_fog());
                 otz = projected->ordering_depth();
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
                     render_face_submit(&face, colors, kf::FaceShading::Flat, (otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK);
@@ -487,7 +487,7 @@ void render_enqueue_sprite(KfSpriteQuad *sprite, s16 depth_bias, KfSpriteDepthCu
 void render_enqueuers_reset_module_state(void)
 {
     kf::restore_initial_value<tmd_textured_primitive_color>();
-    kf::restore_initial_value<model_textured_primitive_color>();
+    kf::restore_initial_value<retextured_primitive_color>();
     kf::restore_initial_value<map_textured_primitive_color>();
     kf::restore_initial_value<render_sprite_light_normal>();
 }

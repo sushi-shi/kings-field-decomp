@@ -22,10 +22,10 @@ void asset_registry_load_tmd_archive(u16 first_asset_id, u8 *archive, std::size_
     }
 }
 
-void asset_registry_set(u16 index, void *data, std::size_t size)
+void asset_registry_set(u16 asset_id, void *data, std::size_t size)
 {
     static_assert(sizeof(KfAssetHeader) == 20);
-    if (index >= KF_ASSET_REGISTRY_KNOWN_ENTRIES || !data || size < sizeof(KfAssetHeader))
+    if (asset_id >= KF_ASSET_REGISTRY_KNOWN_ENTRIES || !data || size < sizeof(KfAssetHeader))
         kf::host_fail("Invalid model asset header");
     auto *bytes = static_cast<u8 *>(data);
     const std::size_t asset_size = tmd_read_word(bytes);
@@ -35,15 +35,15 @@ void asset_registry_set(u16 index, void *data, std::size_t size)
         reinterpret_cast<std::uintptr_t>(data) % alignof(KfAssetHeader))
         kf::host_fail("Invalid model asset extent or alignment");
     const auto tmd = tmd_resource_view(bytes + tmd_offset, asset_size - tmd_offset);
-    game_graphics_runtime.asset_registry_entries[index] = static_cast<KfAssetHeader *>(data);
-    game_graphics_runtime.asset_registry_tmds[index] = tmd;
-    asset_registry_select(index);
+    game_graphics_runtime.asset_registry_entries[asset_id] = static_cast<KfAssetHeader *>(data);
+    game_graphics_runtime.asset_registry_tmds[asset_id] = tmd;
+    asset_registry_select(asset_id);
 }
 
-void asset_registry_select(u16 index)
+void asset_registry_select(u16 asset_id)
 {
-    if (index >= KF_ASSET_REGISTRY_KNOWN_ENTRIES ||
-        !game_graphics_runtime.asset_registry_tmds[index].data)
+    if (asset_id >= KF_ASSET_REGISTRY_KNOWN_ENTRIES ||
+        !game_graphics_runtime.asset_registry_tmds[asset_id].data)
         kf::host_fail("Unregistered model asset");
-    game_graphics_runtime.tmd_state.current_asset = game_graphics_runtime.asset_registry_tmds[index];
+    game_graphics_runtime.tmd_state.current_tmd = game_graphics_runtime.asset_registry_tmds[asset_id];
 }

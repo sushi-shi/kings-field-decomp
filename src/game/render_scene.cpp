@@ -80,20 +80,20 @@ void render_entities(void)
         }
     }
 
-    for (auto &sprite : effect_state.records) {
-        if (sprite.type == KF_EFFECT_SLOT_FREE || sprite.render_id.model == KF_EFFECT_MODEL_NONE) {
+    for (auto &effect : effect_state.records) {
+        if (effect.type == KF_EFFECT_SLOT_FREE || effect.render_id.model == KF_EFFECT_MODEL_NONE) {
             continue;
         }
         if (render_cell_is_visible(
-                sprite.position.vx / KF_MAP_TILE_SIZE, sprite.position.vz / KF_MAP_TILE_SIZE, origin)) {
-            render_actor_sprite(&sprite, &render_light_matrices[KF_RENDER_LIGHT_EFFECT]);
+                effect.position.vx / KF_MAP_TILE_SIZE, effect.position.vz / KF_MAP_TILE_SIZE, origin)) {
+            render_effect(&effect, &render_light_matrices[KF_RENDER_LIGHT_EFFECT]);
         }
     }
 
     for (auto &event : map_runtime_state.events) {
         if (event.state == KF_MAP_EVENT_ACTIVE
             && render_cell_is_visible(event.cell_x, event.cell_z, origin)) {
-            render_map_event(&event, &game_graphics_runtime.light_matrix_copy);
+            render_map_event(&event, &game_graphics_runtime.map_event_light_matrix);
         }
     }
 }
