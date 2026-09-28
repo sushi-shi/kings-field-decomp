@@ -54,7 +54,7 @@ u32 collision_query_world(
     if ((query_flags & KF_COLLISION_SKIP_TERRAIN) == 0) {
         hit = kf_enum_encode<u8>(map_collision_grid.linear[(u16)cell]);
 
-        if (!MAP_CELL_HAS_FULL_FLOOR(kf_enum_decode<KfMapCellKind>(hit))) {
+        if (!map_cell_has_full_floor(kf_enum_decode<KfMapCellKind>(hit))) {
             return hit | KF_COLLISION_TERRAIN;
         }
         if (point_y != KF_COLLISION_IGNORE_HEIGHT) {
@@ -128,7 +128,7 @@ u32 collision_query_world(
     hit = map_event_pool_find_overlap(point_x, point_z, radius);
     if (hit != KF_COLLISION_NONE) {
         if (query_flags & KF_COLLISION_CAPTURE_TARGET) {
-            KfMapEvent *event = &map_event_pool[hit];
+            KfMapEvent *event = &map_runtime_state.events[hit];
 
             collision_target.position = event->reference_position;
             collision_target.rotation = event->rotation;

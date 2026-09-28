@@ -13,7 +13,7 @@ static u32 menu_enter_mode_impl(KfMenuMode menu_mode, int argument)
     u32 result;
     const auto input_context = kf::host_set_input_context(kf::InputContext::Menu);
 
-    pool_release_all();
+    animation_cache_release_all();
     switch (menu_mode) {
     case KF_MENU_MODE_ROOT:
         result = menu_root();
@@ -29,7 +29,7 @@ static u32 menu_enter_mode_impl(KfMenuMode menu_mode, int argument)
         KfItemStockBank shop_bank;
 
         shop_bank = kf_enum_decode<KfItemStockBank>(argument);
-        item_menu_root(shop_bank);
+        shop_menu_root(shop_bank);
         result = 0;
         break;
     }

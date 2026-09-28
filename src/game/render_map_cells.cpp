@@ -39,7 +39,7 @@ void render_map_cell(s32 col, s32 row, KfCellVisibility visibility)
 {
     MATRIX cell_matrix;
     SVECTOR position;
-    s32 orient;
+    s32 orientation;
     u8 object_index;
     s16 staff_timer;
 
@@ -67,28 +67,28 @@ void render_map_cell(s32 col, s32 row, KfCellVisibility visibility)
     if (object_index > KF_MAP_MESHES_PER_BANK - 1) {
         return;
     }
-    orient = kf_enum_encode<u8>(map_cell_orientation_grid.cells[row][col]) - 1;
+    orientation = kf_enum_encode<u8>(map_cell_orientation_grid.cells[row][col]) - 1;
     if (visibility == KF_CELL_WINDOW_DISTANT) {
         object_index += KF_MAP_MESHES_PER_BANK;
     }
-    setVector(&position,
+    position = VECTOR{
         col * KF_MAP_TILE_SIZE - game_graphics_runtime.render_state.view_position.vx,
         map_floor_height_grid.cells[row][col] * -KF_MAP_HEIGHT_STEP
             - game_graphics_runtime.render_state.view_position.vy,
-        row * KF_MAP_TILE_SIZE - game_graphics_runtime.render_state.view_position.vz);
-    if (orient == kf_enum_encode<u8>(KF_MAP_ORIENT_QUARTER_TURN) - 1) {
+        row * KF_MAP_TILE_SIZE - game_graphics_runtime.render_state.view_position.vz}.narrowed();
+    if (orientation == kf_enum_encode<u8>(KF_MAP_ORIENT_QUARTER_TURN) - 1) {
         position.vz += KF_MAP_TILE_SIZE;
-    } else if (orient == kf_enum_encode<u8>(KF_MAP_ORIENT_HALF_TURN) - 1) {
+    } else if (orientation == kf_enum_encode<u8>(KF_MAP_ORIENT_HALF_TURN) - 1) {
         position.vx += KF_MAP_TILE_SIZE;
         position.vz += KF_MAP_TILE_SIZE;
-    } else if (orient == kf_enum_encode<u8>(KF_MAP_ORIENT_THREE_QUARTER_TURN) - 1) {
+    } else if (orientation == kf_enum_encode<u8>(KF_MAP_ORIENT_THREE_QUARTER_TURN) - 1) {
         position.vx += KF_MAP_TILE_SIZE;
     }
 
     kf::render_place_model(cell_matrix, game_graphics_runtime.render_state.view_matrix, position);
-    kf::matrix_multiply_rotation(game_graphics_runtime.render_state.view_matrix, game_graphics_runtime.render_state.quadrant_matrices[orient], cell_matrix);
-    tmd_select_object_vertices(object_index);
-    render_enqueue_map(object_index, &game_graphics_runtime.light_quadrant_matrices[orient], &cell_matrix, game_graphics_runtime.render_state.projection);
+    kf::matrix_multiply_rotation(game_graphics_runtime.render_state.view_matrix, game_graphics_runtime.render_state.quadrant_matrices[orientation], cell_matrix);
+    tmd_select_object_vertices(tmd_context(), object_index);
+    render_enqueue_map(object_index, &game_graphics_runtime.light_quadrant_matrices[orientation], &cell_matrix, game_graphics_runtime.render_state.projection);
 }
 
 void render_map_cells(void)
@@ -112,7 +112,7 @@ void render_map_cells(void)
     row = (u16)game_graphics_runtime.render_state.view_cell.z - game_graphics_runtime.active_cell_window->origin_z;
     col_base = (u16)game_graphics_runtime.render_state.view_cell.x - game_graphics_runtime.active_cell_window->origin_x;
     cell = game_graphics_runtime.active_cell_window->cells;
-    tmd_select(KF_TMD_SLOT_MAP);
+    tmd_select(tmd_context(), KF_TMD_SLOT_MAP);
 
     rows = game_graphics_runtime.active_cell_window->height;
     do {
@@ -134,7 +134,6 @@ void render_map_cells(void)
         rows--;
     } while (rows != 0);
 }
-
 
 void render_map_cells_reset_module_state(void)
 {

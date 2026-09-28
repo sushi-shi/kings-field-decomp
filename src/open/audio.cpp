@@ -1,9 +1,9 @@
+#include <kf/open/resources.h>
 #include <kf/lib/null.h>
 
 #include <kf/lib/resource_file.h>
 #include <kf/lib/memory.h>
 #include <kf/open/audio.h>
-#include <kf/lib/audio_sequence.h>
 #include <cstdlib>
 #include <cstdio>
 #include <cstring>
@@ -18,6 +18,7 @@ enum {
 };
 
 KfAudioState audio_state;
+s32 audio_voice_slot_index = KF_AUDIO_VOICE_SLOTS - 1;
 
 void audio_initialize(void)
 {
@@ -26,17 +27,17 @@ void audio_initialize(void)
     audio_state.bank = nullptr;
     audio_state.sequence = nullptr;
     audio_voice_slot_index = KF_AUDIO_VOICE_SLOTS - 1;
-    audio_state.sequence_buffer = (u8 *)memory_allocate(OPEN_SEQUENCE_BUFFER_BYTES);
+    audio_state.sequence_buffer = (u8 *)memory_allocate(memory_arena, OPEN_SEQUENCE_BUFFER_BYTES);
     audio_state.sequence_active = KF_AUDIO_SEQUENCE_INACTIVE;
-    audio_reset_voice_slots();
+    audio_reset_voice_slots(audio_state);
 }
 
-void audio_load_vab(const u8 *header, std::size_t header_size, const u8 *body, std::size_t body_size)
+void audio_load_vab(KfAudioBankResource resource)
 {
     audio_stop_sequence(KF_AUDIO_STOP_IMMEDIATE);
     kf::sound_master_volume(0, 0);
-    audio_close_vab();
-    audio_state.bank = kf::sound_bank_load(header, header_size, body, body_size);
+    audio_close_vab(audio_state);
+    audio_state.bank = kf::sound_bank_load(resource.header, resource.header_size, resource.body, resource.body_size);
     if (!audio_state.bank)
         kf::host_fail("Cannot decode sound bank");
     s32 frame = OPEN_VAB_SETTLE_FRAMES - 1;
@@ -85,18 +86,17 @@ void audio_stop_sequence(KfAudioStopMode stop_mode)
         }
         kf::sound_master_volume(0, 0);
         kf::sound_sequence_volume(audio_state.sequence, 0, 0);
-        AUDIO_SEQUENCE_STOP_AND_CLOSE();
+        audio_release_sequence(audio_state);
     }
-}
-
-void audio_close_vab(void)
-{
-    AUDIO_SEQUENCE_STOP_AND_CLOSE();
-    kf::sound_bank_release(audio_state.bank);
-    audio_state.bank = nullptr;
 }
 
 void audio_reset_module_state(void)
 {
     kf::restore_initial_value<audio_state>();
+    kf::restore_initial_value<audio_voice_slot_index>();
+}
+
+KfAudioPlayback audio_playback()
+{
+    return {audio_state, audio_voice_slot_index, true};
 }

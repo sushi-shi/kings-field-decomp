@@ -5,7 +5,6 @@
 #include <kf/open/render.h>
 #include <kf/open/scene0.h>
 #include <kf/lib/geometry_types.h>
-#include <kf/lib/graphics.h>
 
 enum {
     OPENING_MODEL_DEPTH_BIAS = -100,
@@ -27,20 +26,20 @@ KfSpriteQuad floor_item_sprites[KF_FLOOR_ITEM_SPRITE_COUNT] = {
 void opening_entity_render(KfOpeningEntity *entity)
 {
     VECTOR scale;
-    SVECTOR screen;
+    SVECTOR relative_position;
     MATRIX model;
     MATRIX light;
     KfEnumStorage<KfOpeningModelId, u16> object_id;
     s16 depth;
 
-    setVector(&screen,
+    relative_position = VECTOR{
         entity->position.vx - open_graphics_runtime.render_state.view_position.vx,
         entity->position.vy - open_graphics_runtime.render_state.view_position.vy,
-        entity->position.vz - open_graphics_runtime.render_state.view_position.vz);
+        entity->position.vz - open_graphics_runtime.render_state.view_position.vz}.narrowed();
 
-    kf::render_place_model(model, open_graphics_runtime.render_state.view_matrix, screen);
+    kf::render_place_model(model, open_graphics_runtime.render_state.view_matrix, relative_position);
     matrix_set_rotation_yxz(&entity->rotation, &model);
-    copyVector(&scale, &entity->scale);
+    scale = entity->scale.widened();
     kf::matrix_scale_axes(model, scale);
     kf::matrix_multiply_rotation(open_graphics_runtime.render_state.light_matrix, model, light);
     kf::matrix_multiply_rotation(open_graphics_runtime.render_state.view_matrix, model, model);
@@ -64,18 +63,16 @@ void opening_entity_render(KfOpeningEntity *entity)
         entity->rotation.y = (entity->rotation.y - OPENING_MODEL_YAW_STEP) & KF_ANGLE_WRAP_MASK;
         break;
     case KF_OPENING_CASTLE_MOUNTAIN_BACKDROP:
-        tmd_select_object_vertices(kf_enum_encode<u16>(object_id));
-        tmd_project_vertices_perspective_right(tmd_get_object(kf_enum_encode<u16>(object_id))->vertex_count, &model, open_graphics_runtime.render_state.projection);
+        tmd_select_object_vertices(tmd_context(), kf_enum_encode<u16>(object_id));
+        tmd_project_vertices_perspective_right(tmd_get_object(tmd_context(), kf_enum_encode<u16>(object_id))->vertex_count, &model, open_graphics_runtime.render_state.projection);
         render_enqueue_tmd(kf_enum_encode<u16>(object_id), 0, &light);
         return;
     case KF_OPENING_ENDING_ORANGE_DISK:
-        depth = ENDING_TRANSLATING_MODEL_DEPTH_BIAS;
-        goto render_alternate;
     case KF_OPENING_ENDING_STARFIELD:
-        depth = ENDING_ROTATING_MODEL_DEPTH_BIAS;
-    render_alternate:
-        tmd_select_object_vertices(kf_enum_encode<u16>(object_id));
-        tmd_project_vertices(tmd_get_object(kf_enum_encode<u16>(object_id))->vertex_count, &model, open_graphics_runtime.render_state.projection);
+        depth = object_id == KF_OPENING_ENDING_ORANGE_DISK
+            ? ENDING_TRANSLATING_MODEL_DEPTH_BIAS : ENDING_ROTATING_MODEL_DEPTH_BIAS;
+        tmd_select_object_vertices(tmd_context(), kf_enum_encode<u16>(object_id));
+        tmd_project_vertices(tmd_get_object(tmd_context(), kf_enum_encode<u16>(object_id))->vertex_count, &model, open_graphics_runtime.render_state.projection);
         render_enqueue_unlit_triangles(kf_enum_encode<u16>(object_id), depth);
         return;
     default:
@@ -83,8 +80,8 @@ void opening_entity_render(KfOpeningEntity *entity)
         break;
     }
 
-    tmd_select_object_vertices(kf_enum_encode<u16>(object_id));
-    tmd_project_vertices(tmd_get_object(kf_enum_encode<u16>(object_id))->vertex_count, &model, open_graphics_runtime.render_state.projection);
+    tmd_select_object_vertices(tmd_context(), kf_enum_encode<u16>(object_id));
+    tmd_project_vertices(tmd_get_object(tmd_context(), kf_enum_encode<u16>(object_id))->vertex_count, &model, open_graphics_runtime.render_state.projection);
     render_enqueue_tmd(kf_enum_encode<u16>(object_id), depth, &light);
 }
 
@@ -99,7 +96,7 @@ void opening_render_entities_and_items(void)
     u16 col;
     s16 remaining;
 
-    tmd_select(KF_TMD_SLOT_ENTITIES);
+    tmd_select(tmd_context(), KF_TMD_SLOT_ENTITIES);
     entity = opening_entity_state.entities;
     for (remaining = KF_OPENING_ENTITY_CAPACITY - 1; remaining != -1; remaining--) {
         if (entity->object_id < KF_OPENING_ENTITY_MODEL_LIMIT) {
@@ -132,7 +129,8 @@ void opening_render_entities_and_items(void)
             if (col < grid->width
                     && grid->cells[row * grid->width + col]
                         != KF_CELL_WINDOW_HIDDEN) {
-                render_floor_item(item, &floor_item_light_matrix);
+                render_floor_item(open_graphics_runtime.render_state, floor_item_sprites,
+                render_enqueue_sprite, item, &floor_item_light_matrix);
             }
         }
         item++;

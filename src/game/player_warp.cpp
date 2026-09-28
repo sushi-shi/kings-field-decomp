@@ -1,3 +1,4 @@
+#include <kf/game/audio.h>
 #include <kf/lib/null.h>
 #include <kf/game/graphics.h>
 #include <kf/lib/bool.h>
@@ -14,27 +15,20 @@ static MATRIX actor_transform_color_matrix = {
 enum {
     WARP_SHIMMER_OWNER_ID = 10,
     WARP_SHIMMER_SOUND_FRAME = 8,
-    WARP_CELL_X_SHIFT = 24,
-    WARP_CELL_Z_SHIFT = 16,
     ACTOR_TRANSFORM_BLEND_INTERVALS = 64,
     ACTOR_TRANSFORM_Y_STEP = 40
 };
 
-#define WARP_CELL_KEY_MASK 0xffff0000
-#define WARP_CELL_KEY(x, z) \
-    (((u32)(x) << WARP_CELL_X_SHIFT) | ((u32)(z) << WARP_CELL_Z_SHIFT))
-
-
 namespace {
-constexpr u32 floor1_floor2_cell = WARP_CELL_KEY(29, 56);
-constexpr u32 floor1_floor3_cell = WARP_CELL_KEY(25, 11);
-constexpr u32 floor1_floor4_cell = WARP_CELL_KEY(39, 35);
-constexpr u32 floor1_exit_cell = WARP_CELL_KEY(15, 2);
-constexpr u32 floor2_floor3_cell = WARP_CELL_KEY(28, 18);
-constexpr u32 floor3_floor4_cell = WARP_CELL_KEY(7, 22);
-constexpr u32 floor3_floor4_alternate_cell = WARP_CELL_KEY(43, 92);
-constexpr u32 floor4_floor5_cell = WARP_CELL_KEY(39, 69);
 struct WarpCell { u8 x, z; };
+constexpr WarpCell floor1_floor2_cell = {29, 56};
+constexpr WarpCell floor1_floor3_cell = {25, 11};
+constexpr WarpCell floor1_floor4_cell = {39, 35};
+constexpr WarpCell floor1_exit_cell = {15, 2};
+constexpr WarpCell floor2_floor3_cell = {28, 18};
+constexpr WarpCell floor3_floor4_cell = {7, 22};
+constexpr WarpCell floor3_floor4_alternate_cell = {43, 92};
+constexpr WarpCell floor4_floor5_cell = {39, 69};
 constexpr WarpCell floor5_entry_gate = {70, 61};
 constexpr WarpCell floor5_inner_gate = {18, 37};
 constexpr WarpCell floor5_ending_gate = {5, 24};
@@ -94,7 +88,7 @@ void player_warp_shimmer(KfWarpShimmerMode shimmer_mode, VECTOR *position)
     for (frame = 0; frame < KF_CYLINDER_TRANSITION_FRAMES; frame++) {
         cursor = effects;
         if (frame == WARP_SHIMMER_SOUND_FRAME) {
-            sound_ref_play(&gameplay_sound_refs[KF_GAMEPLAY_SOUND_WARP_SHIMMER], KF_AUDIO_MAX_VOLUME);
+            sound_ref_play(audio_playback(), &gameplay_sound_refs[KF_GAMEPLAY_SOUND_WARP_SHIMMER], KF_AUDIO_MAX_VOLUME);
         }
         for (i = 0; i < KF_CYLINDER_TRANSITION_COUNT; i++) {
             effect = *cursor++;
@@ -127,7 +121,7 @@ void player_warp_change_floor(KfFloorId floor, KfMapVariant map_variant)
 {
     VECTOR position;
 
-    PLAYER_FLOOR_POSITION(position);
+    player_get_floor_position(position);
     player_warp_shimmer(KF_WARP_SHIMMER_GROW_REMOVE, &position);
     map_unload_floor();
     player_state.progress_state.current_floor = floor;
@@ -143,7 +137,7 @@ void player_warp_change_floor(KfFloorId floor, KfMapVariant map_variant)
         player_state.camera_position.vz / KF_MAP_TILE_SIZE * KF_MAP_TILE_SIZE + KF_MAP_TILE_CENTER;
     position.vz = player_state.camera_position.vz;
     player_sync_position_to_map();
-    position.vy = player_state.floor_height;
+    position.vy = player_state.foot_height;
     player_warp_shimmer(KF_WARP_SHIMMER_SHRINK_REMOVE, &position);
 }
 
@@ -152,11 +146,11 @@ void player_warp_same_floor(KfMapVariant map_variant, s32 cell_x, s32 cell_z)
     VECTOR position;
     KfMapVariant previous_variant;
 
-    PLAYER_FLOOR_POSITION(position);
+    player_get_floor_position(position);
     player_warp_shimmer(KF_WARP_SHIMMER_GROW_REMOVE, &position);
-    collision_adjust_cell_occupancy(player_state.motion_state.fields.map_cell.coords.x,
-                                    player_state.motion_state.fields.map_cell.coords.z, -1);
-    pool_release_all();
+    collision_adjust_cell_occupancy(player_state.motion_state.map_cell.x,
+                                    player_state.motion_state.map_cell.z, -1);
+    animation_cache_release_all();
     previous_variant = player_state.map_variant;
     player_state.map_variant = map_variant;
     map_variant_assets_load();
@@ -171,102 +165,86 @@ void player_warp_same_floor(KfMapVariant map_variant, s32 cell_x, s32 cell_z)
     player_state.camera_position.vz = cell_z * KF_MAP_TILE_SIZE + KF_MAP_TILE_CENTER;
     position.vz = player_state.camera_position.vz;
     player_sync_position_to_map();
-    position.vy = player_state.floor_height;
+    position.vy = player_state.foot_height;
     player_warp_shimmer(KF_WARP_SHIMMER_SHRINK_REMOVE, &position);
+}
+
+static constexpr bool warp_cell_matches(KfMapCellCoordinates cell, WarpCell warp)
+{
+    return cell.x == warp.x && cell.z == warp.z;
 }
 
 KfBoolU32 player_warp_trigger_update(void)
 {
-    u32 cell;
-    KfFloorId destination_floor;
-    KfMapVariant destination_variant = KF_MAP_VARIANT_DEFAULT;
+    const auto cell = player_state.motion_state.map_cell;
 
     switch (player_state.progress_state.current_floor) {
     case KF_FLOOR_FORCE_RELOAD:
         // This resource-load sentinel identifies no floor exit.
         break;
     case KF_FLOOR_1:
-        cell = player_state.motion_state.words[2] & WARP_CELL_KEY_MASK;
-        if (cell == floor1_floor2_cell) {
-            destination_floor = KF_FLOOR_2;
-change_floor:
-            player_warp_change_floor(destination_floor, destination_variant);
-        } else if (cell == floor1_floor3_cell) {
-            destination_floor = KF_FLOOR_3;
-            goto change_floor;
-        } else if (cell == floor1_floor4_cell) {
-            goto change_to_floor4;
-        } else if (cell == floor1_exit_cell) {
-            if (boss_defeat_complete != KF_MAP_SCRIPT_UNSET) {
-                return KF_TRUE;
+        if (warp_cell_matches(cell, floor1_floor2_cell)) {
+            player_warp_change_floor(KF_FLOOR_2, KF_MAP_VARIANT_DEFAULT);
+        } else if (warp_cell_matches(cell, floor1_floor3_cell)) {
+            player_warp_change_floor(KF_FLOOR_3, KF_MAP_VARIANT_DEFAULT);
+        } else if (warp_cell_matches(cell, floor1_floor4_cell)) {
+            player_warp_change_floor(KF_FLOOR_4, KF_MAP_VARIANT_DEFAULT);
+        } else if (warp_cell_matches(cell, floor1_exit_cell)) {
+            if (map_floor_script(KF_FLOOR_5).floor5.boss_defeat != KF_MAP_SCRIPT_UNSET) {
+                return true;
             }
         }
         break;
     case KF_FLOOR_2:
-        cell = player_state.motion_state.words[2] & WARP_CELL_KEY_MASK;
-        if (cell == floor1_floor2_cell) {
-            destination_floor = KF_FLOOR_1;
-            goto change_floor;
-        } else if (cell == floor2_floor3_cell) {
-            destination_floor = KF_FLOOR_3;
-            goto change_floor;
+        if (warp_cell_matches(cell, floor1_floor2_cell)) {
+            player_warp_change_floor(KF_FLOOR_1, KF_MAP_VARIANT_DEFAULT);
+        } else if (warp_cell_matches(cell, floor2_floor3_cell)) {
+            player_warp_change_floor(KF_FLOOR_3, KF_MAP_VARIANT_DEFAULT);
         }
         break;
     case KF_FLOOR_3:
-        cell = player_state.motion_state.words[2] & WARP_CELL_KEY_MASK;
-        if (cell == floor1_floor3_cell) {
-            destination_floor = KF_FLOOR_1;
-            goto change_floor;
-        } else if (cell == floor2_floor3_cell) {
-            destination_floor = KF_FLOOR_2;
-            goto change_floor;
-        } else if (cell == floor3_floor4_cell || cell == floor3_floor4_alternate_cell) {
-change_to_floor4:
-            destination_floor = KF_FLOOR_4;
-            goto change_floor;
+        if (warp_cell_matches(cell, floor1_floor3_cell)) {
+            player_warp_change_floor(KF_FLOOR_1, KF_MAP_VARIANT_DEFAULT);
+        } else if (warp_cell_matches(cell, floor2_floor3_cell)) {
+            player_warp_change_floor(KF_FLOOR_2, KF_MAP_VARIANT_DEFAULT);
+        } else if (warp_cell_matches(cell, floor3_floor4_cell) || warp_cell_matches(cell, floor3_floor4_alternate_cell)) {
+            player_warp_change_floor(KF_FLOOR_4, KF_MAP_VARIANT_DEFAULT);
         }
         break;
     case KF_FLOOR_4:
-        cell = player_state.motion_state.words[2] & WARP_CELL_KEY_MASK;
-        if (cell == floor1_floor4_cell) {
-            destination_floor = KF_FLOOR_1;
-            goto change_floor;
-        } else if (cell == floor3_floor4_cell) {
-            destination_floor = KF_FLOOR_3;
-            goto change_floor;
-        } else if (cell == floor4_floor5_cell) {
-            destination_floor = KF_FLOOR_5;
-            destination_variant = KF_FLOOR5_ENTRY_VARIANT;
-            goto change_floor;
-        } else if (cell == floor3_floor4_alternate_cell) {
-            destination_floor = KF_FLOOR_3;
-            goto change_floor;
+        if (warp_cell_matches(cell, floor1_floor4_cell)) {
+            player_warp_change_floor(KF_FLOOR_1, KF_MAP_VARIANT_DEFAULT);
+        } else if (warp_cell_matches(cell, floor3_floor4_cell)) {
+            player_warp_change_floor(KF_FLOOR_3, KF_MAP_VARIANT_DEFAULT);
+        } else if (warp_cell_matches(cell, floor4_floor5_cell)) {
+            player_warp_change_floor(KF_FLOOR_5, KF_FLOOR5_ENTRY_VARIANT);
+        } else if (warp_cell_matches(cell, floor3_floor4_alternate_cell)) {
+            player_warp_change_floor(KF_FLOOR_3, KF_MAP_VARIANT_DEFAULT);
         }
         break;
     case KF_FLOOR_5:
-        cell = player_state.motion_state.words[2] & WARP_CELL_KEY_MASK;
-        if (cell == floor4_floor5_cell) {
-            goto change_to_floor4;
-        } else if (cell == WARP_CELL_KEY(floor5_entry_gate.x, floor5_entry_gate.z)) {
+        if (warp_cell_matches(cell, floor4_floor5_cell)) {
+            player_warp_change_floor(KF_FLOOR_4, KF_MAP_VARIANT_DEFAULT);
+        } else if (warp_cell_matches(cell, floor5_entry_gate)) {
             player_warp_same_floor(KF_MAP_VARIANT_2, floor5_inner_gate.x, floor5_inner_gate.z);
-        } else if (cell == WARP_CELL_KEY(floor5_inner_gate.x, floor5_inner_gate.z)) {
+        } else if (warp_cell_matches(cell, floor5_inner_gate)) {
             player_warp_same_floor(KF_FLOOR5_ENTRY_VARIANT, floor5_entry_gate.x, floor5_entry_gate.z);
-        } else if (cell == WARP_CELL_KEY(floor5_ending_gate.x, floor5_ending_gate.z)) {
+        } else if (warp_cell_matches(cell, floor5_ending_gate)) {
             player_warp_same_floor(KF_FLOOR5_ALTERNATE_MUSIC_VARIANT, floor5_ending_arrival.x, floor5_ending_arrival.z);
-        } else if (cell == WARP_CELL_KEY(floor5_ending_arrival.x, floor5_ending_arrival.z)) {
-            if (boss_defeat_complete == KF_MAP_SCRIPT_UNSET) {
+        } else if (warp_cell_matches(cell, floor5_ending_arrival)) {
+            if (map_floor_script(KF_FLOOR_5).floor5.boss_defeat == KF_MAP_SCRIPT_UNSET) {
                 player_warp_same_floor(KF_MAP_VARIANT_2, floor5_ending_return.x, floor5_ending_return.z);
             } else {
-                return KF_TRUE;
+                return true;
             }
-        } else if (cell == WARP_CELL_KEY(floor5_inner_return.x, floor5_inner_return.z)) {
+        } else if (warp_cell_matches(cell, floor5_inner_return)) {
             player_warp_same_floor(KF_FLOOR5_ENTRY_VARIANT, floor5_entry_return.x, floor5_entry_return.z);
-        } else if (cell == WARP_CELL_KEY(floor5_entry_return.x, floor5_entry_return.z)) {
+        } else if (warp_cell_matches(cell, floor5_entry_return)) {
             player_warp_same_floor(KF_MAP_VARIANT_2, floor5_inner_return.x, floor5_inner_return.z);
         }
         break;
     }
-    return KF_FALSE;
+    return false;
 }
 
 static constexpr unsigned floor4_transform_hidden_events[] = {1, 2};
@@ -277,19 +255,19 @@ void actor_transform_definition5_to6(KfActor *actor)
     MATRIX saved;
     s32 blend;
 
-    map_event_pool[floor4_transform_hidden_events[0]].state = KF_MAP_EVENT_DISABLED;
-    map_event_pool[floor4_transform_hidden_events[1]].state = KF_MAP_EVENT_DISABLED;
+    map_runtime_state.events[floor4_transform_hidden_events[0]].state = KF_MAP_EVENT_DISABLED;
+    map_runtime_state.events[floor4_transform_hidden_events[1]].state = KF_MAP_EVENT_DISABLED;
     saved = game_graphics_runtime.render_state.lighting.color_matrix;
 
     for (blend = 0; blend < KF_FIXED12_ONE + 1; blend += KF_FIXED12_ONE / ACTOR_TRANSFORM_BLEND_INTERVALS) {
-        lighting_set_color_matrix(&saved, &actor_transform_color_matrix, blend);
+        lighting_set_color_matrix(game_graphics_runtime.render_state, &saved, &actor_transform_color_matrix, blend);
         actor->position.vy += ACTOR_TRANSFORM_Y_STEP;
         actor->rotation.angles.y += KF_ANGLE_FULL_TURN / ACTOR_TRANSFORM_BLEND_INTERVALS;
         render_frame(NULL, NULL);
     }
     actor->definition_id = KF_FLOOR4_TRANSFORM_RESULT_DEFINITION;
     for (blend = KF_FIXED12_ONE; blend >= 0; blend -= KF_FIXED12_ONE / ACTOR_TRANSFORM_BLEND_INTERVALS) {
-        lighting_set_color_matrix(&saved, &actor_transform_color_matrix, blend);
+        lighting_set_color_matrix(game_graphics_runtime.render_state, &saved, &actor_transform_color_matrix, blend);
         actor->position.vy -= ACTOR_TRANSFORM_Y_STEP;
         actor->rotation.angles.y -= KF_ANGLE_FULL_TURN / ACTOR_TRANSFORM_BLEND_INTERVALS;
         render_frame(NULL, NULL);
@@ -297,7 +275,6 @@ void actor_transform_definition5_to6(KfActor *actor)
     lighting_set_active_color_matrix(KF_GAME_COLOR_DEFAULT);
     kf::host_set_input_context(input_context);
 }
-
 
 void player_warp_reset_module_state(void)
 {

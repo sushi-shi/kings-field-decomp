@@ -64,65 +64,26 @@ static inline void copy_vertices(
     memcpy(output, input, std::size_t(count) * sizeof *output);
 }
 
-KfPoolRecord *render_bind_animated_instance(
-    KfPoolRecord **owner_slot, u16 asset_index, KfAnimationClip clip_index, u16 phase,
-    u32 vertex_count)
-{
-    if (vertex_count > KF_PROJECTED_VERTEX_CAPACITY)
-        kf::host_fail("Animated model exceeds vertex capacity.");
-    KfPoolRecord *record = *owner_slot;
-    KfAssetHeader *asset_header = game_graphics_runtime.asset_registry_entries[asset_index];
-    KfAnimClip *clip;
+struct KfAnimationSample {
     KfAnimKeyframe *keyframe;
-    KfMorphObject *morph_object;
-    u32 *clip_table;
-    u32 *object_table;
-    u16 morphs_left;
+    u16 keyframe_index;
+    u16 blend_fraction;
+};
+
+static KfAnimationSample animation_sample_keyframe(KfAssetHeader *asset_header, KfAnimClip *clip, u16 phase)
+{
+    KfAnimKeyframe *keyframe;
     u16 phase_end;
     u16 phase_start;
-
     u16 keyframe_index = 0;
     u16 blend_fraction;
     u16 keyframes_left;
 
-    if (asset_header->animation_clip_count == 0) {
-        if (record != NULL) {
-            pool_record_release(record);
-        }
-        asset_registry_select(asset_index);
-        tmd_select_object_vertices(0);
-        return (KfPoolRecord *)KF_ANIMATION_BIND_STATIC;
-    }
-    if (vertex_count == 0)
-        kf::host_fail("Animated model has no vertices.");
-
-    if (record == NULL) {
-        record = pool_allocate();
-        if (record == NULL) {
-            return NULL;
-        }
-
-reinitialize_record:
-        record->asset_index = asset_index;
-        record->owner_slot = owner_slot;
-retry_allocation:
-        record->cached_vertices = (SVECTOR *)memory_malloc_checked(
-            vertex_count * sizeof(SVECTOR));
-        if (record->cached_vertices == NULL) {
-            pool_release_all();
-            goto retry_allocation;
-        }
-        *owner_slot = record;
-    } else if (record->asset_index != asset_index) {
-        pool_record_release(record);
-        record->clip_index = KF_ANIMATION_CLIP_NONE;
-        goto reinitialize_record;
-    }
+    if (clip->keyframe_count == 0)
+        kf::host_fail("Animation clip has no keyframes.");
 
     phase_end = 0;
     phase_start = 0;
-    clip_table = (u32 *)((char *)asset_header + asset_header->clip_table_offset);
-    clip = (KfAnimClip *)((char *)asset_header + clip_table[kf_enum_encode<u16>(clip_index)]);
     keyframes_left = clip->keyframe_count;
     {
         u32 *keyframe_offsets = clip->keyframes;
@@ -139,7 +100,7 @@ retry_allocation:
                 if (keyframe->reverse != KF_ANIMATION_BLEND_FORWARD) {
                     blend_fraction = KF_FIXED12_ONE - forward_fraction;
                 }
-                goto update_vertex_cache;
+                return {keyframe, keyframe_index, blend_fraction};
             }
             phase_start = phase_end;
             keyframe_index++;
@@ -148,11 +109,70 @@ retry_allocation:
     keyframe_index--;
     blend_fraction = KF_FIXED12_ONE;
 
-update_vertex_cache:
+    return {keyframe, keyframe_index, blend_fraction};
+}
+
+static void animation_allocate_vertex_cache(KfAnimationCacheRecord *record, KfAnimationCacheRecord **owner_slot,
+    u16 asset_index, u32 vertex_count)
+{
+    record->asset_index = asset_index;
+    record->owner_slot = owner_slot;
+    while ((record->cached_vertices = (SVECTOR *)memory_malloc_checked(
+                vertex_count * sizeof(SVECTOR))) == NULL) {
+        animation_cache_release_all();
+    }
+    *owner_slot = record;
+}
+
+KfAnimationCacheRecord *render_bind_animated_instance(
+    KfAnimationCacheRecord **owner_slot, u16 asset_index, KfAnimationClip clip_index, u16 phase,
+    u32 vertex_count)
+{
+    if (vertex_count > KF_PROJECTED_VERTEX_CAPACITY)
+        kf::host_fail("Animated model exceeds vertex capacity.");
+    KfAnimationCacheRecord *record = *owner_slot;
+    KfAssetHeader *asset_header = game_graphics_runtime.asset_registry_entries[asset_index];
+    KfAnimClip *clip;
+    KfAnimKeyframe *keyframe;
+    KfMorphObject *morph_object;
+    u32 *clip_table;
+    u32 *object_table;
+    u16 morphs_left;
+
+    if (asset_header->animation_clip_count == 0) {
+        if (record != NULL) {
+            animation_cache_release(record);
+        }
+        asset_registry_select(asset_index);
+        tmd_select_object_vertices(tmd_context(), 0);
+        return (KfAnimationCacheRecord *)KF_ANIMATION_BIND_STATIC;
+    }
+    if (vertex_count == 0)
+        kf::host_fail("Animated model has no vertices.");
+
+    if (record == NULL) {
+        record = animation_cache_allocate();
+        if (record == NULL) {
+            return NULL;
+        }
+        animation_allocate_vertex_cache(record, owner_slot, asset_index, vertex_count);
+    } else if (record->asset_index != asset_index) {
+        animation_cache_release(record);
+        record->clip_index = KF_ANIMATION_CLIP_NONE;
+        animation_allocate_vertex_cache(record, owner_slot, asset_index, vertex_count);
+    }
+
+    clip_table = (u32 *)((char *)asset_header + asset_header->clip_table_offset);
+    clip = (KfAnimClip *)((char *)asset_header + clip_table[kf_enum_encode<u16>(clip_index)]);
+    const KfAnimationSample sample = animation_sample_keyframe(asset_header, clip, phase);
+    keyframe = sample.keyframe;
+    const u16 keyframe_index = sample.keyframe_index;
+    const u16 blend_fraction = sample.blend_fraction;
+
     if (record->clip_index != clip_index || record->keyframe_index != keyframe_index) {
         object_table = (u32 *)((char *)asset_header + asset_header->object_table_offset);
         asset_registry_select(asset_index);
-        tmd_select_object_vertices(0);
+        tmd_select_object_vertices(tmd_context(), 0);
 
         copy_vertices(record->cached_vertices, game_graphics_runtime.current_tmd_vertices, vertex_count);
 
@@ -177,14 +197,14 @@ update_vertex_cache:
 
     copy_vertices(game_graphics_runtime.morph_scratch, record->cached_vertices, vertex_count);
     morph_add_deltas(game_graphics_runtime.morph_scratch, vertex_count, record->rest_morph, blend_fraction);
-    tmd_set_current_vertices(game_graphics_runtime.morph_scratch);
+    tmd_set_current_vertices(tmd_context(), game_graphics_runtime.morph_scratch);
     record->state = KF_ANIMATION_CACHE_LIVE;
     return record;
 }
 
-void pool_reset(void)
+void animation_cache_reset(void)
 {
-    KfPoolRecord *record = game_graphics_runtime.pool_records;
+    KfAnimationCacheRecord *record = game_graphics_runtime.animation_cache_records;
     u16 records_left = KF_ANIMATION_CACHE_CAPACITY;
 
     do {
@@ -194,9 +214,9 @@ void pool_reset(void)
     } while (--records_left != 0);
 }
 
-void pool_mark_allocated(void)
+void animation_cache_mark_stale(void)
 {
-    KfPoolRecord *record = game_graphics_runtime.pool_records;
+    KfAnimationCacheRecord *record = game_graphics_runtime.animation_cache_records;
     u16 records_left = KF_ANIMATION_CACHE_CAPACITY;
 
     do {
@@ -207,7 +227,7 @@ void pool_mark_allocated(void)
     } while (--records_left != 0);
 }
 
-void pool_record_release(KfPoolRecord *record)
+void animation_cache_release(KfAnimationCacheRecord *record)
 {
     record->state = KF_ANIMATION_CACHE_FREE;
     *record->owner_slot = NULL;
@@ -217,35 +237,35 @@ void pool_record_release(KfPoolRecord *record)
     }
 }
 
-void pool_release_all(void)
+void animation_cache_release_all(void)
 {
-    KfPoolRecord *record = game_graphics_runtime.pool_records;
+    KfAnimationCacheRecord *record = game_graphics_runtime.animation_cache_records;
     s16 records_left;
 
     for (records_left = KF_ANIMATION_CACHE_CAPACITY - 1; records_left != -1; records_left--) {
         if (record->state != KF_ANIMATION_CACHE_FREE) {
-            pool_record_release(record);
+            animation_cache_release(record);
         }
         record++;
     }
 }
 
-void pool_release_stale(void)
+void animation_cache_release_stale(void)
 {
-    KfPoolRecord *record = game_graphics_runtime.pool_records;
+    KfAnimationCacheRecord *record = game_graphics_runtime.animation_cache_records;
     u16 records_left = KF_ANIMATION_CACHE_CAPACITY;
 
     do {
         if (record->state == KF_ANIMATION_CACHE_STALE) {
-            pool_record_release(record);
+            animation_cache_release(record);
         }
         record++;
     } while (--records_left != 0);
 }
 
-KfPoolRecord *pool_allocate(void)
+KfAnimationCacheRecord *animation_cache_allocate(void)
 {
-    KfPoolRecord *record = game_graphics_runtime.pool_records;
+    KfAnimationCacheRecord *record = game_graphics_runtime.animation_cache_records;
     u16 records_left = KF_ANIMATION_CACHE_CAPACITY;
 
     do {

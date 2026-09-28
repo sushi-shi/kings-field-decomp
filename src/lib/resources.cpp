@@ -1,19 +1,8 @@
+#include <kf/platform/prelude.hpp>
 #include <kf/lib/resources.h>
-#ifndef KF_OPEN
-#include <kf/game/resources.h>
-#endif
-
-#ifdef KF_OPEN
 
 const u32 *resource_stream_copy_words(
-    u32 *destination, const u32 *source, s32 word_count)
-#else
-
-const u32 *map_resource_copy_words(
-    u32 *destination,
-    const u32 *source,
-    u32 word_count)
-#endif
+    u32 *destination, const u32 *source, std::size_t word_count)
 {
     u32 *out = destination;
 

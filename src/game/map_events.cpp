@@ -1,3 +1,4 @@
+#include <kf/game/audio.h>
 #include <kf/lib/random.hpp>
 #include <kf/game/actor.h>
 #include <kf/lib/map_data.h>
@@ -21,13 +22,13 @@ KfMapRuntimeState map_runtime_state;
 
 void map_event_timers_reset(void)
 {
-    map_dialogue_advance_gate = KF_DIALOGUE_GATE_RELOAD;
-    map_ambient_script_countdown = MAP_AMBIENT_COUNTDOWN_RELOAD;
+    map_runtime_state.dialogue_advance_gate = KF_DIALOGUE_GATE_RELOAD;
+    map_runtime_state.ambient_script_countdown = MAP_AMBIENT_COUNTDOWN_RELOAD;
 }
 
 void map_event_update_wander(void)
 {
-    KfMapEvent *event = current_map_event;
+    KfMapEvent *event = map_runtime_state.current_event;
     struct KfVecXZs forward;
     VECTOR point;
     s16 heading;
@@ -69,33 +70,30 @@ void map_event_update_wander(void)
 
 void map_event_update_animation_loop(void)
 {
-    KfMapEvent *event = current_map_event;
+    KfMapEvent *event = map_runtime_state.current_event;
 
     event->animation_phase =
         (event->animation_phase + KF_MAP_EVENT_ANIMATION_LOOP_STEP)
         & KF_MAP_EVENT_ANIMATION_PHASE_MASK;
 
     if (player_state.progress_state.current_floor == KF_FLOOR_5
-            && event == &map_event_pool[0]
-            && map_event_pool[0].animation_phase < KF_MAP_EVENT_ANIMATION_LOOP_STEP) {
+            && event == &map_runtime_state.events[0]
+            && map_runtime_state.events[0].animation_phase < KF_MAP_EVENT_ANIMATION_LOOP_STEP) {
         audio_play_spatial_range(&gameplay_sound_refs[KF_GAMEPLAY_SOUND_FLOOR5_EVENT_LOOP],
-            &map_event_pool[0].reference_position,
+            &map_runtime_state.events[0].reference_position,
             KF_AUDIO_MAX_VOLUME, MAP_EVENT_LOOP_SOUND_MAX_DISTANCE, MAP_EVENT_LOOP_SOUND_ATTENUATION_DISTANCE);
     }
 }
 
 void map_event_pool_update(void)
 {
-    KfMapEvent *event = map_event_pool;
-    u16 index = KF_MAP_EVENT_CAPACITY - 1;
-
-    do {
-        KfMapEventState state = event->state;
+    for (auto &event : map_runtime_state.events) {
+        KfMapEventState state = event.state;
 
         if (state == KF_MAP_EVENT_ACTIVE) {
-            map_event_set_current(event);
+            map_event_set_current(&event);
 
-            switch (event->behavior) {
+            switch (event.behavior) {
             case KF_MAP_EVENT_BEHAVIOR_SHOP:
                 // Shop interaction is handled outside the ambient animation update.
                 break;
@@ -106,23 +104,21 @@ void map_event_pool_update(void)
                 map_event_update_animation_loop();
                 break;
             }
-            if (map_dialogue_advance_gate == 0 && event->dialogue.fields.page_delay != 0) {
-                event->dialogue.fields.page_delay--;
-                if (event->dialogue.fields.page_delay == 0) {
-                    s32 limit = event->dialogue_pages.last_page[event->dialogue.fields.stage - 1];
-                    event->dialogue.fields.page++;
-                    if (event->dialogue.fields.page >= limit) {
-                        event->dialogue.fields.page = limit;
+            if (map_runtime_state.dialogue_advance_gate == 0 && event.dialogue.page_delay != 0) {
+                event.dialogue.page_delay--;
+                if (event.dialogue.page_delay == 0) {
+                    s32 limit = event.dialogue_pages.last_page[event.dialogue.stage - 1];
+                    event.dialogue.page++;
+                    if (event.dialogue.page >= limit) {
+                        event.dialogue.page = limit;
                     }
                 }
             }
         }
-
-        event++;
-    } while (index-- != 0);
+    }
 
     {
-        u16 *gate = &map_dialogue_advance_gate;
+        u16 *gate = &map_runtime_state.dialogue_advance_gate;
         u16 current = *gate;
 
         *gate = current - 1;
@@ -131,8 +127,8 @@ void map_event_pool_update(void)
         }
     }
 
-    if (map_ambient_script_countdown-- == 0) {
-        map_ambient_script_countdown = MAP_AMBIENT_COUNTDOWN_RELOAD;
+    if (map_runtime_state.ambient_script_countdown-- == 0) {
+        map_runtime_state.ambient_script_countdown = MAP_AMBIENT_COUNTDOWN_RELOAD;
         switch (player_state.progress_state.current_floor) {
         case KF_FLOOR_FORCE_RELOAD:
             // This resource-load sentinel has no ambient floor script.
@@ -189,14 +185,14 @@ void map_world_state_persist(void)
     event = map_runtime_state.events;
     for (i = 0; i < KF_MAP_EVENT_CAPACITY; i++, event++) {
         map_saved_put(out, end, kf_enum_encode<u8>(event->state));
-        map_saved_put(out, end, event->dialogue.fields.stage_limit);
-        map_saved_put(out, end, event->dialogue.fields.stage);
-        map_saved_put(out, end, event->dialogue.fields.page);
-        const auto stage = event->dialogue.fields.stage;
+        map_saved_put(out, end, event->dialogue.stage_limit);
+        map_saved_put(out, end, event->dialogue.stage);
+        map_saved_put(out, end, event->dialogue.page);
+        const auto stage = event->dialogue.stage;
         if (stage > KF_DIALOGUE_STAGE_COUNT)
             kf::host_fail("Invalid persisted dialogue stage");
         map_saved_put(out, end, stage ? event->dialogue_pages.last_page[stage - 1] : 0);
-        map_saved_put(out, end, event->dialogue.fields.page_delay);
+        map_saved_put(out, end, event->dialogue.page_delay);
         map_saved_put(out, end, event->unknown_0d);
     }
 
@@ -274,11 +270,10 @@ void map_world_state_persist(void)
 
 void map_unload_floor(void)
 {
-    pool_release_all();
-    audio_close_vab();
+    animation_cache_release_all();
+    audio_close_vab(audio_state);
     map_world_state_persist();
 }
-
 
 void map_events_reset_module_state(void)
 {

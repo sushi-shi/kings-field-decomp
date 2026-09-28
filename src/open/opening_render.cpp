@@ -8,10 +8,10 @@ enum {
 
 void opening_render_frame(const VECTOR *position_or_null, const SVECTOR *rotation_or_null)
 {
-    render_set_view_transform(position_or_null, rotation_or_null);
-    display_begin_frame();
+    render_set_view_transform(open_graphics_runtime.render_state, position_or_null, rotation_or_null);
+    display_begin_frame(open_graphics_runtime.display_state);
     opening_render_entities();
-    display_present_frame();
+    display_present_frame(open_graphics_runtime.display_state);
 }
 
 void sprite_add_g4(const KfScreenRect *rectangle, const CVECTOR *color0, const CVECTOR *color1,

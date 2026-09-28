@@ -20,24 +20,14 @@ enum {
 
 void effect_pool_reset(void)
 {
-    KfEffectRecord *record = effect_pool_records;
-    u16 i;
-
-    for (i = 0; i < KF_EFFECT_CAPACITY; i++) {
-        record->type = KF_EFFECT_SLOT_FREE;
-        record++;
+    for (auto &record : effect_state.records) {
+        record.type = KF_EFFECT_SLOT_FREE;
     }
 }
 
 void magic_load_records(const KfMagicTable *table)
 {
-    const u32 *source = (const u32 *)table;
-    u32 *destination = (u32 *)&effect_state.magic;
-    s32 count;
-
-    for (count = sizeof effect_state.magic / sizeof *source; count != 0; count--) {
-        *destination++ = *source++;
-    }
+    effect_state.magic = *table;
 }
 
 void magic_cast(void)
@@ -59,13 +49,13 @@ void magic_cast(void)
         KfActor *target;
         s32 speed;
 
-        setVector(&offset, MAGIC_LAUNCH_OFFSET_X, MAGIC_LAUNCH_OFFSET_Y, MAGIC_LAUNCH_OFFSET_Z);
+        offset = {MAGIC_LAUNCH_OFFSET_X, MAGIC_LAUNCH_OFFSET_Y, MAGIC_LAUNCH_OFFSET_Z};
         angles.x = -player_state.camera_rotation.vx;
         angles.y = player_state.camera_rotation.vy;
         angles.z = -player_state.camera_rotation.vz;
         matrix_set_rotation_yxz(&angles, &matrix);
         world_pos = kf::matrix_apply_rotation(matrix, offset);
-        addVector(&world_pos, &player_state.camera_position);
+        world_pos += player_state.camera_position;
         target = actor_pool_find_target_in_cone(
             &player_state.camera_position,
             player_state.camera_rotation.vy, KF_EFFECT_ACTOR_TARGET_MAX_DISTANCE, KF_ACTOR_AIM_TOLERANCE, &distance);
@@ -108,7 +98,7 @@ void magic_cast(void)
         if (player_state.selected_magic_id == KF_MAGIC_LIGHT_NEEDLE) {
             SVECTOR rotation;
 
-            copyVector(&rotation, &player_state.camera_rotation);
+            rotation = player_state.camera_rotation;
             effect_pool_construct(
                 KF_PLAYER_DAMAGE_MULTIPLIER_ONE, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS,
                 player_state.selected_magic_id, &world_pos, &direction, KfEffectRotationSoundArguments{&rotation, KF_EFFECT_SOUND_PLAY});
@@ -136,8 +126,10 @@ void magic_cast(void)
             s32 cell_x;
             s32 cell_z;
 
-            VECTOR_YAW_PROBE_XZ(spawn.vx, spawn.vz, player_state.camera_position,
-                player_state.camera_rotation, FIRE_WALL_UNTARGETED_DISTANCE);
+            const auto probe = vector_yaw_probe_xz(player_state.camera_position,
+                player_state.camera_rotation.vy, FIRE_WALL_UNTARGETED_DISTANCE);
+            spawn.vx = probe.x;
+            spawn.vz = probe.z;
             cell_z = spawn.vz / KF_MAP_TILE_SIZE;
             cell_x = spawn.vx / KF_MAP_TILE_SIZE;
             spawn.vy = -(map_floor_height_grid.cells[cell_z][cell_x] * KF_MAP_HEIGHT_STEP);
@@ -151,16 +143,12 @@ void magic_cast(void)
     }
 }
 
-void effect_pool_sweep(void)
+void effect_pool_update(void)
 {
-    KfEffectRecord *record = effect_pool_records;
-    u16 i = KF_EFFECT_CAPACITY - 1;
-
-    do {
-        if (record->type != KF_EFFECT_SLOT_FREE) {
-            effect_pool_set_current(record);
+    for (auto &record : effect_state.records) {
+        if (record.type != KF_EFFECT_SLOT_FREE) {
+            effect_pool_set_current(&record);
             effect_update_dispatch();
         }
-        record++;
-    } while (i-- != 0);
+    }
 }

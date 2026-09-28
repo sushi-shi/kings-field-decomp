@@ -3,7 +3,7 @@
 
 #include <kf/lib/bool.h>
 #include <kf/game/combat.h>
-#include <kf/lib/audio.h>
+#include <kf/game/audio.h>
 #include <kf/lib/enum.h>
 #include <kf/game/equipment.h>
 #include <kf/game/effect.h>
@@ -13,7 +13,7 @@
 #include <kf/game/player_motion.h>
 #include <kf/lib/player_stats_types.h>
 
-struct KfPoolRecord;
+struct KfAnimationCacheRecord;
 struct KfAssetHeader;
 
 enum {
@@ -90,18 +90,13 @@ typedef struct KfPlayerProgressState {
     KfEnumStorage<KfFloorId, u8> highest_floor;
 } KfPlayerProgressState;
 
-typedef struct KfPlayerMotionFields {
+typedef struct KfPlayerMotionState {
     s16 strafe_velocity;
     s16 forward_velocity;
     u16 movement_speed;
     s16 yaw_step;
     s16 pitch_step;
-    KfMapCell map_cell;
-} KfPlayerMotionFields;
-
-typedef union KfPlayerMotionState {
-    KfPlayerMotionFields fields;
-    u32 words[3];
+    KfMapCellCoordinates map_cell;
 } KfPlayerMotionState;
 
 typedef struct KfPlayerState {
@@ -152,7 +147,7 @@ typedef struct KfPlayerState {
     struct KfAssetHeader *weapon_asset_buffer;
     s16 weapon_attack_phase;
     u8 unknown_72[2];
-    struct KfPoolRecord *weapon_animation_cache;
+    struct KfAnimationCacheRecord *weapon_animation_cache;
     u8 weapon_magic_shots_remaining;
     u8 weapon_magic_delay;
     KfWeaponAttackCharge weapon_attack_fully_charged;
@@ -176,10 +171,10 @@ typedef struct KfPlayerState {
     KfPlayerUpdateState update_state;
     u8 unknown_a3;
     VECTOR camera_position;
-    s32 floor_height;
+    s32 foot_height;
     SVECTOR camera_rotation;
     KfPlayerMotionState motion_state;
-    KfMapCell previous_map_cell;
+    KfMapCellCoordinates previous_map_cell;
     u8 unknown_ce[6];
     s16 view_bob_offset;
     u16 view_bob_phase;
@@ -204,19 +199,10 @@ extern VECTOR player_position_snapshot;
 extern SVECTOR player_rotation_snapshot;
 extern KfPlayerState player_state;
 
-#define PLAYER_FLOOR_POSITION(position) ( \
-    (position).vx = player_state.camera_position.vx, \
-    (position).vz = player_state.camera_position.vz, \
-    (position).vy = player_state.floor_height)
+extern void player_get_floor_position(VECTOR &position);
 
-#define PLAYER_ITEM_IS_EQUIPPED(item_index) \
-    ((item_index) == kf_enum_encode<u8>(player_state.equipped_weapon_id) || \
-     (item_index) == kf_enum_encode<u8>(player_state.equipped_head_armor_id) || \
-     (item_index) == kf_enum_encode<u8>(player_state.equipped_body_armor_id) || \
-     (item_index) == kf_enum_encode<u8>(player_state.equipped_shield_id) || \
-     (item_index) == kf_enum_encode<u8>(player_state.equipped_arm_armor_id) || \
-     (item_index) == kf_enum_encode<u8>(player_state.equipped_leg_armor_id) || \
-     (item_index) == kf_enum_encode<u8>(player_state.equipped_accessory_id))
+extern bool player_item_is_equipped(KfObjectId item_id);
+extern KfMapAttribute player_current_map_attribute(void);
 
 extern void player_add_experience(s16 amount);
 extern void player_adjust_hp(s32 delta);
@@ -227,10 +213,10 @@ extern void player_apply_damage(
     u16 scale_q12, u16 multiplier_tenths);
 extern void player_begin_weapon_attack(void);
 extern void player_apply_radial_damage(
-    const VECTOR *origin, u32 radius, u16 falloff_q12, u16 base_power,
+    const VECTOR *origin, u32 radius, u16 falloff_q12,
     u16 component0, u16 component1, u16 component2, u16 component3, u16 component4,
     u16 scale_q12, u16 multiplier_tenths);
-extern s32 player_calculate_damage_component(s32 base_power, s32 defense, s32 attack);
+extern s32 player_calculate_damage_component(s32 defender_power, s32 defense, s32 attack);
 extern void player_clear_motion(void);
 extern void player_death_apply_visual_fade(const MATRIX *color_from, s32 blend);
 extern void player_death_begin(void);
@@ -269,5 +255,7 @@ extern void player_warp_shimmer_at_player(KfWarpShimmerMode shimmer_mode);
 extern void player_warp_same_floor(KfMapVariant map_variant, s32 cell_x, s32 cell_z);
 extern void player_warp_to_floor_entry(void);
 extern KfBoolU32 player_warp_trigger_update(void);
+
+extern s32 fixed6_ratio_step(s32 value, s32 span);
 
 #endif

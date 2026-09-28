@@ -6,35 +6,35 @@
 #include <kf/lib/fixed_math.hpp>
 #include <kf/lib/geometry_types.h>
 
-enum {
-    KF_FIXED4_BITS = 4,
-    KF_FIXED6_BITS = 6,
-    KF_FIXED7_BITS = 7,
-    KF_FIXED7_ONE = 128,
-    KF_FIXED8_BITS = 8,
-    KF_FIXED11_BITS = 11,
-    KF_FIXED12_BITS = 12,
-    KF_FIXED12_ONE = 0x1000,
-    KF_ANGLE_EIGHTH_TURN = 0x200,
-    KF_ANGLE_QUARTER_TURN = 0x400,
-    KF_ANGLE_HALF_TURN = 0x800,
-    KF_ANGLE_THREE_QUARTER_TURN = 0xc00,
-    KF_ANGLE_FULL_TURN = 0x1000,
-    KF_ANGLE_WRAP_MASK = 0xfff,
-    KF_MATRIX_ROTATION_ELEMENTS = 9,
-    KF_LENGTH_SQUARE_DOWNSHIFT = 3
-};
+inline constexpr int KF_FIXED4_BITS = 4;
+inline constexpr int KF_FIXED6_BITS = 6;
+inline constexpr int KF_FIXED7_BITS = 7;
+inline constexpr int KF_FIXED7_ONE = 128;
+inline constexpr int KF_FIXED8_BITS = 8;
+inline constexpr int KF_FIXED11_BITS = 11;
+inline constexpr int KF_FIXED12_BITS = 12;
+inline constexpr int KF_FIXED12_ONE = 0x1000;
+inline constexpr int KF_ANGLE_EIGHTH_TURN = 0x200;
+inline constexpr int KF_ANGLE_QUARTER_TURN = 0x400;
+inline constexpr int KF_ANGLE_HALF_TURN = 0x800;
+inline constexpr int KF_ANGLE_THREE_QUARTER_TURN = 0xc00;
+inline constexpr int KF_ANGLE_FULL_TURN = 0x1000;
+inline constexpr int KF_ANGLE_WRAP_MASK = 0xfff;
+inline constexpr int KF_MATRIX_ROTATION_ELEMENTS = 9;
+inline constexpr int KF_LENGTH_SQUARE_DOWNSHIFT = 3;
 
-enum {
+inline constexpr int KF_RANDOM_ANGLE_SHIFT = 3;
 
-    KF_RANDOM_ANGLE_SHIFT = 3,
-
-    KF_CONE_SEARCH_INITIAL_ANGLE_ERROR = 30000
-};
+inline constexpr int KF_CONE_SEARCH_INITIAL_ANGLE_ERROR = 30000;
 
 struct KfVecXZs {
     s16 x;
     s16 z;
+};
+
+struct KfVecXZ {
+    s32 x;
+    s32 z;
 };
 
 struct KfVec3s {
@@ -82,16 +82,20 @@ static inline s32 fixed_vector3_length(s32 x, s32 y, s32 z)
     return kf::length_square_root(x * x + y * y + z * z) << KF_LENGTH_SQUARE_DOWNSHIFT;
 }
 
-#define VECTOR_YAW_PROBE_XZ(x, z, position, rotation, reach) ( \
-    (x) = (position).vx - ((kf::angle_sine((rotation).vy) * (reach)) >> KF_FIXED12_BITS), \
-    (z) = (position).vz + ((kf::angle_cosine((rotation).vy) * (reach)) >> KF_FIXED12_BITS))
+inline KfVecXZ vector_yaw_probe_xz(const VECTOR &position, s16 yaw, s32 reach)
+{
+    // Subtract after the signed shift: moving the minus inside changes rounding.
+    return {
+        position.vx - ((kf::angle_sine(yaw) * reach) >> KF_FIXED12_BITS),
+        position.vz + ((kf::angle_cosine(yaw) * reach) >> KF_FIXED12_BITS)
+    };
+}
 
 extern s16 angle_approach(s16 current, s16 target, s32 step);
 extern KfBool angle_mod_delta_le_half_turn(int lhs, int rhs);
 extern s16 angle_shortest_delta(s32 first, s32 second);
 extern void angle_to_forward_xz(s16 angle, struct KfVecXZs *direction);
-extern KfBool angle_within_tolerance(int lhs, int rhs, s16 range);
-extern s32 fixed6_ratio_step(s32 value, s32 span);
+extern KfBool angle_within_tolerance(int lhs, int rhs, s16 tolerance);
 extern s32 fixed_vector2_length(s32 x, s32 y);
 extern void matrix_interpolate(
     const MATRIX *from, const MATRIX *to, MATRIX *output, s32 blend);
@@ -109,5 +113,8 @@ extern void vector3i_add_xz(
 extern void vector3s_scale_shift12(s16 scale, SVECTOR *vector);
 extern void vector3s_scale_shift12_alt(s16 scale, s16 *vector);
 extern s32 vector_xz_to_angle(s32 x, s32 z);
+
+extern void color_lerp_cvector(const CVECTOR *from, const CVECTOR *to, CVECTOR *output, s32 blend);
+extern u16 color_lerp_rgb555(u16 from, u16 to, s32 blend);
 
 #endif

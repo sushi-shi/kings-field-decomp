@@ -16,7 +16,7 @@ enum {
 
 void render_actor(KfActor *actor)
 {
-    SVECTOR screen;
+    SVECTOR relative_position;
     MATRIX rot_y;
     MATRIX model;
     MATRIX light;
@@ -24,11 +24,11 @@ void render_actor(KfActor *actor)
     u8 descriptor;
     u16 asset;
 
-    setVector(&screen,
+    relative_position = VECTOR{
         actor->position.vx - game_graphics_runtime.render_state.view_position.vx,
         actor->position.vy - game_graphics_runtime.render_state.view_position.vy,
-        actor->position.vz - game_graphics_runtime.render_state.view_position.vz);
-    kf::render_place_model(model, game_graphics_runtime.render_state.view_matrix, screen);
+        actor->position.vz - game_graphics_runtime.render_state.view_position.vz}.narrowed();
+    kf::render_place_model(model, game_graphics_runtime.render_state.view_matrix, relative_position);
     matrix_set_rotation_x(actor->rotation.angles.x, &model);
     matrix_set_rotation_y(-actor->rotation.angles.y, &rot_y);
     kf::matrix_multiply_rotation(rot_y, model, model);
@@ -38,12 +38,12 @@ void render_actor(KfActor *actor)
     descriptor = actor_state.definitions.entries[actor->definition_id].model_and_texture;
     asset = descriptor & ACTOR_MODEL_ASSET_MASK;
     asset_registry_select(asset);
-    object = tmd_get_object(0);
+    object = tmd_get_object(tmd_context(), 0);
     if (render_bind_animated_instance(
-            &actor->animation_cache, asset, actor->animation_id,
+            &actor->animation_cache, asset, actor->animation_clip,
             actor->animation_phase, object->vertex_count) == NULL) {
-        tmd_select_object_vertices(0);
-        tmd_project_vertices(tmd_get_object(0)->vertex_count, &model, game_graphics_runtime.render_state.projection);
+        tmd_select_object_vertices(tmd_context(), 0);
+        tmd_project_vertices(tmd_get_object(tmd_context(), 0)->vertex_count, &model, game_graphics_runtime.render_state.projection);
     } else {
         tmd_project_vertices(object->vertex_count, &model, game_graphics_runtime.render_state.projection);
     }
@@ -53,24 +53,24 @@ void render_actor(KfActor *actor)
         render_enqueue_tmd(0, 0, &light);
     } else {
         game_graphics_runtime.active_render_material = game_graphics_runtime.effect5_materials[descriptor];
-        render_enqueue_model(0, 0, &light);
+        render_enqueue_tmd_retextured(0, 0, &light);
     }
 }
 
 void render_map_object(KfMapObject *object)
 {
-    SVECTOR screen;
+    SVECTOR relative_position;
     MATRIX rot_x;
     MATRIX model;
     MATRIX light;
     KfEnumStorage<KfObjectId, u16> id;
     s16 depth;
 
-    setVector(&screen,
+    relative_position = VECTOR{
         object->position.vx - game_graphics_runtime.render_state.view_position.vx,
         object->position.vy - game_graphics_runtime.render_state.view_position.vy,
-        object->position.vz - game_graphics_runtime.render_state.view_position.vz);
-    kf::render_place_model(model, game_graphics_runtime.render_state.view_matrix, screen);
+        object->position.vz - game_graphics_runtime.render_state.view_position.vz}.narrowed();
+    kf::render_place_model(model, game_graphics_runtime.render_state.view_matrix, relative_position);
     matrix_set_rotation_x(object->rotation.angles.x, &rot_x);
     matrix_set_rotation_y(object->rotation.angles.y, &model);
     kf::matrix_multiply_rotation(model, rot_x, model);
@@ -91,16 +91,16 @@ void render_map_object(KfMapObject *object)
         depth = 0;
         break;
     }
-    tmd_select_object_vertices(kf_enum_encode<u16>(id));
-    tmd_project_vertices(tmd_get_object(kf_enum_encode<u16>(id))->vertex_count, &model, game_graphics_runtime.render_state.projection);
+    tmd_select_object_vertices(tmd_context(), kf_enum_encode<u16>(id));
+    tmd_project_vertices(tmd_get_object(tmd_context(), kf_enum_encode<u16>(id))->vertex_count, &model, game_graphics_runtime.render_state.projection);
     render_enqueue_tmd(kf_enum_encode<u16>(id), depth, &light);
 }
 
 void menu_render_item_model(const MATRIX *lights, const MATRIX *model)
 {
     lighting_set_active_color_matrix(KF_GAME_COLOR_DEFAULT);
-    tmd_select(KF_TMD_SLOT_MENU_ITEM);
-    tmd_select_object_vertices(0);
-    tmd_project_vertices(tmd_get_object(0)->vertex_count, model, game_graphics_runtime.render_state.projection);
+    tmd_select(tmd_context(), KF_TMD_SLOT_MENU_ITEM);
+    tmd_select_object_vertices(tmd_context(), 0);
+    tmd_project_vertices(tmd_get_object(tmd_context(), 0)->vertex_count, model, game_graphics_runtime.render_state.projection);
     render_enqueue_tmd(0, MENU_ITEM_DEPTH_BIAS, lights);
 }
