@@ -1,8 +1,7 @@
 #include <kf/lib/null.h>
 
-#include <kf/lib/audio.h>
-#include <kf/lib/math.h>
 #include <kf/open/audio.h>
+#include <kf/lib/math.h>
 
 enum {
     OPEN_SOUND_EQUAL_PAN_THRESHOLD = 96
@@ -47,7 +46,7 @@ KfAudioPlaybackResult audio_play_spatial(
         left = (attenuated_volume * kf::angle_sine(angle)) >> KF_FIXED12_BITS;
         right = (attenuated_volume * kf::angle_cosine(angle)) >> KF_FIXED12_BITS;
     }
-    audio_play_voice(
+    audio_play_voice(audio_playback(),
         audio_state.bank,
         sound->program,
         sound->tone_and_flags,

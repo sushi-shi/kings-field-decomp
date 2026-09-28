@@ -111,7 +111,7 @@ no must-fix issue. No new unit-test campaign or synthetic gameplay input was use
 
 ### GAME enqueuer byte decoding and cast removal
 
-The finite follow-up converts `render_enqueue_tmd`, `render_enqueue_model` and
+The finite follow-up converts `render_enqueue_tmd`, `render_enqueue_tmd_retextured` and
 `render_enqueue_map` in place. Their object records are now decoded values, with
 checked byte addressing shared with the legacy object accessor. A borrowed packet
 cursor checks the declared count, four-byte header and `input_length * 4` body
@@ -832,7 +832,7 @@ world rendering and closes the unpaced GAME paths listed here:
 | `game_main_loop` | Player, actors, objects, effects and map events advance once; one world render; `frame_pacer_wait` enforces a three-host-tick minimum, about a 20-update/s ceiling. |
 | GAME `render_frame` → `render_floor_item` / `notify_effect_update` | Eligible floor sprites and notifications advance from scene production, even when a caller is outside the normal player/AI loop. No separate animation clock. |
 | GAME warp shimmer, reveal fade and lighting transition | Their nested world-render loops also call the three-tick pacer; they do not run the whole normal player/AI update chain. |
-| GAME `map_floor5_transition_cutscene` | Its camera loop and subsequent transformation/effect loop call world rendering without the gameplay pacer. The presentation's next-host-tick wait alone limits them; this is a concrete dependency outside OPEN. |
+| GAME `map_floor5_weapon_transform_cutscene` | Its camera loop and subsequent transformation/effect loop call world rendering without the gameplay pacer. The presentation's next-host-tick wait alone limits them; this is a concrete dependency outside OPEN. |
 | OPEN scene0 | Camera, entity rotation and lighting fade advance together once per loop. The new loop-local deadline is 22 updates/s. |
 | OPEN scene1 hold / cylinder transition | The hold explicitly waits one host tick without rendering; the cylinder loop renders and then explicitly waits another tick. Neither inherits the scene0 deadline. |
 | Menu / input-release / retained-frame paths | Menu presentation and explicit input waits yield on the host clock. Re-presenting retained contents does not call world-render producers or advance player/AI/flame state. |
@@ -1207,7 +1207,7 @@ address to `actor_pool_find_target_in_cone`, which provides the distance later
 read at `0x800397ec`. The player path bypasses that call. Its preceding yaw
 helper does not receive a pointer to, or itself write, the slot.
 
-The sole proven direct dispatcher caller is `effect_pool_sweep` at
+The sole proven direct dispatcher caller is `effect_pool_update` at
 `0x8003a7a4`; its loop reuses the dispatcher stack area. A stable player distance
 cannot be inferred from that old stack content. The source actor-effect path
 can construct player-targeted alternate homing projectiles, whose constructor

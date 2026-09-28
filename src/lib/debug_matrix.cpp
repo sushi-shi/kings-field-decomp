@@ -1,6 +1,6 @@
+#include <kf/platform/prelude.hpp>
 #include <kf/lib/debug.h>
 #include <kf/lib/math.h>
-#include <kf/open/render.h>
 
 static const char debug_matrix_label[16] = "Dump Matrix\n";
 

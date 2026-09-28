@@ -1,3 +1,5 @@
+#include <kf/game/audio.h>
+#include <kf/game/resources.h>
 #include <kf/lib/null.h>
 #include <kf/game/graphics.h>
 
@@ -10,7 +12,6 @@
 #include <kf/game/game.h>
 static constexpr unsigned weapon_image_number_offset = 9;
 static constexpr unsigned weapon_image_path_capacity = 16;
-
 
 static constexpr s32 PLAYER_INITIAL_POSITION_X = 31000;
 static constexpr s32 PLAYER_INITIAL_POSITION_Z = 4000;
@@ -28,21 +29,19 @@ enum {
     PLAYER_BOB_SINE_DOWNSHIFT = 6
 };
 
-enum {
-    PLAYER_WEAPON_CHARGE_DELAY_UPDATES = 10,
-    PLAYER_COLICHEMARDE_HIT_PHASE = 1000,
-    PLAYER_WEAPON_HIT_PHASE = 3072,
-    PLAYER_WEAPON_HIT_WINDOW = 300,
-    PLAYER_WEAPON_HIT_Y_OFFSET = 1000,
-    PLAYER_WEAPON_HIT_RADIUS = 800,
-    PLAYER_WEAPON_HIT_HEIGHT = 1000,
-    PLAYER_COLLISION_SLIDE_CLEARANCE = 100,
-    PLAYER_COLLISION_DEFLECTION_ANGLE = 64,
-    PLAYER_MAX_STEP_RISE = 699,
-    PLAYER_DIAGONAL_COMPONENT_Q12 = 2896
-};
+static constexpr int PLAYER_WEAPON_CHARGE_DELAY_UPDATES = 10;
+static constexpr int PLAYER_COLICHEMARDE_HIT_PHASE = 1000;
+static constexpr int PLAYER_WEAPON_HIT_PHASE = 3072;
+static constexpr int PLAYER_WEAPON_HIT_WINDOW = 300;
+static constexpr int PLAYER_WEAPON_HIT_Y_OFFSET = 1000;
+static constexpr int PLAYER_WEAPON_HIT_RADIUS = 800;
+static constexpr int PLAYER_WEAPON_HIT_HEIGHT = 1000;
+static constexpr int PLAYER_COLLISION_SLIDE_CLEARANCE = 100;
+static constexpr int PLAYER_COLLISION_DEFLECTION_ANGLE = 64;
+static constexpr int PLAYER_MAX_STEP_RISE = 699;
+static constexpr int PLAYER_DIAGONAL_COMPONENT_Q12 = 2896;
 
-char weapon_image_path_template[weapon_image_path_capacity] = "WEPON/WEP00.MIM";
+char weapon_asset_path_template[weapon_image_path_capacity] = "WEPON/WEP00.MIM";
 
 KfFloorEntryCell floor_entry_cells[KF_PLAYER_FLOOR_ENTRY_COUNT] = {
     {15, 2}, {29, 56}, {28, 18}, {7, 22}, {39, 69}
@@ -118,12 +117,12 @@ void player_equip_weapon(KfObjectId weapon_id)
     player_state.equipped_weapon_id = weapon_id;
     if (weapon_id != KF_OBJECT_NONE) {
         player_state.equipped_weapon_record = &weapon_records.entries[kf_enum_encode<u8>(weapon_id)];
-        weapon_image_path_template[weapon_image_number_offset] = '0' + kf_enum_encode<u32>(weapon_id) / 10;
-        weapon_image_path_template[weapon_image_number_offset + 1] = '0' + kf_enum_encode<u32>(weapon_id) % 10;
+        weapon_asset_path_template[weapon_image_number_offset] = '0' + kf_enum_encode<u32>(weapon_id) / 10;
+        weapon_asset_path_template[weapon_image_number_offset + 1] = '0' + kf_enum_encode<u32>(weapon_id) % 10;
         std::size_t loaded_size;
         if (resource_file_load_into(player_state.weapon_asset_buffer, KF_WEAPON_ASSET_BUFFER_BYTES,
-                weapon_image_path_template, &loaded_size) != KF_RESOURCE_LOADED) {
-            exit(1);
+                weapon_asset_path_template, &loaded_size) != KF_RESOURCE_LOADED) {
+            resource_file_fail(weapon_asset_path_template);
         }
         asset_registry_set(KF_ASSET_WEAPON, player_state.weapon_asset_buffer, loaded_size);
     }
@@ -137,7 +136,7 @@ void player_begin_weapon_attack(void)
     if (player_state.weapon_attack_phase == KF_WEAPON_ATTACK_INACTIVE
         && player_state.equipped_weapon_id != KF_OBJECT_NONE) {
         player_state.weapon_attack_phase = 0;
-        sound_ref_play(&player_sound_refs[KF_PLAYER_SOUND_WEAPON_ATTACK], KF_AUDIO_MAX_VOLUME);
+        sound_ref_play(audio_playback(), &player_sound_refs[KF_PLAYER_SOUND_WEAPON_ATTACK], KF_AUDIO_MAX_VOLUME);
         player_state.attack_charge_state.committed = player_state.attack_charge_state.current;
         if (player_state.attack_charge_state.current == KF_PLAYER_CHARGE_FULL) {
             player_state.weapon_attack_fully_charged = KF_WEAPON_ATTACK_FULL_CHARGE;
@@ -155,7 +154,7 @@ void player_update_weapon_attack(void)
     VECTOR result;
     MATRIX matrix;
     u16 window;
-    s32 actor;
+    s32 actor_index;
 
     if (player_state.equipped_weapon_id == KF_OBJECT_NONE) {
         return;
@@ -166,19 +165,19 @@ void player_update_weapon_attack(void)
         if (player_state.equipped_weapon_id == KF_ITEM_COLICHEMARDE
                 ? (u16)(window - PLAYER_COLICHEMARDE_HIT_PHASE) < PLAYER_WEAPON_HIT_WINDOW
                 : (u16)(window - PLAYER_WEAPON_HIT_PHASE) < PLAYER_WEAPON_HIT_WINDOW) {
-            setVector(&offset,
+            offset = VECTOR{
                 0,
                 PLAYER_WEAPON_HIT_Y_OFFSET,
-                player_state.equipped_weapon_record->attack_z_offset);
-            setVector(&rotation, 0, -player_state.camera_rotation.vy, 0);
+                player_state.equipped_weapon_record->attack_z_offset}.narrowed();
+            rotation = VECTOR{0, -player_state.camera_rotation.vy, 0}.narrowed();
             kf::matrix_set_rotation_xyz(rotation, matrix);
             result = kf::matrix_apply_rotation(matrix, offset);
-            addVector(&result, &player_state.camera_position);
-            actor = actor_pool_find_overlap(result.vx, result.vy, result.vz,
+            result += player_state.camera_position;
+            actor_index = actor_pool_find_overlap(result.vx, result.vy, result.vz,
                 PLAYER_WEAPON_HIT_RADIUS, PLAYER_WEAPON_HIT_HEIGHT);
-            if (actor != -1) {
+            if (actor_index != -1) {
                 actor_apply_damage(
-                    actor,
+                    actor_index,
                     player_state.physical_power,
                     player_state.cutting_attack,
                     player_state.striking_attack,
@@ -210,11 +209,9 @@ void player_update_weapon_attack(void)
 
 void game_initialize_session(void)
 {
-    player_state.camera_rotation.vz = 0;
-    player_state.camera_rotation.vy = 0;
-    player_state.camera_rotation.vx = 0;
-    setVector(&player_state.camera_position, PLAYER_INITIAL_POSITION_X, 0, PLAYER_INITIAL_POSITION_Z);
-    player_state.weapon_asset_buffer = (struct KfAssetHeader *)memory_allocate(KF_WEAPON_ASSET_BUFFER_BYTES);
+    player_state.camera_rotation = {};
+    player_state.camera_position = {PLAYER_INITIAL_POSITION_X, 0, PLAYER_INITIAL_POSITION_Z};
+    player_state.weapon_asset_buffer = (struct KfAssetHeader *)memory_allocate(memory_arena, KF_WEAPON_ASSET_BUFFER_BYTES);
     game_state_initialize();
     player_state.update_state = KF_PLAYER_UPDATE_NORMAL;
     player_state.audio_effects_enabled = KF_PLAYER_OPTION_ON;
@@ -223,17 +220,42 @@ void game_initialize_session(void)
     player_state.compass_enabled = KF_PLAYER_OPTION_ON;
 }
 
+void player_get_floor_position(VECTOR &position)
+{
+    position = {player_state.camera_position.vx, player_state.foot_height,
+        player_state.camera_position.vz};
+}
+
+bool player_item_is_equipped(KfObjectId item_id)
+{
+    return item_id == player_state.equipped_weapon_id
+        || item_id == player_state.equipped_head_armor_id
+        || item_id == player_state.equipped_body_armor_id
+        || item_id == player_state.equipped_shield_id
+        || item_id == player_state.equipped_arm_armor_id
+        || item_id == player_state.equipped_leg_armor_id
+        || item_id == player_state.equipped_accessory_id;
+}
+
+KfMapAttribute player_current_map_attribute(void)
+{
+    const auto &cell = player_state.motion_state.map_cell;
+    return map_attribute_at_cell(cell.x, cell.z);
+}
+
 void player_clear_motion(void)
 {
-    player_state.motion_state.fields.yaw_step = 0;
-    player_state.motion_state.fields.pitch_step = 0;
-    player_state.motion_state.fields.movement_speed = 0;
-    player_state.motion_state.fields.forward_velocity = 0;
-    player_state.motion_state.fields.strafe_velocity = 0;
+    auto &motion = player_state.motion_state;
+    motion.yaw_step = 0;
+    motion.pitch_step = 0;
+    motion.movement_speed = 0;
+    motion.forward_velocity = 0;
+    motion.strafe_velocity = 0;
 }
 
 void player_sync_position_to_map(void)
 {
+    auto &cell = player_state.motion_state.map_cell;
     s32 cell_x = player_state.camera_position.vx / KF_MAP_TILE_SIZE;
     s32 cell_z = player_state.camera_position.vz / KF_MAP_TILE_SIZE;
     s32 floor;
@@ -241,16 +263,16 @@ void player_sync_position_to_map(void)
     s32 floor_height;
 
     player_state.equipment_effect_ticks = 0;
-    player_state.motion_state.fields.map_cell.coords.x = cell_x;
-    player_state.motion_state.fields.map_cell.coords.z = cell_z;
-    floor = map_floor_height_grid.cells[player_state.motion_state.fields.map_cell.coords.z][player_state.motion_state.fields.map_cell.coords.x];
+    cell.x = cell_x;
+    cell.z = cell_z;
+    floor = map_floor_height_grid.cells[cell.z][cell.x];
     player_state.allow_near_actor_spawn = KF_ACTOR_NEAR_SPAWN_ALLOWED;
     floor_height = -(floor * KF_MAP_HEIGHT_STEP);
     view_offset = player_state.view_bob_offset - KF_PLAYER_CAMERA_HEIGHT;
-    player_state.floor_height = floor_height;
+    player_state.foot_height = floor_height;
     player_state.camera_position.vy = view_offset + floor_height;
     player_clear_motion();
-    collision_adjust_cell_occupancy(player_state.motion_state.fields.map_cell.coords.x, player_state.motion_state.fields.map_cell.coords.z, 1);
+    collision_adjust_cell_occupancy(cell.x, cell.z, 1);
     game_graphics_runtime.hud_brightness = KF_HUD_DEFAULT_BRIGHTNESS;
     player_state.vertical_state = KF_PLAYER_VERTICAL_GROUNDED;
     player_state.vertical_velocity = 0;
@@ -286,41 +308,38 @@ s32 player_distance_to_point(
     s32 distance;
     s32 tolerance = point_height;
 
-    switch (0) {
-    default:
-        dx = player_state.camera_position.vx - point_x;
-        if (dx < -max_distance || max_distance < dx) {
-            return KF_PROXIMITY_NONE;
-        }
-        dz = player_state.camera_position.vz - point_z;
-        if (dz < -max_distance || max_distance < dz) {
-            return KF_PROXIMITY_NONE;
-        }
-        dx >>= KF_LENGTH_SQUARE_DOWNSHIFT;
-        if (point_y != KF_COLLISION_IGNORE_HEIGHT) {
-            tolerance >>= 1;
-            center = point_y - tolerance;
-            tolerance += KF_COLLISION_PLAYER_HEIGHT / 2;
-            center += KF_COLLISION_PLAYER_HEIGHT / 2;
-            dy = player_state.floor_height - center;
-            if (dy < -tolerance || tolerance < dy) {
-                break;
-            }
-        }
-        dz >>= KF_LENGTH_SQUARE_DOWNSHIFT;
-        distance = kf::length_square_root(dx * dx + dz * dz) << KF_LENGTH_SQUARE_DOWNSHIFT;
-        if (max_distance < distance) {
-            break;
-        }
-        return distance;
+    dx = player_state.camera_position.vx - point_x;
+    if (dx < -max_distance || max_distance < dx) {
+        return KF_PROXIMITY_NONE;
     }
-    return KF_PROXIMITY_NONE;
+    dz = player_state.camera_position.vz - point_z;
+    if (dz < -max_distance || max_distance < dz) {
+        return KF_PROXIMITY_NONE;
+    }
+    dx >>= KF_LENGTH_SQUARE_DOWNSHIFT;
+    if (point_y != KF_COLLISION_IGNORE_HEIGHT) {
+        tolerance >>= 1;
+        center = point_y - tolerance;
+        tolerance += KF_COLLISION_PLAYER_HEIGHT / 2;
+        center += KF_COLLISION_PLAYER_HEIGHT / 2;
+        dy = player_state.foot_height - center;
+        if (dy < -tolerance || tolerance < dy) {
+            return KF_PROXIMITY_NONE;
+        }
+    }
+    dz >>= KF_LENGTH_SQUARE_DOWNSHIFT;
+    distance = kf::length_square_root(dx * dx + dz * dz) << KF_LENGTH_SQUARE_DOWNSHIFT;
+    if (max_distance < distance) {
+        return KF_PROXIMITY_NONE;
+    }
+    return distance;
 }
 
 s32 player_move_horizontal(s32 heading, s32 distance)
 {
-    s32 cell_z0 = player_state.motion_state.fields.map_cell.coords.z;
-    s32 cell_x0 = player_state.motion_state.fields.map_cell.coords.x;
+    auto &cell = player_state.motion_state.map_cell;
+    s32 cell_z0 = cell.z;
+    s32 cell_x0 = cell.x;
     s32 dz;
     s32 dx;
     s32 new_z;
@@ -341,7 +360,7 @@ s32 player_move_horizontal(s32 heading, s32 distance)
     new_z = dz + player_state.camera_position.vz;
     new_x = dx + player_state.camera_position.vx;
     for (;;) {
-        if (collision_query_world(new_x, player_state.floor_height, new_z,
+        if (collision_query_world(new_x, player_state.foot_height, new_z,
                 KF_COLLISION_PLAYER_RADIUS, KF_COLLISION_PLAYER_HEIGHT,
                 KF_COLLISION_SKIP_TERRAIN | KF_COLLISION_SKIP_PLAYER | KF_COLLISION_CAPTURE_TARGET)
             == KF_COLLISION_NONE) {
@@ -369,22 +388,22 @@ s32 player_move_horizontal(s32 heading, s32 distance)
         }
     }
     cell_z = new_z / KF_MAP_TILE_SIZE;
-    if (cell_z < KF_MAP_ROWS && map_collision_grid.cells[cell_z][player_state.motion_state.fields.map_cell.coords.x] != KF_MAP_CELL_BLOCKED
-        && -(map_floor_height_grid.cells[cell_z][player_state.motion_state.fields.map_cell.coords.x] * KF_MAP_HEIGHT_STEP) - player_state.floor_height
+    if (cell_z < KF_MAP_ROWS && map_collision_grid.cells[cell_z][cell.x] != KF_MAP_CELL_BLOCKED
+        && map_base_floor_height(cell.x, cell_z) - player_state.foot_height
                >= -PLAYER_MAX_STEP_RISE) {
         player_state.camera_position.vz = new_z;
-        player_state.motion_state.fields.map_cell.coords.z = cell_z;
+        cell.z = cell_z;
     }
     cell_x = new_x / KF_MAP_TILE_SIZE;
-    if (cell_x < KF_MAP_COLUMNS && map_collision_grid.cells[player_state.motion_state.fields.map_cell.coords.z][cell_x] != KF_MAP_CELL_BLOCKED
-        && -(map_floor_height_grid.cells[player_state.motion_state.fields.map_cell.coords.z][cell_x] * KF_MAP_HEIGHT_STEP) - player_state.floor_height
+    if (cell_x < KF_MAP_COLUMNS && map_collision_grid.cells[cell.z][cell_x] != KF_MAP_CELL_BLOCKED
+        && map_base_floor_height(cell_x, cell.z) - player_state.foot_height
                >= -PLAYER_MAX_STEP_RISE) {
         player_state.camera_position.vx = new_x;
-        player_state.motion_state.fields.map_cell.coords.x = cell_x;
+        cell.x = cell_x;
     }
     type = map_collision_grid.cells[cell_z0][cell_x0];
     if (type >= KF_MAP_CELL_X_GE_Z && type <= KF_MAP_CELL_SUM_GE_SIZE) {
-        if (player_state.motion_state.fields.map_cell.coords.x == cell_x0 && player_state.motion_state.fields.map_cell.coords.z == cell_z0) {
+        if (cell.x == cell_x0 && cell.z == cell_z0) {
             remainder_z = player_state.camera_position.vz % KF_MAP_TILE_SIZE;
             remainder_x = player_state.camera_position.vx % KF_MAP_TILE_SIZE;
             if (type == KF_MAP_CELL_X_GE_Z) {
@@ -412,8 +431,8 @@ s32 player_move_horizontal(s32 heading, s32 distance)
                     player_state.camera_position.vx += half;
                 }
             }
-            player_state.motion_state.fields.map_cell.coords.z = player_state.camera_position.vz / KF_MAP_TILE_SIZE;
-            player_state.motion_state.fields.map_cell.coords.x = player_state.camera_position.vx / KF_MAP_TILE_SIZE;
+            cell.z = player_state.camera_position.vz / KF_MAP_TILE_SIZE;
+            cell.x = player_state.camera_position.vx / KF_MAP_TILE_SIZE;
         }
         if (map_collision_grid.cells[cell_z][cell_x] == KF_MAP_CELL_BLOCKED) {
             if (dz < 0) {
@@ -422,7 +441,7 @@ s32 player_move_horizontal(s32 heading, s32 distance)
             if (dx < 0) {
                 dx = -dx;
             }
-            type = map_collision_grid.cells[player_state.motion_state.fields.map_cell.coords.z][player_state.motion_state.fields.map_cell.coords.x];
+            type = map_collision_grid.cells[cell.z][cell.x];
             if (type == KF_MAP_CELL_X_GE_Z) {
                 if (dz < dx) {
                     dx = -(distance * PLAYER_DIAGONAL_COMPONENT_Q12) >> KF_FIXED12_BITS;
@@ -463,8 +482,8 @@ s32 player_move_horizontal(s32 heading, s32 distance)
             if (cell_z < KF_MAP_ROWS && cell_x < KF_MAP_COLUMNS && map_collision_grid.cells[cell_z][cell_x] != KF_MAP_CELL_BLOCKED) {
                 player_state.camera_position.vz = new_z;
                 player_state.camera_position.vx = new_x;
-                player_state.motion_state.fields.map_cell.coords.z = cell_z;
-                player_state.motion_state.fields.map_cell.coords.x = cell_x;
+                cell.z = cell_z;
+                cell.x = cell_x;
             }
         }
     }
@@ -477,74 +496,75 @@ void player_update_view_bob(void)
 
     if (player_state.vertical_state == KF_PLAYER_VERTICAL_GROUNDED) {
         phase = (player_state.view_bob_phase
-            + player_state.motion_state.fields.movement_speed * PLAYER_BOB_PHASE_PER_SPEED)
+            + player_state.motion_state.movement_speed * PLAYER_BOB_PHASE_PER_SPEED)
             & KF_ANGLE_WRAP_MASK;
         player_state.view_bob_phase = phase;
         player_state.view_bob_offset = kf::angle_sine(phase) >> PLAYER_BOB_SINE_DOWNSHIFT;
     }
 }
 
+static void player_update_floor_motion(s32 target)
+{
+    if (player_state.update_state != KF_PLAYER_UPDATE_DYING) {
+        if (player_state.foot_height - target < -PLAYER_FATAL_DROP_DISTANCE) {
+            if (player_state.equipped_leg_armor_id == KF_ITEM_FEATHER_BOOTS
+                && player_current_map_attribute() == KF_MAP_ATTRIBUTE_BOTTOMLESS_PIT) {
+                return;
+            }
+            player_death_begin();
+        } else if (target >= PLAYER_ATTRIBUTE_52_FATAL_HEIGHT
+                   && player_current_map_attribute() == KF_MAP_ATTRIBUTE_52) {
+            player_death_begin();
+        }
+    }
+
+    if (player_state.vertical_state == KF_PLAYER_VERTICAL_GROUNDED) {
+        if (target < player_state.foot_height) {
+            player_state.vertical_state = KF_PLAYER_VERTICAL_STEP_UP;
+            if ((s16)player_state.motion_state.movement_speed >= PLAYER_FAST_STEP_MIN_SPEED) {
+                player_state.vertical_velocity = PLAYER_FAST_STEP_UP_VELOCITY;
+            } else {
+                player_state.vertical_velocity = PLAYER_SLOW_STEP_UP_VELOCITY;
+            }
+        } else if (player_state.foot_height < target) {
+            player_state.vertical_state = KF_PLAYER_VERTICAL_FALLING;
+            player_state.vertical_velocity = 0;
+        }
+    }
+
+    // A new fall or step begins moving on this same update.
+    switch (player_state.vertical_state) {
+    case KF_PLAYER_VERTICAL_FALLING:
+        player_state.foot_height += player_state.vertical_velocity;
+        player_state.vertical_velocity += PLAYER_FALL_ACCELERATION;
+        if (target + PLAYER_FALL_LANDING_OVERSHOOT < player_state.foot_height) {
+            player_state.foot_height = target;
+            player_state.vertical_state = KF_PLAYER_VERTICAL_GROUNDED;
+        }
+        break;
+    case KF_PLAYER_VERTICAL_STEP_UP:
+        player_state.foot_height += player_state.vertical_velocity;
+        player_state.vertical_velocity += PLAYER_STEP_UP_ACCELERATION;
+        if (player_state.foot_height <= target) {
+            player_state.foot_height = target;
+            player_state.vertical_state = KF_PLAYER_VERTICAL_GROUNDED;
+        }
+        break;
+    case KF_PLAYER_VERTICAL_GROUNDED:
+        break;
+    }
+}
+
 void player_update_vertical_motion(void)
 {
+    auto &cell = player_state.motion_state.map_cell;
     s32 target;
     s32 view_offset;
 
-    target = -(map_floor_height_grid.cells[player_state.motion_state.fields.map_cell.coords.z][player_state.motion_state.fields.map_cell.coords.x] * KF_MAP_HEIGHT_STEP);
-    switch (0) {
-    default:
-        if (player_state.update_state != KF_PLAYER_UPDATE_DYING) {
-            if (player_state.floor_height - target < -PLAYER_FATAL_DROP_DISTANCE) {
-                if (player_state.equipped_leg_armor_id == KF_ITEM_FEATHER_BOOTS
-                    && map_cell_attribute_grid.cells[player_state.motion_state.fields.map_cell.coords.z][player_state.motion_state.fields.map_cell.coords.x]
-                        == KF_MAP_ATTRIBUTE_BOTTOMLESS_PIT) {
-                    break;
-                }
-                player_death_begin();
-            } else if (target >= PLAYER_ATTRIBUTE_52_FATAL_HEIGHT
-                       && map_cell_attribute_grid.cells[player_state.motion_state.fields.map_cell.coords.z][player_state.motion_state.fields.map_cell.coords.x]
-                           == KF_MAP_ATTRIBUTE_52) {
-                player_death_begin();
-            }
-        }
-        switch (player_state.vertical_state) {
-        case KF_PLAYER_VERTICAL_FALLING:
-        falling:
-            player_state.floor_height += player_state.vertical_velocity;
-            player_state.vertical_velocity += PLAYER_FALL_ACCELERATION;
-            if (target + PLAYER_FALL_LANDING_OVERSHOOT < player_state.floor_height) {
-                player_state.floor_height = target;
-                player_state.vertical_state = KF_PLAYER_VERTICAL_GROUNDED;
-            }
-            break;
-        case KF_PLAYER_VERTICAL_STEP_UP:
-        stepping_up:
-            player_state.floor_height += player_state.vertical_velocity;
-            player_state.vertical_velocity += PLAYER_STEP_UP_ACCELERATION;
-            if (player_state.floor_height <= target) {
-                player_state.floor_height = target;
-                player_state.vertical_state = KF_PLAYER_VERTICAL_GROUNDED;
-            }
-            break;
-        case KF_PLAYER_VERTICAL_GROUNDED:
-            if (target < player_state.floor_height) {
-                player_state.vertical_state = KF_PLAYER_VERTICAL_STEP_UP;
-                if ((s16)player_state.motion_state.fields.movement_speed >= PLAYER_FAST_STEP_MIN_SPEED) {
-                    player_state.vertical_velocity = PLAYER_FAST_STEP_UP_VELOCITY;
-                } else {
-                    player_state.vertical_velocity = PLAYER_SLOW_STEP_UP_VELOCITY;
-                }
-                goto stepping_up;
-            }
-            if (player_state.floor_height < target) {
-                player_state.vertical_state = KF_PLAYER_VERTICAL_FALLING;
-                player_state.vertical_velocity = 0;
-                goto falling;
-            }
-            break;
-        }
-    }
+    target = map_base_floor_height(cell.x, cell.z);
+    player_update_floor_motion(target);
     view_offset = player_state.view_bob_offset - KF_PLAYER_CAMERA_HEIGHT;
-    player_state.camera_position.vy = view_offset + player_state.floor_height;
+    player_state.camera_position.vy = view_offset + player_state.foot_height;
 }
 
 void player_warp_to_floor_entry(void)
@@ -553,26 +573,26 @@ void player_warp_to_floor_entry(void)
     const KfFloorEntryCell *entry;
     KfEnumStorage<KfFloorId, u8> floor;
 
-    PLAYER_FLOOR_POSITION(position);
+    player_get_floor_position(position);
     player_warp_shimmer(KF_WARP_SHIMMER_GROW_REMOVE, &position);
     floor = player_state.progress_state.current_floor;
     entry = &floor_entry_cells[kf_enum_encode<u8>(floor) - 1];
-    player_state.previous_map_cell.coords.x = entry->x;
-    player_state.previous_map_cell.coords.z = entry->z;
-    player_state.camera_position.vx = player_state.previous_map_cell.coords.x * KF_MAP_TILE_SIZE + KF_MAP_TILE_CENTER;
+    player_state.previous_map_cell.x = entry->x;
+    player_state.previous_map_cell.z = entry->z;
+    player_state.camera_position.vx = player_state.previous_map_cell.x * KF_MAP_TILE_SIZE + KF_MAP_TILE_CENTER;
     position.vx = player_state.camera_position.vx;
-    player_state.camera_position.vz = player_state.previous_map_cell.coords.z * KF_MAP_TILE_SIZE + KF_MAP_TILE_CENTER;
+    player_state.camera_position.vz = player_state.previous_map_cell.z * KF_MAP_TILE_SIZE + KF_MAP_TILE_CENTER;
     position.vz = player_state.camera_position.vz;
     if (floor == KF_FLOOR_5 && player_state.map_variant != KF_FLOOR5_ENTRY_VARIANT) {
         if (player_state.map_variant == KF_FLOOR5_ALTERNATE_MUSIC_VARIANT) {
             audio_play_current_map_sequence();
         }
-        pool_release_all();
+        animation_cache_release_all();
         player_state.map_variant = KF_FLOOR5_ENTRY_VARIANT;
         map_variant_assets_load();
     }
     player_sync_position_to_map();
-    position.vy = player_state.floor_height;
+    position.vy = player_state.foot_height;
     player_warp_shimmer(KF_WARP_SHIMMER_SHRINK_REMOVE, &position);
 }
 
@@ -580,13 +600,12 @@ void player_update_transform_snapshot(VECTOR *position_out, SVECTOR *rotation_ou
 {
     *position_out = player_state.camera_position;
     *rotation_out = player_state.camera_rotation;
-    addVector(rotation_out, &player_state.view_rotation_offset);
+    *rotation_out += player_state.view_rotation_offset;
 }
-
 
 void player_core_reset_module_state(void)
 {
-    kf::restore_initial_value<weapon_image_path_template>();
+    kf::restore_initial_value<weapon_asset_path_template>();
     kf::restore_initial_value<floor_entry_cells>();
     kf::restore_initial_value<player_rotation_snapshot>();
     kf::restore_initial_value<player_position_snapshot>();

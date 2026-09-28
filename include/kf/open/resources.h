@@ -1,6 +1,10 @@
 #ifndef KF_OPEN_RESOURCES_H
 #define KF_OPEN_RESOURCES_H
 
+#include <kf/lib/memory.h>
+
+extern KfMemoryArena memory_arena;
+
 #include <kf/lib/map.h>
 
 enum {

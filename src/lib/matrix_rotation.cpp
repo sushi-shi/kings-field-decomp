@@ -1,8 +1,7 @@
+#include <kf/platform/prelude.hpp>
 #include <kf/lib/bool.h>
 
 #include <kf/lib/math.h>
-
-#ifndef KF_OPEN
 
 s16 angle_approach(s16 current, s16 target, s32 step)
 {
@@ -44,7 +43,6 @@ void angle_to_forward_xz(s16 angle, struct KfVecXZs *direction)
     direction->x = -kf::angle_sine(angle);
     direction->z = -kf::angle_cosine(angle);
 }
-#endif
 
 void matrix_set_rotation_x(s16 angle, MATRIX *matrix)
 {

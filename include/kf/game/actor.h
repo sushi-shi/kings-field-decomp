@@ -14,10 +14,10 @@ inline constexpr unsigned KF_FLOOR4_TRANSFORM_RESULT_DEFINITION = 6;
 #include <kf/lib/enum.h>
 #include <kf/lib/map.h>
 #include <kf/lib/geometry_types.h>
-#include <kf/lib/audio.h>
+#include <kf/game/audio.h>
 #include <kf/lib/math.h>
 
-struct KfPoolRecord;
+struct KfAnimationCacheRecord;
 
 enum {
     KF_ACTOR_DEFINITION_COUNT = 12,
@@ -277,7 +277,7 @@ typedef struct KfActor {
     u8 spawn_chance;
     KfActorAction action;
     KfObjectId death_drop_object_id;
-    KfAnimationClip animation_id;
+    KfAnimationClip animation_clip;
     KfActorVerticalState vertical_state;
     u8 unknown_0c[2];
     s16 local_z;
@@ -289,7 +289,7 @@ typedef struct KfActor {
     s16 unknown_1a;
     VECTOR position;
     KfRotation rotation;
-    struct KfPoolRecord *animation_cache;
+    struct KfAnimationCacheRecord *animation_cache;
     KfActorActionProgress action_progress;
     KfActorCollisionState collision_state;
     s16 movement_yaw;
@@ -316,9 +316,7 @@ typedef struct KfActorState {
 extern KfActorActionProfile actor_action_profiles[KF_ACTOR_ACTION_PROFILE_COUNT];
 extern KfActorState actor_state;
 
-#define ACTOR_BEARING_TO_PLAYER(actor) vector_xz_to_angle( \
-    actor_state.player_position.vx - (actor)->position.vx, \
-    actor_state.player_position.vz - (actor)->position.vz)
+extern s32 actor_bearing_to_player(const KfActor *actor);
 
 extern SoundRef boss_death_loop_sound;
 extern SoundRef boss_death_phase_sounds[KF_ACTOR_BOSS_DEATH_SOUND_COUNT];
@@ -342,14 +340,14 @@ extern void actor_play_sound_at_phase(const SoundRef *sound, u16 phase);
 extern void actor_pool_begin_death_by_definition(u16 definition_id);
 extern void actor_pool_clear(void);
 extern void actor_pool_apply_radial_damage(
-    const VECTOR *origin, u32 radius, u16 falloff, u16 base_power,
+    const VECTOR *origin, u32 radius, u16 falloff_q12, u16 base_power,
     u16 component0, u16 component1, u16 component2, u16 component3,
     u16 component4, u16 scale, KfEffectType hit_flags);
 extern s32 actor_pool_find_at_tile(u8 tile_x, u8 tile_z);
 extern KfActor *actor_pool_find_target_in_cone(
     const VECTOR *origin, s16 facing, u32 max_distance,
     s32 angle_tolerance, s32 *distance_out);
-extern s32 actor_pool_find_overlap(s32 x, s32 y, s32 z, s32 extra_radius, s32 point_height);
+extern s32 actor_pool_find_overlap(s32 point_x, s32 point_y, s32 point_z, s32 radius_padding, s32 point_height);
 extern void actor_pool_load_placements(const KfActorPlacement *placements);
 extern void actor_pool_spawn(
     u8 definition_id, const VECTOR *position,
@@ -364,7 +362,7 @@ extern void actor_set_action(KfActor *actor, KfActorAction action);
 extern void actor_set_player_transform( const VECTOR *position_or_null, const SVECTOR *rotation_or_null);
 extern KfActorAction actor_try_select_action_distance_facing(
     KfActorAction action, s32 distance, u16 chance, u16 distance_scale);
-extern KfActorAction actor_try_select_facing_action(
+extern KfActorAction actor_try_select_multi_hit_action(
     KfActorAction action, s32 distance, u16 chance);
 extern KfActorAction actor_try_select_ground_action(
     KfActorAction action, s32 distance, u16 chance);

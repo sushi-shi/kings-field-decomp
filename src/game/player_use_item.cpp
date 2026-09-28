@@ -1,3 +1,4 @@
+#include <kf/game/audio.h>
 #include <kf/lib/null.h>
 #include <kf/lib/bool.h>
 
@@ -6,7 +7,6 @@
 static constexpr unsigned enemy_image_number_offset = 7;
 static constexpr unsigned enemy_image_path_capacity = 14, person_image_path_capacity = 15;
 static constexpr unsigned person_image_number_offset = 8;
-
 
 enum {
     PLAYER_KEY_UNLOCK_VOLUME = 110,
@@ -56,13 +56,11 @@ void player_use_item(KfObjectId item_id)
     KfEffectRecord *record;
     s32 distance;
     s32 index;
-    s32 reach_x;
-    s32 reach_z;
     s16 slot;
-    KfBool8 used = KF_FALSE;
+    KfBool8 used = false;
 
-    VECTOR_YAW_PROBE_XZ(reach_x, reach_z, player_state.camera_position,
-        player_state.camera_rotation, MAP_INTERACTION_PROBE_DISTANCE);
+    const auto reach = vector_yaw_probe_xz(player_state.camera_position,
+        player_state.camera_rotation.vy, MAP_INTERACTION_PROBE_DISTANCE);
     index = 0;
     switch (item_id) {
     case KF_ITEM_KEY_OF_THE_DEAD:
@@ -70,7 +68,8 @@ void player_use_item(KfObjectId item_id)
     case KF_ITEM_DUNGEON_KEY:
     case KF_ITEM_SORCERER_KEY:
         for (;;) {
-            index = map_object_pool_find_interaction_from(index, reach_x, reach_z, MAP_INTERACTION_RADIUS_PADDING);
+            index = map_object_pool_find_interaction_from(
+                index, reach.x, reach.z, MAP_INTERACTION_RADIUS_PADDING);
             if (index == -1) {
                 break;
             }
@@ -91,12 +90,12 @@ void player_use_item(KfObjectId item_id)
                 } else if (object->object_id != KF_MAP_OBJECT_GRAVESTONE
                            || angle_within_tolerance(
                                player_state.camera_rotation.vy, KF_ANGLE_HALF_TURN - object->rotation.angles.y, MAP_DOOR_FACING_TOLERANCE)) {
-                    used = KF_TRUE;
+                    used = true;
                     if (object->link.fields.link_id == kf_enum_encode<u8>(item_id)) {
                         object->link.fields.link_id = KF_MAP_LINK_NONE;
-                        sound_ref_play(&gameplay_sound_refs[KF_GAMEPLAY_SOUND_KEY_UNLOCK], PLAYER_KEY_UNLOCK_VOLUME);
+                        sound_ref_play(audio_playback(), &gameplay_sound_refs[KF_GAMEPLAY_SOUND_KEY_UNLOCK], PLAYER_KEY_UNLOCK_VOLUME);
                         if (object->object_id == KF_MAP_OBJECT_GRAVESTONE) {
-                            sound_ref_play(&gameplay_sound_refs[KF_GAMEPLAY_SOUND_STONE_PASSAGE], KF_AUDIO_MAX_VOLUME);
+                            sound_ref_play(audio_playback(), &gameplay_sound_refs[KF_GAMEPLAY_SOUND_STONE_PASSAGE], KF_AUDIO_MAX_VOLUME);
                         }
                     } else {
                         notify_enqueue(KF_NOTIFICATION_KEY_DOES_NOT_FIT);
@@ -113,7 +112,8 @@ void player_use_item(KfObjectId item_id)
     case KF_ITEM_FIRE_SEAL_STONE:
     case KF_ITEM_WIND_SEAL_STONE:
         for (;;) {
-            index = map_object_pool_find_interaction_from(index, reach_x, reach_z, MAP_INTERACTION_RADIUS_PADDING);
+            index = map_object_pool_find_interaction_from(
+                index, reach.x, reach.z, MAP_INTERACTION_RADIUS_PADDING);
             if (index == -1) {
                 break;
             }
@@ -123,7 +123,7 @@ void player_use_item(KfObjectId item_id)
                     notify_enqueue(KF_NOTIFICATION_NOTHING_HAPPENS);
                 } else {
                     item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)][kf_enum_encode<u8>(object->object_id)] = 0;
-                    used = KF_TRUE;
+                    used = true;
                     map_object_pool_trigger_link(object->link.fields.link_id);
                     object->link.fields.link_id = KF_MAP_LINK_NONE;
                 }
@@ -132,37 +132,38 @@ void player_use_item(KfObjectId item_id)
         }
         break;
     case KF_ITEM_HARP:
-        record = effect_pool_records;
+        record = effect_state.records;
         for (slot = KF_EFFECT_CAPACITY - 1; slot != -1; slot--, record++) {
             if (record->type == KF_EFFECT_SLOT_FREE) {
                 continue;
             }
             if (record->kind == KF_EFFECT_KIND_FLOOR_DEFORMATION) {
-                goto done;
+                notify_enqueue(KF_NOTIFICATION_NOTHING_HAPPENS);
+                return;
             }
         }
         if (player_state.progress_state.current_floor == KF_FLOOR_2) {
-            effect_pool_spawn_typed(
+            effect_pool_spawn_floor_deformation(
                 PLAYER_HARP_FLOOR2_FIRST_SEGMENT, PLAYER_HARP_FLOOR2_SEGMENT_COUNT,
                 PLAYER_HARP_PROGRESS_PER_UPDATE, PLAYER_HARP_CELL_STAGGER,
                 PLAYER_HARP_FLOOR2_SWEEP_UPDATES, PLAYER_HARP_FLOOR2_HOLD_COUNTDOWN);
         } else if (player_state.progress_state.current_floor == KF_FLOOR_3) {
-            effect_pool_spawn_typed(
+            effect_pool_spawn_floor_deformation(
                 PLAYER_HARP_FLOOR3_FIRST_SEGMENT, PLAYER_HARP_FLOOR3_SEGMENT_COUNT,
                 PLAYER_HARP_PROGRESS_PER_UPDATE, PLAYER_HARP_CELL_STAGGER,
                 PLAYER_HARP_FLOOR3_SWEEP_UPDATES, PLAYER_HARP_FLOOR3_HOLD_COUNTDOWN);
         } else {
             break;
         }
-        sound_ref_play(&gameplay_sound_refs[KF_GAMEPLAY_SOUND_HARP], KF_AUDIO_MAX_VOLUME);
-        used = KF_TRUE;
+        sound_ref_play(audio_playback(), &gameplay_sound_refs[KF_GAMEPLAY_SOUND_HARP], KF_AUDIO_MAX_VOLUME);
+        used = true;
         break;
     case KF_ITEM_MEDICINAL_HERB:
     case KF_ITEM_ANTIDOTE_HERB:
     case KF_ITEM_RECOVERY_MEDICINE:
     case KF_ITEM_DRAGON_KING_GRASS_LEAF:
     case KF_ITEM_DRAGON_KING_GRASS_FRUIT:
-        used = KF_TRUE;
+        used = true;
         break;
     case KF_ITEM_GREEN_DRAGON_STAFF:
         player_warp_to_floor_entry();
@@ -197,16 +198,14 @@ void player_use_item(KfObjectId item_id)
         return;
     case KF_ITEM_VERDITE:
         player_state.magic_training += KF_PLAYER_TRAINING_POINTS_PER_GAIN;
-        used = KF_TRUE;
+        used = true;
         player_increment_magic_training();
         break;
     }
-done:
     if (!used) {
         notify_enqueue(KF_NOTIFICATION_NOTHING_HAPPENS);
     }
 }
-
 
 void player_use_item_reset_module_state(void)
 {

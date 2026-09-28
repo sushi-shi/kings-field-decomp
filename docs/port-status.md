@@ -4,6 +4,12 @@ This is the prioritized work queue. [PORTING.md](../PORTING.md) is the source-po
 contract; [port-findings.md](port-findings.md) holds the detailed evidence and
 history. Update this queue when an item's status changes, not just the history.
 
+The common-resource loader preserves its original cross-chunk table copies with
+file-bound checks. Fatal native errors remain visible in a dialog. See the
+[resource loader regression and checks](resource-loader-regression.md).
+The [broader cleanup audit](cleanup-runtime-audit.md) records the lighting fix,
+remaining error-handler coverage, cross-version runtime comparisons and limits.
+
 ## Priority order
 
 No reported problem remains under active investigation. The user reproduced
@@ -26,6 +32,38 @@ live under `src/lib`; entry/reset coordination lives under `src/game` and
 is based on `port`, separate from the concurrent cast-cleanup work. Fresh Linux
 package/launcher checks and a WASM build passed. An eight-second no-input native
 opening run reached its scheduled timeout without a reported startup failure.
+
+Control-flow cleanup: 68 of 72 `goto` statements and all ten `switch (0)` blocks
+have been replaced by focused helpers, guard clauses and ordinary loops. Static
+retail CFG checks guided the boundaries; same-tick transitions, random-call order,
+common update tails and resource ownership remain part of the original logic.
+An empty animation clip now fails explicitly instead of using an uninitialized
+keyframe pointer. Fresh Linux/WASM builds linked, with no new compiler warnings.
+A clean-context review covered all 20 changed source files, caught an accidentally
+removed free-actor-slot guard, and verified its restoration; no findings remain
+unresolved. No gameplay run was performed for this cleanup. The four remaining
+jumps are all in `map_object_probe_door_closing`: defer that function's refactor until
+the overlapping switch/signedness PRs #14/#15 are resolved. This is port-only
+maintenance, not a decomp backport or closure of the runtime gaps below.
+
+Helpers/readability cleanup: domain macros now have typed operations, player
+motion/map coordinates/dialogue no longer need runtime word views, and seven
+fixed-pool traversals use ordinary forward range loops. Player movement uses
+live references and named cell queries; armor periodic effects share a helper
+without combining or reordering HP adjustments. The rationale, behavior-sensitive
+boundaries and concrete follow-up queue are in
+[readability-cleanup.md](readability-cleanup.md). This is source-port maintenance,
+not a claim about original source spelling or a new gameplay implementation.
+Fresh Linux/WASM builds linked with unchanged compiler diagnostics; a separate
+clean-context review found no actionable regressions. No gameplay run was made.
+
+The stacked follow-up passes cover pool searches/copies, player-update helpers,
+rendering visibility, typed XYZ operations, explicit state ownership, menu/dialogue
+operations and shared camera-path math. Shared stateful operations have ordinary
+translation units; no gameplay framework or replacement controller was introduced.
+The complete stack links in clean Linux/WASM builds with the same 57 compiler
+diagnostics on each target. Collision-result modeling and bounded resource loading
+remain separate work; see the cleanup document for their boundaries.
 
 ### 1. Update cadence — opening corrected, GAME pacing bypasses closed; flame report resolved
 

@@ -3,14 +3,12 @@
 #include <kf/lib/render_face.h>
 #include <kf/open/render.h>
 
-#define VTX(index) (&open_graphics_runtime.tmd_projected_vertices[(index)])
-
 void render_enqueue_unlit_triangles(u16 object_index, s16 depth_bias)
 {
     KfTmdPrimitive *polygon;
-    KfTmdObject *object = tmd_get_object(object_index);
+    KfTmdObject *object = tmd_get_object(tmd_context(), object_index);
     u32 remaining = object->primitive_count;
-    u8 *packet = (u8 *)open_graphics_runtime.tmd_state.current_asset.data +
+    u8 *packet = (u8 *)open_graphics_runtime.tmd_state.current_tmd.data +
         (object->primitive_offset + KF_TMD_HEADER_BYTES);
     KfScreenVertex *vertex0;
     KfScreenVertex *vertex1;
@@ -25,9 +23,9 @@ void render_enqueue_unlit_triangles(u16 object_index, s16 depth_bias)
         polygon = (KfTmdPrimitive *)packet;
         switch (tmd_packet_mode(header)) {
         case KF_TMD_MODE_FT3: {
-            vertex0 = VTX(polygon->ft3.v0);
-            vertex1 = VTX(polygon->ft3.v1);
-            vertex2 = VTX(polygon->ft3.v2);
+            vertex0 = tmd_projected_vertex(polygon->ft3.v0);
+            vertex1 = tmd_projected_vertex(polygon->ft3.v1);
+            vertex2 = tmd_projected_vertex(polygon->ft3.v2);
             if (render_face_winding(vertex0, vertex1, vertex2) <= 0) {
                 continue;
             }
@@ -50,9 +48,9 @@ void render_enqueue_unlit_triangles(u16 object_index, s16 depth_bias)
             break;
         }
         case KF_TMD_MODE_F3: {
-            vertex0 = VTX(polygon->f3.v0);
-            vertex1 = VTX(polygon->f3.v1);
-            vertex2 = VTX(polygon->f3.v2);
+            vertex0 = tmd_projected_vertex(polygon->f3.v0);
+            vertex1 = tmd_projected_vertex(polygon->f3.v1);
+            vertex2 = tmd_projected_vertex(polygon->f3.v2);
             if (render_face_winding(vertex0, vertex1, vertex2) <= 0) {
                 continue;
             }

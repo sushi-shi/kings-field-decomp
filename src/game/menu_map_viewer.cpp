@@ -4,22 +4,20 @@
 #include <kf/game/game.h>
 #include <kf/lib/render_face.h>
 
-enum {
-    MENU_MAP_PIXELS_PER_CELL = 2,
-    MENU_MAP_MARKER_SPAN = 4,
-    MENU_MAP_WATCHMAN_SET = 1,
-    MENU_MAP_DEFAULT_SET = 2,
-    MENU_MAP_BRIGHTNESS = 64,
-    MENU_MAP_IMAGE_CLUT = 0x7d40,
-    MENU_MAP_IMAGE_TPAGE = 0x1f,
-    MENU_MAP_MARKER_CLUT = 0x7c40,
-    MENU_MAP_MARKER_TPAGE = 0x1b,
-    MENU_MAP_IMAGE_SPAN = 219,
-    MENU_MAP_IMAGE_LEFT_X = 50,
-    MENU_MAP_IMAGE_TOP_Y = 10,
-    MENU_MAP_MARKER_ORIGIN_X = 58,
-    MENU_MAP_MARKER_ORIGIN_Y = 216
-};
+static constexpr int MENU_MAP_PIXELS_PER_CELL = 2;
+static constexpr int MENU_MAP_MARKER_SPAN = 4;
+static constexpr int MENU_MAP_WATCHMAN_SET = 1;
+static constexpr int MENU_MAP_DEFAULT_SET = 2;
+static constexpr int MENU_MAP_BRIGHTNESS = 64;
+static constexpr int MENU_MAP_IMAGE_CLUT = 0x7d40;
+static constexpr int MENU_MAP_IMAGE_TPAGE = 0x1f;
+static constexpr int MENU_MAP_MARKER_CLUT = 0x7c40;
+static constexpr int MENU_MAP_MARKER_TPAGE = 0x1b;
+static constexpr int MENU_MAP_IMAGE_SPAN = 219;
+static constexpr int MENU_MAP_IMAGE_LEFT_X = 50;
+static constexpr int MENU_MAP_IMAGE_TOP_Y = 10;
+static constexpr int MENU_MAP_MARKER_ORIGIN_X = 58;
+static constexpr int MENU_MAP_MARKER_ORIGIN_Y = 216;
 
 static constexpr unsigned map_image_path_capacity = 16;
 static constexpr unsigned map_image_set_offset = 5, map_image_floor_offset = 6;
@@ -31,12 +29,12 @@ void menu_map_viewer(KfObjectId item_id)
     kf::DrawFace marker{};
     char path[map_image_path_capacity] = "MAP/M00.";
     u8 *buffer;
-    s32 map_number;
+    s32 map_set;
 
-    map_number = MENU_MAP_DEFAULT_SET;
+    map_set = MENU_MAP_DEFAULT_SET;
     if (item_id == KF_ITEM_WATCHMAN_MAP)
-        map_number = MENU_MAP_WATCHMAN_SET;
-    path[map_image_set_offset] = map_number + '0';
+        map_set = MENU_MAP_WATCHMAN_SET;
+    path[map_image_set_offset] = map_set + '0';
     path[map_image_floor_offset] = kf_enum_encode<u8>(player_state.progress_state.current_floor) + '0';
 
     buffer = game_graphics_runtime.display_state.asset_load_buffer;
@@ -54,10 +52,10 @@ void menu_map_viewer(KfObjectId item_id)
         MENU_MAP_IMAGE_LEFT_X + MENU_MAP_IMAGE_SPAN, MENU_MAP_IMAGE_TOP_Y + MENU_MAP_IMAGE_SPAN);
 
     marker.material = render_texture_material(MENU_MAP_MARKER_TPAGE, MENU_MAP_MARKER_CLUT);
-    marker.depth = MENU_MARKER_OT_DEPTH;
+    marker.depth = MENU_OVERLAY_OT_DEPTH;
     render_face_uv_rectangle(&marker, 0, 0, MENU_MAP_MARKER_SPAN, MENU_MAP_MARKER_SPAN);
-    const s32 marker_x = player_state.motion_state.fields.map_cell.coords.x * MENU_MAP_PIXELS_PER_CELL + MENU_MAP_MARKER_ORIGIN_X;
-    const s32 marker_y = MENU_MAP_MARKER_ORIGIN_Y - player_state.motion_state.fields.map_cell.coords.z * MENU_MAP_PIXELS_PER_CELL;
+    const s32 marker_x = player_state.motion_state.map_cell.x * MENU_MAP_PIXELS_PER_CELL + MENU_MAP_MARKER_ORIGIN_X;
+    const s32 marker_y = MENU_MAP_MARKER_ORIGIN_Y - player_state.motion_state.map_cell.z * MENU_MAP_PIXELS_PER_CELL;
     render_face_rectangle(&marker, marker_x, marker_y,
         marker_x + MENU_MAP_MARKER_SPAN, marker_y + MENU_MAP_MARKER_SPAN);
     for (unsigned i = 0; i < 4; ++i) {

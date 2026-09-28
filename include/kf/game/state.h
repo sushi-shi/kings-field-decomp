@@ -1,7 +1,7 @@
 #ifndef KF_GAME_STATE_H
 #define KF_GAME_STATE_H
 
-#include <kf/lib/audio.h>
+#include <kf/game/audio.h>
 #include <kf/lib/types.h>
 #include <kf/lib/overlay.h>
 #include <kf/lib/geometry_types.h>
@@ -15,7 +15,6 @@ inline constexpr unsigned KF_FLOOR2_REVEAL_EVENT = 3;
 inline constexpr unsigned KF_FLOOR3_FIRE_BALL_EVENT = 1;
 inline constexpr unsigned KF_FLOOR5_WEAPON_TRANSFORM_EVENT = 1;
 extern u32 DAT_80057d24;
-extern u32 DAT_800a0768;
 extern KfOverlayResultWord game_next_overlay_mode;
 
 enum {

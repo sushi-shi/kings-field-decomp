@@ -12,14 +12,13 @@
 #include <kf/lib/geometry_types.h>
 #include <kf/lib/math.h>
 
-struct KfPoolRecord;
+struct KfAnimationCacheRecord;
 
 enum {
     MAP_INTERACTION_PROBE_DISTANCE = 1000,
     MAP_INTERACTION_RADIUS_PADDING = 800,
     MAP_DOOR_FACING_TOLERANCE = KF_ANGLE_FULL_TURN / 12
 };
-
 
 enum {
     KF_MAP_SAVED_FLOOR_COUNT = 5,
@@ -76,7 +75,6 @@ typedef struct KfMapSavedFloor {
 typedef struct KfMapSavedWorld {
     KfMapSavedFloor floors[KF_MAP_SAVED_FLOOR_COUNT];
 } KfMapSavedWorld;
-
 
 enum {
     KF_MAP_LINK_BOSS_EMITTERS = 13,
@@ -151,10 +149,10 @@ typedef struct KfMapCellCoordinates {
     u8 x;
 } KfMapCellCoordinates;
 
-typedef union KfMapCell {
-    KfMapCellCoordinates coords;
-    u16 word;
-} KfMapCell;
+constexpr bool map_cells_equal(KfMapCellCoordinates left, KfMapCellCoordinates right)
+{
+    return left.x == right.x && left.z == right.z;
+}
 
 typedef struct KfMapCopyRegion {
     u8 source_x;
@@ -210,7 +208,6 @@ typedef struct KfMapObjectPlacement {
     KfMapObjectLink link;
 } KfMapObjectPlacement;
 
-
 typedef struct KfMapObject {
     KfObjectId object_id;
     u8 unknown_01;
@@ -225,56 +222,7 @@ typedef struct KfMapObject {
     KfMapObjectProgress action_timer;
 } KfMapObject;
 
-enum {
-    KF_CAMERA_PATH_END_X = -1,
-    KF_CAMERA_PATH_FINISHED = -1
-};
-
-typedef struct KfCameraPathPoint {
-    VECTOR position;
-    SVECTOR rotation;
-    s16 speed;
-    s16 unknown_1a;
-} KfCameraPathPoint;
-
-typedef struct KfCameraPathState {
-    const KfCameraPathPoint *points;
-    VECTOR position;
-    SVECTOR rotation;
-    VECTOR position_fixed;
-    VECTOR rotation_fixed;
-    VECTOR position_delta;
-    VECTOR rotation_delta;
-    s16 point_index;
-    s16 unknown_5e;
-    s32 frames_remaining;
-} KfCameraPathState;
-
-static inline void camera_path_publish_fixed(KfCameraPathState *path)
-{
-    setVector(&path->position_fixed,
-        path->position.vx << KF_FIXED4_BITS,
-        path->position.vy << KF_FIXED4_BITS,
-        path->position.vz << KF_FIXED4_BITS);
-    setVector(&path->rotation_fixed,
-        path->rotation.vx << KF_FIXED4_BITS,
-        path->rotation.vy << KF_FIXED4_BITS,
-        path->rotation.vz << KF_FIXED4_BITS);
-}
-
-static inline void camera_path_advance_pose(KfCameraPathState *path, s32 y_offset)
-{
-    addVector(&path->position_fixed, &path->position_delta);
-    addVector(&path->rotation_fixed, &path->rotation_delta);
-    setVector(&path->position,
-        path->position_fixed.vx >> KF_FIXED4_BITS,
-        (path->position_fixed.vy >> KF_FIXED4_BITS) + y_offset,
-        path->position_fixed.vz >> KF_FIXED4_BITS);
-    setVector(&path->rotation,
-        (path->rotation_fixed.vx >> KF_FIXED4_BITS) & KF_ANGLE_WRAP_MASK,
-        (path->rotation_fixed.vy >> KF_FIXED4_BITS) & KF_ANGLE_WRAP_MASK,
-        (path->rotation_fixed.vz >> KF_FIXED4_BITS) & KF_ANGLE_WRAP_MASK);
-}
+#include <kf/lib/camera_path.h>
 
 enum class KfCharacterId : u8 {
     KF_CHARACTER_KEY_OF_THE_DEAD_EXCHANGE = 3,
@@ -337,16 +285,11 @@ typedef struct KfMapEventDefinition {
     u16 unknown_16;
 } KfMapEventDefinition;
 
-typedef struct KfDialogueFields {
+typedef struct KfDialogueState {
     u8 stage_limit;
     u8 stage;
     u8 page;
     u8 page_delay;
-} KfDialogueFields;
-
-typedef union KfDialogueState {
-    KfDialogueFields fields;
-    u32 word;
 } KfDialogueState;
 
 typedef struct KfMapEvent {
@@ -362,15 +305,15 @@ typedef struct KfMapEvent {
     KfMapEventCollisionTurn collision_turn_pending;
     u8 unknown_11;
     u16 animation_phase;
-    s32 position_x;
-    s32 position_z;
+    s32 home_x;
+    s32 home_z;
     u16 cell_x;
     u16 cell_z;
     u16 radius;
     u16 unknown_22;
     VECTOR reference_position;
     SVECTOR rotation;
-    struct KfPoolRecord *animation_cache;
+    struct KfAnimationCacheRecord *animation_cache;
     s16 rotation_target;
     u16 unknown_42;
 } KfMapEvent;
@@ -379,9 +322,9 @@ typedef struct KfMapObjectState {
     KfMapObjectDefinitionTable definitions;
     KfMapObject objects[KF_MAP_OBJECT_CAPACITY];
     u8 unknown_25a8[10];
-    u16 effect_sequence_160;
-    u16 effect_sequence_170;
-    u16 effect_sequence_180;
+    u16 gold_drop_sequence;
+    u16 definition_drop_sequence;
+    u16 placement_drop_sequence;
 } KfMapObjectState;
 
 typedef struct KfMapRuntimeState {
@@ -396,16 +339,11 @@ typedef struct KfMapRuntimeState {
 extern KfMapCopyRegion map_copy_regions[KF_MAP_COPY_REGION_COUNT];
 extern KfMapRuntimeState map_runtime_state;
 
-#define map_event_pool (map_runtime_state.events)
-#define current_map_event (map_runtime_state.current_event)
-#define map_variant_asset_buffer (map_runtime_state.variant_asset_buffer)
-#define map_dialogue_advance_gate (map_runtime_state.dialogue_advance_gate)
-#define map_ambient_script_countdown (map_runtime_state.ambient_script_countdown)
-#define map_world_state_base (map_runtime_state.world_state)
-#define map_floor1_script (map_runtime_state.world_state.floors[0].script.floor1)
-#define map_floor3_script (map_runtime_state.world_state.floors[2].script.floor3)
-#define map_floor5_script (map_runtime_state.world_state.floors[4].script.floor5)
-#define boss_defeat_complete (map_floor5_script.boss_defeat)
+inline KfMapFloorScript &map_floor_script(KfFloorId floor)
+{
+    return map_runtime_state.world_state.floors[kf_enum_encode<u8>(floor) - 1].script;
+}
+
 extern KfMapObjectState map_object_state;
 extern char map_resource_path[KF_MAP_RESOURCE_PATH_BYTES];
 
@@ -448,12 +386,11 @@ extern s32 map_object_pool_find_near_point(s32 point_x, s32 point_z, s32 radius_
 extern void map_object_pool_load(const KfMapObjectPlacement *placements);
 extern void map_object_pool_trigger_link(u8 link_id);
 extern void map_object_pool_update(void);
-extern u32 map_object_probe_forward(const KfMapObject *object, u16 yaw);
-extern void map_object_spawn_actor_debris(u16 source, const VECTOR *position, s32 y_offset);
-extern void map_object_spawn_effect(KfMapObjectDropSource drop_source, KfObjectId object_id, const VECTOR *position, s32 y_offset);
+extern u32 map_object_probe_door_closing(const KfMapObject *object, u16 yaw);
+extern void map_object_spawn_gold_drop(u16 gold_amount, const VECTOR *position, s32 y_offset);
+extern void map_object_spawn_drop(KfMapObjectDropSource drop_source, KfObjectId object_id, const VECTOR *position, s32 y_offset);
 extern void map_object_start_action_if_idle(KfMapObject *object, KfMapObjectOperation action);
 
-extern const u32 *map_resource_copy_words(u32 *destination, const u32 *source, u32 word_count);
 extern u8 *map_resource_load_file(const char *filename, std::size_t *loaded_size = nullptr);
 extern void map_resource_path_set_floor(KfFloorId floor);
 extern void map_resources_load(KfFloorId floor, KfMapVariant map_variant);

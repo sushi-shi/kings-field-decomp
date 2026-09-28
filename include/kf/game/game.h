@@ -21,7 +21,7 @@
 #include <kf/game/effect.h>
 #include <kf/game/equipment.h>
 #include <kf/game/menu.h>
-#include <kf/lib/audio.h>
+#include <kf/game/audio.h>
 #include <kf/game/player.h>
 #include <kf/game/pool.h>
 #include <kf/game/magic.h>

@@ -7,7 +7,6 @@
 #include <kf/lib/memory.h>
 #include <kf/open/render.h>
 #include <kf/open/resources.h>
-#include <kf/lib/graphics.h>
 
 enum {
     DISPLAY_ASSET_BUFFER_BYTES = 2 * 0x26160,
@@ -37,12 +36,12 @@ void render_initialize(void)
     open_graphics_runtime.display_state.buffer_index = KF_DISPLAY_BUFFER_UNINITIALIZED;
     if (resource_file_load_into(opening_cell_storage.rtbl_sectors,
             sizeof opening_cell_storage.rtbl_sectors, "B0/RTBL.") != KF_RESOURCE_LOADED)
-        exit(1);
-    buffer = (u8 *)memory_allocate(DISPLAY_ASSET_BUFFER_BYTES);
+        resource_file_fail("B0/RTBL.");
+    buffer = (u8 *)memory_allocate(memory_arena, DISPLAY_ASSET_BUFFER_BYTES);
     open_graphics_runtime.display_state.asset_load_buffer = buffer;
     open_graphics_runtime.display_state.asset_load_capacity = DISPLAY_ASSET_BUFFER_BYTES;
     open_graphics_runtime.floor_item_state.count = 0;
-    setVector(&angles, 0, 0, 0);
+    angles = {0, 0, 0};
     kf::matrix_set_rotation_xyz(angles, open_graphics_runtime.render_state.quadrant_matrices[0]);
     angles.vy = KF_ANGLE_THREE_QUARTER_TURN;
     kf::matrix_set_rotation_xyz(angles, open_graphics_runtime.render_state.quadrant_matrices[3]);
@@ -64,6 +63,13 @@ void render_initialize(void)
     open_graphics_runtime.floor_item_state.texture = {kf::SurfaceKind::Texture,
         {FLOOR_ITEM_TPAGE_X, 0, 0, FLOOR_ITEM_PALETTE_Y, kf::TextureFormat::Indexed8},
         kf::BlendMode::average};
+}
+
+void lighting_set_active_color_matrix(KfOpenColorPreset preset)
+{
+    auto &destination = open_graphics_runtime.render_state.lighting.color_matrix;
+    const auto &source = color_matrix_table[kf_enum_encode<s32>(preset)];
+    memcpy(destination.m, source.m, sizeof destination.m);
 }
 
 void display_initialize(KfOverlayMode overlay_mode)

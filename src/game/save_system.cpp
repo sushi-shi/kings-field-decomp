@@ -1,3 +1,4 @@
+#include <kf/game/audio.h>
 #include <kf/lib/null.h>
 #include <kf/lib/bool.h>
 #include <kf/game/graphics.h>
@@ -28,7 +29,6 @@ constexpr unsigned talk_character_tens_offset = 12;
 constexpr unsigned talk_character_ones_offset = 13;
 constexpr unsigned talk_page_offset = 14;
 }
-
 
 enum {
     SAVE_MESSAGE_NO_SPACE = 102,
@@ -171,19 +171,19 @@ static void save_state_fields(SaveCodec &io, SavedGameState &state) {
     SAVE_FIELD(s32, camera_position.vx);
     SAVE_FIELD(s32, camera_position.vy);
     SAVE_FIELD(s32, camera_position.vz);
-    SAVE_FIELD(s32, floor_height);
+    SAVE_FIELD(s32, foot_height);
     SAVE_FIELD(s16, camera_rotation.vx);
     SAVE_FIELD(s16, camera_rotation.vy);
     SAVE_FIELD(s16, camera_rotation.vz);
-    SAVE_FIELD(s16, motion_state.fields.strafe_velocity);
-    SAVE_FIELD(s16, motion_state.fields.forward_velocity);
-    SAVE_FIELD(u16, motion_state.fields.movement_speed);
-    SAVE_FIELD(s16, motion_state.fields.yaw_step);
-    SAVE_FIELD(s16, motion_state.fields.pitch_step);
-    SAVE_FIELD(u8, motion_state.fields.map_cell.coords.x);
-    SAVE_FIELD(u8, motion_state.fields.map_cell.coords.z);
-    SAVE_FIELD(u8, previous_map_cell.coords.x);
-    SAVE_FIELD(u8, previous_map_cell.coords.z);
+    SAVE_FIELD(s16, motion_state.strafe_velocity);
+    SAVE_FIELD(s16, motion_state.forward_velocity);
+    SAVE_FIELD(u16, motion_state.movement_speed);
+    SAVE_FIELD(s16, motion_state.yaw_step);
+    SAVE_FIELD(s16, motion_state.pitch_step);
+    SAVE_FIELD(u8, motion_state.map_cell.x);
+    SAVE_FIELD(u8, motion_state.map_cell.z);
+    SAVE_FIELD(u8, previous_map_cell.x);
+    SAVE_FIELD(u8, previous_map_cell.z);
     SAVE_BYTES(unknown_ce);
     SAVE_FIELD(s16, view_bob_offset);
     SAVE_FIELD(u16, view_bob_phase);
@@ -288,8 +288,8 @@ static bool save_state_valid(const SavedGameState &state) {
             || (magic != save_no_equipment_id && magic >= KF_MAGIC_PLAYER_COUNT)
             || p.camera_position.vx < 0 || p.camera_position.vx >= KF_MAP_COLUMNS * KF_MAP_TILE_SIZE
             || p.camera_position.vz < 0 || p.camera_position.vz >= KF_MAP_ROWS * KF_MAP_TILE_SIZE
-            || p.motion_state.fields.map_cell.coords.x >= KF_MAP_COLUMNS
-            || p.motion_state.fields.map_cell.coords.z >= KF_MAP_ROWS)
+            || p.motion_state.map_cell.x >= KF_MAP_COLUMNS
+            || p.motion_state.map_cell.z >= KF_MAP_ROWS)
         return false;
     const KfObjectId armor[] = {p.equipped_head_armor_id, p.equipped_body_armor_id,
         p.equipped_shield_id, p.equipped_arm_armor_id, p.equipped_leg_armor_id};
@@ -318,7 +318,7 @@ static void save_state_apply(const SavedGameState &state) {
     player_state.weapon_asset_buffer = asset;
     player_state.weapon_animation_cache = cache;
     player_state.selected_magic_record = player_state.selected_magic_id == KF_MAGIC_NONE ? nullptr
-        : &magic_records[kf_enum_encode<u8>(player_state.selected_magic_id)];
+        : &effect_state.magic.entries[kf_enum_encode<u8>(player_state.selected_magic_id)];
     player_state.equipped_weapon_record = player_state.equipped_weapon_id == KF_OBJECT_NONE ? nullptr
         : &weapon_records.entries[kf_enum_encode<u8>(player_state.equipped_weapon_id)];
     player_state.equipped_head_armor_record = saved_armor(player_state.equipped_head_armor_id);
@@ -329,7 +329,7 @@ static void save_state_apply(const SavedGameState &state) {
     map_runtime_state.world_state = state.world;
     std::memcpy(item_stock, state.stock, sizeof state.stock);
     for (unsigned i = 0; i < KF_MAGIC_RECORD_COUNT; ++i)
-        magic_records[i].learned = state.learned[i];
+        effect_state.magic.entries[i].learned = state.learned[i];
     // The existing load-return path reloads the floor, weapon and selected magic.
 }
 
@@ -433,7 +433,7 @@ KfSaveResult save_system_write_slot(KfSaveSlotId slot) {
     state.world = map_runtime_state.world_state;
     std::memcpy(state.stock, item_stock, sizeof state.stock);
     for (unsigned i = 0; i < KF_MAGIC_RECORD_COUNT; ++i)
-        state.learned[i] = magic_records[i].learned;
+        state.learned[i] = effect_state.magic.entries[i].learned;
     if (!save_state_valid(state))
         return save_failure(kf::SaveFileResult::Invalid, true);
     u8 data[kf::save_file_capacity];
@@ -482,22 +482,22 @@ KfBool32 menu_load_message_image(s32 message_id)
     u8 *buffer;
 
     if (message_id != MESSAGE_IMAGE_SKIP) {
-        RESOURCE_PATH_WRITE_DECIMAL3(&path[menu_image_number_offset], message_id);
+        resource_path_write_decimal3(&path[menu_image_number_offset], message_id);
         buffer = game_graphics_runtime.display_state.asset_load_buffer;
         std::size_t image_size;
         if (resource_file_load_into(buffer,
                 game_graphics_runtime.display_state.asset_load_capacity, path, &image_size) != KF_RESOURCE_LOADED) {
-            return KF_TRUE;
+            return true;
         }
         tim_upload_images(buffer, image_size);
     }
-    return KF_FALSE;
+    return false;
 }
 
 void screen_show_image_until_input(const char *path)
 {
     s32 brightness = IMAGE_WAIT_INITIAL_BRIGHTNESS;
-    KfBool8 pressed = KF_FALSE;
+    KfBool8 released = false;
     std::size_t image_size;
     if (resource_file_load_into(game_graphics_runtime.display_state.asset_load_buffer,
             game_graphics_runtime.display_state.asset_load_capacity, path, &image_size) != KF_RESOURCE_LOADED) {
@@ -511,9 +511,9 @@ void screen_show_image_until_input(const char *path)
         }
         display_present_system_screen(brightness);
         kf::host_wait_frame();
-        if (pressed == KF_FALSE) {
+        if (released == false) {
             if (kf::host_read_buttons() == 0) {
-                pressed = KF_TRUE;
+                released = true;
             }
         } else if (kf::host_read_buttons() != 0) {
             kf::host_wait_buttons_released();

@@ -1,7 +1,7 @@
 #ifndef KF_OPEN_SCENE0_H
 #define KF_OPEN_SCENE0_H
 
-#include <kf/lib/audio.h>
+#include <kf/open/audio.h>
 #include <kf/lib/map.h>
 
 extern void opening_render_map_cells(void);

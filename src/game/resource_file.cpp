@@ -1,3 +1,4 @@
+#include <kf/game/resources.h>
 #include <kf/game/resource_file.h>
 
 static constexpr s32 item_models_per_directory = 30;
@@ -26,7 +27,7 @@ KfResourceLoadResult resource_file_load_item_model(u8 **destination, s32 index, 
     *loaded_size = 0;
     if (index < 0 || index >= KF_ITEM_COUNT || !item_model_files[index].size)
         return KF_RESOURCE_LOAD_FAILED;
-    return resource_file_try_load_allocated(destination, item_model_files[index].path, loaded_size);
+    return resource_file_try_load_allocated(memory_arena, destination, item_model_files[index].path, loaded_size);
 }
 
 void resource_file_reset_module_state(void)
