@@ -244,7 +244,7 @@ GAME.EXE	actor_animation_crossed_phase	0x8002dccc	0x30	game.actor	100	exact-pres
 GAME.EXE	actor_play_sound_at_phase	0x8002dcfc	0x98	game.actor	100	exact-preserved
 GAME.EXE	actor_try_select_action_distance_facing	0x8002dd94	0x120	game.actor	100	exact-preserved
 GAME.EXE	actor_try_select_ground_action	0x8002deb4	0x164	game.actor	100	exact-preserved
-GAME.EXE	actor_try_select_facing_action	0x8002e018	0xd8	game.actor	100	exact-preserved
+GAME.EXE	actor_try_select_multi_hit_action	0x8002e018	0xd8	game.actor	100	exact-preserved
 GAME.EXE	actor_try_select_profiled_action	0x8002e0f0	0x1f8	game.actor	100	exact-preserved
 GAME.EXE	actor_select_next_action	0x8002e2e8	0x3c0	game.actor_behavior	100	exact-preserved
 GAME.EXE	actor_update_awareness	0x8002e6a8	0x2ac	game.actor_behavior	100	exact-preserved

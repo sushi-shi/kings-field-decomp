@@ -378,7 +378,7 @@ extern void actor_set_action(KfActor *actor, KfActorAction action);
 extern void actor_set_player_transform( const VECTOR *position_or_null, const SVECTOR *rotation_or_null);
 extern KfActorAction actor_try_select_action_distance_facing(
     KfActorAction action, s32 distance, u16 chance, u16 distance_scale);
-extern KfActorAction actor_try_select_facing_action(
+extern KfActorAction actor_try_select_multi_hit_action(
     KfActorAction action, s32 distance, u16 chance);
 extern KfActorAction actor_try_select_ground_action(
     KfActorAction action, s32 distance, u16 chance);

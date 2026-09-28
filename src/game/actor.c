@@ -767,7 +767,7 @@ KfActorAction actor_try_select_ground_action(KfActorAction action, s32 distance,
 }
 
 ADDRESS(0x8002e018, 0xd8)
-KfActorAction actor_try_select_facing_action(KfActorAction action, s32 distance, u16 chance)
+KfActorAction actor_try_select_multi_hit_action(KfActorAction action, s32 distance, u16 chance)
 {
     KfActor *actor = actor_state.current;
     u16 odds = chance;

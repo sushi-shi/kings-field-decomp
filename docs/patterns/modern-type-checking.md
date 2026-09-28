@@ -230,7 +230,7 @@ their unattributed differences. No exact-count movement or banking.
 | `8002da6c` | `actor_pool_find_overlap` | 100 | Unchanged exact |
 | `8002dd94` | `actor_try_select_action_distance_facing` | 100 | Unchanged exact |
 | `8002deb4` | `actor_try_select_ground_action` | 100 | Unchanged exact |
-| `8002e018` | `actor_try_select_facing_action` | 100 | Unchanged exact |
+| `8002e018` | `actor_try_select_multi_hit_action` | 100 | Unchanged exact |
 | `8002e0f0` | `actor_try_select_profiled_action` | 96.333336 | Unchanged partial |
 | `8002e2e8` | `actor_select_next_action` | 100 | Unchanged exact |
 | `8002e6a8` | `actor_update_awareness` | 97.736840 | Unchanged partial |

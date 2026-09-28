@@ -85,7 +85,7 @@ source consumers reveal no second semantic owner. Keep both local to `actor.c`.
 
 The first serves `actor_try_select_action_distance_facing` and
 `actor_try_select_ground_action`; the latter serves
-`actor_try_select_facing_action`, whose action caller selects multi-hit.
+`actor_try_select_multi_hit_action`, whose action caller selects multi-hit.
 Retail loads the tolerances in the `angle_within_tolerance` call delay slots
 at GAME `0x8002de8c`, `0x8002dff0`, and `0x8002e0c8`. Nearby aim and weapon
 cones with values 341 and 1365 have different roles and are not replacements.

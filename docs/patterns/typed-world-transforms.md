@@ -78,7 +78,7 @@ hypotheses. Dispatch indirect jumps retain their existing table evidence.
 | GAME `actor_try_attack_player` | `8002d6a0 / 158` | 100.000000 | 8/5/5/1 | 100%, unchanged and exact |
 | GAME `actor_try_select_action_distance_facing` | `8002dd94 / 120` | 100.000000 | 15/4/11/1 | 100%, unchanged and exact |
 | GAME `actor_try_select_ground_action` | `8002deb4 / 164` | 100.000000 | 14/4/11/1 | 100%, unchanged and exact |
-| GAME `actor_try_select_facing_action` | `8002e018 / d8` | 100.000000 | 10/3/7/1 | 100%, unchanged and exact |
+| GAME `actor_try_select_multi_hit_action` | `8002e018 / d8` | 100.000000 | 10/3/7/1 | 100%, unchanged and exact |
 | GAME `actor_try_select_profiled_action` | `8002e0f0 / 1f8` | 100.000000 | 23/4/16/1 | 100%, unchanged and exact |
 | GAME `actor_move_xz_with_collision` | `8002e954 / 3ac` | 100.000000 | 59/6/41/1 | 100%, unchanged and exact |
 | GAME `actor_move_along_heading` | `8002ed00 / d4` | 100.000000 | 6/5/3/1 | 100%, unchanged and exact |

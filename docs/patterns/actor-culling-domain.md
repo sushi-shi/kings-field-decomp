@@ -92,7 +92,7 @@ placements advance by 0x10. Existing fields in freed slots are otherwise retaine
 | GAME.EXE | `actor_play_sound_at_phase` | `0x8002dcfc / 152` | 100.000000% | Unedited actor-core control; preserve its signature, field widths, calls, data references and current match. |
 | GAME.EXE | `actor_try_select_action_distance_facing` | `0x8002dd94 / 288` | 100.000000% | Unedited actor-core control; preserve its signature, field widths, calls, data references and current match. |
 | GAME.EXE | `actor_try_select_ground_action` | `0x8002deb4 / 356` | 100.000000% | Unedited actor-core control; preserve its signature, field widths, calls, data references and current match. |
-| GAME.EXE | `actor_try_select_facing_action` | `0x8002e018 / 216` | 100.000000% | Unedited actor-core control; preserve its signature, field widths, calls, data references and current match. |
+| GAME.EXE | `actor_try_select_multi_hit_action` | `0x8002e018 / 216` | 100.000000% | Unedited actor-core control; preserve its signature, field widths, calls, data references and current match. |
 | GAME.EXE | `actor_try_select_profiled_action` | `0x8002e0f0 / 504` | 96.333336% | Unedited actor-core control; preserve its signature, field widths, calls, data references and current match. |
 | GAME.EXE | `actor_pool_update` | `0x80030818 / 168` | 100.000000% | Bind every actor; run awareness for occupied slots and action only for active lifecycle; unbind with null. |
 | GAME.EXE | `actor_pool_load_placements` | `0x800308c0 / 428` | 100.000000% | Decode bit 0x20 into culling enum; separate exact-one stream exhaustion. |
@@ -181,7 +181,7 @@ below remain unattributed, with no compiler mechanism inferred from registers.
 | GAME.EXE | `actor_play_sound_at_phase` | `0x8002dcfc / 152` | 100%; exact words and references unchanged. |
 | GAME.EXE | `actor_try_select_action_distance_facing` | `0x8002dd94 / 288` | 100%; exact words and references unchanged. |
 | GAME.EXE | `actor_try_select_ground_action` | `0x8002deb4 / 356` | 100%; exact words and references unchanged. |
-| GAME.EXE | `actor_try_select_facing_action` | `0x8002e018 / 216` | 100%; exact words and references unchanged. |
+| GAME.EXE | `actor_try_select_multi_hit_action` | `0x8002e018 / 216` | 100%; exact words and references unchanged. |
 | GAME.EXE | `actor_try_select_profiled_action` | `0x8002e0f0 / 504` | 96.333336%; unchanged. First divergence `0x8002e108`: candidate `andi $s3, $a2, 0x1f`, retail `andi $s2, $a2, 0x1f`. |
 | GAME.EXE | `actor_pool_update` | `0x80030818 / 168` | 100%; exact words and references unchanged. |
 | GAME.EXE | `actor_pool_load_placements` | `0x800308c0 / 428` | 100%; exact words and references unchanged. |

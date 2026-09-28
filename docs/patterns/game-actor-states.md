@@ -33,7 +33,7 @@ existing halfword motion and phase fields keep their widths.
 | `8002da6c / 144` | `actor_pool_find_overlap` | 100 | Active actors block overlap except dying/post-death and current actor. |
 | `8002dd94 / 120` | `actor_try_select_action_distance_facing` | 100 | Preserves an unfinished matching action; homebound policy rejects far targets; `ff` returns no action. |
 | `8002deb4 / 164` | `actor_try_select_ground_action` | 100 | Shared unfinished-action gate and no-action rejection; existing ground and facing tests unchanged. |
-| `8002e018 / d8` | `actor_try_select_facing_action` | 100 | Same gate/rejection protocol around its distinct distance and facing policy. |
+| `8002e018 / d8` | `actor_try_select_multi_hit_action` | 100 | Same gate/rejection protocol around its distinct distance and facing policy. |
 | `8002e0f0 / 1f8` | `actor_try_select_profiled_action` | 96.333336 | Same gate/rejection; profile 9 counts active actors and kind-9 effects. |
 | `8002e2e8 / 3c0` | `actor_select_next_action` | 100 | Action choices and old-action tests map to decoded dispatcher arms; progress `f0` prevents automatic selection. |
 | `8002e6a8 / 2ac` | `actor_update_awareness` | 97.736840 | Three lifecycle arms and spawn policies; state 2 waits for range exit, without movement. |

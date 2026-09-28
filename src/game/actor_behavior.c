@@ -143,7 +143,7 @@ void actor_select_next_action(s32 player_distance)
     near_range = definition->pursuit_distance_scale << ACTOR_PURSUIT_DISTANCE_SHIFT;
     awareness = definition->awareness_distance;
     if (definition->action_animations[KF_ACTOR_ANIM_SLOT_MULTI_HIT_ATTACK] != KF_ANIMATION_CLIP_NONE
-        && actor_try_select_facing_action(
+        && actor_try_select_multi_hit_action(
                KF_ACTOR_ACTION_MULTI_HIT_ATTACK, player_distance, ACTOR_MULTI_HIT_SELECTION_WEIGHT)
             != KF_ACTOR_ACTION_NONE) {
         chosen = KF_ACTOR_ACTION_MULTI_HIT_ATTACK;
@@ -866,7 +866,7 @@ void actor_update_current_action(void)
     s32 next_y;
     s32 home_x;
     s32 home_z;
-    u16 debris;
+    u16 gold_amount;
     KfMapAttribute attribute;
 
     collision_adjust_cell_occupancy(actor->cell_x, actor->cell_z, -1);
@@ -955,10 +955,10 @@ void actor_update_current_action(void)
             return;
         }
         if (actor_animation_crossed_phase(actor, ACTOR_DEATH_DROP_PHASE)) {
-            debris = ((u32)rand() * definition->gold_drop_limit) >> ACTOR_GOLD_RANDOM_SHIFT;
-            if (debris != 0) {
+            gold_amount = ((u32)rand() * definition->gold_drop_limit) >> ACTOR_GOLD_RANDOM_SHIFT;
+            if (gold_amount != 0) {
                 map_object_spawn_actor_debris(
-                    debris, &actor->position, -(definition->collision_height >> 1));
+                    gold_amount, &actor->position, -(definition->collision_height >> 1));
             }
             if (actor->slot_state == KF_ACTOR_SLOT_DYNAMIC || actor->slot_state == KF_ACTOR_SLOT_RESPAWNING) {
                 if (definition->action_parameters.drop_object != KF_MAP_OBJECT_DROP_DISABLED
