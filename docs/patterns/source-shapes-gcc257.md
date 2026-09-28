@@ -401,7 +401,7 @@ from `display_state` (size `0x20024`), so GAME's `display_state` shrinks to
 | `+0x00ec` | `0x80090fa8` | `tmd_state` (`current_tmd` at `+0x10c`) | `tmd_state` |
 | `+0x0110` | `0x80090fcc` | `asset_registry_entries[60]` | `asset_registry_entries` |
 | `+0x0200` | `0x800910bc` | `current_tmd_vertices` | `current_tmd_vertices` |
-| `+0x0204` | `0x800910c0` | `pool_records[12]` | `pool_records` |
+| `+0x0204` | `0x800910c0` | `animation_cache_records[12]` | `animation_cache_records` |
 | `+0x02f4` | `0x800911b0` | `projected_vertices` (8-byte screen entries) | `DAT_800911b0` |
 | `+0x419c` | `0x80095058` | sprite/floor scratch, floor items, frame counters | `DAT_80095058`, `floor_items`, ... |
 | `+0x47e4` | `0x800956a0` | `render_state` (`fog_near_distance` at `+0xa0`) | `render_state` |

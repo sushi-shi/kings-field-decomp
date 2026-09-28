@@ -198,7 +198,7 @@ update_vertex_cache:
 ADDRESS(0x80020978, 0x30)
 void animation_cache_reset(void)
 {
-    KfAnimationCacheRecord *record = game_graphics_runtime.pool_records;
+    KfAnimationCacheRecord *record = game_graphics_runtime.animation_cache_records;
     u16 records_left = KF_ANIMATION_CACHE_CAPACITY;
 
     do {
@@ -211,7 +211,7 @@ void animation_cache_reset(void)
 ADDRESS(0x800209a8, 0x3c)
 void animation_cache_mark_stale(void)
 {
-    KfAnimationCacheRecord *record = game_graphics_runtime.pool_records;
+    KfAnimationCacheRecord *record = game_graphics_runtime.animation_cache_records;
     u16 records_left = KF_ANIMATION_CACHE_CAPACITY;
 
     do {
@@ -241,7 +241,7 @@ void animation_cache_release(KfAnimationCacheRecord *record)
 ADDRESS(0x80020a2c, 0x6c)
 void animation_cache_release_all(void)
 {
-    KfAnimationCacheRecord *record = game_graphics_runtime.pool_records;
+    KfAnimationCacheRecord *record = game_graphics_runtime.animation_cache_records;
     s16 records_left;
 
     for (records_left = KF_ANIMATION_CACHE_CAPACITY - 1; records_left != -1; records_left--) {
@@ -260,7 +260,7 @@ void animation_cache_release_all(void)
 ADDRESS(0x80020a98, 0x6c)
 void animation_cache_release_stale(void)
 {
-    KfAnimationCacheRecord *record = game_graphics_runtime.pool_records;
+    KfAnimationCacheRecord *record = game_graphics_runtime.animation_cache_records;
     u16 records_left = KF_ANIMATION_CACHE_CAPACITY;
 
     do {
@@ -274,7 +274,7 @@ void animation_cache_release_stale(void)
 ADDRESS(0x80020b04, 0x48)
 KfAnimationCacheRecord *animation_cache_allocate(void)
 {
-    KfAnimationCacheRecord *record = game_graphics_runtime.pool_records;
+    KfAnimationCacheRecord *record = game_graphics_runtime.animation_cache_records;
     u16 records_left = KF_ANIMATION_CACHE_CAPACITY;
 
     do {

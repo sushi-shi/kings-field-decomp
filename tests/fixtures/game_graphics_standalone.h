@@ -10,7 +10,7 @@ extern DRAWENV display_draw_environments[2];
 extern DISPENV display_disp_environments[2];
 extern KfTmdState tmd_state;
 extern SVECTOR *current_tmd_vertices;
-extern KfAnimationCacheRecord pool_records[12];
+extern KfAnimationCacheRecord animation_cache_records[12];
 extern u16 actor_texture_pages[3];
 extern u16 actor_texture_cluts[3];
 extern u16 active_render_clut;

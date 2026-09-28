@@ -410,7 +410,7 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual((datum.name, datum.datatype, datum.size),
                          ("game_graphics_runtime", "KfGraphicsRuntimeGame", 0x249CC))
         self.assertEqual(_structure_field('KfGraphicsRuntimeGame', 0x20228),
-                         ('pool_records', 'KfAnimationCacheRecord[12]', 0xF0))
+                         ('animation_cache_records', 'KfAnimationCacheRecord[12]', 0xF0))
         claims = load_manifest().by_name()["game.pool"].data
         self.assertEqual(claims, ())
         self.assertEqual(game.data_owner(0x800911AF), datum)

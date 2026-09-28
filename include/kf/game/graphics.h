@@ -24,7 +24,7 @@ typedef struct KfGraphicsRuntimeGame {
     KfAssetHeader *asset_registry_entries[KF_ASSET_REGISTRY_KNOWN_ENTRIES];
     u8 unknown_201f4[0x30];
     SVECTOR *current_tmd_vertices;
-    KfAnimationCacheRecord pool_records[KF_ANIMATION_CACHE_CAPACITY];
+    KfAnimationCacheRecord animation_cache_records[KF_ANIMATION_CACHE_CAPACITY];
     KfScreenVertex tmd_projected_vertices[KF_PROJECTED_VERTEX_CAPACITY];
     SVECTOR morph_scratch[KF_MORPH_SCRATCH_CAPACITY];
     u16 actor_texture_pages[KF_FLOOR5_ACTOR_TEXTURE_COUNT];

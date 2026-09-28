@@ -262,7 +262,7 @@ kf inventory ghidra --image game --image open
 kf inventory propose-ghidra
 
 kf sema --image game addr vector2s_scale_shift11
-kf sema --image game xref pool_records --confirmed-only
+kf sema --image game xref animation_cache_records --confirmed-only
 kf sema --image game disasm vector2s_scale_shift11 --blocks
 ```
 

@@ -28,7 +28,7 @@ FIELDS = {
     'display_state': 0x0, 'display_draw_environments': 0x20028,
     'display_disp_environments': 0x200E0, 'unknown_20108': 0x20108,
     'tmd_state': 0x20110, 'unknown_registry_20134': 0x20134,
-    'current_tmd_vertices': 0x20224, 'pool_records': 0x20228,
+    'current_tmd_vertices': 0x20224, 'animation_cache_records': 0x20228,
     'tmd_projected_vertices': 0x20318, 'morph_scratch': 0x22258,
     'actor_texture_pages': 0x241A0, 'unknown_241a6': 0x241A6,
     'actor_texture_cluts': 0x241B0, 'unknown_241b6': 0x241B6,
