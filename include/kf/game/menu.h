@@ -468,10 +468,10 @@ extern void menu_draw_status_details(void);
 extern void menu_draw_two_option(
     const MenuGlyphString *accept_label, const MenuGlyphString *decline_label,
     KfMenuConfirmChoice selected_choice, KfMenuConfirmState confirmation);
-extern void menu_draw_window(KfMenuWindowKind window_kind, s32 count, s32 highlight, KfMenuConfirmState confirmation);
+extern void menu_draw_window(KfMenuWindowKind window_kind, s32 row_count, s32 highlight_row, KfMenuConfirmState confirmation);
 extern void menu_draw_window_backdrop(void);
 extern void menu_format_number(
-    s32 value, s32 count, KF_ENUM_PARAM(KfFormatPaddingMode, s32) padding_mode, s16 *out);
+    s32 value, s32 digit_count, KF_ENUM_PARAM(KfFormatPaddingMode, s32) padding_mode, s16 *out);
 extern void menu_drop_item_panel(void);
 #if KF_MODERN_TYPES && !defined(KF_MENU_MODE_IMPLEMENTATION)
 extern u32 menu_enter_mode(KfMenuMode menu_mode);
@@ -483,7 +483,7 @@ extern u32 menu_enter_mode(KfMenuMode menu_mode, ...);
 extern void menu_equip_select(KfEquipmentMenuCategory equipment_category);
 extern void menu_frame_begin(void);
 extern void menu_item_model_preview(KF_ENUM_PARAM(KfObjectId, s32) item_id);
-extern void menu_list_init(KfMenuList *list, KfMenuWindowKind window_kind, s32 row);
+extern void menu_list_init(KfMenuList *list, KfMenuWindowKind window_kind, s32 title_row);
 #if KF_MODERN_TYPES && !defined(KF_MENU_LIST_IMPLEMENTATION)
 extern KfMenuResult menu_list_confirm(
     const KfMenuList *list, KfMenuConfirmKind confirm_kind, KfMenuPreviewMode preview_mode,
@@ -513,7 +513,7 @@ extern KfMenuResult menu_save_panel(void);
 extern void menu_spell_select(void);
 extern void menu_status_panel(void);
 extern KfMenuResult menu_two_option_prompt(
-    KfMenuWindowKind window_kind, s32 count, s32 highlight,
+    KfMenuWindowKind window_kind, s32 row_count, s32 highlight_row,
     const KfSaveSlotSummary *summaries);
 extern void talk_show_dialogue_page(KF_ENUM_PARAM(KfFloorId, u8) floor, u8 stage, KF_ENUM_PARAM(KfCharacterId, s32) character_id, u8 page);
 

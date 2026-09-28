@@ -38,7 +38,7 @@ typedef struct KfDisplayStateOpen {
 /* Two registered TMD slots and the selected asset. */
 typedef struct KfTmdStateOpen {
     KfTmdHeader *slots[KF_OPEN_TMD_SLOT_COUNT];
-    KfTmdHeader *current_asset;
+    KfTmdHeader *current_tmd;
 } KfTmdStateOpen;
 
 /* OPEN.EXE view state lacks GAME's two extra light matrices. */
@@ -127,7 +127,7 @@ extern void fog_interpolate_near(s32 start, s32 end, s32 ratio);
 extern void fog_set_near(s32 distance);
 extern void color_lerp_cvector(
     const CVECTOR *from, const CVECTOR *to, CVECTOR *output, s32 blend);
-extern u16 color_lerp_rgb555(u16 color0, u16 color1, s32 blend);
+extern u16 color_lerp_rgb555(u16 from, u16 to, s32 blend);
 extern void *primitive_buffer_allocate(u16 byte_count);
 extern void render_initialize(void);
 extern void display_begin_frame(void);
@@ -140,7 +140,7 @@ extern void opening_fade_in(void);
 extern void render_set_view_transform(
     const VECTOR *position_or_null, const SVECTOR *rotation_or_null);
 extern void tmd_project_vertices_perspective_right(s32 count);
-extern void tmd_project_vertices_shift(s32 count, u8 shift);
+extern void tmd_project_vertices_depth_shift(s32 count, u8 depth_shift);
 extern void tmd_transform_vertices(s32 count);
 extern void render_enqueue_tmd(u16 object_index, s16 depth_bias);
 extern void render_enqueue_unlit_triangles(u16 object_index, s16 depth_bias);

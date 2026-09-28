@@ -142,8 +142,8 @@ calls, retained as unattributed codegen residues.
 | `8002a510` | `menu_draw_window_backdrop` | `0x6a4` | 16 / 107 | 99.971760%, unchanged residue |
 | `8002abb4` | `menu_frame_begin` | `0x80` | 1 / 4 | 100% exact, unchanged |
 | `8002ac34` | `menu_present_frame` | `0x98` | 5 / 4 | 100% exact, unchanged |
-| `8002accc` | `primitive_buffer_begin_poly_ft4` | `0x50` | 1 / 4 | 100% exact, unchanged |
-| `8002ad1c` | `primitive_buffer_commit_poly_ft4` | `0x50` | 1 / 5 | 100% exact, unchanged |
+| `8002accc` | `menu_begin_poly_ft4` | `0x50` | 1 / 4 | 100% exact, unchanged |
+| `8002ad1c` | `menu_commit_poly_ft4` | `0x50` | 1 / 5 | 100% exact, unchanged |
 | `8002ad6c` | `menu_list_init` | `0x8c` | 0 / 1 | 100% exact, unchanged |
 | `8002adf8` | `menu_format_number` | `0xac` | 0 / 0 | 100% exact, unchanged |
 | `8002aea4` | `menu_load_item_model` | `0x68` | 3 / 2 | 100% exact, unchanged |

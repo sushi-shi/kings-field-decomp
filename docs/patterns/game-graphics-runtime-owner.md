@@ -119,7 +119,7 @@ Percentages are strict objdiff results; every row below 100% remains open.
 | `8001c2b0` | `tmd_prepare_primitive_indices` | 100.000000 | 100.000000 | Exact preserved |
 | `8001c5b0` | `tmd_register` | 100.000000 | 100.000000 | Exact preserved |
 | `8001c60c` | `tmd_project_vertices` | 100.000000 | 100.000000 | Exact preserved |
-| `8001c6a8` | `tmd_project_vertices_shift` | 100.000000 | 100.000000 | Exact preserved |
+| `8001c6a8` | `tmd_project_vertices_depth_shift` | 100.000000 | 100.000000 | Exact preserved |
 | `8001c754` | `tmd_transform_vertices` | 100.000000 | 100.000000 | Exact preserved |
 | `8001c7f8` | `render_enqueue_tmd` | 98.932236 | 99.314170 | Open |
 | `8001d730` | `render_enqueue_tmd_retextured` | 93.126690 | 99.984160 | Open |
@@ -168,7 +168,7 @@ Percentages are strict objdiff results; every row below 100% remains open.
 | `8002a510` | `menu_draw_window_backdrop` | 99.971760 | 99.971760 | Open |
 | `8002abb4` | `menu_frame_begin` | 100.000000 | 100.000000 | Exact preserved |
 | `8002ac34` | `menu_present_frame` | 100.000000 | 100.000000 | Exact preserved |
-| `8002ad1c` | `primitive_buffer_commit_poly_ft4` | 100.000000 | 100.000000 | Exact preserved |
+| `8002ad1c` | `menu_commit_poly_ft4` | 100.000000 | 100.000000 | Exact preserved |
 | `8002af48` | `menu_load_texture` | 100.000000 | 100.000000 | Exact preserved |
 | `8002c5e0` | `menu_load_message_image` | 100.000000 | 100.000000 | Exact preserved |
 | `8002c794` | `screen_show_image_until_input` | 100.000000 | 100.000000 | Exact preserved |

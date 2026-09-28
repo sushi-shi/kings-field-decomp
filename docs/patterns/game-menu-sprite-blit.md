@@ -169,7 +169,7 @@ none of their thirteen direct call sites consumes a result. Each has a
 strings, indirect transfers or candidate references in either body. The
 return delay slot restores the complete frame.
 
-Both first call `primitive_buffer_begin_poly_ft4`, saving the incoming point
+Both first call `menu_begin_poly_ft4`, saving the incoming point
 in `s1` in its delay slot. They read page and CLUT halfwords, write the eight
 coordinate halfwords in x0/y0 through x3/y3 order, then write the eight UV
 bytes in the same corner order. `MenuSpriteDef` is the shared 12-byte record
@@ -179,7 +179,7 @@ source members. SDK `POLY_FT4` retains its authentic signed-short coordinates
 and unsigned-byte UV members.
 
 Every validated address pair refers to `current_poly_ft4` at `0x80057e88`.
-The last common call is `primitive_buffer_commit_poly_ft4`, with depth 2000
+The last common call is `menu_commit_poly_ft4`, with depth 2000
 set in its delay slot. Its body links the packet with `AddPrim` and advances
 the shared cursor by the SDK packet size, 40 bytes. The begin helper calls
 `SetPolyFT4` and sets RGB to 96.

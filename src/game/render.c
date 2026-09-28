@@ -20,10 +20,10 @@ enum {
     INITIAL_BACK_COLOR = 60,
     SYSTEM_SCREEN_BRIGHTNESS = 96,
     SYSTEM_SCREEN_PATH_DIGIT = 2,
-    EFFECT_TEXTURE_FIRST_PAGE_X = 320,
-    EFFECT_TEXTURE_SECOND_PAGE_X = 384,
-    EFFECT_TEXTURE_THIRD_PAGE_X = 832,
-    EFFECT_TEXTURE_CLUT_Y = 491,
+    ACTOR_TEXTURE_FIRST_PAGE_X = 320,
+    ACTOR_TEXTURE_SECOND_PAGE_X = 384,
+    ACTOR_TEXTURE_THIRD_PAGE_X = 832,
+    ACTOR_TEXTURE_CLUT_Y = 491,
     FLOOR_ITEM_TPAGE_X = 896,
     FLOOR_ITEM_CLUT = 0x7a40,
     HUD_TPAGE_X = 896,
@@ -63,7 +63,7 @@ ADDRESS(0x8001b7b0, 0x308)
 void display_show_system_screen(KfSystemScreen screen)
 {
     POLY_FT4 prim;
-    s32 back;
+    s32 back_buffer;
     s32 attempt;
     s32 brightness;
 
@@ -106,11 +106,11 @@ void display_show_system_screen(KfSystemScreen screen)
     }
     tim_upload_images(game_graphics_runtime.display_state.asset_load_buffer);
 
-    back = game_graphics_runtime.display_state.buffer_index == KF_DISPLAY_BUFFER_FIRST;
-    game_graphics_runtime.display_draw_environments[back].isbg = 0;
-    game_graphics_runtime.display_draw_environments[back].dfe = 0;
-    PutDrawEnv(&game_graphics_runtime.display_draw_environments[back]);
-    game_graphics_runtime.display_state.ordering_table = game_graphics_runtime.display_state.ordering_tables[back].entries;
+    back_buffer = game_graphics_runtime.display_state.buffer_index == KF_DISPLAY_BUFFER_FIRST;
+    game_graphics_runtime.display_draw_environments[back_buffer].isbg = 0;
+    game_graphics_runtime.display_draw_environments[back_buffer].dfe = 0;
+    PutDrawEnv(&game_graphics_runtime.display_draw_environments[back_buffer]);
+    game_graphics_runtime.display_state.ordering_table = game_graphics_runtime.display_state.ordering_tables[back_buffer].entries;
     setRGB0(&prim, brightness, brightness, brightness);
     ClearOTagR(game_graphics_runtime.display_state.ordering_table, KF_ORDERING_TABLE_LENGTH);
     AddPrim((void *)game_graphics_runtime.display_state.ordering_table, (void *)&prim);
@@ -120,8 +120,8 @@ void display_show_system_screen(KfSystemScreen screen)
     }
     while (PadRead(1) != 0) {
     }
-    game_graphics_runtime.display_draw_environments[back].isbg = 1;
-    game_graphics_runtime.display_draw_environments[back].dfe = 1;
+    game_graphics_runtime.display_draw_environments[back_buffer].isbg = 1;
+    game_graphics_runtime.display_draw_environments[back_buffer].dfe = 1;
     DrawSync(0);
 }
 
@@ -133,16 +133,16 @@ void render_prepare_actor_textures(KfFloorId floor)
     if (floor == KF_FLOOR_5) {
         game_graphics_runtime.actor_texture_pages[0] = GetTPage(
             KF_GPU_TEXTURE_8BIT, KF_GPU_BLEND_AVERAGE,
-            EFFECT_TEXTURE_FIRST_PAGE_X, KF_TEXTURE_LOWER_PAGE_Y);
+            ACTOR_TEXTURE_FIRST_PAGE_X, KF_TEXTURE_LOWER_PAGE_Y);
         game_graphics_runtime.actor_texture_pages[1] = GetTPage(
             KF_GPU_TEXTURE_8BIT, KF_GPU_BLEND_AVERAGE,
-            EFFECT_TEXTURE_SECOND_PAGE_X, KF_TEXTURE_LOWER_PAGE_Y);
+            ACTOR_TEXTURE_SECOND_PAGE_X, KF_TEXTURE_LOWER_PAGE_Y);
         game_graphics_runtime.actor_texture_pages[2] = GetTPage(
             KF_GPU_TEXTURE_8BIT, KF_GPU_BLEND_AVERAGE,
-            EFFECT_TEXTURE_THIRD_PAGE_X, KF_TEXTURE_LOWER_PAGE_Y);
-        game_graphics_runtime.actor_texture_cluts[0] = GetClut(0, EFFECT_TEXTURE_CLUT_Y);
-        game_graphics_runtime.actor_texture_cluts[1] = GetClut(0, EFFECT_TEXTURE_CLUT_Y);
-        game_graphics_runtime.actor_texture_cluts[2] = GetClut(0, EFFECT_TEXTURE_CLUT_Y);
+            ACTOR_TEXTURE_THIRD_PAGE_X, KF_TEXTURE_LOWER_PAGE_Y);
+        game_graphics_runtime.actor_texture_cluts[0] = GetClut(0, ACTOR_TEXTURE_CLUT_Y);
+        game_graphics_runtime.actor_texture_cluts[1] = GetClut(0, ACTOR_TEXTURE_CLUT_Y);
+        game_graphics_runtime.actor_texture_cluts[2] = GetClut(0, ACTOR_TEXTURE_CLUT_Y);
     }
 }
 

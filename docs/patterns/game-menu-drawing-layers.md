@@ -49,7 +49,7 @@ linked words and ordered referents, then run Clang, lint, tests and full build.
 
 ## Ordering-table contracts
 
-`primitive_buffer_commit_poly_ft4` at `8002ad1c` shifts its word-sized depth
+`menu_commit_poly_ft4` at `8002ad1c` shifts its word-sized depth
 argument left two and adds the active ordering-table pointer before `AddPrim`.
 Thus 2000 and 2900 are table indices, not world distances. Direct background
 calls similarly add 12000 bytes for entry 3000. `menu_frame_begin` calls

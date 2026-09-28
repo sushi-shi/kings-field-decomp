@@ -41,7 +41,7 @@ slot; no correctness claim is made for that pre-existing runtime defect.
 | GAME.EXE `tmd_set_current_vertices` | `8001c138 / 10` | 100 | 1/0/1 | 100%; raw unchanged |
 | GAME.EXE `tmd_select_object_vertices` | `8001c148 / 3c` | 100 | 1/1/1 | 100%; raw unchanged |
 | GAME.EXE `tmd_project_vertices` | `8001c60c / 9c` | 100 | 4/2/1 | 100%; raw unchanged |
-| GAME.EXE `tmd_project_vertices_shift` | `8001c6a8 / ac` | 100 | 4/2/1 | 100%; raw unchanged |
+| GAME.EXE `tmd_project_vertices_depth_shift` | `8001c6a8 / ac` | 100 | 4/2/1 | 100%; raw unchanged |
 | GAME.EXE `tmd_transform_vertices` | `8001c754 / a4` | 100 | 4/1/1 | 100%; raw unchanged |
 | GAME.EXE `render_actor` | `8001e9a4 / 214` | 100 | 7/20/1 | 100%; raw unchanged |
 | GAME.EXE `render_effect` | `8001eedc / 1e8` | 100 | 8/20/1 | 100%; raw unchanged |
@@ -57,7 +57,7 @@ slot; no correctness claim is made for that pre-existing runtime defect.
 | OPEN.EXE `tmd_select_object_vertices` | `80016ec8 / 3c` | 100 | 1/1/1 | 100%; raw unchanged |
 | OPEN.EXE `tmd_project_vertices` | `8001738c / cc` | 100 | 5/3/1 | 100%; raw unchanged |
 | OPEN.EXE `tmd_project_vertices_perspective_right` | `80017458 / a4` | 100 | 4/2/1 | 100%; raw unchanged |
-| OPEN.EXE `tmd_project_vertices_shift` | `800174fc / ac` | 100 | 4/2/1 | 100%; raw unchanged |
+| OPEN.EXE `tmd_project_vertices_depth_shift` | `800174fc / ac` | 100 | 4/2/1 | 100%; raw unchanged |
 | OPEN.EXE `tmd_transform_vertices` | `800175a8 / a4` | 100 | 4/1/1 | 100%; raw unchanged |
 
 Rebuild the affected units and compare every linked word, direct call and

@@ -92,7 +92,7 @@ void render_weapon(void)
             &player_state.weapon_animation_cache, KF_ASSET_WEAPON, KF_ANIMATION_CLIP_FIRST,
             player_state.weapon_attack_phase,
             object->vertex_count) != NULL) {
-        tmd_project_vertices_shift(object->vertex_count, WEAPON_PROJECTED_DEPTH_SHIFT);
+        tmd_project_vertices_depth_shift(object->vertex_count, WEAPON_PROJECTED_DEPTH_SHIFT);
         depth_bias =
             player_state.equipped_weapon_record->render_translation.z >> WEAPON_DEPTH_BIAS_SHIFT;
         render_enqueue_tmd(0, -depth_bias + WEAPON_BASE_DEPTH_BIAS);

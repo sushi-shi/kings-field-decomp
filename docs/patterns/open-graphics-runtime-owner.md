@@ -196,7 +196,7 @@ The preparation dispatch has 29 candidate pointer rows, not 29 proven calls.
 | `8001736c tmd_release_last_allocation` | `20`; 100% | One allocator call, no pairs, 24-byte frame. No confirmed callers or reads of the tentative slot parameter; retain candidate signature status. |
 | `8001738c tmd_project_vertices` | `cc`; 100% | Signed count, 1000 limit, three calls, four pairs, one internal jump, 56-byte frame. Eight-byte cursors, signed global shift, SDK output pointers, low-halfword depth. |
 | `80017458 tmd_project_vertices_perspective_right` | `a4`; 100% | Word count from object; two calls, three pairs, 64-byte frame. Signed perspective shift right; count-to-minus-one loop and eight-byte cursors. |
-| `800174fc tmd_project_vertices_shift` | `ac`; 100% | Signed count/byte shift from body; no confirmed callers. Two calls, two pairs, 64-byte frame; low-halfword perspective doubled, full-word depth shifted arithmetically. |
+| `800174fc tmd_project_vertices_depth_shift` | `ac`; 100% | Signed count/byte shift from body; no confirmed callers. Two calls, two pairs, 64-byte frame; low-halfword perspective doubled, full-word depth shifted arithmetically. |
 | `800175a8 tmd_transform_vertices` | `a4`; 100% | Signed count from body, no confirmed callers; one call, two pairs, 72-byte frame. Non-perspective output halfwords and duplicate low depth loads. |
 
 Sizes above are hexadecimal. The return delay slots and load delays are part

@@ -121,7 +121,7 @@ typedef struct KfDisplayState {
 /* Eight registered TMD slots and the selected asset. */
 typedef struct KfTmdState {
     KfTmdHeader *slots[KF_GAME_TMD_SLOT_COUNT];
-    KfTmdHeader *current_asset;
+    KfTmdHeader *current_tmd;
 } KfTmdState;
 
 /* GAME.EXE view, lighting, fog, and quadrant matrices. */
@@ -162,8 +162,8 @@ extern void lighting_set_active_color_matrix(KfGameColorPreset preset);
 extern void lighting_set_color_matrix(
     const MATRIX *from, const MATRIX *to, s32 blend);
 extern void menu_render_item_model(void);
-extern void primitive_buffer_begin_poly_ft4(void);
-extern void primitive_buffer_commit_poly_ft4(s32 depth);
+extern void menu_begin_poly_ft4(void);
+extern void menu_commit_poly_ft4(s32 depth);
 extern void render_actor(KfActor *actor);
 extern void render_effect(KfEffectRecord *effect);
 extern void render_hud_models(void);
@@ -189,7 +189,7 @@ extern void render_set_view_transform(
 extern void render_weapon(void);
 extern void screen_show_image_until_input(const char *path);
 extern void sprite_add_ft4(const KfScreenRect *rectangle, u8 *texcoords, u32 tpage, u32 clut, const CVECTOR *color, u16 ot_index);
-extern void tmd_project_vertices_shift(s32 count, u8 shift);
+extern void tmd_project_vertices_depth_shift(s32 count, u8 depth_shift);
 extern void tmd_transform_vertices(s32 count);
 
 #endif

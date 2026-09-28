@@ -76,7 +76,7 @@ edit function bodies, enum argument domains, storage widths or data owners.
 
 | Header owner | Bound | Evidence and scope |
 | --- | ---: | --- |
-| `KfTmdState` / `KfTmdStateOpen` | 8 / 2 pointer slots | The [TMD registry dossier](../../config/evidence/game_semantic_display_tmd.tsv) and current register/select consumers establish separate per-image tables before `current_asset`. Keep separate GAME/OPEN capacity names. |
+| `KfTmdState` / `KfTmdStateOpen` | 8 / 2 pointer slots | The [TMD registry dossier](../../config/evidence/game_semantic_display_tmd.tsv) and current register/select consumers establish separate per-image tables before `current_tmd`. Keep separate GAME/OPEN capacity names. |
 | `KfCellWindow` | 196 cells | The [complete record evidence](../../config/evidence/game_cell_window_data.md) establishes 204 bytes: four halfwords plus 196 byte cells. Capacity includes unused cells in smaller windows; it is not their active width times height. |
 | `KfNotificationDigitBuffer` | 12 halfwords per view | Name the existing common workspace capacity in both signed formatter and unsigned renderer views. Only four displayed digits are consumed; this does not claim twelve displayed digits or a newly proved original local declaration. |
 | `KfMenuAssets` packet arrays | 2 buffers, 4 background / 6 dialog packets per buffer | Reuse `KF_DISPLAY_BUFFER_COUNT`; the [912-byte owner evidence](../../config/evidence/game_menu_assets.md) establishes 160-byte background and 144-byte dialog buffer strides with authentic SDK packets. |

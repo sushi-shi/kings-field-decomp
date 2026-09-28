@@ -24,9 +24,9 @@ All existing slot callers already use named constants.
 | GAME `render_effect` | 0x8001eedc / 0x1e8 | Billboard path passes a2=0 at 0x8001effc. Names normal depth cueing without changing model-path selection or the zero depth bias. |
 | GAME `render_frame` | 0x8001fde4 / 0x518 | Notification calls at 0x80020230, 0x80020254 and 0x800202a0 all clear a2 in their delay slots. All three now use normal depth cueing; depth biases remain zero. |
 | OPEN `render_floor_item` | 0x800190f4 / 0x14c | Loads a2=1 at 0x800191dc before the call at 0x800191f8. Uses the boosted member while preserving its frame counter and facing branches. |
-| GAME `tmd_select` | 0x8001c0e8 / 0x2c | Masks a0 to 16 bits, scales by four, loads a slot and writes current_asset. Typed slot with explicit u16 array-index encoding. |
-| OPEN `tmd_select` | 0x80016e68 / 0x2c | Same halfword selection with OPEN's separate table and current_asset. Typed slot with explicit u16 array-index encoding. |
-| GAME `tmd_register` | 0x8001c5b0 / 0x3c | Masks a0 at 0x8001c5c0, publishes the payload to the slot and current_asset, then prepares packet indices. Typed slot preserves the publication and call order. |
+| GAME `tmd_select` | 0x8001c0e8 / 0x2c | Masks a0 to 16 bits, scales by four, loads a slot and writes current_tmd. Typed slot with explicit u16 array-index encoding. |
+| OPEN `tmd_select` | 0x80016e68 / 0x2c | Same halfword selection with OPEN's separate table and current_tmd. Typed slot with explicit u16 array-index encoding. |
+| GAME `tmd_register` | 0x8001c5b0 / 0x3c | Masks a0 at 0x8001c5c0, publishes the payload to the slot and current_tmd, then prepares packet indices. Typed slot preserves the publication and call order. |
 | OPEN `tmd_register` | 0x80017330 / 0x3c | Same slot masking and two stores before preparation. Typed slot preserves OPEN's table ownership. |
 | GAME `tmd_release_last_allocation` | 0x8001c5ec / 0x20 | Ignores a0 and calls the LIFO allocator. The sole caller passes slot four. Keep the candidate argument, its legacy s32 representation and unchanged release behavior. |
 | OPEN `tmd_release_last_allocation` | 0x8001736c / 0x20 | Identical ignored-argument body, with no decoded caller. The shared unused slot contract remains candidate; enum typing does not establish its historical purpose. |

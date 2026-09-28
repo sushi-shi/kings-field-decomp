@@ -312,7 +312,7 @@ and lighting owners also preserve their complete raw retail bodies.
 | game.render | `8001c5b0` | `tmd_register` | 60/60 | 100.000000 |
 | game.render | `8001c5ec` | `tmd_release_last_allocation` | 32/32 | 100.000000 |
 | game.render | `8001c60c` | `tmd_project_vertices` | 156/156 | 100.000000 |
-| game.render | `8001c6a8` | `tmd_project_vertices_shift` | 172/172 | 100.000000 |
+| game.render | `8001c6a8` | `tmd_project_vertices_depth_shift` | 172/172 | 100.000000 |
 | game.render | `8001c754` | `tmd_transform_vertices` | 164/164 | 100.000000 |
 | game.render_frame | `8001fde4` | `render_frame` | 1304/1304 | 100.000000 |
 | game.save_system | `8002b078` | `save_system_read_catalog` | 216/216 | 100.000000 |

@@ -51,12 +51,12 @@ deferred under the naming-pass policy.
 | `render_prepare_actor_textures` | 138 | `0` | `game_graphics_runtime.actor_texture_pages[0] = GetTPage(` | Texture descriptor ordinal 0; the cache stores three authored page choices in matching order. |
 | `render_prepare_actor_textures` | 141 | `1` | `game_graphics_runtime.actor_texture_pages[1] = GetTPage(` | Texture descriptor ordinal 1; the cache stores three authored page choices in matching order. |
 | `render_prepare_actor_textures` | 144 | `2` | `game_graphics_runtime.actor_texture_pages[2] = GetTPage(` | Texture descriptor ordinal 2; the cache stores three authored page choices in matching order. |
-| `render_prepare_actor_textures` | 147 | `0` | `game_graphics_runtime.actor_texture_cluts[0] = GetClut(0, EFFECT_TEXTURE_CLUT_Y);` | Texture descriptor ordinal 0 pairs this palette with its corresponding cached page. |
-| `render_prepare_actor_textures` | 147 | `0` | `game_graphics_runtime.actor_texture_cluts[0] = GetClut(0, EFFECT_TEXTURE_CLUT_Y);` | All three cached palettes begin at VRAM X zero on the named row. |
-| `render_prepare_actor_textures` | 148 | `1` | `game_graphics_runtime.actor_texture_cluts[1] = GetClut(0, EFFECT_TEXTURE_CLUT_Y);` | Texture descriptor ordinal 1 pairs this palette with its corresponding cached page. |
-| `render_prepare_actor_textures` | 148 | `0` | `game_graphics_runtime.actor_texture_cluts[1] = GetClut(0, EFFECT_TEXTURE_CLUT_Y);` | All three cached palettes begin at VRAM X zero on the named row. |
-| `render_prepare_actor_textures` | 149 | `2` | `game_graphics_runtime.actor_texture_cluts[2] = GetClut(0, EFFECT_TEXTURE_CLUT_Y);` | Texture descriptor ordinal 2 pairs this palette with its corresponding cached page. |
-| `render_prepare_actor_textures` | 149 | `0` | `game_graphics_runtime.actor_texture_cluts[2] = GetClut(0, EFFECT_TEXTURE_CLUT_Y);` | All three cached palettes begin at VRAM X zero on the named row. |
+| `render_prepare_actor_textures` | 147 | `0` | `game_graphics_runtime.actor_texture_cluts[0] = GetClut(0, ACTOR_TEXTURE_CLUT_Y);` | Texture descriptor ordinal 0 pairs this palette with its corresponding cached page. |
+| `render_prepare_actor_textures` | 147 | `0` | `game_graphics_runtime.actor_texture_cluts[0] = GetClut(0, ACTOR_TEXTURE_CLUT_Y);` | All three cached palettes begin at VRAM X zero on the named row. |
+| `render_prepare_actor_textures` | 148 | `1` | `game_graphics_runtime.actor_texture_cluts[1] = GetClut(0, ACTOR_TEXTURE_CLUT_Y);` | Texture descriptor ordinal 1 pairs this palette with its corresponding cached page. |
+| `render_prepare_actor_textures` | 148 | `0` | `game_graphics_runtime.actor_texture_cluts[1] = GetClut(0, ACTOR_TEXTURE_CLUT_Y);` | All three cached palettes begin at VRAM X zero on the named row. |
+| `render_prepare_actor_textures` | 149 | `2` | `game_graphics_runtime.actor_texture_cluts[2] = GetClut(0, ACTOR_TEXTURE_CLUT_Y);` | Texture descriptor ordinal 2 pairs this palette with its corresponding cached page. |
+| `render_prepare_actor_textures` | 149 | `0` | `game_graphics_runtime.actor_texture_cluts[2] = GetClut(0, ACTOR_TEXTURE_CLUT_Y);` | All three cached palettes begin at VRAM X zero on the named row. |
 | `display_initialize` | 158 | `2` | `SetGeomOffset(KF_DISPLAY_WIDTH / 2, KF_DISPLAY_HEIGHT / 2);` | Divide the display width by two to center the projection origin. |
 | `display_initialize` | 158 | `2` | `SetGeomOffset(KF_DISPLAY_WIDTH / 2, KF_DISPLAY_HEIGHT / 2);` | Divide the display height by two to center the projection origin. |
 | `display_initialize` | 160 | `0` | `&game_graphics_runtime.display_draw_environments[0], 0, 0,` | Explicit environment record 0 of the two-buffer pair. |
@@ -161,6 +161,6 @@ deferred under the naming-pass policy.
 | `tmd_prepare_primitive_indices` | 451 | `0` | `} while (primitives_left-- != 0);` | Zero is the terminal value of the unsigned halfword post-decrement traversal. |
 | `tmd_prepare_primitive_indices` | 454 | `0` | `} while (objects_left-- != 0);` | Zero is the terminal value of the unsigned halfword post-decrement traversal. |
 | `tmd_project_vertices` | 483 | `1` | `for (count--; count != -1; count--) {` | Minus one terminates the count-minus-one vertex traversal after its final element. |
-| `tmd_project_vertices_shift` | 505 | `1` | `for (count--; count != -1; count--) {` | Minus one terminates the count-minus-one vertex traversal after its final element. |
+| `tmd_project_vertices_depth_shift` | 505 | `1` | `for (count--; count != -1; count--) {` | Minus one terminates the count-minus-one vertex traversal after its final element. |
 | `tmd_transform_vertices` | 526 | `1` | `for (remaining = count - 1; remaining != -1; remaining--) {` | Initialize the vertex countdown to its final zero-based ordinal. |
 | `tmd_transform_vertices` | 526 | `1` | `for (remaining = count - 1; remaining != -1; remaining--) {` | Minus one terminates the vertex countdown. |

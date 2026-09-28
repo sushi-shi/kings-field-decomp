@@ -2,14 +2,14 @@ ADDRESS_AT("GAME", 0x8001c0e8, 0x2c)
 ADDRESS_AT("OPEN", 0x80016e68, 0x2c)
 void tmd_select(KfTmdSlot slot)
 {
-    KF_GRAPHICS_RUNTIME.tmd_state.current_asset = KF_GRAPHICS_RUNTIME.tmd_state.slots[KF_ENUM_ENCODE(u16, slot)];
+    KF_GRAPHICS_RUNTIME.tmd_state.current_tmd = KF_GRAPHICS_RUNTIME.tmd_state.slots[KF_ENUM_ENCODE(u16, slot)];
 }
 
 ADDRESS_AT("GAME", 0x8001c114, 0x24)
 ADDRESS_AT("OPEN", 0x80016e94, 0x24)
 KfTmdObject *tmd_get_object(u16 object_index)
 {
-    return TMD_OBJECTS(KF_GRAPHICS_RUNTIME.tmd_state.current_asset) + object_index;
+    return TMD_OBJECTS(KF_GRAPHICS_RUNTIME.tmd_state.current_tmd) + object_index;
 }
 
 ADDRESS_AT("GAME", 0x8001c138, 0x10)
@@ -24,7 +24,7 @@ ADDRESS_AT("OPEN", 0x80016ec8, 0x3c)
 void tmd_select_object_vertices(u16 object_index)
 {
     KF_GRAPHICS_RUNTIME.current_tmd_vertices =
-        TMD_OBJECT_VERTICES(KF_GRAPHICS_RUNTIME.tmd_state.current_asset,
+        TMD_OBJECT_VERTICES(KF_GRAPHICS_RUNTIME.tmd_state.current_tmd,
             tmd_get_object(object_index));
 }
 
@@ -64,15 +64,15 @@ void tmd_prepare_primitive_indices(void)
     u16 primitives_left;
     KfTmdPacketHeader header;
 
-    object_count = KF_GRAPHICS_RUNTIME.tmd_state.current_asset->object_count;
+    object_count = KF_GRAPHICS_RUNTIME.tmd_state.current_tmd->object_count;
     objects_left = object_count - 1;
-    object = TMD_OBJECTS(KF_GRAPHICS_RUNTIME.tmd_state.current_asset);
+    object = TMD_OBJECTS(KF_GRAPHICS_RUNTIME.tmd_state.current_tmd);
     if (object_count == 0) {
         return;
     }
     do {
         primitive_count = object->primitive_count;
-        packet = (u8 *)KF_GRAPHICS_RUNTIME.tmd_state.current_asset + (object->primitive_offset + KF_TMD_HEADER_BYTES);
+        packet = (u8 *)KF_GRAPHICS_RUNTIME.tmd_state.current_tmd + (object->primitive_offset + KF_TMD_HEADER_BYTES);
         primitives_left = primitive_count;
         primitives_left--;
         if (primitive_count != 0) {
@@ -163,7 +163,7 @@ ADDRESS_AT("GAME", 0x8001c5b0, 0x3c)
 ADDRESS_AT("OPEN", 0x80017330, 0x3c)
 void tmd_register(KfTmdSlot slot, KfTmdHeader *tmd)
 {
-    KF_GRAPHICS_RUNTIME.tmd_state.current_asset = KF_GRAPHICS_RUNTIME.tmd_state.slots[KF_ENUM_ENCODE(u16, slot)] = tmd;
+    KF_GRAPHICS_RUNTIME.tmd_state.current_tmd = KF_GRAPHICS_RUNTIME.tmd_state.slots[KF_ENUM_ENCODE(u16, slot)] = tmd;
     tmd_prepare_primitive_indices();
 }
 

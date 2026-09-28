@@ -104,7 +104,7 @@ GAME.EXE	tmd_prepare_primitive_indices	0x8001c2b0	0x300	game.render	100	exact-pr
 GAME.EXE	tmd_register	0x8001c5b0	0x3c	game.render	100	exact-preserved
 GAME.EXE	tmd_release_last_allocation	0x8001c5ec	0x20	game.render	100	exact-preserved
 GAME.EXE	tmd_project_vertices	0x8001c60c	0x9c	game.render	100	exact-preserved
-GAME.EXE	tmd_project_vertices_shift	0x8001c6a8	0xac	game.render	100	exact-preserved
+GAME.EXE	tmd_project_vertices_depth_shift	0x8001c6a8	0xac	game.render	100	exact-preserved
 GAME.EXE	tmd_transform_vertices	0x8001c754	0xa4	game.render	100	exact-preserved
 GAME.EXE	render_enqueue_tmd	0x8001c7f8	0xf38	game.render_enqueue	100	exact-preserved
 GAME.EXE	render_enqueue_tmd_retextured	0x8001d730	0x6e8	game.render_enqueue	100	exact-preserved
@@ -186,8 +186,8 @@ GAME.EXE	menu_draw_number	0x8002a310	0x200	game.menu_runtime	100	exact-preserved
 GAME.EXE	menu_draw_window_backdrop	0x8002a510	0x6a4	game.menu_runtime	100	exact-preserved
 GAME.EXE	menu_frame_begin	0x8002abb4	0x80	game.menu_runtime	100	exact-preserved
 GAME.EXE	menu_present_frame	0x8002ac34	0x98	game.menu_runtime	100	exact-preserved
-GAME.EXE	primitive_buffer_begin_poly_ft4	0x8002accc	0x50	game.menu_runtime	100	exact-preserved
-GAME.EXE	primitive_buffer_commit_poly_ft4	0x8002ad1c	0x50	game.menu_runtime	100	exact-preserved
+GAME.EXE	menu_begin_poly_ft4	0x8002accc	0x50	game.menu_runtime	100	exact-preserved
+GAME.EXE	menu_commit_poly_ft4	0x8002ad1c	0x50	game.menu_runtime	100	exact-preserved
 GAME.EXE	menu_list_init	0x8002ad6c	0x8c	game.menu_runtime	100	exact-preserved
 GAME.EXE	menu_format_number	0x8002adf8	0xac	game.menu_runtime	100	exact-preserved
 GAME.EXE	menu_load_item_model	0x8002aea4	0x68	game.menu_runtime	100	exact-preserved
@@ -434,7 +434,7 @@ OPEN.EXE	tmd_register	0x80017330	0x3c	open.render	100	exact-preserved
 OPEN.EXE	tmd_release_last_allocation	0x8001736c	0x20	open.render	100	exact-preserved
 OPEN.EXE	tmd_project_vertices	0x8001738c	0xcc	open.render	100	exact-preserved
 OPEN.EXE	tmd_project_vertices_perspective_right	0x80017458	0xa4	open.render	100	exact-preserved
-OPEN.EXE	tmd_project_vertices_shift	0x800174fc	0xac	open.render	100	exact-preserved
+OPEN.EXE	tmd_project_vertices_depth_shift	0x800174fc	0xac	open.render	100	exact-preserved
 OPEN.EXE	tmd_transform_vertices	0x800175a8	0xa4	open.render	100	exact-preserved
 OPEN.EXE	render_enqueue_tmd	0x8001764c	0xcf8	open.render_tmd	100	exact-preserved
 OPEN.EXE	render_enqueue_unlit_triangles	0x80018344	0x2a4	open.render_unlit	100	exact-preserved

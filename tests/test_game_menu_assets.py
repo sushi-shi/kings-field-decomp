@@ -275,14 +275,14 @@ class GameMenuAssetsTests(unittest.TestCase):
 
                 def service(ctx):
                     name = ctx.call.name
-                    if name == 'primitive_buffer_begin_poly_ft4':
+                    if name == 'menu_begin_poly_ft4':
                         ctx.write_u32(current, state['next'])
                         ctx.write(state['next'], bytes([0xA5]) * 40)
                         ctx.write(state['next'] + 7, b'\x2c')
                     elif name == 'SetSemiTrans':
                         self.assertEqual(ctx.args[1], 1)
                         ctx.write(ctx.args[0] + 7, b'\x2e')
-                    elif name == 'primitive_buffer_commit_poly_ft4':
+                    elif name == 'menu_commit_poly_ft4':
                         self.assertEqual(ctx.args[0], 2900)
                         state['next'] += 40
                     elif name == 'menu_draw_string':
@@ -291,7 +291,7 @@ class GameMenuAssetsTests(unittest.TestCase):
                         self.fail(f'unexpected external service {name}')
                     return HookReturn(0)
 
-                names = ('primitive_buffer_begin_poly_ft4', 'primitive_buffer_commit_poly_ft4',
+                names = ('menu_begin_poly_ft4', 'menu_commit_poly_ft4',
                          'SetSemiTrans', 'AddPrim')
                 if function == 'menu_draw_pickup_preview':
                     names += (*passive, 'menu_draw_string')

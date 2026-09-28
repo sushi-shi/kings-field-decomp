@@ -571,7 +571,7 @@ extern KfMaterialProbe material_probe;
                 'asset_registry_load_tmd_archive', 'asset_registry_set',
                 'asset_registry_select',
             },
-            'game.render': {'tmd_project_vertices', 'tmd_project_vertices_shift',
+            'game.render': {'tmd_project_vertices', 'tmd_project_vertices_depth_shift',
                             'tmd_transform_vertices'},
             'game.pool': {'render_bind_animated_instance'},
         }

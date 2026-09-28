@@ -107,7 +107,7 @@ no callee is invented for that `jr` dispatch.
 
 The TMD slot count is genuinely overlay-specific. GAME has eight pointers
 before the current payload, whereas OPEN has two. The shared payload retains
-the shared `tmd_state.current_asset` field, also used by the reconstructed
+the shared `tmd_state.current_tmd` field, also used by the reconstructed
 asset registry; the TMD interpretation does not introduce an overlapping
 global or a separate payload owner.
 

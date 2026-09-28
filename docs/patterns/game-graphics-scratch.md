@@ -17,7 +17,7 @@ Sony projection, depth, memory and morph operations, not vendor bodies.
 | GAME function | Hex extent; current strict score | Evidence and invariant |
 | --- | --- | --- |
 | `8001c60c tmd_project_vertices` | `9c`; 100% | Nine call sites supply word vertex counts. 64-byte frame, two address pairs, RotTransPers/ReadSZ2 calls, zero guard owning count-minus-one, eight-byte cursors, packed word screen output and halfword depth/perspective. |
-| `8001c6a8 tmd_project_vertices_shift` | `ac`; 100% | Weapon caller supplies word count and shift 3. Same two pairs/calls; 64-byte frame, unsigned-byte shift mask and full signed depth shift before narrowing. |
+| `8001c6a8 tmd_project_vertices_depth_shift` | `ac`; 100% | Weapon caller supplies word count and shift 3. Same two pairs/calls; 64-byte frame, unsigned-byte shift mask and full signed depth shift before narrowing. |
 | `8001c754 tmd_transform_vertices` | `a4`; 100% | Effect-sprite caller supplies word count. 72-byte frame, two pairs, one RotTrans call, halfword X/Y and duplicated Z outputs; zero guard and eight-byte strides. |
 | `800205d4 render_bind_animated_instance` | `3a4`; 98.798290% | Five callers pass typed cache slot, u16 asset/clip/phase and fifth-stack vertex count narrowed to u16. 72-byte frame, twelve calls, four address pairs and five reviewed internal J targets. Preserve zero/one/record returns, halfword countdowns, inherited uninitialized s5 keyframe index, two-word vertex copies, saved extra-vector words and full restore tail. |
 

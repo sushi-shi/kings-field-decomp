@@ -165,7 +165,7 @@ s32 menu_use_item_panel(void)
 {
     KfMenuList ctx;
     s16 labels[50][MENU_GLYPHS_PER_ROW];
-    u8 counts[56];
+    u8 quantities[56];
     KfObjectId item_ids[56];
     u8 *player_stock;
     s32 found;
@@ -185,14 +185,14 @@ s32 menu_use_item_panel(void)
     if (player_stock[KF_ENUM_ENCODE(u8, KF_ITEM_WATCHMAN_MAP)] != 0) {
         for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)
             labels[found][j] = item_name_rows[KF_ENUM_ENCODE(u8, KF_ITEM_WATCHMAN_MAP)].codes[j];
-        counts[found] = player_stock[KF_ENUM_ENCODE(u8, KF_ITEM_WATCHMAN_MAP)];
+        quantities[found] = player_stock[KF_ENUM_ENCODE(u8, KF_ITEM_WATCHMAN_MAP)];
         item_ids[found] = KF_ITEM_WATCHMAN_MAP;
         found++;
     }
     if (player_stock[KF_ENUM_ENCODE(u8, KF_ITEM_SORCERER_MAP)] != 0) {
         for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)
             labels[found][j] = item_name_rows[KF_ENUM_ENCODE(u8, KF_ITEM_SORCERER_MAP)].codes[j];
-        counts[found] = player_stock[KF_ENUM_ENCODE(u8, KF_ITEM_SORCERER_MAP)];
+        quantities[found] = player_stock[KF_ENUM_ENCODE(u8, KF_ITEM_SORCERER_MAP)];
         item_ids[found] = KF_ITEM_SORCERER_MAP;
         found++;
     }
@@ -200,7 +200,7 @@ s32 menu_use_item_panel(void)
         if (item_id != KF_ENUM_ENCODE(s32, KF_ITEM_WATCHMAN_MAP) && item_id != KF_ENUM_ENCODE(s32, KF_ITEM_SORCERER_MAP) && player_stock[item_id] != 0) {
             for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)
                 labels[found][j] = item_name_rows[item_id].codes[j];
-            counts[found] = player_stock[item_id];
+            quantities[found] = player_stock[item_id];
             item_ids[found] = KF_ENUM_DECODE(KfObjectId, item_id);
             found++;
         }
@@ -209,7 +209,7 @@ s32 menu_use_item_panel(void)
         if (item_id != KF_ENUM_ENCODE(s32, KF_ITEM_WATCHMAN_MAP) && item_id != KF_ENUM_ENCODE(s32, KF_ITEM_SORCERER_MAP) && player_stock[item_id] != 0) {
             for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)
                 labels[found][j] = item_name_rows[item_id].codes[j];
-            counts[found] = player_stock[item_id];
+            quantities[found] = player_stock[item_id];
             item_ids[found] = KF_ENUM_DECODE(KfObjectId, item_id);
             found++;
         }
@@ -217,7 +217,7 @@ s32 menu_use_item_panel(void)
     ctx.entry_count = found;
     ctx.glyphs_per_entry = MENU_GLYPHS_PER_ROW;
     ctx.glyph_rows = &labels[0][0];
-    ctx.quantities = counts;
+    ctx.quantities = quantities;
 
     menu_frame_begin();
     if (ctx.entry_count != 0) {

@@ -64,8 +64,8 @@ external. Neighbors in each selected module are included as unchanged controls.
 | `8002a510 / 0x6a4` | `menu_draw_window_backdrop` | 99.97176 | Unchanged contiguous-module control. |
 | `8002abb4 / 0x80` | `menu_frame_begin` | 100.0 | Unchanged contiguous-module control. |
 | `8002ac34 / 0x98` | `menu_present_frame` | 100.0 | Unchanged contiguous-module control. |
-| `8002accc / 0x50` | `primitive_buffer_begin_poly_ft4` | 100.0 | Unchanged contiguous-module control. |
-| `8002ad1c / 0x50` | `primitive_buffer_commit_poly_ft4` | 100.0 | Unchanged contiguous-module control. |
+| `8002accc / 0x50` | `menu_begin_poly_ft4` | 100.0 | Unchanged contiguous-module control. |
+| `8002ad1c / 0x50` | `menu_commit_poly_ft4` | 100.0 | Unchanged contiguous-module control. |
 | `8002ad6c / 0x8c` | `menu_list_init` | 100.0 | Unchanged contiguous-module control. |
 | `8002adf8 / 0xac` | `menu_format_number` | 100.0 | Unchanged contiguous-module control. |
 | `8002aea4 / 0x68` | `menu_load_item_model` | 100.0 | Unchanged contiguous-module control. |
@@ -139,8 +139,8 @@ address references. Twenty-six exact functions also agree with the complete
 | `8002a510` | `menu_draw_window_backdrop` | 99.97176 | 425 / 16 / 107 | Unchanged partial |
 | `8002abb4` | `menu_frame_begin` | 100.0 | 32 / 1 / 4 | Exact retained |
 | `8002ac34` | `menu_present_frame` | 100.0 | 38 / 5 / 4 | Exact retained |
-| `8002accc` | `primitive_buffer_begin_poly_ft4` | 100.0 | 20 / 1 / 4 | Exact retained |
-| `8002ad1c` | `primitive_buffer_commit_poly_ft4` | 100.0 | 20 / 1 / 5 | Exact retained |
+| `8002accc` | `menu_begin_poly_ft4` | 100.0 | 20 / 1 / 4 | Exact retained |
+| `8002ad1c` | `menu_commit_poly_ft4` | 100.0 | 20 / 1 / 5 | Exact retained |
 | `8002ad6c` | `menu_list_init` | 100.0 | 35 / 0 / 1 | Exact retained |
 | `8002adf8` | `menu_format_number` | 100.0 | 43 / 0 / 0 | Exact retained |
 | `8002aea4` | `menu_load_item_model` | 100.0 | 26 / 3 / 2 | Exact retained |

@@ -68,7 +68,7 @@ first-choice comparisons in the widget renderer.
 | `menu_present_frame` | 541 | `0` | `DrawSync(0);` | SDK blocking synchronization mode waits for queued GPU drawing to finish. |
 | `menu_present_frame` | 542 | `0` | `VSync(0);` | SDK synchronization mode waits for the next vertical blank. |
 | `menu_present_frame` | 545 | `1` | `DrawOTag(game_graphics_runtime.display_state.ordering_table + (KF_ORDERING_TABLE_LENGTH - 1));` | Subtract one from the entry count to address the final entry of the reverse ordering table. |
-| `primitive_buffer_commit_poly_ft4` | 560 | `2` | `depth <<= 2;` | Convert a depth index to a byte offset by multiplying by four, the width of each ordering-table entry; this is address scaling, not projected-depth scaling. |
+| `menu_commit_poly_ft4` | 560 | `2` | `depth <<= 2;` | Convert a depth index to a byte offset by multiplying by four, the width of each ordering-table entry; this is address scaling, not projected-depth scaling. |
 | `menu_list_init` | 574 | `12` | `list->title_x = 12;` | Authored list-title X origin, in screen pixels, also used by the loaded titled window records; no recovered rationale chooses twelve. |
 | `menu_list_init` | 575 | `19` | `list->title_y = 19;` | Authored list-title Y origin, in screen pixels, matching the loaded title baseline; no recovered rationale chooses nineteen. |
 | `menu_list_init` | 576 | `0` | `for (i = 0; i < MENU_GLYPHS_PER_ROW; i++) {` | Copy positions zero through nine of the ten-halfword label representation into the equally sized title buffer, including any terminator and trailing words; do not turn this into a terminator-controlled copy. |

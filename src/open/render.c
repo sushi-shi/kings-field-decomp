@@ -22,10 +22,10 @@ RODATA(0x80012138, 0x87)
 ADDRESS(0x8001738c, 0xcc)
 void tmd_project_vertices(s32 count)
 {
-    KfScreenVertex *out;
+    KfScreenVertex *projected;
     SVECTOR *vertex;
     long perspective;
-    long flag;
+    long gte_flags;
     long depth;
     long unused_depth;
 
@@ -33,14 +33,14 @@ void tmd_project_vertices(s32 count)
         debug_printf_sink("POINT OVER !!!!!!\n");
         return;
     }
-    out = open_graphics_runtime.tmd_projected_vertices;
+    projected = open_graphics_runtime.tmd_projected_vertices;
     vertex = open_graphics_runtime.current_tmd_vertices;
     for (count--; count != -1; count--) {
-        RotTransPers(vertex, &out->sxy.word, &perspective, &flag);
-        out->p2 = perspective << open_graphics_runtime.tmd_projection_shift;
+        RotTransPers(vertex, &projected->sxy.word, &perspective, &gte_flags);
+        projected->p2 = perspective << open_graphics_runtime.tmd_projection_shift;
         ReadSZ2(&depth, &unused_depth);
-        out->sz = depth;
-        out++;
+        projected->sz = depth;
+        projected++;
         vertex++;
     }
 }

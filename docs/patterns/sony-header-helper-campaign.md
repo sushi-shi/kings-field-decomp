@@ -173,7 +173,7 @@ trials leave that body byte-identical, not that it is banked or closed.
 | GAME / `80029de0` / `530` | `menu_draw_string` | S068, S069, S070, S082, S083, S084 | 100 → 100 |
 | GAME / `8002a310` / `200` | `menu_draw_number` | S071, S085 | 100 → 100 |
 | GAME / `8002a510` / `6a4` | `menu_draw_window_backdrop` | S072, S073, S074, S075, S086, S087, S088, S089 | 99.971760 → 99.971760 |
-| GAME / `8002accc` / `50` | `primitive_buffer_begin_poly_ft4` | S063 | 100 → 100 |
+| GAME / `8002accc` / `50` | `menu_begin_poly_ft4` | S063 | 100 → 100 |
 | GAME / `8002430c` / `69c` | `menu_status_panel` | S090, S091 | 99.962170 → 99.962170 |
 | GAME / `80016bc0` / `264` | `player_update_weapon_attack` | S092, S093, S094 | 100 → 100 |
 | GAME / `80016e24` / `94` | `game_initialize_session` | S095 | 100 → 100 |

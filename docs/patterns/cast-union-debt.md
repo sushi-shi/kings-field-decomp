@@ -360,12 +360,12 @@ Canonical-owner functions, each retaining strict **100%**:
 Follow-up functions, each retaining strict **100%**:
 
 - GAME: `render_bind_animated_instance`, `pool_reset`, `tmd_set_current_vertices`,
-  `tmd_select_object_vertices`, `tmd_project_vertices`, `tmd_project_vertices_shift`,
+  `tmd_select_object_vertices`, `tmd_project_vertices`, `tmd_project_vertices_depth_shift`,
   `tmd_transform_vertices`, `map_object_pool_clear`, `map_object_pool_load`,
   `map_restore_floor_state`.
 - OPEN: `tmd_set_current_vertices`, `tmd_select_object_vertices`,
   `tmd_project_vertices`, `tmd_project_vertices_perspective_right`,
-  `tmd_project_vertices_shift`, `tmd_transform_vertices`.
+  `tmd_project_vertices_depth_shift`, `tmd_transform_vertices`.
 - GAME `map_world_state_persist` remains **97.52873%**, with its complete object
   unchanged. Rejected controls leave GAME `menu_status_panel` and OPEN
   `opening_scene1_run` at **100%**.

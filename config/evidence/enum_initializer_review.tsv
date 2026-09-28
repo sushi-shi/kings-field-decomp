@@ -58,10 +58,10 @@ src/open/opening_scenes.c:119	opening_scene3_camera_path	KfCameraPathPoint[3]	nu
 src/open/opening_scenes.c:126	opening_ending_camera_path	KfCameraPathPoint[9]	numeric_geometry		Timed camera positions/rotations are interpolated; record components are numerical motion data.
 src/open/opening_scenes.c:139	opening_ending_scroll_camera_path	KfCameraPathPoint[3]	numeric_geometry		Timed camera positions/rotations are interpolated; record components are numerical motion data.
 src/open/opening_scenes.c:146	opening_scene0_sound	SoundRef	sdk_audio		SDK program, tone and note numbers passed to sound APIs; numerical handles/pitch, not game selectors.
-src/open/opening_scenes.c:149	opening_scene3_overlay_rects	KfScreenRect[2]	numeric_geometry		Screen rectangle positions and dimensions; no categorical element.
+src/open/opening_scenes.c:149	opening_scene3_panels	KfScreenRect[2]	numeric_geometry		Screen rectangle positions and dimensions; no categorical element.
 src/open/opening_scenes.c:155	opening_ending_scroll_panels	KfScreenRect[9]	numeric_geometry		Screen rectangle positions and dimensions; no categorical element.
-src/open/opening_scenes.c:168	opening_scene3_overlay_uv	u8[8]	packed_gpu		Interleaved U/V/span descriptor bytes passed to sprite_add_ft4; numerical texture coordinates, with odd bytes unclassified.
-src/open/opening_scenes.c:171	opening_scene3_overlay_color	CVECTOR	sdk_record		Numerical RGB intensities and the SDK packed GPU command/padding byte; no game selector field.
+src/open/opening_scenes.c:168	opening_scene3_panel_uv	u8[8]	packed_gpu		Interleaved U/V/span descriptor bytes passed to sprite_add_ft4; numerical texture coordinates, with odd bytes unclassified.
+src/open/opening_scenes.c:171	opening_scene3_panel_color	CVECTOR	sdk_record		Numerical RGB intensities and the SDK packed GPU command/padding byte; no game selector field.
 src/open/opening_scenes.c:174	opening_ending_scroll_backgrounds	KfScreenRect[2]	numeric_geometry		Screen rectangle positions and dimensions; no categorical element.
 src/open/opening_scenes.c:179	opening_ending_scroll_top_start	CVECTOR	sdk_record		Numerical RGB intensities and the SDK packed GPU command/padding byte; no game selector field.
 src/open/opening_scenes.c:182	opening_ending_scroll_bottom_start	CVECTOR	sdk_record		Numerical RGB intensities and the SDK packed GPU command/padding byte; no game selector field.
@@ -69,7 +69,7 @@ src/open/opening_scenes.c:185	opening_ending_scroll_top_end	CVECTOR	sdk_record		
 src/open/opening_scenes.c:188	opening_ending_scroll_bottom_end	CVECTOR	sdk_record		Numerical RGB intensities and the SDK packed GPU command/padding byte; no game selector field.
 src/open/opening_scenes.c:191	opening_ending_scroll_panel_color	CVECTOR	sdk_record		Numerical RGB intensities and the SDK packed GPU command/padding byte; no game selector field.
 src/open/opening_scenes.c:194	opening_ending_scroll_background_color	CVECTOR	sdk_record		Numerical RGB intensities and the SDK packed GPU command/padding byte; no game selector field.
-src/open/opening_scenes.c:197	opening_ending_scroll_uv	u8[8]	packed_gpu		Interleaved U/V/span descriptor bytes passed to sprite_add_ft4; numerical texture coordinates, with odd bytes unclassified.
+src/open/opening_scenes.c:197	opening_ending_scroll_panel_uv	u8[8]	packed_gpu		Interleaved U/V/span descriptor bytes passed to sprite_add_ft4; numerical texture coordinates, with odd bytes unclassified.
 src/open/opening_scenes.c:698	light_matrix	MATRIX	numeric_matrix		SDK matrix coefficients/translation; arithmetic interpolation and matrix multiplication accept quantities. KF_FIXED12_ONE names numeric Q12 unity.
 src/open/render_init.c:17	color_matrix_table	MATRIX[5]	numeric_matrix		SDK matrix coefficients/translation; arithmetic interpolation and matrix multiplication accept quantities. KF_FIXED12_ONE names numeric Q12 unity.
 src/open/render_map.c:12	map_textured_primitive_color	CVECTOR	sdk_record		Numerical RGB intensities and the SDK packed GPU command/padding byte; no game selector field.

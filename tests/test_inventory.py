@@ -1351,7 +1351,7 @@ class InventoryTests(unittest.TestCase):
         ]
         self.assertEqual(
             identity.parameters,
-            "s32 value;s32 count;KF_ENUM_PARAM(KfFormatPaddingMode, s32) padding_mode;s16 *out",
+            "s32 value;s32 digit_count;KF_ENUM_PARAM(KfFormatPaddingMode, s32) padding_mode;s16 *out",
         )
         release = load_function_identities(RETAIL_CONFIG, required=True)[
             ("GAME.EXE", 0x8002AF0C)
@@ -2066,9 +2066,9 @@ class InventoryTests(unittest.TestCase):
         data = load_data_identities(RETAIL_CONFIG)
         expected_data = {
             0x800356D0: ("opening_scene3_camera_path", "KfCameraPathPoint[3]", 0x54),
-            0x80035878: ("opening_scene3_overlay_rects", "KfScreenRect[2]", 0x10),
-            0x80037284: ("opening_scene3_overlay_uv", "u8[8]", 0x08),
-            0x8003728C: ("opening_scene3_overlay_color", "CVECTOR", 0x04),
+            0x80035878: ("opening_scene3_panels", "KfScreenRect[2]", 0x10),
+            0x80037284: ("opening_scene3_panel_uv", "u8[8]", 0x08),
+            0x8003728C: ("opening_scene3_panel_color", "CVECTOR", 0x04),
         }
         for va, expected in expected_data.items():
             datum = data[("OPEN.EXE", va)]
@@ -2659,7 +2659,7 @@ class InventoryTests(unittest.TestCase):
         expected = {
             0x8001738C: ("tmd_project_vertices", "s32 count"),
             0x80017458: ("tmd_project_vertices_perspective_right", "s32 count"),
-            0x800174FC: ("tmd_project_vertices_shift", "s32 count;u8 shift"),
+            0x800174FC: ("tmd_project_vertices_depth_shift", "s32 count;u8 depth_shift"),
             0x800175A8: ("tmd_transform_vertices", "s32 count"),
         }
         self.assertEqual({parse_int(row["va"]) for row in rows}, set(expected))

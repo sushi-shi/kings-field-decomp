@@ -61,7 +61,7 @@ from [the OPEN experiment](open-era-source-experiment.md); it does not prove
 which SDK revision originally built either image.
 
 `menu_draw_status_summary` reproduces the saved main-worktree candidate: a real
-`s32 row_step = STATS_HEADER_ROW_STEP` supplies all 14 line advances. The full
+`s32 row_step = ROOT_STATUS_SUMMARY_ROW_STEP` supplies all 14 line advances. The full
 1440 bytes match, including the retail transition from immediate spacing to a
 shared saved value. Its origin is explicitly separate from the two discoveries.
 

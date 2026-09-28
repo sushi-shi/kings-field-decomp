@@ -30,10 +30,10 @@ void menu_equip_select(KfEquipmentMenuCategory equipment_category)
     s16 labels[20][MENU_GLYPHS_PER_ROW];
     KfObjectId item_ids[20];
     s16 *name;
-    u8 *owned;
-    s32 i;
+    u8 *player_stock;
+    s32 item_id;
     s32 j;
-    s32 k;
+    s32 found;
     s32 start;
     s32 end;
     KfMenuConfirmState confirm = KF_MENU_CONFIRM_IDLE;
@@ -44,7 +44,7 @@ void menu_equip_select(KfEquipmentMenuCategory equipment_category)
     while (PadRead(1) != 0)
         ;
 
-    owned = item_stock[KF_ENUM_ENCODE(u8, KF_ITEM_STOCK_PLAYER)];
+    player_stock = item_stock[KF_ENUM_ENCODE(u8, KF_ITEM_STOCK_PLAYER)];
     switch (equipment_category) {
     case KF_EQUIP_MENU_WEAPON:
         start = KF_ENUM_ENCODE(u8, KF_ITEM_SHORT_SWORD);
@@ -76,25 +76,25 @@ void menu_equip_select(KfEquipmentMenuCategory equipment_category)
         break;
     }
 
-    k = 0;
-    for (i = start; i < end; i++) {
-        if (owned[i] != 0) {
-            name = item_name_rows[i].codes;
+    found = 0;
+    for (item_id = start; item_id < end; item_id++) {
+        if (player_stock[item_id] != 0) {
+            name = item_name_rows[item_id].codes;
             for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)
-                labels[k][j] = name[j];
-            item_ids[k] = KF_ENUM_DECODE(KfObjectId, i);
-            k++;
+                labels[found][j] = name[j];
+            item_ids[found] = KF_ENUM_DECODE(KfObjectId, item_id);
+            found++;
         }
     }
-    labels[k][0] = 0x59;
-    labels[k][1] = MENU_TEXT_DAKUTEN | 0x4c;
-    labels[k][2] = 0x4c;
-    labels[k][3] = MENU_TEXT_END;
-    item_ids[k] = KF_OBJECT_NONE;
-    k++;
+    labels[found][0] = 0x59;
+    labels[found][1] = MENU_TEXT_DAKUTEN | 0x4c;
+    labels[found][2] = 0x4c;
+    labels[found][3] = MENU_TEXT_END;
+    item_ids[found] = KF_OBJECT_NONE;
+    found++;
 
     menu_list_init(&ctx, KF_MENU_WINDOW_EQUIPMENT, KF_ENUM_ENCODE(s32, equipment_category));
-    ctx.entry_count = k;
+    ctx.entry_count = found;
     ctx.glyphs_per_entry = MENU_GLYPHS_PER_ROW;
     ctx.glyph_rows = &labels[0][0];
     ctx.quantities = NULL;
@@ -206,7 +206,7 @@ void menu_spell_select(void)
     KfEffectKind magic_ids[20];
     s32 magic_id;
     s32 j;
-    s32 k;
+    s32 found;
     KfMenuConfirmState confirm = KF_MENU_CONFIRM_IDLE;
     s32 input = 0;
     s32 prev;
@@ -215,24 +215,24 @@ void menu_spell_select(void)
     while (PadRead(1) != 0)
         ;
 
-    k = 0;
+    found = 0;
     for (magic_id = KF_ENUM_ENCODE(s32, KF_MAGIC_LIGHTNING_BOLT); magic_id < KF_MAGIC_PLAYER_COUNT; magic_id++) {
         if (effect_state.magic.entries[magic_id].learned == KF_MAGIC_LEARNED) {
             for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)
-                labels[k][j] = magic_name_rows[magic_id].codes[j];
-            magic_ids[k] = KF_ENUM_DECODE(KfEffectKind, magic_id);
-            k++;
+                labels[found][j] = magic_name_rows[magic_id].codes[j];
+            magic_ids[found] = KF_ENUM_DECODE(KfEffectKind, magic_id);
+            found++;
         }
     }
-    labels[k][0] = 0x59;
-    labels[k][1] = MENU_TEXT_DAKUTEN | 0x4c;
-    labels[k][2] = 0x4c;
-    labels[k][3] = MENU_TEXT_END;
-    magic_ids[k] = KF_MAGIC_NONE;
-    k++;
+    labels[found][0] = 0x59;
+    labels[found][1] = MENU_TEXT_DAKUTEN | 0x4c;
+    labels[found][2] = 0x4c;
+    labels[found][3] = MENU_TEXT_END;
+    magic_ids[found] = KF_MAGIC_NONE;
+    found++;
 
     menu_list_init(&ctx, KF_MENU_WINDOW_EQUIPMENT, KF_ENUM_ENCODE(s32, KF_EQUIP_MENU_MAGIC));
-    ctx.entry_count = k;
+    ctx.entry_count = found;
     ctx.glyphs_per_entry = MENU_GLYPHS_PER_ROW;
     ctx.glyph_rows = &labels[0][0];
     ctx.quantities = NULL;

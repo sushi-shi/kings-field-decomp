@@ -71,7 +71,7 @@ against an explicit current ledger row. No size assertions or tests are added.
 
 | Setting | Value / units | Uses |
 | --- | --- | --- |
-| `STATS_HEADER_ROW_STEP` | 23 screen pixels | Fourteen header row advances. |
+| `ROOT_STATUS_SUMMARY_ROW_STEP` | 23 screen pixels | Fourteen header row advances. |
 | `STATUS_SUMMARY_ROW_STEP` | 16 screen pixels | Twenty-one detailed-summary row and section-heading advances. |
 | `STATUS_COMPONENT_ROW_STEP` | 14 screen pixels | Twenty individual attack/defense label and value advances. |
 | `MENU_STATS_VITAL_DIGITS` | Four decimal glyphs | Eight HP/MP formatter calls and four slash-position advances. |

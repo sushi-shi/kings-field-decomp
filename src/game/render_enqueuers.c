@@ -34,8 +34,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
 
     object = tmd_get_object(object_index);
     remaining = object->primitive_count;
-    packet = (u8 *)game_graphics_runtime.tmd_state.current_asset + (object->primitive_offset + KF_TMD_HEADER_BYTES);
-    normals = (u8 *)game_graphics_runtime.tmd_state.current_asset + (object->normal_offset + KF_TMD_HEADER_BYTES);
+    packet = (u8 *)game_graphics_runtime.tmd_state.current_tmd + (object->primitive_offset + KF_TMD_HEADER_BYTES);
+    normals = (u8 *)game_graphics_runtime.tmd_state.current_tmd + (object->normal_offset + KF_TMD_HEADER_BYTES);
     while (remaining-- != 0) {
         header = *(u32 *)packet;
         packet = TMD_PACKET_BODY(packet);
@@ -463,8 +463,8 @@ void render_enqueue_tmd_retextured(u16 object_index, s16 depth_bias)
 
     object = tmd_get_object(object_index);
     remaining = object->primitive_count;
-    packet = (u8 *)game_graphics_runtime.tmd_state.current_asset + (object->primitive_offset + KF_TMD_HEADER_BYTES);
-    normals = (u8 *)game_graphics_runtime.tmd_state.current_asset + (object->normal_offset + KF_TMD_HEADER_BYTES);
+    packet = (u8 *)game_graphics_runtime.tmd_state.current_tmd + (object->primitive_offset + KF_TMD_HEADER_BYTES);
+    normals = (u8 *)game_graphics_runtime.tmd_state.current_tmd + (object->normal_offset + KF_TMD_HEADER_BYTES);
     while (remaining-- != 0) {
         u8 *vertices = (u8 *)game_graphics_runtime.tmd_projected_vertices;
 
@@ -655,9 +655,9 @@ void render_enqueue_map(u16 object_index)
     KfScreenVertex *vd;
 
     object = tmd_get_object(object_index);
-    normals = (u8 *)game_graphics_runtime.tmd_state.current_asset + (object->normal_offset + KF_TMD_HEADER_BYTES);
+    normals = (u8 *)game_graphics_runtime.tmd_state.current_tmd + (object->normal_offset + KF_TMD_HEADER_BYTES);
     tmd_project_vertices(object->vertex_count);
-    packet = (u8 *)game_graphics_runtime.tmd_state.current_asset + (object->primitive_offset + KF_TMD_HEADER_BYTES);
+    packet = (u8 *)game_graphics_runtime.tmd_state.current_tmd + (object->primitive_offset + KF_TMD_HEADER_BYTES);
     remaining = object->primitive_count;
     while (remaining-- != 0) {
         u8 *vertices = (u8 *)game_graphics_runtime.tmd_projected_vertices;

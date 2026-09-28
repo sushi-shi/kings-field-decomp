@@ -14,7 +14,7 @@ void render_enqueue_map(u16 object_index)
     KfTmdPrimitive *primitive;
     KfTmdObject *object = tmd_get_object(object_index);
     u32 header;
-    u8 *normals = (u8 *)open_graphics_runtime.tmd_state.current_asset +
+    u8 *normals = (u8 *)open_graphics_runtime.tmd_state.current_tmd +
         (object->normal_offset + KF_TMD_HEADER_BYTES);
     u8 *packet;
     KfScreenVertex *vertex0;
@@ -26,7 +26,7 @@ void render_enqueue_map(u16 object_index)
 
     tmd_project_vertices(object->vertex_count);
     remaining = object->primitive_count;
-    packet = (u8 *)open_graphics_runtime.tmd_state.current_asset +
+    packet = (u8 *)open_graphics_runtime.tmd_state.current_tmd +
         (object->primitive_offset + KF_TMD_HEADER_BYTES);
     for (; remaining-- != 0;
          packet += TMD_PACKET_BODY_BYTES(header)) {

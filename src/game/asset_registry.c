@@ -26,18 +26,18 @@ void asset_registry_load_tmd_archive(u16 first_asset_id, u8 *archive)
 }
 
 ADDRESS(0x8002055c, 0x40)
-void asset_registry_set(u16 index, KfAssetHeader *asset)
+void asset_registry_set(u16 asset_id, KfAssetHeader *asset)
 {
-    game_graphics_runtime.asset_registry_entries[index] = asset;
-    asset_registry_select(index);
+    game_graphics_runtime.asset_registry_entries[asset_id] = asset;
+    asset_registry_select(asset_id);
     tmd_prepare_primitive_indices();
 }
 
 ADDRESS(0x8002059c, 0x38)
-void asset_registry_select(u16 index)
+void asset_registry_select(u16 asset_id)
 {
-    KfAssetHeader *asset = game_graphics_runtime.asset_registry_entries[index];
+    KfAssetHeader *asset = game_graphics_runtime.asset_registry_entries[asset_id];
 
-    game_graphics_runtime.tmd_state.current_asset =
+    game_graphics_runtime.tmd_state.current_tmd =
         (KfTmdHeader *)((u8 *)asset + asset->tmd_data_offset);
 }
