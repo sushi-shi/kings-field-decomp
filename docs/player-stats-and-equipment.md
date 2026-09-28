@@ -86,7 +86,7 @@ Two initialized compiler tables are now explicit data identities:
 
 The three packed `SoundRef` records at `0x80055810` are used by weapon attack,
 death, and level-up paths. The mutable string `WEPON\\WEP00.MIM` is
-`weapon_image_path_template`; `player_equip_weapon` replaces its two decimal
+`weapon_asset_path_template`; `player_equip_weapon` replaces its two decimal
 digits before loading the asset.
 
 Field layouts and opaque ranges are also recorded in the retail structure

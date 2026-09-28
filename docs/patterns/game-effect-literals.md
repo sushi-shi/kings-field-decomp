@@ -69,12 +69,12 @@ change or relocation promotion is intended.
 | `0x80031cc8 / c18` | `map_object_pool_update` | 98.966410 → 98.966410 | — |
 | `0x80036f00 / 44` | `effect_pool_find_free` | 100 → 100 | 17 / 0 / 1 |
 | `0x80036f44 / 82c` | `effect_pool_construct` | 100 → 100 | 523 / 7 / 8 |
-| `0x80037770 / ac` | `effect_pool_spawn_typed` | 100 → 100 | 43 / 1 / 0 |
+| `0x80037770 / ac` | `effect_pool_spawn_floor_deformation` | 100 → 100 | 43 / 1 / 0 |
 | `0x8003781c / 34` | `effect_pool_set_current` | 100 → 100 | 13 / 0 / 2 |
 | `0x80037850 / 76c` | `effect_map_collision` | 97.452630 → 97.452630 | — |
 | `0x80037fbc / 24` | `effect_magic_power` | 100 → 100 | 9 / 0 / 1 |
-| `0x80037fe0 / 2b8` | `effect_projectile_update_3d` | 100 → 100 | 174 / 10 / 2 |
-| `0x80038298 / 260` | `effect_projectile_update_2d` | 99.934210 → 99.934210 | — |
+| `0x80037fe0 / 2b8` | `effect_update_swinging_hazard` | 100 → 100 | 174 / 10 / 2 |
+| `0x80038298 / 260` | `effect_update_orbiting_projectile` | 99.934210 → 99.934210 | — |
 | `0x800384f8 / 1cc` | `effect_floor_deform_line` | 100 → 100 | 115 / 1 / 3 |
 | `0x800386c4 / 68` | `effect_scatter_triple` | 100 → 100 | 26 / 3 / 0 |
 | `0x8003872c / 90` | `effect_rotate_scale_offset_y` | 100 → 100 | 36 / 2 / 0 |
@@ -84,7 +84,7 @@ change or relocation promotion is intended.
 | `0x8003a244 / 30` | `effect_pool_reset` | 100 → 100 | 12 / 0 / 1 |
 | `0x8003a274 / 2c` | `magic_load_records` | 100 → 100 | 11 / 0 / 1 |
 | `0x8003a2a0 / 4c0` | `magic_cast` | 98.875000 → 98.875000 | — |
-| `0x8003a760 / 7c` | `effect_pool_sweep` | 100 → 100 | 31 / 2 / 1 |
+| `0x8003a760 / 7c` | `effect_pool_update` | 100 → 100 | 31 / 2 / 1 |
 
 All 21 final verdicts are unchanged: 16 exact and five partial. The last column
 counts independently resolved complete retail words and ordered call/data

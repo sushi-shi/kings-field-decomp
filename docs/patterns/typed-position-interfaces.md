@@ -61,8 +61,8 @@ All selected string queries are empty.
 | `actor_spawn_action_effect` | `8002edd4 / 454` | 100 | 51/11/34/1 | 100%; raw unchanged |
 | `actor_apply_horizontal_movement` | `8002f31c / 14c` | 100 | 16/1/10/1 | 100%; raw unchanged |
 | `actor_update_current_action` | `8002fa88 / d90` | 100 | 166/69/129/1 | 100%; raw unchanged |
-| `map_object_spawn_effect` | `80031834 / 194` | 94.5049 | 21/5/13/1 | Partial unchanged; raw unchanged |
-| `map_object_spawn_actor_debris` | `800319c8 / 18c` | 100 | 11/6/6/1 | 100%; raw unchanged |
+| `map_object_spawn_drop` | `80031834 / 194` | 94.5049 | 21/5/13/1 | Partial unchanged; raw unchanged |
+| `map_object_spawn_gold_drop` | `800319c8 / 18c` | 100 | 11/6/6/1 | 100%; raw unchanged |
 | `map_object_pool_update` | `80031cc8 / c18` | 98.9664 | 118/35/94/1 | Partial unchanged; raw unchanged |
 | `map_event_pool_find_target_in_cone` | `80033b8c / 144` | 100 | 10/2/6/1 | 100%; raw unchanged |
 | `effect_update_dispatch` | `80038a38 / 180c` | 96.9396 | 257/69/204/1 | Partial unchanged; raw unchanged |

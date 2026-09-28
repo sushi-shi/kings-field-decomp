@@ -42,7 +42,7 @@ commit. No size assertions or compiler steering are part of this change.
 | GAME address / bytes | Function | Strict % | Relevant constraint |
 | --- | --- | --- | --- |
 | `0x800291ec / 268` | `menu_draw_two_option` | 100.0 | Reviewed caller/callee control; call sites, data referents and delay slots retained in its six-view dossier. |
-| `0x800292f8 / 1976` | `menu_draw_item_name_frame` | 94.52227 | Signed item ID, shared yaw halfword, SDK vector base two bytes earlier; Q12 light rows and fixed translation. |
+| `0x800292f8 / 1976` | `menu_draw_pickup_preview` | 94.52227 | Signed item ID, shared yaw halfword, SDK vector base two bytes earlier; Q12 light rows and fixed translation. |
 | `0x80029de0 / 1328` | `menu_draw_string` | 99.98795 | Reviewed caller/callee control; call sites, data referents and delay slots retained in its six-view dossier. |
 | `0x8002adf8 / 172` | `menu_format_number` | 100.0 | Reviewed caller/callee control; call sites, data referents and delay slots retained in its six-view dossier. |
 | `0x8002aea4 / 104` | `menu_load_item_model` | 100.0 | Conditional load and release policy; reset only yaw on successful/empty model selection, preserving other components and failure return. |
@@ -50,13 +50,13 @@ commit. No size assertions or compiler steering are part of this change.
 | `0x80027b7c / 732` | `menu_draw_item_detail` | 91.28416 | Signed item ID, shared yaw halfword, SDK vector base two bytes earlier; Q12 light rows and fixed translation. |
 | `0x800279c4 / 440` | `menu_item_model_preview` | 98.181816 | Signed item ID, shared yaw halfword, SDK vector base two bytes earlier; Q12 light rows and fixed translation. |
 | `0x8001ed38 / 88` | `menu_render_item_model` | 100.0 | Reviewed caller/callee control; call sites, data referents and delay slots retained in its six-view dossier. |
-| `0x80028380 / 852` | `menu_list_interact` | 87.24413 | Reviewed caller/callee control; call sites, data referents and delay slots retained in its six-view dossier. |
-| `0x80021538 / 1476` | `item_menu_buy` | 97.20054 | Reviewed caller/callee control; call sites, data referents and delay slots retained in its six-view dossier. |
-| `0x80021afc / 1280` | `item_menu_sell` | 96.77187 | Reviewed caller/callee control; call sites, data referents and delay slots retained in its six-view dossier. |
+| `0x80028380 / 852` | `menu_list_confirm` | 87.24413 | Reviewed caller/callee control; call sites, data referents and delay slots retained in its six-view dossier. |
+| `0x80021538 / 1476` | `shop_menu_buy` | 97.20054 | Reviewed caller/callee control; call sites, data referents and delay slots retained in its six-view dossier. |
+| `0x80021afc / 1280` | `shop_menu_sell` | 96.77187 | Reviewed caller/callee control; call sites, data referents and delay slots retained in its six-view dossier. |
 | `0x80021ffc / 696` | `item_pickup_confirm` | 100.0 | Reviewed caller/callee control; call sites, data referents and delay slots retained in its six-view dossier. |
 | `0x800238d8 / 1476` | `menu_equip_select` | 97.89973 | Reviewed caller/callee control; call sites, data referents and delay slots retained in its six-view dossier. |
 | `0x80022608 / 1908` | `menu_use_item_panel` | 92.8218 | Reviewed caller/callee control; call sites, data referents and delay slots retained in its six-view dossier. |
-| `0x800249a8 / 1212` | `menu_drop_item` | 98.85478 | Reviewed caller/callee control; call sites, data referents and delay slots retained in its six-view dossier. |
+| `0x800249a8 / 1212` | `menu_drop_item_panel` | 98.85478 | Reviewed caller/callee control; call sites, data referents and delay slots retained in its six-view dossier. |
 
 ## Numeric meanings
 
@@ -91,7 +91,7 @@ these shared modules remain part of the wider, unfinished constant audit.
 
 All 109 unaffected objects retain every non-debug section. Across the three
 edited units, all 21 functions are compared after resolving relocations to
-numeric addresses. Only `menu_draw_item_name_frame` changes linked instructions.
+numeric addresses. Only `menu_draw_pickup_preview` changes linked instructions.
 Its first change is at +0x34: twelve separate base/yaw-load/yaw-store setup
 instructions become ten instructions using one owner-relative address. The
 new +0x34..+0x5c sequence matches raw retail, including the yaw store in the
@@ -124,7 +124,7 @@ implementation or flake are added or changed.
 | GAME address | Function | Final strict % | Verdict |
 | --- | --- | --- | --- |
 | `0x800291ec` | `menu_draw_two_option` | 100.0 | Exact; 67 complete retail words |
-| `0x800292f8` | `menu_draw_item_name_frame` | 95.37652 | Reviewed rotation setup; partial |
+| `0x800292f8` | `menu_draw_pickup_preview` | 95.37652 | Reviewed rotation setup; partial |
 | `0x80029de0` | `menu_draw_string` | 99.98795 | Unchanged linked code; partial |
 | `0x8002adf8` | `menu_format_number` | 100.0 | Exact; 43 complete retail words |
 | `0x8002aea4` | `menu_load_item_model` | 100.0 | Exact; 26 complete retail words |
@@ -132,19 +132,19 @@ implementation or flake are added or changed.
 | `0x80027b7c` | `menu_draw_item_detail` | 91.28416 | Unchanged linked code; partial |
 | `0x800279c4` | `menu_item_model_preview` | 98.181816 | Unchanged linked code; partial |
 | `0x8001ed38` | `menu_render_item_model` | 100.0 | Exact; 22 complete retail words |
-| `0x80028380` | `menu_list_interact` | 87.24413 | Unchanged linked code; partial |
-| `0x80021538` | `item_menu_buy` | 97.20054 | Unchanged linked code; partial |
-| `0x80021afc` | `item_menu_sell` | 96.77187 | Unchanged linked code; partial |
+| `0x80028380` | `menu_list_confirm` | 87.24413 | Unchanged linked code; partial |
+| `0x80021538` | `shop_menu_buy` | 97.20054 | Unchanged linked code; partial |
+| `0x80021afc` | `shop_menu_sell` | 96.77187 | Unchanged linked code; partial |
 | `0x80021ffc` | `item_pickup_confirm` | 100.0 | Exact; 174 complete retail words |
 | `0x800238d8` | `menu_equip_select` | 97.89973 | Unchanged linked code; partial |
 | `0x80022608` | `menu_use_item_panel` | 92.8218 | Unchanged linked code; partial |
-| `0x800249a8` | `menu_drop_item` | 98.85478 | Unchanged linked code; partial |
+| `0x800249a8` | `menu_drop_item_panel` | 98.85478 | Unchanged linked code; partial |
 
 ## Pickup quad follow-up: corner order and shared row type
 
 ### Function Match Plan
 
-At `af68261`, GAME `800292f8 / 1976`, `menu_draw_item_name_frame`, remains
+At `af68261`, GAME `800292f8 / 1976`, `menu_draw_pickup_preview`, remains
 95.376520% under `probe-gcc257-o2-g0`. Fresh hash validation and all six semantic
 views confirm five calls from `item_pickup_confirm`, 23 direct outgoing calls,
 112 validated address pairs, one ten-halfword copy loop, one return with its
@@ -200,7 +200,7 @@ string and three matrices agree with retail; no unused object or padding is
 added to cover the unexplained 64-byte extent. The full tiling and background
 enqueue suffix agrees word-for-word from +0xcc to the epilogue.
 
-Final verdict: `menu_draw_item_name_frame` improves 95.376520% → 99.570850%,
+Final verdict: `menu_draw_pickup_preview` improves 95.376520% → 99.570850%,
 remaining partial. All fifteen siblings remain unchanged, including the
 partial `menu_draw_window_backdrop`; no new function is banked. Literal tokens
 and their meanings are unchanged in both existing ledgers.

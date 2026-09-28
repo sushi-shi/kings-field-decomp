@@ -167,7 +167,7 @@ void magic_cast(void)
 }
 
 ADDRESS(0x8003a760, 0x7c)
-void effect_pool_sweep(void)
+void effect_pool_update(void)
 {
     KfEffectRecord *record = effect_state.records;
     u16 i = KF_EFFECT_CAPACITY - 1;

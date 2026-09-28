@@ -8,7 +8,7 @@ The reviewed six-view retail dossier records its 32-byte frame, buffer-overflow
 branch, two proven SDK calls, eight validated data references and no strings.
 At 0x8001e5d0 it calls `AddPrim`; the delay slot adds four bytes to the
 ordering-table pointer, selecting its second word. The sole proven caller,
-`render_hud_gauges`, passes the sprite member of each visible HUD record.
+`render_hud_sprites`, passes the sprite member of each visible HUD record.
 The preceding projected-sprite renderer instead sorts by computed depth.
 
 The function is game-owned HUD composition around separately attributed

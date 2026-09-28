@@ -71,42 +71,42 @@ KfSpriteQuad effect_billboard_sprites[KF_EFFECT_BILLBOARD_SPRITE_COUNT] = {
  * and projected against the view matrix.
  */
 ADDRESS(0x8001eedc, 0x1e8)
-void render_actor_sprite(KfEffectRecord *sprite)
+void render_effect(KfEffectRecord *effect)
 {
-    SVECTOR screen;
+    SVECTOR relative_position;
     VECTOR scale;
     MATRIX model;
     long flag;
     u16 asset;
     KfTmdObject *object;
 
-    if (sprite->render_id.model == KF_EFFECT_MODEL_NONE) {
+    if (effect->render_id.model == KF_EFFECT_MODEL_NONE) {
         return;
     }
     SetRotMatrix(&game_graphics_runtime.render_state.view_matrix);
     SetTransMatrix(&game_graphics_runtime.render_state.view_matrix);
-    setVector(&screen,
-        sprite->position.vx - game_graphics_runtime.render_state.view_position.vx,
-        sprite->position.vy - game_graphics_runtime.render_state.view_position.vy,
-        sprite->position.vz - game_graphics_runtime.render_state.view_position.vz);
-    RotTrans(&screen, (VECTOR *)&model.t, &flag);
-    matrix_set_rotation_yxz(&sprite->rotation.angles, &model);
-    setVector(&scale, (s16)sprite->scale_x, (s16)sprite->scale_y, (s16)sprite->scale_z);
+    setVector(&relative_position,
+        effect->position.vx - game_graphics_runtime.render_state.view_position.vx,
+        effect->position.vy - game_graphics_runtime.render_state.view_position.vy,
+        effect->position.vz - game_graphics_runtime.render_state.view_position.vz);
+    RotTrans(&relative_position, (VECTOR *)&model.t, &flag);
+    matrix_set_rotation_yxz(&effect->rotation.angles, &model);
+    setVector(&scale, (s16)effect->scale_x, (s16)effect->scale_y, (s16)effect->scale_z);
     ScaleMatrix(&model, &scale);
-    if (sprite->animation_clip == KF_ANIMATION_CLIP_NONE) {
+    if (effect->animation_clip == KF_ANIMATION_CLIP_NONE) {
         MulMatrix2(&game_graphics_runtime.render_state.pitch_matrix, &model);
         SetRotMatrix(&model);
         SetTransMatrix(&model);
-        render_enqueue_sprite(&effect_billboard_sprites[KF_ENUM_ENCODE(u8, sprite->render_id.billboard)], 0, KF_SPRITE_DEPTH_CUE_NORMAL);
+        render_enqueue_sprite(&effect_billboard_sprites[KF_ENUM_ENCODE(u8, effect->render_id.billboard)], 0, KF_SPRITE_DEPTH_CUE_NORMAL);
     } else {
         MulMatrix2(&game_graphics_runtime.render_state.view_matrix, &model);
         SetRotMatrix(&model);
         SetTransMatrix(&model);
-        asset = KF_ENUM_ENCODE(u8, sprite->render_id.model) + KF_ASSET_EFFECT_FIRST;
+        asset = KF_ENUM_ENCODE(u8, effect->render_id.model) + KF_ASSET_EFFECT_FIRST;
         asset_registry_select(asset);
         object = tmd_get_object(0);
         if (render_bind_animated_instance(
-                &sprite->animation_cache, asset, sprite->animation_clip, sprite->visual.animation_phase,
+                &effect->animation_cache, asset, effect->animation_clip, effect->visual.animation_phase,
                 object->vertex_count) == NULL) {
             tmd_select_object_vertices(0);
             tmd_project_vertices(tmd_get_object(0)->vertex_count);

@@ -51,7 +51,7 @@ No whole-function exactness or full-game execution is claimed by these controls.
 | --- | --- | --- |
 | `80055810` / 9 | `player_sound_refs[3]`, `game.player_death`, shared | `40d624c1dafc7bd232bafeb0eef6328b279c4bb15f62705bf3e1e6358e547f3c` |
 | `80055858` / 32 | `player_darkness_color_matrix`, `game.player_update`, private | `1dd66d0b6b8d902cb46da4a6fca05fb6f58a1c6b822c6a550cd5c8f934c8257f` |
-| `80055878` / 64 | `player_damage_camera_offsets[8]`, `game.player_update`, private | `8cd244854dbbe4485fcebd2a0d517e42c1778c390a679ea0f15f5718765612b3` |
+| `80055878` / 64 | `player_damage_view_rotation_offsets[8]`, `game.player_update`, private | `8cd244854dbbe4485fcebd2a0d517e42c1778c390a679ea0f15f5718765612b3` |
 
 Sound entries are `{7,0,80}`, `{7,1,89}`, `{13,0,67}`; addends remain 0, 3,
 and 6. The following three bytes stay unclassified, not added to the array.

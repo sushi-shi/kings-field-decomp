@@ -18,11 +18,11 @@ enum {
 
 /*
  * Per-frame renderer entry, called by the player warp/update path.  It rebuilds
- * the view transform, opens the frame, refreshes the HUD gauge table, draws the
- * screen-space effect and notification sprites, sweeps the entity pools through
+ * the view transform, opens the frame, refreshes the HUD sprite table, draws the
+ * HUD models and notification sprites, sweeps the entity pools through
  * the scene dispatcher (render_entities), draws the held weapon, and presents.
  *
- * The HUD, effect, and notification sprite families use their complete table
+ * The HUD sprite, HUD model, and notification families use their complete table
  * layouts; unknown bytes within the records remain explicitly opaque.
  */
 
@@ -41,19 +41,19 @@ void render_frame(const VECTOR *position_or_null, const SVECTOR *rotation_or_nul
 {
     MATRIX model;
     SVECTOR spin;
-    KfHudSprite *status_sprite;
-    KfHudSprite *auxiliary_sprite;
+    KfHudSprite *poison_icon;
+    KfHudSprite *compass_sprite;
     KfNotificationSprite *record;
     s16 i;
 
     render_set_view_transform(position_or_null, rotation_or_null);
     display_begin_frame();
-    pool_mark_allocated();
+    animation_cache_mark_stale();
     SetGeomScreen(KF_DEFAULT_PROJECTION_DISTANCE);
     render_map_cells();
     SetLightMatrix(&render_light_matrices[KF_RENDER_LIGHT_HUD]);
-    status_sprite = &hud_sprites[KF_HUD_POISON_ICON];
-    status_sprite->state = KF_SPRITE_HIDDEN;
+    poison_icon = &hud_sprites[KF_HUD_POISON_ICON];
+    poison_icon->state = KF_SPRITE_HIDDEN;
     hud_sprites[KF_HUD_SLOWED_ICON].state = KF_SPRITE_HIDDEN;
     hud_sprites[KF_HUD_DARKNESS_ICON].state = KF_SPRITE_HIDDEN;
     hud_sprites[KF_HUD_CURSE_ICON].state = KF_SPRITE_HIDDEN;
@@ -81,7 +81,7 @@ void render_frame(const VECTOR *position_or_null, const SVECTOR *rotation_or_nul
         } else if ((flags & KF_PLAYER_STATUS_DARKNESS) != KF_PLAYER_STATUS_NONE) {
             hud_sprites[KF_HUD_DARKNESS_ICON].state = KF_SPRITE_VISIBLE;
         } else if ((flags & KF_PLAYER_STATUS_POISON) != KF_PLAYER_STATUS_NONE) {
-            status_sprite->state = KF_SPRITE_VISIBLE;
+            poison_icon->state = KF_SPRITE_VISIBLE;
         } else if ((flags & KF_PLAYER_STATUS_SLOWED) != KF_PLAYER_STATUS_NONE) {
             hud_sprites[KF_HUD_SLOWED_ICON].state = KF_SPRITE_VISIBLE;
         }
@@ -96,20 +96,20 @@ void render_frame(const VECTOR *position_or_null, const SVECTOR *rotation_or_nul
         hud_sprites[KF_HUD_MAGIC_PANEL].state = KF_SPRITE_HIDDEN;
     }
 
-    auxiliary_sprite = &hud_sprites[KF_HUD_COMPASS];
-    auxiliary_sprite->state = KF_ENUM_DECODE(KfSpriteState,
+    compass_sprite = &hud_sprites[KF_HUD_COMPASS];
+    compass_sprite->state = KF_ENUM_DECODE(KfSpriteState,
         KF_ENUM_ENCODE(u8, player_state.compass_enabled));
-    effect_sprites[KF_EFFECT_SPRITE_COMPASS].state = KF_ENUM_DECODE(KfSpriteState,
+    hud_models[KF_HUD_MODEL_COMPASS].state = KF_ENUM_DECODE(KfSpriteState,
         KF_ENUM_ENCODE(u8, player_state.compass_enabled));
-    effect_sprites[KF_EFFECT_SPRITE_COMPASS].rotation.vz = -game_graphics_runtime.render_state.view_rotation.vy & KF_ANGLE_WRAP_MASK;
-    render_effect_sprites();
+    hud_models[KF_HUD_MODEL_COMPASS].rotation.vz = -game_graphics_runtime.render_state.view_rotation.vy & KF_ANGLE_WRAP_MASK;
+    render_hud_models();
 
     game_graphics_runtime.active_render_tpage = game_graphics_runtime.hud_tpage;
     game_graphics_runtime.active_render_clut = game_graphics_runtime.hud_clut;
     game_graphics_runtime.active_render_color.b = game_graphics_runtime.hud_brightness;
     game_graphics_runtime.active_render_color.g = game_graphics_runtime.hud_brightness;
     game_graphics_runtime.active_render_color.r = game_graphics_runtime.hud_brightness;
-    render_hud_gauges(auxiliary_sprite - KF_HUD_COMPASS);
+    render_hud_sprites(compass_sprite - KF_HUD_COMPASS);
 
     SetLightMatrix(&render_light_matrices[KF_RENDER_LIGHT_NOTIFICATION]);
     notify_effect_update();
@@ -149,5 +149,5 @@ void render_frame(const VECTOR *position_or_null, const SVECTOR *rotation_or_nul
     render_entities();
     render_weapon();
     display_present_frame();
-    pool_release_stale();
+    animation_cache_release_stale();
 }

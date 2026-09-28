@@ -60,7 +60,7 @@ decoded text is 底なし穴, “Bottomless pit,” as documented in the
 has a separate death test at target Y >= -6999; its environmental identity
 still lacks evidence and is not inferred from the other pit type.
 
-Camera Y is `floor_height + view_bob_offset - 1500`, with downward-positive
+Camera Y is `foot_height + view_bob_offset - 1500`, with downward-positive
 Y. Restart uses the same expression after clearing bob. Death animation
 changes bob, but retains the camera baseline. The main loop copies this camera
 position through `player_update_transform_snapshot` and

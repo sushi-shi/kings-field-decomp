@@ -37,7 +37,7 @@ Selected checked layouts:
 | `KfPlayerLevelGrowth` | `0x0c` | `KfPlayerMotionState` | `0x0c` |
 | `KfPlayerProgressState` | `0x04` | `KfPlayerVitals` | `0x08` |
 | `KfPlayerState` | `0xe0` |  |  |
-| `KfPoolRecord` | `0x14` | `KfPrimitiveBuffer` | `0x0c` |
+| `KfAnimationCacheRecord` | `0x14` | `KfPrimitiveBuffer` | `0x0c` |
 | `KfSaveDirectory` | `0x80` | `KfTmdObject` | `0x1c` |
 | `KfSaveHeader` | `0x280` | `KfSavePayload` | `0x2580` |
 | `KfSaveSlotSummary` | `0x18` | `KfVec3i` | `0x0c` |

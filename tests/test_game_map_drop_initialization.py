@@ -58,7 +58,7 @@ class GameMapDropInitializationTests(unittest.TestCase):
                     profile.cc1_flags, profile.compiler, defines=unit.defines,
                 )
                 obj = _load_object(output)
-                function = obj.named_symbol('map_object_spawn_effect')
+                function = obj.named_symbol('map_object_spawn_drop')
                 words = struct.unpack_from(f'<{function.size // 4}I',
                                            obj.sections['.text'], function.value)
                 # Its final conditional skips only the optional bounce call.

@@ -45,7 +45,7 @@ int effect_magic_power(KfEffectRecord *effect)
 }
 
 ADDRESS(0x80037fe0, 0x2b8)
-void effect_projectile_update_3d(SVECTOR *probe_offset, KF_ENUM_PARAM(KfEffectPhase, s32) phase_limit)
+void effect_update_swinging_hazard(SVECTOR *probe_offset, KF_ENUM_PARAM(KfEffectPhase, s32) phase_limit)
 {
     KfEffectRecord *record = effect_state.current_record;
     KfMagicRecord *magic = effect_state.current_magic;
@@ -115,7 +115,7 @@ void effect_projectile_update_3d(SVECTOR *probe_offset, KF_ENUM_PARAM(KfEffectPh
 }
 
 ADDRESS(0x80038298, 0x260)
-void effect_projectile_update_2d(s32 orbit_radius, KF_ENUM_PARAM(KfEffectPhase, s32) phase_limit)
+void effect_update_orbiting_projectile(s32 orbit_radius, KF_ENUM_PARAM(KfEffectPhase, s32) phase_limit)
 {
     KfEffectRecord *record = effect_state.current_record;
     KfMagicRecord *magic = effect_state.current_magic;

@@ -69,7 +69,7 @@ refreshes the existing behavior ledger after moving shared definitions.
 | 0x8002dcfc / 152 | actor_play_sound_at_phase | 100.000000 |
 | 0x8002dd94 / 288 | actor_try_select_action_distance_facing | 100.000000 |
 | 0x8002deb4 / 356 | actor_try_select_ground_action | 100.000000 |
-| 0x8002e018 / 216 | actor_try_select_facing_action | 100.000000 |
+| 0x8002e018 / 216 | actor_try_select_multi_hit_action | 100.000000 |
 | 0x8002e0f0 / 504 | actor_try_select_profiled_action | 96.333336 |
 | 0x8002e2e8 / 960 | actor_select_next_action | 100.000000 |
 | 0x8002e6a8 / 684 | actor_update_awareness | 97.736840 |

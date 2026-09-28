@@ -29,7 +29,7 @@ FUNCTION = 'player_update'
 CALLEES = (
     'player_death_update', 'player_death_update_reverse_fade',
     'collision_adjust_cell_occupancy', 'PadRead', 'display_show_system_screen',
-    'menu_enter_mode', 'player_use_item', 'pool_release_all', 'audio_close_vab',
+    'menu_enter_mode', 'player_use_item', 'animation_cache_release_all', 'audio_close_vab',
     'map_load_floor_wrapper', 'player_sync_position_to_map', 'player_equip_weapon',
     'player_select_magic', 'map_interaction_dispatch', 'SquareRoot0',
     'player_move_horizontal', 'player_update_view_bob', 'player_begin_weapon_attack',
@@ -40,7 +40,7 @@ CALLEES = (
     'lighting_set_color_matrix', 'fog_interpolate_near', 'SetColorMatrix',
     'fog_set_near', 'player_death_begin', 'player_adjust_hp', 'player_adjust_mp',
     'player_apply_damage', 'player_recalculate_combat_stats',
-    'lighting_apply_weapon9_environment', 'lighting_apply_timed_player_effect',
+    'lighting_apply_shadow_blade_environment', 'lighting_apply_illusion_staff_effect',
 )
 PASSIVE = frozenset((
     'player_death_update', 'player_death_update_reverse_fade',
@@ -56,7 +56,7 @@ OWNERS = (
      '40d624c1dafc7bd232bafeb0eef6328b279c4bb15f62705bf3e1e6358e547f3c'),
     ('game.player_update', 0x80055858, 'player_darkness_color_matrix', 32, 'static',
      '1dd66d0b6b8d902cb46da4a6fca05fb6f58a1c6b822c6a550cd5c8f934c8257f'),
-    ('game.player_update', 0x80055878, 'player_damage_camera_offsets', 64, 'static',
+    ('game.player_update', 0x80055878, 'player_damage_view_rotation_offsets', 64, 'static',
      '8cd244854dbbe4485fcebd2a0d517e42c1778c390a679ea0f15f5718765612b3'),
 )
 REFERENCES = (
@@ -65,11 +65,11 @@ REFERENCES = (
     (0x80016B5C, 0x80055810, 'player_sound_refs', 0),
     (0x800199BC, 0x80055858, 'player_darkness_color_matrix', 0),
     (0x800199F0, 0x80055858, 'player_darkness_color_matrix', 0),
-    (0x80019A44, 0x80055878, 'player_damage_camera_offsets', 0),
-    (0x80019AA0, 0x80055878, 'player_damage_camera_offsets', 3),
-    (0x80019AB0, 0x80055878, 'player_damage_camera_offsets', 0),
-    (0x80019AC0, 0x80055878, 'player_damage_camera_offsets', 7),
-    (0x80019AD0, 0x80055878, 'player_damage_camera_offsets', 4),
+    (0x80019A44, 0x80055878, 'player_damage_view_rotation_offsets', 0),
+    (0x80019AA0, 0x80055878, 'player_damage_view_rotation_offsets', 3),
+    (0x80019AB0, 0x80055878, 'player_damage_view_rotation_offsets', 0),
+    (0x80019AC0, 0x80055878, 'player_damage_view_rotation_offsets', 7),
+    (0x80019AD0, 0x80055878, 'player_damage_view_rotation_offsets', 4),
 )
 
 

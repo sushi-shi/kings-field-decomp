@@ -89,7 +89,7 @@ A standard embedded member is not evidence for a neighboring unknown lane.
 | [KfDisplayState](../../include/kf/game/render.h) | `unknown_01` | Custom double-buffer bookkeeping: index, asset pointer, primitive arenas and ordering tables. No DRAWENV, DISPENV or GsOT whole-record correspondence; their authentic members are modeled separately [S2,S3]. |
 | [KfDisplayStateOpen](../../include/kf/open/render.h) | `unknown_01` | Custom OPEN double-buffer bookkeeping. Its separate active ordering-table pointer and overlay-specific extent distinguish it from both the GAME aggregate and SDK environment/OT records [S2,S3]. |
 | [KfEffectRecord](../../include/kf/game/effect.h) | `unknown_0a`, `unknown_2a` | Custom effect lifecycle record with SDK position and direction/rotation views. unknown_0a precedes VECTOR; unknown_2a follows three unsigned scale halfwords. No whole SVECTOR scale owner or SDK API argument at that address is established [S1]. |
-| [KfEffectSprite](../../include/kf/game/render.h) | `unknown_0c`, `unknown_16` | Custom animated-effect descriptor, not a GPU primitive or GsSPRITE [S2,S3]. SDK SVECTOR rotation begins at +0x0e and already includes its pad at +0x14; unknown_0c and unknown_16 are outside it [S1]. |
+| [KfHudModel](../../include/kf/game/render.h) | `unknown_0c`, `unknown_16` | Custom animated-effect descriptor, not a GPU primitive or GsSPRITE [S2,S3]. SDK SVECTOR rotation begins at +0x0e and already includes its pad at +0x14; unknown_0c and unknown_16 are outside it [S1]. |
 | [KfFloorItem](../../include/kf/lib/item.h) | `unknown_03`, `unknown_10`, `unknown_15` | Custom expanded floor-item record. Three signed position words plus unknown_10 resemble a possible VECTOR extent, but reviewed consumers read coordinates separately; no complete-object/API evidence establishes that SDK owner [S1]. The copied +3 byte and trailing animation gap remain separate unknowns. |
 | [KfFloorItemPlacement](../../include/kf/lib/item.h) | `unknown_03` | Custom MIXA/OPEN placement record with sprite ID, packed appearance, tile bytes and signed local offsets. Loader copies +3 into the runtime item. This is not a GPU sprite or Sony ANM frame [S2,S3,F2]. |
 | [KfFloorItemStateOpen](../../include/kf/open/render.h) | `unknown_08`, `unknown_14` | Unresolved aggregate intervals around custom material, texture selectors, count and item array. The CVECTOR inside material is complete; its scope does not extend to either unknown range [S1]. No standard SDK container correspondence. |
@@ -120,7 +120,7 @@ is therefore retained as SDK storage in the Rust codec. Weapon translation is
 a separate six-byte triple assembled into a VECTOR; absorbing unknown_22 into
 it as an SVECTOR pad would change the owner without supporting evidence.
 
-Likewise, KfEffectSprite.rotation already includes its SDK pad, while its two
+Likewise, KfHudModel.rotation already includes its SDK pad, while its two
 unknown neighboring halfwords are outside the object. KfOpeningEntity.rotation
 is passed to a game helper taking three halfwords, so the following +0x1e lane
 cannot be promoted to SDK padding from proximity. The possible VECTOR shape

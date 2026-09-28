@@ -20,7 +20,7 @@ from scripts.kf.sema.image import RetailImage
 # Complete allocations, including each path's terminating NUL. Gap bytes are
 # deliberately not part of these arrays or a claim of original TU boundaries.
 OWNERS = (
-    ('game.player_core', 0x8005581C, 'weapon_image_path_template', b'WEPON\\WEP00.MIM\0'),
+    ('game.player_core', 0x8005581C, 'weapon_asset_path_template', b'WEPON\\WEP00.MIM\0'),
     ('game.player_core', 0x8005582C, 'floor_entry_cells', bytes((15, 2, 29, 56, 28, 18, 7, 22, 39, 69))),
     ('game.player_use_item', 0x80055838, 'enemy_info_image_path_template', b'ENE0\\EI00.TIM\0'),
     ('game.player_use_item', 0x80055848, 'person_image_path_template', b'PRSN\\PER00.TIM\0'),

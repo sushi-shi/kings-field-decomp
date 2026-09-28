@@ -26,7 +26,7 @@ game ownership; the `rand` implementation remains a vendored boundary.
 | 80016324 | player_apply_damage | 100% | Tests incoming mask 4, compares unsigned resistance with the random bucket, then writes timer 600 and sets the same bit. |
 | 80018880 | player_update | 96.945540% | Signed timer countdown, mask clearing, modulo-20 damage and two-update color flash. |
 | 8001fde4 | render_frame | 100% | The copied status flags' mask 4 enables the poison HUD sprite in the existing priority chain. |
-| 80025f38 | menu_draw_stats_header | 97.686110% | Mask 4 inserts glyph 0x88 in the status row. |
+| 80025f38 | menu_draw_status_summary | 97.686110% | Mask 4 inserts glyph 0x88 in the status row. |
 | 800264d8 | menu_draw_status_details | 95.110700% | The same status glyph; a separate `毒` label aligns with the resistance value. |
 
 Keep all constants' values, widths, CFGs, delay slots, data identities and

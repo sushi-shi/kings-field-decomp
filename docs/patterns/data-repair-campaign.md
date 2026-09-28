@@ -248,15 +248,15 @@ partial; every score and all 484 function-report entries remain unchanged.
 | GAME.EXE | `player_move_horizontal` | 2088/2128 | 96.568960% |
 | GAME.EXE | `player_update` | 6684/6684 | 99.476960% |
 | GAME.EXE | `display_initialize` | 332/336 | 98.421684% |
-| GAME.EXE | `menu_draw_item_name_frame` | 1976/1976 | 99.570850% |
+| GAME.EXE | `menu_draw_pickup_preview` | 1976/1976 | 99.570850% |
 | GAME.EXE | `menu_draw_window_backdrop` | 1700/1700 | 99.971760% |
 | GAME.EXE | `talk_show_dialogue_page` | 164/164 | 98.780490% |
-| GAME.EXE | `map_object_probe_forward` | 196/196 | 93.755104% |
-| GAME.EXE | `map_object_spawn_effect` | 404/400 | 94.504950% |
+| GAME.EXE | `map_object_probe_door_closing` | 196/196 | 93.755104% |
+| GAME.EXE | `map_object_spawn_drop` | 404/400 | 94.504950% |
 | GAME.EXE | `map_show_screen_image` | 144/148 | 88.888885% |
 | GAME.EXE | `map_interaction_dispatch` | 2308/2296 | 99.202774% |
 | GAME.EXE | `map_world_state_persist` | 696/700 | 97.528730% |
-| GAME.EXE | `effect_projectile_update_2d` | 608/608 | 99.934210% |
+| GAME.EXE | `effect_update_orbiting_projectile` | 608/608 | 99.934210% |
 | OPEN.EXE | `opening_ending_scroll_run` | 1944/1944 | 99.917694% |
 | OPEN.EXE | `display_initialize` | 472/476 | 96.652540% |
 

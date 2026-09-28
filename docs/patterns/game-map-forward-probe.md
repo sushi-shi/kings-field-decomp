@@ -2,7 +2,7 @@
 
 ## Function Match Plan and pre-edit evidence
 
-Target: `GAME.EXE:0x80030eb8 map_object_probe_forward`, **196 bytes / 49
+Target: `GAME.EXE:0x80030eb8 map_object_probe_door_closing`, **196 bytes / 49
 words**, unit `game.map_object_pool`, initially **1.8163265%** strict objdiff.
 This extends the related map-object clearing campaign on clean-base
 `0ab6950` (272/362 GAME exact). Hash-identical retail was initialized and all
@@ -216,7 +216,7 @@ retail instruction equality and ordered targets in separate fresh compiles.
 Reject the helper forms; no canonical source, identity or bank change is kept.
 
 The generated report is
-`build/hypotheses/20260908-210404-game-map_object_pool-map_object_probe_forward`.
+`build/hypotheses/20260908-210404-game-map_object_pool-map_object_probe_door_closing`.
 The refreshed dossier is `build/forward-inline-evidence.txt`; independent
 compiles and raw comparisons are under `build/forward-inline-objects` using
 `build/forward-inline-inspect.py` and `build/verify-forward-inline.py`.

@@ -172,7 +172,7 @@ retains its owned delay slot.
 | GAME function | Hex extent; strict production match | Owner-only hypothesis and controls |
 | --- | --- | --- |
 | `8001c7f8 render_enqueue_tmd` | `f38`; 98.932236% | u16 selection/s16 bias; 88-byte frame, 45 ordered calls, 35 retail address pairs, eleven J relocations and a reviewed 29-word switch. Share the selected-asset, projected-base and OT field through the existing complete owner; keep twelve allocation exits and all mode-specific lighting. |
-| `8001d730 render_enqueue_model` | `6e8`; 93.126690% | Same argument widths, 96-byte frame, fifteen calls, ten retail pairs, five internal jumps. Also share active CLUT/page fields through the same owner; keep all four mode entries, material publication and quad tails. |
+| `8001d730 render_enqueue_tmd_retextured` | `6e8`; 93.126690% | Same argument widths, 96-byte frame, fifteen calls, ten retail pairs, five internal jumps. Also share active CLUT/page fields through the same owner; keep all four mode entries, material publication and quad tails. |
 | `8001de18 render_enqueue_map` | `418`; 98.770996% | u16 selection, 80-byte frame, sixteen calls, six retail pairs and one internal jump. Preserve the post-projection asset reload, two separate depth guards and both allocation returns. |
 
 The common chain is selected-asset field `80090fc8` plus 488 to projected
@@ -408,7 +408,7 @@ Function Match Plan: extend the unchanged owner declaration to
 HUD table. Refresh all six GAME semantic views, complete disassembly/CFG,
 the three caller windows in `render_frame`, adjacent boundaries, shared
 types, source history and library evidence before compiling a temporary copy.
-Only `render_effect_sprites` directly reads a field inside this owner;
+Only `render_hud_models` directly reads a field inside this owner;
 the weapon and HUD functions are independent same-unit controls. No source
 algorithm, local lifetime, shared layout, capacity, production DATA claim,
 retail relocation or compiler profile changes.
@@ -416,8 +416,8 @@ retail relocation or compiler profile changes.
 | GAME function | Bytes; frame; blocks/branches | Preserved evidence and verdict |
 | --- | --- | --- |
 | `8001f798 render_weapon` | 280; 72; 4/2 | No arguments from `800202c8`; ten calls and five address pairs. Preserve the -1 attack guard, halfword projection/translation reads, rotation pointer, fifth animation argument and signed depth bias. All 70 words remain raw exact; no direct candidate-owner reference. |
-| `8001f8b0 render_effect_sprites` | 292; 120; 6/3 | No arguments from `8002012c`; twelve calls and two address pairs. Save/restore the SDK color matrix, use `render_state.effect_color_matrix`, stop at the first non-1 byte state, retain the 28-byte stride, Q12 scale, animation guard and projection/enqueue order. All 73 words remain raw exact. |
-| `8001f9d4 render_hud_gauges` | 112; 32; 6/3 | Table argument comes from compass-row pointer minus 168 in the caller's `80020178` delay slot; one call, no data pairs. Keep the 255 sentinel, skip-hidden behavior, 14-byte stride and sprite pointer +2. All 28 words remain raw exact; no direct candidate-owner reference. |
+| `8001f8b0 render_hud_models` | 292; 120; 6/3 | No arguments from `8002012c`; twelve calls and two address pairs. Save/restore the SDK color matrix, use `render_state.hud_model_color_matrix`, stop at the first non-1 byte state, retain the 28-byte stride, Q12 scale, animation guard and projection/enqueue order. All 73 words remain raw exact. |
+| `8001f9d4 render_hud_sprites` | 112; 32; 6/3 | Table argument comes from compass-row pointer minus 168 in the caller's `80020178` delay slot; one call, no data pairs. Keep the 255 sentinel, skip-hidden behavior, 14-byte stride and sprite pointer +2. All 28 words remain raw exact; no direct candidate-owner reference. |
 
 Each function has one common return with its frame-restoring delay slot;
 there are no strings, candidate outgoing references, internal J relocations
@@ -477,7 +477,7 @@ the production source/header, or infer an original declaration spelling.
 | --- | --- | --- |
 | `800204c0 asset_registry_load_tmd_archive` | 156 bytes, 40-byte frame, four blocks, two branches, two calls and one registry address pair. Callers pass a `u16` first slot and archive pointer; retain the four-byte archive header, postdecremented `u16` count, chunk byte-size advance, registration, selection and primitive-index preparation. | All 39 words and ordered targets remain exact. A four-byte owner shift changes only candidate offset `+40`. |
 | `8002055c asset_registry_set` | 64 bytes, 24-byte frame, one block, no branch, two calls and one registry pair. Callers pass a narrowed slot and asset pointer; retain store/select/prepare order and the return delay slot. | All 16 words and ordered targets remain exact. A four-byte owner shift changes only `+14`. |
-| `8002059c asset_registry_select` | 56-byte frameless leaf, one block, no branch or call, and two address pairs. A `u16` index selects a header, whose word at +8 is added to its base and written to `tmd_state.current_asset` at owner +`20130`. | All 14 words and ordered targets remain exact. A four-byte owner shift changes `+c` and `+2c`, independently checking both fields. |
+| `8002059c asset_registry_select` | 56-byte frameless leaf, one block, no branch or call, and two address pairs. A `u16` index selects a header, whose word at +8 is added to its base and written to `tmd_state.current_tmd` at owner +`20130`. | All 14 words and ordered targets remain exact. A four-byte owner shift changes `+c` and `+2c`, independently checking both fields. |
 
 All returns retain their owned delay slots. There are no strings, candidate
 outgoing references, internal jumps or indirect transfers. The three bodies
@@ -528,12 +528,12 @@ source, DATA claim, signature, profile or relocation inventory changes.
 
 | GAME function | Retail bytes; frame; calls | Preserved evidence |
 | --- | --- | --- |
-| `80020978 pool_reset` | 48; leaf; 0 | Clear state and cached-vertex pointer across twelve 20-byte records; unsigned-halfword countdown, pointer step in branch slot. |
-| `800209a8 pool_mark_allocated` | 60; leaf; 0 | Signed-halfword state read; change every nonzero state to stale 1, retaining the twelve-record scan and delay slots. |
-| `80020a2c pool_release_all` | 108; 32; 1 | Signed-halfword 11-to-minus-one loop, release nonzero states, preserve repeated decrement and record argument in call slot. |
-| `80020a98 pool_release_stale` | 108; 40; 1 | Unsigned-halfword twelve-count loop, release only state 1; decrement in predicate slot and record step in backedge slot. |
-| `80020b04 pool_allocate` | 72; leaf; 0 | Return first free record after setting clip=255; do not mark it live. Exhaustion returns null through the validated internal jump. |
-| `800209e4 pool_record_release` | 72; 24; 1 | Independent control: clear state and caller's slot, free a nonnull vertex allocation, then clear that pointer. |
+| `80020978 animation_cache_reset` | 48; leaf; 0 | Clear state and cached-vertex pointer across twelve 20-byte records; unsigned-halfword countdown, pointer step in branch slot. |
+| `800209a8 animation_cache_mark_stale` | 60; leaf; 0 | Signed-halfword state read; change every nonzero state to stale 1, retaining the twelve-record scan and delay slots. |
+| `80020a2c animation_cache_release_all` | 108; 32; 1 | Signed-halfword 11-to-minus-one loop, release nonzero states, preserve repeated decrement and record argument in call slot. |
+| `80020a98 animation_cache_release_stale` | 108; 40; 1 | Unsigned-halfword twelve-count loop, release only state 1; decrement in predicate slot and record step in backedge slot. |
+| `80020b04 animation_cache_allocate` | 72; leaf; 0 | Return first free record after setting clip=255; do not mark it live. Exhaustion returns null through the validated internal jump. |
+| `800209e4 animation_cache_release` | 72; 24; 1 | Independent control: clear state and caller's slot, free a nonnull vertex allocation, then clear that pointer. |
 
 All scans have one validated pool address pair; only allocation has an internal
 J relocation. None has strings, candidate outgoing references or unresolved

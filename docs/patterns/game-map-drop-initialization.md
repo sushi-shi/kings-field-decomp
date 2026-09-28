@@ -2,7 +2,7 @@
 
 ## Function Match Plan at `16ba53e`
 
-Target GAME `80031834 map_object_spawn_effect`, 404 retail bytes in
+Target GAME `80031834 map_object_spawn_drop`, 404 retail bytes in
 `game.map_object`, strict 94.455444%. Fresh native/traced/repeated compilation
 emits 400 bytes and preserves six exact siblings; `map_object_pool_update`
 is the other partial in the eight-function unit. Keep the pinned

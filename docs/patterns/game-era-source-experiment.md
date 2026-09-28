@@ -60,8 +60,8 @@ The actual macro is one comma expression. This repeats the source-shape lesson
 from [the OPEN experiment](open-era-source-experiment.md); it does not prove
 which SDK revision originally built either image.
 
-`menu_draw_stats_header` reproduces the saved main-worktree candidate: a real
-`s32 row_step = STATS_HEADER_ROW_STEP` supplies all 14 line advances. The full
+`menu_draw_status_summary` reproduces the saved main-worktree candidate: a real
+`s32 row_step = ROOT_STATUS_SUMMARY_ROW_STEP` supplies all 14 line advances. The full
 1440 bytes match, including the retail transition from immediate spacing to a
 shared saved value. Its origin is explicitly separate from the two discoveries.
 
@@ -89,18 +89,18 @@ unit/source owner, reference evidence tiers and history.
 | `render_entities` / `0x8001f218` | 5 | 99.517044 | 99.517044 | 99.517044 | no gain |
 | `item_load_database` / `0x80020cfc` | 6 | 99.746666 | 99.746666 | 99.746666 | no gain |
 | `menu_status_panel` / `0x8002430c` | 7 | 99.962170 | 99.962170 | 99.962170 | no gain |
-| `menu_draw_stats_header` / `0x80025f38` | 5 | 97.977776 | 100.000000 | 100.000000 | pre-existing exact reproduced |
+| `menu_draw_status_summary` / `0x80025f38` | 5 | 97.977776 | 100.000000 | 100.000000 | pre-existing exact reproduced |
 | `menu_item_model_preview` / `0x800279c4` | 5 | 98.181816 | 98.181816 | 98.181816 | no gain |
 | `menu_draw_item_detail` / `0x80027b7c` | 9 | 97.814210 | 98.579230 | 97.814210 | fuzzy gain rejected |
-| `menu_draw_item_name_frame` / `0x800292f8` | 8 | 99.570850 | 99.570850 | 99.570850 | no gain |
+| `menu_draw_pickup_preview` / `0x800292f8` | 8 | 99.570850 | 99.570850 | 99.570850 | no gain |
 | `menu_draw_window_backdrop` / `0x8002a510` | 6 | 99.971760 | 99.971760 | 99.971760 | no gain |
 | `talk_show_dialogue_page` / `0x8002c9d4` | 5 | 98.780490 | 98.780490 | 98.780490 | no gain |
-| `map_object_spawn_effect` / `0x80031834` | 5 | 94.504950 | 94.504950 | 94.504950 | no gain |
+| `map_object_spawn_drop` / `0x80031834` | 5 | 94.504950 | 94.504950 | 94.504950 | no gain |
 | `map_show_screen_image` / `0x80034d54` | 5 | 88.888885 | 88.888885 | 88.888885 | no gain |
 | `map_interaction_dispatch` / `0x80034de4` | 7 | 99.202774 | 99.202774 | 99.202774 | no gain |
 | `map_world_state_persist` / `0x80035b5c` | 6 | 97.528730 | 97.528730 | 97.528730 | same bytes; typed owner |
 | `effect_map_collision` / `0x80037850` | 6 | 99.873690 | 99.873690 | 99.873690 | no gain |
-| `effect_projectile_update_2d` / `0x80038298` | 5 | 99.934210 | 99.934210 | 99.934210 | no gain |
+| `effect_update_orbiting_projectile` / `0x80038298` | 5 | 99.934210 | 99.934210 | 99.934210 | no gain |
 | `effect_update_dispatch` / `0x80038a38` | 7 | 99.827810 | 99.827810 | 99.827810 | no gain |
 
 **01. `player_add_experience`** — Exact with one growth-row cursor reused in both level ranges; the last row and `growth[-1]` supply extension increments. Twelve alternatives include the productive two-pointer intermediate (92.036500%) and explicit deltas (98.357666%).
@@ -119,19 +119,19 @@ unit/source owner, reference evidence tiers and history.
 
 **08. `menu_status_panel`** — No gain. SDK quad helpers and ordinary settling/input phases retain or worsen the score. Baseline differs in 16 frame/save operands, with a 64-byte smaller frame. The complete SDK packet types are preserved.
 
-**09. `menu_draw_stats_header`** — Exact pre-existing comparison. The main-worktree candidate saved before this experiment gives one meaningful row spacing value to all 14 line advances. The other four independently written alternatives do not improve the baseline. This is reproduced evidence, not a new discovery attributed to this campaign.
+**09. `menu_draw_status_summary`** — Exact pre-existing comparison. The main-worktree candidate saved before this experiment gives one meaningful row spacing value to all 14 line advances. The other four independently written alternatives do not improve the baseline. This is reproduced evidence, not a new discovery attributed to this campaign.
 
 **10. `menu_item_model_preview`** — No gain. Matrix initialization and glyph-copy variants leave the best body with three reordered address-calculation instructions at +0xc4..+0xcc; complete size, calls and ordered referents agree.
 
 **11. `menu_draw_item_detail`** — Fuzzy gain only; original retained. Indexed/plain glyph-string copies reach 98.579230%, but turn a two-word scheduling swap at +0xec/+0xf4 into 13 unequal aligned words starting +0xd4. Row assignment, actual glyph cursors/countdowns and whole price-table selection do not close it. The first price-table spelling failed compilation and was corrected in a separate recorded attempt.
 
-**12. `menu_draw_item_name_frame`** — No gain. SDK XY/UV/rectangle macros, packet cursors, grouped emission and row-copy forms do not improve the baseline. It has a 64-byte smaller frame plus three reordered address-calculation words, 15 differing words in all.
+**12. `menu_draw_pickup_preview`** — No gain. SDK XY/UV/rectangle macros, packet cursors, grouped emission and row-copy forms do not improve the baseline. It has a 64-byte smaller frame plus three reordered address-calculation words, 15 differing words in all.
 
 **13. `menu_draw_window_backdrop`** — No gain. SDK quad forms, a real packet pointer and ordinary primitive emission leave the 12 frame/save differences unresolved. Baseline frame is 64 bytes smaller; no fictitious local is introduced.
 
 **14. `talk_show_dialogue_page`** — No gain. Decimal digit locals, separate stores and pathname cursors retain or worsen the eight register-word differences. Calls, ordered referents and the complete 164-byte extent agree.
 
-**15. `map_object_spawn_effect`** — No gain. SDK vector setup, coordinate grouping, sequence publication and angle chaining do not close the four-byte-shorter body. Baseline has a different saved-register set and sequence-count schedule, while calls and ordered referents agree.
+**15. `map_object_spawn_drop`** — No gain. SDK vector setup, coordinate grouping, sequence publication and angle chaining do not close the four-byte-shorter body. Baseline has a different saved-register set and sequence-count schedule, while calls and ordered referents agree.
 
 **16. `map_show_screen_image`** — No gain. Direct pathname access, decimal expressions/characters and real string cursors do not close the four-byte-longer body. The first difference is remainder register use at +0x30; floor/path address order and a load-delay nop also differ.
 
@@ -141,7 +141,7 @@ unit/source owner, reference evidence tiers and history.
 
 **19. `effect_map_collision`** — No gain. Result initialization, direct case returns, explicit zero case, unsigned cell guards and merging the inline helper do not close the single differing word at +0x718: retail nop versus an extra fallback result load in an unreachable masked-switch path. No return value is invented to eliminate it.
 
-**20. `effect_projectile_update_2d`** — No gain. Authentic byte phase, shared collision kind, one orbit angle, a real distance VECTOR and a position pointer do not close the ten frame/save differences. Baseline frame is 64 bytes smaller; trigonometric call order is preserved.
+**20. `effect_update_orbiting_projectile`** — No gain. Authentic byte phase, shared collision kind, one orbit angle, a real distance VECTOR and a position pointer do not close the ten frame/save differences. Baseline frame is 64 bytes smaller; trigonometric call order is preserved.
 
 **21. `effect_update_dispatch`** — No gain. Homing SDK operations individually and together, lightning countdown and shared scale publication do not close the baseline 42 register-word differences. Calls, complete size and ordered referents agree. The existing uninitialized homing-distance read is preserved rather than repaired as unrelated gameplay work.
 

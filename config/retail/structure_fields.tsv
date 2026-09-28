@@ -10,8 +10,8 @@ KfActor	0x05	0x01	tile_x	u8	supported	game/actor.h;asm;xrefs;actor_pool_load_pla
 KfActor	0x06	0x01	lifecycle	KfActorLifecycle	supported	game/actor.h;asm;xrefs;game-actor-states.md	lifecycle: dormant 0, active 1, waiting for range exit 2, disabled 3; disabled is also used for scripted hiding
 KfActor	0x07	0x01	spawn_chance	u8	supported	game/actor.h;asm;xrefs;semantic-field-names.md;asm;CFG;callers;callees;xrefs	placement chance shifted by 7 and compared with rand in actor awareness
 KfActor	0x08	0x01	action	KfActorAction	supported	game/actor.h;asm;xrefs;game-actor-states.md	behavior action ID (KF_ACTOR_ACTION_*), distinct from animation-table slots and resource animation IDs
-KfActor	0x09	0x01	death_drop_object_id	KfObjectId	supported	game/actor.h;asm;xrefs;semantic-field-names.md;asm;CFG;callers;callees;xrefs	actor death passes this object ID to map_object_spawn_effect; 0x63 suppresses the drop
-KfActor	0x0a	0x01	animation_id	KfAnimationClip	supported	game/actor.h;asm;xrefs;strict-enum-audit.md	animation selector
+KfActor	0x09	0x01	death_drop_object_id	KfObjectId	supported	game/actor.h;asm;xrefs;semantic-field-names.md;asm;CFG;callers;callees;xrefs	actor death passes this object ID to map_object_spawn_drop; 0x63 suppresses the drop
+KfActor	0x0a	0x01	animation_clip	KfAnimationClip	supported	game/actor.h;asm;xrefs;strict-enum-audit.md	animation selector
 KfActor	0x0b	0x01	vertical_state	KfActorVerticalState	supported	game/actor.h;asm;xrefs;game-actor-states.md	vertical movement policy: none 0, step-up 1, fall 2, long drop 3, jump attack 4
 KfActor	0x0c	0x02	unknown_0c	u8[2]	opaque	game/actor.h;asm;xrefs	meaning unresolved
 KfActor	0x0e	0x02	local_z	s16	supported	game/actor.h;asm;xrefs;actor_pool_load_placements;axis-from-position	local offset along z added to tile_z * 2000
@@ -23,7 +23,7 @@ KfActor	0x18	0x02	cell_z	u16	supported	game/actor.h;asm;xrefs	map cell z; every 
 KfActor	0x1a	0x02	unknown_1a	s16	opaque	game/actor.h;asm;xrefs	meaning unresolved
 KfActor	0x1c	0x10	position	VECTOR	supported	game/actor.h;asm;xrefs;actor_move_xz_with_collision	world position as a four-lane vector; actor_move_xz_with_collision copies all 16 bytes and audio calls pass it as VECTOR
 KfActor	0x2c	0x08	rotation	KfRotation	supported	game/actor.h;asm;xrefs;collision_query_world;typed-world-transforms.md	SDK/Euler rotation; collision captures all eight bytes including pad
-KfActor	0x34	0x04	animation_cache	KfPoolRecord *	supported	game/actor.h;asm;game_semantic_animation_slots.tsv	live animation record installed by the binder through the actor slot and cleared by actor_pool_clear or pool_record_release
+KfActor	0x34	0x04	animation_cache	KfAnimationCacheRecord *	supported	game/actor.h;asm;game_semantic_animation_slots.tsv	live animation record installed by the binder through the actor slot and cleared by actor_pool_clear or animation_cache_release
 KfActor	0x38	0x01	action_progress	KfActorActionProgress	supported	game/actor.h;asm;xrefs;game-actor-states.md;strict-enum-audit.md	action progress: initialization 0, running 1, selection lock 240, completion 255; also jump phases and action-specific counters
 KfActor	0x39	0x01	collision_state	KfActorCollisionState	supported	game/actor.h;asm;xrefs;game-actor-states.md	horizontal steering state: clear 0, axis slide 1, blocked/reversed heading 2; distinct from collision-query result codes
 KfActor	0x3a	0x02	movement_yaw	s16	supported	game/actor.h;asm;xrefs	movement heading
@@ -88,6 +88,13 @@ KfActorState	0x2b3c	0x04	current	KfActor *	supported	game/actor.h;asm;xrefs	acto
 KfActorState	0x2b40	0x02	current_index	u16	supported	game/actor.h;asm;xrefs	index of the actor being updated
 KfActorState	0x2b42	0x02	current_definition_id	u16	supported	game/actor.h;asm;xrefs	definition id of the actor being updated
 KfActorState	0x2b44	0x04	player_target	KfActor *	supported	game/actor.h;asm;xrefs	actor targeted by the player
+KfAnimationCacheRecord	0x00	0x02	state	KfAnimationCacheState	supported	pool.h;game_semantic_animation_pool.tsv;asm;game-asset-animation-layout.md	s16 stored enum: 0 free; 1 stale; 2 live after the binder refreshes scratch vertices
+KfAnimationCacheRecord	0x02	0x02	asset_index	u16	supported	pool.h;game_semantic_animation_pool.tsv;GAME:0x80020684;GAME:0x800206b8	registry index used to detect an instance asset change
+KfAnimationCacheRecord	0x04	0x02	clip_index	KF_ENUM_STORAGE(KfAnimationClip, u16)	supported	pool.h;game_semantic_animation_pool.tsv;GAME:0x800207ac;GAME:0x800208c0;strict-enum-audit.md	cached clip index; allocator and asset reinitialization invalidate it with 0xff
+KfAnimationCacheRecord	0x06	0x02	keyframe_index	u16	supported	pool.h;game_semantic_animation_pool.tsv;GAME:0x800207c0;GAME:0x800208ac	cached keyframe index compared with the binder selection
+KfAnimationCacheRecord	0x08	0x04	rest_morph	KfMorphObject *	supported	pool.h;game_semantic_animation_pool.tsv;GAME:0x800208a4;GAME:0x800208f8	asset-relative object-table target selected by the keyframe rest index
+KfAnimationCacheRecord	0x0c	0x04	cached_vertices	SVECTOR *	supported	pool.h;game_semantic_animation_pool.tsv;GAME:0x80020690;GAME:0x80020870;typed-animation-vertices.md	vertex_count times 8-byte allocation; full-weight morph cache passed to gteMIMefunc
+KfAnimationCacheRecord	0x10	0x04	owner_slot	KfAnimationCacheRecord **	supported	pool.h;game_semantic_animation_pool.tsv;GAME:0x80020688;GAME:0x800209f4	address of the instance record-pointer slot; release clears the pointed-to slot
 KfArmorRecord	0x00	0x02	unknown_00	u16	opaque	game/equipment.h;asm;player_recalculate_combat_stats	meaning unresolved
 KfArmorRecord	0x02	0x02	cutting_defense	u16	supported	game/equipment.h;asm;player_recalculate_combat_stats;game-player-damage-labels.md;retail-menu-glyphs;asm;equipment-accumulation	added twice to cutting_defense
 KfArmorRecord	0x04	0x02	striking_defense	u16	supported	game/equipment.h;asm;player_recalculate_combat_stats;game-player-damage-labels.md;retail-menu-glyphs;asm;equipment-accumulation	added to striking_defense
@@ -95,8 +102,8 @@ KfArmorRecord	0x06	0x02	piercing_defense	u16	supported	game/equipment.h;asm;play
 KfArmorRecord	0x08	0x02	poison_resistance	u16	supported	game/equipment.h;asm;player_recalculate_combat_stats;game-player-poison.md;retail-menu-glyph-0x88	unsigned equipment contribution to player poison resistance
 KfArmorRecord	0x0a	0x02	magic_defense	u16	supported	game/equipment.h;asm;player_recalculate_combat_stats;game-player-damage-labels.md;retail-menu-glyphs;asm;equipment-accumulation	added to magic_defense
 KfArmorRecord	0x0c	0x02	fire_defense	u16	supported	game/equipment.h;asm;player_recalculate_combat_stats;game-player-damage-labels.md;retail-menu-glyphs;asm;equipment-accumulation	added to fire_defense
-KfArmorRecord	0x0e	0x02	hp_regen_interval	u16	supported	game/equipment.h;asm;player_update	nonzero: player_adjust_hp(1) every N frames of player_state.unknown_58
-KfArmorRecord	0x10	0x02	hp_drain_interval	u16	supported	game/equipment.h;asm;player_update	nonzero: player_adjust_hp(-1) every N frames of player_state.unknown_58
+KfArmorRecord	0x0e	0x02	hp_regen_interval	u16	supported	game/equipment.h;asm;player_update	nonzero: player_adjust_hp(1) every N frames of player_state.equipment_effect_ticks
+KfArmorRecord	0x10	0x02	hp_drain_interval	u16	supported	game/equipment.h;asm;player_update	nonzero: player_adjust_hp(-1) every N frames of player_state.equipment_effect_ticks
 KfArmorRecord	0x12	0x0a	unknown_12	u8[10]	opaque	game/equipment.h;asm;player_recalculate_combat_stats	meaning unresolved
 KfArmorTable	0x00	0x498	entries	KfArmorRecord[42]	supported	game/equipment.h;asm;typed-record-tables.md	typed records selected by the game consumers
 KfAssetHeader	0x00	0x04	byte_size	u32	supported	game/asset.h;asm;asset_registry_load_tmd_archive	byte extent used to advance to the next packed asset
@@ -187,43 +194,32 @@ KfEffectDirectionWords	0x04	0x02	z	u16	supported	game/effect.h;asm;effect_pool_c
 KfEffectDirectionWords	0x06	0x02	pad	u16	supported	game/effect.h;asm;effect_pool_construct;effect_update_dispatch;game-effect-constructor.md	last halfword of the complete SDK vector copy
 KfEffectPropagation	0x00	0x02	generations_remaining	u16	supported	game/effect.h;semantic-field-names.md;asm;CFG;callers;callees;xrefs	kind 10 decrements the count passed to its child
 KfEffectPropagation	0x00	0x02	branch	KfEffectGroundBranchRole	supported	game/effect.h;semantic-field-names.md;asm;CFG;callers;callees;xrefs;ground-effect-branch-domain.md	kind 6 propagation branch: center, side or terminal
-KfEffectRecord	0x00	0x01	type	KfEffectType	supported	game/effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed;enum-field-review.md	packed actor/player targets and power/credit class; 0xff marks a free slot
-KfEffectRecord	0x01	0x01	kind	KfEffectKind	supported	game/effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	constructor dispatch selector and magic_records index
-KfEffectRecord	0x02	0x01	base_render_id	KfEffectRenderId	supported	game/effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed;semantic-field-names.md;asm;CFG;callers;callees;xrefs;enum-field-review.md	initial sprite or model selector; current ID cycles from this value
-KfEffectRecord	0x03	0x01	render_id	KfEffectRenderId	supported	game/effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed;semantic-field-names.md;asm;CFG;callers;callees;xrefs;enum-field-review.md	current sprite or model selector consumed by rendering
-KfEffectRecord	0x04	0x01	animation_clip	KfAnimationClip	supported	game/effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed;semantic-field-names.md;asm;CFG;callers;callees;xrefs;strict-enum-audit.md	animation clip index; 0xff selects billboard rendering
-KfEffectRecord	0x05	0x01	sound_played	KF_ENUM_STORAGE(KfAudioPlaybackResult, u8)	supported	game/effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed;semantic-field-names.md;asm;CFG;callers;callees;xrefs;strict-enum-audit.md	spatial-audio accepted latch; zero permits retry
-KfEffectRecord	0x06	0x01	id	u8	supported	game/effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	owning object id passed to the constructor
-KfEffectRecord	0x07	0x01	phase	KfEffectPhase	supported	game/effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed;semantic-field-names.md;asm;CFG;callers;callees;xrefs;strict-enum-audit.md	kind-specific lifecycle or age, captured at dispatch entry
-KfEffectRecord	0x08	0x02	visual	KfEffectVisualState	supported	game/effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed;semantic-field-names.md;asm;CFG;callers;callees;xrefs	kind 10 pulse scale shares storage with model animation phase
-KfEffectRecord	0x0a	0x02	unknown_0a	u16	opaque	game/effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	meaning unresolved
-KfEffectRecord	0x0c	0x10	position	VECTOR	supported	game/effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	world position copied wholesale from the constructor argument
+KfEffectRecord	0x00	0x01	type	KfEffectType	supported	game/effect.h;asm;effect_pool_constructor;effect_pool_spawn_floor_deformation;enum-field-review.md	packed actor/player targets and power/credit class; 0xff marks a free slot
+KfEffectRecord	0x01	0x01	kind	KfEffectKind	supported	game/effect.h;asm;effect_pool_constructor;effect_pool_spawn_floor_deformation	constructor dispatch selector and magic_records index
+KfEffectRecord	0x02	0x01	base_render_id	KfEffectRenderId	supported	game/effect.h;asm;effect_pool_constructor;effect_pool_spawn_floor_deformation;semantic-field-names.md;asm;CFG;callers;callees;xrefs;enum-field-review.md	initial sprite or model selector; current ID cycles from this value
+KfEffectRecord	0x03	0x01	render_id	KfEffectRenderId	supported	game/effect.h;asm;effect_pool_constructor;effect_pool_spawn_floor_deformation;semantic-field-names.md;asm;CFG;callers;callees;xrefs;enum-field-review.md	current sprite or model selector consumed by rendering
+KfEffectRecord	0x04	0x01	animation_clip	KfAnimationClip	supported	game/effect.h;asm;effect_pool_constructor;effect_pool_spawn_floor_deformation;semantic-field-names.md;asm;CFG;callers;callees;xrefs;strict-enum-audit.md	animation clip index; 0xff selects billboard rendering
+KfEffectRecord	0x05	0x01	sound_played	KF_ENUM_STORAGE(KfAudioPlaybackResult, u8)	supported	game/effect.h;asm;effect_pool_constructor;effect_pool_spawn_floor_deformation;semantic-field-names.md;asm;CFG;callers;callees;xrefs;strict-enum-audit.md	spatial-audio accepted latch; zero permits retry
+KfEffectRecord	0x06	0x01	id	u8	supported	game/effect.h;asm;effect_pool_constructor;effect_pool_spawn_floor_deformation	owning object id passed to the constructor
+KfEffectRecord	0x07	0x01	phase	KfEffectPhase	supported	game/effect.h;asm;effect_pool_constructor;effect_pool_spawn_floor_deformation;semantic-field-names.md;asm;CFG;callers;callees;xrefs;strict-enum-audit.md	kind-specific lifecycle or age, captured at dispatch entry
+KfEffectRecord	0x08	0x02	visual	KfEffectVisualState	supported	game/effect.h;asm;effect_pool_constructor;effect_pool_spawn_floor_deformation;semantic-field-names.md;asm;CFG;callers;callees;xrefs	kind 10 pulse scale shares storage with model animation phase
+KfEffectRecord	0x0a	0x02	unknown_0a	u16	opaque	game/effect.h;asm;effect_pool_constructor;effect_pool_spawn_floor_deformation	meaning unresolved
+KfEffectRecord	0x0c	0x10	position	VECTOR	supported	game/effect.h;asm;effect_pool_constructor;effect_pool_spawn_floor_deformation	world position copied wholesale from the constructor argument
 KfEffectRecord	0x1c	0x08	rotation	KfRotation	supported	game/effect.h;asm;effect_pool_construct;effect_update_dispatch;game-effect-constructor.md;LIBGTE.H;game-projectile-helpers.md	complete signed rotation vector including pad; SDK matrix/angle consumers; typed-effect-records.md
-KfEffectRecord	0x24	0x02	scale_x	u16	supported	game/effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	scale x; constructors default it to 0x1000 (1.0 fixed point)
-KfEffectRecord	0x26	0x02	scale_y	u16	supported	game/effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	scale y; constructors default it to 0x1000; warp shimmer sweeps it as intensity
-KfEffectRecord	0x28	0x02	scale_z	u16	supported	game/effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	scale z; constructors default it to 0x1000
-KfEffectRecord	0x2a	0x02	unknown_2a	u16	opaque	game/effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed	meaning unresolved
+KfEffectRecord	0x24	0x02	scale_x	u16	supported	game/effect.h;asm;effect_pool_constructor;effect_pool_spawn_floor_deformation	scale x; constructors default it to 0x1000 (1.0 fixed point)
+KfEffectRecord	0x26	0x02	scale_y	u16	supported	game/effect.h;asm;effect_pool_constructor;effect_pool_spawn_floor_deformation	scale y; constructors default it to 0x1000; warp shimmer sweeps it as intensity
+KfEffectRecord	0x28	0x02	scale_z	u16	supported	game/effect.h;asm;effect_pool_constructor;effect_pool_spawn_floor_deformation	scale z; constructors default it to 0x1000
+KfEffectRecord	0x2a	0x02	unknown_2a	u16	opaque	game/effect.h;asm;effect_pool_constructor;effect_pool_spawn_floor_deformation	meaning unresolved
 KfEffectRecord	0x2c	0x08	direction	KfEffectDirection	supported	game/effect.h;asm;effect_pool_construct;effect_update_dispatch;game-effect-constructor.md	complete constructor SVECTOR copy, reused as unsigned per-kind state
-KfEffectRecord	0x34	0x04	animation_cache	KfPoolRecord *	supported	game/effect.h;asm;game_semantic_animation_slots.tsv	live animation record slot passed directly to the binder by render_actor_sprite
-KfEffectRecord	0x38	0x02	control	KfEffectControl	supported	game/effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed;semantic-field-names.md;asm;CFG;callers;callees;xrefs	kind selects countdown, orbit angle, parent effect index or homing mode; not an audio handle
-KfEffectRecord	0x3a	0x02	propagation	KfEffectPropagation	supported	game/effect.h;asm;effect_pool_constructor;effect_pool_spawn_typed;semantic-field-names.md;asm;CFG;callers;callees;xrefs	kind 10 generation count or kind 6 branch selector
+KfEffectRecord	0x34	0x04	animation_cache	KfAnimationCacheRecord *	supported	game/effect.h;asm;game_semantic_animation_slots.tsv	live animation record slot passed directly to the binder by render_effect
+KfEffectRecord	0x38	0x02	control	KfEffectControl	supported	game/effect.h;asm;effect_pool_constructor;effect_pool_spawn_floor_deformation;semantic-field-names.md;asm;CFG;callers;callees;xrefs	kind selects countdown, orbit angle, parent effect index or homing mode; not an audio handle
+KfEffectRecord	0x3a	0x02	propagation	KfEffectPropagation	supported	game/effect.h;asm;effect_pool_constructor;effect_pool_spawn_floor_deformation;semantic-field-names.md;asm;CFG;callers;callees;xrefs	kind 10 generation count or kind 6 branch selector
 KfEffectRenderId	0x00	0x01	billboard	KfEffectBillboardId	supported	game/effect.h;asm;xrefs;enum-field-review.md	billboard bank ID, including animation frames and NONE sentinel
 KfEffectRenderId	0x00	0x01	model	KfEffectModelId	supported	game/effect.h;asm;xrefs;enum-field-review.md	model bank ID and NONE sentinel
-KfEffectSprite	0x00	0x01	state	KfSpriteState	supported	game/render.h;asm;render_effect_sprites;render_frame	1 is active; every other value stops traversal, including hidden 0 and the authored 0xff end row
-KfEffectSprite	0x01	0x01	animation_clip	KfAnimationClip	supported	game/render.h;asm;render_effect_sprites;strict-enum-audit.md	animation clip passed directly to the shared vertex cache binder
-KfEffectSprite	0x02	0x02	asset_variant	u16	supported	game/render.h;asm;render_effect_sprites	asset variant passed to render_bind_animated_instance
-KfEffectSprite	0x04	0x02	scale	u16	supported	game/render.h;asm;render_effect_sprites	uniform X/Y fixed-point scale numerator
-KfEffectSprite	0x06	0x02	translation_x	s16	supported	game/render.h;asm;render_effect_sprites	model translation X
-KfEffectSprite	0x08	0x02	translation_y	s16	supported	game/render.h;asm;render_effect_sprites	model translation Y
-KfEffectSprite	0x0a	0x02	translation_z	s16	supported	game/render.h;asm;render_effect_sprites	model translation Z
-KfEffectSprite	0x0c	0x02	unknown_0c	u8[2]	opaque	game/render.h;asm;retail-initializer	unread bytes before the rotation vector
-KfEffectSprite	0x0e	0x08	rotation	SVECTOR	supported	game/render.h;asm;render_effect_sprites;render_frame	model rotation; render_frame updates vz to face the view
-KfEffectSprite	0x16	0x02	unknown_16	u8[2]	opaque	game/render.h;asm;retail-initializer	unread bytes before animation_cache
-KfEffectSprite	0x18	0x04	animation_cache	KfPoolRecord *	supported	game/render.h;asm;game_semantic_animation_slots.tsv	live animation record installed through this slot by the binder; both retail effect_sprites initializers contain null pointers
 KfEffectState	0x000	0x1e0	magic	KfMagicTable	supported	game/effect.h;asm;magic_load_records:120-words;game_main_loop:whole-clear;typed-record-tables.md	runtime-loaded magic rows; player selection and weapon-bound indices 5/8/18/20
-KfEffectState	0x1e0	0xb40	records	KfEffectRecord[48]	supported	game/effect.h;asm;effect_pool_sweep;effect_pool_reset	48 live effect records with 60-byte stride
+KfEffectState	0x1e0	0xb40	records	KfEffectRecord[48]	supported	game/effect.h;asm;effect_pool_update;effect_pool_reset	48 live effect records with 60-byte stride
 KfEffectState	0xd20	0x4	current_magic	KfMagicRecord *	supported	game/effect.h;asm;effect_pool_set_current;effect_update_dispatch	magic row selected from the current effect kind
-KfEffectState	0xd24	0x4	current_record	KfEffectRecord *	supported	game/effect.h;asm;effect_pool_set_current;effect_pool_sweep;effect_update_dispatch	active effect record; selector derives the magic base by subtracting 3364 from this slot address
+KfEffectState	0xd24	0x4	current_record	KfEffectRecord *	supported	game/effect.h;asm;effect_pool_set_current;effect_pool_update;effect_update_dispatch	active effect record; selector derives the magic base by subtracting 3364 from this slot address
 KfEffectVisualState	0x00	0x02	animation_phase	u16	supported	game/effect.h;semantic-field-names.md;asm;CFG;callers;callees;xrefs	model animation phase passed to render_bind_animated_instance
 KfEffectVisualState	0x00	0x02	pulse_base_scale	u16	supported	game/effect.h;semantic-field-names.md;asm;CFG;callers;callees;xrefs	kind 10 baseline for sinusoidal scale modulation
 KfEulerAngles	0x00	0x02	x	s16	supported	lib/math.h;asm;xrefs	x angle
@@ -270,12 +266,12 @@ KfGraphicsRuntimeGame	0x20110	0x24	tmd_state	KfTmdState	supported	game_semantic_
 KfGraphicsRuntimeGame	0x20134	0xc0	asset_registry_entries	KfAssetHeader *[48]	supported	game/graphics.h;asm;four-byte-index-stride;shipped-archive-census;KfEffectModelId;cast-owner-reduction.md	known accessed registry prefix through effect-model slot 47; original complete capacity remains unresolved
 KfGraphicsRuntimeGame	0x201f4	0x30	unknown_201f4	u8[48]	opaque	game/graphics.h;shipped-archive-census;cast-owner-reduction.md	unresolved remainder after the known registry prefix; neither a padding role nor additional pointer entries are asserted
 KfGraphicsRuntimeGame	0x20224	0x4	current_tmd_vertices	SVECTOR *	supported	game_semantic_display_tmd.tsv;asm;xrefs;game-graphics-runtime-owner.md;typed-animation-vertices.md	current TMD vertex-array pointer; consumers scale indices by the eight-byte element width
-KfGraphicsRuntimeGame	0x20228	0xf0	pool_records	KfPoolRecord[12]	supported	game_semantic_animation_pool.tsv;reviewed-reloc;asm;game-graphics-runtime-owner.md	complete animation cache: five lifecycle scans visit 12 records of stride 20
+KfGraphicsRuntimeGame	0x20228	0xf0	animation_cache_records	KfAnimationCacheRecord[12]	supported	game_semantic_animation_pool.tsv;reviewed-reloc;asm;game-graphics-runtime-owner.md	complete animation cache: five lifecycle scans visit 12 records of stride 20
 KfGraphicsRuntimeGame	0x20318	0x1f40	tmd_projected_vertices	KfScreenVertex[1000]	candidate	game/graphics.h;asm;pool.c-morph-scratch-start;open/render.h-sibling-capacity	projected screen vertices; the 1000-entry extent is the reviewed morph-scratch start and matches OPEN's independent runtime, not a proven original declaration
 KfGraphicsRuntimeGame	0x22258	0x1f48	morph_scratch	SVECTOR[1001]	candidate	game/graphics.h;asm;pool.c;neighbor-field-extents	animated-vertex blend scratch; element 0 is the header-sized extra vector and the 1001-entry extent is the remainder before the texture pages, not a proven original capacity
-KfGraphicsRuntimeGame	0x241a0	0x6	effect5_texture_pages	u16[3]	supported	game_semantic_effect5_texture_tables.tsv;asm;three-contiguous-stores;indexed-read;game-graphics-runtime-owner.md	three texture-page IDs prepared for floor mode five and indexed by the actor descriptor high nibble
+KfGraphicsRuntimeGame	0x241a0	0x6	actor_texture_pages	u16[3]	supported	game_semantic_effect5_texture_tables.tsv;asm;three-contiguous-stores;indexed-read;game-graphics-runtime-owner.md	three floor-5 texture-page IDs selected by render_actor from the actor model descriptor high nibble
 KfGraphicsRuntimeGame	0x241a6	0xa	unknown_241a6	u8[10]	opaque	game/graphics.h;asm;neighbor-field-extents;game-graphics-runtime-owner.md	unresolved storage interval; no original array capacity or padding role claimed
-KfGraphicsRuntimeGame	0x241b0	0x6	effect5_texture_cluts	u16[3]	supported	game_semantic_effect5_texture_tables.tsv;asm;three-contiguous-stores;paired-index;game-graphics-runtime-owner.md	three CLUT IDs paired with effect5_texture_pages
+KfGraphicsRuntimeGame	0x241b0	0x6	actor_texture_cluts	u16[3]	supported	game_semantic_effect5_texture_tables.tsv;asm;three-contiguous-stores;paired-index;game-graphics-runtime-owner.md	three floor-5 CLUT IDs paired with actor_texture_pages
 KfGraphicsRuntimeGame	0x241b6	0xa	unknown_241b6	u8[10]	opaque	game/graphics.h;asm;neighbor-field-extents;game-graphics-runtime-owner.md	unresolved storage interval; no original array capacity or padding role claimed
 KfGraphicsRuntimeGame	0x241c0	0x2	active_render_clut	u16	supported	game_semantic_render_material.tsv;asm;LIBGPU.H;game-graphics-runtime-owner.md	active palette selector copied into GPU primitive CLUT fields; historical declaration remains WIP
 KfGraphicsRuntimeGame	0x241c2	0x2	active_render_tpage	u16	supported	game_semantic_render_material.tsv;asm;LIBGPU.H;game-graphics-runtime-owner.md	active texture page copied into GPU primitives; historical declaration remains WIP
@@ -319,9 +315,20 @@ KfGraphicsRuntimeOpen	0x24700	0x80	light_quadrant_matrices	MATRIX[4]	supported	o
 KfGraphicsRuntimeOpen	0x24780	0x4	active_cell_window	KfCellWindow *	supported	open/render.h;asm;docs/patterns/open-graphics-runtime-owner.md	preserved subobject or field at its reviewed physical offset; source pointer is const-qualified
 KfGraphicsRuntimeOpen	0x24784	0x2	tmd_projection_shift	s16	supported	open/render.h;asm;docs/patterns/open-graphics-runtime-owner.md	preserved subobject or field at its reviewed physical offset
 KfGraphicsRuntimeOpen	0x24786	0x2	unknown_24786	u8[2]	opaque	open/render.h;asm;docs/patterns/open-graphics-runtime-owner.md	unclassified interval within the independently cleared region
-KfHudSprite	0x00	0x01	state	KfSpriteState	supported	game/render.h;asm;render_hud_gauges;render_frame	1 emits the row, 0 hides it, and 0xff terminates the table
+KfHudModel	0x00	0x01	state	KfSpriteState	supported	game/render.h;asm;render_hud_models;render_frame	1 is active; every other value stops traversal, including hidden 0 and the authored 0xff end row
+KfHudModel	0x01	0x01	animation_clip	KfAnimationClip	supported	game/render.h;asm;render_hud_models;strict-enum-audit.md	animation clip passed directly to the shared vertex cache binder
+KfHudModel	0x02	0x02	animation_phase	u16	supported	game/render.h;asm;render_hud_models	animation phase passed as the fourth (phase) argument to render_bind_animated_instance
+KfHudModel	0x04	0x02	scale	u16	supported	game/render.h;asm;render_hud_models	uniform X/Y fixed-point scale numerator
+KfHudModel	0x06	0x02	translation_x	s16	supported	game/render.h;asm;render_hud_models	model translation X
+KfHudModel	0x08	0x02	translation_y	s16	supported	game/render.h;asm;render_hud_models	model translation Y
+KfHudModel	0x0a	0x02	translation_z	s16	supported	game/render.h;asm;render_hud_models	model translation Z
+KfHudModel	0x0c	0x02	unknown_0c	u8[2]	opaque	game/render.h;asm;retail-initializer	unread bytes before the rotation vector
+KfHudModel	0x0e	0x08	rotation	SVECTOR	supported	game/render.h;asm;render_hud_models;render_frame	model rotation; render_frame updates vz to face the view
+KfHudModel	0x16	0x02	unknown_16	u8[2]	opaque	game/render.h;asm;retail-initializer	unread bytes before animation_cache
+KfHudModel	0x18	0x04	animation_cache	KfAnimationCacheRecord *	supported	game/render.h;asm;game_semantic_animation_slots.tsv	live animation record installed through this slot by the binder; both retail hud_models initializers contain null pointers
+KfHudSprite	0x00	0x01	state	KfSpriteState	supported	game/render.h;asm;render_hud_sprites;render_frame	1 emits the row, 0 hides it, and 0xff terminates the table
 KfHudSprite	0x01	0x01	unknown_01	u8	opaque	game/render.h;retail-initializers	unread byte before the sprite descriptor
-KfHudSprite	0x02	0x0c	sprite	KfSpriteQuad	supported	game/render.h;asm;render_hud_gauges;render_frame	complete descriptor passed to render_screen_sprite; gauge widths are updated in place
+KfHudSprite	0x02	0x0c	sprite	KfSpriteQuad	supported	game/render.h;asm;render_hud_sprites;render_frame	complete descriptor passed to render_screen_sprite; gauge widths are updated in place
 KfMagicRecord	0x00	0x01	learned	KfMagicLearningState	supported	magic.h;asm;player_recalculate_combat_stats;player_update;game-magic-learning-state.md;save_file_write_slot;save_file_read_slot	byte learning state: unlearned0/learned1; menus require exactly1 while progression and Flame Sword preserve nonzero tests; saved verbatim for all24 records
 KfMagicRecord	0x01	0x01	charge_rate	u8	supported	magic.h;asm;player_update	fixed6_ratio_step span while charging magic
 KfMagicRecord	0x02	0x06	sounds	SoundRef[2]	supported	magic.h;asm;effect_update_dispatch;audio_play_spatial	primary and secondary spatial sound references
@@ -357,15 +364,15 @@ KfMapEvent	0x0f	0x01	animation_clip	KfAnimationClip	supported	lib/map.h;map-even
 KfMapEvent	0x10	0x01	collision_turn_pending	KfMapEventCollisionTurn	supported	lib/map.h;map-event-animation-turn-domains.md;asm;xrefs;semantic-field-names.md;asm;CFG;callers;callees;xrefs	collision selected a yaw; suppresses another random heading until the turn completes
 KfMapEvent	0x11	0x01	unknown_11	u8	opaque	lib/map.h;asm;xrefs	meaning unresolved
 KfMapEvent	0x12	0x02	animation_phase	u16	supported	lib/map.h;asm;xrefs;game-map-dialogue-state.md	u16 animation keyframe phase, modulo 4096 during continuous playback; separate from yaw
-KfMapEvent	0x14	0x04	position_x	s32	supported	lib/map.h;asm;xrefs	world x
-KfMapEvent	0x18	0x04	position_z	s32	supported	lib/map.h;asm;xrefs	world z
+KfMapEvent	0x14	0x04	home_x	s32	supported	lib/map.h;asm;xrefs	authored home world x; copied into reference_position at load and never updated
+KfMapEvent	0x18	0x04	home_z	s32	supported	lib/map.h;asm;xrefs	authored home world z; copied into reference_position at load and never updated
 KfMapEvent	0x1c	0x02	cell_x	u16	supported	lib/map.h;asm;xrefs	map cell x
 KfMapEvent	0x1e	0x02	cell_z	u16	supported	lib/map.h;asm;xrefs	map cell z
 KfMapEvent	0x20	0x02	radius	u16	supported	lib/map.h;asm;xrefs	interaction radius
 KfMapEvent	0x22	0x02	unknown_22	u16	opaque	lib/map.h;asm;xrefs	meaning unresolved
 KfMapEvent	0x24	0x10	reference_position	VECTOR	supported	lib/map.h;asm;xrefs;collision_query_world;typed-world-transforms.md	current query/render position; wander updates X/Z, floor load sets Y, collision copies the fourth lane
 KfMapEvent	0x34	0x08	rotation	SVECTOR	supported	lib/map.h;asm;xrefs;semantic-field-names.md;asm;CFG;callers;callees;xrefs;collision_query_world;typed-world-transforms.md	complete signed SDK rotation including copied pad; loader initializes X/Z to zero and yaw drives wandering
-KfMapEvent	0x3c	0x04	animation_cache	KfPoolRecord *	supported	lib/map.h;asm;game_semantic_animation_slots.tsv	live animation record installed through the event+0x3c slot; follows the rotation view and precedes rotation_target without overlap
+KfMapEvent	0x3c	0x04	animation_cache	KfAnimationCacheRecord *	supported	lib/map.h;asm;game_semantic_animation_slots.tsv	live animation record installed through the event+0x3c slot; follows the rotation view and precedes rotation_target without overlap
 KfMapEvent	0x40	0x02	rotation_target	s16	supported	lib/map.h;asm;xrefs	target rotation
 KfMapEvent	0x42	0x02	unknown_42	u16	opaque	lib/map.h;asm;xrefs	meaning unresolved
 KfMapEventDefinition	0x00	0x01	state	KfMapEventState	supported	lib/map.h;asm;xrefs;game-map-dialogue-state.md	0 authored inactive; 1 active; 3 runtime disabled; 255 free/end marker
@@ -446,9 +453,9 @@ KfMapObjectSpawn	0x00	0x01	effect_id	u8	supported	lib/map.h;asm;typed-map-links.
 KfMapObjectState	0x00	0x500	definitions	KfMapObjectDefinitionTable	supported	lib/map.h;asm;base-register;map_object_pool_clear_link;typed-map-tables.md	member of the map_object_state aggregate
 KfMapObjectState	0x500	0x20a8	objects	KfMapObject[190]	supported	lib/map.h;asm;base-register;map_object_pool_clear_link	member of the map_object_state aggregate
 KfMapObjectState	0x25a8	0xa	unknown_25a8	u8[10]	opaque	game_main_loop;OPEN-pool-tail-lineage;data-repair-campaign.md	within complete startup clear; no identified nonzero consumer
-KfMapObjectState	0x25b2	0x2	effect_sequence_160	u16	supported	asm;map_object_pool_clear;data-repair-campaign.md	wrapping sequence for reserved slots 160 through 169
-KfMapObjectState	0x25b4	0x2	effect_sequence_170	u16	supported	asm;map_object_pool_clear;data-repair-campaign.md	wrapping sequence for reserved slots 170 through 179
-KfMapObjectState	0x25b6	0x2	effect_sequence_180	u16	supported	asm;map_object_pool_clear;data-repair-campaign.md	wrapping sequence for reserved slots 180 through 189
+KfMapObjectState	0x25b2	0x2	gold_drop_sequence	u16	supported	asm;map_object_pool_clear;data-repair-campaign.md	wrapping sequence for reserved slots 160 through 169
+KfMapObjectState	0x25b4	0x2	definition_drop_sequence	u16	supported	asm;map_object_pool_clear;data-repair-campaign.md	wrapping sequence for reserved slots 170 through 179
+KfMapObjectState	0x25b6	0x2	placement_drop_sequence	u16	supported	asm;map_object_pool_clear;data-repair-campaign.md	wrapping sequence for reserved slots 180 through 189
 KfMapOrientationGrid	0x00	0x2710	cells	KfMapOrientation[100][100]	supported	map_data.h;strict-enum-audit.md;map_load;map_object_mark_collision_edge;render_map_cells	typed cell selectors share the unchanged 0x2710-byte resource-copy span
 KfMapOrientationGrid	0x00	0x2710	linear	KfMapOrientation[10000]	supported	map_data.h;asm;map_floor_height_for_cell_position;cast-union-debt.md	same typed row-major cells addressed by a flat collision index; dual-index union is a reconstruction convenience
 KfMapOrientationGrid	0x00	0x2710	words	u32[2500]	supported	map_data.h;asm;map_resource_copy_words;resource_stream_copy_words	aligned word-transfer representation sharing the complete cell-grid extent
@@ -464,13 +471,13 @@ KfMapSavedWorld	0x0	0x2134	floors	KfMapSavedFloor[5]	supported	lib/map.h;asm;gam
 KfMemoryAllocationState	0x0	0x4	cursor	u8 *	supported	memory.h;asm;typed-memory-owner.md	null selects heap allocations; otherwise next arena byte
 KfMemoryAllocationState	0x4	0x44	stack	u32[17]	supported	memory.h;asm;typed-memory-owner.md	depth at index zero and generic size-or-heap-pointer entries after it
 KfMemoryArena	0x0	0x4	start	u8 *	supported	memory.h;asm;typed-memory-owner.md	base restored by allocation reset
-KfMemoryArena	0x4	0x4	end	u8 *	supported	memory.h;asm;typed-memory-owner.md	inclusive arena end
+KfMemoryArena	0x4	0x4	last	u8 *	supported	memory.h;asm;typed-memory-owner.md;memory_capture_system_heap_start	inclusive last arena byte; the system heap starts at last + 1
 KfMemoryArena	0x8	0x48	allocation	KfMemoryAllocationState	supported	memory.h;asm;typed-memory-owner.md	cursor-relative retail reset accesses start at -8 and stack depth at +4
 KfMemoryArena	0x50	0x4	system_heap_start	u8 *	supported	asm;cross-overlay-lineage;memory_capture_system_heap_start;data-repair-campaign.md	first system-heap byte captured after the inclusive arena end
 KfMemoryArena	0x54	0x4	system_heap_size	s32	supported	asm;cross-overlay-lineage;memory_reset_system_heap;data-repair-campaign.md	byte extent passed to InitHeap
 KfMenuAssets	0x0	0x140	background_quads	POLY_FT4[2][4]	supported	game/menu.h;game_menu_assets.md;asm;STAT.DAT	complete runtime-loaded menu asset block
-KfMenuAssets	0x140	0x50	mid_depth_quads	POLY_FT4[2]	supported	game/menu.h;game_menu_assets.md;asm;STAT.DAT	complete runtime-loaded menu asset block
-KfMenuAssets	0x190	0x50	foreground_quads	POLY_FT4[2]	supported	game/menu.h;game_menu_assets.md;asm;STAT.DAT	complete runtime-loaded menu asset block
+KfMenuAssets	0x140	0x50	magic_artwork_quads	POLY_FT4[2]	supported	game/menu.h;game_menu_assets.md;asm;STAT.DAT;menu_add_magic_artwork_quad	126x192 right-panel picture quad per buffer (x174..300, y24..216, tpage 0x1f); linked only for spell artwork at OT depth 500
+KfMenuAssets	0x190	0x50	message_image_quads	POLY_FT4[2]	supported	game/menu.h;game_menu_assets.md;asm;STAT.DAT;menu_add_message_image_quad	204x100 centred picture quad per buffer (x58..262, y70..170, tpage 0x1f); linked at OT depth 0 for save/load/power-off message images
 KfMenuAssets	0x1e0	0x120	dialog_quads	POLY_F4[2][6]	supported	game/menu.h;game_menu_assets.md;asm;STAT.DAT	complete runtime-loaded menu asset block
 KfMenuAssets	0x300	0xc	number_atlas	MenuSpriteDef	supported	game/menu.h;game_menu_assets.md;asm;STAT.DAT	complete runtime-loaded menu asset block
 KfMenuAssets	0x30c	0xc	glyph_atlas	MenuSpriteDef	supported	game/menu.h;game_menu_assets.md;asm;STAT.DAT	complete runtime-loaded menu asset block
@@ -590,7 +597,7 @@ KfPlayerState	0x68	0x04	equipped_weapon_record	KfWeaponRecord *	supported	game/p
 KfPlayerState	0x6c	0x04	weapon_asset_buffer	KfAssetHeader *	supported	game/player.h;data_identities.tsv;game-asset-animation-layout.md	49152-byte weapon asset allocation; loaded header passed to asset_registry_set and pointer preserved across save restoration
 KfPlayerState	0x70	0x02	weapon_attack_phase	s16	supported	game/player.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0x72	0x02	unknown_72	u8[2]	opaque	game/player.h;data_identities.tsv	unresolved bytes
-KfPlayerState	0x74	0x04	weapon_animation_cache	KfPoolRecord *	supported	game/player.h;asm;game_semantic_animation_slots.tsv	equipped weapon animation record; cleared on equip, passed by address to the binder, and preserved across save-file player-state copies
+KfPlayerState	0x74	0x04	weapon_animation_cache	KfAnimationCacheRecord *	supported	game/player.h;asm;game_semantic_animation_slots.tsv	equipped weapon animation record; cleared on equip, passed by address to the binder, and preserved across save-file player-state copies
 KfPlayerState	0x78	0x01	weapon_magic_shots_remaining	u8	supported	game/player.h;data_identities.tsv;semantic-field-names.md;asm;CFG;callers;callees;xrefs	decremented per emitted weapon-magic shot; final shot charges MP
 KfPlayerState	0x79	0x01	weapon_magic_delay	u8	supported	game/player.h;data_identities.tsv;semantic-field-names.md;asm;CFG;callers;callees;xrefs	emission countdown; emits at 1 and reloads per-weapon spacing
 KfPlayerState	0x7a	0x01	weapon_attack_fully_charged	KfWeaponAttackCharge	supported	game/player.h;data_identities.tsv;strict-enum-audit.md	member of the player_state aggregate
@@ -614,7 +621,7 @@ KfPlayerState	0x9a	0x08	view_rotation_offset	SVECTOR	supported	game/player.h;dat
 KfPlayerState	0xa2	0x01	update_state	KfPlayerUpdateState	supported	game/player.h;data_identities.tsv;strict-enum-audit.md	member of the player_state aggregate
 KfPlayerState	0xa3	0x01	unknown_a3	u8	opaque	game/player.h;data_identities.tsv	unresolved bytes
 KfPlayerState	0xa4	0x10	camera_position	VECTOR	supported	game/player.h;data_identities.tsv	member of the player_state aggregate
-KfPlayerState	0xb4	0x04	floor_height	s32	supported	game/player.h;data_identities.tsv	member of the player_state aggregate
+KfPlayerState	0xb4	0x04	foot_height	s32	supported	game/player.h;data_identities.tsv	Y of the player feet: set to the cell floor height on sync/landing, integrated by vertical velocity while stepping or falling; camera Y and collision queries derive from it
 KfPlayerState	0xb8	0x08	camera_rotation	SVECTOR	supported	game/player.h;data_identities.tsv	member of the player_state aggregate
 KfPlayerState	0xc0	0x0c	motion_state	KfPlayerMotionState	supported	game/player.h;data_identities.tsv;typed-packed-state.md	member of the player_state aggregate
 KfPlayerState	0xcc	0x02	previous_map_cell	KfMapCell	supported	game/player.h;data_identities.tsv	member of the player_state aggregate
@@ -630,13 +637,6 @@ KfPlayerVitals	0x00	0x02	maximum_hp	u16	supported	game/player.h;asm;xrefs	maximu
 KfPlayerVitals	0x02	0x02	current_hp	u16	supported	game/player.h;asm;xrefs	current HP
 KfPlayerVitals	0x04	0x02	maximum_mp	u16	supported	game/player.h;asm;xrefs	maximum MP
 KfPlayerVitals	0x06	0x02	current_mp	u16	supported	game/player.h;asm;xrefs	current MP
-KfPoolRecord	0x00	0x02	state	KfAnimationCacheState	supported	pool.h;game_semantic_animation_pool.tsv;asm;game-asset-animation-layout.md	s16 stored enum: 0 free; 1 stale; 2 live after the binder refreshes scratch vertices
-KfPoolRecord	0x02	0x02	asset_index	u16	supported	pool.h;game_semantic_animation_pool.tsv;GAME:0x80020684;GAME:0x800206b8	registry index used to detect an instance asset change
-KfPoolRecord	0x04	0x02	clip_index	KF_ENUM_STORAGE(KfAnimationClip, u16)	supported	pool.h;game_semantic_animation_pool.tsv;GAME:0x800207ac;GAME:0x800208c0;strict-enum-audit.md	cached clip index; allocator and asset reinitialization invalidate it with 0xff
-KfPoolRecord	0x06	0x02	keyframe_index	u16	supported	pool.h;game_semantic_animation_pool.tsv;GAME:0x800207c0;GAME:0x800208ac	cached keyframe index compared with the binder selection
-KfPoolRecord	0x08	0x04	rest_morph	KfMorphObject *	supported	pool.h;game_semantic_animation_pool.tsv;GAME:0x800208a4;GAME:0x800208f8	asset-relative object-table target selected by the keyframe rest index
-KfPoolRecord	0x0c	0x04	cached_vertices	SVECTOR *	supported	pool.h;game_semantic_animation_pool.tsv;GAME:0x80020690;GAME:0x80020870;typed-animation-vertices.md	vertex_count times 8-byte allocation; full-weight morph cache passed to gteMIMefunc
-KfPoolRecord	0x10	0x04	owner_slot	KfPoolRecord **	supported	pool.h;game_semantic_animation_pool.tsv;GAME:0x80020688;GAME:0x800209f4	address of the instance record-pointer slot; release clears the pointed-to slot
 KfPrimitiveBuffer	0x00	0x04	start	u8 *	supported	render_types.h;game_semantic_display_tmd.tsv;asm;xrefs	first byte of the primitive allocation range
 KfPrimitiveBuffer	0x04	0x04	end	u8 *	supported	render_types.h;game_semantic_display_tmd.tsv;asm;xrefs	one-past-end boundary initialized from start plus the overlay-specific buffer span
 KfPrimitiveBuffer	0x08	0x04	cursor	u8 *	supported	render_types.h;game_semantic_display_tmd.tsv;asm;xrefs	current primitive allocation cursor reset to start at frame begin
@@ -650,8 +650,8 @@ KfPsxSaveHeader	0x80	0x180	icon_frames	u8[3][128]	supported	game/save.h;save_fil
 KfRenderState	0x00	0x20	view_matrix	MATRIX	supported	game/render.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
 KfRenderState	0x20	0x20	pitch_matrix	MATRIX	supported	game/render.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
 KfRenderState	0x40	0x20	light_matrix	MATRIX	supported	game/render.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
-KfRenderState	0x60	0x20	light_matrix_copy	MATRIX	supported	game/render.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
-KfRenderState	0x80	0x20	effect_color_matrix	MATRIX	supported	game/render.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize;semantic-field-names.md;asm;CFG;callers;callees;xrefs	SetColorMatrix input in render_effect_sprites; initialized from color table 3 and interpolated by death fade
+KfRenderState	0x60	0x20	map_event_light_matrix	MATRIX	supported	game/render.h;game_semantic_display_tmd.tsv;asm;base-register;render_initialize;render_entities;map_reveal_fade	light matrix installed for map events by render_entities; initialized from light_matrix and interpolated by map_reveal_fade
+KfRenderState	0x80	0x20	hud_model_color_matrix	MATRIX	supported	game/render.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize;semantic-field-names.md;asm;CFG;callers;callees;xrefs	SetColorMatrix input in render_hud_models; initialized from color table 3 by map_load_floor and interpolated by the death fades
 KfRenderState	0xa0	0x04	fog_near_distance	s32	supported	game/render.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
 KfRenderState	0xa4	0x10	view_position	VECTOR	supported	game/render.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
 KfRenderState	0xb4	0x08	view_rotation	SVECTOR	supported	game/render.h;game_semantic_display_tmd.tsv;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
@@ -665,8 +665,8 @@ KfRenderStateOpen	0x64	0x10	view_position	VECTOR	supported	open/render.h;asm;bas
 KfRenderStateOpen	0x74	0x08	view_rotation	SVECTOR	supported	open/render.h;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
 KfRenderStateOpen	0x7c	0x04	view_cell	KfVecXZs	supported	open/render.h;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
 KfRenderStateOpen	0x80	0x80	quadrant_matrices	MATRIX[4]	supported	open/render.h;asm;base-register;render_set_view_transform;render_initialize	member of the render_state aggregate
-KfRotation	0x00	0x08	vector	SVECTOR	supported	lib/math.h;asm;effect_pool_construct;effect_projectile_update_3d;typed-effect-records.md;typed-world-transforms.md	complete SDK vector copied with its pad halfword
-KfRotation	0x00	0x06	angles	KfEulerAngles	supported	lib/math.h;asm;render_actor_sprite;matrix_set_rotation_yxz;typed-effect-records.md;typed-world-transforms.md	signed Euler components supplied to the game matrix helper
+KfRotation	0x00	0x08	vector	SVECTOR	supported	lib/math.h;asm;effect_pool_construct;effect_update_swinging_hazard;typed-effect-records.md;typed-world-transforms.md	complete SDK vector copied with its pad halfword
+KfRotation	0x00	0x06	angles	KfEulerAngles	supported	lib/math.h;asm;render_effect;matrix_set_rotation_yxz;typed-effect-records.md;typed-world-transforms.md	signed Euler components supplied to the game matrix helper
 KfSaveDirectory	0x00	0x04	slot_ids	KF_ENUM_STORAGE(KfSaveSlotId, u8)[4]	supported	game/save.h;asm;xrefs	four byte directory tags: empty0, logical slots1..3, spare4; signed-halfword API domain and byte storage: save-slot-id-domain.md
 KfSaveDirectory	0x04	0x1c	reserved	u8[28]	opaque	game/save.h;asm;xrefs	reserved/unknown header range
 KfSaveDirectory	0x20	0x60	summaries	KfSaveSlotSummary[4]	supported	game/save.h;asm;xrefs	four slot summaries
@@ -675,15 +675,15 @@ KfSaveHeader	0x200	0x80	directory	KfSaveDirectory	supported	game/save.h;asm;xref
 KfSavePayload	0x00	0xe0	player_state	u32[56]	supported	game/save.h;save_file_write_slot;save_file_read_slot;aligned-word-copy	verbatim copy of the 0xe0-byte player block starting at player_experience; word-aligned copy loop
 KfSavePayload	0xe0	0x22c	unknown_0e0	u8[556]	opaque	game/save.h;asm	not touched by the write/read pair
 KfSavePayload	0x30c	0x2134	world_state	KfMapSavedWorld	supported	game/save.h;save_file_write_slot;save_file_read_slot;aligned-word-copy;game-map-script-state.md	word-aligned saved world: five 1700-byte slots with typed floor-script prefixes
-KfSavePayload	0x2440	0xf0	item_stock	u8[3][80]	supported	game/save.h;game_state_initialize;item_menu_buy;save_file_write_slot;save_file_read_slot;alignment-checked-copy	complete copy of the three 80-byte item_stock banks; player quantities followed by two shop-stock/availability banks
+KfSavePayload	0x2440	0xf0	item_stock	u8[3][80]	supported	game/save.h;game_state_initialize;shop_menu_buy;save_file_write_slot;save_file_read_slot;alignment-checked-copy	complete copy of the three 80-byte item_stock banks; player quantities followed by two shop-stock/availability banks
 KfSavePayload	0x2530	0x18	magic_flags	KfMagicLearningState[24]	supported	game/save.h;save_file_write_slot;save_file_read_slot;20-byte-record-stride;game-magic-learning-state.md	24 learning-state bytes copied directly from/to byte0 of each20-byte runtime magic record; enum storage preserves unnamed encoded values
 KfSavePayload	0x2548	0x38	unknown_2548	u8[56]	opaque	game/save.h;asm	not touched by the write/read pair
-KfSaveSlotSummary	0x00	0x04	experience	u32	supported	game/save.h;save_file_write_slot;save_file_read_slot;menu_draw_dialog_frame;asm	serialized player experience word; stored and copied as a word
-KfSaveSlotSummary	0x04	0x04	current_floor	KF_ENUM_STORAGE(KfFloorId, u32)	supported	game/save.h;save_file_write_slot;save_file_read_slot;menu_draw_dialog_frame;asm;game-floor-enum-domain.md	serialized player unsigned current-floor byte; stored and copied as a word
-KfSaveSlotSummary	0x08	0x04	current_hp	u32	supported	game/save.h;save_file_write_slot;save_file_read_slot;menu_draw_dialog_frame;asm	serialized player unsigned current-HP halfword; stored and copied as a word
-KfSaveSlotSummary	0x0c	0x04	maximum_hp	u32	supported	game/save.h;save_file_write_slot;save_file_read_slot;menu_draw_dialog_frame;asm	serialized player unsigned maximum-HP halfword; stored and copied as a word
-KfSaveSlotSummary	0x10	0x04	current_mp	u32	supported	game/save.h;save_file_write_slot;save_file_read_slot;menu_draw_dialog_frame;asm	serialized player unsigned current-MP halfword; stored and copied as a word
-KfSaveSlotSummary	0x14	0x04	maximum_mp	u32	supported	game/save.h;save_file_write_slot;save_file_read_slot;menu_draw_dialog_frame;asm	serialized player unsigned maximum-MP halfword; stored and copied as a word
+KfSaveSlotSummary	0x00	0x04	experience	u32	supported	game/save.h;save_file_write_slot;save_file_read_slot;menu_draw_save_slots;asm	serialized player experience word; stored and copied as a word
+KfSaveSlotSummary	0x04	0x04	current_floor	KF_ENUM_STORAGE(KfFloorId, u32)	supported	game/save.h;save_file_write_slot;save_file_read_slot;menu_draw_save_slots;asm;game-floor-enum-domain.md	serialized player unsigned current-floor byte; stored and copied as a word
+KfSaveSlotSummary	0x08	0x04	current_hp	u32	supported	game/save.h;save_file_write_slot;save_file_read_slot;menu_draw_save_slots;asm	serialized player unsigned current-HP halfword; stored and copied as a word
+KfSaveSlotSummary	0x0c	0x04	maximum_hp	u32	supported	game/save.h;save_file_write_slot;save_file_read_slot;menu_draw_save_slots;asm	serialized player unsigned maximum-HP halfword; stored and copied as a word
+KfSaveSlotSummary	0x10	0x04	current_mp	u32	supported	game/save.h;save_file_write_slot;save_file_read_slot;menu_draw_save_slots;asm	serialized player unsigned current-MP halfword; stored and copied as a word
+KfSaveSlotSummary	0x14	0x04	maximum_mp	u32	supported	game/save.h;save_file_write_slot;save_file_read_slot;menu_draw_save_slots;asm	serialized player unsigned maximum-MP halfword; stored and copied as a word
 KfSaveWorkspace	0x00	0x280	header	KfSaveHeader	supported	game/save.h;asm;save_workspace_allocate	first 0x280 bytes of the successful 0x2800-byte allocation
 KfSaveWorkspace	0x280	0x2580	payload	KfSavePayload	supported	game/save.h;asm;save_workspace_allocate	remainder of the allocation; separately published and cleared
 KfScreenRect	0x00	0x02	x	u16	supported	render_types.h;quad-rectangle-types.md;GAME:sprite_add_ft4;OPEN:sprite_add_g4;asm;lhu	screen X origin
@@ -823,9 +823,9 @@ KfTmdObject	0x10	0x04	primitive_offset	u32	supported	tmd.h;game_semantic_display
 KfTmdObject	0x14	0x04	primitive_count	u32	supported	tmd.h;game_semantic_tmd_counts.tsv;asm;Sony-File-Formats-1998:p2-25	word-sized count read with lw by all three polygon emitters; both index-preparation routines narrow it to u16
 KfTmdObject	0x18	0x04	scale	s32	supported	tmd.h;game_semantic_display_tmd.tsv;Psy-Q-TMD-layout	standard TMD object scale field
 KfTmdState	0x00	0x20	slots	KfTmdHeader *[8]	supported	game/render.h;game_semantic_display_tmd.tsv;asm;base-register;tmd_register;typed-tmd-headers.md	member of the tmd_state aggregate
-KfTmdState	0x20	0x04	current_asset	KfTmdHeader *	supported	game/render.h;game_semantic_display_tmd.tsv;asm;base-register;tmd_register;typed-tmd-headers.md	member of the tmd_state aggregate
+KfTmdState	0x20	0x04	current_tmd	KfTmdHeader *	supported	game/render.h;game_semantic_display_tmd.tsv;asm;base-register;tmd_register;typed-tmd-headers.md	member of the tmd_state aggregate
 KfTmdStateOpen	0x00	0x08	slots	KfTmdHeader *[2]	supported	open/render.h;asm;base-register;tmd_register;typed-tmd-headers.md	member of the tmd_state aggregate
-KfTmdStateOpen	0x08	0x04	current_asset	KfTmdHeader *	supported	open/render.h;asm;base-register;tmd_register;typed-tmd-headers.md	member of the tmd_state aggregate
+KfTmdStateOpen	0x08	0x04	current_tmd	KfTmdHeader *	supported	open/render.h;asm;base-register;tmd_register;typed-tmd-headers.md	member of the tmd_state aggregate
 KfVec3s	0x00	0x02	x	s16	supported	lib/math.h;asm;xrefs	x coordinate
 KfVec3s	0x02	0x02	y	s16	supported	lib/math.h;asm;xrefs	y coordinate
 KfVec3s	0x04	0x02	z	s16	supported	lib/math.h;asm;xrefs	z coordinate
@@ -834,8 +834,8 @@ KfVecXZs	0x02	0x02	z	s16	supported	lib/math.h;asm;xrefs	z coordinate
 KfWeaponRecord	0x00	0x01	unknown_00	u8	opaque	game/equipment.h;asm;xrefs;typed-weapon-render.md	meaning unresolved
 KfWeaponRecord	0x01	0x01	charge_rate	u8	supported	game/equipment.h;game_semantic_player_motion_attack.tsv;asm;xrefs;typed-weapon-render.md	combined with physical power to advance POWER while the weapon is idle
 KfWeaponRecord	0x02	0x0a	attack_components	u16[5]	supported	game/equipment.h;game_semantic_player_stats.tsv;asm;xrefs;typed-weapon-render.md	five outgoing damage components copied into player combat state
-KfWeaponRecord	0x0c	0x02	hp_regen_interval	u16	supported	game/equipment.h;asm;player_update;typed-weapon-render.md	nonzero: player_adjust_hp(1) every N frames of player_state.unknown_58
-KfWeaponRecord	0x0e	0x02	mp_regen_interval	u16	supported	game/equipment.h;asm;player_update;typed-weapon-render.md	nonzero: player_adjust_mp(1) every N frames of player_state.unknown_58
+KfWeaponRecord	0x0c	0x02	hp_regen_interval	u16	supported	game/equipment.h;asm;player_update;typed-weapon-render.md	nonzero: player_adjust_hp(1) every N frames of player_state.equipment_effect_ticks
+KfWeaponRecord	0x0e	0x02	mp_regen_interval	u16	supported	game/equipment.h;asm;player_update;typed-weapon-render.md	nonzero: player_adjust_mp(1) every N frames of player_state.equipment_effect_ticks
 KfWeaponRecord	0x10	0x02	projection_distance	u16	supported	game/equipment.h;asm;xrefs;typed-weapon-render.md	unsigned distance supplied to SetGeomScreen
 KfWeaponRecord	0x12	0x02	attack_z_offset	u16	supported	game/equipment.h;game_semantic_player_motion_attack.tsv;asm;xrefs;typed-weapon-render.md	local z component rotated into the weapon hit-test point
 KfWeaponRecord	0x14	0x08	unknown_14	u8[8]	opaque	game/equipment.h;asm;xrefs;typed-weapon-render.md	meaning unresolved

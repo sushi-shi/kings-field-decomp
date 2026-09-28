@@ -151,29 +151,29 @@ trials leave that body byte-identical, not that it is banked or closed.
 | GAME / `80033680` / `11c` | `camera_path_step` | S007, S008 | 100 → 100 |
 | GAME / `80038a38` / `180c` | `effect_update_dispatch` | S009, S010, S011, S012, S013, S014, S015 | 99.827810 → 99.827810 |
 | GAME / `80036f44` / `82c` | `effect_pool_construct` | S016, S017, S018, S019, S020, S021, S022, S023, S024, S025, S026, S027, S028, S029 | 100 → 100 |
-| GAME / `80037770` / `ac` | `effect_pool_spawn_typed` | S030 | 100 → 100 |
-| GAME / `80037fe0` / `2b8` | `effect_projectile_update_3d` | S031 | 100 → 100 |
+| GAME / `80037770` / `ac` | `effect_pool_spawn_floor_deformation` | S030 | 100 → 100 |
+| GAME / `80037fe0` / `2b8` | `effect_update_swinging_hazard` | S031 | 100 → 100 |
 | GAME / `8003872c` / `90` | `effect_rotate_scale_offset_y` | S032, S033 | 100 → 100 |
 | GAME / `8001e9a4` / `214` | `render_actor` | S034 | 100 → 100 |
 | GAME / `8001ebb8` / `180` | `render_map_object` | S035 | 100 → 100 |
 | GAME / `8001ed90` / `14c` | `render_floor_item` | S036 | 100 → 100 |
-| GAME / `8001eedc` / `1e8` | `render_actor_sprite` | S037, S038 | 100 → 100 |
+| GAME / `8001eedc` / `1e8` | `render_effect` | S037, S038 | 100 → 100 |
 | GAME / `8003a2a0` / `4c0` | `magic_cast` | S039, S040, S041 | 100 → 100 |
 | GAME / `8001f0c4` / `154` | `render_map_event` | S042 | 100 → 100 |
 | GAME / `800315c4` / `1c0` | `map_object_pool_find_interaction_from` | S043, S044 | 100 → 100 |
-| GAME / `80031834` / `194` | `map_object_spawn_effect` | S045 | 94.504950 → 94.504950 |
-| GAME / `800319c8` / `18c` | `map_object_spawn_actor_debris` | S046 | 100 → 100 |
+| GAME / `80031834` / `194` | `map_object_spawn_drop` | S045 | 94.504950 → 94.504950 |
+| GAME / `800319c8` / `18c` | `map_object_spawn_gold_drop` | S046 | 100 → 100 |
 | GAME / `80014d34` / `d4` | `pitch_yaw_to_forward_vector` | S047, S048, S049 | 100 → 100 |
 | GAME / `80014e48` / `5c` | `vector3s_scale_shift12` | S050 | 100 → 100 |
 | GAME / `80028a70` / `77c` | `menu_list_render` | S051, S052, S053, S054, S055, S056 | 100 → 100 |
 | GAME / `80022d7c` / `400` | `menu_map_viewer` | S057, S058, S059, S060, S061, S062 | 100 → 100 |
-| GAME / `800292f8` / `7b8` | `menu_draw_item_name_frame` | S064, S065, S066, S067, S076, S077, S078, S079 | 99.570850 → 99.570850 |
+| GAME / `800292f8` / `7b8` | `menu_draw_pickup_preview` | S064, S065, S066, S067, S076, S077, S078, S079 | 99.570850 → 99.570850 |
 | GAME / `80029ab0` / `1a0` | `menu_blit_sprite_translucent` | S080 | 100 → 100 |
 | GAME / `80029c50` / `190` | `menu_blit_sprite` | S081 | 100 → 100 |
 | GAME / `80029de0` / `530` | `menu_draw_string` | S068, S069, S070, S082, S083, S084 | 100 → 100 |
 | GAME / `8002a310` / `200` | `menu_draw_number` | S071, S085 | 100 → 100 |
 | GAME / `8002a510` / `6a4` | `menu_draw_window_backdrop` | S072, S073, S074, S075, S086, S087, S088, S089 | 99.971760 → 99.971760 |
-| GAME / `8002accc` / `50` | `primitive_buffer_begin_poly_ft4` | S063 | 100 → 100 |
+| GAME / `8002accc` / `50` | `menu_begin_poly_ft4` | S063 | 100 → 100 |
 | GAME / `8002430c` / `69c` | `menu_status_panel` | S090, S091 | 99.962170 → 99.962170 |
 | GAME / `80016bc0` / `264` | `player_update_weapon_attack` | S092, S093, S094 | 100 → 100 |
 | GAME / `80016e24` / `94` | `game_initialize_session` | S095 | 100 → 100 |
@@ -207,8 +207,8 @@ residues; the helper trials do not establish compiler causes:
 | Function | Retained residue |
 | --- | --- |
 | GAME `effect_update_dispatch` | First difference at `+38`: s3/s6 roles for the current magic record and effect kind are exchanged; the seven helper sites leave the whole object unchanged. |
-| GAME `map_object_spawn_effect` | Saved-register placement differs from `+4`; the body remains 400 versus 404 retail bytes. S045 preserves its call/reference/control-flow model. |
-| GAME `menu_draw_item_name_frame` | 160-byte frame versus retail 224, plus the existing item-name index instruction order; all eight rectangle sites remain neutral. |
+| GAME `map_object_spawn_drop` | Saved-register placement differs from `+4`; the body remains 400 versus 404 retail bytes. S045 preserves its call/reference/control-flow model. |
+| GAME `menu_draw_pickup_preview` | 160-byte frame versus retail 224, plus the existing item-name index instruction order; all eight rectangle sites remain neutral. |
 | GAME `menu_draw_window_backdrop` | 40-byte frame versus retail 104; all eight rectangle sites preserve the complete body. |
 | GAME `menu_status_panel` | 48-byte frame versus retail 112; both inline XY/UV sites preserve the body. |
 | GAME `player_update` | 216-byte frame versus retail 224. Also retain the known representation/ownership issue: source references `.data+0x60` for `player_previous_input`, target names the independently claimed `80057b30` datum. Neither vector site repairs that data-section model. |

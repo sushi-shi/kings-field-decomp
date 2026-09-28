@@ -16,8 +16,8 @@ source history and a fresh focused compile precede the first source edit.
 
 | GAME function | Extent | Initial strict match | Evidence and first hypothesis |
 | --- | ---: | ---: | --- |
-| `80037fe0 effect_projectile_update_3d` | 696 B | 96.752880% | Two dispatcher calls pass `SVECTOR` pointers and limits 40/60. Retail has a 144-byte frame, two matrices at sp+40/+72, VECTOR at +104, ten calls, four internal jump relocations and two global-address pairs. Recover the unsigned byte lifetime local first, then inspect the signed pitch store and the landing update order. |
-| `80038298 effect_projectile_update_2d` | 608 B | 99.934210% | Dispatcher passes speed 6500 and limit 40. Nine calls, three internal jump relocations, five global-address pairs. The fresh body agrees except for ten frame/save/restore instructions: retail frame 120, source 56. No source change is justified by the unexplained 64 bytes alone. |
+| `80037fe0 effect_update_swinging_hazard` | 696 B | 96.752880% | Two dispatcher calls pass `SVECTOR` pointers and limits 40/60. Retail has a 144-byte frame, two matrices at sp+40/+72, VECTOR at +104, ten calls, four internal jump relocations and two global-address pairs. Recover the unsigned byte lifetime local first, then inspect the signed pitch store and the landing update order. |
+| `80038298 effect_update_orbiting_projectile` | 608 B | 99.934210% | Dispatcher passes speed 6500 and limit 40. Nine calls, three internal jump relocations, five global-address pairs. The fresh body agrees except for ten frame/save/restore instructions: retail frame 120, source 56. No source change is justified by the unexplained 64 bytes alone. |
 
 Neither helper is vendored: neither address is in the vendor inventory, and
 both use the custom 60-byte effect record, selected magic damage components,
@@ -95,8 +95,8 @@ rotation offsets. The 2D body itself is unchanged.
 
 | GAME function | Strict result | Raw audit |
 | --- | ---: | --- |
-| `80037fe0 effect_projectile_update_3d` | 100% exact | All 174 instruction words and 18 function-relative ordered relocations agree, including constants, branch destinations and delay slots. |
-| `80038298 effect_projectile_update_2d` | 99.934210%, unchanged | 152 words on each side; exactly ten frame/save/restore words differ. All 22 ordered relocations agree. Extra retail frame space remains unattributed; no artificial locals added. |
+| `80037fe0 effect_update_swinging_hazard` | 100% exact | All 174 instruction words and 18 function-relative ordered relocations agree, including constants, branch destinations and delay slots. |
+| `80038298 effect_update_orbiting_projectile` | 99.934210%, unchanged | 152 words on each side; exactly ten frame/save/restore words differ. All 22 ordered relocations agree. Extra retail frame space remains unattributed; no artificial locals added. |
 
 The shared field correction also makes four dispatcher argument loads agree
 with retail as documented above. Those are the only two score changes among

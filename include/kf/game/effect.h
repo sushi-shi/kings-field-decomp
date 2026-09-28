@@ -21,7 +21,7 @@ enum {
 #include <kf/lib/math.h>
 #include <kf/game/magic.h>
 
-struct KfPoolRecord;
+struct KfAnimationCacheRecord;
 
 enum {
     KF_EFFECT_CAPACITY = 48
@@ -179,7 +179,7 @@ enum {
     KF_EFFECT_ORBIT_CENTER_SHIFT = 8
 };
 
-/* The orbit helper keeps running at RELEASE_REQUEST; only the 3D helper
+/* The orbit helper keeps running at RELEASE_REQUEST; only the swing helper
  * settles its pitch and enters the rise sequence on a zero crossing. */
 enum {
     KF_EFFECT_SWING_PROBE_SHORT = 0,
@@ -270,7 +270,7 @@ typedef struct KfEffectRecord {
     u16 scale_z;         /* 0x28 */
     u16 unknown_2a;      /* 0x2a */
     KfEffectDirection direction; /* 0x2c */
-    struct KfPoolRecord *animation_cache; /* 0x34 */
+    struct KfAnimationCacheRecord *animation_cache; /* 0x34 */
     KfEffectControl control; /* 0x38: countdown, orbit, parent, or homing selector */
     KfEffectPropagation propagation; /* 0x3a: kind-10 generations or kind-6 branch */
 } KfEffectRecord;
@@ -387,16 +387,16 @@ extern KfEffectRecord *effect_pool_construct(
     u8 id, KfEffectType type, KfEffectKind kind, const VECTOR *position,
     const SVECTOR *direction, ...);
 #endif
-extern KfEffectRecord *effect_pool_spawn_typed(
+extern KfEffectRecord *effect_pool_spawn_floor_deformation(
     u16 first_segment, u16 segment_count, u16 progress_per_update, u16 cell_stagger,
     s32 sweep_updates, s32 hold_countdown);
 extern void effect_pool_set_current(KfEffectRecord *effect);
 extern void effect_pool_reset(void);
-extern void effect_pool_sweep(void);
+extern void effect_pool_update(void);
 extern void effect_update_dispatch(void);
 extern int effect_magic_power(KfEffectRecord *effect);
-extern void effect_projectile_update_3d(SVECTOR *probe_offset, KF_ENUM_PARAM(KfEffectPhase, s32) phase_limit);
-extern void effect_projectile_update_2d(s32 orbit_radius, KF_ENUM_PARAM(KfEffectPhase, s32) phase_limit);
+extern void effect_update_swinging_hazard(SVECTOR *probe_offset, KF_ENUM_PARAM(KfEffectPhase, s32) phase_limit);
+extern void effect_update_orbiting_projectile(s32 orbit_radius, KF_ENUM_PARAM(KfEffectPhase, s32) phase_limit);
 extern void effect_floor_deform_line(s32 segment_index, s32 progress_start, s32 progress_step);
 extern void effect_scatter_triple(KfEffectDirectionWords *velocity);
 extern void effect_rotate_scale_offset_y(SVECTOR *offset, VECTOR *output, s16 angle, s32 scale);

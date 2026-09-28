@@ -133,7 +133,7 @@ including adjacent functions. None of these bodies is changed in production.
 | GAME VA / size | Function / initial score | Independent evidence and pilot verdict |
 | --- | --- | --- |
 | `8001bab8 / 2c` | `lighting_set_active_color_matrix` / 100% | Word index, eight callers, 24-byte frame; one SDK call and one pair to the seven 32-byte colour matrices outside the graphics owner. Raw exact negative ownership control. |
-| `8001bae4 / b0` | `effect5_texture_cache_prepare` / 100% | Word mode from floor loading, 24-byte frame, mode==5 branch; six calls/pairs, pages `(1,0,140/180/340,100)` and CLUT `(0,1eb)` repeated three times, halfword stores. Raw exact with shared-owner references. |
+| `8001bae4 / b0` | `render_prepare_actor_textures` / 100% | Word mode from floor loading, 24-byte frame, mode==5 branch; six calls/pairs, pages `(1,0,140/180/340,100)` and CLUT `(0,1eb)` repeated three times, halfword stores. Raw exact with shared-owner references. |
 | `8001bfb8 / 98` | `display_begin_frame` / 100% | Two callers, no arguments, 24-byte frame, one call/seven pairs; byte toggle/reload, 12-byte primitive-buffer and 64 KiB OT strides, `ClearOTagR(...,4000)`. Raw exact, including cursor and three word resets. |
 | `8001c0e8 / 2c` | `tmd_select` / 100% | Three callers constrain a u16 slot, 8-byte leaf frame, two pairs; index*4 asset load then selected-pointer store. Raw exact. |
 | `8001c114 / 24` | `tmd_get_object` / 100% | Fourteen callers, u16 object index, frameless leaf, one pair; asset+12+index*28, return delay-slot addition. Raw exact. |

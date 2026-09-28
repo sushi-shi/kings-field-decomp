@@ -59,7 +59,7 @@ indirect call, changed template byte or restricted input range is introduced.
 
 ## Object creation and persistence hypotheses
 
-`map_object_spawn_effect` selects one of two ten-object pools, acquires the
+`map_object_spawn_drop` selects one of two ten-object pools, acquires the
 oldest/free slot using the selected sequence, publishes its sequence, initializes
 position/yaw and selects one of three authored actions. The neighboring exact
 debris constructor repeats acquisition/publication and transform setup. Test
@@ -280,15 +280,15 @@ higher fuzzy percentage does not resolve either issue.
 | `item_load_database` / `80020cfc` | 3 | 99.746666 | 1500/1500 | `0x4bc` | 16 |
 | `menu_status_panel` / `8002430c` | 3 | 99.962170 | 1692/1692 | `0x0` | 16 |
 | `menu_draw_item_detail` / `80027b7c` | 6 | 97.814210 | 732/732 | `0xec` | 2 |
-| `menu_draw_item_name_frame` / `800292f8` | 3 | 99.975710 | 1976/1976 | `0x0` | 12 |
+| `menu_draw_pickup_preview` / `800292f8` | 3 | 99.975710 | 1976/1976 | `0x0` | 12 |
 | `menu_draw_window_backdrop` / `8002a510` | 3 | 99.971760 | 1700/1700 | `0x0` | 12 |
 | `talk_show_dialogue_page` / `8002c9d4` | 3 | 98.780490 | 164/164 | `0x30` | 8 |
-| `map_object_spawn_effect` / `80031834` | 3 | 94.504950 | 404/400 | `0x4` | 55 |
+| `map_object_spawn_drop` / `80031834` | 3 | 94.504950 | 404/400 | `0x4` | 55 |
 | `map_show_screen_image` / `80034d54` | 3 | 88.888885 | 144/148 | `0x30` | 20 |
 | `map_interaction_dispatch` / `80034de4` | 3 | 99.202774 | 2308/2296 | `0x2c` | 166 |
 | `map_world_state_persist` / `80035b5c` | 3 | 97.528730 | 696/700 | `0x16c` | 84 |
 | `effect_map_collision` / `80037850` | 0 | 99.873690 | 1900/1900 | `0x718` | 1 |
-| `effect_projectile_update_2d` / `80038298` | 0 | 99.934210 | 608/608 | `0x0` | 10 |
+| `effect_update_orbiting_projectile` / `80038298` | 0 | 99.934210 | 608/608 | `0x0` | 10 |
 | `effect_update_dispatch` / `80038a38` | 0 | 99.827810 | 6156/6156 | `0x38` | 42 |
 
 ## Additional source attempt ledger

@@ -61,7 +61,7 @@ also retained in the saved disassembly.
 | `map_ambient_script_floor5` | `800342ec / f4` | 100 | 6/5/4/1 | Shared dialogue/cell members; retain byte widths and ownership | 100%; raw unchanged |
 | `map_action_script_floor2` | `800345bc / 54` | 100 | 4/1/2/1 | Word dialogue predicate and 0xffffff00 mask | 100%; raw unchanged |
 | `map_action_script_floor3` | `80034610 / 90` | 100 | 8/2/4/1 | Word dialogue predicate and 0xffffff00 mask | 100%; raw unchanged |
-| `map_floor5_transition_cutscene` | `800346a8 / 38c` | 100 | 32/12/19/1 | Shared motion/cell members; retain signedness and stores | 100%; raw unchanged |
+| `map_floor5_weapon_transform_cutscene` | `800346a8 / 38c` | 100 | 32/12/19/1 | Shared motion/cell members; retain signedness and stores | 100%; raw unchanged |
 | `map_action_script_floor5` | `80034a34 / 4c` | 100 | 3/1/1/1 | Word dialogue predicate and 0xffffff00 mask | 100%; raw unchanged |
 | `map_event_interact` | `80034a80 / 2d4` | 100 | 26/7/17/1 | Shared dialogue/cell members; retain byte widths and ownership | 100%; raw unchanged |
 | `map_event_pool_update` | `8003596c / 1f0` | 100 | 24/8/11/1 | Shared dialogue/cell members; retain byte widths and ownership | 100%; raw unchanged |

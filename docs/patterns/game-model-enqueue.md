@@ -2,7 +2,7 @@
 
 ## Function Match Plan (2026-09-06)
 
-GAME `8001d730` / `0x6e8` (1768 bytes), `render_enqueue_model`, starts
+GAME `8001d730` / `0x6e8` (1768 bytes), `render_enqueue_tmd_retextured`, starts
 at strict 60.490950% on `d867e20`, under `probe-gcc257-o2-g0`.
 Hash validation, all six semantic views, complete retail body and CFG,
 the sole actor caller, adjacent emitters, TMD accessor, source history,

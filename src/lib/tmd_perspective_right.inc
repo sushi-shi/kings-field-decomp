@@ -1,21 +1,21 @@
 ADDRESS_AT("OPEN", 0x80017458, 0xa4)
 void tmd_project_vertices_perspective_right(s32 count)
 {
-    KfScreenVertex *out;
+    KfScreenVertex *projected;
     SVECTOR *vertex;
     long perspective;
-    long flag;
+    long gte_flags;
     long depth;
     long unused_depth;
 
-    out = KF_GRAPHICS_RUNTIME.tmd_projected_vertices;
+    projected = KF_GRAPHICS_RUNTIME.tmd_projected_vertices;
     vertex = KF_GRAPHICS_RUNTIME.current_tmd_vertices;
     for (count--; count != -1; count--) {
-        RotTransPers(vertex, &out->sxy.word, &perspective, &flag);
-        out->p2 = perspective >> KF_GRAPHICS_RUNTIME.tmd_projection_shift;
+        RotTransPers(vertex, &projected->sxy.word, &perspective, &gte_flags);
+        projected->p2 = perspective >> KF_GRAPHICS_RUNTIME.tmd_projection_shift;
         ReadSZ2(&depth, &unused_depth);
-        out->sz = depth;
-        out++;
+        projected->sz = depth;
+        projected++;
         vertex++;
     }
 }

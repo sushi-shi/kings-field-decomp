@@ -18,7 +18,7 @@ references. Source history and the earlier shared-base residue note were read.
   instruction at `8003782c` is `addiu a1,a1,-3364`: it derives `8009ce60`
   (magic rows) from the current-effect slot address. This fills the kind
   load-delay slot. No third address pair exists for the table base.
-- The sole proven caller, `effect_pool_sweep` at `8003a79c`, walks 48
+- The sole proven caller, `effect_pool_update` at `8003a79c`, walks 48
   sixty-byte records, skips type `0xff`, passes the record in the call delay
   slot and immediately invokes `effect_update_dispatch`. No result is used.
   Its complete retail body was inspected. The preceding exact typed spawn

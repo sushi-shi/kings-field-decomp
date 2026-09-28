@@ -283,7 +283,7 @@ construct paths, sector-round lengths, retry reads, and allocate or fill
 storage. They do not interpret resource bytes. Likewise
 `map_resource_path_set_floor` `0x8001b390`, `map_resource_load_file`
 `0x8001b3a4`, `menu_map_viewer` `0x80022d7c`, `menu_load_item_model`
-`0x8002aea4`, `menu_load_item_texture` `0x8002af48`,
+`0x8002aea4`, `menu_load_texture` `0x8002af48`,
 `screen_show_image_until_input` `0x8002c794`, and the TALK/ENE/PRSN/KAN path
 builders select files or consume already parsed images. MAP files are ordinary
 single-record TIM files; there is no separate map-image format in GAME.

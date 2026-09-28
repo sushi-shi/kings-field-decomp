@@ -95,7 +95,7 @@ The two open data preconditions now have shipped-data checks:
   eight-byte entries); placements are chunk 4, 20-byte records through the
   `0xff` terminator. This checks initial orientation, not every runtime action,
   paired-door mutation, or save-restored state. The action/definition consistency
-  requirement in `map_object_probe_forward` remains open.
+  requirement in `map_object_probe_door_closing` remains open.
 
 No default result or initialization was added to game logic. Fresh image-specific
 evidence and the before/after reports are under `build/warning-review/`.
@@ -116,8 +116,8 @@ This review changes no C source or compiler flags.
 | GAME `80036618` `player_warp_shimmer` | `scale_y`, `scale_y_step` (2) | Caller contract. All three supported modes initialize both. Known direct callers and callers of `player_warp_shimmer_at_player` supply supported constants; unsupported values fall through without initialization. |
 | OPEN `80014608` `opening_entity_transition` | `initial_scale_y`, `scale_step` (2) | Caller contract. GROW and SHRINK initialize both; CREATE initializes and returns, REMOVE bypasses their use. The four scene call sites supply these supported modes. |
 | GAME `80036e38` `menu_enter_mode` | `result` (1) | Caller contract. ROOT, PICKUP and SHOP assign a result. Known callers select these modes; there is no default for unsupported values. |
-| GAME `800238d8` `menu_equip_select` | `start`, `end` (2) | Caller contract. Seven equipment categories assign both bounds. `menu_option_root` calls this function only from those seven switch cases; MAGIC is handled separately. |
-| GAME `80030eb8` `map_object_probe_forward` | `result` (1) | Conditional hazard. Lift doors assign it; hinged doors require a cardinal masked yaw. The two calls are in door-closing paths. Valid placement orientation and action/definition consistency remain preconditions, not a general proof that every possible object is safe. |
+| GAME `800238d8` `menu_equip_select` | `start`, `end` (2) | Caller contract. Seven equipment categories assign both bounds. `menu_equipment_root` calls this function only from those seven switch cases; MAGIC is handled separately. |
+| GAME `80030eb8` `map_object_probe_door_closing` | `result` (1) | Conditional hazard. Lift doors assign it; hinged doors require a cardinal masked yaw. The two calls are in door-closing paths. Valid placement orientation and action/definition consistency remain preconditions, not a general proof that every possible object is safe. |
 | GAME `800205d4` `render_bind_animated_instance` | `keyframe` (1) | Asset precondition. A selected clip needs at least one keyframe. Zero keyframes bypass assignment and can reach a dereference when the vertex cache is refreshed. This review does not establish a complete shipped-asset census proving that case absent. |
 | GAME `8002fa88` `actor_update_current_action` | `home_x`, `home_z` (2) | Retail-inherited uninitialized reads. RETURN_HOME initialization reaches the heading call before either coordinate is assigned. The assignments belong to the later collision-clear branch. |
 | GAME `800205d4` `render_bind_animated_instance` | `keyframe_index` (1) | Retail-inherited uninitialized read. The index is incremented/decremented and used for cache comparison/storage without an initial assignment, including with nonempty clips. |

@@ -34,8 +34,8 @@ exact result is expected or banked.
 | 0x8001ed38 / 88 | `menu_render_item_model` | 100 | Projection 200, first object in menu TMD, enqueue bias 1000. |
 | 0x8001f218 / 1408 | `render_entities` | 97.380684 | Pool capacities and signed countdowns, unsigned cell windows, five entity emitters; variant interval adds 12 and compares below 24. |
 | 0x8001f798 / 280 | `render_weapon` | 100 | Unsigned projection at +16, signed translations +28/+30/+32, rotation +36; bias 50 minus signed Z shifted by 5. |
-| 0x8001f8b0 / 292 | `render_effect_sprites` | 100 | State byte equals 1, otherwise terminates; Q12 Z scale; animation binding and GTE calls. |
-| 0x8001f9d4 / 112 | `render_hud_gauges` | 100 | Byte state 255 terminates, 1 draws; stride 14 and sprite payload +2; called from frame. |
+| 0x8001f8b0 / 292 | `render_hud_models` | 100 | State byte equals 1, otherwise terminates; Q12 Z scale; animation binding and GTE calls. |
+| 0x8001f9d4 / 112 | `render_hud_sprites` | 100 | Byte state 255 terminates, 1 draws; stride 14 and sprite payload +2; called from frame. |
 | 0x8001fde4 / 1304 | `render_frame` | 100 | HUD stores/widths and status priority, compass yaw, notification rows/materials and translation, scene/weapon/present call order. |
 
 ## Named roles and retail evidence
@@ -118,8 +118,8 @@ and **113 ordered address pairs**. The six exact bodies reproduce all
 | `menu_render_item_model` | 22 / 7 / 0 | Exact, unchanged |
 | `render_entities` | 354 / 9 / 25 | Partial, unchanged |
 | `render_weapon` | 70 / 10 / 5 | Exact, unchanged |
-| `render_effect_sprites` | 73 / 12 / 2 | Exact, unchanged |
-| `render_hud_gauges` | 28 / 1 / 0 | Exact, unchanged |
+| `render_hud_models` | 73 / 12 / 2 | Exact, unchanged |
+| `render_hud_sprites` | 28 / 1 / 0 | Exact, unchanged |
 | `render_frame` | 326 / 20 / 64 | Exact, unchanged |
 
 `render_actor` first differs at entry GAME `8001e9a4`: candidate stack frame

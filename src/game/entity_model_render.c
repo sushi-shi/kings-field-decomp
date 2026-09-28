@@ -22,7 +22,7 @@ enum {
 ADDRESS(0x8001e9a4, 0x214)
 void render_actor(KfActor *actor)
 {
-    SVECTOR screen;
+    SVECTOR relative_position;
     MATRIX rot_y;
     MATRIX model;
     MATRIX light;
@@ -33,11 +33,11 @@ void render_actor(KfActor *actor)
 
     SetRotMatrix(&game_graphics_runtime.render_state.view_matrix);
     SetTransMatrix(&game_graphics_runtime.render_state.view_matrix);
-    setVector(&screen,
+    setVector(&relative_position,
         actor->position.vx - game_graphics_runtime.render_state.view_position.vx,
         actor->position.vy - game_graphics_runtime.render_state.view_position.vy,
         actor->position.vz - game_graphics_runtime.render_state.view_position.vz);
-    RotTrans(&screen, (VECTOR *)&model.t, &flag);
+    RotTrans(&relative_position, (VECTOR *)&model.t, &flag);
     matrix_set_rotation_x(actor->rotation.angles.x, &model);
     matrix_set_rotation_y(-actor->rotation.angles.y, &rot_y);
     MulMatrix2(&rot_y, &model);
@@ -52,7 +52,7 @@ void render_actor(KfActor *actor)
     asset_registry_select(asset);
     object = tmd_get_object(0);
     if (render_bind_animated_instance(
-            &actor->animation_cache, asset, actor->animation_id,
+            &actor->animation_cache, asset, actor->animation_clip,
             actor->animation_phase, object->vertex_count) == NULL) {
         tmd_select_object_vertices(0);
         tmd_project_vertices(tmd_get_object(0)->vertex_count);
@@ -64,16 +64,16 @@ void render_actor(KfActor *actor)
     if (descriptor-- == 0) {
         render_enqueue_tmd(0, 0);
     } else {
-        game_graphics_runtime.active_render_tpage = game_graphics_runtime.effect5_texture_pages[descriptor];
-        game_graphics_runtime.active_render_clut = game_graphics_runtime.effect5_texture_cluts[descriptor];
-        render_enqueue_model(0, 0);
+        game_graphics_runtime.active_render_tpage = game_graphics_runtime.actor_texture_pages[descriptor];
+        game_graphics_runtime.active_render_clut = game_graphics_runtime.actor_texture_cluts[descriptor];
+        render_enqueue_tmd_retextured(0, 0);
     }
 }
 
 ADDRESS(0x8001ebb8, 0x180)
 void render_map_object(KfMapObject *object)
 {
-    SVECTOR screen;
+    SVECTOR relative_position;
     MATRIX rot_x;
     MATRIX model;
     MATRIX light;
@@ -83,11 +83,11 @@ void render_map_object(KfMapObject *object)
 
     SetRotMatrix(&game_graphics_runtime.render_state.view_matrix);
     SetTransMatrix(&game_graphics_runtime.render_state.view_matrix);
-    setVector(&screen,
+    setVector(&relative_position,
         object->position.vx - game_graphics_runtime.render_state.view_position.vx,
         object->position.vy - game_graphics_runtime.render_state.view_position.vy,
         object->position.vz - game_graphics_runtime.render_state.view_position.vz);
-    RotTrans(&screen, (VECTOR *)&model.t, &flag);
+    RotTrans(&relative_position, (VECTOR *)&model.t, &flag);
     matrix_set_rotation_x(object->rotation.angles.x, &rot_x);
     matrix_set_rotation_y(object->rotation.angles.y, &model);
     MulMatrix(&model, &rot_x);

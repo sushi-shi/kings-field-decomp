@@ -70,7 +70,7 @@ intended.
 | `0x8002dcfc / 98` | `actor_play_sound_at_phase` | 100.000000 | 38 / 3 / 2 |
 | `0x8002dd94 / 120` | `actor_try_select_action_distance_facing` | 100.000000 | 72 / 4 / 3 |
 | `0x8002deb4 / 164` | `actor_try_select_ground_action` | 100.000000 | 89 / 4 / 5 |
-| `0x8002e018 / d8` | `actor_try_select_facing_action` | 100.000000 | 54 / 3 / 3 |
+| `0x8002e018 / d8` | `actor_try_select_multi_hit_action` | 100.000000 | 54 / 3 / 3 |
 | `0x8002e0f0 / 1f8` | `actor_try_select_profiled_action` | 96.333336 | Unchanged residue |
 | `0x8002e2e8 / 3c0` | `actor_select_next_action` | 100.000000 | 240 / 11 / 2 |
 | `0x8002e6a8 / 2ac` | `actor_update_awareness` | 97.736840 | Unchanged residue |
@@ -193,7 +193,7 @@ limit of the evidence, not a claim that its design rationale has been recovered.
 | `actor_play_sound_at_phase` | Floor 5 / definition 7 choose range parameters 20000 and 60000 instead of the default range. They configure that special spatial attenuation policy; they do not imply a different sound-volume scale. |
 | `actor_try_select_action_distance_facing` | Distance bands at `scale`, `scale + scale/2`, and `scale*4`; odds shifts `<<2`, `<<1`, `>>2`, and the additional far `>>4` are authored selection weighting. `rand() >> 4` tests 0..2047; raw cutoff 1638 provides the separate facing-test bypass. Keep exact truncation and inequality order. |
 | `actor_try_select_ground_action` | Beyond 7000 halve the chance; below 4001 reject; otherwise multiply chance by 8. The RNG downshift 4 and bypass cutoff 1638 follow the same protocol as the preceding selector. These are measured distance/weight choices. |
-| `actor_try_select_facing_action` | Below 8000 reject; above 11000 divide chance by 16; otherwise multiply by 4. The draw is again `rand() >> 4`. The band and factors remain authored tuning. |
+| `actor_try_select_multi_hit_action` | Below 8000 reject; above 11000 divide chance by 16; otherwise multiply by 4. The draw is again `rand() >> 4`. The band and factors remain authored tuning. |
 | `actor_try_select_profiled_action` | RNG downshift 4 and bypass cutoff 819; profile 9 counts active actors plus occupied kind-9 effects, accepting only when the total is below 2. Zeros/ones initialize and advance the two scans. Kind 9's broader gameplay identity remains unresolved. |
 | `actor_select_next_action` | Pursuit-distance shift 8 multiplies an authored unit by 256; it is not a Q8 fractional weight. Chance `50` hex is 80 out of the helper's 2048-value draw before distance adjustment. Awareness factor 2, pursuit factor 6 and raw cutoffs 5462/1092/8193 implement the existing retreat/idle/wander policy. Do not round those cutoffs to familiar percentages. |
 | `actor_update_awareness` | The spawn chance shifts left 7 before comparison with the full RNG result. Zero flags/vertical extents and `-1` query failures retain their normal protocol. The three named distance gates retain their original strict/inclusive comparisons. |

@@ -11,7 +11,7 @@ instructions.  Only the frame differs: retail reserves 104 bytes and saves
 functions, menu asset structures, SDK providers, source history and current
 unit diff were refreshed.  There are no strings or candidate references.
 
-The adjacent `800292f8 menu_draw_item_name_frame` has the same 64-byte frame
+The adjacent `800292f8 menu_draw_pickup_preview` has the same 64-byte frame
 deficit (224 retail versus 160 probe); fourteen other functions in
 `game.menu_runtime` are exact. This repeated, function-selective extent
 motivates a shared local-object lifetime hypothesis but does not establish
@@ -58,7 +58,7 @@ attribution or authorization to add an unused local object.
 | Function (GAME VA) | Current strict % / bytes | Plain strict % / bytes | No-schedule strict % / bytes |
 | --- | ---: | ---: | ---: |
 | `render_map_cell` (`8001e5ec`) | 99.878380 / 592 | 97.175674 / 592 | 76.777020 / 592 |
-| `effect_projectile_update_2d` (`80038298`) | 99.934210 / 608 | 92.151310 / 604 | 86.500000 / 624 |
+| `effect_update_orbiting_projectile` (`80038298`) | 99.934210 / 608 | 92.151310 / 604 | 86.500000 / 624 |
 | `menu_draw_window_backdrop` (`8002a510`) | 99.971760 / 1700 | 97.216470 / 1712 | 95.374115 / 1708 |
 | `menu_status_panel` (`8002430c`) | 99.962170 / 1692 | 99.111115 / 1700 | 98.047280 / 1700 |
 

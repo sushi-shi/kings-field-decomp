@@ -59,7 +59,7 @@ editing. Complete pre-edit objects and snapshots are saved under
 | GAME.EXE `actor_definitions_load` | `80030a6c / 2c` | 100 | 3/0/1 | 100%; raw unchanged |
 | GAME.EXE `map_apply_copy_region` | `80030a98 / 1e4` | 100 | 8/0/1 | 100%; raw unchanged |
 | GAME.EXE `map_object_mark_collision_edge` | `80030c7c / 23c` | 100 | 29/0/1 | 100%; raw unchanged |
-| GAME.EXE `map_object_probe_forward` | `80030eb8 / c4` | 93.7551 | 13/1/1 | 93.7551%; raw unchanged |
+| GAME.EXE `map_object_probe_door_closing` | `80030eb8 / c4` | 93.7551 | 13/1/1 | 93.7551%; raw unchanged |
 | GAME.EXE `map_object_definitions_load` | `80030fdc / 2c` | 100 | 3/0/1 | 100%; raw unchanged |
 | GAME.EXE `map_object_pool_load` | `80031008 / 448` | 100 | 43/11/1 | 100%; raw unchanged |
 | GAME.EXE `map_object_pool_find_near_point` | `800314f8 / cc` | 100 | 9/1/1 | 100%; raw unchanged |
@@ -69,7 +69,7 @@ editing. Complete pre-edit objects and snapshots are saved under
 | GAME.EXE `map_object_pool_update` | `80031cc8 / c18` | 98.9664 | 118/35/1 | 98.9664%; raw unchanged |
 | GAME.EXE `map_event_pool_load` | `800338b8 / 22c` | 100 | 8/1/1 | 100%; raw unchanged |
 | GAME.EXE `map_ambient_script_floor5` | `800342ec / f4` | 100 | 6/5/1 | 100%; raw unchanged |
-| GAME.EXE `map_floor5_transition_cutscene` | `800346a8 / 38c` | 100 | 32/12/1 | 100%; raw unchanged |
+| GAME.EXE `map_floor5_weapon_transform_cutscene` | `800346a8 / 38c` | 100 | 32/12/1 | 100%; raw unchanged |
 | GAME.EXE `map_interaction_dispatch` | `80034de4 / 904` | 96.4905 | 119/54/1 | 96.4905%; raw unchanged |
 | GAME.EXE `map_world_state_persist` | `80035b5c / 2b8` | 94.8218 | 28/0/1 | 94.8218%; raw unchanged |
 | GAME.EXE `map_restore_floor_state` | `80035e44 / 69c` | 100 | 50/18/1 | 100%; raw unchanged |

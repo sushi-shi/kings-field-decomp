@@ -69,7 +69,7 @@ yes. No automatic cast from card status into a confirmation result is valid.
 ## Message textures
 
 Fresh decoding of the five actual TIM resources confirms the message meanings.
-`menu_load_item_texture` formats `TIM\\Mddd.` from `id + 1`, unlike the
+`menu_load_texture` formats `TIM\\Mddd.` from `id + 1`, unlike the
 save subsystem's direct message-number API. The new local constants retain
 that zero-based index; they do not replace the other API's numeric domain.
 
@@ -143,7 +143,7 @@ section base. No new match is banked.
 | `0x80018880 / 6684` | `player_update` | 96.9455 | 1658 / 66 / 204 |
 | `0x800222b4 / 148` | `menu_save_confirm` | 100 | 37 / 7 / 2 |
 | `0x80022348 / 704` | `menu_root` | 96.8636 | 175 / 28 / 1 |
-| `0x80024e64 / 608` | `menu_save_load_hub` | 100 | 152 / 20 / 2 |
+| `0x80024e64 / 608` | `menu_system_panel` | 100 | 152 / 20 / 2 |
 | `0x800250c4 / 1128` | `menu_save_panel` | 100 | 282 / 58 / 0 |
 | `0x8002552c / 880` | `menu_load_panel` | 100 | 220 / 42 / 0 |
 | `0x800286d4 / 576` | `menu_two_option_prompt` | 100 | 144 / 16 / 0 |

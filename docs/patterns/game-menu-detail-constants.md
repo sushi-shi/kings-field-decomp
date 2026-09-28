@@ -11,9 +11,9 @@ Name the shared marker/dialog ordering depths, three slot-overlay quad indices, 
 | Function | GAME VA / bytes | Strict baseline | Retail calls / conditional branches / returns | Hypothesis |
 | --- | --- | ---: | --- | --- |
 | `menu_draw_item_detail` | `80027b7c / 732` | 92.207650% | 17 / 3 / 1 | Preserve price-table selection and preview transforms; name the repeated 18-pixel baseline advance. |
-| `menu_add_marker_quad` | `80027e58 / 72` | 100.000000% | 1 / 0 / 1 | Name the mid-depth quad bucket 500; retain active-buffer selection. |
-| `menu_add_frame_quad` | `80027ea0 / 68` | 100.000000% | 1 / 0 / 1 | Retain the first-bucket pointer directly; no artificial zero constant is needed. |
-| `menu_draw_dialog_frame` | `80027ee4 / 1180` | 100.000000% | 27 / 7 / 1 | Interpret the signed selector as a highlighted slot, name the packet and number geometry, and retain exact summary traversal. |
+| `menu_add_magic_artwork_quad` | `80027e58 / 72` | 100.000000% | 1 / 0 / 1 | Name the mid-depth quad bucket 500; retain active-buffer selection. |
+| `menu_add_message_image_quad` | `80027ea0 / 68` | 100.000000% | 1 / 0 / 1 | Retain the first-bucket pointer directly; no artificial zero constant is needed. |
+| `menu_draw_save_slots` | `80027ee4 / 1180` | 100.000000% | 27 / 7 / 1 | Interpret the signed selector as a highlighted slot, name the packet and number geometry, and retain exact summary traversal. |
 
 ## Resource and caller evidence
 
@@ -42,7 +42,7 @@ Thus `highlighted_slot` is a signed position with out-of-range behavior, not
 a closed enum of mutually exclusive dialog kinds. The old parameter name and
 border description obscured this relationship.
 
-Retail `menu_add_marker_quad` adds 2,000 bytes to the OT pointer (500 four-byte
+Retail `menu_add_magic_artwork_quad` adds 2,000 bytes to the OT pointer (500 four-byte
 entries). Dialog AddPrim calls add 4,000 bytes (1,000 entries). This bucket is
 separate from the marker and the foreground helper's direct first-entry pointer.
 Preserve call order because AddPrim inserts at the head of its bucket.

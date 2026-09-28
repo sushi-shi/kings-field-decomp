@@ -157,9 +157,9 @@ historical compiler attribution or a completed match.
 | --- | ---: | --- |
 | `800279c4 menu_item_model_preview` | 98.181816% | Unchanged; three name-stride ordering words differ. |
 | `80027b7c menu_draw_item_detail` | 98.579230% | Price selection improved from 92.207650%; twelve name-copy words differ. |
-| `80027e58 menu_add_marker_quad` | 100% | All eighteen words and ordered referents preserved. |
-| `80027ea0 menu_add_frame_quad` | 100% | All seventeen words and ordered referents preserved. |
-| `80027ee4 menu_draw_dialog_frame` | 100% | All 295 words and ordered referents preserved. |
+| `80027e58 menu_add_magic_artwork_quad` | 100% | All eighteen words and ordered referents preserved. |
+| `80027ea0 menu_add_message_image_quad` | 100% | All seventeen words and ordered referents preserved. |
+| `80027ee4 menu_draw_save_slots` | 100% | All 295 words and ordered referents preserved. |
 
 The first preview difference remains `80027a88`: candidate shifts before the
 same two-word item-name base materialization. The detail helper now first

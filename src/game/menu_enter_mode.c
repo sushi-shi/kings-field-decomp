@@ -6,7 +6,7 @@
 
 /*
  * menu_enter_mode (GAME.EXE): tear down and re-establish the system heap around a
- * mode-selected reload. It drains the GPU (DrawSync), runs pool_release_all, resets
+ * mode-selected reload. It drains the GPU (DrawSync), runs animation_cache_release_all, resets
  * the system heap, dispatches on the mode argument, resets the heap again, and
  * clears the player motion state. Callers pass a variable number of arguments;
  * the modes that take one read it through the standard argument macros.
@@ -24,7 +24,7 @@ u32 menu_enter_mode(KfMenuMode menu_mode, ...)
     u32 result;
 
     DrawSync(0);
-    pool_release_all();
+    animation_cache_release_all();
     memory_reset_system_heap();
     switch (menu_mode) {
     case KF_MENU_MODE_ROOT:
@@ -47,7 +47,7 @@ u32 menu_enter_mode(KfMenuMode menu_mode, ...)
         va_start(arguments, menu_mode);
         shop_bank = KF_ENUM_DECODE(KfItemStockBank, va_arg(arguments, int));
         va_end(arguments);
-        item_menu_root(shop_bank);
+        shop_menu_root(shop_bank);
         result = 0;
         break;
     }

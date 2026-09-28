@@ -2,7 +2,7 @@
 
 ## Function Match Plan
 
-GAME `primitive_buffer_commit_poly_ft4` (`8002ad1c`, 0x50 bytes) is 100%
+GAME `menu_commit_poly_ft4` (`8002ad1c`, 0x50 bytes) is 100%
 exact. It has one block, one SDK `AddPrim` call and one return, with five
 validated data-address pairs and no strings. Twenty-one confirmed calls from
 menu drawing routines pass an ordering-table index. Retail shifts that index

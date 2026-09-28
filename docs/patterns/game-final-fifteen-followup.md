@@ -13,7 +13,7 @@ first. Its one differing delay-slot word has already received the ordinary
 selector, result, explicit-zero and helper-boundary controls. No new source
 fact supports repeating those trials or removing the defined zero result.
 
-The first new source control is GAME `map_object_spawn_effect` (`80031834`,
+The first new source control is GAME `map_object_spawn_drop` (`80031834`,
 404 retail bytes versus 400 probe bytes, 94.504950%). Fresh retail validation,
 six semantic views, the actor caller, all callees, both adjacent functions,
 source history and shared map-object declarations were inspected. It remains
@@ -117,7 +117,7 @@ excluded so the control changes no compiler settings.
 | `render_map_object` | `8001ebb8` | Exact control |
 | `menu_render_item_model` | `8001ed38` | Exact control |
 | `render_floor_item` | `8001ed90` | Exact control |
-| `render_actor_sprite` | `8001eedc` | Exact control |
+| `render_effect` | `8001eedc` | Exact control |
 | `render_map_event` | `8001f0c4` | Exact control |
 | `render_entities` | `8001f218` | 99.517044%, saved-register role residue |
 

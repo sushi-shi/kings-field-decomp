@@ -223,9 +223,9 @@ class GameItemStockDataTests(unittest.TestCase):
                                  ExternalHook('menu_list_init', initialize),
                                  ExternalHook('menu_frame_begin', lambda ctx: HookReturn(0)),
                                  ExternalHook('menu_load_item_model', inspect_model)]
-                        program = RetailProgram.link(symbols, ['item_menu_buy'], hooks=hooks)
+                        program = RetailProgram.link(symbols, ['shop_menu_buy'], hooks=hooks)
                         result = ParserMachine(image, program).call(
-                            'item_menu_buy', args=[bank], memory=[MemoryInput(STOCK, bytes(payload))],
+                            'shop_menu_buy', args=[bank], memory=[MemoryInput(STOCK, bytes(payload))],
                             capture=[stock], allowed_writes=[], instruction_limit=10000)
                         self.assertEqual(result.memory_by_name()['stock'], bytes(payload))
                         self.assertEqual(sum(call.name == 'menu_load_item_model'

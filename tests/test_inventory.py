@@ -358,13 +358,13 @@ class InventoryTests(unittest.TestCase):
             ("KfEffectRecord", 0x3C, 0x34, "animation_cache"),
             ("KfMapEvent", 0x44, 0x3C, "animation_cache"),
             ("KfPlayerState", 0xE0, 0x74, "weapon_animation_cache"),
-            ("KfEffectSprite", 0x1C, 0x18, "animation_cache"),
+            ("KfHudModel", 0x1C, 0x18, "animation_cache"),
         )
         for structure, size, offset, name in slots:
             with self.subTest(structure=structure):
                 self.assertEqual(structures[structure].size, size)
                 self.assertEqual(_structure_field(structure, offset),
-                                 (name, "KfPoolRecord *", 4))
+                                 (name, "KfAnimationCacheRecord *", 4))
         # The rotation view occupies 0x34..0x3b, not the cache pointer.
         self.assertEqual(_structure_field("KfMapEvent", 0x34),
                          ("rotation", "SVECTOR", 8))
@@ -374,13 +374,13 @@ class InventoryTests(unittest.TestCase):
     def test_animation_binder_slot_api_belongs_to_pool_header(self) -> None:
         identity = load_function_identities(RETAIL_CONFIG)[("GAME.EXE", 0x800205D4)]
         self.assertEqual(identity.parameters,
-                         "KfPoolRecord **owner_slot;u16 asset_index;"
+                         "KfAnimationCacheRecord **owner_slot;u16 asset_index;"
                          "KF_ENUM_PARAM(KfAnimationClip, u16) clip_index;"
                          "u16 phase;u16 vertex_count")
         pool_header = (REPO / "include/kf/game/pool.h").read_text()
         render_header = (REPO / "include/kf/game/render.h").read_text()
-        self.assertIn("extern KfPoolRecord *render_bind_animated_instance(\n"
-                      "    KfPoolRecord **owner_slot", pool_header)
+        self.assertIn("extern KfAnimationCacheRecord *render_bind_animated_instance(\n"
+                      "    KfAnimationCacheRecord **owner_slot", pool_header)
         self.assertNotIn("extern u16 *render_bind_animated_instance", render_header)
         self.assertIn("#include <kf/game/pool.h>", render_header)
 
@@ -400,17 +400,17 @@ class InventoryTests(unittest.TestCase):
             (0x06, "keyframe_index", "u16", 2),
             (0x08, "rest_morph", "KfMorphObject *", 4),
             (0x0C, "cached_vertices", "SVECTOR *", 4),
-            (0x10, "owner_slot", "KfPoolRecord **", 4),
+            (0x10, "owner_slot", "KfAnimationCacheRecord **", 4),
         )
         for offset, name, datatype, size in fields:
-            self.assertEqual(_structure_field("KfPoolRecord", offset),
+            self.assertEqual(_structure_field("KfAnimationCacheRecord", offset),
                              (name, datatype, size))
         game = index("GAME.EXE")
         datum = game.data_owner(0x800910C0)
         self.assertEqual((datum.name, datum.datatype, datum.size),
                          ("game_graphics_runtime", "KfGraphicsRuntimeGame", 0x249CC))
         self.assertEqual(_structure_field('KfGraphicsRuntimeGame', 0x20228),
-                         ('pool_records', 'KfPoolRecord[12]', 0xF0))
+                         ('animation_cache_records', 'KfAnimationCacheRecord[12]', 0xF0))
         claims = load_manifest().by_name()["game.pool"].data
         self.assertEqual(claims, ())
         self.assertEqual(game.data_owner(0x800911AF), datum)
@@ -820,7 +820,7 @@ class InventoryTests(unittest.TestCase):
             "game/asset.h": ("KfAssetHeader",),
             "game/render.h": (
                 "KfHudSprite",
-                "KfEffectSprite",
+                "KfHudModel",
                 "KfDisplayState",
                 "KfTmdState",
                 "KfRenderState",
@@ -1351,7 +1351,7 @@ class InventoryTests(unittest.TestCase):
         ]
         self.assertEqual(
             identity.parameters,
-            "s32 value;s32 count;KF_ENUM_PARAM(KfFormatPaddingMode, s32) padding_mode;s16 *out",
+            "s32 value;s32 digit_count;KF_ENUM_PARAM(KfFormatPaddingMode, s32) padding_mode;s16 *out",
         )
         release = load_function_identities(RETAIL_CONFIG, required=True)[
             ("GAME.EXE", 0x8002AF0C)
@@ -1363,7 +1363,7 @@ class InventoryTests(unittest.TestCase):
         ]
         self.assertEqual(
             (pending.name, pending.datatype, pending.owner),
-            ("menu_item_model_allocation_pending", "KfMenuModelAllocation", "menu"),
+            ("menu_item_model_allocation", "KfMenuModelAllocation", "menu"),
         )
 
         _, relocations = read_tsv(RETAIL_CONFIG / "relocs.tsv")
@@ -1387,7 +1387,7 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(len(state_references), 3)
         self.assertEqual(
             {row["target_name"] for row in state_references},
-            {"menu_item_model_allocation_pending"},
+            {"menu_item_model_allocation"},
         )
         self.assertEqual(
             {row["status"] for row in state_references},
@@ -1614,7 +1614,7 @@ class InventoryTests(unittest.TestCase):
             ],
             [
                 ("tmd_textured_primitive_color", "CVECTOR"),
-                ("model_textured_primitive_color", "CVECTOR"),
+                ("retextured_primitive_color", "CVECTOR"),
                 ("map_textured_primitive_color", "CVECTOR"),
                 ("render_sprite_light_normal", "SVECTOR"),
             ],
@@ -2066,9 +2066,9 @@ class InventoryTests(unittest.TestCase):
         data = load_data_identities(RETAIL_CONFIG)
         expected_data = {
             0x800356D0: ("opening_scene3_camera_path", "KfCameraPathPoint[3]", 0x54),
-            0x80035878: ("opening_scene3_overlay_rects", "KfScreenRect[2]", 0x10),
-            0x80037284: ("opening_scene3_overlay_uv", "u8[8]", 0x08),
-            0x8003728C: ("opening_scene3_overlay_color", "CVECTOR", 0x04),
+            0x80035878: ("opening_scene3_panels", "KfScreenRect[2]", 0x10),
+            0x80037284: ("opening_scene3_panel_uv", "u8[8]", 0x08),
+            0x8003728C: ("opening_scene3_panel_color", "CVECTOR", 0x04),
         }
         for va, expected in expected_data.items():
             datum = data[("OPEN.EXE", va)]
@@ -2659,7 +2659,7 @@ class InventoryTests(unittest.TestCase):
         expected = {
             0x8001738C: ("tmd_project_vertices", "s32 count"),
             0x80017458: ("tmd_project_vertices_perspective_right", "s32 count"),
-            0x800174FC: ("tmd_project_vertices_shift", "s32 count;u8 shift"),
+            0x800174FC: ("tmd_project_vertices_depth_shift", "s32 count;u8 depth_shift"),
             0x800175A8: ("tmd_transform_vertices", "s32 count"),
         }
         self.assertEqual({parse_int(row["va"]) for row in rows}, set(expected))
@@ -2833,7 +2833,7 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(by_site[0x800160E4]["target_name"], "player_level_growth_table")
         self.assertEqual(by_site[0x80016864]["target_name"], "player_equipment_slot_jump_table")
         self.assertEqual(by_site[0x80016B0C]["target_name"], "player_recalculate_combat_stats")
-        self.assertEqual(by_site[0x80016AAC]["target_name"], "weapon_image_path_template")
+        self.assertEqual(by_site[0x80016AAC]["target_name"], "weapon_asset_path_template")
         self.assertEqual(by_site[0x80012000]["confidence"], "pointer-reviewed")
 
     def test_player_combat_relocations_are_reviewed(self) -> None:
@@ -3279,9 +3279,9 @@ class InventoryTests(unittest.TestCase):
             data_identities[("GAME.EXE", 0x8006E8E0)].scope,
             "global",
         )
-        for va, field in ((0x80070E92, "effect_sequence_160"),
-                          (0x80070E94, "effect_sequence_170"),
-                          (0x80070E96, "effect_sequence_180")):
+        for va, field in ((0x80070E92, "gold_drop_sequence"),
+                          (0x80070E94, "definition_drop_sequence"),
+                          (0x80070E96, "placement_drop_sequence")):
             self.assertNotIn(("GAME.EXE", va), data_identities)
             self.assertEqual(game.data_owner(va).name, "map_object_state")
             self.assertEqual(_structure_field("KfMapObjectState", va - 0x8006E8E0)[0], field)

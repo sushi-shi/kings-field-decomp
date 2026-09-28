@@ -18,7 +18,7 @@ function extent.
 
 | GAME function | VA | Starting strict % | Retail bytes | Starting raw word differences |
 | --- | --- | ---: | ---: | ---: |
-| `map_object_spawn_effect` | `80031834` | 94.50495 | 404 | 55 |
+| `map_object_spawn_drop` | `80031834` | 94.50495 | 404 | 55 |
 | `player_move_horizontal` | `800171fc` | 96.56896 | 2088 | 468 |
 | `map_world_state_persist` | `80035b5c` | 97.52873 | 696 | 84 |
 | `menu_draw_item_detail` | `80027b7c` | 97.80875 | 732 | 3 |
@@ -28,7 +28,7 @@ function extent.
 | `effect_update_dispatch` | `80038a38` | 99.82781 | 6156 | 42 |
 | `effect_map_collision` | `80037850` | 99.87369 | 1900 | 1 |
 | `render_map_cell` | `8001e5ec` | 99.87838 | 592 | 18 |
-| `effect_projectile_update_2d` | `80038298` | 99.93421 | 608 | 10 |
+| `effect_update_orbiting_projectile` | `80038298` | 99.93421 | 608 | 10 |
 | `player_update` | `80018880` | 99.96709 | 6684 | 55 |
 
 Raw counts compare words at the same offsets, including unequal-length tails;
@@ -201,7 +201,7 @@ attributions or proof of historical source form.
 
 | Function | First differing GAME address | Observed baseline difference |
 | --- | --- | --- |
-| `map_object_spawn_effect` | `0x80031838` | Saved-register set and offsets differ; body is 400 versus 404 bytes. |
+| `map_object_spawn_drop` | `0x80031838` | Saved-register set and offsets differ; body is 400 versus 404 bytes. |
 | `player_move_horizontal` | `0x80017228` | Argument register assignment differs; body is 2,128 versus 2,088 bytes. |
 | `map_world_state_persist` | `0x80035cc8` | Address setup, zero initialization and constant setup differ in order. |
 | `menu_draw_item_detail` | `0x80027c68` | Three words differ in stack-interior-pointer setup and the corresponding halfword-store offset. |
@@ -210,7 +210,7 @@ attributions or proof of historical source form.
 | `effect_update_dispatch` | `0x80038a70` | Registers carrying a global load and the effect byte differ. |
 | `effect_map_collision` | `0x80037f68` | Sole word difference: generated `li v0,1` versus retail `nop`. |
 | `render_map_cell` | `0x8001e5ec` | Frame is 88 versus 120 bytes, with corresponding stack offsets. |
-| `effect_projectile_update_2d` | `0x80038298` | Frame is 56 versus 120 bytes, with corresponding stack offsets. |
+| `effect_update_orbiting_projectile` | `0x80038298` | Frame is 56 versus 120 bytes, with corresponding stack offsets. |
 | `player_update` | `0x80018880` | Frame is 216 versus 224 bytes; other differences remain in the body. |
 
 Every baseline preserves the ordered calls. All except horizontal movement
@@ -231,7 +231,7 @@ These counts describe sampled source states, not exhaustive C-program coverage.
 
 | Function | First-round new states | Typed follow-up new states | Kept strict % | Final verdict |
 | --- | ---: | ---: | ---: | --- |
-| `map_object_spawn_effect` | 2049 | 2050 | 97.128716 | Reviewed partial improvement |
+| `map_object_spawn_drop` | 2049 | 2050 | 97.128716 | Reviewed partial improvement |
 | `player_move_horizontal` | 2051 | 2049 | 96.56896 | Unchanged partial |
 | `map_world_state_persist` | 2051 | 2048 | 97.52873 | Unchanged partial |
 | `menu_draw_item_detail` | 2049 | 2050 | 97.80875 | Unchanged partial |
@@ -241,7 +241,7 @@ These counts describe sampled source states, not exhaustive C-program coverage.
 | `effect_update_dispatch` | 2050 | — | 99.82781 | Unchanged partial |
 | `effect_map_collision` | 2052 | — | 99.87369 | Unchanged partial |
 | `render_map_cell` | 2052 | — | 99.87838 | Unchanged partial |
-| `effect_projectile_update_2d` | 2051 | — | 99.93421 | Unchanged partial |
+| `effect_update_orbiting_projectile` | 2051 | — | 99.93421 | Unchanged partial |
 | `player_update` | 2049 | — | 99.96948 | Reviewed partial improvement |
 
 All affected sources pass fresh focused compilation and modern type checks.

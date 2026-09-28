@@ -195,7 +195,7 @@ void player_death_restart(void)
     if (floor != KF_FLOOR_1) {
         player_state.progress_state.current_floor = KF_FLOOR_1;
         player_state.map_variant = KF_MAP_VARIANT_DEFAULT;
-        pool_release_all();
+        animation_cache_release_all();
         audio_close_vab();
         map_load_floor_wrapper();
     }
@@ -210,7 +210,7 @@ void player_death_restart(void)
     player_state.view_rotation_offset.vx = 0;
     player_state.previous_map_cell.coords.x = player_state.motion_state.fields.map_cell.coords.x;
     player_state.previous_map_cell.coords.z = player_state.motion_state.fields.map_cell.coords.z;
-    player_state.camera_position.vy = player_state.floor_height - KF_PLAYER_CAMERA_HEIGHT;
+    player_state.camera_position.vy = player_state.foot_height - KF_PLAYER_CAMERA_HEIGHT;
 }
 
 ADDRESS(0x8001564c, 0x70)
@@ -497,9 +497,9 @@ void player_add_experience(s16 amount)
  * ($a0 for the threshold, $a1 for the excess); locals assigned later move.
  */
 ADDRESS(0x8001627c, 0xa8)
-s32 player_calculate_damage_component(s32 base_power, s32 defense, s32 attack)
+s32 player_calculate_damage_component(s32 defender_power, s32 defense, s32 attack)
 {
-    s32 threshold = base_power;
+    s32 threshold = defender_power;
     s32 excess = defense;
 
     if (attack == 0) {

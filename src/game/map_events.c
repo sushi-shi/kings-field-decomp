@@ -278,7 +278,7 @@ void map_world_state_persist(void)
 ADDRESS(0x80035e14, 0x30)
 void map_unload_floor(void)
 {
-    pool_release_all();
+    animation_cache_release_all();
     audio_close_vab();
     map_world_state_persist();
 }

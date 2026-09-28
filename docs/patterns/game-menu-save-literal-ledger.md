@@ -4,7 +4,7 @@ Current the two-option prompt are accounted for in the
 [confirmation/item ledger](game-menu-confirm-literal-ledger.md). The earlier
 counts and source spellings below describe their recorded audit snapshot.
 
-Complete ledger for `menu_two_option_prompt`, `menu_save_load_hub`,
+Complete ledger for `menu_two_option_prompt`, `menu_system_panel`,
 `menu_save_panel` and `menu_load_panel`: **140 retained occurrences**,
 down from 213. Named constant definitions and retail claims are excluded;
 the separate item-drop function is outside this ledger. Negative signs
@@ -39,22 +39,22 @@ See the [result-domain review](game-menu-save-results.md).
 | `menu_two_option_prompt` | 66 | `0 × 2` | `} else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {` | Current named button bit nonzero and previous bit zero define a rising edge. Preserve priority of vertical navigation, confirmation and cancellation. |
 | `menu_two_option_prompt` | 68 | `1` | `highlight = 1;` | Boolean footer highlight starts and resets off; confirmation sets it for the final presented frame before the release wait. |
 | `menu_two_option_prompt` | 70 | `0 × 2` | `} else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {` | Current named button bit nonzero and previous bit zero define a rising edge. Preserve priority of vertical navigation, confirmation and cancellation. |
-| `menu_save_load_hub` | 176 | `0` | `s32 confirm = 0;` | Boolean panel confirmation/highlight state: clear before sampling a new edge and set on the accepted button edge. Preserve its timing on return-row paths as well as actionable rows. |
-| `menu_save_load_hub` | 177 | `0` | `s32 input = 0;` | Begin edge detection with no previous button bits. |
-| `menu_save_load_hub` | 180 | `1` | `s32 action = -1;` | No pending System row action. This signed index sentinel is distinct from the root result channel and is reset before the result-exit guard. |
-| `menu_save_load_hub` | 186 | `1` | `if (action != -1 \|\| result == action) {` | Redraw the selected frame when an action is pending or the root result equals the no-action index (-1). The latter covers the exit frame; keep this cross-value comparison. |
-| `menu_save_load_hub` | 190 | `1, 0` | `while (PadRead(1) != 0)` | Preserve the ignored retail PadRead argument one; the linked SDK uses its global pad identifier. Zero button bits mean released: !=0 waits for release, ==0 redraws until acknowledgement, and assignment samples the next input edge. |
-| `menu_save_load_hub` | 202 | `0` | `KF_MENU_WINDOW_SYSTEM, KF_MENU_SYSTEM_ROW_COUNT, cursor, 0));` | Null save-summary pointer: the System quit prompt has no slot catalogue to display. |
-| `menu_save_load_hub` | 218 | `1` | `if (action != -1 && result == KF_MENU_ROOT_NO_ITEM)` | A sub-action returning no item/cancellation keeps the System hub open only when a row action was pending. The -1 operand tests the action index, not the named result. |
-| `menu_save_load_hub` | 220 | `1` | `action = -1;` | No pending System row action. This signed index sentinel is distinct from the root result channel and is reset before the result-exit guard. |
-| `menu_save_load_hub` | 224 | `0` | `confirm = 0;` | Boolean panel confirmation/highlight state: clear before sampling a new edge and set on the accepted button edge. Preserve its timing on return-row paths as well as actionable rows. |
-| `menu_save_load_hub` | 226 | `1` | `input = PadRead(1);` | Preserve the ignored retail PadRead argument one; the linked SDK uses its global pad identifier. Zero button bits mean released: !=0 waits for release, ==0 redraws until acknowledgement, and assignment samples the next input edge. |
-| `menu_save_load_hub` | 227 | `0 × 2` | `if ((input & PADLup) != 0 && (prev & PADLup) == 0) {` | Current named button bit nonzero and previous bit zero define a rising edge. Preserve priority of vertical navigation, confirmation and cancellation. |
-| `menu_save_load_hub` | 229 | `0` | `if (cursor != 0)` | Zero is the first-row boundary for decrementing a zero-based cursor; the alternative wraps to the named last row. |
-| `menu_save_load_hub` | 233 | `0 × 2` | `} else if ((input & PADLdown) != 0 && (prev & PADLdown) == 0) {` | Current named button bit nonzero and previous bit zero define a rising edge. Preserve priority of vertical navigation, confirmation and cancellation. |
-| `menu_save_load_hub` | 239 | `0 × 2` | `} else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {` | Current named button bit nonzero and previous bit zero define a rising edge. Preserve priority of vertical navigation, confirmation and cancellation. |
-| `menu_save_load_hub` | 241 | `1` | `confirm = 1;` | Boolean panel confirmation/highlight state: clear before sampling a new edge and set on the accepted button edge. Preserve its timing on return-row paths as well as actionable rows. |
-| `menu_save_load_hub` | 247 | `0 × 2` | `} else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {` | Current named button bit nonzero and previous bit zero define a rising edge. Preserve priority of vertical navigation, confirmation and cancellation. |
+| `menu_system_panel` | 176 | `0` | `s32 confirm = 0;` | Boolean panel confirmation/highlight state: clear before sampling a new edge and set on the accepted button edge. Preserve its timing on return-row paths as well as actionable rows. |
+| `menu_system_panel` | 177 | `0` | `s32 input = 0;` | Begin edge detection with no previous button bits. |
+| `menu_system_panel` | 180 | `1` | `s32 action = -1;` | No pending System row action. This signed index sentinel is distinct from the root result channel and is reset before the result-exit guard. |
+| `menu_system_panel` | 186 | `1` | `if (action != -1 \|\| result == action) {` | Redraw the selected frame when an action is pending or the root result equals the no-action index (-1). The latter covers the exit frame; keep this cross-value comparison. |
+| `menu_system_panel` | 190 | `1, 0` | `while (PadRead(1) != 0)` | Preserve the ignored retail PadRead argument one; the linked SDK uses its global pad identifier. Zero button bits mean released: !=0 waits for release, ==0 redraws until acknowledgement, and assignment samples the next input edge. |
+| `menu_system_panel` | 202 | `0` | `KF_MENU_WINDOW_SYSTEM, KF_MENU_SYSTEM_ROW_COUNT, cursor, 0));` | Null save-summary pointer: the System quit prompt has no slot catalogue to display. |
+| `menu_system_panel` | 218 | `1` | `if (action != -1 && result == KF_MENU_ROOT_NO_ITEM)` | A sub-action returning no item/cancellation keeps the System hub open only when a row action was pending. The -1 operand tests the action index, not the named result. |
+| `menu_system_panel` | 220 | `1` | `action = -1;` | No pending System row action. This signed index sentinel is distinct from the root result channel and is reset before the result-exit guard. |
+| `menu_system_panel` | 224 | `0` | `confirm = 0;` | Boolean panel confirmation/highlight state: clear before sampling a new edge and set on the accepted button edge. Preserve its timing on return-row paths as well as actionable rows. |
+| `menu_system_panel` | 226 | `1` | `input = PadRead(1);` | Preserve the ignored retail PadRead argument one; the linked SDK uses its global pad identifier. Zero button bits mean released: !=0 waits for release, ==0 redraws until acknowledgement, and assignment samples the next input edge. |
+| `menu_system_panel` | 227 | `0 × 2` | `if ((input & PADLup) != 0 && (prev & PADLup) == 0) {` | Current named button bit nonzero and previous bit zero define a rising edge. Preserve priority of vertical navigation, confirmation and cancellation. |
+| `menu_system_panel` | 229 | `0` | `if (cursor != 0)` | Zero is the first-row boundary for decrementing a zero-based cursor; the alternative wraps to the named last row. |
+| `menu_system_panel` | 233 | `0 × 2` | `} else if ((input & PADLdown) != 0 && (prev & PADLdown) == 0) {` | Current named button bit nonzero and previous bit zero define a rising edge. Preserve priority of vertical navigation, confirmation and cancellation. |
+| `menu_system_panel` | 239 | `0 × 2` | `} else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {` | Current named button bit nonzero and previous bit zero define a rising edge. Preserve priority of vertical navigation, confirmation and cancellation. |
+| `menu_system_panel` | 241 | `1` | `confirm = 1;` | Boolean panel confirmation/highlight state: clear before sampling a new edge and set on the accepted button edge. Preserve its timing on return-row paths as well as actionable rows. |
+| `menu_system_panel` | 247 | `0 × 2` | `} else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {` | Current named button bit nonzero and previous bit zero define a rising edge. Preserve priority of vertical navigation, confirmation and cancellation. |
 | `menu_save_panel` | 271 | `0` | `s32 cursor = 0;` | Start or wrap to the first zero-based save/load slot row. |
 | `menu_save_panel` | 272 | `0` | `s32 confirm = 0;` | Boolean panel confirmation/highlight state: clear before sampling a new edge and set on the accepted button edge. Preserve its timing on return-row paths as well as actionable rows. |
 | `menu_save_panel` | 273 | `0` | `s32 input = 0;` | Begin edge detection with no previous button bits. |

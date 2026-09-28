@@ -173,7 +173,7 @@ before the two `lw` loads in `player_distance_to_point_in_cone`; `move v0,a0`
 before the stack-argument loads in `player_apply_radial_damage`). Applied to
 every enrolled unit it produced no regressions and made ten more units exact:
 `matrix_set_rotation_yxz`, the four vector scale helpers,
-`primitive_buffer_commit_poly_ft4`, `menu_release_item_model`
+`menu_commit_poly_ft4`, `menu_release_item_model`
 (previously exact only under 2.6.0 without the second scheduling pass),
 `save_workspace_allocate`, `audio_play_spatial_range`, `sound_ref_play`.
 `probe-gcc257-o2-g0` now carries `cc1_flags = ["-mcpu=r3000"]`.
@@ -247,7 +247,7 @@ Open residues (not steered):
 | Retail signature | Source shape | Witness |
 | --- | --- | --- |
 | `addiu sp,sp,-8` ... `addiu sp,sp,8` around a leaf with no stack traffic (`.frame $sp,8`, `vars= 8`) | a loop whose condition post-decrements a variable (`while (count--)` or `while (count-- != 0)`); `for (; count != 0; count--)` reserves nothing | `repeat_store_word` `0x80014268` |
-| the same frame in a leaf without a loop | a load and a store that address the same global object (`tmd_state.current_asset = tmd_state.slots[index]`); GCC 2.5.8 sources: CSE relates the two addresses, combine folds the array address pseudo into the load, its stale `reg_n_refs` keeps it alive for reload, and `alter_reg` gives the dead pseudo a stack slot that nothing uses. Storing the same load into another object, or `-fforce-addr`, removes the frame | `tmd_select` `0x8001c0e8` |
+| the same frame in a leaf without a loop | a load and a store that address the same global object (`tmd_state.current_tmd = tmd_state.slots[index]`); GCC 2.5.8 sources: CSE relates the two addresses, combine folds the array address pseudo into the load, its stale `reg_n_refs` keeps it alive for reload, and `alter_reg` gives the dead pseudo a stack slot that nothing uses. Storing the same load into another object, or `-fforce-addr`, removes the frame | `tmd_select` `0x8001c0e8` |
 | the same frame in `tmd_prepare_primitive_indices` `0x8001c2b0` | not reproduced; the function stores nothing to a global, so the folded pseudo must come from another expression; open | residue |
 
 
@@ -279,7 +279,7 @@ Residues left in the same module (not steered):
   target was already different.
 - `tmd_prepare_primitive_indices`: in OPEN `0x80017030`, computing the outer
   decrement and object pointer before the zero-count guard reproduces retail's
-  second `tmd_state.current_asset` load. The unused 8-byte frame and the entry
+  second `tmd_state.current_tmd` load. The unused 8-byte frame and the entry
   branch/decrement schedule remain unattributed; the current complete semantic
   source is 98.333336% after all internal jump referents were reviewed.
 
@@ -345,7 +345,7 @@ Historical observations:
   un-hoisted body at once -- the open scheduler-attribution residue.
 
 - `func_8001de18` `0x8001de18` (13%): a base-sharing divergence that turned out
-  **not** to be the dominant one. Retail holds `&tmd_state.current_asset`
+  **not** to be the dominant one. Retail holds `&tmd_state.current_tmd`
   (`tmd_state+0x20`) in one register and forms the projected-vertex buffer as
   `base+488` and the ordering-table pointer as `(buffer-756)`, materialised
   from a single relocation. Because gcc shares a base register only across
@@ -378,7 +378,7 @@ mechanisms exceed what the linked bytes alone establish. The later
 regressions under the current probe and the narrower field relationships that
 have been verified. The complete original object boundary remains unresolved.
 
-The base-register arithmetic in `func_8001de18` (`&tmd_state.current_asset`
+The base-register arithmetic in `func_8001de18` (`&tmd_state.current_tmd`
 reaching `display_state.ordering_table` at `-756` off the `+488` buffer
 pointer) and in the display initializer `func_8001bb94` (`&draw_env[0].dtd`
 reaching `disp_env[0]` at `+162` and `render_state.fog_near_distance` at
@@ -398,10 +398,10 @@ from `display_state` (size `0x20024`), so GAME's `display_state` shrinks to
 | `+0x0004` | `0x80090ec0` | `draw_environments[2]` (`DRAWENV`) | `display_draw_environments` |
 | `+0x00bc` | `0x80090f78` | `disp_environments[2]` (`DISPENV`) | `display_disp_environments` |
 | `+0x00e4` | `0x80090fa0` | 8-byte gap | (unmodelled) |
-| `+0x00ec` | `0x80090fa8` | `tmd_state` (`current_asset` at `+0x10c`) | `tmd_state` |
+| `+0x00ec` | `0x80090fa8` | `tmd_state` (`current_tmd` at `+0x10c`) | `tmd_state` |
 | `+0x0110` | `0x80090fcc` | `asset_registry_entries[60]` | `asset_registry_entries` |
 | `+0x0200` | `0x800910bc` | `current_tmd_vertices` | `current_tmd_vertices` |
-| `+0x0204` | `0x800910c0` | `pool_records[12]` | `pool_records` |
+| `+0x0204` | `0x800910c0` | `animation_cache_records[12]` | `animation_cache_records` |
 | `+0x02f4` | `0x800911b0` | `projected_vertices` (8-byte screen entries) | `DAT_800911b0` |
 | `+0x419c` | `0x80095058` | sprite/floor scratch, floor items, frame counters | `DAT_80095058`, `floor_items`, ... |
 | `+0x47e4` | `0x800956a0` | `render_state` (`fog_near_distance` at `+0xa0`) | `render_state` |
@@ -496,14 +496,14 @@ the later frame/register-allocation residue remains unattributed.
 | `beq a,11; slti a,11; slti a,83; slti a,80` ladder | `switch (action) { case 11: case 80: case 81: case 82: ... default: ... }`; the `&&` spelling folds `>= 11 && < 83` into one unsigned range test | `map_object_pool_trigger_link` `0x80031b54` |
 | `beq id,0xff` whose delay slot holds the index increment from the loop tail | `for (; index < N; index++, object++) { if (id == 0xff) continue; ... }`; a `while` with the body under `if (id != 0xff)` fills the slot from the fall-through instead | `map_object_pool_find_interaction_from` `0x800315c4` |
 | `-1` hoisted into `s7` for the distance compare | compare the call result inline in each branch (`if (f(...) != -1) return index;`); one compare after a `distance` join loads `-1` per iteration | same |
-| `sw x; ...; lw x` reload of a field just stored | store x, y, z first and compute the cells afterwards: any later store through the object pointer invalidates the CSE entry, so the cell reads reload | `map_object_spawn_effect` `0x80031834`, `map_object_spawn_actor_debris` `0x800319c8` |
+| `sw x; ...; lw x` reload of a field just stored | store x, y, z first and compute the cells afterwards: any later store through the object pointer invalidates the CSE entry, so the cell reads reload | `map_object_spawn_drop` `0x80031834`, `map_object_spawn_gold_drop` `0x800319c8` |
 | `lui s0,&counter` kept in a saved register across the acquire call, `lhu; addiu; sh` then the old value stored | `u16 *sequence = &counter; ... object->spawn_sequence = (*sequence)++;` | same |
-| `srl s1,v0,3; andi s1,0xffff` with the parameter's register reused | a separate short-lived `u16 angle = (u32)rand() >> 3;` (the parameter is dead, so the angle inherits its register); reusing the parameter itself keeps it live and swaps the argument registers | `map_object_spawn_actor_debris` |
+| `srl s1,v0,3; andi s1,0xffff` with the parameter's register reused | a separate short-lived `u16 angle = (u32)rand() >> 3;` (the parameter is dead, so the angle inherits its register); reusing the parameter itself keeps it live and swaps the argument registers | `map_object_spawn_gold_drop` |
 | `addiu t3,a2,-1280` (definitions from the pool base) in a leaf loop | a local `definitions = map_object_state.definitions;` pointer hoisted by loop.c and folded by the second CSE pass; indexing the array directly keeps the absolute form | `map_object_pool_clear_link` `0x80031c44` |
 
 Residues left in the module:
 
-- `map_object_spawn_effect`: retail keeps the sequence pointer in `s0` and the
+- `map_object_spawn_drop`: retail keeps the sequence pointer in `s0` and the
   acquired object in `s1` with the return copy scheduled before the counter
   store; every tried spelling reuses `s0` for the object.
   The later [velocity-initialization audit](game-map-drop-initialization.md)
@@ -553,7 +553,7 @@ See [the awareness trace controls](game-actor-awareness.md).
 
 | Retail evidence | Source shape | Function |
 | --- | --- | --- |
-| `lbu; sh zero,18; sb v0,10` init idiom | `timer = 1; animation_id = a[k]; animation_phase = 0;` in that order: the scheduler fills the load delay with the independent halfword store. Phase first leaves `sh; lbu; nop; sb`, because a load cannot move above a store through a different base pointer (alias analysis assumes a conflict) | `actor_update_current_action` `0x8002fa88` |
+| `lbu; sh zero,18; sb v0,10` init idiom | `timer = 1; animation_clip = a[k]; animation_phase = 0;` in that order: the scheduler fills the load delay with the independent halfword store. Phase first leaves `sh; lbu; nop; sb`, because a load cannot move above a store through a different base pointer (alias analysis assumes a conflict) | `actor_update_current_action` `0x8002fa88` |
 | `lbu v0,21(s1)` hoisted above seven zero stores, `sb v0,10` last | the animation assignment is the second statement; the dependent `sb` becomes ready last and trails the independent stores | same |
 | case 2: `beqz -> L0; beq 1 -> L1; j default` with bodies after | a nested `switch (actor->action_timer)` with `case 0`, `case 1`, `default`; the single `actor_advance_animation_wrapped` call sits after the inner switch and the blocked path leaves with `goto` to the vertical section. Duplicating the call per case merges the copies first and the compiler-made label then hides the shared aim call from cross-jumping (`jump_chain` only covers original labels) | same |
 | case 33's timer==0 path jumps into the far branch's aim call | one `move(1, 0); wrapped(steps[1])` tail after the if/else chain; the near-home branch leaves with `break` | same |
@@ -696,13 +696,13 @@ Witnesses come from `src/game/map_interaction.c` (`game.map_interaction`, the
 contiguous band `0x800346a8..0x800356e8` bracketed by the `func_800346a0` and
 `func_800356e8` stubs). This is the per-frame nearby-event/object interaction
 dispatcher `func_80034de4` called by `player_update`, plus its scripted
-transition cutscene (`map_floor5_transition_cutscene`), a trigger latch
+transition cutscene (`map_floor5_weapon_transform_cutscene`), a trigger latch
 (`func_80034a34`), a talk/progress-image dispatcher (`func_80034a80`), and a
 floor-image loader (`func_80034d54`).
 
 | Retail signature | Source shape | Witness |
 | --- | --- | --- |
-| `lw v0,8; lw v1,12; lw a0,16; lw a1,20; sw x4` then `lw v0,172(sp); addiu -600; sw` (the field reloads after the block store) | `struct KfVec4i spawn = *(struct KfVec4i *)&effect->position_x; spawn.y -= 600;` — the aligned 16-byte struct copy leaves the members in memory, so the later `spawn.y` read reloads; four separate `words[k] = field` assignments keep the value in a register and subtract in place | `map_floor5_transition_cutscene` `0x800346a8` |
+| `lw v0,8; lw v1,12; lw a0,16; lw a1,20; sw x4` then `lw v0,172(sp); addiu -600; sw` (the field reloads after the block store) | `struct KfVec4i spawn = *(struct KfVec4i *)&effect->position_x; spawn.y -= 600;` — the aligned 16-byte struct copy leaves the members in memory, so the later `spawn.y` read reloads; four separate `words[k] = field` assignments keep the value in a register and subtract in place | `map_floor5_weapon_transform_cutscene` `0x800346a8` |
 | `beqz stage,A; beq stage,s4,B; j C` three-way dispatch with `A`,`B` laid out after the test and `C` the common tail | `switch (stage) { case 0: A; break; case 1: B; break; }` then the shared tail `C`; an `if (stage==0)…else if (stage==1)` inverts the first test (`bnez`) and inlines `A` | same |
 | `lbu v1,grid; sll v0,v1,1; …` with no `andi 0xff` before the `*100` chain | read a `u8` grid byte into an `s32` local; a `u8` local re-masks with `andi` before the multiply | same |
 | `lw v1,map_event_pool+0x4c; li a0,-256; and; lui/ori 0x28010500; bne` (one masked word compare of four adjacent bytes) | `(*(u32 *)&map_event_pool[1].image_limit & 0xffffff00) == 0x28010500` — a word pun of the image_limit/index/dirty/delay bytes; three byte compares never fold to one `lw` | `func_80034a34` `0x80034a34` |
@@ -763,7 +763,7 @@ Residues recorded in the same module (not steered):
   quotient. Every division, dividend order and named-local variant tried keeps
   the same class assignment. Everything else (the `memcpy` stat-bank loader, the
   sector rounding) matches.
-- `item_menu_buy` `0x80021538` and `item_menu_sell` `0x80021afc`: the earlier
+- `shop_menu_buy` `0x80021538` and `shop_menu_sell` `0x80021afc`: the earlier
   assertion of correct control flow was wrong. The
   [shop-panel flow audit](game-shop-panel-flow.md) restores unconditional
   confirmation reset, long-list upward wrap, post-call cancellation handling,
@@ -1210,7 +1210,7 @@ Source shapes that were load-bearing:
 | a single callee-saved base (`s5`) holds `DAT_800652a8` for the whole body; the build loop strength-reduces `inv[code]` into an advancing temp | index a stable base pointer (`inv = DAT_800652a8; inv[code]`, `inv[selection]--`) rather than an advancing `inv++`, so the exit decrement keeps the base alive across the calls | `func_800249a8` (5.7% -> 91.5%) |
 | catalogue read filtered to the "no card" path via `beq result,1` sharing the fall-through into the menu | write `if (read_catalog(..) != 1) { nodata; return -1; }` (the negated test), not `if (== 1) { menu } else { nodata }` | `func_8002552c`, `func_800250c4` |
 | Three `KfSaveSlotSummary` rows at `sp+16`; the load panel's confirm reads `summaries[cursor].current_hp` (offset 8) for slot occupancy | the 24-byte summary with six `u32` fields, three of them (`0x48` bytes, matching the save panel's `memset(.., 0, sizeof)`) | both save/load panels |
-| the seven equipment ids share one base register with byte offsets `0, 0x2c..0x31` | use the known complete `KfPlayerState *player` and named equipment fields; this preserves a shared base but currently chooses the object start rather than retail's `+0x64` base. Do not index across scalar members to force an interior base. | `menu_drop_item`; [typed-field result](game-drop-item-flow.md#typed-field-follow-up-result-at-45dede3) |
+| the seven equipment ids share one base register with byte offsets `0, 0x2c..0x31` | use the known complete `KfPlayerState *player` and named equipment fields; this preserves a shared base but currently chooses the object start rather than retail's `+0x64` base. Do not index across scalar members to force an interior base. | `menu_drop_item_panel`; [typed-field result](game-drop-item-flow.md#typed-field-follow-up-result-at-45dede3) |
 
 Historical residue hypotheses, not established compiler limitations. The
 linked follow-ups supersede the original claims where source gaps were found:

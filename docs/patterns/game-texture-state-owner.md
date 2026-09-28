@@ -35,7 +35,7 @@ placement expansion. These decoded chains constrain a shared field family.
 | `8001e9a4 render_actor` | 532; 94.751880% | Actor pointer from the scene traversal; 168-byte frame, twenty calls, ten address pairs plus two validated internal jumps. Keep byte descriptor shift/postdecrement and texture publication; express both effect caches and active material under the shared owner. |
 | `8001fde4 render_frame` | 1304; 100% | Nullable VECTOR/SVECTOR forwarding, 80-byte frame, twenty calls, 64 pairs and four internal jumps. All HUD/notification loads, stores and reloads must remain exact. The earlier eight-byte material owner lost eight body bytes and is a negative control. |
 | `8001bce0 render_initialize` | 728; 100% | No arguments; 32-byte frame, fifteen calls, 41 pairs. Preserve allocations, independent matrix addresses, SDK selectors, queue byte clearing and return delay slot. |
-| `8001bae4 effect5_texture_cache_prepare` | 176; 100% | Floor byte passed as the existing promoted domain; 24-byte frame, six calls/pairs, floor-five guard with ra save in its delay slot. Keep all three page and CLUT values and their independent stores. |
+| `8001bae4 render_prepare_actor_textures` | 176; 100% | Floor byte passed as the existing promoted domain; 24-byte frame, six calls/pairs, floor-five guard with ra save in its delay slot. Keep all three page and CLUT values and their independent stores. |
 
 The six image-qualified views, complete retail bodies, constraining callers,
 adjacent source claims and history are reviewed before the temporary compile.

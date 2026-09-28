@@ -49,15 +49,15 @@ and shift, retaining the partial-sector guard and its unsigned shift sequence.
 | GAME address | Function | Bytes | Strict match (before = after) | Per-function evidence and hypothesis |
 | --- | --- | --- | --- | --- |
 | `0x80020cfc` | `item_load_database` | 1500 | 99.746666% | Copy endpoints: 912 assets, 2376 windows, 1600 item names, 180 spell names, 320 bytes per price bank; model-search loop has exclusive bound 80. |
-| `0x80021538` | `item_menu_buy` | 1476 | 99.769646% | Two item-order bands cover IDs 42..79 then 0..41; ten signed halfwords per name; eighty-row workspaces and two-column halfword prices. |
-| `0x80021afc` | `item_menu_sell` | 1280 | 99.609375% | Eighty-row workspace; only allowed unequipped stock rows appended; ten-halfword copies and two-column sale prices. |
+| `0x80021538` | `shop_menu_buy` | 1476 | 99.769646% | Two item-order bands cover IDs 42..79 then 0..41; ten signed halfwords per name; eighty-row workspaces and two-column halfword prices. |
+| `0x80021afc` | `shop_menu_sell` | 1280 | 99.609375% | Eighty-row workspace; only allowed unequipped stock rows appended; ten-halfword copies and two-column sale prices. |
 | `0x800151cc` | `game_state_initialize` | 740 | 100.0% | Raw count 0xef at 8001537c clears all 240 bytes by decrementing through zero; all player/shop seeds stay unchanged. |
 | `0x80022608` | `menu_use_item_panel` | 1908 | 99.48218% | Fifty label rows and two 56-byte workspaces remain distinct; only name width and exclusive item bound 80 change spelling. |
 | `0x8002317c` | `menu_magic_panel` | 1328 | 100.0% | Ten-row label workspace and sixteen code bytes remain; copy/stride uses the shared ten-halfword name format. |
 | `0x800238d8` | `menu_equip_select` | 1476 | 100.0% | Twenty-row workspace remains; category/type boundary and all equipment stores remain; name copy/stride is ten halfwords. |
 | `0x80023e9c` | `menu_spell_select` | 1136 | 99.54225% | Twenty-row workspace and typed selected-spell byte array remain; name copy/stride is ten halfwords. |
-| `0x800249a8` | `menu_drop_item` | 1212 | 99.54785% | Full eighty-entry stock scan and parallel workspace extents; ten glyphs per copied row. |
-| `0x800292f8` | `menu_draw_item_name_frame` | 1976 | 95.37652% | Copies ten name halfwords to a positioned label; keep model/GTE call set and transforms. |
+| `0x800249a8` | `menu_drop_item_panel` | 1212 | 99.54785% | Full eighty-entry stock scan and parallel workspace extents; ten glyphs per copied row. |
+| `0x800292f8` | `menu_draw_pickup_preview` | 1976 | 95.37652% | Copies ten name halfwords to a positioned label; keep model/GTE call set and transforms. |
 | `0x8002ad6c` | `menu_list_init` | 140 | 100.0% | Copies ten title halfwords from the loaded window row, then retains its distinct default stride eight in the return slot. |
 | `0x800279c4` | `menu_item_model_preview` | 440 | 98.181816% | Item-name copy uses ten signed halfwords; quantity formatting remains width two. |
 | `0x80027b7c` | `menu_draw_item_detail` | 732 | 91.28416% | Ten-halfword name copy; pointer to a two-column price row remains u16 with the named shop dimension. |

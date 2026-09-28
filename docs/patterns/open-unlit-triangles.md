@@ -311,7 +311,7 @@ consuming the four-byte header, the next packet advances by
 
 There are eight direct calls, all accounted for. NormalClip and the LIBGPU
 packet helpers have separate SDK attribution; the surrounding TMD/material
-policy is game-owned. This is not GAME's `render_enqueue_model`: that renderer
+policy is game-owned. This is not GAME's `render_enqueue_tmd_retextured`: that renderer
 has additional shading and mode behavior. No lighting or fog calls belong
 in this OPEN body.
 

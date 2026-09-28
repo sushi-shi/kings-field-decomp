@@ -6,7 +6,7 @@ increase. Already exact functions meet the requested byte-match outcome.
 The remaining selected functions are `player_update`, `render_map_cell`,
 `menu_draw_status_details`, `menu_draw_item_detail`,
 `menu_draw_window_backdrop`, `map_interaction_dispatch`,
-`effect_map_collision`, and `effect_projectile_update_2d`.
+`effect_map_collision`, and `effect_update_orbiting_projectile`.
 
 The recorded counts are a lower bound on work: they omit manual source
 edits, compiler trace controls and verification recompilations. Six trials
@@ -964,7 +964,7 @@ residue are under `build/player-motion-owner/` and
 All eight frozen functions received their own evidence snapshot and multiple
 semantic source controls. `menu_draw_status_details` reached strict 100% and
 is banked. `effect_map_collision` is one word short; `menu_draw_item_detail`
-is two words short; `effect_projectile_update_2d`, `render_map_cell` and
+is two words short; `effect_update_orbiting_projectile`, `render_map_cell` and
 `menu_draw_window_backdrop` retain unexplained stack-frame differences;
 `map_interaction_dispatch` retains unsupported reload/lifetime differences;
 and `player_update` retains an eight-byte frame difference after exact call,
@@ -1094,12 +1094,12 @@ Final verification passes the focused compile, complete 739-test / 9183-subtest
 suite, Ruff and whitespace checks. The full build raises GAME to 341/362 exact
 at 99.787% aggregate and the repository total to 448/471 exact. It reaches the
 existing data ownership and section-placement failures with zero artifact
-failures. `map_object_probe_forward` is banked at strict 100%.
+failures. `map_object_probe_door_closing` is banked at strict 100%.
 
 ## Statistics header: shared row-step value
 
 Function Match Plan at `222f381b`: GAME `80025f38`, 1440 retail bytes / 1428
-source bytes, strict 97.977776%, unit `game.menu_draw_stats_header`. Fresh
+source bytes, strict 97.977776%, unit `game.menu_draw_status_summary`. Fresh
 hash-verified evidence includes all six semantic views, the complete 360-word
 retail body, three proven no-argument callers, 28 proven calls, 36 validated
 data-address pairs, two internal jumps, nineteen CFG blocks, nine branches,
@@ -1366,7 +1366,7 @@ source change or bank is made; results and retained traces are under
 
 Follow-up Function Match Plan: GAME `80038a38`, 6156 bytes / strict
 99.827810%, unit `game.effect_dispatch`. Hash-identical retail and all six
-fresh semantic views confirm the sole `effect_pool_sweep` caller, 69 direct
+fresh semantic views confirm the sole `effect_pool_update` caller, 69 direct
 calls, 22 validated address pairs, 257 CFG blocks, 135 conditional branches,
 36 return frontiers, a 168-byte frame and 49 candidate switch-table rows. The
 complete effect-kind policies remain game code around separately identified
@@ -1652,7 +1652,7 @@ Only three linked words differ: after forming `item_id * 5`, retail
 materializes `item_name_rows` before the final shift by two, while the probe
 finishes `item_id * 20` first. Earlier row, direct-index, early-selection,
 cursor, loop and inline-boundary controls left this order unchanged. The
-related `menu_draw_item_name_frame` has since established a new supported
+related `menu_draw_pickup_preview` has since established a new supported
 source fact: a named pointer to the complete row table restores this exact
 split-shift/address schedule while preserving the same typed row consumer.
 

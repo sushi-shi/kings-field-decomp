@@ -16,9 +16,9 @@ switch tables, references, delay slots and all phase/rounding behavior.
 | --- | --- | --- | --- |
 | `80036f00 / 68` | `effect_pool_find_free` | 100.000000 | Forty-eight byte-tagged slots, decrementing halfword scan and null miss; ledger only. |
 | `80036f44 / 2092` | `effect_pool_construct` | 100.000000 | Kind-minus-four switch and six/seven/eight argument slots; identify lightning impact/radial blast and branch visual children, authored orientation/scales, branch delay, emission depth, orbit quantization and extended sound ranges. |
-| `80037770 / 172` | `effect_pool_spawn_typed` | 100.000000 | Specialized floor controller stores live type 0xf0, kind 52 and forward phase; name the complete type value without inventing individual high-bit flags. |
+| `80037770 / 172` | `effect_pool_spawn_floor_deformation` | 100.000000 | Specialized floor controller stores live type 0xf0, kind 52 and forward phase; name the complete type value without inventing individual high-bit flags. |
 | `8003781c / 52` | `effect_pool_set_current` | 100.000000 | Select current record and derive its magic-row pointer; no literals or type changes. |
-| `80038298 / 608` | `effect_projectile_update_2d` | 99.934210 | Signed halfword X/Z centers restore 256-world-unit buckets with <<8; share that quantization width with constructor writes. |
+| `80038298 / 608` | `effect_update_orbiting_projectile` | 99.934210 | Signed halfword X/Z centers restore 256-world-unit buckets with <<8; share that quantization width with constructor writes. |
 | `80038a38 / 6156` | `effect_update_dispatch` | 96.939570 | Lightning impact emits radial children; ground branches emit visual children; twenty 175-unit emergence steps undo constructor depth 3500. Propagate identities and emergence units. |
 
 Image-specific address, disassembly/CFG, callers/callees, strings and match

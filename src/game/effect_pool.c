@@ -380,7 +380,7 @@ KfEffectRecord *effect_pool_construct(
 }
 
 ADDRESS(0x80037770, 0xac)
-KfEffectRecord *effect_pool_spawn_typed(
+KfEffectRecord *effect_pool_spawn_floor_deformation(
     u16 first_segment, u16 segment_count, u16 progress_per_update, u16 cell_stagger,
     s32 sweep_updates, s32 hold_countdown)
 {

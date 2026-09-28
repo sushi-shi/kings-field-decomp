@@ -152,14 +152,14 @@ are retained for adjacent and caller/callee controls as well as changed bodies.
 | `0x80018880 / 6684` | `player_update` | 96.94554 → same | Caller control; code unchanged |
 | `0x80020b4c / 432` | `item_load_floor_placements` | 98.888885 → same | Adjacent control; code unchanged |
 | `0x80020cfc / 1500` | `item_load_database` | 99.746666 → same | Adjacent control; code unchanged |
-| `0x800212d8 / 608` | `item_menu_root` | 100 → same | Exact / 152 retail words |
-| `0x80021538 / 1476` | `item_menu_buy` | 97.20054 → same | Shared stack limit; code unchanged |
-| `0x80021afc / 1280` | `item_menu_sell` | 96.77187 → same | Adjacent control; code unchanged |
+| `0x800212d8 / 608` | `shop_menu_root` | 100 → same | Exact / 152 retail words |
+| `0x80021538 / 1476` | `shop_menu_buy` | 97.20054 → same | Shared stack limit; code unchanged |
+| `0x80021afc / 1280` | `shop_menu_sell` | 96.77187 → same | Adjacent control; code unchanged |
 | `0x80021ffc / 696` | `item_pickup_confirm` | 100 → same | Renamed/typed; exact / 174 retail words |
 | `0x800222b4 / 148` | `menu_save_confirm` | 100 → same | Adjacent control; exact / 37 retail words |
 | `0x80022348 / 704` | `menu_root` | 96.86364 → same | Other return-domain control; code unchanged |
 | `0x80022608 / 1908` | `menu_use_item_panel` | 92.8218 → same | Other return-domain control; code unchanged |
-| `0x800292f8 / 1976` | `menu_draw_item_name_frame` | 94.52227 → same | Preview control; code unchanged |
+| `0x800292f8 / 1976` | `menu_draw_pickup_preview` | 94.52227 → same | Preview control; code unchanged |
 | `0x80034de4 / 2308` | `map_interaction_dispatch` | 83.04679 → 83.436745 | Typed pickup local; reviewed GPR changes |
 | `0x80036e30 / 8` | `func_80036e30` | 100 → same | Unresolved adjacent stub; exact / 2 retail words |
 | `0x80036e38 / 200` | `menu_enter_mode` | 100 → same | Encoded mode boundary; exact / 50 retail words |

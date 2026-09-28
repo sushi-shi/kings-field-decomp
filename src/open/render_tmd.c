@@ -24,9 +24,9 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
     u16 unattributed_stack_slot[2];
     u32 header;
     u32 remaining = object->primitive_count;
-    u8 *packet = (u8 *)open_graphics_runtime.tmd_state.current_asset +
+    u8 *packet = (u8 *)open_graphics_runtime.tmd_state.current_tmd +
         (object->primitive_offset + KF_TMD_HEADER_BYTES);
-    u8 *normals = (u8 *)open_graphics_runtime.tmd_state.current_asset +
+    u8 *normals = (u8 *)open_graphics_runtime.tmd_state.current_tmd +
         (object->normal_offset + KF_TMD_HEADER_BYTES);
     KfScreenVertex *vertex0;
     KfScreenVertex *vertex1;

@@ -33,7 +33,7 @@ All addresses in this table refer to GAME.EXE.
 | Player +0x79 | `weapon_magic_delay` | Weapon magic emits at 1, writes per-weapon delays of 1/2/3, and decrements other nonzero values. |
 | Player +0x98 | `hud_gauges_enabled` | Config row 2, initialized to 1 at 80016e9c; render_frame controls HP/MP/charge/status sprites with it. |
 | Player +0x99 | `compass_enabled` | Config row 3, initialized to 1 at 80016ea4; enables the two HUD components whose needle rotation is the negated view yaw. |
-| Render +0x80 | `effect_color_matrix` | Passed to SetColorMatrix by render_effect_sprites at 8001f8d4; initialized from color table 3 and interpolated during death at 800184e4/80018700. |
+| Render +0x80 | `hud_model_color_matrix` | Passed to SetColorMatrix by render_hud_models at 8001f8d4; initialized from color table 3 and interpolated during death at 800184e4/80018700. |
 | Actor definition +0 | `pursuit_distance_scale` | 8002e364 loads the byte; selection shifts it by 8 and selects player-pursuit action 2 inside the threshold, with existing hysteresis. |
 | Actor definition +1 | `model_and_texture` | render_actor takes low nibble as asset and high nibble as texture-page/CLUT variant. |
 | Actor definition +2 | `melee_attack_chance` | 8002e4b0 supplies chance for action 4, whose animation triggers actor_try_attack_player. |
@@ -42,7 +42,7 @@ All addresses in this table refer to GAME.EXE.
 | Actor definition +0x82 | `effect_owner_id` | Halfword loads at 8002f10c/8002f164/8002f19c/8002f1c4 supply the constructor's owning-ID argument. |
 | Actor definition +0x96 | `gold_drop_limit` | Actor death at 8002fd3c computes `rand() * limit >> 15`. The callee at 800319c8 places object 39 and stores the resulting amount in the two link bytes. COM.DAT defines object 39 as behavior 0x41; `map_interaction_dispatch` reconstructs that amount, notifies it, credits `player_state.gold`, and frees the object. The bound is exclusive. |
 | Placement +5 / Actor +7 | `spawn_chance` | Copied by actor_pool_load_placements; awareness at 8002e760 and 8002e810 compares the byte shifted by 7 against rand. |
-| Placement +6 / Actor +9 | `death_drop_object_id` | Copied by placement loader; 8002fdd4 passes it as object ID to map_object_spawn_effect during death, except sentinel 0x63. |
+| Placement +6 / Actor +9 | `death_drop_object_id` | Copied by placement loader; 8002fdd4 passes it as object ID to map_object_spawn_drop during death, except sentinel 0x63. |
 | Object link +6/+7 | `linked_notification`, `default_notification` | map_interaction_dispatch passes the first to notify_enqueue for behavior 8 with a live link; the second is its default notification. Reset clears both. |
 | Event definition +0x0d / Event +0x0e | `behavior` | Pool load copies the byte; update dispatches 1 to wander and 2 to spinner; interaction also switches on it. |
 | Event +0x0f | `animation_clip` | Third argument to render_bind_animated_instance; interaction selects 0/1 while advancing animation phase. |

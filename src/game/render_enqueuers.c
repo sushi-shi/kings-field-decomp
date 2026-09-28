@@ -34,8 +34,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
 
     object = tmd_get_object(object_index);
     remaining = object->primitive_count;
-    packet = (u8 *)game_graphics_runtime.tmd_state.current_asset + (object->primitive_offset + KF_TMD_HEADER_BYTES);
-    normals = (u8 *)game_graphics_runtime.tmd_state.current_asset + (object->normal_offset + KF_TMD_HEADER_BYTES);
+    packet = (u8 *)game_graphics_runtime.tmd_state.current_tmd + (object->primitive_offset + KF_TMD_HEADER_BYTES);
+    normals = (u8 *)game_graphics_runtime.tmd_state.current_tmd + (object->normal_offset + KF_TMD_HEADER_BYTES);
     while (remaining-- != 0) {
         header = *(u32 *)packet;
         packet = TMD_PACKET_BODY(packet);
@@ -437,7 +437,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
 #undef VTX
 
 DATA(0x80057b5c, 0x4)
-CVECTOR model_textured_primitive_color = {
+CVECTOR retextured_primitive_color = {
     KF_TEXTURE_BASE_BRIGHTNESS, KF_TEXTURE_BASE_BRIGHTNESS,
     KF_TEXTURE_BASE_BRIGHTNESS, 0
 };
@@ -446,7 +446,7 @@ CVECTOR model_textured_primitive_color = {
  * separate model lighting colour. The caller supplies the signed depth bias.
  */
 ADDRESS(0x8001d730, 0x6e8)
-void render_enqueue_model(u16 object_index, s16 depth_bias)
+void render_enqueue_tmd_retextured(u16 object_index, s16 depth_bias)
 {
     KfTmdPrimitive *primitive;
     KfTmdObject *object;
@@ -463,8 +463,8 @@ void render_enqueue_model(u16 object_index, s16 depth_bias)
 
     object = tmd_get_object(object_index);
     remaining = object->primitive_count;
-    packet = (u8 *)game_graphics_runtime.tmd_state.current_asset + (object->primitive_offset + KF_TMD_HEADER_BYTES);
-    normals = (u8 *)game_graphics_runtime.tmd_state.current_asset + (object->normal_offset + KF_TMD_HEADER_BYTES);
+    packet = (u8 *)game_graphics_runtime.tmd_state.current_tmd + (object->primitive_offset + KF_TMD_HEADER_BYTES);
+    normals = (u8 *)game_graphics_runtime.tmd_state.current_tmd + (object->normal_offset + KF_TMD_HEADER_BYTES);
     while (remaining-- != 0) {
         u8 *vertices = (u8 *)game_graphics_runtime.tmd_projected_vertices;
 
@@ -493,9 +493,9 @@ void render_enqueue_model(u16 object_index, s16 depth_bias)
                 prim->packed.uv0 = primitive->texture.uv0;
                 prim->packed.uv1 = primitive->texture.uv1;
                 prim->packed.uv2 = primitive->texture.uv2;
-                model_textured_primitive_color.cd = prim->sdk.code;
+                retextured_primitive_color.cd = prim->sdk.code;
                 NormalColorDpq3((SVECTOR *)(normals + primitive->gt3.n0), (SVECTOR *)(normals + primitive->gt3.n1),
-                                (SVECTOR *)(normals + primitive->gt3.n2), &model_textured_primitive_color, va->p2,
+                                (SVECTOR *)(normals + primitive->gt3.n2), &retextured_primitive_color, va->p2,
                                 &prim->packed.color0, &prim->packed.color1, &prim->packed.color2);
                 otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
@@ -529,11 +529,11 @@ void render_enqueue_model(u16 object_index, s16 depth_bias)
                 prim->packed.uv1 = primitive->texture.uv1;
                 prim->packed.uv2 = primitive->texture.uv2;
                 prim->packed.uv3 = primitive->texture.uv3;
-                model_textured_primitive_color.cd = prim->sdk.code;
+                retextured_primitive_color.cd = prim->sdk.code;
                 NormalColorDpq3((SVECTOR *)(normals + primitive->gt4.n0), (SVECTOR *)(normals + primitive->gt4.n1),
-                                (SVECTOR *)(normals + primitive->gt4.n2), &model_textured_primitive_color, va->p2,
+                                (SVECTOR *)(normals + primitive->gt4.n2), &retextured_primitive_color, va->p2,
                                 &prim->packed.color0, &prim->packed.color1, &prim->packed.color2);
-                NormalColorDpq((SVECTOR *)(normals + primitive->gt4.n3), &model_textured_primitive_color, va->p2,
+                NormalColorDpq((SVECTOR *)(normals + primitive->gt4.n3), &retextured_primitive_color, va->p2,
                                &prim->packed.color3);
                 otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
@@ -564,8 +564,8 @@ void render_enqueue_model(u16 object_index, s16 depth_bias)
                 prim->packed.uv0 = primitive->texture.uv0;
                 prim->packed.uv1 = primitive->texture.uv1;
                 prim->packed.uv2 = primitive->texture.uv2;
-                model_textured_primitive_color.cd = prim->sdk.code;
-                NormalColorDpq((SVECTOR *)(normals + primitive->ft3.n0), &model_textured_primitive_color,
+                retextured_primitive_color.cd = prim->sdk.code;
+                NormalColorDpq((SVECTOR *)(normals + primitive->ft3.n0), &retextured_primitive_color,
                                (va->p2 + vb->p2 + vc->p2) / 3, &prim->packed.color0);
                 otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
@@ -599,8 +599,8 @@ void render_enqueue_model(u16 object_index, s16 depth_bias)
                 prim->packed.uv1 = primitive->texture.uv1;
                 prim->packed.uv2 = primitive->texture.uv2;
                 prim->packed.uv3 = primitive->texture.uv3;
-                model_textured_primitive_color.cd = prim->sdk.code;
-                NormalColorDpq((SVECTOR *)(normals + primitive->ft4.n0), &model_textured_primitive_color,
+                retextured_primitive_color.cd = prim->sdk.code;
+                NormalColorDpq((SVECTOR *)(normals + primitive->ft4.n0), &retextured_primitive_color,
                                (va->p2 + vb->p2 + vc->p2 + vd->p2) >> 2, &prim->packed.color0);
                 otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
@@ -655,9 +655,9 @@ void render_enqueue_map(u16 object_index)
     KfScreenVertex *vd;
 
     object = tmd_get_object(object_index);
-    normals = (u8 *)game_graphics_runtime.tmd_state.current_asset + (object->normal_offset + KF_TMD_HEADER_BYTES);
+    normals = (u8 *)game_graphics_runtime.tmd_state.current_tmd + (object->normal_offset + KF_TMD_HEADER_BYTES);
     tmd_project_vertices(object->vertex_count);
-    packet = (u8 *)game_graphics_runtime.tmd_state.current_asset + (object->primitive_offset + KF_TMD_HEADER_BYTES);
+    packet = (u8 *)game_graphics_runtime.tmd_state.current_tmd + (object->primitive_offset + KF_TMD_HEADER_BYTES);
     remaining = object->primitive_count;
     while (remaining-- != 0) {
         u8 *vertices = (u8 *)game_graphics_runtime.tmd_projected_vertices;

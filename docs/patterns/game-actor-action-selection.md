@@ -82,7 +82,7 @@ simultaneously. Compare each rebuilt object from its first real difference.
 
 All six semantic views, caller argument setups, preceding
 `actor_try_select_action_distance_facing`, intervening
-`actor_try_select_facing_action`, and the following caller were inspected.
+`actor_try_select_multi_hit_action`, and the following caller were inspected.
 The two neighbors are exact controls. The angle callee implements circular
 12-bit tolerance; the vector callee takes signed x/z differences. `rand` is
 the vendored BIOS A0/2f jump stub, retained as an SDK/libc call. Neither game

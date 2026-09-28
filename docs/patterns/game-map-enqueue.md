@@ -22,7 +22,7 @@ checked division by three then shift two, quad shift four, depth bias 200,
 signed upper bound 16384, mask 3fff and header stride mask 3fc.
 
 The earliest instruction difference remains asset-base setup. Retail
-reloads current_asset after projection (`8001de7c`), while the source reuses
+reloads current_tmd after projection (`8001de7c`), while the source reuses
 a pre-call payload snapshot. The projection body writes projected entries,
 not the selected asset; nevertheless the two source references should
 preserve the observed call boundary. The broader GAME graphics owner is

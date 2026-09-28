@@ -29,7 +29,7 @@ class GameSaveLoadHubTests(unittest.TestCase):
             self.skipTest("pinned compiler and SDK headers required")
         manifest = load_manifest()
         unit = manifest.by_name()["game.menu_runtime"]
-        claim = next(fn for fn in unit.functions if fn.symbol == "menu_save_load_hub")
+        claim = next(fn for fn in unit.functions if fn.symbol == "menu_system_panel")
         profile = manifest.profiles[unit.profile]
         target_path = BUILD / "delink/game/modules" / unit.object_name
         if not target_path.is_file():

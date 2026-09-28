@@ -14,8 +14,8 @@ enum {
     MAP_VARIANT_ASSET_BUFFER_BYTES = 0x5a000,
     MAP_SEQUENCE_DEFAULT = 0,
     MAP_SEQUENCE_ALTERNATE = 1,
-    MAP_FLOOR1_ALTERNATE_MUSIC_PROGRESS = 15,
-    MAP_FLOOR2_ALTERNATE_MUSIC_PROGRESS = 25
+    MAP_FLOOR1_ALTERNATE_MUSIC_LEVEL = 15,
+    MAP_FLOOR2_ALTERNATE_MUSIC_LEVEL = 25
 };
 
 DATA(0x80055af0, 0xc)
@@ -61,7 +61,7 @@ void common_resources_load(void)
     memory_release_last();
     cd_file_load_allocated(&stream, "COM\\COM.DAT");
     asset_registry_set(
-        KF_ASSET_EFFECT_SPRITES, (KfAssetHeader *)(stream + KF_RESOURCE_CHUNK_HEADER_BYTES));
+        KF_ASSET_HUD_MODELS, (KfAssetHeader *)(stream + KF_RESOURCE_CHUNK_HEADER_BYTES));
     block = RESOURCE_STREAM_NEXT(stream);
     memcpy((void *)render_cell_windows, (const void *)(block + KF_RESOURCE_CHUNK_HEADER_BYTES),
         sizeof render_cell_windows);
@@ -114,26 +114,26 @@ void map_variant_assets_load(void)
 ADDRESS(0x8001b49c, 0xbc)
 void audio_play_current_map_sequence(void)
 {
-    s32 sequence_id = MAP_SEQUENCE_DEFAULT;
+    s32 sequence_index = MAP_SEQUENCE_DEFAULT;
 
     switch (player_state.progress_state.current_floor) {
     case KF_FLOOR_1:
-        if (player_state.progress_state.level >= MAP_FLOOR1_ALTERNATE_MUSIC_PROGRESS) {
-            sequence_id = MAP_SEQUENCE_ALTERNATE;
+        if (player_state.progress_state.level >= MAP_FLOOR1_ALTERNATE_MUSIC_LEVEL) {
+            sequence_index = MAP_SEQUENCE_ALTERNATE;
         }
         break;
     case KF_FLOOR_2:
-        if (player_state.progress_state.level >= MAP_FLOOR2_ALTERNATE_MUSIC_PROGRESS) {
-            sequence_id = MAP_SEQUENCE_ALTERNATE;
+        if (player_state.progress_state.level >= MAP_FLOOR2_ALTERNATE_MUSIC_LEVEL) {
+            sequence_index = MAP_SEQUENCE_ALTERNATE;
         }
         break;
     case KF_FLOOR_5:
         if (player_state.map_variant == KF_FLOOR5_ALTERNATE_MUSIC_VARIANT) {
-            sequence_id = MAP_SEQUENCE_ALTERNATE;
+            sequence_index = MAP_SEQUENCE_ALTERNATE;
         }
         break;
     }
-    audio_play_map_sequence(sequence_id);
+    audio_play_map_sequence(sequence_index);
 }
 
 ADDRESS(0x8001b558, 0x258)

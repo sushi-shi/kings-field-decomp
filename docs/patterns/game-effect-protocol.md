@@ -39,22 +39,22 @@ decoded behavior, not recovered Japanese spell names or original C symbols.
 | GAME VA / size | Function | Initial and final strict % | Direct calls / CFG blocks | Retail words / ordered addresses |
 | --- | --- | ---: | ---: | ---: |
 | `0x80018880 / 1a1c` | `player_update` | 96.945540 | 66 / 325 | Unchanged residue |
-| `0x8001eedc / 1e8` | `render_actor_sprite` | 100.000000 | 20 / 8 | 122 / 6 |
+| `0x8001eedc / 1e8` | `render_effect` | 100.000000 | 20 / 8 | 122 / 6 |
 | `0x8001f218 / 580` | `render_entities` | 91.250000 | 9 / 61 | Unchanged residue |
 | `0x8002e0f0 / 1f8` | `actor_try_select_profiled_action` | 96.333336 | 4 / 23 | Unchanged residue |
 | `0x8002edd4 / 454` | `actor_spawn_action_effect` | 100.000000 | 11 / 51 | 277 / 3 |
 | `0x8002f8cc / 1bc` | `actor_update_boss_death_sequence` | 100.000000 | 13 / 16 | 111 / 7 |
 | `0x80031008 / 448` | `map_object_pool_load` | 100.000000 | 11 / 43 | 274 / 8 |
 | `0x80031cc8 / c18` | `map_object_pool_update` | 98.966410 | 35 / 118 | Unchanged residue |
-| `0x800346a8 / 38c` | `map_floor5_transition_cutscene` | 100.000000 | 12 / 32 | 227 / 14 |
+| `0x800346a8 / 38c` | `map_floor5_weapon_transform_cutscene` | 100.000000 | 12 / 32 | 227 / 14 |
 | `0x80036f00 / 44` | `effect_pool_find_free` | 100.000000 | 0 / 6 | 17 / 1 |
 | `0x80036f44 / 82c` | `effect_pool_construct` | 100.000000 | 7 / 52 | 523 / 8 |
-| `0x80037770 / ac` | `effect_pool_spawn_typed` | 100.000000 | 1 / 3 | 43 / 0 |
+| `0x80037770 / ac` | `effect_pool_spawn_floor_deformation` | 100.000000 | 1 / 3 | 43 / 0 |
 | `0x8003781c / 34` | `effect_pool_set_current` | 100.000000 | 0 / 1 | 13 / 2 |
 | `0x80037850 / 76c` | `effect_map_collision` | 97.452630 | 1 / 126 | Unchanged residue |
 | `0x80037fbc / 24` | `effect_magic_power` | 100.000000 | 0 / 3 | 9 / 1 |
-| `0x80037fe0 / 2b8` | `effect_projectile_update_3d` | 100.000000 | 10 / 28 | 174 / 2 |
-| `0x80038298 / 260` | `effect_projectile_update_2d` | 99.934210 | 9 / 15 | Unchanged residue |
+| `0x80037fe0 / 2b8` | `effect_update_swinging_hazard` | 100.000000 | 10 / 28 | 174 / 2 |
+| `0x80038298 / 260` | `effect_update_orbiting_projectile` | 99.934210 | 9 / 15 | Unchanged residue |
 | `0x800384f8 / 1cc` | `effect_floor_deform_line` | 100.000000 | 1 / 13 | 115 / 3 |
 | `0x800386c4 / 68` | `effect_scatter_triple` | 100.000000 | 3 / 1 | 26 / 0 |
 | `0x8003872c / 90` | `effect_rotate_scale_offset_y` | 100.000000 | 2 / 1 | 36 / 0 |
@@ -64,7 +64,7 @@ decoded behavior, not recovered Japanese spell names or original C symbols.
 | `0x8003a244 / 30` | `effect_pool_reset` | 100.000000 | 0 / 3 | 12 / 1 |
 | `0x8003a274 / 2c` | `magic_load_records` | 100.000000 | 0 / 3 | 11 / 1 |
 | `0x8003a2a0 / 4c0` | `magic_cast` | 98.875000 | 13 / 37 | Unchanged residue |
-| `0x8003a760 / 7c` | `effect_pool_sweep` | 100.000000 | 2 / 5 | 31 / 1 |
+| `0x8003a760 / 7c` | `effect_pool_update` | 100.000000 | 2 / 5 | 31 / 1 |
 
 ## Named domains
 
@@ -228,7 +228,7 @@ Affected GAME functions are `effect_pool_construct` (0x80036f44/0x82c),
 `effect_update_dispatch` (0x80038a38/0x180c), `actor_spawn_action_effect`
 (0x8002edd4/0x454), and the map-object emitter dispatcher. Existing retail
 constructor/dispatcher dossiers and current source/call paths establish the
-behavior; `render_actor_sprite` (0x8001eedc/0x1e8), reviewed as a consumer,
+behavior; `render_effect` (0x8001eedc/0x1e8), reviewed as a consumer,
 selects billboard descriptors for mode 255 and effect model assets otherwise.
 
 Kind 14 is `MAP_EMITTER_PROJECTILE`: the map projectile-emitter action creates

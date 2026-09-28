@@ -29,9 +29,9 @@ extents and glyph-row width while preserving local workspace capacities.
 | `menu_magic_panel` | 56 | `0 × 2` | `ctx.glyph_rows = &labels[0][0];` | Base address of the first glyph in the first row for the flat list-render API. |
 | `menu_magic_panel` | 57 | `0` | `ctx.quantities = 0;` | Null quantity list: selection panels display names without stock counts. |
 | `menu_magic_panel` | 60 | `0` | `if (ctx.entry_count != 0) {` | Only preview/render an item when the list has entries. |
-| `menu_magic_panel` | 61, 110, 125 | `1 × 3` | `if (menu_load_item_texture(codes[ctx.selected_index]) == 1)` | Numbered-texture loader returns exactly1 on failure; preserve the existing equality check. |
+| `menu_magic_panel` | 61, 110, 125 | `1 × 3` | `if (menu_load_texture(codes[ctx.selected_index]) == 1)` | Numbered-texture loader returns exactly1 on failure; preserve the existing equality check. |
 | `menu_magic_panel` | 69 | `1` | `if (confirm == 1) {` | A set confirmation flag enters the second-stage confirmation widget. |
-| `menu_magic_panel` | 71 | `0` | `KF_MENU_PREVIEW_MAGIC_ICON, codes[ctx.selected_index], 0, KF_ITEM_PRICE_BUY)` | The shop/detail index is an unused zero for the magic-icon confirmation path. |
+| `menu_magic_panel` | 71 | `0` | `KF_MENU_PREVIEW_MAGIC_ARTWORK, codes[ctx.selected_index], 0, KF_ITEM_PRICE_BUY)` | The shop/detail index is an unused zero for the magic-icon confirmation path. |
 | `menu_magic_panel` | 84 | `0` | `confirm = 0;` | Clear the pending confirmation/highlight request for the next input frame. |
 | `menu_magic_panel` | 86 | `1` | `input = PadRead(1);` | Ignored retail PadRead call-site argument; the linked routine uses its global pad identifier. |
 | `menu_magic_panel` | 87 | `0` | `if (ctx.entry_count == 0) {` | No learned instant spells produces an empty list; it has no appended none entry. |
@@ -52,20 +52,20 @@ extents and glyph-row width while preserving local workspace capacities.
 | `menu_magic_panel` | 129 | `1` | `confirm = 1;` | Set the UI confirmation/highlight request on the confirm edge. |
 | `menu_magic_panel` | 130 | `0 × 2` | `} else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {` | Named button present now and absent previously gives a rising edge; zero means no corresponding bit. |
 | `menu_magic_panel` | 135 | `0` | `if (ctx.entry_count != 0)` | Only preview an item when the list has entries. |
-| `menu_option_root` | 170 | `0` | `s32 cursor = 0;` | Start the equipment menu at its first row (weapon); this integer tracks UI position. |
-| `menu_option_root` | 171 | `0` | `s32 confirm = 0;` | Initially no pending confirmation; this is a UI highlight/request flag, not an equipment category. |
-| `menu_option_root` | 172 | `0` | `s32 input = 0;` | Initial previous input state has no pressed buttons for edge detection. |
-| `menu_option_root` | 179 | `0 × 2` | `menu_draw_window(KF_MENU_WINDOW_EQUIPMENT, KF_MENU_EQUIPMENT_ROW_COUNT, 0, 0);` | Retail equipment layout1 contains nine rows: eight equipment/magic categories and return. Start at cursor zero without a confirmation highlight. |
-| `menu_option_root` | 188 | `1, 0` | `while (PadRead(1) != 0)` | Preserve the ignored PadRead call-site argument 1 and wait until the returned button bits are zero; the linked SDK uses global PadIdentifier, not this argument as a port. |
-| `menu_option_root` | 214 | `0` | `confirm = 0;` | Clear the pending confirmation/highlight request for the next input frame. |
-| `menu_option_root` | 216 | `1` | `input = PadRead(1);` | Ignored retail PadRead call-site argument; the linked routine uses its global pad identifier. |
-| `menu_option_root` | 217 | `0 × 2` | `if ((input & PADLup) != 0 && (prev & PADLup) == 0) {` | Named button present now and absent previously gives a rising edge; zero means no corresponding bit. |
-| `menu_option_root` | 219 | `0` | `if (cursor != 0)` | First-row boundary for upward movement. |
-| `menu_option_root` | 223 | `0 × 2` | `} else if ((input & PADLdown) != 0 && (prev & PADLdown) == 0) {` | Named button present now and absent previously gives a rising edge; zero means no corresponding bit. |
-| `menu_option_root` | 228 | `0` | `cursor = 0;` | Wrap downward to the first equipment row. |
-| `menu_option_root` | 229 | `0 × 2` | `} else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {` | Named button present now and absent previously gives a rising edge; zero means no corresponding bit. |
-| `menu_option_root` | 231 | `1` | `confirm = 1;` | Set the UI confirmation/highlight request on the confirm edge. |
-| `menu_option_root` | 236 | `0 × 2` | `} else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {` | Named button present now and absent previously gives a rising edge; zero means no corresponding bit. |
+| `menu_equipment_root` | 170 | `0` | `s32 cursor = 0;` | Start the equipment menu at its first row (weapon); this integer tracks UI position. |
+| `menu_equipment_root` | 171 | `0` | `s32 confirm = 0;` | Initially no pending confirmation; this is a UI highlight/request flag, not an equipment category. |
+| `menu_equipment_root` | 172 | `0` | `s32 input = 0;` | Initial previous input state has no pressed buttons for edge detection. |
+| `menu_equipment_root` | 179 | `0 × 2` | `menu_draw_window(KF_MENU_WINDOW_EQUIPMENT, KF_MENU_EQUIPMENT_ROW_COUNT, 0, 0);` | Retail equipment layout1 contains nine rows: eight equipment/magic categories and return. Start at cursor zero without a confirmation highlight. |
+| `menu_equipment_root` | 188 | `1, 0` | `while (PadRead(1) != 0)` | Preserve the ignored PadRead call-site argument 1 and wait until the returned button bits are zero; the linked SDK uses global PadIdentifier, not this argument as a port. |
+| `menu_equipment_root` | 214 | `0` | `confirm = 0;` | Clear the pending confirmation/highlight request for the next input frame. |
+| `menu_equipment_root` | 216 | `1` | `input = PadRead(1);` | Ignored retail PadRead call-site argument; the linked routine uses its global pad identifier. |
+| `menu_equipment_root` | 217 | `0 × 2` | `if ((input & PADLup) != 0 && (prev & PADLup) == 0) {` | Named button present now and absent previously gives a rising edge; zero means no corresponding bit. |
+| `menu_equipment_root` | 219 | `0` | `if (cursor != 0)` | First-row boundary for upward movement. |
+| `menu_equipment_root` | 223 | `0 × 2` | `} else if ((input & PADLdown) != 0 && (prev & PADLdown) == 0) {` | Named button present now and absent previously gives a rising edge; zero means no corresponding bit. |
+| `menu_equipment_root` | 228 | `0` | `cursor = 0;` | Wrap downward to the first equipment row. |
+| `menu_equipment_root` | 229 | `0 × 2` | `} else if ((input & PADRright) != 0 && (prev & PADRright) == 0) {` | Named button present now and absent previously gives a rising edge; zero means no corresponding bit. |
+| `menu_equipment_root` | 231 | `1` | `confirm = 1;` | Set the UI confirmation/highlight request on the confirm edge. |
+| `menu_equipment_root` | 236 | `0 × 2` | `} else if ((input & PADRdown) != 0 && (prev & PADRdown) == 0) {` | Named button present now and absent previously gives a rising edge; zero means no corresponding bit. |
 | `effect_pool_reset` | 14 | `0` | `for (i = 0; i < KF_EFFECT_CAPACITY; i++) {` | Start the complete effect-pool reset at zero-based entry zero. |
 | `magic_load_records` | 26 | `0` | `for (count = sizeof effect_state.magic / sizeof *source; count != 0; count--) {` | Zero terminates the full runtime-table word-copy countdown; the count comes from the actual 24-record array. |
 | `magic_cast` | 53 | `200` | `offset.vx = -200;` | Authored launch offset X=-200 world units before camera rotation; original placement rationale unknown. |
@@ -88,5 +88,5 @@ extents and glyph-row width while preserving local workspace capacities.
 | `magic_cast` | 127, 143 | `0xa × 2` | `0xa, KF_EFFECT_USE_PLAYER_MAGIC \| KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,` | Effect ID10 supplies unity to the downstream player-damage tenths multiplier on Fire Wall paths; it is separate from the collision-target flags. |
 | `magic_cast` | 136 | `6000` | `- (rsin(player_state.camera_rotation.vy) * 6000 >> KF_FIXED12_BITS);` | Untargeted Fire Wall X offset projects 6000 world units, three tiles, through the Q12 direction; integer rounding remains. Original range rationale unknown. |
 | `magic_cast` | 138 | `6000` | `+ (rcos(player_state.camera_rotation.vy) * 6000 >> KF_FIXED12_BITS);` | Matching Z projection of the same 6000-world-unit Fire Wall placement distance. |
-| `effect_pool_sweep` | 156 | `1` | `u16 i = KF_EFFECT_CAPACITY - 1;` | Inclusive post-decrement traversal begins at count minus one and visits all 48 effect records. |
-| `effect_pool_sweep` | 164 | `0` | `} while (i-- != 0);` | Post-decrement test processes the last record when the old countdown is zero. |
+| `effect_pool_update` | 156 | `1` | `u16 i = KF_EFFECT_CAPACITY - 1;` | Inclusive post-decrement traversal begins at count minus one and visits all 48 effect records. |
+| `effect_pool_update` | 164 | `0` | `} while (i-- != 0);` | Post-decrement test processes the last record when the old countdown is zero. |

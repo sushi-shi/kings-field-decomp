@@ -39,12 +39,12 @@ explain retained special-item timing/bonus values without inventing tuning.
 | GAME address / bytes | Function | Starting strict % | Constraint |
 | --- | --- | --- | --- |
 | `0x80020cfc / 1500` | `item_load_database` | 99.746666 | STAT.DAT loader fixes the 80-name row origin and 20-byte stride; item labels and menu labels are independent resource views. |
-| `0x80021538 / 1476` | `item_menu_buy` | 97.20054 | Control: shop ordering and availability reads must remain unchanged. |
-| `0x80021afc / 1280` | `item_menu_sell` | 96.77187 | Propagate corrected equipped-ID field identities through exclusion tests; preserve byte quantities and all sold-item rules. |
+| `0x80021538 / 1476` | `shop_menu_buy` | 97.20054 | Control: shop ordering and availability reads must remain unchanged. |
+| `0x80021afc / 1280` | `shop_menu_sell` | 96.77187 | Propagate corrected equipped-ID field identities through exclusion tests; preserve byte quantities and all sold-item rules. |
 | `0x80021ffc / 696` | `item_pickup_confirm` | 100.0 | Control: generic item-ID handling and stack-capacity protocol remain unchanged. |
-| `0x800236ac / 556` | `menu_option_root` | 100.0 | Retail menu row2=shield,row3=head,row4=body; Full Plate21 blocks arm/leg rows, not a special helmet. |
+| `0x800236ac / 556` | `menu_equipment_root` | 100.0 | Retail menu row2=shield,row3=head,row4=body; Full Plate21 blocks arm/leg rows, not a special helmet. |
 | `0x800238d8 / 1476` | `menu_equip_select` | 97.89973 | Correct category names/range constants/slot calls together. Raw rows2/3/4 store to player+92/+90/+91 and pass slot4/0/1. Full Plate clears arms/legs. |
-| `0x8002718c / 2104` | `menu_draw_name_list` | 100.0 | Label-row order and reads match shield+92,head+90,body+91; preserve twenty-pixel row stride and empty-name handling. |
+| `0x8002718c / 2104` | `menu_draw_equipment_names` | 100.0 | Label-row order and reads match shield+92,head+90,body+91; preserve twenty-pixel row stride and empty-name handling. |
 | `0x80016848 / 488` | `player_set_equipment_slot` | 100.0 | Slot0/1/4 store byte IDs at+90/+91/+92 and resolve pointers+7c/+80/+84: head/body/shield. Correct names only, never rearrange fields. |
 | `0x80016a30 / 244` | `player_equip_weapon` | 100.0 | Control: byte ID and 44-byte record stride; path formatting and stale-pointer-on-empty behavior unchanged. |
 | `0x80016b24 / 156` | `player_begin_weapon_attack` | 100.0 | Control: weapon-none gate, animation and charging remain unchanged. |
@@ -57,12 +57,12 @@ explain retained special-item timing/bonus values without inventing tuning.
 | `0x80018880 / 6684` | `player_update` | 96.94554 | Correct equipped fields; Skull Armor23 gates cast/charge block. Name weapon switch IDs3/7/8/11 and Shadow Blade9 environment condition without changing timing or queued effects. |
 | `0x800343e0 / 88` | `map_action_script_floor1` | 100.0 | Control: named Dragon Chalice possession and passage flag remain unchanged. |
 | `0x80034610 / 144` | `map_action_script_floor3` | 100.0 | Control: named bracelet possession and learned flags remain unchanged. |
-| `0x800346a8 / 908` | `map_floor5_transition_cutscene` | 100.0 | Dragon Sword10 becomes displayed Moonlight Sword11; inventory and displayed object IDs align in this explicit transformation path. |
+| `0x800346a8 / 908` | `map_floor5_weapon_transform_cutscene` | 100.0 | Dragon Sword10 becomes displayed Moonlight Sword11; inventory and displayed object IDs align in this explicit transformation path. |
 | `0x80034a80 / 724` | `map_event_interact` | 100.0 | Control: named item exchanges and dialogue sequence unchanged. |
 | `0x80035e44 / 1692` | `map_restore_floor_state` | 99.96454 | Named Dragon Sword/Moonlight Sword stock checks gate floor5 link clearing; preserve unrelated link52 domain. |
 | `0x800150a8 / 84` | `weapon_records_load_and_mirror_angles` | 100.0 | Control: sixteen 44-byte records; selectable weapon band still includes blank row12 and stops before Iron Mask13. |
 | `0x800150fc / 44` | `armor_records_load` | 100.0 | Control:42 records with item origin13; capacity is not the count of named equipment. |
-| `0x800187a4 / 76` | `lighting_apply_weapon9_environment` | 100.0 | Control: Shadow Blade caller uses existing function symbol, blend2500/4096 and half fog-near; no symbol or instruction changes. |
+| `0x800187a4 / 76` | `lighting_apply_shadow_blade_environment` | 100.0 | Control: Shadow Blade caller uses existing function symbol, blend2500/4096 and half fog-near; no symbol or instruction changes. |
 
 ## Resource evidence and names
 
@@ -168,7 +168,7 @@ recalculation; the existing unsigned storage and later cap remain significant.
 The original balance rationale for eight is unknown.
 
 Feather Boots (38) bypass the fatal-drop branch only when the cell attribute
-is 93 and `floor_height - target < -3000`. The attribute remains numeric
+is 93 and `foot_height - target < -3000`. The attribute remains numeric
 because its general meaning is unproven. This is a specific exception, not
 general fall or hazard immunity; the separate attribute-82 death check remains.
 
@@ -188,7 +188,7 @@ triples remain 20/20/3, 36/18/3, 8/8/1, and 5/5/2 respectively. Effect and
 magic-record numbers are separate domains from item IDs. No wall-clock timing
 or reason for the authored thresholds is inferred.
 
-Shadow Blade (9) selects the existing `lighting_apply_weapon9_environment`
+Shadow Blade (9) selects the existing `lighting_apply_shadow_blade_environment`
 symbol: a 2500/4096 (61.03515625%) Q12 color blend and half fog-near distance.
 The precise blend's artistic rationale remains unknown. The floor-5 cutscene
 removes the Dragon Sword (10), displays its model and replaces that display

@@ -73,19 +73,19 @@ Unreferenced model rows have not acquired semantic names by this campaign.
 | `0x8002fa88 / 3472` | `actor_update_current_action` | 100.000000% |
 | `0x800308c0 / 428` | `actor_pool_load_placements` | 100.000000% |
 | `0x80030c7c / 572` | `map_object_mark_collision_edge` | 100.000000% |
-| `0x80030eb8 / 196` | `map_object_probe_forward` | 93.755104% |
+| `0x80030eb8 / 196` | `map_object_probe_door_closing` | 93.755104% |
 | `0x80030f7c / 96` | `map_object_pool_clear` | 100.000000% |
 | `0x80031008 / 1096` | `map_object_pool_load` | 100.000000% |
 | `0x800314f8 / 204` | `map_object_pool_find_near_point` | 100.000000% |
 | `0x800315c4 / 448` | `map_object_pool_find_interaction_from` | 100.000000% |
 | `0x800317a4 / 144` | `map_object_effect_pool_acquire` | 100.000000% |
-| `0x80031834 / 404` | `map_object_spawn_effect` | 94.455444% |
-| `0x800319c8 / 396` | `map_object_spawn_actor_debris` | 100.000000% |
+| `0x80031834 / 404` | `map_object_spawn_drop` | 94.455444% |
+| `0x800319c8 / 396` | `map_object_spawn_gold_drop` | 100.000000% |
 | `0x80031b54 / 240` | `map_object_pool_trigger_link` | 100.000000% |
 | `0x80031c44 / 132` | `map_object_pool_clear_link` | 100.000000% |
 | `0x80031cc8 / 3096` | `map_object_pool_update` | 98.966410% |
 | `0x80033f64 / 648` | `map_ambient_script_floor1` | 100.000000% |
-| `0x800346a8 / 908` | `map_floor5_transition_cutscene` | 100.000000% |
+| `0x800346a8 / 908` | `map_floor5_weapon_transform_cutscene` | 100.000000% |
 | `0x80034de4 / 2308` | `map_interaction_dispatch` | 83.436745% |
 | `0x80035b5c / 696` | `map_world_state_persist` | 94.821840% |
 | `0x80035e44 / 1692` | `map_restore_floor_state` | 99.964540% |
@@ -132,8 +132,8 @@ mechanism:
 | --- | --- | --- |
 | `collision_query_world` / `8001a5b0` | `sw s0,24(sp)` | `sw s2,32(sp)` |
 | `render_entities` / `8001f274` | `move s5,v1` | `move s6,v1` |
-| `map_object_probe_forward` / `80030ec4` | `lw a3,8(a0)` | `lw t0,8(a0)` |
-| `map_object_spawn_effect` / `80031838` | `sw ra,32(sp)` | `sw ra,36(sp)` |
+| `map_object_probe_door_closing` / `80030ec4` | `lw a3,8(a0)` | `lw t0,8(a0)` |
+| `map_object_spawn_drop` / `80031838` | `sw ra,32(sp)` | `sw ra,36(sp)` |
 | `map_object_pool_update` / `80031dcc` | `lui a0,0x8005` | `lbu v1,0(s3)` |
 | `map_interaction_dispatch` / `80034de4` | `addiu sp,sp,-80` | `addiu sp,sp,-72` |
 | `map_world_state_persist` / `80035b6c` | `lui v1,0x800a` | `addiu a1,a0,-543` |

@@ -69,7 +69,7 @@ RODATA(0x80012888, 0x18c)
  * rotated local offsets before testing it against the object's position.
  */
 ADDRESS(0x800315c4, 0x1c0)
-s32 map_object_pool_find_interaction_from(s32 start_index, s32 x, s32 z, s32 extra_radius)
+s32 map_object_pool_find_interaction_from(s32 start_index, s32 point_x, s32 point_z, s32 radius_padding)
 {
     KfMapObject *object = &map_object_state.objects[start_index];
     s16 index = start_index;
@@ -87,10 +87,10 @@ s32 map_object_pool_find_interaction_from(s32 start_index, s32 x, s32 z, s32 ext
             setVector(&offset, -KF_MAP_TILE_SIZE, 0, MAP_DOOR_INTERACTION_LOCAL_Z);
             matrix_set_rotation_y(object->rotation.angles.y, &matrix);
             ApplyMatrix(&matrix, &offset, &point);
-            point.vx += x;
-            point.vz += z;
+            point.vx += point_x;
+            point.vz += point_z;
             if (map_object_distance_to_point(
-                    object, point.vx, point.vz, definition->interaction_radius + extra_radius)
+                    object, point.vx, point.vz, definition->interaction_radius + radius_padding)
                 != -1) {
                 return index;
             }
@@ -98,15 +98,15 @@ s32 map_object_pool_find_interaction_from(s32 start_index, s32 x, s32 z, s32 ext
             setVector(&offset, KF_MAP_TILE_SIZE, 0, MAP_DOOR_INTERACTION_LOCAL_Z);
             matrix_set_rotation_y(object->rotation.angles.y, &matrix);
             ApplyMatrix(&matrix, &offset, &point);
-            point.vx += x;
-            point.vz += z;
+            point.vx += point_x;
+            point.vz += point_z;
             if (map_object_distance_to_point(
-                    object, point.vx, point.vz, definition->interaction_radius + extra_radius)
+                    object, point.vx, point.vz, definition->interaction_radius + radius_padding)
                 != -1) {
                 return index;
             }
         } else if (map_object_distance_to_point(
-                       object, x, z, definition->interaction_radius + extra_radius)
+                       object, point_x, point_z, definition->interaction_radius + radius_padding)
                    != -1) {
             return index;
         }
@@ -149,11 +149,11 @@ KfMapObject *map_object_effect_pool_acquire(u16 first_index, u16 count, u16 sequ
 }
 
 /*
- * Spawns an effect object of OBJECT_ID at POSITION (raised by Y_OFFSET) in
- * the 170.. or 180.. effect range, then starts its action by id band.
+ * Spawns a dropped object of OBJECT_ID at POSITION (raised by Y_OFFSET) in
+ * the 170.. or 180.. drop range, then starts its fall action by id band.
  */
 ADDRESS(0x80031834, 0x194)
-void map_object_spawn_effect(
+void map_object_spawn_drop(
     KfMapObjectDropSource drop_source, KfObjectId object_id, const VECTOR *position, s32 y_offset)
 {
     KfBool within_drop_range;
@@ -162,11 +162,11 @@ void map_object_spawn_effect(
     KfMapObject *object;
 
     if (drop_source == KF_MAP_OBJECT_DROP_FROM_PLACEMENT) {
-        sequence = &map_object_state.effect_sequence_180;
+        sequence = &map_object_state.placement_drop_sequence;
         first_index = KF_MAP_OBJECT_PLACEMENT_DROP_FIRST;
     } else {
         first_index = KF_MAP_OBJECT_DEFINITION_DROP_FIRST;
-        sequence = &map_object_state.effect_sequence_170;
+        sequence = &map_object_state.definition_drop_sequence;
     }
     object = map_object_effect_pool_acquire(first_index, KF_MAP_OBJECT_EFFECT_GROUP_CAPACITY, *sequence);
     object->link.fields.spawn.sequence = (*sequence)++;
@@ -189,21 +189,21 @@ void map_object_spawn_effect(
     object->link.fields.vertical_velocity = 0;
 }
 
-/* Spawns debris object 39 for SOURCE at a random bearing 600 units from POSITION. */
+/* Spawns a gold-coin object (39) holding GOLD_AMOUNT at a random bearing 600 units from POSITION. */
 ADDRESS(0x800319c8, 0x18c)
-void map_object_spawn_actor_debris(u16 source, const VECTOR *position, s32 y_offset)
+void map_object_spawn_gold_drop(u16 gold_amount, const VECTOR *position, s32 y_offset)
 {
     KfMapObject *object;
     u16 *sequence;
     u16 angle;
 
-    sequence = &map_object_state.effect_sequence_160;
+    sequence = &map_object_state.gold_drop_sequence;
     object = map_object_effect_pool_acquire(
         KF_MAP_OBJECT_GOLD_DROP_FIRST, KF_MAP_OBJECT_EFFECT_GROUP_CAPACITY, *sequence);
     object->link.fields.spawn.sequence = (*sequence)++;
     object->object_id = KF_ITEM_GOLD_COIN;
     /* Gold drops store their amount across the link and parameter bytes. */
-    object->link.gold_amount = source;
+    object->link.gold_amount = gold_amount;
     angle = (u32)rand() >> KF_RANDOM_ANGLE_SHIFT;
     setVector(&object->position,
         ((rsin(angle) * MAP_GOLD_DROP_SCATTER_RADIUS) >> KF_FIXED12_BITS) + position->vx,
@@ -336,7 +336,7 @@ void map_object_pool_update(void)
                     break;
                 }
                 if (timer == KF_MAP_OBJECT_DOOR_CLOSE_FIRST) {
-                    if (map_object_probe_forward(object, object->rotation.angles.y - KF_ANGLE_QUARTER_TURN) != -1) {
+                    if (map_object_probe_door_closing(object, object->rotation.angles.y - KF_ANGLE_QUARTER_TURN) != -1) {
                         object->action_timer = KF_MAP_OBJECT_DOOR_CLOSE_FIRST;
                         break;
                     }
@@ -379,7 +379,7 @@ void map_object_pool_update(void)
                     break;
                 }
                 if (elapsed == KF_MAP_OBJECT_DOOR_CLOSE_FIRST) {
-                    if (map_object_probe_forward(object, object->rotation.angles.y) != -1) {
+                    if (map_object_probe_door_closing(object, object->rotation.angles.y) != -1) {
                         object->action_timer = KF_MAP_OBJECT_DOOR_CLOSE_FIRST;
                         break;
                     }
@@ -392,14 +392,14 @@ void map_object_pool_update(void)
             break;
         case KF_MAP_OBJECT_OP_FALL_AND_TIP:
             if (object->action_timer == KF_MAP_OBJECT_PROGRESS_INIT) {
-                s32 attribute = map_floor_height_grid.cells[object->cell_z][object->cell_x];
+                s32 floor_steps = map_floor_height_grid.cells[object->cell_z][object->cell_x];
 
                 object->position.vy += object->link.fields.vertical_velocity;
                 object->link.fields.vertical_velocity += MAP_DROP_TIP_GRAVITY;
-                if (object->position.vy < -(attribute * KF_MAP_HEIGHT_STEP)) {
+                if (object->position.vy < -(floor_steps * KF_MAP_HEIGHT_STEP)) {
                     break;
                 }
-                object->position.vy = -(attribute * KF_MAP_HEIGHT_STEP);
+                object->position.vy = -(floor_steps * KF_MAP_HEIGHT_STEP);
                 object->link.fields.vertical_velocity = MAP_DROP_TIP_INITIAL_ANGULAR_VELOCITY;
                 object->action_timer = KF_MAP_OBJECT_PROGRESS_RUNNING;
             } else {
@@ -412,23 +412,23 @@ void map_object_pool_update(void)
             }
             break;
         case KF_MAP_OBJECT_OP_FALL_AND_SPIN: {
-            s32 attribute = map_floor_height_grid.cells[object->cell_z][object->cell_x];
+            s32 floor_steps = map_floor_height_grid.cells[object->cell_z][object->cell_x];
 
             object->position.vy += MAP_DROP_SPIN_Y_STEP;
             object->rotation.angles.y = (object->rotation.angles.y + MAP_DROP_SPIN_YAW_STEP) & KF_ANGLE_WRAP_MASK;
-            if (object->position.vy < -(attribute * KF_MAP_HEIGHT_STEP)) {
+            if (object->position.vy < -(floor_steps * KF_MAP_HEIGHT_STEP)) {
                 break;
             }
-            object->position.vy = -(attribute * KF_MAP_HEIGHT_STEP);
+            object->position.vy = -(floor_steps * KF_MAP_HEIGHT_STEP);
             object->action_timer = KF_MAP_OBJECT_PROGRESS_RUNNING;
             object->action = KF_MAP_OBJECT_OP_NONE;
             break;
         }
         case KF_MAP_OBJECT_OP_BOUNCE: {
-            s32 attribute = map_floor_height_grid.cells[object->cell_z][object->cell_x];
+            s32 floor_steps = map_floor_height_grid.cells[object->cell_z][object->cell_x];
 
             object->position.vy += object->link.fields.vertical_velocity;
-            floor = -(attribute * KF_MAP_HEIGHT_STEP);
+            floor = -(floor_steps * KF_MAP_HEIGHT_STEP);
             tilt = object->rotation.angles.x;
             if (object->action_timer == KF_MAP_OBJECT_PROGRESS_INIT) {
                 object->rotation.angles.x = (tilt + MAP_DROP_BOUNCE_PITCH_STEP) & KF_ANGLE_WRAP_MASK;

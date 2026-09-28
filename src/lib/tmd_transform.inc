@@ -1,6 +1,6 @@
 ADDRESS_AT("GAME", 0x8001c6a8, 0xac)
 ADDRESS_AT("OPEN", 0x800174fc, 0xac)
-void tmd_project_vertices_shift(s32 count, u8 shift)
+void tmd_project_vertices_depth_shift(s32 count, u8 depth_shift)
 {
     KfScreenVertex *projected;
     SVECTOR *vertex;
@@ -15,7 +15,7 @@ void tmd_project_vertices_shift(s32 count, u8 shift)
         RotTransPers(vertex, &projected->sxy.word, &perspective, &gte_flags);
         projected->p2 = perspective << KF_TMD_DEFAULT_PERSPECTIVE_SHIFT;
         ReadSZ2(&depth, &unused_depth);
-        projected->sz = depth >> shift;
+        projected->sz = depth >> depth_shift;
         projected++;
         vertex++;
     }

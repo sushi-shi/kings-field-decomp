@@ -32,7 +32,7 @@ No TU merge, compiler-profile change, fake padding or banked-score update.
   signed halfword heights and 8-byte record stride are direct instruction facts.
   There are no strings; the 24-byte RODATA is the grid-shape dispatch table.
   Return at 0x80037fb4 owns sp += 32. Neighbors are effect_pool_set_current
-  and effect_projectile_update_3d. Existing internal-jump candidates are not
+  and effect_update_swinging_hazard. Existing internal-jump candidates are not
   automatically promoted by this data campaign.
 - `magic_cast`, 0x8003a2a0, 0x4c0 bytes, `game.magic`, 97.375000%:
   no parameters or return value; caller player_update at 0x800193ac.
@@ -41,7 +41,7 @@ No TU merge, compiler-profile change, fake padding or banked-score update.
   Signed lh/slti -4999 at the disputed lookup agrees with actor action case 16;
   its byte attribute is scaled by two and added to 0x800558b6. The 20-byte
   RODATA is the spell jump table; no strings. Return 0x8003a758 owns sp += 144.
-  Neighbors magic_load_records and effect_pool_sweep remain unchanged.
+  Neighbors magic_load_records and effect_pool_update remain unchanged.
 
 Vendor negative controls: none of these entries appears in the vendored
 inventory or the supplied Psy-Q complete-object/text-section match inventories.

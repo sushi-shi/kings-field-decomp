@@ -41,7 +41,7 @@ SDK operations, separately attributed in the vendor inventory.
 | Image / function | Hex extent; initial strict match | Evidence and first source hypothesis |
 | --- | --- | --- |
 | GAME `8001ed90 render_floor_item` | `14c`; 98.79518% | Typed placement pointer from `render_entities`; 80-byte frame, nine calls, six address pairs and one internal jump. Unsigned item ID plus byte frame selects a 12-byte descriptor at `80055b00`. Replace the cast/offset with typed indexing; name the facing/count fields and signed depth bias without changing arithmetic. |
-| GAME `8001eedc render_actor_sprite` | `1e8`; 100% | Effect render view from the same sweep; 112-byte frame, twenty calls, six address pairs and two jumps. Mode ff selects a byte-indexed descriptor at `80055b54`; other modes select model ID plus 30. Preserve its banked body, signed scale halfwords, cache arguments and every return/delay slot. |
+| GAME `8001eedc render_effect` | `1e8`; 100% | Effect render view from the same sweep; 112-byte frame, twenty calls, six address pairs and two jumps. Mode ff selects a byte-indexed descriptor at `80055b54`; other modes select model ID plus 30. Preserve its banked body, signed scale halfwords, cache arguments and every return/delay slot. |
 | OPEN `800190f4 render_floor_item` | `14c`; 98.79518% | Same placement, facing/count and depth-bias protocol; nine calls, six pairs and one jump. Share the new literal names, retaining OPEN's existing seven-record owner and separate image addresses. |
 | GAME `8001e230 render_enqueue_sprite` | `250`; 93.97298% | Five callers and five SDK calls; seven address pairs. Rename the signed-halfword argument from `screen_scale` to `depth_bias` through implementation, header and identity. It is added to anchor depth before the signed threshold and masked OT index; it does not scale corners. |
 
@@ -135,7 +135,7 @@ separate boundary work; this campaign does not claim those types are closed.
 | Function | Final strict match | Before/after raw comparison |
 | --- | --- | --- |
 | GAME `render_floor_item` | 98.79518% unchanged | All 82 source words, nine calls and six address pairs agree; retail still has the extra facing-byte mask. |
-| GAME `render_actor_sprite` | 100% unchanged | All 122 retail words, twenty calls and six address pairs agree, including both internal jumps and the restoring return slot. |
+| GAME `render_effect` | 100% unchanged | All 122 retail words, twenty calls and six address pairs agree, including both internal jumps and the restoring return slot. |
 | OPEN `render_floor_item` | 98.79518% unchanged | All 82 source words, nine calls and six address pairs agree. |
 | GAME `render_enqueue_sprite` | 93.97298% unchanged | The complete object is byte-identical; renaming the bias does not affect generated code. |
 

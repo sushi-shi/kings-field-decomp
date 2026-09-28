@@ -24,7 +24,7 @@ the floor table to consume them or manufacture an initialized zero pad.
 | --- | --- | --- |
 | 561d0 / 38 | map_floor5_camera_path[2] | `camera_path_begin` argument at 34704/08; 28-byte stride and x=-1 termination in camera_path_compute_segment. One position/rotation/speed point and a complete sentinel record. |
 | 56208 / 10 | map_floor1_sound_position | VECTOR argument at 33f8c/90 to spatial sound; three 32-bit coordinates plus authentic SDK vector lane. |
-| 56218 / 20 | map_reveal_light_matrix | MATRIX argument at 344d8/dc to matrix_interpolate; nine signed halfwords, SDK alignment/translation lanes. |
+| 56218 / 20 | map_transfer_light_matrix | MATRIX argument at 344d8/dc to matrix_interpolate; nine signed halfwords, SDK alignment/translation lanes. |
 | 56238 / 10 | map_screen_image_path[16] | Bytes 5,8,9,10 are edited; full base is passed to screen_show_image_until_input via a0-5 in the call delay slot. Retail byte 15 is NUL. |
 | 56248 / 20 | actor_transform_color_matrix | Both fade loops pass this exact MATRIX at 36d74/78 and 36dcc/dd0. Independent from the filename and floor records. |
 | 56268 / 23 | floor_deform_segments[5] | Seven-byte stride at 3852c/30; unsigned loads of fields 0..6. Player item 62 constructs segment ranges (0,4) and (4,1), passed through effect-pool fields to the two dispatcher calls. |
@@ -65,11 +65,11 @@ floor-progress correction. The two RODATA path literals stay source literals.
 | 342e4 / 8 | map_ambient_script_floor4 | 100 | No args/result; admitted event-update call, jr ra/nop. Move unchanged. | Exact retained: 100% |
 | 342ec / f4 | map_ambient_script_floor5 | 100 | No args/result; event-update call, tile/yaw bounds, two TALK/C17 TIM literals and actor/copy-region writes. Preserve literal order and call delays. | Exact retained: 100% |
 | 343e0 / 58 | map_action_script_floor1 | 100 | No args/result; dispatcher call, item 56 and world flag gate copy-region and SoundRef calls. Move unchanged. | Exact retained: 100% |
-| 34438 / 184 | map_reveal_fade | 100 | No args/result, action-floor2 caller; saved full MATRIX, blend 0..4096 by128 then reverse by256, threshold1025, rotation/position stores. Name the private light MATRIX; preserve all lighting/render calls. | Exact retained: 100% |
+| 34438 / 184 | map_floor2_event_transfer_fade | 100 | No args/result, action-floor2 caller; saved full MATRIX, blend 0..4096 by128 then reverse by256, threshold1025, rotation/position stores. Name the private light MATRIX; preserve all lighting/render calls. | Exact retained: 100% |
 | 345bc / 54 | map_action_script_floor2 | 100 | No args/result; event word & ffffff00 equals28010200, state1 -> reveal. Move unchanged. | Exact retained: 100% |
 | 34610 / 90 | map_action_script_floor3 | 100 | No args/result; item50 and event word28010300 gate two learned bytes and notifications. Move unchanged. | Exact retained: 100% |
 | 346a0 / 8 | map_action_script_floor4 | 100 | No args/result; dispatcher call, jr ra/nop. Move unchanged. | Exact retained: 100% |
-| 346a8 / 38c | map_floor5_transition_cutscene | 100 | No args/result; floor5 action caller; bank-0 item10 removal, camera begin/step, occupancy, effect/render loops. Typed camera-path argument replaces gap+8 cast only. | Exact retained: 100% |
+| 346a8 / 38c | map_floor5_weapon_transform_cutscene | 100 | No args/result; floor5 action caller; bank-0 item10 removal, camera begin/step, occupancy, effect/render loops. Typed camera-path argument replaces gap+8 cast only. | Exact retained: 100% |
 | 34a34 / 4c | map_action_script_floor5 | 100 | No args/result; event word28010500 gates transition and world byte6801. Move unchanged. | Exact retained: 100% |
 | 34a80 / 2d4 | map_event_interact | 100 | Existing KfMapEvent* source argument; three dispatcher calls; item trades, notification and dialog/event refresh. Move without signature/CFG changes. | Exact retained: 100% |
 | 34d54 / 90 | map_show_screen_image | 79.25 | Existing s32 group/index source; caller supplies group0/1 and unsigned item byte. Signed div10 produces quotient and remainder; four byte stores then screen call. Own/name complete writable path, retain code-generation residue. | Non-exact, score unchanged |
@@ -93,14 +93,14 @@ The full eight-function six-view dossier `build/effect-data-owner-evidence.log`
 was read with source/history and all constraining caller instructions. None is
 vendored: these are effect-record policies calling SDK math/audio providers.
 All helpers are reached by the dispatcher except rotate-scale, reached by the
-trail helper. The dispatcher has one proven caller, effect_pool_sweep, with no
+trail helper. The dispatcher has one proven caller, effect_pool_update, with no
 arguments. Its 49 switch pointers and unresolved indirect jump are not promoted.
 
 | VA / extent | Function | Before % | Individual evidence / split hypothesis | Final verdict |
 | --- | --- | ---: | --- | --- |
 | 37fbc / 24 | effect_magic_power | 100 | Record pointer in a0 at all five calls; byte type mask16, player magic lhu or5; leaf jr/nop. Keep helper. | Exact retained: 100% |
-| 37fe0 / 2b8 | effect_projectile_update_3d | 96.75288 | Two dispatcher calls pass the two velocity pointers and limits40/60; frame144, ten calls, projectile/impact/pitch CFG. Keep source signature and body. | Non-exact, score unchanged |
-| 38298 / 260 | effect_projectile_update_2d | 99.93421 | Dispatcher passes speed6500/limit40; frame120, nine calls, signed velocity and unsigned life loads. Keep helper unchanged. | Non-exact, score unchanged |
+| 37fe0 / 2b8 | effect_update_swinging_hazard | 96.75288 | Two dispatcher calls pass the two velocity pointers and limits40/60; frame144, ten calls, projectile/impact/pitch CFG. Keep source signature and body. | Non-exact, score unchanged |
+| 38298 / 260 | effect_update_orbiting_projectile | 99.93421 | Dispatcher passes speed6500/limit40; frame120, nine calls, signed velocity and unsigned life loads. Keep helper unchanged. | Non-exact, score unchanged |
 | 386c4 / 68 | effect_scatter_triple | 76.92308 | Dispatcher passes stack triple/current direction; three rand calls, lhu/sh at0/2/4, frame24. No signedness/codegen change. | Non-exact, score unchanged |
 | 3872c / 90 | effect_rotate_scale_offset_y | 100 | Trail caller supplies two pointers, sign-extended angle and scale; lh offsets0/4, multiply/shift12, RotMatrix/ApplyMatrix, frame80. Keep helper. | Exact retained: 100% |
 | 387bc / f8 | effect_spawn_trail_kind13 | 100 | Four dispatcher calls, byte ID and angles +/-1774,+/-1824 with distances4000/8000. Divide by800 and record stride60; frame56, rotate/construct calls. Keep helper. | Exact retained: 100% |

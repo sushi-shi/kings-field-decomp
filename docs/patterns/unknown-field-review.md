@@ -224,7 +224,7 @@ not expose these models as SDK FFI structures.
 | Weapon portion of `unknown_14` | Signed loads at 8001f7f4/8001f800/8001f80c read +0x1c/+0x1e/+0x20 | `render_translation: Vec3s` (`x`, `y`, `z`); opaque prefix stays eight bytes |
 | Weapon `mirrored_angle` and surrounding opaque bytes | 8001f814/8001f818 supply record +0x24 to SDK `RotMatrix`; loader negates the +0x26 Y lane | `render_rotation: SVector` (`vx`, `vy`, `vz`, `pad`), including preserved SDK pad; +0x22 stays unresolved |
 | Actor-placement `unknown_05` | Loader copies source +5 to actor +7; awareness at 8002e760/8002e810 compares it shifted by seven with `rand` | `spawn_chance: u8` |
-| Actor-placement `unknown_06` | Loader copies source +6 to actor +9; death at 8002fdd4 supplies it to `map_object_spawn_effect`, except sentinel 99 | `death_drop_object_id: u8` |
+| Actor-placement `unknown_06` | Loader copies source +6 to actor +9; death at 8002fdd4 supplies it to `map_object_spawn_drop`, except sentinel 99 | `death_drop_object_id: u8` |
 | Event-definition `unknown_0d` | 80033994/8003399c copy source +0x0d to runtime +0x0e; updater dispatches behaviors 1 and 2 | `behavior: u8` |
 
 The live loader identity note and older collision document now refer to
@@ -276,12 +276,12 @@ nor claims a new exact function.
 | OPEN | opening_camera_path_compute_segment | Known segment arithmetic; no new unknown-field meaning. |
 | OPEN | opening_camera_path_step | Known path stepping; no new unknown-field meaning. |
 | GAME | effect_pool_construct | Known effect fields and SDK vectors; +0x0a/+0x2a unresolved. |
-| GAME | effect_pool_spawn_typed | Known spawn arguments; opaque effect lanes unresolved. |
+| GAME | effect_pool_spawn_floor_deformation | Known spawn arguments; opaque effect lanes unresolved. |
 | GAME | audio_initialize | Known SDK initialization; adjacent unknown halfwords unresolved. |
 | OPEN | audio_initialize | Same limitation for OPEN audio state. |
 | GAME | save_file_write_slot | Save transport confirmed; payload gaps/player opaque bytes unresolved. |
 | GAME | save_file_read_slot | Save restoration confirmed; transport does not prove padding. |
-| GAME | render_effect_sprites | SDK rotation boundary retained; adjacent descriptor gaps unresolved. |
+| GAME | render_hud_models | SDK rotation boundary retained; adjacent descriptor gaps unresolved. |
 | OPEN | opening_entity_pool_reset | Three individual control clears proven; allocation analogy remains candidate. |
 | OPEN | opening_entity_pool_load_placements | Known entity construction; unknown tail/control roles unresolved. |
 | OPEN | opening_entity_render | Known render transforms; adjacent unknown halfword not promoted to SDK pad. |

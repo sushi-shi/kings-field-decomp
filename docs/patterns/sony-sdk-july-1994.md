@@ -62,16 +62,16 @@ No source or header change is retained. **456/471 remains exact.**
 | GAME | `item_load_database` | 99.746666 |
 | GAME | `menu_draw_item_detail` | 97.80875 |
 | GAME | `talk_show_dialogue_page` | 98.78049 |
-| GAME | `map_object_spawn_effect` | 94.50495 |
+| GAME | `map_object_spawn_drop` | 94.50495 |
 | GAME | `map_show_screen_image` | 88.888885 |
 | GAME | `map_interaction_dispatch` | 99.202774 |
 | GAME | `map_world_state_persist` | 97.52873 |
 | GAME | `effect_map_collision` | 99.87369 |
-| GAME | `effect_projectile_update_2d` | 99.93421 |
+| GAME | `effect_update_orbiting_projectile` | 99.93421 |
 | GAME | `effect_update_dispatch` | 99.82781 |
 | OPEN | `opening_ending_scroll_run` | 99.917694 |
 | GAME | `menu_status_panel` (UV control) | 100 |
-| GAME | `menu_draw_item_name_frame` (UV control) | 100 |
+| GAME | `menu_draw_pickup_preview` (UV control) | 100 |
 | GAME | `menu_draw_window_backdrop` (UV control) | 100 |
 
 A separate frontend audit confirms the July header's actual inclusion and

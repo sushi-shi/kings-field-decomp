@@ -33,15 +33,15 @@ helper. New copy controls compare the actual emitted loops and access widths.
 | GAME `80020cfc` | `item_load_database` | 99.746666 | Existing compiler-inlined memory copies, SDK CD file boundary, decimal filename construction versus BCD helpers. |
 | GAME `8002430c` | `menu_status_panel` | 99.96217 | Reflected UV rectangle macros and genuine RECT input capture inside the existing inline draw helper. |
 | GAME `80027b7c` | `menu_draw_item_detail` | 97.80875 | SDK memory copy of the ten-glyph row, matrix zero-row initialization, and actual MATRIX field extents. |
-| GAME `800292f8` | `menu_draw_item_name_frame` | 99.97571 | Glyph memory copy, reflected UV rectangles and matrix initialization. |
+| GAME `800292f8` | `menu_draw_pickup_preview` | 99.97571 | Glyph memory copy, reflected UV rectangles and matrix initialization. |
 | GAME `8002a510` | `menu_draw_window_backdrop` | 99.97176 | Reflected UV rectangle macros and genuine RECT inputs. |
 | GAME `8002c9d4` | `talk_show_dialogue_page` | 98.78049 | Decimal ASCII digits versus SDK BCD and character helpers; existing screen call. |
-| GAME `80031834` | `map_object_spawn_effect` | 94.50495 | Existing position setter and the already tested rotation setter's pre-random store dependency. |
+| GAME `80031834` | `map_object_spawn_drop` | 94.50495 | Existing position setter and the already tested rotation setter's pre-random store dependency. |
 | GAME `80034d54` | `map_show_screen_image` | 88.888885 | Decimal ASCII digits versus BCD helpers; global floor read and real screen call. |
 | GAME `80034de4` | `map_interaction_dispatch` | 99.202774 | Two-axis probes, angle predicates and call-preserving SDK boundaries. |
 | GAME `80035b5c` | `map_world_state_persist` | 97.52873 | Eight-byte complete link copy versus SDK `memcpy`; sparse and packed records retain their game serialization. |
 | GAME `80037850` | `effect_map_collision` | 99.87369 | Signed cell bounds, geometry predicates, effect-mask extraction and the real collision call. |
-| GAME `80038298` | `effect_projectile_update_2d` | 99.93421 | VECTOR distance components and setter input capture preserving sin/cos/sin call order. |
+| GAME `80038298` | `effect_update_orbiting_projectile` | 99.93421 | VECTOR distance components and setter input capture preserving sin/cos/sin call order. |
 | GAME `80038a38` | `effect_update_dispatch` | 99.82781 | Existing helpers, complete padded vector copy versus `memcpy`, and scalar scale bounds; reuse previous ordered-vector controls. |
 | OPEN `80014e28` | `opening_ending_scroll_run` | 99.917694 | Transition vector, bounded blend clamp, full MATRIX copy and genuine color/material types. |
 
@@ -61,7 +61,7 @@ mean all eighteen functions must become exact.
 ## Result
 
 Three functions reach strict 100% through the supplied `setUVWH` helper:
-`menu_status_panel`, `menu_draw_item_name_frame` and
+`menu_status_panel`, `menu_draw_pickup_preview` and
 `menu_draw_window_backdrop`. Their complete resolved instruction bodies,
 ordered calls and data referents equal retail. Two further SDK substitutions
 are retained with whole-object byte and relocation equality: the unsigned
@@ -92,7 +92,7 @@ treated as an additive model of the compiler.
 | Function | Initial frame | Retained / retail frame | Body bytes |
 | --- | ---: | ---: | ---: |
 | `menu_status_panel` | 48 | 112 | 1692 |
-| `menu_draw_item_name_frame` | 160 | 224 | 1976 |
+| `menu_draw_pickup_preview` | 160 | 224 | 1976 |
 | `menu_draw_window_backdrop` | 40 | 104 | 1700 |
 
 The status panel already has one inline helper used by all four tiles.
@@ -127,15 +127,15 @@ Unchanged rows remain non-exact; a rejected control is not banked.
 | `item_load_database` | 99.746666 | `+0x4bc`: decimal division operands use different registers. Its six existing `memcpy` operations already inline as word-copy loops. Filename digits are ASCII decimal, not BCD. The file table has the proven older 20-byte stride; replacing it with the supplied 24-byte CdlFILE would be wrong. No source change. |
 | `menu_status_panel` | **100** | `+0x0`: the 64-byte frame difference is removed by reflected SDK UV rectangles with consistent byte-domain inputs. Retained, including all twenty ordered calls and the full body. |
 | `menu_draw_item_detail` | 97.80875 | `+0xec`: glyph cursor base/setup; retail starts at the containing string and stores at `+4`, while source starts at its glyph array. Only three aligned words differ. `memcpy` emits an unrolled word copy rather than the retail ten-halfword loop; zero-row `memset` adds a call absent from retail. Both rejected. |
-| `menu_draw_item_name_frame` | **100** | `+0x0`: composing the three reflected SDK rectangles removes the frame difference. Glyph-copy and matrix-zero alternatives are rejected; the retained glyph loop and matrix setup already agree with retail. |
+| `menu_draw_pickup_preview` | **100** | `+0x0`: composing the three reflected SDK rectangles removes the frame difference. Glyph-copy and matrix-zero alternatives are rejected; the retained glyph loop and matrix setup already agree with retail. |
 | `menu_draw_window_backdrop` | **100** | `+0x0`: the same three reflected SDK rectangles remove the frame difference. No new local RECT is needed. |
 | `talk_show_dialogue_page` | 98.78049 | `+0x30`: decimal remainder register/order differs. Four byte-valued caller arguments feed ASCII filename digits and one game screen call. `btoi`/`itob` and character classification/case macros do not implement these digit stores. No source change. |
-| `map_object_spawn_effect` | 94.50495 | `+0x4`: saved RA offset differs and source omits retail's S4 save; the body is four bytes short. Its position already uses `setVector`. The previous rotation-setter control moves the required pre-`rand` Z clear past the call; that rejected evidence still applies. No new compatible helper. |
+| `map_object_spawn_drop` | 94.50495 | `+0x4`: saved RA offset differs and source omits retail's S4 save; the body is four bytes short. Its position already uses `setVector`. The previous rotation-setter control moves the required pre-`rand` Z clear past the call; that rejected evidence still applies. No new compatible helper. |
 | `map_show_screen_image` | 88.888885 | `+0x30`: remainder register differs; the floor load and filename-address materialization also exchange order. The only call is the existing game screen API. ASCII decimal stores have no matching BCD/character helper. No source change. |
 | `map_interaction_dispatch` | 99.202774 | `+0x2c`: position pointer uses S8 instead of retail S7, with later branch/layout differences. Both probe pairs consume only X/Z and already call `rsin`/`rcos` in retail order. The modular pitch and game angle predicates are not SDK vector construction or saturation. No supported missing helper. |
 | `map_world_state_persist` | 97.52873 | `+0x16c`: definition-base setup appears early; later type predicates differ. A complete eight-byte link `memcpy` changes the retail byte-loop shape and is rejected. Sparse records and packed flags remain explicit game serialization. |
 | `effect_map_collision` | 99.87369 | `+0x718`: source puts `li v0,1` in a branch delay slot where retail has `nop`; it is the only differing word. The branch belongs to game effect-mask/collision handling. Bounds are predicates, not clamps; no Sony helper explains this remaining instruction. |
-| `effect_projectile_update_2d` | 99.93421 | `+0x0`: 56-byte frame versus retail 120; only stack operands differ. A genuine VECTOR for all three distance components adds instructions. Capturing orbit coordinates in sin/cos/sin order before `setVector` preserves calls but adds instructions too. Both rejected. |
+| `effect_update_orbiting_projectile` | 99.93421 | `+0x0`: 56-byte frame versus retail 120; only stack operands differ. A genuine VECTOR for all three distance components adds instructions. Capturing orbit coordinates in sin/cos/sin order before `setVector` preserves calls but adds instructions too. Both rejected. |
 | `effect_update_dispatch` | 99.82781 | `+0x38`: global-address register differs. Complete padded SVECTOR `memcpy` and the unsigned scale `limitRange` controls change body length/instructions. Previous ordered component-setter controls also disagree with retail. Existing compatible helpers are retained. |
 | `opening_ending_scroll_run` | 99.917694 | `+0x398`: phase dispatch uses different registers; one join target also differs. Transition `setVector` is whole-object identical and retained. Full MATRIX `memcpy` is identical but less direct than assignment, so not retained. Adding the blend clamp's lower-bound arm changes branches and is rejected. |
 

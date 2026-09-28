@@ -51,8 +51,8 @@ ledgers. Add no size assertions or permanent tests.
 | GAME VA / bytes | Function | Strict before / after | Words / calls / address references | Verdict |
 | --- | --- | ---: | ---: | --- |
 | `0x80016e24 / 148` | `game_initialize_session` | 100.000000% | 37 / 2 / 12 | Exact preserved |
-| `0x8001f8b0 / 292` | `render_effect_sprites` | 100.000000% | 73 / 12 / 2 | Exact preserved |
-| `0x8001f9d4 / 112` | `render_hud_gauges` | 100.000000% | 28 / 1 / 0 | Exact preserved |
+| `0x8001f8b0 / 292` | `render_hud_models` | 100.000000% | 73 / 12 / 2 | Exact preserved |
+| `0x8001f9d4 / 112` | `render_hud_sprites` | 100.000000% | 28 / 1 / 0 | Exact preserved |
 | `0x8001fde4 / 1304` | `render_frame` | 100.000000% | 326 / 20 / 64 | Exact preserved |
 | `0x80022348 / 704` | `menu_root` | 96.863640% | 175 / 28 / 1 | Partial preserved; residue below |
 | `0x8002589c / 1284` | `menu_config_panel` | 99.859810% | 321 / 19 / 9 | Partial preserved; residue below |

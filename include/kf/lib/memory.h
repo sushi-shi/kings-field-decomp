@@ -26,7 +26,7 @@ typedef struct KfMemoryAllocationState {
 /* Arena and fallback system-heap bookkeeping occupy one shared owner. */
 typedef struct KfMemoryArena {
     u8 *start;
-    u8 *end;
+    u8 *last;
     KfMemoryAllocationState allocation;
     u8 *system_heap_start;
     s32 system_heap_size;

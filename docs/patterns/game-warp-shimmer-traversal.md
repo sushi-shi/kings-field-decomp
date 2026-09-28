@@ -131,6 +131,6 @@ Fresh scouting leaves GAME `8001bb94 display_initialize` at 94.253010%:
 its dimensions/setup instructions already agree, while retail derives both
 DISPENV and distant fog state from the first DRAWENV dither address. Recover
 the enclosing graphics ownership before attempting cross-object pointer
-expressions; no source trial was made. GAME `80030eb8 map_object_probe_forward`
+expressions; no source trial was made. GAME `80030eb8 map_object_probe_door_closing`
 retains the previously documented 93.755104% shared-call CFG and radius/X
 register residue. Its rejected duplicated-call trial was not repeated.

@@ -156,7 +156,7 @@ ADDRESS(0x8002cc64, 0xc4)
 void actor_initialize(KfActor *actor)
 {
     actor->lifecycle = KF_ACTOR_LIFECYCLE_ACTIVE;
-    actor->animation_id = KF_ANIMATION_CLIP_FIRST;
+    actor->animation_clip = KF_ANIMATION_CLIP_FIRST;
     actor->animation_phase = 0;
     actor->collision_state = KF_ACTOR_COLLISION_CLEAR;
     actor->vertical_velocity = 0;
@@ -381,7 +381,7 @@ ADDRESS(0x8002d4a8, 0x1f8)
 void actor_pool_apply_radial_damage(
     const VECTOR *origin,
     u32 radius,
-    u16 falloff,
+    u16 falloff_q12,
     u16 base_power,
     u16 component0,
     u16 component1,
@@ -419,8 +419,8 @@ void actor_pool_apply_radial_damage(
         if (distance == -1) {
             continue;
         }
-        if (falloff != KF_FIXED12_ONE) {
-            damage_scale = radial_damage_attenuated_scale(distance, radius, falloff, scale);
+        if (falloff_q12 != KF_FIXED12_ONE) {
+            damage_scale = radial_damage_attenuated_scale(distance, radius, falloff_q12, scale);
         } else {
             damage_scale = scale;
         }
@@ -579,7 +579,7 @@ s32 actor_distance_to_point(
 }
 
 ADDRESS(0x8002da6c, 0x144)
-s32 actor_pool_find_overlap(s32 x, s32 y, s32 z, s32 extra_radius, s32 point_height)
+s32 actor_pool_find_overlap(s32 point_x, s32 point_y, s32 point_z, s32 radius_padding, s32 point_height)
 {
     KfActor *actor = actor_state.actors;
     KfActorDefinition *definition;
@@ -601,10 +601,10 @@ s32 actor_pool_find_overlap(s32 x, s32 y, s32 z, s32 extra_radius, s32 point_hei
         definition = &actor_state.definitions.entries[actor->definition_id];
         if (actor_distance_to_point(
                 actor,
-                x,
-                y,
-                z,
-                definition->collision_radius + extra_radius,
+                point_x,
+                point_y,
+                point_z,
+                definition->collision_radius + radius_padding,
                 definition->collision_height,
                 point_height) != -1) {
             return index;
@@ -767,7 +767,7 @@ KfActorAction actor_try_select_ground_action(KfActorAction action, s32 distance,
 }
 
 ADDRESS(0x8002e018, 0xd8)
-KfActorAction actor_try_select_facing_action(KfActorAction action, s32 distance, u16 chance)
+KfActorAction actor_try_select_multi_hit_action(KfActorAction action, s32 distance, u16 chance)
 {
     KfActor *actor = actor_state.current;
     u16 odds = chance;

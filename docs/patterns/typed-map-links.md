@@ -46,12 +46,12 @@ control separately.
 | `map_object_pool_clear` | `80030f7c / 60` | 100 | 3/0/1/1 | 1/0/0; 0/4/0 | 100%; raw unchanged |
 | `map_object_pool_load` | `80031008 / 448` | 100 | 43/11/27/1 | 1/9/84; 12/17/0 | 100%; raw unchanged |
 | `map_object_effect_pool_acquire` | `800317a4 / 90` | 100 | 9/0/4/1 | 3/0/0; 0/1/0 | 100%; raw unchanged |
-| `map_object_spawn_effect` | `80031834 / 194` | 94.5049 | 21/5/13/1 | 1/3/0; 5/5/0 | Partial unchanged; raw unchanged |
-| `map_object_spawn_actor_debris` | `800319c8 / 18c` | 100 | 11/6/6/1 | 1/0/0; 6/1/0 | 100%; raw unchanged |
+| `map_object_spawn_drop` | `80031834 / 194` | 94.5049 | 21/5/13/1 | 1/3/0; 5/5/0 | Partial unchanged; raw unchanged |
+| `map_object_spawn_gold_drop` | `800319c8 / 18c` | 100 | 11/6/6/1 | 1/0/0; 6/1/0 | 100%; raw unchanged |
 | `map_object_pool_trigger_link` | `80031b54 / f0` | 100 | 13/1/10/1 | 4/1/0; 1/3/0 | 100%; raw unchanged |
 | `map_object_pool_clear_link` | `80031c44 / 84` | 100 | 7/0/4/1 | 5/0/0; 0/1/0 | 100%; raw unchanged |
 | `map_object_pool_update` | `80031cc8 / c18` | 98.9664 | 118/35/94/1 | 1/30/99; 36/53/0 | Partial unchanged; raw unchanged |
-| `map_floor5_transition_cutscene` | `800346a8 / 38c` | 100 | 32/12/23/1 | 1/8/0; 12/22/0 | 100%; raw unchanged |
+| `map_floor5_weapon_transform_cutscene` | `800346a8 / 38c` | 100 | 32/12/23/1 | 1/8/0; 12/22/0 | 100%; raw unchanged |
 | `map_interaction_dispatch` | `80034de4 / 904` | 96.4905 | 119/54/92/1 | 1/34/89; 56/47/0 | Partial unchanged; raw unchanged |
 | `map_world_state_persist` | `80035b5c / 2b8` | 94.8218 | 28/0/18/1 | 3/1/0; 0/8/0 | Partial unchanged; raw unchanged |
 | `map_restore_floor_state` | `80035e44 / 69c` | 100 | 50/18/32/1 | 1/5/5; 19/37/0 | 100%; raw unchanged |

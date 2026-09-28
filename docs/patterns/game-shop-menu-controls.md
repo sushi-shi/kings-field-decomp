@@ -48,11 +48,11 @@ tests. Refresh complete item literal accounting after the substitutions.
 
 | GAME VA / bytes | Function | Strict baseline |
 | --- | --- | ---: |
-| `0x800212d8 / 608` | `item_menu_root` | 100.000000% |
-| `0x80021538 / 1476` | `item_menu_buy` | 99.769646% |
-| `0x80021afc / 1280` | `item_menu_sell` | 99.609375% |
+| `0x800212d8 / 608` | `shop_menu_root` | 100.000000% |
+| `0x80021538 / 1476` | `shop_menu_buy` | 99.769646% |
+| `0x80021afc / 1280` | `shop_menu_sell` | 99.609375% |
 | `0x80027b7c / 732` | `menu_draw_item_detail` | 92.207650% |
-| `0x80028380 / 852` | `menu_list_interact` | 100.000000% |
+| `0x80028380 / 852` | `menu_list_confirm` | 100.000000% |
 | `0x80028914 / 348` | `menu_draw_window` | 87.540230% |
 | `0x80028a70 / 1916` | `menu_list_render` | 100.000000% |
 | `0x8002ad6c / 140` | `menu_list_init` | 100.000000% |
@@ -96,8 +96,8 @@ existing raw differences, without an attributed optimizer cause.
 
 | Function | GAME site | Candidate / retail |
 | --- | --- | --- |
-| `item_menu_buy` | `0x80021568` | `addiu s2, zero, -0x63` / `addiu s1, zero, -0x63` |
-| `item_menu_sell` | `0x80021b28` | `move s2, zero` / `move s3, zero` |
+| `shop_menu_buy` | `0x80021568` | `addiu s2, zero, -0x63` / `addiu s1, zero, -0x63` |
+| `shop_menu_sell` | `0x80021b28` | `move s2, zero` / `move s3, zero` |
 | `menu_draw_item_detail` | `0x80027b9c` | `move s4, a1` / `move s2, a1` |
 | `menu_draw_window` | `0x80028918` | `sw ra, 0x2c(sp)` / `sw ra, 0x28(sp)` |
 

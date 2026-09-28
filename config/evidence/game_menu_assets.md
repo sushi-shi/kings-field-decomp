@@ -20,18 +20,18 @@ windows and immediate neighbors were also inspected. Reproduction uses
 | 80022d7c / 400 | menu_map_viewer | 100 | Item code in a0; shared screen quads use 160-byte buffer stride, indices 3,2,1,0 at OT 3000. |
 | 8002430c / 69c | menu_status_panel | 73.281330 | No arguments; four mirrored tiles read backdrop tpage/clut/width/height as halfwords and u/v as bytes. |
 | 80025da0 / 198 | menu_config_panel_draw | 100 | Existing by-value ConfigPanelParams, including caller-stack state pointer; option descriptors, glyph atlas, four background quads. |
-| 80025f38 / 5a0 | menu_draw_stats_header | 97.686110 | No arguments; glyph and number atlas addresses passed in a0, positioned text in a1. |
+| 80025f38 / 5a0 | menu_draw_status_summary | 97.686110 | No arguments; glyph and number atlas addresses passed in a0, positioned text in a1. |
 | 800264d8 / cb4 | menu_draw_status_details | 95.110700 | No arguments; same atlases, player halfword statistics and word experience/gold. |
-| 8002718c / 838 | menu_draw_name_list | 100 | No arguments; eight optional item/spell names selected by byte IDs; glyph atlas. |
+| 8002718c / 838 | menu_draw_equipment_names | 100 | No arguments; eight optional item/spell names selected by byte IDs; glyph atlas. |
 | 800279c4 / 1b8 | menu_item_model_preview | 98.181816 | Item ID in a0, ff empty sentinel; glyph and number atlases after model rendering. |
 | 80027b7c / 2dc | menu_draw_item_detail | 91.284160 | ID/price column/buy-sell mode in a0-a2; atlases and row background, not an item-icon descriptor. |
-| 80027e58 / 48 | menu_add_marker_quad | 100 | No arguments; AddPrim OT 500, 40-byte buffer stride from 58228. |
-| 80027ea0 / 44 | menu_add_frame_quad | 100 | No arguments; AddPrim OT 0, 40-byte buffer stride from 58278. |
-| 80027ee4 / 49c | menu_draw_dialog_frame | 98.623726 | Summary pointer/kind in a0-a1; 144-byte dialog-buffer stride, 24-byte quads, indices 2..4; three 24-byte summary rows. |
+| 80027e58 / 48 | menu_add_magic_artwork_quad | 100 | No arguments; AddPrim OT 500, 40-byte buffer stride from 58228. |
+| 80027ea0 / 44 | menu_add_message_image_quad | 100 | No arguments; AddPrim OT 0, 40-byte buffer stride from 58278. |
+| 80027ee4 / 49c | menu_draw_save_slots | 98.623726 | Summary pointer/kind in a0-a1; 144-byte dialog-buffer stride, 24-byte quads, indices 2..4; three 24-byte summary rows. |
 | 80028914 / 15c | menu_draw_window | 88.172420 | Four integer arguments; normal row descriptor 58424, confirmed row 58430 when flag=1, cursor 5846c, glyph atlas. Six literal address pairs lack relocation rows. |
 | 80028a70 / 77c | menu_list_render | 88.252610 | KfMenuList pointer in a0; four 12-byte tile descriptors, byte u/v, halfword geometry, optional quantity source. |
 | 800291ec / 10c | menu_draw_two_option | 100 | Two positioned text pointers and two integer selectors in a0-a3; normal/highlight backgrounds and selection cursor. |
-| 800292f8 / 7b8 | menu_draw_item_name_frame | 68.518220 | Item ID in a0; backdrop address retained across four tiled packets; retail additionally enqueues four background quads missing in current source. |
+| 800292f8 / 7b8 | menu_draw_pickup_preview | 68.518220 | Item ID in a0; backdrop address retained across four tiled packets; retail additionally enqueues four background quads missing in current source. |
 | 8002a510 / 6a4 | menu_draw_window_backdrop | 58.192940 | No arguments; backdrop-relative background quad addresses; retail mirrors horizontal/vertical texture corners in three of four tiles, unlike current source. |
 
 All are absent from the vendored function inventory. Their menu/resource
@@ -49,7 +49,7 @@ History includes the prior menu bank/layout/tile campaigns `94d7e54`,
 and advance to the separately addressed menu-window bank at 80058478.
 The old declaration covered only the first 320 bytes of this copy.
 
-Independently, `menu_draw_item_name_frame` retains 80058400 in s2 at
+Independently, `menu_draw_pickup_preview` retains 80058400 in s2 at
 80029438/8002943c, then derives 80058160, 80058138, 80058110 and 800580e8 by
 subtracting 672, 712, 752 and 792 at 80029a04..80029a70. The shared backdrop
 does the same at 8002ab08..8002ab74. Thus the quad array and later descriptor
@@ -60,8 +60,8 @@ The original aggregate spelling and original TU boundary remain WIP.
 | Offset | Field | Type |
 | ---: | --- | --- |
 | 000 | background_quads | POLY_FT4[2][4] |
-| 140 | mid_depth_quads | POLY_FT4[2] |
-| 190 | foreground_quads | POLY_FT4[2] |
+| 140 | magic_artwork_quads | POLY_FT4[2] |
+| 190 | message_image_quads | POLY_FT4[2] |
 | 1e0 | dialog_quads | POLY_F4[2][6] |
 | 300 | number_atlas | MenuSpriteDef |
 | 30c | glyph_atlas | MenuSpriteDef |
@@ -113,18 +113,18 @@ No candidate evidence was promoted as a side effect of aggregate rebinding.
 | menu_map_viewer | 100 | Exact preserved. |
 | menu_status_panel | 78.468090 | Improved, not exact. Frame 112 versus 48 bytes and subsequent instruction stream differ; call sequence agrees. |
 | menu_config_panel_draw | 100 | Exact preserved. |
-| menu_draw_stats_header | 97.686110 | Unchanged non-exact. Frame 72 versus 64 bytes; later player-stat branch/source form remains unresolved. |
+| menu_draw_status_summary | 97.686110 | Unchanged non-exact. Frame 72 versus 64 bytes; later player-stat branch/source form remains unresolved. |
 | menu_draw_status_details | 95.110700 | Unchanged non-exact. First difference is constant placement across a load delay; later stat branches also remain unresolved. |
-| menu_draw_name_list | 100 | Exact preserved. |
+| menu_draw_equipment_names | 100 | Exact preserved. |
 | menu_item_model_preview | 98.181816 | Unchanged non-exact. Final index shift moves across the name-bank address pair; referent and call sequence agree. |
 | menu_draw_item_detail | 91.284160 | Unchanged non-exact. Saved column/mode registers differ first, followed by name-copy instruction order. |
-| menu_add_marker_quad | 100 | Exact preserved. |
-| menu_add_frame_quad | 100 | Exact preserved. |
-| menu_draw_dialog_frame | 98.623726 | Unchanged non-exact. Summary pointer allocation and later row traversal differ. |
+| menu_add_magic_artwork_quad | 100 | Exact preserved. |
+| menu_add_message_image_quad | 100 | Exact preserved. |
+| menu_draw_save_slots | 98.623726 | Unchanged non-exact. Summary pointer allocation and later row traversal differ. |
 | menu_draw_window | 86.908040 | Honest drop from aggregate references; no banked regression. Six missing address pairs now represented. Additional saved register and signed lh versus source lhu title check remain unresolved. |
 | menu_list_render | 88.252610 | Unchanged non-exact. Frame 96 versus 104 bytes, row-pointer allocation and later loop forms differ. |
 | menu_draw_two_option | 100 | Exact preserved. |
-| menu_draw_item_name_frame | 94.522270 | Improved, not exact. Missing enqueue calls restored; frame 224 versus 160 bytes and rotation-vector owner/reference form still differ. |
+| menu_draw_pickup_preview | 94.522270 | Improved, not exact. Missing enqueue calls restored; frame 224 versus 160 bytes and rotation-vector owner/reference form still differ. |
 | menu_draw_window_backdrop | 99.971760 | Improved, not exact. Correct mirror orientation; only frame/save offsets differ (104 versus 40 bytes). No fake locals or padding added. |
 
 These are observed residues, not attributed compiler mechanisms. Existing menu

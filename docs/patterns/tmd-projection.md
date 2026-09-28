@@ -75,7 +75,7 @@ progress.
 | Projection function | Before | After |
 | --- | ---: | ---: |
 | `tmd_project_vertices` | 98.846150% | 98.846150% |
-| `tmd_project_vertices_shift` | 98.953490% | 98.953490% |
+| `tmd_project_vertices_depth_shift` | 98.953490% | 98.953490% |
 | `tmd_transform_vertices` | 100% | 100% |
 
 In the two non-exact functions, the first differing instruction is the
@@ -111,7 +111,7 @@ projection writers, the three polygon emitters, and
 `KfScreenVertex`. The writers advance eight bytes and fill packed screen
 coordinates at offset 0, depth at 4, and doubled perspective at 6. The
 emitters consume those fields through prepared vertex byte offsets. Their
-retail base calculation is `(u8 *)&tmd_state.current_asset + 0x1e8`, numerically
+retail base calculation is `(u8 *)&tmd_state.current_tmd + 0x1e8`, numerically
 `0x800911b0`; it is not a read through the current-asset pointer. The four
 old halfword identities describe fields of one entry, not four globals.
 Both images now obtain this array's declaration and `current_tmd_vertices`

@@ -55,7 +55,7 @@ in player_use_item.c a consumer-specific explanation.
 | `0x800343e0 / 88` | `map_action_script_floor1` | 100.0 | Possession of byte stock[0][56] reveals copy region 1 once; flag and sound policy remain unchanged. |
 | `0x80034a80 / 724` | `map_event_interact` | 100.0 | Character 8 consumes Mirror of Truth for magic 0; character 7 exchanges fruit for harp. Preserve dialogue gates and item/link domain distinction. |
 | `0x80022d7c / 1024` | `menu_map_viewer` | 100.0 | Only proven caller passes maps 55/73; compare 55 chooses MAP/M1f., otherwise MAP/M2f.; preserve marker coordinates and two-buffer primitives. |
-| `0x80037770 / 172` | `effect_pool_spawn_typed` | 100.0 | Control: harp constructor sets FLOOR_DEFORMATION52 and slot type 0xf0; rename constructor parameters from generic storage lanes to their dispatcher-established segment/progress/countdown meanings; keep widths and stores. |
+| `0x80037770 / 172` | `effect_pool_spawn_floor_deformation` | 100.0 | Control: harp constructor sets FLOOR_DEFORMATION52 and slot type 0xf0; rename constructor parameters from generic storage lanes to their dispatcher-established segment/progress/countdown meanings; keep widths and stores. |
 | `0x80017cf8 / 324` | `player_warp_to_floor_entry` | 100.0 | Control: Green Dragon Staff calls this entry-cell warp; floor 5 conditional resource reload and both shimmer calls remain unchanged. |
 | `0x8001e83c / 360` | `render_map_cells` | 100.0 | Control: grid traversal supplies col,row and cell-window class to render_map_cell. |
 | `0x80018880 / 6684` | `player_update` | 96.94554 | Signed halfword timer compares -1, decrements, then calls lighting wrapper even when new value is -1. Preserve every existing partial-match instruction. |
@@ -206,7 +206,7 @@ separate flake check.
 | `0x800343e0` | `map_action_script_floor1` | 100.0 | Exact; 22 complete retail words |
 | `0x80034a80` | `map_event_interact` | 100.0 | Exact; 181 complete retail words |
 | `0x80022d7c` | `menu_map_viewer` | 100.0 | Exact; 256 complete retail words |
-| `0x80037770` | `effect_pool_spawn_typed` | 100.0 | Exact; 43 complete retail words |
+| `0x80037770` | `effect_pool_spawn_floor_deformation` | 100.0 | Exact; 43 complete retail words |
 | `0x80017cf8` | `player_warp_to_floor_entry` | 100.0 | Exact; 81 complete retail words |
 | `0x8001e83c` | `render_map_cells` | 100.0 | Exact; 90 complete retail words |
 | `0x80018880` | `player_update` | 96.94554 | Unchanged partial match |

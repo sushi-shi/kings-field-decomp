@@ -32,11 +32,11 @@ replaces three branch-local velocity clears with one unconditional clear.
 | `map_object_effect_pool_acquire` | 124 | `0` | `s32 oldest_age = 0;` | Initial greatest age; strict improvement preserves the first winner and can leave no winner. |
 | `map_object_effect_pool_acquire` | 132 | `0` | `if (age < 0) {` | Negative difference detects halfword sequence wrap. |
 | `map_object_effect_pool_acquire` | 140 | `0` | `} while (--count != 0);` | Zero exhausted-count termination; preserves pre/postdecrement ordering. |
-| `map_object_spawn_effect` | 170 | `0` | `object->rotation.z = 0;` | Zero angle or vector component; no extra rotation or vertical displacement/velocity. |
-| `map_object_spawn_effect` | 171 | `0` | `object->rotation.x = 0;` | Zero angle or vector component; no extra rotation or vertical displacement/velocity. |
-| `map_object_spawn_effect` | 181 | `0` | `object->link.vertical_velocity = 0;` | Clear initial vertical velocity for every ID, including IDs outside all three action bands. |
-| `map_object_spawn_actor_debris` | 206 | `0` | `object->rotation.z = 0;` | Zero angle or vector component; no extra rotation or vertical displacement/velocity. |
-| `map_object_spawn_actor_debris` | 207 | `0` | `object->rotation.x = 0;` | Zero angle or vector component; no extra rotation or vertical displacement/velocity. |
+| `map_object_spawn_drop` | 170 | `0` | `object->rotation.z = 0;` | Zero angle or vector component; no extra rotation or vertical displacement/velocity. |
+| `map_object_spawn_drop` | 171 | `0` | `object->rotation.x = 0;` | Zero angle or vector component; no extra rotation or vertical displacement/velocity. |
+| `map_object_spawn_drop` | 181 | `0` | `object->link.vertical_velocity = 0;` | Clear initial vertical velocity for every ID, including IDs outside all three action bands. |
+| `map_object_spawn_gold_drop` | 206 | `0` | `object->rotation.z = 0;` | Zero angle or vector component; no extra rotation or vertical displacement/velocity. |
+| `map_object_spawn_gold_drop` | 207 | `0` | `object->rotation.x = 0;` | Zero angle or vector component; no extra rotation or vertical displacement/velocity. |
 | `map_object_pool_trigger_link` | 222 | `1` | `u16 count = KF_MAP_OBJECT_CAPACITY - 1;` | Inclusive countdown starts at the last slot index. |
 | `map_object_pool_trigger_link` | 243 | `0` | `} while (count-- != 0);` | Zero exhausted-count termination; preserves pre/postdecrement ordering. |
 | `map_object_pool_clear_link` | 251 | `1` | `u16 count = KF_MAP_OBJECT_CAPACITY - 1;` | Inclusive countdown starts at the last slot index. |
@@ -46,11 +46,11 @@ replaces three branch-local velocity clears with one unconditional clear.
 | `map_object_pool_update` | 301 | `0` | `if (pair != 0) {` | Null object pointer initialization or presence check. |
 | `map_object_pool_update` | 304 | `0` | `if (timer == 0) {` | First swing-opening update plays the sound. |
 | `map_object_pool_update` | 313 | `1` | `if (timer == MAP_SWING_DOOR_OPEN_UPDATES - 1) {` | Last zero-based opening update, when the collision edge opens. |
-| `map_object_pool_update` | 322 | `1` | `if (map_object_probe_forward(object, object->rotation.y - KF_ANGLE_QUARTER_TURN) != -1) {` | Established negative-one distance-query miss result. |
+| `map_object_pool_update` | 322 | `1` | `if (map_object_probe_door_closing(object, object->rotation.y - KF_ANGLE_QUARTER_TURN) != -1) {` | Established negative-one distance-query miss result. |
 | `map_object_pool_update` | 336 | `0` | `if (pair != 0) {` | Null object pointer initialization or presence check. |
 | `map_object_pool_update` | 345 | `0` | `if (elapsed == 0) {` | First lift-opening update plays the sound. |
 | `map_object_pool_update` | 349 | `1` | `if (elapsed == MAP_LIFT_DOOR_OPEN_UPDATES - 1) {` | Last zero-based opening update, when the collision edge opens. |
-| `map_object_pool_update` | 358 | `1` | `if (map_object_probe_forward(object, object->rotation.y) != -1) {` | Established negative-one distance-query miss result. |
+| `map_object_pool_update` | 358 | `1` | `if (map_object_probe_door_closing(object, object->rotation.y) != -1) {` | Established negative-one distance-query miss result. |
 | `map_object_pool_update` | 370 | `0` | `if (object->action_timer == 0) {` | Zero timer selects falling before floor contact. |
 | `map_object_pool_update` | 380 | `1` | `object->action_timer = 1;` | One selects tipping after floor contact; same halfword now carries angular velocity. |
 | `map_object_pool_update` | 400 | `1` | `object->action_timer = 1;` | Completion write before the spin action becomes idle. |
@@ -136,8 +136,8 @@ replaces three branch-local velocity clears with one unconditional clear.
 | `map_object_mark_collision_edge` | 116 | `1` | `map_collision_grid[cell_z - 1][cell_x] = value;` | One-cell neighbor offset in the cardinal door-edge geometry. |
 | `map_object_mark_collision_edge` | 117 | `1` | `map_collision_grid[cell_z - 1][cell_x - 1] = value;` | One-cell neighbor offset in the cardinal door-edge geometry. |
 | `map_object_mark_collision_edge` | 117 | `1` | `map_collision_grid[cell_z - 1][cell_x - 1] = value;` | One-cell neighbor offset in the cardinal door-edge geometry. |
-| `map_object_probe_forward` | 137 | `0` | `point_x, KF_COLLISION_IGNORE_HEIGHT, point_z, MAP_DOOR_CLOSING_PROBE_RADIUS, 0,` | Zero vertical extent of the height-ignored distance/collision query. |
-| `map_object_probe_forward` | 142 | `0x000` | `case 0x000:` | Zero yaw, the angular coordinate origin for this cardinal geometry branch. |
+| `map_object_probe_door_closing` | 137 | `0` | `point_x, KF_COLLISION_IGNORE_HEIGHT, point_z, MAP_DOOR_CLOSING_PROBE_RADIUS, 0,` | Zero vertical extent of the height-ignored distance/collision query. |
+| `map_object_probe_door_closing` | 142 | `0x000` | `case 0x000:` | Zero yaw, the angular coordinate origin for this cardinal geometry branch. |
 | `map_object_pool_clear` | 164 | `1` | `u16 index = KF_MAP_OBJECT_CAPACITY - 1;` | Inclusive countdown starts at the last slot index. |
 | `map_object_pool_clear` | 172 | `1` | `link_words[1] = 0;` | Word indices 1/0 and zero stores clear the two aligned link words in retail order. |
 | `map_object_pool_clear` | 172 | `0` | `link_words[1] = 0;` | Word indices 1/0 and zero stores clear the two aligned link words in retail order. |

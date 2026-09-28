@@ -78,7 +78,7 @@ already bounded asset chunk. Typed pointers flow through ordinary consumers.
 
 Cache states are free 0, stale 1 and live 2 in signed halfword storage. Each
 frame marks occupied records stale; rendering refreshes used records to live;
-the sweep releases those left stale. `pool_allocate` only finds a free slot
+the sweep releases those left stale. `animation_cache_allocate` only finds a free slot
 and invalidates its cached clip—it does not itself mark the slot live.
 The binder's mixed pointer/sentinel result and uninitialized incoming
 keyframe-index behavior remain separate, explicitly recorded debt.
@@ -162,12 +162,12 @@ callees and referents alongside source history and the resource evidence.
 | `0x8002055c / 64` | `asset_registry_set` | 100 | Exact / 16 |
 | `0x8002059c / 56` | `asset_registry_select` | 100 | Exact / 14 |
 | `0x800205d4 / 932` | `render_bind_animated_instance` | 100 | Exact / 233 |
-| `0x80020978 / 48` | `pool_reset` | 100 | Exact / 12 |
-| `0x800209a8 / 60` | `pool_mark_allocated` | 100 | Exact / 15 |
-| `0x800209e4 / 72` | `pool_record_release` | 100 | Exact / 18 |
-| `0x80020a2c / 108` | `pool_release_all` | 100 | Exact / 27 |
-| `0x80020a98 / 108` | `pool_release_stale` | 100 | Exact / 27 |
-| `0x80020b04 / 72` | `pool_allocate` | 100 | Exact / 18 |
+| `0x80020978 / 48` | `animation_cache_reset` | 100 | Exact / 12 |
+| `0x800209a8 / 60` | `animation_cache_mark_stale` | 100 | Exact / 15 |
+| `0x800209e4 / 72` | `animation_cache_release` | 100 | Exact / 18 |
+| `0x80020a2c / 108` | `animation_cache_release_all` | 100 | Exact / 27 |
+| `0x80020a98 / 108` | `animation_cache_release_stale` | 100 | Exact / 27 |
+| `0x80020b04 / 72` | `animation_cache_allocate` | 100 | Exact / 18 |
 | `0x8002beb0 / 972` | `save_file_read_slot` | 100 | Exact / 243 |
 | `0x80034de4 / 2308` | `map_interaction_dispatch` | 83.04679 | Partial, unchanged |
 

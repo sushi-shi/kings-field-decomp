@@ -28,9 +28,9 @@ start and variable trailing vector convention. Save and restore both words
 of the affected scratch entry around the same SDK call. Preserve its +1
 count and the scratch publication at +8.
 
-The binder returns its live KfPoolRecord pointer, null on exhaustion, or the
+The binder returns its live KfAnimationCacheRecord pointer, null on exhaustion, or the
 existing integer-one static-success sentinel. All five callers branch only
-on zero/nonzero; no halfword pointer is dereferenced. Use `KfPoolRecord *`
+on zero/nonzero; no halfword pointer is dereferenced. Use `KfAnimationCacheRecord *`
 for the shared return type, preserve the explicit sentinel conversion and
 return the actual record directly. Keep the retail uninitialized incoming
 keyframe-index behavior and every existing branch, argument width and delay
@@ -41,23 +41,23 @@ slot; no correctness claim is made for that pre-existing runtime defect.
 | GAME.EXE `tmd_set_current_vertices` | `8001c138 / 10` | 100 | 1/0/1 | 100%; raw unchanged |
 | GAME.EXE `tmd_select_object_vertices` | `8001c148 / 3c` | 100 | 1/1/1 | 100%; raw unchanged |
 | GAME.EXE `tmd_project_vertices` | `8001c60c / 9c` | 100 | 4/2/1 | 100%; raw unchanged |
-| GAME.EXE `tmd_project_vertices_shift` | `8001c6a8 / ac` | 100 | 4/2/1 | 100%; raw unchanged |
+| GAME.EXE `tmd_project_vertices_depth_shift` | `8001c6a8 / ac` | 100 | 4/2/1 | 100%; raw unchanged |
 | GAME.EXE `tmd_transform_vertices` | `8001c754 / a4` | 100 | 4/1/1 | 100%; raw unchanged |
 | GAME.EXE `render_actor` | `8001e9a4 / 214` | 100 | 7/20/1 | 100%; raw unchanged |
-| GAME.EXE `render_actor_sprite` | `8001eedc / 1e8` | 100 | 8/20/1 | 100%; raw unchanged |
+| GAME.EXE `render_effect` | `8001eedc / 1e8` | 100 | 8/20/1 | 100%; raw unchanged |
 | GAME.EXE `render_map_event` | `8001f0c4 / 154` | 100 | 4/15/1 | 100%; raw unchanged |
 | GAME.EXE `render_weapon` | `8001f798 / 118` | 100 | 4/10/1 | 100%; raw unchanged |
-| GAME.EXE `render_effect_sprites` | `8001f8b0 / 124` | 100 | 6/12/1 | 100%; raw unchanged |
+| GAME.EXE `render_hud_models` | `8001f8b0 / 124` | 100 | 6/12/1 | 100%; raw unchanged |
 | GAME.EXE `asset_registry_set` | `8002055c / 40` | 100 | 1/2/1 | 100%; raw unchanged |
 | GAME.EXE `asset_registry_select` | `8002059c / 38` | 100 | 1/0/1 | 100%; raw unchanged |
 | GAME.EXE `render_bind_animated_instance` | `800205d4 / 3a4` | 100 | 34/12/1 | 100%; raw unchanged |
-| GAME.EXE `pool_record_release` | `800209e4 / 48` | 100 | 3/1/1 | 100%; raw unchanged |
-| GAME.EXE `pool_allocate` | `80020b04 / 48` | 100 | 6/0/1 | 100%; raw unchanged |
+| GAME.EXE `animation_cache_release` | `800209e4 / 48` | 100 | 3/1/1 | 100%; raw unchanged |
+| GAME.EXE `animation_cache_allocate` | `80020b04 / 48` | 100 | 6/0/1 | 100%; raw unchanged |
 | OPEN.EXE `tmd_set_current_vertices` | `80016eb8 / 10` | 100 | 1/0/1 | 100%; raw unchanged |
 | OPEN.EXE `tmd_select_object_vertices` | `80016ec8 / 3c` | 100 | 1/1/1 | 100%; raw unchanged |
 | OPEN.EXE `tmd_project_vertices` | `8001738c / cc` | 100 | 5/3/1 | 100%; raw unchanged |
 | OPEN.EXE `tmd_project_vertices_perspective_right` | `80017458 / a4` | 100 | 4/2/1 | 100%; raw unchanged |
-| OPEN.EXE `tmd_project_vertices_shift` | `800174fc / ac` | 100 | 4/2/1 | 100%; raw unchanged |
+| OPEN.EXE `tmd_project_vertices_depth_shift` | `800174fc / ac` | 100 | 4/2/1 | 100%; raw unchanged |
 | OPEN.EXE `tmd_transform_vertices` | `800175a8 / a4` | 100 | 4/1/1 | 100%; raw unchanged |
 
 Rebuild the affected units and compare every linked word, direct call and

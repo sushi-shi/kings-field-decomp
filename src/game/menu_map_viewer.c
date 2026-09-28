@@ -27,16 +27,16 @@ ADDRESS(0x80022d7c, 0x400)
 void menu_map_viewer(KF_ENUM_PARAM(KfObjectId, s32) item_id)
 {
     s32 frame = 0;
-    POLY_FT4 poly_bg[KF_DISPLAY_BUFFER_COUNT];
-    POLY_FT4 poly_marker[KF_DISPLAY_BUFFER_COUNT];
+    POLY_FT4 map_image_quads[KF_DISPLAY_BUFFER_COUNT];
+    POLY_FT4 marker_quads[KF_DISPLAY_BUFFER_COUNT];
     char path[16] = "MAP\\M00.";
     u8 *buffer;
-    s32 map_number;
+    s32 map_set;
 
-    map_number = MENU_MAP_DEFAULT_SET;
+    map_set = MENU_MAP_DEFAULT_SET;
     if (item_id == KF_ITEM_WATCHMAN_MAP)
-        map_number = MENU_MAP_WATCHMAN_SET;
-    path[5] = map_number + '0';
+        map_set = MENU_MAP_WATCHMAN_SET;
+    path[5] = map_set + '0';
     path[6] = KF_ENUM_ENCODE(u8, player_state.progress_state.current_floor) + '0';
 
     buffer = game_graphics_runtime.display_state.primitive_buffer->cursor;
@@ -44,37 +44,37 @@ void menu_map_viewer(KF_ENUM_PARAM(KfObjectId, s32) item_id)
         return;
     tim_upload_images(buffer);
 
-    SetPolyFT4(&poly_bg[0]);
-    SetSemiTrans((void *)(&poly_bg[0]), 1);
-    setRGB0(&poly_bg[0], MENU_MAP_BRIGHTNESS, MENU_MAP_BRIGHTNESS, MENU_MAP_BRIGHTNESS);
-    poly_bg[0].clut = MENU_MAP_IMAGE_CLUT;
-    poly_bg[0].tpage = MENU_MAP_IMAGE_TPAGE;
-    setUVWH(&poly_bg[0], 0, 0, MENU_MAP_IMAGE_SPAN, MENU_MAP_IMAGE_SPAN);
-    setXYWH(&poly_bg[0],
+    SetPolyFT4(&map_image_quads[0]);
+    SetSemiTrans((void *)(&map_image_quads[0]), 1);
+    setRGB0(&map_image_quads[0], MENU_MAP_BRIGHTNESS, MENU_MAP_BRIGHTNESS, MENU_MAP_BRIGHTNESS);
+    map_image_quads[0].clut = MENU_MAP_IMAGE_CLUT;
+    map_image_quads[0].tpage = MENU_MAP_IMAGE_TPAGE;
+    setUVWH(&map_image_quads[0], 0, 0, MENU_MAP_IMAGE_SPAN, MENU_MAP_IMAGE_SPAN);
+    setXYWH(&map_image_quads[0],
         MENU_MAP_IMAGE_LEFT_X,
         MENU_MAP_IMAGE_TOP_Y,
         MENU_MAP_IMAGE_SPAN,
         MENU_MAP_IMAGE_SPAN);
-    poly_bg[1] = poly_bg[0];
+    map_image_quads[1] = map_image_quads[0];
 
-    SetPolyFT4(&poly_marker[0]);
-    setRGB0(&poly_marker[0], MENU_MAP_BRIGHTNESS, MENU_MAP_BRIGHTNESS, MENU_MAP_BRIGHTNESS);
-    poly_marker[0].clut = MENU_MAP_MARKER_CLUT;
-    poly_marker[0].tpage = MENU_MAP_MARKER_TPAGE;
-    setUVWH(&poly_marker[0], 0, 0, MENU_MAP_MARKER_SPAN, MENU_MAP_MARKER_SPAN);
-    setXYWH(&poly_marker[0],
+    SetPolyFT4(&marker_quads[0]);
+    setRGB0(&marker_quads[0], MENU_MAP_BRIGHTNESS, MENU_MAP_BRIGHTNESS, MENU_MAP_BRIGHTNESS);
+    marker_quads[0].clut = MENU_MAP_MARKER_CLUT;
+    marker_quads[0].tpage = MENU_MAP_MARKER_TPAGE;
+    setUVWH(&marker_quads[0], 0, 0, MENU_MAP_MARKER_SPAN, MENU_MAP_MARKER_SPAN);
+    setXYWH(&marker_quads[0],
         player_state.motion_state.fields.map_cell.coords.x * MENU_MAP_PIXELS_PER_CELL + MENU_MAP_MARKER_ORIGIN_X,
         MENU_MAP_MARKER_ORIGIN_Y - player_state.motion_state.fields.map_cell.coords.z * MENU_MAP_PIXELS_PER_CELL,
         MENU_MAP_MARKER_SPAN,
         MENU_MAP_MARKER_SPAN);
-    poly_marker[1] = poly_marker[0];
+    marker_quads[1] = marker_quads[0];
 
     for (;;) {
         menu_frame_begin();
-        AddPrim((void *)(game_graphics_runtime.display_state.ordering_table + MENU_MARKER_OT_DEPTH),
-                (void *)(&poly_marker[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)]));
+        AddPrim((void *)(game_graphics_runtime.display_state.ordering_table + MENU_OVERLAY_OT_DEPTH),
+                (void *)(&marker_quads[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)]));
         AddPrim((void *)(game_graphics_runtime.display_state.ordering_table + MENU_CONTENT_OT_DEPTH),
-                (void *)(&poly_bg[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)]));
+                (void *)(&map_image_quads[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)]));
         MENU_ENQUEUE_BACKGROUND();
         menu_present_frame();
         if (frame < MENU_PANEL_INPUT_RELEASE_FRAME) {

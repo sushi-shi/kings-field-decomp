@@ -78,26 +78,26 @@ hypotheses. Dispatch indirect jumps retain their existing table evidence.
 | GAME `actor_try_attack_player` | `8002d6a0 / 158` | 100.000000 | 8/5/5/1 | 100%, unchanged and exact |
 | GAME `actor_try_select_action_distance_facing` | `8002dd94 / 120` | 100.000000 | 15/4/11/1 | 100%, unchanged and exact |
 | GAME `actor_try_select_ground_action` | `8002deb4 / 164` | 100.000000 | 14/4/11/1 | 100%, unchanged and exact |
-| GAME `actor_try_select_facing_action` | `8002e018 / d8` | 100.000000 | 10/3/7/1 | 100%, unchanged and exact |
+| GAME `actor_try_select_multi_hit_action` | `8002e018 / d8` | 100.000000 | 10/3/7/1 | 100%, unchanged and exact |
 | GAME `actor_try_select_profiled_action` | `8002e0f0 / 1f8` | 100.000000 | 23/4/16/1 | 100%, unchanged and exact |
 | GAME `actor_move_xz_with_collision` | `8002e954 / 3ac` | 100.000000 | 59/6/41/1 | 100%, unchanged and exact |
 | GAME `actor_move_along_heading` | `8002ed00 / d4` | 100.000000 | 6/5/3/1 | 100%, unchanged and exact |
 | GAME `actor_spawn_action_effect` | `8002edd4 / 454` | 100.000000 | 51/11/34/1 | 100%, unchanged and exact |
 | GAME `actor_prepare_charge_toward_player` | `8002f228 / f4` | 100.000000 | 7/5/3/1 | 100%, unchanged and exact |
 | GAME `actor_update_current_action` | `8002fa88 / d90` | 100.000000 | 166/69/129/1 | 100%, unchanged and exact |
-| GAME `map_object_probe_forward` | `80030eb8 / c4` | 93.755104 | 13/1/12/1 | 93.755104%, unchanged partial |
+| GAME `map_object_probe_door_closing` | `80030eb8 / c4` | 93.755104 | 13/1/12/1 | 93.755104%, unchanged partial |
 | GAME `map_object_pool_load` | `80031008 / 448` | 100.000000 | 43/11/27/1 | 100%, unchanged and exact |
 | GAME `map_object_distance_to_point` | `80031450 / a8` | 100.000000 | 7/1/5/1 | 100%, unchanged and exact |
 | GAME `map_object_pool_find_interaction_from` | `800315c4 / 1c0` | 100.000000 | 14/5/9/1 | 100%, unchanged and exact |
-| GAME `map_object_spawn_effect` | `80031834 / 194` | 94.504950 | 21/5/13/1 | 94.504950%, unchanged partial |
-| GAME `map_object_spawn_actor_debris` | `800319c8 / 18c` | 100.000000 | 11/6/6/1 | 100%, unchanged and exact |
+| GAME `map_object_spawn_drop` | `80031834 / 194` | 94.504950 | 21/5/13/1 | 94.504950%, unchanged partial |
+| GAME `map_object_spawn_gold_drop` | `800319c8 / 18c` | 100.000000 | 11/6/6/1 | 100%, unchanged and exact |
 | GAME `map_object_pool_update` | `80031cc8 / c18` | 98.966410 | 118/35/94/1 | 98.966410%, unchanged partial |
 | GAME `map_event_pool_load` | `800338b8 / 22c` | 100.000000 | 8/1/5/1 | 100%, unchanged and exact |
 | GAME `map_event_distance_to_point` | `80033ae4 / a8` | 100.000000 | 7/1/5/1 | 100%, unchanged and exact |
 | GAME `map_event_pool_find_target_in_cone` | `80033b8c / 144` | 100.000000 | 10/2/6/1 | 100%, unchanged and exact |
 | GAME `map_ambient_script_floor2` | `800341ec / 70` | 100.000000 | 5/2/3/1 | 100%, unchanged and exact |
-| GAME `map_reveal_fade` | `80034438 / 184` | 100.000000 | 8/8/4/1 | 100%, unchanged and exact |
-| GAME `map_floor5_transition_cutscene` | `800346a8 / 38c` | 100.000000 | 32/12/23/1 | 100%, unchanged and exact |
+| GAME `map_floor2_event_transfer_fade` | `80034438 / 184` | 100.000000 | 8/8/4/1 | 100%, unchanged and exact |
+| GAME `map_floor5_weapon_transform_cutscene` | `800346a8 / 38c` | 100.000000 | 32/12/23/1 | 100%, unchanged and exact |
 | GAME `map_interaction_dispatch` | `80034de4 / 904` | 96.490470 | 119/54/92/1 | 96.490470%, unchanged partial |
 | GAME `map_event_update_wander` | `80035708 / 1d8` | 100.000000 | 19/9/12/1 | 100%, unchanged and exact |
 | GAME `map_event_update_animation_loop` | `800358e0 / 8c` | 100.000000 | 5/1/3/1 | 100%, unchanged and exact |

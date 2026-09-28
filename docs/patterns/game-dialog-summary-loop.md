@@ -2,7 +2,7 @@
 
 ## Function Match Plan
 
-GAME `0x80027ee4 menu_draw_dialog_frame`, 1180 bytes, unit
+GAME `0x80027ee4 menu_draw_save_slots`, 1180 bytes, unit
 `game.menu_item_detail`, existing `probe-gcc257-o2-g0`. Strict objdiff starts
 at 98.623726%; the compiled body is 1188 bytes. The six semantic views,
 raw compiled instructions, all 15 direct call sites, neighbors, shared types,

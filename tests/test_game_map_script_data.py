@@ -34,7 +34,7 @@ OWNERS = (
      + struct.pack('<4i6h', -1, -1, -1, 0, -1, -1, -1, 0, -1, 0)),
     ('game.map_scripts', 0x80056208, 'map_floor1_sound_position',
      struct.pack('<4i', 65000, -10000, 25000, 0)),
-    ('game.map_scripts', 0x80056218, 'map_reveal_light_matrix',
+    ('game.map_scripts', 0x80056218, 'map_transfer_light_matrix',
      struct.pack('<9h2x3i', *([0, -4096, 0] * 3), 0, 0, 0)),
     ('game.map_scripts', 0x80056238, 'map_screen_image_path', b'KAN\\B0\\K000.TIM\0'),
     ('game.player_warp', 0x80056248, 'actor_transform_color_matrix',
