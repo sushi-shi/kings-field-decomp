@@ -113,7 +113,7 @@ relocation stream.
 | `entity_model_render` `render_actor` `0x8001e9a4` | redundant `andi`, frame size, regalloc, arg scheduling |
 | `entity_model_render` `render_map_object` `0x8001ebb8` | branch-structure / arg scheduling |
 | `entity_render` `render_floor_item` | redundant `andi 0xf0; andi 0xff` |
-| `entity_render` `render_actor_sprite` | control (exact under R3000 sched) |
+| `entity_render` `render_effect` | control (exact under R3000 sched) |
 | `sprite_add_ft4` `func_80014314` | callee-saved register permutation (POLY_FT4) |
 | `pad` (7 functions) | load-vs-frame-alloc scheduling |
 | `map_events` (4 functions) | mixed scheduling / regalloc |
@@ -151,7 +151,7 @@ Reading the table:
   epilogue evidence (it cannot put `addiu $sp` in the `jr $ra` delay slot;
   373/373 retail framed functions do).
 - No 2.4.1 profile makes any function exact that no 2.5.7 profile makes exact.
-  The union of 2.4.1's exacts (`pad` 7, `render_actor_sprite`, `map_events
+  The union of 2.4.1's exacts (`pad` 7, `render_effect`, `map_events
   func_80035708`) ⊂ the union of 2.5.7's exacts.
 
 ## Per-site evidence (the named residues)
@@ -205,7 +205,7 @@ Dropping `-mcpu` (plain `-O2`) keeps the load before the frame and makes **all
 7 GAME functions exact**, under both 2.5.7 and 2.4.1. The homologous OPEN
 PAD.OBJ copy is independently 6/6 exact with the committed 2.5.7 plain profile.
 Conversely `map_events`, `render_map_cells`
-and `render_actor_sprite` are exact **only** under the R3000 schedule
+and `render_effect` are exact **only** under the R3000 schedule
 (`-mcpu=r2000`), and `render_sprite func_8001e480` is exact **only** under
 `-fno-schedule-insns`. No single global flag captures all of them; retail's
 scheduler sits at a point the rebuilt 2.5.7 scheduler reaches for some

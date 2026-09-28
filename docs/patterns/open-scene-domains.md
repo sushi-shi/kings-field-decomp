@@ -87,10 +87,10 @@ against hash-verified OPEN retail and are exact; none contains a relocation.
 | `80035724` | `opening_ending_camera_path` | 252 |
 | `80035820` | `opening_ending_scroll_camera_path` | 84 |
 | `80035874` | `opening_scene0_sound` | 3 |
-| `80035878` | `opening_scene3_overlay_rects` | 16 |
+| `80035878` | `opening_scene3_panels` | 16 |
 | `80035888` | `opening_ending_scroll_panels` | 72 |
-| `80037284` | `opening_scene3_overlay_uv` | 8 |
-| `8003728c` | `opening_scene3_overlay_color` | 4 |
+| `80037284` | `opening_scene3_panel_uv` | 8 |
+| `8003728c` | `opening_scene3_panel_color` | 4 |
 | `80037290` | `opening_ending_scroll_backgrounds` | 16 |
 | `800372a0` | `opening_ending_scroll_top_start` | 4 |
 | `800372a4` | `opening_ending_scroll_bottom_start` | 4 |
@@ -98,7 +98,7 @@ against hash-verified OPEN retail and are exact; none contains a relocation.
 | `800372ac` | `opening_ending_scroll_bottom_end` | 4 |
 | `800372b0` | `opening_ending_scroll_panel_color` | 4 |
 | `800372b4` | `opening_ending_scroll_background_color` | 4 |
-| `800372b8` | `opening_ending_scroll_uv` | 8 |
+| `800372b8` | `opening_ending_scroll_panel_uv` | 8 |
 
 ## Final domain and matching verification
 

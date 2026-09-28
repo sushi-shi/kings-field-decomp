@@ -2,7 +2,7 @@
 
 ## Function Match Plan at `eaae676`
 
-GAME `800249a8 menu_drop_item`, 1212 bytes, is the last partial member of
+GAME `800249a8 menu_drop_item_panel`, 1212 bytes, is the last partial member of
 `game.menu_item_drop`; the hub and both slot panels are exact. Its starting
 strict score is 98.854780%. A fresh pinned compile reproduces the same
 1212-byte body and 1856-byte frame. The current first difference is the

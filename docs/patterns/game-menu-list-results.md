@@ -14,10 +14,10 @@ The concurrent OPEN display-initialization work is outside this campaign.
 | `80022348` | `menu_root` | 704 | 96.86364% | Sole direct item/magic caller; names the full-word magic no-selection comparison at `80022464`. Root result controls remain separate. |
 | `80022608` | `menu_use_item_panel` | 1908 | 99.48218% | Signed selection initialized at `80022630`; byte item-code load after confirmation; four source model-failure exits and cancellation return -1. Name controls and five immediate HP additions. |
 | `8002317c` | `menu_magic_panel` | 1328 | 100% | Signed selection initialized at `800231a4`; byte spell-code load at `800232fc`; failure, cancellation and insufficient-MP paths stay distinct. Name controls and Bless's three-times-MAGIC recovery. |
-| `800236ac` | `menu_option_root` | 556 | 100% | Same-unit control; full-word equipment category selects the two panels, with MAGIC handled separately. |
+| `800236ac` | `menu_equipment_root` | 556 | 100% | Same-unit control; full-word equipment category selects the two panels, with MAGIC handled separately. |
 | `800238d8` | `menu_equip_select` | 1476 | 100% | Signed selection initialized at `80023908`; byte item ID loaded at `80023b10`; -1 skips equipment publication, while item 255 is a valid unequip choice. |
 | `80023e9c` | `menu_spell_select` | 1136 | 99.54225% | Signed selection initialized at `80023ec4`; `80024074` loads the selected row directly, then `800242c8..2e0` indexes the typed spell array for publication/call. |
-| `800249a8` | `menu_drop_item` | 1212 | 99.54785% | Signed selection initialized at `800249d0`; byte item ID loaded at `80024bdc`; -1 skips stock decrement at `80024e28`. |
+| `800249a8` | `menu_drop_item_panel` | 1212 | 99.54785% | Signed selection initialized at `800249d0`; byte item ID loaded at `80024bdc`; -1 skips stock decrement at `80024e28`. |
 
 The five list panels share pending -99 and no-selection -1 controls. A
 cancelled nested confirmation restores pending; cancelling the outer panel
@@ -150,10 +150,10 @@ also independently equal the retail and delinked target, 877 words total.
 | `80022348` | `menu_root` | 96.86364% | Unchanged partial |
 | `80022608` | `menu_use_item_panel` | 99.48218% | Unchanged partial |
 | `8002317c` | `menu_magic_panel` | 100% | Exact retained |
-| `800236ac` | `menu_option_root` | 100% | Exact retained |
+| `800236ac` | `menu_equipment_root` | 100% | Exact retained |
 | `800238d8` | `menu_equip_select` | 100% | Exact retained |
 | `80023e9c` | `menu_spell_select` | 99.54225% | Unchanged partial |
-| `800249a8` | `menu_drop_item` | 99.54785% | Unchanged partial |
+| `800249a8` | `menu_drop_item_panel` | 99.54785% | Unchanged partial |
 
 Modern checking retains the same 320 errors and 64/112 passing units. Inventory,
 `ruff check scripts tests`, all 678 repository tests (80.732 seconds) and

@@ -128,7 +128,7 @@ changing record extents, argument widths, control flow, constants or returns.
 | `KfEffectRecord` and `KfEffectRenderView` | `0x34` | `animation_cache` |
 | `KfMapEvent` | `0x3c` | `animation_cache` |
 | `KfPlayerState` | `0x74` | `weapon_animation_cache` |
-| `KfEffectSprite` | `0x18` | `animation_cache` |
+| `KfHudModel` | `0x18` | `animation_cache` |
 
 Every field is a `KfAnimationCacheRecord *`, and each binder call passes its address.
 The binder loads the record pointer from that slot, stores the slot address
@@ -151,7 +151,7 @@ animation record across the player-state copy. Its old integer local
 This restoration is part of retail behavior: serialized pointer bytes must
 not replace the live runtime pointers.
 
-The `effect_sprites[2]` initializer changes from four zero bytes to a null
+The `hud_models[2]` initializer changes from four zero bytes to a null
 pointer initializer. Both slot words are zero in the retail 56-byte object;
 neither the sentinel nor any other byte changes. No new overlapping datum,
 storage claim or inferred array capacity is introduced.

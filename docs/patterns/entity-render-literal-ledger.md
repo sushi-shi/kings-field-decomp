@@ -246,12 +246,12 @@ Repeated tokens have separate rows in source order.
 | `render_floor_item` | 94 | `1` | `next_frame = item->animation_frame + 1;` | Advance the animation by one frame before its original byte-wrap comparison. |
 | `render_floor_item` | 97 | `0xff` | `if ((next_frame & 0xff) >= (frame_count & KF_FLOOR_ITEM_FRAME_COUNT_MASK)) {` | The full byte mask preserves modulo-256 narrowing before comparing with the packed low-nibble frame count. |
 | `render_floor_item` | 98 | `0` | `item->animation_frame = 0;` | Reset an exhausted animation to its first frame; frame zero is an ordinal, not an independent mode. |
-| `render_actor_sprite` | 137 | `0` | `render_enqueue_sprite(&effect_billboard_sprites[sprite->sprite_id], 0, KF_SPRITE_DEPTH_CUE_NORMAL);` | Add no caller depth bias to the projected effect billboard. |
-| `render_actor_sprite` | 144 | `0` | `object = tmd_get_object(0);` | Select the first object in the already selected TMD asset; asset identity is handled separately. |
-| `render_actor_sprite` | 147 | `0` | `object->vertex_count) == 0) {` | Zero reports that no animated binding was supplied, selecting the original static-vertex fallback. |
-| `render_actor_sprite` | 148 | `0` | `tmd_select_object_vertices(0);` | Bind the first TMD object vertex array in the static fallback. |
-| `render_actor_sprite` | 149 | `0` | `tmd_project_vertices(tmd_get_object(0)->vertex_count);` | Read the first TMD object count for the static projection fallback. |
-| `render_actor_sprite` | 153 | `0` | `render_enqueue_tmd(0, EFFECT_MODEL_DEPTH_BIAS);` | Enqueue the first object of the selected effect asset with the separately named depth bias. |
+| `render_effect` | 137 | `0` | `render_enqueue_sprite(&effect_billboard_sprites[sprite->sprite_id], 0, KF_SPRITE_DEPTH_CUE_NORMAL);` | Add no caller depth bias to the projected effect billboard. |
+| `render_effect` | 144 | `0` | `object = tmd_get_object(0);` | Select the first object in the already selected TMD asset; asset identity is handled separately. |
+| `render_effect` | 147 | `0` | `object->vertex_count) == 0) {` | Zero reports that no animated binding was supplied, selecting the original static-vertex fallback. |
+| `render_effect` | 148 | `0` | `tmd_select_object_vertices(0);` | Bind the first TMD object vertex array in the static fallback. |
+| `render_effect` | 149 | `0` | `tmd_project_vertices(tmd_get_object(0)->vertex_count);` | Read the first TMD object count for the static projection fallback. |
+| `render_effect` | 153 | `0` | `render_enqueue_tmd(0, EFFECT_MODEL_DEPTH_BIAS);` | Enqueue the first object of the selected effect asset with the separately named depth bias. |
 
 ## `src/game/map_event_render.c`
 

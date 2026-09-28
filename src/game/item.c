@@ -243,7 +243,7 @@ void shop_menu_buy(KF_ENUM_PARAM(KfItemStockBank, s32) shop_bank)
     for (;;) {
         menu_present_frame();
         if (confirm == KF_MENU_CONFIRM_REQUESTED) {
-            if (menu_list_interact(&ctx, KF_MENU_CONFIRM_BUY,
+            if (menu_list_confirm(&ctx, KF_MENU_CONFIRM_BUY,
                     KF_MENU_PREVIEW_ITEM_DETAIL, item_ids[ctx.selected_index], shop_bank, KF_TRADE_BUY)
                     == KF_MENU_RESULT_CANCELLED)
                 selection = KF_ENUM_ENCODE(s32, KF_MENU_RESULT_PENDING);
@@ -359,7 +359,7 @@ void shop_menu_sell(KF_ENUM_PARAM(KfItemStockBank, s32) shop_bank)
     for (;;) {
         menu_present_frame();
         if (confirm == KF_MENU_CONFIRM_REQUESTED) {
-            selection = KF_ENUM_ENCODE(s32, menu_list_interact(&ctx, KF_MENU_CONFIRM_SELL,
+            selection = KF_ENUM_ENCODE(s32, menu_list_confirm(&ctx, KF_MENU_CONFIRM_SELL,
                     KF_MENU_PREVIEW_ITEM_DETAIL, item_ids[ctx.selected_index], shop_bank, KF_TRADE_SELL));
             if (selection == KF_ENUM_ENCODE(s32, KF_MENU_RESULT_CANCELLED))
                 selection = KF_ENUM_ENCODE(s32, KF_MENU_RESULT_PENDING);
@@ -444,19 +444,19 @@ KfMenuResult item_pickup_confirm(KF_ENUM_PARAM(KfObjectId, s32) item_id)
     decline_label.glyphs.codes[3] = MENU_TEXT_END;
 
     menu_frame_begin();
-    menu_draw_item_name_frame(item_id);
+    menu_draw_pickup_preview(item_id);
     menu_draw_two_option(
         &accept_label,
         &decline_label, KF_MENU_CHOICE_ACCEPT, KF_MENU_CONFIRM_IDLE);
     menu_present_frame();
     menu_frame_begin();
-    menu_draw_item_name_frame(item_id);
+    menu_draw_pickup_preview(item_id);
     menu_draw_two_option(
         &accept_label,
         &decline_label, KF_MENU_CHOICE_ACCEPT, KF_MENU_CONFIRM_IDLE);
     menu_present_frame();
     menu_frame_begin();
-    menu_draw_item_name_frame(item_id);
+    menu_draw_pickup_preview(item_id);
     menu_draw_two_option(
         &accept_label,
         &decline_label, KF_MENU_CHOICE_ACCEPT, KF_MENU_CONFIRM_IDLE);
@@ -468,7 +468,7 @@ KfMenuResult item_pickup_confirm(KF_ENUM_PARAM(KfObjectId, s32) item_id)
         menu_present_frame();
         if (result != KF_MENU_RESULT_PENDING) {
             menu_frame_begin();
-            menu_draw_item_name_frame(item_id);
+            menu_draw_pickup_preview(item_id);
             menu_draw_two_option(
                 &accept_label,
                 &decline_label, choice, confirm);
@@ -504,7 +504,7 @@ KfMenuResult item_pickup_confirm(KF_ENUM_PARAM(KfObjectId, s32) item_id)
             menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
             result = KF_MENU_RESULT_DECLINED;
         }
-        menu_draw_item_name_frame(item_id);
+        menu_draw_pickup_preview(item_id);
         menu_draw_two_option(
             &accept_label,
             &decline_label, choice, confirm);

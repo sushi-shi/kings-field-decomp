@@ -1910,9 +1910,9 @@ GAME.EXE	0x80055af0	0x442f0	0xc	defined	reviewed	map_resource_path	char[12]	manu
 GAME.EXE	0x80055afc	0x442fc	0x4	unclassified	reviewed			manual:game-entity-sprite-tables	four zero bytes before the floor-sprite table; no reviewed consumer or padding ownership
 GAME.EXE	0x80055b00	0x44300	0x54	defined	reviewed	floor_item_sprites	KfSpriteQuad[7]	manual:game-entity-sprite-tables	seven logical floor descriptors identical to OPEN; normal animation selectors proven by all five floor resources; initial random-frame bounds remain an original-code limitation
 GAME.EXE	0x80055b54	0x44354	0x108	defined	reviewed	effect_billboard_sprites	KfSpriteQuad[22]	manual:game-entity-sprite-tables	twenty-two twelve-byte effect descriptors; constructor seed 19 and three-frame dispatch reach final row; former byte-pattern strings are texture coordinates
-GAME.EXE	0x80055c5c	0x4445c	0xc4	data	reviewed	hud_sprites	KfHudSprite[14]	manual:game_semantic_hud_sprites	thirteen initialized HUD gauge/status sprite rows followed by a 0xff sentinel row; consumed by render_hud_gauges and updated by render_frame
+GAME.EXE	0x80055c5c	0x4445c	0xc4	data	reviewed	hud_sprites	KfHudSprite[14]	manual:game_semantic_hud_sprites	thirteen initialized HUD gauge/status sprite rows followed by a 0xff sentinel row; consumed by render_hud_sprites and updated by render_frame
 GAME.EXE	0x80055d20	0x44520	0x54	data	reviewed	notification_sprites	KfNotificationSprite[6]	manual:game_semantic_notification_sprites	six initialized 14-byte notification sprite descriptors consumed by notify_effect_update and render_frame
-GAME.EXE	0x80055d74	0x44574	0x38	data	reviewed	effect_sprites	KfEffectSprite[2]	manual:game_semantic_effect_sprites	one initialized live sprite followed by a zeroed 0xff terminator record; 28-byte runtime stride proven by render_effect_sprites
+GAME.EXE	0x80055d74	0x44574	0x38	data	reviewed	hud_models	KfHudModel[2]	manual:game_semantic_effect_sprites	one initialized live sprite followed by a zeroed 0xff terminator record; 28-byte runtime stride proven by render_hud_models
 GAME.EXE	0x80055dac	0x445ac	0x10	defined	reviewed	render_palette_rects	RECT[2]	manual:game-render-material-identities;remaining-data-owner-exhaustion	two SDK palette rectangles at rows 500/499, privately read by render_initialize; preserved physical x/y targets
 GAME.EXE	0x80055dbc	0x445bc	0xe0	defined	reviewed	color_matrix_table	MATRIX[7]	manual:game_semantic_player_death	seven 32-byte colour matrices indexed by base plus 32/128 from player_death fades
 GAME.EXE	0x80055e9c	0x4469c	0xcc	defined	reviewed	render_fixed_cell_window	KfCellWindow	manual:game_cell_window_data	13-by-13 mask in the common 196-cell-capacity window; four halfword header fields and zero remaining cells; no separate interior globals
@@ -2043,7 +2043,7 @@ GAME.EXE	0x80057b48	0x46348	0x8	string	byte-pattern		ascii	investigation:string-
 GAME.EXE	0x80057b50	0x46350	0x7	string	byte-pattern		ascii	investigation:string-census	escaped text: \\E0.;1
 GAME.EXE	0x80057b57	0x46357	0x1	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
 GAME.EXE	0x80057b58	0x46358	0x4	data	reviewed	tmd_textured_primitive_color	CVECTOR	manual:game_render_enqueuers	initialized neutral-grey color; retail stores each emitted textured packet code in the cd field at +3 before lighting
-GAME.EXE	0x80057b5c	0x4635c	0x4	data	reviewed	model_textured_primitive_color	CVECTOR	manual:game_render_enqueuers	initialized neutral-grey color; retail stores each emitted model packet code in the cd field at +3 before lighting
+GAME.EXE	0x80057b5c	0x4635c	0x4	data	reviewed	retextured_primitive_color	CVECTOR	manual:game_render_enqueuers	initialized neutral-grey color; retail stores each emitted model packet code in the cd field at +3 before lighting
 GAME.EXE	0x80057b60	0x46360	0x4	data	reviewed	map_textured_primitive_color	CVECTOR	manual:game_render_enqueuers	third consecutive neutral-grey color; its cd byte at +3 carries the current map primitive code into NormalColorCol
 GAME.EXE	0x80057b64	0x46364	0x8	data	reviewed	render_sprite_light_normal	SVECTOR	manual:game_render_enqueuers	initialized {0, 0, 0x1000, 0} light normal passed by the following sprite enqueuer to NormalColorDpq
 GAME.EXE	0x80057b6c	0x4636c	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
@@ -3524,7 +3524,7 @@ OPEN.EXE	0x80035724	0x23f24	0xfc	data	reviewed	opening_ending_camera_path	KfCame
 OPEN.EXE	0x80035820	0x24020	0x54	data	reviewed	opening_ending_scroll_camera_path	KfCameraPathPoint[3]	manual:open_semantic_ending_scroll	two camera points and complete sentinel; begin/step record extent
 OPEN.EXE	0x80035874	0x24074	0x3	data	reviewed	opening_scene0_sound	SoundRef	manual:open_semantic_opening_scene0;manual:open_sound_data_extent	complete three-byte program 9, tone 0, note 0x43 sound selector
 OPEN.EXE	0x80035877	0x24077	0x1	unclassified	coverage-gap			manual:open_sound_data_extent	retained zero byte between the three-byte SoundRef and overlay rectangles; represented as packing in the module, not as a fourth SoundRef field
-OPEN.EXE	0x80035878	0x24078	0x10	data	reviewed	opening_scene3_overlay_rects	u16[2][4]	manual:open_semantic_opening_scene3	two mutable overlay rectangles with initial y positions 256 and 512
+OPEN.EXE	0x80035878	0x24078	0x10	data	reviewed	opening_scene3_panels	u16[2][4]	manual:open_semantic_opening_scene3	two mutable overlay rectangles with initial y positions 256 and 512
 OPEN.EXE	0x80035888	0x24088	0x48	data	reviewed	opening_ending_scroll_panels	u16[9][4]	manual:open_semantic_ending_scroll	nine mutable eight-byte panel rectangles; signed y read at final row+2 and unsigned visibility window
 OPEN.EXE	0x800358d0	0x240d0	0x10	unclassified	coverage-gap			payload-complement	bytes following the nine ending-scroll panels and preceding the floor-item sprite table; ownership unresolved
 OPEN.EXE	0x800358e0	0x240e0	0x54	defined	reviewed	floor_item_sprites	KfSpriteQuad[7]	manual:open_semantic_floor_item_render	seven 12-byte sprite descriptors; renderer indexes by item id plus animation frame
@@ -3617,8 +3617,8 @@ OPEN.EXE	0x80037248	0x25a48	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4
 OPEN.EXE	0x8003724c	0x25a4c	0x4	defined	ghidra-defined		undefined4	Ghidra-12.0.4/ghidra_psx_ldr-2026.07.08	machine-assisted WIP datum
 OPEN.EXE	0x80037250	0x25a50	0x32	string	byte-pattern		ascii	investigation:string-census	escaped text: $Id: vsync.c,v 1.11 1994/10/15 12:31:01 suzu Exp $
 OPEN.EXE	0x80037282	0x25a82	0x2	unclassified	coverage-gap			payload-complement	may contain missed code, tables, constants, padding, or writable data
-OPEN.EXE	0x80037284	0x25a84	0x8	data	reviewed	opening_scene3_overlay_uv	u8[8]	manual:open_semantic_opening_scene3	shared overlay texture rectangle {u, v, width, height} in even bytes
-OPEN.EXE	0x8003728c	0x25a8c	0x4	data	reviewed	opening_scene3_overlay_color	u8[4]	manual:open_semantic_opening_scene3	RGB 200 modulation color with one pad byte
+OPEN.EXE	0x80037284	0x25a84	0x8	data	reviewed	opening_scene3_panel_uv	u8[8]	manual:open_semantic_opening_scene3	shared overlay texture rectangle {u, v, width, height} in even bytes
+OPEN.EXE	0x8003728c	0x25a8c	0x4	data	reviewed	opening_scene3_panel_color	u8[4]	manual:open_semantic_opening_scene3	RGB 200 modulation color with one pad byte
 OPEN.EXE	0x80037290	0x25a90	0x10	data	reviewed	opening_ending_scroll_backgrounds	u16[2][4]	manual:open_semantic_ending_scroll	two four-halfword background rectangles supplied to G4 and F4 builders
 OPEN.EXE	0x800372a0	0x25aa0	0x4	data	reviewed	opening_ending_scroll_top_start	CVECTOR	manual:open_semantic_ending_scroll	initial top gradient color; complete four-byte SDK color copy
 OPEN.EXE	0x800372a4	0x25aa4	0x4	data	reviewed	opening_ending_scroll_bottom_start	CVECTOR	manual:open_semantic_ending_scroll	initial bottom gradient color; complete four-byte SDK color copy
@@ -3626,7 +3626,7 @@ OPEN.EXE	0x800372a8	0x25aa8	0x4	data	reviewed	opening_ending_scroll_top_end	CVEC
 OPEN.EXE	0x800372ac	0x25aac	0x4	data	reviewed	opening_ending_scroll_bottom_end	CVECTOR	manual:open_semantic_ending_scroll	target bottom gradient color
 OPEN.EXE	0x800372b0	0x25ab0	0x4	data	reviewed	opening_ending_scroll_panel_color	CVECTOR	manual:open_semantic_ending_scroll	RGB color and preserved command byte supplied to FT4 panel builder
 OPEN.EXE	0x800372b4	0x25ab4	0x4	data	reviewed	opening_ending_scroll_background_color	CVECTOR	manual:open_semantic_ending_scroll	black lower-background quad color
-OPEN.EXE	0x800372b8	0x25ab8	0x8	data	reviewed	opening_ending_scroll_uv	u8[8]	manual:open_semantic_ending_scroll	packed texture-coordinate bytes used by all nine panels
+OPEN.EXE	0x800372b8	0x25ab8	0x8	data	reviewed	opening_ending_scroll_panel_uv	u8[8]	manual:open_semantic_ending_scroll	packed texture-coordinate bytes used by all nine panels
 OPEN.EXE	0x800372c0	0x25ac0	0x8	data	reviewed	opening_fade_rect	u16[4]	manual:open_semantic_opening_fade	full-screen fade rectangle {x, y, width, height}
 OPEN.EXE	0x800372c8	0x25ac8	0x8	data	reviewed	opening_fade_uv	u8[8]	manual:open_semantic_opening_fade	texture-coordinate rectangle stored in even bytes {u, v, width, height}
 OPEN.EXE	0x800372d0	0x25ad0	0x4	data	reviewed	opening_fade_color	u8[4]	manual:open_semantic_opening_fade	base modulation color copied locally and ramped during the fade

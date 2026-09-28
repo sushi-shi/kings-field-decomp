@@ -33,7 +33,7 @@ per-field repository tests. Refresh affected literal ledgers; no new banking.
 | `0x80020cfc / 1500` | `item_load_database` | 99.746666 | Control: STAT.DAT spell rows immediately follow eighty 20-byte item rows; nine rows at offset 0x1318, names and runtime records share menu indices. |
 | `0x8002317c / 1328` | `menu_magic_panel` | 95.89759 | Instant IDs 0..3; learned byte must equal 1. Preserve MP debit, HP halfword stores/cap and exact keep-masks 3/12; panel result also represents cancellation. |
 | `0x80023e9c / 1136` | `menu_spell_select` | 98.06338 | Twenty byte-sized code entries contain only ranged IDs4..8 or none255. Type the array; decode its integer range iterator at insertion, encode only at texture/widget boundaries. Keep signed row selection separate. |
-| `0x8002718c / 2104` | `menu_draw_name_list` | 100.0 | Read the typed selected spell, exclude none, then encode its index into the nine-row name table. |
+| `0x8002718c / 2104` | `menu_draw_equipment_names` | 100.0 | Read the typed selected spell, exclude none, then encode its index into the nine-row name table. |
 | `0x800151cc / 740` | `game_state_initialize` | 100.0 | Starting selected spell ID8 is Light Needle; keep all stock and state initialization order. |
 | `0x80015714 / 2068` | `player_recalculate_combat_stats` | 100.0 | Dispoison learns at base magic37 with Healing known; Fire Wall at70, Lightning Bolt at75. Keep learned-byte conditions and notification calls. |
 | `0x800167e4 / 100` | `player_select_magic` | 100.0 | Byte O32 input writes player+5c, masks to255 and resolves a 20-byte record pointer or null. Type field/parameter together; encode the record index explicitly. |
@@ -52,7 +52,7 @@ per-field repository tests. Refresh affected literal ledgers; no new banking.
 ## Recovered domain and storage
 
 An intervening matching commit, `a665d54`, made GAME `0x80028380`
-`menu_list_interact` exact (852 bytes, 100%). Its generic `s32 item_id`
+`menu_list_confirm` exact (852 bytes, 100%). Its generic `s32 item_id`
 argument has three magic-preview comparisons against none255. Fresh six-view
 evidence, its caller/adjacent dossier and an exact pre-edit object are captured
 as `widget-before*`. Encode none to `s32` at those comparisons; the generic
@@ -145,7 +145,7 @@ landed independently in the shared master checkout. Fresh verification
 therefore compares all objects again and identifies each allowed difference
 by unit and address instead of attributing those improvements to this enum.
 The five independently changed units are `game.menu_item_drop`,
-`game.menu_status_panel`, `game.menu_list_interact`, `game.menu` and
+`game.menu_status_panel`, `game.menu_list_confirm`, `game.menu` and
 `game.item`. Their nine changed scores are recorded in
 `recheck/concurrent-differences.json`; all other scores and object sections
 remain unchanged against the original baseline.

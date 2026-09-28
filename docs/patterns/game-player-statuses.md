@@ -33,7 +33,7 @@ not vendored bodies. The RNG, matrix and pad functions remain SDK boundaries.
 | 80018880 | player_update | 96.945540% | Movement limits, darkness fade/fog and four distinct countdown lifecycles. |
 | 8001fde4 | render_frame | 100% | Existing HUD priority masks 1,2,4,8. |
 | 8002317c | menu_magic_panel | 95.897590% | Spell selection 2 sets mask 16 and calls the helper; other cure masks stay literal. |
-| 80025f38 | menu_draw_stats_header | 97.686110% | Status-mask to authored-glyph mapping. |
+| 80025f38 | menu_draw_status_summary | 97.686110% | Status-mask to authored-glyph mapping. |
 | 800264d8 | menu_draw_status_details | 95.110700% | Same mapping; preserve every numeric field and label. |
 
 Introduce constants for duration/refresh values, curse penalty, fire-defense

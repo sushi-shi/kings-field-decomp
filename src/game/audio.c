@@ -66,13 +66,13 @@ void audio_load_vab(u8 *vab_header, u8 *vab_body)
 }
 
 ADDRESS(0x80032a4c, 0x110)
-void audio_play_map_sequence(u8 sequence_id)
+void audio_play_map_sequence(u8 sequence_index)
 {
     char path[20] = "B0\\SND0.SEQ";
 
     audio_stop_sequence_fade();
     if (player_state.audio_music_enabled != KF_PLAYER_OPTION_OFF) {
-        path[6] = sequence_id + '0';
+        path[6] = sequence_index + '0';
         path[1] = KF_ENUM_ENCODE(u8, player_state.progress_state.current_floor) + '0';
         if (cd_file_load_into((void *)audio_state.sequence_buffer, path) == KF_RESOURCE_LOADED) {
             audio_state.sequence_id = SsSeqOpen(

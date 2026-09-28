@@ -34,7 +34,7 @@ item-detail panels have one each.
 | `map_event_interact` | `0x80034a80 / 0x2d4` | 8 | `80034ad8: 06 80 05 3c lui a1,0x8006 ` |
 | `menu_use_item_panel` | `0x80022608 / 0x774` | 1 | `80022650: 06 80 02 3c lui v0,0x8006 ` |
 | `menu_draw_item_detail` | `0x80027b7c / 0x2dc` | 1 | `80027d9c: 06 80 01 3c lui at,0x8006 ` |
-| `menu_drop_item` | `0x800249a8 / 0x4bc` | 1 | `80024a08: 06 80 15 3c lui s5,0x8006 ` |
+| `menu_drop_item_panel` | `0x800249a8 / 0x4bc` | 1 | `80024a08: 06 80 15 3c lui s5,0x8006 ` |
 | `menu_item_model_preview` | `0x800279c4 / 0x1b8` | 1 | `80027b3c: 06 80 01 3c lui at,0x8006 ` |
 | `menu_equip_select` | `0x800238d8 / 0x5c4` | 1 | `8002391c: 06 80 04 3c lui a0,0x8006 ` |
 | `game_state_initialize` | `0x800151cc / 0x2e4` | 33 | `80015374: 06 80 03 3c lui v1,0x8006 ` |

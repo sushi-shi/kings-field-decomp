@@ -137,7 +137,7 @@ DATA(0x80035874, 0x3)
 SoundRef opening_scene0_sound = {9, 0, 0x43};
 
 DATA(0x80035878, 0x10)
-KfScreenRect opening_scene3_overlay_rects[KF_OPENING_SCENE3_OVERLAY_COUNT] = {
+KfScreenRect opening_scene3_panels[KF_OPENING_SCENE3_PANEL_COUNT] = {
     {32, 256, 255, 254},
     {32, 512, 255, 254},
 };
@@ -156,10 +156,10 @@ static KfScreenRect opening_ending_scroll_panels[ENDING_PANEL_COUNT] = {
 };
 
 DATA(0x80037284, 0x8)
-u8 opening_scene3_overlay_uv[KF_QUAD_TEX_DESCRIPTOR_BYTES] = {0, 0, 0, 0, 255, 0, 254, 0};
+u8 opening_scene3_panel_uv[KF_QUAD_TEX_DESCRIPTOR_BYTES] = {0, 0, 0, 0, 255, 0, 254, 0};
 
 DATA(0x8003728c, 0x4)
-CVECTOR opening_scene3_overlay_color = {200, 200, 200, 0};
+CVECTOR opening_scene3_panel_color = {200, 200, 200, 0};
 
 DATA(0x80037290, 0x10)
 static KfScreenRect opening_ending_scroll_backgrounds[2] = {
@@ -185,37 +185,37 @@ DATA(0x800372b4, 0x4)
 static CVECTOR opening_ending_scroll_background_color = {0, 0, 0, 0};
 
 DATA(0x800372b8, 0x8)
-static u8 opening_ending_scroll_uv[KF_QUAD_TEX_DESCRIPTOR_BYTES] = {0, 0, 1, 0, 255, 0, 254, 0};
+static u8 opening_ending_scroll_panel_uv[KF_QUAD_TEX_DESCRIPTOR_BYTES] = {0, 0, 1, 0, 255, 0, 254, 0};
 
 RODATA(0x80012000, 0x20)
 
 ADDRESS(0x80014268, 0x174)
 void opening_scene0_run(void)
 {
-    KfOpeningEntity *entity_11;
-    KfOpeningEntity *entity_12;
+    KfOpeningEntity *decreasing_yaw_model;
+    KfOpeningEntity *increasing_yaw_model;
     s16 blend;
     s16 next_blend;
 
     blend = 0;
     opening_resources_load_scene0();
-    entity_11 = opening_entity_find_by_object_id(
+    decreasing_yaw_model = opening_entity_find_by_object_id(
         opening_entity_state.entities, KF_OPENING_SCENE0_DECREASING_YAW_MODEL);
-    entity_12 = opening_entity_find_by_object_id(
+    increasing_yaw_model = opening_entity_find_by_object_id(
         opening_entity_state.entities, KF_OPENING_SCENE0_INCREASING_YAW_MODEL);
-    entity_12->rotation.y = KF_ANGLE_THREE_QUARTER_TURN;
-    entity_11->rotation.y = KF_ANGLE_THREE_QUARTER_TURN;
+    increasing_yaw_model->rotation.y = KF_ANGLE_THREE_QUARTER_TURN;
+    decreasing_yaw_model->rotation.y = KF_ANGLE_THREE_QUARTER_TURN;
     opening_camera_path_begin(opening_scene0_camera_path);
 
     for (;;) {
         opening_poll_input();
         opening_camera_path_step(0);
         if (opening_camera_path_state.point_index >= SCENE0_ROTATION_START_POINT) {
-            if (entity_11->rotation.y == KF_ANGLE_THREE_QUARTER_TURN) {
+            if (decreasing_yaw_model->rotation.y == KF_ANGLE_THREE_QUARTER_TURN) {
                 sound_ref_play(&opening_scene0_sound, SCENE0_SOUND_VOLUME);
             }
-            entity_11->rotation.y -= SCENE0_YAW_STEP;
-            entity_12->rotation.y += SCENE0_YAW_STEP;
+            decreasing_yaw_model->rotation.y -= SCENE0_YAW_STEP;
+            increasing_yaw_model->rotation.y += SCENE0_YAW_STEP;
         }
 
         if (opening_camera_path_state.point_index >= SCENE0_FADE_OUT_START_POINT ||
@@ -410,16 +410,16 @@ deactivate:
 ADDRESS(0x80014804, 0x330)
 void opening_scene3_run(void)
 {
-    KfOpeningEntity *entity_13;
-    KfOpeningEntity *entity_14;
+    KfOpeningEntity *increasing_yaw_model;
+    KfOpeningEntity *decreasing_yaw_model;
     VECTOR transition_position;
-    u32 texture_pages[KF_OPENING_SCENE3_OVERLAY_COUNT];
+    u32 texture_pages[KF_OPENING_SCENE3_PANEL_COUNT];
     /* Retail reserves six CLUT work slots; this scene populates the first two. */
     u32 cluts[SCENE3_CLUT_WORK_CAPACITY];
-    KfScreenRect *overlay_rect;
-    s16 *overlay_y;
+    KfScreenRect *panel;
+    s16 *panel_y;
     s16 blend;
-    s16 overlay_index;
+    s16 panel_index;
     s32 wave_angle;
 
     wave_angle = 0;
@@ -433,12 +433,12 @@ void opening_scene3_run(void)
         PANEL_TPAGE_FIRST_X + PANEL_TPAGE_X_STRIDE, KF_TEXTURE_LOWER_PAGE_Y);
     cluts[1] = GetClut(0, PANEL_CLUT_FIRST_Y + 1);
 
-    entity_13 = opening_entity_find_by_object_id(
+    increasing_yaw_model = opening_entity_find_by_object_id(
         opening_entity_state.entities, KF_OPENING_SCENE3_INCREASING_YAW_MODEL);
-    entity_14 = opening_entity_find_by_object_id(
+    decreasing_yaw_model = opening_entity_find_by_object_id(
         opening_entity_state.entities, KF_OPENING_SCENE3_DECREASING_YAW_MODEL);
-    entity_14->rotation.y = 0;
-    entity_13->rotation.y = 0;
+    decreasing_yaw_model->rotation.y = 0;
+    increasing_yaw_model->rotation.y = 0;
     opening_camera_path_begin(opening_scene3_camera_path);
 
     blend = 0;
@@ -456,9 +456,9 @@ void opening_scene3_run(void)
         }
     }
 
-    while (entity_13->rotation.y < KF_ANGLE_QUARTER_TURN) {
-        entity_13->rotation.y += SCENE3_YAW_STEP;
-        entity_14->rotation.y -= SCENE3_YAW_STEP;
+    while (increasing_yaw_model->rotation.y < KF_ANGLE_QUARTER_TURN) {
+        increasing_yaw_model->rotation.y += SCENE3_YAW_STEP;
+        decreasing_yaw_model->rotation.y -= SCENE3_YAW_STEP;
         audio_set_listener_transform(
             &opening_camera_path_state.position,
             &opening_camera_path_state.rotation);
@@ -483,24 +483,24 @@ void opening_scene3_run(void)
         display_begin_frame();
         SetGeomScreen(KF_DEFAULT_PROJECTION_DISTANCE);
         opening_render_entities();
-        overlay_index = 0;
-        overlay_rect = opening_scene3_overlay_rects;
-        overlay_y = &overlay_rect->y;
+        panel_index = 0;
+        panel = opening_scene3_panels;
+        panel_y = &panel->y;
         do {
             /* Retain quads while their signed Y span can still cross the screen. */
-            if ((u16)(--*overlay_y + PANEL_CLIP_Y_BIAS) < PANEL_CLIP_SPAN) {
+            if ((u16)(--*panel_y + PANEL_CLIP_Y_BIAS) < PANEL_CLIP_SPAN) {
                 sprite_add_ft4(
-                    overlay_rect,
-                    opening_scene3_overlay_uv,
-                    texture_pages[overlay_index],
-                    cluts[overlay_index],
-                    &opening_scene3_overlay_color,
+                    panel,
+                    opening_scene3_panel_uv,
+                    texture_pages[panel_index],
+                    cluts[panel_index],
+                    &opening_scene3_panel_color,
                     PANEL_OT_DEPTH);
             }
-            overlay_index++;
-            overlay_y += sizeof(*overlay_rect) / sizeof(*overlay_y);
-            overlay_rect++;
-        } while (overlay_index < KF_OPENING_SCENE3_OVERLAY_COUNT);
+            panel_index++;
+            panel_y += sizeof(*panel) / sizeof(*panel_y);
+            panel++;
+        } while (panel_index < KF_OPENING_SCENE3_PANEL_COUNT);
         display_present_frame();
         opening_poll_input();
     } while (opening_input_action == KF_OPENING_INPUT_NONE);
@@ -532,8 +532,8 @@ void opening_scene3_run(void)
 ADDRESS(0x80014b34, 0x2f4)
 void opening_ending_scene_run(void)
 {
-    KfOpeningEntity *entity_13;
-    KfOpeningEntity *entity_14;
+    KfOpeningEntity *increasing_yaw_model;
+    KfOpeningEntity *decreasing_yaw_model;
     VECTOR transition_position;
     s16 brightness;
     s16 blend;
@@ -541,12 +541,12 @@ void opening_ending_scene_run(void)
 
     wave_angle = 0;
     opening_resources_load_ending();
-    entity_13 = opening_entity_find_by_object_id(
+    increasing_yaw_model = opening_entity_find_by_object_id(
         opening_entity_state.entities, KF_OPENING_SCENE3_INCREASING_YAW_MODEL);
-    entity_14 = opening_entity_find_by_object_id(
+    decreasing_yaw_model = opening_entity_find_by_object_id(
         opening_entity_state.entities, KF_OPENING_SCENE3_DECREASING_YAW_MODEL);
-    entity_14->rotation.y = 0;
-    entity_13->rotation.y = 0;
+    decreasing_yaw_model->rotation.y = 0;
+    increasing_yaw_model->rotation.y = 0;
     opening_camera_path_begin(opening_ending_camera_path);
 
     transition_position.vy = KF_OPENING_SCENE_BASE_Y;
@@ -575,9 +575,9 @@ void opening_ending_scene_run(void)
             break;
         }
         if (opening_camera_path_state.point_index >= ENDING_ROTATION_START_POINT) {
-            if (entity_13->rotation.y < KF_ANGLE_QUARTER_TURN) {
-                entity_13->rotation.y += SCENE3_YAW_STEP;
-                entity_14->rotation.y -= SCENE3_YAW_STEP;
+            if (increasing_yaw_model->rotation.y < KF_ANGLE_QUARTER_TURN) {
+                increasing_yaw_model->rotation.y += SCENE3_YAW_STEP;
+                decreasing_yaw_model->rotation.y -= SCENE3_YAW_STEP;
                 audio_set_listener_transform(
                     &opening_camera_path_state.position,
                     &opening_camera_path_state.rotation);
@@ -651,8 +651,8 @@ void opening_ending_scroll_run(void)
     u32 cluts[ENDING_PANEL_COUNT];
     CVECTOR top_color;
     CVECTOR bottom_color;
-    KfOpeningEntity *entity_26;
-    KfOpeningEntity *entity_27;
+    KfOpeningEntity *orange_disk;
+    KfOpeningEntity *starfield;
     KfEndingLightingPhase lighting_phase;
     KfEndingScrollState scroll_state;
     KfEndingSequencePhase sequence_phase;
@@ -704,12 +704,12 @@ void opening_ending_scroll_run(void)
         PANEL_TPAGE_FIRST_X + 8 * PANEL_TPAGE_X_STRIDE, KF_TEXTURE_LOWER_PAGE_Y);
     cluts[8] = GetClut(0, PANEL_CLUT_FIRST_Y + 8);
 
-    entity_26 = opening_entity_find_by_object_id(
+    orange_disk = opening_entity_find_by_object_id(
         opening_entity_state.entities, KF_OPENING_ENDING_ORANGE_DISK);
-    entity_27 = opening_entity_find_by_object_id(
+    starfield = opening_entity_find_by_object_id(
         opening_entity_state.entities, KF_OPENING_ENDING_STARFIELD);
-    entity_26->position.vy -= ENDING_MODEL_START_Y_OFFSET;
-    entity_27->object_id = KF_OPENING_ENTITY_FREE;
+    orange_disk->position.vy -= ENDING_MODEL_START_Y_OFFSET;
+    starfield->object_id = KF_OPENING_ENTITY_FREE;
     opening_camera_path_begin(opening_ending_scroll_camera_path);
     lighting_phase = ENDING_LIGHT_TO_MIDPOINT;
     background_blend = 0;
@@ -777,12 +777,12 @@ void opening_ending_scroll_run(void)
         if (opening_camera_path_state.frames_remaining != KF_CAMERA_PATH_FINISHED) {
             opening_camera_path_step(0);
         }
-        if (entity_26->position.vy < ENDING_MODEL_FINAL_Y) {
-            entity_26->position.vy += ENDING_MODEL_Y_STEP;
+        if (orange_disk->position.vy < ENDING_MODEL_FINAL_Y) {
+            orange_disk->position.vy += ENDING_MODEL_Y_STEP;
         } else if (scroll_state == ENDING_SCROLL_WAIT_DISK) {
-            entity_26->object_id = KF_OPENING_ENTITY_FREE;
+            orange_disk->object_id = KF_OPENING_ENTITY_FREE;
             scroll_state = ENDING_SCROLL_ACTIVE;
-            entity_27->object_id = KF_OPENING_ENDING_STARFIELD;
+            starfield->object_id = KF_OPENING_ENDING_STARFIELD;
         }
         render_set_view_transform(
             &opening_camera_path_state.position, &opening_camera_path_state.rotation);
@@ -804,8 +804,8 @@ void opening_ending_scroll_run(void)
                       &opening_ending_scroll_background_color, ENDING_BACKGROUND_OT_DEPTH);
 
         if (scroll_tick == ENDING_SCROLL_TICK_STARFIELD_AND_PANELS) {
-            entity_27->rotation.z = (entity_27->rotation.z - 1) & KF_ANGLE_WRAP_MASK;
-            if (entity_27->object_id != KF_OPENING_ENTITY_FREE &&
+            starfield->rotation.z = (starfield->rotation.z - 1) & KF_ANGLE_WRAP_MASK;
+            if (starfield->object_id != KF_OPENING_ENTITY_FREE &&
                 open_graphics_runtime.floor_item_state.material.color.r < ENDING_MAX_BRIGHTNESS) {
                 ++open_graphics_runtime.floor_item_state.material.color.r;
                 open_graphics_runtime.floor_item_state.material.color.b =
@@ -829,7 +829,7 @@ void opening_ending_scroll_run(void)
                     }
                 }
                 if ((u16)(panel->y + PANEL_CLIP_Y_BIAS) < PANEL_CLIP_SPAN) {
-                    sprite_add_ft4(panel, opening_ending_scroll_uv,
+                    sprite_add_ft4(panel, opening_ending_scroll_panel_uv,
                                    texture_pages[panel_index], cluts[panel_index],
                                    &opening_ending_scroll_panel_color, PANEL_OT_DEPTH);
                 }

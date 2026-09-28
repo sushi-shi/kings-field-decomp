@@ -13,7 +13,7 @@ Name the sprite point offsets, primitive RGB default and distinct list defaults.
 | Function | GAME VA / bytes | Strict baseline | Retail calls / conditional branches / returns | Source hypothesis |
 | --- | --- | ---: | --- | --- |
 | `menu_draw_two_option` | `800291ec / 268` | 100.000000% | 7 / 3 / 1 | Audit retained literals and preserve existing source behavior. |
-| `menu_draw_item_name_frame` | `800292f8 / 1976` | 95.376520% | 23 / 1 / 1 | Pickup grid at X=118/189, Y=16/120; preserve transform, name copy and mirrored UVs. |
+| `menu_draw_pickup_preview` | `800292f8 / 1976` | 95.376520% | 23 / 1 / 1 | Pickup grid at X=118/189, Y=16/120; preserve transform, name copy and mirrored UVs. |
 | `menu_blit_sprite_translucent` | `80029ab0 / 416` | 100.000000% | 3 / 0 / 1 | Subtract point offsets (4,3); preserve signed coordinates and descriptor width/height. |
 | `menu_blit_sprite` | `80029c50 / 400` | 100.000000% | 2 / 0 / 1 | Subtract point offsets (18,2); preserve opaque packet behavior. |
 | `menu_draw_string` | `80029de0 / 1328` | 100.000000% | 6 / 12 / 1 | Audit retained literals and preserve existing source behavior. |
@@ -21,13 +21,13 @@ Name the sprite point offsets, primitive RGB default and distinct list defaults.
 | `menu_draw_window_backdrop` | `8002a510 / 1700` | 99.971760% | 16 / 0 / 1 | Shared grid at X=166/237, Y=16/120; preserve reverse persistent-quad insertion order. |
 | `menu_frame_begin` | `8002abb4 / 128` | 100.000000% | 1 / 0 / 1 | Audit retained literals and preserve existing source behavior. |
 | `menu_present_frame` | `8002ac34 / 152` | 100.000000% | 5 / 0 / 1 | Audit retained literals and preserve existing source behavior. |
-| `primitive_buffer_begin_poly_ft4` | `8002accc / 80` | 100.000000% | 1 / 0 / 1 | Store default RGB96 after SDK packet initialization. |
-| `primitive_buffer_commit_poly_ft4` | `8002ad1c / 80` | 100.000000% | 1 / 0 / 1 | Audit retained literals and preserve existing source behavior. |
+| `menu_begin_poly_ft4` | `8002accc / 80` | 100.000000% | 1 / 0 / 1 | Store default RGB96 after SDK packet initialization. |
+| `menu_commit_poly_ft4` | `8002ad1c / 80` | 100.000000% | 1 / 0 / 1 | Audit retained literals and preserve existing source behavior. |
 | `menu_list_init` | `8002ad6c / 140` | 100.000000% | 0 / 1 / 1 | Name eleven visible rows and eight-halfword default stride; retain ten-halfword title copy. |
 | `menu_format_number` | `8002adf8 / 172` | 100.000000% | 0 / 8 / 1 | Audit retained literals and preserve existing source behavior. |
 | `menu_load_item_model` | `8002aea4 / 104` | 100.000000% | 3 / 2 / 1 | Audit retained literals and preserve existing source behavior. |
 | `menu_release_item_model` | `8002af0c / 60` | 100.000000% | 1 / 1 / 1 | Audit retained literals and preserve existing source behavior. |
-| `menu_load_item_texture` | `8002af48 / 304` | 100.000000% | 3 / 8 / 1 | Audit retained literals and preserve existing source behavior. |
+| `menu_load_texture` | `8002af48 / 304` | 100.000000% | 3 / 8 / 1 | Audit retained literals and preserve existing source behavior. |
 
 ## Resource and consumer evidence
 

@@ -2,7 +2,7 @@
 
 ## Function Match Plan
 
-Name and type the signed selector used by `menu_draw_dialog_frame`, preserving
+Name and type the signed selector used by `menu_draw_save_slots`, preserving
 its full signed-word representation and range behavior. Use `KfSaveSlotOverlay`
 for the drawing parameter and the two-option prompt's forwarded local. Decode
 the save/load cursor at drawing calls; its format/return rows and arithmetic
@@ -19,7 +19,7 @@ captured source versions, not the pending edits.
 | `menu_save_confirm` | `0x800222b4 / 0x94` | Frame 10264 bytes; the call at `0x800222e8` passes null rows and selector 3 in its delay slot. Name that selector; leave the independent three-frame loop count. |
 | `menu_save_panel` | `0x800250c4 / 0x468` | Seven direct frame calls forward the signed cursor, including format/return rows. Decode at each call without changing the cursor or save-file slot arithmetic. |
 | `menu_load_panel` | `0x8002552c / 0x370` | Five direct frame calls forward the signed cursor, including the return row. Decode at each call. |
-| `menu_draw_dialog_frame` | `0x80027ee4 / 0x49c` | Frame 80 bytes; direct zero/one/two comparisons and signed `slti ...,3` at `0x80028000`/`0x80028060` select ordered overlay calls. Type/name the selector and its three equality values. |
+| `menu_draw_save_slots` | `0x80027ee4 / 0x49c` | Frame 80 bytes; direct zero/one/two comparisons and signed `slti ...,3` at `0x80028000`/`0x80028060` select ordered overlay calls. Type/name the selector and its three equality values. |
 | `menu_two_option_prompt` | `0x800286d4 / 0x240` | Frame 112 bytes; `0x80028718` sets the forwarded word to -1; `0x80028740` replaces it with the caller row only for save/load windows. Type/name the local and decode that row. |
 
 The [original frame/packet review](game-menu-detail-constants.md) establishes

@@ -25,7 +25,7 @@ address is present in the same extended basic block:
   absolute addressing because their delta does not fit.
 - `loop.c:combine_movables` merges the per-arm constant sets into one hoisted
   register, which is why retail derives `s6 = a1 + 488` from the
-  `current_asset` address in the preheader.
+  `current_tmd` address in the preheader.
 
 So the natural source has **no `vertices` local at all**: the emitters spell
 `(KfScreenVertex *)((u8 *)runtime.tmd_projected_vertices + offset)` and
@@ -122,7 +122,7 @@ parameter's entry copy and live range, so `threshold`, `excess` and
 union: a plain `s16` digit array read through `(u16)` casts compiles to the
 same `lhu` loads. The remaining unread slot is the second pointer the
 projection functions pass to `ReadSZ2` (`tmd_project_vertices`,
-`tmd_project_vertices_shift` and the three OPEN siblings). `ReadSZ2` is the
+`tmd_project_vertices_depth_shift` and the three OPEN siblings). `ReadSZ2` is the
 exact Release 2.5 `LIBGTE.LIB` REG member and writes only through its first
 argument, yet retail materialises both stack addresses, so the
 two-argument compatibility declaration and its unread scalar reflect the

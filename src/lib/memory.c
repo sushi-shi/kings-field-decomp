@@ -53,12 +53,12 @@ void memory_set_allocation_mode(KfMemoryAllocationMode allocation_mode)
     switch (allocation_mode) {
     case KF_MEMORY_CREATE_ARENA:
         memory_arena.start = (u8 *)memory_malloc_checked(MEMORY_INITIAL_ARENA_BYTES);
-        memory_arena.end = (u8 *)MEMORY_INITIAL_ARENA_LAST_ADDRESS;
+        memory_arena.last = (u8 *)MEMORY_INITIAL_ARENA_LAST_ADDRESS;
         memory_allocation_reset();
         break;
     case KF_MEMORY_REBASE_ARENA:
         memory_arena.start = memory_arena.allocation.cursor;
-        memory_arena.end = memory_arena.allocation.cursor + MEMORY_REBASED_ARENA_LAST_OFFSET;
+        memory_arena.last = memory_arena.allocation.cursor + MEMORY_REBASED_ARENA_LAST_OFFSET;
         memory_allocation_reset();
         break;
     case KF_MEMORY_USE_HEAP:
@@ -70,7 +70,7 @@ void memory_set_allocation_mode(KfMemoryAllocationMode allocation_mode)
 ADDRESS(0x8001abb0, 0x20)
 void memory_capture_system_heap_start(void)
 {
-    memory_arena.system_heap_start = memory_arena.end + 1;
+    memory_arena.system_heap_start = memory_arena.last + 1;
 }
 
 ADDRESS(0x8001abd0, 0x3c)

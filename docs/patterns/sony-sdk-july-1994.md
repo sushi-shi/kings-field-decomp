@@ -71,7 +71,7 @@ No source or header change is retained. **456/471 remains exact.**
 | GAME | `effect_update_dispatch` | 99.82781 |
 | OPEN | `opening_ending_scroll_run` | 99.917694 |
 | GAME | `menu_status_panel` (UV control) | 100 |
-| GAME | `menu_draw_item_name_frame` (UV control) | 100 |
+| GAME | `menu_draw_pickup_preview` (UV control) | 100 |
 | GAME | `menu_draw_window_backdrop` (UV control) | 100 |
 
 A separate frontend audit confirms the July header's actual inclusion and

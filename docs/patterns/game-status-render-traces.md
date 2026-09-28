@@ -12,7 +12,7 @@ campaigns were inspected before edits. Generated evidence lives under
 | GAME function | Retail bytes / candidate bytes | Strict starting score |
 | --- | ---: | ---: |
 | `8002430c menu_status_panel` | 1692 / 1420 | 81.900710% |
-| `80025f38 menu_draw_stats_header` | 1440 / 1428 | 97.991670% |
+| `80025f38 menu_draw_status_summary` | 1440 / 1428 | 97.991670% |
 | `800264d8 menu_draw_status_details` | 3252 / 3252 | 98.296430% |
 
 All have void interfaces with no parameters or consumed return. Root calls
@@ -111,7 +111,7 @@ constant carriers or claiming a compiler limitation.
 | GAME function | Final strict result | Verdict |
 | --- | ---: | --- |
 | `menu_status_panel` | 81.900710% | Unchanged; byte loads already agree. No owner or frame hypothesis retained. |
-| `menu_draw_stats_header` | 97.991670% | Unchanged; row-spacing register and frame remain unresolved. |
+| `menu_draw_status_summary` | 97.991670% | Unchanged; row-spacing register and frame remain unresolved. |
 | `menu_draw_status_details` | 98.431730% | Sixteen rating words recovered from 98.296430%; partial, not banked. |
 
 Fresh native, host-debug and two traced builds of the final source produce

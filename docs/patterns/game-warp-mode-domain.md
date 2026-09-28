@@ -50,7 +50,7 @@ tests, whitespace and full `kf build`. No size assertions or new tests.
 | `0x800149d4 / 32` | `frame_pacer_vsync_callback` | 100.000000% |
 | `0x800149f4 / 112` | `frame_pacer_wait` | 100.000000% |
 | `0x80017cf8 / 324` | `player_warp_to_floor_entry` | 100.000000% |
-| `0x8001eedc / 488` | `render_actor_sprite` | 100.000000% |
+| `0x8001eedc / 488` | `render_effect` | 100.000000% |
 | `0x8001f218 / 1408` | `render_entities` | 97.380684% |
 | `0x80036618 / 568` | `player_warp_shimmer` | 100.000000% |
 | `0x80036850 / 348` | `player_warp_change_floor` | 100.000000% |

@@ -33,7 +33,7 @@ All addresses in this table refer to GAME.EXE.
 | Player +0x79 | `weapon_magic_delay` | Weapon magic emits at 1, writes per-weapon delays of 1/2/3, and decrements other nonzero values. |
 | Player +0x98 | `hud_gauges_enabled` | Config row 2, initialized to 1 at 80016e9c; render_frame controls HP/MP/charge/status sprites with it. |
 | Player +0x99 | `compass_enabled` | Config row 3, initialized to 1 at 80016ea4; enables the two HUD components whose needle rotation is the negated view yaw. |
-| Render +0x80 | `effect_color_matrix` | Passed to SetColorMatrix by render_effect_sprites at 8001f8d4; initialized from color table 3 and interpolated during death at 800184e4/80018700. |
+| Render +0x80 | `hud_model_color_matrix` | Passed to SetColorMatrix by render_hud_models at 8001f8d4; initialized from color table 3 and interpolated during death at 800184e4/80018700. |
 | Actor definition +0 | `pursuit_distance_scale` | 8002e364 loads the byte; selection shifts it by 8 and selects player-pursuit action 2 inside the threshold, with existing hysteresis. |
 | Actor definition +1 | `model_and_texture` | render_actor takes low nibble as asset and high nibble as texture-page/CLUT variant. |
 | Actor definition +2 | `melee_attack_chance` | 8002e4b0 supplies chance for action 4, whose animation triggers actor_try_attack_player. |

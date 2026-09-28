@@ -30,8 +30,8 @@ FIELDS = {
     'tmd_state': 0x20110, 'unknown_registry_20134': 0x20134,
     'current_tmd_vertices': 0x20224, 'pool_records': 0x20228,
     'tmd_projected_vertices': 0x20318, 'morph_scratch': 0x22258,
-    'effect5_texture_pages': 0x241A0, 'unknown_241a6': 0x241A6,
-    'effect5_texture_cluts': 0x241B0, 'unknown_241b6': 0x241B6,
+    'actor_texture_pages': 0x241A0, 'unknown_241a6': 0x241A6,
+    'actor_texture_cluts': 0x241B0, 'unknown_241b6': 0x241B6,
     'active_render_clut': 0x241C0, 'active_render_tpage': 0x241C2,
     'active_render_red': 0x241C4, 'active_render_green': 0x241C5,
     'active_render_blue': 0x241C6, 'active_render_code': 0x241C7,
@@ -375,7 +375,7 @@ class GameGraphicsOwnerProbeTests(unittest.TestCase):
         selected = {
             'game.render': {
                 'display_show_system_screen', 'lighting_set_active_color_matrix',
-                'effect5_texture_cache_prepare', 'display_initialize', 'display_begin_frame',
+                'render_prepare_actor_textures', 'display_initialize', 'display_begin_frame',
                 'display_present_frame', 'tmd_select', 'tmd_get_object', 'tmd_set_current_vertices',
                 'tmd_select_object_vertices', 'tmd_prepare_primitive_indices', 'tmd_register',
                 'tmd_release_last_allocation',
@@ -385,7 +385,7 @@ class GameGraphicsOwnerProbeTests(unittest.TestCase):
             'game.save_system': {'screen_show_image_until_input'},
             'game.render_frame': {'render_frame'},
             'game.geometry_render': {
-                'render_weapon', 'render_effect_sprites', 'render_hud_gauges',
+                'render_weapon', 'render_hud_models', 'render_hud_sprites',
             },
             'game.pool': {
                 'animation_cache_reset', 'animation_cache_mark_stale', 'animation_cache_release_all',
@@ -571,7 +571,7 @@ extern KfMaterialProbe material_probe;
                 'asset_registry_load_tmd_archive', 'asset_registry_set',
                 'asset_registry_select',
             },
-            'game.render': {'tmd_project_vertices', 'tmd_project_vertices_shift',
+            'game.render': {'tmd_project_vertices', 'tmd_project_vertices_depth_shift',
                             'tmd_transform_vertices'},
             'game.pool': {'render_bind_animated_instance'},
         }
@@ -611,7 +611,7 @@ extern KfMaterialProbe material_probe;
         self.tools()
         image, manifest = self.retail(), load_manifest()
         unit = manifest.by_name()['game.render_enqueue']
-        names = {'render_enqueue_tmd', 'render_enqueue_model', 'render_enqueue_map',
+        names = {'render_enqueue_tmd', 'render_enqueue_tmd_retextured', 'render_enqueue_map',
                  'render_enqueue_sprite'}
         source = candidate_source(unit, names)
         # The file-scope TMD macro sits outside the rewritten function bodies;
@@ -696,7 +696,7 @@ extern KfMaterialProbe material_probe;
             'map_show_screen_image',
             'menu_status_panel',
             'menu_draw_item_detail',
-            'menu_draw_item_name_frame',
+            'menu_draw_pickup_preview',
             'menu_draw_status_details',
             'menu_draw_window',
             'menu_draw_window_backdrop',

@@ -10,7 +10,7 @@ path returns zero. Retail computes the payload address in the null branch's
 delay slot without dereferencing it.
 
 The shared header and payload pointers are also rebound to two independent
-stack objects by `menu_save_confirm` and `menu_save_load_hub`. Their public
+stack objects by `menu_save_confirm` and `menu_system_panel`. Their public
 types must remain `KfSaveHeader *` and `KfSavePayload *`; neither pointer
 universally denotes a complete allocated workspace. Do not combine the
 stack objects or reinterpret those callers as a heap owner.
@@ -45,10 +45,10 @@ SDK services they call. All six query views are retained in the dossier.
 | --- | --- | --- | --- |
 | `save_workspace_allocate` / `8002c27c` / `68` | 100% | 26 instructions, three calls (`memory_allocate`, twice `memset`), five blocks, three data pairs, one internal jump relocation; null branch computes +`280` in its slot; return restores 24-byte frame in its slot; no strings or external confirmed callers | Give only the allocated `2800` bytes their complete header/payload layout; preserve failed-allocation global writes. |
 | `menu_save_confirm` / `800222b4` / `94` | 100% | Seven calls, two data pairs, three-frame loop and pad-release loop; payload at `sp+290`, header at `sp+10`, `2818`-byte frame; return restores frame in its slot; no strings | Keep its existing separate typed stack objects and publication order as an aliasing control. |
-| `menu_save_load_hub` / `80024e64` / `260` | 100% | Twenty call sites, two global pairs, seven validated internal jumps; payload at `sp+290`, header at `sp+10`, `2830`-byte frame; pad/menu branches and terminal redraw loop; return restores frame in its slot; no strings | Preserve independent stack buffers and the complete menu CFG as a second control. |
+| `menu_system_panel` / `80024e64` / `260` | 100% | Twenty call sites, two global pairs, seven validated internal jumps; payload at `sp+290`, header at `sp+10`, `2830`-byte frame; pad/menu branches and terminal redraw loop; return restores frame in its slot; no strings | Preserve independent stack buffers and the complete menu CFG as a second control. |
 
 The public signatures remain `s32 save_workspace_allocate(void)`,
-`void menu_save_confirm(void)` and `s32 menu_save_load_hub(void)`. Adjacent
+`void menu_save_confirm(void)` and `s32 menu_system_panel(void)`. Adjacent
 release/initialization and panel bodies remain unit-wide comparison controls.
 The pre-edit baseline is commit `8138a8e`.
 
@@ -65,7 +65,7 @@ allocation size, clear size or physical referent changes.
 | --- | --- |
 | GAME `save_workspace_allocate` | 100%; all 26 words unchanged, including both null-path global effects and every delay slot. |
 | GAME `menu_save_confirm` | 100%; all 37 words unchanged, with independent stack buffers. |
-| GAME `menu_save_load_hub` | 100%; all 152 words unchanged, with independent stack buffers. |
+| GAME `menu_system_panel` | 100%; all 152 words unchanged, with independent stack buffers. |
 
 All 31 bodies across the three units retain their linked instructions, calls
 and ordered referents. Twenty-nine remain exact; the two existing partials

@@ -97,7 +97,7 @@ Zero-literal modules have no rows; that does not resolve their external identiti
 | `tmd_prepare_primitive_indices` | 204 | `0` | `} while (primitives_left-- != 0);` | Zero is the terminal value of the halfword post-decrement packet countdown. |
 | `tmd_project_vertices` | 239 | `1` | `for (count--; count != -1; count--) {` | Minus one terminates the count-minus-one vertex loop after its final element. |
 | `tmd_project_vertices_perspective_right` | 261 | `1` | `for (count--; count != -1; count--) {` | Minus one terminates the count-minus-one vertex loop after its final element. |
-| `tmd_project_vertices_shift` | 283 | `1` | `for (count--; count != -1; count--) {` | Minus one terminates the count-minus-one vertex loop after its final element. |
+| `tmd_project_vertices_depth_shift` | 283 | `1` | `for (count--; count != -1; count--) {` | Minus one terminates the count-minus-one vertex loop after its final element. |
 | `tmd_transform_vertices` | 303 | `1` | `for (count--; count != -1; count--) {` | Minus one terminates the count-minus-one vertex loop after its final element. |
 
 ## `vendor/src/game_libetc_pad.c`

@@ -169,7 +169,7 @@ none of their thirteen direct call sites consumes a result. Each has a
 strings, indirect transfers or candidate references in either body. The
 return delay slot restores the complete frame.
 
-Both first call `primitive_buffer_begin_poly_ft4`, saving the incoming point
+Both first call `menu_begin_poly_ft4`, saving the incoming point
 in `s1` in its delay slot. They read page and CLUT halfwords, write the eight
 coordinate halfwords in x0/y0 through x3/y3 order, then write the eight UV
 bytes in the same corner order. `MenuSpriteDef` is the shared 12-byte record
@@ -179,7 +179,7 @@ source members. SDK `POLY_FT4` retains its authentic signed-short coordinates
 and unsigned-byte UV members.
 
 Every validated address pair refers to `current_poly_ft4` at `0x80057e88`.
-The last common call is `primitive_buffer_commit_poly_ft4`, with depth 2000
+The last common call is `menu_commit_poly_ft4`, with depth 2000
 set in its delay slot. Its body links the packet with `AddPrim` and advances
 the shared cursor by the SDK packet size, 40 bytes. The begin helper calls
 `SetPolyFT4` and sets RGB to 96.
@@ -204,7 +204,7 @@ All call sites were inspected with their argument setup and delay slots:
 | opaque | `menu_draw_window` | `0x80028a00` | `DAT_8005846c`; selected row |
 | opaque | `menu_draw_two_option` | `0x80029238`, `0x80029250` | `DAT_8005846c`; either option label |
 
-The preceding `menu_draw_item_name_frame` also uses the primitive cursor and
+The preceding `menu_draw_pickup_preview` also uses the primitive cursor and
 SDK helpers, returning at `0x80029aa8` with its 224-byte frame restoration at
 `0x80029aac`. The following `menu_draw_string` starts at `0x80029de0` and uses
 the same descriptor and positioned-label family. Neither boundary overlaps.

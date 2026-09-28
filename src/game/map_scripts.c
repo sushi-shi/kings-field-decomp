@@ -252,7 +252,7 @@ void map_floor2_event_transfer_fade(void)
     MATRIX saved;
     s32 blend;
 
-    saved = game_graphics_runtime.render_state.light_matrix_copy;
+    saved = game_graphics_runtime.render_state.map_event_light_matrix;
 
     for (blend = 0; blend < KF_FIXED12_ONE + 1; blend += MAP_TRANSFER_FADE_IN_STEP) {
         lighting_set_color_matrix(&color_matrix_table[KF_ENUM_ENCODE(s32, KF_GAME_COLOR_DEFAULT)],
@@ -264,7 +264,7 @@ void map_floor2_event_transfer_fade(void)
         } else {
             matrix_interpolate(&saved,
                 &map_transfer_light_matrix,
-                &game_graphics_runtime.render_state.light_matrix_copy,
+                &game_graphics_runtime.render_state.map_event_light_matrix,
                 blend << MAP_TRANSFER_LIGHT_BLEND_SHIFT);
         }
         render_frame(NULL, NULL);
@@ -283,7 +283,7 @@ void map_floor2_event_transfer_fade(void)
     }
 
     lighting_set_active_color_matrix(KF_GAME_COLOR_DEFAULT);
-    game_graphics_runtime.render_state.light_matrix_copy = saved;
+    game_graphics_runtime.render_state.map_event_light_matrix = saved;
 }
 
 /* Floor-2 action script: fade after event 3's first stage-2 dialogue page. */

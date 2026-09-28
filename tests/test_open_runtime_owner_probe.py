@@ -157,7 +157,7 @@ class OpenRuntimeOwnerProbeTests(unittest.TestCase):
             "display_begin_frame", "display_present_frame", "tmd_select", "tmd_get_object",
             "tmd_set_current_vertices", "tmd_select_object_vertices", "render_set_view_transform",
             "tmd_register", "tmd_release_last_allocation", "tmd_project_vertices",
-            "tmd_project_vertices_perspective_right", "tmd_project_vertices_shift",
+            "tmd_project_vertices_perspective_right", "tmd_project_vertices_depth_shift",
             "tmd_transform_vertices",
         })
 

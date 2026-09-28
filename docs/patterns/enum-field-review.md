@@ -200,8 +200,8 @@ separate from the missing selector domains above.
 
 Several plausible names do not justify enums:
 
-- `KfEffectSprite.asset_variant` is passed as the animation binder's **fourth
-  argument, phase**. The name is misleading; the consumed value is numeric.
+- `KfHudModel.animation_phase` is passed as the animation binder's **fourth
+  argument, phase**; the consumed value is numeric.
 - `KfEffectRecord.id`, `KfActorDefinition.effect_owner_id` and
   `KfMapObjectSpawn.effect_id` propagate to player damage's
   `multiplier_tenths`, which participates in multiplication and division.

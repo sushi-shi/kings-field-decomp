@@ -20,7 +20,7 @@
 ADDRESS(0x8001f0c4, 0x154)
 void render_map_event(KfMapEvent *event)
 {
-    SVECTOR screen;
+    SVECTOR relative_position;
     MATRIX model;
     MATRIX composed;
     long flag;
@@ -29,11 +29,11 @@ void render_map_event(KfMapEvent *event)
 
     SetRotMatrix(&game_graphics_runtime.render_state.view_matrix);
     SetTransMatrix(&game_graphics_runtime.render_state.view_matrix);
-    setVector(&screen,
+    setVector(&relative_position,
         event->reference_position.vx - game_graphics_runtime.render_state.view_position.vx,
         event->reference_position.vy - game_graphics_runtime.render_state.view_position.vy,
         event->reference_position.vz - game_graphics_runtime.render_state.view_position.vz);
-    RotTrans(&screen, (VECTOR *)&composed.t, &flag);
+    RotTrans(&relative_position, (VECTOR *)&composed.t, &flag);
     RotMatrix(&event->rotation, &model);
     MulMatrix0(&game_graphics_runtime.render_state.view_matrix, &model, &composed);
     SetRotMatrix(&composed);

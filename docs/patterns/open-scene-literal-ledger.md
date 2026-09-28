@@ -341,14 +341,14 @@ The [audio sequence-domain review](audio-sequence-domains.md) names all three st
 | `opening_scene0_sound` | 131 | `9` | `SoundRef opening_scene0_sound = {9, 0, 0x43};` | Authored sound program byte; no independently supported sound-asset name. |
 | `opening_scene0_sound` | 131 | `0` | `SoundRef opening_scene0_sound = {9, 0, 0x43};` | Authored sound tone byte; zero selects a tone, not silence. |
 | `opening_scene0_sound` | 131 | `0x43` | `SoundRef opening_scene0_sound = {9, 0, 0x43};` | Authored sound note byte; no independently supported sound-asset name. |
-| `opening_scene3_overlay_rects` | 135 | `32` | `{32, 256, 255, 254},` | Authored rectangle X origin in pixels; preserves panel layout, cropping and nonuniform scroll spacing. |
-| `opening_scene3_overlay_rects` | 135 | `256` | `{32, 256, 255, 254},` | Authored rectangle Y origin in pixels; preserves panel layout, cropping and nonuniform scroll spacing. |
-| `opening_scene3_overlay_rects` | 135 | `255` | `{32, 256, 255, 254},` | Authored rectangle width in pixels; preserves panel layout, cropping and nonuniform scroll spacing. |
-| `opening_scene3_overlay_rects` | 135 | `254` | `{32, 256, 255, 254},` | Authored rectangle height in pixels; preserves panel layout, cropping and nonuniform scroll spacing. |
-| `opening_scene3_overlay_rects` | 136 | `32` | `{32, 512, 255, 254},` | Authored rectangle X origin in pixels; preserves panel layout, cropping and nonuniform scroll spacing. |
-| `opening_scene3_overlay_rects` | 136 | `512` | `{32, 512, 255, 254},` | Authored rectangle Y origin in pixels; preserves panel layout, cropping and nonuniform scroll spacing. |
-| `opening_scene3_overlay_rects` | 136 | `255` | `{32, 512, 255, 254},` | Authored rectangle width in pixels; preserves panel layout, cropping and nonuniform scroll spacing. |
-| `opening_scene3_overlay_rects` | 136 | `254` | `{32, 512, 255, 254},` | Authored rectangle height in pixels; preserves panel layout, cropping and nonuniform scroll spacing. |
+| `opening_scene3_panels` | 135 | `32` | `{32, 256, 255, 254},` | Authored rectangle X origin in pixels; preserves panel layout, cropping and nonuniform scroll spacing. |
+| `opening_scene3_panels` | 135 | `256` | `{32, 256, 255, 254},` | Authored rectangle Y origin in pixels; preserves panel layout, cropping and nonuniform scroll spacing. |
+| `opening_scene3_panels` | 135 | `255` | `{32, 256, 255, 254},` | Authored rectangle width in pixels; preserves panel layout, cropping and nonuniform scroll spacing. |
+| `opening_scene3_panels` | 135 | `254` | `{32, 256, 255, 254},` | Authored rectangle height in pixels; preserves panel layout, cropping and nonuniform scroll spacing. |
+| `opening_scene3_panels` | 136 | `32` | `{32, 512, 255, 254},` | Authored rectangle X origin in pixels; preserves panel layout, cropping and nonuniform scroll spacing. |
+| `opening_scene3_panels` | 136 | `512` | `{32, 512, 255, 254},` | Authored rectangle Y origin in pixels; preserves panel layout, cropping and nonuniform scroll spacing. |
+| `opening_scene3_panels` | 136 | `255` | `{32, 512, 255, 254},` | Authored rectangle width in pixels; preserves panel layout, cropping and nonuniform scroll spacing. |
+| `opening_scene3_panels` | 136 | `254` | `{32, 512, 255, 254},` | Authored rectangle height in pixels; preserves panel layout, cropping and nonuniform scroll spacing. |
 | `opening_ending_scroll_panels` | 141 | `32` | `{32, 256, 255, 254},` | Authored rectangle X origin in pixels; preserves panel layout, cropping and nonuniform scroll spacing. |
 | `opening_ending_scroll_panels` | 141 | `256` | `{32, 256, 255, 254},` | Authored rectangle Y origin in pixels; preserves panel layout, cropping and nonuniform scroll spacing. |
 | `opening_ending_scroll_panels` | 141 | `255` | `{32, 256, 255, 254},` | Authored rectangle width in pixels; preserves panel layout, cropping and nonuniform scroll spacing. |
@@ -385,18 +385,18 @@ The [audio sequence-domain review](audio-sequence-domains.md) names all three st
 | `opening_ending_scroll_panels` | 149 | `2258` | `{32, 2258, 255, 254},` | Authored rectangle Y origin in pixels; preserves panel layout, cropping and nonuniform scroll spacing. |
 | `opening_ending_scroll_panels` | 149 | `255` | `{32, 2258, 255, 254},` | Authored rectangle width in pixels; preserves panel layout, cropping and nonuniform scroll spacing. |
 | `opening_ending_scroll_panels` | 149 | `254` | `{32, 2258, 255, 254},` | Authored rectangle height in pixels; preserves panel layout, cropping and nonuniform scroll spacing. |
-| `opening_scene3_overlay_uv` | 153 | `0` | `u8 opening_scene3_overlay_uv[KF_QUAD_TEX_DESCRIPTOR_BYTES] = {0, 0, 0, 0, 255, 0, 254, 0};` | Authored texture U origin read by the FT4 helper; retain its numeric crop. |
-| `opening_scene3_overlay_uv` | 153 | `0` | `u8 opening_scene3_overlay_uv[KF_QUAD_TEX_DESCRIPTOR_BYTES] = {0, 0, 0, 0, 255, 0, 254, 0};` | Authored UV descriptor byte +1; no read in the reviewed FT4 helper establishes a separate meaning. |
-| `opening_scene3_overlay_uv` | 153 | `0` | `u8 opening_scene3_overlay_uv[KF_QUAD_TEX_DESCRIPTOR_BYTES] = {0, 0, 0, 0, 255, 0, 254, 0};` | Authored texture V origin read by the FT4 helper; retain its numeric crop. |
-| `opening_scene3_overlay_uv` | 153 | `0` | `u8 opening_scene3_overlay_uv[KF_QUAD_TEX_DESCRIPTOR_BYTES] = {0, 0, 0, 0, 255, 0, 254, 0};` | Authored UV descriptor byte +3; no read in the reviewed FT4 helper establishes a separate meaning. |
-| `opening_scene3_overlay_uv` | 153 | `255` | `u8 opening_scene3_overlay_uv[KF_QUAD_TEX_DESCRIPTOR_BYTES] = {0, 0, 0, 0, 255, 0, 254, 0};` | Authored texture U span read by the FT4 helper; retain its numeric crop. |
-| `opening_scene3_overlay_uv` | 153 | `0` | `u8 opening_scene3_overlay_uv[KF_QUAD_TEX_DESCRIPTOR_BYTES] = {0, 0, 0, 0, 255, 0, 254, 0};` | Authored UV descriptor byte +5; no read in the reviewed FT4 helper establishes a separate meaning. |
-| `opening_scene3_overlay_uv` | 153 | `254` | `u8 opening_scene3_overlay_uv[KF_QUAD_TEX_DESCRIPTOR_BYTES] = {0, 0, 0, 0, 255, 0, 254, 0};` | Authored texture V span read by the FT4 helper; retain its numeric crop. |
-| `opening_scene3_overlay_uv` | 153 | `0` | `u8 opening_scene3_overlay_uv[KF_QUAD_TEX_DESCRIPTOR_BYTES] = {0, 0, 0, 0, 255, 0, 254, 0};` | Authored UV descriptor byte +7; no read in the reviewed FT4 helper establishes a separate meaning. |
-| `opening_scene3_overlay_color` | 156 | `200` | `CVECTOR opening_scene3_overlay_color = {200, 200, 200, 0};` | Authored red color component; preserve the gradient endpoint or material modulation. |
-| `opening_scene3_overlay_color` | 156 | `200` | `CVECTOR opening_scene3_overlay_color = {200, 200, 200, 0};` | Authored green color component; preserve the gradient endpoint or material modulation. |
-| `opening_scene3_overlay_color` | 156 | `200` | `CVECTOR opening_scene3_overlay_color = {200, 200, 200, 0};` | Authored blue color component; preserve the gradient endpoint or material modulation. |
-| `opening_scene3_overlay_color` | 156 | `0` | `CVECTOR opening_scene3_overlay_color = {200, 200, 200, 0};` | Authored zero fourth color byte; the RGB consumer does not use it as opacity. |
+| `opening_scene3_panel_uv` | 153 | `0` | `u8 opening_scene3_panel_uv[KF_QUAD_TEX_DESCRIPTOR_BYTES] = {0, 0, 0, 0, 255, 0, 254, 0};` | Authored texture U origin read by the FT4 helper; retain its numeric crop. |
+| `opening_scene3_panel_uv` | 153 | `0` | `u8 opening_scene3_panel_uv[KF_QUAD_TEX_DESCRIPTOR_BYTES] = {0, 0, 0, 0, 255, 0, 254, 0};` | Authored UV descriptor byte +1; no read in the reviewed FT4 helper establishes a separate meaning. |
+| `opening_scene3_panel_uv` | 153 | `0` | `u8 opening_scene3_panel_uv[KF_QUAD_TEX_DESCRIPTOR_BYTES] = {0, 0, 0, 0, 255, 0, 254, 0};` | Authored texture V origin read by the FT4 helper; retain its numeric crop. |
+| `opening_scene3_panel_uv` | 153 | `0` | `u8 opening_scene3_panel_uv[KF_QUAD_TEX_DESCRIPTOR_BYTES] = {0, 0, 0, 0, 255, 0, 254, 0};` | Authored UV descriptor byte +3; no read in the reviewed FT4 helper establishes a separate meaning. |
+| `opening_scene3_panel_uv` | 153 | `255` | `u8 opening_scene3_panel_uv[KF_QUAD_TEX_DESCRIPTOR_BYTES] = {0, 0, 0, 0, 255, 0, 254, 0};` | Authored texture U span read by the FT4 helper; retain its numeric crop. |
+| `opening_scene3_panel_uv` | 153 | `0` | `u8 opening_scene3_panel_uv[KF_QUAD_TEX_DESCRIPTOR_BYTES] = {0, 0, 0, 0, 255, 0, 254, 0};` | Authored UV descriptor byte +5; no read in the reviewed FT4 helper establishes a separate meaning. |
+| `opening_scene3_panel_uv` | 153 | `254` | `u8 opening_scene3_panel_uv[KF_QUAD_TEX_DESCRIPTOR_BYTES] = {0, 0, 0, 0, 255, 0, 254, 0};` | Authored texture V span read by the FT4 helper; retain its numeric crop. |
+| `opening_scene3_panel_uv` | 153 | `0` | `u8 opening_scene3_panel_uv[KF_QUAD_TEX_DESCRIPTOR_BYTES] = {0, 0, 0, 0, 255, 0, 254, 0};` | Authored UV descriptor byte +7; no read in the reviewed FT4 helper establishes a separate meaning. |
+| `opening_scene3_panel_color` | 156 | `200` | `CVECTOR opening_scene3_panel_color = {200, 200, 200, 0};` | Authored red color component; preserve the gradient endpoint or material modulation. |
+| `opening_scene3_panel_color` | 156 | `200` | `CVECTOR opening_scene3_panel_color = {200, 200, 200, 0};` | Authored green color component; preserve the gradient endpoint or material modulation. |
+| `opening_scene3_panel_color` | 156 | `200` | `CVECTOR opening_scene3_panel_color = {200, 200, 200, 0};` | Authored blue color component; preserve the gradient endpoint or material modulation. |
+| `opening_scene3_panel_color` | 156 | `0` | `CVECTOR opening_scene3_panel_color = {200, 200, 200, 0};` | Authored zero fourth color byte; the RGB consumer does not use it as opacity. |
 | `opening_ending_scroll_backgrounds` | 159 | `2` | `static KfScreenRect opening_ending_scroll_backgrounds[2] = {` | Two explicitly initialized background rectangles. |
 | `opening_ending_scroll_backgrounds` | 160 | `0` | `{0, 0, KF_DISPLAY_WIDTH, 160}, {0, 160, KF_DISPLAY_WIDTH, 160},` | Authored rectangle X origin in pixels; preserves panel layout, cropping and nonuniform scroll spacing. |
 | `opening_ending_scroll_backgrounds` | 160 | `0` | `{0, 0, KF_DISPLAY_WIDTH, 160}, {0, 160, KF_DISPLAY_WIDTH, 160},` | Authored rectangle Y origin in pixels; preserves panel layout, cropping and nonuniform scroll spacing. |
@@ -428,14 +428,14 @@ The [audio sequence-domain review](audio-sequence-domains.md) names all three st
 | `opening_ending_scroll_background_color` | 179 | `0` | `static CVECTOR opening_ending_scroll_background_color = {0, 0, 0, 0};` | Authored green color component; preserve the gradient endpoint or material modulation. |
 | `opening_ending_scroll_background_color` | 179 | `0` | `static CVECTOR opening_ending_scroll_background_color = {0, 0, 0, 0};` | Authored blue color component; preserve the gradient endpoint or material modulation. |
 | `opening_ending_scroll_background_color` | 179 | `0` | `static CVECTOR opening_ending_scroll_background_color = {0, 0, 0, 0};` | Authored zero fourth color byte; the RGB consumer does not use it as opacity. |
-| `opening_ending_scroll_uv` | 182 | `0` | `static u8 opening_ending_scroll_uv[KF_QUAD_TEX_DESCRIPTOR_BYTES] = {0, 0, 1, 0, 255, 0, 254, 0};` | Authored texture U origin read by the FT4 helper; retain its numeric crop. |
-| `opening_ending_scroll_uv` | 182 | `0` | `static u8 opening_ending_scroll_uv[KF_QUAD_TEX_DESCRIPTOR_BYTES] = {0, 0, 1, 0, 255, 0, 254, 0};` | Authored UV descriptor byte +1; no read in the reviewed FT4 helper establishes a separate meaning. |
-| `opening_ending_scroll_uv` | 182 | `1` | `static u8 opening_ending_scroll_uv[KF_QUAD_TEX_DESCRIPTOR_BYTES] = {0, 0, 1, 0, 255, 0, 254, 0};` | Authored texture V origin read by the FT4 helper; retain its numeric crop. |
-| `opening_ending_scroll_uv` | 182 | `0` | `static u8 opening_ending_scroll_uv[KF_QUAD_TEX_DESCRIPTOR_BYTES] = {0, 0, 1, 0, 255, 0, 254, 0};` | Authored UV descriptor byte +3; no read in the reviewed FT4 helper establishes a separate meaning. |
-| `opening_ending_scroll_uv` | 182 | `255` | `static u8 opening_ending_scroll_uv[KF_QUAD_TEX_DESCRIPTOR_BYTES] = {0, 0, 1, 0, 255, 0, 254, 0};` | Authored texture U span read by the FT4 helper; retain its numeric crop. |
-| `opening_ending_scroll_uv` | 182 | `0` | `static u8 opening_ending_scroll_uv[KF_QUAD_TEX_DESCRIPTOR_BYTES] = {0, 0, 1, 0, 255, 0, 254, 0};` | Authored UV descriptor byte +5; no read in the reviewed FT4 helper establishes a separate meaning. |
-| `opening_ending_scroll_uv` | 182 | `254` | `static u8 opening_ending_scroll_uv[KF_QUAD_TEX_DESCRIPTOR_BYTES] = {0, 0, 1, 0, 255, 0, 254, 0};` | Authored texture V span read by the FT4 helper; retain its numeric crop. |
-| `opening_ending_scroll_uv` | 182 | `0` | `static u8 opening_ending_scroll_uv[KF_QUAD_TEX_DESCRIPTOR_BYTES] = {0, 0, 1, 0, 255, 0, 254, 0};` | Authored UV descriptor byte +7; no read in the reviewed FT4 helper establishes a separate meaning. |
+| `opening_ending_scroll_panel_uv` | 182 | `0` | `static u8 opening_ending_scroll_panel_uv[KF_QUAD_TEX_DESCRIPTOR_BYTES] = {0, 0, 1, 0, 255, 0, 254, 0};` | Authored texture U origin read by the FT4 helper; retain its numeric crop. |
+| `opening_ending_scroll_panel_uv` | 182 | `0` | `static u8 opening_ending_scroll_panel_uv[KF_QUAD_TEX_DESCRIPTOR_BYTES] = {0, 0, 1, 0, 255, 0, 254, 0};` | Authored UV descriptor byte +1; no read in the reviewed FT4 helper establishes a separate meaning. |
+| `opening_ending_scroll_panel_uv` | 182 | `1` | `static u8 opening_ending_scroll_panel_uv[KF_QUAD_TEX_DESCRIPTOR_BYTES] = {0, 0, 1, 0, 255, 0, 254, 0};` | Authored texture V origin read by the FT4 helper; retain its numeric crop. |
+| `opening_ending_scroll_panel_uv` | 182 | `0` | `static u8 opening_ending_scroll_panel_uv[KF_QUAD_TEX_DESCRIPTOR_BYTES] = {0, 0, 1, 0, 255, 0, 254, 0};` | Authored UV descriptor byte +3; no read in the reviewed FT4 helper establishes a separate meaning. |
+| `opening_ending_scroll_panel_uv` | 182 | `255` | `static u8 opening_ending_scroll_panel_uv[KF_QUAD_TEX_DESCRIPTOR_BYTES] = {0, 0, 1, 0, 255, 0, 254, 0};` | Authored texture U span read by the FT4 helper; retain its numeric crop. |
+| `opening_ending_scroll_panel_uv` | 182 | `0` | `static u8 opening_ending_scroll_panel_uv[KF_QUAD_TEX_DESCRIPTOR_BYTES] = {0, 0, 1, 0, 255, 0, 254, 0};` | Authored UV descriptor byte +5; no read in the reviewed FT4 helper establishes a separate meaning. |
+| `opening_ending_scroll_panel_uv` | 182 | `254` | `static u8 opening_ending_scroll_panel_uv[KF_QUAD_TEX_DESCRIPTOR_BYTES] = {0, 0, 1, 0, 255, 0, 254, 0};` | Authored texture V span read by the FT4 helper; retain its numeric crop. |
+| `opening_ending_scroll_panel_uv` | 182 | `0` | `static u8 opening_ending_scroll_panel_uv[KF_QUAD_TEX_DESCRIPTOR_BYTES] = {0, 0, 1, 0, 255, 0, 254, 0};` | Authored UV descriptor byte +7; no read in the reviewed FT4 helper establishes a separate meaning. |
 | `opening_scene0_run` | 194 | `0` | `blend = 0;` | Zero blend accumulator at the start of this interpolation or intermediate counter. |
 | `opening_scene0_run` | 206 | `0` | `opening_camera_path_step(0);` | No added world-space Y displacement for this camera step. |
 | `opening_scene0_run` | 223 | `0` | `if (blend < 0) {` | Signed blend falling below zero ends the scene fade-out. |

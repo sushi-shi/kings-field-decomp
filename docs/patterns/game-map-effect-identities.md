@@ -24,7 +24,7 @@ Ruff, the existing suite, whitespace checking and full `kf build`.
 
 | GAME VA / bytes | Function | Initial strict % |
 | --- | --- | ---: |
-| 8001eedc / 488 | render_actor_sprite | 100 |
+| 8001eedc / 488 | render_effect | 100 |
 | 8001f218 / 1408 | render_entities | 97.380684 |
 | 80031008 / 1096 | map_object_pool_load | 100 |
 | 80031834 / 404 | map_object_spawn_drop | 94.455444 |
@@ -87,7 +87,7 @@ match retail and the delinked targets, including delay slots.
 
 | Function | Final verdict | Words / calls / addresses |
 | --- | --- | ---: |
-| render_actor_sprite | Exact, unchanged | 122 / 20 / 6 |
+| render_effect | Exact, unchanged | 122 / 20 / 6 |
 | render_entities | Partial, unchanged | 354 / 9 / 25 |
 | map_object_pool_load | Exact, unchanged | 274 / 11 / 8 |
 | map_object_spawn_drop | Partial, unchanged | 100 / 5 / 2 |

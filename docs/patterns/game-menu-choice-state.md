@@ -136,10 +136,10 @@ function results, not whole-unit data closure.
 | `80022348` | `menu_root` | 96.86364% | Unchanged partial |
 | `80022608` | `menu_use_item_panel` | 99.48218% | Unchanged partial |
 | `8002317c` | `menu_magic_panel` | 100% | Exact retained |
-| `800236ac` | `menu_option_root` | 100% | Exact retained |
+| `800236ac` | `menu_equipment_root` | 100% | Exact retained |
 | `800238d8` | `menu_equip_select` | 100% | Exact retained |
 | `80023e9c` | `menu_spell_select` | 99.54225% | Unchanged partial |
-| `800249a8` | `menu_drop_item` | 99.54785% | Unchanged partial |
+| `800249a8` | `menu_drop_item_panel` | 99.54785% | Unchanged partial |
 | `8002589c` | `menu_config_panel` | 99.85981% | Unchanged partial |
 | `80025da0` | `menu_config_panel_draw` | 100% | Exact retained |
 

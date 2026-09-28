@@ -298,7 +298,7 @@ and lighting owners also preserve their complete raw retail bodies.
 | game.resources | `8001b558` | `map_resources_load` | 600/600 | 100.000000 |
 | game.render | `8001b7b0` | `display_show_error_screen` | 776/776 | 100.000000 |
 | game.render | `8001bab8` | `lighting_set_active_color_matrix` | 44/44 | 100.000000 |
-| game.render | `8001bae4` | `effect5_texture_cache_prepare` | 176/176 | 100.000000 |
+| game.render | `8001bae4` | `render_prepare_actor_textures` | 176/176 | 100.000000 |
 | game.render | `8001bb94` | `display_initialize` | 332/332 | 100.000000 |
 | game.render | `8001bce0` | `render_initialize` | 728/728 | 100.000000 |
 | game.render | `8001bfb8` | `display_begin_frame` | 152/152 | 100.000000 |
@@ -312,7 +312,7 @@ and lighting owners also preserve their complete raw retail bodies.
 | game.render | `8001c5b0` | `tmd_register` | 60/60 | 100.000000 |
 | game.render | `8001c5ec` | `tmd_release_last_allocation` | 32/32 | 100.000000 |
 | game.render | `8001c60c` | `tmd_project_vertices` | 156/156 | 100.000000 |
-| game.render | `8001c6a8` | `tmd_project_vertices_shift` | 172/172 | 100.000000 |
+| game.render | `8001c6a8` | `tmd_project_vertices_depth_shift` | 172/172 | 100.000000 |
 | game.render | `8001c754` | `tmd_transform_vertices` | 164/164 | 100.000000 |
 | game.render_frame | `8001fde4` | `render_frame` | 1304/1304 | 100.000000 |
 | game.save_system | `8002b078` | `save_system_read_catalog` | 216/216 | 100.000000 |
@@ -435,8 +435,8 @@ Additional affected owners, independently recompiled and raw-retail exact:
 | Final owner | Address | Function | Retail/source bytes | Strict % |
 | --- | --- | --- | ---: | ---: |
 | game.geometry_render | `8001f798` | `render_weapon` | 280/280 | 100.000000 |
-| game.geometry_render | `8001f8b0` | `render_effect_sprites` | 292/292 | 100.000000 |
-| game.geometry_render | `8001f9d4` | `render_hud_gauges` | 112/112 | 100.000000 |
+| game.geometry_render | `8001f8b0` | `render_hud_models` | 292/292 | 100.000000 |
+| game.geometry_render | `8001f9d4` | `render_hud_sprites` | 112/112 | 100.000000 |
 | game.geometry_render | `8001fa44` | `notify_enqueue` | 160/160 | 100.000000 |
 | game.geometry_render | `8001fae4` | `notification_digit_set_v` | 24/24 | 100.000000 |
 | game.geometry_render | `8001fafc` | `notify_effect_update` | 716/716 | 100.000000 |

@@ -173,7 +173,7 @@ before the two `lw` loads in `player_distance_to_point_in_cone`; `move v0,a0`
 before the stack-argument loads in `player_apply_radial_damage`). Applied to
 every enrolled unit it produced no regressions and made ten more units exact:
 `matrix_set_rotation_yxz`, the four vector scale helpers,
-`primitive_buffer_commit_poly_ft4`, `menu_release_item_model`
+`menu_commit_poly_ft4`, `menu_release_item_model`
 (previously exact only under 2.6.0 without the second scheduling pass),
 `save_workspace_allocate`, `audio_play_spatial_range`, `sound_ref_play`.
 `probe-gcc257-o2-g0` now carries `cc1_flags = ["-mcpu=r3000"]`.
@@ -247,7 +247,7 @@ Open residues (not steered):
 | Retail signature | Source shape | Witness |
 | --- | --- | --- |
 | `addiu sp,sp,-8` ... `addiu sp,sp,8` around a leaf with no stack traffic (`.frame $sp,8`, `vars= 8`) | a loop whose condition post-decrements a variable (`while (count--)` or `while (count-- != 0)`); `for (; count != 0; count--)` reserves nothing | `repeat_store_word` `0x80014268` |
-| the same frame in a leaf without a loop | a load and a store that address the same global object (`tmd_state.current_asset = tmd_state.slots[index]`); GCC 2.5.8 sources: CSE relates the two addresses, combine folds the array address pseudo into the load, its stale `reg_n_refs` keeps it alive for reload, and `alter_reg` gives the dead pseudo a stack slot that nothing uses. Storing the same load into another object, or `-fforce-addr`, removes the frame | `tmd_select` `0x8001c0e8` |
+| the same frame in a leaf without a loop | a load and a store that address the same global object (`tmd_state.current_tmd = tmd_state.slots[index]`); GCC 2.5.8 sources: CSE relates the two addresses, combine folds the array address pseudo into the load, its stale `reg_n_refs` keeps it alive for reload, and `alter_reg` gives the dead pseudo a stack slot that nothing uses. Storing the same load into another object, or `-fforce-addr`, removes the frame | `tmd_select` `0x8001c0e8` |
 | the same frame in `tmd_prepare_primitive_indices` `0x8001c2b0` | not reproduced; the function stores nothing to a global, so the folded pseudo must come from another expression; open | residue |
 
 
@@ -279,7 +279,7 @@ Residues left in the same module (not steered):
   target was already different.
 - `tmd_prepare_primitive_indices`: in OPEN `0x80017030`, computing the outer
   decrement and object pointer before the zero-count guard reproduces retail's
-  second `tmd_state.current_asset` load. The unused 8-byte frame and the entry
+  second `tmd_state.current_tmd` load. The unused 8-byte frame and the entry
   branch/decrement schedule remain unattributed; the current complete semantic
   source is 98.333336% after all internal jump referents were reviewed.
 
@@ -345,7 +345,7 @@ Historical observations:
   un-hoisted body at once -- the open scheduler-attribution residue.
 
 - `func_8001de18` `0x8001de18` (13%): a base-sharing divergence that turned out
-  **not** to be the dominant one. Retail holds `&tmd_state.current_asset`
+  **not** to be the dominant one. Retail holds `&tmd_state.current_tmd`
   (`tmd_state+0x20`) in one register and forms the projected-vertex buffer as
   `base+488` and the ordering-table pointer as `(buffer-756)`, materialised
   from a single relocation. Because gcc shares a base register only across
@@ -378,7 +378,7 @@ mechanisms exceed what the linked bytes alone establish. The later
 regressions under the current probe and the narrower field relationships that
 have been verified. The complete original object boundary remains unresolved.
 
-The base-register arithmetic in `func_8001de18` (`&tmd_state.current_asset`
+The base-register arithmetic in `func_8001de18` (`&tmd_state.current_tmd`
 reaching `display_state.ordering_table` at `-756` off the `+488` buffer
 pointer) and in the display initializer `func_8001bb94` (`&draw_env[0].dtd`
 reaching `disp_env[0]` at `+162` and `render_state.fog_near_distance` at
@@ -398,7 +398,7 @@ from `display_state` (size `0x20024`), so GAME's `display_state` shrinks to
 | `+0x0004` | `0x80090ec0` | `draw_environments[2]` (`DRAWENV`) | `display_draw_environments` |
 | `+0x00bc` | `0x80090f78` | `disp_environments[2]` (`DISPENV`) | `display_disp_environments` |
 | `+0x00e4` | `0x80090fa0` | 8-byte gap | (unmodelled) |
-| `+0x00ec` | `0x80090fa8` | `tmd_state` (`current_asset` at `+0x10c`) | `tmd_state` |
+| `+0x00ec` | `0x80090fa8` | `tmd_state` (`current_tmd` at `+0x10c`) | `tmd_state` |
 | `+0x0110` | `0x80090fcc` | `asset_registry_entries[60]` | `asset_registry_entries` |
 | `+0x0200` | `0x800910bc` | `current_tmd_vertices` | `current_tmd_vertices` |
 | `+0x0204` | `0x800910c0` | `pool_records[12]` | `pool_records` |
@@ -1210,7 +1210,7 @@ Source shapes that were load-bearing:
 | a single callee-saved base (`s5`) holds `DAT_800652a8` for the whole body; the build loop strength-reduces `inv[code]` into an advancing temp | index a stable base pointer (`inv = DAT_800652a8; inv[code]`, `inv[selection]--`) rather than an advancing `inv++`, so the exit decrement keeps the base alive across the calls | `func_800249a8` (5.7% -> 91.5%) |
 | catalogue read filtered to the "no card" path via `beq result,1` sharing the fall-through into the menu | write `if (read_catalog(..) != 1) { nodata; return -1; }` (the negated test), not `if (== 1) { menu } else { nodata }` | `func_8002552c`, `func_800250c4` |
 | Three `KfSaveSlotSummary` rows at `sp+16`; the load panel's confirm reads `summaries[cursor].current_hp` (offset 8) for slot occupancy | the 24-byte summary with six `u32` fields, three of them (`0x48` bytes, matching the save panel's `memset(.., 0, sizeof)`) | both save/load panels |
-| the seven equipment ids share one base register with byte offsets `0, 0x2c..0x31` | use the known complete `KfPlayerState *player` and named equipment fields; this preserves a shared base but currently chooses the object start rather than retail's `+0x64` base. Do not index across scalar members to force an interior base. | `menu_drop_item`; [typed-field result](game-drop-item-flow.md#typed-field-follow-up-result-at-45dede3) |
+| the seven equipment ids share one base register with byte offsets `0, 0x2c..0x31` | use the known complete `KfPlayerState *player` and named equipment fields; this preserves a shared base but currently chooses the object start rather than retail's `+0x64` base. Do not index across scalar members to force an interior base. | `menu_drop_item_panel`; [typed-field result](game-drop-item-flow.md#typed-field-follow-up-result-at-45dede3) |
 
 Historical residue hypotheses, not established compiler limitations. The
 linked follow-ups supersede the original claims where source gaps were found:

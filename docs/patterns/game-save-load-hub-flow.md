@@ -2,7 +2,7 @@
 
 ## Function Match Plan at `8c1ad49`
 
-GAME `80024e64 menu_save_load_hub`, 608 bytes, belongs to the contiguous
+GAME `80024e64 menu_system_panel`, 608 bytes, belongs to the contiguous
 four-function `game.menu_item_drop` unit. Its current strict score is
 93.611840%; a fresh pinned `probe-gcc257-o2-g0` compile reproduces the
 remaining dispatch, confirmation and return differences. The three unit

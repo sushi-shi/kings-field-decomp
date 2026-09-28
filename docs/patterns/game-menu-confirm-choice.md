@@ -56,11 +56,11 @@ dialog files and update the changed renderer/pickup accounting.
 | `0x8002317c / 1328` | `menu_magic_panel` | 100.000000% |
 | `0x800238d8 / 1476` | `menu_equip_select` | 100.000000% |
 | `0x80023e9c / 1136` | `menu_spell_select` | 99.542250% |
-| `0x800249a8 / 1212` | `menu_drop_item` | 99.547850% |
-| `0x80024e64 / 608` | `menu_save_load_hub` | 100.000000% |
+| `0x800249a8 / 1212` | `menu_drop_item_panel` | 99.547850% |
+| `0x80024e64 / 608` | `menu_system_panel` | 100.000000% |
 | `0x800250c4 / 1128` | `menu_save_panel` | 100.000000% |
 | `0x8002552c / 880` | `menu_load_panel` | 100.000000% |
-| `0x80028380 / 852` | `menu_list_interact` | 100.000000% |
+| `0x80028380 / 852` | `menu_list_confirm` | 100.000000% |
 | `0x800286d4 / 576` | `menu_two_option_prompt` | 100.000000% |
 | `0x800291ec / 268` | `menu_draw_two_option` | 100.000000% |
 
@@ -107,7 +107,7 @@ symptoms of existing differences, without assigning an optimizer cause.
 | `shop_menu_sell` | `0x80021b28` | `move s2,zero` / `move s3,zero` |
 | `menu_use_item_panel` | `0x80022ccc` | `lhu v0,0x792(v0)` / `addiu v0,v0,0x792` |
 | `menu_spell_select` | `0x80023ec0` | `move s3,zero` / `move s4,zero` |
-| `menu_drop_item` | `0x800249cc` | `move s2,zero` / `move s3,zero` |
+| `menu_drop_item_panel` | `0x800249cc` | `move s2,zero` / `move s3,zero` |
 
 All 112 source/image variants were independently compiled before and after;
 allocated bytes, section alignment, runtime symbols and ordered relocations

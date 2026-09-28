@@ -11,7 +11,7 @@ LIBGPU/LIBGTE calls retain the curated vendor attribution and authentic ABI.
 
 | GAME function | Retail extent; strict baseline | Complete raw discrepancy |
 | --- | --- | --- |
-| `8001d730 render_enqueue_model` | 1768 bytes; 99.984160% | Seven operands exchange header/count slots: source 40/32, retail 32/40. Frame 96, fifteen calls, ten address pairs, five internal jumps and every other word agree. |
+| `8001d730 render_enqueue_tmd_retextured` | 1768 bytes; 99.984160% | Seven operands exchange header/count slots: source 40/32, retail 32/40. Frame 96, fifteen calls, ten address pairs, five internal jumps and every other word agree. |
 | `8001de18 render_enqueue_map` | 1048 bytes; 99.980920% | Five operands exchange header/normal-base slots: source 32/24, retail 24/32. Frame 80, sixteen calls, six address pairs, one internal jump and every other word agree. |
 
 Model retains `void(u16, s16)`, map `void(u16)`. Counts and header words are

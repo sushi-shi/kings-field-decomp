@@ -26,7 +26,7 @@ enum {
  *
  * map_refresh_dialogue_stages refreshes the stage of every active map event.
  * map_load_floor loads the current floor:
- * map_resources_load, the world-state restore, the event refresh, effect5_texture_cache_prepare,
+ * map_resources_load, the world-state restore, the event refresh, render_prepare_actor_textures,
  * then copies colour_matrix_table[3] into the render lighting matrix.
  */
 
@@ -228,8 +228,8 @@ void map_load_floor(void)
                        player_state.map_variant);
     map_restore_floor_state();
     map_refresh_dialogue_stages();
-    effect5_texture_cache_prepare(player_state.progress_state.current_floor);
-    game_graphics_runtime.render_state.effect_color_matrix
+    render_prepare_actor_textures(player_state.progress_state.current_floor);
+    game_graphics_runtime.render_state.hud_model_color_matrix
         = color_matrix_table[KF_ENUM_ENCODE(s32, KF_GAME_COLOR_WHITE)];
 }
 

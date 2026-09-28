@@ -184,7 +184,7 @@ Separately, the dispatcher returns -1 when the image loader reports failure
 one and forwards every other loader result, including successful zero.
 The image selection and function result are distinct contracts.
 
-`menu_load_item_texture` uses a different contract: it adds one to its
+`menu_load_texture` uses a different contract: it adds one to its
 argument before constructing the same filename family. Consequently menu
 indices 103, 104, 105 and 114 select images M104 (loading), M105 (saving),
 M106 (formatting) and M115 (confirmation). Direct message IDs must not be

@@ -2,7 +2,7 @@
 
 ## Function Match Plan
 
-At `2b86c6b`, give the byte state fields of `KfHudSprite` and `KfEffectSprite`
+At `2b86c6b`, give the byte state fields of `KfHudSprite` and `KfHudModel`
 separate enum domains. Reuse the existing HUD HIDDEN=0, VISIBLE=1 and END=255
 names. Give the effect table its own HIDDEN=0, ACTIVE=1 and END=255 values.
 The authored end row uses 255, but effect traversal stops at every non-one
@@ -45,8 +45,8 @@ Refresh the complete four-file rendering ledger and source counts.
 | `0x80018880 / 6684` | `player_update` | 96.945540% |
 | `0x8001e480 / 364` | `render_screen_sprite` | 100.000000% |
 | `0x8001f798 / 280` | `render_weapon` | 100.000000% |
-| `0x8001f8b0 / 292` | `render_effect_sprites` | 100.000000% |
-| `0x8001f9d4 / 112` | `render_hud_gauges` | 100.000000% |
+| `0x8001f8b0 / 292` | `render_hud_models` | 100.000000% |
+| `0x8001f9d4 / 112` | `render_hud_sprites` | 100.000000% |
 | `0x8001fde4 / 1304` | `render_frame` | 100.000000% |
 | `0x800205d4 / 932` | `render_bind_animated_instance` | 100.000000% |
 
@@ -78,8 +78,8 @@ instruction words, including delay slots.
 | `player_update` | 96.945540% | Partial, unchanged |
 | `render_screen_sprite` | 100.000000% | Exact, unchanged |
 | `render_weapon` | 100.000000% | Exact, unchanged |
-| `render_effect_sprites` | 100.000000% | Exact, unchanged |
-| `render_hud_gauges` | 100.000000% | Exact, unchanged |
+| `render_hud_models` | 100.000000% | Exact, unchanged |
+| `render_hud_sprites` | 100.000000% | Exact, unchanged |
 | `render_frame` | 100.000000% | Exact, unchanged |
 | `render_bind_animated_instance` | 100.000000% | Exact, unchanged |
 

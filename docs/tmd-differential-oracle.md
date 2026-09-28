@@ -12,7 +12,7 @@ nix develop --command python -m scripts.kf.tmd_oracle
 
 This is not a game or overlay launch. The runner maps the verified GAME load
 image into a zeroed 2 MiB PSX RAM model, supplies one TMD payload and the
-`current_asset` pointer, enters the function directly, and stops at a sentinel
+`current_tmd` pointer, enters the function directly, and stops at a sentinel
 return address or an instruction limit. The shared `parser_machine` also
 guards writes and code fetches and audits executed load-delay dependencies.
 No BIOS, CD, GPU, audio, callbacks, or game loop execute.
@@ -21,7 +21,7 @@ The candidate's function bytes and compiler-emitted `.rodata` switch table are
 read from the ELF object and relocated at runtime. Both the older `tmd_state`
 identity and the complete `graphics_context` owner are accepted whether they
 are undefined references or definitions in an owned `.bss` section, but both
-must resolve to the retail `current_asset` field at `0x80090fc8`. Unsupported
+must resolve to the retail `current_tmd` field at `0x80090fc8`. Unsupported
 or unresolved relocation forms fail closed.
 
 By default the oracle discovers resource bytes only below the locally

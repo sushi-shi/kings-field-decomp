@@ -32,7 +32,7 @@ No new size assertions, per-spell tests or banking claims.
 | `0x80020cfc / 1500` | `item_load_database` | 99.746666 | Control: STAT.DAT spell rows immediately follow eighty 20-byte item rows; nine rows at offset 0x1318, names and runtime records share menu indices. |
 | `0x8002317c / 1328` | `menu_magic_panel` | 95.89759 | Instant IDs 0..3; learned byte must equal 1. Preserve MP debit, HP halfword stores/cap and exact keep-masks 3/12; panel result also represents cancellation. |
 | `0x80023e9c / 1136` | `menu_spell_select` | 98.06338 | Ranged IDs 4..8, ten-halfword name stride; selected ID remains byte storage, none=255, selection result remains signed. |
-| `0x8002718c / 2104` | `menu_draw_name_list` | 100.0 | Control: selected byte indexes the nine-row spell bank, excluding none=255. |
+| `0x8002718c / 2104` | `menu_draw_equipment_names` | 100.0 | Control: selected byte indexes the nine-row spell bank, excluding none=255. |
 | `0x800151cc / 740` | `game_state_initialize` | 100.0 | Starting selected spell ID8 is Light Needle; keep all stock and state initialization order. |
 | `0x80015714 / 2068` | `player_recalculate_combat_stats` | 100.0 | Dispoison learns at base magic37 with Healing known; Fire Wall at70, Lightning Bolt at75. Keep learned-byte conditions and notification calls. |
 | `0x800167e4 / 100` | `player_select_magic` | 100.0 | Control: low-byte O32 input stored at player+5c; none clears pointer; other IDs index 20-byte magic records. |

@@ -57,13 +57,13 @@ refresh the existing complete detail ledger and source-wide accounting.
 | `0x80021538 / 1476` | `shop_menu_buy` | 99.769646% | 21 / 35 |
 | `0x80021afc / 1280` | `shop_menu_sell` | 99.609375% | 20 / 36 |
 | `0x80022608 / 1908` | `menu_use_item_panel` | 99.482180% | 24 / 48 |
-| `0x800249a8 / 1212` | `menu_drop_item` | 99.547850% | 20 / 36 |
+| `0x800249a8 / 1212` | `menu_drop_item_panel` | 99.547850% | 20 / 36 |
 | `0x800279c4 / 440` | `menu_item_model_preview` | 98.181816% | 10 / 2 |
 | `0x80027b7c / 732` | `menu_draw_item_detail` | 92.207650% | 17 / 3 |
-| `0x80027e58 / 72` | `menu_add_marker_quad` | 100.000000% | 1 / 0 |
-| `0x80027ea0 / 68` | `menu_add_frame_quad` | 100.000000% | 1 / 0 |
-| `0x80027ee4 / 1180` | `menu_draw_dialog_frame` | 100.000000% | 27 / 7 |
-| `0x80028380 / 852` | `menu_list_interact` | 100.000000% | 21 / 28 |
+| `0x80027e58 / 72` | `menu_add_magic_artwork_quad` | 100.000000% | 1 / 0 |
+| `0x80027ea0 / 68` | `menu_add_message_image_quad` | 100.000000% | 1 / 0 |
+| `0x80027ee4 / 1180` | `menu_draw_save_slots` | 100.000000% | 27 / 7 |
+| `0x80028380 / 852` | `menu_list_confirm` | 100.000000% | 21 / 28 |
 | `0x80029de0 / 1328` | `menu_draw_string` | 100.000000% | 6 / 12 |
 | `0x8002a310 / 512` | `menu_draw_number` | 100.000000% | 2 / 2 |
 | `0x8002adf8 / 172` | `menu_format_number` | 100.000000% | 0 / 8 |
@@ -110,7 +110,7 @@ The six partial GAME controls keep their first raw difference:
 | `shop_menu_buy` | `80021568` | `li s2,-99` / `li s1,-99` |
 | `shop_menu_sell` | `80021b28` | `move s2,zero` / `move s3,zero` |
 | `menu_use_item_panel` | `80022ccc` | `lhu v0,0x792(v0)` / `addiu v0,v0,0x792` |
-| `menu_drop_item` | `800249cc` | `move s2,zero` / `move s3,zero` |
+| `menu_drop_item_panel` | `800249cc` | `move s2,zero` / `move s3,zero` |
 | `menu_item_model_preview` | `80027a88` | `sll v0,v0,2` / `lui v1,0x8006` |
 | `menu_draw_item_detail` | `80027b9c` | `move s4,a1` / `move s2,a1` |
 
@@ -130,13 +130,13 @@ artifact failures. No compiler-control tests or size assertions were added.
 | `shop_menu_buy` | 99.769646% | Partial, unchanged |
 | `shop_menu_sell` | 99.609375% | Partial, unchanged |
 | `menu_use_item_panel` | 99.482180% | Partial, unchanged |
-| `menu_drop_item` | 99.547850% | Partial, unchanged |
+| `menu_drop_item_panel` | 99.547850% | Partial, unchanged |
 | `menu_item_model_preview` | 98.181816% | Partial, unchanged |
 | `menu_draw_item_detail` | 92.207650% | Partial, unchanged |
-| `menu_add_marker_quad` | 100.000000% | Exact, unchanged |
-| `menu_add_frame_quad` | 100.000000% | Exact, unchanged |
-| `menu_draw_dialog_frame` | 100.000000% | Exact, unchanged |
-| `menu_list_interact` | 100.000000% | Exact, unchanged |
+| `menu_add_magic_artwork_quad` | 100.000000% | Exact, unchanged |
+| `menu_add_message_image_quad` | 100.000000% | Exact, unchanged |
+| `menu_draw_save_slots` | 100.000000% | Exact, unchanged |
+| `menu_list_confirm` | 100.000000% | Exact, unchanged |
 | `menu_draw_string` | 100.000000% | Exact, unchanged |
 | `menu_draw_number` | 100.000000% | Exact, unchanged |
 | `menu_format_number` | 100.000000% | Exact, unchanged |

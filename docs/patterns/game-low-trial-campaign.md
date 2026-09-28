@@ -1099,7 +1099,7 @@ failures. `map_object_probe_door_closing` is banked at strict 100%.
 ## Statistics header: shared row-step value
 
 Function Match Plan at `222f381b`: GAME `80025f38`, 1440 retail bytes / 1428
-source bytes, strict 97.977776%, unit `game.menu_draw_stats_header`. Fresh
+source bytes, strict 97.977776%, unit `game.menu_draw_status_summary`. Fresh
 hash-verified evidence includes all six semantic views, the complete 360-word
 retail body, three proven no-argument callers, 28 proven calls, 36 validated
 data-address pairs, two internal jumps, nineteen CFG blocks, nine branches,
@@ -1652,7 +1652,7 @@ Only three linked words differ: after forming `item_id * 5`, retail
 materializes `item_name_rows` before the final shift by two, while the probe
 finishes `item_id * 20` first. Earlier row, direct-index, early-selection,
 cursor, loop and inline-boundary controls left this order unchanged. The
-related `menu_draw_item_name_frame` has since established a new supported
+related `menu_draw_pickup_preview` has since established a new supported
 source fact: a named pointer to the complete row table restores this exact
 split-shift/address schedule while preserving the same typed row consumer.
 

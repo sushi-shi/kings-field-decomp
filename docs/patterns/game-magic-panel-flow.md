@@ -8,7 +8,7 @@ during the initial read-only evidence pass; preserve its explicit enum
 boundary. No source edits preceded this plan.
 
 Target GAME `8002317c menu_magic_panel`, 1328 bytes, strict 95.897590%.
-Its sole unit neighbor `800236ac menu_option_root`, 556 bytes, is strict 100%
+Its sole unit neighbor `800236ac menu_equipment_root`, 556 bytes, is strict 100%
 and must remain unchanged. Preserve the unit's eight-row option switch table
 at `RODATA(0x800122f0, 0x20)` and all existing data owners.
 

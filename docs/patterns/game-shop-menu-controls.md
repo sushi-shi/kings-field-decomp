@@ -52,7 +52,7 @@ tests. Refresh complete item literal accounting after the substitutions.
 | `0x80021538 / 1476` | `shop_menu_buy` | 99.769646% |
 | `0x80021afc / 1280` | `shop_menu_sell` | 99.609375% |
 | `0x80027b7c / 732` | `menu_draw_item_detail` | 92.207650% |
-| `0x80028380 / 852` | `menu_list_interact` | 100.000000% |
+| `0x80028380 / 852` | `menu_list_confirm` | 100.000000% |
 | `0x80028914 / 348` | `menu_draw_window` | 87.540230% |
 | `0x80028a70 / 1916` | `menu_list_render` | 100.000000% |
 | `0x8002ad6c / 140` | `menu_list_init` | 100.000000% |

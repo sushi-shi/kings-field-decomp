@@ -106,7 +106,7 @@ Percentages are strict objdiff results; every row below 100% remains open.
 | `800186c4` | `player_death_update_reverse_fade` | 100.000000 | 100.000000 | Exact preserved |
 | `800187a4` | `lighting_apply_shadow_blade_environment` | 100.000000 | 100.000000 | Exact preserved |
 | `8001b7b0` | `display_show_error_screen` | 100.000000 | 100.000000 | Exact preserved |
-| `8001bae4` | `effect5_texture_cache_prepare` | 100.000000 | 100.000000 | Exact preserved |
+| `8001bae4` | `render_prepare_actor_textures` | 100.000000 | 100.000000 | Exact preserved |
 | `8001bb94` | `display_initialize` | 94.253010 | 98.421684 | Open |
 | `8001bce0` | `render_initialize` | 100.000000 | 100.000000 | Exact preserved |
 | `8001bfb8` | `display_begin_frame` | 100.000000 | 100.000000 | Exact preserved |
@@ -119,10 +119,10 @@ Percentages are strict objdiff results; every row below 100% remains open.
 | `8001c2b0` | `tmd_prepare_primitive_indices` | 100.000000 | 100.000000 | Exact preserved |
 | `8001c5b0` | `tmd_register` | 100.000000 | 100.000000 | Exact preserved |
 | `8001c60c` | `tmd_project_vertices` | 100.000000 | 100.000000 | Exact preserved |
-| `8001c6a8` | `tmd_project_vertices_shift` | 100.000000 | 100.000000 | Exact preserved |
+| `8001c6a8` | `tmd_project_vertices_depth_shift` | 100.000000 | 100.000000 | Exact preserved |
 | `8001c754` | `tmd_transform_vertices` | 100.000000 | 100.000000 | Exact preserved |
 | `8001c7f8` | `render_enqueue_tmd` | 98.932236 | 99.314170 | Open |
-| `8001d730` | `render_enqueue_model` | 93.126690 | 99.984160 | Open |
+| `8001d730` | `render_enqueue_tmd_retextured` | 93.126690 | 99.984160 | Open |
 | `8001de18` | `render_enqueue_map` | 98.770996 | 99.980920 | Open |
 | `8001e230` | `render_enqueue_sprite` | 93.972980 | 100.000000 | New exact |
 | `8001e480` | `render_screen_sprite` | 100.000000 | 100.000000 | Exact preserved |
@@ -131,10 +131,10 @@ Percentages are strict objdiff results; every row below 100% remains open.
 | `8001e9a4` | `render_actor` | 94.751880 | 100.000000 | New exact |
 | `8001ebb8` | `render_map_object` | 100.000000 | 100.000000 | Exact preserved |
 | `8001ed90` | `render_floor_item` | 100.000000 | 100.000000 | Exact preserved |
-| `8001eedc` | `render_actor_sprite` | 100.000000 | 100.000000 | Exact preserved |
+| `8001eedc` | `render_effect` | 100.000000 | 100.000000 | Exact preserved |
 | `8001f0c4` | `render_map_event` | 100.000000 | 100.000000 | Exact preserved |
 | `8001f218` | `render_entities` | 97.380684 | 96.667610 | Open |
-| `8001f8b0` | `render_effect_sprites` | 100.000000 | 100.000000 | Exact preserved |
+| `8001f8b0` | `render_hud_models` | 100.000000 | 100.000000 | Exact preserved |
 | `8001fa44` | `notify_enqueue` | 100.000000 | 100.000000 | Exact preserved |
 | `8001fafc` | `notify_effect_update` | 99.385475 | 99.385475 | Open |
 | `8001fdc8` | `display_flip_buffer_index` | 100.000000 | 100.000000 | Exact preserved |
@@ -153,23 +153,23 @@ Percentages are strict objdiff results; every row below 100% remains open.
 | `80020b4c` | `item_load_floor_placements` | 98.888885 | 100.000000 | New exact |
 | `80022d7c` | `menu_map_viewer` | 100.000000 | 100.000000 | Exact preserved |
 | `80025da0` | `menu_config_panel_draw` | 100.000000 | 100.000000 | Exact preserved |
-| `80025f38` | `menu_draw_stats_header` | 97.991670 | 97.991670 | Open |
+| `80025f38` | `menu_draw_status_summary` | 97.991670 | 97.991670 | Open |
 | `800264d8` | `menu_draw_status_details` | 98.431730 | 98.431730 | Open |
-| `8002718c` | `menu_draw_name_list` | 100.000000 | 100.000000 | Exact preserved |
+| `8002718c` | `menu_draw_equipment_names` | 100.000000 | 100.000000 | Exact preserved |
 | `800279c4` | `menu_item_model_preview` | 98.181816 | 98.181816 | Open |
 | `80027b7c` | `menu_draw_item_detail` | 98.579230 | 98.579230 | Open |
-| `80027e58` | `menu_add_marker_quad` | 100.000000 | 100.000000 | Exact preserved |
-| `80027ea0` | `menu_add_frame_quad` | 100.000000 | 100.000000 | Exact preserved |
-| `80027ee4` | `menu_draw_dialog_frame` | 100.000000 | 100.000000 | Exact preserved |
+| `80027e58` | `menu_add_magic_artwork_quad` | 100.000000 | 100.000000 | Exact preserved |
+| `80027ea0` | `menu_add_message_image_quad` | 100.000000 | 100.000000 | Exact preserved |
+| `80027ee4` | `menu_draw_save_slots` | 100.000000 | 100.000000 | Exact preserved |
 | `80028914` | `menu_draw_window` | 87.540230 | 87.540230 | Open |
 | `80028a70` | `menu_list_render` | 100.000000 | 100.000000 | Exact preserved |
 | `800291ec` | `menu_draw_two_option` | 100.000000 | 100.000000 | Exact preserved |
-| `800292f8` | `menu_draw_item_name_frame` | 95.376520 | 95.376520 | Open |
+| `800292f8` | `menu_draw_pickup_preview` | 95.376520 | 95.376520 | Open |
 | `8002a510` | `menu_draw_window_backdrop` | 99.971760 | 99.971760 | Open |
 | `8002abb4` | `menu_frame_begin` | 100.000000 | 100.000000 | Exact preserved |
 | `8002ac34` | `menu_present_frame` | 100.000000 | 100.000000 | Exact preserved |
-| `8002ad1c` | `primitive_buffer_commit_poly_ft4` | 100.000000 | 100.000000 | Exact preserved |
-| `8002af48` | `menu_load_item_texture` | 100.000000 | 100.000000 | Exact preserved |
+| `8002ad1c` | `menu_commit_poly_ft4` | 100.000000 | 100.000000 | Exact preserved |
+| `8002af48` | `menu_load_texture` | 100.000000 | 100.000000 | Exact preserved |
 | `8002c5e0` | `menu_load_message_image` | 100.000000 | 100.000000 | Exact preserved |
 | `8002c794` | `screen_show_image_until_input` | 100.000000 | 100.000000 | Exact preserved |
 | `80034438` | `map_floor2_event_transfer_fade` | 100.000000 | 100.000000 | Exact preserved |

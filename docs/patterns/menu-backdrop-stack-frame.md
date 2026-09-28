@@ -11,7 +11,7 @@ instructions.  Only the frame differs: retail reserves 104 bytes and saves
 functions, menu asset structures, SDK providers, source history and current
 unit diff were refreshed.  There are no strings or candidate references.
 
-The adjacent `800292f8 menu_draw_item_name_frame` has the same 64-byte frame
+The adjacent `800292f8 menu_draw_pickup_preview` has the same 64-byte frame
 deficit (224 retail versus 160 probe); fourteen other functions in
 `game.menu_runtime` are exact. This repeated, function-selective extent
 motivates a shared local-object lifetime hypothesis but does not establish

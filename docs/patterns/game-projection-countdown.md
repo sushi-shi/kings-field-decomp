@@ -18,7 +18,7 @@ perspective and low-halfword depth stores. Its first differing word is the
 countdown destination (`s0` in retail, `s1` in the probe); the output-depth
 pointer takes the opposite register. Other instructions and referents agree.
 
-`GAME.EXE 0x8001c6a8 tmd_project_vertices_shift(s32 count, u8 shift)` is
+`GAME.EXE 0x8001c6a8 tmd_project_vertices_depth_shift(s32 count, u8 depth_shift)` is
 172 bytes, strict 98.953490%. Its sole caller `render_weapon` passes a word
 vertex count and shift 3. The same 64-byte frame, zero guard, countdown and
 pointer strides apply. It masks the shift to eight bits, loads full signed
@@ -56,7 +56,7 @@ full build and existing checks.
 
 Changing only the first loop to the parameter countdown makes
 `tmd_project_vertices` exact in the focused comparison. Applying the same
-source-lifetime change to the second loop makes `tmd_project_vertices_shift`
+source-lifetime change to the second loop makes `tmd_project_vertices_depth_shift`
 exact as well. The recorded rebuild confirms strict objdiff **100%** for
 both: 156 bytes / 39 raw words and 172 bytes / 43 raw words respectively.
 

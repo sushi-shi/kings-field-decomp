@@ -2,7 +2,7 @@
 
 ## Function Match Plan
 
-GAME `0x800236ac menu_option_root`, 556 bytes, `game.menu_panels`, existing
+GAME `0x800236ac menu_equipment_root`, 556 bytes, `game.menu_panels`, existing
 `probe-gcc257-o2-g0`. At `ded8b15`, strict objdiff is 98.848920%; compiled
 text is 560 bytes. The six semantic views, caller, adjacent functions,
 callee interfaces, shared types, raw object streams and source history were

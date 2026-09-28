@@ -59,7 +59,7 @@ globals in ascending order, with consumers using the existing typed externs.
 The seven menu_list_init call windows constrain (window, row) to (7,0), (7,1),
 (0,0), (0,1), (1,equipment choice), (1,1), and (0,4), respectively. The call
 sites are 80021580, 80021b44, 80022648, 800231bc, 80023a80, 80023fac, 800249e8.
-Immediate neighbors are primitive_buffer_commit_poly_ft4 and menu_format_number.
+Immediate neighbors are menu_commit_poly_ft4 and menu_format_number.
 The initializer copies ten `lhu`/`sh` halfwords, not four halfwords from an
 eight-byte object. Its final `sb` at 8002adf4 is the return delay slot and writes
 glyph capacity 8. Fields at +32/+36 are untouched. The old DAT_80058494 extern

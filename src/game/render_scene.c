@@ -20,7 +20,7 @@ void render_entities(void)
     KfMapObject *object;
     KfActor *actor;
     KfMapEvent *event;
-    KfEffectRecord *sprite;
+    KfEffectRecord *effect;
     s16 i;
     MATRIX *effect_light_matrix;
     u16 *active_tpage;
@@ -112,29 +112,29 @@ void render_entities(void)
         }
     }
 
-    /* Actor sprites. */
+    /* Effects. */
     SetLightMatrix(effect_light_matrix);
-    sprite = effect_state.records;
-    for (i = KF_EFFECT_CAPACITY - 1; i != -1; sprite++, i--) {
-        if (sprite->type == KF_EFFECT_SLOT_FREE || sprite->render_id.model == KF_EFFECT_MODEL_NONE) {
+    effect = effect_state.records;
+    for (i = KF_EFFECT_CAPACITY - 1; i != -1; effect++, i--) {
+        if (effect->type == KF_EFFECT_SLOT_FREE || effect->render_id.model == KF_EFFECT_MODEL_NONE) {
             continue;
         }
         {
             const KfCellWindow *g;
 
-            row = (sprite->position.vz / KF_MAP_TILE_SIZE) - window_origin_z;
+            row = (effect->position.vz / KF_MAP_TILE_SIZE) - window_origin_z;
             g = game_graphics_runtime.active_cell_window;
             if (row < g->height) {
-                col = (sprite->position.vx / KF_MAP_TILE_SIZE) - window_origin_x;
+                col = (effect->position.vx / KF_MAP_TILE_SIZE) - window_origin_x;
                 if (col < g->width && g->cells[row * g->width + col] != KF_CELL_WINDOW_HIDDEN) {
-                    render_actor_sprite(sprite);
+                    render_effect(effect);
                 }
             }
         }
     }
 
     /* Map events. */
-    SetLightMatrix(&game_graphics_runtime.render_state.light_matrix_copy);
+    SetLightMatrix(&game_graphics_runtime.render_state.map_event_light_matrix);
     event = map_runtime_state.events;
     for (i = KF_MAP_EVENT_CAPACITY - 1; i != -1; i--) {
         if (event->state == KF_MAP_EVENT_ACTIVE) {

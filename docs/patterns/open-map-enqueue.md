@@ -354,7 +354,7 @@ Only the five exact projection controls are re-banked, not the map renderer
 or its partial caller.
 
 The all-image historical strict audit still flags four pre-existing GAME
-partial rows: `render_enqueue_model`, `render_enqueue_map`, `render_entities`
+partial rows: `render_enqueue_tmd_retextured`, `render_enqueue_map`, `render_entities`
 and `notify_effect_update`. Every existing function's size and score was
 compared with the pre-edit reports and is unchanged; these historical
 high-water discrepancies were not introduced or re-banked by this campaign.
