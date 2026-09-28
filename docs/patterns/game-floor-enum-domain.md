@@ -41,7 +41,7 @@ including delay slots, with no promotion of partial functions to exact.
 | `map_resource_path_set_floor` | `0x8001b390 / 20` | 100.000000% | 0 / 0 | Propagate the floor domain at existing fields/API boundaries; preserve instructions and referents. |
 | `audio_play_current_map_sequence` | `0x8001b49c / 188` | 100.000000% | 1 / 7 | Propagate the floor domain at existing fields/API boundaries; preserve instructions and referents. |
 | `map_resources_load` | `0x8001b558 / 600` | 100.000000% | 31 / 1 | Propagate the floor domain at existing fields/API boundaries; preserve instructions and referents. |
-| `effect5_texture_cache_prepare` | `0x8001bae4 / 176` | 100.000000% | 6 / 1 | Propagate the floor domain at existing fields/API boundaries; preserve instructions and referents. |
+| `render_prepare_actor_textures` | `0x8001bae4 / 176` | 100.000000% | 6 / 1 | Propagate the floor domain at existing fields/API boundaries; preserve instructions and referents. |
 | `menu_map_viewer` | `0x80022d7c / 1024` | 100.000000% | 17 / 9 | Propagate the floor domain at existing fields/API boundaries; preserve instructions and referents. |
 | `menu_draw_status_summary` | `0x80025f38 / 1440` | 97.991670% | 28 / 9 | Propagate the floor domain at existing fields/API boundaries; preserve instructions and referents. |
 | `menu_draw_save_slots` | `0x80027ee4 / 1180` | 100.000000% | 27 / 7 | Propagate the floor domain at existing fields/API boundaries; preserve instructions and referents. |
@@ -117,7 +117,7 @@ direct calls and 465 address materializations. The 26 exact controls retain
 | `map_resource_path_set_floor` | 100.000000% | Exact, unchanged |
 | `audio_play_current_map_sequence` | 100.000000% | Exact, unchanged |
 | `map_resources_load` | 100.000000% | Exact, unchanged |
-| `effect5_texture_cache_prepare` | 100.000000% | Exact, unchanged |
+| `render_prepare_actor_textures` | 100.000000% | Exact, unchanged |
 | `menu_map_viewer` | 100.000000% | Exact, unchanged |
 | `menu_draw_status_summary` | 97.991670% | Partial, unchanged |
 | `menu_draw_save_slots` | 100.000000% | Exact, unchanged |

@@ -24,7 +24,7 @@ void player_death_apply_visual_fade(const MATRIX *color_from, s32 blend)
 {
     lighting_set_color_matrix(color_from, &color_matrix_table[KF_ENUM_ENCODE(s32, KF_GAME_COLOR_BLACK)], blend);
     matrix_interpolate(&color_matrix_table[KF_ENUM_ENCODE(s32, KF_GAME_COLOR_WHITE)],
-        &color_matrix_table[KF_ENUM_ENCODE(s32, KF_GAME_COLOR_BLACK)], &game_graphics_runtime.render_state.effect_color_matrix, blend);
+        &color_matrix_table[KF_ENUM_ENCODE(s32, KF_GAME_COLOR_BLACK)], &game_graphics_runtime.render_state.hud_model_color_matrix, blend);
     fog_interpolate_near(player_death_saved_fog_near, 0, blend);
     game_graphics_runtime.hud_brightness = ((blend * -KF_HUD_DEFAULT_BRIGHTNESS) >> KF_FIXED12_BITS)
         + KF_HUD_DEFAULT_BRIGHTNESS;
@@ -79,7 +79,7 @@ void player_death_update_reverse_fade(void)
     lighting_set_color_matrix(&color_matrix_table[KF_ENUM_ENCODE(s32, KF_GAME_COLOR_BLACK)],
         &color_matrix_table[KF_ENUM_ENCODE(s32, KF_GAME_COLOR_DEFAULT)], *blend);
     matrix_interpolate(&color_matrix_table[KF_ENUM_ENCODE(s32, KF_GAME_COLOR_BLACK)],
-        &color_matrix_table[KF_ENUM_ENCODE(s32, KF_GAME_COLOR_WHITE)], &game_graphics_runtime.render_state.effect_color_matrix, *blend);
+        &color_matrix_table[KF_ENUM_ENCODE(s32, KF_GAME_COLOR_WHITE)], &game_graphics_runtime.render_state.hud_model_color_matrix, *blend);
     fog_interpolate_near(0, player_death_saved_fog_near, *blend);
     game_graphics_runtime.hud_brightness = (*blend * KF_HUD_DEFAULT_BRIGHTNESS) >> KF_FIXED12_BITS;
     *blend += PLAYER_DEATH_FADE_STEP;

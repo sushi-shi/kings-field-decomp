@@ -30,7 +30,7 @@ PAIRS = (
     (
         "GAME.EXE",
         0x8001BAE4,
-        "effect5_texture_cache_prepare",
+        "render_prepare_actor_textures",
         "void",
         "KfFloorId floor",
     ),
@@ -146,7 +146,7 @@ class DisplayTmdInventoryTests(unittest.TestCase):
         identities = load_data_identities(RETAIL_CONFIG)
         expected = {
             0x80057B58: "tmd_textured_primitive_color",
-            0x80057B5C: "model_textured_primitive_color",
+            0x80057B5C: "retextured_primitive_color",
         }
         for va, name in expected.items():
             row = identities[("GAME.EXE", va)]

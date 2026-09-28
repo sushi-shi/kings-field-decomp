@@ -43,7 +43,7 @@ selected string queries are empty.
 | GAME `tmd_project_vertices_shift` | `8001c6a8 / ac` | 100 | 4/2/2/1 | 100%; raw unchanged |
 | GAME `tmd_transform_vertices` | `8001c754 / a4` | 100 | 4/1/2/1 | 100%; raw unchanged |
 | GAME `render_enqueue_tmd` | `8001c7f8 / f38` | 99.3142 | 92/45/66/1 | Partial unchanged; raw unchanged |
-| GAME `render_enqueue_model` | `8001d730 / 6e8` | 100 | 41/15/30/1 | 100%; raw unchanged |
+| GAME `render_enqueue_tmd_retextured` | `8001d730 / 6e8` | 100 | 41/15/30/1 | 100%; raw unchanged |
 | GAME `render_enqueue_map` | `8001de18 / 418` | 100 | 20/16/14/1 | 100%; raw unchanged |
 | GAME `render_map_cell` | `8001e5ec / 250` | 99.8784 | 24/9/17/1 | Partial unchanged; raw unchanged |
 | OPEN `tmd_project_vertices` | `8001738c / cc` | 100 | 5/3/4/1 | 100%; raw unchanged |

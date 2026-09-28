@@ -157,7 +157,7 @@ trials leave that body byte-identical, not that it is banked or closed.
 | GAME / `8001e9a4` / `214` | `render_actor` | S034 | 100 → 100 |
 | GAME / `8001ebb8` / `180` | `render_map_object` | S035 | 100 → 100 |
 | GAME / `8001ed90` / `14c` | `render_floor_item` | S036 | 100 → 100 |
-| GAME / `8001eedc` / `1e8` | `render_actor_sprite` | S037, S038 | 100 → 100 |
+| GAME / `8001eedc` / `1e8` | `render_effect` | S037, S038 | 100 → 100 |
 | GAME / `8003a2a0` / `4c0` | `magic_cast` | S039, S040, S041 | 100 → 100 |
 | GAME / `8001f0c4` / `154` | `render_map_event` | S042 | 100 → 100 |
 | GAME / `800315c4` / `1c0` | `map_object_pool_find_interaction_from` | S043, S044 | 100 → 100 |

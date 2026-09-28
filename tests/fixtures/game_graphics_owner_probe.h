@@ -18,9 +18,9 @@ typedef struct KfGraphicsOwnerProbe {
     KfPoolRecord pool_records[12];
     KfScreenVertex tmd_projected_vertices[1000];
     SVECTOR morph_scratch[1001];
-    u16 effect5_texture_pages[3];
+    u16 actor_texture_pages[3];
     u8 unknown_241a6[10];
-    u16 effect5_texture_cluts[3];
+    u16 actor_texture_cluts[3];
     u8 unknown_241b6[10];
     u16 active_render_clut;
     u16 active_render_tpage;

@@ -117,7 +117,7 @@ excluded so the control changes no compiler settings.
 | `render_map_object` | `8001ebb8` | Exact control |
 | `menu_render_item_model` | `8001ed38` | Exact control |
 | `render_floor_item` | `8001ed90` | Exact control |
-| `render_actor_sprite` | `8001eedc` | Exact control |
+| `render_effect` | `8001eedc` | Exact control |
 | `render_map_event` | `8001f0c4` | Exact control |
 | `render_entities` | `8001f218` | 99.517044%, saved-register role residue |
 

@@ -21,7 +21,7 @@ All existing slot callers already use named constants.
 | GAME `render_enqueue_sprite` | 0x8001e230 / 0x250 | Word comparison at 0x8001e400 selects the arithmetic half-term at 0x8001e410 before NormalColorDpq. Five calls pass zero or one. Typed mode and named cue factor; primitive allocation, material references, coordinates and biased depth unchanged. |
 | OPEN `render_enqueue_sprite` | 0x800189a0 / 0x21c | Word comparison at 0x80018b3c selects the same shift/add at 0x80018b4c. Its sole caller passes one. Shared mode with the same predicate and signed arithmetic; the existing separate allocation and material owner remain. |
 | GAME `render_floor_item` | 0x8001ed90 / 0x14c | Calls 0x8001e230 with a2=1 at 0x8001ee94. The floor-item argument now names boosted depth cueing; position, facing, bias and animation updates stay intact. |
-| GAME `render_actor_sprite` | 0x8001eedc / 0x1e8 | Billboard path passes a2=0 at 0x8001effc. Names normal depth cueing without changing model-path selection or the zero depth bias. |
+| GAME `render_effect` | 0x8001eedc / 0x1e8 | Billboard path passes a2=0 at 0x8001effc. Names normal depth cueing without changing model-path selection or the zero depth bias. |
 | GAME `render_frame` | 0x8001fde4 / 0x518 | Notification calls at 0x80020230, 0x80020254 and 0x800202a0 all clear a2 in their delay slots. All three now use normal depth cueing; depth biases remain zero. |
 | OPEN `render_floor_item` | 0x800190f4 / 0x14c | Loads a2=1 at 0x800191dc before the call at 0x800191f8. Uses the boosted member while preserving its frame counter and facing branches. |
 | GAME `tmd_select` | 0x8001c0e8 / 0x2c | Masks a0 to 16 bits, scales by four, loads a slot and writes current_asset. Typed slot with explicit u16 array-index encoding. |

@@ -90,7 +90,7 @@ GAME.EXE	audio_play_current_map_sequence	0x8001b49c	0xbc	game.resources	100	exac
 GAME.EXE	map_resources_load	0x8001b558	0x258	game.resources	100	exact-preserved
 GAME.EXE	display_show_error_screen	0x8001b7b0	0x308	game.render	100	exact-preserved
 GAME.EXE	lighting_set_active_color_matrix	0x8001bab8	0x2c	game.render	100	exact-preserved
-GAME.EXE	effect5_texture_cache_prepare	0x8001bae4	0xb0	game.render	100	exact-preserved
+GAME.EXE	render_prepare_actor_textures	0x8001bae4	0xb0	game.render	100	exact-preserved
 GAME.EXE	display_initialize	0x8001bb94	0x14c	game.render	100	exact-preserved
 GAME.EXE	render_initialize	0x8001bce0	0x2d8	game.render	100	exact-preserved
 GAME.EXE	display_begin_frame	0x8001bfb8	0x98	game.render	100	exact-preserved
@@ -107,7 +107,7 @@ GAME.EXE	tmd_project_vertices	0x8001c60c	0x9c	game.render	100	exact-preserved
 GAME.EXE	tmd_project_vertices_shift	0x8001c6a8	0xac	game.render	100	exact-preserved
 GAME.EXE	tmd_transform_vertices	0x8001c754	0xa4	game.render	100	exact-preserved
 GAME.EXE	render_enqueue_tmd	0x8001c7f8	0xf38	game.render_enqueue	100	exact-preserved
-GAME.EXE	render_enqueue_model	0x8001d730	0x6e8	game.render_enqueue	100	exact-preserved
+GAME.EXE	render_enqueue_tmd_retextured	0x8001d730	0x6e8	game.render_enqueue	100	exact-preserved
 GAME.EXE	render_enqueue_map	0x8001de18	0x418	game.render_enqueue	100	exact-preserved
 GAME.EXE	render_enqueue_sprite	0x8001e230	0x250	game.render_enqueue	100	exact-preserved
 GAME.EXE	render_screen_sprite	0x8001e480	0x16c	game.render_sprite	100	exact-preserved
@@ -117,12 +117,12 @@ GAME.EXE	render_actor	0x8001e9a4	0x214	game.entity_model_render	100	exact-preser
 GAME.EXE	render_map_object	0x8001ebb8	0x180	game.entity_model_render	100	exact-preserved
 GAME.EXE	menu_render_item_model	0x8001ed38	0x58	game.entity_model_render	100	exact-preserved
 GAME.EXE	render_floor_item	0x8001ed90	0x14c	game.entity_render	100	exact-preserved
-GAME.EXE	render_actor_sprite	0x8001eedc	0x1e8	game.entity_render	100	exact-preserved
+GAME.EXE	render_effect	0x8001eedc	0x1e8	game.entity_render	100	exact-preserved
 GAME.EXE	render_map_event	0x8001f0c4	0x154	game.map_event_render	100	exact-preserved
 GAME.EXE	render_entities	0x8001f218	0x580	game.render_scene	100	exact-preserved
 GAME.EXE	render_weapon	0x8001f798	0x118	game.geometry_render	100	exact-preserved
-GAME.EXE	render_effect_sprites	0x8001f8b0	0x124	game.geometry_render	100	exact-preserved
-GAME.EXE	render_hud_gauges	0x8001f9d4	0x70	game.geometry_render	100	exact-preserved
+GAME.EXE	render_hud_models	0x8001f8b0	0x124	game.geometry_render	100	exact-preserved
+GAME.EXE	render_hud_sprites	0x8001f9d4	0x70	game.geometry_render	100	exact-preserved
 GAME.EXE	notify_enqueue	0x8001fa44	0xa0	game.geometry_render	100	exact-preserved
 GAME.EXE	notification_digit_set_v	0x8001fae4	0x18	game.geometry_render	100	exact-preserved
 GAME.EXE	notify_effect_update	0x8001fafc	0x2cc	game.geometry_render	100	exact-preserved

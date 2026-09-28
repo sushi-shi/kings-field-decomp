@@ -71,8 +71,8 @@ KF_ENUM_BEGIN(KfSpriteState, u8)
 KF_ENUM_END(KfSpriteState)
 
 enum {
-    KF_EFFECT_SPRITE_COMPASS = 0,
-    KF_EFFECT_SPRITE_TABLE_ROWS = 2
+    KF_HUD_MODEL_COMPASS = 0,
+    KF_HUD_MODEL_TABLE_ROWS = 2
 };
 
 enum {
@@ -93,10 +93,10 @@ typedef struct KfHudSprite {
 } KfHudSprite;
 
 /* Animated screen-facing model entry; only VISIBLE continues traversal. */
-typedef struct KfEffectSprite {
+typedef struct KfHudModel {
     KfSpriteState state;
     KfAnimationClip animation_clip;
-    u16 asset_variant;
+    u16 animation_phase;
     u16 scale;
     s16 translation_x;
     s16 translation_y;
@@ -105,7 +105,7 @@ typedef struct KfEffectSprite {
     SVECTOR rotation;
     u8 unknown_16[2];
     KfPoolRecord *animation_cache;
-} KfEffectSprite;
+} KfHudModel;
 
 /* Double-buffered GAME.EXE display state. */
 typedef struct KfDisplayState {
@@ -129,8 +129,8 @@ typedef struct KfRenderState {
     MATRIX view_matrix;
     MATRIX pitch_matrix;
     MATRIX light_matrix;
-    MATRIX light_matrix_copy;
-    MATRIX effect_color_matrix;
+    MATRIX map_event_light_matrix;
+    MATRIX hud_model_color_matrix;
     s32 fog_near_distance;
     VECTOR view_position;
     SVECTOR view_rotation;
@@ -142,7 +142,7 @@ extern MATRIX color_matrix_table[KF_GAME_COLOR_PRESET_COUNT];
 extern KfCellWindow render_cell_windows[KF_CELL_WINDOW_YAW_COUNT];
 extern KfSpriteQuad floor_item_sprites[KF_FLOOR_ITEM_SPRITE_COUNT];
 extern KfSpriteQuad effect_billboard_sprites[KF_EFFECT_BILLBOARD_SPRITE_COUNT];
-extern KfEffectSprite effect_sprites[KF_EFFECT_SPRITE_TABLE_ROWS];
+extern KfHudModel hud_models[KF_HUD_MODEL_TABLE_ROWS];
 extern KfHudSprite hud_sprites[KF_HUD_TABLE_ROWS];
 extern MATRIX render_light_matrices[KF_RENDER_LIGHT_COUNT];
 
@@ -152,7 +152,7 @@ extern void display_initialize(void);
 extern void display_play_transition(void);
 extern void display_present_frame(void);
 extern void display_show_system_screen(KfSystemScreen screen);
-extern void effect5_texture_cache_prepare(KfFloorId floor);
+extern void render_prepare_actor_textures(KfFloorId floor);
 extern void fog_interpolate_near(s32 start, s32 end, s32 ratio);
 extern void fog_set_near(s32 distance);
 extern void lighting_apply_color_preset6(void);
@@ -165,18 +165,18 @@ extern void menu_render_item_model(void);
 extern void primitive_buffer_begin_poly_ft4(void);
 extern void primitive_buffer_commit_poly_ft4(s32 depth);
 extern void render_actor(KfActor *actor);
-extern void render_actor_sprite(KfEffectRecord *sprite);
-extern void render_effect_sprites(void);
+extern void render_effect(KfEffectRecord *effect);
+extern void render_hud_models(void);
 extern void render_floor_item(KfFloorItem *item);
 extern void render_enqueue_map(u16 object_index);
-extern void render_enqueue_model(u16 object_index, s16 depth_bias);
+extern void render_enqueue_tmd_retextured(u16 object_index, s16 depth_bias);
 extern void render_enqueue_sprite(
     KfSpriteQuad *sprite, s16 depth_bias, KfSpriteDepthCueMode depth_cue_mode);
 extern void render_enqueue_tmd(u16 object_index, s16 depth_bias);
 extern void render_entities(void);
 extern void render_frame(
     const VECTOR *position_or_null, const SVECTOR *rotation_or_null);
-extern void render_hud_gauges(KfHudSprite *table);
+extern void render_hud_sprites(KfHudSprite *table);
 extern void render_initialize(void);
 extern void render_map_cell(
     s32 col, s32 row, KF_ENUM_PARAM(KfCellVisibility, char) visibility);

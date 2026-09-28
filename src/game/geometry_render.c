@@ -39,7 +39,7 @@ KfNotificationSprite notification_sprites[KF_NOTIFICATION_SPRITE_COUNT] = {
 };
 
 DATA(0x80055d74, 0x38)
-KfEffectSprite effect_sprites[KF_EFFECT_SPRITE_TABLE_ROWS] = {
+KfHudModel hud_models[KF_HUD_MODEL_TABLE_ROWS] = {
     {KF_SPRITE_VISIBLE, KF_ANIMATION_CLIP_FIRST, 0, 0x33, 0x11e, 0x22, 0xc8, {0, 0}, {0, 0, 0, 0}, {0, 0}, NULL},
     {KF_SPRITE_END},
 };
@@ -100,26 +100,26 @@ void render_weapon(void)
 }
 
 /*
- * Draws the animated decal/sprite list.  The current color matrix is saved and
- * replaced with render_state's sprite color matrix for the whole pass and
- * restored afterwards.  Each live entry builds a rotated, uniformly scaled
+ * Draws the screen-space HUD model list (the compass needle).  The current
+ * color matrix is saved and replaced with render_state's HUD model color matrix
+ * for the whole pass and restored afterwards.  Each live entry builds a rotated, uniformly scaled
  * model matrix with the translation folded into its t column, tests visibility
  * through render_bind_animated_instance, and, if visible, transforms and enqueues asset 0x15.
  */
 ADDRESS(0x8001f8b0, 0x124)
-void render_effect_sprites(void)
+void render_hud_models(void)
 {
     MATRIX model;
     VECTOR scale;
     MATRIX saved_color_matrix;
-    KfEffectSprite *entry;
+    KfHudModel *entry;
     KfTmdObject *object;
     u16 scale_numerator;
 
     ReadColorMatrix(&saved_color_matrix);
-    SetColorMatrix(&game_graphics_runtime.render_state.effect_color_matrix);
+    SetColorMatrix(&game_graphics_runtime.render_state.hud_model_color_matrix);
     scale.vz = KF_FIXED12_ONE;
-    entry = effect_sprites;
+    entry = hud_models;
     while (entry->state == KF_SPRITE_VISIBLE) {
         model.t[0] = entry->translation_x;
         model.t[1] = entry->translation_y;
@@ -131,11 +131,11 @@ void render_effect_sprites(void)
         ScaleMatrix(&model, &scale);
         SetRotMatrix(&model);
         SetTransMatrix(&model);
-        asset_registry_select(KF_ASSET_EFFECT_SPRITES);
+        asset_registry_select(KF_ASSET_HUD_MODELS);
         object = tmd_get_object(0);
         if (render_bind_animated_instance(
-                &entry->animation_cache, KF_ASSET_EFFECT_SPRITES,
-                entry->animation_clip, entry->asset_variant,
+                &entry->animation_cache, KF_ASSET_HUD_MODELS,
+                entry->animation_clip, entry->animation_phase,
                 object->vertex_count) != NULL) {
             tmd_transform_vertices(object->vertex_count);
             render_enqueue_tmd(0, 0);
@@ -151,7 +151,7 @@ void render_effect_sprites(void)
  * header.  The table base is supplied by the caller.
  */
 ADDRESS(0x8001f9d4, 0x70)
-void render_hud_gauges(KfHudSprite *table)
+void render_hud_sprites(KfHudSprite *table)
 {
     KfHudSprite *entry;
 

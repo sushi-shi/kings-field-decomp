@@ -48,15 +48,15 @@ deferred under the naming-pass policy.
 | `display_show_error_screen` | 123 | `1` | `game_graphics_runtime.display_draw_environments[back].isbg = 1;` | Boolean true enables SDK automatic background clearing. |
 | `display_show_error_screen` | 124 | `1` | `game_graphics_runtime.display_draw_environments[back].dfe = 1;` | Boolean true restores SDK drawing into the display area. |
 | `display_show_error_screen` | 125 | `0` | `DrawSync(0);` | Authentic SDK blocking GPU synchronization mode. |
-| `effect5_texture_cache_prepare` | 138 | `0` | `game_graphics_runtime.effect5_texture_pages[0] = GetTPage(` | Texture descriptor ordinal 0; the cache stores three authored page choices in matching order. |
-| `effect5_texture_cache_prepare` | 141 | `1` | `game_graphics_runtime.effect5_texture_pages[1] = GetTPage(` | Texture descriptor ordinal 1; the cache stores three authored page choices in matching order. |
-| `effect5_texture_cache_prepare` | 144 | `2` | `game_graphics_runtime.effect5_texture_pages[2] = GetTPage(` | Texture descriptor ordinal 2; the cache stores three authored page choices in matching order. |
-| `effect5_texture_cache_prepare` | 147 | `0` | `game_graphics_runtime.effect5_texture_cluts[0] = GetClut(0, EFFECT_TEXTURE_CLUT_Y);` | Texture descriptor ordinal 0 pairs this palette with its corresponding cached page. |
-| `effect5_texture_cache_prepare` | 147 | `0` | `game_graphics_runtime.effect5_texture_cluts[0] = GetClut(0, EFFECT_TEXTURE_CLUT_Y);` | All three cached palettes begin at VRAM X zero on the named row. |
-| `effect5_texture_cache_prepare` | 148 | `1` | `game_graphics_runtime.effect5_texture_cluts[1] = GetClut(0, EFFECT_TEXTURE_CLUT_Y);` | Texture descriptor ordinal 1 pairs this palette with its corresponding cached page. |
-| `effect5_texture_cache_prepare` | 148 | `0` | `game_graphics_runtime.effect5_texture_cluts[1] = GetClut(0, EFFECT_TEXTURE_CLUT_Y);` | All three cached palettes begin at VRAM X zero on the named row. |
-| `effect5_texture_cache_prepare` | 149 | `2` | `game_graphics_runtime.effect5_texture_cluts[2] = GetClut(0, EFFECT_TEXTURE_CLUT_Y);` | Texture descriptor ordinal 2 pairs this palette with its corresponding cached page. |
-| `effect5_texture_cache_prepare` | 149 | `0` | `game_graphics_runtime.effect5_texture_cluts[2] = GetClut(0, EFFECT_TEXTURE_CLUT_Y);` | All three cached palettes begin at VRAM X zero on the named row. |
+| `render_prepare_actor_textures` | 138 | `0` | `game_graphics_runtime.actor_texture_pages[0] = GetTPage(` | Texture descriptor ordinal 0; the cache stores three authored page choices in matching order. |
+| `render_prepare_actor_textures` | 141 | `1` | `game_graphics_runtime.actor_texture_pages[1] = GetTPage(` | Texture descriptor ordinal 1; the cache stores three authored page choices in matching order. |
+| `render_prepare_actor_textures` | 144 | `2` | `game_graphics_runtime.actor_texture_pages[2] = GetTPage(` | Texture descriptor ordinal 2; the cache stores three authored page choices in matching order. |
+| `render_prepare_actor_textures` | 147 | `0` | `game_graphics_runtime.actor_texture_cluts[0] = GetClut(0, EFFECT_TEXTURE_CLUT_Y);` | Texture descriptor ordinal 0 pairs this palette with its corresponding cached page. |
+| `render_prepare_actor_textures` | 147 | `0` | `game_graphics_runtime.actor_texture_cluts[0] = GetClut(0, EFFECT_TEXTURE_CLUT_Y);` | All three cached palettes begin at VRAM X zero on the named row. |
+| `render_prepare_actor_textures` | 148 | `1` | `game_graphics_runtime.actor_texture_cluts[1] = GetClut(0, EFFECT_TEXTURE_CLUT_Y);` | Texture descriptor ordinal 1 pairs this palette with its corresponding cached page. |
+| `render_prepare_actor_textures` | 148 | `0` | `game_graphics_runtime.actor_texture_cluts[1] = GetClut(0, EFFECT_TEXTURE_CLUT_Y);` | All three cached palettes begin at VRAM X zero on the named row. |
+| `render_prepare_actor_textures` | 149 | `2` | `game_graphics_runtime.actor_texture_cluts[2] = GetClut(0, EFFECT_TEXTURE_CLUT_Y);` | Texture descriptor ordinal 2 pairs this palette with its corresponding cached page. |
+| `render_prepare_actor_textures` | 149 | `0` | `game_graphics_runtime.actor_texture_cluts[2] = GetClut(0, EFFECT_TEXTURE_CLUT_Y);` | All three cached palettes begin at VRAM X zero on the named row. |
 | `display_initialize` | 158 | `2` | `SetGeomOffset(KF_DISPLAY_WIDTH / 2, KF_DISPLAY_HEIGHT / 2);` | Divide the display width by two to center the projection origin. |
 | `display_initialize` | 158 | `2` | `SetGeomOffset(KF_DISPLAY_WIDTH / 2, KF_DISPLAY_HEIGHT / 2);` | Divide the display height by two to center the projection origin. |
 | `display_initialize` | 160 | `0` | `&game_graphics_runtime.display_draw_environments[0], 0, 0,` | Explicit environment record 0 of the two-buffer pair. |

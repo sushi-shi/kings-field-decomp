@@ -172,7 +172,7 @@ retains its owned delay slot.
 | GAME function | Hex extent; strict production match | Owner-only hypothesis and controls |
 | --- | --- | --- |
 | `8001c7f8 render_enqueue_tmd` | `f38`; 98.932236% | u16 selection/s16 bias; 88-byte frame, 45 ordered calls, 35 retail address pairs, eleven J relocations and a reviewed 29-word switch. Share the selected-asset, projected-base and OT field through the existing complete owner; keep twelve allocation exits and all mode-specific lighting. |
-| `8001d730 render_enqueue_model` | `6e8`; 93.126690% | Same argument widths, 96-byte frame, fifteen calls, ten retail pairs, five internal jumps. Also share active CLUT/page fields through the same owner; keep all four mode entries, material publication and quad tails. |
+| `8001d730 render_enqueue_tmd_retextured` | `6e8`; 93.126690% | Same argument widths, 96-byte frame, fifteen calls, ten retail pairs, five internal jumps. Also share active CLUT/page fields through the same owner; keep all four mode entries, material publication and quad tails. |
 | `8001de18 render_enqueue_map` | `418`; 98.770996% | u16 selection, 80-byte frame, sixteen calls, six retail pairs and one internal jump. Preserve the post-projection asset reload, two separate depth guards and both allocation returns. |
 
 The common chain is selected-asset field `80090fc8` plus 488 to projected
@@ -408,7 +408,7 @@ Function Match Plan: extend the unchanged owner declaration to
 HUD table. Refresh all six GAME semantic views, complete disassembly/CFG,
 the three caller windows in `render_frame`, adjacent boundaries, shared
 types, source history and library evidence before compiling a temporary copy.
-Only `render_effect_sprites` directly reads a field inside this owner;
+Only `render_hud_models` directly reads a field inside this owner;
 the weapon and HUD functions are independent same-unit controls. No source
 algorithm, local lifetime, shared layout, capacity, production DATA claim,
 retail relocation or compiler profile changes.
@@ -416,8 +416,8 @@ retail relocation or compiler profile changes.
 | GAME function | Bytes; frame; blocks/branches | Preserved evidence and verdict |
 | --- | --- | --- |
 | `8001f798 render_weapon` | 280; 72; 4/2 | No arguments from `800202c8`; ten calls and five address pairs. Preserve the -1 attack guard, halfword projection/translation reads, rotation pointer, fifth animation argument and signed depth bias. All 70 words remain raw exact; no direct candidate-owner reference. |
-| `8001f8b0 render_effect_sprites` | 292; 120; 6/3 | No arguments from `8002012c`; twelve calls and two address pairs. Save/restore the SDK color matrix, use `render_state.effect_color_matrix`, stop at the first non-1 byte state, retain the 28-byte stride, Q12 scale, animation guard and projection/enqueue order. All 73 words remain raw exact. |
-| `8001f9d4 render_hud_gauges` | 112; 32; 6/3 | Table argument comes from compass-row pointer minus 168 in the caller's `80020178` delay slot; one call, no data pairs. Keep the 255 sentinel, skip-hidden behavior, 14-byte stride and sprite pointer +2. All 28 words remain raw exact; no direct candidate-owner reference. |
+| `8001f8b0 render_hud_models` | 292; 120; 6/3 | No arguments from `8002012c`; twelve calls and two address pairs. Save/restore the SDK color matrix, use `render_state.hud_model_color_matrix`, stop at the first non-1 byte state, retain the 28-byte stride, Q12 scale, animation guard and projection/enqueue order. All 73 words remain raw exact. |
+| `8001f9d4 render_hud_sprites` | 112; 32; 6/3 | Table argument comes from compass-row pointer minus 168 in the caller's `80020178` delay slot; one call, no data pairs. Keep the 255 sentinel, skip-hidden behavior, 14-byte stride and sprite pointer +2. All 28 words remain raw exact; no direct candidate-owner reference. |
 
 Each function has one common return with its frame-restoring delay slot;
 there are no strings, candidate outgoing references, internal J relocations

@@ -128,21 +128,21 @@ void display_show_system_screen(KfSystemScreen screen)
 #include "../lib/lighting_color.inc"
 
 ADDRESS(0x8001bae4, 0xb0)
-void effect5_texture_cache_prepare(KfFloorId floor)
+void render_prepare_actor_textures(KfFloorId floor)
 {
     if (floor == KF_FLOOR_5) {
-        game_graphics_runtime.effect5_texture_pages[0] = GetTPage(
+        game_graphics_runtime.actor_texture_pages[0] = GetTPage(
             KF_GPU_TEXTURE_8BIT, KF_GPU_BLEND_AVERAGE,
             EFFECT_TEXTURE_FIRST_PAGE_X, KF_TEXTURE_LOWER_PAGE_Y);
-        game_graphics_runtime.effect5_texture_pages[1] = GetTPage(
+        game_graphics_runtime.actor_texture_pages[1] = GetTPage(
             KF_GPU_TEXTURE_8BIT, KF_GPU_BLEND_AVERAGE,
             EFFECT_TEXTURE_SECOND_PAGE_X, KF_TEXTURE_LOWER_PAGE_Y);
-        game_graphics_runtime.effect5_texture_pages[2] = GetTPage(
+        game_graphics_runtime.actor_texture_pages[2] = GetTPage(
             KF_GPU_TEXTURE_8BIT, KF_GPU_BLEND_AVERAGE,
             EFFECT_TEXTURE_THIRD_PAGE_X, KF_TEXTURE_LOWER_PAGE_Y);
-        game_graphics_runtime.effect5_texture_cluts[0] = GetClut(0, EFFECT_TEXTURE_CLUT_Y);
-        game_graphics_runtime.effect5_texture_cluts[1] = GetClut(0, EFFECT_TEXTURE_CLUT_Y);
-        game_graphics_runtime.effect5_texture_cluts[2] = GetClut(0, EFFECT_TEXTURE_CLUT_Y);
+        game_graphics_runtime.actor_texture_cluts[0] = GetClut(0, EFFECT_TEXTURE_CLUT_Y);
+        game_graphics_runtime.actor_texture_cluts[1] = GetClut(0, EFFECT_TEXTURE_CLUT_Y);
+        game_graphics_runtime.actor_texture_cluts[2] = GetClut(0, EFFECT_TEXTURE_CLUT_Y);
     }
 }
 
@@ -182,7 +182,7 @@ ADDRESS(0x8001bce0, 0x2d8)
 void render_initialize(void)
 {
     SVECTOR angles;
-    KfNotificationId *flag;
+    KfNotificationId *message_id;
     u8 count;
     u8 *buffer;
 
@@ -213,7 +213,7 @@ void render_initialize(void)
     game_graphics_runtime.render_state.light_matrix.m[2][0] = -1300;
     game_graphics_runtime.render_state.light_matrix.m[2][1] = 2700;
     game_graphics_runtime.render_state.light_matrix.m[2][2] = 800;
-    game_graphics_runtime.render_state.light_matrix_copy = game_graphics_runtime.render_state.light_matrix;
+    game_graphics_runtime.render_state.map_event_light_matrix = game_graphics_runtime.render_state.light_matrix;
     MulMatrix0(
         &game_graphics_runtime.render_state.light_matrix,
         &game_graphics_runtime.render_state.quadrant_matrices[0],
@@ -247,10 +247,10 @@ void render_initialize(void)
     game_graphics_runtime.notification_state.control.effect_phase = KF_NOTIFICATION_IDLE;
     game_graphics_runtime.notification_state.control.queue_tail = 0;
     game_graphics_runtime.notification_state.control.queue_head = 0;
-    flag = game_graphics_runtime.notification_message_ids;
+    message_id = game_graphics_runtime.notification_message_ids;
     count = KF_NOTIFICATION_CAPACITY - 1;
     do {
-        *flag++ = KF_NOTIFICATION_NONE;
+        *message_id++ = KF_NOTIFICATION_NONE;
     } while (count-- != 0);
     pool_reset();
 }

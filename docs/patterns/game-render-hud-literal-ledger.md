@@ -23,8 +23,8 @@ and names the effect table state values, compass slot and bound.
 | `render_actor` | 61 | `0` | `if (descriptor-- == 0) {` | High-nibble zero selects the native TMD material; preserve the postdecrement and byte narrowing of the one-based cache selector. |
 | `render_actor` | 62 | `0` | `render_enqueue_tmd(0, 0);` | First object within the selected TMD resource. |
 | `render_actor` | 62 | `0` | `render_enqueue_tmd(0, 0);` | Zero extra ordering-table depth bias. |
-| `render_actor` | 66 | `0` | `render_enqueue_model(0, 0);` | First object within the selected TMD resource. |
-| `render_actor` | 66 | `0` | `render_enqueue_model(0, 0);` | Zero extra ordering-table depth bias. |
+| `render_actor` | 66 | `0` | `render_enqueue_tmd_retextured(0, 0);` | First object within the selected TMD resource. |
+| `render_actor` | 66 | `0` | `render_enqueue_tmd_retextured(0, 0);` | Zero extra ordering-table depth bias. |
 | `render_map_object` | 99 | `3` | `case KF_ENUM_DECODE(KfMapObjectBehavior, 3):` | Unresolved authored map-object behavior ID sharing the lift-door depth bias; no evidence justifies calling the behavior a lift door. |
 | `render_map_object` | 107 | `0` | `depth = 0;` | No additional ordering-table depth bias in the default behavior. |
 | `menu_render_item_model` | 121 | `0` | `tmd_select_object_vertices(0);` | First object within the selected TMD resource; local array origin, not a global asset ID. |
@@ -195,13 +195,13 @@ replaces the raw mode comparison with a typed visibility-grid member.
 | `render_weapon` | 77 | `0` | `object->vertex_count) != 0) {` | Animation-binding boolean success/failure predicate; preserve exact zero comparison. |
 | `render_weapon` | 80 | `32` | `(s16)*(const u16 *)((const u8 *)player_state.equipped_weapon_record + 32) >> WEAPON_DEPTH_BIAS_SHIFT;` | Proven weapon Z-translation offset, explicitly sign-extended before shifting; shared object-type recovery remains open. |
 | `render_weapon` | 81 | `0` | `render_enqueue_tmd(0, -depth_bias + WEAPON_BASE_DEPTH_BIAS);` | First object within the selected TMD resource. |
-| `render_effect_sprites` | 107 | `0` | `model.t[0] = entry->translation_x;` | SDK MATRIX translation component index: 0=X, 1=Y, 2=Z. |
-| `render_effect_sprites` | 108 | `1` | `model.t[1] = entry->translation_y;` | SDK MATRIX translation component index: 0=X, 1=Y, 2=Z. |
-| `render_effect_sprites` | 109 | `2` | `model.t[2] = entry->translation_z;` | SDK MATRIX translation component index: 0=X, 1=Y, 2=Z. |
-| `render_effect_sprites` | 118 | `0` | `object = tmd_get_object(0);` | First object within the selected TMD resource; local array origin, not a global asset ID. |
-| `render_effect_sprites` | 122 | `0` | `object->vertex_count) != 0) {` | Animation-binding boolean success/failure predicate; preserve exact zero comparison. |
-| `render_effect_sprites` | 124 | `0` | `render_enqueue_tmd(0, 0);` | First object within the selected TMD resource. |
-| `render_effect_sprites` | 124 | `0` | `render_enqueue_tmd(0, 0);` | Zero extra ordering-table depth bias. |
+| `render_hud_models` | 107 | `0` | `model.t[0] = entry->translation_x;` | SDK MATRIX translation component index: 0=X, 1=Y, 2=Z. |
+| `render_hud_models` | 108 | `1` | `model.t[1] = entry->translation_y;` | SDK MATRIX translation component index: 0=X, 1=Y, 2=Z. |
+| `render_hud_models` | 109 | `2` | `model.t[2] = entry->translation_z;` | SDK MATRIX translation component index: 0=X, 1=Y, 2=Z. |
+| `render_hud_models` | 118 | `0` | `object = tmd_get_object(0);` | First object within the selected TMD resource; local array origin, not a global asset ID. |
+| `render_hud_models` | 122 | `0` | `object->vertex_count) != 0) {` | Animation-binding boolean success/failure predicate; preserve exact zero comparison. |
+| `render_hud_models` | 124 | `0` | `render_enqueue_tmd(0, 0);` | First object within the selected TMD resource. |
+| `render_hud_models` | 124 | `0` | `render_enqueue_tmd(0, 0);` | Zero extra ordering-table depth bias. |
 
 ## `src/game/render_frame.c`
 

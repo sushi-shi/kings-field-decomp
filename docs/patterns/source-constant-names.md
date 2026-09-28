@@ -1115,7 +1115,7 @@ non-debug contents from 893a3fa. Exactly four of 484 score rows change:
 | GAME function | Earlier baseline | Imported result |
 | --- | ---: | ---: |
 | `render_enqueue_tmd` | 52.039013% | 98.932236% |
-| `render_enqueue_model` | 60.490950% | 93.126690% |
+| `render_enqueue_tmd_retextured` | 60.490950% | 93.126690% |
 | `render_enqueue_map` | 17.954199% | 98.770996% |
 | `render_enqueue_sprite` | 88.263510% | 93.972980% |
 

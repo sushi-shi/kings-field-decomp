@@ -39,7 +39,7 @@ decoded behavior, not recovered Japanese spell names or original C symbols.
 | GAME VA / size | Function | Initial and final strict % | Direct calls / CFG blocks | Retail words / ordered addresses |
 | --- | --- | ---: | ---: | ---: |
 | `0x80018880 / 1a1c` | `player_update` | 96.945540 | 66 / 325 | Unchanged residue |
-| `0x8001eedc / 1e8` | `render_actor_sprite` | 100.000000 | 20 / 8 | 122 / 6 |
+| `0x8001eedc / 1e8` | `render_effect` | 100.000000 | 20 / 8 | 122 / 6 |
 | `0x8001f218 / 580` | `render_entities` | 91.250000 | 9 / 61 | Unchanged residue |
 | `0x8002e0f0 / 1f8` | `actor_try_select_profiled_action` | 96.333336 | 4 / 23 | Unchanged residue |
 | `0x8002edd4 / 454` | `actor_spawn_action_effect` | 100.000000 | 11 / 51 | 277 / 3 |
@@ -228,7 +228,7 @@ Affected GAME functions are `effect_pool_construct` (0x80036f44/0x82c),
 `effect_update_dispatch` (0x80038a38/0x180c), `actor_spawn_action_effect`
 (0x8002edd4/0x454), and the map-object emitter dispatcher. Existing retail
 constructor/dispatcher dossiers and current source/call paths establish the
-behavior; `render_actor_sprite` (0x8001eedc/0x1e8), reviewed as a consumer,
+behavior; `render_effect` (0x8001eedc/0x1e8), reviewed as a consumer,
 selects billboard descriptors for mode 255 and effect model assets otherwise.
 
 Kind 14 is `MAP_EMITTER_PROJECTILE`: the map projectile-emitter action creates

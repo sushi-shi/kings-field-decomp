@@ -37,10 +37,10 @@ src/game/player_use_item.c:28	person_image_path_template	char[15]	encoded_conten
 src/game/player_warp.c:8	actor_transform_color_matrix	MATRIX	numeric_matrix		SDK matrix coefficients/translation; arithmetic interpolation and matrix multiplication accept quantities. KF_FIXED12_ONE names numeric Q12 unity.
 src/game/render.c:39	system_screen_path	char[7]	encoded_content		Filename, path template, debug text or number-formatting character buffer; byte positions hold character encodings.
 src/game/render_enqueuers.c:9	tmd_textured_primitive_color	CVECTOR	sdk_record		Numerical RGB intensities and the SDK packed GPU command/padding byte; no game selector field.
-src/game/render_enqueuers.c:463	model_textured_primitive_color	CVECTOR	sdk_record		Numerical RGB intensities and the SDK packed GPU command/padding byte; no game selector field.
+src/game/render_enqueuers.c:463	retextured_primitive_color	CVECTOR	sdk_record		Numerical RGB intensities and the SDK packed GPU command/padding byte; no game selector field.
 src/game/render_enqueuers.c:649	map_textured_primitive_color	CVECTOR	sdk_record		Numerical RGB intensities and the SDK packed GPU command/padding byte; no game selector field.
 src/game/render_enqueuers.c:655	render_sprite_light_normal	SVECTOR	numeric_geometry		SDK vector coordinates/rotation/displacements and padding; quantitative geometry.
-src/game/render_frame.c:30	effect_sprites	KfEffectSprite[2]	typed_record		State and animation clip already use enum domains. asset_variant is the numerical binder phase; other members are geometry, scale, padding and a cache pointer.
+src/game/render_frame.c:30	hud_models	KfHudModel[2]	typed_record		State and animation clip already use enum domains. animation_phase is the numerical binder phase; other members are geometry, scale, padding and a cache pointer.
 src/game/render_frame.c:37	hud_palette_rect	RECT	numeric_geometry		SDK VRAM or screen rectangle coordinates and dimensions.
 src/game/render_frame.c:40	notification_palette_rect	RECT	numeric_geometry		SDK VRAM or screen rectangle coordinates and dimensions.
 src/game/render_map_cells.c:17	render_fixed_cell_window	KfCellWindow	typed_record		Grid dimensions and origin remain numerical; cells already use KfCellVisibility.

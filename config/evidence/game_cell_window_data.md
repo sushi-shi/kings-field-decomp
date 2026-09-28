@@ -136,7 +136,7 @@ origin/bounds halfwords at +6/+4 and +2/+0 and the selected cell byte at +8.
 The pools use map objects (190, stride 44), actors (128, stride 72), variable
 floor items (stride 24), sprites (48, stride 60) and map events (8, stride 68).
 Its nine calls are tmd_select, render_map_object, render_actor, three
-SetLightMatrix calls, render_floor_item, render_actor_sprite and render_map_event.
+SetLightMatrix calls, render_floor_item, render_effect and render_map_event.
 There are 25 validated data/internal-jump references and no strings. Its only
 caller is render_frame at `800202c0`. Existing code-generation/CFG differences
 remain outside this data ownership change.

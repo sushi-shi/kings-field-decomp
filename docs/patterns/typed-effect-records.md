@@ -22,7 +22,7 @@ vendored controls.
 
 | GAME function | VA / bytes | Initial strict % | Blocks / direct calls / branches / returns | Direct evidence for the change |
 | --- | --- | ---: | --- | --- |
-| `render_actor_sprite` | `8001eedc / 1e8` | 100 | 8 / 20 / 5 / 1 | Only caller passes the live pool record; `lhu` position +0c/+10/+14, `lh` scale +24/+26/+28, rotation pointer +1c, animation slot +34 |
+| `render_effect` | `8001eedc / 1e8` | 100 | 8 / 20 / 5 / 1 | Only caller passes the live pool record; `lhu` position +0c/+10/+14, `lh` scale +24/+26/+28, rotation pointer +1c, animation slot +34 |
 | `render_entities` | `8001f218 / 580` | 96.667610 | 61 / 9 / 41 / 1 | Effect cursor is `effect_state+1e0`, advances 60 bytes; full signed position words feed division by 2000 |
 | `player_warp_shimmer` | `80036618 / 238` | 100 | 23 / 9 / 14 / 1 | Constructor result supplies the shared record; yaw +1e is wrapped by 0xfff and stored in the loop delay slot |
 | `effect_pool_construct` | `80036f44 / 82c` | 100 | 52 / 7 / 38 / 1 | All 29 callers constrain byte header inputs, full VECTOR position and stack SVECTOR arguments; optional rotation copies include pad |
@@ -74,7 +74,7 @@ new first divergence or new code-generation residue in this stage.
 
 | Function | Final strict % | Final verdict |
 | --- | ---: | --- |
-| `render_actor_sprite` | 100 | All 122 linked words unchanged and retail-exact |
+| `render_effect` | 100 | All 122 linked words unchanged and retail-exact |
 | `render_entities` | 96.667610 | Every pre-edit linked word unchanged; existing partial match |
 | `player_warp_shimmer` | 100 | All 142 linked words unchanged and retail-exact |
 | `effect_pool_construct` | 100 | All 523 linked words unchanged and retail-exact |

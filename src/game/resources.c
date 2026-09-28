@@ -61,7 +61,7 @@ void common_resources_load(void)
     memory_release_last();
     cd_file_load_allocated(&stream, "COM\\COM.DAT");
     asset_registry_set(
-        KF_ASSET_EFFECT_SPRITES, (KfAssetHeader *)(stream + KF_RESOURCE_CHUNK_HEADER_BYTES));
+        KF_ASSET_HUD_MODELS, (KfAssetHeader *)(stream + KF_RESOURCE_CHUNK_HEADER_BYTES));
     block = RESOURCE_STREAM_NEXT(stream);
     memcpy((void *)render_cell_windows, (const void *)(block + KF_RESOURCE_CHUNK_HEADER_BYTES),
         sizeof render_cell_windows);

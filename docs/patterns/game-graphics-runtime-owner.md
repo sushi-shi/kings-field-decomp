@@ -106,7 +106,7 @@ Percentages are strict objdiff results; every row below 100% remains open.
 | `800186c4` | `player_death_update_reverse_fade` | 100.000000 | 100.000000 | Exact preserved |
 | `800187a4` | `lighting_apply_weapon9_environment` | 100.000000 | 100.000000 | Exact preserved |
 | `8001b7b0` | `display_show_error_screen` | 100.000000 | 100.000000 | Exact preserved |
-| `8001bae4` | `effect5_texture_cache_prepare` | 100.000000 | 100.000000 | Exact preserved |
+| `8001bae4` | `render_prepare_actor_textures` | 100.000000 | 100.000000 | Exact preserved |
 | `8001bb94` | `display_initialize` | 94.253010 | 98.421684 | Open |
 | `8001bce0` | `render_initialize` | 100.000000 | 100.000000 | Exact preserved |
 | `8001bfb8` | `display_begin_frame` | 100.000000 | 100.000000 | Exact preserved |
@@ -122,7 +122,7 @@ Percentages are strict objdiff results; every row below 100% remains open.
 | `8001c6a8` | `tmd_project_vertices_shift` | 100.000000 | 100.000000 | Exact preserved |
 | `8001c754` | `tmd_transform_vertices` | 100.000000 | 100.000000 | Exact preserved |
 | `8001c7f8` | `render_enqueue_tmd` | 98.932236 | 99.314170 | Open |
-| `8001d730` | `render_enqueue_model` | 93.126690 | 99.984160 | Open |
+| `8001d730` | `render_enqueue_tmd_retextured` | 93.126690 | 99.984160 | Open |
 | `8001de18` | `render_enqueue_map` | 98.770996 | 99.980920 | Open |
 | `8001e230` | `render_enqueue_sprite` | 93.972980 | 100.000000 | New exact |
 | `8001e480` | `render_screen_sprite` | 100.000000 | 100.000000 | Exact preserved |
@@ -131,10 +131,10 @@ Percentages are strict objdiff results; every row below 100% remains open.
 | `8001e9a4` | `render_actor` | 94.751880 | 100.000000 | New exact |
 | `8001ebb8` | `render_map_object` | 100.000000 | 100.000000 | Exact preserved |
 | `8001ed90` | `render_floor_item` | 100.000000 | 100.000000 | Exact preserved |
-| `8001eedc` | `render_actor_sprite` | 100.000000 | 100.000000 | Exact preserved |
+| `8001eedc` | `render_effect` | 100.000000 | 100.000000 | Exact preserved |
 | `8001f0c4` | `render_map_event` | 100.000000 | 100.000000 | Exact preserved |
 | `8001f218` | `render_entities` | 97.380684 | 96.667610 | Open |
-| `8001f8b0` | `render_effect_sprites` | 100.000000 | 100.000000 | Exact preserved |
+| `8001f8b0` | `render_hud_models` | 100.000000 | 100.000000 | Exact preserved |
 | `8001fa44` | `notify_enqueue` | 100.000000 | 100.000000 | Exact preserved |
 | `8001fafc` | `notify_effect_update` | 99.385475 | 99.385475 | Open |
 | `8001fdc8` | `display_flip_buffer_index` | 100.000000 | 100.000000 | Exact preserved |

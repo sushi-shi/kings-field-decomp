@@ -32,7 +32,7 @@ SDK implementations. No outgoing candidate references or strings occur.
 | Image / address / body | Function | Before | Evidence and intended change |
 | --- | --- | ---: | --- |
 | GAME `8001c7f8 / f38` | `render_enqueue_tmd` | 99.314170% | Seven callers constrain unsigned object ID and signed halfword bias. Twelve packet modes, 88-byte retail frame, 45 direct calls plus switch transfer, 29-word table, per-packet allocation-overflow returns, packed XY words/UV halfwords/CVECTOR colors. Replace individual field casts with existing `KfGpu*` and `KfTmdPrimitive` members; retain every guard, call, constant, mode and loop. |
-| GAME `8001d730 / 6e8` | `render_enqueue_model` | 100% | Actor caller, 96-byte frame, four textured modes and 15 direct calls. Shared material CLUT/page fields and model color are retained; use matching packed packet views without changing primitive/count/depth widths. |
+| GAME `8001d730 / 6e8` | `render_enqueue_tmd_retextured` | 100% | Actor caller, 96-byte frame, four textured modes and 15 direct calls. Shared material CLUT/page fields and model color are retained; use matching packed packet views without changing primitive/count/depth widths. |
 | GAME `8001de18 / 418` | `render_enqueue_map` | 100% | Map-cell caller, 80-byte frame, two textured modes, projection plus 16 direct calls, depth bias 200 and per-vertex fog. Use the existing typed TMD texture/color and GPU packet fields; preserve depth arithmetic and allocation exits. |
 | GAME `8001e230 / 250` | `render_enqueue_sprite` | 100% | Five callers, projected anchor/four corners, signed bias and word depth-cue flag, five SDK calls. Replace four packed XY pointer stores and destination color pointer with `KfGpuFT4` fields; address the separate source-color owner in the graphics-state family. |
 
@@ -88,7 +88,7 @@ Fresh strict objdiff and independently linked raw-word comparison give:
 | GAME function | Before / after % | Raw result |
 | --- | --- | --- |
 | `render_enqueue_tmd` | 99.314170 / 99.314170 | All 3,900 compiled bytes unchanged; existing non-exact result remains open. |
-| `render_enqueue_model` | 100 / 100 | All 1,768 bytes and ordered references unchanged and retail-exact. |
+| `render_enqueue_tmd_retextured` | 100 / 100 | All 1,768 bytes and ordered references unchanged and retail-exact. |
 | `render_enqueue_map` | 100 / 100 | All 1,048 bytes and ordered references unchanged and retail-exact. |
 | `render_enqueue_sprite` | 100 / 100 | All 592 bytes and ordered references unchanged and retail-exact. Four XY casts remain pending. |
 | `render_screen_sprite` | 100 / 100 | All 364 bytes and ordered references unchanged and retail-exact. |

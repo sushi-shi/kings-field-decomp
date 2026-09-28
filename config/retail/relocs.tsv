@@ -3266,35 +3266,35 @@ GAME.EXE	0x8001d628	0xbe28		mips26	reachable-code	0x80054348	load		jal		control-
 GAME.EXE	0x8001d684	0xbe84		mips26	reachable-code	0x8004dd14	load		jal		control-flow-reviewed	reviewed	manual:render_enqueue_tmd
 GAME.EXE	0x8001d6cc	0xbecc		mips26	reachable-code	0x80054290	load		jal		control-flow-reviewed	reviewed	manual:render_enqueue_tmd
 GAME.EXE	0x8001d760	0xbf60		mips26	reachable-code	0x8001c114	load	tmd_get_object	jal		control-flow-reviewed	reviewed	manual:game_semantic_display_tmd
-GAME.EXE	0x8001d76c	0xbf6c	0x8001d770	mips_hi16_lo16	reachable-code	0x80090fc8	bss	game_graphics_runtime	lui+addiu	a1	paired-reviewed	reviewed	manual:render_enqueue_model
-GAME.EXE	0x8001d7a8	0xbfa8	0x8001d7ac	mips_hi16_lo16	reachable-code	0x80057b5f	load	model_textured_primitive_color	lui+addiu	fp	paired-reviewed	reviewed	manual:render_enqueue_model
+GAME.EXE	0x8001d76c	0xbf6c	0x8001d770	mips_hi16_lo16	reachable-code	0x80090fc8	bss	game_graphics_runtime	lui+addiu	a1	paired-reviewed	reviewed	manual:render_enqueue_tmd_retextured
+GAME.EXE	0x8001d7a8	0xbfa8	0x8001d7ac	mips_hi16_lo16	reachable-code	0x80057b5f	load	retextured_primitive_color	lui+addiu	fp	paired-reviewed	reviewed	manual:render_enqueue_tmd_retextured
 GAME.EXE	0x8001d7f0	0xbff0		mips26	reachable-code	0x8001ddbc	load		j		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x8001d804	0xc004		mips26	reachable-code	0x8001ddbc	load		j		control-flow	candidate	investigation:relocs.tsv
-GAME.EXE	0x8001d830	0xc030		mips26	reachable-code	0x8004de4c	load		jal		control-flow-reviewed	reviewed	manual:render_enqueue_model
-GAME.EXE	0x8001d840	0xc040	0x8001d844	mips_hi16_lo16	reachable-code	0x80070eb8	bss	game_graphics_runtime	lui+lw	v1	paired-reviewed	reviewed	manual:render_enqueue_model
-GAME.EXE	0x8001d85c	0xc05c	0x8001d860	mips_hi16_lo16	reachable-code	0x80070eb8	bss	game_graphics_runtime	lui+lw	v0	paired-reviewed	reviewed	manual:render_enqueue_model
-GAME.EXE	0x8001d880	0xc080		mips26	reachable-code	0x800543d4	load		jal		control-flow-reviewed	reviewed	manual:render_enqueue_model
-GAME.EXE	0x8001d920	0xc120		mips26	reachable-code	0x8004dd40	load		jal		control-flow-reviewed	reviewed	manual:render_enqueue_model
+GAME.EXE	0x8001d830	0xc030		mips26	reachable-code	0x8004de4c	load		jal		control-flow-reviewed	reviewed	manual:render_enqueue_tmd_retextured
+GAME.EXE	0x8001d840	0xc040	0x8001d844	mips_hi16_lo16	reachable-code	0x80070eb8	bss	game_graphics_runtime	lui+lw	v1	paired-reviewed	reviewed	manual:render_enqueue_tmd_retextured
+GAME.EXE	0x8001d85c	0xc05c	0x8001d860	mips_hi16_lo16	reachable-code	0x80070eb8	bss	game_graphics_runtime	lui+lw	v0	paired-reviewed	reviewed	manual:render_enqueue_tmd_retextured
+GAME.EXE	0x8001d880	0xc080		mips26	reachable-code	0x800543d4	load		jal		control-flow-reviewed	reviewed	manual:render_enqueue_tmd_retextured
+GAME.EXE	0x8001d920	0xc120		mips26	reachable-code	0x8004dd40	load		jal		control-flow-reviewed	reviewed	manual:render_enqueue_tmd_retextured
 GAME.EXE	0x8001d970	0xc170		mips26	reachable-code	0x8001dd98	load		j		control-flow	candidate	investigation:relocs.tsv
-GAME.EXE	0x8001d99c	0xc19c		mips26	reachable-code	0x8004de4c	load		jal		control-flow-reviewed	reviewed	manual:render_enqueue_model
-GAME.EXE	0x8001d9ac	0xc1ac	0x8001d9b0	mips_hi16_lo16	reachable-code	0x80070eb8	bss	game_graphics_runtime	lui+lw	v1	paired-reviewed	reviewed	manual:render_enqueue_model
-GAME.EXE	0x8001d9c8	0xc1c8	0x8001d9cc	mips_hi16_lo16	reachable-code	0x80070eb8	bss	game_graphics_runtime	lui+lw	v0	paired-reviewed	reviewed	manual:render_enqueue_model
-GAME.EXE	0x8001d9ec	0xc1ec		mips26	reachable-code	0x80054424	load		jal		control-flow-reviewed	reviewed	manual:render_enqueue_model
-GAME.EXE	0x8001daa4	0xc2a4		mips26	reachable-code	0x8004dd40	load		jal		control-flow-reviewed	reviewed	manual:render_enqueue_model
-GAME.EXE	0x8001dabc	0xc2bc		mips26	reachable-code	0x8004dd14	load		jal		control-flow-reviewed	reviewed	manual:render_enqueue_model
+GAME.EXE	0x8001d99c	0xc19c		mips26	reachable-code	0x8004de4c	load		jal		control-flow-reviewed	reviewed	manual:render_enqueue_tmd_retextured
+GAME.EXE	0x8001d9ac	0xc1ac	0x8001d9b0	mips_hi16_lo16	reachable-code	0x80070eb8	bss	game_graphics_runtime	lui+lw	v1	paired-reviewed	reviewed	manual:render_enqueue_tmd_retextured
+GAME.EXE	0x8001d9c8	0xc1c8	0x8001d9cc	mips_hi16_lo16	reachable-code	0x80070eb8	bss	game_graphics_runtime	lui+lw	v0	paired-reviewed	reviewed	manual:render_enqueue_tmd_retextured
+GAME.EXE	0x8001d9ec	0xc1ec		mips26	reachable-code	0x80054424	load		jal		control-flow-reviewed	reviewed	manual:render_enqueue_tmd_retextured
+GAME.EXE	0x8001daa4	0xc2a4		mips26	reachable-code	0x8004dd40	load		jal		control-flow-reviewed	reviewed	manual:render_enqueue_tmd_retextured
+GAME.EXE	0x8001dabc	0xc2bc		mips26	reachable-code	0x8004dd14	load		jal		control-flow-reviewed	reviewed	manual:render_enqueue_tmd_retextured
 GAME.EXE	0x8001dac4	0xc2c4		mips26	reachable-code	0x8001dd74	load		j		control-flow	candidate	investigation:relocs.tsv
-GAME.EXE	0x8001daf0	0xc2f0		mips26	reachable-code	0x8004de4c	load		jal		control-flow-reviewed	reviewed	manual:render_enqueue_model
-GAME.EXE	0x8001db00	0xc300	0x8001db04	mips_hi16_lo16	reachable-code	0x80070eb8	bss	game_graphics_runtime	lui+lw	v1	paired-reviewed	reviewed	manual:render_enqueue_model
-GAME.EXE	0x8001db1c	0xc31c	0x8001db20	mips_hi16_lo16	reachable-code	0x80070eb8	bss	game_graphics_runtime	lui+lw	v0	paired-reviewed	reviewed	manual:render_enqueue_model
-GAME.EXE	0x8001db40	0xc340		mips26	reachable-code	0x800543ac	load		jal		control-flow-reviewed	reviewed	manual:render_enqueue_model
-GAME.EXE	0x8001dbf8	0xc3f8		mips26	reachable-code	0x8004dd14	load		jal		control-flow-reviewed	reviewed	manual:render_enqueue_model
+GAME.EXE	0x8001daf0	0xc2f0		mips26	reachable-code	0x8004de4c	load		jal		control-flow-reviewed	reviewed	manual:render_enqueue_tmd_retextured
+GAME.EXE	0x8001db00	0xc300	0x8001db04	mips_hi16_lo16	reachable-code	0x80070eb8	bss	game_graphics_runtime	lui+lw	v1	paired-reviewed	reviewed	manual:render_enqueue_tmd_retextured
+GAME.EXE	0x8001db1c	0xc31c	0x8001db20	mips_hi16_lo16	reachable-code	0x80070eb8	bss	game_graphics_runtime	lui+lw	v0	paired-reviewed	reviewed	manual:render_enqueue_tmd_retextured
+GAME.EXE	0x8001db40	0xc340		mips26	reachable-code	0x800543ac	load		jal		control-flow-reviewed	reviewed	manual:render_enqueue_tmd_retextured
+GAME.EXE	0x8001dbf8	0xc3f8		mips26	reachable-code	0x8004dd14	load		jal		control-flow-reviewed	reviewed	manual:render_enqueue_tmd_retextured
 GAME.EXE	0x8001dc48	0xc448		mips26	reachable-code	0x8001dd98	load		j		control-flow	candidate	investigation:relocs.tsv
-GAME.EXE	0x8001dc74	0xc474		mips26	reachable-code	0x8004de4c	load		jal		control-flow-reviewed	reviewed	manual:render_enqueue_model
-GAME.EXE	0x8001dc84	0xc484	0x8001dc88	mips_hi16_lo16	reachable-code	0x80070eb8	bss	game_graphics_runtime	lui+lw	v1	paired-reviewed	reviewed	manual:render_enqueue_model
-GAME.EXE	0x8001dca0	0xc4a0	0x8001dca4	mips_hi16_lo16	reachable-code	0x80070eb8	bss	game_graphics_runtime	lui+lw	v0	paired-reviewed	reviewed	manual:render_enqueue_model
-GAME.EXE	0x8001dcc4	0xc4c4		mips26	reachable-code	0x800543fc	load		jal		control-flow-reviewed	reviewed	manual:render_enqueue_model
-GAME.EXE	0x8001dd6c	0xc56c		mips26	reachable-code	0x8004dd14	load		jal		control-flow-reviewed	reviewed	manual:render_enqueue_model
-GAME.EXE	0x8001ddb4	0xc5b4		mips26	reachable-code	0x80054290	load		jal		control-flow-reviewed	reviewed	manual:render_enqueue_model
+GAME.EXE	0x8001dc74	0xc474		mips26	reachable-code	0x8004de4c	load		jal		control-flow-reviewed	reviewed	manual:render_enqueue_tmd_retextured
+GAME.EXE	0x8001dc84	0xc484	0x8001dc88	mips_hi16_lo16	reachable-code	0x80070eb8	bss	game_graphics_runtime	lui+lw	v1	paired-reviewed	reviewed	manual:render_enqueue_tmd_retextured
+GAME.EXE	0x8001dca0	0xc4a0	0x8001dca4	mips_hi16_lo16	reachable-code	0x80070eb8	bss	game_graphics_runtime	lui+lw	v0	paired-reviewed	reviewed	manual:render_enqueue_tmd_retextured
+GAME.EXE	0x8001dcc4	0xc4c4		mips26	reachable-code	0x800543fc	load		jal		control-flow-reviewed	reviewed	manual:render_enqueue_tmd_retextured
+GAME.EXE	0x8001dd6c	0xc56c		mips26	reachable-code	0x8004dd14	load		jal		control-flow-reviewed	reviewed	manual:render_enqueue_tmd_retextured
+GAME.EXE	0x8001ddb4	0xc5b4		mips26	reachable-code	0x80054290	load		jal		control-flow-reviewed	reviewed	manual:render_enqueue_tmd_retextured
 GAME.EXE	0x8001de44	0xc644		mips26	reachable-code	0x8001c114	load	tmd_get_object	jal		control-flow-reviewed	reviewed	manual:game_semantic_display_tmd
 GAME.EXE	0x8001de50	0xc650	0x8001de54	mips_hi16_lo16	reachable-code	0x80090fc8	bss	game_graphics_runtime	lui+addiu	s2	mips-hi-lo-data-pair	reviewed	scripts/kf/inventory.py:bss-pair-scan;render_enqueue-review
 GAME.EXE	0x8001de6c	0xc66c		mips26	reachable-code	0x8001c60c	load		jal		control-flow	reviewed	investigation:relocs.tsv;render_enqueue-review
@@ -3558,7 +3558,7 @@ GAME.EXE	0x8001f894	0xe094		mips26	reachable-code	0x8001c7f8	load		jal		control-
 GAME.EXE	0x8001f8c4	0xe0c4		mips26	reachable-code	0x8004da04	load		jal		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x8001f8cc	0xe0cc	0x8001f8d0	mips_hi16_lo16	reachable-code	0x80095720	bss	game_graphics_runtime	lui+addiu	a0	paired-reviewed	reviewed	manual:game_semantic_geometry_render
 GAME.EXE	0x8001f8d4	0xe0d4		mips26	reachable-code	0x8004d7e4	load	SetColorMatrix	jal		control-flow	candidate	investigation:relocs.tsv
-GAME.EXE	0x8001f8e4	0xe0e4	0x8001f8e8	mips_hi16_lo16	reachable-code	0x80055d74	load	effect_sprites	lui+addiu	s2	paired-reviewed	reviewed	manual:game_semantic_effect_sprites
+GAME.EXE	0x8001f8e4	0xe0e4	0x8001f8e8	mips_hi16_lo16	reachable-code	0x80055d74	load	hud_models	lui+addiu	s2	paired-reviewed	reviewed	manual:game_semantic_effect_sprites
 GAME.EXE	0x8001f920	0xe120		mips26	reachable-code	0x8004e9b8	load		jal		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x8001f938	0xe138		mips26	reachable-code	0x8004d53c	load		jal		control-flow	candidate	investigation:relocs.tsv
 GAME.EXE	0x8001f940	0xe140		mips26	reachable-code	0x8004d784	load	SetRotMatrix	jal		control-flow	candidate	investigation:relocs.tsv
@@ -3669,8 +3669,8 @@ GAME.EXE	0x800200f0	0xe8f0	0x800200f4	mips_hi16_lo16	reachable-code	0x80055cf6	l
 GAME.EXE	0x800200f8	0xe8f8	0x800200fc	mips_hi16_lo16	reachable-code	0x800a0819	bss	player_state	lui+lbu	v1	paired-reviewed	reviewed	manual:player_state-aggregate
 GAME.EXE	0x80020100	0xe900	0x80020104	mips_hi16_lo16	reachable-code	0x80095756	bss	game_graphics_runtime	lui+lhu	v0	mips-hi-lo-data-pair	reviewed	scripts/kf/inventory.py:bss-pair-scan
 GAME.EXE	0x80020108	0xe908	0x8002010c	mips_hi16_lo16	reachable-code	0x80055d04	load	hud_sprites	lui+addiu	s0	paired-reviewed	reviewed	manual:game_semantic_hud_sprites
-GAME.EXE	0x80020114	0xe914	0x80020118	mips_hi16_lo16	reachable-code	0x80055d74	load	effect_sprites	lui+sb	at	paired-reviewed	reviewed	manual:game_semantic_effect_sprites
-GAME.EXE	0x80020124	0xe924	0x80020128	mips_hi16_lo16	reachable-code	0x80055d86	load	effect_sprites	lui+sh	at	paired-reviewed	reviewed	manual:game_semantic_effect_sprites
+GAME.EXE	0x80020114	0xe914	0x80020118	mips_hi16_lo16	reachable-code	0x80055d74	load	hud_models	lui+sb	at	paired-reviewed	reviewed	manual:game_semantic_effect_sprites
+GAME.EXE	0x80020124	0xe924	0x80020128	mips_hi16_lo16	reachable-code	0x80055d86	load	hud_models	lui+sh	at	paired-reviewed	reviewed	manual:game_semantic_effect_sprites
 GAME.EXE	0x8002012c	0xe92c		mips26	reachable-code	0x8001f8b0	load		jal		control-flow	reviewed	investigation:relocs.tsv
 GAME.EXE	0x80020134	0xe934	0x80020138	mips_hi16_lo16	reachable-code	0x80095062	bss	game_graphics_runtime	lui+lhu	v1	mips-hi-lo-data-pair	reviewed	scripts/kf/inventory.py:bss-pair-scan
 GAME.EXE	0x8002013c	0xe93c	0x80020140	mips_hi16_lo16	reachable-code	0x80095060	bss	game_graphics_runtime	lui+lhu	a1	mips-hi-lo-data-pair	reviewed	scripts/kf/inventory.py:bss-pair-scan
@@ -7043,7 +7043,7 @@ GAME.EXE	0x8003656c	0x24d6c	0x80036570	mips_hi16_lo16	reachable-code	0x800a078c	
 GAME.EXE	0x80036574	0x24d74		mips26	reachable-code	0x8001b558	load	map_resources_load	jal		control-flow-reviewed	reviewed	manual:game_map_load
 GAME.EXE	0x8003657c	0x24d7c		mips26	reachable-code	0x80035e44	load	map_restore_floor_state	jal		control-flow-reviewed	reviewed	manual:game_map_load
 GAME.EXE	0x80036584	0x24d84		mips26	reachable-code	0x800364e0	load	map_refresh_dialogue_stages	jal		control-flow-reviewed	reviewed	manual:game_map_load
-GAME.EXE	0x80036590	0x24d90		mips26	reachable-code	0x8001bae4	load	effect5_texture_cache_prepare	jal		control-flow-reviewed	reviewed	manual:game_map_load
+GAME.EXE	0x80036590	0x24d90		mips26	reachable-code	0x8001bae4	load	render_prepare_actor_textures	jal		control-flow-reviewed	reviewed	manual:game_map_load
 GAME.EXE	0x80036598	0x24d98	0x8003659c	mips_hi16_lo16	reachable-code	0x80055e1c	load	color_matrix_table	lui+addiu	a1	paired-reviewed	reviewed	manual:game_map_load
 GAME.EXE	0x800365a0	0x24da0	0x800365a4	mips_hi16_lo16	reachable-code	0x80095720	bss	game_graphics_runtime	lui+addiu	a0	paired-reviewed	reviewed	manual:game_map_load
 GAME.EXE	0x80036600	0x24e00		mips26	reachable-code	0x80036554	load		jal		control-flow-reviewed	reviewed	manual:game_func_800365f8

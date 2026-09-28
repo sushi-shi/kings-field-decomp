@@ -437,7 +437,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
 #undef VTX
 
 DATA(0x80057b5c, 0x4)
-CVECTOR model_textured_primitive_color = {
+CVECTOR retextured_primitive_color = {
     KF_TEXTURE_BASE_BRIGHTNESS, KF_TEXTURE_BASE_BRIGHTNESS,
     KF_TEXTURE_BASE_BRIGHTNESS, 0
 };
@@ -446,7 +446,7 @@ CVECTOR model_textured_primitive_color = {
  * separate model lighting colour. The caller supplies the signed depth bias.
  */
 ADDRESS(0x8001d730, 0x6e8)
-void render_enqueue_model(u16 object_index, s16 depth_bias)
+void render_enqueue_tmd_retextured(u16 object_index, s16 depth_bias)
 {
     KfTmdPrimitive *primitive;
     KfTmdObject *object;
@@ -493,9 +493,9 @@ void render_enqueue_model(u16 object_index, s16 depth_bias)
                 prim->packed.uv0 = primitive->texture.uv0;
                 prim->packed.uv1 = primitive->texture.uv1;
                 prim->packed.uv2 = primitive->texture.uv2;
-                model_textured_primitive_color.cd = prim->sdk.code;
+                retextured_primitive_color.cd = prim->sdk.code;
                 NormalColorDpq3((SVECTOR *)(normals + primitive->gt3.n0), (SVECTOR *)(normals + primitive->gt3.n1),
-                                (SVECTOR *)(normals + primitive->gt3.n2), &model_textured_primitive_color, va->p2,
+                                (SVECTOR *)(normals + primitive->gt3.n2), &retextured_primitive_color, va->p2,
                                 &prim->packed.color0, &prim->packed.color1, &prim->packed.color2);
                 otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
@@ -529,11 +529,11 @@ void render_enqueue_model(u16 object_index, s16 depth_bias)
                 prim->packed.uv1 = primitive->texture.uv1;
                 prim->packed.uv2 = primitive->texture.uv2;
                 prim->packed.uv3 = primitive->texture.uv3;
-                model_textured_primitive_color.cd = prim->sdk.code;
+                retextured_primitive_color.cd = prim->sdk.code;
                 NormalColorDpq3((SVECTOR *)(normals + primitive->gt4.n0), (SVECTOR *)(normals + primitive->gt4.n1),
-                                (SVECTOR *)(normals + primitive->gt4.n2), &model_textured_primitive_color, va->p2,
+                                (SVECTOR *)(normals + primitive->gt4.n2), &retextured_primitive_color, va->p2,
                                 &prim->packed.color0, &prim->packed.color1, &prim->packed.color2);
-                NormalColorDpq((SVECTOR *)(normals + primitive->gt4.n3), &model_textured_primitive_color, va->p2,
+                NormalColorDpq((SVECTOR *)(normals + primitive->gt4.n3), &retextured_primitive_color, va->p2,
                                &prim->packed.color3);
                 otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
@@ -564,8 +564,8 @@ void render_enqueue_model(u16 object_index, s16 depth_bias)
                 prim->packed.uv0 = primitive->texture.uv0;
                 prim->packed.uv1 = primitive->texture.uv1;
                 prim->packed.uv2 = primitive->texture.uv2;
-                model_textured_primitive_color.cd = prim->sdk.code;
-                NormalColorDpq((SVECTOR *)(normals + primitive->ft3.n0), &model_textured_primitive_color,
+                retextured_primitive_color.cd = prim->sdk.code;
+                NormalColorDpq((SVECTOR *)(normals + primitive->ft3.n0), &retextured_primitive_color,
                                (va->p2 + vb->p2 + vc->p2) / 3, &prim->packed.color0);
                 otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
@@ -599,8 +599,8 @@ void render_enqueue_model(u16 object_index, s16 depth_bias)
                 prim->packed.uv1 = primitive->texture.uv1;
                 prim->packed.uv2 = primitive->texture.uv2;
                 prim->packed.uv3 = primitive->texture.uv3;
-                model_textured_primitive_color.cd = prim->sdk.code;
-                NormalColorDpq((SVECTOR *)(normals + primitive->ft4.n0), &model_textured_primitive_color,
+                retextured_primitive_color.cd = prim->sdk.code;
+                NormalColorDpq((SVECTOR *)(normals + primitive->ft4.n0), &retextured_primitive_color,
                                (va->p2 + vb->p2 + vc->p2 + vd->p2) >> 2, &prim->packed.color0);
                 otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);
                 if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {

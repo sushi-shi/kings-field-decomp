@@ -358,7 +358,7 @@ class InventoryTests(unittest.TestCase):
             ("KfEffectRecord", 0x3C, 0x34, "animation_cache"),
             ("KfMapEvent", 0x44, 0x3C, "animation_cache"),
             ("KfPlayerState", 0xE0, 0x74, "weapon_animation_cache"),
-            ("KfEffectSprite", 0x1C, 0x18, "animation_cache"),
+            ("KfHudModel", 0x1C, 0x18, "animation_cache"),
         )
         for structure, size, offset, name in slots:
             with self.subTest(structure=structure):
@@ -820,7 +820,7 @@ class InventoryTests(unittest.TestCase):
             "game/asset.h": ("KfAssetHeader",),
             "game/render.h": (
                 "KfHudSprite",
-                "KfEffectSprite",
+                "KfHudModel",
                 "KfDisplayState",
                 "KfTmdState",
                 "KfRenderState",
@@ -1614,7 +1614,7 @@ class InventoryTests(unittest.TestCase):
             ],
             [
                 ("tmd_textured_primitive_color", "CVECTOR"),
-                ("model_textured_primitive_color", "CVECTOR"),
+                ("retextured_primitive_color", "CVECTOR"),
                 ("map_textured_primitive_color", "CVECTOR"),
                 ("render_sprite_light_normal", "SVECTOR"),
             ],

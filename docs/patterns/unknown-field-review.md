@@ -281,7 +281,7 @@ nor claims a new exact function.
 | OPEN | audio_initialize | Same limitation for OPEN audio state. |
 | GAME | save_file_write_slot | Save transport confirmed; payload gaps/player opaque bytes unresolved. |
 | GAME | save_file_read_slot | Save restoration confirmed; transport does not prove padding. |
-| GAME | render_effect_sprites | SDK rotation boundary retained; adjacent descriptor gaps unresolved. |
+| GAME | render_hud_models | SDK rotation boundary retained; adjacent descriptor gaps unresolved. |
 | OPEN | opening_entity_pool_reset | Three individual control clears proven; allocation analogy remains candidate. |
 | OPEN | opening_entity_pool_load_placements | Known entity construction; unknown tail/control roles unresolved. |
 | OPEN | opening_entity_render | Known render transforms; adjacent unknown halfword not promoted to SDK pad. |
