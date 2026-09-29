@@ -1,5 +1,5 @@
-#ifndef KF_POOL_H
-#define KF_POOL_H
+#ifndef KF_ANIMATION_CACHE_H
+#define KF_ANIMATION_CACHE_H
 
 #include <kf/lib/animation.h>
 #include <kf/lib/types.h>

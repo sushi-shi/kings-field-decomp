@@ -5,7 +5,7 @@
 #include <kf/game/asset.h>
 #include <kf/game/render.h>
 #include <kf/lib/memory.h>
-#include <kf/game/pool.h>
+#include <kf/game/animation_cache.h>
 #include <kf/lib/geometry_types.h>
 #include <cstdlib>
 #include <cstdio>

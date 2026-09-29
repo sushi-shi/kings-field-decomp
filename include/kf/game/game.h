@@ -23,7 +23,7 @@
 #include <kf/game/menu.h>
 #include <kf/game/audio.h>
 #include <kf/game/player.h>
-#include <kf/game/pool.h>
+#include <kf/game/animation_cache.h>
 #include <kf/game/magic.h>
 
 #endif

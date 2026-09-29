@@ -15,7 +15,7 @@ remaining error-handler coverage, cross-version runtime comparisons and limits.
 No reported problem remains under active investigation. The user reproduced
 the plaque edge in the verified retail-disc emulator session. Flames, Linux
 inputs and the general Linux visual check are also user-confirmed.
-Browser/ending checks remain verification gaps; MAGIC is deferred until the user
+The natural-ending check remains a verification gap; MAGIC is deferred until the user
 reproduces it. Additional cast cleanup is separate maintenance, not an active bug.
 
 Semantic naming cleanup is recorded in [semantic-naming.md](semantic-naming.md):
@@ -158,18 +158,20 @@ remain separate work; see the cleanup document for their boundaries.
   [capture restoration](port-findings.md#restoring-mouse-capture-after-modal-interaction),
   [pixel changes](port-findings.md#pixel-arithmetic-correction).
 
-### 4. Browser audio and persistence — verification gaps
+### 4. Browser audio and persistence — closed
 
-- Evidence: local disc import, opening, game/menu rendering, cache reload and
-  original-menu save/load across a page reload have been exercised. Audible
-  browser playback and save/cache retention across a full browser restart have
-  not. Persistent-storage permission was denied in the checked headless profile.
-- Next: ask for a short real-browser check of music/menu sounds and the existing
-  save/cache after a normal browser restart. Check mouse capture under browser
-  permission rules during that session; a required click is not a native bug.
-- Close when: audible playback and restart persistence work, and storage/capture
-  permission limitations are visible to the user. Do not promise survival after
-  site-data deletion or turn this into a power-loss test campaign.
+- Evidence: the user confirmed audible playback in the browser and the native
+  client (2026-09-29). An isolated no-input Chromium profile then imported the
+  Japanese BIN/CUE, reached the opening, and measured a non-silent signal at the
+  page's audio destination (peak 0.50; 39 of 45 seconds above RMS 0.001). After the
+  Chromium process fully exited and relaunched on the same profile, the resource
+  cache restored without re-import ("Loaded verified extracted files from this
+  device"), and a seeded 8,964-byte save-store entry was byte-identical.
+- Limits: persistent storage was not granted in that profile, and the page says so
+  ("Saves can be evicted or cleared by the browser"); mouse capture still needs a
+  click, which the page also states. Loading a save after a browser restart through
+  the original menu was not exercised without user input. Game time and audio pause
+  while the window lacks focus, by design (`SDL_EVENT_WINDOW_FOCUS_LOST`).
 
 ### 5. Natural ending and application re-entry — verification gap
 
