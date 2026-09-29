@@ -211,7 +211,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias, const MATRIX *lights)
             }
             break;
         }
-        case (KF_TMD_MODE_G3 | KF_TMD_MODE_SEMITRANS): {
+        case KF_TMD_MODE_G3_SEMITRANS: {
             KfTmdPrimitive *polygon = (KfTmdPrimitive *)packet;
 
             vertex0 = tmd_projected_vertex(polygon->g3.v0);
@@ -295,7 +295,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias, const MATRIX *lights)
             }
             break;
         }
-        case (KF_TMD_MODE_G4 | KF_TMD_MODE_SEMITRANS): {
+        case KF_TMD_MODE_G4_SEMITRANS: {
             KfTmdPrimitive *polygon = (KfTmdPrimitive *)packet;
 
             vertex0 = tmd_projected_vertex(polygon->g4.v0);
@@ -328,7 +328,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias, const MATRIX *lights)
             }
             break;
         }
-        case (KF_TMD_MODE_F3 | KF_TMD_MODE_SEMITRANS): {
+        case KF_TMD_MODE_F3_SEMITRANS: {
             KfTmdPrimitive *polygon = (KfTmdPrimitive *)packet;
 
             vertex0 = tmd_projected_vertex(polygon->f3.v0);
@@ -353,7 +353,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias, const MATRIX *lights)
             }
             break;
         }
-        case (KF_TMD_MODE_F4 | KF_TMD_MODE_SEMITRANS): {
+        case KF_TMD_MODE_F4_SEMITRANS: {
             KfTmdPrimitive *polygon = (KfTmdPrimitive *)packet;
 
             vertex0 = tmd_projected_vertex(polygon->f4.v0);
