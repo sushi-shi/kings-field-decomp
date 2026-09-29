@@ -26,6 +26,8 @@ KF_ENUM_END(KfMenuMode)
 KF_ENUM_BEGIN(KfMenuResult, s32)
     KF_MENU_RESULT_PENDING = -99,
     KF_MENU_RESULT_GAME_LOADED = -3,
+    /* Handled by player_update (retail compares with -2), but no retail GAME menu
+     * path returns it: an accepted System quit shows the power-off image forever. */
     KF_MENU_RESULT_RETURN_TO_INTRO = -2,
     KF_MENU_RESULT_CANCELLED = -1,
     KF_MENU_RESULT_ACCEPTED = 0,

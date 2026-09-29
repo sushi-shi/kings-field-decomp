@@ -155,17 +155,17 @@ void map_resources_load(KfFloorId floor, KF_ENUM_PARAM(KfMapVariant, s32) map_va
     block = stream;
     RESOURCE_STREAM_NEXT(stream);
     audio_play_current_map_sequence();
-    source = map_resource_copy_words(
+    source = resource_stream_copy_words(
         map_cell_attribute_grid.words,
         (u32 *)(stream + KF_RESOURCE_CHUNK_HEADER_BYTES),
         MAP_GRID_WORDS);
-    source = map_resource_copy_words(
+    source = resource_stream_copy_words(
         map_floor_height_grid.words, source, MAP_GRID_WORDS);
-    source = map_resource_copy_words(
+    source = resource_stream_copy_words(
         map_cell_orientation_grid.words, source, MAP_GRID_WORDS);
-    source = map_resource_copy_words(
+    source = resource_stream_copy_words(
         map_collision_flag_grid.words, source, MAP_GRID_WORDS);
-    map_resource_copy_words(
+    resource_stream_copy_words(
         map_collision_grid.words, source, MAP_GRID_WORDS);
     item_load_floor_placements(
         (KfFloorItemPlacement *)(RESOURCE_STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES));

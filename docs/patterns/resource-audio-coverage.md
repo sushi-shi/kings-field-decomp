@@ -85,7 +85,7 @@ delinked target and raw retail words. No function was newly banked.
 | GAME.EXE | `common_resources_load` | `0x8001b180 / 528` | 10 / 4 | 100%; unchanged. |
 | GAME.EXE | `map_resource_path_set_floor` | `0x8001b390 / 20` | 0 / 0 | 100%; unchanged. |
 | GAME.EXE | `map_resource_load_file` | `0x8001b3a4 / 64` | 2 / 0 | 100%; unchanged. |
-| GAME.EXE | `map_resource_copy_words` | `0x8001b3e4 / 48` | 0 / 2 | 100%; unchanged. |
+| GAME.EXE | `resource_stream_copy_words` | `0x8001b3e4 / 48` | 0 / 2 | 100%; unchanged. |
 | GAME.EXE | `map_variant_assets_load` | `0x8001b414 / 136` | 2 / 0 | 100%; unchanged. |
 | GAME.EXE | `audio_play_current_map_sequence` | `0x8001b49c / 188` | 1 / 7 | 100%; unchanged. |
 | GAME.EXE | `map_resources_load` | `0x8001b558 / 600` | 31 / 1 | 100%; unchanged. |

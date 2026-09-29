@@ -387,12 +387,12 @@ class GameGraphicsOwnerProbeTests(unittest.TestCase):
             'game.geometry_render': {
                 'render_weapon', 'render_hud_models', 'render_hud_sprites',
             },
-            'game.pool': {
+            'game.animation_cache': {
                 'animation_cache_reset', 'animation_cache_mark_stale', 'animation_cache_release_all',
                 'animation_cache_release_stale', 'animation_cache_allocate',
             },
         }
-        controls = {'game.pool': {'render_bind_animated_instance', 'animation_cache_release'}}
+        controls = {'game.animation_cache': {'render_bind_animated_instance', 'animation_cache_release'}}
         pool_base_lows = {
             'animation_cache_reset': 0x4, 'animation_cache_mark_stale': 0x4, 'animation_cache_release_all': 0x18,
             'animation_cache_release_stale': 0x1C, 'animation_cache_allocate': 0x4,
@@ -573,7 +573,7 @@ extern KfMaterialProbe material_probe;
             },
             'game.render': {'tmd_project_vertices', 'tmd_project_vertices_depth_shift',
                             'tmd_transform_vertices'},
-            'game.pool': {'render_bind_animated_instance'},
+            'game.animation_cache': {'render_bind_animated_instance'},
         }
         for unit_name, names in selected.items():
             unit = manifest.by_name()[unit_name]
@@ -678,7 +678,7 @@ extern KfMaterialProbe material_probe;
             'game.player_core',
             'game.player_death',
             'game.player_death_fade',
-            'game.pool',
+            'game.animation_cache',
             'game.render',
             'game.render_enqueue',
             'game.render_frame',

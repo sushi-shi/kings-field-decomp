@@ -11,7 +11,7 @@ Named definitions and ADDRESS/DATA/RODATA claims are excluded. Every row represe
 | --- | ---: | --- | --- | --- |
 | `asset_registry_load_tmd_archive` | 16 | `0` | `while (count-- != 0) {` | Archive countdown exhaustion; the archive header supplies the count and the named header extent supplies its byte stride. |
 
-## `src/game/pool.c`
+## `src/game/animation_cache.c`
 
 35 retained occurrences.
 

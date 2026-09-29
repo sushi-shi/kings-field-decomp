@@ -94,27 +94,27 @@ serialized tails using the legacy C89 convention, not a one-element limit.
 
 | Source / lines | Literal | Occurrences | Reason retained inline |
 | --- | --- | ---: | --- |
-| `pool.c:16,25,33` | `1` | 3 | Variable tails for keyframe offsets, morph indices and vertex deltas; their counts come from the corresponding header fields. |
-| `pool.c:54` | `0` | 1 | `copy_vertices` terminates its element countdown; each iteration copies the two words of one SDK vector. |
-| `pool.c:77` | `0` | 1 | Empty animation-clip count selects the static rendering path. |
-| `pool.c:78,86,90` | `0` | 3 | Null cache-record pointer checks before release, reuse or allocation failure. |
-| `pool.c:82,151` | `0` | 2 | First TMD object selected for both static and animated models; retail ignores the morph object's stored TMD selector. |
-| `pool.c:91` | `0` | 1 | Null return on cache exhaustion; the separate static-success sentinel is already named. |
-| `pool.c:99` | `0` | 1 | Null vertex allocation triggers cache release and retry. |
-| `pool.c:115,116` | `0` | 2 | Origin of the accumulated clip-phase interval. |
-| `pool.c:123` | `0` | 1 | Clip keyframe countdown terminates after the stored count is exhausted. |
-| `pool.c:132` | `0` | 1 | Nonzero serialized reversal flag complements the blend fraction; retain the full nonzero predicate. |
-| `pool.c:159` | `0` | 1 | Keyframe morph countdown terminates after its stored count is exhausted. |
-| `pool.c:175,189` | `1` | 2 | Scratch vertices start one SDK vector after the extra slot used by the rest-morph blend. |
-| `pool.c:180,186` | `0` | 2 | First word of the extra scratch vector, holding X/Y, saved and restored around the blend. |
-| `pool.c:181,187` | `1` | 2 | Second word of the same vector, holding Z/pad, saved and restored. |
-| `pool.c:185` | `1` | 1 | Include the header-sized extra vector in the SDK rest-morph call, then restore its scratch entry. |
-| `pool.c:202,228` | `0` | 2 | Null owned-vertex pointer after reset or release. |
-| `pool.c:204,218,267,282` | `0` | 4 | Twelve-record countdown termination in reset, mark, sweep and allocation scans. |
-| `pool.c:225` | `0` | 1 | Clear the owner's live cache pointer on release. |
-| `pool.c:226` | `0` | 1 | Free only a non-null owned vertex buffer. |
-| `pool.c:243,243` | `1`, `-1` | 2 | Capacity minus one initializes the signed countdown; minus one terminates after all twelve records. Neither is a cache state. |
-| `pool.c:283` | `0` | 1 | Null result when the scan finds no free record. |
+| `animation_cache.c:16,25,33` | `1` | 3 | Variable tails for keyframe offsets, morph indices and vertex deltas; their counts come from the corresponding header fields. |
+| `animation_cache.c:54` | `0` | 1 | `copy_vertices` terminates its element countdown; each iteration copies the two words of one SDK vector. |
+| `animation_cache.c:77` | `0` | 1 | Empty animation-clip count selects the static rendering path. |
+| `animation_cache.c:78,86,90` | `0` | 3 | Null cache-record pointer checks before release, reuse or allocation failure. |
+| `animation_cache.c:82,151` | `0` | 2 | First TMD object selected for both static and animated models; retail ignores the morph object's stored TMD selector. |
+| `animation_cache.c:91` | `0` | 1 | Null return on cache exhaustion; the separate static-success sentinel is already named. |
+| `animation_cache.c:99` | `0` | 1 | Null vertex allocation triggers cache release and retry. |
+| `animation_cache.c:115,116` | `0` | 2 | Origin of the accumulated clip-phase interval. |
+| `animation_cache.c:123` | `0` | 1 | Clip keyframe countdown terminates after the stored count is exhausted. |
+| `animation_cache.c:132` | `0` | 1 | Nonzero serialized reversal flag complements the blend fraction; retain the full nonzero predicate. |
+| `animation_cache.c:159` | `0` | 1 | Keyframe morph countdown terminates after its stored count is exhausted. |
+| `animation_cache.c:175,189` | `1` | 2 | Scratch vertices start one SDK vector after the extra slot used by the rest-morph blend. |
+| `animation_cache.c:180,186` | `0` | 2 | First word of the extra scratch vector, holding X/Y, saved and restored around the blend. |
+| `animation_cache.c:181,187` | `1` | 2 | Second word of the same vector, holding Z/pad, saved and restored. |
+| `animation_cache.c:185` | `1` | 1 | Include the header-sized extra vector in the SDK rest-morph call, then restore its scratch entry. |
+| `animation_cache.c:202,228` | `0` | 2 | Null owned-vertex pointer after reset or release. |
+| `animation_cache.c:204,218,267,282` | `0` | 4 | Twelve-record countdown termination in reset, mark, sweep and allocation scans. |
+| `animation_cache.c:225` | `0` | 1 | Clear the owner's live cache pointer on release. |
+| `animation_cache.c:226` | `0` | 1 | Free only a non-null owned vertex buffer. |
+| `animation_cache.c:243,243` | `1`, `-1` | 2 | Capacity minus one initializes the signed countdown; minus one terminates after all twelve records. Neither is a cache state. |
+| `animation_cache.c:283` | `0` | 1 | Null result when the scan finds no free record. |
 | `asset_registry.c:16` | `0` | 1 | Archive asset countdown termination; the header supplies the count. |
 
 Existing named constants retain their separate domains: pool capacity 12,

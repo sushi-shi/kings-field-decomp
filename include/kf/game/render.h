@@ -8,7 +8,7 @@
 #include <kf/game/effect.h>
 #include <kf/lib/map.h>
 #include <kf/lib/item.h>
-#include <kf/game/pool.h>
+#include <kf/game/animation_cache.h>
 #include <kf/lib/render_types.h>
 #include <kf/lib/tmd.h>
 

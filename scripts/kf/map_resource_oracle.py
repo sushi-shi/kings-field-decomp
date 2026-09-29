@@ -163,7 +163,7 @@ def normalize_trace(
     ignored = {
         "map_resources_load",
         "map_resource_load_file",
-        "map_resource_copy_words",
+        "resource_stream_copy_words",
         "strcpy",
     }
     for call in calls:
@@ -329,7 +329,7 @@ def compare_floor(
         for name in (
             "map_resource_path_set_floor",
             "map_resource_load_file",
-            "map_resource_copy_words",
+            "resource_stream_copy_words",
             "map_resources_load",
         )
     ]

@@ -5,7 +5,7 @@
 #include <kf/game/asset.h>
 #include <kf/game/render.h>
 #include <kf/lib/memory.h>
-#include <kf/game/pool.h>
+#include <kf/game/animation_cache.h>
 #include <psyq/sdk.h>
 #include <psyq/libc.h>
 

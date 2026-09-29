@@ -82,7 +82,7 @@ def record_cases(root: Path, symbols: GameSymbols) -> list[RecordCase]:
     specs = (
         (
             1,
-            "map_resource_copy_words",
+            "resource_stream_copy_words",
             "8001b100_resources.o",
             "records-render",
             "render_cell_windows",
@@ -119,7 +119,7 @@ def record_cases(root: Path, symbols: GameSymbols) -> list[RecordCase]:
         ),
         (
             6,
-            "map_resource_copy_words",
+            "resource_stream_copy_words",
             "8001b100_resources.o",
             "records-growth",
             "player_level_growth_table",

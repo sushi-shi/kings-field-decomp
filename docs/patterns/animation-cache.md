@@ -14,7 +14,7 @@ The binder is the only proven caller of `animation_cache_allocate` and the only 
 the asset, clip, keyframe and rest-object metadata. It owns the vertex
 allocation and installs its record in a caller-provided slot. Release clears
 that same slot before freeing the cached vertices. This shared state and
-lifecycle support one reconstructed `game.pool` TU, beyond address adjacency.
+lifecycle support one reconstructed `game.animation_cache` TU, beyond address adjacency.
 The historical filename and original file boundaries remain unproven.
 The adjacent asset registry and item-placement loader retain separate owners.
 
@@ -43,7 +43,7 @@ extent inferred solely from the next global. The adjacent projected-vertex
 and morph-scratch arrays still have only referenced-prefix extents in the
 inventory; this campaign does not invent their capacities.
 
-`pool.h` owns the shared record, binder and lifecycle API and imports the SDK's
+`animation_cache.h` owns the shared record, binder and lifecycle API and imports the SDK's
 `SVECTOR`. The morph object is forward-declared there, with its private format
 definition in the owner source. `game/render.h` includes the pool interface;
 it no longer owns a duplicate binder declaration. The caller-slot campaign
@@ -109,7 +109,7 @@ remain exact, all 13 vendored verification functions remain exact, and all
 59 data-owning units match. Only the six exact pool lifecycle rows are banked.
 The campaign removes one TU; the shared record layout remains 20 bytes and
 three previously opaque fields acquire supported meanings. The oracle's
-candidate path and rebuild unit now follow `game.pool`, with a regression
+candidate path and rebuild unit now follow `game.animation_cache`, with a regression
 test against manifest ownership.
 
 ## Caller-slot type recovery

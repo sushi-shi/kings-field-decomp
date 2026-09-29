@@ -63,7 +63,7 @@ propagation is identified separately in the review.
 | `map_resource_path_set_floor` | 90 | `1` | `map_resource_path[1] = KF_ENUM_ENCODE(s32, floor) + '0';` | Byte one is the floor digit in B0\<filename>; ASCII zero encodes the explicitly converted floor value at the text boundary. |
 | `map_resource_path_set_floor` | 90 | `'0'` | `map_resource_path[1] = KF_ENUM_ENCODE(s32, floor) + '0';` | Byte one is the floor digit in B0\<filename>; ASCII zero encodes the explicitly converted floor value at the text boundary. |
 | `map_resource_load_file` | 98 | `3` | `strcpy(&map_resource_path[3], filename);` | Byte three is the first filename character after the B0\ prefix; this is a local string-layout offset. |
-| `map_resource_copy_words` | 109 | `0` | `while (word_count-- != 0) {` | Copy while the pre-decrement unsigned count is nonzero; preserve the post-decrement expression and advanced source return. |
+| `resource_stream_copy_words` | 109 | `0` | `while (word_count-- != 0) {` | Copy while the pre-decrement unsigned count is nonzero; preserve the post-decrement expression and advanced source return. |
 | `map_variant_assets_load` | 121 | `3` | `memcpy(&map_resource_path[3], "CHR0.MIM", sizeof "CHR0.MIM");` | Replace the filename starting after B0\; the literal offset belongs to the adjacent template, not an asset registry ID. |
 | `map_variant_assets_load` | 122 | `6` | `map_resource_path[6] = player_state.map_variant + '0';` | Byte six is the CHR filename digit in B0\CHR0.MIM; ASCII zero formats the numeric variant at this text boundary. |
 | `map_variant_assets_load` | 122 | `'0'` | `map_resource_path[6] = player_state.map_variant + '0';` | Byte six is the CHR filename digit in B0\CHR0.MIM; ASCII zero formats the numeric variant at this text boundary. |

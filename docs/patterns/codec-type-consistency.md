@@ -37,7 +37,7 @@ byte sequences without narrowing their accepted values.
 | Actor definitions | [KfActorDefinition](../../include/kf/game/actor.h): action parameters, sound references, signed attachment offsets and special-attack values, animation tables, combat values and the unknown +0x38 range. The former opaque whole-record array becomes an explicit decoded record. |
 | Map events | [KfMapEventDefinition](../../include/kf/lib/map.h): character/model identifiers, dialogue-page limits and stage limit replace generic kind/variant/tag/image-limit names. |
 | Menu text | [MenuPoint, MenuGlyphRow and MenuGlyphString](../../include/kf/game/menu.h): signed screen coordinates and shared glyph-row grouping. |
-| Animation assets and cache | [KfAssetHeader](../../include/kf/game/asset.h) and [KfAnimationCacheRecord](../../include/kf/game/pool.h): clip counts, clip indices, cached vertices and owner-slot identity. |
+| Animation assets and cache | [KfAssetHeader](../../include/kf/game/asset.h) and [KfAnimationCacheRecord](../../include/kf/game/animation_cache.h): clip counts, clip indices, cached vertices and owner-slot identity. |
 
 Decoded resource identifiers and flags retain their full encoded integer
 domain. A known enum vocabulary does not justify rejecting other bit patterns

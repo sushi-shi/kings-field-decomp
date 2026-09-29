@@ -70,7 +70,7 @@ source-evidenced interpretation, not a claim about unreconstructed code.
 
 **`KfAnimKeyframe.reverse`: missing interpolation-selector domain.**
 
-This private struct in `src/game/pool.c:23` escaped the checked-layout inventory.
+This private struct in `src/game/animation_cache.c:23` escaped the checked-layout inventory.
 `render_bind_animated_instance` chooses the normal fraction for zero and
 `4096 - fraction` for nonzero. GAME retail loads the unsigned halfword at
 `0x80020774`, tests zero at `0x8002077c`, and performs the reverse subtraction

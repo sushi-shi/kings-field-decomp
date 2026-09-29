@@ -100,7 +100,7 @@ is banked. Size-weighted objdiff similarity over the same 13,672 retail bytes
 rises from 99.470158% to **99.493564%**; the unweighted mean rises from
 99.662421% to 99.674261%. These are similarity measures, not fractions of
 behavior proved correct. The sole retained source change is the typed
-`SVECTOR` copy helper in `game.pool`.
+`SVECTOR` copy helper in `game.animation_cache`.
 
 | Function | Final strict score | Verdict |
 | --- | ---: | --- |

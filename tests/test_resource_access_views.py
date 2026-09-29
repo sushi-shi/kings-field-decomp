@@ -61,7 +61,7 @@ class ResourceAccessViewTests(unittest.TestCase):
             self.assertNotEqual(result.returncode, 0, grid)
 
     def test_copy_api_accepts_word_storage_but_not_const_destinations(self):
-        for function in ("map_resource_copy_words", "resource_stream_copy_words"):
+        for function in ("resource_stream_copy_words",):
             body = f"const u32 *copy(KfMapOrientationGrid *grid, const u32 *source) {{ return {function}(grid->words, source, 2500); }}"
             for mode in ("retail", "modern"):
                 with self.subTest(function=function, mode=mode):

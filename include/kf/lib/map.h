@@ -509,7 +509,6 @@ extern void map_object_spawn_gold_drop(u16 gold_amount, const VECTOR *position, 
 extern void map_object_spawn_drop(KfMapObjectDropSource drop_source, KfObjectId object_id, const VECTOR *position, s32 y_offset);
 extern void map_object_start_action_if_idle(KfMapObject *object, KfMapObjectOperation action);
 /* Copy into a complete object with word-aligned storage; count is in words. */
-extern const u32 *map_resource_copy_words(u32 *destination, const u32 *source, u32 word_count);
 extern u8 *map_resource_load_file(const char *filename);
 extern void map_resource_path_set_floor(KfFloorId floor);
 extern void map_resources_load(KfFloorId floor, KF_ENUM_PARAM(KfMapVariant, s32) map_variant);

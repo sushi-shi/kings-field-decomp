@@ -157,7 +157,7 @@ source/curated-owner coverage. Thus **the whole-binary behavioral audit is
 still incomplete**. An unresolved row records the next evidence needed,
 not a claim that the field has been proved meaningless.
 
-The local source-only `unknown_02` in `src/game/pool.c` is outside the
+The local source-only `unknown_02` in `src/game/animation_cache.c` is outside the
 requested 79 header declarations. Codec owners without a corresponding
 reviewed C owner were not added to the scope.
 

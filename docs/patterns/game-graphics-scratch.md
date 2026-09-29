@@ -95,7 +95,7 @@ decoded control flow and publication order, not a compiler-wall attribution.
 All 25 ordered source/target relocation records agree after normalizing only
 intra-function section-label spelling; distinct callees, data identities and
 REL addends are preserved. Both focused builds and the recorded match report
-7/7 exact in `game.pool`. The canonical and temporary-owner raw controls
+7/7 exact in `game.animation_cache`. The canonical and temporary-owner raw controls
 agree on every instruction of all four selected functions.
 
 Ruff, all 642 repository tests (77.352s, no skips), eight focused graphics

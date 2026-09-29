@@ -316,7 +316,7 @@ and distinct countdown endpoints.
 
 The remaining ten source lines still have no supported semantic replacement.
 The field inventory now records exact access instructions for all nine shared
-field identities involved (the clip header is local to `pool.c`).
+field identities involved (the clip header is local to `animation_cache.c`).
 
 - OPEN +0x50a/+0x50c/+0x50e: exact admitted relocations identify only three
   reset stores. `kf sema xref` on an interior address returns the whole owner's

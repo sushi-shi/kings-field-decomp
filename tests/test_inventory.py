@@ -377,12 +377,12 @@ class InventoryTests(unittest.TestCase):
                          "KfAnimationCacheRecord **owner_slot;u16 asset_index;"
                          "KF_ENUM_PARAM(KfAnimationClip, u16) clip_index;"
                          "u16 phase;u16 vertex_count")
-        pool_header = (REPO / "include/kf/game/pool.h").read_text()
+        pool_header = (REPO / "include/kf/game/animation_cache.h").read_text()
         render_header = (REPO / "include/kf/game/render.h").read_text()
         self.assertIn("extern KfAnimationCacheRecord *render_bind_animated_instance(\n"
                       "    KfAnimationCacheRecord **owner_slot", pool_header)
         self.assertNotIn("extern u16 *render_bind_animated_instance", render_header)
-        self.assertIn("#include <kf/game/pool.h>", render_header)
+        self.assertIn("#include <kf/game/animation_cache.h>", render_header)
 
     def test_animation_slot_renderers_use_direct_internal_and_vendor_headers(self) -> None:
         for name in ("entity_render", "map_event_render", "geometry_render"):
@@ -411,16 +411,16 @@ class InventoryTests(unittest.TestCase):
                          ("game_graphics_runtime", "KfGraphicsRuntimeGame", 0x249CC))
         self.assertEqual(_structure_field('KfGraphicsRuntimeGame', 0x20228),
                          ('animation_cache_records', 'KfAnimationCacheRecord[12]', 0xF0))
-        claims = load_manifest().by_name()["game.pool"].data
+        claims = load_manifest().by_name()["game.animation_cache"].data
         self.assertEqual(claims, ())
         self.assertEqual(game.data_owner(0x800911AF), datum)
         self.assertEqual(game.data_owner(0x800911B0), datum)
 
     def test_animation_binder_and_cache_lifecycle_share_contiguous_ownership(self) -> None:
         manifest = load_manifest()
-        unit = manifest.by_name()["game.pool"]
+        unit = manifest.by_name()["game.animation_cache"]
         self.assertNotIn("game.render_bind_animated_instance", manifest.by_name())
-        self.assertEqual(unit.source_path, REPO / "src/game/pool.c")
+        self.assertEqual(unit.source_path, REPO / "src/game/animation_cache.c")
         self.assertEqual([function.va for function in unit.functions], [
             0x800205D4, 0x80020978, 0x800209A8, 0x800209E4,
             0x80020A2C, 0x80020A98, 0x80020B04,

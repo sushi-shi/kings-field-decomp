@@ -8,7 +8,7 @@ KfActorDefinition	0x98	supported	game/actor.h;game_semantic_actor_core.tsv;asm;x
 KfActorDefinitionTable	0x720	supported	game/actor.h;asm;typed-map-tables.md	twelve complete actor definitions and 456 copy words
 KfActorPlacement	0x10	supported	game/actor.h;game_semantic_actor_core.tsv;runtime-stride	placement record extent; fields remain opaque
 KfActorState	0x2b48	supported	game/actor.h;game_semantic_actor_core.tsv;asm;pool-relative-definition-and-current-actor-addresses	actor system state: definitions, live actors, player transform snapshot, current and target actor pointers
-KfAnimationCacheRecord	0x14	supported	pool.h;game_semantic_animation_pool.tsv;asm;xrefs	animation vertex-cache record; twelve records with a 20-byte stride
+KfAnimationCacheRecord	0x14	supported	animation_cache.h;game_semantic_animation_pool.tsv;asm;xrefs	animation vertex-cache record; twelve records with a 20-byte stride
 KfArmorRecord	0x1c	supported	game/equipment.h;asm;player_recalculate_combat_stats;player_set_equipment_slot	28-byte armor/accessory record; armor_records[42] holds item ids 13..54
 KfArmorTable	0x498	supported	game/equipment.h;asm;typed-record-tables.md	42 armor/accessory records; complete 294-word resource copy
 KfAssetHeader	0x14	supported	game/asset.h;asm;asset_registry;render_bind_animated_instance	model asset header shared by static and animated registry entries

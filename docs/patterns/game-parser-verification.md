@@ -30,7 +30,7 @@ Psy-Q attribution covers the SDK callees; the TMD format/type evidence is
 documented in [tmd-counts.md](tmd-counts.md). Adjacent functions and linked
 ownership stay in their existing units except for the independently committed
 animation-cache consolidation (`6f862d9`), which moved the binder into
-`game.pool` while this campaign was running. That concurrent work is not counted
+`game.animation_cache` while this campaign was running. That concurrent work is not counted
 as a result of this campaign.
 
 ## Verification plan

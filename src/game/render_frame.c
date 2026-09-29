@@ -6,7 +6,7 @@
 #include <kf/game/player.h>
 #include <kf/lib/math.h>
 #include <kf/game/state.h>
-#include <kf/game/pool.h>
+#include <kf/game/animation_cache.h>
 
 enum {
     HUD_GAUGE_WIDTH = 50,

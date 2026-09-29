@@ -158,9 +158,9 @@ source = "src/game/lighting_presets.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
-unit = "game.player_status_effect4"
+unit = "game.player_fire_defense"
 image = "GAME.EXE"
-source = "src/game/player_status_effect4.c"
+source = "src/game/player_fire_defense.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
@@ -273,9 +273,9 @@ source = "src/game/asset_registry.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
-unit = "game.pool"
+unit = "game.animation_cache"
 image = "GAME.EXE"
-source = "src/game/pool.c"
+source = "src/game/animation_cache.c"
 profile = "probe-gcc257-o2-g0"
 
 [[unit]]
