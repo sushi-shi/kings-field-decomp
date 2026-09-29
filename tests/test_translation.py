@@ -7,7 +7,7 @@ import subprocess
 import tempfile
 import unittest
 
-from scripts.english_patch import MAGIC, embed, replacement_spans
+from scripts.english_patch import MAGIC, embed, from_ppf, ppf3_records, replacement_spans
 
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -21,6 +21,43 @@ def record(name=b"KF/TEST.", size=8, spans=((1, b"XY"), (7, b"Z"))):
 
 def delta(*records):
     return MAGIC + struct.pack("<I", len(records)) + b"".join(records)
+
+
+def ppf3(*records, blockcheck=True):
+    header = b"PPF30" + bytes([2]) + b" " * 50 + bytes([0, int(blockcheck), 0, 0])
+    body = b"".join(struct.pack("<Q", offset) + bytes([len(data)]) + data for offset, data in records)
+    return header + (bytes(1024) if blockcheck else b"") + body
+
+
+class PpfConversion(unittest.TestCase):
+    RAW, HEADER = 2352, 24
+
+    def at(self, sector, byte):
+        return sector * self.RAW + self.HEADER + byte
+
+    def test_maps_sector_data_to_files_and_drops_headers_and_ecc(self):
+        layout = {"A.BIN": (20, 3000), "KF/B.DAT": (30, 10)}
+        patch = ppf3(
+            (self.at(20, 5), b"xy"),              # A.BIN bytes 5-6
+            (self.at(21, 0), b"z"),               # second sector: A.BIN byte 2048
+            (21 * self.RAW + 2, b"hdr"),          # sector header: not file data
+            (self.at(20, 2048), b"ecc"),          # EDC/ECC after the data area
+            (self.at(30, 9), b"end"),             # byte 9 is B.DAT's last; 10-11 are padding
+            (self.at(99, 0), b"q"),               # sector owned by no file
+        )
+        payload = from_ppf(patch, layout)
+        self.assertEqual(payload, delta(record(b"A.BIN", 3000, ((5, b"xy"), (2048, b"z"))),
+                                        record(b"KF/B.DAT", 10, ((9, b"e"),))))
+
+    def test_rejects_non_ppf3_and_truncated_records(self):
+        with self.assertRaises(ValueError):
+            list(ppf3_records(b"PPF20" + bytes(80)))
+        with self.assertRaises(ValueError):
+            list(ppf3_records(ppf3((self.at(1, 0), b"abc"))[:-2]))
+
+    def test_patch_without_file_changes_is_rejected(self):
+        with self.assertRaises(ValueError):
+            from_ppf(ppf3((5, b"hdr")), {"A.BIN": (20, 100)})
 
 
 class Translation(unittest.TestCase):

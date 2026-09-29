@@ -33,26 +33,27 @@ set_target_properties(kf_codecs PROPERTIES IMPORTED_LOCATION "${KF_CODEC_LIBRARY
 add_dependencies(kf_codecs kf_codecs_build)
 
 find_package(Python3 REQUIRED COMPONENTS Interpreter)
-set(KF_ENGLISH_PATCH "${CMAKE_SOURCE_DIR}/resources/english-v1.kfdelta" CACHE FILEPATH
-    "Local English translation delta to embed (optional; redistribution pending)")
-set(KF_PATCH_ARGS)
-set(KF_PATCH_DEPENDS)
-if(EXISTS "${KF_ENGLISH_PATCH}")
-  list(APPEND KF_PATCH_ARGS --input "${KF_ENGLISH_PATCH}")
-  list(APPEND KF_PATCH_DEPENDS "${KF_ENGLISH_PATCH}")
+# The Nix dev shell and package supply a delta derived from the translator's PPF
+# release; otherwise a local resources/english-v1.kfdelta is used when present.
+if(DEFINED ENV{KF_ENGLISH_PATCH} AND NOT "$ENV{KF_ENGLISH_PATCH}" STREQUAL "")
+  set(KF_ENGLISH_PATCH_DEFAULT "$ENV{KF_ENGLISH_PATCH}")
 else()
-  message(STATUS "English payload absent: building Japanese-only import support")
+  set(KF_ENGLISH_PATCH_DEFAULT "${CMAKE_SOURCE_DIR}/resources/english-v1.kfdelta")
 endif()
-set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${KF_ENGLISH_PATCH}")
-add_custom_command(OUTPUT "${CMAKE_BINARY_DIR}/generated/english_patch.inc"
+set(KF_ENGLISH_PATCH "${KF_ENGLISH_PATCH_DEFAULT}" CACHE FILEPATH
+    "English translation delta to embed (optional; never distribute builds containing it)")
+# Checked on every build, so a payload added after configuring is picked up;
+# the generated file is rewritten only when its content changes.
+add_custom_target(kf_english_patch
   COMMAND ${Python3_EXECUTABLE} "${CMAKE_SOURCE_DIR}/scripts/english_patch.py" embed
-    ${KF_PATCH_ARGS} --output "${CMAKE_BINARY_DIR}/generated/english_patch.inc"
-  DEPENDS scripts/english_patch.py ${KF_PATCH_DEPENDS} VERBATIM)
+    --input "${KF_ENGLISH_PATCH}" --optional --output "${CMAKE_BINARY_DIR}/generated/english_patch.inc"
+  BYPRODUCTS "${CMAKE_BINARY_DIR}/generated/english_patch.inc" VERBATIM)
 include(cmake/OriginalSources.cmake)
 add_library(kf_support STATIC src/platform/files.cpp src/platform/disc.cpp src/platform/assets.cpp src/platform/language.cpp src/platform/translation.cpp src/platform/controls.cpp src/lib/fixed_math.cpp src/lib/random.cpp)
 target_sources(kf_support PRIVATE "${CMAKE_BINARY_DIR}/generated/english_patch.inc")
 target_include_directories(kf_support PUBLIC include PRIVATE "${CMAKE_BINARY_DIR}/generated")
 target_link_libraries(kf_support PUBLIC kf_codecs)
+add_dependencies(kf_support kf_english_patch)
 target_compile_options(kf_support PRIVATE -Wall -Wextra -Wpedantic -Werror)
 
 if(EMSCRIPTEN)

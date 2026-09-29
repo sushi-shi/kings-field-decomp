@@ -3,10 +3,9 @@
 The port supports the original Japanese SLPS-00017 resource set and a local
 English v1.0 translation delta. John Osborne (weissvulf) announced the translation
 in [the Agetec forum](https://www.tapatalk.com/groups/agetec/presenting-the-king-s-field-translation-patch-t1827.html).
-The supplied English reference archive contains an already-patched single-track
-MODE2/2352 BIN/CUE; the port derives its local delta from the verified file trees.
-No original disc, translated image or complete extracted resource tree is bundled.
-The translation delta remains untracked pending redistribution permission.
+The port derives its delta from the translator's PPF release at build time (see
+[Translation payload](#translation-payload)). No original disc, translated image,
+translation payload or extracted resource tree is stored in this repository.
 
 ## Selection and extraction
 
@@ -34,26 +33,35 @@ verified but never executed. Their bytes are retained for resource identity;
 gameplay runs the native compiled sources. Already verified English trees remain
 accepted for compatibility with earlier local imports.
 
-## Local translation payload
+## Translation payload
 
-Redistribution permission is pending. `resources/english-v1.kfdelta` is ignored
-by Git; do not publish it or binaries containing it while permission is being
-arranged. The local payload is derived from the two hash-verified resource trees:
+The English data is the translator's own release: John Osborne's
+`Kings_Field_Jap_to_Eng_v1.0.rar` (a PPF 3.0 patch, December 2006). The flake
+fetches it from the Wayback Machine copy of the translator's site, pinned by
+SHA-256; nothing translated is stored in this repository or re-hosted. The
+build converts the PPF into the file-level delta below with
+`scripts/english_patch.py from-ppf`, using `resources/slps-00017-layout.tsv`, the
+committed table of the Japanese disc's 428 file extents (path, first
+2352-byte sector, size). PPF bytes outside file data (sector headers,
+EDC/ECC) are dropped. Applying the translator's PPF to the Japanese BIN
+reproduces the English v1.0 image byte for byte, and the converted delta
+reproduces all 428 English files.
+
+`nix develop` exports the derived delta as `KF_ENGLISH_PATCH`, and the Nix
+package passes it to CMake, so both embed English automatically
+(`nix build .#english-delta` builds it alone). Outside Nix, CMake falls back to
+an ignored local `resources/english-v1.kfdelta`, which `english_patch.py create`
+or `from-ppf` can produce. A build without any payload still supports Japanese
+and reports clearly that English generation is unavailable.
+
+The translation's redistribution terms are not stated, so do not publish
+binaries, caches or derived deltas that contain it. `layout` regenerates the
+extent table from a Japanese BIN:
 
 ```sh
-nix develop --command python3 scripts/english_patch.py create \
-  --japanese /path/to/japanese/disc --english /path/to/english/disc \
-  --output resources/english-v1.kfdelta
-nix develop --command cmake --preset linux
-nix develop --command cmake --build --preset linux
+nix develop --command python3 scripts/english_patch.py layout \
+  --disc /path/to/Japanese.bin --output resources/slps-00017-layout.tsv
 ```
-
-CMake embeds that payload in Linux and WASM builds. `KF_ENGLISH_PATCH` can name
-another local path. A build without the payload still supports Japanese and
-reports clearly that English generation is unavailable. For a local Nix package
-that includes ignored files, use `nix run path:. -- --language en`; Git-based
-flake sources intentionally omit the ignored payload. Do not distribute that
-local package yet.
 
 The versioned delta stores sorted resource paths, unchanged file lengths, and
 ordered replacement spans. The decoder checks paths, lengths, offsets, ordering,

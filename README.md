@@ -23,12 +23,13 @@ no `KF_DISC` and reuse
 unset or relative, it defaults to `$HOME/.cache`. Saves are stored separately
 in the SDL user-preference directory, in three `.kfs` slots.
 
-For a local build with the translation payload, add `--language en`. English
-resources are generated automatically from the Japanese cache and saved alongside
-it as `resources-en-v1`. You do not need an English-patched disc. Later launches
-can use just `kings-field --language en`; Japanese remains the default. Translation
-redistribution permission is pending, so the payload is local and untracked.
-See [English resources](docs/english-resources.md) for local build instructions.
+For English, add `--language en`. The Nix build fetches John Osborne's English
+translation patch from its original release and derives the resource delta
+locally; English resources are then generated from the Japanese cache and saved
+alongside it as `resources-en-v1`. You do not need an English-patched disc. Later
+launches can use just `kings-field --language en`; Japanese remains the default.
+Do not publish builds or caches that contain the translation. See
+[English resources](docs/english-resources.md).
 
 The game starts from the opening. Append options after `--`:
 
