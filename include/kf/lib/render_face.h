@@ -4,7 +4,25 @@
 #include <kf/platform/host.hpp>
 #include <kf/lib/tmd.h>
 
-using KfFaceShading = kf::FaceShading;
+#include <optional>
+#include <initializer_list>
+
+// A visible face owns its projected corners; no animation-scratch pointers escape.
+struct KfProjectedFace {
+    KfScreenVertex corners[4];
+    kf::FaceShape shape;
+
+    void complete_quad(const KfScreenVertex &fourth);
+    kf::DrawFace draw_face() const;
+    s32 ordering_depth() const;
+    s32 average_fog() const;
+    s16 fog(unsigned corner) const { return corners[corner].p2; }
+};
+
+std::optional<KfProjectedFace> render_projected_triangle(
+    std::span<const KfScreenVertex, KF_PROJECTED_VERTEX_CAPACITY> vertices,
+    u16 first, u16 second, u16 third);
+void render_face_uvs(kf::DrawFace &face, std::initializer_list<u16> texcoords);
 
 inline std::int64_t render_face_winding(const KfScreenVertex *a,
     const KfScreenVertex *b, const KfScreenVertex *c)
@@ -45,11 +63,11 @@ inline void render_face_uv(kf::DrawFace *face, unsigned index, u16 uv)
 }
 
 inline void render_face_submit(kf::DrawFace *face, const CVECTOR *colors,
-    KfFaceShading shading, s32 depth)
+    kf::FaceShading shading, s32 depth)
 {
     const float divisor = face->material.kind == kf::SurfaceKind::Texture ? kf::texture_color_unity : kf::color8_scale;
     for (unsigned i = 0; i < static_cast<unsigned>(face->shape); ++i) {
-        const auto &color = colors[shading == KfFaceShading::Flat ? 0 : i];
+        const auto &color = colors[shading == kf::FaceShading::Flat ? 0 : i];
         face->vertices[i].r = color.r / divisor;
         face->vertices[i].g = color.g / divisor;
         face->vertices[i].b = color.b / divisor;

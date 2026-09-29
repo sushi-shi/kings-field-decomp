@@ -247,8 +247,8 @@ void opening_scene1_draw_fade(u8 shade)
         SCENE1_RIGHT_PANEL_X + SCENE1_PANEL_WIDTH, KF_DISPLAY_HEIGHT);
     render_face_uv_rectangle(&left, 0, 0, SCENE1_PANEL_WIDTH, KF_DISPLAY_HEIGHT);
     render_face_uv_rectangle(&right, 0, 0, SCENE1_PANEL_WIDTH, KF_DISPLAY_HEIGHT);
-    render_face_submit(&left, &color, KfFaceShading::Flat, 0);
-    render_face_submit(&right, &color, KfFaceShading::Flat, 0);
+    render_face_submit(&left, &color, kf::FaceShading::Flat, 0);
+    render_face_submit(&right, &color, kf::FaceShading::Flat, 0);
     display_present_frame(open_graphics_runtime.display_state);
 }
 

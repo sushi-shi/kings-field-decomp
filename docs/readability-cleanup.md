@@ -177,6 +177,27 @@ definitions of the inspected shared operations. Independent review covered the
 full ownership diff, its callers and reset chains; its header self-include
 finding is fixed. No gameplay or timing comparison was performed for this pass.
 
+### Projected-face operations
+
+GAME's TMD/model/map producers and OPEN's TMD/map/unlit producers now use one
+projected-face operation for the first three vertices and winding rejection.
+Accepted faces own copied projected values. Quads fetch and append their fourth
+vertex only after rejection, as before; draw-command construction copies the
+screen coordinates. Triangle depth/fog means retain signed division by three;
+quad means retain signed shifts. Depth biases, bounds, masks and insertion order
+stay at the original callers.
+
+Callers still choose lighting and fog explicitly. In particular, model Gouraud
+faces retain vertex-zero fog where the original code used it, while map faces
+use per-corner fog and flat faces use their original mean. Semi-transparent
+special cases keep their existing zero-fog inputs. UV assignment is grouped in
+corner order, and callers use `kf::FaceShading` directly without a redundant alias.
+Packet decoding/traversal, clipping, shaders, blending and sorting are unchanged.
+
+Linux/WASM builds retain the baseline's 57 warnings. A fresh independent review
+covered all 34 converted cases and the new helper, with no actionable findings.
+This is source-level review, not a visual or performance measurement.
+
 ## Remaining cleanup boundaries
 
 These need their own behavior/type or loader-boundary work, not cosmetic wrappers.
@@ -222,12 +243,8 @@ state-alias review into an application/rendering rewrite:
 
 1. **One-program shared-code ownership:** implemented above, with explicit
    phase state and no executable-mode selector.
-2. **Projected-face operations.** Group the repeated projected-vertex lookup,
-   winding check and face-coordinate construction in the opening renderers.
-   Preserve the fourth-vertex lookup after triangle winding rejection, flat
-   versus Gouraud fog inputs (including existing vertex-zero uses), depth
-   arithmetic, packet traversal and submission order. A helper should express
-   a face operation, not just rename three pointer assignments.
+2. **Projected-face operations:** implemented above, retaining per-producer
+   culling, fog, depth and submission policy.
 3. **Arithmetic operations.** Replace straightforward bounds with `std::min`,
    `std::max` or `std::clamp` only when narrowing, side effects and comparison
    semantics agree. Existing repeated distance calculations are candidates for
@@ -240,7 +257,7 @@ state-alias review into an application/rendering rewrite:
    express. Keep useful fixed-width aliases; remove aliases that only hide an
    identical native type as those callers are converted (for example face shading).
 
-The rendering/math entries remain an implementation queue, not a claim that all
+The arithmetic entry remains an implementation queue, not a claim that all
 boilerplate has already been removed.
 
 ## Verification scope

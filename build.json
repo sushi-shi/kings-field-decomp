@@ -103,6 +103,7 @@
     "src/lib/resource_file.cpp",
     "src/lib/resources.cpp",
     "src/lib/debug_matrix.cpp",
-    "src/lib/render_view.cpp"
+    "src/lib/render_view.cpp",
+    "src/lib/render_face.cpp"
   ]
 }
