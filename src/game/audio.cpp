@@ -1,3 +1,4 @@
+#include <algorithm>
 #include <kf/game/resources.h>
 #include <kf/lib/null.h>
 
@@ -118,11 +119,7 @@ KfAudioPlaybackResult audio_play_spatial(
     }
     distance_gain_q7 = ((attenuation_distance - listener_distance) << KF_FIXED7_BITS) / attenuation_distance;
     attenuated_volume = (distance_gain_q7 * volume) >> KF_FIXED7_BITS;
-    if (attenuated_volume < 0) {
-        attenuated_volume = 0;
-    } else if (attenuated_volume >= KF_AUDIO_MAX_VOLUME + 1) {
-        attenuated_volume = KF_AUDIO_MAX_VOLUME;
-    }
+    attenuated_volume = std::clamp<s32>(attenuated_volume, 0, KF_AUDIO_MAX_VOLUME);
     angle = vector_xz_to_angle(
         position->vx - audio_state.listener_position.vx,
         audio_state.listener_position.vz - position->vz);
@@ -136,9 +133,7 @@ KfAudioPlaybackResult audio_play_spatial(
     // Preserve that quirk; changing it to a nonzero test changes panning.
     if ((sound->tone_and_flags & KF_SOUND_PAN_NARROWING_FLAG) == 1) {
         distance_gain_q7 += GAME_SOUND_PAN_NARROWING_GAIN_BOOST;
-        if (distance_gain_q7 >= KF_AUDIO_MAX_VOLUME + 1) {
-            distance_gain_q7 = KF_AUDIO_MAX_VOLUME;
-        }
+        distance_gain_q7 = std::min<s32>(distance_gain_q7, KF_AUDIO_MAX_VOLUME);
     }
     if (distance_gain_q7 >= GAME_SOUND_PAN_NARROW_THRESHOLD) {
         angle = (((angle - KF_ANGLE_EIGHTH_TURN)
@@ -146,13 +141,9 @@ KfAudioPlaybackResult audio_play_spatial(
             + KF_ANGLE_EIGHTH_TURN;
     }
     left = (attenuated_volume * kf::angle_sine(angle)) / GAME_SOUND_PAN_DIVISOR;
-    if (left >= KF_AUDIO_MAX_VOLUME + 1) {
-        left = KF_AUDIO_MAX_VOLUME;
-    }
+    left = std::min<s32>(left, KF_AUDIO_MAX_VOLUME);
     right = (attenuated_volume * kf::angle_cosine(angle)) / GAME_SOUND_PAN_DIVISOR;
-    if (right >= KF_AUDIO_MAX_VOLUME + 1) {
-        right = KF_AUDIO_MAX_VOLUME;
-    }
+    right = std::min<s32>(right, KF_AUDIO_MAX_VOLUME);
     audio_play_voice(audio_playback(),
         audio_state.bank,
         sound->program,

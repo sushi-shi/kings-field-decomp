@@ -96,6 +96,14 @@ s32 fixed_vector2_length(s32 x, s32 y)
     return kf::length_square_root(x * x + y * y) << KF_LENGTH_SQUARE_DOWNSHIFT;
 }
 
+s32 fixed_vector3_length(s32 x, s32 y, s32 z)
+{
+    x >>= KF_LENGTH_SQUARE_DOWNSHIFT;
+    y >>= KF_LENGTH_SQUARE_DOWNSHIFT;
+    z >>= KF_LENGTH_SQUARE_DOWNSHIFT;
+    return kf::length_square_root(x * x + y * y + z * z) << KF_LENGTH_SQUARE_DOWNSHIFT;
+}
+
 s16 angle_shortest_delta(s32 first, s32 second)
 {
     s32 difference;

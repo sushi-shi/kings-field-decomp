@@ -1,3 +1,5 @@
+#include <algorithm>
+#include <cstdlib>
 #include <kf/lib/random.hpp>
 #include <kf/lib/null.h>
 #include <kf/lib/bool.h>
@@ -242,9 +244,7 @@ s32 combat_calculate_damage_component(s32 base_power, s32 attack, s32 defense)
     }
     attack += base_power / COMBAT_BASE_POWER_WEIGHT_DIVISOR;
     difference = attack - defense;
-    if (difference < 0) {
-        difference = 0;
-    }
+    difference = std::max<s32>(difference, 0);
     if (defense == 0) {
         defense = 1;
     }
@@ -506,7 +506,6 @@ s32 actor_distance_to_point(
     if (point_z < -max_distance || max_distance < point_z) {
         return -1;
     }
-    point_x >>= KF_LENGTH_SQUARE_DOWNSHIFT;
     if (point_y != KF_COLLISION_IGNORE_HEIGHT) {
         actor_height >>= 1;
         point_height >>= 1;
@@ -519,8 +518,7 @@ s32 actor_distance_to_point(
             return -1;
         }
     }
-    point_z >>= KF_LENGTH_SQUARE_DOWNSHIFT;
-    distance = kf::length_square_root(point_x * point_x + point_z * point_z) << KF_LENGTH_SQUARE_DOWNSHIFT;
+    distance = fixed_vector2_length(point_x, point_z);
     if (max_distance < distance) {
         return -1;
     }
@@ -573,30 +571,15 @@ void actor_bind_current(KfActor *actor)
 
 void actor_advance_animation_wrapped(KfActor *actor, s16 delta)
 {
-    if (delta < 0) {
-        actor->animation_step = -delta;
-    } else {
-        actor->animation_step = delta;
-    }
+    actor->animation_step = std::abs(delta);
     actor->animation_phase = (actor->animation_phase + delta) & KF_ACTOR_ANIMATION_PHASE_MAX;
 }
 
 void actor_advance_animation_clamped(KfActor *actor, s16 delta)
 {
-    s16 phase;
-
-    if (delta < 0) {
-        actor->animation_step = -delta;
-    } else {
-        actor->animation_step = delta;
-    }
-    phase = actor->animation_phase + delta;
-    actor->animation_phase = phase;
-    if (phase >= KF_ACTOR_ANIMATION_PHASE_PERIOD) {
-        actor->animation_phase = KF_ACTOR_ANIMATION_PHASE_MAX;
-    } else if (phase < 0) {
-        actor->animation_phase = 0;
-    }
+    actor->animation_step = std::abs(delta);
+    const s16 phase = actor->animation_phase + delta;
+    actor->animation_phase = std::clamp<s32>(phase, 0, KF_ACTOR_ANIMATION_PHASE_MAX);
 }
 
 KfBool32 actor_animation_crossed_phase(const KfActor *actor, u16 phase)
