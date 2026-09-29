@@ -4,6 +4,27 @@ A direct source port of the original Japanese King's Field (SLPS-00017).
 The original game logic runs through portable rendering, audio and platform
 interfaces. Supply your own disc image; game data is not bundled.
 
+## Branches
+
+```text
+              master
+                 |
+     +-----------+-----------+
+     |                       |
+     v                       v
+  source                  classic
+     |
+     v
+   port (you are here)
+```
+
+| Branch | Purpose |
+| --- | --- |
+| `master` | Reconstruction and matching |
+| `source` | C++ PS1 build, codecs, and base for porting |
+| `classic` | C PS1 build |
+| `port` | Crossplatform port |
+
 ## Play on Linux
 
 On x86_64 Linux with Nix flakes enabled:
