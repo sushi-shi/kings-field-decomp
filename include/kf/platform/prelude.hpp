@@ -19,8 +19,10 @@
 #include <kf/platform/host.hpp>
 #include <kf/platform/module_state.hpp>
 #include <kf/platform/input.hpp>
+#include <kf/platform/language_runtime.hpp>
 #include <kf/lib/codec.h>
 #include <kf/renderer/renderer.hpp>
+#include <kf/renderer/ui_text.hpp>
 #include <kf/renderer/lighting.hpp>
 #include <kf/renderer/projection.hpp>
 #include <kf/lib/geometry_types.h>

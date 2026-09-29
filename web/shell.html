@@ -41,13 +41,13 @@
   const discInput = document.getElementById('disc');
   const playButton = document.getElementById('play');
   const languageInput = document.getElementById('language');
-  let dataRoot = null, generation = 0, running = false, stopped = false, lastError = '';
+  let dataRoot = null, japaneseDataRoot = null, generation = 0, running = false, stopped = false, lastError = '';
   const fileLimit = 16 * 1024 * 1024, treeLimit = 128 * 1024 * 1024;
   const pathCapacity = 128, retailFileCount = 428, cueLimit = 65536;
   const cacheSchemaVersion = 1, manifestHeaderBytes = 8, manifestFileLengthOffset = 4;
   function setBusy(busy) {
     discInput.disabled = busy || running || stopped;
-    languageInput.disabled = busy || running || stopped;
+    languageInput.disabled = busy || stopped;
     playButton.disabled = busy || running || stopped || !dataRoot;
     document.getElementById('skip-intro').disabled = running || stopped;
   }
@@ -184,6 +184,8 @@
   }
   async function restoreCache() {
     setBusy(true);
+    if (japaneseDataRoot && japaneseDataRoot !== dataRoot) removeOwnedTree(japaneseDataRoot);
+    japaneseDataRoot = null;
     if (dataRoot) removeOwnedTree(dataRoot);
     dataRoot = null;
     let database, root;
@@ -217,6 +219,21 @@
           mountFiles(files, root);
         }
         dataRoot = root;
+        if (languageInput.value === 'ja') {
+          japaneseDataRoot = dataRoot;
+        } else {
+          // Keep the original tree mounted for switching back during this game.
+          let japaneseCache;
+          try {
+            japaneseCache = await openCache('ja');
+            const japanese = await readCache(japaneseCache);
+            if (await verifyFiles(japanese, 'ja')) {
+              japaneseDataRoot = '/kf-data-' + (++generation);
+              mountFiles(japanese, japaneseDataRoot);
+            }
+          } catch (error) { console.warn('Japanese resources:', error); }
+          finally { if (japaneseCache) japaneseCache.close(); }
+        }
         cacheLabel.textContent = 'Loaded verified extracted files from this device.';
       }
     } catch (error) {
@@ -236,12 +253,23 @@
     onRuntimeInitialized() { restoreCache(); },
     print(text) { statusLabel.textContent = text; },
     printErr(text) { lastError = text; console.error(text); },
-    gameStarted() { statusLabel.textContent = 'Original game running. Click the game to capture the mouse.'; },
+    gameStarted() {
+      statusLabel.textContent = 'Original game running. Change language here or in Configuration.';
+      setBusy(false);
+    },
+    languageChanged(current, requested, message) {
+      if (!running) return;
+      languageInput.value = requested;
+      statusLabel.textContent = message + ' Current language: ' + (current === 'en' ? 'English' : 'Japanese') + '.';
+    },
     onAbort(text) { stopped = true; statusLabel.textContent = 'Application stopped: ' + text + ' Reload to restart.'; setBusy(true); },
     onExit(code) { stopped = true; statusLabel.textContent = 'Application exited (' + code + '). ' + lastError + ' Reload to restart.'; setBusy(true); }
   };
   languageInput.addEventListener('change', () => {
-    if (!running && !stopped) restoreCache();
+    if (stopped) return;
+    if (running)
+      Module.ccall('kf_request_language', 'number', ['string'], [languageInput.value]);
+    else restoreCache();
   });
   discInput.addEventListener('change', async event => {
     if (running || stopped) return;
@@ -278,16 +306,19 @@
           !Module.ccall('kf_prepare_resources', 'number', ['string','string','string'], [japaneseRoot,root,'en']))
         throw Error(lastError || 'English resource generation failed.');
       const previous = dataRoot;
+      const previousJapanese = japaneseDataRoot;
       dataRoot = root;
+      japaneseDataRoot = japaneseRoot;
       installed = true;
       if (previous) removeOwnedTree(previous);
+      if (previousJapanese && previousJapanese !== previous) removeOwnedTree(previousJapanese);
       if (languageInput.value === 'en') await cacheFiles(collectedFiles(root), 'en');
       statusLabel.textContent = 'Ready. Press Play to start.';
     } catch (error) {
       if (!stopped) statusLabel.textContent = String(error.message || error);
     } finally {
       removeOwnedTree(input);
-      if (japaneseRoot && japaneseRoot !== root) removeOwnedTree(japaneseRoot);
+      if (!installed && japaneseRoot && japaneseRoot !== root) removeOwnedTree(japaneseRoot);
       if (!installed) removeOwnedTree(root);
       setBusy(false);
       discInput.value = '';
@@ -298,6 +329,8 @@
     running = true;
     setBusy(true);
     const args = ['--data', dataRoot, '--language', languageInput.value];
+    if (japaneseDataRoot && japaneseDataRoot !== dataRoot)
+      args.push('--japanese-data', japaneseDataRoot);
     if (document.getElementById('skip-intro').checked) args.push('--skip-intro');
     statusLabel.textContent = 'Starting original game…';
     Module.canvas.focus();

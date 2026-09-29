@@ -73,6 +73,17 @@ try {
     await until('!discInput.disabled && dataRoot !== null');
     if (!await evaluate('verifyFiles(collectedFiles(dataRoot))')) throw Error('Wrong resource hash');
   }
+  async function key(key, code, number) {
+    await cdp('Input.dispatchKeyEvent', {type:'keyDown', key, code, windowsVirtualKeyCode:number});
+    await sleep(150);
+    await cdp('Input.dispatchKeyEvent', {type:'keyUp', key, code, windowsVirtualKeyCode:number});
+    await sleep(200);
+  }
+  async function liveSelect(language) {
+    await evaluate(`languageInput.value=${JSON.stringify(language)}; languageInput.dispatchEvent(new Event('change'));`);
+    await until(`Module.ccall('kf_current_language', 'string', [], []) === ${JSON.stringify(language)} || stopped`);
+    if (await evaluate('stopped')) throw Error(await evaluate('statusLabel.textContent'));
+  }
   await cdp('Page.navigate', {url});
   await until("document.getElementById('disc') && !document.getElementById('disc').disabled");
   const document = await cdp('DOM.getDocument');
@@ -90,19 +101,40 @@ try {
   await until("document.getElementById('disc') && !document.getElementById('disc').disabled");
   await select('en');
   console.log('Browser: English cache survives a page reload.');
+  await select('ja');
   await evaluate("document.getElementById('skip-intro').checked=true; playButton.click();");
-  await until("statusLabel.textContent.includes('Original game running') || stopped");
+  await until("(running && !languageInput.disabled) || stopped");
   if (await evaluate('stopped')) throw Error(await evaluate('statusLabel.textContent'));
   await sleep(3000);
   if (await evaluate('stopped')) throw Error(await evaluate('statusLabel.textContent'));
-  console.log('Browser: generated English resources reached gameplay.');
+  console.log('Browser: Japanese resources reached gameplay.');
+  await liveSelect('en');
+  await liveSelect('ja');
+  await liveSelect('en');
+  await liveSelect('ja');
+  console.log('Browser: English generated during gameplay and reused without restarting.');
+  await evaluate('Module.canvas.focus();');
+  await key('Tab', 'Tab', 9);
+  await evaluate("languageInput.value='en'; languageInput.dispatchEvent(new Event('change'));");
+  await sleep(250);
+  if (await evaluate("Module.ccall('kf_current_language', 'string', [], [])") !== 'ja')
+    throw Error('Language switched while the root menu was active');
+  await key('ArrowUp', 'ArrowUp', 38);
+  await key('ArrowUp', 'ArrowUp', 38);
+  await key('Enter', 'Enter', 13);
+  await until("Module.ccall('kf_current_language', 'string', [], []) === 'en' || stopped");
+  for (let row = 0; row < 4; ++row) await key('ArrowDown', 'ArrowDown', 40);
+  await key('ArrowRight', 'ArrowRight', 39);
+  await until("Module.ccall('kf_current_language', 'string', [], []) === 'ja' || stopped");
+  await key('Enter', 'Enter', 13);
+  await until("Module.ccall('kf_current_language', 'string', [], []) === 'en' || stopped");
+  if (await evaluate('stopped')) throw Error(await evaluate('statusLabel.textContent'));
+  console.log('Browser: Configuration language row switches both ways; queued changes wait for a safe menu.');
   if (screenshotArg) {
-    await cdp('Input.dispatchKeyEvent', {type:'keyDown', key:'Tab', code:'Tab', windowsVirtualKeyCode:9});
-    await cdp('Input.dispatchKeyEvent', {type:'keyUp', key:'Tab', code:'Tab', windowsVirtualKeyCode:9});
     await sleep(1000);
     const screenshot = await cdp('Page.captureScreenshot', {format:'png'});
     await writeFile(screenshotArg, Buffer.from(screenshot.data, 'base64'));
-    console.log('Browser: captured English menu for visual review.');
+    console.log('Browser: captured English Configuration menu for visual review.');
   }
 } finally {
   socket?.close();

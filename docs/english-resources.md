@@ -33,6 +33,42 @@ verified but never executed. Their bytes are retained for resource identity;
 gameplay runs the native compiled sources. Already verified English trees remain
 accepted for compatibility with earlier local imports.
 
+## Switching during play
+
+**Configuration → Language** sits below Compass and above Return. Left/right
+or Confirm toggles Japanese and English while keeping the panel open. The
+browser selector requests the same change. Requests made during other menus,
+dialogue, or opening/ending scenes wait for gameplay or Configuration, where
+no active dialogue/list keeps copied glyph rows from the previous language.
+
+Switching changes the resource root, reloads the menu descriptions and names
+from `STAT.DAT`, and updates the translated font and notification texels in
+`COM/MIX.TIM`. It does not reload the floor, restart the game, alter player or
+actor state, or write a save. Only texels that differ between the two common
+TIM streams are replaced; later map and menu texture uploads are preserved.
+Subsequent dialogue and image loads use the selected resource root.
+
+The new Language row uses small independent Latin labels (`LANGUAGE`,
+`JAPANESE`, `ENGLISH`) so it remains readable in either resource set. The
+translation's font atlas contains word fragments rather than a full alphabet.
+The original four configuration toggles and their save representation remain
+unchanged. Language is a session preference; launch options still select the
+initial language.
+
+If English is needed during play, the verified Japanese tree is converted into
+a private temporary tree, reused for the remainder of that session and removed
+on normal shutdown. Failed preparation leaves the active language unchanged
+and removes partial temporary output. The launcher retains its Japanese cache;
+the browser keeps the verified Japanese tree mounted alongside an English
+startup tree. A direct launch from English resources can provide that base with
+`--japanese-data DIRECTORY`. Without a Japanese base, switching back is
+unavailable; without a translation payload, generating English is unavailable.
+
+Runtime verification is available with `tests/runtime_scenarios.py
+--switch-language`: each of six GAME entries switches both ways and checks that
+player/actor/object state and the complete live texture store survive the round
+trip, before comparing the ordinary saved states with a baseline.
+
 ## Translation payload
 
 The English data is the translator's own release: John Osborne's
@@ -190,14 +226,19 @@ outputs. `tests/runtime_scenarios.py --language en` exercises the same real
 floor/save/transition scenarios with English resources. Full English dialogue,
 all menus and a full playthrough still need manual review.
 
-Local validation of this implementation passed: 19 regression tests, Linux and
-WASM builds, and `nix flake check path:. -L`. Both real conversion paths matched
-all 428 English reference files byte for byte. The English sanitizer runtime
-scenario completed all five floors and six GAME entries, with six saved states
-identical to the original Japanese baseline. Headless Chromium verified Japanese
-import, English generation from cache, language switching, cache restoration
-after a page reload, and English gameplay startup. This is not a full playthrough
-or an audible-audio check.
+Local validation passed 27 regression tests, Linux and WASM builds, Ruff, and
+`nix flake check -L`. ASan/UBSan remained enabled; leak detection was disabled
+because LeakSanitizer cannot run under the execution environment's ptrace.
+The runtime language scenario completed all five floors and six GAME entries,
+switched Japanese → English → Japanese in each entry, preserved player/actor/
+object state and all live texture words, and produced six saves identical to
+the Japanese baseline. Native menu captures checked the added row in both
+languages. Headless Chromium verified imports, both cache restores, English
+startup with Japanese available, first English generation during Japanese
+gameplay, repeated live switches, deferred requests from other menus, and
+the Configuration controls. This is not a full playthrough or an audible-audio
+check. Earlier disc and directory conversions also matched all 428 English
+reference files byte for byte.
 
 The browser resource smoke test can be repeated with:
 

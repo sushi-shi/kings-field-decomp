@@ -516,6 +516,18 @@ void menu_config_panel(void)
     u32 prev;
     KfMenuResult result = KF_MENU_RESULT_PENDING;
     KfPlayerOption original_music;
+    bool language_failed = false;
+    const auto change_option = [&] {
+        if (row == KF_MENU_CONFIG_LANGUAGE_ROW) {
+            const auto target = kf::game_language() == kf::Language::Japanese
+                ? kf::Language::English : kf::Language::Japanese;
+            language_failed = !kf::language_request(target) || !game_apply_language();
+            menu_play_input_sound(language_failed ? MENU_SOUND_CANCEL_OR_ERROR : MENU_SOUND_CONFIRM);
+        } else if (row < KF_MENU_CONFIG_SETTING_COUNT) {
+            menu_play_input_sound(MENU_SOUND_CONFIRM);
+            option_states[row] = kf_enum_decode<KfPlayerOption>(option_states[row] == KF_PLAYER_OPTION_OFF);
+        }
+    };
 
     kf::host_wait_buttons_released();
 
@@ -541,6 +553,8 @@ void menu_config_panel(void)
     menu_draw_window(KF_MENU_WINDOW_CONFIG, KF_MENU_CONFIG_ROW_COUNT, row, confirm);
     menu_present_frame();
     do {
+        if (game_apply_language())
+            language_failed = false;
         if (confirm == KF_MENU_CONFIRM_REQUESTED || result == KF_MENU_RESULT_CANCELLED) {
             menu_frame_begin();
             menu_config_panel_draw(on_label, off_label, option_states);
@@ -571,17 +585,14 @@ void menu_config_panel(void)
             }
         } else if ((kf::button_pressed(input, prev, kf::Button::Right)) ||
                    (kf::button_pressed(input, prev, kf::Button::Left))) {
-            if (row != KF_MENU_CONFIG_RETURN_ROW) {
-                menu_play_input_sound(MENU_SOUND_CONFIRM);
-                option_states[row] = kf_enum_decode<KfPlayerOption>(option_states[row] == KF_PLAYER_OPTION_OFF);
-            }
+            change_option();
         } else if (kf::button_pressed(input, prev, kf::Button::Confirm)) {
-            menu_play_input_sound(MENU_SOUND_CONFIRM);
             if (row == KF_MENU_CONFIG_RETURN_ROW) {
+                menu_play_input_sound(MENU_SOUND_CONFIRM);
                 confirm = KF_MENU_CONFIRM_REQUESTED;
                 result = KF_MENU_RESULT_CANCELLED;
             } else {
-                option_states[row] = kf_enum_decode<KfPlayerOption>(option_states[row] == KF_PLAYER_OPTION_OFF);
+                change_option();
             }
         } else if (kf::button_pressed(input, prev, kf::Button::Back)) {
             menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
@@ -589,6 +600,8 @@ void menu_config_panel(void)
         }
         menu_config_panel_draw(on_label, off_label, option_states);
         menu_draw_window(KF_MENU_WINDOW_CONFIG, KF_MENU_CONFIG_ROW_COUNT, row, confirm);
+        if (language_failed)
+            kf::ui_text("LANGUAGE UNAVAILABLE", 16, 190, 1.5f, MENU_CONTENT_OT_DEPTH);
         menu_present_frame();
     } while (1);
 
@@ -1573,7 +1586,14 @@ void menu_draw_window(KfMenuWindowKind window_kind, s32 row_count, s32 highlight
             if (row == highlight_row) {
                 menu_blit_sprite(&menu_assets.selection_cursor, &layout->rows[row].position);
             }
-            menu_draw_string(&menu_assets.glyph_atlas, &layout->rows[row]);
+            if (window_kind == KF_MENU_WINDOW_CONFIG && row == KF_MENU_CONFIG_LANGUAGE_ROW) {
+                const auto position = layout->rows[row].position;
+                kf::ui_text("LANGUAGE", position.x, position.y + 1, 1.5f, MENU_CONTENT_OT_DEPTH);
+                kf::ui_text(kf::game_language() == kf::Language::Japanese ? "JAPANESE" : "ENGLISH",
+                    CONFIG_OPTION_ON_X, position.y + 1, 1.5f, MENU_CONTENT_OT_DEPTH);
+            } else {
+                menu_draw_string(&menu_assets.glyph_atlas, &layout->rows[row]);
+            }
             row++;
         } while (row < row_count);
     }

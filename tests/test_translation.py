@@ -120,6 +120,36 @@ class Translation(unittest.TestCase):
             self.assertEqual(output, after)
 
 
+class RuntimeLanguage(unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.temp = tempfile.TemporaryDirectory(prefix="kf-language-runtime-")
+        cls.addClassCleanup(cls.temp.cleanup)
+        cls.binary = Path(cls.temp.name) / "test"
+        subprocess.run([
+            "clang++", "-std=c++20", "-O1", "-g", "-Wall", "-Wextra", "-Werror",
+            "-fno-exceptions", "-fsanitize=address,undefined", "-I", str(ROOT / "include"),
+            str(ROOT / "tests/language_runtime_regressions.cpp"),
+            str(ROOT / "src/platform/language_runtime.cpp"),
+            str(ROOT / "src/platform/language.cpp"), "-o", str(cls.binary),
+        ], check=True, capture_output=True, text=True)
+
+    def test_pending_switch_reuse_and_cleanup(self):
+        subprocess.run([self.binary, "switch"], check=True)
+
+    def test_failed_generation_keeps_current_language_and_can_retry(self):
+        subprocess.run([self.binary, "failed-generation"], check=True)
+
+    def test_missing_payload_or_original_resources(self):
+        subprocess.run([self.binary, "unavailable"], check=True)
+
+    def test_invalid_alternate_keeps_current_language(self):
+        subprocess.run([self.binary, "invalid-alternate"], check=True)
+
+    def test_pending_change_can_be_cancelled(self):
+        subprocess.run([self.binary, "cancel-pending"], check=True)
+
+
 class Launcher(unittest.TestCase):
     def setUp(self):
         self.temp = tempfile.TemporaryDirectory(prefix="kf-launch-")
@@ -160,6 +190,8 @@ if '--extract-to' in args:
         self.assertEqual(len(calls), 3)
         self.assertEqual(calls[0][:4], ["--language", "ja", "--disc", str(self.disc)])
         self.assertEqual(calls[1][:3], ["--language", "en", "--data"])
+        self.assertIn("--japanese-data", calls[2])
+        self.assertTrue(calls[2][calls[2].index("--japanese-data") + 1].endswith("/resources-v1"))
 
     def test_switch_to_english_and_back_without_disc(self):
         self.launch(KF_DISC=str(self.disc))

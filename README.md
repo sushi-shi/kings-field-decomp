@@ -40,6 +40,18 @@ The game starts from the opening. Append options after `--`:
 | `--saves DIRECTORY` | Use an existing save directory |
 | `--data DIRECTORY` | Use an extracted disc tree instead of `KF_DISC` |
 
+During play, open **Configuration → Language** (below Compass). Left/right or
+Confirm switches between Japanese and English immediately, keeping the menu
+open and preserving your current game. The first English switch may take a
+moment to prepare resources. The browser's language selector also works during
+play; changes requested in other menus or cutscenes wait until gameplay or
+Configuration resumes. Language selection lasts for the current session;
+`--language` / `KF_LANGUAGE` still choose the starting language.
+
+When launching the binary directly with an English `--data` tree, also pass
+`--japanese-data DIRECTORY` to enable switching back to the original language.
+The packaged launcher and browser supply the Japanese resources automatically.
+
 For example, to use existing extracted files:
 
 ```sh

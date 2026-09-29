@@ -39,6 +39,38 @@ KfMapAttributeGrid map_cell_attribute_grid;
 
 static constexpr auto map_grid_word_count = sizeof map_cell_attribute_grid / sizeof(u32);
 
+static kf::ByteBuffer common_images_read()
+{
+    kf::DataFile file{};
+    kf::ByteBuffer bytes{};
+    if (resource_file_open(&file, "COM/MIX.TIM") != kf::FileResult::Ok ||
+        !kf::buffer_resize(&bytes, file.size) ||
+        kf::data_file_read(&file, bytes.data, bytes.size) != kf::FileResult::Ok)
+        kf::host_fail("Cannot reload language graphics.");
+    kf::data_file_close(&file);
+    return bytes;
+}
+
+bool game_apply_language(void)
+{
+    if (kf::language_requested() == kf::game_language())
+        return false;
+    auto previous = common_images_read();
+    if (!kf::language_apply_pending()) {
+        kf::buffer_release(&previous);
+        return false;
+    }
+    auto current = common_images_read();
+    if (!kf::texture_store_translate_tim(&kf::host_renderer()->textures,
+            previous.data, previous.size, current.data, current.size))
+        kf::host_fail("Cannot reload language graphics.");
+    kf::buffer_release(&previous);
+    kf::buffer_release(&current);
+    menu_resources_reload();
+    kf::host_language_status("Language changed.");
+    return true;
+}
+
 void common_resources_load(void)
 {
     u8 *images;

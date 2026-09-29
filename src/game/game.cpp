@@ -21,6 +21,7 @@ KfOverlayResultWord game_next_overlay_mode;
 
 void game_main_loop(void)
 {
+    kf::language_apply_pending();
     memset((void *)&game_graphics_runtime, 0, sizeof game_graphics_runtime);
     memset((void *)&actor_state, 0, sizeof actor_state);
     memset((void *)&map_object_state, 0, sizeof map_object_state);
@@ -36,6 +37,7 @@ void game_main_loop(void)
     effect_pool_reset();
     map_event_timers_reset();
     common_resources_load();
+    kf::host_language_status("Language ready.");
     game_initialize_session();
     memory_set_allocation_mode(memory_arena, KF_MEMORY_REBASE_ARENA);
     map_load_floor_wrapper();
@@ -43,6 +45,7 @@ void game_main_loop(void)
     player_warp_shimmer_at_player(KF_WARP_SHIMMER_SHRINK_REMOVE);
     game_next_overlay_mode = KF_OVERLAY_MODE_NONE;
     for (;;) {
+        game_apply_language();
         player_update();
         if (game_next_overlay_mode != KF_OVERLAY_MODE_NONE) {
             break;

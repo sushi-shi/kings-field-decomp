@@ -16,7 +16,7 @@ done
 # Preserve the direct application's explicit resource/extraction workflows.
 for argument in "$@"; do
   case "$argument" in
-    --data|--disc|--extract-to|--extract-only)
+    --data|--disc|--extract-to|--extract-only|--japanese-data)
       exec "$game_binary" "$@"
       ;;
   esac
@@ -93,4 +93,4 @@ if [[ ! -d "$data_directory" ]]; then
 fi
 flock -u "$cache_lock"
 exec {cache_lock}>&-
-exec "$game_binary" --data "$data_directory" "$@" --language "$language"
+exec "$game_binary" --data "$data_directory" --japanese-data "$japanese_directory" "$@" --language "$language"

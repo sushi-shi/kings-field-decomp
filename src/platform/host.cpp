@@ -3,6 +3,7 @@
 #include <kf/audio/sound.hpp>
 #include <kf/platform/input.hpp>
 #include <kf/platform/controls.hpp>
+#include <kf/platform/language_runtime.hpp>
 #include <kf/renderer/renderer.hpp>
 #include <SDL3/SDL.h>
 #include <algorithm>
@@ -18,6 +19,9 @@ EM_JS(void, host_browser_status, (const char *message), {
 });
 EM_JS(int, host_browser_mouse_captured, (), {
     return document.pointerLockElement === Module.canvas;
+});
+EM_JS(void, host_browser_language, (const char *current, const char *requested, const char *message), {
+    Module['languageChanged'](UTF8ToString(current), UTF8ToString(requested), UTF8ToString(message));
 });
 #endif
 
@@ -149,6 +153,7 @@ bool host_start() {
 }
 
 void host_shutdown() {
+    language_resources_stop();
     sound_shutdown();
     save_storage_shutdown();
     std::free(host.frame_faces);
@@ -162,6 +167,14 @@ void host_shutdown() {
         SDL_DestroyWindow(host.window);
     host = {};
     SDL_Quit();
+}
+
+void host_language_status(const char *message) {
+    std::printf("%s (%s)\n", message, language_name(game_language()));
+    std::fflush(stdout);
+#ifdef __EMSCRIPTEN__
+    host_browser_language(language_code(game_language()), language_code(language_requested()), message);
+#endif
 }
 
 [[noreturn]] void host_fail(const char *message) {

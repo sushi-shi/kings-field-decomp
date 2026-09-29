@@ -57,6 +57,8 @@ bool translation_apply(AssetTable *assets, std::span<const u8> patch) {
     return reader.remaining.empty();
 }
 
+bool translation_available() { return sizeof english_patch_data > 1; }
+
 const char *assets_prepare_language(AssetTable *assets, Language language) {
     if (assets_match_language(assets, language))
         return nullptr;
