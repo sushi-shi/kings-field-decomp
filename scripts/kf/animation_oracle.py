@@ -40,8 +40,8 @@ from scripts.kf.tmd_oracle import shipped_cases
 
 
 FUNCTION = "render_bind_animated_instance"
-CANDIDATE_UNIT = "game.pool"
-CANDIDATE_OBJECT = BUILD / "objdiff/game/base/800205d4_pool.o"
+CANDIDATE_UNIT = "game.animation_cache"
+CANDIDATE_OBJECT = BUILD / "objdiff/game/base/800205d4_animation_cache.o"
 ASSET_VA = 0x80060000
 SCRATCH_VA = 0x800930F0
 ASSET_REGISTRY_VA = 0x80090FCC

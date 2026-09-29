@@ -7,7 +7,7 @@
 
 enum {
     KF_FLOOR5_ACTOR_TEXTURE_COUNT = 3,
-    /* Morph scratch includes the extra header-sized vector blended by pool.c;
+    /* Morph scratch includes the extra header-sized vector blended by animation_cache.c;
      * its extent remains WIP. */
     KF_MORPH_SCRATCH_CAPACITY = 1001
 };

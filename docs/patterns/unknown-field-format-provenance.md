@@ -127,7 +127,7 @@ cannot be promoted to SDK padding from proximity. The possible VECTOR shape
 in KfFloorItem and possible halfword UV lanes in MenuTileSprite remain source
 modeling hypotheses requiring their own consumer/alias evidence.
 
-The local `KfAnimClip.unknown_02` in `src/game/pool.c` is outside the requested
+The local `KfAnimClip.unknown_02` in `src/game/animation_cache.c` is outside the requested
 79 header fields, but the standard-format check also leaves it unresolved:
 VDF defines the nested morph object, and Sony's 2D ANM format does not match the
 surrounding clip grammar. No zero-padding, unused-field or reserved-field rename

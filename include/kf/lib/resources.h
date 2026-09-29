@@ -20,6 +20,6 @@ enum {
 extern void tim_upload_images(u8 *tim_data);
 /* Both spans contain word_count aligned words; returns the advanced source. */
 extern const u32 *resource_stream_copy_words(
-    u32 *destination, const u32 *source, s32 word_count);
+    u32 *destination, const u32 *source, u32 word_count);
 
 #endif

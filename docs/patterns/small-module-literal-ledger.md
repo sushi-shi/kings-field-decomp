@@ -24,7 +24,7 @@ Zero-literal modules have no rows; that does not resolve their external identiti
 | `menu_enter_mode` | 24 | `0` | `DrawSync(0);` | SDK blocking GPU synchronization selector; drain pending work before changing frame or heap state. |
 | `menu_enter_mode` | 58 | `0` | `result = 0;` | The void shop path returns a zero word; its caller ignores the value, and it is not a pickup-result enum. |
 
-## `src/game/player_status_effect4.c`
+## `src/game/player_fire_defense.c`
 
 0 retained occurrences.
 

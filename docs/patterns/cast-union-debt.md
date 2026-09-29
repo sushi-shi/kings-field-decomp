@@ -62,7 +62,7 @@ and **30 unions**. The integration snapshot below is historical.
   extent. Their `.words` members remain removed. These dual-index unions are
   deliberate reconstruction conveniences, not recovered original declarations
   or proof that no better union-free model exists.
-- GAME `map_resource_copy_words` and OPEN `resource_stream_copy_words` accept
+- `resource_stream_copy_words` (GAME and OPEN) accepts
   complete destination objects through `void *`, converting to a word cursor
   inside the implementation. Callers pass `&map_cell_orientation_grid` without
   a word-pointer cast. Both buffers must remain word-aligned; count and return
@@ -102,7 +102,7 @@ Final verdicts for changed functions (all strict **100%**, unchanged):
 | --- | --- | --- |
 | GAME | `8001a29c` | `map_floor_height_for_cell_position` |
 | GAME | `8001a5ac` | `collision_query_world` |
-| GAME | `8001b3e4` | `map_resource_copy_words` |
+| GAME | `8001b3e4` | `resource_stream_copy_words` |
 | GAME | `8001b558` | `map_resources_load` |
 | GAME | `8001c148` | `tmd_select_object_vertices` |
 | GAME | `8002af48` | `menu_load_texture` |

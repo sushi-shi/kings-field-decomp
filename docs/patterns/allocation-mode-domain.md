@@ -61,7 +61,7 @@ only nulls the cursor, retaining depth and existing entries.
 | GAME.EXE | `common_resources_load` | `0x8001b180 / 528` | Unedited caller-unit control: preserve existing signature, resource/frame behavior, calls and data references. |
 | GAME.EXE | `map_resource_path_set_floor` | `0x8001b390 / 20` | Unedited caller-unit control: preserve existing signature, resource/frame behavior, calls and data references. |
 | GAME.EXE | `map_resource_load_file` | `0x8001b3a4 / 64` | Unedited caller-unit control: preserve existing signature, resource/frame behavior, calls and data references. |
-| GAME.EXE | `map_resource_copy_words` | `0x8001b3e4 / 48` | Unedited caller-unit control: preserve existing signature, resource/frame behavior, calls and data references. |
+| GAME.EXE | `resource_stream_copy_words` | `0x8001b3e4 / 48` | Unedited caller-unit control: preserve existing signature, resource/frame behavior, calls and data references. |
 | GAME.EXE | `map_variant_assets_load` | `0x8001b414 / 136` | Unedited caller-unit control: preserve existing signature, resource/frame behavior, calls and data references. |
 | GAME.EXE | `audio_play_current_map_sequence` | `0x8001b49c / 188` | Unedited caller-unit control: preserve existing signature, resource/frame behavior, calls and data references. |
 | GAME.EXE | `map_resources_load` | `0x8001b558 / 600` | Pass heap mode after map/variant resource setup; separate integer variant parameter remains outside this domain. |
@@ -180,7 +180,7 @@ references agree with the previous objects, delinked targets and raw retail.
 | GAME.EXE | `common_resources_load` | `0x8001b180 / 528` | 100%; unchanged words and references. |
 | GAME.EXE | `map_resource_path_set_floor` | `0x8001b390 / 20` | 100%; unchanged words and references. |
 | GAME.EXE | `map_resource_load_file` | `0x8001b3a4 / 64` | 100%; unchanged words and references. |
-| GAME.EXE | `map_resource_copy_words` | `0x8001b3e4 / 48` | 100%; unchanged words and references. |
+| GAME.EXE | `resource_stream_copy_words` | `0x8001b3e4 / 48` | 100%; unchanged words and references. |
 | GAME.EXE | `map_variant_assets_load` | `0x8001b414 / 136` | 100%; unchanged words and references. |
 | GAME.EXE | `audio_play_current_map_sequence` | `0x8001b49c / 188` | 100%; unchanged words and references. |
 | GAME.EXE | `map_resources_load` | `0x8001b558 / 600` | 100%; unchanged words and references. |

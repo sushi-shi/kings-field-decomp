@@ -292,7 +292,7 @@ and lighting owners also preserve their complete raw retail bodies.
 | game.resources | `8001b180` | `common_resources_load` | 528/528 | 100.000000 |
 | game.resources | `8001b390` | `map_resource_path_set_floor` | 20/20 | 100.000000 |
 | game.resources | `8001b3a4` | `map_resource_load_file` | 64/64 | 100.000000 |
-| game.resources | `8001b3e4` | `map_resource_copy_words` | 48/48 | 100.000000 |
+| game.resources | `8001b3e4` | `resource_stream_copy_words` | 48/48 | 100.000000 |
 | game.resources | `8001b414` | `map_variant_assets_load` | 136/136 | 100.000000 |
 | game.resources | `8001b49c` | `audio_play_current_map_sequence` | 188/188 | 100.000000 |
 | game.resources | `8001b558` | `map_resources_load` | 600/600 | 100.000000 |

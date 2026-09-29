@@ -47,10 +47,10 @@ casts, or replacement structures. The display frame code also retains the
 different unidentified per-image counters explicitly. Source sharing does not
 merge either image's storage or function identity.
 
-`map_resource_copy_words` and `resource_stream_copy_words` retain their curated
-names and respectively unsigned/signed word counts. Their decrement-until-zero
-loop has one implementation with image-selected declarations. This avoids
-changing the interface merely to make two definitions look identical.
+`resource_stream_copy_words` is one shared definition claimed at both images'
+addresses. The GAME and OPEN bodies are byte-identical, and the loop only tests
+`count-- != 0`, so neither image reveals the count's signedness; both use one
+`u32` word-count declaration.
 
 The clean C and C++ generators process fragments with the same claim/comment
 and type transformations as ordinary source. Exported fragments contain no

@@ -24,7 +24,7 @@ All addresses below belong to `GAME.EXE` (`SLPS-00017`).
 | `armor_records_load` | `800150fc` | 100% |
 | `tim_upload_images` | `8001b100` | 100% |
 | `common_resources_load` | `8001b180` | 100% |
-| `map_resource_copy_words` | `8001b3e4` | 100% |
+| `resource_stream_copy_words` | `8001b3e4` | 100% |
 | `map_resources_load` | `8001b558` | 100% |
 | `tmd_prepare_primitive_indices` | `8001c2b0` | 98.333336% |
 | `tmd_register` | `8001c5b0` | 100% |

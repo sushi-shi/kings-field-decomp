@@ -518,7 +518,7 @@ banking entry changes.
 ### Pool lifecycle consumer audit at `81fa559`
 
 Function Match Plan: extend the unchanged complete-owner fixture to the five
-pool scans in `game.pool`. Their shared twelve-record cache, initialization
+pool scans in `game.animation_cache`. Their shared twelve-record cache, initialization
 and frame sweep connect this campaign. Read all six GAME semantic views for
 the scans and release helper, all fifteen caller windows, adjacent binder/item
 boundaries, current source/history and the existing animation-cache dossier.

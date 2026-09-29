@@ -58,7 +58,7 @@ binary equivalence. Builds, compiler checks and tests were deferred as requested
 | [include/kf/open/resources.h](../../include/kf/open/resources.h) | 2 |
 | [include/kf/open/scene0.h](../../include/kf/open/scene0.h) | 0 |
 | [include/kf/lib/overlay.h](../../include/kf/lib/overlay.h) | 0 |
-| [include/kf/game/pool.h](../../include/kf/game/pool.h) | 0 |
+| [include/kf/game/animation_cache.h](../../include/kf/game/animation_cache.h) | 0 |
 | [vendor/include/psyq/sdk.h](../../vendor/include/psyq/sdk.h) | 0 |
 | [vendor/include/psyq/audio.h](../../vendor/include/psyq/audio.h) | 0 |
 | [vendor/include/psyq/cd.h](../../vendor/include/psyq/cd.h) | 0 |

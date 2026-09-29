@@ -3,7 +3,7 @@
 ## Review scope
 
 At `6c85b0c`, reconcile every current literal in GAME `asset_registry.c`,
-`pool.c`, `camera_path.c` and OPEN `camera_path.c`. Earlier domain notes
+`animation_cache.c`, `camera_path.c` and OPEN `camera_path.c`. Earlier domain notes
 describe these families but do not supply a current token/expression ledger.
 Capture all sixteen functions with image-qualified disassembly, CFG, callers,
 callees, strings, current matches and history. Check the shipped animation

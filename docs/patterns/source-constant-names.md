@@ -275,7 +275,7 @@ fade durations, resource IDs and path digits have per-occurrence reasons.
 The [asset and animation-cache review](game-asset-animation-layout.md) types
 the free/stale/live state, recovers the header's animation-clip count from
 shipped table extents, and propagates asset-header pointers. It explains all
-36 retained literals in `pool.c` and `asset_registry.c`; vertex allocation
+36 retained literals in `animation_cache.c` and `asset_registry.c`; vertex allocation
 uses the SDK element size and the weapon buffer has a named byte capacity.
 
 The [pickup outcome review](game-item-pickup-outcomes.md) corrects the
@@ -533,7 +533,7 @@ The animation cache has twelve records: reset/release stores free (0), the
 per-frame mark stores stale (1), and a successful bind stores live (2). The
 next stale sweep frees only untouched records. Clip 0xff invalidates cached
 keyframe selection; the pointer-valued return 1 reports a static asset. These
-contracts are now named in `pool.h`. The clip's unused header field retains
+contracts are now named in `animation_cache.h`. The clip's unused header field retains
 its unresolved spelling. The later VDF format audit in
 `semantic-field-names.md` identifies the morph's object selector.
 
@@ -1331,7 +1331,7 @@ changes together with the earlier named cache states, pool capacity, Q12
 constants and morph object selector. The merge needs no source conflict
 resolution and does not touch the user's uncommitted OPEN renderer work.
 
-Verification plan: compile the literal incoming `pool.c` independently with
+Verification plan: compile the literal incoming `animation_cache.c` independently with
 the same headers/profile, compare its non-debug contents with the named
 merged object, and check all other objects against 1839ef2. Only the incoming
 binder improvement to strict 100% is expected among the 484 function scores.
