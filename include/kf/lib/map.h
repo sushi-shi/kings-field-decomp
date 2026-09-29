@@ -386,7 +386,7 @@ extern s32 map_object_pool_find_near_point(s32 point_x, s32 point_z, s32 radius_
 extern void map_object_pool_load(const KfMapObjectPlacement *placements);
 extern void map_object_pool_trigger_link(u8 link_id);
 extern void map_object_pool_update(void);
-extern s32 map_object_probe_door_closing(const KfMapObject *object, u16 yaw);
+extern u32 map_object_probe_door_closing(const KfMapObject *object, u16 yaw);
 extern void map_object_spawn_gold_drop(u16 gold_amount, const VECTOR *position, s32 y_offset);
 extern void map_object_spawn_drop(KfMapObjectDropSource drop_source, KfObjectId object_id, const VECTOR *position, s32 y_offset);
 extern void map_object_start_action_if_idle(KfMapObject *object, KfMapObjectOperation action);
