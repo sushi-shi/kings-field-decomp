@@ -281,6 +281,8 @@ void actor_update_awareness(void)
     KfActorSlotState spawn_policy;
 
     switch (actor->lifecycle) {
+    case KF_ACTOR_LIFECYCLE_DISABLED:
+        break;
     case KF_ACTOR_LIFECYCLE_DORMANT:
         distance = actor_player_distance(actor, ACTOR_ACTIVATION_RANGE);
         if (distance == -1) {
@@ -382,7 +384,7 @@ KfActorMoveResult actor_move_xz_with_collision(const struct KfVecXZs *delta, KfA
     KfActor *actor = actor_state.current;
     KfActorDefinition *definition = actor_state.current_definition;
     VECTOR target;
-    s32 result;
+    u32 result;
     s32 drop;
     s32 threshold;
 
@@ -489,6 +491,9 @@ void actor_spawn_action_effect(KfActorEffectCode effect_code, KfActorEffectSlot 
     effect_code &= KF_ACTOR_EFFECT_KIND_MASK;
     for (i = 0; i < repeat; i++) {
         switch (actor_effect_kind_from_payload(effect_code)) {
+        default:
+            // Other effect kinds have no actor-launch recipe here.
+            break;
         case KF_MAGIC_FIRE_BALL:
         case KF_MAGIC_WIND_CUTTER:
         case KF_MAGIC_LIGHT_NEEDLE:
@@ -615,7 +620,7 @@ void actor_apply_horizontal_movement(void)
     KfActor *actor = actor_state.current;
     KfActorDefinition *definition;
     VECTOR target;
-    s32 result;
+    u32 result;
 
     target.vx = actor->movement_x + actor->position.vx;
     target.vz = actor->movement_z + actor->position.vz;
@@ -669,7 +674,7 @@ void actor_apply_random_movement(s16 step, s16 limit)
     KfActor *actor = actor_state.current;
     KfActorDefinition *definition = actor_state.current_definition;
     VECTOR target;
-    s32 result;
+    u32 result;
 
     if (kf::random_next() < (kf::random_max + 1) / 2) {
         actor->movement_x += step;
@@ -831,7 +836,7 @@ static void actor_update_vertical_motion(KfActor *actor, const KfActorDefinition
 {
     s32 floor_height;
     s32 next_y;
-    s32 hit;
+    u32 hit;
 
     switch (actor->vertical_state) {
     case KF_ACTOR_VERTICAL_NONE:
@@ -895,12 +900,15 @@ void actor_update_current_action(void)
     KfActorDefinition *definition = actor_state.current_definition;
     struct KfVecXZs direction;
     VECTOR target;
-    s32 result;
+    u32 result;
     u16 gold_amount;
     KfMapAttribute attribute;
 
     collision_adjust_cell_occupancy(actor->cell_x, actor->cell_z, -1);
     switch (actor->action) {
+    case KF_ACTOR_ACTION_NONE:
+        // Vertical movement and occupancy maintenance still run below.
+        break;
     case KF_ACTOR_ACTION_IDLE:
         if (actor->action_progress == KF_ACTOR_PROGRESS_INIT) {
             actor->action_progress = KF_ACTOR_PROGRESS_RUNNING;
@@ -1053,6 +1061,9 @@ void actor_update_current_action(void)
         actor->animation_phase = std::min<s32>(actor->animation_phase, KF_ACTOR_ANIMATION_PHASE_MAX);
         actor_play_sound_at_phase(&definition->sounds[KF_ACTOR_SOUND_ATTACK], definition->action_animation_phases[KF_ACTOR_ANIM_SLOT_JUMP_ATTACK]);
         switch (actor->action_progress) {
+        default:
+            // Only the jump-attack progress markers transition in this action.
+            break;
         case KF_ACTOR_PROGRESS_JUMP_RISING:
             if (actor->vertical_velocity >= 0) {
                 actor_prepare_charge_toward_player();

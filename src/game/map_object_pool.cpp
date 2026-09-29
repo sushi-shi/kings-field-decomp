@@ -70,6 +70,9 @@ void map_object_mark_collision_edge(const KfMapObject *object, KfMapCellKind cel
     yaw &= KF_ANGLE_WRAP_MASK;
     cell_z = object->cell_z;
     switch (definition->behavior_type) {
+    default:
+        // Other operations do not modify the door collision cells.
+        break;
     case KF_MAP_OBJECT_OP_LIFT_DOOR:
     case KF_MAP_OBJECT_OP_03:
         map_collision_grid.cells[cell_z][cell_x] = cell_kind;
@@ -112,16 +115,18 @@ void map_object_mark_collision_edge(const KfMapObject *object, KfMapCellKind cel
     }
 }
 
-s32 map_object_probe_door_closing(const KfMapObject *object, u16 yaw)
+u32 map_object_probe_door_closing(const KfMapObject *object, u16 yaw)
 {
     const KfMapObjectDefinition *definition = &map_object_state.definitions.entries[kf_enum_encode<u8>(object->object_id)];
     s32 point_x = object->position.vx;
     s32 point_z = object->position.vz;
-    s32 result;
+    u32 result;
     s32 probe_radius;
 
     yaw &= KF_ANGLE_WRAP_MASK;
     switch (definition->behavior_type) {
+    default:
+        kf::host_fail("Door clearance requested for a non-door operation");
     case KF_MAP_OBJECT_OP_LIFT_DOOR:
         probe_radius = MAP_DOOR_CLOSING_PROBE_RADIUS;
     probe:
@@ -132,6 +137,8 @@ s32 map_object_probe_door_closing(const KfMapObject *object, u16 yaw)
     case KF_MAP_OBJECT_OP_HINGED_DOOR:
         probe_radius = MAP_DOOR_CLOSING_PROBE_RADIUS;
         switch (yaw) {
+        default:
+            kf::host_fail("Door clearance requires a cardinal hinge angle");
         case 0:
             point_x += KF_MAP_TILE_SIZE;
             goto probe;
@@ -200,6 +207,9 @@ void map_object_pool_load(const KfMapObjectPlacement *placements)
                 collision_adjust_cell_occupancy(object.cell_x, object.cell_z, 1);
             }
             switch (object_id) {
+            default:
+                // Common placement initialization is sufficient for other object IDs.
+                break;
             case KF_MAP_OBJECT_ORBITING_PROJECTILE:
                 object.link.fields.action_parameter.effect_index = effect_pool_construct(
                                                     object.link.fields.spawn.effect_id,

@@ -109,7 +109,7 @@ KfTmdFaceData tmd_decode_face(const KfTmdPacket &packet, u32 vertex_count)
     bool textured;
     bool gouraud;
     // The caller's original mode switch decides which packets are rendered.
-    switch (packet.mode & ~KF_TMD_MODE_SEMITRANS) {
+    switch (tmd_opaque_mode(packet.mode)) {
     case KF_TMD_MODE_F3:  corners = 3; textured = false; gouraud = false; break;
     case KF_TMD_MODE_F4:  corners = 4; textured = false; gouraud = false; break;
     case KF_TMD_MODE_G3:  corners = 3; textured = false; gouraud = true;  break;

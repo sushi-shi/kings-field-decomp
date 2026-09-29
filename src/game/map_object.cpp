@@ -255,6 +255,9 @@ void map_object_pool_update(void)
             continue;
         }
         switch (object->action) {
+        default:
+            // Unlisted operations have no per-frame action here.
+            break;
         case KF_MAP_OBJECT_OP_HINGED_DOOR:
             timer = object->action_timer;
             if (object->link.fields.action_parameter.object_index != KF_MAP_OBJECT_PARAMETER_NONE) {
@@ -287,7 +290,7 @@ void map_object_pool_update(void)
                     break;
                 }
                 if (timer == KF_MAP_OBJECT_DOOR_CLOSE_FIRST) {
-                    if (map_object_probe_door_closing(object, object->rotation.angles.y - KF_ANGLE_QUARTER_TURN) != -1) {
+                    if (map_object_probe_door_closing(object, object->rotation.angles.y - KF_ANGLE_QUARTER_TURN) != KF_COLLISION_NONE) {
                         object->action_timer = KF_MAP_OBJECT_DOOR_CLOSE_FIRST;
                         break;
                     }
@@ -324,7 +327,7 @@ void map_object_pool_update(void)
                     break;
                 }
                 if (elapsed == KF_MAP_OBJECT_DOOR_CLOSE_FIRST) {
-                    if (map_object_probe_door_closing(object, object->rotation.angles.y) != -1) {
+                    if (map_object_probe_door_closing(object, object->rotation.angles.y) != KF_COLLISION_NONE) {
                         object->action_timer = KF_MAP_OBJECT_DOOR_CLOSE_FIRST;
                         break;
                     }
@@ -405,6 +408,9 @@ void map_object_pool_update(void)
                     break;
                 }
                 switch (object->object_id) {
+                default:
+                    // Only the listed emitter IDs spawn projectiles.
+                    break;
             case KF_MAP_OBJECT_PROJECTILE_EMITTER:
                 direction.vy = 0;
                 direction.vx = (kf::angle_sine(object->rotation.angles.y) * MAP_EMITTER_VELOCITY_NUMERATOR) >> MAP_EMITTER_VELOCITY_SHIFT;

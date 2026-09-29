@@ -483,6 +483,9 @@ void effect_update_dispatch(void)
             -(map_floor_height_grid.cells[effect->position.vz / KF_MAP_TILE_SIZE]
                                    [effect->position.vx / KF_MAP_TILE_SIZE] * KF_MAP_HEIGHT_STEP);
         switch (phase) {
+        default:
+            // Other phase values have no ground-trail transition.
+            break;
         case KF_EFFECT_GROUND_TRAIL_WAIT_FOR_PARENT:
             if (kf_enum_encode<u8>(linked_effect->phase) > kf_enum_encode<u8>(KF_EFFECT_MOONLIGHT_IMPACT_FIRST) - 1) {
                 effect->phase = KF_EFFECT_GROUND_TRAIL_SHRINK;
@@ -633,6 +636,9 @@ void effect_update_dispatch(void)
             if (effect->control.frames_remaining != KF_EFFECT_GROUND_BRANCH_TIMER_DONE) {
                 if (effect->control.frames_remaining-- == 0) {
                     switch (effect->propagation.branch) {
+                    case KF_EFFECT_GROUND_BRANCH_LEAF:
+                        // A leaf emits no further branches.
+                        break;
                     case KF_EFFECT_GROUND_BRANCH_ROOT:
                         effect_spawn_ground_branch(
                             effect->id, effect, KF_ANGLE_QUARTER_TURN, KF_EFFECT_GROUND_BRANCH_QUARTER_TURN);
@@ -729,14 +735,15 @@ void effect_update_dispatch(void)
             effect->phase = scale_phase;
         } else if (kf_enum_encode<u8>(phase) < kf_enum_encode<u8>(KF_EFFECT_ACTOR_SPAWNER_TRAVEL_LAST) + 1) {
             VECTOR position;
+            u32 collision;
 
             position.vx = effect->position.vx + effect->direction.vector.vx;
             position.vz = effect->position.vz + effect->direction.vector.vz;
             position.vy = effect->position.vy;
-            value = collision_query_world(
+            collision = collision_query_world(
                 position.vx, position.vy, position.vz, ACTOR_SPAWNER_COLLISION_RADIUS, 0,
                 KF_COLLISION_SKIP_MAP_OBJECTS | KF_COLLISION_SKIP_MAP_EVENTS);
-            if ((phase == KF_EFFECT_ACTOR_SPAWNER_TRAVEL_LAST && value != KF_COLLISION_NONE) || effect->control.frames_remaining == 0) {
+            if ((phase == KF_EFFECT_ACTOR_SPAWNER_TRAVEL_LAST && collision != KF_COLLISION_NONE) || effect->control.frames_remaining == 0) {
                 effect->phase = KF_EFFECT_ACTOR_SPAWNER_WAIT_FIRST;
             } else {
                 effect->position.vx = position.vx;
@@ -800,6 +807,9 @@ void effect_update_dispatch(void)
         s32 remaining;
 
         switch (phase) {
+        default:
+            // Only advance, hold and reverse drive floor deformation.
+            break;
         case KF_EFFECT_FLOOR_DEFORM_ADVANCE:
             remaining = effect->direction.words.x - 1;
             effect->direction.words.x = remaining;

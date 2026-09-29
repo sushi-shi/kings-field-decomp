@@ -22,8 +22,11 @@ enum {
     KF_COLLISION_PLAYER_HEIGHT = 1700
 };
 
+// Packed world-query results and signed distance/index probes have distinct domains.
+inline constexpr u32 KF_COLLISION_NONE = 0xffffffffu;
+inline constexpr s32 KF_PROXIMITY_NONE = -1;
+
 enum {
-    KF_COLLISION_NONE = -1,
     KF_COLLISION_TERRAIN = 0x10000,
     KF_COLLISION_BELOW_FLOOR = 0x1fff0,
     KF_COLLISION_CEILING = 0x1fff1,
