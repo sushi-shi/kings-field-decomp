@@ -19,10 +19,13 @@
 </style>
 <main>
   <h1>KING'S FIELD</h1>
-  <p>Select your original Japanese SLPS-00017 ISO or BIN and optional CUE.<br>
+  <p>Select your Japanese SLPS-00017 disc: ISO or BIN and optional CUE. English is prepared automatically.<br>
      Extraction stays on this device. Disc files are never uploaded.</p>
   <input id="disc" aria-label="Original disc image files" type="file" accept=".iso,.bin,.cue" multiple disabled>
-  <div class="options"><label><input id="skip-intro" type="checkbox"> Skip opening</label></div>
+  <div class="options">
+    <label>Language <select id="language" disabled><option value="ja">Japanese</option><option value="en">English v1.0</option></select></label>
+    <label><input id="skip-intro" type="checkbox"> Skip opening</label>
+  </div>
   <button id="play" disabled>Play</button>
   <p id="status" role="status" aria-live="polite">Loading application…</p>
   <p id="cache-status">Checking this device for extracted files…</p>
@@ -37,12 +40,14 @@
   const storageLabel = document.getElementById('storage-status');
   const discInput = document.getElementById('disc');
   const playButton = document.getElementById('play');
+  const languageInput = document.getElementById('language');
   let dataRoot = null, generation = 0, running = false, stopped = false, lastError = '';
   const fileLimit = 16 * 1024 * 1024, treeLimit = 128 * 1024 * 1024;
   const pathCapacity = 128, retailFileCount = 428, cueLimit = 65536;
   const cacheSchemaVersion = 1, manifestHeaderBytes = 8, manifestFileLengthOffset = 4;
   function setBusy(busy) {
     discInput.disabled = busy || running || stopped;
+    languageInput.disabled = busy || running || stopped;
     playButton.disabled = busy || running || stopped || !dataRoot;
     document.getElementById('skip-intro').disabled = running || stopped;
   }
@@ -50,9 +55,11 @@
     return typeof path === 'string' && path.length > 0 && path.length < pathCapacity &&
       path.split('/').every(part => part && part !== '.' && part !== '..' && /^[A-Z0-9_.-]+$/.test(part));
   }
-  function openCache() {
+  function openCache(language = languageInput.value) {
     return new Promise((resolve, reject) => {
-      const request = indexedDB.open('kings-field-resources', cacheSchemaVersion);
+      // Preserve the original Japanese cache; each supported translation has its own DB.
+      const name = language === 'en' ? 'kings-field-resources-en-v1' : 'kings-field-resources';
+      const request = indexedDB.open(name, cacheSchemaVersion);
       let failed = false;
       request.onupgradeneeded = () => request.result.createObjectStore('files');
       request.onblocked = () => { failed = true; reject(Error('Resource cache is blocked by another tab.')); };
@@ -90,7 +97,7 @@
       transaction.oncomplete = () => resolve(files);
     });
   }
-  async function verifyFiles(files) {
+  async function verifyFiles(files, language = languageInput.value) {
     if (files.length !== retailFileCount) return false;
     files.sort((a, b) => a.path < b.path ? -1 : a.path > b.path ? 1 : 0);
     const encoder = new TextEncoder();
@@ -114,7 +121,7 @@
     }
     const digest = new Uint8Array(await crypto.subtle.digest('SHA-256', canonical));
     const hex = Array.from(digest, byte => byte.toString(16).padStart(2, '0')).join('');
-    return hex === Module.ccall('kf_retail_files_hash', 'string', [], []);
+    return hex === Module.ccall('kf_resource_files_hash', 'string', ['string'], [language]);
   }
   function removeOwnedTree(root) {
     // Only launcher-created, session-local trees; never the independent save DB.
@@ -154,11 +161,11 @@
     visit('');
     return files;
   }
-  async function cacheFiles(files) {
+  async function cacheFiles(files, language = languageInput.value) {
     let database;
     cacheLabel.textContent = 'Caching extracted files on this device…';
     try {
-      database = await openCache();
+      database = await openCache(language);
       await new Promise((resolve, reject) => {
         const transaction = database.transaction('files', 'readwrite');
         const store = transaction.objectStore('files');
@@ -176,28 +183,50 @@
     }
   }
   async function restoreCache() {
+    setBusy(true);
+    if (dataRoot) removeOwnedTree(dataRoot);
+    dataRoot = null;
     let database, root;
     try {
       database = await openCache();
-      const files = await readCache(database);
+      let files = await readCache(database);
+      if (!files.length && languageInput.value === 'en') {
+        database.close();
+        database = await openCache('ja');
+        const japanese = await readCache(database);
+        if (japanese.length) {
+          if (!await verifyFiles(japanese, 'ja')) throw Error('Japanese cache failed verification.');
+          const source = '/kf-data-' + (++generation);
+          root = '/kf-data-' + (++generation);
+          try {
+            mountFiles(japanese, source);
+            if (!Module.ccall('kf_prepare_resources', 'number', ['string','string','string'], [source,root,'en']))
+              throw Error(lastError || 'English resource generation failed.');
+            files = collectedFiles(root);
+            await cacheFiles(files, 'en');
+          } finally { removeOwnedTree(source); }
+        }
+      }
       if (!files.length) {
         cacheLabel.textContent = 'Select the disc to create a local resource cache.';
       } else {
         statusLabel.textContent = 'Verifying cached files…';
         if (!await verifyFiles(files)) throw Error('Cached files do not match the supported disc.');
-        root = '/kf-data-' + (++generation);
-        mountFiles(files, root);
+        if (!root) {
+          root = '/kf-data-' + (++generation);
+          mountFiles(files, root);
+        }
         dataRoot = root;
         cacheLabel.textContent = 'Loaded verified extracted files from this device.';
       }
     } catch (error) {
       if (root && root !== dataRoot) removeOwnedTree(root);
       console.warn('Resource cache:', error);
-      cacheLabel.textContent = 'Cache unavailable or invalid; select the original disc again.';
+      cacheLabel.textContent = 'Cache unavailable: ' + (error.message || error);
     } finally {
       if (database) database.close();
       if (!stopped)
-        statusLabel.textContent = dataRoot ? 'Ready. Press Play to start.' : 'Select your original Japanese disc.';
+        statusLabel.textContent = dataRoot ? 'Ready. Press Play to start.' : 'Select your Japanese disc.';
       setBusy(false);
     }
   }
@@ -211,6 +240,9 @@
     onAbort(text) { stopped = true; statusLabel.textContent = 'Application stopped: ' + text + ' Reload to restart.'; setBusy(true); },
     onExit(code) { stopped = true; statusLabel.textContent = 'Application exited (' + code + '). ' + lastError + ' Reload to restart.'; setBusy(true); }
   };
+  languageInput.addEventListener('change', () => {
+    if (!running && !stopped) restoreCache();
+  });
   discInput.addEventListener('change', async event => {
     if (running || stopped) return;
     const selected = Array.from(event.target.files);
@@ -228,7 +260,7 @@
     }
     setBusy(true);
     const id = ++generation, root = '/kf-data-' + id, input = '/kf-input-' + id;
-    let installed = false;
+    let installed = false, japaneseRoot;
     lastError = '';
     try {
       statusLabel.textContent = 'Reading local disc…';
@@ -238,18 +270,24 @@
       statusLabel.textContent = 'Extracting and verifying original files…';
       await new Promise(resolve => setTimeout(resolve, 0));
       const source = input + '/' + (cues.length ? cues[0].name : images[0].name);
-      if (!Module.ccall('kf_extract_disc', 'number', ['string','string'], [source,root]))
+      japaneseRoot = languageInput.value === 'en' ? '/kf-data-' + (++generation) : root;
+      if (!Module.ccall('kf_extract_disc', 'number', ['string','string','string'], [source,japaneseRoot,'ja']))
         throw Error(lastError || 'Disc extraction failed.');
+      await cacheFiles(collectedFiles(japaneseRoot), 'ja');
+      if (languageInput.value === 'en' &&
+          !Module.ccall('kf_prepare_resources', 'number', ['string','string','string'], [japaneseRoot,root,'en']))
+        throw Error(lastError || 'English resource generation failed.');
       const previous = dataRoot;
       dataRoot = root;
       installed = true;
       if (previous) removeOwnedTree(previous);
-      await cacheFiles(collectedFiles(root));
+      if (languageInput.value === 'en') await cacheFiles(collectedFiles(root), 'en');
       statusLabel.textContent = 'Ready. Press Play to start.';
     } catch (error) {
       if (!stopped) statusLabel.textContent = String(error.message || error);
     } finally {
       removeOwnedTree(input);
+      if (japaneseRoot && japaneseRoot !== root) removeOwnedTree(japaneseRoot);
       if (!installed) removeOwnedTree(root);
       setBusy(false);
       discInput.value = '';
@@ -259,7 +297,7 @@
     if (running || stopped || !dataRoot || playButton.disabled) return;
     running = true;
     setBusy(true);
-    const args = ['--data', dataRoot];
+    const args = ['--data', dataRoot, '--language', languageInput.value];
     if (document.getElementById('skip-intro').checked) args.push('--skip-intro');
     statusLabel.textContent = 'Starting original game…';
     Module.canvas.focus();

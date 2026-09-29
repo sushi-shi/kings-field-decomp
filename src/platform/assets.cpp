@@ -1,4 +1,5 @@
 #include <kf/platform/assets.hpp>
+#include <kf/platform/translation.hpp>
 #include <bit>
 #include <algorithm>
 #include <cstdio>
@@ -254,7 +255,10 @@ static u32 le32(const u8 *p) {
 static u32 be32(const u8 *p) {
     return (u32(p[0]) << 24) | (u32(p[1]) << 16) | (u32(p[2]) << 8) | u32(p[3]);
 }
-bool assets_match_retail(AssetTable *table) {
+const char *assets_language_hash(Language language) {
+    return language == Language::English ? english_v1_files_sha256 : retail_files_sha256;
+}
+bool assets_match_language(AssetTable *table, Language language) {
     if (table->count != retail_resource_file_count)
         return false;
     std::sort(table->entries, table->entries + table->count,
@@ -279,7 +283,7 @@ bool assets_match_retail(AssetTable *table) {
     }
     char digest[sha256_hex_capacity];
     sha256_finish(&hash, digest);
-    return std::strcmp(digest, retail_files_sha256) == 0;
+    return std::strcmp(digest, assets_language_hash(language)) == 0;
 }
 static void read_extent(DiscImporter *importer, const DiscExtent *file) {
     const auto sectors = (std::uint64_t(file->length) + iso_payload_bytes - 1) / iso_payload_bytes;
@@ -297,8 +301,8 @@ static void read_extent(DiscImporter *importer, const DiscExtent *file) {
 }
 static void next_file(DiscImporter *importer) {
     if (importer->file_index == importer->file_count) {
-        if (!assets_match_retail(&importer->assets)) {
-            disc_import_fail(importer, "Extracted files do not match Japanese SLPS-00017.");
+        if (const char *error = assets_prepare_language(&importer->assets, importer->language)) {
+            disc_import_fail(importer, error);
             return;
         }
         importer->state = ImportState::complete;
@@ -325,17 +329,18 @@ void disc_import_fail(DiscImporter *importer, const char *message) {
     importer->request = {};
     assets_release(&importer->assets);
 }
-void disc_import_start(DiscImporter *importer, std::uint64_t disc_size) {
+void disc_import_start(DiscImporter *importer, std::uint64_t disc_size, Language language) {
     disc_import_release(importer);
+    importer->language = language;
     if (disc_size < (iso_primary_volume_sector + 1) * iso_payload_bytes || disc_size > disc_import_limit) {
-        disc_import_fail(importer, "Expected a Japanese SLPS-00017 ISO or BIN image (up to 128 MiB).");
+        disc_import_fail(importer, "Expected an SLPS-00017 ISO or BIN image (up to 128 MiB).");
         return;
     }
     importer->disc_size = disc_size;
     importer->state = ImportState::layout;
     importer->request = {0, cd_raw_sector_bytes};
     std::snprintf(importer->message, sizeof importer->message,
-                  "Verifying Japanese SLPS-00017 disc...");
+                  "Verifying %s SLPS-00017 disc...", language_name(language));
 }
 bool disc_import_waiting(const DiscImporter *importer) {
     return importer->state >= ImportState::layout && importer->state <= ImportState::file;

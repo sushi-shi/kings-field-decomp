@@ -1,5 +1,6 @@
 #include <kf/platform/disc.hpp>
 #include <kf/platform/assets.hpp>
+#include <kf/platform/translation.hpp>
 #include <cerrno>
 #include <cctype>
 #include <cstdio>
@@ -7,6 +8,7 @@
 #include <cstring>
 #include <new>
 #include <fcntl.h>
+#include <dirent.h>
 #include <sys/stat.h>
 #include <unistd.h>
 
@@ -177,7 +179,29 @@ static bool write_asset(int root, const Asset &asset) {
     return closed && written == asset.bytes.size;
 }
 
-bool disc_extract(const char *source, const char *destination) {
+static bool write_resource_tree(const char *destination, const AssetTable &assets, Language language) {
+    bool ok = true;
+    if (ok && ::mkdir(destination, S_IRWXU) != 0) {
+        std::fprintf(stderr, "Cannot create %s: %s. Extraction requires a new directory; use --data to reuse one.\n",
+                     destination, std::strerror(errno));
+        ok = false;
+    } else if (ok) {
+        const int root = ::open(destination, O_RDONLY | O_DIRECTORY | O_NOFOLLOW | O_CLOEXEC);
+        ok = root >= 0;
+        for (std::size_t i = 0; ok && i < assets.count; ++i)
+            ok = write_asset(root, assets.entries[i]);
+        if (root >= 0 && ::close(root) != 0)
+            ok = false;
+        if (!ok)
+            std::fprintf(stderr, "Extraction failed; partial files remain in %s. No existing directory was replaced.\n", destination);
+        else
+            std::printf("Extracted %zu verified %s files to %s\n", assets.count,
+                        language_name(language), destination);
+    }
+    return ok;
+}
+
+bool disc_extract(const char *source, const char *destination, Language language) {
     std::size_t size;
     FILE *file = open_disc(source, &size);
     if (!file) {
@@ -189,7 +213,7 @@ bool disc_extract(const char *source, const char *destination) {
         std::fclose(file);
         return false;
     }
-    disc_import_start(importer, size);
+    disc_import_start(importer, size, language);
     ByteBuffer read{};
     while (disc_import_waiting(importer)) {
         const auto request = importer->request;
@@ -207,24 +231,120 @@ bool disc_extract(const char *source, const char *destination) {
         ok = false;
     if (!ok)
         std::fprintf(stderr, "%s\n", importer->message);
-    if (ok && ::mkdir(destination, S_IRWXU) != 0) {
-        std::fprintf(stderr, "Cannot create %s: %s. Extraction requires a new directory; use --data to reuse one.\n",
-                     destination, std::strerror(errno));
-        ok = false;
-    } else if (ok) {
-        const int root = ::open(destination, O_RDONLY | O_DIRECTORY | O_NOFOLLOW | O_CLOEXEC);
-        ok = root >= 0;
-        for (std::size_t i = 0; ok && i < importer->assets.count; ++i)
-            ok = write_asset(root, importer->assets.entries[i]);
-        if (root >= 0 && ::close(root) != 0)
-            ok = false;
-        if (!ok)
-            std::fprintf(stderr, "Extraction failed; partial files remain in %s. No existing directory was replaced.\n", destination);
-        else
-            std::printf("Extracted %zu verified files to %s\n", importer->assets.count, destination);
-    }
+    if (ok)
+        ok = write_resource_tree(destination, importer->assets, language);
     disc_import_release(importer);
     delete importer;
     return ok;
 }
+
+static bool read_resource_tree(int root, const char *prefix, AssetTable *assets,
+                               std::size_t *total, unsigned *directories) {
+    if (++*directories > 128)
+        return false;
+    const int descriptor = ::dup(root);
+    if (descriptor < 0)
+        return false;
+    DIR *directory = ::fdopendir(descriptor);
+    if (!directory) {
+        ::close(descriptor);
+        return false;
+    }
+    bool ok = true;
+    while (ok) {
+        errno = 0;
+        const auto *entry = ::readdir(directory);
+        if (!entry) {
+            ok = errno == 0;
+            break;
+        }
+        if (std::strcmp(entry->d_name, ".") == 0 || std::strcmp(entry->d_name, "..") == 0)
+            continue;
+        char path[128], normalized[128];
+        const int length = std::snprintf(path, sizeof path, "%s%s", prefix, entry->d_name);
+        if (length < 0 || static_cast<std::size_t>(length) >= sizeof path - 1 ||
+            !asset_path(normalized, sizeof normalized, path) || std::strcmp(path, normalized) != 0) {
+            ok = false;
+            break;
+        }
+        // Reject links and special files before reading. O_NONBLOCK also avoids FIFO waits.
+        const int child = ::openat(root, entry->d_name, O_RDONLY | O_NONBLOCK | O_NOFOLLOW | O_CLOEXEC);
+        struct stat info{};
+        if (child < 0) {
+            ok = false;
+            break;
+        }
+        ok = ::fstat(child, &info) == 0;
+        if (ok && S_ISDIR(info.st_mode)) {
+            path[length] = '/';
+            path[length + 1] = 0;
+            ok = read_resource_tree(child, path, assets, total, directories);
+        } else if (ok && S_ISREG(info.st_mode) && info.st_size >= 0 &&
+                   info.st_size <= 16 * 1024 * 1024 && assets->count < 428 &&
+                   static_cast<std::uint64_t>(info.st_size) <= disc_import_limit - *total) {
+            ByteBuffer bytes{};
+            ok = buffer_resize(&bytes, static_cast<std::size_t>(info.st_size));
+            std::size_t at = 0;
+            while (ok && at < bytes.size) {
+                const auto count = ::read(child, bytes.data + at, bytes.size - at);
+                if (count < 0 && errno == EINTR)
+                    continue;
+                if (count <= 0) { ok = false; break; }
+                at += static_cast<std::size_t>(count);
+            }
+            u8 extra;
+            if (ok)
+                ok = ::read(child, &extra, 1) == 0;
+            *total += bytes.size;
+            if (ok)
+                ok = assets_append(assets, path, &bytes);
+            buffer_release(&bytes);
+        } else {
+            ok = false;
+        }
+        if (::close(child) != 0)
+            ok = false;
+    }
+    if (::closedir(directory) != 0)
+        ok = false;
+    return ok;
+}
+
+bool disc_verify_directory(const char *directory, Language language) {
+    const int root = ::open(directory, O_RDONLY | O_DIRECTORY | O_CLOEXEC);
+    AssetTable assets{};
+    std::size_t total = 0;
+    unsigned directories = 0;
+    bool ok = root >= 0 && read_resource_tree(root, "", &assets, &total, &directories) &&
+        assets_match_language(&assets, language);
+    if (root >= 0 && ::close(root) != 0)
+        ok = false;
+    assets_release(&assets);
+    if (!ok)
+        std::fprintf(stderr, "Resource tree does not match supported %s SLPS-00017 files: %s. Select the matching --language ja|en and disc tree.\n",
+                     language_name(language), directory);
+    return ok;
+}
+bool disc_prepare_directory(const char *source, const char *destination, Language language) {
+    const int root = ::open(source, O_RDONLY | O_DIRECTORY | O_CLOEXEC);
+    AssetTable assets{};
+    std::size_t total = 0;
+    unsigned directories = 0;
+    bool ok = root >= 0 && read_resource_tree(root, "", &assets, &total, &directories);
+    if (root >= 0 && ::close(root) != 0)
+        ok = false;
+    if (!ok)
+        std::fprintf(stderr, "Cannot read resource tree: %s\n", source);
+    if (ok) {
+        if (const char *error = assets_prepare_language(&assets, language)) {
+            std::fprintf(stderr, "%s\n", error);
+            ok = false;
+        }
+    }
+    if (ok)
+        ok = write_resource_tree(destination, assets, language);
+    assets_release(&assets);
+    return ok;
+}
+
 }

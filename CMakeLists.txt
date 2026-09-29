@@ -32,9 +32,26 @@ add_library(kf_codecs STATIC IMPORTED GLOBAL)
 set_target_properties(kf_codecs PROPERTIES IMPORTED_LOCATION "${KF_CODEC_LIBRARY}")
 add_dependencies(kf_codecs kf_codecs_build)
 
+find_package(Python3 REQUIRED COMPONENTS Interpreter)
+set(KF_ENGLISH_PATCH "${CMAKE_SOURCE_DIR}/resources/english-v1.kfdelta" CACHE FILEPATH
+    "Local English translation delta to embed (optional; redistribution pending)")
+set(KF_PATCH_ARGS)
+set(KF_PATCH_DEPENDS)
+if(EXISTS "${KF_ENGLISH_PATCH}")
+  list(APPEND KF_PATCH_ARGS --input "${KF_ENGLISH_PATCH}")
+  list(APPEND KF_PATCH_DEPENDS "${KF_ENGLISH_PATCH}")
+else()
+  message(STATUS "English payload absent: building Japanese-only import support")
+endif()
+set_property(DIRECTORY APPEND PROPERTY CMAKE_CONFIGURE_DEPENDS "${KF_ENGLISH_PATCH}")
+add_custom_command(OUTPUT "${CMAKE_BINARY_DIR}/generated/english_patch.inc"
+  COMMAND ${Python3_EXECUTABLE} "${CMAKE_SOURCE_DIR}/scripts/english_patch.py" embed
+    ${KF_PATCH_ARGS} --output "${CMAKE_BINARY_DIR}/generated/english_patch.inc"
+  DEPENDS scripts/english_patch.py ${KF_PATCH_DEPENDS} VERBATIM)
 include(cmake/OriginalSources.cmake)
-add_library(kf_support STATIC src/platform/files.cpp src/platform/disc.cpp src/platform/assets.cpp src/platform/controls.cpp src/lib/fixed_math.cpp src/lib/random.cpp)
-target_include_directories(kf_support PUBLIC include)
+add_library(kf_support STATIC src/platform/files.cpp src/platform/disc.cpp src/platform/assets.cpp src/platform/language.cpp src/platform/translation.cpp src/platform/controls.cpp src/lib/fixed_math.cpp src/lib/random.cpp)
+target_sources(kf_support PRIVATE "${CMAKE_BINARY_DIR}/generated/english_patch.inc")
+target_include_directories(kf_support PUBLIC include PRIVATE "${CMAKE_BINARY_DIR}/generated")
 target_link_libraries(kf_support PUBLIC kf_codecs)
 target_compile_options(kf_support PRIVATE -Wall -Wextra -Wpedantic -Werror)
 

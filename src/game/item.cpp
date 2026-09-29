@@ -1,3 +1,4 @@
+#include <kf/game/menu_text.h>
 #include <kf/game/resources.h>
 #include <kf/game/menu_glyphs.h>
 #include <kf/lib/null.h>
@@ -511,15 +512,10 @@ KfMenuResult item_pickup_confirm(KfObjectId item_id)
 
     accept_label.position.x = MENU_PICKUP_CONFIRM_TEXT_X;
     accept_label.position.y = MENU_PICKUP_CONFIRM_ACCEPT_Y;
-    accept_label.glyphs.codes[0] = menu_glyphs::pickup[0];
-    accept_label.glyphs.codes[1] = menu_glyphs::pickup[1];
-    accept_label.glyphs.codes[2] = MENU_TEXT_END;
+    accept_label.glyphs = menu_label(MenuLabel::Pickup);
     decline_label.position.x = MENU_PICKUP_CONFIRM_TEXT_X;
     decline_label.position.y = MENU_PICKUP_CONFIRM_DECLINE_Y;
-    decline_label.glyphs.codes[0] = menu_glyphs::cancel[0];
-    decline_label.glyphs.codes[1] = menu_glyphs::cancel[1];
-    decline_label.glyphs.codes[2] = menu_glyphs::cancel[2];
-    decline_label.glyphs.codes[3] = MENU_TEXT_END;
+    decline_label.glyphs = menu_label(MenuLabel::Cancel);
 
     menu_frame_begin();
     menu_draw_pickup_preview(item_id);

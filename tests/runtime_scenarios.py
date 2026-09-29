@@ -43,7 +43,7 @@ def build_observer(root, build, output, movement):
     subprocess.run(link, cwd=build, check=True)
 
 
-def run_observer(output, data, movement):
+def run_observer(output, data, movement, language):
     saves = output / "saves"
     saves.mkdir(exist_ok=True)
     environment = dict(
@@ -57,7 +57,7 @@ def run_observer(output, data, movement):
     log = output / "runtime.log"
     with log.open("w") as stream:
         process = subprocess.Popen(
-            [str(output / "client"), "--data", str(data), "--skip-intro", "--saves", str(saves)],
+            [str(output / "client"), "--data", str(data), "--language", language, "--skip-intro", "--saves", str(saves)],
             stdout=stream, stderr=subprocess.STDOUT, env=environment, start_new_session=True,
         )
         start, focused = time.monotonic(), False
@@ -94,13 +94,14 @@ def main():
     parser.add_argument("--build", choices=["linux", "sanitize"], default="sanitize")
     parser.add_argument("--data", type=Path, required=True)
     parser.add_argument("--movement", action="store_true")
+    parser.add_argument("--language", choices=["ja", "en"], default="ja")
     parser.add_argument("--baseline", type=Path, help="Compare all six saves with a previous output directory")
     args = parser.parse_args()
     root = args.source_root.resolve()
     output = root / "build" / ("cleanup-audit-movement" if args.movement else "cleanup-audit")
     output.mkdir(exist_ok=True)
     build_observer(root, root / "build" / args.build, output, args.movement)
-    run_observer(output, args.data.resolve(), args.movement)
+    run_observer(output, args.data.resolve(), args.movement, args.language)
     if args.baseline:
         for entry in range(1, 7):
             name = f"entry-{entry}.kfs"

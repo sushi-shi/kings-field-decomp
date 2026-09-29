@@ -9,3 +9,6 @@ __pycache__/
 *.bin
 *.cue
 *.iso
+
+# Local translation payload; redistribution permission pending.
+/resources/*.kfdelta

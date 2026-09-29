@@ -1,3 +1,4 @@
+#include <kf/game/menu_text.h>
 #include <kf/game/menu_glyphs.h>
 #include <kf/lib/null.h>
 
@@ -72,10 +73,8 @@ void menu_equip_select(KfEquipmentMenuCategory equipment_category)
             found++;
         }
     }
-    labels[found][0] = menu_glyphs::unequip[0];
-    labels[found][1] = menu_glyphs::unequip[1];
-    labels[found][2] = menu_glyphs::unequip[2];
-    labels[found][3] = MENU_TEXT_END;
+    const auto unequip = menu_label(MenuLabel::Unequip);
+    std::copy_n(unequip.codes, MENU_GLYPHS_PER_ROW, labels[found]);
     item_ids[found] = KF_OBJECT_NONE;
     found++;
 
@@ -199,10 +198,8 @@ void menu_spell_select(void)
             found++;
         }
     }
-    labels[found][0] = menu_glyphs::unequip[0];
-    labels[found][1] = menu_glyphs::unequip[1];
-    labels[found][2] = menu_glyphs::unequip[2];
-    labels[found][3] = MENU_TEXT_END;
+    const auto unequip = menu_label(MenuLabel::Unequip);
+    std::copy_n(unequip.codes, MENU_GLYPHS_PER_ROW, labels[found]);
     magic_ids[found] = KF_MAGIC_NONE;
     found++;
 

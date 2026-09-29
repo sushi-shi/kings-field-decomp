@@ -17,15 +17,24 @@ MODE2/2352 CUE with INDEX 01 at 00:00:00. Keep a CUE's referenced BIN beside it.
 `KF_DISC` is read at runtime: no `--impure` or manual extraction is needed.
 The launcher never uploads the disc or adds it to the Nix store.
 
-The first launch verifies and extracts the resources; later launches reuse
+The first launch verifies and extracts the Japanese resources; later launches need
+no `KF_DISC` and reuse
 `$XDG_CACHE_HOME/kings-field/SLPS-00017/resources-v1`. If `XDG_CACHE_HOME` is
 unset or relative, it defaults to `$HOME/.cache`. Saves are stored separately
 in the SDL user-preference directory, in three `.kfs` slots.
+
+For a local build with the translation payload, add `--language en`. English
+resources are generated automatically from the Japanese cache and saved alongside
+it as `resources-en-v1`. You do not need an English-patched disc. Later launches
+can use just `kings-field --language en`; Japanese remains the default. Translation
+redistribution permission is pending, so the payload is local and untracked.
+See [English resources](docs/english-resources.md) for local build instructions.
 
 The game starts from the opening. Append options after `--`:
 
 | Option | Purpose |
 | --- | --- |
+| `--language ja` / `--language en` | Select Japanese or English (requires translation-enabled build) |
 | `--skip-intro` | Start gameplay directly |
 | `--saves DIRECTORY` | Use an existing save directory |
 | `--data DIRECTORY` | Use an extracted disc tree instead of `KF_DISC` |
@@ -81,7 +90,7 @@ without inheritance, RTTI or exceptions.
 ## Browser
 
 After the WASM build, serve `build/wasm` over localhost or HTTPS and open
-`kings-field.html`. Select an ISO or BIN (with its CUE if applicable), then
+`kings-field.html`. Select a Japanese ISO or BIN (with its CUE if applicable), choose a language, then
 press Play. Extraction stays local; resources and saves use separate IndexedDB
 stores. Browser storage can be cleared or evicted.
 

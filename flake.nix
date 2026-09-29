@@ -5,14 +5,14 @@
     let
       system = "x86_64-linux";
       pkgs = import nixpkgs { inherit system; };
-      nativeTools = with pkgs; [ cmake ninja pkg-config cargo rustc clang ];
+      nativeTools = with pkgs; [ cmake ninja pkg-config cargo rustc clang python3 ];
       nativeLibraries = with pkgs; [ sdl3 libGL libglvnd ];
       sources = pkgs.lib.cleanSourceWith {
         src = ./.;
         filter = path: type:
           let
             relative = pkgs.lib.removePrefix "${toString ./.}/" (toString path);
-            sourceDirectories = [ "cmake" "src" "include" "codecs" "codec-bridge" "web" ];
+            sourceDirectories = [ "cmake" "src" "include" "codecs" "codec-bridge" "web" "scripts" "resources" ];
           in pkgs.lib.cleanSourceFilter path type
             && !(builtins.elem (baseNameOf path) [ "build" "target" "__pycache__" ])
             && (builtins.elem relative [ "CMakeLists.txt" "build.json" ]
