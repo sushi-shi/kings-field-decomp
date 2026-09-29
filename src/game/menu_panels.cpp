@@ -133,6 +133,8 @@ void menu_equipment_root(void)
             kf::host_wait_buttons_released();
         }
         switch (selection) {
+        case KF_EQUIP_MENU_NONE:
+            break;
         case KF_EQUIP_MENU_ARM:
         case KF_EQUIP_MENU_LEG:
             if (player_state.equipped_body_armor_id == KF_ITEM_FULL_PLATE) {

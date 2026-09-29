@@ -126,6 +126,8 @@ void map_ambient_script_floor1(void)
     }
 
     switch (map_floor_script(KF_FLOOR_1).floor1.actor_activation_stage) {
+    case KF_MAP_TRIGGER_COMPLETE:
+        break;
     case KF_MAP_TRIGGER_AWAIT_ENTRY:
         if (script_region_contains_cell(floor1_actor_entry, cell)) {
             map_floor_script(KF_FLOOR_1).floor1.actor_activation_stage = KF_MAP_TRIGGER_AWAIT_EXIT;
@@ -151,6 +153,8 @@ void map_ambient_script_floor1(void)
     }
 
     switch (map_floor_script(KF_FLOOR_1).floor1.object_removal_stage) {
+    case KF_MAP_TRIGGER_COMPLETE:
+        break;
     case KF_MAP_TRIGGER_AWAIT_ENTRY:
         if (script_region_contains_cell(floor1_removal_entry, cell)) {
             map_floor_script(KF_FLOOR_1).floor1.object_removal_stage = KF_MAP_TRIGGER_AWAIT_EXIT;

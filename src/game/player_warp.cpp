@@ -179,6 +179,9 @@ KfBoolU32 player_warp_trigger_update(void)
     const auto cell = player_state.motion_state.map_cell;
 
     switch (player_state.progress_state.current_floor) {
+    case KF_FLOOR_FORCE_RELOAD:
+        // This resource-load sentinel identifies no floor exit.
+        break;
     case KF_FLOOR_1:
         if (warp_cell_matches(cell, floor1_floor2_cell)) {
             player_warp_change_floor(KF_FLOOR_2, KF_MAP_VARIANT_DEFAULT);
