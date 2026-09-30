@@ -32,8 +32,12 @@ On x86_64 Linux with Nix flakes enabled:
 KF_DISC="/path/to/King's Field (Japan).iso" nix run github:sushi-shi/kings-field-decomp/port
 ```
 
-Use a Japanese ISO, BIN, or single-track CUE/BIN disc image.
-Keep the CUE and its BIN file together.
+Supply your own disc image of the Japanese King's Field (SLPS-00017).
+Tested image: `King's Field (Japan).bin`, SHA-256:
+
+```text
+ae74beba377d686bfaa292ea40df8ade4454ec3139c2b5152364e02aac90b3d9
+```
 
 The first launch extracts and caches game data locally. Saves use three separate
 slots. No manual extraction or `--impure` is needed.
