@@ -51,7 +51,7 @@ void opening_resources_load_scene0(void)
         kf::host_fail("Truncated opening map grids");
     source = resource_stream_copy_words(
         cutscene_map_cell_attribute_grid.words,
-        (const u32 *)(stream + KF_RESOURCE_CHUNK_HEADER_BYTES),
+        resource_chunk_data<u32>(map_grids, "opening map grids"),
         map_grid_word_count);
     source = resource_stream_copy_words(
         cutscene_map_floor_height_grid.words, source, map_grid_word_count);
@@ -65,9 +65,8 @@ void opening_resources_load_scene0(void)
     const auto floor_items = resource_chunk_view(stream, resource_end);
     item_load_floor_placements(cutscene_floor_item_storage(), cutscene_map_floor_height_grid, floor_items.data, floor_items.size);
     stream = resource_stream_next(stream, resource_end);
-    resource_chunk_view(stream, resource_end);
     opening_entity_pool_load_placements(
-        (const KfMapObjectPlacement *)(stream + KF_RESOURCE_CHUNK_HEADER_BYTES),
+        resource_chunk_view(stream, resource_end),
         KF_OPENING_ENTITY_FLOOR_HEIGHT);
     stream = resource_stream_next(stream, resource_end);
     memory_release_last(cutscene_memory_arena);
@@ -96,9 +95,11 @@ void opening_resources_load_scene1(void)
     memory_allocation_reset(cutscene_memory_arena);
     std::size_t resource_size;
     resource_file_load_allocated(cutscene_memory_arena, &stream, "B0/MIXA1.", &resource_size);
+    const u8 *resource_end = stream + resource_size;
     cutscene_audio_load_vab(audio_bank_resource(stream, resource_size));
-    vab_chunk = RESOURCE_STREAM_NEXT(stream);
-    RESOURCE_STREAM_NEXT(stream);
+    stream = resource_stream_next(stream, resource_end);
+    vab_chunk = stream;
+    stream = resource_stream_next(stream, resource_end);
     memory_release_last(cutscene_memory_arena);
     opening_scene1_arena_cursor = vab_chunk + KF_RESOURCE_REUSE_PREFIX_BYTES;
     cutscene_memory_arena.allocation.cursor = opening_scene1_arena_cursor;
@@ -118,15 +119,16 @@ void opening_resources_load_scene3(void)
     resource_file_load_allocated(cutscene_memory_arena, &tim_stream, "B0/MIX3.", &tim_size);
     tim_upload_images(tim_stream, tim_size);
     memory_release_last(cutscene_memory_arena);
-    resource_file_load_allocated(cutscene_memory_arena, &stream, "B0/MIXA3.");
-    opening_entity_pool_load_placements(
-        (const KfMapObjectPlacement *)(stream + KF_RESOURCE_CHUNK_HEADER_BYTES),
-        KF_OPENING_SCENE_BASE_Y);
-    RESOURCE_STREAM_NEXT(stream);
-    memory_release_last(cutscene_memory_arena);
     std::size_t resource_size;
-    resource_file_load_allocated(cutscene_memory_arena, &stream, "B0/MIXB3.", &resource_size);
+    resource_file_load_allocated(cutscene_memory_arena, &stream, "B0/MIXA3.", &resource_size);
     const u8 *resource_end = stream + resource_size;
+    opening_entity_pool_load_placements(
+        resource_chunk_view(stream, resource_end),
+        KF_OPENING_SCENE_BASE_Y);
+    stream = resource_stream_next(stream, resource_end);
+    memory_release_last(cutscene_memory_arena);
+    resource_file_load_allocated(cutscene_memory_arena, &stream, "B0/MIXB3.", &resource_size);
+    resource_end = stream + resource_size;
     const auto entity_tmd = resource_chunk_view(stream, resource_end);
     tmd_register(cutscene_tmd_context(), KF_TMD_SLOT_ENTITIES,
         stream + KF_RESOURCE_CHUNK_HEADER_BYTES, entity_tmd.size);
@@ -149,17 +151,20 @@ void opening_resources_load_ending(void)
     memory_release_last(cutscene_memory_arena);
     std::size_t resource_size;
     resource_file_load_allocated(cutscene_memory_arena, &stream, "B0/MIXAE.", &resource_size);
+    const u8 *resource_end = stream + resource_size;
     cutscene_audio_load_vab(audio_bank_resource(stream, resource_size));
-    vab_chunk = RESOURCE_STREAM_NEXT(stream);
+    stream = resource_stream_next(stream, resource_end);
+    vab_chunk = stream;
+    stream = resource_stream_next(stream, resource_end);
     opening_entity_pool_load_placements(
-        (const KfMapObjectPlacement *)(RESOURCE_STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES),
+        resource_chunk_view(stream, resource_end),
         KF_OPENING_SCENE_BASE_Y);
-    RESOURCE_STREAM_NEXT(stream);
+    stream = resource_stream_next(stream, resource_end);
     memory_release_last(cutscene_memory_arena);
     *arena_cursor = vab_chunk + KF_RESOURCE_REUSE_PREFIX_BYTES;
     audio_play_sequence_file(opening_ending_sequence_path);
     resource_file_load_allocated(cutscene_memory_arena, &stream, "B0/MIXBE.", &resource_size);
-    const u8 *resource_end = stream + resource_size;
+    resource_end = stream + resource_size;
     const auto entity_tmd = resource_chunk_view(stream, resource_end);
     tmd_register(cutscene_tmd_context(), KF_TMD_SLOT_ENTITIES,
         stream + KF_RESOURCE_CHUNK_HEADER_BYTES, entity_tmd.size);
@@ -172,11 +177,13 @@ void opening_resources_load_ending_entities(void)
 {
     u8 *stream;
 
-    resource_file_load_allocated(cutscene_memory_arena, &stream, "B0/MIXAF.");
+    std::size_t resource_size;
+    resource_file_load_allocated(cutscene_memory_arena, &stream, "B0/MIXAF.", &resource_size);
+    const u8 *resource_end = stream + resource_size;
     opening_entity_pool_load_placements(
-        (const KfMapObjectPlacement *)(stream + KF_RESOURCE_CHUNK_HEADER_BYTES),
+        resource_chunk_view(stream, resource_end),
         KF_OPENING_SCENE_BASE_Y);
-    RESOURCE_STREAM_NEXT(stream);
+    stream = resource_stream_next(stream, resource_end);
     memory_release_last(cutscene_memory_arena);
 }
 
@@ -192,8 +199,10 @@ void opening_resources_load_ending_sequence(void)
     *arena_cursor = opening_ending_arena_cursor;
     std::size_t resource_size;
     resource_file_load_allocated(cutscene_memory_arena, &stream, "B0/MIXAG.", &resource_size);
+    const u8 *resource_end = stream + resource_size;
     cutscene_audio_load_vab(audio_bank_resource(stream, resource_size));
-    vab_chunk = RESOURCE_STREAM_NEXT(stream);
+    stream = resource_stream_next(stream, resource_end);
+    vab_chunk = stream;
     memory_release_last(cutscene_memory_arena);
     *arena_cursor = vab_chunk + KF_RESOURCE_REUSE_PREFIX_BYTES;
     audio_play_sequence_file("B0/ENDG.");

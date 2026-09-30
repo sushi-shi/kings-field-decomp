@@ -9,41 +9,33 @@ CVECTOR cutscene_map_textured_primitive_color = {
 
 void cutscene_render_enqueue_map(u16 object_index, const MATRIX *lights, const MATRIX *model, const kf::Projection &projection)
 {
-    KfTmdPrimitive *primitive;
-    KfTmdObject *object = tmd_get_object(cutscene_tmd_context(), object_index);
-    u32 header;
-    SVECTOR *normals = (SVECTOR *)((u8 *)open_graphics_runtime.tmd_state.current_tmd.data +
-        (object->normal_offset + KF_TMD_HEADER_BYTES));
-    u8 *packet;
+    const auto object = tmd_read_object(cutscene_tmd_context(), object_index);
+    auto stream = tmd_primitive_stream(cutscene_tmd_context(), object);
+    const auto normals = tmd_normal_bytes(cutscene_tmd_context(), object);
     CVECTOR shade;
-    u32 remaining;
 
-    cutscene_tmd_project_vertices(object->vertex_count, model, projection);
-    remaining = object->primitive_count;
-    packet = (u8 *)open_graphics_runtime.tmd_state.current_tmd.data +
-        (object->primitive_offset + KF_TMD_HEADER_BYTES);
-    for (; remaining-- != 0;
-         packet += TMD_PACKET_BODY_BYTES(header)) {
-        header = *(u32 *)packet;
-        packet = TMD_PACKET_BODY(packet);
-        primitive = (KfTmdPrimitive *)packet;
-        switch (tmd_packet_mode(header)) {
+    cutscene_tmd_project_vertices(object.vertex_count, model, projection);
+
+    while (stream.remaining != 0) {
+        const auto packet = tmd_next_packet(stream);
+        switch (packet.mode) {
         case KF_TMD_MODE_FT4: {
+            const auto p = tmd_decode_face(packet, object.vertex_count);
             s32 depth;
 
             auto projected = render_projected_triangle(
                 open_graphics_runtime.tmd_projected_vertices,
-                primitive->ft4.v0, primitive->ft4.v1, primitive->ft4.v2);
+                p.vertices[0], p.vertices[1], p.vertices[2]);
             if (!projected) {
                 continue;
             }
-            projected->complete_quad(open_graphics_runtime.tmd_projected_vertices[primitive->ft4.v3]);
+            projected->complete_quad(open_graphics_runtime.tmd_projected_vertices[p.vertices[3]]);
             auto face = projected->draw_face();
             CVECTOR colors[4] {};
-            face.material = render_texture_material(primitive->ft4.tsb, primitive->ft4.cba);
-            render_face_uvs(face, {primitive->texture.uv0, primitive->texture.uv1, primitive->texture.uv2, primitive->texture.uv3});
+            face.material = render_texture_material(p.texture_page, p.palette);
+            render_face_uvs(face, {p.uv[0], p.uv[1], p.uv[2], p.uv[3]});
             shade = kf::render_light_normal(open_graphics_runtime.render_state.lighting, *lights,
-                normals[primitive->ft4.n0], cutscene_map_textured_primitive_color, 0);
+                tmd_read_normal(normals, p.normals[0]), cutscene_map_textured_primitive_color, 0);
             colors[0] = kf::render_fog_color(open_graphics_runtime.render_state.lighting, shade, projected->fog(0));
             colors[1] = kf::render_fog_color(open_graphics_runtime.render_state.lighting, shade, projected->fog(1));
             colors[2] = kf::render_fog_color(open_graphics_runtime.render_state.lighting, shade, projected->fog(2));
@@ -56,20 +48,21 @@ void cutscene_render_enqueue_map(u16 object_index, const MATRIX *lights, const M
             break;
         }
         case KF_TMD_MODE_FT3: {
+            const auto p = tmd_decode_face(packet, object.vertex_count);
             s32 depth;
 
             auto projected = render_projected_triangle(
                 open_graphics_runtime.tmd_projected_vertices,
-                primitive->ft3.v0, primitive->ft3.v1, primitive->ft3.v2);
+                p.vertices[0], p.vertices[1], p.vertices[2]);
             if (!projected) {
                 continue;
             }
             auto face = projected->draw_face();
             CVECTOR colors[4] {};
-            face.material = render_texture_material(primitive->ft3.tsb, primitive->ft3.cba);
-            render_face_uvs(face, {primitive->texture.uv0, primitive->texture.uv1, primitive->texture.uv2});
+            face.material = render_texture_material(p.texture_page, p.palette);
+            render_face_uvs(face, {p.uv[0], p.uv[1], p.uv[2]});
             shade = kf::render_light_normal(open_graphics_runtime.render_state.lighting, *lights,
-                normals[primitive->ft3.n0], cutscene_map_textured_primitive_color, 0);
+                tmd_read_normal(normals, p.normals[0]), cutscene_map_textured_primitive_color, 0);
             colors[0] = kf::render_fog_color(open_graphics_runtime.render_state.lighting, shade, projected->fog(0));
             colors[1] = kf::render_fog_color(open_graphics_runtime.render_state.lighting, shade, projected->fog(1));
             colors[2] = kf::render_fog_color(open_graphics_runtime.render_state.lighting, shade, projected->fog(2));
