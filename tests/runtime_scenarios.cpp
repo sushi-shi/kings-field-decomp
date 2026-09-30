@@ -61,13 +61,21 @@ void audit_selected_player_update()
     if (++audit_frames != (std::getenv("KF_AUDIT_MOVEMENT") ? 96u : 16u))
         return;
     map_world_state_persist();
-    if (save_system_write_slot(KF_SAVE_SLOT_FIRST) != KF_SAVE_RESULT_OK)
+    if (save_system_write_slot(kf::SaveSlot::First) != KF_SAVE_RESULT_OK)
         kf::host_fail("Audit: save write failed");
     u8 bytes[kf::save_file_capacity];
     std::size_t size = 0;
     if (kf::save_file_read(kf::SaveSlot::First, bytes, sizeof bytes, &size) !=
         kf::SaveFileResult::Ok)
         kf::host_fail("Audit: saved bytes unavailable");
+    for (auto slot : {kf::SaveSlot::Second, kf::SaveSlot::Third}) {
+        u8 other[kf::save_file_capacity];
+        std::size_t other_size = 0;
+        if (save_system_write_slot(slot) != KF_SAVE_RESULT_OK ||
+            kf::save_file_read(slot, other, sizeof other, &other_size) != kf::SaveFileResult::Ok ||
+            other_size != size || std::memcmp(bytes, other, size))
+            kf::host_fail("Audit: save-slot identities differ between game and storage");
+    }
     u32 hash = 2166136261u;
     for (std::size_t i = 0; i < size; ++i)
         hash = (hash ^ bytes[i]) * 16777619u;
@@ -87,9 +95,11 @@ void audit_selected_player_update()
     std::array<KfSaveSlotSummary, KF_SAVE_SLOT_COUNT> slots;
     if (save_system_read_catalog(slots) != KF_SAVE_RESULT_OK)
         kf::host_fail("Audit: save catalog failed");
-    player_state.gold = gold + 123;
-    if (save_system_read_slot(KF_SAVE_SLOT_FIRST) != KF_SAVE_RESULT_OK || player_state.gold != gold)
-        kf::host_fail("Audit: save restoration failed");
+    for (auto slot : {kf::SaveSlot::First, kf::SaveSlot::Second, kf::SaveSlot::Third}) {
+        player_state.gold = gold + 123;
+        if (save_system_read_slot(slot) != KF_SAVE_RESULT_OK || player_state.gold != gold)
+            kf::host_fail("Audit: save restoration failed");
+    }
     game_result = GameResult::ReturnToIntro;
 }
 

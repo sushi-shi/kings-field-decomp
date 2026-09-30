@@ -204,7 +204,7 @@ void menu_drop_item_panel(void)
         player_stock[selection]--;
 }
 
-KfMenuResult menu_system_panel(void)
+KfMenuAction menu_system_panel(void)
 {
     s32 cursor = kf_enum_encode<s32>(KF_MENU_SYSTEM_ACTION_LOAD);
     KfMenuConfirmState confirm = KF_MENU_CONFIRM_IDLE;
@@ -225,7 +225,7 @@ KfMenuResult menu_system_panel(void)
         case KF_MENU_SYSTEM_ACTION_LOAD:
             result = menu_load_panel();
             if (result == KF_MENU_RESULT_ACCEPTED)
-                result = KF_MENU_RESULT_GAME_LOADED;
+                return KfMenuAction::GameLoaded;
             break;
         case KF_MENU_SYSTEM_ACTION_QUIT:
             result = menu_two_option_prompt(
@@ -283,7 +283,7 @@ KfMenuResult menu_system_panel(void)
         menu_draw_window(KF_MENU_WINDOW_SYSTEM, KF_MENU_SYSTEM_ROW_COUNT, cursor, confirm);
         menu_present_frame();
     }
-    return result;
+    return KfMenuAction::Close;
 }
 
 KfMenuResult menu_save_panel(void)
@@ -335,7 +335,7 @@ KfMenuResult menu_save_panel(void)
                         menu_draw_window(KF_MENU_WINDOW_SAVE, KF_MENU_SAVE_ROW_COUNT, cursor, confirm);
                         menu_present_frame();
                     }
-                    status = kf_enum_encode<s32>(save_system_write_slot(kf_enum_decode<KfSaveSlotArgument>(cursor + kf_enum_encode<s16>(KF_SAVE_SLOT_FIRST))));
+                    status = kf_enum_encode<s32>(save_system_write_slot(kf_enum_decode<kf::SaveSlot>(cursor + kf_enum_encode<s16>(kf::SaveSlot::First))));
                 }
 
                 if (status != kf_enum_encode<s32>(KF_SAVE_RESULT_OK)) {
@@ -435,7 +435,7 @@ KfMenuResult menu_load_panel(void)
                     menu_draw_window(KF_MENU_WINDOW_LOAD, KF_MENU_LOAD_ROW_COUNT, cursor, confirm);
                     menu_present_frame();
                 }
-                if (save_system_read_slot(kf_enum_decode<KfSaveSlotArgument>(cursor + kf_enum_encode<s16>(KF_SAVE_SLOT_FIRST))) != KF_SAVE_RESULT_OK) {
+                if (save_system_read_slot(kf_enum_decode<kf::SaveSlot>(cursor + kf_enum_encode<s16>(kf::SaveSlot::First))) != KF_SAVE_RESULT_OK) {
                     while (kf::host_read_buttons() == 0) {
                         menu_frame_begin();
                         menu_add_message_image_quad();
@@ -1364,9 +1364,9 @@ enum {
     MENU_LIST_CONFIRM_DECLINE_Y = MENU_LIST_CONFIRM_ACCEPT_Y + MENU_CONFIRM_ROW_STEP
 };
 
+template <typename DrawPreview>
 static KfMenuResult menu_list_confirm_impl(
-    const KfMenuList *list, KfMenuConfirmKind confirm_kind, KfMenuPreviewMode preview_mode,
-    s32 preview_id, KfItemStockBank shop_bank, KfTradeMode price_mode)
+    const KfMenuList *list, KfMenuConfirmKind confirm_kind, DrawPreview draw_preview)
 {
     MenuGlyphString accept_label;
     MenuGlyphString decline_label;
@@ -1406,28 +1406,14 @@ static KfMenuResult menu_list_confirm_impl(
     }
 
     menu_frame_begin();
-    if (preview_mode == KF_MENU_PREVIEW_ITEM_MODEL) {
-        menu_item_model_preview(kf_enum_decode<KfObjectId>(preview_id));
-    } else if (preview_mode == KF_MENU_PREVIEW_ITEM_DETAIL) {
-        menu_draw_item_detail(kf_enum_decode<KfObjectId>(preview_id), shop_bank, price_mode);
-    } else if (preview_mode == KF_MENU_PREVIEW_MAGIC_ARTWORK
-            && preview_id != kf_enum_encode<s32>(KF_MAGIC_NONE)) {
-        menu_add_magic_artwork_quad();
-    }
+    draw_preview();
     menu_list_render(list);
     menu_draw_two_option(&accept_label, &decline_label, selected, confirmation);
     menu_present_frame();
     do {
         if (result != KF_MENU_RESULT_PENDING) {
             menu_frame_begin();
-            if (preview_mode == KF_MENU_PREVIEW_ITEM_MODEL) {
-                menu_item_model_preview(kf_enum_decode<KfObjectId>(preview_id));
-            } else if (preview_mode == KF_MENU_PREVIEW_ITEM_DETAIL) {
-                menu_draw_item_detail(kf_enum_decode<KfObjectId>(preview_id), shop_bank, price_mode);
-            } else if (preview_mode == KF_MENU_PREVIEW_MAGIC_ARTWORK
-                    && preview_id != kf_enum_encode<s32>(KF_MAGIC_NONE)) {
-                menu_add_magic_artwork_quad();
-            }
+            draw_preview();
             menu_list_render(list);
             menu_draw_two_option(&accept_label, &decline_label, selected, confirmation);
             menu_present_frame();
@@ -1455,14 +1441,7 @@ static KfMenuResult menu_list_confirm_impl(
             menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
             result = KF_MENU_RESULT_CANCELLED;
         }
-        if (preview_mode == KF_MENU_PREVIEW_ITEM_MODEL) {
-            menu_item_model_preview(kf_enum_decode<KfObjectId>(preview_id));
-        } else if (preview_mode == KF_MENU_PREVIEW_ITEM_DETAIL) {
-            menu_draw_item_detail(kf_enum_decode<KfObjectId>(preview_id), shop_bank, price_mode);
-        } else if (preview_mode == KF_MENU_PREVIEW_MAGIC_ARTWORK
-                && preview_id != kf_enum_encode<s32>(KF_MAGIC_NONE)) {
-            menu_add_magic_artwork_quad();
-        }
+        draw_preview();
         menu_list_render(list);
         menu_draw_two_option(&accept_label, &decline_label, selected, confirmation);
         menu_present_frame();
@@ -1932,14 +1911,21 @@ KfMenuResult menu_list_confirm(
     const KfMenuList *list, KfMenuConfirmKind confirmation, KfMenuPreviewMode preview,
     KfObjectId id, KfItemStockBank bank, KfTradeMode trade)
 {
-    return menu_list_confirm_impl(list, confirmation, preview, static_cast<s32>(id), bank, trade);
+    return menu_list_confirm_impl(list, confirmation, [=] {
+        if (preview == KF_MENU_PREVIEW_ITEM_MODEL)
+            menu_item_model_preview(id);
+        else
+            menu_draw_item_detail(id, bank, trade);
+    });
 }
 
 KfMenuResult menu_list_confirm(
-    const KfMenuList *list, KfMenuConfirmKind confirmation, KfMenuPreviewMode preview,
-    KfEffectKind id, KfItemStockBank bank, KfTradeMode trade)
+    const KfMenuList *list, KfMenuConfirmKind confirmation, KfEffectKind id)
 {
-    return menu_list_confirm_impl(list, confirmation, preview, static_cast<s32>(id), bank, trade);
+    return menu_list_confirm_impl(list, confirmation, [id] {
+        if (id != KF_MAGIC_NONE)
+            menu_add_magic_artwork_quad();
+    });
 }
 
 void menu_runtime_reset_module_state(void)
