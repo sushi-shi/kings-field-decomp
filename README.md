@@ -129,7 +129,8 @@ To extract a disc with this executable, replace `--data` with
 
 ## Windows
 
-Build the 64-bit Windows executable from Linux with the same pinned Nix shell:
+On Windows, build inside an x86_64 WSL2 Linux distribution with Nix flakes
+enabled. These commands also work on x86_64 Linux:
 
 ```sh
 nix develop
@@ -144,8 +145,8 @@ Copy `build/windows/kings-field.exe` to Windows, then run in PowerShell:
 ```
 
 ISO and raw BIN images also work. An OpenGL 3.3 graphics driver is required;
-SDL and the compiler runtimes are linked into the executable. No Nix installation
-is needed on Windows. English starts automatically, and **Configuration → Language**
+SDL and the compiler runtimes are linked into the executable. Running it needs
+no Nix installation. English starts automatically, and **Configuration → Language**
 switches between English and Japanese. Extracted resources are temporary and are
 removed on normal exit. Saves stay in `%APPDATA%\KingsField\SLPS00017`; use
 `--saves DIRECTORY` to choose an existing directory.
@@ -158,7 +159,8 @@ them (see [translation details](docs/english-resources.md)).
 
 ## Browser
 
-Inside `nix develop`:
+The WebAssembly build runs in browsers on Windows and Linux. To build it on
+Windows, use the same WSL2/Nix environment. Inside `nix develop`:
 
 ```sh
 emcmake cmake --preset wasm
