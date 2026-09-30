@@ -176,7 +176,7 @@ void tmd_project_vertices(s32 count, const MATRIX *model, const kf::Projection &
     vertex = game_graphics_runtime.current_tmd_vertices;
     for (count--; count != -1; count--) {
         const auto point = kf::render_project_point(*model, projection, *vertex);
-        projected->sxy.vector = {point.x, point.y};
+        projected->position = {point.x, point.y};
         projected->p2 = point.fog << KF_TMD_DEFAULT_PERSPECTIVE_SHIFT;
         projected->sz = point.depth;
         projected++;

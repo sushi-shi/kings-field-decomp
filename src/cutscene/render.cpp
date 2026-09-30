@@ -18,7 +18,7 @@ void cutscene_tmd_project_vertices(s32 count, const MATRIX *model, const kf::Pro
     vertex = open_graphics_runtime.current_tmd_vertices;
     for (count--; count != -1; count--) {
         const auto point = kf::render_project_point(*model, projection, *vertex);
-        projected->sxy.vector = {point.x, point.y};
+        projected->position = {point.x, point.y};
         projected->p2 = point.fog << open_graphics_runtime.tmd_projection_shift;
         projected->sz = point.depth;
         projected++;
@@ -37,7 +37,7 @@ void tmd_project_vertices_perspective_right(s32 count, const MATRIX *model, cons
     vertex = open_graphics_runtime.current_tmd_vertices;
     for (count--; count != -1; count--) {
         const auto point = kf::render_project_point(*model, projection, *vertex);
-        out->sxy.vector = {point.x, point.y};
+        out->position = {point.x, point.y};
         out->p2 = point.fog >> open_graphics_runtime.tmd_projection_shift;
         out->sz = point.depth;
         out++;
