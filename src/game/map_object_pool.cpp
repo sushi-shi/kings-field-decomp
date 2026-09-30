@@ -1,6 +1,7 @@
 #include <kf/platform/prelude.h>
 #include <kf/game/collision.h>
 #include <kf/game/game.h>
+#include <kf/lib/codec.h>
 #include <kf/lib/map.h>
 #include <kf/lib/map_data.h>
 
@@ -169,20 +170,23 @@ void map_object_definitions_load(const KfMapObjectDefinitionTable *definitions)
     map_object_state.definitions = *definitions;
 }
 
-void map_object_pool_load(const KfMapObjectPlacement *placements)
+void map_object_pool_load(KfResourceChunk chunk)
 {
-    bool ended = false;
-    const KfMapObjectPlacement *placement = placements;
+    std::array<KfObjectPlacementData, KF_MAP_OBJECT_CAPACITY> decoded {};
+    std::size_t count;
+    if (kf_object_placements_decode(chunk.data, chunk.size,
+            {KF_MAP_COLUMNS, KF_MAP_OBJECT_DEFINITION_COUNT, KF_MAP_TILE_SIZE}, decoded.data(), decoded.size(), &count) != KF_CODEC_OK)
+        kf::host_fail("Invalid map object placements.");
     KfMapObjectDefinition *definition;
     SVECTOR effect_direction;
     KfObjectId object_id;
 
-    for (auto &object : map_object_state.objects) {
-        if (ended == true
-            || kf_enum_decode<KfObjectId>(placement->object_id) == KF_OBJECT_NONE) {
-            ended = true;
+    for (std::size_t i = 0; i < std::size(map_object_state.objects); ++i) {
+        auto &object = map_object_state.objects[i];
+        if (i >= count) {
             object.object_id = KF_OBJECT_NONE;
         } else {
+            const auto *placement = &decoded[i];
             object_id = kf_enum_decode<KfObjectId>(placement->object_id);
             object.object_id = object_id;
             object.cell_x = placement->tile_x;
@@ -196,7 +200,8 @@ void map_object_pool_load(const KfMapObjectPlacement *placements)
                 - map_floor_height_grid.cells[placement->tile_z][placement->tile_x] * KF_MAP_HEIGHT_STEP;
             object.action = KF_MAP_OBJECT_OP_NONE;
 
-            object.link = placement->link;
+            object.link.words[0] = placement->link[0];
+            object.link.words[1] = placement->link[1];
             definition = &map_object_state.definitions.entries[kf_enum_encode<u8>(object.object_id)];
             if (definition->collision_radius != 0) {
                 collision_adjust_cell_occupancy(object.cell_x, object.cell_z, 1);
@@ -268,7 +273,6 @@ void map_object_pool_load(const KfMapObjectPlacement *placements)
                 map_object_start_action_if_idle(&object, KF_MAP_OBJECT_OP_COPY_REGION);
             }
             map_object_mark_collision_edge(&object, KF_MAP_CELL_BLOCKED, object.rotation.angles.y);
-            placement++;
         }
     }
 }

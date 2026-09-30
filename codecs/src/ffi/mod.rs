@@ -2,6 +2,7 @@ use crate::cast::AsUsize;
 pub(crate) mod bindings;
 use bindings::*;
 mod audio;
+mod resources;
 mod texture;
 use crate::bytes::{read_u16_le, span};
 use crate::tim::{Image, Images, PixelFormat};

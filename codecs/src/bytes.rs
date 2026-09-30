@@ -74,3 +74,22 @@ pub(crate) fn take(bytes: &[u8], at: &mut usize) -> crate::Result<u8> {
     *at += 1;
     Ok(value)
 }
+
+#[track_caller]
+pub(crate) fn records<T: bytemuck::AnyBitPattern>(
+    bytes: &[u8],
+    at: usize,
+    count: usize,
+) -> crate::Result<impl ExactSizeIterator<Item = T> + '_> {
+    const { assert!(size_of::<T>() != 0) };
+    let size = count
+        .checked_mul(size_of::<T>())
+        .ok_or(crate::Error::truncated(
+            at,
+            usize::MAX,
+            bytes.len().saturating_sub(at),
+        ))?;
+    Ok(span(bytes, at, size)?
+        .chunks_exact(size_of::<T>())
+        .map(bytemuck::pod_read_unaligned))
+}

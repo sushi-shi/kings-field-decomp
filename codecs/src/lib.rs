@@ -17,3 +17,6 @@ mod tim;
 #[forbid(unsafe_code)]
 mod error;
 pub(crate) use error::{bail, Error, Result};
+
+#[forbid(unsafe_code)]
+mod resources;

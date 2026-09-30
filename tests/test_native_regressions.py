@@ -14,6 +14,12 @@ class NativeRegressions(unittest.TestCase):
     def setUpClass(cls):
         cls.directory = tempfile.TemporaryDirectory(prefix="kf-native-regressions-")
         cls.addClassCleanup(cls.directory.cleanup)
+        rust_target = Path(cls.directory.name) / "rust"
+        subprocess.run([
+            "cargo", "build", "--offline", "--locked", "--release",
+            "--manifest-path", str(ROOT / "codecs/Cargo.toml"),
+            "--target-dir", str(rust_target),
+        ], check=True)
         for name in ["native_regressions", "lighting_regressions", "resource_failures",
                      "cutscene_resources", "collision_results"]:
             subprocess.run(
@@ -22,6 +28,7 @@ class NativeRegressions(unittest.TestCase):
                     "-ffunction-sections", "-fdata-sections", "-Wl,--gc-sections",
                     "-fsanitize=address,undefined", "-ftrivial-auto-var-init=pattern",
                     "-I", str(ROOT / "include"), str(ROOT / "tests" / f"{name}.cpp"),
+                    *([str(rust_target / "release/libkf_codec.a")] if name == "cutscene_resources" else []),
                     "-o", str(Path(cls.directory.name) / name),
                 ],
                 check=True, text=True,
@@ -32,7 +39,7 @@ class NativeRegressions(unittest.TestCase):
         binary = Path(self.directory.name) / "cutscene_resources"
         for consumer in ["lit", "map", "unlit", "placements"]:
             cases = ["valid", "truncated"]
-            cases += (["unterminated", "outside-grid"] if consumer == "placements"
+            cases += (["unterminated", "outside-grid", "unaligned", "fixed-height"] if consumer == "placements"
                       else ["short-layout", "vertex"])
             if consumer in ["lit", "map"]:
                 cases.append("normal")
@@ -40,7 +47,7 @@ class NativeRegressions(unittest.TestCase):
                 with self.subTest(consumer=consumer, case=case):
                     result = subprocess.run([binary, consumer, case], capture_output=True,
                                             text=True, timeout=10)
-                    self.assertEqual(result.returncode, 0 if case == "valid" else 77,
+                    self.assertEqual(result.returncode, 0 if case in ("valid", "unaligned", "fixed-height") else 77,
                                      result.stderr)
 
     def test_collision_results_and_door_probes(self):

@@ -35,9 +35,18 @@ no preceding MIX header. Embedded TMD extent is the containing asset's tail, not
 an independently proved subregion. Registration checks the 12-byte header and
 28-byte object records. Gameplay enqueuers retain distinct 12/4/2 accepted-case
 sets and advance by `input_length * 4` even for skipped modes. Cutscene enqueuers
-use the same bounded decoder with their own accepted modes. Gameplay animation
-metadata and projection-source lifetimes still need
-[bounded-read work](https://github.com/sushi-shi/kings-field-decomp/issues/40).
+use the same bounded decoder with their own accepted modes.
+
+Rust decodes animation clips, keyframes and morphs when an asset is registered.
+The game owns the decoded arrays; animation caches retain morph indices rather
+than resource pointers and are invalidated when their asset is replaced.
+Fixed codec records are defined once in `codecs/src/formats.rs`, with explicit
+endianness, byte alignment and checked sizes. Gameplay and opening placements
+use the shared decoders. Placement decoders return counted records and validate their grid
+and definition indices. Actor definitions retain their resource layout with a checked
+table extent. Cell-window dimensions and map orientations still need load-time
+validation; further resource work is tracked in
+[issue #40](https://github.com/sushi-shi/kings-field-decomp/issues/40).
 
 The floor-item appearance byte packs facing in the high nibble and frame count
 in the low nibble. B1 MIXA base-sprite 4 records use `0x23`/`0x13`; base-sprite 0
@@ -137,6 +146,5 @@ Whole-row replacements can change these labels. Effect update IDs passed to
 These are intentional port policies. The affected combat paths still need direct
 runtime verification.
 
-Fixed audio and TIM records are defined in `codecs/src/formats.rs`, with explicit
-endianness, byte alignment and checked sizes. Codec errors retain parser source
-locations through the shared Rust error type and C status conversion.
+Codec errors retain parser source locations through the shared Rust error type
+and C status conversion.

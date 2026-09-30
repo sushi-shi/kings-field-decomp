@@ -122,3 +122,80 @@ record!(AdpcmHeader, 2, {
     predictor_shift: u8,
     flags: u8,
 });
+
+record!(AssetHeader, 20, {
+    encoded_bytes: LeU32,
+    clip_count: LeU32,
+    tmd_offset: LeU32,
+    morph_table_offset: LeU32,
+    clip_table_offset: LeU32,
+});
+
+record!(AnimationClip, 4, {
+    keyframe_count: LeU16,
+    _reserved: [u8; 2],
+});
+
+record!(AnimationKeyframe, 8, {
+    reverse: LeU16,
+    duration: LeU16,
+    rest_morph: LeU16,
+    morph_count: LeU16,
+});
+
+record!(AnimationMorph, 12, {
+    _reserved: [u8; 4],
+    base_vertex: LeU32,
+    delta_count: LeU32,
+});
+
+record!(AnimationDelta, 8, {
+    x: LeI16,
+    y: LeI16,
+    z: LeI16,
+    _reserved: [u8; 2],
+});
+
+record!(ActorPlacement, 16, {
+    slot_state: u8,
+    definition_flags: u8,
+    heading_quadrant: u8,
+    tile_z: u8,
+    tile_x: u8,
+    spawn_chance: u8,
+    death_drop_object_id: u8,
+    _reserved0: [u8; 3],
+    local_z: LeI16,
+    local_x: LeI16,
+    _reserved1: [u8; 2],
+});
+
+record!(ObjectPlacement, 20, {
+    object_id: u8,
+    _reserved: u8,
+    tile_z: u8,
+    tile_x: u8,
+    yaw: LeU16,
+    local_z: LeI16,
+    local_x: LeI16,
+    local_y: LeI16,
+    link: [LeU32; 2],
+});
+
+record!(EventPlacement, 24, {
+    state: u8,
+    character_id: u8,
+    model_index: u8,
+    cell_z: u8,
+    cell_x: u8,
+    dialogue_pages: [u8; 5],
+    dialogue_stage_limit: u8,
+    unknown_0b: u8,
+    unknown_0c: u8,
+    behavior: u8,
+    position_z_offset: LeI16,
+    position_x_offset: LeI16,
+    initial_rotation: LeU16,
+    radius: LeU16,
+    _reserved: [u8; 2],
+});

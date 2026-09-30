@@ -222,21 +222,14 @@ void map_resources_load(KfFloorId floor, KfMapVariant map_variant)
     const auto floor_items = resource_chunk_view(stream, resource_end);
     item_load_floor_placements(floor_item_storage(), map_floor_height_grid, floor_items.data, floor_items.size);
     stream = resource_stream_next(stream, resource_end);
-    resource_chunk_view(stream, resource_end);
-    map_object_pool_load(
-        (KfMapObjectPlacement *)(stream + KF_RESOURCE_CHUNK_HEADER_BYTES));
+    map_object_pool_load(resource_chunk_view(stream, resource_end));
     stream = resource_stream_next(stream, resource_end);
-    resource_chunk_view(stream, resource_end);
-    actor_pool_load_placements(
-        (KfActorPlacement *)(stream + KF_RESOURCE_CHUNK_HEADER_BYTES));
+    actor_pool_load_placements(resource_chunk_view(stream, resource_end));
     stream = resource_stream_next(stream, resource_end);
-    resource_chunk_view(stream, resource_end);
-    actor_definitions_load(
-        (const KfActorDefinitionTable *)(stream + KF_RESOURCE_CHUNK_HEADER_BYTES));
+    actor_definitions_load(resource_chunk_data<KfActorDefinitionTable>(
+        resource_chunk_view(stream, resource_end), "actor definitions"));
     stream = resource_stream_next(stream, resource_end);
-    resource_chunk_view(stream, resource_end);
-    map_event_pool_load(
-        (KfMapEventDefinition *)(stream + KF_RESOURCE_CHUNK_HEADER_BYTES));
+    map_event_pool_load(resource_chunk_view(stream, resource_end));
     memory_release_last(memory_arena);
     memory_arena.allocation.cursor = block + KF_RESOURCE_REUSE_PREFIX_BYTES;
     stream = map_resource_load_file("MIXB.DAT", &resource_size);

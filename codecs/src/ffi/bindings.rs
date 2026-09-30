@@ -20,6 +20,112 @@ pub struct KfTimInfo {
     pub palette_x: i32,
     pub palette_y: i32,
 }
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct KfAssetInfo {
+    pub encoded_bytes: u32,
+    pub tmd_offset: u32,
+    pub clip_count: u32,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct KfAnimationClipData {
+    pub first_keyframe: usize,
+    pub keyframe_count: usize,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct KfAnimationKeyframe {
+    pub reverse: u16,
+    pub duration: u16,
+    pub rest_morph: u16,
+    pub first_morph: usize,
+    pub morph_count: usize,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct KfAnimationMorph {
+    pub base_vertex: u32,
+    pub first_delta: usize,
+    pub delta_count: usize,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct KfAnimationDelta {
+    pub x: i16,
+    pub y: i16,
+    pub z: i16,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct KfAnimationSizes {
+    pub clips: usize,
+    pub keyframes: usize,
+    pub morphs: usize,
+    pub indices: usize,
+    pub deltas: usize,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct KfAnimationOutput {
+    pub clips: *mut KfAnimationClipData,
+    pub keyframes: *mut KfAnimationKeyframe,
+    pub morphs: *mut KfAnimationMorph,
+    pub indices: *mut u16,
+    pub deltas: *mut KfAnimationDelta,
+    pub capacity: KfAnimationSizes,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct KfPlacementLimits {
+    pub map_side: u32,
+    pub definitions: u32,
+    pub tile_size: u32,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct KfActorPlacementData {
+    pub slot_state: u8,
+    pub definition_id: u8,
+    pub near_square_culling: u8,
+    pub heading_quadrant: u8,
+    pub tile_z: u8,
+    pub tile_x: u8,
+    pub spawn_chance: u8,
+    pub death_drop_object_id: u8,
+    pub local_z: i16,
+    pub local_x: i16,
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct KfObjectPlacementData {
+    pub object_id: u8,
+    pub tile_z: u8,
+    pub tile_x: u8,
+    pub yaw: u16,
+    pub local_z: i16,
+    pub local_x: i16,
+    pub local_y: i16,
+    pub link: [u32; 2usize],
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct KfEventPlacementData {
+    pub state: u8,
+    pub character_id: u8,
+    pub model_index: u8,
+    pub cell_z: u8,
+    pub cell_x: u8,
+    pub dialogue_pages: [u8; 5usize],
+    pub dialogue_stage_limit: u8,
+    pub unknown_0b: u8,
+    pub unknown_0c: u8,
+    pub behavior: u8,
+    pub position_z_offset: i16,
+    pub position_x_offset: i16,
+    pub initial_rotation: u16,
+    pub radius: u16,
+}
 pub const KF_AUDIO_PROGRAM_COUNT: _bindgen_ty_1 = 128;
 pub const KF_AUDIO_TONE_COUNT: _bindgen_ty_1 = 16;
 pub const KF_AUDIO_SAMPLE_COUNT: _bindgen_ty_1 = 256;
