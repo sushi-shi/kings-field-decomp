@@ -12,9 +12,4 @@ enum class KfAnimationClip : u8 {
     KF_ANIMATION_CLIP_NONE = 0xff
 }; using enum KfAnimationClip;
 
-enum class KfAnimationBlendDirection : u16 {
-    KF_ANIMATION_BLEND_FORWARD = 0,
-    KF_ANIMATION_BLEND_REVERSE = 1
-}; using enum KfAnimationBlendDirection;
-
 #endif // KF_ANIMATION_H

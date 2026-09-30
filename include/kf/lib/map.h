@@ -14,6 +14,7 @@
 
 struct KfAnimationCacheRecord;
 struct KfCollisionResult;
+struct KfResourceChunk;
 
 enum {
     MAP_INTERACTION_PROBE_DISTANCE = 1000,
@@ -268,24 +269,6 @@ typedef struct KfDialoguePageLimits {
     u8 last_page[KF_DIALOGUE_STAGE_COUNT];
 } KfDialoguePageLimits;
 
-typedef struct KfMapEventDefinition {
-    KfMapEventState state;
-    KfCharacterId character_id;
-    u8 model_index;
-    u8 cell_z;
-    u8 cell_x;
-    KfDialoguePageLimits dialogue_pages;
-    u8 dialogue_stage_limit;
-    u8 unknown_0b;
-    u8 unknown_0c;
-    KfMapEventBehavior behavior;
-    s16 position_z_offset;
-    s16 position_x_offset;
-    u16 initial_rotation;
-    u16 radius;
-    u16 unknown_16;
-} KfMapEventDefinition;
-
 typedef struct KfDialogueState {
     u8 stage_limit;
     u8 stage;
@@ -366,7 +349,7 @@ extern void map_event_advance_animation_blocking(KfMapEvent *event, u16 target, 
 extern s32 map_event_distance_to_point( const KfMapEvent *event, s32 point_x, s32 point_z, s32 max_distance);
 extern s32 map_event_pool_find_overlap(s32 point_x, s32 point_z, s32 radius_padding);
 extern KfMapEvent *map_event_pool_find_target_in_cone( const VECTOR *origin, s16 facing, s32 max_distance, s32 angle_tolerance, s32 *distance_out);
-extern void map_event_pool_load(const KfMapEventDefinition *definitions);
+extern void map_event_pool_load(KfResourceChunk placements);
 extern void map_event_pool_update(void);
 extern void map_event_refresh_dialogue_stage(KfMapEvent *event);
 extern void map_event_set_current(KfMapEvent *event);
@@ -384,7 +367,7 @@ extern void map_object_pool_clear_link(u8 link_id);
 extern s32 map_object_pool_find_interaction_from(
     s32 start_index, s32 point_x, s32 point_z, s32 radius_padding);
 extern s32 map_object_pool_find_near_point(s32 point_x, s32 point_z, s32 radius_padding);
-extern void map_object_pool_load(const KfMapObjectPlacement *placements);
+extern void map_object_pool_load(KfResourceChunk placements);
 extern void map_object_pool_trigger_link(u8 link_id);
 extern void map_object_pool_update(void);
 extern KfCollisionResult map_object_probe_door_closing(const KfMapObject *object, u16 yaw);

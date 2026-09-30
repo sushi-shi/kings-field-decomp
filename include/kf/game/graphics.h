@@ -15,7 +15,7 @@ typedef struct KfGraphicsRuntimeGame {
     KfDisplayState display_state;
     u8 unknown_20108[8];
     KfTmdState tmd_state;
-    KfAssetHeader *asset_registry_entries[KF_ASSET_REGISTRY_KNOWN_ENTRIES];
+    KfAnimationData asset_animations[KF_ASSET_REGISTRY_KNOWN_ENTRIES];
     KfTmdResource asset_registry_tmds[KF_ASSET_REGISTRY_KNOWN_ENTRIES];
     u8 unknown_201f4[0x30];
     SVECTOR *current_tmd_vertices;

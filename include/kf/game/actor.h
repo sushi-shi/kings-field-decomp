@@ -155,11 +155,6 @@ enum {
 };
 
 enum {
-    KF_ACTOR_PLACEMENT_DEFINITION_MASK = 0x1f,
-    KF_ACTOR_PLACEMENT_NEAR_SQUARE_CULLING = 0x20
-};
-
-enum {
     KF_ACTOR_ACTION_PROFILE_COUNT = 25
 };
 
@@ -252,20 +247,6 @@ enum class KfActorHeadingQuadrant : u8 {
     KF_ACTOR_HEADING_270 = 3
 }; using enum KfActorHeadingQuadrant;
 
-typedef struct KfActorPlacement {
-    KfActorSlotState slot_state;
-    u8 definition_flags;
-    KfActorHeadingQuadrant heading_quadrant;
-    u8 tile_z;
-    u8 tile_x;
-    u8 spawn_chance;
-    KfObjectId death_drop_object_id;
-    u8 unknown_07[3];
-    s16 local_z;
-    s16 local_x;
-    u8 unknown_0e[2];
-} KfActorPlacement;
-
 typedef struct KfActor {
     KfActorSlotState slot_state;
     u8 definition_id;
@@ -348,7 +329,7 @@ extern KfActor *actor_pool_find_target_in_cone(
     const VECTOR *origin, s16 facing, u32 max_distance,
     s32 angle_tolerance, s32 *distance_out);
 extern s32 actor_pool_find_overlap(s32 point_x, s32 point_y, s32 point_z, s32 radius_padding, s32 point_height);
-extern void actor_pool_load_placements(const KfActorPlacement *placements);
+extern void actor_pool_load_placements(KfResourceChunk placements);
 extern void actor_pool_spawn(
     u8 definition_id, const VECTOR *position,
     const struct KfVec3s *rotation);

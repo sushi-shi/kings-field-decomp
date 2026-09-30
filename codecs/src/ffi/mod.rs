@@ -1,7 +1,8 @@
-mod bindings;
+pub(crate) mod bindings;
 use bindings::*;
 mod audio;
 mod texture;
+mod resources;
 use crate::tim::{Image, Images};
 use crate::tim::{
     TIM_DIRECT16, TIM_DIRECT24, TIM_FLAGS_MASK, TIM_FORMAT_MASK, TIM_INDEXED4, TIM_INDEXED8,

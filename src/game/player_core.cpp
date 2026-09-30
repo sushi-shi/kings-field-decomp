@@ -215,7 +215,7 @@ void game_initialize_session(void)
 {
     player_state.camera_rotation = {};
     player_state.camera_position = {PLAYER_INITIAL_POSITION_X, 0, PLAYER_INITIAL_POSITION_Z};
-    player_state.weapon_asset_buffer = (struct KfAssetHeader *)memory_allocate(memory_arena, KF_WEAPON_ASSET_BUFFER_BYTES);
+    player_state.weapon_asset_buffer = static_cast<u8 *>(memory_allocate(memory_arena, KF_WEAPON_ASSET_BUFFER_BYTES));
     game_state_initialize();
     player_state.update_state = KF_PLAYER_UPDATE_NORMAL;
     player_state.audio_effects_enabled = KF_PLAYER_OPTION_ON;

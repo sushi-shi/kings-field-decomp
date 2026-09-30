@@ -1,4 +1,6 @@
 #include <kf/platform/prelude.h>
+#include <kf/lib/codec.h>
+#include <kf/game/asset.h>
 #include <kf/lib/null.h>
 #include <kf/lib/bool.h>
 
@@ -38,23 +40,29 @@ void map_event_advance_animation_blocking(KfMapEvent *event, u16 target, s16 ste
     kf::host_set_input_context(input_context);
 }
 
-void map_event_pool_load(const KfMapEventDefinition *definitions)
+void map_event_pool_load(KfResourceChunk chunk)
 {
-    KfBool8 exhausted = false;
-
-    for (auto &event : map_runtime_state.events) {
-        if (exhausted == true || definitions->state == KF_MAP_EVENT_FREE) {
-            exhausted = true;
+    KfEventPlacementData decoded[KF_MAP_EVENT_CAPACITY] {};
+    std::size_t count;
+    if (kf_event_placements_decode(chunk.data, chunk.size,
+            {KF_MAP_COLUMNS, KF_ASSET_WEAPON - KF_ASSET_MAP_EVENT_FIRST, KF_MAP_TILE_SIZE},
+            decoded, std::size(decoded), &count) != KF_CODEC_OK)
+        kf::host_fail("Invalid map event placements.");
+    for (std::size_t i = 0; i < std::size(map_runtime_state.events); ++i) {
+        auto &event = map_runtime_state.events[i];
+        if (i >= count) {
             event.state = KF_MAP_EVENT_FREE;
         } else {
-            event.state = definitions->state;
-            event.character_id = definitions->character_id;
+            const auto *definitions = &decoded[i];
+            event.state = kf_enum_decode<KfMapEventState>(definitions->state);
+            event.character_id = kf_enum_decode<KfCharacterId>(definitions->character_id);
             event.model_index = definitions->model_index;
-            event.dialogue_pages = definitions->dialogue_pages;
+            std::copy(std::begin(definitions->dialogue_pages), std::end(definitions->dialogue_pages),
+                event.dialogue_pages.last_page);
             event.dialogue.stage_limit = definitions->dialogue_stage_limit;
             event.unknown_0c = definitions->unknown_0b;
             event.unknown_0d = definitions->unknown_0c;
-            event.behavior = definitions->behavior;
+            event.behavior = kf_enum_decode<KfMapEventBehavior>(definitions->behavior);
             event.home_x = definitions->cell_x * KF_MAP_TILE_SIZE + definitions->position_x_offset;
             event.reference_position.vx = event.home_x;
             event.home_z = definitions->cell_z * KF_MAP_TILE_SIZE + definitions->position_z_offset;
@@ -65,7 +73,6 @@ void map_event_pool_load(const KfMapEventDefinition *definitions)
             event.reference_position.vy =
                 -(map_floor_height_grid.cells[event.cell_z][event.cell_x] * KF_MAP_HEIGHT_STEP);
             event.rotation.vy = definitions->initial_rotation;
-            definitions++;
             event.rotation.vz = 0;
             event.rotation.vx = 0;
             event.dialogue.page = KF_DIALOGUE_FIRST_PAGE;

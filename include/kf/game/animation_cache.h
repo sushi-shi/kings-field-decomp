@@ -7,8 +7,6 @@
 #include <kf/lib/geometry_types.h>
 #include <kf/lib/tmd.h>
 
-struct KfMorphObject;
-
 enum class KfAnimationCacheState : s16 {
     KF_ANIMATION_CACHE_FREE = 0,
     KF_ANIMATION_CACHE_STALE = 1,
@@ -22,9 +20,9 @@ enum {
 typedef struct KfAnimationCacheRecord {
     KfAnimationCacheState state;
     u16 asset_index;
-    KfEnumStorage<KfAnimationClip, u16> clip_index;
+    KfAnimationClip clip_index;
     u16 keyframe_index;
-    struct KfMorphObject *rest_morph;
+    u16 rest_morph;
     SVECTOR *cached_vertices;
     struct KfAnimationCacheRecord **owner_slot;
 } KfAnimationCacheRecord;

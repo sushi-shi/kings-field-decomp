@@ -14,7 +14,6 @@
 #include <kf/lib/player_stats_types.h>
 
 struct KfAnimationCacheRecord;
-struct KfAssetHeader;
 
 enum {
     KF_PLAYER_SOUND_WEAPON_ATTACK = 0,
@@ -144,7 +143,7 @@ typedef struct KfPlayerState {
     KfObjectId equipped_weapon_id;
     u8 unknown_65[3];
     KfWeaponRecord *equipped_weapon_record;
-    struct KfAssetHeader *weapon_asset_buffer;
+    u8 *weapon_asset_buffer;
     s16 weapon_attack_phase;
     u8 unknown_72[2];
     struct KfAnimationCacheRecord *weapon_animation_cache;
