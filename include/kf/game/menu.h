@@ -2,6 +2,7 @@
 #define KF_GAME_MENU_H
 
 #include <kf/game/save.h>
+#include <span>
 #include <kf/lib/item.h>
 #include <kf/lib/map.h>
 #include <kf/lib/resource_file.h>
@@ -341,7 +342,7 @@ extern void menu_blit_sprite_translucent(
 extern void menu_config_panel(void);
 extern void menu_resources_reload(void);
 extern void menu_draw_save_slots(
-    const KfSaveSlotSummary *summaries, KfSaveSlotOverlay slot_overlay);
+    std::span<const KfSaveSlotSummary> summaries, KfSaveSlotOverlay slot_overlay);
 extern void menu_draw_item_detail(
     KfObjectId item_id, KfItemStockBank shop_bank, KfTradeMode price_mode);
 extern void menu_draw_pickup_preview(KfObjectId item_id);
@@ -391,7 +392,7 @@ extern void menu_spell_select(void);
 extern void menu_status_panel(void);
 extern KfMenuResult menu_two_option_prompt(
     KfMenuWindowKind window_kind, s32 row_count, s32 highlight_row,
-    const KfSaveSlotSummary *summaries);
+    std::span<const KfSaveSlotSummary> summaries);
 extern void talk_show_dialogue_page(KfFloorId floor, u8 stage, KfCharacterId character_id, u8 page);
 
 void menu_enqueue_background(void);

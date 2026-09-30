@@ -335,7 +335,7 @@ constexpr u8 save_magic[] = {'K', 'F', 'J', 'P', 'S', 'A', 'V', 'E'};
 constexpr u32 save_version = 1;
 constexpr std::size_t save_header_bytes = 20;
 struct SaveCatalogEntry { bool occupied; u32 checksum; };
-static SaveCatalogEntry save_catalog[KF_SAVE_SLOT_COUNT];
+static std::array<SaveCatalogEntry, KF_SAVE_SLOT_COUNT> save_catalog;
 
 static bool save_slot_valid(KfSaveSlotId slot) {
     return slot >= KF_SAVE_SLOT_FIRST && slot <= KF_SAVE_SLOT_THIRD;
@@ -382,10 +382,10 @@ static KfSaveResult save_failure(kf::SaveFileResult result, bool writing) {
     return result == kf::SaveFileResult::NoSpace ? KF_SAVE_RESULT_NO_SPACE : KF_SAVE_RESULT_FAILED;
 }
 
-KfSaveResult save_system_read_catalog(KfSaveSlotSummary *summaries) {
-    std::memset(summaries, 0, sizeof(*summaries) * KF_SAVE_SLOT_COUNT);
-    std::memset(save_catalog, 0, sizeof save_catalog);
-    for (unsigned i = 0; i < KF_SAVE_SLOT_COUNT; ++i) {
+KfSaveResult save_system_read_catalog(std::array<KfSaveSlotSummary, KF_SAVE_SLOT_COUNT> &summaries) {
+    summaries = {};
+    save_catalog = {};
+    for (std::size_t i = 0; i < summaries.size(); ++i) {
         SavedGameState state{};
         u32 checksum = 0;
         const auto slot = static_cast<KfSaveSlotId>(i + 1);
@@ -395,7 +395,7 @@ KfSaveResult save_system_read_catalog(KfSaveSlotSummary *summaries) {
         if (result != kf::SaveFileResult::Ok) {
             summaries[i].state = result == kf::SaveFileResult::Invalid
                 ? KfSaveSlotState::Damaged : KfSaveSlotState::Unavailable;
-            std::fprintf(stderr, "Save slot %u cannot be read (%d); other slots remain available\n",
+            std::fprintf(stderr, "Save slot %zu cannot be read (%d); other slots remain available\n",
                 i + 1, static_cast<int>(result));
             continue;
         }

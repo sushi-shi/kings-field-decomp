@@ -88,7 +88,7 @@ void audit_selected_player_update()
     std::fwrite(bytes, 1, size, file);
     std::fclose(file);
     const u32 gold = player_state.gold;
-    KfSaveSlotSummary slots[KF_SAVE_SLOT_COUNT];
+    std::array<KfSaveSlotSummary, KF_SAVE_SLOT_COUNT> slots;
     if (save_system_read_catalog(slots) != KF_SAVE_RESULT_OK)
         kf::host_fail("Audit: save catalog failed");
     player_state.gold = gold + 123;

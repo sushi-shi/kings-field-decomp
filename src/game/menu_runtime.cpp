@@ -232,7 +232,7 @@ KfMenuResult menu_system_panel(void)
             break;
         case KF_MENU_SYSTEM_ACTION_QUIT:
             result = menu_two_option_prompt(
-                KF_MENU_WINDOW_SYSTEM, KF_MENU_SYSTEM_ROW_COUNT, cursor, NULL);
+                KF_MENU_WINDOW_SYSTEM, KF_MENU_SYSTEM_ROW_COUNT, cursor, {});
             if (result == KF_MENU_RESULT_ACCEPTED) {
                 menu_load_texture(MENU_TEXTURE_POWER_OFF);
                 audio_stop_sequence_fade();
@@ -291,7 +291,7 @@ KfMenuResult menu_system_panel(void)
 
 KfMenuResult menu_save_panel(void)
 {
-    KfSaveSlotSummary summaries[KF_SAVE_SLOT_COUNT];
+    std::array<KfSaveSlotSummary, KF_SAVE_SLOT_COUNT> summaries;
     s32 cursor = 0;
     KfMenuConfirmState confirm = KF_MENU_CONFIRM_IDLE;
     s32 input = 0;
@@ -394,7 +394,7 @@ KfMenuResult menu_save_panel(void)
 
 KfMenuResult menu_load_panel(void)
 {
-    KfSaveSlotSummary summaries[KF_SAVE_SLOT_COUNT];
+    std::array<KfSaveSlotSummary, KF_SAVE_SLOT_COUNT> summaries;
     s32 cursor = 0;
     KfMenuConfirmState confirm = KF_MENU_CONFIRM_IDLE;
     s32 input = 0;
@@ -1295,7 +1295,7 @@ void menu_add_message_image_quad(void)
     menu_submit_template(menu_assets.message_image_quads[kf_enum_encode<u8>(game_graphics_runtime.display_state.buffer_index)], 0);
 }
 
-void menu_draw_save_slots(const KfSaveSlotSummary *summaries, KfSaveSlotOverlay slot_overlay)
+void menu_draw_save_slots(std::span<const KfSaveSlotSummary> summaries, KfSaveSlotOverlay slot_overlay)
 {
     MenuGlyphString text;
     s32 i;
@@ -1318,7 +1318,7 @@ void menu_draw_save_slots(const KfSaveSlotSummary *summaries, KfSaveSlotOverlay 
         menu_submit_template(menu_assets.dialog_quads[kf_enum_encode<u8>(game_graphics_runtime.display_state.buffer_index)][MENU_SAVE_SLOT2_QUAD], MENU_CONTENT_OT_DEPTH);
     }
 
-    if (summaries == NULL) {
+    if (summaries.empty()) {
         return;
     }
 
@@ -1503,7 +1503,7 @@ enum {
 
 KfMenuResult menu_two_option_prompt(
     KfMenuWindowKind window_kind, s32 row_count, s32 highlight_row,
-    const KfSaveSlotSummary *summaries)
+    std::span<const KfSaveSlotSummary> summaries)
 {
     MenuGlyphString accept_label;
     MenuGlyphString decline_label;
