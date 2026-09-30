@@ -26,10 +26,10 @@ void host_enqueue_face(const DrawFace &) { ++submitted; }
 void cutscene_tmd_project_vertices(s32, const MATRIX *, const kf::Projection &)
 {
     auto &vertices = open_graphics_runtime.tmd_projected_vertices;
-    vertices[0] = {{.vector = {0, 0}}, 800, 0};
-    vertices[1] = {{.vector = {100, 0}}, 800, 0};
-    vertices[2] = {{.vector = {0, 100}}, 800, 0};
-    vertices[3] = {{.vector = {100, 100}}, 800, 0};
+    vertices[0] = {{0, 0}, 800, 0};
+    vertices[1] = {{100, 0}, 800, 0};
+    vertices[2] = {{0, 100}, 800, 0};
+    vertices[3] = {{100, 100}, 800, 0};
 }
 
 static void word(std::vector<u8> &bytes, std::size_t offset, u32 value)

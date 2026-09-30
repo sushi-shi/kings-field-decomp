@@ -225,7 +225,7 @@ void tmd_project_vertices_depth_shift(KfTmdContext context, s32 count, u8 depth_
     vertex = context.current_vertices;
     for (count--; count != -1; count--) {
         const auto point = kf::render_project_point(*model, projection, *vertex);
-        projected->sxy.vector = {point.x, point.y};
+        projected->position = {point.x, point.y};
         projected->p2 = point.fog << KF_TMD_DEFAULT_PERSPECTIVE_SHIFT;
         projected->sz = point.depth >> depth_shift;
         projected++;
@@ -246,8 +246,8 @@ void tmd_transform_vertices(KfTmdContext context, s32 count, const MATRIX *model
     vertex = context.current_vertices;
     for (remaining = count - 1; remaining != -1; remaining--) {
         transformed = kf::render_transform_point(*model, *vertex);
-        projected->sxy.vector.vx = transformed.vx;
-        projected->sxy.vector.vy = transformed.vy;
+        projected->position.vx = transformed.vx;
+        projected->position.vy = transformed.vy;
         projected->p2 = transformed.vz;
         projected->sz = transformed.vz;
         projected++;

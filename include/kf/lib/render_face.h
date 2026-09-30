@@ -30,10 +30,10 @@ inline std::int64_t render_face_winding(const KfScreenVertex *a,
     const KfScreenVertex *b, const KfScreenVertex *c)
 {
     // Retail tests the projected coordinates, including their saturation.
-    const std::int64_t ab_x = b->sxy.vector.vx - a->sxy.vector.vx;
-    const std::int64_t ab_y = b->sxy.vector.vy - a->sxy.vector.vy;
-    const std::int64_t ac_x = c->sxy.vector.vx - a->sxy.vector.vx;
-    const std::int64_t ac_y = c->sxy.vector.vy - a->sxy.vector.vy;
+    const std::int64_t ab_x = b->position.vx - a->position.vx;
+    const std::int64_t ab_y = b->position.vy - a->position.vy;
+    const std::int64_t ac_x = c->position.vx - a->position.vx;
+    const std::int64_t ac_y = c->position.vy - a->position.vy;
     return ab_x * ac_y - ab_y * ac_x;
 }
 
@@ -54,8 +54,8 @@ inline kf::FaceMaterial render_texture_material(u16 page, u16 palette)
 
 inline void render_face_vertex(kf::DrawFace *face, unsigned index, const KfScreenVertex *vertex)
 {
-    face->vertices[index].x = vertex->sxy.vector.vx;
-    face->vertices[index].y = vertex->sxy.vector.vy;
+    face->vertices[index].x = vertex->position.vx;
+    face->vertices[index].y = vertex->position.vy;
 }
 
 inline void render_face_uv(kf::DrawFace *face, unsigned index, u16 uv)
