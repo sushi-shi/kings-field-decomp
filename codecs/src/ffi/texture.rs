@@ -1,8 +1,9 @@
 use super::bindings::*;
-use super::{INVALID, OK, OUTPUT_FULL};
+use super::{input_valid, output_valid, INVALID, OK, OUTPUT_FULL};
 use crate::tim::{ImageBlock, Images};
+use crate::bytes::read_u16_le;
 use crate::tim::{TIM_DIRECT16, TIM_FLAGS_MASK, TIM_FORMAT_MASK};
-use core::{mem::align_of, slice};
+use core::slice;
 const TEXTURE_WIDTH: usize = 1024;
 const TEXTURE_HEIGHT: usize = 512;
 
@@ -24,23 +25,18 @@ fn copy_block(block: &ImageBlock<'_>, words: &mut [u16]) {
             // the image edges; retain this only during material conversion.
             words[((r.y as usize + y) & (TEXTURE_HEIGHT - 1)) * TEXTURE_WIDTH
                 + ((r.x as usize + x) & (TEXTURE_WIDTH - 1))] =
-                u16::from_le_bytes([block.pixels[at], block.pixels[at + 1]]);
+                read_u16_le(block.pixels, at).expect("validated TIM pixels");
         }
     }
 }
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn kf_tim_compose(
     bytes: *const u8,
     length: usize,
     words: *mut u16,
     capacity: usize,
 ) -> KfCodecResult {
-    if bytes.is_null()
-        || words.is_null()
-        || length > isize::MAX as usize
-        || words as usize % align_of::<u16>() != 0
-        || capacity > isize::MAX as usize / 2
-    {
+    if !input_valid(bytes, length) || !output_valid(words, capacity) {
         return INVALID;
     }
     if capacity < TEXTURE_WIDTH * TEXTURE_HEIGHT {

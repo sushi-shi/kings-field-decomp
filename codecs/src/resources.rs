@@ -1,30 +1,14 @@
+use crate::bytes::{read, read_u16_le, read_u32_le, records, span};
 use crate::ffi::bindings::*;
 
 type Result<T> = core::result::Result<T, KfCodecResult>;
 const INVALID: KfCodecResult = KF_CODEC_INVALID;
 
-fn span(bytes: &[u8], at: usize, count: usize, width: usize) -> Result<&[u8]> {
-    let size = count.checked_mul(width).ok_or(INVALID)?;
-    bytes
-        .get(at..at.checked_add(size).ok_or(INVALID)?)
-        .ok_or(INVALID)
-}
-fn word(bytes: &[u8], at: usize) -> Result<u32> {
-    Ok(u32::from_le_bytes(
-        span(bytes, at, 1, 4)?.try_into().unwrap(),
-    ))
-}
-fn half(bytes: &[u8], at: usize) -> Result<u16> {
-    Ok(u16::from_le_bytes(
-        span(bytes, at, 1, 2)?.try_into().unwrap(),
-    ))
-}
-
 pub fn asset_info(bytes: &[u8]) -> Result<KfAssetInfo> {
-    span(bytes, 0, 1, 20)?;
-    let encoded_bytes = word(bytes, 0)?;
-    let clip_count = word(bytes, 4)?;
-    let tmd_offset = word(bytes, 8)?;
+    span(bytes, 0, 20).ok_or(INVALID)?;
+    let encoded_bytes = read_u32_le(bytes, 0).ok_or(INVALID)?;
+    let clip_count = read_u32_le(bytes, 4).ok_or(INVALID)?;
+    let tmd_offset = read_u32_le(bytes, 8).ok_or(INVALID)?;
     if encoded_bytes < 20
         || encoded_bytes as usize > bytes.len()
         || tmd_offset < 20
@@ -69,17 +53,23 @@ pub fn animation(
     if vertex_count == 0 {
         return Err(INVALID);
     }
-    let clip_table = span(bytes, word(bytes, 16)? as usize, sizes.clips, 4)?;
-    let object_table = word(bytes, 12)? as usize;
+    let clip_table = records(
+        bytes,
+        read_u32_le(bytes, 16).ok_or(INVALID)? as usize,
+        sizes.clips,
+        4,
+    )
+    .ok_or(INVALID)?;
+    let object_table = read_u32_le(bytes, 12).ok_or(INVALID)? as usize;
     // Morph IDs are 16-bit on disc. Validate/decode shared morphs just once.
     let mut used = [0u64; 1024];
     for (clip_index, offset) in clip_table.chunks_exact(4).enumerate() {
-        let at = u32::from_le_bytes(offset.try_into().unwrap()) as usize;
-        let count = half(bytes, at)? as usize;
+        let at = read_u32_le(offset, 0).ok_or(INVALID)? as usize;
+        let count = read_u16_le(bytes, at).ok_or(INVALID)? as usize;
         if count == 0 {
             return Err(INVALID);
         }
-        let offsets = span(bytes, at.checked_add(4).ok_or(INVALID)?, count, 4)?;
+        let offsets = records(bytes, at.checked_add(4).ok_or(INVALID)?, count, 4).ok_or(INVALID)?;
         if let Some(out) = output.as_mut() {
             *out.clips.get_mut(clip_index).ok_or(KF_CODEC_OUTPUT_FULL)? = KfAnimationClipData {
                 first_keyframe: sizes.keyframes,
@@ -87,25 +77,26 @@ pub fn animation(
             };
         }
         for offset in offsets.chunks_exact(4) {
-            let at = u32::from_le_bytes(offset.try_into().unwrap()) as usize;
-            let header = span(bytes, at, 1, 8)?;
-            let rest = half(header, 4)?;
-            let count = half(header, 6)? as usize;
-            let indices = span(bytes, at.checked_add(8).ok_or(INVALID)?, count, 2)?;
+            let at = read_u32_le(offset, 0).ok_or(INVALID)? as usize;
+            let header = span(bytes, at, 8).ok_or(INVALID)?;
+            let rest = read_u16_le(header, 4).ok_or(INVALID)?;
+            let count = read_u16_le(header, 6).ok_or(INVALID)? as usize;
+            let indices =
+                records(bytes, at.checked_add(8).ok_or(INVALID)?, count, 2).ok_or(INVALID)?;
             used[rest as usize / 64] |= 1u64 << (rest % 64);
             if let Some(out) = output.as_mut() {
                 *out.keyframes
                     .get_mut(sizes.keyframes)
                     .ok_or(KF_CODEC_OUTPUT_FULL)? = KfAnimationKeyframe {
-                    reverse: half(header, 0)?,
-                    duration: half(header, 2)?,
+                    reverse: read_u16_le(header, 0).ok_or(INVALID)?,
+                    duration: read_u16_le(header, 2).ok_or(INVALID)?,
                     rest_morph: rest,
                     first_morph: sizes.indices,
                     morph_count: count,
                 };
             }
             for index in indices.chunks_exact(2) {
-                let id = u16::from_le_bytes(index.try_into().unwrap());
+                let id = read_u16_le(index, 0).ok_or(INVALID)?;
                 used[id as usize / 64] |= 1u64 << (id % 64);
                 if let Some(out) = output.as_mut() {
                     *out.indices
@@ -127,14 +118,15 @@ pub fn animation(
             let id = block * 64 + bits.trailing_zeros() as usize;
             bits &= bits - 1;
             let entry = object_table.checked_add(id * 4).ok_or(INVALID)?;
-            let at = word(bytes, entry)? as usize;
-            let header = span(bytes, at, 1, 12)?;
-            let base_vertex = word(header, 4)?;
-            let count = word(header, 8)?;
+            let at = read_u32_le(bytes, entry).ok_or(INVALID)? as usize;
+            let header = span(bytes, at, 12).ok_or(INVALID)?;
+            let base_vertex = read_u32_le(header, 4).ok_or(INVALID)?;
+            let count = read_u32_le(header, 8).ok_or(INVALID)?;
             if base_vertex > vertex_count || count > vertex_count - base_vertex {
                 return Err(INVALID);
             }
-            let deltas = span(bytes, at.checked_add(12).ok_or(INVALID)?, count as usize, 8)?;
+            let deltas = records(bytes, at.checked_add(12).ok_or(INVALID)?, count as usize, 8)
+                .ok_or(INVALID)?;
             if let Some(out) = output.as_mut() {
                 *out.morphs.get_mut(id).ok_or(KF_CODEC_OUTPUT_FULL)? = KfAnimationMorph {
                     base_vertex,
@@ -147,9 +139,9 @@ pub fn animation(
                     *out.deltas
                         .get_mut(sizes.deltas)
                         .ok_or(KF_CODEC_OUTPUT_FULL)? = KfAnimationDelta {
-                        x: half(delta, 0)? as i16,
-                        y: half(delta, 2)? as i16,
-                        z: half(delta, 4)? as i16,
+                        x: read_u16_le(delta, 0).ok_or(INVALID)? as i16,
+                        y: read_u16_le(delta, 2).ok_or(INVALID)? as i16,
+                        z: read_u16_le(delta, 4).ok_or(INVALID)? as i16,
                     };
                 }
                 sizes.deltas = sizes.deltas.checked_add(1).ok_or(INVALID)?;
@@ -174,7 +166,7 @@ fn placements<T>(
         if *bytes.get(at).ok_or(INVALID)? == 255 {
             return Ok(index);
         }
-        *slot = decode(span(bytes, at, 1, width)?)?;
+        *slot = decode(span(bytes, at, width).ok_or(INVALID)?)?;
     }
     Ok(output.len())
 }
@@ -193,7 +185,10 @@ pub fn actors(
 ) -> Result<usize> {
     placements(bytes, 16, output, |b| {
         cell(b[3], b[4], limits)?;
-        for (tile, local) in [(b[3], half(b, 10)? as i16), (b[4], half(b, 12)? as i16)] {
+        for (tile, local) in [
+            (b[3], read_u16_le(b, 10).ok_or(INVALID)? as i16),
+            (b[4], read_u16_le(b, 12).ok_or(INVALID)? as i16),
+        ] {
             let position = i64::from(tile) * i64::from(limits.tile_size) + i64::from(local);
             let extent = i64::from(limits.map_side)
                 .checked_mul(i64::from(limits.tile_size))
@@ -214,8 +209,8 @@ pub fn actors(
             tile_x: b[4],
             spawn_chance: b[5],
             death_drop_object_id: b[6],
-            local_z: half(b, 10)? as i16,
-            local_x: half(b, 12)? as i16,
+            local_z: read_u16_le(b, 10).ok_or(INVALID)? as i16,
+            local_x: read_u16_le(b, 12).ok_or(INVALID)? as i16,
         })
     })
 }
@@ -234,11 +229,14 @@ pub fn objects(
             object_id: b[0],
             tile_z: b[2],
             tile_x: b[3],
-            yaw: half(b, 4)?,
-            local_z: half(b, 6)? as i16,
-            local_x: half(b, 8)? as i16,
-            local_y: half(b, 10)? as i16,
-            link: [word(b, 12)?, word(b, 16)?],
+            yaw: read_u16_le(b, 4).ok_or(INVALID)?,
+            local_z: read_u16_le(b, 6).ok_or(INVALID)? as i16,
+            local_x: read_u16_le(b, 8).ok_or(INVALID)? as i16,
+            local_y: read_u16_le(b, 10).ok_or(INVALID)? as i16,
+            link: [
+                read_u32_le(b, 12).ok_or(INVALID)?,
+                read_u32_le(b, 16).ok_or(INVALID)?,
+            ],
         })
     })
 }
@@ -263,15 +261,15 @@ pub fn events(
             model_index: b[2],
             cell_z: b[3],
             cell_x: b[4],
-            dialogue_pages: b[5..10].try_into().unwrap(),
+            dialogue_pages: read(b, 5).ok_or(INVALID)?,
             dialogue_stage_limit: b[10],
             unknown_0b: b[11],
             unknown_0c: b[12],
             behavior: b[13],
-            position_z_offset: half(b, 14)? as i16,
-            position_x_offset: half(b, 16)? as i16,
-            initial_rotation: half(b, 18)?,
-            radius: half(b, 20)?,
+            position_z_offset: read_u16_le(b, 14).ok_or(INVALID)? as i16,
+            position_x_offset: read_u16_le(b, 16).ok_or(INVALID)? as i16,
+            initial_rotation: read_u16_le(b, 18).ok_or(INVALID)?,
+            radius: read_u16_le(b, 20).ok_or(INVALID)?,
         })
     })
 }

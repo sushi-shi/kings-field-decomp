@@ -12,3 +12,6 @@ doctest = false
 [profile.release]
 panic = "abort"
 overflow-checks = true
+
+[dependencies]
+bytemuck = { version = "1.25.2", default-features = false }

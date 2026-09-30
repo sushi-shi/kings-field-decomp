@@ -36,6 +36,21 @@
         python3 ${./scripts/english_patch.py} from-ppf --ppf translation.ppf \
           --layout ${./scripts/slps-00017-layout.tsv} --output "$out"
       '';
+      cargoDeps = pkgs.rustPlatform.importCargoLock {
+        lockFile = ./codecs/Cargo.lock;
+      };
+      cargoConfig = pkgs.writeText "kings-field-cargo-config.toml" ''
+        [source.crates-io]
+        replace-with = "nix-vendor"
+        [source.nix-vendor]
+        directory = "${cargoDeps}"
+      '';
+      cargoEnvironment = ''
+        export CARGO_NET_OFFLINE=true
+        export CARGO_HOME="$TMPDIR/kings-field-cargo"
+        mkdir -p "$CARGO_HOME"
+        cp ${cargoConfig} "$CARGO_HOME/config.toml"
+      '';
       unwrapped = pkgs.clangStdenv.mkDerivation {
         pname = "kings-field";
         version = "0.1.0";
@@ -43,9 +58,7 @@
         nativeBuildInputs = nativeTools;
         buildInputs = nativeLibraries;
         cmakeFlags = [ "-DKF_ENGLISH_PATCH=${englishDelta}" ];
-        preBuild = ''
-          export CARGO_HOME="$TMPDIR/kings-field-cargo"
-        '';
+        preBuild = cargoEnvironment;
         meta = {
           description = "King's Field direct source port (requires original Japanese disc data)";
           mainProgram = "kings-field";
@@ -110,7 +123,7 @@
           chmod -R u+w source
           cd source
           bash codecs/bindings.sh --check
-          export CARGO_HOME="$TMPDIR/kings-field-cargo"
+          ${cargoEnvironment}
           cargo clippy --offline --locked --release --manifest-path codecs/Cargo.toml -- \
             -D unfulfilled_lint_expectations
           touch "$out"
@@ -120,6 +133,7 @@
         packages = nativeTools ++ nativeLibraries ++ (with pkgs; [
           emscripten nodejs chromium xvfb-run xdotool imagemagick python3 clippy
         ]);
+        shellHook = cargoEnvironment;
         KF_SDL_SOURCE = "${pkgs.sdl3.src}";
         KF_RUST_SOURCE = "${pkgs.rustPlatform.rustLibSrc}";
         KF_ENGLISH_PATCH = "${englishDelta}";

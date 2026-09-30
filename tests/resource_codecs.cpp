@@ -48,6 +48,23 @@ static void animation()
     assert(kf_animation_measure(empty.data(), empty.size(), 1, &sizes) == KF_CODEC_INVALID);
     output.capacity.deltas = 0;
     assert(kf_animation_decode(bytes.data(), bytes.size(), 1, &output) == KF_CODEC_OUTPUT_FULL);
+    // Input bytes may be unaligned; typed output storage must not be.
+    alignas(KfAnimationOutput) std::array<uint8_t, sizeof(KfAnimationOutput) + 1> storage {};
+    auto *unaligned = storage.data() + 1;
+    assert(kf_asset_info(bytes.data(), bytes.size(), reinterpret_cast<KfAssetInfo *>(unaligned)) == KF_CODEC_INVALID);
+    assert(kf_animation_measure(bytes.data(), bytes.size(), 1, reinterpret_cast<KfAnimationSizes *>(unaligned)) == KF_CODEC_INVALID);
+    assert(kf_animation_decode(bytes.data(), bytes.size(), 1, reinterpret_cast<KfAnimationOutput *>(unaligned)) == KF_CODEC_INVALID);
+    std::vector<uint8_t> tim(24);
+    word(tim, 0, 0x10); word(tim, 4, 2); word(tim, 8, 16); word(tim, 16, (1u << 16) | 2);
+    KfTimInfo tim_info {};
+    assert(kf_tim_info(tim.data(), tim.size(), 0, &tim_info) == KF_CODEC_OK);
+    assert(kf_tim_info(tim.data(), tim.size(), 0, reinterpret_cast<KfTimInfo *>(unaligned)) == KF_CODEC_INVALID);
+    output.capacity = sizes;
+    output.clips = reinterpret_cast<KfAnimationClipData *>(unaligned);
+    assert(kf_animation_decode(bytes.data(), bytes.size(), 1, &output) == KF_CODEC_INVALID);
+    output.clips = &clip;
+    output.capacity.clips = SIZE_MAX;
+    assert(kf_animation_decode(bytes.data(), bytes.size(), 1, &output) == KF_CODEC_INVALID);
     // Explicit little-endian decoding must also accept an unaligned source.
     bytes.insert(bytes.begin(), 0);
     assert(kf_animation_measure(bytes.data() + 1, bytes.size() - 1, 1, &sizes) == KF_CODEC_OK);

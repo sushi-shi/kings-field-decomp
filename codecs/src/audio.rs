@@ -1,3 +1,5 @@
+use crate::bytes;
+
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
 pub struct SoundRef {
     pub program: u8,
@@ -145,7 +147,7 @@ impl VabHeader {
                 have: bytes.len(),
             });
         }
-        let form: [u8; 4] = bytes[..4].try_into().unwrap();
+        let form: [u8; 4] = bytes::read(bytes, 0).expect("validated VAB header");
         if form != VAB_MAGIC {
             return Err(VabError::InvalidMagic(form));
         }
@@ -169,18 +171,18 @@ impl VabHeader {
     pub fn to_le_bytes(self) -> [u8; VAB_HEADER_SIZE] {
         let mut output = [0; VAB_HEADER_SIZE];
         output[..4].copy_from_slice(&self.form);
-        output[4..8].copy_from_slice(&self.version.to_le_bytes());
-        output[8..12].copy_from_slice(&self.id.to_le_bytes());
-        output[12..16].copy_from_slice(&self.file_size.to_le_bytes());
-        output[16..18].copy_from_slice(&self.reserved0.to_le_bytes());
-        output[18..20].copy_from_slice(&self.program_count.to_le_bytes());
-        output[20..22].copy_from_slice(&self.tone_count.to_le_bytes());
-        output[22..24].copy_from_slice(&self.sample_count.to_le_bytes());
+        output[4..8].copy_from_slice(bytemuck::bytes_of(&self.version.to_le()));
+        output[8..12].copy_from_slice(bytemuck::bytes_of(&self.id.to_le()));
+        output[12..16].copy_from_slice(bytemuck::bytes_of(&self.file_size.to_le()));
+        output[16..18].copy_from_slice(bytemuck::bytes_of(&self.reserved0.to_le()));
+        output[18..20].copy_from_slice(bytemuck::bytes_of(&self.program_count.to_le()));
+        output[20..22].copy_from_slice(bytemuck::bytes_of(&self.tone_count.to_le()));
+        output[22..24].copy_from_slice(bytemuck::bytes_of(&self.sample_count.to_le()));
         output[24] = self.master_volume;
         output[25] = self.pan;
         output[26] = self.attribute1;
         output[27] = self.attribute2;
-        output[28..32].copy_from_slice(&self.reserved1.to_le_bytes());
+        output[28..32].copy_from_slice(bytemuck::bytes_of(&self.reserved1.to_le()));
         output
     }
 
@@ -229,9 +231,9 @@ impl VabProgram {
         output[3] = self.mode;
         output[4] = self.pan;
         output[5] = self.reserved0 as u8;
-        output[6..8].copy_from_slice(&self.attribute.to_le_bytes());
-        output[8..12].copy_from_slice(&self.reserved1.to_le_bytes());
-        output[12..16].copy_from_slice(&self.reserved2.to_le_bytes());
+        output[6..8].copy_from_slice(bytemuck::bytes_of(&self.attribute.to_le()));
+        output[8..12].copy_from_slice(bytemuck::bytes_of(&self.reserved1.to_le()));
+        output[12..16].copy_from_slice(bytemuck::bytes_of(&self.reserved2.to_le()));
         output
     }
 }
@@ -327,7 +329,7 @@ impl VabTone {
         .enumerate()
         {
             let offset = 16 + at * 2;
-            output[offset..offset + 2].copy_from_slice(&value.to_le_bytes());
+            output[offset..offset + 2].copy_from_slice(bytemuck::bytes_of(&value.to_le()));
         }
         output
     }
@@ -652,15 +654,15 @@ pub struct SeqHeader {
 impl SeqHeader {
     pub fn parse(bytes: &[u8]) -> Result<Self, SeqError> {
         let header = seq_span(bytes, 0, SEQ_HEADER_SIZE)?;
-        let form: [u8; 4] = header[..4].try_into().unwrap();
+        let form: [u8; 4] = bytes::read(header, 0).expect("validated SEQ header");
         if form != SEQ_MAGIC {
             return Err(SeqError::InvalidMagic(form));
         }
         Ok(Self {
             form,
-            version: u32::from_be_bytes(header[4..8].try_into().unwrap()),
-            resolution: u16::from_be_bytes(header[8..10].try_into().unwrap()),
-            tempo: u32::from_be_bytes([0, header[10], header[11], header[12]]),
+            version: bytes::read_u32_be(header, 4).expect("validated SEQ header"),
+            resolution: bytes::read_u16_be(header, 8).expect("validated SEQ header"),
+            tempo: bytes::read_u24_be(header, 10).expect("validated SEQ header"),
             time_signature_numerator: header[13],
             time_signature_denominator_shift: header[14],
         })
@@ -672,9 +674,9 @@ impl SeqHeader {
         }
         let mut output = [0; SEQ_HEADER_SIZE];
         output[..4].copy_from_slice(&self.form);
-        output[4..8].copy_from_slice(&self.version.to_be_bytes());
-        output[8..10].copy_from_slice(&self.resolution.to_be_bytes());
-        let tempo = self.tempo.to_be_bytes();
+        output[4..8].copy_from_slice(bytemuck::bytes_of(&self.version.to_be()));
+        output[8..10].copy_from_slice(bytemuck::bytes_of(&self.resolution.to_be()));
+        let tempo: [u8; 4] = bytemuck::cast(self.tempo.to_be());
         output[10..13].copy_from_slice(&tempo[1..]);
         output[13] = self.time_signature_numerator;
         output[14] = self.time_signature_denominator_shift;
@@ -909,8 +911,8 @@ pub fn apply_successful_game_sequence_open(
         return Err(SeqRuntimeError::SequenceSlotOccupied(allocated_sequence_id));
     }
     *open_flags |= bit;
-    audio_state[12..14].copy_from_slice(&allocated_sequence_id.to_le_bytes());
-    audio_state[16..20].copy_from_slice(&1u32.to_le_bytes());
+    audio_state[12..14].copy_from_slice(bytemuck::bytes_of(&allocated_sequence_id.to_le()));
+    audio_state[16..20].copy_from_slice(bytemuck::bytes_of(&1u32.to_le()));
     Ok(())
 }
 
@@ -1084,7 +1086,7 @@ fn update_tick_interval(
 }
 
 fn score_u16(score: &[u8; SEQ_SCORE_RECORD_SIZE], at: usize) -> u16 {
-    u16::from_le_bytes([score[at], score[at + 1]])
+    bytes::read_u16_le(score, at).expect("field within score record")
 }
 
 fn score_i16(score: &[u8; SEQ_SCORE_RECORD_SIZE], at: usize) -> i16 {
@@ -1092,15 +1094,15 @@ fn score_i16(score: &[u8; SEQ_SCORE_RECORD_SIZE], at: usize) -> i16 {
 }
 
 fn score_u32(score: &[u8; SEQ_SCORE_RECORD_SIZE], at: usize) -> u32 {
-    u32::from_le_bytes([score[at], score[at + 1], score[at + 2], score[at + 3]])
+    bytes::read_u32_le(score, at).expect("field within score record")
 }
 
 fn put_score_u16(score: &mut [u8; SEQ_SCORE_RECORD_SIZE], at: usize, value: u16) {
-    score[at..at + 2].copy_from_slice(&value.to_le_bytes());
+    score[at..at + 2].copy_from_slice(bytemuck::bytes_of(&value.to_le()));
 }
 
 fn put_score_u32(score: &mut [u8; SEQ_SCORE_RECORD_SIZE], at: usize, value: u32) {
-    score[at..at + 4].copy_from_slice(&value.to_le_bytes());
+    score[at..at + 4].copy_from_slice(bytemuck::bytes_of(&value.to_le()));
 }
 
 pub struct SeqEvents<'a> {
@@ -1324,8 +1326,7 @@ fn take_data(bytes: &[u8], at: &mut usize) -> Result<u8, SeqError> {
 }
 
 fn seq_span(bytes: &[u8], at: usize, size: usize) -> Result<&[u8], SeqError> {
-    at.checked_add(size)
-        .and_then(|end| bytes.get(at..end))
+    bytes::span(bytes, at, size)
         .ok_or(SeqError::Truncated {
             at,
             need: size,
@@ -1334,9 +1335,9 @@ fn seq_span(bytes: &[u8], at: usize, size: usize) -> Result<&[u8], SeqError> {
 }
 
 fn le_u16(bytes: &[u8], at: usize) -> u16 {
-    u16::from_le_bytes([bytes[at], bytes[at + 1]])
+    bytes::read_u16_le(bytes, at).expect("validated VAB record")
 }
 
 fn le_u32(bytes: &[u8], at: usize) -> u32 {
-    u32::from_le_bytes([bytes[at], bytes[at + 1], bytes[at + 2], bytes[at + 3]])
+    bytes::read_u32_le(bytes, at).expect("validated VAB record")
 }

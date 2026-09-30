@@ -1,9 +1,10 @@
 use super::bindings::*;
+use super::{input_valid, output_valid};
 use crate::resources;
-use core::{mem::size_of, slice};
+use core::slice;
 
 unsafe fn input<'a>(bytes: *const u8, length: usize) -> Result<&'a [u8], KfCodecResult> {
-    if bytes.is_null() || length > isize::MAX as usize {
+    if !input_valid(bytes, length) {
         return Err(KF_CODEC_INVALID);
     }
     Ok(slice::from_raw_parts(bytes, length))
@@ -13,19 +14,19 @@ unsafe fn output<'a, T>(data: *mut T, count: usize) -> Result<&'a mut [T], KfCod
     if count == 0 {
         return Ok(&mut []);
     }
-    if data.is_null() || count > isize::MAX as usize / size_of::<T>() {
+    if !output_valid(data, count) {
         return Err(KF_CODEC_INVALID);
     }
     Ok(slice::from_raw_parts_mut(data, count))
 }
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn kf_asset_info(
     bytes: *const u8,
     length: usize,
     info: *mut KfAssetInfo,
 ) -> KfCodecResult {
-    if info.is_null() {
+    if !output_valid(info, 1) {
         return KF_CODEC_INVALID;
     }
     match input(bytes, length).and_then(resources::asset_info) {
@@ -37,14 +38,14 @@ pub unsafe extern "C" fn kf_asset_info(
     }
 }
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn kf_animation_measure(
     bytes: *const u8,
     length: usize,
     vertex_count: u32,
     sizes: *mut KfAnimationSizes,
 ) -> KfCodecResult {
-    if sizes.is_null() {
+    if !output_valid(sizes, 1) {
         return KF_CODEC_INVALID;
     }
     match input(bytes, length).and_then(|b| resources::animation(b, vertex_count, None)) {
@@ -56,15 +57,18 @@ pub unsafe extern "C" fn kf_animation_measure(
     }
 }
 
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn kf_animation_decode(
     bytes: *const u8,
     length: usize,
     vertex_count: u32,
     destination: *mut KfAnimationOutput,
 ) -> KfCodecResult {
+    if !output_valid(destination, 1) {
+        return KF_CODEC_INVALID;
+    }
     let decode = || {
-        let d = destination.as_mut().ok_or(KF_CODEC_INVALID)?;
+        let d = &mut *destination;
         let bytes = input(bytes, length)?;
         let out = resources::AnimationOutput {
             clips: output(d.clips, d.capacity.clips)?,
@@ -83,7 +87,7 @@ pub unsafe extern "C" fn kf_animation_decode(
 
 macro_rules! placement_decoder {
     ($name:ident, $record:ty, $decode:ident) => {
-        #[no_mangle]
+        #[unsafe(no_mangle)]
         pub unsafe extern "C" fn $name(
             bytes: *const u8,
             length: usize,
@@ -92,7 +96,7 @@ macro_rules! placement_decoder {
             capacity: usize,
             count: *mut usize,
         ) -> KfCodecResult {
-            if count.is_null() {
+            if !output_valid(count, 1) {
                 return KF_CODEC_INVALID;
             }
             let decode = || {

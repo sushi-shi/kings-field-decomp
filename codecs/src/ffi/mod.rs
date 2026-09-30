@@ -4,10 +4,22 @@ mod audio;
 mod texture;
 mod resources;
 use crate::tim::{Image, Images};
+use crate::bytes::{read_u16_le, span};
 use crate::tim::{
     TIM_DIRECT16, TIM_DIRECT24, TIM_FLAGS_MASK, TIM_FORMAT_MASK, TIM_INDEXED4, TIM_INDEXED8,
 };
 use core::{panic::PanicInfo, slice};
+// C callers still guarantee valid allocations and non-overlapping borrows.
+fn input_valid(data: *const u8, length: usize) -> bool {
+    !data.is_null() && length <= isize::MAX as usize
+}
+
+fn output_valid<T>(data: *mut T, count: usize) -> bool {
+    !data.is_null()
+        && data.is_aligned()
+        && count.checked_mul(size_of::<T>()).is_some_and(|size| size <= isize::MAX as usize)
+}
+
 const INDEXED4_PALETTE_COLORS: usize = 16;
 const INDEXED4_BITS: usize = 4;
 const INDEXED4_MASK: u8 = 15;
@@ -23,7 +35,7 @@ extern "C" {
 }
 // Native prebuilt core retains an unwind metadata reference. This library uses
 // panic=abort; entering an unwinder is a fatal ABI violation, never a no-op.
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub extern "C" fn rust_eh_personality() -> ! {
     unsafe { abort() }
 }
@@ -55,14 +67,14 @@ fn dimensions(image: &Image<'_>) -> Result<(usize, usize), KfCodecResult> {
     }
     Ok((width, height))
 }
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn kf_tim_info(
     bytes: *const u8,
     length: usize,
     offset: usize,
     info: *mut KfTimInfo,
 ) -> KfCodecResult {
-    if bytes.is_null() || info.is_null() || length > isize::MAX as usize {
+    if !input_valid(bytes, length) || !output_valid(info, 1) {
         return INVALID;
     }
     let image = match parse(slice::from_raw_parts(bytes, length), offset) {
@@ -88,7 +100,7 @@ pub unsafe extern "C" fn kf_tim_info(
     });
     OK
 }
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn kf_tim_rgba(
     bytes: *const u8,
     length: usize,
@@ -97,11 +109,7 @@ pub unsafe extern "C" fn kf_tim_rgba(
     rgba: *mut u8,
     capacity: usize,
 ) -> KfCodecResult {
-    if bytes.is_null()
-        || rgba.is_null()
-        || length > isize::MAX as usize
-        || capacity > isize::MAX as usize
-    {
+    if !input_valid(bytes, length) || !output_valid(rgba, capacity) {
         return INVALID;
     }
     let image = match parse(slice::from_raw_parts(bytes, length), offset) {
@@ -134,7 +142,7 @@ pub unsafe extern "C" fn kf_tim_rgba(
             Some(at) => at,
             None => return INVALID,
         };
-        match clut.pixels.get(at..at.saturating_add(count * 2)) {
+        match span(clut.pixels, at, count * 2) {
             Some(p) => p,
             None => return INVALID,
         }
@@ -150,10 +158,7 @@ pub unsafe extern "C" fn kf_tim_rgba(
             continue;
         }
         let word = if mode == TIM_DIRECT16 {
-            u16::from_le_bytes([
-                image.image.pixels[index * 2],
-                image.image.pixels[index * 2 + 1],
-            ])
+            read_u16_le(image.image.pixels, index * 2).expect("validated TIM pixels")
         } else {
             let entry = if mode == TIM_INDEXED4 {
                 ((image.image.pixels[index / 2] >> ((index % 2) * INDEXED4_BITS)) & INDEXED4_MASK)
@@ -161,7 +166,7 @@ pub unsafe extern "C" fn kf_tim_rgba(
             } else {
                 image.image.pixels[index] as usize
             };
-            u16::from_le_bytes([palette[entry * 2], palette[entry * 2 + 1]])
+            read_u16_le(palette, entry * 2).expect("validated TIM palette")
         };
         for (channel, shift) in destination[..3]
             .iter_mut()

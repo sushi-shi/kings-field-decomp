@@ -1,3 +1,4 @@
+use crate::bytes;
 use core::fmt;
 
 pub const TIM_MAGIC: u32 = 0x10;
@@ -60,7 +61,7 @@ impl Rect {
                 .chunks_exact_mut(2)
                 .zip([self.x, self.y, self.width, self.height])
         {
-            destination.copy_from_slice(&value.to_le_bytes());
+            destination.copy_from_slice(bytemuck::bytes_of(&value.to_le()));
         }
         bytes
     }
@@ -105,7 +106,7 @@ impl TimImageDescriptor {
             self.image_rectangle,
             self.image_data,
         ]) {
-            destination.copy_from_slice(&word.to_le_bytes());
+            destination.copy_from_slice(bytemuck::bytes_of(&word.to_le()));
         }
         bytes
     }
@@ -192,8 +193,7 @@ impl<'a> Iterator for Images<'a> {
 }
 
 fn span(bytes: &[u8], at: usize, size: usize) -> Result<&[u8], TimError> {
-    at.checked_add(size)
-        .and_then(|end| bytes.get(at..end))
+    bytes::span(bytes, at, size)
         .ok_or(TimError::Truncated {
             at,
             need: size,
@@ -202,7 +202,11 @@ fn span(bytes: &[u8], at: usize, size: usize) -> Result<&[u8], TimError> {
 }
 
 fn u32_at(bytes: &[u8], at: usize) -> Result<u32, TimError> {
-    Ok(u32::from_le_bytes(span(bytes, at, 4)?.try_into().unwrap()))
+    bytes::read_u32_le(bytes, at).ok_or(TimError::Truncated {
+        at,
+        need: 4,
+        available: bytes.len().saturating_sub(at),
+    })
 }
 
 fn block<'a>(bytes: &'a [u8], cursor: &mut usize) -> Result<ImageBlock<'a>, TimError> {
@@ -214,7 +218,7 @@ fn block<'a>(bytes: &'a [u8], cursor: &mut usize) -> Result<ImageBlock<'a>, TimE
         return Err(TimError::InvalidBlockSize { at, declared });
     }
     let encoded = span(bytes, at, size)?;
-    let half = |offset| i16::from_le_bytes([encoded[offset], encoded[offset + 1]]);
+    let half = |offset| bytes::read_u16_le(encoded, offset).expect("validated TIM rectangle") as i16;
     let rectangle = Rect {
         x: half(BLOCK_RECTANGLE_X_OFFSET),
         y: half(BLOCK_RECTANGLE_Y_OFFSET),
