@@ -1,30 +1,34 @@
 use super::bindings::*;
 use super::{input_valid, output_valid, status};
 use crate::bytes::read_u16_le;
-use crate::tim::{ImageBlock, Images};
-use crate::tim::{TIM_DIRECT16, TIM_FLAGS_MASK, TIM_FORMAT_MASK};
+use crate::cast::AsUsize;
+use crate::tim::{ImageBlock, Images, PixelFormat};
 use core::slice;
-const TEXTURE_WIDTH: usize = 1024;
-const TEXTURE_HEIGHT: usize = 512;
+const TEXTURE_WIDTH: u16 = 1024;
+const TEXTURE_HEIGHT: u16 = 512;
 
 fn rectangle_valid(block: &ImageBlock<'_>) -> bool {
-    let r = block.rectangle;
-    r.x.get() >= 0
-        && r.y.get() >= 0
-        && r.x.get() < TEXTURE_WIDTH as i16
-        && r.y.get() < TEXTURE_HEIGHT as i16
-        && r.width.get() <= TEXTURE_WIDTH as i16
-        && r.height.get() <= TEXTURE_HEIGHT as i16
+    let r = block;
+    r.x >= 0
+        && r.y >= 0
+        && i32::from(r.x) < i32::from(TEXTURE_WIDTH)
+        && i32::from(r.y) < i32::from(TEXTURE_HEIGHT)
+        && r.width <= TEXTURE_WIDTH
+        && r.height <= TEXTURE_HEIGHT
 }
 fn copy_block(block: &ImageBlock<'_>, words: &mut [u16]) -> crate::Result<()> {
-    let r = block.rectangle;
-    for y in 0..r.height.get() as usize {
-        for x in 0..r.width.get() as usize {
-            let at = (y * r.width.get() as usize + x) * 2;
+    let r = block;
+    let width = r.width.as_usize();
+    let height = r.height.as_usize();
+    let origin_x = usize::try_from(r.x)?;
+    let origin_y = usize::try_from(r.y)?;
+    for y in 0..height {
+        for x in 0..width {
+            let at = (y * width + x) * 2;
             // Common CLUT rectangles cross row 511. Authored transfers wrap at
             // the image edges; retain this only during material conversion.
-            words[((r.y.get() as usize + y) & (TEXTURE_HEIGHT - 1)) * TEXTURE_WIDTH
-                + ((r.x.get() as usize + x) & (TEXTURE_WIDTH - 1))] =
+            words[((origin_y + y) & (TEXTURE_HEIGHT.as_usize() - 1)) * TEXTURE_WIDTH.as_usize()
+                + ((origin_x + x) & (TEXTURE_WIDTH.as_usize() - 1))] =
                 read_u16_le(block.pixels, at)?;
         }
     }
@@ -49,15 +53,14 @@ unsafe fn tim_compose(
     if !input_valid(bytes, length) || !output_valid(words, capacity) {
         crate::bail!("invalid texture pointer or size");
     }
-    if capacity < TEXTURE_WIDTH * TEXTURE_HEIGHT {
+    if capacity < TEXTURE_WIDTH.as_usize() * TEXTURE_HEIGHT.as_usize() {
         return Err(crate::Error::output_full());
     }
     let bytes = slice::from_raw_parts(bytes, length);
     let mut count = 0;
     for image in Images::new(bytes) {
         let image = image?;
-        if image.mode & TIM_FORMAT_MASK > TIM_DIRECT16
-            || image.mode & !TIM_FLAGS_MASK != 0
+        if image.format == PixelFormat::Direct24
             || !rectangle_valid(&image.image)
             || image.clut.is_some_and(|c| !rectangle_valid(&c))
         {
@@ -68,7 +71,8 @@ unsafe fn tim_compose(
     if count == 0 {
         crate::bail!("texture contains no TIM images");
     }
-    let words = slice::from_raw_parts_mut(words, TEXTURE_WIDTH * TEXTURE_HEIGHT);
+    let words =
+        slice::from_raw_parts_mut(words, TEXTURE_WIDTH.as_usize() * TEXTURE_HEIGHT.as_usize());
     for image in Images::new(bytes) {
         let image = image?;
         if let Some(clut) = image.clut {

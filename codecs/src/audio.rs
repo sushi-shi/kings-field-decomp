@@ -4,13 +4,13 @@ use crate::formats::{SeqHeader, VabHeader, VabProgram, VabTone};
 
 pub const VAB_MAGIC: [u8; 4] = *b"pBAV";
 const VAB_HEADER_SIZE: usize = size_of::<VabHeader>();
-pub const VAB_PROGRAM_SLOTS: usize = 128;
+pub const VAB_PROGRAM_SLOTS: u16 = 128;
 const VAB_PROGRAM_SIZE: usize = size_of::<VabProgram>();
-pub const VAB_TONES_PER_PROGRAM: usize = 16;
+pub const VAB_TONES_PER_PROGRAM: u16 = 16;
 const VAB_TONE_SIZE: usize = size_of::<VabTone>();
 pub const VAB_OFFSET_ENTRIES: usize = 256;
-pub const VAB_OFFSET_TABLE_SIZE: usize = VAB_OFFSET_ENTRIES * 2;
-pub const VAB_SAMPLE_UNIT: usize = 8;
+pub const VAB_OFFSET_TABLE_SIZE: usize = VAB_OFFSET_ENTRIES * size_of::<u16>();
+pub const VAB_SAMPLE_UNIT: u32 = 8;
 
 // MIDI status and variable-length encodings used by the SEQ parser/bridge.
 pub mod midi {
@@ -62,8 +62,10 @@ impl VabHeader {
     pub fn encoded_header_len(self) -> crate::Result<usize> {
         validate_counts(self)?;
         Ok(VAB_HEADER_SIZE
-            + VAB_PROGRAM_SLOTS * VAB_PROGRAM_SIZE
-            + self.program_count.get().as_usize() * VAB_TONES_PER_PROGRAM * VAB_TONE_SIZE
+            + VAB_PROGRAM_SLOTS.as_usize() * VAB_PROGRAM_SIZE
+            + self.program_count.get().as_usize()
+                * VAB_TONES_PER_PROGRAM.as_usize()
+                * VAB_TONE_SIZE
             + VAB_OFFSET_TABLE_SIZE)
     }
 }
@@ -72,7 +74,6 @@ impl VabHeader {
 pub struct VabBank<'a> {
     pub header: VabHeader,
     header_bytes: &'a [u8],
-    body_bytes: &'a [u8],
     tone_table_offset: usize,
     offset_table_offset: usize,
 }
@@ -104,7 +105,7 @@ impl<'a> VabBank<'a> {
                 actual_file_size,
             ));
         }
-        let tone_table_offset = VAB_HEADER_SIZE + VAB_PROGRAM_SLOTS * VAB_PROGRAM_SIZE;
+        let tone_table_offset = VAB_HEADER_SIZE + VAB_PROGRAM_SLOTS.as_usize() * VAB_PROGRAM_SIZE;
         let offset_table_offset = expected_header - VAB_OFFSET_TABLE_SIZE;
         let first = bytes::read_u16_le(header_bytes, offset_table_offset)?;
         if first != 0 {
@@ -113,39 +114,40 @@ impl<'a> VabBank<'a> {
                 i64::from(first),
             ));
         }
-        let mut body_len = 0usize;
+        let mut body_len = 0u32;
         for sample in 0..header.sample_count.get() {
             let units = bytes::read_u16_le(
                 header_bytes,
                 offset_table_offset + (sample.as_usize() + 1) * 2,
             )?;
-            let bytes = units
-                .as_usize()
+            let bytes = u32::from(units)
                 .checked_mul(VAB_SAMPLE_UNIT)
                 .ok_or(crate::Error::invalid("VAB sample length overflow"))?;
             body_len = body_len
                 .checked_add(bytes)
                 .ok_or(crate::Error::invalid("VAB sample length overflow"))?;
         }
-        if body_len != body_bytes.len() {
+        if body_len.as_usize() != body_bytes.len() {
             return Err(crate::Error::size_mismatch(
                 "VAB body",
-                body_len,
+                body_len.as_usize(),
                 body_bytes.len(),
             ));
         }
         Ok(Self {
             header,
             header_bytes,
-            body_bytes,
             tone_table_offset,
             offset_table_offset,
         })
     }
 
     pub fn program_slot(&self, index: usize) -> crate::Result<VabProgram> {
-        if index >= VAB_PROGRAM_SLOTS {
-            return Err(crate::Error::invalid_index(index, VAB_PROGRAM_SLOTS));
+        if index >= VAB_PROGRAM_SLOTS.as_usize() {
+            return Err(crate::Error::invalid_index(
+                index,
+                VAB_PROGRAM_SLOTS.as_usize(),
+            ));
         }
         let at = VAB_HEADER_SIZE + index * VAB_PROGRAM_SIZE;
         bytes::read(self.header_bytes, at)
@@ -158,10 +160,14 @@ impl<'a> VabBank<'a> {
                 self.header.program_count.get().as_usize(),
             ));
         }
-        if tone >= VAB_TONES_PER_PROGRAM {
-            return Err(crate::Error::invalid_index(tone, VAB_TONES_PER_PROGRAM));
+        if tone >= VAB_TONES_PER_PROGRAM.as_usize() {
+            return Err(crate::Error::invalid_index(
+                tone,
+                VAB_TONES_PER_PROGRAM.as_usize(),
+            ));
         }
-        let at = self.tone_table_offset + (program * VAB_TONES_PER_PROGRAM + tone) * VAB_TONE_SIZE;
+        let at = self.tone_table_offset
+            + (program * VAB_TONES_PER_PROGRAM.as_usize() + tone) * VAB_TONE_SIZE;
         bytes::read(self.header_bytes, at)
     }
 
@@ -188,17 +194,17 @@ impl<'a> VabBank<'a> {
 }
 
 fn validate_counts(header: VabHeader) -> crate::Result<()> {
-    if header.program_count.get().as_usize() > VAB_PROGRAM_SLOTS {
+    if header.program_count.get() > VAB_PROGRAM_SLOTS {
         return Err(crate::Error::invalid_count(
             "VAB programs",
             header.program_count.get(),
-            VAB_PROGRAM_SLOTS as u16,
+            VAB_PROGRAM_SLOTS,
         ));
     }
     let maximum_tones = header
         .program_count
         .get()
-        .saturating_mul(VAB_TONES_PER_PROGRAM as u16);
+        .saturating_mul(VAB_TONES_PER_PROGRAM);
     if header.tone_count.get() > maximum_tones {
         return Err(crate::Error::invalid_count(
             "VAB tones",
@@ -210,27 +216,27 @@ fn validate_counts(header: VabHeader) -> crate::Result<()> {
         return Err(crate::Error::invalid_count(
             "VAB samples",
             header.sample_count.get(),
-            (VAB_OFFSET_ENTRIES - 1) as u16,
+            u16::try_from(VAB_OFFSET_ENTRIES - 1)?,
         ));
     }
     Ok(())
 }
 
 #[derive(Debug, Clone, Copy)]
-pub struct VabSample<'a> {
+pub struct VabSample {
     pub index: u16,
-    pub offset: usize,
-    pub data: &'a [u8],
+    pub offset: u32,
+    pub size: u32,
 }
 
 pub(crate) struct VabSamples<'a> {
     bank: VabBank<'a>,
     index: u16,
-    body_offset: usize,
+    body_offset: u32,
 }
 
 impl<'a> Iterator for VabSamples<'a> {
-    type Item = crate::Result<VabSample<'a>>;
+    type Item = crate::Result<VabSample>;
 
     fn next(&mut self) -> Option<Self::Item> {
         if self.index == self.bank.header.sample_count.get() {
@@ -243,13 +249,13 @@ impl<'a> Iterator for VabSamples<'a> {
                 return Some(Err(error));
             }
         };
-        let size = size_units.as_usize() * VAB_SAMPLE_UNIT;
+        let size = u32::from(size_units) * VAB_SAMPLE_UNIT;
         let offset = self.body_offset;
         self.body_offset += size;
         let sample = VabSample {
             index: self.index,
             offset,
-            data: &self.bank.body_bytes[offset..offset + size],
+            size,
         };
         self.index += 1;
         Some(Ok(sample))
@@ -343,7 +349,7 @@ impl<'a> SeqEvents<'a> {
         let start = self.at;
         let (delta, delta_len) = read_variable_length_at(self.bytes, &mut self.at)?;
         let status_at = self.at;
-        let first = take(self.bytes, &mut self.at)?;
+        let first = bytes::take(self.bytes, &mut self.at)?;
         let (status, first_data, used_running_status) = if first < midi::STATUS_BIT {
             let status = self.running_status.ok_or(crate::Error::invalid_byte(
                 "missing SEQ running status",
@@ -395,7 +401,7 @@ impl<'a> SeqEvents<'a> {
             }
             midi::META => {
                 self.running_status = None;
-                let meta_type = take(self.bytes, &mut self.at)?;
+                let meta_type = bytes::take(self.bytes, &mut self.at)?;
                 let (length, _) = read_variable_length_at(self.bytes, &mut self.at)?;
                 let size = length.as_usize();
                 let data = bytes::span(self.bytes, self.at, size)?;
@@ -483,7 +489,7 @@ fn read_variable_length_at(bytes: &[u8], at: &mut usize) -> crate::Result<(u32, 
     let start = *at;
     let mut value = 0u32;
     for index in 0..midi::VLQ_BYTES_MAX {
-        let byte = take(bytes, at)?;
+        let byte = bytes::take(bytes, at)?;
         value = (value << midi::DATA_BITS) | u32::from(byte & midi::DATA_MASK);
         if byte & midi::VLQ_CONTINUATION == 0 {
             return Ok((value, index + 1));
@@ -496,16 +502,9 @@ fn read_variable_length_at(bytes: &[u8], at: &mut usize) -> crate::Result<(u32, 
 }
 
 #[track_caller]
-fn take(bytes: &[u8], at: &mut usize) -> crate::Result<u8> {
-    let value = *bytes.get(*at).ok_or(crate::Error::truncated(*at, 1, 0))?;
-    *at += 1;
-    Ok(value)
-}
-
-#[track_caller]
 fn take_data(bytes: &[u8], at: &mut usize) -> crate::Result<u8> {
     let offset = *at;
-    let value = take(bytes, at)?;
+    let value = bytes::take(bytes, at)?;
     if value >= midi::STATUS_BIT {
         return Err(crate::Error::invalid_byte(
             "invalid SEQ data byte",

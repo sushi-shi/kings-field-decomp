@@ -1,5 +1,5 @@
 #![no_std]
-#![deny(dead_code, unsafe_attr_outside_unsafe)]
+#![deny(dead_code, unsafe_attr_outside_unsafe, clippy::as_conversions)]
 
 #[forbid(unsafe_code)]
 mod bytes;

@@ -200,3 +200,10 @@ macro_rules! bail {
     };
 }
 pub(crate) use bail;
+
+impl From<core::num::TryFromIntError> for Error {
+    #[track_caller]
+    fn from(_: core::num::TryFromIntError) -> Self {
+        Self::invalid("integer conversion out of range")
+    }
+}

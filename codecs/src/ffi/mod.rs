@@ -4,10 +4,7 @@ use bindings::*;
 mod audio;
 mod texture;
 use crate::bytes::{read_u16_le, span};
-use crate::tim::{Image, Images};
-use crate::tim::{
-    TIM_DIRECT16, TIM_DIRECT24, TIM_FLAGS_MASK, TIM_FORMAT_MASK, TIM_INDEXED4, TIM_INDEXED8,
-};
+use crate::tim::{Image, Images, PixelFormat};
 use core::{panic::PanicInfo, slice};
 struct Diagnostic;
 
@@ -16,11 +13,10 @@ impl core::fmt::Write for Diagnostic {
         unsafe extern "C" {
             fn printf(format: *const core::ffi::c_char, ...) -> core::ffi::c_int;
         }
-        // The precision bounds each non-NUL-terminated Rust string.
-        for chunk in text.as_bytes().chunks(i32::MAX as usize) {
-            unsafe {
-                printf(c"%.*s".as_ptr(), chunk.len() as i32, chunk.as_ptr());
-            }
+        let length = core::ffi::c_int::try_from(text.len()).map_err(|_| core::fmt::Error)?;
+        // The precision bounds this non-NUL-terminated Rust string.
+        unsafe {
+            printf(c"%.*s".as_ptr(), length, text.as_ptr());
         }
         Ok(())
     }
@@ -28,7 +24,7 @@ impl core::fmt::Write for Diagnostic {
 
 // C callers still guarantee valid allocations and non-overlapping borrows.
 fn input_valid(data: *const u8, length: usize) -> bool {
-    !data.is_null() && length <= isize::MAX as usize
+    !data.is_null() && isize::try_from(length).is_ok()
 }
 
 fn output_valid<T>(data: *mut T, count: usize) -> bool {
@@ -36,7 +32,7 @@ fn output_valid<T>(data: *mut T, count: usize) -> bool {
         && data.is_aligned()
         && count
             .checked_mul(size_of::<T>())
-            .is_some_and(|size| size <= isize::MAX as usize)
+            .is_some_and(|size| isize::try_from(size).is_ok())
 }
 
 const INDEXED4_PALETTE_COLORS: usize = 16;
@@ -51,6 +47,7 @@ const ALPHA_OPAQUE: u8 = 255;
 
 extern "C" {
     fn abort() -> !;
+    fn fflush(stream: *mut core::ffi::c_void) -> core::ffi::c_int;
 }
 // Native prebuilt core retains an unwind metadata reference. This library uses
 // panic=abort; entering an unwinder is a fatal ABI violation, never a no-op.
@@ -59,9 +56,14 @@ pub extern "C" fn rust_eh_personality() -> ! {
     unsafe { abort() }
 }
 #[panic_handler]
-fn panic(_: &PanicInfo<'_>) -> ! {
+fn panic(info: &PanicInfo<'_>) -> ! {
+    use core::fmt::Write;
+    let _ = writeln!(Diagnostic, "kf-codec panic: {info}");
     // Programming errors must not unwind across the C ABI.
-    unsafe { abort() }
+    unsafe {
+        fflush(core::ptr::null_mut());
+        abort()
+    }
 }
 fn status(result: crate::Result<()>) -> KfCodecResult {
     use core::fmt::Write;
@@ -91,17 +93,17 @@ fn parse(bytes: &[u8], offset: usize) -> crate::Result<Image<'_>> {
     Images::new(tail).next().ok_or(crate::Error::end())?
 }
 
-fn dimensions(image: &Image<'_>) -> crate::Result<(usize, usize)> {
-    let words = image.image.rectangle.width.get() as usize;
-    let height = image.image.rectangle.height.get() as usize;
-    let width = match image.mode & TIM_FORMAT_MASK {
-        TIM_INDEXED4 => words * 4,
-        TIM_INDEXED8 => words * 2,
-        TIM_DIRECT16 => words,
-        TIM_DIRECT24 if words * 2 % 3 == 0 => words * 2 / 3,
+fn dimensions(image: &Image<'_>) -> crate::Result<(u32, u32)> {
+    let words = u32::from(image.image.width);
+    let height = u32::from(image.image.height);
+    let width = match image.format {
+        PixelFormat::Indexed4 => words * 4,
+        PixelFormat::Indexed8 => words * 2,
+        PixelFormat::Direct16 => words,
+        PixelFormat::Direct24 if words * 2 % 3 == 0 => words * 2 / 3,
         _ => crate::bail!("invalid TIM mode or dimensions"),
     };
-    if width == 0 || height == 0 || image.mode & !TIM_FLAGS_MASK != 0 {
+    if width == 0 || height == 0 {
         crate::bail!("invalid TIM mode or dimensions");
     }
     Ok((width, height))
@@ -127,18 +129,15 @@ unsafe fn tim_info(
     }
     let image = parse(slice::from_raw_parts(bytes, length), offset)?;
     let (width, height) = dimensions(&image)?;
-    if image.encoded_len > u32::MAX.as_usize() {
-        crate::bail!("TIM size exceeds u32");
-    }
     info.write(KfTimInfo {
-        mode: image.mode,
-        width: width as u32,
-        height: height as u32,
-        encoded_bytes: image.encoded_len as u32,
-        image_x: image.image.rectangle.x.get() as i32,
-        image_y: image.image.rectangle.y.get() as i32,
-        palette_x: image.clut.map_or(0, |c| c.rectangle.x.get() as i32),
-        palette_y: image.clut.map_or(0, |c| c.rectangle.y.get() as i32),
+        mode: image.encoded_mode(),
+        width,
+        height,
+        encoded_bytes: image.encoded_len,
+        image_x: i32::from(image.image.x),
+        image_y: i32::from(image.image.y),
+        palette_x: image.clut.map_or(0, |c| i32::from(c.x)),
+        palette_y: image.clut.map_or(0, |c| i32::from(c.y)),
     });
     Ok(())
 }
@@ -168,18 +167,19 @@ unsafe fn tim_rgba(
     let image = parse(slice::from_raw_parts(bytes, length), offset)?;
     let (width, height) = dimensions(&image)?;
     let needed = width
-        .checked_mul(height)
+        .as_usize()
+        .checked_mul(height.as_usize())
         .and_then(|n| n.checked_mul(4))
         .ok_or(crate::Error::invalid("TIM pixel count overflow"))?;
     if capacity < needed {
         return Err(crate::Error::output_full());
     }
-    let mode = image.mode & TIM_FORMAT_MASK;
-    let palette = if mode < TIM_DIRECT16 {
+    let format = image.format;
+    let palette = if matches!(format, PixelFormat::Indexed4 | PixelFormat::Indexed8) {
         let clut = image
             .clut
             .ok_or(crate::Error::invalid("indexed TIM has no palette"))?;
-        let count = if mode == TIM_INDEXED4 {
+        let count = if format == PixelFormat::Indexed4 {
             INDEXED4_PALETTE_COLORS
         } else {
             INDEXED8_PALETTE_COLORS
@@ -194,18 +194,18 @@ unsafe fn tim_rgba(
     };
     let output = slice::from_raw_parts_mut(rgba, needed);
     for (index, destination) in output.chunks_exact_mut(4).enumerate() {
-        if mode == TIM_DIRECT24 {
+        if format == PixelFormat::Direct24 {
             let at = index * 3;
             destination[..3].copy_from_slice(&image.image.pixels[at..at + 3]);
             destination[3] = ALPHA_OPAQUE;
             continue;
         }
-        let word = if mode == TIM_DIRECT16 {
+        let word = if format == PixelFormat::Direct16 {
             read_u16_le(image.image.pixels, index * 2)
         } else {
-            let entry = if mode == TIM_INDEXED4 {
+            let entry = if format == PixelFormat::Indexed4 {
                 ((image.image.pixels[index / 2] >> ((index % 2) * INDEXED4_BITS)) & INDEXED4_MASK)
-                    as usize
+                    .as_usize()
             } else {
                 image.image.pixels[index].as_usize()
             };
@@ -216,7 +216,7 @@ unsafe fn tim_rgba(
             .iter_mut()
             .zip([0, RGB5_BITS, 2 * RGB5_BITS])
         {
-            let value = ((word >> shift) & RGB5_MASK) as u8;
+            let value = u8::try_from((word >> shift) & RGB5_MASK)?;
             *channel = (value << RGB5_RGB8_SHIFT) | (value >> RGB5_REPLICATION_SHIFT);
         }
         destination[3] = if word == 0 { 0 } else { ALPHA_OPAQUE };

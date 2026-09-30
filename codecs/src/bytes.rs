@@ -67,3 +67,10 @@ pub(crate) fn read_u32_le(bytes: &[u8], at: usize) -> crate::Result<u32> {
 pub(crate) fn read_u24_be(bytes: &[u8], at: usize) -> crate::Result<u32> {
     read(bytes, at).map(BeU24::get)
 }
+
+#[track_caller]
+pub(crate) fn take(bytes: &[u8], at: &mut usize) -> crate::Result<u8> {
+    let value = *bytes.get(*at).ok_or(crate::Error::truncated(*at, 1, 0))?;
+    *at += 1;
+    Ok(value)
+}

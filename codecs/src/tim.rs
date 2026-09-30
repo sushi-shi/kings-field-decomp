@@ -1,30 +1,64 @@
 use crate::bytes::{self, read_u32_le, span};
 use crate::cast::AsUsize;
-use crate::formats::{TimBlock, TimHeader, TimRectangle};
+use crate::formats::{TimBlock, TimHeader};
 
-pub const TIM_MAGIC: u32 = 0x10;
-pub const TIM_FORMAT_MASK: u32 = 7;
-pub const TIM_CLUT_FLAG: u32 = 8;
-pub const TIM_FLAGS_MASK: u32 = 15;
-pub const TIM_INDEXED4: u32 = 0;
-pub const TIM_INDEXED8: u32 = 1;
-pub const TIM_DIRECT16: u32 = 2;
-pub const TIM_DIRECT24: u32 = 3;
+const TIM_MAGIC: u32 = 0x10;
+const FORMAT_MASK: u32 = 0b111;
+const CLUT_FLAG: u32 = 1 << 3;
+const FLAGS_MASK: u32 = FORMAT_MASK | CLUT_FLAG;
 const BLOCK_SIZE_LOW_BITS: u32 = 3;
+
+#[derive(Debug, Clone, Copy, PartialEq, Eq)]
+pub(crate) enum PixelFormat {
+    Indexed4,
+    Indexed8,
+    Direct16,
+    Direct24,
+}
+
+impl PixelFormat {
+    fn parse(mode: u32) -> crate::Result<Self> {
+        if mode & !FLAGS_MASK != 0 {
+            crate::bail!("unsupported TIM flags");
+        }
+        match mode & FORMAT_MASK {
+            0 => Ok(Self::Indexed4),
+            1 => Ok(Self::Indexed8),
+            2 => Ok(Self::Direct16),
+            3 => Ok(Self::Direct24),
+            _ => crate::bail!("unsupported TIM pixel format"),
+        }
+    }
+}
 
 #[derive(Debug, Clone, Copy)]
 pub struct ImageBlock<'a> {
-    pub rectangle: TimRectangle,
+    pub x: i16,
+    pub y: i16,
+    pub width: u16,
+    pub height: u16,
 
     pub pixels: &'a [u8],
 }
 
 #[derive(Debug, Clone, Copy)]
 pub struct Image<'a> {
-    pub mode: u32,
+    pub format: PixelFormat,
     pub clut: Option<ImageBlock<'a>>,
     pub image: ImageBlock<'a>,
-    pub encoded_len: usize,
+    pub encoded_len: u32,
+}
+
+impl Image<'_> {
+    pub(crate) fn encoded_mode(&self) -> u32 {
+        let format = match self.format {
+            PixelFormat::Indexed4 => 0,
+            PixelFormat::Indexed8 => 1,
+            PixelFormat::Direct16 => 2,
+            PixelFormat::Direct24 => 3,
+        };
+        format | if self.clut.is_some() { CLUT_FLAG } else { 0 }
+    }
 }
 
 pub(crate) struct Images<'a> {
@@ -50,8 +84,9 @@ impl<'a> Images<'a> {
         let start = self.at;
         let header: TimHeader = bytes::read(self.bytes, start)?;
         let mode = header.mode.get();
+        let format = PixelFormat::parse(mode)?;
         let mut cursor = start + size_of::<TimHeader>();
-        let clut = if mode & TIM_CLUT_FLAG != 0 {
+        let clut = if mode & CLUT_FLAG != 0 {
             Some(block(self.bytes, &mut cursor)?)
         } else {
             None
@@ -59,10 +94,10 @@ impl<'a> Images<'a> {
         let image = block(self.bytes, &mut cursor)?;
         self.at = cursor;
         Ok(Some(Image {
-            mode,
+            format,
             clut,
             image,
-            encoded_len: cursor - start,
+            encoded_len: u32::try_from(cursor - start)?,
         }))
     }
 }
@@ -95,22 +130,22 @@ fn block<'a>(bytes: &'a [u8], cursor: &mut usize) -> crate::Result<ImageBlock<'a
     }
     let encoded = span(bytes, at, size)?;
     let rectangle = header.rectangle;
-    if rectangle.width.get() < 0 || rectangle.height.get() < 0 {
-        return Err(crate::Error::invalid_rectangle(
-            at,
-            rectangle.width.get(),
-            rectangle.height.get(),
-        ));
-    }
-    let count = (rectangle.width.get() as usize)
-        .checked_mul(rectangle.height.get() as usize)
+    let invalid =
+        crate::Error::invalid_rectangle(at, rectangle.width.get(), rectangle.height.get());
+    let width = u16::try_from(rectangle.width.get()).map_err(|_| invalid)?;
+    let height = u16::try_from(rectangle.height.get()).map_err(|_| invalid)?;
+    let count = width
+        .as_usize()
+        .checked_mul(height.as_usize())
         .and_then(|value| value.checked_mul(2))
-        .ok_or(crate::Error::invalid_rectangle(
-            at,
-            rectangle.width.get(),
-            rectangle.height.get(),
-        ))?;
+        .ok_or(invalid)?;
     let pixels = span(encoded, size_of::<TimBlock>(), count)?;
     *cursor = at + size;
-    Ok(ImageBlock { rectangle, pixels })
+    Ok(ImageBlock {
+        x: rectangle.x.get(),
+        y: rectangle.y.get(),
+        width,
+        height,
+        pixels,
+    })
 }

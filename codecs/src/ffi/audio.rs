@@ -9,8 +9,8 @@ use core::{ptr, slice};
 
 const SUPPORTED_SEQ_VERSION: u32 = 1;
 const TONE_REVERB_FLAG: u8 = 4;
-const ADSR_SUSTAIN_LEVEL_STEP: u32 = 2048;
-const ENVELOPE_LEVEL_MAX: u32 = 32767;
+const ADSR_SUSTAIN_LEVEL_STEP: u16 = 2048;
+const ENVELOPE_LEVEL_MAX: u16 = 32767;
 const ADPCM_BLOCK_BYTES: usize = crate::cast::u32_to_usize(KF_AUDIO_ADPCM_BLOCK_BYTES);
 const ADPCM_BLOCK_FRAMES: usize = crate::cast::u32_to_usize(KF_AUDIO_ADPCM_BLOCK_FRAMES);
 const ADPCM_HEADER_BYTES: usize = 2;
@@ -77,17 +77,17 @@ unsafe fn audio_bank_decode(
     result.sample_count = bank.header.sample_count.get();
     let mut packed_program = 0;
     for slot in 0..VAB_PROGRAM_SLOTS {
-        let program = bank.program_slot(slot)?;
+        let program = bank.program_slot(slot.as_usize())?;
         if program.tone_count == 0 {
             continue;
         }
-        if program.tone_count.as_usize() > VAB_TONES_PER_PROGRAM
+        if u16::from(program.tone_count) > VAB_TONES_PER_PROGRAM
             || program.master_volume > midi::DATA_MASK
             || program.pan > midi::DATA_MASK
         {
             crate::bail!("invalid VAB program");
         }
-        let target = &mut result.programs[slot];
+        let target = &mut result.programs[slot.as_usize()];
         target.tone_count = program.tone_count;
         target.volume = program.master_volume;
         target.pan = program.pan;
@@ -95,9 +95,10 @@ unsafe fn audio_bank_decode(
         // Program numbers are sparse; occupied slots own consecutive tone blocks.
         for ordinal in 0..program.tone_count.as_usize() {
             let tone = bank.tone(packed_program, ordinal)?;
-            if tone.program.get() != slot as i16
-                || tone.sample.get() < 1
-                || tone.sample.get() as u16 > bank.header.sample_count.get()
+            let sample = u16::try_from(tone.sample.get())?;
+            if i32::from(tone.program.get()) != i32::from(slot)
+                || sample < 1
+                || sample > bank.header.sample_count.get()
                 || tone.volume > midi::DATA_MASK
                 || tone.pan > midi::DATA_MASK
                 || tone.center_shift > midi::DATA_MASK
@@ -124,7 +125,7 @@ unsafe fn audio_bank_decode(
                 portamento_time: tone.portamento_time,
                 bend_down: tone.pitch_bend_minimum,
                 bend_up: tone.pitch_bend_maximum,
-                sample_index: tone.sample.get() as u16 - 1,
+                sample_index: sample - 1,
                 envelope: KfAudioEnvelope {
                     attack_shift: tone.adsr1.attack_shift(),
                     attack_step: tone.adsr1.attack_step(),
@@ -132,9 +133,9 @@ unsafe fn audio_bank_decode(
                     sustain_shift: tone.adsr2.sustain_shift(),
                     sustain_step: tone.adsr2.sustain_step(),
                     release_shift: tone.adsr2.release_shift(),
-                    sustain_level: ((u32::from(tone.adsr1.sustain_level()) + 1)
+                    sustain_level: ((u16::from(tone.adsr1.sustain_level()) + 1)
                         * ADSR_SUSTAIN_LEVEL_STEP)
-                        .min(ENVELOPE_LEVEL_MAX) as u16,
+                        .min(ENVELOPE_LEVEL_MAX),
                     attack_exponential: tone.adsr1.attack_exponential(),
                     sustain_exponential: tone.adsr2.sustain_exponential(),
                     sustain_decreasing: tone.adsr2.sustain_decreasing(),
@@ -150,8 +151,8 @@ unsafe fn audio_bank_decode(
     for sample in bank.samples() {
         let sample = sample?;
         result.samples[sample.index.as_usize()] = KfAudioSampleRange {
-            offset: sample.offset as u32,
-            size: sample.data.len() as u32,
+            offset: sample.offset,
+            size: sample.size,
         };
     }
     Ok(())
@@ -189,7 +190,7 @@ unsafe fn audio_sample_info(
         if block[1] & ADPCM_LOOP_START != 0 {
             loop_begin = frames;
         }
-        frames += ADPCM_BLOCK_FRAMES as u32;
+        frames += KF_AUDIO_ADPCM_BLOCK_FRAMES;
         if block[1] & ADPCM_END != 0 {
             info.write(KfAudioSampleInfo {
                 frames,
@@ -257,8 +258,10 @@ unsafe fn audio_decode_block(
     }
     let (positive, negative) = FILTERS[filter];
     for n in 0..ADPCM_BLOCK_FRAMES {
-        let nibble = ((block[ADPCM_HEADER_BYTES + n / 2] >> ((n & 1) * ADPCM_NIBBLE_BITS))
-            & ADPCM_NIBBLE_MASK) as i32;
+        let nibble = i32::from(
+            (block[ADPCM_HEADER_BYTES + n / 2] >> ((n & 1) * ADPCM_NIBBLE_BITS))
+                & ADPCM_NIBBLE_MASK,
+        );
         let signed = if nibble < ADPCM_NIBBLE_SIGN_BIT {
             nibble
         } else {
@@ -268,7 +271,7 @@ unsafe fn audio_decode_block(
             + ((state.previous * positive + state.older * negative + ADPCM_PREDICTOR_ROUNDING)
                 >> ADPCM_PREDICTOR_FRACTION_BITS);
         let value = value.clamp(i32::from(i16::MIN), i32::from(i16::MAX));
-        pcm.add(n).write(value as i16);
+        pcm.add(n).write(i16::try_from(value)?);
         state.older = state.previous;
         state.previous = value;
     }
@@ -307,7 +310,7 @@ unsafe fn music_decode(
     {
         crate::bail!("unsupported SEQ header");
     }
-    let mut count = 0;
+    let mut count = 0u32;
     let mut duration = 0u64;
     for parsed in sequence.events() {
         let event = parsed?;
@@ -370,10 +373,10 @@ unsafe fn music_decode(
             _ => crate::bail!("unsupported SEQ event"),
         }
         if !events.is_null() {
-            if count == capacity {
+            if count.as_usize() == capacity {
                 return Err(crate::Error::output_full());
             }
-            events.add(count).write(result);
+            events.add(count.as_usize()).write(result);
         }
         count += 1;
         if matches!(
@@ -389,7 +392,7 @@ unsafe fn music_decode(
             info.write(KfMusicInfo {
                 resolution: u32::from(sequence.header.resolution.get()),
                 tempo: sequence.header.tempo.get(),
-                event_count: count as u32,
+                event_count: count,
             });
             return Ok(());
         }

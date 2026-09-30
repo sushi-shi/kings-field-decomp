@@ -74,8 +74,25 @@ static void tim_records()
     assert(kf_tim_info(tim.data(), tim.size(), tim.size(), &info) == KF_CODEC_END);
     std::array<uint8_t, 8> rgba {};
     assert(kf_tim_rgba(tim.data(), tim.size(), 0, 0, rgba.data(), rgba.size() - 1) == KF_CODEC_OUTPUT_FULL);
+    for (uint32_t mode : {0u, 1u, 2u}) {
+        word(tim, 4, mode);
+        assert(kf_tim_info(tim.data(), tim.size(), 0, &info) == KF_CODEC_OK);
+        assert(info.mode == mode && info.width == (8u >> mode) && info.height == 1);
+    }
+    for (uint32_t mode : {4u, 7u, 16u, 0xffffffffu}) {
+        word(tim, 4, mode);
+        assert(kf_tim_info(tim.data(), tim.size(), 0, &info) == KF_CODEC_INVALID);
+    }
+    word(tim, 4, 2);
     word(tim, 16, 0x0001ffff);
     assert(kf_tim_info(tim.data(), tim.size(), 0, &info) == KF_CODEC_INVALID);
+    word(tim, 16, 0xffff0001);
+    assert(kf_tim_info(tim.data(), tim.size(), 0, &info) == KF_CODEC_INVALID);
+    tim.resize(28);
+    word(tim, 4, 3); word(tim, 8, 20); word(tim, 12, 0xfffcfffd); word(tim, 16, 0x00010003);
+    assert(kf_tim_info(tim.data(), tim.size(), 0, &info) == KF_CODEC_OK);
+    assert(info.width == 2 && info.height == 1 && info.encoded_bytes == tim.size());
+    assert(info.image_x == -3 && info.image_y == -4);
 }
 
 int main()
