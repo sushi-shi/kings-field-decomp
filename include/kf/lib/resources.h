@@ -2,6 +2,7 @@
 #define KF_RESOURCES_H
 
 #include <kf/lib/geometry_types.h>
+#include <kf/lib/map_types.h>
 #include <kf/lib/types.h>
 #include <kf/platform/host.h>
 
@@ -65,7 +66,8 @@ inline u8 *resource_stream_next(u8 *chunk, const u8 *end)
 
 extern void tim_upload_images(const u8 *tim_data, std::size_t size);
 
-extern const u32 *resource_stream_copy_words(
-    u32 *destination, const u32 *source, std::size_t word_count);
+void map_grids_load(KfResourceChunk chunk, KfMapAttributeGrid &attributes,
+    KfMapGrid &heights, KfMapOrientationGrid &orientations,
+    KfMapGrid &flags, KfMapCollisionGrid &collision);
 
 #endif // KF_RESOURCES_H

@@ -21,7 +21,7 @@ class NativeRegressions(unittest.TestCase):
             "--target-dir", str(rust_target),
         ], check=True)
         for name in ["native_regressions", "lighting_regressions", "resource_failures",
-                     "cutscene_resources", "collision_results"]:
+                     "cutscene_resources", "collision_results", "map_grids"]:
             subprocess.run(
                 [
                     "clang++", "-std=c++20", "-O1", "-g", "-fno-rtti",
@@ -34,6 +34,15 @@ class NativeRegressions(unittest.TestCase):
                 check=True, text=True,
             )
         cls.binary = Path(cls.directory.name) / "native_regressions"
+
+    def test_map_grid_copy_alignment_and_bounds(self):
+        for scenario in ("aligned", "unaligned", "truncated"):
+            with self.subTest(scenario=scenario):
+                result = subprocess.run([Path(self.directory.name) / "map_grids", scenario],
+                                        capture_output=True, text=True, timeout=10)
+                self.assertEqual(result.returncode, 77 if scenario == "truncated" else 0,
+                                 result.stderr)
+                self.assertEqual(result.stderr, "Truncated map grids\n" if scenario == "truncated" else "")
 
     def test_cutscene_resource_boundaries(self):
         binary = Path(self.directory.name) / "cutscene_resources"

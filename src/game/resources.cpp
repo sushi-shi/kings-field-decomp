@@ -39,8 +39,6 @@ KfMapCollisionGrid map_collision_grid;
 
 KfMapAttributeGrid map_cell_attribute_grid;
 
-static constexpr auto map_grid_word_count = sizeof map_cell_attribute_grid / sizeof(u32);
-
 static kf::ByteBuffer common_images_read()
 {
     kf::DataFile file{};
@@ -184,7 +182,6 @@ void map_resources_load(KfFloorId floor, KfMapVariant map_variant)
 {
     u8 *stream;
     u8 *block;
-    const u32 *source;
 
     audio_stop_sequence_fade();
     effect_pool_reset();
@@ -203,21 +200,10 @@ void map_resources_load(KfFloorId floor, KfMapVariant map_variant)
     block = stream;
     stream = resource_stream_next(stream, resource_end);
     audio_play_current_map_sequence();
-    const auto map_grids = resource_chunk_view(stream, resource_end);
-    if (map_grids.size < 5 * sizeof map_cell_attribute_grid)
-        kf::host_fail("Truncated map grids");
-    source = resource_stream_copy_words(
-        map_cell_attribute_grid.words,
-        (u32 *)(stream + KF_RESOURCE_CHUNK_HEADER_BYTES),
-        map_grid_word_count);
-    source = resource_stream_copy_words(
-        map_floor_height_grid.words, source, map_grid_word_count);
-    source = resource_stream_copy_words(
-        map_cell_orientation_grid.words, source, map_grid_word_count);
-    source = resource_stream_copy_words(
-        map_collision_flag_grid.words, source, map_grid_word_count);
-    resource_stream_copy_words(
-        map_collision_grid.words, source, map_grid_word_count);
+    map_grids_load(resource_chunk_view(stream, resource_end),
+        map_cell_attribute_grid, map_floor_height_grid,
+        map_cell_orientation_grid, map_collision_flag_grid,
+        map_collision_grid);
     stream = resource_stream_next(stream, resource_end);
     const auto floor_items = resource_chunk_view(stream, resource_end);
     item_load_floor_placements(floor_item_storage(), map_floor_height_grid, floor_items.data, floor_items.size);

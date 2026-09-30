@@ -42,7 +42,8 @@ The game owns the decoded arrays; animation caches retain morph indices rather
 than resource pointers and are invalidated when their asset is replaced.
 Fixed codec records are defined once in `codecs/src/formats.rs`, with explicit
 endianness, byte alignment and checked sizes. Gameplay and opening placements
-use the shared decoders. Placement decoders return counted records and validate their grid
+use the shared decoders; map grids are copied from bounded bytes without aligned
+source casts. Placement decoders return counted records and validate their grid
 and definition indices. Actor definitions retain their resource layout with a checked
 table extent. Cell-window dimensions and map orientations still need load-time
 validation; further resource work is tracked in
