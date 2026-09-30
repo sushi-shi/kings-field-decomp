@@ -68,6 +68,13 @@ const OK: KfCodecResult = KF_CODEC_OK;
 const END: KfCodecResult = KF_CODEC_END;
 const INVALID: KfCodecResult = KF_CODEC_INVALID;
 const OUTPUT_FULL: KfCodecResult = KF_CODEC_OUTPUT_FULL;
+impl From<crate::bytes::ReadError> for KfCodecResult {
+    fn from(error: crate::bytes::ReadError) -> Self {
+        report_error(error.location, c"truncated codec input");
+        INVALID
+    }
+}
+
 impl From<crate::tim::TimError> for KfCodecResult {
     fn from(error: crate::tim::TimError) -> Self {
         if let crate::tim::TimError::Truncated { location, .. } = error {
@@ -188,7 +195,7 @@ pub unsafe extern "C" fn kf_tim_rgba(
             continue;
         }
         let word = if mode == TIM_DIRECT16 {
-            read_u16_le(image.image.pixels, index * 2).expect("validated TIM pixels")
+            read_u16_le(image.image.pixels, index * 2)
         } else {
             let entry = if mode == TIM_INDEXED4 {
                 ((image.image.pixels[index / 2] >> ((index % 2) * INDEXED4_BITS)) & INDEXED4_MASK)
@@ -196,7 +203,11 @@ pub unsafe extern "C" fn kf_tim_rgba(
             } else {
                 image.image.pixels[index].as_usize()
             };
-            read_u16_le(palette, entry * 2).expect("validated TIM palette")
+            read_u16_le(palette, entry * 2)
+        };
+        let word = match word {
+            Ok(word) => word,
+            Err(error) => return error.into(),
         };
         for (channel, shift) in destination[..3]
             .iter_mut()

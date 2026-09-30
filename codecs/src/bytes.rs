@@ -13,6 +13,65 @@ pub(crate) struct ReadError {
 
 type Result<T> = core::result::Result<T, ReadError>;
 
+pub(crate) struct Record<'a, const SIZE: usize> {
+    bytes: &'a [u8; SIZE],
+}
+
+impl<'a, const SIZE: usize> Record<'a, SIZE> {
+    #[track_caller]
+    pub(crate) fn new(bytes: &'a [u8]) -> Result<Self> {
+        let bytes = bytes.first_chunk().ok_or(ReadError {
+            location: Location::caller(),
+            at: 0,
+            need: SIZE,
+            available: bytes.len(),
+        })?;
+        Ok(Self { bytes })
+    }
+
+    pub(crate) fn read<const AT: usize, T: bytemuck::AnyBitPattern>(&self) -> T {
+        const { assert!(AT <= SIZE && size_of::<T>() <= SIZE - AT) };
+        bytemuck::pod_read_unaligned(&self.bytes[AT..AT + size_of::<T>()])
+    }
+
+    pub(crate) fn u8<const AT: usize>(&self) -> u8 {
+        self.read::<AT, _>()
+    }
+
+    pub(crate) fn i8<const AT: usize>(&self) -> i8 {
+        self.read::<AT, _>()
+    }
+
+    pub(crate) fn u16_le<const AT: usize>(&self) -> u16 {
+        u16::from_le(self.read::<AT, _>())
+    }
+
+    pub(crate) fn i16_le<const AT: usize>(&self) -> i16 {
+        i16::from_le(self.read::<AT, _>())
+    }
+
+    pub(crate) fn u32_le<const AT: usize>(&self) -> u32 {
+        u32::from_le(self.read::<AT, _>())
+    }
+
+    pub(crate) fn i32_le<const AT: usize>(&self) -> i32 {
+        i32::from_le(self.read::<AT, _>())
+    }
+
+    pub(crate) fn u16_be<const AT: usize>(&self) -> u16 {
+        u16::from_be(self.read::<AT, _>())
+    }
+
+    pub(crate) fn u32_be<const AT: usize>(&self) -> u32 {
+        u32::from_be(self.read::<AT, _>())
+    }
+
+    pub(crate) fn u24_be<const AT: usize>(&self) -> u32 {
+        let [a, b, c] = self.read::<AT, [u8; 3]>();
+        u32::from_be(bytemuck::cast([0, a, b, c]))
+    }
+}
+
 #[track_caller]
 pub(crate) fn span(bytes: &[u8], at: usize, size: usize) -> Result<&[u8]> {
     at.checked_add(size)
@@ -57,23 +116,8 @@ pub(crate) fn read_i16_le(bytes: &[u8], at: usize) -> Result<i16> {
 }
 
 #[track_caller]
-pub(crate) fn read_i32_le(bytes: &[u8], at: usize) -> Result<i32> {
-    read(bytes, at).map(i32::from_le)
-}
-
-#[track_caller]
 pub(crate) fn read_u32_le(bytes: &[u8], at: usize) -> Result<u32> {
     read(bytes, at).map(u32::from_le)
-}
-
-#[track_caller]
-pub(crate) fn read_u16_be(bytes: &[u8], at: usize) -> Result<u16> {
-    read(bytes, at).map(u16::from_be)
-}
-
-#[track_caller]
-pub(crate) fn read_u32_be(bytes: &[u8], at: usize) -> Result<u32> {
-    read(bytes, at).map(u32::from_be)
 }
 
 #[track_caller]

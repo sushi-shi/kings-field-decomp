@@ -16,7 +16,7 @@ fn rectangle_valid(block: &ImageBlock<'_>) -> bool {
         && r.width <= TEXTURE_WIDTH as i16
         && r.height <= TEXTURE_HEIGHT as i16
 }
-fn copy_block(block: &ImageBlock<'_>, words: &mut [u16]) {
+fn copy_block(block: &ImageBlock<'_>, words: &mut [u16]) -> Result<(), crate::bytes::ReadError> {
     let r = block.rectangle;
     for y in 0..r.height as usize {
         for x in 0..r.width as usize {
@@ -24,10 +24,10 @@ fn copy_block(block: &ImageBlock<'_>, words: &mut [u16]) {
             // Common CLUT rectangles cross row 511. Authored transfers wrap at
             // the image edges; retain this only during material conversion.
             words[((r.y as usize + y) & (TEXTURE_HEIGHT - 1)) * TEXTURE_WIDTH
-                + ((r.x as usize + x) & (TEXTURE_WIDTH - 1))] =
-                read_u16_le(block.pixels, at).expect("validated TIM pixels");
+                + ((r.x as usize + x) & (TEXTURE_WIDTH - 1))] = read_u16_le(block.pixels, at)?;
         }
     }
+    Ok(())
 }
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn kf_tim_compose(
@@ -63,11 +63,18 @@ pub unsafe extern "C" fn kf_tim_compose(
     }
     let words = slice::from_raw_parts_mut(words, TEXTURE_WIDTH * TEXTURE_HEIGHT);
     for image in Images::new(bytes) {
-        let image = image.expect("preflighted TIM stream");
+        let image = match image {
+            Ok(image) => image,
+            Err(error) => return error.into(),
+        };
         if let Some(clut) = image.clut {
-            copy_block(&clut, words);
+            if let Err(error) = copy_block(&clut, words) {
+                return error.into();
+            }
         }
-        copy_block(&image.image, words);
+        if let Err(error) = copy_block(&image.image, words) {
+            return error.into();
+        }
     }
     OK
 }

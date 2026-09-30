@@ -10,7 +10,7 @@ ROOT = Path(__file__).resolve().parents[1]
 
 
 class ResourceCodecs(unittest.TestCase):
-    def test_animation_and_placement_boundaries(self):
+    def test_resource_boundaries(self):
         with tempfile.TemporaryDirectory(prefix="kf-resource-codecs-") as temporary:
             directory = Path(temporary)
             subprocess.run([
@@ -28,3 +28,6 @@ class ResourceCodecs(unittest.TestCase):
             result = subprocess.run([binary], check=True, timeout=20, capture_output=True, text=True)
             self.assertRegex(result.stdout,
                              r"kf-codec: [^\n]*resources\.rs:\d+:\d+: truncated resource input")
+            for format_name in ("VAB", "SEQ"):
+                self.assertRegex(result.stdout,
+                                 rf"kf-codec: [^\n]*audio\.rs:\d+:\d+: truncated {format_name} input")

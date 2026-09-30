@@ -1,7 +1,9 @@
 #include <kf/lib/codec.h>
+#include <kf/audio/codec.h>
 #include <algorithm>
 #include <array>
 #include <cassert>
+#include <memory>
 #include <vector>
 
 static void word(std::vector<uint8_t> &bytes, size_t at, uint32_t value)
@@ -113,8 +115,47 @@ static void placements()
     assert(kf_event_placements_decode(bytes.data(), 24, limits, events.data(), 1, &count) == KF_CODEC_OK && count == 1);
 }
 
+static void audio_records()
+{
+    std::vector<uint8_t> header(32 + 128 * 16 + 16 * 32 + 256 * 2);
+    std::array<uint8_t, 8> body {};
+    word(header, 0, 0x56414270); word(header, 4, 7);
+    word(header, 12, header.size() + body.size());
+    word(header, 16, 1u << 16); word(header, 20, (1u << 16) | 1);
+    header[24] = 99; header[25] = 63;
+    header[32] = 1; header[33] = 79; header[34] = 5; header[36] = 62;
+    const size_t tone = 32 + 128 * 16;
+    header[tone + 2] = 89; header[tone + 4] = 60;
+    header[tone + 5] = 64; header[tone + 7] = 127;
+    word(header, tone + 20, 1u << 16);
+    header[tone + 16 * 32 + 2] = 1;
+    auto bank = std::make_unique<KfAudioBankData>();
+    for (size_t size = 0; size < 32; ++size)
+        assert(kf_audio_bank_decode(header.data(), size, body.data(), body.size(), bank.get()) == KF_CODEC_INVALID);
+    header.insert(header.begin(), 0);
+    assert(kf_audio_bank_decode(header.data() + 1, header.size() - 1, body.data(), body.size(), bank.get()) == KF_CODEC_OK);
+    assert(bank->volume == 99 && bank->pan == 63 && bank->sample_count == 1);
+    assert(bank->programs[0].volume == 79 && bank->programs[0].priority == 5);
+    assert(bank->programs[0].tones[0].volume == 89 && bank->programs[0].tones[0].sample_index == 0);
+    assert(bank->samples[0].offset == 0 && bank->samples[0].size == body.size());
+
+    // An odd source address, big-endian resolution and a three-byte tempo.
+    const std::array<uint8_t, 20> sequence {
+        0, 'p', 'Q', 'E', 'S', 0, 0, 0, 1, 0x01, 0x23,
+        0x01, 0x23, 0x45, 4, 2, 1, 0xff, 0x2f, 0,
+    };
+    KfMusicInfo info {};
+    KfMusicEvent event {};
+    for (size_t size = 0; size < sequence.size() - 1; ++size)
+        assert(kf_music_decode(sequence.data() + 1, size, &event, 1, &info) == KF_CODEC_INVALID);
+    assert(kf_music_decode(sequence.data() + 1, sequence.size() - 1, &event, 1, &info) == KF_CODEC_OK);
+    assert(info.resolution == 0x0123 && info.tempo == 0x012345 && info.event_count == 1);
+    assert(event.kind == KfMusicEventKind::End && event.delta == 1);
+}
+
 int main()
 {
     animation();
     placements();
+    audio_records();
 }

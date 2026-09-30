@@ -14,10 +14,7 @@ pub const TIM_DIRECT16: u32 = 2;
 pub const TIM_DIRECT24: u32 = 3;
 const BLOCK_SIZE_LOW_BITS: u32 = 3;
 const BLOCK_HEADER_BYTES: usize = 12;
-const BLOCK_RECTANGLE_X_OFFSET: usize = 4;
-const BLOCK_RECTANGLE_Y_OFFSET: usize = 6;
-const BLOCK_RECTANGLE_WIDTH_OFFSET: usize = 8;
-const BLOCK_RECTANGLE_HEIGHT_OFFSET: usize = 10;
+const BLOCK_RECTANGLE_OFFSET: usize = 4;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum TimError {
@@ -211,12 +208,12 @@ fn block<'a>(bytes: &'a [u8], cursor: &mut usize) -> Result<ImageBlock<'a>, TimE
         return Err(TimError::InvalidBlockSize { at, declared });
     }
     let encoded = span(bytes, at, size)?;
-    let half = |offset| bytes::read_i16_le(encoded, offset).expect("validated TIM rectangle");
+    let record = bytes::Record::<8>::new(&encoded[BLOCK_RECTANGLE_OFFSET..])?;
     let rectangle = Rect {
-        x: half(BLOCK_RECTANGLE_X_OFFSET),
-        y: half(BLOCK_RECTANGLE_Y_OFFSET),
-        width: half(BLOCK_RECTANGLE_WIDTH_OFFSET),
-        height: half(BLOCK_RECTANGLE_HEIGHT_OFFSET),
+        x: record.i16_le::<0>(),
+        y: record.i16_le::<2>(),
+        width: record.i16_le::<4>(),
+        height: record.i16_le::<6>(),
     };
     if rectangle.width < 0 || rectangle.height < 0 {
         return Err(TimError::InvalidRectangle {
@@ -237,7 +234,7 @@ fn block<'a>(bytes: &'a [u8], cursor: &mut usize) -> Result<ImageBlock<'a>, TimE
     *cursor = at + size;
     Ok(ImageBlock {
         rectangle,
-        rectangle_offset: at + BLOCK_RECTANGLE_X_OFFSET,
+        rectangle_offset: at + BLOCK_RECTANGLE_OFFSET,
         data_offset: at + BLOCK_HEADER_BYTES,
         pixels,
         payload: &encoded[BLOCK_HEADER_BYTES..],

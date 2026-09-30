@@ -1,11 +1,20 @@
 use super::bindings::*;
 use super::{input_valid, output_valid, INVALID, OK, OUTPUT_FULL};
 use crate::audio::midi;
-use crate::audio::{ChannelMessage, SeqError, SeqEventKind, Sequence, VabBank};
+use crate::audio::{ChannelMessage, SeqError, SeqEventKind, Sequence, VabBank, VabError};
 use crate::audio::{VAB_PROGRAM_SLOTS, VAB_TONES_PER_PROGRAM};
 use crate::bytes::read_u24_be;
 use crate::cast::{AsU64, AsUsize};
 use core::{ptr, slice};
+
+impl From<VabError> for KfCodecResult {
+    fn from(error: VabError) -> Self {
+        if let VabError::Truncated { location, .. } = error {
+            super::report_error(location, c"truncated VAB input");
+        }
+        INVALID
+    }
+}
 
 impl From<SeqError> for KfCodecResult {
     fn from(error: SeqError) -> Self {
@@ -71,7 +80,7 @@ pub unsafe extern "C" fn kf_audio_bank_decode(
         slice::from_raw_parts(body, body_size),
     ) {
         Ok(bank) => bank,
-        Err(_) => return INVALID,
+        Err(error) => return error.into(),
     };
     if bank.header.master_volume > midi::DATA_MASK || bank.header.pan > midi::DATA_MASK {
         return INVALID;
@@ -85,7 +94,10 @@ pub unsafe extern "C" fn kf_audio_bank_decode(
     result.sample_count = bank.header.sample_count;
     let mut packed_program = 0;
     for slot in 0..VAB_PROGRAM_SLOTS {
-        let program = bank.program_slot(slot).unwrap();
+        let program = match bank.program_slot(slot) {
+            Ok(program) => program,
+            Err(error) => return error.into(),
+        };
         if program.tone_count == 0 {
             continue;
         }
@@ -103,8 +115,8 @@ pub unsafe extern "C" fn kf_audio_bank_decode(
         // Program numbers are sparse; occupied slots own consecutive tone blocks.
         for ordinal in 0..program.tone_count.as_usize() {
             let tone = match bank.tone(packed_program, ordinal) {
-                Some(tone) => tone,
-                None => return INVALID,
+                Ok(tone) => tone,
+                Err(error) => return error.into(),
             };
             if tone.program != slot as i16
                 || tone.sample < 1
@@ -163,6 +175,10 @@ pub unsafe extern "C" fn kf_audio_bank_decode(
         return INVALID;
     }
     for sample in bank.samples() {
+        let sample = match sample {
+            Ok(sample) => sample,
+            Err(error) => return error.into(),
+        };
         result.samples[sample.index.as_usize()] = KfAudioSampleRange {
             offset: sample.offset as u32,
             size: sample.data.len() as u32,
@@ -348,7 +364,10 @@ pub unsafe extern "C" fn kf_music_decode(
                 data,
             } if data.len() == 3 => {
                 result.kind = KF_MUSIC_TEMPO;
-                result.value = read_u24_be(data, 0).expect("validated MIDI tempo");
+                result.value = match read_u24_be(data, 0) {
+                    Ok(tempo) => tempo,
+                    Err(error) => return SeqError::from(error).into(),
+                };
                 if result.value == 0 {
                     return INVALID;
                 }
