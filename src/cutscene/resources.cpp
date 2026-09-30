@@ -29,13 +29,10 @@ KfMapCollisionGrid cutscene_map_collision_grid;
 
 KfMapAttributeGrid cutscene_map_cell_attribute_grid;
 
-static constexpr auto map_grid_word_count = sizeof cutscene_map_cell_attribute_grid / sizeof(u32);
-
 void opening_resources_load_scene0(void)
 {
     u8 *stream;
     u8 *vab_chunk;
-    const u32 *source;
 
     audio_stop_sequence(KF_AUDIO_STOP_FADE);
     audio_close_vab(cutscene_audio_state);
@@ -47,21 +44,10 @@ void opening_resources_load_scene0(void)
     stream = resource_stream_next(stream, resource_end);
     vab_chunk = stream;
     stream = resource_stream_next(stream, resource_end);
-    const auto map_grids = resource_chunk_view(stream, resource_end);
-    if (map_grids.size < 5 * sizeof cutscene_map_cell_attribute_grid)
-        kf::host_fail("Truncated opening map grids");
-    source = resource_stream_copy_words(
-        cutscene_map_cell_attribute_grid.words,
-        resource_chunk_data<u32>(map_grids, "opening map grids"),
-        map_grid_word_count);
-    source = resource_stream_copy_words(
-        cutscene_map_floor_height_grid.words, source, map_grid_word_count);
-    source = resource_stream_copy_words(
-        cutscene_map_cell_orientation_grid.words, source, map_grid_word_count);
-    source = resource_stream_copy_words(
-        opening_cell_storage.scene.collision_flags.words, source, map_grid_word_count);
-    resource_stream_copy_words(
-        cutscene_map_collision_grid.words, source, map_grid_word_count);
+    map_grids_load(resource_chunk_view(stream, resource_end),
+        cutscene_map_cell_attribute_grid, cutscene_map_floor_height_grid,
+        cutscene_map_cell_orientation_grid, opening_cell_storage.scene.collision_flags,
+        cutscene_map_collision_grid);
     stream = resource_stream_next(stream, resource_end);
     const auto floor_items = resource_chunk_view(stream, resource_end);
     item_load_floor_placements(cutscene_floor_item_storage(), cutscene_map_floor_height_grid, floor_items.data, floor_items.size);

@@ -15,7 +15,6 @@
 #include <array>
 
 struct KfAnimationCacheRecord;
-struct KfAssetHeader;
 
 enum {
     KF_PLAYER_SOUND_WEAPON_ATTACK = 0,
@@ -145,7 +144,7 @@ typedef struct KfPlayerState {
     KfObjectId equipped_weapon_id;
     std::array<u8, 3> unknown_65;
     KfWeaponRecord *equipped_weapon_record;
-    struct KfAssetHeader *weapon_asset_buffer;
+    u8 *weapon_asset_buffer;
     s16 weapon_attack_phase;
     std::array<u8, 2> unknown_72;
     struct KfAnimationCacheRecord *weapon_animation_cache;

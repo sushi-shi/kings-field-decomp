@@ -13,50 +13,21 @@
 #include <cstring>
 #include <new>
 
-typedef struct KfAnimClip {
-    u16 keyframe_count;
-    u16 unknown_02;
-    u32 keyframes[1];
-} KfAnimClip;
-
-typedef struct KfAnimKeyframe {
-    KfAnimationBlendDirection reverse;
-    u16 duration;
-    u16 rest_index;
-    u16 morph_count;
-    u16 morph_indices[1];
-} KfAnimKeyframe;
-
-typedef struct KfMorphRange {
-    u32 base_vertex;
-    u32 vertex_count;
-} KfMorphRange;
-
-typedef struct KfMorphObject {
-    u32 tmd_object_index;
-    KfMorphRange range;
-    SVECTOR deltas[1];
-} KfMorphObject;
-
-static_assert(sizeof(KfMorphRange) == 8 && offsetof(KfMorphObject, deltas) == 12);
-
-static void morph_add_deltas(SVECTOR *vertices, u32 vertex_count,
-    const KfMorphObject *morph, u16 blend)
+static void morph_add_deltas(SVECTOR *vertices, const KfAnimationData &animation,
+    u16 morph_index, u16 blend)
 {
-    const auto &range = morph->range;
-    if (range.base_vertex > vertex_count || range.vertex_count > vertex_count - range.base_vertex)
-        kf::host_fail("Animation morph exceeds model vertex range.");
+    const auto &morph = animation.morphs[morph_index];
     const auto add = [blend](s16 value, s16 delta) {
         const s32 scaled = (s32(delta) * s16(blend)) >> KF_FIXED12_BITS;
         // Delta scaling saturates first; adding it to the base vertex wraps.
         return static_cast<s16>(value + std::clamp<s32>(scaled, std::numeric_limits<s16>::min(), std::numeric_limits<s16>::max()));
     };
-    for (u32 i = 0; i < range.vertex_count; ++i) {
-        SVECTOR &vertex = vertices[range.base_vertex + i];
-        const SVECTOR &delta = morph->deltas[i];
-        vertex.vx = add(vertex.vx, delta.vx);
-        vertex.vy = add(vertex.vy, delta.vy);
-        vertex.vz = add(vertex.vz, delta.vz);
+    for (std::size_t i = 0; i < morph.delta_count; ++i) {
+        SVECTOR &vertex = vertices[morph.base_vertex + i];
+        const auto &delta = animation.deltas[morph.first_delta + i];
+        vertex.vx = add(vertex.vx, delta.x);
+        vertex.vy = add(vertex.vy, delta.y);
+        vertex.vz = add(vertex.vz, delta.z);
     }
 }
 
@@ -67,51 +38,28 @@ static inline void copy_vertices(
 }
 
 struct KfAnimationSample {
-    KfAnimKeyframe *keyframe;
+    const KfAnimationKeyframe &keyframe;
     u16 keyframe_index;
     u16 blend_fraction;
 };
 
-static KfAnimationSample animation_sample_keyframe(KfAssetHeader *asset_header, KfAnimClip *clip, u16 phase)
+static KfAnimationSample animation_sample_keyframe(const KfAnimationData &animation,
+    const KfAnimationClipData &clip, u16 phase)
 {
-    KfAnimKeyframe *keyframe;
-    u16 phase_end;
-    u16 phase_start;
-    u16 keyframe_index = 0;
-    u16 blend_fraction;
-    u16 keyframes_left;
-
-    if (clip->keyframe_count == 0)
-        kf::host_fail("Animation clip has no keyframes.");
-
-    phase_end = 0;
-    phase_start = 0;
-    keyframes_left = clip->keyframe_count;
-    {
-        u32 *keyframe_offsets = clip->keyframes;
-
-        while (keyframes_left-- != 0) {
-            keyframe = (KfAnimKeyframe *)((char *)asset_header + *keyframe_offsets);
-            keyframe_offsets++;
-            phase_end += keyframe->duration;
-            if (phase < phase_end) {
-                u32 forward_fraction = ((u32)(u16)(phase - phase_start) << KF_FIXED12_BITS)
-                    / keyframe->duration;
-
-                blend_fraction = forward_fraction;
-                if (keyframe->reverse != KF_ANIMATION_BLEND_FORWARD) {
-                    blend_fraction = KF_FIXED12_ONE - forward_fraction;
-                }
-                return {keyframe, keyframe_index, blend_fraction};
-            }
-            phase_start = phase_end;
-            keyframe_index++;
+    u16 phase_end = 0;
+    for (std::size_t i = 0; i < clip.keyframe_count; ++i) {
+        const auto &keyframe = animation.keyframes[clip.first_keyframe + i];
+        const u16 phase_start = phase_end;
+        phase_end += keyframe.duration;
+        if (phase < phase_end) {
+            const u16 forward = ((u32)(u16)(phase - phase_start) << KF_FIXED12_BITS)
+                / keyframe.duration;
+            return {keyframe, static_cast<u16>(i), static_cast<u16>(
+                keyframe.reverse ? KF_FIXED12_ONE - forward : forward)};
         }
     }
-    keyframe_index--;
-    blend_fraction = KF_FIXED12_ONE;
-
-    return {keyframe, keyframe_index, blend_fraction};
+    const auto last = clip.keyframe_count - 1;
+    return {animation.keyframes[clip.first_keyframe + last], static_cast<u16>(last), KF_FIXED12_ONE};
 }
 
 static void animation_allocate_vertex_cache(KfAnimationCacheRecord *record, KfAnimationCacheRecord **owner_slot,
@@ -139,15 +87,10 @@ bool render_bind_instance_vertices(
     if (vertex_count > KF_PROJECTED_VERTEX_CAPACITY)
         kf::host_fail("Animated model exceeds vertex capacity.");
     KfAnimationCacheRecord *record = *owner_slot;
-    KfAssetHeader *asset_header = game_graphics_runtime.asset_registry_entries[asset_index];
-    KfAnimClip *clip;
-    KfAnimKeyframe *keyframe;
-    KfMorphObject *morph_object;
-    u32 *clip_table;
-    u32 *object_table;
-    u16 morphs_left;
+    asset_registry_select(asset_index);
+    const auto &animation = game_graphics_runtime.asset_animations[asset_index];
 
-    if (asset_header->animation_clip_count == 0) {
+    if (animation.clips.empty()) {
         if (record != NULL) {
             animation_cache_release(record);
         }
@@ -155,8 +98,11 @@ bool render_bind_instance_vertices(
         tmd_select_object_vertices(tmd_context(), 0);
         return true;
     }
-    if (vertex_count == 0)
-        kf::host_fail("Animated model has no vertices.");
+    if (vertex_count != animation.vertex_count)
+        kf::host_fail("Animation vertex count differs from its model.");
+    const auto clip_id = kf_enum_encode<u16>(clip_index);
+    if (clip_id >= animation.clips.size())
+        kf::host_fail("Animation clip index exceeds its resource.");
 
     if (record == NULL) {
         record = animation_cache_allocate();
@@ -170,41 +116,25 @@ bool render_bind_instance_vertices(
         animation_allocate_vertex_cache(record, owner_slot, asset_index, vertex_count);
     }
 
-    clip_table = (u32 *)((char *)asset_header + asset_header->clip_table_offset);
-    clip = (KfAnimClip *)((char *)asset_header + clip_table[kf_enum_encode<u16>(clip_index)]);
-    const KfAnimationSample sample = animation_sample_keyframe(asset_header, clip, phase);
-    keyframe = sample.keyframe;
+    const KfAnimationSample sample = animation_sample_keyframe(animation, animation.clips[clip_id], phase);
+    const auto &keyframe = sample.keyframe;
     const u16 keyframe_index = sample.keyframe_index;
     const u16 blend_fraction = sample.blend_fraction;
 
     if (record->clip_index != clip_index || record->keyframe_index != keyframe_index) {
-        object_table = (u32 *)((char *)asset_header + asset_header->object_table_offset);
-        asset_registry_select(asset_index);
         tmd_select_object_vertices(tmd_context(), 0);
-
         copy_vertices(record->cached_vertices.data(), game_graphics_runtime.current_tmd_vertices, vertex_count);
-
-        morphs_left = keyframe->morph_count;
-        {
-            u16 *morph_indices = keyframe->morph_indices;
-
-            while (morphs_left-- != 0) {
-                morph_object = (KfMorphObject *)(
-                    (char *)asset_header + object_table[*morph_indices]);
-                morph_indices++;
-                morph_add_deltas(record->cached_vertices.data(), vertex_count, morph_object, KF_FIXED12_ONE);
-            }
-        }
-
-        record->rest_morph = (KfMorphObject *)(
-            (char *)asset_header + object_table[keyframe->rest_index]);
+        for (std::size_t i = 0; i < keyframe.morph_count; ++i)
+            morph_add_deltas(record->cached_vertices.data(), animation,
+                animation.indices[keyframe.first_morph + i], KF_FIXED12_ONE);
+        record->rest_morph = keyframe.rest_morph;
     }
 
     record->clip_index = clip_index;
     record->keyframe_index = keyframe_index;
 
     copy_vertices(game_graphics_runtime.morph_scratch.data(), record->cached_vertices.data(), vertex_count);
-    morph_add_deltas(game_graphics_runtime.morph_scratch.data(), vertex_count, record->rest_morph, blend_fraction);
+    morph_add_deltas(game_graphics_runtime.morph_scratch.data(), animation, record->rest_morph, blend_fraction);
     tmd_set_current_vertices(tmd_context(), game_graphics_runtime.morph_scratch.data());
     record->state = KF_ANIMATION_CACHE_LIVE;
     return true;

@@ -150,5 +150,5 @@ try {
   browser.kill('SIGTERM');
   await new Promise(resolve => browser.exitCode !== null ? resolve() : browser.once('exit', resolve));
   await new Promise(resolve => server.close(resolve));
-  await rm(profile, {recursive:true, force:true});
+  await rm(profile, {recursive:true, force:true, maxRetries:5, retryDelay:100});
 }

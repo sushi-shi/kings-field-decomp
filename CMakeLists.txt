@@ -14,34 +14,9 @@ if(KF_SANITIZE AND NOT EMSCRIPTEN)
   add_link_options(-fsanitize=address,undefined)
 endif()
 
-find_program(CARGO_EXECUTABLE cargo REQUIRED)
-find_program(BINDGEN_EXECUTABLE bindgen REQUIRED)
-find_program(BASH_EXECUTABLE bash REQUIRED)
-set(KF_RUST_DIR "${CMAKE_BINARY_DIR}/rust")
-set(KF_RUST_ARGS --offline --locked --release --manifest-path ${CMAKE_SOURCE_DIR}/codecs/Cargo.toml)
-if(EMSCRIPTEN)
-  list(APPEND KF_RUST_ARGS --target wasm32-unknown-emscripten -Zbuild-std=core,compiler_builtins)
-  # Cargo 1.95's pinned source-root override avoids mutating the Nix sysroot.
-  set(KF_RUST_ENV "__CARGO_TESTS_ONLY_SRC_ROOT=$ENV{KF_RUST_SOURCE}")
-  set(KF_CODEC_LIBRARY "${KF_RUST_DIR}/wasm32-unknown-emscripten/release/libkf_codec.a")
-else()
-  set(KF_CODEC_LIBRARY "${KF_RUST_DIR}/release/libkf_codec.a")
-endif()
-file(GLOB_RECURSE KF_CODEC_SOURCES CONFIGURE_DEPENDS codecs/src/*.rs)
-add_custom_command(OUTPUT "${KF_CODEC_LIBRARY}"
-  COMMAND ${CMAKE_COMMAND} -E env BINDGEN=${BINDGEN_EXECUTABLE}
-    ${BASH_EXECUTABLE} codecs/bindings.sh
-  COMMAND ${CMAKE_COMMAND} -E env CARGO_TARGET_DIR=${KF_RUST_DIR} RUSTC_BOOTSTRAP=1
-    RUSTFLAGS=-Cpanic=abort ${KF_RUST_ENV} ${CARGO_EXECUTABLE} build ${KF_RUST_ARGS}
-  COMMAND ${CMAKE_COMMAND} -E touch "${KF_CODEC_LIBRARY}"
-  DEPENDS ${KF_CODEC_SOURCES} codecs/Cargo.toml codecs/Cargo.lock
-    codecs/bindings.sh include/kf/lib/codec.h include/kf/audio/codec.h
-    ${BINDGEN_EXECUTABLE}
-  WORKING_DIRECTORY ${CMAKE_SOURCE_DIR} VERBATIM)
-add_custom_target(kf_codecs_build DEPENDS "${KF_CODEC_LIBRARY}")
-add_library(kf_codecs STATIC IMPORTED GLOBAL)
-set_target_properties(kf_codecs PROPERTIES IMPORTED_LOCATION "${KF_CODEC_LIBRARY}")
-add_dependencies(kf_codecs kf_codecs_build)
+add_library(kf_codecs STATIC codecs/tim.cpp codecs/audio.cpp codecs/resources.cpp)
+target_include_directories(kf_codecs PUBLIC include)
+target_compile_options(kf_codecs PRIVATE -Wall -Wextra -Wpedantic -Werror)
 
 find_package(Python3 REQUIRED COMPONENTS Interpreter)
 # The Nix dev shell and package supply a delta derived from the translator's PPF
