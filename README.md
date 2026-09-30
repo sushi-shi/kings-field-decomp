@@ -42,7 +42,11 @@ ae74beba377d686bfaa292ea40df8ade4454ec3139c2b5152364e02aac90b3d9
 The first launch extracts and caches game data locally. Saves use three separate
 slots.
 
-Optional arguments go after `--`:
+With `nix run`, pass game options after `--`. For example:
+
+```sh
+KF_DISC=/path/to/disc.iso nix run . -- --saves /path/to/saves
+```
 
 | Option | Purpose |
 | --- | --- |
