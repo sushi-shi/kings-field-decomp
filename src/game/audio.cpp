@@ -130,9 +130,7 @@ KfAudioPlaybackResult audio_play_spatial(
         angle = KF_ANGLE_FULL_TURN - angle;
     }
     angle >>= 1;
-    // Retail compares the masked high bit to 1, so this branch never runs.
-    // Preserve that quirk; changing it to a nonzero test changes panning.
-    if ((sound->tone_and_flags & KF_SOUND_PAN_NARROWING_FLAG) == 1) {
+    if ((sound->tone_and_flags & KF_SOUND_PAN_NARROWING_FLAG) != 0) {
         distance_gain_q7 += GAME_SOUND_PAN_NARROWING_GAIN_BOOST;
         distance_gain_q7 = std::min<s32>(distance_gain_q7, KF_AUDIO_MAX_VOLUME);
     }
