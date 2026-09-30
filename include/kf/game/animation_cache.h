@@ -29,7 +29,6 @@ typedef struct KfAnimationCacheRecord {
     struct KfAnimationCacheRecord **owner_slot;
 } KfAnimationCacheRecord;
 
-// Bind static or animated vertices; false means no animation cache slot is available.
 extern bool render_bind_instance_vertices(
     KfAnimationCacheRecord **owner_slot, u16 asset_index, KfAnimationClip clip_index, u16 phase,
     u32 vertex_count);
