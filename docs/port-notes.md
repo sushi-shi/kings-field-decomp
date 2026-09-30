@@ -34,8 +34,9 @@ to the nominal chunk breaks startup.
 no preceding MIX header. Embedded TMD extent is the containing asset's tail, not
 an independently proved subregion. Registration checks the 12-byte header and
 28-byte object records. Gameplay enqueuers retain distinct 12/4/2 accepted-case
-sets and advance by `input_length * 4` even for skipped modes. Cutscene packet
-unions, animation metadata and projection-source lifetimes still need
+sets and advance by `input_length * 4` even for skipped modes. Cutscene enqueuers
+use the same bounded decoder with their own accepted modes. Gameplay animation
+metadata and projection-source lifetimes still need
 [bounded-read work](https://github.com/sushi-shi/kings-field-decomp/issues/40).
 
 The floor-item appearance byte packs facing in the high nibble and frame count
