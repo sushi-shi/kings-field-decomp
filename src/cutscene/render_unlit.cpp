@@ -6,31 +6,25 @@
 
 void render_enqueue_unlit_triangles(u16 object_index, s16 depth_bias)
 {
-    KfTmdPrimitive *polygon;
-    KfTmdObject *object = tmd_get_object(cutscene_tmd_context(), object_index);
-    u32 remaining = object->primitive_count;
-    u8 *packet = (u8 *)open_graphics_runtime.tmd_state.current_tmd.data +
-        (object->primitive_offset + KF_TMD_HEADER_BYTES);
-    u32 header;
+    const auto object = tmd_read_object(cutscene_tmd_context(), object_index);
+    auto stream = tmd_primitive_stream(cutscene_tmd_context(), object);
     s32 depth;
 
-    for (; remaining-- != 0;
-         packet += TMD_PACKET_BODY_BYTES(header)) {
-        header = *(u32 *)packet;
-        packet = TMD_PACKET_BODY(packet);
-        polygon = (KfTmdPrimitive *)packet;
-        switch (tmd_packet_mode(header)) {
+    while (stream.remaining != 0) {
+        const auto packet = tmd_next_packet(stream);
+        switch (packet.mode) {
         case KF_TMD_MODE_FT3: {
+            const auto p = tmd_decode_face(packet, object.vertex_count);
             auto projected = render_projected_triangle(
                 open_graphics_runtime.tmd_projected_vertices,
-                polygon->ft3.v0, polygon->ft3.v1, polygon->ft3.v2);
+                p.vertices[0], p.vertices[1], p.vertices[2]);
             if (!projected) {
                 continue;
             }
             auto face = projected->draw_face();
             CVECTOR colors[4] {};
-            face.material = render_texture_material(polygon->ft3.tsb, polygon->ft3.cba);
-            render_face_uvs(face, {polygon->texture.uv0, polygon->texture.uv1, polygon->texture.uv2});
+            face.material = render_texture_material(p.texture_page, p.palette);
+            render_face_uvs(face, {p.uv[0], p.uv[1], p.uv[2]});
             colors[0] = {open_graphics_runtime.floor_item_state.material.color.r, open_graphics_runtime.floor_item_state.material.color.g, open_graphics_runtime.floor_item_state.material.color.b, 0};
             depth = projected->ordering_depth() + depth_bias;
             if (depth >= KF_SCENE_MIN_OT_DEPTH) {
@@ -39,15 +33,16 @@ void render_enqueue_unlit_triangles(u16 object_index, s16 depth_bias)
             break;
         }
         case KF_TMD_MODE_F3: {
+            const auto p = tmd_decode_face(packet, object.vertex_count);
             auto projected = render_projected_triangle(
                 open_graphics_runtime.tmd_projected_vertices,
-                polygon->f3.v0, polygon->f3.v1, polygon->f3.v2);
+                p.vertices[0], p.vertices[1], p.vertices[2]);
             if (!projected) {
                 continue;
             }
             auto face = projected->draw_face();
             CVECTOR colors[4] {};
-            colors[0] = {polygon->f3.r, polygon->f3.g, polygon->f3.b, 0};
+            colors[0] = {p.color.r, p.color.g, p.color.b, 0};
             depth = projected->ordering_depth() + depth_bias;
             if (depth >= KF_SCENE_MIN_OT_DEPTH) {
                 render_face_submit(&face, colors, kf::FaceShading::Flat, depth & KF_ORDERING_TABLE_INDEX_MASK);
