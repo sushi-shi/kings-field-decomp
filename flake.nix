@@ -35,17 +35,49 @@
           platforms = [ system ];
         };
       };
-      game = pkgs.writeShellApplication {
-        name = "kings-field";
-        runtimeInputs = [ pkgs.coreutils pkgs.util-linux ];
-        text = ''
-          game_binary=${unwrapped}/bin/kings-field
-          ${builtins.readFile ./scripts/launch.sh}
-        '';
-        meta.description = "King's Field launcher: set KF_DISC to your original Japanese ISO or BIN/CUE";
-      };
+      game = pkgs.lib.makeOverridable ({ disc ? null }:
+        let
+          resources = pkgs.runCommand "kings-field-resources" {
+            preferLocalBuild = true;
+            allowSubstitutes = false;
+          } ''
+            ${unwrapped}/bin/kings-field --disc ${pkgs.lib.escapeShellArg "${disc}"} \
+              --extract-to "$out" --extract-only
+          '';
+        in pkgs.writeShellApplication {
+          name = "kings-field";
+          runtimeInputs = [ pkgs.coreutils pkgs.util-linux ];
+          text = if disc == null then ''
+            game_binary=${unwrapped}/bin/kings-field
+            ${builtins.readFile ./scripts/launch.sh}
+          '' else ''
+            exec ${unwrapped}/bin/kings-field --data ${resources} "$@"
+          '';
+          meta.description = if disc == null
+            then "King's Field launcher: set KF_DISC to your original Japanese ISO or BIN/CUE"
+            else "King's Field with resources from your Japanese disc";
+        }) {};
     in {
       packages.${system}.default = game;
+      nixosModules.default = { config, lib, pkgs, ... }:
+        let cfg = config.programs.kings-field;
+        in {
+          options.programs.kings-field = {
+            enable = lib.mkEnableOption "King's Field";
+            disc = lib.mkOption {
+              type = lib.types.nullOr lib.types.path;
+              default = null;
+              description = "Japanese disc image to extract during installation. If unset, use KF_DISC when launching.";
+            };
+          };
+          config = lib.mkIf cfg.enable {
+            environment.systemPackages = [
+              (self.packages.${pkgs.stdenv.hostPlatform.system}.default.override {
+                inherit (cfg) disc;
+              })
+            ];
+          };
+        };
       apps.${system}.default = {
         type = "app";
         program = "${game}/bin/kings-field";
