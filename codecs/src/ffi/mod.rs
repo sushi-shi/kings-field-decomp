@@ -10,20 +10,20 @@ use crate::tim::{
     TIM_DIRECT16, TIM_DIRECT24, TIM_FLAGS_MASK, TIM_FORMAT_MASK, TIM_INDEXED4, TIM_INDEXED8,
 };
 use core::{panic::PanicInfo, slice};
-fn report_error(location: &'static core::panic::Location<'static>, message: &core::ffi::CStr) {
-    unsafe extern "C" {
-        fn printf(format: *const core::ffi::c_char, ...) -> core::ffi::c_int;
-    }
-    // printf is supplied by the native/browser C runtime; lengths bound Rust's non-NUL file name.
-    unsafe {
-        printf(
-            c"kf-codec: %.*s:%u:%u: %s\n".as_ptr(),
-            i32::try_from(location.file().len()).unwrap_or(i32::MAX),
-            location.file().as_ptr(),
-            location.line(),
-            location.column(),
-            message.as_ptr(),
-        );
+struct Diagnostic;
+
+impl core::fmt::Write for Diagnostic {
+    fn write_str(&mut self, text: &str) -> core::fmt::Result {
+        unsafe extern "C" {
+            fn printf(format: *const core::ffi::c_char, ...) -> core::ffi::c_int;
+        }
+        // The precision bounds each non-NUL-terminated Rust string.
+        for chunk in text.as_bytes().chunks(i32::MAX as usize) {
+            unsafe {
+                printf(c"%.*s".as_ptr(), chunk.len() as i32, chunk.as_ptr());
+            }
+        }
+        Ok(())
     }
 }
 
@@ -68,28 +68,34 @@ const OK: KfCodecResult = KF_CODEC_OK;
 const END: KfCodecResult = KF_CODEC_END;
 const INVALID: KfCodecResult = KF_CODEC_INVALID;
 const OUTPUT_FULL: KfCodecResult = KF_CODEC_OUTPUT_FULL;
-impl From<crate::bytes::ReadError> for KfCodecResult {
-    fn from(error: crate::bytes::ReadError) -> Self {
-        report_error(error.location, c"truncated codec input");
-        INVALID
+impl From<crate::Error> for KfCodecResult {
+    fn from(error: crate::Error) -> Self {
+        use core::fmt::Write;
+        let status = match error.kind {
+            crate::error::Kind::End => return END,
+            crate::error::Kind::OutputFull => OUTPUT_FULL,
+            _ => INVALID,
+        };
+        let _ = writeln!(
+            Diagnostic,
+            "kf-codec: {}:{}:{}: {}",
+            error.location.file(),
+            error.location.line(),
+            error.location.column(),
+            error
+        );
+        status
     }
 }
 
-impl From<crate::tim::TimError> for KfCodecResult {
-    fn from(error: crate::tim::TimError) -> Self {
-        if let crate::tim::TimError::Truncated { location, .. } = error {
-            report_error(location, c"truncated TIM input");
-        }
-        INVALID
-    }
+fn parse(bytes: &[u8], offset: usize) -> crate::Result<Image<'_>> {
+    let tail = bytes
+        .get(offset..)
+        .ok_or(crate::Error::invalid("TIM offset exceeds input"))?;
+    Images::new(tail).next().ok_or(crate::Error::end())?
 }
 
-fn parse(bytes: &[u8], offset: usize) -> Result<Image<'_>, KfCodecResult> {
-    let tail = bytes.get(offset..).ok_or(INVALID)?;
-    Images::new(tail).next().ok_or(END)?.map_err(Into::into)
-}
-
-fn dimensions(image: &Image<'_>) -> Result<(usize, usize), KfCodecResult> {
+fn dimensions(image: &Image<'_>) -> crate::Result<(usize, usize)> {
     let words = image.image.rectangle.width.get() as usize;
     let height = image.image.rectangle.height.get() as usize;
     let width = match image.mode & TIM_FORMAT_MASK {
@@ -97,10 +103,10 @@ fn dimensions(image: &Image<'_>) -> Result<(usize, usize), KfCodecResult> {
         TIM_INDEXED8 => words * 2,
         TIM_DIRECT16 => words,
         TIM_DIRECT24 if words * 2 % 3 == 0 => words * 2 / 3,
-        _ => return Err(INVALID),
+        _ => return Err(crate::Error::invalid("invalid TIM mode or dimensions")),
     };
     if width == 0 || height == 0 || image.mode & !TIM_FLAGS_MASK != 0 {
-        return Err(INVALID);
+        return Err(crate::Error::invalid("invalid TIM mode or dimensions"));
     }
     Ok((width, height))
 }
@@ -112,18 +118,18 @@ pub unsafe extern "C" fn kf_tim_info(
     info: *mut KfTimInfo,
 ) -> KfCodecResult {
     if !input_valid(bytes, length) || !output_valid(info, 1) {
-        return INVALID;
+        return crate::Error::invalid("invalid TIM pointer or size").into();
     }
     let image = match parse(slice::from_raw_parts(bytes, length), offset) {
         Ok(i) => i,
-        Err(e) => return e,
+        Err(e) => return e.into(),
     };
     let (width, height) = match dimensions(&image) {
         Ok(d) => d,
-        Err(e) => return e,
+        Err(e) => return e.into(),
     };
     if image.encoded_len > u32::MAX.as_usize() {
-        return INVALID;
+        return crate::Error::invalid("TIM size exceeds u32").into();
     }
     info.write(KfTimInfo {
         mode: image.mode,
@@ -147,28 +153,28 @@ pub unsafe extern "C" fn kf_tim_rgba(
     capacity: usize,
 ) -> KfCodecResult {
     if !input_valid(bytes, length) || !output_valid(rgba, capacity) {
-        return INVALID;
+        return crate::Error::invalid("invalid TIM pointer or size").into();
     }
     let image = match parse(slice::from_raw_parts(bytes, length), offset) {
         Ok(i) => i,
-        Err(e) => return e,
+        Err(e) => return e.into(),
     };
     let (width, height) = match dimensions(&image) {
         Ok(d) => d,
-        Err(e) => return e,
+        Err(e) => return e.into(),
     };
     let needed = match width.checked_mul(height).and_then(|n| n.checked_mul(4)) {
         Some(n) => n,
-        None => return INVALID,
+        None => return crate::Error::invalid("TIM pixel count overflow").into(),
     };
     if capacity < needed {
-        return OUTPUT_FULL;
+        return crate::Error::output_full().into();
     }
     let mode = image.mode & TIM_FORMAT_MASK;
     let palette = if mode < TIM_DIRECT16 {
         let clut = match image.clut {
             Some(c) => c,
-            None => return INVALID,
+            None => return crate::Error::invalid("indexed TIM has no palette").into(),
         };
         let count = if mode == TIM_INDEXED4 {
             INDEXED4_PALETTE_COLORS
@@ -177,11 +183,11 @@ pub unsafe extern "C" fn kf_tim_rgba(
         };
         let at = match palette_row.as_usize().checked_mul(count * 2) {
             Some(at) => at,
-            None => return INVALID,
+            None => return crate::Error::invalid("TIM palette offset overflow").into(),
         };
         match span(clut.pixels, at, count * 2) {
             Ok(p) => p,
-            Err(_) => return INVALID,
+            Err(error) => return error.into(),
         }
     } else {
         &[]

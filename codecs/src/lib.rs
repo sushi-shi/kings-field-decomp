@@ -15,3 +15,7 @@ mod formats;
 mod resources;
 #[forbid(unsafe_code)]
 mod tim;
+
+#[forbid(unsafe_code)]
+mod error;
+pub(crate) use error::{Error, Result};

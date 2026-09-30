@@ -4,36 +4,7 @@ use crate::bytes::{read, records, LeU16, LeU32};
 use crate::cast::AsUsize;
 use crate::ffi::bindings::*;
 use crate::formats;
-use core::panic::Location;
-
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub(crate) enum Error {
-    Read(crate::bytes::ReadError),
-    Invalid(&'static Location<'static>),
-    OutputFull(&'static Location<'static>),
-}
-
-impl Error {
-    #[track_caller]
-    fn invalid() -> Self {
-        Self::Invalid(Location::caller())
-    }
-
-    #[track_caller]
-    fn output_full() -> Self {
-        Self::OutputFull(Location::caller())
-    }
-}
-
-impl From<crate::bytes::ReadError> for Error {
-    fn from(error: crate::bytes::ReadError) -> Self {
-        Self::Read(error)
-    }
-}
-
-type Result<T> = core::result::Result<T, Error>;
-
-fn asset_header(bytes: &[u8]) -> Result<formats::AssetHeader> {
+fn asset_header(bytes: &[u8]) -> crate::Result<formats::AssetHeader> {
     let header: formats::AssetHeader = read(bytes, 0)?;
     let encoded_bytes = header.encoded_bytes.get();
     let clip_count = header.clip_count.get();
@@ -44,12 +15,12 @@ fn asset_header(bytes: &[u8]) -> Result<formats::AssetHeader> {
         || tmd_offset > encoded_bytes
         || clip_count > 256
     {
-        return Err(Error::invalid());
+        return Err(crate::Error::invalid("invalid asset header"));
     }
     Ok(header)
 }
 
-pub fn asset_info(bytes: &[u8]) -> Result<KfAssetInfo> {
+pub fn asset_info(bytes: &[u8]) -> crate::Result<KfAssetInfo> {
     let header = asset_header(bytes)?;
     Ok(KfAssetInfo {
         encoded_bytes: header.encoded_bytes.get(),
@@ -71,7 +42,7 @@ pub fn animation(
     bytes: &[u8],
     vertex_count: u32,
     mut output: Option<AnimationOutput<'_>>,
-) -> Result<KfAnimationSizes> {
+) -> crate::Result<KfAnimationSizes> {
     let header = asset_header(bytes)?;
     let bytes = &bytes[..header.encoded_bytes.get().as_usize()];
     let mut sizes = KfAnimationSizes {
@@ -85,7 +56,7 @@ pub fn animation(
         return Ok(sizes);
     }
     if vertex_count == 0 {
-        return Err(Error::invalid());
+        return Err(crate::Error::invalid("animated asset has no vertices"));
     }
     let clip_table = records::<LeU32>(
         bytes,
@@ -100,16 +71,18 @@ pub fn animation(
         let clip: formats::AnimationClip = read(bytes, at)?;
         let count = clip.keyframe_count.get().as_usize();
         if count == 0 {
-            return Err(Error::invalid());
+            return Err(crate::Error::invalid("animation clip has no keyframes"));
         }
         let offsets = records::<LeU32>(
             bytes,
             at.checked_add(size_of::<formats::AnimationClip>())
-                .ok_or(Error::invalid())?,
+                .ok_or(crate::Error::invalid("clip table offset overflow"))?,
             count,
         )?;
         if let Some(out) = output.as_mut() {
-            *out.clips.get_mut(clip_index).ok_or(Error::output_full())? = KfAnimationClipData {
+            *out.clips
+                .get_mut(clip_index)
+                .ok_or(crate::Error::output_full())? = KfAnimationClipData {
                 first_keyframe: sizes.keyframes,
                 keyframe_count: count,
             };
@@ -122,14 +95,14 @@ pub fn animation(
             let indices = records::<LeU16>(
                 bytes,
                 at.checked_add(size_of::<formats::AnimationKeyframe>())
-                    .ok_or(Error::invalid())?,
+                    .ok_or(crate::Error::invalid("keyframe table offset overflow"))?,
                 count,
             )?;
             used[rest.as_usize() / 64] |= 1u64 << (rest % 64);
             if let Some(out) = output.as_mut() {
                 *out.keyframes
                     .get_mut(sizes.keyframes)
-                    .ok_or(Error::output_full())? = KfAnimationKeyframe {
+                    .ok_or(crate::Error::output_full())? = KfAnimationKeyframe {
                     reverse: header.reverse.get(),
                     duration: header.duration.get(),
                     rest_morph: rest,
@@ -143,14 +116,22 @@ pub fn animation(
                 if let Some(out) = output.as_mut() {
                     *out.indices
                         .get_mut(sizes.indices)
-                        .ok_or(Error::output_full())? = id;
+                        .ok_or(crate::Error::output_full())? = id;
                 }
-                sizes.indices = sizes.indices.checked_add(1).ok_or(Error::invalid())?;
+                sizes.indices = sizes
+                    .indices
+                    .checked_add(1)
+                    .ok_or(crate::Error::invalid("animation index count overflow"))?;
             }
-            sizes.keyframes = sizes.keyframes.checked_add(1).ok_or(Error::invalid())?;
+            sizes.keyframes = sizes
+                .keyframes
+                .checked_add(1)
+                .ok_or(crate::Error::invalid("animation keyframe count overflow"))?;
             // Shared offsets must not amplify a small input into unbounded work/storage.
             if sizes.keyframes > bytes.len() || sizes.indices > bytes.len() {
-                return Err(Error::invalid());
+                return Err(crate::Error::invalid(
+                    "animation keyframes exceed input budget",
+                ));
             }
         }
     }
@@ -161,22 +142,22 @@ pub fn animation(
             bits &= bits - 1;
             let entry = morph_table
                 .checked_add(id * size_of::<LeU32>())
-                .ok_or(Error::invalid())?;
+                .ok_or(crate::Error::invalid("morph table offset overflow"))?;
             let at = read::<LeU32>(bytes, entry)?.get().as_usize();
             let header: formats::AnimationMorph = read(bytes, at)?;
             let base_vertex = header.base_vertex.get();
             let count = header.delta_count.get();
             if base_vertex > vertex_count || count > vertex_count - base_vertex {
-                return Err(Error::invalid());
+                return Err(crate::Error::invalid("morph vertices exceed model bounds"));
             }
             let deltas = records::<formats::AnimationDelta>(
                 bytes,
                 at.checked_add(size_of::<formats::AnimationMorph>())
-                    .ok_or(Error::invalid())?,
+                    .ok_or(crate::Error::invalid("morph delta offset overflow"))?,
                 count.as_usize(),
             )?;
             if let Some(out) = output.as_mut() {
-                *out.morphs.get_mut(id).ok_or(Error::output_full())? = KfAnimationMorph {
+                *out.morphs.get_mut(id).ok_or(crate::Error::output_full())? = KfAnimationMorph {
                     base_vertex,
                     first_delta: sizes.deltas,
                     delta_count: count.as_usize(),
@@ -186,16 +167,21 @@ pub fn animation(
                 if let Some(out) = output.as_mut() {
                     *out.deltas
                         .get_mut(sizes.deltas)
-                        .ok_or(Error::output_full())? = KfAnimationDelta {
+                        .ok_or(crate::Error::output_full())? = KfAnimationDelta {
                         x: delta.x.get(),
                         y: delta.y.get(),
                         z: delta.z.get(),
                     };
                 }
-                sizes.deltas = sizes.deltas.checked_add(1).ok_or(Error::invalid())?;
+                sizes.deltas = sizes
+                    .deltas
+                    .checked_add(1)
+                    .ok_or(crate::Error::invalid("animation delta count overflow"))?;
             }
             if sizes.deltas > bytes.len() {
-                return Err(Error::invalid());
+                return Err(crate::Error::invalid(
+                    "animation deltas exceed input budget",
+                ));
             }
             sizes.morphs = id + 1;
         }
@@ -206,13 +192,16 @@ pub fn animation(
 fn placements<Wire: bytemuck::AnyBitPattern, T>(
     bytes: &[u8],
     output: &mut [T],
-    decode: impl Fn(Wire) -> Result<T>,
-) -> Result<usize> {
+    decode: impl Fn(Wire) -> crate::Result<T>,
+) -> crate::Result<usize> {
     for (index, slot) in output.iter_mut().enumerate() {
         let at = index
             .checked_mul(size_of::<Wire>())
-            .ok_or(Error::invalid())?;
-        if *bytes.get(at).ok_or(Error::invalid())? == 255 {
+            .ok_or(crate::Error::invalid("placement offset overflow"))?;
+        if *bytes.get(at).ok_or(crate::Error::invalid(
+            "missing placement record or sentinel",
+        ))? == 255
+        {
             return Ok(index);
         }
         *slot = decode(read(bytes, at)?)?;
@@ -220,9 +209,9 @@ fn placements<Wire: bytemuck::AnyBitPattern, T>(
     Ok(output.len())
 }
 
-fn cell(z: u8, x: u8, limits: KfPlacementLimits) -> Result<()> {
+fn cell(z: u8, x: u8, limits: KfPlacementLimits) -> crate::Result<()> {
     if u32::from(z) >= limits.map_side || u32::from(x) >= limits.map_side {
-        return Err(Error::invalid());
+        return Err(crate::Error::invalid("placement cell exceeds map bounds"));
     }
     Ok(())
 }
@@ -231,23 +220,23 @@ pub fn actors(
     bytes: &[u8],
     limits: KfPlacementLimits,
     output: &mut [KfActorPlacementData],
-) -> Result<usize> {
+) -> crate::Result<usize> {
     placements(bytes, output, |b: formats::ActorPlacement| {
         cell(b.tile_z, b.tile_x, limits)?;
         for (tile, local) in [(b.tile_z, b.local_z.get()), (b.tile_x, b.local_x.get())] {
             let position = i64::from(tile) * i64::from(limits.tile_size) + i64::from(local);
             let extent = i64::from(limits.map_side)
                 .checked_mul(i64::from(limits.tile_size))
-                .ok_or(Error::invalid())?;
+                .ok_or(crate::Error::invalid("map extent overflow"))?;
             if position < 0 || position >= extent {
-                return Err(Error::invalid());
+                return Err(crate::Error::invalid("actor position exceeds map bounds"));
             }
         }
         if b.slot_state > 3
             || u32::from(b.definition_flags & 31) >= limits.definitions
             || b.heading_quadrant > 3
         {
-            return Err(Error::invalid());
+            return Err(crate::Error::invalid("invalid actor placement"));
         }
         Ok(KfActorPlacementData {
             slot_state: b.slot_state,
@@ -268,11 +257,13 @@ pub fn objects(
     bytes: &[u8],
     limits: KfPlacementLimits,
     output: &mut [KfObjectPlacementData],
-) -> Result<usize> {
+) -> crate::Result<usize> {
     placements(bytes, output, |b: formats::ObjectPlacement| {
         cell(b.tile_z, b.tile_x, limits)?;
         if u32::from(b.object_id) >= limits.definitions {
-            return Err(Error::invalid());
+            return Err(crate::Error::invalid(
+                "object definition exceeds available definitions",
+            ));
         }
         Ok(KfObjectPlacementData {
             object_id: b.object_id,
@@ -291,7 +282,7 @@ pub fn events(
     bytes: &[u8],
     limits: KfPlacementLimits,
     output: &mut [KfEventPlacementData],
-) -> Result<usize> {
+) -> crate::Result<usize> {
     placements(bytes, output, |b: formats::EventPlacement| {
         cell(b.cell_z, b.cell_x, limits)?;
         if !matches!(b.state, 0 | 1 | 3)
@@ -299,7 +290,7 @@ pub fn events(
             || b.dialogue_stage_limit > 5
             || b.behavior > 2
         {
-            return Err(Error::invalid());
+            return Err(crate::Error::invalid("invalid event placement"));
         }
         Ok(KfEventPlacementData {
             state: b.state,

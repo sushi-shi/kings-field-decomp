@@ -26,8 +26,12 @@ class ResourceCodecs(unittest.TestCase):
                 str(directory / "rust/release/libkf_codec.a"), "-o", str(binary),
             ], check=True)
             result = subprocess.run([binary], check=True, timeout=20, capture_output=True, text=True)
-            self.assertRegex(result.stdout,
-                             r"kf-codec: [^\n]*resources\.rs:\d+:\d+: truncated resource input")
-            for format_name in ("VAB", "SEQ"):
+            for module in ("resources", "audio", "tim"):
                 self.assertRegex(result.stdout,
-                                 rf"kf-codec: [^\n]*audio\.rs:\d+:\d+: truncated {format_name} input")
+                                 rf"kf-codec: [^\n]*{module}\.rs:\d+:\d+: truncated input at \d+: need \d+ bytes, have \d+")
+            self.assertNotRegex(result.stdout, r"kf-codec: [^\n]*(?:bytes|error)\.rs:")
+            self.assertRegex(result.stdout,
+                             r"kf-codec: [^\n]*tim\.rs:\d+:\d+: invalid rectangle -1x1 at 8")
+            self.assertRegex(result.stdout,
+                             r"kf-codec: [^\n]*resources\.rs:\d+:\d+: codec output is full")
+            self.assertNotIn("end of input", result.stdout)

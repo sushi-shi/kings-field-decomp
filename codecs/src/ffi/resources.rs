@@ -1,41 +1,21 @@
 use super::bindings::*;
-use super::{input_valid, output_valid, report_error};
+use super::{input_valid, output_valid};
 use crate::resources;
 use core::slice;
 
-impl From<resources::Error> for KfCodecResult {
-    fn from(error: resources::Error) -> Self {
-        let (location, message, result) = match error {
-            resources::Error::Read(error) => (
-                error.location,
-                c"truncated resource input",
-                KF_CODEC_INVALID,
-            ),
-            resources::Error::Invalid(location) => {
-                (location, c"invalid resource input", KF_CODEC_INVALID)
-            }
-            resources::Error::OutputFull(location) => {
-                (location, c"resource output is full", KF_CODEC_OUTPUT_FULL)
-            }
-        };
-        report_error(location, message);
-        result
-    }
-}
-
-unsafe fn input<'a>(bytes: *const u8, length: usize) -> Result<&'a [u8], KfCodecResult> {
+unsafe fn input<'a>(bytes: *const u8, length: usize) -> crate::Result<&'a [u8]> {
     if !input_valid(bytes, length) {
-        return Err(KF_CODEC_INVALID);
+        return Err(crate::Error::invalid("invalid resource pointer or size"));
     }
     Ok(slice::from_raw_parts(bytes, length))
 }
 
-unsafe fn output<'a, T>(data: *mut T, count: usize) -> Result<&'a mut [T], KfCodecResult> {
+unsafe fn output<'a, T>(data: *mut T, count: usize) -> crate::Result<&'a mut [T]> {
     if count == 0 {
         return Ok(&mut []);
     }
     if !output_valid(data, count) {
-        return Err(KF_CODEC_INVALID);
+        return Err(crate::Error::invalid("invalid resource pointer or size"));
     }
     Ok(slice::from_raw_parts_mut(data, count))
 }
@@ -47,14 +27,14 @@ pub unsafe extern "C" fn kf_asset_info(
     info: *mut KfAssetInfo,
 ) -> KfCodecResult {
     if !output_valid(info, 1) {
-        return KF_CODEC_INVALID;
+        return crate::Error::invalid("invalid resource output pointer").into();
     }
-    match input(bytes, length).and_then(|b| resources::asset_info(b).map_err(Into::into)) {
+    match input(bytes, length).and_then(resources::asset_info) {
         Ok(value) => {
             info.write(value);
             KF_CODEC_OK
         }
-        Err(e) => e,
+        Err(e) => e.into(),
     }
 }
 
@@ -66,16 +46,14 @@ pub unsafe extern "C" fn kf_animation_measure(
     sizes: *mut KfAnimationSizes,
 ) -> KfCodecResult {
     if !output_valid(sizes, 1) {
-        return KF_CODEC_INVALID;
+        return crate::Error::invalid("invalid resource output pointer").into();
     }
-    match input(bytes, length)
-        .and_then(|b| resources::animation(b, vertex_count, None).map_err(Into::into))
-    {
+    match input(bytes, length).and_then(|b| resources::animation(b, vertex_count, None)) {
         Ok(value) => {
             sizes.write(value);
             KF_CODEC_OK
         }
-        Err(e) => e,
+        Err(e) => e.into(),
     }
 }
 
@@ -87,7 +65,7 @@ pub unsafe extern "C" fn kf_animation_decode(
     destination: *mut KfAnimationOutput,
 ) -> KfCodecResult {
     if !output_valid(destination, 1) {
-        return KF_CODEC_INVALID;
+        return crate::Error::invalid("invalid resource output pointer").into();
     }
     let decode = || {
         let d = &mut *destination;
@@ -99,11 +77,11 @@ pub unsafe extern "C" fn kf_animation_decode(
             indices: output(d.indices, d.capacity.indices)?,
             deltas: output(d.deltas, d.capacity.deltas)?,
         };
-        resources::animation(bytes, vertex_count, Some(out)).map_err(Into::into)
+        resources::animation(bytes, vertex_count, Some(out))
     };
     match decode() {
         Ok(_) => KF_CODEC_OK,
-        Err(e) => e,
+        Err(e) => e.into(),
     }
 }
 
@@ -119,7 +97,7 @@ macro_rules! placement_decoder {
             count: *mut usize,
         ) -> KfCodecResult {
             if !output_valid(count, 1) {
-                return KF_CODEC_INVALID;
+                return crate::Error::invalid("invalid resource output pointer").into();
             }
             let decode = || {
                 resources::$decode(
@@ -127,14 +105,13 @@ macro_rules! placement_decoder {
                     limits,
                     output(destination, capacity)?,
                 )
-                .map_err(Into::into)
             };
             match decode() {
                 Ok(n) => {
                     count.write(n);
                     KF_CODEC_OK
                 }
-                Err(e) => e,
+                Err(e) => e.into(),
             }
         }
     };

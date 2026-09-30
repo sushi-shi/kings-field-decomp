@@ -2,8 +2,6 @@ use crate::bytes;
 use crate::cast::AsUsize;
 use crate::formats::{SeqHeader, VabHeader, VabProgram, VabTone};
 
-use core::fmt;
-
 pub const VAB_MAGIC: [u8; 4] = *b"pBAV";
 const VAB_HEADER_SIZE: usize = size_of::<VabHeader>();
 pub const VAB_PROGRAM_SLOTS: usize = 128;
@@ -52,72 +50,16 @@ pub mod midi {
 pub const SEQ_MAGIC: [u8; 4] = *b"pQES";
 const SEQ_HEADER_SIZE: usize = size_of::<SeqHeader>();
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum VabError {
-    Truncated {
-        location: &'static core::panic::Location<'static>,
-        at: usize,
-        need: usize,
-        available: usize,
-    },
-    InvalidIndex {
-        index: usize,
-        count: usize,
-    },
-    InvalidMagic([u8; 4]),
-    InvalidCount {
-        field: &'static str,
-        value: u16,
-        maximum: u16,
-    },
-    HeaderLength {
-        expected: usize,
-        actual: usize,
-    },
-    FileSize {
-        declared: u32,
-        actual: usize,
-    },
-    NonzeroFirstSampleOffset(u16),
-    SampleLengthOverflow {
-        sample: u16,
-        units: u16,
-    },
-    BodyLength {
-        expected: usize,
-        actual: usize,
-    },
-}
-
-impl From<bytes::ReadError> for VabError {
-    fn from(error: bytes::ReadError) -> Self {
-        Self::Truncated {
-            location: error.location,
-            at: error.at,
-            need: error.need,
-            available: error.available,
-        }
-    }
-}
-
-impl fmt::Display for VabError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "VAB {self:?}")
-    }
-}
-
-impl core::error::Error for VabError {}
-
 impl VabHeader {
-    pub fn parse(bytes: &[u8]) -> Result<Self, VabError> {
+    pub fn parse(bytes: &[u8]) -> crate::Result<Self> {
         let record: Self = bytes::read(bytes, 0)?;
         if record.magic != VAB_MAGIC {
-            return Err(VabError::InvalidMagic(record.magic));
+            return Err(crate::Error::invalid_magic("VAB", record.magic));
         }
         Ok(record)
     }
 
-    pub fn encoded_header_len(self) -> Result<usize, VabError> {
+    pub fn encoded_header_len(self) -> crate::Result<usize> {
         validate_counts(self)?;
         Ok(VAB_HEADER_SIZE
             + VAB_PROGRAM_SLOTS * VAB_PROGRAM_SIZE
@@ -136,34 +78,40 @@ pub struct VabBank<'a> {
 }
 
 impl<'a> VabBank<'a> {
-    pub fn parse(header_bytes: &'a [u8], body_bytes: &'a [u8]) -> Result<Self, VabError> {
+    pub fn parse(header_bytes: &'a [u8], body_bytes: &'a [u8]) -> crate::Result<Self> {
         let header = VabHeader::parse(header_bytes)?;
         let expected_header = header.encoded_header_len()?;
         if header_bytes.len() != expected_header {
-            return Err(VabError::HeaderLength {
-                expected: expected_header,
-                actual: header_bytes.len(),
-            });
+            return Err(crate::Error::size_mismatch(
+                "VAB header",
+                expected_header,
+                header_bytes.len(),
+            ));
         }
         let actual_file_size =
             header_bytes
                 .len()
                 .checked_add(body_bytes.len())
-                .ok_or(VabError::FileSize {
-                    declared: header.file_size.get(),
-                    actual: usize::MAX,
-                })?;
+                .ok_or(crate::Error::size_mismatch(
+                    "VAB file",
+                    header.file_size.get().as_usize(),
+                    usize::MAX,
+                ))?;
         if header.file_size.get().as_usize() != actual_file_size {
-            return Err(VabError::FileSize {
-                declared: header.file_size.get(),
-                actual: actual_file_size,
-            });
+            return Err(crate::Error::size_mismatch(
+                "VAB file",
+                header.file_size.get().as_usize(),
+                actual_file_size,
+            ));
         }
         let tone_table_offset = VAB_HEADER_SIZE + VAB_PROGRAM_SLOTS * VAB_PROGRAM_SIZE;
         let offset_table_offset = expected_header - VAB_OFFSET_TABLE_SIZE;
         let first = bytes::read_u16_le(header_bytes, offset_table_offset)?;
         if first != 0 {
-            return Err(VabError::NonzeroFirstSampleOffset(first));
+            return Err(crate::Error::invalid_value(
+                "VAB first sample offset (expected zero)",
+                i64::from(first),
+            ));
         }
         let mut body_len = 0usize;
         for sample in 0..header.sample_count.get() {
@@ -174,16 +122,17 @@ impl<'a> VabBank<'a> {
             let bytes = units
                 .as_usize()
                 .checked_mul(VAB_SAMPLE_UNIT)
-                .ok_or(VabError::SampleLengthOverflow { sample, units })?;
+                .ok_or(crate::Error::invalid("VAB sample length overflow"))?;
             body_len = body_len
                 .checked_add(bytes)
-                .ok_or(VabError::SampleLengthOverflow { sample, units })?;
+                .ok_or(crate::Error::invalid("VAB sample length overflow"))?;
         }
         if body_len != body_bytes.len() {
-            return Err(VabError::BodyLength {
-                expected: body_len,
-                actual: body_bytes.len(),
-            });
+            return Err(crate::Error::size_mismatch(
+                "VAB body",
+                body_len,
+                body_bytes.len(),
+            ));
         }
         Ok(Self {
             header,
@@ -194,45 +143,39 @@ impl<'a> VabBank<'a> {
         })
     }
 
-    pub fn program_slot(&self, index: usize) -> Result<VabProgram, VabError> {
+    pub fn program_slot(&self, index: usize) -> crate::Result<VabProgram> {
         if index >= VAB_PROGRAM_SLOTS {
-            return Err(VabError::InvalidIndex {
-                index,
-                count: VAB_PROGRAM_SLOTS,
-            });
+            return Err(crate::Error::invalid_index(index, VAB_PROGRAM_SLOTS));
         }
         let at = VAB_HEADER_SIZE + index * VAB_PROGRAM_SIZE;
-        Ok(bytes::read(self.header_bytes, at)?)
+        bytes::read(self.header_bytes, at)
     }
 
-    pub fn tone(&self, program: usize, tone: usize) -> Result<VabTone, VabError> {
+    pub fn tone(&self, program: usize, tone: usize) -> crate::Result<VabTone> {
         if program >= self.header.program_count.get().as_usize() {
-            return Err(VabError::InvalidIndex {
-                index: program,
-                count: self.header.program_count.get().as_usize(),
-            });
+            return Err(crate::Error::invalid_index(
+                program,
+                self.header.program_count.get().as_usize(),
+            ));
         }
         if tone >= VAB_TONES_PER_PROGRAM {
-            return Err(VabError::InvalidIndex {
-                index: tone,
-                count: VAB_TONES_PER_PROGRAM,
-            });
+            return Err(crate::Error::invalid_index(tone, VAB_TONES_PER_PROGRAM));
         }
         let at = self.tone_table_offset + (program * VAB_TONES_PER_PROGRAM + tone) * VAB_TONE_SIZE;
-        Ok(bytes::read(self.header_bytes, at)?)
+        bytes::read(self.header_bytes, at)
     }
 
-    pub fn sample_size_units(&self, sample: usize) -> Result<u16, VabError> {
+    pub fn sample_size_units(&self, sample: usize) -> crate::Result<u16> {
         if sample >= self.header.sample_count.get().as_usize() {
-            return Err(VabError::InvalidIndex {
-                index: sample,
-                count: self.header.sample_count.get().as_usize(),
-            });
+            return Err(crate::Error::invalid_index(
+                sample,
+                self.header.sample_count.get().as_usize(),
+            ));
         }
-        Ok(bytes::read_u16_le(
+        bytes::read_u16_le(
             self.header_bytes,
             self.offset_table_offset + (sample + 1) * 2,
-        )?)
+        )
     }
 
     pub fn samples(&self) -> VabSamples<'a> {
@@ -244,31 +187,31 @@ impl<'a> VabBank<'a> {
     }
 }
 
-fn validate_counts(header: VabHeader) -> Result<(), VabError> {
+fn validate_counts(header: VabHeader) -> crate::Result<()> {
     if header.program_count.get().as_usize() > VAB_PROGRAM_SLOTS {
-        return Err(VabError::InvalidCount {
-            field: "programs",
-            value: header.program_count.get(),
-            maximum: VAB_PROGRAM_SLOTS as u16,
-        });
+        return Err(crate::Error::invalid_count(
+            "VAB programs",
+            header.program_count.get(),
+            VAB_PROGRAM_SLOTS as u16,
+        ));
     }
     let maximum_tones = header
         .program_count
         .get()
         .saturating_mul(VAB_TONES_PER_PROGRAM as u16);
     if header.tone_count.get() > maximum_tones {
-        return Err(VabError::InvalidCount {
-            field: "tones",
-            value: header.tone_count.get(),
-            maximum: maximum_tones,
-        });
+        return Err(crate::Error::invalid_count(
+            "VAB tones",
+            header.tone_count.get(),
+            maximum_tones,
+        ));
     }
     if header.sample_count.get().as_usize() >= VAB_OFFSET_ENTRIES {
-        return Err(VabError::InvalidCount {
-            field: "samples",
-            value: header.sample_count.get(),
-            maximum: (VAB_OFFSET_ENTRIES - 1) as u16,
-        });
+        return Err(crate::Error::invalid_count(
+            "VAB samples",
+            header.sample_count.get(),
+            (VAB_OFFSET_ENTRIES - 1) as u16,
+        ));
     }
     Ok(())
 }
@@ -280,14 +223,14 @@ pub struct VabSample<'a> {
     pub data: &'a [u8],
 }
 
-pub struct VabSamples<'a> {
+pub(crate) struct VabSamples<'a> {
     bank: VabBank<'a>,
     index: u16,
     body_offset: usize,
 }
 
 impl<'a> Iterator for VabSamples<'a> {
-    type Item = Result<VabSample<'a>, VabError>;
+    type Item = crate::Result<VabSample<'a>>;
 
     fn next(&mut self) -> Option<Self::Item> {
         if self.index == self.bank.header.sample_count.get() {
@@ -313,56 +256,11 @@ impl<'a> Iterator for VabSamples<'a> {
     }
 }
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum SeqError {
-    Truncated {
-        location: &'static core::panic::Location<'static>,
-        at: usize,
-        need: usize,
-        available: usize,
-    },
-    InvalidMagic([u8; 4]),
-    VariableLengthTooLong {
-        at: usize,
-    },
-    MissingRunningStatus {
-        at: usize,
-        byte: u8,
-    },
-    InvalidDataByte {
-        at: usize,
-        byte: u8,
-    },
-    UnsupportedStatus {
-        at: usize,
-        status: u8,
-    },
-}
-
-impl From<bytes::ReadError> for SeqError {
-    fn from(error: bytes::ReadError) -> Self {
-        Self::Truncated {
-            location: error.location,
-            at: error.at,
-            need: error.need,
-            available: error.available,
-        }
-    }
-}
-
-impl fmt::Display for SeqError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "SEQ {self:?}")
-    }
-}
-
-impl core::error::Error for SeqError {}
-
 impl SeqHeader {
-    pub fn parse(bytes: &[u8]) -> Result<Self, SeqError> {
+    pub fn parse(bytes: &[u8]) -> crate::Result<Self> {
         let record: Self = bytes::read(bytes, 0)?;
         if record.magic != SEQ_MAGIC {
-            return Err(SeqError::InvalidMagic(record.magic));
+            return Err(crate::Error::invalid_magic("SEQ", record.magic));
         }
         Ok(record)
     }
@@ -375,7 +273,7 @@ pub struct Sequence<'a> {
 }
 
 impl<'a> Sequence<'a> {
-    pub fn parse(bytes: &'a [u8]) -> Result<Self, SeqError> {
+    pub fn parse(bytes: &'a [u8]) -> crate::Result<Self> {
         Ok(Self {
             header: SeqHeader::parse(bytes)?,
             bytes,
@@ -430,7 +328,7 @@ pub struct SeqEvent<'a> {
     pub encoded: &'a [u8],
 }
 
-pub struct SeqEvents<'a> {
+pub(crate) struct SeqEvents<'a> {
     bytes: &'a [u8],
     at: usize,
     running_status: Option<u8>,
@@ -438,7 +336,7 @@ pub struct SeqEvents<'a> {
 }
 
 impl<'a> SeqEvents<'a> {
-    fn parse_next(&mut self) -> Result<Option<SeqEvent<'a>>, SeqError> {
+    fn parse_next(&mut self) -> crate::Result<Option<SeqEvent<'a>>> {
         if self.at == self.bytes.len() {
             return Ok(None);
         }
@@ -447,10 +345,11 @@ impl<'a> SeqEvents<'a> {
         let status_at = self.at;
         let first = take(self.bytes, &mut self.at)?;
         let (status, first_data, used_running_status) = if first < midi::STATUS_BIT {
-            let status = self.running_status.ok_or(SeqError::MissingRunningStatus {
-                at: status_at,
-                byte: first,
-            })?;
+            let status = self.running_status.ok_or(crate::Error::invalid_byte(
+                "missing SEQ running status",
+                status_at,
+                first,
+            ))?;
             (status, Some(first), true)
         } else {
             (first, None, false)
@@ -531,20 +430,22 @@ impl<'a> SeqEvents<'a> {
                 let data = bytes::span(self.bytes, self.at, size)?;
                 for (index, byte) in data.iter().copied().enumerate() {
                     if byte >= midi::STATUS_BIT {
-                        return Err(SeqError::InvalidDataByte {
-                            at: self.at + index,
+                        return Err(crate::Error::invalid_byte(
+                            "invalid SEQ data byte",
+                            self.at + index,
                             byte,
-                        });
+                        ));
                     }
                 }
                 self.at += size;
                 SeqEventKind::System { status, data }
             }
             _ => {
-                return Err(SeqError::UnsupportedStatus {
-                    at: status_at,
+                return Err(crate::Error::invalid_byte(
+                    "unsupported SEQ status",
+                    status_at,
                     status,
-                })
+                ))
             }
         };
         Ok(Some(SeqEvent {
@@ -558,7 +459,7 @@ impl<'a> SeqEvents<'a> {
 }
 
 impl<'a> Iterator for SeqEvents<'a> {
-    type Item = Result<SeqEvent<'a>, SeqError>;
+    type Item = crate::Result<SeqEvent<'a>>;
 
     fn next(&mut self) -> Option<Self::Item> {
         if self.stopped {
@@ -578,7 +479,7 @@ impl<'a> Iterator for SeqEvents<'a> {
     }
 }
 
-fn read_variable_length_at(bytes: &[u8], at: &mut usize) -> Result<(u32, usize), SeqError> {
+fn read_variable_length_at(bytes: &[u8], at: &mut usize) -> crate::Result<(u32, usize)> {
     let start = *at;
     let mut value = 0u32;
     for index in 0..midi::VLQ_BYTES_MAX {
@@ -588,30 +489,29 @@ fn read_variable_length_at(bytes: &[u8], at: &mut usize) -> Result<(u32, usize),
             return Ok((value, index + 1));
         }
     }
-    Err(SeqError::VariableLengthTooLong { at: start })
+    Err(crate::Error::invalid_at(
+        "SEQ variable-length value exceeds four bytes",
+        start,
+    ))
 }
 
 #[track_caller]
-fn take(bytes: &[u8], at: &mut usize) -> Result<u8, SeqError> {
-    let value = *bytes.get(*at).ok_or(SeqError::Truncated {
-        location: core::panic::Location::caller(),
-        at: *at,
-        need: 1,
-        available: 0,
-    })?;
+fn take(bytes: &[u8], at: &mut usize) -> crate::Result<u8> {
+    let value = *bytes.get(*at).ok_or(crate::Error::truncated(*at, 1, 0))?;
     *at += 1;
     Ok(value)
 }
 
 #[track_caller]
-fn take_data(bytes: &[u8], at: &mut usize) -> Result<u8, SeqError> {
+fn take_data(bytes: &[u8], at: &mut usize) -> crate::Result<u8> {
     let offset = *at;
     let value = take(bytes, at)?;
     if value >= midi::STATUS_BIT {
-        return Err(SeqError::InvalidDataByte {
-            at: offset,
-            byte: value,
-        });
+        return Err(crate::Error::invalid_byte(
+            "invalid SEQ data byte",
+            offset,
+            value,
+        ));
     }
     Ok(value)
 }

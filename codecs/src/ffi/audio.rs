@@ -1,29 +1,11 @@
 use super::bindings::*;
-use super::{input_valid, output_valid, INVALID, OK, OUTPUT_FULL};
+use super::{input_valid, output_valid, OK};
 use crate::audio::midi;
-use crate::audio::{ChannelMessage, SeqError, SeqEventKind, Sequence, VabBank, VabError};
+use crate::audio::{ChannelMessage, SeqEventKind, Sequence, VabBank};
 use crate::audio::{VAB_PROGRAM_SLOTS, VAB_TONES_PER_PROGRAM};
 use crate::bytes::read_u24_be;
 use crate::cast::{AsU64, AsUsize};
 use core::{ptr, slice};
-
-impl From<VabError> for KfCodecResult {
-    fn from(error: VabError) -> Self {
-        if let VabError::Truncated { location, .. } = error {
-            super::report_error(location, c"truncated VAB input");
-        }
-        INVALID
-    }
-}
-
-impl From<SeqError> for KfCodecResult {
-    fn from(error: SeqError) -> Self {
-        if let SeqError::Truncated { location, .. } = error {
-            super::report_error(location, c"truncated SEQ input");
-        }
-        INVALID
-    }
-}
 
 const SUPPORTED_SEQ_VERSION: u32 = 1;
 const TONE_REVERB_FLAG: u8 = 4;
@@ -73,7 +55,7 @@ pub unsafe extern "C" fn kf_audio_bank_decode(
     destination: *mut KfAudioBankData,
 ) -> KfCodecResult {
     if !input(header, header_size) || !input(body, body_size) || !output_valid(destination, 1) {
-        return INVALID;
+        return crate::Error::invalid("invalid audio bank pointer or size").into();
     }
     let bank = match VabBank::parse(
         slice::from_raw_parts(header, header_size),
@@ -83,7 +65,7 @@ pub unsafe extern "C" fn kf_audio_bank_decode(
         Err(error) => return error.into(),
     };
     if bank.header.master_volume > midi::DATA_MASK || bank.header.pan > midi::DATA_MASK {
-        return INVALID;
+        return crate::Error::invalid("invalid VAB volume or pan").into();
     }
     // Initialize the caller's allocation directly: this bank is too large for
     // a temporary value on the browser's C/Rust stack.
@@ -105,7 +87,7 @@ pub unsafe extern "C" fn kf_audio_bank_decode(
             || program.master_volume > midi::DATA_MASK
             || program.pan > midi::DATA_MASK
         {
-            return INVALID;
+            return crate::Error::invalid("invalid VAB program").into();
         }
         let target = &mut result.programs[slot];
         target.tone_count = program.tone_count;
@@ -128,7 +110,7 @@ pub unsafe extern "C" fn kf_audio_bank_decode(
                 || tone.maximum_note > midi::DATA_MASK
                 || tone.mode & !TONE_REVERB_FLAG != 0
             {
-                return INVALID;
+                return crate::Error::invalid("invalid VAB tone").into();
             }
             target.tones[ordinal] = KfAudioTone {
                 priority: tone.priority,
@@ -175,7 +157,7 @@ pub unsafe extern "C" fn kf_audio_bank_decode(
         packed_program += 1;
     }
     if packed_program != bank.header.program_count.get().as_usize() {
-        return INVALID;
+        return crate::Error::invalid("VAB program count mismatch").into();
     }
     for sample in bank.samples() {
         let sample = match sample {
@@ -202,14 +184,14 @@ pub unsafe extern "C" fn kf_audio_sample_info(
         || size / ADPCM_BLOCK_BYTES > u32::MAX.as_usize() / ADPCM_BLOCK_FRAMES
         || !output_valid(info, 1)
     {
-        return INVALID;
+        return crate::Error::invalid("invalid ADPCM pointer or size").into();
     }
     let mut frames = 0;
     let mut loop_begin = 0;
     for block in slice::from_raw_parts(data, size).chunks_exact(ADPCM_BLOCK_BYTES) {
         if block[0] >> ADPCM_FILTER_OFFSET > ADPCM_FILTER_LAST || block[1] & !ADPCM_FLAGS_MASK != 0
         {
-            return INVALID;
+            return crate::Error::invalid("invalid ADPCM filter or flags").into();
         }
         if block[1] & ADPCM_LOOP_START != 0 {
             loop_begin = frames;
@@ -249,16 +231,16 @@ pub unsafe extern "C" fn kf_audio_decode_block(
         || !output_valid(predictor, 1)
         || !output_valid(pcm, 1)
     {
-        return INVALID;
+        return crate::Error::invalid("invalid ADPCM block pointer or size").into();
     }
     if capacity < ADPCM_BLOCK_FRAMES {
-        return OUTPUT_FULL;
+        return crate::Error::output_full().into();
     }
     let block = slice::from_raw_parts(data, ADPCM_BLOCK_BYTES);
     const FILTERS: [(i32, i32); 5] = [(0, 0), (60, 0), (115, -52), (98, -55), (122, -60)];
     let filter = (block[0] >> ADPCM_FILTER_OFFSET).as_usize();
     if filter >= FILTERS.len() || block[1] & !ADPCM_FLAGS_MASK != 0 {
-        return INVALID;
+        return crate::Error::invalid("invalid ADPCM filter or flags").into();
     }
     let shift = match block[0] & ADPCM_SHIFT_MASK {
         0..=ADPCM_MAX_SHIFT => block[0] & ADPCM_SHIFT_MASK,
@@ -268,7 +250,7 @@ pub unsafe extern "C" fn kf_audio_decode_block(
     if !(i32::from(i16::MIN)..=i32::from(i16::MAX)).contains(&state.previous)
         || !(i32::from(i16::MIN)..=i32::from(i16::MAX)).contains(&state.older)
     {
-        return INVALID;
+        return crate::Error::invalid("invalid ADPCM predictor").into();
     }
     let (positive, negative) = FILTERS[filter];
     for n in 0..ADPCM_BLOCK_FRAMES {
@@ -303,7 +285,7 @@ pub unsafe extern "C" fn kf_music_decode(
         || (!events.is_null() && !output_valid(events, capacity))
         || (events.is_null() && capacity != 0)
     {
-        return INVALID;
+        return crate::Error::invalid("invalid music pointer or size").into();
     }
     let sequence = match Sequence::parse(slice::from_raw_parts(data, size)) {
         Ok(sequence) => sequence,
@@ -313,7 +295,7 @@ pub unsafe extern "C" fn kf_music_decode(
         || sequence.header.resolution.get() == 0
         || sequence.header.tempo.get() == 0
     {
-        return INVALID;
+        return crate::Error::invalid("unsupported SEQ header").into();
     }
     let mut count = 0;
     let mut duration = 0u64;
@@ -359,7 +341,7 @@ pub unsafe extern "C" fn kf_music_decode(
                         result.value = u32::from(channel.data1)
                             | (u32::from(channel.data2.unwrap_or(0)) << midi::DATA_BITS);
                     }
-                    _ => return INVALID,
+                    _ => return crate::Error::invalid("unsupported SEQ channel message").into(),
                 }
             }
             SeqEventKind::Meta {
@@ -369,10 +351,10 @@ pub unsafe extern "C" fn kf_music_decode(
                 result.kind = KF_MUSIC_TEMPO;
                 result.value = match read_u24_be(data, 0) {
                     Ok(tempo) => tempo,
-                    Err(error) => return SeqError::from(error).into(),
+                    Err(error) => return error.into(),
                 };
                 if result.value == 0 {
-                    return INVALID;
+                    return crate::Error::invalid("zero SEQ tempo").into();
                 }
             }
             SeqEventKind::Meta {
@@ -381,11 +363,11 @@ pub unsafe extern "C" fn kf_music_decode(
             } if data.is_empty() => {
                 result.kind = KF_MUSIC_END;
             }
-            _ => return INVALID,
+            _ => return crate::Error::invalid("unsupported SEQ event").into(),
         }
         if !events.is_null() {
             if count == capacity {
-                return OUTPUT_FULL;
+                return crate::Error::output_full().into();
             }
             events.add(count).write(result);
         }
@@ -398,7 +380,7 @@ pub unsafe extern "C" fn kf_music_decode(
             }
         ) {
             if duration == 0 {
-                return INVALID;
+                return crate::Error::invalid("zero SEQ duration").into();
             }
             info.write(KfMusicInfo {
                 resolution: u32::from(sequence.header.resolution.get()),
@@ -408,5 +390,5 @@ pub unsafe extern "C" fn kf_music_decode(
             return OK;
         }
     }
-    INVALID
+    crate::Error::invalid("SEQ is missing an end event").into()
 }

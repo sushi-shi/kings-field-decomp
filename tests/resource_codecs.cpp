@@ -60,6 +60,11 @@ static void animation()
     word(tim, 0, 0x10); word(tim, 4, 2); word(tim, 8, 16); word(tim, 16, (1u << 16) | 2);
     KfTimInfo tim_info {};
     assert(kf_tim_info(tim.data(), tim.size(), 0, &tim_info) == KF_CODEC_OK);
+    assert(kf_tim_info(tim.data(), tim.size() - 1, 0, &tim_info) == KF_CODEC_INVALID);
+    assert(kf_tim_info(tim.data(), tim.size(), tim.size(), &tim_info) == KF_CODEC_END);
+    auto invalid_rectangle = tim;
+    word(invalid_rectangle, 16, 0x0001ffff);
+    assert(kf_tim_info(invalid_rectangle.data(), invalid_rectangle.size(), 0, &tim_info) == KF_CODEC_INVALID);
     assert(kf_tim_info(tim.data(), tim.size(), 0, reinterpret_cast<KfTimInfo *>(unaligned)) == KF_CODEC_INVALID);
     output.capacity = sizes;
     output.clips = reinterpret_cast<KfAnimationClipData *>(unaligned);

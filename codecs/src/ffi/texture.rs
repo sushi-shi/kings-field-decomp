@@ -1,5 +1,5 @@
 use super::bindings::*;
-use super::{input_valid, output_valid, INVALID, OK, OUTPUT_FULL};
+use super::{input_valid, output_valid, OK};
 use crate::bytes::read_u16_le;
 use crate::tim::{ImageBlock, Images};
 use crate::tim::{TIM_DIRECT16, TIM_FLAGS_MASK, TIM_FORMAT_MASK};
@@ -16,7 +16,7 @@ fn rectangle_valid(block: &ImageBlock<'_>) -> bool {
         && r.width.get() <= TEXTURE_WIDTH as i16
         && r.height.get() <= TEXTURE_HEIGHT as i16
 }
-fn copy_block(block: &ImageBlock<'_>, words: &mut [u16]) -> Result<(), crate::bytes::ReadError> {
+fn copy_block(block: &ImageBlock<'_>, words: &mut [u16]) -> crate::Result<()> {
     let r = block.rectangle;
     for y in 0..r.height.get() as usize {
         for x in 0..r.width.get() as usize {
@@ -38,10 +38,10 @@ pub unsafe extern "C" fn kf_tim_compose(
     capacity: usize,
 ) -> KfCodecResult {
     if !input_valid(bytes, length) || !output_valid(words, capacity) {
-        return INVALID;
+        return crate::Error::invalid("invalid texture pointer or size").into();
     }
     if capacity < TEXTURE_WIDTH * TEXTURE_HEIGHT {
-        return OUTPUT_FULL;
+        return crate::Error::output_full().into();
     }
     let bytes = slice::from_raw_parts(bytes, length);
     let mut count = 0;
@@ -55,12 +55,12 @@ pub unsafe extern "C" fn kf_tim_compose(
             || !rectangle_valid(&image.image)
             || image.clut.is_some_and(|c| !rectangle_valid(&c))
         {
-            return INVALID;
+            return crate::Error::invalid("invalid texture mode or rectangle").into();
         }
         count += 1;
     }
     if count == 0 {
-        return INVALID;
+        return crate::Error::invalid("texture contains no TIM images").into();
     }
     let words = slice::from_raw_parts_mut(words, TEXTURE_WIDTH * TEXTURE_HEIGHT);
     for image in Images::new(bytes) {

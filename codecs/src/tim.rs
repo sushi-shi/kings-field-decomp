@@ -1,7 +1,6 @@
-use crate::bytes::{self, read_u32_le, span, ReadError};
+use crate::bytes::{self, read_u32_le, span};
 use crate::cast::AsUsize;
 use crate::formats::{TimBlock, TimHeader, TimRectangle};
-use core::fmt;
 
 pub const TIM_MAGIC: u32 = 0x10;
 pub const TIM_FORMAT_MASK: u32 = 7;
@@ -12,44 +11,6 @@ pub const TIM_INDEXED8: u32 = 1;
 pub const TIM_DIRECT16: u32 = 2;
 pub const TIM_DIRECT24: u32 = 3;
 const BLOCK_SIZE_LOW_BITS: u32 = 3;
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub enum TimError {
-    Truncated {
-        location: &'static core::panic::Location<'static>,
-        at: usize,
-        need: usize,
-        available: usize,
-    },
-    InvalidBlockSize {
-        at: usize,
-        declared: u32,
-    },
-    InvalidRectangle {
-        at: usize,
-        width: i16,
-        height: i16,
-    },
-}
-
-impl From<ReadError> for TimError {
-    fn from(error: ReadError) -> Self {
-        Self::Truncated {
-            location: error.location,
-            at: error.at,
-            need: error.need,
-            available: error.available,
-        }
-    }
-}
-
-impl fmt::Display for TimError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
-        write!(f, "TIM {self:?}")
-    }
-}
-
-impl core::error::Error for TimError {}
 
 #[derive(Debug, Clone, Copy)]
 pub struct ImageBlock<'a> {
@@ -66,7 +27,7 @@ pub struct Image<'a> {
     pub encoded_len: usize,
 }
 
-pub struct Images<'a> {
+pub(crate) struct Images<'a> {
     bytes: &'a [u8],
     at: usize,
     stopped: bool,
@@ -81,7 +42,7 @@ impl<'a> Images<'a> {
         }
     }
 
-    fn parse_next(&mut self) -> Result<Option<Image<'a>>, TimError> {
+    fn parse_next(&mut self) -> crate::Result<Option<Image<'a>>> {
         if self.bytes.len() - self.at < 4 || read_u32_le(self.bytes, self.at)? != TIM_MAGIC {
             self.stopped = true;
             return Ok(None);
@@ -107,7 +68,7 @@ impl<'a> Images<'a> {
 }
 
 impl<'a> Iterator for Images<'a> {
-    type Item = Result<Image<'a>, TimError>;
+    type Item = crate::Result<Image<'a>>;
 
     fn next(&mut self) -> Option<Self::Item> {
         if self.stopped {
@@ -124,31 +85,31 @@ impl<'a> Iterator for Images<'a> {
     }
 }
 
-fn block<'a>(bytes: &'a [u8], cursor: &mut usize) -> Result<ImageBlock<'a>, TimError> {
+fn block<'a>(bytes: &'a [u8], cursor: &mut usize) -> crate::Result<ImageBlock<'a>> {
     let at = *cursor;
     let header: TimBlock = bytes::read(bytes, at)?;
     let declared = header.encoded_bytes.get();
     let size = (declared & !BLOCK_SIZE_LOW_BITS).as_usize();
     if size < size_of::<TimBlock>() {
-        return Err(TimError::InvalidBlockSize { at, declared });
+        return Err(crate::Error::invalid_record_size(at, declared));
     }
     let encoded = span(bytes, at, size)?;
     let rectangle = header.rectangle;
     if rectangle.width.get() < 0 || rectangle.height.get() < 0 {
-        return Err(TimError::InvalidRectangle {
+        return Err(crate::Error::invalid_rectangle(
             at,
-            width: rectangle.width.get(),
-            height: rectangle.height.get(),
-        });
+            rectangle.width.get(),
+            rectangle.height.get(),
+        ));
     }
     let count = (rectangle.width.get() as usize)
         .checked_mul(rectangle.height.get() as usize)
         .and_then(|value| value.checked_mul(2))
-        .ok_or(TimError::InvalidRectangle {
+        .ok_or(crate::Error::invalid_rectangle(
             at,
-            width: rectangle.width.get(),
-            height: rectangle.height.get(),
-        })?;
+            rectangle.width.get(),
+            rectangle.height.get(),
+        ))?;
     let pixels = span(encoded, size_of::<TimBlock>(), count)?;
     *cursor = at + size;
     Ok(ImageBlock { rectangle, pixels })

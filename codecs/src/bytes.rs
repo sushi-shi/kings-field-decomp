@@ -1,18 +1,6 @@
 //! Bounded byte access shared by the resource codecs.
 #![deny(clippy::as_conversions)]
 
-use core::panic::Location;
-
-#[derive(Clone, Copy, Debug, PartialEq, Eq)]
-pub(crate) struct ReadError {
-    pub location: &'static Location<'static>,
-    pub at: usize,
-    pub need: usize,
-    pub available: usize,
-}
-
-type Result<T> = core::result::Result<T, ReadError>;
-
 macro_rules! endian {
     ($name:ident, $value:ty, $size:literal, $decode:ident) => {
         #[repr(transparent)]
@@ -45,15 +33,14 @@ impl BeU24 {
 }
 
 #[track_caller]
-pub(crate) fn span(bytes: &[u8], at: usize, size: usize) -> Result<&[u8]> {
+pub(crate) fn span(bytes: &[u8], at: usize, size: usize) -> crate::Result<&[u8]> {
     at.checked_add(size)
         .and_then(|end| bytes.get(at..end))
-        .ok_or(ReadError {
-            location: Location::caller(),
+        .ok_or(crate::Error::truncated(
             at,
-            need: size,
-            available: bytes.len().saturating_sub(at),
-        })
+            size,
+            bytes.len().saturating_sub(at),
+        ))
 }
 
 #[track_caller]
@@ -61,21 +48,22 @@ pub(crate) fn records<T: bytemuck::AnyBitPattern>(
     bytes: &[u8],
     at: usize,
     count: usize,
-) -> Result<impl ExactSizeIterator<Item = T> + '_> {
+) -> crate::Result<impl ExactSizeIterator<Item = T> + '_> {
     const { assert!(size_of::<T>() != 0) };
-    let size = count.checked_mul(size_of::<T>()).ok_or(ReadError {
-        location: Location::caller(),
-        at,
-        need: usize::MAX,
-        available: bytes.len().saturating_sub(at),
-    })?;
+    let size = count
+        .checked_mul(size_of::<T>())
+        .ok_or(crate::Error::truncated(
+            at,
+            usize::MAX,
+            bytes.len().saturating_sub(at),
+        ))?;
     Ok(span(bytes, at, size)?
         .chunks_exact(size_of::<T>())
         .map(bytemuck::pod_read_unaligned))
 }
 
 #[track_caller]
-pub(crate) fn read<T: bytemuck::AnyBitPattern>(bytes: &[u8], at: usize) -> Result<T> {
+pub(crate) fn read<T: bytemuck::AnyBitPattern>(bytes: &[u8], at: usize) -> crate::Result<T> {
     // The bounded span has exactly T's size; unaligned reads copy the value.
     Ok(bytemuck::pod_read_unaligned(span(
         bytes,
@@ -85,16 +73,16 @@ pub(crate) fn read<T: bytemuck::AnyBitPattern>(bytes: &[u8], at: usize) -> Resul
 }
 
 #[track_caller]
-pub(crate) fn read_u16_le(bytes: &[u8], at: usize) -> Result<u16> {
+pub(crate) fn read_u16_le(bytes: &[u8], at: usize) -> crate::Result<u16> {
     read(bytes, at).map(LeU16::get)
 }
 
 #[track_caller]
-pub(crate) fn read_u32_le(bytes: &[u8], at: usize) -> Result<u32> {
+pub(crate) fn read_u32_le(bytes: &[u8], at: usize) -> crate::Result<u32> {
     read(bytes, at).map(LeU32::get)
 }
 
 #[track_caller]
-pub(crate) fn read_u24_be(bytes: &[u8], at: usize) -> Result<u32> {
+pub(crate) fn read_u24_be(bytes: &[u8], at: usize) -> crate::Result<u32> {
     read(bytes, at).map(BeU24::get)
 }
