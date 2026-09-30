@@ -71,7 +71,7 @@ static KfCollisionResult effect_collision_in_cell(
     y = position->vy;
     floor = map_floor_height_grid.cells[z][x] * -KF_MAP_HEIGHT_STEP;
     if (floor < y) {
-        return KF_COLLISION_TERRAIN;
+        return {KfCollisionKind::Terrain};
     }
     attr = map_cell_attribute_grid.cells[z][x];
     if (attr != KF_MAP_ATTRIBUTE_NONE) {
@@ -79,7 +79,7 @@ static KfCollisionResult effect_collision_in_cell(
         if (height < 0) {
             height += floor;
             if (y < height) {
-                return KF_COLLISION_TERRAIN;
+                return {KfCollisionKind::Terrain};
             }
         } else {
             record = &map_cell_height_records[height];
@@ -106,10 +106,10 @@ static KfCollisionResult effect_collision_in_cell(
             (!map_cell_has_full_floor(map_collision_grid.cells[z][x + 1])
                 || position->vx % KF_MAP_TILE_SIZE < KF_MAP_TILE_CENTER)) {
             if (!map_cell_has_full_floor(map_collision_grid.cells[z][x - 1])) {
-                return KF_COLLISION_TERRAIN;
+                return {KfCollisionKind::Terrain};
             }
             if (KF_MAP_TILE_CENTER < position->vx % KF_MAP_TILE_SIZE) {
-                return KF_COLLISION_TERRAIN;
+                return {KfCollisionKind::Terrain};
             }
         }
         break;
@@ -118,23 +118,23 @@ static KfCollisionResult effect_collision_in_cell(
                 >= position->vz % KF_MAP_TILE_SIZE) {
             break;
         }
-        return KF_COLLISION_TERRAIN;
+        return {KfCollisionKind::Terrain};
     case KF_MAP_CELL_SUM_LE_SIZE:
         if ((KF_MAP_TILE_SIZE + KF_MAP_TILE_CENTER)
                 < position->vx % KF_MAP_TILE_SIZE + position->vz % KF_MAP_TILE_SIZE) {
-            return KF_COLLISION_TERRAIN;
+            return {KfCollisionKind::Terrain};
         }
         break;
     case KF_MAP_CELL_Z_GE_X:
         if (position->vx % KF_MAP_TILE_SIZE
                 > position->vz % KF_MAP_TILE_SIZE + KF_MAP_TILE_CENTER) {
-            return KF_COLLISION_TERRAIN;
+            return {KfCollisionKind::Terrain};
         }
         break;
     case KF_MAP_CELL_SUM_GE_SIZE:
         if (position->vx % KF_MAP_TILE_SIZE + position->vz % KF_MAP_TILE_SIZE
                 < KF_MAP_TILE_CENTER) {
-            return KF_COLLISION_TERRAIN;
+            return {KfCollisionKind::Terrain};
         }
         break;
     }
@@ -154,7 +154,7 @@ KfCollisionResult effect_map_collision(VECTOR *position, s32 radius)
     subz = position->vz % KF_MAP_TILE_SIZE;
     effect = effect_state.current_record;
     if (x < 0 || x >= KF_MAP_COLUMNS || z < 0 || z >= KF_MAP_ROWS) {
-        return KF_COLLISION_TERRAIN;
+        return {KfCollisionKind::Terrain};
     }
     return effect_collision_in_cell(position, radius, x, z, subz, effect);
 }

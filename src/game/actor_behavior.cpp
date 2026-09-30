@@ -343,8 +343,8 @@ static KfActorMoveResult actor_handle_blocked_movement(
                     target.vz,
                     definition->collision_radius,
                     definition->collision_height,
-                    ACTOR_WALK_COLLISION_FLAGS)
-                == KF_COLLISION_NONE) {
+                    ACTOR_WALK_COLLISION_FLAGS).kind
+                == KfCollisionKind::None) {
                 if (delta->z >= 0) {
                     actor->movement_yaw = KF_ANGLE_HALF_TURN;
                 } else {
@@ -359,8 +359,8 @@ static KfActorMoveResult actor_handle_blocked_movement(
                            actor->position.vz,
                            definition->collision_radius,
                            definition->collision_height,
-                           ACTOR_WALK_COLLISION_FLAGS)
-                       == KF_COLLISION_NONE) {
+                           ACTOR_WALK_COLLISION_FLAGS).kind
+                       == KfCollisionKind::None) {
                 if (delta->x < 0) {
                     actor->movement_yaw = KF_ANGLE_QUARTER_TURN;
                 } else {
@@ -398,8 +398,8 @@ KfActorMoveResult actor_move_xz_with_collision(const struct KfVecXZs *delta, KfA
         definition->collision_radius,
         definition->collision_height,
         ACTOR_WALK_COLLISION_FLAGS);
-    if (result != KF_COLLISION_NONE
-        && (result != KF_COLLISION_BELOW_FLOOR || actor->vertical_state == KF_ACTOR_VERTICAL_LONG_DROP)) {
+    if (result.kind != KfCollisionKind::None
+        && (result.kind != KfCollisionKind::BelowFloor || actor->vertical_state == KF_ACTOR_VERTICAL_LONG_DROP)) {
         return actor_handle_blocked_movement(actor, definition, delta, target, collision_policy);
     }
     drop = target.vy - map_floor_height_at_position(&target);
@@ -633,7 +633,7 @@ void actor_apply_horizontal_movement(void)
         definition->collision_radius,
         definition->collision_height,
         ACTOR_VELOCITY_COLLISION_FLAGS);
-    if (result != KF_COLLISION_NONE) {
+    if (result.kind != KfCollisionKind::None) {
         if (result.kind != KfCollisionKind::Player) {
             actor->movement_x = -actor->movement_x >> 1;
             actor->movement_z = -actor->movement_z >> 1;
@@ -708,7 +708,7 @@ void actor_apply_random_movement(s16 step, s16 limit)
         definition->collision_radius,
         definition->collision_height,
         ACTOR_VELOCITY_COLLISION_FLAGS);
-    if (result == KF_COLLISION_NONE) {
+    if (result.kind == KfCollisionKind::None) {
         actor->position = target;
     } else {
         actor->action_progress = KF_ACTOR_PROGRESS_DRIFT_COLLIDED;
@@ -719,7 +719,7 @@ void actor_apply_random_movement(s16 step, s16 limit)
             definition->collision_radius,
             definition->collision_height,
             ACTOR_VELOCITY_COLLISION_FLAGS);
-        if (result != KF_COLLISION_NONE) {
+        if (result.kind != KfCollisionKind::None) {
             actor->movement_x = -actor->movement_x;
         } else if (collision_query_world(
                        actor->position.vx,
@@ -727,8 +727,8 @@ void actor_apply_random_movement(s16 step, s16 limit)
                        actor->position.vz,
                        definition->collision_radius,
                        definition->collision_height,
-                       ACTOR_VELOCITY_COLLISION_FLAGS)
-                   != KF_COLLISION_NONE) {
+                       ACTOR_VELOCITY_COLLISION_FLAGS).kind
+                   != KfCollisionKind::None) {
             actor->movement_y = -actor->movement_y;
         }
         if (collision_query_world(
@@ -737,8 +737,8 @@ void actor_apply_random_movement(s16 step, s16 limit)
                 target.vz,
                 definition->collision_radius,
                 definition->collision_height,
-                ACTOR_VELOCITY_COLLISION_FLAGS)
-            != KF_COLLISION_NONE) {
+                ACTOR_VELOCITY_COLLISION_FLAGS).kind
+            != KfCollisionKind::None) {
             actor->movement_z = -actor->movement_z;
         }
     }
@@ -870,24 +870,19 @@ static void actor_update_vertical_motion(KfActor *actor, const KfActorDefinition
             definition->collision_radius,
             definition->collision_height,
             ACTOR_VELOCITY_COLLISION_FLAGS);
-        if (hit == KF_COLLISION_NONE) {
+        if (hit.kind == KfCollisionKind::None) {
             actor_apply_fall_step(actor, next_y);
             break;
         }
         if (hit.kind == KfCollisionKind::Player) {
             player_apply_damage(0, ACTOR_JUMP_CONTACT_STRIKING_DAMAGE, 0, KF_PLAYER_STATUS_NONE, 0, 0, KF_FIXED12_ONE, KF_PLAYER_DAMAGE_MULTIPLIER_ONE);
             actor_bounce_from_jump(actor);
-        } else if (hit.kind == KfCollisionKind::Terrain) {
-            switch (hit.detail) {
-            case KF_COLLISION_DETAIL_BELOW_FLOOR:
-                floor_height = map_floor_height_at_position(&actor->position);
-                actor_land(actor, floor_height);
-                break;
-            case KF_COLLISION_DETAIL_CEILING:
-                actor->vertical_state = KF_ACTOR_VERTICAL_JUMP_ATTACK;
-                actor->vertical_velocity = ACTOR_JUMP_CEILING_VELOCITY_Y;
-                break;
-            }
+        } else if (hit.kind == KfCollisionKind::BelowFloor) {
+            floor_height = map_floor_height_at_position(&actor->position);
+            actor_land(actor, floor_height);
+        } else if (hit.kind == KfCollisionKind::Ceiling) {
+            actor->vertical_state = KF_ACTOR_VERTICAL_JUMP_ATTACK;
+            actor->vertical_velocity = ACTOR_JUMP_CEILING_VELOCITY_Y;
         } else if (hit.kind == KfCollisionKind::Actor) {
             actor_bounce_from_jump(actor);
         }
@@ -1081,18 +1076,6 @@ void actor_update_current_action(void)
             if (actor->vertical_state != KF_ACTOR_VERTICAL_JUMP_ATTACK) {
                 actor->vertical_state = KF_ACTOR_VERTICAL_NONE;
                 actor->vertical_velocity = 0;
-                result = collision_query_world(
-                    actor->position.vx,
-                    actor->position.vy,
-                    actor->position.vz,
-                    definition->collision_radius,
-                    definition->collision_height,
-                    ACTOR_VELOCITY_COLLISION_FLAGS);
-
-                if (result != KF_COLLISION_NONE && (result.encoded() >> KF_COLLISION_KIND_SHIFT) == KF_COLLISION_DETAIL_CEILING) {
-                    actor->vertical_state = KF_ACTOR_VERTICAL_FALL;
-                    actor->vertical_velocity = 0;
-                }
                 actor->action_progress = KF_ACTOR_PROGRESS_COMPLETE;
                 actor_select_next_action(actor_player_distance(actor, ACTOR_ACTIVE_RANGE));
             }
@@ -1124,7 +1107,7 @@ void actor_update_current_action(void)
         }
         result = collision_query_world(
             actor->position.vx, KF_COLLISION_IGNORE_HEIGHT, actor->position.vz, definition->collision_radius, 0, ACTOR_WALK_COLLISION_FLAGS);
-        if (result != KF_COLLISION_NONE) {
+        if (result.kind != KfCollisionKind::None) {
             target.vx = actor->position.vx;
             target.vz = actor->position.vz;
             angle_to_forward_xz(actor->rotation.angles.y, &direction);

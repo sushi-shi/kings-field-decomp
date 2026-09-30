@@ -47,8 +47,8 @@ void map_event_update_wander(void)
 
     if (collision_query_world(
             point.vx, KF_COLLISION_IGNORE_HEIGHT, point.vz, event->radius, 0,
-            KF_COLLISION_SKIP_MAP_EVENTS | (KF_COLLISION_CELL_BLOCKS_WANDER << KF_COLLISION_CELL_FLAG_SHIFT))
-            == KF_COLLISION_NONE) {
+            KF_COLLISION_SKIP_MAP_EVENTS | (KF_COLLISION_CELL_BLOCKS_WANDER << KF_COLLISION_CELL_FLAG_SHIFT)).kind
+            == KfCollisionKind::None) {
         event->reference_position.vx = point.vx;
         event->reference_position.vz = point.vz;
         event->cell_x = point.vx / KF_MAP_TILE_SIZE;

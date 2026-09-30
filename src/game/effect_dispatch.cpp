@@ -133,7 +133,7 @@ static bool effect_handle_projectile_collision(KfEffectRecord *effect, KfMagicRe
     KfMagicRecord *impact_magic;
 
     collision = effect_map_collision(&effect->position, radius);
-    if (collision != KF_COLLISION_NONE) {
+    if (collision.kind != KfCollisionKind::None) {
         u16 impact_power;
 
         impact_magic = effect_state.current_magic;
@@ -424,7 +424,7 @@ void effect_update_dispatch(void)
 
     case KF_EFFECT_KIND_MOONLIGHT_PROJECTILE:
         if (kf_enum_encode<u8>(phase) < kf_enum_encode<u8>(KF_EFFECT_MOONLIGHT_TRAVEL_LAST) + 1) {
-            if (effect_map_collision(&effect->position, PROJECTILE_COLLISION_RADIUS) != KF_COLLISION_NONE) {
+            if (effect_map_collision(&effect->position, PROJECTILE_COLLISION_RADIUS).kind != KfCollisionKind::None) {
                 effect->animation_clip = KF_ANIMATION_CLIP_NONE;
                 effect->base_render_id.model = KF_EFFECT_MODEL_NONE;
                 effect->render_id.model = KF_EFFECT_MODEL_NONE;
@@ -469,7 +469,7 @@ void effect_update_dispatch(void)
 
         linked_effect = &effect_state.records[effect->control.parent_effect_index];
         collision = effect_map_collision(&effect->position, radius);
-        if (collision != KF_COLLISION_NONE) {
+        if (collision.kind != KfCollisionKind::None) {
             collision_kind = collision.kind;
             power = effect_magic_power(effect);
             if (collision_kind == KfCollisionKind::Actor) {
@@ -555,7 +555,7 @@ void effect_update_dispatch(void)
         effect->position += movement;
         effect->phase++;
         effect->rotation.vector.vz = (effect->rotation.vector.vz + HOMING_ROLL_STEP) & KF_ANGLE_WRAP_MASK;
-        if (effect_map_collision(&effect->position, radius) != KF_COLLISION_NONE) {
+        if (effect_map_collision(&effect->position, radius).kind != KfCollisionKind::None) {
             if (effect->base_render_id.model == KF_EFFECT_MODEL_HOMING_PROJECTILE_ALTERNATE) {
                 effect_pool_construct(
                     effect->id, effect->type, KF_EFFECT_KIND_RADIAL_BLAST_ALTERNATE,
@@ -744,7 +744,7 @@ void effect_update_dispatch(void)
             collision = collision_query_world(
                 position.vx, position.vy, position.vz, ACTOR_SPAWNER_COLLISION_RADIUS, 0,
                 KF_COLLISION_SKIP_MAP_OBJECTS | KF_COLLISION_SKIP_MAP_EVENTS);
-            if ((phase == KF_EFFECT_ACTOR_SPAWNER_TRAVEL_LAST && collision != KF_COLLISION_NONE) || effect->control.frames_remaining == 0) {
+            if ((phase == KF_EFFECT_ACTOR_SPAWNER_TRAVEL_LAST && collision.kind != KfCollisionKind::None) || effect->control.frames_remaining == 0) {
                 effect->phase = KF_EFFECT_ACTOR_SPAWNER_WAIT_FIRST;
             } else {
                 effect->position.vx = position.vx;

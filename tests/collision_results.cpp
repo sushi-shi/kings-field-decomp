@@ -43,32 +43,29 @@ int main()
     const auto query = [&](s32 y, u32 flags = 0) {
         return collision_query_world(coordinate, y, coordinate, 100, 0, flags);
     };
-    assert(query(-1) == KF_COLLISION_NONE);
-    assert(query(-1).encoded() == 0xffffffffu);
-    assert(query(1) == KF_COLLISION_BELOW_FLOOR);
-    assert(query(1).encoded() == 0x1fff0);
-    assert(query(-4000) == KF_COLLISION_CEILING);
-    assert(query(-4000).encoded() == 0x1fff1);
+    assert(query(-1).kind == KfCollisionKind::None);
+    assert(query(1).kind == KfCollisionKind::BelowFloor);
+    assert(query(-4000).kind == KfCollisionKind::Ceiling);
     map_cell_attribute_grid.linear[cell] = KF_MAP_ATTRIBUTE_NONE;
-    assert(query(-1).encoded() == 0x1fff2);
+    assert(query(-1).kind == KfCollisionKind::MissingAttribute);
     map_cell_attribute_grid.linear[cell] = kf_enum_decode<KfMapAttribute>(1);
     map_collision_grid.linear[cell] = KF_MAP_CELL_BLOCKED;
-    assert(query(-1).encoded() == 0x10000);
+    assert(query(-1).kind == KfCollisionKind::Terrain);
     map_collision_grid.linear[cell] = KF_MAP_CELL_FLOOR;
     map_collision_flag_grid.linear[cell] = 0xa1;
     const auto rejection = query(-1, 0xa000);
     assert(rejection.kind == KfCollisionKind::CellFlags && rejection.detail == 0xa0);
-    assert(rejection.encoded() == 0xa000);
     map_collision_flag_grid.linear[cell] = 1;
     player_hit = 0; actor_hit = 2; object_hit = 3; event_hit = 4;
-    assert(query(-1).encoded() == 0x800000);
+    assert(query(-1).kind == KfCollisionKind::Player);
     const auto actor = query(-1, KF_COLLISION_SKIP_PLAYER);
     assert(actor.kind == KfCollisionKind::Actor && actor.detail == 2);
-    assert(actor.encoded() == 0x100002);
-    assert(query(-1, KF_COLLISION_SKIP_PLAYER | KF_COLLISION_SKIP_ACTORS).encoded() == 0x200003);
+    const auto object = query(-1, KF_COLLISION_SKIP_PLAYER | KF_COLLISION_SKIP_ACTORS);
+    assert(object.kind == KfCollisionKind::MapObject && object.detail == 3);
     const auto skip = KF_COLLISION_SKIP_PLAYER | KF_COLLISION_SKIP_ACTORS | KF_COLLISION_SKIP_MAP_OBJECTS;
-    assert(query(-1, skip).encoded() == 0x400004);
-    assert(query(-1, skip | KF_COLLISION_SKIP_MAP_EVENTS) == KF_COLLISION_NONE);
+    const auto event = query(-1, skip);
+    assert(event.kind == KfCollisionKind::MapEvent && event.detail == 4);
+    assert(query(-1, skip | KF_COLLISION_SKIP_MAP_EVENTS).kind == KfCollisionKind::None);
     player_state.camera_position = {1, 2, 3};
     query(-1, KF_COLLISION_CAPTURE_TARGET);
     assert(collision_target.position.vx == 1 && collision_target.radius == KF_COLLISION_PLAYER_RADIUS);
@@ -81,9 +78,10 @@ int main()
     effect_state.current_record = &effect;
     VECTOR point {coordinate, -1, coordinate};
     const auto fallback = effect_map_collision(&point, 100);
-    assert(fallback.kind == KfCollisionKind::EffectWithoutTargets && fallback.encoded() == 1);
+    assert(fallback.kind == KfCollisionKind::EffectWithoutTargets);
     effect.type = KF_EFFECT_COLLISION_TARGET_ACTORS;
-    assert(effect_map_collision(&point, 100).encoded() == 0x100002);
+    const auto effect_hit = effect_map_collision(&point, 100);
+    assert(effect_hit.kind == KfCollisionKind::Actor && effect_hit.detail == 2);
 
     // Door probes skip terrain and map objects but still detect actors/events/player.
     auto &door = map_object_state.objects[0];
@@ -106,5 +104,5 @@ int main()
     actor_hit = -1;
     assert(map_object_probe_door_closing(&door, 0).kind == KfCollisionKind::MapEvent);
     event_hit = -1;
-    assert(map_object_probe_door_closing(&door, 0) == KF_COLLISION_NONE);
+    assert(map_object_probe_door_closing(&door, 0).kind == KfCollisionKind::None);
 }

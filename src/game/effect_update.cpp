@@ -65,7 +65,7 @@ void effect_update_swinging_hazard(SVECTOR *probe_offset, KfEffectPhase phase_li
         world = kf::matrix_apply_rotation(rotation_matrix, *probe_offset);
         world += record->position;
         collision = effect_map_collision(&world, EFFECT_SWING_COLLISION_RADIUS);
-        if (collision != KF_COLLISION_NONE) {
+        if (collision.kind != KfCollisionKind::None) {
             if (collision.kind == KfCollisionKind::Actor) {
                 actor_apply_damage(collision.detail, 0, magic->damage_components[0],
                     magic->damage_components[2], magic->damage_components[1],
@@ -130,7 +130,7 @@ void effect_update_orbiting_projectile(s32 orbit_radius, KfEffectPhase phase_lim
         record->control.orbit_angle = (record->control.orbit_angle
             + KF_ANGLE_FULL_TURN / EFFECT_ORBIT_UPDATES_PER_TURN) & KF_ANGLE_WRAP_MASK;
         collision = effect_map_collision(&record->position, EFFECT_ORBIT_COLLISION_RADIUS);
-        if (collision != KF_COLLISION_NONE) {
+        if (collision.kind != KfCollisionKind::None) {
             if (collision.kind == KfCollisionKind::Actor) {
                 actor_apply_damage(collision.detail, 0, magic->damage_components[0],
                     magic->damage_components[2], magic->damage_components[1],

@@ -48,25 +48,15 @@ policy is not a proved retail boot seed.
 
 ## Collision results
 
-`KfCollisionResult` separates these query results; they are not one bitset:
+World queries return an explicit collision kind: terrain, below floor, ceiling,
+missing attribute, player, actor, map object, map event, rejected cell flags, or
+no hit. The detail carries a cell kind, pool index or rejected flags where needed.
+Effect queries also distinguish obstruction when no collision targets are selected.
 
-| Kind | Detail | Encoded value |
-| --- | --- | --- |
-| None | — | `0xffffffff` |
-| Terrain | Cell kind or `fff0`/`fff1`/`fff2` for below-floor/ceiling/missing attribute | `0x10000 | detail` |
-| Actor / map object / map event | Pool index | `0x100000` / `0x200000` / `0x400000`, plus index |
-| Player | — | `0x800000` |
-| CellFlags | Rejected authored cell bits | `flags << 8` |
-| EffectWithoutTargets | — | `1` |
+Queries check terrain, rejected cell flags, then player, actors, objects and
+events, subject to skip flags and occupancy. Distance/index probes use signed
+`-1` and have a separate domain.
 
-World queries check terrain, rejected cell flags, then player, actors, objects and
-events, subject to skip flags and occupancy. Effect queries can return literal-one
-obstruction when neither actors nor player are targeted. Distance/index probes
-still use signed `-1` and have a separate domain.
-
-The jump-attack landing check compares the encoded high word with `0xfff1`, a
-terrain *detail*. No current producer emits that high word. Preserve this explicit
-comparison until its intended behavior is established; it is not a ceiling predicate.
 Door-closing probes ignore terrain and map objects, checking a 3,000-unit radius at
 the lift-door origin or the cardinally offset hinged-door position.
 
