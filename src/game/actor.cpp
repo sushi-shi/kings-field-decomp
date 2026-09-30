@@ -3,7 +3,6 @@
 #include <cstdlib>
 #include <kf/lib/random.h>
 #include <kf/lib/null.h>
-#include <kf/lib/bool.h>
 
 #include <kf/game/effect.h>
 #include <kf/lib/map_data.h>
@@ -583,7 +582,7 @@ void actor_advance_animation_clamped(KfActor *actor, s16 delta)
     actor->animation_phase = std::clamp<s32>(phase, 0, KF_ACTOR_ANIMATION_PHASE_MAX);
 }
 
-KfBool32 actor_animation_crossed_phase(const KfActor *actor, u16 phase)
+bool actor_animation_crossed_phase(const KfActor *actor, u16 phase)
 {
     return phase < actor->animation_phase
         && phase >= actor->animation_phase - actor->animation_step;

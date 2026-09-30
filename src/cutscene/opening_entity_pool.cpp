@@ -1,6 +1,5 @@
 #include <kf/platform/prelude.h>
 #include <kf/lib/null.h>
-#include <kf/lib/bool.h>
 
 #include <kf/lib/map_data.h>
 #include <kf/lib/math.h>
@@ -33,7 +32,7 @@ KfOpeningEntity *opening_entity_find_by_object_id(
 void opening_entity_pool_load_placements(
     const KfMapObjectPlacement *placements, s32 base_y)
 {
-    KfBool16 exhausted = false;
+    bool exhausted = false;
     const KfMapObjectPlacement *placement = placements;
 
     for (auto &entity : opening_entity_state.entities) {

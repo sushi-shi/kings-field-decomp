@@ -1,7 +1,6 @@
 #ifndef KF_LIB_MATH_H
 #define KF_LIB_MATH_H
 
-#include <kf/lib/bool.h>
 #include <kf/lib/types.h>
 #include <kf/lib/fixed_math.h>
 #include <kf/lib/geometry_types.h>
@@ -89,10 +88,10 @@ inline KfVecXZ vector_yaw_probe_xz(const VECTOR &position, s16 yaw, s32 reach)
 }
 
 extern s16 angle_approach(s16 current, s16 target, s32 step);
-extern KfBool angle_mod_delta_le_half_turn(int lhs, int rhs);
+extern bool angle_mod_delta_le_half_turn(int lhs, int rhs);
 extern s16 angle_shortest_delta(s32 first, s32 second);
 extern void angle_to_forward_xz(s16 angle, struct KfVecXZs *direction);
-extern KfBool angle_within_tolerance(int lhs, int rhs, s16 tolerance);
+extern bool angle_within_tolerance(int lhs, int rhs, s16 tolerance);
 extern void matrix_interpolate(
     const MATRIX *from, const MATRIX *to, MATRIX *output, s32 blend);
 extern void matrix_set_rotation_x(s16 angle, MATRIX *matrix);

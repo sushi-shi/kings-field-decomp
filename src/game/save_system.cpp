@@ -1,7 +1,6 @@
 #include <kf/platform/prelude.h>
 #include <kf/game/audio.h>
 #include <kf/lib/null.h>
-#include <kf/lib/bool.h>
 #include <kf/game/graphics.h>
 #include <kf/lib/resource_file.h>
 #include <kf/game/save.h>
@@ -43,7 +42,7 @@ enum {
     IMAGE_WAIT_MAX_BRIGHTNESS = 127
 };
 char talk_image_path_template[talk_image_path_capacity] = "TALK/C00/T00000.TIM";
-KfBool32 menu_load_message_image(s32 message_id);
+bool menu_load_message_image(s32 message_id);
 void screen_show_image_until_input(const char *path);
 
 // Version one lists every persisted field explicitly. Runtime pointers are
@@ -64,8 +63,6 @@ struct SaveCodec {
 
 template <typename T, typename Wire>
 static void save_assign(T &field, Wire value) { field = static_cast<T>(value); }
-template <typename Enum, typename Storage, typename Wire>
-static void save_assign(KfEnumStorage<Enum, Storage> &field, Wire value) { field = static_cast<Enum>(value); }
 
 template <typename Wire, typename T>
 static void save_field(SaveCodec &io, T &field) {
@@ -477,7 +474,7 @@ void menu_play_input_sound(KfMenuSoundCue cue)
     kf::sound_note_release(audio_state.bank, sound.program, sound.note);
 }
 
-KfBool32 menu_load_message_image(s32 message_id)
+bool menu_load_message_image(s32 message_id)
 {
     char path[menu_image_path_capacity] = "TIM/M000.";
     u8 *buffer;
@@ -498,7 +495,7 @@ KfBool32 menu_load_message_image(s32 message_id)
 void screen_show_image_until_input(const char *path)
 {
     s32 brightness = IMAGE_WAIT_INITIAL_BRIGHTNESS;
-    KfBool8 released = false;
+    bool released = false;
     std::size_t image_size;
     if (resource_file_load_into(game_graphics_runtime.display_state.asset_load_buffer,
             game_graphics_runtime.display_state.asset_load_capacity, path, &image_size) != KF_RESOURCE_LOADED) {

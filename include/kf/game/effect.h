@@ -252,7 +252,7 @@ typedef struct KfEffectRecord {
     KfEffectRenderId base_render_id;
     KfEffectRenderId render_id;
     KfAnimationClip animation_clip;
-    KfEnumStorage<KfAudioPlaybackResult, u8> sound_played;
+    KfAudioPlaybackResult sound_played;
     u8 id;
     KfEffectPhase phase;
     KfEffectVisualState visual;

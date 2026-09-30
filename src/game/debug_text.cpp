@@ -1,11 +1,10 @@
 #include <kf/platform/prelude.h>
-#include <kf/lib/bool.h>
 #include <stdarg.h>
 
 #include <kf/lib/debug.h>
 #include <kf/lib/types.h>
 
-KfBool32 debug_stop_flag = false;
+bool debug_stop_flag = false;
 
 void debug_stop(void)
 {

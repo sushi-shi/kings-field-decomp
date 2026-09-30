@@ -1,7 +1,6 @@
 #ifndef KF_GAME_PLAYER_H
 #define KF_GAME_PLAYER_H
 
-#include <kf/lib/bool.h>
 #include <kf/game/combat.h>
 #include <kf/game/audio.h>
 #include <kf/lib/enum.h>
@@ -86,8 +85,8 @@ enum {
 typedef struct KfPlayerProgressState {
     u8 level;
     u8 unknown_01;
-    KfEnumStorage<KfFloorId, u8> current_floor;
-    KfEnumStorage<KfFloorId, u8> highest_floor;
+    KfFloorId current_floor;
+    KfFloorId highest_floor;
 } KfPlayerProgressState;
 
 typedef struct KfPlayerMotionState {
@@ -163,10 +162,10 @@ typedef struct KfPlayerState {
     KfObjectId equipped_arm_armor_id;
     KfObjectId equipped_leg_armor_id;
     KfObjectId equipped_accessory_id;
-    KfEnumStorage<KfPlayerOption, u8> audio_effects_enabled;
-    KfEnumStorage<KfPlayerOption, u8> audio_music_enabled;
-    KfEnumStorage<KfPlayerOption, u8> hud_gauges_enabled;
-    KfEnumStorage<KfPlayerOption, u8> compass_enabled;
+    KfPlayerOption audio_effects_enabled;
+    KfPlayerOption audio_music_enabled;
+    KfPlayerOption hud_gauges_enabled;
+    KfPlayerOption compass_enabled;
     SVECTOR view_rotation_offset;
     KfPlayerUpdateState update_state;
     u8 unknown_a3;
@@ -254,7 +253,7 @@ extern void player_warp_shimmer(KfWarpShimmerMode shimmer_mode, VECTOR *position
 extern void player_warp_shimmer_at_player(KfWarpShimmerMode shimmer_mode);
 extern void player_warp_same_floor(KfMapVariant map_variant, s32 cell_x, s32 cell_z);
 extern void player_warp_to_floor_entry(void);
-extern KfBoolU32 player_warp_trigger_update(void);
+extern bool player_warp_trigger_update(void);
 
 extern s32 fixed6_ratio_step(s32 value, s32 span);
 

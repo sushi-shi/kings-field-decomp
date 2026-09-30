@@ -1,6 +1,5 @@
 #include <kf/platform/prelude.h>
 #include <kf/lib/null.h>
-#include <kf/lib/bool.h>
 
 #include <kf/lib/map_data.h>
 #include <kf/lib/map.h>
@@ -40,7 +39,7 @@ void map_event_advance_animation_blocking(KfMapEvent *event, u16 target, s16 ste
 
 void map_event_pool_load(const KfMapEventDefinition *definitions)
 {
-    KfBool8 exhausted = false;
+    bool exhausted = false;
 
     for (auto &event : map_runtime_state.events) {
         if (exhausted == true || definitions->state == KF_MAP_EVENT_FREE) {

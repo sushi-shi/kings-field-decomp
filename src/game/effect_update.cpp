@@ -117,7 +117,7 @@ void effect_update_orbiting_projectile(s32 orbit_radius, KfEffectPhase phase_lim
 {
     KfEffectRecord *record = effect_state.current_record;
     KfMagicRecord *magic = effect_state.current_magic;
-    KfEnumStorage<KfEffectPhase, u32> life = record->phase;
+    KfEffectPhase life = record->phase;
     KfCollisionResult collision;
 
     if ((kf_enum_encode<u32>(life) & EFFECT_PHASE_BYTE_MASK) < kf_enum_encode<u8>(KF_EFFECT_HAZARD_RELEASE_REQUEST) + 1) {

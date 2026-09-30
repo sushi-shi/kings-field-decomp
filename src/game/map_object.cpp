@@ -142,7 +142,7 @@ KfMapObject *map_object_effect_pool_acquire(u16 first_index, u16 count, u16 sequ
 
 void map_object_spawn_drop(KfMapObjectDropSource drop_source, KfObjectId object_id, const VECTOR *position, s32 y_offset)
 {
-    KfBool within_drop_range;
+    bool within_drop_range;
     u16 *sequence;
     u16 first_index;
     KfMapObject *object;

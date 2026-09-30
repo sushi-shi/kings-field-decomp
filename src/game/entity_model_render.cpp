@@ -64,7 +64,7 @@ void render_map_object(KfMapObject *object)
     MATRIX rot_x;
     MATRIX model;
     MATRIX light;
-    KfEnumStorage<KfObjectId, u16> id;
+    KfObjectId id;
     s16 depth;
 
     relative_position = VECTOR{

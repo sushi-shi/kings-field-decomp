@@ -2,7 +2,6 @@
 #include <algorithm>
 #include <kf/game/audio.h>
 #include <kf/lib/random.h>
-#include <kf/lib/bool.h>
 
 #include <kf/lib/map_data.h>
 #include <kf/game/actor.h>
@@ -118,7 +117,7 @@ static KfActorAction actor_choose_movement_action(const KfActor *actor,
     const KfActorDefinition *definition, KfActorAction action,
     s32 player_distance, s32 awareness, s32 near_range)
 {
-    KfBool32 recently_active;
+    bool recently_active;
 
     recently_active = action == KF_ACTOR_ACTION_RETREAT
         || action == KF_ACTOR_ACTION_MELEE_ATTACK

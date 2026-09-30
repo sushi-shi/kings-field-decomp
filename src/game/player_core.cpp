@@ -573,7 +573,7 @@ void player_warp_to_floor_entry(void)
 {
     VECTOR position;
     const KfFloorEntryCell *entry;
-    KfEnumStorage<KfFloorId, u8> floor;
+    KfFloorId floor;
 
     player_get_floor_position(position);
     player_warp_shimmer(KF_WARP_SHIMMER_GROW_REMOVE, &position);

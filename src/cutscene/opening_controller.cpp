@@ -34,8 +34,8 @@ void opening_run(Cutscene scene)
 {
     u8 *tim_data;
     std::size_t tim_size;
-    KfEnumStorage<KfOpeningInputAction, s32> advance_action;
-    KfEnumStorage<KfOpeningInputAction, s32> skip_action;
+    KfOpeningInputAction advance_action;
+    KfOpeningInputAction skip_action;
 
     memset((void *)&open_graphics_runtime, 0, sizeof open_graphics_runtime);
     memset((void *)&opening_entity_state, 0, sizeof opening_entity_state);

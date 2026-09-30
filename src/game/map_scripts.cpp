@@ -2,7 +2,6 @@
 #include <kf/game/audio.h>
 #include <kf/lib/random.h>
 #include <kf/lib/null.h>
-#include <kf/lib/bool.h>
 #include <kf/game/graphics.h>
 
 #include <kf/game/actor.h>
@@ -609,7 +608,7 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
     s32 index;
     s32 result;
     KfMenuResult pickup_result;
-    KfBool8 found_item;
+    bool found_item;
     KfMapEvent *event;
     KfMapObject *object;
     KfMapObjectDefinition *definition;

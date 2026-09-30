@@ -1,7 +1,6 @@
 #include <kf/platform/prelude.h>
 #include <kf/game/audio.h>
 #include <kf/lib/null.h>
-#include <kf/lib/bool.h>
 
 #include <kf/game/player.h>
 #include <kf/game/game.h>
@@ -58,7 +57,7 @@ void player_use_item(KfObjectId item_id)
     s32 distance;
     s32 index;
     s16 slot;
-    KfBool8 used = false;
+    bool used = false;
 
     const auto reach = vector_yaw_probe_xz(player_state.camera_position,
         player_state.camera_rotation.vy, MAP_INTERACTION_PROBE_DISTANCE);

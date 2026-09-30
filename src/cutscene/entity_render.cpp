@@ -30,7 +30,7 @@ void opening_entity_render(KfOpeningEntity *entity)
     SVECTOR relative_position;
     MATRIX model;
     MATRIX light;
-    KfEnumStorage<KfOpeningModelId, u16> object_id;
+    KfOpeningModelId object_id;
     s16 depth;
 
     relative_position = VECTOR{

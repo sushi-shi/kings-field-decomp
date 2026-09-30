@@ -3,7 +3,6 @@
 #include <kf/game/resources.h>
 #include <kf/game/menu_glyphs.h>
 #include <kf/lib/null.h>
-#include <kf/lib/bool.h>
 
 #include <kf/platform/input.h>
 #include <kf/game/menu.h>
@@ -64,7 +63,7 @@ void menu_enqueue_background(void)
         menu_submit_template(background[i], MENU_BACKGROUND_OT_DEPTH);
 }
 
-static void menu_draw_backdrop_tile(s32 x, s32 y, KfBool32 flip_x, KfBool32 flip_y)
+static void menu_draw_backdrop_tile(s32 x, s32 y, bool flip_x, bool flip_y)
 {
     const auto &tile = menu_assets.window_backdrop;
     auto face = menu_textured_quad(tile.material, x, y, tile.width, tile.height);
@@ -1399,7 +1398,7 @@ static KfMenuResult menu_list_confirm_impl(
     MenuGlyphString accept_label;
     MenuGlyphString decline_label;
     KfMenuConfirmChoice selected;
-    KfEnumStorage<KfMenuConfirmState, u32> confirmation;
+    KfMenuConfirmState confirmation;
     u32 input;
     u32 prev;
     KfMenuResult result;

@@ -2,7 +2,6 @@
 #include <kf/game/audio.h>
 #include <kf/lib/null.h>
 #include <kf/game/graphics.h>
-#include <kf/lib/bool.h>
 
 #include <kf/lib/map_data.h>
 #include <kf/game/player.h>
@@ -53,7 +52,7 @@ void player_warp_shimmer(KfWarpShimmerMode shimmer_mode, VECTOR *position)
     s16 scale_y_step;
     s16 frame;
     s16 i;
-    KfEnumStorage<KfWarpShimmerMode, s16> mode_value = shimmer_mode;
+    KfWarpShimmerMode mode_value = shimmer_mode;
 
     switch (mode_value) {
     case KF_WARP_SHIMMER_GROW_REMOVE:
@@ -175,7 +174,7 @@ static constexpr bool warp_cell_matches(KfMapCellCoordinates cell, WarpCell warp
     return cell.x == warp.x && cell.z == warp.z;
 }
 
-KfBoolU32 player_warp_trigger_update(void)
+bool player_warp_trigger_update(void)
 {
     const auto cell = player_state.motion_state.map_cell;
 

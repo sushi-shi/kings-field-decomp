@@ -1,5 +1,4 @@
 #include <kf/platform/prelude.h>
-#include <kf/lib/bool.h>
 
 #include <kf/lib/map_data.h>
 #include <kf/lib/map.h>
@@ -171,7 +170,7 @@ void map_object_definitions_load(const KfMapObjectDefinitionTable *definitions)
 
 void map_object_pool_load(const KfMapObjectPlacement *placements)
 {
-    KfBool16 ended = false;
+    bool ended = false;
     const KfMapObjectPlacement *placement = placements;
     KfMapObjectDefinition *definition;
     SVECTOR effect_direction;

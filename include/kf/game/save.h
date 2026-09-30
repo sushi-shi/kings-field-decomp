@@ -22,7 +22,7 @@ using KfSaveSlotArgument = KfSaveSlotId;
 enum class KfSaveSlotState : u8 { Empty, Ready, Damaged, Unavailable };
 struct KfSaveSlotSummary {
     u32 experience;
-    KfEnumStorage<KfFloorId, u32> current_floor;
+    KfFloorId current_floor;
     u32 current_hp;
     u32 maximum_hp;
     u32 current_mp;
