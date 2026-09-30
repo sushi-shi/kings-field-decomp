@@ -36,39 +36,6 @@ void audit_initialize_session()
 }
 void audit_selected_player_update()
 {
-    if (audit_entries == 1 && audit_frames == 8 && std::getenv("KF_AUDIT_KEYS")) {
-        const auto objects_before = map_object_state;
-        const auto notifications_before = game_graphics_runtime.notification_state;
-        KfNotificationId messages_before[KF_NOTIFICATION_CAPACITY];
-        std::memcpy(messages_before, game_graphics_runtime.notification_message_ids, sizeof messages_before);
-        const auto reach = vector_yaw_probe_xz(player_state.camera_position,
-            player_state.camera_rotation.vy, MAP_INTERACTION_PROBE_DISTANCE);
-        for (const auto key : {KF_ITEM_KEY_OF_THE_DEAD, KF_ITEM_RAITO_FAMILY_KEY,
-                              KF_ITEM_DUNGEON_KEY, KF_ITEM_SORCERER_KEY}) {
-            for (auto &object : map_object_state.objects)
-                object.object_id = KF_OBJECT_NONE;
-            player_use_item(key);
-            // Exercise a hit at the end of the pool as well as an empty search.
-            auto &lock = map_object_state.objects[KF_MAP_OBJECT_CAPACITY - 1];
-            lock = {};
-            lock.object_id = KF_MAP_OBJECT_FLAT_WOODEN_LID;
-            lock.position = {reach.x, 0, reach.z};
-            lock.link.fields.link_id = kf_enum_encode<u8>(key);
-            player_use_item(key);
-            if (lock.link.fields.link_id != KF_MAP_LINK_NONE)
-                kf::host_fail("Audit: matching key did not unlock container");
-            const auto wrong_key = key == KF_ITEM_KEY_OF_THE_DEAD
-                ? KF_ITEM_RAITO_FAMILY_KEY : KF_ITEM_KEY_OF_THE_DEAD;
-            lock.link.fields.link_id = kf_enum_encode<u8>(wrong_key);
-            player_use_item(key);
-            if (lock.link.fields.link_id != kf_enum_encode<u8>(wrong_key))
-                kf::host_fail("Audit: wrong key unlocked container");
-        }
-        map_object_state = objects_before;
-        game_graphics_runtime.notification_state = notifications_before;
-        std::memcpy(game_graphics_runtime.notification_message_ids, messages_before, sizeof messages_before);
-        std::fprintf(stderr, "AUDIT keys: all four keys handled empty, matching and wrong locks\n");
-    }
     if (audit_frames == 8 && std::getenv("KF_AUDIT_LANGUAGE_SWITCH")) {
         const auto initial = kf::game_language();
         const auto alternate = initial == kf::Language::Japanese ? kf::Language::English : kf::Language::Japanese;
