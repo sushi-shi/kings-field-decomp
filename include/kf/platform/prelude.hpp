@@ -1,5 +1,5 @@
 #pragma once
-// System and portable interfaces live outside the original modules' namespaces.
+// Common system and portable interfaces.
 #include <cstddef>
 #include <cstdint>
 #include <bit>

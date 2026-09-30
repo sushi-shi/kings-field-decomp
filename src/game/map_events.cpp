@@ -1,3 +1,4 @@
+#include <kf/platform/prelude.hpp>
 #include <algorithm>
 #include <kf/game/audio.h>
 #include <kf/lib/random.hpp>

@@ -3,7 +3,6 @@
 #include <array>
 
 // Compile the actual loader; replace only its file, graphics and audio services.
-namespace kf::game {
 #include "../src/game/resources.cpp"
 #include "../src/game/equipment.cpp"
 
@@ -33,13 +32,12 @@ void prepare_common_data()
     }
     assert(offset == common_data.size());
 }
-}
 
 void resource_file_load_allocated(KfMemoryArena &, u8 **destination, const char *path, std::size_t *size)
 {
     assert(std::strcmp(path, "COM/COM.DAT") == 0 || std::strcmp(path, "COM/MIX.TIM") == 0);
-    *destination = kf::game::common_data.data();
-    *size = kf::game::file_size;
+    *destination = common_data.data();
+    *size = file_size;
 }
 void tim_upload_images(const u8 *, std::size_t) {}
 void memory_release_last(KfMemoryArena &) {}
@@ -59,7 +57,6 @@ static State states[2] = {{&scalar, {8, 9}}, {&rows[1][2], {10, 11}}};
 
 int main(int argc, char **argv)
 {
-    using namespace kf::game;
     assert(argc == 2);
     prepare_common_data();
     if (std::strcmp(argv[1], "reset") == 0) {

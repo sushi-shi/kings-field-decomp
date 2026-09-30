@@ -6,7 +6,6 @@ struct Renderer;
 struct FaceList;
 struct DrawFace;
 struct FrameStyle;
-enum class AppMode : u8 { Opening, Gameplay, Ending };
 struct UpdatePacer {
     std::uint64_t deadline_ns;
     u32 steps_per_second;

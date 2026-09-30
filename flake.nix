@@ -12,10 +12,10 @@
         filter = path: type:
           let
             relative = pkgs.lib.removePrefix "${toString ./.}/" (toString path);
-            sourceDirectories = [ "cmake" "src" "include" "codecs" "web" ];
+            sourceDirectories = [ "src" "include" "codecs" "web" ];
           in pkgs.lib.cleanSourceFilter path type
             && !(builtins.elem (baseNameOf path) [ "build" "target" "__pycache__" ])
-            && (builtins.elem relative [ "CMakeLists.txt" "build.json" ]
+            && (builtins.elem relative [ "CMakeLists.txt" ]
               || builtins.any (directory:
                 relative == directory || pkgs.lib.hasPrefix "${directory}/" relative
               ) sourceDirectories);

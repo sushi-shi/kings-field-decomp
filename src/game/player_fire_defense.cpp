@@ -1,3 +1,4 @@
+#include <kf/platform/prelude.hpp>
 #include <kf/game/player.h>
 
 void player_apply_fire_defense_boost(void)

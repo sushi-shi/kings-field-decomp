@@ -1,3 +1,4 @@
+#include <kf/platform/prelude.hpp>
 #include <kf/game/resources.h>
 #include <kf/game/menu_glyphs.h>
 #include <kf/lib/null.h>
