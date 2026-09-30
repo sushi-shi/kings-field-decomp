@@ -40,9 +40,13 @@ ae74beba377d686bfaa292ea40df8ade4454ec3139c2b5152364e02aac90b3d9
 ```
 
 The first launch extracts and caches game data locally. Saves use three separate
-slots. No manual extraction or `--impure` is needed.
+slots.
 
-Optional arguments go after `--`:
+With `nix run`, pass game options after `--`. For example:
+
+```sh
+KF_DISC=/path/to/disc.iso nix run . -- --saves /path/to/saves
+```
 
 | Option | Purpose |
 | --- | --- |
@@ -50,6 +54,46 @@ Optional arguments go after `--`:
 | `--data DIRECTORY` | Use an extracted disc tree instead of `KF_DISC` |
 
 In a local checkout, use `KF_DISC=/path/to/disc.iso nix run .`.
+
+## Install with a NixOS flake
+
+For an x86_64 Linux system, add the game and a local directory containing your
+disc to your flake inputs:
+
+```nix
+inputs.kings-field.url = "github:sushi-shi/kings-field-decomp/port";
+inputs.kings-field-disc = {
+  url = "path:/path/to/disc-directory";
+  flake = false;
+};
+```
+
+Import the module and set your disc's filename:
+
+```nix
+outputs = { nixpkgs, kings-field, kings-field-disc, ... }: {
+  nixosConfigurations."<host>" = nixpkgs.lib.nixosSystem {
+    modules = [
+      ./configuration.nix
+      kings-field.nixosModules.default
+      {
+        programs.kings-field = {
+          enable = true;
+          disc = "${kings-field-disc}/King's Field (Japan).iso";
+        };
+      }
+    ];
+  };
+};
+```
+
+Nix verifies and extracts the disc into its store during installation. Rebuild
+your configuration, replacing `<host>` with your host's name, then launch:
+
+```sh
+sudo nixos-rebuild switch --flake '.#<host>'
+kings-field
+```
 
 ## Controls
 
