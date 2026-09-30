@@ -1,4 +1,5 @@
-#pragma once
+#ifndef KF_PLATFORM_SAVES_HPP
+#define KF_PLATFORM_SAVES_HPP
 #include <kf/lib/types.h>
 #include <cstddef>
 
@@ -13,3 +14,5 @@ SaveFileResult save_file_read(SaveSlot slot, u8 *data, std::size_t capacity, std
 // An I/O error after native rename may leave the new file visible without proving durability.
 SaveFileResult save_file_write(SaveSlot slot, const u8 *data, std::size_t size);
 }
+
+#endif

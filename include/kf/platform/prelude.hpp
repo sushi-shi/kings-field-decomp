@@ -1,4 +1,5 @@
-#pragma once
+#ifndef KF_PLATFORM_PRELUDE_HPP
+#define KF_PLATFORM_PRELUDE_HPP
 // Common system and portable interfaces.
 #include <cstddef>
 #include <cstdint>
@@ -39,3 +40,5 @@
 #include <kf/lib/tmd.h>
 #include <kf/lib/graphics.h>
 #include <kf/lib/render_face.h>
+
+#endif

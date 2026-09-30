@@ -1,4 +1,5 @@
-#pragma once
+#ifndef KF_PLATFORM_HOST_HPP
+#define KF_PLATFORM_HOST_HPP
 #include <kf/lib/types.h>
 #include <cstddef>
 namespace kf {
@@ -27,3 +28,5 @@ void host_enqueue_face(const DrawFace &face);
 void host_present_frame(const FrameStyle &style);
 [[noreturn]] void host_fail(const char *message);
 }
+
+#endif

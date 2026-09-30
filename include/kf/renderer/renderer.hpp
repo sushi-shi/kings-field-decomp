@@ -1,4 +1,5 @@
-#pragma once
+#ifndef KF_RENDERER_RENDERER_HPP
+#define KF_RENDERER_RENDERER_HPP
 #include <kf/platform/assets.hpp>
 #include <kf/renderer/textures.hpp>
 #include <kf/renderer/constants.hpp>
@@ -54,3 +55,5 @@ void renderer_delete_texture(TextureId texture);
 void renderer_present_retained(const Renderer *renderer, int width, int height);
 bool renderer_draw_faces(Renderer *renderer, const FaceList *faces, int width, int height);
 } // namespace kf
+
+#endif

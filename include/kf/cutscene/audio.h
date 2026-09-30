@@ -1,4 +1,5 @@
-#pragma once
+#ifndef KF_CUTSCENE_AUDIO_H
+#define KF_CUTSCENE_AUDIO_H
 #include <kf/lib/audio.h>
 
 extern KfAudioState cutscene_audio_state;
@@ -12,3 +13,5 @@ extern KfAudioPlaybackResult cutscene_audio_play_spatial(
     const SoundRef *sound, const VECTOR *position, s16 volume, s32 max_distance,
     s32 attenuation_distance);
 extern void audio_stop_sequence(KfAudioStopMode stop_mode);
+
+#endif

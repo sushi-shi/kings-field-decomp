@@ -1,4 +1,5 @@
-#pragma once
+#ifndef KF_RENDERER_PROJECTION_HPP
+#define KF_RENDERER_PROJECTION_HPP
 #include <kf/lib/geometry_types.h>
 
 namespace kf {
@@ -22,3 +23,5 @@ void render_place_model(MATRIX &model, const MATRIX &view, const SVECTOR &positi
 ProjectedPoint render_project_point(const MATRIX &model, const Projection &projection,
     const SVECTOR &point);
 }
+
+#endif

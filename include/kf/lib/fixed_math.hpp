@@ -1,4 +1,5 @@
-#pragma once
+#ifndef KF_LIB_FIXED_MATH_HPP
+#define KF_LIB_FIXED_MATH_HPP
 #include <kf/lib/geometry_types.h>
 
 namespace kf {
@@ -17,3 +18,5 @@ void matrix_scale_axes(MATRIX &matrix, const VECTOR &scale);
 VECTOR matrix_apply_rotation(const MATRIX &matrix, const SVECTOR &vector);
 void matrix_set_rotation_xyz(const SVECTOR &angles, MATRIX &matrix);
 }
+
+#endif

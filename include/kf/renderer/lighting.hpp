@@ -1,4 +1,5 @@
-#pragma once
+#ifndef KF_RENDERER_LIGHTING_HPP
+#define KF_RENDERER_LIGHTING_HPP
 #include <kf/lib/geometry_types.h>
 
 namespace kf {
@@ -12,3 +13,5 @@ CVECTOR render_light_normal(const LightingEnvironment &environment, const MATRIX
     const SVECTOR &normal, CVECTOR base, s32 depth_cue = 0);
 CVECTOR render_fog_color(const LightingEnvironment &environment, CVECTOR color, s32 depth_cue);
 }
+
+#endif

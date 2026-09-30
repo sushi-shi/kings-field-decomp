@@ -1,4 +1,5 @@
-#pragma once
+#ifndef KF_PLATFORM_MODULE_STATE_HPP
+#define KF_PLATFORM_MODULE_STATE_HPP
 #include <cstddef>
 #include <type_traits>
 
@@ -32,3 +33,5 @@ void restore_initial_value()
     copy_module_value(Object, initial.value);
 }
 }
+
+#endif

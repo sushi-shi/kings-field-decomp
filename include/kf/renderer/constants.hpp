@@ -1,4 +1,5 @@
-#pragma once
+#ifndef KF_RENDERER_CONSTANTS_HPP
+#define KF_RENDERER_CONSTANTS_HPP
 
 namespace kf {
 inline constexpr int render_width = 320;
@@ -33,3 +34,5 @@ inline constexpr int palette_y_shift = 6;
 inline constexpr int packed_uv_component_bits = 8;
 inline constexpr int packed_uv_component_mask = 0xff;
 }
+
+#endif
