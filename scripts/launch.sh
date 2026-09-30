@@ -32,7 +32,6 @@ if [[ ! -f "$KF_DISC" || ! -r "$KF_DISC" ]]; then
 fi
 
 # Every accepted disc extracts to the same hash-verified Japanese resource set.
-# Only this launcher's successful imports are published at resources-v1.
 case "${XDG_CACHE_HOME:-}" in
   /*) cache_base="$XDG_CACHE_HOME/kings-field/SLPS-00017" ;;
   *) cache_base="${HOME:?HOME or an absolute XDG_CACHE_HOME is required}/.cache/kings-field/SLPS-00017" ;;
@@ -41,7 +40,7 @@ umask 077
 mkdir -p -- "$cache_base"
 exec {cache_lock}>"$cache_base/import.lock"
 flock -x "$cache_lock"
-data_directory="$cache_base/resources-v1"
+data_directory="$cache_base/resources"
 if [[ -L "$data_directory" || ( -e "$data_directory" && ! -d "$data_directory" ) ]]; then
   printf 'Resource cache is not an ordinary directory: %s\n' "$data_directory" >&2
   exit 1
