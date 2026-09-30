@@ -55,6 +55,40 @@ KF_DISC=/path/to/disc.iso nix run . -- --saves /path/to/saves
 
 In a local checkout, use `KF_DISC=/path/to/disc.iso nix run .`.
 
+## Install with a NixOS flake
+
+For an x86_64 Linux system, add the game to your existing flake inputs:
+
+```nix
+inputs.kings-field.url = "github:sushi-shi/kings-field-decomp/port";
+```
+
+Include `kings-field` in your `outputs` arguments and add it to your host's
+`environment.systemPackages`:
+
+```nix
+outputs = { nixpkgs, kings-field, ... }: {
+  nixosConfigurations.your-host = nixpkgs.lib.nixosSystem {
+    modules = [
+      ./configuration.nix
+      ({ pkgs, ... }: {
+        environment.systemPackages = [
+          kings-field.packages.${pkgs.stdenv.hostPlatform.system}.default
+        ];
+      })
+    ];
+  };
+};
+```
+
+Keep your existing host configuration and other modules. From your system flake
+directory, rebuild using your host's name, then launch:
+
+```sh
+sudo nixos-rebuild switch --flake .#your-host
+KF_DISC="/path/to/King's Field (Japan).iso" kings-field
+```
+
 ## Controls
 
 | Action | Keyboard / mouse |
