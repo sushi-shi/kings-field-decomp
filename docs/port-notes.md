@@ -46,6 +46,30 @@ call count and scaling, and accepts zero-frame records. Attribution of the earli
 unmasked expression needs separate GAME/OPEN evidence. The port's seed-one startup
 policy is not a proved retail boot seed.
 
+## Collision results
+
+`KfCollisionResult` separates these query results; they are not one bitset:
+
+| Kind | Detail | Encoded value |
+| --- | --- | --- |
+| None | — | `0xffffffff` |
+| Terrain | Cell kind or `fff0`/`fff1`/`fff2` for below-floor/ceiling/missing attribute | `0x10000 | detail` |
+| Actor / map object / map event | Pool index | `0x100000` / `0x200000` / `0x400000`, plus index |
+| Player | — | `0x800000` |
+| CellFlags | Rejected authored cell bits | `flags << 8` |
+| EffectWithoutTargets | — | `1` |
+
+World queries check terrain, rejected cell flags, then player, actors, objects and
+events, subject to skip flags and occupancy. Effect queries can return literal-one
+obstruction when neither actors nor player are targeted. Distance/index probes
+still use signed `-1` and have a separate domain.
+
+The jump-attack landing check compares the encoded high word with `0xfff1`, a
+terrain *detail*. No current producer emits that high word. Preserve this explicit
+comparison until its intended behavior is established; it is not a ceiling predicate.
+Door-closing probes ignore terrain and map objects, checking a 3,000-unit radius at
+the lift-door origin or the cardinally offset hinged-door position.
+
 ## Rendering
 
 | Retail GAME.EXE evidence | Retained behavior |

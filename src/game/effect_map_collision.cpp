@@ -14,11 +14,11 @@ KfCellHeightRecord map_cell_height_records[KF_MAP_CELL_HEIGHT_RECORD_COUNT] = {
     {0, -10000, 1000, -15000},
 };
 
-static u32 effect_query_collision_targets(VECTOR *position, s32 radius, const KfEffectRecord *effect)
+static KfCollisionResult effect_query_collision_targets(VECTOR *position, s32 radius, const KfEffectRecord *effect)
 {
     switch (effect->type & KF_EFFECT_COLLISION_TARGETS_MASK) {
     default:
-        return 1;
+        return {KfCollisionKind::EffectWithoutTargets};
     case KF_EFFECT_COLLISION_TARGET_ACTORS:
         return collision_query_world(position->vx, position->vy, position->vz, radius, 0,
             KF_COLLISION_SKIP_TERRAIN | KF_COLLISION_SKIP_PLAYER
@@ -57,7 +57,7 @@ static bool effect_within_height_rectangle(const KfCellHeightRecord *record,
     return coordinate >= record->x_min && coordinate <= record->x_max;
 }
 
-static inline u32 effect_collision_in_cell(
+static KfCollisionResult effect_collision_in_cell(
     VECTOR *position, s32 radius, s16 x, s16 z, s32 subz,
     KfEffectRecord *effect)
 {
@@ -142,7 +142,7 @@ static inline u32 effect_collision_in_cell(
     return effect_query_collision_targets(position, radius, effect);
 }
 
-u32 effect_map_collision(VECTOR *position, s32 radius)
+KfCollisionResult effect_map_collision(VECTOR *position, s32 radius)
 {
     KfEffectRecord *effect;
     s16 x;

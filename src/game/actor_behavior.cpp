@@ -385,7 +385,7 @@ KfActorMoveResult actor_move_xz_with_collision(const struct KfVecXZs *delta, KfA
     KfActor *actor = actor_state.current;
     KfActorDefinition *definition = actor_state.current_definition;
     VECTOR target;
-    u32 result;
+    KfCollisionResult result;
     s32 drop;
     s32 threshold;
 
@@ -621,7 +621,7 @@ void actor_apply_horizontal_movement(void)
     KfActor *actor = actor_state.current;
     KfActorDefinition *definition;
     VECTOR target;
-    u32 result;
+    KfCollisionResult result;
 
     target.vx = actor->movement_x + actor->position.vx;
     target.vz = actor->movement_z + actor->position.vz;
@@ -634,7 +634,7 @@ void actor_apply_horizontal_movement(void)
         definition->collision_height,
         ACTOR_VELOCITY_COLLISION_FLAGS);
     if (result != KF_COLLISION_NONE) {
-        if ((result >> KF_COLLISION_KIND_SHIFT) != (KF_COLLISION_PLAYER >> KF_COLLISION_KIND_SHIFT)) {
+        if (result.kind != KfCollisionKind::Player) {
             actor->movement_x = -actor->movement_x >> 1;
             actor->movement_z = -actor->movement_z >> 1;
         } else {
@@ -675,7 +675,7 @@ void actor_apply_random_movement(s16 step, s16 limit)
     KfActor *actor = actor_state.current;
     KfActorDefinition *definition = actor_state.current_definition;
     VECTOR target;
-    u32 result;
+    KfCollisionResult result;
 
     if (kf::random_next() < (kf::random_max + 1) / 2) {
         actor->movement_x += step;
@@ -837,7 +837,7 @@ static void actor_update_vertical_motion(KfActor *actor, const KfActorDefinition
 {
     s32 floor_height;
     s32 next_y;
-    u32 hit;
+    KfCollisionResult hit;
 
     switch (actor->vertical_state) {
     case KF_ACTOR_VERTICAL_NONE:
@@ -874,11 +874,11 @@ static void actor_update_vertical_motion(KfActor *actor, const KfActorDefinition
             actor_apply_fall_step(actor, next_y);
             break;
         }
-        if ((hit >> KF_COLLISION_KIND_SHIFT) == (KF_COLLISION_PLAYER >> KF_COLLISION_KIND_SHIFT)) {
+        if (hit.kind == KfCollisionKind::Player) {
             player_apply_damage(0, ACTOR_JUMP_CONTACT_STRIKING_DAMAGE, 0, KF_PLAYER_STATUS_NONE, 0, 0, KF_FIXED12_ONE, KF_PLAYER_DAMAGE_MULTIPLIER_ONE);
             actor_bounce_from_jump(actor);
-        } else if ((hit >> KF_COLLISION_KIND_SHIFT) == (KF_COLLISION_TERRAIN >> KF_COLLISION_KIND_SHIFT)) {
-            switch (hit & KF_COLLISION_DETAIL_MASK) {
+        } else if (hit.kind == KfCollisionKind::Terrain) {
+            switch (hit.detail) {
             case KF_COLLISION_DETAIL_BELOW_FLOOR:
                 floor_height = map_floor_height_at_position(&actor->position);
                 actor_land(actor, floor_height);
@@ -888,7 +888,7 @@ static void actor_update_vertical_motion(KfActor *actor, const KfActorDefinition
                 actor->vertical_velocity = ACTOR_JUMP_CEILING_VELOCITY_Y;
                 break;
             }
-        } else if ((hit >> KF_COLLISION_KIND_SHIFT) == (KF_COLLISION_ACTOR >> KF_COLLISION_KIND_SHIFT)) {
+        } else if (hit.kind == KfCollisionKind::Actor) {
             actor_bounce_from_jump(actor);
         }
         break;
@@ -901,7 +901,7 @@ void actor_update_current_action(void)
     KfActorDefinition *definition = actor_state.current_definition;
     struct KfVecXZs direction;
     VECTOR target;
-    u32 result;
+    KfCollisionResult result;
     u16 gold_amount;
     KfMapAttribute attribute;
 
@@ -1089,7 +1089,7 @@ void actor_update_current_action(void)
                     definition->collision_height,
                     ACTOR_VELOCITY_COLLISION_FLAGS);
 
-                if (result != KF_COLLISION_NONE && (result >> KF_COLLISION_KIND_SHIFT) == KF_COLLISION_DETAIL_CEILING) {
+                if (result != KF_COLLISION_NONE && (result.encoded() >> KF_COLLISION_KIND_SHIFT) == KF_COLLISION_DETAIL_CEILING) {
                     actor->vertical_state = KF_ACTOR_VERTICAL_FALL;
                     actor->vertical_velocity = 0;
                 }

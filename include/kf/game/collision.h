@@ -22,27 +22,57 @@ enum {
     KF_COLLISION_PLAYER_HEIGHT = 1700
 };
 
-// Packed world-query results and signed distance/index probes have distinct domains.
-inline constexpr u32 KF_COLLISION_NONE = 0xffffffffu;
 inline constexpr s32 KF_PROXIMITY_NONE = -1;
 
-enum {
-    KF_COLLISION_TERRAIN = 0x10000,
-    KF_COLLISION_BELOW_FLOOR = 0x1fff0,
-    KF_COLLISION_CEILING = 0x1fff1,
-    KF_COLLISION_MISSING_ATTRIBUTE = 0x1fff2,
-    KF_COLLISION_ACTOR = 0x100000,
-    KF_COLLISION_MAP_OBJECT = 0x200000,
-    KF_COLLISION_MAP_EVENT = 0x400000,
-    KF_COLLISION_PLAYER = 0x800000
+enum class KfCollisionKind : u16 {
+    None,
+    Terrain,
+    Actor,
+    MapObject,
+    MapEvent,
+    Player,
+    CellFlags,
+    EffectWithoutTargets
+};
+
+struct KfCollisionResult {
+    KfCollisionKind kind;
+    u16 detail = 0;
+
+    constexpr bool operator==(const KfCollisionResult &) const = default;
+
+    // Retain the original encoding for consumers whose meaning is unresolved.
+    constexpr u32 encoded() const
+    {
+        switch (kind) {
+        case KfCollisionKind::None: return 0xffffffffu;
+        case KfCollisionKind::Terrain: return 0x10000u | detail;
+        case KfCollisionKind::Actor: return 0x100000u | detail;
+        case KfCollisionKind::MapObject: return 0x200000u | detail;
+        case KfCollisionKind::MapEvent: return 0x400000u | detail;
+        case KfCollisionKind::Player: return 0x800000u;
+        case KfCollisionKind::CellFlags: return static_cast<u32>(detail) << 8;
+        case KfCollisionKind::EffectWithoutTargets: return 1;
+        }
+        return 0xffffffffu;
+    }
 };
 
 enum {
     KF_COLLISION_KIND_SHIFT = 16,
-    KF_COLLISION_DETAIL_MASK = 0xffff,
-    KF_COLLISION_DETAIL_BELOW_FLOOR = KF_COLLISION_BELOW_FLOOR & KF_COLLISION_DETAIL_MASK,
-    KF_COLLISION_DETAIL_CEILING = KF_COLLISION_CEILING & KF_COLLISION_DETAIL_MASK
+    KF_COLLISION_DETAIL_BELOW_FLOOR = 0xfff0,
+    KF_COLLISION_DETAIL_CEILING = 0xfff1,
+    KF_COLLISION_DETAIL_MISSING_ATTRIBUTE = 0xfff2
 };
+
+inline constexpr KfCollisionResult KF_COLLISION_NONE {KfCollisionKind::None};
+inline constexpr KfCollisionResult KF_COLLISION_TERRAIN {KfCollisionKind::Terrain};
+inline constexpr KfCollisionResult KF_COLLISION_BELOW_FLOOR {
+    KfCollisionKind::Terrain, KF_COLLISION_DETAIL_BELOW_FLOOR};
+inline constexpr KfCollisionResult KF_COLLISION_CEILING {
+    KfCollisionKind::Terrain, KF_COLLISION_DETAIL_CEILING};
+inline constexpr KfCollisionResult KF_COLLISION_MISSING_ATTRIBUTE {
+    KfCollisionKind::Terrain, KF_COLLISION_DETAIL_MISSING_ATTRIBUTE};
 
 typedef struct KfCollisionTarget {
     VECTOR position;
@@ -66,7 +96,7 @@ extern KfCellHeightRecord map_cell_height_records[KF_MAP_CELL_HEIGHT_RECORD_COUN
 
 extern void collision_adjust_cell_occupancy(
     u16 cell_x, u16 cell_z, s32 delta);
-extern u32 collision_query_world(
+extern KfCollisionResult collision_query_world(
     s32 point_x, s32 point_y, s32 point_z, s32 radius, s32 height,
     u32 flags);
 extern s32 map_floor_height_at_position(const VECTOR *position);

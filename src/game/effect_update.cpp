@@ -53,7 +53,7 @@ void effect_update_swinging_hazard(SVECTOR *probe_offset, KfEffectPhase phase_li
     MATRIX rotation_matrix;
     MATRIX yaw_matrix;
     VECTOR world;
-    u32 collision;
+    KfCollisionResult collision;
     s16 pitch;
     s16 next_pitch;
 
@@ -66,11 +66,11 @@ void effect_update_swinging_hazard(SVECTOR *probe_offset, KfEffectPhase phase_li
         world += record->position;
         collision = effect_map_collision(&world, EFFECT_SWING_COLLISION_RADIUS);
         if (collision != KF_COLLISION_NONE) {
-            if ((collision >> KF_COLLISION_KIND_SHIFT) == (KF_COLLISION_ACTOR >> KF_COLLISION_KIND_SHIFT)) {
-                actor_apply_damage(collision & KF_COLLISION_DETAIL_MASK, 0, magic->damage_components[0],
+            if (collision.kind == KfCollisionKind::Actor) {
+                actor_apply_damage(collision.detail, 0, magic->damage_components[0],
                     magic->damage_components[2], magic->damage_components[1],
                     0, 0, KF_ACTOR_DAMAGE_SCALE_ONE, record->type);
-            } else if ((collision >> KF_COLLISION_KIND_SHIFT) == (KF_COLLISION_PLAYER >> KF_COLLISION_KIND_SHIFT)) {
+            } else if (collision.kind == KfCollisionKind::Player) {
                 player_apply_damage(magic->damage_components[0],
                     magic->damage_components[2], magic->damage_components[1],
                     KF_PLAYER_STATUS_NONE, 0, 0, KF_FIXED12_ONE, record->id);
@@ -118,7 +118,7 @@ void effect_update_orbiting_projectile(s32 orbit_radius, KfEffectPhase phase_lim
     KfEffectRecord *record = effect_state.current_record;
     KfMagicRecord *magic = effect_state.current_magic;
     KfEnumStorage<KfEffectPhase, u32> life = record->phase;
-    u32 collision;
+    KfCollisionResult collision;
 
     if ((kf_enum_encode<u32>(life) & EFFECT_PHASE_BYTE_MASK) < kf_enum_encode<u8>(KF_EFFECT_HAZARD_RELEASE_REQUEST) + 1) {
         record->position.vx = (record->direction.vector.vx << KF_EFFECT_ORBIT_CENTER_SHIFT)
@@ -131,11 +131,11 @@ void effect_update_orbiting_projectile(s32 orbit_radius, KfEffectPhase phase_lim
             + KF_ANGLE_FULL_TURN / EFFECT_ORBIT_UPDATES_PER_TURN) & KF_ANGLE_WRAP_MASK;
         collision = effect_map_collision(&record->position, EFFECT_ORBIT_COLLISION_RADIUS);
         if (collision != KF_COLLISION_NONE) {
-            if ((collision >> KF_COLLISION_KIND_SHIFT) == (KF_COLLISION_ACTOR >> KF_COLLISION_KIND_SHIFT)) {
-                actor_apply_damage(collision & KF_COLLISION_DETAIL_MASK, 0, magic->damage_components[0],
+            if (collision.kind == KfCollisionKind::Actor) {
+                actor_apply_damage(collision.detail, 0, magic->damage_components[0],
                     magic->damage_components[2], magic->damage_components[1],
                     0, 0, KF_ACTOR_DAMAGE_SCALE_ONE, record->type);
-            } else if ((collision >> KF_COLLISION_KIND_SHIFT) == (KF_COLLISION_PLAYER >> KF_COLLISION_KIND_SHIFT)) {
+            } else if (collision.kind == KfCollisionKind::Player) {
                 player_apply_damage(magic->damage_components[0],
                     magic->damage_components[2], magic->damage_components[1],
                     KF_PLAYER_STATUS_NONE, 0, 0, KF_FIXED12_ONE, record->id);
