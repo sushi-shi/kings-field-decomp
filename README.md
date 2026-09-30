@@ -61,9 +61,6 @@ In a local checkout, use `KF_DISC=/path/to/disc.iso nix run .`.
 | Back | Backspace or Escape in menus |
 | Pause | P or Escape during gameplay |
 
-Controllers are supported. Click to capture the mouse; switching away pauses
-the game and releases it. Press a key or button to resume from pause.
-
 ## Build from source
 
 From the `port` branch:
