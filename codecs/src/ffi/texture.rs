@@ -1,7 +1,8 @@
-use crate::{INVALID, OK, OUTPUT_FULL};
+use super::bindings::*;
+use super::{INVALID, OK, OUTPUT_FULL};
+use crate::tim::{ImageBlock, Images};
+use crate::tim::{TIM_DIRECT16, TIM_FLAGS_MASK, TIM_FORMAT_MASK};
 use core::{mem::align_of, slice};
-use kf_codec::tim::{ImageBlock, Images};
-use kf_codec::tim::{TIM_DIRECT16, TIM_FLAGS_MASK, TIM_FORMAT_MASK};
 const TEXTURE_WIDTH: usize = 1024;
 const TEXTURE_HEIGHT: usize = 512;
 
@@ -33,7 +34,7 @@ pub unsafe extern "C" fn kf_tim_compose(
     length: usize,
     words: *mut u16,
     capacity: usize,
-) -> i32 {
+) -> KfCodecResult {
     if bytes.is_null()
         || words.is_null()
         || length > isize::MAX as usize

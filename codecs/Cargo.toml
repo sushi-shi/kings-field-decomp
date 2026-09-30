@@ -3,15 +3,12 @@ name = "kf-codec"
 version = "0.1.0"
 edition = "2021"
 publish = false
-autobins = false
-autotests = false
-autobenches = false
-autoexamples = false
 
 [lib]
-path = "src/lib.rs"
+crate-type = ["staticlib"]
 test = false
 doctest = false
 
 [profile.release]
+panic = "abort"
 overflow-checks = true

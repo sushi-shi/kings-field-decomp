@@ -12,20 +12,20 @@ endif()
 
 find_program(CARGO_EXECUTABLE cargo REQUIRED)
 set(KF_RUST_DIR "${CMAKE_BINARY_DIR}/rust")
-set(KF_RUST_ARGS --offline --locked --release --manifest-path ${CMAKE_SOURCE_DIR}/codec-bridge/Cargo.toml)
+set(KF_RUST_ARGS --offline --locked --release --manifest-path ${CMAKE_SOURCE_DIR}/codecs/Cargo.toml)
 if(EMSCRIPTEN)
   list(APPEND KF_RUST_ARGS --target wasm32-unknown-emscripten -Zbuild-std=core,compiler_builtins)
   # Cargo 1.95's pinned source-root override avoids mutating the Nix sysroot.
   set(KF_RUST_ENV "__CARGO_TESTS_ONLY_SRC_ROOT=$ENV{KF_RUST_SOURCE}")
-  set(KF_CODEC_LIBRARY "${KF_RUST_DIR}/wasm32-unknown-emscripten/release/libkf_codec_bridge.a")
+  set(KF_CODEC_LIBRARY "${KF_RUST_DIR}/wasm32-unknown-emscripten/release/libkf_codec.a")
 else()
-  set(KF_CODEC_LIBRARY "${KF_RUST_DIR}/release/libkf_codec_bridge.a")
+  set(KF_CODEC_LIBRARY "${KF_RUST_DIR}/release/libkf_codec.a")
 endif()
-file(GLOB_RECURSE KF_CODEC_SOURCES CONFIGURE_DEPENDS codecs/src/*.rs codec-bridge/src/*.rs)
+file(GLOB_RECURSE KF_CODEC_SOURCES CONFIGURE_DEPENDS codecs/src/*.rs)
 add_custom_command(OUTPUT "${KF_CODEC_LIBRARY}"
   COMMAND ${CMAKE_COMMAND} -E env CARGO_TARGET_DIR=${KF_RUST_DIR} RUSTC_BOOTSTRAP=1
     RUSTFLAGS=-Cpanic=abort ${KF_RUST_ENV} ${CARGO_EXECUTABLE} build ${KF_RUST_ARGS}
-  DEPENDS ${KF_CODEC_SOURCES} codecs/Cargo.toml codec-bridge/Cargo.toml codec-bridge/Cargo.lock
+  DEPENDS ${KF_CODEC_SOURCES} codecs/Cargo.toml codecs/Cargo.lock
   WORKING_DIRECTORY ${CMAKE_SOURCE_DIR} VERBATIM)
 add_custom_target(kf_codecs_build DEPENDS "${KF_CODEC_LIBRARY}")
 add_library(kf_codecs STATIC IMPORTED GLOBAL)

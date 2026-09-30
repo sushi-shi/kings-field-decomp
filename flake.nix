@@ -12,7 +12,7 @@
         filter = path: type:
           let
             relative = pkgs.lib.removePrefix "${toString ./.}/" (toString path);
-            sourceDirectories = [ "cmake" "src" "include" "codecs" "codec-bridge" "web" ];
+            sourceDirectories = [ "cmake" "src" "include" "codecs" "web" ];
           in pkgs.lib.cleanSourceFilter path type
             && !(builtins.elem (baseNameOf path) [ "build" "target" "__pycache__" ])
             && (builtins.elem relative [ "CMakeLists.txt" "build.json" ]
@@ -51,10 +51,22 @@
         program = "${game}/bin/kings-field";
         meta.description = "King's Field direct source port";
       };
-      checks.${system} = { native = unwrapped; launcher = game; };
+      checks.${system} = {
+        native = unwrapped;
+        launcher = game;
+        codec-bindings = pkgs.runCommand "kf-codec-bindings" {
+          nativeBuildInputs = with pkgs; [ rust-bindgen rustfmt ];
+          src = sources;
+        } ''
+          cp -r "$src" source
+          cd source
+          bash codecs/bindings.sh --check
+          touch "$out"
+        '';
+      };
       devShells.${system}.default = (pkgs.mkShell.override { stdenv = pkgs.clangStdenv; }) {
         packages = nativeTools ++ nativeLibraries ++ (with pkgs; [
-          emscripten nodejs chromium xvfb-run xdotool imagemagick rustfmt python3
+          emscripten nodejs chromium xvfb-run xdotool imagemagick rustfmt rust-bindgen python3
         ]);
         KF_SDL_SOURCE = "${pkgs.sdl3.src}";
         KF_RUST_SOURCE = "${pkgs.rustPlatform.rustLibSrc}";

@@ -108,9 +108,9 @@ stores. Browser storage can be cleared or evicted.
 
 ## Status
 
-Linux inputs, combat, sound and general rendering have been user-checked.
-Browser audible playback, full-browser-restart persistence/capture, and natural
-ending/re-entry still need verification.
+Linux controls, brief combat, general rendering and native/browser audio have
+been user-checked. Native save/load and browser cache/save persistence have
+bounded verification; the natural ending and re-entry still need a suitable run.
 
-See [remaining work](docs/port-status.md), [implementation notes](PORTING.md)
-and [detailed findings](docs/port-findings.md).
+See [remaining work](docs/port-status.md), [architecture and maintenance](PORTING.md)
+and [technical notes](docs/port-findings.md).

@@ -1,8 +1,9 @@
-use crate::{INVALID, OK, OUTPUT_FULL};
+use super::bindings::*;
+use super::{INVALID, OK, OUTPUT_FULL};
+use crate::audio::midi;
+use crate::audio::{ChannelMessage, SeqEventKind, Sequence, VabBank};
+use crate::audio::{VAB_PROGRAM_SLOTS, VAB_TONES_PER_PROGRAM};
 use core::{mem::align_of, ptr, slice};
-use kf_codec::audio::midi;
-use kf_codec::audio::{ChannelMessage, SeqEventKind, Sequence, VabBank};
-use kf_codec::audio::{VAB_OFFSET_ENTRIES, VAB_PROGRAM_SLOTS, VAB_TONES_PER_PROGRAM};
 
 const SUPPORTED_SEQ_VERSION: u32 = 1;
 const TONE_REVERB_FLAG: u8 = 4;
@@ -20,8 +21,8 @@ const ENVELOPE_LEVEL_MAX: u32 = 32767;
 const ADSR_EXPONENTIAL_OFFSET: u32 = 15;
 const ADSR_SUSTAIN_DIRECTION_OFFSET: u32 = 14;
 const ADSR_RELEASE_EXPONENTIAL_OFFSET: u32 = 5;
-const ADPCM_BLOCK_BYTES: usize = 16;
-const ADPCM_BLOCK_FRAMES: usize = 28;
+const ADPCM_BLOCK_BYTES: usize = KF_AUDIO_ADPCM_BLOCK_BYTES as usize;
+const ADPCM_BLOCK_FRAMES: usize = KF_AUDIO_ADPCM_BLOCK_FRAMES as usize;
 const ADPCM_HEADER_BYTES: usize = 2;
 const ADPCM_FILTER_OFFSET: u32 = 4;
 const ADPCM_FILTER_LAST: u8 = 4;
@@ -40,95 +41,6 @@ const ADPCM_SAMPLE_SCALE: i32 = 4096;
 const ADPCM_PREDICTOR_ROUNDING: i32 = 32;
 const ADPCM_PREDICTOR_FRACTION_BITS: u32 = 6;
 
-// Wire values match KfMusicEventKind in include/kf/audio/codec.h.
-#[repr(u32)]
-enum MusicEventKind {
-    NoteOff = 0,
-    NoteOn = 1,
-    Volume = 2,
-    Program = 3,
-    PitchBend = 4,
-    Tempo = 5,
-    End = 6,
-}
-
-#[repr(C)]
-struct Envelope {
-    attack_shift: u8,
-    attack_step: u8,
-    decay_shift: u8,
-    sustain_shift: u8,
-    sustain_step: u8,
-    release_shift: u8,
-    sustain_level: u16,
-    attack_exponential: u8,
-    sustain_exponential: u8,
-    sustain_decreasing: u8,
-    release_exponential: u8,
-}
-#[repr(C)]
-struct Tone {
-    priority: u8,
-    reverb: u8,
-    volume: u8,
-    pan: u8,
-    center_note: u8,
-    center_shift: u8,
-    minimum_note: u8,
-    maximum_note: u8,
-    vibrato_width: u8,
-    vibrato_time: u8,
-    portamento_width: u8,
-    portamento_time: u8,
-    bend_down: u8,
-    bend_up: u8,
-    sample_index: u16,
-    envelope: Envelope,
-}
-#[repr(C)]
-struct Program {
-    tone_count: u8,
-    volume: u8,
-    pan: u8,
-    priority: u8,
-    tones: [Tone; VAB_TONES_PER_PROGRAM],
-}
-#[repr(C)]
-struct SampleRange {
-    offset: u32,
-    size: u32,
-}
-#[repr(C)]
-pub struct BankData {
-    volume: u8,
-    pan: u8,
-    sample_count: u16,
-    programs: [Program; VAB_PROGRAM_SLOTS],
-    samples: [SampleRange; VAB_OFFSET_ENTRIES],
-}
-#[repr(C)]
-pub struct SampleInfo {
-    frames: u32,
-    loop_begin: u32,
-    loop_end: u32,
-}
-#[repr(C)]
-pub struct MusicEvent {
-    delta: u32,
-    kind: u32,
-    value: u32,
-    channel: u8,
-    note: u8,
-    velocity: u8,
-    reserved: u8,
-}
-#[repr(C)]
-pub struct MusicInfo {
-    resolution: u32,
-    tempo: u32,
-    event_count: u32,
-}
-
 fn input(data: *const u8, size: usize) -> bool {
     !data.is_null() && size <= isize::MAX as usize && size <= u32::MAX as usize
 }
@@ -142,8 +54,8 @@ pub unsafe extern "C" fn kf_audio_bank_decode(
     header_size: usize,
     body: *const u8,
     body_size: usize,
-    destination: *mut BankData,
-) -> i32 {
+    destination: *mut KfAudioBankData,
+) -> KfCodecResult {
     if !input(header, header_size) || !input(body, body_size) || !output(destination) {
         return INVALID;
     }
@@ -199,7 +111,7 @@ pub unsafe extern "C" fn kf_audio_bank_decode(
             {
                 return INVALID;
             }
-            target.tones[ordinal] = Tone {
+            target.tones[ordinal] = KfAudioTone {
                 priority: tone.priority,
                 reverb: u8::from(tone.mode & TONE_REVERB_FLAG != 0),
                 volume: tone.volume,
@@ -217,7 +129,7 @@ pub unsafe extern "C" fn kf_audio_bank_decode(
                 bend_down: tone.pitch_bend_minimum,
                 bend_up: tone.pitch_bend_maximum,
                 sample_index: tone.sample as u16 - 1,
-                envelope: Envelope {
+                envelope: KfAudioEnvelope {
                     attack_shift: ((tone.adsr1 >> ADSR_ATTACK_SHIFT_OFFSET) & ADSR_RATE_SHIFT_MASK)
                         as u8,
                     attack_step: ((tone.adsr1 >> ADSR_ATTACK_STEP_OFFSET) & ADSR_STEP_MASK) as u8,
@@ -244,7 +156,7 @@ pub unsafe extern "C" fn kf_audio_bank_decode(
         return INVALID;
     }
     for sample in bank.samples() {
-        result.samples[usize::from(sample.index)] = SampleRange {
+        result.samples[usize::from(sample.index)] = KfAudioSampleRange {
             offset: sample.offset as u32,
             size: sample.data.len() as u32,
         };
@@ -252,18 +164,12 @@ pub unsafe extern "C" fn kf_audio_bank_decode(
     OK
 }
 
-#[repr(C)]
-pub struct Predictor {
-    previous: i32,
-    older: i32,
-}
-
 #[no_mangle]
 pub unsafe extern "C" fn kf_audio_sample_info(
     data: *const u8,
     size: usize,
-    info: *mut SampleInfo,
-) -> i32 {
+    info: *mut KfAudioSampleInfo,
+) -> KfCodecResult {
     if !input(data, size)
         || size == 0
         || size % ADPCM_BLOCK_BYTES != 0
@@ -284,7 +190,7 @@ pub unsafe extern "C" fn kf_audio_sample_info(
         }
         frames += ADPCM_BLOCK_FRAMES as u32;
         if block[1] & ADPCM_END != 0 {
-            info.write(SampleInfo {
+            info.write(KfAudioSampleInfo {
                 frames,
                 loop_begin,
                 loop_end: if block[1] & ADPCM_REPEAT != 0 {
@@ -296,7 +202,7 @@ pub unsafe extern "C" fn kf_audio_sample_info(
             return OK;
         }
     }
-    info.write(SampleInfo {
+    info.write(KfAudioSampleInfo {
         frames,
         loop_begin: 0,
         loop_end: 0,
@@ -308,10 +214,10 @@ pub unsafe extern "C" fn kf_audio_sample_info(
 pub unsafe extern "C" fn kf_audio_decode_block(
     data: *const u8,
     size: usize,
-    predictor: *mut Predictor,
+    predictor: *mut KfAudioPredictor,
     pcm: *mut i16,
     capacity: usize,
-) -> i32 {
+) -> KfCodecResult {
     if !input(data, size) || size != ADPCM_BLOCK_BYTES || !output(predictor) || !output(pcm) {
         return INVALID;
     }
@@ -358,15 +264,15 @@ pub unsafe extern "C" fn kf_audio_decode_block(
 pub unsafe extern "C" fn kf_music_decode(
     data: *const u8,
     size: usize,
-    events: *mut MusicEvent,
+    events: *mut KfMusicEvent,
     capacity: usize,
-    info: *mut MusicInfo,
-) -> i32 {
+    info: *mut KfMusicInfo,
+) -> KfCodecResult {
     if !input(data, size)
         || !output(info)
         || (!events.is_null() && !output(events))
         || (events.is_null() && capacity != 0)
-        || capacity > isize::MAX as usize / core::mem::size_of::<MusicEvent>()
+        || capacity > isize::MAX as usize / core::mem::size_of::<KfMusicEvent>()
     {
         return INVALID;
     }
@@ -387,9 +293,9 @@ pub unsafe extern "C" fn kf_music_decode(
             Ok(event) => event,
             Err(_) => return INVALID,
         };
-        let mut result = MusicEvent {
+        let mut result = KfMusicEvent {
             delta: event.delta,
-            kind: MusicEventKind::NoteOff as u32,
+            kind: KF_MUSIC_NOTE_OFF,
             value: 0,
             channel: 0,
             note: 0,
@@ -405,22 +311,22 @@ pub unsafe extern "C" fn kf_music_decode(
                         result.velocity = channel.data2.unwrap_or(0);
                         result.kind =
                             if channel.message == ChannelMessage::NoteOn && result.velocity != 0 {
-                                MusicEventKind::NoteOn as u32
+                                KF_MUSIC_NOTE_ON
                             } else {
-                                MusicEventKind::NoteOff as u32
+                                KF_MUSIC_NOTE_OFF
                             };
                         result.note = channel.data1;
                     }
                     ChannelMessage::ControlChange if channel.data1 == midi::CHANNEL_VOLUME => {
-                        result.kind = MusicEventKind::Volume as u32;
+                        result.kind = KF_MUSIC_VOLUME;
                         result.value = u32::from(channel.data2.unwrap_or(0));
                     }
                     ChannelMessage::ProgramChange => {
-                        result.kind = MusicEventKind::Program as u32;
+                        result.kind = KF_MUSIC_PROGRAM;
                         result.value = u32::from(channel.data1);
                     }
                     ChannelMessage::PitchBend => {
-                        result.kind = MusicEventKind::PitchBend as u32;
+                        result.kind = KF_MUSIC_PITCH_BEND;
                         result.value = u32::from(channel.data1)
                             | (u32::from(channel.data2.unwrap_or(0)) << midi::DATA_BITS);
                     }
@@ -431,7 +337,7 @@ pub unsafe extern "C" fn kf_music_decode(
                 meta_type: midi::META_TEMPO,
                 data,
             } if data.len() == 3 => {
-                result.kind = MusicEventKind::Tempo as u32;
+                result.kind = KF_MUSIC_TEMPO;
                 result.value =
                     (u32::from(data[0]) << 16) | (u32::from(data[1]) << 8) | u32::from(data[2]);
                 if result.value == 0 {
@@ -442,7 +348,7 @@ pub unsafe extern "C" fn kf_music_decode(
                 meta_type: midi::META_END,
                 data,
             } if data.is_empty() => {
-                result.kind = MusicEventKind::End as u32;
+                result.kind = KF_MUSIC_END;
             }
             _ => return INVALID,
         }
@@ -463,7 +369,7 @@ pub unsafe extern "C" fn kf_music_decode(
             if duration == 0 {
                 return INVALID;
             }
-            info.write(MusicInfo {
+            info.write(KfMusicInfo {
                 resolution: u32::from(sequence.header.resolution),
                 tempo: sequence.header.tempo,
                 event_count: count as u32,

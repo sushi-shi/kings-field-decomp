@@ -1,11 +1,12 @@
-#![no_std]
+mod bindings;
+use bindings::*;
 mod audio;
 mod texture;
-use core::{panic::PanicInfo, slice};
-use kf_codec::tim::{Image, Images};
-use kf_codec::tim::{
+use crate::tim::{Image, Images};
+use crate::tim::{
     TIM_DIRECT16, TIM_DIRECT24, TIM_FLAGS_MASK, TIM_FORMAT_MASK, TIM_INDEXED4, TIM_INDEXED8,
 };
+use core::{panic::PanicInfo, slice};
 const INDEXED4_PALETTE_COLORS: usize = 16;
 const INDEXED4_BITS: usize = 4;
 const INDEXED4_MASK: u8 = 15;
@@ -30,26 +31,15 @@ fn panic(_: &PanicInfo<'_>) -> ! {
     // Programming errors must not unwind across the C ABI.
     unsafe { abort() }
 }
-const OK: i32 = 0;
-const END: i32 = 1;
-const INVALID: i32 = 2;
-const OUTPUT_FULL: i32 = 3;
-#[repr(C)]
-pub struct TimInfo {
-    mode: u32,
-    width: u32,
-    height: u32,
-    encoded_bytes: u32,
-    image_x: i32,
-    image_y: i32,
-    palette_x: i32,
-    palette_y: i32,
-}
-fn parse(bytes: &[u8], offset: usize) -> Result<Image<'_>, i32> {
+const OK: KfCodecResult = KF_CODEC_OK;
+const END: KfCodecResult = KF_CODEC_END;
+const INVALID: KfCodecResult = KF_CODEC_INVALID;
+const OUTPUT_FULL: KfCodecResult = KF_CODEC_OUTPUT_FULL;
+fn parse(bytes: &[u8], offset: usize) -> Result<Image<'_>, KfCodecResult> {
     let tail = bytes.get(offset..).ok_or(INVALID)?;
     Images::new(tail).next().ok_or(END)?.map_err(|_| INVALID)
 }
-fn dimensions(image: &Image<'_>) -> Result<(usize, usize), i32> {
+fn dimensions(image: &Image<'_>) -> Result<(usize, usize), KfCodecResult> {
     let words = image.image.rectangle.width as usize;
     let height = image.image.rectangle.height as usize;
     let width = match image.mode & TIM_FORMAT_MASK {
@@ -69,8 +59,8 @@ pub unsafe extern "C" fn kf_tim_info(
     bytes: *const u8,
     length: usize,
     offset: usize,
-    info: *mut TimInfo,
-) -> i32 {
+    info: *mut KfTimInfo,
+) -> KfCodecResult {
     if bytes.is_null() || info.is_null() || length > isize::MAX as usize {
         return INVALID;
     }
@@ -85,7 +75,7 @@ pub unsafe extern "C" fn kf_tim_info(
     if image.encoded_len > u32::MAX as usize {
         return INVALID;
     }
-    info.write(TimInfo {
+    info.write(KfTimInfo {
         mode: image.mode,
         width: width as u32,
         height: height as u32,
@@ -105,7 +95,7 @@ pub unsafe extern "C" fn kf_tim_rgba(
     palette_row: u32,
     rgba: *mut u8,
     capacity: usize,
-) -> i32 {
+) -> KfCodecResult {
     if bytes.is_null()
         || rgba.is_null()
         || length > isize::MAX as usize
