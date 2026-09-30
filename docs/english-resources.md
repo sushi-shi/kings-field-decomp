@@ -16,15 +16,15 @@ prepares English resources. After import, `kings-field --language en` and
 also selects a default; an explicit option overrides it.
 
 The launcher first imports and verifies all 428 Japanese files in
-`$XDG_CACHE_HOME/kings-field/SLPS-00017/resources-v1` (or `~/.cache/...`). It
-creates `resources-en-v1` from this base using an embedded translation delta.
+`$XDG_CACHE_HOME/kings-field/SLPS-00017/resources` (or `~/.cache/...`). It
+creates `resources-en` from this base using an embedded translation delta.
 The source tree is unchanged. Input and complete output hashes must match;
 only verified output is published by renaming a temporary directory under the
 import lock. Partial/failed imports never replace a cache. Saves remain shared
 between languages in the same language-independent `.kfs` format.
 
 The browser follows the same workflow and keeps Japanese resources in
-`kings-field-resources` and English resources in `kings-field-resources-en-v1`
+`kings-field-resources` and English resources in `kings-field-resources-en`
 IndexedDB databases. Selecting English can generate its missing cache from
 previously imported Japanese files without selecting the disc again.
 
@@ -48,9 +48,9 @@ actor state, or write a save. Only texels that differ between the two common
 TIM streams are replaced; later map and menu texture uploads are preserved.
 Subsequent dialogue and image loads use the selected resource root.
 
-The new Language row uses small independent Latin labels (`LANGUAGE`,
-`JAPANESE`, `ENGLISH`) so it remains readable in either resource set. The
-translation's font atlas contains word fragments rather than a full alphabet.
+The Language row uses the existing menu atlas and text renderer. English
+reuses the individual capital letters used by BACK and COMPASS; Japanese
+uses the original kana for `げんご` and `にほんご`.
 The original four configuration toggles and their save representation remain
 unchanged. Language is a session preference; launch options still select the
 initial language.
@@ -84,8 +84,8 @@ reproduces the English v1.0 image byte for byte, and the converted delta
 reproduces all 428 English files.
 
 `nix develop` exports the derived delta as `KF_ENGLISH_PATCH`, and the Nix
-package passes it to CMake, so both embed English automatically
-(`nix build .#english-delta` builds it alone). Outside Nix, CMake falls back to
+package passes it to CMake, so both embed English automatically. Outside Nix,
+CMake falls back to
 an ignored local `resources/english-v1.kfdelta`, which `english_patch.py create`
 or `from-ppf` can produce. A build without any payload still supports Japanese
 and reports clearly that English generation is unavailable.

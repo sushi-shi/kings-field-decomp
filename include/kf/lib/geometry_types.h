@@ -1,4 +1,6 @@
-#pragma once
+#ifndef KF_LIB_GEOMETRY_TYPES_H
+#define KF_LIB_GEOMETRY_TYPES_H
+
 #include <kf/lib/types.h>
 #include <cstddef>
 #include <type_traits>
@@ -70,3 +72,5 @@ static_assert(std::is_standard_layout_v<VECTOR> && std::is_standard_layout_v<SVE
 static_assert(std::is_trivially_copyable_v<VECTOR> && std::is_trivially_copyable_v<SVECTOR>);
 static_assert(std::is_trivially_default_constructible_v<VECTOR>
     && std::is_trivially_default_constructible_v<SVECTOR>);
+
+#endif // KF_LIB_GEOMETRY_TYPES_H

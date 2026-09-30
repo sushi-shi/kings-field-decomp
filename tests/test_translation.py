@@ -173,7 +173,7 @@ if '--extract-to' in args:
         self.disc = self.root / "Japanese disc.iso"
         self.disc.touch()
         self.env = dict(os.environ, XDG_CACHE_HOME=str(self.root / "cache"), TEST_CALLS=str(self.log))
-        for key in ["KF_DISC", "KF_LANGUAGE", "TEST_FAIL"]:
+        for key in ["KF_DISC", "KF_LANGUAGE", "TEST_FAIL", "japanese_resources"]:
             self.env.pop(key, None)
 
     def launch(self, *args, success=True, **env):
@@ -191,7 +191,7 @@ if '--extract-to' in args:
         self.assertEqual(calls[0][:4], ["--language", "ja", "--disc", str(self.disc)])
         self.assertEqual(calls[1][:3], ["--language", "en", "--data"])
         self.assertIn("--japanese-data", calls[2])
-        self.assertTrue(calls[2][calls[2].index("--japanese-data") + 1].endswith("/resources-v1"))
+        self.assertTrue(calls[2][calls[2].index("--japanese-data") + 1].endswith("/resources"))
 
     def test_switch_to_english_and_back_without_disc(self):
         self.launch(KF_DISC=str(self.disc))
@@ -208,13 +208,29 @@ if '--extract-to' in args:
     def test_failed_translation_preserves_japanese_and_does_not_publish(self):
         self.launch("--language", "en", success=False, KF_DISC=str(self.disc), TEST_FAIL="en")
         cache = self.root / "cache/kings-field/SLPS-00017"
-        self.assertTrue((cache / "resources-v1/test").is_file())
-        self.assertFalse((cache / "resources-en-v1").exists())
+        self.assertTrue((cache / "resources/test").is_file())
+        self.assertFalse((cache / "resources-en").exists())
         self.launch("--language", "ja")
 
     def test_missing_disc_and_invalid_language(self):
         self.assertEqual(self.launch("--language", "en", success=False), [])
         self.assertEqual(self.launch("--language", "invalid", success=False), [])
+
+    def test_installed_japanese_resources_need_no_disc_or_cache(self):
+        installed = self.root / "installed resources"
+        installed.mkdir()
+        calls = self.launch(japanese_resources=str(installed))
+        self.assertEqual(calls, [["--data", str(installed), "--language", "ja"]])
+        self.assertFalse((self.root / "cache").exists())
+
+    def test_installed_resources_can_prepare_english_and_switch_back(self):
+        installed = self.root / "installed resources"
+        installed.mkdir()
+        calls = self.launch("--language", "en", japanese_resources=str(installed))
+        self.assertEqual(len(calls), 2)
+        self.assertEqual(calls[0][:4], ["--language", "en", "--data", str(installed)])
+        self.assertEqual(calls[1][calls[1].index("--japanese-data") + 1], str(installed))
+        self.assertFalse((self.root / "cache/kings-field/SLPS-00017/resources").exists())
 
 
 if __name__ == "__main__":

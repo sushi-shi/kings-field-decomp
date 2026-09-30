@@ -1,4 +1,5 @@
-#include <kf/lib/random.hpp>
+#include <kf/platform/prelude.h>
+#include <kf/lib/random.h>
 #include <kf/game/audio.h>
 #include <kf/lib/map_data.h>
 #include <kf/game/collision.h>

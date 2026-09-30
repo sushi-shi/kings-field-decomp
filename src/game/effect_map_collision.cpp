@@ -1,3 +1,4 @@
+#include <kf/platform/prelude.h>
 #include <kf/lib/map_data.h>
 #include <kf/game/collision.h>
 #include <kf/game/effect.h>

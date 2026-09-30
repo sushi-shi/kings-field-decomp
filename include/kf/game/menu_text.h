@@ -1,6 +1,8 @@
-#pragma once
+#ifndef KF_GAME_MENU_TEXT_H
+#define KF_GAME_MENU_TEXT_H
+
 #include <kf/game/menu.h>
-#include <kf/platform/language.hpp>
+#include <kf/platform/language.h>
 
 // Authored atlas glyphs, not Unicode. Resource-owned rows still come from STAT.DAT.
 // English v1.0's executable edits are recorded in docs/english-resources.md.
@@ -9,13 +11,27 @@ enum class MenuLabel {
     HeaderLevel, DetailLevel, HeaderGold, DetailGold, PriceUnit,
     PhysicalPower, MagicPower, TotalAttack, TotalDefense, Attack, Defense,
     Cutting, Striking, Holy, Fire, PoisonResistance, MagicDefense,
-    SlowedStatus, DarknessStatus, CurseStatus
+    SlowedStatus, DarknessStatus, CurseStatus,
+    Language, LanguageName, LanguageUnavailable
 };
 
 inline MenuGlyphRow menu_label(MenuLabel label)
 {
     const bool english = kf::game_language() == kf::Language::English;
     switch (label) {
+    case MenuLabel::Language:
+        // The translation's individual capitals also spell BACK and COMPASS.
+        // Japanese uses the original kana: げんご.
+        return english ? MenuGlyphRow{{0x136, 0xdc, 0x50, 0x146, 0x11, 0xdc, 0x146, 0x138, MENU_TEXT_END}}
+                       : MenuGlyphRow{{MENU_TEXT_DAKUTEN | 0x48, 0x6d, MENU_TEXT_DAKUTEN | 0x49, MENU_TEXT_END}};
+    case MenuLabel::LanguageName:
+        // ENGLISH / にほんご.
+        return english ? MenuGlyphRow{{0x138, 0x50, 0x146, 0x136, 0x4, 0x134, 0x3, MENU_TEXT_END}}
+                       : MenuGlyphRow{{0x55, 0x5d, 0x6d, MENU_TEXT_DAKUTEN | 0x49, MENU_TEXT_END}};
+    case MenuLabel::LanguageUnavailable:
+        // NO DATA / つかえません.
+        return english ? MenuGlyphRow{{0x50, 0x0, MENU_TEXT_BLANK, 0xb, 0xdc, 0x10, 0xdc, MENU_TEXT_END}}
+                       : MenuGlyphRow{{0x51, 0x45, 0x43, 0x5e, 0x4d, 0x6d, MENU_TEXT_END}};
     case MenuLabel::Pickup:
         return english ? MenuGlyphRow{{0x00, 0x06, MENU_TEXT_END}}
                        : MenuGlyphRow{{0x53, 0x6a, MENU_TEXT_END}};
@@ -100,3 +116,5 @@ inline MenuGlyphRow menu_label(MenuLabel label)
     }
     return {{MENU_TEXT_END}};
 }
+
+#endif // KF_GAME_MENU_TEXT_H

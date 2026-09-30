@@ -1,6 +1,7 @@
+#include <kf/platform/prelude.h>
 #include <algorithm>
 #include <cstdlib>
-#include <kf/lib/random.hpp>
+#include <kf/lib/random.h>
 #include <kf/lib/null.h>
 #include <kf/lib/bool.h>
 

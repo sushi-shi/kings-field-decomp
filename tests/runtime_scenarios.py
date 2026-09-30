@@ -23,19 +23,17 @@ def build_observer(root, build, output, movement):
         link = link[2:]
     if link[-2:] == ["&&", ":"]:
         link = link[:-2]
-    fixtures = [("src/game/game.cpp", "GAME"), ("src/open/opening_helpers.cpp", "OPENING")]
+    fixtures = [("src/game/game.cpp", "GAME"), ("src/cutscene/opening_helpers.cpp", "OPENING")]
     if movement:
         fixtures.append(("src/game/player_update.cpp", "INPUT"))
     for source, mode in fixtures:
-        wrapper = next(
-            path for path in (build / "original").rglob("*.cpp")
-            if str(root / source) in path.read_text()
-        )
-        command = next(shlex.split(line) for line in commands if str(wrapper) in line)
+        source_path = root / source
+        command = next(shlex.split(line) for line in commands
+                       if str(source_path) in shlex.split(line))
         original = command[command.index("-o") + 1]
         replacement = str(output / f"{mode.lower()}.o")
         command[command.index("-o") + 1] = replacement
-        command[command.index(str(wrapper))] = str(Path(__file__).with_suffix(".cpp").resolve())
+        command[command.index(str(source_path))] = str(Path(__file__).with_suffix(".cpp").resolve())
         command.extend([f"-DKF_AUDIT_{mode}", f'-DKF_AUDIT_SOURCE="{root / source}"'])
         subprocess.run(command, cwd=build, check=True)
         link[link.index(original)] = replacement
@@ -60,7 +58,7 @@ def run_observer(output, data, movement, language, switch_language, japanese_dat
     log = output / "runtime.log"
     with log.open("w") as stream:
         arguments = [str(output / "client"), "--data", str(data), "--language", language,
-                     "--skip-intro", "--saves", str(saves)]
+                     "--saves", str(saves)]
         if japanese_data:
             arguments += ["--japanese-data", str(japanese_data)]
         process = subprocess.Popen(

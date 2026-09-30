@@ -3,7 +3,7 @@
 
 #include <kf/lib/bool.h>
 #include <kf/lib/types.h>
-#include <kf/lib/fixed_math.hpp>
+#include <kf/lib/fixed_math.h>
 #include <kf/lib/geometry_types.h>
 
 inline constexpr int KF_FIXED4_BITS = 4;
@@ -113,4 +113,4 @@ extern s32 vector_xz_to_angle(s32 x, s32 z);
 extern void color_lerp_cvector(const CVECTOR *from, const CVECTOR *to, CVECTOR *output, s32 blend);
 extern u16 color_lerp_rgb555(u16 from, u16 to, s32 blend);
 
-#endif
+#endif // KF_LIB_MATH_H

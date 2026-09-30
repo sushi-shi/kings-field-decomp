@@ -1,8 +1,28 @@
 # King's Field — Linux / WebAssembly source port
 
-A direct source port of the original Japanese King's Field (SLPS-00017).
-The original game logic runs through portable rendering, audio and platform
-interfaces. Supply your own disc image; game data is not bundled.
+A Linux and browser port of the original Japanese King's Field (SLPS-00017).
+Supply your own disc image; game data is not bundled.
+
+## Branches
+
+```text
+              master
+                 |
+     +-----------+-----------+
+     |                       |
+     v                       v
+  source                  classic
+     |
+     v
+   port (you are here)
+```
+
+| Branch | Purpose |
+| --- | --- |
+| `master` | Reconstruction and matching |
+| `source` | C++ PS1 build, codecs, and base for porting |
+| `classic` | C PS1 build |
+| `port` | Linux and browser port |
 
 ## Play on Linux
 
@@ -12,55 +32,73 @@ On x86_64 Linux with Nix flakes enabled:
 KF_DISC="/path/to/King's Field (Japan).iso" nix run github:sushi-shi/kings-field-decomp/port
 ```
 
-Supported images: 2048-byte-sector ISO, raw MODE2/2352 BIN, or a single-track
-MODE2/2352 CUE with INDEX 01 at 00:00:00. Keep a CUE's referenced BIN beside it.
-`KF_DISC` is read at runtime: no `--impure` or manual extraction is needed.
-The launcher never uploads the disc or adds it to the Nix store.
+Supply your own disc image of the Japanese King's Field (SLPS-00017).
+Tested image: `King's Field (Japan).bin`, SHA-256:
 
-The first launch verifies and extracts the Japanese resources; later launches need
-no `KF_DISC` and reuse
-`$XDG_CACHE_HOME/kings-field/SLPS-00017/resources-v1`. If `XDG_CACHE_HOME` is
-unset or relative, it defaults to `$HOME/.cache`. Saves are stored separately
-in the SDL user-preference directory, in three `.kfs` slots.
+```text
+ae74beba377d686bfaa292ea40df8ade4454ec3139c2b5152364e02aac90b3d9
+```
 
-For English, add `--language en`. The Nix build fetches John Osborne's English
-translation patch from its original release and derives the resource delta
-locally; English resources are then generated from the Japanese cache and saved
-alongside it as `resources-en-v1`. You do not need an English-patched disc. Later
-launches can use just `kings-field --language en`; Japanese remains the default.
-Do not publish builds or caches that contain the translation. See
-[English resources](docs/english-resources.md).
+The first launch extracts and caches game data locally. Saves use three separate
+slots.
 
-The game starts from the opening. Append options after `--`:
+Switch between Japanese and English during play in **Configuration → Language**.
+English uses John Osborne's translation, prepared from your Japanese disc.
+See [translation details](docs/english-resources.md).
+
+With `nix run`, pass game options after `--`. For example:
+
+```sh
+KF_DISC=/path/to/disc.iso nix run . -- --saves /path/to/saves
+```
 
 | Option | Purpose |
 | --- | --- |
-| `--language ja` / `--language en` | Select Japanese or English (requires translation-enabled build) |
-| `--skip-intro` | Start gameplay directly |
 | `--saves DIRECTORY` | Use an existing save directory |
 | `--data DIRECTORY` | Use an extracted disc tree instead of `KF_DISC` |
+| `--language ja\|en` | Choose the starting language |
 
-During play, open **Configuration → Language** (below Compass). Left/right or
-Confirm switches between Japanese and English immediately, keeping the menu
-open and preserving your current game. The first English switch may take a
-moment to prepare resources. The browser's language selector also works during
-play; changes requested in other menus or cutscenes wait until gameplay or
-Configuration resumes. Language selection lasts for the current session;
-`--language` / `KF_LANGUAGE` still choose the starting language.
+In a local checkout, use `KF_DISC=/path/to/disc.iso nix run .`.
 
-When launching the binary directly with an English `--data` tree, also pass
-`--japanese-data DIRECTORY` to enable switching back to the original language.
-The packaged launcher and browser supply the Japanese resources automatically.
+## Install with a NixOS flake
 
-For example, to use existing extracted files:
+For an x86_64 Linux system, add the game and a local directory containing your
+disc to your flake inputs:
 
-```sh
-nix run github:sushi-shi/kings-field-decomp/port -- --data /path/to/extracted/disc
+```nix
+inputs.kings-field.url = "github:sushi-shi/kings-field-decomp/port";
+inputs.kings-field-disc = {
+  url = "path:/path/to/disc-directory";
+  flake = false;
+};
 ```
 
-The flake also exposes `packages.x86_64-linux.default` for installation or use
-from another flake. The installed `kings-field` command uses the same `KF_DISC`
-variable. In a local checkout of `port`, use `nix run .`.
+Import the module and set your disc's filename:
+
+```nix
+outputs = { nixpkgs, kings-field, kings-field-disc, ... }: {
+  nixosConfigurations."<host>" = nixpkgs.lib.nixosSystem {
+    modules = [
+      ./configuration.nix
+      kings-field.nixosModules.default
+      {
+        programs.kings-field = {
+          enable = true;
+          disc = "${kings-field-disc}/King's Field (Japan).iso";
+        };
+      }
+    ];
+  };
+};
+```
+
+Nix verifies and extracts the disc into its store during installation. Rebuild
+your configuration, replacing `<host>` with your host's name, then launch:
+
+```sh
+sudo nixos-rebuild switch --flake '.#<host>'
+kings-field
+```
 
 ## Controls
 
@@ -74,44 +112,32 @@ variable. In a local checkout of `port`, use `nix run .`.
 | Interact / confirm | E or Enter |
 | Inventory / skip intro | Tab |
 | Back | Backspace or Escape in menus |
-| Pause | P or Escape during gameplay; fresh input resumes |
-
-Controllers are also supported. Click the window to capture the mouse; this
-initial click does not attack. Focus loss pauses the game and releases capture.
-Linux logical-key remapping, including Caps-to-Escape, is respected. Browsers
-may require another click to restore pointer lock.
+| Pause | P or Escape during gameplay |
 
 ## Build from source
 
-Use the `port` branch and its pinned development shell:
+From the `port` branch:
 
 ```sh
 nix develop
 cmake --preset linux
 cmake --build --preset linux
-emcmake cmake --preset wasm
-cmake --build --preset wasm
+build/linux/kings-field --data /path/to/extracted/disc
 ```
 
-The native executable is `build/linux/kings-field`. Unlike the Nix launcher,
-it expects explicit `--data DIRECTORY` or `--disc IMAGE --extract-to NEW_DIRECTORY`
-arguments; extraction destinations must not already exist.
-
-Code uses C++20 as C with classes: plain structures, functions and scoped enums,
-without inheritance, RTTI or exceptions.
+To extract a disc with this executable, replace `--data` with
+`--disc IMAGE --extract-to NEW_DIRECTORY`. The destination must not already exist.
 
 ## Browser
 
-After the WASM build, serve `build/wasm` over localhost or HTTPS and open
-`kings-field.html`. Select a Japanese ISO or BIN (with its CUE if applicable), choose a language, then
-press Play. Extraction stays local; resources and saves use separate IndexedDB
-stores. Browser storage can be cleared or evicted.
+Inside `nix develop`:
 
-## Status
+```sh
+emcmake cmake --preset wasm
+cmake --build --preset wasm
+python3 -m http.server --directory build/wasm
+```
 
-Linux inputs, combat, sound and general rendering have been user-checked.
-Browser audible playback, full-browser-restart persistence/capture, and natural
-ending/re-entry still need verification.
-
-See [remaining work](docs/port-status.md), [implementation notes](PORTING.md)
-and [detailed findings](docs/port-findings.md).
+Open [the game](http://localhost:8000/kings-field.html), select your disc and press
+Play. The language selector also works during play. Data and saves stay in
+browser storage; clearing it removes them.

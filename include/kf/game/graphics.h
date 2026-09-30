@@ -56,4 +56,4 @@ inline KfFloorItemStorage floor_item_storage()
     return {game_graphics_runtime.floor_item_count, game_graphics_runtime.floor_items};
 }
 
-#endif
+#endif // KF_GAME_GRAPHICS_H

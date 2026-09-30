@@ -1,10 +1,11 @@
+#include <kf/platform/prelude.h>
 #include <kf/game/menu_text.h>
 #include <kf/game/resources.h>
 #include <kf/game/menu_glyphs.h>
 #include <kf/lib/null.h>
 #include <kf/lib/bool.h>
 
-#include <kf/platform/input.hpp>
+#include <kf/platform/input.h>
 #include <kf/game/menu.h>
 #include <kf/game/game.h>
 #include <cstdlib>
@@ -600,8 +601,10 @@ void menu_config_panel(void)
         }
         menu_config_panel_draw(on_label, off_label, option_states);
         menu_draw_window(KF_MENU_WINDOW_CONFIG, KF_MENU_CONFIG_ROW_COUNT, row, confirm);
-        if (language_failed)
-            kf::ui_text("LANGUAGE UNAVAILABLE", 16, 190, 1.5f, MENU_CONTENT_OT_DEPTH);
+        if (language_failed) {
+            MenuGlyphString message{{16, 190}, menu_label(MenuLabel::LanguageUnavailable)};
+            menu_draw_string(&menu_assets.glyph_atlas, &message);
+        }
         menu_present_frame();
     } while (1);
 
@@ -1587,10 +1590,12 @@ void menu_draw_window(KfMenuWindowKind window_kind, s32 row_count, s32 highlight
                 menu_blit_sprite(&menu_assets.selection_cursor, &layout->rows[row].position);
             }
             if (window_kind == KF_MENU_WINDOW_CONFIG && row == KF_MENU_CONFIG_LANGUAGE_ROW) {
-                const auto position = layout->rows[row].position;
-                kf::ui_text("LANGUAGE", position.x, position.y + 1, 1.5f, MENU_CONTENT_OT_DEPTH);
-                kf::ui_text(kf::game_language() == kf::Language::Japanese ? "JAPANESE" : "ENGLISH",
-                    CONFIG_OPTION_ON_X, position.y + 1, 1.5f, MENU_CONTENT_OT_DEPTH);
+                auto text = layout->rows[row];
+                text.glyphs = menu_label(MenuLabel::Language);
+                menu_draw_string(&menu_assets.glyph_atlas, &text);
+                text.position.x = CONFIG_OPTION_ON_X;
+                text.glyphs = menu_label(MenuLabel::LanguageName);
+                menu_draw_string(&menu_assets.glyph_atlas, &text);
             } else {
                 menu_draw_string(&menu_assets.glyph_atlas, &layout->rows[row]);
             }

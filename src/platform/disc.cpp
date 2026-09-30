@@ -1,6 +1,6 @@
-#include <kf/platform/disc.hpp>
-#include <kf/platform/assets.hpp>
-#include <kf/platform/translation.hpp>
+#include <kf/platform/disc.h>
+#include <kf/platform/assets.h>
+#include <kf/platform/translation.h>
 #include <cerrno>
 #include <cctype>
 #include <cstdio>

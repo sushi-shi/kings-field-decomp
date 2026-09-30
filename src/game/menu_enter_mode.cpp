@@ -1,3 +1,4 @@
+#include <kf/platform/prelude.h>
 #include <stdarg.h>
 
 #include <kf/game/menu.h>

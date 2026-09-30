@@ -84,6 +84,11 @@ try {
     await until(`Module.ccall('kf_current_language', 'string', [], []) === ${JSON.stringify(language)} || stopped`);
     if (await evaluate('stopped')) throw Error(await evaluate('statusLabel.textContent'));
   }
+  async function capture(path) {
+    await sleep(1000);
+    const screenshot = await cdp('Page.captureScreenshot', {format:'png'});
+    await writeFile(path, Buffer.from(screenshot.data, 'base64'));
+  }
   await cdp('Page.navigate', {url});
   await until("document.getElementById('disc') && !document.getElementById('disc').disabled");
   const document = await cdp('DOM.getDocument');
@@ -102,12 +107,13 @@ try {
   await select('en');
   console.log('Browser: English cache survives a page reload.');
   await select('ja');
-  await evaluate("document.getElementById('skip-intro').checked=true; playButton.click();");
+  await evaluate('playButton.click();');
   await until("(running && !languageInput.disabled) || stopped");
   if (await evaluate('stopped')) throw Error(await evaluate('statusLabel.textContent'));
   await sleep(3000);
   if (await evaluate('stopped')) throw Error(await evaluate('statusLabel.textContent'));
-  console.log('Browser: Japanese resources reached gameplay.');
+  await evaluate('Module.canvas.focus();');
+  await key('Tab', 'Tab', 9);
   await liveSelect('en');
   await liveSelect('ja');
   await liveSelect('en');
@@ -126,15 +132,14 @@ try {
   for (let row = 0; row < 4; ++row) await key('ArrowDown', 'ArrowDown', 40);
   await key('ArrowRight', 'ArrowRight', 39);
   await until("Module.ccall('kf_current_language', 'string', [], []) === 'ja' || stopped");
+  if (screenshotArg) await capture(screenshotArg.replace(/\.png$/, '') + '-ja.png');
   await key('Enter', 'Enter', 13);
   await until("Module.ccall('kf_current_language', 'string', [], []) === 'en' || stopped");
   if (await evaluate('stopped')) throw Error(await evaluate('statusLabel.textContent'));
   console.log('Browser: Configuration language row switches both ways; queued changes wait for a safe menu.');
   if (screenshotArg) {
-    await sleep(1000);
-    const screenshot = await cdp('Page.captureScreenshot', {format:'png'});
-    await writeFile(screenshotArg, Buffer.from(screenshot.data, 'base64'));
-    console.log('Browser: captured English Configuration menu for visual review.');
+    await capture(screenshotArg);
+    console.log('Browser: captured both Configuration languages for visual review.');
   }
 } finally {
   socket?.close();

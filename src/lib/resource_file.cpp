@@ -1,8 +1,8 @@
-#include <kf/platform/prelude.hpp>
+#include <kf/platform/prelude.h>
 #include <kf/lib/resource_file.h>
 
 #include <kf/lib/memory.h>
-#include <kf/platform/files.hpp>
+#include <kf/platform/files.h>
 
 static constexpr std::size_t resource_path_capacity = 128;
 

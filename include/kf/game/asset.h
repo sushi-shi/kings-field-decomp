@@ -27,4 +27,4 @@ extern void asset_registry_load_tmd_archive(
 extern void asset_registry_select(u16 asset_id);
 extern void asset_registry_set(u16 asset_id, void *data, std::size_t size);
 
-#endif
+#endif // KF_GAME_ASSET_H

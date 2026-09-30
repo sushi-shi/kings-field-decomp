@@ -5,17 +5,17 @@
     let
       system = "x86_64-linux";
       pkgs = import nixpkgs { inherit system; };
-      nativeTools = with pkgs; [ cmake ninja pkg-config cargo rustc clang python3 ];
+      nativeTools = with pkgs; [ cmake ninja pkg-config cargo rustc clang rust-bindgen rustfmt python3 ];
       nativeLibraries = with pkgs; [ sdl3 libGL libglvnd ];
       sources = pkgs.lib.cleanSourceWith {
         src = ./.;
         filter = path: type:
           let
             relative = pkgs.lib.removePrefix "${toString ./.}/" (toString path);
-            sourceDirectories = [ "cmake" "src" "include" "codecs" "codec-bridge" "web" "scripts" "resources" ];
+            sourceDirectories = [ "src" "include" "codecs" "web" "scripts" "resources" ];
           in pkgs.lib.cleanSourceFilter path type
             && !(builtins.elem (baseNameOf path) [ "build" "target" "__pycache__" ])
-            && (builtins.elem relative [ "CMakeLists.txt" "build.json" ]
+            && (builtins.elem relative [ "CMakeLists.txt" ]
               || builtins.any (directory:
                 relative == directory || pkgs.lib.hasPrefix "${directory}/" relative
               ) sourceDirectories);
@@ -52,26 +52,73 @@
           platforms = [ system ];
         };
       };
-      game = pkgs.writeShellApplication {
-        name = "kings-field";
-        runtimeInputs = [ pkgs.coreutils pkgs.util-linux ];
-        text = ''
-          game_binary=${unwrapped}/bin/kings-field
-          ${builtins.readFile ./scripts/launch.sh}
-        '';
-        meta.description = "King's Field launcher: set KF_DISC to your original Japanese ISO or BIN/CUE";
-      };
+      game = pkgs.lib.makeOverridable ({ disc ? null }:
+        let
+          resources = pkgs.runCommand "kings-field-resources" {
+            preferLocalBuild = true;
+            allowSubstitutes = false;
+          } ''
+            ${unwrapped}/bin/kings-field --language ja --disc ${pkgs.lib.escapeShellArg "${disc}"} \
+              --extract-to "$out" --extract-only
+          '';
+        in pkgs.writeShellApplication {
+          name = "kings-field";
+          runtimeInputs = [ pkgs.coreutils pkgs.util-linux ];
+          text = ''
+            game_binary=${unwrapped}/bin/kings-field
+            ${pkgs.lib.optionalString (disc != null) "japanese_resources=${resources}"}
+            ${builtins.readFile ./scripts/launch.sh}
+          '';
+          meta.description = if disc == null
+            then "King's Field launcher: set KF_DISC to your original Japanese ISO or BIN/CUE"
+            else "King's Field with resources from your Japanese disc";
+        }) {};
     in {
-      packages.${system} = { inherit game unwrapped; english-delta = englishDelta; default = game; };
+      packages.${system}.default = game;
+      nixosModules.default = { config, lib, pkgs, ... }:
+        let cfg = config.programs.kings-field;
+        in {
+          options.programs.kings-field = {
+            enable = lib.mkEnableOption "King's Field";
+            disc = lib.mkOption {
+              type = lib.types.nullOr lib.types.path;
+              default = null;
+              description = "Japanese disc image to extract during installation. If unset, use KF_DISC when launching.";
+            };
+          };
+          config = lib.mkIf cfg.enable {
+            environment.systemPackages = [
+              (self.packages.${pkgs.stdenv.hostPlatform.system}.default.override {
+                inherit (cfg) disc;
+              })
+            ];
+          };
+        };
       apps.${system}.default = {
         type = "app";
         program = "${game}/bin/kings-field";
         meta.description = "King's Field direct source port";
       };
-      checks.${system} = { native = unwrapped; launcher = game; };
+      checks.${system} = {
+        native = unwrapped;
+        launcher = game;
+        codec-bindings = pkgs.runCommand "kf-codec-bindings" {
+          nativeBuildInputs = with pkgs; [ rust-bindgen rustfmt cargo rustc clippy ];
+          src = sources;
+        } ''
+          cp -r "$src" source
+          chmod -R u+w source
+          cd source
+          bash codecs/bindings.sh --check
+          export CARGO_HOME="$TMPDIR/kings-field-cargo"
+          cargo clippy --offline --locked --release --manifest-path codecs/Cargo.toml -- \
+            -D unfulfilled_lint_expectations
+          touch "$out"
+        '';
+      };
       devShells.${system}.default = (pkgs.mkShell.override { stdenv = pkgs.clangStdenv; }) {
         packages = nativeTools ++ nativeLibraries ++ (with pkgs; [
-          emscripten nodejs chromium xvfb-run xdotool imagemagick rustfmt python3
+          emscripten nodejs chromium xvfb-run xdotool imagemagick python3 clippy
         ]);
         KF_SDL_SOURCE = "${pkgs.sdl3.src}";
         KF_RUST_SOURCE = "${pkgs.rustPlatform.rustLibSrc}";

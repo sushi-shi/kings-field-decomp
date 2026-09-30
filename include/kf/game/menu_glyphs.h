@@ -1,4 +1,6 @@
-#pragma once
+#ifndef KF_GAME_MENU_GLYPHS_H
+#define KF_GAME_MENU_GLYPHS_H
+
 #include <kf/game/menu.h>
 
 // Original Japanese atlas sequences, not Unicode code points. Keep partial
@@ -44,3 +46,5 @@ inline constexpr s16 cancel[] = {0x63, 0x61, 0x6a, MENU_TEXT_END};
 inline constexpr s16 pickup[] = {0x53, 0x6a, MENU_TEXT_END};
 inline constexpr s16 unequip[] = {0x59, MENU_TEXT_DAKUTEN | 0x4c, 0x4c, MENU_TEXT_END};
 }
+
+#endif // KF_GAME_MENU_GLYPHS_H

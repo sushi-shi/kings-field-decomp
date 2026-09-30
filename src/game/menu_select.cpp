@@ -1,8 +1,9 @@
+#include <kf/platform/prelude.h>
 #include <kf/game/menu_text.h>
 #include <kf/game/menu_glyphs.h>
 #include <kf/lib/null.h>
 
-#include <kf/platform/input.hpp>
+#include <kf/platform/input.h>
 #include <kf/game/menu.h>
 #include <kf/game/game.h>
 static constexpr unsigned MENU_SELECTION_LIST_CAPACITY = 20;

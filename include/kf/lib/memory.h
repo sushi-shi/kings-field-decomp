@@ -41,4 +41,4 @@ extern void memory_set_allocation_mode(KfMemoryArena &arena, KfMemoryAllocationM
 extern void *memory_malloc_checked(std::size_t size);
 extern void memory_release_last(KfMemoryArena &arena);
 
-#endif
+#endif // KF_MEMORY_H

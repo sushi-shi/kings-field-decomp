@@ -1,3 +1,4 @@
+#include <kf/platform/prelude.h>
 #include <kf/lib/map.h>
 #include <kf/game/player.h>
 

@@ -1,4 +1,4 @@
-#include <kf/platform/language.hpp>
+#include <kf/platform/language.h>
 #include <cstring>
 
 namespace kf {

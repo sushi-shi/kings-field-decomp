@@ -5,7 +5,7 @@
 #include <kf/lib/enum.h>
 #include <kf/lib/sound_types.h>
 #include <kf/lib/geometry_types.h>
-#include <kf/audio/sound.hpp>
+#include <kf/audio/sound.h>
 
 inline constexpr int KF_AUDIO_VOICE_SLOTS = 10;
 inline constexpr int KF_AUDIO_MAX_VOLUME = 0x7f;
@@ -67,4 +67,4 @@ void sound_ref_play(KfAudioPlayback playback, const SoundRef *sound, s16 volume)
 void audio_play_voice(KfAudioPlayback playback,
     kf::SoundBank *bank, s16 program, s16 tone, s16 note, s16 left_volume, s16 right_volume);
 
-#endif
+#endif // KF_AUDIO_H

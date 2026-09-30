@@ -1,3 +1,4 @@
+#include <kf/platform/prelude.h>
 #include <kf/game/resources.h>
 #include <kf/game/resource_file.h>
 

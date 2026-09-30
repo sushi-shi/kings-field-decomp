@@ -1,7 +1,7 @@
-#include <kf/platform/language_runtime.hpp>
-#include <kf/platform/translation.hpp>
-#include <kf/platform/disc.hpp>
-#include <kf/platform/files.hpp>
+#include <kf/platform/language_runtime.h>
+#include <kf/platform/translation.h>
+#include <kf/platform/disc.h>
+#include <kf/platform/files.h>
 #include <cassert>
 #include <filesystem>
 #include <fstream>

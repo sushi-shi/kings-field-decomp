@@ -1,5 +1,5 @@
-#include <kf/renderer/projection.hpp>
-#include <kf/lib/fixed_math.hpp>
+#include <kf/renderer/projection.h>
+#include <kf/lib/fixed_math.h>
 #include <algorithm>
 #include <array>
 #include <bit>

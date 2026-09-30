@@ -1,4 +1,4 @@
-#include <kf/platform/translation.hpp>
+#include <kf/platform/translation.h>
 #include <cstring>
 #include "english_patch.inc"
 

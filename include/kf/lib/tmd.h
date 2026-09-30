@@ -6,7 +6,7 @@
 
 #include <kf/lib/types.h>
 #include <kf/lib/enum.h>
-#include <kf/renderer/projection.hpp>
+#include <kf/renderer/projection.h>
 #include <span>
 
 enum class KfTmdSlot : u16 {
@@ -326,4 +326,4 @@ extern void tmd_project_vertices_depth_shift(KfTmdContext context, s32 count, u8
     const MATRIX *model, const kf::Projection &projection);
 extern void tmd_transform_vertices(KfTmdContext context, s32 count, const MATRIX *model);
 
-#endif
+#endif // KF_TMD_H

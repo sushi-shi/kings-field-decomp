@@ -1,4 +1,4 @@
-#include <kf/platform/translation.hpp>
+#include <kf/platform/translation.h>
 #include <cassert>
 #include <cstdio>
 #include <cstring>

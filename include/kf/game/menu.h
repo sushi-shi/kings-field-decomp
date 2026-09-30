@@ -6,7 +6,7 @@
 #include <kf/lib/map.h>
 #include <kf/lib/resource_file.h>
 #include <kf/lib/debug.h>
-#include <kf/renderer/renderer.hpp>
+#include <kf/renderer/renderer.h>
 #include <kf/game/magic.h>
 #include <kf/lib/render_types.h>
 #include <kf/lib/menu_types.h>
@@ -396,4 +396,4 @@ extern void talk_show_dialogue_page(KfFloorId floor, u8 stage, KfCharacterId cha
 
 void menu_enqueue_background(void);
 
-#endif
+#endif // KF_GAME_MENU_H

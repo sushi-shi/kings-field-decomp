@@ -1,3 +1,4 @@
+#include <kf/platform/prelude.h>
 #include <algorithm>
 #include <kf/game/audio.h>
 #include <kf/game/resources.h>

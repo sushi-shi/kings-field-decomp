@@ -71,4 +71,4 @@ typedef struct KfMagicTable {
 extern void magic_load_records(const KfMagicTable *table);
 extern void magic_cast(void);
 
-#endif
+#endif // KF_MAGIC_H

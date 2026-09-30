@@ -3,7 +3,7 @@ for argument in "$@"; do
   case "$argument" in
     --help|-h)
       printf '%s\n' \
-        "Usage: KF_DISC=/path/to/disc.iso kings-field [--language ja|en] [--saves DIRECTORY] [--skip-intro]" \
+        "Usage: KF_DISC=/path/to/disc.iso kings-field [--language ja|en] [--saves DIRECTORY]" \
         "Language defaults to KF_LANGUAGE, or ja. English is generated automatically from your Japanese disc." \
         "Supply KF_DISC once; cached Japanese resources support both languages afterward." \
         "Verified resources are reused from the XDG cache; saves are stored separately." \
@@ -31,15 +31,18 @@ for ((index = 0; index < ${#arguments[@]}; index++)); do
       language="${arguments[index]-}"
       ;;
     --saves) index=$((index + 1)) ;;
-    --skip-intro) ;;
     *) printf 'Unknown option: %s. Use --help.\n' "${arguments[index]}" >&2; exit 1 ;;
   esac
 done
 case "$language" in
-  ja) cache_name=resources-v1 ;;
-  en) cache_name=resources-en-v1 ;;
+  ja) cache_name=resources ;;
+  en) cache_name=resources-en ;;
   *) printf 'Unsupported language: %s. Use ja or en.\n' "$language" >&2; exit 1 ;;
 esac
+
+if [[ -n "${japanese_resources:-}" && "$language" == ja ]]; then
+  exec "$game_binary" --data "$japanese_resources" "$@" --language ja
+fi
 
 case "${XDG_CACHE_HOME:-}" in
   /*) cache_base="$XDG_CACHE_HOME/kings-field/SLPS-00017" ;;
@@ -49,7 +52,7 @@ umask 077
 mkdir -p -- "$cache_base"
 exec {cache_lock}>"$cache_base/import.lock"
 flock -x "$cache_lock"
-japanese_directory="$cache_base/resources-v1"
+japanese_directory="${japanese_resources:-$cache_base/resources}"
 data_directory="$cache_base/$cache_name"
 for directory in "$japanese_directory" "$data_directory"; do
   if [[ -L "$directory" || ( -e "$directory" && ! -d "$directory" ) ]]; then

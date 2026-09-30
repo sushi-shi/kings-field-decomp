@@ -1,4 +1,4 @@
-#include <kf/renderer/lighting.hpp>
+#include <kf/renderer/lighting.h>
 #include <algorithm>
 
 namespace kf {

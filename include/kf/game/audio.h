@@ -1,4 +1,6 @@
-#pragma once
+#ifndef KF_GAME_AUDIO_H
+#define KF_GAME_AUDIO_H
+
 #include <kf/lib/audio.h>
 
 extern KfAudioState audio_state;
@@ -19,3 +21,5 @@ extern KfAudioPlaybackResult audio_play_spatial_range(
     s32 max_distance, s32 attenuation_distance);
 extern void audio_stop_sequence_fade(void);
 extern void audio_stop_sequence_master_fade(s32 fade_step);
+
+#endif // KF_GAME_AUDIO_H

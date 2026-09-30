@@ -1,17 +1,17 @@
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
-#include <kf/platform/host.hpp>
-#include <kf/platform/input.hpp>
-#include <kf/platform/files.hpp>
-#include <kf/platform/disc.hpp>
-#include <kf/platform/saves.hpp>
-#include <kf/platform/language_runtime.hpp>
+#include <kf/platform/host.h>
+#include <kf/platform/input.h>
+#include <kf/platform/files.h>
+#include <kf/platform/disc.h>
+#include <kf/platform/saves.h>
+#include <kf/platform/language_runtime.h>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
-#include <kf/platform/assets.hpp>
+#include <kf/platform/assets.h>
 
 extern "C" EMSCRIPTEN_KEEPALIVE int kf_extract_disc(const char *source, const char *destination,
                                                   const char *code) {
@@ -37,8 +37,8 @@ extern "C" EMSCRIPTEN_KEEPALIVE const char *kf_current_language() {
 EM_JS(void, browser_game_started, (), { Module['gameStarted'](); });
 #endif
 
-extern "C" kf::AppMode kf_run_game();
-extern "C" void kf_run_opening(kf::AppMode mode);
+#include <kf/game/session.h>
+#include <kf/cutscene/playback.h>
 
 int main(int argc, char **argv) {
     const char *data = "data";
@@ -47,7 +47,6 @@ int main(int argc, char **argv) {
     const char *extracted = nullptr;
     const char *japanese_data = nullptr;
     bool data_selected = false, extract_only = false;
-    bool skip_intro = false;
     const char *language_code = std::getenv("KF_LANGUAGE");
     if (!language_code)
         language_code = "ja";
@@ -64,15 +63,13 @@ int main(int argc, char **argv) {
             extract_only = true;
         else if (std::strcmp(argv[i], "--saves") == 0 && i + 1 < argc)
             saves = argv[++i];
-        else if (std::strcmp(argv[i], "--skip-intro") == 0)
-            skip_intro = true;
         else if (std::strcmp(argv[i], "--language") == 0 && i + 1 < argc)
             language_code = argv[++i];
         else if (std::strcmp(argv[i], "--japanese-data") == 0 && i + 1 < argc)
             japanese_data = argv[++i];
         else {
             const bool help = std::strcmp(argv[i], "--help") == 0 || std::strcmp(argv[i], "-h") == 0;
-            std::fprintf(help ? stdout : stderr, "Usage: kings-field [--data DIRECTORY | --disc IMAGE] [--extract-to NEW_DIRECTORY] [--extract-only] [--language ja|en] [--japanese-data DIRECTORY] [--saves DIRECTORY] [--skip-intro]\nLanguage defaults to KF_LANGUAGE, or ja. Change it during play in Configuration. When starting from an English tree, --japanese-data supplies the original resources for switching back.\n");
+            std::fprintf(help ? stdout : stderr, "Usage: kings-field [--data DIRECTORY | --disc IMAGE] [--extract-to NEW_DIRECTORY] [--extract-only] [--language ja|en] [--japanese-data DIRECTORY] [--saves DIRECTORY]\nLanguage defaults to KF_LANGUAGE, or ja. Change it during play in Configuration. When starting from an English tree, --japanese-data supplies the original resources for switching back.\n");
             return help ? 0 : 1;
         }
     }
@@ -114,19 +111,9 @@ int main(int argc, char **argv) {
 #ifdef __EMSCRIPTEN__
     browser_game_started();
 #endif
-    kf::AppMode mode = skip_intro ? kf::AppMode::Gameplay : kf::AppMode::Opening;
+    cutscene_play(Cutscene::Intro);
     for (;;) {
-        switch (mode) {
-        case kf::AppMode::Gameplay:
-            kf::host_set_input_context(kf::InputContext::Gameplay);
-            mode = kf_run_game();
-            break;
-        case kf::AppMode::Opening:
-        case kf::AppMode::Ending:
-            kf::host_set_input_context(kf::InputContext::Opening);
-            kf_run_opening(mode);
-            mode = kf::AppMode::Gameplay;
-            break;
-        }
+        const GameResult result = game_play();
+        cutscene_play(result == GameResult::Completed ? Cutscene::Ending : Cutscene::Intro);
     }
 }
