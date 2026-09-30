@@ -13,12 +13,10 @@
 
 #include <array>
 #include <span>
+#include <variant>
 
-enum class KfMenuMode : s32 {
-    KF_MENU_MODE_ROOT = 0,
-    KF_MENU_MODE_ITEM_PICKUP = 1,
-    KF_MENU_MODE_SHOP = 2
-}; using enum KfMenuMode;
+enum class KfMenuAction { Close, GameLoaded, ReturnToIntro };
+using KfMenuOutcome = std::variant<KfMenuAction, KfObjectId>;
 
 enum class KfMenuRootChoice : s32 {
     KF_ROOT_CHOICE_NONE = -1,
@@ -69,8 +67,7 @@ enum class KfMenuConfirmKind : s32 {
 
 enum class KfMenuPreviewMode : s32 {
     KF_MENU_PREVIEW_ITEM_MODEL = 0,
-    KF_MENU_PREVIEW_ITEM_DETAIL = 1,
-    KF_MENU_PREVIEW_MAGIC_ARTWORK = 2
+    KF_MENU_PREVIEW_ITEM_DETAIL = 1
 }; using enum KfMenuPreviewMode;
 
 enum class KfTradeMode : s32 {
@@ -103,37 +100,13 @@ enum {
 
 static inline KfMenuResult menu_confirm_result_from_choice(KfMenuConfirmChoice choice)
 {
-    return kf_enum_decode<KfMenuResult>(-kf_enum_encode<s32>(choice));
+    return choice == KF_MENU_CHOICE_ACCEPT ? KF_MENU_RESULT_ACCEPTED : KF_MENU_RESULT_CANCELLED;
 }
 
 enum {
     MENU_CONFIRM_TEXT_X = 96,
     MENU_CONFIRM_ROW_STEP = 20
 };
-
-template <typename Value>
-class KfMenuSelection {
-public:
-    constexpr KfMenuSelection(Value value) : value_(kf_enum_encode<s32>(value)) {}
-    constexpr KfMenuSelection(KfMenuResult result) : value_(kf_enum_encode<s32>(result)) {}
-
-    constexpr s32 encoded_value() const { return value_; }
-    friend constexpr bool operator==(KfMenuSelection lhs, KfMenuSelection rhs)
-    { return lhs.value_ == rhs.value_; }
-
-private:
-    s32 value_;
-};
-
-using ::kf_enum_encode;
-
-template <typename Integer, typename Value>
-constexpr Integer kf_enum_encode(KfMenuSelection<Value> selection)
-{
-    return static_cast<Integer>(selection.encoded_value());
-}
-
-typedef KfMenuSelection<KfEffectKind> KfMagicPanelResult;
 
 enum {
     KF_MENU_SYSTEM_RETURN_ROW = 2,
@@ -362,9 +335,9 @@ extern void menu_draw_window_backdrop(void);
 extern void menu_format_number(
     s32 value, s32 digit_count, KfFormatPaddingMode padding_mode, std::span<s16> out);
 extern void menu_drop_item_panel(void);
-extern u32 menu_enter_mode(KfMenuMode menu_mode);
-extern u32 menu_enter_mode(KfMenuMode menu_mode, KfObjectId item_id);
-extern u32 menu_enter_mode(KfMenuMode menu_mode, KfItemStockBank shop_bank);
+extern KfMenuOutcome menu_open_root();
+extern KfMenuResult menu_confirm_pickup(KfObjectId item_id);
+extern void menu_open_shop(KfItemStockBank shop_bank);
 extern void menu_equip_select(KfEquipmentMenuCategory equipment_category);
 extern void menu_frame_begin(void);
 extern void menu_item_model_preview(KfObjectId item_id);
@@ -373,21 +346,20 @@ extern KfMenuResult menu_list_confirm(
     const KfMenuList *list, KfMenuConfirmKind confirm_kind, KfMenuPreviewMode preview_mode,
     KfObjectId item_id, KfItemStockBank shop_bank, KfTradeMode price_mode);
 extern KfMenuResult menu_list_confirm(
-    const KfMenuList *list, KfMenuConfirmKind confirm_kind, KfMenuPreviewMode preview_mode,
-    KfEffectKind magic_id, KfItemStockBank shop_bank, KfTradeMode price_mode);
+    const KfMenuList *list, KfMenuConfirmKind confirm_kind, KfEffectKind magic_id);
 extern void menu_list_render(const KfMenuList *list);
 extern KfResourceLoadResult menu_load_item_model(KfObjectId item_id);
 extern KfResourceLoadResult menu_load_texture(KfMenuTextureId texture_id);
 extern void menu_release_item_model(void);
 extern KfMenuResult menu_load_panel(void);
-extern KfMagicPanelResult menu_magic_panel(void);
+extern bool menu_magic_panel(void);
 extern void menu_map_viewer(KfObjectId item_id);
 extern void menu_equipment_root(void);
 extern void menu_play_input_sound(KfMenuSoundCue cue);
 extern void menu_present_frame(void);
-extern s32 menu_root(void);
+extern KfMenuOutcome menu_root(void);
 extern void menu_save_confirm(void);
-extern KfMenuResult menu_system_panel(void);
+extern KfMenuAction menu_system_panel(void);
 extern KfMenuResult menu_save_panel(void);
 extern void menu_spell_select(void);
 extern void menu_status_panel(void);

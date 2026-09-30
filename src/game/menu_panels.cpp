@@ -14,7 +14,7 @@ enum {
     BLESS_HP_RECOVERY_MAGIC_MULTIPLIER = 3
 };
 
-KfMagicPanelResult menu_magic_panel(void)
+bool menu_magic_panel(void)
 {
     KfMenuList ctx;
     std::array<std::array<s16, MENU_GLYPHS_PER_ROW>, MENU_MAGIC_LABEL_CAPACITY> labels;
@@ -24,7 +24,8 @@ KfMagicPanelResult menu_magic_panel(void)
     KfMenuConfirmState confirm = KF_MENU_CONFIRM_IDLE;
     s32 input = 0;
     s32 prev;
-    KfMagicPanelResult selection = KF_MENU_RESULT_PENDING;
+    KfEffectKind selection = KF_MAGIC_NONE;
+    KfMenuResult result = KF_MENU_RESULT_PENDING;
 
     kf::host_wait_buttons_released();
     menu_list_init(&ctx, KF_MENU_WINDOW_ROOT, kf_enum_encode<s32>(KF_ROOT_CHOICE_USE_MAGIC));
@@ -44,7 +45,7 @@ KfMagicPanelResult menu_magic_panel(void)
     menu_frame_begin();
     if (ctx.entry_count != 0) {
         if (menu_load_texture(menu_texture_from_magic(magic_ids[ctx.selected_index])) == KF_RESOURCE_LOAD_FAILED)
-            return KF_MENU_RESULT_CANCELLED;
+            return false;
         menu_add_magic_artwork_quad();
     }
     menu_list_render(&ctx);
@@ -53,13 +54,15 @@ KfMagicPanelResult menu_magic_panel(void)
         menu_present_frame();
         if (confirm == KF_MENU_CONFIRM_REQUESTED) {
             if (menu_list_confirm(&ctx, KF_MENU_CONFIRM_USE,
-                    KF_MENU_PREVIEW_MAGIC_ARTWORK, magic_ids[ctx.selected_index], KF_ITEM_STOCK_PLAYER, KF_TRADE_BUY)
+                    magic_ids[ctx.selected_index])
                     == KF_MENU_RESULT_CANCELLED)
-                selection = KF_MENU_RESULT_PENDING;
-            else
+                result = KF_MENU_RESULT_PENDING;
+            else {
                 selection = magic_ids[ctx.selected_index];
+                result = KF_MENU_RESULT_ACCEPTED;
+            }
         }
-        if (selection != KF_MENU_RESULT_PENDING) {
+        if (result != KF_MENU_RESULT_PENDING) {
             kf::host_wait_buttons_released();
             break;
         }
@@ -71,17 +74,17 @@ KfMagicPanelResult menu_magic_panel(void)
         if (ctx.entry_count == 0) {
             if (input != 0) {
                 menu_play_input_sound(MENU_SOUND_CURSOR);
-                selection = KF_MENU_RESULT_CANCELLED;
+                result = KF_MENU_RESULT_CANCELLED;
             }
         } else if (menu_list_handle_navigation(ctx, input, prev)) {
             if (menu_load_texture(menu_texture_from_magic(magic_ids[ctx.selected_index])) == KF_RESOURCE_LOAD_FAILED)
-                return KF_MENU_RESULT_CANCELLED;
+                return false;
         } else if (kf::button_pressed(input, prev, kf::Button::Confirm)) {
             menu_play_input_sound(MENU_SOUND_CONFIRM);
             confirm = KF_MENU_CONFIRM_REQUESTED;
         } else if (kf::button_pressed(input, prev, kf::Button::Back)) {
             menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
-            selection = KF_MENU_RESULT_CANCELLED;
+            result = KF_MENU_RESULT_CANCELLED;
         }
 
         if (ctx.entry_count != 0)
@@ -89,9 +92,9 @@ KfMagicPanelResult menu_magic_panel(void)
         menu_list_render(&ctx);
     }
 
-    if (selection != KF_MENU_RESULT_CANCELLED) {
+    if (result != KF_MENU_RESULT_CANCELLED) {
         if (player_state.vitals.current_mp < effect_state.magic.entries[kf_enum_encode<s32>(selection)].mp_cost)
-            return selection;
+            return result == KF_MENU_RESULT_ACCEPTED;
         player_state.vitals.current_mp -= effect_state.magic.entries[kf_enum_encode<s32>(selection)].mp_cost;
         if (selection == KF_MAGIC_HEALING) {
             player_state.vitals.current_hp += player_state.magic;
@@ -107,7 +110,7 @@ KfMagicPanelResult menu_magic_panel(void)
         if (player_state.vitals.current_hp > player_state.vitals.maximum_hp)
             player_state.vitals.current_hp = player_state.vitals.maximum_hp;
     }
-    return selection;
+    return result == KF_MENU_RESULT_ACCEPTED;
 }
 
 void menu_equipment_root(void)

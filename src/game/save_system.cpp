@@ -338,11 +338,8 @@ constexpr std::size_t save_header_bytes = 20;
 struct SaveCatalogEntry { bool occupied; u32 checksum; };
 static std::array<SaveCatalogEntry, KF_SAVE_SLOT_COUNT> save_catalog;
 
-static bool save_slot_valid(KfSaveSlotId slot) {
-    return slot >= KF_SAVE_SLOT_FIRST && slot <= KF_SAVE_SLOT_THIRD;
-}
-static kf::SaveSlot save_slot_native(KfSaveSlotId slot) {
-    return static_cast<kf::SaveSlot>(kf_enum_encode<s16>(slot));
+static bool save_slot_valid(kf::SaveSlot slot) {
+    return slot >= kf::SaveSlot::First && slot <= kf::SaveSlot::Third;
 }
 static KfSaveSlotSummary save_summary(const SavedGameState &state) {
     const auto &p = state.player;
@@ -351,10 +348,10 @@ static KfSaveSlotSummary save_summary(const SavedGameState &state) {
         KfSaveSlotState::Ready};
 }
 
-static kf::SaveFileResult save_read_record(KfSaveSlotId slot, SavedGameState &state, u32 &checksum) {
+static kf::SaveFileResult save_read_record(kf::SaveSlot slot, SavedGameState &state, u32 &checksum) {
     std::array<u8, kf::save_file_capacity> data;
     std::size_t size;
-    const auto result = kf::save_file_read(save_slot_native(slot), data.data(), data.size(), &size);
+    const auto result = kf::save_file_read(slot, data.data(), data.size(), &size);
     if (result != kf::SaveFileResult::Ok)
         return result;
     if (size < save_header_bytes || std::memcmp(data.data(), save_magic.data(), save_magic.size()) != 0)
@@ -389,7 +386,7 @@ KfSaveResult save_system_read_catalog(std::array<KfSaveSlotSummary, KF_SAVE_SLOT
     for (std::size_t i = 0; i < summaries.size(); ++i) {
         SavedGameState state{};
         u32 checksum = 0;
-        const auto slot = static_cast<KfSaveSlotId>(i + 1);
+        const auto slot = static_cast<kf::SaveSlot>(i + 1);
         const auto result = save_read_record(slot, state, checksum);
         if (result == kf::SaveFileResult::Missing)
             continue;
@@ -406,7 +403,7 @@ KfSaveResult save_system_read_catalog(std::array<KfSaveSlotSummary, KF_SAVE_SLOT
     return KF_SAVE_RESULT_OK;
 }
 
-KfSaveResult save_system_read_slot(KfSaveSlotId slot) {
+KfSaveResult save_system_read_slot(kf::SaveSlot slot) {
     if (!save_slot_valid(slot))
         return save_failure(kf::SaveFileResult::Invalid, false);
     SavedGameState state{};
@@ -424,7 +421,7 @@ KfSaveResult save_system_read_slot(KfSaveSlotId slot) {
     return KF_SAVE_RESULT_OK;
 }
 
-KfSaveResult save_system_write_slot(KfSaveSlotId slot) {
+KfSaveResult save_system_write_slot(kf::SaveSlot slot) {
     if (!save_slot_valid(slot))
         return save_failure(kf::SaveFileResult::Invalid, true);
     SavedGameState state{};
@@ -448,7 +445,7 @@ KfSaveResult save_system_write_slot(KfSaveSlotId slot) {
     save_field<u32>(header, version);
     save_field<u32>(header, payload_size);
     save_field<u32>(header, checksum);
-    const auto result = kf::save_file_write(save_slot_native(slot), data.data(), payload.position);
+    const auto result = kf::save_file_write(slot, data.data(), payload.position);
     if (result != kf::SaveFileResult::Ok)
         return save_failure(result, true);
     save_catalog[kf_enum_encode<s16>(slot) - 1] = {true, checksum};

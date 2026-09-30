@@ -627,7 +627,6 @@ void player_update(void)
 {
     auto &motion = player_state.motion_state;
     u32 input;
-    s32 item;
 
     input = kf::host_read_buttons();
     const auto look = kf::host_take_look();
@@ -653,14 +652,20 @@ void player_update(void)
     }
     if (kf::button_pressed(input, player_previous_input, kf::Button::Back)
         && player_state.weapon_attack_phase == KF_WEAPON_ATTACK_INACTIVE) {
-        item = menu_enter_mode(KF_MENU_MODE_ROOT);
-        if (item >= 0) {
-            player_use_item(kf_enum_decode<KfObjectId>(item));
-        } else if (item == kf_enum_encode<s32>(KF_MENU_RESULT_GAME_LOADED)) {
-            player_restore_loaded_game();
-        } else if (item == kf_enum_encode<s32>(KF_MENU_RESULT_RETURN_TO_INTRO)) {
-            game_result = GameResult::ReturnToIntro;
-            return;
+        const auto outcome = menu_open_root();
+        if (const auto *item = std::get_if<KfObjectId>(&outcome)) {
+            player_use_item(*item);
+        } else {
+            switch (std::get<KfMenuAction>(outcome)) {
+            case KfMenuAction::GameLoaded:
+                player_restore_loaded_game();
+                break;
+            case KfMenuAction::ReturnToIntro:
+                game_result = GameResult::ReturnToIntro;
+                return;
+            case KfMenuAction::Close:
+                break;
+            }
         }
         player_previous_input = input;
     } else {

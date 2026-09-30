@@ -547,7 +547,7 @@ static void map_interact_hinged_container(KfMapObject *object,
     item_index = KF_MAP_CONTAINER_ITEM_COUNT - 1;
     for (;;) {
         if (*item_id != KF_OBJECT_NONE) {
-            pickup_result = kf_enum_decode<KfMenuResult>(menu_enter_mode(KF_MENU_MODE_ITEM_PICKUP, *item_id));
+            pickup_result = menu_confirm_pickup(*item_id);
             switch (pickup_result) {
             case KF_MENU_RESULT_ACCEPTED:
                 *item_id = KF_OBJECT_NONE;
@@ -652,7 +652,7 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
                 map_event_advance_animation_blocking(event, KF_MAP_EVENT_ANIMATION_TALK_POSE, KF_MAP_EVENT_ANIMATION_TALK_STEP);
                 audio_play_map_sequence(MAP_SHOP_SEQUENCE_INDEX);
                 map_event_interact(event);
-                menu_enter_mode(KF_MENU_MODE_SHOP, kf_enum_decode<KfItemStockBank>(kf_enum_encode<u8>(event->character_id)));
+                menu_open_shop(kf_enum_decode<KfItemStockBank>(kf_enum_encode<u8>(event->character_id)));
                 audio_play_current_map_sequence();
                 map_event_advance_animation_blocking(event, KF_MAP_EVENT_ANIMATION_PHASE_MASK, KF_MAP_EVENT_ANIMATION_TALK_STEP);
                 map_finish_event_interaction(event);
@@ -706,7 +706,7 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
                 for (;;) {
                     if (*item_id != KF_OBJECT_NONE) {
                         found_item = true;
-                        pickup_result = kf_enum_decode<KfMenuResult>(menu_enter_mode(KF_MENU_MODE_ITEM_PICKUP, *item_id));
+                        pickup_result = menu_confirm_pickup(*item_id);
                         switch (pickup_result) {
                         case KF_MENU_RESULT_ACCEPTED:
                             *item_id = KF_OBJECT_NONE;
@@ -764,7 +764,7 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
                 continue;
 
             case KF_MAP_OBJECT_OP_ITEM_PICKUP:
-                pickup_result = kf_enum_decode<KfMenuResult>(menu_enter_mode(KF_MENU_MODE_ITEM_PICKUP, object->object_id));
+                pickup_result = menu_confirm_pickup(object->object_id);
                 switch (pickup_result) {
                 case KF_MENU_RESULT_ACCEPTED:
                     object->object_id = KF_OBJECT_NONE;
