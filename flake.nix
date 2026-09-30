@@ -45,7 +45,7 @@
         meta.description = "King's Field launcher: set KF_DISC to your original Japanese ISO or BIN/CUE";
       };
     in {
-      packages.${system} = { inherit game unwrapped; default = game; };
+      packages.${system}.default = game;
       apps.${system}.default = {
         type = "app";
         program = "${game}/bin/kings-field";
