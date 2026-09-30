@@ -1,14 +1,15 @@
 #include <kf/platform/prelude.h>
 #include <kf/game/audio.h>
-#include <kf/lib/random.h>
-#include <kf/lib/null.h>
-
-#include <kf/lib/map_data.h>
-#include <kf/lib/map.h>
-#include <cstdlib>
-#include <cstdio>
-#include <cstring>
 #include <kf/game/game.h>
+#include <kf/lib/map.h>
+#include <kf/lib/map_data.h>
+#include <kf/lib/null.h>
+#include <kf/lib/random.h>
+
+#include <array>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 enum {
     MAP_DOOR_INTERACTION_LOCAL_Z = 550,
@@ -47,20 +48,20 @@ static constexpr u32 MAP_EMITTER_VELOCITY_NUMERATOR = 175u;
 static constexpr u32 MAP_FIRE_BALL_EMITTER_VELOCITY_NUMERATOR = 25u;
 static constexpr u32 MAP_BOSS_EMITTER_VELOCITY_NUMERATOR = 225u;
 
-SoundRef gameplay_sound_refs[KF_GAMEPLAY_SOUND_COUNT] = {
-    {9, 0, 72},
-    {10, 0, 77},
-    {11, 0, 60},
-    {9, 0, 80},
-    {21, 0, 48},
-    {12, 0, 83},
-    {19, 4, 103},
-    {9, 0, 67},
-    {20, 0, 48},
-    {8, 0, 47},
-    {60, 0, 44},
-    {27, 0, 65},
-    {15, 0, 71}
+std::array<SoundRef, KF_GAMEPLAY_SOUND_COUNT> gameplay_sound_refs = {
+    SoundRef{9, 0, 72},
+    SoundRef{10, 0, 77},
+    SoundRef{11, 0, 60},
+    SoundRef{9, 0, 80},
+    SoundRef{21, 0, 48},
+    SoundRef{12, 0, 83},
+    SoundRef{19, 4, 103},
+    SoundRef{9, 0, 67},
+    SoundRef{20, 0, 48},
+    SoundRef{8, 0, 47},
+    SoundRef{60, 0, 44},
+    SoundRef{27, 0, 65},
+    SoundRef{15, 0, 71}
 };
 
 s32 map_object_pool_find_interaction_from(s32 start_index, s32 point_x, s32 point_z, s32 radius_padding)
@@ -142,7 +143,7 @@ KfMapObject *map_object_effect_pool_acquire(u16 first_index, u16 count, u16 sequ
 
 void map_object_spawn_drop(KfMapObjectDropSource drop_source, KfObjectId object_id, const VECTOR *position, s32 y_offset)
 {
-    KfBool within_drop_range;
+    bool within_drop_range;
     u16 *sequence;
     u16 first_index;
     KfMapObject *object;

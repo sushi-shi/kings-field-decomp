@@ -1,14 +1,15 @@
 #include <kf/platform/prelude.h>
-#include <algorithm>
+#include <kf/game/audio.h>
+#include <kf/game/game.h>
 #include <kf/game/resources.h>
+#include <kf/lib/math.h>
 #include <kf/lib/null.h>
 
-#include <kf/lib/math.h>
-#include <kf/game/audio.h>
-#include <cstdlib>
+#include <algorithm>
+#include <array>
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
-#include <kf/game/game.h>
 
 enum {
     GAME_SEQUENCE_BUFFER_BYTES = 0x3000,
@@ -49,14 +50,14 @@ static constexpr unsigned sequence_number_offset = 6, sequence_floor_offset = 1;
 
 void audio_play_map_sequence(u8 sequence_index)
 {
-    char path[sequence_path_capacity] = "B0/SND0.SEQ";
+    std::array<char, sequence_path_capacity> path = {"B0/SND0.SEQ"};
     std::size_t sequence_size;
 
     audio_stop_sequence_fade();
     if (player_state.audio_music_enabled != KF_PLAYER_OPTION_OFF) {
         path[sequence_number_offset] = sequence_index + '0';
         path[sequence_floor_offset] = kf_enum_encode<u8>(player_state.progress_state.current_floor) + '0';
-        if (resource_file_load_into(audio_state.sequence_buffer, GAME_SEQUENCE_BUFFER_BYTES, path, &sequence_size) == KF_RESOURCE_LOADED) {
+        if (resource_file_load_into(audio_state.sequence_buffer, GAME_SEQUENCE_BUFFER_BYTES, path.data(), &sequence_size) == KF_RESOURCE_LOADED) {
             audio_state.sequence = kf::sound_sequence_load(audio_state.sequence_buffer, sequence_size, audio_state.bank);
             if (!audio_state.sequence)
                 kf::host_fail("Cannot decode music sequence");
@@ -130,9 +131,7 @@ KfAudioPlaybackResult audio_play_spatial(
         angle = KF_ANGLE_FULL_TURN - angle;
     }
     angle >>= 1;
-    // Retail compares the masked high bit to 1, so this branch never runs.
-    // Preserve that quirk; changing it to a nonzero test changes panning.
-    if ((sound->tone_and_flags & KF_SOUND_PAN_NARROWING_FLAG) == 1) {
+    if ((sound->tone_and_flags & KF_SOUND_PAN_NARROWING_FLAG) != 0) {
         distance_gain_q7 += GAME_SOUND_PAN_NARROWING_GAIN_BOOST;
         distance_gain_q7 = std::min<s32>(distance_gain_q7, KF_AUDIO_MAX_VOLUME);
     }

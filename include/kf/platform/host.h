@@ -2,7 +2,9 @@
 #define KF_PLATFORM_HOST_H
 
 #include <kf/lib/types.h>
+
 #include <cstddef>
+
 namespace kf {
 struct Renderer;
 struct FaceList;

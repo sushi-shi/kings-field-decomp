@@ -1,19 +1,20 @@
 #include <kf/platform/prelude.h>
-#include <kf/game/menu_text.h>
-#include <kf/game/resources.h>
-#include <kf/game/menu_glyphs.h>
-#include <kf/lib/null.h>
-#include <kf/game/graphics.h>
-
-#include <kf/platform/input.h>
-#include <kf/lib/map_data.h>
-#include <kf/lib/item.h>
-#include <kf/game/resource_file.h>
-#include <cstdlib>
-#include <cstdio>
-#include <cstring>
 #include <kf/game/game.h>
+#include <kf/game/graphics.h>
+#include <kf/game/menu_glyphs.h>
+#include <kf/game/menu_text.h>
+#include <kf/game/resource_file.h>
+#include <kf/game/resources.h>
+#include <kf/lib/item.h>
+#include <kf/lib/map_data.h>
+#include <kf/lib/null.h>
 #include <kf/lib/render_face.h>
+#include <kf/platform/input.h>
+
+#include <array>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 void shop_menu_buy(KfItemStockBank shop_bank);
 void shop_menu_sell(KfItemStockBank shop_bank);
@@ -27,15 +28,15 @@ enum {
 
 KfMenuAssets menu_assets;
 
-MenuWindowLayout menu_window_layouts[KF_MENU_WINDOW_LAYOUT_COUNT];
+std::array<MenuWindowLayout, KF_MENU_WINDOW_LAYOUT_COUNT> menu_window_layouts;
 
-MenuGlyphRow item_name_rows[KF_ITEM_COUNT];
+std::array<MenuGlyphRow, KF_ITEM_COUNT> item_name_rows;
 
-MenuGlyphRow magic_name_rows[KF_MAGIC_PLAYER_COUNT];
+std::array<MenuGlyphRow, KF_MAGIC_PLAYER_COUNT> magic_name_rows;
 
-u16 item_buy_prices[KF_ITEM_COUNT][KF_ITEM_SHOP_COUNT];
+std::array<std::array<u16, KF_ITEM_SHOP_COUNT>, KF_ITEM_COUNT> item_buy_prices;
 
-u16 item_sell_prices[KF_ITEM_COUNT][KF_ITEM_SHOP_COUNT];
+std::array<std::array<u16, KF_ITEM_SHOP_COUNT>, KF_ITEM_COUNT> item_sell_prices;
 
 // STAT.DAT stores little-endian words and authored GPU templates. Only this
 // loading boundary knows that layout; menus retain copied native descriptions.
@@ -307,13 +308,11 @@ void shop_menu_root(KfItemStockBank shop_bank)
 void shop_menu_buy(KfItemStockBank shop_bank)
 {
     KfMenuList ctx;
-    s16 entries[KF_ITEM_COUNT][MENU_GLYPHS_PER_ROW];
-    u8 available[KF_ITEM_COUNT];
-    KfObjectId item_ids[KF_ITEM_COUNT];
-    u8 *stock;
+    std::array<std::array<s16, MENU_GLYPHS_PER_ROW>, KF_ITEM_COUNT> entries;
+    std::array<u8, KF_ITEM_COUNT> available;
+    std::array<KfObjectId, KF_ITEM_COUNT> item_ids;
     s32 slot;
     s32 found;
-    s32 j;
     KfMenuConfirmState confirm = KF_MENU_CONFIRM_IDLE;
     s32 input = 0;
     s32 prev;
@@ -322,12 +321,11 @@ void shop_menu_buy(KfItemStockBank shop_bank)
     kf::host_wait_buttons_released();
     menu_list_init(&ctx, KF_MENU_WINDOW_SHOP, kf_enum_encode<s32>(KF_TRADE_BUY));
 
-    stock = item_stock[kf_enum_encode<s32>(shop_bank)];
+    auto &stock = item_stock[kf_enum_encode<s32>(shop_bank)];
     found = 0;
     for (slot = kf_enum_encode<s32>(KF_ITEM_VERDITE); slot < KF_ITEM_COUNT; slot++) {
         if (stock[slot] != 0 && item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)][slot] < KF_ITEM_STACK_CAPACITY) {
-            for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)
-                entries[found][j] = item_name_rows[slot].codes[j];
+            entries[found] = item_name_rows[slot].codes;
             available[found] = stock[slot];
             item_ids[found] = kf_enum_decode<KfObjectId>(slot);
             found++;
@@ -335,8 +333,7 @@ void shop_menu_buy(KfItemStockBank shop_bank)
     }
     for (slot = 0; slot < kf_enum_encode<s32>(KF_ITEM_VERDITE); slot++) {
         if (stock[slot] != 0 && item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)][slot] < KF_ITEM_STACK_CAPACITY) {
-            for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)
-                entries[found][j] = item_name_rows[slot].codes[j];
+            entries[found] = item_name_rows[slot].codes;
             available[found] = stock[slot];
             item_ids[found] = kf_enum_decode<KfObjectId>(slot);
             found++;
@@ -344,9 +341,8 @@ void shop_menu_buy(KfItemStockBank shop_bank)
     }
     ctx.entry_count = found;
     ctx.visible_rows = MENU_SHOP_VISIBLE_ROWS;
-    ctx.glyphs_per_entry = MENU_GLYPHS_PER_ROW;
-    ctx.glyph_rows = &entries[0][0];
-    ctx.quantities = NULL;
+    ctx.glyph_rows = entries;
+    ctx.quantities = {};
 
     menu_frame_begin();
     if (ctx.entry_count != 0) {
@@ -413,13 +409,11 @@ void shop_menu_buy(KfItemStockBank shop_bank)
 void shop_menu_sell(KfItemStockBank shop_bank)
 {
     KfMenuList ctx;
-    s16 entries[KF_ITEM_COUNT][MENU_GLYPHS_PER_ROW];
-    u8 available[KF_ITEM_COUNT];
-    KfObjectId item_ids[KF_ITEM_COUNT];
-    u8 *stock;
+    std::array<std::array<s16, MENU_GLYPHS_PER_ROW>, KF_ITEM_COUNT> entries;
+    std::array<u8, KF_ITEM_COUNT> available;
+    std::array<KfObjectId, KF_ITEM_COUNT> item_ids;
     s32 slot;
     s32 found;
-    s32 j;
     KfMenuConfirmState confirm = KF_MENU_CONFIRM_IDLE;
     s32 input = 0;
     s32 prev;
@@ -428,7 +422,7 @@ void shop_menu_sell(KfItemStockBank shop_bank)
     kf::host_wait_buttons_released();
     menu_list_init(&ctx, KF_MENU_WINDOW_SHOP, kf_enum_encode<s32>(KF_TRADE_SELL));
 
-    stock = item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)];
+    auto &stock = item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)];
     found = 0;
     for (slot = 0; slot < kf_enum_encode<s32>(KF_ITEM_GOLD_CROSS); slot++) {
         if (stock[slot] != 0) {
@@ -436,8 +430,7 @@ void shop_menu_sell(KfItemStockBank shop_bank)
             if (player_item_is_equipped(kf_enum_decode<KfObjectId>(slot)))
                 available[found]--;
             if (available[found] != 0) {
-                for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)
-                    entries[found][j] = item_name_rows[slot].codes[j];
+                entries[found] = item_name_rows[slot].codes;
                 item_ids[found] = kf_enum_decode<KfObjectId>(slot);
                 found++;
             }
@@ -445,9 +438,8 @@ void shop_menu_sell(KfItemStockBank shop_bank)
     }
     ctx.entry_count = found;
     ctx.visible_rows = MENU_SHOP_VISIBLE_ROWS;
-    ctx.glyphs_per_entry = MENU_GLYPHS_PER_ROW;
-    ctx.glyph_rows = &entries[0][0];
-    ctx.quantities = NULL;
+    ctx.glyph_rows = entries;
+    ctx.quantities = {};
 
     menu_frame_begin();
     if (ctx.entry_count != 0) {

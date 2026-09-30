@@ -2,6 +2,7 @@
 #define KF_LIB_TYPES_H
 
 #include <cstdint>
+
 using s8 = std::int8_t;
 using u8 = std::uint8_t;
 using s16 = std::int16_t;

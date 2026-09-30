@@ -1,16 +1,15 @@
 #include <kf/platform/prelude.h>
-#include <algorithm>
-#include <kf/game/audio.h>
-#include <kf/lib/random.h>
-#include <kf/lib/bool.h>
-
-#include <kf/lib/map_data.h>
 #include <kf/game/actor.h>
+#include <kf/game/audio.h>
 #include <kf/game/collision.h>
-#include <cstdlib>
-#include <cstdio>
-#include <cstring>
 #include <kf/game/game.h>
+#include <kf/lib/map_data.h>
+#include <kf/lib/random.h>
+
+#include <algorithm>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 enum {
     ACTOR_ACTIVATION_RANGE = 28000,
@@ -118,7 +117,7 @@ static KfActorAction actor_choose_movement_action(const KfActor *actor,
     const KfActorDefinition *definition, KfActorAction action,
     s32 player_distance, s32 awareness, s32 near_range)
 {
-    KfBool32 recently_active;
+    bool recently_active;
 
     recently_active = action == KF_ACTOR_ACTION_RETREAT
         || action == KF_ACTOR_ACTION_MELEE_ATTACK

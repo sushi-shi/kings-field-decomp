@@ -1,9 +1,8 @@
 #include <kf/platform/prelude.h>
-#include <kf/game/graphics.h>
-
-#include <kf/lib/map_data.h>
-#include <kf/game/render.h>
 #include <kf/game/game.h>
+#include <kf/game/graphics.h>
+#include <kf/game/render.h>
+#include <kf/lib/map_data.h>
 
 enum {
     ILLUSION_STAFF_REMAP_PHASE_MASK = 3,

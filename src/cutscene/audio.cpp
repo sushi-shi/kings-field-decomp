@@ -1,12 +1,12 @@
 #include <kf/platform/prelude.h>
-#include <kf/cutscene/resources.h>
-#include <kf/lib/null.h>
-
-#include <kf/lib/resource_file.h>
-#include <kf/lib/memory.h>
 #include <kf/cutscene/audio.h>
-#include <cstdlib>
+#include <kf/cutscene/resources.h>
+#include <kf/lib/memory.h>
+#include <kf/lib/null.h>
+#include <kf/lib/resource_file.h>
+
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 
 enum {

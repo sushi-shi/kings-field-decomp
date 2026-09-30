@@ -2,6 +2,7 @@
 #define KF_AUDIO_SOUND_H
 
 #include <kf/lib/types.h>
+
 #include <cstddef>
 
 namespace kf {

@@ -25,7 +25,7 @@ void host_enqueue_face(const DrawFace &) { ++submitted; }
 // Supply a visible projected quad so all packet indices and normals are consumed.
 void cutscene_tmd_project_vertices(s32, const MATRIX *, const kf::Projection &)
 {
-    auto *vertices = open_graphics_runtime.tmd_projected_vertices;
+    auto &vertices = open_graphics_runtime.tmd_projected_vertices;
     vertices[0] = {{0, 0}, 800, 0};
     vertices[1] = {{100, 0}, 800, 0};
     vertices[2] = {{0, 100}, 800, 0};

@@ -1,7 +1,8 @@
 #include <kf/platform/prelude.h>
-#include <kf/game/resources.h>
 #include <kf/game/game.h>
+#include <kf/game/resources.h>
 #include <kf/game/session.h>
+
 void display_play_transition_reset_module_state(void);
 void game_reset_module_state(void);
 void equipment_reset_module_state(void);

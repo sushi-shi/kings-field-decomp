@@ -2,9 +2,9 @@
 #define KF_RESOURCE_FILE_H
 
 #include <kf/lib/memory.h>
-
 #include <kf/lib/types.h>
 #include <kf/platform/files.h>
+
 #include <cstddef>
 
 enum class KfResourceLoadResult : s32 {

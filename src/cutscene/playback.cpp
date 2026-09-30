@@ -1,8 +1,9 @@
 #include <kf/platform/prelude.h>
-#include <kf/cutscene/resources.h>
 #include <kf/cutscene/controller.h>
 #include <kf/cutscene/playback.h>
+#include <kf/cutscene/resources.h>
 #include <kf/lib/memory.h>
+
 void opening_helpers_reset_module_state(void);
 void camera_path_reset_module_state(void);
 void opening_scenes_reset_module_state(void);

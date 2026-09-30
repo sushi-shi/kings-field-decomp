@@ -1,10 +1,9 @@
 #ifndef KF_LIB_MATH_H
 #define KF_LIB_MATH_H
 
-#include <kf/lib/bool.h>
-#include <kf/lib/types.h>
 #include <kf/lib/fixed_math.h>
 #include <kf/lib/geometry_types.h>
+#include <kf/lib/types.h>
 
 inline constexpr int KF_FIXED4_BITS = 4;
 inline constexpr int KF_FIXED6_BITS = 6;
@@ -20,7 +19,6 @@ inline constexpr int KF_ANGLE_HALF_TURN = 0x800;
 inline constexpr int KF_ANGLE_THREE_QUARTER_TURN = 0xc00;
 inline constexpr int KF_ANGLE_FULL_TURN = 0x1000;
 inline constexpr int KF_ANGLE_WRAP_MASK = 0xfff;
-inline constexpr int KF_MATRIX_ROTATION_ELEMENTS = 9;
 inline constexpr int KF_LENGTH_SQUARE_DOWNSHIFT = 3;
 
 inline constexpr int KF_RANDOM_ANGLE_SHIFT = 3;
@@ -89,10 +87,10 @@ inline KfVecXZ vector_yaw_probe_xz(const VECTOR &position, s16 yaw, s32 reach)
 }
 
 extern s16 angle_approach(s16 current, s16 target, s32 step);
-extern KfBool angle_mod_delta_le_half_turn(int lhs, int rhs);
+extern bool angle_mod_delta_le_half_turn(int lhs, int rhs);
 extern s16 angle_shortest_delta(s32 first, s32 second);
 extern void angle_to_forward_xz(s16 angle, struct KfVecXZs *direction);
-extern KfBool angle_within_tolerance(int lhs, int rhs, s16 tolerance);
+extern bool angle_within_tolerance(int lhs, int rhs, s16 tolerance);
 extern void matrix_interpolate(
     const MATRIX *from, const MATRIX *to, MATRIX *output, s32 blend);
 extern void matrix_set_rotation_x(s16 angle, MATRIX *matrix);

@@ -1,8 +1,8 @@
 #ifndef KF_OPEN_OPENING_HELPERS_H
 #define KF_OPEN_OPENING_HELPERS_H
 
-#include <kf/lib/types.h>
 #include <kf/lib/enum.h>
+#include <kf/lib/types.h>
 
 enum class KfOpeningInputAction : u32 {
     KF_OPENING_INPUT_NONE = 0,

@@ -1,11 +1,10 @@
 #include <kf/platform/prelude.h>
-#include <kf/lib/null.h>
-#include <kf/game/graphics.h>
-
-#include <kf/lib/geometry_types.h>
-#include <kf/game/render.h>
-#include <kf/lib/math.h>
 #include <kf/game/asset.h>
+#include <kf/game/graphics.h>
+#include <kf/game/render.h>
+#include <kf/lib/geometry_types.h>
+#include <kf/lib/math.h>
+#include <kf/lib/null.h>
 
 enum {
     ACTOR_MODEL_ASSET_MASK = 0xf,
@@ -64,7 +63,7 @@ void render_map_object(KfMapObject *object)
     MATRIX rot_x;
     MATRIX model;
     MATRIX light;
-    KfEnumStorage<KfObjectId, u16> id;
+    KfObjectId id;
     s16 depth;
 
     relative_position = VECTOR{

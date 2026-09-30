@@ -21,7 +21,7 @@ void game_main_loop()
         kf::host_shutdown();
         std::exit(0);
     }
-    if (memory_arena.start || std::strcmp(map_resource_path, "B0/") != 0)
+    if (memory_arena.start || std::strcmp(map_resource_path.data(), "B0/") != 0)
         kf::host_fail("Audit: module state not restored");
     audit_original_game_main_loop();
 }
@@ -42,19 +42,15 @@ void audit_selected_player_update()
         const auto player_before = player_state;
         const auto actors_before = actor_state;
         const auto objects_before = map_object_state;
-        constexpr auto texture_words = kf::texture_store_width * kf::texture_store_height;
-        auto *textures = kf::host_renderer()->textures.words;
-        auto *before = static_cast<u16 *>(std::malloc(texture_words * sizeof(u16)));
-        if (!before) std::exit(3);
-        std::memcpy(before, textures, texture_words * sizeof(u16));
+        const auto &textures = kf::host_renderer()->textures.words;
+        const auto before = textures;
         if (!kf::language_request(alternate) || !game_apply_language() ||
             kf::game_language() != alternate ||
-            std::memcmp(before, textures, texture_words * sizeof(u16)) == 0)
+            before == textures)
             kf::host_fail("Audit: language switch did not replace text graphics");
         if (!kf::language_request(initial) || !game_apply_language() ||
-            std::memcmp(before, textures, texture_words * sizeof(u16)) != 0)
+            before != textures)
             kf::host_fail("Audit: language round trip changed other live textures");
-        std::free(before);
         if (std::memcmp(&player_before, &player_state, sizeof player_state) ||
             std::memcmp(&actors_before, &actor_state, sizeof actor_state) ||
             std::memcmp(&objects_before, &map_object_state, sizeof map_object_state))
@@ -88,7 +84,7 @@ void audit_selected_player_update()
     std::fwrite(bytes, 1, size, file);
     std::fclose(file);
     const u32 gold = player_state.gold;
-    KfSaveSlotSummary slots[KF_SAVE_SLOT_COUNT];
+    std::array<KfSaveSlotSummary, KF_SAVE_SLOT_COUNT> slots;
     if (save_system_read_catalog(slots) != KF_SAVE_RESULT_OK)
         kf::host_fail("Audit: save catalog failed");
     player_state.gold = gold + 123;

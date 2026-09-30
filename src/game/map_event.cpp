@@ -1,11 +1,9 @@
 #include <kf/platform/prelude.h>
-#include <kf/lib/null.h>
-#include <kf/lib/bool.h>
-
-#include <kf/lib/map_data.h>
-#include <kf/lib/map.h>
 #include <kf/game/collision.h>
 #include <kf/game/game.h>
+#include <kf/lib/map.h>
+#include <kf/lib/map_data.h>
+#include <kf/lib/null.h>
 
 void map_event_set_current(KfMapEvent *event)
 {
@@ -40,7 +38,7 @@ void map_event_advance_animation_blocking(KfMapEvent *event, u16 target, s16 ste
 
 void map_event_pool_load(const KfMapEventDefinition *definitions)
 {
-    KfBool8 exhausted = false;
+    bool exhausted = false;
 
     for (auto &event : map_runtime_state.events) {
         if (exhausted == true || definitions->state == KF_MAP_EVENT_FREE) {
@@ -139,7 +137,7 @@ KfMapEvent *map_event_pool_find_target_in_cone(
 
 s32 map_event_pool_find_overlap(s32 point_x, s32 point_z, s32 radius_padding)
 {
-    KfMapEvent *event = map_runtime_state.events;
+    KfMapEvent *event = map_runtime_state.events.data();
     s16 index = 0;
 
     do {

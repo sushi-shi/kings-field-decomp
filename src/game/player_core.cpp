@@ -1,17 +1,19 @@
 #include <kf/platform/prelude.h>
-#include <algorithm>
 #include <kf/game/audio.h>
-#include <kf/game/resources.h>
-#include <kf/lib/null.h>
-#include <kf/game/graphics.h>
-
-#include <kf/lib/map_data.h>
-#include <kf/game/player.h>
 #include <kf/game/collision.h>
-#include <cstdlib>
-#include <cstdio>
-#include <cstring>
 #include <kf/game/game.h>
+#include <kf/game/graphics.h>
+#include <kf/game/player.h>
+#include <kf/game/resources.h>
+#include <kf/lib/map_data.h>
+#include <kf/lib/null.h>
+
+#include <algorithm>
+#include <array>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+
 static constexpr unsigned weapon_image_number_offset = 9;
 static constexpr unsigned weapon_image_path_capacity = 16;
 
@@ -43,17 +45,17 @@ static constexpr int PLAYER_COLLISION_DEFLECTION_ANGLE = 64;
 static constexpr int PLAYER_MAX_STEP_RISE = 699;
 static constexpr int PLAYER_DIAGONAL_COMPONENT_Q12 = 2896;
 
-char weapon_asset_path_template[weapon_image_path_capacity] = "WEPON/WEP00.MIM";
+std::array<char, weapon_image_path_capacity> weapon_asset_path_template = {"WEPON/WEP00.MIM"};
 
-KfFloorEntryCell floor_entry_cells[KF_PLAYER_FLOOR_ENTRY_COUNT] = {
-    {15, 2}, {29, 56}, {28, 18}, {7, 22}, {39, 69}
+std::array<KfFloorEntryCell, KF_PLAYER_FLOOR_ENTRY_COUNT> floor_entry_cells = {
+    KfFloorEntryCell{15, 2}, KfFloorEntryCell{29, 56}, KfFloorEntryCell{28, 18}, KfFloorEntryCell{7, 22}, KfFloorEntryCell{39, 69}
 };
 
 SVECTOR player_rotation_snapshot;
 
 VECTOR player_position_snapshot;
 
-KfPlayerLevelGrowth player_level_growth_table[KF_PLAYER_LEVEL_GROWTH_COUNT];
+std::array<KfPlayerLevelGrowth, KF_PLAYER_LEVEL_GROWTH_COUNT> player_level_growth_table;
 
 KfPlayerState player_state;
 
@@ -126,8 +128,8 @@ void player_equip_weapon(KfObjectId weapon_id)
         weapon_asset_path_template[weapon_image_number_offset + 1] = '0' + kf_enum_encode<u32>(weapon_id) % 10;
         std::size_t loaded_size;
         if (resource_file_load_into(player_state.weapon_asset_buffer, KF_WEAPON_ASSET_BUFFER_BYTES,
-                weapon_asset_path_template, &loaded_size) != KF_RESOURCE_LOADED) {
-            resource_file_fail(weapon_asset_path_template);
+                weapon_asset_path_template.data(), &loaded_size) != KF_RESOURCE_LOADED) {
+            resource_file_fail(weapon_asset_path_template.data());
         }
         asset_registry_set(KF_ASSET_WEAPON, player_state.weapon_asset_buffer, loaded_size);
     }
@@ -573,7 +575,7 @@ void player_warp_to_floor_entry(void)
 {
     VECTOR position;
     const KfFloorEntryCell *entry;
-    KfEnumStorage<KfFloorId, u8> floor;
+    KfFloorId floor;
 
     player_get_floor_position(position);
     player_warp_shimmer(KF_WARP_SHIMMER_GROW_REMOVE, &position);

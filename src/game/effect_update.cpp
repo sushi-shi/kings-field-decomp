@@ -1,12 +1,13 @@
 #include <kf/platform/prelude.h>
-#include <kf/lib/random.h>
 #include <kf/game/audio.h>
-#include <kf/lib/map_data.h>
 #include <kf/game/collision.h>
 #include <kf/game/effect.h>
+#include <kf/lib/map_data.h>
+#include <kf/lib/random.h>
 
-#include <cstdlib>
+#include <array>
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 
 static constexpr u32 EFFECT_PHASE_BYTE_MASK = 0xff;
@@ -29,12 +30,12 @@ enum {
     GROUND_BRANCH_CHILD_SPACING = 1500
 };
 
-static KfFloorDeformSegment floor_deform_segments[FLOOR_DEFORM_SEGMENT_COUNT] = {
-    {65, 80, 1, 0, 2, 0, 100},
-    {61, 73, 0, 255, 2, 0, 100},
-    {75, 56, 1, 0, 3, 0, 100},
-    {37, 27, 0, 255, 3, 0, 100},
-    {32, 82, 0, 1, 12, 0, 100}
+static std::array<KfFloorDeformSegment, FLOOR_DEFORM_SEGMENT_COUNT> floor_deform_segments = {
+    KfFloorDeformSegment{65, 80, 1, 0, 2, 0, 100},
+    KfFloorDeformSegment{61, 73, 0, 255, 2, 0, 100},
+    KfFloorDeformSegment{75, 56, 1, 0, 3, 0, 100},
+    KfFloorDeformSegment{37, 27, 0, 255, 3, 0, 100},
+    KfFloorDeformSegment{32, 82, 0, 1, 12, 0, 100}
 };
 
 int effect_magic_power(KfEffectRecord *effect)
@@ -117,7 +118,7 @@ void effect_update_orbiting_projectile(s32 orbit_radius, KfEffectPhase phase_lim
 {
     KfEffectRecord *record = effect_state.current_record;
     KfMagicRecord *magic = effect_state.current_magic;
-    KfEnumStorage<KfEffectPhase, u32> life = record->phase;
+    KfEffectPhase life = record->phase;
     KfCollisionResult collision;
 
     if ((kf_enum_encode<u32>(life) & EFFECT_PHASE_BYTE_MASK) < kf_enum_encode<u8>(KF_EFFECT_HAZARD_RELEASE_REQUEST) + 1) {
@@ -246,7 +247,7 @@ void effect_spawn_ground_trail(u8 id, KfEffectRecord *parent_effect, s16 angle, 
     s32 scale = (distance << KF_FIXED12_BITS) / TRAIL_UNIT_SCALE_DISTANCE;
 
     effect_rotate_scale_offset_y(&parent_effect->direction.vector, &position, angle, scale);
-    index = parent_effect - effect_state.records;
+    index = parent_effect - effect_state.records.data();
     position.vx += parent_effect->position.vx;
     position.vz += parent_effect->position.vz;
     effect_pool_construct(id, parent_effect->type, KF_EFFECT_KIND_GROUND_TRAIL, &position,

@@ -1,8 +1,8 @@
 #include <kf/platform/prelude.h>
-#include <kf/lib/map_data.h>
-#include <kf/cutscene/resources.h>
 #include <kf/cutscene/render.h>
+#include <kf/cutscene/resources.h>
 #include <kf/cutscene/scene0.h>
+#include <kf/lib/map_data.h>
 
 KfOpeningCellStorage opening_cell_storage;
 

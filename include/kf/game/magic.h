@@ -1,8 +1,8 @@
 #ifndef KF_MAGIC_H
 #define KF_MAGIC_H
 
-#include <kf/lib/sound_types.h>
 #include <kf/lib/enum.h>
+#include <kf/lib/sound_types.h>
 
 enum {
     KF_MAGIC_PLAYER_COUNT = 9,

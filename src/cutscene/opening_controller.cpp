@@ -1,23 +1,24 @@
 #include <kf/platform/prelude.h>
-#include <kf/lib/null.h>
-
-#include <kf/cutscene/playback.h>
 #include <kf/cutscene/audio.h>
-#include <kf/lib/resource_file.h>
-#include <kf/lib/memory.h>
 #include <kf/cutscene/controller.h>
 #include <kf/cutscene/opening_helpers.h>
 #include <kf/cutscene/opening_scenes.h>
+#include <kf/cutscene/playback.h>
 #include <kf/cutscene/render.h>
 #include <kf/cutscene/resources.h>
 #include <kf/lib/geometry_types.h>
-#include <cstdlib>
-#include <cstdio>
-#include <cstring>
-#include <kf/platform/input.h>
+#include <kf/lib/memory.h>
+#include <kf/lib/null.h>
+#include <kf/lib/resource_file.h>
 #include <kf/lib/resources.h>
+#include <kf/platform/input.h>
 
-char opening_initial_tim_path[KF_OPENING_INITIAL_TIM_PATH_BYTES] = "B0/L0.";
+#include <array>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+
+std::array<char, KF_OPENING_INITIAL_TIM_PATH_BYTES> opening_initial_tim_path = {"B0/L0."};
 
 static void opening_load_skip_assets(void)
 {
@@ -34,11 +35,11 @@ void opening_run(Cutscene scene)
 {
     u8 *tim_data;
     std::size_t tim_size;
-    KfEnumStorage<KfOpeningInputAction, s32> advance_action;
-    KfEnumStorage<KfOpeningInputAction, s32> skip_action;
+    KfOpeningInputAction advance_action;
+    KfOpeningInputAction skip_action;
 
-    memset((void *)&open_graphics_runtime, 0, sizeof open_graphics_runtime);
-    memset((void *)&opening_entity_state, 0, sizeof opening_entity_state);
+    open_graphics_runtime = {};
+    opening_entity_state = {};
     memory_set_allocation_mode(cutscene_memory_arena, KF_MEMORY_CREATE_ARENA);
     cutscene_audio_initialize();
     cutscene_display_initialize(scene);
@@ -50,8 +51,8 @@ void opening_run(Cutscene scene)
         if (resource_file_load_into(
                 (void *)open_graphics_runtime.display_state.asset_load_buffer,
                 open_graphics_runtime.display_state.asset_load_capacity,
-                opening_initial_tim_path, &tim_size) != KF_RESOURCE_LOADED) {
-            resource_file_fail(opening_initial_tim_path);
+                opening_initial_tim_path.data(), &tim_size) != KF_RESOURCE_LOADED) {
+            resource_file_fail(opening_initial_tim_path.data());
         }
         advance_action = KF_OPENING_INPUT_ADVANCE;
         tim_upload_images(open_graphics_runtime.display_state.asset_load_buffer, tim_size);
