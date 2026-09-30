@@ -7,6 +7,9 @@
 #include <cstdlib>
 #include <filesystem>
 #include <string>
+#ifdef _WIN32
+#include <kf/platform/windows.h>
+#endif
 
 namespace kf {
 namespace {
@@ -20,16 +23,23 @@ std::size_t index(Language language) { return language == Language::English ? 1 
 void remove_temporary_resources() {
     if (!temporary_root.empty()) {
         std::error_code error;
-        std::filesystem::remove_all(temporary_root, error);
+        std::filesystem::remove_all(std::filesystem::path(reinterpret_cast<const char8_t *>(temporary_root.c_str())), error);
         temporary_root.clear();
     }
 }
 
 bool prepare_english() {
     std::error_code error;
+#ifdef _WIN32
+    const auto directory = windows_temporary_directory(L"kings-field-language-");
+    if (directory.empty())
+        return false;
+    auto path = utf8_path(directory);
+#else
     auto path = (std::filesystem::temp_directory_path(error) / "kings-field-language-XXXXXX").string();
     if (error || !::mkdtemp(path.data()))
         return false;
+#endif
     temporary_root = path;
     const auto destination = path + "/en";
     if (!disc_prepare_directory(roots[0].c_str(), destination.c_str(), Language::English)) {

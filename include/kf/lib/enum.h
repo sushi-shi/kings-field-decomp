@@ -1,8 +1,10 @@
 #ifndef KF_LIB_ENUM_H
 #define KF_LIB_ENUM_H
 
+#include <type_traits>
+
 template <typename Enum, typename Storage>
-    requires (__is_enum(Enum) && __is_integral(Storage))
+    requires (std::is_enum_v<Enum> && std::is_integral_v<Storage>)
 class KfEnumStorage {
 public:
     KfEnumStorage() = default;
@@ -28,21 +30,21 @@ constexpr bool operator==(KfEnumStorage<Enum, Left> lhs, KfEnumStorage<Enum, Rig
 }
 
 template <typename Enum, typename Integer>
-    requires (__is_enum(Enum) && __is_integral(Integer))
+    requires (std::is_enum_v<Enum> && std::is_integral_v<Integer>)
 constexpr Enum kf_enum_decode(Integer value)
 {
     return static_cast<Enum>(value);
 }
 
 template <typename Integer, typename Enum>
-    requires (__is_integral(Integer) && __is_enum(Enum))
+    requires (std::is_integral_v<Integer> && std::is_enum_v<Enum>)
 constexpr Integer kf_enum_encode(Enum value)
 {
     return static_cast<Integer>(value);
 }
 
 template <typename Integer, typename Enum, typename Storage>
-    requires (__is_enum(Enum) && __is_integral(Integer))
+    requires (std::is_enum_v<Enum> && std::is_integral_v<Integer>)
 constexpr Integer kf_enum_encode(KfEnumStorage<Enum, Storage> value)
 {
     return static_cast<Integer>(value.encoded_value());

@@ -148,3 +148,29 @@ These are intentional port policies. The affected combat paths still need direct
 runtime verification.
 
 Codec errors retain parser source locations through `std::source_location`.
+
+## Windows validation
+
+The `windows` CMake preset cross-compiles with the pinned MinGW compiler and SDL
+source in `nix develop`. The same C++ codecs are compiled for all three targets.
+The resulting executable uses desktop OpenGL 3.3; Linux and WebAssembly retain
+OpenGL ES 3.0. Windows GL functions are resolved for the current SDL context.
+
+Windows paths cross the platform boundary as UTF-8 and use Unicode Win32 APIs.
+Extended absolute paths preserve disc filenames ending in a dot, including
+through temporary-resource cleanup. Save writes flush a uniquely created sibling
+file before replacing the selected slot with `MoveFileExW` and write-through.
+Native Windows and real GPU testing remain necessary in addition to Wine.
+
+Run the isolated Wine checks with no disc, or supply the original Japanese BIN
+to also compare extraction and exercise gameplay, saves, and language switching:
+
+```sh
+cmake --preset windows
+cmake --preset linux
+xvfb-run -a python3 tests/windows_smoke.py --disc "/path/to/King's Field (Japan).bin"
+```
+
+The test creates its own Wine prefix, virtual display, resource trees, and saves.
+It does not use the player's save directory. All generated artifacts remain under
+`build/`; the temporary prefix and fixtures are removed after the run.

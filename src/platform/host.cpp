@@ -128,9 +128,15 @@ bool host_start() {
         std::fprintf(stderr, "%s\n", SDL_GetError());
         return false;
     }
+#ifdef _WIN32
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 3);
+#else
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_ES);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 3);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 0);
+#endif
     host.window = SDL_CreateWindow("King's Field", 960, 720, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
     if (host.window)
         host.context = SDL_GL_CreateContext(host.window);

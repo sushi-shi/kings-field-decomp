@@ -8,14 +8,25 @@
 #include <new>
 #include <stdexcept>
 #include <string>
+#ifdef _WIN32
+#include <kf/platform/windows.h>
+#endif
 
 namespace kf {
 static constexpr unsigned ascii_first_printable = 32;
 static std::string data_root;
 
 bool data_files_set_root(const char *directory) {
+#ifdef _WIN32
+    const HANDLE root = directory ? windows_open(windows_path(directory).c_str(), true) : INVALID_HANDLE_VALUE;
+    const bool available = root != INVALID_HANDLE_VALUE;
+    if (available)
+        CloseHandle(root);
+#else
     struct stat info {};
-    if (!directory || stat(directory, &info) != 0 || !S_ISDIR(info.st_mode)) {
+    const bool available = directory && stat(directory, &info) == 0 && S_ISDIR(info.st_mode);
+#endif
+    if (!available) {
         std::fprintf(stderr, "Resource directory is unavailable: %s\n", directory ? directory : "(null)");
         return false;
     }
@@ -66,7 +77,11 @@ FileResult data_file_open(DataFile *file, const char *path) {
     } catch (const std::length_error &) {
         return FileResult::TooLarge;
     }
+#ifdef _WIN32
+    auto *stream = windows_fopen(full_path.c_str());
+#else
     auto *stream = std::fopen(full_path.c_str(), "rb");
+#endif
     const int open_error = errno;
     if (!stream)
         return open_error == ENOENT ? FileResult::NotFound : FileResult::IoError;
