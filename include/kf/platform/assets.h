@@ -3,6 +3,7 @@
 
 #include <kf/lib/codec.h>
 #include <kf/lib/types.h>
+#include <kf/platform/language.h>
 #include <cstddef>
 
 namespace kf {
@@ -65,6 +66,7 @@ struct DiscExtent {
 };
 struct DiscImporter {
     ImportState state;
+    Language language;
     ReadRequest request;
     std::uint64_t disc_size;
     u32 sector_size, volume_sectors;
@@ -83,8 +85,11 @@ struct DiscImporter {
 // Identity metadata only; extracted resources remain ordinary, unchanged files.
 inline constexpr const char *retail_files_sha256 =
     "450b9f09ca34bedc1c8bc150e01b79bfe108c700dad2b2783246b926953deee2";
-bool assets_match_retail(AssetTable *table);
-void disc_import_start(DiscImporter *importer, std::uint64_t disc_size);
+inline constexpr const char *english_v1_files_sha256 =
+    "697b2b80d13a3e6e54b2d72f90a49e29ae6a31d6d45970b40aee908b94208595";
+const char *assets_language_hash(Language language);
+bool assets_match_language(AssetTable *table, Language language);
+void disc_import_start(DiscImporter *importer, std::uint64_t disc_size, Language language);
 bool disc_import_waiting(const DiscImporter *importer);
 void disc_import_supply(DiscImporter *importer, const u8 *bytes, std::size_t size);
 void disc_import_fail(DiscImporter *importer, const char *message);

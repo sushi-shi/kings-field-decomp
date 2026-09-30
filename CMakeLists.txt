@@ -39,6 +39,22 @@ add_library(kf_codecs STATIC IMPORTED GLOBAL)
 set_target_properties(kf_codecs PROPERTIES IMPORTED_LOCATION "${KF_CODEC_LIBRARY}")
 add_dependencies(kf_codecs kf_codecs_build)
 
+find_package(Python3 REQUIRED COMPONENTS Interpreter)
+# The Nix dev shell and package supply a delta derived from the translator's PPF
+# release; otherwise a local resources/english-v1.kfdelta is used when present.
+if(DEFINED ENV{KF_ENGLISH_PATCH} AND NOT "$ENV{KF_ENGLISH_PATCH}" STREQUAL "")
+  set(KF_ENGLISH_PATCH_DEFAULT "$ENV{KF_ENGLISH_PATCH}")
+else()
+  set(KF_ENGLISH_PATCH_DEFAULT "${CMAKE_SOURCE_DIR}/resources/english-v1.kfdelta")
+endif()
+set(KF_ENGLISH_PATCH "${KF_ENGLISH_PATCH_DEFAULT}" CACHE FILEPATH
+    "English translation delta to embed (optional; never distribute builds containing it)")
+# Checked on every build, so a payload added after configuring is picked up;
+# the generated file is rewritten only when its content changes.
+add_custom_target(kf_english_patch
+  COMMAND ${Python3_EXECUTABLE} "${CMAKE_SOURCE_DIR}/scripts/english_patch.py" embed
+    --input "${KF_ENGLISH_PATCH}" --optional --output "${CMAKE_BINARY_DIR}/generated/english_patch.inc"
+  BYPRODUCTS "${CMAKE_BINARY_DIR}/generated/english_patch.inc" VERBATIM)
 set(KF_GAME_SOURCES
   src/game/display_play_transition.cpp
   src/game/player_warp_shimmer_at_player.cpp
@@ -136,9 +152,11 @@ set(KF_GAME_SOURCES
 )
 set_source_files_properties(${KF_GAME_SOURCES} PROPERTIES
   COMPILE_OPTIONS "-Wall;-Wextra;-fwrapv;-fno-strict-aliasing")
-add_library(kf_support STATIC src/platform/files.cpp src/platform/disc.cpp src/platform/assets.cpp src/platform/controls.cpp src/lib/fixed_math.cpp src/lib/random.cpp)
-target_include_directories(kf_support PUBLIC include)
+add_library(kf_support STATIC src/platform/files.cpp src/platform/disc.cpp src/platform/assets.cpp src/platform/language.cpp src/platform/translation.cpp src/platform/controls.cpp src/lib/fixed_math.cpp src/lib/random.cpp)
+target_sources(kf_support PRIVATE "${CMAKE_BINARY_DIR}/generated/english_patch.inc")
+target_include_directories(kf_support PUBLIC include PRIVATE "${CMAKE_BINARY_DIR}/generated")
 target_link_libraries(kf_support PUBLIC kf_codecs)
+add_dependencies(kf_support kf_english_patch)
 target_compile_options(kf_support PRIVATE -Wall -Wextra -Wpedantic -Werror)
 
 if(EMSCRIPTEN)
@@ -153,7 +171,7 @@ else()
   find_package(SDL3 CONFIG REQUIRED)
   find_library(KF_GLES_LIBRARY GLESv2 REQUIRED)
 endif()
-add_library(kf_host STATIC src/platform/host.cpp src/platform/saves.cpp src/audio/sound.cpp src/renderer/renderer.cpp src/renderer/textures.cpp src/renderer/lighting.cpp src/renderer/projection.cpp)
+add_library(kf_host STATIC src/platform/host.cpp src/platform/saves.cpp src/platform/language_runtime.cpp src/audio/sound.cpp src/renderer/renderer.cpp src/renderer/textures.cpp src/renderer/lighting.cpp src/renderer/projection.cpp)
 target_include_directories(kf_host PUBLIC include)
 target_link_libraries(kf_host PUBLIC kf_support SDL3::SDL3)
 target_compile_options(kf_host PRIVATE -Wall -Wextra -Wpedantic -Werror)

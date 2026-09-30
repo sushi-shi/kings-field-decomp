@@ -36,6 +36,31 @@ void audit_initialize_session()
 }
 void audit_selected_player_update()
 {
+    if (audit_frames == 8 && std::getenv("KF_AUDIT_LANGUAGE_SWITCH")) {
+        const auto initial = kf::game_language();
+        const auto alternate = initial == kf::Language::Japanese ? kf::Language::English : kf::Language::Japanese;
+        const auto player_before = player_state;
+        const auto actors_before = actor_state;
+        const auto objects_before = map_object_state;
+        constexpr auto texture_words = kf::texture_store_width * kf::texture_store_height;
+        auto *textures = kf::host_renderer()->textures.words;
+        auto *before = static_cast<u16 *>(std::malloc(texture_words * sizeof(u16)));
+        if (!before) std::exit(3);
+        std::memcpy(before, textures, texture_words * sizeof(u16));
+        if (!kf::language_request(alternate) || !game_apply_language() ||
+            kf::game_language() != alternate ||
+            std::memcmp(before, textures, texture_words * sizeof(u16)) == 0)
+            kf::host_fail("Audit: language switch did not replace text graphics");
+        if (!kf::language_request(initial) || !game_apply_language() ||
+            std::memcmp(before, textures, texture_words * sizeof(u16)) != 0)
+            kf::host_fail("Audit: language round trip changed other live textures");
+        std::free(before);
+        if (std::memcmp(&player_before, &player_state, sizeof player_state) ||
+            std::memcmp(&actors_before, &actor_state, sizeof actor_state) ||
+            std::memcmp(&objects_before, &map_object_state, sizeof map_object_state))
+            kf::host_fail("Audit: language switch changed world state");
+        std::fprintf(stderr, "AUDIT language round trip entry=%u preserved world and textures\n", audit_entries);
+    }
     player_update();
     if (++audit_frames != (std::getenv("KF_AUDIT_MOVEMENT") ? 96u : 16u))
         return;

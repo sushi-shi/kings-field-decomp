@@ -21,6 +21,7 @@
 #include <kf/platform/host.h>
 #include <kf/platform/module_state.h>
 #include <kf/platform/input.h>
+#include <kf/platform/language_runtime.h>
 #include <kf/lib/codec.h>
 #include <kf/renderer/renderer.h>
 #include <kf/renderer/lighting.h>

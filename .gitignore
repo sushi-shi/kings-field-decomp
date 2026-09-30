@@ -8,3 +8,6 @@ __pycache__/
 *.bin
 *.cue
 *.iso
+
+# Derived translation payload; never commit or publish (terms unstated).
+/resources/*.kfdelta

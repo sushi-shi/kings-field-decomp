@@ -50,7 +50,8 @@ enum {
     KF_MENU_CONFIG_GAUGES_ROW = 2,
     KF_MENU_CONFIG_COMPASS_ROW = 3,
     KF_MENU_CONFIG_SETTING_COUNT = 4,
-    KF_MENU_CONFIG_RETURN_ROW = KF_MENU_CONFIG_SETTING_COUNT,
+    KF_MENU_CONFIG_LANGUAGE_ROW = KF_MENU_CONFIG_SETTING_COUNT,
+    KF_MENU_CONFIG_RETURN_ROW = KF_MENU_CONFIG_LANGUAGE_ROW + 1,
     KF_MENU_CONFIG_ROW_COUNT = KF_MENU_CONFIG_RETURN_ROW + 1
 };
 
@@ -338,6 +339,7 @@ extern void menu_blit_sprite(
 extern void menu_blit_sprite_translucent(
     const MenuSpriteDef *sprite, const MenuPoint *position);
 extern void menu_config_panel(void);
+extern void menu_resources_reload(void);
 extern void menu_draw_save_slots(
     const KfSaveSlotSummary *summaries, KfSaveSlotOverlay slot_overlay);
 extern void menu_draw_item_detail(

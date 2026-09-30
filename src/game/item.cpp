@@ -1,4 +1,5 @@
 #include <kf/platform/prelude.h>
+#include <kf/game/menu_text.h>
 #include <kf/game/resources.h>
 #include <kf/game/menu_glyphs.h>
 #include <kf/lib/null.h>
@@ -167,7 +168,7 @@ static void menu_data_string(MenuDataReader *reader, MenuGlyphString *string)
     menu_data_glyphs(reader, &string->glyphs);
 }
 
-void item_load_database(void)
+void menu_resources_reload(void)
 {
     u8 *stat_data;
     std::size_t stat_size;
@@ -203,6 +204,10 @@ void item_load_database(void)
     // label, moved into that removed row in the native menu description.
     auto &save_layout = menu_window_layouts[kf_enum_encode<s32>(KF_MENU_WINDOW_SAVE)];
     save_layout.rows[KF_MENU_SAVE_RETURN_ROW].glyphs = save_layout.rows[stat_save_return_row].glyphs;
+    auto &config = menu_window_layouts[kf_enum_encode<s32>(KF_MENU_WINDOW_CONFIG)];
+    config.rows[KF_MENU_CONFIG_RETURN_ROW] = config.rows[KF_MENU_CONFIG_LANGUAGE_ROW];
+    config.rows[KF_MENU_CONFIG_RETURN_ROW].position.y += config.rows[1].position.y - config.rows[0].position.y;
+    config.rows[KF_MENU_CONFIG_LANGUAGE_ROW].glyphs.codes[0] = MENU_TEXT_END;
     for (auto &row : item_name_rows)
         menu_data_glyphs(&reader, &row);
     for (auto &row : magic_name_rows)
@@ -215,7 +220,11 @@ void item_load_database(void)
             price = menu_data_word(&reader);
 
     memory_release_last(memory_arena);
+}
 
+void item_load_database(void)
+{
+    menu_resources_reload();
     resource_file_index_item_models();
 }
 
@@ -512,15 +521,10 @@ KfMenuResult item_pickup_confirm(KfObjectId item_id)
 
     accept_label.position.x = MENU_PICKUP_CONFIRM_TEXT_X;
     accept_label.position.y = MENU_PICKUP_CONFIRM_ACCEPT_Y;
-    accept_label.glyphs.codes[0] = menu_glyphs::pickup[0];
-    accept_label.glyphs.codes[1] = menu_glyphs::pickup[1];
-    accept_label.glyphs.codes[2] = MENU_TEXT_END;
+    accept_label.glyphs = menu_label(MenuLabel::Pickup);
     decline_label.position.x = MENU_PICKUP_CONFIRM_TEXT_X;
     decline_label.position.y = MENU_PICKUP_CONFIRM_DECLINE_Y;
-    decline_label.glyphs.codes[0] = menu_glyphs::cancel[0];
-    decline_label.glyphs.codes[1] = menu_glyphs::cancel[1];
-    decline_label.glyphs.codes[2] = menu_glyphs::cancel[2];
-    decline_label.glyphs.codes[3] = MENU_TEXT_END;
+    decline_label.glyphs = menu_label(MenuLabel::Cancel);
 
     menu_frame_begin();
     menu_draw_pickup_preview(item_id);

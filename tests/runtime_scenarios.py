@@ -41,7 +41,7 @@ def build_observer(root, build, output, movement):
     subprocess.run(link, cwd=build, check=True)
 
 
-def run_observer(output, data, movement):
+def run_observer(output, data, movement, language, switch_language, japanese_data):
     saves = output / "saves"
     saves.mkdir(exist_ok=True)
     environment = dict(
@@ -50,12 +50,20 @@ def run_observer(output, data, movement):
         ASAN_OPTIONS="detect_leaks=0", UBSAN_OPTIONS="halt_on_error=1:print_stacktrace=1",
     )
     environment.pop("KF_AUDIT_MOVEMENT", None)
+    environment.pop("KF_AUDIT_LANGUAGE_SWITCH", None)
     if movement:
         environment["KF_AUDIT_MOVEMENT"] = "1"
+    if switch_language:
+        environment["KF_AUDIT_LANGUAGE_SWITCH"] = "1"
     log = output / "runtime.log"
     with log.open("w") as stream:
+        arguments = [str(output / "client"), "--data", str(data), "--saves", str(saves)]
+        if language:
+            arguments += ["--language", language]
+        if japanese_data:
+            arguments += ["--japanese-data", str(japanese_data)]
         process = subprocess.Popen(
-            [str(output / "client"), "--data", str(data), "--saves", str(saves)],
+            arguments,
             stdout=stream, stderr=subprocess.STDOUT, env=environment, start_new_session=True,
         )
         start, focused = time.monotonic(), False
@@ -84,6 +92,8 @@ def run_observer(output, data, movement):
     print(contents)
     if "AUDIT complete:" not in contents or contents.count("AUDIT entry=") != 6:
         raise RuntimeError("Observer did not finish all scenarios")
+    if switch_language and contents.count("AUDIT language round trip") != 6:
+        raise RuntimeError("Observer did not switch languages in every GAME entry")
 
 
 def main():
@@ -92,13 +102,19 @@ def main():
     parser.add_argument("--build", choices=["linux", "sanitize"], default="sanitize")
     parser.add_argument("--data", type=Path, required=True)
     parser.add_argument("--movement", action="store_true")
+    parser.add_argument("--language", choices=["ja", "en"], help="Override the application's default")
+    parser.add_argument("--switch-language", action="store_true")
+    parser.add_argument("--japanese-data", type=Path)
     parser.add_argument("--baseline", type=Path, help="Compare all six saves with a previous output directory")
     args = parser.parse_args()
     root = args.source_root.resolve()
     output = root / "build" / ("cleanup-audit-movement" if args.movement else "cleanup-audit")
+    if args.switch_language:
+        output = output.with_name(output.name + "-language")
     output.mkdir(exist_ok=True)
     build_observer(root, root / "build" / args.build, output, args.movement)
-    run_observer(output, args.data.resolve(), args.movement)
+    run_observer(output, args.data.resolve(), args.movement, args.language,
+                 args.switch_language, args.japanese_data)
     if args.baseline:
         for entry in range(1, 7):
             name = f"entry-{entry}.kfs"

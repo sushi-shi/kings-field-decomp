@@ -42,6 +42,10 @@ ae74beba377d686bfaa292ea40df8ade4454ec3139c2b5152364e02aac90b3d9
 The first launch extracts and caches game data locally. Saves use three separate
 slots.
 
+The game starts in English. Switch languages during play in **Configuration → Language**.
+English uses John Osborne's translation, prepared from your Japanese disc.
+See [translation details](docs/english-resources.md).
+
 With `nix run`, pass game options after `--`. For example:
 
 ```sh
@@ -52,6 +56,7 @@ KF_DISC=/path/to/disc.iso nix run . -- --saves /path/to/saves
 | --- | --- |
 | `--saves DIRECTORY` | Use an existing save directory |
 | `--data DIRECTORY` | Use an extracted disc tree instead of `KF_DISC` |
+| `--language ja\|en` | Choose the starting language |
 
 In a local checkout, use `KF_DISC=/path/to/disc.iso nix run .`.
 
@@ -134,4 +139,5 @@ python3 -m http.server --directory build/wasm
 ```
 
 Open [the game](http://localhost:8000/kings-field.html), select your disc and press
-Play. Data and saves stay in browser storage; clearing it removes them.
+Play. The language selector also works during play. Data and saves stay in
+browser storage; clearing it removes them.

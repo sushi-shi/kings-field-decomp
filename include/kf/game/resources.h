@@ -6,5 +6,6 @@
 extern KfMemoryArena memory_arena;
 
 extern void common_resources_load(void);
+extern bool game_apply_language(void);
 
 #endif // KF_GAME_RESOURCES_H
