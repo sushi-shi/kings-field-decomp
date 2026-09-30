@@ -22,7 +22,7 @@ Supply your own disc image; game data is not bundled.
 | `master` | Reconstruction and matching |
 | `source` | C++ PS1 build, codecs, and base for porting |
 | `classic` | C PS1 build |
-| `port` | Linux and browser port (default) |
+| `port` | Linux and browser port |
 
 ## Play on Linux
 
