@@ -125,7 +125,7 @@ static void animation_allocate_vertex_cache(KfAnimationCacheRecord *record, KfAn
     *owner_slot = record;
 }
 
-KfAnimationCacheRecord *render_bind_animated_instance(
+bool render_bind_instance_vertices(
     KfAnimationCacheRecord **owner_slot, u16 asset_index, KfAnimationClip clip_index, u16 phase,
     u32 vertex_count)
 {
@@ -146,7 +146,7 @@ KfAnimationCacheRecord *render_bind_animated_instance(
         }
         asset_registry_select(asset_index);
         tmd_select_object_vertices(tmd_context(), 0);
-        return (KfAnimationCacheRecord *)KF_ANIMATION_BIND_STATIC;
+        return true;
     }
     if (vertex_count == 0)
         kf::host_fail("Animated model has no vertices.");
@@ -154,7 +154,7 @@ KfAnimationCacheRecord *render_bind_animated_instance(
     if (record == NULL) {
         record = animation_cache_allocate();
         if (record == NULL) {
-            return NULL;
+            return false;
         }
         animation_allocate_vertex_cache(record, owner_slot, asset_index, vertex_count);
     } else if (record->asset_index != asset_index) {
@@ -200,7 +200,7 @@ KfAnimationCacheRecord *render_bind_animated_instance(
     morph_add_deltas(game_graphics_runtime.morph_scratch, vertex_count, record->rest_morph, blend_fraction);
     tmd_set_current_vertices(tmd_context(), game_graphics_runtime.morph_scratch);
     record->state = KF_ANIMATION_CACHE_LIVE;
-    return record;
+    return true;
 }
 
 void animation_cache_reset(void)

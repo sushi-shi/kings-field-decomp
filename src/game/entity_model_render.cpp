@@ -40,9 +40,9 @@ void render_actor(KfActor *actor)
     asset = descriptor & ACTOR_MODEL_ASSET_MASK;
     asset_registry_select(asset);
     object = tmd_get_object(tmd_context(), 0);
-    if (render_bind_animated_instance(
+    if (!render_bind_instance_vertices(
             &actor->animation_cache, asset, actor->animation_clip,
-            actor->animation_phase, object->vertex_count) == NULL) {
+            actor->animation_phase, object->vertex_count)) {
         tmd_select_object_vertices(tmd_context(), 0);
         tmd_project_vertices(tmd_get_object(tmd_context(), 0)->vertex_count, &model, game_graphics_runtime.render_state.projection);
     } else {

@@ -72,9 +72,9 @@ void render_effect(KfEffectRecord *effect, const MATRIX *lights)
         asset = kf_enum_encode<u8>(effect->render_id.model) + KF_ASSET_EFFECT_FIRST;
         asset_registry_select(asset);
         object = tmd_get_object(tmd_context(), 0);
-        if (render_bind_animated_instance(
+        if (!render_bind_instance_vertices(
                 &effect->animation_cache, asset, effect->animation_clip, effect->visual.animation_phase,
-                object->vertex_count) == NULL) {
+                object->vertex_count)) {
             tmd_select_object_vertices(tmd_context(), 0);
             tmd_project_vertices(tmd_get_object(tmd_context(), 0)->vertex_count, &model, game_graphics_runtime.render_state.projection);
         } else {

@@ -16,8 +16,7 @@ enum class KfAnimationCacheState : s16 {
 }; using enum KfAnimationCacheState;
 
 enum {
-    KF_ANIMATION_CACHE_CAPACITY = 12,
-    KF_ANIMATION_BIND_STATIC = 1
+    KF_ANIMATION_CACHE_CAPACITY = 12
 };
 
 typedef struct KfAnimationCacheRecord {
@@ -30,7 +29,7 @@ typedef struct KfAnimationCacheRecord {
     struct KfAnimationCacheRecord **owner_slot;
 } KfAnimationCacheRecord;
 
-extern KfAnimationCacheRecord *render_bind_animated_instance(
+extern bool render_bind_instance_vertices(
     KfAnimationCacheRecord **owner_slot, u16 asset_index, KfAnimationClip clip_index, u16 phase,
     u32 vertex_count);
 extern void animation_cache_reset(void);
