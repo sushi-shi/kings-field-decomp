@@ -1,4 +1,5 @@
-#pragma once
+#ifndef KF_PLATFORM_INPUT_HPP
+#define KF_PLATFORM_INPUT_HPP
 #include <kf/lib/types.h>
 
 namespace kf {
@@ -27,3 +28,5 @@ void host_wait_button_press();
 InputContext host_set_input_context(InputContext context);
 LookDelta host_take_look();
 }
+
+#endif

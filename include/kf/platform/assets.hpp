@@ -1,4 +1,5 @@
-#pragma once
+#ifndef KF_PLATFORM_ASSETS_HPP
+#define KF_PLATFORM_ASSETS_HPP
 #include <kf/lib/codec.h>
 #include <kf/lib/types.h>
 #include <cstddef>
@@ -89,3 +90,5 @@ void disc_import_fail(DiscImporter *importer, const char *message);
 double disc_import_progress(const DiscImporter *importer);
 void disc_import_release(DiscImporter *importer);
 } // namespace kf
+
+#endif

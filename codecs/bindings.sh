@@ -15,7 +15,7 @@ trap 'rm -f "$bindings"' EXIT
   --no-prepend-enum-name --no-doc-comments \
   --raw-line '// Generated from the C codec headers by CMake. Do not edit.' \
   --raw-line '#![expect(dead_code, non_camel_case_types)]' \
-  --output "$bindings" -- -x c -std=c11 -Wno-pragma-once-outside-header -I include
+  --output "$bindings" -- -x c -std=c11 -I include
 
 # Only identity_op is emitted by bindgen's zero-offset layout assertions.
 sed -i 's/#\[allow(clippy::unnecessary_operation, clippy::identity_op)\]/#[expect(clippy::identity_op)]/' "$bindings"

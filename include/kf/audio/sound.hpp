@@ -1,4 +1,5 @@
-#pragma once
+#ifndef KF_AUDIO_SOUND_HPP
+#define KF_AUDIO_SOUND_HPP
 #include <kf/lib/types.h>
 #include <cstddef>
 
@@ -27,3 +28,5 @@ void sound_sequence_play(MusicSequence *sequence);
 void sound_sequence_volume(MusicSequence *sequence, s16 left, s16 right);
 void sound_sequence_release(MusicSequence *sequence);
 }
+
+#endif

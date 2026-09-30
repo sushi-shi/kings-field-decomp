@@ -1,4 +1,5 @@
-#pragma once
+#ifndef KF_AUDIO_CODEC_H
+#define KF_AUDIO_CODEC_H
 #include <kf/lib/codec.h>
 #ifdef __cplusplus
 extern "C" {
@@ -66,4 +67,6 @@ KfCodecResult kf_music_decode(const uint8_t *data, size_t size,
 }
 static_assert(sizeof(KfAudioEnvelope) == 12 && sizeof(KfAudioTone) == 28);
 static_assert(sizeof(KfMusicEvent) == 16);
+#endif
+
 #endif

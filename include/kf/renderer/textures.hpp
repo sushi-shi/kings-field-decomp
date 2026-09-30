@@ -1,4 +1,5 @@
-#pragma once
+#ifndef KF_RENDERER_TEXTURES_HPP
+#define KF_RENDERER_TEXTURES_HPP
 #include <kf/platform/assets.hpp>
 
 namespace kf {
@@ -24,3 +25,5 @@ bool texture_decode(Image *image, TextureSource source, const u16 *words, std::s
 u32 texture_store_resolve(TextureStore *store, TextureSource source);
 void texture_store_release(TextureStore *store);
 }
+
+#endif
