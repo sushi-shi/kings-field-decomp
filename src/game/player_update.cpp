@@ -653,18 +653,19 @@ void player_update(void)
     if (kf::button_pressed(input, player_previous_input, kf::Button::Back)
         && player_state.weapon_attack_phase == KF_WEAPON_ATTACK_INACTIVE) {
         const auto outcome = menu_open_root();
-        switch (outcome.action) {
-        case KfMenuAction::UseItem:
-            player_use_item(outcome.item);
-            break;
-        case KfMenuAction::GameLoaded:
-            player_restore_loaded_game();
-            break;
-        case KfMenuAction::ReturnToIntro:
-            game_result = GameResult::ReturnToIntro;
-            return;
-        case KfMenuAction::Close:
-            break;
+        if (const auto *item = std::get_if<KfObjectId>(&outcome)) {
+            player_use_item(*item);
+        } else {
+            switch (std::get<KfMenuAction>(outcome)) {
+            case KfMenuAction::GameLoaded:
+                player_restore_loaded_game();
+                break;
+            case KfMenuAction::ReturnToIntro:
+                game_result = GameResult::ReturnToIntro;
+                return;
+            case KfMenuAction::Close:
+                break;
+            }
         }
         player_previous_input = input;
     } else {

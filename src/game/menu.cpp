@@ -54,7 +54,7 @@ KfMenuOutcome menu_root(void)
     kf::host_wait_buttons_released();
 
     for (;;) {
-        if (selection != KF_ROOT_CHOICE_NONE || (result && result->action == KfMenuAction::Close)) {
+        if (selection != KF_ROOT_CHOICE_NONE || (result && *result == KfMenuOutcome{KfMenuAction::Close})) {
             menu_frame_begin();
             menu_draw_status_summary();
             menu_draw_window(KF_MENU_WINDOW_ROOT, KF_MENU_ROOT_ROW_COUNT, cursor, confirm);
@@ -66,7 +66,7 @@ KfMenuOutcome menu_root(void)
             break;
         case KF_ROOT_CHOICE_USE_ITEM:
             if (const auto item = menu_use_item_panel())
-                result = KfMenuOutcome{KfMenuAction::UseItem, *item};
+                result = *item;
             break;
         case KF_ROOT_CHOICE_USE_MAGIC:
             if (menu_magic_panel())

@@ -9,6 +9,8 @@ public:
     {
         animation_cache_release_all();
     }
+    MenuSession(const MenuSession &) = delete;
+    MenuSession &operator=(const MenuSession &) = delete;
     ~MenuSession()
     {
         player_clear_motion();

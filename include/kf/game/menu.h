@@ -13,13 +13,10 @@
 
 #include <array>
 #include <span>
+#include <variant>
 
-enum class KfMenuAction { Close, UseItem, GameLoaded, ReturnToIntro };
-
-struct KfMenuOutcome {
-    KfMenuAction action;
-    KfObjectId item = KF_OBJECT_NONE;
-};
+enum class KfMenuAction { Close, GameLoaded, ReturnToIntro };
+using KfMenuOutcome = std::variant<KfMenuAction, KfObjectId>;
 
 enum class KfMenuRootChoice : s32 {
     KF_ROOT_CHOICE_NONE = -1,

@@ -1,5 +1,9 @@
 #include "../src/game/menu_enter_mode.cpp"
 #include <cassert>
+#include <type_traits>
+
+static_assert(!std::is_constructible_v<KfMenuOutcome, KfMenuAction, KfObjectId>);
+static_assert(!std::is_copy_constructible_v<MenuSession>);
 
 static kf::InputContext context = kf::InputContext::Gameplay;
 static unsigned releases, clears;
@@ -48,11 +52,11 @@ int main()
 {
     for (auto previous : {kf::InputContext::Gameplay, kf::InputContext::Scripted}) {
         context = previous;
-        for (auto action : {KfMenuAction::UseItem, KfMenuAction::Close,
-                            KfMenuAction::GameLoaded, KfMenuAction::ReturnToIntro}) {
-            next_outcome = {action, KF_ITEM_SHORT_SWORD};
+        for (const KfMenuOutcome outcome : {KfMenuOutcome{KF_ITEM_SHORT_SWORD}, KfMenuOutcome{KfMenuAction::Close},
+                KfMenuOutcome{KfMenuAction::GameLoaded}, KfMenuOutcome{KfMenuAction::ReturnToIntro}}) {
+            next_outcome = outcome;
             const auto result = menu_open_root();
-            assert(result.action == action && result.item == KF_ITEM_SHORT_SWORD);
+            assert(result == outcome);
             assert(context == previous && releases == clears);
         }
         for (auto result : {KF_MENU_RESULT_ACCEPTED, KF_MENU_RESULT_CANCELLED,
