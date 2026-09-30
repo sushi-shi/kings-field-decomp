@@ -5,7 +5,7 @@
     let
       system = "x86_64-linux";
       pkgs = import nixpkgs { inherit system; };
-      nativeTools = with pkgs; [ cmake ninja pkg-config cargo rustc clang ];
+      nativeTools = with pkgs; [ cmake ninja pkg-config cargo rustc clang rust-bindgen rustfmt ];
       nativeLibraries = with pkgs; [ sdl3 libGL libglvnd ];
       sources = pkgs.lib.cleanSourceWith {
         src = ./.;
@@ -59,6 +59,7 @@
           src = sources;
         } ''
           cp -r "$src" source
+          chmod -R u+w source
           cd source
           bash codecs/bindings.sh --check
           touch "$out"
@@ -66,7 +67,7 @@
       };
       devShells.${system}.default = (pkgs.mkShell.override { stdenv = pkgs.clangStdenv; }) {
         packages = nativeTools ++ nativeLibraries ++ (with pkgs; [
-          emscripten nodejs chromium xvfb-run xdotool imagemagick rustfmt rust-bindgen python3
+          emscripten nodejs chromium xvfb-run xdotool imagemagick python3
         ]);
         KF_SDL_SOURCE = "${pkgs.sdl3.src}";
         KF_RUST_SOURCE = "${pkgs.rustPlatform.rustLibSrc}";
