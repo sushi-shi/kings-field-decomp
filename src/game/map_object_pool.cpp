@@ -116,46 +116,40 @@ void map_object_mark_collision_edge(const KfMapObject *object, KfMapCellKind cel
     }
 }
 
-u32 map_object_probe_door_closing(const KfMapObject *object, u16 yaw)
+KfCollisionResult map_object_probe_door_closing(const KfMapObject *object, u16 yaw)
 {
     const KfMapObjectDefinition *definition = &map_object_state.definitions.entries[kf_enum_encode<u8>(object->object_id)];
     s32 point_x = object->position.vx;
     s32 point_z = object->position.vz;
-    u32 result;
-    s32 probe_radius;
 
     yaw &= KF_ANGLE_WRAP_MASK;
     switch (definition->behavior_type) {
     default:
         kf::host_fail("Door clearance requested for a non-door operation");
     case KF_MAP_OBJECT_OP_LIFT_DOOR:
-        probe_radius = MAP_DOOR_CLOSING_PROBE_RADIUS;
-    probe:
-        result = collision_query_world(
-            point_x, KF_COLLISION_IGNORE_HEIGHT, point_z, probe_radius, 0,
-            KF_COLLISION_SKIP_TERRAIN | KF_COLLISION_SKIP_MAP_OBJECTS);
         break;
     case KF_MAP_OBJECT_OP_HINGED_DOOR:
-        probe_radius = MAP_DOOR_CLOSING_PROBE_RADIUS;
         switch (yaw) {
         default:
             kf::host_fail("Door clearance requires a cardinal hinge angle");
         case 0:
             point_x += KF_MAP_TILE_SIZE;
-            goto probe;
+            break;
         case KF_ANGLE_QUARTER_TURN:
             point_z += KF_MAP_TILE_SIZE;
-            goto probe;
+            break;
         case KF_ANGLE_HALF_TURN:
             point_x -= KF_MAP_TILE_SIZE;
-            goto probe;
+            break;
         case KF_ANGLE_THREE_QUARTER_TURN:
             point_z -= KF_MAP_TILE_SIZE;
-            goto probe;
+            break;
         }
         break;
     }
-    return result;
+    return collision_query_world(
+        point_x, KF_COLLISION_IGNORE_HEIGHT, point_z, MAP_DOOR_CLOSING_PROBE_RADIUS, 0,
+        KF_COLLISION_SKIP_TERRAIN | KF_COLLISION_SKIP_MAP_OBJECTS);
 }
 
 void map_object_pool_clear(void)

@@ -46,6 +46,20 @@ call count and scaling, and accepts zero-frame records. Attribution of the earli
 unmasked expression needs separate GAME/OPEN evidence. The port's seed-one startup
 policy is not a proved retail boot seed.
 
+## Collision results
+
+World queries return an explicit collision kind: terrain, below floor, ceiling,
+missing attribute, player, actor, map object, map event, rejected cell flags, or
+no hit. The detail carries a cell kind, pool index or rejected flags where needed.
+Effect queries also distinguish obstruction when no collision targets are selected.
+
+Queries check terrain, rejected cell flags, then player, actors, objects and
+events, subject to skip flags and occupancy. Distance/index probes use signed
+`-1` and have a separate domain.
+
+Door-closing probes ignore terrain and map objects, checking a 3,000-unit radius at
+the lift-door origin or the cardinally offset hinged-door position.
+
 ## Rendering
 
 | Retail GAME.EXE evidence | Retained behavior |
@@ -105,6 +119,9 @@ Whole-row replacements can change these labels. Effect update IDs passed to
 
 ## Deliberate behavior corrections
 
+- **Jump landing:** GAME compares the collision result's shifted kind with the
+  ceiling detail `0xfff1` at `0x80030168..0x80030184`, so its fall-recovery branch
+  cannot run. The port checks `Ceiling` directly and resumes gravity.
 - **Return home:** GAME action 33 in `actor_update_current_action` (`0x8002fa88`)
   uses uninitialized home registers at `0x80030500`; its proven caller supplies
   residue `(1, 65535)`. The port computes actual placement coordinates.

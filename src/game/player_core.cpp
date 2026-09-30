@@ -364,8 +364,8 @@ s32 player_move_horizontal(s32 heading, s32 distance)
     for (;;) {
         if (collision_query_world(new_x, player_state.foot_height, new_z,
                 KF_COLLISION_PLAYER_RADIUS, KF_COLLISION_PLAYER_HEIGHT,
-                KF_COLLISION_SKIP_TERRAIN | KF_COLLISION_SKIP_PLAYER | KF_COLLISION_CAPTURE_TARGET)
-            == KF_COLLISION_NONE) {
+                KF_COLLISION_SKIP_TERRAIN | KF_COLLISION_SKIP_PLAYER | KF_COLLISION_CAPTURE_TARGET).kind
+            == KfCollisionKind::None) {
             break;
         }
 

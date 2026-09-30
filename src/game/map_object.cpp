@@ -291,7 +291,7 @@ void map_object_pool_update(void)
                     break;
                 }
                 if (timer == KF_MAP_OBJECT_DOOR_CLOSE_FIRST) {
-                    if (map_object_probe_door_closing(object, object->rotation.angles.y - KF_ANGLE_QUARTER_TURN) != KF_COLLISION_NONE) {
+                    if (map_object_probe_door_closing(object, object->rotation.angles.y - KF_ANGLE_QUARTER_TURN).kind != KfCollisionKind::None) {
                         object->action_timer = KF_MAP_OBJECT_DOOR_CLOSE_FIRST;
                         break;
                     }
@@ -328,7 +328,7 @@ void map_object_pool_update(void)
                     break;
                 }
                 if (elapsed == KF_MAP_OBJECT_DOOR_CLOSE_FIRST) {
-                    if (map_object_probe_door_closing(object, object->rotation.angles.y) != KF_COLLISION_NONE) {
+                    if (map_object_probe_door_closing(object, object->rotation.angles.y).kind != KfCollisionKind::None) {
                         object->action_timer = KF_MAP_OBJECT_DOOR_CLOSE_FIRST;
                         break;
                     }
