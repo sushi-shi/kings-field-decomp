@@ -38,10 +38,6 @@ impl<'a, const SIZE: usize> Record<'a, SIZE> {
         self.read::<AT, _>()
     }
 
-    pub(crate) fn i8<const AT: usize>(&self) -> i8 {
-        self.read::<AT, _>()
-    }
-
     pub(crate) fn u16_le<const AT: usize>(&self) -> u16 {
         u16::from_le(self.read::<AT, _>())
     }
@@ -52,10 +48,6 @@ impl<'a, const SIZE: usize> Record<'a, SIZE> {
 
     pub(crate) fn u32_le<const AT: usize>(&self) -> u32 {
         u32::from_le(self.read::<AT, _>())
-    }
-
-    pub(crate) fn i32_le<const AT: usize>(&self) -> i32 {
-        i32::from_le(self.read::<AT, _>())
     }
 
     pub(crate) fn u16_be<const AT: usize>(&self) -> u16 {

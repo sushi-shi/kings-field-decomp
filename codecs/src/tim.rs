@@ -62,76 +62,19 @@ pub struct Rect {
     pub height: i16,
 }
 
-impl Rect {
-    pub fn to_le_bytes(self) -> [u8; 8] {
-        let mut bytes = [0; 8];
-        for (destination, value) in
-            bytes
-                .chunks_exact_mut(2)
-                .zip([self.x, self.y, self.width, self.height])
-        {
-            destination.copy_from_slice(&value.to_le_bytes());
-        }
-        bytes
-    }
-}
-
 #[derive(Debug, Clone, Copy)]
 pub struct ImageBlock<'a> {
     pub rectangle: Rect,
-    pub rectangle_offset: usize,
-    pub data_offset: usize,
 
     pub pixels: &'a [u8],
-
-    pub payload: &'a [u8],
 }
 
 #[derive(Debug, Clone, Copy)]
 pub struct Image<'a> {
-    pub offset: usize,
     pub mode: u32,
     pub clut: Option<ImageBlock<'a>>,
     pub image: ImageBlock<'a>,
     pub encoded_len: usize,
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct TimImageDescriptor {
-    pub mode: u32,
-    pub clut_rectangle: u32,
-    pub clut_data: u32,
-    pub image_rectangle: u32,
-    pub image_data: u32,
-}
-
-impl TimImageDescriptor {
-    pub fn to_le_bytes(self) -> [u8; 20] {
-        let mut bytes = [0; 20];
-        for (destination, word) in bytes.chunks_exact_mut(4).zip([
-            self.mode,
-            self.clut_rectangle,
-            self.clut_data,
-            self.image_rectangle,
-            self.image_data,
-        ]) {
-            destination.copy_from_slice(&word.to_le_bytes());
-        }
-        bytes
-    }
-}
-
-impl Image<'_> {
-    pub fn psx_descriptor(&self, stream_address: u32) -> TimImageDescriptor {
-        let address = |offset: usize| stream_address.wrapping_add(offset as u32);
-        TimImageDescriptor {
-            mode: self.mode,
-            clut_rectangle: self.clut.map_or(0, |block| address(block.rectangle_offset)),
-            clut_data: self.clut.map_or(0, |block| address(block.data_offset)),
-            image_rectangle: address(self.image.rectangle_offset),
-            image_data: address(self.image.data_offset),
-        }
-    }
 }
 
 pub struct Images<'a> {
@@ -147,14 +90,6 @@ impl<'a> Images<'a> {
             at: 0,
             stopped: false,
         }
-    }
-
-    pub const fn position(&self) -> usize {
-        self.at
-    }
-
-    pub fn remainder(&self) -> &'a [u8] {
-        &self.bytes[self.at..]
     }
 
     fn parse_next(&mut self) -> Result<Option<Image<'a>>, TimError> {
@@ -173,7 +108,6 @@ impl<'a> Images<'a> {
         let image = block(self.bytes, &mut cursor)?;
         self.at = cursor;
         Ok(Some(Image {
-            offset: start,
             mode,
             clut,
             image,
@@ -232,11 +166,5 @@ fn block<'a>(bytes: &'a [u8], cursor: &mut usize) -> Result<ImageBlock<'a>, TimE
         })?;
     let pixels = span(encoded, BLOCK_HEADER_BYTES, count)?;
     *cursor = at + size;
-    Ok(ImageBlock {
-        rectangle,
-        rectangle_offset: at + BLOCK_RECTANGLE_OFFSET,
-        data_offset: at + BLOCK_HEADER_BYTES,
-        pixels,
-        payload: &encoded[BLOCK_HEADER_BYTES..],
-    })
+    Ok(ImageBlock { rectangle, pixels })
 }

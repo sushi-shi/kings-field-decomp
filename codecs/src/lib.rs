@@ -1,5 +1,5 @@
 #![no_std]
-#![deny(unsafe_attr_outside_unsafe)]
+#![deny(dead_code, unsafe_attr_outside_unsafe)]
 
 #[forbid(unsafe_code)]
 mod bytes;
@@ -7,9 +7,9 @@ mod bytes;
 mod cast;
 
 #[forbid(unsafe_code)]
-pub mod audio;
+mod audio;
 mod ffi;
 #[forbid(unsafe_code)]
 mod resources;
 #[forbid(unsafe_code)]
-pub mod tim;
+mod tim;
