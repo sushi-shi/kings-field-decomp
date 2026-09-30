@@ -1,5 +1,6 @@
-#ifndef KF_PLATFORM_DISC_HPP
-#define KF_PLATFORM_DISC_HPP
+#ifndef KF_PLATFORM_DISC_H
+#define KF_PLATFORM_DISC_H
+
 #include <cstddef>
 
 namespace kf {
@@ -9,4 +10,4 @@ bool disc_cue_image(const char *text, char *filename, std::size_t capacity);
 bool disc_extract(const char *source, const char *destination);
 }
 
-#endif
+#endif // KF_PLATFORM_DISC_H

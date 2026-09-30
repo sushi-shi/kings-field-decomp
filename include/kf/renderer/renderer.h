@@ -1,8 +1,9 @@
-#ifndef KF_RENDERER_RENDERER_HPP
-#define KF_RENDERER_RENDERER_HPP
-#include <kf/platform/assets.hpp>
-#include <kf/renderer/textures.hpp>
-#include <kf/renderer/constants.hpp>
+#ifndef KF_RENDERER_RENDERER_H
+#define KF_RENDERER_RENDERER_H
+
+#include <kf/platform/assets.h>
+#include <kf/renderer/textures.h>
+#include <kf/renderer/constants.h>
 
 namespace kf {
 using TextureId = u32;
@@ -56,4 +57,4 @@ void renderer_present_retained(const Renderer *renderer, int width, int height);
 bool renderer_draw_faces(Renderer *renderer, const FaceList *faces, int width, int height);
 } // namespace kf
 
-#endif
+#endif // KF_RENDERER_RENDERER_H

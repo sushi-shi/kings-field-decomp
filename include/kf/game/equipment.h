@@ -50,4 +50,4 @@ extern void weapon_records_load_and_mirror_angles(
     const KfWeaponTable *source);
 extern void armor_records_load(const KfArmorTable *source);
 
-#endif
+#endif // KF_GAME_EQUIPMENT_H

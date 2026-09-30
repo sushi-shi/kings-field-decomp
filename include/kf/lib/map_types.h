@@ -182,4 +182,4 @@ typedef union KfMapOrientationGrid {
     u32 words[KF_MAP_GRID_WORD_COUNT];
 } KfMapOrientationGrid;
 
-#endif
+#endif // KF_MAP_TYPES_H

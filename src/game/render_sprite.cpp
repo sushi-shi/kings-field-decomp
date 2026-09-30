@@ -1,4 +1,4 @@
-#include <kf/platform/prelude.hpp>
+#include <kf/platform/prelude.h>
 #include <kf/game/graphics.h>
 #include <kf/lib/render_face.h>
 #include <kf/game/render.h>

@@ -17,4 +17,4 @@ enum class KfAnimationBlendDirection : u16 {
     KF_ANIMATION_BLEND_REVERSE = 1
 }; using enum KfAnimationBlendDirection;
 
-#endif
+#endif // KF_ANIMATION_H

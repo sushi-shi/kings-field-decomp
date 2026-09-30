@@ -1,5 +1,6 @@
-#ifndef KF_PLATFORM_FILES_HPP
-#define KF_PLATFORM_FILES_HPP
+#ifndef KF_PLATFORM_FILES_H
+#define KF_PLATFORM_FILES_H
+
 #include <cstddef>
 #include <cstdio>
 
@@ -21,4 +22,4 @@ FileResult data_file_read_into(const char *path, void *destination, std::size_t 
 void data_file_report_error(FileResult result, const char *path);
 }
 
-#endif
+#endif // KF_PLATFORM_FILES_H

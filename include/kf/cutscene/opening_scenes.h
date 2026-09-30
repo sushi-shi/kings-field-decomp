@@ -36,4 +36,4 @@ extern void opening_scene3_run(void);
 extern void opening_ending_scene_run(void);
 extern void opening_ending_scroll_run(void);
 
-#endif
+#endif // KF_OPEN_OPENING_SCENES_H

@@ -5,4 +5,4 @@ enum class Cutscene { Intro, Ending };
 
 void cutscene_play(Cutscene scene);
 
-#endif
+#endif // KF_CUTSCENE_PLAYBACK_H

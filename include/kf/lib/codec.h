@@ -1,10 +1,11 @@
 #ifndef KF_CODEC_H
 #define KF_CODEC_H
+
 #include <stddef.h>
 #include <stdint.h>
 #ifdef __cplusplus
 extern "C" {
-#endif
+#endif // __cplusplus
 #ifdef __cplusplus
 enum class KfCodecResult : int32_t {
     KF_CODEC_OK = 0,
@@ -20,7 +21,7 @@ typedef enum KfCodecResult {
     KF_CODEC_INVALID = 2,
     KF_CODEC_OUTPUT_FULL = 3
 } KfCodecResult;
-#endif
+#endif // __cplusplus
 typedef struct KfTimInfo {
     uint32_t mode, width, height, encoded_bytes;
     int32_t image_x, image_y, palette_x, palette_y;
@@ -34,5 +35,6 @@ KfCodecResult kf_tim_rgba(const uint8_t *bytes, size_t length, size_t offset, ui
 KfCodecResult kf_tim_compose(const uint8_t *bytes, size_t length, uint16_t *words, size_t capacity);
 #ifdef __cplusplus
 }
-#endif
-#endif
+#endif // __cplusplus
+
+#endif // KF_CODEC_H

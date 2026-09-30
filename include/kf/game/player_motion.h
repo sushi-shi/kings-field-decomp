@@ -1,5 +1,6 @@
 #ifndef KF_GAME_PLAYER_MOTION_H
 #define KF_GAME_PLAYER_MOTION_H
+
 #include <kf/lib/types.h>
 
 enum class KfPlayerVerticalState : u8 {
@@ -12,4 +13,4 @@ using enum KfPlayerVerticalState;
 inline constexpr s32 KF_PLAYER_CAMERA_HEIGHT = 1500;
 inline constexpr s32 KF_PLAYER_CAMERA_PITCH_LIMIT = 191;
 
-#endif
+#endif // KF_GAME_PLAYER_MOTION_H

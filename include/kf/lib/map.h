@@ -400,4 +400,4 @@ extern void map_world_state_persist(void);
 extern bool map_saved_link_valid(KfMapObjectOperation operation, const KfMapObjectLink &link);
 extern s32 map_floor1_cross_index(void);
 
-#endif
+#endif // KF_LIB_MAP_H

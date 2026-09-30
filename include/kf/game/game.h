@@ -11,7 +11,7 @@
 #include <kf/lib/math.h>
 #include <kf/game/state.h>
 #include <kf/game/system.h>
-#include <kf/platform/input.hpp>
+#include <kf/platform/input.h>
 #include <kf/game/render.h>
 #include <kf/game/asset.h>
 #include <kf/game/notify.h>
@@ -26,4 +26,4 @@
 #include <kf/game/animation_cache.h>
 #include <kf/game/magic.h>
 
-#endif
+#endif // KF_GAME_H

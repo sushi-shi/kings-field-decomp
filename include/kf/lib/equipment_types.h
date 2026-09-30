@@ -1,5 +1,6 @@
 #ifndef KF_LIB_EQUIPMENT_TYPES_H
 #define KF_LIB_EQUIPMENT_TYPES_H
+
 #include <kf/lib/types.h>
 
 enum class KfEquipmentSlot : u8 {
@@ -20,4 +21,4 @@ enum {
     KF_ARMOR_TABLE_WORD_COUNT = 294
 };
 
-#endif
+#endif // KF_LIB_EQUIPMENT_TYPES_H

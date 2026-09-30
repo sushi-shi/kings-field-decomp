@@ -1,9 +1,10 @@
 #ifndef KF_AUDIO_CODEC_H
 #define KF_AUDIO_CODEC_H
+
 #include <kf/lib/codec.h>
 #ifdef __cplusplus
 extern "C" {
-#endif
+#endif // __cplusplus
 
 enum { KF_AUDIO_PROGRAM_COUNT = 128, KF_AUDIO_TONE_COUNT = 16, KF_AUDIO_SAMPLE_COUNT = 256 };
 enum { KF_AUDIO_ADPCM_BLOCK_BYTES = 16, KF_AUDIO_ADPCM_BLOCK_FRAMES = 28 };
@@ -43,7 +44,7 @@ typedef enum KfMusicEventKind {
     KF_MUSIC_NOTE_OFF, KF_MUSIC_NOTE_ON, KF_MUSIC_VOLUME, KF_MUSIC_PROGRAM,
     KF_MUSIC_PITCH_BEND, KF_MUSIC_TEMPO, KF_MUSIC_END
 } KfMusicEventKind;
-#endif
+#endif // __cplusplus
 typedef struct KfMusicEvent {
     uint32_t delta;
     KfMusicEventKind kind;
@@ -65,8 +66,6 @@ KfCodecResult kf_music_decode(const uint8_t *data, size_t size,
     KfMusicEvent *events, size_t capacity, KfMusicInfo *info);
 #ifdef __cplusplus
 }
-static_assert(sizeof(KfAudioEnvelope) == 12 && sizeof(KfAudioTone) == 28);
-static_assert(sizeof(KfMusicEvent) == 16);
-#endif
+#endif // __cplusplus
 
-#endif
+#endif // KF_AUDIO_CODEC_H

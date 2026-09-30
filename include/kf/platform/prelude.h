@@ -1,5 +1,6 @@
-#ifndef KF_PLATFORM_PRELUDE_HPP
-#define KF_PLATFORM_PRELUDE_HPP
+#ifndef KF_PLATFORM_PRELUDE_H
+#define KF_PLATFORM_PRELUDE_H
+
 // Common system and portable interfaces.
 #include <cstddef>
 #include <cstdint>
@@ -12,18 +13,18 @@
 #include <limits>
 #include <type_traits>
 #include <kf/lib/types.h>
-#include <kf/lib/fixed_math.hpp>
-#include <kf/lib/random.hpp>
-#include <kf/audio/sound.hpp>
-#include <kf/platform/files.hpp>
-#include <kf/platform/saves.hpp>
-#include <kf/platform/host.hpp>
-#include <kf/platform/module_state.hpp>
-#include <kf/platform/input.hpp>
+#include <kf/lib/fixed_math.h>
+#include <kf/lib/random.h>
+#include <kf/audio/sound.h>
+#include <kf/platform/files.h>
+#include <kf/platform/saves.h>
+#include <kf/platform/host.h>
+#include <kf/platform/module_state.h>
+#include <kf/platform/input.h>
 #include <kf/lib/codec.h>
-#include <kf/renderer/renderer.hpp>
-#include <kf/renderer/lighting.hpp>
-#include <kf/renderer/projection.hpp>
+#include <kf/renderer/renderer.h>
+#include <kf/renderer/lighting.h>
+#include <kf/renderer/projection.h>
 #include <kf/lib/geometry_types.h>
 
 // Shared game-library types and operations have one identity across phases.
@@ -41,4 +42,4 @@
 #include <kf/lib/graphics.h>
 #include <kf/lib/render_face.h>
 
-#endif
+#endif // KF_PLATFORM_PRELUDE_H

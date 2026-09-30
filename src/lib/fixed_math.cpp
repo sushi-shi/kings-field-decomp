@@ -1,4 +1,4 @@
-#include <kf/lib/fixed_math.hpp>
+#include <kf/lib/fixed_math.h>
 #include <algorithm>
 #include <bit>
 #include <cstdint>

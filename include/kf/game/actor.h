@@ -376,4 +376,4 @@ extern void actor_update_current_action(void);
 extern void actor_update_effect_action(KfActorEffectSlot effect_slot);
 extern void actor_transform_definition5_to6(KfActor *actor);
 
-#endif
+#endif // KF_GAME_ACTOR_H

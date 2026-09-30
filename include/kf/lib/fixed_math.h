@@ -1,5 +1,6 @@
-#ifndef KF_LIB_FIXED_MATH_HPP
-#define KF_LIB_FIXED_MATH_HPP
+#ifndef KF_LIB_FIXED_MATH_H
+#define KF_LIB_FIXED_MATH_H
+
 #include <kf/lib/geometry_types.h>
 
 namespace kf {
@@ -19,4 +20,4 @@ VECTOR matrix_apply_rotation(const MATRIX &matrix, const SVECTOR &vector);
 void matrix_set_rotation_xyz(const SVECTOR &angles, MATRIX &matrix);
 }
 
-#endif
+#endif // KF_LIB_FIXED_MATH_H

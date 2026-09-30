@@ -153,4 +153,4 @@ extern void screen_show_image_until_input(const char *path);
 
 extern void tmd_project_vertices(s32 count, const MATRIX *model, const kf::Projection &projection);
 
-#endif
+#endif // KF_GAME_RENDER_H

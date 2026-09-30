@@ -1,5 +1,5 @@
-#include <kf/renderer/textures.hpp>
-#include <kf/renderer/renderer.hpp>
+#include <kf/renderer/textures.h>
+#include <kf/renderer/renderer.h>
 #include <cstdlib>
 #include <limits>
 

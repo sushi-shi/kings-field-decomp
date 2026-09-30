@@ -1,5 +1,6 @@
 #ifndef KF_GAME_EFFECT_H
 #define KF_GAME_EFFECT_H
+
 #include <kf/game/audio.h>
 
 enum {
@@ -359,4 +360,4 @@ extern void effect_spawn_ground_trail(u8 id, KfEffectRecord *parent_effect, s16 
 extern void effect_spawn_ground_branch(u8 id, KfEffectRecord *parent_effect, s16 angle_offset, KfEffectGroundBranchRole branch_role);
 extern u32 effect_map_collision(VECTOR *position, s32 radius);
 
-#endif
+#endif // KF_GAME_EFFECT_H

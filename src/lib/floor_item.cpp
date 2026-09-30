@@ -1,10 +1,10 @@
-#include <kf/platform/prelude.hpp>
+#include <kf/platform/prelude.h>
 #include <kf/lib/item_types.h>
 #include <kf/lib/map_types.h>
 #include <kf/lib/math.h>
 #include <kf/lib/graphics.h>
 
-#include <kf/lib/random.hpp>
+#include <kf/lib/random.h>
 
 namespace {
 constexpr std::size_t placement_bytes = 12;

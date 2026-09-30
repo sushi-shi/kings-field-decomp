@@ -1,7 +1,7 @@
-#include <kf/platform/prelude.hpp>
+#include <kf/platform/prelude.h>
 #include <algorithm>
 #include <kf/game/audio.h>
-#include <kf/lib/random.hpp>
+#include <kf/lib/random.h>
 #include <kf/lib/bool.h>
 
 #include <kf/lib/map_data.h>

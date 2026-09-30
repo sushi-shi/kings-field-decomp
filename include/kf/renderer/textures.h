@@ -1,6 +1,7 @@
-#ifndef KF_RENDERER_TEXTURES_HPP
-#define KF_RENDERER_TEXTURES_HPP
-#include <kf/platform/assets.hpp>
+#ifndef KF_RENDERER_TEXTURES_H
+#define KF_RENDERER_TEXTURES_H
+
+#include <kf/platform/assets.h>
 
 namespace kf {
 enum class TextureFormat : u8 { Indexed4, Indexed8, Direct16 };
@@ -26,4 +27,4 @@ u32 texture_store_resolve(TextureStore *store, TextureSource source);
 void texture_store_release(TextureStore *store);
 }
 
-#endif
+#endif // KF_RENDERER_TEXTURES_H

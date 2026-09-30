@@ -103,4 +103,4 @@ inline KfFloorItemStorage cutscene_floor_item_storage()
     return {open_graphics_runtime.floor_item_state.count, open_graphics_runtime.floor_item_state.items};
 }
 
-#endif
+#endif // KF_OPEN_RENDER_H

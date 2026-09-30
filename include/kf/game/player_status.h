@@ -25,4 +25,4 @@ constexpr KfPlayerStatusFlags operator|(KfPlayerStatusFlags lhs, KfPlayerStatusF
     inline KfPlayerStatusFlags& operator&=(KfPlayerStatusFlags& lhs, KfPlayerStatusFlags rhs) { return lhs = lhs & rhs; }
     inline KfPlayerStatusFlags& operator^=(KfPlayerStatusFlags& lhs, KfPlayerStatusFlags rhs) { return lhs = lhs ^ rhs; }
 
-#endif
+#endif // KF_PLAYER_STATUS_H

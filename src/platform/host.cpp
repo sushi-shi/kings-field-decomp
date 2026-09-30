@@ -1,9 +1,9 @@
-#include <kf/platform/host.hpp>
-#include <kf/platform/saves.hpp>
-#include <kf/audio/sound.hpp>
-#include <kf/platform/input.hpp>
-#include <kf/platform/controls.hpp>
-#include <kf/renderer/renderer.hpp>
+#include <kf/platform/host.h>
+#include <kf/platform/saves.h>
+#include <kf/audio/sound.h>
+#include <kf/platform/input.h>
+#include <kf/platform/controls.h>
+#include <kf/renderer/renderer.h>
 #include <SDL3/SDL.h>
 #include <algorithm>
 #include <cmath>
