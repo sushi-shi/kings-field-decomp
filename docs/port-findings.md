@@ -1,8 +1,22 @@
 # Port technical notes
 
 These are current constraints and unresolved attribution questions. The
-[status page](port-status.md) tracks remaining work; [PORTING.md](../PORTING.md)
-describes ownership and verification. Implementation history lives in Git.
+[status page](port-status.md) tracks remaining work; the [README](../README.md)
+describes building and maintenance. Implementation history lives in Git.
+
+## Ownership and update order
+
+GAME and OPEN own separate arenas and phase state; re-entry resets initialized
+globals as well as BSS. Shared operations receive the actual owner, and borrowed
+views must not survive phase transitions. Decode file bytes with explicit bounds,
+widths and endianness before constructing native runtime objects.
+
+Movement updates Z before testing X. Pools visit live slots in ascending order,
+so later slots activated during an update can run that tick. Armor regeneration
+precedes drain in head/body/shield/arm/leg order; combining HP deltas changes
+clamping and death handling. GAME camera paths fetch then increment, whereas
+OPEN increments then fetches. Preserve these orders when extracting helpers.
+`matrix_interpolate` updates rotation only; translation must remain intact.
 
 ## Reconstruction boundary
 

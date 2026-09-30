@@ -99,6 +99,23 @@ arguments; extraction destinations must not already exist.
 Code uses C++20 as C with classes: plain structures, functions and scoped enums,
 without inheritance, RTTI or exceptions.
 
+### Maintenance
+
+Codec structs are defined in `include/kf/lib/codec.h` and
+`include/kf/audio/codec.h`. After editing them, regenerate the committed Rust
+bindings with `nix develop -c bash codecs/bindings.sh`.
+
+Run the existing regressions and package/binding checks with:
+
+```sh
+nix develop -c python3 -m unittest discover -s tests -v
+nix flake check -L
+```
+
+Where process inspection is blocked, set `ASAN_OPTIONS=detect_leaks=0` for the
+regressions. Address and undefined-behavior checking remain enabled. Optional
+disc-backed checks are documented in `tests/runtime_scenarios.py`.
+
 ## Browser
 
 After the WASM build, serve `build/wasm` over localhost or HTTPS and open
@@ -112,5 +129,4 @@ Linux controls, brief combat, general rendering and native/browser audio have
 been user-checked. Native save/load and browser cache/save persistence have
 bounded verification; the natural ending and re-entry still need a suitable run.
 
-See [remaining work](docs/port-status.md), [architecture and maintenance](PORTING.md)
-and [technical notes](docs/port-findings.md).
+See [remaining work](docs/port-status.md) and [technical notes](docs/port-findings.md).
