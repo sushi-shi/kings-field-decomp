@@ -1,6 +1,7 @@
 #ifndef KF_GAME_STATE_H
 #define KF_GAME_STATE_H
 
+#include <array>
 #include <kf/game/audio.h>
 #include <kf/lib/types.h>
 #include <kf/game/session.h>
@@ -32,8 +33,8 @@ enum {
     KF_GAMEPLAY_SOUND_KEY_UNLOCK = 12,
     KF_GAMEPLAY_SOUND_COUNT = 13
 };
-extern SoundRef gameplay_sound_refs[KF_GAMEPLAY_SOUND_COUNT];
+extern std::array<SoundRef, KF_GAMEPLAY_SOUND_COUNT> gameplay_sound_refs;
 inline constexpr unsigned talk_image_path_capacity = 20;
-extern char talk_image_path_template[talk_image_path_capacity];
+extern std::array<char, talk_image_path_capacity> talk_image_path_template;
 
 #endif // KF_GAME_STATE_H

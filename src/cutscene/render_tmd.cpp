@@ -1,3 +1,4 @@
+#include <array>
 #include <kf/platform/prelude.h>
 #include <kf/lib/null.h>
 
@@ -28,7 +29,7 @@ void cutscene_render_enqueue_tmd(u16 object_index, s16 depth_bias, const MATRIX 
                 continue;
             }
             auto face = projected->draw_face();
-            CVECTOR colors[4] {};
+            std::array<CVECTOR, 4> colors {};
             face.material = render_texture_material(p.texture_page, p.palette);
             render_face_uvs(face, {p.uv[0], p.uv[1], p.uv[2]});
             colors[0] = kf::render_light_normal(open_graphics_runtime.render_state.lighting, *lights,
@@ -49,7 +50,7 @@ void cutscene_render_enqueue_tmd(u16 object_index, s16 depth_bias, const MATRIX 
             }
             projected->complete_quad(open_graphics_runtime.tmd_projected_vertices[p.vertices[3]]);
             auto face = projected->draw_face();
-            CVECTOR colors[4] {};
+            std::array<CVECTOR, 4> colors {};
             colors[0] = kf::render_light_normal(open_graphics_runtime.render_state.lighting, *lights,
                 tmd_read_normal(normals, p.normals[0]), p.color, projected->average_fog());
             depth = projected->ordering_depth() + depth_bias;
@@ -67,7 +68,7 @@ void cutscene_render_enqueue_tmd(u16 object_index, s16 depth_bias, const MATRIX 
                 continue;
             }
             auto face = projected->draw_face();
-            CVECTOR colors[4] {};
+            std::array<CVECTOR, 4> colors {};
             colors[0] = kf::render_light_normal(open_graphics_runtime.render_state.lighting, *lights,
                 tmd_read_normal(normals, p.normals[0]), p.color, projected->fog(0));
             colors[1] = kf::render_light_normal(open_graphics_runtime.render_state.lighting, *lights,
@@ -90,7 +91,7 @@ void cutscene_render_enqueue_tmd(u16 object_index, s16 depth_bias, const MATRIX 
             }
             projected->complete_quad(open_graphics_runtime.tmd_projected_vertices[p.vertices[3]]);
             auto face = projected->draw_face();
-            CVECTOR colors[4] {};
+            std::array<CVECTOR, 4> colors {};
             colors[0] = kf::render_light_normal(open_graphics_runtime.render_state.lighting, *lights,
                 tmd_read_normal(normals, p.normals[0]), p.color, projected->fog(0));
             colors[1] = kf::render_light_normal(open_graphics_runtime.render_state.lighting, *lights,
@@ -114,7 +115,7 @@ void cutscene_render_enqueue_tmd(u16 object_index, s16 depth_bias, const MATRIX 
                 continue;
             }
             auto face = projected->draw_face();
-            CVECTOR colors[4] {};
+            std::array<CVECTOR, 4> colors {};
             face.material = render_texture_material(p.texture_page, p.palette);
             render_face_uvs(face, {p.uv[0], p.uv[1], p.uv[2]});
             colors[0] = kf::render_light_normal(open_graphics_runtime.render_state.lighting, *lights,
@@ -139,7 +140,7 @@ void cutscene_render_enqueue_tmd(u16 object_index, s16 depth_bias, const MATRIX 
             }
             projected->complete_quad(open_graphics_runtime.tmd_projected_vertices[p.vertices[3]]);
             auto face = projected->draw_face();
-            CVECTOR colors[4] {};
+            std::array<CVECTOR, 4> colors {};
             face.material = render_texture_material(p.texture_page, p.palette);
             render_face_uvs(face, {p.uv[0], p.uv[1], p.uv[2], p.uv[3]});
             colors[0] = kf::render_light_normal(open_graphics_runtime.render_state.lighting, *lights,
@@ -165,7 +166,7 @@ void cutscene_render_enqueue_tmd(u16 object_index, s16 depth_bias, const MATRIX 
                 continue;
             }
             auto face = projected->draw_face();
-            CVECTOR colors[4] {};
+            std::array<CVECTOR, 4> colors {};
             face.transparency = kf::FaceTransparency::Blend;
             colors[0] = kf::render_light_normal(open_graphics_runtime.render_state.lighting, *lights,
                 tmd_read_normal(normals, p.normals[0]), p.color, 0);
@@ -189,7 +190,7 @@ void cutscene_render_enqueue_tmd(u16 object_index, s16 depth_bias, const MATRIX 
             }
             projected->complete_quad(open_graphics_runtime.tmd_projected_vertices[p.vertices[3]]);
             auto face = projected->draw_face();
-            CVECTOR colors[4] {};
+            std::array<CVECTOR, 4> colors {};
             face.material = render_texture_material(p.texture_page, p.palette);
             render_face_uvs(face, {p.uv[0], p.uv[1], p.uv[2], p.uv[3]});
             colors[0] = kf::render_light_normal(open_graphics_runtime.render_state.lighting, *lights,
@@ -209,7 +210,7 @@ void cutscene_render_enqueue_tmd(u16 object_index, s16 depth_bias, const MATRIX 
                 continue;
             }
             auto face = projected->draw_face();
-            CVECTOR colors[4] {};
+            std::array<CVECTOR, 4> colors {};
             colors[0] = kf::render_light_normal(open_graphics_runtime.render_state.lighting, *lights,
                 tmd_read_normal(normals, p.normals[0]), p.color, projected->average_fog());
             depth = projected->ordering_depth() + depth_bias;
@@ -228,7 +229,7 @@ void cutscene_render_enqueue_tmd(u16 object_index, s16 depth_bias, const MATRIX 
             }
             projected->complete_quad(open_graphics_runtime.tmd_projected_vertices[p.vertices[3]]);
             auto face = projected->draw_face();
-            CVECTOR colors[4] {};
+            std::array<CVECTOR, 4> colors {};
             face.transparency = kf::FaceTransparency::Blend;
             colors[0] = kf::render_light_normal(open_graphics_runtime.render_state.lighting, *lights,
                 tmd_read_normal(normals, p.normals[0]), p.color, projected->fog(0));
@@ -253,7 +254,7 @@ void cutscene_render_enqueue_tmd(u16 object_index, s16 depth_bias, const MATRIX 
                 continue;
             }
             auto face = projected->draw_face();
-            CVECTOR colors[4] {};
+            std::array<CVECTOR, 4> colors {};
             face.transparency = kf::FaceTransparency::Blend;
             colors[0] = kf::render_light_normal(open_graphics_runtime.render_state.lighting, *lights,
                 tmd_read_normal(normals, p.normals[0]), p.color, projected->average_fog());
@@ -273,7 +274,7 @@ void cutscene_render_enqueue_tmd(u16 object_index, s16 depth_bias, const MATRIX 
             }
             projected->complete_quad(open_graphics_runtime.tmd_projected_vertices[p.vertices[3]]);
             auto face = projected->draw_face();
-            CVECTOR colors[4] {};
+            std::array<CVECTOR, 4> colors {};
             face.transparency = kf::FaceTransparency::Blend;
             colors[0] = kf::render_light_normal(open_graphics_runtime.render_state.lighting, *lights,
                 tmd_read_normal(normals, p.normals[0]), p.color, projected->average_fog());

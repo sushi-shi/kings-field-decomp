@@ -71,7 +71,7 @@ void render_entities(void)
     game_graphics_runtime.active_render_color.r = KF_FLOOR_ITEM_RENDER_BRIGHTNESS;
     const s16 item_count = game_graphics_runtime.floor_item_count;
     game_graphics_runtime.active_render_material = game_graphics_runtime.floor_item_material;
-    auto *items = game_graphics_runtime.floor_items;
+    auto *items = game_graphics_runtime.floor_items.data();
     for (s16 index = 0; index < item_count; index++) {
         auto &item = items[index];
         if (render_cell_is_visible(

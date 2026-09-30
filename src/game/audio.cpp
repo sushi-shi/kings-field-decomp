@@ -1,3 +1,4 @@
+#include <array>
 #include <kf/platform/prelude.h>
 #include <algorithm>
 #include <kf/game/resources.h>
@@ -49,14 +50,14 @@ static constexpr unsigned sequence_number_offset = 6, sequence_floor_offset = 1;
 
 void audio_play_map_sequence(u8 sequence_index)
 {
-    char path[sequence_path_capacity] = "B0/SND0.SEQ";
+    std::array<char, sequence_path_capacity> path = {"B0/SND0.SEQ"};
     std::size_t sequence_size;
 
     audio_stop_sequence_fade();
     if (player_state.audio_music_enabled != KF_PLAYER_OPTION_OFF) {
         path[sequence_number_offset] = sequence_index + '0';
         path[sequence_floor_offset] = kf_enum_encode<u8>(player_state.progress_state.current_floor) + '0';
-        if (resource_file_load_into(audio_state.sequence_buffer, GAME_SEQUENCE_BUFFER_BYTES, path, &sequence_size) == KF_RESOURCE_LOADED) {
+        if (resource_file_load_into(audio_state.sequence_buffer, GAME_SEQUENCE_BUFFER_BYTES, path.data(), &sequence_size) == KF_RESOURCE_LOADED) {
             audio_state.sequence = kf::sound_sequence_load(audio_state.sequence_buffer, sequence_size, audio_state.bank);
             if (!audio_state.sequence)
                 kf::host_fail("Cannot decode music sequence");

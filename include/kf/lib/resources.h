@@ -4,6 +4,7 @@
 #include <kf/lib/types.h>
 #include <kf/platform/host.h>
 #include <kf/lib/geometry_types.h>
+#include <array>
 #include <type_traits>
 #include <cstdio>
 
@@ -22,16 +23,16 @@ inline const T *resource_chunk_data(const KfResourceChunk &chunk,
                                     const char *name = "resource record")
 {
     static_assert(std::is_trivially_copyable_v<T>);
-    char message[256];
+    std::array<char, 256> message;
     if (chunk.size < sizeof(T)) {
-        std::snprintf(message, sizeof message, "Truncated %s: need %zu bytes, have %zu.",
+        std::snprintf(message.data(), message.size(), "Truncated %s: need %zu bytes, have %zu.",
                       name, sizeof(T), chunk.size);
-        kf::host_fail(message);
+        kf::host_fail(message.data());
     }
     if (reinterpret_cast<std::uintptr_t>(chunk.data) % alignof(T)) {
-        std::snprintf(message, sizeof message, "Unaligned %s: requires %zu-byte alignment.",
+        std::snprintf(message.data(), message.size(), "Unaligned %s: requires %zu-byte alignment.",
                       name, alignof(T));
-        kf::host_fail(message);
+        kf::host_fail(message.data());
     }
     return reinterpret_cast<const T *>(chunk.data);
 }

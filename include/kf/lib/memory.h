@@ -1,6 +1,7 @@
 #ifndef KF_MEMORY_H
 #define KF_MEMORY_H
 
+#include <array>
 #include <kf/lib/types.h>
 #include <kf/lib/enum.h>
 #include <cstddef>
@@ -24,7 +25,7 @@ struct KfMemoryAllocation {
 typedef struct KfMemoryAllocationState {
     u8 *cursor;
     std::size_t depth;
-    KfMemoryAllocation stack[KF_MEMORY_ALLOCATION_CAPACITY];
+    std::array<KfMemoryAllocation, KF_MEMORY_ALLOCATION_CAPACITY> stack;
 } KfMemoryAllocationState;
 
 typedef struct KfMemoryArena {

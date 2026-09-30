@@ -1,3 +1,4 @@
+#include <array>
 #include <kf/platform/prelude.h>
 #include <kf/lib/random.h>
 #include <kf/lib/null.h>
@@ -96,10 +97,10 @@ enum {
     LONG_SWING_PROBE_LENGTH = 4900
 };
 
-SVECTOR effect_swing_probe_offsets[KF_EFFECT_SWING_PROBE_COUNT] = {
+std::array<SVECTOR, KF_EFFECT_SWING_PROBE_COUNT> effect_swing_probe_offsets = {{
     {0, SHORT_SWING_PROBE_LENGTH, 0, 0},
     {0, LONG_SWING_PROBE_LENGTH, 0, 0},
-};
+}};
 
 static void effect_begin_lightning_impact(KfEffectRecord *effect, const KfMagicRecord *magic)
 {

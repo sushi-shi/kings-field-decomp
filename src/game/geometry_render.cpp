@@ -1,3 +1,4 @@
+#include <array>
 #include <kf/platform/prelude.h>
 #include <stdarg.h>
 #include <kf/lib/null.h>
@@ -11,7 +12,7 @@
 #include <kf/game/notify.h>
 #include <kf/game/menu.h>
 
-KfHudSprite hud_sprites[KF_HUD_TABLE_ROWS] = {
+std::array<KfHudSprite, KF_HUD_TABLE_ROWS> hud_sprites = {{
     {KF_SPRITE_VISIBLE, 0, {0x50, 0x03, 1, 5, 0x1f, 0x15, 0x32, 5}},
     {KF_SPRITE_VISIBLE, 0, {0x50, 0x03, 1, 5, 0x1f, 0x23, 0x32, 5}},
     {KF_SPRITE_VISIBLE, 0, {0x50, 0x15, 1, 2, 0x81, 0x16, 0x32, 2}},
@@ -26,21 +27,21 @@ KfHudSprite hud_sprites[KF_HUD_TABLE_ROWS] = {
     {KF_SPRITE_VISIBLE, 0, {0, 0x30, 0x5c, 8, 0x5e, 0x21, 0x5c, 8}},
     {KF_SPRITE_VISIBLE, 0, {0, 0x80, 0x21, 0x20, 0x10d, 0x12, 0x21, 0x20}},
     {KF_SPRITE_END, 0, {0xff, 0xff, 0xff, 0xff, 0xffff, 0xffff, 0xffff, 0xffff}},
-};
+}};
 
-KfNotificationSprite notification_sprites[KF_NOTIFICATION_SPRITE_COUNT] = {
+std::array<KfNotificationSprite, KF_NOTIFICATION_SPRITE_COUNT> notification_sprites = {{
     {KF_SPRITE_HIDDEN, 0, {0, 0, 0x7f, 0x0f, 0xffc0, 0xffa0, 0x7f, 0x0f}},
     {KF_SPRITE_HIDDEN, 0, {0, 0, 0x7f, 0x0f, 0xffc4, 0xffa0, 0x7f, 0x0f}},
     {KF_SPRITE_HIDDEN, 0, {0xf0, 0, 7, 0x0b, 0xffc4, 0xffa3, 7, 0x0b}},
     {KF_SPRITE_HIDDEN, 0, {0xf0, 0, 7, 0x0b, 0xffba, 0xffa3, 7, 0x0b}},
     {KF_SPRITE_HIDDEN, 0, {0xf0, 0, 7, 0x0b, 0xffb0, 0xffa3, 7, 0x0b}},
     {KF_SPRITE_HIDDEN, 0, {0xf0, 0, 7, 0x0b, 0xffa6, 0xffa3, 7, 0x0b}},
-};
+}};
 
-KfHudModel hud_models[KF_HUD_MODEL_TABLE_ROWS] = {
+std::array<KfHudModel, KF_HUD_MODEL_TABLE_ROWS> hud_models = {{
     {KF_SPRITE_VISIBLE, KF_ANIMATION_CLIP_FIRST, 0, 0x33, 0x11e, 0x22, 0xc8, {0, 0}, {0, 0, 0, 0}, {0, 0}, NULL},
     {KF_SPRITE_END, {}, 0, 0, 0, 0, 0, {}, {}, {}, nullptr},
-};
+}};
 
 enum {
     WEAPON_PROJECTED_DEPTH_SHIFT = 3,
@@ -88,10 +89,9 @@ void render_hud_models(const MATRIX *lights)
     u16 scale_numerator;
 
     saved_color_matrix = game_graphics_runtime.render_state.lighting.color_matrix;
-    memcpy(game_graphics_runtime.render_state.lighting.color_matrix.m, (game_graphics_runtime.hud_model_color_matrix).m,
-        sizeof game_graphics_runtime.render_state.lighting.color_matrix.m);
+    game_graphics_runtime.render_state.lighting.color_matrix.m = (game_graphics_runtime.hud_model_color_matrix).m;
     scale.vz = KF_FIXED12_ONE;
-    entry = hud_models;
+    entry = hud_models.data();
     while (entry->state == KF_SPRITE_VISIBLE) {
         model.t[0] = entry->translation_x;
         model.t[1] = entry->translation_y;
@@ -112,8 +112,7 @@ void render_hud_models(const MATRIX *lights)
         }
         entry++;
     }
-    memcpy(game_graphics_runtime.render_state.lighting.color_matrix.m, (saved_color_matrix).m,
-        sizeof game_graphics_runtime.render_state.lighting.color_matrix.m);
+    game_graphics_runtime.render_state.lighting.color_matrix.m = (saved_color_matrix).m;
 }
 
 void render_hud_sprites(KfHudSprite *table)
@@ -154,7 +153,7 @@ void notify_enqueue(KfNotificationArgument message_id, ...)
     if (game_graphics_runtime.notification_message_ids[*head] == KF_NOTIFICATION_NONE) {
         game_graphics_runtime.notification_message_ids[*head] = message_id;
         if (message_id == KF_NOTIFICATION_GOLD) {
-            u16 *payload = game_graphics_runtime.notification_state.message_payloads;
+            u16 *payload = game_graphics_runtime.notification_state.message_payloads.data();
             va_list arguments;
             va_start(arguments, message_id);
             payload[*head] = va_arg(arguments, s32);
@@ -199,8 +198,8 @@ void notify_effect_update(void)
         game_graphics_runtime.notification_state.control.effect_angle_x = 0;
         game_graphics_runtime.notification_state.control.hold_frames = NOTIFICATION_HOLD_FRAMES;
         if (id == KF_NOTIFICATION_GOLD) {
-            KfNotificationSprite *sprite_records = notification_sprites;
-            s16 digits[KF_NOTIFICATION_DIGIT_CAPACITY];
+            KfNotificationSprite *sprite_records = notification_sprites.data();
+            std::array<s16, KF_NOTIFICATION_DIGIT_CAPACITY> digits;
             sprite_records[KF_NOTIFICATION_TEXT_SPRITE].active = KF_SPRITE_HIDDEN;
             notification_sprites[KF_NOTIFICATION_GOLD_SPRITE].active = KF_SPRITE_VISIBLE;
             notification_sprites[KF_NOTIFICATION_GOLD_SPRITE].sprite.u =

@@ -1,3 +1,4 @@
+#include <array>
 #include <kf/platform/prelude.h>
 #include <kf/lib/random.h>
 #include <kf/game/audio.h>
@@ -29,13 +30,13 @@ enum {
     GROUND_BRANCH_CHILD_SPACING = 1500
 };
 
-static KfFloorDeformSegment floor_deform_segments[FLOOR_DEFORM_SEGMENT_COUNT] = {
+static std::array<KfFloorDeformSegment, FLOOR_DEFORM_SEGMENT_COUNT> floor_deform_segments = {{
     {65, 80, 1, 0, 2, 0, 100},
     {61, 73, 0, 255, 2, 0, 100},
     {75, 56, 1, 0, 3, 0, 100},
     {37, 27, 0, 255, 3, 0, 100},
     {32, 82, 0, 1, 12, 0, 100}
-};
+}};
 
 int effect_magic_power(KfEffectRecord *effect)
 {
@@ -246,7 +247,7 @@ void effect_spawn_ground_trail(u8 id, KfEffectRecord *parent_effect, s16 angle, 
     s32 scale = (distance << KF_FIXED12_BITS) / TRAIL_UNIT_SCALE_DISTANCE;
 
     effect_rotate_scale_offset_y(&parent_effect->direction.vector, &position, angle, scale);
-    index = parent_effect - effect_state.records;
+    index = parent_effect - effect_state.records.data();
     position.vx += parent_effect->position.vx;
     position.vz += parent_effect->position.vz;
     effect_pool_construct(id, parent_effect->type, KF_EFFECT_KIND_GROUND_TRAIL, &position,

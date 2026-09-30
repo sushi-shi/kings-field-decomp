@@ -1,3 +1,4 @@
+#include <array>
 #include <kf/platform/prelude.h>
 #include <kf/game/graphics.h>
 
@@ -18,14 +19,14 @@ enum {
     HUD_CHARGE_UNITS_PER_PIXEL = KF_PLAYER_CHARGE_FULL / HUD_GAUGE_WIDTH
 };
 
-MATRIX render_light_matrices[KF_RENDER_LIGHT_COUNT] = {
-    {{{0, -3600, 0}, {4096, 0, -4096}, {0, 4096, 3000}}, {0, 0, 0}},
-    {{{0, 0, 4096}, {0, 0, 4096}, {0, 0, 0}}, {0, 0, 0}},
-    {{{0, 0, 4096}, {0, 0, 4096}, {0, -4096, 0}}, {0, 0, 0}},
-    {{{4096, 0, 0}, {0, 4096, 0}, {0, 0, 4096}}, {0, 0, 0}},
-    {{{0, 0, -4096}, {3800, 0, -3800}, {-3800, 0, -3800}}, {0, 0, 0}},
-    {{{0, 0, 3800}, {3800, 0, -3800}, {-3800, 0, -3800}}, {0, 0, 0}},
-};
+std::array<MATRIX, KF_RENDER_LIGHT_COUNT> render_light_matrices = {{
+    {{{{0, -3600, 0}, {4096, 0, -4096}, {0, 4096, 3000}}}, {0, 0, 0}},
+    {{{{0, 0, 4096}, {0, 0, 4096}, {0, 0, 0}}}, {0, 0, 0}},
+    {{{{0, 0, 4096}, {0, 0, 4096}, {0, -4096, 0}}}, {0, 0, 0}},
+    {{{{4096, 0, 0}, {0, 4096, 0}, {0, 0, 4096}}}, {0, 0, 0}},
+    {{{{0, 0, -4096}, {3800, 0, -3800}, {-3800, 0, -3800}}}, {0, 0, 0}},
+    {{{{0, 0, 3800}, {3800, 0, -3800}, {-3800, 0, -3800}}}, {0, 0, 0}},
+}};
 
 void render_frame(const VECTOR *position_or_null, const SVECTOR *rotation_or_null)
 {
@@ -108,7 +109,7 @@ void render_frame(const VECTOR *position_or_null, const SVECTOR *rotation_or_nul
     kf::matrix_set_rotation_xyz(spin, model);
 
     game_graphics_runtime.active_render_material = game_graphics_runtime.notification_text_material;
-    record = notification_sprites;
+    record = notification_sprites.data();
     if (record[KF_NOTIFICATION_TEXT_SPRITE].active == KF_SPRITE_VISIBLE) {
         render_enqueue_sprite(&record[KF_NOTIFICATION_TEXT_SPRITE].sprite, 0, KF_SPRITE_DEPTH_CUE_NORMAL, &render_light_matrices[KF_RENDER_LIGHT_NOTIFICATION], &model, game_graphics_runtime.render_state.projection);
     }

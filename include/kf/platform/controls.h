@@ -3,6 +3,7 @@
 
 // Collect platform controls; the original game still owns their gameplay meaning.
 #include <kf/lib/types.h>
+#include <array>
 #include <cstddef>
 
 namespace kf {
@@ -41,7 +42,7 @@ struct InputBinding {
     bool down;
 };
 struct InputState {
-    InputBinding bindings[input_binding_capacity];
+    std::array<InputBinding, input_binding_capacity> bindings;
     std::size_t binding_count;
     InputFrame pending;
 };

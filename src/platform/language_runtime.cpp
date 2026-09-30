@@ -2,18 +2,19 @@
 #include <kf/platform/disc.h>
 #include <kf/platform/files.h>
 #include <kf/platform/translation.h>
+#include <array>
 #include <cstdlib>
 #include <filesystem>
 #include <string>
 
 namespace kf {
 namespace {
-std::string roots[2];
-bool verified[2];
+std::array<std::string, 2> roots;
+std::array<bool, 2> verified;
 std::string temporary_root;
 Language requested = Language::Japanese;
 
-unsigned index(Language language) { return language == Language::English ? 1 : 0; }
+std::size_t index(Language language) { return language == Language::English ? 1 : 0; }
 
 void remove_temporary_resources() {
     if (!temporary_root.empty()) {
@@ -57,9 +58,8 @@ bool language_resources_start(const char *data, Language language, const char *j
 
 void language_resources_stop() {
     remove_temporary_resources();
-    roots[0].clear();
-    roots[1].clear();
-    verified[0] = verified[1] = false;
+    roots = {};
+    verified = {};
 }
 
 bool language_available(Language language) {

@@ -1,6 +1,8 @@
 #ifndef KF_OPEN_RESOURCES_H
 #define KF_OPEN_RESOURCES_H
 
+#include <array>
+#include <span>
 #include <kf/lib/memory.h>
 #include <kf/lib/resources.h>
 
@@ -42,7 +44,7 @@ typedef struct KfOpeningEntity {
     u8 unknown_01;
     u16 cell_x;
     u16 cell_z;
-    u8 unknown_06[2];
+    std::array<u8, 2> unknown_06;
     VECTOR position;
     struct KfEulerAngles rotation;
     u16 unknown_1e;
@@ -50,8 +52,8 @@ typedef struct KfOpeningEntity {
 } KfOpeningEntity;
 
 typedef struct KfOpeningEntityState {
-    KfOpeningEntity entities[KF_OPENING_ENTITY_CAPACITY];
-    u8 unknown_500[10];
+    std::array<KfOpeningEntity, KF_OPENING_ENTITY_CAPACITY> entities;
+    std::array<u8, 10> unknown_500;
     u16 unknown_control_50a;
     u16 unknown_control_50c;
     u16 unknown_control_50e;
@@ -61,7 +63,7 @@ extern KfOpeningEntityState opening_entity_state;
 
 extern void opening_entity_pool_reset(void);
 extern KfOpeningEntity *opening_entity_find_by_object_id(
-    KfOpeningEntity *entities, KfOpeningModelId object_id);
+    std::span<KfOpeningEntity> entities, KfOpeningModelId object_id);
 extern void opening_entity_pool_load_placements(
     KfResourceChunk placements, s32 base_y);
 

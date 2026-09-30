@@ -1,3 +1,4 @@
+#include <array>
 #include <kf/platform/prelude.h>
 #include <kf/lib/null.h>
 #include <kf/game/graphics.h>
@@ -35,7 +36,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias, const MATRIX *lights)
                 vertices, p.vertices[0], p.vertices[1], p.vertices[2]);
             if (projected) {
                 auto face = projected->draw_face();
-                CVECTOR colors[4] {};
+                std::array<CVECTOR, 4> colors {};
                 face.material = render_texture_material(p.texture_page, p.palette);
                 render_face_uvs(face, {p.uv[0], p.uv[1], p.uv[2]});
                 colors[0] = kf::render_light_normal(game_graphics_runtime.render_state.lighting, *lights,
@@ -54,7 +55,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias, const MATRIX *lights)
             if (projected) {
                 projected->complete_quad(vertices[p.vertices[3]]);
                 auto face = projected->draw_face();
-                CVECTOR colors[4] {};
+                std::array<CVECTOR, 4> colors {};
                 colors[0] = kf::render_light_normal(game_graphics_runtime.render_state.lighting, *lights,
                     tmd_read_normal(normals, p.normals[0]), p.color, projected->average_fog());
                 otz = projected->ordering_depth();
@@ -70,7 +71,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias, const MATRIX *lights)
                 vertices, p.vertices[0], p.vertices[1], p.vertices[2]);
             if (projected) {
                 auto face = projected->draw_face();
-                CVECTOR colors[4] {};
+                std::array<CVECTOR, 4> colors {};
                 colors[0] = kf::render_light_normal(game_graphics_runtime.render_state.lighting, *lights,
                     tmd_read_normal(normals, p.normals[0]), p.color, projected->fog(0));
                 colors[1] = kf::render_light_normal(game_graphics_runtime.render_state.lighting, *lights,
@@ -91,7 +92,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias, const MATRIX *lights)
             if (projected) {
                 projected->complete_quad(vertices[p.vertices[3]]);
                 auto face = projected->draw_face();
-                CVECTOR colors[4] {};
+                std::array<CVECTOR, 4> colors {};
                 colors[0] = kf::render_light_normal(game_graphics_runtime.render_state.lighting, *lights,
                     tmd_read_normal(normals, p.normals[0]), p.color, projected->fog(0));
                 colors[1] = kf::render_light_normal(game_graphics_runtime.render_state.lighting, *lights,
@@ -113,7 +114,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias, const MATRIX *lights)
                 vertices, p.vertices[0], p.vertices[1], p.vertices[2]);
             if (projected) {
                 auto face = projected->draw_face();
-                CVECTOR colors[4] {};
+                std::array<CVECTOR, 4> colors {};
                 face.material = render_texture_material(p.texture_page, p.palette);
                 render_face_uvs(face, {p.uv[0], p.uv[1], p.uv[2]});
                 colors[0] = kf::render_light_normal(game_graphics_runtime.render_state.lighting, *lights,
@@ -136,7 +137,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias, const MATRIX *lights)
             if (projected) {
                 projected->complete_quad(vertices[p.vertices[3]]);
                 auto face = projected->draw_face();
-                CVECTOR colors[4] {};
+                std::array<CVECTOR, 4> colors {};
                 face.material = render_texture_material(p.texture_page, p.palette);
                 render_face_uvs(face, {p.uv[0], p.uv[1], p.uv[2], p.uv[3]});
                 colors[0] = kf::render_light_normal(game_graphics_runtime.render_state.lighting, *lights,
@@ -160,7 +161,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias, const MATRIX *lights)
                 vertices, p.vertices[0], p.vertices[1], p.vertices[2]);
             if (projected) {
                 auto face = projected->draw_face();
-                CVECTOR colors[4] {};
+                std::array<CVECTOR, 4> colors {};
                 face.transparency = kf::FaceTransparency::Blend;
                 colors[0] = kf::render_light_normal(game_graphics_runtime.render_state.lighting, *lights,
                     tmd_read_normal(normals, p.normals[0]), p.color, 0);
@@ -182,7 +183,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias, const MATRIX *lights)
             if (projected) {
                 projected->complete_quad(vertices[p.vertices[3]]);
                 auto face = projected->draw_face();
-                CVECTOR colors[4] {};
+                std::array<CVECTOR, 4> colors {};
                 face.material = render_texture_material(p.texture_page, p.palette);
                 render_face_uvs(face, {p.uv[0], p.uv[1], p.uv[2], p.uv[3]});
                 colors[0] = kf::render_light_normal(game_graphics_runtime.render_state.lighting, *lights,
@@ -200,7 +201,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias, const MATRIX *lights)
                 vertices, p.vertices[0], p.vertices[1], p.vertices[2]);
             if (projected) {
                 auto face = projected->draw_face();
-                CVECTOR colors[4] {};
+                std::array<CVECTOR, 4> colors {};
                 colors[0] = kf::render_light_normal(game_graphics_runtime.render_state.lighting, *lights,
                     tmd_read_normal(normals, p.normals[0]), p.color, projected->average_fog());
                 otz = projected->ordering_depth();
@@ -217,7 +218,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias, const MATRIX *lights)
             if (projected) {
                 projected->complete_quad(vertices[p.vertices[3]]);
                 auto face = projected->draw_face();
-                CVECTOR colors[4] {};
+                std::array<CVECTOR, 4> colors {};
                 face.transparency = kf::FaceTransparency::Blend;
                 colors[0] = kf::render_light_normal(game_graphics_runtime.render_state.lighting, *lights,
                     tmd_read_normal(normals, p.normals[0]), p.color, projected->fog(0));
@@ -240,7 +241,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias, const MATRIX *lights)
                 vertices, p.vertices[0], p.vertices[1], p.vertices[2]);
             if (projected) {
                 auto face = projected->draw_face();
-                CVECTOR colors[4] {};
+                std::array<CVECTOR, 4> colors {};
                 face.transparency = kf::FaceTransparency::Blend;
                 colors[0] = kf::render_light_normal(game_graphics_runtime.render_state.lighting, *lights,
                     tmd_read_normal(normals, p.normals[0]), p.color, projected->average_fog());
@@ -258,7 +259,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias, const MATRIX *lights)
             if (projected) {
                 projected->complete_quad(vertices[p.vertices[3]]);
                 auto face = projected->draw_face();
-                CVECTOR colors[4] {};
+                std::array<CVECTOR, 4> colors {};
                 face.transparency = kf::FaceTransparency::Blend;
                 colors[0] = kf::render_light_normal(game_graphics_runtime.render_state.lighting, *lights,
                     tmd_read_normal(normals, p.normals[0]), p.color, projected->average_fog());
@@ -298,7 +299,7 @@ void render_enqueue_tmd_retextured(u16 object_index, s16 depth_bias, const MATRI
                 vertices, p.vertices[0], p.vertices[1], p.vertices[2]);
             if (projected) {
                 auto face = projected->draw_face();
-                CVECTOR colors[4] {};
+                std::array<CVECTOR, 4> colors {};
                 face.material = game_graphics_runtime.active_render_material;
                 render_face_uvs(face, {p.uv[0], p.uv[1], p.uv[2]});
                 colors[0] = kf::render_light_normal(game_graphics_runtime.render_state.lighting, *lights,
@@ -321,7 +322,7 @@ void render_enqueue_tmd_retextured(u16 object_index, s16 depth_bias, const MATRI
             if (projected) {
                 projected->complete_quad(vertices[p.vertices[3]]);
                 auto face = projected->draw_face();
-                CVECTOR colors[4] {};
+                std::array<CVECTOR, 4> colors {};
                 face.material = game_graphics_runtime.active_render_material;
                 render_face_uvs(face, {p.uv[0], p.uv[1], p.uv[2], p.uv[3]});
                 colors[0] = kf::render_light_normal(game_graphics_runtime.render_state.lighting, *lights,
@@ -345,7 +346,7 @@ void render_enqueue_tmd_retextured(u16 object_index, s16 depth_bias, const MATRI
                 vertices, p.vertices[0], p.vertices[1], p.vertices[2]);
             if (projected) {
                 auto face = projected->draw_face();
-                CVECTOR colors[4] {};
+                std::array<CVECTOR, 4> colors {};
                 face.material = game_graphics_runtime.active_render_material;
                 render_face_uvs(face, {p.uv[0], p.uv[1], p.uv[2]});
                 colors[0] = kf::render_light_normal(game_graphics_runtime.render_state.lighting, *lights,
@@ -364,7 +365,7 @@ void render_enqueue_tmd_retextured(u16 object_index, s16 depth_bias, const MATRI
             if (projected) {
                 projected->complete_quad(vertices[p.vertices[3]]);
                 auto face = projected->draw_face();
-                CVECTOR colors[4] {};
+                std::array<CVECTOR, 4> colors {};
                 face.material = game_graphics_runtime.active_render_material;
                 render_face_uvs(face, {p.uv[0], p.uv[1], p.uv[2], p.uv[3]});
                 colors[0] = kf::render_light_normal(game_graphics_runtime.render_state.lighting, *lights,
@@ -411,7 +412,7 @@ void render_enqueue_map(u16 object_index, const MATRIX *lights, const MATRIX *mo
             if (projected) {
                 projected->complete_quad(vertices[p.vertices[3]]);
                 auto face = projected->draw_face();
-                CVECTOR colors[4] {};
+                std::array<CVECTOR, 4> colors {};
                 face.material = render_texture_material(p.texture_page, p.palette);
                 render_face_uvs(face, {p.uv[0], p.uv[1], p.uv[2], p.uv[3]});
                 shade = kf::render_light_normal(game_graphics_runtime.render_state.lighting, *lights,
@@ -435,7 +436,7 @@ void render_enqueue_map(u16 object_index, const MATRIX *lights, const MATRIX *mo
                 vertices, p.vertices[0], p.vertices[1], p.vertices[2]);
             if (projected) {
                 auto face = projected->draw_face();
-                CVECTOR colors[4] {};
+                std::array<CVECTOR, 4> colors {};
                 face.material = render_texture_material(p.texture_page, p.palette);
                 render_face_uvs(face, {p.uv[0], p.uv[1], p.uv[2]});
                 shade = kf::render_light_normal(game_graphics_runtime.render_state.lighting, *lights,
@@ -456,7 +457,7 @@ void render_enqueue_map(u16 object_index, const MATRIX *lights, const MATRIX *mo
 
 void render_enqueue_sprite(KfSpriteQuad *sprite, s16 depth_bias, KfSpriteDepthCueMode depth_cue_mode, const MATRIX *lights, const MATRIX *model, const kf::Projection &projection)
 {
-    SVECTOR corners[4];
+    std::array<SVECTOR, 4> corners;
     SVECTOR anchor;
     s32 depth_cue;
     s32 otz;
@@ -468,7 +469,7 @@ void render_enqueue_sprite(KfSpriteQuad *sprite, s16 depth_bias, KfSpriteDepthCu
     corners[0].vz = corners[1].vz = corners[2].vz = corners[3].vz = 0;
     anchor.vx = anchor.vy = anchor.vz = 0;
     otz = kf::render_project_point(*model, projection, anchor).depth >> KF_GTE_DEPTH_TO_OT_SHIFT;
-    kf::ProjectedPoint positions[4];
+    std::array<kf::ProjectedPoint, 4> positions;
     for (unsigned i = 0; i < 4; ++i)
         positions[i] = kf::render_project_point(*model, projection, corners[i]);
     depth_cue = positions[3].fog;
@@ -489,7 +490,7 @@ void render_enqueue_sprite(KfSpriteQuad *sprite, s16 depth_bias, KfSpriteDepthCu
     color = kf::render_light_normal(game_graphics_runtime.render_state.lighting, *lights,
         render_sprite_light_normal, game_graphics_runtime.active_render_color, depth_cue);
     if (otz + depth_bias >= KF_SCENE_MIN_OT_DEPTH) {
-        render_face_submit(&face, &color, kf::FaceShading::Flat,
+        render_face_submit(&face, {&color, 1}, kf::FaceShading::Flat,
             (otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK);
     }
 }

@@ -7,6 +7,7 @@
 #include <kf/renderer/renderer.h>
 #include <SDL3/SDL.h>
 #include <algorithm>
+#include <array>
 #include <cmath>
 #include <cstdio>
 #include <cstdlib>
@@ -35,7 +36,7 @@ struct HostState {
     std::size_t frame_count, frame_capacity;
     InputState input;
     InputContext input_context;
-    SDL_Keycode pressed_keys[SDL_SCANCODE_COUNT];
+    std::array<SDL_Keycode, SDL_SCANCODE_COUNT> pressed_keys;
     Uint64 epoch, paused_ns, pause_start;
     double look_remainder_x, look_remainder_y;
     bool focused, mouse_captured, resume_mouse_capture;
@@ -74,7 +75,8 @@ static void platform_yield(Uint64 nanoseconds) {
 
 static void bind_inputs() {
     auto *input = &host.input;
-    const struct { SDL_Keycode code; Action action; } keys[] = {
+    struct KeyBinding { SDL_Keycode code; Action action; };
+    constexpr std::array<KeyBinding, 18> keys = {{
         {SDLK_W, Action::forward}, {SDLK_UP, Action::forward},
         {SDLK_S, Action::backward}, {SDLK_DOWN, Action::backward},
         {SDLK_A, Action::strafe_left}, {SDLK_D, Action::strafe_right},
@@ -84,12 +86,13 @@ static void bind_inputs() {
         {SDLK_SPACE, Action::attack}, {SDLK_Q, Action::magic},
         {SDLK_TAB, Action::inventory}, {SDLK_BACKSPACE, Action::back},
         {SDLK_ESCAPE, Action::pause_or_back}, {SDLK_P, Action::pause}
-    };
+    }};
     for (const auto &key : keys)
         input_bind(input, {InputDevice::keyboard, static_cast<u32>(key.code)}, key.action);
     input_bind(input, {InputDevice::mouse, SDL_BUTTON_LEFT}, Action::attack);
     input_bind(input, {InputDevice::mouse, SDL_BUTTON_RIGHT}, Action::magic);
-    const struct { SDL_GamepadButton code; Action action; } buttons[] = {
+    struct ButtonBinding { SDL_GamepadButton code; Action action; };
+    constexpr std::array<ButtonBinding, 12> buttons = {{
         {SDL_GAMEPAD_BUTTON_DPAD_UP, Action::forward}, {SDL_GAMEPAD_BUTTON_DPAD_DOWN, Action::backward},
         {SDL_GAMEPAD_BUTTON_DPAD_LEFT, Action::turn_left}, {SDL_GAMEPAD_BUTTON_DPAD_RIGHT, Action::turn_right},
         {SDL_GAMEPAD_BUTTON_NORTH, Action::attack}, {SDL_GAMEPAD_BUTTON_WEST, Action::magic},
@@ -97,7 +100,7 @@ static void bind_inputs() {
         {SDL_GAMEPAD_BUTTON_START, Action::inventory}, {SDL_GAMEPAD_BUTTON_BACK, Action::pause},
         {SDL_GAMEPAD_BUTTON_LEFT_SHOULDER, Action::strafe_left},
         {SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER, Action::strafe_right}
-    };
+    }};
     for (const auto &button : buttons)
         input_bind(input, {InputDevice::gamepad, static_cast<u32>(button.code)}, button.action);
     // Axis directions use distinct controls so releasing a stick cannot release a held D-pad.
@@ -135,9 +138,9 @@ bool host_start() {
     }
     // All frame pacing uses the absolute clock below, not a second swap-interval wait.
     SDL_GL_SetSwapInterval(0);
-    char error[renderer_error_capacity] {};
-    if (!renderer_init(&host.renderer, error, sizeof error)) {
-        std::fprintf(stderr, "%s\n", error);
+    std::array<char, renderer_error_capacity> error{};
+    if (!renderer_init(&host.renderer, error.data(), error.size())) {
+        std::fprintf(stderr, "%s\n", error.data());
         host_shutdown();
         return false;
     }
@@ -309,7 +312,7 @@ static void process_event(const SDL_Event &event) {
             host.resume_mouse_capture = false;
             sound_set_paused(true);
             input_clear(&host.input);
-            std::fill_n(host.pressed_keys, SDL_SCANCODE_COUNT, SDLK_UNKNOWN);
+            host.pressed_keys.fill(SDLK_UNKNOWN);
             host.look_remainder_x = host.look_remainder_y = 0;
             SDL_SetWindowRelativeMouseMode(host.window, false);
         }
@@ -407,7 +410,8 @@ u32 host_read_buttons() {
     // Original game code samples held buttons and derives its own edges.
     const u32 actions = host.input.pending.held;
     host.input.pending.pressed = host.input.pending.released = 0;
-    const struct { Action action; Button button; } mapping[] = {
+    struct ButtonAction { Action action; Button button; };
+    constexpr std::array<ButtonAction, 15> mapping = {{
         {Action::forward, Button::Up}, {Action::backward, Button::Down},
         {Action::turn_left, Button::Left}, {Action::turn_right, Button::Right},
         {Action::strafe_left, Button::StrafeLeft}, {Action::strafe_right, Button::StrafeRight},
@@ -415,7 +419,7 @@ u32 host_read_buttons() {
         {Action::attack, Button::Attack}, {Action::magic, Button::Magic},
         {Action::interact, Button::Confirm}, {Action::confirm, Button::Confirm},
         {Action::back, Button::Back}, {Action::inventory, Button::Start}, {Action::pause, Button::Select}
-    };
+    }};
     u32 buttons = 0;
     for (const auto &entry : mapping)
         if (actions & action_bit(entry.action))

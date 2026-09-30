@@ -1,3 +1,4 @@
+#include <span>
 #include <kf/platform/prelude.h>
 #include <kf/cutscene/camera_path.h>
 #include <kf/cutscene/opening_helpers.h>
@@ -12,7 +13,7 @@ void opening_camera_path_compute_segment(void)
     camera_path_prepare_segment(&path, point);
 }
 
-void opening_camera_path_begin(const KfCameraPathPoint *points)
+void opening_camera_path_begin(std::span<const KfCameraPathPoint> points)
 {
     auto &path = opening_camera_path_state;
     path.points = points;

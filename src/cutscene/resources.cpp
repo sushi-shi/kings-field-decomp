@@ -1,3 +1,4 @@
+#include <array>
 #include <kf/platform/prelude.h>
 #include <kf/lib/null.h>
 
@@ -14,7 +15,7 @@
 #include <cstring>
 #include <kf/lib/resources.h>
 
-char opening_ending_sequence_path[8] = "B0/END.";
+std::array<char, 8> opening_ending_sequence_path = {"B0/END."};
 
 static u8 *opening_scene1_arena_cursor;
 
@@ -162,7 +163,7 @@ void opening_resources_load_ending(void)
     stream = resource_stream_next(stream, resource_end);
     memory_release_last(cutscene_memory_arena);
     *arena_cursor = vab_chunk + KF_RESOURCE_REUSE_PREFIX_BYTES;
-    audio_play_sequence_file(opening_ending_sequence_path);
+    audio_play_sequence_file(opening_ending_sequence_path.data());
     resource_file_load_allocated(cutscene_memory_arena, &stream, "B0/MIXBE.", &resource_size);
     resource_end = stream + resource_size;
     const auto entity_tmd = resource_chunk_view(stream, resource_end);

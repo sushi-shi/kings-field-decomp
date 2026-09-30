@@ -1,6 +1,7 @@
 #ifndef KF_TMD_H
 #define KF_TMD_H
 
+#include <array>
 #include <kf/lib/memory.h>
 #include <kf/lib/render_types.h>
 
@@ -90,9 +91,9 @@ struct KfTmdPacket {
 
 // Decoded values, not a view of a serialized packet or a GPU command.
 struct KfTmdFaceData {
-    u16 vertices[4];
-    u16 normals[4];
-    u16 uv[4];
+    std::array<u16, 4> vertices;
+    std::array<u16, 4> normals;
+    std::array<u16, 4> uv;
     u16 texture_page;
     u16 palette;
     CVECTOR color;

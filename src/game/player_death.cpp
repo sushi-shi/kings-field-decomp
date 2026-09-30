@@ -1,3 +1,4 @@
+#include <array>
 #include <kf/platform/prelude.h>
 #include <algorithm>
 #include <kf/game/audio.h>
@@ -40,17 +41,17 @@ enum {
     PLAYER_DAMAGE_THRESHOLD_MULTIPLIER = 2
 };
 
-SoundRef player_sound_refs[KF_PLAYER_SOUND_COUNT] = {
+std::array<SoundRef, KF_PLAYER_SOUND_COUNT> player_sound_refs = {{
     {7, 0, 80},
     {7, 1, 89},
     {13, 0, 67}
-};
+}};
 
 s32 player_death_saved_fog_near;
 
 MATRIX player_death_saved_color_matrix;
 
-u8 item_stock[KF_ITEM_STOCK_BANK_COUNT][KF_ITEM_COUNT];
+std::array<std::array<u8, KF_ITEM_COUNT>, KF_ITEM_STOCK_BANK_COUNT> item_stock;
 
 void player_death_begin(void)
 {
@@ -64,9 +65,6 @@ void player_death_begin(void)
 
 void game_state_initialize(void)
 {
-    u8 *cursor;
-    s32 count;
-
     player_state.experience = 0;
     player_state.progress_state.level = 1;
     player_state.progress_state.current_floor = KF_FLOOR_1;
@@ -108,16 +106,8 @@ void game_state_initialize(void)
     player_state.poison_timer = KF_PLAYER_STATUS_TIMER_INACTIVE;
     player_state.darkness_timer = KF_PLAYER_STATUS_TIMER_INACTIVE;
     player_state.curse_timer = KF_PLAYER_STATUS_TIMER_INACTIVE;
-    cursor = (u8 *)&map_runtime_state.world_state;
-    count = sizeof(map_runtime_state.world_state) - 1;
-    do {
-        *cursor++ = 0;
-    } while (--count != -1);
-    cursor = (u8 *)&item_stock;
-    count = sizeof(item_stock) - 1;
-    do {
-        *cursor++ = 0;
-    } while (--count != -1);
+    map_runtime_state.world_state = {};
+    item_stock = {};
     item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)][kf_enum_encode<u8>(KF_ITEM_SHORT_SWORD)] = 1;
     item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)][kf_enum_encode<u8>(KF_ITEM_MEDICINAL_HERB)] = 1;
     item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_FIRST_SHOP)][kf_enum_encode<u8>(KF_ITEM_SHORT_SWORD)] = 1;

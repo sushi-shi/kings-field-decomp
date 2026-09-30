@@ -1,6 +1,7 @@
 #ifndef KF_RENDERER_RENDERER_H
 #define KF_RENDERER_RENDERER_H
 
+#include <array>
 #include <kf/platform/assets.h>
 #include <kf/renderer/textures.h>
 #include <kf/renderer/constants.h>
@@ -32,7 +33,7 @@ struct FaceMaterial {
     TextureColorMode color_mode = TextureColorMode::Modulated;
 };
 struct DrawFace {
-    Vertex vertices[4];
+    std::array<Vertex, 4> vertices;
     FaceShape shape;
     FaceMaterial material;
     FaceTransparency transparency;

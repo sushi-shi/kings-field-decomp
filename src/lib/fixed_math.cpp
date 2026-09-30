@@ -1,3 +1,4 @@
+#include <array>
 #include <kf/lib/fixed_math.h>
 #include <algorithm>
 #include <bit>
@@ -19,7 +20,7 @@ constexpr s32 matrix_component_min = -32768;
 constexpr s32 matrix_component_max = 32767;
 }
 
-static constexpr s16 quarter_sine[angle_quarter_turn] = {
+static constexpr std::array<s16, angle_quarter_turn> quarter_sine = {{
     0, 6, 13, 19, 25, 31, 38, 44, 50, 57, 63, 69, 75, 82, 88, 94,
     101, 107, 113, 119, 126, 132, 138, 144, 151, 157, 163, 170, 176, 182, 188, 195,
     201, 207, 214, 220, 226, 232, 239, 245, 251, 257, 264, 270, 276, 283, 289, 295,
@@ -84,7 +85,7 @@ static constexpr s16 quarter_sine[angle_quarter_turn] = {
     4085, 4085, 4086, 4086, 4087, 4087, 4088, 4088, 4088, 4089, 4089, 4089, 4090, 4090, 4090, 4091,
     4091, 4091, 4092, 4092, 4092, 4092, 4093, 4093, 4093, 4093, 4094, 4094, 4094, 4094, 4094, 4095,
     4095, 4095, 4095, 4095, 4095, 4095, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096, 4096,
-};
+}};
 
 enum class AngleQuadrant : u32 { First, Second, Third, Fourth };
 
@@ -125,9 +126,9 @@ s32 angle_cosine(s32 angle)
 
 s32 fixed_arctangent(s32 ratio_q12)
 {
-    static constexpr s32 angles[] = {511, 302, 159, 81, 41, 20, 10, 5, 3, 1, 0, 0};
+    static constexpr std::array<s32, 12> angles = {{511, 302, 159, 81, 41, 20, 10, 5, 3, 1, 0, 0}};
     s32 x = fixed12_unity, y = ratio_q12, angle = 0;
-    for (unsigned step = 0; step < sizeof angles / sizeof angles[0]; ++step) {
+    for (std::size_t step = 0; step < angles.size(); ++step) {
         const u32 dx = static_cast<u32>(x >> step), dy = static_cast<u32>(y >> step);
         if (y < 0) {
             x = static_cast<s32>(static_cast<u32>(x) - dy);
@@ -144,7 +145,7 @@ s32 fixed_arctangent(s32 ratio_q12)
 
 s32 length_square_root(u32 squared_length)
 {
-    static constexpr u16 roots[] = {
+    static constexpr std::array<u16, 192> roots = {{
     4096, 4127, 4159, 4190, 4222, 4252, 4283, 4314, 4344, 4374, 4404, 4434, 4463, 4492, 4521, 4550,
     4579, 4608, 4636, 4664, 4692, 4720, 4748, 4775, 4802, 4830, 4857, 4884, 4910, 4937, 4964, 4990,
     5016, 5042, 5068, 5094, 5120, 5145, 5170, 5196, 5221, 5246, 5271, 5296, 5320, 5345, 5369, 5394,
@@ -157,7 +158,7 @@ s32 length_square_root(u32 squared_length)
     7384, 7401, 7419, 7437, 7454, 7472, 7489, 7507, 7524, 7542, 7559, 7576, 7594, 7611, 7628, 7645,
     7662, 7680, 7697, 7714, 7731, 7747, 7764, 7781, 7798, 7815, 7832, 7848, 7865, 7882, 7898, 7915,
     7931, 7948, 7964, 7981, 7997, 8014, 8030, 8046, 8062, 8079, 8095, 8111, 8127, 8143, 8159, 8175,
-    };
+    }};
     if (squared_length == 0)
         return 0;
     // Preserve the original coarse mantissa lookup, not host sqrt rounding.
@@ -170,9 +171,9 @@ s32 length_square_root(u32 squared_length)
 
 void matrix_multiply_rotation(const MATRIX &left, const MATRIX &right, MATRIX &output)
 {
-    s16 result[3][3];
-    for (unsigned row = 0; row < 3; ++row) {
-        for (unsigned column = 0; column < 3; ++column) {
+    std::array<std::array<s16, 3>, 3> result;
+    for (std::size_t row = 0; row < 3; ++row) {
+        for (std::size_t column = 0; column < 3; ++column) {
             const std::int64_t dot = std::int64_t(left.m[row][0]) * right.m[0][column]
                 + std::int64_t(left.m[row][1]) * right.m[1][column]
                 + std::int64_t(left.m[row][2]) * right.m[2][column];
@@ -180,14 +181,14 @@ void matrix_multiply_rotation(const MATRIX &left, const MATRIX &right, MATRIX &o
                 std::clamp<std::int64_t>(dot >> fixed12_bits, matrix_component_min, matrix_component_max));
         }
     }
-    std::memcpy(output.m, result, sizeof result);
+    output.m = result;
 }
 
 void matrix_scale_axes(MATRIX &matrix, const VECTOR &scale)
 {
-    const s32 axes[] = {scale.vx, scale.vy, scale.vz};
-    for (unsigned row = 0; row < 3; ++row) {
-        for (unsigned column = 0; column < 3; ++column) {
+    const std::array<s32, 3> axes = {{scale.vx, scale.vy, scale.vz}};
+    for (std::size_t row = 0; row < 3; ++row) {
+        for (std::size_t column = 0; column < 3; ++column) {
             // Original scaling wraps the product to 32 bits before its signed
             // shift, then narrows to 16 bits; composition instead saturates.
             const u32 product = static_cast<u32>(matrix.m[row][column])
@@ -199,8 +200,8 @@ void matrix_scale_axes(MATRIX &matrix, const VECTOR &scale)
 
 VECTOR matrix_apply_rotation(const MATRIX &matrix, const SVECTOR &vector)
 {
-    s32 result[3];
-    for (unsigned row = 0; row < 3; ++row) {
+    std::array<s32, 3> result;
+    for (std::size_t row = 0; row < 3; ++row) {
         const std::int64_t dot = std::int64_t(matrix.m[row][0]) * vector.vx
             + std::int64_t(matrix.m[row][1]) * vector.vy
             + std::int64_t(matrix.m[row][2]) * vector.vz;

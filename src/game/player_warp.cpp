@@ -1,3 +1,4 @@
+#include <array>
 #include <kf/platform/prelude.h>
 #include <kf/game/audio.h>
 #include <kf/lib/null.h>
@@ -9,7 +10,7 @@
 #include <kf/game/game.h>
 
 static MATRIX actor_transform_color_matrix = {
-    {{250, 100, 500}, {250, 100, 500}, {250, 100, 500}}, {0, 0, 0}
+    {{{250, 100, 500}, {250, 100, 500}, {250, 100, 500}}}, {0, 0, 0}
 };
 
 enum {
@@ -41,7 +42,7 @@ constexpr WarpCell floor5_entry_return = {14, 79};
 void player_warp_shimmer(KfWarpShimmerMode shimmer_mode, VECTOR *position)
 {
     const auto input_context = kf::host_set_input_context(kf::InputContext::Scripted);
-    KfEffectRecord *effects[KF_CYLINDER_TRANSITION_COUNT];
+    std::array<KfEffectRecord *, KF_CYLINDER_TRANSITION_COUNT> effects;
     KfEffectRecord **cursor;
     KfEffectRecord *effect;
     struct {
@@ -70,7 +71,7 @@ void player_warp_shimmer(KfWarpShimmerMode shimmer_mode, VECTOR *position)
     scratch.position.vz = position->vz;
     scratch.position.vy = position->vy;
     display_flip_buffer_index();
-    cursor = effects;
+    cursor = effects.data();
     for (i = KF_CYLINDER_TRANSITION_COUNT - 1; i != -1; i--) {
         effect = effect_pool_construct(
             WARP_SHIMMER_OWNER_ID,
@@ -86,7 +87,7 @@ void player_warp_shimmer(KfWarpShimmerMode shimmer_mode, VECTOR *position)
     render_frame(&player_state.camera_position, &player_state.camera_rotation);
 
     for (frame = 0; frame < KF_CYLINDER_TRANSITION_FRAMES; frame++) {
-        cursor = effects;
+        cursor = effects.data();
         if (frame == WARP_SHIMMER_SOUND_FRAME) {
             sound_ref_play(audio_playback(), &gameplay_sound_refs[KF_GAMEPLAY_SOUND_WARP_SHIMMER], KF_AUDIO_MAX_VOLUME);
         }
@@ -108,7 +109,7 @@ void player_warp_shimmer(KfWarpShimmerMode shimmer_mode, VECTOR *position)
     }
 
     if (mode_value != KF_WARP_SHIMMER_GROW_KEEP) {
-        cursor = effects;
+        cursor = effects.data();
         for (i = KF_CYLINDER_TRANSITION_COUNT - 1; i != -1; i--) {
             effect = *cursor++;
             effect->type = KF_EFFECT_SLOT_FREE;
@@ -247,7 +248,7 @@ bool player_warp_trigger_update(void)
     return false;
 }
 
-static constexpr unsigned floor4_transform_hidden_events[] = {1, 2};
+static constexpr std::array<unsigned, 2> floor4_transform_hidden_events = {{1, 2}};
 
 void actor_transform_definition5_to6(KfActor *actor)
 {

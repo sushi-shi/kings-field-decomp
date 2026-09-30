@@ -1,6 +1,7 @@
 #ifndef KF_LIB_CAMERA_PATH_H
 #define KF_LIB_CAMERA_PATH_H
 
+#include <span>
 #include <kf/lib/geometry_types.h>
 
 enum {
@@ -16,7 +17,7 @@ typedef struct KfCameraPathPoint {
 } KfCameraPathPoint;
 
 typedef struct KfCameraPathState {
-    const KfCameraPathPoint *points;
+    std::span<const KfCameraPathPoint> points;
     VECTOR position;
     SVECTOR rotation;
     VECTOR position_fixed;

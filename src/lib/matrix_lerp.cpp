@@ -9,17 +9,14 @@ void matrix_interpolate(
     MATRIX *output,
     s32 blend)
 {
-    const s16 *source = &from->m[0][0];
-    const s16 *target = &to->m[0][0];
-    s16 *destination = &output->m[0][0];
-    s16 count = KF_MATRIX_ROTATION_ELEMENTS - 1;
-
-    do {
-        u16 from_value = *source++;
-        u16 to_value = *target++;
-
-        *destination++ = from_value + ((((s16)to_value - (s16)from_value) * blend) >> KF_FIXED12_BITS);
-    } while (--count != -1);
+    for (std::size_t row = 0; row < output->m.size(); ++row) {
+        for (std::size_t column = 0; column < output->m[row].size(); ++column) {
+            const s16 from_value = from->m[row][column];
+            const s16 to_value = to->m[row][column];
+            output->m[row][column] = from_value
+                + (((to_value - from_value) * blend) >> KF_FIXED12_BITS);
+        }
+    }
 }
 
 void lighting_set_color_matrix(KfRenderState &view,

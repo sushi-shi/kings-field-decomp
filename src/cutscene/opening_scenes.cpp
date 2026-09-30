@@ -1,3 +1,4 @@
+#include <array>
 #include <kf/platform/prelude.h>
 #include <algorithm>
 #include <kf/lib/null.h>
@@ -87,7 +88,7 @@ enum class KfEndingScrollTick : s16 {
     ENDING_SCROLL_TICK_HOLD_AFTER_STARFIELD = 3
 }; using enum KfEndingScrollTick;
 
-KfCameraPathPoint opening_scene0_camera_path[KF_OPENING_SCENE0_CAMERA_POINT_COUNT] = {
+std::array<KfCameraPathPoint, KF_OPENING_SCENE0_CAMERA_POINT_COUNT> opening_scene0_camera_path = {{
     {{101000, -13000, 101000, 0}, {256, 0, 200, 0}, 0, 0},
     {{101000, -12000, 117000, 0}, {0, 128, -200, 0}, 400, 0},
     {{101000, -11700, 127000, 0}, {0, 1024, 100, 0}, 400, 0},
@@ -105,15 +106,15 @@ KfCameraPathPoint opening_scene0_camera_path[KF_OPENING_SCENE0_CAMERA_POINT_COUN
     {{163000, -11900, 163000, 0}, {100, -512, -100, 0}, 200, 0},
     {{163000, -12100, 161000, 0}, {100, -256, -100, 0}, 100, 0},
     {{KF_CAMERA_PATH_END_X, -1, -1, 0}, {-1, -1, -1, 0}, -1, 0},
-};
+}};
 
-KfCameraPathPoint opening_scene3_camera_path[KF_OPENING_SCENE3_CAMERA_POINT_COUNT] = {
+std::array<KfCameraPathPoint, KF_OPENING_SCENE3_CAMERA_POINT_COUNT> opening_scene3_camera_path = {{
     {{101000, -11500, 115200, 0}, {0, 0x800, 0, 0}, 0, 0},
     {{101000, -11500, 101000, 0}, {0, 0x800, 0, 0}, 0x10, 0},
     {{KF_CAMERA_PATH_END_X, -1, -1, 0}, {-1, -1, -1, 0}, -1, 0},
-};
+}};
 
-KfCameraPathPoint opening_ending_camera_path[KF_OPENING_ENDING_CAMERA_POINT_COUNT] = {
+std::array<KfCameraPathPoint, KF_OPENING_ENDING_CAMERA_POINT_COUNT> opening_ending_camera_path = {{
     {{101000, -11500, 101000, 0}, {0, 0, 0, 0}, 0, 0},
     {{101000, -11500, 108600, 0}, {0, 0, 0, 0}, 35, 0},
     {{101000, -11500, 108800, 0}, {0, 0, 0, 0}, 20, 0},
@@ -123,22 +124,22 @@ KfCameraPathPoint opening_ending_camera_path[KF_OPENING_ENDING_CAMERA_POINT_COUN
     {{101000, -11500, 109800, 0}, {0, 0, 0, 0}, 60, 0},
     {{101000, -11500, 117000, 0}, {0, 0, 0, 0}, 100, 0},
     {{KF_CAMERA_PATH_END_X, -1, -1, 0}, {-1, -1, -1, 0}, -1, 0},
-};
+}};
 
-static KfCameraPathPoint opening_ending_scroll_camera_path[ENDING_SCROLL_CAMERA_POINT_COUNT] = {
+static std::array<KfCameraPathPoint, ENDING_SCROLL_CAMERA_POINT_COUNT> opening_ending_scroll_camera_path = {{
     {{101000, -8500, 89000, 0}, {0, 0, 0, 0}, 0, 0},
     {{101000, -12000, 89000, 0}, {0, 0, 0, 0}, 2, 0},
     {{KF_CAMERA_PATH_END_X, -1, -1, 0}, {-1, -1, -1, 0}, -1, 0},
-};
+}};
 
 SoundRef opening_scene0_sound = {9, 0, 0x43};
 
-KfScreenRect opening_scene3_panels[KF_OPENING_SCENE3_PANEL_COUNT] = {
+std::array<KfScreenRect, KF_OPENING_SCENE3_PANEL_COUNT> opening_scene3_panels = {{
     {32, 256, 255, 254},
     {32, 512, 255, 254},
-};
+}};
 
-static KfScreenRect opening_ending_scroll_panels[ENDING_PANEL_COUNT] = {
+static std::array<KfScreenRect, ENDING_PANEL_COUNT> opening_ending_scroll_panels = {{
     {32, 256, 255, 254},
     {32, 512, 255, 254},
     {32, 768, 255, 254},
@@ -148,15 +149,15 @@ static KfScreenRect opening_ending_scroll_panels[ENDING_PANEL_COUNT] = {
     {32, 1746, 255, 254},
     {32, 2002, 255, 254},
     {32, 2258, 255, 254},
-};
+}};
 
-u8 opening_scene3_panel_uv[KF_QUAD_TEX_DESCRIPTOR_BYTES] = {0, 0, 0, 0, 255, 0, 254, 0};
+std::array<u8, KF_QUAD_TEX_DESCRIPTOR_BYTES> opening_scene3_panel_uv = {{0, 0, 0, 0, 255, 0, 254, 0}};
 
 CVECTOR opening_scene3_panel_color = {200, 200, 200, 0};
 
-static KfScreenRect opening_ending_scroll_backgrounds[2] = {
+static std::array<KfScreenRect, 2> opening_ending_scroll_backgrounds = {{
     {0, 0, KF_DISPLAY_WIDTH, 160}, {0, 160, KF_DISPLAY_WIDTH, 160},
-};
+}};
 
 static CVECTOR opening_ending_scroll_top_start = {32, 0, 32, 0};
 
@@ -170,7 +171,7 @@ static CVECTOR opening_ending_scroll_panel_color = {200, 200, 200, 0};
 
 static CVECTOR opening_ending_scroll_background_color = {0, 0, 0, 0};
 
-static u8 opening_ending_scroll_panel_uv[KF_QUAD_TEX_DESCRIPTOR_BYTES] = {0, 0, 1, 0, 255, 0, 254, 0};
+static std::array<u8, KF_QUAD_TEX_DESCRIPTOR_BYTES> opening_ending_scroll_panel_uv = {{0, 0, 1, 0, 255, 0, 254, 0}};
 
 void opening_scene0_run(void)
 {
@@ -249,8 +250,8 @@ void opening_scene1_draw_fade(u8 shade)
         SCENE1_RIGHT_PANEL_X + SCENE1_PANEL_WIDTH, KF_DISPLAY_HEIGHT);
     render_face_uv_rectangle(&left, 0, 0, SCENE1_PANEL_WIDTH, KF_DISPLAY_HEIGHT);
     render_face_uv_rectangle(&right, 0, 0, SCENE1_PANEL_WIDTH, KF_DISPLAY_HEIGHT);
-    render_face_submit(&left, &color, kf::FaceShading::Flat, 0);
-    render_face_submit(&right, &color, kf::FaceShading::Flat, 0);
+    render_face_submit(&left, {&color, 1}, kf::FaceShading::Flat, 0);
+    render_face_submit(&right, {&color, 1}, kf::FaceShading::Flat, 0);
     display_present_frame(open_graphics_runtime.display_state);
 }
 
@@ -375,9 +376,8 @@ void opening_scene3_run(void)
     KfOpeningEntity *increasing_yaw_model;
     KfOpeningEntity *decreasing_yaw_model;
     VECTOR transition_position;
-    kf::FaceMaterial materials[KF_OPENING_SCENE3_PANEL_COUNT];
+    std::array<kf::FaceMaterial, KF_OPENING_SCENE3_PANEL_COUNT> materials;
     KfScreenRect *panel;
-    s16 *panel_y;
     s16 blend;
     s16 panel_index;
     s32 wave_angle;
@@ -440,10 +440,9 @@ void opening_scene3_run(void)
         display_begin_frame(open_graphics_runtime.display_state);
         opening_render_entities();
         panel_index = 0;
-        panel = opening_scene3_panels;
-        panel_y = &panel->y;
+        panel = opening_scene3_panels.data();
         do {
-            if ((u16)(--*panel_y + PANEL_CLIP_Y_BIAS) < PANEL_CLIP_SPAN) {
+            if ((u16)(--panel->y + PANEL_CLIP_Y_BIAS) < PANEL_CLIP_SPAN) {
                 sprite_add_ft4(
                     panel,
                     opening_scene3_panel_uv,
@@ -452,7 +451,6 @@ void opening_scene3_run(void)
                     PANEL_OT_DEPTH);
             }
             panel_index++;
-            panel_y += sizeof(*panel) / sizeof(*panel_y);
             panel++;
         } while (panel_index < KF_OPENING_SCENE3_PANEL_COUNT);
         display_present_frame(open_graphics_runtime.display_state);
@@ -585,9 +583,9 @@ void opening_ending_scroll_run(void)
 {
     VECTOR transition_position;
     MATRIX light_matrix = {
-        {{0, 0, -4095}, {4095, 0, -2048}, {-4095, 0, -2048}}, {0, 0, 0}
+        {{{0, 0, -4095}, {4095, 0, -2048}, {-4095, 0, -2048}}}, {0, 0, 0}
     };
-    kf::FaceMaterial materials[ENDING_PANEL_COUNT];
+    std::array<kf::FaceMaterial, ENDING_PANEL_COUNT> materials;
     CVECTOR top_color;
     CVECTOR bottom_color;
     KfOpeningEntity *orange_disk;
@@ -727,7 +725,7 @@ void opening_ending_scroll_run(void)
         }
         if (scroll_state > ENDING_SCROLL_WAIT_DISK) {
             panel_index = 0;
-            panel = opening_ending_scroll_panels;
+            panel = opening_ending_scroll_panels.data();
             do {
                 if (scroll_tick == ENDING_SCROLL_TICK_STARFIELD_AND_PANELS ||
                     scroll_tick == ENDING_SCROLL_TICK_PANELS) {

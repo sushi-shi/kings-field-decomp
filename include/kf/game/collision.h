@@ -1,6 +1,7 @@
 #ifndef KF_GAME_COLLISION_H
 #define KF_GAME_COLLISION_H
 
+#include <array>
 #include <kf/lib/types.h>
 #include <kf/lib/map_data.h>
 #include <kf/lib/geometry_types.h>
@@ -58,8 +59,8 @@ typedef struct KfCellHeightRecord {
 } KfCellHeightRecord;
 
 extern KfCollisionTarget collision_target;
-extern s16 map_cell_attribute_height_table[KF_MAP_ATTRIBUTE_COUNT];
-extern KfCellHeightRecord map_cell_height_records[KF_MAP_CELL_HEIGHT_RECORD_COUNT];
+extern std::array<s16, KF_MAP_ATTRIBUTE_COUNT> map_cell_attribute_height_table;
+extern std::array<KfCellHeightRecord, KF_MAP_CELL_HEIGHT_RECORD_COUNT> map_cell_height_records;
 
 extern void collision_adjust_cell_occupancy(
     u16 cell_x, u16 cell_z, s32 delta);

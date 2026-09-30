@@ -138,7 +138,7 @@ KfMapEvent *map_event_pool_find_target_in_cone(
 
 s32 map_event_pool_find_overlap(s32 point_x, s32 point_z, s32 radius_padding)
 {
-    KfMapEvent *event = map_runtime_state.events;
+    KfMapEvent *event = map_runtime_state.events.data();
     s16 index = 0;
 
     do {

@@ -21,7 +21,7 @@ void game_main_loop()
         kf::host_shutdown();
         std::exit(0);
     }
-    if (memory_arena.start || std::strcmp(map_resource_path, "B0/") != 0)
+    if (memory_arena.start || std::strcmp(map_resource_path.data(), "B0/") != 0)
         kf::host_fail("Audit: module state not restored");
     audit_original_game_main_loop();
 }

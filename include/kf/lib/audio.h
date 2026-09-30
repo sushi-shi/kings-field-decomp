@@ -1,6 +1,7 @@
 #ifndef KF_AUDIO_H
 #define KF_AUDIO_H
 
+#include <array>
 #include <kf/lib/types.h>
 #include <kf/lib/enum.h>
 #include <kf/lib/sound_types.h>
@@ -30,7 +31,7 @@ enum class KfAudioPlaybackResult : u32 {
 }; using enum KfAudioPlaybackResult;
 
 typedef struct KfAudioVoiceSlots {
-    kf::SoundVoice voice_ids[KF_AUDIO_VOICE_SLOTS];
+    std::array<kf::SoundVoice, KF_AUDIO_VOICE_SLOTS> voice_ids;
 } KfAudioVoiceSlots;
 
 typedef struct KfAudioState {

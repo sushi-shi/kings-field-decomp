@@ -13,6 +13,6 @@ void render_screen_sprite(KfSpriteQuad *sprite)
         sprite->x + sprite->w, sprite->y + sprite->h);
     render_face_uv_rectangle(&face, sprite->u, sprite->v,
         sprite->u + sprite->u_span, sprite->v + sprite->v_span);
-    render_face_submit(&face, &game_graphics_runtime.active_render_color,
+    render_face_submit(&face, {&game_graphics_runtime.active_render_color, 1},
         kf::FaceShading::Flat, HUD_SPRITE_OT_DEPTH);
 }

@@ -1,3 +1,4 @@
+#include <array>
 #include <kf/platform/prelude.h>
 #include <algorithm>
 #include <cstdlib>
@@ -40,7 +41,7 @@ enum {
     ACTOR_SPAWNER_POPULATION_LIMIT = 2
 };
 
-KfActorActionProfile actor_action_profiles[KF_ACTOR_ACTION_PROFILE_COUNT] = {
+std::array<KfActorActionProfile, KF_ACTOR_ACTION_PROFILE_COUNT> actor_action_profiles = {{
     {},
     {},
     {},
@@ -66,14 +67,14 @@ KfActorActionProfile actor_action_profiles[KF_ACTOR_ACTION_PROFILE_COUNT] = {
     {9000, 256, 4000, 768, 48},
     {12000, 256, 5500, 768, 32},
     {20000, 256, 6000, 1024, 48},
-};
+}};
 
-SoundRef boss_death_phase_sounds[KF_ACTOR_BOSS_DEATH_SOUND_COUNT] = {
+std::array<SoundRef, KF_ACTOR_BOSS_DEATH_SOUND_COUNT> boss_death_phase_sounds = {{
     {27, 1, 88},
     {27, 2, 88},
     {27, 3, 88},
     {88, 88, 88},
-};
+}};
 
 SoundRef boss_death_loop_sound = {70, 0, 65};
 
@@ -563,7 +564,7 @@ void actor_bind_current(KfActor *actor)
     s32 index;
 
     actor_state.current = actor;
-    index = actor ? actor - actor_state.actors : -1;
+    index = actor ? actor - actor_state.actors.data() : -1;
     actor_state.current_definition = actor ? &actor_state.definitions.entries[actor->definition_id] : nullptr;
     actor_state.current_index = index;
     actor_state.current_definition_id = actor ? actor->definition_id : 0;
@@ -745,7 +746,7 @@ KfActorAction actor_try_select_profiled_action(KfActorAction action, s32 distanc
         return KF_ACTOR_ACTION_NONE;
     }
     if (profile == KF_EFFECT_KIND_ACTOR_SPAWNER) {
-        candidate = actor_state.actors;
+        candidate = actor_state.actors.data();
         count = 0;
         index = KF_ACTOR_CAPACITY - 1;
         do {
@@ -755,7 +756,7 @@ KfActorAction actor_try_select_profiled_action(KfActorAction action, s32 distanc
             }
             candidate++;
         } while (--index != -1);
-        record = effect_state.records;
+        record = effect_state.records.data();
         index = KF_EFFECT_CAPACITY - 1;
         do {
             if (record->type != KF_EFFECT_SLOT_FREE

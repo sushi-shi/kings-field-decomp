@@ -19,7 +19,6 @@ inline constexpr int KF_ANGLE_HALF_TURN = 0x800;
 inline constexpr int KF_ANGLE_THREE_QUARTER_TURN = 0xc00;
 inline constexpr int KF_ANGLE_FULL_TURN = 0x1000;
 inline constexpr int KF_ANGLE_WRAP_MASK = 0xfff;
-inline constexpr int KF_MATRIX_ROTATION_ELEMENTS = 9;
 inline constexpr int KF_LENGTH_SQUARE_DOWNSHIFT = 3;
 
 inline constexpr int KF_RANDOM_ANGLE_SHIFT = 3;

@@ -1,6 +1,7 @@
 #ifndef KF_GAME_MENU_H
 #define KF_GAME_MENU_H
 
+#include <array>
 #include <kf/game/save.h>
 #include <span>
 #include <kf/lib/item.h>
@@ -223,7 +224,7 @@ enum {
 };
 
 typedef struct MenuGlyphRow {
-    s16 codes[MENU_GLYPHS_PER_ROW];
+    std::array<s16, MENU_GLYPHS_PER_ROW> codes;
 } MenuGlyphRow;
 
 typedef struct MenuGlyphString {
@@ -233,7 +234,7 @@ typedef struct MenuGlyphString {
 
 typedef struct MenuWindowLayout {
     MenuGlyphString title;
-    MenuGlyphString rows[MENU_WINDOW_ROW_CAPACITY];
+    std::array<MenuGlyphString, MENU_WINDOW_ROW_CAPACITY> rows;
 } MenuWindowLayout;
 
 typedef struct MenuSpriteDef {
@@ -266,10 +267,10 @@ enum {
 };
 
 typedef struct KfMenuAssets {
-    kf::DrawFace background_quads[KF_DISPLAY_BUFFER_COUNT][MENU_BACKGROUND_QUAD_COUNT];
-    kf::DrawFace magic_artwork_quads[KF_DISPLAY_BUFFER_COUNT];
-    kf::DrawFace message_image_quads[KF_DISPLAY_BUFFER_COUNT];
-    kf::DrawFace dialog_quads[KF_DISPLAY_BUFFER_COUNT][MENU_DIALOG_QUAD_COUNT];
+    std::array<std::array<kf::DrawFace, MENU_BACKGROUND_QUAD_COUNT>, KF_DISPLAY_BUFFER_COUNT> background_quads;
+    std::array<kf::DrawFace, KF_DISPLAY_BUFFER_COUNT> magic_artwork_quads;
+    std::array<kf::DrawFace, KF_DISPLAY_BUFFER_COUNT> message_image_quads;
+    std::array<std::array<kf::DrawFace, MENU_DIALOG_QUAD_COUNT>, KF_DISPLAY_BUFFER_COUNT> dialog_quads;
     MenuSpriteDef number_atlas;
     MenuSpriteDef glyph_atlas;
     MenuTileSprite window_backdrop;
@@ -277,7 +278,7 @@ typedef struct KfMenuAssets {
     MenuSpriteDef option_highlight;
     MenuSpriteDef row_background;
     MenuSpriteDef row_confirmed_background;
-    MenuTileSprite list_tiles[MENU_LIST_TILE_COUNT];
+    std::array<MenuTileSprite, MENU_LIST_TILE_COUNT> list_tiles;
     MenuSpriteDef selection_cursor;
 } KfMenuAssets;
 
@@ -290,9 +291,8 @@ typedef struct KfMenuList {
     u8 scroll_offset;
     u8 selected_index;
     u8 cursor_row;
-    u8 glyphs_per_entry;
-    s16 *glyph_rows;
-    u8 *quantities;
+    std::span<const std::array<s16, MENU_GLYPHS_PER_ROW>> glyph_rows;
+    std::span<const u8> quantities;
 } KfMenuList;
 
 extern void menu_list_previous(KfMenuList *list);
@@ -319,11 +319,11 @@ enum {
 
 extern SVECTOR menu_item_preview_rotation;
 extern KfMenuAssets menu_assets;
-extern MenuWindowLayout menu_window_layouts[KF_MENU_WINDOW_LAYOUT_COUNT];
-extern MenuGlyphRow item_name_rows[KF_ITEM_COUNT];
-extern MenuGlyphRow magic_name_rows[KF_MAGIC_PLAYER_COUNT];
-extern u16 item_buy_prices[KF_ITEM_COUNT][KF_ITEM_SHOP_COUNT];
-extern u16 item_sell_prices[KF_ITEM_COUNT][KF_ITEM_SHOP_COUNT];
+extern std::array<MenuWindowLayout, KF_MENU_WINDOW_LAYOUT_COUNT> menu_window_layouts;
+extern std::array<MenuGlyphRow, KF_ITEM_COUNT> item_name_rows;
+extern std::array<MenuGlyphRow, KF_MAGIC_PLAYER_COUNT> magic_name_rows;
+extern std::array<std::array<u16, KF_ITEM_SHOP_COUNT>, KF_ITEM_COUNT> item_buy_prices;
+extern std::array<std::array<u16, KF_ITEM_SHOP_COUNT>, KF_ITEM_COUNT> item_sell_prices;
 enum class KfMenuModelAllocation : s32 {
     KF_MENU_MODEL_RELEASED = 0,
     KF_MENU_MODEL_ALLOCATED = 1
@@ -359,7 +359,7 @@ extern void menu_draw_two_option(
 extern void menu_draw_window(KfMenuWindowKind window_kind, s32 row_count, s32 highlight_row, KfMenuConfirmState confirmation);
 extern void menu_draw_window_backdrop(void);
 extern void menu_format_number(
-    s32 value, s32 digit_count, KfFormatPaddingMode padding_mode, s16 *out);
+    s32 value, s32 digit_count, KfFormatPaddingMode padding_mode, std::span<s16> out);
 extern void menu_drop_item_panel(void);
 extern u32 menu_enter_mode(KfMenuMode menu_mode);
 extern u32 menu_enter_mode(KfMenuMode menu_mode, KfObjectId item_id);

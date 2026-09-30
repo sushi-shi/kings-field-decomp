@@ -1,3 +1,4 @@
+#include <array>
 #include <kf/platform/prelude.h>
 #include <kf/lib/render_face.h>
 #include <kf/cutscene/render.h>
@@ -9,7 +10,7 @@ SVECTOR cutscene_render_sprite_light_normal = {0, 0, KF_FIXED12_ONE, 0};
 
 void cutscene_render_enqueue_sprite(KfSpriteQuad *sprite, s16 depth_bias, KfSpriteDepthCueMode depth_cue_mode, const MATRIX *lights, const MATRIX *model, const kf::Projection &projection)
 {
-    SVECTOR corners[4];
+    std::array<SVECTOR, 4> corners;
     SVECTOR anchor{};
     s32 depth_cue;
     s32 otz;
@@ -20,7 +21,7 @@ void cutscene_render_enqueue_sprite(KfSpriteQuad *sprite, s16 depth_bias, KfSpri
     corners[2].vy = corners[3].vy = sprite->y + sprite->h;
     corners[0].vz = corners[1].vz = corners[2].vz = corners[3].vz = 0;
     otz = kf::render_project_point(*model, projection, anchor).depth >> KF_GTE_DEPTH_TO_OT_SHIFT;
-    kf::ProjectedPoint positions[4];
+    std::array<kf::ProjectedPoint, 4> positions;
     for (unsigned i = 0; i < 4; ++i)
         positions[i] = kf::render_project_point(*model, projection, corners[i]);
     depth_cue = positions[3].fog;
@@ -41,7 +42,7 @@ void cutscene_render_enqueue_sprite(KfSpriteQuad *sprite, s16 depth_bias, KfSpri
     color = kf::render_light_normal(open_graphics_runtime.render_state.lighting, *lights,
         cutscene_render_sprite_light_normal, open_graphics_runtime.floor_item_state.material.color, depth_cue);
     if (otz + depth_bias >= KF_SCENE_MIN_OT_DEPTH) {
-        render_face_submit(&face, &color, kf::FaceShading::Flat,
+        render_face_submit(&face, {&color, 1}, kf::FaceShading::Flat,
             (otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK);
     }
 }

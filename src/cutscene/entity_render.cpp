@@ -1,3 +1,4 @@
+#include <array>
 #include <kf/platform/prelude.h>
 #include <kf/lib/math.h>
 #include <kf/cutscene/resources.h>
@@ -14,7 +15,7 @@ enum {
     ENDING_ROTATING_MODEL_DEPTH_BIAS = 10000
 };
 
-KfSpriteQuad cutscene_floor_item_sprites[KF_FLOOR_ITEM_SPRITE_COUNT] = {
+std::array<KfSpriteQuad, KF_FLOOR_ITEM_SPRITE_COUNT> cutscene_floor_item_sprites = {{
     {0x90, 0x00, 0x20, 0x20, 0xfe00, 0xfc40, 0x400, 0x400},
     {0xb0, 0x00, 0x20, 0x20, 0xfe00, 0xfc40, 0x400, 0x400},
     {0xd0, 0x00, 0x20, 0x20, 0xfe00, 0xfc40, 0x400, 0x400},
@@ -22,7 +23,7 @@ KfSpriteQuad cutscene_floor_item_sprites[KF_FLOOR_ITEM_SPRITE_COUNT] = {
     {0x90, 0x20, 0x20, 0x27, 0xfe00, 0xfb40, 0x400, 0x500},
     {0xb0, 0x20, 0x20, 0x27, 0xfe00, 0xfb40, 0x400, 0x500},
     {0xd0, 0x20, 0x20, 0x27, 0xfe00, 0xfb40, 0x400, 0x500},
-};
+}};
 
 void opening_entity_render(KfOpeningEntity *entity)
 {
@@ -98,7 +99,7 @@ void opening_render_entities_and_items(void)
     s16 remaining;
 
     tmd_select(cutscene_tmd_context(), KF_TMD_SLOT_ENTITIES);
-    entity = opening_entity_state.entities;
+    entity = opening_entity_state.entities.data();
     for (remaining = KF_OPENING_ENTITY_CAPACITY - 1; remaining != -1; remaining--) {
         if (entity->object_id < KF_OPENING_ENTITY_MODEL_LIMIT) {
             const KfCellWindow *grid = open_graphics_runtime.active_cell_window;
@@ -118,7 +119,7 @@ void opening_render_entities_and_items(void)
     open_graphics_runtime.floor_item_state.material.color.r = open_graphics_runtime.floor_item_state.material.color.g =
         open_graphics_runtime.floor_item_state.material.color.b = KF_FLOOR_ITEM_RENDER_BRIGHTNESS;
     open_graphics_runtime.floor_item_state.material.surface = open_graphics_runtime.floor_item_state.texture;
-    item = open_graphics_runtime.floor_item_state.items;
+    item = open_graphics_runtime.floor_item_state.items.data();
     remaining = open_graphics_runtime.floor_item_state.count;
     while (--remaining != -1) {
         const KfCellWindow *grid = open_graphics_runtime.active_cell_window;

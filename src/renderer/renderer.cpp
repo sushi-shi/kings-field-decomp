@@ -1,3 +1,4 @@
+#include <array>
 #include <kf/renderer/renderer.h>
 #include <GLES3/gl3.h>
 #include <cstdio>
@@ -20,7 +21,7 @@ constexpr GLint shader_texture_raw = 2;
 // Triangles are backend-private: original producers submit whole faces, which
 // are sorted before this representation is constructed.
 struct DrawTriangle {
-    Vertex vertices[3];
+    std::array<Vertex, 3> vertices;
     u32 material;
     BlendMode blend;
     SurfaceKind surface;
@@ -168,8 +169,8 @@ void main() {
     glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA8, render_width, render_height, 0, GL_RGBA, GL_UNSIGNED_BYTE, nullptr);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-    u8 white[] = {color8_max, color8_max, color8_max, color8_max};
-    const Image solid{1, 1, {white, sizeof white, sizeof white}};
+    std::array<u8, 4> white = {{color8_max, color8_max, color8_max, color8_max}};
+    const Image solid{1, 1, {white.data(), white.size(), white.size()}};
     renderer->white_texture = renderer_upload(&solid);
     if (!renderer->white_texture) {
         std::snprintf(error, size, "Cannot create solid-color material.");
@@ -267,7 +268,7 @@ static void renderer_draw(const Renderer *renderer, const DrawList *draws, int w
         }
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, draws->textures[draw->material]);
-        glBufferData(GL_ARRAY_BUFFER, sizeof draw->vertices, draw->vertices, GL_STREAM_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, sizeof draw->vertices, draw->vertices.data(), GL_STREAM_DRAW);
         glUniform1i(texture_mode, draw->surface == SurfaceKind::Solid ? shader_texture_solid :
             draw->color_mode == TextureColorMode::Modulated ? shader_texture_modulated : shader_texture_raw);
         glUniform1i(dither_enabled, draw->dither ? 1 : 0);

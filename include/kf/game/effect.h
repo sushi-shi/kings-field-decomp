@@ -1,6 +1,7 @@
 #ifndef KF_GAME_EFFECT_H
 #define KF_GAME_EFFECT_H
 
+#include <array>
 #include <kf/game/audio.h>
 
 enum {
@@ -271,12 +272,12 @@ typedef struct KfEffectRecord {
 
 typedef struct KfEffectState {
     KfMagicTable magic;
-    KfEffectRecord records[KF_EFFECT_CAPACITY];
+    std::array<KfEffectRecord, KF_EFFECT_CAPACITY> records;
     KfMagicRecord *current_magic;
     KfEffectRecord *current_record;
 } KfEffectState;
 
-extern SVECTOR effect_swing_probe_offsets[KF_EFFECT_SWING_PROBE_COUNT];
+extern std::array<SVECTOR, KF_EFFECT_SWING_PROBE_COUNT> effect_swing_probe_offsets;
 extern KfEffectState effect_state;
 
 enum class KfEffectSoundRequest : s32 {

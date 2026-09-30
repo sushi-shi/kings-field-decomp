@@ -1,3 +1,4 @@
+#include <array>
 #include <kf/platform/prelude.h>
 #include <kf/lib/null.h>
 
@@ -22,7 +23,7 @@ void render_enqueue_unlit_triangles(u16 object_index, s16 depth_bias)
                 continue;
             }
             auto face = projected->draw_face();
-            CVECTOR colors[4] {};
+            std::array<CVECTOR, 4> colors {};
             face.material = render_texture_material(p.texture_page, p.palette);
             render_face_uvs(face, {p.uv[0], p.uv[1], p.uv[2]});
             colors[0] = {open_graphics_runtime.floor_item_state.material.color.r, open_graphics_runtime.floor_item_state.material.color.g, open_graphics_runtime.floor_item_state.material.color.b, 0};
@@ -41,7 +42,7 @@ void render_enqueue_unlit_triangles(u16 object_index, s16 depth_bias)
                 continue;
             }
             auto face = projected->draw_face();
-            CVECTOR colors[4] {};
+            std::array<CVECTOR, 4> colors {};
             colors[0] = {p.color.r, p.color.g, p.color.b, 0};
             depth = projected->ordering_depth() + depth_bias;
             if (depth >= KF_SCENE_MIN_OT_DEPTH) {

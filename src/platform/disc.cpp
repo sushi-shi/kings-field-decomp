@@ -17,7 +17,7 @@ static constexpr unsigned cue_line_capacity = 1024;
 static constexpr unsigned disc_path_capacity = 4096;
 static constexpr std::size_t cue_file_capacity = 65536;
 static constexpr unsigned ascii_first_printable = 32;
-bool disc_cue_image(const char *text, char *filename, std::size_t capacity) {
+bool disc_cue_image(const char *text, std::span<char> filename) {
     bool file = false, track = false, index = false;
     while (*text) {
         const char *end = std::strchr(text, '\n');
@@ -28,19 +28,19 @@ bool disc_cue_image(const char *text, char *filename, std::size_t capacity) {
         const char *tail = end;
         while (tail > text && std::isspace(static_cast<unsigned char>(tail[-1])))
             --tail;
-        char line[cue_line_capacity];
+        std::array<char, cue_line_capacity> line;
         const auto length = static_cast<std::size_t>(tail - text);
-        if (length >= sizeof line)
+        if (length >= line.size())
             return false;
-        std::memcpy(line, text, length);
+        std::memcpy(line.data(), text, length);
         line[length] = 0;
         text = *end ? end + 1 : end;
-        if (!length || std::strncmp(line, "REM ", 4) == 0)
+        if (!length || std::strncmp(line.data(), "REM ", 4) == 0)
             continue;
-        if (std::strncmp(line, "FILE ", 5) == 0) {
+        if (std::strncmp(line.data(), "FILE ", 5) == 0) {
             if (file || track || index)
                 return false;
-            const char *name = line + 5;
+            const char *name = line.data() + 5;
             while (*name == ' ' || *name == '\t')
                 ++name;
             const bool quoted = *name == '"';
@@ -55,23 +55,23 @@ bool disc_cue_image(const char *text, char *filename, std::size_t capacity) {
                 return false;
             while (*kind == ' ' || *kind == '\t')
                 ++kind;
-            if (std::strcmp(kind, "BINARY") != 0 || name_size >= capacity)
+            if (std::strcmp(kind, "BINARY") != 0 || name_size >= filename.size())
                 return false;
             // Only a sibling file: never resolve absolute paths or traversal.
             for (const char *at = name; at != name_end; ++at)
                 if (*at == '/' || *at == '\\' || *at == ':' ||
                     static_cast<unsigned char>(*at) < ascii_first_printable)
                     return false;
-            std::memcpy(filename, name, name_size);
+            std::memcpy(filename.data(), name, name_size);
             filename[name_size] = 0;
-            if (std::strcmp(filename, ".") == 0 || std::strcmp(filename, "..") == 0)
+            if (std::strcmp(filename.data(), ".") == 0 || std::strcmp(filename.data(), "..") == 0)
                 return false;
             file = true;
-        } else if (std::strcmp(line, "TRACK 01 MODE2/2352") == 0) {
+        } else if (std::strcmp(line.data(), "TRACK 01 MODE2/2352") == 0) {
             if (!file || track || index)
                 return false;
             track = true;
-        } else if (std::strcmp(line, "INDEX 01 00:00:00") == 0) {
+        } else if (std::strcmp(line.data(), "INDEX 01 00:00:00") == 0) {
             if (!track || index)
                 return false;
             index = true;
@@ -121,11 +121,11 @@ static FILE *open_disc(const char *source, std::size_t *size) {
     bool ok = buffer_resize(&cue, *size + 1) && std::fread(cue.data, 1, *size, file) == *size;
     if (std::fclose(file) != 0)
         ok = false;
-    char name[cue_line_capacity];
+    std::array<char, cue_line_capacity> name;
     if (ok) {
         cue.data[*size] = 0;
         ok = !std::memchr(cue.data, 0, *size) &&
-            disc_cue_image(reinterpret_cast<const char *>(cue.data), name, sizeof name);
+            disc_cue_image(reinterpret_cast<const char *>(cue.data), name);
     }
     buffer_release(&cue);
     if (!ok) {
@@ -134,21 +134,20 @@ static FILE *open_disc(const char *source, std::size_t *size) {
     }
     const char *slash = std::strrchr(source, '/');
     const auto prefix = slash ? static_cast<std::size_t>(slash + 1 - source) : 0;
-    char path[disc_path_capacity];
-    if (prefix + std::strlen(name) >= sizeof path)
+    std::array<char, disc_path_capacity> path;
+    if (prefix + std::strlen(name.data()) >= path.size())
         return nullptr;
-    std::memcpy(path, source, prefix);
-    std::strcpy(path + prefix, name);
-    return open_image(path, size);
+    std::memcpy(path.data(), source, prefix);
+    std::strcpy(path.data() + prefix, name.data());
+    return open_image(path.data(), size);
 }
 
 static bool write_asset(int root, const Asset &asset) {
-    char path[sizeof asset.path];
-    std::memcpy(path, asset.path, sizeof path);
+    auto path = asset.path;
     int directory = ::dup(root);
     if (directory < 0)
         return false;
-    char *name = path;
+    char *name = path.data();
     while (char *slash = std::strchr(name, '/')) {
         *slash = 0;
         if (::mkdirat(directory, name, S_IRWXU) != 0 && errno != EEXIST) {
@@ -230,7 +229,7 @@ bool disc_extract(const char *source, const char *destination, Language language
     if (std::fclose(file) != 0)
         ok = false;
     if (!ok)
-        std::fprintf(stderr, "%s\n", importer->message);
+        std::fprintf(stderr, "%s\n", importer->message.data());
     if (ok)
         ok = write_resource_tree(destination, importer->assets, language);
     disc_import_release(importer);
@@ -260,10 +259,10 @@ static bool read_resource_tree(int root, const char *prefix, AssetTable *assets,
         }
         if (std::strcmp(entry->d_name, ".") == 0 || std::strcmp(entry->d_name, "..") == 0)
             continue;
-        char path[128], normalized[128];
-        const int length = std::snprintf(path, sizeof path, "%s%s", prefix, entry->d_name);
-        if (length < 0 || static_cast<std::size_t>(length) >= sizeof path - 1 ||
-            !asset_path(normalized, sizeof normalized, path) || std::strcmp(path, normalized) != 0) {
+        std::array<char, asset_path_capacity> path, normalized;
+        const int length = std::snprintf(path.data(), path.size(), "%s%s", prefix, entry->d_name);
+        if (length < 0 || static_cast<std::size_t>(length) >= path.size() - 1 ||
+            !asset_path(normalized, path.data()) || std::strcmp(path.data(), normalized.data()) != 0) {
             ok = false;
             break;
         }
@@ -278,7 +277,7 @@ static bool read_resource_tree(int root, const char *prefix, AssetTable *assets,
         if (ok && S_ISDIR(info.st_mode)) {
             path[length] = '/';
             path[length + 1] = 0;
-            ok = read_resource_tree(child, path, assets, total, directories);
+            ok = read_resource_tree(child, path.data(), assets, total, directories);
         } else if (ok && S_ISREG(info.st_mode) && info.st_size >= 0 &&
                    info.st_size <= 16 * 1024 * 1024 && assets->count < 428 &&
                    static_cast<std::uint64_t>(info.st_size) <= disc_import_limit - *total) {
@@ -297,7 +296,7 @@ static bool read_resource_tree(int root, const char *prefix, AssetTable *assets,
                 ok = ::read(child, &extra, 1) == 0;
             *total += bytes.size;
             if (ok)
-                ok = assets_append(assets, path, &bytes);
+                ok = assets_append(assets, path.data(), &bytes);
             buffer_release(&bytes);
         } else {
             ok = false;

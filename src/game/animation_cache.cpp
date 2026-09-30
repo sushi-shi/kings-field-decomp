@@ -196,16 +196,16 @@ bool render_bind_instance_vertices(
     record->clip_index = clip_index;
     record->keyframe_index = keyframe_index;
 
-    copy_vertices(game_graphics_runtime.morph_scratch, record->cached_vertices, vertex_count);
-    morph_add_deltas(game_graphics_runtime.morph_scratch, vertex_count, record->rest_morph, blend_fraction);
-    tmd_set_current_vertices(tmd_context(), game_graphics_runtime.morph_scratch);
+    copy_vertices(game_graphics_runtime.morph_scratch.data(), record->cached_vertices, vertex_count);
+    morph_add_deltas(game_graphics_runtime.morph_scratch.data(), vertex_count, record->rest_morph, blend_fraction);
+    tmd_set_current_vertices(tmd_context(), game_graphics_runtime.morph_scratch.data());
     record->state = KF_ANIMATION_CACHE_LIVE;
     return true;
 }
 
 void animation_cache_reset(void)
 {
-    KfAnimationCacheRecord *record = game_graphics_runtime.animation_cache_records;
+    KfAnimationCacheRecord *record = game_graphics_runtime.animation_cache_records.data();
     u16 records_left = KF_ANIMATION_CACHE_CAPACITY;
 
     do {
@@ -217,7 +217,7 @@ void animation_cache_reset(void)
 
 void animation_cache_mark_stale(void)
 {
-    KfAnimationCacheRecord *record = game_graphics_runtime.animation_cache_records;
+    KfAnimationCacheRecord *record = game_graphics_runtime.animation_cache_records.data();
     u16 records_left = KF_ANIMATION_CACHE_CAPACITY;
 
     do {
@@ -240,7 +240,7 @@ void animation_cache_release(KfAnimationCacheRecord *record)
 
 void animation_cache_release_all(void)
 {
-    KfAnimationCacheRecord *record = game_graphics_runtime.animation_cache_records;
+    KfAnimationCacheRecord *record = game_graphics_runtime.animation_cache_records.data();
     s16 records_left;
 
     for (records_left = KF_ANIMATION_CACHE_CAPACITY - 1; records_left != -1; records_left--) {
@@ -253,7 +253,7 @@ void animation_cache_release_all(void)
 
 void animation_cache_release_stale(void)
 {
-    KfAnimationCacheRecord *record = game_graphics_runtime.animation_cache_records;
+    KfAnimationCacheRecord *record = game_graphics_runtime.animation_cache_records.data();
     u16 records_left = KF_ANIMATION_CACHE_CAPACITY;
 
     do {
@@ -266,7 +266,7 @@ void animation_cache_release_stale(void)
 
 KfAnimationCacheRecord *animation_cache_allocate(void)
 {
-    KfAnimationCacheRecord *record = game_graphics_runtime.animation_cache_records;
+    KfAnimationCacheRecord *record = game_graphics_runtime.animation_cache_records.data();
     u16 records_left = KF_ANIMATION_CACHE_CAPACITY;
 
     do {

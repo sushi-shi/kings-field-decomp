@@ -1,3 +1,4 @@
+#include <array>
 #include <kf/platform/prelude.h>
 #include <kf/lib/null.h>
 
@@ -15,11 +16,10 @@ enum {
 KfMagicPanelResult menu_magic_panel(void)
 {
     KfMenuList ctx;
-    s16 labels[MENU_MAGIC_LABEL_CAPACITY][MENU_GLYPHS_PER_ROW];
-    KfEffectKind magic_ids[MENU_MAGIC_ENTRY_CAPACITY];
+    std::array<std::array<s16, MENU_GLYPHS_PER_ROW>, MENU_MAGIC_LABEL_CAPACITY> labels;
+    std::array<KfEffectKind, MENU_MAGIC_ENTRY_CAPACITY> magic_ids;
     s32 found;
     s32 magic_id;
-    s32 j;
     KfMenuConfirmState confirm = KF_MENU_CONFIRM_IDLE;
     s32 input = 0;
     s32 prev;
@@ -31,16 +31,14 @@ KfMagicPanelResult menu_magic_panel(void)
     found = 0;
     for (magic_id = kf_enum_encode<s32>(KF_MAGIC_HEALING); magic_id < kf_enum_encode<s32>(KF_MAGIC_LIGHTNING_BOLT); magic_id++) {
         if (effect_state.magic.entries[magic_id].learned == KF_MAGIC_LEARNED) {
-            for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)
-                labels[found][j] = magic_name_rows[magic_id].codes[j];
+            labels[found] = magic_name_rows[magic_id].codes;
             magic_ids[found] = kf_enum_decode<KfEffectKind>(magic_id);
             found++;
         }
     }
     ctx.entry_count = found;
-    ctx.glyphs_per_entry = MENU_GLYPHS_PER_ROW;
-    ctx.glyph_rows = &labels[0][0];
-    ctx.quantities = NULL;
+    ctx.glyph_rows = labels;
+    ctx.quantities = {};
 
     menu_frame_begin();
     if (ctx.entry_count != 0) {

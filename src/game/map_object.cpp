@@ -1,3 +1,4 @@
+#include <array>
 #include <kf/platform/prelude.h>
 #include <kf/game/audio.h>
 #include <kf/lib/random.h>
@@ -47,7 +48,7 @@ static constexpr u32 MAP_EMITTER_VELOCITY_NUMERATOR = 175u;
 static constexpr u32 MAP_FIRE_BALL_EMITTER_VELOCITY_NUMERATOR = 25u;
 static constexpr u32 MAP_BOSS_EMITTER_VELOCITY_NUMERATOR = 225u;
 
-SoundRef gameplay_sound_refs[KF_GAMEPLAY_SOUND_COUNT] = {
+std::array<SoundRef, KF_GAMEPLAY_SOUND_COUNT> gameplay_sound_refs = {{
     {9, 0, 72},
     {10, 0, 77},
     {11, 0, 60},
@@ -61,7 +62,7 @@ SoundRef gameplay_sound_refs[KF_GAMEPLAY_SOUND_COUNT] = {
     {60, 0, 44},
     {27, 0, 65},
     {15, 0, 71}
-};
+}};
 
 s32 map_object_pool_find_interaction_from(s32 start_index, s32 point_x, s32 point_z, s32 radius_padding)
 {

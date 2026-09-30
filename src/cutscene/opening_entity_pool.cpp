@@ -1,3 +1,4 @@
+#include <span>
 #include <kf/platform/prelude.h>
 #include <kf/lib/null.h>
 
@@ -19,11 +20,13 @@ void opening_entity_pool_reset(void)
 }
 
 KfOpeningEntity *opening_entity_find_by_object_id(
-    KfOpeningEntity *entities, KfOpeningModelId object_id)
+    std::span<KfOpeningEntity> entities, KfOpeningModelId object_id)
 {
-    for (auto *entity = entities; entity->object_id != KF_OPENING_ENTITY_FREE; entity++) {
-        if (entity->object_id == object_id) {
-            return entity;
+    for (auto &entity : entities) {
+        if (entity.object_id == KF_OPENING_ENTITY_FREE)
+            break;
+        if (entity.object_id == object_id) {
+            return &entity;
         }
     }
     return NULL;

@@ -1,6 +1,7 @@
 #ifndef KF_GAME_PLAYER_H
 #define KF_GAME_PLAYER_H
 
+#include <array>
 #include <kf/game/combat.h>
 #include <kf/game/audio.h>
 #include <kf/lib/enum.h>
@@ -122,7 +123,7 @@ typedef struct KfPlayerState {
     u16 piercing_attack;
     u16 holy_attack;
     u16 fire_attack;
-    u8 unknown_3a[2];
+    std::array<u8, 2> unknown_3a;
     u16 cutting_defense;
     u16 striking_defense;
     u16 piercing_defense;
@@ -135,22 +136,22 @@ typedef struct KfPlayerState {
     s16 slowed_timer;
     s16 fire_defense_timer;
     s16 illusion_staff_timer;
-    u8 unknown_54[4];
+    std::array<u8, 4> unknown_54;
     u32 equipment_effect_ticks;
     KfEffectKind selected_magic_id;
-    u8 unknown_5d[3];
+    std::array<u8, 3> unknown_5d;
     KfMagicRecord *selected_magic_record;
     KfObjectId equipped_weapon_id;
-    u8 unknown_65[3];
+    std::array<u8, 3> unknown_65;
     KfWeaponRecord *equipped_weapon_record;
     struct KfAssetHeader *weapon_asset_buffer;
     s16 weapon_attack_phase;
-    u8 unknown_72[2];
+    std::array<u8, 2> unknown_72;
     struct KfAnimationCacheRecord *weapon_animation_cache;
     u8 weapon_magic_shots_remaining;
     u8 weapon_magic_delay;
     KfWeaponAttackCharge weapon_attack_fully_charged;
-    u8 unknown_7b[1];
+    std::array<u8, 1> unknown_7b;
     KfArmorRecord *equipped_head_armor_record;
     KfArmorRecord *equipped_body_armor_record;
     KfArmorRecord *equipped_shield_record;
@@ -174,14 +175,14 @@ typedef struct KfPlayerState {
     SVECTOR camera_rotation;
     KfPlayerMotionState motion_state;
     KfMapCellCoordinates previous_map_cell;
-    u8 unknown_ce[6];
+    std::array<u8, 6> unknown_ce;
     s16 view_bob_offset;
     u16 view_bob_phase;
     u16 death_camera_pitch_step;
     s16 death_visual_blend;
     s16 vertical_velocity;
     KfPlayerVerticalState vertical_state;
-    u8 unknown_df[1];
+    std::array<u8, 1> unknown_df;
 } KfPlayerState;
 
 typedef struct KfFloorEntryCell {
@@ -189,11 +190,11 @@ typedef struct KfFloorEntryCell {
     u8 z;
 } KfFloorEntryCell;
 
-extern SoundRef player_sound_refs[KF_PLAYER_SOUND_COUNT];
-extern KfFloorEntryCell floor_entry_cells[KF_PLAYER_FLOOR_ENTRY_COUNT];
+extern std::array<SoundRef, KF_PLAYER_SOUND_COUNT> player_sound_refs;
+extern std::array<KfFloorEntryCell, KF_PLAYER_FLOOR_ENTRY_COUNT> floor_entry_cells;
 extern MATRIX player_death_saved_color_matrix;
 extern s32 player_death_saved_fog_near;
-extern KfPlayerLevelGrowth player_level_growth_table[KF_PLAYER_LEVEL_GROWTH_COUNT];
+extern std::array<KfPlayerLevelGrowth, KF_PLAYER_LEVEL_GROWTH_COUNT> player_level_growth_table;
 extern VECTOR player_position_snapshot;
 extern SVECTOR player_rotation_snapshot;
 extern KfPlayerState player_state;

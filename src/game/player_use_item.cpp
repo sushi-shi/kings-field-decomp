@@ -1,3 +1,4 @@
+#include <array>
 #include <kf/platform/prelude.h>
 #include <kf/game/audio.h>
 #include <kf/lib/null.h>
@@ -25,9 +26,9 @@ enum {
     PLAYER_HARP_FLOOR3_HOLD_COUNTDOWN = 270
 };
 
-char enemy_info_image_path_template[enemy_image_path_capacity] = "ENE0/EI00.TIM";
+std::array<char, enemy_image_path_capacity> enemy_info_image_path_template = {"ENE0/EI00.TIM"};
 
-char person_image_path_template[person_image_path_capacity] = "PRSN/PER00.TIM";
+std::array<char, person_image_path_capacity> person_image_path_template = {"PRSN/PER00.TIM"};
 
 void actor_show_info_image(const KfActor *actor)
 {
@@ -36,7 +37,7 @@ void actor_show_info_image(const KfActor *actor)
     enemy_info_image_path_template[3] = '0' + kf_enum_encode<u8>(player_state.progress_state.current_floor);
     enemy_info_image_path_template[enemy_image_number_offset] = '0' + actor->definition_id / 10;
     enemy_info_image_path_template[enemy_image_number_offset + 1] = '0' + actor->definition_id % 10;
-    screen_show_image_until_input(enemy_info_image_path_template);
+    screen_show_image_until_input(enemy_info_image_path_template.data());
 }
 
 void map_event_show_person_image(const KfMapEvent *event)
@@ -45,7 +46,7 @@ void map_event_show_person_image(const KfMapEvent *event)
     render_frame(NULL, NULL);
     person_image_path_template[person_image_number_offset] = '0' + kf_enum_encode<u8>(event->character_id) / 10;
     person_image_path_template[person_image_number_offset + 1] = '0' + kf_enum_encode<u8>(event->character_id) % 10;
-    screen_show_image_until_input(person_image_path_template);
+    screen_show_image_until_input(person_image_path_template.data());
 }
 
 void player_use_item(KfObjectId item_id)
@@ -139,7 +140,7 @@ void player_use_item(KfObjectId item_id)
         }
         break;
     case KF_ITEM_HARP:
-        record = effect_state.records;
+        record = effect_state.records.data();
         for (slot = KF_EFFECT_CAPACITY - 1; slot != -1; slot--, record++) {
             if (record->type == KF_EFFECT_SLOT_FREE) {
                 continue;

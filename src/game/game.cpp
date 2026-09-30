@@ -23,11 +23,11 @@ GameResult game_result;
 void game_main_loop(void)
 {
     kf::language_apply_pending();
-    memset((void *)&game_graphics_runtime, 0, sizeof game_graphics_runtime);
-    memset((void *)&actor_state, 0, sizeof actor_state);
-    memset((void *)&map_object_state, 0, sizeof map_object_state);
+    game_graphics_runtime = {};
+    actor_state = {};
+    map_object_state = {};
     effect_state = {};
-    memset((void *)map_runtime_state.events, 0, sizeof map_runtime_state.events);
+    map_runtime_state.events = {};
     player_state = {};
     memory_set_allocation_mode(memory_arena, KF_MEMORY_CREATE_ARENA);
     audio_initialize();
