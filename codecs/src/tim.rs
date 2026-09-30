@@ -1,4 +1,5 @@
-use crate::bytes;
+use crate::bytes::{self, read_u32_le, span, ReadError};
+use crate::cast::AsUsize;
 use core::fmt;
 
 pub const TIM_MAGIC: u32 = 0x10;
@@ -18,10 +19,10 @@ const BLOCK_RECTANGLE_Y_OFFSET: usize = 6;
 const BLOCK_RECTANGLE_WIDTH_OFFSET: usize = 8;
 const BLOCK_RECTANGLE_HEIGHT_OFFSET: usize = 10;
 
-
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum TimError {
     Truncated {
+        location: &'static core::panic::Location<'static>,
         at: usize,
         need: usize,
         available: usize,
@@ -35,6 +36,17 @@ pub enum TimError {
         width: i16,
         height: i16,
     },
+}
+
+impl From<ReadError> for TimError {
+    fn from(error: ReadError) -> Self {
+        Self::Truncated {
+            location: error.location,
+            at: error.at,
+            need: error.need,
+            available: error.available,
+        }
+    }
 }
 
 impl fmt::Display for TimError {
@@ -61,7 +73,7 @@ impl Rect {
                 .chunks_exact_mut(2)
                 .zip([self.x, self.y, self.width, self.height])
         {
-            destination.copy_from_slice(bytemuck::bytes_of(&value.to_le()));
+            destination.copy_from_slice(&value.to_le_bytes());
         }
         bytes
     }
@@ -106,14 +118,13 @@ impl TimImageDescriptor {
             self.image_rectangle,
             self.image_data,
         ]) {
-            destination.copy_from_slice(bytemuck::bytes_of(&word.to_le()));
+            destination.copy_from_slice(&word.to_le_bytes());
         }
         bytes
     }
 }
 
 impl Image<'_> {
-
     pub fn psx_descriptor(&self, stream_address: u32) -> TimImageDescriptor {
         let address = |offset: usize| stream_address.wrapping_add(offset as u32);
         TimImageDescriptor {
@@ -150,12 +161,12 @@ impl<'a> Images<'a> {
     }
 
     fn parse_next(&mut self) -> Result<Option<Image<'a>>, TimError> {
-        if self.bytes.len() - self.at < 4 || u32_at(self.bytes, self.at)? != TIM_MAGIC {
+        if self.bytes.len() - self.at < 4 || read_u32_le(self.bytes, self.at)? != TIM_MAGIC {
             self.stopped = true;
             return Ok(None);
         }
         let start = self.at;
-        let mode = u32_at(self.bytes, start + TIM_MODE_OFFSET)?;
+        let mode = read_u32_le(self.bytes, start + TIM_MODE_OFFSET)?;
         let mut cursor = start + TIM_HEADER_BYTES;
         let clut = if mode & TIM_CLUT_FLAG != 0 {
             Some(block(self.bytes, &mut cursor)?)
@@ -192,33 +203,15 @@ impl<'a> Iterator for Images<'a> {
     }
 }
 
-fn span(bytes: &[u8], at: usize, size: usize) -> Result<&[u8], TimError> {
-    bytes::span(bytes, at, size)
-        .ok_or(TimError::Truncated {
-            at,
-            need: size,
-            available: bytes.len().saturating_sub(at),
-        })
-}
-
-fn u32_at(bytes: &[u8], at: usize) -> Result<u32, TimError> {
-    bytes::read_u32_le(bytes, at).ok_or(TimError::Truncated {
-        at,
-        need: 4,
-        available: bytes.len().saturating_sub(at),
-    })
-}
-
 fn block<'a>(bytes: &'a [u8], cursor: &mut usize) -> Result<ImageBlock<'a>, TimError> {
     let at = *cursor;
-    let declared = u32_at(bytes, at)?;
-    let size =
-        usize::try_from(declared & !BLOCK_SIZE_LOW_BITS).map_err(|_| TimError::InvalidBlockSize { at, declared })?;
+    let declared = read_u32_le(bytes, at)?;
+    let size = (declared & !BLOCK_SIZE_LOW_BITS).as_usize();
     if size < BLOCK_HEADER_BYTES {
         return Err(TimError::InvalidBlockSize { at, declared });
     }
     let encoded = span(bytes, at, size)?;
-    let half = |offset| bytes::read_u16_le(encoded, offset).expect("validated TIM rectangle") as i16;
+    let half = |offset| bytes::read_i16_le(encoded, offset).expect("validated TIM rectangle");
     let rectangle = Rect {
         x: half(BLOCK_RECTANGLE_X_OFFSET),
         y: half(BLOCK_RECTANGLE_Y_OFFSET),

@@ -1,10 +1,10 @@
 #include <kf/platform/prelude.h>
-#include <kf/lib/null.h>
-#include <kf/lib/bool.h>
-
+#include <kf/cutscene/resources.h>
 #include <kf/lib/map_data.h>
 #include <kf/lib/math.h>
-#include <kf/cutscene/resources.h>
+#include <kf/lib/null.h>
+
+#include <span>
 
 KfOpeningEntityState opening_entity_state;
 
@@ -20,11 +20,13 @@ void opening_entity_pool_reset(void)
 }
 
 KfOpeningEntity *opening_entity_find_by_object_id(
-    KfOpeningEntity *entities, KfOpeningModelId object_id)
+    std::span<KfOpeningEntity> entities, KfOpeningModelId object_id)
 {
-    for (auto *entity = entities; entity->object_id != KF_OPENING_ENTITY_FREE; entity++) {
-        if (entity->object_id == object_id) {
-            return entity;
+    for (auto &entity : entities) {
+        if (entity.object_id == KF_OPENING_ENTITY_FREE)
+            break;
+        if (entity.object_id == object_id) {
+            return &entity;
         }
     }
     return NULL;
@@ -33,7 +35,7 @@ KfOpeningEntity *opening_entity_find_by_object_id(
 void opening_entity_pool_load_placements(
     KfResourceChunk placements, s32 base_y)
 {
-    KfBool16 exhausted = false;
+    bool exhausted = false;
 
     for (auto &entity : opening_entity_state.entities) {
         if (!exhausted && placements.size == 0)

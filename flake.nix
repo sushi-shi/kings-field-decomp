@@ -39,17 +39,23 @@
       cargoDeps = pkgs.rustPlatform.importCargoLock {
         lockFile = ./codecs/Cargo.lock;
       };
-      cargoConfig = pkgs.writeText "kings-field-cargo-config.toml" ''
+      browserCargoDeps = pkgs.symlinkJoin {
+        name = "kings-field-browser-cargo-deps";
+        paths = [ cargoDeps (pkgs.rustPlatform.importCargoLock {
+          lockFile = "${pkgs.rustPlatform.rustLibSrc}/Cargo.lock";
+        }) ];
+      };
+      cargoConfig = deps: pkgs.writeText "kings-field-cargo-config.toml" ''
         [source.crates-io]
         replace-with = "nix-vendor"
         [source.nix-vendor]
-        directory = "${cargoDeps}"
+        directory = "${deps}"
       '';
-      cargoEnvironment = ''
+      cargoEnvironment = deps: ''
         export CARGO_NET_OFFLINE=true
         export CARGO_HOME="$TMPDIR/kings-field-cargo"
         mkdir -p "$CARGO_HOME"
-        cp ${cargoConfig} "$CARGO_HOME/config.toml"
+        cp ${cargoConfig deps} "$CARGO_HOME/config.toml"
       '';
       unwrapped = pkgs.clangStdenv.mkDerivation {
         pname = "kings-field";
@@ -58,7 +64,7 @@
         nativeBuildInputs = nativeTools;
         buildInputs = nativeLibraries;
         cmakeFlags = [ "-DKF_ENGLISH_PATCH=${englishDelta}" ];
-        preBuild = cargoEnvironment;
+        preBuild = cargoEnvironment cargoDeps;
         meta = {
           description = "King's Field direct source port (requires original Japanese disc data)";
           mainProgram = "kings-field";
@@ -123,7 +129,7 @@
           chmod -R u+w source
           cd source
           bash codecs/bindings.sh --check
-          ${cargoEnvironment}
+          ${cargoEnvironment cargoDeps}
           cargo clippy --offline --locked --release --manifest-path codecs/Cargo.toml -- \
             -D unfulfilled_lint_expectations
           touch "$out"
@@ -133,7 +139,7 @@
         packages = nativeTools ++ nativeLibraries ++ (with pkgs; [
           emscripten nodejs chromium xvfb-run xdotool imagemagick python3 clippy
         ]);
-        shellHook = cargoEnvironment;
+        shellHook = cargoEnvironment browserCargoDeps;
         KF_SDL_SOURCE = "${pkgs.sdl3.src}";
         KF_RUST_SOURCE = "${pkgs.rustPlatform.rustLibSrc}";
         KF_ENGLISH_PATCH = "${englishDelta}";

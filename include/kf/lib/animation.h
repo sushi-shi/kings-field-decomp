@@ -1,8 +1,8 @@
 #ifndef KF_ANIMATION_H
 #define KF_ANIMATION_H
 
-#include <kf/lib/types.h>
 #include <kf/lib/enum.h>
+#include <kf/lib/types.h>
 
 enum class KfAnimationClip : u8 {
     KF_ANIMATION_CLIP_FIRST = 0,

@@ -1,7 +1,27 @@
 use super::bindings::*;
-use super::{input_valid, output_valid};
+use super::{input_valid, output_valid, report_error};
 use crate::resources;
 use core::slice;
+
+impl From<resources::Error> for KfCodecResult {
+    fn from(error: resources::Error) -> Self {
+        let (location, message, result) = match error {
+            resources::Error::Read(error) => (
+                error.location,
+                c"truncated resource input",
+                KF_CODEC_INVALID,
+            ),
+            resources::Error::Invalid(location) => {
+                (location, c"invalid resource input", KF_CODEC_INVALID)
+            }
+            resources::Error::OutputFull(location) => {
+                (location, c"resource output is full", KF_CODEC_OUTPUT_FULL)
+            }
+        };
+        report_error(location, message);
+        result
+    }
+}
 
 unsafe fn input<'a>(bytes: *const u8, length: usize) -> Result<&'a [u8], KfCodecResult> {
     if !input_valid(bytes, length) {
@@ -29,7 +49,7 @@ pub unsafe extern "C" fn kf_asset_info(
     if !output_valid(info, 1) {
         return KF_CODEC_INVALID;
     }
-    match input(bytes, length).and_then(resources::asset_info) {
+    match input(bytes, length).and_then(|b| resources::asset_info(b).map_err(Into::into)) {
         Ok(value) => {
             info.write(value);
             KF_CODEC_OK
@@ -48,7 +68,9 @@ pub unsafe extern "C" fn kf_animation_measure(
     if !output_valid(sizes, 1) {
         return KF_CODEC_INVALID;
     }
-    match input(bytes, length).and_then(|b| resources::animation(b, vertex_count, None)) {
+    match input(bytes, length)
+        .and_then(|b| resources::animation(b, vertex_count, None).map_err(Into::into))
+    {
         Ok(value) => {
             sizes.write(value);
             KF_CODEC_OK
@@ -77,7 +99,7 @@ pub unsafe extern "C" fn kf_animation_decode(
             indices: output(d.indices, d.capacity.indices)?,
             deltas: output(d.deltas, d.capacity.deltas)?,
         };
-        resources::animation(bytes, vertex_count, Some(out))
+        resources::animation(bytes, vertex_count, Some(out)).map_err(Into::into)
     };
     match decode() {
         Ok(_) => KF_CODEC_OK,
@@ -105,6 +127,7 @@ macro_rules! placement_decoder {
                     limits,
                     output(destination, capacity)?,
                 )
+                .map_err(Into::into)
             };
             match decode() {
                 Ok(n) => {

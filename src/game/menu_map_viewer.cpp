@@ -1,9 +1,10 @@
 #include <kf/platform/prelude.h>
-#include <kf/game/graphics.h>
-
-#include <kf/game/menu.h>
 #include <kf/game/game.h>
+#include <kf/game/graphics.h>
+#include <kf/game/menu.h>
 #include <kf/lib/render_face.h>
+
+#include <array>
 
 static constexpr int MENU_MAP_PIXELS_PER_CELL = 2;
 static constexpr int MENU_MAP_MARKER_SPAN = 4;
@@ -28,7 +29,7 @@ void menu_map_viewer(KfObjectId item_id)
     s32 frame = 0;
     kf::DrawFace background{};
     kf::DrawFace marker{};
-    char path[map_image_path_capacity] = "MAP/M00.";
+    std::array<char, map_image_path_capacity> path = {"MAP/M00."};
     u8 *buffer;
     s32 map_set;
 
@@ -41,7 +42,7 @@ void menu_map_viewer(KfObjectId item_id)
     buffer = game_graphics_runtime.display_state.asset_load_buffer;
     std::size_t image_size;
     if (resource_file_load_into(buffer,
-            game_graphics_runtime.display_state.asset_load_capacity, path, &image_size) != KF_RESOURCE_LOADED)
+            game_graphics_runtime.display_state.asset_load_capacity, path.data(), &image_size) != KF_RESOURCE_LOADED)
         return;
     tim_upload_images(buffer, image_size);
 

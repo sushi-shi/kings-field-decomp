@@ -2,10 +2,12 @@
 #define KF_ANIMATION_CACHE_H
 
 #include <kf/lib/animation.h>
-#include <kf/lib/types.h>
 #include <kf/lib/enum.h>
 #include <kf/lib/geometry_types.h>
 #include <kf/lib/tmd.h>
+#include <kf/lib/types.h>
+
+#include <vector>
 
 enum class KfAnimationCacheState : s16 {
     KF_ANIMATION_CACHE_FREE = 0,
@@ -23,7 +25,7 @@ typedef struct KfAnimationCacheRecord {
     KfAnimationClip clip_index;
     u16 keyframe_index;
     u16 rest_morph;
-    SVECTOR *cached_vertices;
+    std::vector<SVECTOR> cached_vertices;
     struct KfAnimationCacheRecord **owner_slot;
 } KfAnimationCacheRecord;
 

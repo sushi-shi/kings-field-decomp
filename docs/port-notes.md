@@ -115,9 +115,7 @@ rebase deadlines without catch-up steps.
 
 ## Audio and menu quirks
 
-GAME `audio_play_spatial` masks SoundRef byte one with `0x80` then compares to `1`
-(`0x80032e64..0x80032e78`), making the pan-narrowing gain adjustment unreachable.
-A nonzero test changes behavior. GAME `0x80032f8c` masks the tone with `0x0f`;
+GAME `0x80032f8c` masks the tone with `0x0f`;
 OPEN passes the selector unchanged and uses distance gain on its near/equal-pan
 path.
 
@@ -127,6 +125,11 @@ Whole-row replacements can change these labels. Effect update IDs passed to
 
 ## Deliberate behavior corrections
 
+- **Spatial sound panning:** GAME `audio_play_spatial` masks SoundRef byte one
+  with `0x80` then compares to `1` (`0x80032e64..0x80032e78`), so the flagged
+  pan-narrowing adjustment cannot run. Floor-five actor definitions 5–7 set this
+  flag in all three sound references. The port tests the flag for nonzero and
+  applies the existing 36-point panning gain adjustment after distance attenuation.
 - **Jump landing:** GAME compares the collision result's shifted kind with the
   ceiling detail `0xfff1` at `0x80030168..0x80030184`, so its fall-recovery branch
   cannot run. The port checks `Ceiling` directly and resumes gravity.

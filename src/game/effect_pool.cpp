@@ -1,9 +1,8 @@
 #include <kf/platform/prelude.h>
 #include <kf/game/audio.h>
-#include <kf/lib/null.h>
-
 #include <kf/game/effect.h>
 #include <kf/game/game.h>
+#include <kf/lib/null.h>
 
 // These bytes are initialized by retail but have no modeled moonlight consumer.
 static constexpr u8 EFFECT_MOONLIGHT_INITIAL_CONTROL_BYTE = 0xff;

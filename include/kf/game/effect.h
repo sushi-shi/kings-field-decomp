@@ -3,6 +3,8 @@
 
 #include <kf/game/audio.h>
 
+#include <array>
+
 enum {
     KF_EFFECT_PROJECTILE_DEFAULT_SPEED = 600,
     KF_EFFECT_LIGHTNING_SPEED = 800,
@@ -11,9 +13,9 @@ enum {
     KF_EFFECT_ACTOR_TARGET_WIDE_CONE = 0x555
 };
 
+#include <kf/game/magic.h>
 #include <kf/lib/animation.h>
 #include <kf/lib/math.h>
-#include <kf/game/magic.h>
 
 struct KfAnimationCacheRecord;
 struct KfCollisionResult;
@@ -252,7 +254,7 @@ typedef struct KfEffectRecord {
     KfEffectRenderId base_render_id;
     KfEffectRenderId render_id;
     KfAnimationClip animation_clip;
-    KfEnumStorage<KfAudioPlaybackResult, u8> sound_played;
+    KfAudioPlaybackResult sound_played;
     u8 id;
     KfEffectPhase phase;
     KfEffectVisualState visual;
@@ -271,12 +273,12 @@ typedef struct KfEffectRecord {
 
 typedef struct KfEffectState {
     KfMagicTable magic;
-    KfEffectRecord records[KF_EFFECT_CAPACITY];
+    std::array<KfEffectRecord, KF_EFFECT_CAPACITY> records;
     KfMagicRecord *current_magic;
     KfEffectRecord *current_record;
 } KfEffectState;
 
-extern SVECTOR effect_swing_probe_offsets[KF_EFFECT_SWING_PROBE_COUNT];
+extern std::array<SVECTOR, KF_EFFECT_SWING_PROBE_COUNT> effect_swing_probe_offsets;
 extern KfEffectState effect_state;
 
 enum class KfEffectSoundRequest : s32 {

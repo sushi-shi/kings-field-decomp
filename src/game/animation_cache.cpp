@@ -1,16 +1,17 @@
 #include <kf/platform/prelude.h>
-#include <kf/lib/null.h>
-#include <kf/game/graphics.h>
-
-#include <kf/lib/math.h>
-#include <kf/game/asset.h>
-#include <kf/game/render.h>
-#include <kf/lib/memory.h>
 #include <kf/game/animation_cache.h>
+#include <kf/game/asset.h>
+#include <kf/game/graphics.h>
+#include <kf/game/render.h>
 #include <kf/lib/geometry_types.h>
-#include <cstdlib>
+#include <kf/lib/math.h>
+#include <kf/lib/memory.h>
+#include <kf/lib/null.h>
+
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
+#include <new>
 
 static void morph_add_deltas(SVECTOR *vertices, const KfAnimationData &animation,
     u16 morph_index, u16 blend)
@@ -66,9 +67,15 @@ static void animation_allocate_vertex_cache(KfAnimationCacheRecord *record, KfAn
 {
     record->asset_index = asset_index;
     record->owner_slot = owner_slot;
-    while ((record->cached_vertices = (SVECTOR *)memory_malloc_checked(
-                vertex_count * sizeof(SVECTOR))) == NULL) {
+    try {
+        record->cached_vertices.resize(vertex_count);
+    } catch (const std::bad_alloc &) {
         animation_cache_release_all();
+        try {
+            record->cached_vertices.resize(vertex_count);
+        } catch (const std::bad_alloc &) {
+            kf::host_fail("Cannot allocate animation vertices.");
+        }
     }
     *owner_slot = record;
 }
@@ -116,9 +123,9 @@ bool render_bind_instance_vertices(
 
     if (record->clip_index != clip_index || record->keyframe_index != keyframe_index) {
         tmd_select_object_vertices(tmd_context(), 0);
-        copy_vertices(record->cached_vertices, game_graphics_runtime.current_tmd_vertices, vertex_count);
+        copy_vertices(record->cached_vertices.data(), game_graphics_runtime.current_tmd_vertices, vertex_count);
         for (std::size_t i = 0; i < keyframe.morph_count; ++i)
-            morph_add_deltas(record->cached_vertices, animation,
+            morph_add_deltas(record->cached_vertices.data(), animation,
                 animation.indices[keyframe.first_morph + i], KF_FIXED12_ONE);
         record->rest_morph = keyframe.rest_morph;
     }
@@ -126,28 +133,28 @@ bool render_bind_instance_vertices(
     record->clip_index = clip_index;
     record->keyframe_index = keyframe_index;
 
-    copy_vertices(game_graphics_runtime.morph_scratch, record->cached_vertices, vertex_count);
-    morph_add_deltas(game_graphics_runtime.morph_scratch, animation, record->rest_morph, blend_fraction);
-    tmd_set_current_vertices(tmd_context(), game_graphics_runtime.morph_scratch);
+    copy_vertices(game_graphics_runtime.morph_scratch.data(), record->cached_vertices.data(), vertex_count);
+    morph_add_deltas(game_graphics_runtime.morph_scratch.data(), animation, record->rest_morph, blend_fraction);
+    tmd_set_current_vertices(tmd_context(), game_graphics_runtime.morph_scratch.data());
     record->state = KF_ANIMATION_CACHE_LIVE;
     return true;
 }
 
 void animation_cache_reset(void)
 {
-    KfAnimationCacheRecord *record = game_graphics_runtime.animation_cache_records;
+    KfAnimationCacheRecord *record = game_graphics_runtime.animation_cache_records.data();
     u16 records_left = KF_ANIMATION_CACHE_CAPACITY;
 
     do {
         record->state = KF_ANIMATION_CACHE_FREE;
-        record->cached_vertices = NULL;
+        record->cached_vertices.clear();
         record++;
     } while (--records_left != 0);
 }
 
 void animation_cache_mark_stale(void)
 {
-    KfAnimationCacheRecord *record = game_graphics_runtime.animation_cache_records;
+    KfAnimationCacheRecord *record = game_graphics_runtime.animation_cache_records.data();
     u16 records_left = KF_ANIMATION_CACHE_CAPACITY;
 
     do {
@@ -162,15 +169,12 @@ void animation_cache_release(KfAnimationCacheRecord *record)
 {
     record->state = KF_ANIMATION_CACHE_FREE;
     *record->owner_slot = NULL;
-    if (record->cached_vertices != NULL) {
-        free((void *)record->cached_vertices);
-        record->cached_vertices = NULL;
-    }
+    std::vector<SVECTOR>().swap(record->cached_vertices);
 }
 
 void animation_cache_release_all(void)
 {
-    KfAnimationCacheRecord *record = game_graphics_runtime.animation_cache_records;
+    KfAnimationCacheRecord *record = game_graphics_runtime.animation_cache_records.data();
     s16 records_left;
 
     for (records_left = KF_ANIMATION_CACHE_CAPACITY - 1; records_left != -1; records_left--) {
@@ -183,7 +187,7 @@ void animation_cache_release_all(void)
 
 void animation_cache_release_stale(void)
 {
-    KfAnimationCacheRecord *record = game_graphics_runtime.animation_cache_records;
+    KfAnimationCacheRecord *record = game_graphics_runtime.animation_cache_records.data();
     u16 records_left = KF_ANIMATION_CACHE_CAPACITY;
 
     do {
@@ -196,7 +200,7 @@ void animation_cache_release_stale(void)
 
 KfAnimationCacheRecord *animation_cache_allocate(void)
 {
-    KfAnimationCacheRecord *record = game_graphics_runtime.animation_cache_records;
+    KfAnimationCacheRecord *record = game_graphics_runtime.animation_cache_records.data();
     u16 records_left = KF_ANIMATION_CACHE_CAPACITY;
 
     do {

@@ -1,14 +1,32 @@
+use crate::cast::AsUsize;
 pub(crate) mod bindings;
 use bindings::*;
 mod audio;
-mod texture;
 mod resources;
-use crate::tim::{Image, Images};
+mod texture;
 use crate::bytes::{read_u16_le, span};
+use crate::tim::{Image, Images};
 use crate::tim::{
     TIM_DIRECT16, TIM_DIRECT24, TIM_FLAGS_MASK, TIM_FORMAT_MASK, TIM_INDEXED4, TIM_INDEXED8,
 };
 use core::{panic::PanicInfo, slice};
+fn report_error(location: &'static core::panic::Location<'static>, message: &core::ffi::CStr) {
+    unsafe extern "C" {
+        fn printf(format: *const core::ffi::c_char, ...) -> core::ffi::c_int;
+    }
+    // printf is supplied by the native/browser C runtime; lengths bound Rust's non-NUL file name.
+    unsafe {
+        printf(
+            c"kf-codec: %.*s:%u:%u: %s\n".as_ptr(),
+            i32::try_from(location.file().len()).unwrap_or(i32::MAX),
+            location.file().as_ptr(),
+            location.line(),
+            location.column(),
+            message.as_ptr(),
+        );
+    }
+}
+
 // C callers still guarantee valid allocations and non-overlapping borrows.
 fn input_valid(data: *const u8, length: usize) -> bool {
     !data.is_null() && length <= isize::MAX as usize
@@ -17,7 +35,9 @@ fn input_valid(data: *const u8, length: usize) -> bool {
 fn output_valid<T>(data: *mut T, count: usize) -> bool {
     !data.is_null()
         && data.is_aligned()
-        && count.checked_mul(size_of::<T>()).is_some_and(|size| size <= isize::MAX as usize)
+        && count
+            .checked_mul(size_of::<T>())
+            .is_some_and(|size| size <= isize::MAX as usize)
 }
 
 const INDEXED4_PALETTE_COLORS: usize = 16;
@@ -48,10 +68,20 @@ const OK: KfCodecResult = KF_CODEC_OK;
 const END: KfCodecResult = KF_CODEC_END;
 const INVALID: KfCodecResult = KF_CODEC_INVALID;
 const OUTPUT_FULL: KfCodecResult = KF_CODEC_OUTPUT_FULL;
+impl From<crate::tim::TimError> for KfCodecResult {
+    fn from(error: crate::tim::TimError) -> Self {
+        if let crate::tim::TimError::Truncated { location, .. } = error {
+            report_error(location, c"truncated TIM input");
+        }
+        INVALID
+    }
+}
+
 fn parse(bytes: &[u8], offset: usize) -> Result<Image<'_>, KfCodecResult> {
     let tail = bytes.get(offset..).ok_or(INVALID)?;
-    Images::new(tail).next().ok_or(END)?.map_err(|_| INVALID)
+    Images::new(tail).next().ok_or(END)?.map_err(Into::into)
 }
+
 fn dimensions(image: &Image<'_>) -> Result<(usize, usize), KfCodecResult> {
     let words = image.image.rectangle.width as usize;
     let height = image.image.rectangle.height as usize;
@@ -85,7 +115,7 @@ pub unsafe extern "C" fn kf_tim_info(
         Ok(d) => d,
         Err(e) => return e,
     };
-    if image.encoded_len > u32::MAX as usize {
+    if image.encoded_len > u32::MAX.as_usize() {
         return INVALID;
     }
     info.write(KfTimInfo {
@@ -138,13 +168,13 @@ pub unsafe extern "C" fn kf_tim_rgba(
         } else {
             INDEXED8_PALETTE_COLORS
         };
-        let at = match (palette_row as usize).checked_mul(count * 2) {
+        let at = match palette_row.as_usize().checked_mul(count * 2) {
             Some(at) => at,
             None => return INVALID,
         };
         match span(clut.pixels, at, count * 2) {
-            Some(p) => p,
-            None => return INVALID,
+            Ok(p) => p,
+            Err(_) => return INVALID,
         }
     } else {
         &[]
@@ -164,7 +194,7 @@ pub unsafe extern "C" fn kf_tim_rgba(
                 ((image.image.pixels[index / 2] >> ((index % 2) * INDEXED4_BITS)) & INDEXED4_MASK)
                     as usize
             } else {
-                image.image.pixels[index] as usize
+                image.image.pixels[index].as_usize()
             };
             read_u16_le(palette, entry * 2).expect("validated TIM palette")
         };

@@ -25,4 +25,6 @@ class ResourceCodecs(unittest.TestCase):
                 str(ROOT / "tests/resource_codecs.cpp"),
                 str(directory / "rust/release/libkf_codec.a"), "-o", str(binary),
             ], check=True)
-            subprocess.run([binary], check=True, timeout=20)
+            result = subprocess.run([binary], check=True, timeout=20, capture_output=True, text=True)
+            self.assertRegex(result.stdout,
+                             r"kf-codec: [^\n]*resources\.rs:\d+:\d+: truncated resource input")

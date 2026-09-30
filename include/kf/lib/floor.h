@@ -1,8 +1,8 @@
 #ifndef KF_FLOOR_H
 #define KF_FLOOR_H
 
-#include <kf/lib/types.h>
 #include <kf/lib/enum.h>
+#include <kf/lib/types.h>
 
 enum class KfFloorId : s32 {
     KF_FLOOR_1 = 1,

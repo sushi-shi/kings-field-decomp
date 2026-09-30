@@ -3,6 +3,8 @@
 
 #include <kf/lib/geometry_types.h>
 
+#include <span>
+
 enum {
     KF_CAMERA_PATH_END_X = -1,
     KF_CAMERA_PATH_FINISHED = -1
@@ -16,7 +18,7 @@ typedef struct KfCameraPathPoint {
 } KfCameraPathPoint;
 
 typedef struct KfCameraPathState {
-    const KfCameraPathPoint *points;
+    std::span<const KfCameraPathPoint> points;
     VECTOR position;
     SVECTOR rotation;
     VECTOR position_fixed;

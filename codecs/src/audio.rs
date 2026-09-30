@@ -1,4 +1,5 @@
 use crate::bytes;
+use crate::cast::AsUsize;
 
 #[derive(Clone, Copy, Debug, Default, Eq, PartialEq)]
 pub struct SoundRef {
@@ -34,7 +35,6 @@ pub const VAB_TONE_SIZE: usize = 32;
 pub const VAB_OFFSET_ENTRIES: usize = 256;
 pub const VAB_OFFSET_TABLE_SIZE: usize = VAB_OFFSET_ENTRIES * 2;
 pub const VAB_SAMPLE_UNIT: usize = 8;
-
 
 // MIDI status and variable-length encodings used by the SEQ parser/bridge.
 pub mod midi {
@@ -153,36 +153,36 @@ impl VabHeader {
         }
         Ok(Self {
             form,
-            version: le_u32(bytes, 4),
-            id: le_u32(bytes, 8) as i32,
-            file_size: le_u32(bytes, 12),
-            reserved0: le_u16(bytes, 16),
-            program_count: le_u16(bytes, 18),
-            tone_count: le_u16(bytes, 20),
-            sample_count: le_u16(bytes, 22),
+            version: bytes::read_u32_le(bytes, 4).expect("validated VAB record"),
+            id: bytes::read_i32_le(bytes, 8).expect("validated VAB record"),
+            file_size: bytes::read_u32_le(bytes, 12).expect("validated VAB record"),
+            reserved0: bytes::read_u16_le(bytes, 16).expect("validated VAB record"),
+            program_count: bytes::read_u16_le(bytes, 18).expect("validated VAB record"),
+            tone_count: bytes::read_u16_le(bytes, 20).expect("validated VAB record"),
+            sample_count: bytes::read_u16_le(bytes, 22).expect("validated VAB record"),
             master_volume: bytes[24],
             pan: bytes[25],
             attribute1: bytes[26],
             attribute2: bytes[27],
-            reserved1: le_u32(bytes, 28),
+            reserved1: bytes::read_u32_le(bytes, 28).expect("validated VAB record"),
         })
     }
 
     pub fn to_le_bytes(self) -> [u8; VAB_HEADER_SIZE] {
         let mut output = [0; VAB_HEADER_SIZE];
         output[..4].copy_from_slice(&self.form);
-        output[4..8].copy_from_slice(bytemuck::bytes_of(&self.version.to_le()));
-        output[8..12].copy_from_slice(bytemuck::bytes_of(&self.id.to_le()));
-        output[12..16].copy_from_slice(bytemuck::bytes_of(&self.file_size.to_le()));
-        output[16..18].copy_from_slice(bytemuck::bytes_of(&self.reserved0.to_le()));
-        output[18..20].copy_from_slice(bytemuck::bytes_of(&self.program_count.to_le()));
-        output[20..22].copy_from_slice(bytemuck::bytes_of(&self.tone_count.to_le()));
-        output[22..24].copy_from_slice(bytemuck::bytes_of(&self.sample_count.to_le()));
+        output[4..8].copy_from_slice(&self.version.to_le_bytes());
+        output[8..12].copy_from_slice(&self.id.to_le_bytes());
+        output[12..16].copy_from_slice(&self.file_size.to_le_bytes());
+        output[16..18].copy_from_slice(&self.reserved0.to_le_bytes());
+        output[18..20].copy_from_slice(&self.program_count.to_le_bytes());
+        output[20..22].copy_from_slice(&self.tone_count.to_le_bytes());
+        output[22..24].copy_from_slice(&self.sample_count.to_le_bytes());
         output[24] = self.master_volume;
         output[25] = self.pan;
         output[26] = self.attribute1;
         output[27] = self.attribute2;
-        output[28..32].copy_from_slice(bytemuck::bytes_of(&self.reserved1.to_le()));
+        output[28..32].copy_from_slice(&self.reserved1.to_le_bytes());
         output
     }
 
@@ -190,7 +190,7 @@ impl VabHeader {
         validate_counts(self)?;
         Ok(VAB_HEADER_SIZE
             + VAB_PROGRAM_SLOTS * VAB_PROGRAM_SIZE
-            + usize::from(self.program_count) * VAB_TONES_PER_PROGRAM * VAB_TONE_SIZE
+            + self.program_count.as_usize() * VAB_TONES_PER_PROGRAM * VAB_TONE_SIZE
             + VAB_OFFSET_TABLE_SIZE)
     }
 }
@@ -217,9 +217,9 @@ impl VabProgram {
             mode: bytes[3],
             pan: bytes[4],
             reserved0: bytes[5] as i8,
-            attribute: le_u16(bytes, 6) as i16,
-            reserved1: le_u32(bytes, 8),
-            reserved2: le_u32(bytes, 12),
+            attribute: bytes::read_i16_le(bytes, 6).expect("validated VAB record"),
+            reserved1: bytes::read_u32_le(bytes, 8).expect("validated VAB record"),
+            reserved2: bytes::read_u32_le(bytes, 12).expect("validated VAB record"),
         }
     }
 
@@ -231,9 +231,9 @@ impl VabProgram {
         output[3] = self.mode;
         output[4] = self.pan;
         output[5] = self.reserved0 as u8;
-        output[6..8].copy_from_slice(bytemuck::bytes_of(&self.attribute.to_le()));
-        output[8..12].copy_from_slice(bytemuck::bytes_of(&self.reserved1.to_le()));
-        output[12..16].copy_from_slice(bytemuck::bytes_of(&self.reserved2.to_le()));
+        output[6..8].copy_from_slice(&self.attribute.to_le_bytes());
+        output[8..12].copy_from_slice(&self.reserved1.to_le_bytes());
+        output[12..16].copy_from_slice(&self.reserved2.to_le_bytes());
         output
     }
 }
@@ -282,15 +282,15 @@ impl VabTone {
             pitch_bend_maximum: bytes[13],
             reserved1: bytes[14],
             reserved2: bytes[15],
-            adsr1: le_u16(bytes, 16),
-            adsr2: le_u16(bytes, 18),
-            program: le_u16(bytes, 20) as i16,
-            sample: le_u16(bytes, 22) as i16,
+            adsr1: bytes::read_u16_le(bytes, 16).expect("validated VAB record"),
+            adsr2: bytes::read_u16_le(bytes, 18).expect("validated VAB record"),
+            program: bytes::read_i16_le(bytes, 20).expect("validated VAB record"),
+            sample: bytes::read_i16_le(bytes, 22).expect("validated VAB record"),
             reserved: [
-                le_u16(bytes, 24) as i16,
-                le_u16(bytes, 26) as i16,
-                le_u16(bytes, 28) as i16,
-                le_u16(bytes, 30) as i16,
+                bytes::read_i16_le(bytes, 24).expect("validated VAB record"),
+                bytes::read_i16_le(bytes, 26).expect("validated VAB record"),
+                bytes::read_i16_le(bytes, 28).expect("validated VAB record"),
+                bytes::read_i16_le(bytes, 30).expect("validated VAB record"),
             ],
         }
     }
@@ -329,7 +329,7 @@ impl VabTone {
         .enumerate()
         {
             let offset = 16 + at * 2;
-            output[offset..offset + 2].copy_from_slice(bytemuck::bytes_of(&value.to_le()));
+            output[offset..offset + 2].copy_from_slice(&value.to_le_bytes());
         }
         output
     }
@@ -362,7 +362,7 @@ impl<'a> VabBank<'a> {
                     declared: header.file_size,
                     actual: usize::MAX,
                 })?;
-        if usize::try_from(header.file_size).ok() != Some(actual_file_size) {
+        if header.file_size.as_usize() != actual_file_size {
             return Err(VabError::FileSize {
                 declared: header.file_size,
                 actual: actual_file_size,
@@ -370,17 +370,20 @@ impl<'a> VabBank<'a> {
         }
         let tone_table_offset = VAB_HEADER_SIZE + VAB_PROGRAM_SLOTS * VAB_PROGRAM_SIZE;
         let offset_table_offset = expected_header - VAB_OFFSET_TABLE_SIZE;
-        let first = le_u16(header_bytes, offset_table_offset);
+        let first =
+            bytes::read_u16_le(header_bytes, offset_table_offset).expect("validated VAB record");
         if first != 0 {
             return Err(VabError::NonzeroFirstSampleOffset(first));
         }
         let mut body_len = 0usize;
         for sample in 0..header.sample_count {
-            let units = le_u16(
+            let units = bytes::read_u16_le(
                 header_bytes,
-                offset_table_offset + (usize::from(sample) + 1) * 2,
-            );
-            let bytes = usize::from(units)
+                offset_table_offset + (sample.as_usize() + 1) * 2,
+            )
+            .expect("validated VAB record");
+            let bytes = units
+                .as_usize()
                 .checked_mul(VAB_SAMPLE_UNIT)
                 .ok_or(VabError::SampleLengthOverflow { sample, units })?;
             body_len = body_len
@@ -411,7 +414,7 @@ impl<'a> VabBank<'a> {
     }
 
     pub fn program(&self, index: usize) -> Option<VabProgram> {
-        if index >= usize::from(self.header.program_count) {
+        if index >= self.header.program_count.as_usize() {
             return None;
         }
         self.program_slot(index)
@@ -431,7 +434,7 @@ impl<'a> VabBank<'a> {
         VabPrograms {
             bytes: self.header_bytes,
             index: 0,
-            count: usize::from(self.header.program_count),
+            count: self.header.program_count.as_usize(),
         }
     }
 
@@ -444,7 +447,7 @@ impl<'a> VabBank<'a> {
     }
 
     pub fn tone(&self, program: usize, tone: usize) -> Option<VabTone> {
-        if program >= usize::from(self.header.program_count) || tone >= VAB_TONES_PER_PROGRAM {
+        if program >= self.header.program_count.as_usize() || tone >= VAB_TONES_PER_PROGRAM {
             return None;
         }
         let at = self.tone_table_offset + (program * VAB_TONES_PER_PROGRAM + tone) * VAB_TONE_SIZE;
@@ -452,7 +455,11 @@ impl<'a> VabBank<'a> {
     }
 
     pub fn tones(&self, program: usize) -> Option<VabTones<'a>> {
-        let count = usize::from(self.program(program)?.tone_count).min(VAB_TONES_PER_PROGRAM);
+        let count = self
+            .program(program)?
+            .tone_count
+            .as_usize()
+            .min(VAB_TONES_PER_PROGRAM);
         Some(VabTones {
             bytes: self.header_bytes,
             at: self.tone_table_offset + program * VAB_TONES_PER_PROGRAM * VAB_TONE_SIZE,
@@ -462,13 +469,16 @@ impl<'a> VabBank<'a> {
     }
 
     pub fn sample_size_units(&self, sample: usize) -> Option<u16> {
-        if sample >= usize::from(self.header.sample_count) {
+        if sample >= self.header.sample_count.as_usize() {
             return None;
         }
-        Some(le_u16(
-            self.header_bytes,
-            self.offset_table_offset + (sample + 1) * 2,
-        ))
+        Some(
+            bytes::read_u16_le(
+                self.header_bytes,
+                self.offset_table_offset + (sample + 1) * 2,
+            )
+            .expect("validated VAB record"),
+        )
     }
 
     pub fn samples(&self) -> VabSamples<'a> {
@@ -489,7 +499,7 @@ impl<'a> VabBank<'a> {
 }
 
 fn validate_counts(header: VabHeader) -> Result<(), VabError> {
-    if usize::from(header.program_count) > VAB_PROGRAM_SLOTS {
+    if header.program_count.as_usize() > VAB_PROGRAM_SLOTS {
         return Err(VabError::InvalidCount {
             field: "programs",
             value: header.program_count,
@@ -506,7 +516,7 @@ fn validate_counts(header: VabHeader) -> Result<(), VabError> {
             maximum: maximum_tones,
         });
     }
-    if usize::from(header.sample_count) >= VAB_OFFSET_ENTRIES {
+    if header.sample_count.as_usize() >= VAB_OFFSET_ENTRIES {
         return Err(VabError::InvalidCount {
             field: "samples",
             value: header.sample_count,
@@ -587,8 +597,8 @@ impl<'a> Iterator for VabSamples<'a> {
         if self.index == self.bank.header.sample_count {
             return None;
         }
-        let size_units = self.bank.sample_size_units(usize::from(self.index))?;
-        let size = usize::from(size_units) * VAB_SAMPLE_UNIT;
+        let size_units = self.bank.sample_size_units(self.index.as_usize())?;
+        let size = size_units.as_usize() * VAB_SAMPLE_UNIT;
         let offset = self.body_offset;
         self.body_offset += size;
         let sample = VabSample {
@@ -605,6 +615,7 @@ impl<'a> Iterator for VabSamples<'a> {
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum SeqError {
     Truncated {
+        location: &'static core::panic::Location<'static>,
         at: usize,
         need: usize,
         available: usize,
@@ -632,6 +643,17 @@ pub enum SeqError {
     },
 }
 
+impl From<bytes::ReadError> for SeqError {
+    fn from(error: bytes::ReadError) -> Self {
+        Self::Truncated {
+            location: error.location,
+            at: error.at,
+            need: error.need,
+            available: error.available,
+        }
+    }
+}
+
 impl fmt::Display for SeqError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         write!(f, "SEQ {self:?}")
@@ -653,7 +675,7 @@ pub struct SeqHeader {
 
 impl SeqHeader {
     pub fn parse(bytes: &[u8]) -> Result<Self, SeqError> {
-        let header = seq_span(bytes, 0, SEQ_HEADER_SIZE)?;
+        let header = bytes::span(bytes, 0, SEQ_HEADER_SIZE)?;
         let form: [u8; 4] = bytes::read(header, 0).expect("validated SEQ header");
         if form != SEQ_MAGIC {
             return Err(SeqError::InvalidMagic(form));
@@ -674,9 +696,9 @@ impl SeqHeader {
         }
         let mut output = [0; SEQ_HEADER_SIZE];
         output[..4].copy_from_slice(&self.form);
-        output[4..8].copy_from_slice(bytemuck::bytes_of(&self.version.to_be()));
-        output[8..10].copy_from_slice(bytemuck::bytes_of(&self.resolution.to_be()));
-        let tempo: [u8; 4] = bytemuck::cast(self.tempo.to_be());
+        output[4..8].copy_from_slice(&self.version.to_be_bytes());
+        output[8..10].copy_from_slice(&self.resolution.to_be_bytes());
+        let tempo = self.tempo.to_be_bytes();
         output[10..13].copy_from_slice(&tempo[1..]);
         output[13] = self.time_signature_numerator;
         output[14] = self.time_signature_denominator_shift;
@@ -911,8 +933,8 @@ pub fn apply_successful_game_sequence_open(
         return Err(SeqRuntimeError::SequenceSlotOccupied(allocated_sequence_id));
     }
     *open_flags |= bit;
-    audio_state[12..14].copy_from_slice(bytemuck::bytes_of(&allocated_sequence_id.to_le()));
-    audio_state[16..20].copy_from_slice(bytemuck::bytes_of(&1u32.to_le()));
+    audio_state[12..14].copy_from_slice(&allocated_sequence_id.to_le_bytes());
+    audio_state[16..20].copy_from_slice(&1u32.to_le_bytes());
     Ok(())
 }
 
@@ -936,7 +958,7 @@ pub fn apply_sequence_event(
             let callback = match channel.message {
                 ChannelMessage::NoteOn => {
                     let velocity = channel.data2.unwrap_or(0);
-                    let channel = usize::from(active_channel);
+                    let channel = active_channel.as_usize();
                     let program = score[88 + channel];
                     let vab_id = score_i16(score, 110);
                     if velocity == 0 {
@@ -967,15 +989,11 @@ pub fn apply_sequence_event(
                     let value = channel
                         .data2
                         .ok_or(SeqRuntimeError::UnsupportedControl(controller))?;
-                    put_score_u16(
-                        score,
-                        112 + usize::from(active_channel) * 2,
-                        u16::from(value),
-                    );
+                    put_score_u16(score, 112 + active_channel.as_usize() * 2, u16::from(value));
                     None
                 }
                 ChannelMessage::ProgramChange => {
-                    score[88 + usize::from(active_channel)] = channel.data1;
+                    score[88 + active_channel.as_usize()] = channel.data1;
                     None
                 }
                 ChannelMessage::PitchBend => {
@@ -987,7 +1005,7 @@ pub fn apply_sequence_event(
                     Some(SeqCallback::PitchBend {
                         sequence: sequence_id,
                         vab_id: score_i16(score, 110),
-                        program: score[88 + usize::from(active_channel)],
+                        program: score[88 + active_channel.as_usize()],
                         value,
                     })
                 }
@@ -1090,7 +1108,7 @@ fn score_u16(score: &[u8; SEQ_SCORE_RECORD_SIZE], at: usize) -> u16 {
 }
 
 fn score_i16(score: &[u8; SEQ_SCORE_RECORD_SIZE], at: usize) -> i16 {
-    score_u16(score, at) as i16
+    bytes::read_i16_le(score, at).expect("field within score record")
 }
 
 fn score_u32(score: &[u8; SEQ_SCORE_RECORD_SIZE], at: usize) -> u32 {
@@ -1098,11 +1116,11 @@ fn score_u32(score: &[u8; SEQ_SCORE_RECORD_SIZE], at: usize) -> u32 {
 }
 
 fn put_score_u16(score: &mut [u8; SEQ_SCORE_RECORD_SIZE], at: usize, value: u16) {
-    score[at..at + 2].copy_from_slice(bytemuck::bytes_of(&value.to_le()));
+    score[at..at + 2].copy_from_slice(&value.to_le_bytes());
 }
 
 fn put_score_u32(score: &mut [u8; SEQ_SCORE_RECORD_SIZE], at: usize, value: u32) {
-    score[at..at + 4].copy_from_slice(bytemuck::bytes_of(&value.to_le()));
+    score[at..at + 4].copy_from_slice(&value.to_le_bytes());
 }
 
 pub struct SeqEvents<'a> {
@@ -1181,22 +1199,28 @@ impl<'a> SeqEvents<'a> {
                 self.running_status = None;
                 let meta_type = take(self.bytes, &mut self.at)?;
                 let (length, _) = read_variable_length_at(self.bytes, &mut self.at)?;
-                let size = usize::try_from(length)
-                    .map_err(|_| SeqError::VariableLengthOutOfRange(length))?;
-                let data = seq_span(self.bytes, self.at, size)?;
+                let size = length.as_usize();
+                let data = bytes::span(self.bytes, self.at, size)?;
                 self.at += size;
                 SeqEventKind::Meta { meta_type, data }
             }
             midi::SYSEX_START | midi::SYSEX_END => {
                 self.running_status = None;
                 let (length, _) = read_variable_length_at(self.bytes, &mut self.at)?;
-                let size = usize::try_from(length)
-                    .map_err(|_| SeqError::VariableLengthOutOfRange(length))?;
-                let data = seq_span(self.bytes, self.at, size)?;
+                let size = length.as_usize();
+                let data = bytes::span(self.bytes, self.at, size)?;
                 self.at += size;
                 SeqEventKind::SystemExclusive { status, data }
             }
-            midi::TIME_CODE | midi::SONG_POSITION | midi::SONG_SELECT | midi::TUNE_REQUEST | midi::TIMING_CLOCK | midi::START | midi::CONTINUE | midi::STOP | midi::ACTIVE_SENSING => {
+            midi::TIME_CODE
+            | midi::SONG_POSITION
+            | midi::SONG_SELECT
+            | midi::TUNE_REQUEST
+            | midi::TIMING_CLOCK
+            | midi::START
+            | midi::CONTINUE
+            | midi::STOP
+            | midi::ACTIVE_SENSING => {
                 if status < midi::TIMING_CLOCK {
                     self.running_status = None;
                 }
@@ -1205,7 +1229,7 @@ impl<'a> SeqEvents<'a> {
                     midi::SONG_POSITION => 2,
                     _ => 0,
                 };
-                let data = seq_span(self.bytes, self.at, size)?;
+                let data = bytes::span(self.bytes, self.at, size)?;
                 for (index, byte) in data.iter().copied().enumerate() {
                     if byte >= midi::STATUS_BIT {
                         return Err(SeqError::InvalidDataByte {
@@ -1303,8 +1327,10 @@ pub fn encode_variable_length(value: u32, output: &mut [u8]) -> Result<usize, Se
     Ok(size)
 }
 
+#[track_caller]
 fn take(bytes: &[u8], at: &mut usize) -> Result<u8, SeqError> {
     let value = *bytes.get(*at).ok_or(SeqError::Truncated {
+        location: core::panic::Location::caller(),
         at: *at,
         need: 1,
         available: 0,
@@ -1313,6 +1339,7 @@ fn take(bytes: &[u8], at: &mut usize) -> Result<u8, SeqError> {
     Ok(value)
 }
 
+#[track_caller]
 fn take_data(bytes: &[u8], at: &mut usize) -> Result<u8, SeqError> {
     let offset = *at;
     let value = take(bytes, at)?;
@@ -1323,21 +1350,4 @@ fn take_data(bytes: &[u8], at: &mut usize) -> Result<u8, SeqError> {
         });
     }
     Ok(value)
-}
-
-fn seq_span(bytes: &[u8], at: usize, size: usize) -> Result<&[u8], SeqError> {
-    bytes::span(bytes, at, size)
-        .ok_or(SeqError::Truncated {
-            at,
-            need: size,
-            available: bytes.len().saturating_sub(at),
-        })
-}
-
-fn le_u16(bytes: &[u8], at: usize) -> u16 {
-    bytes::read_u16_le(bytes, at).expect("validated VAB record")
-}
-
-fn le_u32(bytes: &[u8], at: usize) -> u32 {
-    bytes::read_u32_le(bytes, at).expect("validated VAB record")
 }

@@ -1,18 +1,19 @@
 #include <kf/platform/prelude.h>
 #include <kf/game/audio.h>
-#include <kf/lib/random.h>
-#include <kf/lib/null.h>
-#include <kf/game/graphics.h>
-
-#include <kf/platform/input.h>
-#include <kf/game/session.h>
-#include <kf/game/player.h>
 #include <kf/game/collision.h>
-#include <algorithm>
-#include <cstdlib>
-#include <cstdio>
-#include <cstring>
 #include <kf/game/game.h>
+#include <kf/game/graphics.h>
+#include <kf/game/player.h>
+#include <kf/game/session.h>
+#include <kf/lib/null.h>
+#include <kf/lib/random.h>
+#include <kf/platform/input.h>
+
+#include <algorithm>
+#include <array>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 static constexpr u16 PLAYER_PITFALL_CUTTING_DAMAGE = 5;
 static constexpr u16 PLAYER_PITFALL_STRIKING_DAMAGE = 3;
@@ -69,19 +70,23 @@ enum {
 };
 
 static MATRIX player_darkness_color_matrix = {
-    {{666, 233, 1333}, {666, 233, 1333}, {666, 233, 1333}},
-    {0, 0, 0}
+    .m = {{
+        {666, 233, 1333},
+        {666, 233, 1333},
+        {666, 233, 1333},
+    }},
+    .t = {},
 };
 
-static SVECTOR player_damage_view_rotation_offsets[kf_enum_encode<u8>(KF_PLAYER_DAMAGE_FRAME_END)] = {
-    {0, 0, 0, 0},
-    {-32, 0, -32, 0},
-    {-64, 0, -64, 0},
-    {-48, 0, -32, 0},
-    {-32, 0, 0, 0},
-    {-16, 0, 32, 0},
-    {0, 0, 64, 0},
-    {-16, 0, 32, 0}
+static std::array<SVECTOR, kf_enum_encode<u8>(KF_PLAYER_DAMAGE_FRAME_END)> player_damage_view_rotation_offsets = {
+    SVECTOR{0, 0, 0, 0},
+    SVECTOR{-32, 0, -32, 0},
+    SVECTOR{-64, 0, -64, 0},
+    SVECTOR{-48, 0, -32, 0},
+    SVECTOR{-32, 0, 0, 0},
+    SVECTOR{-16, 0, 32, 0},
+    SVECTOR{0, 0, 64, 0},
+    SVECTOR{-16, 0, 32, 0}
 };
 
 static u32 player_previous_input = 0;
@@ -267,7 +272,7 @@ static void player_update_weapon_magic()
                     if (target == NULL) {
                         homing_target = KF_EFFECT_HOMING_WANDER;
                     } else {
-                        homing_target = kf_enum_decode<KfEffectHomingMode>(target - actor_state.actors);
+                        homing_target = kf_enum_decode<KfEffectHomingMode>(target - actor_state.actors.data());
                     }
                 }
                 launch_direction = &direction;
@@ -458,13 +463,12 @@ static void player_update_darkness()
                 fade = (s16)(DARKNESS_FADE_STEPS - player_state.darkness_timer);
             }
             if (fade >= 0) {
-                lighting_set_color_matrix(game_graphics_runtime.render_state, &player_darkness_color_matrix, color_matrix_table,
+                lighting_set_color_matrix(game_graphics_runtime.render_state, &player_darkness_color_matrix, color_matrix_table.data(),
                     fade << (KF_FIXED12_BITS - DARKNESS_FADE_BITS));
                 fog_interpolate_near(game_graphics_runtime.render_state, PLAYER_DARKNESS_FOG_NEAR, KF_INITIAL_FOG_NEAR_DISTANCE,
                     fade << (KF_FIXED12_BITS - DARKNESS_FADE_BITS));
             } else {
-                memcpy(game_graphics_runtime.render_state.lighting.color_matrix.m, (player_darkness_color_matrix).m,
-                    sizeof game_graphics_runtime.render_state.lighting.color_matrix.m);
+                game_graphics_runtime.render_state.lighting.color_matrix.m = (player_darkness_color_matrix).m;
                 fog_set_near(game_graphics_runtime.render_state, PLAYER_DARKNESS_FOG_NEAR);
             }
         }

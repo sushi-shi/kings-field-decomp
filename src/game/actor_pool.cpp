@@ -1,10 +1,11 @@
 #include <kf/platform/prelude.h>
-#include <kf/lib/null.h>
-
-#include <kf/lib/map_data.h>
-#include <kf/lib/codec.h>
 #include <kf/game/actor.h>
 #include <kf/game/game.h>
+#include <kf/lib/codec.h>
+#include <kf/lib/map_data.h>
+#include <kf/lib/null.h>
+
+#include <array>
 
 KfActorState actor_state;
 
@@ -24,10 +25,10 @@ void actor_pool_update(void)
 
 void actor_pool_load_placements(KfResourceChunk chunk)
 {
-    KfActorPlacementData decoded[KF_ACTOR_CAPACITY] {};
+    std::array<KfActorPlacementData, KF_ACTOR_CAPACITY> decoded {};
     std::size_t count;
     if (kf_actor_placements_decode(chunk.data, chunk.size,
-            {KF_MAP_COLUMNS, KF_ACTOR_DEFINITION_COUNT, KF_MAP_TILE_SIZE}, decoded, std::size(decoded), &count) != KF_CODEC_OK)
+            {KF_MAP_COLUMNS, KF_ACTOR_DEFINITION_COUNT, KF_MAP_TILE_SIZE}, decoded.data(), decoded.size(), &count) != KF_CODEC_OK)
         kf::host_fail("Invalid actor placements.");
     for (std::size_t i = 0; i < std::size(actor_state.actors); ++i) {
         auto &actor = actor_state.actors[i];

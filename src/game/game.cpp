@@ -1,15 +1,15 @@
 #include <kf/platform/prelude.h>
 #include <kf/game/audio.h>
-#include <kf/game/resources.h>
-#include <kf/game/graphics.h>
-
-#include <kf/game/session.h>
-#include <kf/game/player.h>
-#include <kf/game/save.h>
-#include <cstdlib>
-#include <cstdio>
-#include <cstring>
 #include <kf/game/game.h>
+#include <kf/game/graphics.h>
+#include <kf/game/player.h>
+#include <kf/game/resources.h>
+#include <kf/game/save.h>
+#include <kf/game/session.h>
+
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 enum {
     FRAME_PACER_INTERVAL_TICKS = 3,
@@ -24,11 +24,11 @@ void game_main_loop(void)
 {
     kf::language_apply_pending();
     game_graphics_runtime = {};
-    memset((void *)&actor_state, 0, sizeof actor_state);
-    memset((void *)&map_object_state, 0, sizeof map_object_state);
-    memset((void *)&effect_state, 0, sizeof(KfEffectState));
-    memset((void *)map_runtime_state.events, 0, sizeof map_runtime_state.events);
-    memset((void *)&player_state, 0, sizeof(KfPlayerState));
+    actor_state = {};
+    map_object_state = {};
+    effect_state = {};
+    map_runtime_state.events = {};
+    player_state = {};
     memory_set_allocation_mode(memory_arena, KF_MEMORY_CREATE_ARENA);
     audio_initialize();
     display_initialize();

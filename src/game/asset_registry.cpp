@@ -1,8 +1,10 @@
 #include <kf/platform/prelude.h>
-#include <kf/game/graphics.h>
-
 #include <kf/game/asset.h>
+#include <kf/game/graphics.h>
 #include <kf/game/render.h>
+
+#include <new>
+#include <stdexcept>
 
 void asset_registry_load_tmd_archive(u16 first_asset_id, u8 *archive, std::size_t size)
 {
@@ -23,7 +25,7 @@ void asset_registry_load_tmd_archive(u16 first_asset_id, u8 *archive, std::size_
     }
 }
 
-void asset_registry_set(u16 asset_id, void *data, std::size_t size)
+void asset_registry_set(u16 asset_id, void *data, std::size_t size) try
 {
     KfAssetInfo info;
     if (asset_id >= KF_ASSET_REGISTRY_KNOWN_ENTRIES ||
@@ -56,6 +58,10 @@ void asset_registry_set(u16 asset_id, void *data, std::size_t size)
         if (record.state != KF_ANIMATION_CACHE_FREE && record.asset_index == asset_id)
             animation_cache_release(&record);
     game_graphics_runtime.asset_animations[asset_id] = std::move(animation);
+} catch (const std::bad_alloc &) {
+    kf::host_fail("Cannot allocate decoded animation data.");
+} catch (const std::length_error &) {
+    kf::host_fail("Decoded animation exceeds container capacity.");
 }
 
 void asset_registry_select(u16 asset_id)

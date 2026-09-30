@@ -1,10 +1,20 @@
 use super::bindings::*;
 use super::{input_valid, output_valid, INVALID, OK, OUTPUT_FULL};
 use crate::audio::midi;
-use crate::bytes::read_u24_be;
-use crate::audio::{ChannelMessage, SeqEventKind, Sequence, VabBank};
+use crate::audio::{ChannelMessage, SeqError, SeqEventKind, Sequence, VabBank};
 use crate::audio::{VAB_PROGRAM_SLOTS, VAB_TONES_PER_PROGRAM};
+use crate::bytes::read_u24_be;
+use crate::cast::{AsU64, AsUsize};
 use core::{ptr, slice};
+
+impl From<SeqError> for KfCodecResult {
+    fn from(error: SeqError) -> Self {
+        if let SeqError::Truncated { location, .. } = error {
+            super::report_error(location, c"truncated SEQ input");
+        }
+        INVALID
+    }
+}
 
 const SUPPORTED_SEQ_VERSION: u32 = 1;
 const TONE_REVERB_FLAG: u8 = 4;
@@ -22,8 +32,8 @@ const ENVELOPE_LEVEL_MAX: u32 = 32767;
 const ADSR_EXPONENTIAL_OFFSET: u32 = 15;
 const ADSR_SUSTAIN_DIRECTION_OFFSET: u32 = 14;
 const ADSR_RELEASE_EXPONENTIAL_OFFSET: u32 = 5;
-const ADPCM_BLOCK_BYTES: usize = KF_AUDIO_ADPCM_BLOCK_BYTES as usize;
-const ADPCM_BLOCK_FRAMES: usize = KF_AUDIO_ADPCM_BLOCK_FRAMES as usize;
+const ADPCM_BLOCK_BYTES: usize = crate::cast::u32_to_usize(KF_AUDIO_ADPCM_BLOCK_BYTES);
+const ADPCM_BLOCK_FRAMES: usize = crate::cast::u32_to_usize(KF_AUDIO_ADPCM_BLOCK_FRAMES);
 const ADPCM_HEADER_BYTES: usize = 2;
 const ADPCM_FILTER_OFFSET: u32 = 4;
 const ADPCM_FILTER_LAST: u8 = 4;
@@ -43,7 +53,7 @@ const ADPCM_PREDICTOR_ROUNDING: i32 = 32;
 const ADPCM_PREDICTOR_FRACTION_BITS: u32 = 6;
 
 fn input(data: *const u8, size: usize) -> bool {
-    input_valid(data, size) && size <= u32::MAX as usize
+    input_valid(data, size) && size <= u32::MAX.as_usize()
 }
 #[unsafe(no_mangle)]
 pub unsafe extern "C" fn kf_audio_bank_decode(
@@ -79,7 +89,7 @@ pub unsafe extern "C" fn kf_audio_bank_decode(
         if program.tone_count == 0 {
             continue;
         }
-        if usize::from(program.tone_count) > VAB_TONES_PER_PROGRAM
+        if program.tone_count.as_usize() > VAB_TONES_PER_PROGRAM
             || program.master_volume > midi::DATA_MASK
             || program.pan > midi::DATA_MASK
         {
@@ -91,7 +101,7 @@ pub unsafe extern "C" fn kf_audio_bank_decode(
         target.pan = program.pan;
         target.priority = program.priority;
         // Program numbers are sparse; occupied slots own consecutive tone blocks.
-        for ordinal in 0..usize::from(program.tone_count) {
+        for ordinal in 0..program.tone_count.as_usize() {
             let tone = match bank.tone(packed_program, ordinal) {
                 Some(tone) => tone,
                 None => return INVALID,
@@ -149,11 +159,11 @@ pub unsafe extern "C" fn kf_audio_bank_decode(
         }
         packed_program += 1;
     }
-    if packed_program != usize::from(bank.header.program_count) {
+    if packed_program != bank.header.program_count.as_usize() {
         return INVALID;
     }
     for sample in bank.samples() {
-        result.samples[usize::from(sample.index)] = KfAudioSampleRange {
+        result.samples[sample.index.as_usize()] = KfAudioSampleRange {
             offset: sample.offset as u32,
             size: sample.data.len() as u32,
         };
@@ -170,7 +180,7 @@ pub unsafe extern "C" fn kf_audio_sample_info(
     if !input(data, size)
         || size == 0
         || size % ADPCM_BLOCK_BYTES != 0
-        || size / ADPCM_BLOCK_BYTES > u32::MAX as usize / ADPCM_BLOCK_FRAMES
+        || size / ADPCM_BLOCK_BYTES > u32::MAX.as_usize() / ADPCM_BLOCK_FRAMES
         || !output_valid(info, 1)
     {
         return INVALID;
@@ -215,7 +225,11 @@ pub unsafe extern "C" fn kf_audio_decode_block(
     pcm: *mut i16,
     capacity: usize,
 ) -> KfCodecResult {
-    if !input(data, size) || size != ADPCM_BLOCK_BYTES || !output_valid(predictor, 1) || !output_valid(pcm, 1) {
+    if !input(data, size)
+        || size != ADPCM_BLOCK_BYTES
+        || !output_valid(predictor, 1)
+        || !output_valid(pcm, 1)
+    {
         return INVALID;
     }
     if capacity < ADPCM_BLOCK_FRAMES {
@@ -223,7 +237,7 @@ pub unsafe extern "C" fn kf_audio_decode_block(
     }
     let block = slice::from_raw_parts(data, ADPCM_BLOCK_BYTES);
     const FILTERS: [(i32, i32); 5] = [(0, 0), (60, 0), (115, -52), (98, -55), (122, -60)];
-    let filter = usize::from(block[0] >> ADPCM_FILTER_OFFSET);
+    let filter = (block[0] >> ADPCM_FILTER_OFFSET).as_usize();
     if filter >= FILTERS.len() || block[1] & !ADPCM_FLAGS_MASK != 0 {
         return INVALID;
     }
@@ -274,7 +288,7 @@ pub unsafe extern "C" fn kf_music_decode(
     }
     let sequence = match Sequence::parse(slice::from_raw_parts(data, size)) {
         Ok(sequence) => sequence,
-        Err(_) => return INVALID,
+        Err(error) => return error.into(),
     };
     if sequence.header.version != SUPPORTED_SEQ_VERSION
         || sequence.header.resolution == 0
@@ -287,7 +301,7 @@ pub unsafe extern "C" fn kf_music_decode(
     for parsed in sequence.events() {
         let event = match parsed {
             Ok(event) => event,
-            Err(_) => return INVALID,
+            Err(error) => return error.into(),
         };
         let mut result = KfMusicEvent {
             delta: event.delta,
@@ -298,7 +312,7 @@ pub unsafe extern "C" fn kf_music_decode(
             velocity: 0,
             reserved: 0,
         };
-        duration += u64::from(event.delta);
+        duration += event.delta.as_u64();
         match event.kind {
             SeqEventKind::Channel(channel) => {
                 result.channel = channel.channel;
@@ -334,8 +348,7 @@ pub unsafe extern "C" fn kf_music_decode(
                 data,
             } if data.len() == 3 => {
                 result.kind = KF_MUSIC_TEMPO;
-                result.value =
-                    read_u24_be(data, 0).expect("validated MIDI tempo");
+                result.value = read_u24_be(data, 0).expect("validated MIDI tempo");
                 if result.value == 0 {
                     return INVALID;
                 }

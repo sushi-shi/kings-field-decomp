@@ -1,7 +1,7 @@
 use super::bindings::*;
 use super::{input_valid, output_valid, INVALID, OK, OUTPUT_FULL};
-use crate::tim::{ImageBlock, Images};
 use crate::bytes::read_u16_le;
+use crate::tim::{ImageBlock, Images};
 use crate::tim::{TIM_DIRECT16, TIM_FLAGS_MASK, TIM_FORMAT_MASK};
 use core::slice;
 const TEXTURE_WIDTH: usize = 1024;
@@ -47,7 +47,7 @@ pub unsafe extern "C" fn kf_tim_compose(
     for image in Images::new(bytes) {
         let image = match image {
             Ok(i) => i,
-            Err(_) => return INVALID,
+            Err(error) => return error.into(),
         };
         if image.mode & TIM_FORMAT_MASK > TIM_DIRECT16
             || image.mode & !TIM_FLAGS_MASK != 0

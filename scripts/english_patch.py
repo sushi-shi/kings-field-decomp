@@ -186,11 +186,11 @@ def from_ppf(patch, layout):
 
 
 def embed(payload):
-    # A trailing sentinel keeps the empty-payload build standard C++.
     rows = [",".join(str(byte) for byte in payload[i:i + 32]) + ","
             for i in range(0, len(payload), 32)]
-    return "// Generated; do not commit.\nstatic const unsigned char english_patch_data[] = {\n" + \
-        "\n".join(rows) + "\n0};\n"
+    return ("// Generated; do not commit.\n#include <array>\n"
+            f"static constexpr std::array<unsigned char, {len(payload)}> english_patch_data = {{\n"
+            + "\n".join(rows) + "\n};\n")
 
 
 def main():

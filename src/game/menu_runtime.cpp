@@ -1,20 +1,20 @@
 #include <kf/platform/prelude.h>
+#include <kf/game/game.h>
+#include <kf/game/graphics.h>
+#include <kf/game/menu.h>
+#include <kf/game/menu_glyphs.h>
 #include <kf/game/menu_text.h>
 #include <kf/game/resources.h>
-#include <kf/game/menu_glyphs.h>
 #include <kf/lib/null.h>
-#include <kf/lib/bool.h>
-
-#include <kf/platform/input.h>
-#include <kf/game/menu.h>
-#include <kf/game/game.h>
-#include <cstdlib>
-#include <cstdio>
-#include <cstring>
-#include <kf/game/graphics.h>
 #include <kf/lib/render_face.h>
+#include <kf/platform/input.h>
 
-static constexpr s32 pickup_preview_translation[] = {220, 140, 1500};
+#include <array>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+
+static constexpr std::array<s32, 3> pickup_preview_translation = {220, 140, 1500};
 
 KfMenuModelAllocation menu_item_model_allocation = KF_MENU_MODEL_RELEASED;
 
@@ -64,7 +64,7 @@ void menu_enqueue_background(void)
         menu_submit_template(background[i], MENU_BACKGROUND_OT_DEPTH);
 }
 
-static void menu_draw_backdrop_tile(s32 x, s32 y, KfBool32 flip_x, KfBool32 flip_y)
+static void menu_draw_backdrop_tile(s32 x, s32 y, bool flip_x, bool flip_y)
 {
     const auto &tile = menu_assets.window_backdrop;
     auto face = menu_textured_quad(tile.material, x, y, tile.width, tile.height);
@@ -118,13 +118,11 @@ void menu_status_panel(void)
 void menu_drop_item_panel(void)
 {
     KfMenuList ctx;
-    s16 labels[KF_ITEM_COUNT][MENU_GLYPHS_PER_ROW];
-    u8 quantities[KF_ITEM_COUNT];
-    KfObjectId item_ids[KF_ITEM_COUNT];
-    u8 *player_stock;
+    std::array<std::array<s16, MENU_GLYPHS_PER_ROW>, KF_ITEM_COUNT> labels;
+    std::array<u8, KF_ITEM_COUNT> quantities;
+    std::array<KfObjectId, KF_ITEM_COUNT> item_ids;
     s32 found;
     s32 item_id;
-    s32 j;
     KfMenuConfirmState confirm = KF_MENU_CONFIRM_IDLE;
     s32 input = 0;
     s32 prev;
@@ -135,15 +133,14 @@ void menu_drop_item_panel(void)
 
     found = 0;
     item_id = 0;
-    player_stock = item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)];
+    auto &player_stock = item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)];
     for (; item_id < KF_ITEM_COUNT; item_id++) {
         if (player_stock[item_id] != 0) {
             quantities[found] = player_stock[item_id];
             if (player_item_is_equipped(kf_enum_decode<KfObjectId>(item_id)))
                 quantities[found]--;
             if (quantities[found] != 0) {
-                for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)
-                    labels[found][j] = item_name_rows[item_id].codes[j];
+                labels[found] = item_name_rows[item_id].codes;
                 item_ids[found] = kf_enum_decode<KfObjectId>(item_id);
                 found++;
             }
@@ -151,9 +148,8 @@ void menu_drop_item_panel(void)
     }
 
     ctx.entry_count = found;
-    ctx.glyphs_per_entry = MENU_GLYPHS_PER_ROW;
-    ctx.glyph_rows = &labels[0][0];
-    ctx.quantities = NULL;
+    ctx.glyph_rows = labels;
+    ctx.quantities = {};
 
     menu_frame_begin();
     if (ctx.entry_count != 0) {
@@ -233,7 +229,7 @@ KfMenuResult menu_system_panel(void)
             break;
         case KF_MENU_SYSTEM_ACTION_QUIT:
             result = menu_two_option_prompt(
-                KF_MENU_WINDOW_SYSTEM, KF_MENU_SYSTEM_ROW_COUNT, cursor, NULL);
+                KF_MENU_WINDOW_SYSTEM, KF_MENU_SYSTEM_ROW_COUNT, cursor, {});
             if (result == KF_MENU_RESULT_ACCEPTED) {
                 menu_load_texture(MENU_TEXTURE_POWER_OFF);
                 audio_stop_sequence_fade();
@@ -292,7 +288,7 @@ KfMenuResult menu_system_panel(void)
 
 KfMenuResult menu_save_panel(void)
 {
-    KfSaveSlotSummary summaries[KF_SAVE_SLOT_COUNT];
+    std::array<KfSaveSlotSummary, KF_SAVE_SLOT_COUNT> summaries;
     s32 cursor = 0;
     KfMenuConfirmState confirm = KF_MENU_CONFIRM_IDLE;
     s32 input = 0;
@@ -395,7 +391,7 @@ KfMenuResult menu_save_panel(void)
 
 KfMenuResult menu_load_panel(void)
 {
-    KfSaveSlotSummary summaries[KF_SAVE_SLOT_COUNT];
+    std::array<KfSaveSlotSummary, KF_SAVE_SLOT_COUNT> summaries;
     s32 cursor = 0;
     KfMenuConfirmState confirm = KF_MENU_CONFIRM_IDLE;
     s32 input = 0;
@@ -504,11 +500,11 @@ enum {
 };
 
 void menu_config_panel_draw(
-    MenuGlyphString on_label, MenuGlyphString off_label, KfPlayerOption *option_states);
+    MenuGlyphString on_label, MenuGlyphString off_label, const std::array<KfPlayerOption, KF_MENU_CONFIG_SETTING_COUNT> &option_states);
 
 void menu_config_panel(void)
 {
-    KfPlayerOption option_states[KF_MENU_CONFIG_SETTING_COUNT];
+    std::array<KfPlayerOption, KF_MENU_CONFIG_SETTING_COUNT> option_states;
     MenuGlyphString on_label;
     MenuGlyphString off_label;
     s32 row = 0;
@@ -622,15 +618,12 @@ void menu_config_panel(void)
 }
 
 void menu_config_panel_draw(
-    MenuGlyphString on_label, MenuGlyphString off_label, KfPlayerOption *option_states)
+    MenuGlyphString on_label, MenuGlyphString off_label, const std::array<KfPlayerOption, KF_MENU_CONFIG_SETTING_COUNT> &option_states)
 {
-    s32 i;
-    KfPlayerOption *state;
     const MenuSpriteDef *off_box;
 
-    state = option_states;
-    for (i = 0; i < KF_MENU_CONFIG_SETTING_COUNT; i++) {
-        if (*state == KF_PLAYER_OPTION_ON) {
+    for (const auto state : option_states) {
+        if (state == KF_PLAYER_OPTION_ON) {
             menu_blit_sprite_translucent(&menu_assets.option_highlight, &on_label.position);
             off_box = &menu_assets.option_background;
         } else {
@@ -644,7 +637,6 @@ void menu_config_panel_draw(
         menu_draw_string(
             &menu_assets.glyph_atlas,
             &off_label);
-        state++;
         on_label.position.y += CONFIG_OPTION_ROW_STEP;
         off_label.position.y += CONFIG_OPTION_ROW_STEP;
     }
@@ -1150,9 +1142,6 @@ void menu_item_model_preview(KfObjectId item_id)
     MATRIX rotation;
     MATRIX light_source;
     MATRIX light_result;
-    const MenuGlyphRow *rows;
-    const MenuGlyphRow *name;
-    s32 i;
 
     if (item_id != KF_OBJECT_NONE) {
         rotation.t[0] = MENU_ITEM_PREVIEW_TRANSLATION_X;
@@ -1167,14 +1156,9 @@ void menu_item_model_preview(KfObjectId item_id)
         kf::matrix_multiply_rotation(light_source, rotation, light_result);
         menu_render_item_model(&light_result, &rotation);
 
-        rows = item_name_rows;
-        name = &rows[kf_enum_encode<s32>(item_id)];
-
         text.position.x = MENU_ITEM_NAME_X;
         text.position.y = MENU_ITEM_PREVIEW_NAME_Y;
-        for (i = 0; i < MENU_GLYPHS_PER_ROW; i++) {
-            text.glyphs.codes[i] = name->codes[i];
-        }
+        text.glyphs = item_name_rows[kf_enum_encode<s32>(item_id)];
         menu_draw_string(&menu_assets.glyph_atlas, &text);
 
         text.position.x = MENU_INVENTORY_QUANTITY_LABEL_X;
@@ -1214,9 +1198,6 @@ void menu_draw_item_detail(KfObjectId item_id, KfItemStockBank shop_bank, KfTrad
     MATRIX light_source;
     MATRIX light_result;
     s32 price;
-    MenuGlyphRow *rows;
-    s16 *name;
-    s32 i;
 
     if (item_id == KF_OBJECT_NONE) {
         return;
@@ -1236,16 +1217,7 @@ void menu_draw_item_detail(KfObjectId item_id, KfItemStockBank shop_bank, KfTrad
 
     text.position.x = MENU_ITEM_NAME_X;
     text.position.y = MENU_ITEM_PREVIEW_NAME_Y;
-    rows = item_name_rows;
-    name = rows[kf_enum_encode<s32>(item_id)].codes;
-    {
-        s16 *glyph = text.glyphs.codes;
-
-        for (i = 0; i < MENU_GLYPHS_PER_ROW; i++) {
-            *glyph = *name++;
-            glyph++;
-        }
-    }
+    text.glyphs = item_name_rows[kf_enum_encode<s32>(item_id)];
     menu_draw_string(&menu_assets.glyph_atlas, &text);
 
     text.position.x = MENU_ITEM_DETAIL_PRICE_X;
@@ -1296,7 +1268,7 @@ void menu_add_message_image_quad(void)
     menu_submit_template(menu_assets.message_image_quads[kf_enum_encode<u8>(game_graphics_runtime.display_state.buffer_index)], 0);
 }
 
-void menu_draw_save_slots(const KfSaveSlotSummary *summaries, KfSaveSlotOverlay slot_overlay)
+void menu_draw_save_slots(std::span<const KfSaveSlotSummary> summaries, KfSaveSlotOverlay slot_overlay)
 {
     MenuGlyphString text;
     s32 i;
@@ -1319,7 +1291,7 @@ void menu_draw_save_slots(const KfSaveSlotSummary *summaries, KfSaveSlotOverlay 
         menu_submit_template(menu_assets.dialog_quads[kf_enum_encode<u8>(game_graphics_runtime.display_state.buffer_index)][MENU_SAVE_SLOT2_QUAD], MENU_CONTENT_OT_DEPTH);
     }
 
-    if (summaries == NULL) {
+    if (summaries.empty()) {
         return;
     }
 
@@ -1399,7 +1371,7 @@ static KfMenuResult menu_list_confirm_impl(
     MenuGlyphString accept_label;
     MenuGlyphString decline_label;
     KfMenuConfirmChoice selected;
-    KfEnumStorage<KfMenuConfirmState, u32> confirmation;
+    KfMenuConfirmState confirmation;
     u32 input;
     u32 prev;
     KfMenuResult result;
@@ -1504,7 +1476,7 @@ enum {
 
 KfMenuResult menu_two_option_prompt(
     KfMenuWindowKind window_kind, s32 row_count, s32 highlight_row,
-    const KfSaveSlotSummary *summaries)
+    std::span<const KfSaveSlotSummary> summaries)
 {
     MenuGlyphString accept_label;
     MenuGlyphString decline_label;
@@ -1626,16 +1598,10 @@ void menu_list_render(const KfMenuList *list)
 {
     MenuGlyphString text;
     const MenuTileSprite *tile;
-    s16 *glyph;
-    u8 *quantity;
     s32 row;
-    s32 i;
     s32 yoff;
     u32 tens;
     u32 ones;
-
-    glyph = list->glyph_rows;
-    quantity = list->quantities;
 
     if (list->title.position.x != 0) {
         menu_blit_sprite_translucent(
@@ -1644,23 +1610,19 @@ void menu_list_render(const KfMenuList *list)
             &menu_assets.glyph_atlas, &list->title);
     }
 
-    if (quantity != NULL)
-        quantity += list->scroll_offset;
-    glyph = glyph + list->scroll_offset * list->glyphs_per_entry;
     row = 0;
     if (row < list->visible_rows && row < list->entry_count) {
         do {
             text.position.x = list->list_x + MENU_LIST_TEXT_INSET;
             text.position.y = list->list_y + MENU_LIST_TEXT_INSET;
             text.position.y += row * MENU_LIST_ROW_HEIGHT;
-            for (i = 0; i < list->glyphs_per_entry; i++) {
-                text.glyphs.codes[i] = *glyph++;
-            }
+            const auto index = list->scroll_offset + row;
+            text.glyphs.codes = list->glyph_rows[index];
             menu_draw_string(
                 &menu_assets.glyph_atlas, &text);
-            if (list->quantities != NULL) {
-                tens = *quantity / 10u;
-                ones = *quantity % 10u;
+            if (!list->quantities.empty()) {
+                tens = list->quantities[index] / 10u;
+                ones = list->quantities[index] % 10u;
                 text.position.x += MENU_LIST_QUANTITY_X_OFFSET;
                 text.position.y += MENU_LIST_QUANTITY_Y_OFFSET;
                 text.glyphs.codes[0] = tens;
@@ -1671,7 +1633,6 @@ void menu_list_render(const KfMenuList *list)
                 text.glyphs.codes[2] = MENU_TEXT_END;
                 menu_draw_number(
                     &menu_assets.number_atlas, &text);
-                quantity++;
             }
         } while (++row < list->visible_rows && row < list->entry_count);
     }
@@ -1705,7 +1666,6 @@ enum {
     MENU_OPAQUE_SPRITE_X_OFFSET = 18,
     MENU_OPAQUE_SPRITE_Y_OFFSET = 2,
     MENU_LIST_DEFAULT_VISIBLE_ROWS = 11,
-    MENU_LIST_DEFAULT_GLYPHS_PER_ENTRY = 8,
     MENU_BACKDROP_LEFT_X = 166,
     MENU_BACKDROP_RIGHT_X = MENU_BACKDROP_LEFT_X + MENU_BACKDROP_COLUMN_STEP,
     MENU_PICKUP_BACKDROP_LEFT_X = 118,
@@ -1760,9 +1720,6 @@ void menu_draw_pickup_preview(KfObjectId item_id)
     MATRIX rotation;
     MATRIX light_source;
     MATRIX light_result;
-    const MenuGlyphRow *rows;
-    const MenuGlyphRow *name;
-    s32 i;
 
     rotation.t[0] = pickup_preview_translation[0];
     rotation.t[1] = pickup_preview_translation[1];
@@ -1776,13 +1733,9 @@ void menu_draw_pickup_preview(KfObjectId item_id)
     kf::matrix_multiply_rotation(light_source, rotation, light_result);
     menu_render_item_model(&light_result, &rotation);
 
-    rows = item_name_rows;
-    name = &rows[kf_enum_encode<s32>(item_id)];
     string.position.x = 0x80;
     string.position.y = 0x24;
-    for (i = 0; i < MENU_GLYPHS_PER_ROW; i++) {
-        string.glyphs.codes[i] = name->codes[i];
-    }
+    string.glyphs = item_name_rows[kf_enum_encode<s32>(item_id)];
     menu_draw_string(&menu_assets.glyph_atlas, &string);
 
     menu_draw_backdrop_tile(MENU_PICKUP_BACKDROP_LEFT_X, MENU_BACKDROP_TOP_Y, false, false);
@@ -1901,13 +1854,9 @@ void menu_present_frame(void)
 
 void menu_list_init(KfMenuList *list, KfMenuWindowKind window_kind, s32 title_row)
 {
-    s32 i;
-
     list->title.position.x = 12;
     list->title.position.y = 19;
-    for (i = 0; i < MENU_GLYPHS_PER_ROW; i++) {
-        list->title.glyphs.codes[i] = menu_window_layouts[kf_enum_encode<s32>(window_kind)].rows[title_row].glyphs.codes[i];
-    }
+    list->title.glyphs = menu_window_layouts[kf_enum_encode<s32>(window_kind)].rows[title_row].glyphs;
     list->list_x = 0x16;
     list->list_y = 0x26;
     list->entry_count = 0;
@@ -1915,18 +1864,15 @@ void menu_list_init(KfMenuList *list, KfMenuWindowKind window_kind, s32 title_ro
     list->scroll_offset = 0;
     list->selected_index = 0;
     list->cursor_row = 0;
-    list->glyphs_per_entry = MENU_LIST_DEFAULT_GLYPHS_PER_ENTRY;
 }
 
-void menu_format_number(s32 value, s32 digit_count, KfFormatPaddingMode padding_mode, s16 *out)
+void menu_format_number(s32 value, s32 digit_count, KfFormatPaddingMode padding_mode, std::span<s16> out)
 {
     s32 i = 0;
     s32 blank;
 
     blank = (padding_mode == KF_FORMAT_PAD_SPACES) ? MENU_NUMBER_BLANK : 0;
-    for (; i < digit_count; i++) {
-        out[i] = blank;
-    }
+    std::ranges::fill(out.first(digit_count), blank);
     out[digit_count] = MENU_TEXT_END;
     for (i = digit_count - 1; i >= 0; i--) {
         out[i] = value % 10;
@@ -1964,7 +1910,7 @@ void menu_release_item_model(void)
 
 KfResourceLoadResult menu_load_texture(KfMenuTextureId texture_id)
 {
-    char name[menu_image_path_capacity] = "TIM/M000.";
+    std::array<char, menu_image_path_capacity> name = {"TIM/M000."};
     u8 *destination;
     s32 number;
 
@@ -1974,7 +1920,7 @@ KfResourceLoadResult menu_load_texture(KfMenuTextureId texture_id)
         destination = game_graphics_runtime.display_state.asset_load_buffer;
         std::size_t image_size;
         if (resource_file_load_into(destination,
-                game_graphics_runtime.display_state.asset_load_capacity, name, &image_size) != KF_RESOURCE_LOADED) {
+                game_graphics_runtime.display_state.asset_load_capacity, name.data(), &image_size) != KF_RESOURCE_LOADED) {
             return KF_RESOURCE_LOAD_FAILED;
         }
         tim_upload_images(destination, image_size);

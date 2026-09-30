@@ -67,8 +67,7 @@ void audio_close_vab(KfAudioState &state)
 
 void audio_reset_voice_slots(KfAudioState &state)
 {
-    for (auto &voice : state.voice_slots.voice_ids)
-        voice = kf::no_sound_voice;
+    state.voice_slots.voice_ids.fill(kf::no_sound_voice);
 }
 
 void audio_play_voice(KfAudioPlayback playback,

@@ -3,6 +3,8 @@
 
 #[forbid(unsafe_code)]
 mod bytes;
+#[forbid(unsafe_code)]
+mod cast;
 
 #[forbid(unsafe_code)]
 pub mod audio;

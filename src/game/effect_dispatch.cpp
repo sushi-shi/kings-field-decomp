@@ -1,14 +1,15 @@
 #include <kf/platform/prelude.h>
-#include <kf/lib/random.h>
-#include <kf/lib/null.h>
-
-#include <kf/lib/map_data.h>
 #include <kf/game/collision.h>
 #include <kf/game/effect.h>
-#include <cstdlib>
-#include <cstdio>
-#include <cstring>
 #include <kf/game/game.h>
+#include <kf/lib/map_data.h>
+#include <kf/lib/null.h>
+#include <kf/lib/random.h>
+
+#include <array>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 enum {
     EFFECT_ORBIT_RADIUS = 6500
@@ -96,9 +97,9 @@ enum {
     LONG_SWING_PROBE_LENGTH = 4900
 };
 
-SVECTOR effect_swing_probe_offsets[KF_EFFECT_SWING_PROBE_COUNT] = {
-    {0, SHORT_SWING_PROBE_LENGTH, 0, 0},
-    {0, LONG_SWING_PROBE_LENGTH, 0, 0},
+std::array<SVECTOR, KF_EFFECT_SWING_PROBE_COUNT> effect_swing_probe_offsets = {
+    SVECTOR{0, SHORT_SWING_PROBE_LENGTH, 0, 0},
+    SVECTOR{0, LONG_SWING_PROBE_LENGTH, 0, 0},
 };
 
 static void effect_begin_lightning_impact(KfEffectRecord *effect, const KfMagicRecord *magic)

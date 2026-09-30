@@ -1,25 +1,25 @@
 #include <kf/platform/prelude.h>
-#include <kf/lib/codec.h>
-#include <kf/lib/bool.h>
-
-#include <kf/lib/map_data.h>
-#include <kf/lib/map.h>
 #include <kf/game/collision.h>
-#include <cstdlib>
-#include <cstdio>
-#include <cstring>
 #include <kf/game/game.h>
+#include <kf/lib/codec.h>
+#include <kf/lib/map.h>
+#include <kf/lib/map_data.h>
+
+#include <array>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 enum {
     MAP_DOOR_CLOSING_PROBE_RADIUS = 3000
 };
 
-KfMapCopyRegion map_copy_regions[KF_MAP_COPY_REGION_COUNT] = {
-    {55, 33, 50, 39, 3, 3},
-    {47, 16, 30, 20, 3, 3},
-    {58, 44, 15, 48, 3, 3},
-    {64, 44, 37, 45, 3, 3},
-    {0, 0, 36, 4, 7, 1},
+std::array<KfMapCopyRegion, KF_MAP_COPY_REGION_COUNT> map_copy_regions = {
+    KfMapCopyRegion{55, 33, 50, 39, 3, 3},
+    KfMapCopyRegion{47, 16, 30, 20, 3, 3},
+    KfMapCopyRegion{58, 44, 15, 48, 3, 3},
+    KfMapCopyRegion{64, 44, 37, 45, 3, 3},
+    KfMapCopyRegion{0, 0, 36, 4, 7, 1},
 };
 
 KfMapObjectState map_object_state;
@@ -158,7 +158,7 @@ void map_object_pool_clear(void)
     for (auto &object : map_object_state.objects) {
         object.object_id = KF_OBJECT_NONE;
         object.action = KF_MAP_OBJECT_OP_NONE;
-        std::memset(&object.link, 0, sizeof object.link);
+        object.link = {};
     }
     map_object_state.placement_drop_sequence = 0;
     map_object_state.definition_drop_sequence = 0;
@@ -172,10 +172,10 @@ void map_object_definitions_load(const KfMapObjectDefinitionTable *definitions)
 
 void map_object_pool_load(KfResourceChunk chunk)
 {
-    KfObjectPlacementData decoded[KF_MAP_OBJECT_CAPACITY] {};
+    std::array<KfObjectPlacementData, KF_MAP_OBJECT_CAPACITY> decoded {};
     std::size_t count;
     if (kf_object_placements_decode(chunk.data, chunk.size,
-            {KF_MAP_COLUMNS, KF_MAP_OBJECT_DEFINITION_COUNT, KF_MAP_TILE_SIZE}, decoded, std::size(decoded), &count) != KF_CODEC_OK)
+            {KF_MAP_COLUMNS, KF_MAP_OBJECT_DEFINITION_COUNT, KF_MAP_TILE_SIZE}, decoded.data(), decoded.size(), &count) != KF_CODEC_OK)
         kf::host_fail("Invalid map object placements.");
     KfMapObjectDefinition *definition;
     SVECTOR effect_direction;
@@ -217,7 +217,7 @@ void map_object_pool_load(KfResourceChunk chunk)
                                                     KF_EFFECT_KIND_ORBITING_PROJECTILE,
                                                     &object.position,
                                                     &effect_direction)
-                    - effect_state.records;
+                    - effect_state.records.data();
                 map_object_start_action_if_idle(&object, KF_MAP_OBJECT_OP_RELEASE_ORBIT_OR_SHORT_SWING);
                 break;
             case KF_MAP_OBJECT_BOSS_PROJECTILE_EMITTER:
@@ -234,7 +234,7 @@ void map_object_pool_load(KfResourceChunk chunk)
                                                     &object.position,
                                                     &effect_direction,
                                                     KfEffectRotationArguments{&object.rotation.vector})
-                    - effect_state.records;
+                    - effect_state.records.data();
                 map_object_start_action_if_idle(&object, KF_MAP_OBJECT_OP_RELEASE_ORBIT_OR_SHORT_SWING);
                 break;
             case KF_MAP_OBJECT_LONG_SWING:
@@ -245,7 +245,7 @@ void map_object_pool_load(KfResourceChunk chunk)
                                                     &object.position,
                                                     &effect_direction,
                                                     KfEffectRotationArguments{&object.rotation.vector})
-                    - effect_state.records;
+                    - effect_state.records.data();
                 map_object_start_action_if_idle(&object, KF_MAP_OBJECT_OP_RELEASE_LONG_SWING);
                 break;
             case KF_MAP_OBJECT_EFFECT_SWITCH:
@@ -253,7 +253,7 @@ void map_object_pool_load(KfResourceChunk chunk)
                     effect_pool_construct(
                         0, KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER, KF_EFFECT_KIND_MAP_SWITCH, &object.position,
                         &effect_direction, KfEffectRotationArguments{&object.rotation.vector})
-                    - effect_state.records;
+                    - effect_state.records.data();
                 map_object_start_action_if_idle(&object, KF_MAP_OBJECT_OP_EFFECT_SWITCH);
                 break;
             case KF_ITEM_DRAGON_CHALICE:
@@ -298,7 +298,7 @@ s32 map_object_distance_to_point(
 
 s32 map_object_pool_find_near_point(s32 point_x, s32 point_z, s32 radius_padding)
 {
-    KfMapObject *object = map_object_state.objects;
+    KfMapObject *object = map_object_state.objects.data();
     s16 index;
     u16 radius;
 

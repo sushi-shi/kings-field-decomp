@@ -1,19 +1,19 @@
 #include <kf/platform/prelude.h>
-#include <kf/game/audio.h>
-#include <kf/lib/random.h>
-#include <kf/lib/null.h>
-#include <kf/lib/bool.h>
-#include <kf/game/graphics.h>
-
 #include <kf/game/actor.h>
-#include <kf/lib/map_data.h>
-#include <kf/lib/map.h>
+#include <kf/game/audio.h>
 #include <kf/game/collision.h>
-#include <kf/game/notify.h>
-#include <cstdlib>
-#include <cstdio>
-#include <cstring>
 #include <kf/game/game.h>
+#include <kf/game/graphics.h>
+#include <kf/game/notify.h>
+#include <kf/lib/map.h>
+#include <kf/lib/map_data.h>
+#include <kf/lib/null.h>
+#include <kf/lib/random.h>
+
+#include <array>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 namespace {
 constexpr unsigned floor2_harp_ambient_stage = 2, floor2_harp_ambient_page_end = 3;
@@ -89,24 +89,29 @@ static constexpr bool script_region_contains_cell(const ScriptCellRegion &region
         && cell.x < region.x_end && cell.z < region.z_end;
 }
 
-static KfCameraPathPoint map_floor5_camera_path[2] = {
-    {{173000, -11500, 85000, 0}, {0, KF_ANGLE_HALF_TURN, 0, 0}, 100, 0},
-    {{KF_CAMERA_PATH_END_X, -1, -1, 0}, {-1, -1, -1, 0}, -1, 0}
+static std::array<KfCameraPathPoint, 2> map_floor5_camera_path = {
+    KfCameraPathPoint{{173000, -11500, 85000, 0}, {0, KF_ANGLE_HALF_TURN, 0, 0}, 100, 0},
+    KfCameraPathPoint{{KF_CAMERA_PATH_END_X, -1, -1, 0}, {-1, -1, -1, 0}, -1, 0}
 };
 
 static VECTOR map_floor1_sound_position = {65000, -10000, 25000, 0};
 
 static MATRIX map_transfer_light_matrix = {
-    {{0, -KF_FIXED12_ONE, 0}, {0, -KF_FIXED12_ONE, 0}, {0, -KF_FIXED12_ONE, 0}}, {0, 0, 0}
+    .m = {{
+        {0, -KF_FIXED12_ONE, 0},
+        {0, -KF_FIXED12_ONE, 0},
+        {0, -KF_FIXED12_ONE, 0},
+    }},
+    .t = {},
 };
 
 static constexpr unsigned map_screen_path_capacity = 16;
 static constexpr unsigned map_screen_floor_offset = 5, map_screen_group_offset = 8, map_screen_number_offset = 9;
-static char map_screen_image_path[map_screen_path_capacity] = "KAN/B0/K000.TIM";
+static std::array<char, map_screen_path_capacity> map_screen_image_path = {"KAN/B0/K000.TIM"};
 
 s32 actor_pool_find_at_tile(u8 tile_x, u8 tile_z)
 {
-    KfActor *actor = actor_state.actors;
+    KfActor *actor = actor_state.actors.data();
     s16 index;
 
     for (index = 0; index < KF_ACTOR_CAPACITY; index++, actor++) {
@@ -609,7 +614,7 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
     s32 index;
     s32 result;
     KfMenuResult pickup_result;
-    KfBool8 found_item;
+    bool found_item;
     KfMapEvent *event;
     KfMapObject *object;
     KfMapObjectDefinition *definition;

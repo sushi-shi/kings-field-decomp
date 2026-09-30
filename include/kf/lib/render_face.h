@@ -1,16 +1,17 @@
 #ifndef KF_LIB_RENDER_FACE_H
 #define KF_LIB_RENDER_FACE_H
 
-#include <kf/renderer/renderer.h>
-#include <kf/platform/host.h>
 #include <kf/lib/tmd.h>
+#include <kf/platform/host.h>
+#include <kf/renderer/renderer.h>
 
-#include <optional>
+#include <array>
 #include <initializer_list>
+#include <optional>
 
 // A visible face owns its projected corners; no animation-scratch pointers escape.
 struct KfProjectedFace {
-    KfScreenVertex corners[4];
+    std::array<KfScreenVertex, 4> corners;
     kf::FaceShape shape;
 
     void complete_quad(const KfScreenVertex &fourth);
@@ -29,16 +30,16 @@ inline std::int64_t render_face_winding(const KfScreenVertex *a,
     const KfScreenVertex *b, const KfScreenVertex *c)
 {
     // Retail tests the projected coordinates, including their saturation.
-    const std::int64_t ab_x = b->sxy.vector.vx - a->sxy.vector.vx;
-    const std::int64_t ab_y = b->sxy.vector.vy - a->sxy.vector.vy;
-    const std::int64_t ac_x = c->sxy.vector.vx - a->sxy.vector.vx;
-    const std::int64_t ac_y = c->sxy.vector.vy - a->sxy.vector.vy;
+    const std::int64_t ab_x = b->position.vx - a->position.vx;
+    const std::int64_t ab_y = b->position.vy - a->position.vy;
+    const std::int64_t ac_x = c->position.vx - a->position.vx;
+    const std::int64_t ac_y = c->position.vy - a->position.vy;
     return ab_x * ac_y - ab_y * ac_x;
 }
 
 inline kf::BlendMode render_texture_blend(u16 page)
 {
-    constexpr kf::BlendMode modes[] = {kf::BlendMode::average, kf::BlendMode::add,
+    constexpr std::array<kf::BlendMode, 4> modes = {kf::BlendMode::average, kf::BlendMode::add,
         kf::BlendMode::subtract, kf::BlendMode::add_quarter};
     return modes[(page >> kf::texture_blend_shift) & kf::texture_blend_mask];
 }
@@ -53,8 +54,8 @@ inline kf::FaceMaterial render_texture_material(u16 page, u16 palette)
 
 inline void render_face_vertex(kf::DrawFace *face, unsigned index, const KfScreenVertex *vertex)
 {
-    face->vertices[index].x = vertex->sxy.vector.vx;
-    face->vertices[index].y = vertex->sxy.vector.vy;
+    face->vertices[index].x = vertex->position.vx;
+    face->vertices[index].y = vertex->position.vy;
 }
 
 inline void render_face_uv(kf::DrawFace *face, unsigned index, u16 uv)
@@ -63,11 +64,11 @@ inline void render_face_uv(kf::DrawFace *face, unsigned index, u16 uv)
     face->vertices[index].v = (uv >> kf::packed_uv_component_bits) / kf::texture_uv_scale;
 }
 
-inline void render_face_submit(kf::DrawFace *face, const CVECTOR *colors,
+inline void render_face_submit(kf::DrawFace *face, std::span<const CVECTOR> colors,
     kf::FaceShading shading, s32 depth)
 {
     const float divisor = face->material.kind == kf::SurfaceKind::Texture ? kf::texture_color_unity : kf::color8_scale;
-    for (unsigned i = 0; i < static_cast<unsigned>(face->shape); ++i) {
+    for (std::size_t i = 0; i < static_cast<unsigned>(face->shape); ++i) {
         const auto &color = colors[shading == kf::FaceShading::Flat ? 0 : i];
         face->vertices[i].r = color.r / divisor;
         face->vertices[i].g = color.g / divisor;

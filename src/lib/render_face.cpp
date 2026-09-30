@@ -24,7 +24,7 @@ kf::DrawFace KfProjectedFace::draw_face() const
 {
     kf::DrawFace face{};
     face.shape = shape;
-    for (unsigned i = 0; i < static_cast<unsigned>(shape); ++i)
+    for (std::size_t i = 0; i < static_cast<unsigned>(shape); ++i)
         render_face_vertex(&face, i, &corners[i]);
     return face;
 }
