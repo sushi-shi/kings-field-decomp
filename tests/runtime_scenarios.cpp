@@ -1,8 +1,6 @@
 #if defined(KF_AUDIT_GAME)
 
 #include <kf/platform/prelude.hpp>
-namespace kf::game
-{
 #define game_main_loop audit_original_game_main_loop
 #define player_update audit_selected_player_update
 #define game_initialize_session audit_initialize_session
@@ -71,15 +69,12 @@ void audit_selected_player_update()
     player_state.gold = gold + 123;
     if (save_system_read_slot(KF_SAVE_SLOT_FIRST) != KF_SAVE_RESULT_OK || player_state.gold != gold)
         kf::host_fail("Audit: save restoration failed");
-    game_next_overlay_mode = KF_OVERLAY_MODE_INTRO;
+    game_result = GameResult::ReturnToIntro;
 }
-} // namespace kf::game
 
 #elif defined(KF_AUDIT_OPENING)
 
 #include <kf/platform/prelude.hpp>
-namespace kf::opening
-{
 #define opening_poll_input audit_original_opening_poll_input
 #include KF_AUDIT_SOURCE
 #undef opening_poll_input
@@ -88,20 +83,16 @@ void opening_poll_input()
     audit_original_opening_poll_input();
     opening_input_action = KF_OPENING_INPUT_SKIP;
 }
-} // namespace kf::opening
 
 #elif defined(KF_AUDIT_INPUT)
 
 #include <kf/platform/prelude.hpp>
-namespace kf::game
-{
 extern unsigned audit_frames;
-}
 namespace kf
 {
 u32 audit_read_buttons()
 {
-    const auto frame = game::audit_frames;
+    const auto frame = ::audit_frames;
     if (frame >= 16 && frame < 28)
         return static_cast<u32>(Button::Up);
     if (frame >= 28 && frame < 36)
@@ -115,11 +106,8 @@ u32 audit_read_buttons()
     return 0;
 }
 } // namespace kf
-namespace kf::game
-{
 #define host_read_buttons audit_read_buttons
 #include KF_AUDIT_SOURCE
 #undef host_read_buttons
-} // namespace kf::game
 
 #endif

@@ -5,17 +5,17 @@
     let
       system = "x86_64-linux";
       pkgs = import nixpkgs { inherit system; };
-      nativeTools = with pkgs; [ cmake ninja pkg-config cargo rustc clang ];
+      nativeTools = with pkgs; [ cmake ninja pkg-config cargo rustc clang rust-bindgen rustfmt ];
       nativeLibraries = with pkgs; [ sdl3 libGL libglvnd ];
       sources = pkgs.lib.cleanSourceWith {
         src = ./.;
         filter = path: type:
           let
             relative = pkgs.lib.removePrefix "${toString ./.}/" (toString path);
-            sourceDirectories = [ "cmake" "src" "include" "codecs" "web" ];
+            sourceDirectories = [ "src" "include" "codecs" "web" ];
           in pkgs.lib.cleanSourceFilter path type
             && !(builtins.elem (baseNameOf path) [ "build" "target" "__pycache__" ])
-            && (builtins.elem relative [ "CMakeLists.txt" "build.json" ]
+            && (builtins.elem relative [ "CMakeLists.txt" ]
               || builtins.any (directory:
                 relative == directory || pkgs.lib.hasPrefix "${directory}/" relative
               ) sourceDirectories);
@@ -55,18 +55,22 @@
         native = unwrapped;
         launcher = game;
         codec-bindings = pkgs.runCommand "kf-codec-bindings" {
-          nativeBuildInputs = with pkgs; [ rust-bindgen rustfmt ];
+          nativeBuildInputs = with pkgs; [ rust-bindgen rustfmt cargo rustc clippy ];
           src = sources;
         } ''
           cp -r "$src" source
+          chmod -R u+w source
           cd source
           bash codecs/bindings.sh --check
+          export CARGO_HOME="$TMPDIR/kings-field-cargo"
+          cargo clippy --offline --locked --release --manifest-path codecs/Cargo.toml -- \
+            -D unfulfilled_lint_expectations
           touch "$out"
         '';
       };
       devShells.${system}.default = (pkgs.mkShell.override { stdenv = pkgs.clangStdenv; }) {
         packages = nativeTools ++ nativeLibraries ++ (with pkgs; [
-          emscripten nodejs chromium xvfb-run xdotool imagemagick rustfmt rust-bindgen python3
+          emscripten nodejs chromium xvfb-run xdotool imagemagick python3 clippy
         ]);
         KF_SDL_SOURCE = "${pkgs.sdl3.src}";
         KF_RUST_SOURCE = "${pkgs.rustPlatform.rustLibSrc}";

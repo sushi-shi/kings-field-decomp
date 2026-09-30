@@ -3,7 +3,7 @@
 
 #include <kf/game/audio.h>
 #include <kf/lib/types.h>
-#include <kf/lib/overlay.h>
+#include <kf/game/session.h>
 #include <kf/lib/geometry_types.h>
 
 // Floor-local script configuration: indices are not global character IDs.
@@ -15,7 +15,7 @@ inline constexpr unsigned KF_FLOOR2_REVEAL_EVENT = 3;
 inline constexpr unsigned KF_FLOOR3_FIRE_BALL_EVENT = 1;
 inline constexpr unsigned KF_FLOOR5_WEAPON_TRANSFORM_EVENT = 1;
 extern u32 DAT_80057d24;
-extern KfOverlayResultWord game_next_overlay_mode;
+extern GameResult game_result;
 
 enum {
     KF_GAMEPLAY_SOUND_LIFT_DOOR = 0,

@@ -1,3 +1,4 @@
+#include <kf/platform/prelude.hpp>
 #include <algorithm>
 #include <cstdlib>
 #include <kf/lib/random.hpp>

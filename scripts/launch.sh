@@ -3,7 +3,7 @@ for argument in "$@"; do
   case "$argument" in
     --help|-h)
       printf '%s\n' \
-        "Usage: KF_DISC=/path/to/disc.iso kings-field [--saves DIRECTORY] [--skip-intro]" \
+        "Usage: KF_DISC=/path/to/disc.iso kings-field [--saves DIRECTORY]" \
         "The original Japanese ISO or BIN/CUE is extracted locally on first launch." \
         "Verified resources are reused from the XDG cache; saves are stored separately." \
         "Explicit --data or --disc/--extract-to/--extract-only options bypass automatic caching."

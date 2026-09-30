@@ -1,3 +1,4 @@
+#include <kf/platform/prelude.hpp>
 #include <kf/lib/random.hpp>
 #include <kf/lib/null.h>
 

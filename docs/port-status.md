@@ -1,8 +1,8 @@
 # Port status
 
 Linux and WebAssembly build and run the original game/opening through native
-platform, rendering, audio and save interfaces. See [architecture](../PORTING.md)
-and [technical constraints](port-findings.md) before changing behavior.
+platform, rendering, audio and save interfaces. See the
+[technical constraints](port-findings.md) before changing behavior.
 
 ## Verified scope
 

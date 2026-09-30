@@ -1,3 +1,4 @@
+#include <kf/platform/prelude.hpp>
 #include <kf/game/graphics.h>
 
 #include <kf/lib/geometry_types.h>

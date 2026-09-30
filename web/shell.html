@@ -22,7 +22,6 @@
   <p>Select your original Japanese SLPS-00017 ISO or BIN and optional CUE.<br>
      Extraction stays on this device. Disc files are never uploaded.</p>
   <input id="disc" aria-label="Original disc image files" type="file" accept=".iso,.bin,.cue" multiple disabled>
-  <div class="options"><label><input id="skip-intro" type="checkbox"> Skip opening</label></div>
   <button id="play" disabled>Play</button>
   <p id="status" role="status" aria-live="polite">Loading application…</p>
   <p id="cache-status">Checking this device for extracted files…</p>
@@ -44,7 +43,6 @@
   function setBusy(busy) {
     discInput.disabled = busy || running || stopped;
     playButton.disabled = busy || running || stopped || !dataRoot;
-    document.getElementById('skip-intro').disabled = running || stopped;
   }
   function validPath(path) {
     return typeof path === 'string' && path.length > 0 && path.length < pathCapacity &&
@@ -260,7 +258,6 @@
     running = true;
     setBusy(true);
     const args = ['--data', dataRoot];
-    if (document.getElementById('skip-intro').checked) args.push('--skip-intro');
     statusLabel.textContent = 'Starting original game…';
     Module.canvas.focus();
     // Do not await permission before audio creation: main enters within this gesture.
