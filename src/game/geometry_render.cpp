@@ -67,10 +67,10 @@ void render_weapon(void)
     kf::matrix_set_rotation_xyz(weapon->render_rotation, model);
     asset_registry_select(KF_ASSET_WEAPON);
     object = tmd_get_object(tmd_context(), 0);
-    if (render_bind_animated_instance(
+    if (render_bind_instance_vertices(
             &player_state.weapon_animation_cache, KF_ASSET_WEAPON, KF_ANIMATION_CLIP_FIRST,
             player_state.weapon_attack_phase,
-            object->vertex_count) != NULL) {
+            object->vertex_count)) {
         tmd_project_vertices_depth_shift(tmd_context(), object->vertex_count, WEAPON_PROJECTED_DEPTH_SHIFT, &model, projection);
         depth_bias =
             player_state.equipped_weapon_record->render_translation.z >> WEAPON_DEPTH_BIAS_SHIFT;
@@ -103,10 +103,10 @@ void render_hud_models(const MATRIX *lights)
         kf::matrix_scale_axes(model, scale);
         asset_registry_select(KF_ASSET_HUD_MODELS);
         object = tmd_get_object(tmd_context(), 0);
-        if (render_bind_animated_instance(
+        if (render_bind_instance_vertices(
                 &entry->animation_cache, KF_ASSET_HUD_MODELS,
                 entry->animation_clip, entry->animation_phase,
-                object->vertex_count) != NULL) {
+                object->vertex_count)) {
             tmd_transform_vertices(tmd_context(), object->vertex_count, &model);
             render_enqueue_tmd(0, 0, lights);
         }
