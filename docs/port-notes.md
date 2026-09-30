@@ -136,3 +136,7 @@ Whole-row replacements can change these labels. Effect update IDs passed to
 
 These are intentional port policies. The affected combat paths still need direct
 runtime verification.
+
+Fixed audio and TIM records are defined in `codecs/src/formats.rs`, with explicit
+endianness, byte alignment and checked sizes. Codec errors retain parser source
+locations through the shared Rust error type and C status conversion.

@@ -1,12 +1,44 @@
-mod bindings;
+use crate::cast::AsUsize;
+pub(crate) mod bindings;
 use bindings::*;
 mod audio;
 mod texture;
+use crate::bytes::{read_u16_le, span};
 use crate::tim::{Image, Images};
 use crate::tim::{
     TIM_DIRECT16, TIM_DIRECT24, TIM_FLAGS_MASK, TIM_FORMAT_MASK, TIM_INDEXED4, TIM_INDEXED8,
 };
 use core::{panic::PanicInfo, slice};
+struct Diagnostic;
+
+impl core::fmt::Write for Diagnostic {
+    fn write_str(&mut self, text: &str) -> core::fmt::Result {
+        unsafe extern "C" {
+            fn printf(format: *const core::ffi::c_char, ...) -> core::ffi::c_int;
+        }
+        // The precision bounds each non-NUL-terminated Rust string.
+        for chunk in text.as_bytes().chunks(i32::MAX as usize) {
+            unsafe {
+                printf(c"%.*s".as_ptr(), chunk.len() as i32, chunk.as_ptr());
+            }
+        }
+        Ok(())
+    }
+}
+
+// C callers still guarantee valid allocations and non-overlapping borrows.
+fn input_valid(data: *const u8, length: usize) -> bool {
+    !data.is_null() && length <= isize::MAX as usize
+}
+
+fn output_valid<T>(data: *mut T, count: usize) -> bool {
+    !data.is_null()
+        && data.is_aligned()
+        && count
+            .checked_mul(size_of::<T>())
+            .is_some_and(|size| size <= isize::MAX as usize)
+}
+
 const INDEXED4_PALETTE_COLORS: usize = 16;
 const INDEXED4_BITS: usize = 4;
 const INDEXED4_MASK: u8 = 15;
@@ -22,7 +54,7 @@ extern "C" {
 }
 // Native prebuilt core retains an unwind metadata reference. This library uses
 // panic=abort; entering an unwinder is a fatal ABI violation, never a no-op.
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub extern "C" fn rust_eh_personality() -> ! {
     unsafe { abort() }
 }
@@ -31,63 +63,86 @@ fn panic(_: &PanicInfo<'_>) -> ! {
     // Programming errors must not unwind across the C ABI.
     unsafe { abort() }
 }
-const OK: KfCodecResult = KF_CODEC_OK;
-const END: KfCodecResult = KF_CODEC_END;
-const INVALID: KfCodecResult = KF_CODEC_INVALID;
-const OUTPUT_FULL: KfCodecResult = KF_CODEC_OUTPUT_FULL;
-fn parse(bytes: &[u8], offset: usize) -> Result<Image<'_>, KfCodecResult> {
-    let tail = bytes.get(offset..).ok_or(INVALID)?;
-    Images::new(tail).next().ok_or(END)?.map_err(|_| INVALID)
+fn status(result: crate::Result<()>) -> KfCodecResult {
+    use core::fmt::Write;
+    let Err(error) = result else {
+        return KF_CODEC_OK;
+    };
+    let status = match error.kind {
+        crate::error::Kind::End => return KF_CODEC_END,
+        crate::error::Kind::OutputFull => KF_CODEC_OUTPUT_FULL,
+        _ => KF_CODEC_INVALID,
+    };
+    let _ = writeln!(
+        Diagnostic,
+        "kf-codec: {}:{}:{}: {}",
+        error.location.file(),
+        error.location.line(),
+        error.location.column(),
+        error
+    );
+    status
 }
-fn dimensions(image: &Image<'_>) -> Result<(usize, usize), KfCodecResult> {
-    let words = image.image.rectangle.width as usize;
-    let height = image.image.rectangle.height as usize;
+
+fn parse(bytes: &[u8], offset: usize) -> crate::Result<Image<'_>> {
+    let tail = bytes
+        .get(offset..)
+        .ok_or(crate::Error::invalid("TIM offset exceeds input"))?;
+    Images::new(tail).next().ok_or(crate::Error::end())?
+}
+
+fn dimensions(image: &Image<'_>) -> crate::Result<(usize, usize)> {
+    let words = image.image.rectangle.width.get() as usize;
+    let height = image.image.rectangle.height.get() as usize;
     let width = match image.mode & TIM_FORMAT_MASK {
         TIM_INDEXED4 => words * 4,
         TIM_INDEXED8 => words * 2,
         TIM_DIRECT16 => words,
         TIM_DIRECT24 if words * 2 % 3 == 0 => words * 2 / 3,
-        _ => return Err(INVALID),
+        _ => crate::bail!("invalid TIM mode or dimensions"),
     };
     if width == 0 || height == 0 || image.mode & !TIM_FLAGS_MASK != 0 {
-        return Err(INVALID);
+        crate::bail!("invalid TIM mode or dimensions");
     }
     Ok((width, height))
 }
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn kf_tim_info(
     bytes: *const u8,
     length: usize,
     offset: usize,
     info: *mut KfTimInfo,
 ) -> KfCodecResult {
-    if bytes.is_null() || info.is_null() || length > isize::MAX as usize {
-        return INVALID;
+    status(tim_info(bytes, length, offset, info))
+}
+
+unsafe fn tim_info(
+    bytes: *const u8,
+    length: usize,
+    offset: usize,
+    info: *mut KfTimInfo,
+) -> crate::Result<()> {
+    if !input_valid(bytes, length) || !output_valid(info, 1) {
+        crate::bail!("invalid TIM pointer or size");
     }
-    let image = match parse(slice::from_raw_parts(bytes, length), offset) {
-        Ok(i) => i,
-        Err(e) => return e,
-    };
-    let (width, height) = match dimensions(&image) {
-        Ok(d) => d,
-        Err(e) => return e,
-    };
-    if image.encoded_len > u32::MAX as usize {
-        return INVALID;
+    let image = parse(slice::from_raw_parts(bytes, length), offset)?;
+    let (width, height) = dimensions(&image)?;
+    if image.encoded_len > u32::MAX.as_usize() {
+        crate::bail!("TIM size exceeds u32");
     }
     info.write(KfTimInfo {
         mode: image.mode,
         width: width as u32,
         height: height as u32,
         encoded_bytes: image.encoded_len as u32,
-        image_x: image.image.rectangle.x as i32,
-        image_y: image.image.rectangle.y as i32,
-        palette_x: image.clut.map_or(0, |c| c.rectangle.x as i32),
-        palette_y: image.clut.map_or(0, |c| c.rectangle.y as i32),
+        image_x: image.image.rectangle.x.get() as i32,
+        image_y: image.image.rectangle.y.get() as i32,
+        palette_x: image.clut.map_or(0, |c| c.rectangle.x.get() as i32),
+        palette_y: image.clut.map_or(0, |c| c.rectangle.y.get() as i32),
     });
-    OK
+    Ok(())
 }
-#[no_mangle]
+#[unsafe(no_mangle)]
 pub unsafe extern "C" fn kf_tim_rgba(
     bytes: *const u8,
     length: usize,
@@ -96,47 +151,44 @@ pub unsafe extern "C" fn kf_tim_rgba(
     rgba: *mut u8,
     capacity: usize,
 ) -> KfCodecResult {
-    if bytes.is_null()
-        || rgba.is_null()
-        || length > isize::MAX as usize
-        || capacity > isize::MAX as usize
-    {
-        return INVALID;
+    status(tim_rgba(bytes, length, offset, palette_row, rgba, capacity))
+}
+
+unsafe fn tim_rgba(
+    bytes: *const u8,
+    length: usize,
+    offset: usize,
+    palette_row: u32,
+    rgba: *mut u8,
+    capacity: usize,
+) -> crate::Result<()> {
+    if !input_valid(bytes, length) || !output_valid(rgba, capacity) {
+        crate::bail!("invalid TIM pointer or size");
     }
-    let image = match parse(slice::from_raw_parts(bytes, length), offset) {
-        Ok(i) => i,
-        Err(e) => return e,
-    };
-    let (width, height) = match dimensions(&image) {
-        Ok(d) => d,
-        Err(e) => return e,
-    };
-    let needed = match width.checked_mul(height).and_then(|n| n.checked_mul(4)) {
-        Some(n) => n,
-        None => return INVALID,
-    };
+    let image = parse(slice::from_raw_parts(bytes, length), offset)?;
+    let (width, height) = dimensions(&image)?;
+    let needed = width
+        .checked_mul(height)
+        .and_then(|n| n.checked_mul(4))
+        .ok_or(crate::Error::invalid("TIM pixel count overflow"))?;
     if capacity < needed {
-        return OUTPUT_FULL;
+        return Err(crate::Error::output_full());
     }
     let mode = image.mode & TIM_FORMAT_MASK;
     let palette = if mode < TIM_DIRECT16 {
-        let clut = match image.clut {
-            Some(c) => c,
-            None => return INVALID,
-        };
+        let clut = image
+            .clut
+            .ok_or(crate::Error::invalid("indexed TIM has no palette"))?;
         let count = if mode == TIM_INDEXED4 {
             INDEXED4_PALETTE_COLORS
         } else {
             INDEXED8_PALETTE_COLORS
         };
-        let at = match (palette_row as usize).checked_mul(count * 2) {
-            Some(at) => at,
-            None => return INVALID,
-        };
-        match clut.pixels.get(at..at.saturating_add(count * 2)) {
-            Some(p) => p,
-            None => return INVALID,
-        }
+        let at = palette_row
+            .as_usize()
+            .checked_mul(count * 2)
+            .ok_or(crate::Error::invalid("TIM palette offset overflow"))?;
+        span(clut.pixels, at, count * 2)?
     } else {
         &[]
     };
@@ -149,19 +201,17 @@ pub unsafe extern "C" fn kf_tim_rgba(
             continue;
         }
         let word = if mode == TIM_DIRECT16 {
-            u16::from_le_bytes([
-                image.image.pixels[index * 2],
-                image.image.pixels[index * 2 + 1],
-            ])
+            read_u16_le(image.image.pixels, index * 2)
         } else {
             let entry = if mode == TIM_INDEXED4 {
                 ((image.image.pixels[index / 2] >> ((index % 2) * INDEXED4_BITS)) & INDEXED4_MASK)
                     as usize
             } else {
-                image.image.pixels[index] as usize
+                image.image.pixels[index].as_usize()
             };
-            u16::from_le_bytes([palette[entry * 2], palette[entry * 2 + 1]])
+            read_u16_le(palette, entry * 2)
         };
+        let word = word?;
         for (channel, shift) in destination[..3]
             .iter_mut()
             .zip([0, RGB5_BITS, 2 * RGB5_BITS])
@@ -171,5 +221,5 @@ pub unsafe extern "C" fn kf_tim_rgba(
         }
         destination[3] = if word == 0 { 0 } else { ALPHA_OPAQUE };
     }
-    OK
+    Ok(())
 }

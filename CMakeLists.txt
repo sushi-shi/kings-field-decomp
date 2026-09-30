@@ -18,7 +18,7 @@ find_program(CARGO_EXECUTABLE cargo REQUIRED)
 find_program(BINDGEN_EXECUTABLE bindgen REQUIRED)
 find_program(BASH_EXECUTABLE bash REQUIRED)
 set(KF_RUST_DIR "${CMAKE_BINARY_DIR}/rust")
-set(KF_RUST_ARGS --offline --locked --release --manifest-path ${CMAKE_SOURCE_DIR}/codecs/Cargo.toml)
+set(KF_RUST_ARGS --locked --release --manifest-path ${CMAKE_SOURCE_DIR}/codecs/Cargo.toml)
 if(EMSCRIPTEN)
   list(APPEND KF_RUST_ARGS --target wasm32-unknown-emscripten -Zbuild-std=core,compiler_builtins)
   # Cargo 1.95's pinned source-root override avoids mutating the Nix sysroot.

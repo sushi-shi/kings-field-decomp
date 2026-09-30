@@ -20,22 +20,6 @@ pub struct KfTimInfo {
     pub palette_x: i32,
     pub palette_y: i32,
 }
-#[expect(clippy::identity_op)]
-const _: () = {
-    ["Size of KfTimInfo"][::core::mem::size_of::<KfTimInfo>() - 32usize];
-    ["Alignment of KfTimInfo"][::core::mem::align_of::<KfTimInfo>() - 4usize];
-    ["Offset of field: KfTimInfo::mode"][::core::mem::offset_of!(KfTimInfo, mode) - 0usize];
-    ["Offset of field: KfTimInfo::width"][::core::mem::offset_of!(KfTimInfo, width) - 4usize];
-    ["Offset of field: KfTimInfo::height"][::core::mem::offset_of!(KfTimInfo, height) - 8usize];
-    ["Offset of field: KfTimInfo::encoded_bytes"]
-        [::core::mem::offset_of!(KfTimInfo, encoded_bytes) - 12usize];
-    ["Offset of field: KfTimInfo::image_x"][::core::mem::offset_of!(KfTimInfo, image_x) - 16usize];
-    ["Offset of field: KfTimInfo::image_y"][::core::mem::offset_of!(KfTimInfo, image_y) - 20usize];
-    ["Offset of field: KfTimInfo::palette_x"]
-        [::core::mem::offset_of!(KfTimInfo, palette_x) - 24usize];
-    ["Offset of field: KfTimInfo::palette_y"]
-        [::core::mem::offset_of!(KfTimInfo, palette_y) - 28usize];
-};
 pub const KF_AUDIO_PROGRAM_COUNT: _bindgen_ty_1 = 128;
 pub const KF_AUDIO_TONE_COUNT: _bindgen_ty_1 = 16;
 pub const KF_AUDIO_SAMPLE_COUNT: _bindgen_ty_1 = 256;
@@ -58,33 +42,6 @@ pub struct KfAudioEnvelope {
     pub sustain_decreasing: u8,
     pub release_exponential: u8,
 }
-#[expect(clippy::identity_op)]
-const _: () = {
-    ["Size of KfAudioEnvelope"][::core::mem::size_of::<KfAudioEnvelope>() - 12usize];
-    ["Alignment of KfAudioEnvelope"][::core::mem::align_of::<KfAudioEnvelope>() - 2usize];
-    ["Offset of field: KfAudioEnvelope::attack_shift"]
-        [::core::mem::offset_of!(KfAudioEnvelope, attack_shift) - 0usize];
-    ["Offset of field: KfAudioEnvelope::attack_step"]
-        [::core::mem::offset_of!(KfAudioEnvelope, attack_step) - 1usize];
-    ["Offset of field: KfAudioEnvelope::decay_shift"]
-        [::core::mem::offset_of!(KfAudioEnvelope, decay_shift) - 2usize];
-    ["Offset of field: KfAudioEnvelope::sustain_shift"]
-        [::core::mem::offset_of!(KfAudioEnvelope, sustain_shift) - 3usize];
-    ["Offset of field: KfAudioEnvelope::sustain_step"]
-        [::core::mem::offset_of!(KfAudioEnvelope, sustain_step) - 4usize];
-    ["Offset of field: KfAudioEnvelope::release_shift"]
-        [::core::mem::offset_of!(KfAudioEnvelope, release_shift) - 5usize];
-    ["Offset of field: KfAudioEnvelope::sustain_level"]
-        [::core::mem::offset_of!(KfAudioEnvelope, sustain_level) - 6usize];
-    ["Offset of field: KfAudioEnvelope::attack_exponential"]
-        [::core::mem::offset_of!(KfAudioEnvelope, attack_exponential) - 8usize];
-    ["Offset of field: KfAudioEnvelope::sustain_exponential"]
-        [::core::mem::offset_of!(KfAudioEnvelope, sustain_exponential) - 9usize];
-    ["Offset of field: KfAudioEnvelope::sustain_decreasing"]
-        [::core::mem::offset_of!(KfAudioEnvelope, sustain_decreasing) - 10usize];
-    ["Offset of field: KfAudioEnvelope::release_exponential"]
-        [::core::mem::offset_of!(KfAudioEnvelope, release_exponential) - 11usize];
-};
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct KfAudioTone {
@@ -105,40 +62,6 @@ pub struct KfAudioTone {
     pub sample_index: u16,
     pub envelope: KfAudioEnvelope,
 }
-#[expect(clippy::identity_op)]
-const _: () = {
-    ["Size of KfAudioTone"][::core::mem::size_of::<KfAudioTone>() - 28usize];
-    ["Alignment of KfAudioTone"][::core::mem::align_of::<KfAudioTone>() - 2usize];
-    ["Offset of field: KfAudioTone::priority"]
-        [::core::mem::offset_of!(KfAudioTone, priority) - 0usize];
-    ["Offset of field: KfAudioTone::reverb"][::core::mem::offset_of!(KfAudioTone, reverb) - 1usize];
-    ["Offset of field: KfAudioTone::volume"][::core::mem::offset_of!(KfAudioTone, volume) - 2usize];
-    ["Offset of field: KfAudioTone::pan"][::core::mem::offset_of!(KfAudioTone, pan) - 3usize];
-    ["Offset of field: KfAudioTone::center_note"]
-        [::core::mem::offset_of!(KfAudioTone, center_note) - 4usize];
-    ["Offset of field: KfAudioTone::center_shift"]
-        [::core::mem::offset_of!(KfAudioTone, center_shift) - 5usize];
-    ["Offset of field: KfAudioTone::minimum_note"]
-        [::core::mem::offset_of!(KfAudioTone, minimum_note) - 6usize];
-    ["Offset of field: KfAudioTone::maximum_note"]
-        [::core::mem::offset_of!(KfAudioTone, maximum_note) - 7usize];
-    ["Offset of field: KfAudioTone::vibrato_width"]
-        [::core::mem::offset_of!(KfAudioTone, vibrato_width) - 8usize];
-    ["Offset of field: KfAudioTone::vibrato_time"]
-        [::core::mem::offset_of!(KfAudioTone, vibrato_time) - 9usize];
-    ["Offset of field: KfAudioTone::portamento_width"]
-        [::core::mem::offset_of!(KfAudioTone, portamento_width) - 10usize];
-    ["Offset of field: KfAudioTone::portamento_time"]
-        [::core::mem::offset_of!(KfAudioTone, portamento_time) - 11usize];
-    ["Offset of field: KfAudioTone::bend_down"]
-        [::core::mem::offset_of!(KfAudioTone, bend_down) - 12usize];
-    ["Offset of field: KfAudioTone::bend_up"]
-        [::core::mem::offset_of!(KfAudioTone, bend_up) - 13usize];
-    ["Offset of field: KfAudioTone::sample_index"]
-        [::core::mem::offset_of!(KfAudioTone, sample_index) - 14usize];
-    ["Offset of field: KfAudioTone::envelope"]
-        [::core::mem::offset_of!(KfAudioTone, envelope) - 16usize];
-};
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct KfAudioProgram {
@@ -148,35 +71,12 @@ pub struct KfAudioProgram {
     pub priority: u8,
     pub tones: [KfAudioTone; 16usize],
 }
-#[expect(clippy::identity_op)]
-const _: () = {
-    ["Size of KfAudioProgram"][::core::mem::size_of::<KfAudioProgram>() - 452usize];
-    ["Alignment of KfAudioProgram"][::core::mem::align_of::<KfAudioProgram>() - 2usize];
-    ["Offset of field: KfAudioProgram::tone_count"]
-        [::core::mem::offset_of!(KfAudioProgram, tone_count) - 0usize];
-    ["Offset of field: KfAudioProgram::volume"]
-        [::core::mem::offset_of!(KfAudioProgram, volume) - 1usize];
-    ["Offset of field: KfAudioProgram::pan"][::core::mem::offset_of!(KfAudioProgram, pan) - 2usize];
-    ["Offset of field: KfAudioProgram::priority"]
-        [::core::mem::offset_of!(KfAudioProgram, priority) - 3usize];
-    ["Offset of field: KfAudioProgram::tones"]
-        [::core::mem::offset_of!(KfAudioProgram, tones) - 4usize];
-};
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct KfAudioSampleRange {
     pub offset: u32,
     pub size: u32,
 }
-#[expect(clippy::identity_op)]
-const _: () = {
-    ["Size of KfAudioSampleRange"][::core::mem::size_of::<KfAudioSampleRange>() - 8usize];
-    ["Alignment of KfAudioSampleRange"][::core::mem::align_of::<KfAudioSampleRange>() - 4usize];
-    ["Offset of field: KfAudioSampleRange::offset"]
-        [::core::mem::offset_of!(KfAudioSampleRange, offset) - 0usize];
-    ["Offset of field: KfAudioSampleRange::size"]
-        [::core::mem::offset_of!(KfAudioSampleRange, size) - 4usize];
-};
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct KfAudioBankData {
@@ -186,21 +86,6 @@ pub struct KfAudioBankData {
     pub programs: [KfAudioProgram; 128usize],
     pub samples: [KfAudioSampleRange; 256usize],
 }
-#[expect(clippy::identity_op)]
-const _: () = {
-    ["Size of KfAudioBankData"][::core::mem::size_of::<KfAudioBankData>() - 59908usize];
-    ["Alignment of KfAudioBankData"][::core::mem::align_of::<KfAudioBankData>() - 4usize];
-    ["Offset of field: KfAudioBankData::volume"]
-        [::core::mem::offset_of!(KfAudioBankData, volume) - 0usize];
-    ["Offset of field: KfAudioBankData::pan"]
-        [::core::mem::offset_of!(KfAudioBankData, pan) - 1usize];
-    ["Offset of field: KfAudioBankData::sample_count"]
-        [::core::mem::offset_of!(KfAudioBankData, sample_count) - 2usize];
-    ["Offset of field: KfAudioBankData::programs"]
-        [::core::mem::offset_of!(KfAudioBankData, programs) - 4usize];
-    ["Offset of field: KfAudioBankData::samples"]
-        [::core::mem::offset_of!(KfAudioBankData, samples) - 57860usize];
-};
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct KfAudioSampleInfo {
@@ -208,32 +93,12 @@ pub struct KfAudioSampleInfo {
     pub loop_begin: u32,
     pub loop_end: u32,
 }
-#[expect(clippy::identity_op)]
-const _: () = {
-    ["Size of KfAudioSampleInfo"][::core::mem::size_of::<KfAudioSampleInfo>() - 12usize];
-    ["Alignment of KfAudioSampleInfo"][::core::mem::align_of::<KfAudioSampleInfo>() - 4usize];
-    ["Offset of field: KfAudioSampleInfo::frames"]
-        [::core::mem::offset_of!(KfAudioSampleInfo, frames) - 0usize];
-    ["Offset of field: KfAudioSampleInfo::loop_begin"]
-        [::core::mem::offset_of!(KfAudioSampleInfo, loop_begin) - 4usize];
-    ["Offset of field: KfAudioSampleInfo::loop_end"]
-        [::core::mem::offset_of!(KfAudioSampleInfo, loop_end) - 8usize];
-};
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct KfAudioPredictor {
     pub previous: i32,
     pub older: i32,
 }
-#[expect(clippy::identity_op)]
-const _: () = {
-    ["Size of KfAudioPredictor"][::core::mem::size_of::<KfAudioPredictor>() - 8usize];
-    ["Alignment of KfAudioPredictor"][::core::mem::align_of::<KfAudioPredictor>() - 4usize];
-    ["Offset of field: KfAudioPredictor::previous"]
-        [::core::mem::offset_of!(KfAudioPredictor, previous) - 0usize];
-    ["Offset of field: KfAudioPredictor::older"]
-        [::core::mem::offset_of!(KfAudioPredictor, older) - 4usize];
-};
 pub const KF_MUSIC_NOTE_OFF: KfMusicEventKind = 0;
 pub const KF_MUSIC_NOTE_ON: KfMusicEventKind = 1;
 pub const KF_MUSIC_VOLUME: KfMusicEventKind = 2;
@@ -253,21 +118,6 @@ pub struct KfMusicEvent {
     pub velocity: u8,
     pub reserved: u8,
 }
-#[expect(clippy::identity_op)]
-const _: () = {
-    ["Size of KfMusicEvent"][::core::mem::size_of::<KfMusicEvent>() - 16usize];
-    ["Alignment of KfMusicEvent"][::core::mem::align_of::<KfMusicEvent>() - 4usize];
-    ["Offset of field: KfMusicEvent::delta"][::core::mem::offset_of!(KfMusicEvent, delta) - 0usize];
-    ["Offset of field: KfMusicEvent::kind"][::core::mem::offset_of!(KfMusicEvent, kind) - 4usize];
-    ["Offset of field: KfMusicEvent::value"][::core::mem::offset_of!(KfMusicEvent, value) - 8usize];
-    ["Offset of field: KfMusicEvent::channel"]
-        [::core::mem::offset_of!(KfMusicEvent, channel) - 12usize];
-    ["Offset of field: KfMusicEvent::note"][::core::mem::offset_of!(KfMusicEvent, note) - 13usize];
-    ["Offset of field: KfMusicEvent::velocity"]
-        [::core::mem::offset_of!(KfMusicEvent, velocity) - 14usize];
-    ["Offset of field: KfMusicEvent::reserved"]
-        [::core::mem::offset_of!(KfMusicEvent, reserved) - 15usize];
-};
 #[repr(C)]
 #[derive(Debug, Copy, Clone)]
 pub struct KfMusicInfo {
@@ -275,13 +125,3 @@ pub struct KfMusicInfo {
     pub tempo: u32,
     pub event_count: u32,
 }
-#[expect(clippy::identity_op)]
-const _: () = {
-    ["Size of KfMusicInfo"][::core::mem::size_of::<KfMusicInfo>() - 12usize];
-    ["Alignment of KfMusicInfo"][::core::mem::align_of::<KfMusicInfo>() - 4usize];
-    ["Offset of field: KfMusicInfo::resolution"]
-        [::core::mem::offset_of!(KfMusicInfo, resolution) - 0usize];
-    ["Offset of field: KfMusicInfo::tempo"][::core::mem::offset_of!(KfMusicInfo, tempo) - 4usize];
-    ["Offset of field: KfMusicInfo::event_count"]
-        [::core::mem::offset_of!(KfMusicInfo, event_count) - 8usize];
-};
