@@ -12,14 +12,12 @@ int main(int argc, char **argv) {
     for (int c; (c = std::fgetc(file)) != EOF;)
         patch.push_back(static_cast<u8>(c));
     assert(std::fclose(file) == 0);
-    kf::ByteBuffer bytes{};
-    assert(kf::buffer_resize(&bytes, 8));
-    std::memcpy(bytes.data, "abcdefgh", 8);
+    kf::ByteBuffer bytes(8);
+    std::memcpy(bytes.data(), "abcdefgh", 8);
     kf::AssetTable assets{};
-    assert(kf::assets_append(&assets, "KF/TEST.", &bytes));
-    const bool ok = kf::translation_apply(&assets, patch);
+    assert(kf::assets_append(assets, "KF/TEST.", std::move(bytes)));
+    const bool ok = kf::translation_apply(assets, patch);
     if (ok)
-        std::fwrite(assets.entries[0].bytes.data, 1, 8, stdout);
-    kf::assets_release(&assets);
+        std::fwrite(assets[0].bytes.data(), 1, 8, stdout);
     return ok ? 0 : 1;
 }

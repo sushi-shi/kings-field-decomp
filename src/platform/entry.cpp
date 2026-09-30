@@ -1,17 +1,21 @@
-#include <SDL3/SDL.h>
-#include <SDL3/SDL_main.h>
+#include <kf/platform/disc.h>
+#include <kf/platform/files.h>
 #include <kf/platform/host.h>
 #include <kf/platform/input.h>
-#include <kf/platform/files.h>
-#include <kf/platform/disc.h>
-#include <kf/platform/saves.h>
 #include <kf/platform/language_runtime.h>
+#include <kf/platform/saves.h>
+
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_main.h>
+
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+
 #ifdef __EMSCRIPTEN__
-#include <emscripten.h>
 #include <kf/platform/assets.h>
+
+#include <emscripten.h>
 
 extern "C" EMSCRIPTEN_KEEPALIVE int kf_extract_disc(const char *source, const char *destination,
                                                   const char *code) {
@@ -37,8 +41,8 @@ extern "C" EMSCRIPTEN_KEEPALIVE const char *kf_current_language() {
 EM_JS(void, browser_game_started, (), { Module['gameStarted'](); });
 #endif
 
-#include <kf/game/session.h>
 #include <kf/cutscene/playback.h>
+#include <kf/game/session.h>
 
 int main(int argc, char **argv) {
     const char *data = "data";

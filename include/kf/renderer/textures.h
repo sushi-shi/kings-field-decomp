@@ -3,6 +3,8 @@
 
 #include <kf/platform/assets.h>
 
+#include <vector>
+
 namespace kf {
 enum class TextureFormat : u8 { Indexed4, Indexed8, Direct16 };
 struct TextureSource {
@@ -17,9 +19,8 @@ struct TextureEntry {
 struct TextureStore {
     // Authored TIM texels and palettes share this coordinate space. It is not a
     // framebuffer, command memory, or an address space exposed to gameplay.
-    u16 *words;
-    TextureEntry *entries;
-    std::size_t count, capacity;
+    std::vector<u16> words;
+    std::vector<TextureEntry> entries;
 };
 bool texture_store_upload_tim(TextureStore *store, const u8 *bytes, std::size_t size);
 // Replace only translated texels/palette entries; retain later map/menu uploads.

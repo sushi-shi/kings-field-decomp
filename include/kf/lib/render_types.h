@@ -1,11 +1,11 @@
 #ifndef KF_RENDER_TYPES_H
 #define KF_RENDER_TYPES_H
 
-#include <kf/lib/types.h>
 #include <kf/lib/enum.h>
-#include <kf/renderer/renderer.h>
+#include <kf/lib/types.h>
 #include <kf/renderer/lighting.h>
 #include <kf/renderer/projection.h>
+#include <kf/renderer/renderer.h>
 
 enum { KF_PROJECTED_VERTEX_CAPACITY = 1000 };
 

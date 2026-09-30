@@ -1,17 +1,19 @@
 #include <kf/platform/prelude.h>
-#include <kf/lib/map_data.h>
 #include <kf/game/collision.h>
 #include <kf/game/effect.h>
 #include <kf/game/game.h>
+#include <kf/lib/map_data.h>
 
-KfCellHeightRecord map_cell_height_records[KF_MAP_CELL_HEIGHT_RECORD_COUNT] = {
-    {500, -2000, 1500, -1250},
-    {1000, -2500, 2000, -1000},
-    {0, -2500, 2000, -1000},
-    {0, -2500, 1000, -1000},
-    {1000, -10000, 2000, -15000},
-    {0, -10000, 2000, -15000},
-    {0, -10000, 1000, -15000},
+#include <array>
+
+std::array<KfCellHeightRecord, KF_MAP_CELL_HEIGHT_RECORD_COUNT> map_cell_height_records = {
+    KfCellHeightRecord{500, -2000, 1500, -1250},
+    KfCellHeightRecord{1000, -2500, 2000, -1000},
+    KfCellHeightRecord{0, -2500, 2000, -1000},
+    KfCellHeightRecord{0, -2500, 1000, -1000},
+    KfCellHeightRecord{1000, -10000, 2000, -15000},
+    KfCellHeightRecord{0, -10000, 2000, -15000},
+    KfCellHeightRecord{0, -10000, 1000, -15000},
 };
 
 static KfCollisionResult effect_query_collision_targets(VECTOR *position, s32 radius, const KfEffectRecord *effect)

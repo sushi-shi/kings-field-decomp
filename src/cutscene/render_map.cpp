@@ -1,6 +1,8 @@
 #include <kf/platform/prelude.h>
-#include <kf/lib/render_face.h>
 #include <kf/cutscene/render.h>
+#include <kf/lib/render_face.h>
+
+#include <array>
 
 CVECTOR cutscene_map_textured_primitive_color = {
     KF_TEXTURE_BASE_BRIGHTNESS, KF_TEXTURE_BASE_BRIGHTNESS,
@@ -31,7 +33,7 @@ void cutscene_render_enqueue_map(u16 object_index, const MATRIX *lights, const M
             }
             projected->complete_quad(open_graphics_runtime.tmd_projected_vertices[p.vertices[3]]);
             auto face = projected->draw_face();
-            CVECTOR colors[4] {};
+            std::array<CVECTOR, 4> colors {};
             face.material = render_texture_material(p.texture_page, p.palette);
             render_face_uvs(face, {p.uv[0], p.uv[1], p.uv[2], p.uv[3]});
             shade = kf::render_light_normal(open_graphics_runtime.render_state.lighting, *lights,
@@ -58,7 +60,7 @@ void cutscene_render_enqueue_map(u16 object_index, const MATRIX *lights, const M
                 continue;
             }
             auto face = projected->draw_face();
-            CVECTOR colors[4] {};
+            std::array<CVECTOR, 4> colors {};
             face.material = render_texture_material(p.texture_page, p.palette);
             render_face_uvs(face, {p.uv[0], p.uv[1], p.uv[2]});
             shade = kf::render_light_normal(open_graphics_runtime.render_state.lighting, *lights,

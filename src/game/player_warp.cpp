@@ -1,16 +1,21 @@
 #include <kf/platform/prelude.h>
 #include <kf/game/audio.h>
-#include <kf/lib/null.h>
-#include <kf/game/graphics.h>
-#include <kf/lib/bool.h>
-
-#include <kf/lib/map_data.h>
-#include <kf/game/player.h>
 #include <kf/game/collision.h>
 #include <kf/game/game.h>
+#include <kf/game/graphics.h>
+#include <kf/game/player.h>
+#include <kf/lib/map_data.h>
+#include <kf/lib/null.h>
+
+#include <array>
 
 static MATRIX actor_transform_color_matrix = {
-    {{250, 100, 500}, {250, 100, 500}, {250, 100, 500}}, {0, 0, 0}
+    .m = {{
+        {250, 100, 500},
+        {250, 100, 500},
+        {250, 100, 500},
+    }},
+    .t = {},
 };
 
 enum {
@@ -42,7 +47,7 @@ constexpr WarpCell floor5_entry_return = {14, 79};
 void player_warp_shimmer(KfWarpShimmerMode shimmer_mode, VECTOR *position)
 {
     const auto input_context = kf::host_set_input_context(kf::InputContext::Scripted);
-    KfEffectRecord *effects[KF_CYLINDER_TRANSITION_COUNT];
+    std::array<KfEffectRecord *, KF_CYLINDER_TRANSITION_COUNT> effects;
     KfEffectRecord **cursor;
     KfEffectRecord *effect;
     struct {
@@ -53,7 +58,7 @@ void player_warp_shimmer(KfWarpShimmerMode shimmer_mode, VECTOR *position)
     s16 scale_y_step;
     s16 frame;
     s16 i;
-    KfEnumStorage<KfWarpShimmerMode, s16> mode_value = shimmer_mode;
+    KfWarpShimmerMode mode_value = shimmer_mode;
 
     switch (mode_value) {
     case KF_WARP_SHIMMER_GROW_REMOVE:
@@ -71,7 +76,7 @@ void player_warp_shimmer(KfWarpShimmerMode shimmer_mode, VECTOR *position)
     scratch.position.vz = position->vz;
     scratch.position.vy = position->vy;
     display_flip_buffer_index();
-    cursor = effects;
+    cursor = effects.data();
     for (i = KF_CYLINDER_TRANSITION_COUNT - 1; i != -1; i--) {
         effect = effect_pool_construct(
             WARP_SHIMMER_OWNER_ID,
@@ -87,7 +92,7 @@ void player_warp_shimmer(KfWarpShimmerMode shimmer_mode, VECTOR *position)
     render_frame(&player_state.camera_position, &player_state.camera_rotation);
 
     for (frame = 0; frame < KF_CYLINDER_TRANSITION_FRAMES; frame++) {
-        cursor = effects;
+        cursor = effects.data();
         if (frame == WARP_SHIMMER_SOUND_FRAME) {
             sound_ref_play(audio_playback(), &gameplay_sound_refs[KF_GAMEPLAY_SOUND_WARP_SHIMMER], KF_AUDIO_MAX_VOLUME);
         }
@@ -109,7 +114,7 @@ void player_warp_shimmer(KfWarpShimmerMode shimmer_mode, VECTOR *position)
     }
 
     if (mode_value != KF_WARP_SHIMMER_GROW_KEEP) {
-        cursor = effects;
+        cursor = effects.data();
         for (i = KF_CYLINDER_TRANSITION_COUNT - 1; i != -1; i--) {
             effect = *cursor++;
             effect->type = KF_EFFECT_SLOT_FREE;
@@ -175,7 +180,7 @@ static constexpr bool warp_cell_matches(KfMapCellCoordinates cell, WarpCell warp
     return cell.x == warp.x && cell.z == warp.z;
 }
 
-KfBoolU32 player_warp_trigger_update(void)
+bool player_warp_trigger_update(void)
 {
     const auto cell = player_state.motion_state.map_cell;
 
@@ -248,7 +253,7 @@ KfBoolU32 player_warp_trigger_update(void)
     return false;
 }
 
-static constexpr unsigned floor4_transform_hidden_events[] = {1, 2};
+static constexpr std::array<unsigned, 2> floor4_transform_hidden_events = {1, 2};
 
 void actor_transform_definition5_to6(KfActor *actor)
 {

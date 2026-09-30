@@ -1,15 +1,16 @@
 #include <kf/platform/prelude.h>
-#include <algorithm>
-#include <kf/game/audio.h>
-#include <kf/lib/random.h>
 #include <kf/game/actor.h>
-#include <kf/lib/map_data.h>
-#include <kf/lib/map.h>
+#include <kf/game/audio.h>
 #include <kf/game/collision.h>
-#include <cstdlib>
-#include <cstdio>
-#include <cstring>
 #include <kf/game/game.h>
+#include <kf/lib/map.h>
+#include <kf/lib/map_data.h>
+#include <kf/lib/random.h>
+
+#include <algorithm>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 enum {
     MAP_AMBIENT_COUNTDOWN_RELOAD = 10,
@@ -178,11 +179,11 @@ void map_world_state_persist(void)
     s32 active;
 
     out = map_runtime_state.world_state.floors[
-        kf_enum_encode<u8>(player_state.progress_state.current_floor) - 1].records;
+        kf_enum_encode<u8>(player_state.progress_state.current_floor) - 1].records.data();
     u8 *const end = out + KF_MAP_SAVED_RECORD_BYTES;
     map_saved_put(out, end, 1);
 
-    event = map_runtime_state.events;
+    event = map_runtime_state.events.data();
     for (i = 0; i < KF_MAP_EVENT_CAPACITY; i++, event++) {
         map_saved_put(out, end, kf_enum_encode<u8>(event->state));
         map_saved_put(out, end, event->dialogue.stage_limit);

@@ -1,9 +1,8 @@
 #include <kf/platform/prelude.h>
-#include <kf/lib/null.h>
-
-#include <kf/lib/map_data.h>
 #include <kf/game/actor.h>
 #include <kf/game/game.h>
+#include <kf/lib/map_data.h>
+#include <kf/lib/null.h>
 
 enum class KfActorPlacementStreamState : s32 {
     KF_ACTOR_PLACEMENTS_READING = 0,

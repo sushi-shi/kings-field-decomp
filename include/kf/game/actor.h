@@ -5,17 +5,18 @@ inline constexpr unsigned KF_FLOOR5_BOSS_DEFINITION = 7;
 inline constexpr unsigned KF_FLOOR4_TRANSFORM_SOURCE_DEFINITION = 5;
 inline constexpr unsigned KF_FLOOR4_TRANSFORM_RESULT_DEFINITION = 6;
 
-#include <kf/lib/bool.h>
+#include <kf/game/audio.h>
 #include <kf/game/combat.h>
-#include <kf/lib/animation.h>
 #include <kf/game/effect.h>
 #include <kf/game/player_status.h>
-#include <kf/lib/types.h>
+#include <kf/lib/animation.h>
 #include <kf/lib/enum.h>
-#include <kf/lib/map.h>
 #include <kf/lib/geometry_types.h>
-#include <kf/game/audio.h>
+#include <kf/lib/map.h>
 #include <kf/lib/math.h>
+#include <kf/lib/types.h>
+
+#include <array>
 
 struct KfAnimationCacheRecord;
 
@@ -279,7 +280,7 @@ typedef struct KfActor {
     KfObjectId death_drop_object_id;
     KfAnimationClip animation_clip;
     KfActorVerticalState vertical_state;
-    u8 unknown_0c[2];
+    std::array<u8, 2> unknown_0c;
     s16 local_z;
     s16 local_x;
     u16 animation_phase;
@@ -298,12 +299,12 @@ typedef struct KfActor {
     s16 movement_x;
     s16 movement_z;
     s16 movement_y;
-    u8 unknown_46[2];
+    std::array<u8, 2> unknown_46;
 } KfActor;
 
 typedef struct KfActorState {
     KfActorDefinitionTable definitions;
-    KfActor actors[KF_ACTOR_CAPACITY];
+    std::array<KfActor, KF_ACTOR_CAPACITY> actors;
     VECTOR player_position;
     SVECTOR player_rotation;
     KfActorDefinition *current_definition;
@@ -313,15 +314,15 @@ typedef struct KfActorState {
     KfActor *player_target;
 } KfActorState;
 
-extern KfActorActionProfile actor_action_profiles[KF_ACTOR_ACTION_PROFILE_COUNT];
+extern std::array<KfActorActionProfile, KF_ACTOR_ACTION_PROFILE_COUNT> actor_action_profiles;
 extern KfActorState actor_state;
 
 extern s32 actor_bearing_to_player(const KfActor *actor);
 
 extern SoundRef boss_death_loop_sound;
-extern SoundRef boss_death_phase_sounds[KF_ACTOR_BOSS_DEATH_SOUND_COUNT];
+extern std::array<SoundRef, KF_ACTOR_BOSS_DEATH_SOUND_COUNT> boss_death_phase_sounds;
 
-extern KfBool32 actor_animation_crossed_phase(const KfActor *actor, u16 phase);
+extern bool actor_animation_crossed_phase(const KfActor *actor, u16 phase);
 extern void actor_advance_animation_clamped(KfActor *actor, s16 delta);
 extern void actor_advance_animation_wrapped(KfActor *actor, s16 delta);
 extern void actor_apply_horizontal_movement(void);

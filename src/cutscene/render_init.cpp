@@ -1,13 +1,15 @@
 #include <kf/platform/prelude.h>
-#include <cstdlib>
-#include <cstdio>
-#include <cstring>
 #include <kf/cutscene/playback.h>
-#include <kf/lib/resource_file.h>
-#include <kf/lib/item.h>
-#include <kf/lib/memory.h>
 #include <kf/cutscene/render.h>
 #include <kf/cutscene/resources.h>
+#include <kf/lib/item.h>
+#include <kf/lib/memory.h>
+#include <kf/lib/resource_file.h>
+
+#include <array>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 enum {
     DISPLAY_ASSET_BUFFER_BYTES = 2 * 0x26160,
@@ -15,16 +17,49 @@ enum {
     FLOOR_ITEM_PALETTE_Y = 488
 };
 
-MATRIX cutscene_color_matrix_table[KF_OPEN_COLOR_PRESET_COUNT] = {
-    {{{2000, 700, 4000}, {2000, 700, 4000}, {2000, 700, 4000}}, {0, 0, 0}},
-    {{{0, 0, 0}, {0, 0, 0}, {0, 0, 0}}, {0, 0, 0}},
-    {{{4095, 4095, 4095}, {4095, 4095, 4095}, {4095, 4095, 4095}}, {0, 0, 0}},
-    {{{170, 682, 682}, {170, 341, 341}, {0, 0, 0}}, {0, 0, 0}},
-    {{{0, 0, 0}, {375, 375, 375}, {0, 0, 0}}, {0, 0, 0}},
+std::array<MATRIX, KF_OPEN_COLOR_PRESET_COUNT> cutscene_color_matrix_table = {
+    MATRIX{
+        .m = {{
+            {2000, 700, 4000},
+            {2000, 700, 4000},
+            {2000, 700, 4000},
+        }},
+        .t = {},
+    },
+    MATRIX{},
+    MATRIX{
+        .m = {{
+            {4095, 4095, 4095},
+            {4095, 4095, 4095},
+            {4095, 4095, 4095},
+        }},
+        .t = {},
+    },
+    MATRIX{
+        .m = {{
+            {170, 682, 682},
+            {170, 341, 341},
+            {0, 0, 0},
+        }},
+        .t = {},
+    },
+    MATRIX{
+        .m = {{
+            {0, 0, 0},
+            {375, 375, 375},
+            {0, 0, 0},
+        }},
+        .t = {},
+    },
 };
 
 MATRIX floor_item_light_matrix = {
-    {{0, 0, KF_FIXED12_ONE}, {0, 0, KF_FIXED12_ONE}, {0, 0, 0}}, {0, 0, 0},
+    .m = {{
+        {0, 0, KF_FIXED12_ONE},
+        {0, 0, KF_FIXED12_ONE},
+        {0, 0, 0},
+    }},
+    .t = {},
 };
 
 KfGraphicsRuntimeOpen open_graphics_runtime;
@@ -50,13 +85,12 @@ void cutscene_render_initialize(void)
     kf::matrix_set_rotation_xyz(angles, open_graphics_runtime.render_state.quadrant_matrices[2]);
     angles.vy = KF_ANGLE_QUARTER_TURN;
     kf::matrix_set_rotation_xyz(angles, open_graphics_runtime.render_state.quadrant_matrices[1]);
-    static constexpr s16 initial_light_directions[3][3] = {
-        {3800, -2800, 0},
-        {-3000, -3600, -3400},
-        {-1300, 2700, 800},
+    static constexpr std::array<std::array<s16, 3>, 3> initial_light_directions = {
+        std::array<s16, 3>{3800, -2800, 0},
+        std::array<s16, 3>{-3000, -3600, -3400},
+        std::array<s16, 3>{-1300, 2700, 800},
     };
-    memcpy(open_graphics_runtime.render_state.light_matrix.m,
-        initial_light_directions, sizeof initial_light_directions);
+    open_graphics_runtime.render_state.light_matrix.m = initial_light_directions;
     kf::matrix_multiply_rotation(open_graphics_runtime.render_state.light_matrix, open_graphics_runtime.render_state.quadrant_matrices[0], open_graphics_runtime.light_quadrant_matrices[0]);
     kf::matrix_multiply_rotation(open_graphics_runtime.render_state.light_matrix, open_graphics_runtime.render_state.quadrant_matrices[1], open_graphics_runtime.light_quadrant_matrices[1]);
     kf::matrix_multiply_rotation(open_graphics_runtime.render_state.light_matrix, open_graphics_runtime.render_state.quadrant_matrices[2], open_graphics_runtime.light_quadrant_matrices[2]);
@@ -70,7 +104,7 @@ void cutscene_lighting_set_active_color_matrix(KfOpenColorPreset preset)
 {
     auto &destination = open_graphics_runtime.render_state.lighting.color_matrix;
     const auto &source = cutscene_color_matrix_table[kf_enum_encode<s32>(preset)];
-    memcpy(destination.m, source.m, sizeof destination.m);
+    destination.m = source.m;
 }
 
 void cutscene_display_initialize(Cutscene scene)

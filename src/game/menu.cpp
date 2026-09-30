@@ -1,9 +1,11 @@
 #include <kf/platform/prelude.h>
-#include <kf/lib/null.h>
-
-#include <kf/platform/input.h>
-#include <kf/game/menu.h>
 #include <kf/game/game.h>
+#include <kf/game/menu.h>
+#include <kf/lib/null.h>
+#include <kf/platform/input.h>
+
+#include <array>
+
 static constexpr unsigned MENU_INVENTORY_LABEL_CAPACITY = 50;
 static constexpr unsigned MENU_INVENTORY_ENTRY_CAPACITY = 56;
 
@@ -19,7 +21,7 @@ void menu_save_confirm(void)
     do {
         i++;
         menu_frame_begin();
-        menu_draw_save_slots(NULL, KF_SAVE_OVERLAY_ALL);
+        menu_draw_save_slots({}, KF_SAVE_OVERLAY_ALL);
         menu_draw_window(KF_MENU_WINDOW_SAVE, KF_MENU_SAVE_ROW_COUNT, 0, KF_MENU_CONFIRM_IDLE);
         menu_present_frame();
     } while (i < 3);
@@ -141,13 +143,11 @@ enum {
 s32 menu_use_item_panel(void)
 {
     KfMenuList ctx;
-    s16 labels[MENU_INVENTORY_LABEL_CAPACITY][MENU_GLYPHS_PER_ROW];
-    u8 quantities[MENU_INVENTORY_ENTRY_CAPACITY];
-    KfObjectId item_ids[MENU_INVENTORY_ENTRY_CAPACITY];
-    u8 *player_stock;
+    std::array<std::array<s16, MENU_GLYPHS_PER_ROW>, MENU_INVENTORY_LABEL_CAPACITY> labels;
+    std::array<u8, MENU_INVENTORY_ENTRY_CAPACITY> quantities;
+    std::array<KfObjectId, MENU_INVENTORY_ENTRY_CAPACITY> item_ids;
     s32 found;
     s32 item_id;
-    s32 j;
     KfMenuConfirmState confirm = KF_MENU_CONFIRM_IDLE;
     s32 input = 0;
     s32 prev;
@@ -156,26 +156,23 @@ s32 menu_use_item_panel(void)
     kf::host_wait_buttons_released();
     menu_list_init(&ctx, KF_MENU_WINDOW_ROOT, kf_enum_encode<s32>(KF_ROOT_CHOICE_USE_ITEM));
 
-    player_stock = item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)];
+    auto &player_stock = item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)];
     found = 0;
     if (player_stock[kf_enum_encode<u8>(KF_ITEM_WATCHMAN_MAP)] != 0) {
-        for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)
-            labels[found][j] = item_name_rows[kf_enum_encode<u8>(KF_ITEM_WATCHMAN_MAP)].codes[j];
+        labels[found] = item_name_rows[kf_enum_encode<u8>(KF_ITEM_WATCHMAN_MAP)].codes;
         quantities[found] = player_stock[kf_enum_encode<u8>(KF_ITEM_WATCHMAN_MAP)];
         item_ids[found] = KF_ITEM_WATCHMAN_MAP;
         found++;
     }
     if (player_stock[kf_enum_encode<u8>(KF_ITEM_SORCERER_MAP)] != 0) {
-        for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)
-            labels[found][j] = item_name_rows[kf_enum_encode<u8>(KF_ITEM_SORCERER_MAP)].codes[j];
+        labels[found] = item_name_rows[kf_enum_encode<u8>(KF_ITEM_SORCERER_MAP)].codes;
         quantities[found] = player_stock[kf_enum_encode<u8>(KF_ITEM_SORCERER_MAP)];
         item_ids[found] = KF_ITEM_SORCERER_MAP;
         found++;
     }
     for (item_id = kf_enum_encode<s32>(KF_ITEM_VERDITE); item_id < kf_enum_encode<s32>(KF_ITEM_LIGHT_RING); item_id++) {
         if (item_id != kf_enum_encode<s32>(KF_ITEM_WATCHMAN_MAP) && item_id != kf_enum_encode<s32>(KF_ITEM_SORCERER_MAP) && player_stock[item_id] != 0) {
-            for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)
-                labels[found][j] = item_name_rows[item_id].codes[j];
+            labels[found] = item_name_rows[item_id].codes;
             quantities[found] = player_stock[item_id];
             item_ids[found] = kf_enum_decode<KfObjectId>(item_id);
             found++;
@@ -183,16 +180,14 @@ s32 menu_use_item_panel(void)
     }
     for (item_id = kf_enum_encode<s32>(KF_ITEM_GOLD_CROSS); item_id < KF_ITEM_COUNT; item_id++) {
         if (item_id != kf_enum_encode<s32>(KF_ITEM_WATCHMAN_MAP) && item_id != kf_enum_encode<s32>(KF_ITEM_SORCERER_MAP) && player_stock[item_id] != 0) {
-            for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)
-                labels[found][j] = item_name_rows[item_id].codes[j];
+            labels[found] = item_name_rows[item_id].codes;
             quantities[found] = player_stock[item_id];
             item_ids[found] = kf_enum_decode<KfObjectId>(item_id);
             found++;
         }
     }
     ctx.entry_count = found;
-    ctx.glyphs_per_entry = MENU_GLYPHS_PER_ROW;
-    ctx.glyph_rows = &labels[0][0];
+    ctx.glyph_rows = labels;
     ctx.quantities = quantities;
 
     menu_frame_begin();

@@ -12,8 +12,8 @@ const u32 *resource_stream_copy_words(
     return source;
 }
 
-#include <kf/renderer/renderer.h>
 #include <kf/platform/host.h>
+#include <kf/renderer/renderer.h>
 
 void tim_upload_images(const u8 *tim_data, std::size_t size)
 {

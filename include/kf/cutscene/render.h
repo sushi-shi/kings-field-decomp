@@ -1,16 +1,17 @@
 #ifndef KF_OPEN_RENDER_H
 #define KF_OPEN_RENDER_H
 
-#include <kf/lib/graphics.h>
-
+#include <kf/cutscene/playback.h>
 #include <kf/lib/enum.h>
-#include <kf/lib/resource_file.h>
-#include <kf/lib/math.h>
+#include <kf/lib/graphics.h>
 #include <kf/lib/item.h>
 #include <kf/lib/map_data.h>
-#include <kf/cutscene/playback.h>
+#include <kf/lib/math.h>
 #include <kf/lib/render_types.h>
+#include <kf/lib/resource_file.h>
 #include <kf/lib/tmd.h>
+
+#include <array>
 
 enum class KfOpenColorPreset : s32 {
     KF_OPEN_COLOR_DEFAULT = 0,
@@ -26,7 +27,7 @@ enum {
 };
 
 typedef struct KfTmdStateOpen {
-    KfTmdResource slots[KF_OPEN_TMD_SLOT_COUNT];
+    std::array<KfTmdResource, KF_OPEN_TMD_SLOT_COUNT> slots;
     KfTmdResource current_tmd;
 } KfTmdStateOpen;
 
@@ -37,33 +38,33 @@ typedef struct KfSpriteMaterial {
 
 typedef struct KfFloorItemStateOpen {
     KfSpriteMaterial material;
-    u8 unknown_08[6];
+    std::array<u8, 6> unknown_08;
     kf::FaceMaterial texture;
     u16 count;
-    u8 unknown_14[4];
-    KfFloorItem items[KF_FLOOR_ITEM_CAPACITY];
+    std::array<u8, 4> unknown_14;
+    std::array<KfFloorItem, KF_FLOOR_ITEM_CAPACITY> items;
 } KfFloorItemStateOpen;
 
 typedef struct KfGraphicsRuntimeOpen {
     KfDisplayState display_state;
-    u8 unknown_20108[8];
+    std::array<u8, 8> unknown_20108;
     KfTmdStateOpen tmd_state;
-    u8 unknown_2011c[4];
+    std::array<u8, 4> unknown_2011c;
     SVECTOR *current_tmd_vertices;
-    u8 unknown_20124[0x14];
-    KfScreenVertex tmd_projected_vertices[KF_PROJECTED_VERTEX_CAPACITY];
-    u8 unknown_22078[0x1f68];
+    std::array<u8, 0x14> unknown_20124;
+    std::array<KfScreenVertex, KF_PROJECTED_VERTEX_CAPACITY> tmd_projected_vertices;
+    std::array<u8, 0x1f68> unknown_22078;
     KfFloorItemStateOpen floor_item_state;
     KfRenderState render_state;
-    MATRIX light_quadrant_matrices[KF_VIEW_QUADRANT_COUNT];
+    std::array<MATRIX, KF_VIEW_QUADRANT_COUNT> light_quadrant_matrices;
     const KfCellWindow *active_cell_window;
     s16 tmd_projection_shift;
-    u8 unknown_24786[2];
+    std::array<u8, 2> unknown_24786;
 } KfGraphicsRuntimeOpen;
 extern KfGraphicsRuntimeOpen open_graphics_runtime;
 
-extern MATRIX cutscene_color_matrix_table[KF_OPEN_COLOR_PRESET_COUNT];
-extern KfSpriteQuad cutscene_floor_item_sprites[KF_FLOOR_ITEM_SPRITE_COUNT];
+extern std::array<MATRIX, KF_OPEN_COLOR_PRESET_COUNT> cutscene_color_matrix_table;
+extern std::array<KfSpriteQuad, KF_FLOOR_ITEM_SPRITE_COUNT> cutscene_floor_item_sprites;
 extern MATRIX floor_item_light_matrix;
 extern SVECTOR cutscene_render_sprite_light_normal;
 extern CVECTOR cutscene_map_textured_primitive_color;

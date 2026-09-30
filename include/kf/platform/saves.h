@@ -2,6 +2,7 @@
 #define KF_PLATFORM_SAVES_H
 
 #include <kf/lib/types.h>
+
 #include <cstddef>
 
 namespace kf {
