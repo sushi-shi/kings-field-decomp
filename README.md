@@ -42,7 +42,7 @@ ae74beba377d686bfaa292ea40df8ade4454ec3139c2b5152364e02aac90b3d9
 The first launch extracts and caches game data locally. Saves use three separate
 slots.
 
-Switch between Japanese and English during play in **Configuration → Language**.
+The game starts in English. Switch languages during play in **Configuration → Language**.
 English uses John Osborne's translation, prepared from your Japanese disc.
 See [translation details](docs/english-resources.md).
 

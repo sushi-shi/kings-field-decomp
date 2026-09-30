@@ -11,7 +11,8 @@ bool disc_cue_image(const char *text, char *filename, std::size_t capacity);
 bool disc_extract(const char *source, const char *destination, Language language);
 bool disc_prepare_directory(const char *source, const char *destination, Language language);
 // Startup-only verification also prevents a --data tree from mixing languages.
-bool disc_verify_directory(const char *directory, Language language);
+// With actual supplied, English startup may also accept a Japanese base to convert.
+bool disc_verify_directory(const char *directory, Language language, Language *actual = nullptr);
 }
 
 #endif // KF_PLATFORM_DISC_H

@@ -4,7 +4,7 @@ for argument in "$@"; do
     --help|-h)
       printf '%s\n' \
         "Usage: KF_DISC=/path/to/disc.iso kings-field [--language ja|en] [--saves DIRECTORY]" \
-        "Language defaults to KF_LANGUAGE, or ja. English is generated automatically from your Japanese disc." \
+        "Language defaults to KF_LANGUAGE, or en. English is generated automatically from your Japanese disc." \
         "Supply KF_DISC once; cached Japanese resources support both languages afterward." \
         "Verified resources are reused from the XDG cache; saves are stored separately." \
         "Explicit --data or --disc/--extract-to/--extract-only options bypass automatic caching."
@@ -22,7 +22,7 @@ for argument in "$@"; do
   esac
 done
 
-language="${KF_LANGUAGE-ja}"
+language="${KF_LANGUAGE-en}"
 arguments=("$@")
 for ((index = 0; index < ${#arguments[@]}; index++)); do
   case "${arguments[index]}" in

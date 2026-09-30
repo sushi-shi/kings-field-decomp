@@ -185,8 +185,8 @@ if '--extract-to' in args:
         self.assertEqual(result.returncode, 0 if success else 1, result.stderr)
         return [json.loads(line) for line in self.log.read_text().splitlines()] if self.log.exists() else []
 
-    def test_first_english_launch_imports_japanese_then_translates(self):
-        calls = self.launch("--language", "en", KF_DISC=str(self.disc))
+    def test_default_launch_imports_japanese_then_translates(self):
+        calls = self.launch(KF_DISC=str(self.disc))
         self.assertEqual(len(calls), 3)
         self.assertEqual(calls[0][:4], ["--language", "ja", "--disc", str(self.disc)])
         self.assertEqual(calls[1][:3], ["--language", "en", "--data"])
@@ -194,7 +194,7 @@ if '--extract-to' in args:
         self.assertTrue(calls[2][calls[2].index("--japanese-data") + 1].endswith("/resources"))
 
     def test_switch_to_english_and_back_without_disc(self):
-        self.launch(KF_DISC=str(self.disc))
+        self.launch("--language", "ja", KF_DISC=str(self.disc))
         self.disc.unlink()
         self.log.unlink()
         calls = self.launch("--language", "en")
@@ -219,14 +219,14 @@ if '--extract-to' in args:
     def test_installed_japanese_resources_need_no_disc_or_cache(self):
         installed = self.root / "installed resources"
         installed.mkdir()
-        calls = self.launch(japanese_resources=str(installed))
+        calls = self.launch(KF_LANGUAGE="ja", japanese_resources=str(installed))
         self.assertEqual(calls, [["--data", str(installed), "--language", "ja"]])
         self.assertFalse((self.root / "cache").exists())
 
     def test_installed_resources_can_prepare_english_and_switch_back(self):
         installed = self.root / "installed resources"
         installed.mkdir()
-        calls = self.launch("--language", "en", japanese_resources=str(installed))
+        calls = self.launch(japanese_resources=str(installed))
         self.assertEqual(len(calls), 2)
         self.assertEqual(calls[0][:4], ["--language", "en", "--data", str(installed)])
         self.assertEqual(calls[1][calls[1].index("--japanese-data") + 1], str(installed))

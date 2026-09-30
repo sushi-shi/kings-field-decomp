@@ -310,16 +310,22 @@ static bool read_resource_tree(int root, const char *prefix, AssetTable *assets,
     return ok;
 }
 
-bool disc_verify_directory(const char *directory, Language language) {
+bool disc_verify_directory(const char *directory, Language language, Language *actual) {
     const int root = ::open(directory, O_RDONLY | O_DIRECTORY | O_CLOEXEC);
     AssetTable assets{};
     std::size_t total = 0;
     unsigned directories = 0;
-    bool ok = root >= 0 && read_resource_tree(root, "", &assets, &total, &directories) &&
-        assets_match_language(&assets, language);
+    bool ok = root >= 0 && read_resource_tree(root, "", &assets, &total, &directories);
+    Language detected = language;
+    if (ok && !assets_match_language(&assets, language)) {
+        ok = actual && language == Language::English && assets_match_language(&assets, Language::Japanese);
+        detected = Language::Japanese;
+    }
     if (root >= 0 && ::close(root) != 0)
         ok = false;
     assets_release(&assets);
+    if (ok && actual)
+        *actual = detected;
     if (!ok)
         std::fprintf(stderr, "Resource tree does not match supported %s SLPS-00017 files: %s. Select the matching --language ja|en and disc tree.\n",
                      language_name(language), directory);

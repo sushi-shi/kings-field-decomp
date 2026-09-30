@@ -20,7 +20,7 @@ bool data_files_set_root(const char *path) {
     active_root = path;
     return true;
 }
-bool disc_verify_directory(const char *path, Language) { return std::string(path) != "corrupt"; }
+bool disc_verify_directory(const char *path, Language, Language *) { return std::string(path) != "corrupt"; }
 bool disc_prepare_directory(const char *, const char *destination, Language language) {
     assert(language == Language::English);
     ++preparations;

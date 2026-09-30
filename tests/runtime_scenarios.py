@@ -57,8 +57,9 @@ def run_observer(output, data, movement, language, switch_language, japanese_dat
         environment["KF_AUDIT_LANGUAGE_SWITCH"] = "1"
     log = output / "runtime.log"
     with log.open("w") as stream:
-        arguments = [str(output / "client"), "--data", str(data), "--language", language,
-                     "--saves", str(saves)]
+        arguments = [str(output / "client"), "--data", str(data), "--saves", str(saves)]
+        if language:
+            arguments += ["--language", language]
         if japanese_data:
             arguments += ["--japanese-data", str(japanese_data)]
         process = subprocess.Popen(
@@ -101,7 +102,7 @@ def main():
     parser.add_argument("--build", choices=["linux", "sanitize"], default="sanitize")
     parser.add_argument("--data", type=Path, required=True)
     parser.add_argument("--movement", action="store_true")
-    parser.add_argument("--language", choices=["ja", "en"], default="ja")
+    parser.add_argument("--language", choices=["ja", "en"], help="Override the application's default")
     parser.add_argument("--switch-language", action="store_true")
     parser.add_argument("--japanese-data", type=Path)
     parser.add_argument("--baseline", type=Path, help="Compare all six saves with a previous output directory")

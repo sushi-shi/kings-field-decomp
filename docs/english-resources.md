@@ -10,10 +10,13 @@ translation payload or extracted resource tree is stored in this repository.
 ## Selection and extraction
 
 The user supplies only the original Japanese SLPS-00017 disc. On the first
-launch, set `KF_DISC` to its ISO, BIN or CUE; `--language en` automatically
-prepares English resources. After import, `kings-field --language en` and
+launch, set `KF_DISC` to its ISO, BIN or CUE; English is selected by default
+and prepared automatically. After import, `kings-field` and
 `kings-field --language ja` reuse the cache without the disc. `KF_LANGUAGE`
 also selects a default; an explicit option overrides it.
+
+Direct launches with `--data` also accept a verified Japanese tree and prepare
+English in a temporary directory, keeping the Japanese files for switching back.
 
 The launcher first imports and verifies all 428 Japanese files in
 `$XDG_CACHE_HOME/kings-field/SLPS-00017/resources` (or `~/.cache/...`). It

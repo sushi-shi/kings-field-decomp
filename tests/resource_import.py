@@ -40,7 +40,7 @@ def main():
         reference = contents(args.english_reference)
         run("--disc", args.disc, "--language", "ja", "--extract-to", japanese, "--extract-only")
         original = contents(japanese)
-        run("--disc", args.disc, "--language", "en", "--extract-to", english, "--extract-only")
+        run("--disc", args.disc, "--extract-to", english, "--extract-only")
         assert contents(english) == reference
         run("--data", japanese, "--language", "en", "--extract-to", prepared, "--extract-only")
         assert contents(prepared) == reference

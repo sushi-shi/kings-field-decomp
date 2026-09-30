@@ -91,14 +91,16 @@ try {
   }
   await cdp('Page.navigate', {url});
   await until("document.getElementById('disc') && !document.getElementById('disc').disabled");
+  if (await evaluate('languageInput.value') !== 'en') throw Error('English is not the default');
   const document = await cdp('DOM.getDocument');
   const input = await cdp('DOM.querySelector', {nodeId:document.root.nodeId, selector:'#disc'});
   await cdp('DOM.setFileInputFiles', {nodeId:input.nodeId, files:[resolve(discArg)]});
   await until('!discInput.disabled && dataRoot !== null');
-  if (!await evaluate('verifyFiles(collectedFiles(dataRoot))')) throw Error('Japanese import failed hash');
-  console.log('Browser: Japanese disc imported and verified.');
+  if (!await evaluate('verifyFiles(collectedFiles(dataRoot))')) throw Error('English import failed hash');
+  console.log('Browser: Japanese disc imported and English prepared by default.');
+  await select('ja');
   await select('en');
-  console.log('Browser: English generated from cached Japanese without another disc selection.');
+  console.log('Browser: Japanese and English restore without another disc selection.');
   await select('ja');
   await select('en');
   console.log('Browser: both language caches restore and verify.');
@@ -106,7 +108,6 @@ try {
   await until("document.getElementById('disc') && !document.getElementById('disc').disabled");
   await select('en');
   console.log('Browser: English cache survives a page reload.');
-  await select('ja');
   await evaluate('playButton.click();');
   await until("(running && !languageInput.disabled) || stopped");
   if (await evaluate('stopped')) throw Error(await evaluate('statusLabel.textContent'));
@@ -114,11 +115,14 @@ try {
   if (await evaluate('stopped')) throw Error(await evaluate('statusLabel.textContent'));
   await evaluate('Module.canvas.focus();');
   await key('Tab', 'Tab', 9);
-  await liveSelect('en');
+  if (await evaluate("Module.ccall('kf_current_language', 'string', [], [])") !== 'en')
+    throw Error('Game did not start in English');
   await liveSelect('ja');
   await liveSelect('en');
   await liveSelect('ja');
-  console.log('Browser: English generated during gameplay and reused without restarting.');
+  await liveSelect('en');
+  await liveSelect('ja');
+  console.log('Browser: English startup and repeated language switches work without restarting.');
   await evaluate('Module.canvas.focus();');
   await key('Tab', 'Tab', 9);
   await evaluate("languageInput.value='en'; languageInput.dispatchEvent(new Event('change'));");

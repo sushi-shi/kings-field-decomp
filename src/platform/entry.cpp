@@ -49,7 +49,7 @@ int main(int argc, char **argv) {
     bool data_selected = false, extract_only = false;
     const char *language_code = std::getenv("KF_LANGUAGE");
     if (!language_code)
-        language_code = "ja";
+        language_code = "en";
     for (int i = 1; i < argc; ++i) {
         if (std::strcmp(argv[i], "--data") == 0 && i + 1 < argc) {
             data = argv[++i];
@@ -69,7 +69,7 @@ int main(int argc, char **argv) {
             japanese_data = argv[++i];
         else {
             const bool help = std::strcmp(argv[i], "--help") == 0 || std::strcmp(argv[i], "-h") == 0;
-            std::fprintf(help ? stdout : stderr, "Usage: kings-field [--data DIRECTORY | --disc IMAGE] [--extract-to NEW_DIRECTORY] [--extract-only] [--language ja|en] [--japanese-data DIRECTORY] [--saves DIRECTORY]\nLanguage defaults to KF_LANGUAGE, or ja. Change it during play in Configuration. When starting from an English tree, --japanese-data supplies the original resources for switching back.\n");
+            std::fprintf(help ? stdout : stderr, "Usage: kings-field [--data DIRECTORY | --disc IMAGE] [--extract-to NEW_DIRECTORY] [--extract-only] [--language ja|en] [--japanese-data DIRECTORY] [--saves DIRECTORY]\nLanguage defaults to KF_LANGUAGE, or en. Change it during play in Configuration. When starting from an English tree, --japanese-data supplies the original resources for switching back.\n");
             return help ? 0 : 1;
         }
     }
@@ -98,14 +98,22 @@ int main(int argc, char **argv) {
         if (extract_only)
             return 0;
     }
-    if (!disc && !kf::disc_verify_directory(data, language))
+    kf::Language resource_language = language;
+    if (!disc && !kf::disc_verify_directory(data, language, &resource_language))
         return 1;
-    if (!kf::language_resources_start(data, language, japanese_data))
+    if (!kf::language_resources_start(data, resource_language, japanese_data))
         return 1;
+    if (resource_language != language &&
+        (!kf::language_request(language) || !kf::language_apply_pending())) {
+        kf::language_resources_stop();
+        return 1;
+    }
     std::printf("Starting King's Field (%s).\n", kf::language_name(language));
     // Create browser audio within the launch gesture, before asynchronous storage.
-    if (!kf::host_start())
+    if (!kf::host_start()) {
+        kf::language_resources_stop();
         return 1;
+    }
     if (!kf::save_storage_start(saves))
         kf::host_fail("Cannot initialize save storage. Check browser storage permissions or the selected save directory.");
 #ifdef __EMSCRIPTEN__
