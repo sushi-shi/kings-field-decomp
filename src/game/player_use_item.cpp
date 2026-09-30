@@ -112,6 +112,7 @@ void player_use_item(KfObjectId item_id)
             }
             index++;
         }
+        break;
 
     case KF_ITEM_DRAGON_CHALICE:
     case KF_ITEM_WATER_SEAL_STONE:
