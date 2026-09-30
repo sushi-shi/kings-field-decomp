@@ -47,7 +47,6 @@ The game starts from the opening. Append options after `--`:
 
 | Option | Purpose |
 | --- | --- |
-| `--skip-intro` | Start gameplay directly |
 | `--saves DIRECTORY` | Use an existing save directory |
 | `--data DIRECTORY` | Use an extracted disc tree instead of `KF_DISC` |
 

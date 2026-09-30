@@ -1,3 +1,4 @@
+#include <kf/platform/prelude.hpp>
 #include <algorithm>
 #include <kf/game/resources.h>
 #include <kf/lib/null.h>

@@ -1,10 +1,11 @@
+#include <kf/platform/prelude.hpp>
 #include <kf/game/audio.h>
 #include <kf/lib/random.hpp>
 #include <kf/lib/null.h>
 #include <kf/game/graphics.h>
 
 #include <kf/platform/input.hpp>
-#include <kf/lib/overlay.h>
+#include <kf/game/session.h>
 #include <kf/game/player.h>
 #include <kf/game/collision.h>
 #include <algorithm>
@@ -654,7 +655,7 @@ void player_update(void)
         } else if (item == kf_enum_encode<s32>(KF_MENU_RESULT_GAME_LOADED)) {
             player_restore_loaded_game();
         } else if (item == kf_enum_encode<s32>(KF_MENU_RESULT_RETURN_TO_INTRO)) {
-            game_next_overlay_mode = KF_OVERLAY_MODE_INTRO;
+            game_result = GameResult::ReturnToIntro;
             return;
         }
         player_previous_input = input;

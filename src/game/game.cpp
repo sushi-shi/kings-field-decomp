@@ -1,8 +1,9 @@
+#include <kf/platform/prelude.hpp>
 #include <kf/game/audio.h>
 #include <kf/game/resources.h>
 #include <kf/game/graphics.h>
 
-#include <kf/lib/overlay.h>
+#include <kf/game/session.h>
 #include <kf/game/player.h>
 #include <kf/game/save.h>
 #include <cstdlib>
@@ -17,7 +18,7 @@ enum {
 
 static std::uint64_t frame_pacer_last_tick;
 
-KfOverlayResultWord game_next_overlay_mode;
+GameResult game_result;
 
 void game_main_loop(void)
 {
@@ -41,10 +42,10 @@ void game_main_loop(void)
     map_load_floor_wrapper();
     frame_pacer_last_tick = kf::host_clock_tick();
     player_warp_shimmer_at_player(KF_WARP_SHIMMER_SHRINK_REMOVE);
-    game_next_overlay_mode = KF_OVERLAY_MODE_NONE;
+    game_result = GameResult::Running;
     for (;;) {
         player_update();
-        if (game_next_overlay_mode != KF_OVERLAY_MODE_NONE) {
+        if (game_result != GameResult::Running) {
             break;
         }
         player_update_transform_snapshot(&player_position_snapshot, &player_rotation_snapshot);
@@ -60,7 +61,7 @@ void game_main_loop(void)
             == KF_MAP_ATTRIBUTE_WARP) {
             if (!map_cells_equal(player_state.previous_map_cell, player_state.motion_state.map_cell)) {
                 if (player_warp_trigger_update() != 0) {
-                    game_next_overlay_mode = KF_OVERLAY_MODE_ENDING;
+                    game_result = GameResult::Completed;
                     player_warp_shimmer_at_player(KF_WARP_SHIMMER_GROW_KEEP);
                     display_play_transition();
                     audio_stop_sequence_master_fade(ENDING_MASTER_FADE_STEP_Q8);
@@ -91,5 +92,5 @@ void frame_pacer_wait(void)
 void game_reset_module_state(void)
 {
     kf::restore_initial_value<frame_pacer_last_tick>();
-    kf::restore_initial_value<game_next_overlay_mode>();
+    kf::restore_initial_value<game_result>();
 }

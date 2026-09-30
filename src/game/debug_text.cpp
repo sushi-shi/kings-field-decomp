@@ -1,3 +1,4 @@
+#include <kf/platform/prelude.hpp>
 #include <kf/lib/bool.h>
 #include <stdarg.h>
 
