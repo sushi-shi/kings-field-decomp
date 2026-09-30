@@ -1076,6 +1076,13 @@ void actor_update_current_action(void)
             if (actor->vertical_state != KF_ACTOR_VERTICAL_JUMP_ATTACK) {
                 actor->vertical_state = KF_ACTOR_VERTICAL_NONE;
                 actor->vertical_velocity = 0;
+                result = collision_query_world(
+                    actor->position.vx, actor->position.vy, actor->position.vz,
+                    definition->collision_radius, definition->collision_height,
+                    ACTOR_VELOCITY_COLLISION_FLAGS);
+                if (result.kind == KfCollisionKind::Ceiling) {
+                    actor->vertical_state = KF_ACTOR_VERTICAL_FALL;
+                }
                 actor->action_progress = KF_ACTOR_PROGRESS_COMPLETE;
                 actor_select_next_action(actor_player_distance(actor, ACTOR_ACTIVE_RANGE));
             }

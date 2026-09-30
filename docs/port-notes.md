@@ -119,6 +119,9 @@ Whole-row replacements can change these labels. Effect update IDs passed to
 
 ## Deliberate behavior corrections
 
+- **Jump landing:** GAME compares the collision result's shifted kind with the
+  ceiling detail `0xfff1` at `0x80030168..0x80030184`, so its fall-recovery branch
+  cannot run. The port checks `Ceiling` directly and resumes gravity.
 - **Return home:** GAME action 33 in `actor_update_current_action` (`0x8002fa88`)
   uses uninitialized home registers at `0x80030500`; its proven caller supplies
   residue `(1, 65535)`. The port computes actual placement coordinates.
