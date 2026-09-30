@@ -32,8 +32,8 @@ On x86_64 Linux with Nix flakes enabled:
 KF_DISC="/path/to/King's Field (Japan).iso" nix run github:sushi-shi/kings-field-decomp/port
 ```
 
-Accepts ISO (2048-byte sectors), BIN (MODE2/2352), or single-track CUE/BIN
-(INDEX 01 at 00:00:00). Keep the CUE and its BIN together.
+Use a Japanese ISO, BIN, or single-track CUE/BIN disc image.
+Keep the CUE and its BIN file together.
 
 The first launch extracts and caches game data locally. Saves use three separate
 slots. No manual extraction or `--impure` is needed.
