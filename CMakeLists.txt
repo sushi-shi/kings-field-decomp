@@ -41,11 +41,11 @@ add_dependencies(kf_codecs kf_codecs_build)
 
 find_package(Python3 REQUIRED COMPONENTS Interpreter)
 # The Nix dev shell and package supply a delta derived from the translator's PPF
-# release; otherwise a local resources/english-v1.kfdelta is used when present.
+# release; otherwise a local english-v1.kfdelta in the build directory is used.
 if(DEFINED ENV{KF_ENGLISH_PATCH} AND NOT "$ENV{KF_ENGLISH_PATCH}" STREQUAL "")
   set(KF_ENGLISH_PATCH_DEFAULT "$ENV{KF_ENGLISH_PATCH}")
 else()
-  set(KF_ENGLISH_PATCH_DEFAULT "${CMAKE_SOURCE_DIR}/resources/english-v1.kfdelta")
+  set(KF_ENGLISH_PATCH_DEFAULT "${CMAKE_BINARY_DIR}/english-v1.kfdelta")
 endif()
 set(KF_ENGLISH_PATCH "${KF_ENGLISH_PATCH_DEFAULT}" CACHE FILEPATH
     "English translation delta to embed (optional; never distribute builds containing it)")

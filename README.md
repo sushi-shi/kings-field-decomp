@@ -55,7 +55,6 @@ KF_DISC=/path/to/disc.iso nix run . -- --saves /path/to/saves
 | Option | Purpose |
 | --- | --- |
 | `--saves DIRECTORY` | Use an existing save directory |
-| `--data DIRECTORY` | Use an extracted disc tree instead of `KF_DISC` |
 | `--language ja\|en` | Choose the starting language |
 
 In a local checkout, use `KF_DISC=/path/to/disc.iso nix run .`.
