@@ -2,6 +2,7 @@
 #define KF_GAME_ASSET_H
 
 #include <kf/lib/types.h>
+#include <kf/lib/codec.h>
 
 enum {
     KF_ASSET_ARCHIVE_HEADER_BYTES = 4,
@@ -13,14 +14,6 @@ enum {
     KF_ASSET_REGISTRY_KNOWN_ENTRIES = 48,
     KF_WEAPON_ASSET_BUFFER_BYTES = 49152
 };
-
-typedef struct KfAssetHeader {
-    u32 byte_size;
-    s32 animation_clip_count;
-    u32 tmd_data_offset;
-    u32 object_table_offset;
-    u32 clip_table_offset;
-} KfAssetHeader;
 
 extern void asset_registry_load_tmd_archive(
     u16 first_asset_id, u8 *archive, std::size_t size);

@@ -5,7 +5,7 @@
     let
       system = "x86_64-linux";
       pkgs = import nixpkgs { inherit system; };
-      nativeTools = with pkgs; [ cmake ninja pkg-config cargo rustc clang rust-bindgen rustfmt python3 ];
+      nativeTools = with pkgs; [ cmake ninja pkg-config clang python3 ];
       nativeLibraries = with pkgs; [ sdl3 libGL libglvnd ];
       sources = pkgs.lib.cleanSourceWith {
         src = ./.;
@@ -43,9 +43,6 @@
         nativeBuildInputs = nativeTools;
         buildInputs = nativeLibraries;
         cmakeFlags = [ "-DKF_ENGLISH_PATCH=${englishDelta}" ];
-        preBuild = ''
-          export CARGO_HOME="$TMPDIR/kings-field-cargo"
-        '';
         meta = {
           description = "King's Field direct source port (requires original Japanese disc data)";
           mainProgram = "kings-field";
@@ -102,26 +99,12 @@
       checks.${system} = {
         native = unwrapped;
         launcher = game;
-        codec-bindings = pkgs.runCommand "kf-codec-bindings" {
-          nativeBuildInputs = with pkgs; [ rust-bindgen rustfmt cargo rustc clippy ];
-          src = sources;
-        } ''
-          cp -r "$src" source
-          chmod -R u+w source
-          cd source
-          bash codecs/bindings.sh --check
-          export CARGO_HOME="$TMPDIR/kings-field-cargo"
-          cargo clippy --offline --locked --release --manifest-path codecs/Cargo.toml -- \
-            -D unfulfilled_lint_expectations
-          touch "$out"
-        '';
       };
       devShells.${system}.default = (pkgs.mkShell.override { stdenv = pkgs.clangStdenv; }) {
         packages = nativeTools ++ nativeLibraries ++ (with pkgs; [
-          emscripten nodejs chromium xvfb-run xdotool imagemagick python3 clippy
+          emscripten nodejs chromium xvfb-run xdotool imagemagick python3
         ]);
         KF_SDL_SOURCE = "${pkgs.sdl3.src}";
-        KF_RUST_SOURCE = "${pkgs.rustPlatform.rustLibSrc}";
         KF_ENGLISH_PATCH = "${englishDelta}";
       };
     };

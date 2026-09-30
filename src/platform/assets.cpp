@@ -56,7 +56,7 @@ constexpr double import_file_progress = 0.9;
 bool image_decode_tim(Image *image, const u8 *data, std::size_t size, std::size_t offset,
                       u32 palette) {
     KfTimInfo info{};
-    if (kf_tim_info(data, size, offset, &info) != KF_CODEC_OK)
+    if (kf_tim_info({data, size}, offset, info) != KF_CODEC_OK)
         return false;
     if (info.width > maximum_tim_dimension || info.height > maximum_tim_dimension)
         return false;
@@ -66,7 +66,7 @@ bool image_decode_tim(Image *image, const u8 *data, std::size_t size, std::size_
     } catch (const std::bad_alloc &) {
         return false;
     }
-    if (kf_tim_rgba(data, size, offset, palette, decoded.rgba.data(), decoded.rgba.size()) !=
+    if (kf_tim_rgba({data, size}, offset, palette, decoded.rgba) !=
         KF_CODEC_OK) {
         return false;
     }
