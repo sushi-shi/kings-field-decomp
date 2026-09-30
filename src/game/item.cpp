@@ -1,20 +1,20 @@
-#include <array>
 #include <kf/platform/prelude.h>
-#include <kf/game/menu_text.h>
-#include <kf/game/resources.h>
-#include <kf/game/menu_glyphs.h>
-#include <kf/lib/null.h>
-#include <kf/game/graphics.h>
-
-#include <kf/platform/input.h>
-#include <kf/lib/map_data.h>
-#include <kf/lib/item.h>
-#include <kf/game/resource_file.h>
-#include <cstdlib>
-#include <cstdio>
-#include <cstring>
 #include <kf/game/game.h>
+#include <kf/game/graphics.h>
+#include <kf/game/menu_glyphs.h>
+#include <kf/game/menu_text.h>
+#include <kf/game/resource_file.h>
+#include <kf/game/resources.h>
+#include <kf/lib/item.h>
+#include <kf/lib/map_data.h>
+#include <kf/lib/null.h>
 #include <kf/lib/render_face.h>
+#include <kf/platform/input.h>
+
+#include <array>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 void shop_menu_buy(KfItemStockBank shop_bank);
 void shop_menu_sell(KfItemStockBank shop_bank);

@@ -1,17 +1,17 @@
 #include <kf/platform/assets.h>
 #include <kf/platform/translation.h>
-#include <bit>
+
 #include <algorithm>
+#include <bit>
 #include <cstdio>
-#include <cstdlib>
 #include <cstring>
-#include <limits>
+#include <new>
 #include <string_view>
+#include <utility>
 
 namespace kf {
 namespace {
 constexpr unsigned maximum_tim_dimension = 4096;
-constexpr std::size_t initial_asset_capacity = 64;
 constexpr unsigned sha256_round_count = 64;
 constexpr unsigned sha256_input_words = 16;
 constexpr unsigned sha256_length_offset = 56;
@@ -53,25 +53,6 @@ constexpr double import_metadata_progress = 0.1;
 constexpr double import_file_progress = 0.9;
 }
 
-bool buffer_resize(ByteBuffer *buffer, std::size_t size) {
-    if (size > buffer->capacity) {
-        void *allocation = std::realloc(buffer->data, size);
-        if (!allocation)
-            return false;
-        buffer->data = static_cast<u8 *>(allocation);
-        buffer->capacity = size;
-    }
-    buffer->size = size;
-    return true;
-}
-void buffer_release(ByteBuffer *buffer) {
-    std::free(buffer->data);
-    *buffer = {};
-}
-void image_release(Image *image) {
-    buffer_release(&image->rgba);
-    *image = {};
-}
 bool image_decode_tim(Image *image, const u8 *data, std::size_t size, std::size_t offset,
                       u32 palette) {
     KfTimInfo info{};
@@ -80,15 +61,16 @@ bool image_decode_tim(Image *image, const u8 *data, std::size_t size, std::size_
     if (info.width > maximum_tim_dimension || info.height > maximum_tim_dimension)
         return false;
     Image decoded{info.width, info.height, {}};
-    if (!buffer_resize(&decoded.rgba, static_cast<std::size_t>(info.width) * info.height * 4))
-        return false;
-    if (kf_tim_rgba(data, size, offset, palette, decoded.rgba.data, decoded.rgba.size) !=
-        KF_CODEC_OK) {
-        image_release(&decoded);
+    try {
+        decoded.rgba.resize(static_cast<std::size_t>(info.width) * info.height * 4);
+    } catch (const std::bad_alloc &) {
         return false;
     }
-    image_release(image);
-    *image = decoded;
+    if (kf_tim_rgba(data, size, offset, palette, decoded.rgba.data(), decoded.rgba.size()) !=
+        KF_CODEC_OK) {
+        return false;
+    }
+    *image = std::move(decoded);
     return true;
 }
 bool asset_path(std::span<char> output, const char *input) {
@@ -136,41 +118,26 @@ bool asset_path(std::span<char> output, const char *input) {
     }
     return true;
 }
-bool assets_append(AssetTable *table, const char *path, ByteBuffer *bytes) {
+bool assets_append(AssetTable &table, const char *path, ByteBuffer &&bytes) {
     std::array<char, asset_path_capacity> normalized{};
-    if (!asset_path(normalized, path) || assets_find(table, normalized.data()))
+    if (table.size() == table.max_size() ||
+        !asset_path(normalized, path) || assets_find(table, normalized.data()))
         return false;
-    if (table->count == table->capacity) {
-        const auto capacity = table->capacity ? table->capacity * 2 : initial_asset_capacity;
-        if (capacity > std::numeric_limits<std::size_t>::max() / sizeof(Asset))
-            return false;
-        auto *entries =
-            static_cast<Asset *>(std::realloc(table->entries, capacity * sizeof(Asset)));
-        if (!entries)
-            return false;
-        table->entries = entries;
-        table->capacity = capacity;
+    try {
+        table.emplace_back(normalized, std::move(bytes));
+    } catch (const std::bad_alloc &) {
+        return false;
     }
-    auto *asset = &table->entries[table->count++];
-    asset->path = normalized;
-    asset->bytes = *bytes;
-    *bytes = {};
     return true;
 }
-const Asset *assets_find(const AssetTable *table, const char *path) {
+Asset *assets_find(AssetTable &table, const char *path) {
     std::array<char, asset_path_capacity> normalized{};
     if (!asset_path(normalized, path))
         return nullptr;
-    for (std::size_t i = 0; i < table->count; ++i)
-        if (std::strcmp(table->entries[i].path.data(), normalized.data()) == 0)
-            return &table->entries[i];
+    for (auto &asset : table)
+        if (std::strcmp(asset.path.data(), normalized.data()) == 0)
+            return &asset;
     return nullptr;
-}
-void assets_release(AssetTable *table) {
-    for (std::size_t i = 0; i < table->count; ++i)
-        buffer_release(&table->entries[i].bytes);
-    std::free(table->entries);
-    *table = {};
 }
 
 static constexpr std::array<u32, sha256_round_count> sha_constants = {
@@ -256,28 +223,28 @@ static u32 be32(const u8 *p) {
 const char *assets_language_hash(Language language) {
     return language == Language::English ? english_v1_files_sha256 : retail_files_sha256;
 }
-bool assets_match_language(AssetTable *table, Language language) {
-    if (table->count != retail_resource_file_count)
+bool assets_match_language(AssetTable &table, Language language) {
+    if (table.size() != retail_resource_file_count)
         return false;
-    std::sort(table->entries, table->entries + table->count,
+    std::sort(table.begin(), table.end(),
               [](const Asset &a, const Asset &b) { return std::strcmp(a.path.data(), b.path.data()) < 0; });
     Sha256 hash{};
     sha256_init(&hash);
     std::size_t total = 0;
-    for (std::size_t i = 0; i < table->count; ++i) {
-        const auto &asset = table->entries[i];
+    for (std::size_t i = 0; i < table.size(); ++i) {
+        const auto &asset = table[i];
         const auto path_size = std::strlen(asset.path.data());
-        if (asset.bytes.size > disc_import_limit - total)
+        if (asset.bytes.size() > disc_import_limit - total)
             return false;
-        total += asset.bytes.size;
+        total += asset.bytes.size();
         std::array<u8, 8> sizes;
         for (std::size_t byte = 0; byte < 4; ++byte) {
             sizes[byte] = static_cast<u8>(path_size >> (byte * 8));
-            sizes[byte + 4] = static_cast<u8>(asset.bytes.size >> (byte * 8));
+            sizes[byte + 4] = static_cast<u8>(asset.bytes.size() >> (byte * 8));
         }
         sha256_update(&hash, sizes);
         sha256_update(&hash, {reinterpret_cast<const u8 *>(asset.path.data()), path_size});
-        sha256_update(&hash, {asset.bytes.data, asset.bytes.size});
+        sha256_update(&hash, asset.bytes);
     }
     std::array<char, sha256_hex_capacity> digest;
     sha256_finish(&hash, digest);
@@ -299,14 +266,14 @@ static void read_extent(DiscImporter *importer, const DiscExtent *file) {
 }
 static void next_file(DiscImporter *importer) {
     if (importer->file_index == importer->file_count) {
-        if (const char *error = assets_prepare_language(&importer->assets, importer->language)) {
+        if (const char *error = assets_prepare_language(importer->assets, importer->language)) {
             disc_import_fail(importer, error);
             return;
         }
         importer->state = ImportState::complete;
         importer->request = {};
         std::snprintf(importer->message.data(), importer->message.size(), "Imported %zu resource files.",
-                      importer->assets.count);
+                      importer->assets.size());
         return;
     }
     importer->state = ImportState::file;
@@ -325,10 +292,10 @@ void disc_import_fail(DiscImporter *importer, const char *message) {
     std::snprintf(importer->message.data(), importer->message.size(), "%s", message);
     importer->state = ImportState::failed;
     importer->request = {};
-    assets_release(&importer->assets);
+    importer->assets.clear();
 }
 void disc_import_start(DiscImporter *importer, std::uint64_t disc_size, Language language) {
-    disc_import_release(importer);
+    *importer = {};
     importer->language = language;
     if (disc_size < (iso_primary_volume_sector + 1) * iso_payload_bytes || disc_size > disc_import_limit) {
         disc_import_fail(importer, "Expected an SLPS-00017 ISO or BIN image (up to 128 MiB).");
@@ -343,35 +310,38 @@ void disc_import_start(DiscImporter *importer, std::uint64_t disc_size, Language
 bool disc_import_waiting(const DiscImporter *importer) {
     return importer->state >= ImportState::layout && importer->state <= ImportState::file;
 }
-static bool unpack_payload(DiscImporter *importer, const u8 *raw, std::size_t size,
-                           ByteBuffer *output) {
+static bool unpack_payload(DiscImporter *importer, std::span<const u8> raw,
+                           ByteBuffer &output) {
     const auto length = importer->current.length;
-    if (!buffer_resize(output, length))
+    try {
+        output.resize(length);
+    } catch (const std::bad_alloc &) {
         return false;
+    }
     for (std::size_t at = 0, sector = 0; at < length; at += iso_payload_bytes, sector += importer->sector_size) {
         auto count = length - at;
         if (count > iso_payload_bytes)
             count = iso_payload_bytes;
         const auto header = importer->sector_size == cd_raw_sector_bytes ? cd_mode2_payload_offset : 0u;
-        if (sector + header + count > size)
+        if (sector + header + count > raw.size())
             return false;
         if (header && (raw[sector + cd_mode_offset] != cd_mode2 || (raw[sector + cd_submode_offset] & cd_form2_flag) ||
-                       std::memcmp(raw + sector + cd_subheader_offset, raw + sector + cd_subheader_copy_offset, cd_subheader_bytes) != 0))
+                       std::memcmp(raw.data() + sector + cd_subheader_offset, raw.data() + sector + cd_subheader_copy_offset, cd_subheader_bytes) != 0))
             return false;
-        std::memcpy(output->data + at, raw + sector + header, count);
+        std::memcpy(output.data() + at, raw.data() + sector + header, count);
     }
     return true;
 }
-static bool parse_directory(DiscImporter *importer, const ByteBuffer *bytes) {
-    for (std::size_t at = 0; at < bytes->size;) {
-        const auto length = bytes->data[at];
+static bool parse_directory(DiscImporter *importer, std::span<const u8> bytes) {
+    for (std::size_t at = 0; at < bytes.size();) {
+        const auto length = bytes.data()[at];
         if (!length) {
             at = (at / iso_payload_bytes + 1) * iso_payload_bytes;
             continue;
         }
-        if (length < iso_minimum_record_bytes || length > bytes->size - at || at % iso_payload_bytes + length > iso_payload_bytes)
+        if (length < iso_minimum_record_bytes || length > bytes.size() - at || at % iso_payload_bytes + length > iso_payload_bytes)
             return false;
-        const auto *row = bytes->data + at;
+        const auto *row = bytes.data() + at;
         const auto name_length = row[iso_name_length_offset];
         if (iso_name_offset + name_length > length)
             return false;
@@ -423,16 +393,16 @@ static bool parse_directory(DiscImporter *importer, const ByteBuffer *bytes) {
     }
     return true;
 }
-void disc_import_supply(DiscImporter *importer, const u8 *bytes, std::size_t size) {
+void disc_import_supply(DiscImporter *importer, std::span<const u8> bytes) {
     if (!disc_import_waiting(importer))
         return;
-    if (size != importer->request.length || (!bytes && size)) {
+    if (bytes.size() != importer->request.length) {
         disc_import_fail(importer, "Disc read was incomplete.");
         return;
     }
     if (importer->state == ImportState::layout) {
         constexpr std::array<u8, 12> sync = {0,255,255,255,255,255,255,255,255,255,255,0};
-        importer->sector_size = std::memcmp(bytes, sync.data(), sync.size()) == 0 ? cd_raw_sector_bytes : iso_payload_bytes;
+        importer->sector_size = std::memcmp(bytes.data(), sync.data(), sync.size()) == 0 ? cd_raw_sector_bytes : iso_payload_bytes;
         if (importer->disc_size % importer->sector_size != 0) {
             disc_import_fail(importer, "Image has an incomplete data sector.");
             return;
@@ -443,26 +413,25 @@ void disc_import_supply(DiscImporter *importer, const u8 *bytes, std::size_t siz
         return;
     }
     ByteBuffer payload{};
-    if (!unpack_payload(importer, bytes, size, &payload)) {
-        buffer_release(&payload);
+    if (!unpack_payload(importer, bytes, payload)) {
         disc_import_fail(importer, "Invalid data sector or allocation failure.");
         return;
     }
     if (importer->state == ImportState::volume) {
-        if (payload.size != iso_payload_bytes || std::memcmp(payload.data, "\1CD001\1", 7) != 0 ||
-            std::memcmp(payload.data + iso_volume_id_offset, "SLPS-00017                      ", iso_volume_id_bytes) != 0 ||
-            payload.data[iso_block_size_offset] != 0 || payload.data[iso_block_size_offset + 1] != 8 ||
-            payload.data[iso_block_size_offset + 2] != 8 || payload.data[iso_block_size_offset + 3] != 0 ||
-            le32(payload.data + iso_volume_size_le_offset) != be32(payload.data + iso_volume_size_be_offset) ||
-            le32(payload.data + iso_volume_size_le_offset) > importer->disc_size / importer->sector_size) {
+        if (payload.size() != iso_payload_bytes || std::memcmp(payload.data(), "\1CD001\1", 7) != 0 ||
+            std::memcmp(payload.data() + iso_volume_id_offset, "SLPS-00017                      ", iso_volume_id_bytes) != 0 ||
+            payload.data()[iso_block_size_offset] != 0 || payload.data()[iso_block_size_offset + 1] != 8 ||
+            payload.data()[iso_block_size_offset + 2] != 8 || payload.data()[iso_block_size_offset + 3] != 0 ||
+            le32(payload.data() + iso_volume_size_le_offset) != be32(payload.data() + iso_volume_size_be_offset) ||
+            le32(payload.data() + iso_volume_size_le_offset) > importer->disc_size / importer->sector_size) {
             disc_import_fail(importer, "Unsupported ISO9660 volume; Japanese SLPS-00017 is required.");
         } else {
-            const auto *root = payload.data + iso_root_record_offset;
+            const auto *root = payload.data() + iso_root_record_offset;
             if (root[0] < iso_minimum_record_bytes || root[iso_extended_attributes_offset] || !(root[iso_flags_offset] & iso_directory_flag) || root[iso_file_unit_offset] || root[iso_interleave_gap_offset] ||
                 le32(root + iso_extent_le_offset) != be32(root + iso_extent_be_offset) || le32(root + iso_length_le_offset) != be32(root + iso_length_be_offset)) {
                 disc_import_fail(importer, "Invalid ISO9660 root directory.");
             } else {
-                importer->volume_sectors = le32(payload.data + iso_volume_size_le_offset);
+                importer->volume_sectors = le32(payload.data() + iso_volume_size_le_offset);
                 importer->directories[importer->directory_count++] = {
                     {}, le32(root + iso_extent_le_offset), le32(root + iso_length_le_offset)};
                 importer->visited_directories[importer->visited_count++] = le32(root + iso_extent_le_offset);
@@ -470,17 +439,16 @@ void disc_import_supply(DiscImporter *importer, const u8 *bytes, std::size_t siz
             }
         }
     } else if (importer->state == ImportState::directory) {
-        if (!parse_directory(importer, &payload))
+        if (!parse_directory(importer, payload))
             disc_import_fail(importer, "Invalid ISO9660 directory.");
         else
             next_directory(importer);
     } else {
-        if (!assets_append(&importer->assets, importer->current.path.data(), &payload))
+        if (!assets_append(importer->assets, importer->current.path.data(), std::move(payload)))
             disc_import_fail(importer, "Duplicate resource name or allocation failure.");
         else
             next_file(importer);
     }
-    buffer_release(&payload);
 }
 double disc_import_progress(const DiscImporter *importer) {
     if (!importer->disc_size)
@@ -488,11 +456,7 @@ double disc_import_progress(const DiscImporter *importer) {
     if (importer->state == ImportState::complete)
         return 1;
     return import_metadata_progress + (importer->file_count
-                      ? import_file_progress * double(importer->assets.count) / double(importer->file_count)
+                      ? import_file_progress * double(importer->assets.size()) / double(importer->file_count)
                       : 0);
-}
-void disc_import_release(DiscImporter *importer) {
-    assets_release(&importer->assets);
-    *importer = {};
 }
 } // namespace kf

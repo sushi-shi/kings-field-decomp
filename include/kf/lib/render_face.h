@@ -1,13 +1,13 @@
 #ifndef KF_LIB_RENDER_FACE_H
 #define KF_LIB_RENDER_FACE_H
 
-#include <array>
-#include <kf/renderer/renderer.h>
-#include <kf/platform/host.h>
 #include <kf/lib/tmd.h>
+#include <kf/platform/host.h>
+#include <kf/renderer/renderer.h>
 
-#include <optional>
+#include <array>
 #include <initializer_list>
+#include <optional>
 
 // A visible face owns its projected corners; no animation-scratch pointers escape.
 struct KfProjectedFace {
@@ -39,8 +39,8 @@ inline std::int64_t render_face_winding(const KfScreenVertex *a,
 
 inline kf::BlendMode render_texture_blend(u16 page)
 {
-    constexpr std::array<kf::BlendMode, 4> modes = {{kf::BlendMode::average, kf::BlendMode::add,
-        kf::BlendMode::subtract, kf::BlendMode::add_quarter}};
+    constexpr std::array<kf::BlendMode, 4> modes = {kf::BlendMode::average, kf::BlendMode::add,
+        kf::BlendMode::subtract, kf::BlendMode::add_quarter};
     return modes[(page >> kf::texture_blend_shift) & kf::texture_blend_mask];
 }
 

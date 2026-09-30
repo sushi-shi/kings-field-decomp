@@ -1,9 +1,9 @@
-#include <array>
 #include <kf/platform/prelude.h>
-#include <kf/game/graphics.h>
-
-#include <kf/game/render.h>
 #include <kf/game/game.h>
+#include <kf/game/graphics.h>
+#include <kf/game/render.h>
+
+#include <array>
 
 typedef struct {
     std::array<u8, KF_QUAD_TEX_DESCRIPTOR_BYTES> v;
@@ -13,9 +13,9 @@ KfScreenRect fade_screen_rect = {
     KF_TRANSITION_RECT_X, 0, KF_TRANSITION_RECT_WIDTH, KF_TRANSITION_RECT_HEIGHT
 };
 
-FadeUv fade_screen_uv = {{
+FadeUv fade_screen_uv = {
     0, 0, 0, 0, KF_TRANSITION_RECT_WIDTH, 0, KF_TRANSITION_RECT_HEIGHT, 0
-}};
+};
 
 CVECTOR fade_screen_color = {0, 0, 0, 0};
 

@@ -1,19 +1,19 @@
-#include <array>
 #include <kf/platform/prelude.h>
-#include <kf/game/graphics.h>
-#include <kf/lib/null.h>
-
-#include <kf/game/resources.h>
-#include <kf/lib/resources.h>
 #include <kf/game/equipment.h>
-#include <kf/lib/map.h>
+#include <kf/game/game.h>
+#include <kf/game/graphics.h>
 #include <kf/game/player.h>
 #include <kf/game/render.h>
+#include <kf/game/resources.h>
 #include <kf/lib/geometry_types.h>
-#include <cstdlib>
+#include <kf/lib/map.h>
+#include <kf/lib/null.h>
+#include <kf/lib/resources.h>
+
+#include <array>
 #include <cstdio>
 #include <cstring>
-#include <kf/game/game.h>
+#include <new>
 
 enum {
     MAP_VARIANT_ASSET_BUFFER_BYTES = 0x5a000,
@@ -45,11 +45,22 @@ static kf::ByteBuffer common_images_read()
 {
     kf::DataFile file{};
     kf::ByteBuffer bytes{};
-    if (resource_file_open(&file, "COM/MIX.TIM") != kf::FileResult::Ok ||
-        !kf::buffer_resize(&bytes, file.size) ||
-        kf::data_file_read(&file, bytes.data, bytes.size) != kf::FileResult::Ok)
+    if (resource_file_open(&file, "COM/MIX.TIM") != kf::FileResult::Ok)
         kf::host_fail("Cannot reload language graphics.");
+    if (file.size > bytes.max_size()) {
+        kf::data_file_close(&file);
+        kf::host_fail("Cannot reload language graphics.");
+    }
+    try {
+        bytes.resize(file.size);
+    } catch (const std::bad_alloc &) {
+        kf::data_file_close(&file);
+        kf::host_fail("Cannot reload language graphics.");
+    }
+    const auto result = kf::data_file_read(&file, bytes.data(), bytes.size());
     kf::data_file_close(&file);
+    if (result != kf::FileResult::Ok)
+        kf::host_fail("Cannot reload language graphics.");
     return bytes;
 }
 
@@ -58,16 +69,12 @@ bool game_apply_language(void)
     if (kf::language_requested() == kf::game_language())
         return false;
     auto previous = common_images_read();
-    if (!kf::language_apply_pending()) {
-        kf::buffer_release(&previous);
+    if (!kf::language_apply_pending())
         return false;
-    }
     auto current = common_images_read();
     if (!kf::texture_store_translate_tim(&kf::host_renderer()->textures,
-            previous.data, previous.size, current.data, current.size))
+            previous.data(), previous.size(), current.data(), current.size()))
         kf::host_fail("Cannot reload language graphics.");
-    kf::buffer_release(&previous);
-    kf::buffer_release(&current);
     menu_resources_reload();
     kf::host_language_status("Language changed.");
     return true;

@@ -1,19 +1,19 @@
-#include <array>
 #include <kf/platform/prelude.h>
 #include <kf/game/audio.h>
-#include <kf/lib/random.h>
-#include <kf/lib/null.h>
-#include <kf/game/graphics.h>
-
-#include <kf/platform/input.h>
-#include <kf/game/session.h>
-#include <kf/game/player.h>
 #include <kf/game/collision.h>
-#include <algorithm>
-#include <cstdlib>
-#include <cstdio>
-#include <cstring>
 #include <kf/game/game.h>
+#include <kf/game/graphics.h>
+#include <kf/game/player.h>
+#include <kf/game/session.h>
+#include <kf/lib/null.h>
+#include <kf/lib/random.h>
+#include <kf/platform/input.h>
+
+#include <algorithm>
+#include <array>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 static constexpr u16 PLAYER_PITFALL_CUTTING_DAMAGE = 5;
 static constexpr u16 PLAYER_PITFALL_STRIKING_DAMAGE = 3;
@@ -70,20 +70,24 @@ enum {
 };
 
 static MATRIX player_darkness_color_matrix = {
-    {{{666, 233, 1333}, {666, 233, 1333}, {666, 233, 1333}}},
-    {0, 0, 0}
+    .m = {{
+        {666, 233, 1333},
+        {666, 233, 1333},
+        {666, 233, 1333},
+    }},
+    .t = {},
 };
 
-static std::array<SVECTOR, kf_enum_encode<u8>(KF_PLAYER_DAMAGE_FRAME_END)> player_damage_view_rotation_offsets = {{
-    {0, 0, 0, 0},
-    {-32, 0, -32, 0},
-    {-64, 0, -64, 0},
-    {-48, 0, -32, 0},
-    {-32, 0, 0, 0},
-    {-16, 0, 32, 0},
-    {0, 0, 64, 0},
-    {-16, 0, 32, 0}
-}};
+static std::array<SVECTOR, kf_enum_encode<u8>(KF_PLAYER_DAMAGE_FRAME_END)> player_damage_view_rotation_offsets = {
+    SVECTOR{0, 0, 0, 0},
+    SVECTOR{-32, 0, -32, 0},
+    SVECTOR{-64, 0, -64, 0},
+    SVECTOR{-48, 0, -32, 0},
+    SVECTOR{-32, 0, 0, 0},
+    SVECTOR{-16, 0, 32, 0},
+    SVECTOR{0, 0, 64, 0},
+    SVECTOR{-16, 0, 32, 0}
+};
 
 static u32 player_previous_input = 0;
 

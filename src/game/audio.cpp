@@ -1,15 +1,15 @@
-#include <array>
 #include <kf/platform/prelude.h>
-#include <algorithm>
+#include <kf/game/audio.h>
+#include <kf/game/game.h>
 #include <kf/game/resources.h>
+#include <kf/lib/math.h>
 #include <kf/lib/null.h>
 
-#include <kf/lib/math.h>
-#include <kf/game/audio.h>
-#include <cstdlib>
+#include <algorithm>
+#include <array>
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
-#include <kf/game/game.h>
 
 enum {
     GAME_SEQUENCE_BUFFER_BYTES = 0x3000,

@@ -1,12 +1,13 @@
 #ifndef KF_LIB_GRAPHICS_H
 #define KF_LIB_GRAPHICS_H
 
-#include <array>
-#include <kf/lib/math.h>
-#include <kf/lib/map_types.h>
 #include <kf/lib/item_types.h>
+#include <kf/lib/map_types.h>
+#include <kf/lib/math.h>
 #include <kf/lib/render_types.h>
 #include <kf/lib/tmd.h>
+
+#include <array>
 
 typedef struct KfDisplayState {
     kf::FrameStyle frame_style;

@@ -1,16 +1,17 @@
-#include <array>
 #include <kf/platform/prelude.h>
 #include <kf/game/audio.h>
-#include <kf/lib/null.h>
-#include <kf/game/graphics.h>
-#include <kf/lib/resource_file.h>
-#include <kf/game/save.h>
-#include <kf/game/player.h>
-#include <kf/platform/saves.h>
-#include <cstdlib>
-#include <cstdio>
-#include <cstring>
 #include <kf/game/game.h>
+#include <kf/game/graphics.h>
+#include <kf/game/player.h>
+#include <kf/game/save.h>
+#include <kf/lib/null.h>
+#include <kf/lib/resource_file.h>
+#include <kf/platform/saves.h>
+
+#include <array>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 namespace {
 constexpr int save_no_equipment_id = 255;
@@ -289,8 +290,8 @@ static bool save_state_valid(const SavedGameState &state) {
             || p.motion_state.map_cell.x >= KF_MAP_COLUMNS
             || p.motion_state.map_cell.z >= KF_MAP_ROWS)
         return false;
-    const std::array<KfObjectId, 5> armor = {{p.equipped_head_armor_id, p.equipped_body_armor_id,
-        p.equipped_shield_id, p.equipped_arm_armor_id, p.equipped_leg_armor_id}};
+    const std::array<KfObjectId, 5> armor = {p.equipped_head_armor_id, p.equipped_body_armor_id,
+        p.equipped_shield_id, p.equipped_arm_armor_id, p.equipped_leg_armor_id};
     for (const auto id : armor) {
         const int index = kf_enum_encode<u8>(id) - kf_enum_encode<u8>(KF_ITEM_IRON_MASK);
         if (id != KF_OBJECT_NONE && (index < 0 || index >= KF_ARMOR_RECORD_COUNT))
@@ -331,7 +332,7 @@ static void save_state_apply(const SavedGameState &state) {
     // The existing load-return path reloads the floor, weapon and selected magic.
 }
 
-constexpr std::array<u8, 8> save_magic = {{'K', 'F', 'J', 'P', 'S', 'A', 'V', 'E'}};
+constexpr std::array<u8, 8> save_magic = {'K', 'F', 'J', 'P', 'S', 'A', 'V', 'E'};
 constexpr u32 save_version = 1;
 constexpr std::size_t save_header_bytes = 20;
 struct SaveCatalogEntry { bool occupied; u32 checksum; };

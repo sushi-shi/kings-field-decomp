@@ -1,16 +1,16 @@
-#include <array>
 #include <kf/platform/prelude.h>
-#include <algorithm>
 #include <kf/game/audio.h>
-#include <kf/lib/random.h>
-#include <kf/lib/null.h>
-#include <kf/game/graphics.h>
-
-#include <kf/game/player.h>
-#include <cstdlib>
-#include <cstdio>
-#include <cstring>
 #include <kf/game/game.h>
+#include <kf/game/graphics.h>
+#include <kf/game/player.h>
+#include <kf/lib/null.h>
+#include <kf/lib/random.h>
+
+#include <algorithm>
+#include <array>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 static constexpr s32 PLAYER_REVIVAL_POSITION_X = 64000;
 static constexpr s32 PLAYER_REVIVAL_POSITION_Z = 20000;
@@ -41,11 +41,11 @@ enum {
     PLAYER_DAMAGE_THRESHOLD_MULTIPLIER = 2
 };
 
-std::array<SoundRef, KF_PLAYER_SOUND_COUNT> player_sound_refs = {{
-    {7, 0, 80},
-    {7, 1, 89},
-    {13, 0, 67}
-}};
+std::array<SoundRef, KF_PLAYER_SOUND_COUNT> player_sound_refs = {
+    SoundRef{7, 0, 80},
+    SoundRef{7, 1, 89},
+    SoundRef{13, 0, 67}
+};
 
 s32 player_death_saved_fog_near;
 

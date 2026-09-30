@@ -1,22 +1,22 @@
-#include <array>
 #include <kf/platform/prelude.h>
-#include <kf/lib/null.h>
-
-#include <kf/cutscene/playback.h>
 #include <kf/cutscene/audio.h>
-#include <kf/lib/resource_file.h>
-#include <kf/lib/memory.h>
 #include <kf/cutscene/controller.h>
 #include <kf/cutscene/opening_helpers.h>
 #include <kf/cutscene/opening_scenes.h>
+#include <kf/cutscene/playback.h>
 #include <kf/cutscene/render.h>
 #include <kf/cutscene/resources.h>
 #include <kf/lib/geometry_types.h>
-#include <cstdlib>
-#include <cstdio>
-#include <cstring>
-#include <kf/platform/input.h>
+#include <kf/lib/memory.h>
+#include <kf/lib/null.h>
+#include <kf/lib/resource_file.h>
 #include <kf/lib/resources.h>
+#include <kf/platform/input.h>
+
+#include <array>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 std::array<char, KF_OPENING_INITIAL_TIM_PATH_BYTES> opening_initial_tim_path = {"B0/L0."};
 

@@ -1,5 +1,4 @@
 #include <kf/platform/prelude.h>
-
 #include <kf/lib/math.h>
 
 void pitch_yaw_to_forward_vector(const struct KfEulerAngles *angles, SVECTOR *direction)

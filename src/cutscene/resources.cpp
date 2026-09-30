@@ -1,19 +1,19 @@
-#include <array>
 #include <kf/platform/prelude.h>
-#include <kf/lib/null.h>
-
 #include <kf/cutscene/audio.h>
-#include <kf/lib/resource_file.h>
-#include <kf/lib/item.h>
-#include <kf/lib/map_data.h>
-#include <kf/lib/memory.h>
 #include <kf/cutscene/render.h>
 #include <kf/cutscene/resources.h>
 #include <kf/lib/geometry_types.h>
-#include <cstdlib>
-#include <cstdio>
-#include <cstring>
+#include <kf/lib/item.h>
+#include <kf/lib/map_data.h>
+#include <kf/lib/memory.h>
+#include <kf/lib/null.h>
+#include <kf/lib/resource_file.h>
 #include <kf/lib/resources.h>
+
+#include <array>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 std::array<char, 8> opening_ending_sequence_path = {"B0/END."};
 

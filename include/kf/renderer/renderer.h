@@ -1,10 +1,11 @@
 #ifndef KF_RENDERER_RENDERER_H
 #define KF_RENDERER_RENDERER_H
 
-#include <array>
 #include <kf/platform/assets.h>
-#include <kf/renderer/textures.h>
 #include <kf/renderer/constants.h>
+#include <kf/renderer/textures.h>
+
+#include <array>
 
 namespace kf {
 using TextureId = u32;

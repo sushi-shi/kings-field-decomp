@@ -1,10 +1,11 @@
 #ifndef KF_OPEN_RESOURCES_H
 #define KF_OPEN_RESOURCES_H
 
-#include <array>
-#include <span>
 #include <kf/lib/memory.h>
 #include <kf/lib/resources.h>
+
+#include <array>
+#include <span>
 
 extern KfMemoryArena cutscene_memory_arena;
 

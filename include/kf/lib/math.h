@@ -1,9 +1,9 @@
 #ifndef KF_LIB_MATH_H
 #define KF_LIB_MATH_H
 
-#include <kf/lib/types.h>
 #include <kf/lib/fixed_math.h>
 #include <kf/lib/geometry_types.h>
+#include <kf/lib/types.h>
 
 inline constexpr int KF_FIXED4_BITS = 4;
 inline constexpr int KF_FIXED6_BITS = 6;

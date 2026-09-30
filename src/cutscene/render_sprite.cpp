@@ -1,9 +1,10 @@
-#include <array>
 #include <kf/platform/prelude.h>
-#include <kf/lib/render_face.h>
 #include <kf/cutscene/render.h>
-#include <cstdlib>
+#include <kf/lib/render_face.h>
+
+#include <array>
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 
 SVECTOR cutscene_render_sprite_light_normal = {0, 0, KF_FIXED12_ONE, 0};

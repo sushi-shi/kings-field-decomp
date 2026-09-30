@@ -1,6 +1,7 @@
-#include <array>
 #include <kf/renderer/lighting.h>
+
 #include <algorithm>
+#include <array>
 
 namespace kf {
 namespace {
@@ -38,10 +39,10 @@ CVECTOR render_fog_color(const LightingEnvironment &environment, CVECTOR color, 
 
 CVECTOR render_light_normal(const LightingEnvironment &environment, const MATRIX &lights,
     const SVECTOR &normal, CVECTOR base, s32 depth_cue) {
-    const std::array<s16, 3> direction = {{normal.vx, normal.vy, normal.vz}};
-    const std::array<s32, 3> ambient = {{environment.ambient.r, environment.ambient.g, environment.ambient.b}};
-    const std::array<s32, 3> far_color = {{environment.fog.r, environment.fog.g, environment.fog.b}};
-    const std::array<u8, 3> tint = {{base.r, base.g, base.b}};
+    const std::array<s16, 3> direction = {normal.vx, normal.vy, normal.vz};
+    const std::array<s32, 3> ambient = {environment.ambient.r, environment.ambient.g, environment.ambient.b};
+    const std::array<s32, 3> far_color = {environment.fog.r, environment.fog.g, environment.fog.b};
+    const std::array<u8, 3> tint = {base.r, base.g, base.b};
     std::array<s32, 3> illumination;
     std::array<u8, 3> color;
     for (std::size_t row = 0; row < 3; ++row) {

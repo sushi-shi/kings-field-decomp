@@ -1,8 +1,8 @@
 #ifndef KF_DEBUG_H
 #define KF_DEBUG_H
 
-#include <kf/lib/types.h>
 #include <kf/lib/enum.h>
+#include <kf/lib/types.h>
 
 enum class KfFormatDigitState : u8 {
     KF_FORMAT_DIGITS_LEADING = 0,

@@ -1,15 +1,16 @@
 #include <kf/platform/prelude.h>
-#include <algorithm>
-#include <kf/game/audio.h>
-#include <kf/lib/random.h>
 #include <kf/game/actor.h>
-#include <kf/lib/map_data.h>
-#include <kf/lib/map.h>
+#include <kf/game/audio.h>
 #include <kf/game/collision.h>
-#include <cstdlib>
-#include <cstdio>
-#include <cstring>
 #include <kf/game/game.h>
+#include <kf/lib/map.h>
+#include <kf/lib/map_data.h>
+#include <kf/lib/random.h>
+
+#include <algorithm>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 enum {
     MAP_AMBIENT_COUNTDOWN_RELOAD = 10,

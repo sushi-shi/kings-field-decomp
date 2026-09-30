@@ -1,10 +1,9 @@
 #include <kf/platform/prelude.h>
-#include <kf/lib/null.h>
-
+#include <kf/cutscene/render.h>
+#include <kf/lib/debug.h>
 #include <kf/lib/map_data.h>
 #include <kf/lib/memory.h>
-#include <kf/lib/debug.h>
-#include <kf/cutscene/render.h>
+#include <kf/lib/null.h>
 #include <kf/lib/tmd.h>
 
 void cutscene_tmd_project_vertices(s32 count, const MATRIX *model, const kf::Projection &projection)

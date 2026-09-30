@@ -1,7 +1,8 @@
-#include <array>
 #include <kf/platform/prelude.h>
-#include <kf/game/resources.h>
 #include <kf/game/resource_file.h>
+#include <kf/game/resources.h>
+
+#include <array>
 
 static constexpr s32 item_models_per_directory = 30;
 

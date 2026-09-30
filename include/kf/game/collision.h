@@ -1,10 +1,11 @@
 #ifndef KF_GAME_COLLISION_H
 #define KF_GAME_COLLISION_H
 
-#include <array>
-#include <kf/lib/types.h>
-#include <kf/lib/map_data.h>
 #include <kf/lib/geometry_types.h>
+#include <kf/lib/map_data.h>
+#include <kf/lib/types.h>
+
+#include <array>
 
 // Original actors and wandering events reject cells carrying this authored bit.
 inline constexpr int KF_COLLISION_CELL_BLOCKS_WANDER = 0x80;

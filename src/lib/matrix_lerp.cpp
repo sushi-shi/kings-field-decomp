@@ -1,7 +1,7 @@
 #include <kf/platform/prelude.h>
+#include <kf/lib/graphics.h>
 #include <kf/lib/math.h>
 #include <kf/lib/render_types.h>
-#include <kf/lib/graphics.h>
 
 void matrix_interpolate(
     const MATRIX *from,

@@ -1,17 +1,18 @@
 #ifndef KF_GAME_PLAYER_H
 #define KF_GAME_PLAYER_H
 
-#include <array>
-#include <kf/game/combat.h>
 #include <kf/game/audio.h>
-#include <kf/lib/enum.h>
-#include <kf/game/equipment.h>
+#include <kf/game/combat.h>
 #include <kf/game/effect.h>
-#include <kf/lib/map.h>
+#include <kf/game/equipment.h>
 #include <kf/game/magic.h>
-#include <kf/game/player_status.h>
 #include <kf/game/player_motion.h>
+#include <kf/game/player_status.h>
+#include <kf/lib/enum.h>
+#include <kf/lib/map.h>
 #include <kf/lib/player_stats_types.h>
+
+#include <array>
 
 struct KfAnimationCacheRecord;
 struct KfAssetHeader;

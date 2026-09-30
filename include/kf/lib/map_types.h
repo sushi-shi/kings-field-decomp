@@ -1,8 +1,8 @@
 #ifndef KF_MAP_TYPES_H
 #define KF_MAP_TYPES_H
 
-#include <kf/lib/types.h>
 #include <kf/lib/enum.h>
+#include <kf/lib/types.h>
 
 enum {
     KF_MAP_COLUMNS = 100,

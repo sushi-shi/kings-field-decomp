@@ -1,7 +1,7 @@
 #include <kf/platform/prelude.h>
-#include <kf/lib/tmd.h>
 #include <kf/lib/graphics.h>
 #include <kf/lib/memory.h>
+#include <kf/lib/tmd.h>
 
 static KfTmdResource &tmd_slot(KfTmdContext context, KfTmdSlot slot)
 {

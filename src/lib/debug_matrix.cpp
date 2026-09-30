@@ -1,7 +1,8 @@
-#include <array>
 #include <kf/platform/prelude.h>
 #include <kf/lib/debug.h>
 #include <kf/lib/math.h>
+
+#include <array>
 
 static const std::array<char, 16> debug_matrix_label = {"Dump Matrix\n"};
 

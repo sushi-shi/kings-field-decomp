@@ -1,4 +1,5 @@
 #include <kf/platform/controls.h>
+
 #include <cmath>
 
 namespace kf {

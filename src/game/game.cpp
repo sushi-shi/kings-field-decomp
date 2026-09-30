@@ -1,15 +1,15 @@
 #include <kf/platform/prelude.h>
 #include <kf/game/audio.h>
-#include <kf/game/resources.h>
-#include <kf/game/graphics.h>
-
-#include <kf/game/session.h>
-#include <kf/game/player.h>
-#include <kf/game/save.h>
-#include <cstdlib>
-#include <cstdio>
-#include <cstring>
 #include <kf/game/game.h>
+#include <kf/game/graphics.h>
+#include <kf/game/player.h>
+#include <kf/game/resources.h>
+#include <kf/game/save.h>
+#include <kf/game/session.h>
+
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 enum {
     FRAME_PACER_INTERVAL_TICKS = 3,

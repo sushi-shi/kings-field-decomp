@@ -1,10 +1,10 @@
-#include <array>
 #include <kf/platform/prelude.h>
-#include <kf/game/graphics.h>
-
-#include <kf/game/menu.h>
 #include <kf/game/game.h>
+#include <kf/game/graphics.h>
+#include <kf/game/menu.h>
 #include <kf/lib/render_face.h>
+
+#include <array>
 
 static constexpr int MENU_MAP_PIXELS_PER_CELL = 2;
 static constexpr int MENU_MAP_MARKER_SPAN = 4;

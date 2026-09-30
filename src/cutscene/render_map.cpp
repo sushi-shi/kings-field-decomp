@@ -1,7 +1,8 @@
-#include <array>
 #include <kf/platform/prelude.h>
-#include <kf/lib/render_face.h>
 #include <kf/cutscene/render.h>
+#include <kf/lib/render_face.h>
+
+#include <array>
 
 CVECTOR cutscene_map_textured_primitive_color = {
     KF_TEXTURE_BASE_BRIGHTNESS, KF_TEXTURE_BASE_BRIGHTNESS,

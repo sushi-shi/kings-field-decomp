@@ -1,8 +1,9 @@
 #ifndef KF_LIB_CAMERA_PATH_H
 #define KF_LIB_CAMERA_PATH_H
 
-#include <span>
 #include <kf/lib/geometry_types.h>
+
+#include <span>
 
 enum {
     KF_CAMERA_PATH_END_X = -1,

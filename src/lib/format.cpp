@@ -1,7 +1,8 @@
-#include <array>
 #include <kf/platform/prelude.h>
-#include <stdarg.h>
 #include <kf/lib/debug.h>
+
+#include <array>
+#include <stdarg.h>
 
 static constexpr unsigned format_number_capacity = 24;
 static std::array<char, format_number_capacity> format_number_storage;

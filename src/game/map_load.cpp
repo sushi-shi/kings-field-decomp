@@ -1,16 +1,16 @@
-#include <array>
 #include <kf/platform/prelude.h>
-#include <kf/lib/random.h>
-#include <kf/game/graphics.h>
-
-#include <kf/lib/map_data.h>
-#include <kf/lib/map.h>
-#include <cstdlib>
-#include <cstdio>
-#include <cstring>
 #include <kf/game/game.h>
+#include <kf/game/graphics.h>
+#include <kf/lib/map.h>
+#include <kf/lib/map_data.h>
+#include <kf/lib/random.h>
 
-static constexpr std::array<u8, 4> floor5_boss_death_cleanup_definitions = {{0, 2, 3, 4}};
+#include <array>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+
+static constexpr std::array<u8, 4> floor5_boss_death_cleanup_definitions = {0, 2, 3, 4};
 
 enum {
     MAP_RESTORE_POSITION_RANDOM_BITS = 15

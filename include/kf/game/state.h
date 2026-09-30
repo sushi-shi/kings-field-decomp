@@ -1,11 +1,12 @@
 #ifndef KF_GAME_STATE_H
 #define KF_GAME_STATE_H
 
-#include <array>
 #include <kf/game/audio.h>
-#include <kf/lib/types.h>
 #include <kf/game/session.h>
 #include <kf/lib/geometry_types.h>
+#include <kf/lib/types.h>
+
+#include <array>
 
 // Floor-local script configuration: indices are not global character IDs.
 inline constexpr u8 KF_FLOOR1_TRIGGER_ACTOR_TILE_X = 7;

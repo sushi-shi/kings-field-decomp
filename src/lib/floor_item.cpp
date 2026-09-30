@@ -1,9 +1,8 @@
 #include <kf/platform/prelude.h>
+#include <kf/lib/graphics.h>
 #include <kf/lib/item_types.h>
 #include <kf/lib/map_types.h>
 #include <kf/lib/math.h>
-#include <kf/lib/graphics.h>
-
 #include <kf/lib/random.h>
 
 namespace {

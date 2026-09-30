@@ -1,10 +1,9 @@
 #include <kf/platform/prelude.h>
-#include <kf/lib/null.h>
-
-#include <kf/lib/map_data.h>
-#include <kf/lib/map.h>
 #include <kf/game/collision.h>
 #include <kf/game/game.h>
+#include <kf/lib/map.h>
+#include <kf/lib/map_data.h>
+#include <kf/lib/null.h>
 
 void map_event_set_current(KfMapEvent *event)
 {

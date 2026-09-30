@@ -1,15 +1,15 @@
-#include <array>
 #include <kf/platform/prelude.h>
-#include <kf/lib/null.h>
 #include <kf/game/graphics.h>
-
-#include <kf/lib/geometry_types.h>
-#include <cstdlib>
-#include <cstdio>
-#include <cstring>
 #include <kf/game/render.h>
-#include <kf/lib/tmd.h>
+#include <kf/lib/geometry_types.h>
+#include <kf/lib/null.h>
 #include <kf/lib/render_face.h>
+#include <kf/lib/tmd.h>
+
+#include <array>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 CVECTOR tmd_textured_primitive_color = {
     KF_TEXTURE_BASE_BRIGHTNESS, KF_TEXTURE_BASE_BRIGHTNESS,

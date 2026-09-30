@@ -2,6 +2,7 @@
 #define KF_LIB_GEOMETRY_TYPES_H
 
 #include <kf/lib/types.h>
+
 #include <array>
 #include <cstddef>
 #include <type_traits>

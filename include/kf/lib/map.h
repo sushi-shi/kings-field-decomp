@@ -1,18 +1,19 @@
 #ifndef KF_LIB_MAP_H
 #define KF_LIB_MAP_H
 
-#include <array>
-#include <span>
 #include <kf/lib/animation.h>
-#include <kf/lib/types.h>
+#include <kf/lib/enum.h>
+#include <kf/lib/floor.h>
+#include <kf/lib/geometry_types.h>
+#include <kf/lib/item.h>
 #include <kf/lib/map_data.h>
 #include <kf/lib/map_object_types.h>
-#include <kf/lib/item.h>
-#include <kf/lib/floor.h>
-#include <kf/lib/enum.h>
-#include <kf/lib/notify_types.h>
-#include <kf/lib/geometry_types.h>
 #include <kf/lib/math.h>
+#include <kf/lib/notify_types.h>
+#include <kf/lib/types.h>
+
+#include <array>
+#include <span>
 
 struct KfAnimationCacheRecord;
 struct KfCollisionResult;

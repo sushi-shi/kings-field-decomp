@@ -3,6 +3,7 @@
 
 // Collect platform controls; the original game still owns their gameplay meaning.
 #include <kf/lib/types.h>
+
 #include <array>
 #include <cstddef>
 

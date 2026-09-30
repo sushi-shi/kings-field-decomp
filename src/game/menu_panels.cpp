@@ -1,10 +1,11 @@
-#include <array>
 #include <kf/platform/prelude.h>
-#include <kf/lib/null.h>
-
-#include <kf/platform/input.h>
-#include <kf/game/menu.h>
 #include <kf/game/game.h>
+#include <kf/game/menu.h>
+#include <kf/lib/null.h>
+#include <kf/platform/input.h>
+
+#include <array>
+
 static constexpr unsigned MENU_MAGIC_LABEL_CAPACITY = 10;
 static constexpr unsigned MENU_MAGIC_ENTRY_CAPACITY = 16;
 

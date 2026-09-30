@@ -1,7 +1,8 @@
-#include <span>
 #include <kf/platform/prelude.h>
-#include <kf/lib/map.h>
 #include <kf/game/player.h>
+#include <kf/lib/map.h>
+
+#include <span>
 
 void camera_path_compute_segment(KfCameraPathState *path)
 {

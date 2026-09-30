@@ -1,9 +1,10 @@
 #ifndef KF_NOTIFY_H
 #define KF_NOTIFY_H
 
-#include <array>
 #include <kf/game/render.h>
 #include <kf/lib/notify_types.h>
+
+#include <array>
 
 enum {
     KF_NOTIFICATION_CAPACITY = 8,

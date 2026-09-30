@@ -1,20 +1,20 @@
-#include <array>
 #include <kf/platform/prelude.h>
+#include <kf/game/game.h>
+#include <kf/game/graphics.h>
+#include <kf/game/menu.h>
+#include <kf/game/menu_glyphs.h>
 #include <kf/game/menu_text.h>
 #include <kf/game/resources.h>
-#include <kf/game/menu_glyphs.h>
 #include <kf/lib/null.h>
-
-#include <kf/platform/input.h>
-#include <kf/game/menu.h>
-#include <kf/game/game.h>
-#include <cstdlib>
-#include <cstdio>
-#include <cstring>
-#include <kf/game/graphics.h>
 #include <kf/lib/render_face.h>
+#include <kf/platform/input.h>
 
-static constexpr std::array<s32, 3> pickup_preview_translation = {{220, 140, 1500}};
+#include <array>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+
+static constexpr std::array<s32, 3> pickup_preview_translation = {220, 140, 1500};
 
 KfMenuModelAllocation menu_item_model_allocation = KF_MENU_MODEL_RELEASED;
 

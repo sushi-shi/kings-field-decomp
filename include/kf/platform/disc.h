@@ -1,8 +1,9 @@
 #ifndef KF_PLATFORM_DISC_H
 #define KF_PLATFORM_DISC_H
 
-#include <span>
 #include <kf/platform/language.h>
+
+#include <span>
 
 namespace kf {
 // The supported retail CUE is one MODE2/2352 track at file offset zero.

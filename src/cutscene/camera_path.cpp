@@ -1,7 +1,8 @@
-#include <span>
 #include <kf/platform/prelude.h>
 #include <kf/cutscene/camera_path.h>
 #include <kf/cutscene/opening_helpers.h>
+
+#include <span>
 
 KfCameraPathState opening_camera_path_state;
 

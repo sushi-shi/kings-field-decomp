@@ -1,14 +1,15 @@
-#include <array>
 #include <kf/platform/prelude.h>
 #include <kf/cutscene/render.h>
+
+#include <array>
 
 KfScreenRect opening_fade_rect = {
     KF_TRANSITION_RECT_X, 0, KF_TRANSITION_RECT_WIDTH, KF_TRANSITION_RECT_HEIGHT
 };
 
-std::array<u8, KF_QUAD_TEX_DESCRIPTOR_BYTES> opening_fade_uv = {{
+std::array<u8, KF_QUAD_TEX_DESCRIPTOR_BYTES> opening_fade_uv = {
     0, 0, 0, 0, KF_TRANSITION_RECT_WIDTH, 0, KF_TRANSITION_RECT_HEIGHT, 0
-}};
+};
 
 CVECTOR opening_fade_color = {0, 0, 0, 0};
 

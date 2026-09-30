@@ -1,10 +1,11 @@
 #ifndef KF_GAME_GRAPHICS_H
 #define KF_GAME_GRAPHICS_H
 
-#include <array>
-#include <kf/game/render.h>
 #include <kf/game/asset.h>
 #include <kf/game/notify.h>
+#include <kf/game/render.h>
+
+#include <array>
 
 enum {
     KF_FLOOR5_ACTOR_TEXTURE_COUNT = 3,

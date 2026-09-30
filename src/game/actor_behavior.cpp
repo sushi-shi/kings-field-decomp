@@ -1,15 +1,15 @@
 #include <kf/platform/prelude.h>
-#include <algorithm>
+#include <kf/game/actor.h>
 #include <kf/game/audio.h>
+#include <kf/game/collision.h>
+#include <kf/game/game.h>
+#include <kf/lib/map_data.h>
 #include <kf/lib/random.h>
 
-#include <kf/lib/map_data.h>
-#include <kf/game/actor.h>
-#include <kf/game/collision.h>
-#include <cstdlib>
+#include <algorithm>
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
-#include <kf/game/game.h>
 
 enum {
     ACTOR_ACTIVATION_RANGE = 28000,

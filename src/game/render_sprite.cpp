@@ -1,7 +1,7 @@
 #include <kf/platform/prelude.h>
 #include <kf/game/graphics.h>
-#include <kf/lib/render_face.h>
 #include <kf/game/render.h>
+#include <kf/lib/render_face.h>
 
 enum { HUD_SPRITE_OT_DEPTH = 1 };
 

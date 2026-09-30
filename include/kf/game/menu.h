@@ -1,17 +1,18 @@
 #ifndef KF_GAME_MENU_H
 #define KF_GAME_MENU_H
 
-#include <array>
+#include <kf/game/magic.h>
 #include <kf/game/save.h>
-#include <span>
+#include <kf/lib/debug.h>
 #include <kf/lib/item.h>
 #include <kf/lib/map.h>
-#include <kf/lib/resource_file.h>
-#include <kf/lib/debug.h>
-#include <kf/renderer/renderer.h>
-#include <kf/game/magic.h>
-#include <kf/lib/render_types.h>
 #include <kf/lib/menu_types.h>
+#include <kf/lib/render_types.h>
+#include <kf/lib/resource_file.h>
+#include <kf/renderer/renderer.h>
+
+#include <array>
+#include <span>
 
 enum class KfMenuMode : s32 {
     KF_MENU_MODE_ROOT = 0,

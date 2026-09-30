@@ -18,7 +18,7 @@ class NativeRegressions(unittest.TestCase):
                      "cutscene_resources", "collision_results"]:
             subprocess.run(
                 [
-                    "clang++", "-std=c++20", "-O1", "-g", "-fno-exceptions", "-fno-rtti",
+                    "clang++", "-std=c++20", "-O1", "-g", "-fno-rtti",
                     "-ffunction-sections", "-fdata-sections", "-Wl,--gc-sections",
                     "-fsanitize=address,undefined", "-ftrivial-auto-var-init=pattern",
                     "-I", str(ROOT / "include"), str(ROOT / "tests" / f"{name}.cpp"),

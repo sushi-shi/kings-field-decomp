@@ -1,10 +1,11 @@
-#include <array>
 #include <kf/platform/prelude.h>
 #include <kf/game/audio.h>
+#include <kf/game/game.h>
+#include <kf/game/player.h>
 #include <kf/lib/null.h>
 
-#include <kf/game/player.h>
-#include <kf/game/game.h>
+#include <array>
+
 static constexpr unsigned enemy_image_number_offset = 7;
 static constexpr unsigned enemy_image_path_capacity = 14, person_image_path_capacity = 15;
 static constexpr unsigned person_image_number_offset = 8;

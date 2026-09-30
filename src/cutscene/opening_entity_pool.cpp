@@ -1,10 +1,10 @@
-#include <span>
 #include <kf/platform/prelude.h>
-#include <kf/lib/null.h>
-
+#include <kf/cutscene/resources.h>
 #include <kf/lib/map_data.h>
 #include <kf/lib/math.h>
-#include <kf/cutscene/resources.h>
+#include <kf/lib/null.h>
+
+#include <span>
 
 KfOpeningEntityState opening_entity_state;
 

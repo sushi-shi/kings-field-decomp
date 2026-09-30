@@ -2,6 +2,7 @@
 #define KF_AUDIO_CODEC_H
 
 #include <kf/lib/codec.h>
+
 #ifdef __cplusplus
 extern "C" {
 #endif // __cplusplus

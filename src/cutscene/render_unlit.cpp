@@ -1,9 +1,9 @@
-#include <array>
 #include <kf/platform/prelude.h>
-#include <kf/lib/null.h>
-
-#include <kf/lib/render_face.h>
 #include <kf/cutscene/render.h>
+#include <kf/lib/null.h>
+#include <kf/lib/render_face.h>
+
+#include <array>
 
 void render_enqueue_unlit_triangles(u16 object_index, s16 depth_bias)
 {

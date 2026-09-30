@@ -1,10 +1,11 @@
-#include <array>
 #include <kf/platform/prelude.h>
-#include <kf/lib/map_data.h>
 #include <kf/game/collision.h>
 #include <kf/game/game.h>
+#include <kf/lib/map_data.h>
 
-std::array<s16, KF_MAP_ATTRIBUTE_COUNT> map_cell_attribute_height_table = {{
+#include <array>
+
+std::array<s16, KF_MAP_ATTRIBUTE_COUNT> map_cell_attribute_height_table = {
     -25000, -3000, -3000, -3000, -3000, -3000, -3000, -3000,
     -3000, -3000, -3000, -3000, -3000, -3000, -3000, -3000,
     -3000, -3000, -3000, -5000, -5000, -5000, -5000, -2500,
@@ -37,7 +38,7 @@ std::array<s16, KF_MAP_ATTRIBUTE_COUNT> map_cell_attribute_height_table = {{
     0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, 0, 0,
     0, 0, 0, 0, 0, 0, -25000,
-}};
+};
 
 KfCollisionTarget collision_target;
 

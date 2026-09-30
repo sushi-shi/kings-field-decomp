@@ -1,16 +1,17 @@
 #include <kf/platform/prelude.h>
-#include <kf/lib/null.h>
-#include <kf/game/graphics.h>
-
-#include <kf/lib/math.h>
-#include <kf/game/asset.h>
-#include <kf/game/render.h>
-#include <kf/lib/memory.h>
 #include <kf/game/animation_cache.h>
+#include <kf/game/asset.h>
+#include <kf/game/graphics.h>
+#include <kf/game/render.h>
 #include <kf/lib/geometry_types.h>
-#include <cstdlib>
+#include <kf/lib/math.h>
+#include <kf/lib/memory.h>
+#include <kf/lib/null.h>
+
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
+#include <new>
 
 typedef struct KfAnimClip {
     u16 keyframe_count;
@@ -118,9 +119,15 @@ static void animation_allocate_vertex_cache(KfAnimationCacheRecord *record, KfAn
 {
     record->asset_index = asset_index;
     record->owner_slot = owner_slot;
-    while ((record->cached_vertices = (SVECTOR *)memory_malloc_checked(
-                vertex_count * sizeof(SVECTOR))) == NULL) {
+    try {
+        record->cached_vertices.resize(vertex_count);
+    } catch (const std::bad_alloc &) {
         animation_cache_release_all();
+        try {
+            record->cached_vertices.resize(vertex_count);
+        } catch (const std::bad_alloc &) {
+            kf::host_fail("Cannot allocate animation vertices.");
+        }
     }
     *owner_slot = record;
 }
@@ -175,7 +182,7 @@ bool render_bind_instance_vertices(
         asset_registry_select(asset_index);
         tmd_select_object_vertices(tmd_context(), 0);
 
-        copy_vertices(record->cached_vertices, game_graphics_runtime.current_tmd_vertices, vertex_count);
+        copy_vertices(record->cached_vertices.data(), game_graphics_runtime.current_tmd_vertices, vertex_count);
 
         morphs_left = keyframe->morph_count;
         {
@@ -185,7 +192,7 @@ bool render_bind_instance_vertices(
                 morph_object = (KfMorphObject *)(
                     (char *)asset_header + object_table[*morph_indices]);
                 morph_indices++;
-                morph_add_deltas(record->cached_vertices, vertex_count, morph_object, KF_FIXED12_ONE);
+                morph_add_deltas(record->cached_vertices.data(), vertex_count, morph_object, KF_FIXED12_ONE);
             }
         }
 
@@ -196,7 +203,7 @@ bool render_bind_instance_vertices(
     record->clip_index = clip_index;
     record->keyframe_index = keyframe_index;
 
-    copy_vertices(game_graphics_runtime.morph_scratch.data(), record->cached_vertices, vertex_count);
+    copy_vertices(game_graphics_runtime.morph_scratch.data(), record->cached_vertices.data(), vertex_count);
     morph_add_deltas(game_graphics_runtime.morph_scratch.data(), vertex_count, record->rest_morph, blend_fraction);
     tmd_set_current_vertices(tmd_context(), game_graphics_runtime.morph_scratch.data());
     record->state = KF_ANIMATION_CACHE_LIVE;
@@ -210,7 +217,7 @@ void animation_cache_reset(void)
 
     do {
         record->state = KF_ANIMATION_CACHE_FREE;
-        record->cached_vertices = NULL;
+        record->cached_vertices.clear();
         record++;
     } while (--records_left != 0);
 }
@@ -232,10 +239,7 @@ void animation_cache_release(KfAnimationCacheRecord *record)
 {
     record->state = KF_ANIMATION_CACHE_FREE;
     *record->owner_slot = NULL;
-    if (record->cached_vertices != NULL) {
-        free((void *)record->cached_vertices);
-        record->cached_vertices = NULL;
-    }
+    std::vector<SVECTOR>().swap(record->cached_vertices);
 }
 
 void animation_cache_release_all(void)

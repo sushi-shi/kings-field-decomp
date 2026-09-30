@@ -5,17 +5,18 @@ inline constexpr unsigned KF_FLOOR5_BOSS_DEFINITION = 7;
 inline constexpr unsigned KF_FLOOR4_TRANSFORM_SOURCE_DEFINITION = 5;
 inline constexpr unsigned KF_FLOOR4_TRANSFORM_RESULT_DEFINITION = 6;
 
-#include <array>
+#include <kf/game/audio.h>
 #include <kf/game/combat.h>
-#include <kf/lib/animation.h>
 #include <kf/game/effect.h>
 #include <kf/game/player_status.h>
-#include <kf/lib/types.h>
+#include <kf/lib/animation.h>
 #include <kf/lib/enum.h>
-#include <kf/lib/map.h>
 #include <kf/lib/geometry_types.h>
-#include <kf/game/audio.h>
+#include <kf/lib/map.h>
 #include <kf/lib/math.h>
+#include <kf/lib/types.h>
+
+#include <array>
 
 struct KfAnimationCacheRecord;
 

@@ -1,18 +1,17 @@
-#include <array>
 #include <kf/platform/prelude.h>
-#include <algorithm>
-#include <cstdlib>
-#include <kf/lib/random.h>
-#include <kf/lib/null.h>
-
-#include <kf/game/effect.h>
-#include <kf/lib/map_data.h>
 #include <kf/game/actor.h>
 #include <kf/game/collision.h>
-#include <cstdlib>
-#include <cstdio>
-#include <cstring>
+#include <kf/game/effect.h>
 #include <kf/game/game.h>
+#include <kf/lib/map_data.h>
+#include <kf/lib/null.h>
+#include <kf/lib/random.h>
+
+#include <algorithm>
+#include <array>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 enum {
     ACTOR_SELECTION_ANGLE_TOLERANCE = 0x18e,
@@ -41,40 +40,40 @@ enum {
     ACTOR_SPAWNER_POPULATION_LIMIT = 2
 };
 
-std::array<KfActorActionProfile, KF_ACTOR_ACTION_PROFILE_COUNT> actor_action_profiles = {{
-    {},
-    {},
-    {},
-    {},
-    {12000, 256, 5500, 768, 32},
-    {9000, 256, 4000, 768, 48},
-    {},
-    {9000, 256, 4000, 768, 48},
-    {9000, 256, 4000, 768, 48},
-    {10000, 256, 1000, 768, 32},
-    {6000, 64, 3000, 768, 48},
-    {20000, 64, 5000, 768, 48},
-    {6000, 64, 2000, 768, 48},
-    {9000, 256, 4000, 768, 48},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {},
-    {20000, 256, 6000, 1024, 48},
-    {},
-    {9000, 256, 4000, 768, 48},
-    {12000, 256, 5500, 768, 32},
-    {20000, 256, 6000, 1024, 48},
-}};
+std::array<KfActorActionProfile, KF_ACTOR_ACTION_PROFILE_COUNT> actor_action_profiles = {
+    KfActorActionProfile{},
+    KfActorActionProfile{},
+    KfActorActionProfile{},
+    KfActorActionProfile{},
+    KfActorActionProfile{12000, 256, 5500, 768, 32},
+    KfActorActionProfile{9000, 256, 4000, 768, 48},
+    KfActorActionProfile{},
+    KfActorActionProfile{9000, 256, 4000, 768, 48},
+    KfActorActionProfile{9000, 256, 4000, 768, 48},
+    KfActorActionProfile{10000, 256, 1000, 768, 32},
+    KfActorActionProfile{6000, 64, 3000, 768, 48},
+    KfActorActionProfile{20000, 64, 5000, 768, 48},
+    KfActorActionProfile{6000, 64, 2000, 768, 48},
+    KfActorActionProfile{9000, 256, 4000, 768, 48},
+    KfActorActionProfile{},
+    KfActorActionProfile{},
+    KfActorActionProfile{},
+    KfActorActionProfile{},
+    KfActorActionProfile{},
+    KfActorActionProfile{},
+    KfActorActionProfile{20000, 256, 6000, 1024, 48},
+    KfActorActionProfile{},
+    KfActorActionProfile{9000, 256, 4000, 768, 48},
+    KfActorActionProfile{12000, 256, 5500, 768, 32},
+    KfActorActionProfile{20000, 256, 6000, 1024, 48},
+};
 
-std::array<SoundRef, KF_ACTOR_BOSS_DEATH_SOUND_COUNT> boss_death_phase_sounds = {{
-    {27, 1, 88},
-    {27, 2, 88},
-    {27, 3, 88},
-    {88, 88, 88},
-}};
+std::array<SoundRef, KF_ACTOR_BOSS_DEATH_SOUND_COUNT> boss_death_phase_sounds = {
+    SoundRef{27, 1, 88},
+    SoundRef{27, 2, 88},
+    SoundRef{27, 3, 88},
+    SoundRef{88, 88, 88},
+};
 
 SoundRef boss_death_loop_sound = {70, 0, 65};
 

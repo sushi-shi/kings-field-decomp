@@ -1,7 +1,8 @@
-#include <kf/platform/language_runtime.h>
 #include <kf/platform/disc.h>
 #include <kf/platform/files.h>
+#include <kf/platform/language_runtime.h>
 #include <kf/platform/translation.h>
+
 #include <array>
 #include <cstdlib>
 #include <filesystem>

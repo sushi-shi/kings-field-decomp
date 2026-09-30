@@ -1,9 +1,8 @@
 #include <kf/platform/prelude.h>
 #include <kf/game/graphics.h>
-
-#include <kf/lib/map_data.h>
 #include <kf/game/render.h>
 #include <kf/game/state.h>
+#include <kf/lib/map_data.h>
 
 enum {
     ACTOR_CULL_SQUARE_HALF_WIDTH = 12,

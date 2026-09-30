@@ -1,9 +1,10 @@
 #ifndef KF_GAME_SAVE_H
 #define KF_GAME_SAVE_H
 
-#include <kf/lib/types.h>
 #include <kf/lib/enum.h>
 #include <kf/lib/floor.h>
+#include <kf/lib/types.h>
+
 #include <array>
 
 enum class KfSaveResult : s32 {

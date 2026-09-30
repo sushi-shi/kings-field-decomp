@@ -1,7 +1,6 @@
 #include <kf/platform/prelude.h>
-#include <kf/game/graphics.h>
-
 #include <kf/game/asset.h>
+#include <kf/game/graphics.h>
 #include <kf/game/render.h>
 
 void asset_registry_load_tmd_archive(u16 first_asset_id, u8 *archive, std::size_t size)

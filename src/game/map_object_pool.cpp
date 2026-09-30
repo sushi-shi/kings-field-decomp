@@ -1,25 +1,25 @@
-#include <array>
 #include <kf/platform/prelude.h>
-
-#include <kf/lib/map_data.h>
-#include <kf/lib/map.h>
 #include <kf/game/collision.h>
-#include <cstdlib>
-#include <cstdio>
-#include <cstring>
 #include <kf/game/game.h>
+#include <kf/lib/map.h>
+#include <kf/lib/map_data.h>
+
+#include <array>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 enum {
     MAP_DOOR_CLOSING_PROBE_RADIUS = 3000
 };
 
-std::array<KfMapCopyRegion, KF_MAP_COPY_REGION_COUNT> map_copy_regions = {{
-    {55, 33, 50, 39, 3, 3},
-    {47, 16, 30, 20, 3, 3},
-    {58, 44, 15, 48, 3, 3},
-    {64, 44, 37, 45, 3, 3},
-    {0, 0, 36, 4, 7, 1},
-}};
+std::array<KfMapCopyRegion, KF_MAP_COPY_REGION_COUNT> map_copy_regions = {
+    KfMapCopyRegion{55, 33, 50, 39, 3, 3},
+    KfMapCopyRegion{47, 16, 30, 20, 3, 3},
+    KfMapCopyRegion{58, 44, 15, 48, 3, 3},
+    KfMapCopyRegion{64, 44, 37, 45, 3, 3},
+    KfMapCopyRegion{0, 0, 36, 4, 7, 1},
+};
 
 KfMapObjectState map_object_state;
 

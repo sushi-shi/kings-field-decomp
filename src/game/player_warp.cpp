@@ -1,16 +1,21 @@
-#include <array>
 #include <kf/platform/prelude.h>
 #include <kf/game/audio.h>
-#include <kf/lib/null.h>
-#include <kf/game/graphics.h>
-
-#include <kf/lib/map_data.h>
-#include <kf/game/player.h>
 #include <kf/game/collision.h>
 #include <kf/game/game.h>
+#include <kf/game/graphics.h>
+#include <kf/game/player.h>
+#include <kf/lib/map_data.h>
+#include <kf/lib/null.h>
+
+#include <array>
 
 static MATRIX actor_transform_color_matrix = {
-    {{{250, 100, 500}, {250, 100, 500}, {250, 100, 500}}}, {0, 0, 0}
+    .m = {{
+        {250, 100, 500},
+        {250, 100, 500},
+        {250, 100, 500},
+    }},
+    .t = {},
 };
 
 enum {
@@ -248,7 +253,7 @@ bool player_warp_trigger_update(void)
     return false;
 }
 
-static constexpr std::array<unsigned, 2> floor4_transform_hidden_events = {{1, 2}};
+static constexpr std::array<unsigned, 2> floor4_transform_hidden_events = {1, 2};
 
 void actor_transform_definition5_to6(KfActor *actor)
 {

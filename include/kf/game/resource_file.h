@@ -1,9 +1,10 @@
 #ifndef KF_GAME_RESOURCE_FILE_H
 #define KF_GAME_RESOURCE_FILE_H
 
-#include <array>
-#include <kf/lib/resource_file.h>
 #include <kf/lib/item.h>
+#include <kf/lib/resource_file.h>
+
+#include <array>
 
 inline constexpr unsigned item_model_path_capacity = 32;
 inline constexpr unsigned menu_image_path_capacity = 16;

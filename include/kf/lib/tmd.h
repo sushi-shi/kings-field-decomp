@@ -1,13 +1,13 @@
 #ifndef KF_TMD_H
 #define KF_TMD_H
 
-#include <array>
+#include <kf/lib/enum.h>
 #include <kf/lib/memory.h>
 #include <kf/lib/render_types.h>
-
 #include <kf/lib/types.h>
-#include <kf/lib/enum.h>
 #include <kf/renderer/projection.h>
+
+#include <array>
 #include <span>
 
 enum class KfTmdSlot : u16 {

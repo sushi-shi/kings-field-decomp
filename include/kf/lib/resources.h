@@ -1,12 +1,13 @@
 #ifndef KF_RESOURCES_H
 #define KF_RESOURCES_H
 
+#include <kf/lib/geometry_types.h>
 #include <kf/lib/types.h>
 #include <kf/platform/host.h>
-#include <kf/lib/geometry_types.h>
+
 #include <array>
-#include <type_traits>
 #include <cstdio>
+#include <type_traits>
 
 enum {
     KF_RESOURCE_CHUNK_HEADER_BYTES = 4,

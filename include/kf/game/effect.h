@@ -1,8 +1,9 @@
 #ifndef KF_GAME_EFFECT_H
 #define KF_GAME_EFFECT_H
 
-#include <array>
 #include <kf/game/audio.h>
+
+#include <array>
 
 enum {
     KF_EFFECT_PROJECTILE_DEFAULT_SPEED = 600,
@@ -12,9 +13,9 @@ enum {
     KF_EFFECT_ACTOR_TARGET_WIDE_CONE = 0x555
 };
 
+#include <kf/game/magic.h>
 #include <kf/lib/animation.h>
 #include <kf/lib/math.h>
-#include <kf/game/magic.h>
 
 struct KfAnimationCacheRecord;
 struct KfCollisionResult;

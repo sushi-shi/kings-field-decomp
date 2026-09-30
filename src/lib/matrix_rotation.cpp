@@ -1,5 +1,4 @@
 #include <kf/platform/prelude.h>
-
 #include <kf/lib/math.h>
 
 s16 angle_approach(s16 current, s16 target, s32 step)

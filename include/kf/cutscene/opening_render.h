@@ -1,10 +1,10 @@
 #ifndef KF_OPEN_OPENING_RENDER_H
 #define KF_OPEN_OPENING_RENDER_H
 
-#include <kf/lib/types.h>
-#include <kf/lib/render_types.h>
 #include <kf/cutscene/resources.h>
 #include <kf/lib/geometry_types.h>
+#include <kf/lib/render_types.h>
+#include <kf/lib/types.h>
 
 extern void opening_render_frame(
     const VECTOR *position_or_null, const SVECTOR *rotation_or_null);

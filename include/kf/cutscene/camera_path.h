@@ -1,8 +1,9 @@
 #ifndef KF_OPEN_CAMERA_PATH_H
 #define KF_OPEN_CAMERA_PATH_H
 
-#include <span>
 #include <kf/lib/map.h>
+
+#include <span>
 
 extern KfCameraPathState opening_camera_path_state;
 

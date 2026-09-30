@@ -1,8 +1,8 @@
 #include <kf/platform/prelude.h>
-#include <stdarg.h>
-
 #include <kf/lib/debug.h>
 #include <kf/lib/types.h>
+
+#include <stdarg.h>
 
 bool debug_stop_flag = false;
 

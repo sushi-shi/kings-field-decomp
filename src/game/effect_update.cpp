@@ -1,13 +1,13 @@
-#include <array>
 #include <kf/platform/prelude.h>
-#include <kf/lib/random.h>
 #include <kf/game/audio.h>
-#include <kf/lib/map_data.h>
 #include <kf/game/collision.h>
 #include <kf/game/effect.h>
+#include <kf/lib/map_data.h>
+#include <kf/lib/random.h>
 
-#include <cstdlib>
+#include <array>
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 
 static constexpr u32 EFFECT_PHASE_BYTE_MASK = 0xff;
@@ -30,13 +30,13 @@ enum {
     GROUND_BRANCH_CHILD_SPACING = 1500
 };
 
-static std::array<KfFloorDeformSegment, FLOOR_DEFORM_SEGMENT_COUNT> floor_deform_segments = {{
-    {65, 80, 1, 0, 2, 0, 100},
-    {61, 73, 0, 255, 2, 0, 100},
-    {75, 56, 1, 0, 3, 0, 100},
-    {37, 27, 0, 255, 3, 0, 100},
-    {32, 82, 0, 1, 12, 0, 100}
-}};
+static std::array<KfFloorDeformSegment, FLOOR_DEFORM_SEGMENT_COUNT> floor_deform_segments = {
+    KfFloorDeformSegment{65, 80, 1, 0, 2, 0, 100},
+    KfFloorDeformSegment{61, 73, 0, 255, 2, 0, 100},
+    KfFloorDeformSegment{75, 56, 1, 0, 3, 0, 100},
+    KfFloorDeformSegment{37, 27, 0, 255, 3, 0, 100},
+    KfFloorDeformSegment{32, 82, 0, 1, 12, 0, 100}
+};
 
 int effect_magic_power(KfEffectRecord *effect)
 {

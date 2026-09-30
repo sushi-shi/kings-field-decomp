@@ -1,17 +1,17 @@
 #ifndef KF_OPEN_RENDER_H
 #define KF_OPEN_RENDER_H
 
-#include <array>
-#include <kf/lib/graphics.h>
-
+#include <kf/cutscene/playback.h>
 #include <kf/lib/enum.h>
-#include <kf/lib/resource_file.h>
-#include <kf/lib/math.h>
+#include <kf/lib/graphics.h>
 #include <kf/lib/item.h>
 #include <kf/lib/map_data.h>
-#include <kf/cutscene/playback.h>
+#include <kf/lib/math.h>
 #include <kf/lib/render_types.h>
+#include <kf/lib/resource_file.h>
 #include <kf/lib/tmd.h>
+
+#include <array>
 
 enum class KfOpenColorPreset : s32 {
     KF_OPEN_COLOR_DEFAULT = 0,

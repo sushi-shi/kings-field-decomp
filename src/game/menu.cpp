@@ -1,10 +1,11 @@
-#include <array>
 #include <kf/platform/prelude.h>
-#include <kf/lib/null.h>
-
-#include <kf/platform/input.h>
-#include <kf/game/menu.h>
 #include <kf/game/game.h>
+#include <kf/game/menu.h>
+#include <kf/lib/null.h>
+#include <kf/platform/input.h>
+
+#include <array>
+
 static constexpr unsigned MENU_INVENTORY_LABEL_CAPACITY = 50;
 static constexpr unsigned MENU_INVENTORY_ENTRY_CAPACITY = 56;
 

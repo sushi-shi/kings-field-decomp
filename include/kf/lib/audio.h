@@ -1,12 +1,13 @@
 #ifndef KF_AUDIO_H
 #define KF_AUDIO_H
 
-#include <array>
-#include <kf/lib/types.h>
-#include <kf/lib/enum.h>
-#include <kf/lib/sound_types.h>
-#include <kf/lib/geometry_types.h>
 #include <kf/audio/sound.h>
+#include <kf/lib/enum.h>
+#include <kf/lib/geometry_types.h>
+#include <kf/lib/sound_types.h>
+#include <kf/lib/types.h>
+
+#include <array>
 
 inline constexpr int KF_AUDIO_VOICE_SLOTS = 10;
 inline constexpr int KF_AUDIO_MAX_VOLUME = 0x7f;

@@ -1,17 +1,17 @@
 #ifndef KF_GAME_RENDER_H
 #define KF_GAME_RENDER_H
 
-#include <array>
-#include <kf/lib/graphics.h>
-
-#include <kf/lib/enum.h>
 #include <kf/game/actor.h>
-#include <kf/game/effect.h>
-#include <kf/lib/map.h>
-#include <kf/lib/item.h>
 #include <kf/game/animation_cache.h>
+#include <kf/game/effect.h>
+#include <kf/lib/enum.h>
+#include <kf/lib/graphics.h>
+#include <kf/lib/item.h>
+#include <kf/lib/map.h>
 #include <kf/lib/render_types.h>
 #include <kf/lib/tmd.h>
+
+#include <array>
 
 enum class KfGameColorPreset : s32 {
     KF_GAME_COLOR_DEFAULT = 0,

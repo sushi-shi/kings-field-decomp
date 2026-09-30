@@ -1,10 +1,11 @@
 #ifndef KF_OPEN_OPENING_SCENES_H
 #define KF_OPEN_OPENING_SCENES_H
 
-#include <array>
 #include <kf/cutscene/audio.h>
 #include <kf/lib/map.h>
 #include <kf/lib/render_types.h>
+
+#include <array>
 
 enum { KF_OPENING_SCENE3_PANEL_COUNT = 2 };
 

@@ -1,18 +1,19 @@
-#include <array>
 #include <kf/platform/prelude.h>
-#include <algorithm>
 #include <kf/game/audio.h>
-#include <kf/game/resources.h>
-#include <kf/lib/null.h>
-#include <kf/game/graphics.h>
-
-#include <kf/lib/map_data.h>
-#include <kf/game/player.h>
 #include <kf/game/collision.h>
-#include <cstdlib>
-#include <cstdio>
-#include <cstring>
 #include <kf/game/game.h>
+#include <kf/game/graphics.h>
+#include <kf/game/player.h>
+#include <kf/game/resources.h>
+#include <kf/lib/map_data.h>
+#include <kf/lib/null.h>
+
+#include <algorithm>
+#include <array>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+
 static constexpr unsigned weapon_image_number_offset = 9;
 static constexpr unsigned weapon_image_path_capacity = 16;
 
@@ -46,9 +47,9 @@ static constexpr int PLAYER_DIAGONAL_COMPONENT_Q12 = 2896;
 
 std::array<char, weapon_image_path_capacity> weapon_asset_path_template = {"WEPON/WEP00.MIM"};
 
-std::array<KfFloorEntryCell, KF_PLAYER_FLOOR_ENTRY_COUNT> floor_entry_cells = {{
-    {15, 2}, {29, 56}, {28, 18}, {7, 22}, {39, 69}
-}};
+std::array<KfFloorEntryCell, KF_PLAYER_FLOOR_ENTRY_COUNT> floor_entry_cells = {
+    KfFloorEntryCell{15, 2}, KfFloorEntryCell{29, 56}, KfFloorEntryCell{28, 18}, KfFloorEntryCell{7, 22}, KfFloorEntryCell{39, 69}
+};
 
 SVECTOR player_rotation_snapshot;
 

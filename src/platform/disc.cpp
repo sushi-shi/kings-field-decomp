@@ -1,16 +1,19 @@
-#include <kf/platform/disc.h>
 #include <kf/platform/assets.h>
+#include <kf/platform/disc.h>
 #include <kf/platform/translation.h>
-#include <cerrno>
-#include <cctype>
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
-#include <new>
-#include <fcntl.h>
-#include <dirent.h>
+
 #include <sys/stat.h>
+
+#include <cctype>
+#include <cerrno>
+#include <cstdio>
+#include <cstring>
+#include <dirent.h>
+#include <fcntl.h>
+#include <memory>
+#include <new>
 #include <unistd.h>
+#include <utility>
 
 namespace kf {
 static constexpr unsigned cue_line_capacity = 1024;
@@ -118,16 +121,21 @@ static FILE *open_disc(const char *source, std::size_t *size) {
         return nullptr;
     }
     ByteBuffer cue{};
-    bool ok = buffer_resize(&cue, *size + 1) && std::fread(cue.data, 1, *size, file) == *size;
+    bool ok = true;
+    try {
+        cue.resize(*size + 1);
+        ok = std::fread(cue.data(), 1, *size, file) == *size;
+    } catch (const std::bad_alloc &) {
+        ok = false;
+    }
     if (std::fclose(file) != 0)
         ok = false;
     std::array<char, cue_line_capacity> name;
     if (ok) {
-        cue.data[*size] = 0;
-        ok = !std::memchr(cue.data, 0, *size) &&
-            disc_cue_image(reinterpret_cast<const char *>(cue.data), name);
+        cue[*size] = 0;
+        ok = !std::memchr(cue.data(), 0, *size) &&
+            disc_cue_image(reinterpret_cast<const char *>(cue.data()), name);
     }
-    buffer_release(&cue);
     if (!ok) {
         std::fprintf(stderr, "CUE must describe one MODE2/2352 track with INDEX 01 at 00:00:00.\n");
         return nullptr;
@@ -166,8 +174,8 @@ static bool write_asset(int root, const Asset &asset) {
     if (file < 0)
         return false;
     std::size_t written = 0;
-    while (written < asset.bytes.size) {
-        const auto count = ::write(file, asset.bytes.data + written, asset.bytes.size - written);
+    while (written < asset.bytes.size()) {
+        const auto count = ::write(file, asset.bytes.data() + written, asset.bytes.size() - written);
         if (count < 0 && errno == EINTR)
             continue;
         if (count <= 0)
@@ -175,7 +183,7 @@ static bool write_asset(int root, const Asset &asset) {
         written += static_cast<std::size_t>(count);
     }
     const bool closed = ::close(file) == 0;
-    return closed && written == asset.bytes.size;
+    return closed && written == asset.bytes.size();
 }
 
 static bool write_resource_tree(const char *destination, const AssetTable &assets, Language language) {
@@ -187,14 +195,14 @@ static bool write_resource_tree(const char *destination, const AssetTable &asset
     } else if (ok) {
         const int root = ::open(destination, O_RDONLY | O_DIRECTORY | O_NOFOLLOW | O_CLOEXEC);
         ok = root >= 0;
-        for (std::size_t i = 0; ok && i < assets.count; ++i)
-            ok = write_asset(root, assets.entries[i]);
+        for (std::size_t i = 0; ok && i < assets.size(); ++i)
+            ok = write_asset(root, assets[i]);
         if (root >= 0 && ::close(root) != 0)
             ok = false;
         if (!ok)
             std::fprintf(stderr, "Extraction failed; partial files remain in %s. No existing directory was replaced.\n", destination);
         else
-            std::printf("Extracted %zu verified %s files to %s\n", assets.count,
+            std::printf("Extracted %zu verified %s files to %s\n", assets.size(),
                         language_name(language), destination);
     }
     return ok;
@@ -207,24 +215,30 @@ bool disc_extract(const char *source, const char *destination, Language language
         std::fprintf(stderr, "Cannot open disc image: %s\n", source);
         return false;
     }
-    auto *importer = new (std::nothrow) DiscImporter{};
-    if (!importer) {
+    std::unique_ptr<DiscImporter> importer;
+    try {
+        importer = std::make_unique<DiscImporter>();
+    } catch (const std::bad_alloc &) {
         std::fclose(file);
         return false;
     }
-    disc_import_start(importer, size, language);
+    disc_import_start(importer.get(), size, language);
     ByteBuffer read{};
-    while (disc_import_waiting(importer)) {
+    while (disc_import_waiting(importer.get())) {
         const auto request = importer->request;
-        if (!buffer_resize(&read, request.length) ||
-            ::fseeko(file, static_cast<off_t>(request.offset), SEEK_SET) != 0 ||
-            std::fread(read.data, 1, read.size, file) != read.size) {
-            disc_import_fail(importer, "Cannot read the selected disc image.");
+        try {
+            read.resize(request.length);
+        } catch (const std::bad_alloc &) {
+            disc_import_fail(importer.get(), "Cannot allocate disc read buffer.");
             break;
         }
-        disc_import_supply(importer, read.data, read.size);
+        if (::fseeko(file, static_cast<off_t>(request.offset), SEEK_SET) != 0 ||
+            std::fread(read.data(), 1, read.size(), file) != read.size()) {
+            disc_import_fail(importer.get(), "Cannot read the selected disc image.");
+            break;
+        }
+        disc_import_supply(importer.get(), read);
     }
-    buffer_release(&read);
     bool ok = importer->state == ImportState::complete;
     if (std::fclose(file) != 0)
         ok = false;
@@ -232,12 +246,10 @@ bool disc_extract(const char *source, const char *destination, Language language
         std::fprintf(stderr, "%s\n", importer->message.data());
     if (ok)
         ok = write_resource_tree(destination, importer->assets, language);
-    disc_import_release(importer);
-    delete importer;
     return ok;
 }
 
-static bool read_resource_tree(int root, const char *prefix, AssetTable *assets,
+static bool read_resource_tree(int root, const char *prefix, AssetTable &assets,
                                std::size_t *total, unsigned *directories) {
     if (++*directories > 128)
         return false;
@@ -279,13 +291,17 @@ static bool read_resource_tree(int root, const char *prefix, AssetTable *assets,
             path[length + 1] = 0;
             ok = read_resource_tree(child, path.data(), assets, total, directories);
         } else if (ok && S_ISREG(info.st_mode) && info.st_size >= 0 &&
-                   info.st_size <= 16 * 1024 * 1024 && assets->count < 428 &&
+                   info.st_size <= 16 * 1024 * 1024 && assets.size() < 428 &&
                    static_cast<std::uint64_t>(info.st_size) <= disc_import_limit - *total) {
             ByteBuffer bytes{};
-            ok = buffer_resize(&bytes, static_cast<std::size_t>(info.st_size));
+            try {
+                bytes.resize(static_cast<std::size_t>(info.st_size));
+            } catch (const std::bad_alloc &) {
+                ok = false;
+            }
             std::size_t at = 0;
-            while (ok && at < bytes.size) {
-                const auto count = ::read(child, bytes.data + at, bytes.size - at);
+            while (ok && at < bytes.size()) {
+                const auto count = ::read(child, bytes.data() + at, bytes.size() - at);
                 if (count < 0 && errno == EINTR)
                     continue;
                 if (count <= 0) { ok = false; break; }
@@ -294,10 +310,9 @@ static bool read_resource_tree(int root, const char *prefix, AssetTable *assets,
             u8 extra;
             if (ok)
                 ok = ::read(child, &extra, 1) == 0;
-            *total += bytes.size;
+            *total += bytes.size();
             if (ok)
-                ok = assets_append(assets, path.data(), &bytes);
-            buffer_release(&bytes);
+                ok = assets_append(assets, path.data(), std::move(bytes));
         } else {
             ok = false;
         }
@@ -314,15 +329,14 @@ bool disc_verify_directory(const char *directory, Language language, Language *a
     AssetTable assets{};
     std::size_t total = 0;
     unsigned directories = 0;
-    bool ok = root >= 0 && read_resource_tree(root, "", &assets, &total, &directories);
+    bool ok = root >= 0 && read_resource_tree(root, "", assets, &total, &directories);
     Language detected = language;
-    if (ok && !assets_match_language(&assets, language)) {
-        ok = actual && language == Language::English && assets_match_language(&assets, Language::Japanese);
+    if (ok && !assets_match_language(assets, language)) {
+        ok = actual && language == Language::English && assets_match_language(assets, Language::Japanese);
         detected = Language::Japanese;
     }
     if (root >= 0 && ::close(root) != 0)
         ok = false;
-    assets_release(&assets);
     if (ok && actual)
         *actual = detected;
     if (!ok)
@@ -335,20 +349,19 @@ bool disc_prepare_directory(const char *source, const char *destination, Languag
     AssetTable assets{};
     std::size_t total = 0;
     unsigned directories = 0;
-    bool ok = root >= 0 && read_resource_tree(root, "", &assets, &total, &directories);
+    bool ok = root >= 0 && read_resource_tree(root, "", assets, &total, &directories);
     if (root >= 0 && ::close(root) != 0)
         ok = false;
     if (!ok)
         std::fprintf(stderr, "Cannot read resource tree: %s\n", source);
     if (ok) {
-        if (const char *error = assets_prepare_language(&assets, language)) {
+        if (const char *error = assets_prepare_language(assets, language)) {
             std::fprintf(stderr, "%s\n", error);
             ok = false;
         }
     }
     if (ok)
         ok = write_resource_tree(destination, assets, language);
-    assets_release(&assets);
     return ok;
 }
 

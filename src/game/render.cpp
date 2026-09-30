@@ -1,19 +1,19 @@
-#include <array>
 #include <kf/platform/prelude.h>
-#include <kf/game/resources.h>
-#include <kf/lib/null.h>
-#include <kf/game/graphics.h>
-
-#include <kf/lib/map_data.h>
-#include <kf/game/resource_file.h>
-#include <kf/game/render.h>
-#include <kf/game/notify.h>
-#include <kf/lib/geometry_types.h>
-#include <cstdlib>
-#include <cstdio>
-#include <cstring>
 #include <kf/game/game.h>
+#include <kf/game/graphics.h>
+#include <kf/game/notify.h>
+#include <kf/game/render.h>
+#include <kf/game/resource_file.h>
+#include <kf/game/resources.h>
+#include <kf/lib/geometry_types.h>
+#include <kf/lib/map_data.h>
+#include <kf/lib/null.h>
 #include <kf/lib/tmd.h>
+
+#include <array>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 enum {
     DISPLAY_ASSET_BUFFER_BYTES = 2 * 0x19640,
@@ -32,15 +32,57 @@ enum {
     NOTIFICATION_PALETTE_Y = 499
 };
 
-std::array<MATRIX, KF_GAME_COLOR_PRESET_COUNT> color_matrix_table = {{
-    {{{{2000, 700, 4000}, {2000, 700, 4000}, {2000, 700, 4000}}}, {0, 0, 0}},
-    {{{{3000, 1000, 4000}, {200, 70, 400}, {200, 70, 400}}}, {0, 0, 0}},
-    {{{{1000, 350, 2000}, {1000, 350, 2000}, {3000, 1000, 4000}}}, {0, 0, 0}},
-    {{{{4095, 4095, 4095}, {4095, 4095, 4095}, {4095, 4095, 4095}}}, {0, 0, 0}},
-    {{{{0, 0, 0}, {0, 0, 0}, {0, 0, 0}}}, {0, 0, 0}},
-    {{{{0, 0, 0}, {4095, 4095, 4095}, {0, 0, 0}}}, {0, 0, 0}},
-    {{{{0, 0, 0}, {0, 0, 0}, {4095, 4095, 4095}}}, {0, 0, 0}},
-}};
+std::array<MATRIX, KF_GAME_COLOR_PRESET_COUNT> color_matrix_table = {
+    MATRIX{
+        .m = {{
+            {2000, 700, 4000},
+            {2000, 700, 4000},
+            {2000, 700, 4000},
+        }},
+        .t = {},
+    },
+    MATRIX{
+        .m = {{
+            {3000, 1000, 4000},
+            {200, 70, 400},
+            {200, 70, 400},
+        }},
+        .t = {},
+    },
+    MATRIX{
+        .m = {{
+            {1000, 350, 2000},
+            {1000, 350, 2000},
+            {3000, 1000, 4000},
+        }},
+        .t = {},
+    },
+    MATRIX{
+        .m = {{
+            {4095, 4095, 4095},
+            {4095, 4095, 4095},
+            {4095, 4095, 4095},
+        }},
+        .t = {},
+    },
+    MATRIX{},
+    MATRIX{
+        .m = {{
+            {0, 0, 0},
+            {4095, 4095, 4095},
+            {0, 0, 0},
+        }},
+        .t = {},
+    },
+    MATRIX{
+        .m = {{
+            {0, 0, 0},
+            {0, 0, 0},
+            {4095, 4095, 4095},
+        }},
+        .t = {},
+    },
+};
 
 KfGraphicsRuntimeGame game_graphics_runtime;
 
@@ -90,8 +132,8 @@ void display_present_system_screen(s32 color)
 void render_prepare_actor_textures(KfFloorId floor)
 {
     if (floor == KF_FLOOR_5) {
-        constexpr std::array<u16, KF_FLOOR5_ACTOR_TEXTURE_COUNT> page_x = {{
-            ACTOR_TEXTURE_FIRST_PAGE_X, ACTOR_TEXTURE_SECOND_PAGE_X, ACTOR_TEXTURE_THIRD_PAGE_X}};
+        constexpr std::array<u16, KF_FLOOR5_ACTOR_TEXTURE_COUNT> page_x = {
+            ACTOR_TEXTURE_FIRST_PAGE_X, ACTOR_TEXTURE_SECOND_PAGE_X, ACTOR_TEXTURE_THIRD_PAGE_X};
         for (std::size_t i = 0; i < KF_FLOOR5_ACTOR_TEXTURE_COUNT; ++i)
             game_graphics_runtime.effect5_materials[i] = {kf::SurfaceKind::Texture,
                 {page_x[i], KF_TEXTURE_LOWER_PAGE_Y, 0, ACTOR_TEXTURE_CLUT_Y,
@@ -129,11 +171,11 @@ void render_initialize(void)
     kf::matrix_set_rotation_xyz(angles, game_graphics_runtime.render_state.quadrant_matrices[2]);
     angles.vy = KF_ANGLE_QUARTER_TURN;
     kf::matrix_set_rotation_xyz(angles, game_graphics_runtime.render_state.quadrant_matrices[1]);
-    static constexpr std::array<std::array<s16, 3>, 3> initial_light_directions = {{
-        {3800, -2800, 0},
-        {-3000, -3600, -3400},
-        {-1300, 2700, 800},
-    }};
+    static constexpr std::array<std::array<s16, 3>, 3> initial_light_directions = {
+        std::array<s16, 3>{3800, -2800, 0},
+        std::array<s16, 3>{-3000, -3600, -3400},
+        std::array<s16, 3>{-1300, 2700, 800},
+    };
     game_graphics_runtime.render_state.light_matrix.m = initial_light_directions;
     game_graphics_runtime.map_event_light_matrix = game_graphics_runtime.render_state.light_matrix;
     kf::matrix_multiply_rotation(game_graphics_runtime.render_state.light_matrix, game_graphics_runtime.render_state.quadrant_matrices[0], game_graphics_runtime.light_quadrant_matrices[0]);

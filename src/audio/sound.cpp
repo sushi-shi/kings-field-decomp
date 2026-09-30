@@ -1,7 +1,9 @@
-#include <kf/audio/sound.h>
 #include <kf/audio/codec.h>
+#include <kf/audio/sound.h>
 #include <kf/platform/host.h>
+
 #include <SDL3/SDL.h>
+
 #include <algorithm>
 #include <array>
 #include <cmath>
@@ -9,7 +11,9 @@
 #include <cstdlib>
 #include <cstring>
 #include <limits>
+#include <memory>
 #include <new>
+#include <vector>
 
 namespace kf {
 constexpr unsigned sample_rate = 44100;
@@ -53,14 +57,14 @@ constexpr float pcm16_scale = 32768.0f;
 struct SoundBank {
     KfAudioBankData data;
     std::array<KfAudioSampleInfo, KF_AUDIO_SAMPLE_COUNT> samples;
-    u8 *body;
+    std::vector<u8> body;
     unsigned references;
     SoundBank *next;
 };
 struct MusicChannel { u8 program, volume; };
 struct MusicSequence {
     KfMusicInfo info;
-    KfMusicEvent *events;
+    std::vector<KfMusicEvent> events;
     SoundBank *bank;
     MusicSequence *next;
     std::array<MusicChannel, channel_count> channels;
@@ -135,7 +139,6 @@ static void bank_unref(SoundBank *bank) {
         link = &(*link)->next;
     if (*link)
         *link = bank->next;
-    std::free(bank->body);
     delete bank;
 }
 
@@ -223,7 +226,7 @@ static bool read_sample(Voice &voice, float &sample) {
         }
         // The validated, immutable block remains owned by the bank. Only the
         // voice's position jumps at a repeat; its two-sample history continues.
-        if (kf_audio_decode_block(voice.bank->body + range.offset + voice.block_offset,
+        if (kf_audio_decode_block(voice.bank->body.data() + range.offset + voice.block_offset,
                 KF_AUDIO_ADPCM_BLOCK_BYTES, &voice.predictor, voice.decoded.data(), voice.decoded.size()) != KF_CODEC_OK) {
             sound.failed = true;
             return false;
@@ -507,7 +510,6 @@ static void sequence_release(MusicSequence *sequence) {
     if (*link)
         *link = sequence->next;
     bank_unref(sequence->bank);
-    std::free(sequence->events);
     delete sequence;
 }
 
@@ -560,32 +562,25 @@ void sound_master_volume(s16 left, s16 right) {
     sound.master_right = volume(right);
 }
 
-SoundBank *sound_bank_load(const u8 *header, std::size_t header_size, const u8 *body, std::size_t body_size) {
-    auto *bank = new (std::nothrow) SoundBank{};
-    if (!bank)
+SoundBank *sound_bank_load(const u8 *header, std::size_t header_size, const u8 *body, std::size_t body_size) try {
+    auto bank = std::make_unique<SoundBank>();
+    if (kf_audio_bank_decode(header, header_size, body, body_size, &bank->data) != KF_CODEC_OK)
         return nullptr;
-    if (kf_audio_bank_decode(header, header_size, body, body_size, &bank->data) != KF_CODEC_OK) {
-        delete bank;
-        return nullptr;
-    }
     for (std::size_t i = 0; i < bank->data.sample_count; ++i) {
         const auto &range = bank->data.samples[i];
-        if (kf_audio_sample_info(body + range.offset, range.size, &bank->samples[i]) != KF_CODEC_OK) {
-            delete bank;
+        if (kf_audio_sample_info(body + range.offset, range.size, &bank->samples[i]) != KF_CODEC_OK)
             return nullptr;
-        }
     }
-    bank->body = static_cast<u8 *>(std::malloc(body_size));
-    if (!bank->body) {
-        delete bank;
+    if (body_size > bank->body.max_size())
         return nullptr;
-    }
-    std::memcpy(bank->body, body, body_size);
+    bank->body.assign(body, body + body_size);
     bank->references = 1;
     sound_poll();
     bank->next = sound.banks;
-    sound.banks = bank;
-    return bank;
+    sound.banks = bank.release();
+    return sound.banks;
+} catch (const std::bad_alloc &) {
+    return nullptr;
 }
 
 void sound_bank_release(SoundBank *bank) {
@@ -628,27 +623,25 @@ void sound_note_release(SoundBank *bank, s16 program, s16 note) {
             release(voice);
 }
 
-MusicSequence *sound_sequence_load(const u8 *data, std::size_t size, SoundBank *bank) {
+MusicSequence *sound_sequence_load(const u8 *data, std::size_t size, SoundBank *bank) try {
     KfMusicInfo info{};
-    if (!bank || kf_music_decode(data, size, nullptr, 0, &info) != KF_CODEC_OK
-            || static_cast<std::size_t>(info.event_count) > std::numeric_limits<std::size_t>::max() / sizeof(KfMusicEvent))
+    if (!bank || kf_music_decode(data, size, nullptr, 0, &info) != KF_CODEC_OK)
         return nullptr;
-    auto *sequence = new (std::nothrow) MusicSequence{};
-    if (!sequence)
+    auto sequence = std::make_unique<MusicSequence>();
+    if (info.event_count > sequence->events.max_size())
         return nullptr;
-    sequence->events = static_cast<KfMusicEvent *>(std::malloc(info.event_count * sizeof(KfMusicEvent)));
-    if (!sequence->events || kf_music_decode(data, size, sequence->events, info.event_count, &sequence->info) != KF_CODEC_OK) {
-        std::free(sequence->events);
-        delete sequence;
+    sequence->events.resize(info.event_count);
+    if (kf_music_decode(data, size, sequence->events.data(), sequence->events.size(), &sequence->info) != KF_CODEC_OK)
         return nullptr;
-    }
     sequence->bank = bank;
     sequence->left = sequence->right = 1;
     sound_poll();
     ++bank->references;
     sequence->next = sound.sequences;
-    sound.sequences = sequence;
-    return sequence;
+    sound.sequences = sequence.release();
+    return sound.sequences;
+} catch (const std::bad_alloc &) {
+    return nullptr;
 }
 
 void sound_sequence_play(MusicSequence *sequence) {
