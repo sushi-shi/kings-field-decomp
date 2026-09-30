@@ -68,7 +68,7 @@ Include `kings-field` in your `outputs` arguments and add it to your host's
 
 ```nix
 outputs = { nixpkgs, kings-field, ... }: {
-  nixosConfigurations.your-host = nixpkgs.lib.nixosSystem {
+  nixosConfigurations."<host>" = nixpkgs.lib.nixosSystem {
     modules = [
       ./configuration.nix
       ({ pkgs, ... }: {
@@ -85,7 +85,7 @@ Keep your existing host configuration and other modules. From your system flake
 directory, rebuild using your host's name, then launch:
 
 ```sh
-sudo nixos-rebuild switch --flake .#your-host
+sudo nixos-rebuild switch --flake '.#<host>'
 KF_DISC="/path/to/King's Field (Japan).iso" kings-field
 ```
 
