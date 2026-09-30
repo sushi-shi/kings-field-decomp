@@ -1,10 +1,10 @@
-#include <kf/platform/prelude.hpp>
+#include <kf/platform/prelude.h>
 #include <kf/game/audio.h>
-#include <kf/lib/random.hpp>
+#include <kf/lib/random.h>
 #include <kf/lib/null.h>
 #include <kf/game/graphics.h>
 
-#include <kf/platform/input.hpp>
+#include <kf/platform/input.h>
 #include <kf/game/session.h>
 #include <kf/game/player.h>
 #include <kf/game/collision.h>

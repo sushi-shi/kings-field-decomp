@@ -1,5 +1,6 @@
 #ifndef KF_GAME_SAVE_H
 #define KF_GAME_SAVE_H
+
 #include <kf/lib/types.h>
 #include <kf/lib/enum.h>
 #include <kf/lib/floor.h>
@@ -31,4 +32,5 @@ struct KfSaveSlotSummary {
 KfSaveResult save_system_read_catalog(KfSaveSlotSummary *summaries);
 KfSaveResult save_system_read_slot(KfSaveSlotId slot);
 KfSaveResult save_system_write_slot(KfSaveSlotId slot);
-#endif
+
+#endif // KF_GAME_SAVE_H

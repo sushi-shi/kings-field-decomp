@@ -1,6 +1,6 @@
 #include "../src/lib/matrix_lerp.cpp"
 #include <cassert>
-#include <kf/platform/prelude.hpp>
+#include <kf/platform/prelude.h>
 
 int main()
 {

@@ -1,5 +1,6 @@
 #ifndef KF_LIB_GRAPHICS_H
 #define KF_LIB_GRAPHICS_H
+
 #include <kf/lib/math.h>
 #include <kf/lib/map_types.h>
 #include <kf/lib/item_types.h>
@@ -51,4 +52,4 @@ void item_load_floor_placements(KfFloorItemStorage storage, const KfMapGrid &hei
 void render_floor_item(const KfRenderState &view, KfSpriteQuad *sprites,
     KfSpriteEnqueue enqueue_sprite, KfFloorItem *item, const MATRIX *lights);
 
-#endif
+#endif // KF_LIB_GRAPHICS_H

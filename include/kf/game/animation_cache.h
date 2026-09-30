@@ -40,4 +40,4 @@ extern void animation_cache_release_all(void);
 extern void animation_cache_release_stale(void);
 extern KfAnimationCacheRecord *animation_cache_allocate(void);
 
-#endif
+#endif // KF_ANIMATION_CACHE_H

@@ -73,4 +73,4 @@ extern s32 map_floor_height_at_position(const VECTOR *position);
 extern s32 map_floor_height_for_cell_position(
     u16 cell_index, s32 point_x, s32 point_z);
 
-#endif
+#endif // KF_GAME_COLLISION_H

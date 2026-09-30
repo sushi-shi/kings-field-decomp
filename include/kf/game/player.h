@@ -258,4 +258,4 @@ extern KfBoolU32 player_warp_trigger_update(void);
 
 extern s32 fixed6_ratio_step(s32 value, s32 span);
 
-#endif
+#endif // KF_GAME_PLAYER_H

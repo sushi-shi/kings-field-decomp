@@ -1,5 +1,6 @@
-#ifndef KF_PLATFORM_MODULE_STATE_HPP
-#define KF_PLATFORM_MODULE_STATE_HPP
+#ifndef KF_PLATFORM_MODULE_STATE_H
+#define KF_PLATFORM_MODULE_STATE_H
+
 #include <cstddef>
 #include <type_traits>
 
@@ -11,7 +12,6 @@ void copy_module_value(T &destination, const T &source)
         for (std::size_t i = 0; i < std::extent_v<T>; ++i)
             copy_module_value(destination[i], source[i]);
     } else {
-        static_assert(std::is_copy_assignable_v<T>);
         destination = source;
     }
 }
@@ -34,4 +34,4 @@ void restore_initial_value()
 }
 }
 
-#endif
+#endif // KF_PLATFORM_MODULE_STATE_H

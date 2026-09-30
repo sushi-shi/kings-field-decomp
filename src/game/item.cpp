@@ -1,10 +1,10 @@
-#include <kf/platform/prelude.hpp>
+#include <kf/platform/prelude.h>
 #include <kf/game/resources.h>
 #include <kf/game/menu_glyphs.h>
 #include <kf/lib/null.h>
 #include <kf/game/graphics.h>
 
-#include <kf/platform/input.hpp>
+#include <kf/platform/input.h>
 #include <kf/lib/map_data.h>
 #include <kf/lib/item.h>
 #include <kf/game/resource_file.h>

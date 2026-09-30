@@ -1,5 +1,6 @@
-#ifndef KF_RENDERER_PROJECTION_HPP
-#define KF_RENDERER_PROJECTION_HPP
+#ifndef KF_RENDERER_PROJECTION_H
+#define KF_RENDERER_PROJECTION_H
+
 #include <kf/lib/geometry_types.h>
 
 namespace kf {
@@ -24,4 +25,4 @@ ProjectedPoint render_project_point(const MATRIX &model, const Projection &proje
     const SVECTOR &point);
 }
 
-#endif
+#endif // KF_RENDERER_PROJECTION_H

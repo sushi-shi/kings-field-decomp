@@ -1,4 +1,4 @@
-#include <kf/platform/prelude.hpp>
+#include <kf/platform/prelude.h>
 #include <kf/game/audio.h>
 #include <kf/lib/null.h>
 #include <kf/lib/bool.h>
@@ -6,7 +6,7 @@
 #include <kf/lib/resource_file.h>
 #include <kf/game/save.h>
 #include <kf/game/player.h>
-#include <kf/platform/saves.hpp>
+#include <kf/platform/saves.h>
 #include <cstdlib>
 #include <cstdio>
 #include <cstring>

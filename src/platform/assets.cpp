@@ -1,4 +1,4 @@
-#include <kf/platform/assets.hpp>
+#include <kf/platform/assets.h>
 #include <bit>
 #include <algorithm>
 #include <cstdio>

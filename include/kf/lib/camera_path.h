@@ -1,5 +1,6 @@
 #ifndef KF_LIB_CAMERA_PATH_H
 #define KF_LIB_CAMERA_PATH_H
+
 #include <kf/lib/geometry_types.h>
 
 enum {
@@ -31,4 +32,4 @@ extern void camera_path_prepare_segment(KfCameraPathState *path, const KfCameraP
 extern void camera_path_publish_fixed(KfCameraPathState *path);
 extern void camera_path_advance_pose(KfCameraPathState *path, s32 y_offset);
 
-#endif
+#endif // KF_LIB_CAMERA_PATH_H

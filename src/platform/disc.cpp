@@ -1,5 +1,5 @@
-#include <kf/platform/disc.hpp>
-#include <kf/platform/assets.hpp>
+#include <kf/platform/disc.h>
+#include <kf/platform/assets.h>
 #include <cerrno>
 #include <cctype>
 #include <cstdio>

@@ -1,4 +1,4 @@
-#include <kf/platform/prelude.hpp>
+#include <kf/platform/prelude.h>
 #include <kf/cutscene/camera_path.h>
 #include <kf/cutscene/opening_helpers.h>
 

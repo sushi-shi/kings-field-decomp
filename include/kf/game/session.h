@@ -5,4 +5,4 @@ enum class GameResult { Running, ReturnToIntro, Completed };
 
 GameResult game_play();
 
-#endif
+#endif // KF_GAME_SESSION_H

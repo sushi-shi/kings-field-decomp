@@ -20,4 +20,4 @@ enum class KfMapVariant : u8 {
     KF_FLOOR5_ALTERNATE_MUSIC_VARIANT = 3
 }; using enum KfMapVariant;
 
-#endif
+#endif // KF_FLOOR_H

@@ -1,4 +1,4 @@
-#include <kf/platform/prelude.hpp>
+#include <kf/platform/prelude.h>
 #include <kf/lib/audio.h>
 
 static constexpr std::size_t sound_chunk_header_bytes = 4;

@@ -7,4 +7,4 @@ extern KfMemoryArena memory_arena;
 
 extern void common_resources_load(void);
 
-#endif
+#endif // KF_GAME_RESOURCES_H

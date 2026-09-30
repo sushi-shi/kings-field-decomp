@@ -47,4 +47,4 @@ typedef KfBoolStorage<u32> KfBoolU32;
 typedef KfBoolStorage<u8> KfBool8;
 typedef KfBoolStorage<u16> KfBool16;
 
-#endif
+#endif // KF_BOOL_H

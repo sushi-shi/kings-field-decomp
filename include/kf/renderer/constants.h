@@ -1,5 +1,5 @@
-#ifndef KF_RENDERER_CONSTANTS_HPP
-#define KF_RENDERER_CONSTANTS_HPP
+#ifndef KF_RENDERER_CONSTANTS_H
+#define KF_RENDERER_CONSTANTS_H
 
 namespace kf {
 inline constexpr int render_width = 320;
@@ -35,4 +35,4 @@ inline constexpr int packed_uv_component_bits = 8;
 inline constexpr int packed_uv_component_mask = 0xff;
 }
 
-#endif
+#endif // KF_RENDERER_CONSTANTS_H

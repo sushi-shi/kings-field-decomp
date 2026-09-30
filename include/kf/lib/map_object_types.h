@@ -1,5 +1,6 @@
 #ifndef KF_LIB_MAP_OBJECT_TYPES_H
 #define KF_LIB_MAP_OBJECT_TYPES_H
+
 #include <kf/lib/types.h>
 
 enum {
@@ -51,4 +52,4 @@ typedef struct KfMapObjectDefinitionTable {
     KfMapObjectDefinition entries[KF_MAP_OBJECT_DEFINITION_COUNT];
 } KfMapObjectDefinitionTable;
 
-#endif
+#endif // KF_LIB_MAP_OBJECT_TYPES_H

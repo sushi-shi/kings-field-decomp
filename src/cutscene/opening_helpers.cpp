@@ -1,7 +1,7 @@
-#include <kf/platform/prelude.hpp>
+#include <kf/platform/prelude.h>
 #include <kf/lib/math.h>
 #include <kf/cutscene/opening_helpers.h>
-#include <kf/platform/input.hpp>
+#include <kf/platform/input.h>
 
 KfOpeningInputAction opening_input_action;
 

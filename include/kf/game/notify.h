@@ -39,4 +39,4 @@ extern KfNotificationSprite notification_sprites[KF_NOTIFICATION_SPRITE_COUNT];
 extern void notify_enqueue(KfNotificationArgument message_id, ...);
 extern void notify_effect_update(void);
 
-#endif
+#endif // KF_NOTIFY_H

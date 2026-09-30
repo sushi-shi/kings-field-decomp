@@ -36,4 +36,4 @@ extern SoundRef gameplay_sound_refs[KF_GAMEPLAY_SOUND_COUNT];
 inline constexpr unsigned talk_image_path_capacity = 20;
 extern char talk_image_path_template[talk_image_path_capacity];
 
-#endif
+#endif // KF_GAME_STATE_H

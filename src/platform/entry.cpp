@@ -1,15 +1,15 @@
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
-#include <kf/platform/host.hpp>
-#include <kf/platform/input.hpp>
-#include <kf/platform/files.hpp>
-#include <kf/platform/disc.hpp>
-#include <kf/platform/saves.hpp>
+#include <kf/platform/host.h>
+#include <kf/platform/input.h>
+#include <kf/platform/files.h>
+#include <kf/platform/disc.h>
+#include <kf/platform/saves.h>
 #include <cstdio>
 #include <cstring>
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
-#include <kf/platform/assets.hpp>
+#include <kf/platform/assets.h>
 
 extern "C" EMSCRIPTEN_KEEPALIVE int kf_extract_disc(const char *source, const char *destination) {
     return kf::disc_extract(source, destination);

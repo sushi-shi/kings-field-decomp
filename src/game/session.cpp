@@ -1,4 +1,4 @@
-#include <kf/platform/prelude.hpp>
+#include <kf/platform/prelude.h>
 #include <kf/game/resources.h>
 #include <kf/game/game.h>
 #include <kf/game/session.h>

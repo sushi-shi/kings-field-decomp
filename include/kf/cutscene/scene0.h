@@ -9,4 +9,4 @@ extern void opening_render_entities_and_items(void);
 extern void opening_scene0_render_frame(
     const VECTOR *position_or_null, const SVECTOR *rotation_or_null);
 
-#endif
+#endif // KF_OPEN_SCENE0_H

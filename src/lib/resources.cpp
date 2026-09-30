@@ -1,4 +1,4 @@
-#include <kf/platform/prelude.hpp>
+#include <kf/platform/prelude.h>
 #include <kf/lib/resources.h>
 
 const u32 *resource_stream_copy_words(
@@ -12,8 +12,8 @@ const u32 *resource_stream_copy_words(
     return source;
 }
 
-#include <kf/renderer/renderer.hpp>
-#include <kf/platform/host.hpp>
+#include <kf/renderer/renderer.h>
+#include <kf/platform/host.h>
 
 void tim_upload_images(const u8 *tim_data, std::size_t size)
 {

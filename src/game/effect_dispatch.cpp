@@ -1,5 +1,5 @@
-#include <kf/platform/prelude.hpp>
-#include <kf/lib/random.hpp>
+#include <kf/platform/prelude.h>
+#include <kf/lib/random.h>
 #include <kf/lib/null.h>
 
 #include <kf/lib/map_data.h>

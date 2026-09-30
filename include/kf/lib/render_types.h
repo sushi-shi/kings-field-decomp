@@ -3,9 +3,9 @@
 
 #include <kf/lib/types.h>
 #include <kf/lib/enum.h>
-#include <kf/renderer/renderer.hpp>
-#include <kf/renderer/lighting.hpp>
-#include <kf/renderer/projection.hpp>
+#include <kf/renderer/renderer.h>
+#include <kf/renderer/lighting.h>
+#include <kf/renderer/projection.h>
 
 enum { KF_PROJECTED_VERTEX_CAPACITY = 1000 };
 
@@ -126,4 +126,4 @@ inline void transition_advance_color(CVECTOR &color)
     color.g = color.r;
 }
 
-#endif
+#endif // KF_RENDER_TYPES_H

@@ -10,4 +10,4 @@ extern char opening_initial_tim_path[KF_OPENING_INITIAL_TIM_PATH_BYTES];
 
 extern void opening_run(Cutscene scene);
 
-#endif
+#endif // KF_OPEN_CONTROLLER_H

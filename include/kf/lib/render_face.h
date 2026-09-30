@@ -1,7 +1,8 @@
 #ifndef KF_LIB_RENDER_FACE_H
 #define KF_LIB_RENDER_FACE_H
-#include <kf/renderer/renderer.hpp>
-#include <kf/platform/host.hpp>
+
+#include <kf/renderer/renderer.h>
+#include <kf/platform/host.h>
 #include <kf/lib/tmd.h>
 
 #include <optional>
@@ -94,4 +95,5 @@ inline void render_face_uv_rectangle(kf::DrawFace *face, u8 u, u8 v, u8 right, u
     face->vertices[0].v = face->vertices[1].v = v / kf::texture_uv_scale;
     face->vertices[2].v = face->vertices[3].v = bottom / kf::texture_uv_scale;
 }
-#endif
+
+#endif // KF_LIB_RENDER_FACE_H

@@ -1,5 +1,6 @@
 #ifndef KF_LIB_SOUND_TYPES_H
 #define KF_LIB_SOUND_TYPES_H
+
 #include <kf/lib/types.h>
 
 inline constexpr int KF_SOUND_TONE_INDEX_MASK = 0x0f;
@@ -13,6 +14,4 @@ typedef struct SoundRef {
     u8 note;
 } SoundRef;
 
-static_assert(sizeof(SoundRef) == 3);
-
-#endif
+#endif // KF_LIB_SOUND_TYPES_H

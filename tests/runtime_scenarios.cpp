@@ -1,6 +1,6 @@
 #if defined(KF_AUDIT_GAME)
 
-#include <kf/platform/prelude.hpp>
+#include <kf/platform/prelude.h>
 #define game_main_loop audit_original_game_main_loop
 #define player_update audit_selected_player_update
 #define game_initialize_session audit_initialize_session
@@ -74,7 +74,7 @@ void audit_selected_player_update()
 
 #elif defined(KF_AUDIT_OPENING)
 
-#include <kf/platform/prelude.hpp>
+#include <kf/platform/prelude.h>
 #define opening_poll_input audit_original_opening_poll_input
 #include KF_AUDIT_SOURCE
 #undef opening_poll_input
@@ -86,7 +86,7 @@ void opening_poll_input()
 
 #elif defined(KF_AUDIT_INPUT)
 
-#include <kf/platform/prelude.hpp>
+#include <kf/platform/prelude.h>
 extern unsigned audit_frames;
 namespace kf
 {

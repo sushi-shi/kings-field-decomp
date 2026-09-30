@@ -9,4 +9,4 @@ extern void opening_camera_path_compute_segment(void);
 extern void opening_camera_path_begin(const KfCameraPathPoint *points);
 extern void opening_camera_path_step(s32 y_offset);
 
-#endif
+#endif // KF_OPEN_CAMERA_PATH_H

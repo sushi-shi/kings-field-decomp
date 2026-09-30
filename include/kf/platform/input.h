@@ -1,5 +1,6 @@
-#ifndef KF_PLATFORM_INPUT_HPP
-#define KF_PLATFORM_INPUT_HPP
+#ifndef KF_PLATFORM_INPUT_H
+#define KF_PLATFORM_INPUT_H
+
 #include <kf/lib/types.h>
 
 namespace kf {
@@ -29,4 +30,4 @@ InputContext host_set_input_context(InputContext context);
 LookDelta host_take_look();
 }
 
-#endif
+#endif // KF_PLATFORM_INPUT_H

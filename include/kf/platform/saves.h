@@ -1,5 +1,6 @@
-#ifndef KF_PLATFORM_SAVES_HPP
-#define KF_PLATFORM_SAVES_HPP
+#ifndef KF_PLATFORM_SAVES_H
+#define KF_PLATFORM_SAVES_H
+
 #include <kf/lib/types.h>
 #include <cstddef>
 
@@ -15,4 +16,4 @@ SaveFileResult save_file_read(SaveSlot slot, u8 *data, std::size_t capacity, std
 SaveFileResult save_file_write(SaveSlot slot, const u8 *data, std::size_t size);
 }
 
-#endif
+#endif // KF_PLATFORM_SAVES_H

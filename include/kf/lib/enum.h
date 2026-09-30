@@ -1,5 +1,6 @@
 #ifndef KF_LIB_ENUM_H
 #define KF_LIB_ENUM_H
+
 template <typename Enum, typename Storage>
     requires (__is_enum(Enum) && __is_integral(Storage))
 class KfEnumStorage {
@@ -47,4 +48,4 @@ constexpr Integer kf_enum_encode(KfEnumStorage<Enum, Storage> value)
     return static_cast<Integer>(value.encoded_value());
 }
 
-#endif
+#endif // KF_LIB_ENUM_H

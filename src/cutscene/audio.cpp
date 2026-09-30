@@ -1,4 +1,4 @@
-#include <kf/platform/prelude.hpp>
+#include <kf/platform/prelude.h>
 #include <kf/cutscene/resources.h>
 #include <kf/lib/null.h>
 

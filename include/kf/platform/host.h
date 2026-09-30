@@ -1,5 +1,6 @@
-#ifndef KF_PLATFORM_HOST_HPP
-#define KF_PLATFORM_HOST_HPP
+#ifndef KF_PLATFORM_HOST_H
+#define KF_PLATFORM_HOST_H
+
 #include <kf/lib/types.h>
 #include <cstddef>
 namespace kf {
@@ -29,4 +30,4 @@ void host_present_frame(const FrameStyle &style);
 [[noreturn]] void host_fail(const char *message);
 }
 
-#endif
+#endif // KF_PLATFORM_HOST_H

@@ -1,4 +1,4 @@
-#include <kf/platform/prelude.hpp>
+#include <kf/platform/prelude.h>
 #include <kf/lib/null.h>
 
 #include <kf/cutscene/playback.h>
@@ -14,7 +14,7 @@
 #include <cstdlib>
 #include <cstdio>
 #include <cstring>
-#include <kf/platform/input.hpp>
+#include <kf/platform/input.h>
 #include <kf/lib/resources.h>
 
 char opening_initial_tim_path[KF_OPENING_INITIAL_TIM_PATH_BYTES] = "B0/L0.";

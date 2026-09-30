@@ -1,6 +1,6 @@
-#include <kf/audio/sound.hpp>
+#include <kf/audio/sound.h>
 #include <kf/audio/codec.h>
-#include <kf/platform/host.hpp>
+#include <kf/platform/host.h>
 #include <SDL3/SDL.h>
 #include <algorithm>
 #include <cmath>

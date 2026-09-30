@@ -14,4 +14,4 @@ extern void sprite_add_g4(
 extern void opening_entity_render(KfOpeningEntity *entity);
 extern void opening_render_entities(void);
 
-#endif
+#endif // KF_OPEN_OPENING_RENDER_H

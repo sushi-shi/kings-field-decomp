@@ -1,5 +1,6 @@
-#ifndef KF_PLATFORM_CONTROLS_HPP
-#define KF_PLATFORM_CONTROLS_HPP
+#ifndef KF_PLATFORM_CONTROLS_H
+#define KF_PLATFORM_CONTROLS_H
+
 // Collect platform controls; the original game still owns their gameplay meaning.
 #include <kf/lib/types.h>
 #include <cstddef>
@@ -55,4 +56,4 @@ void input_clear(InputState *input);
 InputFrame input_take(InputState *input);
 } // namespace kf
 
-#endif
+#endif // KF_PLATFORM_CONTROLS_H
