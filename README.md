@@ -40,7 +40,7 @@ ae74beba377d686bfaa292ea40df8ade4454ec3139c2b5152364e02aac90b3d9
 ```
 
 The first launch extracts and caches game data locally. Saves use three separate
-slots. No manual extraction or `--impure` is needed.
+slots.
 
 Optional arguments go after `--`:
 
