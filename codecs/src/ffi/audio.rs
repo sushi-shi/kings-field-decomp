@@ -91,7 +91,7 @@ pub unsafe extern "C" fn kf_audio_bank_decode(
     let result = &mut *destination;
     result.volume = bank.header.master_volume;
     result.pan = bank.header.pan;
-    result.sample_count = bank.header.sample_count;
+    result.sample_count = bank.header.sample_count.get();
     let mut packed_program = 0;
     for slot in 0..VAB_PROGRAM_SLOTS {
         let program = match bank.program_slot(slot) {
@@ -118,9 +118,9 @@ pub unsafe extern "C" fn kf_audio_bank_decode(
                 Ok(tone) => tone,
                 Err(error) => return error.into(),
             };
-            if tone.program != slot as i16
-                || tone.sample < 1
-                || tone.sample as u16 > bank.header.sample_count
+            if tone.program.get() != slot as i16
+                || tone.sample.get() < 1
+                || tone.sample.get() as u16 > bank.header.sample_count.get()
                 || tone.volume > midi::DATA_MASK
                 || tone.pan > midi::DATA_MASK
                 || tone.center_shift > midi::DATA_MASK
@@ -147,31 +147,34 @@ pub unsafe extern "C" fn kf_audio_bank_decode(
                 portamento_time: tone.portamento_time,
                 bend_down: tone.pitch_bend_minimum,
                 bend_up: tone.pitch_bend_maximum,
-                sample_index: tone.sample as u16 - 1,
+                sample_index: tone.sample.get() as u16 - 1,
                 envelope: KfAudioEnvelope {
-                    attack_shift: ((tone.adsr1 >> ADSR_ATTACK_SHIFT_OFFSET) & ADSR_RATE_SHIFT_MASK)
-                        as u8,
-                    attack_step: ((tone.adsr1 >> ADSR_ATTACK_STEP_OFFSET) & ADSR_STEP_MASK) as u8,
-                    decay_shift: ((tone.adsr1 >> ADSR_DECAY_SHIFT_OFFSET) & ADSR_DECAY_SHIFT_MASK)
-                        as u8,
-                    sustain_shift: ((tone.adsr2 >> ADSR_SUSTAIN_SHIFT_OFFSET)
+                    attack_shift: ((tone.adsr1.get() >> ADSR_ATTACK_SHIFT_OFFSET)
                         & ADSR_RATE_SHIFT_MASK) as u8,
-                    sustain_step: ((tone.adsr2 >> ADSR_SUSTAIN_STEP_OFFSET) & ADSR_STEP_MASK) as u8,
-                    release_shift: (tone.adsr2 & ADSR_RATE_SHIFT_MASK) as u8,
-                    sustain_level: (((u32::from(tone.adsr1) & ADSR_SUSTAIN_LEVEL_MASK) + 1)
+                    attack_step: ((tone.adsr1.get() >> ADSR_ATTACK_STEP_OFFSET) & ADSR_STEP_MASK)
+                        as u8,
+                    decay_shift: ((tone.adsr1.get() >> ADSR_DECAY_SHIFT_OFFSET)
+                        & ADSR_DECAY_SHIFT_MASK) as u8,
+                    sustain_shift: ((tone.adsr2.get() >> ADSR_SUSTAIN_SHIFT_OFFSET)
+                        & ADSR_RATE_SHIFT_MASK) as u8,
+                    sustain_step: ((tone.adsr2.get() >> ADSR_SUSTAIN_STEP_OFFSET) & ADSR_STEP_MASK)
+                        as u8,
+                    release_shift: (tone.adsr2.get() & ADSR_RATE_SHIFT_MASK) as u8,
+                    sustain_level: (((u32::from(tone.adsr1.get()) & ADSR_SUSTAIN_LEVEL_MASK) + 1)
                         * ADSR_SUSTAIN_LEVEL_STEP)
                         .min(ENVELOPE_LEVEL_MAX) as u16,
-                    attack_exponential: (tone.adsr1 >> ADSR_EXPONENTIAL_OFFSET) as u8,
-                    sustain_exponential: (tone.adsr2 >> ADSR_EXPONENTIAL_OFFSET) as u8,
-                    sustain_decreasing: ((tone.adsr2 >> ADSR_SUSTAIN_DIRECTION_OFFSET) & 1) as u8,
-                    release_exponential: ((tone.adsr2 >> ADSR_RELEASE_EXPONENTIAL_OFFSET) & 1)
+                    attack_exponential: (tone.adsr1.get() >> ADSR_EXPONENTIAL_OFFSET) as u8,
+                    sustain_exponential: (tone.adsr2.get() >> ADSR_EXPONENTIAL_OFFSET) as u8,
+                    sustain_decreasing: ((tone.adsr2.get() >> ADSR_SUSTAIN_DIRECTION_OFFSET) & 1)
+                        as u8,
+                    release_exponential: ((tone.adsr2.get() >> ADSR_RELEASE_EXPONENTIAL_OFFSET) & 1)
                         as u8,
                 },
             };
         }
         packed_program += 1;
     }
-    if packed_program != bank.header.program_count.as_usize() {
+    if packed_program != bank.header.program_count.get().as_usize() {
         return INVALID;
     }
     for sample in bank.samples() {
@@ -306,9 +309,9 @@ pub unsafe extern "C" fn kf_music_decode(
         Ok(sequence) => sequence,
         Err(error) => return error.into(),
     };
-    if sequence.header.version != SUPPORTED_SEQ_VERSION
-        || sequence.header.resolution == 0
-        || sequence.header.tempo == 0
+    if sequence.header.version.get() != SUPPORTED_SEQ_VERSION
+        || sequence.header.resolution.get() == 0
+        || sequence.header.tempo.get() == 0
     {
         return INVALID;
     }
@@ -398,8 +401,8 @@ pub unsafe extern "C" fn kf_music_decode(
                 return INVALID;
             }
             info.write(KfMusicInfo {
-                resolution: u32::from(sequence.header.resolution),
-                tempo: sequence.header.tempo,
+                resolution: u32::from(sequence.header.resolution.get()),
+                tempo: sequence.header.tempo.get(),
                 event_count: count as u32,
             });
             return OK;

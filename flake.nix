@@ -122,7 +122,7 @@
         native = unwrapped;
         launcher = game;
         codec-bindings = pkgs.runCommand "kf-codec-bindings" {
-          nativeBuildInputs = with pkgs; [ rust-bindgen rustfmt cargo rustc clippy ];
+          nativeBuildInputs = with pkgs; [ clang rust-bindgen rustfmt cargo rustc clippy ];
           src = sources;
         } ''
           cp -r "$src" source

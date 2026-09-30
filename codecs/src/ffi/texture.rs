@@ -9,22 +9,23 @@ const TEXTURE_HEIGHT: usize = 512;
 
 fn rectangle_valid(block: &ImageBlock<'_>) -> bool {
     let r = block.rectangle;
-    r.x >= 0
-        && r.y >= 0
-        && r.x < TEXTURE_WIDTH as i16
-        && r.y < TEXTURE_HEIGHT as i16
-        && r.width <= TEXTURE_WIDTH as i16
-        && r.height <= TEXTURE_HEIGHT as i16
+    r.x.get() >= 0
+        && r.y.get() >= 0
+        && r.x.get() < TEXTURE_WIDTH as i16
+        && r.y.get() < TEXTURE_HEIGHT as i16
+        && r.width.get() <= TEXTURE_WIDTH as i16
+        && r.height.get() <= TEXTURE_HEIGHT as i16
 }
 fn copy_block(block: &ImageBlock<'_>, words: &mut [u16]) -> Result<(), crate::bytes::ReadError> {
     let r = block.rectangle;
-    for y in 0..r.height as usize {
-        for x in 0..r.width as usize {
-            let at = (y * r.width as usize + x) * 2;
+    for y in 0..r.height.get() as usize {
+        for x in 0..r.width.get() as usize {
+            let at = (y * r.width.get() as usize + x) * 2;
             // Common CLUT rectangles cross row 511. Authored transfers wrap at
             // the image edges; retain this only during material conversion.
-            words[((r.y as usize + y) & (TEXTURE_HEIGHT - 1)) * TEXTURE_WIDTH
-                + ((r.x as usize + x) & (TEXTURE_WIDTH - 1))] = read_u16_le(block.pixels, at)?;
+            words[((r.y.get() as usize + y) & (TEXTURE_HEIGHT - 1)) * TEXTURE_WIDTH
+                + ((r.x.get() as usize + x) & (TEXTURE_WIDTH - 1))] =
+                read_u16_le(block.pixels, at)?;
         }
     }
     Ok(())

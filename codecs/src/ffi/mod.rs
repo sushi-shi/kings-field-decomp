@@ -90,8 +90,8 @@ fn parse(bytes: &[u8], offset: usize) -> Result<Image<'_>, KfCodecResult> {
 }
 
 fn dimensions(image: &Image<'_>) -> Result<(usize, usize), KfCodecResult> {
-    let words = image.image.rectangle.width as usize;
-    let height = image.image.rectangle.height as usize;
+    let words = image.image.rectangle.width.get() as usize;
+    let height = image.image.rectangle.height.get() as usize;
     let width = match image.mode & TIM_FORMAT_MASK {
         TIM_INDEXED4 => words * 4,
         TIM_INDEXED8 => words * 2,
@@ -130,10 +130,10 @@ pub unsafe extern "C" fn kf_tim_info(
         width: width as u32,
         height: height as u32,
         encoded_bytes: image.encoded_len as u32,
-        image_x: image.image.rectangle.x as i32,
-        image_y: image.image.rectangle.y as i32,
-        palette_x: image.clut.map_or(0, |c| c.rectangle.x as i32),
-        palette_y: image.clut.map_or(0, |c| c.rectangle.y as i32),
+        image_x: image.image.rectangle.x.get() as i32,
+        image_y: image.image.rectangle.y.get() as i32,
+        palette_x: image.clut.map_or(0, |c| c.rectangle.x.get() as i32),
+        palette_y: image.clut.map_or(0, |c| c.rectangle.y.get() as i32),
     });
     OK
 }

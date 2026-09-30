@@ -1,8 +1,9 @@
 #![deny(clippy::as_conversions)]
 
-use crate::bytes::{read, read_i16_le, read_u16_le, read_u32_le, records, span};
+use crate::bytes::{read, records, LeU16, LeU32};
 use crate::cast::AsUsize;
 use crate::ffi::bindings::*;
+use crate::formats;
 use core::panic::Location;
 
 #[derive(Clone, Copy, Debug, PartialEq, Eq)]
@@ -32,23 +33,28 @@ impl From<crate::bytes::ReadError> for Error {
 
 type Result<T> = core::result::Result<T, Error>;
 
-pub fn asset_info(bytes: &[u8]) -> Result<KfAssetInfo> {
-    span(bytes, 0, 20)?;
-    let encoded_bytes = read_u32_le(bytes, 0)?;
-    let clip_count = read_u32_le(bytes, 4)?;
-    let tmd_offset = read_u32_le(bytes, 8)?;
-    if encoded_bytes < 20
+fn asset_header(bytes: &[u8]) -> Result<formats::AssetHeader> {
+    let header: formats::AssetHeader = read(bytes, 0)?;
+    let encoded_bytes = header.encoded_bytes.get();
+    let clip_count = header.clip_count.get();
+    let tmd_offset = header.tmd_offset.get();
+    if encoded_bytes.as_usize() < size_of::<formats::AssetHeader>()
         || encoded_bytes.as_usize() > bytes.len()
-        || tmd_offset < 20
+        || tmd_offset.as_usize() < size_of::<formats::AssetHeader>()
         || tmd_offset > encoded_bytes
         || clip_count > 256
     {
         return Err(Error::invalid());
     }
+    Ok(header)
+}
+
+pub fn asset_info(bytes: &[u8]) -> Result<KfAssetInfo> {
+    let header = asset_header(bytes)?;
     Ok(KfAssetInfo {
-        encoded_bytes,
-        tmd_offset,
-        clip_count,
+        encoded_bytes: header.encoded_bytes.get(),
+        tmd_offset: header.tmd_offset.get(),
+        clip_count: header.clip_count.get(),
     })
 }
 
@@ -66,58 +72,73 @@ pub fn animation(
     vertex_count: u32,
     mut output: Option<AnimationOutput<'_>>,
 ) -> Result<KfAnimationSizes> {
-    let info = asset_info(bytes)?;
-    let bytes = &bytes[..info.encoded_bytes.as_usize()];
+    let header = asset_header(bytes)?;
+    let bytes = &bytes[..header.encoded_bytes.get().as_usize()];
     let mut sizes = KfAnimationSizes {
-        clips: info.clip_count.as_usize(),
+        clips: header.clip_count.get().as_usize(),
         keyframes: 0,
         morphs: 0,
         indices: 0,
         deltas: 0,
     };
-    if info.clip_count == 0 {
+    if header.clip_count.get() == 0 {
         return Ok(sizes);
     }
     if vertex_count == 0 {
         return Err(Error::invalid());
     }
-    let clip_table = records(bytes, read_u32_le(bytes, 16)?.as_usize(), sizes.clips, 4)?;
-    let object_table = read_u32_le(bytes, 12)?.as_usize();
+    let clip_table = records::<LeU32>(
+        bytes,
+        header.clip_table_offset.get().as_usize(),
+        sizes.clips,
+    )?;
+    let morph_table = header.morph_table_offset.get().as_usize();
     // Morph IDs are 16-bit on disc. Validate/decode shared morphs just once.
     let mut used = [0u64; 1024];
-    for (clip_index, offset) in clip_table.chunks_exact(4).enumerate() {
-        let at = read_u32_le(offset, 0)?.as_usize();
-        let count = read_u16_le(bytes, at)?.as_usize();
+    for (clip_index, offset) in clip_table.enumerate() {
+        let at = offset.get().as_usize();
+        let clip: formats::AnimationClip = read(bytes, at)?;
+        let count = clip.keyframe_count.get().as_usize();
         if count == 0 {
             return Err(Error::invalid());
         }
-        let offsets = records(bytes, at.checked_add(4).ok_or(Error::invalid())?, count, 4)?;
+        let offsets = records::<LeU32>(
+            bytes,
+            at.checked_add(size_of::<formats::AnimationClip>())
+                .ok_or(Error::invalid())?,
+            count,
+        )?;
         if let Some(out) = output.as_mut() {
             *out.clips.get_mut(clip_index).ok_or(Error::output_full())? = KfAnimationClipData {
                 first_keyframe: sizes.keyframes,
                 keyframe_count: count,
             };
         }
-        for offset in offsets.chunks_exact(4) {
-            let at = read_u32_le(offset, 0)?.as_usize();
-            let header = span(bytes, at, 8)?;
-            let rest = read_u16_le(header, 4)?;
-            let count = read_u16_le(header, 6)?.as_usize();
-            let indices = records(bytes, at.checked_add(8).ok_or(Error::invalid())?, count, 2)?;
+        for offset in offsets {
+            let at = offset.get().as_usize();
+            let header: formats::AnimationKeyframe = read(bytes, at)?;
+            let rest = header.rest_morph.get();
+            let count = header.morph_count.get().as_usize();
+            let indices = records::<LeU16>(
+                bytes,
+                at.checked_add(size_of::<formats::AnimationKeyframe>())
+                    .ok_or(Error::invalid())?,
+                count,
+            )?;
             used[rest.as_usize() / 64] |= 1u64 << (rest % 64);
             if let Some(out) = output.as_mut() {
                 *out.keyframes
                     .get_mut(sizes.keyframes)
                     .ok_or(Error::output_full())? = KfAnimationKeyframe {
-                    reverse: read_u16_le(header, 0)?,
-                    duration: read_u16_le(header, 2)?,
+                    reverse: header.reverse.get(),
+                    duration: header.duration.get(),
                     rest_morph: rest,
                     first_morph: sizes.indices,
                     morph_count: count,
                 };
             }
-            for index in indices.chunks_exact(2) {
-                let id = read_u16_le(index, 0)?;
+            for index in indices {
+                let id = index.get();
                 used[id.as_usize() / 64] |= 1u64 << (id % 64);
                 if let Some(out) = output.as_mut() {
                     *out.indices
@@ -138,19 +159,21 @@ pub fn animation(
         while bits != 0 {
             let id = block * 64 + bits.trailing_zeros().as_usize();
             bits &= bits - 1;
-            let entry = object_table.checked_add(id * 4).ok_or(Error::invalid())?;
-            let at = read_u32_le(bytes, entry)?.as_usize();
-            let header = span(bytes, at, 12)?;
-            let base_vertex = read_u32_le(header, 4)?;
-            let count = read_u32_le(header, 8)?;
+            let entry = morph_table
+                .checked_add(id * size_of::<LeU32>())
+                .ok_or(Error::invalid())?;
+            let at = read::<LeU32>(bytes, entry)?.get().as_usize();
+            let header: formats::AnimationMorph = read(bytes, at)?;
+            let base_vertex = header.base_vertex.get();
+            let count = header.delta_count.get();
             if base_vertex > vertex_count || count > vertex_count - base_vertex {
                 return Err(Error::invalid());
             }
-            let deltas = records(
+            let deltas = records::<formats::AnimationDelta>(
                 bytes,
-                at.checked_add(12).ok_or(Error::invalid())?,
+                at.checked_add(size_of::<formats::AnimationMorph>())
+                    .ok_or(Error::invalid())?,
                 count.as_usize(),
-                8,
             )?;
             if let Some(out) = output.as_mut() {
                 *out.morphs.get_mut(id).ok_or(Error::output_full())? = KfAnimationMorph {
@@ -159,14 +182,14 @@ pub fn animation(
                     delta_count: count.as_usize(),
                 };
             }
-            for delta in deltas.chunks_exact(8) {
+            for delta in deltas {
                 if let Some(out) = output.as_mut() {
                     *out.deltas
                         .get_mut(sizes.deltas)
                         .ok_or(Error::output_full())? = KfAnimationDelta {
-                        x: read_i16_le(delta, 0)?,
-                        y: read_i16_le(delta, 2)?,
-                        z: read_i16_le(delta, 4)?,
+                        x: delta.x.get(),
+                        y: delta.y.get(),
+                        z: delta.z.get(),
                     };
                 }
                 sizes.deltas = sizes.deltas.checked_add(1).ok_or(Error::invalid())?;
@@ -180,18 +203,19 @@ pub fn animation(
     Ok(sizes)
 }
 
-fn placements<T>(
+fn placements<Wire: bytemuck::AnyBitPattern, T>(
     bytes: &[u8],
-    width: usize,
     output: &mut [T],
-    decode: impl Fn(&[u8]) -> Result<T>,
+    decode: impl Fn(Wire) -> Result<T>,
 ) -> Result<usize> {
     for (index, slot) in output.iter_mut().enumerate() {
-        let at = index.checked_mul(width).ok_or(Error::invalid())?;
+        let at = index
+            .checked_mul(size_of::<Wire>())
+            .ok_or(Error::invalid())?;
         if *bytes.get(at).ok_or(Error::invalid())? == 255 {
             return Ok(index);
         }
-        *slot = decode(span(bytes, at, width)?)?;
+        *slot = decode(read(bytes, at)?)?;
     }
     Ok(output.len())
 }
@@ -208,9 +232,9 @@ pub fn actors(
     limits: KfPlacementLimits,
     output: &mut [KfActorPlacementData],
 ) -> Result<usize> {
-    placements(bytes, 16, output, |b| {
-        cell(b[3], b[4], limits)?;
-        for (tile, local) in [(b[3], read_i16_le(b, 10)?), (b[4], read_i16_le(b, 12)?)] {
+    placements(bytes, output, |b: formats::ActorPlacement| {
+        cell(b.tile_z, b.tile_x, limits)?;
+        for (tile, local) in [(b.tile_z, b.local_z.get()), (b.tile_x, b.local_x.get())] {
             let position = i64::from(tile) * i64::from(limits.tile_size) + i64::from(local);
             let extent = i64::from(limits.map_side)
                 .checked_mul(i64::from(limits.tile_size))
@@ -219,20 +243,23 @@ pub fn actors(
                 return Err(Error::invalid());
             }
         }
-        if b[0] > 3 || u32::from(b[1] & 31) >= limits.definitions || b[2] > 3 {
+        if b.slot_state > 3
+            || u32::from(b.definition_flags & 31) >= limits.definitions
+            || b.heading_quadrant > 3
+        {
             return Err(Error::invalid());
         }
         Ok(KfActorPlacementData {
-            slot_state: b[0],
-            definition_id: b[1] & 31,
-            near_square_culling: u8::from(b[1] & 32 != 0),
-            heading_quadrant: b[2],
-            tile_z: b[3],
-            tile_x: b[4],
-            spawn_chance: b[5],
-            death_drop_object_id: b[6],
-            local_z: read_i16_le(b, 10)?,
-            local_x: read_i16_le(b, 12)?,
+            slot_state: b.slot_state,
+            definition_id: b.definition_flags & 31,
+            near_square_culling: u8::from(b.definition_flags & 32 != 0),
+            heading_quadrant: b.heading_quadrant,
+            tile_z: b.tile_z,
+            tile_x: b.tile_x,
+            spawn_chance: b.spawn_chance,
+            death_drop_object_id: b.death_drop_object_id,
+            local_z: b.local_z.get(),
+            local_x: b.local_x.get(),
         })
     })
 }
@@ -242,20 +269,20 @@ pub fn objects(
     limits: KfPlacementLimits,
     output: &mut [KfObjectPlacementData],
 ) -> Result<usize> {
-    placements(bytes, 20, output, |b| {
-        cell(b[2], b[3], limits)?;
-        if u32::from(b[0]) >= limits.definitions {
+    placements(bytes, output, |b: formats::ObjectPlacement| {
+        cell(b.tile_z, b.tile_x, limits)?;
+        if u32::from(b.object_id) >= limits.definitions {
             return Err(Error::invalid());
         }
         Ok(KfObjectPlacementData {
-            object_id: b[0],
-            tile_z: b[2],
-            tile_x: b[3],
-            yaw: read_u16_le(b, 4)?,
-            local_z: read_i16_le(b, 6)?,
-            local_x: read_i16_le(b, 8)?,
-            local_y: read_i16_le(b, 10)?,
-            link: [read_u32_le(b, 12)?, read_u32_le(b, 16)?],
+            object_id: b.object_id,
+            tile_z: b.tile_z,
+            tile_x: b.tile_x,
+            yaw: b.yaw.get(),
+            local_z: b.local_z.get(),
+            local_x: b.local_x.get(),
+            local_y: b.local_y.get(),
+            link: [b.link[0].get(), b.link[1].get()],
         })
     })
 }
@@ -265,30 +292,30 @@ pub fn events(
     limits: KfPlacementLimits,
     output: &mut [KfEventPlacementData],
 ) -> Result<usize> {
-    placements(bytes, 24, output, |b| {
-        cell(b[3], b[4], limits)?;
-        if !matches!(b[0], 0 | 1 | 3)
-            || u32::from(b[2]) >= limits.definitions
-            || b[10] > 5
-            || b[13] > 2
+    placements(bytes, output, |b: formats::EventPlacement| {
+        cell(b.cell_z, b.cell_x, limits)?;
+        if !matches!(b.state, 0 | 1 | 3)
+            || u32::from(b.model_index) >= limits.definitions
+            || b.dialogue_stage_limit > 5
+            || b.behavior > 2
         {
             return Err(Error::invalid());
         }
         Ok(KfEventPlacementData {
-            state: b[0],
-            character_id: b[1],
-            model_index: b[2],
-            cell_z: b[3],
-            cell_x: b[4],
-            dialogue_pages: read(b, 5)?,
-            dialogue_stage_limit: b[10],
-            unknown_0b: b[11],
-            unknown_0c: b[12],
-            behavior: b[13],
-            position_z_offset: read_i16_le(b, 14)?,
-            position_x_offset: read_i16_le(b, 16)?,
-            initial_rotation: read_u16_le(b, 18)?,
-            radius: read_u16_le(b, 20)?,
+            state: b.state,
+            character_id: b.character_id,
+            model_index: b.model_index,
+            cell_z: b.cell_z,
+            cell_x: b.cell_x,
+            dialogue_pages: b.dialogue_pages,
+            dialogue_stage_limit: b.dialogue_stage_limit,
+            unknown_0b: b.unknown_0b,
+            unknown_0c: b.unknown_0c,
+            behavior: b.behavior,
+            position_z_offset: b.position_z_offset.get(),
+            position_x_offset: b.position_x_offset.get(),
+            initial_rotation: b.initial_rotation.get(),
+            radius: b.radius.get(),
         })
     })
 }

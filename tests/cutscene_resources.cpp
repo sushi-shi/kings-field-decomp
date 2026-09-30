@@ -43,14 +43,21 @@ int main(int argc, char **argv)
     assert(argc == 3);
     const std::string_view consumer = argv[1], scenario = argv[2];
     if (consumer == "placements") {
-        KfMapObjectPlacement entries[2] {};
-        entries[1].object_id = 0xff;
-        std::size_t size = sizeof entries;
-        if (scenario == "truncated") size = sizeof(entries[0]) - 1;
-        if (scenario == "unterminated") size = sizeof(entries[0]);
-        if (scenario == "outside-grid") entries[0].tile_x = KF_MAP_COLUMNS;
-        opening_entity_pool_load_placements({reinterpret_cast<const u8 *>(entries), size}, 0);
+        std::vector<u8> bytes(21);
+        bytes[20] = 0xff;
+        bytes[8] = bytes[9] = bytes[11] = 0xff;
+        bytes[10] = 0xfe;
+        std::size_t size = bytes.size();
+        if (scenario == "truncated") size = 19;
+        if (scenario == "unterminated") size = 20;
+        if (scenario == "outside-grid" || scenario == "fixed-height") bytes[3] = KF_MAP_COLUMNS;
+        if (scenario == "unaligned") bytes.insert(bytes.begin(), 0);
+        opening_entity_pool_load_placements(
+            {bytes.data() + (scenario == "unaligned"), size}, scenario == "fixed-height" ? 42 : 0);
         assert(opening_entity_state.entities[0].object_id == static_cast<KfOpeningModelId>(0));
+        assert(opening_entity_state.entities[0].position.vx ==
+               (scenario == "fixed-height" ? KF_MAP_COLUMNS * KF_MAP_TILE_SIZE : 0) - 1);
+        assert(opening_entity_state.entities[0].position.vy == (scenario == "fixed-height" ? 40 : -2));
         assert(opening_entity_state.entities[1].object_id == KF_OPENING_ENTITY_FREE);
         return 0;
     }

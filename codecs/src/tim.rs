@@ -1,10 +1,9 @@
 use crate::bytes::{self, read_u32_le, span, ReadError};
 use crate::cast::AsUsize;
+use crate::formats::{TimBlock, TimHeader, TimRectangle};
 use core::fmt;
 
 pub const TIM_MAGIC: u32 = 0x10;
-pub const TIM_HEADER_BYTES: usize = 8;
-pub const TIM_MODE_OFFSET: usize = 4;
 pub const TIM_FORMAT_MASK: u32 = 7;
 pub const TIM_CLUT_FLAG: u32 = 8;
 pub const TIM_FLAGS_MASK: u32 = 15;
@@ -13,8 +12,6 @@ pub const TIM_INDEXED8: u32 = 1;
 pub const TIM_DIRECT16: u32 = 2;
 pub const TIM_DIRECT24: u32 = 3;
 const BLOCK_SIZE_LOW_BITS: u32 = 3;
-const BLOCK_HEADER_BYTES: usize = 12;
-const BLOCK_RECTANGLE_OFFSET: usize = 4;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum TimError {
@@ -54,17 +51,9 @@ impl fmt::Display for TimError {
 
 impl core::error::Error for TimError {}
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct Rect {
-    pub x: i16,
-    pub y: i16,
-    pub width: i16,
-    pub height: i16,
-}
-
 #[derive(Debug, Clone, Copy)]
 pub struct ImageBlock<'a> {
-    pub rectangle: Rect,
+    pub rectangle: TimRectangle,
 
     pub pixels: &'a [u8],
 }
@@ -98,8 +87,9 @@ impl<'a> Images<'a> {
             return Ok(None);
         }
         let start = self.at;
-        let mode = read_u32_le(self.bytes, start + TIM_MODE_OFFSET)?;
-        let mut cursor = start + TIM_HEADER_BYTES;
+        let header: TimHeader = bytes::read(self.bytes, start)?;
+        let mode = header.mode.get();
+        let mut cursor = start + size_of::<TimHeader>();
         let clut = if mode & TIM_CLUT_FLAG != 0 {
             Some(block(self.bytes, &mut cursor)?)
         } else {
@@ -136,35 +126,30 @@ impl<'a> Iterator for Images<'a> {
 
 fn block<'a>(bytes: &'a [u8], cursor: &mut usize) -> Result<ImageBlock<'a>, TimError> {
     let at = *cursor;
-    let declared = read_u32_le(bytes, at)?;
+    let header: TimBlock = bytes::read(bytes, at)?;
+    let declared = header.encoded_bytes.get();
     let size = (declared & !BLOCK_SIZE_LOW_BITS).as_usize();
-    if size < BLOCK_HEADER_BYTES {
+    if size < size_of::<TimBlock>() {
         return Err(TimError::InvalidBlockSize { at, declared });
     }
     let encoded = span(bytes, at, size)?;
-    let record = bytes::Record::<8>::new(&encoded[BLOCK_RECTANGLE_OFFSET..])?;
-    let rectangle = Rect {
-        x: record.i16_le::<0>(),
-        y: record.i16_le::<2>(),
-        width: record.i16_le::<4>(),
-        height: record.i16_le::<6>(),
-    };
-    if rectangle.width < 0 || rectangle.height < 0 {
+    let rectangle = header.rectangle;
+    if rectangle.width.get() < 0 || rectangle.height.get() < 0 {
         return Err(TimError::InvalidRectangle {
             at,
-            width: rectangle.width,
-            height: rectangle.height,
+            width: rectangle.width.get(),
+            height: rectangle.height.get(),
         });
     }
-    let count = (rectangle.width as usize)
-        .checked_mul(rectangle.height as usize)
+    let count = (rectangle.width.get() as usize)
+        .checked_mul(rectangle.height.get() as usize)
         .and_then(|value| value.checked_mul(2))
         .ok_or(TimError::InvalidRectangle {
             at,
-            width: rectangle.width,
-            height: rectangle.height,
+            width: rectangle.width.get(),
+            height: rectangle.height.get(),
         })?;
-    let pixels = span(encoded, BLOCK_HEADER_BYTES, count)?;
+    let pixels = span(encoded, size_of::<TimBlock>(), count)?;
     *cursor = at + size;
     Ok(ImageBlock { rectangle, pixels })
 }

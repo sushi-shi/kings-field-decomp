@@ -1,14 +1,15 @@
 use crate::bytes;
 use crate::cast::AsUsize;
+use crate::formats::{SeqHeader, VabHeader, VabProgram, VabTone};
 
 use core::fmt;
 
 pub const VAB_MAGIC: [u8; 4] = *b"pBAV";
-pub const VAB_HEADER_SIZE: usize = 32;
+const VAB_HEADER_SIZE: usize = size_of::<VabHeader>();
 pub const VAB_PROGRAM_SLOTS: usize = 128;
-pub const VAB_PROGRAM_SIZE: usize = 16;
+const VAB_PROGRAM_SIZE: usize = size_of::<VabProgram>();
 pub const VAB_TONES_PER_PROGRAM: usize = 16;
-pub const VAB_TONE_SIZE: usize = 32;
+const VAB_TONE_SIZE: usize = size_of::<VabTone>();
 pub const VAB_OFFSET_ENTRIES: usize = 256;
 pub const VAB_OFFSET_TABLE_SIZE: usize = VAB_OFFSET_ENTRIES * 2;
 pub const VAB_SAMPLE_UNIT: usize = 8;
@@ -49,7 +50,7 @@ pub mod midi {
 }
 
 pub const SEQ_MAGIC: [u8; 4] = *b"pQES";
-pub const SEQ_HEADER_SIZE: usize = 15;
+const SEQ_HEADER_SIZE: usize = size_of::<SeqHeader>();
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum VabError {
@@ -107,107 +108,21 @@ impl fmt::Display for VabError {
 
 impl core::error::Error for VabError {}
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct VabHeader {
-    pub file_size: u32,
-    pub program_count: u16,
-    pub tone_count: u16,
-    pub sample_count: u16,
-    pub master_volume: u8,
-    pub pan: u8,
-}
-
 impl VabHeader {
     pub fn parse(bytes: &[u8]) -> Result<Self, VabError> {
-        let record = bytes::Record::<VAB_HEADER_SIZE>::new(bytes)?;
-        let form: [u8; 4] = record.read::<0, _>();
-        if form != VAB_MAGIC {
-            return Err(VabError::InvalidMagic(form));
+        let record: Self = bytes::read(bytes, 0)?;
+        if record.magic != VAB_MAGIC {
+            return Err(VabError::InvalidMagic(record.magic));
         }
-        Ok(Self {
-            file_size: record.u32_le::<12>(),
-            program_count: record.u16_le::<18>(),
-            tone_count: record.u16_le::<20>(),
-            sample_count: record.u16_le::<22>(),
-            master_volume: record.u8::<24>(),
-            pan: record.u8::<25>(),
-        })
+        Ok(record)
     }
 
     pub fn encoded_header_len(self) -> Result<usize, VabError> {
         validate_counts(self)?;
         Ok(VAB_HEADER_SIZE
             + VAB_PROGRAM_SLOTS * VAB_PROGRAM_SIZE
-            + self.program_count.as_usize() * VAB_TONES_PER_PROGRAM * VAB_TONE_SIZE
+            + self.program_count.get().as_usize() * VAB_TONES_PER_PROGRAM * VAB_TONE_SIZE
             + VAB_OFFSET_TABLE_SIZE)
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct VabProgram {
-    pub tone_count: u8,
-    pub master_volume: u8,
-    pub priority: u8,
-    pub pan: u8,
-}
-
-impl VabProgram {
-    fn parse(bytes: &[u8]) -> Result<Self, VabError> {
-        let record = bytes::Record::<VAB_PROGRAM_SIZE>::new(bytes)?;
-        Ok(Self {
-            tone_count: record.u8::<0>(),
-            master_volume: record.u8::<1>(),
-            priority: record.u8::<2>(),
-            pan: record.u8::<4>(),
-        })
-    }
-}
-
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct VabTone {
-    pub priority: u8,
-    pub mode: u8,
-    pub volume: u8,
-    pub pan: u8,
-    pub center_note: u8,
-    pub center_shift: u8,
-    pub minimum_note: u8,
-    pub maximum_note: u8,
-    pub vibrato_width: u8,
-    pub vibrato_time: u8,
-    pub portamento_width: u8,
-    pub portamento_time: u8,
-    pub pitch_bend_minimum: u8,
-    pub pitch_bend_maximum: u8,
-    pub adsr1: u16,
-    pub adsr2: u16,
-    pub program: i16,
-    pub sample: i16,
-}
-
-impl VabTone {
-    fn parse(bytes: &[u8]) -> Result<Self, VabError> {
-        let record = bytes::Record::<VAB_TONE_SIZE>::new(bytes)?;
-        Ok(Self {
-            priority: record.u8::<0>(),
-            mode: record.u8::<1>(),
-            volume: record.u8::<2>(),
-            pan: record.u8::<3>(),
-            center_note: record.u8::<4>(),
-            center_shift: record.u8::<5>(),
-            minimum_note: record.u8::<6>(),
-            maximum_note: record.u8::<7>(),
-            vibrato_width: record.u8::<8>(),
-            vibrato_time: record.u8::<9>(),
-            portamento_width: record.u8::<10>(),
-            portamento_time: record.u8::<11>(),
-            pitch_bend_minimum: record.u8::<12>(),
-            pitch_bend_maximum: record.u8::<13>(),
-            adsr1: record.u16_le::<16>(),
-            adsr2: record.u16_le::<18>(),
-            program: record.i16_le::<20>(),
-            sample: record.i16_le::<22>(),
-        })
     }
 }
 
@@ -235,12 +150,12 @@ impl<'a> VabBank<'a> {
                 .len()
                 .checked_add(body_bytes.len())
                 .ok_or(VabError::FileSize {
-                    declared: header.file_size,
+                    declared: header.file_size.get(),
                     actual: usize::MAX,
                 })?;
-        if header.file_size.as_usize() != actual_file_size {
+        if header.file_size.get().as_usize() != actual_file_size {
             return Err(VabError::FileSize {
-                declared: header.file_size,
+                declared: header.file_size.get(),
                 actual: actual_file_size,
             });
         }
@@ -251,7 +166,7 @@ impl<'a> VabBank<'a> {
             return Err(VabError::NonzeroFirstSampleOffset(first));
         }
         let mut body_len = 0usize;
-        for sample in 0..header.sample_count {
+        for sample in 0..header.sample_count.get() {
             let units = bytes::read_u16_le(
                 header_bytes,
                 offset_table_offset + (sample.as_usize() + 1) * 2,
@@ -287,14 +202,14 @@ impl<'a> VabBank<'a> {
             });
         }
         let at = VAB_HEADER_SIZE + index * VAB_PROGRAM_SIZE;
-        VabProgram::parse(bytes::span(self.header_bytes, at, VAB_PROGRAM_SIZE)?)
+        Ok(bytes::read(self.header_bytes, at)?)
     }
 
     pub fn tone(&self, program: usize, tone: usize) -> Result<VabTone, VabError> {
-        if program >= self.header.program_count.as_usize() {
+        if program >= self.header.program_count.get().as_usize() {
             return Err(VabError::InvalidIndex {
                 index: program,
-                count: self.header.program_count.as_usize(),
+                count: self.header.program_count.get().as_usize(),
             });
         }
         if tone >= VAB_TONES_PER_PROGRAM {
@@ -304,14 +219,14 @@ impl<'a> VabBank<'a> {
             });
         }
         let at = self.tone_table_offset + (program * VAB_TONES_PER_PROGRAM + tone) * VAB_TONE_SIZE;
-        VabTone::parse(bytes::span(self.header_bytes, at, VAB_TONE_SIZE)?)
+        Ok(bytes::read(self.header_bytes, at)?)
     }
 
     pub fn sample_size_units(&self, sample: usize) -> Result<u16, VabError> {
-        if sample >= self.header.sample_count.as_usize() {
+        if sample >= self.header.sample_count.get().as_usize() {
             return Err(VabError::InvalidIndex {
                 index: sample,
-                count: self.header.sample_count.as_usize(),
+                count: self.header.sample_count.get().as_usize(),
             });
         }
         Ok(bytes::read_u16_le(
@@ -330,27 +245,28 @@ impl<'a> VabBank<'a> {
 }
 
 fn validate_counts(header: VabHeader) -> Result<(), VabError> {
-    if header.program_count.as_usize() > VAB_PROGRAM_SLOTS {
+    if header.program_count.get().as_usize() > VAB_PROGRAM_SLOTS {
         return Err(VabError::InvalidCount {
             field: "programs",
-            value: header.program_count,
+            value: header.program_count.get(),
             maximum: VAB_PROGRAM_SLOTS as u16,
         });
     }
     let maximum_tones = header
         .program_count
+        .get()
         .saturating_mul(VAB_TONES_PER_PROGRAM as u16);
-    if header.tone_count > maximum_tones {
+    if header.tone_count.get() > maximum_tones {
         return Err(VabError::InvalidCount {
             field: "tones",
-            value: header.tone_count,
+            value: header.tone_count.get(),
             maximum: maximum_tones,
         });
     }
-    if header.sample_count.as_usize() >= VAB_OFFSET_ENTRIES {
+    if header.sample_count.get().as_usize() >= VAB_OFFSET_ENTRIES {
         return Err(VabError::InvalidCount {
             field: "samples",
-            value: header.sample_count,
+            value: header.sample_count.get(),
             maximum: (VAB_OFFSET_ENTRIES - 1) as u16,
         });
     }
@@ -374,13 +290,13 @@ impl<'a> Iterator for VabSamples<'a> {
     type Item = Result<VabSample<'a>, VabError>;
 
     fn next(&mut self) -> Option<Self::Item> {
-        if self.index == self.bank.header.sample_count {
+        if self.index == self.bank.header.sample_count.get() {
             return None;
         }
         let size_units = match self.bank.sample_size_units(self.index.as_usize()) {
             Ok(units) => units,
             Err(error) => {
-                self.index = self.bank.header.sample_count;
+                self.index = self.bank.header.sample_count.get();
                 return Some(Err(error));
             }
         };
@@ -442,26 +358,13 @@ impl fmt::Display for SeqError {
 
 impl core::error::Error for SeqError {}
 
-#[derive(Debug, Clone, Copy, PartialEq, Eq)]
-pub struct SeqHeader {
-    pub version: u32,
-    pub resolution: u16,
-
-    pub tempo: u32,
-}
-
 impl SeqHeader {
     pub fn parse(bytes: &[u8]) -> Result<Self, SeqError> {
-        let record = bytes::Record::<SEQ_HEADER_SIZE>::new(bytes)?;
-        let form: [u8; 4] = record.read::<0, _>();
-        if form != SEQ_MAGIC {
-            return Err(SeqError::InvalidMagic(form));
+        let record: Self = bytes::read(bytes, 0)?;
+        if record.magic != SEQ_MAGIC {
+            return Err(SeqError::InvalidMagic(record.magic));
         }
-        Ok(Self {
-            version: record.u32_be::<4>(),
-            resolution: record.u16_be::<8>(),
-            tempo: record.u24_be::<10>(),
-        })
+        Ok(record)
     }
 }
 

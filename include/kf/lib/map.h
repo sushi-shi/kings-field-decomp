@@ -201,18 +201,6 @@ typedef union KfMapObjectLink {
     u32 words[2];
 } KfMapObjectLink;
 
-typedef struct KfMapObjectPlacement {
-    u8 object_id;
-    u8 unknown_01;
-    u8 tile_z;
-    u8 tile_x;
-    u16 yaw;
-    s16 local_z;
-    s16 local_x;
-    s16 local_y;
-    KfMapObjectLink link;
-} KfMapObjectPlacement;
-
 typedef struct KfMapObject {
     KfObjectId object_id;
     u8 unknown_01;

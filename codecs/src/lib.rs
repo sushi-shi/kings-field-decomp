@@ -10,6 +10,8 @@ mod cast;
 mod audio;
 mod ffi;
 #[forbid(unsafe_code)]
+mod formats;
+#[forbid(unsafe_code)]
 mod resources;
 #[forbid(unsafe_code)]
 mod tim;

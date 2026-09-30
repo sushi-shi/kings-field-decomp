@@ -13,54 +13,34 @@ pub(crate) struct ReadError {
 
 type Result<T> = core::result::Result<T, ReadError>;
 
-pub(crate) struct Record<'a, const SIZE: usize> {
-    bytes: &'a [u8; SIZE],
+macro_rules! endian {
+    ($name:ident, $value:ty, $size:literal, $decode:ident) => {
+        #[repr(transparent)]
+        #[derive(Clone, Copy, Debug, bytemuck::Pod, bytemuck::Zeroable)]
+        pub(crate) struct $name([u8; $size]);
+
+        impl $name {
+            pub(crate) fn get(self) -> $value {
+                <$value>::$decode(self.0)
+            }
+        }
+    };
 }
 
-impl<'a, const SIZE: usize> Record<'a, SIZE> {
-    #[track_caller]
-    pub(crate) fn new(bytes: &'a [u8]) -> Result<Self> {
-        let bytes = bytes.first_chunk().ok_or(ReadError {
-            location: Location::caller(),
-            at: 0,
-            need: SIZE,
-            available: bytes.len(),
-        })?;
-        Ok(Self { bytes })
-    }
+endian!(LeU16, u16, 2, from_le_bytes);
+endian!(LeI16, i16, 2, from_le_bytes);
+endian!(LeU32, u32, 4, from_le_bytes);
+endian!(BeU16, u16, 2, from_be_bytes);
+endian!(BeU32, u32, 4, from_be_bytes);
 
-    pub(crate) fn read<const AT: usize, T: bytemuck::AnyBitPattern>(&self) -> T {
-        const { assert!(AT <= SIZE && size_of::<T>() <= SIZE - AT) };
-        bytemuck::pod_read_unaligned(&self.bytes[AT..AT + size_of::<T>()])
-    }
+#[repr(transparent)]
+#[derive(Clone, Copy, Debug, bytemuck::Pod, bytemuck::Zeroable)]
+pub(crate) struct BeU24([u8; 3]);
 
-    pub(crate) fn u8<const AT: usize>(&self) -> u8 {
-        self.read::<AT, _>()
-    }
-
-    pub(crate) fn u16_le<const AT: usize>(&self) -> u16 {
-        u16::from_le(self.read::<AT, _>())
-    }
-
-    pub(crate) fn i16_le<const AT: usize>(&self) -> i16 {
-        i16::from_le(self.read::<AT, _>())
-    }
-
-    pub(crate) fn u32_le<const AT: usize>(&self) -> u32 {
-        u32::from_le(self.read::<AT, _>())
-    }
-
-    pub(crate) fn u16_be<const AT: usize>(&self) -> u16 {
-        u16::from_be(self.read::<AT, _>())
-    }
-
-    pub(crate) fn u32_be<const AT: usize>(&self) -> u32 {
-        u32::from_be(self.read::<AT, _>())
-    }
-
-    pub(crate) fn u24_be<const AT: usize>(&self) -> u32 {
-        let [a, b, c] = self.read::<AT, [u8; 3]>();
-        u32::from_be(bytemuck::cast([0, a, b, c]))
+impl BeU24 {
+    pub(crate) fn get(self) -> u32 {
+        let [a, b, c] = self.0;
+        u32::from_be_bytes([0, a, b, c])
     }
 }
 
@@ -77,14 +57,21 @@ pub(crate) fn span(bytes: &[u8], at: usize, size: usize) -> Result<&[u8]> {
 }
 
 #[track_caller]
-pub(crate) fn records(bytes: &[u8], at: usize, count: usize, width: usize) -> Result<&[u8]> {
-    let size = count.checked_mul(width).ok_or(ReadError {
+pub(crate) fn records<T: bytemuck::AnyBitPattern>(
+    bytes: &[u8],
+    at: usize,
+    count: usize,
+) -> Result<impl ExactSizeIterator<Item = T> + '_> {
+    const { assert!(size_of::<T>() != 0) };
+    let size = count.checked_mul(size_of::<T>()).ok_or(ReadError {
         location: Location::caller(),
         at,
         need: usize::MAX,
         available: bytes.len().saturating_sub(at),
     })?;
-    span(bytes, at, size)
+    Ok(span(bytes, at, size)?
+        .chunks_exact(size_of::<T>())
+        .map(bytemuck::pod_read_unaligned))
 }
 
 #[track_caller]
@@ -99,23 +86,15 @@ pub(crate) fn read<T: bytemuck::AnyBitPattern>(bytes: &[u8], at: usize) -> Resul
 
 #[track_caller]
 pub(crate) fn read_u16_le(bytes: &[u8], at: usize) -> Result<u16> {
-    read(bytes, at).map(u16::from_le)
-}
-
-#[track_caller]
-pub(crate) fn read_i16_le(bytes: &[u8], at: usize) -> Result<i16> {
-    read(bytes, at).map(i16::from_le)
+    read(bytes, at).map(LeU16::get)
 }
 
 #[track_caller]
 pub(crate) fn read_u32_le(bytes: &[u8], at: usize) -> Result<u32> {
-    read(bytes, at).map(u32::from_le)
+    read(bytes, at).map(LeU32::get)
 }
 
 #[track_caller]
 pub(crate) fn read_u24_be(bytes: &[u8], at: usize) -> Result<u32> {
-    let bytes = span(bytes, at, 3)?;
-    Ok(u32::from_be(bytemuck::cast([
-        0, bytes[0], bytes[1], bytes[2],
-    ])))
+    read(bytes, at).map(BeU24::get)
 }
