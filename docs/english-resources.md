@@ -79,7 +79,7 @@ The English data is the translator's own release: John Osborne's
 fetches it from the Wayback Machine copy of the translator's site, pinned by
 SHA-256; nothing translated is stored in this repository or re-hosted. The
 build converts the PPF into the file-level delta below with
-`scripts/english_patch.py from-ppf`, using `resources/slps-00017-layout.tsv`, the
+`scripts/english_patch.py from-ppf`, using `scripts/slps-00017-layout.tsv`, the
 committed table of the Japanese disc's 428 file extents (path, first
 2352-byte sector, size). PPF bytes outside file data (sector headers,
 EDC/ECC) are dropped. Applying the translator's PPF to the Japanese BIN
@@ -89,7 +89,7 @@ reproduces all 428 English files.
 `nix develop` exports the derived delta as `KF_ENGLISH_PATCH`, and the Nix
 package passes it to CMake, so both embed English automatically. Outside Nix,
 CMake falls back to
-an ignored local `resources/english-v1.kfdelta`, which `english_patch.py create`
+`english-v1.kfdelta` in its build directory, which `english_patch.py create`
 or `from-ppf` can produce. A build without any payload still supports Japanese
 and reports clearly that English generation is unavailable.
 
@@ -99,7 +99,7 @@ extent table from a Japanese BIN:
 
 ```sh
 nix develop --command python3 scripts/english_patch.py layout \
-  --disc /path/to/Japanese.bin --output resources/slps-00017-layout.tsv
+  --disc /path/to/Japanese.bin --output scripts/slps-00017-layout.tsv
 ```
 
 The versioned delta stores sorted resource paths, unchanged file lengths, and

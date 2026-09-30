@@ -12,7 +12,7 @@
         filter = path: type:
           let
             relative = pkgs.lib.removePrefix "${toString ./.}/" (toString path);
-            sourceDirectories = [ "src" "include" "codecs" "web" "scripts" "resources" ];
+            sourceDirectories = [ "src" "include" "codecs" "web" "scripts" ];
           in pkgs.lib.cleanSourceFilter path type
             && !(builtins.elem (baseNameOf path) [ "build" "target" "__pycache__" ])
             && (builtins.elem relative [ "CMakeLists.txt" ]
@@ -34,7 +34,7 @@
       } ''
         bsdtar -xOf ${englishTranslation} "KF Jap to Eng v1.0.ppf" > translation.ppf
         python3 ${./scripts/english_patch.py} from-ppf --ppf translation.ppf \
-          --layout ${./resources/slps-00017-layout.tsv} --output "$out"
+          --layout ${./scripts/slps-00017-layout.tsv} --output "$out"
       '';
       unwrapped = pkgs.clangStdenv.mkDerivation {
         pname = "kings-field";

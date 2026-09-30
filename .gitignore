@@ -10,4 +10,4 @@ __pycache__/
 *.iso
 
 # Derived translation payload; never commit or publish (terms unstated).
-/resources/*.kfdelta
+*.kfdelta
