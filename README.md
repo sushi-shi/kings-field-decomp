@@ -111,4 +111,5 @@ Linux controls, brief combat, general rendering and native/browser audio have
 been user-checked. Native save/load and browser cache/save persistence have
 bounded verification; the natural ending and re-entry still need a suitable run.
 
-See [remaining work](docs/port-status.md) and [technical notes](docs/port-findings.md).
+See [open issues](https://github.com/sushi-shi/kings-field-decomp/issues) and
+[technical notes](docs/port-notes.md).
