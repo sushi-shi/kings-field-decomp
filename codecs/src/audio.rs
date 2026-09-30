@@ -2,6 +2,51 @@ use crate::bytes;
 use crate::cast::AsUsize;
 use crate::formats::{SeqHeader, VabHeader, VabProgram, VabTone};
 
+bitflags::bitflags! {
+    #[derive(Clone, Copy, Debug)]
+    pub(crate) struct ToneFlags: u8 {
+        const REVERB = 1 << 2;
+    }
+
+    #[derive(Clone, Copy, Debug)]
+    pub(crate) struct AdpcmFlags: u8 {
+        const END = 1 << 0;
+        const REPEAT = 1 << 1;
+        const LOOP_START = 1 << 2;
+    }
+}
+
+pub(crate) struct AdpcmHeader {
+    pub coefficients: (i32, i32),
+    pub shift: u8,
+    pub flags: AdpcmFlags,
+}
+
+impl AdpcmHeader {
+    pub(crate) fn parse(bytes: &[u8]) -> crate::Result<Self> {
+        let raw: crate::formats::AdpcmHeader = bytes::read(bytes, 0)?;
+        let coefficients = match raw.predictor_shift >> 4 {
+            0 => (0, 0),
+            1 => (60, 0),
+            2 => (115, -52),
+            3 => (98, -55),
+            4 => (122, -60),
+            _ => crate::bail!("invalid ADPCM filter"),
+        };
+        let shift = match raw.predictor_shift & 15 {
+            value @ 0..=12 => value,
+            _ => 9,
+        };
+        let flags =
+            AdpcmFlags::from_bits(raw.flags).ok_or(crate::Error::invalid("unknown ADPCM flags"))?;
+        Ok(Self {
+            coefficients,
+            shift,
+            flags,
+        })
+    }
+}
+
 pub const VAB_MAGIC: [u8; 4] = *b"pBAV";
 const VAB_HEADER_SIZE: usize = size_of::<VabHeader>();
 pub const VAB_PROGRAM_SLOTS: u16 = 128;
@@ -309,12 +354,10 @@ pub enum ChannelMessage {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct ChannelEvent {
-    pub status: u8,
     pub channel: u8,
     pub message: ChannelMessage,
     pub data1: u8,
     pub data2: Option<u8>,
-    pub used_running_status: bool,
 }
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -327,11 +370,8 @@ pub enum SeqEventKind<'a> {
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub struct SeqEvent<'a> {
-    pub offset: usize,
     pub delta: u32,
-    pub delta_len: usize,
     pub kind: SeqEventKind<'a>,
-    pub encoded: &'a [u8],
 }
 
 pub(crate) struct SeqEvents<'a> {
@@ -346,19 +386,18 @@ impl<'a> SeqEvents<'a> {
         if self.at == self.bytes.len() {
             return Ok(None);
         }
-        let start = self.at;
-        let (delta, delta_len) = read_variable_length_at(self.bytes, &mut self.at)?;
+        let delta = read_variable_length_at(self.bytes, &mut self.at)?;
         let status_at = self.at;
         let first = bytes::take(self.bytes, &mut self.at)?;
-        let (status, first_data, used_running_status) = if first < midi::STATUS_BIT {
+        let (status, first_data) = if first < midi::STATUS_BIT {
             let status = self.running_status.ok_or(crate::Error::invalid_byte(
                 "missing SEQ running status",
                 status_at,
                 first,
             ))?;
-            (status, Some(first), true)
+            (status, Some(first))
         } else {
-            (first, None, false)
+            (first, None)
         };
         let kind = match status {
             midi::CHANNEL_STATUS_FIRST..=midi::CHANNEL_STATUS_LAST => {
@@ -391,18 +430,16 @@ impl<'a> SeqEvents<'a> {
                     None
                 };
                 SeqEventKind::Channel(ChannelEvent {
-                    status,
                     channel: status & midi::CHANNEL_MASK,
                     message,
                     data1,
                     data2,
-                    used_running_status,
                 })
             }
             midi::META => {
                 self.running_status = None;
                 let meta_type = bytes::take(self.bytes, &mut self.at)?;
-                let (length, _) = read_variable_length_at(self.bytes, &mut self.at)?;
+                let length = read_variable_length_at(self.bytes, &mut self.at)?;
                 let size = length.as_usize();
                 let data = bytes::span(self.bytes, self.at, size)?;
                 self.at += size;
@@ -410,7 +447,7 @@ impl<'a> SeqEvents<'a> {
             }
             midi::SYSEX_START | midi::SYSEX_END => {
                 self.running_status = None;
-                let (length, _) = read_variable_length_at(self.bytes, &mut self.at)?;
+                let length = read_variable_length_at(self.bytes, &mut self.at)?;
                 let size = length.as_usize();
                 let data = bytes::span(self.bytes, self.at, size)?;
                 self.at += size;
@@ -454,13 +491,7 @@ impl<'a> SeqEvents<'a> {
                 ))
             }
         };
-        Ok(Some(SeqEvent {
-            offset: start,
-            delta,
-            delta_len,
-            kind,
-            encoded: &self.bytes[start..self.at],
-        }))
+        Ok(Some(SeqEvent { delta, kind }))
     }
 }
 
@@ -485,14 +516,14 @@ impl<'a> Iterator for SeqEvents<'a> {
     }
 }
 
-fn read_variable_length_at(bytes: &[u8], at: &mut usize) -> crate::Result<(u32, usize)> {
+fn read_variable_length_at(bytes: &[u8], at: &mut usize) -> crate::Result<u32> {
     let start = *at;
     let mut value = 0u32;
-    for index in 0..midi::VLQ_BYTES_MAX {
+    for _ in 0..midi::VLQ_BYTES_MAX {
         let byte = bytes::take(bytes, at)?;
         value = (value << midi::DATA_BITS) | u32::from(byte & midi::DATA_MASK);
         if byte & midi::VLQ_CONTINUATION == 0 {
-            return Ok((value, index + 1));
+            return Ok(value);
         }
     }
     Err(crate::Error::invalid_at(

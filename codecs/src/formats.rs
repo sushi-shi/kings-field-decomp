@@ -117,3 +117,8 @@ record!(TimBlock, 12, {
     encoded_bytes: LeU32,
     rectangle: TimRectangle,
 });
+
+record!(AdpcmHeader, 2, {
+    predictor_shift: u8,
+    flags: u8,
+});

@@ -95,8 +95,54 @@ static void tim_records()
     assert(info.image_x == -3 && info.image_y == -4);
 }
 
+static void adpcm_headers()
+{
+    std::array<uint8_t, KF_AUDIO_ADPCM_BLOCK_BYTES> block {};
+    std::fill(block.begin() + 2, block.end(), 0x87);
+    std::array<int16_t, KF_AUDIO_ADPCM_BLOCK_FRAMES> pcm {};
+    constexpr int32_t filters[][2] = {{0, 0}, {60, 0}, {115, -52}, {98, -55}, {122, -60}};
+    KfAudioSampleInfo info {};
+    for (uint8_t filter = 0; filter < 5; ++filter) {
+        for (uint8_t shift = 0; shift < 16; ++shift) {
+            block[0] = (filter << 4) | shift;
+            for (uint8_t flags = 0; flags < 8; ++flags) {
+                block[1] = flags;
+                KfAudioPredictor predictor {1000, -500};
+                assert(kf_audio_sample_info(block.data(), block.size(), &info) == KF_CODEC_OK);
+                assert(info.frames == pcm.size() && info.loop_end == ((flags & 3) == 3 ? pcm.size() : 0));
+                assert(kf_audio_decode_block(block.data(), block.size(), &predictor, pcm.data(), pcm.size()) == KF_CODEC_OK);
+                int32_t previous = 1000, older = -500;
+                for (size_t i = 0; i < pcm.size(); ++i) {
+                    const int32_t signed_nibble = i % 2 == 0 ? 7 : -8;
+                    const int32_t value = std::clamp(
+                        ((signed_nibble * 4096) >> (shift <= 12 ? shift : 9))
+                            + ((previous * filters[filter][0] + older * filters[filter][1] + 32) >> 6),
+                        -32768, 32767);
+                    assert(pcm[i] == value);
+                    older = previous;
+                    previous = value;
+                }
+                assert(predictor.previous == previous && predictor.older == older);
+            }
+        }
+    }
+    for (uint8_t flags : {8, 16, 32, 64, 128, 255}) {
+        block[0] = 0; block[1] = flags;
+        KfAudioPredictor predictor {};
+        assert(kf_audio_sample_info(block.data(), block.size(), &info) == KF_CODEC_INVALID);
+        assert(kf_audio_decode_block(block.data(), block.size(), &predictor, pcm.data(), pcm.size()) == KF_CODEC_INVALID);
+    }
+    for (uint8_t filter = 5; filter < 16; ++filter) {
+        block[0] = filter << 4; block[1] = 0;
+        KfAudioPredictor predictor {};
+        assert(kf_audio_sample_info(block.data(), block.size(), &info) == KF_CODEC_INVALID);
+        assert(kf_audio_decode_block(block.data(), block.size(), &predictor, pcm.data(), pcm.size()) == KF_CODEC_INVALID);
+    }
+}
+
 int main()
 {
     audio_records();
     tim_records();
+    adpcm_headers();
 }

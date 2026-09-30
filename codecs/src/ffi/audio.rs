@@ -1,28 +1,20 @@
 use super::bindings::*;
 use super::{input_valid, output_valid, status};
 use crate::audio::midi;
-use crate::audio::{ChannelMessage, SeqEventKind, Sequence, VabBank};
+use crate::audio::{
+    AdpcmFlags, AdpcmHeader, ChannelMessage, SeqEventKind, Sequence, ToneFlags, VabBank,
+};
 use crate::audio::{VAB_PROGRAM_SLOTS, VAB_TONES_PER_PROGRAM};
 use crate::bytes::read_u24_be;
 use crate::cast::{AsU64, AsUsize};
 use core::{ptr, slice};
 
 const SUPPORTED_SEQ_VERSION: u32 = 1;
-const TONE_REVERB_FLAG: u8 = 4;
 const ADSR_SUSTAIN_LEVEL_STEP: u16 = 2048;
 const ENVELOPE_LEVEL_MAX: u16 = 32767;
 const ADPCM_BLOCK_BYTES: usize = crate::cast::u32_to_usize(KF_AUDIO_ADPCM_BLOCK_BYTES);
 const ADPCM_BLOCK_FRAMES: usize = crate::cast::u32_to_usize(KF_AUDIO_ADPCM_BLOCK_FRAMES);
 const ADPCM_HEADER_BYTES: usize = 2;
-const ADPCM_FILTER_OFFSET: u32 = 4;
-const ADPCM_FILTER_LAST: u8 = 4;
-const ADPCM_FLAGS_MASK: u8 = 7;
-const ADPCM_LOOP_START: u8 = 4;
-const ADPCM_END: u8 = 1;
-const ADPCM_REPEAT: u8 = 2;
-const ADPCM_SHIFT_MASK: u8 = 15;
-const ADPCM_MAX_SHIFT: u8 = 12;
-const ADPCM_RESERVED_SHIFT: u8 = 9;
 const ADPCM_NIBBLE_BITS: usize = 4;
 const ADPCM_NIBBLE_MASK: u8 = 15;
 const ADPCM_NIBBLE_SIGN_BIT: i32 = 8;
@@ -96,6 +88,8 @@ unsafe fn audio_bank_decode(
         for ordinal in 0..program.tone_count.as_usize() {
             let tone = bank.tone(packed_program, ordinal)?;
             let sample = u16::try_from(tone.sample.get())?;
+            let flags = ToneFlags::from_bits(tone.mode)
+                .ok_or(crate::Error::invalid("unknown VAB tone flags"))?;
             if i32::from(tone.program.get()) != i32::from(slot)
                 || sample < 1
                 || sample > bank.header.sample_count.get()
@@ -104,13 +98,12 @@ unsafe fn audio_bank_decode(
                 || tone.center_shift > midi::DATA_MASK
                 || tone.minimum_note > tone.maximum_note
                 || tone.maximum_note > midi::DATA_MASK
-                || tone.mode & !TONE_REVERB_FLAG != 0
             {
                 crate::bail!("invalid VAB tone");
             }
             target.tones[ordinal] = KfAudioTone {
                 priority: tone.priority,
-                reverb: u8::from(tone.mode & TONE_REVERB_FLAG != 0),
+                reverb: u8::from(flags.contains(ToneFlags::REVERB)),
                 volume: tone.volume,
                 pan: tone.pan,
                 // This is a pitch reference, not a MIDI note-on. Retail banks
@@ -183,19 +176,16 @@ unsafe fn audio_sample_info(
     let mut frames = 0;
     let mut loop_begin = 0;
     for block in slice::from_raw_parts(data, size).chunks_exact(ADPCM_BLOCK_BYTES) {
-        if block[0] >> ADPCM_FILTER_OFFSET > ADPCM_FILTER_LAST || block[1] & !ADPCM_FLAGS_MASK != 0
-        {
-            crate::bail!("invalid ADPCM filter or flags");
-        }
-        if block[1] & ADPCM_LOOP_START != 0 {
+        let header = AdpcmHeader::parse(block)?;
+        if header.flags.contains(AdpcmFlags::LOOP_START) {
             loop_begin = frames;
         }
         frames += KF_AUDIO_ADPCM_BLOCK_FRAMES;
-        if block[1] & ADPCM_END != 0 {
+        if header.flags.contains(AdpcmFlags::END) {
             info.write(KfAudioSampleInfo {
                 frames,
                 loop_begin,
-                loop_end: if block[1] & ADPCM_REPEAT != 0 {
+                loop_end: if header.flags.contains(AdpcmFlags::REPEAT) {
                     frames
                 } else {
                     0
@@ -241,22 +231,14 @@ unsafe fn audio_decode_block(
         return Err(crate::Error::output_full());
     }
     let block = slice::from_raw_parts(data, ADPCM_BLOCK_BYTES);
-    const FILTERS: [(i32, i32); 5] = [(0, 0), (60, 0), (115, -52), (98, -55), (122, -60)];
-    let filter = (block[0] >> ADPCM_FILTER_OFFSET).as_usize();
-    if filter >= FILTERS.len() || block[1] & !ADPCM_FLAGS_MASK != 0 {
-        crate::bail!("invalid ADPCM filter or flags");
-    }
-    let shift = match block[0] & ADPCM_SHIFT_MASK {
-        0..=ADPCM_MAX_SHIFT => block[0] & ADPCM_SHIFT_MASK,
-        _ => ADPCM_RESERVED_SHIFT,
-    };
+    let header = AdpcmHeader::parse(block)?;
     let state = &mut *predictor;
     if !(i32::from(i16::MIN)..=i32::from(i16::MAX)).contains(&state.previous)
         || !(i32::from(i16::MIN)..=i32::from(i16::MAX)).contains(&state.older)
     {
         crate::bail!("invalid ADPCM predictor");
     }
-    let (positive, negative) = FILTERS[filter];
+    let (positive, negative) = header.coefficients;
     for n in 0..ADPCM_BLOCK_FRAMES {
         let nibble = i32::from(
             (block[ADPCM_HEADER_BYTES + n / 2] >> ((n & 1) * ADPCM_NIBBLE_BITS))
@@ -267,7 +249,7 @@ unsafe fn audio_decode_block(
         } else {
             nibble - ADPCM_NIBBLE_MODULUS
         };
-        let value = ((signed * ADPCM_SAMPLE_SCALE) >> shift)
+        let value = ((signed * ADPCM_SAMPLE_SCALE) >> header.shift)
             + ((state.previous * positive + state.older * negative + ADPCM_PREDICTOR_ROUNDING)
                 >> ADPCM_PREDICTOR_FRACTION_BITS);
         let value = value.clamp(i32::from(i16::MIN), i32::from(i16::MAX));

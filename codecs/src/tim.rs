@@ -4,8 +4,12 @@ use crate::formats::{TimBlock, TimHeader};
 
 const TIM_MAGIC: u32 = 0x10;
 const FORMAT_MASK: u32 = 0b111;
-const CLUT_FLAG: u32 = 1 << 3;
-const FLAGS_MASK: u32 = FORMAT_MASK | CLUT_FLAG;
+bitflags::bitflags! {
+    #[derive(Clone, Copy, Debug)]
+    struct TimFlags: u32 {
+        const CLUT = 1 << 3;
+    }
+}
 const BLOCK_SIZE_LOW_BITS: u32 = 3;
 
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
@@ -17,11 +21,8 @@ pub(crate) enum PixelFormat {
 }
 
 impl PixelFormat {
-    fn parse(mode: u32) -> crate::Result<Self> {
-        if mode & !FLAGS_MASK != 0 {
-            crate::bail!("unsupported TIM flags");
-        }
-        match mode & FORMAT_MASK {
+    fn parse(value: u32) -> crate::Result<Self> {
+        match value {
             0 => Ok(Self::Indexed4),
             1 => Ok(Self::Indexed8),
             2 => Ok(Self::Direct16),
@@ -57,7 +58,12 @@ impl Image<'_> {
             PixelFormat::Direct16 => 2,
             PixelFormat::Direct24 => 3,
         };
-        format | if self.clut.is_some() { CLUT_FLAG } else { 0 }
+        format
+            | if self.clut.is_some() {
+                TimFlags::CLUT.bits()
+            } else {
+                0
+            }
     }
 }
 
@@ -84,9 +90,11 @@ impl<'a> Images<'a> {
         let start = self.at;
         let header: TimHeader = bytes::read(self.bytes, start)?;
         let mode = header.mode.get();
-        let format = PixelFormat::parse(mode)?;
+        let format = PixelFormat::parse(mode & FORMAT_MASK)?;
+        let flags = TimFlags::from_bits(mode & !FORMAT_MASK)
+            .ok_or(crate::Error::invalid("unsupported TIM flags"))?;
         let mut cursor = start + size_of::<TimHeader>();
-        let clut = if mode & CLUT_FLAG != 0 {
+        let clut = if flags.contains(TimFlags::CLUT) {
             Some(block(self.bytes, &mut cursor)?)
         } else {
             None

@@ -25,16 +25,6 @@ impl AsUsize for u32 {
     }
 }
 
-impl AsU64 for usize {
-    #[expect(
-        clippy::as_conversions,
-        reason = "the platform width assertions prove this is lossless"
-    )]
-    fn as_u64(self) -> u64 {
-        self as u64
-    }
-}
-
 macro_rules! widening {
     ($trait:ident, $method:ident, $target:ty; $($source:ty),+) => { $(
         const _: () = assert!(<$source>::BITS <= <$target>::BITS);
@@ -45,4 +35,4 @@ macro_rules! widening {
 }
 
 widening!(AsUsize, as_usize, usize; u8, u16);
-widening!(AsU64, as_u64, u64; u8, u16, u32);
+widening!(AsU64, as_u64, u64; u32);
