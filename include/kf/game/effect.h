@@ -16,6 +16,7 @@ enum {
 #include <kf/game/magic.h>
 
 struct KfAnimationCacheRecord;
+struct KfCollisionResult;
 
 enum {
     KF_EFFECT_CAPACITY = 48
@@ -358,6 +359,6 @@ extern void effect_scatter_triple(KfEffectDirectionWords *velocity);
 extern void effect_rotate_scale_offset_y(SVECTOR *offset, VECTOR *output, s16 angle, s32 scale);
 extern void effect_spawn_ground_trail(u8 id, KfEffectRecord *parent_effect, s16 angle, s32 distance);
 extern void effect_spawn_ground_branch(u8 id, KfEffectRecord *parent_effect, s16 angle_offset, KfEffectGroundBranchRole branch_role);
-extern u32 effect_map_collision(VECTOR *position, s32 radius);
+extern KfCollisionResult effect_map_collision(VECTOR *position, s32 radius);
 
 #endif // KF_GAME_EFFECT_H

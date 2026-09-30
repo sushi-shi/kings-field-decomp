@@ -15,7 +15,7 @@ class NativeRegressions(unittest.TestCase):
         cls.directory = tempfile.TemporaryDirectory(prefix="kf-native-regressions-")
         cls.addClassCleanup(cls.directory.cleanup)
         for name in ["native_regressions", "lighting_regressions", "resource_failures",
-                     "cutscene_resources"]:
+                     "cutscene_resources", "collision_results"]:
             subprocess.run(
                 [
                     "clang++", "-std=c++20", "-O1", "-g", "-fno-exceptions", "-fno-rtti",
@@ -42,6 +42,9 @@ class NativeRegressions(unittest.TestCase):
                                             text=True, timeout=10)
                     self.assertEqual(result.returncode, 0 if case == "valid" else 77,
                                      result.stderr)
+
+    def test_collision_results_and_door_probes(self):
+        subprocess.run([Path(self.directory.name) / "collision_results"], check=True)
 
     def test_lighting_preserves_translation_and_supports_aliasing(self):
         subprocess.run([Path(self.directory.name) / "lighting_regressions"], check=True)
