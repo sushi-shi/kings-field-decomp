@@ -43,14 +43,16 @@ def build_observer(root, build, output, movement, resources=False):
     subprocess.run(link, cwd=build, check=True)
 
 
-def run_observer(output, data, movement, language, switch_language, japanese_data):
+def run_observer(output, data, movement, language, switch_language, japanese_data,
+                 runner=(), timeout=180):
     saves = output / "saves"
     saves.mkdir(exist_ok=True)
     environment = dict(
         os.environ, SDL_VIDEODRIVER="x11", SDL_AUDIO_DRIVER="dummy",
         GDK_BACKEND="x11", GSK_RENDERER="cairo", KF_AUDIT_OUTPUT=str(output),
-        ASAN_OPTIONS="detect_leaks=0", UBSAN_OPTIONS="halt_on_error=1:print_stacktrace=1",
     )
+    environment.setdefault("UBSAN_OPTIONS", "halt_on_error=1:print_stacktrace=1")
+    environment.setdefault("TSAN_OPTIONS", "halt_on_error=1")
     environment.pop("KF_AUDIT_MOVEMENT", None)
     environment.pop("KF_AUDIT_LANGUAGE_SWITCH", None)
     if movement:
@@ -59,7 +61,7 @@ def run_observer(output, data, movement, language, switch_language, japanese_dat
         environment["KF_AUDIT_LANGUAGE_SWITCH"] = "1"
     log = output / "runtime.log"
     with log.open("w") as stream:
-        arguments = [str(output / "client"), "--data", str(data), "--saves", str(saves)]
+        arguments = [*runner, str(output / "client"), "--data", str(data), "--saves", str(saves)]
         if language:
             arguments += ["--language", language]
         if japanese_data:
@@ -70,13 +72,15 @@ def run_observer(output, data, movement, language, switch_language, japanese_dat
         )
         start, focused = time.monotonic(), False
         try:
-            while process.poll() is None and time.monotonic() - start < 180:
+            while process.poll() is None and time.monotonic() - start < timeout:
                 if not focused:
                     result = subprocess.run(
                         ["xdotool", "search", "--pid", str(process.pid), "--name", "^King.s Field$"],
                         capture_output=True, text=True,
                     )
                     if result.returncode == 0:
+                        subprocess.run(["xdotool", "windowsize", result.stdout.splitlines()[0],
+                                        "320", "240"], check=True)
                         subprocess.run(["xdotool", "windowfocus", result.stdout.splitlines()[0]], check=True)
                         focused = True
                 if "Audit:" in log.read_text() or "runtime error:" in log.read_text():
@@ -102,6 +106,10 @@ def main():
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--source-root", type=Path, default=Path(__file__).resolve().parents[1])
     parser.add_argument("--build", choices=["linux", "sanitize"], default="sanitize")
+    parser.add_argument("--build-dir", type=Path, help="Use a custom native build, e.g. ThreadSanitizer")
+    parser.add_argument("--output", type=Path, help="Directory for isolated saves, executable and logs")
+    parser.add_argument("--runner", default="", help="Command prefix, e.g. 'valgrind --error-exitcode=1'")
+    parser.add_argument("--timeout", type=int, default=180, help="Maximum runtime in seconds")
     parser.add_argument("--data", type=Path, required=True)
     parser.add_argument("--movement", action="store_true")
     parser.add_argument("--resources", action="store_true", help="Audit cutscene resource loading and retained models")
@@ -110,14 +118,19 @@ def main():
     parser.add_argument("--japanese-data", type=Path)
     parser.add_argument("--baseline", type=Path, help="Compare all six saves with a previous output directory")
     args = parser.parse_args()
+    if args.timeout < 1:
+        parser.error("timeout must be positive")
     root = args.source_root.resolve()
     output = root / "build" / ("cleanup-audit-movement" if args.movement else "cleanup-audit")
     if args.switch_language:
         output = output.with_name(output.name + "-language")
-    output.mkdir(exist_ok=True)
-    build_observer(root, root / "build" / args.build, output, args.movement, args.resources)
+    if args.output:
+        output = args.output.resolve()
+    output.mkdir(parents=True, exist_ok=True)
+    build = args.build_dir.resolve() if args.build_dir else root / "build" / args.build
+    build_observer(root, build, output, args.movement, args.resources)
     run_observer(output, args.data.resolve(), args.movement, args.language,
-                 args.switch_language, args.japanese_data)
+                 args.switch_language, args.japanese_data, shlex.split(args.runner), args.timeout)
     if args.resources and "AUDIT cutscene resources complete" not in (output / "runtime.log").read_text():
         raise RuntimeError("Cutscene resource audit did not complete")
     if args.baseline:
