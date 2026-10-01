@@ -131,7 +131,7 @@ typedef struct KfScreenVertex {
 struct KfTmdContext {
     std::span<KfTmdResource> slots;
     KfTmdResource &current_tmd;
-    SVECTOR *&current_vertices;
+    std::span<const SVECTOR> &current_vertices;
     std::span<KfScreenVertex, KF_PROJECTED_VERTEX_CAPACITY> projected_vertices;
 };
 
@@ -150,7 +150,7 @@ extern void tmd_register(KfTmdContext context, KfTmdSlot slot, u8 *data, std::si
 extern void tmd_release_last_allocation(KfTmdContext context, KfMemoryArena &arena, KfTmdSlot slot);
 extern void tmd_select(KfTmdContext context, KfTmdSlot slot);
 extern void tmd_select_object_vertices(KfTmdContext context, u16 object_index);
-extern void tmd_set_current_vertices(KfTmdContext context, SVECTOR *vertices);
+extern std::span<const SVECTOR> tmd_vertices(KfTmdContext context, s32 count);
 
 extern void tmd_project_vertices_depth_shift(KfTmdContext context, s32 count, u8 depth_shift,
     const MATRIX *model, const kf::Projection &projection);

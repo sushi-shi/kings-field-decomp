@@ -31,6 +31,7 @@ void tmd_select(KfTmdContext context, KfTmdSlot slot)
     if (!resource.data)
         kf::host_fail("Unregistered TMD slot");
     context.current_tmd = resource;
+    context.current_vertices = {};
 }
 
 static u8 *tmd_object_bytes(KfTmdContext context, u16 index)
@@ -177,9 +178,13 @@ SVECTOR tmd_read_normal(KfTmdBytes normals, u16 index)
         std::bit_cast<s16>(tmd_read_halfword(bytes + 6))};
 }
 
-void tmd_set_current_vertices(KfTmdContext context, SVECTOR *vertices)
+std::span<const SVECTOR> tmd_vertices(KfTmdContext context, s32 count)
 {
-    context.current_vertices = vertices;
+    if (count < 0 || count > KF_PROJECTED_VERTEX_CAPACITY)
+        kf::host_fail("Model exceeds projected vertex capacity.");
+    if (static_cast<std::size_t>(count) > context.current_vertices.size())
+        kf::host_fail("Model exceeds selected vertex source.");
+    return context.current_vertices.first(count);
 }
 
 void tmd_select_object_vertices(KfTmdContext context, u16 index)
@@ -193,7 +198,7 @@ void tmd_select_object_vertices(KfTmdContext context, u16 index)
     auto *vertices = reinterpret_cast<u8 *>(resource.data) + KF_TMD_HEADER_BYTES + offset;
     if (reinterpret_cast<std::uintptr_t>(vertices) % alignof(SVECTOR))
         kf::host_fail("Unaligned TMD vertices");
-    context.current_vertices = reinterpret_cast<SVECTOR *>(vertices);
+    context.current_vertices = {reinterpret_cast<const SVECTOR *>(vertices), object->vertex_count};
 }
 
 void tmd_register(KfTmdContext context, KfTmdSlot slot, u8 *data, std::size_t size)
@@ -201,6 +206,7 @@ void tmd_register(KfTmdContext context, KfTmdSlot slot, u8 *data, std::size_t si
     const auto resource = tmd_resource_view(data, size);
     tmd_slot(context, slot) = resource;
     context.current_tmd = resource;
+    context.current_vertices = {};
 }
 
 void tmd_release_last_allocation(KfTmdContext context, KfMemoryArena &arena, KfTmdSlot slot)
@@ -208,7 +214,7 @@ void tmd_release_last_allocation(KfTmdContext context, KfMemoryArena &arena, KfT
     auto &resource = tmd_slot(context, slot);
     if (context.current_tmd.data == resource.data) {
         context.current_tmd = {};
-        context.current_vertices = NULL;
+        context.current_vertices = {};
     }
     resource = {};
     memory_release_last(arena);
@@ -216,13 +222,11 @@ void tmd_release_last_allocation(KfTmdContext context, KfMemoryArena &arena, KfT
 
 void tmd_project_vertices_depth_shift(KfTmdContext context, s32 count, u8 depth_shift, const MATRIX *model, const kf::Projection &projection)
 {
-    if (count < 0 || count > KF_PROJECTED_VERTEX_CAPACITY)
-        kf::host_fail("Model exceeds projected vertex capacity.");
     KfScreenVertex *projected;
-    SVECTOR *vertex;
+    const SVECTOR *vertex;
 
     projected = context.projected_vertices.data();
-    vertex = context.current_vertices;
+    vertex = tmd_vertices(context, count).data();
     for (count--; count != -1; count--) {
         const auto point = kf::render_project_point(*model, projection, *vertex);
         projected->position = {point.x, point.y};
@@ -235,15 +239,13 @@ void tmd_project_vertices_depth_shift(KfTmdContext context, s32 count, u8 depth_
 
 void tmd_transform_vertices(KfTmdContext context, s32 count, const MATRIX *model)
 {
-    if (count < 0 || count > KF_PROJECTED_VERTEX_CAPACITY)
-        kf::host_fail("Model exceeds projected vertex capacity.");
     KfScreenVertex *projected;
-    SVECTOR *vertex;
+    const SVECTOR *vertex;
     VECTOR transformed;
     s32 remaining;
 
     projected = context.projected_vertices.data();
-    vertex = context.current_vertices;
+    vertex = tmd_vertices(context, count).data();
     for (remaining = count - 1; remaining != -1; remaining--) {
         transformed = kf::render_transform_point(*model, *vertex);
         projected->position.vx = transformed.vx;

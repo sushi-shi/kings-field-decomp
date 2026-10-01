@@ -158,6 +158,65 @@ void opening_poll_input()
     opening_input_action = KF_OPENING_INPUT_SKIP;
 }
 
+#elif defined(KF_AUDIT_RESOURCES)
+
+#define opening_run audit_original_opening_run
+#include KF_AUDIT_SOURCE
+#undef opening_run
+
+static void audit_cutscene_models(KfTmdSlot slot)
+{
+    auto context = cutscene_tmd_context();
+    tmd_select(context, slot);
+    MATRIX identity{};
+    identity.m[0][0] = identity.m[1][1] = identity.m[2][2] = KF_FIXED12_ONE;
+    const auto count = context.current_tmd.data->object_count;
+    if (count > std::numeric_limits<u16>::max())
+        kf::host_fail("Audit: too many cutscene objects");
+    for (u16 index = 0; index < count; ++index) {
+        kf::host_begin_frame();
+        tmd_select_object_vertices(context, index);
+        const auto object = tmd_read_object(context, index);
+        if (slot == KF_TMD_SLOT_MAP) {
+            cutscene_render_enqueue_map(index, &identity, &identity, {});
+        } else {
+            cutscene_tmd_project_vertices(object.vertex_count, &identity, {});
+            cutscene_render_enqueue_tmd(index, 0, &identity);
+            render_enqueue_unlit_triangles(index, 0);
+            tmd_project_vertices_perspective_right(object.vertex_count, &identity, {});
+        }
+    }
+}
+
+void opening_run(Cutscene scene)
+{
+    static bool audited;
+    if (!audited) {
+        audited = true;
+        memory_set_allocation_mode(cutscene_memory_arena, KF_MEMORY_CREATE_ARENA);
+        cutscene_audio_initialize();
+        cutscene_display_initialize(scene);
+        opening_entity_pool_reset();
+        memory_set_allocation_mode(cutscene_memory_arena, KF_MEMORY_REBASE_ARENA);
+        opening_resources_load_scene0();
+        audit_cutscene_models(KF_TMD_SLOT_MAP);
+        audit_cutscene_models(KF_TMD_SLOT_ENTITIES);
+        opening_resources_load_scene1();
+        opening_resources_load_scene3();
+        audit_cutscene_models(KF_TMD_SLOT_ENTITIES);
+        opening_resources_load_ending();
+        audit_cutscene_models(KF_TMD_SLOT_ENTITIES);
+        opening_resources_load_ending_entities();
+        audit_cutscene_models(KF_TMD_SLOT_ENTITIES);
+        opening_resources_load_ending_sequence();
+        audit_cutscene_models(KF_TMD_SLOT_ENTITIES);
+        audio_close_vab(cutscene_audio_state);
+        memory_destroy_arena(cutscene_memory_arena);
+        std::fprintf(stderr, "AUDIT cutscene resources complete\n");
+    }
+    audit_original_opening_run(scene);
+}
+
 #elif defined(KF_AUDIT_INPUT)
 
 #include <kf/platform/prelude.h>

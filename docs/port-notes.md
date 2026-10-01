@@ -39,15 +39,21 @@ use the same bounded decoder with their own accepted modes.
 
 The codecs decode animation clips, keyframes and morphs when an asset is registered.
 The game owns the decoded arrays; animation caches retain morph indices rather
-than resource pointers and are invalidated when their asset is replaced.
+than resource pointers and are invalidated when their asset is replaced. Archive
+replacement clears the whole destination bank, including entries omitted by a
+shorter archive. Floor changes invalidate model views before rewinding the arena;
+the separately retained weapon and common HUD resources survive that rewind.
+Selected vertex sources carry their element count, which bounds projection and
+transformation reads as well as the fixed output capacity. Selecting or registering
+a model clears the previous vertex selection.
 The shared byte reader in `include/kf/lib/byte_reader.h` checks bounds and reads explicit
 endianness without aligned source casts. Gameplay and opening placements
 use the shared decoders; map grids are copied from bounded bytes without aligned
 source casts. Placement decoders return counted records and validate their grid
 and definition indices. Actor definitions retain their resource layout with a checked
-table extent. Cell-window dimensions and map orientations still need load-time
-validation; further resource work is tracked in
-[issue #40](https://github.com/sushi-shi/kings-field-decomp/issues/40).
+table extent. Gameplay and opening cell windows share a bounded decoder that
+validates dimensions, origins and visibility values. Map orientations are validated
+before they can index rotation matrices, including cells that scripts may reveal later.
 
 The floor-item appearance byte packs facing in the high nibble and frame count
 in the low nibble. B1 MIXA base-sprite 4 records use `0x23`/`0x13`; base-sprite 0

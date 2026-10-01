@@ -5,6 +5,7 @@
 #include <kf/lib/item.h>
 #include <kf/lib/memory.h>
 #include <kf/lib/resource_file.h>
+#include <kf/lib/resources.h>
 
 #include <array>
 #include <cstdio>
@@ -70,9 +71,11 @@ void cutscene_render_initialize(void)
     u8 *buffer;
 
     open_graphics_runtime.display_state.buffer_index = KF_DISPLAY_BUFFER_UNINITIALIZED;
-    if (resource_file_load_into(opening_cell_storage.rtbl_sectors,
-            sizeof opening_cell_storage.rtbl_sectors, "B0/RTBL.") != KF_RESOURCE_LOADED)
-        resource_file_fail("B0/RTBL.");
+    u8 *windows;
+    std::size_t window_bytes;
+    resource_file_load_allocated(cutscene_memory_arena, &windows, "B0/RTBL.", &window_bytes);
+    cell_windows_load({windows, window_bytes}, opening_scene_cells.windows);
+    memory_release_last(cutscene_memory_arena);
     buffer = (u8 *)memory_allocate(cutscene_memory_arena, DISPLAY_ASSET_BUFFER_BYTES);
     open_graphics_runtime.display_state.asset_load_buffer = buffer;
     open_graphics_runtime.display_state.asset_load_capacity = DISPLAY_ASSET_BUFFER_BYTES;

@@ -203,13 +203,11 @@ void render_initialize(void)
 
 void tmd_project_vertices(s32 count, const MATRIX *model, const kf::Projection &projection)
 {
-    if (count < 0 || count > KF_PROJECTED_VERTEX_CAPACITY)
-        kf::host_fail("Model exceeds projected vertex capacity.");
     KfScreenVertex *projected;
-    SVECTOR *vertex;
+    const SVECTOR *vertex;
 
     projected = game_graphics_runtime.tmd_projected_vertices.data();
-    vertex = game_graphics_runtime.current_tmd_vertices;
+    vertex = tmd_vertices(tmd_context(), count).data();
     for (count--; count != -1; count--) {
         const auto point = kf::render_project_point(*model, projection, *vertex);
         projected->position = {point.x, point.y};

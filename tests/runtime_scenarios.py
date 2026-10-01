@@ -13,7 +13,7 @@ import subprocess
 import time
 
 
-def build_observer(root, build, output, movement):
+def build_observer(root, build, output, movement, resources=False):
     subprocess.run(["cmake", "--build", str(build)], cwd=root, check=True)
     commands = subprocess.check_output(
         ["ninja", "-t", "commands", "kings-field"], cwd=build, text=True
@@ -26,6 +26,8 @@ def build_observer(root, build, output, movement):
     fixtures = [("src/game/game.cpp", "GAME"), ("src/cutscene/opening_helpers.cpp", "OPENING")]
     if movement:
         fixtures.append(("src/game/player_update.cpp", "INPUT"))
+    if resources:
+        fixtures.append(("src/cutscene/opening_controller.cpp", "RESOURCES"))
     for source, mode in fixtures:
         source_path = root / source
         command = next(shlex.split(line) for line in commands
@@ -102,6 +104,7 @@ def main():
     parser.add_argument("--build", choices=["linux", "sanitize"], default="sanitize")
     parser.add_argument("--data", type=Path, required=True)
     parser.add_argument("--movement", action="store_true")
+    parser.add_argument("--resources", action="store_true", help="Audit cutscene resource loading and retained models")
     parser.add_argument("--language", choices=["ja", "en"], help="Override the application's default")
     parser.add_argument("--switch-language", action="store_true")
     parser.add_argument("--japanese-data", type=Path)
@@ -112,9 +115,11 @@ def main():
     if args.switch_language:
         output = output.with_name(output.name + "-language")
     output.mkdir(exist_ok=True)
-    build_observer(root, root / "build" / args.build, output, args.movement)
+    build_observer(root, root / "build" / args.build, output, args.movement, args.resources)
     run_observer(output, args.data.resolve(), args.movement, args.language,
                  args.switch_language, args.japanese_data)
+    if args.resources and "AUDIT cutscene resources complete" not in (output / "runtime.log").read_text():
+        raise RuntimeError("Cutscene resource audit did not complete")
     if args.baseline:
         for entry in range(1, 7):
             name = f"entry-{entry}.kfs"
