@@ -154,3 +154,20 @@ These are intentional port policies. The affected combat paths still need direct
 runtime verification.
 
 Codec errors retain parser source locations through `std::source_location`.
+
+## MAGIC charge evidence
+
+The one-off empty bar report remains deferred without a reproduction. Ordinary
+refill requires a selected spell, no new Magic-button edge, gameplay updates and
+body armor other than Skull Armor. Charge is distinct from MP. Eligible gain is
+`2 * (((magic * 64) / (charge_rate + 1)) + 1)`, followed by the original halfword
+assignment and clamp to 5,000 (GAME `0x800193cc..0x80019430`). Shipped offensive
+rates for IDs 4–8 are 70, 28, 45, 20 and 14; starting Light Needle gains 172 per
+eligible update and fills in 30 updates.
+
+Spell selection and successful casting clear charge; insufficient MP does not
+block later refill. Load-return reselects the saved spell and rebuilds its pointer.
+The HUD derives width as `magic_charge / 100` (GAME `0x8001ffb8..0x8001ffc4`).
+These gates do not explain the reported session. If reproduced, inspect spell
+ID/pointer, charge, magic power, armor, input edges, update state and HUD width;
+do not repeat the static trace or reset state speculatively.

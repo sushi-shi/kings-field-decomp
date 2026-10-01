@@ -1,11 +1,13 @@
+#include <kf/lib/null.h>
+#include <kf/game/graphics.h>
+#include <kf/game/party_runtime.h>
+
 #include <kf/platform/prelude.h>
 #include <kf/game/asset.h>
-#include <kf/game/graphics.h>
 #include <kf/game/render.h>
 #include <kf/game/state.h>
 #include <kf/lib/geometry_types.h>
 #include <kf/lib/math.h>
-#include <kf/lib/null.h>
 
 #include <array>
 
@@ -46,7 +48,8 @@ std::array<KfSpriteQuad, KF_EFFECT_BILLBOARD_SPRITE_COUNT> effect_billboard_spri
     KfSpriteQuad{0xc8, 0xa2, 0x17, 0x5c, 0xff38, 0xec78, 0x190, 0x1388},
 };
 
-void render_effect(KfEffectRecord *effect, const MATRIX *lights)
+void render_effect(KfEffectRecord *effect, const MATRIX *lights, const PartyEntityPose &pose,
+    const PartyEffectAppearance &appearance)
 {
     SVECTOR relative_position;
     VECTOR scale;
@@ -54,28 +57,31 @@ void render_effect(KfEffectRecord *effect, const MATRIX *lights)
     u16 asset;
     KfTmdObject *object;
 
-    if (effect->render_id.model == KF_EFFECT_MODEL_NONE) {
+    if (appearance.render_id.model == KF_EFFECT_MODEL_NONE) {
         return;
     }
     relative_position = VECTOR{
-        effect->position.vx - game_graphics_runtime.render_state.view_position.vx,
-        effect->position.vy - game_graphics_runtime.render_state.view_position.vy,
-        effect->position.vz - game_graphics_runtime.render_state.view_position.vz}.narrowed();
+        pose.position.vx - game_graphics_runtime.render_state.view_position.vx,
+        pose.position.vy - game_graphics_runtime.render_state.view_position.vy,
+        pose.position.vz - game_graphics_runtime.render_state.view_position.vz}.narrowed();
     kf::render_place_model(model, game_graphics_runtime.render_state.view_matrix, relative_position);
-    matrix_set_rotation_yxz(&effect->rotation.angles, &model);
-    scale = {(s16)effect->scale_x, (s16)effect->scale_y, (s16)effect->scale_z};
+    const KfEulerAngles angles {pose.rotation.vx, pose.rotation.vy, pose.rotation.vz};
+    matrix_set_rotation_yxz(&angles, &model);
+    scale = {(s16)appearance.scale_x, (s16)appearance.scale_y, (s16)appearance.scale_z};
     kf::matrix_scale_axes(model, scale);
-    if (effect->animation_clip == KF_ANIMATION_CLIP_NONE) {
+    if (appearance.animation_clip == KF_ANIMATION_CLIP_NONE) {
+        if (kf_enum_encode<u8>(appearance.render_id.billboard) >= KF_EFFECT_BILLBOARD_SPRITE_COUNT)
+            kf::host_fail("Effect references an invalid billboard.");
         kf::matrix_multiply_rotation(game_graphics_runtime.render_state.pitch_matrix, model, model);
-        render_enqueue_sprite(&effect_billboard_sprites[kf_enum_encode<u8>(effect->render_id.billboard)], 0, KF_SPRITE_DEPTH_CUE_NORMAL, lights, &model, game_graphics_runtime.render_state.projection);
+        render_enqueue_sprite(&effect_billboard_sprites[kf_enum_encode<u8>(appearance.render_id.billboard)], 0, KF_SPRITE_DEPTH_CUE_NORMAL, lights, &model, game_graphics_runtime.render_state.projection);
     } else {
         kf::matrix_multiply_rotation(game_graphics_runtime.render_state.view_matrix, model, model);
-        asset = kf_enum_encode<u8>(effect->render_id.model) + KF_ASSET_EFFECT_FIRST;
+        asset = kf_enum_encode<u8>(appearance.render_id.model) + KF_ASSET_EFFECT_FIRST;
         asset_registry_select(asset);
         object = tmd_get_object(tmd_context(), 0);
-        if (!render_bind_instance_vertices(
-                &effect->animation_cache, asset, effect->animation_clip, effect->visual.animation_phase,
-                object->vertex_count)) {
+        if (render_bind_instance_vertices(
+                &effect->animation_cache, asset, appearance.animation_clip, appearance.animation_phase,
+                object->vertex_count) == false) {
             tmd_select_object_vertices(tmd_context(), 0);
             tmd_project_vertices(tmd_get_object(tmd_context(), 0)->vertex_count, &model, game_graphics_runtime.render_state.projection);
         } else {

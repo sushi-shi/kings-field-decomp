@@ -44,4 +44,15 @@
 #include <kf/lib/resources.h>
 #include <kf/lib/tmd.h>
 
+#include <memory>
+#include <vector>
+#include <array>
+#include <span>
+#include <kf/net/transport.hpp>
+#include <kf/net/protocol.hpp>
+#include <kf/net/world.h>
+#include <kf/platform/frame_task.hpp>
+#include <kf/platform/campaign.hpp>
+#include <kf/platform/avatars.hpp>
+
 #endif // KF_PLATFORM_PRELUDE_H

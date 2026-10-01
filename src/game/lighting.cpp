@@ -1,26 +1,32 @@
+#include <kf/platform/frame_task.hpp>
+#include <kf/game/system.h>
+#include <kf/game/world.h>
+#include <kf/game/party_runtime.h>
+#include <kf/game/player.h>
+#include <kf/lib/null.h>
+#include <kf/game/graphics.h>
+
+#include <kf/lib/math.h>
+#include <kf/game/render.h>
 #include <kf/platform/prelude.h>
 #include <kf/game/game.h>
-#include <kf/game/graphics.h>
-#include <kf/game/render.h>
-#include <kf/lib/math.h>
-#include <kf/lib/null.h>
 
 enum {
     LIGHTING_COLOR_BLEND_STEP = 0x400,
     VITAL_RESTORE_COLOR_LEVEL = 0xfff
 };
 
-void lighting_transition_color_matrix(const MATRIX *from, const MATRIX *to)
+kf::FrameTask<void> lighting_transition_color_matrix(WorldState &world, PlayerContext &player, const MATRIX *from, const MATRIX *to)
 {
-    const auto input_context = kf::host_set_input_context(kf::InputContext::Scripted);
+    kf::InputContextScope input_context(kf::InputContext::Scripted);
     s32 blend = 0;
 
     do {
         lighting_set_color_matrix(game_graphics_runtime.render_state, from, to, blend);
-        render_frame(NULL, NULL);
+        (co_await render_frame(world, player, NULL, NULL));
         blend += LIGHTING_COLOR_BLEND_STEP;
     } while (blend <= KF_FIXED12_ONE);
-    kf::host_set_input_context(input_context);
+
 }
 
 void color_matrix_set_rgb(s16 red, s16 green, s16 blue, MATRIX *matrix)
@@ -36,23 +42,32 @@ void color_matrix_set_rgb(s16 red, s16 green, s16 blue, MATRIX *matrix)
     matrix->m[2][0] = blue;
 }
 
-void player_restore_vitals_with_color_cycle(void)
+kf::FrameTask<void> player_restore_vitals_with_color_cycle(WorldState &world, PlayerContext &player)
 {
+    if (world.party.enabled) {
+        if (!world.prediction) {
+            player.state.vitals.current_hp = player.state.vitals.maximum_hp;
+            player.state.vitals.current_mp = player.state.vitals.maximum_mp;
+            player.state.status_effect_flags &= KF_PLAYER_STATUS_KEEP_UPPER;
+            party_revive_spectators(world, player);
+        }
+        co_return;
+    }
     MATRIX saved;
     MATRIX first;
     MATRIX second;
 
     saved = game_graphics_runtime.render_state.lighting.color_matrix;
     color_matrix_set_rgb(0, VITAL_RESTORE_COLOR_LEVEL, 0, &first);
-    lighting_transition_color_matrix(&saved, &first);
+    (co_await lighting_transition_color_matrix(world, player, &saved, &first));
     color_matrix_set_rgb(
         0, VITAL_RESTORE_COLOR_LEVEL, VITAL_RESTORE_COLOR_LEVEL, &second);
-    lighting_transition_color_matrix(&first, &second);
+    (co_await lighting_transition_color_matrix(world, player, &first, &second));
     color_matrix_set_rgb(VITAL_RESTORE_COLOR_LEVEL, VITAL_RESTORE_COLOR_LEVEL,
         VITAL_RESTORE_COLOR_LEVEL, &first);
-    lighting_transition_color_matrix(&second, &first);
-    lighting_transition_color_matrix(&first, &saved);
-    player_state.vitals.current_hp = player_state.vitals.maximum_hp;
-    player_state.vitals.current_mp = player_state.vitals.maximum_mp;
-    player_state.status_effect_flags &= KF_PLAYER_STATUS_KEEP_UPPER;
+    (co_await lighting_transition_color_matrix(world, player, &second, &first));
+    (co_await lighting_transition_color_matrix(world, player, &first, &saved));
+    player.state.vitals.current_hp = player.state.vitals.maximum_hp;
+    player.state.vitals.current_mp = player.state.vitals.maximum_mp;
+    player.state.status_effect_flags &= KF_PLAYER_STATUS_KEEP_UPPER;
 }

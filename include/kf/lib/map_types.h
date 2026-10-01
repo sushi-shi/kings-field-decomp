@@ -22,6 +22,11 @@ static inline s32 map_placement_axis_position(u8 tile, s16 local)
     return tile * KF_MAP_TILE_SIZE + local;
 }
 
+constexpr bool map_position_within_grid(s32 x, s32 z)
+{
+    return x >= 0 && z >= 0 && x < KF_MAP_COLUMNS * KF_MAP_TILE_SIZE && z < KF_MAP_ROWS * KF_MAP_TILE_SIZE;
+}
+
 enum class KfMapAttribute : u8 {
     KF_MAP_ATTRIBUTE_00 = 0x00,
     KF_MAP_ATTRIBUTE_01 = 0x01,

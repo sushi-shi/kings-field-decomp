@@ -1,22 +1,31 @@
 #ifndef KF_GAME_MENU_H
 #define KF_GAME_MENU_H
 
-#include <kf/game/magic.h>
+struct WorldState;
+
+struct PlayerContext;
+
+#include <kf/platform/frame_task.hpp>
 #include <kf/game/save.h>
 #include <kf/lib/debug.h>
 #include <kf/lib/item.h>
 #include <kf/lib/map.h>
-#include <kf/lib/menu_types.h>
-#include <kf/lib/render_types.h>
 #include <kf/lib/resource_file.h>
 #include <kf/renderer/renderer.h>
+#include <kf/game/magic.h>
+#include <kf/lib/render_types.h>
+#include <kf/lib/menu_types.h>
 
 #include <array>
 #include <span>
 #include <variant>
 
+extern kf::FrameTask<KfMenuResult> menu_confirm_pickup(PlayerContext &, KfObjectId);
+extern kf::FrameTask<void> menu_open_shop(PlayerContext &, KfItemStockBank);
+
 enum class KfMenuAction { Close, GameLoaded, ReturnToIntro };
 using KfMenuOutcome = std::variant<KfMenuAction, KfObjectId>;
+extern kf::FrameTask<KfMenuOutcome> menu_open_root(WorldState &, PlayerContext &);
 
 enum class KfMenuRootChoice : s32 {
     KF_ROOT_CHOICE_NONE = -1,
@@ -285,7 +294,7 @@ typedef struct KfMenuList {
 
 extern void menu_list_previous(KfMenuList *list);
 extern void menu_list_next(KfMenuList *list);
-extern bool menu_list_handle_navigation(KfMenuList &list, u32 input, u32 previous);
+extern kf::FrameTask<bool> menu_list_handle_navigation(KfMenuList &list, u32 input, u32 previous);
 
 enum {
     MENU_ITEM_PREVIEW_YAW_STEP = 16,
@@ -315,8 +324,8 @@ enum class KfMenuModelAllocation : s32 {
 extern KfMenuModelAllocation menu_item_model_allocation;
 
 extern void item_load_database(void);
-extern void shop_menu_root(KfItemStockBank shop_bank);
-extern KfMenuResult item_pickup_confirm(KfObjectId item_id);
+extern kf::FrameTask<void> shop_menu_root(PlayerContext &player, KfItemStockBank shop_bank);
+extern kf::FrameTask<KfMenuResult> item_pickup_confirm(PlayerContext &player, KfObjectId item_id);
 KfResourceLoadResult menu_load_image(const char *path);
 extern void menu_add_message_image_quad(void);
 extern void menu_add_magic_artwork_quad(void);
@@ -324,20 +333,19 @@ extern void menu_blit_sprite(
     const MenuSpriteDef *sprite, const MenuPoint *position);
 extern void menu_blit_sprite_translucent(
     const MenuSpriteDef *sprite, const MenuPoint *position);
-extern void menu_config_panel(void);
-extern void menu_resources_reload(void);
+extern kf::FrameTask<void> menu_config_panel(PlayerContext &player);
 extern void menu_draw_save_slots(
     std::span<const KfSaveSlotSummary> summaries, KfSaveSlotOverlay slot_overlay);
-extern void menu_draw_item_detail(
+extern void menu_draw_item_detail(PlayerContext &player,
     KfObjectId item_id, KfItemStockBank shop_bank, KfTradeMode price_mode);
 extern void menu_draw_pickup_preview(KfObjectId item_id);
 extern void menu_draw_number(
     const MenuSpriteDef *font, const MenuGlyphString *string);
 extern void menu_draw_string(
     const MenuSpriteDef *font, const MenuGlyphString *string);
-extern void menu_draw_equipment_names(void);
-extern void menu_draw_status_summary(void);
-extern void menu_draw_status_details(void);
+extern void menu_draw_equipment_names(PlayerContext &player);
+extern void menu_draw_status_summary(PlayerContext &player);
+extern void menu_draw_status_details(PlayerContext &player);
 struct MenuChoiceLabel;
 extern void menu_draw_two_option(
     const MenuChoiceLabel *accept_label, const MenuChoiceLabel *decline_label,
@@ -346,39 +354,37 @@ extern void menu_draw_window(KfMenuWindowKind window_kind, s32 row_count, s32 hi
 extern void menu_draw_window_backdrop(void);
 extern void menu_format_number(
     s32 value, s32 digit_count, KfFormatPaddingMode padding_mode, std::span<s16> out);
-extern void menu_drop_item_panel(void);
-extern KfMenuOutcome menu_open_root();
-extern KfMenuResult menu_confirm_pickup(KfObjectId item_id);
-extern void menu_open_shop(KfItemStockBank shop_bank);
-extern void menu_equip_select(KfEquipmentMenuCategory equipment_category);
+extern kf::FrameTask<void> menu_drop_item_panel(PlayerContext &player);
+extern kf::FrameTask<void> menu_equip_select(PlayerContext &player, KfEquipmentMenuCategory equipment_category);
+extern void menu_resources_reload(void);
 extern void menu_frame_begin(void);
-extern void menu_item_model_preview(KfObjectId item_id);
+extern void menu_item_model_preview(PlayerContext &player, KfObjectId item_id);
 extern void menu_list_init(KfMenuList *list, KfMenuWindowKind window_kind, s32 title_row);
-extern KfMenuResult menu_list_confirm(
+extern kf::FrameTask<KfMenuResult> menu_list_confirm(PlayerContext &player,
     const KfMenuList *list, KfMenuConfirmKind confirm_kind, KfMenuPreviewMode preview_mode,
     KfObjectId item_id, KfItemStockBank shop_bank, KfTradeMode price_mode);
-extern KfMenuResult menu_list_confirm(
+extern kf::FrameTask<KfMenuResult> menu_list_confirm(PlayerContext &player,
     const KfMenuList *list, KfMenuConfirmKind confirm_kind, KfEffectKind magic_id);
 extern void menu_list_render(const KfMenuList *list);
 extern KfResourceLoadResult menu_load_item_model(KfObjectId item_id);
 extern KfResourceLoadResult menu_load_texture(KfMenuTextureId texture_id);
 extern void menu_release_item_model(void);
-extern KfMenuResult menu_load_panel(void);
-extern bool menu_magic_panel(void);
-extern void menu_map_viewer(KfObjectId item_id);
-extern void menu_equipment_root(void);
-extern void menu_play_input_sound(KfMenuSoundCue cue);
-extern void menu_present_frame(void);
-extern KfMenuOutcome menu_root(void);
-extern void menu_save_confirm(void);
-extern KfMenuAction menu_system_panel(void);
-extern KfMenuResult menu_save_panel(void);
-extern void menu_spell_select(void);
-extern void menu_status_panel(void);
-extern KfMenuResult menu_two_option_prompt(
+extern kf::FrameTask<KfMenuResult> menu_load_panel(WorldState &world, PlayerContext &player);
+extern kf::FrameTask<bool> menu_magic_panel(WorldState &world, PlayerContext &player);
+extern kf::FrameTask<void> menu_map_viewer(PlayerContext &player, KfObjectId item_id);
+extern kf::FrameTask<void> menu_equipment_root(WorldState &world, PlayerContext &player);
+extern kf::FrameTask<void> menu_play_input_sound(KfMenuSoundCue cue);
+extern kf::FrameTask<void> menu_present_frame(void);
+extern kf::FrameTask<KfMenuOutcome> menu_root(WorldState &world, PlayerContext &player);
+extern kf::FrameTask<void> menu_save_confirm(WorldState &world, PlayerContext &player);
+extern kf::FrameTask<KfMenuAction> menu_system_panel(WorldState &world, PlayerContext &player);
+extern kf::FrameTask<KfMenuResult> menu_save_panel(WorldState &world, PlayerContext &player);
+extern kf::FrameTask<void> menu_spell_select(WorldState &world, PlayerContext &player);
+extern kf::FrameTask<void> menu_status_panel(PlayerContext &player);
+extern kf::FrameTask<KfMenuResult> menu_two_option_prompt(
     KfMenuWindowKind window_kind, s32 row_count, s32 highlight_row,
     std::span<const KfSaveSlotSummary> summaries);
-extern void talk_show_dialogue_page(KfFloorId floor, u8 stage, KfCharacterId character_id, u8 page);
+extern kf::FrameTask<void> talk_show_dialogue_page(KfFloorId floor, u8 stage, KfCharacterId character_id, u8 page);
 
 void menu_enqueue_background(void);
 

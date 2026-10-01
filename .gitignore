@@ -7,6 +7,7 @@ __pycache__/
 *.bin
 *.cue
 *.iso
+/services/rooms/node_modules/
 
 # Derived translation payload; never commit or publish (terms unstated).
 *.kfdelta

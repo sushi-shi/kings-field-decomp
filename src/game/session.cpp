@@ -1,6 +1,8 @@
+#include <kf/game/world.h>
+#include <kf/game/player.h>
+#include <kf/game/resources.h>
 #include <kf/platform/prelude.h>
 #include <kf/game/game.h>
-#include <kf/game/resources.h>
 #include <kf/game/session.h>
 
 void display_play_transition_reset_module_state(void);
@@ -19,6 +21,7 @@ void render_map_cells_reset_module_state(void);
 void entity_render_reset_module_state(void);
 void geometry_render_reset_module_state(void);
 void render_frame_reset_module_state(void);
+void player_avatar_render_reset_module_state(void);
 void item_reset_module_state(void);
 void menu_runtime_reset_module_state(void);
 void save_system_reset_module_state(void);
@@ -36,8 +39,9 @@ void effect_update_reset_module_state(void);
 void effect_dispatch_reset_module_state(void);
 void debug_text_reset_module_state(void);
 
-static void restore_module_initial_state()
+void game_restore_initial_state()
 {
+    player_avatar_render_reset_module_state();
     display_play_transition_reset_module_state();
     game_reset_module_state();
     equipment_reset_module_state();
@@ -76,8 +80,14 @@ static void restore_module_initial_state()
 
 GameResult game_play() {
     kf::host_set_input_context(kf::InputContext::Gameplay);
-    restore_module_initial_state();
-    game_main_loop();
+    game_restore_initial_state();
+    PlayerContext player {};
+    auto world = std::make_unique<WorldState>();
+    auto game = game_main_loop(*world, player);
+    while (!game.done()) {
+        game.advance();
+        kf::host_wait_until_tick(kf::host_clock_tick() + 1);
+    }
     animation_cache_release_all();
     memory_destroy_arena(memory_arena);
     if (game_result == GameResult::Running)

@@ -1,12 +1,16 @@
 #ifndef KF_GAME_SAVE_H
 #define KF_GAME_SAVE_H
 
+struct WorldState;
+
+struct PlayerContext;
+#include <kf/lib/types.h>
 #include <kf/lib/enum.h>
 #include <kf/lib/floor.h>
-#include <kf/lib/types.h>
 #include <kf/platform/saves.h>
 
 #include <array>
+#include <span>
 
 enum class KfSaveResult : s32 {
     KF_SAVE_RESULT_FAILED = 0,
@@ -25,8 +29,7 @@ struct KfSaveSlotSummary {
     u32 maximum_mp;
     KfSaveSlotState state;
 };
-KfSaveResult save_system_read_catalog(std::array<KfSaveSlotSummary, KF_SAVE_SLOT_COUNT> &summaries);
-KfSaveResult save_system_read_slot(kf::SaveSlot slot);
-KfSaveResult save_system_write_slot(kf::SaveSlot slot);
-
-#endif // KF_GAME_SAVE_H
+KfSaveResult save_system_read_catalog(WorldState &world, std::span<KfSaveSlotSummary, KF_SAVE_SLOT_COUNT> summaries);
+KfSaveResult save_system_read_slot(WorldState &world, PlayerContext &player, kf::SaveSlot slot);
+KfSaveResult save_system_write_slot(WorldState &world, PlayerContext &player, kf::SaveSlot slot);
+#endif

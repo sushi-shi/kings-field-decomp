@@ -1,11 +1,14 @@
+#include <kf/platform/frame_task.hpp>
+#include <kf/game/system.h>
+#include <kf/game/world.h>
 #include <kf/platform/prelude.h>
 #include <kf/game/audio.h>
 #include <kf/game/game.h>
+#include <kf/game/player_actions.h>
 #include <kf/game/player.h>
 #include <kf/lib/null.h>
 
 #include <array>
-
 static constexpr unsigned enemy_image_number_offset = 7;
 static constexpr unsigned enemy_image_path_capacity = 14, person_image_path_capacity = 15;
 static constexpr unsigned person_image_number_offset = 8;
@@ -31,38 +34,44 @@ std::array<char, enemy_image_path_capacity> enemy_info_image_path_template = {"E
 
 std::array<char, person_image_path_capacity> person_image_path_template = {"PRSN/PER00.TIM"};
 
-void actor_show_info_image(const KfActor *actor)
+kf::FrameTask<void> actor_show_info_image(WorldState &world, PlayerContext &player, const KfActor *actor)
 {
-    render_frame(NULL, NULL);
-    render_frame(NULL, NULL);
-    enemy_info_image_path_template[3] = '0' + kf_enum_encode<u8>(player_state.progress_state.current_floor);
+    (co_await render_frame(world, player, NULL, NULL));
+    (co_await render_frame(world, player, NULL, NULL));
+    enemy_info_image_path_template[3] = '0' + kf_enum_encode<u8>(player.state.progress_state.current_floor);
     enemy_info_image_path_template[enemy_image_number_offset] = '0' + actor->definition_id / 10;
     enemy_info_image_path_template[enemy_image_number_offset + 1] = '0' + actor->definition_id % 10;
-    screen_show_image_until_input(enemy_info_image_path_template.data());
+    (co_await screen_show_image_until_input(enemy_info_image_path_template.data()));
 }
 
-void map_event_show_person_image(const KfMapEvent *event)
+kf::FrameTask<void> map_event_show_person_image(WorldState &world, PlayerContext &player, const KfMapEvent *event)
 {
-    render_frame(NULL, NULL);
-    render_frame(NULL, NULL);
+    (co_await render_frame(world, player, NULL, NULL));
+    (co_await render_frame(world, player, NULL, NULL));
     person_image_path_template[person_image_number_offset] = '0' + kf_enum_encode<u8>(event->character_id) / 10;
     person_image_path_template[person_image_number_offset + 1] = '0' + kf_enum_encode<u8>(event->character_id) % 10;
-    screen_show_image_until_input(person_image_path_template.data());
+    (co_await screen_show_image_until_input(person_image_path_template.data()));
 }
 
-void player_use_item(KfObjectId item_id)
+bool player_use_world_item(WorldState &world, PlayerContext &player, KfObjectId item_id)
 {
     KfMapObject *object;
-    KfActor *actor;
-    KfMapEvent *event;
     KfEffectRecord *record;
-    s32 distance;
     s32 index;
     s16 slot;
     bool used = false;
+    bool feedback = false;
+    const auto notify = [&](KfNotificationId id) {
+        feedback = true;
+        if (player.local_view) notify_enqueue(id);
+    };
 
-    const auto reach = vector_yaw_probe_xz(player_state.camera_position,
-        player_state.camera_rotation.vy, MAP_INTERACTION_PROBE_DISTANCE);
+    if (world.prediction || player.prediction || kf_enum_encode<unsigned>(item_id) >= KF_ITEM_COUNT ||
+        !player.item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)][kf_enum_encode<u8>(item_id)]) return false;
+    if (player_consume_item(player, item_id)) return true;
+
+    const auto reach = vector_yaw_probe_xz(player.state.camera_position,
+        player.state.camera_rotation.vy, MAP_INTERACTION_PROBE_DISTANCE);
     index = 0;
     switch (item_id) {
     default:
@@ -73,12 +82,12 @@ void player_use_item(KfObjectId item_id)
     case KF_ITEM_DUNGEON_KEY:
     case KF_ITEM_SORCERER_KEY:
         for (;;) {
-            index = map_object_pool_find_interaction_from(
+            index = map_object_pool_find_interaction_from(world,
                 index, reach.x, reach.z, MAP_INTERACTION_RADIUS_PADDING);
             if (index == -1) {
                 break;
             }
-            object = &map_object_state.objects[index];
+            object = &world.objects.objects[index];
             switch (object->object_id) {
             default:
                 // Only the listed doors and lids accept keys.
@@ -94,19 +103,19 @@ void player_use_item(KfObjectId item_id)
             case KF_MAP_OBJECT_TALL_HINGED_DOOR:
             case KF_MAP_OBJECT_TALL_HINGED_DOOR_PARTNER:
                 if (object->link.fields.link_id == KF_MAP_LINK_NONE) {
-                    notify_enqueue(KF_NOTIFICATION_NOTHING_HAPPENS);
+                    notify(KF_NOTIFICATION_NOTHING_HAPPENS);
                 } else if (object->object_id != KF_MAP_OBJECT_GRAVESTONE
                            || angle_within_tolerance(
-                               player_state.camera_rotation.vy, KF_ANGLE_HALF_TURN - object->rotation.angles.y, MAP_DOOR_FACING_TOLERANCE)) {
-                    used = true;
+                               player.state.camera_rotation.vy, KF_ANGLE_HALF_TURN - object->rotation.angles.y, MAP_DOOR_FACING_TOLERANCE)) {
                     if (object->link.fields.link_id == kf_enum_encode<u8>(item_id)) {
+                        used = true;
                         object->link.fields.link_id = KF_MAP_LINK_NONE;
-                        sound_ref_play(audio_playback(), &gameplay_sound_refs[KF_GAMEPLAY_SOUND_KEY_UNLOCK], PLAYER_KEY_UNLOCK_VOLUME);
+                        sound_ref_play(audio_playback(player), &gameplay_sound_refs[KF_GAMEPLAY_SOUND_KEY_UNLOCK], PLAYER_KEY_UNLOCK_VOLUME);
                         if (object->object_id == KF_MAP_OBJECT_GRAVESTONE) {
-                            sound_ref_play(audio_playback(), &gameplay_sound_refs[KF_GAMEPLAY_SOUND_STONE_PASSAGE], KF_AUDIO_MAX_VOLUME);
+                            sound_ref_play(audio_playback(player), &gameplay_sound_refs[KF_GAMEPLAY_SOUND_STONE_PASSAGE], KF_AUDIO_MAX_VOLUME);
                         }
                     } else {
-                        notify_enqueue(KF_NOTIFICATION_KEY_DOES_NOT_FIT);
+                        notify(KF_NOTIFICATION_KEY_DOES_NOT_FIT);
                     }
                 }
                 break;
@@ -121,19 +130,19 @@ void player_use_item(KfObjectId item_id)
     case KF_ITEM_FIRE_SEAL_STONE:
     case KF_ITEM_WIND_SEAL_STONE:
         for (;;) {
-            index = map_object_pool_find_interaction_from(
+            index = map_object_pool_find_interaction_from(world,
                 index, reach.x, reach.z, MAP_INTERACTION_RADIUS_PADDING);
             if (index == -1) {
                 break;
             }
-            object = &map_object_state.objects[index];
+            object = &world.objects.objects[index];
             if (object->object_id == kf_enum_decode<KfObjectId>(kf_enum_encode<u8>(item_id))) {
                 if (object->link.fields.link_id == KF_MAP_LINK_NONE) {
-                    notify_enqueue(KF_NOTIFICATION_NOTHING_HAPPENS);
+                    notify(KF_NOTIFICATION_NOTHING_HAPPENS);
                 } else {
-                    item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)][kf_enum_encode<u8>(object->object_id)] = 0;
+                    player.item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)][kf_enum_encode<u8>(object->object_id)] = 0;
                     used = true;
-                    map_object_pool_trigger_link(object->link.fields.link_id);
+                    map_object_pool_trigger_link(world, object->link.fields.link_id);
                     object->link.fields.link_id = KF_MAP_LINK_NONE;
                 }
             }
@@ -141,77 +150,84 @@ void player_use_item(KfObjectId item_id)
         }
         break;
     case KF_ITEM_HARP:
-        record = effect_state.records.data();
+        record = world.effects.records.data();
         for (slot = KF_EFFECT_CAPACITY - 1; slot != -1; slot--, record++) {
             if (record->type == KF_EFFECT_SLOT_FREE) {
                 continue;
             }
             if (record->kind == KF_EFFECT_KIND_FLOOR_DEFORMATION) {
-                notify_enqueue(KF_NOTIFICATION_NOTHING_HAPPENS);
-                return;
+                notify(KF_NOTIFICATION_NOTHING_HAPPENS);
+                return false;
             }
         }
-        if (player_state.progress_state.current_floor == KF_FLOOR_2) {
-            effect_pool_spawn_floor_deformation(
+        if (player.state.progress_state.current_floor == KF_FLOOR_2) {
+            record = effect_pool_spawn_floor_deformation(world,
                 PLAYER_HARP_FLOOR2_FIRST_SEGMENT, PLAYER_HARP_FLOOR2_SEGMENT_COUNT,
                 PLAYER_HARP_PROGRESS_PER_UPDATE, PLAYER_HARP_CELL_STAGGER,
                 PLAYER_HARP_FLOOR2_SWEEP_UPDATES, PLAYER_HARP_FLOOR2_HOLD_COUNTDOWN);
-        } else if (player_state.progress_state.current_floor == KF_FLOOR_3) {
-            effect_pool_spawn_floor_deformation(
+        } else if (player.state.progress_state.current_floor == KF_FLOOR_3) {
+            record = effect_pool_spawn_floor_deformation(world,
                 PLAYER_HARP_FLOOR3_FIRST_SEGMENT, PLAYER_HARP_FLOOR3_SEGMENT_COUNT,
                 PLAYER_HARP_PROGRESS_PER_UPDATE, PLAYER_HARP_CELL_STAGGER,
                 PLAYER_HARP_FLOOR3_SWEEP_UPDATES, PLAYER_HARP_FLOOR3_HOLD_COUNTDOWN);
         } else {
             break;
         }
-        sound_ref_play(audio_playback(), &gameplay_sound_refs[KF_GAMEPLAY_SOUND_HARP], KF_AUDIO_MAX_VOLUME);
-        used = true;
-        break;
-    case KF_ITEM_MEDICINAL_HERB:
-    case KF_ITEM_ANTIDOTE_HERB:
-    case KF_ITEM_RECOVERY_MEDICINE:
-    case KF_ITEM_DRAGON_KING_GRASS_LEAF:
-    case KF_ITEM_DRAGON_KING_GRASS_FRUIT:
-        used = true;
-        break;
-    case KF_ITEM_GREEN_DRAGON_STAFF:
-        player_warp_to_floor_entry();
-        return;
-    case KF_ITEM_ILLUSION_STAFF:
-        player_state.illusion_staff_timer = PLAYER_ILLUSION_STAFF_TIMER_RELOAD;
-        if (item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)][kf_enum_encode<u8>(KF_ITEM_ILLUSION_STAFF)] != 0) {
-            item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)][kf_enum_encode<u8>(KF_ITEM_ILLUSION_STAFF)]--;
+        if (!record) {
+            notify(KF_NOTIFICATION_NOTHING_HAPPENS);
+            return false;
         }
-        return;
+        sound_ref_play(audio_playback(player), &gameplay_sound_refs[KF_GAMEPLAY_SOUND_HARP], KF_AUDIO_MAX_VOLUME);
+        used = true;
+        break;
+    case KF_ITEM_ILLUSION_STAFF:
+        player.state.illusion_staff_timer = PLAYER_ILLUSION_STAFF_TIMER_RELOAD;
+        if (player.item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)][kf_enum_encode<u8>(KF_ITEM_ILLUSION_STAFF)] != 0) {
+            player.item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)][kf_enum_encode<u8>(KF_ITEM_ILLUSION_STAFF)]--;
+        }
+        return true;
+    }
+    if (!used && !feedback) notify(KF_NOTIFICATION_NOTHING_HAPPENS);
+    return used;
+}
+
+kf::FrameTask<void> player_use_item(WorldState &world, PlayerContext &player, KfObjectId item_id)
+{
+    if (kf_enum_encode<unsigned>(item_id) >= KF_ITEM_COUNT || !player.item_stock[0][kf_enum_encode<u8>(item_id)]) co_return;
+    s32 distance;
+    KfActor *actor;
+    KfMapEvent *event;
+    switch (item_id) {
+    case KF_ITEM_GREEN_DRAGON_STAFF:
+        co_await player_warp_to_floor_entry(world, player);
+        co_return;
     case KF_ITEM_MIRROR_OF_TRUTH:
-        actor = actor_pool_find_target_in_cone(
-            &player_state.camera_position,
-            player_state.camera_rotation.vy,
+        actor = actor_pool_find_target_in_cone(world,
+            &player.state.camera_position,
+            player.state.camera_rotation.vy,
             PLAYER_MIRROR_TARGET_DISTANCE,
             PLAYER_MIRROR_ANGLE_TOLERANCE,
             &distance);
         if (actor != NULL) {
-            actor_show_info_image(actor);
-            return;
+            (co_await actor_show_info_image(world, player, actor));
+            co_return;
         }
-        event = map_event_pool_find_target_in_cone(
-            &player_state.camera_position,
-            player_state.camera_rotation.vy,
+        event = map_event_pool_find_target_in_cone(world,
+            &player.state.camera_position,
+            player.state.camera_rotation.vy,
             PLAYER_MIRROR_TARGET_DISTANCE,
             PLAYER_MIRROR_ANGLE_TOLERANCE,
             &distance);
         if (event == NULL) {
             break;
         }
-        map_event_show_person_image(event);
-        return;
-    case KF_ITEM_VERDITE:
-        player_state.magic_training += KF_PLAYER_TRAINING_POINTS_PER_GAIN;
-        used = true;
-        player_increment_magic_training();
-        break;
+        (co_await map_event_show_person_image(world, player, event));
+        co_return;
+    default:
+        player_use_world_item(world, player, item_id);
+        co_return;
     }
-    if (!used) {
+    if (player.local_view) {
         notify_enqueue(KF_NOTIFICATION_NOTHING_HAPPENS);
     }
 }

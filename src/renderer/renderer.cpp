@@ -8,6 +8,7 @@
 #include <cstdio>
 #include <cstring>
 #include <limits>
+#include <array>
 #include <new>
 #include <vector>
 
@@ -190,6 +191,7 @@ void main() {
 }
 
 void renderer_release(Renderer *renderer) {
+    renderer_set_notice(renderer, nullptr);
     texture_store_release(&renderer->textures);
     renderer_delete_texture(renderer->white_texture);
     glDeleteProgram(renderer->program);
@@ -219,6 +221,59 @@ TextureId renderer_upload(const Image *image) {
 }
 void renderer_delete_texture(TextureId texture) {
     glDeleteTextures(1, &texture);
+}
+
+bool renderer_set_notice(Renderer *renderer, const char *text) {
+    glDeleteFramebuffers(1, &renderer->notice_framebuffer);
+    renderer_delete_texture(renderer->notice_texture);
+    renderer->notice_framebuffer = renderer->notice_texture = 0;
+    if (!text || !*text) return true;
+    // Five columns, low bit at the top. Independent of the retail glyph atlas.
+    static constexpr u8 letters[26][5] = {
+        {126,17,17,17,126},{127,73,73,73,54},{62,65,65,65,34},{127,65,65,34,28},
+        {127,73,73,73,65},{127,9,9,9,1},{62,65,73,73,122},{127,8,8,8,127},
+        {0,65,127,65,0},{32,64,65,63,1},{127,8,20,34,65},{127,64,64,64,64},
+        {127,2,12,2,127},{127,4,8,16,127},{62,65,65,65,62},{127,9,9,9,6},
+        {62,65,81,33,94},{127,9,25,41,70},{38,73,73,73,50},{1,1,127,1,1},
+        {63,64,64,64,63},{31,32,64,32,31},{63,64,56,64,63},{99,20,8,20,99},
+        {3,4,120,4,3},{97,81,73,69,67}
+    };
+    char lines[2][48] {};
+    unsigned lengths[2] {}, row = 0;
+    for (unsigned i = 0; i < 97 && text[i]; ++i) {
+        if (text[i] == '\n') { if (++row == 2) break; }
+        else if (lengths[row] < 48) lines[row][lengths[row]++] = text[i];
+    }
+    const unsigned rows = lengths[1] ? 2 : 1;
+    const unsigned width = std::max(lengths[0], lengths[1]) * 6 + 12, height = rows * 10 + 8;
+    // Notices can be drawn inside checkpoint/travel continuations. Keep their
+    // bitmap off the browser's small stack.
+    std::vector<u8> pixels(width * height * 4);
+    for (unsigned i = 0; i < width * height; ++i) pixels[i*4+3] = 255;
+    for (unsigned line = 0; line < rows; ++line) {
+        const unsigned left = (width - lengths[line] * 6 + 1) / 2;
+        for (unsigned i = 0; i < lengths[line]; ++i) {
+            const auto c = lines[line][i] >= 'a' && lines[line][i] <= 'z' ? lines[line][i] - 'a' + 'A' : lines[line][i];
+            if (c < 'A' || c > 'Z') continue;
+            for (unsigned x = 0; x < 5; ++x) for (unsigned y = 0; y < 7; ++y) {
+                if (!(letters[c-'A'][x] & (1u << y))) continue;
+                // GL images start at their lower row; keep the notice upright.
+                const auto at = ((height - 1 - (5 + line * 10 + y)) * width + left + i * 6 + x) * 4;
+                pixels[at] = 240; pixels[at+1] = 232; pixels[at+2] = 208;
+            }
+        }
+    }
+    const Image image {width, height, std::move(pixels)};
+    renderer->notice_texture = renderer_upload(&image);
+    if (!renderer->notice_texture) return false;
+    renderer->notice_width = width;
+    renderer->notice_height = height;
+    glGenFramebuffers(1, &renderer->notice_framebuffer);
+    glBindFramebuffer(GL_FRAMEBUFFER, renderer->notice_framebuffer);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, renderer->notice_texture, 0);
+    const bool complete = glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE;
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    return complete;
 }
 static float clear_channel(float value) {
     const auto channel = static_cast<u32>(std::clamp(std::round(value * color8_max), 0.0f, color8_scale)) >> color5_color8_shift;
@@ -304,6 +359,15 @@ void renderer_present_retained(const Renderer *renderer, int width, int height) 
     glBindFramebuffer(GL_READ_FRAMEBUFFER, renderer->framebuffer);
     glBlitFramebuffer(0, 0, render_width, render_height, x, y, x + target_width, y + target_height,
                       GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    if (renderer->notice_texture) {
+        const int notice_width = renderer->notice_width * target_width / render_width;
+        const int notice_height = renderer->notice_height * target_height / render_height;
+        const int left = x + (target_width - notice_width) / 2;
+        const int top = y + target_height - 8 * target_height / render_height;
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, renderer->notice_framebuffer);
+        glBlitFramebuffer(0, 0, renderer->notice_width, renderer->notice_height,
+            left, top - notice_height, left + notice_width, top, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    }
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
@@ -394,7 +458,7 @@ bool renderer_draw_faces(Renderer *renderer, const FaceList *faces, int width, i
             const bool textured = face.material.kind == SurfaceKind::Texture;
             if (textured)
                 preceding_blend = face.material.blend;
-            textures[i] = textured ? texture_store_resolve(&renderer->textures, face.material.source)
+            textures[i] = textured ? (face.material.texture ? face.material.texture : texture_store_resolve(&renderer->textures, face.material.source))
                                    : renderer->white_texture;
             if (!textures[i]) {
                 good = false;

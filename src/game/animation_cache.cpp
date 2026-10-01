@@ -86,6 +86,9 @@ bool render_bind_instance_vertices(
 {
     if (vertex_count > KF_PROJECTED_VERTEX_CAPACITY)
         kf::host_fail("Animated model exceeds vertex capacity.");
+    if (asset_index >= KF_ASSET_REGISTRY_KNOWN_ENTRIES ||
+        !game_graphics_runtime.asset_registry_tmds[asset_index].data)
+        kf::host_fail("Animated model references an unavailable asset.");
     KfAnimationCacheRecord *record = *owner_slot;
     asset_registry_select(asset_index);
     const auto &animation = game_graphics_runtime.asset_animations[asset_index];

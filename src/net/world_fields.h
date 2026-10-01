@@ -1,0 +1,272 @@
+// Explicit wire field order, shared by the encoder and decoder.
+template<class IO, class T> requires std::is_same_v<std::remove_const_t<T>, KfNetWorldSound>
+void fields(IO &io, T &v)
+{
+    io.value(v.sequence);
+    io.value(v.x);
+    io.value(v.y);
+    io.value(v.z);
+    io.value(v.program);
+    io.value(v.tone);
+    io.value(v.note);
+    io.value(v.volume);
+    io.value(v.max_distance);
+    io.value(v.attenuation_distance);
+}
+template<class IO, class T> requires std::is_same_v<std::remove_const_t<T>, KfNetWorldStory>
+void fields(IO &io, T &v)
+{
+    io.value(v.kind);
+    io.value(v.initiator);
+    io.value(v.effect);
+    io.value(v.tick);
+    io.value(v.object);
+    io.value(v.generation);
+    io.value(v.camera_x);
+    io.value(v.camera_y);
+    io.value(v.camera_z);
+    io.value(v.pitch);
+    io.value(v.yaw);
+    io.value(v.roll);
+    io.value(v.page);
+    io.value(v.ready_mask);
+}
+template<class IO, class T> requires std::is_same_v<std::remove_const_t<T>, KfNetWorldPlayer>
+void fields(IO &io, T &v)
+{
+    io.value(v.experience);
+    io.value(v.next_level_experience);
+    io.value(v.progress_state_level);
+    io.value(v.progress_state_unknown_01);
+    io.value(v.progress_state_current_floor);
+    io.value(v.progress_state_highest_floor);
+    io.value(v.map_variant);
+    io.value(v.allow_near_actor_spawn);
+    io.value(v.weapon_charge_delay);
+    io.value(v.unknown_0f);
+    io.value(v.vitals_maximum_hp);
+    io.value(v.vitals_current_hp);
+    io.value(v.vitals_maximum_mp);
+    io.value(v.vitals_current_mp);
+    io.value(v.attack_charge_state_current);
+    io.value(v.attack_charge_state_committed);
+    io.value(v.magic_charge);
+    io.value(v.physical_power_training);
+    io.value(v.magic_training);
+    io.value(v.base_physical_power);
+    io.value(v.base_magic);
+    io.value(v.physical_power);
+    io.value(v.magic);
+    io.value(v.status_effect_flags);
+    io.value(v.gold);
+    io.value(v.cutting_attack);
+    io.value(v.striking_attack);
+    io.value(v.piercing_attack);
+    io.value(v.holy_attack);
+    io.value(v.fire_attack);
+    io.value(v.unknown_3a);
+    io.value(v.cutting_defense);
+    io.value(v.striking_defense);
+    io.value(v.piercing_defense);
+    io.value(v.poison_resistance);
+    io.value(v.magic_defense);
+    io.value(v.fire_defense);
+    io.value(v.curse_timer);
+    io.value(v.darkness_timer);
+    io.value(v.poison_timer);
+    io.value(v.slowed_timer);
+    io.value(v.fire_defense_timer);
+    io.value(v.illusion_staff_timer);
+    io.value(v.unknown_54);
+    io.value(v.equipment_effect_ticks);
+    io.value(v.selected_magic_id);
+    io.value(v.unknown_5d);
+    io.value(v.equipped_weapon_id);
+    io.value(v.unknown_65);
+    io.value(v.weapon_attack_phase);
+    io.value(v.unknown_72);
+    io.value(v.weapon_magic_shots_remaining);
+    io.value(v.weapon_magic_delay);
+    io.value(v.weapon_attack_fully_charged);
+    io.value(v.unknown_7b);
+    io.value(v.equipped_head_armor_id);
+    io.value(v.equipped_body_armor_id);
+    io.value(v.equipped_shield_id);
+    io.value(v.equipped_arm_armor_id);
+    io.value(v.equipped_leg_armor_id);
+    io.value(v.equipped_accessory_id);
+    io.value(v.audio_effects_enabled);
+    io.value(v.audio_music_enabled);
+    io.value(v.hud_gauges_enabled);
+    io.value(v.compass_enabled);
+    io.value(v.view_rotation_offset_vx);
+    io.value(v.view_rotation_offset_vy);
+    io.value(v.view_rotation_offset_vz);
+    io.value(v.update_state);
+    io.value(v.unknown_a3);
+    io.value(v.camera_position_vx);
+    io.value(v.camera_position_vy);
+    io.value(v.camera_position_vz);
+    io.value(v.foot_height);
+    io.value(v.camera_rotation_vx);
+    io.value(v.camera_rotation_vy);
+    io.value(v.camera_rotation_vz);
+    io.value(v.motion_state_strafe_velocity);
+    io.value(v.motion_state_forward_velocity);
+    io.value(v.motion_state_movement_speed);
+    io.value(v.motion_state_yaw_step);
+    io.value(v.motion_state_pitch_step);
+    io.value(v.motion_state_map_cell_x);
+    io.value(v.motion_state_map_cell_z);
+    io.value(v.previous_map_cell_x);
+    io.value(v.previous_map_cell_z);
+    io.value(v.unknown_ce);
+    io.value(v.view_bob_offset);
+    io.value(v.view_bob_phase);
+    io.value(v.death_camera_pitch_step);
+    io.value(v.death_visual_blend);
+    io.value(v.vertical_velocity);
+    io.value(v.vertical_state);
+    io.value(v.unknown_df);
+    io.value(v.party_slot);
+    io.value(v.previous_input);
+    io.value(v.cast_pose_ticks);
+    io.value(v.movement_velocity_limit);
+    io.value(v.turn_step_limit);
+    io.value(v.item_stock);
+    io.value(v.learned_magic);
+    io.value(v.random_state);
+}
+template<class IO, class T> requires std::is_same_v<std::remove_const_t<T>, KfNetWorldActor>
+void fields(IO &io, T &v)
+{
+    io.value(v.generation);
+    io.value(v.random_state);
+    io.value(v.target_player_slot);
+    io.value(v.target_player_generation);
+    io.value(v.transform_step);
+    io.value(v.slot_state);
+    io.value(v.definition_id);
+    io.value(v.culling_mode);
+    io.value(v.heading_quadrant);
+    io.value(v.tile_z);
+    io.value(v.tile_x);
+    io.value(v.lifecycle);
+    io.value(v.spawn_chance);
+    io.value(v.action);
+    io.value(v.death_drop_object_id);
+    io.value(v.animation_clip);
+    io.value(v.vertical_state);
+    io.value(v.unknown_0c);
+    io.value(v.local_z);
+    io.value(v.local_x);
+    io.value(v.animation_phase);
+    io.value(v.health);
+    io.value(v.cell_x);
+    io.value(v.cell_z);
+    io.value(v.unknown_1a);
+    io.value(v.position_vx);
+    io.value(v.position_vy);
+    io.value(v.position_vz);
+    io.value(v.rotation_vector_vx);
+    io.value(v.rotation_vector_vy);
+    io.value(v.rotation_vector_vz);
+    io.value(v.action_progress);
+    io.value(v.collision_state);
+    io.value(v.movement_yaw);
+    io.value(v.animation_step);
+    io.value(v.vertical_velocity);
+    io.value(v.movement_x);
+    io.value(v.movement_z);
+    io.value(v.movement_y);
+    io.value(v.unknown_46);
+}
+template<class IO, class T> requires std::is_same_v<std::remove_const_t<T>, KfNetWorldEffect>
+void fields(IO &io, T &v)
+{
+    io.value(v.owner_player_slot);
+    io.value(v.owner_player_generation);
+    io.value(v.generation);
+    io.value(v.age);
+    io.value(v.random_state);
+    io.value(v.target_player_slot);
+    io.value(v.target_player_generation);
+    io.value(v.slot_type);
+    io.value(v.kind);
+    io.value(v.base_render_id);
+    io.value(v.render_id);
+    io.value(v.animation_clip);
+    io.value(v.sound_played);
+    io.value(v.id);
+    io.value(v.phase);
+    io.value(v.visual);
+    io.value(v.unknown_0a);
+    io.value(v.position_vx);
+    io.value(v.position_vy);
+    io.value(v.position_vz);
+    io.value(v.rotation_vector_vx);
+    io.value(v.rotation_vector_vy);
+    io.value(v.rotation_vector_vz);
+    io.value(v.scale_x);
+    io.value(v.scale_y);
+    io.value(v.scale_z);
+    io.value(v.unknown_2a);
+    io.value(v.direction_vector_vx);
+    io.value(v.direction_vector_vy);
+    io.value(v.direction_vector_vz);
+    io.value(v.control);
+    io.value(v.propagation);
+}
+template<class IO, class T> requires std::is_same_v<std::remove_const_t<T>, KfNetWorldObject>
+void fields(IO &io, T &v)
+{
+    io.value(v.generation);
+    io.value(v.object_id);
+    io.value(v.unknown_01);
+    io.value(v.cell_x);
+    io.value(v.cell_z);
+    io.value(v.unknown_06);
+    io.value(v.position_vx);
+    io.value(v.position_vy);
+    io.value(v.position_vz);
+    io.value(v.rotation_vector_vx);
+    io.value(v.rotation_vector_vy);
+    io.value(v.rotation_vector_vz);
+    io.value(v.link_words);
+    io.value(v.action);
+    io.value(v.unknown_29);
+    io.value(v.action_timer);
+}
+template<class IO, class T> requires std::is_same_v<std::remove_const_t<T>, KfNetWorldEvent>
+void fields(IO &io, T &v)
+{
+    io.value(v.state);
+    io.value(v.character_id);
+    io.value(v.model_index);
+    io.value(v.dialogue_pages_last_page);
+    io.value(v.dialogue_stage_limit);
+    io.value(v.dialogue_stage);
+    io.value(v.dialogue_page);
+    io.value(v.dialogue_page_delay);
+    io.value(v.unknown_0c);
+    io.value(v.unknown_0d);
+    io.value(v.behavior);
+    io.value(v.animation_clip);
+    io.value(v.collision_turn_pending);
+    io.value(v.unknown_11);
+    io.value(v.animation_phase);
+    io.value(v.home_x);
+    io.value(v.home_z);
+    io.value(v.cell_x);
+    io.value(v.cell_z);
+    io.value(v.radius);
+    io.value(v.unknown_22);
+    io.value(v.reference_position_vx);
+    io.value(v.reference_position_vy);
+    io.value(v.reference_position_vz);
+    io.value(v.rotation_vx);
+    io.value(v.rotation_vy);
+    io.value(v.rotation_vz);
+    io.value(v.rotation_target);
+    io.value(v.unknown_42);
+}

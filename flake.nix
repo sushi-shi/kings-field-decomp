@@ -6,7 +6,7 @@
       system = "x86_64-linux";
       pkgs = import nixpkgs { inherit system; };
       nativeTools = with pkgs; [ cmake ninja pkg-config clang python3 ];
-      nativeLibraries = with pkgs; [ sdl3 libGL libglvnd ];
+      nativeLibraries = with pkgs; [ sdl3 libGL libglvnd libdatachannel nlohmann_json ];
       sources = pkgs.lib.cleanSourceWith {
         src = ./.;
         filter = path: type:
@@ -42,7 +42,7 @@
         src = sources;
         nativeBuildInputs = nativeTools;
         buildInputs = nativeLibraries;
-        cmakeFlags = [ "-DKF_ENGLISH_PATCH=${englishDelta}" ];
+        cmakeFlags = [ "-DKF_ENGLISH_PATCH=${englishDelta}" "-DBUILD_TESTING=OFF" ];
         meta = {
           description = "King's Field direct source port (requires original Japanese disc data)";
           mainProgram = "kings-field";
@@ -102,7 +102,8 @@
       };
       devShells.${system}.default = (pkgs.mkShell.override { stdenv = pkgs.clangStdenv; }) {
         packages = nativeTools ++ nativeLibraries ++ (with pkgs; [
-          emscripten nodejs chromium xvfb-run xdotool imagemagick python3
+          emscripten nodejs chromium coturn nginx openssl xvfb-run xdotool imagemagick python3 gh ruff
+          valgrind cppcheck
         ]);
         KF_SDL_SOURCE = "${pkgs.sdl3.src}";
         KF_ENGLISH_PATCH = "${englishDelta}";

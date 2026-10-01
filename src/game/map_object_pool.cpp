@@ -1,9 +1,12 @@
+#include <kf/game/world.h>
+#include <kf/game/player.h>
+
+#include <kf/lib/map_data.h>
+#include <kf/lib/map.h>
 #include <kf/platform/prelude.h>
 #include <kf/game/collision.h>
 #include <kf/game/game.h>
 #include <kf/lib/codec.h>
-#include <kf/lib/map.h>
-#include <kf/lib/map_data.h>
 
 #include <array>
 #include <cstdio>
@@ -22,9 +25,8 @@ std::array<KfMapCopyRegion, KF_MAP_COPY_REGION_COUNT> map_copy_regions = {
     KfMapCopyRegion{0, 0, 36, 4, 7, 1},
 };
 
-KfMapObjectState map_object_state;
 
-void map_apply_copy_region(KfMapCopyRegionId region_id)
+void map_apply_copy_region(WorldState &world, KfMapCopyRegionId region_id)
 {
     const KfMapCopyRegion *region;
     u8 height;
@@ -46,14 +48,14 @@ void map_apply_copy_region(KfMapCopyRegionId region_id)
         destination_x = region->destination_x;
         source_x = region->source_x;
         while (width-- != 0) {
-            map_cell_attribute_grid.cells[destination_z][destination_x] =
-                map_cell_attribute_grid.cells[source_z][source_x];
-            map_floor_height_grid.cells[destination_z][destination_x] =
-                map_floor_height_grid.cells[source_z][source_x];
-            map_cell_orientation_grid.cells[destination_z][destination_x] = map_cell_orientation_grid.cells[source_z][source_x];
-            map_collision_grid.cells[destination_z][destination_x] =
-                map_collision_grid.cells[source_z][source_x];
-            map_collision_flag_grid.cells[destination_z][destination_x] = map_collision_flag_grid.cells[source_z][source_x];
+            world.cell_attribute.cells[destination_z][destination_x] =
+                world.cell_attribute.cells[source_z][source_x];
+            world.floor_height.cells[destination_z][destination_x] =
+                world.floor_height.cells[source_z][source_x];
+            world.cell_orientation.cells[destination_z][destination_x] = world.cell_orientation.cells[source_z][source_x];
+            world.collision.cells[destination_z][destination_x] =
+                world.collision.cells[source_z][source_x];
+            world.collision_flags.cells[destination_z][destination_x] = world.collision_flags.cells[source_z][source_x];
             source_x++;
             destination_x++;
         }
@@ -62,22 +64,28 @@ void map_apply_copy_region(KfMapCopyRegionId region_id)
     }
 }
 
-void map_object_mark_collision_edge(const KfMapObject *object, KfMapCellKind cell_kind, u16 yaw)
+void map_object_mark_collision_edge(WorldState &world, const KfMapObject *object, KfMapCellKind cell_kind, u16 yaw)
 {
     u8 cell_x = object->cell_x;
     u8 cell_z;
     const KfMapObjectDefinition *definition;
 
-    definition = &map_object_state.definitions.entries[kf_enum_encode<u8>(object->object_id)];
+    definition = &world.objects.definitions.entries[kf_enum_encode<u8>(object->object_id)];
     yaw &= KF_ANGLE_WRAP_MASK;
     cell_z = object->cell_z;
+    // Doors occupy neighboring cells; match the snapshot boundary validation.
+    if ((definition->behavior_type == KF_MAP_OBJECT_OP_HINGED_DOOR ||
+            definition->behavior_type == KF_MAP_OBJECT_OP_LIFT_DOOR ||
+            definition->behavior_type == KF_MAP_OBJECT_OP_03) &&
+        (cell_x < 1 || cell_x >= KF_MAP_COLUMNS - 1 || cell_z < 1 || cell_z >= KF_MAP_ROWS - 1))
+        kf::host_fail("Door placement exceeds collision grid bounds.");
     switch (definition->behavior_type) {
     default:
         // Other operations do not modify the door collision cells.
         break;
     case KF_MAP_OBJECT_OP_LIFT_DOOR:
     case KF_MAP_OBJECT_OP_03:
-        map_collision_grid.cells[cell_z][cell_x] = cell_kind;
+        world.collision.cells[cell_z][cell_x] = cell_kind;
         switch (yaw) {
         case 0:
             cell_z++;
@@ -92,34 +100,34 @@ void map_object_mark_collision_edge(const KfMapObject *object, KfMapCellKind cel
             cell_x--;
             break;
         }
-        map_collision_grid.cells[cell_z][cell_x] = cell_kind;
+        world.collision.cells[cell_z][cell_x] = cell_kind;
         break;
     case KF_MAP_OBJECT_OP_HINGED_DOOR:
         switch (yaw) {
         case 0:
-            map_collision_grid.cells[cell_z][cell_x + 1] =
-                map_collision_grid.cells[cell_z - 1][cell_x + 1] = cell_kind;
+            world.collision.cells[cell_z][cell_x + 1] =
+                world.collision.cells[cell_z - 1][cell_x + 1] = cell_kind;
             break;
         case KF_ANGLE_QUARTER_TURN:
-            map_collision_grid.cells[cell_z + 1][cell_x] = cell_kind;
-            map_collision_grid.cells[cell_z + 1][cell_x + 1] = cell_kind;
+            world.collision.cells[cell_z + 1][cell_x] = cell_kind;
+            world.collision.cells[cell_z + 1][cell_x + 1] = cell_kind;
             break;
         case KF_ANGLE_HALF_TURN:
-            map_collision_grid.cells[cell_z][cell_x - 1] =
-                map_collision_grid.cells[cell_z + 1][cell_x - 1] = cell_kind;
+            world.collision.cells[cell_z][cell_x - 1] =
+                world.collision.cells[cell_z + 1][cell_x - 1] = cell_kind;
             break;
         case KF_ANGLE_THREE_QUARTER_TURN:
-            map_collision_grid.cells[cell_z - 1][cell_x] = cell_kind;
-            map_collision_grid.cells[cell_z - 1][cell_x - 1] = cell_kind;
+            world.collision.cells[cell_z - 1][cell_x] = cell_kind;
+            world.collision.cells[cell_z - 1][cell_x - 1] = cell_kind;
             break;
         }
         break;
     }
 }
 
-KfCollisionResult map_object_probe_door_closing(const KfMapObject *object, u16 yaw)
+KfCollisionResult map_object_probe_door_closing(WorldState &world, PlayerContext &player, const KfMapObject *object, u16 yaw)
 {
-    const KfMapObjectDefinition *definition = &map_object_state.definitions.entries[kf_enum_encode<u8>(object->object_id)];
+    const KfMapObjectDefinition *definition = &world.objects.definitions.entries[kf_enum_encode<u8>(object->object_id)];
     s32 point_x = object->position.vx;
     s32 point_z = object->position.vz;
 
@@ -148,29 +156,30 @@ KfCollisionResult map_object_probe_door_closing(const KfMapObject *object, u16 y
         }
         break;
     }
-    return collision_query_world(
+    return collision_query_world(world, player,
         point_x, KF_COLLISION_IGNORE_HEIGHT, point_z, MAP_DOOR_CLOSING_PROBE_RADIUS, 0,
         KF_COLLISION_SKIP_TERRAIN | KF_COLLISION_SKIP_MAP_OBJECTS);
 }
 
-void map_object_pool_clear(void)
+void map_object_pool_clear(WorldState &world)
 {
-    for (auto &object : map_object_state.objects) {
+    for (auto &object : world.objects.objects) {
+        object.generation = 1;
         object.object_id = KF_OBJECT_NONE;
         object.action = KF_MAP_OBJECT_OP_NONE;
         object.link = {};
     }
-    map_object_state.placement_drop_sequence = 0;
-    map_object_state.definition_drop_sequence = 0;
-    map_object_state.gold_drop_sequence = 0;
+    world.objects.placement_drop_sequence = 0;
+    world.objects.definition_drop_sequence = 0;
+    world.objects.gold_drop_sequence = 0;
 }
 
-void map_object_definitions_load(const KfMapObjectDefinitionTable *definitions)
+void map_object_definitions_load(WorldState &world, const KfMapObjectDefinitionTable *definitions)
 {
-    map_object_state.definitions = *definitions;
+    world.objects.definitions = *definitions;
 }
 
-void map_object_pool_load(KfResourceChunk chunk)
+void map_object_pool_load(WorldState &world, PlayerContext &player, KfResourceChunk chunk)
 {
     std::array<KfObjectPlacementData, KF_MAP_OBJECT_CAPACITY> decoded {};
     std::size_t count;
@@ -178,11 +187,16 @@ void map_object_pool_load(KfResourceChunk chunk)
             {KF_MAP_COLUMNS, KF_MAP_OBJECT_DEFINITION_COUNT, KF_MAP_TILE_SIZE}, decoded, count) != KF_CODEC_OK)
         kf::host_fail("Invalid map object placements.");
     KfMapObjectDefinition *definition;
-    SVECTOR effect_direction;
+    SVECTOR effect_direction {};
     KfObjectId object_id;
+    const auto required_effect_index = [&world](KfEffectRecord *effect) {
+        if (!effect) kf::host_fail("Cannot allocate required map object effect.");
+        return effect - world.effects.records.data();
+    };
 
-    for (std::size_t i = 0; i < std::size(map_object_state.objects); ++i) {
-        auto &object = map_object_state.objects[i];
+    for (std::size_t i = 0; i < std::size(world.objects.objects); ++i) {
+        auto &object = world.objects.objects[i];
+        object.generation = 1;
         if (i >= count) {
             object.object_id = KF_OBJECT_NONE;
         } else {
@@ -197,27 +211,26 @@ void map_object_pool_load(KfResourceChunk chunk)
             object.position.vx = map_placement_axis_position(placement->tile_x, placement->local_x);
             object.position.vz = map_placement_axis_position(placement->tile_z, placement->local_z);
             object.position.vy = placement->local_y
-                - map_floor_height_grid.cells[placement->tile_z][placement->tile_x] * KF_MAP_HEIGHT_STEP;
+                - world.floor_height.cells[placement->tile_z][placement->tile_x] * KF_MAP_HEIGHT_STEP;
             object.action = KF_MAP_OBJECT_OP_NONE;
 
             object.link.words[0] = placement->link[0];
             object.link.words[1] = placement->link[1];
-            definition = &map_object_state.definitions.entries[kf_enum_encode<u8>(object.object_id)];
+            definition = &world.objects.definitions.entries[kf_enum_encode<u8>(object.object_id)];
             if (definition->collision_radius != 0) {
-                collision_adjust_cell_occupancy(object.cell_x, object.cell_z, 1);
+                collision_adjust_cell_occupancy(world, object.cell_x, object.cell_z, 1);
             }
             switch (object_id) {
             default:
                 // Common placement initialization is sufficient for other object IDs.
                 break;
             case KF_MAP_OBJECT_ORBITING_PROJECTILE:
-                object.link.fields.action_parameter.effect_index = effect_pool_construct(
+                object.link.fields.action_parameter.effect_index = required_effect_index(effect_pool_construct(world, player,
                                                     object.link.fields.spawn.effect_id,
                                                     KF_EFFECT_CLASS_20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
                                                     KF_EFFECT_KIND_ORBITING_PROJECTILE,
                                                     &object.position,
-                                                    &effect_direction)
-                    - effect_state.records.data();
+                                                    &effect_direction));
                 map_object_start_action_if_idle(&object, KF_MAP_OBJECT_OP_RELEASE_ORBIT_OR_SHORT_SWING);
                 break;
             case KF_MAP_OBJECT_BOSS_PROJECTILE_EMITTER:
@@ -227,33 +240,30 @@ void map_object_pool_load(KfResourceChunk chunk)
                 map_object_start_action_if_idle(&object, KF_MAP_OBJECT_OP_PROJECTILE_EMITTER);
                 break;
             case KF_MAP_OBJECT_SHORT_SWING:
-                object.link.fields.action_parameter.effect_index = effect_pool_construct(
+                object.link.fields.action_parameter.effect_index = required_effect_index(effect_pool_construct(world, player,
                                                     object.link.fields.spawn.effect_id,
                                                     KF_EFFECT_CLASS_20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
                                                     KF_EFFECT_KIND_SWINGING_HAZARD_SHORT,
                                                     &object.position,
                                                     &effect_direction,
-                                                    KfEffectRotationArguments{&object.rotation.vector})
-                    - effect_state.records.data();
+                                                    KfEffectRotationArguments{&object.rotation.vector}));
                 map_object_start_action_if_idle(&object, KF_MAP_OBJECT_OP_RELEASE_ORBIT_OR_SHORT_SWING);
                 break;
             case KF_MAP_OBJECT_LONG_SWING:
-                object.link.fields.action_parameter.effect_index = effect_pool_construct(
+                object.link.fields.action_parameter.effect_index = required_effect_index(effect_pool_construct(world, player,
                                                     object.link.fields.spawn.effect_id,
                                                     KF_EFFECT_CLASS_20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
                                                     KF_EFFECT_KIND_SWINGING_HAZARD_LONG,
                                                     &object.position,
                                                     &effect_direction,
-                                                    KfEffectRotationArguments{&object.rotation.vector})
-                    - effect_state.records.data();
+                                                    KfEffectRotationArguments{&object.rotation.vector}));
                 map_object_start_action_if_idle(&object, KF_MAP_OBJECT_OP_RELEASE_LONG_SWING);
                 break;
             case KF_MAP_OBJECT_EFFECT_SWITCH:
                 object.link.fields.action_parameter.effect_index =
-                    effect_pool_construct(
+                    required_effect_index(effect_pool_construct(world, player,
                         0, KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER, KF_EFFECT_KIND_MAP_SWITCH, &object.position,
-                        &effect_direction, KfEffectRotationArguments{&object.rotation.vector})
-                    - effect_state.records.data();
+                        &effect_direction, KfEffectRotationArguments{&object.rotation.vector}));
                 map_object_start_action_if_idle(&object, KF_MAP_OBJECT_OP_EFFECT_SWITCH);
                 break;
             case KF_ITEM_DRAGON_CHALICE:
@@ -272,7 +282,7 @@ void map_object_pool_load(KfResourceChunk chunk)
             if (definition->behavior_type == KF_MAP_OBJECT_OP_COPY_REGION) {
                 map_object_start_action_if_idle(&object, KF_MAP_OBJECT_OP_COPY_REGION);
             }
-            map_object_mark_collision_edge(&object, KF_MAP_CELL_BLOCKED, object.rotation.angles.y);
+            map_object_mark_collision_edge(world, &object, KF_MAP_CELL_BLOCKED, object.rotation.angles.y);
         }
     }
 }
@@ -296,9 +306,9 @@ s32 map_object_distance_to_point(
     return -1;
 }
 
-s32 map_object_pool_find_near_point(s32 point_x, s32 point_z, s32 radius_padding)
+s32 map_object_pool_find_near_point(WorldState &world, s32 point_x, s32 point_z, s32 radius_padding)
 {
-    KfMapObject *object = map_object_state.objects.data();
+    KfMapObject *object = world.objects.objects.data();
     s16 index;
     u16 radius;
 
@@ -306,7 +316,7 @@ s32 map_object_pool_find_near_point(s32 point_x, s32 point_z, s32 radius_padding
         if (object->object_id == KF_OBJECT_NONE) {
             continue;
         }
-        radius = map_object_state.definitions.entries[kf_enum_encode<u8>(object->object_id)].collision_radius;
+        radius = world.objects.definitions.entries[kf_enum_encode<u8>(object->object_id)].collision_radius;
         if (radius == 0) {
             continue;
         }
@@ -322,5 +332,4 @@ s32 map_object_pool_find_near_point(s32 point_x, s32 point_z, s32 radius_padding
 void map_object_pool_reset_module_state(void)
 {
     kf::restore_initial_value<map_copy_regions>();
-    kf::restore_initial_value<map_object_state>();
 }

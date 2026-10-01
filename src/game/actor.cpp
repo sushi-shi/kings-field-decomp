@@ -1,16 +1,19 @@
+#include <kf/game/world.h>
+#include <kf/game/player.h>
+#include <algorithm>
+#include <cstdlib>
+#include <kf/lib/random.h>
+#include <kf/lib/null.h>
+
+#include <kf/game/effect.h>
+#include <kf/lib/map_data.h>
 #include <kf/platform/prelude.h>
 #include <kf/game/actor.h>
 #include <kf/game/collision.h>
-#include <kf/game/effect.h>
 #include <kf/game/game.h>
-#include <kf/lib/map_data.h>
-#include <kf/lib/null.h>
-#include <kf/lib/random.h>
 
-#include <algorithm>
 #include <array>
 #include <cstdio>
-#include <cstdlib>
 #include <cstring>
 
 enum {
@@ -77,9 +80,9 @@ std::array<SoundRef, KF_ACTOR_BOSS_DEATH_SOUND_COUNT> boss_death_phase_sounds = 
 
 SoundRef boss_death_loop_sound = {70, 0, 65};
 
-KfActor *actor_pool_find_free(void)
+KfActor *actor_pool_find_free(WorldState &world)
 {
-    for (auto &actor : actor_state.actors) {
+    for (auto &actor : world.actors.actors) {
         if (actor.slot_state == KF_ACTOR_SLOT_FREE) {
             return &actor;
         }
@@ -87,27 +90,27 @@ KfActor *actor_pool_find_free(void)
     return NULL;
 }
 
-void func_8002cab4(void)
+void func_8002cab4(WorldState &world)
 {
-    actor_pool_find_free();
+    actor_pool_find_free(world);
 }
 
-s32 actor_bearing_to_player(const KfActor *actor)
+s32 actor_bearing_to_player(WorldState &world, const KfActor *actor)
 {
     return vector_xz_to_angle(
-        actor_state.player_position.vx - actor->position.vx,
-        actor_state.player_position.vz - actor->position.vz);
+        world.actors.player_position.vx - actor->position.vx,
+        world.actors.player_position.vz - actor->position.vz);
 }
 
-void actor_set_player_transform(
+void actor_set_player_transform(WorldState &world,
     const VECTOR *position_or_null,
     const SVECTOR *rotation_or_null)
 {
     if (position_or_null != NULL) {
-        actor_state.player_position = *position_or_null;
+        world.actors.player_position = *position_or_null;
     }
     if (rotation_or_null != NULL) {
-        actor_state.player_rotation = *rotation_or_null;
+        world.actors.player_rotation = *rotation_or_null;
     }
 }
 
@@ -137,8 +140,13 @@ void actor_set_rotation(
     actor->rotation.angles.z = z;
 }
 
-void actor_initialize(KfActor *actor)
+void actor_initialize(WorldState &world, KfActor *actor)
 {
+    ++actor->generation;
+    actor->transform_step = 0;
+    if (world.party.enabled)
+        actor->random.state = world.epoch * 747796405u + actor->generation * 2891336453u
+            + static_cast<u32>(actor - world.actors.actors.data());
     actor->lifecycle = KF_ACTOR_LIFECYCLE_ACTIVE;
     actor->animation_clip = KF_ANIMATION_CLIP_FIRST;
     actor->animation_phase = 0;
@@ -147,47 +155,48 @@ void actor_initialize(KfActor *actor)
     actor->vertical_state = KF_ACTOR_VERTICAL_NONE;
     actor->action = KF_ACTOR_ACTION_NONE;
     actor->action_progress = KF_ACTOR_PROGRESS_COMPLETE;
-    actor->health = actor_state.definitions.entries[actor->definition_id].initial_health;
+    actor->health = world.actors.definitions.entries[actor->definition_id].initial_health;
     if (actor->slot_state == KF_ACTOR_SLOT_RESPAWNING
         || actor->slot_state == KF_ACTOR_SLOT_HOMEBOUND
         || actor->slot_state == KF_ACTOR_SLOT_PERSISTENT) {
         actor->rotation.angles.y = kf_enum_encode<u8>(actor->heading_quadrant) * KF_ANGLE_QUARTER_TURN;
     } else {
-        actor->rotation.angles.y = kf::random_next() >> KF_RANDOM_ANGLE_SHIFT;
+        actor->rotation.angles.y = (world.party.enabled ? kf::random_next(actor->random)
+            : kf::random_next()) >> KF_RANDOM_ANGLE_SHIFT;
     }
-    collision_adjust_cell_occupancy(actor->cell_x, actor->cell_z, 1);
+    collision_adjust_cell_occupancy(world, actor->cell_x, actor->cell_z, 1);
 }
 
-static inline void actor_initialize_at_home(KfActor *actor)
+static inline void actor_initialize_at_home(WorldState &world, KfActor *actor)
 {
     VECTOR position;
 
     position.vx = map_placement_axis_position(actor->tile_x, actor->local_x);
     position.vz = map_placement_axis_position(actor->tile_z, actor->local_z);
-    position.vy = map_floor_height_at_position(&position);
+    position.vy = map_floor_height_at_position(world, &position);
     actor_set_position(actor, &position);
     actor_set_rotation(actor, 0, 0, 0);
-    actor_initialize(actor);
+    actor_initialize(world, actor);
 }
 
-void actor_initialize_current(void)
+void actor_initialize_current(WorldState &world)
 {
-    KfActor *actor = actor_state.current;
+    KfActor *actor = world.actors.current;
 
-    actor_initialize_at_home(actor);
+    actor_initialize_at_home(world, actor);
 }
 
-void actor_initialize_slot(u16 actor_index)
+void actor_initialize_slot(WorldState &world, u16 actor_index)
 {
-    KfActor *actor = &actor_state.actors[actor_index];
+    KfActor *actor = &world.actors.actors[actor_index];
 
     actor->lifecycle = KF_ACTOR_LIFECYCLE_ACTIVE;
-    actor_initialize_at_home(actor);
+    actor_initialize_at_home(world, actor);
 }
 
-void actor_pool_clear(void)
+void actor_pool_clear(WorldState &world)
 {
-    for (auto &actor : actor_state.actors) {
+    for (auto &actor : world.actors.actors) {
         actor.slot_state = KF_ACTOR_SLOT_FREE;
         actor.lifecycle = KF_ACTOR_LIFECYCLE_DORMANT;
         actor.animation_cache = NULL;
@@ -200,12 +209,12 @@ void actor_set_action(KfActor *actor, KfActorAction action)
     actor->action_progress = KF_ACTOR_PROGRESS_INIT;
 }
 
-void actor_pool_spawn(
+void actor_pool_spawn(WorldState &world,
     u8 definition_id,
     const VECTOR *position,
     const struct KfVec3s *rotation)
 {
-    KfActor *actor = actor_pool_find_free();
+    KfActor *actor = actor_pool_find_free(world);
     if (actor == NULL)
         return;
     actor->definition_id = definition_id;
@@ -215,15 +224,15 @@ void actor_pool_spawn(
     actor->culling_mode = KF_ACTOR_CULL_VISIBILITY_GRID;
     actor_set_position(actor, position);
     actor_set_rotation(actor, rotation->x, rotation->y, rotation->z);
-    actor_initialize(actor);
+    actor_initialize(world, actor);
     actor_set_action(actor, KF_ACTOR_ACTION_PURSUE);
 }
 
-void actor_pool_begin_death_by_definition(u16 definition_id)
+void actor_pool_begin_death_by_definition(WorldState &world, u16 definition_id)
 {
-    KfActorDefinition *definition = &actor_state.definitions.entries[definition_id];
+    KfActorDefinition *definition = &world.actors.definitions.entries[definition_id];
 
-    for (auto &actor : actor_state.actors) {
+    for (auto &actor : world.actors.actors) {
         if (actor.slot_state != KF_ACTOR_SLOT_FREE && actor.definition_id == definition_id) {
             if (actor.lifecycle == KF_ACTOR_LIFECYCLE_ACTIVE
                 && definition->action_animations[KF_ACTOR_ANIM_SLOT_DEATH] != KF_ANIMATION_CLIP_NONE) {
@@ -251,7 +260,7 @@ s32 combat_calculate_damage_component(s32 base_power, s32 attack, s32 defense)
     return difference + attack * attack / (defense * COMBAT_DEFENSE_DENOMINATOR_MULTIPLIER);
 }
 
-void actor_apply_damage(
+void actor_apply_damage(WorldState &world, PlayerContext &player,
     u16 actor_index,
     u16 base_power,
     u16 component0,
@@ -262,14 +271,15 @@ void actor_apply_damage(
     u16 scale,
     KfEffectType hit_flags)
 {
-    KfActor *actor = &actor_state.actors[actor_index];
-    KfActorDefinition *definition = &actor_state.definitions.entries[actor->definition_id];
+    if (world.prediction) return;
+    KfActor *actor = &world.actors.actors[actor_index];
+    KfActorDefinition *definition = &world.actors.definitions.entries[actor->definition_id];
     s32 damage;
     s32 health;
     s32 remaining;
 
-    if (player_state.progress_state.current_floor == KF_FLOOR_5 && actor->definition_id == KF_FLOOR5_BOSS_DEFINITION) {
-        if (map_floor_script(KF_FLOOR_5).floor5.boss_encounter_started == KF_MAP_SCRIPT_UNSET) {
+    if (player.state.progress_state.current_floor == KF_FLOOR_5 && actor->definition_id == KF_FLOOR5_BOSS_DEFINITION) {
+        if (map_floor_script(world, KF_FLOOR_5).floor5.boss_encounter_started == KF_MAP_SCRIPT_UNSET) {
             return;
         }
         if (actor->health == 0) {
@@ -310,9 +320,9 @@ void actor_apply_damage(
     }
     if (actor->health != 0 && hit_flags == KF_ACTOR_DAMAGE_CREDIT_PLAYER) {
         if (component0 == 0 && component1 == 0 && component2 == 0) {
-            player_increment_magic_training();
+            player_increment_magic_training(player);
         } else if (component1 != 0 || component2 != 0) {
-            player_increment_physical_power_training();
+            player_increment_physical_power_training(player);
         }
     }
     if (actor->action == KF_ACTOR_ACTION_DRIFT) {
@@ -324,7 +334,7 @@ void actor_apply_damage(
     if (remaining <= 0) {
         remaining = 0;
         if (health != 0 && hit_flags == KF_ACTOR_DAMAGE_CREDIT_PLAYER) {
-            player_add_experience(definition->experience_reward);
+            party_award_experience(world, player, definition->experience_reward);
         }
         if (definition->action_animations[KF_ACTOR_ANIM_SLOT_DEATH] != KF_ANIMATION_CLIP_NONE) {
             actor_set_action(actor, KF_ACTOR_ACTION_DYING);
@@ -337,7 +347,7 @@ void actor_apply_damage(
     actor->health = remaining;
 }
 
-void actor_pool_apply_radial_damage(
+void actor_pool_apply_radial_damage(WorldState &world, PlayerContext &player,
     const VECTOR *origin,
     u32 radius,
     u16 falloff_q12,
@@ -355,17 +365,17 @@ void actor_pool_apply_radial_damage(
     u16 damage_scale;
 
     for (s16 index = 0; index < KF_ACTOR_CAPACITY; index++) {
-        KfActor *actor = &actor_state.actors[index];
+        KfActor *actor = &world.actors.actors[index];
         if (actor->lifecycle != KF_ACTOR_LIFECYCLE_ACTIVE) {
             continue;
         }
         if (actor->action == KF_ACTOR_ACTION_POST_DEATH) {
             continue;
         }
-        if (actor == actor_state.current) {
+        if (actor == world.actors.current) {
             continue;
         }
-        definition = &actor_state.definitions.entries[actor->definition_id];
+        definition = &world.actors.definitions.entries[actor->definition_id];
         distance = actor_distance_to_point(
             actor,
             origin->vx,
@@ -382,7 +392,7 @@ void actor_pool_apply_radial_damage(
         } else {
             damage_scale = scale;
         }
-        actor_apply_damage(
+        actor_apply_damage(world, player,
             index,
             base_power,
             component0,
@@ -395,23 +405,23 @@ void actor_pool_apply_radial_damage(
     }
 }
 
-void actor_try_attack_player(
+void actor_try_attack_player(WorldState &world, PlayerContext &player,
     u16 minimum_distance,
     u16 maximum_distance,
     s16 angle_offset,
     s16 angle_tolerance)
 {
-    KfActorDefinition *definition = actor_state.current_definition;
-    KfActor *actor = actor_state.current;
+    KfActorDefinition *definition = world.actors.current_definition;
+    KfActor *actor = world.actors.current;
     s32 distance;
     s32 angle;
     KfPlayerStatusFlags status_effect;
 
     distance = actor_distance_to_point(
         actor,
-        actor_state.player_position.vx,
-        actor_state.player_position.vy + KF_PLAYER_CAMERA_HEIGHT,
-        actor_state.player_position.vz,
+        world.actors.player_position.vx,
+        world.actors.player_position.vy + KF_PLAYER_CAMERA_HEIGHT,
+        world.actors.player_position.vz,
         maximum_distance,
         definition->collision_height,
         KF_COLLISION_PLAYER_HEIGHT);
@@ -421,16 +431,16 @@ void actor_try_attack_player(
     if (distance < minimum_distance) {
         return;
     }
-    angle = actor_bearing_to_player(actor);
+    angle = actor_bearing_to_player(world, actor);
     if (!angle_within_tolerance(actor->rotation.angles.y + angle_offset, angle, angle_tolerance)) {
         return;
     }
     status_effect = KF_PLAYER_STATUS_NONE;
     if (definition->status_effect_chance != 0
-        && (kf::random_next() >> ACTOR_STATUS_CHANCE_RANDOM_SHIFT) < definition->status_effect_chance) {
+        && (actor_random_next(world) >> ACTOR_STATUS_CHANCE_RANDOM_SHIFT) < definition->status_effect_chance) {
         status_effect = definition->status_effect;
     }
-    player_apply_damage(
+    player_apply_damage(player,
         definition->attack_components[KF_COMBAT_COMPONENT_CUTTING],
         definition->attack_components[KF_COMBAT_COMPONENT_STRIKING],
         definition->attack_components[KF_COMBAT_COMPONENT_PIERCING],
@@ -441,7 +451,7 @@ void actor_try_attack_player(
         KF_PLAYER_DAMAGE_MULTIPLIER_ONE);
 }
 
-KfActor *actor_pool_find_target_in_cone(
+KfActor *actor_pool_find_target_in_cone(WorldState &world,
     const VECTOR *origin,
     s16 facing,
     u32 max_distance,
@@ -455,14 +465,14 @@ KfActor *actor_pool_find_target_in_cone(
     s16 delta;
     s16 folded;
 
-    for (auto &actor : actor_state.actors) {
+    for (auto &actor : world.actors.actors) {
         if (actor.lifecycle != KF_ACTOR_LIFECYCLE_ACTIVE) {
             continue;
         }
         if (actor.action == KF_ACTOR_ACTION_POST_DEATH) {
             continue;
         }
-        if (&actor == actor_state.current) {
+        if (&actor == world.actors.current) {
             continue;
         }
         distance = actor_distance_to_point(
@@ -525,12 +535,12 @@ s32 actor_distance_to_point(
     return distance;
 }
 
-s32 actor_pool_find_overlap(s32 point_x, s32 point_y, s32 point_z, s32 radius_padding, s32 point_height)
+s32 actor_pool_find_overlap(WorldState &world, s32 point_x, s32 point_y, s32 point_z, s32 radius_padding, s32 point_height)
 {
     KfActorDefinition *definition;
 
     for (s16 index = 0; index < KF_ACTOR_CAPACITY; index++) {
-        KfActor *actor = &actor_state.actors[index];
+        KfActor *actor = &world.actors.actors[index];
         if (actor->lifecycle != KF_ACTOR_LIFECYCLE_ACTIVE) {
             continue;
         }
@@ -540,10 +550,10 @@ s32 actor_pool_find_overlap(s32 point_x, s32 point_y, s32 point_z, s32 radius_pa
         if (actor->action == KF_ACTOR_ACTION_POST_DEATH) {
             continue;
         }
-        if (actor == actor_state.current) {
+        if (actor == world.actors.current) {
             continue;
         }
-        definition = &actor_state.definitions.entries[actor->definition_id];
+        definition = &world.actors.definitions.entries[actor->definition_id];
         if (actor_distance_to_point(
                 actor,
                 point_x,
@@ -558,15 +568,15 @@ s32 actor_pool_find_overlap(s32 point_x, s32 point_y, s32 point_z, s32 radius_pa
     return -1;
 }
 
-void actor_bind_current(KfActor *actor)
+void actor_bind_current(WorldState &world, KfActor *actor)
 {
     s32 index;
 
-    actor_state.current = actor;
-    index = actor ? actor - actor_state.actors.data() : -1;
-    actor_state.current_definition = actor ? &actor_state.definitions.entries[actor->definition_id] : nullptr;
-    actor_state.current_index = index;
-    actor_state.current_definition_id = actor ? actor->definition_id : 0;
+    world.actors.current = actor;
+    index = actor ? actor - world.actors.actors.data() : -1;
+    world.actors.current_definition = actor ? &world.actors.definitions.entries[actor->definition_id] : nullptr;
+    world.actors.current_index = index;
+    world.actors.current_definition_id = actor ? actor->definition_id : 0;
 }
 
 void actor_advance_animation_wrapped(KfActor *actor, s16 delta)
@@ -588,29 +598,29 @@ bool actor_animation_crossed_phase(const KfActor *actor, u16 phase)
         && phase >= actor->animation_phase - actor->animation_step;
 }
 
-void actor_play_sound_at_phase(const SoundRef *sound, u16 phase)
+void actor_play_sound_at_phase(WorldState &world, PlayerContext &player, const SoundRef *sound, u16 phase)
 {
-    KfActor *actor = actor_state.current;
+    KfActor *actor = world.actors.current;
 
     if (!actor_animation_crossed_phase(actor, phase)) {
         return;
     }
-    if (player_state.progress_state.current_floor == KF_FLOOR_5 && actor->definition_id == KF_FLOOR5_BOSS_DEFINITION) {
-        audio_play_spatial_range(
+    if (player.state.progress_state.current_floor == KF_FLOOR_5 && actor->definition_id == KF_FLOOR5_BOSS_DEFINITION) {
+        audio_play_spatial_range(player,
             sound, &actor->position, KF_AUDIO_MAX_VOLUME, KF_AUDIO_EXTENDED_MAX_DISTANCE, KF_AUDIO_EXTENDED_ATTENUATION_DISTANCE);
     } else {
-        audio_play_spatial_default_range(
+        audio_play_spatial_default_range(player,
             sound, &actor->position, KF_AUDIO_MAX_VOLUME);
     }
 }
 
-KfActorAction actor_try_select_action_distance_facing(
+KfActorAction actor_try_select_action_distance_facing(WorldState &world,
     KfActorAction action,
     s32 distance,
     u16 chance,
     u16 distance_scale)
 {
-    KfActor *actor = actor_state.current;
+    KfActor *actor = world.actors.current;
     u16 odds = chance;
 
     if (actor->action == action && actor->action_progress != KF_ACTOR_PROGRESS_COMPLETE) {
@@ -629,35 +639,35 @@ KfActorAction actor_try_select_action_distance_facing(
     } else {
         odds >>= ACTOR_SELECTION_OUTER_CHANCE_SHIFT;
     }
-    if (!((kf::random_next() >> ACTOR_SELECTION_RANDOM_SHIFT) < odds)) {
+    if (!((actor_random_next(world) >> ACTOR_SELECTION_RANDOM_SHIFT) < odds)) {
         return KF_ACTOR_ACTION_NONE;
     }
-    if (kf::random_next() < ACTOR_SELECTION_FACING_BYPASS_LIMIT) {
+    if (actor_random_next(world) < ACTOR_SELECTION_FACING_BYPASS_LIMIT) {
         return action;
     }
     if (angle_within_tolerance(
             actor->rotation.angles.y,
-            actor_bearing_to_player(actor),
+            actor_bearing_to_player(world, actor),
             ACTOR_SELECTION_ANGLE_TOLERANCE)) {
         return action;
     }
     return KF_ACTOR_ACTION_NONE;
 }
 
-KfActorAction actor_try_select_ground_action(KfActorAction action, s32 distance, u16 chance)
+KfActorAction actor_try_select_ground_action(WorldState &world, KfActorAction action, s32 distance, u16 chance)
 {
-    KfActor *actor = actor_state.current;
+    KfActor *actor = world.actors.current;
     u16 odds = chance;
 
     if (actor->action == action && actor->action_progress != KF_ACTOR_PROGRESS_COMPLETE) {
         return actor->action;
     }
-    if (-(map_floor_height_grid.cells[actor->cell_z][actor->cell_x] * KF_MAP_HEIGHT_STEP)
+    if (-(world.floor_height.cells[actor->cell_z][actor->cell_x] * KF_MAP_HEIGHT_STEP)
         != actor->position.vy) {
         return KF_ACTOR_ACTION_NONE;
     }
-    if (actor_state.player_target == actor) {
-        actor_state.player_target = NULL;
+    if (world.actors.player_target == actor) {
+        world.actors.player_target = NULL;
         return action;
     }
     if (distance > ACTOR_GROUND_SELECTION_FAR_RANGE) {
@@ -668,24 +678,24 @@ KfActorAction actor_try_select_ground_action(KfActorAction action, s32 distance,
         }
         odds <<= ACTOR_GROUND_NEAR_CHANCE_SHIFT;
     }
-    if (!((kf::random_next() >> ACTOR_SELECTION_RANDOM_SHIFT) < odds)) {
+    if (!((actor_random_next(world) >> ACTOR_SELECTION_RANDOM_SHIFT) < odds)) {
         return KF_ACTOR_ACTION_NONE;
     }
-    if (kf::random_next() < ACTOR_SELECTION_FACING_BYPASS_LIMIT) {
+    if (actor_random_next(world) < ACTOR_SELECTION_FACING_BYPASS_LIMIT) {
         return action;
     }
     if (angle_within_tolerance(
             actor->rotation.angles.y,
-            actor_bearing_to_player(actor),
+            actor_bearing_to_player(world, actor),
             ACTOR_SELECTION_ANGLE_TOLERANCE)) {
         return action;
     }
     return KF_ACTOR_ACTION_NONE;
 }
 
-KfActorAction actor_try_select_multi_hit_action(KfActorAction action, s32 distance, u16 chance)
+KfActorAction actor_try_select_multi_hit_action(WorldState &world, KfActorAction action, s32 distance, u16 chance)
 {
-    KfActor *actor = actor_state.current;
+    KfActor *actor = world.actors.current;
     u16 odds = chance;
 
     if (actor->action == action && actor->action_progress != KF_ACTOR_PROGRESS_COMPLETE) {
@@ -699,23 +709,23 @@ KfActorAction actor_try_select_multi_hit_action(KfActorAction action, s32 distan
         }
         odds <<= ACTOR_MULTI_HIT_NEAR_CHANCE_SHIFT;
     }
-    if (!((kf::random_next() >> ACTOR_SELECTION_RANDOM_SHIFT) < odds)) {
+    if (!((actor_random_next(world) >> ACTOR_SELECTION_RANDOM_SHIFT) < odds)) {
         return KF_ACTOR_ACTION_NONE;
     }
     if (angle_within_tolerance(
             actor->rotation.angles.y,
-            actor_bearing_to_player(actor),
+            actor_bearing_to_player(world, actor),
             ACTOR_MULTI_HIT_SELECTION_ANGLE_TOLERANCE)) {
         return action;
     }
     return KF_ACTOR_ACTION_NONE;
 }
 
-KfActorAction actor_try_select_profiled_action(KfActorAction action, s32 distance, KfActorEffectCode effect_code, u16 chance)
+KfActorAction actor_try_select_profiled_action(WorldState &world, KfActorAction action, s32 distance, KfActorEffectCode effect_code, u16 chance)
 {
     KfEffectKind profile = kf_enum_decode<KfEffectKind>(kf_enum_encode<u16>(effect_code & KF_ACTOR_EFFECT_KIND_MASK));
     KfActorActionProfile *weights = &actor_action_profiles[kf_enum_encode<u16>(profile)];
-    KfActor *actor = actor_state.current;
+    KfActor *actor = world.actors.current;
     s32 odds;
     KfActor *candidate;
     const KfEffectRecord *record;
@@ -734,18 +744,18 @@ KfActorAction actor_try_select_profiled_action(KfActorAction action, s32 distanc
         }
     }
     odds = (chance * odds) >> KF_FIXED8_BITS;
-    if (!((kf::random_next() >> ACTOR_SELECTION_RANDOM_SHIFT) < odds)) {
+    if (!((actor_random_next(world) >> ACTOR_SELECTION_RANDOM_SHIFT) < odds)) {
         return KF_ACTOR_ACTION_NONE;
     }
     if (!angle_within_tolerance(
             actor->rotation.angles.y,
-            actor_bearing_to_player(actor),
+            actor_bearing_to_player(world, actor),
             KF_ACTOR_AIM_TOLERANCE)
-        && kf::random_next() >= ACTOR_PROFILE_FACING_BYPASS_LIMIT) {
+        && actor_random_next(world) >= ACTOR_PROFILE_FACING_BYPASS_LIMIT) {
         return KF_ACTOR_ACTION_NONE;
     }
     if (profile == KF_EFFECT_KIND_ACTOR_SPAWNER) {
-        candidate = actor_state.actors.data();
+        candidate = world.actors.actors.data();
         count = 0;
         index = KF_ACTOR_CAPACITY - 1;
         do {
@@ -755,7 +765,7 @@ KfActorAction actor_try_select_profiled_action(KfActorAction action, s32 distanc
             }
             candidate++;
         } while (--index != -1);
-        record = effect_state.records.data();
+        record = world.effects.records.data();
         index = KF_EFFECT_CAPACITY - 1;
         do {
             if (record->type != KF_EFFECT_SLOT_FREE

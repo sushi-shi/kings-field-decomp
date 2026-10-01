@@ -1,6 +1,6 @@
+#include <kf/lib/map.h>
 #include <kf/platform/prelude.h>
 #include <kf/game/player.h>
-#include <kf/lib/map.h>
 
 #include <span>
 
@@ -11,11 +11,11 @@ void camera_path_compute_segment(KfCameraPathState *path)
     camera_path_prepare_segment(path, point);
 }
 
-void camera_path_begin(KfCameraPathState *path, std::span<const KfCameraPathPoint> points)
+void camera_path_begin(PlayerContext &player, KfCameraPathState *path, std::span<const KfCameraPathPoint> points)
 {
     path->points = points;
-    path->position = player_state.camera_position;
-    path->rotation = player_state.camera_rotation;
+    path->position = player.state.camera_position;
+    path->rotation = player.state.camera_rotation;
     path->point_index = 0;
     camera_path_publish_fixed(path);
     camera_path_compute_segment(path);

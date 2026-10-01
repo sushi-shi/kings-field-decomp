@@ -1,3 +1,5 @@
+#include <kf/platform/frame_task.hpp>
+#include <kf/game/world.h>
 #include <kf/platform/prelude.h>
 #include <kf/game/animation_cache.h>
 #include <kf/game/graphics.h>
@@ -71,7 +73,7 @@ std::array<MATRIX, KF_RENDER_LIGHT_COUNT> render_light_matrices = {
     },
 };
 
-void render_frame(const VECTOR *position_or_null, const SVECTOR *rotation_or_null)
+void render_world_frame(WorldState &world, PlayerContext &player, const VECTOR *position_or_null, const SVECTOR *rotation_or_null)
 {
     game_update_language_comparison();
     MATRIX model;
@@ -84,13 +86,13 @@ void render_frame(const VECTOR *position_or_null, const SVECTOR *rotation_or_nul
     render_set_view_transform(game_graphics_runtime.render_state, position_or_null, rotation_or_null);
     display_begin_frame(game_graphics_runtime.display_state);
     animation_cache_mark_stale();
-    render_map_cells();
+    render_map_cells(world, player);
     poison_icon = &hud_sprites[KF_HUD_POISON_ICON];
     poison_icon->state = KF_SPRITE_HIDDEN;
     hud_sprites[KF_HUD_SLOWED_ICON].state = KF_SPRITE_HIDDEN;
     hud_sprites[KF_HUD_DARKNESS_ICON].state = KF_SPRITE_HIDDEN;
     hud_sprites[KF_HUD_CURSE_ICON].state = KF_SPRITE_HIDDEN;
-    if (player_state.hud_gauges_enabled == KF_PLAYER_OPTION_ON) {
+    if (player.state.hud_gauges_enabled == KF_PLAYER_OPTION_ON) {
         KfPlayerStatusFlags flags;
         hud_sprites[KF_HUD_HP_GAUGE].state = KF_SPRITE_VISIBLE;
         hud_sprites[KF_HUD_MP_GAUGE].state = KF_SPRITE_VISIBLE;
@@ -100,15 +102,15 @@ void render_frame(const VECTOR *position_or_null, const SVECTOR *rotation_or_nul
         hud_sprites[KF_HUD_MP_PANEL].state = KF_SPRITE_VISIBLE;
         hud_sprites[KF_HUD_ATTACK_PANEL].state = KF_SPRITE_VISIBLE;
         hud_sprites[KF_HUD_MAGIC_PANEL].state = KF_SPRITE_VISIBLE;
-        hud_sprites[KF_HUD_HP_GAUGE].sprite.w = (player_state.vitals.current_hp * HUD_GAUGE_WIDTH
-                                   + (player_state.vitals.maximum_hp - 1) / HUD_GAUGE_WIDTH)
-                                  / player_state.vitals.maximum_hp;
-        hud_sprites[KF_HUD_MP_GAUGE].sprite.w = (player_state.vitals.current_mp * HUD_GAUGE_WIDTH
-                                   + (player_state.vitals.maximum_mp - 1) / HUD_GAUGE_WIDTH)
-                                  / player_state.vitals.maximum_mp;
-        hud_sprites[KF_HUD_ATTACK_GAUGE].sprite.w = player_state.attack_charge_state.current / HUD_CHARGE_UNITS_PER_PIXEL;
-        hud_sprites[KF_HUD_MAGIC_GAUGE].sprite.w = player_state.magic_charge / HUD_CHARGE_UNITS_PER_PIXEL;
-        flags = player_state.status_effect_flags;
+        hud_sprites[KF_HUD_HP_GAUGE].sprite.w = (player.state.vitals.current_hp * HUD_GAUGE_WIDTH
+                                   + (player.state.vitals.maximum_hp - 1) / HUD_GAUGE_WIDTH)
+                                  / player.state.vitals.maximum_hp;
+        hud_sprites[KF_HUD_MP_GAUGE].sprite.w = (player.state.vitals.current_mp * HUD_GAUGE_WIDTH
+                                   + (player.state.vitals.maximum_mp - 1) / HUD_GAUGE_WIDTH)
+                                  / player.state.vitals.maximum_mp;
+        hud_sprites[KF_HUD_ATTACK_GAUGE].sprite.w = player.state.attack_charge_state.current / HUD_CHARGE_UNITS_PER_PIXEL;
+        hud_sprites[KF_HUD_MAGIC_GAUGE].sprite.w = player.state.magic_charge / HUD_CHARGE_UNITS_PER_PIXEL;
+        flags = player.state.status_effect_flags;
         if ((flags & KF_PLAYER_STATUS_CURSE) != KF_PLAYER_STATUS_NONE) {
             hud_sprites[KF_HUD_CURSE_ICON].state = KF_SPRITE_VISIBLE;
         } else if ((flags & KF_PLAYER_STATUS_DARKNESS) != KF_PLAYER_STATUS_NONE) {
@@ -130,8 +132,8 @@ void render_frame(const VECTOR *position_or_null, const SVECTOR *rotation_or_nul
     }
 
     compass_sprite = &hud_sprites[KF_HUD_COMPASS];
-    compass_sprite->state = kf_enum_decode<KfSpriteState>(kf_enum_encode<u8>(player_state.compass_enabled));
-    hud_models[KF_HUD_MODEL_COMPASS].state = kf_enum_decode<KfSpriteState>(kf_enum_encode<u8>(player_state.compass_enabled));
+    compass_sprite->state = kf_enum_decode<KfSpriteState>(kf_enum_encode<u8>(player.state.compass_enabled));
+    hud_models[KF_HUD_MODEL_COMPASS].state = kf_enum_decode<KfSpriteState>(kf_enum_encode<u8>(player.state.compass_enabled));
     hud_models[KF_HUD_MODEL_COMPASS].rotation.vz = -game_graphics_runtime.render_state.view_rotation.vy & KF_ANGLE_WRAP_MASK;
     render_hud_models(&render_light_matrices[KF_RENDER_LIGHT_HUD]);
 
@@ -141,7 +143,6 @@ void render_frame(const VECTOR *position_or_null, const SVECTOR *rotation_or_nul
     game_graphics_runtime.active_render_color.r = game_graphics_runtime.hud_brightness;
     render_hud_sprites(compass_sprite - KF_HUD_COMPASS);
 
-    notify_effect_update();
 
     game_graphics_runtime.active_render_color.r = NOTIFICATION_RENDER_BRIGHTNESS;
     game_graphics_runtime.active_render_color.g = NOTIFICATION_RENDER_BRIGHTNESS;
@@ -169,13 +170,20 @@ void render_frame(const VECTOR *position_or_null, const SVECTOR *rotation_or_nul
         record++;
     }
 
-    render_entities();
-    render_weapon();
-    display_present_frame(game_graphics_runtime.display_state);
+    render_party(world, player.party_slot);
+    render_entities(world);
+    render_weapon(player);
+    kf::host_present_frame(game_graphics_runtime.display_state.frame_style);
     animation_cache_release_stale();
-    // World rendering also advances floor sprites and notifications. Pace every
-    // caller, including blocking scripts; presentation consumes this deadline.
-    frame_pacer_wait();
+}
+
+kf::FrameTask<void> render_frame(WorldState &world, PlayerContext &player,
+    const VECTOR *position_or_null, const SVECTOR *rotation_or_null)
+{
+    notify_effect_update();
+    render_world_frame(world, player, position_or_null, rotation_or_null);
+    presentation_advance_floor_items();
+    (co_await frame_pacer_wait());
 }
 
 void render_frame_reset_module_state(void)

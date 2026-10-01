@@ -1,6 +1,9 @@
 #ifndef KF_GAME_EFFECT_H
 #define KF_GAME_EFFECT_H
 
+struct WorldState;
+
+struct PlayerContext;
 #include <kf/game/audio.h>
 
 #include <array>
@@ -16,6 +19,7 @@ enum {
 #include <kf/game/magic.h>
 #include <kf/lib/animation.h>
 #include <kf/lib/math.h>
+#include <kf/lib/random.h>
 
 struct KfAnimationCacheRecord;
 struct KfCollisionResult;
@@ -249,6 +253,13 @@ typedef union KfEffectRenderId {
 } KfEffectRenderId;
 
 typedef struct KfEffectRecord {
+    u8 owner_player_slot;
+    u32 owner_player_generation;
+    u32 generation;
+    u32 age; // Saturating update count for snapshot-safe visual chronology.
+    kf::RandomStream random;
+    u8 target_player_slot;
+    u32 target_player_generation;
     KfEffectType type;
     KfEffectKind kind;
     KfEffectRenderId base_render_id;
@@ -279,7 +290,6 @@ typedef struct KfEffectState {
 } KfEffectState;
 
 extern std::array<SVECTOR, KF_EFFECT_SWING_PROBE_COUNT> effect_swing_probe_offsets;
-extern KfEffectState effect_state;
 
 enum class KfEffectSoundRequest : s32 {
     KF_EFFECT_SOUND_SILENT = 0,
@@ -318,49 +328,50 @@ public:
 };
 class KfEffectParentArguments { public: s32 parent_index; };
 
-extern KfEffectRecord *effect_pool_find_free(void);
-extern KfEffectRecord *effect_pool_construct(
+extern KfEffectRecord *effect_pool_find_free(WorldState &world);
+extern KfEffectRecord *effect_pool_construct(WorldState &world, PlayerContext &player,
     u8 id, KfEffectType type, KfEffectKind kind, const VECTOR *position,
     const SVECTOR *direction);
-extern KfEffectRecord *effect_pool_construct(
+extern KfEffectRecord *effect_pool_construct(WorldState &world, PlayerContext &player,
     u8 id, KfEffectType type, KfEffectKind kind, const VECTOR *position,
     const SVECTOR *direction, KfEffectBranchArguments arguments);
-extern KfEffectRecord *effect_pool_construct(
+extern KfEffectRecord *effect_pool_construct(WorldState &world, PlayerContext &player,
     u8 id, KfEffectType type, KfEffectKind kind, const VECTOR *position,
     const SVECTOR *direction, KfEffectRotationArguments arguments);
-extern KfEffectRecord *effect_pool_construct(
+extern KfEffectRecord *effect_pool_construct(WorldState &world, PlayerContext &player,
     u8 id, KfEffectType type, KfEffectKind kind, const VECTOR *position,
     const SVECTOR *direction, KfEffectRotationSoundArguments arguments);
-extern KfEffectRecord *effect_pool_construct(
+extern KfEffectRecord *effect_pool_construct(WorldState &world, PlayerContext &player,
     u8 id, KfEffectType type, KfEffectKind kind, const VECTOR *position,
     const SVECTOR *direction, KfEffectDurationSoundArguments arguments);
-extern KfEffectRecord *effect_pool_construct(
+extern KfEffectRecord *effect_pool_construct(WorldState &world, PlayerContext &player,
     u8 id, KfEffectType type, KfEffectKind kind, const VECTOR *position,
     const SVECTOR *direction, KfEffectScatterArguments arguments);
-extern KfEffectRecord *effect_pool_construct(
+extern KfEffectRecord *effect_pool_construct(WorldState &world, PlayerContext &player,
     u8 id, KfEffectType type, KfEffectKind kind, const VECTOR *position,
     const SVECTOR *direction, KfEffectSoundArguments arguments);
-extern KfEffectRecord *effect_pool_construct(
+extern KfEffectRecord *effect_pool_construct(WorldState &world, PlayerContext &player,
     u8 id, KfEffectType type, KfEffectKind kind, const VECTOR *position,
     const SVECTOR *direction, KfEffectHomingArguments arguments);
-extern KfEffectRecord *effect_pool_construct(
+extern KfEffectRecord *effect_pool_construct(WorldState &world, PlayerContext &player,
     u8 id, KfEffectType type, KfEffectKind kind, const VECTOR *position,
     const SVECTOR *direction, KfEffectParentArguments arguments);
-extern KfEffectRecord *effect_pool_spawn_floor_deformation(
+extern KfEffectRecord *effect_pool_spawn_floor_deformation(WorldState &world,
     u16 first_segment, u16 segment_count, u16 progress_per_update, u16 cell_stagger,
     s32 sweep_updates, s32 hold_countdown);
-extern void effect_pool_set_current(KfEffectRecord *effect);
-extern void effect_pool_reset(void);
-extern void effect_pool_update(void);
-extern void effect_update_dispatch(void);
-extern int effect_magic_power(KfEffectRecord *effect);
-extern void effect_update_swinging_hazard(SVECTOR *probe_offset, KfEffectPhase phase_limit);
-extern void effect_update_orbiting_projectile(s32 orbit_radius, KfEffectPhase phase_limit);
-extern void effect_floor_deform_line(s32 segment_index, s32 progress_start, s32 progress_step);
-extern void effect_scatter_triple(KfEffectDirectionWords *velocity);
+extern void effect_pool_set_current(WorldState &world, KfEffectRecord *effect);
+extern void effect_pool_reset(WorldState &world);
+extern void effect_pool_update(WorldState &world, PlayerContext &player);
+extern void effect_update_dispatch(WorldState &world, PlayerContext &player);
+extern int effect_magic_power(PlayerContext &player, KfEffectRecord *effect);
+extern void effect_update_swinging_hazard(WorldState &world, PlayerContext &player, SVECTOR *probe_offset, KfEffectPhase phase_limit);
+extern void effect_update_orbiting_projectile(WorldState &world, PlayerContext &player, s32 orbit_radius, KfEffectPhase phase_limit);
+extern void effect_floor_deform_line(WorldState &world, PlayerContext &player, s32 segment_index, s32 progress_start, s32 progress_step);
+extern s32 effect_random_next(WorldState &world);
+extern void effect_scatter_triple(WorldState &world, KfEffectDirectionWords *velocity);
 extern void effect_rotate_scale_offset_y(SVECTOR *offset, VECTOR *output, s16 angle, s32 scale);
-extern void effect_spawn_ground_trail(u8 id, KfEffectRecord *parent_effect, s16 angle, s32 distance);
-extern void effect_spawn_ground_branch(u8 id, KfEffectRecord *parent_effect, s16 angle_offset, KfEffectGroundBranchRole branch_role);
-extern KfCollisionResult effect_map_collision(VECTOR *position, s32 radius);
+extern void effect_spawn_ground_trail(WorldState &world, PlayerContext &player, u8 id, KfEffectRecord *parent_effect, s16 angle, s32 distance);
+extern void effect_spawn_ground_branch(WorldState &world, PlayerContext &player, u8 id, KfEffectRecord *parent_effect, s16 angle_offset, KfEffectGroundBranchRole branch_role);
+extern KfCollisionResult effect_map_collision(WorldState &world, PlayerContext &player, VECTOR *position, s32 radius);
 
 #endif // KF_GAME_EFFECT_H

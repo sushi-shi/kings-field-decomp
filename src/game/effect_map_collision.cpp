@@ -1,8 +1,10 @@
+#include <kf/game/world.h>
+#include <kf/game/player.h>
+#include <kf/lib/map_data.h>
 #include <kf/platform/prelude.h>
 #include <kf/game/collision.h>
 #include <kf/game/effect.h>
 #include <kf/game/game.h>
-#include <kf/lib/map_data.h>
 
 #include <array>
 
@@ -16,21 +18,26 @@ std::array<KfCellHeightRecord, KF_MAP_CELL_HEIGHT_RECORD_COUNT> map_cell_height_
     KfCellHeightRecord{0, -10000, 1000, -15000},
 };
 
-static KfCollisionResult effect_query_collision_targets(VECTOR *position, s32 radius, const KfEffectRecord *effect)
+static KfCollisionResult effect_query_collision_targets(WorldState &world, PlayerContext &player, VECTOR *position, s32 radius, const KfEffectRecord *effect)
 {
+    if (world.party.enabled && effect->owner_player_slot != no_player) {
+        return collision_query_world(world, player, position->vx, position->vy, position->vz, radius, 0,
+            KF_COLLISION_SKIP_TERRAIN | KF_COLLISION_SKIP_MAP_OBJECTS | KF_COLLISION_SKIP_MAP_EVENTS,
+            effect->owner_player_slot);
+    }
     switch (effect->type & KF_EFFECT_COLLISION_TARGETS_MASK) {
     default:
         return {KfCollisionKind::EffectWithoutTargets};
     case KF_EFFECT_COLLISION_TARGET_ACTORS:
-        return collision_query_world(position->vx, position->vy, position->vz, radius, 0,
+        return collision_query_world(world, player, position->vx, position->vy, position->vz, radius, 0,
             KF_COLLISION_SKIP_TERRAIN | KF_COLLISION_SKIP_PLAYER
                 | KF_COLLISION_SKIP_MAP_OBJECTS | KF_COLLISION_SKIP_MAP_EVENTS);
     case KF_EFFECT_COLLISION_TARGET_PLAYER:
-        return collision_query_world(position->vx, position->vy, position->vz, radius, 0,
+        return collision_query_world(world, player, position->vx, position->vy, position->vz, radius, 0,
             KF_COLLISION_SKIP_TERRAIN | KF_COLLISION_SKIP_ACTORS
                 | KF_COLLISION_SKIP_MAP_OBJECTS | KF_COLLISION_SKIP_MAP_EVENTS);
     case KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER:
-        return collision_query_world(position->vx, position->vy, position->vz, radius, 0,
+        return collision_query_world(world, player, position->vx, position->vy, position->vz, radius, 0,
             KF_COLLISION_SKIP_TERRAIN | KF_COLLISION_SKIP_MAP_OBJECTS
                 | KF_COLLISION_SKIP_MAP_EVENTS);
     }
@@ -59,11 +66,11 @@ static bool effect_within_height_rectangle(const KfCellHeightRecord *record,
     return coordinate >= record->x_min && coordinate <= record->x_max;
 }
 
-static KfCollisionResult effect_collision_in_cell(
+static inline KfCollisionResult effect_collision_in_cell(WorldState &world, PlayerContext &player,
     VECTOR *position, s32 radius, s16 x, s16 z, s32 subz,
     KfEffectRecord *effect)
 {
-    KfCellHeightRecord *record;
+    const KfCellHeightRecord *record;
     s32 subx;
     s32 y;
     s32 floor;
@@ -71,11 +78,11 @@ static KfCollisionResult effect_collision_in_cell(
     KfMapAttribute attr;
 
     y = position->vy;
-    floor = map_floor_height_grid.cells[z][x] * -KF_MAP_HEIGHT_STEP;
+    floor = world.floor_height.cells[z][x] * -KF_MAP_HEIGHT_STEP;
     if (floor < y) {
         return {KfCollisionKind::Terrain};
     }
-    attr = map_cell_attribute_grid.cells[z][x];
+    attr = world.cell_attribute.cells[z][x];
     if (attr != KF_MAP_ATTRIBUTE_NONE) {
         height = map_cell_attribute_height_table[kf_enum_encode<u8>(attr)];
         if (height < 0) {
@@ -86,28 +93,32 @@ static KfCollisionResult effect_collision_in_cell(
         } else {
             record = &map_cell_height_records[height];
             if (floor + record->y_min <= y && y <= floor + record->y_max) {
-                const KfMapOrientation orientation = map_cell_orientation_grid.cells[z][x];
+                const KfMapOrientation orientation = world.cell_orientation.cells[z][x];
                 subx = position->vx % KF_MAP_TILE_SIZE;
                 if (effect_within_height_rectangle(record, orientation, subx, subz)) {
-                    return effect_query_collision_targets(position, radius, effect);
+                    return effect_query_collision_targets(world, player, position, radius, effect);
                 }
             }
         }
     }
 
-    switch (map_collision_grid.cells[z][x]) {
+    switch (world.collision.cells[z][x]) {
     case KF_MAP_CELL_FLOOR:
     case KF_MAP_CELL_STEP:
         // Full-floor cells need no diagonal/corner rejection.
         break;
-    case KF_MAP_CELL_BLOCKED:
-        if ((!map_cell_has_full_floor(map_collision_grid.cells[z + 1][x])
+    case KF_MAP_CELL_BLOCKED: {
+        const auto full_floor = [&](s32 column, s32 row) {
+            return column >= 0 && row >= 0 && column < KF_MAP_COLUMNS && row < KF_MAP_ROWS &&
+                map_cell_has_full_floor(world.collision.cells[row][column]);
+        };
+        if ((!full_floor(x, z + 1)
                 || position->vz % KF_MAP_TILE_SIZE < KF_MAP_TILE_CENTER) &&
-            (!map_cell_has_full_floor(map_collision_grid.cells[z - 1][x])
+            (!full_floor(x, z - 1)
                 || KF_MAP_TILE_CENTER < position->vz % KF_MAP_TILE_SIZE) &&
-            (!map_cell_has_full_floor(map_collision_grid.cells[z][x + 1])
+            (!full_floor(x + 1, z)
                 || position->vx % KF_MAP_TILE_SIZE < KF_MAP_TILE_CENTER)) {
-            if (!map_cell_has_full_floor(map_collision_grid.cells[z][x - 1])) {
+            if (!full_floor(x - 1, z)) {
                 return {KfCollisionKind::Terrain};
             }
             if (KF_MAP_TILE_CENTER < position->vx % KF_MAP_TILE_SIZE) {
@@ -115,6 +126,7 @@ static KfCollisionResult effect_collision_in_cell(
             }
         }
         break;
+    }
     case KF_MAP_CELL_X_GE_Z:
         if (position->vx % KF_MAP_TILE_SIZE + KF_MAP_TILE_CENTER
                 >= position->vz % KF_MAP_TILE_SIZE) {
@@ -141,11 +153,12 @@ static KfCollisionResult effect_collision_in_cell(
         break;
     }
 
-    return effect_query_collision_targets(position, radius, effect);
+    return effect_query_collision_targets(world, player, position, radius, effect);
 }
 
-KfCollisionResult effect_map_collision(VECTOR *position, s32 radius)
+KfCollisionResult effect_map_collision(WorldState &world, PlayerContext &player, VECTOR *position, s32 radius)
 {
+    if (!map_position_within_grid(position->vx, position->vz)) return {KfCollisionKind::Terrain};
     KfEffectRecord *effect;
     s16 x;
     s16 z;
@@ -154,15 +167,14 @@ KfCollisionResult effect_map_collision(VECTOR *position, s32 radius)
     x = position->vx / KF_MAP_TILE_SIZE;
     z = position->vz / KF_MAP_TILE_SIZE;
     subz = position->vz % KF_MAP_TILE_SIZE;
-    effect = effect_state.current_record;
+    effect = world.effects.current_record;
     if (x < 0 || x >= KF_MAP_COLUMNS || z < 0 || z >= KF_MAP_ROWS) {
         return {KfCollisionKind::Terrain};
     }
-    return effect_collision_in_cell(position, radius, x, z, subz, effect);
+    return effect_collision_in_cell(world, player, position, radius, x, z, subz, effect);
 }
 
 
 void effect_map_collision_reset_module_state(void)
 {
-    kf::restore_initial_value<map_cell_height_records>();
 }

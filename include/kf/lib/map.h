@@ -1,16 +1,22 @@
 #ifndef KF_LIB_MAP_H
 #define KF_LIB_MAP_H
 
+#include <kf/platform/frame_task.hpp>
+struct KfCollisionResult;
+struct WorldState;
+
+struct PlayerContext;
+
 #include <kf/lib/animation.h>
-#include <kf/lib/enum.h>
-#include <kf/lib/floor.h>
-#include <kf/lib/geometry_types.h>
-#include <kf/lib/item.h>
+#include <kf/lib/types.h>
 #include <kf/lib/map_data.h>
 #include <kf/lib/map_object_types.h>
+#include <kf/lib/item.h>
+#include <kf/lib/floor.h>
+#include <kf/lib/enum.h>
+#include <kf/lib/geometry_types.h>
 #include <kf/lib/math.h>
 #include <kf/lib/notify_types.h>
-#include <kf/lib/types.h>
 
 #include <array>
 #include <span>
@@ -202,6 +208,7 @@ typedef union KfMapObjectLink {
 } KfMapObjectLink;
 
 typedef struct KfMapObject {
+    u32 generation = 1;
     KfObjectId object_id;
     u8 unknown_01;
     u16 cell_x;
@@ -267,6 +274,12 @@ typedef struct KfDialogueState {
     u8 page_delay;
 } KfDialogueState;
 
+struct DialoguePage {
+    KfFloorId floor {};
+    KfCharacterId character {};
+    u8 stage {}, page {};
+};
+
 typedef struct KfMapEvent {
     KfMapEventState state;
     KfCharacterId character_id;
@@ -293,6 +306,9 @@ typedef struct KfMapEvent {
     u16 unknown_42;
 } KfMapEvent;
 
+kf::FrameTask<void> map_event_interact(WorldState &world, PlayerContext &player,
+    KfMapEvent *event, DialoguePage *capture = nullptr);
+
 typedef struct KfMapObjectState {
     KfMapObjectDefinitionTable definitions;
     std::array<KfMapObject, KF_MAP_OBJECT_CAPACITY> objects;
@@ -312,67 +328,67 @@ typedef struct KfMapRuntimeState {
 } KfMapRuntimeState;
 
 extern std::array<KfMapCopyRegion, KF_MAP_COPY_REGION_COUNT> map_copy_regions;
-extern KfMapRuntimeState map_runtime_state;
 
-inline KfMapFloorScript &map_floor_script(KfFloorId floor)
-{
-    return map_runtime_state.world_state.floors[kf_enum_encode<u8>(floor) - 1].script;
-}
+KfMapFloorScript &map_floor_script(WorldState &world, KfFloorId floor);
 
-extern KfMapObjectState map_object_state;
 extern std::array<char, KF_MAP_RESOURCE_PATH_BYTES> map_resource_path;
 
-extern void camera_path_begin(KfCameraPathState *path, std::span<const KfCameraPathPoint> points);
+extern void camera_path_begin(PlayerContext &player, KfCameraPathState *path, std::span<const KfCameraPathPoint> points);
 extern void camera_path_compute_segment(KfCameraPathState *path);
 extern void camera_path_step(KfCameraPathState *path, s32 y_offset);
-extern void map_apply_copy_region(KfMapCopyRegionId region_id);
-extern void map_ambient_script_floor1(void);
-extern void map_ambient_script_floor2(void);
-extern void map_ambient_script_floor3(void);
+extern void map_apply_copy_region(WorldState &world, KfMapCopyRegionId region_id);
+extern void map_ambient_script_floor1(WorldState &world, PlayerContext &player);
+extern void map_ambient_script_floor2(WorldState &world, PlayerContext &player);
+extern kf::FrameTask<void> map_ambient_script_floor3(WorldState &world, PlayerContext &player);
 extern void map_ambient_script_floor4(void);
-extern void map_ambient_script_floor5(void);
-extern void map_action_script_floor1(void);
-extern void map_action_script_floor2(void);
-extern void map_action_script_floor3(void);
+extern kf::FrameTask<void> map_ambient_script_floor5(WorldState &world, PlayerContext &player);
+extern void map_action_script_floor1(WorldState &world, PlayerContext &player);
+extern kf::FrameTask<void> map_action_script_floor2(WorldState &world, PlayerContext &player);
+extern void map_action_script_floor3(WorldState &world, PlayerContext &player);
 extern void map_action_script_floor4(void);
-extern void map_action_script_floor5(void);
-extern void map_event_advance_animation_blocking(KfMapEvent *event, u16 target, s16 step);
+extern kf::FrameTask<void> map_action_script_floor5(WorldState &world, PlayerContext &player);
+extern kf::FrameTask<void> map_event_advance_animation_blocking(WorldState &world, PlayerContext &player, KfMapEvent *event, u16 target, s16 step);
 extern s32 map_event_distance_to_point( const KfMapEvent *event, s32 point_x, s32 point_z, s32 max_distance);
-extern s32 map_event_pool_find_overlap(s32 point_x, s32 point_z, s32 radius_padding);
-extern KfMapEvent *map_event_pool_find_target_in_cone( const VECTOR *origin, s16 facing, s32 max_distance, s32 angle_tolerance, s32 *distance_out);
-extern void map_event_pool_load(KfResourceChunk placements);
-extern void map_event_pool_update(void);
-extern void map_event_refresh_dialogue_stage(KfMapEvent *event);
-extern void map_event_set_current(KfMapEvent *event);
-extern void map_event_timers_reset(void);
-extern void map_interaction_dispatch(
+extern s32 map_event_pool_find_overlap(WorldState &world, s32 point_x, s32 point_z, s32 radius_padding);
+extern KfMapEvent *map_event_pool_find_target_in_cone(WorldState &world,  const VECTOR *origin, s16 facing, s32 max_distance, s32 angle_tolerance, s32 *distance_out);
+extern void map_event_pool_load(WorldState &world, KfResourceChunk definitions);
+extern void map_event_pool_update(WorldState &world, PlayerContext &player);
+extern kf::FrameTask<void> map_ambient_scripts_update(WorldState &world, PlayerContext &player);
+extern void map_event_refresh_dialogue_stage(PlayerContext &player, KfMapEvent *event);
+extern void map_event_set_current(WorldState &world, KfMapEvent *event);
+extern void map_event_timers_reset(WorldState &world);
+extern kf::FrameTask<void> map_interaction_dispatch(WorldState &world, PlayerContext &player,
     const VECTOR *position, SVECTOR *rotation);
-extern void map_load_floor_wrapper(void);
-extern void map_load_floor(void);
-extern void map_object_definitions_load(const KfMapObjectDefinitionTable *definitions);
+bool map_object_image_valid(KfObjectId object, u8 image);
+kf::FrameTask<void> map_show_object_image(PlayerContext &player, KfObjectId object, u8 image);
+extern kf::FrameTask<void> map_load_floor_wrapper(WorldState &world, PlayerContext &player);
+extern kf::FrameTask<void> map_load_floor(WorldState &world, PlayerContext &player);
+extern void map_object_definitions_load(WorldState &world, const KfMapObjectDefinitionTable *definitions);
 extern s32 map_object_distance_to_point( const KfMapObject *object, s32 point_x, s32 point_z, s32 max_distance);
-extern KfMapObject *map_object_effect_pool_acquire(u16 first_index, u16 count, u16 sequence);
-extern void map_object_mark_collision_edge(const KfMapObject *object, KfMapCellKind cell_kind, u16 yaw);
-extern void map_object_pool_clear(void);
-extern void map_object_pool_clear_link(u8 link_id);
-extern s32 map_object_pool_find_interaction_from(
+extern KfMapObject *map_object_effect_pool_acquire(WorldState &world, u16 first_index, u16 count, u16 sequence);
+extern void map_object_mark_collision_edge(WorldState &world, const KfMapObject *object, KfMapCellKind cell_kind, u16 yaw);
+extern void map_object_pool_clear(WorldState &world);
+extern void map_object_pool_clear_link(WorldState &world, u8 link_id);
+extern s32 map_object_pool_find_interaction_from(WorldState &world,
     s32 start_index, s32 point_x, s32 point_z, s32 radius_padding);
-extern s32 map_object_pool_find_near_point(s32 point_x, s32 point_z, s32 radius_padding);
-extern void map_object_pool_load(KfResourceChunk placements);
-extern void map_object_pool_trigger_link(u8 link_id);
-extern void map_object_pool_update(void);
-extern KfCollisionResult map_object_probe_door_closing(const KfMapObject *object, u16 yaw);
-extern void map_object_spawn_gold_drop(u16 gold_amount, const VECTOR *position, s32 y_offset);
-extern void map_object_spawn_drop(KfMapObjectDropSource drop_source, KfObjectId object_id, const VECTOR *position, s32 y_offset);
+extern s32 map_object_pool_find_near_point(WorldState &world, s32 point_x, s32 point_z, s32 radius_padding);
+extern void map_object_pool_load(WorldState &world, PlayerContext &player, KfResourceChunk placements);
+extern void map_object_pool_trigger_link(WorldState &world, u8 link_id);
+extern void map_object_pool_update(WorldState &world, PlayerContext &player);
+extern KfCollisionResult map_object_probe_door_closing(WorldState &world, PlayerContext &player, const KfMapObject *object, u16 yaw);
+extern void map_object_spawn_gold_drop(WorldState &world, u16 gold_amount, const VECTOR *position, s32 y_offset);
+extern void map_object_spawn_drop(WorldState &world, KfMapObjectDropSource drop_source, KfObjectId object_id, const VECTOR *position, s32 y_offset);
 extern void map_object_start_action_if_idle(KfMapObject *object, KfMapObjectOperation action);
+extern bool map_start_hinged_door_pair(WorldState &world, KfMapObject *object,
+    const KfMapObjectDefinition *definition, s32 index);
 
 extern u8 *map_resource_load_file(const char *filename, std::size_t *loaded_size = nullptr);
 extern void map_resource_path_set_floor(KfFloorId floor);
-extern void map_resources_load(KfFloorId floor, KfMapVariant map_variant);
-extern void map_unload_floor(void);
-extern void map_variant_assets_load(void);
-extern void map_world_state_persist(void);
+extern kf::FrameTask<void> map_resources_load(WorldState &world, PlayerContext &player, KfFloorId floor, KfMapVariant map_variant);
+extern void map_unload_floor(WorldState &world, PlayerContext &player);
+extern void map_variant_assets_load(WorldState &world, PlayerContext &player);
+extern void map_world_state_persist(WorldState &world, PlayerContext &player);
 extern bool map_saved_link_valid(KfMapObjectOperation operation, const KfMapObjectLink &link);
-extern s32 map_floor1_cross_index(void);
+extern s32 map_floor1_cross_index(WorldState &world);
 
 #endif // KF_LIB_MAP_H

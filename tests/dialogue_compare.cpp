@@ -57,14 +57,24 @@ bool host_action_held(Action action)
     assert(action == Action::compare_language);
     return frames.at(frame).compare;
 }
-void host_wait_frame() { ++frame; }
-void host_wait_buttons_released(u32) { assert(frame == frames.size()); }
 InputContext host_set_input_context(InputContext next)
 {
     const auto previous = context;
     context = next;
     return previous;
 }
+}
+
+kf::FrameTask<void> game_wait_frame()
+{
+    co_await kf::FrameDelay{1};
+    ++frame;
+}
+
+kf::FrameTask<void> game_wait_buttons_released(u32)
+{
+    assert(frame == frames.size());
+    co_return;
 }
 
 void tim_upload_images(const u8 *data, std::size_t size)
@@ -110,7 +120,12 @@ int main(int argc, char **argv)
                 ? kf::Language::English : kf::Language::Japanese;
             if (available)
                 assert(kf::language_request(other));
-            screen_show_image_until_input("TALK/PAGE.TIM");
+            auto page = screen_show_image_until_input("TALK/PAGE.TIM");
+            unsigned advances = 0;
+            while (!page.done()) {
+                assert(++advances <= frames.size() + 1);
+                page.advance();
+            }
             assert(frame == frames.size() && context == kf::InputContext::Scripted);
             assert(kf::game_language() == language);
             assert(kf::language_requested() == (available ? other : language));

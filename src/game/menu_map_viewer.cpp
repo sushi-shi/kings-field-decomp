@@ -1,7 +1,11 @@
+#include <kf/platform/frame_task.hpp>
+#include <kf/game/system.h>
+#include <kf/game/player.h>
+#include <kf/game/graphics.h>
+
+#include <kf/game/menu.h>
 #include <kf/platform/prelude.h>
 #include <kf/game/game.h>
-#include <kf/game/graphics.h>
-#include <kf/game/menu.h>
 #include <kf/lib/render_face.h>
 
 #include <array>
@@ -24,7 +28,7 @@ static constexpr int MENU_MAP_MARKER_ORIGIN_Y = 216;
 static constexpr unsigned map_image_path_capacity = 16;
 static constexpr unsigned map_image_set_offset = 5, map_image_floor_offset = 6;
 
-void menu_map_viewer(KfObjectId item_id)
+kf::FrameTask<void> menu_map_viewer(PlayerContext &player, KfObjectId item_id)
 {
     s32 frame = 0;
     kf::DrawFace background{};
@@ -37,13 +41,13 @@ void menu_map_viewer(KfObjectId item_id)
     if (item_id == KF_ITEM_WATCHMAN_MAP)
         map_set = MENU_MAP_WATCHMAN_SET;
     path[map_image_set_offset] = map_set + '0';
-    path[map_image_floor_offset] = kf_enum_encode<u8>(player_state.progress_state.current_floor) + '0';
+    path[map_image_floor_offset] = kf_enum_encode<u8>(player.state.progress_state.current_floor) + '0';
 
     buffer = game_graphics_runtime.display_state.asset_load_buffer;
     std::size_t image_size;
     if (resource_file_load_into(buffer,
             game_graphics_runtime.display_state.asset_load_capacity, path.data(), &image_size) != KF_RESOURCE_LOADED)
-        return;
+        co_return;
     tim_upload_images(buffer, image_size);
 
     background.material = render_texture_material(MENU_MAP_IMAGE_TPAGE, MENU_MAP_IMAGE_CLUT);
@@ -56,8 +60,8 @@ void menu_map_viewer(KfObjectId item_id)
     marker.material = render_texture_material(MENU_MAP_MARKER_TPAGE, MENU_MAP_MARKER_CLUT);
     marker.depth = MENU_OVERLAY_OT_DEPTH;
     render_face_uv_rectangle(&marker, 0, 0, MENU_MAP_MARKER_SPAN, MENU_MAP_MARKER_SPAN);
-    const s32 marker_x = player_state.motion_state.map_cell.x * MENU_MAP_PIXELS_PER_CELL + MENU_MAP_MARKER_ORIGIN_X;
-    const s32 marker_y = MENU_MAP_MARKER_ORIGIN_Y - player_state.motion_state.map_cell.z * MENU_MAP_PIXELS_PER_CELL;
+    const s32 marker_x = player.state.motion_state.map_cell.x * MENU_MAP_PIXELS_PER_CELL + MENU_MAP_MARKER_ORIGIN_X;
+    const s32 marker_y = MENU_MAP_MARKER_ORIGIN_Y - player.state.motion_state.map_cell.z * MENU_MAP_PIXELS_PER_CELL;
     render_face_rectangle(&marker, marker_x, marker_y,
         marker_x + MENU_MAP_MARKER_SPAN, marker_y + MENU_MAP_MARKER_SPAN);
     for (unsigned i = 0; i < 4; ++i) {
@@ -73,17 +77,17 @@ void menu_map_viewer(KfObjectId item_id)
         kf::host_enqueue_face(marker);
         kf::host_enqueue_face(background);
         menu_enqueue_background();
-        menu_present_frame();
+        (co_await menu_present_frame());
         if (frame < MENU_PANEL_INPUT_RELEASE_FRAME) {
             frame++;
         } else if (frame == MENU_PANEL_INPUT_RELEASE_FRAME) {
-            kf::host_wait_buttons_released();
+            (co_await game_wait_buttons_released());
             frame++;
         } else {
             if (kf::host_read_buttons() == 0)
                 continue;
-            kf::host_wait_buttons_released();
-            return;
+            (co_await game_wait_buttons_released());
+            co_return;
         }
     }
 }

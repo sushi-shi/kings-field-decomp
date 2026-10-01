@@ -1,13 +1,17 @@
-#include <kf/platform/prelude.h>
-#include <kf/game/actor.h>
+#include <kf/platform/frame_task.hpp>
+#include <kf/game/system.h>
+#include <kf/game/world.h>
+#include <kf/game/player.h>
+#include <algorithm>
 #include <kf/game/audio.h>
+#include <kf/lib/random.h>
+#include <kf/game/actor.h>
+#include <kf/lib/map_data.h>
+#include <kf/lib/map.h>
+#include <kf/platform/prelude.h>
 #include <kf/game/collision.h>
 #include <kf/game/game.h>
-#include <kf/lib/map.h>
-#include <kf/lib/map_data.h>
-#include <kf/lib/random.h>
 
-#include <algorithm>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -21,22 +25,21 @@ enum {
     MAP_EVENT_LOOP_SOUND_ATTENUATION_DISTANCE = 50000
 };
 
-KfMapRuntimeState map_runtime_state;
 
-void map_event_timers_reset(void)
+void map_event_timers_reset(WorldState &world)
 {
-    map_runtime_state.dialogue_advance_gate = KF_DIALOGUE_GATE_RELOAD;
-    map_runtime_state.ambient_script_countdown = MAP_AMBIENT_COUNTDOWN_RELOAD;
+    world.map.dialogue_advance_gate = KF_DIALOGUE_GATE_RELOAD;
+    world.map.ambient_script_countdown = MAP_AMBIENT_COUNTDOWN_RELOAD;
 }
 
-void map_event_update_wander(void)
+void map_event_update_wander(WorldState &world, PlayerContext &player)
 {
-    KfMapEvent *event = map_runtime_state.current_event;
+    KfMapEvent *event = world.map.current_event;
     struct KfVecXZs forward;
     VECTOR point;
     s16 heading;
 
-    collision_adjust_cell_occupancy(event->cell_x, event->cell_z, -1);
+    collision_adjust_cell_occupancy(world, event->cell_x, event->cell_z, -1);
 
     heading = angle_approach(event->rotation.vy, event->rotation_target, MAP_EVENT_WANDER_TURN_STEP);
     event->rotation.vy = heading;
@@ -46,7 +49,7 @@ void map_event_update_wander(void)
     point.vx = forward.x + event->reference_position.vx;
     point.vz = forward.z + event->reference_position.vz;
 
-    if (collision_query_world(
+    if (collision_query_world(world, player,
             point.vx, KF_COLLISION_IGNORE_HEIGHT, point.vz, event->radius, 0,
             KF_COLLISION_SKIP_MAP_EVENTS | (KF_COLLISION_CELL_BLOCKS_WANDER << KF_COLLISION_CELL_FLAG_SHIFT)).kind
             == KfCollisionKind::None) {
@@ -55,12 +58,12 @@ void map_event_update_wander(void)
         event->cell_x = point.vx / KF_MAP_TILE_SIZE;
         event->cell_z = point.vz / KF_MAP_TILE_SIZE;
         event->collision_turn_pending = KF_MAP_EVENT_COLLISION_TURN_NONE;
-        if (event->rotation.vy == event->rotation_target && kf::random_next() < MAP_EVENT_WANDER_TURN_RANDOM_LIMIT) {
-            event->rotation_target = kf::random_next() >> KF_RANDOM_ANGLE_SHIFT;
+        if (event->rotation.vy == event->rotation_target && world_random_next(world) < MAP_EVENT_WANDER_TURN_RANDOM_LIMIT) {
+            event->rotation_target = world_random_next(world) >> KF_RANDOM_ANGLE_SHIFT;
         }
     } else {
         if (event->collision_turn_pending == KF_MAP_EVENT_COLLISION_TURN_NONE || event->rotation.vy == event->rotation_target) {
-            event->rotation_target = kf::random_next() >> KF_RANDOM_ANGLE_SHIFT;
+            event->rotation_target = world_random_next(world) >> KF_RANDOM_ANGLE_SHIFT;
             event->collision_turn_pending = KF_MAP_EVENT_COLLISION_TURN_PENDING;
         }
     }
@@ -68,46 +71,46 @@ void map_event_update_wander(void)
     event->animation_phase =
         (event->animation_phase + KF_MAP_EVENT_ANIMATION_WANDER_STEP)
         & KF_MAP_EVENT_ANIMATION_PHASE_MASK;
-    collision_adjust_cell_occupancy(event->cell_x, event->cell_z, 1);
+    collision_adjust_cell_occupancy(world, event->cell_x, event->cell_z, 1);
 }
 
-void map_event_update_animation_loop(void)
+void map_event_update_animation_loop(WorldState &world, PlayerContext &player)
 {
-    KfMapEvent *event = map_runtime_state.current_event;
+    KfMapEvent *event = world.map.current_event;
 
     event->animation_phase =
         (event->animation_phase + KF_MAP_EVENT_ANIMATION_LOOP_STEP)
         & KF_MAP_EVENT_ANIMATION_PHASE_MASK;
 
-    if (player_state.progress_state.current_floor == KF_FLOOR_5
-            && event == &map_runtime_state.events[0]
-            && map_runtime_state.events[0].animation_phase < KF_MAP_EVENT_ANIMATION_LOOP_STEP) {
-        audio_play_spatial_range(&gameplay_sound_refs[KF_GAMEPLAY_SOUND_FLOOR5_EVENT_LOOP],
-            &map_runtime_state.events[0].reference_position,
+    if (player.state.progress_state.current_floor == KF_FLOOR_5
+            && event == &world.map.events[0]
+            && world.map.events[0].animation_phase < KF_MAP_EVENT_ANIMATION_LOOP_STEP) {
+        audio_play_spatial_range(player, &gameplay_sound_refs[KF_GAMEPLAY_SOUND_FLOOR5_EVENT_LOOP],
+            &world.map.events[0].reference_position,
             KF_AUDIO_MAX_VOLUME, MAP_EVENT_LOOP_SOUND_MAX_DISTANCE, MAP_EVENT_LOOP_SOUND_ATTENUATION_DISTANCE);
     }
 }
 
-void map_event_pool_update(void)
+void map_event_pool_update(WorldState &world, PlayerContext &player)
 {
-    for (auto &event : map_runtime_state.events) {
+    for (auto &event : world.map.events) {
         KfMapEventState state = event.state;
 
         if (state == KF_MAP_EVENT_ACTIVE) {
-            map_event_set_current(&event);
+            map_event_set_current(world, &event);
 
             switch (event.behavior) {
             case KF_MAP_EVENT_BEHAVIOR_SHOP:
                 // Shop interaction is handled outside the ambient animation update.
                 break;
             case KF_MAP_EVENT_BEHAVIOR_WANDER:
-                map_event_update_wander();
+                map_event_update_wander(world, player);
                 break;
             case KF_MAP_EVENT_BEHAVIOR_ANIMATION_LOOP:
-                map_event_update_animation_loop();
+                map_event_update_animation_loop(world, player);
                 break;
             }
-            if (map_runtime_state.dialogue_advance_gate == 0 && event.dialogue.page_delay != 0) {
+            if (world.map.dialogue_advance_gate == 0 && event.dialogue.page_delay != 0) {
                 event.dialogue.page_delay--;
                 if (event.dialogue.page_delay == 0) {
                     s32 limit = event.dialogue_pages.last_page[event.dialogue.stage - 1];
@@ -119,7 +122,7 @@ void map_event_pool_update(void)
     }
 
     {
-        u16 *gate = &map_runtime_state.dialogue_advance_gate;
+        u16 *gate = &world.map.dialogue_advance_gate;
         u16 current = *gate;
 
         *gate = current - 1;
@@ -128,26 +131,30 @@ void map_event_pool_update(void)
         }
     }
 
-    if (map_runtime_state.ambient_script_countdown-- == 0) {
-        map_runtime_state.ambient_script_countdown = MAP_AMBIENT_COUNTDOWN_RELOAD;
-        switch (player_state.progress_state.current_floor) {
+}
+
+kf::FrameTask<void> map_ambient_scripts_update(WorldState &world, PlayerContext &player)
+{
+    if (world.map.ambient_script_countdown-- == 0) {
+        world.map.ambient_script_countdown = MAP_AMBIENT_COUNTDOWN_RELOAD;
+        switch (player.state.progress_state.current_floor) {
         case KF_FLOOR_FORCE_RELOAD:
             // This resource-load sentinel has no ambient floor script.
             break;
         case KF_FLOOR_1:
-            map_ambient_script_floor1();
+            map_ambient_script_floor1(world, player);
             break;
         case KF_FLOOR_2:
-            map_ambient_script_floor2();
+            map_ambient_script_floor2(world, player);
             break;
         case KF_FLOOR_3:
-            map_ambient_script_floor3();
+            (co_await map_ambient_script_floor3(world, player));
             break;
         case KF_FLOOR_4:
             map_ambient_script_floor4();
             break;
         case KF_FLOOR_5:
-            map_ambient_script_floor5();
+            (co_await map_ambient_script_floor5(world, player));
             break;
         }
     }
@@ -167,7 +174,7 @@ static void map_saved_put(u8 *&out, const u8 *end, u8 value)
     *map_saved_reserve(out, end, 1) = value;
 }
 
-void map_world_state_persist(void)
+void map_world_state_persist(WorldState &world, PlayerContext &player)
 {
     u8 *out;
     u8 *count_slot;
@@ -178,12 +185,12 @@ void map_world_state_persist(void)
     s32 i;
     s32 active;
 
-    out = map_runtime_state.world_state.floors[
-        kf_enum_encode<u8>(player_state.progress_state.current_floor) - 1].records.data();
+    out = world.map.world_state.floors[
+        kf_enum_encode<u8>(player.state.progress_state.current_floor) - 1].records.data();
     u8 *const end = out + KF_MAP_SAVED_RECORD_BYTES;
     map_saved_put(out, end, 1);
 
-    event = map_runtime_state.events.data();
+    event = world.map.events.data();
     for (i = 0; i < KF_MAP_EVENT_CAPACITY; i++, event++) {
         map_saved_put(out, end, kf_enum_encode<u8>(event->state));
         map_saved_put(out, end, event->dialogue.stage_limit);
@@ -199,7 +206,7 @@ void map_world_state_persist(void)
 
     count_slot = map_saved_reserve(out, end, 1);
     active = 0;
-    actor = &actor_state.actors[0];
+    actor = &world.actors.actors[0];
     for (i = 0; i < KF_ACTOR_CAPACITY; i++, actor++) {
         if (actor->slot_state == KF_ACTOR_SLOT_PERSISTENT || actor->slot_state == KF_ACTOR_SLOT_HOMEBOUND) {
             active++;
@@ -213,15 +220,15 @@ void map_world_state_persist(void)
     }
     *count_slot = active;
 
-    object = &map_object_state.objects[0];
+    object = &world.objects.objects[0];
     for (i = 0; i < KF_MAP_OBJECT_CAPACITY; i++, object++) {
         map_saved_put(out, end, kf_enum_encode<u8>(object->object_id));
     }
 
     count_slot = map_saved_reserve(out, end, 1);
     active = 0;
-    object = &map_object_state.objects[0];
-    definitions = map_object_state.definitions.entries;
+    object = &world.objects.objects[0];
+    definitions = world.objects.definitions.entries;
     for (i = 0; i < KF_MAP_OBJECT_EFFECT_FIRST; i++, object++) {
         KfObjectId id = object->object_id;
         KfMapObjectOperation behavior;
@@ -253,7 +260,7 @@ void map_world_state_persist(void)
     }
     *count_slot = active;
 
-    object = &map_object_state.objects[KF_MAP_OBJECT_GOLD_DROP_FIRST];
+    object = &world.objects.objects[KF_MAP_OBJECT_GOLD_DROP_FIRST];
     for (i = 0; i < KF_MAP_OBJECT_EFFECT_GROUP_CAPACITY; i++, object++) {
         map_saved_put(out, end, object->cell_x);
         map_saved_put(out, end, object->cell_z);
@@ -261,7 +268,7 @@ void map_world_state_persist(void)
         map_saved_put(out, end, object->link.gold_amount >> 8);
     }
 
-    object = &map_object_state.objects[KF_MAP_OBJECT_DEFINITION_DROP_FIRST];
+    object = &world.objects.objects[KF_MAP_OBJECT_DEFINITION_DROP_FIRST];
     for (i = 0; i < 2 * KF_MAP_OBJECT_EFFECT_GROUP_CAPACITY; i++, object++) {
         map_saved_put(out, end, object->cell_x);
         map_saved_put(out, end, object->cell_z);
@@ -269,14 +276,28 @@ void map_world_state_persist(void)
     }
 }
 
-void map_unload_floor(void)
+void map_unload_floor(WorldState &world, PlayerContext &player)
 {
     animation_cache_release_all();
     audio_close_vab(audio_state);
-    map_world_state_persist();
+    map_world_state_persist(world, player);
 }
 
 void map_events_reset_module_state(void)
 {
-    kf::restore_initial_value<map_runtime_state>();
+}
+
+s32 map_base_floor_height(WorldState &world, s32 x, s32 z)
+{
+    return -(world.floor_height.cells[z][x] * KF_MAP_HEIGHT_STEP);
+}
+
+KfMapAttribute map_attribute_at_cell(WorldState &world, s32 x, s32 z)
+{
+    return world.cell_attribute.cells[z][x];
+}
+
+KfMapFloorScript &map_floor_script(WorldState &world, KfFloorId floor)
+{
+    return world.map.world_state.floors[kf_enum_encode<u8>(floor) - 1].script;
 }

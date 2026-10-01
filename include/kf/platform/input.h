@@ -29,7 +29,18 @@ bool host_action_held(Action action);
 void host_wait_buttons_released(u32 mask = ~u32(0));
 void host_wait_button_press();
 InputContext host_set_input_context(InputContext context);
+InputContext host_input_context();
 LookDelta host_take_look();
+
+class InputContextScope {
+public:
+    explicit InputContextScope(InputContext context) : previous(host_set_input_context(context)) {}
+    ~InputContextScope() { host_set_input_context(previous); }
+    InputContextScope(const InputContextScope &) = delete;
+    InputContextScope &operator=(const InputContextScope &) = delete;
+private:
+    InputContext previous;
+};
 }
 
 #endif // KF_PLATFORM_INPUT_H

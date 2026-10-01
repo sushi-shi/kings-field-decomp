@@ -17,8 +17,8 @@ static KfMapObjectDefinitionTable loaded_objects;
 static KfMagicTable loaded_magic;
 
 void asset_registry_set(u16, void *, std::size_t) {}
-void magic_load_records(const KfMagicTable *source) { loaded_magic = *source; }
-void map_object_definitions_load(const KfMapObjectDefinitionTable *source) { loaded_objects = *source; }
+void magic_load_records(WorldState &, PlayerContext &, const KfMagicTable *source) { loaded_magic = *source; }
+void map_object_definitions_load(WorldState &, const KfMapObjectDefinitionTable *source) { loaded_objects = *source; }
 
 void prepare_common_data()
 {
@@ -100,7 +100,8 @@ int main(int argc, char **argv)
         resource_stream_tail(common_data.data() + armor_offset - 4,
                              common_data.data() + file_size);
     }
-    common_resources_load();
+    WorldState world;
+    common_resources_load(world, world.party.members[0].player);
     static_assert(sizeof(KfArmorTable) == 1176);
     static_assert(sizeof(KfMapObjectDefinitionTable) == 1280);
     // Check the complete original copy extents, including subsequent headers/data.

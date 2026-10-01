@@ -1,3 +1,4 @@
+#include <kf/platform/prelude.h>
 #include "../src/game/collision.cpp"
 #define map_object_pool_find_near_point original_map_object_pool_find_near_point
 #include "../src/game/map_object_pool.cpp"
@@ -5,27 +6,31 @@
 #include "../src/game/effect_map_collision.cpp"
 #include <cassert>
 
-KfMapCollisionGrid map_collision_grid {};
-KfMapGrid map_collision_flag_grid {}, map_floor_height_grid {};
-KfMapAttributeGrid map_cell_attribute_grid {};
-KfMapOrientationGrid map_cell_orientation_grid {};
-KfPlayerState player_state {};
-KfActorState actor_state {};
-KfMapRuntimeState map_runtime_state {};
-KfEffectState effect_state {};
+static WorldState world;
+static PlayerContext player;
+static auto &map_collision_grid = world.collision;
+static auto &map_collision_flag_grid = world.collision_flags;
+static auto &map_cell_attribute_grid = world.cell_attribute;
+static auto &player_state = player.state;
+static auto &actor_state = world.actors;
+static auto &effect_state = world.effects;
+static auto &map_object_state = world.objects;
+static auto &collision_target = world.collision_target;
 static s32 player_hit = -1, actor_hit = -1, object_hit = -1, event_hit = -1;
 static s32 queried_x, queried_y, queried_z, queried_radius, queried_height;
 
-s32 player_distance_to_point(s32 x, s32 y, s32 z, s32 radius, s32 height)
+s32 player_distance_to_point(PlayerContext &owner, s32 x, s32 y, s32 z, s32 radius, s32 height)
 {
+    assert(&owner == &player);
     queried_x = x; queried_y = y; queried_z = z;
     queried_radius = radius; queried_height = height;
     return player_hit;
 }
-s32 actor_pool_find_overlap(s32, s32, s32, s32, s32) { return actor_hit; }
-s32 map_object_pool_find_near_point(s32, s32, s32) { return object_hit; }
-s32 map_event_pool_find_overlap(s32, s32, s32) { return event_hit; }
-s32 map_floor_height_for_cell_position(u16, s32, s32) { return 0; }
+s32 actor_pool_find_overlap(WorldState &, s32, s32, s32, s32, s32) { return actor_hit; }
+s32 map_object_pool_find_near_point(WorldState &, s32, s32, s32) { return object_hit; }
+s32 map_event_pool_find_overlap(WorldState &, s32, s32, s32) { return event_hit; }
+s32 map_floor_height_for_cell_position(WorldState &, u16, s32, s32) { return 0; }
+s32 party_find_overlap(WorldState &, s32, s32, s32, s32, s32, u8) { assert(false); return -1; }
 namespace kf {
 [[noreturn]] void host_fail(const char *message)
 {
@@ -41,7 +46,7 @@ int main()
     map_collision_grid.linear[cell] = KF_MAP_CELL_FLOOR;
     map_cell_attribute_grid.linear[cell] = kf_enum_decode<KfMapAttribute>(1);
     const auto query = [&](s32 y, u32 flags = 0) {
-        return collision_query_world(coordinate, y, coordinate, 100, 0, flags);
+        return collision_query_world(world, player, coordinate, y, coordinate, 100, 0, flags);
     };
     assert(query(-1).kind == KfCollisionKind::None);
     assert(query(1).kind == KfCollisionKind::BelowFloor);
@@ -77,10 +82,10 @@ int main()
     KfEffectRecord effect {};
     effect_state.current_record = &effect;
     VECTOR point {coordinate, -1, coordinate};
-    const auto fallback = effect_map_collision(&point, 100);
+    const auto fallback = effect_map_collision(world, player, &point, 100);
     assert(fallback.kind == KfCollisionKind::EffectWithoutTargets);
     effect.type = KF_EFFECT_COLLISION_TARGET_ACTORS;
-    const auto effect_hit = effect_map_collision(&point, 100);
+    const auto effect_hit = effect_map_collision(world, player, &point, 100);
     assert(effect_hit.kind == KfCollisionKind::Actor && effect_hit.detail == 2);
 
     // Door probes skip terrain and map objects but still detect actors/events/player.
@@ -93,16 +98,16 @@ int main()
         const s32 x = coordinate + (yaw == 0 ? KF_MAP_TILE_SIZE : yaw == 2048 ? -KF_MAP_TILE_SIZE : 0);
         const s32 z = coordinate + (yaw == 1024 ? KF_MAP_TILE_SIZE : yaw == 3072 ? -KF_MAP_TILE_SIZE : 0);
         map_collision_flag_grid.cells[z / KF_MAP_TILE_SIZE][x / KF_MAP_TILE_SIZE] = 1;
-        assert(map_object_probe_door_closing(&door, yaw).kind == KfCollisionKind::Player);
+        assert(map_object_probe_door_closing(world, player, &door, yaw).kind == KfCollisionKind::Player);
         assert(queried_x == x && queried_z == z && queried_y == KF_COLLISION_IGNORE_HEIGHT);
         assert(queried_radius == 3000 + KF_COLLISION_PLAYER_RADIUS && queried_height == 0);
     }
     definition.behavior_type = KF_MAP_OBJECT_OP_LIFT_DOOR;
     player_hit = -1;
-    assert(map_object_probe_door_closing(&door, 123).kind == KfCollisionKind::Actor);
+    assert(map_object_probe_door_closing(world, player, &door, 123).kind == KfCollisionKind::Actor);
     assert(queried_x == coordinate && queried_z == coordinate);
     actor_hit = -1;
-    assert(map_object_probe_door_closing(&door, 0).kind == KfCollisionKind::MapEvent);
+    assert(map_object_probe_door_closing(world, player, &door, 0).kind == KfCollisionKind::MapEvent);
     event_hit = -1;
-    assert(map_object_probe_door_closing(&door, 0).kind == KfCollisionKind::None);
+    assert(map_object_probe_door_closing(world, player, &door, 0).kind == KfCollisionKind::None);
 }

@@ -31,6 +31,14 @@ add_custom_target(kf_english_patch
     --input "${KF_ENGLISH_PATCH}" --optional --output "${CMAKE_BINARY_DIR}/generated/english_patch.inc"
   BYPRODUCTS "${CMAKE_BINARY_DIR}/generated/english_patch.inc" VERBATIM)
 set(KF_GAME_SOURCES
+  src/game/avatar_pose.cpp
+  src/game/campaign.cpp
+  src/game/coop_session.cpp
+  src/game/party.cpp
+  src/game/party_runtime.cpp
+  src/game/player_actions.cpp
+  src/game/player_avatar_render.cpp
+  src/game/snapshot.cpp
   src/game/display_play_transition.cpp
   src/game/player_warp_shimmer_at_player.cpp
   src/game/game.cpp
@@ -132,6 +140,9 @@ add_library(kf_support STATIC
   src/lib/fixed_math.cpp
   src/lib/random.cpp
   src/lib/resource_decode.cpp
+  src/platform/avatar_pack.cpp
+  src/platform/avatar_source.cpp
+  src/platform/avatar_disc.cpp
   src/platform/assets.cpp
   src/platform/controls.cpp
   src/platform/disc.cpp
@@ -162,16 +173,43 @@ else()
   find_package(SDL3 CONFIG REQUIRED)
   find_library(KF_GLES_LIBRARY GLESv2 REQUIRED)
 endif()
-add_library(kf_host STATIC src/platform/host.cpp src/platform/saves.cpp src/platform/language_runtime.cpp src/audio/sound.cpp src/renderer/renderer.cpp src/renderer/textures.cpp src/renderer/lighting.cpp src/renderer/projection.cpp)
+# Header-only JSON is shared by the native and browser signaling parsers.
+find_package(nlohmann_json 3.12 CONFIG QUIET NO_CMAKE_FIND_ROOT_PATH)
+if(NOT nlohmann_json_FOUND)
+  include(FetchContent)
+  FetchContent_Declare(nlohmann_json
+    URL https://github.com/nlohmann/json/releases/download/v3.12.0/json.tar.xz
+    URL_HASH SHA256=42f6e95cad6ec532fd372391373363b62a14af6d771056dbfc86160e6dfff7aa
+    DOWNLOAD_EXTRACT_TIMESTAMP TRUE)
+  FetchContent_MakeAvailable(nlohmann_json)
+endif()
+add_library(kf_network OBJECT src/net/codec.cpp src/net/world.cpp src/net/protocol.cpp
+  src/net/transport.cpp src/net/transport_session.cpp)
+target_include_directories(kf_network PUBLIC include)
+target_link_libraries(kf_network PRIVATE nlohmann_json::nlohmann_json)
+target_compile_options(kf_network PRIVATE -Wall -Wextra -Werror)
+if(EMSCRIPTEN)
+  target_sources(kf_network PRIVATE src/net/transport_web.cpp src/net/transport_browser.cpp)
+else()
+  find_package(LibDataChannel CONFIG REQUIRED)
+  target_sources(kf_network PRIVATE src/net/transport_native.cpp)
+  target_link_libraries(kf_network PRIVATE LibDataChannel::LibDataChannel)
+endif()
+
+add_library(kf_host STATIC src/platform/avatars.cpp src/platform/campaign.cpp src/platform/host.cpp src/platform/saves.cpp src/platform/language_runtime.cpp src/audio/sound.cpp src/renderer/renderer.cpp src/renderer/textures.cpp src/renderer/lighting.cpp src/renderer/projection.cpp)
 target_include_directories(kf_host PUBLIC include)
 target_link_libraries(kf_host PUBLIC kf_support SDL3::SDL3)
 target_compile_options(kf_host PRIVATE -Wall -Wextra -Wpedantic -Werror)
-add_executable(kings-field src/platform/entry.cpp
-  ${KF_GAME_SOURCES})
-target_link_libraries(kings-field PRIVATE kf_host)
+add_library(kf_game OBJECT ${KF_GAME_SOURCES})
+target_include_directories(kf_game PRIVATE include)
+add_executable(kings-field src/platform/entry.cpp $<TARGET_OBJECTS:kf_game>)
+target_link_libraries(kings-field PRIVATE kf_host kf_network)
 target_compile_options(kings-field PRIVATE -Wall -Wextra)
 if(EMSCRIPTEN)
   target_link_options(kings-field PRIVATE
+    # Coroutine continuations may nest on the normal WASM stack before yielding.
+    # Asyncify's stack stores suspended platform calls and is a separate budget.
+    -sSTACK_SIZE=1048576 -sSTACK_OVERFLOW_CHECK=2
     -sASYNCIFY=1 -sASYNCIFY_STACK_SIZE=262144
     -sUSE_WEBGL2=1 -sMIN_WEBGL_VERSION=2 -sMAX_WEBGL_VERSION=2
     -sALLOW_MEMORY_GROWTH=1 -sMAXIMUM_MEMORY=536870912
@@ -184,3 +222,46 @@ else()
   target_link_libraries(kings-field PRIVATE ${KF_GLES_LIBRARY})
 endif()
 install(TARGETS kings-field RUNTIME DESTINATION bin)
+
+include(CTest)
+if(BUILD_TESTING AND EMSCRIPTEN)
+  add_executable(coop-browser-test tests/coop_transport_browser.cpp)
+  target_link_libraries(coop-browser-test PRIVATE kf_network)
+  target_link_options(coop-browser-test PRIVATE -sASYNCIFY=1 -sASYNCIFY_STACK_SIZE=262144 -sALLOW_MEMORY_GROWTH=1 -sENVIRONMENT=web -sEXIT_RUNTIME=1)
+  set_target_properties(coop-browser-test PROPERTIES SUFFIX .html)
+endif()
+if(BUILD_TESTING AND NOT EMSCRIPTEN)
+  add_executable(coop-protocol-test tests/coop_protocol.cpp)
+  target_link_libraries(coop-protocol-test PRIVATE kf_network)
+  target_compile_options(coop-protocol-test PRIVATE -Wall -Wextra -Werror)
+  add_test(NAME coop-protocol COMMAND coop-protocol-test)
+  add_executable(coop-world-codec-test tests/coop_world_codec.cpp)
+  target_link_libraries(coop-world-codec-test PRIVATE kf_network)
+  add_test(NAME coop-world-codec COMMAND coop-world-codec-test)
+  add_executable(coop-avatar-codec-test tests/coop_avatar_codec.cpp)
+  target_link_libraries(coop-avatar-codec-test PRIVATE kf_support)
+  target_compile_options(coop-avatar-codec-test PRIVATE -Wall -Wextra -Werror)
+  add_test(NAME coop-avatar-codec COMMAND coop-avatar-codec-test)
+  add_executable(coop-transport-inbox-test tests/coop_transport_inbox.cpp src/net/transport_session.cpp)
+  target_include_directories(coop-transport-inbox-test PRIVATE include)
+  target_link_libraries(coop-transport-inbox-test PRIVATE nlohmann_json::nlohmann_json)
+  target_compile_options(coop-transport-inbox-test PRIVATE -Wall -Wextra -Werror)
+  add_test(NAME coop-transport-inbox COMMAND coop-transport-inbox-test)
+  add_executable(coop-crossplay-host tests/coop_crossplay_host.cpp)
+  target_link_libraries(coop-crossplay-host PRIVATE kf_network)
+  add_executable(coop-transport-test tests/coop_transport.cpp)
+  target_link_libraries(coop-transport-test PRIVATE kf_network)
+  target_compile_options(coop-transport-test PRIVATE -Wall -Wextra -Werror)
+  add_executable(coop-runtime-test tests/coop_runtime.cpp
+    $<TARGET_OBJECTS:kf_game>)
+  target_link_libraries(coop-runtime-test PRIVATE kf_host kf_network ${KF_GLES_LIBRARY})
+  target_compile_options(coop-runtime-test PRIVATE -Wall -Wextra -Werror)
+  add_test(NAME coop-runtime COMMAND coop-runtime-test)
+  add_test(NAME coop-effect-failures COMMAND ${Python3_EXECUTABLE}
+    ${CMAKE_SOURCE_DIR}/tests/coop_effect_failures.py $<TARGET_FILE:coop-runtime-test>)
+  add_executable(coop-movement-test tests/coop_movement.cpp
+    $<TARGET_OBJECTS:kf_game>)
+  target_link_libraries(coop-movement-test PRIVATE kf_host kf_network ${KF_GLES_LIBRARY})
+  target_compile_options(coop-movement-test PRIVATE -Wall -Wextra -Werror)
+  add_test(NAME coop-movement COMMAND coop-movement-test)
+endif()

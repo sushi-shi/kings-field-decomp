@@ -52,6 +52,6 @@ void sprite_add_ft4(const KfScreenRect *rectangle, std::span<const u8, KF_QUAD_T
 void item_load_floor_placements(KfFloorItemStorage storage, const KfMapGrid &heights,
     const u8 *data, std::size_t size);
 void render_floor_item(const KfRenderState &view, std::span<KfSpriteQuad> sprites,
-    KfSpriteEnqueue enqueue_sprite, KfFloorItem *item, const MATRIX *lights);
+    KfSpriteEnqueue enqueue_sprite, const KfFloorItem *item, const MATRIX *lights);
 
 #endif // KF_LIB_GRAPHICS_H

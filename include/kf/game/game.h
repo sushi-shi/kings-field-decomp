@@ -1,6 +1,8 @@
 #ifndef KF_GAME_H
 #define KF_GAME_H
 
+#include <kf/lib/map_data.h>
+#include <kf/lib/memory.h>
 #include <kf/game/actor.h>
 #include <kf/game/animation_cache.h>
 #include <kf/game/asset.h>
@@ -18,12 +20,13 @@
 #include <kf/game/save.h>
 #include <kf/game/state.h>
 #include <kf/game/system.h>
-#include <kf/lib/item.h>
-#include <kf/lib/map.h>
-#include <kf/lib/map_data.h>
-#include <kf/lib/math.h>
-#include <kf/lib/memory.h>
-#include <kf/lib/resources.h>
 #include <kf/platform/input.h>
+#include <kf/lib/map.h>
+
+void game_restore_initial_state();
+
+#include <kf/lib/item.h>
+#include <kf/lib/math.h>
+#include <kf/lib/resources.h>
 
 #endif // KF_GAME_H
