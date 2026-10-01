@@ -11,7 +11,17 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-
+#ifdef _WIN32
+#include <kf/platform/windows.h>
+namespace {
+std::filesystem::path temporary_disc;
+void remove_temporary_disc() {
+    std::error_code error;
+    if (!temporary_disc.empty())
+        std::filesystem::remove_all(temporary_disc, error);
+}
+}
+#endif
 #ifdef __EMSCRIPTEN__
 #include <kf/platform/assets.h>
 
@@ -88,9 +98,26 @@ int main(int argc, char **argv) {
         std::fprintf(stderr, "Use --data or --disc. To prepare an existing tree, use --data with --extract-to NEW_DIRECTORY.\n");
         return 1;
     }
+#ifdef _WIN32
+    std::string temporary_data;
+    if (disc && !extracted) {
+        if (extract_only) {
+            std::fprintf(stderr, "--extract-only requires --extract-to NEW_DIRECTORY.\n");
+            return 1;
+        }
+        temporary_disc = kf::windows_temporary_directory(L"kings-field-disc-");
+        if (temporary_disc.empty()) {
+            std::fprintf(stderr, "Cannot create temporary disc resources.\n");
+            return 1;
+        }
+        std::atexit(remove_temporary_disc);
+        temporary_data = kf::utf8_path(temporary_disc / L"ja");
+        extracted = temporary_data.c_str();
+    }
+#endif
     if (disc) {
         data = extracted ? extracted : "data";
-        if (!kf::disc_extract(disc, data, language))
+        if (!kf::disc_extract(disc, data, extract_only ? language : kf::Language::Japanese))
             return 1;
         if (extract_only)
             return 0;
@@ -102,7 +129,7 @@ int main(int argc, char **argv) {
         if (extract_only)
             return 0;
     }
-    kf::Language resource_language = language;
+    kf::Language resource_language = disc ? kf::Language::Japanese : language;
     if (!disc && !kf::disc_verify_directory(data, language, &resource_language))
         return 1;
     if (!kf::language_resources_start(data, resource_language, japanese_data))

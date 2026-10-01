@@ -1,6 +1,6 @@
-# King's Field — Linux / WebAssembly source port
+# King's Field — Linux / Windows / WebAssembly source port
 
-A Linux and browser port of the original Japanese King's Field (SLPS-00017).
+A Linux, Windows and browser port of the original Japanese King's Field (SLPS-00017).
 Supply your own disc image; game data is not bundled.
 
 ## Branches
@@ -22,7 +22,7 @@ Supply your own disc image; game data is not bundled.
 | `master` | Reconstruction and matching |
 | `source` | C++ PS1 build, codecs, and base for porting |
 | `classic` | C PS1 build |
-| `port` | Linux and browser port |
+| `port` | Linux, Windows and browser port |
 
 ## Play on Linux
 
@@ -132,6 +132,36 @@ build/linux/kings-field --data /path/to/extracted/disc
 
 To extract a disc with this executable, replace `--data` with
 `--disc IMAGE --extract-to NEW_DIRECTORY`. The destination must not already exist.
+
+## Windows
+
+On Windows, build inside an x86_64 WSL2 Linux distribution with Nix flakes
+enabled. These commands also work on x86_64 Linux:
+
+```sh
+nix develop
+cmake --preset windows
+cmake --build --preset windows
+```
+
+Copy `build/windows/kings-field.exe` to Windows, then run in PowerShell:
+
+```powershell
+.\kings-field.exe --disc "C:\Games\King's Field (Japan).cue"
+```
+
+ISO and raw BIN images also work. An OpenGL 3.3 graphics driver is required;
+SDL and the compiler runtimes are linked into the executable. Running it needs
+no Nix installation. English starts automatically, and **Configuration → Language**
+switches between English and Japanese. Extracted resources are temporary and are
+removed on normal exit. Saves stay in `%APPDATA%\KingsField\SLPS00017`; use
+`--saves DIRECTORY` to choose an existing directory.
+
+For faster later starts, extract Japanese resources once with
+`--disc IMAGE --language ja --extract-to NEW_DIRECTORY --extract-only`, then launch
+with `--data DIRECTORY`. Keep the extracted filenames intact, including trailing
+dots. Builds contain the locally derived translation payload; do not redistribute
+them (see [translation details](docs/english-resources.md)).
 
 ## Browser
 

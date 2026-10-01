@@ -1,5 +1,5 @@
 {
-  description = "King's Field portable Linux and WebAssembly application";
+  description = "King's Field portable Linux, Windows and WebAssembly application";
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/64c08a7ca051951c8eae34e3e3cb1e202fe36786";
   outputs = { self, nixpkgs }:
     let
@@ -102,7 +102,8 @@
       };
       devShells.${system}.default = (pkgs.mkShell.override { stdenv = pkgs.clangStdenv; }) {
         packages = nativeTools ++ nativeLibraries ++ (with pkgs; [
-          emscripten nodejs chromium xvfb-run xdotool imagemagick python3
+          emscripten nodejs chromium xvfb-run xdotool imagemagick python3 ruff
+          pkgsCross.mingwW64.stdenv.cc wine64
         ]);
         KF_SDL_SOURCE = "${pkgs.sdl3.src}";
         KF_ENGLISH_PATCH = "${englishDelta}";

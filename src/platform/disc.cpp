@@ -2,18 +2,21 @@
 #include <kf/platform/disc.h>
 #include <kf/platform/translation.h>
 
-#include <sys/stat.h>
-
 #include <cctype>
 #include <cerrno>
 #include <cstdio>
 #include <cstring>
-#include <dirent.h>
-#include <fcntl.h>
 #include <memory>
 #include <new>
-#include <unistd.h>
 #include <utility>
+#ifdef _WIN32
+#include <kf/platform/windows.h>
+#else
+#include <sys/stat.h>
+#include <dirent.h>
+#include <fcntl.h>
+#include <unistd.h>
+#endif
 
 namespace kf {
 static constexpr unsigned cue_line_capacity = 1024;
@@ -86,6 +89,17 @@ bool disc_cue_image(const char *text, std::span<char> filename) {
 }
 
 static FILE *open_image(const char *path, std::size_t *size) {
+#ifdef _WIN32
+    FILE *file = windows_fopen(path);
+    if (!file)
+        return nullptr;
+    struct _stat64 info{};
+    if (_fstat64(_fileno(file), &info) != 0 || info.st_size <= 0 ||
+        static_cast<std::uint64_t>(info.st_size) > disc_import_limit) {
+        std::fclose(file);
+        return nullptr;
+    }
+#else
     const int descriptor = ::open(path, O_RDONLY | O_NONBLOCK | O_CLOEXEC);
     if (descriptor < 0)
         return nullptr;
@@ -100,6 +114,7 @@ static FILE *open_image(const char *path, std::size_t *size) {
         ::close(descriptor);
         return nullptr;
     }
+#endif
     *size = static_cast<std::size_t>(info.st_size);
     return file;
 }
@@ -141,6 +156,11 @@ static FILE *open_disc(const char *source, std::size_t *size) {
         return nullptr;
     }
     const char *slash = std::strrchr(source, '/');
+#ifdef _WIN32
+    const char *backslash = std::strrchr(source, '\\');
+    if (backslash && (!slash || backslash > slash))
+        slash = backslash;
+#endif
     const auto prefix = slash ? static_cast<std::size_t>(slash + 1 - source) : 0;
     std::array<char, disc_path_capacity> path;
     if (prefix + std::strlen(name.data()) >= path.size())
@@ -150,6 +170,7 @@ static FILE *open_disc(const char *source, std::size_t *size) {
     return open_image(path.data(), size);
 }
 
+#ifndef _WIN32
 static bool write_asset(int root, const Asset &asset) {
     auto path = asset.path;
     int directory = ::dup(root);
@@ -208,6 +229,10 @@ static bool write_resource_tree(const char *destination, const AssetTable &asset
     return ok;
 }
 
+#else
+#include "disc_windows.h"
+#endif
+
 bool disc_extract(const char *source, const char *destination, Language language) {
     std::size_t size;
     FILE *file = open_disc(source, &size);
@@ -232,7 +257,12 @@ bool disc_extract(const char *source, const char *destination, Language language
             disc_import_fail(importer.get(), "Cannot allocate disc read buffer.");
             break;
         }
-        if (::fseeko(file, static_cast<off_t>(request.offset), SEEK_SET) != 0 ||
+        if (
+#ifdef _WIN32
+            ::_fseeki64(file, static_cast<__int64>(request.offset), SEEK_SET) != 0 ||
+#else
+            ::fseeko(file, static_cast<off_t>(request.offset), SEEK_SET) != 0 ||
+#endif
             std::fread(read.data(), 1, read.size(), file) != read.size()) {
             disc_import_fail(importer.get(), "Cannot read the selected disc image.");
             break;
@@ -249,6 +279,7 @@ bool disc_extract(const char *source, const char *destination, Language language
     return ok;
 }
 
+#ifndef _WIN32
 static bool read_resource_tree(int root, const char *prefix, AssetTable &assets,
                                std::size_t *total, unsigned *directories) {
     if (++*directories > 128)
@@ -324,19 +355,31 @@ static bool read_resource_tree(int root, const char *prefix, AssetTable &assets,
     return ok;
 }
 
+#endif
+
 bool disc_verify_directory(const char *directory, Language language, Language *actual) {
+#ifdef _WIN32
+    const auto root = windows_path(directory);
+#else
     const int root = ::open(directory, O_RDONLY | O_DIRECTORY | O_CLOEXEC);
+#endif
     AssetTable assets{};
     std::size_t total = 0;
     unsigned directories = 0;
-    bool ok = root >= 0 && read_resource_tree(root, "", assets, &total, &directories);
+    bool ok =
+#ifndef _WIN32
+        root >= 0 &&
+#endif
+        read_resource_tree(root, "", assets, &total, &directories);
     Language detected = language;
     if (ok && !assets_match_language(assets, language)) {
         ok = actual && language == Language::English && assets_match_language(assets, Language::Japanese);
         detected = Language::Japanese;
     }
+#ifndef _WIN32
     if (root >= 0 && ::close(root) != 0)
         ok = false;
+#endif
     if (ok && actual)
         *actual = detected;
     if (!ok)
@@ -345,13 +388,23 @@ bool disc_verify_directory(const char *directory, Language language, Language *a
     return ok;
 }
 bool disc_prepare_directory(const char *source, const char *destination, Language language) {
+#ifdef _WIN32
+    const auto root = windows_path(source);
+#else
     const int root = ::open(source, O_RDONLY | O_DIRECTORY | O_CLOEXEC);
+#endif
     AssetTable assets{};
     std::size_t total = 0;
     unsigned directories = 0;
-    bool ok = root >= 0 && read_resource_tree(root, "", assets, &total, &directories);
+    bool ok =
+#ifndef _WIN32
+        root >= 0 &&
+#endif
+        read_resource_tree(root, "", assets, &total, &directories);
+#ifndef _WIN32
     if (root >= 0 && ::close(root) != 0)
         ok = false;
+#endif
     if (!ok)
         std::fprintf(stderr, "Cannot read resource tree: %s\n", source);
     if (ok) {

@@ -1,6 +1,13 @@
 #include <kf/renderer/renderer.h>
-
+#ifdef _WIN32
+#define GL_GLEXT_PROTOTYPES
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_opengl.h>
+#define KF_SHADER_VERSION "#version 330 core\n"
+#else
 #include <GLES3/gl3.h>
+#define KF_SHADER_VERSION "#version 300 es\n"
+#endif
 
 #include <algorithm>
 #include <array>
@@ -12,6 +19,62 @@
 #include <vector>
 
 namespace kf {
+#ifdef _WIN32
+// Windows exports only OpenGL 1.1; load every entry point for the current SDL context.
+#define KF_GL_FUNCTIONS(X) \
+    X(glActiveTexture) \
+    X(glAttachShader) \
+    X(glBindBuffer) \
+    X(glBindFramebuffer) \
+    X(glBindTexture) \
+    X(glBindVertexArray) \
+    X(glBlitFramebuffer) \
+    X(glBufferData) \
+    X(glCheckFramebufferStatus) \
+    X(glClear) \
+    X(glClearColor) \
+    X(glCompileShader) \
+    X(glCopyTexSubImage2D) \
+    X(glCreateProgram) \
+    X(glCreateShader) \
+    X(glDeleteBuffers) \
+    X(glDeleteFramebuffers) \
+    X(glDeleteProgram) \
+    X(glDeleteShader) \
+    X(glDeleteTextures) \
+    X(glDeleteVertexArrays) \
+    X(glDisable) \
+    X(glDrawArrays) \
+    X(glEnable) \
+    X(glEnableVertexAttribArray) \
+    X(glFramebufferTexture2D) \
+    X(glGenBuffers) \
+    X(glGenFramebuffers) \
+    X(glGenTextures) \
+    X(glGenVertexArrays) \
+    X(glGetError) \
+    X(glGetProgramInfoLog) \
+    X(glGetProgramiv) \
+    X(glGetShaderInfoLog) \
+    X(glGetShaderiv) \
+    X(glGetUniformLocation) \
+    X(glLinkProgram) \
+    X(glReadPixels) \
+    X(glScissor) \
+    X(glShaderSource) \
+    X(glTexImage2D) \
+    X(glTexParameteri) \
+    X(glTexSubImage2D) \
+    X(glUniform1i) \
+    X(glUseProgram) \
+    X(glVertexAttribPointer) \
+    X(glViewport)
+#define KF_GL_DECLARE(name) static decltype(&::name) name;
+KF_GL_FUNCTIONS(KF_GL_DECLARE)
+#undef KF_GL_DECLARE
+static bool gl_loaded;
+#endif
+
 namespace {
 constexpr int display_aspect_width = 4;
 constexpr int display_aspect_height = 3;
@@ -52,7 +115,15 @@ static GLuint shader(GLenum type, const char *source, char *error, std::size_t s
     return object;
 }
 bool renderer_init(Renderer *renderer, char *error, std::size_t size) try {
-    const auto vertex = shader(GL_VERTEX_SHADER, R"(#version 300 es
+#ifdef _WIN32
+#define KF_GL_LOAD(name) \
+    name = reinterpret_cast<decltype(name)>(SDL_GL_GetProcAddress(#name)); \
+    if (!name) { std::snprintf(error, size, "Missing OpenGL entry point: %s", #name); return false; }
+    KF_GL_FUNCTIONS(KF_GL_LOAD)
+#undef KF_GL_LOAD
+    gl_loaded = true;
+#endif
+    const auto vertex = shader(GL_VERTEX_SHADER, KF_SHADER_VERSION R"(
 layout(location=0) in vec2 position;
 layout(location=1) in vec2 texcoord;
 layout(location=2) in vec4 color;
@@ -70,7 +141,7 @@ void main() {
                                error, size);
     if (!vertex)
         return false;
-    const auto fragment = shader(GL_FRAGMENT_SHADER, R"(#version 300 es
+    const auto fragment = shader(GL_FRAGMENT_SHADER, KF_SHADER_VERSION R"(
 precision highp float;
 precision highp int;
 uniform sampler2D image;
@@ -190,6 +261,11 @@ void main() {
 }
 
 void renderer_release(Renderer *renderer) {
+#ifdef _WIN32
+    if (!gl_loaded)
+        return;
+    gl_loaded = false;
+#endif
     texture_store_release(&renderer->textures);
     renderer_delete_texture(renderer->white_texture);
     glDeleteProgram(renderer->program);
