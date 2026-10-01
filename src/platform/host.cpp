@@ -1,4 +1,5 @@
 #include <kf/platform/host.hpp>
+#include <kf/platform/avatars.hpp>
 #include <kf/platform/saves.hpp>
 #include <kf/audio/sound.hpp>
 #include <kf/platform/input.hpp>
@@ -19,6 +20,12 @@ EM_JS(void, host_browser_status, (const char *message), {
 EM_JS(int, host_browser_mouse_captured, (), {
     return document.pointerLockElement === Module.canvas;
 });
+EM_JS(void, host_browser_room, (const char *code, int hosting), {
+    Module['onlineRoom']?.(UTF8ToString(code), !!hosting);
+});
+EM_JS(void, host_browser_online_status, (const char *message), {
+    Module['onlineStatus']?.(UTF8ToString(message));
+});
 #endif
 
 namespace kf {
@@ -33,8 +40,10 @@ struct HostState {
     InputContext input_context;
     SDL_Keycode pressed_keys[SDL_SCANCODE_COUNT];
     Uint64 epoch, paused_ns, pause_start;
+    std::uint64_t notice_until;
     double look_remainder_x, look_remainder_y;
     bool focused, mouse_captured, resume_mouse_capture;
+    bool session_running;
 };
 static HostState host;
 static constexpr Uint64 ns_per_second = 1000000000;
@@ -149,6 +158,7 @@ bool host_start() {
 }
 
 void host_shutdown() {
+    avatars_release();
     sound_shutdown();
     save_storage_shutdown();
     std::free(host.frame_faces);
@@ -303,7 +313,8 @@ static void process_event(const SDL_Event &event) {
         break;
     case SDL_EVENT_WINDOW_FOCUS_GAINED:
         if (!host.focused) {
-            host.paused_ns += SDL_GetTicksNS() - host.pause_start;
+            if (!host.session_running)
+                host.paused_ns += SDL_GetTicksNS() - host.pause_start;
             host.focused = true;
             sound_set_paused(false);
         }
@@ -329,15 +340,58 @@ void host_poll() {
             process_event(event);
         refresh_mouse_capture();
         sound_poll();
-        if (host.focused)
+        if (host.notice_until && host_clock_tick() >= host.notice_until) {
+            host.notice_until = 0;
+            renderer_set_notice(&host.renderer, nullptr);
+            present_retained_frame();
+        }
+        if (host.focused || host.session_running)
             return;
         platform_yield(unfocused_poll_interval_ns);
     }
 }
 
 std::uint64_t host_clock_ns() {
-    const auto now = host.focused ? SDL_GetTicksNS() : host.pause_start;
+    const auto now = host.focused || host.session_running ? SDL_GetTicksNS() : host.pause_start;
     return now - host.epoch - host.paused_ns;
+}
+
+void host_set_session_running(bool running) {
+    if (host.session_running == running) return;
+    if (!host.focused) {
+        const auto now = SDL_GetTicksNS();
+        if (running) host.paused_ns += now - host.pause_start;
+        host.pause_start = now;
+    }
+    host.session_running = running;
+    if (!running && host.notice_until) {
+        host.notice_until = 0;
+        renderer_set_notice(&host.renderer, nullptr);
+    }
+}
+
+void host_online_room(const char *code, bool hosting) {
+#ifdef __EMSCRIPTEN__
+    host_browser_room(code, hosting);
+#else
+    char title[192];
+    std::snprintf(title, sizeof title, "King's Field — %s %s", hosting ? "Hosting" : "Room", code);
+    SDL_SetWindowTitle(host.window, title);
+#endif
+}
+
+void host_online_status(const char *message) {
+#ifdef __EMSCRIPTEN__
+    host_browser_online_status(message);
+#else
+    (void)message;
+#endif
+}
+
+void host_notice(const char *message) {
+    if (!renderer_set_notice(&host.renderer, message)) host_fail("Cannot display game notice.");
+    host.notice_until = message && *message ? host_clock_tick() + 300 : 0;
+    present_retained_frame();
 }
 
 std::uint64_t host_clock_tick() {
@@ -446,6 +500,8 @@ InputContext host_set_input_context(InputContext context) {
     refresh_mouse_capture();
     return previous;
 }
+
+InputContext host_input_context() { return host.input_context; }
 
 LookDelta host_take_look() {
     constexpr double angle_units_per_pixel = mouse_degrees_per_pixel * angle_units_per_turn / degrees_per_turn;

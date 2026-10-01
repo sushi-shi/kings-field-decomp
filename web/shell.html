@@ -2,6 +2,7 @@
 <html lang="en">
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="kf-room-service" content="/rooms">
 <title>King's Field</title>
 <style>
   body { margin:0; background:#090909; color:#ddd; font:16px system-ui,sans-serif; text-align:center; }
@@ -14,8 +15,16 @@
     color:inherit; background:#191919; font:inherit; margin:8px; }
   button:enabled, .file-label { cursor:pointer; }
   button:disabled { opacity:.45; }
+  [hidden] { display:none !important; }
   input[type=file] { max-width:100%; margin:8px; }
   .options { margin:12px; }
+  #join-code { padding:12px; font:inherit; width:15em; max-width:80%; color:inherit; background:#191919; border:1px solid #777; }
+  #room-code { font:22px monospace; user-select:all; overflow-wrap:anywhere; }
+  #room-panel { position:sticky; top:0; z-index:2; background:#111; border:1px solid #555; padding:8px; margin:12px 0; }
+  #avatar-preview { width:240px; max-width:100%; aspect-ratio:6/7; margin:12px auto;
+    background:#20242c; touch-action:none; cursor:grab; }
+  #avatar-preview:focus-visible { outline:2px solid #ddd; outline-offset:3px; }
+  #avatar-preview-help { font-size:13px; color:#aaa; }
 </style>
 <main>
   <h1>KING'S FIELD</h1>
@@ -23,8 +32,44 @@
      Extraction stays on this device. Disc files are never uploaded.</p>
   <input id="disc" aria-label="Original disc image files" type="file" accept=".iso,.bin,.cue" multiple disabled>
   <div class="options"><label><input id="skip-intro" type="checkbox"> Skip opening</label></div>
-  <button id="play" disabled>Play</button>
+  <div class="options">
+    <label for="avatars">Multiplayer characters: KFIII disc</label>
+    <input id="avatars" type="file" accept=".bin,.iso,.kfa" disabled>
+    <label for="avatar">Character</label>
+    <select id="avatar" disabled><option value="41">Load a character pack</option></select>
+    <div id="avatar-preview-panel" hidden>
+      <canvas id="avatar-preview" width="240" height="280" tabindex="0" role="img"
+        aria-label="Selected character. Drag or use arrow keys to rotate." aria-describedby="avatar-preview-help"></canvas>
+      <p id="avatar-preview-help">Drag or use arrow keys to rotate.</p>
+      <div id="avatar-pose-controls" hidden>
+        <label for="avatar-pose">Pose</label>
+        <select id="avatar-pose">
+          <option value="0">Rest</option><option value="1">Walk</option>
+          <option value="2">Step sideways</option><option value="3">Swing</option>
+          <option value="4">Thrust</option><option value="5">Cast</option>
+        </select>
+        <label for="avatar-phase">Animation position</label>
+        <input id="avatar-phase" type="range" min="0" max="4096" step="1" value="2048" disabled>
+      </div>
+    </div>
+    <p id="avatar-status">Select the US King's Field II / KFIII (SLUS-00255) BIN or ISO for multiplayer.<br>Characters stay on this device and are cached for next time.</p>
+  </div>
+  <button id="play" disabled>Play solo</button>
+  <label for="campaign">Host campaign</label>
+  <select id="campaign" disabled><option value="0">New campaign</option></select>
+  <button id="host" disabled>Host multiplayer</button>
+  <p id="campaign-status"></p>
+  <div>
+    <label for="join-code">Room code</label>
+    <input id="join-code" type="text" maxlength="128" autocomplete="off" autocapitalize="off" spellcheck="false" disabled>
+    <button id="join" disabled>Join multiplayer</button>
+  </div>
+  <div id="room-panel" hidden>
+    <p>Room code: <output id="room-code"></output> <button id="copy-room">Copy code</button></p>
+    <p id="room-help">Friends can enter this code under Join multiplayer.</p>
+  </div>
   <p id="status" role="status" aria-live="polite">Loading application…</p>
+  <button id="restart" hidden>Back to lobby</button>
   <p id="cache-status">Checking this device for extracted files…</p>
   <p id="storage-status">Save files use separate browser storage.</p>
   <canvas id="canvas" width="960" height="720" tabindex="0" oncontextmenu="event.preventDefault()"></canvas>
@@ -37,22 +82,36 @@
   const storageLabel = document.getElementById('storage-status');
   const discInput = document.getElementById('disc');
   const playButton = document.getElementById('play');
-  let dataRoot = null, generation = 0, running = false, stopped = false, lastError = '';
+  const hostButton = document.getElementById('host');
+  const campaignSelect = document.getElementById('campaign');
+  const campaignStatus = document.getElementById('campaign-status');
+  const joinButton = document.getElementById('join');
+  const joinCode = document.getElementById('join-code');
+  const avatarInput = document.getElementById('avatars');
+  const avatarSelect = document.getElementById('avatar');
+  const avatarStatus = document.getElementById('avatar-status');
+  let avatarPath = null;
+  let dataRoot = null, generation = 0, running = false, stopped = false, lastError = '', onlineMode = 'solo';
   const fileLimit = 16 * 1024 * 1024, treeLimit = 128 * 1024 * 1024;
   const pathCapacity = 128, retailFileCount = 428, cueLimit = 65536;
   const cacheSchemaVersion = 1, manifestHeaderBytes = 8, manifestFileLengthOffset = 4;
   function setBusy(busy) {
     discInput.disabled = busy || running || stopped;
-    playButton.disabled = busy || running || stopped || !dataRoot;
+    avatarInput.disabled = busy || running || stopped;
+    avatarSelect.disabled = busy || running || stopped || !avatarPath;
+    campaignSelect.disabled = busy || running || stopped || !avatarPath;
+    for (const button of [playButton, hostButton, joinButton])
+      button.disabled = busy || running || stopped || !dataRoot || (button !== playButton && !avatarPath);
+    joinCode.disabled = busy || running || stopped;
     document.getElementById('skip-intro').disabled = running || stopped;
   }
   function validPath(path) {
     return typeof path === 'string' && path.length > 0 && path.length < pathCapacity &&
       path.split('/').every(part => part && part !== '.' && part !== '..' && /^[A-Z0-9_.-]+$/.test(part));
   }
-  function openCache() {
+  function openCache(name = 'kings-field-resources') {
     return new Promise((resolve, reject) => {
-      const request = indexedDB.open('kings-field-resources', cacheSchemaVersion);
+      const request = indexedDB.open(name, cacheSchemaVersion);
       let failed = false;
       request.onupgradeneeded = () => request.result.createObjectStore('files');
       request.onblocked = () => { failed = true; reject(Error('Resource cache is blocked by another tab.')); };
@@ -196,8 +255,10 @@
       cacheLabel.textContent = 'Cache unavailable or invalid; select the original disc again.';
     } finally {
       if (database) database.close();
+      await restoreCharacters();
+      await refreshCampaigns();
       if (!stopped)
-        statusLabel.textContent = dataRoot ? 'Ready. Press Play to start.' : 'Select your original Japanese disc.';
+        statusLabel.textContent = dataRoot ? 'Ready. Play solo, host a room, or join friends.' : 'Select your original Japanese disc.';
       setBusy(false);
     }
   }
@@ -205,11 +266,37 @@
     canvas:document.getElementById('canvas'),
     noInitialRun:true,
     onRuntimeInitialized() { restoreCache(); },
-    print(text) { statusLabel.textContent = text; },
+    print(text) { console.log(text); if (onlineMode === 'solo') statusLabel.textContent = text; },
     printErr(text) { lastError = text; console.error(text); },
-    gameStarted() { statusLabel.textContent = 'Original game running. Click the game to capture the mouse.'; },
-    onAbort(text) { stopped = true; statusLabel.textContent = 'Application stopped: ' + text + ' Reload to restart.'; setBusy(true); },
-    onExit(code) { stopped = true; statusLabel.textContent = 'Application exited (' + code + '). ' + lastError + ' Reload to restart.'; setBusy(true); }
+    gameStarted() { statusLabel.textContent = onlineMode === 'solo'
+      ? 'Original game running. Click the game to capture the mouse.' : 'Connecting to the room service…'; },
+    onlineStatus(message) {
+      if (statusLabel.textContent !== message) statusLabel.textContent = message;
+      if (message.startsWith('Connected.')) lastError = '';
+    },
+    onlineRoom(code, hosting) {
+      document.getElementById('room-code').textContent = code;
+      document.getElementById('room-panel').hidden = false;
+      document.getElementById('room-help').textContent = hosting
+        ? 'Share this code with friends. Each player loads their own game resources, then selects Join multiplayer.'
+        : 'Joined this room. The host controls the shared world.';
+      statusLabel.textContent = hosting ? 'Room ready. Share your code with friends.' : 'Connecting to the host…';
+    },
+    onAbort(text) {
+      stopped = true;
+      statusLabel.textContent = 'Application stopped: ' + text;
+      document.getElementById('room-panel').hidden = true;
+      document.getElementById('restart').hidden = false;
+      setBusy(true);
+    },
+    onExit(code) {
+      stopped = true;
+      statusLabel.textContent = onlineMode === 'solo' ? 'Application exited (' + code + '). ' + lastError
+        : 'Multiplayer session ended. ' + lastError;
+      document.getElementById('room-panel').hidden = true;
+      document.getElementById('restart').hidden = false;
+      setBusy(true);
+    }
   };
   discInput.addEventListener('change', async event => {
     if (running || stopped) return;
@@ -245,7 +332,7 @@
       installed = true;
       if (previous) removeOwnedTree(previous);
       await cacheFiles(collectedFiles(root));
-      statusLabel.textContent = 'Ready. Press Play to start.';
+      statusLabel.textContent = 'Ready. Play solo, host a room, or join friends.';
     } catch (error) {
       if (!stopped) statusLabel.textContent = String(error.message || error);
     } finally {
@@ -255,13 +342,385 @@
       discInput.value = '';
     }
   });
-  playButton.addEventListener('click', () => {
-    if (running || stopped || !dataRoot || playButton.disabled) return;
-    running = true;
+  const avatarPreviewCanvas = document.getElementById('avatar-preview');
+  const avatarPreviewPanel = document.getElementById('avatar-preview-panel');
+  const avatarPreviewHelp = document.getElementById('avatar-preview-help');
+  const avatarPoseControls = document.getElementById('avatar-pose-controls');
+  const avatarPose = document.getElementById('avatar-pose');
+  const avatarPhase = document.getElementById('avatar-phase');
+  // Catalogue correspondences are recorded in docs/port-findings.md. The
+  // numeric IDs remain the saved selection and network identity.
+  const avatarNames = {
+    0:'Christy Clements', 1:'Lyn Reinhardt', 2:'Lyn Reinhardt (Sitting)',
+    3:'Gullick Risty', 4:'Jens Stensland', 5:'Rene Thomas', 6:'Michael Hansen',
+    7:'Janan Green (Prayer)', 8:'Mark Johnson', 9:'Zul Arifin',
+    13:'Varde', 14:'Jack Leininger', 15:'Lyn Reinhardt (Dead)',
+    16:'Marcus Peppers', 17:'Jamie Porter', 18:'Yvette Bince', 19:'Toni Gomez',
+    20:'Priscilla Gomez', 21:'Marilyn Miller', 22:'Ed Edmund', 23:'Robert Shreve',
+    24:'Krone Licht', 25:'Jane Cowley', 26:'John Creel', 27:'Olivier Veyrac',
+    28:'Sal Estrada', 29:'The Skeleton of the Giant', 30:'The Skeleton of Light',
+    31:'The Tree of Dragon King Plant', 32:'Unnamed elf (1)', 33:'Unnamed elf (2)',
+    34:'Leon Shore', 36:'Airon Green (Healthy)', 37:'Janan Green (Cup)',
+    38:'Joe Santos', 39:'Franz Stoppenbach', 40:'Tim Lindquist',
+    41:'James Seward McCain V', 42:'Alexander Thornton Regginis', 43:'Orladin',
+  };
+  let avatarPreview = null, avatarPreviewYaw = 0.35;
+  function clearAvatarPreview() {
+    if (avatarPreview) {
+      const {gl, program, buffer, texture} = avatarPreview;
+      gl.deleteBuffer(buffer); gl.deleteTexture(texture); gl.deleteProgram(program);
+      avatarPreview = null;
+    }
+  }
+  function drawAvatarPreview() {
+    if (!avatarPreview || running) return;
+    const {gl, program, count, center, extent, height} = avatarPreview;
+    gl.viewport(0, 0, avatarPreviewCanvas.width, avatarPreviewCanvas.height);
+    gl.clearColor(0.125, 0.14, 0.17, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
+    gl.useProgram(program);
+    gl.uniform2f(gl.getUniformLocation(program, 'rotation'), Math.cos(avatarPreviewYaw), Math.sin(avatarPreviewYaw));
+    gl.uniform3fv(gl.getUniformLocation(program, 'center'), center);
+    gl.uniform2f(gl.getUniformLocation(program, 'extent'), extent * avatarPreviewCanvas.width / avatarPreviewCanvas.height, extent);
+    gl.uniform1f(gl.getUniformLocation(program, 'atlasHeight'), height);
+    gl.drawArrays(gl.TRIANGLES, 0, count);
+  }
+  function loadAvatarPreview() {
+    if (!avatarPath || running) return;
+    avatarPreviewPanel.hidden = false;
+    try {
+      if (!avatarPreview) {
+        const gl = avatarPreviewCanvas.getContext('webgl2', {alpha:false, antialias:false});
+        if (!gl || gl.isContextLost()) throw Error('WebGL preview unavailable');
+        const program = gl.createProgram();
+        avatarPreview = {gl, program, buffer:gl.createBuffer(), texture:gl.createTexture()};
+        const shader = (kind, source) => {
+          const value = gl.createShader(kind);
+          gl.shaderSource(value, source); gl.compileShader(value);
+          const ok = gl.getShaderParameter(value, gl.COMPILE_STATUS);
+          if (ok) gl.attachShader(program, value);
+          gl.deleteShader(value);
+          if (!ok) throw Error('Character preview shader failed');
+        };
+        shader(gl.VERTEX_SHADER, `#version 300 es
+          layout(location=0) in vec3 position;
+          layout(location=1) in vec3 normal;
+          layout(location=2) in vec2 uv;
+          layout(location=3) in vec4 color;
+          uniform vec2 rotation, extent;
+          uniform vec3 center;
+          uniform float atlasHeight;
+          out vec2 texcoord;
+          out vec3 tint;
+          vec3 turn(vec3 p) { return vec3(rotation.x*p.x+rotation.y*p.z, p.y, -rotation.y*p.x+rotation.x*p.z); }
+          void main() {
+            vec3 p=turn(position-center);
+            gl_Position=vec4(p.x/extent.x, -p.y/extent.y, p.z/(2.0*extent.y), 1.0);
+            vec3 n=turn(normal);
+            float light=color.a>0.5 ? 1.0 : 0.6+0.4*max(0.0,dot(n/max(length(n),0.001),normalize(vec3(-0.4,-0.7,-1.0))));
+            tint=color.rgb/128.0*light;
+            texcoord=(uv+vec2(0.5))/vec2(256.0,atlasHeight);
+          }`);
+        shader(gl.FRAGMENT_SHADER, `#version 300 es
+          precision highp float;
+          uniform sampler2D atlas;
+          in vec2 texcoord;
+          in vec3 tint;
+          out vec4 pixel;
+          void main() {
+            vec4 tex=texture(atlas,texcoord);
+            if (tex.a<0.5) discard;
+            pixel=vec4(tex.rgb*tint,1.0);
+          }`);
+        gl.linkProgram(program);
+        if (!gl.getProgramParameter(program, gl.LINK_STATUS)) throw Error('Character preview program failed');
+        gl.bindBuffer(gl.ARRAY_BUFFER, avatarPreview.buffer);
+        for (const [location, size, type, offset] of [[0,3,gl.SHORT,0],[1,3,gl.SHORT,6],[2,2,gl.UNSIGNED_SHORT,12],[3,4,gl.UNSIGNED_BYTE,16]]) {
+          gl.enableVertexAttribArray(location);
+          gl.vertexAttribPointer(location, size, type, false, 20, offset);
+        }
+        gl.activeTexture(gl.TEXTURE0);
+        gl.bindTexture(gl.TEXTURE_2D, avatarPreview.texture);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.NEAREST);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.NEAREST);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+        gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+        gl.enable(gl.DEPTH_TEST);
+      }
+      const slot = Number(avatarSelect.value);
+      const rigged = !!Module.ccall('kf_avatar_has_rig', 'number', ['number'], [slot]);
+      avatarPoseControls.hidden = !rigged;
+      avatarPhase.disabled = avatarPose.value === '0';
+      avatarPhase.setAttribute('aria-valuetext', Math.round(Number(avatarPhase.value)*100/4096) + '%');
+      avatarPreviewCanvas.setAttribute('aria-label',
+        avatarSelect.selectedOptions[0].textContent + (rigged ? '. ' + avatarPose.selectedOptions[0].textContent : '') +
+        '. Drag or use arrow keys to rotate.');
+      const motion = Number(avatarPose.value);
+      const phase = Number(avatarPhase.value);
+      const pointer = Module.ccall('kf_avatar_preview_vertices', 'number', ['number','number','number'], [slot,motion,phase]);
+      const count = Module.ccall('kf_avatar_preview_count', 'number', ['number'], [slot]);
+      const height = Module.ccall('kf_avatar_preview_height', 'number', ['number'], [slot]);
+      const rgba = Module.ccall('kf_avatar_preview_rgba', 'number', ['number'], [slot]);
+      if (!pointer || !count || !height || !rgba) throw Error('Character preview missing');
+      // KfAvatarVertex's upload layout is asserted by the C++ bridge. These
+      // views reference an already validated local pack, never raw file bytes.
+      const vertices = HEAPU8.subarray(pointer, pointer + count*20);
+      const positions = new DataView(vertices.buffer, vertices.byteOffset, vertices.byteLength);
+      const low = [Infinity,Infinity,Infinity], high = [-Infinity,-Infinity,-Infinity];
+      for (let i=0; i<count; ++i) for (let axis=0; axis<3; ++axis) {
+        const value = positions.getInt16(i*20+axis*2, true);
+        low[axis] = Math.min(low[axis],value); high[axis] = Math.max(high[axis],value);
+      }
+      const {gl} = avatarPreview;
+      gl.bufferData(gl.ARRAY_BUFFER, vertices, gl.STATIC_DRAW);
+      gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, 256, height, 0, gl.RGBA, gl.UNSIGNED_BYTE,
+        HEAPU8.subarray(rgba, rgba + 256*height*4));
+      avatarPreview.count = count; avatarPreview.height = height; avatarPreview.slot = slot;
+      // Rigged meshes use a 2000-unit body height. Keep their camera fixed as
+      // the pose changes, leaving room above the head for a raised attack.
+      avatarPreview.center = rigged ? [0,-1000,0] : low.map((value,axis) => (value+high[axis])/2);
+      avatarPreview.extent = rigged ? 1350 : Math.max(1,(high[1]-low[1])/2,
+        Math.hypot(high[0]-low[0],high[2]-low[2])*avatarPreviewCanvas.height/(2*avatarPreviewCanvas.width))*1.12;
+      avatarPreviewCanvas.hidden = false;
+      avatarPreviewHelp.textContent = 'Drag or use arrow keys to rotate. ' +
+        (rigged ?
+          'Walking and combat poses available.' : 'This body uses its original pose.');
+      drawAvatarPreview();
+    } catch (error) {
+      clearAvatarPreview();
+      avatarPreviewCanvas.hidden = true;
+      avatarPoseControls.hidden = true;
+      avatarPreviewHelp.textContent = 'Preview unavailable. You can still select this character.';
+      console.warn('Character preview:', error);
+    }
+  }
+  avatarPose.addEventListener('change', () => {
+    avatarPhase.value = ({1:1024,2:1024,3:3072,4:1000,5:2048})[avatarPose.value] ?? 2048;
+    loadAvatarPreview();
+  });
+  avatarPhase.addEventListener('input', () => loadAvatarPreview());
+  let avatarPreviewDrag = null;
+  avatarPreviewCanvas.addEventListener('pointerdown', event => {
+    if (!avatarPreview || running || !event.isPrimary) return;
+    avatarPreviewDrag = event.clientX;
+    avatarPreviewCanvas.setPointerCapture(event.pointerId);
+    avatarPreviewCanvas.focus();
+  });
+  avatarPreviewCanvas.addEventListener('pointermove', event => {
+    if (avatarPreviewDrag === null || !event.isPrimary) return;
+    avatarPreviewYaw += (event.clientX-avatarPreviewDrag)*0.015;
+    avatarPreviewDrag = event.clientX;
+    drawAvatarPreview();
+  });
+  avatarPreviewCanvas.addEventListener('lostpointercapture', () => { avatarPreviewDrag = null; });
+  avatarPreviewCanvas.addEventListener('keydown', event => {
+    if (!['ArrowLeft','ArrowRight'].includes(event.key)) return;
+    event.preventDefault();
+    avatarPreviewYaw += event.key === 'ArrowLeft' ? -0.2 : 0.2;
+    drawAvatarPreview();
+  });
+  avatarPreviewCanvas.addEventListener('webglcontextlost', event => {
+    event.preventDefault(); avatarPreview = null;
+    avatarPreviewHelp.textContent = 'Character preview interrupted.';
+  });
+  avatarPreviewCanvas.addEventListener('webglcontextrestored', () => loadAvatarPreview());
+  function installCharacters(bytes, selected = 41) {
+    if (!(bytes instanceof Uint8Array) || !bytes.length || bytes.length > 32 * 1024 * 1024)
+      throw Error('Invalid character pack size (32 MiB maximum).');
+    const candidate = '/characters-candidate.kfa';
+    try {
+      Module.FS.writeFile(candidate, bytes);
+      if (!Module.ccall('kf_load_avatars', 'number', ['string'], [candidate])) throw Error('Invalid character pack.');
+      const path = '/characters.kfa';
+      Module.FS.rename(candidate, path);
+      avatarPath = path;
+      avatarSelect.replaceChildren();
+      const animated = document.createElement('optgroup');
+      const original = document.createElement('optgroup');
+      animated.label = 'Animated characters';
+      original.label = 'Original poses';
+      const available = [];
+      for (let slot = 0; slot < 44; ++slot) {
+        if (!Module.ccall('kf_has_avatar', 'number', ['number'], [slot])) continue;
+        available.push({slot, name:avatarNames[slot] || 'Character ' + (slot + 1)});
+      }
+      available.sort((a,b) => a.name.localeCompare(b.name));
+      for (const {slot,name} of available) {
+        const option = document.createElement('option');
+        option.value = slot;
+        option.textContent = name;
+        (Module.ccall('kf_avatar_has_rig', 'number', ['number'], [slot]) ? animated : original).append(option);
+      }
+      for (const group of [animated,original]) if (group.children.length) avatarSelect.append(group);
+      if (Number.isInteger(selected) && selected >= 0 && selected < 44 && Module.ccall('kf_has_avatar', 'number', ['number'], [selected]))
+        avatarSelect.value = String(selected);
+      avatarStatus.textContent = avatarSelect.options.length + ' character bodies available on this device.';
+      loadAvatarPreview();
+    } finally {
+      if (Module.FS.analyzePath(candidate).exists) Module.FS.unlink(candidate);
+    }
+  }
+  async function cacheCharacters(bytes) {
+    let database;
+    try {
+      database = await openCache('kings-field-characters');
+      await new Promise((resolve, reject) => {
+        const transaction = database.transaction('files', 'readwrite');
+        transaction.oncomplete = resolve;
+        transaction.onabort = () => reject(transaction.error);
+        const store = transaction.objectStore('files');
+        if (bytes) store.put(bytes, 'pack');
+        store.put(Number(avatarSelect.value), 'selected');
+      });
+    } catch (error) {
+      console.warn('Character cache:', error);
+      avatarStatus.textContent = 'Characters are ready for this session, but could not be cached.';
+    } finally { database?.close(); }
+  }
+  async function restoreCharacters() {
+    let database;
+    try {
+      database = await openCache('kings-field-characters');
+      const cached = await new Promise((resolve, reject) => {
+        const transaction = database.transaction('files', 'readonly');
+        const store = transaction.objectStore('files');
+        const pack = store.get('pack'), selected = store.get('selected');
+        transaction.oncomplete = () => resolve({bytes:pack.result, selected:selected.result});
+        transaction.onabort = () => reject(transaction.error);
+      });
+      if (cached.bytes !== undefined) installCharacters(cached.bytes, cached.selected);
+    } catch (error) {
+      console.warn('Character cache:', error);
+      avatarStatus.textContent = 'Character cache unavailable or invalid; select the KFIII disc again.';
+    } finally { database?.close(); }
+  }
+  async function charactersFromDisc(file) {
+    if (!file.size || file.size > 800 * 1024 * 1024 ||
+        !Module.ccall('kf_avatar_disc_start', 'number', ['number'], [file.size]))
+      throw Error('Select a KFIII BIN or ISO data track (800 MiB maximum).');
+    const chunk = '/avatar-read.bin', output = '/avatar-import.kfa';
+    try {
+      for (;;) {
+        const length = Module.ccall('kf_avatar_disc_read', 'number', [], []);
+        if (length === 0) break;
+        if (length < 0) throw Error(Module.ccall('kf_avatar_disc_error', 'string', [], []));
+        const offset = Module.ccall('kf_avatar_disc_offset', 'number', [], []);
+        Module.FS.writeFile(chunk, new Uint8Array(await file.slice(offset, offset + length).arrayBuffer()));
+        if (!Module.ccall('kf_avatar_disc_supply', 'number', ['string'], [chunk]))
+          throw Error(Module.ccall('kf_avatar_disc_error', 'string', [], []) || 'Cannot read character data.');
+        Module.FS.unlink(chunk);
+      }
+      if (!Module.ccall('kf_avatar_disc_finish', 'number', ['string'], [output])) throw Error('Cannot extract character data.');
+      return Module.FS.readFile(output);
+    } finally {
+      Module.ccall('kf_avatar_disc_cancel', null, [], []);
+      for (const path of [chunk, output]) if (Module.FS.analyzePath(path).exists) Module.FS.unlink(path);
+    }
+  }
+  avatarSelect.addEventListener('change', () => {
+    if (!running && avatarPath) { loadAvatarPreview(); cacheCharacters(); }
+  });
+  avatarInput.addEventListener('change', async () => {
+    const file = avatarInput.files[0];
+    if (!file || running || stopped) return;
     setBusy(true);
+    try {
+      avatarStatus.textContent = 'Extracting characters locally…';
+      let bytes;
+      if (/\.kfa$/i.test(file.name)) {
+        if (file.size > 32 * 1024 * 1024) throw Error('Character pack exceeds 32 MiB.');
+        bytes = new Uint8Array(await file.arrayBuffer());
+      } else if (/\.(bin|iso)$/i.test(file.name)) bytes = await charactersFromDisc(file);
+      else throw Error('Select the KFIII BIN or ISO data track.');
+      installCharacters(bytes);
+      await cacheCharacters(bytes);
+    } catch (error) {
+      avatarStatus.textContent = error.message;
+    } finally { avatarInput.value = ''; await refreshCampaigns(); setBusy(false); }
+  });
+  async function refreshCampaigns() {
+    const selected = campaignSelect.value;
+    campaignSelect.replaceChildren(new Option('New campaign', '0'));
+    campaignStatus.textContent = '';
+    if (!avatarPath) return;
+    let db;
+    const path = '/campaign-preview.kfc';
+    try {
+      db = await openCache('kings-field-saves');
+      const {files, profile} = await new Promise((resolve, reject) => {
+        const tx = db.transaction('files', 'readonly');
+        const store = tx.objectStore('files');
+        const saves = [1,2,3].map(slot => store.get('party' + slot + '.kfc'));
+        const profile = store.get('online-profile');
+        tx.oncomplete = () => resolve({files:saves.map(r => r.result), profile:profile.result});
+        tx.onabort = () => reject(tx.error);
+      });
+      const owner = profile instanceof Uint8Array && profile.length === 32
+        ? Array.from(new Uint8Array(await crypto.subtle.digest('SHA-256', profile)), b => b.toString(16).padStart(2,'0')).join('')
+        : '';
+      files.forEach((bytes, index) => {
+        if (bytes === undefined) return;
+        let summary;
+        if (bytes instanceof Uint8Array && bytes.length <= 132*1024) {
+          Module.FS.writeFile(path, bytes);
+          const result = Module.ccall('kf_campaign_preview', 'string', ['string'], [path]);
+          if (result) summary = JSON.parse(result);
+        }
+        const usable = summary && summary.owner === owner;
+        const label = !summary ? 'unavailable with these resources' : !usable ? 'different player profile'
+          : 'Floor ' + summary.floor + ' · Level ' + summary.level;
+        const option = new Option('Slot ' + (index+1) + ' — ' + label, String(index+1));
+        option.disabled = !usable;
+        campaignSelect.append(option);
+      });
+      if (Array.from(campaignSelect.options).some(o => o.value === selected && !o.disabled)) campaignSelect.value = selected;
+      if (files.some(bytes => bytes !== undefined)) campaignStatus.textContent = 'Choose a saved campaign to continue hosting.';
+    } catch {
+      campaignStatus.textContent = 'Saved campaigns could not be read on this device.';
+    } finally {
+      db?.close();
+      if (Module.FS.analyzePath(path).exists) Module.FS.unlink(path);
+    }
+  }
+  function startGame(mode) {
+    if (running || stopped || !dataRoot || playButton.disabled) return;
+    if (mode !== 'solo' && !avatarPath) {
+      avatarStatus.textContent = 'Select the KFIII disc to load multiplayer characters first.';
+      return;
+    }
     const args = ['--data', dataRoot];
+    if (mode === 'join') {
+      const room = joinCode.value.trim();
+      if (!/^[A-Za-z0-9_-]{1,128}$/.test(room)) {
+        statusLabel.textContent = 'Enter the room code shared by your friend.';
+        joinCode.focus();
+        return;
+      }
+      args.push('--join', room);
+    } else if (mode === 'host') {
+      args.push('--host');
+      const selected = campaignSelect.selectedOptions[0];
+      if (!selected || selected.disabled) return;
+      if (selected.value !== '0') args.push('--campaign', selected.value);
+    }
+    if (mode !== 'solo') {
+      if (avatarPath) args.push('--avatar', avatarSelect.value);
+      const signal = new URL(document.querySelector('meta[name="kf-room-service"]').content, location.href);
+      if (signal.protocol === 'https:') signal.protocol = 'wss:';
+      if (signal.protocol === 'http:') signal.protocol = 'ws:';
+      if (!['ws:', 'wss:'].includes(signal.protocol)) {
+        statusLabel.textContent = 'The room service is not configured correctly.';
+        return;
+      }
+      args.push('--signal', signal.href);
+    }
+    running = true;
+    clearAvatarPreview();
+    avatarPreviewPanel.hidden = true;
+    onlineMode = mode;
+    setBusy(true);
     if (document.getElementById('skip-intro').checked) args.push('--skip-intro');
-    statusLabel.textContent = 'Starting original game…';
+    statusLabel.textContent = mode === 'host' ? 'Creating multiplayer room…' : mode === 'join' ? 'Joining multiplayer room…' : 'Starting original game…';
     Module.canvas.focus();
     // Do not await permission before audio creation: main enters within this gesture.
     if (navigator.storage && navigator.storage.persist)
@@ -273,7 +732,23 @@
     else
       storageLabel.textContent = 'Persistent-storage requests are unavailable. Saves may be evicted or cleared.';
     try { Module.callMain(args); }
-    catch (error) { stopped = true; statusLabel.textContent = 'Application stopped: ' + error + ' Reload to restart.'; setBusy(true); }
+    catch (error) { Module.onAbort(error); }
+  }
+  playButton.addEventListener('click', () => startGame('solo'));
+  document.getElementById('restart').addEventListener('click', () => location.reload());
+  hostButton.addEventListener('click', () => startGame('host'));
+  joinButton.addEventListener('click', () => startGame('join'));
+  joinCode.addEventListener('keydown', event => {
+    if (event.key === 'Enter') startGame('join');
+  });
+  document.getElementById('copy-room').addEventListener('click', async () => {
+    const code = document.getElementById('room-code').textContent;
+    try {
+      await navigator.clipboard.writeText(code);
+      document.getElementById('room-help').textContent = 'Code copied. Send it to your friends.';
+    } catch {
+      document.getElementById('room-help').textContent = 'Select the room code above and copy it to share.';
+    }
   });
 </script>
 {{{ SCRIPT }}}

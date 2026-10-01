@@ -1,12 +1,18 @@
 #ifndef KF_GAME_RENDER_H
 #define KF_GAME_RENDER_H
 
+struct WorldState;
+
+struct PlayerContext;
+struct PartyEntityPose;
+struct PartyEffectAppearance;
+
 #include <kf/lib/graphics.h>
 
 #include <kf/lib/enum.h>
 #include <kf/game/actor.h>
 #include <kf/game/effect.h>
-#include <kf/lib/map.h>
+#include <kf/game/map.h>
 #include <kf/lib/item.h>
 #include <kf/game/animation_cache.h>
 #include <kf/lib/render_types.h>
@@ -119,8 +125,8 @@ extern MATRIX render_light_matrices[KF_RENDER_LIGHT_COUNT];
 
 extern void display_flip_buffer_index(void);
 extern void display_initialize(void);
-extern void display_play_transition(void);
-extern void display_show_system_screen(KfSystemScreen screen);
+extern kf::FrameTask<void> display_play_transition(void);
+extern kf::FrameTask<void> display_show_system_screen(KfSystemScreen screen);
 extern void display_present_system_screen(s32 brightness);
 extern void render_prepare_actor_textures(KfFloorId floor);
 extern void lighting_apply_blue_tint(void);
@@ -128,28 +134,33 @@ extern void lighting_apply_illusion_staff_effect(void);
 extern void lighting_apply_shadow_blade_environment(void);
 extern void lighting_set_active_color_matrix(KfGameColorPreset preset);
 extern void menu_render_item_model(const MATRIX *lights, const MATRIX *model);
-extern void render_actor(KfActor *actor);
-extern void render_effect(KfEffectRecord *effect, const MATRIX *lights);
+extern void render_actor(WorldState &world, KfActor *actor, const PartyEntityPose &pose);
+extern void render_effect(KfEffectRecord *effect, const MATRIX *lights, const PartyEntityPose &pose,
+    const PartyEffectAppearance &appearance);
 extern void render_hud_models(const MATRIX *lights);
 extern void render_enqueue_map(u16 object_index, const MATRIX *lights, const MATRIX *model, const kf::Projection &projection);
 extern void render_enqueue_tmd_retextured(u16 object_index, s16 depth_bias, const MATRIX *lights);
 extern void render_enqueue_sprite(KfSpriteQuad *effect, s16 depth_bias, KfSpriteDepthCueMode depth_cue_mode, const MATRIX *lights, const MATRIX *model, const kf::Projection &projection);
 extern void render_enqueue_tmd(u16 object_index, s16 depth_bias, const MATRIX *lights);
-extern void render_entities(void);
+extern void render_entities(WorldState &world);
+void render_party(WorldState &world, u8 camera_slot);
 // Advances and presents one world frame, including the shared three-tick wait.
 // Callers must not add another gameplay interval; menus/retained frames are separate.
-extern void render_frame(
+extern kf::FrameTask<void> render_frame(WorldState &world, PlayerContext &player,
     const VECTOR *position_or_null, const SVECTOR *rotation_or_null);
+void render_world_frame(WorldState &world, PlayerContext &player,
+    const VECTOR *position_or_null, const SVECTOR *rotation_or_null);
+void presentation_advance_floor_items();
 extern void render_hud_sprites(KfHudSprite *table);
 extern void render_initialize(void);
-extern void render_map_cell(
+extern void render_map_cell(WorldState &world, PlayerContext &player,
     s32 col, s32 row, KfCellVisibility visibility);
-extern void render_map_cells(void);
-extern void render_map_event(KfMapEvent *event, const MATRIX *lights);
-extern void render_map_object(KfMapObject *object);
+extern void render_map_cells(WorldState &world, PlayerContext &player);
+extern void render_map_event(KfMapEvent *event, const MATRIX *lights, const PartyEntityPose &pose);
+extern void render_map_object(WorldState &world, KfMapObject *object, const PartyEntityPose &pose);
 extern void render_screen_sprite(KfSpriteQuad *sprite);
-extern void render_weapon(void);
-extern void screen_show_image_until_input(const char *path);
+extern void render_weapon(PlayerContext &player);
+extern kf::FrameTask<void> screen_show_image_until_input(const char *path);
 
 extern void tmd_project_vertices(s32 count, const MATRIX *model, const kf::Projection &projection);
 

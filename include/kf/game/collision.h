@@ -1,8 +1,12 @@
 #ifndef KF_GAME_COLLISION_H
 #define KF_GAME_COLLISION_H
 
+struct WorldState;
+
+struct PlayerContext;
+
 #include <kf/lib/types.h>
-#include <kf/lib/map_data.h>
+#include <kf/game/map_data.h>
 #include <kf/lib/geometry_types.h>
 
 // Original actors and wandering events reject cells carrying this authored bit.
@@ -60,17 +64,22 @@ typedef struct KfCellHeightRecord {
     s16 y_max;
 } KfCellHeightRecord;
 
-extern KfCollisionTarget collision_target;
 extern s16 map_cell_attribute_height_table[KF_MAP_ATTRIBUTE_COUNT];
-extern KfCellHeightRecord map_cell_height_records[KF_MAP_CELL_HEIGHT_RECORD_COUNT];
 
-extern void collision_adjust_cell_occupancy(
+inline s16 map_attribute_preceding_height(KfMapAttribute attribute)
+{
+    const unsigned index = kf_enum_encode<u8>(attribute);
+    // Aim/jump rules use the preceding entry. Attribute zero has no predecessor.
+    return map_cell_attribute_height_table[index ? index - 1 : 0];
+}
+
+extern void collision_adjust_cell_occupancy(WorldState &world,
     u16 cell_x, u16 cell_z, s32 delta);
-extern u32 collision_query_world(
+extern u32 collision_query_world(WorldState &world, PlayerContext &player,
     s32 point_x, s32 point_y, s32 point_z, s32 radius, s32 height,
-    u32 flags);
-extern s32 map_floor_height_at_position(const VECTOR *position);
-extern s32 map_floor_height_for_cell_position(
+    u32 flags, u8 ignored_player = 0xff);
+extern s32 map_floor_height_at_position(WorldState &world, const VECTOR *position);
+extern s32 map_floor_height_for_cell_position(WorldState &world,
     u16 cell_index, s32 point_x, s32 point_z);
 
 #endif

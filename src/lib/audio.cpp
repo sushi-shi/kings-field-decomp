@@ -49,6 +49,7 @@ void audio_set_listener_transform(KfAudioState &state,
 
 void sound_ref_play(KfAudioPlayback playback, const SoundRef *sound, s16 volume)
 {
+    if (playback.capture && playback.capture(playback.capture_context, *sound, volume)) return;
     audio_play_voice(playback,
         playback.state.bank,
         sound->program,

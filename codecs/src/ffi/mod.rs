@@ -1,12 +1,16 @@
-mod bindings;
+pub(crate) mod bindings;
 use bindings::*;
 mod audio;
+mod avatar;
+mod network;
 mod texture;
+pub(crate) mod transport;
+pub(crate) mod world;
 use crate::tim::{Image, Images};
 use crate::tim::{
     TIM_DIRECT16, TIM_DIRECT24, TIM_FLAGS_MASK, TIM_FORMAT_MASK, TIM_INDEXED4, TIM_INDEXED8,
 };
-use core::{panic::PanicInfo, slice};
+use core::slice;
 const INDEXED4_PALETTE_COLORS: usize = 16;
 const INDEXED4_BITS: usize = 4;
 const INDEXED4_MASK: u8 = 15;
@@ -17,20 +21,6 @@ const RGB5_RGB8_SHIFT: u32 = 3;
 const RGB5_REPLICATION_SHIFT: u32 = 2;
 const ALPHA_OPAQUE: u8 = 255;
 
-extern "C" {
-    fn abort() -> !;
-}
-// Native prebuilt core retains an unwind metadata reference. This library uses
-// panic=abort; entering an unwinder is a fatal ABI violation, never a no-op.
-#[no_mangle]
-pub extern "C" fn rust_eh_personality() -> ! {
-    unsafe { abort() }
-}
-#[panic_handler]
-fn panic(_: &PanicInfo<'_>) -> ! {
-    // Programming errors must not unwind across the C ABI.
-    unsafe { abort() }
-}
 const OK: KfCodecResult = KF_CODEC_OK;
 const END: KfCodecResult = KF_CODEC_END;
 const INVALID: KfCodecResult = KF_CODEC_INVALID;

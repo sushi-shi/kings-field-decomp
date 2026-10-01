@@ -3,6 +3,14 @@
     {
       "name": "game",
       "sources": [
+        "src/game/party.cpp",
+        "src/game/party_runtime.cpp",
+        "src/game/player_actions.cpp",
+        "src/game/coop_session.cpp",
+        "src/game/player_avatar_render.cpp",
+        "src/game/avatar_pose.cpp",
+        "src/game/campaign.cpp",
+        "src/game/snapshot.cpp",
         "src/game/display_play_transition.cpp",
         "src/game/player_warp_shimmer_at_player.cpp",
         "src/game/game.cpp",

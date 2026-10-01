@@ -6,7 +6,7 @@ struct Renderer;
 struct FaceList;
 struct DrawFace;
 struct FrameStyle;
-enum class AppMode : u8 { Opening, Gameplay, Ending };
+enum class AppMode : u8 { Opening, Gameplay, Ending, Exit };
 struct UpdatePacer {
     std::uint64_t deadline_ns;
     u32 steps_per_second;
@@ -15,6 +15,10 @@ struct UpdatePacer {
 bool host_start();
 void host_shutdown();
 void host_poll();
+void host_set_session_running(bool running);
+void host_online_room(const char *code, bool hosting);
+void host_online_status(const char *message);
+void host_notice(const char *message);
 std::uint64_t host_clock_ns();
 std::uint64_t host_clock_tick();
 void host_wait_until_tick(std::uint64_t deadline);

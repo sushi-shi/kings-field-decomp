@@ -1,3 +1,5 @@
+#include <kf/game/world.h>
+#include <kf/game/party_runtime.h>
 #include <kf/lib/null.h>
 #include <kf/game/graphics.h>
 
@@ -14,7 +16,7 @@ enum {
     MENU_ITEM_DEPTH_BIAS = 1000
 };
 
-void render_actor(KfActor *actor)
+void render_actor(WorldState &world, KfActor *actor, const PartyEntityPose &pose)
 {
     SVECTOR relative_position;
     MATRIX rot_y;
@@ -25,17 +27,17 @@ void render_actor(KfActor *actor)
     u16 asset;
 
     relative_position = VECTOR{
-        actor->position.vx - game_graphics_runtime.render_state.view_position.vx,
-        actor->position.vy - game_graphics_runtime.render_state.view_position.vy,
-        actor->position.vz - game_graphics_runtime.render_state.view_position.vz}.narrowed();
+        pose.position.vx - game_graphics_runtime.render_state.view_position.vx,
+        pose.position.vy - game_graphics_runtime.render_state.view_position.vy,
+        pose.position.vz - game_graphics_runtime.render_state.view_position.vz}.narrowed();
     kf::render_place_model(model, game_graphics_runtime.render_state.view_matrix, relative_position);
-    matrix_set_rotation_x(actor->rotation.angles.x, &model);
-    matrix_set_rotation_y(-actor->rotation.angles.y, &rot_y);
+    matrix_set_rotation_x(pose.rotation.vx, &model);
+    matrix_set_rotation_y(-pose.rotation.vy, &rot_y);
     kf::matrix_multiply_rotation(rot_y, model, model);
     kf::matrix_multiply_rotation(render_light_matrices[KF_RENDER_LIGHT_ACTOR], model, light);
     kf::matrix_multiply_rotation(game_graphics_runtime.render_state.view_matrix, model, model);
 
-    descriptor = actor_state.definitions.entries[actor->definition_id].model_and_texture;
+    descriptor = world.actors.definitions.entries[actor->definition_id].model_and_texture;
     asset = descriptor & ACTOR_MODEL_ASSET_MASK;
     asset_registry_select(asset);
     object = tmd_get_object(tmd_context(), 0);
@@ -57,7 +59,7 @@ void render_actor(KfActor *actor)
     }
 }
 
-void render_map_object(KfMapObject *object)
+void render_map_object(WorldState &world, KfMapObject *object, const PartyEntityPose &pose)
 {
     SVECTOR relative_position;
     MATRIX rot_x;
@@ -67,18 +69,18 @@ void render_map_object(KfMapObject *object)
     s16 depth;
 
     relative_position = VECTOR{
-        object->position.vx - game_graphics_runtime.render_state.view_position.vx,
-        object->position.vy - game_graphics_runtime.render_state.view_position.vy,
-        object->position.vz - game_graphics_runtime.render_state.view_position.vz}.narrowed();
+        pose.position.vx - game_graphics_runtime.render_state.view_position.vx,
+        pose.position.vy - game_graphics_runtime.render_state.view_position.vy,
+        pose.position.vz - game_graphics_runtime.render_state.view_position.vz}.narrowed();
     kf::render_place_model(model, game_graphics_runtime.render_state.view_matrix, relative_position);
-    matrix_set_rotation_x(object->rotation.angles.x, &rot_x);
-    matrix_set_rotation_y(object->rotation.angles.y, &model);
+    matrix_set_rotation_x(pose.rotation.vx, &rot_x);
+    matrix_set_rotation_y(pose.rotation.vy, &model);
     kf::matrix_multiply_rotation(model, rot_x, model);
     kf::matrix_multiply_rotation(game_graphics_runtime.render_state.light_matrix, model, light);
     kf::matrix_multiply_rotation(game_graphics_runtime.render_state.view_matrix, model, model);
 
     id = object->object_id;
-    switch (map_object_state.definitions.entries[kf_enum_encode<u8>(object->object_id)].behavior_type) {
+    switch (world.objects.definitions.entries[kf_enum_encode<u8>(object->object_id)].behavior_type) {
     case KF_MAP_OBJECT_OP_LIFT_DOOR:
     case KF_MAP_OBJECT_OP_03:
         depth = MAP_LIFT_DOOR_DEPTH_BIAS;

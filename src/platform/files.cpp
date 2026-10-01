@@ -1,4 +1,9 @@
 #include <kf/platform/files.hpp>
+#include <kf/platform/assets.hpp>
+#include <algorithm>
+#include <array>
+#include <filesystem>
+#include <vector>
 #include <cerrno>
 #include <cstdlib>
 #include <cstring>
@@ -44,6 +49,64 @@ static bool valid_relative_path(const char *path) {
             return true;
         segment = at + 1;
     }
+}
+
+std::string data_files_hash() {
+    if (!data_root) return {};
+    namespace fs = std::filesystem;
+    std::error_code error;
+    const fs::path root(data_root);
+    std::vector<std::string> paths;
+    std::size_t directories = 0;
+    fs::recursive_directory_iterator at(root, error), end;
+    if (error) return {};
+    while (at != end) {
+        const auto status = at->symlink_status(error);
+        if (error || at.depth() > 8) return {};
+        if (fs::is_directory(status)) {
+            if (++directories > disc_directory_capacity) return {};
+        } else if (fs::is_regular_file(status)) {
+            const auto path = at->path().lexically_relative(root).generic_string();
+            if (path.size() >= asset_path_capacity || !valid_relative_path(path.c_str()) ||
+                paths.size() == disc_file_capacity) return {};
+            paths.push_back(path);
+        } else return {}; // Do not traverse links, devices or pipes as resources.
+        at.increment(error);
+        if (error) return {};
+    }
+    if (paths.empty()) return {};
+    std::sort(paths.begin(), paths.end());
+    Sha256 hash {};
+    sha256_init(&hash);
+    std::array<u8, 4 * 1024> buffer;
+    std::size_t total = 0;
+    for (const auto &path : paths) {
+        DataFile file {};
+        if (data_file_open(&file, path.c_str()) != FileResult::Ok) return {};
+        bool ok = file.size <= disc_import_limit - total;
+        if (ok) {
+            total += file.size;
+            u8 sizes[8];
+            for (unsigned byte = 0; byte < 4; ++byte) {
+                sizes[byte] = static_cast<u8>(path.size() >> (byte * 8));
+                sizes[byte + 4] = static_cast<u8>(file.size >> (byte * 8));
+            }
+            sha256_update(&hash, sizes, sizeof sizes);
+            sha256_update(&hash, reinterpret_cast<const u8 *>(path.data()), path.size());
+            for (std::size_t remaining = file.size; remaining && ok;) {
+                const auto count = std::min(remaining, buffer.size());
+                ok = std::fread(buffer.data(), 1, count, file.stream) == count;
+                if (ok) sha256_update(&hash, buffer.data(), count);
+                remaining -= count;
+            }
+            ok = ok && std::fgetc(file.stream) == EOF && !std::ferror(file.stream);
+        }
+        data_file_close(&file);
+        if (!ok) return {};
+    }
+    char digest[sha256_hex_capacity];
+    sha256_finish(&hash, digest);
+    return digest;
 }
 
 FileResult data_file_open(DataFile *file, const char *path) {

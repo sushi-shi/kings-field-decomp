@@ -17,7 +17,6 @@ const BLOCK_RECTANGLE_Y_OFFSET: usize = 6;
 const BLOCK_RECTANGLE_WIDTH_OFFSET: usize = 8;
 const BLOCK_RECTANGLE_HEIGHT_OFFSET: usize = 10;
 
-
 #[derive(Debug, Clone, Copy, PartialEq, Eq)]
 pub enum TimError {
     Truncated {
@@ -112,7 +111,6 @@ impl TimImageDescriptor {
 }
 
 impl Image<'_> {
-
     pub fn psx_descriptor(&self, stream_address: u32) -> TimImageDescriptor {
         let address = |offset: usize| stream_address.wrapping_add(offset as u32);
         TimImageDescriptor {
@@ -208,8 +206,8 @@ fn u32_at(bytes: &[u8], at: usize) -> Result<u32, TimError> {
 fn block<'a>(bytes: &'a [u8], cursor: &mut usize) -> Result<ImageBlock<'a>, TimError> {
     let at = *cursor;
     let declared = u32_at(bytes, at)?;
-    let size =
-        usize::try_from(declared & !BLOCK_SIZE_LOW_BITS).map_err(|_| TimError::InvalidBlockSize { at, declared })?;
+    let size = usize::try_from(declared & !BLOCK_SIZE_LOW_BITS)
+        .map_err(|_| TimError::InvalidBlockSize { at, declared })?;
     if size < BLOCK_HEADER_BYTES {
         return Err(TimError::InvalidBlockSize { at, declared });
     }

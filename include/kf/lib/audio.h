@@ -54,6 +54,9 @@ struct KfAudioPlayback {
     KfAudioState &state;
     s32 &voice_slot_index;
     bool effects_enabled;
+    // Return true when phase policy has handled playback itself.
+    bool (*capture)(void *, const SoundRef &, s16) = nullptr;
+    void *capture_context = nullptr;
 };
 
 KfAudioBankResource audio_bank_resource(const u8 *data, std::size_t size);

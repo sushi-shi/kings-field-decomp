@@ -64,7 +64,7 @@ void item_load_floor_placements(KfFloorItemStorage storage, const KfMapGrid &hei
 }
 
 void render_floor_item(const KfRenderState &view, KfSpriteQuad *sprites,
-    KfSpriteEnqueue enqueue_sprite, KfFloorItem *item, const MATRIX *lights)
+    KfSpriteEnqueue enqueue_sprite, const KfFloorItem *item, const MATRIX *lights)
 {
     SVECTOR screen;
     MATRIX model;
@@ -88,5 +88,4 @@ void render_floor_item(const KfRenderState &view, KfSpriteQuad *sprites,
         depth_bias = KF_FLOOR_ITEM_BILLBOARD_DEPTH_BIAS;
     }
     enqueue_sprite(&sprites[kf_enum_encode<u16>(item->base_sprite_index) + item->animation_frame], depth_bias, KF_SPRITE_DEPTH_CUE_BOOSTED, lights, &model, view.projection);
-    floor_item_advance_frame(item);
 }

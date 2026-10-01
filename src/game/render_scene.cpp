@@ -1,8 +1,11 @@
+#include <kf/game/world.h>
+#include <kf/game/party_runtime.h>
 #include <kf/game/graphics.h>
 
-#include <kf/lib/map_data.h>
+#include <kf/game/map_data.h>
 #include <kf/game/render.h>
 #include <kf/game/state.h>
+#include <kf/game/player_actions.h>
 
 enum {
     ACTOR_CULL_SQUARE_HALF_WIDTH = 12,
@@ -42,7 +45,22 @@ static bool render_actor_is_visible(const KfActor &actor, RenderCellOrigin origi
     return col < ACTOR_CULL_SQUARE_WIDTH;
 }
 
-void render_entities(void)
+void presentation_advance_floor_items()
+{
+    const auto *grid = game_graphics_runtime.active_cell_window;
+    if (!grid) return;
+    const RenderCellOrigin origin {
+        static_cast<u16>(game_graphics_runtime.render_state.view_cell.x - grid->origin_x),
+        static_cast<u16>(game_graphics_runtime.render_state.view_cell.z - grid->origin_z)};
+    for (s16 index = 0; index < game_graphics_runtime.floor_item_count; ++index) {
+        auto &item = game_graphics_runtime.floor_items[index];
+        if (render_cell_is_visible(item.position_x / KF_MAP_TILE_SIZE,
+                                  item.position_z / KF_MAP_TILE_SIZE, origin))
+            floor_item_advance_frame(&item);
+    }
+}
+
+void render_entities(WorldState &world)
 {
     const auto *grid = game_graphics_runtime.active_cell_window;
     const u16 window_origin_z = game_graphics_runtime.render_state.view_cell.z - grid->origin_z;
@@ -51,17 +69,28 @@ void render_entities(void)
 
     tmd_select(tmd_context(), KF_TMD_SLOT_ENTITIES);
 
-    for (auto &object : map_object_state.objects) {
-        if (object.object_id < KF_MAP_OBJECT_RENDER_ID_END
-            && render_cell_is_visible(object.cell_x, object.cell_z, origin)) {
-            render_map_object(&object);
+    for (auto &object : world.objects.objects) {
+        const auto index = &object - world.objects.objects;
+        auto pose = party_present_entity(world.presentation ? &world.presentation->objects[index] : nullptr,
+            party_object_pose(object));
+        if (pose.active && (render_cell_is_visible(object.cell_x, object.cell_z, origin) ||
+            (world.presentation && render_cell_is_visible(pose.position.vx / KF_MAP_TILE_SIZE, pose.position.vz / KF_MAP_TILE_SIZE, origin)))) {
+            if (!player_loot_visible(world, world.party.local_slot, index)) continue;
+            const auto *actions = world.party.members[world.party.local_slot].player.actions;
+            if (world.party.enabled && actions && actions->container == index && actions->container_generation == object.generation) {
+                pose.rotation.vx = actions->container_pitch;
+            }
+            render_map_object(world, &object, pose);
         }
     }
 
-    for (auto &actor : actor_state.actors) {
-        if (actor.lifecycle == KF_ACTOR_LIFECYCLE_ACTIVE
-            && render_actor_is_visible(actor, origin)) {
-            render_actor(&actor);
+    for (auto &actor : world.actors.actors) {
+        const auto index = &actor - world.actors.actors;
+        const auto pose = party_present_entity(world.presentation ? &world.presentation->actors[index] : nullptr,
+            party_actor_pose(actor));
+        if (pose.active && (render_actor_is_visible(actor, origin) ||
+            (world.presentation && render_cell_is_visible(pose.position.vx / KF_MAP_TILE_SIZE, pose.position.vz / KF_MAP_TILE_SIZE, origin)))) {
+            render_actor(world, &actor, pose);
         }
     }
 
@@ -80,20 +109,28 @@ void render_entities(void)
         }
     }
 
-    for (auto &effect : effect_state.records) {
-        if (effect.type == KF_EFFECT_SLOT_FREE || effect.render_id.model == KF_EFFECT_MODEL_NONE) {
+    for (auto &effect : world.effects.records) {
+        if (effect.type == KF_EFFECT_SLOT_FREE) {
             continue;
         }
-        if (render_cell_is_visible(
-                effect.position.vx / KF_MAP_TILE_SIZE, effect.position.vz / KF_MAP_TILE_SIZE, origin)) {
-            render_effect(&effect, &render_light_matrices[KF_RENDER_LIGHT_EFFECT]);
+        const auto index = &effect - world.effects.records;
+        const auto pose = party_present_entity(world.presentation ? &world.presentation->effects[index] : nullptr,
+            party_effect_pose(effect));
+        if (render_cell_is_visible(pose.position.vx / KF_MAP_TILE_SIZE, pose.position.vz / KF_MAP_TILE_SIZE, origin)) {
+            PartyEffectAppearance appearance;
+            if (party_present_effect(world.presentation ? &world.presentation->effect_visuals[index] : nullptr,
+                    effect, appearance))
+                render_effect(&effect, &render_light_matrices[KF_RENDER_LIGHT_EFFECT], pose, appearance);
         }
     }
 
-    for (auto &event : map_runtime_state.events) {
-        if (event.state == KF_MAP_EVENT_ACTIVE
-            && render_cell_is_visible(event.cell_x, event.cell_z, origin)) {
-            render_map_event(&event, &game_graphics_runtime.map_event_light_matrix);
+    for (auto &event : world.map.events) {
+        const auto index = &event - world.map.events;
+        const auto pose = party_present_entity(world.presentation ? &world.presentation->events[index] : nullptr,
+            party_event_pose(event));
+        if (pose.active && (render_cell_is_visible(event.cell_x, event.cell_z, origin) ||
+            (world.presentation && render_cell_is_visible(pose.position.vx / KF_MAP_TILE_SIZE, pose.position.vz / KF_MAP_TILE_SIZE, origin)))) {
+            render_map_event(&event, &game_graphics_runtime.map_event_light_matrix, pose);
         }
     }
 }

@@ -1,0 +1,9 @@
+{
+  "name": "kings-field-rooms",
+  "private": true,
+  "type": "module",
+  "version": "0.1.0",
+  "engines": { "node": ">=22" },
+  "scripts": { "start": "node server.mjs", "test": "node --test server.test.mjs" },
+  "dependencies": { "ws": "8.18.3" }
+}

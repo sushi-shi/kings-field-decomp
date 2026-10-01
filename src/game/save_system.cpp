@@ -1,9 +1,12 @@
+#include <kf/game/system.h>
+#include <kf/game/world.h>
 #include <kf/game/audio.h>
 #include <kf/lib/null.h>
 #include <kf/lib/bool.h>
 #include <kf/game/graphics.h>
 #include <kf/lib/resource_file.h>
 #include <kf/game/save.h>
+#include <kf/game/campaign.h>
 #include <kf/game/player.h>
 #include <kf/platform/saves.hpp>
 #include <cstdlib>
@@ -43,7 +46,7 @@ enum {
 };
 char talk_image_path_template[talk_image_path_capacity] = "TALK/C00/T00000.TIM";
 KfBool32 menu_load_message_image(s32 message_id);
-void screen_show_image_until_input(const char *path);
+kf::FrameTask<void> screen_show_image_until_input(const char *path);
 
 // Version one lists every persisted field explicitly. Runtime pointers are
 // deliberately absent; enum widths and byte order do not depend on the host ABI.
@@ -216,9 +219,9 @@ static u32 save_checksum(const u8 *data, std::size_t size) {
     return ~crc;
 }
 
-static bool save_world_valid(const KfMapSavedWorld &world) {
+static bool save_world_valid(WorldState &world, const KfMapSavedWorld &saved_world) {
     static_assert(sizeof(KfMapObjectLink) == 8, "Update the floor record boundary when the compact link representation changes");
-    for (const auto &floor : world.floors) {
+    for (const auto &floor : saved_world.floors) {
         if (floor.records[0] == 0)
             continue;
         if (floor.records[0] != 1)
@@ -262,7 +265,7 @@ static bool save_world_valid(const KfMapSavedWorld &world) {
                 return false;
             KfMapObjectLink link{};
             std::memcpy(&link, floor.records + position + 1, sizeof link);
-            if (!map_saved_link_valid(map_object_state.definitions.entries[id].behavior_type, link))
+            if (!map_saved_link_valid(world.objects.definitions.entries[id].behavior_type, link))
                 return false;
         }
         for (unsigned group = 0; group < 3; ++group) {
@@ -276,7 +279,7 @@ static bool save_world_valid(const KfMapSavedWorld &world) {
     return true;
 }
 
-static bool save_state_valid(const SavedGameState &state) {
+static bool save_state_valid(WorldState &world, const SavedGameState &state) {
     const auto &p = state.player;
     const auto floor = kf_enum_encode<u8>(p.progress_state.current_floor);
     const auto highest = kf_enum_encode<u8>(p.progress_state.highest_floor);
@@ -304,32 +307,32 @@ static bool save_state_valid(const SavedGameState &state) {
     for (const auto flag : state.learned)
         if (flag != KF_MAGIC_UNLEARNED && flag != KF_MAGIC_LEARNED)
             return false;
-    return save_world_valid(state.world);
+    return save_world_valid(world, state.world);
 }
 
 static KfArmorRecord *saved_armor(KfObjectId id) {
     return id == KF_OBJECT_NONE ? nullptr : &armor_records.entries[kf_enum_encode<u8>(id) - kf_enum_encode<u8>(KF_ITEM_IRON_MASK)];
 }
 
-static void save_state_apply(const SavedGameState &state) {
-    auto *asset = player_state.weapon_asset_buffer;
-    auto *cache = player_state.weapon_animation_cache;
-    player_state = state.player;
-    player_state.weapon_asset_buffer = asset;
-    player_state.weapon_animation_cache = cache;
-    player_state.selected_magic_record = player_state.selected_magic_id == KF_MAGIC_NONE ? nullptr
-        : &effect_state.magic.entries[kf_enum_encode<u8>(player_state.selected_magic_id)];
-    player_state.equipped_weapon_record = player_state.equipped_weapon_id == KF_OBJECT_NONE ? nullptr
-        : &weapon_records.entries[kf_enum_encode<u8>(player_state.equipped_weapon_id)];
-    player_state.equipped_head_armor_record = saved_armor(player_state.equipped_head_armor_id);
-    player_state.equipped_body_armor_record = saved_armor(player_state.equipped_body_armor_id);
-    player_state.equipped_shield_record = saved_armor(player_state.equipped_shield_id);
-    player_state.equipped_arm_armor_record = saved_armor(player_state.equipped_arm_armor_id);
-    player_state.equipped_leg_armor_record = saved_armor(player_state.equipped_leg_armor_id);
-    map_runtime_state.world_state = state.world;
-    std::memcpy(item_stock, state.stock, sizeof state.stock);
+static void save_state_apply(WorldState &world, PlayerContext &player, const SavedGameState &state) {
+    auto *asset = player.state.weapon_asset_buffer;
+    auto *cache = player.state.weapon_animation_cache;
+    player.state = state.player;
+    player.state.weapon_asset_buffer = asset;
+    player.state.weapon_animation_cache = cache;
+    player.state.selected_magic_record = player.state.selected_magic_id == KF_MAGIC_NONE ? nullptr
+        : &world.effects.magic.entries[kf_enum_encode<u8>(player.state.selected_magic_id)];
+    player.state.equipped_weapon_record = player.state.equipped_weapon_id == KF_OBJECT_NONE ? nullptr
+        : &weapon_records.entries[kf_enum_encode<u8>(player.state.equipped_weapon_id)];
+    player.state.equipped_head_armor_record = saved_armor(player.state.equipped_head_armor_id);
+    player.state.equipped_body_armor_record = saved_armor(player.state.equipped_body_armor_id);
+    player.state.equipped_shield_record = saved_armor(player.state.equipped_shield_id);
+    player.state.equipped_arm_armor_record = saved_armor(player.state.equipped_arm_armor_id);
+    player.state.equipped_leg_armor_record = saved_armor(player.state.equipped_leg_armor_id);
+    world.map.world_state = state.world;
+    std::memcpy(player.item_stock, state.stock, sizeof state.stock);
     for (unsigned i = 0; i < KF_MAGIC_RECORD_COUNT; ++i)
-        effect_state.magic.entries[i].learned = state.learned[i];
+        player.learned_magic[i] = state.learned[i];
     // The existing load-return path reloads the floor, weapon and selected magic.
 }
 
@@ -352,7 +355,7 @@ static KfSaveSlotSummary save_summary(const SavedGameState &state) {
         KfSaveSlotState::Ready};
 }
 
-static kf::SaveFileResult save_read_record(KfSaveSlotId slot, SavedGameState &state, u32 &checksum) {
+static kf::SaveFileResult save_read_record(WorldState &world, KfSaveSlotId slot, SavedGameState &state, u32 &checksum) {
     u8 data[kf::save_file_capacity];
     std::size_t size;
     const auto result = kf::save_file_read(save_slot_native(slot), data, sizeof data, &size);
@@ -369,7 +372,7 @@ static kf::SaveFileResult save_read_record(KfSaveSlotId slot, SavedGameState &st
             || checksum != save_checksum(data + save_header_bytes, payload_size))
         return kf::SaveFileResult::Invalid;
     save_state_fields(io, state);
-    return io.valid && io.position == size && save_state_valid(state)
+    return io.valid && io.position == size && save_state_valid(world, state)
         ? kf::SaveFileResult::Ok : kf::SaveFileResult::Invalid;
 }
 
@@ -384,14 +387,15 @@ static KfSaveResult save_failure(kf::SaveFileResult result, bool writing) {
     return result == kf::SaveFileResult::NoSpace ? KF_SAVE_RESULT_NO_SPACE : KF_SAVE_RESULT_FAILED;
 }
 
-KfSaveResult save_system_read_catalog(KfSaveSlotSummary *summaries) {
+KfSaveResult save_system_read_catalog(WorldState &world, KfSaveSlotSummary *summaries) {
+    if (world.party.enabled) return campaign_read_catalog(world, summaries);
     std::memset(summaries, 0, sizeof(*summaries) * KF_SAVE_SLOT_COUNT);
     std::memset(save_catalog, 0, sizeof save_catalog);
     for (unsigned i = 0; i < KF_SAVE_SLOT_COUNT; ++i) {
         SavedGameState state{};
         u32 checksum = 0;
         const auto slot = static_cast<KfSaveSlotId>(i + 1);
-        const auto result = save_read_record(slot, state, checksum);
+        const auto result = save_read_record(world, slot, state, checksum);
         if (result == kf::SaveFileResult::Missing)
             continue;
         if (result != kf::SaveFileResult::Ok) {
@@ -407,12 +411,13 @@ KfSaveResult save_system_read_catalog(KfSaveSlotSummary *summaries) {
     return KF_SAVE_RESULT_OK;
 }
 
-KfSaveResult save_system_read_slot(KfSaveSlotId slot) {
+KfSaveResult save_system_read_slot(WorldState &world, PlayerContext &player, KfSaveSlotId slot) {
+    if (world.party.enabled) return KF_SAVE_RESULT_FAILED;
     if (!save_slot_valid(slot))
         return save_failure(kf::SaveFileResult::Invalid, false);
     SavedGameState state{};
     u32 checksum = 0;
-    const auto result = save_read_record(slot, state, checksum);
+    const auto result = save_read_record(world, slot, state, checksum);
     if (result != kf::SaveFileResult::Ok)
         return save_failure(result, false);
     const auto &catalog = save_catalog[kf_enum_encode<s16>(slot) - 1];
@@ -421,20 +426,21 @@ KfSaveResult save_system_read_slot(KfSaveSlotId slot) {
         return KF_SAVE_RESULT_FAILED;
     }
     // No live game state is touched until the complete file is decoded and validated.
-    save_state_apply(state);
+    save_state_apply(world, player, state);
     return KF_SAVE_RESULT_OK;
 }
 
-KfSaveResult save_system_write_slot(KfSaveSlotId slot) {
+KfSaveResult save_system_write_slot(WorldState &world, PlayerContext &player, KfSaveSlotId slot) {
+    if (world.party.enabled) return KF_SAVE_RESULT_FAILED;
     if (!save_slot_valid(slot))
         return save_failure(kf::SaveFileResult::Invalid, true);
     SavedGameState state{};
-    state.player = player_state;
-    state.world = map_runtime_state.world_state;
-    std::memcpy(state.stock, item_stock, sizeof state.stock);
+    state.player = player.state;
+    state.world = world.map.world_state;
+    std::memcpy(state.stock, player.item_stock, sizeof state.stock);
     for (unsigned i = 0; i < KF_MAGIC_RECORD_COUNT; ++i)
-        state.learned[i] = effect_state.magic.entries[i].learned;
-    if (!save_state_valid(state))
+        state.learned[i] = player.learned_magic[i];
+    if (!save_state_valid(world, state))
         return save_failure(kf::SaveFileResult::Invalid, true);
     u8 data[kf::save_file_capacity];
     SaveCodec payload{data, sizeof data, save_header_bytes, SaveCodecMode::Write, true};
@@ -456,7 +462,7 @@ KfSaveResult save_system_write_slot(KfSaveSlotId slot) {
     return KF_SAVE_RESULT_OK;
 }
 
-void menu_play_input_sound(KfMenuSoundCue cue)
+kf::FrameTask<void> menu_play_input_sound(KfMenuSoundCue cue)
 {
     SoundRef sound;
 
@@ -472,7 +478,7 @@ void menu_play_input_sound(KfMenuSoundCue cue)
     }
 
     kf::sound_note_play(audio_state.bank, sound.program, sound.note, MENU_INPUT_SOUND_VOLUME, MENU_INPUT_SOUND_VOLUME);
-    kf::host_wait_frame();
+    (co_await game_wait_frame());
     kf::sound_note_release(audio_state.bank, sound.program, sound.note);
 }
 
@@ -494,36 +500,36 @@ KfBool32 menu_load_message_image(s32 message_id)
     return false;
 }
 
-void screen_show_image_until_input(const char *path)
+kf::FrameTask<void> screen_show_image_until_input(const char *path)
 {
     s32 brightness = IMAGE_WAIT_INITIAL_BRIGHTNESS;
     KfBool8 released = false;
     std::size_t image_size;
     if (resource_file_load_into(game_graphics_runtime.display_state.asset_load_buffer,
             game_graphics_runtime.display_state.asset_load_capacity, path, &image_size) != KF_RESOURCE_LOADED) {
-        return;
+        co_return;
     }
     tim_upload_images(game_graphics_runtime.display_state.asset_load_buffer, image_size);
-    const auto input_context = kf::host_set_input_context(kf::InputContext::Menu);
+    kf::InputContextScope input_context(kf::InputContext::Menu);
     for (;;) {
         if (brightness < IMAGE_WAIT_MAX_BRIGHTNESS) {
             brightness++;
         }
         display_present_system_screen(brightness);
-        kf::host_wait_frame();
+        (co_await game_wait_frame());
         if (released == false) {
             if (kf::host_read_buttons() == 0) {
                 released = true;
             }
         } else if (kf::host_read_buttons() != 0) {
-            kf::host_wait_buttons_released();
+            (co_await game_wait_buttons_released());
             break;
         }
     }
-    kf::host_set_input_context(input_context);
+
 }
 
-void talk_show_dialogue_page(KfFloorId floor, u8 stage, KfCharacterId character_id, u8 page)
+kf::FrameTask<void> talk_show_dialogue_page(KfFloorId floor, u8 stage, KfCharacterId character_id, u8 page)
 {
     char *directory_character = &talk_image_path_template[talk_directory_character_offset];
 
@@ -534,7 +540,7 @@ void talk_show_dialogue_page(KfFloorId floor, u8 stage, KfCharacterId character_
         kf_enum_encode<s32>(character_id) % 10 + '0';
     talk_image_path_template[talk_stage_offset] = stage + '0';
     talk_image_path_template[talk_page_offset] = page + '0';
-    screen_show_image_until_input(directory_character - talk_directory_character_offset);
+    (co_await screen_show_image_until_input(directory_character - talk_directory_character_offset));
 }
 
 void save_system_reset_module_state(void)

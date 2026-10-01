@@ -1,8 +1,9 @@
+#include <kf/game/system.h>
 #include <kf/game/resources.h>
 #include <kf/lib/null.h>
 #include <kf/game/graphics.h>
 
-#include <kf/lib/map_data.h>
+#include <kf/game/map_data.h>
 #include <kf/game/resource_file.h>
 #include <kf/game/render.h>
 #include <kf/game/notify.h>
@@ -42,7 +43,7 @@ MATRIX color_matrix_table[KF_GAME_COLOR_PRESET_COUNT] = {
 
 KfGraphicsRuntimeGame game_graphics_runtime;
 
-void display_show_system_screen(KfSystemScreen screen)
+kf::FrameTask<void> display_show_system_screen(KfSystemScreen screen)
 {
     char path[] = "E0.";
     std::size_t image_size;
@@ -51,14 +52,14 @@ void display_show_system_screen(KfSystemScreen screen)
             game_graphics_runtime.display_state.asset_load_capacity, &image_size) != kf::FileResult::Ok)
         kf::host_fail("Cannot load system screen.");
     tim_upload_images(game_graphics_runtime.display_state.asset_load_buffer, image_size);
-    const auto input_context = kf::host_set_input_context(kf::InputContext::Menu);
+    kf::InputContextScope input_context(kf::InputContext::Menu);
     display_present_system_screen(SYSTEM_SCREEN_BRIGHTNESS);
     // Fast file loading must not let the key that opened pause dismiss it.
     if (screen == KF_SYSTEM_SCREEN_PAUSE)
-        kf::host_wait_buttons_released();
-    kf::host_wait_button_press();
-    kf::host_wait_buttons_released();
-    kf::host_set_input_context(input_context);
+        (co_await game_wait_buttons_released());
+    (co_await game_wait_button_press());
+    (co_await game_wait_buttons_released());
+
 }
 
 void display_present_system_screen(s32 color)

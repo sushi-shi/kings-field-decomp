@@ -285,3 +285,1344 @@ const _: () = {
     ["Offset of field: KfMusicInfo::event_count"]
         [::core::mem::offset_of!(KfMusicInfo, event_count) - 8usize];
 };
+pub const KF_AVATAR_MAX_BYTES: _bindgen_ty_3 = 33554432;
+pub const KF_AVATAR_SLOTS: _bindgen_ty_3 = 44;
+pub type _bindgen_ty_3 = ::core::ffi::c_uint;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct KfAvatarPack {
+    _unused: [u8; 0],
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct KfAvatarImport {
+    _unused: [u8; 0],
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct KfAvatarRead {
+    pub offset: u32,
+    pub length: u32,
+}
+#[allow(clippy::unnecessary_operation, clippy::identity_op)]
+const _: () = {
+    ["Size of KfAvatarRead"][::core::mem::size_of::<KfAvatarRead>() - 8usize];
+    ["Alignment of KfAvatarRead"][::core::mem::align_of::<KfAvatarRead>() - 4usize];
+    ["Offset of field: KfAvatarRead::offset"]
+        [::core::mem::offset_of!(KfAvatarRead, offset) - 0usize];
+    ["Offset of field: KfAvatarRead::length"]
+        [::core::mem::offset_of!(KfAvatarRead, length) - 4usize];
+};
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct KfAvatarVertex {
+    pub x: i16,
+    pub y: i16,
+    pub z: i16,
+    pub nx: i16,
+    pub ny: i16,
+    pub nz: i16,
+    pub u: u16,
+    pub v: u16,
+    pub r: u8,
+    pub g: u8,
+    pub b: u8,
+    pub unlit: u8,
+}
+#[allow(clippy::unnecessary_operation, clippy::identity_op)]
+const _: () = {
+    ["Size of KfAvatarVertex"][::core::mem::size_of::<KfAvatarVertex>() - 20usize];
+    ["Alignment of KfAvatarVertex"][::core::mem::align_of::<KfAvatarVertex>() - 2usize];
+    ["Offset of field: KfAvatarVertex::x"][::core::mem::offset_of!(KfAvatarVertex, x) - 0usize];
+    ["Offset of field: KfAvatarVertex::y"][::core::mem::offset_of!(KfAvatarVertex, y) - 2usize];
+    ["Offset of field: KfAvatarVertex::z"][::core::mem::offset_of!(KfAvatarVertex, z) - 4usize];
+    ["Offset of field: KfAvatarVertex::nx"][::core::mem::offset_of!(KfAvatarVertex, nx) - 6usize];
+    ["Offset of field: KfAvatarVertex::ny"][::core::mem::offset_of!(KfAvatarVertex, ny) - 8usize];
+    ["Offset of field: KfAvatarVertex::nz"][::core::mem::offset_of!(KfAvatarVertex, nz) - 10usize];
+    ["Offset of field: KfAvatarVertex::u"][::core::mem::offset_of!(KfAvatarVertex, u) - 12usize];
+    ["Offset of field: KfAvatarVertex::v"][::core::mem::offset_of!(KfAvatarVertex, v) - 14usize];
+    ["Offset of field: KfAvatarVertex::r"][::core::mem::offset_of!(KfAvatarVertex, r) - 16usize];
+    ["Offset of field: KfAvatarVertex::g"][::core::mem::offset_of!(KfAvatarVertex, g) - 17usize];
+    ["Offset of field: KfAvatarVertex::b"][::core::mem::offset_of!(KfAvatarVertex, b) - 18usize];
+    ["Offset of field: KfAvatarVertex::unlit"]
+        [::core::mem::offset_of!(KfAvatarVertex, unlit) - 19usize];
+};
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct KfAvatarMesh {
+    pub triangles: u32,
+    pub slot: u16,
+    pub height: u16,
+}
+#[allow(clippy::unnecessary_operation, clippy::identity_op)]
+const _: () = {
+    ["Size of KfAvatarMesh"][::core::mem::size_of::<KfAvatarMesh>() - 8usize];
+    ["Alignment of KfAvatarMesh"][::core::mem::align_of::<KfAvatarMesh>() - 4usize];
+    ["Offset of field: KfAvatarMesh::triangles"]
+        [::core::mem::offset_of!(KfAvatarMesh, triangles) - 0usize];
+    ["Offset of field: KfAvatarMesh::slot"][::core::mem::offset_of!(KfAvatarMesh, slot) - 4usize];
+    ["Offset of field: KfAvatarMesh::height"]
+        [::core::mem::offset_of!(KfAvatarMesh, height) - 6usize];
+};
+pub const KF_NET_PROTOCOL_VERSION: _bindgen_ty_4 = 15;
+pub const KF_NET_HEADER_BYTES: _bindgen_ty_4 = 19;
+pub const KF_NET_PACKET_LIMIT: _bindgen_ty_4 = 60000;
+pub const KF_NET_TRANSFER_LIMIT: _bindgen_ty_4 = 131072;
+pub const KF_NET_FRAGMENT_BYTES: _bindgen_ty_4 = 16000;
+pub const KF_NET_INPUT_REDUNDANCY: _bindgen_ty_4 = 4;
+pub const KF_NET_INPUT_QUEUE: _bindgen_ty_4 = 32;
+pub type _bindgen_ty_4 = ::core::ffi::c_uint;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct KfNetHeader {
+    pub kind: u8,
+    pub epoch: u32,
+    pub sequence: u32,
+    pub generation: u32,
+}
+#[allow(clippy::unnecessary_operation, clippy::identity_op)]
+const _: () = {
+    ["Size of KfNetHeader"][::core::mem::size_of::<KfNetHeader>() - 16usize];
+    ["Alignment of KfNetHeader"][::core::mem::align_of::<KfNetHeader>() - 4usize];
+    ["Offset of field: KfNetHeader::kind"][::core::mem::offset_of!(KfNetHeader, kind) - 0usize];
+    ["Offset of field: KfNetHeader::epoch"][::core::mem::offset_of!(KfNetHeader, epoch) - 4usize];
+    ["Offset of field: KfNetHeader::sequence"]
+        [::core::mem::offset_of!(KfNetHeader, sequence) - 8usize];
+    ["Offset of field: KfNetHeader::generation"]
+        [::core::mem::offset_of!(KfNetHeader, generation) - 12usize];
+};
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct KfNetInputFrame {
+    pub sequence: u32,
+    pub tick: u32,
+    pub buttons: u32,
+    pub yaw: i32,
+    pub pitch: i32,
+}
+#[allow(clippy::unnecessary_operation, clippy::identity_op)]
+const _: () = {
+    ["Size of KfNetInputFrame"][::core::mem::size_of::<KfNetInputFrame>() - 20usize];
+    ["Alignment of KfNetInputFrame"][::core::mem::align_of::<KfNetInputFrame>() - 4usize];
+    ["Offset of field: KfNetInputFrame::sequence"]
+        [::core::mem::offset_of!(KfNetInputFrame, sequence) - 0usize];
+    ["Offset of field: KfNetInputFrame::tick"]
+        [::core::mem::offset_of!(KfNetInputFrame, tick) - 4usize];
+    ["Offset of field: KfNetInputFrame::buttons"]
+        [::core::mem::offset_of!(KfNetInputFrame, buttons) - 8usize];
+    ["Offset of field: KfNetInputFrame::yaw"]
+        [::core::mem::offset_of!(KfNetInputFrame, yaw) - 12usize];
+    ["Offset of field: KfNetInputFrame::pitch"]
+        [::core::mem::offset_of!(KfNetInputFrame, pitch) - 16usize];
+};
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct KfNetInputBundle {
+    pub header: KfNetHeader,
+    pub count: u8,
+    pub frames: [KfNetInputFrame; 4usize],
+}
+#[allow(clippy::unnecessary_operation, clippy::identity_op)]
+const _: () = {
+    ["Size of KfNetInputBundle"][::core::mem::size_of::<KfNetInputBundle>() - 100usize];
+    ["Alignment of KfNetInputBundle"][::core::mem::align_of::<KfNetInputBundle>() - 4usize];
+    ["Offset of field: KfNetInputBundle::header"]
+        [::core::mem::offset_of!(KfNetInputBundle, header) - 0usize];
+    ["Offset of field: KfNetInputBundle::count"]
+        [::core::mem::offset_of!(KfNetInputBundle, count) - 16usize];
+    ["Offset of field: KfNetInputBundle::frames"]
+        [::core::mem::offset_of!(KfNetInputBundle, frames) - 20usize];
+};
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct KfNetCommand {
+    pub header: KfNetHeader,
+    pub kind: u8,
+    pub object: u16,
+    pub argument: u16,
+    pub target_generation: u32,
+}
+#[allow(clippy::unnecessary_operation, clippy::identity_op)]
+const _: () = {
+    ["Size of KfNetCommand"][::core::mem::size_of::<KfNetCommand>() - 28usize];
+    ["Alignment of KfNetCommand"][::core::mem::align_of::<KfNetCommand>() - 4usize];
+    ["Offset of field: KfNetCommand::header"]
+        [::core::mem::offset_of!(KfNetCommand, header) - 0usize];
+    ["Offset of field: KfNetCommand::kind"][::core::mem::offset_of!(KfNetCommand, kind) - 16usize];
+    ["Offset of field: KfNetCommand::object"]
+        [::core::mem::offset_of!(KfNetCommand, object) - 18usize];
+    ["Offset of field: KfNetCommand::argument"]
+        [::core::mem::offset_of!(KfNetCommand, argument) - 20usize];
+    ["Offset of field: KfNetCommand::target_generation"]
+        [::core::mem::offset_of!(KfNetCommand, target_generation) - 24usize];
+};
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct KfNetInteraction {
+    pub header: KfNetHeader,
+    pub floor: u8,
+    pub stage: u8,
+    pub character: u8,
+    pub page: u8,
+    pub shop: u8,
+}
+#[allow(clippy::unnecessary_operation, clippy::identity_op)]
+const _: () = {
+    ["Size of KfNetInteraction"][::core::mem::size_of::<KfNetInteraction>() - 24usize];
+    ["Alignment of KfNetInteraction"][::core::mem::align_of::<KfNetInteraction>() - 4usize];
+    ["Offset of field: KfNetInteraction::header"]
+        [::core::mem::offset_of!(KfNetInteraction, header) - 0usize];
+    ["Offset of field: KfNetInteraction::floor"]
+        [::core::mem::offset_of!(KfNetInteraction, floor) - 16usize];
+    ["Offset of field: KfNetInteraction::stage"]
+        [::core::mem::offset_of!(KfNetInteraction, stage) - 17usize];
+    ["Offset of field: KfNetInteraction::character"]
+        [::core::mem::offset_of!(KfNetInteraction, character) - 18usize];
+    ["Offset of field: KfNetInteraction::page"]
+        [::core::mem::offset_of!(KfNetInteraction, page) - 19usize];
+    ["Offset of field: KfNetInteraction::shop"]
+        [::core::mem::offset_of!(KfNetInteraction, shop) - 20usize];
+};
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct KfNetFragment {
+    pub header: KfNetHeader,
+    pub total: u32,
+    pub offset: u32,
+    pub payload_offset: u32,
+    pub payload_size: u32,
+}
+#[allow(clippy::unnecessary_operation, clippy::identity_op)]
+const _: () = {
+    ["Size of KfNetFragment"][::core::mem::size_of::<KfNetFragment>() - 32usize];
+    ["Alignment of KfNetFragment"][::core::mem::align_of::<KfNetFragment>() - 4usize];
+    ["Offset of field: KfNetFragment::header"]
+        [::core::mem::offset_of!(KfNetFragment, header) - 0usize];
+    ["Offset of field: KfNetFragment::total"]
+        [::core::mem::offset_of!(KfNetFragment, total) - 16usize];
+    ["Offset of field: KfNetFragment::offset"]
+        [::core::mem::offset_of!(KfNetFragment, offset) - 20usize];
+    ["Offset of field: KfNetFragment::payload_offset"]
+        [::core::mem::offset_of!(KfNetFragment, payload_offset) - 24usize];
+    ["Offset of field: KfNetFragment::payload_size"]
+        [::core::mem::offset_of!(KfNetFragment, payload_size) - 28usize];
+};
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct KfNetInputInbox {
+    pub pending: [KfNetInputFrame; 32usize],
+    pub received: u32,
+    pub consumed: u32,
+    pub begin: u8,
+    pub count: u8,
+}
+#[allow(clippy::unnecessary_operation, clippy::identity_op)]
+const _: () = {
+    ["Size of KfNetInputInbox"][::core::mem::size_of::<KfNetInputInbox>() - 652usize];
+    ["Alignment of KfNetInputInbox"][::core::mem::align_of::<KfNetInputInbox>() - 4usize];
+    ["Offset of field: KfNetInputInbox::pending"]
+        [::core::mem::offset_of!(KfNetInputInbox, pending) - 0usize];
+    ["Offset of field: KfNetInputInbox::received"]
+        [::core::mem::offset_of!(KfNetInputInbox, received) - 640usize];
+    ["Offset of field: KfNetInputInbox::consumed"]
+        [::core::mem::offset_of!(KfNetInputInbox, consumed) - 644usize];
+    ["Offset of field: KfNetInputInbox::begin"]
+        [::core::mem::offset_of!(KfNetInputInbox, begin) - 648usize];
+    ["Offset of field: KfNetInputInbox::count"]
+        [::core::mem::offset_of!(KfNetInputInbox, count) - 649usize];
+};
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct KfNetTransfer {
+    pub epoch: u32,
+    pub sequence: u32,
+    pub generation: u32,
+    pub total: u32,
+    pub received: u32,
+}
+#[allow(clippy::unnecessary_operation, clippy::identity_op)]
+const _: () = {
+    ["Size of KfNetTransfer"][::core::mem::size_of::<KfNetTransfer>() - 20usize];
+    ["Alignment of KfNetTransfer"][::core::mem::align_of::<KfNetTransfer>() - 4usize];
+    ["Offset of field: KfNetTransfer::epoch"]
+        [::core::mem::offset_of!(KfNetTransfer, epoch) - 0usize];
+    ["Offset of field: KfNetTransfer::sequence"]
+        [::core::mem::offset_of!(KfNetTransfer, sequence) - 4usize];
+    ["Offset of field: KfNetTransfer::generation"]
+        [::core::mem::offset_of!(KfNetTransfer, generation) - 8usize];
+    ["Offset of field: KfNetTransfer::total"]
+        [::core::mem::offset_of!(KfNetTransfer, total) - 12usize];
+    ["Offset of field: KfNetTransfer::received"]
+        [::core::mem::offset_of!(KfNetTransfer, received) - 16usize];
+};
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct KfNetTransport {
+    _unused: [u8; 0],
+}
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct KfNetTransportConfig {
+    pub address: [u8; 2049usize],
+    pub room: [u8; 129usize],
+    pub resources: [u8; 129usize],
+    pub recipe: [u8; 129usize],
+    pub resume: [u8; 129usize],
+    pub credential: [u8; 65usize],
+    pub roster: [[u8; 32usize]; 4usize],
+    pub host: u8,
+}
+#[allow(clippy::unnecessary_operation, clippy::identity_op)]
+const _: () = {
+    ["Size of KfNetTransportConfig"][::core::mem::size_of::<KfNetTransportConfig>() - 2759usize];
+    ["Alignment of KfNetTransportConfig"][::core::mem::align_of::<KfNetTransportConfig>() - 1usize];
+    ["Offset of field: KfNetTransportConfig::address"]
+        [::core::mem::offset_of!(KfNetTransportConfig, address) - 0usize];
+    ["Offset of field: KfNetTransportConfig::room"]
+        [::core::mem::offset_of!(KfNetTransportConfig, room) - 2049usize];
+    ["Offset of field: KfNetTransportConfig::resources"]
+        [::core::mem::offset_of!(KfNetTransportConfig, resources) - 2178usize];
+    ["Offset of field: KfNetTransportConfig::recipe"]
+        [::core::mem::offset_of!(KfNetTransportConfig, recipe) - 2307usize];
+    ["Offset of field: KfNetTransportConfig::resume"]
+        [::core::mem::offset_of!(KfNetTransportConfig, resume) - 2436usize];
+    ["Offset of field: KfNetTransportConfig::credential"]
+        [::core::mem::offset_of!(KfNetTransportConfig, credential) - 2565usize];
+    ["Offset of field: KfNetTransportConfig::roster"]
+        [::core::mem::offset_of!(KfNetTransportConfig, roster) - 2630usize];
+    ["Offset of field: KfNetTransportConfig::host"]
+        [::core::mem::offset_of!(KfNetTransportConfig, host) - 2758usize];
+};
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct KfNetTransportEvent {
+    pub kind: u8,
+    pub peer: u8,
+    pub lane: u8,
+    pub identity: [u8; 32usize],
+    pub size: u32,
+    pub data: [u8; 60000usize],
+}
+#[allow(clippy::unnecessary_operation, clippy::identity_op)]
+const _: () = {
+    ["Size of KfNetTransportEvent"][::core::mem::size_of::<KfNetTransportEvent>() - 60040usize];
+    ["Alignment of KfNetTransportEvent"][::core::mem::align_of::<KfNetTransportEvent>() - 4usize];
+    ["Offset of field: KfNetTransportEvent::kind"]
+        [::core::mem::offset_of!(KfNetTransportEvent, kind) - 0usize];
+    ["Offset of field: KfNetTransportEvent::peer"]
+        [::core::mem::offset_of!(KfNetTransportEvent, peer) - 1usize];
+    ["Offset of field: KfNetTransportEvent::lane"]
+        [::core::mem::offset_of!(KfNetTransportEvent, lane) - 2usize];
+    ["Offset of field: KfNetTransportEvent::identity"]
+        [::core::mem::offset_of!(KfNetTransportEvent, identity) - 3usize];
+    ["Offset of field: KfNetTransportEvent::size"]
+        [::core::mem::offset_of!(KfNetTransportEvent, size) - 36usize];
+    ["Offset of field: KfNetTransportEvent::data"]
+        [::core::mem::offset_of!(KfNetTransportEvent, data) - 40usize];
+};
+pub const KF_WORLD_PLAYERS: _bindgen_ty_5 = 4;
+pub const KF_WORLD_ACTORS: _bindgen_ty_5 = 128;
+pub const KF_WORLD_EFFECTS: _bindgen_ty_5 = 48;
+pub const KF_WORLD_OBJECTS: _bindgen_ty_5 = 190;
+pub const KF_WORLD_EVENTS: _bindgen_ty_5 = 8;
+pub const KF_WORLD_ACTOR_DEFINITIONS: _bindgen_ty_5 = 12;
+pub const KF_WORLD_ACTIONS: _bindgen_ty_5 = 16;
+pub const KF_WORLD_FLOORS: _bindgen_ty_5 = 5;
+pub const KF_WORLD_GRID_CELLS: _bindgen_ty_5 = 10000;
+pub const KF_WORLD_ASSETS: _bindgen_ty_5 = 48;
+pub const KF_WORLD_OBJECT_DEFINITIONS: _bindgen_ty_5 = 160;
+pub const KF_WORLD_QUEST_REWARD_MASK: _bindgen_ty_5 = 31;
+pub const KF_WORLD_SOUNDS: _bindgen_ty_5 = 32;
+pub const KF_WORLD_CAST_POSE_TICKS: _bindgen_ty_5 = 12;
+pub type _bindgen_ty_5 = ::core::ffi::c_uint;
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct KfNetWorldHeader {
+    pub epoch: u32,
+    pub tick: u32,
+    pub floor: i32,
+    pub full: u8,
+    pub variant: u8,
+}
+#[allow(clippy::unnecessary_operation, clippy::identity_op)]
+const _: () = {
+    ["Size of KfNetWorldHeader"][::core::mem::size_of::<KfNetWorldHeader>() - 16usize];
+    ["Alignment of KfNetWorldHeader"][::core::mem::align_of::<KfNetWorldHeader>() - 4usize];
+    ["Offset of field: KfNetWorldHeader::epoch"]
+        [::core::mem::offset_of!(KfNetWorldHeader, epoch) - 0usize];
+    ["Offset of field: KfNetWorldHeader::tick"]
+        [::core::mem::offset_of!(KfNetWorldHeader, tick) - 4usize];
+    ["Offset of field: KfNetWorldHeader::floor"]
+        [::core::mem::offset_of!(KfNetWorldHeader, floor) - 8usize];
+    ["Offset of field: KfNetWorldHeader::full"]
+        [::core::mem::offset_of!(KfNetWorldHeader, full) - 12usize];
+    ["Offset of field: KfNetWorldHeader::variant"]
+        [::core::mem::offset_of!(KfNetWorldHeader, variant) - 13usize];
+};
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct KfNetWorldPlayer {
+    pub experience: i32,
+    pub next_level_experience: i32,
+    pub progress_state_level: u8,
+    pub progress_state_unknown_01: u8,
+    pub progress_state_current_floor: u8,
+    pub progress_state_highest_floor: u8,
+    pub map_variant: u8,
+    pub allow_near_actor_spawn: u8,
+    pub weapon_charge_delay: u8,
+    pub unknown_0f: u8,
+    pub vitals_maximum_hp: u16,
+    pub vitals_current_hp: u16,
+    pub vitals_maximum_mp: u16,
+    pub vitals_current_mp: u16,
+    pub attack_charge_state_current: u16,
+    pub attack_charge_state_committed: u16,
+    pub magic_charge: u16,
+    pub physical_power_training: u16,
+    pub magic_training: u16,
+    pub base_physical_power: u16,
+    pub base_magic: u16,
+    pub physical_power: u16,
+    pub magic: u16,
+    pub status_effect_flags: u16,
+    pub gold: u32,
+    pub cutting_attack: u16,
+    pub striking_attack: u16,
+    pub piercing_attack: u16,
+    pub holy_attack: u16,
+    pub fire_attack: u16,
+    pub unknown_3a: [u8; 2usize],
+    pub cutting_defense: u16,
+    pub striking_defense: u16,
+    pub piercing_defense: u16,
+    pub poison_resistance: u16,
+    pub magic_defense: u16,
+    pub fire_defense: u16,
+    pub curse_timer: i16,
+    pub darkness_timer: i16,
+    pub poison_timer: i16,
+    pub slowed_timer: i16,
+    pub fire_defense_timer: i16,
+    pub illusion_staff_timer: i16,
+    pub unknown_54: [u8; 4usize],
+    pub equipment_effect_ticks: u32,
+    pub selected_magic_id: u8,
+    pub unknown_5d: [u8; 3usize],
+    pub equipped_weapon_id: u8,
+    pub unknown_65: [u8; 3usize],
+    pub weapon_attack_phase: i16,
+    pub unknown_72: [u8; 2usize],
+    pub weapon_magic_shots_remaining: u8,
+    pub weapon_magic_delay: u8,
+    pub weapon_attack_fully_charged: u8,
+    pub unknown_7b: [u8; 1usize],
+    pub equipped_head_armor_id: u8,
+    pub equipped_body_armor_id: u8,
+    pub equipped_shield_id: u8,
+    pub equipped_arm_armor_id: u8,
+    pub equipped_leg_armor_id: u8,
+    pub equipped_accessory_id: u8,
+    pub audio_effects_enabled: u8,
+    pub audio_music_enabled: u8,
+    pub hud_gauges_enabled: u8,
+    pub compass_enabled: u8,
+    pub view_rotation_offset_vx: i16,
+    pub view_rotation_offset_vy: i16,
+    pub view_rotation_offset_vz: i16,
+    pub update_state: u8,
+    pub unknown_a3: u8,
+    pub camera_position_vx: i32,
+    pub camera_position_vy: i32,
+    pub camera_position_vz: i32,
+    pub foot_height: i32,
+    pub camera_rotation_vx: i16,
+    pub camera_rotation_vy: i16,
+    pub camera_rotation_vz: i16,
+    pub motion_state_strafe_velocity: i16,
+    pub motion_state_forward_velocity: i16,
+    pub motion_state_movement_speed: u16,
+    pub motion_state_yaw_step: i16,
+    pub motion_state_pitch_step: i16,
+    pub motion_state_map_cell_x: u8,
+    pub motion_state_map_cell_z: u8,
+    pub previous_map_cell_x: u8,
+    pub previous_map_cell_z: u8,
+    pub unknown_ce: [u8; 6usize],
+    pub view_bob_offset: i16,
+    pub view_bob_phase: u16,
+    pub death_camera_pitch_step: u16,
+    pub death_visual_blend: i16,
+    pub vertical_velocity: i16,
+    pub vertical_state: u8,
+    pub unknown_df: [u8; 1usize],
+    pub party_slot: u8,
+    pub previous_input: u32,
+    pub cast_pose_ticks: u8,
+    pub movement_velocity_limit: i32,
+    pub turn_step_limit: i32,
+    pub item_stock: [[u8; 80usize]; 3usize],
+    pub learned_magic: [u8; 24usize],
+    pub random_state: u32,
+}
+#[allow(clippy::unnecessary_operation, clippy::identity_op)]
+const _: () = {
+    ["Size of KfNetWorldPlayer"][::core::mem::size_of::<KfNetWorldPlayer>() - 468usize];
+    ["Alignment of KfNetWorldPlayer"][::core::mem::align_of::<KfNetWorldPlayer>() - 4usize];
+    ["Offset of field: KfNetWorldPlayer::experience"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, experience) - 0usize];
+    ["Offset of field: KfNetWorldPlayer::next_level_experience"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, next_level_experience) - 4usize];
+    ["Offset of field: KfNetWorldPlayer::progress_state_level"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, progress_state_level) - 8usize];
+    ["Offset of field: KfNetWorldPlayer::progress_state_unknown_01"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, progress_state_unknown_01) - 9usize];
+    ["Offset of field: KfNetWorldPlayer::progress_state_current_floor"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, progress_state_current_floor) - 10usize];
+    ["Offset of field: KfNetWorldPlayer::progress_state_highest_floor"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, progress_state_highest_floor) - 11usize];
+    ["Offset of field: KfNetWorldPlayer::map_variant"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, map_variant) - 12usize];
+    ["Offset of field: KfNetWorldPlayer::allow_near_actor_spawn"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, allow_near_actor_spawn) - 13usize];
+    ["Offset of field: KfNetWorldPlayer::weapon_charge_delay"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, weapon_charge_delay) - 14usize];
+    ["Offset of field: KfNetWorldPlayer::unknown_0f"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, unknown_0f) - 15usize];
+    ["Offset of field: KfNetWorldPlayer::vitals_maximum_hp"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, vitals_maximum_hp) - 16usize];
+    ["Offset of field: KfNetWorldPlayer::vitals_current_hp"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, vitals_current_hp) - 18usize];
+    ["Offset of field: KfNetWorldPlayer::vitals_maximum_mp"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, vitals_maximum_mp) - 20usize];
+    ["Offset of field: KfNetWorldPlayer::vitals_current_mp"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, vitals_current_mp) - 22usize];
+    ["Offset of field: KfNetWorldPlayer::attack_charge_state_current"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, attack_charge_state_current) - 24usize];
+    ["Offset of field: KfNetWorldPlayer::attack_charge_state_committed"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, attack_charge_state_committed) - 26usize];
+    ["Offset of field: KfNetWorldPlayer::magic_charge"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, magic_charge) - 28usize];
+    ["Offset of field: KfNetWorldPlayer::physical_power_training"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, physical_power_training) - 30usize];
+    ["Offset of field: KfNetWorldPlayer::magic_training"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, magic_training) - 32usize];
+    ["Offset of field: KfNetWorldPlayer::base_physical_power"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, base_physical_power) - 34usize];
+    ["Offset of field: KfNetWorldPlayer::base_magic"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, base_magic) - 36usize];
+    ["Offset of field: KfNetWorldPlayer::physical_power"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, physical_power) - 38usize];
+    ["Offset of field: KfNetWorldPlayer::magic"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, magic) - 40usize];
+    ["Offset of field: KfNetWorldPlayer::status_effect_flags"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, status_effect_flags) - 42usize];
+    ["Offset of field: KfNetWorldPlayer::gold"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, gold) - 44usize];
+    ["Offset of field: KfNetWorldPlayer::cutting_attack"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, cutting_attack) - 48usize];
+    ["Offset of field: KfNetWorldPlayer::striking_attack"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, striking_attack) - 50usize];
+    ["Offset of field: KfNetWorldPlayer::piercing_attack"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, piercing_attack) - 52usize];
+    ["Offset of field: KfNetWorldPlayer::holy_attack"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, holy_attack) - 54usize];
+    ["Offset of field: KfNetWorldPlayer::fire_attack"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, fire_attack) - 56usize];
+    ["Offset of field: KfNetWorldPlayer::unknown_3a"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, unknown_3a) - 58usize];
+    ["Offset of field: KfNetWorldPlayer::cutting_defense"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, cutting_defense) - 60usize];
+    ["Offset of field: KfNetWorldPlayer::striking_defense"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, striking_defense) - 62usize];
+    ["Offset of field: KfNetWorldPlayer::piercing_defense"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, piercing_defense) - 64usize];
+    ["Offset of field: KfNetWorldPlayer::poison_resistance"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, poison_resistance) - 66usize];
+    ["Offset of field: KfNetWorldPlayer::magic_defense"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, magic_defense) - 68usize];
+    ["Offset of field: KfNetWorldPlayer::fire_defense"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, fire_defense) - 70usize];
+    ["Offset of field: KfNetWorldPlayer::curse_timer"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, curse_timer) - 72usize];
+    ["Offset of field: KfNetWorldPlayer::darkness_timer"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, darkness_timer) - 74usize];
+    ["Offset of field: KfNetWorldPlayer::poison_timer"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, poison_timer) - 76usize];
+    ["Offset of field: KfNetWorldPlayer::slowed_timer"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, slowed_timer) - 78usize];
+    ["Offset of field: KfNetWorldPlayer::fire_defense_timer"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, fire_defense_timer) - 80usize];
+    ["Offset of field: KfNetWorldPlayer::illusion_staff_timer"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, illusion_staff_timer) - 82usize];
+    ["Offset of field: KfNetWorldPlayer::unknown_54"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, unknown_54) - 84usize];
+    ["Offset of field: KfNetWorldPlayer::equipment_effect_ticks"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, equipment_effect_ticks) - 88usize];
+    ["Offset of field: KfNetWorldPlayer::selected_magic_id"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, selected_magic_id) - 92usize];
+    ["Offset of field: KfNetWorldPlayer::unknown_5d"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, unknown_5d) - 93usize];
+    ["Offset of field: KfNetWorldPlayer::equipped_weapon_id"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, equipped_weapon_id) - 96usize];
+    ["Offset of field: KfNetWorldPlayer::unknown_65"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, unknown_65) - 97usize];
+    ["Offset of field: KfNetWorldPlayer::weapon_attack_phase"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, weapon_attack_phase) - 100usize];
+    ["Offset of field: KfNetWorldPlayer::unknown_72"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, unknown_72) - 102usize];
+    ["Offset of field: KfNetWorldPlayer::weapon_magic_shots_remaining"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, weapon_magic_shots_remaining) - 104usize];
+    ["Offset of field: KfNetWorldPlayer::weapon_magic_delay"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, weapon_magic_delay) - 105usize];
+    ["Offset of field: KfNetWorldPlayer::weapon_attack_fully_charged"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, weapon_attack_fully_charged) - 106usize];
+    ["Offset of field: KfNetWorldPlayer::unknown_7b"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, unknown_7b) - 107usize];
+    ["Offset of field: KfNetWorldPlayer::equipped_head_armor_id"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, equipped_head_armor_id) - 108usize];
+    ["Offset of field: KfNetWorldPlayer::equipped_body_armor_id"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, equipped_body_armor_id) - 109usize];
+    ["Offset of field: KfNetWorldPlayer::equipped_shield_id"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, equipped_shield_id) - 110usize];
+    ["Offset of field: KfNetWorldPlayer::equipped_arm_armor_id"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, equipped_arm_armor_id) - 111usize];
+    ["Offset of field: KfNetWorldPlayer::equipped_leg_armor_id"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, equipped_leg_armor_id) - 112usize];
+    ["Offset of field: KfNetWorldPlayer::equipped_accessory_id"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, equipped_accessory_id) - 113usize];
+    ["Offset of field: KfNetWorldPlayer::audio_effects_enabled"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, audio_effects_enabled) - 114usize];
+    ["Offset of field: KfNetWorldPlayer::audio_music_enabled"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, audio_music_enabled) - 115usize];
+    ["Offset of field: KfNetWorldPlayer::hud_gauges_enabled"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, hud_gauges_enabled) - 116usize];
+    ["Offset of field: KfNetWorldPlayer::compass_enabled"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, compass_enabled) - 117usize];
+    ["Offset of field: KfNetWorldPlayer::view_rotation_offset_vx"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, view_rotation_offset_vx) - 118usize];
+    ["Offset of field: KfNetWorldPlayer::view_rotation_offset_vy"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, view_rotation_offset_vy) - 120usize];
+    ["Offset of field: KfNetWorldPlayer::view_rotation_offset_vz"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, view_rotation_offset_vz) - 122usize];
+    ["Offset of field: KfNetWorldPlayer::update_state"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, update_state) - 124usize];
+    ["Offset of field: KfNetWorldPlayer::unknown_a3"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, unknown_a3) - 125usize];
+    ["Offset of field: KfNetWorldPlayer::camera_position_vx"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, camera_position_vx) - 128usize];
+    ["Offset of field: KfNetWorldPlayer::camera_position_vy"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, camera_position_vy) - 132usize];
+    ["Offset of field: KfNetWorldPlayer::camera_position_vz"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, camera_position_vz) - 136usize];
+    ["Offset of field: KfNetWorldPlayer::foot_height"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, foot_height) - 140usize];
+    ["Offset of field: KfNetWorldPlayer::camera_rotation_vx"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, camera_rotation_vx) - 144usize];
+    ["Offset of field: KfNetWorldPlayer::camera_rotation_vy"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, camera_rotation_vy) - 146usize];
+    ["Offset of field: KfNetWorldPlayer::camera_rotation_vz"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, camera_rotation_vz) - 148usize];
+    ["Offset of field: KfNetWorldPlayer::motion_state_strafe_velocity"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, motion_state_strafe_velocity) - 150usize];
+    ["Offset of field: KfNetWorldPlayer::motion_state_forward_velocity"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, motion_state_forward_velocity) - 152usize];
+    ["Offset of field: KfNetWorldPlayer::motion_state_movement_speed"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, motion_state_movement_speed) - 154usize];
+    ["Offset of field: KfNetWorldPlayer::motion_state_yaw_step"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, motion_state_yaw_step) - 156usize];
+    ["Offset of field: KfNetWorldPlayer::motion_state_pitch_step"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, motion_state_pitch_step) - 158usize];
+    ["Offset of field: KfNetWorldPlayer::motion_state_map_cell_x"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, motion_state_map_cell_x) - 160usize];
+    ["Offset of field: KfNetWorldPlayer::motion_state_map_cell_z"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, motion_state_map_cell_z) - 161usize];
+    ["Offset of field: KfNetWorldPlayer::previous_map_cell_x"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, previous_map_cell_x) - 162usize];
+    ["Offset of field: KfNetWorldPlayer::previous_map_cell_z"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, previous_map_cell_z) - 163usize];
+    ["Offset of field: KfNetWorldPlayer::unknown_ce"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, unknown_ce) - 164usize];
+    ["Offset of field: KfNetWorldPlayer::view_bob_offset"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, view_bob_offset) - 170usize];
+    ["Offset of field: KfNetWorldPlayer::view_bob_phase"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, view_bob_phase) - 172usize];
+    ["Offset of field: KfNetWorldPlayer::death_camera_pitch_step"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, death_camera_pitch_step) - 174usize];
+    ["Offset of field: KfNetWorldPlayer::death_visual_blend"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, death_visual_blend) - 176usize];
+    ["Offset of field: KfNetWorldPlayer::vertical_velocity"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, vertical_velocity) - 178usize];
+    ["Offset of field: KfNetWorldPlayer::vertical_state"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, vertical_state) - 180usize];
+    ["Offset of field: KfNetWorldPlayer::unknown_df"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, unknown_df) - 181usize];
+    ["Offset of field: KfNetWorldPlayer::party_slot"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, party_slot) - 182usize];
+    ["Offset of field: KfNetWorldPlayer::previous_input"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, previous_input) - 184usize];
+    ["Offset of field: KfNetWorldPlayer::cast_pose_ticks"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, cast_pose_ticks) - 188usize];
+    ["Offset of field: KfNetWorldPlayer::movement_velocity_limit"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, movement_velocity_limit) - 192usize];
+    ["Offset of field: KfNetWorldPlayer::turn_step_limit"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, turn_step_limit) - 196usize];
+    ["Offset of field: KfNetWorldPlayer::item_stock"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, item_stock) - 200usize];
+    ["Offset of field: KfNetWorldPlayer::learned_magic"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, learned_magic) - 440usize];
+    ["Offset of field: KfNetWorldPlayer::random_state"]
+        [::core::mem::offset_of!(KfNetWorldPlayer, random_state) - 464usize];
+};
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct KfNetWorldActor {
+    pub generation: u32,
+    pub random_state: u32,
+    pub target_player_slot: u8,
+    pub target_player_generation: u32,
+    pub transform_step: u16,
+    pub slot_state: u8,
+    pub definition_id: u8,
+    pub culling_mode: u8,
+    pub heading_quadrant: u8,
+    pub tile_z: u8,
+    pub tile_x: u8,
+    pub lifecycle: u8,
+    pub spawn_chance: u8,
+    pub action: u8,
+    pub death_drop_object_id: u8,
+    pub animation_clip: u8,
+    pub vertical_state: u8,
+    pub unknown_0c: [u8; 2usize],
+    pub local_z: i16,
+    pub local_x: i16,
+    pub animation_phase: u16,
+    pub health: u16,
+    pub cell_x: u16,
+    pub cell_z: u16,
+    pub unknown_1a: i16,
+    pub position_vx: i32,
+    pub position_vy: i32,
+    pub position_vz: i32,
+    pub rotation_vector_vx: i16,
+    pub rotation_vector_vy: i16,
+    pub rotation_vector_vz: i16,
+    pub action_progress: u8,
+    pub collision_state: u8,
+    pub movement_yaw: i16,
+    pub animation_step: i16,
+    pub vertical_velocity: i16,
+    pub movement_x: i16,
+    pub movement_z: i16,
+    pub movement_y: i16,
+    pub unknown_46: [u8; 2usize],
+}
+#[allow(clippy::unnecessary_operation, clippy::identity_op)]
+const _: () = {
+    ["Size of KfNetWorldActor"][::core::mem::size_of::<KfNetWorldActor>() - 84usize];
+    ["Alignment of KfNetWorldActor"][::core::mem::align_of::<KfNetWorldActor>() - 4usize];
+    ["Offset of field: KfNetWorldActor::generation"]
+        [::core::mem::offset_of!(KfNetWorldActor, generation) - 0usize];
+    ["Offset of field: KfNetWorldActor::random_state"]
+        [::core::mem::offset_of!(KfNetWorldActor, random_state) - 4usize];
+    ["Offset of field: KfNetWorldActor::target_player_slot"]
+        [::core::mem::offset_of!(KfNetWorldActor, target_player_slot) - 8usize];
+    ["Offset of field: KfNetWorldActor::target_player_generation"]
+        [::core::mem::offset_of!(KfNetWorldActor, target_player_generation) - 12usize];
+    ["Offset of field: KfNetWorldActor::transform_step"]
+        [::core::mem::offset_of!(KfNetWorldActor, transform_step) - 16usize];
+    ["Offset of field: KfNetWorldActor::slot_state"]
+        [::core::mem::offset_of!(KfNetWorldActor, slot_state) - 18usize];
+    ["Offset of field: KfNetWorldActor::definition_id"]
+        [::core::mem::offset_of!(KfNetWorldActor, definition_id) - 19usize];
+    ["Offset of field: KfNetWorldActor::culling_mode"]
+        [::core::mem::offset_of!(KfNetWorldActor, culling_mode) - 20usize];
+    ["Offset of field: KfNetWorldActor::heading_quadrant"]
+        [::core::mem::offset_of!(KfNetWorldActor, heading_quadrant) - 21usize];
+    ["Offset of field: KfNetWorldActor::tile_z"]
+        [::core::mem::offset_of!(KfNetWorldActor, tile_z) - 22usize];
+    ["Offset of field: KfNetWorldActor::tile_x"]
+        [::core::mem::offset_of!(KfNetWorldActor, tile_x) - 23usize];
+    ["Offset of field: KfNetWorldActor::lifecycle"]
+        [::core::mem::offset_of!(KfNetWorldActor, lifecycle) - 24usize];
+    ["Offset of field: KfNetWorldActor::spawn_chance"]
+        [::core::mem::offset_of!(KfNetWorldActor, spawn_chance) - 25usize];
+    ["Offset of field: KfNetWorldActor::action"]
+        [::core::mem::offset_of!(KfNetWorldActor, action) - 26usize];
+    ["Offset of field: KfNetWorldActor::death_drop_object_id"]
+        [::core::mem::offset_of!(KfNetWorldActor, death_drop_object_id) - 27usize];
+    ["Offset of field: KfNetWorldActor::animation_clip"]
+        [::core::mem::offset_of!(KfNetWorldActor, animation_clip) - 28usize];
+    ["Offset of field: KfNetWorldActor::vertical_state"]
+        [::core::mem::offset_of!(KfNetWorldActor, vertical_state) - 29usize];
+    ["Offset of field: KfNetWorldActor::unknown_0c"]
+        [::core::mem::offset_of!(KfNetWorldActor, unknown_0c) - 30usize];
+    ["Offset of field: KfNetWorldActor::local_z"]
+        [::core::mem::offset_of!(KfNetWorldActor, local_z) - 32usize];
+    ["Offset of field: KfNetWorldActor::local_x"]
+        [::core::mem::offset_of!(KfNetWorldActor, local_x) - 34usize];
+    ["Offset of field: KfNetWorldActor::animation_phase"]
+        [::core::mem::offset_of!(KfNetWorldActor, animation_phase) - 36usize];
+    ["Offset of field: KfNetWorldActor::health"]
+        [::core::mem::offset_of!(KfNetWorldActor, health) - 38usize];
+    ["Offset of field: KfNetWorldActor::cell_x"]
+        [::core::mem::offset_of!(KfNetWorldActor, cell_x) - 40usize];
+    ["Offset of field: KfNetWorldActor::cell_z"]
+        [::core::mem::offset_of!(KfNetWorldActor, cell_z) - 42usize];
+    ["Offset of field: KfNetWorldActor::unknown_1a"]
+        [::core::mem::offset_of!(KfNetWorldActor, unknown_1a) - 44usize];
+    ["Offset of field: KfNetWorldActor::position_vx"]
+        [::core::mem::offset_of!(KfNetWorldActor, position_vx) - 48usize];
+    ["Offset of field: KfNetWorldActor::position_vy"]
+        [::core::mem::offset_of!(KfNetWorldActor, position_vy) - 52usize];
+    ["Offset of field: KfNetWorldActor::position_vz"]
+        [::core::mem::offset_of!(KfNetWorldActor, position_vz) - 56usize];
+    ["Offset of field: KfNetWorldActor::rotation_vector_vx"]
+        [::core::mem::offset_of!(KfNetWorldActor, rotation_vector_vx) - 60usize];
+    ["Offset of field: KfNetWorldActor::rotation_vector_vy"]
+        [::core::mem::offset_of!(KfNetWorldActor, rotation_vector_vy) - 62usize];
+    ["Offset of field: KfNetWorldActor::rotation_vector_vz"]
+        [::core::mem::offset_of!(KfNetWorldActor, rotation_vector_vz) - 64usize];
+    ["Offset of field: KfNetWorldActor::action_progress"]
+        [::core::mem::offset_of!(KfNetWorldActor, action_progress) - 66usize];
+    ["Offset of field: KfNetWorldActor::collision_state"]
+        [::core::mem::offset_of!(KfNetWorldActor, collision_state) - 67usize];
+    ["Offset of field: KfNetWorldActor::movement_yaw"]
+        [::core::mem::offset_of!(KfNetWorldActor, movement_yaw) - 68usize];
+    ["Offset of field: KfNetWorldActor::animation_step"]
+        [::core::mem::offset_of!(KfNetWorldActor, animation_step) - 70usize];
+    ["Offset of field: KfNetWorldActor::vertical_velocity"]
+        [::core::mem::offset_of!(KfNetWorldActor, vertical_velocity) - 72usize];
+    ["Offset of field: KfNetWorldActor::movement_x"]
+        [::core::mem::offset_of!(KfNetWorldActor, movement_x) - 74usize];
+    ["Offset of field: KfNetWorldActor::movement_z"]
+        [::core::mem::offset_of!(KfNetWorldActor, movement_z) - 76usize];
+    ["Offset of field: KfNetWorldActor::movement_y"]
+        [::core::mem::offset_of!(KfNetWorldActor, movement_y) - 78usize];
+    ["Offset of field: KfNetWorldActor::unknown_46"]
+        [::core::mem::offset_of!(KfNetWorldActor, unknown_46) - 80usize];
+};
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct KfNetWorldEffect {
+    pub owner_player_slot: u8,
+    pub owner_player_generation: u32,
+    pub generation: u32,
+    pub age: u32,
+    pub random_state: u32,
+    pub target_player_slot: u8,
+    pub target_player_generation: u32,
+    pub slot_type: u8,
+    pub kind: u8,
+    pub base_render_id: u8,
+    pub render_id: u8,
+    pub animation_clip: u8,
+    pub sound_played: u8,
+    pub id: u8,
+    pub phase: u8,
+    pub visual: u16,
+    pub unknown_0a: u16,
+    pub position_vx: i32,
+    pub position_vy: i32,
+    pub position_vz: i32,
+    pub rotation_vector_vx: i16,
+    pub rotation_vector_vy: i16,
+    pub rotation_vector_vz: i16,
+    pub scale_x: u16,
+    pub scale_y: u16,
+    pub scale_z: u16,
+    pub unknown_2a: u16,
+    pub direction_vector_vx: i16,
+    pub direction_vector_vy: i16,
+    pub direction_vector_vz: i16,
+    pub control: u16,
+    pub propagation: u16,
+}
+#[allow(clippy::unnecessary_operation, clippy::identity_op)]
+const _: () = {
+    ["Size of KfNetWorldEffect"][::core::mem::size_of::<KfNetWorldEffect>() - 76usize];
+    ["Alignment of KfNetWorldEffect"][::core::mem::align_of::<KfNetWorldEffect>() - 4usize];
+    ["Offset of field: KfNetWorldEffect::owner_player_slot"]
+        [::core::mem::offset_of!(KfNetWorldEffect, owner_player_slot) - 0usize];
+    ["Offset of field: KfNetWorldEffect::owner_player_generation"]
+        [::core::mem::offset_of!(KfNetWorldEffect, owner_player_generation) - 4usize];
+    ["Offset of field: KfNetWorldEffect::generation"]
+        [::core::mem::offset_of!(KfNetWorldEffect, generation) - 8usize];
+    ["Offset of field: KfNetWorldEffect::age"]
+        [::core::mem::offset_of!(KfNetWorldEffect, age) - 12usize];
+    ["Offset of field: KfNetWorldEffect::random_state"]
+        [::core::mem::offset_of!(KfNetWorldEffect, random_state) - 16usize];
+    ["Offset of field: KfNetWorldEffect::target_player_slot"]
+        [::core::mem::offset_of!(KfNetWorldEffect, target_player_slot) - 20usize];
+    ["Offset of field: KfNetWorldEffect::target_player_generation"]
+        [::core::mem::offset_of!(KfNetWorldEffect, target_player_generation) - 24usize];
+    ["Offset of field: KfNetWorldEffect::slot_type"]
+        [::core::mem::offset_of!(KfNetWorldEffect, slot_type) - 28usize];
+    ["Offset of field: KfNetWorldEffect::kind"]
+        [::core::mem::offset_of!(KfNetWorldEffect, kind) - 29usize];
+    ["Offset of field: KfNetWorldEffect::base_render_id"]
+        [::core::mem::offset_of!(KfNetWorldEffect, base_render_id) - 30usize];
+    ["Offset of field: KfNetWorldEffect::render_id"]
+        [::core::mem::offset_of!(KfNetWorldEffect, render_id) - 31usize];
+    ["Offset of field: KfNetWorldEffect::animation_clip"]
+        [::core::mem::offset_of!(KfNetWorldEffect, animation_clip) - 32usize];
+    ["Offset of field: KfNetWorldEffect::sound_played"]
+        [::core::mem::offset_of!(KfNetWorldEffect, sound_played) - 33usize];
+    ["Offset of field: KfNetWorldEffect::id"]
+        [::core::mem::offset_of!(KfNetWorldEffect, id) - 34usize];
+    ["Offset of field: KfNetWorldEffect::phase"]
+        [::core::mem::offset_of!(KfNetWorldEffect, phase) - 35usize];
+    ["Offset of field: KfNetWorldEffect::visual"]
+        [::core::mem::offset_of!(KfNetWorldEffect, visual) - 36usize];
+    ["Offset of field: KfNetWorldEffect::unknown_0a"]
+        [::core::mem::offset_of!(KfNetWorldEffect, unknown_0a) - 38usize];
+    ["Offset of field: KfNetWorldEffect::position_vx"]
+        [::core::mem::offset_of!(KfNetWorldEffect, position_vx) - 40usize];
+    ["Offset of field: KfNetWorldEffect::position_vy"]
+        [::core::mem::offset_of!(KfNetWorldEffect, position_vy) - 44usize];
+    ["Offset of field: KfNetWorldEffect::position_vz"]
+        [::core::mem::offset_of!(KfNetWorldEffect, position_vz) - 48usize];
+    ["Offset of field: KfNetWorldEffect::rotation_vector_vx"]
+        [::core::mem::offset_of!(KfNetWorldEffect, rotation_vector_vx) - 52usize];
+    ["Offset of field: KfNetWorldEffect::rotation_vector_vy"]
+        [::core::mem::offset_of!(KfNetWorldEffect, rotation_vector_vy) - 54usize];
+    ["Offset of field: KfNetWorldEffect::rotation_vector_vz"]
+        [::core::mem::offset_of!(KfNetWorldEffect, rotation_vector_vz) - 56usize];
+    ["Offset of field: KfNetWorldEffect::scale_x"]
+        [::core::mem::offset_of!(KfNetWorldEffect, scale_x) - 58usize];
+    ["Offset of field: KfNetWorldEffect::scale_y"]
+        [::core::mem::offset_of!(KfNetWorldEffect, scale_y) - 60usize];
+    ["Offset of field: KfNetWorldEffect::scale_z"]
+        [::core::mem::offset_of!(KfNetWorldEffect, scale_z) - 62usize];
+    ["Offset of field: KfNetWorldEffect::unknown_2a"]
+        [::core::mem::offset_of!(KfNetWorldEffect, unknown_2a) - 64usize];
+    ["Offset of field: KfNetWorldEffect::direction_vector_vx"]
+        [::core::mem::offset_of!(KfNetWorldEffect, direction_vector_vx) - 66usize];
+    ["Offset of field: KfNetWorldEffect::direction_vector_vy"]
+        [::core::mem::offset_of!(KfNetWorldEffect, direction_vector_vy) - 68usize];
+    ["Offset of field: KfNetWorldEffect::direction_vector_vz"]
+        [::core::mem::offset_of!(KfNetWorldEffect, direction_vector_vz) - 70usize];
+    ["Offset of field: KfNetWorldEffect::control"]
+        [::core::mem::offset_of!(KfNetWorldEffect, control) - 72usize];
+    ["Offset of field: KfNetWorldEffect::propagation"]
+        [::core::mem::offset_of!(KfNetWorldEffect, propagation) - 74usize];
+};
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct KfNetWorldObject {
+    pub generation: u32,
+    pub object_id: u8,
+    pub unknown_01: u8,
+    pub cell_x: u16,
+    pub cell_z: u16,
+    pub unknown_06: [u8; 2usize],
+    pub position_vx: i32,
+    pub position_vy: i32,
+    pub position_vz: i32,
+    pub rotation_vector_vx: i16,
+    pub rotation_vector_vy: i16,
+    pub rotation_vector_vz: i16,
+    pub link_words: [u32; 2usize],
+    pub action: u8,
+    pub unknown_29: u8,
+    pub action_timer: u16,
+}
+#[allow(clippy::unnecessary_operation, clippy::identity_op)]
+const _: () = {
+    ["Size of KfNetWorldObject"][::core::mem::size_of::<KfNetWorldObject>() - 44usize];
+    ["Alignment of KfNetWorldObject"][::core::mem::align_of::<KfNetWorldObject>() - 4usize];
+    ["Offset of field: KfNetWorldObject::generation"]
+        [::core::mem::offset_of!(KfNetWorldObject, generation) - 0usize];
+    ["Offset of field: KfNetWorldObject::object_id"]
+        [::core::mem::offset_of!(KfNetWorldObject, object_id) - 4usize];
+    ["Offset of field: KfNetWorldObject::unknown_01"]
+        [::core::mem::offset_of!(KfNetWorldObject, unknown_01) - 5usize];
+    ["Offset of field: KfNetWorldObject::cell_x"]
+        [::core::mem::offset_of!(KfNetWorldObject, cell_x) - 6usize];
+    ["Offset of field: KfNetWorldObject::cell_z"]
+        [::core::mem::offset_of!(KfNetWorldObject, cell_z) - 8usize];
+    ["Offset of field: KfNetWorldObject::unknown_06"]
+        [::core::mem::offset_of!(KfNetWorldObject, unknown_06) - 10usize];
+    ["Offset of field: KfNetWorldObject::position_vx"]
+        [::core::mem::offset_of!(KfNetWorldObject, position_vx) - 12usize];
+    ["Offset of field: KfNetWorldObject::position_vy"]
+        [::core::mem::offset_of!(KfNetWorldObject, position_vy) - 16usize];
+    ["Offset of field: KfNetWorldObject::position_vz"]
+        [::core::mem::offset_of!(KfNetWorldObject, position_vz) - 20usize];
+    ["Offset of field: KfNetWorldObject::rotation_vector_vx"]
+        [::core::mem::offset_of!(KfNetWorldObject, rotation_vector_vx) - 24usize];
+    ["Offset of field: KfNetWorldObject::rotation_vector_vy"]
+        [::core::mem::offset_of!(KfNetWorldObject, rotation_vector_vy) - 26usize];
+    ["Offset of field: KfNetWorldObject::rotation_vector_vz"]
+        [::core::mem::offset_of!(KfNetWorldObject, rotation_vector_vz) - 28usize];
+    ["Offset of field: KfNetWorldObject::link_words"]
+        [::core::mem::offset_of!(KfNetWorldObject, link_words) - 32usize];
+    ["Offset of field: KfNetWorldObject::action"]
+        [::core::mem::offset_of!(KfNetWorldObject, action) - 40usize];
+    ["Offset of field: KfNetWorldObject::unknown_29"]
+        [::core::mem::offset_of!(KfNetWorldObject, unknown_29) - 41usize];
+    ["Offset of field: KfNetWorldObject::action_timer"]
+        [::core::mem::offset_of!(KfNetWorldObject, action_timer) - 42usize];
+};
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct KfNetWorldEvent {
+    pub state: u8,
+    pub character_id: u8,
+    pub model_index: u8,
+    pub dialogue_pages_last_page: [u8; 5usize],
+    pub dialogue_stage_limit: u8,
+    pub dialogue_stage: u8,
+    pub dialogue_page: u8,
+    pub dialogue_page_delay: u8,
+    pub unknown_0c: u8,
+    pub unknown_0d: u8,
+    pub behavior: u8,
+    pub animation_clip: u8,
+    pub collision_turn_pending: u8,
+    pub unknown_11: u8,
+    pub animation_phase: u16,
+    pub home_x: i32,
+    pub home_z: i32,
+    pub cell_x: u16,
+    pub cell_z: u16,
+    pub radius: u16,
+    pub unknown_22: u16,
+    pub reference_position_vx: i32,
+    pub reference_position_vy: i32,
+    pub reference_position_vz: i32,
+    pub rotation_vx: i16,
+    pub rotation_vy: i16,
+    pub rotation_vz: i16,
+    pub rotation_target: i16,
+    pub unknown_42: u16,
+}
+#[allow(clippy::unnecessary_operation, clippy::identity_op)]
+const _: () = {
+    ["Size of KfNetWorldEvent"][::core::mem::size_of::<KfNetWorldEvent>() - 60usize];
+    ["Alignment of KfNetWorldEvent"][::core::mem::align_of::<KfNetWorldEvent>() - 4usize];
+    ["Offset of field: KfNetWorldEvent::state"]
+        [::core::mem::offset_of!(KfNetWorldEvent, state) - 0usize];
+    ["Offset of field: KfNetWorldEvent::character_id"]
+        [::core::mem::offset_of!(KfNetWorldEvent, character_id) - 1usize];
+    ["Offset of field: KfNetWorldEvent::model_index"]
+        [::core::mem::offset_of!(KfNetWorldEvent, model_index) - 2usize];
+    ["Offset of field: KfNetWorldEvent::dialogue_pages_last_page"]
+        [::core::mem::offset_of!(KfNetWorldEvent, dialogue_pages_last_page) - 3usize];
+    ["Offset of field: KfNetWorldEvent::dialogue_stage_limit"]
+        [::core::mem::offset_of!(KfNetWorldEvent, dialogue_stage_limit) - 8usize];
+    ["Offset of field: KfNetWorldEvent::dialogue_stage"]
+        [::core::mem::offset_of!(KfNetWorldEvent, dialogue_stage) - 9usize];
+    ["Offset of field: KfNetWorldEvent::dialogue_page"]
+        [::core::mem::offset_of!(KfNetWorldEvent, dialogue_page) - 10usize];
+    ["Offset of field: KfNetWorldEvent::dialogue_page_delay"]
+        [::core::mem::offset_of!(KfNetWorldEvent, dialogue_page_delay) - 11usize];
+    ["Offset of field: KfNetWorldEvent::unknown_0c"]
+        [::core::mem::offset_of!(KfNetWorldEvent, unknown_0c) - 12usize];
+    ["Offset of field: KfNetWorldEvent::unknown_0d"]
+        [::core::mem::offset_of!(KfNetWorldEvent, unknown_0d) - 13usize];
+    ["Offset of field: KfNetWorldEvent::behavior"]
+        [::core::mem::offset_of!(KfNetWorldEvent, behavior) - 14usize];
+    ["Offset of field: KfNetWorldEvent::animation_clip"]
+        [::core::mem::offset_of!(KfNetWorldEvent, animation_clip) - 15usize];
+    ["Offset of field: KfNetWorldEvent::collision_turn_pending"]
+        [::core::mem::offset_of!(KfNetWorldEvent, collision_turn_pending) - 16usize];
+    ["Offset of field: KfNetWorldEvent::unknown_11"]
+        [::core::mem::offset_of!(KfNetWorldEvent, unknown_11) - 17usize];
+    ["Offset of field: KfNetWorldEvent::animation_phase"]
+        [::core::mem::offset_of!(KfNetWorldEvent, animation_phase) - 18usize];
+    ["Offset of field: KfNetWorldEvent::home_x"]
+        [::core::mem::offset_of!(KfNetWorldEvent, home_x) - 20usize];
+    ["Offset of field: KfNetWorldEvent::home_z"]
+        [::core::mem::offset_of!(KfNetWorldEvent, home_z) - 24usize];
+    ["Offset of field: KfNetWorldEvent::cell_x"]
+        [::core::mem::offset_of!(KfNetWorldEvent, cell_x) - 28usize];
+    ["Offset of field: KfNetWorldEvent::cell_z"]
+        [::core::mem::offset_of!(KfNetWorldEvent, cell_z) - 30usize];
+    ["Offset of field: KfNetWorldEvent::radius"]
+        [::core::mem::offset_of!(KfNetWorldEvent, radius) - 32usize];
+    ["Offset of field: KfNetWorldEvent::unknown_22"]
+        [::core::mem::offset_of!(KfNetWorldEvent, unknown_22) - 34usize];
+    ["Offset of field: KfNetWorldEvent::reference_position_vx"]
+        [::core::mem::offset_of!(KfNetWorldEvent, reference_position_vx) - 36usize];
+    ["Offset of field: KfNetWorldEvent::reference_position_vy"]
+        [::core::mem::offset_of!(KfNetWorldEvent, reference_position_vy) - 40usize];
+    ["Offset of field: KfNetWorldEvent::reference_position_vz"]
+        [::core::mem::offset_of!(KfNetWorldEvent, reference_position_vz) - 44usize];
+    ["Offset of field: KfNetWorldEvent::rotation_vx"]
+        [::core::mem::offset_of!(KfNetWorldEvent, rotation_vx) - 48usize];
+    ["Offset of field: KfNetWorldEvent::rotation_vy"]
+        [::core::mem::offset_of!(KfNetWorldEvent, rotation_vy) - 50usize];
+    ["Offset of field: KfNetWorldEvent::rotation_vz"]
+        [::core::mem::offset_of!(KfNetWorldEvent, rotation_vz) - 52usize];
+    ["Offset of field: KfNetWorldEvent::rotation_target"]
+        [::core::mem::offset_of!(KfNetWorldEvent, rotation_target) - 54usize];
+    ["Offset of field: KfNetWorldEvent::unknown_42"]
+        [::core::mem::offset_of!(KfNetWorldEvent, unknown_42) - 56usize];
+};
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct KfNetWorldMember {
+    pub presence: u8,
+    pub character_id: [u8; 32usize],
+    pub generation: u32,
+    pub acknowledged_input: u32,
+    pub quest_rewards: u32,
+    pub connected: u8,
+    pub avatar: u8,
+    pub player: KfNetWorldPlayer,
+    pub loot_claims: [[u8; 190usize]; 5usize],
+}
+#[allow(clippy::unnecessary_operation, clippy::identity_op)]
+const _: () = {
+    ["Size of KfNetWorldMember"][::core::mem::size_of::<KfNetWorldMember>() - 1472usize];
+    ["Alignment of KfNetWorldMember"][::core::mem::align_of::<KfNetWorldMember>() - 4usize];
+    ["Offset of field: KfNetWorldMember::presence"]
+        [::core::mem::offset_of!(KfNetWorldMember, presence) - 0usize];
+    ["Offset of field: KfNetWorldMember::character_id"]
+        [::core::mem::offset_of!(KfNetWorldMember, character_id) - 1usize];
+    ["Offset of field: KfNetWorldMember::generation"]
+        [::core::mem::offset_of!(KfNetWorldMember, generation) - 36usize];
+    ["Offset of field: KfNetWorldMember::acknowledged_input"]
+        [::core::mem::offset_of!(KfNetWorldMember, acknowledged_input) - 40usize];
+    ["Offset of field: KfNetWorldMember::quest_rewards"]
+        [::core::mem::offset_of!(KfNetWorldMember, quest_rewards) - 44usize];
+    ["Offset of field: KfNetWorldMember::connected"]
+        [::core::mem::offset_of!(KfNetWorldMember, connected) - 48usize];
+    ["Offset of field: KfNetWorldMember::avatar"]
+        [::core::mem::offset_of!(KfNetWorldMember, avatar) - 49usize];
+    ["Offset of field: KfNetWorldMember::player"]
+        [::core::mem::offset_of!(KfNetWorldMember, player) - 52usize];
+    ["Offset of field: KfNetWorldMember::loot_claims"]
+        [::core::mem::offset_of!(KfNetWorldMember, loot_claims) - 520usize];
+};
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct KfNetWorldFloor {
+    pub script: [u8; 10usize],
+    pub records: [u8; 1690usize],
+}
+#[allow(clippy::unnecessary_operation, clippy::identity_op)]
+const _: () = {
+    ["Size of KfNetWorldFloor"][::core::mem::size_of::<KfNetWorldFloor>() - 1700usize];
+    ["Alignment of KfNetWorldFloor"][::core::mem::align_of::<KfNetWorldFloor>() - 1usize];
+    ["Offset of field: KfNetWorldFloor::script"]
+        [::core::mem::offset_of!(KfNetWorldFloor, script) - 0usize];
+    ["Offset of field: KfNetWorldFloor::records"]
+        [::core::mem::offset_of!(KfNetWorldFloor, records) - 10usize];
+};
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct KfNetWorldStory {
+    pub kind: u8,
+    pub initiator: u8,
+    pub effect: u8,
+    pub tick: u16,
+    pub object: u16,
+    pub generation: u32,
+    pub camera_x: i32,
+    pub camera_y: i32,
+    pub camera_z: i32,
+    pub pitch: i16,
+    pub yaw: i16,
+    pub roll: i16,
+    pub page: u8,
+    pub ready_mask: u8,
+}
+#[allow(clippy::unnecessary_operation, clippy::identity_op)]
+const _: () = {
+    ["Size of KfNetWorldStory"][::core::mem::size_of::<KfNetWorldStory>() - 32usize];
+    ["Alignment of KfNetWorldStory"][::core::mem::align_of::<KfNetWorldStory>() - 4usize];
+    ["Offset of field: KfNetWorldStory::kind"]
+        [::core::mem::offset_of!(KfNetWorldStory, kind) - 0usize];
+    ["Offset of field: KfNetWorldStory::initiator"]
+        [::core::mem::offset_of!(KfNetWorldStory, initiator) - 1usize];
+    ["Offset of field: KfNetWorldStory::effect"]
+        [::core::mem::offset_of!(KfNetWorldStory, effect) - 2usize];
+    ["Offset of field: KfNetWorldStory::tick"]
+        [::core::mem::offset_of!(KfNetWorldStory, tick) - 4usize];
+    ["Offset of field: KfNetWorldStory::object"]
+        [::core::mem::offset_of!(KfNetWorldStory, object) - 6usize];
+    ["Offset of field: KfNetWorldStory::generation"]
+        [::core::mem::offset_of!(KfNetWorldStory, generation) - 8usize];
+    ["Offset of field: KfNetWorldStory::camera_x"]
+        [::core::mem::offset_of!(KfNetWorldStory, camera_x) - 12usize];
+    ["Offset of field: KfNetWorldStory::camera_y"]
+        [::core::mem::offset_of!(KfNetWorldStory, camera_y) - 16usize];
+    ["Offset of field: KfNetWorldStory::camera_z"]
+        [::core::mem::offset_of!(KfNetWorldStory, camera_z) - 20usize];
+    ["Offset of field: KfNetWorldStory::pitch"]
+        [::core::mem::offset_of!(KfNetWorldStory, pitch) - 24usize];
+    ["Offset of field: KfNetWorldStory::yaw"]
+        [::core::mem::offset_of!(KfNetWorldStory, yaw) - 26usize];
+    ["Offset of field: KfNetWorldStory::roll"]
+        [::core::mem::offset_of!(KfNetWorldStory, roll) - 28usize];
+    ["Offset of field: KfNetWorldStory::page"]
+        [::core::mem::offset_of!(KfNetWorldStory, page) - 30usize];
+    ["Offset of field: KfNetWorldStory::ready_mask"]
+        [::core::mem::offset_of!(KfNetWorldStory, ready_mask) - 31usize];
+};
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct KfNetWorldSound {
+    pub sequence: u32,
+    pub x: i32,
+    pub y: i32,
+    pub z: i32,
+    pub program: u8,
+    pub tone: u8,
+    pub note: u8,
+    pub volume: u8,
+    pub max_distance: i32,
+    pub attenuation_distance: i32,
+}
+#[allow(clippy::unnecessary_operation, clippy::identity_op)]
+const _: () = {
+    ["Size of KfNetWorldSound"][::core::mem::size_of::<KfNetWorldSound>() - 28usize];
+    ["Alignment of KfNetWorldSound"][::core::mem::align_of::<KfNetWorldSound>() - 4usize];
+    ["Offset of field: KfNetWorldSound::sequence"]
+        [::core::mem::offset_of!(KfNetWorldSound, sequence) - 0usize];
+    ["Offset of field: KfNetWorldSound::x"][::core::mem::offset_of!(KfNetWorldSound, x) - 4usize];
+    ["Offset of field: KfNetWorldSound::y"][::core::mem::offset_of!(KfNetWorldSound, y) - 8usize];
+    ["Offset of field: KfNetWorldSound::z"][::core::mem::offset_of!(KfNetWorldSound, z) - 12usize];
+    ["Offset of field: KfNetWorldSound::program"]
+        [::core::mem::offset_of!(KfNetWorldSound, program) - 16usize];
+    ["Offset of field: KfNetWorldSound::tone"]
+        [::core::mem::offset_of!(KfNetWorldSound, tone) - 17usize];
+    ["Offset of field: KfNetWorldSound::note"]
+        [::core::mem::offset_of!(KfNetWorldSound, note) - 18usize];
+    ["Offset of field: KfNetWorldSound::volume"]
+        [::core::mem::offset_of!(KfNetWorldSound, volume) - 19usize];
+    ["Offset of field: KfNetWorldSound::max_distance"]
+        [::core::mem::offset_of!(KfNetWorldSound, max_distance) - 20usize];
+    ["Offset of field: KfNetWorldSound::attenuation_distance"]
+        [::core::mem::offset_of!(KfNetWorldSound, attenuation_distance) - 24usize];
+};
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct KfNetWorld {
+    pub header: KfNetWorldHeader,
+    pub quest_rewards: u32,
+    pub members: [KfNetWorldMember; 4usize],
+    pub actors: [KfNetWorldActor; 128usize],
+    pub action_animations: [[u8; 16usize]; 12usize],
+    pub effects: [KfNetWorldEffect; 48usize],
+    pub objects: [KfNetWorldObject; 190usize],
+    pub events: [KfNetWorldEvent; 8usize],
+    pub gold_drop_sequence: u16,
+    pub definition_drop_sequence: u16,
+    pub placement_drop_sequence: u16,
+    pub dialogue_advance_gate: u16,
+    pub ambient_script_countdown: u16,
+    pub floors: [KfNetWorldFloor; 5usize],
+    pub sound_sequence: u32,
+    pub sounds: [KfNetWorldSound; 32usize],
+    pub collision_flags: [u8; 10000usize],
+    pub cell_orientation: [u8; 10000usize],
+    pub floor_height: [u8; 10000usize],
+    pub collision: [u8; 10000usize],
+    pub cell_attribute: [u8; 10000usize],
+    pub random_state: u32,
+    pub story: KfNetWorldStory,
+}
+#[allow(clippy::unnecessary_operation, clippy::identity_op)]
+const _: () = {
+    ["Size of KfNetWorld"][::core::mem::size_of::<KfNetWorld>() - 88788usize];
+    ["Alignment of KfNetWorld"][::core::mem::align_of::<KfNetWorld>() - 4usize];
+    ["Offset of field: KfNetWorld::header"][::core::mem::offset_of!(KfNetWorld, header) - 0usize];
+    ["Offset of field: KfNetWorld::quest_rewards"]
+        [::core::mem::offset_of!(KfNetWorld, quest_rewards) - 16usize];
+    ["Offset of field: KfNetWorld::members"]
+        [::core::mem::offset_of!(KfNetWorld, members) - 20usize];
+    ["Offset of field: KfNetWorld::actors"]
+        [::core::mem::offset_of!(KfNetWorld, actors) - 5908usize];
+    ["Offset of field: KfNetWorld::action_animations"]
+        [::core::mem::offset_of!(KfNetWorld, action_animations) - 16660usize];
+    ["Offset of field: KfNetWorld::effects"]
+        [::core::mem::offset_of!(KfNetWorld, effects) - 16852usize];
+    ["Offset of field: KfNetWorld::objects"]
+        [::core::mem::offset_of!(KfNetWorld, objects) - 20500usize];
+    ["Offset of field: KfNetWorld::events"]
+        [::core::mem::offset_of!(KfNetWorld, events) - 28860usize];
+    ["Offset of field: KfNetWorld::gold_drop_sequence"]
+        [::core::mem::offset_of!(KfNetWorld, gold_drop_sequence) - 29340usize];
+    ["Offset of field: KfNetWorld::definition_drop_sequence"]
+        [::core::mem::offset_of!(KfNetWorld, definition_drop_sequence) - 29342usize];
+    ["Offset of field: KfNetWorld::placement_drop_sequence"]
+        [::core::mem::offset_of!(KfNetWorld, placement_drop_sequence) - 29344usize];
+    ["Offset of field: KfNetWorld::dialogue_advance_gate"]
+        [::core::mem::offset_of!(KfNetWorld, dialogue_advance_gate) - 29346usize];
+    ["Offset of field: KfNetWorld::ambient_script_countdown"]
+        [::core::mem::offset_of!(KfNetWorld, ambient_script_countdown) - 29348usize];
+    ["Offset of field: KfNetWorld::floors"]
+        [::core::mem::offset_of!(KfNetWorld, floors) - 29350usize];
+    ["Offset of field: KfNetWorld::sound_sequence"]
+        [::core::mem::offset_of!(KfNetWorld, sound_sequence) - 37852usize];
+    ["Offset of field: KfNetWorld::sounds"]
+        [::core::mem::offset_of!(KfNetWorld, sounds) - 37856usize];
+    ["Offset of field: KfNetWorld::collision_flags"]
+        [::core::mem::offset_of!(KfNetWorld, collision_flags) - 38752usize];
+    ["Offset of field: KfNetWorld::cell_orientation"]
+        [::core::mem::offset_of!(KfNetWorld, cell_orientation) - 48752usize];
+    ["Offset of field: KfNetWorld::floor_height"]
+        [::core::mem::offset_of!(KfNetWorld, floor_height) - 58752usize];
+    ["Offset of field: KfNetWorld::collision"]
+        [::core::mem::offset_of!(KfNetWorld, collision) - 68752usize];
+    ["Offset of field: KfNetWorld::cell_attribute"]
+        [::core::mem::offset_of!(KfNetWorld, cell_attribute) - 78752usize];
+    ["Offset of field: KfNetWorld::random_state"]
+        [::core::mem::offset_of!(KfNetWorld, random_state) - 88752usize];
+    ["Offset of field: KfNetWorld::story"][::core::mem::offset_of!(KfNetWorld, story) - 88756usize];
+};
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct KfNetWorldLimits {
+    pub asset_clips: [i32; 48usize],
+    pub actor_assets: [u8; 12usize],
+    pub object_operations: [u8; 160usize],
+}
+#[allow(clippy::unnecessary_operation, clippy::identity_op)]
+const _: () = {
+    ["Size of KfNetWorldLimits"][::core::mem::size_of::<KfNetWorldLimits>() - 364usize];
+    ["Alignment of KfNetWorldLimits"][::core::mem::align_of::<KfNetWorldLimits>() - 4usize];
+    ["Offset of field: KfNetWorldLimits::asset_clips"]
+        [::core::mem::offset_of!(KfNetWorldLimits, asset_clips) - 0usize];
+    ["Offset of field: KfNetWorldLimits::actor_assets"]
+        [::core::mem::offset_of!(KfNetWorldLimits, actor_assets) - 192usize];
+    ["Offset of field: KfNetWorldLimits::object_operations"]
+        [::core::mem::offset_of!(KfNetWorldLimits, object_operations) - 204usize];
+};
+#[repr(C)]
+#[derive(Debug, Copy, Clone)]
+pub struct KfNetWorldSummary {
+    pub experience: u32,
+    pub hp: u16,
+    pub maximum_hp: u16,
+    pub mp: u16,
+    pub maximum_mp: u16,
+    pub floor: u8,
+    pub level: u8,
+    pub owner: [u8; 32usize],
+}
+#[allow(clippy::unnecessary_operation, clippy::identity_op)]
+const _: () = {
+    ["Size of KfNetWorldSummary"][::core::mem::size_of::<KfNetWorldSummary>() - 48usize];
+    ["Alignment of KfNetWorldSummary"][::core::mem::align_of::<KfNetWorldSummary>() - 4usize];
+    ["Offset of field: KfNetWorldSummary::experience"]
+        [::core::mem::offset_of!(KfNetWorldSummary, experience) - 0usize];
+    ["Offset of field: KfNetWorldSummary::hp"]
+        [::core::mem::offset_of!(KfNetWorldSummary, hp) - 4usize];
+    ["Offset of field: KfNetWorldSummary::maximum_hp"]
+        [::core::mem::offset_of!(KfNetWorldSummary, maximum_hp) - 6usize];
+    ["Offset of field: KfNetWorldSummary::mp"]
+        [::core::mem::offset_of!(KfNetWorldSummary, mp) - 8usize];
+    ["Offset of field: KfNetWorldSummary::maximum_mp"]
+        [::core::mem::offset_of!(KfNetWorldSummary, maximum_mp) - 10usize];
+    ["Offset of field: KfNetWorldSummary::floor"]
+        [::core::mem::offset_of!(KfNetWorldSummary, floor) - 12usize];
+    ["Offset of field: KfNetWorldSummary::level"]
+        [::core::mem::offset_of!(KfNetWorldSummary, level) - 13usize];
+    ["Offset of field: KfNetWorldSummary::owner"]
+        [::core::mem::offset_of!(KfNetWorldSummary, owner) - 14usize];
+};

@@ -47,19 +47,19 @@ enum {
     WEAPON_BASE_DEPTH_BIAS = 50
 };
 
-void render_weapon(void)
+void render_weapon(PlayerContext &player)
 {
     MATRIX model;
     KfWeaponRecord *weapon;
     KfTmdObject *object;
     s32 depth_bias;
 
-    if (player_state.weapon_attack_phase == KF_WEAPON_ATTACK_INACTIVE) {
+    if (player.state.weapon_attack_phase == KF_WEAPON_ATTACK_INACTIVE) {
         return;
     }
     auto projection = game_graphics_runtime.render_state.projection;
-    projection.distance = player_state.equipped_weapon_record->projection_distance;
-    weapon = player_state.equipped_weapon_record;
+    projection.distance = player.state.equipped_weapon_record->projection_distance;
+    weapon = player.state.equipped_weapon_record;
     model.t[0] = weapon->render_translation.x;
     model.t[1] = weapon->render_translation.y;
     model.t[2] = weapon->render_translation.z;
@@ -67,12 +67,12 @@ void render_weapon(void)
     asset_registry_select(KF_ASSET_WEAPON);
     object = tmd_get_object(tmd_context(), 0);
     if (render_bind_animated_instance(
-            &player_state.weapon_animation_cache, KF_ASSET_WEAPON, KF_ANIMATION_CLIP_FIRST,
-            player_state.weapon_attack_phase,
+            &player.state.weapon_animation_cache, KF_ASSET_WEAPON, KF_ANIMATION_CLIP_FIRST,
+            player.state.weapon_attack_phase,
             object->vertex_count) != NULL) {
         tmd_project_vertices_depth_shift(tmd_context(), object->vertex_count, WEAPON_PROJECTED_DEPTH_SHIFT, &model, projection);
         depth_bias =
-            player_state.equipped_weapon_record->render_translation.z >> WEAPON_DEPTH_BIAS_SHIFT;
+            player.state.equipped_weapon_record->render_translation.z >> WEAPON_DEPTH_BIAS_SHIFT;
         render_enqueue_tmd(0, -depth_bias + WEAPON_BASE_DEPTH_BIAS, &render_light_matrices[KF_RENDER_LIGHT_WEAPON]);
     }
 }

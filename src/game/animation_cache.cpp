@@ -130,6 +130,9 @@ KfAnimationCacheRecord *render_bind_animated_instance(
 {
     if (vertex_count > KF_PROJECTED_VERTEX_CAPACITY)
         kf::host_fail("Animated model exceeds vertex capacity.");
+    if (asset_index >= KF_ASSET_REGISTRY_KNOWN_ENTRIES ||
+        !game_graphics_runtime.asset_registry_entries[asset_index])
+        kf::host_fail("Animated model references an unavailable asset.");
     KfAnimationCacheRecord *record = *owner_slot;
     KfAssetHeader *asset_header = game_graphics_runtime.asset_registry_entries[asset_index];
     KfAnimClip *clip;
@@ -149,6 +152,8 @@ KfAnimationCacheRecord *render_bind_animated_instance(
     }
     if (vertex_count == 0)
         kf::host_fail("Animated model has no vertices.");
+    if (kf_enum_encode<u16>(clip_index) >= asset_header->animation_clip_count)
+        kf::host_fail("Animated model references an invalid clip.");
 
     if (record == NULL) {
         record = animation_cache_allocate();

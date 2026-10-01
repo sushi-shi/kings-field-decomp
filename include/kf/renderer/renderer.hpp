@@ -28,6 +28,9 @@ struct FaceMaterial {
     TextureSource source;
     BlendMode blend;
     TextureColorMode color_mode = TextureColorMode::Modulated;
+    // Locally imported character atlas, owned for the entire session; zero uses
+    // the original game's texture coordinates and palette lookup.
+    TextureId texture = 0;
 };
 struct DrawFace {
     Vertex vertices[4];
@@ -45,6 +48,8 @@ struct FaceList {
 struct Renderer {
     u32 program, vao, buffer, framebuffer, color_texture, blend_texture;
     TextureId white_texture;
+    u32 notice_framebuffer, notice_texture;
+    int notice_width, notice_height;
     TextureStore textures;
 };
 bool renderer_init(Renderer *renderer, char *error, std::size_t error_size);
@@ -53,4 +58,6 @@ TextureId renderer_upload(const Image *image);
 void renderer_delete_texture(TextureId texture);
 void renderer_present_retained(const Renderer *renderer, int width, int height);
 bool renderer_draw_faces(Renderer *renderer, const FaceList *faces, int width, int height);
+// Bounded two-line Latin notice, composited after the retained game image.
+bool renderer_set_notice(Renderer *renderer, const char *text);
 } // namespace kf

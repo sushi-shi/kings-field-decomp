@@ -1,6 +1,10 @@
 #ifndef KF_GAME_ACTOR_H
 #define KF_GAME_ACTOR_H
 
+struct WorldState;
+
+struct PlayerContext;
+
 inline constexpr unsigned KF_FLOOR5_BOSS_DEFINITION = 7;
 inline constexpr unsigned KF_FLOOR4_TRANSFORM_SOURCE_DEFINITION = 5;
 inline constexpr unsigned KF_FLOOR4_TRANSFORM_RESULT_DEFINITION = 6;
@@ -12,7 +16,7 @@ inline constexpr unsigned KF_FLOOR4_TRANSFORM_RESULT_DEFINITION = 6;
 #include <kf/game/player_status.h>
 #include <kf/lib/types.h>
 #include <kf/lib/enum.h>
-#include <kf/lib/map.h>
+#include <kf/game/map.h>
 #include <kf/lib/geometry_types.h>
 #include <kf/game/audio.h>
 #include <kf/lib/math.h>
@@ -267,6 +271,11 @@ typedef struct KfActorPlacement {
 } KfActorPlacement;
 
 typedef struct KfActor {
+    u32 generation;
+    kf::RandomStream random;
+    u8 target_player_slot;
+    u32 target_player_generation;
+    u16 transform_step;
     KfActorSlotState slot_state;
     u8 definition_id;
     KfActorCullingMode culling_mode;
@@ -314,9 +323,9 @@ typedef struct KfActorState {
 } KfActorState;
 
 extern KfActorActionProfile actor_action_profiles[KF_ACTOR_ACTION_PROFILE_COUNT];
-extern KfActorState actor_state;
+bool actor_step_transform(WorldState &world, KfActor &actor);
 
-extern s32 actor_bearing_to_player(const KfActor *actor);
+extern s32 actor_bearing_to_player(WorldState &world, const KfActor *actor);
 
 extern SoundRef boss_death_loop_sound;
 extern SoundRef boss_death_phase_sounds[KF_ACTOR_BOSS_DEATH_SOUND_COUNT];
@@ -324,56 +333,56 @@ extern SoundRef boss_death_phase_sounds[KF_ACTOR_BOSS_DEATH_SOUND_COUNT];
 extern KfBool32 actor_animation_crossed_phase(const KfActor *actor, u16 phase);
 extern void actor_advance_animation_clamped(KfActor *actor, s16 delta);
 extern void actor_advance_animation_wrapped(KfActor *actor, s16 delta);
-extern void actor_apply_horizontal_movement(void);
-extern void actor_apply_random_movement(s16 step, s16 limit);
-extern void actor_bind_current(KfActor *actor);
-extern void actor_apply_damage(
+extern void actor_apply_horizontal_movement(WorldState &world, PlayerContext &player);
+extern void actor_apply_random_movement(WorldState &world, PlayerContext &player, s16 step, s16 limit);
+extern void actor_bind_current(WorldState &world, KfActor *actor);
+extern void actor_apply_damage(WorldState &world, PlayerContext &player,
     u16 actor_index, u16 base_power, u16 component0, u16 component1,
     u16 component2, u16 component3, u16 component4, u16 scale, KfEffectType hit_flags);
-extern void actor_definitions_load(const KfActorDefinitionTable *definitions);
-extern void actor_initialize(KfActor *actor);
-extern void actor_initialize_current(void);
-extern void actor_initialize_slot(u16 actor_index);
-extern KfActorMoveResult actor_move_along_heading(KfActorMoveDirection direction, KfActorCollisionPolicy collision_policy);
-extern KfActorMoveResult actor_move_xz_with_collision(const struct KfVecXZs *delta, KfActorCollisionPolicy collision_policy);
-extern void actor_play_sound_at_phase(const SoundRef *sound, u16 phase);
-extern void actor_pool_begin_death_by_definition(u16 definition_id);
-extern void actor_pool_clear(void);
-extern void actor_pool_apply_radial_damage(
+extern void actor_definitions_load(WorldState &world, const KfActorDefinitionTable *definitions);
+extern void actor_initialize(WorldState &world, KfActor *actor);
+extern void actor_initialize_current(WorldState &world);
+extern void actor_initialize_slot(WorldState &world, u16 actor_index);
+extern KfActorMoveResult actor_move_along_heading(WorldState &world, PlayerContext &player, KfActorMoveDirection direction, KfActorCollisionPolicy collision_policy);
+extern KfActorMoveResult actor_move_xz_with_collision(WorldState &world, PlayerContext &player, const struct KfVecXZs *delta, KfActorCollisionPolicy collision_policy);
+extern void actor_play_sound_at_phase(WorldState &world, PlayerContext &player, const SoundRef *sound, u16 phase);
+extern void actor_pool_begin_death_by_definition(WorldState &world, u16 definition_id);
+extern void actor_pool_clear(WorldState &world);
+extern void actor_pool_apply_radial_damage(WorldState &world, PlayerContext &player,
     const VECTOR *origin, u32 radius, u16 falloff_q12, u16 base_power,
     u16 component0, u16 component1, u16 component2, u16 component3,
     u16 component4, u16 scale, KfEffectType hit_flags);
-extern s32 actor_pool_find_at_tile(u8 tile_x, u8 tile_z);
-extern KfActor *actor_pool_find_target_in_cone(
+extern s32 actor_pool_find_at_tile(WorldState &world, u8 tile_x, u8 tile_z);
+extern KfActor *actor_pool_find_target_in_cone(WorldState &world,
     const VECTOR *origin, s16 facing, u32 max_distance,
     s32 angle_tolerance, s32 *distance_out);
-extern s32 actor_pool_find_overlap(s32 point_x, s32 point_y, s32 point_z, s32 radius_padding, s32 point_height);
-extern void actor_pool_load_placements(const KfActorPlacement *placements);
-extern void actor_pool_spawn(
+extern s32 actor_pool_find_overlap(WorldState &world, s32 point_x, s32 point_y, s32 point_z, s32 radius_padding, s32 point_height);
+extern void actor_pool_load_placements(WorldState &world, const KfActorPlacement *placements);
+extern void actor_pool_spawn(WorldState &world,
     u8 definition_id, const VECTOR *position,
     const struct KfVec3s *rotation);
-extern void actor_pool_update(void);
+extern kf::FrameTask<void> actor_pool_update(WorldState &world, PlayerContext &player);
 extern s32 actor_distance_to_point(
     const KfActor *actor, s32 point_x, s32 point_y, s32 point_z,
     s32 max_distance, s32 actor_height, s32 point_height);
-extern void actor_prepare_charge_toward_player(void);
-extern void actor_select_next_action(s32 player_distance);
+extern void actor_prepare_charge_toward_player(WorldState &world);
+extern void actor_select_next_action(WorldState &world, s32 player_distance);
 extern void actor_set_action(KfActor *actor, KfActorAction action);
-extern void actor_set_player_transform( const VECTOR *position_or_null, const SVECTOR *rotation_or_null);
-extern KfActorAction actor_try_select_action_distance_facing(
+extern void actor_set_player_transform(WorldState &world,  const VECTOR *position_or_null, const SVECTOR *rotation_or_null);
+extern KfActorAction actor_try_select_action_distance_facing(WorldState &world,
     KfActorAction action, s32 distance, u16 chance, u16 distance_scale);
-extern KfActorAction actor_try_select_multi_hit_action(
+extern KfActorAction actor_try_select_multi_hit_action(WorldState &world,
     KfActorAction action, s32 distance, u16 chance);
-extern KfActorAction actor_try_select_ground_action(
+extern KfActorAction actor_try_select_ground_action(WorldState &world,
     KfActorAction action, s32 distance, u16 chance);
-extern KfActorAction actor_try_select_profiled_action(
+extern KfActorAction actor_try_select_profiled_action(WorldState &world,
     KfActorAction action, s32 distance, KfActorEffectCode effect_code, u16 chance);
-extern void actor_try_attack_player(
+extern void actor_try_attack_player(WorldState &world, PlayerContext &player,
     u16 minimum_distance, u16 maximum_distance,
     s16 angle_offset, s16 angle_tolerance);
-extern void actor_update_awareness(void);
-extern void actor_update_current_action(void);
-extern void actor_update_effect_action(KfActorEffectSlot effect_slot);
-extern void actor_transform_definition5_to6(KfActor *actor);
+extern void actor_update_awareness(WorldState &world, PlayerContext &player);
+extern kf::FrameTask<void> actor_update_current_action(WorldState &world, PlayerContext &player);
+extern void actor_update_effect_action(WorldState &world, PlayerContext &player, KfActorEffectSlot effect_slot);
+extern kf::FrameTask<void> actor_transform_definition5_to6(WorldState &world, PlayerContext &player, KfActor *actor);
 
 #endif

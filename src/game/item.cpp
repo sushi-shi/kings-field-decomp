@@ -1,20 +1,23 @@
+#include <kf/game/system.h>
+#include <kf/game/player.h>
 #include <kf/game/resources.h>
 #include <kf/game/menu_glyphs.h>
 #include <kf/lib/null.h>
 #include <kf/game/graphics.h>
 
 #include <kf/platform/input.hpp>
-#include <kf/lib/map_data.h>
+#include <kf/game/map_data.h>
 #include <kf/lib/item.h>
 #include <kf/game/resource_file.h>
 #include <cstdlib>
 #include <cstdio>
 #include <cstring>
 #include <kf/game/game.h>
+#include <kf/game/player_actions.h>
 #include <kf/lib/render_face.h>
 
-void shop_menu_buy(KfItemStockBank shop_bank);
-void shop_menu_sell(KfItemStockBank shop_bank);
+kf::FrameTask<void> shop_menu_buy(PlayerContext &player, KfItemStockBank shop_bank);
+kf::FrameTask<void> shop_menu_sell(PlayerContext &player, KfItemStockBank shop_bank);
 
 enum {
     MENU_SHOP_VISIBLE_ROWS = 9,
@@ -218,7 +221,7 @@ void item_load_database(void)
     resource_file_index_item_models();
 }
 
-void shop_menu_root(KfItemStockBank shop_bank)
+kf::FrameTask<void> shop_menu_root(PlayerContext &player, KfItemStockBank shop_bank)
 {
     s32 cursor = kf_enum_encode<s32>(KF_TRADE_BUY);
     KfMenuConfirmState confirm = KF_MENU_CONFIRM_IDLE;
@@ -229,38 +232,38 @@ void shop_menu_root(KfItemStockBank shop_bank)
 
     menu_frame_begin();
     menu_draw_window(KF_MENU_WINDOW_SHOP, KF_SHOP_CHOICE_COUNT, kf_enum_encode<s32>(KF_TRADE_BUY), KF_MENU_CONFIRM_IDLE);
-    menu_present_frame();
+    (co_await menu_present_frame());
     menu_frame_begin();
     menu_draw_window(KF_MENU_WINDOW_SHOP, KF_SHOP_CHOICE_COUNT, kf_enum_encode<s32>(KF_TRADE_BUY), KF_MENU_CONFIRM_IDLE);
-    menu_present_frame();
+    (co_await menu_present_frame());
     menu_frame_begin();
     menu_draw_window(KF_MENU_WINDOW_SHOP, KF_SHOP_CHOICE_COUNT, kf_enum_encode<s32>(KF_TRADE_BUY), KF_MENU_CONFIRM_IDLE);
-    menu_play_input_sound(MENU_SOUND_CURSOR);
-    kf::host_wait_buttons_released();
+    (co_await menu_play_input_sound(MENU_SOUND_CURSOR));
+    (co_await game_wait_buttons_released());
 
     for (;;) {
-        menu_present_frame();
+        (co_await menu_present_frame());
         if (trade_mode != KF_TRADE_NONE
                 || kf_enum_encode<s32>(result) == kf_enum_encode<s32>(trade_mode)) {
             menu_frame_begin();
             menu_draw_window(KF_MENU_WINDOW_SHOP, KF_SHOP_CHOICE_COUNT, cursor, confirm);
-            menu_present_frame();
-            kf::host_wait_buttons_released();
+            (co_await menu_present_frame());
+            (co_await game_wait_buttons_released());
         }
         switch (trade_mode) {
         case KF_TRADE_NONE:
             break;
         case KF_TRADE_BUY:
-            shop_menu_buy(shop_bank);
+            (co_await shop_menu_buy(player, shop_bank));
             break;
         case KF_TRADE_SELL:
-            shop_menu_sell(shop_bank);
+            (co_await shop_menu_sell(player, shop_bank));
             break;
         }
         trade_mode = KF_TRADE_NONE;
         if (result != KF_MENU_RESULT_PENDING) {
-            kf::host_wait_buttons_released();
-            return;
+            (co_await game_wait_buttons_released());
+            co_return;
         }
 
         menu_frame_begin();
@@ -268,33 +271,33 @@ void shop_menu_root(KfItemStockBank shop_bank)
         prev = input;
         input = kf::host_read_buttons();
         if (kf::button_pressed(input, prev, kf::Button::Up)) {
-            menu_play_input_sound(MENU_SOUND_CURSOR);
+            (co_await menu_play_input_sound(MENU_SOUND_CURSOR));
             if (cursor != kf_enum_encode<s32>(KF_TRADE_BUY))
                 cursor--;
             else
                 cursor = KF_SHOP_ROW_RETURN;
         } else if (kf::button_pressed(input, prev, kf::Button::Down)) {
-            menu_play_input_sound(MENU_SOUND_CURSOR);
+            (co_await menu_play_input_sound(MENU_SOUND_CURSOR));
             if (cursor != KF_SHOP_ROW_RETURN)
                 cursor++;
             else
                 cursor = kf_enum_encode<s32>(KF_TRADE_BUY);
         } else if (kf::button_pressed(input, prev, kf::Button::Confirm)) {
-            menu_play_input_sound(MENU_SOUND_CONFIRM);
+            (co_await menu_play_input_sound(MENU_SOUND_CONFIRM));
             confirm = KF_MENU_CONFIRM_REQUESTED;
             if (cursor < KF_SHOP_ROW_RETURN)
                 trade_mode = kf_enum_decode<KfTradeMode>(cursor);
             else
                 result = KF_MENU_RESULT_CANCELLED;
         } else if (kf::button_pressed(input, prev, kf::Button::Back)) {
-            menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
+            (co_await menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR));
             result = KF_MENU_RESULT_CANCELLED;
         }
         menu_draw_window(KF_MENU_WINDOW_SHOP, KF_SHOP_CHOICE_COUNT, cursor, confirm);
     }
 }
 
-void shop_menu_buy(KfItemStockBank shop_bank)
+kf::FrameTask<void> shop_menu_buy(PlayerContext &player, KfItemStockBank shop_bank)
 {
     KfMenuList ctx;
     s16 entries[KF_ITEM_COUNT][MENU_GLYPHS_PER_ROW];
@@ -309,13 +312,13 @@ void shop_menu_buy(KfItemStockBank shop_bank)
     s32 prev;
     s32 selection = kf_enum_encode<s32>(KF_MENU_RESULT_PENDING);
 
-    kf::host_wait_buttons_released();
+    (co_await game_wait_buttons_released());
     menu_list_init(&ctx, KF_MENU_WINDOW_SHOP, kf_enum_encode<s32>(KF_TRADE_BUY));
 
-    stock = item_stock[kf_enum_encode<s32>(shop_bank)];
+    stock = player.item_stock[kf_enum_encode<s32>(shop_bank)];
     found = 0;
     for (slot = kf_enum_encode<s32>(KF_ITEM_VERDITE); slot < KF_ITEM_COUNT; slot++) {
-        if (stock[slot] != 0 && item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)][slot] < KF_ITEM_STACK_CAPACITY) {
+        if (stock[slot] != 0 && player.item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)][slot] < KF_ITEM_STACK_CAPACITY) {
             for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)
                 entries[found][j] = item_name_rows[slot].codes[j];
             available[found] = stock[slot];
@@ -324,7 +327,7 @@ void shop_menu_buy(KfItemStockBank shop_bank)
         }
     }
     for (slot = 0; slot < kf_enum_encode<s32>(KF_ITEM_VERDITE); slot++) {
-        if (stock[slot] != 0 && item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)][slot] < KF_ITEM_STACK_CAPACITY) {
+        if (stock[slot] != 0 && player.item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)][slot] < KF_ITEM_STACK_CAPACITY) {
             for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)
                 entries[found][j] = item_name_rows[slot].codes[j];
             available[found] = stock[slot];
@@ -341,16 +344,16 @@ void shop_menu_buy(KfItemStockBank shop_bank)
     menu_frame_begin();
     if (ctx.entry_count != 0) {
         if (menu_load_item_model(item_ids[ctx.selected_index]) != KF_RESOURCE_LOADED)
-            return;
-        menu_draw_item_detail(item_ids[ctx.selected_index], shop_bank, KF_TRADE_BUY);
+            co_return;
+        menu_draw_item_detail(player, item_ids[ctx.selected_index], shop_bank, KF_TRADE_BUY);
     }
     menu_list_render(&ctx);
 
     for (;;) {
-        menu_present_frame();
+        (co_await menu_present_frame());
         if (confirm == KF_MENU_CONFIRM_REQUESTED) {
-            if (menu_list_confirm(&ctx, KF_MENU_CONFIRM_BUY,
-                    KF_MENU_PREVIEW_ITEM_DETAIL, item_ids[ctx.selected_index], shop_bank, KF_TRADE_BUY)
+            if ((co_await menu_list_confirm(player, &ctx, KF_MENU_CONFIRM_BUY,
+                    KF_MENU_PREVIEW_ITEM_DETAIL, item_ids[ctx.selected_index], shop_bank, KF_TRADE_BUY))
                     == KF_MENU_RESULT_CANCELLED)
                 selection = kf_enum_encode<s32>(KF_MENU_RESULT_PENDING);
             else
@@ -358,7 +361,7 @@ void shop_menu_buy(KfItemStockBank shop_bank)
         }
         confirm = KF_MENU_CONFIRM_IDLE;
         if (selection != kf_enum_encode<s32>(KF_MENU_RESULT_PENDING)) {
-            kf::host_wait_buttons_released();
+            (co_await game_wait_buttons_released());
             break;
         }
 
@@ -366,41 +369,40 @@ void shop_menu_buy(KfItemStockBank shop_bank)
         input = kf::host_read_buttons();
         if (ctx.entry_count == 0) {
             if (input != 0) {
-                menu_play_input_sound(MENU_SOUND_CURSOR);
+                (co_await menu_play_input_sound(MENU_SOUND_CURSOR));
                 selection = kf_enum_encode<s32>(KF_MENU_RESULT_CANCELLED);
             }
-        } else if (menu_list_handle_navigation(ctx, input, prev)) {
+        } else if ((co_await menu_list_handle_navigation(ctx, input, prev))) {
             if (menu_load_item_model(item_ids[ctx.selected_index]) != KF_RESOURCE_LOADED)
-                return;
+                co_return;
         } else if (kf::button_pressed(input, prev, kf::Button::Confirm)) {
-            if (player_state.gold
+            if (player.state.gold
                     < item_buy_prices[kf_enum_encode<u8>(item_ids[ctx.selected_index])][kf_enum_encode<s32>(shop_bank) - kf_enum_encode<s32>(KF_ITEM_STOCK_FIRST_SHOP)]) {
-                menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
+                (co_await menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR));
             } else {
-                menu_play_input_sound(MENU_SOUND_CONFIRM);
+                (co_await menu_play_input_sound(MENU_SOUND_CONFIRM));
                 confirm = KF_MENU_CONFIRM_REQUESTED;
             }
         } else if (kf::button_pressed(input, prev, kf::Button::Back)) {
-            menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
+            (co_await menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR));
             selection = kf_enum_encode<s32>(KF_MENU_RESULT_CANCELLED);
         }
 
         menu_frame_begin();
         if (ctx.entry_count != 0)
-            menu_draw_item_detail(item_ids[ctx.selected_index], shop_bank, KF_TRADE_BUY);
+            menu_draw_item_detail(player, item_ids[ctx.selected_index], shop_bank, KF_TRADE_BUY);
         menu_list_render(&ctx);
     }
 
     menu_release_item_model();
     if (selection != kf_enum_encode<s32>(KF_MENU_RESULT_CANCELLED)) {
-        if (selection == kf_enum_encode<s32>(KF_ITEM_GOLD_CROSS))
-            stock[kf_enum_encode<u8>(KF_ITEM_GOLD_CROSS)]--;
-        player_state.gold -= item_buy_prices[selection][kf_enum_encode<s32>(shop_bank) - kf_enum_encode<s32>(KF_ITEM_STOCK_FIRST_SHOP)];
-        item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)][selection]++;
+        if (player.actions)
+            co_await player_request_action(player, kf::net::CommandKind::Buy, static_cast<u16>(selection), kf_enum_encode<u16>(shop_bank));
+        else player_trade_item(player, shop_bank, kf_enum_decode<KfObjectId>(selection), true);
     }
 }
 
-void shop_menu_sell(KfItemStockBank shop_bank)
+kf::FrameTask<void> shop_menu_sell(PlayerContext &player, KfItemStockBank shop_bank)
 {
     KfMenuList ctx;
     s16 entries[KF_ITEM_COUNT][MENU_GLYPHS_PER_ROW];
@@ -415,15 +417,15 @@ void shop_menu_sell(KfItemStockBank shop_bank)
     s32 prev;
     s32 selection = kf_enum_encode<s32>(KF_MENU_RESULT_PENDING);
 
-    kf::host_wait_buttons_released();
+    (co_await game_wait_buttons_released());
     menu_list_init(&ctx, KF_MENU_WINDOW_SHOP, kf_enum_encode<s32>(KF_TRADE_SELL));
 
-    stock = item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)];
+    stock = player.item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)];
     found = 0;
     for (slot = 0; slot < kf_enum_encode<s32>(KF_ITEM_GOLD_CROSS); slot++) {
         if (stock[slot] != 0) {
             available[found] = stock[slot];
-            if (player_item_is_equipped(kf_enum_decode<KfObjectId>(slot)))
+            if (player_item_is_equipped(player, kf_enum_decode<KfObjectId>(slot)))
                 available[found]--;
             if (available[found] != 0) {
                 for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)
@@ -442,16 +444,16 @@ void shop_menu_sell(KfItemStockBank shop_bank)
     menu_frame_begin();
     if (ctx.entry_count != 0) {
         if (menu_load_item_model(item_ids[ctx.selected_index]) != KF_RESOURCE_LOADED)
-            return;
-        menu_draw_item_detail(item_ids[ctx.selected_index], shop_bank, KF_TRADE_SELL);
+            co_return;
+        menu_draw_item_detail(player, item_ids[ctx.selected_index], shop_bank, KF_TRADE_SELL);
     }
     menu_list_render(&ctx);
 
     for (;;) {
-        menu_present_frame();
+        (co_await menu_present_frame());
         if (confirm == KF_MENU_CONFIRM_REQUESTED) {
-            selection = kf_enum_encode<s32>(menu_list_confirm(&ctx, KF_MENU_CONFIRM_SELL,
-                    KF_MENU_PREVIEW_ITEM_DETAIL, item_ids[ctx.selected_index], shop_bank, KF_TRADE_SELL));
+            selection = kf_enum_encode<s32>((co_await menu_list_confirm(player, &ctx, KF_MENU_CONFIRM_SELL,
+                    KF_MENU_PREVIEW_ITEM_DETAIL, item_ids[ctx.selected_index], shop_bank, KF_TRADE_SELL)));
             if (selection == kf_enum_encode<s32>(KF_MENU_RESULT_CANCELLED))
                 selection = kf_enum_encode<s32>(KF_MENU_RESULT_PENDING);
             else
@@ -459,7 +461,7 @@ void shop_menu_sell(KfItemStockBank shop_bank)
         }
         confirm = KF_MENU_CONFIRM_IDLE;
         if (selection != kf_enum_encode<s32>(KF_MENU_RESULT_PENDING)) {
-            kf::host_wait_buttons_released();
+            (co_await game_wait_buttons_released());
             break;
         }
 
@@ -467,34 +469,35 @@ void shop_menu_sell(KfItemStockBank shop_bank)
         input = kf::host_read_buttons();
         if (ctx.entry_count == 0) {
             if (input != 0) {
-                menu_play_input_sound(MENU_SOUND_CURSOR);
+                (co_await menu_play_input_sound(MENU_SOUND_CURSOR));
                 selection = kf_enum_encode<s32>(KF_MENU_RESULT_CANCELLED);
             }
-        } else if (menu_list_handle_navigation(ctx, input, prev)) {
+        } else if ((co_await menu_list_handle_navigation(ctx, input, prev))) {
             if (menu_load_item_model(item_ids[ctx.selected_index]) != KF_RESOURCE_LOADED)
-                return;
+                co_return;
         } else if (kf::button_pressed(input, prev, kf::Button::Confirm)) {
-            menu_play_input_sound(MENU_SOUND_CONFIRM);
+            (co_await menu_play_input_sound(MENU_SOUND_CONFIRM));
             confirm = KF_MENU_CONFIRM_REQUESTED;
         } else if (kf::button_pressed(input, prev, kf::Button::Back)) {
-            menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
+            (co_await menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR));
             selection = kf_enum_encode<s32>(KF_MENU_RESULT_CANCELLED);
         }
 
         menu_frame_begin();
         if (ctx.entry_count != 0)
-            menu_draw_item_detail(item_ids[ctx.selected_index], shop_bank, KF_TRADE_SELL);
+            menu_draw_item_detail(player, item_ids[ctx.selected_index], shop_bank, KF_TRADE_SELL);
         menu_list_render(&ctx);
     }
 
     menu_release_item_model();
     if (selection != kf_enum_encode<s32>(KF_MENU_RESULT_CANCELLED)) {
-        stock[selection]--;
-        player_state.gold += item_sell_prices[selection][kf_enum_encode<s32>(shop_bank) - kf_enum_encode<s32>(KF_ITEM_STOCK_FIRST_SHOP)];
+        if (player.actions)
+            co_await player_request_action(player, kf::net::CommandKind::Sell, static_cast<u16>(selection), kf_enum_encode<u16>(shop_bank));
+        else player_trade_item(player, shop_bank, kf_enum_decode<KfObjectId>(selection), false);
     }
 }
 
-KfMenuResult item_pickup_confirm(KfObjectId item_id)
+kf::FrameTask<KfMenuResult> item_pickup_confirm(PlayerContext &player, KfObjectId item_id)
 {
     MenuGlyphString accept_label;
     MenuGlyphString decline_label;
@@ -502,12 +505,10 @@ KfMenuResult item_pickup_confirm(KfObjectId item_id)
     KfMenuConfirmState confirm = KF_MENU_CONFIRM_IDLE;
     s32 input = 0;
     KfMenuResult result = KF_MENU_RESULT_PENDING;
-    s32 stock_count;
     s32 prev;
 
-    stock_count = item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)][kf_enum_encode<s32>(item_id)];
     if (menu_load_item_model(item_id) != KF_RESOURCE_LOADED)
-        return KF_MENU_RESULT_DECLINED;
+        co_return KF_MENU_RESULT_DECLINED;
 
     accept_label.position.x = MENU_PICKUP_CONFIRM_TEXT_X;
     accept_label.position.y = MENU_PICKUP_CONFIRM_ACCEPT_Y;
@@ -526,31 +527,31 @@ KfMenuResult item_pickup_confirm(KfObjectId item_id)
     menu_draw_two_option(
         &accept_label,
         &decline_label, KF_MENU_CHOICE_ACCEPT, KF_MENU_CONFIRM_IDLE);
-    menu_present_frame();
+    (co_await menu_present_frame());
     menu_frame_begin();
     menu_draw_pickup_preview(item_id);
     menu_draw_two_option(
         &accept_label,
         &decline_label, KF_MENU_CHOICE_ACCEPT, KF_MENU_CONFIRM_IDLE);
-    menu_present_frame();
+    (co_await menu_present_frame());
     menu_frame_begin();
     menu_draw_pickup_preview(item_id);
     menu_draw_two_option(
         &accept_label,
         &decline_label, KF_MENU_CHOICE_ACCEPT, KF_MENU_CONFIRM_IDLE);
-    menu_play_input_sound(MENU_SOUND_CURSOR);
-    kf::host_wait_buttons_released();
+    (co_await menu_play_input_sound(MENU_SOUND_CURSOR));
+    (co_await game_wait_buttons_released());
 
     for (;;) {
-        menu_present_frame();
+        (co_await menu_present_frame());
         if (result != KF_MENU_RESULT_PENDING) {
             menu_frame_begin();
             menu_draw_pickup_preview(item_id);
             menu_draw_two_option(
                 &accept_label,
                 &decline_label, choice, confirm);
-            menu_present_frame();
-            kf::host_wait_buttons_released();
+            (co_await menu_present_frame());
+            (co_await game_wait_buttons_released());
             break;
         }
 
@@ -559,25 +560,25 @@ KfMenuResult item_pickup_confirm(KfObjectId item_id)
         input = kf::host_read_buttons();
         if ((kf::button_pressed(input, prev, kf::Button::Up))
                 || (kf::button_pressed(input, prev, kf::Button::Down))) {
-            menu_play_input_sound(MENU_SOUND_CURSOR);
+            (co_await menu_play_input_sound(MENU_SOUND_CURSOR));
             if (choice != KF_MENU_CHOICE_ACCEPT)
                 choice = KF_MENU_CHOICE_ACCEPT;
             else
                 choice = KF_MENU_CHOICE_DECLINE;
         } else if (kf::button_pressed(input, prev, kf::Button::Confirm)) {
-            menu_play_input_sound(MENU_SOUND_CONFIRM);
+            (co_await menu_play_input_sound(MENU_SOUND_CONFIRM));
             confirm = KF_MENU_CONFIRM_REQUESTED;
             if (choice != KF_MENU_CHOICE_ACCEPT) {
                 result = KF_MENU_RESULT_DECLINED;
             } else {
                 result = KF_MENU_RESULT_STACK_FULL;
-                if (stock_count != KF_ITEM_STACK_CAPACITY) {
-                    item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)][kf_enum_encode<s32>(item_id)]++;
+                if (player.item_stock[0][kf_enum_encode<u8>(item_id)] < KF_ITEM_STACK_CAPACITY) {
+                    if (!player.actions) ++player.item_stock[0][kf_enum_encode<u8>(item_id)];
                     result = KF_MENU_RESULT_ACCEPTED;
                 }
             }
         } else if (kf::button_pressed(input, prev, kf::Button::Back)) {
-            menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
+            (co_await menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR));
             result = KF_MENU_RESULT_DECLINED;
         }
         menu_draw_pickup_preview(item_id);
@@ -587,7 +588,7 @@ KfMenuResult item_pickup_confirm(KfObjectId item_id)
     }
 
     menu_release_item_model();
-    return result;
+    co_return result;
 }
 
 void item_reset_module_state(void)

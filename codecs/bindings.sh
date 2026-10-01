@@ -9,7 +9,7 @@ esac
 
 bindings=$(mktemp)
 trap 'rm -f "$bindings"' EXIT
-bindgen include/kf/audio/codec.h \
+bindgen codecs/ffi.h \
   --use-core --rust-target 1.85 --rust-edition 2021 \
   --allowlist-type 'Kf.*' --allowlist-var 'KF_.*' --generate types,vars \
   --no-prepend-enum-name --no-doc-comments \

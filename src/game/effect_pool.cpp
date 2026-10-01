@@ -1,3 +1,5 @@
+#include <kf/game/world.h>
+#include <kf/game/player.h>
 #include <kf/game/audio.h>
 #include <kf/lib/null.h>
 
@@ -17,11 +19,10 @@ enum {
     EFFECT_WARP_HORIZONTAL_SCALE = 0x1800
 };
 
-KfEffectState effect_state;
 
-KfEffectRecord *effect_pool_find_free(void)
+KfEffectRecord *effect_pool_find_free(WorldState &world)
 {
-    for (auto &record : effect_state.records) {
+    for (auto &record : world.effects.records) {
         if (record.type == KF_EFFECT_SLOT_FREE) {
             return &record;
         }
@@ -40,13 +41,33 @@ struct EffectArguments {
     s32 parent_index = 0;
 };
 
-static KfEffectRecord *effect_pool_construct_impl(u8 id, KfEffectType type, KfEffectKind kind, const VECTOR *position,
+static KfEffectRecord *effect_pool_construct_impl(WorldState &world, PlayerContext &player, u8 id, KfEffectType type, KfEffectKind kind, const VECTOR *position,
     const SVECTOR *direction, const EffectArguments& arguments)
 {
-    KfEffectRecord *record = effect_pool_find_free();
+    if (!map_position_within_grid(position->vx, position->vz)) return nullptr;
+    KfEffectRecord *record = effect_pool_find_free(world);
     KfMagicRecord *magic;
 
     if (record != NULL) {
+        ++record->generation;
+        record->age = 0;
+        record->owner_player_slot = world.party.enabled &&
+            (type & KF_ACTOR_DAMAGE_CREDIT_MASK) == KF_ACTOR_DAMAGE_CREDIT_PLAYER
+            ? player.party_slot : no_player;
+        record->owner_player_generation = record->owner_player_slot < party_capacity
+            ? world.party.members[record->owner_player_slot].generation : 0;
+        record->random.state = world.epoch + record->generation * 2654435761u
+            + static_cast<u32>(record - world.effects.records) * 2246822519u;
+        record->target_player_slot = no_player;
+        record->target_player_generation = 0;
+        if (world.party.enabled && record->owner_player_slot == no_player) {
+            record->target_player_slot = player.party_slot;
+            record->target_player_generation = world.party.members[player.party_slot].generation;
+            if (world.effects.current_record && !world.actors.current) {
+                record->target_player_slot = world.effects.current_record->target_player_slot;
+                record->target_player_generation = world.effects.current_record->target_player_generation;
+            }
+        }
         record->type = type;
         record->kind = kind;
         record->position = *position;
@@ -61,7 +82,7 @@ static KfEffectRecord *effect_pool_construct_impl(u8 id, KfEffectType type, KfEf
 
         // Non-magic effects share this constructor but have no magic record.
         magic = kf_enum_encode<u8>(record->kind) < KF_MAGIC_RECORD_COUNT
-            ? &effect_state.magic.entries[kf_enum_encode<u8>(record->kind)] : nullptr;
+            ? &world.effects.magic.entries[kf_enum_encode<u8>(record->kind)] : nullptr;
 
         switch (record->kind) {
         case KF_MAGIC_FIRE_BALL:
@@ -69,7 +90,7 @@ static KfEffectRecord *effect_pool_construct_impl(u8 id, KfEffectType type, KfEf
             record->base_render_id.billboard = KF_EFFECT_BILLBOARD_FIRE_BALL;
             record->render_id.billboard = KF_EFFECT_BILLBOARD_FIRE_BALL;
             record->rotation.vector = {};
-            audio_play_spatial_default_range(&magic->sounds[0],
+            audio_play_spatial_default_range(player, &magic->sounds[0],
                                              &record->position, KF_AUDIO_MAX_VOLUME);
             break;
         case KF_MAGIC_WIND_CUTTER:
@@ -78,7 +99,7 @@ static KfEffectRecord *effect_pool_construct_impl(u8 id, KfEffectType type, KfEf
             record->render_id.billboard = KF_EFFECT_BILLBOARD_WIND_CUTTER;
             record->rotation.vector = {EFFECT_WIND_CUTTER_PITCH, 0, 0};
             if (arguments.sound != KF_EFFECT_SOUND_SILENT) {
-                audio_play_spatial_default_range(&magic->sounds[0],
+                audio_play_spatial_default_range(player, &magic->sounds[0],
                                                  &record->position, KF_AUDIO_MAX_VOLUME);
             }
             break;
@@ -92,8 +113,8 @@ static KfEffectRecord *effect_pool_construct_impl(u8 id, KfEffectType type, KfEf
             record->rotation.vector = {};
             record->control.frames_remaining = arguments.duration;
             if (arguments.sound != KF_EFFECT_SOUND_SILENT) {
-                audio_play_spatial_range(
-                    &effect_state.magic.entries[kf_enum_encode<u8>(KF_MAGIC_LIGHTNING_BOLT)].sounds[0],
+                audio_play_spatial_range(player,
+                    &world.effects.magic.entries[kf_enum_encode<u8>(KF_MAGIC_LIGHTNING_BOLT)].sounds[0],
                     &record->position, KF_AUDIO_MAX_VOLUME,
                     KF_AUDIO_EXTENDED_MAX_DISTANCE,
                     KF_AUDIO_EXTENDED_ATTENUATION_DISTANCE);
@@ -107,8 +128,8 @@ static KfEffectRecord *effect_pool_construct_impl(u8 id, KfEffectType type, KfEf
             record->kind = KF_EFFECT_KIND_LIGHTNING_IMPACT;
             record->animation_clip = KF_ANIMATION_CLIP_NONE;
             record->rotation.vector = {};
-            audio_play_spatial_range(
-                &effect_state.magic.entries[kf_enum_encode<u8>(KF_MAGIC_LIGHTNING_BOLT)].sounds[1],
+            audio_play_spatial_range(player,
+                &world.effects.magic.entries[kf_enum_encode<u8>(KF_MAGIC_LIGHTNING_BOLT)].sounds[1],
                 &record->position, KF_AUDIO_MAX_VOLUME,
                 KF_AUDIO_EXTENDED_MAX_DISTANCE,
                 KF_AUDIO_EXTENDED_ATTENUATION_DISTANCE);
@@ -138,7 +159,7 @@ static KfEffectRecord *effect_pool_construct_impl(u8 id, KfEffectType type, KfEf
                 record->propagation.branch = branch_role;
             }
             if (record->propagation.branch != KF_EFFECT_GROUND_BRANCH_LEAF) {
-                sound_ref_play(audio_playback(), &magic->sounds[0], EFFECT_GROUND_BRANCH_SOUND_VOLUME);
+                sound_ref_play(audio_playback(player), &magic->sounds[0], EFFECT_GROUND_BRANCH_SOUND_VOLUME);
             }
             break;
         case KF_EFFECT_KIND_GROUND_BRANCH_VISUAL:
@@ -157,7 +178,7 @@ static KfEffectRecord *effect_pool_construct_impl(u8 id, KfEffectType type, KfEf
             record->scale_y = 0;
             record->scale_x = 0;
             record->control.frames_remaining = arguments.duration;
-            audio_play_spatial_default_range(&magic->sounds[0],
+            audio_play_spatial_default_range(player, &magic->sounds[0],
                                              &record->position, KF_AUDIO_MAX_VOLUME);
             break;
         case KF_EFFECT_KIND_SCATTER_PROJECTILE:
@@ -169,7 +190,7 @@ static KfEffectRecord *effect_pool_construct_impl(u8 id, KfEffectType type, KfEf
             record->control.frames_remaining = arguments.duration;
             record->scale_x = record->scale_y = record->scale_z =
                 record->visual.pulse_base_scale = arguments.scale;
-            audio_play_spatial_default_range(&magic->sounds[0],
+            audio_play_spatial_default_range(player, &magic->sounds[0],
                                              &record->position, KF_AUDIO_MAX_VOLUME);
             break;
         case KF_EFFECT_KIND_DARKNESS_PROJECTILE:
@@ -177,7 +198,7 @@ static KfEffectRecord *effect_pool_construct_impl(u8 id, KfEffectType type, KfEf
             record->base_render_id.billboard = KF_EFFECT_BILLBOARD_DARKNESS_PROJECTILE;
             record->render_id.billboard = KF_EFFECT_BILLBOARD_DARKNESS_PROJECTILE;
             record->rotation.vector = {};
-            audio_play_spatial_default_range(&magic->sounds[0],
+            audio_play_spatial_default_range(player, &magic->sounds[0],
                                              &record->position, KF_AUDIO_MAX_VOLUME);
             break;
         case KF_EFFECT_KIND_CURSE_PROJECTILE:
@@ -185,7 +206,7 @@ static KfEffectRecord *effect_pool_construct_impl(u8 id, KfEffectType type, KfEf
             record->base_render_id.billboard = KF_EFFECT_BILLBOARD_CURSE_PROJECTILE;
             record->render_id.billboard = KF_EFFECT_BILLBOARD_CURSE_PROJECTILE;
             record->rotation.vector = {};
-            audio_play_spatial_default_range(&magic->sounds[0],
+            audio_play_spatial_default_range(player, &magic->sounds[0],
                                              &record->position, KF_AUDIO_MAX_VOLUME);
             break;
         case KF_EFFECT_KIND_EMERGING_PROJECTILE:
@@ -218,7 +239,7 @@ static KfEffectRecord *effect_pool_construct_impl(u8 id, KfEffectType type, KfEf
             record->rotation.vector = *arguments.rotation;
             record->rotation.vector.vx = -record->rotation.vector.vx;
             if (arguments.sound != KF_EFFECT_SOUND_SILENT) {
-                audio_play_spatial_default_range(&magic->sounds[0],
+                audio_play_spatial_default_range(player, &magic->sounds[0],
                                                  &record->position, KF_AUDIO_MAX_VOLUME);
             }
             break;
@@ -229,7 +250,7 @@ static KfEffectRecord *effect_pool_construct_impl(u8 id, KfEffectType type, KfEf
             record->rotation.vector = *arguments.rotation;
             record->rotation.vector.vx = -record->rotation.vector.vx;
             if (arguments.sound != KF_EFFECT_SOUND_SILENT) {
-                audio_play_spatial_default_range(&magic->sounds[0],
+                audio_play_spatial_default_range(player, &magic->sounds[0],
                                                  &record->position, KF_AUDIO_MAX_VOLUME);
             }
             break;
@@ -277,8 +298,8 @@ static KfEffectRecord *effect_pool_construct_impl(u8 id, KfEffectType type, KfEf
             record->control.bytes.high = EFFECT_MOONLIGHT_INITIAL_CONTROL_BYTE;
             record->control.bytes.low = EFFECT_MOONLIGHT_INITIAL_CONTROL_BYTE;
             record->rotation.vector.vx = -record->rotation.vector.vx;
-            audio_play_spatial_range(
-                &effect_state.magic.entries[kf_enum_encode<u8>(KF_EFFECT_KIND_RADIAL_BLAST)].sounds[1],
+            audio_play_spatial_range(player,
+                &world.effects.magic.entries[kf_enum_encode<u8>(KF_EFFECT_KIND_RADIAL_BLAST)].sounds[1],
                 &record->position, KF_AUDIO_MAX_VOLUME,
                 KF_AUDIO_EXTENDED_MAX_DISTANCE,
                 KF_AUDIO_EXTENDED_ATTENUATION_DISTANCE);
@@ -299,8 +320,8 @@ static KfEffectRecord *effect_pool_construct_impl(u8 id, KfEffectType type, KfEf
             record->kind = KF_EFFECT_KIND_RADIAL_BLAST;
             record->animation_clip = KF_ANIMATION_CLIP_FIRST;
             if (arguments.sound != KF_EFFECT_SOUND_SILENT) {
-                audio_play_spatial_range(
-                    &effect_state.magic.entries[kf_enum_encode<u8>(KF_EFFECT_KIND_RADIAL_BLAST)].sounds[0],
+                audio_play_spatial_range(player,
+                    &world.effects.magic.entries[kf_enum_encode<u8>(KF_EFFECT_KIND_RADIAL_BLAST)].sounds[0],
                     &record->position, KF_AUDIO_MAX_VOLUME,
                     KF_AUDIO_EXTENDED_MAX_DISTANCE,
                     KF_AUDIO_EXTENDED_ATTENUATION_DISTANCE);
@@ -311,8 +332,8 @@ static KfEffectRecord *effect_pool_construct_impl(u8 id, KfEffectType type, KfEf
             record->render_id.model = KF_EFFECT_MODEL_RADIAL_BLAST;
             record->animation_clip = KF_ANIMATION_CLIP_FIRST;
             if (arguments.sound != KF_EFFECT_SOUND_SILENT) {
-                audio_play_spatial_range(
-                    &effect_state.magic.entries[kf_enum_encode<u8>(KF_EFFECT_KIND_RADIAL_BLAST)].sounds[0],
+                audio_play_spatial_range(player,
+                    &world.effects.magic.entries[kf_enum_encode<u8>(KF_EFFECT_KIND_RADIAL_BLAST)].sounds[0],
                     &record->position, KF_AUDIO_MAX_VOLUME,
                     KF_AUDIO_EXTENDED_MAX_DISTANCE,
                     KF_AUDIO_EXTENDED_ATTENUATION_DISTANCE);
@@ -330,8 +351,8 @@ static KfEffectRecord *effect_pool_construct_impl(u8 id, KfEffectType type, KfEf
             record->scale_y = KF_FIXED12_ONE / 2;
             record->scale_x = KF_FIXED12_ONE / 2;
             if (arguments.sound != KF_EFFECT_SOUND_SILENT) {
-                audio_play_spatial_default_range(
-                    &effect_state.magic.entries[kf_enum_encode<u8>(KF_EFFECT_KIND_HOMING_PROJECTILE)].sounds[0],
+                audio_play_spatial_default_range(player,
+                    &world.effects.magic.entries[kf_enum_encode<u8>(KF_EFFECT_KIND_HOMING_PROJECTILE)].sounds[0],
                     &record->position, KF_AUDIO_MAX_VOLUME);
             }
             break;
@@ -346,8 +367,8 @@ static KfEffectRecord *effect_pool_construct_impl(u8 id, KfEffectType type, KfEf
             record->scale_y = KF_FIXED12_ONE / 2;
             record->scale_x = KF_FIXED12_ONE / 2;
             if (arguments.sound != KF_EFFECT_SOUND_SILENT) {
-                audio_play_spatial_default_range(
-                    &effect_state.magic.entries[kf_enum_encode<u8>(KF_EFFECT_KIND_HOMING_PROJECTILE)].sounds[0],
+                audio_play_spatial_default_range(player,
+                    &world.effects.magic.entries[kf_enum_encode<u8>(KF_EFFECT_KIND_HOMING_PROJECTILE)].sounds[0],
                     &record->position, KF_AUDIO_MAX_VOLUME);
             }
             break;
@@ -358,7 +379,7 @@ static KfEffectRecord *effect_pool_construct_impl(u8 id, KfEffectType type, KfEf
             record->scale_y = 0;
             record->scale_z = EFFECT_WARP_HORIZONTAL_SCALE;
             record->scale_x = EFFECT_WARP_HORIZONTAL_SCALE;
-            record->rotation.vector = {0, player_state.camera_rotation.vy, 0};
+            record->rotation.vector = {0, player.state.camera_rotation.vy, 0};
             break;
         default:
             record->type = KF_EFFECT_SLOT_FREE;
@@ -369,12 +390,18 @@ static KfEffectRecord *effect_pool_construct_impl(u8 id, KfEffectType type, KfEf
     return record;
 }
 
-KfEffectRecord *effect_pool_spawn_floor_deformation(
+KfEffectRecord *effect_pool_spawn_floor_deformation(WorldState &world,
     u16 first_segment, u16 segment_count, u16 progress_per_update, u16 cell_stagger,
     s32 sweep_updates, s32 hold_countdown)
 {
-    KfEffectRecord *record = effect_pool_find_free();
+    KfEffectRecord *record = effect_pool_find_free(world);
     if (record != NULL) {
+        ++record->generation;
+        record->age = 0;
+        record->owner_player_slot = no_player;
+        record->owner_player_generation = 0;
+        record->target_player_slot = no_player;
+        record->target_player_generation = 0;
         record->rotation.vector = VECTOR{first_segment, segment_count, progress_per_update}.narrowed();
         record->position.vx = sweep_updates;
         record->position.vy = hold_countdown;
@@ -390,91 +417,90 @@ KfEffectRecord *effect_pool_spawn_floor_deformation(
     return record;
 }
 
-void effect_pool_set_current(KfEffectRecord *effect)
+void effect_pool_set_current(WorldState &world, KfEffectRecord *effect)
 {
-    effect_state.current_record = effect;
-    effect_state.current_magic = kf_enum_encode<u8>(effect->kind) < KF_MAGIC_RECORD_COUNT
-        ? &effect_state.magic.entries[kf_enum_encode<u8>(effect->kind)] : nullptr;
+    world.effects.current_record = effect;
+    world.effects.current_magic = kf_enum_encode<u8>(effect->kind) < KF_MAGIC_RECORD_COUNT
+        ? &world.effects.magic.entries[kf_enum_encode<u8>(effect->kind)] : nullptr;
 }
 
-KfEffectRecord *effect_pool_construct(u8 id, KfEffectType type, KfEffectKind kind, const VECTOR *position,
+KfEffectRecord *effect_pool_construct(WorldState &world, PlayerContext &player, u8 id, KfEffectType type, KfEffectKind kind, const VECTOR *position,
     const SVECTOR *direction)
 {
     EffectArguments arguments;
-    return effect_pool_construct_impl(id, type, kind, position, direction, arguments);
+    return effect_pool_construct_impl(world, player, id, type, kind, position, direction, arguments);
 }
 
-KfEffectRecord *effect_pool_construct(u8 id, KfEffectType type, KfEffectKind kind, const VECTOR *position,
+KfEffectRecord *effect_pool_construct(WorldState &world, PlayerContext &player, u8 id, KfEffectType type, KfEffectKind kind, const VECTOR *position,
     const SVECTOR *direction, KfEffectBranchArguments value)
 {
     EffectArguments arguments;
     arguments.role = value.role;
-    return effect_pool_construct_impl(id, type, kind, position, direction, arguments);
+    return effect_pool_construct_impl(world, player, id, type, kind, position, direction, arguments);
 }
 
-KfEffectRecord *effect_pool_construct(u8 id, KfEffectType type, KfEffectKind kind, const VECTOR *position,
+KfEffectRecord *effect_pool_construct(WorldState &world, PlayerContext &player, u8 id, KfEffectType type, KfEffectKind kind, const VECTOR *position,
     const SVECTOR *direction, KfEffectRotationArguments value)
 {
     EffectArguments arguments;
     arguments.rotation = value.rotation;
-    return effect_pool_construct_impl(id, type, kind, position, direction, arguments);
+    return effect_pool_construct_impl(world, player, id, type, kind, position, direction, arguments);
 }
 
-KfEffectRecord *effect_pool_construct(u8 id, KfEffectType type, KfEffectKind kind, const VECTOR *position,
+KfEffectRecord *effect_pool_construct(WorldState &world, PlayerContext &player, u8 id, KfEffectType type, KfEffectKind kind, const VECTOR *position,
     const SVECTOR *direction, KfEffectRotationSoundArguments value)
 {
     EffectArguments arguments;
     arguments.rotation = value.rotation;
     arguments.sound = value.sound;
-    return effect_pool_construct_impl(id, type, kind, position, direction, arguments);
+    return effect_pool_construct_impl(world, player, id, type, kind, position, direction, arguments);
 }
 
-KfEffectRecord *effect_pool_construct(u8 id, KfEffectType type, KfEffectKind kind, const VECTOR *position,
+KfEffectRecord *effect_pool_construct(WorldState &world, PlayerContext &player, u8 id, KfEffectType type, KfEffectKind kind, const VECTOR *position,
     const SVECTOR *direction, KfEffectDurationSoundArguments value)
 {
     EffectArguments arguments;
     arguments.duration = value.duration;
     arguments.sound = value.sound;
-    return effect_pool_construct_impl(id, type, kind, position, direction, arguments);
+    return effect_pool_construct_impl(world, player, id, type, kind, position, direction, arguments);
 }
 
-KfEffectRecord *effect_pool_construct(u8 id, KfEffectType type, KfEffectKind kind, const VECTOR *position,
+KfEffectRecord *effect_pool_construct(WorldState &world, PlayerContext &player, u8 id, KfEffectType type, KfEffectKind kind, const VECTOR *position,
     const SVECTOR *direction, KfEffectScatterArguments value)
 {
     EffectArguments arguments;
     arguments.generations = value.generations;
     arguments.duration = value.duration;
     arguments.scale = value.scale;
-    return effect_pool_construct_impl(id, type, kind, position, direction, arguments);
+    return effect_pool_construct_impl(world, player, id, type, kind, position, direction, arguments);
 }
 
-KfEffectRecord *effect_pool_construct(u8 id, KfEffectType type, KfEffectKind kind, const VECTOR *position,
+KfEffectRecord *effect_pool_construct(WorldState &world, PlayerContext &player, u8 id, KfEffectType type, KfEffectKind kind, const VECTOR *position,
     const SVECTOR *direction, KfEffectSoundArguments value)
 {
     EffectArguments arguments;
     arguments.sound = value.sound;
-    return effect_pool_construct_impl(id, type, kind, position, direction, arguments);
+    return effect_pool_construct_impl(world, player, id, type, kind, position, direction, arguments);
 }
 
-KfEffectRecord *effect_pool_construct(u8 id, KfEffectType type, KfEffectKind kind, const VECTOR *position,
+KfEffectRecord *effect_pool_construct(WorldState &world, PlayerContext &player, u8 id, KfEffectType type, KfEffectKind kind, const VECTOR *position,
     const SVECTOR *direction, KfEffectHomingArguments value)
 {
     EffectArguments arguments;
     arguments.rotation = value.rotation;
     arguments.target = value.target;
     arguments.sound = value.sound;
-    return effect_pool_construct_impl(id, type, kind, position, direction, arguments);
+    return effect_pool_construct_impl(world, player, id, type, kind, position, direction, arguments);
 }
 
-KfEffectRecord *effect_pool_construct(u8 id, KfEffectType type, KfEffectKind kind, const VECTOR *position,
+KfEffectRecord *effect_pool_construct(WorldState &world, PlayerContext &player, u8 id, KfEffectType type, KfEffectKind kind, const VECTOR *position,
     const SVECTOR *direction, KfEffectParentArguments value)
 {
     EffectArguments arguments;
     arguments.parent_index = value.parent_index;
-    return effect_pool_construct_impl(id, type, kind, position, direction, arguments);
+    return effect_pool_construct_impl(world, player, id, type, kind, position, direction, arguments);
 }
 
 void effect_pool_reset_module_state(void)
 {
-    kf::restore_initial_value<effect_state>();
 }

@@ -1,21 +1,24 @@
+#include <kf/game/system.h>
+#include <kf/game/world.h>
+#include <kf/game/player.h>
 #include <kf/lib/null.h>
 #include <kf/lib/bool.h>
 
-#include <kf/lib/map_data.h>
-#include <kf/lib/map.h>
+#include <kf/game/map_data.h>
+#include <kf/game/map.h>
 #include <kf/game/collision.h>
 #include <kf/game/game.h>
 
-void map_event_set_current(KfMapEvent *event)
+void map_event_set_current(WorldState &world, KfMapEvent *event)
 {
-    map_runtime_state.current_event = event;
+    world.map.current_event = event;
 }
 
-void map_event_refresh_dialogue_stage(KfMapEvent *event)
+void map_event_refresh_dialogue_stage(PlayerContext &player, KfMapEvent *event)
 {
     if (event->dialogue.stage_limit <= event->dialogue.stage)
         return;
-    const u8 highest_floor = kf_enum_encode<u8>(player_state.progress_state.highest_floor);
+    const u8 highest_floor = kf_enum_encode<u8>(player.state.progress_state.highest_floor);
     const u8 stage = highest_floor < event->dialogue.stage_limit
         ? highest_floor : event->dialogue.stage_limit;
     if (event->dialogue.stage == stage)
@@ -25,23 +28,23 @@ void map_event_refresh_dialogue_stage(KfMapEvent *event)
     event->dialogue.page_delay = 0;
 }
 
-void map_event_advance_animation_blocking(KfMapEvent *event, u16 target, s16 step)
+kf::FrameTask<void> map_event_advance_animation_blocking(WorldState &world, PlayerContext &player, KfMapEvent *event, u16 target, s16 step)
 {
-    const auto input_context = kf::host_set_input_context(kf::InputContext::Scripted);
+    kf::InputContextScope input_context(kf::InputContext::Scripted);
     while (event->animation_phase < target) {
         event->animation_phase += step;
-        render_frame(NULL, NULL);
+        (co_await render_frame(world, player, NULL, NULL));
     }
     event->animation_phase = target;
-    render_frame(NULL, NULL);
-    kf::host_set_input_context(input_context);
+    (co_await render_frame(world, player, NULL, NULL));
+
 }
 
-void map_event_pool_load(const KfMapEventDefinition *definitions)
+void map_event_pool_load(WorldState &world, const KfMapEventDefinition *definitions)
 {
     KfBool8 exhausted = false;
 
-    for (auto &event : map_runtime_state.events) {
+    for (auto &event : world.map.events) {
         if (exhausted == true || definitions->state == KF_MAP_EVENT_FREE) {
             exhausted = true;
             event.state = KF_MAP_EVENT_FREE;
@@ -62,7 +65,7 @@ void map_event_pool_load(const KfMapEventDefinition *definitions)
             event.cell_z = definitions->cell_z;
             event.radius = definitions->radius;
             event.reference_position.vy =
-                -(map_floor_height_grid.cells[event.cell_z][event.cell_x] * KF_MAP_HEIGHT_STEP);
+                -(world.floor_height.cells[event.cell_z][event.cell_x] * KF_MAP_HEIGHT_STEP);
             event.rotation.vy = definitions->initial_rotation;
             definitions++;
             event.rotation.vz = 0;
@@ -74,7 +77,7 @@ void map_event_pool_load(const KfMapEventDefinition *definitions)
             event.animation_phase = 0;
             event.rotation_target = 0;
             event.collision_turn_pending = KF_MAP_EVENT_COLLISION_TURN_NONE;
-            collision_adjust_cell_occupancy(event.cell_x, event.cell_z, 1);
+            collision_adjust_cell_occupancy(world, event.cell_x, event.cell_z, 1);
         }
     }
 }
@@ -98,7 +101,7 @@ s32 map_event_distance_to_point(
     return -1;
 }
 
-KfMapEvent *map_event_pool_find_target_in_cone(
+KfMapEvent *map_event_pool_find_target_in_cone(WorldState &world,
     const VECTOR *origin,
     s16 facing,
     s32 max_distance,
@@ -112,7 +115,7 @@ KfMapEvent *map_event_pool_find_target_in_cone(
     s16 angle;
     s16 folded;
 
-    for (auto &event : map_runtime_state.events) {
+    for (auto &event : world.map.events) {
         if (event.state != KF_MAP_EVENT_ACTIVE) {
             continue;
         }
@@ -136,9 +139,9 @@ KfMapEvent *map_event_pool_find_target_in_cone(
     return found;
 }
 
-s32 map_event_pool_find_overlap(s32 point_x, s32 point_z, s32 radius_padding)
+s32 map_event_pool_find_overlap(WorldState &world, s32 point_x, s32 point_z, s32 radius_padding)
 {
-    KfMapEvent *event = map_runtime_state.events;
+    KfMapEvent *event = world.map.events;
     s16 index = 0;
 
     do {

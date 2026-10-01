@@ -8,3 +8,4 @@ __pycache__/
 *.bin
 *.cue
 *.iso
+/services/rooms/node_modules/

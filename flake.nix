@@ -7,12 +7,19 @@
       pkgs = import nixpkgs { inherit system; };
       nativeTools = with pkgs; [ cmake ninja pkg-config cargo rustc clang ];
       nativeLibraries = with pkgs; [ sdl3 libGL libglvnd ];
+      cargoVendor = pkgs.symlinkJoin {
+        name = "kf-cargo-vendor";
+        paths = [
+          (pkgs.rustPlatform.importCargoLock { lockFile = ./codecs/Cargo.lock; })
+          (pkgs.rustPlatform.importCargoLock { lockFile = "${pkgs.rustPlatform.rustLibSrc}/Cargo.lock"; })
+        ];
+      };
       sources = pkgs.lib.cleanSourceWith {
         src = ./.;
         filter = path: type:
           let
             relative = pkgs.lib.removePrefix "${toString ./.}/" (toString path);
-            sourceDirectories = [ "cmake" "src" "include" "codecs" "web" ];
+            sourceDirectories = [ "cmake" "src" "include" "codecs" "web" "tests" ];
           in pkgs.lib.cleanSourceFilter path type
             && !(builtins.elem (baseNameOf path) [ "build" "target" "__pycache__" ])
             && (builtins.elem relative [ "CMakeLists.txt" "build.json" ]
@@ -26,6 +33,8 @@
         src = sources;
         nativeBuildInputs = nativeTools;
         buildInputs = nativeLibraries;
+        KF_CARGO_VENDOR = cargoVendor;
+        doCheck = true;
         preBuild = ''
           export CARGO_HOME="$TMPDIR/kings-field-cargo"
         '';
@@ -66,10 +75,11 @@
       };
       devShells.${system}.default = (pkgs.mkShell.override { stdenv = pkgs.clangStdenv; }) {
         packages = nativeTools ++ nativeLibraries ++ (with pkgs; [
-          emscripten nodejs chromium xvfb-run xdotool imagemagick rustfmt rust-bindgen python3
+          emscripten nodejs chromium coturn nginx openssl xvfb-run xdotool imagemagick rustfmt rust-bindgen python3 _7zz
         ]);
         KF_SDL_SOURCE = "${pkgs.sdl3.src}";
         KF_RUST_SOURCE = "${pkgs.rustPlatform.rustLibSrc}";
+        KF_CARGO_VENDOR = cargoVendor;
       };
     };
 }

@@ -1,7 +1,7 @@
 #include <kf/game/player.h>
 
-void player_apply_fire_defense_boost(void)
+void player_apply_fire_defense_boost(PlayerContext &player)
 {
-    player_state.fire_defense_timer = KF_FIRE_DEFENSE_DURATION_UPDATES;
-    player_state.status_effect_flags |= KF_PLAYER_STATUS_FIRE_DEFENSE_BOOST;
+    player.state.fire_defense_timer = KF_FIRE_DEFENSE_DURATION_UPDATES;
+    player.state.status_effect_flags |= KF_PLAYER_STATUS_FIRE_DEFENSE_BOOST;
 }

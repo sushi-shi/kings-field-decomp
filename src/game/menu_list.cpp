@@ -1,3 +1,4 @@
+#include <kf/game/system.h>
 #include <kf/game/menu.h>
 #include <kf/platform/input.hpp>
 
@@ -36,16 +37,16 @@ void menu_list_next(KfMenuList *list)
     }
 }
 
-bool menu_list_handle_navigation(KfMenuList &list, u32 input, u32 previous)
+kf::FrameTask<bool> menu_list_handle_navigation(KfMenuList &list, u32 input, u32 previous)
 {
     if (kf::button_pressed(input, previous, kf::Button::Up)) {
-        menu_play_input_sound(MENU_SOUND_CURSOR);
+        (co_await menu_play_input_sound(MENU_SOUND_CURSOR));
         menu_list_previous(&list);
     } else if (kf::button_pressed(input, previous, kf::Button::Down)) {
-        menu_play_input_sound(MENU_SOUND_CURSOR);
+        (co_await menu_play_input_sound(MENU_SOUND_CURSOR));
         menu_list_next(&list);
     } else {
-        return false;
+        co_return false;
     }
-    return true;
+    co_return true;
 }

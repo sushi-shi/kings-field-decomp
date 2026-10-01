@@ -33,7 +33,6 @@ pub const VAB_OFFSET_ENTRIES: usize = 256;
 pub const VAB_OFFSET_TABLE_SIZE: usize = VAB_OFFSET_ENTRIES * 2;
 pub const VAB_SAMPLE_UNIT: usize = 8;
 
-
 // MIDI status and variable-length encodings used by the SEQ parser/bridge.
 pub mod midi {
     pub const STATUS_BIT: u8 = 0x80;
@@ -1194,7 +1193,15 @@ impl<'a> SeqEvents<'a> {
                 self.at += size;
                 SeqEventKind::SystemExclusive { status, data }
             }
-            midi::TIME_CODE | midi::SONG_POSITION | midi::SONG_SELECT | midi::TUNE_REQUEST | midi::TIMING_CLOCK | midi::START | midi::CONTINUE | midi::STOP | midi::ACTIVE_SENSING => {
+            midi::TIME_CODE
+            | midi::SONG_POSITION
+            | midi::SONG_SELECT
+            | midi::TUNE_REQUEST
+            | midi::TIMING_CLOCK
+            | midi::START
+            | midi::CONTINUE
+            | midi::STOP
+            | midi::ACTIVE_SENSING => {
                 if status < midi::TIMING_CLOCK {
                     self.running_status = None;
                 }

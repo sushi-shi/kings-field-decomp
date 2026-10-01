@@ -131,6 +131,7 @@ void opening_render_entities_and_items(void)
                         != KF_CELL_WINDOW_HIDDEN) {
                 render_floor_item(open_graphics_runtime.render_state, floor_item_sprites,
                 render_enqueue_sprite, item, &floor_item_light_matrix);
+                floor_item_advance_frame(item);
             }
         }
         item++;
