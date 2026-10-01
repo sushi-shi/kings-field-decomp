@@ -13,7 +13,7 @@
 #include <array>
 #include <cstdio>
 #include <cstring>
-#include <new>
+#include <optional>
 
 enum {
     MAP_VARIANT_ASSET_BUFFER_BYTES = 0x5a000,
@@ -39,40 +39,60 @@ KfMapCollisionGrid map_collision_grid;
 
 KfMapAttributeGrid map_cell_attribute_grid;
 
-static kf::ByteBuffer common_images_read()
+namespace {
+std::array<kf::ByteBuffer, 2> language_images;
+std::optional<kf::Language> displayed_language;
+
+bool prepare_text_language(kf::Language language)
 {
-    kf::DataFile file{};
-    kf::ByteBuffer bytes{};
-    if (resource_file_open(&file, "COM/MIX.TIM") != kf::FileResult::Ok)
-        kf::host_fail("Cannot reload language graphics.");
-    if (file.size > bytes.max_size()) {
-        kf::data_file_close(&file);
-        kf::host_fail("Cannot reload language graphics.");
-    }
-    try {
-        bytes.resize(file.size);
-    } catch (const std::bad_alloc &) {
-        kf::data_file_close(&file);
-        kf::host_fail("Cannot reload language graphics.");
-    }
-    const auto result = kf::data_file_read(&file, bytes.data(), bytes.size());
-    kf::data_file_close(&file);
-    if (result != kf::FileResult::Ok)
-        kf::host_fail("Cannot reload language graphics.");
-    return bytes;
+    auto &images = language_images[static_cast<std::size_t>(language)];
+    if (images.empty() && kf::language_file_load(language, "KF/COM/MIX.TIM", images,
+            kf::disc_import_limit) != kf::FileResult::Ok)
+        return false;
+    return menu_prepare_language(language);
+}
+
+bool show_text_language(kf::Language language)
+{
+    const auto previous = game_text_language();
+    if (language == previous)
+        return true;
+    if (!prepare_text_language(previous) || !prepare_text_language(language))
+        return false;
+    const auto &before = language_images[static_cast<std::size_t>(previous)];
+    const auto &after = language_images[static_cast<std::size_t>(language)];
+    if (!kf::texture_store_translate_tim(&kf::host_renderer()->textures,
+            before.data(), before.size(), after.data(), after.size()))
+        kf::host_fail("Cannot replace language graphics.");
+    displayed_language = language;
+    return true;
+}
+}
+
+kf::Language game_text_language()
+{
+    return displayed_language.value_or(kf::game_language());
+}
+
+void game_update_language_comparison()
+{
+    auto language = kf::game_language();
+    if (kf::host_action_held(kf::Action::compare_language))
+        language = language == kf::Language::English ? kf::Language::Japanese : kf::Language::English;
+    if (kf::language_available(language))
+        show_text_language(language);
 }
 
 bool game_apply_language(void)
 {
     if (kf::language_requested() == kf::game_language())
         return false;
-    auto previous = common_images_read();
+    const auto previous = game_text_language();
     if (!kf::language_apply_pending())
         return false;
-    auto current = common_images_read();
-    if (!kf::texture_store_translate_tim(&kf::host_renderer()->textures,
-            previous.data(), previous.size(), current.data(), current.size()))
-        kf::host_fail("Cannot reload language graphics.");
+    displayed_language = previous;
+    if (!show_text_language(kf::game_language()))
+        kf::host_fail("Cannot replace language graphics.");
     menu_resources_reload();
     kf::host_language_status("Language changed.");
     return true;
@@ -80,6 +100,7 @@ bool game_apply_language(void)
 
 void common_resources_load(void)
 {
+    displayed_language = kf::game_language();
     u8 *images;
     std::size_t image_size;
     u8 *stream;
@@ -250,6 +271,8 @@ void map_resources_load(KfFloorId floor, KfMapVariant map_variant)
 
 void resources_reset_module_state(void)
 {
+    language_images = {};
+    displayed_language.reset();
     kf::restore_initial_value<map_resource_path>();
     kf::restore_initial_value<map_mix_tim_filename>();
     kf::restore_initial_value<render_cell_windows>();

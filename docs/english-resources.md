@@ -38,11 +38,23 @@ accepted for compatibility with earlier local imports.
 
 ## Switching during play
 
+Hold **R** or the controller's **right-stick button** to view dialogue, inventory,
+menus and gameplay messages in the other language. Release to restore the
+selected language. Comparison does not advance dialogue or change the game's
+language setting. Notifications such as “Empty” retain their remaining display
+time while held. If alternate resources are unavailable, the original text stays
+visible.
+
+Dialogue pages preload both images and restore their background on each swap.
+Menus retain item, spell and label identities and resolve their text when drawn;
+each language's resources are cached independently. The comparison changes the
+common text textures without changing the resource root, inventory or selection.
+
 **Configuration → Language** sits below Compass and above Return. Left/right
 or Confirm toggles Japanese and English while keeping the panel open. The
-browser selector requests the same change. Requests made during other menus,
-dialogue, or opening/ending scenes wait for gameplay or Configuration, where
-no active dialogue/list keeps copied glyph rows from the previous language.
+browser selector requests the same change. Permanent language changes requested
+during other menus, dialogue, or opening/ending scenes wait for gameplay or
+Configuration.
 
 Switching changes the resource root, reloads the menu descriptions and names
 from `STAT.DAT`, and updates the translated font and notification texels in

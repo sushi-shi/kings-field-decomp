@@ -15,16 +15,21 @@ class NativeRegressions(unittest.TestCase):
         cls.directory = tempfile.TemporaryDirectory(prefix="kf-native-regressions-")
         cls.addClassCleanup(cls.directory.cleanup)
         for name in ["native_regressions", "lighting_regressions", "resource_failures",
-                     "cutscene_resources", "collision_results", "map_grids", "menu_outcomes"]:
+                     "cutscene_resources", "collision_results", "map_grids", "menu_outcomes", "dialogue_compare",
+                     "keyboard_controls"]:
             subprocess.run(
                 [
                     "clang++", "-std=c++20", "-O1", "-g", "-fno-rtti",
                     "-ffunction-sections", "-fdata-sections", "-Wl,--gc-sections",
                     "-fsanitize=address,undefined", "-ftrivial-auto-var-init=pattern",
                     "-I", str(ROOT / "include"), str(ROOT / "tests" / f"{name}.cpp"),
+                    *([str(ROOT / "src/platform/language.cpp")] if name == "native_regressions" else []),
                     *([str(ROOT / source) for source in ("src/audio/codec.cpp", "src/renderer/tim.cpp",
                                                         "src/lib/resource_decode.cpp")]
                       if name == "cutscene_resources" else []),
+                    *([str(ROOT / source) for source in ("src/lib/resource_file.cpp", "src/platform/files.cpp",
+                                                        "src/platform/language_runtime.cpp", "src/platform/language.cpp")]
+                      if name == "dialogue_compare" else []),
                     "-o", str(Path(cls.directory.name) / name),
                 ],
                 check=True, text=True,
@@ -57,6 +62,12 @@ class NativeRegressions(unittest.TestCase):
 
     def test_menu_outcomes_and_session_restoration(self):
         subprocess.run([Path(self.directory.name) / "menu_outcomes"], check=True)
+
+    def test_keyboard_layouts_and_remapped_keys(self):
+        subprocess.run([Path(self.directory.name) / "keyboard_controls"], check=True)
+
+    def test_dialogue_comparison_preserves_page_language_and_resource_root(self):
+        subprocess.run([Path(self.directory.name) / "dialogue_compare", self.directory.name], check=True)
 
     def test_collision_results_and_door_probes(self):
         subprocess.run([Path(self.directory.name) / "collision_results"], check=True)

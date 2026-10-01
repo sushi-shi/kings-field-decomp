@@ -7,7 +7,6 @@
 #include <array>
 #include <optional>
 
-static constexpr unsigned MENU_INVENTORY_LABEL_CAPACITY = 50;
 static constexpr unsigned MENU_INVENTORY_ENTRY_CAPACITY = 56;
 
 
@@ -141,7 +140,6 @@ enum {
 static std::optional<KfObjectId> menu_use_item_panel(void)
 {
     KfMenuList ctx;
-    std::array<std::array<s16, MENU_GLYPHS_PER_ROW>, MENU_INVENTORY_LABEL_CAPACITY> labels;
     std::array<u8, MENU_INVENTORY_ENTRY_CAPACITY> quantities;
     std::array<KfObjectId, MENU_INVENTORY_ENTRY_CAPACITY> item_ids;
     s32 found;
@@ -158,20 +156,17 @@ static std::optional<KfObjectId> menu_use_item_panel(void)
     auto &player_stock = item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)];
     found = 0;
     if (player_stock[kf_enum_encode<u8>(KF_ITEM_WATCHMAN_MAP)] != 0) {
-        labels[found] = item_name_rows[kf_enum_encode<u8>(KF_ITEM_WATCHMAN_MAP)].codes;
         quantities[found] = player_stock[kf_enum_encode<u8>(KF_ITEM_WATCHMAN_MAP)];
         item_ids[found] = KF_ITEM_WATCHMAN_MAP;
         found++;
     }
     if (player_stock[kf_enum_encode<u8>(KF_ITEM_SORCERER_MAP)] != 0) {
-        labels[found] = item_name_rows[kf_enum_encode<u8>(KF_ITEM_SORCERER_MAP)].codes;
         quantities[found] = player_stock[kf_enum_encode<u8>(KF_ITEM_SORCERER_MAP)];
         item_ids[found] = KF_ITEM_SORCERER_MAP;
         found++;
     }
     for (item_id = kf_enum_encode<s32>(KF_ITEM_VERDITE); item_id < kf_enum_encode<s32>(KF_ITEM_LIGHT_RING); item_id++) {
         if (item_id != kf_enum_encode<s32>(KF_ITEM_WATCHMAN_MAP) && item_id != kf_enum_encode<s32>(KF_ITEM_SORCERER_MAP) && player_stock[item_id] != 0) {
-            labels[found] = item_name_rows[item_id].codes;
             quantities[found] = player_stock[item_id];
             item_ids[found] = kf_enum_decode<KfObjectId>(item_id);
             found++;
@@ -179,14 +174,13 @@ static std::optional<KfObjectId> menu_use_item_panel(void)
     }
     for (item_id = kf_enum_encode<s32>(KF_ITEM_GOLD_CROSS); item_id < KF_ITEM_COUNT; item_id++) {
         if (item_id != kf_enum_encode<s32>(KF_ITEM_WATCHMAN_MAP) && item_id != kf_enum_encode<s32>(KF_ITEM_SORCERER_MAP) && player_stock[item_id] != 0) {
-            labels[found] = item_name_rows[item_id].codes;
             quantities[found] = player_stock[item_id];
             item_ids[found] = kf_enum_decode<KfObjectId>(item_id);
             found++;
         }
     }
     ctx.entry_count = found;
-    ctx.glyph_rows = labels;
+    ctx.entries = std::span<const KfObjectId>(item_ids).first(found);
     ctx.quantities = quantities;
 
     menu_frame_begin();

@@ -256,8 +256,22 @@ typedef struct KfMenuAssets {
     MenuSpriteDef selection_cursor;
 } KfMenuAssets;
 
+struct KfMenuResources {
+    KfMenuAssets assets;
+    std::array<MenuWindowLayout, KF_MENU_WINDOW_LAYOUT_COUNT> windows;
+    std::array<MenuGlyphRow, KF_ITEM_COUNT> items;
+    std::array<MenuGlyphRow, KF_MAGIC_PLAYER_COUNT> magic;
+    std::array<std::array<u16, KF_ITEM_SHOP_COUNT>, KF_ITEM_COUNT> buy_prices;
+    std::array<std::array<u16, KF_ITEM_SHOP_COUNT>, KF_ITEM_COUNT> sell_prices;
+};
+
+const KfMenuResources &menu_resources();
+bool menu_prepare_language(kf::Language language);
+
 typedef struct KfMenuList {
-    MenuGlyphString title;
+    MenuPoint title_position;
+    KfMenuWindowKind title_window;
+    s32 title_row;
     u8 list_x;
     u8 list_y;
     u8 entry_count;
@@ -265,7 +279,7 @@ typedef struct KfMenuList {
     u8 scroll_offset;
     u8 selected_index;
     u8 cursor_row;
-    std::span<const std::array<s16, MENU_GLYPHS_PER_ROW>> glyph_rows;
+    std::variant<std::span<const KfObjectId>, std::span<const KfEffectKind>> entries;
     std::span<const u8> quantities;
 } KfMenuList;
 
@@ -292,10 +306,6 @@ enum {
 };
 
 extern SVECTOR menu_item_preview_rotation;
-extern KfMenuAssets menu_assets;
-extern std::array<MenuWindowLayout, KF_MENU_WINDOW_LAYOUT_COUNT> menu_window_layouts;
-extern std::array<MenuGlyphRow, KF_ITEM_COUNT> item_name_rows;
-extern std::array<MenuGlyphRow, KF_MAGIC_PLAYER_COUNT> magic_name_rows;
 extern std::array<std::array<u16, KF_ITEM_SHOP_COUNT>, KF_ITEM_COUNT> item_buy_prices;
 extern std::array<std::array<u16, KF_ITEM_SHOP_COUNT>, KF_ITEM_COUNT> item_sell_prices;
 enum class KfMenuModelAllocation : s32 {
@@ -307,6 +317,7 @@ extern KfMenuModelAllocation menu_item_model_allocation;
 extern void item_load_database(void);
 extern void shop_menu_root(KfItemStockBank shop_bank);
 extern KfMenuResult item_pickup_confirm(KfObjectId item_id);
+KfResourceLoadResult menu_load_image(const char *path);
 extern void menu_add_message_image_quad(void);
 extern void menu_add_magic_artwork_quad(void);
 extern void menu_blit_sprite(
@@ -327,8 +338,9 @@ extern void menu_draw_string(
 extern void menu_draw_equipment_names(void);
 extern void menu_draw_status_summary(void);
 extern void menu_draw_status_details(void);
+struct MenuChoiceLabel;
 extern void menu_draw_two_option(
-    const MenuGlyphString *accept_label, const MenuGlyphString *decline_label,
+    const MenuChoiceLabel *accept_label, const MenuChoiceLabel *decline_label,
     KfMenuConfirmChoice selected_choice, KfMenuConfirmState confirmation);
 extern void menu_draw_window(KfMenuWindowKind window_kind, s32 row_count, s32 highlight_row, KfMenuConfirmState confirmation);
 extern void menu_draw_window_backdrop(void);

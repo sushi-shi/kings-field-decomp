@@ -128,7 +128,7 @@ class RuntimeLanguage(unittest.TestCase):
         cls.binary = Path(cls.temp.name) / "test"
         subprocess.run([
             "clang++", "-std=c++20", "-O1", "-g", "-Wall", "-Wextra", "-Werror",
-            "-fsanitize=address,undefined", "-I", str(ROOT / "include"),
+            "-fsanitize=address,undefined", "-ffunction-sections", "-fdata-sections", "-Wl,--gc-sections", "-I", str(ROOT / "include"),
             str(ROOT / "tests/language_runtime_regressions.cpp"),
             str(ROOT / "src/platform/language_runtime.cpp"),
             str(ROOT / "src/platform/language.cpp"), "-o", str(cls.binary),
