@@ -257,6 +257,8 @@ if(BUILD_TESTING AND NOT EMSCRIPTEN)
   target_link_libraries(coop-runtime-test PRIVATE kf_host kf_network ${KF_GLES_LIBRARY})
   target_compile_options(coop-runtime-test PRIVATE -Wall -Wextra -Werror)
   add_test(NAME coop-runtime COMMAND coop-runtime-test)
+  add_test(NAME coop-effect-failures COMMAND ${Python3_EXECUTABLE}
+    ${CMAKE_SOURCE_DIR}/tests/coop_effect_failures.py $<TARGET_FILE:coop-runtime-test>)
   add_executable(coop-movement-test tests/coop_movement.cpp
     $<TARGET_OBJECTS:kf_game>)
   target_link_libraries(coop-movement-test PRIVATE kf_host kf_network ${KF_GLES_LIBRARY})

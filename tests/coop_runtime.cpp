@@ -17,6 +17,7 @@
 #include <kf/game/state.h>
 #include <kf/game/graphics.h>
 void map_event_update_wander(WorldState &, PlayerContext &);
+void actor_spawn_action_effect(WorldState &, PlayerContext &, KfActorEffectCode, KfActorEffectSlot);
 
 static void require(bool condition, const char *message)
 {
@@ -154,6 +155,17 @@ static void independent_characters_and_worlds()
             "Campaign scripts share mutable world state");
 }
 
+static bool same_matrix(const MATRIX &a, const MATRIX &b)
+{
+    return a.m == b.m && a.t == b.t;
+}
+
+static bool same_pose(const AvatarPose &a, const AvatarPose &b)
+{
+    return a.rigged == b.rigged && a.avatar == b.avatar &&
+        std::equal(std::begin(a.bones), std::end(a.bones), std::begin(b.bones), same_matrix);
+}
+
 static void avatar_animation_and_attachments()
 {
     for (s16 yaw = 0; yaw < 4096; yaw += 128) {
@@ -196,7 +208,7 @@ static void avatar_animation_and_attachments()
         }
     }
     avatar_build_pose(41,{1024,180,0,-1,0,false},walking);
-    require(std::memcmp(&idle,&walking,sizeof idle)!=0,"Walking pose stayed static");
+    require(!same_pose(idle,walking),"Walking pose stayed static");
     AvatarPose casting;
     avatar_build_pose(41,{0,0,0,-1,0,false,6},casting);
     vertex={275,-860,0,0,0,-4096,0,0,128,128,128,0};
@@ -213,10 +225,10 @@ static void avatar_animation_and_attachments()
         "Inner hand vertices stayed behind when the arm cast");
     const auto cast_weapon = avatar_equipment_transform(casting,false);
     const auto idle_weapon = avatar_equipment_transform(idle,false);
-    require(std::memcmp(&cast_weapon,&idle_weapon,sizeof cast_weapon)==0,
+    require(same_matrix(cast_weapon,idle_weapon),
         "Casting moved the weapon out of its idle hand");
     avatar_build_pose(41,{0,0,0,-1,0,false,0},casting);
-    require(std::memcmp(&idle,&casting,sizeof idle)==0,"Casting did not return to idle");
+    require(same_pose(idle,casting),"Casting did not return to idle");
     avatar_build_pose(41,{65535,-32768,32767,32767,32767,false},swing);
     vertex={275,-860,0,0,0,-4096,0,0,128,128,128,0};
     avatar_pose_vertex(swing,vertex,position,normal);
@@ -246,7 +258,7 @@ static void avatar_animation_and_attachments()
         const auto hand=kf::render_transform_point(avatar_equipment_transform(swing,false),{0,350,0});
         require(std::abs(position.vx-hand.vx)<4 && std::abs(position.vy-hand.vy)<4 && std::abs(position.vz-hand.vz)<4,
             "Second standing body's weapon detached from its hand");
-        require(std::memcmp(&idle,&swing,sizeof idle)!=0,"Second standing body did not animate");
+        require(!same_pose(idle,swing),"Second standing body did not animate");
     }
     for (const SVECTOR velocity : {SVECTOR{180,0,0},SVECTOR{0,0,180},SVECTOR{180,0,180},SVECTOR{-180,0,-180}})
     for (u16 phase=0; phase<4096; phase+=128) {
@@ -280,7 +292,7 @@ static void avatar_animation_and_attachments()
         const auto hand=kf::render_transform_point(avatar_equipment_transform(swing,false),{0,350,0});
         require(std::abs(position.vx-hand.vx)<4 && std::abs(position.vy-hand.vy)<4 && std::abs(position.vz-hand.vz)<4,
             "Coated body's weapon detached from its asymmetric hand");
-        require(std::memcmp(&idle,&swing,sizeof idle)!=0,"Coated body did not animate");
+        require(!same_pose(idle,swing),"Coated body did not animate");
     }
     for (const SVECTOR velocity : {SVECTOR{180,0,0},SVECTOR{0,0,180},SVECTOR{180,0,180},SVECTOR{-180,0,-180}})
     for (u16 phase=0; phase<4096; phase+=128) {
@@ -1839,6 +1851,59 @@ static void spell_snapshot_transitions()
     }
 }
 
+static void map_effect_fixture(KfObjectId id, bool exhausted, bool outside)
+{
+    auto world = std::make_unique<WorldState>();
+    auto &player = world->party.members[0].player;
+    player.local_view = false;
+    effect_pool_reset(*world);
+    world->objects.definitions.entries[kf_enum_encode<u8>(id)].behavior_type = KF_MAP_OBJECT_OP_NONE;
+    if (exhausted)
+        for (auto &effect : world->effects.records) effect.type = KF_EFFECT_CLASS_20;
+    std::array<u8, 21> placement {};
+    placement[0] = kf_enum_encode<u8>(id);
+    // Cell zero plus local x=-1 is syntactically valid but outside the world.
+    if (outside) placement[8] = placement[9] = 0xff;
+    placement[20] = 0xff;
+    map_object_pool_load(*world, player, {placement.data(), placement.size()});
+    require(!exhausted && !outside, "Invalid map effect allocation was accepted");
+    const auto index = world->objects.objects[0].link.fields.action_parameter.effect_index;
+    require(index < KF_EFFECT_CAPACITY, "Map hazard retained an invalid effect index");
+    const auto &direction = world->effects.records[index].direction.vector;
+    require(direction.vx == 0 && direction.vy == 0 && direction.vz == 0,
+        "Stationary map effect has uninitialized motion");
+}
+
+static void door_edge_fixture(KfMapObjectOperation operation, u8 x, u8 z, u16 yaw)
+{
+    auto world = std::make_unique<WorldState>();
+    for (auto &cell : world->collision.linear) cell = KF_MAP_CELL_FLOOR;
+    world->objects.definitions.entries[0].behavior_type = operation;
+    KfMapObject object {};
+    object.object_id = kf_enum_decode<KfObjectId>(0);
+    object.cell_x = x;
+    object.cell_z = z;
+    map_object_mark_collision_edge(*world, &object, KF_MAP_CELL_BLOCKED, yaw);
+    require(std::count(std::begin(world->collision.linear), std::end(world->collision.linear),
+        KF_MAP_CELL_BLOCKED) == 2, "Door collision footprint changed");
+}
+
+static void actor_attachment_bounds()
+{
+    auto world = std::make_unique<WorldState>();
+    effect_pool_reset(*world);
+    KfActor actor {};
+    KfActorDefinition definition {};
+    world->actors.current = &actor;
+    world->actors.current_definition = &definition;
+    for (auto slot : {KF_ACTOR_EFFECT_SLOT_THIRD, kf_enum_decode<KfActorEffectSlot>(-1)}) {
+        actor_spawn_action_effect(*world, world->party.members[0].player,
+            kf_enum_decode<KfActorEffectCode>(kf_enum_encode<u8>(KF_MAGIC_FIRE_BALL)), slot);
+        for (const auto &effect : world->effects.records)
+            require(effect.type == KF_EFFECT_SLOT_FREE, "Unsupported attachment launched an effect");
+    }
+}
+
 static void spell_world_bounds()
 {
     auto world = std::make_unique<WorldState>();
@@ -2972,7 +3037,8 @@ static int ending_fixture_host(const char *url, const char *pack, const char *mo
 
 static std::unique_ptr<WorldState> retail_fixture_open(const char *resources)
 {
-    require(kf::data_files_set_root(resources), "Cannot open retail world resources");
+    require(kf::language_resources_start(resources, kf::Language::Japanese, nullptr),
+        "Cannot open retail world resources");
     require(kf::host_start(), "Cannot start isolated world-state check");
     game_restore_initial_state();
     auto world = std::make_unique<WorldState>();
@@ -3442,6 +3508,16 @@ static int snapshot_summary(const char *path)
 
 int main(int argc, char **argv)
 {
+    if (argc == 6 && !std::strcmp(argv[1], "--door-edge")) {
+        door_edge_fixture(kf_enum_decode<KfMapObjectOperation>(std::atoi(argv[2])),
+            std::atoi(argv[3]), std::atoi(argv[4]), std::atoi(argv[5]));
+        return 0;
+    }
+    if (argc == 4 && !std::strcmp(argv[1], "--invalid-map-effect")) {
+        map_effect_fixture(kf_enum_decode<KfObjectId>(std::atoi(argv[2])),
+            !std::strcmp(argv[3], "exhausted"), !std::strcmp(argv[3], "outside"));
+        return 0;
+    }
     if (argc == 3 && !std::strcmp(argv[1], "--party-travel")) return party_travel_check(argv[2]);
     if (argc == 5 && !std::strcmp(argv[1], "--save-fixture")) return save_fixture(argv[2], argv[3], argv[4]);
     if (argc == 5 && !std::strcmp(argv[1], "--travel-fixture")) return save_fixture(argv[2], argv[3], argv[4], FixtureKind::Travel);
@@ -3500,6 +3576,12 @@ int main(int argc, char **argv)
     prediction_budget_and_view();
     entity_presentation_corrections();
     effect_presentation_history();
+    actor_attachment_bounds();
+    for (auto operation : {KF_MAP_OBJECT_OP_HINGED_DOOR, KF_MAP_OBJECT_OP_LIFT_DOOR, KF_MAP_OBJECT_OP_03})
+        for (u16 yaw : {0, 1024, 2048, 3072}) door_edge_fixture(operation, 50, 50, yaw);
+    for (auto id : {KF_MAP_OBJECT_ORBITING_PROJECTILE, KF_MAP_OBJECT_SHORT_SWING,
+            KF_MAP_OBJECT_LONG_SWING, KF_MAP_OBJECT_EFFECT_SWITCH})
+        map_effect_fixture(id, false, false);
     spell_world_bounds();
     spell_snapshot_transitions();
     world_and_player_random_isolation();

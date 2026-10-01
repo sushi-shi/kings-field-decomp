@@ -510,6 +510,9 @@ void actor_spawn_action_effect(WorldState &world, PlayerContext &player, KfActor
         case KF_EFFECT_KIND_PHYSICAL_PROJECTILE:
         case KF_EFFECT_KIND_LIGHTNING_BOLT_ALTERNATE:
         case KF_EFFECT_KIND_HOMING_PROJECTILE_ALTERNATE:
+            // Three action slots share only two authored attachment offsets.
+            if (kf_enum_encode<u32>(effect_slot) >= KF_ACTOR_ATTACHMENT_OFFSET_COUNT)
+                return;
             offset = {
                 definition->attachment_offsets[kf_enum_encode<s32>(effect_slot)].x,
                 definition->attachment_offsets[kf_enum_encode<s32>(effect_slot)].y,

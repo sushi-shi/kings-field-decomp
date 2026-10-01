@@ -73,6 +73,12 @@ void map_object_mark_collision_edge(WorldState &world, const KfMapObject *object
     definition = &world.objects.definitions.entries[kf_enum_encode<u8>(object->object_id)];
     yaw &= KF_ANGLE_WRAP_MASK;
     cell_z = object->cell_z;
+    // Doors occupy neighboring cells; match the snapshot boundary validation.
+    if ((definition->behavior_type == KF_MAP_OBJECT_OP_HINGED_DOOR ||
+            definition->behavior_type == KF_MAP_OBJECT_OP_LIFT_DOOR ||
+            definition->behavior_type == KF_MAP_OBJECT_OP_03) &&
+        (cell_x < 1 || cell_x >= KF_MAP_COLUMNS - 1 || cell_z < 1 || cell_z >= KF_MAP_ROWS - 1))
+        kf::host_fail("Door placement exceeds collision grid bounds.");
     switch (definition->behavior_type) {
     default:
         // Other operations do not modify the door collision cells.
@@ -181,8 +187,12 @@ void map_object_pool_load(WorldState &world, PlayerContext &player, KfResourceCh
             {KF_MAP_COLUMNS, KF_MAP_OBJECT_DEFINITION_COUNT, KF_MAP_TILE_SIZE}, decoded, count) != KF_CODEC_OK)
         kf::host_fail("Invalid map object placements.");
     KfMapObjectDefinition *definition;
-    SVECTOR effect_direction;
+    SVECTOR effect_direction {};
     KfObjectId object_id;
+    const auto required_effect_index = [&world](KfEffectRecord *effect) {
+        if (!effect) kf::host_fail("Cannot allocate required map object effect.");
+        return effect - world.effects.records.data();
+    };
 
     for (std::size_t i = 0; i < std::size(world.objects.objects); ++i) {
         auto &object = world.objects.objects[i];
@@ -215,13 +225,12 @@ void map_object_pool_load(WorldState &world, PlayerContext &player, KfResourceCh
                 // Common placement initialization is sufficient for other object IDs.
                 break;
             case KF_MAP_OBJECT_ORBITING_PROJECTILE:
-                object.link.fields.action_parameter.effect_index = effect_pool_construct(world, player,
+                object.link.fields.action_parameter.effect_index = required_effect_index(effect_pool_construct(world, player,
                                                     object.link.fields.spawn.effect_id,
                                                     KF_EFFECT_CLASS_20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
                                                     KF_EFFECT_KIND_ORBITING_PROJECTILE,
                                                     &object.position,
-                                                    &effect_direction)
-                    - world.effects.records.data();
+                                                    &effect_direction));
                 map_object_start_action_if_idle(&object, KF_MAP_OBJECT_OP_RELEASE_ORBIT_OR_SHORT_SWING);
                 break;
             case KF_MAP_OBJECT_BOSS_PROJECTILE_EMITTER:
@@ -231,33 +240,30 @@ void map_object_pool_load(WorldState &world, PlayerContext &player, KfResourceCh
                 map_object_start_action_if_idle(&object, KF_MAP_OBJECT_OP_PROJECTILE_EMITTER);
                 break;
             case KF_MAP_OBJECT_SHORT_SWING:
-                object.link.fields.action_parameter.effect_index = effect_pool_construct(world, player,
+                object.link.fields.action_parameter.effect_index = required_effect_index(effect_pool_construct(world, player,
                                                     object.link.fields.spawn.effect_id,
                                                     KF_EFFECT_CLASS_20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
                                                     KF_EFFECT_KIND_SWINGING_HAZARD_SHORT,
                                                     &object.position,
                                                     &effect_direction,
-                                                    KfEffectRotationArguments{&object.rotation.vector})
-                    - world.effects.records.data();
+                                                    KfEffectRotationArguments{&object.rotation.vector}));
                 map_object_start_action_if_idle(&object, KF_MAP_OBJECT_OP_RELEASE_ORBIT_OR_SHORT_SWING);
                 break;
             case KF_MAP_OBJECT_LONG_SWING:
-                object.link.fields.action_parameter.effect_index = effect_pool_construct(world, player,
+                object.link.fields.action_parameter.effect_index = required_effect_index(effect_pool_construct(world, player,
                                                     object.link.fields.spawn.effect_id,
                                                     KF_EFFECT_CLASS_20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
                                                     KF_EFFECT_KIND_SWINGING_HAZARD_LONG,
                                                     &object.position,
                                                     &effect_direction,
-                                                    KfEffectRotationArguments{&object.rotation.vector})
-                    - world.effects.records.data();
+                                                    KfEffectRotationArguments{&object.rotation.vector}));
                 map_object_start_action_if_idle(&object, KF_MAP_OBJECT_OP_RELEASE_LONG_SWING);
                 break;
             case KF_MAP_OBJECT_EFFECT_SWITCH:
                 object.link.fields.action_parameter.effect_index =
-                    effect_pool_construct(world, player,
+                    required_effect_index(effect_pool_construct(world, player,
                         0, KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER, KF_EFFECT_KIND_MAP_SWITCH, &object.position,
-                        &effect_direction, KfEffectRotationArguments{&object.rotation.vector})
-                    - world.effects.records.data();
+                        &effect_direction, KfEffectRotationArguments{&object.rotation.vector}));
                 map_object_start_action_if_idle(&object, KF_MAP_OBJECT_OP_EFFECT_SWITCH);
                 break;
             case KF_ITEM_DRAGON_CHALICE:

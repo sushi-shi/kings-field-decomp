@@ -103,6 +103,7 @@
       devShells.${system}.default = (pkgs.mkShell.override { stdenv = pkgs.clangStdenv; }) {
         packages = nativeTools ++ nativeLibraries ++ (with pkgs; [
           emscripten nodejs chromium coturn nginx openssl xvfb-run xdotool imagemagick python3 gh ruff
+          valgrind cppcheck
         ]);
         KF_SDL_SOURCE = "${pkgs.sdl3.src}";
         KF_ENGLISH_PATCH = "${englishDelta}";

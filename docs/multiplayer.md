@@ -99,3 +99,53 @@ Public NAT/firewall combinations and sustained gameplay across travel, combat,
 reconnection and campaign restoration still need user testing. Local transport
 success does not establish those behaviors. Deployment templates and launcher
 instructions are in the [README](../README.md).
+
+### Sanitizer and analyzer audit (2026-10-01)
+
+The multiplayer audit used the pinned Nix tools, isolated fixtures and no manual
+navigation. Retail coverage means 20 simulation updates and full/fast snapshot
+round trips for floors 1–4 and all three floor-5 variants, plus bounded party
+travel fixtures; it is not a complete playthrough.
+
+| Check | Result and limits |
+| --- | --- |
+| ASan + UBSan + `_GLIBCXX_ASSERTIONS` | Seven CTest suites, all-floor snapshots and party travel pass with the normal renderer. An additional forced-Mesa-softpipe travel run reports a buffer overread inside the driver's framebuffer blit; that configuration remains unresolved. Leak detection disabled for the environment restriction below. |
+| Valgrind | Five isolated codec suites, runtime/campaign-save suite and all-floor fixtures: zero memory errors; no definitely, indirectly or possibly lost blocks. Library allocations remain reachable at exit. |
+| MemorySanitizer | Resource codecs, record codecs, protocol and world codec pass. Avatar suite is inconclusive: the same uninitialized read reproduces with just `std::set<unsigned>` insertion/destruction against the uninstrumented standard library. |
+| Parser fuzzing | 20,094 multiplayer/avatar/importer inputs and 63,366 resource inputs under ASan/UBSan; no sanitizer failures. Two short, seeded 60-second runs. |
+| Clang analyzer, clang-tidy, cppcheck | All 132 production translation units checked. Actionable bounds/allocation findings fixed; changed units rechecked with Clang tools. Remaining diagnostics were reviewed, not blanket-suppressed. Completion does not mean zero warnings. |
+| ThreadSanitizer | Seven CTest suites and the all-floor fixture pass. Native WebRTC integration reports lock-order inversions in libdatachannel and race reports involving uninstrumented dependencies; this integration is **not clean**. The lock inversions remain a potential dependency deadlock. Browser WebRTC uses a different backend and is not covered by native TSan. |
+| LeakSanitizer | Even an empty-program probe fails because process inspection is restricted in this environment. |
+
+The audit fixes unsupported actor attachment indexing, unchecked allocation of
+required map-object effects, uninitialized stationary-effect directions and
+boundary-door collision writes. Regression assertions compare avatar fields
+instead of reading struct padding. Resource fixtures initialize the selected
+language before loading retail data.
+
+Run the sanitizer and resource fixtures inside `nix develop`:
+
+```sh
+cmake --preset sanitize -DCMAKE_CXX_FLAGS=-D_GLIBCXX_ASSERTIONS
+cmake --build --preset sanitize
+ASAN_OPTIONS=detect_leaks=0 UBSAN_OPTIONS=halt_on_error=1 ctest --test-dir build/sanitize --output-on-failure
+ASAN_OPTIONS=detect_leaks=0 UBSAN_OPTIONS=halt_on_error=1 xvfb-run -a build/sanitize/coop-runtime-test --world-states /path/to/extracted/KF1
+ASAN_OPTIONS=detect_leaks=0 UBSAN_OPTIONS=halt_on_error=1 xvfb-run -a build/sanitize/coop-runtime-test --party-travel /path/to/extracted/KF1
+```
+
+The multiplayer fuzz harness needs no retail assets, filesystem access or live
+network. Optional seeds are individual world snapshots, packets and character
+packs. Split the length-prefixed output of `coop-world-codec-test` into separate
+files before using it as a seed corpus.
+
+```sh
+mkdir -p build/fuzz-corpus
+clang++ -std=c++20 -O1 -g -D_GLIBCXX_ASSERTIONS -Iinclude \
+  -fsanitize=fuzzer,address,undefined -fno-omit-frame-pointer \
+  tests/fuzz_multiplayer.cpp src/net/codec.cpp src/net/world.cpp \
+  src/platform/avatar_pack.cpp src/platform/avatar_source.cpp src/platform/avatar_disc.cpp \
+  -o build/fuzz-multiplayer
+ASAN_OPTIONS=detect_leaks=0 UBSAN_OPTIONS=halt_on_error=1 \
+  build/fuzz-multiplayer build/fuzz-corpus -max_total_time=60 -timeout=5 \
+  -rss_limit_mb=2048 -max_len=131072 -artifact_prefix=build/
+```
