@@ -109,13 +109,13 @@ travel fixtures; it is not a complete playthrough.
 
 | Check | Result and limits |
 | --- | --- |
-| ASan + UBSan + `_GLIBCXX_ASSERTIONS` | Seven CTest suites, all-floor snapshots and party travel pass with the normal renderer. An additional forced-Mesa-softpipe travel run reports a buffer overread inside the driver's framebuffer blit; that configuration remains unresolved. Leak detection disabled for the environment restriction below. |
+| ASan + UBSan + `_GLIBCXX_ASSERTIONS` | Seven CTest suites, all-floor snapshots and party travel pass with the normal renderer, including a privileged rerun with leak detection enabled. An additional forced-Mesa-softpipe travel run reports a buffer overread inside the driver's framebuffer blit; that configuration remains unresolved. |
 | Valgrind | Five isolated codec suites, runtime/campaign-save suite and all-floor fixtures: zero memory errors; no definitely, indirectly or possibly lost blocks. Library allocations remain reachable at exit. |
 | MemorySanitizer | Resource codecs, record codecs, protocol and world codec pass. Avatar suite is inconclusive: the same uninitialized read reproduces with just `std::set<unsigned>` insertion/destruction against the uninstrumented standard library. |
 | Parser fuzzing | 20,094 multiplayer/avatar/importer inputs and 63,366 resource inputs under ASan/UBSan; no sanitizer failures. Two short, seeded 60-second runs. |
 | Clang analyzer, clang-tidy, cppcheck | All 132 production translation units checked. Actionable bounds/allocation findings fixed; changed units rechecked with Clang tools. Remaining diagnostics were reviewed, not blanket-suppressed. Completion does not mean zero warnings. |
 | ThreadSanitizer | Seven CTest suites and the all-floor fixture pass. Native WebRTC integration reports lock-order inversions in libdatachannel and race reports involving uninstrumented dependencies; this integration is **not clean**. The lock inversions remain a potential dependency deadlock. Browser WebRTC uses a different backend and is not covered by native TSan. |
-| LeakSanitizer | Even an empty-program probe fails because process inspection is restricted in this environment. |
+| LeakSanitizer | With sudo, seven multiplayer suites, both resource-codec suites, all-floor snapshots, party travel and four-party native WebRTC pass with no leaks reported and no suppressions. Empty and deliberate-123-byte-leak controls confirm detection works. Unprivileged runs are blocked by the host's `ptrace_scope=2`; no system setting was changed. |
 
 The audit fixes unsupported actor attachment indexing, unchecked allocation of
 required map-object effects, uninitialized stationary-effect directions and
@@ -132,6 +132,18 @@ ASAN_OPTIONS=detect_leaks=0 UBSAN_OPTIONS=halt_on_error=1 ctest --test-dir build
 ASAN_OPTIONS=detect_leaks=0 UBSAN_OPTIONS=halt_on_error=1 xvfb-run -a build/sanitize/coop-runtime-test --world-states /path/to/extracted/KF1
 ASAN_OPTIONS=detect_leaks=0 UBSAN_OPTIONS=halt_on_error=1 xvfb-run -a build/sanitize/coop-runtime-test --party-travel /path/to/extracted/KF1
 ```
+
+On this host, enable leak detection by running the already-built isolated test
+executables with sudo; compile as the ordinary user. For example:
+
+```sh
+sudo env ASAN_OPTIONS=detect_leaks=1:halt_on_error=1 UBSAN_OPTIONS=halt_on_error=1 \
+  LSAN_OPTIONS=exitcode=86 "$PWD/build/sanitize/coop-runtime-test"
+```
+
+The privileged graphical fixtures used Xvfb, `SDL_AUDIO_DRIVER=dummy` and a
+temporary `XDG_RUNTIME_DIR`, avoiding the user's desktop/audio session. This
+privilege requirement does not require changing the host's ptrace policy.
 
 The multiplayer fuzz harness needs no retail assets, filesystem access or live
 network. Optional seeds are individual world snapshots, packets and character
