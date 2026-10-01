@@ -18,10 +18,11 @@ class ResourceCodecs(unittest.TestCase):
                 "clang++", "-std=c++20", "-O1", "-g", "-Wall", "-Wextra", "-Werror",
                 "-fsanitize=address,undefined", "-I", str(ROOT / "include"),
                 str(ROOT / "tests/resource_codecs.cpp"),
-                *(str(source) for source in sorted((ROOT / "codecs").glob("*.cpp"))), "-o", str(binary),
+                *(str(ROOT / source) for source in ("src/audio/codec.cpp", "src/renderer/tim.cpp",
+                                                   "src/lib/resource_decode.cpp")), "-o", str(binary),
             ], check=True)
             result = subprocess.run([binary], check=True, timeout=20, capture_output=True, text=True)
             self.assertRegex(result.stderr,
-                             r"kf-codec: [^\n]*resources\.cpp:\d+:\d+: truncated input at \d+: need \d+ bytes, have \d+")
-            self.assertNotRegex(result.stderr, r"kf-codec: [^\n]*bytes\.h:")
+                             r"kf-codec: [^\n]*resource_decode\.cpp:\d+:\d+: truncated input at \d+: need \d+ bytes, have \d+")
+            self.assertNotRegex(result.stderr, r"kf-codec: [^\n]*byte_reader\.h:")
             self.assertNotIn("end of input", result.stderr)
