@@ -111,12 +111,13 @@ kings-field
 | Interact / confirm | E or Enter |
 | Inventory / skip intro | Tab |
 | Back | Backspace or Escape in menus |
-| Compare dialogue languages (hold) | L |
+| Compare text languages (hold) | R |
 | Pause | P or Escape during gameplay |
 
-Hold **L** or **right-stick click** on a controller to compare English and Japanese
-on dialogue and full-screen information pages. Release to return to your selected
-language without advancing the page.
+Hold **R** or **right-stick click** on a controller to read dialogue, inventory,
+menus and messages such as “Empty” in the other language. Release to return to
+your selected language. Comparison does not advance dialogue; messages stay
+visible while held.
 
 ## Build from source
 

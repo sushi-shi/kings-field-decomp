@@ -13,7 +13,6 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-#include <new>
 #include <string>
 
 namespace {
@@ -477,20 +476,11 @@ void menu_play_input_sound(KfMenuSoundCue cue)
 
 bool menu_load_message_image(s32 message_id)
 {
+    if (message_id == MESSAGE_IMAGE_SKIP)
+        return false;
     std::array<char, menu_image_path_capacity> path = {"TIM/M000."};
-    u8 *buffer;
-
-    if (message_id != MESSAGE_IMAGE_SKIP) {
-        resource_path_write_decimal3(&path[menu_image_number_offset], message_id);
-        buffer = game_graphics_runtime.display_state.asset_load_buffer;
-        std::size_t image_size;
-        if (resource_file_load_into(buffer,
-                game_graphics_runtime.display_state.asset_load_capacity, path.data(), &image_size) != KF_RESOURCE_LOADED) {
-            return true;
-        }
-        tim_upload_images(buffer, image_size);
-    }
-    return false;
+    resource_path_write_decimal3(&path[menu_image_number_offset], message_id);
+    return menu_load_image(path.data()) != KF_RESOURCE_LOADED;
 }
 
 static kf::ByteBuffer comparison_image_read(const char *path, std::size_t capacity)
@@ -500,21 +490,8 @@ static kf::ByteBuffer comparison_image_read(const char *path, std::size_t capaci
     kf::ByteBuffer bytes;
     if (!kf::language_available(alternate))
         return bytes;
-    kf::DataFile file{};
     const auto full_path = std::string("KF/") + path;
-    if (kf::language_file_open(&file, alternate, full_path.c_str()) != kf::FileResult::Ok)
-        return bytes;
-    if (file.size <= capacity && file.size <= bytes.max_size()) {
-        try {
-            bytes.resize(file.size);
-        } catch (const std::bad_alloc &) {
-            kf::data_file_close(&file);
-            return {};
-        }
-        if (kf::data_file_read(&file, bytes.data(), bytes.size()) != kf::FileResult::Ok)
-            bytes.clear();
-    }
-    kf::data_file_close(&file);
+    kf::language_file_load(alternate, full_path.c_str(), bytes, capacity);
     return bytes;
 }
 

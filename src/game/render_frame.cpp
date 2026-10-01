@@ -2,6 +2,7 @@
 #include <kf/game/animation_cache.h>
 #include <kf/game/graphics.h>
 #include <kf/game/notify.h>
+#include <kf/game/resources.h>
 #include <kf/game/player.h>
 #include <kf/game/render.h>
 #include <kf/game/state.h>
@@ -72,6 +73,7 @@ std::array<MATRIX, KF_RENDER_LIGHT_COUNT> render_light_matrices = {
 
 void render_frame(const VECTOR *position_or_null, const SVECTOR *rotation_or_null)
 {
+    game_update_language_comparison();
     MATRIX model;
     SVECTOR spin;
     KfHudSprite *poison_icon;

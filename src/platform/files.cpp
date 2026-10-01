@@ -108,6 +108,21 @@ void data_file_close(DataFile *file) {
     *file = {};
 }
 
+FileResult data_file_read(DataFile *file, std::vector<u8> &destination, std::size_t capacity) {
+    destination.clear();
+    if (file->size > capacity || file->size > destination.max_size())
+        return FileResult::TooLarge;
+    try {
+        destination.resize(file->size);
+    } catch (const std::bad_alloc &) {
+        return FileResult::OutOfMemory;
+    }
+    const auto result = data_file_read(file, destination.data(), destination.size());
+    if (result != FileResult::Ok)
+        destination.clear();
+    return result;
+}
+
 FileResult data_file_read_into(const char *path, void *destination, std::size_t capacity,
                               std::size_t *loaded_size) {
     if (loaded_size)

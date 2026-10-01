@@ -89,7 +89,7 @@ static void bind_inputs() {
         KeyBinding{SDLK_SPACE, Action::attack}, KeyBinding{SDLK_Q, Action::magic},
         KeyBinding{SDLK_TAB, Action::inventory}, KeyBinding{SDLK_BACKSPACE, Action::back},
         KeyBinding{SDLK_ESCAPE, Action::pause_or_back}, KeyBinding{SDLK_P, Action::pause},
-        KeyBinding{SDLK_L, Action::compare_language}
+        KeyBinding{SDLK_R, Action::compare_language}
     };
     for (const auto &key : keys)
         input_bind(input, {InputDevice::keyboard, static_cast<u32>(key.code)}, key.action);

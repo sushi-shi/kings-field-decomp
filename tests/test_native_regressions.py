@@ -22,6 +22,7 @@ class NativeRegressions(unittest.TestCase):
                     "-ffunction-sections", "-fdata-sections", "-Wl,--gc-sections",
                     "-fsanitize=address,undefined", "-ftrivial-auto-var-init=pattern",
                     "-I", str(ROOT / "include"), str(ROOT / "tests" / f"{name}.cpp"),
+                    *([str(ROOT / "src/platform/language.cpp")] if name == "native_regressions" else []),
                     *([str(ROOT / source) for source in ("src/audio/codec.cpp", "src/renderer/tim.cpp",
                                                         "src/lib/resource_decode.cpp")]
                       if name == "cutscene_resources" else []),

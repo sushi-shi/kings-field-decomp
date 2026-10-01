@@ -117,4 +117,15 @@ bool language_apply_pending() {
     game_set_language(target);
     return true;
 }
+
+FileResult language_file_load(Language language, const char *path, std::vector<u8> &destination,
+                              std::size_t capacity) {
+    destination.clear();
+    DataFile file{};
+    auto result = language_file_open(&file, language, path);
+    if (result == FileResult::Ok)
+        result = data_file_read(&file, destination, capacity);
+    data_file_close(&file);
+    return result;
+}
 }

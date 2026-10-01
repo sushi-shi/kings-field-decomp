@@ -236,6 +236,8 @@ void notify_effect_update(void)
         break;
     }
     case KF_NOTIFICATION_HOLD: {
+        if (kf::host_action_held(kf::Action::compare_language))
+            break;
         u8 counter = game_graphics_runtime.notification_state.control.hold_frames - 1;
         game_graphics_runtime.notification_state.control.hold_frames = counter;
         if (counter == 0) {
