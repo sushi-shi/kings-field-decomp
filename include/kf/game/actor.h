@@ -22,8 +22,6 @@ struct KfAnimationCacheRecord;
 
 enum {
     KF_ACTOR_DEFINITION_COUNT = 12,
-    KF_ACTOR_DEFINITION_WORD_COUNT = 456,
-    KF_ACTOR_ATTACHMENT_OFFSET_COUNT = 2,
     KF_ACTOR_CAPACITY = 128
 };
 
@@ -212,10 +210,9 @@ typedef struct KfActorDefinition {
     KfAnimationClip action_animations[KF_ACTOR_ANIM_SLOT_COUNT];
     u8 turn_rate;
     SoundRef sounds[KF_ACTOR_SOUND_COUNT];
-    struct KfVec3s attachment_offsets[KF_ACTOR_ATTACHMENT_OFFSET_COUNT];
+    std::array<KfVec3s, KF_ACTOR_EFFECT_PARAMETER_COUNT> attachment_offsets;
     s16 special_attack_chance;
     s16 special_attack_range;
-    u8 unknown_38[2];
     u16 action_animation_steps[KF_ACTOR_ANIM_SLOT_COUNT];
     u16 action_animation_phases[KF_ACTOR_ANIM_SLOT_COUNT];
     u16 collision_radius;
@@ -312,7 +309,7 @@ extern void actor_bind_current(KfActor *actor);
 extern void actor_apply_damage(
     u16 actor_index, u16 base_power, u16 component0, u16 component1,
     u16 component2, u16 component3, u16 component4, u16 scale, KfEffectType hit_flags);
-extern void actor_definitions_load(const KfActorDefinitionTable *definitions);
+extern void actor_definitions_load(KfResourceChunk chunk);
 extern void actor_initialize(KfActor *actor);
 extern void actor_initialize_current(void);
 extern void actor_initialize_slot(u16 actor_index);

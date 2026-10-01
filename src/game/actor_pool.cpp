@@ -1,6 +1,7 @@
 #include <kf/platform/prelude.h>
 #include <kf/game/actor.h>
 #include <kf/game/game.h>
+#include <kf/lib/byte_reader.h>
 #include <kf/lib/codec.h>
 #include <kf/lib/map_data.h>
 #include <kf/lib/null.h>
@@ -61,9 +62,57 @@ void actor_pool_load_placements(KfResourceChunk chunk)
     }
 }
 
-void actor_definitions_load(const KfActorDefinitionTable *definitions)
+void actor_definitions_load(KfResourceChunk chunk)
 {
-    actor_state.definitions = *definitions;
+    using namespace kf::codec;
+    constexpr std::size_t actor_definition_bytes = 152;
+    KfActorDefinitionTable definitions {};
+    if (decode([&] {
+        Reader input({chunk.data, chunk.size});
+        for (auto &definition : definitions.entries) {
+            Reader record(input.take(actor_definition_bytes));
+            definition.pursuit_distance_scale = record.byte();
+            definition.model_and_texture = record.byte();
+            definition.melee_attack_chance = record.byte();
+            definition.status_effect = kf_enum_decode<KfPlayerStatusFlags>(record.byte());
+            definition.status_effect_chance = record.byte();
+            for (auto &code : definition.action_parameters.effect_codes)
+                code = kf_enum_decode<KfActorEffectCode>(record.byte());
+            for (auto &chance : definition.action_parameters.effect_chances)
+                chance = record.byte();
+            definition.action_parameters.drop_object = kf_enum_decode<KfObjectId>(record.byte());
+            definition.action_parameters.drop_chance = record.byte();
+            definition.move_speed = record.byte();
+            for (auto &clip : definition.action_animations)
+                clip = kf_enum_decode<KfAnimationClip>(record.byte());
+            definition.turn_rate = record.byte();
+            for (auto &sound : definition.sounds)
+                sound = {record.byte(), record.byte(), record.byte()};
+            for (auto &offset : definition.attachment_offsets)
+                offset = {record.s16_le(), record.s16_le(), record.s16_le()};
+            // Retail reuses the third attachment's x/y for special-attack parameters.
+            const auto &third = definition.attachment_offsets.back();
+            definition.special_attack_chance = third.x;
+            definition.special_attack_range = third.y;
+            for (auto &step : definition.action_animation_steps)
+                step = record.u16_le();
+            for (auto &phase : definition.action_animation_phases)
+                phase = record.u16_le();
+            definition.collision_radius = record.u16_le();
+            definition.collision_height = record.u16_le();
+            definition.awareness_distance = record.u16_le();
+            definition.initial_health = record.u16_le();
+            definition.effect_owner_id = record.u16_le();
+            definition.experience_reward = record.u16_le();
+            for (auto &component : definition.attack_components)
+                component = record.u16_le();
+            for (auto &defense : definition.defenses)
+                defense = record.u16_le();
+            definition.gold_drop_limit = record.u16_le();
+        }
+    }) != KF_CODEC_OK)
+        kf::host_fail("Invalid actor definitions.");
+    actor_state.definitions = definitions;
 }
 
 

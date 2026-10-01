@@ -231,8 +231,7 @@ void map_resources_load(KfFloorId floor, KfMapVariant map_variant)
     stream = resource_stream_next(stream, resource_end);
     actor_pool_load_placements(resource_chunk_view(stream, resource_end));
     stream = resource_stream_next(stream, resource_end);
-    actor_definitions_load(resource_chunk_data<KfActorDefinitionTable>(
-        resource_chunk_view(stream, resource_end), "actor definitions"));
+    actor_definitions_load(resource_chunk_view(stream, resource_end));
     stream = resource_stream_next(stream, resource_end);
     map_event_pool_load(resource_chunk_view(stream, resource_end));
     memory_release_last(memory_arena);
