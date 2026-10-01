@@ -45,8 +45,12 @@ KfCollisionTarget collision_target;
 KfCollisionResult collision_query_world(
     s32 point_x, s32 point_y, s32 point_z, s32 radius, s32 height, u32 flags)
 {
+    if (point_x < 0 || point_x >= KF_MAP_COLUMNS * KF_MAP_TILE_SIZE
+        || point_z < 0 || point_z >= KF_MAP_ROWS * KF_MAP_TILE_SIZE) {
+        return {KfCollisionKind::Terrain};
+    }
     s32 cell = point_x / KF_MAP_TILE_SIZE
-        + (s16)(point_z / KF_MAP_TILE_SIZE) * KF_MAP_COLUMNS;
+        + (point_z / KF_MAP_TILE_SIZE) * KF_MAP_COLUMNS;
     s32 floor_height;
     s32 hit;
     KfMapAttribute attribute;
