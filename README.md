@@ -114,8 +114,6 @@ kings-field
 | Compare text languages (hold) | R |
 | Pause | P or Escape during gameplay |
 
-Letter shortcuts use physical QWERTY positions regardless of keyboard layout.
-
 Hold **R** or **right-stick click** on a controller to read dialogue, inventory,
 menus and messages such as “Empty” in the other language. Release to return to
 your selected language. Comparison does not advance dialogue; messages stay
