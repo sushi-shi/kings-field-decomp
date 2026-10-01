@@ -229,8 +229,12 @@ static void process_keyboard_event(const SDL_KeyboardEvent &event) {
     if (event.down) {
         if (pressed_key != SDLK_UNKNOWN)
             return;
-        // Use the layout/remap, without Shift/Caps changing letter bindings.
-        pressed_key = SDL_GetKeyFromScancode(event.scancode, SDL_KMOD_NONE, false);
+        // Letter shortcuts follow physical QWERTY positions in every layout.
+        // Other keys retain logical remaps, including Caps Lock to Escape.
+        if (event.scancode >= SDL_SCANCODE_A && event.scancode <= SDL_SCANCODE_Z)
+            pressed_key = SDLK_A + static_cast<SDL_Keycode>(event.scancode - SDL_SCANCODE_A);
+        else
+            pressed_key = SDL_GetKeyFromScancode(event.scancode, SDL_KMOD_NONE, false);
         if (pressed_key != SDLK_UNKNOWN)
             input_button(&host.input, {InputDevice::keyboard, pressed_key}, true);
     } else {

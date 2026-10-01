@@ -15,7 +15,8 @@ class NativeRegressions(unittest.TestCase):
         cls.directory = tempfile.TemporaryDirectory(prefix="kf-native-regressions-")
         cls.addClassCleanup(cls.directory.cleanup)
         for name in ["native_regressions", "lighting_regressions", "resource_failures",
-                     "cutscene_resources", "collision_results", "map_grids", "menu_outcomes", "dialogue_compare"]:
+                     "cutscene_resources", "collision_results", "map_grids", "menu_outcomes", "dialogue_compare",
+                     "keyboard_controls"]:
             subprocess.run(
                 [
                     "clang++", "-std=c++20", "-O1", "-g", "-fno-rtti",
@@ -61,6 +62,9 @@ class NativeRegressions(unittest.TestCase):
 
     def test_menu_outcomes_and_session_restoration(self):
         subprocess.run([Path(self.directory.name) / "menu_outcomes"], check=True)
+
+    def test_keyboard_layouts_and_remapped_keys(self):
+        subprocess.run([Path(self.directory.name) / "keyboard_controls"], check=True)
 
     def test_dialogue_comparison_preserves_page_language_and_resource_root(self):
         subprocess.run([Path(self.directory.name) / "dialogue_compare", self.directory.name], check=True)
