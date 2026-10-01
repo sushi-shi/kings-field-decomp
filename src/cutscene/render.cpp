@@ -9,12 +9,10 @@
 void cutscene_tmd_project_vertices(s32 count, const MATRIX *model, const kf::Projection &projection)
 {
     KfScreenVertex *projected;
-    SVECTOR *vertex;
+    const SVECTOR *vertex;
 
-    if (count < 0 || count > KF_PROJECTED_VERTEX_CAPACITY)
-        kf::host_fail("Model exceeds projected vertex capacity.");
     projected = open_graphics_runtime.tmd_projected_vertices.data();
-    vertex = open_graphics_runtime.current_tmd_vertices;
+    vertex = tmd_vertices(cutscene_tmd_context(), count).data();
     for (count--; count != -1; count--) {
         const auto point = kf::render_project_point(*model, projection, *vertex);
         projected->position = {point.x, point.y};
@@ -27,13 +25,11 @@ void cutscene_tmd_project_vertices(s32 count, const MATRIX *model, const kf::Pro
 
 void tmd_project_vertices_perspective_right(s32 count, const MATRIX *model, const kf::Projection &projection)
 {
-    if (count < 0 || count > KF_PROJECTED_VERTEX_CAPACITY)
-        kf::host_fail("Model exceeds projected vertex capacity.");
     KfScreenVertex *out;
-    SVECTOR *vertex;
+    const SVECTOR *vertex;
 
     out = open_graphics_runtime.tmd_projected_vertices.data();
-    vertex = open_graphics_runtime.current_tmd_vertices;
+    vertex = tmd_vertices(cutscene_tmd_context(), count).data();
     for (count--; count != -1; count--) {
         const auto point = kf::render_project_point(*model, projection, *vertex);
         out->position = {point.x, point.y};

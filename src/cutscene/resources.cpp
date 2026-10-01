@@ -46,7 +46,7 @@ void opening_resources_load_scene0(void)
     stream = resource_stream_next(stream, resource_end);
     map_grids_load(resource_chunk_view(stream, resource_end),
         cutscene_map_cell_attribute_grid, cutscene_map_floor_height_grid,
-        cutscene_map_cell_orientation_grid, opening_cell_storage.scene.collision_flags,
+        cutscene_map_cell_orientation_grid, opening_scene_cells.collision_flags,
         cutscene_map_collision_grid);
     stream = resource_stream_next(stream, resource_end);
     const auto floor_items = resource_chunk_view(stream, resource_end);

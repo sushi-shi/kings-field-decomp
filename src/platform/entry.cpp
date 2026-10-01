@@ -118,6 +118,7 @@ int main(int argc, char **argv) {
         return 1;
     }
     if (online.host || !online.room.empty()) {
+        online.lobby = true;
         if (!kf::avatar_mesh(online.avatar == 0xff ? 41 : online.avatar)) {
             std::fprintf(stderr, "Multiplayer needs character resources: use --avatar-disc KFIII_IMAGE or --avatars PACK.\n");
             return 1;

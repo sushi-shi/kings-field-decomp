@@ -11,6 +11,7 @@
 #endif
 
 namespace kf {
+// Also persisted in campaign compatibility: pose corrections do not change it.
 static constexpr char avatar_presentation_recipe[] = "kf3-standing-pose-v13";
 static KfAvatarPack *pack;
 static AvatarMesh meshes[KF_AVATAR_SLOTS];
@@ -157,8 +158,12 @@ static void open_elf_forearms(KfAvatarVertex &vertex) {
           (std::abs(vertex.x)>160 && vertex.y<-1250) || vertex.z<-120)) return;
     const bool left=vertex.x>=0 && !(vertex.y<-1110 && vertex.z<-160);
     const SVECTOR elbow=left ? SVECTOR{215,-1290,-40} : SVECTOR{-240,-1280,-95};
+    // Keep the right forearm rigid beyond its elbow join. Blending across the
+    // entire crossed forearm pinched it into a spike when the weapon arm bent.
+    // Taper at the upper seam too, so its shared vertex remains on the arm.
     const auto weight=left ? std::clamp((vertex.y+1390)*4096/230,0,4096) :
-        std::clamp((vertex.x+240)*4096/200,0,4096);
+        std::min(std::clamp((vertex.x+240)*4096/60,0,4096),
+            std::clamp((vertex.y+1390)*4096/60,0,4096));
     MATRIX rotation{};
     matrix_set_rotation_xyz({static_cast<s16>((left ? 350 : 240)*weight/4096),0,
         static_cast<s16>((left ? -250 : 850)*weight/4096)},rotation);

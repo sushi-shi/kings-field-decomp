@@ -9,7 +9,8 @@ typedef struct KfNetTransport KfNetTransport;
 typedef struct KfNetTransportConfig {
     uint8_t address[2049], room[129], resources[129], recipe[129], resume[129];
     uint8_t credential[65], roster[4][32];
-    uint8_t host;
+    uint8_t roster_avatars[4];
+    uint8_t host, lobby, avatar;
 } KfNetTransportConfig;
 typedef struct KfNetTransportEvent {
     uint8_t kind, peer, lane;
@@ -26,6 +27,7 @@ void kf_net_transport_close(KfNetTransport *);
 KfCodecResult kf_net_transport_poll(KfNetTransport *, KfNetTransportEvent *);
 KfCodecResult kf_net_transport_send(KfNetTransport *, uint8_t, uint8_t, const uint8_t *, size_t);
 KfCodecResult kf_net_transport_resume(KfNetTransport *, uint8_t *, size_t, size_t *);
+KfCodecResult kf_net_transport_lobby(KfNetTransport *, uint8_t start);
 
 /* Browser bridge only: integer session IDs reject callbacks after close. */
 void kf_net_browser_event(uint32_t, uint8_t, uint8_t, uint8_t, uint32_t, const uint8_t *, size_t);

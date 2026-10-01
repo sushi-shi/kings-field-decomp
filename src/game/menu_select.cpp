@@ -18,7 +18,6 @@ static constexpr unsigned MENU_SELECTION_LIST_CAPACITY = 20;
 kf::FrameTask<void> menu_equip_select(PlayerContext &player, KfEquipmentMenuCategory equipment_category)
 {
     KfMenuList ctx;
-    std::array<std::array<s16, MENU_GLYPHS_PER_ROW>, MENU_SELECTION_LIST_CAPACITY> labels;
     std::array<KfObjectId, MENU_SELECTION_LIST_CAPACITY> item_ids;
     s32 item_id;
     s32 found;
@@ -70,19 +69,16 @@ kf::FrameTask<void> menu_equip_select(PlayerContext &player, KfEquipmentMenuCate
     found = 0;
     for (item_id = start; item_id < end; item_id++) {
         if (player_stock[item_id] != 0) {
-            labels[found] = item_name_rows[item_id].codes;
             item_ids[found] = kf_enum_decode<KfObjectId>(item_id);
             found++;
         }
     }
-    const auto unequip = menu_label(MenuLabel::Unequip);
-    labels[found] = unequip.codes;
     item_ids[found] = KF_OBJECT_NONE;
     found++;
 
     menu_list_init(&ctx, KF_MENU_WINDOW_EQUIPMENT, kf_enum_encode<s32>(equipment_category));
     ctx.entry_count = found;
-    ctx.glyph_rows = labels;
+    ctx.entries = std::span<const KfObjectId>(item_ids).first(found);
     ctx.quantities = {};
 
     if (ctx.entry_count != 0) {
@@ -142,7 +138,6 @@ kf::FrameTask<void> menu_equip_select(PlayerContext &player, KfEquipmentMenuCate
 kf::FrameTask<void> menu_spell_select(WorldState &world, PlayerContext &player)
 {
     KfMenuList ctx;
-    std::array<std::array<s16, MENU_GLYPHS_PER_ROW>, MENU_SELECTION_LIST_CAPACITY> labels;
     std::array<KfEffectKind, MENU_SELECTION_LIST_CAPACITY> magic_ids;
     s32 magic_id;
     s32 found;
@@ -156,19 +151,16 @@ kf::FrameTask<void> menu_spell_select(WorldState &world, PlayerContext &player)
     found = 0;
     for (magic_id = kf_enum_encode<s32>(KF_MAGIC_LIGHTNING_BOLT); magic_id < KF_MAGIC_PLAYER_COUNT; magic_id++) {
         if (player.learned_magic[magic_id] == KF_MAGIC_LEARNED) {
-            labels[found] = magic_name_rows[magic_id].codes;
             magic_ids[found] = kf_enum_decode<KfEffectKind>(magic_id);
             found++;
         }
     }
-    const auto unequip = menu_label(MenuLabel::Unequip);
-    labels[found] = unequip.codes;
     magic_ids[found] = KF_MAGIC_NONE;
     found++;
 
     menu_list_init(&ctx, KF_MENU_WINDOW_EQUIPMENT, kf_enum_encode<s32>(KF_EQUIP_MENU_MAGIC));
     ctx.entry_count = found;
-    ctx.glyph_rows = labels;
+    ctx.entries = std::span<const KfEffectKind>(magic_ids).first(found);
     ctx.quantities = {};
 
     menu_frame_begin();

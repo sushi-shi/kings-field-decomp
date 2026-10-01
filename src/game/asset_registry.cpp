@@ -6,14 +6,47 @@
 #include <new>
 #include <stdexcept>
 
+static void asset_registry_clear(u16 asset_id)
+{
+    auto &resource = game_graphics_runtime.asset_registry_tmds[asset_id];
+    if (game_graphics_runtime.tmd_state.current_tmd.data == resource.data) {
+        game_graphics_runtime.tmd_state.current_tmd = {};
+        game_graphics_runtime.current_tmd_vertices = {};
+    }
+    for (auto &record : game_graphics_runtime.animation_cache_records)
+        if (record.state != KF_ANIMATION_CACHE_FREE && record.asset_index == asset_id)
+            animation_cache_release(&record);
+    resource = {};
+    game_graphics_runtime.asset_animations[asset_id] = {};
+}
+
+void asset_registry_clear_floor()
+{
+    animation_cache_release_all();
+    game_graphics_runtime.tmd_state = {};
+    game_graphics_runtime.current_tmd_vertices = {};
+    for (u16 id = 0; id < KF_ASSET_REGISTRY_KNOWN_ENTRIES; ++id)
+        if (id != KF_ASSET_WEAPON && id != KF_ASSET_HUD_MODELS)
+            asset_registry_clear(id);
+}
+
 void asset_registry_load_tmd_archive(u16 first_asset_id, u8 *archive, std::size_t size)
 {
     if (!archive || size < KF_ASSET_ARCHIVE_HEADER_BYTES)
         kf::host_fail("Truncated model archive header");
     const u16 count = archive[0] | (static_cast<u16>(archive[1]) << 8);
-    if (first_asset_id > KF_ASSET_REGISTRY_KNOWN_ENTRIES ||
-        count > KF_ASSET_REGISTRY_KNOWN_ENTRIES - first_asset_id)
-        kf::host_fail("Model archive exceeds the asset registry");
+    u16 end;
+    switch (first_asset_id) {
+    case KF_ASSET_ACTOR_FIRST: end = KF_ASSET_MAP_EVENT_FIRST; break;
+    case KF_ASSET_MAP_EVENT_FIRST: end = KF_ASSET_WEAPON; break;
+    case KF_ASSET_EFFECT_FIRST: end = KF_ASSET_REGISTRY_KNOWN_ENTRIES; break;
+    default: kf::host_fail("Invalid model archive bank");
+    }
+    if (count > end - first_asset_id)
+        kf::host_fail("Model archive exceeds its asset bank");
+    // A shorter replacement must not leave views into the previous archive.
+    for (u16 id = first_asset_id; id < end; ++id)
+        asset_registry_clear(id);
 
     archive += KF_ASSET_ARCHIVE_HEADER_BYTES;
     size -= KF_ASSET_ARCHIVE_HEADER_BYTES;
@@ -60,4 +93,5 @@ void asset_registry_select(u16 asset_id)
         !game_graphics_runtime.asset_registry_tmds[asset_id].data)
         kf::host_fail("Unregistered model asset");
     game_graphics_runtime.tmd_state.current_tmd = game_graphics_runtime.asset_registry_tmds[asset_id];
+    game_graphics_runtime.current_tmd_vertices = {};
 }

@@ -8,6 +8,7 @@
 #include <kf/game/save.h>
 #include <kf/game/campaign.h>
 #include <kf/game/player.h>
+#include <kf/platform/assets.h>
 #include <kf/platform/saves.h>
 #include <cstdlib>
 #include <cstdio>
@@ -16,6 +17,7 @@
 #include <kf/game/game.h>
 
 #include <array>
+#include <string>
 
 namespace {
 constexpr int save_no_equipment_id = 255;
@@ -481,20 +483,23 @@ kf::FrameTask<void> menu_play_input_sound(KfMenuSoundCue cue)
 
 bool menu_load_message_image(s32 message_id)
 {
+    if (message_id == MESSAGE_IMAGE_SKIP)
+        return false;
     std::array<char, menu_image_path_capacity> path = {"TIM/M000."};
-    u8 *buffer;
+    resource_path_write_decimal3(&path[menu_image_number_offset], message_id);
+    return menu_load_image(path.data()) != KF_RESOURCE_LOADED;
+}
 
-    if (message_id != MESSAGE_IMAGE_SKIP) {
-        resource_path_write_decimal3(&path[menu_image_number_offset], message_id);
-        buffer = game_graphics_runtime.display_state.asset_load_buffer;
-        std::size_t image_size;
-        if (resource_file_load_into(buffer,
-                game_graphics_runtime.display_state.asset_load_capacity, path.data(), &image_size) != KF_RESOURCE_LOADED) {
-            return true;
-        }
-        tim_upload_images(buffer, image_size);
-    }
-    return false;
+static kf::ByteBuffer comparison_image_read(const char *path, std::size_t capacity)
+{
+    const auto alternate = kf::game_language() == kf::Language::Japanese
+        ? kf::Language::English : kf::Language::Japanese;
+    kf::ByteBuffer bytes;
+    if (!kf::language_available(alternate))
+        return bytes;
+    const auto full_path = std::string("KF/") + path;
+    kf::language_file_load(alternate, full_path.c_str(), bytes, capacity);
+    return bytes;
 }
 
 kf::FrameTask<void> screen_show_image_until_input(const char *path)
@@ -507,18 +512,46 @@ kf::FrameTask<void> screen_show_image_until_input(const char *path)
         co_return;
     }
     tim_upload_images(game_graphics_runtime.display_state.asset_load_buffer, image_size);
+    const auto alternate = comparison_image_read(path, game_graphics_runtime.display_state.asset_load_capacity);
+    // Transparent glyph pixels need the original backdrop when replacing a page.
+    kf::Image backdrop{};
+    if (!alternate.empty() && !kf::renderer_capture_frame(kf::host_renderer(), backdrop))
+        kf::host_fail("Cannot capture the dialogue background.");
+    bool showing_alternate = false;
+    bool reported_unavailable = false;
     kf::InputContextScope input_context(kf::InputContext::Menu);
     for (;;) {
+        const auto buttons = kf::host_read_buttons();
+        const bool compare = kf::host_action_held(kf::Action::compare_language);
+        const bool show_alternate = compare && !alternate.empty();
+        if (show_alternate != showing_alternate) {
+            if (!kf::renderer_restore_frame(kf::host_renderer(), backdrop))
+                kf::host_fail("Cannot restore the dialogue background.");
+            if (show_alternate)
+                tim_upload_images(alternate.data(), alternate.size());
+            else
+                tim_upload_images(game_graphics_runtime.display_state.asset_load_buffer, image_size);
+            showing_alternate = show_alternate;
+        }
+        if (compare && alternate.empty() && !reported_unavailable) {
+            kf::host_language_status("The other language is unavailable for this page.");
+            reported_unavailable = true;
+        }
         if (brightness < IMAGE_WAIT_MAX_BRIGHTNESS) {
             brightness++;
         }
         display_present_system_screen(brightness);
         (co_await game_wait_frame());
+        // A comparison never advances the page, including a confirm held through release.
+        if (compare) {
+            released = false;
+            continue;
+        }
         if (released == false) {
-            if (kf::host_read_buttons() == 0) {
+            if (buttons == 0) {
                 released = true;
             }
-        } else if (kf::host_read_buttons() != 0) {
+        } else if (buttons != 0) {
             (co_await game_wait_buttons_released());
             break;
         }

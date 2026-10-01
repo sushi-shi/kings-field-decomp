@@ -3,6 +3,11 @@
 #include <kf/game/game.h>
 #include <kf/game/party_runtime.h>
 
+#include <array>
+#include <cstdint>
+#include <span>
+#include <vector>
+
 bool party_predict_tick(WorldState &world, PartyRuntime &runtime, u32 authoritative_tick)
 {
     if (!world.prediction || runtime.tick < authoritative_tick ||
@@ -438,6 +443,57 @@ kf::FrameTask<bool> party_travel(WorldState &world)
     co_return false;
 }
 
+static std::vector<VECTOR> party_spawn_occupied(const WorldState &world, u8 ignored_slot)
+{
+    std::vector<VECTOR> occupied;
+    for (u8 slot = 0; slot < party_capacity; ++slot) {
+        const auto &member = world.party.members[slot];
+        if (slot == ignored_slot || !party_member_alive(member)) continue;
+        const auto &state = member.player.state;
+        occupied.push_back({state.camera_position.vx, state.foot_height, state.camera_position.vz});
+    }
+    return occupied;
+}
+
+static bool party_spawn_near(WorldState &world, PlayerContext &player, const VECTOR &anchor,
+    std::span<const VECTOR> occupied, VECTOR &position)
+{
+    constexpr s32 radius = KF_COLLISION_PLAYER_RADIUS;
+    constexpr s32 spacing = 2 * radius + 100;
+    constexpr s32 step_limit = 699;
+    const auto available = [&](s32 x, s32 z) {
+        if (x < radius || z < radius || x + radius >= KF_MAP_COLUMNS * KF_MAP_TILE_SIZE ||
+            z + radius >= KF_MAP_ROWS * KF_MAP_TILE_SIZE) return false;
+        const s32 floor = map_base_floor_height(world, x / KF_MAP_TILE_SIZE, z / KF_MAP_TILE_SIZE);
+        if (std::abs(floor - anchor.vy) > step_limit) return false;
+        // Check the whole footprint, including adjacent cells at walls/ledges.
+        for (s32 row = (z - radius) / KF_MAP_TILE_SIZE; row <= (z + radius) / KF_MAP_TILE_SIZE; ++row)
+            for (s32 col = (x - radius) / KF_MAP_TILE_SIZE; col <= (x + radius) / KF_MAP_TILE_SIZE; ++col)
+                if (!map_cell_has_full_floor(world.collision.cells[row][col]) ||
+                    std::abs(map_base_floor_height(world, col, row) - floor) > step_limit) return false;
+        for (const auto &other : occupied) {
+            const auto dx = std::int64_t(x) - other.vx;
+            const auto dz = std::int64_t(z) - other.vz;
+            if (std::abs(floor - other.vy) < KF_COLLISION_PLAYER_HEIGHT &&
+                dx * dx + dz * dz < spacing * spacing) return false;
+        }
+        if (collision_query_world(world, player, x, floor, z, radius, KF_COLLISION_PLAYER_HEIGHT,
+                KF_COLLISION_SKIP_PLAYER).kind != KfCollisionKind::None) return false;
+        position = {x, floor, z};
+        return true;
+    };
+    if (available(anchor.vx, anchor.vz)) return true;
+    constexpr std::array<std::array<s32, 2>, 8> directions {{
+        {{1, 0}}, {{-1, 0}}, {{0, 1}}, {{0, -1}},
+        {{1, 1}}, {{-1, 1}}, {{1, -1}}, {{-1, -1}}
+    }};
+    for (s32 ring = 1; ring <= 3; ++ring)
+        for (const auto &direction : directions)
+            if (available(anchor.vx + direction[0] * spacing * ring,
+                    anchor.vz + direction[1] * spacing * ring)) return true;
+    return false;
+}
+
 bool party_admit(WorldState &world, u8 slot, const kf::net::Identity &character_id, bool returning)
 {
     if (slot >= party_capacity || character_id == kf::net::Identity{} ||
@@ -448,6 +504,12 @@ bool party_admit(WorldState &world, u8 slot, const kf::net::Identity &character_
     if (member.presence == PartyPresence::Living || member.presence == PartyPresence::Spectating) return false;
     if (returning && member.character_id != character_id) return false;
     auto &player = member.player;
+    const auto &host = world.party.members[0].player.state;
+    const VECTOR anchor {host.camera_position.vx, host.foot_height, host.camera_position.vz};
+    const auto heading = host.camera_rotation;
+    const auto occupied = party_spawn_occupied(world, slot);
+    VECTOR position;
+    if (!party_spawn_near(world, player, anchor, occupied, position)) return false;
     if (!returning) {
         std::memset(member.loot_claims, 0, sizeof member.loot_claims);
         member.quest_rewards = 0;
@@ -469,10 +531,8 @@ bool party_admit(WorldState &world, u8 slot, const kf::net::Identity &character_
             player.state.progress_state.highest_floor = std::max<KfFloorId>(player.state.progress_state.highest_floor,
                 other.player.state.progress_state.highest_floor);
     player.state.map_variant = world.variant;
-    const auto &entry = floor_entry_cells[kf_enum_encode<unsigned>(world.floor) - 1];
-    player.state.camera_position.vx = entry.x * KF_MAP_TILE_SIZE + KF_MAP_TILE_CENTER;
-    player.state.camera_position.vz = entry.z * KF_MAP_TILE_SIZE + KF_MAP_TILE_CENTER;
-    player.state.camera_rotation = {};
+    player.state.camera_position = position;
+    player.state.camera_rotation = heading;
     if (!returning) party_clear_status(player);
     player.state.update_state = KF_PLAYER_UPDATE_NORMAL;
     if (!returning) {
@@ -496,7 +556,19 @@ void party_move_to_floor_entry(WorldState &world)
 {
     if (!world.party.enabled || world.prediction) return;
     const auto &entry = floor_entry_cells[kf_enum_encode<unsigned>(world.floor) - 1];
-    for (auto &member : world.party.members) {
+    const VECTOR anchor {entry.x * KF_MAP_TILE_SIZE + KF_MAP_TILE_CENTER,
+        map_base_floor_height(world, entry.x, entry.z), entry.z * KF_MAP_TILE_SIZE + KF_MAP_TILE_CENTER};
+    std::array<VECTOR, party_capacity> positions;
+    std::vector<VECTOR> occupied;
+    // Plan the complete move before changing any position or occupancy count.
+    for (u8 slot = 0; slot < party_capacity; ++slot) {
+        auto &member = world.party.members[slot];
+        if (member.presence == PartyPresence::Empty || member.presence == PartyPresence::Waiting) continue;
+        if (!party_spawn_near(world, member.player, anchor, occupied, positions[slot])) return;
+        if (party_member_alive(member)) occupied.push_back(positions[slot]);
+    }
+    for (u8 slot = 0; slot < party_capacity; ++slot) {
+        auto &member = world.party.members[slot];
         if (member.presence == PartyPresence::Empty || member.presence == PartyPresence::Waiting) continue;
         auto &player = member.player;
         const bool living = party_member_alive(member);
@@ -504,14 +576,14 @@ void party_move_to_floor_entry(WorldState &world)
             const auto cell = player.state.motion_state.map_cell;
             collision_adjust_cell_occupancy(world, cell.x, cell.z, -1);
         }
-        player.state.camera_position.vx = entry.x * KF_MAP_TILE_SIZE + KF_MAP_TILE_CENTER;
-        player.state.camera_position.vz = entry.z * KF_MAP_TILE_SIZE + KF_MAP_TILE_CENTER;
+        player.state.camera_position = positions[slot];
         player.state.progress_state.current_floor = world.floor;
         player.state.map_variant = world.variant;
         party_reset_motion(player);
         player_sync_position_to_map(world, player);
         player.state.previous_map_cell = player.state.motion_state.map_cell;
-        if (!living) collision_adjust_cell_occupancy(world, entry.x, entry.z, -1);
+        if (!living) collision_adjust_cell_occupancy(world,
+            player.state.motion_state.map_cell.x, player.state.motion_state.map_cell.z, -1);
     }
 }
 
@@ -520,7 +592,11 @@ void party_revive_spectators(WorldState &world, const PlayerContext &at)
     for (auto &member : world.party.members) {
         if (member.presence != PartyPresence::Spectating || !member.connected) continue;
         auto &player = member.player;
-        player.state.camera_position = at.state.camera_position;
+        const VECTOR anchor {at.state.camera_position.vx, at.state.foot_height, at.state.camera_position.vz};
+        const auto occupied = party_spawn_occupied(world, player.party_slot);
+        VECTOR position;
+        if (!party_spawn_near(world, player, anchor, occupied, position)) continue;
+        player.state.camera_position = position;
         player.state.camera_rotation = at.state.camera_rotation;
         player_sync_position_to_map(world, player);
         party_clear_status(player);

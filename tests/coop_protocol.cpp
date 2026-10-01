@@ -78,7 +78,7 @@ int main() {
     require(input_encode(input, packet), "Cannot encode controls");
     abi_rejections(packet);
     queue_capacity();
-    const std::array<u8, 19> header_bytes {0x4b, 0x46, 0x4e, 0x31, 15, 0, 1, 4, 0, 0, 0, 3, 0, 0, 0, 7, 0, 0, 0};
+    const std::array<u8, 19> header_bytes {0x4b, 0x46, 0x4e, 0x31, 16, 0, 1, 4, 0, 0, 0, 3, 0, 0, 0, 7, 0, 0, 0};
     require(std::memcmp(packet.data(), header_bytes.data(), header_bytes.size()) == 0,
             "Protocol wire header changed");
     auto old_version = packet;

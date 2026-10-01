@@ -20,6 +20,8 @@
 #include <kf/lib/render_face.h>
 
 #include <array>
+#include <optional>
+#include <utility>
 
 kf::FrameTask<void> shop_menu_buy(PlayerContext &player, KfItemStockBank shop_bank);
 kf::FrameTask<void> shop_menu_sell(PlayerContext &player, KfItemStockBank shop_bank);
@@ -31,13 +33,7 @@ enum {
     MENU_PICKUP_CONFIRM_DECLINE_Y = MENU_PICKUP_CONFIRM_ACCEPT_Y + MENU_CONFIRM_ROW_STEP
 };
 
-KfMenuAssets menu_assets;
-
-std::array<MenuWindowLayout, KF_MENU_WINDOW_LAYOUT_COUNT> menu_window_layouts;
-
-std::array<MenuGlyphRow, KF_ITEM_COUNT> item_name_rows;
-
-std::array<MenuGlyphRow, KF_MAGIC_PLAYER_COUNT> magic_name_rows;
+static std::array<std::optional<KfMenuResources>, 2> menu_languages;
 
 std::array<std::array<u16, KF_ITEM_SHOP_COUNT>, KF_ITEM_COUNT> item_buy_prices;
 
@@ -174,58 +170,82 @@ static void menu_data_string(MenuDataReader *reader, MenuGlyphString *string)
     menu_data_glyphs(reader, &string->glyphs);
 }
 
-void menu_resources_reload(void)
+static void menu_resources_decode(std::span<const u8> bytes, KfMenuResources &resources)
 {
-    u8 *stat_data;
-    std::size_t stat_size;
-    resource_file_load_allocated(memory_arena, &stat_data, "COM/STAT.DAT", &stat_size);
-    MenuDataReader reader{stat_data, stat_size};
+    MenuDataReader reader{bytes.data(), bytes.size()};
 
-    for (auto &bank : menu_assets.background_quads)
+    for (auto &bank : resources.assets.background_quads)
         for (auto &face : bank)
             face = menu_data_face(&reader, MenuTemplateKind::Textured);
-    for (auto &face : menu_assets.magic_artwork_quads)
+    for (auto &face : resources.assets.magic_artwork_quads)
         face = menu_data_face(&reader, MenuTemplateKind::Textured);
-    for (auto &face : menu_assets.message_image_quads)
+    for (auto &face : resources.assets.message_image_quads)
         face = menu_data_face(&reader, MenuTemplateKind::Textured);
-    for (auto &bank : menu_assets.dialog_quads)
+    for (auto &bank : resources.assets.dialog_quads)
         for (auto &face : bank)
             face = menu_data_face(&reader, MenuTemplateKind::Solid);
-    menu_assets.number_atlas = menu_data_sprite(&reader);
-    menu_assets.glyph_atlas = menu_data_sprite(&reader);
-    menu_assets.window_backdrop = menu_data_tile(&reader);
-    menu_assets.option_background = menu_data_sprite(&reader);
-    menu_assets.option_highlight = menu_data_sprite(&reader);
-    menu_assets.row_background = menu_data_sprite(&reader);
-    menu_assets.row_confirmed_background = menu_data_sprite(&reader);
-    for (auto &tile : menu_assets.list_tiles)
+    resources.assets.number_atlas = menu_data_sprite(&reader);
+    resources.assets.glyph_atlas = menu_data_sprite(&reader);
+    resources.assets.window_backdrop = menu_data_tile(&reader);
+    resources.assets.option_background = menu_data_sprite(&reader);
+    resources.assets.option_highlight = menu_data_sprite(&reader);
+    resources.assets.row_background = menu_data_sprite(&reader);
+    resources.assets.row_confirmed_background = menu_data_sprite(&reader);
+    for (auto &tile : resources.assets.list_tiles)
         tile = menu_data_tile(&reader);
-    menu_assets.selection_cursor = menu_data_sprite(&reader);
-    for (auto &layout : menu_window_layouts) {
+    resources.assets.selection_cursor = menu_data_sprite(&reader);
+    for (auto &layout : resources.windows) {
         menu_data_string(&reader, &layout.title);
         for (auto &row : layout.rows)
             menu_data_string(&reader, &row);
     }
     // Ordinary save files have no format-card action. Keep the authored return
     // label, moved into that removed row in the native menu description.
-    auto &save_layout = menu_window_layouts[kf_enum_encode<s32>(KF_MENU_WINDOW_SAVE)];
+    auto &save_layout = resources.windows[kf_enum_encode<s32>(KF_MENU_WINDOW_SAVE)];
     save_layout.rows[KF_MENU_SAVE_RETURN_ROW].glyphs = save_layout.rows[stat_save_return_row].glyphs;
-    auto &config = menu_window_layouts[kf_enum_encode<s32>(KF_MENU_WINDOW_CONFIG)];
+    auto &config = resources.windows[kf_enum_encode<s32>(KF_MENU_WINDOW_CONFIG)];
     config.rows[KF_MENU_CONFIG_RETURN_ROW] = config.rows[KF_MENU_CONFIG_LANGUAGE_ROW];
     config.rows[KF_MENU_CONFIG_RETURN_ROW].position.y += config.rows[1].position.y - config.rows[0].position.y;
     config.rows[KF_MENU_CONFIG_LANGUAGE_ROW].glyphs.codes[0] = MENU_TEXT_END;
-    for (auto &row : item_name_rows)
+    for (auto &row : resources.items)
         menu_data_glyphs(&reader, &row);
-    for (auto &row : magic_name_rows)
+    for (auto &row : resources.magic)
         menu_data_glyphs(&reader, &row);
-    for (auto &item : item_buy_prices)
+    for (auto &item : resources.buy_prices)
         for (u16 &price : item)
             price = menu_data_word(&reader);
-    for (auto &item : item_sell_prices)
+    for (auto &item : resources.sell_prices)
         for (u16 &price : item)
             price = menu_data_word(&reader);
 
-    memory_release_last(memory_arena);
+}
+
+bool menu_prepare_language(kf::Language language)
+{
+    auto &slot = menu_languages[static_cast<std::size_t>(language)];
+    if (slot)
+        return true;
+    kf::ByteBuffer bytes;
+    if (kf::language_file_load(language, "KF/COM/STAT.DAT", bytes, kf::disc_import_limit) != kf::FileResult::Ok)
+        return false;
+    KfMenuResources resources{};
+    menu_resources_decode(bytes, resources);
+    slot = std::move(resources);
+    return true;
+}
+
+const KfMenuResources &menu_resources()
+{
+    return menu_languages[static_cast<std::size_t>(game_text_language())].value();
+}
+
+void menu_resources_reload(void)
+{
+    if (!menu_prepare_language(kf::game_language()))
+        kf::host_fail("Cannot load menu resources.");
+    const auto &resources = menu_languages[static_cast<std::size_t>(kf::game_language())].value();
+    item_buy_prices = resources.buy_prices;
+    item_sell_prices = resources.sell_prices;
 }
 
 void item_load_database(void)
@@ -313,7 +333,6 @@ kf::FrameTask<void> shop_menu_root(PlayerContext &player, KfItemStockBank shop_b
 kf::FrameTask<void> shop_menu_buy(PlayerContext &player, KfItemStockBank shop_bank)
 {
     KfMenuList ctx;
-    std::array<std::array<s16, MENU_GLYPHS_PER_ROW>, KF_ITEM_COUNT> entries;
     std::array<u8, KF_ITEM_COUNT> available;
     std::array<KfObjectId, KF_ITEM_COUNT> item_ids;
     s32 slot;
@@ -330,7 +349,6 @@ kf::FrameTask<void> shop_menu_buy(PlayerContext &player, KfItemStockBank shop_ba
     found = 0;
     for (slot = kf_enum_encode<s32>(KF_ITEM_VERDITE); slot < KF_ITEM_COUNT; slot++) {
         if (stock[slot] != 0 && player.item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)][slot] < KF_ITEM_STACK_CAPACITY) {
-            entries[found] = item_name_rows[slot].codes;
             available[found] = stock[slot];
             item_ids[found] = kf_enum_decode<KfObjectId>(slot);
             found++;
@@ -338,7 +356,6 @@ kf::FrameTask<void> shop_menu_buy(PlayerContext &player, KfItemStockBank shop_ba
     }
     for (slot = 0; slot < kf_enum_encode<s32>(KF_ITEM_VERDITE); slot++) {
         if (stock[slot] != 0 && player.item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)][slot] < KF_ITEM_STACK_CAPACITY) {
-            entries[found] = item_name_rows[slot].codes;
             available[found] = stock[slot];
             item_ids[found] = kf_enum_decode<KfObjectId>(slot);
             found++;
@@ -346,7 +363,7 @@ kf::FrameTask<void> shop_menu_buy(PlayerContext &player, KfItemStockBank shop_ba
     }
     ctx.entry_count = found;
     ctx.visible_rows = MENU_SHOP_VISIBLE_ROWS;
-    ctx.glyph_rows = entries;
+    ctx.entries = std::span<const KfObjectId>(item_ids).first(found);
     ctx.quantities = {};
 
     menu_frame_begin();
@@ -413,7 +430,6 @@ kf::FrameTask<void> shop_menu_buy(PlayerContext &player, KfItemStockBank shop_ba
 kf::FrameTask<void> shop_menu_sell(PlayerContext &player, KfItemStockBank shop_bank)
 {
     KfMenuList ctx;
-    std::array<std::array<s16, MENU_GLYPHS_PER_ROW>, KF_ITEM_COUNT> entries;
     std::array<u8, KF_ITEM_COUNT> available;
     std::array<KfObjectId, KF_ITEM_COUNT> item_ids;
     s32 slot;
@@ -434,7 +450,6 @@ kf::FrameTask<void> shop_menu_sell(PlayerContext &player, KfItemStockBank shop_b
             if (player_item_is_equipped(player, kf_enum_decode<KfObjectId>(slot)))
                 available[found]--;
             if (available[found] != 0) {
-                entries[found] = item_name_rows[slot].codes;
                 item_ids[found] = kf_enum_decode<KfObjectId>(slot);
                 found++;
             }
@@ -442,7 +457,7 @@ kf::FrameTask<void> shop_menu_sell(PlayerContext &player, KfItemStockBank shop_b
     }
     ctx.entry_count = found;
     ctx.visible_rows = MENU_SHOP_VISIBLE_ROWS;
-    ctx.glyph_rows = entries;
+    ctx.entries = std::span<const KfObjectId>(item_ids).first(found);
     ctx.quantities = {};
 
     menu_frame_begin();
@@ -503,8 +518,8 @@ kf::FrameTask<void> shop_menu_sell(PlayerContext &player, KfItemStockBank shop_b
 
 kf::FrameTask<KfMenuResult> item_pickup_confirm(PlayerContext &player, KfObjectId item_id)
 {
-    MenuGlyphString accept_label;
-    MenuGlyphString decline_label;
+    MenuChoiceLabel accept_label;
+    MenuChoiceLabel decline_label;
     KfMenuConfirmChoice choice = KF_MENU_CHOICE_ACCEPT;
     KfMenuConfirmState confirm = KF_MENU_CONFIRM_IDLE;
     s32 input = 0;
@@ -516,10 +531,10 @@ kf::FrameTask<KfMenuResult> item_pickup_confirm(PlayerContext &player, KfObjectI
 
     accept_label.position.x = MENU_PICKUP_CONFIRM_TEXT_X;
     accept_label.position.y = MENU_PICKUP_CONFIRM_ACCEPT_Y;
-    accept_label.glyphs = menu_label(MenuLabel::Pickup);
+    accept_label.label = MenuLabel::Pickup;
     decline_label.position.x = MENU_PICKUP_CONFIRM_TEXT_X;
     decline_label.position.y = MENU_PICKUP_CONFIRM_DECLINE_Y;
-    decline_label.glyphs = menu_label(MenuLabel::Cancel);
+    decline_label.label = MenuLabel::Cancel;
 
     menu_frame_begin();
     menu_draw_pickup_preview(item_id);
@@ -592,10 +607,7 @@ kf::FrameTask<KfMenuResult> item_pickup_confirm(PlayerContext &player, KfObjectI
 
 void item_reset_module_state(void)
 {
-    kf::restore_initial_value<menu_assets>();
-    kf::restore_initial_value<menu_window_layouts>();
-    kf::restore_initial_value<item_name_rows>();
-    kf::restore_initial_value<magic_name_rows>();
+    menu_languages = {};
     kf::restore_initial_value<item_buy_prices>();
     kf::restore_initial_value<item_sell_prices>();
 }

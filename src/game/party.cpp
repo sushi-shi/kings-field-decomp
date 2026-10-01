@@ -148,13 +148,17 @@ bool party_melee_hit(WorldState &world, PlayerContext &attacker, const VECTOR &p
     const auto slot = party_find_overlap(world, point.vx, point.vy, point.vz,
         radius + KF_COLLISION_PLAYER_RADIUS, height, attacker.party_slot);
     if (slot == KF_PROXIMITY_NONE) return false;
+    // Tenfold melee scaling makes a charged starting sword hit remove 10 of
+    // a fresh character's 30 HP. Scale before truncating partial charge to HP.
+    constexpr u32 friendly_melee_scale = 10;
+    const auto charge = std::min<u32>(attacker.state.attack_charge_state.committed, KF_ACTOR_DAMAGE_SCALE_ONE);
     // Use the same defense, charge and status path as other incoming hits.
     // Party membership survives damage; this path awards neither XP nor loot.
     player_apply_damage(world.party.members[slot].player,
         attacker.state.cutting_attack, attacker.state.striking_attack,
         attacker.state.piercing_attack, KF_PLAYER_STATUS_NONE,
         attacker.state.holy_attack, attacker.state.fire_attack,
-        static_cast<u16>(static_cast<u32>(attacker.state.attack_charge_state.committed) * KF_FIXED12_ONE /
+        static_cast<u16>(charge * KF_FIXED12_ONE * friendly_melee_scale /
                          KF_ACTOR_DAMAGE_SCALE_ONE), KF_PLAYER_DAMAGE_MULTIPLIER_ONE);
     return true;
 }

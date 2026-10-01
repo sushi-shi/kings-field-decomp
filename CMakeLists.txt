@@ -207,6 +207,9 @@ target_link_libraries(kings-field PRIVATE kf_host kf_network)
 target_compile_options(kings-field PRIVATE -Wall -Wextra)
 if(EMSCRIPTEN)
   target_link_options(kings-field PRIVATE
+    # Coroutine continuations may nest on the normal WASM stack before yielding.
+    # Asyncify's stack stores suspended platform calls and is a separate budget.
+    -sSTACK_SIZE=1048576 -sSTACK_OVERFLOW_CHECK=2
     -sASYNCIFY=1 -sASYNCIFY_STACK_SIZE=262144
     -sUSE_WEBGL2=1 -sMIN_WEBGL_VERSION=2 -sMAX_WEBGL_VERSION=2
     -sALLOW_MEMORY_GROWTH=1 -sMAXIMUM_MEMORY=536870912
@@ -254,4 +257,9 @@ if(BUILD_TESTING AND NOT EMSCRIPTEN)
   target_link_libraries(coop-runtime-test PRIVATE kf_host kf_network ${KF_GLES_LIBRARY})
   target_compile_options(coop-runtime-test PRIVATE -Wall -Wextra -Werror)
   add_test(NAME coop-runtime COMMAND coop-runtime-test)
+  add_executable(coop-movement-test tests/coop_movement.cpp
+    $<TARGET_OBJECTS:kf_game>)
+  target_link_libraries(coop-movement-test PRIVATE kf_host kf_network ${KF_GLES_LIBRARY})
+  target_compile_options(coop-movement-test PRIVATE -Wall -Wextra -Werror)
+  add_test(NAME coop-movement COMMAND coop-movement-test)
 endif()

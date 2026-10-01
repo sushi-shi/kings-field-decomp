@@ -28,6 +28,9 @@ Transport *transport_open(const Config &config)
     for (unsigned slot = 0; slot < config.roster.size(); ++slot)
         std::copy(config.roster[slot].begin(), config.roster[slot].end(), input.roster[slot]);
     input.host = config.host;
+    input.lobby = config.lobby;
+    input.avatar = config.avatar == 0xff ? 41 : config.avatar;
+    std::copy(config.roster_avatars.begin(), config.roster_avatars.end(), input.roster_avatars);
     auto transport = std::make_unique<Transport>();
     transport->handle = kf_net_transport_open(&input);
     return transport->handle ? transport.release() : nullptr;
@@ -49,7 +52,14 @@ bool transport_poll(Transport &transport, Event &event)
     event.peer = result.peer;
     event.channel = static_cast<Channel>(result.lane);
     std::copy(std::begin(result.identity), std::end(result.identity), event.identity.begin());
-    if (event.kind == EventKind::Packet) event.packet.assign(result.data, result.data + result.size);
+    if (event.kind == EventKind::Lobby && result.size == 76) {
+        event.lobby.started = result.data[0];
+        event.lobby.present = result.data[1]; event.lobby.ready = result.data[2];
+        event.lobby.occupied = result.data[3];
+        std::copy_n(result.data + 4, 4, event.lobby.avatars.begin());
+        for (unsigned peer = 0; peer < 4; ++peer)
+            event.lobby.join_codes[peer] = reinterpret_cast<const char *>(result.data + 8 + peer * 17);
+    } else if (event.kind == EventKind::Packet) event.packet.assign(result.data, result.data + result.size);
     else event.text.assign(result.data, result.data + result.size);
     return true;
 }
@@ -58,6 +68,11 @@ bool transport_send(Transport &transport, u8 peer, Channel channel, std::span<co
 {
     return kf_net_transport_send(transport.handle, peer, static_cast<u8>(channel), packet.data(), packet.size()) == KF_CODEC_OK;
 }
+
+bool transport_lobby_ready(Transport &transport)
+{ return kf_net_transport_lobby(transport.handle, 0) == KF_CODEC_OK; }
+bool transport_lobby_start(Transport &transport)
+{ return kf_net_transport_lobby(transport.handle, 1) == KF_CODEC_OK; }
 
 const std::string &transport_resume_token(const Transport &transport)
 {

@@ -21,3 +21,4 @@ void avatar_build_pose(u8 avatar, const AvatarMotion &motion, AvatarPose &pose);
 void avatar_pose_vertex(const AvatarPose &pose, const KfAvatarVertex &vertex,
     SVECTOR &position, SVECTOR &normal);
 MATRIX avatar_equipment_transform(const AvatarPose &pose, bool shield);
+MATRIX avatar_body_rotation(s16 camera_yaw);

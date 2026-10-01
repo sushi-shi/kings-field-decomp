@@ -46,7 +46,7 @@ void render_equipment(KfObjectId item, bool shield, const AvatarPose &pose,
     model.t[0]=position.vx; model.t[1]=position.vy; model.t[2]=position.vz;
     auto context=tmd_context();
     const auto saved=context.current_tmd;
-    auto *saved_vertices=context.current_vertices;
+    const auto saved_vertices=context.current_vertices;
     context.current_tmd=tmd_resource_view(bytes.data(),bytes.size());
     const auto count=context.current_tmd.data->object_count;
     for (u16 object=0; object<count; ++object) {
@@ -83,9 +83,7 @@ void render_party(WorldState &world, u8 camera_slot)
         const VECTOR delta {body.position.vx - view.view_position.vx,
             body.position.vy - view.view_position.vy, body.position.vz - view.view_position.vz};
         if (std::abs(delta.vx) > 16000 || std::abs(delta.vy) > 16000 || std::abs(delta.vz) > 16000) continue;
-        MATRIX model{}, lights{};
-        // KFIII base bodies face -Z; KF1's zero-yaw movement faces +Z.
-        matrix_set_rotation_y(2048 - body.rotation.vy, &model);
+        MATRIX model = avatar_body_rotation(body.rotation.vy), lights{};
         kf::matrix_multiply_rotation(render_light_matrices[KF_RENDER_LIGHT_ACTOR], model, lights);
         kf::render_place_model(model, view.view_matrix, delta.narrowed());
         kf::matrix_multiply_rotation(view.view_matrix, model, model);

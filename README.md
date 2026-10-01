@@ -111,7 +111,13 @@ kings-field
 | Interact / confirm | E or Enter |
 | Inventory / skip intro | Tab |
 | Back | Backspace or Escape in menus |
+| Compare text languages (hold) | R |
 | Pause | P or Escape during gameplay |
+
+Hold **R** or **right-stick click** on a controller to read dialogue, inventory,
+menus and messages such as “Empty” in the other language. Release to return to
+your selected language. Comparison does not advance dialogue; messages stay
+visible while held.
 
 ## Build from source
 
@@ -132,20 +138,25 @@ To extract a disc with this executable, replace `--data` with
 After the WASM build, serve `build/wasm` over localhost or HTTPS and open
 `kings-field.html`. Select an ISO or BIN (with its CUE if applicable), then
 choose **Play solo**, **Host multiplayer**, or enter a friend's room code and
-choose **Join multiplayer**. Hosting displays a copyable room code. Every player
+choose **Join multiplayer**. Hosting displays a copyable room code and a waiting
+lobby with the party's avatars. Once everyone connected is ready, the host clicks
+**Start game** to launch together. The host can also start alone. Every player
 loads their own resources; extraction stays local, and resources and saves use
 separate IndexedDB stores. Browser storage can be cleared or evicted.
 
-Multiplayer creates a private random profile in save storage. Reopen the site
-and join the same room code to recover your character. Campaign saves contain
-public profile hashes, so a returning player keeps their inventory and progress
-even when friends join in a different order. Native clients keep the profile in
-their save directory; `--host --campaign 1` rehosts that profile's first saved
-campaign with a new room code. In the browser, select a slot under **Host campaign**
-before clicking **Host multiplayer**. The launcher shows the saved floor and
-level; unreadable, incompatible or other-profile slots cannot be selected.
-Keep the same browser profile or native save
-directory when returning. Clearing it also removes the multiplayer credential.
+Only the host stores campaign saves. Select a slot under **Host campaign** before
+clicking **Host multiplayer** to restore it. The lobby shows each saved avatar
+with a character code underneath: share that code with a friend, who enters it
+in **Join multiplayer** to resume that character, including from another device.
+Absent characters remain reserved; new players can take unused slots, up to four
+characters in total. The host may start with any number of connected players.
+Character codes last for that hosted room; rehosting creates new codes.
+
+Multiplayer also keeps a private random profile in save storage for reconnecting
+to the same room. Preserve the host's browser storage to retain its campaigns and
+ownership. The campaign selector shows the saved floor and level; unreadable,
+incompatible or other-profile saves cannot be selected. Native clients retain
+their profile in the save directory and can rehost with `--host --campaign 1`.
 
 The website's room service handles codes and WebRTC signaling. Gameplay runs in
 the host's browser, with direct peer connections when available and a configured

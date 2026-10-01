@@ -20,7 +20,7 @@ typedef struct KfGraphicsRuntimeGame {
     std::array<KfAnimationData, KF_ASSET_REGISTRY_KNOWN_ENTRIES> asset_animations;
     std::array<KfTmdResource, KF_ASSET_REGISTRY_KNOWN_ENTRIES> asset_registry_tmds;
     std::array<u8, 0x30> unknown_201f4;
-    SVECTOR *current_tmd_vertices;
+    std::span<const SVECTOR> current_tmd_vertices;
     std::array<KfAnimationCacheRecord, KF_ANIMATION_CACHE_CAPACITY> animation_cache_records;
     std::array<KfScreenVertex, KF_PROJECTED_VERTEX_CAPACITY> tmd_projected_vertices;
     std::array<SVECTOR, KF_MORPH_SCRATCH_CAPACITY> morph_scratch;

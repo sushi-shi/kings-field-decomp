@@ -6,6 +6,7 @@
 // matching Japanese resource directory, after the character pack/disc.
 // --preview checks local selection/rendering and startup cleanup, with no gameplay input.
 // --preview-only skips gameplay, TURN and KF1 import; use '-' for the Japanese disc argument.
+// --lobby checks waiting, shared Start and saved-character codes without gameplay input.
 // KF_TEST_AVATAR selects the guest body for the short --pose scene (default 41).
 // --combat uses the native executable/data arguments and checks lethal friendly
 // fire with one short starting-area step and bounded weapon input.
@@ -150,7 +151,8 @@ try {
     });
   }
   async function evaluate(session, expression) {
-    const result = await cdp('Runtime.evaluate', { expression, returnByValue: true, awaitPromise: true, userGesture: true }, session);
+    const result = await cdp('Runtime.evaluate', { expression, returnByValue: true, awaitPromise: true, userGesture: true }, session)
+      .catch(error => { throw new Error(`${error.message}: ${expression.slice(0,160)}`, {cause:error}); });
     assert.ok(!result.exceptionDetails, JSON.stringify(result.exceptionDetails));
     return result.result.value;
   }
@@ -174,6 +176,18 @@ try {
     }
     throw new Error(`Timed out: ${expression}\n${await evaluate(session, 'document.body.innerText')}`);
   }
+  async function relayTypes(page, slot) {
+    return evaluate(page, `(async () => {
+      const peers = Array.from(Module.kfTransports.values())[0].peers;
+      const peer = ${slot === undefined ? 'Array.from(peers.values())[0]' : `peers.get(${slot})`};
+      if (peer.pc.getConfiguration().iceTransportPolicy !== 'relay')
+        throw new Error('Test did not force relay policy');
+      const stats = await peer.pc.getStats();
+      const transport = Array.from(stats.values()).find(s => s.type === 'transport' && s.selectedCandidatePairId);
+      const pair = stats.get(transport.selectedCandidatePairId);
+      return [stats.get(pair.localCandidateId).candidateType, stats.get(pair.remoteCandidateId).candidateType];
+    })()`);
+  }
   async function player(avatar = 41) {
     const { browserContextId } = await cdp('Target.createBrowserContext');
     const { targetId } = await cdp('Target.createTarget', { url: 'about:blank', browserContextId });
@@ -185,7 +199,7 @@ try {
     // broken credential issuance, relay allocation, or relayed game traffic.
     await cdp('Page.addScriptToEvaluateOnNewDocument', { source: `const OriginalPeer = RTCPeerConnection;
       window.avatarRequests = []; window.actionReplies = [];
-      window.roomAdmissions = [];
+      window.roomAdmissions = []; window.lobbyMessages = [];
       window.fullWorld = null; window.worldTransfer = null;
       window.clientHeader = null;
       window.waitingEpochs = []; window.loadedWorlds = []; window.heldLoaded = null;
@@ -198,6 +212,7 @@ try {
           super(...args);
           this.addEventListener('message', event => {
             const m = JSON.parse(event.data);
+            if (m.type === 'lobby') lobbyMessages.push(m);
             if (m.type === 'created' || m.type === 'joined')
               roomAdmissions.push({slot:m.slot, identity:m.identity, resumed:m.resumed});
           });
@@ -362,6 +377,8 @@ try {
     async function hostRoom(saved = false) {
       await evaluate(host, `campaignSelect.value='${saved ? 1 : 0}'; hostButton.click()`);
       await until(host, '!document.getElementById("room-panel").hidden');
+      await until(host, '!document.getElementById("start-party").disabled');
+      await evaluate(host, 'document.getElementById("start-party").click()');
       return evaluate(host, 'document.getElementById("room-code").textContent');
     }
     async function joinRoom(code, status = 'Connected.') {
@@ -815,7 +832,7 @@ try {
   await until(host, "!document.getElementById('room-panel').hidden");
   const code = await evaluate(host, "document.getElementById('room-code').textContent");
   assert.match(code, /^[A-Za-z0-9_-]+$/);
-  const guest = await player(avatars && !standing ? 0 : standingAvatar);
+  const guest = await player(scenario === '--lobby' ? 1 : avatars && !standing ? 0 : standingAvatar);
   await evaluate(guest, `joinCode.value = ${JSON.stringify(code)}; joinButton.click();`);
   await until(guest, "!document.getElementById('room-panel').hidden");
   assert.equal(await evaluate(guest, "document.getElementById('room-code').textContent"), code);
@@ -823,13 +840,86 @@ try {
     assert.equal(await evaluate(client, 'roomCompatibility.resources'),
       await evaluate(client, "Module.ccall('kf_resource_files_hash', 'string', ['string'], [languageInput.value])"),
       'Startup resource hashing disagrees with the independently verified browser manifest');
+  await until(host, '!document.getElementById("start-party").disabled && document.querySelectorAll("#party-roster li").length === 2');
+  await until(guest, 'fullWorld !== null');
+  assert.equal(await evaluate(guest, 'Module.canvas.hidden && !document.getElementById("waiting-room").hidden && clientHeader === null'), true,
+    'Guest started gameplay before the host');
+  assert.equal(await evaluate(host, 'Module.canvas.hidden'), true, 'Host started gameplay before Start');
+  assert.equal(await evaluate(host, 'document.querySelectorAll("#party-roster img").length'), 2);
+  assert.equal(await evaluate(guest, 'document.querySelectorAll("#party-roster code").length'), 0,
+    'Guest received character claim codes');
+  if (scenario === '--lobby') {
+    // Exercise RTC close/signalling leave ordering, then reuse the freed slot
+    // with a new private identity in another isolated browser context.
+    await evaluate(guest, "Array.from(Module.kfTransports.values())[0].socket.send(JSON.stringify({type:'leave'}))");
+    await until(guest, 'stopped');
+    await until(host, 'document.querySelectorAll("#party-roster li").length === 1');
+    await cdp('Page.reload', {}, guest);
+    await until(guest, 'typeof hostButton !== "undefined" && !hostButton.disabled');
+    const replacement = await player(1);
+    await evaluate(replacement, `joinCode.value=${JSON.stringify(code)}; joinButton.click()`);
+    await until(host, '!document.getElementById("start-party").disabled && document.querySelectorAll("#party-roster li").length === 2');
+    await until(replacement, 'fullWorld !== null');
+    await evaluate(host, 'document.getElementById("start-party").click()');
+    await until(replacement, 'statusLabel.textContent.startsWith("Connected.") && clientHeader !== null');
+    await until(host, 'document.getElementById("waiting-room").hidden && !Module.canvas.hidden');
+    assert.equal((await evaluate(replacement, 'roomAdmissions.at(-1)')).slot, 1);
+    assert.deepEqual(await relayTypes(replacement), ['relay', 'relay']);
+    console.log('Waiting lobby, freed slot reuse and shared Start passed');
+    const identity = (await evaluate(replacement, 'roomAdmissions.at(-1)')).identity;
+    const snapshot = Buffer.from(await evaluate(replacement, 'Array.from(fullWorld)'));
+    const compatibility = await evaluate(host, 'roomCompatibility');
+    const header = Buffer.alloc(134);
+    header.write('KFC1'); header.writeUInt16LE(1,4);
+    header.write(createHash('sha256').update(compatibility.resources + '\0' + compatibility.recipe + '\0').digest('hex'),6);
+    header.write(createHash('sha256').update(snapshot).digest('hex'),70);
+    const checkpoint = Buffer.concat([header,snapshot]);
+    // Save a real synchronized starting-area checkpoint without navigating to
+    // a save point. Only the host stores the campaign.
+    await evaluate(host, `(async () => {
+      await new Promise((resolve,reject) => {
+        const tx=Module.kfSaveDb.transaction('files','readwrite',{durability:'strict'});
+        tx.oncomplete=resolve; tx.onabort=()=>reject(tx.error);
+        tx.objectStore('files').put(new Uint8Array(${JSON.stringify(Array.from(checkpoint))}),'party1.kfc');
+      });
+    })()`);
+    console.log('Host checkpoint fixture stored');
+    await evaluate(host, "Array.from(Module.kfTransports.values())[0].socket.send(JSON.stringify({type:'leave'}))");
+    await until(host, 'stopped'); await until(replacement, 'stopped');
+    await cdp('Page.reload', {}, host);
+    await until(host, 'typeof hostButton !== "undefined" && !hostButton.disabled && !campaignSelect.options[1].disabled');
+    await evaluate(host, "campaignSelect.value='1'; hostButton.click()");
+    await until(host, '!document.getElementById("start-party").disabled && document.querySelectorAll("#party-roster code").length === 1');
+    assert.match(await evaluate(host, 'document.getElementById("party-roster").textContent'), /Saved character · not connected/);
+    const characterCode = await evaluate(host, 'document.querySelector("#party-roster code").textContent');
+    assert.match(characterCode, /^[A-Za-z0-9_-]{16}$/);
+    if (screenshot) {
+      const shot = await cdp('Page.captureScreenshot', {format:'png'}, host);
+      await writeFile(screenshot, Buffer.from(shot.data,'base64'));
+    }
+    // Start solo while retaining the absent character, then claim it from the
+    // original guest's different device/profile with the host's character code.
+    await evaluate(host, 'document.getElementById("start-party").click()');
+    await until(host, 'document.getElementById("waiting-room").hidden');
+    await evaluate(guest, `joinCode.value=${JSON.stringify(characterCode)}; joinButton.click()`);
+    await until(guest, 'statusLabel.textContent.startsWith("Connected.") && clientHeader !== null');
+    const claimed = await evaluate(guest, 'roomAdmissions.at(-1)');
+    assert.equal(claimed.identity, identity, 'Character code lost the saved identity');
+    assert.equal(claimed.slot, 1, 'Character code changed the saved slot');
+    assert.equal(await evaluate(guest, 'lobbyMessages.at(-1).members[1].avatar'), 1);
+    assert.equal(await evaluate(guest, 'document.querySelectorAll("#party-roster code").length'), 0);
+    assert.deepEqual(failures, []);
+    for (const lines of logs.values()) assert.doesNotMatch(lines.join('\n'), /Rejected invalid|Cannot encode|Application stopped|deadline exceeded/);
+    console.log('Browser waiting lobby, RTC leave/slot reuse, shared Start, host-only save, solo rehost and cross-device character claim passed');
+  } else {
+  await evaluate(host, 'document.getElementById("start-party").click()');
   await until(guest, 'statusLabel.textContent.startsWith("Connected.")');
   for (let i = 0; i < 300 && !logs.get(host).some(line => line === 'Player 2 admitted'); ++i) await pause(100);
   assert.ok(logs.get(host).some(line => line === 'Player 2 admitted'), 'Browser guest was not admitted');
   const originalAdmission = await evaluate(guest, 'roomAdmissions.at(-1)');
   if (avatars) {
     if (!standing) {
-      await until(guest, 'avatarRequests.some(request => request.slot === 0 && actionReplies.some(reply => reply.kind === 9 && reply.sequence === request.sequence))');
+      assert.equal(await evaluate(guest, 'lobbyMessages.at(-1).members[1].avatar'), 0);
       console.log('Guest character selection accepted by the host');
     }
     if (['--avatars', '--standing-avatar', '--pose'].includes(scenario)) {
@@ -922,18 +1012,6 @@ try {
     console.log('Guest starting-area menu action accepted while world snapshots continued');
   }
   if (['--menus','--campaign','--crossplay'].includes(scenario)) await menuAction(guest);
-  async function relayTypes(page, slot) {
-    return evaluate(page, `(async () => {
-      const peers = Array.from(Module.kfTransports.values())[0].peers;
-      const peer = ${slot === undefined ? 'Array.from(peers.values())[0]' : `peers.get(${slot})`};
-      if (peer.pc.getConfiguration().iceTransportPolicy !== 'relay')
-        throw new Error('Test did not force relay policy');
-      const stats = await peer.pc.getStats();
-      const transport = Array.from(stats.values()).find(s => s.type === 'transport' && s.selectedCandidatePairId);
-      const pair = stats.get(transport.selectedCandidatePairId);
-      return [stats.get(pair.localCandidateId).candidateType, stats.get(pair.remoteCandidateId).candidateType];
-    })()`);
-  }
   if (crossplay) {
     const native = await nativePlayer(['--join', code]);
     await nativeUntil(native, /World synchronized: epoch [1-9]\d*, tick \d+, floor 1/);
@@ -1072,6 +1150,8 @@ try {
     const newCode = await evaluate(host, 'document.getElementById("room-code").textContent');
     assert.notEqual(newCode,code);
     await evaluate(guest, `joinCode.value = ${JSON.stringify(newCode)}; joinButton.click();`);
+    await until(host, '!document.getElementById("start-party").disabled && lobbyMessages.at(-1).members[1].ready');
+    await evaluate(host, 'document.getElementById("start-party").click()');
     await until(guest, 'statusLabel.textContent.startsWith("Connected.")');
     const returned = await evaluate(guest, 'roomAdmissions.at(-1)');
     assert.equal(returned.identity,originalAdmission.identity);
@@ -1103,6 +1183,7 @@ try {
     'A damaged character cache affected original game resources');
   assert.deepEqual(failures, []);
   console.log('Browser import, host/join codes, TURN world sync, reconnect, profile reload and return to lobby passed');
+  }
   }
 } finally {
   for (const child of nativeClients) {

@@ -47,6 +47,8 @@ struct Session {
     std::uint64_t last_snapshot_time {};
     bool host {}, room_ready {}, received_world {}, ended {};
     bool admitted {}, awaiting_host {};
+    bool started {}, lobby_ready_sent {};
+    LobbyState lobby;
     unsigned reconnect_attempt {};
     std::uint64_t retry_at {}, reconnect_deadline {}, host_wait_deadline {};
     bool barrier {};
@@ -85,6 +87,11 @@ static bool session_confirm_presence(Session &session, const WorldState &world)
 
 static void session_world_status(const Session &session, const WorldState &world)
 {
+    if (!session.started) {
+        kf::host_online_status(session.host ? "Share the room code. Start when your party is ready."
+            : "Waiting for the host to start the game.");
+        return;
+    }
     const auto &member = world.party.members[session.slot];
     if (world.story.kind == party_story_ending)
         kf::host_online_status("Campaign completed. Synchronizing the ending with the party…");
@@ -431,14 +438,14 @@ static void session_host_packet(Session &session, WorldState &world, const Event
         }
     } else if (header.kind == MessageKind::Resync && event.channel == Channel::Actions) {
         session_queue_world(session, world, event.peer);
-    } else if (header.kind == MessageKind::Input && event.channel == Channel::State && remote.loaded && member.connected) {
+    } else if (header.kind == MessageKind::Input && event.channel == Channel::State && session.started && remote.loaded && member.connected) {
         InputBundle bundle;
         if (input_decode(event.packet, bundle) && remote.inputs.push(bundle))
             remote.last_input_tick = session.runtime.tick;
     } else if (header.kind == MessageKind::Command && event.channel == Channel::Actions && remote.reply.empty()) {
         Command command;
         if (!command_decode(event.packet, command)) return;
-        const bool accepted = remote.loaded && !session.barrier &&
+        const bool accepted = session.started && remote.loaded && !session.barrier &&
             party_apply_command(world, event.peer, session.commands[event.peer], command);
         if (accepted && command.kind == CommandKind::Interact) {
             if (!interaction_encode(session.commands[event.peer].interaction, remote.reply))
@@ -535,6 +542,7 @@ kf::FrameTask<void> coop_game_loop(WorldState &world, PlayerContext &offline)
     session.host = kf::net::application_config.host;
     if (!session.host) world.presentation = &session.presentation;
     session.config = kf::net::application_config;
+    session.started = !session.config.lobby;
     kf::host_set_session_running(true);
     world.party.enabled = true;
     world.party.local_slot = 0;
@@ -552,8 +560,10 @@ kf::FrameTask<void> coop_game_loop(WorldState &world, PlayerContext &offline)
                 kf::host_fail("Cannot read the selected campaign save");
             co_await session_restore_checkpoint(session, world);
         }
-        for (u8 slot = 0; slot < party_capacity; ++slot)
+        for (u8 slot = 0; slot < party_capacity; ++slot) {
             session.config.roster[slot] = world.party.members[slot].character_id;
+            session.config.roster_avatars[slot] = world.party.members[slot].avatar;
+        }
     }
     session.transport.reset(kf::net::transport_open(session.config));
     if (!session.transport) kf::host_fail("Cannot open online room transport");
@@ -576,7 +586,8 @@ kf::FrameTask<void> coop_game_loop(WorldState &world, PlayerContext &offline)
                 }
                 session.config.room = event.text;
                 session.config.resume_token = transport_resume_token(*session.transport);
-                if (!session.host && !session.reconnect_deadline)
+                session.lobby_ready_sent = false;
+                if (!session.host && session.started && !session.reconnect_deadline)
                     session.reconnect_deadline = kf::host_clock_tick() + 1800;
                 session.slot = event.peer;
                 session.room_ready = true;
@@ -602,6 +613,34 @@ kf::FrameTask<void> coop_game_loop(WorldState &world, PlayerContext &offline)
                 kf::host_online_room(event.text.c_str(), session.host);
                 if (session.host && session.barrier)
                     kf::host_online_status("Reconnecting the party…");
+            } else if (event.kind == EventKind::Lobby) {
+                session.lobby = event.lobby;
+                if (session.host && !session.started) for (u8 peer = 1; peer < party_capacity; ++peer) {
+                    if (event.lobby.occupied & (1u << peer)) continue;
+                    auto &member = world.party.members[peer];
+                    if (party_member_alive(member)) {
+                        const auto cell = member.player.state.motion_state.map_cell;
+                        collision_adjust_cell_occupancy(world, cell.x, cell.z, -1);
+                    }
+                    session.runtime.controls[peer] = {};
+                    session.runtime.inputs[peer] = {};
+                    session.peers[peer] = {};
+                    session.commands[peer] = {};
+                    member = {};
+                }
+                if (event.lobby.occupied & (1u << session.slot))
+                    session.config.avatar = event.lobby.avatars[session.slot];
+                if (!session.started && event.lobby.started) {
+                    session.started = true;
+                    next_tick = kf::host_clock_tick() + 3;
+                    session.last_snapshot_time = kf::host_clock_tick();
+                    kf::host_take_look();
+                    session.menu_previous = kf::host_read_buttons();
+                    std::fprintf(stdout, "Party started\n");
+                    std::fflush(stdout);
+                }
+                kf::host_online_lobby(event.lobby, session.host);
+                if (session.started) session_world_status(session, world);
             } else if (event.kind == EventKind::Connected && session.host) {
                 if (!event.peer || event.peer >= party_capacity) continue;
                 auto &peer = session.peers[event.peer];
@@ -615,6 +654,15 @@ kf::FrameTask<void> coop_game_loop(WorldState &world, PlayerContext &offline)
                 party_set_connected(world, session.runtime, event.peer, false);
                 peer.inputs.state.received = peer.inputs.state.consumed = member.acknowledged_input;
                 if (member.presence == PartyPresence::Empty) member.presence = PartyPresence::Waiting;
+                if (!session.started && (member.presence == PartyPresence::Waiting || member.presence == PartyPresence::Disconnected)) {
+                    const bool returning = member.presence == PartyPresence::Disconnected;
+                    if (party_admit(world, event.peer, peer.identity, returning)) {
+                        std::fprintf(stdout, "Player %u %s\n", event.peer + 1, returning ? "returned" : "admitted");
+                        std::fflush(stdout);
+                    }
+                    const auto avatar = session.lobby.avatars[event.peer];
+                    if (kf::avatar_mesh(avatar)) member.avatar = avatar;
+                }
                 session_queue_world(session, world, event.peer);
             } else if (event.kind == EventKind::Disconnected && session.host) {
                 if (!event.peer || event.peer >= party_capacity) continue;
@@ -622,6 +670,14 @@ kf::FrameTask<void> coop_game_loop(WorldState &world, PlayerContext &offline)
                 session.commands[event.peer].event = -1;
                 session.commands[event.peer].return_to_entry = false;
                 party_set_connected(world, session.runtime, event.peer, false);
+                if (!session.started && !(session.lobby.occupied & (1u << event.peer))) {
+                    auto &member = world.party.members[event.peer];
+                    if (party_member_alive(member)) {
+                        const auto cell = member.player.state.motion_state.map_cell;
+                        collision_adjust_cell_occupancy(world, cell.x, cell.z, -1);
+                    }
+                    member = {};
+                }
             } else if (event.kind == EventKind::HostWaiting && !session.host) {
                 session.awaiting_host = true;
                 session.host_wait_deadline = kf::host_clock_tick() + 900;
@@ -777,6 +833,40 @@ kf::FrameTask<void> coop_game_loop(WorldState &world, PlayerContext &offline)
                 session.transport.reset(transport_open(session.config));
                 if (!session.transport) session_reconnect(session, world);
             }
+        }
+        if (session.config.lobby && session.room_ready && session.transport && !session.lobby_ready_sent &&
+            (session.host || (session.received_world &&
+                (world.party.members[session.slot].presence == PartyPresence::Living ||
+                 world.party.members[session.slot].presence == PartyPresence::Spectating))))
+            session.lobby_ready_sent = transport_lobby_ready(*session.transport);
+        if (!session.started) {
+            if (session.host) for (u8 peer = 1; peer < party_capacity; ++peer) {
+                auto &remote = session.peers[peer];
+                auto &member = world.party.members[peer];
+                if (remote.connected && remote.next_fragment == remote.outgoing.size() &&
+                    (member.presence == PartyPresence::Waiting || member.presence == PartyPresence::Disconnected) &&
+                    party_admit(world, peer, remote.identity, member.presence == PartyPresence::Disconnected)) {
+                    if (kf::avatar_mesh(session.lobby.avatars[peer])) member.avatar = session.lobby.avatars[peer];
+                    session_queue_world(session, world, peer);
+                }
+            }
+            kf::host_take_look();
+            const auto buttons = kf::host_read_buttons();
+#ifdef __EMSCRIPTEN__
+            const bool start = kf::host_take_lobby_start();
+#else
+            // The waiting-room UI belongs to the website; command-line hosts
+            // retain immediate startup and guests may join their running game.
+            const bool start = true;
+#endif
+            session.menu_previous = buttons;
+            if (session.host && session.room_ready && start && session.lobby.present &&
+                session.lobby.present == session.lobby.ready)
+                transport_lobby_start(*session.transport);
+            if (session.host && session.transport && session.room_ready) session_flush(session);
+            next_tick = now + 3;
+            co_await kf::FrameDelay {1};
+            continue;
         }
         campaign_poll(world);
         if (session.host && session.room_ready && now > next_tick + 12) {

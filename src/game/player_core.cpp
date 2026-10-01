@@ -14,6 +14,7 @@
 #include <kf/game/game.h>
 
 #include <array>
+#include <cstdint>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
@@ -44,8 +45,6 @@ static constexpr int PLAYER_WEAPON_HIT_WINDOW = 300;
 static constexpr int PLAYER_WEAPON_HIT_Y_OFFSET = 1000;
 static constexpr int PLAYER_WEAPON_HIT_RADIUS = 800;
 static constexpr int PLAYER_WEAPON_HIT_HEIGHT = 1000;
-static constexpr int PLAYER_COLLISION_SLIDE_CLEARANCE = 100;
-static constexpr int PLAYER_COLLISION_DEFLECTION_ANGLE = 64;
 static constexpr int PLAYER_MAX_STEP_RISE = 699;
 static constexpr int PLAYER_DIAGONAL_COMPONENT_Q12 = 2896;
 
@@ -357,48 +356,42 @@ s32 player_move_horizontal(WorldState &world, PlayerContext &player, s32 heading
     s32 dx;
     s32 new_z;
     s32 new_x;
-    s32 angle;
-    s32 radius;
     s32 remainder_z;
     s32 remainder_x;
     s32 half;
     u32 cell_z;
     u32 cell_x;
-    SVECTOR delta;
-    s16 attempt = 1;
     KfMapCellKind type;
 
+    const auto origin = player.state.camera_position;
+    const auto original_cell = cell;
+    if (distance <= 0 || cell.x >= KF_MAP_COLUMNS || cell.z >= KF_MAP_ROWS) return 1;
     dz = (kf::angle_cosine(heading) * distance) >> KF_FIXED12_BITS;
     dx = (-kf::angle_sine(heading) * distance) >> KF_FIXED12_BITS;
-    new_z = dz + player.state.camera_position.vz;
-    new_x = dx + player.state.camera_position.vx;
-    for (;;) {
-        if (collision_query_world(world, player, new_x, player.state.foot_height, new_z,
-                KF_COLLISION_PLAYER_RADIUS, KF_COLLISION_PLAYER_HEIGHT,
-                KF_COLLISION_SKIP_TERRAIN | KF_COLLISION_SKIP_PLAYER | KF_COLLISION_CAPTURE_TARGET).kind
-            == KfCollisionKind::None) {
-            break;
-        }
-
-        delta.vx = world.collision_target.position.vx - player.state.camera_position.vx;
-        delta.vz = player.state.camera_position.vz - world.collision_target.position.vz;
-        angle = vector_xz_to_angle(delta.vx, delta.vz);
-        angle = (angle_mod_delta_le_half_turn(heading, angle) == 0
-            ? angle + (KF_ANGLE_HALF_TURN + PLAYER_COLLISION_DEFLECTION_ANGLE)
-            : angle + (KF_ANGLE_HALF_TURN - PLAYER_COLLISION_DEFLECTION_ANGLE))
-            & KF_ANGLE_WRAP_MASK;
-        radius = world.collision_target.radius
-            + (KF_COLLISION_PLAYER_RADIUS + PLAYER_COLLISION_SLIDE_CLEARANCE);
-        delta.vz = (kf::angle_cosine(angle) * radius) >> KF_FIXED12_BITS;
-        delta.vx = (-kf::angle_sine(angle) * radius) >> KF_FIXED12_BITS;
-        attempt--;
-        new_z = world.collision_target.position.vz + delta.vz;
-        dz = new_z - player.state.camera_position.vz;
-        new_x = world.collision_target.position.vx + delta.vx;
-        dx = new_x - player.state.camera_position.vx;
-        if (attempt == -1) {
-            return 1;
-        }
+    new_z = dz + origin.vz;
+    new_x = dx + origin.vx;
+    const auto query = [&](s32 x, s32 z) {
+        return collision_query_world(world, player, x, player.state.foot_height, z,
+            KF_COLLISION_PLAYER_RADIUS, KF_COLLISION_PLAYER_HEIGHT,
+            KF_COLLISION_SKIP_TERRAIN | KF_COLLISION_SKIP_PLAYER | KF_COLLISION_CAPTURE_TARGET);
+    };
+    const auto hit = query(new_x, new_z);
+    if (hit.kind != KfCollisionKind::None) {
+        // Terrain and other non-body results do not populate collision_target.
+        if (hit.kind != KfCollisionKind::Actor && hit.kind != KfCollisionKind::MapObject &&
+            hit.kind != KfCollisionKind::MapEvent && hit.kind != KfCollisionKind::Player) return 1;
+        const auto nx = std::int64_t(origin.vx) - world.collision_target.position.vx;
+        const auto nz = std::int64_t(origin.vz) - world.collision_target.position.vz;
+        const auto squared = nx * nx + nz * nz;
+        const auto inward = std::int64_t(dx) * nx + std::int64_t(dz) * nz;
+        if (!squared || inward >= 0) return 1;
+        // Remove only the inward component. Sliding cannot gain speed or push
+        // an overlapping spawn out by an entire collision radius.
+        dx -= static_cast<s32>(inward * nx / squared);
+        dz -= static_cast<s32>(inward * nz / squared);
+        new_x = origin.vx + dx;
+        new_z = origin.vz + dz;
+        if (query(new_x, new_z).kind != KfCollisionKind::None) return 1;
     }
     cell_z = new_z / KF_MAP_TILE_SIZE;
     if (cell_z < KF_MAP_ROWS && world.collision.cells[cell_z][cell.x] != KF_MAP_CELL_BLOCKED
@@ -447,7 +440,8 @@ s32 player_move_horizontal(WorldState &world, PlayerContext &player, s32 heading
             cell.z = player.state.camera_position.vz / KF_MAP_TILE_SIZE;
             cell.x = player.state.camera_position.vx / KF_MAP_TILE_SIZE;
         }
-        if (world.collision.cells[cell_z][cell_x] == KF_MAP_CELL_BLOCKED) {
+        if (cell_z < KF_MAP_ROWS && cell_x < KF_MAP_COLUMNS &&
+            world.collision.cells[cell_z][cell_x] == KF_MAP_CELL_BLOCKED) {
             if (dz < 0) {
                 dz = -dz;
             }
@@ -492,13 +486,23 @@ s32 player_move_horizontal(WorldState &world, PlayerContext &player, s32 heading
             cell_z = new_z / KF_MAP_TILE_SIZE;
             new_x = dx + player.state.camera_position.vx;
             cell_x = new_x / KF_MAP_TILE_SIZE;
-            if (cell_z < KF_MAP_ROWS && cell_x < KF_MAP_COLUMNS && world.collision.cells[cell_z][cell_x] != KF_MAP_CELL_BLOCKED) {
+            if (new_x >= 0 && new_z >= 0 && cell_z < KF_MAP_ROWS && cell_x < KF_MAP_COLUMNS &&
+                world.collision.cells[cell_z][cell_x] != KF_MAP_CELL_BLOCKED) {
                 player.state.camera_position.vz = new_z;
                 player.state.camera_position.vx = new_x;
                 cell.z = cell_z;
                 cell.x = cell_x;
             }
         }
+    }
+    const auto moved_x = std::int64_t(player.state.camera_position.vx) - origin.vx;
+    const auto moved_z = std::int64_t(player.state.camera_position.vz) - origin.vz;
+    const auto limit = std::int64_t(distance) + 2; // Fixed-point component rounding.
+    if (moved_x * moved_x + moved_z * moved_z > limit * limit ||
+        ((moved_x || moved_z) && query(player.state.camera_position.vx,
+            player.state.camera_position.vz).kind != KfCollisionKind::None)) {
+        player.state.camera_position = origin;
+        cell = original_cell;
     }
     return 1;
 }

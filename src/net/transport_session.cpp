@@ -241,6 +241,33 @@ struct KfNetTransport {
             admitted = true; ice = std::move(servers);
             { std::lock_guard lock(inbox->mutex); inbox->resume = resume; }
             auto event = control(Room, peer, room); event.identity = id; inbox->push(std::move(event));
+        } else if (type == "lobby") {
+            require(admitted && j.at("started").is_boolean() && j.at("members").is_array() &&
+                j.at("members").size() == 4, "Invalid lobby state");
+            Event event; event.kind = Lobby; event.data.resize(76);
+            event.data[0] = j.at("started").get<bool>();
+            for (u8 peer = 0; peer < 4; ++peer) {
+                const auto &member = j.at("members")[peer];
+                if (member.is_null()) continue;
+                require(member.is_object() && member.at("ready").is_boolean() && member.at("connected").is_boolean() &&
+                    member.at("avatar").is_number_unsigned() && member.at("avatar").get<unsigned>() < 44,
+                    "Invalid lobby member");
+                event.data[3] |= 1u << peer;
+                if (member.at("connected").get<bool>()) event.data[1] |= 1u << peer;
+                if (member.at("ready").get<bool>()) event.data[2] |= 1u << peer;
+                require(!(event.data[2] & (1u << peer)) || (event.data[1] & (1u << peer)), "Invalid lobby readiness");
+                event.data[4 + peer] = member.at("avatar").get<u8>();
+                if (member.contains("code")) {
+                    const auto code = text(member, "code", 16);
+                    require(config.host && peer && code.size() == 16 &&
+                        std::all_of(code.begin(), code.end(), [](unsigned char c) {
+                            return (c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') ||
+                                (c >= '0' && c <= '9') || c == '-' || c == '_';
+                        }), "Invalid character join code");
+                    std::copy(code.begin(), code.end(), event.data.begin() + 8 + peer * 17);
+                }
+            }
+            inbox->push(std::move(event));
         } else if (type == "peer") {
             auto peer = slot(j, "slot"); require(admitted && config.host && remote(peer), "Unexpected peer announcement");
             auto id = identity(text(j, "identity", 64)); auto servers = ice_servers(j); ice = std::move(servers);
@@ -277,7 +304,8 @@ struct KfNetTransport {
             auto string = [](auto &field) { return std::string(reinterpret_cast<const char *>(field)); };
             const Json request {{"type", config.resume[0] ? "resume" : config.host ? "create" : "join"},
                 {"protocol", KF_NET_PROTOCOL_VERSION}, {"resources", string(config.resources)}, {"recipe", string(config.recipe)},
-                {"room", string(config.room)}, {"resume", string(config.resume)}, {"credential", string(config.credential)}, {"roster", roster}};
+                {"room", string(config.room)}, {"resume", string(config.resume)}, {"credential", string(config.credential)}, {"roster", roster},
+                {"lobby", bool(config.lobby)}, {"avatar", config.avatar}, {"rosterAvatars", config.roster_avatars}};
             require(backend_signal(*backend, request.dump()), "Cannot send room request"); break;
         }
         case 1: receive(parse(raw.data)); break;
@@ -305,7 +333,7 @@ struct KfNetTransport {
 
 KfNetTransport *kf_net_transport_open(const KfNetTransportConfig *config)
 {
-    if (!config || config->host > 1) return nullptr;
+    if (!config || config->host > 1 || config->lobby > 1 || config->avatar >= 44) return nullptr;
     try {
         auto bounded = [](const auto &field) {
             const auto end = std::find(std::begin(field), std::end(field), 0);
@@ -323,6 +351,12 @@ KfNetTransport *kf_net_transport_open(const KfNetTransportConfig *config)
     } catch (const std::exception &) { return nullptr; }
 }
 void kf_net_transport_close(KfNetTransport *transport) { delete transport; }
+KfCodecResult kf_net_transport_lobby(KfNetTransport *transport, u8 start)
+{
+    if (!transport || !transport->admitted || start > 1 || (start && !transport->config.host)) return KF_CODEC_INVALID;
+    return backend_signal(*transport->backend, start ? "{\"type\":\"start\"}" : "{\"type\":\"ready\"}")
+        ? KF_CODEC_OK : KF_CODEC_OUTPUT_FULL;
+}
 KfCodecResult kf_net_transport_poll(KfNetTransport *transport, KfNetTransportEvent *out)
 {
     if (!transport || !out) return KF_CODEC_INVALID;

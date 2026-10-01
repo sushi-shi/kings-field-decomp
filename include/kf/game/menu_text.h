@@ -2,6 +2,7 @@
 #define KF_GAME_MENU_TEXT_H
 
 #include <kf/game/menu.h>
+#include <kf/game/resources.h>
 #include <kf/platform/language.h>
 
 // Authored atlas glyphs, not Unicode. Resource-owned rows still come from STAT.DAT.
@@ -15,9 +16,14 @@ enum class MenuLabel {
     Language, LanguageName, LanguageUnavailable
 };
 
+struct MenuChoiceLabel {
+    MenuPoint position;
+    MenuLabel label;
+};
+
 inline MenuGlyphRow menu_label(MenuLabel label)
 {
-    const bool english = kf::game_language() == kf::Language::English;
+    const bool english = game_text_language() == kf::Language::English;
     switch (label) {
     case MenuLabel::Language:
         // The translation's individual capitals also spell BACK and COMPASS.

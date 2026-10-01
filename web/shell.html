@@ -70,6 +70,11 @@
   <div id="room-panel" hidden>
     <p>Room code: <output id="room-code"></output> <button id="copy-room">Copy code</button></p>
     <p id="room-help">Friends can enter this code under Join multiplayer.</p>
+    <div id="waiting-room" hidden>
+      <ul id="party-roster" aria-live="polite"></ul>
+      <button id="start-party" disabled>Start game</button>
+      <button id="leave-party">Leave lobby</button>
+    </div>
   </div>
   <p id="status" role="status" aria-live="polite">Loading application…</p>
   <button id="restart" hidden>Back to lobby</button>
@@ -77,7 +82,8 @@
   <p id="storage-status">Save files use separate browser storage.</p>
   <canvas id="canvas" width="960" height="720" tabindex="0" oncontextmenu="event.preventDefault()"></canvas>
   <p id="controls">W/S move · A/D strafe · arrows turn · E interact · Space attack · Q magic<br>
-     Tab menu · Enter confirm · Backspace back · P pause · click game for mouse capture</p>
+     Tab menu · Enter confirm · Backspace back · P pause · click game for mouse capture<br>
+     Hold R or controller right-stick click to read text in the other language</p>
 </main>
 <script>
   const statusLabel = document.getElementById('status');
@@ -332,6 +338,43 @@
         : 'Joined this room. The host controls the shared world.';
       statusLabel.textContent = hosting ? 'Room ready. Share your code with friends.' : 'Connecting to the host…';
     },
+    onlineLobby(started, present, ready, occupied, avatars, codes, hosting) {
+      const wasWaiting = !document.getElementById('waiting-room').hidden;
+      document.getElementById('waiting-room').hidden = started;
+      Module.canvas.hidden = !started;
+      document.getElementById('controls').hidden = !started;
+      const roster = document.getElementById('party-roster');
+      roster.replaceChildren();
+      for (let slot = 0; slot < 4; ++slot) {
+        if (!(occupied & (1 << slot))) continue;
+        const row = document.createElement('li');
+        row.textContent = (slot === 0 ? 'Host' : 'Player ' + (slot + 1)) + ' · ' +
+          (avatarNames[avatars[slot]] || 'Character ' + (avatars[slot] + 1)) + ' · ' +
+          (!(present & (1 << slot)) ? 'Saved character · not connected' : ready & (1 << slot) ? 'Ready' : 'Connecting…');
+        if (avatarPortraits.has(avatars[slot])) {
+          const portrait = document.createElement('img');
+          portrait.src = avatarPortraits.get(avatars[slot]);
+          portrait.alt = avatarNames[avatars[slot]] || 'Character';
+          portrait.width = 96; portrait.height = 112;
+          row.prepend(portrait);
+        }
+        if (hosting && codes[slot]) {
+          const hint = document.createElement('p');
+          hint.textContent = 'Join as this character: ';
+          const code = document.createElement('code');
+          code.textContent = codes[slot];
+          hint.append(code);
+          row.append(hint);
+        }
+        roster.append(row);
+      }
+      const start = document.getElementById('start-party');
+      start.hidden = !hosting;
+      start.disabled = started || !present || ready !== present;
+      if (!started) statusLabel.textContent = hosting
+        ? 'Share the room code. Start when your party is ready.' : 'Waiting for the host to start the game.';
+      else if (wasWaiting) { Module.canvas.focus(); statusLabel.textContent = 'Starting the party…'; }
+    },
     onAbort(text) {
       stopped = true;
       statusLabel.textContent = 'Application stopped: ' + text;
@@ -430,6 +473,17 @@
     41:'James Seward McCain V', 42:'Alexander Thornton Regginis', 43:'Orladin',
   };
   let avatarPreview = null, avatarPreviewYaw = 0.35;
+  const avatarPortraits = new Map();
+  function captureLobbyPortraits() {
+    const selected = avatarSelect.value, pose = avatarPose.value, yaw = avatarPreviewYaw;
+    avatarPose.value = '0'; avatarPreviewYaw = 0.35;
+    for (const option of avatarSelect.options) {
+      avatarSelect.value = option.value;
+      loadAvatarPreview();
+      if (avatarPreview) avatarPortraits.set(Number(option.value), avatarPreviewCanvas.toDataURL('image/png'));
+    }
+    avatarSelect.value = selected; avatarPose.value = pose; avatarPreviewYaw = yaw;
+  }
   function clearAvatarPreview() {
     if (avatarPreview) {
       const {gl, program, buffer, texture} = avatarPreview;
@@ -599,6 +653,7 @@
       const path = '/characters.kfa';
       Module.FS.rename(candidate, path);
       avatarPath = path;
+      avatarPortraits.clear();
       avatarSelect.replaceChildren();
       const animated = document.createElement('optgroup');
       const original = document.createElement('optgroup');
@@ -780,7 +835,10 @@
       }
       args.push('--signal', signal.href);
     }
+    if (mode !== 'solo' && !avatarPortraits.size) captureLobbyPortraits();
     running = true;
+    Module.canvas.hidden = mode !== 'solo';
+    document.getElementById('controls').hidden = mode !== 'solo';
     clearAvatarPreview();
     avatarPreviewPanel.hidden = true;
     onlineMode = mode;
@@ -803,6 +861,11 @@
   playButton.addEventListener('click', () => startGame('solo'));
   document.getElementById('restart').addEventListener('click', () => location.reload());
   hostButton.addEventListener('click', () => startGame('host'));
+  document.getElementById('start-party').addEventListener('click', () => {
+    document.getElementById('start-party').disabled = true;
+    Module.ccall('kf_lobby_start', null, [], []);
+  });
+  document.getElementById('leave-party').addEventListener('click', () => location.reload());
   joinButton.addEventListener('click', () => startGame('join'));
   joinCode.addEventListener('keydown', event => {
     if (event.key === 'Enter') startGame('join');

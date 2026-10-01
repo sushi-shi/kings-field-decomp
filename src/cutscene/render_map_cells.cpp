@@ -4,7 +4,7 @@
 #include <kf/cutscene/scene0.h>
 #include <kf/lib/map_data.h>
 
-KfOpeningCellStorage opening_cell_storage;
+KfOpeningSceneCells opening_scene_cells;
 
 void cutscene_render_map_cell(s32 col, s32 row, KfCellVisibility visibility)
 {
@@ -55,7 +55,7 @@ void opening_render_map_cells(void)
     u8 cols;
 
     open_graphics_runtime.active_cell_window =
-        &opening_cell_storage.scene.windows[KF_CELL_WINDOW_YAW_COUNT - 1
+        &opening_scene_cells.windows[KF_CELL_WINDOW_YAW_COUNT - 1
             - (open_graphics_runtime.render_state.view_rotation.vy
                 >> KF_CELL_WINDOW_YAW_SHIFT)];
     cell = open_graphics_runtime.active_cell_window->cells;
@@ -86,5 +86,5 @@ void opening_render_map_cells(void)
 
 void cutscene_render_map_cells_reset_module_state(void)
 {
-    kf::restore_initial_value<opening_cell_storage>();
+    kf::restore_initial_value<opening_scene_cells>();
 }

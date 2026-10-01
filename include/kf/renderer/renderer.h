@@ -61,6 +61,9 @@ void renderer_release(Renderer *renderer);
 TextureId renderer_upload(const Image *image);
 void renderer_delete_texture(TextureId texture);
 void renderer_present_retained(const Renderer *renderer, int width, int height);
+// Frame snapshots retain OpenGL's bottom-up row order.
+bool renderer_capture_frame(const Renderer *renderer, Image &image);
+bool renderer_restore_frame(const Renderer *renderer, const Image &image);
 bool renderer_draw_faces(Renderer *renderer, const FaceList *faces, int width, int height);
 // Bounded two-line Latin notice, composited after the retained game image.
 bool renderer_set_notice(Renderer *renderer, const char *text);

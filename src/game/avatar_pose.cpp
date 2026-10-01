@@ -227,6 +227,14 @@ SVECTOR blend(SVECTOR a, SVECTOR b, s32 weight)
 
 bool avatar_has_rig(unsigned avatar) { return rig(avatar) != nullptr; }
 
+MATRIX avatar_body_rotation(s16 camera_yaw)
+{
+    MATRIX rotation {};
+    // Imported bodies face -Z; player movement faces (-sin(yaw), +cos(yaw)).
+    matrix_set_rotation_y((KF_ANGLE_HALF_TURN + camera_yaw) & KF_ANGLE_WRAP_MASK, &rotation);
+    return rotation;
+}
+
 void avatar_build_pose(u8 avatar, const AvatarMotion &motion, AvatarPose &pose)
 {
     pose = {};

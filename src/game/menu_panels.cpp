@@ -10,7 +10,6 @@
 #include <kf/game/player_actions.h>
 #include <kf/platform/prelude.h>
 #include <array>
-static constexpr unsigned MENU_MAGIC_LABEL_CAPACITY = 10;
 static constexpr unsigned MENU_MAGIC_ENTRY_CAPACITY = 16;
 
 
@@ -18,7 +17,6 @@ static constexpr unsigned MENU_MAGIC_ENTRY_CAPACITY = 16;
 kf::FrameTask<bool> menu_magic_panel(WorldState &world, PlayerContext &player)
 {
     KfMenuList ctx;
-    std::array<std::array<s16, MENU_GLYPHS_PER_ROW>, MENU_MAGIC_LABEL_CAPACITY> labels;
     std::array<KfEffectKind, MENU_MAGIC_ENTRY_CAPACITY> magic_ids;
     s32 found;
     s32 magic_id;
@@ -34,13 +32,12 @@ kf::FrameTask<bool> menu_magic_panel(WorldState &world, PlayerContext &player)
     found = 0;
     for (magic_id = kf_enum_encode<s32>(KF_MAGIC_HEALING); magic_id < kf_enum_encode<s32>(KF_MAGIC_LIGHTNING_BOLT); magic_id++) {
         if (player.learned_magic[magic_id] == KF_MAGIC_LEARNED) {
-            labels[found] = magic_name_rows[magic_id].codes;
             magic_ids[found] = kf_enum_decode<KfEffectKind>(magic_id);
             found++;
         }
     }
     ctx.entry_count = found;
-    ctx.glyph_rows = labels;
+    ctx.entries = std::span<const KfEffectKind>(magic_ids).first(found);
     ctx.quantities = {};
 
     menu_frame_begin();

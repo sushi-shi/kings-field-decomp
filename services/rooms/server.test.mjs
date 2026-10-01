@@ -43,6 +43,101 @@ async function connect(url, credential = randomBytes(32).toString('hex')) {
 }
 
 const compatibility = { protocol: 8, resources: 'retail-test-hash', recipe: 'avatar-test-recipe' };
+async function lobby(client, predicate) {
+  for (let attempt = 0; attempt < 20; ++attempt) {
+    const state = await client.next('lobby');
+    if (predicate(state)) return state;
+  }
+  assert.fail('Expected lobby state was not published');
+}
+
+test('host waits in a visible roster and starts the ready party together', async t => {
+  const url = await setup(t);
+  const host = await connect(url);
+  host.send({type:'create', ...compatibility, lobby:true, avatar:41});
+  const room = await host.next('created');
+  assert.equal((await host.next('lobby')).started, false);
+  host.send({type:'ready'});
+  const guest = await connect(url);
+  guest.send({type:'join', room:room.room, ...compatibility, avatar:1});
+  await guest.next('joined');
+  const waiting = await lobby(host, state => state.members[1]?.connected);
+  assert.equal(waiting.members[1].avatar, 1);
+  assert.equal(waiting.members[1].ready, false);
+  host.send({type:'start'});
+  assert.equal((await lobby(host, state => !!state.members[1])).started, false);
+  guest.send({type:'start'});
+  assert.match((await guest.next('error')).reason, /Only the host/);
+  guest.send({type:'ready'});
+  await lobby(host, state => state.members[1]?.ready);
+  host.send({type:'start'});
+  for (const client of [host,guest]) assert.equal((await lobby(client, state => state.started)).started, true);
+});
+
+test('saved character codes transfer a character to another device and reserve absent characters', async t => {
+  const url = await setup(t);
+  const host = await connect(url);
+  const originalCredential = randomBytes(32).toString('hex');
+  const savedIdentity = createHash('sha256').update(Buffer.from(originalCredential, 'hex')).digest('hex');
+  host.send({type:'create', ...compatibility, lobby:true,
+    roster:['0'.repeat(64), savedIdentity, 'b'.repeat(64), '0'.repeat(64)], rosterAvatars:[41,1,19,41]});
+  const room = await host.next('created');
+  const saved = await host.next('lobby');
+  const code = saved.members[1].code;
+  assert.match(code, /^[A-Za-z0-9_-]{16}$/);
+  assert.equal(saved.members[1].connected, false);
+  host.send({type:'ready'});
+  await lobby(host, state => state.members[0].ready);
+  host.send({type:'start'});
+  assert.equal((await lobby(host, state => state.started)).started, true, 'Absent characters must not prevent a solo start');
+  const returning = await connect(url);
+  returning.send({type:'join', room:code, ...compatibility, avatar:5});
+  const admission = await returning.next('joined');
+  assert.equal(admission.room, room.room);
+  assert.equal(admission.slot, 1);
+  assert.equal(admission.identity, savedIdentity);
+  const returned = await returning.next('lobby');
+  assert.equal(returned.members[1].avatar, 1, 'Claiming a saved character must preserve its avatar');
+  assert.ok(returned.members.every(member => !member || !('code' in member)), 'Character codes leaked to a guest');
+  const previousOwner = await connect(url, originalCredential);
+  previousOwner.send({type:'join', room:room.room, ...compatibility});
+  assert.match((await previousOwner.next('error')).reason, /character code/, 'Original profile allocated a duplicate saved identity');
+  const duplicate = await connect(url);
+  duplicate.send({type:'join', room:code, ...compatibility});
+  assert.match((await duplicate.next('error')).reason, /already connected/);
+  const newcomer = await connect(url);
+  newcomer.send({type:'join', room:room.room, ...compatibility, avatar:26});
+  assert.equal((await newcomer.next('joined')).slot, 3, 'New player replaced an absent saved character');
+  const extra = await connect(url);
+  extra.send({type:'join', room:room.room, ...compatibility});
+  assert.match((await extra.next('error')).reason, /Party full/);
+  returning.socket.close();
+  await lobby(host, state => !state.members[1].connected);
+  duplicate.send({type:'join', room:code, ...compatibility});
+  assert.equal((await duplicate.next('joined')).identity, savedIdentity);
+  host.send({type:'leave'});
+  await duplicate.next('ended');
+  const expired = await connect(url);
+  expired.send({type:'join', room:code, ...compatibility});
+  assert.equal((await expired.next('error')).reason, 'Room unavailable');
+});
+
+test('departing lobby newcomers free a slot while saved characters remain reserved', async t => {
+  const url = await setup(t);
+  const host = await connect(url);
+  host.send({type:'create', ...compatibility, lobby:true});
+  const room = await host.next('created');
+  const first = await connect(url);
+  first.send({type:'join', room:room.room, ...compatibility});
+  await first.next('joined');
+  await lobby(host, state => state.members[1]?.connected);
+  first.socket.close();
+  await lobby(host, state => state.members[1] === null);
+  const second = await connect(url);
+  second.send({type:'join', room:room.room, ...compatibility});
+  assert.equal((await second.next('joined')).slot, 1);
+});
+
 async function create(url) {
   const host = await connect(url);
   host.send({ type: 'create', ...compatibility });

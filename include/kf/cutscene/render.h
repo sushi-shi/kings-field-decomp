@@ -50,7 +50,7 @@ typedef struct KfGraphicsRuntimeOpen {
     std::array<u8, 8> unknown_20108;
     KfTmdStateOpen tmd_state;
     std::array<u8, 4> unknown_2011c;
-    SVECTOR *current_tmd_vertices;
+    std::span<const SVECTOR> current_tmd_vertices;
     std::array<u8, 0x14> unknown_20124;
     std::array<KfScreenVertex, KF_PROJECTED_VERTEX_CAPACITY> tmd_projected_vertices;
     std::array<u8, 0x1f68> unknown_22078;
@@ -70,15 +70,10 @@ extern SVECTOR cutscene_render_sprite_light_normal;
 extern CVECTOR cutscene_map_textured_primitive_color;
 
 typedef struct KfOpeningSceneCells {
-    KfCellWindow windows[KF_CELL_WINDOW_YAW_COUNT];
-    u8 unknown_cc0[0x30];
+    std::array<KfCellWindow, KF_CELL_WINDOW_YAW_COUNT> windows;
     KfMapGrid collision_flags;
 } KfOpeningSceneCells;
-typedef union KfOpeningCellStorage {
-    u32 rtbl_sectors[2][512];
-    KfOpeningSceneCells scene;
-} KfOpeningCellStorage;
-extern KfOpeningCellStorage opening_cell_storage;
+extern KfOpeningSceneCells opening_scene_cells;
 
 extern void cutscene_display_initialize(Cutscene scene);
 extern void cutscene_lighting_set_active_color_matrix(KfOpenColorPreset preset);

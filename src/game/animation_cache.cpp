@@ -126,7 +126,7 @@ bool render_bind_instance_vertices(
 
     if (record->clip_index != clip_index || record->keyframe_index != keyframe_index) {
         tmd_select_object_vertices(tmd_context(), 0);
-        copy_vertices(record->cached_vertices.data(), game_graphics_runtime.current_tmd_vertices, vertex_count);
+        copy_vertices(record->cached_vertices.data(), tmd_vertices(tmd_context(), vertex_count).data(), vertex_count);
         for (std::size_t i = 0; i < keyframe.morph_count; ++i)
             morph_add_deltas(record->cached_vertices.data(), animation,
                 animation.indices[keyframe.first_morph + i], KF_FIXED12_ONE);
@@ -138,7 +138,7 @@ bool render_bind_instance_vertices(
 
     copy_vertices(game_graphics_runtime.morph_scratch.data(), record->cached_vertices.data(), vertex_count);
     morph_add_deltas(game_graphics_runtime.morph_scratch.data(), animation, record->rest_morph, blend_fraction);
-    tmd_set_current_vertices(tmd_context(), game_graphics_runtime.morph_scratch.data());
+    game_graphics_runtime.current_tmd_vertices = std::span(game_graphics_runtime.morph_scratch).first(vertex_count);
     record->state = KF_ANIMATION_CACHE_LIVE;
     return true;
 }

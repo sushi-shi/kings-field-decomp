@@ -50,10 +50,19 @@ throne model. Ten bodies have movement, melee and casting poses. The complete
 catalogue roster and all remaining bodies are not yet animated; Yvette's palette
 and Airon's sick form remain unresolved. See the avatar notes for evidence.
 
-Private profiles identify returning characters; public hashes appear in the
-party roster. Campaign checkpoints preserve the party and world, while the
-browser/native save directory retains the private credential. Save work is not
-a priority for the current migration.
+The browser waits in a roster lobby while resources/world state synchronize;
+only the host starts gameplay. Connected guests spawn in clear nearby positions
+instead of overlapping at a tile center. Private profiles support reconnects.
+Only the host persists the campaign. Rehosting reserves saved characters and
+displays per-character claim codes, allowing a guest on another device to keep
+the saved identity, inventory and avatar. Codes are room-scoped, host-visible
+bearer credentials. Absent characters are retained, and unused slots admit new
+players up to the four-character limit. The host may start alone.
+
+Against a fresh unarmoured character's 30 HP, the starter sword deals 10 HP per
+fully charged friendly hit; partial charge and armour still affect damage.
+Death currently removes the third-person body and switches the victim to
+spectating a living party member; there is no third-person death animation yet.
 
 ## Verification
 
@@ -67,6 +76,7 @@ ASAN_OPTIONS=detect_leaks=0 python -m unittest discover -s tests
 emcmake cmake --preset wasm
 cmake --build --preset wasm
 node --test services/rooms/server.test.mjs
+node services/rooms/browser-lobby.test.mjs build/wasm /path/to/KF1.bin /tmp/lobby.png --lobby /path/to/characters.kfa
 node services/rooms/webrtc.test.mjs build/linux/coop-transport-test
 node services/rooms/crossplay.test.mjs build/linux/coop-crossplay-host build/wasm --https --stun-only --reject-packet
 node services/rooms/crossplay.test.mjs build/linux/coop-crossplay-host build/wasm --turn-tls --reject-peer

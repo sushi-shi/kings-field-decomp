@@ -371,6 +371,30 @@ void renderer_present_retained(const Renderer *renderer, int width, int height) 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
 }
 
+bool renderer_capture_frame(const Renderer *renderer, Image &image) {
+    try {
+        image.rgba.resize(render_width * render_height * 4);
+    } catch (const std::bad_alloc &) {
+        return false;
+    }
+    image.width = render_width;
+    image.height = render_height;
+    glBindFramebuffer(GL_READ_FRAMEBUFFER, renderer->framebuffer);
+    glReadPixels(0, 0, render_width, render_height, GL_RGBA, GL_UNSIGNED_BYTE, image.rgba.data());
+    return glGetError() == GL_NO_ERROR;
+}
+
+bool renderer_restore_frame(const Renderer *renderer, const Image &image) {
+    if (image.width != render_width || image.height != render_height ||
+        image.rgba.size() != render_width * render_height * 4)
+        return false;
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, renderer->color_texture);
+    glTexSubImage2D(GL_TEXTURE_2D, 0, 0, 0, render_width, render_height,
+                   GL_RGBA, GL_UNSIGNED_BYTE, image.rgba.data());
+    return glGetError() == GL_NO_ERROR;
+}
+
 struct FaceOrder {
     std::size_t index;
     s32 depth;

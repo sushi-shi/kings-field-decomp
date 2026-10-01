@@ -156,6 +156,12 @@ static void independent_characters_and_worlds()
 
 static void avatar_animation_and_attachments()
 {
+    for (s16 yaw = 0; yaw < 4096; yaw += 128) {
+        const auto forward = kf::matrix_apply_rotation(avatar_body_rotation(yaw), {0,0,-4096});
+        require(std::abs(forward.vx + kf::angle_sine(yaw)) <= 2 &&
+            std::abs(forward.vz - kf::angle_cosine(yaw)) <= 2,
+            "Remote body faces a different direction from player movement");
+    }
     AvatarPose idle, walking, swing;
     avatar_build_pose(41,{0,0,0,-1,0,false},idle);
     require(idle.rigged,"Standing character has no rig");
@@ -515,6 +521,47 @@ static void elf_avatar_animation()
         for (s16 x : {-135,-45,45,135}) for (s16 z : {-252,100})
             require(point({x,0,z}).vy<=2,"Elf's foot penetrated the floor");
     }
+    // Two actual Lyn triangles exercise import-time pose correction as well
+    // as skinning: the upper seam must stay on the arm, not pin to the torso.
+    constexpr std::array<KfAvatarVertex,6> source {{
+        {-194,-1413,-88,0,0,-4096,0,350,128,128,128,0},
+        {-192,-1388,-35,0,0,-4096,31,350,128,128,128,0},
+        {-196,-1331,-99,0,0,-4096,9,413,128,128,128,0},
+        {-163,-1316,-204,0,0,-4096,31,350,128,128,128,0},
+        {-235,-1345,-145,0,0,-4096,23,413,128,128,128,0},
+        {-139,-1295,-150,0,0,-4096,0,350,128,128,128,0}
+    }};
+    std::vector<u8> bytes {'K','F','A','1',1,0,1,0,1,0,158,1,2,0,0,0};
+    const auto word=[&](u16 value) { bytes.push_back(value); bytes.push_back(value>>8); };
+    for (const auto &vertex : source) {
+        for (s16 value : {vertex.x,vertex.y,vertex.z,vertex.nx,vertex.ny,vertex.nz}) word(static_cast<u16>(value));
+        word(vertex.u); word(vertex.v);
+        bytes.insert(bytes.end(),{vertex.r,vertex.g,vertex.b,vertex.unlit});
+    }
+    bytes.resize(bytes.size()+256*414*4,255);
+    char directory[]="/tmp/kf-elf-seam-XXXXXX";
+    require(mkdtemp(directory),"Cannot create isolated elf mesh fixture");
+    const auto path=std::filesystem::path(directory)/"characters.kfa";
+    auto *file=std::fopen(path.c_str(),"wb");
+    require(file && std::fwrite(bytes.data(),1,bytes.size(),file)==bytes.size(),"Cannot write elf mesh fixture");
+    std::fclose(file);
+    require(kf::avatars_load(path.c_str()),"Cannot load actual elf triangles");
+    const auto *mesh=kf::avatar_mesh(1);
+    require(mesh && mesh->info.triangles==2,"Elf correction changed mesh topology");
+    require(mesh->vertices[3].x<-175 && mesh->vertices[3].y>-1220,
+        "Elf's crossed forearm still pinches inward at the elbow");
+    for (const s16 phase : {s16{-1},s16{1600},s16{2600},s16{3072},s16{3500}}) {
+        avatar_build_pose(1,{0,0,0,phase,0,false},pose);
+        const auto &seam=mesh->vertices[1];
+        SVECTOR actual,normal;
+        avatar_pose_vertex(pose,seam,actual,normal);
+        const auto expected=kf::render_transform_point(pose.bones[static_cast<unsigned>(AvatarBone::RightArm)],
+            {seam.x,seam.y,seam.z});
+        require(actual.vx==expected.vx && actual.vy==expected.vy && actual.vz==expected.vz,
+            "Elf's corrected elbow seam detached from the animated upper arm");
+    }
+    kf::avatars_release();
+    std::filesystem::remove_all(directory);
 }
 
 static void armored_avatar_animation()
@@ -1253,6 +1300,9 @@ static void shared_quest_rewards()
             "Sanctuary reward did not teach both spells");
     late.presence = PartyPresence::Waiting;
     const auto growth = player_level_growth_table[0];
+    for (auto &cell : world->collision.linear) cell = KF_MAP_CELL_FLOOR;
+    actor_pool_clear(*world);
+    map_object_pool_clear(*world);
     player_level_growth_table[0].maximum_hp = 100;
     player_level_growth_table[0].maximum_mp = 50;
     require(party_admit(*world, 3, character_identity(99), false) && late.character_id == character_identity(99) &&
@@ -1276,7 +1326,10 @@ static void party_entry_return()
     world->floor = KF_FLOOR_5;
     world->variant = KF_FLOOR5_ENTRY_VARIANT;
     const auto &entry = floor_entry_cells[4];
-    world->floor_height.cells[entry.z][entry.x] = 3;
+    for (auto &cell : world->floor_height.linear) cell = 3;
+    for (auto &cell : world->collision.linear) cell = KF_MAP_CELL_FLOOR;
+    actor_pool_clear(*world);
+    map_object_pool_clear(*world);
     for (u8 slot = 0; slot < party_capacity; ++slot) {
         auto &member = world->party.members[slot];
         member.presence = slot == 2 ? PartyPresence::Spectating : slot == 3 ? PartyPresence::Disconnected : PartyPresence::Living;
@@ -1304,8 +1357,8 @@ static void party_entry_return()
     for (u8 slot = 0; slot < party_capacity; ++slot) {
         const auto &member = world->party.members[slot];
         const auto &player = member.player;
-        require(!world->collision_flags.cells[5][slot + 5] && player.state.motion_state.map_cell.x == entry.x &&
-            player.state.motion_state.map_cell.z == entry.z && map_cells_equal(player.state.previous_map_cell, player.state.motion_state.map_cell),
+        require(!world->collision_flags.cells[5][slot + 5] && std::abs(player.state.motion_state.map_cell.x - entry.x) <= 3 &&
+            std::abs(player.state.motion_state.map_cell.z - entry.z) <= 3 && map_cells_equal(player.state.previous_map_cell, player.state.motion_state.map_cell),
             "Party return left old occupancy or immediately retriggered an entrance");
         require(player.state.map_variant == KF_FLOOR5_ENTRY_VARIANT && player.state.foot_height == -3 * KF_MAP_HEIGHT_STEP &&
             player.state.weapon_attack_phase == KF_WEAPON_ATTACK_INACTIVE && player.state.vitals.current_hp == (slot == 2 ? 0 : 37) &&
@@ -1357,6 +1410,9 @@ static void party_terminal_travel()
 static void party_lifecycle()
 {
     auto world = std::make_unique<WorldState>();
+    for (auto &cell : world->collision.linear) cell = KF_MAP_CELL_FLOOR;
+    actor_pool_clear(*world);
+    map_object_pool_clear(*world);
     PartyRuntime runtime;
     world->party.enabled = true;
     for (u8 slot = 0; slot < 2; ++slot) {
@@ -1446,6 +1502,24 @@ static void party_combat()
     }
     auto &attacker = world->party.members[0].player;
     auto &victim = world->party.members[1].player;
+    // Retail level-one stats and short-sword attack components, without assets.
+    attacker.state.cutting_attack = 2;
+    attacker.state.striking_attack = attacker.state.piercing_attack = 1;
+    attacker.state.attack_charge_state.committed = KF_ACTOR_DAMAGE_SCALE_ONE;
+    victim.state.physical_power = 20;
+    victim.state.vitals.current_hp = victim.state.vitals.maximum_hp = 30;
+    const VECTOR starter_impact {11000, KF_COLLISION_IGNORE_HEIGHT, 10000};
+    for (unsigned hit = 1; hit <= 3; ++hit) {
+        require(party_melee_hit(*world, attacker, starter_impact, 100, 1000), "Starter melee missed");
+        require(victim.state.vitals.current_hp == 30 - hit * 10,
+            "Three charged starting sword hits must kill a fresh character");
+    }
+    victim.state.vitals.current_hp = 30;
+    attacker.state.attack_charge_state.committed = KF_ACTOR_DAMAGE_SCALE_ONE / 2;
+    require(party_melee_hit(*world, attacker, starter_impact, 100, 1000) && victim.state.vitals.current_hp == 25,
+        "Partial melee charge was rounded away or ignored");
+    attacker.state.striking_attack = attacker.state.piercing_attack = 0;
+    victim.state.physical_power = 10;
     attacker.state.cutting_attack = 30;
     attacker.state.attack_charge_state.committed = 4096;
     victim.state.vitals.current_hp = 1;
@@ -2341,6 +2415,10 @@ static void snapshot_validation_and_prediction_isolation()
     spectator.character_id = character_identity(2);
     spectator.presence = PartyPresence::Spectating;
     spectator.player.state.vitals.current_hp = 0;
+    // The snapshot fixture above deliberately has no walkable terrain. Saving
+    // revives beside the living player only when a real footprint is clear.
+    for (auto &cell : source->collision.linear) cell = KF_MAP_CELL_FLOOR;
+    for (auto &cell : source->floor_height.linear) cell = 0;
     auto saving = campaign_save(*source, player, kf::SaveSlot::First);
     saving.advance();
     require(campaign.writing && spectator.presence == PartyPresence::Spectating,

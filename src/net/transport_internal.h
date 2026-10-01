@@ -17,7 +17,7 @@ namespace kf::net::detail {
 using Json = nlohmann::json;
 using Identity = std::array<u8, 32>;
 inline constexpr std::size_t signal_limit = 65536, queue_bytes = 2 * 1024 * 1024, queue_events = 128;
-enum EventKind : u8 { Room, Connected, Disconnected, Packet, HostWaiting, Ended, Error };
+enum EventKind : u8 { Room, Connected, Disconnected, Packet, HostWaiting, Ended, Error, Lobby };
 struct Event {
     u8 kind {}, peer {}, lane {};
     u32 generation {};
