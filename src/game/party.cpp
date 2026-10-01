@@ -1,3 +1,4 @@
+#include <kf/platform/prelude.h>
 #include <kf/game/world.h>
 #include <kf/game/party.h>
 #include <kf/game/notify.h>
@@ -131,10 +132,10 @@ s32 party_find_overlap(WorldState &world, s32 x, s32 y, s32 z,
     return nearest;
 }
 
-PlayerContext &party_collision_player(WorldState &world, PlayerContext &offline_player, u32 collision)
+PlayerContext &party_collision_player(WorldState &world, PlayerContext &offline_player, KfCollisionResult collision)
 {
     if (!world.party.enabled) return offline_player;
-    const auto slot = collision & KF_COLLISION_DETAIL_MASK;
+    const auto slot = collision.detail;
     if (slot >= party_capacity)
         kf::host_fail("Invalid party collision target");
     return world.party.members[slot].player;

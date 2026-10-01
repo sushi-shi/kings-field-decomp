@@ -1,10 +1,13 @@
 #include <kf/game/world.h>
 #include <kf/game/player.h>
-#include <kf/game/map_data.h>
+#include <kf/lib/map_data.h>
+#include <kf/platform/prelude.h>
 #include <kf/game/collision.h>
 #include <kf/game/game.h>
 
-s16 map_cell_attribute_height_table[KF_MAP_ATTRIBUTE_COUNT] = {
+#include <array>
+
+std::array<s16, KF_MAP_ATTRIBUTE_COUNT> map_cell_attribute_height_table = {
     -25000, -3000, -3000, -3000, -3000, -3000, -3000, -3000,
     -3000, -3000, -3000, -3000, -3000, -3000, -3000, -3000,
     -3000, -3000, -3000, -5000, -5000, -5000, -5000, -2500,
@@ -40,12 +43,12 @@ s16 map_cell_attribute_height_table[KF_MAP_ATTRIBUTE_COUNT] = {
 };
 
 
-u32 collision_query_world(WorldState &world, PlayerContext &player,
+KfCollisionResult collision_query_world(WorldState &world, PlayerContext &player,
     s32 point_x, s32 point_y, s32 point_z, s32 radius, s32 height, u32 flags, u8 ignored_player)
 {
     if (point_x < 0 || point_z < 0 || point_x >= KF_MAP_COLUMNS * KF_MAP_TILE_SIZE ||
         point_z >= KF_MAP_ROWS * KF_MAP_TILE_SIZE)
-        return KF_COLLISION_TERRAIN;
+        return {KfCollisionKind::Terrain};
     s32 cell = point_x / KF_MAP_TILE_SIZE
         + (s16)(point_z / KF_MAP_TILE_SIZE) * KF_MAP_COLUMNS;
     s32 floor_height;
@@ -59,21 +62,21 @@ u32 collision_query_world(WorldState &world, PlayerContext &player,
         hit = kf_enum_encode<u8>(world.collision.linear[(u16)cell]);
 
         if (!map_cell_has_full_floor(kf_enum_decode<KfMapCellKind>(hit))) {
-            return hit | KF_COLLISION_TERRAIN;
+            return {KfCollisionKind::Terrain, static_cast<u16>(hit)};
         }
         if (point_y != KF_COLLISION_IGNORE_HEIGHT) {
             floor_height = map_floor_height_for_cell_position(world,
                 (u16)cell, point_x, point_z);
             if (floor_height < point_y) {
-                return KF_COLLISION_BELOW_FLOOR;
+                return {KfCollisionKind::BelowFloor};
             }
             attribute = world.cell_attribute.linear[(u16)cell];
             if (attribute == KF_MAP_ATTRIBUTE_NONE) {
-                return KF_COLLISION_MISSING_ATTRIBUTE;
+                return {KfCollisionKind::MissingAttribute};
             }
             if (map_cell_attribute_height_table[kf_enum_encode<u8>(attribute)] + height < 0
                 && point_y < map_cell_attribute_height_table[kf_enum_encode<u8>(attribute)] + height + floor_height) {
-                return KF_COLLISION_CEILING;
+                return {KfCollisionKind::Ceiling};
             }
         }
     }
@@ -81,10 +84,10 @@ u32 collision_query_world(WorldState &world, PlayerContext &player,
     rejection_mask = (query_flags >> KF_COLLISION_CELL_FLAG_SHIFT) & KF_COLLISION_CELL_FLAG_MASK;
     hit = cell_flags & rejection_mask;
     if (hit != 0) {
-        return hit << KF_COLLISION_CELL_FLAG_SHIFT;
+        return {KfCollisionKind::CellFlags, static_cast<u16>(hit)};
     }
     if ((cell_flags & KF_CELL_OCCUPANT_COUNT_MASK) == 0 && !world.party.enabled) {
-        return KF_COLLISION_NONE;
+        return {KfCollisionKind::None};
     }
     if ((query_flags & KF_COLLISION_SKIP_PLAYER) == 0) {
         if (world.party.enabled) {
@@ -94,10 +97,9 @@ u32 collision_query_world(WorldState &world, PlayerContext &player,
                 const auto &target = world.party.members[slot].player.state;
                 if (query_flags & KF_COLLISION_CAPTURE_TARGET) {
                     world.collision_target.position = target.camera_position;
-                    world.collision_target.rotation = target.camera_rotation;
                     world.collision_target.radius = KF_COLLISION_PLAYER_RADIUS;
                 }
-                return KF_COLLISION_PLAYER | static_cast<u32>(slot);
+                return {KfCollisionKind::Player, static_cast<u16>(slot)};
             }
         } else {
         hit = player_distance_to_point(player,
@@ -105,10 +107,9 @@ u32 collision_query_world(WorldState &world, PlayerContext &player,
         if (hit != KF_PROXIMITY_NONE) {
             if (query_flags & KF_COLLISION_CAPTURE_TARGET) {
                 world.collision_target.position = player.state.camera_position;
-                world.collision_target.rotation = player.state.camera_rotation;
                 world.collision_target.radius = KF_COLLISION_PLAYER_RADIUS;
             }
-            return KF_COLLISION_PLAYER;
+            return {KfCollisionKind::Player};
         }
         }
     }
@@ -120,10 +121,9 @@ u32 collision_query_world(WorldState &world, PlayerContext &player,
                 KfActorDefinition *definition = &world.actors.definitions.entries[actor->definition_id];
 
                 world.collision_target.position = actor->position;
-                world.collision_target.rotation = actor->rotation.vector;
                 world.collision_target.radius = definition->collision_radius;
             }
-            return hit | KF_COLLISION_ACTOR;
+            return {KfCollisionKind::Actor, static_cast<u16>(hit)};
         }
     }
     if ((query_flags & KF_COLLISION_SKIP_MAP_OBJECTS) == 0) {
@@ -134,14 +134,13 @@ u32 collision_query_world(WorldState &world, PlayerContext &player,
                 KfMapObjectDefinition *definition = &world.objects.definitions.entries[kf_enum_encode<u8>(object->object_id)];
 
                 world.collision_target.position = object->position;
-                world.collision_target.rotation = object->rotation.vector;
                 world.collision_target.radius = definition->collision_radius;
             }
-            return hit | KF_COLLISION_MAP_OBJECT;
+            return {KfCollisionKind::MapObject, static_cast<u16>(hit)};
         }
     }
     if (query_flags & KF_COLLISION_SKIP_MAP_EVENTS) {
-        return KF_COLLISION_NONE;
+        return {KfCollisionKind::None};
     }
     hit = map_event_pool_find_overlap(world, point_x, point_z, radius);
     if (hit != KF_PROXIMITY_NONE) {
@@ -149,12 +148,11 @@ u32 collision_query_world(WorldState &world, PlayerContext &player,
             KfMapEvent *event = &world.map.events[hit];
 
             world.collision_target.position = event->reference_position;
-            world.collision_target.rotation = event->rotation;
             world.collision_target.radius = event->radius;
         }
-        return hit | KF_COLLISION_MAP_EVENT;
+        return {KfCollisionKind::MapEvent, static_cast<u16>(hit)};
     }
-    return KF_COLLISION_NONE;
+    return {KfCollisionKind::None};
 }
 
 

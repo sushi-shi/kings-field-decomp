@@ -1,7 +1,7 @@
 #include <kf/platform/avatars.hpp>
-#include <kf/platform/assets.hpp>
-#include <kf/renderer/renderer.hpp>
-#include <kf/lib/fixed_math.hpp>
+#include <kf/platform/assets.h>
+#include <kf/renderer/renderer.h>
+#include <kf/lib/fixed_math.h>
 #include <algorithm>
 #include <cstdio>
 #include <vector>
@@ -227,8 +227,8 @@ static bool install(const u8 *bytes, std::size_t size) {
     }
     Sha256 digest{};
     sha256_init(&digest);
-    sha256_update(&digest,reinterpret_cast<const u8 *>(avatar_presentation_recipe),sizeof avatar_presentation_recipe);
-    sha256_update(&digest, bytes, size);
+    sha256_update(&digest, {reinterpret_cast<const u8 *>(avatar_presentation_recipe), sizeof avatar_presentation_recipe});
+    sha256_update(&digest, {bytes, size});
     sha256_finish(&digest, hash);
     return true;
 }
@@ -296,7 +296,7 @@ unsigned avatar_texture(unsigned slot) {
     if (!mesh) return 0;
     if (!textures[slot]) {
         const auto size = static_cast<std::size_t>(256 * mesh->info.height * 4);
-        const Image image{256, mesh->info.height, {const_cast<u8 *>(mesh->rgba), size, size}};
+        const Image image{256, mesh->info.height, {mesh->rgba, mesh->rgba + size}};
         textures[slot] = renderer_upload(&image);
     }
     return textures[slot];

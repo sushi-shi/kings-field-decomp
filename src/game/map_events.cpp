@@ -1,17 +1,20 @@
+#include <kf/platform/frame_task.hpp>
 #include <kf/game/system.h>
 #include <kf/game/world.h>
 #include <kf/game/player.h>
 #include <algorithm>
 #include <kf/game/audio.h>
-#include <kf/lib/random.hpp>
+#include <kf/lib/random.h>
 #include <kf/game/actor.h>
-#include <kf/game/map_data.h>
-#include <kf/game/map.h>
+#include <kf/lib/map_data.h>
+#include <kf/lib/map.h>
+#include <kf/platform/prelude.h>
 #include <kf/game/collision.h>
-#include <cstdlib>
-#include <cstdio>
-#include <cstring>
 #include <kf/game/game.h>
+
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 enum {
     MAP_AMBIENT_COUNTDOWN_RELOAD = 10,
@@ -48,8 +51,8 @@ void map_event_update_wander(WorldState &world, PlayerContext &player)
 
     if (collision_query_world(world, player,
             point.vx, KF_COLLISION_IGNORE_HEIGHT, point.vz, event->radius, 0,
-            KF_COLLISION_SKIP_MAP_EVENTS | (KF_COLLISION_CELL_BLOCKS_WANDER << KF_COLLISION_CELL_FLAG_SHIFT))
-            == KF_COLLISION_NONE) {
+            KF_COLLISION_SKIP_MAP_EVENTS | (KF_COLLISION_CELL_BLOCKS_WANDER << KF_COLLISION_CELL_FLAG_SHIFT)).kind
+            == KfCollisionKind::None) {
         event->reference_position.vx = point.vx;
         event->reference_position.vz = point.vz;
         event->cell_x = point.vx / KF_MAP_TILE_SIZE;
@@ -183,11 +186,11 @@ void map_world_state_persist(WorldState &world, PlayerContext &player)
     s32 active;
 
     out = world.map.world_state.floors[
-        kf_enum_encode<u8>(player.state.progress_state.current_floor) - 1].records;
+        kf_enum_encode<u8>(player.state.progress_state.current_floor) - 1].records.data();
     u8 *const end = out + KF_MAP_SAVED_RECORD_BYTES;
     map_saved_put(out, end, 1);
 
-    event = world.map.events;
+    event = world.map.events.data();
     for (i = 0; i < KF_MAP_EVENT_CAPACITY; i++, event++) {
         map_saved_put(out, end, kf_enum_encode<u8>(event->state));
         map_saved_put(out, end, event->dialogue.stage_limit);

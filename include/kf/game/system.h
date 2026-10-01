@@ -1,5 +1,8 @@
 #ifndef KF_GAME_SYSTEM_H
 #define KF_GAME_SYSTEM_H
+#include <kf/platform/frame_task.hpp>
+#include <kf/lib/types.h>
+struct KfDisplayState;
 
 struct WorldState;
 
@@ -15,4 +18,4 @@ extern kf::FrameTask<void> game_main_loop(WorldState &world, PlayerContext &play
 extern kf::FrameTask<void> coop_game_loop(WorldState &world, PlayerContext &player);
 extern void game_shutdown(void);
 
-#endif
+#endif // KF_GAME_SYSTEM_H

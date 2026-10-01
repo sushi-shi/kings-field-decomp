@@ -1,7 +1,11 @@
-#include <kf/platform/saves.hpp>
+#include <kf/platform/saves.h>
+
 #include <SDL3/SDL.h>
+
+#include <array>
 #include <cstdio>
 #include <cstring>
+
 #ifdef __EMSCRIPTEN__
 #include <emscripten.h>
 EM_JS_DEPS(save_strings, "$UTF8ToString");
@@ -131,11 +135,14 @@ EM_ASYNC_JS(int, browser_online_profile, (u8 *output), {
     } catch { return 0; }
 });
 #else
+#include <sys/stat.h>
+
 #include <cerrno>
 #include <fcntl.h>
 #include <sys/stat.h>
 #include <sys/file.h>
 #include <unistd.h>
+
 #endif
 
 namespace kf {

@@ -1,3 +1,5 @@
+#include <kf/platform/prelude.h>
+#include <kf/platform/frame_task.hpp>
 #include <kf/game/game.h>
 #include <kf/game/party_runtime.h>
 

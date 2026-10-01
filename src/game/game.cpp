@@ -1,16 +1,18 @@
+#include <kf/platform/frame_task.hpp>
 #include <kf/game/system.h>
 #include <kf/game/world.h>
+#include <kf/platform/prelude.h>
 #include <kf/game/audio.h>
-#include <kf/game/resources.h>
-#include <kf/game/graphics.h>
-
-#include <kf/lib/overlay.h>
-#include <kf/game/player.h>
-#include <kf/game/save.h>
-#include <cstdlib>
-#include <cstdio>
-#include <cstring>
 #include <kf/game/game.h>
+#include <kf/game/graphics.h>
+#include <kf/game/player.h>
+#include <kf/game/resources.h>
+#include <kf/game/save.h>
+#include <kf/game/session.h>
+
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 enum {
     FRAME_PACER_INTERVAL_TICKS = 3,
@@ -19,7 +21,7 @@ enum {
 
 static std::uint64_t frame_pacer_last_tick;
 
-KfOverlayResultWord game_next_overlay_mode;
+GameResult game_result;
 
 kf::FrameTask<void> game_wait_frame()
 {
@@ -46,12 +48,13 @@ kf::FrameTask<void> game_present_frame(const KfDisplayState &display)
 
 kf::FrameTask<void> game_main_loop(WorldState &world, PlayerContext &player)
 {
-    memset((void *)&game_graphics_runtime, 0, sizeof game_graphics_runtime);
-    memset((void *)&world.actors, 0, sizeof world.actors);
-    memset((void *)&world.objects, 0, sizeof world.objects);
-    memset((void *)&world.effects, 0, sizeof(KfEffectState));
-    memset((void *)world.map.events, 0, sizeof world.map.events);
-    memset((void *)&player.state, 0, sizeof(KfPlayerState));
+    kf::language_apply_pending();
+    game_graphics_runtime = {};
+    world.actors = {};
+    world.objects = {};
+    world.effects = {};
+    world.map.events = {};
+    player.state = {};
     memory_set_allocation_mode(memory_arena, KF_MEMORY_CREATE_ARENA);
     audio_initialize();
     display_initialize();
@@ -61,17 +64,18 @@ kf::FrameTask<void> game_main_loop(WorldState &world, PlayerContext &player)
     effect_pool_reset(world);
     map_event_timers_reset(world);
     common_resources_load(world, player);
+    kf::host_language_status("Language ready.");
     game_initialize_session(world, player);
     memory_set_allocation_mode(memory_arena, KF_MEMORY_REBASE_ARENA);
     (co_await map_load_floor_wrapper(world, player));
     frame_pacer_last_tick = kf::host_clock_tick();
     (co_await player_warp_shimmer_at_player(world, player, KF_WARP_SHIMMER_SHRINK_REMOVE));
-    game_next_overlay_mode = KF_OVERLAY_MODE_NONE;
+    game_result = GameResult::Running;
     if (!kf::net::application_config.signaling_url.empty()) {
         co_await coop_game_loop(world, player);
-        if (game_next_overlay_mode == KF_OVERLAY_MODE_NONE)
-            game_next_overlay_mode = KF_OVERLAY_MODE_INTRO;
-        else if (game_next_overlay_mode == KF_OVERLAY_MODE_ENDING) {
+        if (game_result == GameResult::Running)
+            game_result = GameResult::ReturnToIntro;
+        else if (game_result == GameResult::Completed) {
             auto &local = world.party.members[world.party.local_slot].player;
             co_await player_warp_shimmer_at_player(world, local, KF_WARP_SHIMMER_GROW_KEEP);
             co_await display_play_transition();
@@ -81,8 +85,9 @@ kf::FrameTask<void> game_main_loop(WorldState &world, PlayerContext &player)
         co_return;
     }
     for (;;) {
+        game_apply_language();
         (co_await player_update(world, player, {kf::host_read_buttons(), kf::host_take_look()}));
-        if (game_next_overlay_mode != KF_OVERLAY_MODE_NONE) {
+        if (game_result != GameResult::Running) {
             break;
         }
         player_update_transform_snapshot(player, &player.presentation.position_snapshot, &player.presentation.rotation_snapshot);
@@ -99,7 +104,7 @@ kf::FrameTask<void> game_main_loop(WorldState &world, PlayerContext &player)
             == KF_MAP_ATTRIBUTE_WARP) {
             if (!map_cells_equal(player.state.previous_map_cell, player.state.motion_state.map_cell)) {
                 if ((co_await player_warp_trigger_update(world, player)) != 0) {
-                    game_next_overlay_mode = KF_OVERLAY_MODE_ENDING;
+                    game_result = GameResult::Completed;
                     (co_await player_warp_shimmer_at_player(world, player, KF_WARP_SHIMMER_GROW_KEEP));
                     (co_await display_play_transition());
                     (co_await audio_stop_sequence_master_fade(ENDING_MASTER_FADE_STEP_Q8));
@@ -133,5 +138,5 @@ kf::FrameTask<void> frame_pacer_wait(void)
 void game_reset_module_state(void)
 {
     kf::restore_initial_value<frame_pacer_last_tick>();
-    kf::restore_initial_value<game_next_overlay_mode>();
+    kf::restore_initial_value<game_result>();
 }

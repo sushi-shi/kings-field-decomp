@@ -18,7 +18,7 @@ typedef struct KfNetTransportEvent {
     uint8_t data[KF_NET_PACKET_LIMIT];
 } KfNetTransportEvent;
 
-/* One owner calls open/send/poll/close. Rust owns connections and queues.
+/* One owner calls open/send/poll/close. The transport owns connections and queues.
  * Config strings are UTF-8, NUL terminated. Events are copied to caller storage.
  * Transport handles are invalid after close; no callbacks enter gameplay. */
 KfNetTransport *kf_net_transport_open(const KfNetTransportConfig *);

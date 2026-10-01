@@ -1,6 +1,7 @@
 #ifndef KF_GAME_PARTY_RUNTIME_H
 #define KF_GAME_PARTY_RUNTIME_H
 
+#include <kf/platform/frame_task.hpp>
 #include <kf/game/world.h>
 
 // Local continuations are deliberately outside snapshots and campaign saves.

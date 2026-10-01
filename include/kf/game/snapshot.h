@@ -2,6 +2,9 @@
 #define KF_GAME_SNAPSHOT_H
 
 #include <kf/game/world.h>
+#include <memory>
+#include <span>
+#include <vector>
 
 struct WorldSnapshotInfo {
     u32 epoch {};

@@ -1,50 +1,32 @@
-#include <kf/game/system.h>
-#include <kf/game/world.h>
-#include <kf/game/player.h>
-#include <stdarg.h>
-
-#include <kf/game/menu.h>
+#include <kf/platform/prelude.h>
+#include <kf/platform/frame_task.hpp>
 #include <kf/game/game.h>
+#include <kf/game/menu.h>
 
-void func_80036e30(void)
-{
-
+namespace {
+class MenuSession {
+public:
+    explicit MenuSession(PlayerContext &player) : player(player), input(kf::InputContext::Menu) {
+        animation_cache_release_all();
+    }
+    ~MenuSession() { menu_release_item_model(); player_clear_motion(player); }
+private:
+    PlayerContext &player;
+    kf::InputContextScope input;
+};
 }
 
-static kf::FrameTask<u32> menu_enter_mode_impl(WorldState &world, PlayerContext &player, KfMenuMode menu_mode, int argument)
-{
-    struct MenuModelScope { ~MenuModelScope() { menu_release_item_model(); } } model_scope;
-    u32 result;
-    kf::InputContextScope input_context(kf::InputContext::Menu);
-
-    animation_cache_release_all();
-    switch (menu_mode) {
-    case KF_MENU_MODE_ROOT:
-        result = (co_await menu_root(world, player));
-        break;
-    case KF_MENU_MODE_ITEM_PICKUP: {
-        KfObjectId item_id;
-
-        item_id = kf_enum_decode<KfObjectId>(argument);
-        result = kf_enum_encode<u32>((co_await item_pickup_confirm(player, item_id)));
-        break;
-    }
-    case KF_MENU_MODE_SHOP: {
-        KfItemStockBank shop_bank;
-
-        shop_bank = kf_enum_decode<KfItemStockBank>(argument);
-        (co_await shop_menu_root(player, shop_bank));
-        result = 0;
-        break;
-    }
-    }
-    player_clear_motion(player);
-
-    co_return result;
+kf::FrameTask<KfMenuOutcome> menu_open_root(WorldState &world, PlayerContext &player) {
+    const MenuSession session(player);
+    co_return co_await menu_root(world, player);
 }
 
-kf::FrameTask<u32> menu_enter_mode(WorldState &world, PlayerContext &player, KfMenuMode mode) { co_return (co_await menu_enter_mode_impl(world, player, mode, 0)); }
-kf::FrameTask<u32> menu_enter_mode(WorldState &world, PlayerContext &player, KfMenuMode mode, KfObjectId id)
-{ co_return (co_await menu_enter_mode_impl(world, player, mode, static_cast<int>(id))); }
-kf::FrameTask<u32> menu_enter_mode(WorldState &world, PlayerContext &player, KfMenuMode mode, KfItemStockBank bank)
-{ co_return (co_await menu_enter_mode_impl(world, player, mode, static_cast<int>(bank))); }
+kf::FrameTask<KfMenuResult> menu_confirm_pickup(PlayerContext &player, KfObjectId item) {
+    const MenuSession session(player);
+    co_return co_await item_pickup_confirm(player, item);
+}
+
+kf::FrameTask<void> menu_open_shop(PlayerContext &player, KfItemStockBank bank) {
+    const MenuSession session(player);
+    co_await shop_menu_root(player, bank);
+}

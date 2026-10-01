@@ -1,6 +1,7 @@
+#include <kf/platform/prelude.h>
 #include <kf/game/avatar.h>
 #include <kf/lib/math.h>
-#include <kf/renderer/projection.hpp>
+#include <kf/renderer/projection.h>
 #include <algorithm>
 
 namespace {

@@ -821,7 +821,7 @@ try {
   assert.equal(await evaluate(guest, "document.getElementById('room-code').textContent"), code);
   for (const client of [host, guest])
     assert.equal(await evaluate(client, 'roomCompatibility.resources'),
-      await evaluate(client, "Module.ccall('kf_retail_files_hash', 'string', [], [])"),
+      await evaluate(client, "Module.ccall('kf_resource_files_hash', 'string', ['string'], [languageInput.value])"),
       'Startup resource hashing disagrees with the independently verified browser manifest');
   await until(guest, 'statusLabel.textContent.startsWith("Connected.")');
   for (let i = 0; i < 300 && !logs.get(host).some(line => line === 'Player 2 admitted'); ++i) await pause(100);

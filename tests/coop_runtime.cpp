@@ -1,9 +1,8 @@
-#include <kf/platform/prelude.hpp>
+#include <kf/platform/prelude.h>
 #include <filesystem>
 #include <chrono>
 #include <thread>
 #include <GLES3/gl3.h>
-namespace kf::game {
 #include <kf/game/game.h>
 #include <kf/game/player.h>
 #include <kf/game/world.h>
@@ -18,7 +17,6 @@ namespace kf::game {
 #include <kf/game/state.h>
 #include <kf/game/graphics.h>
 void map_event_update_wander(WorldState &, PlayerContext &);
-}
 
 static void require(bool condition, const char *message)
 {
@@ -27,6 +25,30 @@ static void require(bool condition, const char *message)
         std::abort();
     }
 }
+
+// Snapshot fixtures need registered clip metadata, without loading or drawing
+// resource models. Restore both owned animation data and the borrowed TMD view.
+struct SnapshotAssetFixture {
+    unsigned slot;
+    KfAnimationData previous_animation;
+    KfTmdResource previous_tmd;
+    KfTmdHeader tmd {0x41, 0, 0};
+    SnapshotAssetFixture(unsigned index, unsigned clips) : slot(index),
+        previous_animation(std::move(game_graphics_runtime.asset_animations[index])),
+        previous_tmd(game_graphics_runtime.asset_registry_tmds[index])
+    {
+        game_graphics_runtime.asset_animations[slot] = {};
+        game_graphics_runtime.asset_animations[slot].clips.resize(clips);
+        game_graphics_runtime.asset_registry_tmds[slot] = {&tmd, sizeof(tmd)};
+    }
+    ~SnapshotAssetFixture()
+    {
+        game_graphics_runtime.asset_animations[slot] = std::move(previous_animation);
+        game_graphics_runtime.asset_registry_tmds[slot] = previous_tmd;
+    }
+    SnapshotAssetFixture(const SnapshotAssetFixture &) = delete;
+    SnapshotAssetFixture &operator=(const SnapshotAssetFixture &) = delete;
+};
 
 static kf::net::Identity character_identity(std::uint64_t value)
 {
@@ -108,7 +130,6 @@ static void persistent_online_profile()
 
 static void independent_characters_and_worlds()
 {
-    using namespace kf::game;
     PlayerContext first {}, second {};
     first.state.vitals.current_hp = second.state.vitals.current_hp = 100;
     first.state.vitals.maximum_hp = second.state.vitals.maximum_hp = 100;
@@ -135,7 +156,6 @@ static void independent_characters_and_worlds()
 
 static void avatar_animation_and_attachments()
 {
-    using namespace kf::game;
     AvatarPose idle, walking, swing;
     avatar_build_pose(41,{0,0,0,-1,0,false},idle);
     require(idle.rigged,"Standing character has no rig");
@@ -311,7 +331,6 @@ static void avatar_animation_and_attachments()
 
 static void hunched_avatar_animation()
 {
-    using namespace kf::game;
     AvatarPose idle, pose;
     avatar_build_pose(22,{0,0,0,-1,0,false},idle);
     require(idle.rigged && avatar_has_rig(22),"Hunched standing body has no rig");
@@ -362,7 +381,6 @@ static void hunched_avatar_animation()
 
 static void raised_arm_avatar_animation()
 {
-    using namespace kf::game;
     AvatarPose pose;
     const auto point = [&](SVECTOR source) {
         KfAvatarVertex vertex{source.vx,source.vy,source.vz,0,0,-4096,0,0,128,128,128,0};
@@ -402,7 +420,6 @@ static void raised_arm_avatar_animation()
 
 static void clasped_avatar_animation()
 {
-    using namespace kf::game;
     AvatarPose pose;
     const auto point = [&](SVECTOR source) {
         KfAvatarVertex vertex{source.vx,source.vy,source.vz,0,0,-4096,0,0,128,128,128,0};
@@ -447,7 +464,6 @@ static void clasped_avatar_animation()
 
 static void elf_avatar_animation()
 {
-    using namespace kf::game;
     AvatarPose pose;
     const auto point = [&](SVECTOR source, u16 atlas_v=350) {
         KfAvatarVertex vertex{source.vx,source.vy,source.vz,0,0,-4096,0,atlas_v,128,128,128,0};
@@ -503,7 +519,6 @@ static void elf_avatar_animation()
 
 static void armored_avatar_animation()
 {
-    using namespace kf::game;
     AvatarPose pose;
     const auto point = [&](SVECTOR source, u16 atlas_v=32) {
         KfAvatarVertex vertex{source.vx,source.vy,source.vz,0,0,-4096,0,atlas_v,128,128,128,0};
@@ -559,7 +574,6 @@ static void armored_avatar_animation()
 
 static void vested_avatar_animation()
 {
-    using namespace kf::game;
     AvatarPose pose;
     const auto point = [&](SVECTOR source) {
         KfAvatarVertex vertex{source.vx,source.vy,source.vz,0,0,-4096,0,0,128,128,128,0};
@@ -605,7 +619,6 @@ static void vested_avatar_animation()
 
 static void character_pack_and_selection()
 {
-    using namespace kf::game;
     using namespace kf::net;
     std::vector<u8> bytes{'K','F','A','1',1,0,1,0,23,0,1,0,1,0,0,0};
     bytes.resize(16 + 60, 0);
@@ -657,7 +670,6 @@ static void character_pack_and_selection()
 
 static void authoritative_menu_actions()
 {
-    using namespace kf::game;
     using namespace kf::net;
     auto world = std::make_unique<WorldState>();
     world->party.enabled = true;
@@ -683,7 +695,7 @@ static void authoritative_menu_actions()
     auto apply = [&](CommandKind kind, u16 object, u16 argument = 0) {
         Command command {{MessageKind::Command, world->epoch, ++sequence, member.generation}, kind, object, argument}, decoded;
         std::vector<u8> bytes;
-        require(command_encode(command, bytes) && command_decode(bytes, decoded), "Menu command did not cross the Rust codec");
+        require(command_encode(command, bytes) && command_decode(bytes, decoded), "Menu command did not cross the protocol codec");
         return party_apply_command(*world, 1, command_state, decoded);
     };
     const auto herb = kf_enum_encode<u16>(KF_ITEM_MEDICINAL_HERB);
@@ -806,7 +818,6 @@ static void authoritative_menu_actions()
 
 static void authoritative_object_activation()
 {
-    using namespace kf::game;
     using namespace kf::net;
     auto world = std::make_unique<WorldState>();
     world->party.enabled = true;
@@ -828,7 +839,7 @@ static void authoritative_object_activation()
         Command command {{MessageKind::Command, world->epoch, ++sequence, member.generation},
             CommandKind::ActivateObject, index, kf_enum_encode<u16>(expected)}, decoded;
         std::vector<u8> bytes;
-        require(command_encode(command, bytes) && command_decode(bytes, decoded), "Object activation did not cross the Rust codec");
+        require(command_encode(command, bytes) && command_decode(bytes, decoded), "Object activation did not cross the protocol codec");
         return party_apply_command(*world, 1, commands, decoded);
     };
     auto &door = world->objects.objects[4];
@@ -938,7 +949,6 @@ static void authoritative_object_activation()
 
 static void personal_loot()
 {
-    using namespace kf::game;
     using namespace kf::net;
     auto world = std::make_unique<WorldState>();
     world->party.enabled = true;
@@ -967,7 +977,7 @@ static void personal_loot()
         Command command {{MessageKind::Command, world->epoch, ++sequence[slot], 1}, CommandKind::TakeLoot,
             index, static_cast<u16>((kf_enum_encode<u16>(item) << 8) | component), generation}, decoded;
         std::vector<u8> bytes;
-        require(command_encode(command, bytes) && command_decode(bytes, decoded), "Loot command did not cross the Rust codec");
+        require(command_encode(command, bytes) && command_decode(bytes, decoded), "Loot command did not cross the protocol codec");
         return party_apply_command(*world, slot, commands[slot], decoded);
     };
     auto &object = world->objects.objects[4];
@@ -1042,7 +1052,6 @@ static void personal_loot()
 
 static void authoritative_world_items()
 {
-    using namespace kf::game;
     using namespace kf::net;
     auto world = std::make_unique<WorldState>();
     world->party.enabled = true;
@@ -1071,7 +1080,7 @@ static void authoritative_world_items()
     auto use = [&](KfObjectId item) {
         Command command {{MessageKind::Command, world->epoch, ++sequence, 1}, CommandKind::UseItem, kf_enum_encode<u16>(item), 0}, decoded;
         std::vector<u8> bytes;
-        require(command_encode(command, bytes) && command_decode(bytes, decoded), "World-item command did not cross the Rust codec");
+        require(command_encode(command, bytes) && command_decode(bytes, decoded), "World-item command did not cross the protocol codec");
         return party_apply_command(*world, 1, state, decoded);
     };
     require(!use(KF_ITEM_DUNGEON_KEY), "Unowned key unlocked a shared object");
@@ -1131,7 +1140,6 @@ static void authoritative_world_items()
 
 static void shared_quest_rewards()
 {
-    using namespace kf::game;
     using namespace kf::net;
     auto world = std::make_unique<WorldState>();
     world->party.enabled = true;
@@ -1158,7 +1166,7 @@ static void shared_quest_rewards()
     auto interact = [&](u16 index, CommandKind kind = CommandKind::Interact) {
         Command command {{MessageKind::Command, world->epoch, ++sequence, 1}, kind, index, 0}, decoded;
         std::vector<u8> bytes;
-        require(command_encode(command, bytes) && command_decode(bytes, decoded), "Quest command did not cross the Rust codec");
+        require(command_encode(command, bytes) && command_decode(bytes, decoded), "Quest command did not cross the protocol codec");
         return party_apply_command(*world, 1, commands, decoded);
     };
     auto set_event = [&](int index, KfCharacterId character, u8 stage) {
@@ -1263,7 +1271,6 @@ static void shared_quest_rewards()
 
 static void party_entry_return()
 {
-    using namespace kf::game;
     auto world = std::make_unique<WorldState>();
     world->party.enabled = true;
     world->floor = KF_FLOOR_5;
@@ -1314,7 +1321,6 @@ static void party_entry_return()
 
 static void party_terminal_travel()
 {
-    using namespace kf::game;
     for (const bool dead_host : {false, true}) {
         auto world = std::make_unique<WorldState>();
         world->party.enabled = true;
@@ -1350,7 +1356,6 @@ static void party_terminal_travel()
 
 static void party_lifecycle()
 {
-    using namespace kf::game;
     auto world = std::make_unique<WorldState>();
     PartyRuntime runtime;
     world->party.enabled = true;
@@ -1385,7 +1390,6 @@ static void party_lifecycle()
 
 static void party_reconnect_lifecycle()
 {
-    using namespace kf::game;
     auto world = std::make_unique<WorldState>();
     PartyRuntime runtime;
     world->party.enabled = true;
@@ -1426,7 +1430,6 @@ static void party_reconnect_lifecycle()
 
 static void party_combat()
 {
-    using namespace kf::game;
     auto world = std::make_unique<WorldState>();
     world->party.enabled = true;
     for (u8 slot = 0; slot < 3; ++slot) {
@@ -1479,7 +1482,8 @@ static void party_combat()
     const auto hit = collision_query_world(*world, attacker, 12000, KF_COLLISION_IGNORE_HEIGHT,
         10000, 1, 0, KF_COLLISION_SKIP_TERRAIN | KF_COLLISION_SKIP_ACTORS |
         KF_COLLISION_SKIP_MAP_OBJECTS | KF_COLLISION_SKIP_MAP_EVENTS, 0);
-    require(hit == (KF_COLLISION_PLAYER | 2), "Projectile collision did not retain the struck player slot");
+    require(hit.kind == KfCollisionKind::Player && hit.detail == 2,
+        "Projectile collision did not retain the struck player slot");
     require(&party_collision_player(*world, attacker, hit) == &third.player,
             "Projectile damage selected the source rather than the collision target");
     party_apply_radial_damage(*world, attacker, &impact, 10000, 4096, 30, 0, 0, 0, 0, 4096, 10);
@@ -1488,7 +1492,6 @@ static void party_combat()
 
 static void party_spell_combat()
 {
-    using namespace kf::game;
     // Exercise the real effect dispatcher and its children in a small empty room.
     // No level navigation, renderer or live resource files are needed.
     for (const auto kind : {KF_MAGIC_FIRE_BALL, KF_MAGIC_WIND_CUTTER, KF_MAGIC_LIGHT_NEEDLE,
@@ -1571,7 +1574,6 @@ static void party_spell_combat()
 
 static void enemy_target_and_random_state()
 {
-    using namespace kf::game;
     auto world = std::make_unique<WorldState>();
     world->party.enabled = true;
     for (u8 slot = 0; slot < 2; ++slot) {
@@ -1665,7 +1667,6 @@ static void enemy_target_and_random_state()
 
 static void prediction_budget_and_view()
 {
-    using namespace kf::game;
     auto world = std::make_unique<WorldState>();
     world->party.enabled = world->prediction = true;
     actor_pool_clear(*world);
@@ -1720,14 +1721,9 @@ static void prediction_budget_and_view()
 
 static void spell_snapshot_transitions()
 {
-    using namespace kf::game;
-    KfAssetHeader effect_asset {};
-    effect_asset.animation_clip_count = 1;
-    std::array<KfAssetHeader *, 18> previous_assets;
-    for (unsigned i = 0; i < previous_assets.size(); ++i) {
-        previous_assets[i] = game_graphics_runtime.asset_registry_entries[30 + i];
-        game_graphics_runtime.asset_registry_entries[30 + i] = &effect_asset;
-    }
+    std::array<std::unique_ptr<SnapshotAssetFixture>, 18> assets;
+    for (unsigned i = 0; i < assets.size(); ++i)
+        assets[i] = std::make_unique<SnapshotAssetFixture>(30 + i, 1);
     for (const auto kind : {KF_MAGIC_FIRE_BALL, KF_MAGIC_LIGHTNING_BOLT,
             KF_EFFECT_KIND_LIGHTNING_BOLT_ALTERNATE, KF_MAGIC_WIND_CUTTER,
             KF_EFFECT_KIND_SCATTER_PROJECTILE, KF_EFFECT_KIND_DARKNESS_PROJECTILE,
@@ -1767,13 +1763,10 @@ static void spell_snapshot_transitions()
             effect_pool_update(*world, player);
         }
     }
-    for (unsigned i = 0; i < previous_assets.size(); ++i)
-        game_graphics_runtime.asset_registry_entries[30 + i] = previous_assets[i];
 }
 
 static void spell_world_bounds()
 {
-    using namespace kf::game;
     auto world = std::make_unique<WorldState>();
     actor_pool_clear(*world);
     map_object_pool_clear(*world);
@@ -1795,7 +1788,7 @@ static void spell_world_bounds()
         effect->position = outside; // Final movement of a prior tick / bounded remote snapshot.
         effect_pool_set_current(*world, effect);
         auto query = outside;
-        require(effect_map_collision(*world, player, &query, 100) == KF_COLLISION_TERRAIN,
+        require(effect_map_collision(*world, player, &query, 100).kind == KfCollisionKind::Terrain,
             "Out-of-world coordinates wrapped to an in-map collision cell");
         effect_pool_update(*world, player);
         require(effect->type == KF_EFFECT_SLOT_FREE && world->effects.records[1].type == KF_EFFECT_SLOT_FREE,
@@ -1825,7 +1818,7 @@ static void spell_world_bounds()
     effect_pool_set_current(*world, &world->effects.records[0]);
     for (const s32 x : {0, 199999}) for (const s32 z : {0, 199999}) {
         VECTOR corner {x, -500, z};
-        require(effect_map_collision(*world, player, &corner, 100) == KF_COLLISION_TERRAIN,
+        require(effect_map_collision(*world, player, &corner, 100).kind == KfCollisionKind::Terrain,
             "Blocked border cell read an out-of-map neighbor");
     }
     for (auto &cell : world->collision.linear) cell = KF_MAP_CELL_FLOOR;
@@ -1856,7 +1849,6 @@ static void spell_world_bounds()
 
 static void effect_presentation_history()
 {
-    using namespace kf::game;
     auto world = std::make_unique<WorldState>();
     auto presentation = std::make_unique<PartyPresentation>();
     actor_pool_clear(*world);
@@ -1959,7 +1951,6 @@ static void effect_presentation_history()
 
 static void entity_presentation_corrections()
 {
-    using namespace kf::game;
     auto world = std::make_unique<WorldState>();
     auto presentation = std::make_unique<PartyPresentation>();
     world->party.enabled = true;
@@ -2056,7 +2047,6 @@ static void entity_presentation_corrections()
 
 static void world_and_player_random_isolation()
 {
-    using namespace kf::game;
     auto source = std::make_unique<WorldState>();
     source->party.enabled = true;
     source->random.state = 12345;
@@ -2116,7 +2106,6 @@ static void world_and_player_random_isolation()
 
 static void authoritative_audio()
 {
-    using namespace kf::game;
     auto host = std::make_unique<WorldState>();
     auto guest = std::make_unique<WorldState>();
     host->party.enabled = true;
@@ -2220,7 +2209,6 @@ static void authoritative_audio()
 
 static void snapshot_validation_and_prediction_isolation()
 {
-    using namespace kf::game;
     auto source = std::make_unique<WorldState>();
     source->party.enabled = true;
     source->random.state = 0xabcdef01;
@@ -2353,7 +2341,7 @@ static void snapshot_validation_and_prediction_isolation()
     spectator.character_id = character_identity(2);
     spectator.presence = PartyPresence::Spectating;
     spectator.player.state.vitals.current_hp = 0;
-    auto saving = campaign_save(*source, player, KF_SAVE_SLOT_FIRST);
+    auto saving = campaign_save(*source, player, kf::SaveSlot::First);
     saving.advance();
     require(campaign.writing && spectator.presence == PartyPresence::Spectating,
             "Revival occurred before durable save completion");
@@ -2418,7 +2406,6 @@ static void snapshot_validation_and_prediction_isolation()
 
 static void shared_floor1_triggers()
 {
-    using namespace kf::game;
     auto world = std::make_unique<WorldState>();
     world->party.enabled = true;
     actor_pool_clear(*world);
@@ -2461,9 +2448,8 @@ static void shared_floor1_triggers()
     require(script.object_removal_stage == KF_MAP_TRIGGER_COMPLETE,"A spectator held the area trigger open");
 }
 
-static void shared_ending(kf::game::WorldState &world)
+static void shared_ending(WorldState &world)
 {
-    using namespace kf::game;
     require(!party_ending_begin(world),"Campaign ended before the boss was defeated");
     map_floor_script(world,KF_FLOOR_5).floor5.boss_defeat = KF_MAP_SCRIPT_SET;
     for (const auto floor : {KF_FLOOR_5,KF_FLOOR_1}) {
@@ -2510,14 +2496,10 @@ static void shared_ending(kf::game::WorldState &world)
     }
 }
 
-static void shared_boss_reveal(kf::game::WorldState &world)
+static void shared_boss_reveal(WorldState &world)
 {
-    using namespace kf::game;
     using namespace kf::net;
-    KfAssetHeader boss_asset {};
-    boss_asset.animation_clip_count = 4;
-    auto *old_asset = game_graphics_runtime.asset_registry_entries[0];
-    game_graphics_runtime.asset_registry_entries[0] = &boss_asset;
+    SnapshotAssetFixture boss_asset(0, 4);
     auto &guest = world.party.members[1].player;
     auto &spectator = world.party.members[2];
     spectator = world.party.members[0];
@@ -2552,7 +2534,7 @@ static void shared_boss_reveal(kf::game::WorldState &world)
         Command request {{MessageKind::Command,world.epoch,commands[slot].last_sequence+1,world.party.members[slot].generation},
             CommandKind::StoryReady,page,0}, decoded;
         std::vector<u8> bytes;
-        require(command_encode(request,bytes) && command_decode(bytes,decoded),"Boss acknowledgement failed the Rust codec");
+        require(command_encode(request,bytes) && command_decode(bytes,decoded),"Boss acknowledgement failed the protocol codec");
         return party_apply_command(world,slot,commands[slot],decoded);
     };
     auto snapshot = [&] {
@@ -2599,19 +2581,12 @@ static void shared_boss_reveal(kf::game::WorldState &world)
         "Boss reveal or terrain activation repeated");
     snapshot();
     shared_ending(world);
-    game_graphics_runtime.asset_registry_entries[0] = old_asset;
 }
 
 static void shared_story_scenes()
 {
-    using namespace kf::game;
     using namespace kf::net;
-    KfAssetHeader asset {};
-    asset.animation_clip_count = 1;
-    auto *old_npc = game_graphics_runtime.asset_registry_entries[10];
-    auto *old_blast = game_graphics_runtime.asset_registry_entries[41];
-    game_graphics_runtime.asset_registry_entries[10] = &asset;
-    game_graphics_runtime.asset_registry_entries[41] = &asset;
+    SnapshotAssetFixture npc_asset(10, 1), blast_asset(41, 1);
     for (const auto floor : {KF_FLOOR_2, KF_FLOOR_5}) {
         auto world = std::make_unique<WorldState>();
         world->party.enabled = true;
@@ -2728,8 +2703,6 @@ static void shared_story_scenes()
             shared_boss_reveal(*world);
         }
     }
-    game_graphics_runtime.asset_registry_entries[10] = old_npc;
-    game_graphics_runtime.asset_registry_entries[41] = old_blast;
 }
 
 static void retail_character_import(const char *disc, const char *reference)
@@ -2767,13 +2740,13 @@ static void retail_character_import(const char *disc, const char *reference)
     require(result && result_size <= KF_AVATAR_MAX_BYTES,"Importer did not publish a bounded pack");
     file = std::fopen(reference,"rb");
     require(file && !std::fseek(file,0,SEEK_END) && std::ftell(file) == result_size && !std::fseek(file,0,SEEK_SET),
-        "Rust and reference character pack sizes differ");
+        "Imported and reference character pack sizes differ");
     std::vector<u8> expected(result_size);
     require(std::fread(expected.data(),1,expected.size(),file) == expected.size(),"Cannot read reference character pack");
     std::fclose(file);
     for (std::size_t i=0; i<expected.size(); ++i) if (expected[i] != result[i]) {
-        std::fprintf(stderr,"Character pack divergence at byte %zu: Rust %u, reference %u\n",i,result[i],expected[i]);
-        require(false,"Rust import differs from the independent Python converter");
+        std::fprintf(stderr,"Character pack divergence at byte %zu: imported %u, reference %u\n",i,result[i],expected[i]);
+        require(false,"Character import differs from the independent Python converter");
     }
     kf_avatar_import_close(importer);
     // Exercise the ISO path against the same retail payload without making a
@@ -2843,7 +2816,6 @@ static void resource_identity()
 
 static int ending_fixture_host(const char *url, const char *pack, const char *mode, const char *data)
 {
-    using namespace kf::game;
     using namespace kf::net;
     require(kf::avatars_load(pack),"Cannot load the ending fixture's character pack");
     Config config;
@@ -2920,9 +2892,8 @@ static int ending_fixture_host(const char *url, const char *pack, const char *mo
     return received ? 0 : 1;
 }
 
-static std::unique_ptr<kf::game::WorldState> retail_fixture_open(const char *resources)
+static std::unique_ptr<WorldState> retail_fixture_open(const char *resources)
 {
-    using namespace kf::game;
     require(kf::data_files_set_root(resources), "Cannot open retail world resources");
     require(kf::host_start(), "Cannot start isolated world-state check");
     game_restore_initial_state();
@@ -2952,9 +2923,8 @@ static std::unique_ptr<kf::game::WorldState> retail_fixture_open(const char *res
     return world;
 }
 
-static void retail_fixture_load(kf::game::WorldState &world, unsigned floor, unsigned variant)
+static void retail_fixture_load(WorldState &world, unsigned floor, unsigned variant)
 {
-    using namespace kf::game;
     auto &player = world.party.members[0].player;
     animation_cache_release_all();
     player.state.progress_state.current_floor = kf_enum_decode<KfFloorId>(floor);
@@ -2972,7 +2942,6 @@ static void retail_fixture_load(kf::game::WorldState &world, unsigned floor, uns
 
 static void retail_fixture_close()
 {
-    using namespace kf::game;
     animation_cache_release_all();
     game_shutdown();
     memory_destroy_arena(memory_arena);
@@ -2981,7 +2950,6 @@ static void retail_fixture_close()
 
 static int party_travel_check(const char *resources)
 {
-    using namespace kf::game;
     for (const bool dead_host : {false, true}) {
         auto world = retail_fixture_open(resources);
         retail_fixture_load(*world, 5, 1);
@@ -3103,7 +3071,6 @@ static int party_travel_check(const char *resources)
 
 static int world_state_check(const char *resources)
 {
-    using namespace kf::game;
     auto world = retail_fixture_open(resources);
     auto &player = world->party.members[0].player;
     for (const auto [floor, variant] : std::array<std::pair<unsigned, unsigned>, 7> {{
@@ -3155,7 +3122,6 @@ static int world_state_check(const char *resources)
 enum class FixtureKind { Save, Travel, Wipe, Spell };
 static int save_fixture(const char *resources, const char *input, const char *output, FixtureKind kind = FixtureKind::Save)
 {
-    using namespace kf::game;
     auto *file = std::fopen(input, "rb");
     require(file, "Cannot open fixture snapshot");
     std::vector<u8> bytes(KF_NET_TRANSFER_LIMIT + 1);
@@ -3390,7 +3356,7 @@ static int snapshot_summary(const char *path)
     std::fclose(file);
     KfNetWorldSummary summary {};
     require(good && kf_net_world_summary(bytes.data(),size,&summary)==KF_CODEC_OK,
-        "Captured snapshot failed Rust metadata validation");
+        "Captured snapshot failed metadata validation");
     std::printf("{\"hp\":%u,\"maximum_hp\":%u,\"mp\":%u,\"experience\":%u,\"floor\":%u}\n",
         summary.hp,summary.maximum_hp,summary.mp,summary.experience,summary.floor);
     return 0;
@@ -3421,10 +3387,10 @@ int main(int argc, char **argv)
     require(argc == 1,"Expected either no arguments, or KFIII disc and reference character pack");
     // First gameplay draws in this fresh process must retain the solo sequence.
     {
-        auto solo = std::make_unique<kf::game::WorldState>();
+        auto solo = std::make_unique<WorldState>();
         kf::RandomStream expected;
-        require(kf::game::world_random_next(*solo) == kf::random_next(expected) &&
-            kf::game::player_random_next(solo->party.members[0].player) == kf::random_next(expected) &&
+        require(world_random_next(*solo) == kf::random_next(expected) &&
+            player_random_next(solo->party.members[0].player) == kf::random_next(expected) &&
             kf::random_next() == kf::random_next(expected), "Solo random-call order changed");
     }
     task_lifecycle();

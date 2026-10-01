@@ -1,3 +1,5 @@
+#include <kf/platform/prelude.h>
+#include <kf/platform/frame_task.hpp>
 #include <kf/game/game.h>
 #include <kf/game/campaign.h>
 #include <kf/game/snapshot.h>
@@ -36,7 +38,7 @@ void campaign_poll(WorldState &world)
     campaign->pending_checkpoint.clear();
 }
 
-kf::FrameTask<KfSaveResult> campaign_save(WorldState &world, PlayerContext &player, KfSaveSlotId slot)
+kf::FrameTask<KfSaveResult> campaign_save(WorldState &world, PlayerContext &player, kf::SaveSlot slot)
 {
     auto *campaign = world.campaign;
     if (!campaign || campaign->writing || world.prediction || world.story.kind || player.party_slot != 0)

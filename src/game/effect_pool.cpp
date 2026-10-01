@@ -1,10 +1,10 @@
 #include <kf/game/world.h>
 #include <kf/game/player.h>
+#include <kf/platform/prelude.h>
 #include <kf/game/audio.h>
-#include <kf/lib/null.h>
-
 #include <kf/game/effect.h>
 #include <kf/game/game.h>
+#include <kf/lib/null.h>
 
 // These bytes are initialized by retail but have no modeled moonlight consumer.
 static constexpr u8 EFFECT_MOONLIGHT_INITIAL_CONTROL_BYTE = 0xff;
@@ -57,7 +57,7 @@ static KfEffectRecord *effect_pool_construct_impl(WorldState &world, PlayerConte
         record->owner_player_generation = record->owner_player_slot < party_capacity
             ? world.party.members[record->owner_player_slot].generation : 0;
         record->random.state = world.epoch + record->generation * 2654435761u
-            + static_cast<u32>(record - world.effects.records) * 2246822519u;
+            + static_cast<u32>(record - world.effects.records.data()) * 2246822519u;
         record->target_player_slot = no_player;
         record->target_player_generation = 0;
         if (world.party.enabled && record->owner_player_slot == no_player) {

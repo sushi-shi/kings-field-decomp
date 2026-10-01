@@ -13,7 +13,7 @@ enum {
     KF_WORLD_CAST_POSE_TICKS = 12
 };
 
-/* Pointer-free semantic records. Explicit Rust encoding defines the wire format;
+/* Pointer-free semantic records. Explicit field encoding defines the wire format;
  * native struct padding and resource/cache pointers never enter a packet. */
 typedef struct KfNetWorldHeader {
     uint32_t epoch, tick;
@@ -317,6 +317,9 @@ typedef struct KfNetWorldSummary {
 /* Failure leaves decoded outputs unchanged. Caller-owned buffers/records must
  * be valid, aligned and disjoint, as for the other codec entry points. */
 KfCodecResult kf_net_world_info(const uint8_t *, size_t, KfNetWorldHeader *);
+/* Full structural check before changing resources; decode must still validate
+ * against the newly loaded resource limits before publishing the world. */
+KfCodecResult kf_net_world_preflight(const uint8_t *, size_t, KfNetWorldHeader *);
 /* Catalogue metadata only. Loading still requires resource-aware world_decode. */
 KfCodecResult kf_net_world_summary(const uint8_t *, size_t, KfNetWorldSummary *);
 KfCodecResult kf_net_world_encode(const KfNetWorld *, const KfNetWorldLimits *, uint8_t *, size_t, size_t *);

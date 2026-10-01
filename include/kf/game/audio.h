@@ -1,7 +1,9 @@
-#pragma once
+#ifndef KF_GAME_AUDIO_H
+#define KF_GAME_AUDIO_H
 
 struct PlayerContext;
 struct WorldState;
+#include <kf/platform/frame_task.hpp>
 #include <kf/lib/audio.h>
 
 extern KfAudioState audio_state;
@@ -33,3 +35,5 @@ extern KfAudioPlaybackResult audio_play_spatial_range(PlayerContext &player,
     s32 max_distance, s32 attenuation_distance);
 extern kf::FrameTask<void> audio_stop_sequence_fade(void);
 extern kf::FrameTask<void> audio_stop_sequence_master_fade(s32 fade_step);
+
+#endif // KF_GAME_AUDIO_H

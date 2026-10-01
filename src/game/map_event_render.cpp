@@ -2,6 +2,7 @@
 #include <kf/game/graphics.h>
 #include <kf/game/party_runtime.h>
 
+#include <kf/platform/prelude.h>
 #include <kf/game/asset.h>
 #include <kf/game/render.h>
 #include <kf/lib/geometry_types.h>
@@ -24,9 +25,9 @@ void render_map_event(KfMapEvent *event, const MATRIX *lights, const PartyEntity
     asset = event->model_index + KF_ASSET_MAP_EVENT_FIRST;
     asset_registry_select(asset);
     object = tmd_get_object(tmd_context(), 0);
-    if (render_bind_animated_instance(
+    if (!render_bind_instance_vertices(
             &event->animation_cache, asset, event->animation_clip, event->animation_phase,
-            object->vertex_count) == NULL) {
+            object->vertex_count)) {
         tmd_select_object_vertices(tmd_context(), 0);
         tmd_project_vertices(tmd_get_object(tmd_context(), 0)->vertex_count, &composed, game_graphics_runtime.render_state.projection);
     } else {

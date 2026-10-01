@@ -1,3 +1,5 @@
+#include <kf/platform/prelude.h>
+#include <kf/platform/frame_task.hpp>
 #include <kf/game/game.h>
 #include <kf/game/player_actions.h>
 #include <kf/game/avatar.h>
@@ -285,7 +287,7 @@ kf::FrameTask<void> player_loot_interact(WorldState &world, PlayerContext &playe
             }
         }
         if (!offer.gold) {
-            const auto result = kf_enum_decode<KfMenuResult>(co_await menu_enter_mode(world, player, KF_MENU_MODE_ITEM_PICKUP, offer.item));
+            const auto result = (co_await menu_confirm_pickup(player, offer.item));
             if (result == KF_MENU_RESULT_STACK_FULL) notify_enqueue(KF_NOTIFICATION_CANNOT_CARRY_MORE);
             if (result != KF_MENU_RESULT_ACCEPTED) continue;
         }

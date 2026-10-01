@@ -1,7 +1,9 @@
 #ifndef KF_GAME_PLAYER_ACTIONS_H
 #define KF_GAME_PLAYER_ACTIONS_H
 
+#include <kf/platform/frame_task.hpp>
 #include <kf/game/world.h>
+#include <kf/net/protocol.hpp>
 #include <kf/game/menu.h>
 
 // One local menu confirmation at a time; never serialized or replayed after

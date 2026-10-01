@@ -39,12 +39,6 @@ public:
         value(bits);
         if (reading) field = static_cast<T>(bits);
     }
-    template<class Enum, class Storage>
-    void value(KfEnumStorage<Enum, Storage> &field) {
-        auto bits = field.encoded_value();
-        value(bits);
-        if (reading) field = static_cast<Enum>(bits);
-    }
     template<class T, std::size_t N>
     void value(T (&fields)[N]) { for (auto &field : fields) value(field); }
 private:

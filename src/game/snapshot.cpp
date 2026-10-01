@@ -1,3 +1,4 @@
+#include <kf/platform/prelude.h>
 #include <kf/game/snapshot.h>
 #include <kf/game/game.h>
 #include <kf/game/graphics.h>
@@ -101,8 +102,8 @@ static KfNetWorldLimits snapshot_limits(const WorldState &world)
 {
     KfNetWorldLimits limits {};
     for (std::size_t i = 0; i < KF_WORLD_ASSETS; ++i) {
-        const auto *asset = game_graphics_runtime.asset_registry_entries[i];
-        limits.asset_clips[i] = asset ? asset->animation_clip_count : -1;
+        limits.asset_clips[i] = game_graphics_runtime.asset_registry_tmds[i].data
+            ? game_graphics_runtime.asset_animations[i].clips.size() : -1;
     }
     for (std::size_t i = 0; i < KF_WORLD_ACTOR_DEFINITIONS; ++i)
         limits.actor_assets[i] = world.actors.definitions.entries[i].model_and_texture & 15;
@@ -184,7 +185,7 @@ static WorldSnapshotInfo snapshot_info(const KfNetWorldHeader &header)
 bool world_snapshot_info(std::span<const u8> bytes, WorldSnapshotInfo &info)
 {
     KfNetWorldHeader header {};
-    if (kf_net_world_info(bytes.data(), bytes.size(), &header) != KF_CODEC_OK) return false;
+    if (kf_net_world_preflight(bytes.data(), bytes.size(), &header) != KF_CODEC_OK) return false;
     info = snapshot_info(header);
     return true;
 }

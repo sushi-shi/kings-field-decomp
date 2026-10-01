@@ -6,6 +6,8 @@ struct WorldState;
 struct PlayerContext;
 #include <kf/game/audio.h>
 
+#include <array>
+
 enum {
     KF_EFFECT_PROJECTILE_DEFAULT_SPEED = 600,
     KF_EFFECT_LIGHTNING_SPEED = 800,
@@ -14,12 +16,13 @@ enum {
     KF_EFFECT_ACTOR_TARGET_WIDE_CONE = 0x555
 };
 
+#include <kf/game/magic.h>
 #include <kf/lib/animation.h>
 #include <kf/lib/math.h>
-#include <kf/lib/random.hpp>
-#include <kf/game/magic.h>
+#include <kf/lib/random.h>
 
 struct KfAnimationCacheRecord;
+struct KfCollisionResult;
 
 enum {
     KF_EFFECT_CAPACITY = 48
@@ -262,7 +265,7 @@ typedef struct KfEffectRecord {
     KfEffectRenderId base_render_id;
     KfEffectRenderId render_id;
     KfAnimationClip animation_clip;
-    KfEnumStorage<KfAudioPlaybackResult, u8> sound_played;
+    KfAudioPlaybackResult sound_played;
     u8 id;
     KfEffectPhase phase;
     KfEffectVisualState visual;
@@ -281,12 +284,12 @@ typedef struct KfEffectRecord {
 
 typedef struct KfEffectState {
     KfMagicTable magic;
-    KfEffectRecord records[KF_EFFECT_CAPACITY];
+    std::array<KfEffectRecord, KF_EFFECT_CAPACITY> records;
     KfMagicRecord *current_magic;
     KfEffectRecord *current_record;
 } KfEffectState;
 
-extern SVECTOR effect_swing_probe_offsets[KF_EFFECT_SWING_PROBE_COUNT];
+extern std::array<SVECTOR, KF_EFFECT_SWING_PROBE_COUNT> effect_swing_probe_offsets;
 
 enum class KfEffectSoundRequest : s32 {
     KF_EFFECT_SOUND_SILENT = 0,
@@ -369,6 +372,6 @@ extern void effect_scatter_triple(WorldState &world, KfEffectDirectionWords *vel
 extern void effect_rotate_scale_offset_y(SVECTOR *offset, VECTOR *output, s16 angle, s32 scale);
 extern void effect_spawn_ground_trail(WorldState &world, PlayerContext &player, u8 id, KfEffectRecord *parent_effect, s16 angle, s32 distance);
 extern void effect_spawn_ground_branch(WorldState &world, PlayerContext &player, u8 id, KfEffectRecord *parent_effect, s16 angle_offset, KfEffectGroundBranchRole branch_role);
-extern u32 effect_map_collision(WorldState &world, PlayerContext &player, VECTOR *position, s32 radius);
+extern KfCollisionResult effect_map_collision(WorldState &world, PlayerContext &player, VECTOR *position, s32 radius);
 
-#endif
+#endif // KF_GAME_EFFECT_H

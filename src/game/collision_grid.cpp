@@ -1,5 +1,6 @@
 #include <kf/game/world.h>
-#include <kf/game/map_data.h>
+#include <kf/lib/map_data.h>
+#include <kf/platform/prelude.h>
 #include <kf/game/collision.h>
 #include <kf/game/game.h>
 

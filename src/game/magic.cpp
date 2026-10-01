@@ -1,11 +1,12 @@
 #include <kf/game/world.h>
 #include <kf/lib/null.h>
 
-#include <kf/game/map_data.h>
+#include <kf/lib/map_data.h>
+#include <kf/platform/prelude.h>
 #include <kf/game/collision.h>
-#include <kf/game/player.h>
 #include <kf/game/game.h>
 #include <kf/game/magic.h>
+#include <kf/game/player.h>
 
 enum {
     MAGIC_LAUNCH_OFFSET_X = -200,

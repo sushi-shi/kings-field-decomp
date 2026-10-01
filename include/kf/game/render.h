@@ -7,16 +7,19 @@ struct PlayerContext;
 struct PartyEntityPose;
 struct PartyEffectAppearance;
 
+#include <kf/platform/frame_task.hpp>
 #include <kf/lib/graphics.h>
 
 #include <kf/lib/enum.h>
 #include <kf/game/actor.h>
 #include <kf/game/effect.h>
-#include <kf/game/map.h>
+#include <kf/lib/map.h>
 #include <kf/lib/item.h>
 #include <kf/game/animation_cache.h>
 #include <kf/lib/render_types.h>
 #include <kf/lib/tmd.h>
+
+#include <array>
 
 enum class KfGameColorPreset : s32 {
     KF_GAME_COLOR_DEFAULT = 0,
@@ -104,24 +107,24 @@ typedef struct KfHudModel {
     s16 translation_x;
     s16 translation_y;
     s16 translation_z;
-    u8 unknown_0c[2];
+    std::array<u8, 2> unknown_0c;
     SVECTOR rotation;
-    u8 unknown_16[2];
+    std::array<u8, 2> unknown_16;
     KfAnimationCacheRecord *animation_cache;
 } KfHudModel;
 
 typedef struct KfTmdState {
-    KfTmdResource slots[KF_GAME_TMD_SLOT_COUNT];
+    std::array<KfTmdResource, KF_GAME_TMD_SLOT_COUNT> slots;
     KfTmdResource current_tmd;
 } KfTmdState;
 
-extern MATRIX color_matrix_table[KF_GAME_COLOR_PRESET_COUNT];
-extern KfCellWindow render_cell_windows[KF_CELL_WINDOW_YAW_COUNT];
-extern KfSpriteQuad floor_item_sprites[KF_FLOOR_ITEM_SPRITE_COUNT];
-extern KfSpriteQuad effect_billboard_sprites[KF_EFFECT_BILLBOARD_SPRITE_COUNT];
-extern KfHudModel hud_models[KF_HUD_MODEL_TABLE_ROWS];
-extern KfHudSprite hud_sprites[KF_HUD_TABLE_ROWS];
-extern MATRIX render_light_matrices[KF_RENDER_LIGHT_COUNT];
+extern std::array<MATRIX, KF_GAME_COLOR_PRESET_COUNT> color_matrix_table;
+extern std::array<KfCellWindow, KF_CELL_WINDOW_YAW_COUNT> render_cell_windows;
+extern std::array<KfSpriteQuad, KF_FLOOR_ITEM_SPRITE_COUNT> floor_item_sprites;
+extern std::array<KfSpriteQuad, KF_EFFECT_BILLBOARD_SPRITE_COUNT> effect_billboard_sprites;
+extern std::array<KfHudModel, KF_HUD_MODEL_TABLE_ROWS> hud_models;
+extern std::array<KfHudSprite, KF_HUD_TABLE_ROWS> hud_sprites;
+extern std::array<MATRIX, KF_RENDER_LIGHT_COUNT> render_light_matrices;
 
 extern void display_flip_buffer_index(void);
 extern void display_initialize(void);
@@ -164,4 +167,4 @@ extern kf::FrameTask<void> screen_show_image_until_input(const char *path);
 
 extern void tmd_project_vertices(s32 count, const MATRIX *model, const kf::Projection &projection);
 
-#endif
+#endif // KF_GAME_RENDER_H

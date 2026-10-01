@@ -1,18 +1,20 @@
+#include <kf/platform/frame_task.hpp>
 #include <kf/game/system.h>
 #include <kf/game/world.h>
 #include <kf/game/player.h>
 #include <algorithm>
 #include <kf/game/audio.h>
-#include <kf/lib/random.hpp>
-#include <kf/lib/bool.h>
+#include <kf/lib/random.h>
 
-#include <kf/game/map_data.h>
+#include <kf/lib/map_data.h>
+#include <kf/platform/prelude.h>
 #include <kf/game/actor.h>
 #include <kf/game/collision.h>
-#include <cstdlib>
-#include <cstdio>
-#include <cstring>
 #include <kf/game/game.h>
+
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 enum {
     ACTOR_ACTIVATION_RANGE = 28000,
@@ -120,7 +122,7 @@ static KfActorAction actor_choose_movement_action(WorldState &world, const KfAct
     const KfActorDefinition *definition, KfActorAction action,
     s32 player_distance, s32 awareness, s32 near_range)
 {
-    KfBool32 recently_active;
+    bool recently_active;
 
     recently_active = action == KF_ACTOR_ACTION_RETREAT
         || action == KF_ACTOR_ACTION_MELEE_ATTACK
@@ -345,8 +347,8 @@ static KfActorMoveResult actor_handle_blocked_movement(WorldState &world, Player
                     target.vz,
                     definition->collision_radius,
                     definition->collision_height,
-                    ACTOR_WALK_COLLISION_FLAGS)
-                == KF_COLLISION_NONE) {
+                    ACTOR_WALK_COLLISION_FLAGS).kind
+                == KfCollisionKind::None) {
                 if (delta->z >= 0) {
                     actor->movement_yaw = KF_ANGLE_HALF_TURN;
                 } else {
@@ -361,8 +363,8 @@ static KfActorMoveResult actor_handle_blocked_movement(WorldState &world, Player
                            actor->position.vz,
                            definition->collision_radius,
                            definition->collision_height,
-                           ACTOR_WALK_COLLISION_FLAGS)
-                       == KF_COLLISION_NONE) {
+                           ACTOR_WALK_COLLISION_FLAGS).kind
+                       == KfCollisionKind::None) {
                 if (delta->x < 0) {
                     actor->movement_yaw = KF_ANGLE_QUARTER_TURN;
                 } else {
@@ -387,7 +389,7 @@ KfActorMoveResult actor_move_xz_with_collision(WorldState &world, PlayerContext 
     KfActor *actor = world.actors.current;
     KfActorDefinition *definition = world.actors.current_definition;
     VECTOR target;
-    u32 result;
+    KfCollisionResult result;
     s32 drop;
     s32 threshold;
 
@@ -400,8 +402,8 @@ KfActorMoveResult actor_move_xz_with_collision(WorldState &world, PlayerContext 
         definition->collision_radius,
         definition->collision_height,
         ACTOR_WALK_COLLISION_FLAGS);
-    if (result != KF_COLLISION_NONE
-        && (result != KF_COLLISION_BELOW_FLOOR || actor->vertical_state == KF_ACTOR_VERTICAL_LONG_DROP)) {
+    if (result  .kind != KfCollisionKind::None
+        && (result  .kind != KfCollisionKind::BelowFloor || actor->vertical_state == KF_ACTOR_VERTICAL_LONG_DROP)) {
         return actor_handle_blocked_movement(world, player, actor, definition, delta, target, collision_policy);
     }
     drop = target.vy - map_floor_height_at_position(world, &target);
@@ -623,7 +625,7 @@ void actor_apply_horizontal_movement(WorldState &world, PlayerContext &player)
     KfActor *actor = world.actors.current;
     KfActorDefinition *definition;
     VECTOR target;
-    u32 result;
+    KfCollisionResult result;
 
     target.vx = actor->movement_x + actor->position.vx;
     target.vz = actor->movement_z + actor->position.vz;
@@ -635,8 +637,8 @@ void actor_apply_horizontal_movement(WorldState &world, PlayerContext &player)
         definition->collision_radius,
         definition->collision_height,
         ACTOR_VELOCITY_COLLISION_FLAGS);
-    if (result != KF_COLLISION_NONE) {
-        if ((result >> KF_COLLISION_KIND_SHIFT) != (KF_COLLISION_PLAYER >> KF_COLLISION_KIND_SHIFT)) {
+    if (result.kind != KfCollisionKind::None) {
+        if (result.kind != KfCollisionKind::Player) {
             actor->movement_x = -actor->movement_x >> 1;
             actor->movement_z = -actor->movement_z >> 1;
         } else {
@@ -677,7 +679,7 @@ void actor_apply_random_movement(WorldState &world, PlayerContext &player, s16 s
     KfActor *actor = world.actors.current;
     KfActorDefinition *definition = world.actors.current_definition;
     VECTOR target;
-    u32 result;
+    KfCollisionResult result;
 
     if (actor_random_next(world) < (kf::random_max + 1) / 2) {
         actor->movement_x += step;
@@ -710,7 +712,7 @@ void actor_apply_random_movement(WorldState &world, PlayerContext &player, s16 s
         definition->collision_radius,
         definition->collision_height,
         ACTOR_VELOCITY_COLLISION_FLAGS);
-    if (result == KF_COLLISION_NONE) {
+    if (result.kind == KfCollisionKind::None) {
         actor->position = target;
     } else {
         actor->action_progress = KF_ACTOR_PROGRESS_DRIFT_COLLIDED;
@@ -721,7 +723,7 @@ void actor_apply_random_movement(WorldState &world, PlayerContext &player, s16 s
             definition->collision_radius,
             definition->collision_height,
             ACTOR_VELOCITY_COLLISION_FLAGS);
-        if (result != KF_COLLISION_NONE) {
+        if (result.kind != KfCollisionKind::None) {
             actor->movement_x = -actor->movement_x;
         } else if (collision_query_world(world, player,
                        actor->position.vx,
@@ -729,8 +731,8 @@ void actor_apply_random_movement(WorldState &world, PlayerContext &player, s16 s
                        actor->position.vz,
                        definition->collision_radius,
                        definition->collision_height,
-                       ACTOR_VELOCITY_COLLISION_FLAGS)
-                   != KF_COLLISION_NONE) {
+                       ACTOR_VELOCITY_COLLISION_FLAGS).kind
+                   != KfCollisionKind::None) {
             actor->movement_y = -actor->movement_y;
         }
         if (collision_query_world(world, player,
@@ -739,8 +741,8 @@ void actor_apply_random_movement(WorldState &world, PlayerContext &player, s16 s
                 target.vz,
                 definition->collision_radius,
                 definition->collision_height,
-                ACTOR_VELOCITY_COLLISION_FLAGS)
-            != KF_COLLISION_NONE) {
+                ACTOR_VELOCITY_COLLISION_FLAGS).kind
+            != KfCollisionKind::None) {
             actor->movement_z = -actor->movement_z;
         }
     }
@@ -839,7 +841,7 @@ static void actor_update_vertical_motion(WorldState &world, PlayerContext &playe
 {
     s32 floor_height;
     s32 next_y;
-    u32 hit;
+    KfCollisionResult hit;
 
     switch (actor->vertical_state) {
     case KF_ACTOR_VERTICAL_NONE:
@@ -872,25 +874,26 @@ static void actor_update_vertical_motion(WorldState &world, PlayerContext &playe
             definition->collision_radius,
             definition->collision_height,
             ACTOR_VELOCITY_COLLISION_FLAGS);
-        if (hit == KF_COLLISION_NONE) {
+        if (hit.kind == KfCollisionKind::None) {
             actor_apply_fall_step(actor, next_y);
             break;
         }
-        if ((hit >> KF_COLLISION_KIND_SHIFT) == (KF_COLLISION_PLAYER >> KF_COLLISION_KIND_SHIFT)) {
+        if (hit.kind == KfCollisionKind::Player) {
             player_apply_damage(player, 0, ACTOR_JUMP_CONTACT_STRIKING_DAMAGE, 0, KF_PLAYER_STATUS_NONE, 0, 0, KF_FIXED12_ONE, KF_PLAYER_DAMAGE_MULTIPLIER_ONE);
             actor_bounce_from_jump(actor);
-        } else if ((hit >> KF_COLLISION_KIND_SHIFT) == (KF_COLLISION_TERRAIN >> KF_COLLISION_KIND_SHIFT)) {
-            switch (hit & KF_COLLISION_DETAIL_MASK) {
-            case KF_COLLISION_DETAIL_BELOW_FLOOR:
+        } else if (hit.kind == KfCollisionKind::BelowFloor || hit.kind == KfCollisionKind::Ceiling) {
+            switch (hit.kind) {
+            default: break;
+            case KfCollisionKind::BelowFloor:
                 floor_height = map_floor_height_at_position(world, &actor->position);
                 actor_land(actor, floor_height);
                 break;
-            case KF_COLLISION_DETAIL_CEILING:
+            case KfCollisionKind::Ceiling:
                 actor->vertical_state = KF_ACTOR_VERTICAL_JUMP_ATTACK;
                 actor->vertical_velocity = ACTOR_JUMP_CEILING_VELOCITY_Y;
                 break;
             }
-        } else if ((hit >> KF_COLLISION_KIND_SHIFT) == (KF_COLLISION_ACTOR >> KF_COLLISION_KIND_SHIFT)) {
+        } else if (hit.kind == KfCollisionKind::Actor) {
             actor_bounce_from_jump(actor);
         }
         break;
@@ -903,7 +906,7 @@ kf::FrameTask<void> actor_update_current_action(WorldState &world, PlayerContext
     KfActorDefinition *definition = world.actors.current_definition;
     struct KfVecXZs direction;
     VECTOR target;
-    u32 result;
+    KfCollisionResult result;
     u16 gold_amount;
     KfMapAttribute attribute;
 
@@ -1095,10 +1098,8 @@ kf::FrameTask<void> actor_update_current_action(WorldState &world, PlayerContext
                     definition->collision_radius,
                     definition->collision_height,
                     ACTOR_VELOCITY_COLLISION_FLAGS);
-
-                if (result != KF_COLLISION_NONE && (result >> KF_COLLISION_KIND_SHIFT) == KF_COLLISION_DETAIL_CEILING) {
+                if (result.kind == KfCollisionKind::Ceiling) {
                     actor->vertical_state = KF_ACTOR_VERTICAL_FALL;
-                    actor->vertical_velocity = 0;
                 }
                 actor->action_progress = KF_ACTOR_PROGRESS_COMPLETE;
                 actor_select_next_action(world, actor_player_distance(world, actor, ACTOR_ACTIVE_RANGE));
@@ -1131,7 +1132,7 @@ kf::FrameTask<void> actor_update_current_action(WorldState &world, PlayerContext
         }
         result = collision_query_world(world, player,
             actor->position.vx, KF_COLLISION_IGNORE_HEIGHT, actor->position.vz, definition->collision_radius, 0, ACTOR_WALK_COLLISION_FLAGS);
-        if (result != KF_COLLISION_NONE) {
+        if (result.kind != KfCollisionKind::None) {
             target.vx = actor->position.vx;
             target.vz = actor->position.vz;
             angle_to_forward_xz(actor->rotation.angles.y, &direction);

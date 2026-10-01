@@ -1,3 +1,4 @@
+#include <kf/platform/prelude.h>
 #include <kf/game/world.h>
 #include <kf/game/party_runtime.h>
 #include <kf/game/graphics.h>
@@ -5,7 +6,7 @@
 #include <kf/game/avatar.h>
 #include <kf/lib/math.h>
 #include <kf/platform/avatars.hpp>
-#include <kf/renderer/renderer.hpp>
+#include <kf/renderer/renderer.h>
 #include <kf/lib/render_face.h>
 #include <kf/lib/resource_file.h>
 #include <algorithm>

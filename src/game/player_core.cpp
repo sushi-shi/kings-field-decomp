@@ -1,3 +1,4 @@
+#include <kf/platform/frame_task.hpp>
 #include <kf/game/system.h>
 #include <kf/game/world.h>
 #include <algorithm>
@@ -6,13 +7,17 @@
 #include <kf/lib/null.h>
 #include <kf/game/graphics.h>
 
-#include <kf/game/map_data.h>
+#include <kf/lib/map_data.h>
 #include <kf/game/player.h>
+#include <kf/platform/prelude.h>
 #include <kf/game/collision.h>
-#include <cstdlib>
-#include <cstdio>
-#include <cstring>
 #include <kf/game/game.h>
+
+#include <array>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+
 static constexpr unsigned weapon_image_number_offset = 9;
 static constexpr unsigned weapon_image_path_capacity = 16;
 
@@ -44,15 +49,15 @@ static constexpr int PLAYER_COLLISION_DEFLECTION_ANGLE = 64;
 static constexpr int PLAYER_MAX_STEP_RISE = 699;
 static constexpr int PLAYER_DIAGONAL_COMPONENT_Q12 = 2896;
 
-char weapon_asset_path_template[weapon_image_path_capacity] = "WEPON/WEP00.MIM";
+std::array<char, weapon_image_path_capacity> weapon_asset_path_template = {"WEPON/WEP00.MIM"};
 
-KfFloorEntryCell floor_entry_cells[KF_PLAYER_FLOOR_ENTRY_COUNT] = {
-    {15, 2}, {29, 56}, {28, 18}, {7, 22}, {39, 69}
+std::array<KfFloorEntryCell, KF_PLAYER_FLOOR_ENTRY_COUNT> floor_entry_cells = {
+    KfFloorEntryCell{15, 2}, KfFloorEntryCell{29, 56}, KfFloorEntryCell{28, 18}, KfFloorEntryCell{7, 22}, KfFloorEntryCell{39, 69}
 };
 
 
 
-KfPlayerLevelGrowth player_level_growth_table[KF_PLAYER_LEVEL_GROWTH_COUNT];
+std::array<KfPlayerLevelGrowth, KF_PLAYER_LEVEL_GROWTH_COUNT> player_level_growth_table;
 
 
 void player_set_equipment_slot(PlayerContext &player, KfObjectId item_id, KfEquipmentSlot slot)
@@ -120,8 +125,8 @@ void player_refresh_weapon_asset(PlayerContext &player)
     weapon_asset_path_template[weapon_image_number_offset + 1] = '0' + kf_enum_encode<u32>(weapon_id) % 10;
     std::size_t loaded_size;
     if (resource_file_load_into(player.state.weapon_asset_buffer, KF_WEAPON_ASSET_BUFFER_BYTES,
-            weapon_asset_path_template, &loaded_size) != KF_RESOURCE_LOADED)
-        resource_file_fail(weapon_asset_path_template);
+            weapon_asset_path_template.data(), &loaded_size) != KF_RESOURCE_LOADED)
+        resource_file_fail(weapon_asset_path_template.data());
     asset_registry_set(KF_ASSET_WEAPON, player.state.weapon_asset_buffer, loaded_size);
 }
 
@@ -220,7 +225,7 @@ void game_initialize_session(WorldState &world, PlayerContext &player)
 {
     player.state.camera_rotation = {};
     player.state.camera_position = {PLAYER_INITIAL_POSITION_X, 0, PLAYER_INITIAL_POSITION_Z};
-    player.state.weapon_asset_buffer = (struct KfAssetHeader *)memory_allocate(memory_arena, KF_WEAPON_ASSET_BUFFER_BYTES);
+    player.state.weapon_asset_buffer = static_cast<u8 *>(memory_allocate(memory_arena, KF_WEAPON_ASSET_BUFFER_BYTES));
     game_state_initialize(world, player);
     player.state.update_state = KF_PLAYER_UPDATE_NORMAL;
     player.state.audio_effects_enabled = KF_PLAYER_OPTION_ON;
@@ -370,8 +375,8 @@ s32 player_move_horizontal(WorldState &world, PlayerContext &player, s32 heading
     for (;;) {
         if (collision_query_world(world, player, new_x, player.state.foot_height, new_z,
                 KF_COLLISION_PLAYER_RADIUS, KF_COLLISION_PLAYER_HEIGHT,
-                KF_COLLISION_SKIP_TERRAIN | KF_COLLISION_SKIP_PLAYER | KF_COLLISION_CAPTURE_TARGET)
-            == KF_COLLISION_NONE) {
+                KF_COLLISION_SKIP_TERRAIN | KF_COLLISION_SKIP_PLAYER | KF_COLLISION_CAPTURE_TARGET).kind
+            == KfCollisionKind::None) {
             break;
         }
 
@@ -579,7 +584,7 @@ kf::FrameTask<void> player_warp_to_floor_entry(WorldState &world, PlayerContext 
 {
     VECTOR position;
     const KfFloorEntryCell *entry;
-    KfEnumStorage<KfFloorId, u8> floor;
+    KfFloorId floor;
 
     player_get_floor_position(player, position);
     (co_await player_warp_shimmer(world, player, KF_WARP_SHIMMER_GROW_REMOVE, &position));

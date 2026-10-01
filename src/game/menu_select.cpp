@@ -1,25 +1,26 @@
+#include <kf/platform/frame_task.hpp>
 #include <kf/game/system.h>
 #include <kf/game/world.h>
 #include <kf/game/player.h>
 #include <kf/game/menu_glyphs.h>
 #include <kf/lib/null.h>
 
-#include <kf/platform/input.hpp>
+#include <kf/platform/input.h>
 #include <kf/game/menu.h>
 #include <kf/game/game.h>
 #include <kf/game/player_actions.h>
+#include <kf/platform/prelude.h>
+#include <kf/game/menu_text.h>
+#include <array>
 static constexpr unsigned MENU_SELECTION_LIST_CAPACITY = 20;
 
 
 kf::FrameTask<void> menu_equip_select(PlayerContext &player, KfEquipmentMenuCategory equipment_category)
 {
     KfMenuList ctx;
-    s16 labels[MENU_SELECTION_LIST_CAPACITY][MENU_GLYPHS_PER_ROW];
-    KfObjectId item_ids[MENU_SELECTION_LIST_CAPACITY];
-    s16 *name;
-    u8 *player_stock;
+    std::array<std::array<s16, MENU_GLYPHS_PER_ROW>, MENU_SELECTION_LIST_CAPACITY> labels;
+    std::array<KfObjectId, MENU_SELECTION_LIST_CAPACITY> item_ids;
     s32 item_id;
-    s32 j;
     s32 found;
     s32 start;
     s32 end;
@@ -30,7 +31,7 @@ kf::FrameTask<void> menu_equip_select(PlayerContext &player, KfEquipmentMenuCate
 
     (co_await game_wait_buttons_released());
 
-    player_stock = player.item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)];
+    auto &player_stock = player.item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)];
     switch (equipment_category) {
     case KF_EQUIP_MENU_NONE:
     case KF_EQUIP_MENU_MAGIC:
@@ -69,25 +70,20 @@ kf::FrameTask<void> menu_equip_select(PlayerContext &player, KfEquipmentMenuCate
     found = 0;
     for (item_id = start; item_id < end; item_id++) {
         if (player_stock[item_id] != 0) {
-            name = item_name_rows[item_id].codes;
-            for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)
-                labels[found][j] = name[j];
+            labels[found] = item_name_rows[item_id].codes;
             item_ids[found] = kf_enum_decode<KfObjectId>(item_id);
             found++;
         }
     }
-    labels[found][0] = menu_glyphs::unequip[0];
-    labels[found][1] = menu_glyphs::unequip[1];
-    labels[found][2] = menu_glyphs::unequip[2];
-    labels[found][3] = MENU_TEXT_END;
+    const auto unequip = menu_label(MenuLabel::Unequip);
+    labels[found] = unequip.codes;
     item_ids[found] = KF_OBJECT_NONE;
     found++;
 
     menu_list_init(&ctx, KF_MENU_WINDOW_EQUIPMENT, kf_enum_encode<s32>(equipment_category));
     ctx.entry_count = found;
-    ctx.glyphs_per_entry = MENU_GLYPHS_PER_ROW;
-    ctx.glyph_rows = &labels[0][0];
-    ctx.quantities = NULL;
+    ctx.glyph_rows = labels;
+    ctx.quantities = {};
 
     if (ctx.entry_count != 0) {
         if (menu_load_item_model(item_ids[ctx.selected_index]) != KF_RESOURCE_LOADED)
@@ -146,10 +142,9 @@ kf::FrameTask<void> menu_equip_select(PlayerContext &player, KfEquipmentMenuCate
 kf::FrameTask<void> menu_spell_select(WorldState &world, PlayerContext &player)
 {
     KfMenuList ctx;
-    s16 labels[MENU_SELECTION_LIST_CAPACITY][MENU_GLYPHS_PER_ROW];
-    KfEffectKind magic_ids[MENU_SELECTION_LIST_CAPACITY];
+    std::array<std::array<s16, MENU_GLYPHS_PER_ROW>, MENU_SELECTION_LIST_CAPACITY> labels;
+    std::array<KfEffectKind, MENU_SELECTION_LIST_CAPACITY> magic_ids;
     s32 magic_id;
-    s32 j;
     s32 found;
     KfMenuConfirmState confirm = KF_MENU_CONFIRM_IDLE;
     s32 input = 0;
@@ -161,24 +156,20 @@ kf::FrameTask<void> menu_spell_select(WorldState &world, PlayerContext &player)
     found = 0;
     for (magic_id = kf_enum_encode<s32>(KF_MAGIC_LIGHTNING_BOLT); magic_id < KF_MAGIC_PLAYER_COUNT; magic_id++) {
         if (player.learned_magic[magic_id] == KF_MAGIC_LEARNED) {
-            for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)
-                labels[found][j] = magic_name_rows[magic_id].codes[j];
+            labels[found] = magic_name_rows[magic_id].codes;
             magic_ids[found] = kf_enum_decode<KfEffectKind>(magic_id);
             found++;
         }
     }
-    labels[found][0] = menu_glyphs::unequip[0];
-    labels[found][1] = menu_glyphs::unequip[1];
-    labels[found][2] = menu_glyphs::unequip[2];
-    labels[found][3] = MENU_TEXT_END;
+    const auto unequip = menu_label(MenuLabel::Unequip);
+    labels[found] = unequip.codes;
     magic_ids[found] = KF_MAGIC_NONE;
     found++;
 
     menu_list_init(&ctx, KF_MENU_WINDOW_EQUIPMENT, kf_enum_encode<s32>(KF_EQUIP_MENU_MAGIC));
     ctx.entry_count = found;
-    ctx.glyphs_per_entry = MENU_GLYPHS_PER_ROW;
-    ctx.glyph_rows = &labels[0][0];
-    ctx.quantities = NULL;
+    ctx.glyph_rows = labels;
+    ctx.quantities = {};
 
     menu_frame_begin();
     if (ctx.entry_count != 0) {
@@ -192,8 +183,7 @@ kf::FrameTask<void> menu_spell_select(WorldState &world, PlayerContext &player)
     for (;;) {
         (co_await menu_present_frame());
         if (confirm == KF_MENU_CONFIRM_REQUESTED) {
-            selection = kf_enum_encode<s32>((co_await menu_list_confirm(player, &ctx, KF_MENU_CONFIRM_EQUIP,
-                    KF_MENU_PREVIEW_MAGIC_ARTWORK, magic_ids[ctx.selected_index], KF_ITEM_STOCK_PLAYER, KF_TRADE_BUY)));
+            selection = kf_enum_encode<s32>((co_await menu_list_confirm(player, &ctx, KF_MENU_CONFIRM_EQUIP, magic_ids[ctx.selected_index])));
             if (selection == kf_enum_encode<s32>(KF_MENU_RESULT_CANCELLED))
                 selection = kf_enum_encode<s32>(KF_MENU_RESULT_PENDING);
             else

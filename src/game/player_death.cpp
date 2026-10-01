@@ -1,16 +1,19 @@
+#include <kf/platform/frame_task.hpp>
 #include <kf/game/system.h>
 #include <kf/game/world.h>
 #include <algorithm>
+#include <kf/platform/prelude.h>
 #include <kf/game/audio.h>
-#include <kf/lib/random.hpp>
-#include <kf/lib/null.h>
-#include <kf/game/graphics.h>
-
-#include <kf/game/player.h>
-#include <cstdlib>
-#include <cstdio>
-#include <cstring>
 #include <kf/game/game.h>
+#include <kf/game/graphics.h>
+#include <kf/game/player.h>
+#include <kf/lib/null.h>
+#include <kf/lib/random.h>
+
+#include <array>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 static constexpr s32 PLAYER_REVIVAL_POSITION_X = 64000;
 static constexpr s32 PLAYER_REVIVAL_POSITION_Z = 20000;
@@ -41,10 +44,10 @@ enum {
     PLAYER_DAMAGE_THRESHOLD_MULTIPLIER = 2
 };
 
-SoundRef player_sound_refs[KF_PLAYER_SOUND_COUNT] = {
-    {7, 0, 80},
-    {7, 1, 89},
-    {13, 0, 67}
+std::array<SoundRef, KF_PLAYER_SOUND_COUNT> player_sound_refs = {
+    SoundRef{7, 0, 80},
+    SoundRef{7, 1, 89},
+    SoundRef{13, 0, 67}
 };
 
 
@@ -70,8 +73,6 @@ void game_state_initialize(WorldState &world, PlayerContext &player)
 void player_initialize_character(WorldState &world, PlayerContext &player)
 {
     player.cast_pose_ticks = 0;
-    u8 *cursor;
-    s32 count;
 
     player.state.experience = 0;
     player.state.progress_state.level = 1;
@@ -114,11 +115,7 @@ void player_initialize_character(WorldState &world, PlayerContext &player)
     player.state.poison_timer = KF_PLAYER_STATUS_TIMER_INACTIVE;
     player.state.darkness_timer = KF_PLAYER_STATUS_TIMER_INACTIVE;
     player.state.curse_timer = KF_PLAYER_STATUS_TIMER_INACTIVE;
-    cursor = (u8 *)&player.item_stock;
-    count = sizeof(player.item_stock) - 1;
-    do {
-        *cursor++ = 0;
-    } while (--count != -1);
+    player.item_stock = {};
     player.item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)][kf_enum_encode<u8>(KF_ITEM_SHORT_SWORD)] = 1;
     player.item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)][kf_enum_encode<u8>(KF_ITEM_MEDICINAL_HERB)] = 1;
     player.item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_FIRST_SHOP)][kf_enum_encode<u8>(KF_ITEM_SHORT_SWORD)] = 1;

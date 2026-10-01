@@ -9,17 +9,19 @@ inline constexpr unsigned KF_FLOOR5_BOSS_DEFINITION = 7;
 inline constexpr unsigned KF_FLOOR4_TRANSFORM_SOURCE_DEFINITION = 5;
 inline constexpr unsigned KF_FLOOR4_TRANSFORM_RESULT_DEFINITION = 6;
 
-#include <kf/lib/bool.h>
+#include <kf/platform/frame_task.hpp>
+#include <kf/game/audio.h>
 #include <kf/game/combat.h>
-#include <kf/lib/animation.h>
 #include <kf/game/effect.h>
 #include <kf/game/player_status.h>
-#include <kf/lib/types.h>
+#include <kf/lib/animation.h>
 #include <kf/lib/enum.h>
-#include <kf/game/map.h>
+#include <kf/lib/map.h>
 #include <kf/lib/geometry_types.h>
-#include <kf/game/audio.h>
 #include <kf/lib/math.h>
+#include <kf/lib/types.h>
+
+#include <array>
 
 struct KfAnimationCacheRecord;
 
@@ -159,11 +161,6 @@ enum {
 };
 
 enum {
-    KF_ACTOR_PLACEMENT_DEFINITION_MASK = 0x1f,
-    KF_ACTOR_PLACEMENT_NEAR_SQUARE_CULLING = 0x20
-};
-
-enum {
     KF_ACTOR_ACTION_PROFILE_COUNT = 25
 };
 
@@ -256,20 +253,6 @@ enum class KfActorHeadingQuadrant : u8 {
     KF_ACTOR_HEADING_270 = 3
 }; using enum KfActorHeadingQuadrant;
 
-typedef struct KfActorPlacement {
-    KfActorSlotState slot_state;
-    u8 definition_flags;
-    KfActorHeadingQuadrant heading_quadrant;
-    u8 tile_z;
-    u8 tile_x;
-    u8 spawn_chance;
-    KfObjectId death_drop_object_id;
-    u8 unknown_07[3];
-    s16 local_z;
-    s16 local_x;
-    u8 unknown_0e[2];
-} KfActorPlacement;
-
 typedef struct KfActor {
     u32 generation;
     kf::RandomStream random;
@@ -288,7 +271,7 @@ typedef struct KfActor {
     KfObjectId death_drop_object_id;
     KfAnimationClip animation_clip;
     KfActorVerticalState vertical_state;
-    u8 unknown_0c[2];
+    std::array<u8, 2> unknown_0c;
     s16 local_z;
     s16 local_x;
     u16 animation_phase;
@@ -307,12 +290,12 @@ typedef struct KfActor {
     s16 movement_x;
     s16 movement_z;
     s16 movement_y;
-    u8 unknown_46[2];
+    std::array<u8, 2> unknown_46;
 } KfActor;
 
 typedef struct KfActorState {
     KfActorDefinitionTable definitions;
-    KfActor actors[KF_ACTOR_CAPACITY];
+    std::array<KfActor, KF_ACTOR_CAPACITY> actors;
     VECTOR player_position;
     SVECTOR player_rotation;
     KfActorDefinition *current_definition;
@@ -322,15 +305,15 @@ typedef struct KfActorState {
     KfActor *player_target;
 } KfActorState;
 
-extern KfActorActionProfile actor_action_profiles[KF_ACTOR_ACTION_PROFILE_COUNT];
+extern std::array<KfActorActionProfile, KF_ACTOR_ACTION_PROFILE_COUNT> actor_action_profiles;
 bool actor_step_transform(WorldState &world, KfActor &actor);
 
 extern s32 actor_bearing_to_player(WorldState &world, const KfActor *actor);
 
 extern SoundRef boss_death_loop_sound;
-extern SoundRef boss_death_phase_sounds[KF_ACTOR_BOSS_DEATH_SOUND_COUNT];
+extern std::array<SoundRef, KF_ACTOR_BOSS_DEATH_SOUND_COUNT> boss_death_phase_sounds;
 
-extern KfBool32 actor_animation_crossed_phase(const KfActor *actor, u16 phase);
+extern bool actor_animation_crossed_phase(const KfActor *actor, u16 phase);
 extern void actor_advance_animation_clamped(KfActor *actor, s16 delta);
 extern void actor_advance_animation_wrapped(KfActor *actor, s16 delta);
 extern void actor_apply_horizontal_movement(WorldState &world, PlayerContext &player);
@@ -357,7 +340,7 @@ extern KfActor *actor_pool_find_target_in_cone(WorldState &world,
     const VECTOR *origin, s16 facing, u32 max_distance,
     s32 angle_tolerance, s32 *distance_out);
 extern s32 actor_pool_find_overlap(WorldState &world, s32 point_x, s32 point_y, s32 point_z, s32 radius_padding, s32 point_height);
-extern void actor_pool_load_placements(WorldState &world, const KfActorPlacement *placements);
+extern void actor_pool_load_placements(WorldState &world, KfResourceChunk placements);
 extern void actor_pool_spawn(WorldState &world,
     u8 definition_id, const VECTOR *position,
     const struct KfVec3s *rotation);
@@ -385,4 +368,4 @@ extern kf::FrameTask<void> actor_update_current_action(WorldState &world, Player
 extern void actor_update_effect_action(WorldState &world, PlayerContext &player, KfActorEffectSlot effect_slot);
 extern kf::FrameTask<void> actor_transform_definition5_to6(WorldState &world, PlayerContext &player, KfActor *actor);
 
-#endif
+#endif // KF_GAME_ACTOR_H

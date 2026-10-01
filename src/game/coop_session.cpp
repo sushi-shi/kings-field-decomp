@@ -1,3 +1,5 @@
+#include <kf/platform/prelude.h>
+#include <kf/platform/frame_task.hpp>
 #include <kf/game/game.h>
 #include <kf/game/party_runtime.h>
 #include <kf/game/snapshot.h>
@@ -207,17 +209,17 @@ static void session_reconnect(Session &session, WorldState &world)
 
 static kf::FrameTask<void> session_menu(WorldState &world, PlayerContext &player)
 {
-    const auto result = static_cast<s32>(co_await menu_enter_mode(world, player, KF_MENU_MODE_ROOT));
-    if (result >= 0) {
-        if (result == kf_enum_encode<s32>(KF_ITEM_MIRROR_OF_TRUTH))
-            co_await player_use_item(world, player, kf_enum_decode<KfObjectId>(result));
-        else co_await player_request_action(player, CommandKind::UseItem, static_cast<u16>(result));
-    } else if (result == kf_enum_encode<s32>(KF_MENU_RESULT_RETURN_TO_INTRO)) {
-        game_next_overlay_mode = KF_OVERLAY_MODE_INTRO;
+    const auto result = co_await menu_open_root(world, player);
+    if (const auto *item = std::get_if<KfObjectId>(&result)) {
+        if (*item == KF_ITEM_MIRROR_OF_TRUTH)
+            co_await player_use_item(world, player, *item);
+        else co_await player_request_action(player, CommandKind::UseItem, kf_enum_encode<u16>(*item));
+    } else if (std::get<KfMenuAction>(result) == KfMenuAction::ReturnToIntro) {
+        game_result = GameResult::ReturnToIntro;
     }
 }
 
-static kf::FrameTask<void> session_npc_interaction(WorldState &world, PlayerContext &player, u16 event)
+static kf::FrameTask<void> session_npc_interaction(WorldState &, PlayerContext &player, u16 event)
 {
     if (!(co_await player_request_action(player, CommandKind::Interact, event))) co_return;
     const auto view = player.actions->interaction;
@@ -225,7 +227,7 @@ static kf::FrameTask<void> session_npc_interaction(WorldState &world, PlayerCont
         view.stage, kf_enum_decode<KfCharacterId>(view.character), view.page);
     if (view.shop) {
         co_await audio_play_map_sequence(player, 2);
-        co_await menu_enter_mode(world, player, KF_MENU_MODE_SHOP, kf_enum_decode<KfItemStockBank>(view.shop));
+        co_await menu_open_shop(player, kf_enum_decode<KfItemStockBank>(view.shop));
         co_await audio_play_current_map_sequence(player);
     }
     co_await player_request_action(player, CommandKind::Cancel, event);
@@ -673,9 +675,9 @@ kf::FrameTask<void> coop_game_loop(WorldState &world, PlayerContext &offline)
                 WorldSnapshotInfo info;
                 if (!world_snapshot_info(bytes, info) || info.epoch != header.epoch || info.tick != header.sequence) continue;
                 if (info.epoch < world.epoch || (info.epoch == world.epoch && session.received_world && info.tick < session.last_snapshot_tick)) continue;
+                if ((info.floor != world.floor || info.variant != world.variant) && !info.full) continue;
                 party_cancel_tasks(session.runtime);
                 if (info.floor != world.floor || info.variant != world.variant) {
-                    if (!info.full) continue;
                     session.presentation = {};
                     session.view_correction = {};
                     session_cancel_menu(session);
@@ -686,11 +688,16 @@ kf::FrameTask<void> coop_game_loop(WorldState &world, PlayerContext &offline)
                     co_await map_load_floor_wrapper(world, local);
                 }
                 auto restored = world_snapshot_decode(bytes, world, info);
-                if (!restored) { std::fprintf(stderr, "Rejected invalid world snapshot\n"); continue; }
+                if (!restored) {
+                    kf::host_online_status("The host sent an incompatible world. Leave and rejoin the room.");
+                    session.ended = true;
+                    break;
+                }
                 const auto restored_id = restored->party.members[session.slot].character_id;
                 if (restored_id != Identity{} && restored_id != session.identity) {
-                    std::fprintf(stderr, "Rejected snapshot for a different character\n");
-                    continue;
+                    kf::host_online_status("The host sent a snapshot for a different character.");
+                    session.ended = true;
+                    break;
                 }
                 const auto old_generation = world.party.members[session.slot].generation;
                 const auto old_epoch = world.epoch;
@@ -906,7 +913,7 @@ kf::FrameTask<void> coop_game_loop(WorldState &world, PlayerContext &offline)
             }
         }
         if (session.host && session.transport && session.room_ready) session_flush(session);
-        if (game_next_overlay_mode != KF_OVERLAY_MODE_NONE) break;
+        if (game_result != GameResult::Running) break;
         co_await kf::FrameDelay {1};
     }
     world.campaign = nullptr;
@@ -915,7 +922,7 @@ kf::FrameTask<void> coop_game_loop(WorldState &world, PlayerContext &offline)
     // A validated terminal snapshot is final even if signaling or the host
     // disappears after delivery. Ordinary room closure still returns to lobby.
     if (world.story.kind == party_story_ending) {
-        game_next_overlay_mode = KF_OVERLAY_MODE_ENDING;
+        game_result = GameResult::Completed;
         std::fprintf(stdout, "Campaign completed; entering the ending\n");
         std::fflush(stdout);
     }

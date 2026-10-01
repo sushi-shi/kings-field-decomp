@@ -1,5 +1,5 @@
 #include <kf/platform/campaign.hpp>
-#include <kf/platform/assets.hpp>
+#include <kf/platform/assets.h>
 #include <kf/platform/avatars.hpp>
 #include <kf/net/wire.hpp>
 #include <cstring>
@@ -17,8 +17,8 @@ void compatibility(std::string_view resources, std::string_view recipe, char (&o
     sha256_init(&hash);
     const u8 zero = 0;
     for (auto text : {resources, recipe}) {
-        sha256_update(&hash, reinterpret_cast<const u8 *>(text.data()), text.size());
-        sha256_update(&hash, &zero, 1);
+        sha256_update(&hash, {reinterpret_cast<const u8 *>(text.data()), text.size()});
+        sha256_update(&hash, {&zero, 1});
     }
     sha256_finish(&hash, output);
 }
@@ -26,7 +26,7 @@ void checksum(std::span<const u8> bytes, char (&output)[sha256_hex_capacity])
 {
     Sha256 hash;
     sha256_init(&hash);
-    sha256_update(&hash, bytes.data(), bytes.size());
+    sha256_update(&hash, {bytes.data(), bytes.size()});
     sha256_finish(&hash, output);
 }
 }
@@ -80,8 +80,10 @@ SaveFileResult campaign_file_summary(SaveSlot slot, std::string_view resources, 
 }
 
 #ifdef __EMSCRIPTEN__
-extern "C" EMSCRIPTEN_KEEPALIVE const char *kf_campaign_preview(const char *path)
+extern "C" EMSCRIPTEN_KEEPALIVE const char *kf_campaign_preview(const char *path, const char *language_code)
 {
+    kf::Language language;
+    if (!kf::language_parse(language_code, &language)) return "";
     auto *file = std::fopen(path, "rb");
     if (!file) return "";
     std::vector<u8> bytes(kf::campaign_file_capacity + 1), snapshot;
@@ -89,7 +91,7 @@ extern "C" EMSCRIPTEN_KEEPALIVE const char *kf_campaign_preview(const char *path
     const bool good = !std::ferror(file);
     std::fclose(file);
     KfNetWorldSummary summary {};
-    if (!good || !kf::campaign_file_unpack(std::span<const u8>(bytes).first(size), kf::retail_files_sha256,
+    if (!good || !kf::campaign_file_unpack(std::span<const u8>(bytes).first(size), kf::assets_language_hash(language),
         kf::avatars_hash(), snapshot) || kf_net_world_summary(snapshot.data(), snapshot.size(), &summary) != KF_CODEC_OK)
         return "";
     char owner[65];

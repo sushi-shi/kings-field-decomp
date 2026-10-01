@@ -1,19 +1,15 @@
-// Copies typed snapshot records only; wire parsing and validation live in Rust.
+// Copy explicit wire fields; runtime enum widths and containers are independent.
 template<class T, class U>
 static void snapshot_assign(T &destination, const U &source)
 {
-    static_assert(sizeof(T) == sizeof(U));
-    destination = static_cast<T>(source);
+    if constexpr (requires { std::size(destination); std::size(source); }) {
+        static_assert(std::size(T{}) == std::size(U{}));
+        for (std::size_t i = 0; i < std::size(destination); ++i)
+            snapshot_assign(destination[i], source[i]);
+    } else {
+        destination = static_cast<T>(source);
+    }
 }
-template<class E, class S, class U>
-static void snapshot_assign(KfEnumStorage<E, S> &destination, const U &source)
-{ destination = static_cast<E>(source); }
-template<class T, class E, class S>
-static void snapshot_assign(T &destination, const KfEnumStorage<E, S> &source)
-{ destination = static_cast<T>(source.encoded_value()); }
-template<class T, class U, std::size_t N>
-static void snapshot_assign(T (&destination)[N], const U (&source)[N])
-{ for (std::size_t i = 0; i < N; ++i) snapshot_assign(destination[i], source[i]); }
 template<bool Restore, class T, class U>
 static void snapshot_field(T &runtime, U &record)
 {

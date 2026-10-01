@@ -1,25 +1,28 @@
 #include <kf/game/world.h>
 #include <kf/game/player.h>
-#include <kf/lib/bool.h>
 
-#include <kf/game/map_data.h>
-#include <kf/game/map.h>
+#include <kf/lib/map_data.h>
+#include <kf/lib/map.h>
+#include <kf/platform/prelude.h>
 #include <kf/game/collision.h>
-#include <cstdlib>
-#include <cstdio>
-#include <cstring>
 #include <kf/game/game.h>
+#include <kf/lib/codec.h>
+
+#include <array>
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
 
 enum {
     MAP_DOOR_CLOSING_PROBE_RADIUS = 3000
 };
 
-KfMapCopyRegion map_copy_regions[KF_MAP_COPY_REGION_COUNT] = {
-    {55, 33, 50, 39, 3, 3},
-    {47, 16, 30, 20, 3, 3},
-    {58, 44, 15, 48, 3, 3},
-    {64, 44, 37, 45, 3, 3},
-    {0, 0, 36, 4, 7, 1},
+std::array<KfMapCopyRegion, KF_MAP_COPY_REGION_COUNT> map_copy_regions = {
+    KfMapCopyRegion{55, 33, 50, 39, 3, 3},
+    KfMapCopyRegion{47, 16, 30, 20, 3, 3},
+    KfMapCopyRegion{58, 44, 15, 48, 3, 3},
+    KfMapCopyRegion{64, 44, 37, 45, 3, 3},
+    KfMapCopyRegion{0, 0, 36, 4, 7, 1},
 };
 
 
@@ -116,46 +119,40 @@ void map_object_mark_collision_edge(WorldState &world, const KfMapObject *object
     }
 }
 
-u32 map_object_probe_door_closing(WorldState &world, PlayerContext &player, const KfMapObject *object, u16 yaw)
+KfCollisionResult map_object_probe_door_closing(WorldState &world, PlayerContext &player, const KfMapObject *object, u16 yaw)
 {
     const KfMapObjectDefinition *definition = &world.objects.definitions.entries[kf_enum_encode<u8>(object->object_id)];
     s32 point_x = object->position.vx;
     s32 point_z = object->position.vz;
-    u32 result;
-    s32 probe_radius;
 
     yaw &= KF_ANGLE_WRAP_MASK;
     switch (definition->behavior_type) {
     default:
         kf::host_fail("Door clearance requested for a non-door operation");
     case KF_MAP_OBJECT_OP_LIFT_DOOR:
-        probe_radius = MAP_DOOR_CLOSING_PROBE_RADIUS;
-    probe:
-        result = collision_query_world(world, player,
-            point_x, KF_COLLISION_IGNORE_HEIGHT, point_z, probe_radius, 0,
-            KF_COLLISION_SKIP_TERRAIN | KF_COLLISION_SKIP_MAP_OBJECTS);
         break;
     case KF_MAP_OBJECT_OP_HINGED_DOOR:
-        probe_radius = MAP_DOOR_CLOSING_PROBE_RADIUS;
         switch (yaw) {
         default:
             kf::host_fail("Door clearance requires a cardinal hinge angle");
         case 0:
             point_x += KF_MAP_TILE_SIZE;
-            goto probe;
+            break;
         case KF_ANGLE_QUARTER_TURN:
             point_z += KF_MAP_TILE_SIZE;
-            goto probe;
+            break;
         case KF_ANGLE_HALF_TURN:
             point_x -= KF_MAP_TILE_SIZE;
-            goto probe;
+            break;
         case KF_ANGLE_THREE_QUARTER_TURN:
             point_z -= KF_MAP_TILE_SIZE;
-            goto probe;
+            break;
         }
         break;
     }
-    return result;
+    return collision_query_world(world, player,
+        point_x, KF_COLLISION_IGNORE_HEIGHT, point_z, MAP_DOOR_CLOSING_PROBE_RADIUS, 0,
+        KF_COLLISION_SKIP_TERRAIN | KF_COLLISION_SKIP_MAP_OBJECTS);
 }
 
 void map_object_pool_clear(WorldState &world)
@@ -164,7 +161,7 @@ void map_object_pool_clear(WorldState &world)
         object.generation = 1;
         object.object_id = KF_OBJECT_NONE;
         object.action = KF_MAP_OBJECT_OP_NONE;
-        std::memset(&object.link, 0, sizeof object.link);
+        object.link = {};
     }
     world.objects.placement_drop_sequence = 0;
     world.objects.definition_drop_sequence = 0;
@@ -176,21 +173,24 @@ void map_object_definitions_load(WorldState &world, const KfMapObjectDefinitionT
     world.objects.definitions = *definitions;
 }
 
-void map_object_pool_load(WorldState &world, PlayerContext &player, const KfMapObjectPlacement *placements)
+void map_object_pool_load(WorldState &world, PlayerContext &player, KfResourceChunk chunk)
 {
-    KfBool16 ended = false;
-    const KfMapObjectPlacement *placement = placements;
+    std::array<KfObjectPlacementData, KF_MAP_OBJECT_CAPACITY> decoded {};
+    std::size_t count;
+    if (kf_object_placements_decode({chunk.data, chunk.size},
+            {KF_MAP_COLUMNS, KF_MAP_OBJECT_DEFINITION_COUNT, KF_MAP_TILE_SIZE}, decoded, count) != KF_CODEC_OK)
+        kf::host_fail("Invalid map object placements.");
     KfMapObjectDefinition *definition;
     SVECTOR effect_direction;
     KfObjectId object_id;
 
-    for (auto &object : world.objects.objects) {
+    for (std::size_t i = 0; i < std::size(world.objects.objects); ++i) {
+        auto &object = world.objects.objects[i];
         object.generation = 1;
-        if (ended == true
-            || kf_enum_decode<KfObjectId>(placement->object_id) == KF_OBJECT_NONE) {
-            ended = true;
+        if (i >= count) {
             object.object_id = KF_OBJECT_NONE;
         } else {
+            const auto *placement = &decoded[i];
             object_id = kf_enum_decode<KfObjectId>(placement->object_id);
             object.object_id = object_id;
             object.cell_x = placement->tile_x;
@@ -204,7 +204,8 @@ void map_object_pool_load(WorldState &world, PlayerContext &player, const KfMapO
                 - world.floor_height.cells[placement->tile_z][placement->tile_x] * KF_MAP_HEIGHT_STEP;
             object.action = KF_MAP_OBJECT_OP_NONE;
 
-            object.link = placement->link;
+            object.link.words[0] = placement->link[0];
+            object.link.words[1] = placement->link[1];
             definition = &world.objects.definitions.entries[kf_enum_encode<u8>(object.object_id)];
             if (definition->collision_radius != 0) {
                 collision_adjust_cell_occupancy(world, object.cell_x, object.cell_z, 1);
@@ -220,7 +221,7 @@ void map_object_pool_load(WorldState &world, PlayerContext &player, const KfMapO
                                                     KF_EFFECT_KIND_ORBITING_PROJECTILE,
                                                     &object.position,
                                                     &effect_direction)
-                    - world.effects.records;
+                    - world.effects.records.data();
                 map_object_start_action_if_idle(&object, KF_MAP_OBJECT_OP_RELEASE_ORBIT_OR_SHORT_SWING);
                 break;
             case KF_MAP_OBJECT_BOSS_PROJECTILE_EMITTER:
@@ -237,7 +238,7 @@ void map_object_pool_load(WorldState &world, PlayerContext &player, const KfMapO
                                                     &object.position,
                                                     &effect_direction,
                                                     KfEffectRotationArguments{&object.rotation.vector})
-                    - world.effects.records;
+                    - world.effects.records.data();
                 map_object_start_action_if_idle(&object, KF_MAP_OBJECT_OP_RELEASE_ORBIT_OR_SHORT_SWING);
                 break;
             case KF_MAP_OBJECT_LONG_SWING:
@@ -248,7 +249,7 @@ void map_object_pool_load(WorldState &world, PlayerContext &player, const KfMapO
                                                     &object.position,
                                                     &effect_direction,
                                                     KfEffectRotationArguments{&object.rotation.vector})
-                    - world.effects.records;
+                    - world.effects.records.data();
                 map_object_start_action_if_idle(&object, KF_MAP_OBJECT_OP_RELEASE_LONG_SWING);
                 break;
             case KF_MAP_OBJECT_EFFECT_SWITCH:
@@ -256,7 +257,7 @@ void map_object_pool_load(WorldState &world, PlayerContext &player, const KfMapO
                     effect_pool_construct(world, player,
                         0, KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER, KF_EFFECT_KIND_MAP_SWITCH, &object.position,
                         &effect_direction, KfEffectRotationArguments{&object.rotation.vector})
-                    - world.effects.records;
+                    - world.effects.records.data();
                 map_object_start_action_if_idle(&object, KF_MAP_OBJECT_OP_EFFECT_SWITCH);
                 break;
             case KF_ITEM_DRAGON_CHALICE:
@@ -276,7 +277,6 @@ void map_object_pool_load(WorldState &world, PlayerContext &player, const KfMapO
                 map_object_start_action_if_idle(&object, KF_MAP_OBJECT_OP_COPY_REGION);
             }
             map_object_mark_collision_edge(world, &object, KF_MAP_CELL_BLOCKED, object.rotation.angles.y);
-            placement++;
         }
     }
 }
@@ -302,7 +302,7 @@ s32 map_object_distance_to_point(
 
 s32 map_object_pool_find_near_point(WorldState &world, s32 point_x, s32 point_z, s32 radius_padding)
 {
-    KfMapObject *object = world.objects.objects;
+    KfMapObject *object = world.objects.objects.data();
     s16 index;
     u16 radius;
 

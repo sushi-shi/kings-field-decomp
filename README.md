@@ -1,8 +1,7 @@
 # King's Field — Linux / WebAssembly source port
 
-A direct source port of the original Japanese King's Field (SLPS-00017).
-The original game logic runs through portable rendering, audio and platform
-interfaces. Supply your own disc image; game data is not bundled.
+A Linux and browser port of the original Japanese King's Field (SLPS-00017).
+Supply your own disc image; game data is not bundled.
 
 ## Branches
 
@@ -23,7 +22,7 @@ interfaces. Supply your own disc image; game data is not bundled.
 | `master` | Reconstruction and matching |
 | `source` | C++ PS1 build, codecs, and base for porting |
 | `classic` | C PS1 build |
-| `port` | Crossplatform port |
+| `port` | Linux and browser port |
 
 ## Play on Linux
 
@@ -33,33 +32,72 @@ On x86_64 Linux with Nix flakes enabled:
 KF_DISC="/path/to/King's Field (Japan).iso" nix run github:sushi-shi/kings-field-decomp/port
 ```
 
-Supported images: 2048-byte-sector ISO, raw MODE2/2352 BIN, or a single-track
-MODE2/2352 CUE with INDEX 01 at 00:00:00. Keep a CUE's referenced BIN beside it.
-`KF_DISC` is read at runtime: no `--impure` or manual extraction is needed.
-The launcher never uploads the disc or adds it to the Nix store.
+Supply your own disc image of the Japanese King's Field (SLPS-00017).
+Tested image: `King's Field (Japan).bin`, SHA-256:
 
-The first launch verifies and extracts the resources; later launches reuse
-`$XDG_CACHE_HOME/kings-field/SLPS-00017/resources-v1`. If `XDG_CACHE_HOME` is
-unset or relative, it defaults to `$HOME/.cache`. Saves are stored separately
-in the SDL user-preference directory, in three `.kfs` slots.
+```text
+ae74beba377d686bfaa292ea40df8ade4454ec3139c2b5152364e02aac90b3d9
+```
 
-The game starts from the opening. Append options after `--`:
+The first launch extracts and caches game data locally. Saves use three separate
+slots.
+
+The game starts in English. Switch languages during play in **Configuration → Language**.
+English uses John Osborne's translation, prepared from your Japanese disc.
+See [translation details](docs/english-resources.md).
+
+With `nix run`, pass game options after `--`. For example:
+
+```sh
+KF_DISC=/path/to/disc.iso nix run . -- --saves /path/to/saves
+```
 
 | Option | Purpose |
 | --- | --- |
-| `--skip-intro` | Start gameplay directly |
 | `--saves DIRECTORY` | Use an existing save directory |
-| `--data DIRECTORY` | Use an extracted disc tree instead of `KF_DISC` |
+| `--language ja\|en` | Choose the starting language |
 
-For example, to use existing extracted files:
+In a local checkout, use `KF_DISC=/path/to/disc.iso nix run .`.
 
-```sh
-nix run github:sushi-shi/kings-field-decomp/port -- --data /path/to/extracted/disc
+## Install with a NixOS flake
+
+For an x86_64 Linux system, add the game and a local directory containing your
+disc to your flake inputs:
+
+```nix
+inputs.kings-field.url = "github:sushi-shi/kings-field-decomp/port";
+inputs.kings-field-disc = {
+  url = "path:/path/to/disc-directory";
+  flake = false;
+};
 ```
 
-The flake also exposes `packages.x86_64-linux.default` for installation or use
-from another flake. The installed `kings-field` command uses the same `KF_DISC`
-variable. In a local checkout of `port`, use `nix run .`.
+Import the module and set your disc's filename:
+
+```nix
+outputs = { nixpkgs, kings-field, kings-field-disc, ... }: {
+  nixosConfigurations."<host>" = nixpkgs.lib.nixosSystem {
+    modules = [
+      ./configuration.nix
+      kings-field.nixosModules.default
+      {
+        programs.kings-field = {
+          enable = true;
+          disc = "${kings-field-disc}/King's Field (Japan).iso";
+        };
+      }
+    ];
+  };
+};
+```
+
+Nix verifies and extracts the disc into its store during installation. Rebuild
+your configuration, replacing `<host>` with your host's name, then launch:
+
+```sh
+sudo nixos-rebuild switch --flake '.#<host>'
+kings-field
+```
 
 ## Controls
 
@@ -73,31 +111,21 @@ variable. In a local checkout of `port`, use `nix run .`.
 | Interact / confirm | E or Enter |
 | Inventory / skip intro | Tab |
 | Back | Backspace or Escape in menus |
-| Pause | P or Escape during gameplay; fresh input resumes |
-
-Controllers are also supported. Click the window to capture the mouse; this
-initial click does not attack. Focus loss pauses the game and releases capture.
-Linux logical-key remapping, including Caps-to-Escape, is respected. Browsers
-may require another click to restore pointer lock.
+| Pause | P or Escape during gameplay |
 
 ## Build from source
 
-Use the `port` branch and its pinned development shell:
+From the `port` branch:
 
 ```sh
 nix develop
 cmake --preset linux
 cmake --build --preset linux
-emcmake cmake --preset wasm
-cmake --build --preset wasm
+build/linux/kings-field --data /path/to/extracted/disc
 ```
 
-The native executable is `build/linux/kings-field`. Unlike the Nix launcher,
-it expects explicit `--data DIRECTORY` or `--disc IMAGE --extract-to NEW_DIRECTORY`
-arguments; extraction destinations must not already exist.
-
-Code uses C++20 as C with classes: plain structures, functions and scoped enums,
-without inheritance, RTTI or exceptions.
+To extract a disc with this executable, replace `--data` with
+`--disc IMAGE --extract-to NEW_DIRECTORY`. The destination must not already exist.
 
 ## Browser
 
@@ -122,7 +150,7 @@ directory when returning. Clearing it also removes the multiplayer credential.
 The website's room service handles codes and WebRTC signaling. Gameplay runs in
 the host's browser, with direct peer connections when available and a configured
 TURN relay when a direct connection cannot be established. Co-op is still under
-development; the remaining gameplay work is listed in [status](docs/port-status.md).
+development; implementation boundaries and remaining validation are described in [multiplayer notes](docs/multiplayer.md).
 
 For multiplayer characters, select your US King's Field II disc (`SLUS-00255`,
 the western release of KFIII) in the **Multiplayer characters: KFIII disc** field,
@@ -182,7 +210,7 @@ on the servers. Both clients receive fresh credentials before new connections,
 including late joins and reconnection after host recovery. `TURN_URL` accepts up
 to seven comma-separated relay URLs sharing that secret. Browsers can use TCP
 or TLS TURN when their network blocks UDP. The pinned native networking library
-only supports UDP TURN; native clients still need UDP access. TURN needs its own
+is validated with UDP TURN; native TCP/TLS relay support remains unverified. TURN needs its own
 publicly reachable listener and relay ports;
 an HTTP reverse proxy alone cannot relay WebRTC traffic. Room state is in memory,
 so a room-service restart ends its rooms.
@@ -273,11 +301,40 @@ connection and checks that overflowing its queue leaves the healthy peer usable.
 These are local transport checks; public NAT/firewall combinations still need
 verification on the deployed service.
 
-## Status
+### Linux
 
-Linux controls, brief combat, general rendering and native/browser audio have
-been user-checked. Native save/load and browser cache/save persistence have
-bounded verification; the natural ending and re-entry still need a suitable run.
+Inside `nix develop`:
 
-See [remaining work](docs/port-status.md), [architecture and maintenance](PORTING.md)
-and [technical notes](docs/port-findings.md).
+```sh
+emcmake cmake --preset wasm
+cmake --build --preset wasm
+python3 -m http.server --directory build/wasm
+```
+
+### Windows
+
+The browser version can be built directly on Windows. Install
+[Git](https://git-scm.com/downloads/win), [Python 3](https://www.python.org/downloads/windows/),
+[CMake 3.25+](https://cmake.org/download/) and [Ninja](https://ninja-build.org/),
+with their commands available on `PATH`. In PowerShell, from your `port` checkout:
+
+```powershell
+git clone --depth 1 --branch 5.0.6 https://github.com/emscripten-core/emsdk.git build/emsdk
+.\build\emsdk\emsdk.bat install 5.0.6
+.\build\emsdk\emsdk.bat activate 5.0.6
+Set-ExecutionPolicy -Scope Process RemoteSigned
+.\build\emsdk\emsdk_env.ps1
+python scripts/english_patch.py fetch --output build/wasm/english-v1.kfdelta
+emcmake cmake --preset wasm
+cmake --build --preset wasm
+python -m http.server --directory build/wasm
+```
+
+CMake downloads SDL automatically. For later builds, repeat from
+`Set-ExecutionPolicy`, skipping the translation download.
+
+### Play
+
+Open [the game](http://localhost:8000/kings-field.html), select your disc and press
+Play. The language selector also works during play. Data and saves stay in
+browser storage; clearing it removes them.

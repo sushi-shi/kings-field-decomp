@@ -1,15 +1,18 @@
 #include <kf/game/world.h>
 #include <kf/game/player.h>
 #include <kf/game/audio.h>
-#include <kf/lib/random.hpp>
+#include <kf/lib/random.h>
 #include <kf/lib/null.h>
 
-#include <kf/game/map_data.h>
-#include <kf/game/map.h>
+#include <kf/lib/map_data.h>
+#include <kf/lib/map.h>
 #include <cstdlib>
 #include <cstdio>
 #include <cstring>
+#include <kf/platform/prelude.h>
 #include <kf/game/game.h>
+
+#include <array>
 
 enum {
     MAP_DOOR_INTERACTION_LOCAL_Z = 550,
@@ -48,20 +51,20 @@ static constexpr u32 MAP_EMITTER_VELOCITY_NUMERATOR = 175u;
 static constexpr u32 MAP_FIRE_BALL_EMITTER_VELOCITY_NUMERATOR = 25u;
 static constexpr u32 MAP_BOSS_EMITTER_VELOCITY_NUMERATOR = 225u;
 
-SoundRef gameplay_sound_refs[KF_GAMEPLAY_SOUND_COUNT] = {
-    {9, 0, 72},
-    {10, 0, 77},
-    {11, 0, 60},
-    {9, 0, 80},
-    {21, 0, 48},
-    {12, 0, 83},
-    {19, 4, 103},
-    {9, 0, 67},
-    {20, 0, 48},
-    {8, 0, 47},
-    {60, 0, 44},
-    {27, 0, 65},
-    {15, 0, 71}
+std::array<SoundRef, KF_GAMEPLAY_SOUND_COUNT> gameplay_sound_refs = {
+    SoundRef{9, 0, 72},
+    SoundRef{10, 0, 77},
+    SoundRef{11, 0, 60},
+    SoundRef{9, 0, 80},
+    SoundRef{21, 0, 48},
+    SoundRef{12, 0, 83},
+    SoundRef{19, 4, 103},
+    SoundRef{9, 0, 67},
+    SoundRef{20, 0, 48},
+    SoundRef{8, 0, 47},
+    SoundRef{60, 0, 44},
+    SoundRef{27, 0, 65},
+    SoundRef{15, 0, 71}
 };
 
 s32 map_object_pool_find_interaction_from(WorldState &world, s32 start_index, s32 point_x, s32 point_z, s32 radius_padding)
@@ -120,7 +123,7 @@ void map_object_start_action_if_idle(KfMapObject *object, KfMapObjectOperation a
 static void map_object_new_drop(WorldState &world, KfMapObject &object)
 {
     if (!++object.generation) kf::host_fail("Map object generation exhausted");
-    const auto index = &object - world.objects.objects;
+    const auto index = &object - world.objects.objects.data();
     const auto floor = kf_enum_encode<unsigned>(world.floor) - 1;
     for (auto &member : world.party.members) member.loot_claims[floor][index] = 0;
 }
@@ -156,7 +159,7 @@ KfMapObject *map_object_effect_pool_acquire(WorldState &world, u16 first_index, 
 void map_object_spawn_drop(WorldState &world, KfMapObjectDropSource drop_source, KfObjectId object_id, const VECTOR *position, s32 y_offset)
 {
     if (world.prediction) return;
-    KfBool within_drop_range;
+    bool within_drop_range;
     u16 *sequence;
     u16 first_index;
     KfMapObject *object;
@@ -308,7 +311,7 @@ void map_object_pool_update(WorldState &world, PlayerContext &player)
                     break;
                 }
                 if (timer == KF_MAP_OBJECT_DOOR_CLOSE_FIRST) {
-                    if (map_object_probe_door_closing(world, player, object, object->rotation.angles.y - KF_ANGLE_QUARTER_TURN) != KF_COLLISION_NONE) {
+                    if (map_object_probe_door_closing(world, player, object, object->rotation.angles.y - KF_ANGLE_QUARTER_TURN)  .kind != KfCollisionKind::None) {
                         object->action_timer = KF_MAP_OBJECT_DOOR_CLOSE_FIRST;
                         break;
                     }
@@ -345,7 +348,7 @@ void map_object_pool_update(WorldState &world, PlayerContext &player)
                     break;
                 }
                 if (elapsed == KF_MAP_OBJECT_DOOR_CLOSE_FIRST) {
-                    if (map_object_probe_door_closing(world, player, object, object->rotation.angles.y) != KF_COLLISION_NONE) {
+                    if (map_object_probe_door_closing(world, player, object, object->rotation.angles.y)  .kind != KfCollisionKind::None) {
                         object->action_timer = KF_MAP_OBJECT_DOOR_CLOSE_FIRST;
                         break;
                     }

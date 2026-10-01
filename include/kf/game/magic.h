@@ -75,4 +75,4 @@ typedef struct KfMagicTable {
 extern void magic_load_records(WorldState &world, PlayerContext &player, const KfMagicTable *table);
 extern void magic_cast(WorldState &world, PlayerContext &player);
 
-#endif
+#endif // KF_MAGIC_H

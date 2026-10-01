@@ -1,42 +1,67 @@
+#include <kf/platform/disc.h>
+#include <kf/platform/files.h>
+#include <kf/platform/host.h>
+#include <kf/platform/input.h>
+#include <kf/platform/language_runtime.h>
+#include <kf/platform/saves.h>
+
+#include <kf/net/transport.hpp>
+#include <kf/platform/avatars.hpp>
+#include <array>
+
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_main.h>
-#include <kf/platform/host.hpp>
-#include <kf/platform/input.hpp>
-#include <kf/platform/files.hpp>
-#include <kf/platform/disc.hpp>
-#include <kf/platform/saves.hpp>
-#include <kf/net/transport.hpp>
-#include <kf/platform/assets.hpp>
-#include <kf/platform/avatars.hpp>
-#include <cstdlib>
-#include <cstdio>
-#include <cstring>
-#ifdef __EMSCRIPTEN__
-#include <emscripten.h>
-#include <kf/platform/assets.hpp>
 
-extern "C" EMSCRIPTEN_KEEPALIVE int kf_extract_disc(const char *source, const char *destination) {
-    return kf::disc_extract(source, destination);
+#include <cstdio>
+#include <cstdlib>
+#include <cstring>
+
+#ifdef __EMSCRIPTEN__
+#include <kf/platform/assets.h>
+
+#include <emscripten.h>
+
+extern "C" EMSCRIPTEN_KEEPALIVE int kf_extract_disc(const char *source, const char *destination,
+                                                  const char *code) {
+    kf::Language language;
+    return kf::language_parse(code, &language) && kf::disc_extract(source, destination, language);
 }
-extern "C" EMSCRIPTEN_KEEPALIVE const char *kf_retail_files_hash() {
-    return kf::retail_files_sha256;
+extern "C" EMSCRIPTEN_KEEPALIVE int kf_prepare_resources(const char *source, const char *destination,
+                                                       const char *code) {
+    kf::Language language;
+    return kf::language_parse(code, &language) && kf::disc_prepare_directory(source, destination, language);
+}
+extern "C" EMSCRIPTEN_KEEPALIVE const char *kf_resource_files_hash(const char *code) {
+    kf::Language language;
+    return kf::language_parse(code, &language) ? kf::assets_language_hash(language) : "";
+}
+extern "C" EMSCRIPTEN_KEEPALIVE int kf_request_language(const char *code) {
+    if (!kf::net::application_config.signaling_url.empty()) return 0;
+    kf::Language language;
+    return kf::language_parse(code, &language) && kf::language_request(language);
+}
+extern "C" EMSCRIPTEN_KEEPALIVE const char *kf_current_language() {
+    return kf::language_code(kf::game_language());
 }
 EM_JS(void, browser_game_started, (), { Module['gameStarted'](); });
 #endif
 
-extern "C" kf::AppMode kf_run_game();
-extern "C" void kf_run_opening(kf::AppMode mode);
+#include <kf/cutscene/playback.h>
+#include <kf/game/session.h>
 
 int main(int argc, char **argv) {
     const char *data = "data";
     const char *saves = nullptr;
     const char *disc = nullptr;
     const char *extracted = nullptr;
-    const char *avatars = nullptr;
-    const char *avatar_disc = nullptr;
-    bool data_selected = false, extract_only = false;
+    const char *avatars = nullptr, *avatar_disc = nullptr;
     bool skip_intro = false;
     auto &online = kf::net::application_config;
+    const char *japanese_data = nullptr;
+    bool data_selected = false, extract_only = false;
+    const char *language_code = std::getenv("KF_LANGUAGE");
+    if (!language_code)
+        language_code = "en";
     for (int i = 1; i < argc; ++i) {
         if (std::strcmp(argv[i], "--data") == 0 && i + 1 < argc) {
             data = argv[++i];
@@ -71,9 +96,14 @@ int main(int argc, char **argv) {
         else if (std::strcmp(argv[i], "--campaign") == 0 && i + 1 < argc &&
                  argv[i + 1][0] >= '1' && argv[i + 1][0] <= '3' && !argv[i + 1][1])
             online.campaign_slot = static_cast<u8>(argv[++i][0] - '0');
+        else if (std::strcmp(argv[i], "--language") == 0 && i + 1 < argc)
+            language_code = argv[++i];
+        else if (std::strcmp(argv[i], "--japanese-data") == 0 && i + 1 < argc)
+            japanese_data = argv[++i];
         else {
-            std::fprintf(stderr, "Usage: kings-field [--data DIRECTORY | --disc IMAGE [--extract-to NEW_DIRECTORY] [--extract-only]] [--saves DIRECTORY] [--skip-intro] [--host | --join ROOM] [--signal URL] [--avatar-disc KFIII_IMAGE | --avatars PACK] [--avatar ID]\n");
-            return 1;
+            const bool help = std::strcmp(argv[i], "--help") == 0 || std::strcmp(argv[i], "-h") == 0;
+            std::fprintf(help ? stdout : stderr, "Usage: kings-field [--data DIRECTORY | --disc IMAGE] [--extract-to NEW_DIRECTORY] [--extract-only] [--language ja|en] [--japanese-data DIRECTORY] [--saves DIRECTORY] [--host | --join CODE] [--signal URL] [--avatars PACK | --avatar-disc IMAGE] [--avatar ID] [--campaign 1|2|3] [--skip-intro]\nLanguage defaults to KF_LANGUAGE, or en. Change it during play in Configuration. When starting from an English tree, --japanese-data supplies the original resources for switching back.\n");
+            return help ? 0 : 1;
         }
     }
     if ((online.campaign_slot && !online.host) || (online.host && !online.room.empty()) ||
@@ -96,19 +126,42 @@ int main(int argc, char **argv) {
         online.avatar_recipe = kf::avatars_hash();
         skip_intro = true;
     }
-    if ((disc && data_selected) || (!disc && (extracted || extract_only))) {
-        std::fprintf(stderr, "Use --data for existing files, or --disc with optional --extract-to/--extract-only.\n");
+    kf::Language language;
+    if (!kf::language_parse(language_code, &language)) {
+        std::fprintf(stderr, "Unsupported language: %s. Use ja or en.\n", language_code);
+        return 1;
+    }
+    kf::game_set_language(language);
+    if ((disc && data_selected) || (!disc && !data_selected && (extracted || extract_only)) ||
+        (data_selected && extract_only && !extracted)) {
+        std::fprintf(stderr, "Use --data or --disc. To prepare an existing tree, use --data with --extract-to NEW_DIRECTORY.\n");
         return 1;
     }
     if (disc) {
         data = extracted ? extracted : "data";
-        if (!kf::disc_extract(disc, data))
+        if (!kf::disc_extract(disc, data, language))
             return 1;
         if (extract_only)
             return 0;
     }
-    if (!kf::data_files_set_root(data))
+    if (data_selected && extracted) {
+        if (!kf::disc_prepare_directory(data, extracted, language))
+            return 1;
+        data = extracted;
+        if (extract_only)
+            return 0;
+    }
+    kf::Language resource_language = language;
+    if (!disc && !kf::disc_verify_directory(data, language, &resource_language))
         return 1;
+    if (!kf::language_resources_start(data, resource_language, japanese_data))
+        return 1;
+    if (resource_language != language &&
+        (!kf::language_request(language) || !kf::language_apply_pending())) {
+        kf::language_resources_stop();
+        return 1;
+    }
+    std::printf("Starting King's Field (%s).\n", kf::language_name(language));
     if (online.host || !online.room.empty()) {
         online.resources = kf::data_files_hash();
         if (online.resources.empty()) {
@@ -117,8 +170,10 @@ int main(int argc, char **argv) {
         }
     }
     // Create browser audio within the launch gesture, before asynchronous storage.
-    if (!kf::host_start())
+    if (!kf::host_start()) {
+        kf::language_resources_stop();
         return 1;
+    }
     if (!kf::save_storage_start(saves))
         kf::host_fail("Cannot initialize save storage. Check browser storage permissions or the selected save directory.");
     if (!online.signaling_url.empty()) {
@@ -134,28 +189,13 @@ int main(int argc, char **argv) {
 #ifdef __EMSCRIPTEN__
     browser_game_started();
 #endif
-    kf::AppMode mode = skip_intro ? kf::AppMode::Gameplay : kf::AppMode::Opening;
+    if (!skip_intro) cutscene_play(Cutscene::Intro);
     for (;;) {
-        switch (mode) {
-        case kf::AppMode::Gameplay:
-            kf::host_set_input_context(kf::InputContext::Gameplay);
-            mode = kf_run_game();
-            break;
-        case kf::AppMode::Opening:
-        case kf::AppMode::Ending:
-            kf::host_set_input_context(kf::InputContext::Opening);
-            if (mode == kf::AppMode::Ending && !online.signaling_url.empty()) {
-                std::puts("Playing the campaign ending");
-                std::fflush(stdout);
-            }
-            kf_run_opening(mode);
-            mode = mode == kf::AppMode::Ending && !online.signaling_url.empty()
-                ? kf::AppMode::Exit : kf::AppMode::Gameplay;
-            break;
-        case kf::AppMode::Exit:
-            kf::save_storage_shutdown();
-            kf::host_shutdown();
-            return 0;
+        const GameResult result = game_play();
+        if (result == GameResult::Completed) cutscene_play(Cutscene::Ending);
+        else if (online.signaling_url.empty()) cutscene_play(Cutscene::Intro);
+        if (!online.signaling_url.empty()) {
+            kf::save_storage_shutdown(); kf::host_shutdown(); return 0;
         }
     }
 }

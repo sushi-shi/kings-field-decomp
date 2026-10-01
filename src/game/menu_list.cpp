@@ -1,6 +1,8 @@
+#include <kf/platform/frame_task.hpp>
 #include <kf/game/system.h>
+#include <kf/platform/prelude.h>
 #include <kf/game/menu.h>
-#include <kf/platform/input.hpp>
+#include <kf/platform/input.h>
 
 void menu_list_previous(KfMenuList *list)
 {

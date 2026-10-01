@@ -10,5 +10,6 @@ struct PlayerContext;
 extern KfMemoryArena memory_arena;
 
 extern void common_resources_load(WorldState &world, PlayerContext &player);
+extern bool game_apply_language(void);
 
-#endif
+#endif // KF_GAME_RESOURCES_H

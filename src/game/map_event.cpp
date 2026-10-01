@@ -1,13 +1,18 @@
+#include <kf/platform/frame_task.hpp>
 #include <kf/game/system.h>
 #include <kf/game/world.h>
 #include <kf/game/player.h>
 #include <kf/lib/null.h>
-#include <kf/lib/bool.h>
 
-#include <kf/game/map_data.h>
-#include <kf/game/map.h>
+#include <kf/lib/map_data.h>
+#include <kf/lib/map.h>
+#include <kf/platform/prelude.h>
+#include <kf/game/asset.h>
 #include <kf/game/collision.h>
 #include <kf/game/game.h>
+#include <kf/lib/codec.h>
+
+#include <array>
 
 void map_event_set_current(WorldState &world, KfMapEvent *event)
 {
@@ -40,23 +45,28 @@ kf::FrameTask<void> map_event_advance_animation_blocking(WorldState &world, Play
 
 }
 
-void map_event_pool_load(WorldState &world, const KfMapEventDefinition *definitions)
+void map_event_pool_load(WorldState &world, KfResourceChunk chunk)
 {
-    KfBool8 exhausted = false;
-
-    for (auto &event : world.map.events) {
-        if (exhausted == true || definitions->state == KF_MAP_EVENT_FREE) {
-            exhausted = true;
+    std::array<KfEventPlacementData, KF_MAP_EVENT_CAPACITY> decoded {};
+    std::size_t count;
+    if (kf_event_placements_decode({chunk.data, chunk.size},
+            {KF_MAP_COLUMNS, KF_ASSET_WEAPON - KF_ASSET_MAP_EVENT_FIRST, KF_MAP_TILE_SIZE}, decoded, count) != KF_CODEC_OK)
+        kf::host_fail("Invalid map event placements.");
+    for (std::size_t i = 0; i < std::size(world.map.events); ++i) {
+        auto &event = world.map.events[i];
+        if (i >= count) {
             event.state = KF_MAP_EVENT_FREE;
         } else {
-            event.state = definitions->state;
-            event.character_id = definitions->character_id;
+            const auto *definitions = &decoded[i];
+            event.state = kf_enum_decode<KfMapEventState>(definitions->state);
+            event.character_id = kf_enum_decode<KfCharacterId>(definitions->character_id);
             event.model_index = definitions->model_index;
-            event.dialogue_pages = definitions->dialogue_pages;
+            std::copy(std::begin(definitions->dialogue_pages), std::end(definitions->dialogue_pages),
+                std::begin(event.dialogue_pages.last_page));
             event.dialogue.stage_limit = definitions->dialogue_stage_limit;
             event.unknown_0c = definitions->unknown_0b;
             event.unknown_0d = definitions->unknown_0c;
-            event.behavior = definitions->behavior;
+            event.behavior = kf_enum_decode<KfMapEventBehavior>(definitions->behavior);
             event.home_x = definitions->cell_x * KF_MAP_TILE_SIZE + definitions->position_x_offset;
             event.reference_position.vx = event.home_x;
             event.home_z = definitions->cell_z * KF_MAP_TILE_SIZE + definitions->position_z_offset;
@@ -67,7 +77,6 @@ void map_event_pool_load(WorldState &world, const KfMapEventDefinition *definiti
             event.reference_position.vy =
                 -(world.floor_height.cells[event.cell_z][event.cell_x] * KF_MAP_HEIGHT_STEP);
             event.rotation.vy = definitions->initial_rotation;
-            definitions++;
             event.rotation.vz = 0;
             event.rotation.vx = 0;
             event.dialogue.page = KF_DIALOGUE_FIRST_PAGE;
@@ -141,7 +150,7 @@ KfMapEvent *map_event_pool_find_target_in_cone(WorldState &world,
 
 s32 map_event_pool_find_overlap(WorldState &world, s32 point_x, s32 point_z, s32 radius_padding)
 {
-    KfMapEvent *event = world.map.events;
+    KfMapEvent *event = world.map.events.data();
     s16 index = 0;
 
     do {

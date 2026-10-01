@@ -3,5 +3,8 @@
 
 #include <kf/lib/item_types.h>
 
+#include <array>
 
-#endif
+extern std::array<std::array<u8, KF_ITEM_COUNT>, KF_ITEM_STOCK_BANK_COUNT> item_stock;
+
+#endif // KF_ITEM_H

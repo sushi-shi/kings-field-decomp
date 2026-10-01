@@ -1,3 +1,4 @@
+#include <kf/platform/frame_task.hpp>
 #include <kf/game/system.h>
 #include <kf/game/world.h>
 #include <kf/lib/null.h>
@@ -5,6 +6,7 @@
 
 #include <kf/lib/math.h>
 #include <kf/game/player.h>
+#include <kf/platform/prelude.h>
 #include <kf/game/game.h>
 
 enum {

@@ -1,16 +1,16 @@
+#include <kf/platform/frame_task.hpp>
 #include <kf/game/system.h>
 #include <kf/game/world.h>
 #include <kf/game/player.h>
 #include <kf/lib/null.h>
 
-#include <kf/game/map_data.h>
+#include <kf/lib/map_data.h>
+#include <kf/platform/prelude.h>
 #include <kf/game/actor.h>
 #include <kf/game/game.h>
+#include <kf/lib/codec.h>
 
-enum class KfActorPlacementStreamState : s32 {
-    KF_ACTOR_PLACEMENTS_READING = 0,
-    KF_ACTOR_PLACEMENTS_EXHAUSTED = 1
-}; using enum KfActorPlacementStreamState;
+#include <array>
 
 
 kf::FrameTask<void> actor_pool_update(WorldState &world, PlayerContext &player)
@@ -49,32 +49,35 @@ s32 actor_random_next(WorldState &world)
     return kf::random_next(world.actors.current->random);
 }
 
-void actor_pool_load_placements(WorldState &world, const KfActorPlacement *placements)
+void actor_pool_load_placements(WorldState &world, KfResourceChunk chunk)
 {
-    KfActorPlacementStreamState stream_state = KF_ACTOR_PLACEMENTS_READING;
-
-    for (auto &actor : world.actors.actors) {
-        if (stream_state == KF_ACTOR_PLACEMENTS_EXHAUSTED
-            || placements->slot_state == KF_ACTOR_SLOT_FREE) {
-            stream_state = KF_ACTOR_PLACEMENTS_EXHAUSTED;
+    std::array<KfActorPlacementData, KF_ACTOR_CAPACITY> decoded {};
+    std::size_t count;
+    if (kf_actor_placements_decode({chunk.data, chunk.size},
+            {KF_MAP_COLUMNS, KF_ACTOR_DEFINITION_COUNT, KF_MAP_TILE_SIZE}, decoded, count) != KF_CODEC_OK)
+        kf::host_fail("Invalid actor placements.");
+    for (std::size_t i = 0; i < std::size(world.actors.actors); ++i) {
+        auto &actor = world.actors.actors[i];
+        if (i >= count) {
             actor.slot_state = KF_ACTOR_SLOT_FREE;
             actor.lifecycle = KF_ACTOR_LIFECYCLE_DORMANT;
             continue;
         }
-        actor.slot_state = placements->slot_state;
+        const auto *placements = &decoded[i];
+        actor.slot_state = kf_enum_decode<KfActorSlotState>(placements->slot_state);
         actor.target_player_slot = no_player;
-        actor.random.state = 1u + static_cast<u32>(&actor - world.actors.actors) * 2654435761u + world.epoch;
-        actor.definition_id = placements->definition_flags & KF_ACTOR_PLACEMENT_DEFINITION_MASK;
-        if (placements->definition_flags & KF_ACTOR_PLACEMENT_NEAR_SQUARE_CULLING) {
+        actor.random.state = 1u + static_cast<u32>(i) * 2654435761u + world.epoch;
+        actor.definition_id = placements->definition_id;
+        if (placements->near_square_culling) {
             actor.culling_mode = KF_ACTOR_CULL_NEAR_SQUARE;
         } else {
             actor.culling_mode = KF_ACTOR_CULL_VISIBILITY_GRID;
         }
-        actor.heading_quadrant = placements->heading_quadrant;
+        actor.heading_quadrant = kf_enum_decode<KfActorHeadingQuadrant>(placements->heading_quadrant);
         actor.tile_z = placements->tile_z;
         actor.tile_x = placements->tile_x;
         actor.spawn_chance = placements->spawn_chance;
-        actor.death_drop_object_id = placements->death_drop_object_id;
+        actor.death_drop_object_id = kf_enum_decode<KfObjectId>(placements->death_drop_object_id);
         actor.local_z = placements->local_z;
         actor.local_x = placements->local_x;
         actor.lifecycle = KF_ACTOR_LIFECYCLE_DORMANT;
@@ -83,7 +86,6 @@ void actor_pool_load_placements(WorldState &world, const KfActorPlacement *place
         actor.position.vy = map_floor_height_at_position(world, &actor.position);
         actor.cell_x = actor.tile_x;
         actor.cell_z = actor.tile_z;
-        placements++;
     }
 }
 

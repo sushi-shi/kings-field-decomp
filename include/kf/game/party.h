@@ -6,6 +6,7 @@
 
 struct WorldState;
 struct KfActor;
+struct KfCollisionResult;
 inline constexpr u8 party_capacity = 4;
 inline constexpr u8 no_player = 0xff;
 
@@ -40,7 +41,7 @@ PlayerContext *party_nearest_player(WorldState &world, const VECTOR &position);
 PlayerContext *party_actor_target(WorldState &world, KfActor &actor, PlayerContext &nearest);
 s32 party_find_overlap(WorldState &world, s32 x, s32 y, s32 z,
                        s32 radius, s32 height, u8 ignored_slot = no_player);
-PlayerContext &party_collision_player(WorldState &world, PlayerContext &offline_player, u32 collision);
+PlayerContext &party_collision_player(WorldState &world, PlayerContext &offline_player, KfCollisionResult collision);
 bool party_melee_hit(WorldState &world, PlayerContext &attacker, const VECTOR &point,
                      s32 radius, s32 height);
 void party_award_experience(WorldState &world, PlayerContext &offline_player, s16 amount);

@@ -1,21 +1,26 @@
-#include <kf/platform/disc.hpp>
-#include <kf/platform/assets.hpp>
-#include <cerrno>
-#include <cctype>
-#include <cstdio>
-#include <cstdlib>
-#include <cstring>
-#include <new>
-#include <fcntl.h>
+#include <kf/platform/assets.h>
+#include <kf/platform/disc.h>
+#include <kf/platform/translation.h>
+
 #include <sys/stat.h>
+
+#include <cctype>
+#include <cerrno>
+#include <cstdio>
+#include <cstring>
+#include <dirent.h>
+#include <fcntl.h>
+#include <memory>
+#include <new>
 #include <unistd.h>
+#include <utility>
 
 namespace kf {
 static constexpr unsigned cue_line_capacity = 1024;
 static constexpr unsigned disc_path_capacity = 4096;
 static constexpr std::size_t cue_file_capacity = 65536;
 static constexpr unsigned ascii_first_printable = 32;
-bool disc_cue_image(const char *text, char *filename, std::size_t capacity) {
+bool disc_cue_image(const char *text, std::span<char> filename) {
     bool file = false, track = false, index = false;
     while (*text) {
         const char *end = std::strchr(text, '\n');
@@ -26,19 +31,19 @@ bool disc_cue_image(const char *text, char *filename, std::size_t capacity) {
         const char *tail = end;
         while (tail > text && std::isspace(static_cast<unsigned char>(tail[-1])))
             --tail;
-        char line[cue_line_capacity];
+        std::array<char, cue_line_capacity> line;
         const auto length = static_cast<std::size_t>(tail - text);
-        if (length >= sizeof line)
+        if (length >= line.size())
             return false;
-        std::memcpy(line, text, length);
+        std::memcpy(line.data(), text, length);
         line[length] = 0;
         text = *end ? end + 1 : end;
-        if (!length || std::strncmp(line, "REM ", 4) == 0)
+        if (!length || std::strncmp(line.data(), "REM ", 4) == 0)
             continue;
-        if (std::strncmp(line, "FILE ", 5) == 0) {
+        if (std::strncmp(line.data(), "FILE ", 5) == 0) {
             if (file || track || index)
                 return false;
-            const char *name = line + 5;
+            const char *name = line.data() + 5;
             while (*name == ' ' || *name == '\t')
                 ++name;
             const bool quoted = *name == '"';
@@ -53,23 +58,23 @@ bool disc_cue_image(const char *text, char *filename, std::size_t capacity) {
                 return false;
             while (*kind == ' ' || *kind == '\t')
                 ++kind;
-            if (std::strcmp(kind, "BINARY") != 0 || name_size >= capacity)
+            if (std::strcmp(kind, "BINARY") != 0 || name_size >= filename.size())
                 return false;
             // Only a sibling file: never resolve absolute paths or traversal.
             for (const char *at = name; at != name_end; ++at)
                 if (*at == '/' || *at == '\\' || *at == ':' ||
                     static_cast<unsigned char>(*at) < ascii_first_printable)
                     return false;
-            std::memcpy(filename, name, name_size);
+            std::memcpy(filename.data(), name, name_size);
             filename[name_size] = 0;
-            if (std::strcmp(filename, ".") == 0 || std::strcmp(filename, "..") == 0)
+            if (std::strcmp(filename.data(), ".") == 0 || std::strcmp(filename.data(), "..") == 0)
                 return false;
             file = true;
-        } else if (std::strcmp(line, "TRACK 01 MODE2/2352") == 0) {
+        } else if (std::strcmp(line.data(), "TRACK 01 MODE2/2352") == 0) {
             if (!file || track || index)
                 return false;
             track = true;
-        } else if (std::strcmp(line, "INDEX 01 00:00:00") == 0) {
+        } else if (std::strcmp(line.data(), "INDEX 01 00:00:00") == 0) {
             if (!track || index)
                 return false;
             index = true;
@@ -116,37 +121,41 @@ static FILE *open_disc(const char *source, std::size_t *size) {
         return nullptr;
     }
     ByteBuffer cue{};
-    bool ok = buffer_resize(&cue, *size + 1) && std::fread(cue.data, 1, *size, file) == *size;
+    bool ok = true;
+    try {
+        cue.resize(*size + 1);
+        ok = std::fread(cue.data(), 1, *size, file) == *size;
+    } catch (const std::bad_alloc &) {
+        ok = false;
+    }
     if (std::fclose(file) != 0)
         ok = false;
-    char name[cue_line_capacity];
+    std::array<char, cue_line_capacity> name;
     if (ok) {
-        cue.data[*size] = 0;
-        ok = !std::memchr(cue.data, 0, *size) &&
-            disc_cue_image(reinterpret_cast<const char *>(cue.data), name, sizeof name);
+        cue[*size] = 0;
+        ok = !std::memchr(cue.data(), 0, *size) &&
+            disc_cue_image(reinterpret_cast<const char *>(cue.data()), name);
     }
-    buffer_release(&cue);
     if (!ok) {
         std::fprintf(stderr, "CUE must describe one MODE2/2352 track with INDEX 01 at 00:00:00.\n");
         return nullptr;
     }
     const char *slash = std::strrchr(source, '/');
     const auto prefix = slash ? static_cast<std::size_t>(slash + 1 - source) : 0;
-    char path[disc_path_capacity];
-    if (prefix + std::strlen(name) >= sizeof path)
+    std::array<char, disc_path_capacity> path;
+    if (prefix + std::strlen(name.data()) >= path.size())
         return nullptr;
-    std::memcpy(path, source, prefix);
-    std::strcpy(path + prefix, name);
-    return open_image(path, size);
+    std::memcpy(path.data(), source, prefix);
+    std::strcpy(path.data() + prefix, name.data());
+    return open_image(path.data(), size);
 }
 
 static bool write_asset(int root, const Asset &asset) {
-    char path[sizeof asset.path];
-    std::memcpy(path, asset.path, sizeof path);
+    auto path = asset.path;
     int directory = ::dup(root);
     if (directory < 0)
         return false;
-    char *name = path;
+    char *name = path.data();
     while (char *slash = std::strchr(name, '/')) {
         *slash = 0;
         if (::mkdirat(directory, name, S_IRWXU) != 0 && errno != EEXIST) {
@@ -165,8 +174,8 @@ static bool write_asset(int root, const Asset &asset) {
     if (file < 0)
         return false;
     std::size_t written = 0;
-    while (written < asset.bytes.size) {
-        const auto count = ::write(file, asset.bytes.data + written, asset.bytes.size - written);
+    while (written < asset.bytes.size()) {
+        const auto count = ::write(file, asset.bytes.data() + written, asset.bytes.size() - written);
         if (count < 0 && errno == EINTR)
             continue;
         if (count <= 0)
@@ -174,39 +183,11 @@ static bool write_asset(int root, const Asset &asset) {
         written += static_cast<std::size_t>(count);
     }
     const bool closed = ::close(file) == 0;
-    return closed && written == asset.bytes.size;
+    return closed && written == asset.bytes.size();
 }
 
-bool disc_extract(const char *source, const char *destination) {
-    std::size_t size;
-    FILE *file = open_disc(source, &size);
-    if (!file) {
-        std::fprintf(stderr, "Cannot open disc image: %s\n", source);
-        return false;
-    }
-    auto *importer = new (std::nothrow) DiscImporter{};
-    if (!importer) {
-        std::fclose(file);
-        return false;
-    }
-    disc_import_start(importer, size);
-    ByteBuffer read{};
-    while (disc_import_waiting(importer)) {
-        const auto request = importer->request;
-        if (!buffer_resize(&read, request.length) ||
-            ::fseeko(file, static_cast<off_t>(request.offset), SEEK_SET) != 0 ||
-            std::fread(read.data, 1, read.size, file) != read.size) {
-            disc_import_fail(importer, "Cannot read the selected disc image.");
-            break;
-        }
-        disc_import_supply(importer, read.data, read.size);
-    }
-    buffer_release(&read);
-    bool ok = importer->state == ImportState::complete;
-    if (std::fclose(file) != 0)
-        ok = false;
-    if (!ok)
-        std::fprintf(stderr, "%s\n", importer->message);
+static bool write_resource_tree(const char *destination, const AssetTable &assets, Language language) {
+    bool ok = true;
     if (ok && ::mkdir(destination, S_IRWXU) != 0) {
         std::fprintf(stderr, "Cannot create %s: %s. Extraction requires a new directory; use --data to reuse one.\n",
                      destination, std::strerror(errno));
@@ -214,17 +195,174 @@ bool disc_extract(const char *source, const char *destination) {
     } else if (ok) {
         const int root = ::open(destination, O_RDONLY | O_DIRECTORY | O_NOFOLLOW | O_CLOEXEC);
         ok = root >= 0;
-        for (std::size_t i = 0; ok && i < importer->assets.count; ++i)
-            ok = write_asset(root, importer->assets.entries[i]);
+        for (std::size_t i = 0; ok && i < assets.size(); ++i)
+            ok = write_asset(root, assets[i]);
         if (root >= 0 && ::close(root) != 0)
             ok = false;
         if (!ok)
             std::fprintf(stderr, "Extraction failed; partial files remain in %s. No existing directory was replaced.\n", destination);
         else
-            std::printf("Extracted %zu verified files to %s\n", importer->assets.count, destination);
+            std::printf("Extracted %zu verified %s files to %s\n", assets.size(),
+                        language_name(language), destination);
     }
-    disc_import_release(importer);
-    delete importer;
     return ok;
 }
+
+bool disc_extract(const char *source, const char *destination, Language language) {
+    std::size_t size;
+    FILE *file = open_disc(source, &size);
+    if (!file) {
+        std::fprintf(stderr, "Cannot open disc image: %s\n", source);
+        return false;
+    }
+    std::unique_ptr<DiscImporter> importer;
+    try {
+        importer = std::make_unique<DiscImporter>();
+    } catch (const std::bad_alloc &) {
+        std::fclose(file);
+        return false;
+    }
+    disc_import_start(importer.get(), size, language);
+    ByteBuffer read{};
+    while (disc_import_waiting(importer.get())) {
+        const auto request = importer->request;
+        try {
+            read.resize(request.length);
+        } catch (const std::bad_alloc &) {
+            disc_import_fail(importer.get(), "Cannot allocate disc read buffer.");
+            break;
+        }
+        if (::fseeko(file, static_cast<off_t>(request.offset), SEEK_SET) != 0 ||
+            std::fread(read.data(), 1, read.size(), file) != read.size()) {
+            disc_import_fail(importer.get(), "Cannot read the selected disc image.");
+            break;
+        }
+        disc_import_supply(importer.get(), read);
+    }
+    bool ok = importer->state == ImportState::complete;
+    if (std::fclose(file) != 0)
+        ok = false;
+    if (!ok)
+        std::fprintf(stderr, "%s\n", importer->message.data());
+    if (ok)
+        ok = write_resource_tree(destination, importer->assets, language);
+    return ok;
+}
+
+static bool read_resource_tree(int root, const char *prefix, AssetTable &assets,
+                               std::size_t *total, unsigned *directories) {
+    if (++*directories > 128)
+        return false;
+    const int descriptor = ::dup(root);
+    if (descriptor < 0)
+        return false;
+    DIR *directory = ::fdopendir(descriptor);
+    if (!directory) {
+        ::close(descriptor);
+        return false;
+    }
+    bool ok = true;
+    while (ok) {
+        errno = 0;
+        const auto *entry = ::readdir(directory);
+        if (!entry) {
+            ok = errno == 0;
+            break;
+        }
+        if (std::strcmp(entry->d_name, ".") == 0 || std::strcmp(entry->d_name, "..") == 0)
+            continue;
+        std::array<char, asset_path_capacity> path, normalized;
+        const int length = std::snprintf(path.data(), path.size(), "%s%s", prefix, entry->d_name);
+        if (length < 0 || static_cast<std::size_t>(length) >= path.size() - 1 ||
+            !asset_path(normalized, path.data()) || std::strcmp(path.data(), normalized.data()) != 0) {
+            ok = false;
+            break;
+        }
+        // Reject links and special files before reading. O_NONBLOCK also avoids FIFO waits.
+        const int child = ::openat(root, entry->d_name, O_RDONLY | O_NONBLOCK | O_NOFOLLOW | O_CLOEXEC);
+        struct stat info{};
+        if (child < 0) {
+            ok = false;
+            break;
+        }
+        ok = ::fstat(child, &info) == 0;
+        if (ok && S_ISDIR(info.st_mode)) {
+            path[length] = '/';
+            path[length + 1] = 0;
+            ok = read_resource_tree(child, path.data(), assets, total, directories);
+        } else if (ok && S_ISREG(info.st_mode) && info.st_size >= 0 &&
+                   info.st_size <= 16 * 1024 * 1024 && assets.size() < 428 &&
+                   static_cast<std::uint64_t>(info.st_size) <= disc_import_limit - *total) {
+            ByteBuffer bytes{};
+            try {
+                bytes.resize(static_cast<std::size_t>(info.st_size));
+            } catch (const std::bad_alloc &) {
+                ok = false;
+            }
+            std::size_t at = 0;
+            while (ok && at < bytes.size()) {
+                const auto count = ::read(child, bytes.data() + at, bytes.size() - at);
+                if (count < 0 && errno == EINTR)
+                    continue;
+                if (count <= 0) { ok = false; break; }
+                at += static_cast<std::size_t>(count);
+            }
+            u8 extra;
+            if (ok)
+                ok = ::read(child, &extra, 1) == 0;
+            *total += bytes.size();
+            if (ok)
+                ok = assets_append(assets, path.data(), std::move(bytes));
+        } else {
+            ok = false;
+        }
+        if (::close(child) != 0)
+            ok = false;
+    }
+    if (::closedir(directory) != 0)
+        ok = false;
+    return ok;
+}
+
+bool disc_verify_directory(const char *directory, Language language, Language *actual) {
+    const int root = ::open(directory, O_RDONLY | O_DIRECTORY | O_CLOEXEC);
+    AssetTable assets{};
+    std::size_t total = 0;
+    unsigned directories = 0;
+    bool ok = root >= 0 && read_resource_tree(root, "", assets, &total, &directories);
+    Language detected = language;
+    if (ok && !assets_match_language(assets, language)) {
+        ok = actual && language == Language::English && assets_match_language(assets, Language::Japanese);
+        detected = Language::Japanese;
+    }
+    if (root >= 0 && ::close(root) != 0)
+        ok = false;
+    if (ok && actual)
+        *actual = detected;
+    if (!ok)
+        std::fprintf(stderr, "Resource tree does not match supported %s SLPS-00017 files: %s. Select the matching --language ja|en and disc tree.\n",
+                     language_name(language), directory);
+    return ok;
+}
+bool disc_prepare_directory(const char *source, const char *destination, Language language) {
+    const int root = ::open(source, O_RDONLY | O_DIRECTORY | O_CLOEXEC);
+    AssetTable assets{};
+    std::size_t total = 0;
+    unsigned directories = 0;
+    bool ok = root >= 0 && read_resource_tree(root, "", assets, &total, &directories);
+    if (root >= 0 && ::close(root) != 0)
+        ok = false;
+    if (!ok)
+        std::fprintf(stderr, "Cannot read resource tree: %s\n", source);
+    if (ok) {
+        if (const char *error = assets_prepare_language(assets, language)) {
+            std::fprintf(stderr, "%s\n", error);
+            ok = false;
+        }
+    }
+    if (ok)
+        ok = write_resource_tree(destination, assets, language);
+    return ok;
+}
+
 }

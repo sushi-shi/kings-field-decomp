@@ -1,7 +1,6 @@
 /build/
 /result
 /result-*
-/codecs/target/
 *.kfpack
 __pycache__/
 *.pyc
@@ -9,3 +8,6 @@ __pycache__/
 *.cue
 *.iso
 /services/rooms/node_modules/
+
+# Derived translation payload; never commit or publish (terms unstated).
+*.kfdelta

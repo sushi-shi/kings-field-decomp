@@ -1,3 +1,4 @@
+#include <kf/platform/frame_task.hpp>
 #include <kf/game/system.h>
 #include <kf/game/world.h>
 #include <kf/game/graphics.h>
@@ -6,14 +7,17 @@
 #include <kf/game/resources.h>
 #include <kf/lib/resources.h>
 #include <kf/game/equipment.h>
-#include <kf/game/map.h>
+#include <kf/lib/map.h>
+#include <kf/platform/prelude.h>
+#include <kf/game/game.h>
 #include <kf/game/player.h>
 #include <kf/game/render.h>
 #include <kf/lib/geometry_types.h>
-#include <cstdlib>
+
+#include <array>
 #include <cstdio>
 #include <cstring>
-#include <kf/game/game.h>
+#include <new>
 
 enum {
     MAP_VARIANT_ASSET_BUFFER_BYTES = 0x5a000,
@@ -23,18 +27,55 @@ enum {
     MAP_FLOOR2_ALTERNATE_MUSIC_LEVEL = 25
 };
 
-char map_resource_path[KF_MAP_RESOURCE_PATH_BYTES] = "B0/";
+std::array<char, KF_MAP_RESOURCE_PATH_BYTES> map_resource_path = {"B0/"};
 
-char map_mix_tim_filename[8] = "MIX.TIM";
+std::array<char, 8> map_mix_tim_filename = {"MIX.TIM"};
 
-KfCellWindow render_cell_windows[KF_CELL_WINDOW_YAW_COUNT];
-
-
+std::array<KfCellWindow, KF_CELL_WINDOW_YAW_COUNT> render_cell_windows;
 
 
 
 
-static constexpr auto map_grid_word_count = sizeof(KfMapAttributeGrid) / sizeof(u32);
+
+
+static kf::ByteBuffer common_images_read()
+{
+    kf::DataFile file{};
+    kf::ByteBuffer bytes{};
+    if (resource_file_open(&file, "COM/MIX.TIM") != kf::FileResult::Ok)
+        kf::host_fail("Cannot reload language graphics.");
+    if (file.size > bytes.max_size()) {
+        kf::data_file_close(&file);
+        kf::host_fail("Cannot reload language graphics.");
+    }
+    try {
+        bytes.resize(file.size);
+    } catch (const std::bad_alloc &) {
+        kf::data_file_close(&file);
+        kf::host_fail("Cannot reload language graphics.");
+    }
+    const auto result = kf::data_file_read(&file, bytes.data(), bytes.size());
+    kf::data_file_close(&file);
+    if (result != kf::FileResult::Ok)
+        kf::host_fail("Cannot reload language graphics.");
+    return bytes;
+}
+
+bool game_apply_language(void)
+{
+    if (kf::language_requested() == kf::game_language())
+        return false;
+    auto previous = common_images_read();
+    if (!kf::language_apply_pending())
+        return false;
+    auto current = common_images_read();
+    if (!kf::texture_store_translate_tim(&kf::host_renderer()->textures,
+            previous.data(), previous.size(), current.data(), current.size()))
+        kf::host_fail("Cannot reload language graphics.");
+    menu_resources_reload();
+    kf::host_language_status("Language changed.");
+    return true;
+}
 
 void common_resources_load(WorldState &world, PlayerContext &player)
 {
@@ -56,7 +97,7 @@ void common_resources_load(WorldState &world, PlayerContext &player)
     const auto cell_windows = resource_chunk_view(stream, resource_end);
     if (cell_windows.size < sizeof render_cell_windows)
         kf::host_fail("Truncated cell windows");
-    memcpy(render_cell_windows, cell_windows.data, sizeof render_cell_windows);
+    memcpy(render_cell_windows.data(), cell_windows.data, sizeof render_cell_windows);
     stream = resource_stream_next(stream, resource_end);
     weapon_records_load_and_mirror_angles(
         resource_chunk_data<KfWeaponTable>(resource_chunk_view(stream, resource_end)));
@@ -76,7 +117,7 @@ void common_resources_load(WorldState &world, PlayerContext &player)
     const auto level_growth = resource_chunk_view(stream, resource_end);
     if (level_growth.size < sizeof player_level_growth_table)
         kf::host_fail("Truncated player level growth table");
-    memcpy(player_level_growth_table, level_growth.data, sizeof player_level_growth_table);
+    memcpy(player_level_growth_table.data(), level_growth.data, sizeof player_level_growth_table);
     memory_release_last(memory_arena);
     memory_arena.allocation.cursor = block + KF_RESOURCE_REUSE_PREFIX_BYTES;
 }
@@ -91,7 +132,7 @@ u8 *map_resource_load_file(const char *filename, std::size_t *loaded_size)
     u8 *data;
 
     strcpy(&map_resource_path[3], filename);
-    resource_file_load_allocated(memory_arena, &data, map_resource_path, loaded_size);
+    resource_file_load_allocated(memory_arena, &data, map_resource_path.data(), loaded_size);
     return data;
 }
 
@@ -103,8 +144,8 @@ void map_variant_assets_load(WorldState &world, PlayerContext &player)
     memcpy((void *)(&map_resource_path[3]), (const void *)("CHR0.MIM"), sizeof "CHR0.MIM");
     map_resource_path[6] = kf_enum_encode<u8>(player.state.map_variant) + '0';
     std::size_t loaded_size;
-    if (resource_file_load_into(*asset_buffer, MAP_VARIANT_ASSET_BUFFER_BYTES, map_resource_path, &loaded_size) != KF_RESOURCE_LOADED)
-        resource_file_fail(map_resource_path);
+    if (resource_file_load_into(*asset_buffer, MAP_VARIANT_ASSET_BUFFER_BYTES, map_resource_path.data(), &loaded_size) != KF_RESOURCE_LOADED)
+        resource_file_fail(map_resource_path.data());
     asset_registry_load_tmd_archive(KF_ASSET_ACTOR_FIRST, *asset_buffer, loaded_size);
 }
 
@@ -141,14 +182,13 @@ kf::FrameTask<void> map_resources_load(WorldState &world, PlayerContext &player,
 {
     u8 *stream;
     u8 *block;
-    const u32 *source;
 
     (co_await audio_stop_sequence_fade());
     effect_pool_reset(world);
     memory_allocation_reset(memory_arena);
     map_resource_path_set_floor(floor);
     std::size_t image_size;
-    u8 *images = map_resource_load_file(map_mix_tim_filename, &image_size);
+    u8 *images = map_resource_load_file(map_mix_tim_filename.data(), &image_size);
     tim_upload_images(images, image_size);
     memory_release_last(memory_arena);
     std::size_t resource_size;
@@ -159,41 +199,23 @@ kf::FrameTask<void> map_resources_load(WorldState &world, PlayerContext &player,
     stream = resource_stream_next(stream, resource_end);
     block = stream;
     stream = resource_stream_next(stream, resource_end);
-    (co_await audio_play_current_map_sequence(player));
-    const auto map_grids = resource_chunk_view(stream, resource_end);
-    if (map_grids.size < 5 * sizeof world.cell_attribute)
-        kf::host_fail("Truncated map grids");
-    source = resource_stream_copy_words(
-        world.cell_attribute.words,
-        (u32 *)(stream + KF_RESOURCE_CHUNK_HEADER_BYTES),
-        map_grid_word_count);
-    source = resource_stream_copy_words(
-        world.floor_height.words, source, map_grid_word_count);
-    source = resource_stream_copy_words(
-        world.cell_orientation.words, source, map_grid_word_count);
-    source = resource_stream_copy_words(
-        world.collision_flags.words, source, map_grid_word_count);
-    resource_stream_copy_words(
-        world.collision.words, source, map_grid_word_count);
+    co_await audio_play_current_map_sequence(player);
+    map_grids_load(resource_chunk_view(stream, resource_end),
+        world.cell_attribute, world.floor_height,
+        world.cell_orientation, world.collision_flags,
+        world.collision);
     stream = resource_stream_next(stream, resource_end);
     const auto floor_items = resource_chunk_view(stream, resource_end);
     item_load_floor_placements(floor_item_storage(), world.floor_height, floor_items.data, floor_items.size);
     stream = resource_stream_next(stream, resource_end);
-    resource_chunk_view(stream, resource_end);
-    map_object_pool_load(world, player,
-        (KfMapObjectPlacement *)(stream + KF_RESOURCE_CHUNK_HEADER_BYTES));
+    map_object_pool_load(world, player, resource_chunk_view(stream, resource_end));
     stream = resource_stream_next(stream, resource_end);
-    resource_chunk_view(stream, resource_end);
-    actor_pool_load_placements(world,
-        (KfActorPlacement *)(stream + KF_RESOURCE_CHUNK_HEADER_BYTES));
+    actor_pool_load_placements(world, resource_chunk_view(stream, resource_end));
     stream = resource_stream_next(stream, resource_end);
-    resource_chunk_view(stream, resource_end);
-    actor_definitions_load(world,
-        (const KfActorDefinitionTable *)(stream + KF_RESOURCE_CHUNK_HEADER_BYTES));
+    actor_definitions_load(world, resource_chunk_data<KfActorDefinitionTable>(
+        resource_chunk_view(stream, resource_end), "actor definitions"));
     stream = resource_stream_next(stream, resource_end);
-    resource_chunk_view(stream, resource_end);
-    map_event_pool_load(world,
-        (KfMapEventDefinition *)(stream + KF_RESOURCE_CHUNK_HEADER_BYTES));
+    map_event_pool_load(world, resource_chunk_view(stream, resource_end));
     memory_release_last(memory_arena);
     memory_arena.allocation.cursor = block + KF_RESOURCE_REUSE_PREFIX_BYTES;
     stream = map_resource_load_file("MIXB.DAT", &resource_size);

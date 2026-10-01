@@ -2,8 +2,9 @@
 #include <kf/game/player.h>
 #include <kf/game/graphics.h>
 
-#include <kf/game/map_data.h>
+#include <kf/lib/map_data.h>
 #include <kf/game/render.h>
+#include <kf/platform/prelude.h>
 #include <kf/game/game.h>
 
 enum {

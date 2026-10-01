@@ -1,13 +1,15 @@
 #include <kf/game/world.h>
 #include <kf/game/player.h>
-#include <kf/lib/random.hpp>
+#include <kf/lib/random.h>
 #include <kf/game/audio.h>
-#include <kf/game/map_data.h>
+#include <kf/lib/map_data.h>
+#include <kf/platform/prelude.h>
 #include <kf/game/collision.h>
 #include <kf/game/effect.h>
 
-#include <cstdlib>
+#include <array>
 #include <cstdio>
+#include <cstdlib>
 #include <cstring>
 
 static constexpr u32 EFFECT_PHASE_BYTE_MASK = 0xff;
@@ -30,12 +32,12 @@ enum {
     GROUND_BRANCH_CHILD_SPACING = 1500
 };
 
-static KfFloorDeformSegment floor_deform_segments[FLOOR_DEFORM_SEGMENT_COUNT] = {
-    {65, 80, 1, 0, 2, 0, 100},
-    {61, 73, 0, 255, 2, 0, 100},
-    {75, 56, 1, 0, 3, 0, 100},
-    {37, 27, 0, 255, 3, 0, 100},
-    {32, 82, 0, 1, 12, 0, 100}
+static std::array<KfFloorDeformSegment, FLOOR_DEFORM_SEGMENT_COUNT> floor_deform_segments = {
+    KfFloorDeformSegment{65, 80, 1, 0, 2, 0, 100},
+    KfFloorDeformSegment{61, 73, 0, 255, 2, 0, 100},
+    KfFloorDeformSegment{75, 56, 1, 0, 3, 0, 100},
+    KfFloorDeformSegment{37, 27, 0, 255, 3, 0, 100},
+    KfFloorDeformSegment{32, 82, 0, 1, 12, 0, 100}
 };
 
 int effect_magic_power(PlayerContext &player, KfEffectRecord *effect)
@@ -54,7 +56,7 @@ void effect_update_swinging_hazard(WorldState &world, PlayerContext &player, SVE
     MATRIX rotation_matrix;
     MATRIX yaw_matrix;
     VECTOR world_position;
-    u32 collision;
+    KfCollisionResult collision;
     s16 pitch;
     s16 next_pitch;
 
@@ -66,12 +68,12 @@ void effect_update_swinging_hazard(WorldState &world, PlayerContext &player, SVE
         world_position = kf::matrix_apply_rotation(rotation_matrix, *probe_offset);
         world_position += record->position;
         collision = effect_map_collision(world, player, &world_position, EFFECT_SWING_COLLISION_RADIUS);
-        if (collision != KF_COLLISION_NONE) {
-            if ((collision >> KF_COLLISION_KIND_SHIFT) == (KF_COLLISION_ACTOR >> KF_COLLISION_KIND_SHIFT)) {
-                actor_apply_damage(world, player, collision & KF_COLLISION_DETAIL_MASK, 0, magic->damage_components[0],
+        if (collision  .kind != KfCollisionKind::None) {
+            if (collision.kind == KfCollisionKind::Actor) {
+                actor_apply_damage(world, player, collision.detail, 0, magic->damage_components[0],
                     magic->damage_components[2], magic->damage_components[1],
                     0, 0, KF_ACTOR_DAMAGE_SCALE_ONE, record->type);
-            } else if ((collision >> KF_COLLISION_KIND_SHIFT) == (KF_COLLISION_PLAYER >> KF_COLLISION_KIND_SHIFT)) {
+            } else if (collision.kind == KfCollisionKind::Player) {
                 player_apply_damage(party_collision_player(world, player, collision), magic->damage_components[0],
                     magic->damage_components[2], magic->damage_components[1],
                     KF_PLAYER_STATUS_NONE, 0, 0, KF_FIXED12_ONE, record->id);
@@ -118,8 +120,8 @@ void effect_update_orbiting_projectile(WorldState &world, PlayerContext &player,
 {
     KfEffectRecord *record = world.effects.current_record;
     KfMagicRecord *magic = world.effects.current_magic;
-    KfEnumStorage<KfEffectPhase, u32> life = record->phase;
-    u32 collision;
+    KfEffectPhase life = record->phase;
+    KfCollisionResult collision;
 
     if ((kf_enum_encode<u32>(life) & EFFECT_PHASE_BYTE_MASK) < kf_enum_encode<u8>(KF_EFFECT_HAZARD_RELEASE_REQUEST) + 1) {
         record->position.vx = (record->direction.vector.vx << KF_EFFECT_ORBIT_CENTER_SHIFT)
@@ -131,12 +133,12 @@ void effect_update_orbiting_projectile(WorldState &world, PlayerContext &player,
         record->control.orbit_angle = (record->control.orbit_angle
             + KF_ANGLE_FULL_TURN / EFFECT_ORBIT_UPDATES_PER_TURN) & KF_ANGLE_WRAP_MASK;
         collision = effect_map_collision(world, player, &record->position, EFFECT_ORBIT_COLLISION_RADIUS);
-        if (collision != KF_COLLISION_NONE) {
-            if ((collision >> KF_COLLISION_KIND_SHIFT) == (KF_COLLISION_ACTOR >> KF_COLLISION_KIND_SHIFT)) {
-                actor_apply_damage(world, player, collision & KF_COLLISION_DETAIL_MASK, 0, magic->damage_components[0],
+        if (collision  .kind != KfCollisionKind::None) {
+            if (collision.kind == KfCollisionKind::Actor) {
+                actor_apply_damage(world, player, collision.detail, 0, magic->damage_components[0],
                     magic->damage_components[2], magic->damage_components[1],
                     0, 0, KF_ACTOR_DAMAGE_SCALE_ONE, record->type);
-            } else if ((collision >> KF_COLLISION_KIND_SHIFT) == (KF_COLLISION_PLAYER >> KF_COLLISION_KIND_SHIFT)) {
+            } else if (collision.kind == KfCollisionKind::Player) {
                 player_apply_damage(party_collision_player(world, player, collision), magic->damage_components[0],
                     magic->damage_components[2], magic->damage_components[1],
                     KF_PLAYER_STATUS_NONE, 0, 0, KF_FIXED12_ONE, record->id);
@@ -266,7 +268,7 @@ void effect_spawn_ground_trail(WorldState &world, PlayerContext &player, u8 id, 
     s32 scale = (distance << KF_FIXED12_BITS) / TRAIL_UNIT_SCALE_DISTANCE;
 
     effect_rotate_scale_offset_y(&parent_effect->direction.vector, &position, angle, scale);
-    index = parent_effect - world.effects.records;
+    index = parent_effect - world.effects.records.data();
     position.vx += parent_effect->position.vx;
     position.vz += parent_effect->position.vz;
     effect_pool_construct(world, player, id, parent_effect->type, KF_EFFECT_KIND_GROUND_TRAIL, &position,

@@ -1,5 +1,5 @@
+#include <kf/platform/prelude.h>
 #include <kf/game/graphics.h>
-
 #include <kf/game/render.h>
 
 enum {
@@ -35,5 +35,5 @@ void lighting_set_active_color_matrix(KfGameColorPreset preset)
 {
     auto &destination = game_graphics_runtime.render_state.lighting.color_matrix;
     const auto &source = color_matrix_table[kf_enum_encode<s32>(preset)];
-    memcpy(destination.m, source.m, sizeof destination.m);
+    destination.m = source.m;
 }

@@ -1,12 +1,14 @@
+#include <kf/platform/frame_task.hpp>
 #include <kf/game/system.h>
 #include <kf/game/world.h>
+#include <kf/platform/prelude.h>
 #include <kf/game/audio.h>
-#include <kf/lib/null.h>
-#include <kf/lib/bool.h>
-
-#include <kf/game/player.h>
 #include <kf/game/game.h>
 #include <kf/game/player_actions.h>
+#include <kf/game/player.h>
+#include <kf/lib/null.h>
+
+#include <array>
 static constexpr unsigned enemy_image_number_offset = 7;
 static constexpr unsigned enemy_image_path_capacity = 14, person_image_path_capacity = 15;
 static constexpr unsigned person_image_number_offset = 8;
@@ -28,9 +30,9 @@ enum {
     PLAYER_HARP_FLOOR3_HOLD_COUNTDOWN = 270
 };
 
-char enemy_info_image_path_template[enemy_image_path_capacity] = "ENE0/EI00.TIM";
+std::array<char, enemy_image_path_capacity> enemy_info_image_path_template = {"ENE0/EI00.TIM"};
 
-char person_image_path_template[person_image_path_capacity] = "PRSN/PER00.TIM";
+std::array<char, person_image_path_capacity> person_image_path_template = {"PRSN/PER00.TIM"};
 
 kf::FrameTask<void> actor_show_info_image(WorldState &world, PlayerContext &player, const KfActor *actor)
 {
@@ -39,7 +41,7 @@ kf::FrameTask<void> actor_show_info_image(WorldState &world, PlayerContext &play
     enemy_info_image_path_template[3] = '0' + kf_enum_encode<u8>(player.state.progress_state.current_floor);
     enemy_info_image_path_template[enemy_image_number_offset] = '0' + actor->definition_id / 10;
     enemy_info_image_path_template[enemy_image_number_offset + 1] = '0' + actor->definition_id % 10;
-    (co_await screen_show_image_until_input(enemy_info_image_path_template));
+    (co_await screen_show_image_until_input(enemy_info_image_path_template.data()));
 }
 
 kf::FrameTask<void> map_event_show_person_image(WorldState &world, PlayerContext &player, const KfMapEvent *event)
@@ -48,7 +50,7 @@ kf::FrameTask<void> map_event_show_person_image(WorldState &world, PlayerContext
     (co_await render_frame(world, player, NULL, NULL));
     person_image_path_template[person_image_number_offset] = '0' + kf_enum_encode<u8>(event->character_id) / 10;
     person_image_path_template[person_image_number_offset + 1] = '0' + kf_enum_encode<u8>(event->character_id) % 10;
-    (co_await screen_show_image_until_input(person_image_path_template));
+    (co_await screen_show_image_until_input(person_image_path_template.data()));
 }
 
 bool player_use_world_item(WorldState &world, PlayerContext &player, KfObjectId item_id)
@@ -57,7 +59,7 @@ bool player_use_world_item(WorldState &world, PlayerContext &player, KfObjectId 
     KfEffectRecord *record;
     s32 index;
     s16 slot;
-    KfBool8 used = false;
+    bool used = false;
     bool feedback = false;
     const auto notify = [&](KfNotificationId id) {
         feedback = true;
@@ -121,6 +123,7 @@ bool player_use_world_item(WorldState &world, PlayerContext &player, KfObjectId 
             index++;
         }
         break;
+
     case KF_ITEM_DRAGON_CHALICE:
     case KF_ITEM_WATER_SEAL_STONE:
     case KF_ITEM_EARTH_SEAL_STONE:
@@ -147,7 +150,7 @@ bool player_use_world_item(WorldState &world, PlayerContext &player, KfObjectId 
         }
         break;
     case KF_ITEM_HARP:
-        record = world.effects.records;
+        record = world.effects.records.data();
         for (slot = KF_EFFECT_CAPACITY - 1; slot != -1; slot--, record++) {
             if (record->type == KF_EFFECT_SLOT_FREE) {
                 continue;

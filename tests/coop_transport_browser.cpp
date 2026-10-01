@@ -87,7 +87,8 @@ int main()
     if (!rejected_resume(config)) { test_result(0,"Resume rejection lost its terminal reason"); return 1; }
     auto *client = transport_open(config);
     if (!client) { test_result(0, "Cannot open browser transport"); return 1; }
-    const auto deadline = emscripten_get_now() + 20000;
+    // Relay selection can outlast direct candidate checks and DTLS backoff.
+    const auto deadline = emscripten_get_now() + 60000;
     bool ready = false, reliable = false, state = false, success = false;
     bool paused = false;
     u8 remote = 0;

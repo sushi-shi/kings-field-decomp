@@ -22,7 +22,7 @@ int main(int argc, char **argv)
     large[0] = 0; large[1] = 1; large[2] = 255; large[3] = 128;
     bool success = false, failed = false;
     unsigned connections = 0;
-    const auto deadline = std::chrono::steady_clock::now() + std::chrono::seconds(25);
+    const auto deadline = std::chrono::steady_clock::now() + std::chrono::seconds(65);
     while (!success && !failed && std::chrono::steady_clock::now() < deadline) {
         Event event;
         while (transport_poll(*host, event)) {

@@ -4,7 +4,7 @@
 #include <kf/game/actor.h>
 #include <kf/game/effect.h>
 #include <kf/game/collision.h>
-#include <kf/game/map.h>
+#include <kf/lib/map.h>
 #include <kf/game/party.h>
 #include <kf/game/story.h>
 struct CampaignRuntime;

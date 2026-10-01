@@ -1,17 +1,21 @@
+#include <kf/platform/frame_task.hpp>
 #include <kf/game/system.h>
 #include <kf/game/world.h>
 #include <kf/game/player.h>
-#include <kf/lib/random.hpp>
+#include <kf/lib/random.h>
 #include <kf/game/graphics.h>
 
-#include <kf/game/map_data.h>
-#include <kf/game/map.h>
+#include <kf/lib/map_data.h>
+#include <kf/lib/map.h>
 #include <cstdlib>
 #include <cstdio>
 #include <cstring>
+#include <kf/platform/prelude.h>
 #include <kf/game/game.h>
 
-static constexpr u8 floor5_boss_death_cleanup_definitions[] = {0, 2, 3, 4};
+#include <array>
+
+static constexpr std::array<u8, 4> floor5_boss_death_cleanup_definitions = {0, 2, 3, 4};
 
 enum {
     MAP_RESTORE_POSITION_RANDOM_BITS = 15
@@ -54,9 +58,9 @@ void map_restore_floor_state(WorldState &world, PlayerContext &player)
     const auto floor = kf_enum_encode<u8>(player.state.progress_state.current_floor);
     if (floor < 1 || floor > KF_MAP_SAVED_FLOOR_COUNT)
         kf::host_fail("Invalid restored floor");
-    in = world.map.world_state.floors[floor - 1].records;
+    in = world.map.world_state.floors[floor - 1].records.data();
     if (*in++ == 1) {
-        event = world.map.events;
+        event = world.map.events.data();
         for (i = 0; i < KF_MAP_EVENT_CAPACITY; i++, event++) {
             event->state = kf_enum_decode<KfMapEventState>(*in++);
             event->dialogue.stage_limit = *in++;
@@ -74,7 +78,7 @@ void map_restore_floor_state(WorldState &world, PlayerContext &player)
 
         i = *in++;
         if (--i != -1) {
-            KfActor *actors = world.actors.actors;
+            KfActor *actors = world.actors.actors.data();
 
             do {
                 index = *in++;
@@ -236,7 +240,7 @@ void map_restore_floor_state(WorldState &world, PlayerContext &player)
 
 void map_refresh_dialogue_stages(WorldState &world, PlayerContext &player)
 {
-    KfMapEvent *event = world.map.events;
+    KfMapEvent *event = world.map.events.data();
     u16 index = KF_MAP_EVENT_CAPACITY - 1;
 
     do {

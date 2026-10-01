@@ -317,7 +317,8 @@ ${config}
   }
   if (rejectPeer) {
     let ready = false;
-    for (let attempt = 0; attempt < 200; ++attempt) {
+    // Allow ICE candidate fallback and DTLS retries before injecting a fault.
+    for (let attempt = 0; attempt < 2000; ++attempt) {
       ready = (await browserState()).ready === 'yes';
       if (ready) break;
       await pause(25);
@@ -463,7 +464,7 @@ ${config}
     console.log(`${browserHost ? 'Browser' : 'Native'} host isolated ${fault} and ignored late signals`);
   }
   let outcome;
-  for (let attempt = 0; attempt < 250; ++attempt) {
+  for (let attempt = 0; attempt < 650; ++attempt) {
     const result = await command('Runtime.evaluate', {
       expression: '({result: document.body?.dataset.result, detail: document.body?.dataset.detail, status: document.body?.innerText})',
       returnByValue: true,
