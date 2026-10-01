@@ -116,10 +116,7 @@ void common_resources_load(void)
     asset_registry_set(
         KF_ASSET_HUD_MODELS, stream + KF_RESOURCE_CHUNK_HEADER_BYTES, effect_asset.size);
     block = stream = resource_stream_next(stream, resource_end);
-    const auto cell_windows = resource_chunk_view(stream, resource_end);
-    if (cell_windows.size < sizeof render_cell_windows)
-        kf::host_fail("Truncated cell windows");
-    memcpy(render_cell_windows.data(), cell_windows.data, sizeof render_cell_windows);
+    cell_windows_load(resource_chunk_view(stream, resource_end), render_cell_windows);
     stream = resource_stream_next(stream, resource_end);
     weapon_records_load_and_mirror_angles(
         resource_chunk_data<KfWeaponTable>(resource_chunk_view(stream, resource_end)));
@@ -205,6 +202,7 @@ void map_resources_load(KfFloorId floor, KfMapVariant map_variant)
     u8 *block;
 
     audio_stop_sequence_fade();
+    asset_registry_clear_floor();
     effect_pool_reset();
     memory_allocation_reset(memory_arena);
     map_resource_path_set_floor(floor);

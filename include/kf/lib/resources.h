@@ -3,11 +3,13 @@
 
 #include <kf/lib/geometry_types.h>
 #include <kf/lib/map_types.h>
+#include <kf/lib/render_types.h>
 #include <kf/lib/types.h>
 #include <kf/platform/host.h>
 
 #include <array>
 #include <cstdio>
+#include <span>
 #include <type_traits>
 
 enum {
@@ -69,5 +71,8 @@ extern void tim_upload_images(const u8 *tim_data, std::size_t size);
 void map_grids_load(KfResourceChunk chunk, KfMapAttributeGrid &attributes,
     KfMapGrid &heights, KfMapOrientationGrid &orientations,
     KfMapGrid &flags, KfMapCollisionGrid &collision);
+
+void cell_windows_load(KfResourceChunk chunk,
+    std::span<KfCellWindow, KF_CELL_WINDOW_YAW_COUNT> windows);
 
 #endif // KF_RESOURCES_H

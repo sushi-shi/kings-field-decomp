@@ -16,17 +16,19 @@ class NativeRegressions(unittest.TestCase):
         cls.addClassCleanup(cls.directory.cleanup)
         for name in ["native_regressions", "lighting_regressions", "resource_failures",
                      "cutscene_resources", "collision_results", "map_grids", "menu_outcomes", "dialogue_compare",
-                     "keyboard_controls"]:
+                     "keyboard_controls", "cell_windows", "vertex_sources", "asset_lifetimes"]:
             subprocess.run(
                 [
                     "clang++", "-std=c++20", "-O1", "-g", "-fno-rtti",
                     "-ffunction-sections", "-fdata-sections", "-Wl,--gc-sections",
                     "-fsanitize=address,undefined", "-ftrivial-auto-var-init=pattern",
                     "-I", str(ROOT / "include"), str(ROOT / "tests" / f"{name}.cpp"),
-                    *([str(ROOT / "src/platform/language.cpp")] if name == "native_regressions" else []),
+                    *([str(ROOT / source) for source in ("src/platform/language.cpp", "src/lib/resources.cpp")]
+                      if name == "native_regressions" else []),
                     *([str(ROOT / source) for source in ("src/audio/codec.cpp", "src/renderer/tim.cpp",
                                                         "src/lib/resource_decode.cpp")]
                       if name == "cutscene_resources" else []),
+                    *([str(ROOT / "src/lib/resource_decode.cpp")] if name == "asset_lifetimes" else []),
                     *([str(ROOT / source) for source in ("src/lib/resource_file.cpp", "src/platform/files.cpp",
                                                         "src/platform/language_runtime.cpp", "src/platform/language.cpp")]
                       if name == "dialogue_compare" else []),
@@ -37,13 +39,38 @@ class NativeRegressions(unittest.TestCase):
         cls.binary = Path(cls.directory.name) / "native_regressions"
 
     def test_map_grid_copy_alignment_and_bounds(self):
-        for scenario in ("aligned", "unaligned", "truncated"):
+        for scenario in ("aligned", "unaligned", "truncated", "zero-orientation", "high-orientation"):
             with self.subTest(scenario=scenario):
                 result = subprocess.run([Path(self.directory.name) / "map_grids", scenario],
                                         capture_output=True, text=True, timeout=10)
-                self.assertEqual(result.returncode, 77 if scenario == "truncated" else 0,
+                invalid = scenario not in ("aligned", "unaligned")
+                self.assertEqual(result.returncode, 77 if invalid else 0,
                                  result.stderr)
-                self.assertEqual(result.stderr, "Truncated map grids\n" if scenario == "truncated" else "")
+                error = "Truncated map grids\n" if scenario == "truncated" else "Invalid map cell orientation\n"
+                self.assertEqual(result.stderr, error if invalid else "")
+
+    def test_cell_window_resource_boundaries(self):
+        for scenario in ("valid", "unaligned", "truncated", "zero-width", "zero-height",
+                         "oversized", "wide", "origin", "visibility"):
+            with self.subTest(scenario=scenario):
+                result = subprocess.run([Path(self.directory.name) / "cell_windows", scenario],
+                                        capture_output=True, text=True, timeout=10)
+                self.assertEqual(result.returncode, 0 if scenario in ("valid", "unaligned") else 77,
+                                 result.stderr)
+
+    def test_selected_vertex_source_bounds_and_lifetime(self):
+        for scenario in ("valid", "short-source", "negative", "capacity", "select", "register", "release"):
+            with self.subTest(scenario=scenario):
+                result = subprocess.run([Path(self.directory.name) / "vertex_sources", scenario],
+                                        capture_output=True, text=True, timeout=10)
+                self.assertEqual(result.returncode, 0 if scenario == "valid" else 77, result.stderr)
+
+    def test_asset_replacement_and_floor_lifetimes(self):
+        for scenario in ("valid", "truncated", "overflow"):
+            with self.subTest(scenario=scenario):
+                result = subprocess.run([Path(self.directory.name) / "asset_lifetimes", scenario],
+                                        capture_output=True, text=True, timeout=10)
+                self.assertEqual(result.returncode, 0 if scenario == "valid" else 77, result.stderr)
 
     def test_cutscene_resource_boundaries(self):
         binary = Path(self.directory.name) / "cutscene_resources"

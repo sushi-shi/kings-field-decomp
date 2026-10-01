@@ -31,6 +31,12 @@ void prepare_common_data()
         offset += 4 + size;
     }
     assert(offset == common_data.size());
+    std::array<KfCellWindow, KF_CELL_WINDOW_YAW_COUNT> windows{};
+    for (auto &window : windows) {
+        window.width = 14;
+        window.height = 14;
+    }
+    std::memcpy(common_data.data() + 428, windows.data(), sizeof windows);
 }
 
 void resource_file_load_allocated(KfMemoryArena &, u8 **destination, const char *path, std::size_t *size)
@@ -39,10 +45,11 @@ void resource_file_load_allocated(KfMemoryArena &, u8 **destination, const char 
     *destination = common_data.data();
     *size = file_size;
 }
-void tim_upload_images(const u8 *, std::size_t) {}
 void memory_release_last(KfMemoryArena &) {}
 
 namespace kf {
+Renderer *host_renderer() { static Renderer renderer{}; return &renderer; }
+bool texture_store_upload_tim(TextureStore *, const u8 *, std::size_t) { return true; }
 [[noreturn]] void host_fail(const char *message)
 {
     std::fprintf(stderr, "%s\n", message);
