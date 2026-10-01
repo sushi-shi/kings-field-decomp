@@ -51,16 +51,20 @@ static bool valid_relative_path(const char *path) {
 }
 
 FileResult data_file_open(DataFile *file, const char *path) {
+    return data_file_open_at(file, data_root.c_str(), path);
+}
+
+FileResult data_file_open_at(DataFile *file, const char *directory, const char *path) {
     *file = {};
-    if (data_root.empty() || !valid_relative_path(path))
+    if (!directory || !*directory || !valid_relative_path(path))
         return FileResult::InvalidPath;
-    const auto root_size = data_root.size();
+    const auto root_size = std::strlen(directory);
     const auto path_size = std::strlen(path);
     if (root_size > std::numeric_limits<std::size_t>::max() - path_size - 2)
         return FileResult::TooLarge;
     std::string full_path;
     try {
-        full_path = data_root + '/' + path;
+        full_path = std::string(directory) + '/' + path;
     } catch (const std::bad_alloc &) {
         return FileResult::OutOfMemory;
     } catch (const std::length_error &) {

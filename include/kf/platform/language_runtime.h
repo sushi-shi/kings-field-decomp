@@ -1,6 +1,7 @@
 #ifndef KF_PLATFORM_LANGUAGE_RUNTIME_H
 #define KF_PLATFORM_LANGUAGE_RUNTIME_H
 
+#include <kf/platform/files.h>
 #include <kf/platform/language.h>
 
 namespace kf {
@@ -9,6 +10,7 @@ void language_resources_stop();
 bool language_request(Language language);
 Language language_requested();
 bool language_available(Language language);
+FileResult language_file_open(DataFile *file, Language language, const char *path);
 // Call only where no menu/dialogue holds copies of the old language's labels.
 bool language_apply_pending();
 void host_language_status(const char *message);

@@ -38,6 +38,12 @@ accepted for compatibility with earlier local imports.
 
 ## Switching during play
 
+On dialogue and full-screen information pages, hold **L** or the controller's
+**right-stick button** to view the other language. Release to restore the selected
+language. Both images are loaded when the page opens; comparing them does not
+advance the dialogue or change the game's language setting. If the alternate
+resources are unavailable, the original page remains visible.
+
 **Configuration → Language** sits below Compass and above Return. Left/right
 or Confirm toggles Japanese and English while keeping the panel open. The
 browser selector requests the same change. Requests made during other menus,

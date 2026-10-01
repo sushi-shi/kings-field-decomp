@@ -26,6 +26,7 @@ enum class Action : u8 {
     pause_or_back,
     confirm,
     back,
+    compare_language,
     count
 };
 enum class InputDevice : u8 { keyboard, mouse, gamepad };

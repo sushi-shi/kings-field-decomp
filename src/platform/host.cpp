@@ -79,7 +79,7 @@ static void platform_yield(Uint64 nanoseconds) {
 static void bind_inputs() {
     auto *input = &host.input;
     struct KeyBinding { SDL_Keycode code; Action action; };
-    constexpr std::array<KeyBinding, 18> keys = {
+    constexpr std::array<KeyBinding, 19> keys = {
         KeyBinding{SDLK_W, Action::forward}, KeyBinding{SDLK_UP, Action::forward},
         KeyBinding{SDLK_S, Action::backward}, KeyBinding{SDLK_DOWN, Action::backward},
         KeyBinding{SDLK_A, Action::strafe_left}, KeyBinding{SDLK_D, Action::strafe_right},
@@ -88,21 +88,23 @@ static void bind_inputs() {
         KeyBinding{SDLK_E, Action::interact}, KeyBinding{SDLK_RETURN, Action::confirm},
         KeyBinding{SDLK_SPACE, Action::attack}, KeyBinding{SDLK_Q, Action::magic},
         KeyBinding{SDLK_TAB, Action::inventory}, KeyBinding{SDLK_BACKSPACE, Action::back},
-        KeyBinding{SDLK_ESCAPE, Action::pause_or_back}, KeyBinding{SDLK_P, Action::pause}
+        KeyBinding{SDLK_ESCAPE, Action::pause_or_back}, KeyBinding{SDLK_P, Action::pause},
+        KeyBinding{SDLK_L, Action::compare_language}
     };
     for (const auto &key : keys)
         input_bind(input, {InputDevice::keyboard, static_cast<u32>(key.code)}, key.action);
     input_bind(input, {InputDevice::mouse, SDL_BUTTON_LEFT}, Action::attack);
     input_bind(input, {InputDevice::mouse, SDL_BUTTON_RIGHT}, Action::magic);
     struct ButtonBinding { SDL_GamepadButton code; Action action; };
-    constexpr std::array<ButtonBinding, 12> buttons = {
+    constexpr std::array<ButtonBinding, 13> buttons = {
         ButtonBinding{SDL_GAMEPAD_BUTTON_DPAD_UP, Action::forward}, ButtonBinding{SDL_GAMEPAD_BUTTON_DPAD_DOWN, Action::backward},
         ButtonBinding{SDL_GAMEPAD_BUTTON_DPAD_LEFT, Action::turn_left}, ButtonBinding{SDL_GAMEPAD_BUTTON_DPAD_RIGHT, Action::turn_right},
         ButtonBinding{SDL_GAMEPAD_BUTTON_NORTH, Action::attack}, ButtonBinding{SDL_GAMEPAD_BUTTON_WEST, Action::magic},
         ButtonBinding{SDL_GAMEPAD_BUTTON_EAST, Action::interact}, ButtonBinding{SDL_GAMEPAD_BUTTON_SOUTH, Action::back},
         ButtonBinding{SDL_GAMEPAD_BUTTON_START, Action::inventory}, ButtonBinding{SDL_GAMEPAD_BUTTON_BACK, Action::pause},
         ButtonBinding{SDL_GAMEPAD_BUTTON_LEFT_SHOULDER, Action::strafe_left},
-        ButtonBinding{SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER, Action::strafe_right}
+        ButtonBinding{SDL_GAMEPAD_BUTTON_RIGHT_SHOULDER, Action::strafe_right},
+        ButtonBinding{SDL_GAMEPAD_BUTTON_RIGHT_STICK, Action::compare_language}
     };
     for (const auto &button : buttons)
         input_bind(input, {InputDevice::gamepad, static_cast<u32>(button.code)}, button.action);
@@ -405,6 +407,11 @@ void host_wait_update(UpdatePacer &pacer) {
         pacer.deadline_ns = now;
         pacer.fractional_ns = 0;
     }
+}
+
+bool host_action_held(Action action) {
+    host_poll();
+    return (host.input.pending.held & action_bit(action)) != 0;
 }
 
 u32 host_read_buttons() {

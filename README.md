@@ -111,7 +111,12 @@ kings-field
 | Interact / confirm | E or Enter |
 | Inventory / skip intro | Tab |
 | Back | Backspace or Escape in menus |
+| Compare dialogue languages (hold) | L |
 | Pause | P or Escape during gameplay |
+
+Hold **L** or **right-stick click** on a controller to compare English and Japanese
+on dialogue and full-screen information pages. Release to return to your selected
+language without advancing the page.
 
 ## Build from source
 

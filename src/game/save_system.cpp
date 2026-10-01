@@ -6,12 +6,15 @@
 #include <kf/game/save.h>
 #include <kf/lib/null.h>
 #include <kf/lib/resource_file.h>
+#include <kf/platform/assets.h>
 #include <kf/platform/saves.h>
 
 #include <array>
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
+#include <new>
+#include <string>
 
 namespace {
 constexpr int save_no_equipment_id = 255;
@@ -490,6 +493,31 @@ bool menu_load_message_image(s32 message_id)
     return false;
 }
 
+static kf::ByteBuffer comparison_image_read(const char *path, std::size_t capacity)
+{
+    const auto alternate = kf::game_language() == kf::Language::Japanese
+        ? kf::Language::English : kf::Language::Japanese;
+    kf::ByteBuffer bytes;
+    if (!kf::language_available(alternate))
+        return bytes;
+    kf::DataFile file{};
+    const auto full_path = std::string("KF/") + path;
+    if (kf::language_file_open(&file, alternate, full_path.c_str()) != kf::FileResult::Ok)
+        return bytes;
+    if (file.size <= capacity && file.size <= bytes.max_size()) {
+        try {
+            bytes.resize(file.size);
+        } catch (const std::bad_alloc &) {
+            kf::data_file_close(&file);
+            return {};
+        }
+        if (kf::data_file_read(&file, bytes.data(), bytes.size()) != kf::FileResult::Ok)
+            bytes.clear();
+    }
+    kf::data_file_close(&file);
+    return bytes;
+}
+
 void screen_show_image_until_input(const char *path)
 {
     s32 brightness = IMAGE_WAIT_INITIAL_BRIGHTNESS;
@@ -500,18 +528,46 @@ void screen_show_image_until_input(const char *path)
         return;
     }
     tim_upload_images(game_graphics_runtime.display_state.asset_load_buffer, image_size);
+    const auto alternate = comparison_image_read(path, game_graphics_runtime.display_state.asset_load_capacity);
+    // Transparent glyph pixels need the original backdrop when replacing a page.
+    kf::Image backdrop{};
+    if (!alternate.empty() && !kf::renderer_capture_frame(kf::host_renderer(), backdrop))
+        kf::host_fail("Cannot capture the dialogue background.");
+    bool showing_alternate = false;
+    bool reported_unavailable = false;
     const auto input_context = kf::host_set_input_context(kf::InputContext::Menu);
     for (;;) {
+        const auto buttons = kf::host_read_buttons();
+        const bool compare = kf::host_action_held(kf::Action::compare_language);
+        const bool show_alternate = compare && !alternate.empty();
+        if (show_alternate != showing_alternate) {
+            if (!kf::renderer_restore_frame(kf::host_renderer(), backdrop))
+                kf::host_fail("Cannot restore the dialogue background.");
+            if (show_alternate)
+                tim_upload_images(alternate.data(), alternate.size());
+            else
+                tim_upload_images(game_graphics_runtime.display_state.asset_load_buffer, image_size);
+            showing_alternate = show_alternate;
+        }
+        if (compare && alternate.empty() && !reported_unavailable) {
+            kf::host_language_status("The other language is unavailable for this page.");
+            reported_unavailable = true;
+        }
         if (brightness < IMAGE_WAIT_MAX_BRIGHTNESS) {
             brightness++;
         }
         display_present_system_screen(brightness);
         kf::host_wait_frame();
+        // A comparison never advances the page, including a confirm held through release.
+        if (compare) {
+            released = false;
+            continue;
+        }
         if (released == false) {
-            if (kf::host_read_buttons() == 0) {
+            if (buttons == 0) {
                 released = true;
             }
-        } else if (kf::host_read_buttons() != 0) {
+        } else if (buttons != 0) {
             kf::host_wait_buttons_released();
             break;
         }
