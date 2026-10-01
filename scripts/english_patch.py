@@ -11,11 +11,33 @@ import hashlib
 from pathlib import Path
 import re
 import struct
+import subprocess
+import tempfile
+import urllib.request
 
 
 MAGIC = b"KFEN\x01\0\0\0"
 JAPANESE = "450b9f09ca34bedc1c8bc150e01b79bfe108c700dad2b2783246b926953deee2"
 ENGLISH = "697b2b80d13a3e6e54b2d72f90a49e29ae6a31d6d45970b40aee908b94208595"
+
+
+def fetch():
+    """Fetch the same pinned translation release as the Nix build."""
+    url = ("https://web.archive.org/web/20211128030012id_/"
+           "https://www.angelfire.com/art3/weissvulf/Kings_Field_Jap_to_Eng_v1.0.rar")
+    with urllib.request.urlopen(url, timeout=120) as response:
+        archive = response.read()
+    if hashlib.sha256(archive).hexdigest() != "d4131e4a2e3e9f3c0188e4c2c6c2eca632dc5a954da8db4af299bc4fbe2edb6e":
+        raise ValueError("English translation archive does not match the supported release")
+    with tempfile.TemporaryDirectory(prefix="kf-english-") as directory:
+        root = Path(directory)
+        path = root / "translation.rar"
+        path.write_bytes(archive)
+        # CMake's bundled libarchive reads RAR on Windows as well as Linux.
+        subprocess.run(["cmake", "-E", "tar", "xf", str(path), "KF Jap to Eng v1.0.ppf"],
+                       cwd=root, check=True)
+        patch = (root / "KF Jap to Eng v1.0.ppf").read_bytes()
+    return from_ppf(patch, read_layout(Path(__file__).with_name("slps-00017-layout.tsv")))
 
 
 def read_tree(root, expected):
@@ -196,6 +218,8 @@ def embed(payload):
 def main():
     parser = argparse.ArgumentParser(description=__doc__)
     commands = parser.add_subparsers(dest="command", required=True)
+    download = commands.add_parser("fetch", help="download and convert the pinned English translation")
+    download.add_argument("--output", type=Path, required=True)
     build = commands.add_parser("create")
     build.add_argument("--japanese", type=Path, required=True)
     build.add_argument("--english", type=Path, required=True)
@@ -213,7 +237,11 @@ def main():
     cpp.add_argument("--output", type=Path, required=True)
     args = parser.parse_args()
     args.output.parent.mkdir(parents=True, exist_ok=True)
-    if args.command == "create":
+    if args.command == "fetch":
+        payload = fetch()
+        args.output.write_bytes(payload)
+        print(f"Created local English delta from download: {len(payload)} bytes")
+    elif args.command == "create":
         payload = create(args.japanese, args.english)
         args.output.write_bytes(payload)
         print(f"Created local English delta: {len(payload)} bytes")
