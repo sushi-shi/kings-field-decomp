@@ -111,7 +111,13 @@ kings-field
 | Interact / confirm | E or Enter |
 | Inventory / skip intro | Tab |
 | Back | Backspace or Escape in menus |
+| Compare text languages (hold) | R |
 | Pause | P or Escape during gameplay |
+
+Hold **R** or **right-stick click** on a controller to read dialogue, inventory,
+menus and messages such as “Empty” in the other language. Release to return to
+your selected language. Comparison does not advance dialogue; messages stay
+visible while held.
 
 ## Build from source
 
@@ -159,14 +165,39 @@ them (see [translation details](docs/english-resources.md)).
 
 ## Browser
 
-The WebAssembly build runs in browsers on Windows and Linux. To build it on
-Windows, use the same WSL2/Nix environment. Inside `nix develop`:
+### Linux
+
+Inside `nix develop`:
 
 ```sh
 emcmake cmake --preset wasm
 cmake --build --preset wasm
 python3 -m http.server --directory build/wasm
 ```
+
+### Windows
+
+The browser version can be built directly on Windows. Install
+[Git](https://git-scm.com/downloads/win), [Python 3](https://www.python.org/downloads/windows/),
+[CMake 3.25+](https://cmake.org/download/) and [Ninja](https://ninja-build.org/),
+with their commands available on `PATH`. In PowerShell, from your `port` checkout:
+
+```powershell
+git clone --depth 1 --branch 5.0.6 https://github.com/emscripten-core/emsdk.git build/emsdk
+.\build\emsdk\emsdk.bat install 5.0.6
+.\build\emsdk\emsdk.bat activate 5.0.6
+Set-ExecutionPolicy -Scope Process RemoteSigned
+.\build\emsdk\emsdk_env.ps1
+python scripts/english_patch.py fetch --output build/wasm/english-v1.kfdelta
+emcmake cmake --preset wasm
+cmake --build --preset wasm
+python -m http.server --directory build/wasm
+```
+
+CMake downloads SDL automatically. For later builds, repeat from
+`Set-ExecutionPolicy`, skipping the translation download.
+
+### Play
 
 Open [the game](http://localhost:8000/kings-field.html), select your disc and press
 Play. The language selector also works during play. Data and saves stay in

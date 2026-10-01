@@ -89,6 +89,26 @@ try {
     const screenshot = await cdp('Page.captureScreenshot', {format:'png'});
     await writeFile(path, Buffer.from(screenshot.data, 'base64'));
   }
+  async function compareMenu(language, panel) {
+    await sleep(300);
+    const clip = await evaluate(`(() => {
+      const r = Module.canvas.getBoundingClientRect();
+      return {x: scrollX + r.x + r.width * 4 / 320, y: scrollY + r.y + r.height * 12 / 240,
+        width: r.width * 152 / 320, height: r.height * 198 / 240, scale: 1};
+    })()`);
+    const picture = async () => (await cdp('Page.captureScreenshot', {format:'png', clip})).data;
+    const before = await picture();
+    await cdp('Input.dispatchKeyEvent', {type:'keyDown', key:'r', code:'KeyR', windowsVirtualKeyCode:82});
+    await sleep(400);
+    const alternate = await picture();
+    await cdp('Input.dispatchKeyEvent', {type:'keyUp', key:'r', code:'KeyR', windowsVirtualKeyCode:82});
+    await sleep(400);
+    if (before === alternate) throw Error(`${panel}: comparison did not change menu text`);
+    if (before !== await picture()) throw Error(`${panel}: comparison did not restore the menu`);
+    if (await evaluate("Module.ccall('kf_current_language', 'string', [], [])") !== language)
+      throw Error(`${panel}: comparison changed the selected language`);
+    console.log(`Browser: ${panel} compares and restores in ${language}.`);
+  }
   await cdp('Page.navigate', {url});
   await until("document.getElementById('disc') && !document.getElementById('disc').disabled");
   if (await evaluate('languageInput.value') !== 'en') throw Error('English is not the default');
@@ -144,6 +164,26 @@ try {
   if (screenshotArg) {
     await capture(screenshotArg);
     console.log('Browser: captured both Configuration languages for visual review.');
+  }
+  await key('Backspace', 'Backspace', 8);
+  await key('Backspace', 'Backspace', 8);
+  for (const language of ['en', 'ja']) {
+    await liveSelect(language);
+    await evaluate('Module.canvas.focus();');
+    await key('Tab', 'Tab', 9);
+    await compareMenu(language, 'Inventory root');
+    await key('Enter', 'Enter', 13);
+    await compareMenu(language, 'Item list');
+    await key('Backspace', 'Backspace', 8);
+    await key('ArrowDown', 'ArrowDown', 40);
+    await key('ArrowDown', 'ArrowDown', 40);
+    await key('Enter', 'Enter', 13);
+    await compareMenu(language, 'Equipment names');
+    await key('Enter', 'Enter', 13);
+    await compareMenu(language, 'Weapon list');
+    await key('Enter', 'Enter', 13);
+    await compareMenu(language, 'Equipment confirmation');
+    for (let i = 0; i < 4; ++i) await key('Backspace', 'Backspace', 8);
   }
 } finally {
   socket?.close();

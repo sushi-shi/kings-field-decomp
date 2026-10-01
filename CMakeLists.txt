@@ -14,10 +14,6 @@ if(KF_SANITIZE AND NOT EMSCRIPTEN)
   add_link_options(-fsanitize=address,undefined)
 endif()
 
-add_library(kf_codecs STATIC codecs/tim.cpp codecs/audio.cpp codecs/resources.cpp)
-target_include_directories(kf_codecs PUBLIC include)
-target_compile_options(kf_codecs PRIVATE -Wall -Wextra -Wpedantic -Werror)
-
 find_package(Python3 REQUIRED COMPONENTS Interpreter)
 # The Nix dev shell and package supply a delta derived from the translator's PPF
 # release; otherwise a local english-v1.kfdelta in the build directory is used.
@@ -131,21 +127,37 @@ set(KF_GAME_SOURCES
 )
 set_source_files_properties(${KF_GAME_SOURCES} PROPERTIES
   COMPILE_OPTIONS "-Wall;-Wextra;-fwrapv;-fno-strict-aliasing")
-add_library(kf_support STATIC src/platform/files.cpp src/platform/disc.cpp src/platform/assets.cpp src/platform/language.cpp src/platform/translation.cpp src/platform/controls.cpp src/lib/fixed_math.cpp src/lib/random.cpp)
+add_library(kf_support STATIC
+  src/audio/codec.cpp
+  src/lib/fixed_math.cpp
+  src/lib/random.cpp
+  src/lib/resource_decode.cpp
+  src/platform/assets.cpp
+  src/platform/controls.cpp
+  src/platform/disc.cpp
+  src/platform/files.cpp
+  src/platform/language.cpp
+  src/platform/translation.cpp
+  src/renderer/tim.cpp)
 target_sources(kf_support PRIVATE "${CMAKE_BINARY_DIR}/generated/english_patch.inc")
 target_include_directories(kf_support PUBLIC include PRIVATE "${CMAKE_BINARY_DIR}/generated")
-target_link_libraries(kf_support PUBLIC kf_codecs)
 add_dependencies(kf_support kf_english_patch)
 target_compile_options(kf_support PRIVATE -Wall -Wextra -Wpedantic -Werror)
 
 if(EMSCRIPTEN OR WIN32)
-  if(NOT DEFINED ENV{KF_SDL_SOURCE})
-    message(FATAL_ERROR "Build in nix develop: KF_SDL_SOURCE must identify the pinned SDL3 source")
-  endif()
   set(SDL_SHARED OFF CACHE BOOL "" FORCE)
   set(SDL_STATIC ON CACHE BOOL "" FORCE)
   set(SDL_TEST_LIBRARY OFF CACHE BOOL "" FORCE)
-  add_subdirectory("$ENV{KF_SDL_SOURCE}" "${CMAKE_BINARY_DIR}/sdl3" EXCLUDE_FROM_ALL)
+  if(DEFINED ENV{KF_SDL_SOURCE} AND NOT "$ENV{KF_SDL_SOURCE}" STREQUAL "")
+    add_subdirectory("$ENV{KF_SDL_SOURCE}" "${CMAKE_BINARY_DIR}/sdl3" EXCLUDE_FROM_ALL)
+  else()
+    include(FetchContent)
+    FetchContent_Declare(SDL3
+      URL https://github.com/libsdl-org/SDL/releases/download/release-3.4.8/SDL3-3.4.8.tar.gz
+      URL_HASH SHA256=e9fff7467fb60f037e6708da18b25560649e4c63edc2a69bb871b960d9cbfbba
+      DOWNLOAD_EXTRACT_TIMESTAMP TRUE)
+    FetchContent_MakeAvailable(SDL3)
+  endif()
 else()
   find_package(SDL3 CONFIG REQUIRED)
   find_library(KF_GLES_LIBRARY GLESv2 REQUIRED)

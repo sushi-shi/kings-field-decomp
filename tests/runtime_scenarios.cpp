@@ -1,6 +1,9 @@
 #if defined(KF_AUDIT_GAME)
 
 #include <kf/platform/prelude.h>
+#include <kf/game/menu.h>
+#include <kf/game/notify.h>
+#include <SDL3/SDL.h>
 #define game_main_loop audit_original_game_main_loop
 #define player_update audit_selected_player_update
 #define game_initialize_session audit_initialize_session
@@ -44,6 +47,46 @@ void audit_selected_player_update()
         const auto objects_before = map_object_state;
         const auto &textures = kf::host_renderer()->textures.words;
         const auto before = textures;
+        const auto names = menu_resources().items;
+        auto compare = [](bool held) {
+            SDL_Event event{};
+            event.type = held ? SDL_EVENT_KEY_DOWN : SDL_EVENT_KEY_UP;
+            event.key.scancode = SDL_SCANCODE_R;
+            event.key.down = held;
+            SDL_PushEvent(&event);
+            game_update_language_comparison();
+        };
+        game_graphics_runtime.notification_state = {};
+        game_graphics_runtime.notification_message_ids.fill(KF_NOTIFICATION_NONE);
+        notify_enqueue(KF_NOTIFICATION_NOTHING_INSIDE);
+        notify_effect_update();
+        auto notification_pixels = [&textures] {
+            kf::Image atlas;
+            if (!kf::texture_decode(&atlas, game_graphics_runtime.notification_text_material.source,
+                    textures.data(), textures.size()))
+                kf::host_fail("Audit: cannot decode notification texture");
+            const auto &sprite = notification_sprites[KF_NOTIFICATION_TEXT_SPRITE].sprite;
+            kf::ByteBuffer pixels;
+            for (u32 y = sprite.v; y < u32(sprite.v) + sprite.v_span; ++y) {
+                const auto start = (y * atlas.width + sprite.u) * 4;
+                pixels.insert(pixels.end(), atlas.rgba.begin() + start,
+                    atlas.rgba.begin() + start + sprite.u_span * 4);
+            }
+            return pixels;
+        };
+        const auto empty_message = notification_pixels();
+        const auto hold_frames = game_graphics_runtime.notification_state.control.hold_frames;
+        compare(true);
+        notify_effect_update();
+        if (game_text_language() != alternate || kf::game_language() != initial || before == textures ||
+            names[0].codes == menu_resources().items[0].codes || empty_message == notification_pixels() ||
+            game_graphics_runtime.notification_state.control.hold_frames != hold_frames)
+            kf::host_fail("Audit: language comparison did not translate menu/notification text");
+        compare(false);
+        if (game_text_language() != initial || before != textures ||
+            names[0].codes != menu_resources().items[0].codes)
+            kf::host_fail("Audit: comparison release did not restore text and textures");
+        std::fprintf(stderr, "AUDIT comparison entry=%u restored text and preserved notification time\n", audit_entries);
         if (!kf::language_request(alternate) || !game_apply_language() ||
             kf::game_language() != alternate ||
             before == textures)

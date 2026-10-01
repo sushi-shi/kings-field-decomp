@@ -75,6 +75,19 @@ int main(int, char **) {
     if (!initialized)
         std::fprintf(stderr, "%s\n", message);
     assert(initialized);
+    kf::FaceList frame{};
+    frame.style.red = 1;
+    assert(kf::renderer_draw_faces(renderer, &frame, 320, 240));
+    kf::Image before, changed, restored;
+    assert(kf::renderer_capture_frame(renderer, before));
+    frame.style.red = 0;
+    frame.style.green = 1;
+    assert(kf::renderer_draw_faces(renderer, &frame, 320, 240));
+    assert(kf::renderer_capture_frame(renderer, changed));
+    assert(before.rgba != changed.rgba);
+    assert(kf::renderer_restore_frame(renderer, before));
+    assert(kf::renderer_capture_frame(renderer, restored));
+    assert(before.rgba == restored.rgba);
     kf::renderer_present_retained(renderer, 320, 240);
     assert(SDL_GL_SwapWindow(window));
     kf::renderer_release(renderer);

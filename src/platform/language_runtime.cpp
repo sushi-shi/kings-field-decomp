@@ -50,6 +50,17 @@ bool prepare_english() {
     verified[1] = true;
     return true;
 }
+
+bool prepare_resources(Language language) {
+    const auto slot = index(language);
+    if (roots[slot].empty() && (language != Language::English || roots[0].empty() ||
+            !translation_available() || !prepare_english()))
+        return false;
+    if (!verified[slot] && !disc_verify_directory(roots[slot].c_str(), language))
+        return false;
+    verified[slot] = true;
+    return true;
+}
 }
 
 bool language_resources_start(const char *data, Language language, const char *japanese_data) {
@@ -94,21 +105,37 @@ bool language_request(Language language) {
 
 Language language_requested() { return requested; }
 
+FileResult language_file_open(DataFile *file, Language language, const char *path) {
+    *file = {};
+    if (!prepare_resources(language))
+        return FileResult::IoError;
+    return data_file_open_at(file, roots[index(language)].c_str(), path);
+}
+
 bool language_apply_pending() {
     if (requested == game_language())
         return false;
     const auto target = requested;
     const auto slot = index(target);
     requested = game_language();
-    if ((roots[slot].empty() && !prepare_english()) ||
-        (!verified[slot] && !disc_verify_directory(roots[slot].c_str(), target)) ||
+    if (!prepare_resources(target) ||
         !data_files_set_root(roots[slot].c_str())) {
         host_language_status("Cannot prepare the selected language. Current language retained.");
         return false;
     }
-    verified[slot] = true;
     requested = target;
     game_set_language(target);
     return true;
+}
+
+FileResult language_file_load(Language language, const char *path, std::vector<u8> &destination,
+                              std::size_t capacity) {
+    destination.clear();
+    DataFile file{};
+    auto result = language_file_open(&file, language, path);
+    if (result == FileResult::Ok)
+        result = data_file_read(&file, destination, capacity);
+    data_file_close(&file);
+    return result;
 }
 }
