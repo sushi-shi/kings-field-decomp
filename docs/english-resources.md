@@ -89,8 +89,10 @@ reproduces all 428 English files.
 `nix develop` exports the derived delta as `KF_ENGLISH_PATCH`, and the Nix
 package passes it to CMake, so both embed English automatically. Outside Nix,
 CMake falls back to
-`english-v1.kfdelta` in its build directory, which `english_patch.py create`
-or `from-ppf` can produce. A build without any payload still supports Japanese
+`english-v1.kfdelta` in its build directory. With Python and CMake on `PATH`, run
+`python scripts/english_patch.py fetch --output build/wasm/english-v1.kfdelta`
+to download, verify and convert the same release. `create` and `from-ppf` also
+accept local inputs. A build without any payload still supports Japanese
 and reports clearly that English generation is unavailable.
 
 The translation's redistribution terms are not stated, so do not publish
