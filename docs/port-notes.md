@@ -40,7 +40,7 @@ use the same bounded decoder with their own accepted modes.
 The codecs decode animation clips, keyframes and morphs when an asset is registered.
 The game owns the decoded arrays; animation caches retain morph indices rather
 than resource pointers and are invalidated when their asset is replaced.
-The shared byte reader in `codecs/bytes.h` checks bounds and reads explicit
+The shared byte reader in `include/kf/lib/byte_reader.h` checks bounds and reads explicit
 endianness without aligned source casts. Gameplay and opening placements
 use the shared decoders; map grids are copied from bounded bytes without aligned
 source casts. Placement decoders return counted records and validate their grid

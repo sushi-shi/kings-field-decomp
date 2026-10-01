@@ -1,5 +1,5 @@
-#ifndef KF_CODECS_BYTES_H
-#define KF_CODECS_BYTES_H
+#ifndef KF_LIB_BYTE_READER_H
+#define KF_LIB_BYTE_READER_H
 
 #include <kf/lib/codec.h>
 
@@ -134,4 +134,4 @@ constexpr u8 field(u16 value)
 
 } // namespace kf::codec
 
-#endif // KF_CODECS_BYTES_H
+#endif // KF_LIB_BYTE_READER_H
