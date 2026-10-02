@@ -250,11 +250,11 @@ void effect_spawn_ground_trail(u8 id, KfEffectRecord *parent_effect, s16 angle, 
     index = parent_effect - effect_state.records.data();
     position.vx += parent_effect->position.vx;
     position.vz += parent_effect->position.vz;
-    effect_pool_construct(id, parent_effect->type, KF_EFFECT_KIND_GROUND_TRAIL, &position,
-        &parent_effect->direction.vector, KfEffectParentArguments{index});
+    effect_spawn_ground_trail(id, parent_effect->type, position, parent_effect->direction.vector, index);
 }
 
-void effect_spawn_ground_branch(u8 id, KfEffectRecord *parent_effect, s16 angle_offset, KfEffectGroundBranchRole branch_role)
+void effect_spawn_ground_branch(u8 id, KfEffectRecord *parent_effect, s16 angle_offset,
+    KfEffectGroundBranchRole branch_role)
 {
     VECTOR position;
     s32 angle = -(s16)(parent_effect->direction.words.y + angle_offset);
@@ -266,8 +266,7 @@ void effect_spawn_ground_branch(u8 id, KfEffectRecord *parent_effect, s16 angle_
     cell_z = position.vz / KF_MAP_TILE_SIZE;
     cell_x = position.vx / KF_MAP_TILE_SIZE;
     position.vy = -(map_floor_height_grid.cells[cell_z][cell_x] * KF_MAP_HEIGHT_STEP);
-    effect_pool_construct(id, parent_effect->type, KF_MAGIC_FIRE_WALL, &position,
-        &parent_effect->direction.vector, KfEffectBranchArguments{branch_role});
+    effect_spawn_fire_wall(id, parent_effect->type, position, parent_effect->direction.vector, branch_role);
 }
 
 void effect_update_reset_module_state(void)

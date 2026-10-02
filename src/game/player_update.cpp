@@ -278,23 +278,42 @@ static void player_update_weapon_magic()
                 launch_direction = &direction;
                 pitch_yaw_to_forward_vector(&effect_rotation.angles, launch_direction);
                 vector3s_scale_shift12(PLAYER_WEAPON_MAGIC_SPEED, launch_direction);
-                effect_pool_construct(
-                    KF_PLAYER_DAMAGE_MULTIPLIER_ONE, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS, effect,
-                    &position, launch_direction, KfEffectHomingArguments{&player_state.camera_rotation, homing_target, KF_EFFECT_SOUND_PLAY});
+                switch (effect) {
+                case KF_MAGIC_FIRE_BALL:
+                    effect_spawn_fire_ball(KF_PLAYER_DAMAGE_MULTIPLIER_ONE,
+                        KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS, position, *launch_direction);
+                    break;
+                case KF_MAGIC_LIGHT_NEEDLE:
+                    effect_spawn_light_needle(KF_PLAYER_DAMAGE_MULTIPLIER_ONE,
+                        KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS, position, *launch_direction,
+                        player_state.camera_rotation, KF_EFFECT_SOUND_PLAY);
+                    break;
+                case KF_EFFECT_KIND_MOONLIGHT_PROJECTILE:
+                    effect_spawn_moonlight_projectile(KF_PLAYER_DAMAGE_MULTIPLIER_ONE,
+                        KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS, position, *launch_direction,
+                        player_state.camera_rotation);
+                    break;
+                case KF_EFFECT_KIND_HOMING_PROJECTILE:
+                    effect_spawn_homing_projectile(KF_PLAYER_DAMAGE_MULTIPLIER_ONE,
+                        KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS, position, *launch_direction,
+                        KfEffectVariant::Normal, player_state.camera_rotation, homing_target, KF_EFFECT_SOUND_PLAY);
+                    break;
+                default: break;
+                }
                 if (effect == KF_EFFECT_KIND_HOMING_PROJECTILE) {
                     position.vy += PLAYER_TRIPLE_FANG_Y_OFFSET;
                     effect_rotation.vector = VECTOR{
                         player_state.camera_rotation.vx + PLAYER_TRIPLE_FANG_PITCH_OFFSET,
                         player_state.camera_rotation.vy,
                         player_state.camera_rotation.vz}.narrowed();
-                    effect_pool_construct(
-                        KF_PLAYER_DAMAGE_MULTIPLIER_ONE, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS,
-                        KF_EFFECT_KIND_HOMING_PROJECTILE, &position, launch_direction, KfEffectHomingArguments{&effect_rotation.vector, homing_target, KF_EFFECT_SOUND_SILENT});
+                    effect_spawn_homing_projectile(KF_PLAYER_DAMAGE_MULTIPLIER_ONE,
+                        KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS, position, *launch_direction,
+                        KfEffectVariant::Normal, effect_rotation.vector, homing_target, KF_EFFECT_SOUND_SILENT);
                     effect_rotation.angles.x -= 2 * PLAYER_TRIPLE_FANG_PITCH_OFFSET;
                     position.vy -= 2 * PLAYER_TRIPLE_FANG_Y_OFFSET;
-                    effect_pool_construct(
-                        KF_PLAYER_DAMAGE_MULTIPLIER_ONE, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS,
-                        KF_EFFECT_KIND_HOMING_PROJECTILE, &position, launch_direction, KfEffectHomingArguments{&effect_rotation.vector, homing_target, KF_EFFECT_SOUND_SILENT});
+                    effect_spawn_homing_projectile(KF_PLAYER_DAMAGE_MULTIPLIER_ONE,
+                        KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS, position, *launch_direction,
+                        KfEffectVariant::Normal, effect_rotation.vector, homing_target, KF_EFFECT_SOUND_SILENT);
                 }
             }
             player_state.weapon_magic_shots_remaining--;

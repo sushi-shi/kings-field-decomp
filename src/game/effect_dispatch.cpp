@@ -115,13 +115,11 @@ static void effect_begin_lightning_impact(KfEffectRecord *effect, const KfMagicR
         -(map_floor_height_grid.cells[effect->position.vz / KF_MAP_TILE_SIZE]
                                [effect->position.vx / KF_MAP_TILE_SIZE] * KF_MAP_HEIGHT_STEP);
     if (effect->base_render_id.billboard == KF_EFFECT_BILLBOARD_LIGHTNING_BOLT) {
-        effect_pool_construct(
-            effect->id, effect->type, KF_EFFECT_KIND_LIGHTNING_IMPACT,
-            &impact_position, &effect->rotation.vector);
+        effect_spawn_lightning_impact(effect->id, effect->type, impact_position, effect->rotation.vector,
+            KfEffectVariant::Normal);
     } else {
-        effect_pool_construct(
-            effect->id, effect->type, KF_EFFECT_KIND_LIGHTNING_IMPACT_ALTERNATE,
-            &impact_position, &effect->rotation.vector);
+        effect_spawn_lightning_impact(effect->id, effect->type, impact_position, effect->rotation.vector,
+            KfEffectVariant::Alternate);
     }
 }
 
@@ -341,9 +339,9 @@ void effect_update_dispatch(void)
                         } else {
                             effect->control.frames_remaining = SCATTER_BRANCH_COUNTDOWN;
                         }
-                        effect_pool_construct(
-                            effect->id, effect->type, kind, &effect->position, &scatter.vector,
-                            KfEffectScatterArguments{effect->propagation.generations_remaining, effect->control.frames_remaining, (s16)effect->scale_x});
+                        effect_spawn_scatter_projectile(effect->id, effect->type, effect->position, scatter.vector,
+                            effect->propagation.generations_remaining, effect->control.frames_remaining,
+                            (s16)effect->scale_x);
                         effect_scatter_triple(&effect->direction.words);
                     } else {
                         effect->type = KF_EFFECT_SLOT_FREE;
@@ -440,8 +438,10 @@ void effect_update_dispatch(void)
                 effect->scale_z = MOONLIGHT_LENGTH_MAX;
             }
             if (phase == KF_EFFECT_MOONLIGHT_TRAIL_EMIT_PHASE) {
-                effect_spawn_ground_trail(effect->id, effect, MOONLIGHT_NEAR_TRAIL_ANGLE, MOONLIGHT_NEAR_TRAIL_DISTANCE);
-                effect_spawn_ground_trail(effect->id, effect, -MOONLIGHT_NEAR_TRAIL_ANGLE, MOONLIGHT_NEAR_TRAIL_DISTANCE);
+                effect_spawn_ground_trail(effect->id, effect, MOONLIGHT_NEAR_TRAIL_ANGLE,
+                    MOONLIGHT_NEAR_TRAIL_DISTANCE);
+                effect_spawn_ground_trail(effect->id, effect, -MOONLIGHT_NEAR_TRAIL_ANGLE,
+                    MOONLIGHT_NEAR_TRAIL_DISTANCE);
                 effect_spawn_ground_trail(effect->id, effect, MOONLIGHT_FAR_TRAIL_ANGLE, MOONLIGHT_FAR_TRAIL_DISTANCE);
                 effect_spawn_ground_trail(effect->id, effect, -MOONLIGHT_FAR_TRAIL_ANGLE, MOONLIGHT_FAR_TRAIL_DISTANCE);
             }
@@ -450,9 +450,8 @@ void effect_update_dispatch(void)
             }
         } else {
             if (((kf_enum_encode<u8>(phase) - kf_enum_encode<u8>(KF_EFFECT_MOONLIGHT_IMPACT_FIRST)) & 1) == 0) {
-                effect_pool_construct(
-                    effect->id, effect->type, KF_EFFECT_KIND_RADIAL_BLAST,
-                    &effect->position, &effect->direction.vector, KfEffectSoundArguments{KF_EFFECT_SOUND_PLAY});
+                effect_spawn_radial_blast(effect->id, effect->type, effect->position, effect->direction.vector,
+                    KfEffectVariant::Normal, KF_EFFECT_SOUND_PLAY);
             }
             if (phase > KF_EFFECT_MOONLIGHT_IMPACT_LAST) {
                 effect->type = KF_EFFECT_SLOT_FREE;
@@ -558,13 +557,11 @@ void effect_update_dispatch(void)
         effect->rotation.vector.vz = (effect->rotation.vector.vz + HOMING_ROLL_STEP) & KF_ANGLE_WRAP_MASK;
         if (effect_map_collision(&effect->position, radius).kind != KfCollisionKind::None) {
             if (effect->base_render_id.model == KF_EFFECT_MODEL_HOMING_PROJECTILE_ALTERNATE) {
-                effect_pool_construct(
-                    effect->id, effect->type, KF_EFFECT_KIND_RADIAL_BLAST_ALTERNATE,
-                    &effect->position, &effect->direction.vector, KfEffectSoundArguments{KF_EFFECT_SOUND_PLAY});
+                effect_spawn_radial_blast(effect->id, effect->type, effect->position, effect->direction.vector,
+                    KfEffectVariant::Alternate, KF_EFFECT_SOUND_PLAY);
             } else {
-                effect_pool_construct(
-                    effect->id, effect->type, KF_EFFECT_KIND_RADIAL_BLAST,
-                    &effect->position, &effect->direction.vector, KfEffectSoundArguments{KF_EFFECT_SOUND_PLAY});
+                effect_spawn_radial_blast(effect->id, effect->type, effect->position, effect->direction.vector,
+                    KfEffectVariant::Normal, KF_EFFECT_SOUND_PLAY);
             }
             effect->type = KF_EFFECT_SLOT_FREE;
         }
@@ -581,13 +578,11 @@ void effect_update_dispatch(void)
             }
             if (phase == KF_EFFECT_LIGHTNING_IMPACT_EMIT_FIRST || phase == KF_EFFECT_LIGHTNING_IMPACT_EMIT_SECOND || phase == KF_EFFECT_LIGHTNING_IMPACT_EMIT_LAST) {
                 if (effect->base_render_id.billboard == KF_EFFECT_BILLBOARD_LIGHTNING_IMPACT) {
-                    effect_pool_construct(
-                        effect->id, effect->type, KF_EFFECT_KIND_LIGHTNING_RADIAL_BLAST,
-                        &effect->position, &effect->rotation.vector);
+                    effect_spawn_lightning_radial_blast(effect->id, effect->type, effect->position,
+                        effect->rotation.vector, KfEffectVariant::Normal);
                 } else {
-                    effect_pool_construct(
-                        effect->id, effect->type, KF_EFFECT_KIND_LIGHTNING_RADIAL_BLAST_ALTERNATE,
-                        &effect->position, &effect->rotation.vector);
+                    effect_spawn_lightning_radial_blast(effect->id, effect->type, effect->position,
+                        effect->rotation.vector, KfEffectVariant::Alternate);
                 }
                 if (phase == KF_EFFECT_LIGHTNING_IMPACT_EMIT_FIRST) {
                     audio_play_spatial_default_range(
@@ -686,9 +681,7 @@ void effect_update_dispatch(void)
                 spawn_position.vz = effect->position.vz
                     + ((kf::angle_cosine(angle) * distance) >> KF_FIXED12_BITS);
                 spawn_position.vy = effect->position.vy;
-                effect_pool_construct(
-                    effect->id, effect->type, KF_EFFECT_KIND_GROUND_BRANCH_VISUAL,
-                    &spawn_position, &effect->rotation.vector);
+                effect_spawn_ground_branch_visual(effect->id, effect->type, spawn_position, effect->rotation.vector);
                 power = effect_magic_power(effect);
                 actor_pool_apply_radial_damage(
                     &effect->position,
