@@ -20,7 +20,6 @@ void render_actor(KfActor *actor)
     MATRIX rot_y;
     MATRIX model;
     MATRIX light;
-    KfTmdObject *object;
     u8 descriptor;
     u16 asset;
 
@@ -38,15 +37,13 @@ void render_actor(KfActor *actor)
     descriptor = actor_state.definitions.entries[actor->definition_id].model_and_texture;
     asset = descriptor & ACTOR_MODEL_ASSET_MASK;
     asset_registry_select(asset);
-    object = tmd_get_object(tmd_context(), 0);
+    const auto object = tmd_read_object(tmd_context(), 0);
     if (!render_bind_instance_vertices(
             &actor->animation_cache, asset, actor->animation_clip,
-            actor->animation_phase, object->vertex_count)) {
+            actor->animation_phase, object.vertex_count)) {
         tmd_select_object_vertices(tmd_context(), 0);
-        tmd_project_vertices(tmd_get_object(tmd_context(), 0)->vertex_count, &model, game_graphics_runtime.render_state.projection);
-    } else {
-        tmd_project_vertices(object->vertex_count, &model, game_graphics_runtime.render_state.projection);
     }
+    tmd_project_vertices(object.vertex_count, &model, game_graphics_runtime.render_state.projection);
 
     descriptor >>= ACTOR_MODEL_TEXTURE_SHIFT;
     if (descriptor-- == 0) {
@@ -92,7 +89,7 @@ void render_map_object(KfMapObject *object)
         break;
     }
     tmd_select_object_vertices(tmd_context(), kf_enum_encode<u16>(id));
-    tmd_project_vertices(tmd_get_object(tmd_context(), kf_enum_encode<u16>(id))->vertex_count, &model, game_graphics_runtime.render_state.projection);
+    tmd_project_vertices(tmd_read_object(tmd_context(), kf_enum_encode<u16>(id)).vertex_count, &model, game_graphics_runtime.render_state.projection);
     render_enqueue_tmd(kf_enum_encode<u16>(id), depth, &light);
 }
 
@@ -101,6 +98,6 @@ void menu_render_item_model(const MATRIX *lights, const MATRIX *model)
     lighting_set_active_color_matrix(KF_GAME_COLOR_DEFAULT);
     tmd_select(tmd_context(), KF_TMD_SLOT_MENU_ITEM);
     tmd_select_object_vertices(tmd_context(), 0);
-    tmd_project_vertices(tmd_get_object(tmd_context(), 0)->vertex_count, model, game_graphics_runtime.render_state.projection);
+    tmd_project_vertices(tmd_read_object(tmd_context(), 0).vertex_count, model, game_graphics_runtime.render_state.projection);
     render_enqueue_tmd(0, MENU_ITEM_DEPTH_BIAS, lights);
 }

@@ -70,7 +70,7 @@ typedef struct KfTmdHeader {
 
 // Borrowed resource storage; selection copies the pointer and its extent together.
 struct KfTmdResource {
-    KfTmdHeader *data;
+    const KfTmdHeader *data;
     std::size_t size;
 };
 
@@ -138,15 +138,14 @@ struct KfTmdContext {
 // TMD vertex/normal indices remain file element indices; projected storage may
 // change independently without rewriting the loaded resource.
 
-extern KfTmdObject *tmd_get_object(KfTmdContext context, u16 object_index);
 extern KfTmdObject tmd_read_object(KfTmdContext context, u16 object_index);
 extern KfTmdPrimitiveStream tmd_primitive_stream(KfTmdContext context, const KfTmdObject &object);
 extern KfTmdPacket tmd_next_packet(KfTmdPrimitiveStream &stream);
 extern KfTmdFaceData tmd_decode_face(const KfTmdPacket &packet, u32 vertex_count);
 extern KfTmdBytes tmd_normal_bytes(KfTmdContext context, const KfTmdObject &object);
 extern SVECTOR tmd_read_normal(KfTmdBytes normals, u16 index);
-extern KfTmdResource tmd_resource_view(u8 *data, std::size_t size);
-extern void tmd_register(KfTmdContext context, KfTmdSlot slot, u8 *data, std::size_t size);
+extern KfTmdResource tmd_resource_view(const u8 *data, std::size_t size);
+extern void tmd_register(KfTmdContext context, KfTmdSlot slot, const u8 *data, std::size_t size);
 extern void tmd_release_last_allocation(KfTmdContext context, KfMemoryArena &arena, KfTmdSlot slot);
 extern void tmd_select(KfTmdContext context, KfTmdSlot slot);
 extern void tmd_select_object_vertices(KfTmdContext context, u16 object_index);

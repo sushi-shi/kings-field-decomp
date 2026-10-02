@@ -53,7 +53,6 @@ void render_weapon(void)
 {
     MATRIX model;
     KfWeaponRecord *weapon;
-    KfTmdObject *object;
     s32 depth_bias;
 
     if (player_state.weapon_attack_phase == KF_WEAPON_ATTACK_INACTIVE) {
@@ -67,12 +66,12 @@ void render_weapon(void)
     model.t[2] = weapon->render_translation.z;
     kf::matrix_set_rotation_xyz(weapon->render_rotation, model);
     asset_registry_select(KF_ASSET_WEAPON);
-    object = tmd_get_object(tmd_context(), 0);
+    const auto object = tmd_read_object(tmd_context(), 0);
     if (render_bind_instance_vertices(
             &player_state.weapon_animation_cache, KF_ASSET_WEAPON, KF_ANIMATION_CLIP_FIRST,
             player_state.weapon_attack_phase,
-            object->vertex_count)) {
-        tmd_project_vertices_depth_shift(tmd_context(), object->vertex_count, WEAPON_PROJECTED_DEPTH_SHIFT, &model, projection);
+            object.vertex_count)) {
+        tmd_project_vertices_depth_shift(tmd_context(), object.vertex_count, WEAPON_PROJECTED_DEPTH_SHIFT, &model, projection);
         depth_bias =
             player_state.equipped_weapon_record->render_translation.z >> WEAPON_DEPTH_BIAS_SHIFT;
         render_enqueue_tmd(0, -depth_bias + WEAPON_BASE_DEPTH_BIAS, &render_light_matrices[KF_RENDER_LIGHT_WEAPON]);
@@ -85,7 +84,6 @@ void render_hud_models(const MATRIX *lights)
     VECTOR scale;
     MATRIX saved_color_matrix;
     KfHudModel *entry;
-    KfTmdObject *object;
     u16 scale_numerator;
 
     saved_color_matrix = game_graphics_runtime.render_state.lighting.color_matrix;
@@ -102,12 +100,12 @@ void render_hud_models(const MATRIX *lights)
         scale.vx = scale_numerator;
         kf::matrix_scale_axes(model, scale);
         asset_registry_select(KF_ASSET_HUD_MODELS);
-        object = tmd_get_object(tmd_context(), 0);
+        const auto object = tmd_read_object(tmd_context(), 0);
         if (render_bind_instance_vertices(
                 &entry->animation_cache, KF_ASSET_HUD_MODELS,
                 entry->animation_clip, entry->animation_phase,
-                object->vertex_count)) {
-            tmd_transform_vertices(tmd_context(), object->vertex_count, &model);
+                object.vertex_count)) {
+            tmd_transform_vertices(tmd_context(), object.vertex_count, &model);
             render_enqueue_tmd(0, 0, lights);
         }
         entry++;
