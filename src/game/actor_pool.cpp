@@ -6,6 +6,10 @@
 #include <kf/lib/null.h>
 
 #include <array>
+#include <bit>
+#include <cstddef>
+#include <cstring>
+#include <type_traits>
 
 KfActorState actor_state;
 
@@ -61,9 +65,17 @@ void actor_pool_load_placements(KfResourceChunk chunk)
     }
 }
 
-void actor_definitions_load(const KfActorDefinitionTable *definitions)
+void actor_definitions_load(KfResourceChunk chunk)
 {
-    actor_state.definitions = *definitions;
+    static_assert(std::endian::native == std::endian::little);
+    static_assert(std::is_trivially_copyable_v<KfActorDefinition>);
+    static_assert(std::is_standard_layout_v<KfVec3s> && std::is_standard_layout_v<KfActorSpecialAttack>);
+    static_assert(sizeof(KfActorDefinition) == 152);
+    static_assert(offsetof(KfActorDefinition, third_attachment) == 0x34);
+    static_assert(offsetof(KfActorDefinition, action_animation_steps) == 0x3a);
+    if (chunk.size < sizeof actor_state.definitions)
+        kf::host_fail("Truncated actor definitions.");
+    std::memcpy(&actor_state.definitions, chunk.data, sizeof actor_state.definitions);
 }
 
 

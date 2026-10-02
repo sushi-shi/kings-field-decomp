@@ -194,15 +194,15 @@ void actor_select_next_action(s32 player_distance)
         chosen = KF_ACTOR_ACTION_MULTI_HIT_ATTACK;
     } else if (definition->action_animations[KF_ACTOR_ANIM_SLOT_JUMP_ATTACK] != KF_ANIMATION_CLIP_NONE
                && actor_try_select_ground_action(
-                      KF_ACTOR_ACTION_JUMP_ATTACK, player_distance, definition->special_attack_chance)
+                      KF_ACTOR_ACTION_JUMP_ATTACK, player_distance, definition->special_attack.chance)
                    != KF_ACTOR_ACTION_NONE) {
         chosen = KF_ACTOR_ACTION_JUMP_ATTACK;
     } else if (definition->action_animations[KF_ACTOR_ANIM_SLOT_SPECIAL_ATTACK] != KF_ANIMATION_CLIP_NONE
                && actor_try_select_action_distance_facing(
                       KF_ACTOR_ACTION_SPECIAL_ATTACK,
                       player_distance,
-                      definition->special_attack_chance,
-                      definition->special_attack_range)
+                      definition->special_attack.chance,
+                      definition->special_attack.range)
                    != KF_ACTOR_ACTION_NONE) {
         chosen = KF_ACTOR_ACTION_SPECIAL_ATTACK;
     } else if (definition->action_animations[KF_ACTOR_ANIM_SLOT_EFFECT0] != KF_ANIMATION_CLIP_NONE
@@ -505,10 +505,12 @@ void actor_spawn_action_effect(KfActorEffectCode effect_code, KfActorEffectSlot 
         case KF_EFFECT_KIND_PHYSICAL_PROJECTILE:
         case KF_EFFECT_KIND_LIGHTNING_BOLT_ALTERNATE:
         case KF_EFFECT_KIND_HOMING_PROJECTILE_ALTERNATE:
-            offset = {
-                definition->attachment_offsets[kf_enum_encode<s32>(effect_slot)].x,
-                definition->attachment_offsets[kf_enum_encode<s32>(effect_slot)].y,
-                definition->attachment_offsets[kf_enum_encode<s32>(effect_slot)].z};
+            {
+                const auto &attachment = effect_slot == KF_ACTOR_EFFECT_SLOT_THIRD
+                    ? definition->third_attachment
+                    : definition->attachment_offsets[kf_enum_encode<s32>(effect_slot)];
+                offset = {attachment.x, attachment.y, attachment.z};
+            }
             if (repeat == 2) {
                 if (i == 0) {
                     offset.vx = offset.vx + ACTOR_PAIRED_EFFECT_X_OFFSET;
@@ -1067,7 +1069,7 @@ void actor_update_current_action(void)
             break;
         case KF_ACTOR_PROGRESS_JUMP_ATTACK_PENDING:
             if (actor_animation_crossed_phase(actor, ACTOR_JUMP_CONTACT_PHASE)) {
-                actor_try_attack_player(0, definition->special_attack_range, 0, KF_ACTOR_AIM_TOLERANCE);
+                actor_try_attack_player(0, definition->special_attack.range, 0, KF_ACTOR_AIM_TOLERANCE);
                 actor->action_progress = KF_ACTOR_PROGRESS_JUMP_WAIT_FOR_LANDING;
             }
             break;
@@ -1098,7 +1100,7 @@ void actor_update_current_action(void)
         actor_play_sound_at_phase(&definition->sounds[KF_ACTOR_SOUND_ATTACK], definition->action_animation_phases[KF_ACTOR_ANIM_SLOT_SPECIAL_ATTACK]);
         if (actor->animation_phase >= ACTOR_SPECIAL_CONTACT_PHASE
             && actor->animation_phase < definition->action_animation_steps[KF_ACTOR_ANIM_SLOT_SPECIAL_ATTACK] + ACTOR_SPECIAL_CONTACT_PHASE) {
-            actor_try_attack_player(0, definition->special_attack_range, 0, KF_ACTOR_AIM_TOLERANCE);
+            actor_try_attack_player(0, definition->special_attack.range, 0, KF_ACTOR_AIM_TOLERANCE);
         }
         if (actor->animation_phase >= KF_ACTOR_ANIMATION_PHASE_MAX) {
             actor->action_progress = KF_ACTOR_PROGRESS_COMPLETE;
