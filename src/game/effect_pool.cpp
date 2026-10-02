@@ -344,9 +344,7 @@ KfEffectRecord *effect_spawn_swinging_hazard_short(u8 id, KfEffectType type, con
     record->render_id = KF_EFFECT_MODEL_SWINGING_HAZARD;
     record->rotation = rotation;
     record->rotation.vx = KF_ANGLE_EIGHTH_TURN;
-    record->direction.vz = 0;
-    record->direction.vy = 0;
-    record->direction.vx = 0;
+    record->pitch_velocity = 0;
     record->scale_z = EFFECT_SHORT_SWING_SCALE;
     record->scale_y = EFFECT_SHORT_SWING_SCALE;
     record->scale_x = EFFECT_SHORT_SWING_SCALE;
@@ -364,9 +362,7 @@ KfEffectRecord *effect_spawn_swinging_hazard_long(u8 id, KfEffectType type, cons
     record->render_id = KF_EFFECT_MODEL_SWINGING_HAZARD;
     record->rotation = rotation;
     record->rotation.vx = KF_ANGLE_EIGHTH_TURN;
-    record->direction.vz = 0;
-    record->direction.vy = 0;
-    record->direction.vx = 0;
+    record->pitch_velocity = 0;
     return record;
 }
 
@@ -384,9 +380,10 @@ KfEffectRecord *effect_spawn_orbiting_projectile(u8 id, KfEffectType type, const
     record->scale_z = EFFECT_ORBIT_SCALE;
     record->scale_y = EFFECT_ORBIT_SCALE;
     record->scale_x = EFFECT_ORBIT_SCALE;
-    record->direction.vx = record->position.vx >> KF_EFFECT_ORBIT_CENTER_SHIFT;
-    record->direction.vz = record->position.vz >> KF_EFFECT_ORBIT_CENTER_SHIFT;
-    record->direction.vy = record->position.vy;
+    record->orbit_center = {
+        static_cast<s16>(record->position.vx >> KF_EFFECT_ORBIT_CENTER_SHIFT),
+        static_cast<s16>(record->position.vy),
+        static_cast<s16>(record->position.vz >> KF_EFFECT_ORBIT_CENTER_SHIFT)};
     return record;
 }
 
@@ -491,15 +488,21 @@ KfEffectRecord *effect_spawn_warp_shimmer(u8 id, KfEffectType type, const VECTOR
 }
 
 KfEffectRecord *effect_pool_spawn_floor_deformation(
-    u16 first_segment, u16 segment_count, u16 progress_per_update, u16 cell_stagger,
-    s32 sweep_updates, s32 hold_countdown)
+    s16 first_segment, s16 segment_count, s16 progress_per_update, s16 cell_stagger,
+    u16 sweep_updates, s32 hold_countdown)
 {
     KfEffectRecord *record = effect_pool_find_free();
     if (record != NULL) {
         record->floor_deformation = {
-            static_cast<s16>(first_segment), static_cast<s16>(segment_count),
-            static_cast<s16>(progress_per_update), static_cast<s16>(cell_stagger),
-            0, static_cast<u16>(sweep_updates), sweep_updates, hold_countdown};
+            .first_segment = first_segment,
+            .segment_count = segment_count,
+            .progress_per_update = progress_per_update,
+            .cell_stagger = cell_stagger,
+            .progress = 0,
+            .updates_remaining = sweep_updates,
+            .sweep_updates = sweep_updates,
+            .hold_countdown = hold_countdown,
+        };
         record->base_render_id = KF_EFFECT_MODEL_NONE;
         record->render_id = KF_EFFECT_MODEL_NONE;
         record->kind = KF_EFFECT_KIND_FLOOR_DEFORMATION;

@@ -750,16 +750,12 @@ void effect_update_dispatch(void)
             }
         } else if (phase < KF_EFFECT_ACTOR_SPAWNER_SHRINK_FIRST) {
             if (phase == KF_EFFECT_ACTOR_SPAWNER_CREATE_PHASE) {
-                struct KfVec3s actor_rotation;
-                VECTOR position;
-
-                position = {
+                const VECTOR position = {
                     effect->position.vx,
                     effect->position.vy + ACTOR_SPAWNER_CREATE_Y_OFFSET,
                     effect->position.vz};
-                actor_rotation.x = 0;
-                actor_rotation.z = 0;
-                actor_rotation.y = vector_xz_to_angle(
+                SVECTOR actor_rotation{};
+                actor_rotation.vy = vector_xz_to_angle(
                     player_state.camera_position.vx - position.vx,
                     player_state.camera_position.vz - position.vz);
                 value = kf::random_next();

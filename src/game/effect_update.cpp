@@ -59,7 +59,6 @@ void effect_update_swinging_hazard(SVECTOR *probe_offset, KfEffectPhase phase_li
     s16 next_pitch;
 
     if (kf_enum_encode<u8>(life) < kf_enum_encode<u8>(KF_EFFECT_HAZARD_RELEASE_REQUEST) + 1u) {
-        kf::matrix_set_rotation_xyz(record->rotation, rotation_matrix);
         matrix_set_rotation_x(record->rotation.vx, &rotation_matrix);
         matrix_set_rotation_y(record->rotation.vy, &yaw_matrix);
         kf::matrix_multiply_rotation(yaw_matrix, rotation_matrix, rotation_matrix);
@@ -76,7 +75,7 @@ void effect_update_swinging_hazard(SVECTOR *probe_offset, KfEffectPhase phase_li
                     magic->damage_components[2], magic->damage_components[1],
                     KF_PLAYER_STATUS_NONE, 0, 0, KF_FIXED12_ONE, record->id);
             }
-            record->direction.vx = -record->direction.vx;
+            record->pitch_velocity = -record->pitch_velocity;
         }
         if (record->sound_played == KF_AUDIO_NOT_PLAYED) {
             if (kf::random_next() < EFFECT_HAZARD_SOUND_RANDOM_CUTOFF) {
@@ -87,18 +86,19 @@ void effect_update_swinging_hazard(SVECTOR *probe_offset, KfEffectPhase phase_li
         }
         if (record->rotation.vx >= KF_ANGLE_EIGHTH_TURN) {
             record->rotation.vx = KF_ANGLE_EIGHTH_TURN;
-            record->direction.vx = 0;
+            record->pitch_velocity = 0;
         } else if (record->rotation.vy < -KF_ANGLE_EIGHTH_TURN + 1) {
+            // Retail tests the yaw here, not the pitch.
             record->rotation.vx = -KF_ANGLE_EIGHTH_TURN;
-            record->direction.vx = 0;
+            record->pitch_velocity = 0;
         }
         if (record->rotation.vx > 0) {
-            record->direction.vx -= EFFECT_SWING_ANGULAR_ACCEL;
+            record->pitch_velocity -= EFFECT_SWING_ANGULAR_ACCEL;
         } else {
-            record->direction.vx += EFFECT_SWING_ANGULAR_ACCEL;
+            record->pitch_velocity += EFFECT_SWING_ANGULAR_ACCEL;
         }
         pitch = record->rotation.vx;
-        next_pitch = record->rotation.vx + record->direction.vx;
+        next_pitch = record->rotation.vx + record->pitch_velocity;
         if ((next_pitch <= 0 && pitch >= 0) || (next_pitch >= 0 && pitch <= 0)) {
             if (life == KF_EFFECT_HAZARD_RELEASE_REQUEST) {
                 next_pitch = 0;
@@ -122,11 +122,11 @@ void effect_update_orbiting_projectile(s32 orbit_radius, KfEffectPhase phase_lim
     KfCollisionResult collision;
 
     if ((kf_enum_encode<u32>(life) & EFFECT_PHASE_BYTE_MASK) < kf_enum_encode<u8>(KF_EFFECT_HAZARD_RELEASE_REQUEST) + 1) {
-        record->position.vx = (record->direction.vx << KF_EFFECT_ORBIT_CENTER_SHIFT)
+        record->position.vx = (record->orbit_center.vx << KF_EFFECT_ORBIT_CENTER_SHIFT)
             + (kf::angle_sine((s16)record->orbit_angle) * orbit_radius >> KF_FIXED12_BITS);
-        record->position.vz = (record->direction.vz << KF_EFFECT_ORBIT_CENTER_SHIFT)
+        record->position.vz = (record->orbit_center.vz << KF_EFFECT_ORBIT_CENTER_SHIFT)
             + (kf::angle_cosine((s16)record->orbit_angle) * orbit_radius >> KF_FIXED12_BITS);
-        record->position.vy = record->direction.vy
+        record->position.vy = record->orbit_center.vy
             + (kf::angle_sine((s16)record->orbit_angle << 1) >> 2);
         record->orbit_angle = (record->orbit_angle
             + KF_ANGLE_FULL_TURN / EFFECT_ORBIT_UPDATES_PER_TURN) & KF_ANGLE_WRAP_MASK;

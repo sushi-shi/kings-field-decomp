@@ -29,7 +29,7 @@ static void reset()
     map_collision_flag_grid = {};
 }
 
-static void scatter_words()
+static void scatter_velocity_wraps()
 {
     // Track the BIOS-style random stream independently, retaining its unsigned
     // word arithmetic before comparing the signed velocity used for movement.
@@ -47,7 +47,7 @@ static void scatter_words()
     }
 }
 
-static void falling_words()
+static void falling_velocity_wraps()
 {
     for (const u16 bits : {0, 0x7fff, 0x8000, 0xffff}) {
         reset();
@@ -62,20 +62,20 @@ static void falling_words()
     }
 }
 
-static void swinging_words()
+static void swinging_velocity_wraps()
 {
     for (const u16 bits : {0, 0x7fff, 0x8000, 0xffff}) {
         reset();
         auto *effect = effect_spawn_swinging_hazard_short(0, KF_EFFECT_COLLISION_TARGET_ACTORS,
             {10000, -1000, 10000}, {}, {});
         effect->rotation.vx = 100;
-        effect->direction.vx = static_cast<s16>(bits);
+        effect->pitch_velocity = static_cast<s16>(bits);
         effect->sound_played = KF_AUDIO_PLAYED;
         effect_pool_set_current(effect);
         SVECTOR probe{};
         effect_update_swinging_hazard(&probe, KF_EFFECT_SHORT_SWING_PHASE_LIMIT);
         const u16 angular_velocity = bits - 10;
-        assert(effect->direction.vx == static_cast<s16>(angular_velocity));
+        assert(effect->pitch_velocity == static_cast<s16>(angular_velocity));
         assert(effect->rotation.vx == static_cast<s16>(100 + angular_velocity));
     }
 }
@@ -142,10 +142,9 @@ static void floor_lifecycle(u16 first, u16 count, s32 sweep, s32 hold)
 
 int main()
 {
-    static_assert(sizeof(KfEulerAngles) == 6 && sizeof(SVECTOR) == 8);
-    scatter_words();
-    falling_words();
-    swinging_words();
+    scatter_velocity_wraps();
+    falling_velocity_wraps();
+    swinging_velocity_wraps();
     orbit_and_branch();
     actor_rotations();
     floor_lifecycle(0, 4, 43, 70);

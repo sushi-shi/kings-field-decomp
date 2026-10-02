@@ -32,7 +32,7 @@ bool map_saved_link_valid(KfMapObjectOperation operation, const KfMapObjectLink 
         return link.action_parameter == KF_MAP_OBJECT_PARAMETER_NONE
             || link.action_parameter < KF_MAP_OBJECT_CAPACITY;
     case KF_MAP_OBJECT_OP_COPY_REGION:
-        return link.action_parameter == kf_enum_encode<u8>(KF_MAP_COPY_REGION_NONE)
+        return kf_enum_decode<KfMapCopyRegionId>(link.action_parameter) == KF_MAP_COPY_REGION_NONE
             || link.action_parameter < KF_MAP_COPY_REGION_COUNT;
     case KF_MAP_OBJECT_OP_RELEASE_ORBIT_OR_SHORT_SWING:
     case KF_MAP_OBJECT_OP_RELEASE_LONG_SWING:

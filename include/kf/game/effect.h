@@ -228,7 +228,7 @@ struct KfFloorDeformation {
     s16 cell_stagger;
     s16 progress;
     u16 updates_remaining;
-    s32 sweep_updates;
+    u16 sweep_updates;
     s32 hold_countdown;
 };
 
@@ -252,13 +252,15 @@ typedef struct KfEffectRecord {
     SVECTOR direction;
     struct KfAnimationCacheRecord *animation_cache;
     // Kind-specific state. Each spawner initializes the fields its kind uses.
-    u16 frames_remaining;
-    u16 orbit_angle;
-    u8 parent_effect_index;
-    KfEffectHomingMode target_mode;
-    u16 pulse_base_scale;
-    u16 generations_remaining;
-    KfEffectGroundBranchRole branch_role;
+    u16 frames_remaining; // lightning bolt, scatter, fire wall, actor spawner
+    u16 pulse_base_scale; // scatter
+    u16 generations_remaining; // scatter
+    KfEffectGroundBranchRole branch_role; // fire wall
+    u8 parent_effect_index; // ground trail
+    KfEffectHomingMode target_mode; // homing projectile
+    s16 pitch_velocity; // swinging hazard
+    u16 orbit_angle; // orbiting projectile
+    SVECTOR orbit_center; // orbiting projectile; x and z in KF_EFFECT_ORBIT_CENTER_SHIFT steps
     KfFloorDeformation floor_deformation;
 } KfEffectRecord;
 
@@ -334,8 +336,8 @@ KfEffectRecord *effect_spawn_homing_projectile(u8 id, KfEffectType type, const V
 KfEffectRecord *effect_spawn_warp_shimmer(u8 id, KfEffectType type, const VECTOR &position,
     const SVECTOR &direction);
 extern KfEffectRecord *effect_pool_spawn_floor_deformation(
-    u16 first_segment, u16 segment_count, u16 progress_per_update, u16 cell_stagger,
-    s32 sweep_updates, s32 hold_countdown);
+    s16 first_segment, s16 segment_count, s16 progress_per_update, s16 cell_stagger,
+    u16 sweep_updates, s32 hold_countdown);
 extern void effect_pool_set_current(KfEffectRecord *effect);
 extern void effect_pool_reset(void);
 extern void effect_pool_update(void);

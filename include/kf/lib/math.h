@@ -41,12 +41,6 @@ struct KfVec3s {
     s16 z;
 };
 
-struct KfEulerAngles {
-    s16 x;
-    s16 y;
-    s16 z;
-};
-
 static inline s16 angle_error_magnitude(s16 difference)
 {
     s16 folded;

@@ -203,7 +203,7 @@ void actor_set_action(KfActor *actor, KfActorAction action)
 void actor_pool_spawn(
     u8 definition_id,
     const VECTOR *position,
-    const struct KfVec3s *rotation)
+    const SVECTOR *rotation)
 {
     KfActor *actor = actor_pool_find_free();
     if (actor == NULL)
@@ -214,7 +214,7 @@ void actor_pool_spawn(
     actor->tile_x = KF_MAP_CELL_COORD_INVALID;
     actor->culling_mode = KF_ACTOR_CULL_VISIBILITY_GRID;
     actor_set_position(actor, position);
-    actor_set_rotation(actor, rotation->x, rotation->y, rotation->z);
+    actor_set_rotation(actor, rotation->vx, rotation->vy, rotation->vz);
     actor_initialize(actor);
     actor_set_action(actor, KF_ACTOR_ACTION_PURSUE);
 }

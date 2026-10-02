@@ -57,9 +57,9 @@ void opening_entity_pool_load_placements(
         entity.object_id = kf_enum_decode<KfOpeningModelId>(placement.object_id);
         entity.cell_x = placement.tile_x;
         entity.cell_z = placement.tile_z;
-        entity.rotation.z = 0;
-        entity.rotation.x = 0;
-        entity.rotation.y = placement.yaw & KF_ANGLE_WRAP_MASK;
+        entity.rotation.vz = 0;
+        entity.rotation.vx = 0;
+        entity.rotation.vy = placement.yaw & KF_ANGLE_WRAP_MASK;
         entity.position.vx = map_placement_axis_position(placement.tile_x, placement.local_x);
         entity.position.vz = map_placement_axis_position(placement.tile_z, placement.local_z);
         entity.scale = {KF_FIXED12_ONE, KF_FIXED12_ONE, KF_FIXED12_ONE};

@@ -186,8 +186,8 @@ void opening_scene0_run(void)
         opening_entity_state.entities, KF_OPENING_SCENE0_DECREASING_YAW_MODEL);
     increasing_yaw_model = opening_entity_find_by_object_id(
         opening_entity_state.entities, KF_OPENING_SCENE0_INCREASING_YAW_MODEL);
-    increasing_yaw_model->rotation.y = KF_ANGLE_THREE_QUARTER_TURN;
-    decreasing_yaw_model->rotation.y = KF_ANGLE_THREE_QUARTER_TURN;
+    increasing_yaw_model->rotation.vy = KF_ANGLE_THREE_QUARTER_TURN;
+    decreasing_yaw_model->rotation.vy = KF_ANGLE_THREE_QUARTER_TURN;
     opening_camera_path_begin(opening_scene0_camera_path);
     // Stable port cadence calibrated from the measured retail flythrough.
     auto pacer = kf::host_begin_update_pacer(SCENE0_UPDATES_PER_SECOND);
@@ -196,11 +196,11 @@ void opening_scene0_run(void)
         opening_poll_input();
         opening_camera_path_step(0);
         if (opening_camera_path_state.point_index >= SCENE0_ROTATION_START_POINT) {
-            if (decreasing_yaw_model->rotation.y == KF_ANGLE_THREE_QUARTER_TURN) {
+            if (decreasing_yaw_model->rotation.vy == KF_ANGLE_THREE_QUARTER_TURN) {
                 sound_ref_play(cutscene_audio_playback(), &opening_scene0_sound, SCENE0_SOUND_VOLUME);
             }
-            decreasing_yaw_model->rotation.y -= SCENE0_YAW_STEP;
-            increasing_yaw_model->rotation.y += SCENE0_YAW_STEP;
+            decreasing_yaw_model->rotation.vy -= SCENE0_YAW_STEP;
+            increasing_yaw_model->rotation.vy += SCENE0_YAW_STEP;
         }
 
         if (opening_camera_path_state.point_index >= SCENE0_FADE_OUT_START_POINT ||
@@ -330,9 +330,9 @@ void opening_cylinder_transition(KfOpeningCylinderTransitionMode transition_mode
     do {
         entity->object_id = KF_OPENING_TRANSITION_CYLINDER;
         entity->position = *position;
-        entity->rotation.z = 0;
-        entity->rotation.y = 0;
-        entity->rotation.x = 0;
+        entity->rotation.vz = 0;
+        entity->rotation.vy = 0;
+        entity->rotation.vx = 0;
         entity->scale = VECTOR{KF_FIXED12_ONE, initial_scale_y, KF_FIXED12_ONE}.narrowed();
         entity++;
         entity_index--;
@@ -355,8 +355,8 @@ void opening_cylinder_transition(KfOpeningCylinderTransitionMode transition_mode
                 }
             }
             entity_index++;
-            entity->rotation.y =
-                (entity->rotation.y + KF_CYLINDER_TRANSITION_YAW_STEP) & KF_ANGLE_WRAP_MASK;
+            entity->rotation.vy =
+                (entity->rotation.vy + KF_CYLINDER_TRANSITION_YAW_STEP) & KF_ANGLE_WRAP_MASK;
             entity++;
         } while (entity_index < KF_CYLINDER_TRANSITION_COUNT);
         opening_render_frame(NULL, NULL);
@@ -394,8 +394,8 @@ void opening_scene3_run(void)
         opening_entity_state.entities, KF_OPENING_SCENE3_INCREASING_YAW_MODEL);
     decreasing_yaw_model = opening_entity_find_by_object_id(
         opening_entity_state.entities, KF_OPENING_SCENE3_DECREASING_YAW_MODEL);
-    decreasing_yaw_model->rotation.y = 0;
-    increasing_yaw_model->rotation.y = 0;
+    decreasing_yaw_model->rotation.vy = 0;
+    increasing_yaw_model->rotation.vy = 0;
     opening_camera_path_begin(opening_scene3_camera_path);
 
     blend = 0;
@@ -413,9 +413,9 @@ void opening_scene3_run(void)
         }
     }
 
-    while (increasing_yaw_model->rotation.y < KF_ANGLE_QUARTER_TURN) {
-        increasing_yaw_model->rotation.y += SCENE3_YAW_STEP;
-        decreasing_yaw_model->rotation.y -= SCENE3_YAW_STEP;
+    while (increasing_yaw_model->rotation.vy < KF_ANGLE_QUARTER_TURN) {
+        increasing_yaw_model->rotation.vy += SCENE3_YAW_STEP;
+        decreasing_yaw_model->rotation.vy -= SCENE3_YAW_STEP;
         audio_set_listener_transform(cutscene_audio_state,
             &opening_camera_path_state.position,
             &opening_camera_path_state.rotation);
@@ -496,8 +496,8 @@ void opening_ending_scene_run(void)
         opening_entity_state.entities, KF_OPENING_SCENE3_INCREASING_YAW_MODEL);
     decreasing_yaw_model = opening_entity_find_by_object_id(
         opening_entity_state.entities, KF_OPENING_SCENE3_DECREASING_YAW_MODEL);
-    decreasing_yaw_model->rotation.y = 0;
-    increasing_yaw_model->rotation.y = 0;
+    decreasing_yaw_model->rotation.vy = 0;
+    increasing_yaw_model->rotation.vy = 0;
     opening_camera_path_begin(opening_ending_camera_path);
 
     transition_position = {opening_camera_path_state.position.vx, KF_OPENING_SCENE_BASE_Y,
@@ -524,9 +524,9 @@ void opening_ending_scene_run(void)
             break;
         }
         if (opening_camera_path_state.point_index >= ENDING_ROTATION_START_POINT) {
-            if (increasing_yaw_model->rotation.y < KF_ANGLE_QUARTER_TURN) {
-                increasing_yaw_model->rotation.y += SCENE3_YAW_STEP;
-                decreasing_yaw_model->rotation.y -= SCENE3_YAW_STEP;
+            if (increasing_yaw_model->rotation.vy < KF_ANGLE_QUARTER_TURN) {
+                increasing_yaw_model->rotation.vy += SCENE3_YAW_STEP;
+                decreasing_yaw_model->rotation.vy -= SCENE3_YAW_STEP;
                 audio_set_listener_transform(cutscene_audio_state,
                     &opening_camera_path_state.position,
                     &opening_camera_path_state.rotation);
@@ -718,7 +718,7 @@ void opening_ending_scroll_run(void)
                       &opening_ending_scroll_background_color, ENDING_BACKGROUND_OT_DEPTH);
 
         if (scroll_tick == ENDING_SCROLL_TICK_STARFIELD_AND_PANELS) {
-            starfield->rotation.z = (starfield->rotation.z - 1) & KF_ANGLE_WRAP_MASK;
+            starfield->rotation.vz = (starfield->rotation.vz - 1) & KF_ANGLE_WRAP_MASK;
             if (starfield->object_id != KF_OPENING_ENTITY_FREE &&
                 open_graphics_runtime.floor_item_state.material.color.r < ENDING_MAX_BRIGHTNESS) {
                 ++open_graphics_runtime.floor_item_state.material.color.r;

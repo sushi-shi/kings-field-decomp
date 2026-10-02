@@ -41,8 +41,7 @@ void opening_entity_render(KfOpeningEntity *entity)
         entity->position.vz - open_graphics_runtime.render_state.view_position.vz}.narrowed();
 
     kf::render_place_model(model, open_graphics_runtime.render_state.view_matrix, relative_position);
-    const SVECTOR rotation{entity->rotation.x, entity->rotation.y, entity->rotation.z};
-    matrix_set_rotation_yxz(&rotation, &model);
+    matrix_set_rotation_yxz(&entity->rotation, &model);
     scale = entity->scale.widened();
     kf::matrix_scale_axes(model, scale);
     kf::matrix_multiply_rotation(open_graphics_runtime.render_state.light_matrix, model, light);
@@ -60,11 +59,11 @@ void opening_entity_render(KfOpeningEntity *entity)
         break;
     case KF_OPENING_GREEN_CRYSTAL_INCREASING_YAW:
     case KF_OPENING_PINK_CRYSTAL_INCREASING_YAW:
-        entity->rotation.y = (entity->rotation.y + OPENING_MODEL_YAW_STEP) & KF_ANGLE_WRAP_MASK;
+        entity->rotation.vy = (entity->rotation.vy + OPENING_MODEL_YAW_STEP) & KF_ANGLE_WRAP_MASK;
         break;
     case KF_OPENING_GREEN_CRYSTAL_DECREASING_YAW:
     case KF_OPENING_PINK_CRYSTAL_DECREASING_YAW:
-        entity->rotation.y = (entity->rotation.y - OPENING_MODEL_YAW_STEP) & KF_ANGLE_WRAP_MASK;
+        entity->rotation.vy = (entity->rotation.vy - OPENING_MODEL_YAW_STEP) & KF_ANGLE_WRAP_MASK;
         break;
     case KF_OPENING_CASTLE_MOUNTAIN_BACKDROP:
         tmd_select_object_vertices(cutscene_tmd_context(), kf_enum_encode<u16>(object_id));
