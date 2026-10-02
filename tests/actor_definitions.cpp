@@ -10,6 +10,12 @@ namespace kf {
 
 int main()
 {
+    KfActorDefinition shared {};
+    shared.special_attack = {10, 2300, 0};
+    assert(shared.third_attachment.x == 10 && shared.third_attachment.y == 2300);
+    shared.third_attachment = {0, -1000, -2200};
+    assert(shared.special_attack.chance == 0 && shared.special_attack.range == -1000);
+
     constexpr std::size_t record_bytes = 152;
     // An unaligned table with a trailing unused definition, as allowed by MIXA.
     std::vector<u8> bytes(1 + record_bytes * (KF_ACTOR_DEFINITION_COUNT + 1));
@@ -39,10 +45,10 @@ int main()
         assert(definition.action_animations[KF_ACTOR_ANIM_SLOT_EFFECT2] == KF_ANIMATION_CLIP_FOURTH);
         assert(definition.attachment_offsets[0].x == 10);
         assert(definition.attachment_offsets[1].x == 20);
-        const auto &third = definition.attachment_offsets[2];
+        const auto &third = definition.third_attachment;
         assert(third.x == 0 && third.y == -1000 && third.z == -2200);
-        assert(definition.special_attack_chance == 0);
-        assert(definition.special_attack_range == -1000);
+        assert(definition.special_attack.chance == 0);
+        assert(definition.special_attack.range == -1000);
         assert(definition.action_animation_steps[0] == 0x1234);
         assert(definition.action_animation_phases[0] == 0x5678);
         assert(definition.initial_health == 0x9abc);

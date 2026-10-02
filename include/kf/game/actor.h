@@ -199,6 +199,12 @@ enum {
     KF_ACTOR_DAMAGE_SCALE_ONE = 5000
 };
 
+struct KfActorSpecialAttack {
+    s16 chance;
+    s16 range;
+    s16 unused;
+};
+
 typedef struct KfActorDefinition {
     u8 pursuit_distance_scale;
     u8 model_and_texture;
@@ -210,9 +216,12 @@ typedef struct KfActorDefinition {
     KfAnimationClip action_animations[KF_ACTOR_ANIM_SLOT_COUNT];
     u8 turn_rate;
     SoundRef sounds[KF_ACTOR_SOUND_COUNT];
-    std::array<KfVec3s, KF_ACTOR_EFFECT_PARAMETER_COUNT> attachment_offsets;
-    s16 special_attack_chance;
-    s16 special_attack_range;
+    std::array<KfVec3s, 2> attachment_offsets;
+    // Both views share three s16 members: C++ permits reading their common initial sequence.
+    union {
+        KfVec3s third_attachment;
+        KfActorSpecialAttack special_attack;
+    };
     u16 action_animation_steps[KF_ACTOR_ANIM_SLOT_COUNT];
     u16 action_animation_phases[KF_ACTOR_ANIM_SLOT_COUNT];
     u16 collision_radius;
