@@ -1040,7 +1040,7 @@ void actor_update_current_action(void)
             actor->animation_clip = definition->action_animations[KF_ACTOR_ANIM_SLOT_JUMP_ATTACK];
             actor->animation_phase = 0;
             attribute = map_cell_attribute_grid.cells[actor->cell_z][actor->cell_x];
-            if (map_cell_attribute_height_table[kf_enum_encode<u8>(attribute) - 1] > ACTOR_JUMP_HEIGHT_THRESHOLD) {
+            if (map_attack_height(attribute) > ACTOR_JUMP_HEIGHT_THRESHOLD) {
                 actor->vertical_state = KF_ACTOR_VERTICAL_JUMP_ATTACK;
                 actor->vertical_velocity = ACTOR_JUMP_SHORT_VELOCITY_Y;
                 actor->animation_step = ACTOR_JUMP_SHORT_ANIMATION_STEP;
