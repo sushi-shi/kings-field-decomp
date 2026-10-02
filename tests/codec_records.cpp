@@ -6,6 +6,17 @@
 #include <memory>
 #include <vector>
 
+template<class Operation>
+static void rejects(Operation operation)
+{
+    try {
+        operation();
+        assert(false && "malformed resource was accepted");
+    } catch (const kf::codec::Error &error) {
+        error.report();
+    }
+}
+
 static void word(std::vector<uint8_t> &bytes, size_t at, uint32_t value)
 {
     for (unsigned i = 0; i < 4; ++i) bytes[at + i] = value >> (8 * i);
@@ -27,22 +38,22 @@ static void audio_records()
     header[tone + 16 * 32 + 2] = 1;
     auto bank = std::make_unique<KfAudioBankData>();
     for (size_t size = 0; size < 32; ++size)
-        assert(kf_audio_bank_decode({header.data(), size}, body, *bank) == KF_CODEC_INVALID);
+        rejects([&] { kf_audio_bank_decode({header.data(), size}, body, *bank); });
     header.insert(header.begin(), 0);
-    assert(kf_audio_bank_decode({header.data() + 1, header.size() - 1}, body, *bank) == KF_CODEC_OK);
+    kf_audio_bank_decode({header.data() + 1, header.size() - 1}, body, *bank);
     assert(bank->volume == 99 && bank->pan == 63 && bank->sample_count == 1);
     assert(bank->programs[0].volume == 79 && bank->programs[0].priority == 5);
     assert(bank->programs[0].tones[0].volume == 89 && bank->programs[0].tones[0].sample_index == 0);
     assert(bank->samples[0].offset == 0 && bank->samples[0].size == body.size());
     word(header, 1 + tone + 16, 0xb52fdba7);
-    assert(kf_audio_bank_decode({header.data() + 1, header.size() - 1}, body, *bank) == KF_CODEC_OK);
+    kf_audio_bank_decode({header.data() + 1, header.size() - 1}, body, *bank);
     const auto &envelope = bank->programs[0].tones[0].envelope;
     assert(envelope.attack_shift == 22 && envelope.attack_step == 3 && envelope.decay_shift == 10);
     assert(envelope.sustain_shift == 21 && envelope.sustain_step == 0 && envelope.release_shift == 15);
     assert(envelope.sustain_level == 16384 && envelope.attack_exponential == 1);
     assert(envelope.sustain_exponential == 1 && envelope.sustain_decreasing == 0 && envelope.release_exponential == 1);
     word(header, 1 + tone + 16, 0xffffffff);
-    assert(kf_audio_bank_decode({header.data() + 1, header.size() - 1}, body, *bank) == KF_CODEC_OK);
+    kf_audio_bank_decode({header.data() + 1, header.size() - 1}, body, *bank);
     assert(envelope.attack_shift == 31 && envelope.attack_step == 3 && envelope.decay_shift == 15);
     assert(envelope.sustain_shift == 31 && envelope.sustain_step == 3 && envelope.release_shift == 31);
     assert(envelope.sustain_level == 32767 && envelope.sustain_decreasing == 1);
@@ -55,13 +66,13 @@ static void audio_records()
     KfMusicInfo info {};
     std::vector<KfMusicEvent> events;
     for (size_t size = 0; size < sequence.size() - 1; ++size)
-        assert(kf_music_decode({sequence.data() + 1, size}, events, info) == KF_CODEC_INVALID);
-    assert(kf_music_decode({sequence.data() + 1, sequence.size() - 1}, events, info) == KF_CODEC_OK);
+        rejects([&] { kf_music_decode({sequence.data() + 1, size}, events, info); });
+    kf_music_decode({sequence.data() + 1, sequence.size() - 1}, events, info);
     assert(info.resolution == 0x0123 && info.tempo == 0x012345 && events.size() == 1);
     assert(events[0].kind == KfMusicEventKind::End && events[0].delta == 1);
     auto unsupported = sequence;
     unsupported[17] = 0xa0;
-    assert(kf_music_decode({unsupported.data() + 1, unsupported.size() - 1}, events, info) == KF_CODEC_INVALID);
+    rejects([&] { kf_music_decode({unsupported.data() + 1, unsupported.size() - 1}, events, info); });
 }
 
 static void tim_records()
@@ -69,28 +80,28 @@ static void tim_records()
     std::vector<uint8_t> tim(24);
     word(tim, 0, 0x10); word(tim, 4, 2); word(tim, 8, 16); word(tim, 16, (1u << 16) | 2);
     KfTimInfo info {};
-    assert(kf_tim_info(tim, 0, info) == KF_CODEC_OK);
-    assert(kf_tim_info({tim.data(), tim.size() - 1}, 0, info) == KF_CODEC_INVALID);
-    assert(kf_tim_info(tim, tim.size(), info) == KF_CODEC_END);
+    info = KfTimImage::parse(tim, 0)->info();
+    rejects([&] { info = KfTimImage::parse({tim.data(), tim.size() - 1}, 0)->info(); });
+    assert(!KfTimImage::parse(tim, tim.size()));
     std::array<uint8_t, 8> rgba {};
-    assert(kf_tim_rgba(tim, 0, 0, {rgba.data(), rgba.size() - 1}) == KF_CODEC_OUTPUT_FULL);
+    rejects([&] { KfTimImage::parse(tim, 0)->rgba(0, {rgba.data(), rgba.size() - 1}); });
     for (uint32_t mode : {0u, 1u, 2u}) {
         word(tim, 4, mode);
-        assert(kf_tim_info(tim, 0, info) == KF_CODEC_OK);
+        info = KfTimImage::parse(tim, 0)->info();
         assert(info.mode == mode && info.width == (8u >> mode) && info.height == 1);
     }
     for (uint32_t mode : {4u, 7u, 16u, 0xffffffffu}) {
         word(tim, 4, mode);
-        assert(kf_tim_info(tim, 0, info) == KF_CODEC_INVALID);
+        rejects([&] { info = KfTimImage::parse(tim, 0)->info(); });
     }
     word(tim, 4, 2);
     word(tim, 16, 0x0001ffff);
-    assert(kf_tim_info(tim, 0, info) == KF_CODEC_INVALID);
+    rejects([&] { info = KfTimImage::parse(tim, 0)->info(); });
     word(tim, 16, 0xffff0001);
-    assert(kf_tim_info(tim, 0, info) == KF_CODEC_INVALID);
+    rejects([&] { info = KfTimImage::parse(tim, 0)->info(); });
     tim.resize(28);
     word(tim, 4, 3); word(tim, 8, 20); word(tim, 12, 0xfffcfffd); word(tim, 16, 0x00010003);
-    assert(kf_tim_info(tim, 0, info) == KF_CODEC_OK);
+    info = KfTimImage::parse(tim, 0)->info();
     assert(info.width == 2 && info.height == 1 && info.encoded_bytes == tim.size());
     assert(info.image_x == -3 && info.image_y == -4);
 }
@@ -108,9 +119,9 @@ static void adpcm_headers()
             for (uint8_t flags = 0; flags < 8; ++flags) {
                 block[1] = flags;
                 KfAudioPredictor predictor {1000, -500};
-                assert(kf_audio_sample_info(block, info) == KF_CODEC_OK);
+                info = kf_audio_sample_info(block);
                 assert(info.frames == pcm.size() && info.loop_end == ((flags & 3) == 3 ? pcm.size() : 0));
-                assert(kf_audio_decode_block(block, predictor, pcm) == KF_CODEC_OK);
+                kf_audio_decode_block(block, predictor, pcm);
                 int32_t previous = 1000, older = -500;
                 for (size_t i = 0; i < pcm.size(); ++i) {
                     const int32_t signed_nibble = i % 2 == 0 ? 7 : -8;
@@ -129,14 +140,14 @@ static void adpcm_headers()
     for (uint8_t flags : {8, 16, 32, 64, 128, 255}) {
         block[0] = 0; block[1] = flags;
         KfAudioPredictor predictor {};
-        assert(kf_audio_sample_info(block, info) == KF_CODEC_INVALID);
-        assert(kf_audio_decode_block(block, predictor, pcm) == KF_CODEC_INVALID);
+        rejects([&] { info = kf_audio_sample_info(block); });
+        rejects([&] { kf_audio_decode_block(block, predictor, pcm); });
     }
     for (uint8_t filter = 5; filter < 16; ++filter) {
         block[0] = filter << 4; block[1] = 0;
         KfAudioPredictor predictor {};
-        assert(kf_audio_sample_info(block, info) == KF_CODEC_INVALID);
-        assert(kf_audio_decode_block(block, predictor, pcm) == KF_CODEC_INVALID);
+        rejects([&] { info = kf_audio_sample_info(block); });
+        rejects([&] { kf_audio_decode_block(block, predictor, pcm); });
     }
 }
 
@@ -152,7 +163,7 @@ static void music_events()
     };
     std::vector<KfMusicEvent> events;
     KfMusicInfo info {};
-    assert(kf_music_decode(sequence, events, info) == KF_CODEC_OK);
+    kf_music_decode(sequence, events, info);
     assert(events.size() == 8 && info.resolution == 96 && info.tempo == 500000);
     assert(events[0].kind == KfMusicEventKind::Program && events[0].value == 5 && events[0].channel == 2);
     assert(events[1].kind == KfMusicEventKind::Program && events[1].value == 6 && events[1].delta == 1);
@@ -172,7 +183,7 @@ static void music_events()
         }) {
         std::vector<u8> bad(sequence.begin(), sequence.begin() + 15);
         bad.insert(bad.end(), tail.begin(), tail.end());
-        assert(kf_music_decode(bad, events, info) == KF_CODEC_INVALID);
+        rejects([&] { kf_music_decode(bad, events, info); });
         assert(events.size() == 8 && events[5].value == 8191); // Owned output stays intact.
     }
 }
@@ -194,15 +205,15 @@ static void tim_pixels()
         word(tim, image + 8, (1u << 16) | (mode == 0 ? 1 : 2));
         word(tim, image + 12, mode == 0 ? 0x3210 : 0x03020100);
         std::array<u8, 16> rgba {};
-        assert(kf_tim_rgba(tim, 0, 1, rgba) == KF_CODEC_OK && rgba == expected);
-        assert(kf_tim_rgba(tim, 0, 2, rgba) == KF_CODEC_INVALID);
+        KfTimImage::parse(tim, 0)->rgba(1, rgba); assert(rgba == expected);
+        rejects([&] { KfTimImage::parse(tim, 0)->rgba(2, rgba); });
         std::vector<u16> words(1024 * 512);
-        assert(kf_tim_compose(tim, words) == KF_CODEC_OK);
+        kf_tim_compose(tim, words);
         assert(words[1023] == 0x001f && words[0] == 0x03e0 && words[1] == 0x7c00);
         // A later malformed image must not partially overwrite the texture.
         word(tim, image + 8, 0xffffffff);
         std::fill(words.begin(), words.end(), 42);
-        assert(kf_tim_compose(tim, words) == KF_CODEC_INVALID);
+        rejects([&] { kf_tim_compose(tim, words); });
         assert(std::ranges::all_of(words, [](u16 value) { return value == 42; }));
     }
     std::vector<u8> direct(28);
@@ -210,11 +221,11 @@ static void tim_pixels()
     word(direct, 16, (1u << 16) | 4);
     word(direct, 20, (0x03e0u << 16) | 0x001f); word(direct, 24, 0x7c00);
     std::array<u8, 16> rgba {};
-    assert(kf_tim_rgba(direct, 0, 0, rgba) == KF_CODEC_OK && rgba == expected);
+    KfTimImage::parse(direct, 0)->rgba(0, rgba); assert(rgba == expected);
     word(direct, 4, 3); word(direct, 16, (1u << 16) | 3);
     const std::array<u8, 6> rgb {1, 2, 3, 4, 5, 6};
     std::ranges::copy(rgb, direct.begin() + 20);
-    assert(kf_tim_rgba(direct, 0, 0, rgba) == KF_CODEC_OK);
+    KfTimImage::parse(direct, 0)->rgba(0, rgba);
     assert((std::array<u8, 8>{rgba[0], rgba[1], rgba[2], rgba[3], rgba[4], rgba[5], rgba[6], rgba[7]} ==
         std::array<u8, 8>{1, 2, 3, 255, 4, 5, 6, 255}));
 }

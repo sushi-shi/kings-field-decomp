@@ -1,12 +1,13 @@
 #ifndef KF_LIB_BYTE_READER_H
 #define KF_LIB_BYTE_READER_H
 
-#include <kf/lib/codec.h>
+#include <kf/lib/types.h>
 
 #include <bit>
 #include <cstdio>
 #include <limits>
 #include <source_location>
+#include <span>
 #include <string>
 
 namespace kf::codec {
@@ -14,37 +15,28 @@ namespace kf::codec {
 using Bytes = std::span<const u8>;
 
 struct Error {
-    KfCodecResult result;
     std::string message;
     std::source_location location;
+
+    void report() const
+    {
+        std::fprintf(stderr, "kf-codec: %s:%u:%u: %s\n", location.file_name(),
+            location.line(), location.column(), message.c_str());
+    }
 };
 
 inline void require(bool valid, const char *message,
     std::source_location location = std::source_location::current())
 {
     if (!valid)
-        throw Error {KF_CODEC_INVALID, message, location};
+        throw Error {message, location};
 }
 
 inline void output_fits(bool fits,
     std::source_location location = std::source_location::current())
 {
     if (!fits)
-        throw Error {KF_CODEC_OUTPUT_FULL, "codec output is full", location};
-}
-
-template<class Function>
-KfCodecResult decode(Function function)
-{
-    try {
-        function();
-        return KF_CODEC_OK;
-    } catch (const Error &error) {
-        if (error.result != KF_CODEC_END)
-            std::fprintf(stderr, "kf-codec: %s:%u:%u: %s\n", error.location.file_name(),
-                error.location.line(), error.location.column(), error.message.c_str());
-        return error.result;
-    }
+        throw Error {"codec output is full", location};
 }
 
 inline std::size_t product(std::size_t count, std::size_t width,
@@ -59,7 +51,7 @@ inline Bytes slice(Bytes bytes, std::size_t at, std::size_t count,
     std::source_location location = std::source_location::current())
 {
     if (at > bytes.size() || count > bytes.size() - at) {
-        throw Error {KF_CODEC_INVALID,
+        throw Error {
             "truncated input at " + std::to_string(at) + ": need " + std::to_string(count) +
                 " bytes, have " + std::to_string(at > bytes.size() ? 0 : bytes.size() - at),
             location};

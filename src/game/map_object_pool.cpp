@@ -178,13 +178,11 @@ static u8 map_object_effect_index(KfEffectRecord *effect)
     return static_cast<u8>(effect - effect_state.records.data());
 }
 
-void map_object_pool_load(KfResourceChunk chunk)
+void map_object_pool_load(KfResourceChunk chunk) try
 {
     std::array<KfObjectPlacementData, KF_MAP_OBJECT_CAPACITY> decoded {};
-    std::size_t count;
-    if (kf_object_placements_decode({chunk.data, chunk.size},
-            {KF_MAP_COLUMNS, KF_MAP_OBJECT_DEFINITION_COUNT, KF_MAP_TILE_SIZE}, decoded, count) != KF_CODEC_OK)
-        kf::host_fail("Invalid map object placements.");
+    const auto count = kf_object_placements_decode({chunk.data, chunk.size},
+            {KF_MAP_COLUMNS, KF_MAP_OBJECT_DEFINITION_COUNT, KF_MAP_TILE_SIZE}, decoded);
     KfMapObjectDefinition *definition;
     const SVECTOR effect_direction{};
     KfObjectId object_id;
@@ -270,6 +268,9 @@ void map_object_pool_load(KfResourceChunk chunk)
             map_object_mark_collision_edge(&object, KF_MAP_CELL_BLOCKED, object.rotation.angles.y);
         }
     }
+} catch (const kf::codec::Error &error) {
+    error.report();
+    kf::host_fail("Invalid map object placements.");
 }
 
 s32 map_object_distance_to_point(
