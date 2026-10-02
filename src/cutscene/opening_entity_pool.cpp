@@ -35,7 +35,7 @@ KfOpeningEntity *opening_entity_find_by_object_id(
 }
 
 void opening_entity_pool_load_placements(
-    KfResourceChunk placements, s32 base_y)
+    KfResourceChunk placements, s32 base_y) try
 {
     std::array<KfObjectPlacementData, KF_OPENING_ENTITY_CAPACITY> decoded {};
     constexpr u32 byte_values = std::numeric_limits<u8>::max() + 1u;
@@ -43,9 +43,7 @@ void opening_entity_pool_load_placements(
         base_y == KF_OPENING_ENTITY_FLOOR_HEIGHT ? KF_MAP_COLUMNS : byte_values,
         byte_values, KF_MAP_TILE_SIZE,
     };
-    std::size_t count;
-    if (kf_object_placements_decode({placements.data, placements.size}, limits, decoded, count) != KF_CODEC_OK)
-        kf::host_fail("Invalid opening entity placements");
+    const auto count = kf_object_placements_decode({placements.data, placements.size}, limits, decoded);
 
     for (std::size_t i = 0; i < opening_entity_state.entities.size(); ++i) {
         auto &entity = opening_entity_state.entities[i];
@@ -71,6 +69,9 @@ void opening_entity_pool_load_placements(
             entity.position.vy = base_y + placement.local_y;
         }
     }
+} catch (const kf::codec::Error &error) {
+    error.report();
+    kf::host_fail("Invalid opening entity placements");
 }
 
 

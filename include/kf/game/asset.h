@@ -18,7 +18,7 @@ enum {
 extern void asset_registry_load_tmd_archive(
     u16 first_asset_id, u8 *archive, std::size_t size);
 extern void asset_registry_select(u16 asset_id);
-extern void asset_registry_set(u16 asset_id, void *data, std::size_t size);
+extern std::size_t asset_registry_set(u16 asset_id, void *data, std::size_t size);
 extern void asset_registry_clear_floor();
 
 #endif // KF_GAME_ASSET_H
