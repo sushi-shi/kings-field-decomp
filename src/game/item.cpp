@@ -5,6 +5,7 @@
 #include <kf/game/menu_text.h>
 #include <kf/game/resource_file.h>
 #include <kf/game/resources.h>
+#include <kf/lib/byte_reader.h>
 #include <kf/lib/item.h>
 #include <kf/lib/map_data.h>
 #include <kf/lib/null.h>
@@ -53,52 +54,17 @@ constexpr u8 stat_packet_raw_texture_flag = 1;
 constexpr unsigned stat_quad_page_offset = 22;
 constexpr unsigned stat_quad_palette_offset = 14;
 constexpr unsigned stat_quad_corners_offset = 8;
-constexpr unsigned stat_textured_corner_bytes = 8;
-constexpr unsigned stat_solid_corner_bytes = 4;
-constexpr unsigned stat_corner_y_offset = 2;
-constexpr unsigned stat_corner_u_offset = 4;
-constexpr unsigned stat_corner_v_offset = 5;
 constexpr std::size_t stat_sprite_bytes = 12;
-constexpr unsigned stat_sprite_palette_offset = 2;
-constexpr unsigned stat_sprite_u_offset = 4;
-constexpr unsigned stat_sprite_v_offset = 6;
-constexpr unsigned stat_sprite_x_or_width_offset = 8;
-constexpr unsigned stat_sprite_y_or_height_offset = 10;
 constexpr unsigned stat_save_return_row = 4;
-}
-
-struct MenuDataReader {
-    const u8 *cursor;
-    std::size_t remaining;
-};
-
-static const u8 *menu_data_take(MenuDataReader *reader, std::size_t size)
-{
-    if (size > reader->remaining)
-        kf::host_fail("Truncated COM/STAT.DAT");
-    const u8 *data = reader->cursor;
-    reader->cursor += size;
-    reader->remaining -= size;
-    return data;
-}
-
-static u16 menu_data_u16(const u8 *data)
-{
-    return data[0] | (static_cast<u16>(data[1]) << 8);
-}
-
-static u16 menu_data_word(MenuDataReader *reader)
-{
-    return menu_data_u16(menu_data_take(reader, 2));
 }
 
 enum class MenuTemplateKind : u8 { Textured, Solid };
 
-static kf::DrawFace menu_data_face(MenuDataReader *reader, MenuTemplateKind kind)
+static kf::DrawFace menu_data_face(kf::codec::Reader &reader, MenuTemplateKind kind)
 {
     const bool textured = kind == MenuTemplateKind::Textured;
     const std::size_t size = textured ? stat_textured_quad_bytes : stat_solid_quad_bytes;
-    const u8 *data = menu_data_take(reader, size);
+    const auto data = reader.take(size);
     kf::DrawFace face{};
     face.shape = kf::FaceShape::Quad;
     // The second bank's first dialog template is empty in the original file.
@@ -111,21 +77,24 @@ static kf::DrawFace menu_data_face(MenuDataReader *reader, MenuTemplateKind kind
     const u8 command = data[stat_packet_command_offset];
     if (data[stat_packet_length_offset] != size / stat_packet_word_bytes - 1 || (command & stat_packet_kind_mask) != (textured ? stat_textured_quad_command : stat_solid_quad_command))
         kf::host_fail("Unsupported menu template in COM/STAT.DAT");
-    if (textured)
-        face.material = render_texture_material(menu_data_u16(data + stat_quad_page_offset), menu_data_u16(data + stat_quad_palette_offset));
-    else
+    if (textured) {
+        const u16 page = kf::codec::Reader(data.subspan(stat_quad_page_offset)).u16_le();
+        const u16 palette = kf::codec::Reader(data.subspan(stat_quad_palette_offset)).u16_le();
+        face.material = render_texture_material(page, palette);
+    } else {
         face.material.kind = kf::SurfaceKind::Solid;
+    }
     face.transparency = command & stat_packet_blend_flag ? kf::FaceTransparency::Blend : kf::FaceTransparency::Opaque;
     face.material.color_mode = textured && (command & stat_packet_raw_texture_flag)
         ? kf::TextureColorMode::Raw : kf::TextureColorMode::Modulated;
-    for (unsigned i = 0; i < 4; ++i) {
-        auto &vertex = face.vertices[i];
-        const u8 *corner = data + stat_quad_corners_offset + i * (textured ? stat_textured_corner_bytes : stat_solid_corner_bytes);
-        vertex.x = static_cast<s16>(menu_data_u16(corner));
-        vertex.y = static_cast<s16>(menu_data_u16(corner + stat_corner_y_offset));
+    kf::codec::Reader corners(data.subspan(stat_quad_corners_offset));
+    for (auto &vertex : face.vertices) {
+        vertex.x = corners.s16_le();
+        vertex.y = corners.s16_le();
         if (textured) {
-            vertex.u = corner[stat_corner_u_offset] / kf::texture_uv_scale;
-            vertex.v = corner[stat_corner_v_offset] / kf::texture_uv_scale;
+            vertex.u = corners.byte() / kf::texture_uv_scale;
+            vertex.v = corners.byte() / kf::texture_uv_scale;
+            corners.skip(2); // Palette/page words belong to the face material.
         }
         const float divisor = textured ? kf::texture_color_unity : kf::color8_scale;
         const bool raw_texture = textured && (command & stat_packet_raw_texture_flag);
@@ -137,62 +106,68 @@ static kf::DrawFace menu_data_face(MenuDataReader *reader, MenuTemplateKind kind
     return face;
 }
 
-static MenuSpriteDef menu_data_sprite(MenuDataReader *reader)
+static MenuSpriteDef menu_data_sprite(kf::codec::Reader &reader)
 {
-    const u8 *data = menu_data_take(reader, stat_sprite_bytes);
-    return {render_texture_material(menu_data_u16(data), menu_data_u16(data + stat_sprite_palette_offset)),
-        menu_data_u16(data + stat_sprite_u_offset), menu_data_u16(data + stat_sprite_v_offset),
-        static_cast<s16>(menu_data_u16(data + stat_sprite_x_or_width_offset)), static_cast<s16>(menu_data_u16(data + stat_sprite_y_or_height_offset))};
+    kf::codec::Reader sprite(reader.take(stat_sprite_bytes));
+    const u16 page = sprite.u16_le();
+    const u16 palette = sprite.u16_le();
+    return {render_texture_material(page, palette), sprite.u16_le(), sprite.u16_le(),
+        sprite.s16_le(), sprite.s16_le()};
 }
 
-static MenuTileSprite menu_data_tile(MenuDataReader *reader)
+static MenuTileSprite menu_data_tile(kf::codec::Reader &reader)
 {
-    const u8 *data = menu_data_take(reader, stat_sprite_bytes);
-    return {render_texture_material(menu_data_u16(data), menu_data_u16(data + stat_sprite_palette_offset)),
-        data[stat_sprite_u_offset], data[stat_sprite_v_offset], menu_data_u16(data + stat_sprite_x_or_width_offset), menu_data_u16(data + stat_sprite_y_or_height_offset)};
+    kf::codec::Reader tile(reader.take(stat_sprite_bytes));
+    const u16 page = tile.u16_le();
+    const u16 palette = tile.u16_le();
+    const u8 u = tile.byte();
+    tile.skip(1);
+    const u8 v = tile.byte();
+    tile.skip(1);
+    return {render_texture_material(page, palette), u, v, tile.u16_le(), tile.u16_le()};
 }
 
-static void menu_data_glyphs(MenuDataReader *reader, MenuGlyphRow *row)
+static void menu_data_glyphs(kf::codec::Reader &reader, MenuGlyphRow *row)
 {
     for (s16 &code : row->codes)
-        code = static_cast<s16>(menu_data_word(reader));
+        code = reader.s16_le();
 }
 
-static void menu_data_string(MenuDataReader *reader, MenuGlyphString *string)
+static void menu_data_string(kf::codec::Reader &reader, MenuGlyphString *string)
 {
-    string->position.x = static_cast<s16>(menu_data_word(reader));
-    string->position.y = static_cast<s16>(menu_data_word(reader));
+    string->position.x = reader.s16_le();
+    string->position.y = reader.s16_le();
     menu_data_glyphs(reader, &string->glyphs);
 }
 
-static void menu_resources_decode(std::span<const u8> bytes, KfMenuResources &resources)
+static void menu_resources_decode(std::span<const u8> bytes, KfMenuResources &resources) try
 {
-    MenuDataReader reader{bytes.data(), bytes.size()};
+    kf::codec::Reader reader(bytes);
 
     for (auto &bank : resources.assets.background_quads)
         for (auto &face : bank)
-            face = menu_data_face(&reader, MenuTemplateKind::Textured);
+            face = menu_data_face(reader, MenuTemplateKind::Textured);
     for (auto &face : resources.assets.magic_artwork_quads)
-        face = menu_data_face(&reader, MenuTemplateKind::Textured);
+        face = menu_data_face(reader, MenuTemplateKind::Textured);
     for (auto &face : resources.assets.message_image_quads)
-        face = menu_data_face(&reader, MenuTemplateKind::Textured);
+        face = menu_data_face(reader, MenuTemplateKind::Textured);
     for (auto &bank : resources.assets.dialog_quads)
         for (auto &face : bank)
-            face = menu_data_face(&reader, MenuTemplateKind::Solid);
-    resources.assets.number_atlas = menu_data_sprite(&reader);
-    resources.assets.glyph_atlas = menu_data_sprite(&reader);
-    resources.assets.window_backdrop = menu_data_tile(&reader);
-    resources.assets.option_background = menu_data_sprite(&reader);
-    resources.assets.option_highlight = menu_data_sprite(&reader);
-    resources.assets.row_background = menu_data_sprite(&reader);
-    resources.assets.row_confirmed_background = menu_data_sprite(&reader);
+            face = menu_data_face(reader, MenuTemplateKind::Solid);
+    resources.assets.number_atlas = menu_data_sprite(reader);
+    resources.assets.glyph_atlas = menu_data_sprite(reader);
+    resources.assets.window_backdrop = menu_data_tile(reader);
+    resources.assets.option_background = menu_data_sprite(reader);
+    resources.assets.option_highlight = menu_data_sprite(reader);
+    resources.assets.row_background = menu_data_sprite(reader);
+    resources.assets.row_confirmed_background = menu_data_sprite(reader);
     for (auto &tile : resources.assets.list_tiles)
-        tile = menu_data_tile(&reader);
-    resources.assets.selection_cursor = menu_data_sprite(&reader);
+        tile = menu_data_tile(reader);
+    resources.assets.selection_cursor = menu_data_sprite(reader);
     for (auto &layout : resources.windows) {
-        menu_data_string(&reader, &layout.title);
+        menu_data_string(reader, &layout.title);
         for (auto &row : layout.rows)
-            menu_data_string(&reader, &row);
+            menu_data_string(reader, &row);
     }
     // Ordinary save files have no format-card action. Keep the authored return
     // label, moved into that removed row in the native menu description.
@@ -203,16 +178,18 @@ static void menu_resources_decode(std::span<const u8> bytes, KfMenuResources &re
     config.rows[KF_MENU_CONFIG_RETURN_ROW].position.y += config.rows[1].position.y - config.rows[0].position.y;
     config.rows[KF_MENU_CONFIG_LANGUAGE_ROW].glyphs.codes[0] = MENU_TEXT_END;
     for (auto &row : resources.items)
-        menu_data_glyphs(&reader, &row);
+        menu_data_glyphs(reader, &row);
     for (auto &row : resources.magic)
-        menu_data_glyphs(&reader, &row);
+        menu_data_glyphs(reader, &row);
     for (auto &item : resources.buy_prices)
         for (u16 &price : item)
-            price = menu_data_word(&reader);
+            price = reader.u16_le();
     for (auto &item : resources.sell_prices)
         for (u16 &price : item)
-            price = menu_data_word(&reader);
-
+            price = reader.u16_le();
+} catch (const kf::codec::Error &error) {
+    error.report();
+    kf::host_fail("Truncated COM/STAT.DAT");
 }
 
 bool menu_prepare_language(kf::Language language)
