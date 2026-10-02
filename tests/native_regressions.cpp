@@ -16,7 +16,7 @@ std::array<KfPlayerLevelGrowth, KF_PLAYER_LEVEL_GROWTH_COUNT> player_level_growt
 static KfMapObjectDefinitionTable loaded_objects;
 static KfMagicTable loaded_magic;
 
-void asset_registry_set(u16, void *, std::size_t) {}
+std::size_t asset_registry_set(u16, void *, std::size_t size) { return size; }
 void magic_load_records(const KfMagicTable *source) { loaded_magic = *source; }
 void map_object_definitions_load(const KfMapObjectDefinitionTable *source) { loaded_objects = *source; }
 

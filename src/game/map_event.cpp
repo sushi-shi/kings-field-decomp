@@ -40,28 +40,26 @@ void map_event_advance_animation_blocking(KfMapEvent *event, u16 target, s16 ste
     kf::host_set_input_context(input_context);
 }
 
-void map_event_pool_load(KfResourceChunk chunk)
+void map_event_pool_load(KfResourceChunk chunk) try
 {
     std::array<KfEventPlacementData, KF_MAP_EVENT_CAPACITY> decoded {};
-    std::size_t count;
-    if (kf_event_placements_decode({chunk.data, chunk.size},
-            {KF_MAP_COLUMNS, KF_ASSET_WEAPON - KF_ASSET_MAP_EVENT_FIRST, KF_MAP_TILE_SIZE}, decoded, count) != KF_CODEC_OK)
-        kf::host_fail("Invalid map event placements.");
+    const auto count = kf_event_placements_decode({chunk.data, chunk.size},
+            {KF_MAP_COLUMNS, KF_ASSET_WEAPON - KF_ASSET_MAP_EVENT_FIRST, KF_MAP_TILE_SIZE}, decoded);
     for (std::size_t i = 0; i < std::size(map_runtime_state.events); ++i) {
         auto &event = map_runtime_state.events[i];
         if (i >= count) {
             event.state = KF_MAP_EVENT_FREE;
         } else {
             const auto *definitions = &decoded[i];
-            event.state = kf_enum_decode<KfMapEventState>(definitions->state);
-            event.character_id = kf_enum_decode<KfCharacterId>(definitions->character_id);
+            event.state = definitions->state;
+            event.character_id = definitions->character_id;
             event.model_index = definitions->model_index;
             std::copy(std::begin(definitions->dialogue_pages), std::end(definitions->dialogue_pages),
                 std::begin(event.dialogue_pages.last_page));
             event.dialogue.stage_limit = definitions->dialogue_stage_limit;
             event.unknown_0c = definitions->unknown_0b;
             event.unknown_0d = definitions->unknown_0c;
-            event.behavior = kf_enum_decode<KfMapEventBehavior>(definitions->behavior);
+            event.behavior = definitions->behavior;
             event.home_x = definitions->cell_x * KF_MAP_TILE_SIZE + definitions->position_x_offset;
             event.reference_position.vx = event.home_x;
             event.home_z = definitions->cell_z * KF_MAP_TILE_SIZE + definitions->position_z_offset;
@@ -84,6 +82,9 @@ void map_event_pool_load(KfResourceChunk chunk)
             collision_adjust_cell_occupancy(event.cell_x, event.cell_z, 1);
         }
     }
+} catch (const kf::codec::Error &error) {
+    error.report();
+    kf::host_fail("Invalid map event placements.");
 }
 
 s32 map_event_distance_to_point(

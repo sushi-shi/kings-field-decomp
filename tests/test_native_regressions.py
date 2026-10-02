@@ -16,7 +16,7 @@ class NativeRegressions(unittest.TestCase):
         cls.addClassCleanup(cls.directory.cleanup)
         for name in ["native_regressions", "lighting_regressions", "resource_failures",
                      "cutscene_resources", "collision_results", "map_grids", "menu_outcomes", "dialogue_compare",
-                     "keyboard_controls", "cell_windows", "vertex_sources", "asset_lifetimes"]:
+                     "keyboard_controls", "cell_windows", "vertex_sources", "asset_lifetimes", "menu_resources"]:
             subprocess.run(
                 [
                     "clang++", "-std=c++20", "-O1", "-g", "-fno-rtti",
@@ -89,6 +89,9 @@ class NativeRegressions(unittest.TestCase):
 
     def test_menu_outcomes_and_session_restoration(self):
         subprocess.run([Path(self.directory.name) / "menu_outcomes"], check=True)
+
+    def test_menu_resource_fields_and_validation(self):
+        subprocess.run([Path(self.directory.name) / "menu_resources"], check=True)
 
     def test_keyboard_layouts_and_remapped_keys(self):
         subprocess.run([Path(self.directory.name) / "keyboard_controls"], check=True)
