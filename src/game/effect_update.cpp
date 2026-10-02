@@ -2,6 +2,7 @@
 #include <kf/game/audio.h>
 #include <kf/game/collision.h>
 #include <kf/game/effect.h>
+#include <kf/game/game.h>
 #include <kf/lib/map_data.h>
 #include <kf/lib/random.h>
 
@@ -9,9 +10,6 @@
 #include <cstdio>
 #include <cstdlib>
 #include <cstring>
-
-static constexpr u32 EFFECT_PHASE_BYTE_MASK = 0xff;
-#include <kf/game/game.h>
 
 enum {
     EFFECT_FIXED_MAGIC_POWER = 5,
@@ -46,11 +44,11 @@ int effect_magic_power(KfEffectRecord *effect)
     return EFFECT_FIXED_MAGIC_POWER;
 }
 
-void effect_update_swinging_hazard(SVECTOR *probe_offset, KfEffectPhase phase_limit)
+void effect_update_swinging_hazard(SVECTOR *probe_offset, u8 phase_limit)
 {
     KfEffectRecord *record = effect_state.current_record;
     KfMagicRecord *magic = effect_state.current_magic;
-    KfEffectPhase life = record->phase;
+    u8 life = record->phase;
     MATRIX rotation_matrix;
     MATRIX yaw_matrix;
     VECTOR world;
@@ -58,7 +56,7 @@ void effect_update_swinging_hazard(SVECTOR *probe_offset, KfEffectPhase phase_li
     s16 pitch;
     s16 next_pitch;
 
-    if (kf_enum_encode<u8>(life) < kf_enum_encode<u8>(KF_EFFECT_HAZARD_RELEASE_REQUEST) + 1u) {
+    if (life <= KF_EFFECT_HAZARD_RELEASE_REQUEST) {
         kf::matrix_set_rotation_xyz(record->rotation.vector, rotation_matrix);
         matrix_set_rotation_x(record->rotation.vector.vx, &rotation_matrix);
         matrix_set_rotation_y(record->rotation.vector.vy, &yaw_matrix);
@@ -108,20 +106,20 @@ void effect_update_swinging_hazard(SVECTOR *probe_offset, KfEffectPhase phase_li
             }
         }
         record->rotation.vector.vx = next_pitch;
-    } else if (kf_enum_encode<u8>(life) >= kf_enum_encode<u8>(KF_EFFECT_HAZARD_RISE_FIRST) && kf_enum_encode<s16>(phase_limit) >= kf_enum_encode<u8>(life)) {
+    } else if (life >= KF_EFFECT_HAZARD_RISE_FIRST && phase_limit >= life) {
         record->position.vy -= EFFECT_HAZARD_RISE_STEP;
         record->phase++;
     }
 }
 
-void effect_update_orbiting_projectile(s32 orbit_radius, KfEffectPhase phase_limit)
+void effect_update_orbiting_projectile(s32 orbit_radius, u8 phase_limit)
 {
     KfEffectRecord *record = effect_state.current_record;
     KfMagicRecord *magic = effect_state.current_magic;
-    KfEffectPhase life = record->phase;
+    u8 life = record->phase;
     KfCollisionResult collision;
 
-    if ((kf_enum_encode<u32>(life) & EFFECT_PHASE_BYTE_MASK) < kf_enum_encode<u8>(KF_EFFECT_HAZARD_RELEASE_REQUEST) + 1) {
+    if (life <= KF_EFFECT_HAZARD_RELEASE_REQUEST) {
         record->position.vx = (record->direction.vector.vx << KF_EFFECT_ORBIT_CENTER_SHIFT)
             + (kf::angle_sine((s16)record->control.orbit_angle) * orbit_radius >> KF_FIXED12_BITS);
         record->position.vz = (record->direction.vector.vz << KF_EFFECT_ORBIT_CENTER_SHIFT)
@@ -157,7 +155,7 @@ void effect_update_orbiting_projectile(s32 orbit_radius, KfEffectPhase phase_lim
                 record->sound_played = KF_AUDIO_NOT_PLAYED;
             }
         }
-    } else if ((kf_enum_encode<u32>(life) & EFFECT_PHASE_BYTE_MASK) != kf_enum_encode<u8>(KF_EFFECT_HAZARD_RUNNING) && kf_enum_encode<s16>(phase_limit) >= (int)(kf_enum_encode<u32>(life) & EFFECT_PHASE_BYTE_MASK)) {
+    } else if (life != KF_EFFECT_HAZARD_RUNNING && phase_limit >= life) {
         record->position.vy -= EFFECT_HAZARD_RISE_STEP;
         record->phase++;
     }

@@ -16,7 +16,7 @@ enum {
     MAP_GOLD_DROP_SCATTER_RADIUS = 600,
     MAP_GOLD_DROP_INITIAL_VELOCITY_Y = -120,
     MAP_EFFECT_SPAWN_SEQUENCE_MODULUS = 0x10000,
-    MAP_SWING_DOOR_YAW_STEP = KF_ANGLE_QUARTER_TURN / kf_enum_encode<u16>(KF_MAP_OBJECT_SWING_OPEN_END),
+    MAP_SWING_DOOR_YAW_STEP = KF_ANGLE_QUARTER_TURN / KF_MAP_OBJECT_SWING_OPEN_END,
     MAP_LIFT_DOOR_Y_STEP = 60,
     MAP_DROP_TIP_GRAVITY = 20,
     MAP_DROP_TIP_INITIAL_ANGULAR_VELOCITY = 16,
@@ -40,7 +40,7 @@ enum {
     MAP_BOSS_EMITTER_SOUND_RANDOM_LIMIT = (kf::random_max + 1) / 8,
     MAP_EFFECT_SWITCH_PHASE_STEP = 128,
     MAP_REVEAL_LIFT = KF_MAP_OBJECT_REVEAL_DEPTH
-        + (kf_enum_encode<u16>(KF_MAP_OBJECT_REVEAL_SETTLE_END) - 1) * KF_MAP_OBJECT_REVEAL_SETTLE_STEP,
+        + (KF_MAP_OBJECT_REVEAL_SETTLE_END - 1) * KF_MAP_OBJECT_REVEAL_SETTLE_STEP,
     MAP_RESTORE_POINT_YAW_STEP = 8
 };
 
@@ -246,8 +246,8 @@ void map_object_pool_update(void)
     u8 *counter;
     SVECTOR direction;
     VECTOR point;
-    KfMapObjectProgress timer;
-    KfMapObjectProgress elapsed;
+    u16 timer;
+    u16 elapsed;
     s32 floor;
     s32 tilt;
 
@@ -396,7 +396,8 @@ void map_object_pool_update(void)
                 break;
             }
             object->link.fields.vertical_velocity = -(object->link.fields.vertical_velocity >> 1);
-            object->action_timer = map_object_toggle_progress(object->action_timer);
+            object->action_timer = object->action_timer == KF_MAP_OBJECT_PROGRESS_INIT
+                ? KF_MAP_OBJECT_PROGRESS_RUNNING : KF_MAP_OBJECT_PROGRESS_INIT;
             break;
         }
         case KF_MAP_OBJECT_OP_PROJECTILE_EMITTER:
@@ -424,7 +425,7 @@ void map_object_pool_update(void)
                     &object->position,
                     &direction,
                     KfEffectRotationArguments{&object->rotation.vector});
-                object->action_timer = kf_enum_decode<KfMapObjectProgress>((kf::random_next() >> MAP_EMITTER_COUNTDOWN_RANDOM_SHIFT) + MAP_EMITTER_COUNTDOWN_BASE);
+                object->action_timer = (kf::random_next() >> MAP_EMITTER_COUNTDOWN_RANDOM_SHIFT) + MAP_EMITTER_COUNTDOWN_BASE;
                 break;
             case KF_MAP_OBJECT_FIRE_BALL_EMITTER:
                 direction.vy = 0;
@@ -440,7 +441,7 @@ void map_object_pool_update(void)
                     &point,
                     &direction,
                     KfEffectRotationArguments{&object->rotation.vector});
-                object->action_timer = kf_enum_decode<KfMapObjectProgress>((kf::random_next() >> MAP_EMITTER_COUNTDOWN_RANDOM_SHIFT) + MAP_EMITTER_COUNTDOWN_BASE);
+                object->action_timer = (kf::random_next() >> MAP_EMITTER_COUNTDOWN_RANDOM_SHIFT) + MAP_EMITTER_COUNTDOWN_BASE;
                 break;
             case KF_MAP_OBJECT_WIND_CUTTER_EMITTER:
                 direction.vy = 0;
@@ -456,7 +457,7 @@ void map_object_pool_update(void)
                     &point,
                     &direction,
                     KfEffectRotationSoundArguments{&object->rotation.vector, KF_EFFECT_SOUND_PLAY});
-                object->action_timer = kf_enum_decode<KfMapObjectProgress>((kf::random_next() >> MAP_EMITTER_COUNTDOWN_RANDOM_SHIFT) + MAP_EMITTER_COUNTDOWN_BASE);
+                object->action_timer = (kf::random_next() >> MAP_EMITTER_COUNTDOWN_RANDOM_SHIFT) + MAP_EMITTER_COUNTDOWN_BASE;
                 break;
             case KF_MAP_OBJECT_BOSS_PROJECTILE_EMITTER:
                 if (map_floor_script(KF_FLOOR_5).floor5.boss_encounter_started == KF_MAP_SCRIPT_UNSET) {
@@ -483,7 +484,7 @@ void map_object_pool_update(void)
                     &point,
                     &direction,
                     KfEffectRotationSoundArguments{&object->rotation.vector, effect_sound_request(kf::random_next() < MAP_BOSS_EMITTER_SOUND_RANDOM_LIMIT)});
-                object->action_timer = kf_enum_decode<KfMapObjectProgress>((kf::random_next() >> MAP_EMITTER_COUNTDOWN_RANDOM_SHIFT) + MAP_BOSS_EMITTER_COUNTDOWN_BASE);
+                object->action_timer = (kf::random_next() >> MAP_EMITTER_COUNTDOWN_RANDOM_SHIFT) + MAP_BOSS_EMITTER_COUNTDOWN_BASE;
                 break;
             }
             } else {

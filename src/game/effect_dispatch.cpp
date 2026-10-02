@@ -215,7 +215,7 @@ static void effect_randomize_homing_direction(KfEffectRecord *effect)
         (effect->direction.words.y + (kf::random_next() >> HOMING_YAW_RANDOM_SHIFT) - HOMING_YAW_RANDOM_BIAS) & KF_ANGLE_WRAP_MASK;
 }
 
-static void effect_update_homing_direction(KfEffectRecord *effect, KfEffectPhase phase)
+static void effect_update_homing_direction(KfEffectRecord *effect, u8 phase)
 {
     KfActor *target;
     s16 desired_pitch;
@@ -274,7 +274,7 @@ void effect_update_dispatch(void)
 {
     KfEffectRecord *effect = effect_state.current_record;
     KfMagicRecord *magic = effect_state.current_magic;
-    KfEffectPhase phase;
+    u8 phase;
     KfEffectKind kind;
     u32 radius;
     u16 angle;
@@ -380,7 +380,7 @@ void effect_update_dispatch(void)
         }
 
         if (phase < KF_EFFECT_FIRE_BALL_IMPACT_END && kind == KF_MAGIC_FIRE_BALL) {
-            effect->render_id.billboard = kf_enum_decode<KfEffectBillboardId>(kf_enum_encode<u8>(effect->base_render_id.billboard) + kf_enum_encode<u8>(phase));
+            effect->render_id.billboard = kf_enum_decode<KfEffectBillboardId>(kf_enum_encode<u8>(effect->base_render_id.billboard) + phase);
         } else if (phase < KF_EFFECT_PROJECTILE_IMPACT_END) {
             effect->type = KF_EFFECT_SLOT_FREE;
         } else if (phase < KF_EFFECT_PROJECTILE_DISSIPATE_END) {
@@ -424,7 +424,7 @@ void effect_update_dispatch(void)
         break;
 
     case KF_EFFECT_KIND_MOONLIGHT_PROJECTILE:
-        if (kf_enum_encode<u8>(phase) < kf_enum_encode<u8>(KF_EFFECT_MOONLIGHT_TRAVEL_LAST) + 1) {
+        if (phase <= KF_EFFECT_MOONLIGHT_TRAVEL_LAST) {
             if (effect_map_collision(&effect->position, PROJECTILE_COLLISION_RADIUS).kind != KfCollisionKind::None) {
                 effect->animation_clip = KF_ANIMATION_CLIP_NONE;
                 effect->base_render_id.model = KF_EFFECT_MODEL_NONE;
@@ -449,7 +449,7 @@ void effect_update_dispatch(void)
                 return;
             }
         } else {
-            if (((kf_enum_encode<u8>(phase) - kf_enum_encode<u8>(KF_EFFECT_MOONLIGHT_IMPACT_FIRST)) & 1) == 0) {
+            if (((phase - KF_EFFECT_MOONLIGHT_IMPACT_FIRST) & 1) == 0) {
                 effect_pool_construct(
                     effect->id, effect->type, KF_EFFECT_KIND_RADIAL_BLAST,
                     &effect->position, &effect->direction.vector, KfEffectSoundArguments{KF_EFFECT_SOUND_PLAY});
@@ -489,7 +489,7 @@ void effect_update_dispatch(void)
             // Other phase values have no ground-trail transition.
             break;
         case KF_EFFECT_GROUND_TRAIL_WAIT_FOR_PARENT:
-            if (kf_enum_encode<u8>(linked_effect->phase) > kf_enum_encode<u8>(KF_EFFECT_MOONLIGHT_IMPACT_FIRST) - 1) {
+            if (linked_effect->phase >= KF_EFFECT_MOONLIGHT_IMPACT_FIRST) {
                 effect->phase = KF_EFFECT_GROUND_TRAIL_SHRINK;
             }
             break;
@@ -517,9 +517,9 @@ void effect_update_dispatch(void)
 
             effect->scale_y = effect->scale_z =
                 effect->scale_x += RADIAL_BLAST_SCALE_STEP;
-            damage_radius = kf_enum_encode<u8>(phase) * RADIAL_BLAST_RADIUS_STEP;
+            damage_radius = phase * RADIAL_BLAST_RADIUS_STEP;
             power = effect_magic_power(effect);
-            if (kf_enum_encode<u8>(effect->phase) & 1) {
+            if (effect->phase & 1) {
                 actor_pool_apply_radial_damage(
                     &effect->position,
                     damage_radius, KF_FIXED12_ONE, power,
@@ -608,7 +608,7 @@ void effect_update_dispatch(void)
             effect->scale_y = effect->scale_z =
                 effect->scale_x += LIGHTNING_BLAST_SCALE_STEP;
             effect->rotation.vector.vy = (effect->rotation.vector.vy + LIGHTNING_BLAST_YAW_STEP) & KF_ANGLE_WRAP_MASK;
-            if (kf_enum_encode<u8>(phase) & 1) {
+            if (phase & 1) {
                 u32 damage_radius;
                 KfMagicRecord *lightning_magic;
 
@@ -616,7 +616,7 @@ void effect_update_dispatch(void)
                     effect->position.vx,
                     KF_COLLISION_IGNORE_HEIGHT,
                     effect->position.vz};
-                damage_radius = kf_enum_encode<u8>(phase) * LIGHTNING_BLAST_RADIUS_STEP;
+                damage_radius = phase * LIGHTNING_BLAST_RADIUS_STEP;
                 power = effect_magic_power(effect);
                 lightning_magic = &effect_state.magic.entries[kf_enum_encode<u8>(KF_MAGIC_LIGHTNING_BOLT)];
                 actor_pool_apply_radial_damage(
@@ -661,7 +661,7 @@ void effect_update_dispatch(void)
                 }
             }
             effect->scale_y += GROUND_BRANCH_SCALE_STEP;
-            if (kf_enum_encode<u8>(phase) == kf_enum_encode<u8>(KF_EFFECT_GROUND_BRANCH_GROW_END) - 1) {
+            if (phase == KF_EFFECT_GROUND_BRANCH_GROW_END - 1) {
                 switch (effect->propagation.branch) {
                 case KF_EFFECT_GROUND_BRANCH_ROOT:
                     effect->phase = KF_EFFECT_GROUND_BRANCH_ROOT_HOLD_BASE;
@@ -676,7 +676,7 @@ void effect_update_dispatch(void)
                 }
             }
         } else if (phase < KF_EFFECT_GROUND_BRANCH_SHRINK_FIRST) {
-            if ((kf_enum_encode<u8>(phase) & (GROUND_BRANCH_DAMAGE_PERIOD - 1)) == 0) {
+            if ((phase & (GROUND_BRANCH_DAMAGE_PERIOD - 1)) == 0) {
                 VECTOR spawn_position;
 
                 angle = (u32)kf::random_next() >> KF_RANDOM_ANGLE_SHIFT;
@@ -725,7 +725,7 @@ void effect_update_dispatch(void)
 
     case KF_EFFECT_KIND_ACTOR_SPAWNER: {
         s32 scale;
-        KfEffectPhase scale_phase;
+        u8 scale_phase;
 
         if (phase < KF_EFFECT_ACTOR_SPAWNER_TRAVEL_FIRST) {
             scale = effect->scale_x + ACTOR_SPAWNER_SCALE_STEP;
@@ -735,7 +735,7 @@ void effect_update_dispatch(void)
             effect->scale_y = scale;
             scale_phase++;
             effect->phase = scale_phase;
-        } else if (kf_enum_encode<u8>(phase) < kf_enum_encode<u8>(KF_EFFECT_ACTOR_SPAWNER_TRAVEL_LAST) + 1) {
+        } else if (phase <= KF_EFFECT_ACTOR_SPAWNER_TRAVEL_LAST) {
             VECTOR position;
             KfCollisionResult collision;
 

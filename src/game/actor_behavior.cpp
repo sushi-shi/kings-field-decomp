@@ -793,8 +793,8 @@ static void actor_update_pursuit(KfActor *actor, const KfActorDefinition *defini
         break;
     case KF_ACTOR_PROGRESS_RUNNING:
         if (actor_move_along_heading(KF_ACTOR_MOVE_FORWARD, KF_ACTOR_COLLISION_STOP) != KF_ACTOR_MOVE_SUCCEEDED) {
-            actor->action_progress = kf_enum_decode<KfActorActionProgress>((kf::random_next() >> ACTOR_PURSUIT_BACKOFF_RANDOM_SHIFT)
-                + kf_enum_encode<u8>(KF_ACTOR_PROGRESS_BACKOFF_BASE));
+            actor->action_progress = (kf::random_next() >> ACTOR_PURSUIT_BACKOFF_RANDOM_SHIFT)
+                + KF_ACTOR_PROGRESS_BACKOFF_BASE;
             return;
         }
         if (kf::random_next() < ACTOR_PURSUIT_TURN_RANDOM_LIMIT) {
