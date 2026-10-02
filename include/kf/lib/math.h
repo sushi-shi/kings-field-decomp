@@ -47,11 +47,6 @@ struct KfEulerAngles {
     s16 z;
 };
 
-typedef union KfRotation {
-    SVECTOR vector;
-    struct KfEulerAngles angles;
-} KfRotation;
-
 static inline s16 angle_error_magnitude(s16 difference)
 {
     s16 folded;
@@ -97,9 +92,9 @@ extern void matrix_set_rotation_x(s16 angle, MATRIX *matrix);
 extern void matrix_set_rotation_y(s16 angle, MATRIX *matrix);
 extern void matrix_set_rotation_z(s16 angle, MATRIX *matrix);
 extern void matrix_set_rotation_yxz(
-    const struct KfEulerAngles *angles, MATRIX *matrix);
+    const SVECTOR *angles, MATRIX *matrix);
 extern void pitch_yaw_to_forward_vector(
-    const struct KfEulerAngles *angles, SVECTOR *direction);
+    const SVECTOR *angles, SVECTOR *direction);
 extern void vector2s_scale_shift11(s16 scale, struct KfVecXZs *vector);
 extern void vector2s_scale_shift12(s16 scale, s16 *vector);
 extern void vector3i_add_xz(

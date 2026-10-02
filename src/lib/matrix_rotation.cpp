@@ -90,13 +90,13 @@ void matrix_set_rotation_z(s16 angle, MATRIX *matrix)
     matrix->m[2][2] = KF_FIXED12_ONE;
 }
 
-void matrix_set_rotation_yxz(const struct KfEulerAngles *angles, MATRIX *matrix)
+void matrix_set_rotation_yxz(const SVECTOR *angles, MATRIX *matrix)
 {
     MATRIX temporary;
 
-    matrix_set_rotation_z(angles->z, &temporary);
-    matrix_set_rotation_x(angles->x, matrix);
+    matrix_set_rotation_z(angles->vz, &temporary);
+    matrix_set_rotation_x(angles->vx, matrix);
     kf::matrix_multiply_rotation(*matrix, temporary, *matrix);
-    matrix_set_rotation_y(angles->y, &temporary);
+    matrix_set_rotation_y(angles->vy, &temporary);
     kf::matrix_multiply_rotation(temporary, *matrix, *matrix);
 }

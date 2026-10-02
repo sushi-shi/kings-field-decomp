@@ -41,7 +41,8 @@ void opening_entity_render(KfOpeningEntity *entity)
         entity->position.vz - open_graphics_runtime.render_state.view_position.vz}.narrowed();
 
     kf::render_place_model(model, open_graphics_runtime.render_state.view_matrix, relative_position);
-    matrix_set_rotation_yxz(&entity->rotation, &model);
+    const SVECTOR rotation{entity->rotation.x, entity->rotation.y, entity->rotation.z};
+    matrix_set_rotation_yxz(&rotation, &model);
     scale = entity->scale.widened();
     kf::matrix_scale_axes(model, scale);
     kf::matrix_multiply_rotation(open_graphics_runtime.render_state.light_matrix, model, light);

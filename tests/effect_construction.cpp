@@ -39,7 +39,7 @@ int main()
         auto *effect = effect_spawn_lightning_bolt(17, type, position, direction,
             variant, 37, KF_EFFECT_SOUND_SILENT);
         assert(effect && effect->id == 17 && effect->type == type);
-        assert(effect->position.vx == position.vx && effect->direction.vector.vy == direction.vy);
+        assert(effect->position.vx == position.vx && effect->direction.vy == direction.vy);
         assert(effect->kind == KF_MAGIC_LIGHTNING_BOLT && effect->control.frames_remaining == 37);
         assert(effect->base_render_id.billboard == (variant == KfEffectVariant::Normal
             ? KF_EFFECT_BILLBOARD_LIGHTNING_BOLT : KF_EFFECT_BILLBOARD_LIGHTNING_BOLT_ALTERNATE));
@@ -51,8 +51,8 @@ int main()
         assert(effect->base_render_id.model == (variant == KfEffectVariant::Normal
             ? KF_EFFECT_MODEL_HOMING_PROJECTILE : KF_EFFECT_MODEL_HOMING_PROJECTILE_ALTERNATE));
         assert(effect->control.target_mode == KF_EFFECT_HOMING_PLAYER);
-        assert(effect->rotation.vector.vx == -rotation.vx && effect->rotation.vector.vy == rotation.vy);
-        assert(effect->direction.vector.vx == -rotation.vx && effect->direction.vector.vy == rotation.vy);
+        assert(effect->rotation.vx == -rotation.vx && effect->rotation.vy == rotation.vy);
+        assert(effect->direction.vx == -rotation.vx && effect->direction.vy == rotation.vy);
         assert(effect->scale_x == KF_FIXED12_ONE / 2 && effect->scale_y == KF_FIXED12_ONE / 2);
         assert(sounds == 1);
     }

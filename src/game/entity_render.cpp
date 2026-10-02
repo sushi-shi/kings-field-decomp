@@ -62,7 +62,7 @@ void render_effect(KfEffectRecord *effect, const MATRIX *lights)
         effect->position.vy - game_graphics_runtime.render_state.view_position.vy,
         effect->position.vz - game_graphics_runtime.render_state.view_position.vz}.narrowed();
     kf::render_place_model(model, game_graphics_runtime.render_state.view_matrix, relative_position);
-    matrix_set_rotation_yxz(&effect->rotation.angles, &model);
+    matrix_set_rotation_yxz(&effect->rotation, &model);
     scale = {(s16)effect->scale_x, (s16)effect->scale_y, (s16)effect->scale_z};
     kf::matrix_scale_axes(model, scale);
     if (effect->animation_clip == KF_ANIMATION_CLIP_NONE) {

@@ -198,18 +198,6 @@ enum {
     KF_EFFECT_SWING_PROBE_COUNT = 2
 };
 
-typedef struct KfEffectDirectionWords {
-    u16 x;
-    u16 y;
-    u16 z;
-    u16 pad;
-} KfEffectDirectionWords;
-
-typedef union KfEffectDirection {
-    SVECTOR vector;
-    KfEffectDirectionWords words;
-} KfEffectDirection;
-
 typedef union KfEffectVisualState {
     u16 animation_phase;
     u16 pulse_base_scale;
@@ -248,6 +236,17 @@ typedef union KfEffectRenderId {
     KfEffectModelId model;
 } KfEffectRenderId;
 
+struct KfFloorDeformation {
+    s16 first_segment;
+    s16 segment_count;
+    s16 progress_per_update;
+    s16 cell_stagger;
+    s16 progress;
+    u16 updates_remaining;
+    s32 sweep_updates;
+    s32 hold_countdown;
+};
+
 typedef struct KfEffectRecord {
     KfEffectType type;
     KfEffectKind kind;
@@ -260,15 +259,16 @@ typedef struct KfEffectRecord {
     KfEffectVisualState visual;
     u16 unknown_0a;
     VECTOR position;
-    KfRotation rotation;
+    SVECTOR rotation;
     u16 scale_x;
     u16 scale_y;
     u16 scale_z;
     u16 unknown_2a;
-    KfEffectDirection direction;
+    SVECTOR direction;
     struct KfAnimationCacheRecord *animation_cache;
     KfEffectControl control;
     KfEffectPropagation propagation;
+    KfFloorDeformation floor_deformation;
 } KfEffectRecord;
 
 typedef struct KfEffectState {
@@ -353,7 +353,7 @@ extern int effect_magic_power(KfEffectRecord *effect);
 extern void effect_update_swinging_hazard(SVECTOR *probe_offset, KfEffectPhase phase_limit);
 extern void effect_update_orbiting_projectile(s32 orbit_radius, KfEffectPhase phase_limit);
 extern void effect_floor_deform_line(s32 segment_index, s32 progress_start, s32 progress_step);
-extern void effect_scatter_triple(KfEffectDirectionWords *velocity);
+extern void effect_scatter_triple(SVECTOR *velocity);
 extern void effect_rotate_scale_offset_y(SVECTOR *offset, VECTOR *output, s16 angle, s32 scale);
 extern void effect_spawn_ground_trail(u8 id, KfEffectRecord *parent_effect, s16 angle, s32 distance);
 extern void effect_spawn_ground_branch(u8 id, KfEffectRecord *parent_effect, s16 angle_offset,

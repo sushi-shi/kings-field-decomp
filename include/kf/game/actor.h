@@ -270,7 +270,7 @@ typedef struct KfActor {
     u16 cell_z;
     s16 unknown_1a;
     VECTOR position;
-    KfRotation rotation;
+    SVECTOR rotation;
     struct KfAnimationCacheRecord *animation_cache;
     KfActorActionProgress action_progress;
     KfActorCollisionState collision_state;

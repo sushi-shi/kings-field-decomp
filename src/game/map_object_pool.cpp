@@ -199,9 +199,9 @@ void map_object_pool_load(KfResourceChunk chunk)
             object.object_id = object_id;
             object.cell_x = placement->tile_x;
             object.cell_z = placement->tile_z;
-            object.rotation.angles.z = 0;
-            object.rotation.angles.x = 0;
-            object.rotation.angles.y = placement->yaw & KF_ANGLE_WRAP_MASK;
+            object.rotation.vz = 0;
+            object.rotation.vx = 0;
+            object.rotation.vy = placement->yaw & KF_ANGLE_WRAP_MASK;
             object.position.vx = map_placement_axis_position(placement->tile_x, placement->local_x);
             object.position.vz = map_placement_axis_position(placement->tile_z, placement->local_z);
             object.position.vy = placement->local_y
@@ -235,20 +235,20 @@ void map_object_pool_load(KfResourceChunk chunk)
                 object.link.fields.action_parameter.effect_index = map_object_effect_index(
                     effect_spawn_swinging_hazard_short(object.link.fields.spawn.effect_id,
                         KF_EFFECT_CLASS_20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER, object.position,
-                        effect_direction, object.rotation.vector));
+                        effect_direction, object.rotation));
                 map_object_start_action_if_idle(&object, KF_MAP_OBJECT_OP_RELEASE_ORBIT_OR_SHORT_SWING);
                 break;
             case KF_MAP_OBJECT_LONG_SWING:
                 object.link.fields.action_parameter.effect_index = map_object_effect_index(
                     effect_spawn_swinging_hazard_long(object.link.fields.spawn.effect_id,
                         KF_EFFECT_CLASS_20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER, object.position,
-                        effect_direction, object.rotation.vector));
+                        effect_direction, object.rotation));
                 map_object_start_action_if_idle(&object, KF_MAP_OBJECT_OP_RELEASE_LONG_SWING);
                 break;
             case KF_MAP_OBJECT_EFFECT_SWITCH:
                 object.link.fields.action_parameter.effect_index = map_object_effect_index(
                     effect_spawn_map_switch(0, KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER, object.position,
-                        effect_direction, object.rotation.vector));
+                        effect_direction, object.rotation));
                 map_object_start_action_if_idle(&object, KF_MAP_OBJECT_OP_EFFECT_SWITCH);
                 break;
             case KF_ITEM_DRAGON_CHALICE:
@@ -267,7 +267,7 @@ void map_object_pool_load(KfResourceChunk chunk)
             if (definition->behavior_type == KF_MAP_OBJECT_OP_COPY_REGION) {
                 map_object_start_action_if_idle(&object, KF_MAP_OBJECT_OP_COPY_REGION);
             }
-            map_object_mark_collision_edge(&object, KF_MAP_CELL_BLOCKED, object.rotation.angles.y);
+            map_object_mark_collision_edge(&object, KF_MAP_CELL_BLOCKED, object.rotation.vy);
         }
     }
 }

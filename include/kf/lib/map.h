@@ -208,7 +208,7 @@ typedef struct KfMapObject {
     u16 cell_z;
     std::array<u8, 2> unknown_06;
     VECTOR position;
-    KfRotation rotation;
+    SVECTOR rotation;
     KfMapObjectLink link;
     KfMapObjectOperation action;
     u8 unknown_29;

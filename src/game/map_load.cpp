@@ -126,9 +126,9 @@ void map_restore_floor_state(void)
                 object->cell_z * KF_MAP_TILE_SIZE + ((kf::random_next() * KF_MAP_TILE_SIZE) >> MAP_RESTORE_POSITION_RANDOM_BITS);
             object->position.vy =
                 -(map_floor_height_grid.cells[object->cell_z][object->cell_x] * KF_MAP_HEIGHT_STEP);
-            object->rotation.angles.z = 0;
-            object->rotation.angles.y = 0;
-            object->rotation.angles.x = 0;
+            object->rotation.vz = 0;
+            object->rotation.vy = 0;
+            object->rotation.vx = 0;
             object->link.gold_amount = *in++;
             object->link.gold_amount |= *in++ << 8;
             object->link.fields.spawn.sequence = 0;
@@ -146,12 +146,12 @@ void map_restore_floor_state(void)
             object->position.vy =
                 -(map_floor_height_grid.cells[object->cell_z][object->cell_x] * KF_MAP_HEIGHT_STEP);
             if (object->object_id < KF_MAP_DROP_TIP_ID_END) {
-                object->rotation.angles.x = KF_ANGLE_QUARTER_TURN;
+                object->rotation.vx = KF_ANGLE_QUARTER_TURN;
             } else if (object->object_id < KF_MAP_DROP_SPIN_ID_END) {
-                object->rotation.angles.x = 0;
+                object->rotation.vx = 0;
             }
-            object->rotation.angles.z = 0;
-            object->rotation.angles.y = *in++ << KF_MAP_SAVED_YAW_SHIFT;
+            object->rotation.vz = 0;
+            object->rotation.vy = *in++ << KF_MAP_SAVED_YAW_SHIFT;
             object->link.gold_amount = 0;
             object->link.fields.spawn.sequence = 0;
             object->link.fields.vertical_velocity = 0;

@@ -95,8 +95,8 @@ void player_warp_shimmer(KfWarpShimmerMode shimmer_mode, VECTOR *position)
                     effect->scale_y = scale_y_step + current_scale_y;
                 }
             }
-            effect->rotation.vector.vy =
-                (effect->rotation.vector.vy + KF_CYLINDER_TRANSITION_YAW_STEP)
+            effect->rotation.vy =
+                (effect->rotation.vy + KF_CYLINDER_TRANSITION_YAW_STEP)
                 & KF_ANGLE_WRAP_MASK;
         }
         render_frame(&player_state.camera_position, &player_state.camera_rotation);
@@ -255,14 +255,14 @@ void actor_transform_definition5_to6(KfActor *actor)
     for (blend = 0; blend < KF_FIXED12_ONE + 1; blend += KF_FIXED12_ONE / ACTOR_TRANSFORM_BLEND_INTERVALS) {
         lighting_set_color_matrix(game_graphics_runtime.render_state, &saved, &actor_transform_color_matrix, blend);
         actor->position.vy += ACTOR_TRANSFORM_Y_STEP;
-        actor->rotation.angles.y += KF_ANGLE_FULL_TURN / ACTOR_TRANSFORM_BLEND_INTERVALS;
+        actor->rotation.vy += KF_ANGLE_FULL_TURN / ACTOR_TRANSFORM_BLEND_INTERVALS;
         render_frame(NULL, NULL);
     }
     actor->definition_id = KF_FLOOR4_TRANSFORM_RESULT_DEFINITION;
     for (blend = KF_FIXED12_ONE; blend >= 0; blend -= KF_FIXED12_ONE / ACTOR_TRANSFORM_BLEND_INTERVALS) {
         lighting_set_color_matrix(game_graphics_runtime.render_state, &saved, &actor_transform_color_matrix, blend);
         actor->position.vy -= ACTOR_TRANSFORM_Y_STEP;
-        actor->rotation.angles.y -= KF_ANGLE_FULL_TURN / ACTOR_TRANSFORM_BLEND_INTERVALS;
+        actor->rotation.vy -= KF_ANGLE_FULL_TURN / ACTOR_TRANSFORM_BLEND_INTERVALS;
         render_frame(NULL, NULL);
     }
     lighting_set_active_color_matrix(KF_GAME_COLOR_DEFAULT);

@@ -265,7 +265,7 @@ void map_world_state_persist(void)
     for (i = 0; i < 2 * KF_MAP_OBJECT_EFFECT_GROUP_CAPACITY; i++, object++) {
         map_saved_put(out, end, object->cell_x);
         map_saved_put(out, end, object->cell_z);
-        map_saved_put(out, end, (u16)object->rotation.angles.y >> KF_MAP_SAVED_YAW_SHIFT);
+        map_saved_put(out, end, (u16)object->rotation.vy >> KF_MAP_SAVED_YAW_SHIFT);
     }
 }
 

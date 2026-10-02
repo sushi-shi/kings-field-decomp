@@ -349,9 +349,9 @@ void map_floor5_weapon_transform_cutscene(void)
     sword->position.vx = sword->cell_x * KF_MAP_TILE_SIZE + KF_MAP_TILE_CENTER;
     sword->position.vz = sword->cell_z * KF_MAP_TILE_SIZE + KF_MAP_TILE_CENTER;
     grid_height = map_floor_height_grid.cells[sword->cell_z][sword->cell_x];
-    sword->rotation.angles.z = 0;
-    sword->rotation.angles.x = 0;
-    sword->rotation.angles.y = KF_ANGLE_HALF_TURN;
+    sword->rotation.vz = 0;
+    sword->rotation.vx = 0;
+    sword->rotation.vy = KF_ANGLE_HALF_TURN;
     sword->action = KF_MAP_OBJECT_OP_NONE;
     sword->position.vy = -(grid_height * KF_MAP_HEIGHT_STEP) - MAP_WEAPON_TRANSFORM_HEIGHT;
 
@@ -361,7 +361,7 @@ void map_floor5_weapon_transform_cutscene(void)
     for (;;) {
         switch (phase) {
         case MAP_WEAPON_TRANSFORM_SPIN_UP:
-            sword->rotation.angles.y += spin;
+            sword->rotation.vy += spin;
             if (hold != 0) {
                 hold -= 1;
                 if (hold == 1) {
@@ -381,7 +381,7 @@ void map_floor5_weapon_transform_cutscene(void)
             }
             break;
         case MAP_WEAPON_TRANSFORM_SPIN_DOWN:
-            sword->rotation.angles.y += spin;
+            sword->rotation.vy += spin;
             if (spin > 0) {
                 spin -= MAP_WEAPON_TRANSFORM_YAW_ACCELERATION;
             } else {
@@ -509,7 +509,7 @@ static void map_interact_hinged_container(KfMapObject *object,
         notify_enqueue(object->link.fields.linked_notification);
         return;
     }
-    if (!angle_within_tolerance(rotation->vy, object->rotation.angles.y, KF_ANGLE_EIGHTH_TURN)) {
+    if (!angle_within_tolerance(rotation->vy, object->rotation.vy, KF_ANGLE_EIGHTH_TURN)) {
         return;
     }
 
@@ -531,7 +531,7 @@ static void map_interact_hinged_container(KfMapObject *object,
     saved_pitch = rotation->vx;
     audio_play_spatial_default_range(
         &gameplay_sound_refs[KF_GAMEPLAY_SOUND_CONTAINER_OPEN], &object->position, KF_AUDIO_MAX_VOLUME);
-    while (object->rotation.angles.x >= -(KF_ANGLE_QUARTER_TURN - 1)) {
+    while (object->rotation.vx >= -(KF_ANGLE_QUARTER_TURN - 1)) {
         u16 current_pitch = rotation->vx;
         u16 relative_pitch = current_pitch;
 
@@ -539,7 +539,7 @@ static void map_interact_hinged_container(KfMapObject *object,
         if (relative_pitch >= MAP_CONTAINER_CAMERA_PITCH_SPAN) {
             rotation->vx = current_pitch + MAP_CONTAINER_CAMERA_PITCH_STEP;
         }
-        object->rotation.angles.x -= MAP_CONTAINER_OPEN_PITCH_STEP;
+        object->rotation.vx -= MAP_CONTAINER_OPEN_PITCH_STEP;
         render_frame(position, rotation);
     }
 
@@ -565,7 +565,7 @@ static void map_interact_hinged_container(KfMapObject *object,
         }
         item_id++;
     }
-    object->rotation.angles.x = 0;
+    object->rotation.vx = 0;
     rotation->vx = saved_pitch;
 }
 
@@ -733,9 +733,9 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
             }
 
             case KF_MAP_OBJECT_OP_LIFT_DOOR:
-                if (!angle_within_tolerance(rotation->vy, object->rotation.angles.y, MAP_DOOR_FACING_TOLERANCE)
+                if (!angle_within_tolerance(rotation->vy, object->rotation.vy, MAP_DOOR_FACING_TOLERANCE)
                     && !angle_within_tolerance(
-                        rotation->vy, object->rotation.angles.y + KF_ANGLE_HALF_TURN, MAP_DOOR_FACING_TOLERANCE)) {
+                        rotation->vy, object->rotation.vy + KF_ANGLE_HALF_TURN, MAP_DOOR_FACING_TOLERANCE)) {
                     break;
                 }
                 if (object->action != KF_MAP_OBJECT_OP_NONE) {
@@ -750,9 +750,9 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
 
             case KF_MAP_OBJECT_OP_HINGED_DOOR:
             case KF_MAP_OBJECT_OP_HINGED_DOOR_PARTNER:
-                if (!angle_within_tolerance(rotation->vy, object->rotation.angles.y, MAP_DOOR_FACING_TOLERANCE)
+                if (!angle_within_tolerance(rotation->vy, object->rotation.vy, MAP_DOOR_FACING_TOLERANCE)
                     && !angle_within_tolerance(
-                        rotation->vy, object->rotation.angles.y + KF_ANGLE_HALF_TURN, MAP_DOOR_FACING_TOLERANCE)) {
+                        rotation->vy, object->rotation.vy + KF_ANGLE_HALF_TURN, MAP_DOOR_FACING_TOLERANCE)) {
                     break;
                 }
                 if (object->link.fields.link_id != KF_MAP_LINK_NONE && definition->behavior_type == KF_MAP_OBJECT_OP_HINGED_DOOR) {

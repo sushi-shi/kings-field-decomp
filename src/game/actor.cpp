@@ -132,9 +132,9 @@ void actor_set_rotation(
     s16 y,
     s16 z)
 {
-    actor->rotation.angles.x = x;
-    actor->rotation.angles.y = y;
-    actor->rotation.angles.z = z;
+    actor->rotation.vx = x;
+    actor->rotation.vy = y;
+    actor->rotation.vz = z;
 }
 
 void actor_initialize(KfActor *actor)
@@ -151,9 +151,9 @@ void actor_initialize(KfActor *actor)
     if (actor->slot_state == KF_ACTOR_SLOT_RESPAWNING
         || actor->slot_state == KF_ACTOR_SLOT_HOMEBOUND
         || actor->slot_state == KF_ACTOR_SLOT_PERSISTENT) {
-        actor->rotation.angles.y = kf_enum_encode<u8>(actor->heading_quadrant) * KF_ANGLE_QUARTER_TURN;
+        actor->rotation.vy = kf_enum_encode<u8>(actor->heading_quadrant) * KF_ANGLE_QUARTER_TURN;
     } else {
-        actor->rotation.angles.y = kf::random_next() >> KF_RANDOM_ANGLE_SHIFT;
+        actor->rotation.vy = kf::random_next() >> KF_RANDOM_ANGLE_SHIFT;
     }
     collision_adjust_cell_occupancy(actor->cell_x, actor->cell_z, 1);
 }
@@ -422,7 +422,7 @@ void actor_try_attack_player(
         return;
     }
     angle = actor_bearing_to_player(actor);
-    if (!angle_within_tolerance(actor->rotation.angles.y + angle_offset, angle, angle_tolerance)) {
+    if (!angle_within_tolerance(actor->rotation.vy + angle_offset, angle, angle_tolerance)) {
         return;
     }
     status_effect = KF_PLAYER_STATUS_NONE;
@@ -636,7 +636,7 @@ KfActorAction actor_try_select_action_distance_facing(
         return action;
     }
     if (angle_within_tolerance(
-            actor->rotation.angles.y,
+            actor->rotation.vy,
             actor_bearing_to_player(actor),
             ACTOR_SELECTION_ANGLE_TOLERANCE)) {
         return action;
@@ -675,7 +675,7 @@ KfActorAction actor_try_select_ground_action(KfActorAction action, s32 distance,
         return action;
     }
     if (angle_within_tolerance(
-            actor->rotation.angles.y,
+            actor->rotation.vy,
             actor_bearing_to_player(actor),
             ACTOR_SELECTION_ANGLE_TOLERANCE)) {
         return action;
@@ -703,7 +703,7 @@ KfActorAction actor_try_select_multi_hit_action(KfActorAction action, s32 distan
         return KF_ACTOR_ACTION_NONE;
     }
     if (angle_within_tolerance(
-            actor->rotation.angles.y,
+            actor->rotation.vy,
             actor_bearing_to_player(actor),
             ACTOR_MULTI_HIT_SELECTION_ANGLE_TOLERANCE)) {
         return action;
@@ -738,7 +738,7 @@ KfActorAction actor_try_select_profiled_action(KfActorAction action, s32 distanc
         return KF_ACTOR_ACTION_NONE;
     }
     if (!angle_within_tolerance(
-            actor->rotation.angles.y,
+            actor->rotation.vy,
             actor_bearing_to_player(actor),
             KF_ACTOR_AIM_TOLERANCE)
         && kf::random_next() >= ACTOR_PROFILE_FACING_BYPASS_LIMIT) {

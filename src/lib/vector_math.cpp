@@ -1,7 +1,7 @@
 #include <kf/platform/prelude.h>
 #include <kf/lib/math.h>
 
-void pitch_yaw_to_forward_vector(const struct KfEulerAngles *angles, SVECTOR *direction)
+void pitch_yaw_to_forward_vector(const SVECTOR *angles, SVECTOR *direction)
 {
     MATRIX pitch_matrix;
     MATRIX yaw_matrix;
@@ -9,10 +9,10 @@ void pitch_yaw_to_forward_vector(const struct KfEulerAngles *angles, SVECTOR *di
     VECTOR result;
 
     source = {0, 0, KF_FIXED12_ONE};
-    matrix_set_rotation_x(-angles->x & KF_ANGLE_WRAP_MASK, &pitch_matrix);
+    matrix_set_rotation_x(-angles->vx & KF_ANGLE_WRAP_MASK, &pitch_matrix);
     result = kf::matrix_apply_rotation(pitch_matrix, source);
     source = result.narrowed();
-    matrix_set_rotation_y(angles->y, &yaw_matrix);
+    matrix_set_rotation_y(angles->vy, &yaw_matrix);
     result = kf::matrix_apply_rotation(yaw_matrix, source);
     *direction = result.narrowed();
 }

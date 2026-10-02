@@ -183,7 +183,7 @@ static void player_update_weapon_magic()
     KfActor *target;
     const VECTOR *origin;
     SVECTOR direction;
-    KfRotation effect_rotation;
+    SVECTOR effect_rotation{};
     SVECTOR *launch_direction;
     SVECTOR spawn_offset;
     VECTOR position;
@@ -244,23 +244,23 @@ static void player_update_weapon_magic()
                     PLAYER_WEAPON_MAGIC_SPAWN_X,
                     PLAYER_WEAPON_MAGIC_SPAWN_Y,
                     PLAYER_WEAPON_MAGIC_SPAWN_Z};
-                effect_rotation.vector = VECTOR{
+                effect_rotation = VECTOR{
                     -player_state.camera_rotation.vx,
                     player_state.camera_rotation.vy,
                     -player_state.camera_rotation.vz}.narrowed();
-                matrix_set_rotation_yxz(&effect_rotation.angles, &matrix);
+                matrix_set_rotation_yxz(&effect_rotation, &matrix);
                 position = kf::matrix_apply_rotation(matrix, spawn_offset);
                 position += player_state.camera_position;
-                effect_rotation.vector = player_state.camera_rotation;
+                effect_rotation = player_state.camera_rotation;
                 origin = &player_state.camera_position;
                 if ((effect == KF_MAGIC_FIRE_BALL || effect == KF_MAGIC_LIGHT_NEEDLE)
                     && player_state.weapon_magic_shots_remaining != 1) {
                     actor_state.player_target = actor_pool_find_target_in_cone(
                         origin, player_state.camera_rotation.vy, KF_EFFECT_ACTOR_TARGET_MAX_DISTANCE,
                         PLAYER_WEAPON_MAGIC_BURST_CONE, &distance);
-                    effect_rotation.angles.x -= PLAYER_WEAPON_MAGIC_JITTER_BIAS
+                    effect_rotation.vx -= PLAYER_WEAPON_MAGIC_JITTER_BIAS
                         - (kf::random_next() >> PLAYER_WEAPON_MAGIC_RANDOM_SHIFT);
-                    effect_rotation.angles.y -= PLAYER_WEAPON_MAGIC_JITTER_BIAS
+                    effect_rotation.vy -= PLAYER_WEAPON_MAGIC_JITTER_BIAS
                         - (kf::random_next() >> PLAYER_WEAPON_MAGIC_RANDOM_SHIFT);
                     homing_target = kf_enum_decode<KfEffectHomingMode>(player_state.weapon_magic_shots_remaining & 1);
                 } else {
@@ -276,7 +276,7 @@ static void player_update_weapon_magic()
                     }
                 }
                 launch_direction = &direction;
-                pitch_yaw_to_forward_vector(&effect_rotation.angles, launch_direction);
+                pitch_yaw_to_forward_vector(&effect_rotation, launch_direction);
                 vector3s_scale_shift12(PLAYER_WEAPON_MAGIC_SPEED, launch_direction);
                 switch (effect) {
                 case KF_MAGIC_FIRE_BALL:
@@ -302,18 +302,18 @@ static void player_update_weapon_magic()
                 }
                 if (effect == KF_EFFECT_KIND_HOMING_PROJECTILE) {
                     position.vy += PLAYER_TRIPLE_FANG_Y_OFFSET;
-                    effect_rotation.vector = VECTOR{
+                    effect_rotation = VECTOR{
                         player_state.camera_rotation.vx + PLAYER_TRIPLE_FANG_PITCH_OFFSET,
                         player_state.camera_rotation.vy,
                         player_state.camera_rotation.vz}.narrowed();
                     effect_spawn_homing_projectile(KF_PLAYER_DAMAGE_MULTIPLIER_ONE,
                         KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS, position, *launch_direction,
-                        KfEffectVariant::Normal, effect_rotation.vector, homing_target, KF_EFFECT_SOUND_SILENT);
-                    effect_rotation.angles.x -= 2 * PLAYER_TRIPLE_FANG_PITCH_OFFSET;
+                        KfEffectVariant::Normal, effect_rotation, homing_target, KF_EFFECT_SOUND_SILENT);
+                    effect_rotation.vx -= 2 * PLAYER_TRIPLE_FANG_PITCH_OFFSET;
                     position.vy -= 2 * PLAYER_TRIPLE_FANG_Y_OFFSET;
                     effect_spawn_homing_projectile(KF_PLAYER_DAMAGE_MULTIPLIER_ONE,
                         KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS, position, *launch_direction,
-                        KfEffectVariant::Normal, effect_rotation.vector, homing_target, KF_EFFECT_SOUND_SILENT);
+                        KfEffectVariant::Normal, effect_rotation, homing_target, KF_EFFECT_SOUND_SILENT);
                 }
             }
             player_state.weapon_magic_shots_remaining--;

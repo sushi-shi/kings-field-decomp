@@ -33,8 +33,8 @@ void render_frame(const VECTOR *, const SVECTOR *)
     ++frames;
     for (const auto &effect : effect_state.records) {
         if (effect.type != KF_EFFECT_SLOT_FREE && effect.kind == KF_EFFECT_KIND_WARP_SHIMMER) {
-            assert(effect.direction.vector.vx == 0 && effect.direction.vector.vy == 0);
-            assert(effect.direction.vector.vz == 0);
+            assert(effect.direction.vx == 0 && effect.direction.vy == 0);
+            assert(effect.direction.vz == 0);
         }
     }
 }
@@ -108,7 +108,7 @@ int main()
         assert(index == effect_state.records.size() - 1);
         assert(effect_state.records[index].type != KF_EFFECT_SLOT_FREE);
         if (id == KF_MAP_OBJECT_EFFECT_SWITCH) {
-            const auto &direction = effect_state.records[index].direction.vector;
+            const auto &direction = effect_state.records[index].direction;
             assert(direction.vx == 0 && direction.vy == 0 && direction.vz == 0);
         }
     }

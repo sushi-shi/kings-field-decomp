@@ -97,7 +97,7 @@ void player_use_item(KfObjectId item_id)
                     notify_enqueue(KF_NOTIFICATION_NOTHING_HAPPENS);
                 } else if (object->object_id != KF_MAP_OBJECT_GRAVESTONE
                            || angle_within_tolerance(
-                               player_state.camera_rotation.vy, KF_ANGLE_HALF_TURN - object->rotation.angles.y, MAP_DOOR_FACING_TOLERANCE)) {
+                               player_state.camera_rotation.vy, KF_ANGLE_HALF_TURN - object->rotation.vy, MAP_DOOR_FACING_TOLERANCE)) {
                     used = true;
                     if (object->link.fields.link_id == kf_enum_encode<u8>(item_id)) {
                         object->link.fields.link_id = KF_MAP_LINK_NONE;

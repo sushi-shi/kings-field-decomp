@@ -80,7 +80,7 @@ s32 map_object_pool_find_interaction_from(s32 start_index, s32 point_x, s32 poin
         definition = &map_object_state.definitions.entries[kf_enum_encode<u8>(object->object_id)];
         if (definition->behavior_type == KF_MAP_OBJECT_OP_HINGED_DOOR) {
             offset = {-KF_MAP_TILE_SIZE, 0, MAP_DOOR_INTERACTION_LOCAL_Z};
-            matrix_set_rotation_y(object->rotation.angles.y, &matrix);
+            matrix_set_rotation_y(object->rotation.vy, &matrix);
             point = kf::matrix_apply_rotation(matrix, offset);
             point.vx += point_x;
             point.vz += point_z;
@@ -91,7 +91,7 @@ s32 map_object_pool_find_interaction_from(s32 start_index, s32 point_x, s32 poin
             }
         } else if (definition->behavior_type == KF_MAP_OBJECT_OP_HINGED_DOOR_PARTNER) {
             offset = {KF_MAP_TILE_SIZE, 0, MAP_DOOR_INTERACTION_LOCAL_Z};
-            matrix_set_rotation_y(object->rotation.angles.y, &matrix);
+            matrix_set_rotation_y(object->rotation.vy, &matrix);
             point = kf::matrix_apply_rotation(matrix, offset);
             point.vx += point_x;
             point.vz += point_z;
@@ -161,10 +161,10 @@ void map_object_spawn_drop(KfMapObjectDropSource drop_source, KfObjectId object_
     object->position = {position->vx, y_offset + position->vy, position->vz};
     object->cell_x = object->position.vx / KF_MAP_TILE_SIZE;
     object->cell_z = object->position.vz / KF_MAP_TILE_SIZE;
-    object->rotation.angles.z = 0;
-    object->rotation.angles.x = 0;
+    object->rotation.vz = 0;
+    object->rotation.vx = 0;
     within_drop_range = object_id < KF_MAP_DROP_BOUNCE_ID_END;
-    object->rotation.angles.y = kf::random_next() >> KF_RANDOM_ANGLE_SHIFT;
+    object->rotation.vy = kf::random_next() >> KF_RANDOM_ANGLE_SHIFT;
     object->action = KF_MAP_OBJECT_OP_NONE;
     if (object_id < KF_MAP_DROP_TIP_ID_END) {
         map_object_start_action_if_idle(object, KF_MAP_OBJECT_OP_FALL_AND_TIP);
@@ -195,9 +195,9 @@ void map_object_spawn_gold_drop(u16 gold_amount, const VECTOR *position, s32 y_o
         ((kf::angle_cosine(angle) * MAP_GOLD_DROP_SCATTER_RADIUS) >> KF_FIXED12_BITS) + position->vz};
     object->cell_x = object->position.vx / KF_MAP_TILE_SIZE;
     object->cell_z = object->position.vz / KF_MAP_TILE_SIZE;
-    object->rotation.angles.z = 0;
-    object->rotation.angles.x = 0;
-    object->rotation.angles.y = kf::random_next() >> KF_RANDOM_ANGLE_SHIFT;
+    object->rotation.vz = 0;
+    object->rotation.vx = 0;
+    object->rotation.vy = kf::random_next() >> KF_RANDOM_ANGLE_SHIFT;
     object->action = KF_MAP_OBJECT_OP_NONE;
     map_object_start_action_if_idle(object, KF_MAP_OBJECT_OP_BOUNCE);
     object->link.fields.vertical_velocity = MAP_GOLD_DROP_INITIAL_VELOCITY_Y;
@@ -269,9 +269,9 @@ void map_object_pool_update(void)
             }
             object->action_timer++;
             if (timer < KF_MAP_OBJECT_SWING_OPEN_END) {
-                object->rotation.angles.y += MAP_SWING_DOOR_YAW_STEP;
+                object->rotation.vy += MAP_SWING_DOOR_YAW_STEP;
                 if (pair != NULL) {
-                    pair->rotation.angles.y -= MAP_SWING_DOOR_YAW_STEP;
+                    pair->rotation.vy -= MAP_SWING_DOOR_YAW_STEP;
                 }
                 if (timer == KF_MAP_OBJECT_PROGRESS_INIT) {
                     if (object->object_id == KF_MAP_OBJECT_HINGED_DOOR) {
@@ -283,7 +283,7 @@ void map_object_pool_update(void)
                     }
                 }
                 if (timer == KF_MAP_OBJECT_SWING_OPEN_LAST) {
-                    map_object_mark_collision_edge(object, KF_MAP_CELL_FLOOR, object->rotation.angles.y - KF_ANGLE_QUARTER_TURN);
+                    map_object_mark_collision_edge(object, KF_MAP_CELL_FLOOR, object->rotation.vy - KF_ANGLE_QUARTER_TURN);
                     object->action_timer = KF_MAP_OBJECT_DOOR_HOLD_FIRST;
                 }
             } else if (timer >= KF_MAP_OBJECT_DOOR_CLOSE_FIRST) {
@@ -292,11 +292,11 @@ void map_object_pool_update(void)
                     break;
                 }
                 if (timer == KF_MAP_OBJECT_DOOR_CLOSE_FIRST) {
-                    if (map_object_probe_door_closing(object, object->rotation.angles.y - KF_ANGLE_QUARTER_TURN).kind != KfCollisionKind::None) {
+                    if (map_object_probe_door_closing(object, object->rotation.vy - KF_ANGLE_QUARTER_TURN).kind != KfCollisionKind::None) {
                         object->action_timer = KF_MAP_OBJECT_DOOR_CLOSE_FIRST;
                         break;
                     }
-                    map_object_mark_collision_edge(object, KF_MAP_CELL_BLOCKED, object->rotation.angles.y - KF_ANGLE_QUARTER_TURN);
+                    map_object_mark_collision_edge(object, KF_MAP_CELL_BLOCKED, object->rotation.vy - KF_ANGLE_QUARTER_TURN);
                     if (object->object_id == KF_MAP_OBJECT_HINGED_DOOR) {
                         audio_play_spatial_default_range(
                             &gameplay_sound_refs[KF_GAMEPLAY_SOUND_HINGED_DOOR], &object->position, KF_AUDIO_MAX_VOLUME);
@@ -305,9 +305,9 @@ void map_object_pool_update(void)
                             &gameplay_sound_refs[KF_GAMEPLAY_SOUND_STONE_PASSAGE], &object->position, KF_AUDIO_MAX_VOLUME);
                     }
                 }
-                object->rotation.angles.y -= MAP_SWING_DOOR_YAW_STEP;
+                object->rotation.vy -= MAP_SWING_DOOR_YAW_STEP;
                 if (pair != NULL) {
-                    pair->rotation.angles.y += MAP_SWING_DOOR_YAW_STEP;
+                    pair->rotation.vy += MAP_SWING_DOOR_YAW_STEP;
                 }
             }
             break;
@@ -320,7 +320,7 @@ void map_object_pool_update(void)
                         &gameplay_sound_refs[KF_GAMEPLAY_SOUND_LIFT_DOOR], &object->position, KF_AUDIO_MAX_VOLUME);
                 }
                 if (elapsed == KF_MAP_OBJECT_LIFT_OPEN_LAST) {
-                    map_object_mark_collision_edge(object, KF_MAP_CELL_FLOOR, object->rotation.angles.y);
+                    map_object_mark_collision_edge(object, KF_MAP_CELL_FLOOR, object->rotation.vy);
                     object->action_timer = KF_MAP_OBJECT_DOOR_HOLD_FIRST;
                 }
             } else if (elapsed >= KF_MAP_OBJECT_DOOR_CLOSE_FIRST) {
@@ -329,11 +329,11 @@ void map_object_pool_update(void)
                     break;
                 }
                 if (elapsed == KF_MAP_OBJECT_DOOR_CLOSE_FIRST) {
-                    if (map_object_probe_door_closing(object, object->rotation.angles.y).kind != KfCollisionKind::None) {
+                    if (map_object_probe_door_closing(object, object->rotation.vy).kind != KfCollisionKind::None) {
                         object->action_timer = KF_MAP_OBJECT_DOOR_CLOSE_FIRST;
                         break;
                     }
-                    map_object_mark_collision_edge(object, KF_MAP_CELL_BLOCKED, object->rotation.angles.y);
+                    map_object_mark_collision_edge(object, KF_MAP_CELL_BLOCKED, object->rotation.vy);
                     audio_play_spatial_default_range(
                         &gameplay_sound_refs[KF_GAMEPLAY_SOUND_LIFT_DOOR], &object->position, KF_AUDIO_MAX_VOLUME);
                 }
@@ -353,10 +353,10 @@ void map_object_pool_update(void)
                 object->link.fields.vertical_velocity = MAP_DROP_TIP_INITIAL_ANGULAR_VELOCITY;
                 object->action_timer = KF_MAP_OBJECT_PROGRESS_RUNNING;
             } else {
-                object->rotation.angles.x += object->link.fields.vertical_velocity;
+                object->rotation.vx += object->link.fields.vertical_velocity;
                 object->link.fields.vertical_velocity += MAP_DROP_TIP_ANGULAR_ACCELERATION;
-                if (object->rotation.angles.x >= KF_ANGLE_QUARTER_TURN) {
-                    object->rotation.angles.x = KF_ANGLE_QUARTER_TURN;
+                if (object->rotation.vx >= KF_ANGLE_QUARTER_TURN) {
+                    object->rotation.vx = KF_ANGLE_QUARTER_TURN;
                     object->action = KF_MAP_OBJECT_OP_NONE;
                 }
             }
@@ -365,7 +365,7 @@ void map_object_pool_update(void)
             s32 floor_steps = map_floor_height_grid.cells[object->cell_z][object->cell_x];
 
             object->position.vy += MAP_DROP_SPIN_Y_STEP;
-            object->rotation.angles.y = (object->rotation.angles.y + MAP_DROP_SPIN_YAW_STEP) & KF_ANGLE_WRAP_MASK;
+            object->rotation.vy = (object->rotation.vy + MAP_DROP_SPIN_YAW_STEP) & KF_ANGLE_WRAP_MASK;
             if (object->position.vy < -(floor_steps * KF_MAP_HEIGHT_STEP)) {
                 break;
             }
@@ -379,11 +379,11 @@ void map_object_pool_update(void)
 
             object->position.vy += object->link.fields.vertical_velocity;
             floor = -(floor_steps * KF_MAP_HEIGHT_STEP);
-            tilt = object->rotation.angles.x;
+            tilt = object->rotation.vx;
             if (object->action_timer == KF_MAP_OBJECT_PROGRESS_INIT) {
-                object->rotation.angles.x = (tilt + MAP_DROP_BOUNCE_PITCH_STEP) & KF_ANGLE_WRAP_MASK;
+                object->rotation.vx = (tilt + MAP_DROP_BOUNCE_PITCH_STEP) & KF_ANGLE_WRAP_MASK;
             } else {
-                object->rotation.angles.x = (tilt - MAP_DROP_BOUNCE_PITCH_STEP) & KF_ANGLE_WRAP_MASK;
+                object->rotation.vx = (tilt - MAP_DROP_BOUNCE_PITCH_STEP) & KF_ANGLE_WRAP_MASK;
             }
             object->link.fields.vertical_velocity += MAP_DROP_BOUNCE_GRAVITY;
             if (object->position.vy < floor) {
@@ -391,7 +391,7 @@ void map_object_pool_update(void)
             }
             object->position.vy = floor;
             if (object->link.fields.vertical_velocity < MAP_DROP_BOUNCE_STOP_VELOCITY) {
-                object->rotation.angles.x = 0;
+                object->rotation.vx = 0;
                 object->action = KF_MAP_OBJECT_OP_NONE;
                 break;
             }
@@ -415,17 +415,17 @@ void map_object_pool_update(void)
                     break;
             case KF_MAP_OBJECT_PROJECTILE_EMITTER:
                 direction.vy = 0;
-                direction.vx = (kf::angle_sine(object->rotation.angles.y) * MAP_EMITTER_VELOCITY_NUMERATOR) >> MAP_EMITTER_VELOCITY_SHIFT;
-                direction.vz = (-kf::angle_cosine(object->rotation.angles.y) * MAP_EMITTER_VELOCITY_NUMERATOR) >> MAP_EMITTER_VELOCITY_SHIFT;
+                direction.vx = (kf::angle_sine(object->rotation.vy) * MAP_EMITTER_VELOCITY_NUMERATOR) >> MAP_EMITTER_VELOCITY_SHIFT;
+                direction.vz = (-kf::angle_cosine(object->rotation.vy) * MAP_EMITTER_VELOCITY_NUMERATOR) >> MAP_EMITTER_VELOCITY_SHIFT;
                 effect_spawn_map_emitter_projectile(object->link.fields.spawn.effect_id,
                     KF_EFFECT_CLASS_20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER, object->position, direction,
-                    object->rotation.vector);
+                    object->rotation);
                 object->action_timer = kf_enum_decode<KfMapObjectProgress>((kf::random_next() >> MAP_EMITTER_COUNTDOWN_RANDOM_SHIFT) + MAP_EMITTER_COUNTDOWN_BASE);
                 break;
             case KF_MAP_OBJECT_FIRE_BALL_EMITTER:
                 direction.vy = 0;
-                direction.vx = (kf::angle_sine(object->rotation.angles.y) * MAP_FIRE_BALL_EMITTER_VELOCITY_NUMERATOR) >> MAP_FIRE_BALL_EMITTER_VELOCITY_SHIFT;
-                direction.vz = (-kf::angle_cosine(object->rotation.angles.y) * MAP_FIRE_BALL_EMITTER_VELOCITY_NUMERATOR) >> MAP_FIRE_BALL_EMITTER_VELOCITY_SHIFT;
+                direction.vx = (kf::angle_sine(object->rotation.vy) * MAP_FIRE_BALL_EMITTER_VELOCITY_NUMERATOR) >> MAP_FIRE_BALL_EMITTER_VELOCITY_SHIFT;
+                direction.vz = (-kf::angle_cosine(object->rotation.vy) * MAP_FIRE_BALL_EMITTER_VELOCITY_NUMERATOR) >> MAP_FIRE_BALL_EMITTER_VELOCITY_SHIFT;
                 point.vx = object->position.vx;
                 point.vz = object->position.vz;
                 point.vy = object->position.vy + MAP_FIRE_BALL_EMITTER_Y_OFFSET;
@@ -435,8 +435,8 @@ void map_object_pool_update(void)
                 break;
             case KF_MAP_OBJECT_WIND_CUTTER_EMITTER:
                 direction.vy = 0;
-                direction.vx = (kf::angle_sine(object->rotation.angles.y) * MAP_EMITTER_VELOCITY_NUMERATOR) >> MAP_EMITTER_VELOCITY_SHIFT;
-                direction.vz = (-kf::angle_cosine(object->rotation.angles.y) * MAP_EMITTER_VELOCITY_NUMERATOR) >> MAP_EMITTER_VELOCITY_SHIFT;
+                direction.vx = (kf::angle_sine(object->rotation.vy) * MAP_EMITTER_VELOCITY_NUMERATOR) >> MAP_EMITTER_VELOCITY_SHIFT;
+                direction.vz = (-kf::angle_cosine(object->rotation.vy) * MAP_EMITTER_VELOCITY_NUMERATOR) >> MAP_EMITTER_VELOCITY_SHIFT;
                 point.vx = object->position.vx;
                 point.vz = object->position.vz;
                 point.vy = object->position.vy + MAP_WIND_CUTTER_EMITTER_Y_OFFSET;
@@ -450,9 +450,9 @@ void map_object_pool_update(void)
                     break;
                 }
                 direction.vy = 0;
-                direction.vx = (kf::angle_sine(object->rotation.angles.y + KF_ANGLE_QUARTER_TURN) * MAP_BOSS_EMITTER_VELOCITY_NUMERATOR) >> MAP_EMITTER_VELOCITY_SHIFT;
-                direction.vz = (-kf::angle_cosine(object->rotation.angles.y + KF_ANGLE_QUARTER_TURN) * MAP_BOSS_EMITTER_VELOCITY_NUMERATOR) >> MAP_EMITTER_VELOCITY_SHIFT;
-                switch (object->rotation.angles.y) {
+                direction.vx = (kf::angle_sine(object->rotation.vy + KF_ANGLE_QUARTER_TURN) * MAP_BOSS_EMITTER_VELOCITY_NUMERATOR) >> MAP_EMITTER_VELOCITY_SHIFT;
+                direction.vz = (-kf::angle_cosine(object->rotation.vy + KF_ANGLE_QUARTER_TURN) * MAP_BOSS_EMITTER_VELOCITY_NUMERATOR) >> MAP_EMITTER_VELOCITY_SHIFT;
+                switch (object->rotation.vy) {
                 case 0:
                     point.vx = object->position.vx + MAP_BOSS_EMITTER_X_OFFSET;
                     point.vz = object->position.vz + MAP_BOSS_EMITTER_Z_OFFSET;
@@ -563,7 +563,7 @@ void map_object_pool_update(void)
         case KF_MAP_OBJECT_OP_RESTORE_POINT:
             if (object->link.fields.link_id == KF_MAP_LINK_NONE) {
                 object->object_id = KF_MAP_OBJECT_FILLED_FOUNTAIN;
-                object->rotation.angles.y = (object->rotation.angles.y + MAP_RESTORE_POINT_YAW_STEP) & KF_ANGLE_WRAP_MASK;
+                object->rotation.vy = (object->rotation.vy + MAP_RESTORE_POINT_YAW_STEP) & KF_ANGLE_WRAP_MASK;
             }
             break;
         }
