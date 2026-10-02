@@ -215,7 +215,7 @@ static float envelope_frame(Voice &voice) {
     return state.level / envelope_level_scale;
 }
 
-static bool read_sample(Voice &voice, float &sample) {
+static bool read_sample(Voice &voice, float &sample) try {
     const auto index = voice.tone->sample_index;
     const auto &info = voice.bank->samples[index];
     const auto &range = voice.bank->data.samples[index];
@@ -227,17 +227,17 @@ static bool read_sample(Voice &voice, float &sample) {
         }
         // The validated, immutable block remains owned by the bank. Only the
         // voice's position jumps at a repeat; its two-sample history continues.
-        if (kf_audio_decode_block({voice.bank->body.data() + range.offset + voice.block_offset,
-                KF_AUDIO_ADPCM_BLOCK_BYTES},
-                voice.predictor, voice.decoded) != KF_CODEC_OK) {
-            sound.failed = true;
-            return false;
-        }
+        kf_audio_decode_block({voice.bank->body.data() + range.offset + voice.block_offset,
+                KF_AUDIO_ADPCM_BLOCK_BYTES}, voice.predictor, voice.decoded);
         voice.block_offset += KF_AUDIO_ADPCM_BLOCK_BYTES;
         voice.decoded_cursor = 0;
     }
     sample = voice.decoded[voice.decoded_cursor++] / pcm16_scale;
     return true;
+} catch (const codec::Error &error) {
+    error.report();
+    sound.failed = true;
+    return false;
 }
 
 static void voice_pitch(Voice &voice, int bend = pitch_bend_center) {
@@ -566,12 +566,10 @@ void sound_master_volume(s16 left, s16 right) {
 
 SoundBank *sound_bank_load(const u8 *header, std::size_t header_size, const u8 *body, std::size_t body_size) try {
     auto bank = std::make_unique<SoundBank>();
-    if (kf_audio_bank_decode({header, header_size}, {body, body_size}, bank->data) != KF_CODEC_OK)
-        return nullptr;
+    kf_audio_bank_decode({header, header_size}, {body, body_size}, bank->data);
     for (std::size_t i = 0; i < bank->data.sample_count; ++i) {
         const auto &range = bank->data.samples[i];
-        if (kf_audio_sample_info({body + range.offset, range.size}, bank->samples[i]) != KF_CODEC_OK)
-            return nullptr;
+        bank->samples[i] = kf_audio_sample_info({body + range.offset, range.size});
     }
     if (body_size > bank->body.max_size())
         return nullptr;
@@ -581,6 +579,9 @@ SoundBank *sound_bank_load(const u8 *header, std::size_t header_size, const u8 *
     bank->next = sound.banks;
     sound.banks = bank.release();
     return sound.banks;
+} catch (const codec::Error &error) {
+    error.report();
+    return nullptr;
 } catch (const std::bad_alloc &) {
     return nullptr;
 }
@@ -629,8 +630,7 @@ MusicSequence *sound_sequence_load(const u8 *data, std::size_t size, SoundBank *
     if (!bank)
         return nullptr;
     auto sequence = std::make_unique<MusicSequence>();
-    if (kf_music_decode({data, size}, sequence->events, sequence->info) != KF_CODEC_OK)
-        return nullptr;
+    kf_music_decode({data, size}, sequence->events, sequence->info);
     sequence->bank = bank;
     sequence->left = sequence->right = 1;
     sound_poll();
@@ -638,6 +638,9 @@ MusicSequence *sound_sequence_load(const u8 *data, std::size_t size, SoundBank *
     sequence->next = sound.sequences;
     sound.sequences = sequence.release();
     return sound.sequences;
+} catch (const codec::Error &error) {
+    error.report();
+    return nullptr;
 } catch (const std::bad_alloc &) {
     return nullptr;
 } catch (const std::length_error &) {

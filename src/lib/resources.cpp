@@ -36,7 +36,7 @@ void cell_windows_load(KfResourceChunk chunk,
     std::span<KfCellWindow, KF_CELL_WINDOW_YAW_COUNT> windows)
 {
     using namespace kf::codec;
-    if (decode([&] {
+    try {
         Reader input({chunk.data, chunk.size});
         for (auto &window : windows) {
             window.width = input.u16_le();
@@ -55,8 +55,10 @@ void cell_windows_load(KfResourceChunk chunk,
                 cell = kf_enum_decode<KfCellVisibility>(value);
             }
         }
-    }) != KF_CODEC_OK)
+    } catch (const Error &error) {
+        error.report();
         kf::host_fail("Invalid cell-window resource");
+    }
 }
 
 void tim_upload_images(const u8 *tim_data, std::size_t size)

@@ -45,14 +45,14 @@ struct KfMusicEvent {
 struct KfMusicInfo { u32 resolution, tempo; };
 
 // Inputs and outputs are disjoint. No result retains input pointers.
-KfCodecResult kf_audio_bank_decode(std::span<const u8> header, std::span<const u8> body,
+void kf_audio_bank_decode(std::span<const u8> header, std::span<const u8> body,
     KfAudioBankData &output);
 // Positions are mono frames; zero loop_end denotes a one-shot sample.
-KfCodecResult kf_audio_sample_info(std::span<const u8> data, KfAudioSampleInfo &info);
+KfAudioSampleInfo kf_audio_sample_info(std::span<const u8> data);
 // Zero predictor state at key-on, not at loop jumps. Decode 16 bytes to 28 frames.
-KfCodecResult kf_audio_decode_block(std::span<const u8> data,
+void kf_audio_decode_block(std::span<const u8> data,
     KfAudioPredictor &predictor, std::span<s16> pcm);
-KfCodecResult kf_music_decode(std::span<const u8> data,
+void kf_music_decode(std::span<const u8> data,
     std::vector<KfMusicEvent> &events, KfMusicInfo &info);
 
 #endif // KF_AUDIO_CODEC_H
