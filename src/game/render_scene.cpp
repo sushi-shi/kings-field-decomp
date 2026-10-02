@@ -81,7 +81,7 @@ void render_entities(void)
     }
 
     for (auto &effect : effect_state.records) {
-        if (effect.type == KF_EFFECT_SLOT_FREE || effect.render_id.model == KF_EFFECT_MODEL_NONE) {
+        if (effect.type == KF_EFFECT_SLOT_FREE || !effect_has_visual(effect)) {
             continue;
         }
         if (render_cell_is_visible(

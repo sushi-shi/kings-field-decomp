@@ -427,8 +427,8 @@ void effect_update_dispatch(void)
         if (kf_enum_encode<u8>(phase) < kf_enum_encode<u8>(KF_EFFECT_MOONLIGHT_TRAVEL_LAST) + 1) {
             if (effect_map_collision(&effect->position, PROJECTILE_COLLISION_RADIUS).kind != KfCollisionKind::None) {
                 effect->animation_clip = KF_ANIMATION_CLIP_NONE;
-                effect->base_render_id.model = KF_EFFECT_MODEL_NONE;
-                effect->render_id.model = KF_EFFECT_MODEL_NONE;
+                effect->base_render_id.billboard = KF_EFFECT_BILLBOARD_NONE;
+                effect->render_id.billboard = KF_EFFECT_BILLBOARD_NONE;
                 effect->phase = KF_EFFECT_MOONLIGHT_IMPACT_FIRST;
                 audio_play_spatial_default_range(
                     &effect_state.magic.entries[kf_enum_encode<u8>(KF_EFFECT_KIND_RADIAL_BLAST)].sounds[1], &effect->position, KF_AUDIO_MAX_VOLUME);

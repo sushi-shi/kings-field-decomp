@@ -54,7 +54,7 @@ void render_effect(KfEffectRecord *effect, const MATRIX *lights)
     u16 asset;
     KfTmdObject *object;
 
-    if (effect->render_id.model == KF_EFFECT_MODEL_NONE) {
+    if (!effect_has_visual(*effect)) {
         return;
     }
     relative_position = VECTOR{
