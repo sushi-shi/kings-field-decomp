@@ -63,6 +63,13 @@ extern KfCollisionTarget collision_target;
 extern std::array<s16, KF_MAP_ATTRIBUTE_COUNT> map_cell_attribute_height_table;
 extern std::array<KfCellHeightRecord, KF_MAP_CELL_HEIGHT_RECORD_COUNT> map_cell_height_records;
 
+inline s16 map_attack_height(KfMapAttribute attribute)
+{
+    const auto index = kf_enum_encode<u8>(attribute);
+    // Attacks use the preceding height; attribute zero reads a zero halfword in retail.
+    return index == 0 ? 0 : map_cell_attribute_height_table[index - 1];
+}
+
 extern void collision_adjust_cell_occupancy(
     u16 cell_x, u16 cell_z, s32 delta);
 extern KfCollisionResult collision_query_world(

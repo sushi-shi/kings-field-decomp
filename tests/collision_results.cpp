@@ -3,6 +3,7 @@
 #include "../src/game/map_object_pool.cpp"
 #undef map_object_pool_find_near_point
 #include "../src/game/effect_map_collision.cpp"
+#include <algorithm>
 #include <cassert>
 #include <limits>
 
@@ -44,6 +45,15 @@ int main()
             assert(collision_query_world(1000, 0, coordinate, 0, 0, flags).kind == KfCollisionKind::Terrain);
         }
     }
+    // The retail attack lookup starts one halfword before the collision table.
+    std::array<s16, 256> attack_heights {};
+    std::copy(map_cell_attribute_height_table.begin(), map_cell_attribute_height_table.end(),
+              attack_heights.begin() + 1);
+    for (u16 attribute = 0; attribute < attack_heights.size(); ++attribute)
+        assert(map_attack_height(kf_enum_decode<KfMapAttribute>(attribute)) == attack_heights[attribute]);
+    assert(map_attack_height(KF_MAP_ATTRIBUTE_00) == 0);
+    assert(map_attack_height(KF_MAP_ATTRIBUTE_NONE) == -25000);
+
     constexpr s32 cell = 50 * KF_MAP_COLUMNS + 50;
     constexpr s32 coordinate = 50 * KF_MAP_TILE_SIZE;
     map_collision_grid.linear[cell] = KF_MAP_CELL_FLOOR;
