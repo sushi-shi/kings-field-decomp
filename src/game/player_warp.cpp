@@ -47,17 +47,10 @@ constexpr WarpCell floor5_entry_return = {14, 79};
 void player_warp_shimmer(KfWarpShimmerMode shimmer_mode, VECTOR *position)
 {
     const auto input_context = kf::host_set_input_context(kf::InputContext::Scripted);
-    std::array<KfEffectRecord *, KF_CYLINDER_TRANSITION_COUNT> effects;
-    KfEffectRecord **cursor;
-    KfEffectRecord *effect;
-    struct {
-        VECTOR position;
-        SVECTOR direction;
-    } scratch;
+    std::array<KfEffectRecord *, KF_CYLINDER_TRANSITION_COUNT> effects{};
     s16 scale_y;
     s16 scale_y_step;
     s16 frame;
-    s16 i;
     KfWarpShimmerMode mode_value = shimmer_mode;
 
     switch (mode_value) {
@@ -72,18 +65,13 @@ void player_warp_shimmer(KfWarpShimmerMode shimmer_mode, VECTOR *position)
         break;
     }
 
-    scratch.position.vx = position->vx;
-    scratch.position.vz = position->vz;
-    scratch.position.vy = position->vy;
     display_flip_buffer_index();
-    cursor = effects.data();
-    for (i = KF_CYLINDER_TRANSITION_COUNT - 1; i != -1; i--) {
-        effect = effect_pool_construct(
-            WARP_SHIMMER_OWNER_ID,
-            KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS,
-            KF_EFFECT_KIND_WARP_SHIMMER, position, &scratch.direction);
+    for (auto &effect : effects) {
+        effect = effect_spawn_warp_shimmer(WARP_SHIMMER_OWNER_ID,
+            KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS, *position, {});
+        if (!effect)
+            break;
         effect->scale_y = scale_y;
-        *cursor++ = effect;
     }
 
     display_flip_buffer_index();
@@ -92,12 +80,13 @@ void player_warp_shimmer(KfWarpShimmerMode shimmer_mode, VECTOR *position)
     render_frame(&player_state.camera_position, &player_state.camera_rotation);
 
     for (frame = 0; frame < KF_CYLINDER_TRANSITION_FRAMES; frame++) {
-        cursor = effects.data();
         if (frame == WARP_SHIMMER_SOUND_FRAME) {
             sound_ref_play(audio_playback(), &gameplay_sound_refs[KF_GAMEPLAY_SOUND_WARP_SHIMMER], KF_AUDIO_MAX_VOLUME);
         }
-        for (i = 0; i < KF_CYLINDER_TRANSITION_COUNT; i++) {
-            effect = *cursor++;
+        for (s16 i = 0; i < KF_CYLINDER_TRANSITION_COUNT; ++i) {
+            auto *effect = effects[i];
+            if (!effect)
+                break;
 
             if (i * KF_CYLINDER_TRANSITION_STAGGER_FRAMES < frame) {
                 u16 current_scale_y = effect->scale_y;
@@ -114,11 +103,9 @@ void player_warp_shimmer(KfWarpShimmerMode shimmer_mode, VECTOR *position)
     }
 
     if (mode_value != KF_WARP_SHIMMER_GROW_KEEP) {
-        cursor = effects.data();
-        for (i = KF_CYLINDER_TRANSITION_COUNT - 1; i != -1; i--) {
-            effect = *cursor++;
-            effect->type = KF_EFFECT_SLOT_FREE;
-        }
+        for (auto *effect : effects)
+            if (effect)
+                effect->type = KF_EFFECT_SLOT_FREE;
     }
     kf::host_set_input_context(input_context);
 }

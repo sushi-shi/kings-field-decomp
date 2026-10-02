@@ -94,17 +94,27 @@ void magic_cast(void)
         angles.z = player_state.camera_rotation.vz;
         pitch_yaw_to_forward_vector(&angles, &direction);
         vector3s_scale_shift12(speed, &direction);
-        if (player_state.selected_magic_id == KF_MAGIC_LIGHT_NEEDLE) {
-            SVECTOR rotation;
-
-            rotation = player_state.camera_rotation;
-            effect_pool_construct(
-                KF_PLAYER_DAMAGE_MULTIPLIER_ONE, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS,
-                player_state.selected_magic_id, &world_pos, &direction, KfEffectRotationSoundArguments{&rotation, KF_EFFECT_SOUND_PLAY});
-        } else {
-            effect_pool_construct(
-                KF_PLAYER_DAMAGE_MULTIPLIER_ONE, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS,
-                player_state.selected_magic_id, &world_pos, &direction, KfEffectDurationSoundArguments{distance, KF_EFFECT_SOUND_PLAY});
+        switch (player_state.selected_magic_id) {
+        case KF_MAGIC_LIGHT_NEEDLE:
+            effect_spawn_light_needle(KF_PLAYER_DAMAGE_MULTIPLIER_ONE,
+                KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS, world_pos, direction, player_state.camera_rotation,
+                KF_EFFECT_SOUND_PLAY);
+            break;
+        case KF_MAGIC_LIGHTNING_BOLT:
+            effect_spawn_lightning_bolt(KF_PLAYER_DAMAGE_MULTIPLIER_ONE,
+                KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS, world_pos, direction,
+                KfEffectVariant::Normal, distance, KF_EFFECT_SOUND_PLAY);
+            break;
+        case KF_MAGIC_FIRE_BALL:
+            effect_spawn_fire_ball(KF_PLAYER_DAMAGE_MULTIPLIER_ONE,
+                KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS, world_pos, direction);
+            break;
+        case KF_MAGIC_WIND_CUTTER:
+            effect_spawn_wind_cutter(KF_PLAYER_DAMAGE_MULTIPLIER_ONE,
+                KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS, world_pos, direction,
+                KF_EFFECT_SOUND_PLAY);
+            break;
+        default: break;
         }
         break;
     }
@@ -116,10 +126,9 @@ void magic_cast(void)
             &player_state.camera_position,
             player_state.camera_rotation.vy, KF_EFFECT_ACTOR_TARGET_MAX_DISTANCE, KF_ACTOR_AIM_TOLERANCE, &distance);
         if (target != NULL) {
-            effect_pool_construct(
-                KF_PLAYER_DAMAGE_MULTIPLIER_ONE, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
-                player_state.selected_magic_id, &target->position,
-                &player_state.camera_rotation, KfEffectBranchArguments{KF_EFFECT_GROUND_BRANCH_ROOT});
+            effect_spawn_fire_wall(KF_PLAYER_DAMAGE_MULTIPLIER_ONE,
+                KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER, target->position,
+                player_state.camera_rotation, KF_EFFECT_GROUND_BRANCH_ROOT);
         } else {
             VECTOR spawn;
             s32 cell_x;
@@ -132,10 +141,9 @@ void magic_cast(void)
             cell_z = spawn.vz / KF_MAP_TILE_SIZE;
             cell_x = spawn.vx / KF_MAP_TILE_SIZE;
             spawn.vy = -(map_floor_height_grid.cells[cell_z][cell_x] * KF_MAP_HEIGHT_STEP);
-            effect_pool_construct(
-                KF_PLAYER_DAMAGE_MULTIPLIER_ONE, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
-                player_state.selected_magic_id, &spawn, &player_state.camera_rotation,
-                KfEffectBranchArguments{KF_EFFECT_GROUND_BRANCH_ROOT});
+            effect_spawn_fire_wall(KF_PLAYER_DAMAGE_MULTIPLIER_ONE,
+                KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER, spawn,
+                player_state.camera_rotation, KF_EFFECT_GROUND_BRANCH_ROOT);
         }
         break;
     }

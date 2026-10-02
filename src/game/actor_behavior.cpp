@@ -573,25 +573,62 @@ void actor_spawn_action_effect(KfActorEffectCode effect_code, KfActorEffectSlot 
             }
             pitch_yaw_to_forward_vector(&effect_rotation.angles, &direction);
             vector3s_scale_shift12(speed, &direction);
-            if (actor_effect_kind_from_payload(effect_code) == KF_MAGIC_LIGHT_NEEDLE || actor_effect_kind_from_payload(effect_code) == KF_EFFECT_KIND_PHYSICAL_PROJECTILE) {
-                effect_pool_construct(
-                    definition->effect_owner_id, KF_EFFECT_CLASS_20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
-                    actor_effect_kind_from_payload(effect_code), &position, &direction, KfEffectRotationSoundArguments{&effect_rotation.vector, KF_EFFECT_SOUND_PLAY});
-            } else if (actor_effect_kind_from_payload(effect_code) == KF_EFFECT_KIND_HOMING_PROJECTILE_ALTERNATE) {
+            switch (actor_effect_kind_from_payload(effect_code)) {
+            case KF_MAGIC_LIGHT_NEEDLE:
+                effect_spawn_light_needle(definition->effect_owner_id,
+                    KF_EFFECT_CLASS_20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER, position, direction,
+                    effect_rotation.vector, KF_EFFECT_SOUND_PLAY);
+                break;
+            case KF_EFFECT_KIND_PHYSICAL_PROJECTILE:
+                effect_spawn_physical_projectile(definition->effect_owner_id,
+                    KF_EFFECT_CLASS_20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER, position, direction,
+                    effect_rotation.vector, KF_EFFECT_SOUND_PLAY);
+                break;
+            case KF_EFFECT_KIND_HOMING_PROJECTILE_ALTERNATE:
                 burst_rotation.angles.x = actor->rotation.angles.x;
                 burst_rotation.angles.y = facing;
                 burst_rotation.angles.z = actor->rotation.angles.z;
-                effect_pool_construct(
-                    definition->effect_owner_id, KF_EFFECT_CLASS_20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER, KF_EFFECT_KIND_HOMING_PROJECTILE_ALTERNATE,
-                    &position, &direction, KfEffectHomingArguments{&burst_rotation.vector, KF_EFFECT_HOMING_PLAYER, KF_EFFECT_SOUND_PLAY});
-            } else if (actor_effect_kind_from_payload(effect_code) == KF_EFFECT_KIND_SCATTER_PROJECTILE) {
-                effect_pool_construct(
-                    definition->effect_owner_id, KF_EFFECT_CLASS_20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
-                    KF_EFFECT_KIND_SCATTER_PROJECTILE, &position, &direction, KfEffectScatterArguments{ACTOR_SCATTER_GENERATIONS, distance, ACTOR_SCATTER_INITIAL_SCALE});
-            } else {
-                effect_pool_construct(
-                    definition->effect_owner_id, KF_EFFECT_CLASS_20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
-                    actor_effect_kind_from_payload(effect_code), &position, &direction, KfEffectDurationSoundArguments{distance, KF_EFFECT_SOUND_PLAY});
+                effect_spawn_homing_projectile(definition->effect_owner_id,
+                    KF_EFFECT_CLASS_20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER, position, direction,
+                    KfEffectVariant::Alternate, burst_rotation.vector, KF_EFFECT_HOMING_PLAYER, KF_EFFECT_SOUND_PLAY);
+                break;
+            case KF_EFFECT_KIND_SCATTER_PROJECTILE:
+                effect_spawn_scatter_projectile(definition->effect_owner_id,
+                    KF_EFFECT_CLASS_20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER, position, direction,
+                    ACTOR_SCATTER_GENERATIONS, distance, ACTOR_SCATTER_INITIAL_SCALE);
+                break;
+            case KF_MAGIC_FIRE_BALL:
+                effect_spawn_fire_ball(definition->effect_owner_id,
+                    KF_EFFECT_CLASS_20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER, position, direction);
+                break;
+            case KF_MAGIC_WIND_CUTTER:
+                effect_spawn_wind_cutter(definition->effect_owner_id,
+                    KF_EFFECT_CLASS_20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER, position, direction,
+                    KF_EFFECT_SOUND_PLAY);
+                break;
+            case KF_EFFECT_KIND_ACTOR_SPAWNER:
+                effect_spawn_actor_spawner(definition->effect_owner_id,
+                    KF_EFFECT_CLASS_20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER, position, direction,
+                    distance);
+                break;
+            case KF_EFFECT_KIND_DARKNESS_PROJECTILE:
+                effect_spawn_darkness_projectile(definition->effect_owner_id,
+                    KF_EFFECT_CLASS_20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER, position, direction);
+                break;
+            case KF_EFFECT_KIND_CURSE_PROJECTILE:
+                effect_spawn_curse_projectile(definition->effect_owner_id,
+                    KF_EFFECT_CLASS_20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER, position, direction);
+                break;
+            case KF_EFFECT_KIND_EMERGING_PROJECTILE:
+                effect_spawn_emerging_projectile(definition->effect_owner_id,
+                    KF_EFFECT_CLASS_20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER, position, direction);
+                break;
+            case KF_EFFECT_KIND_LIGHTNING_BOLT_ALTERNATE:
+                effect_spawn_lightning_bolt(definition->effect_owner_id,
+                    KF_EFFECT_CLASS_20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER, position, direction,
+                    KfEffectVariant::Alternate, distance, KF_EFFECT_SOUND_PLAY);
+                break;
+            default: break;
             }
             break;
         }
@@ -773,9 +810,8 @@ void actor_update_boss_death_sequence(void)
         position.vz = actor->position.vz + (kf::random_next() & ACTOR_BOSS_DEATH_SCATTER_XZ_MASK) - ACTOR_BOSS_DEATH_SCATTER_XZ_BIAS;
         position.vy = actor->position.vy - (kf::random_next() & ACTOR_BOSS_DEATH_SCATTER_Y_MASK);
 
-        effect_pool_construct(
-            0, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER, KF_EFFECT_KIND_RADIAL_BLAST_ALTERNATE,
-            &position, &direction, KfEffectSoundArguments{KF_EFFECT_SOUND_SILENT});
+        effect_spawn_radial_blast(0, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
+            position, direction, KfEffectVariant::Alternate, KF_EFFECT_SOUND_SILENT);
         if (actor->animation_phase % (definition->action_animation_steps[KF_ACTOR_ANIM_SLOT_DEATH] * ACTOR_BOSS_DEATH_SOUND_PERIOD) == 0) {
             sound_ref_play(audio_playback(), &boss_death_loop_sound, ACTOR_BOSS_DEATH_LOOP_VOLUME);
         }
