@@ -364,11 +364,15 @@ s32 player_move_horizontal(s32 heading, s32 distance)
     new_z = dz + player_state.camera_position.vz;
     new_x = dx + player_state.camera_position.vx;
     for (;;) {
-        if (collision_query_world(new_x, player_state.foot_height, new_z,
+        const auto collision = collision_query_world(new_x, player_state.foot_height, new_z,
                 KF_COLLISION_PLAYER_RADIUS, KF_COLLISION_PLAYER_HEIGHT,
-                KF_COLLISION_SKIP_TERRAIN | KF_COLLISION_SKIP_PLAYER | KF_COLLISION_CAPTURE_TARGET).kind
-            == KfCollisionKind::None) {
+                KF_COLLISION_SKIP_TERRAIN | KF_COLLISION_SKIP_PLAYER | KF_COLLISION_CAPTURE_TARGET);
+        if (collision.kind == KfCollisionKind::None) {
             break;
+        }
+        // The world boundary has no entity target to slide around.
+        if (collision.kind == KfCollisionKind::Terrain) {
+            return 1;
         }
 
         delta.vx = collision_target.position.vx - player_state.camera_position.vx;

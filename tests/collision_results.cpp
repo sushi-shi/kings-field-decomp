@@ -4,6 +4,7 @@
 #undef map_object_pool_find_near_point
 #include "../src/game/effect_map_collision.cpp"
 #include <cassert>
+#include <limits>
 
 KfMapCollisionGrid map_collision_grid {};
 KfMapGrid map_collision_flag_grid {}, map_floor_height_grid {};
@@ -36,6 +37,13 @@ namespace kf {
 
 int main()
 {
+    for (const s32 coordinate : {-1, -KF_MAP_TILE_SIZE, KF_MAP_COLUMNS * KF_MAP_TILE_SIZE,
+                                 std::numeric_limits<s32>::min(), std::numeric_limits<s32>::max()}) {
+        for (const u32 flags : {0u, u32(KF_COLLISION_SKIP_TERRAIN | KF_COLLISION_CAPTURE_TARGET)}) {
+            assert(collision_query_world(coordinate, 0, 1000, 0, 0, flags).kind == KfCollisionKind::Terrain);
+            assert(collision_query_world(1000, 0, coordinate, 0, 0, flags).kind == KfCollisionKind::Terrain);
+        }
+    }
     constexpr s32 cell = 50 * KF_MAP_COLUMNS + 50;
     constexpr s32 coordinate = 50 * KF_MAP_TILE_SIZE;
     map_collision_grid.linear[cell] = KF_MAP_CELL_FLOOR;

@@ -16,7 +16,7 @@ class NativeRegressions(unittest.TestCase):
         cls.addClassCleanup(cls.directory.cleanup)
         for name in ["native_regressions", "lighting_regressions", "resource_failures",
                      "cutscene_resources", "collision_results", "map_grids", "menu_outcomes", "dialogue_compare",
-                     "keyboard_controls", "cell_windows", "vertex_sources", "asset_lifetimes", "actor_definitions"]:
+                     "keyboard_controls", "cell_windows", "vertex_sources", "asset_lifetimes", "actor_definitions", "player_movement"]:
             subprocess.run(
                 [
                     "clang++", "-std=c++20", "-O1", "-g", "-fno-rtti",
@@ -101,6 +101,9 @@ class NativeRegressions(unittest.TestCase):
 
     def test_actor_definition_attachments_and_shared_parameters(self):
         subprocess.run([Path(self.directory.name) / "actor_definitions"], check=True)
+
+    def test_player_movement_at_world_boundaries(self):
+        subprocess.run([Path(self.directory.name) / "player_movement"], check=True)
 
     def test_lighting_preserves_translation_and_supports_aliasing(self):
         subprocess.run([Path(self.directory.name) / "lighting_regressions"], check=True)
