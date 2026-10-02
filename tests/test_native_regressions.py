@@ -16,7 +16,8 @@ class NativeRegressions(unittest.TestCase):
         cls.addClassCleanup(cls.directory.cleanup)
         for name in ["native_regressions", "lighting_regressions", "resource_failures",
                      "cutscene_resources", "collision_results", "map_grids", "menu_outcomes", "dialogue_compare",
-                     "keyboard_controls", "cell_windows", "vertex_sources", "asset_lifetimes", "effect_construction"]:
+                     "keyboard_controls", "cell_windows", "vertex_sources", "asset_lifetimes",
+                     "effect_construction", "effect_exhaustion"]:
             subprocess.run(
                 [
                     "clang++", "-std=c++20", "-O1", "-g", "-fno-rtti",
@@ -28,7 +29,8 @@ class NativeRegressions(unittest.TestCase):
                     *([str(ROOT / source) for source in ("src/audio/codec.cpp", "src/renderer/tim.cpp",
                                                         "src/lib/resource_decode.cpp")]
                       if name == "cutscene_resources" else []),
-                    *([str(ROOT / "src/lib/resource_decode.cpp")] if name == "asset_lifetimes" else []),
+                    *([str(ROOT / "src/lib/resource_decode.cpp")]
+                      if name in ("asset_lifetimes", "effect_exhaustion") else []),
                     *([str(ROOT / source) for source in ("src/lib/resource_file.cpp", "src/platform/files.cpp",
                                                         "src/platform/language_runtime.cpp", "src/platform/language.cpp")]
                       if name == "dialogue_compare" else []),
@@ -40,6 +42,9 @@ class NativeRegressions(unittest.TestCase):
 
     def test_effect_construction_contracts(self):
         subprocess.run([Path(self.directory.name) / "effect_construction"], check=True, timeout=10)
+
+    def test_effect_pool_exhaustion(self):
+        subprocess.run([Path(self.directory.name) / "effect_exhaustion"], check=True, timeout=10)
 
     def test_map_grid_copy_alignment_and_bounds(self):
         for scenario in ("aligned", "unaligned", "truncated", "zero-orientation", "high-orientation"):
