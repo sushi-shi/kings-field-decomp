@@ -107,37 +107,21 @@ enum {
     KF_MAP_OBJECT_PLACEMENT_DROP_FIRST = 180
 };
 
-enum class KfMapObjectProgress : u16 {
-    KF_MAP_OBJECT_PROGRESS_INIT = 0,
-    KF_MAP_OBJECT_PROGRESS_RUNNING = 1,
-    KF_MAP_OBJECT_SWING_OPEN_LAST = 31,
-    KF_MAP_OBJECT_SWING_OPEN_END = 32,
-    KF_MAP_OBJECT_LIFT_OPEN_LAST = 40,
-    KF_MAP_OBJECT_LIFT_OPEN_END = 41,
-    KF_MAP_OBJECT_DOOR_HOLD_FIRST = 250,
-    KF_MAP_OBJECT_DOOR_CLOSE_FIRST = 300,
-    KF_MAP_OBJECT_SWING_CLOSE_END = 332,
-    KF_MAP_OBJECT_LIFT_CLOSE_END = 341,
-    KF_MAP_OBJECT_REVEAL_SETTLE_END = 6,
-    KF_MAP_OBJECT_SWITCH_READY = 0,
-    KF_MAP_OBJECT_SWITCH_FORWARD = 1,
-    KF_MAP_OBJECT_SWITCH_DISABLED = 2,
-    KF_MAP_OBJECT_SWITCH_REVERSE = 3
-}; using enum KfMapObjectProgress;
-inline KfMapObjectProgress& operator++(KfMapObjectProgress& value)
-    { value = static_cast<KfMapObjectProgress>(static_cast<u16>(value) + 1); return value; }
-    inline KfMapObjectProgress operator++(KfMapObjectProgress& value, int)
-    { KfMapObjectProgress previous = value; ++value; return previous; }
-    inline KfMapObjectProgress& operator--(KfMapObjectProgress& value)
-    { value = static_cast<KfMapObjectProgress>(static_cast<u16>(value) - 1); return value; }
-    inline KfMapObjectProgress operator--(KfMapObjectProgress& value, int)
-    { KfMapObjectProgress previous = value; --value; return previous; }
-
-constexpr KfMapObjectProgress map_object_toggle_progress(KfMapObjectProgress progress)
-{
-    return progress == KF_MAP_OBJECT_PROGRESS_INIT
-        ? KF_MAP_OBJECT_PROGRESS_RUNNING : KF_MAP_OBJECT_PROGRESS_INIT;
-}
+inline constexpr u16 KF_MAP_OBJECT_PROGRESS_INIT = 0;
+inline constexpr u16 KF_MAP_OBJECT_PROGRESS_RUNNING = 1;
+inline constexpr u16 KF_MAP_OBJECT_SWING_OPEN_LAST = 31;
+inline constexpr u16 KF_MAP_OBJECT_SWING_OPEN_END = 32;
+inline constexpr u16 KF_MAP_OBJECT_LIFT_OPEN_LAST = 40;
+inline constexpr u16 KF_MAP_OBJECT_LIFT_OPEN_END = 41;
+inline constexpr u16 KF_MAP_OBJECT_DOOR_HOLD_FIRST = 250;
+inline constexpr u16 KF_MAP_OBJECT_DOOR_CLOSE_FIRST = 300;
+inline constexpr u16 KF_MAP_OBJECT_SWING_CLOSE_END = 332;
+inline constexpr u16 KF_MAP_OBJECT_LIFT_CLOSE_END = 341;
+inline constexpr u16 KF_MAP_OBJECT_REVEAL_SETTLE_END = 6;
+inline constexpr u16 KF_MAP_OBJECT_SWITCH_READY = 0;
+inline constexpr u16 KF_MAP_OBJECT_SWITCH_FORWARD = 1;
+inline constexpr u16 KF_MAP_OBJECT_SWITCH_DISABLED = 2;
+inline constexpr u16 KF_MAP_OBJECT_SWITCH_REVERSE = 3;
 
 enum class KfMapObjectDropSource : u8 {
     KF_MAP_OBJECT_DROP_FROM_PLACEMENT = 0,
@@ -212,7 +196,7 @@ typedef struct KfMapObject {
     KfMapObjectLink link;
     KfMapObjectOperation action;
     u8 unknown_29;
-    KfMapObjectProgress action_timer;
+    u16 action_timer;
 } KfMapObject;
 
 #include <kf/lib/camera_path.h>

@@ -66,28 +66,18 @@ enum class KfActorAction : u8 {
     KF_ACTOR_ACTION_NONE = 0xff
 }; using enum KfActorAction;
 
-enum class KfActorActionProgress : u8 {
-    KF_ACTOR_PROGRESS_INIT = 0,
-    KF_ACTOR_PROGRESS_RUNNING = 1,
-    KF_ACTOR_PROGRESS_JUMP_RISING = 1,
-    KF_ACTOR_PROGRESS_JUMP_ATTACK_PENDING = 2,
-    KF_ACTOR_PROGRESS_JUMP_WAIT_FOR_LANDING = 3,
-    KF_ACTOR_PROGRESS_DRIFT_COLLIDED = 2,
-    KF_ACTOR_PROGRESS_POST_DEATH_END = 7,
-    KF_ACTOR_PROGRESS_BACKOFF_END = 11,
-    KF_ACTOR_PROGRESS_BACKOFF_BASE = 13,
-    KF_ACTOR_PROGRESS_BACKOFF_LAST = 28,
-    KF_ACTOR_PROGRESS_LOCKED = 0xf0,
-    KF_ACTOR_PROGRESS_COMPLETE = 0xff
-}; using enum KfActorActionProgress;
-inline KfActorActionProgress& operator++(KfActorActionProgress& value)
-    { value = static_cast<KfActorActionProgress>(static_cast<u8>(value) + 1); return value; }
-    inline KfActorActionProgress operator++(KfActorActionProgress& value, int)
-    { KfActorActionProgress previous = value; ++value; return previous; }
-    inline KfActorActionProgress& operator--(KfActorActionProgress& value)
-    { value = static_cast<KfActorActionProgress>(static_cast<u8>(value) - 1); return value; }
-    inline KfActorActionProgress operator--(KfActorActionProgress& value, int)
-    { KfActorActionProgress previous = value; --value; return previous; }
+inline constexpr u8 KF_ACTOR_PROGRESS_INIT = 0;
+inline constexpr u8 KF_ACTOR_PROGRESS_RUNNING = 1;
+inline constexpr u8 KF_ACTOR_PROGRESS_JUMP_RISING = 1;
+inline constexpr u8 KF_ACTOR_PROGRESS_JUMP_ATTACK_PENDING = 2;
+inline constexpr u8 KF_ACTOR_PROGRESS_JUMP_WAIT_FOR_LANDING = 3;
+inline constexpr u8 KF_ACTOR_PROGRESS_DRIFT_COLLIDED = 2;
+inline constexpr u8 KF_ACTOR_PROGRESS_POST_DEATH_END = 7;
+inline constexpr u8 KF_ACTOR_PROGRESS_BACKOFF_END = 11;
+inline constexpr u8 KF_ACTOR_PROGRESS_BACKOFF_BASE = 13;
+inline constexpr u8 KF_ACTOR_PROGRESS_BACKOFF_LAST = 28;
+inline constexpr u8 KF_ACTOR_PROGRESS_LOCKED = 0xf0;
+inline constexpr u8 KF_ACTOR_PROGRESS_COMPLETE = 0xff;
 
 enum class KfActorMoveDirection : s32 {
     KF_ACTOR_MOVE_BACKWARD = -1,
@@ -278,7 +268,7 @@ typedef struct KfActor {
     VECTOR position;
     KfRotation rotation;
     struct KfAnimationCacheRecord *animation_cache;
-    KfActorActionProgress action_progress;
+    u8 action_progress;
     KfActorCollisionState collision_state;
     s16 movement_yaw;
     s16 animation_step;
