@@ -147,7 +147,7 @@ void player_death_restart(void)
 {
     KfFloorId floor = player_state.progress_state.current_floor;
 
-    if (map_floor_script(KF_FLOOR_1).floor1.revival_enabled == KF_MAP_SCRIPT_SET && item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)][kf_enum_encode<u8>(KF_ITEM_DRAGON_KING_GRASS_FRUIT)] != 0) {
+    if (map_runtime_state.world_state.floor1.revival_enabled == KF_MAP_SCRIPT_SET && item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)][kf_enum_encode<u8>(KF_ITEM_DRAGON_KING_GRASS_FRUIT)] != 0) {
         item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)][kf_enum_encode<u8>(KF_ITEM_DRAGON_KING_GRASS_FRUIT)]--;
         map_world_state_persist();
         player_state.camera_position.vx = PLAYER_REVIVAL_POSITION_X;

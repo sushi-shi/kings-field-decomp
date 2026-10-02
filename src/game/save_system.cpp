@@ -95,6 +95,42 @@ static void save_bytes(SaveCodec &io, std::span<u8> bytes) {
         save_field<u8>(io, byte);
 }
 
+static void save_padding(SaveCodec &io, std::size_t count) {
+    for (std::size_t i = 0; i < count; ++i) {
+        u8 zero = 0;
+        save_field<u8>(io, zero);
+    }
+}
+
+// Each floor slot starts with KF_MAP_SAVED_RECORDS_OFFSET script bytes.
+static void save_floor_script(SaveCodec &io, KfMapSavedWorld &world, KfFloorId floor) {
+    std::size_t used = 0;
+    switch (floor) {
+    case KF_FLOOR_1:
+        save_field<u8>(io, world.floor1.object_removal_stage);
+        save_field<u8>(io, world.floor1.actor_activation_stage);
+        save_field<u8>(io, world.floor1.passage_opened);
+        save_field<u8>(io, world.floor1.revival_enabled);
+        used = sizeof world.floor1;
+        break;
+    case KF_FLOOR_3:
+        save_field<u8>(io, world.floor3.revealed_piece_count);
+        used = sizeof world.floor3;
+        break;
+    case KF_FLOOR_5:
+        save_field<u8>(io, world.floor5.character_arrived);
+        save_field<u8>(io, world.floor5.weapon_transformed);
+        save_field<u8>(io, world.floor5.boss_encounter_started);
+        save_field<u8>(io, world.floor5.boss_defeat);
+        used = sizeof world.floor5;
+        break;
+    default:
+        // Floors 2 and 4 have no script state.
+        break;
+    }
+    save_padding(io, KF_MAP_SAVED_RECORDS_OFFSET - used);
+}
+
 static void save_state_fields(SaveCodec &io, SavedGameState &state) {
     auto &p = state.player;
 #define SAVE_FIELD(type, name) save_field<type>(io, p.name)
@@ -195,11 +231,9 @@ static void save_state_fields(SaveCodec &io, SavedGameState &state) {
     SAVE_BYTES(unknown_df);
 #undef SAVE_FIELD
 #undef SAVE_BYTES
-    // The existing world persistence producer already writes bounded-width
-    // script/record byte streams. Neither field contains native pointers.
-    for (auto &floor : state.world.floors) {
-        save_bytes(io, floor.script.bytes);
-        save_bytes(io, floor.records);
+    for (unsigned i = 0; i < KF_MAP_SAVED_FLOOR_COUNT; ++i) {
+        save_floor_script(io, state.world, kf_enum_decode<KfFloorId>(i + 1));
+        save_bytes(io, state.world.floors[i].records);
     }
     for (auto &stock : state.stock)
         save_bytes(io, stock);

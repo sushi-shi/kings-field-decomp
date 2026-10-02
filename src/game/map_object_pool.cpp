@@ -208,8 +208,7 @@ void map_object_pool_load(KfResourceChunk chunk)
                 - map_floor_height_grid.cells[placement->tile_z][placement->tile_x] * KF_MAP_HEIGHT_STEP;
             object.action = KF_MAP_OBJECT_OP_NONE;
 
-            object.link.words[0] = placement->link[0];
-            object.link.words[1] = placement->link[1];
+            object.link = map_object_link_from_bytes(placement->link);
             definition = &map_object_state.definitions.entries[kf_enum_encode<u8>(object.object_id)];
             if (definition->collision_radius != 0) {
                 collision_adjust_cell_occupancy(object.cell_x, object.cell_z, 1);
@@ -219,8 +218,8 @@ void map_object_pool_load(KfResourceChunk chunk)
                 // Common placement initialization is sufficient for other object IDs.
                 break;
             case KF_MAP_OBJECT_ORBITING_PROJECTILE:
-                object.link.fields.action_parameter.effect_index = map_object_effect_index(
-                    effect_spawn_orbiting_projectile(object.link.fields.spawn.effect_id,
+                object.link.action_parameter = map_object_effect_index(
+                    effect_spawn_orbiting_projectile(map_object_effect_id(object.link),
                         KF_EFFECT_CLASS_20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER, object.position,
                         effect_direction));
                 map_object_start_action_if_idle(&object, KF_MAP_OBJECT_OP_RELEASE_ORBIT_OR_SHORT_SWING);
@@ -232,21 +231,21 @@ void map_object_pool_load(KfResourceChunk chunk)
                 map_object_start_action_if_idle(&object, KF_MAP_OBJECT_OP_PROJECTILE_EMITTER);
                 break;
             case KF_MAP_OBJECT_SHORT_SWING:
-                object.link.fields.action_parameter.effect_index = map_object_effect_index(
-                    effect_spawn_swinging_hazard_short(object.link.fields.spawn.effect_id,
+                object.link.action_parameter = map_object_effect_index(
+                    effect_spawn_swinging_hazard_short(map_object_effect_id(object.link),
                         KF_EFFECT_CLASS_20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER, object.position,
                         effect_direction, object.rotation));
                 map_object_start_action_if_idle(&object, KF_MAP_OBJECT_OP_RELEASE_ORBIT_OR_SHORT_SWING);
                 break;
             case KF_MAP_OBJECT_LONG_SWING:
-                object.link.fields.action_parameter.effect_index = map_object_effect_index(
-                    effect_spawn_swinging_hazard_long(object.link.fields.spawn.effect_id,
+                object.link.action_parameter = map_object_effect_index(
+                    effect_spawn_swinging_hazard_long(map_object_effect_id(object.link),
                         KF_EFFECT_CLASS_20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER, object.position,
                         effect_direction, object.rotation));
                 map_object_start_action_if_idle(&object, KF_MAP_OBJECT_OP_RELEASE_LONG_SWING);
                 break;
             case KF_MAP_OBJECT_EFFECT_SWITCH:
-                object.link.fields.action_parameter.effect_index = map_object_effect_index(
+                object.link.action_parameter = map_object_effect_index(
                     effect_spawn_map_switch(0, KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER, object.position,
                         effect_direction, object.rotation));
                 map_object_start_action_if_idle(&object, KF_MAP_OBJECT_OP_EFFECT_SWITCH);

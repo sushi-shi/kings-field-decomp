@@ -198,29 +198,6 @@ enum {
     KF_EFFECT_SWING_PROBE_COUNT = 2
 };
 
-typedef union KfEffectVisualState {
-    u16 animation_phase;
-    u16 pulse_base_scale;
-} KfEffectVisualState;
-
-typedef struct KfEffectControlBytes {
-    u8 low;
-    u8 high;
-} KfEffectControlBytes;
-
-typedef union KfEffectControl {
-    u16 frames_remaining;
-    u16 orbit_angle;
-    u8 parent_effect_index;
-    KfEffectHomingMode target_mode;
-    KfEffectControlBytes bytes;
-} KfEffectControl;
-
-typedef union KfEffectPropagation {
-    u16 generations_remaining;
-    KfEffectGroundBranchRole branch;
-} KfEffectPropagation;
-
 typedef struct KfFloorDeformSegment {
     u8 column;
     u8 row;
@@ -231,10 +208,18 @@ typedef struct KfFloorDeformSegment {
     u8 end_height;
 } KfFloorDeformSegment;
 
-typedef union KfEffectRenderId {
-    KfEffectBillboardId billboard;
-    KfEffectModelId model;
-} KfEffectRenderId;
+// One byte selects what an effect draws: a billboard sprite while its
+// animation clip is KF_ANIMATION_CLIP_NONE, otherwise a model.
+// KF_EFFECT_MODEL_NONE draws nothing.
+struct KfEffectRenderId {
+    u8 value;
+
+    KfEffectRenderId() = default;
+    constexpr KfEffectRenderId(KfEffectBillboardId id) : value(kf_enum_encode<u8>(id)) {}
+    constexpr KfEffectRenderId(KfEffectModelId id) : value(kf_enum_encode<u8>(id)) {}
+    constexpr KfEffectBillboardId billboard() const { return kf_enum_decode<KfEffectBillboardId>(value); }
+    constexpr KfEffectModelId model() const { return kf_enum_decode<KfEffectModelId>(value); }
+};
 
 struct KfFloorDeformation {
     s16 first_segment;
@@ -256,7 +241,7 @@ typedef struct KfEffectRecord {
     KfAudioPlaybackResult sound_played;
     u8 id;
     KfEffectPhase phase;
-    KfEffectVisualState visual;
+    u16 animation_phase;
     u16 unknown_0a;
     VECTOR position;
     SVECTOR rotation;
@@ -266,8 +251,14 @@ typedef struct KfEffectRecord {
     u16 unknown_2a;
     SVECTOR direction;
     struct KfAnimationCacheRecord *animation_cache;
-    KfEffectControl control;
-    KfEffectPropagation propagation;
+    // Kind-specific state. Each spawner initializes the fields its kind uses.
+    u16 frames_remaining;
+    u16 orbit_angle;
+    u8 parent_effect_index;
+    KfEffectHomingMode target_mode;
+    u16 pulse_base_scale;
+    u16 generations_remaining;
+    KfEffectGroundBranchRole branch_role;
     KfFloorDeformation floor_deformation;
 } KfEffectRecord;
 

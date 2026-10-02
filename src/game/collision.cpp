@@ -55,7 +55,7 @@ KfCollisionResult collision_query_world(
     u16 query_flags = flags;
 
     if ((query_flags & KF_COLLISION_SKIP_TERRAIN) == 0) {
-        hit = kf_enum_encode<u8>(map_collision_grid.linear[(u16)cell]);
+        hit = kf_enum_encode<u8>(map_collision_grid.cell((u16)cell));
 
         if (!map_cell_has_full_floor(kf_enum_decode<KfMapCellKind>(hit))) {
             return {KfCollisionKind::Terrain, static_cast<u16>(hit)};
@@ -66,7 +66,7 @@ KfCollisionResult collision_query_world(
             if (floor_height < point_y) {
                 return {KfCollisionKind::BelowFloor};
             }
-            attribute = map_cell_attribute_grid.linear[(u16)cell];
+            attribute = map_cell_attribute_grid.cell((u16)cell);
             if (attribute == KF_MAP_ATTRIBUTE_NONE) {
                 return {KfCollisionKind::MissingAttribute};
             }
@@ -76,7 +76,7 @@ KfCollisionResult collision_query_world(
             }
         }
     }
-    cell_flags = map_collision_flag_grid.linear[(u16)cell];
+    cell_flags = map_collision_flag_grid.cell((u16)cell);
     rejection_mask = (query_flags >> KF_COLLISION_CELL_FLAG_SHIFT) & KF_COLLISION_CELL_FLAG_MASK;
     hit = cell_flags & rejection_mask;
     if (hit != 0) {

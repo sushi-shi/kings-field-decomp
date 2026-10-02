@@ -69,7 +69,7 @@ struct KfObjectPlacementData {
     u8 object_id, tile_z, tile_x;
     u16 yaw;
     s16 local_z, local_x, local_y;
-    std::array<u32, 2> link;
+    std::array<u8, 8> link;
 };
 struct KfEventPlacementData {
     u8 state, character_id, model_index, cell_z, cell_x;

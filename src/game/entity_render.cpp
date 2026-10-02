@@ -54,7 +54,7 @@ void render_effect(KfEffectRecord *effect, const MATRIX *lights)
     u16 asset;
     KfTmdObject *object;
 
-    if (effect->render_id.model == KF_EFFECT_MODEL_NONE) {
+    if (effect->render_id.model() == KF_EFFECT_MODEL_NONE) {
         return;
     }
     relative_position = VECTOR{
@@ -67,14 +67,14 @@ void render_effect(KfEffectRecord *effect, const MATRIX *lights)
     kf::matrix_scale_axes(model, scale);
     if (effect->animation_clip == KF_ANIMATION_CLIP_NONE) {
         kf::matrix_multiply_rotation(game_graphics_runtime.render_state.pitch_matrix, model, model);
-        render_enqueue_sprite(&effect_billboard_sprites[kf_enum_encode<u8>(effect->render_id.billboard)], 0, KF_SPRITE_DEPTH_CUE_NORMAL, lights, &model, game_graphics_runtime.render_state.projection);
+        render_enqueue_sprite(&effect_billboard_sprites[kf_enum_encode<u8>(effect->render_id.billboard())], 0, KF_SPRITE_DEPTH_CUE_NORMAL, lights, &model, game_graphics_runtime.render_state.projection);
     } else {
         kf::matrix_multiply_rotation(game_graphics_runtime.render_state.view_matrix, model, model);
-        asset = kf_enum_encode<u8>(effect->render_id.model) + KF_ASSET_EFFECT_FIRST;
+        asset = kf_enum_encode<u8>(effect->render_id.model()) + KF_ASSET_EFFECT_FIRST;
         asset_registry_select(asset);
         object = tmd_get_object(tmd_context(), 0);
         if (!render_bind_instance_vertices(
-                &effect->animation_cache, asset, effect->animation_clip, effect->visual.animation_phase,
+                &effect->animation_cache, asset, effect->animation_clip, effect->animation_phase,
                 object->vertex_count)) {
             tmd_select_object_vertices(tmd_context(), 0);
             tmd_project_vertices(tmd_get_object(tmd_context(), 0)->vertex_count, &model, game_graphics_runtime.render_state.projection);

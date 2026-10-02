@@ -123,12 +123,12 @@ void effect_update_orbiting_projectile(s32 orbit_radius, KfEffectPhase phase_lim
 
     if ((kf_enum_encode<u32>(life) & EFFECT_PHASE_BYTE_MASK) < kf_enum_encode<u8>(KF_EFFECT_HAZARD_RELEASE_REQUEST) + 1) {
         record->position.vx = (record->direction.vx << KF_EFFECT_ORBIT_CENTER_SHIFT)
-            + (kf::angle_sine((s16)record->control.orbit_angle) * orbit_radius >> KF_FIXED12_BITS);
+            + (kf::angle_sine((s16)record->orbit_angle) * orbit_radius >> KF_FIXED12_BITS);
         record->position.vz = (record->direction.vz << KF_EFFECT_ORBIT_CENTER_SHIFT)
-            + (kf::angle_cosine((s16)record->control.orbit_angle) * orbit_radius >> KF_FIXED12_BITS);
+            + (kf::angle_cosine((s16)record->orbit_angle) * orbit_radius >> KF_FIXED12_BITS);
         record->position.vy = record->direction.vy
-            + (kf::angle_sine((s16)record->control.orbit_angle << 1) >> 2);
-        record->control.orbit_angle = (record->control.orbit_angle
+            + (kf::angle_sine((s16)record->orbit_angle << 1) >> 2);
+        record->orbit_angle = (record->orbit_angle
             + KF_ANGLE_FULL_TURN / EFFECT_ORBIT_UPDATES_PER_TURN) & KF_ANGLE_WRAP_MASK;
         collision = effect_map_collision(&record->position, EFFECT_ORBIT_COLLISION_RADIUS);
         if (collision.kind != KfCollisionKind::None) {

@@ -8,6 +8,13 @@
 
 void actor_spawn_action_effect(KfActorEffectCode effect_code, KfActorEffectSlot effect_slot);
 
+template <typename Cell>
+static void fill(KfMapCells<Cell> &grid, Cell value)
+{
+    for (auto &row : grid.cells)
+        std::ranges::fill(row, value);
+}
+
 static void reset()
 {
     effect_state = {};
@@ -16,10 +23,10 @@ static void reset()
     actor_pool_clear();
     player_state = {};
     player_state.camera_position = {10000, -1000, 10000};
-    std::ranges::fill(map_collision_grid.linear, KF_MAP_CELL_FLOOR);
-    std::ranges::fill(map_cell_attribute_grid.linear, KF_MAP_ATTRIBUTE_NONE);
-    std::ranges::fill(map_floor_height_grid.linear, 0);
-    std::ranges::fill(map_collision_flag_grid.linear, 0);
+    fill(map_collision_grid, KF_MAP_CELL_FLOOR);
+    fill(map_cell_attribute_grid, KF_MAP_ATTRIBUTE_NONE);
+    map_floor_height_grid = {};
+    map_collision_flag_grid = {};
 }
 
 static void scatter_words()
@@ -129,7 +136,8 @@ static void floor_lifecycle(u16 first, u16 count, s32 sweep, s32 hold)
     }
     assert(frames == static_cast<u32>(2 * sweep + hold + 3));
     assert(effect->type == KF_EFFECT_SLOT_FREE);
-    assert(std::ranges::all_of(map_floor_height_grid.linear, [](u8 height) { return height == 0; }));
+    for (const auto &row : map_floor_height_grid.cells)
+        assert(std::ranges::all_of(row, [](u8 height) { return height == 0; }));
 }
 
 int main()

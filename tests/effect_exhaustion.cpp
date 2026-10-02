@@ -104,7 +104,7 @@ int main()
 
         effect_state.records.back().type = KF_EFFECT_SLOT_FREE;
         map_object_pool_load({bytes.data(), bytes.size()});
-        const auto index = map_object_state.objects[0].link.fields.action_parameter.effect_index;
+        const auto index = map_object_state.objects[0].link.action_parameter;
         assert(index == effect_state.records.size() - 1);
         assert(effect_state.records[index].type != KF_EFFECT_SLOT_FREE);
         if (id == KF_MAP_OBJECT_EFFECT_SWITCH) {

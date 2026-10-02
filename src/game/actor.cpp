@@ -269,7 +269,7 @@ void actor_apply_damage(
     s32 remaining;
 
     if (player_state.progress_state.current_floor == KF_FLOOR_5 && actor->definition_id == KF_FLOOR5_BOSS_DEFINITION) {
-        if (map_floor_script(KF_FLOOR_5).floor5.boss_encounter_started == KF_MAP_SCRIPT_UNSET) {
+        if (map_runtime_state.world_state.floor5.boss_encounter_started == KF_MAP_SCRIPT_UNSET) {
             return;
         }
         if (actor->health == 0) {

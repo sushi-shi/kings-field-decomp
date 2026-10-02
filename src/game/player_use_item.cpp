@@ -93,14 +93,14 @@ void player_use_item(KfObjectId item_id)
             case KF_MAP_OBJECT_HINGED_DOOR_PARTNER:
             case KF_MAP_OBJECT_TALL_HINGED_DOOR:
             case KF_MAP_OBJECT_TALL_HINGED_DOOR_PARTNER:
-                if (object->link.fields.link_id == KF_MAP_LINK_NONE) {
+                if (object->link.link_id == KF_MAP_LINK_NONE) {
                     notify_enqueue(KF_NOTIFICATION_NOTHING_HAPPENS);
                 } else if (object->object_id != KF_MAP_OBJECT_GRAVESTONE
                            || angle_within_tolerance(
                                player_state.camera_rotation.vy, KF_ANGLE_HALF_TURN - object->rotation.vy, MAP_DOOR_FACING_TOLERANCE)) {
                     used = true;
-                    if (object->link.fields.link_id == kf_enum_encode<u8>(item_id)) {
-                        object->link.fields.link_id = KF_MAP_LINK_NONE;
+                    if (object->link.link_id == kf_enum_encode<u8>(item_id)) {
+                        object->link.link_id = KF_MAP_LINK_NONE;
                         sound_ref_play(audio_playback(), &gameplay_sound_refs[KF_GAMEPLAY_SOUND_KEY_UNLOCK], PLAYER_KEY_UNLOCK_VOLUME);
                         if (object->object_id == KF_MAP_OBJECT_GRAVESTONE) {
                             sound_ref_play(audio_playback(), &gameplay_sound_refs[KF_GAMEPLAY_SOUND_STONE_PASSAGE], KF_AUDIO_MAX_VOLUME);
@@ -128,13 +128,13 @@ void player_use_item(KfObjectId item_id)
             }
             object = &map_object_state.objects[index];
             if (object->object_id == kf_enum_decode<KfObjectId>(kf_enum_encode<u8>(item_id))) {
-                if (object->link.fields.link_id == KF_MAP_LINK_NONE) {
+                if (object->link.link_id == KF_MAP_LINK_NONE) {
                     notify_enqueue(KF_NOTIFICATION_NOTHING_HAPPENS);
                 } else {
                     item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)][kf_enum_encode<u8>(object->object_id)] = 0;
                     used = true;
-                    map_object_pool_trigger_link(object->link.fields.link_id);
-                    object->link.fields.link_id = KF_MAP_LINK_NONE;
+                    map_object_pool_trigger_link(object->link.link_id);
+                    object->link.link_id = KF_MAP_LINK_NONE;
                 }
             }
             index++;
