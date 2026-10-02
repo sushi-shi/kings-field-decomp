@@ -52,9 +52,8 @@ void render_effect(KfEffectRecord *effect, const MATRIX *lights)
     VECTOR scale;
     MATRIX model;
     u16 asset;
-    KfTmdObject *object;
 
-    if (effect->render_id.model == KF_EFFECT_MODEL_NONE) {
+    if (!effect_has_visual(*effect)) {
         return;
     }
     relative_position = VECTOR{
@@ -72,15 +71,13 @@ void render_effect(KfEffectRecord *effect, const MATRIX *lights)
         kf::matrix_multiply_rotation(game_graphics_runtime.render_state.view_matrix, model, model);
         asset = kf_enum_encode<u8>(effect->render_id.model) + KF_ASSET_EFFECT_FIRST;
         asset_registry_select(asset);
-        object = tmd_get_object(tmd_context(), 0);
+        const auto object = tmd_read_object(tmd_context(), 0);
         if (!render_bind_instance_vertices(
                 &effect->animation_cache, asset, effect->animation_clip, effect->visual.animation_phase,
-                object->vertex_count)) {
+                object.vertex_count)) {
             tmd_select_object_vertices(tmd_context(), 0);
-            tmd_project_vertices(tmd_get_object(tmd_context(), 0)->vertex_count, &model, game_graphics_runtime.render_state.projection);
-        } else {
-            tmd_project_vertices(object->vertex_count, &model, game_graphics_runtime.render_state.projection);
         }
+        tmd_project_vertices(object.vertex_count, &model, game_graphics_runtime.render_state.projection);
         render_enqueue_tmd(0, EFFECT_MODEL_DEPTH_BIAS, lights);
     }
 }

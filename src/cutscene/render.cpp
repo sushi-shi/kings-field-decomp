@@ -1,6 +1,5 @@
 #include <kf/platform/prelude.h>
 #include <kf/cutscene/render.h>
-#include <kf/lib/debug.h>
 #include <kf/lib/map_data.h>
 #include <kf/lib/memory.h>
 #include <kf/lib/null.h>

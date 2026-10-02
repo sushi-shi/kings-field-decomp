@@ -11,7 +11,6 @@ void render_map_event(KfMapEvent *event, const MATRIX *lights)
     MATRIX model;
     MATRIX composed;
     u16 asset;
-    KfTmdObject *object;
 
     relative_position = VECTOR{
         event->reference_position.vx - game_graphics_runtime.render_state.view_position.vx,
@@ -22,14 +21,12 @@ void render_map_event(KfMapEvent *event, const MATRIX *lights)
     kf::matrix_multiply_rotation(game_graphics_runtime.render_state.view_matrix, model, composed);
     asset = event->model_index + KF_ASSET_MAP_EVENT_FIRST;
     asset_registry_select(asset);
-    object = tmd_get_object(tmd_context(), 0);
+    const auto object = tmd_read_object(tmd_context(), 0);
     if (!render_bind_instance_vertices(
             &event->animation_cache, asset, event->animation_clip, event->animation_phase,
-            object->vertex_count)) {
+            object.vertex_count)) {
         tmd_select_object_vertices(tmd_context(), 0);
-        tmd_project_vertices(tmd_get_object(tmd_context(), 0)->vertex_count, &composed, game_graphics_runtime.render_state.projection);
-    } else {
-        tmd_project_vertices(object->vertex_count, &composed, game_graphics_runtime.render_state.projection);
     }
+    tmd_project_vertices(object.vertex_count, &composed, game_graphics_runtime.render_state.projection);
     render_enqueue_tmd(0, 0, lights);
 }

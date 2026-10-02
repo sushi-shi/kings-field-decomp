@@ -12,7 +12,7 @@ static KfTmdResource &tmd_slot(KfTmdContext context, KfTmdSlot slot)
     return slots[index];
 }
 
-KfTmdResource tmd_resource_view(u8 *data, std::size_t size)
+KfTmdResource tmd_resource_view(const u8 *data, std::size_t size)
 {
     // Legacy typed consumers still read serialized words directly on these targets.
     static_assert(std::endian::native == std::endian::little);
@@ -22,7 +22,7 @@ KfTmdResource tmd_resource_view(u8 *data, std::size_t size)
     const auto objects = tmd_read_word(data + offsetof(KfTmdHeader, object_count));
     if (objects > (size - KF_TMD_HEADER_BYTES) / sizeof(KfTmdObject))
         kf::host_fail("Truncated TMD object table");
-    return {reinterpret_cast<KfTmdHeader *>(data), size};
+    return {reinterpret_cast<const KfTmdHeader *>(data), size};
 }
 
 void tmd_select(KfTmdContext context, KfTmdSlot slot)
@@ -34,21 +34,16 @@ void tmd_select(KfTmdContext context, KfTmdSlot slot)
     context.current_vertices = {};
 }
 
-static u8 *tmd_object_bytes(KfTmdContext context, u16 index)
+static const u8 *tmd_object_bytes(KfTmdContext context, u16 index)
 {
     const auto resource = context.current_tmd;
     if (!resource.data || resource.size < KF_TMD_HEADER_BYTES)
         kf::host_fail("No selected TMD resource");
-    auto *bytes = reinterpret_cast<u8 *>(resource.data);
+    const auto *bytes = reinterpret_cast<const u8 *>(resource.data);
     if (index >= tmd_read_word(bytes + offsetof(KfTmdHeader, object_count)) ||
         index >= (resource.size - KF_TMD_HEADER_BYTES) / sizeof(KfTmdObject))
         kf::host_fail("TMD object index exceeds its resource");
     return bytes + KF_TMD_HEADER_BYTES + sizeof(KfTmdObject) * index;
-}
-
-KfTmdObject *tmd_get_object(KfTmdContext context, u16 index)
-{
-    return reinterpret_cast<KfTmdObject *>(tmd_object_bytes(context, index));
 }
 
 KfTmdObject tmd_read_object(KfTmdContext context, u16 index)
@@ -189,19 +184,19 @@ std::span<const SVECTOR> tmd_vertices(KfTmdContext context, s32 count)
 
 void tmd_select_object_vertices(KfTmdContext context, u16 index)
 {
-    const auto *object = tmd_get_object(context, index);
+    const auto object = tmd_read_object(context, index);
     const auto resource = context.current_tmd;
-    const std::size_t offset = object->vertex_offset;
+    const std::size_t offset = object.vertex_offset;
     const auto payload_size = resource.size - KF_TMD_HEADER_BYTES;
-    if (offset > payload_size || object->vertex_count > (payload_size - offset) / sizeof(SVECTOR))
+    if (offset > payload_size || object.vertex_count > (payload_size - offset) / sizeof(SVECTOR))
         kf::host_fail("TMD vertices exceed their resource");
-    auto *vertices = reinterpret_cast<u8 *>(resource.data) + KF_TMD_HEADER_BYTES + offset;
+    const auto *vertices = reinterpret_cast<const u8 *>(resource.data) + KF_TMD_HEADER_BYTES + offset;
     if (reinterpret_cast<std::uintptr_t>(vertices) % alignof(SVECTOR))
         kf::host_fail("Unaligned TMD vertices");
-    context.current_vertices = {reinterpret_cast<const SVECTOR *>(vertices), object->vertex_count};
+    context.current_vertices = {reinterpret_cast<const SVECTOR *>(vertices), object.vertex_count};
 }
 
-void tmd_register(KfTmdContext context, KfTmdSlot slot, u8 *data, std::size_t size)
+void tmd_register(KfTmdContext context, KfTmdSlot slot, const u8 *data, std::size_t size)
 {
     const auto resource = tmd_resource_view(data, size);
     tmd_slot(context, slot) = resource;
