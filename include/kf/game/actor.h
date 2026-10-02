@@ -270,7 +270,7 @@ typedef struct KfActor {
     u16 cell_z;
     s16 unknown_1a;
     VECTOR position;
-    KfRotation rotation;
+    SVECTOR rotation;
     struct KfAnimationCacheRecord *animation_cache;
     KfActorActionProgress action_progress;
     KfActorCollisionState collision_state;
@@ -332,8 +332,7 @@ extern KfActor *actor_pool_find_target_in_cone(
 extern s32 actor_pool_find_overlap(s32 point_x, s32 point_y, s32 point_z, s32 radius_padding, s32 point_height);
 extern void actor_pool_load_placements(KfResourceChunk placements);
 extern void actor_pool_spawn(
-    u8 definition_id, const VECTOR *position,
-    const struct KfVec3s *rotation);
+    u8 definition_id, const VECTOR *position, const SVECTOR *rotation);
 extern void actor_pool_update(void);
 extern s32 actor_distance_to_point(
     const KfActor *actor, s32 point_x, s32 point_y, s32 point_z,

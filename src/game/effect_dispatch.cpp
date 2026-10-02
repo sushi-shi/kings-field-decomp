@@ -114,11 +114,11 @@ static void effect_begin_lightning_impact(KfEffectRecord *effect, const KfMagicR
     impact_position.vy =
         -(map_floor_height_grid.cells[effect->position.vz / KF_MAP_TILE_SIZE]
                                [effect->position.vx / KF_MAP_TILE_SIZE] * KF_MAP_HEIGHT_STEP);
-    if (effect->base_render_id.billboard == KF_EFFECT_BILLBOARD_LIGHTNING_BOLT) {
-        effect_spawn_lightning_impact(effect->id, effect->type, impact_position, effect->rotation.vector,
+    if (effect->base_render_id.billboard() == KF_EFFECT_BILLBOARD_LIGHTNING_BOLT) {
+        effect_spawn_lightning_impact(effect->id, effect->type, impact_position, effect->rotation,
             KfEffectVariant::Normal);
     } else {
-        effect_spawn_lightning_impact(effect->id, effect->type, impact_position, effect->rotation.vector,
+        effect_spawn_lightning_impact(effect->id, effect->type, impact_position, effect->rotation,
             KfEffectVariant::Alternate);
     }
 }
@@ -192,7 +192,7 @@ static bool effect_handle_projectile_collision(KfEffectRecord *effect, KfMagicRe
         }
 
         if (kind == KF_EFFECT_KIND_EMERGING_PROJECTILE) {
-            effect->direction.words.y = 0;
+            effect->direction.vy = 0;
             effect->phase = KF_EFFECT_PROJECTILE_FALL;
         } else if (kind == KF_EFFECT_KIND_DARKNESS_PROJECTILE
                    || kind == KF_EFFECT_KIND_CURSE_PROJECTILE) {
@@ -207,10 +207,10 @@ static bool effect_handle_projectile_collision(KfEffectRecord *effect, KfMagicRe
 
 static void effect_randomize_homing_direction(KfEffectRecord *effect)
 {
-    effect->direction.words.x =
-        (effect->direction.words.x + (kf::random_next() >> HOMING_PITCH_RANDOM_SHIFT) - HOMING_PITCH_RANDOM_BIAS) & KF_ANGLE_WRAP_MASK;
-    effect->direction.words.y =
-        (effect->direction.words.y + (kf::random_next() >> HOMING_YAW_RANDOM_SHIFT) - HOMING_YAW_RANDOM_BIAS) & KF_ANGLE_WRAP_MASK;
+    effect->direction.vx =
+        (effect->direction.vx + (kf::random_next() >> HOMING_PITCH_RANDOM_SHIFT) - HOMING_PITCH_RANDOM_BIAS) & KF_ANGLE_WRAP_MASK;
+    effect->direction.vy =
+        (effect->direction.vy + (kf::random_next() >> HOMING_YAW_RANDOM_SHIFT) - HOMING_YAW_RANDOM_BIAS) & KF_ANGLE_WRAP_MASK;
 }
 
 static void effect_update_homing_direction(KfEffectRecord *effect, KfEffectPhase phase)
@@ -221,37 +221,37 @@ static void effect_update_homing_direction(KfEffectRecord *effect, KfEffectPhase
     if (phase == KF_EFFECT_PHASE_INIT) {
         effect_randomize_homing_direction(effect);
     } else if (phase > KF_EFFECT_HOMING_INITIAL_PHASE_LAST) {
-        if (effect->control.target_mode == KF_EFFECT_HOMING_WANDER) {
+        if (effect->target_mode == KF_EFFECT_HOMING_WANDER) {
             if (kf::random_next() < HOMING_WANDER_RANDOM_CUTOFF) {
                 effect_randomize_homing_direction(effect);
                 // A wandering turn skips the tracking-phase reset, but not movement.
                 return;
             }
-        } else if (effect->control.target_mode == KF_EFFECT_HOMING_PLAYER) {
+        } else if (effect->target_mode == KF_EFFECT_HOMING_PLAYER) {
             s32 aim_height;
             // Pitch uses horizontal distance; the height difference is separate.
             const s32 target_distance = fixed_vector2_length(
                 player_state.camera_position.vx - effect->position.vx,
                 player_state.camera_position.vz - effect->position.vz);
 
-            effect->direction.words.y = vector_xz_to_angle(
+            effect->direction.vy = vector_xz_to_angle(
                 player_state.camera_position.vx - effect->position.vx,
                 effect->position.vz - player_state.camera_position.vz);
             aim_height = effect->position.vy - HOMING_PLAYER_AIM_Y_OFFSET;
             desired_pitch = vector_xz_to_angle(
                 aim_height - player_state.camera_position.vy,
                 -target_distance);
-            effect->direction.words.x = -desired_pitch & KF_ANGLE_WRAP_MASK;
+            effect->direction.vx = -desired_pitch & KF_ANGLE_WRAP_MASK;
         } else {
             s32 target_distance;
             target = actor_pool_find_target_in_cone(
                 &effect->position,
-                effect->rotation.vector.vy, KF_EFFECT_ACTOR_TARGET_MAX_DISTANCE, KF_EFFECT_ACTOR_TARGET_WIDE_CONE, &target_distance);
+                effect->rotation.vy, KF_EFFECT_ACTOR_TARGET_MAX_DISTANCE, KF_EFFECT_ACTOR_TARGET_WIDE_CONE, &target_distance);
             if (target != NULL) {
                 KfActorDefinition *definition =
                     &actor_state.definitions.entries[target->definition_id];
 
-                effect->direction.words.y = vector_xz_to_angle(
+                effect->direction.vy = vector_xz_to_angle(
                     target->position.vx - effect->position.vx,
                     effect->position.vz - target->position.vz);
                 desired_pitch = vector_xz_to_angle(
@@ -259,9 +259,9 @@ static void effect_update_homing_direction(KfEffectRecord *effect, KfEffectPhase
                         - (target->position.vy
                            - (definition->collision_height >> 1)),
                     -target_distance);
-                effect->direction.words.x = -desired_pitch & KF_ANGLE_WRAP_MASK;
+                effect->direction.vx = -desired_pitch & KF_ANGLE_WRAP_MASK;
             } else {
-                effect->direction.words.x = 0;
+                effect->direction.vx = 0;
             }
         }
         effect->phase = KF_EFFECT_HOMING_TRACKING_PHASE;
@@ -302,64 +302,64 @@ void effect_update_dispatch(void)
                 return;
             }
 
-            effect->position += effect->direction.vector;
+            effect->position += effect->direction;
             if (kind == KF_MAGIC_FIRE_BALL || kind == KF_EFFECT_KIND_DARKNESS_PROJECTILE) {
-                effect->rotation.vector.vz = (effect->rotation.vector.vz + PROJECTILE_ROLL_STEP) & KF_ANGLE_WRAP_MASK;
+                effect->rotation.vz = (effect->rotation.vz + PROJECTILE_ROLL_STEP) & KF_ANGLE_WRAP_MASK;
                 return;
             }
             if (kind == KF_MAGIC_LIGHTNING_BOLT) {
                 s32 remaining;
 
-                effect->rotation.vector.vz = (effect->rotation.vector.vz + PROJECTILE_ROLL_STEP) & KF_ANGLE_WRAP_MASK;
-                remaining = effect->control.frames_remaining - 1;
-                effect->control.frames_remaining = remaining;
+                effect->rotation.vz = (effect->rotation.vz + PROJECTILE_ROLL_STEP) & KF_ANGLE_WRAP_MASK;
+                remaining = effect->frames_remaining - 1;
+                effect->frames_remaining = remaining;
                 if ((u16)remaining == 0) {
                     effect_begin_lightning_impact(effect, magic);
                 } else {
-                    effect->render_id.billboard = kf_enum_decode<KfEffectBillboardId>(kf_enum_encode<u8>(effect->base_render_id.billboard) + (effect->control.frames_remaining & 1));
+                    effect->render_id.value = effect->base_render_id.value + (effect->frames_remaining & 1);
                 }
                 return;
             }
             if (kind == KF_EFFECT_KIND_SCATTER_PROJECTILE) {
-                KfEffectDirection scatter;
+                SVECTOR scatter;
                 s32 pulse_angle;
 
-                if (--effect->control.frames_remaining == 0) {
-                    if (effect->propagation.generations_remaining != 0) {
+                if (--effect->frames_remaining == 0) {
+                    if (effect->generations_remaining != 0) {
                         next = ((s16)effect->scale_x * 3) >> 2;
-                        effect->visual.pulse_base_scale = next;
+                        effect->pulse_base_scale = next;
                         effect->scale_z = next;
                         effect->scale_y = next;
                         effect->scale_x = next;
-                        effect->propagation.generations_remaining--;
-                        scatter.vector = effect->direction.vector;
-                        effect_scatter_triple(&scatter.words);
-                        if (effect->propagation.generations_remaining == 0) {
-                            effect->control.frames_remaining = SCATTER_FINAL_COUNTDOWN;
+                        effect->generations_remaining--;
+                        scatter = effect->direction;
+                        effect_scatter_triple(&scatter);
+                        if (effect->generations_remaining == 0) {
+                            effect->frames_remaining = SCATTER_FINAL_COUNTDOWN;
                         } else {
-                            effect->control.frames_remaining = SCATTER_BRANCH_COUNTDOWN;
+                            effect->frames_remaining = SCATTER_BRANCH_COUNTDOWN;
                         }
-                        effect_spawn_scatter_projectile(effect->id, effect->type, effect->position, scatter.vector,
-                            effect->propagation.generations_remaining, effect->control.frames_remaining,
+                        effect_spawn_scatter_projectile(effect->id, effect->type, effect->position, scatter,
+                            effect->generations_remaining, effect->frames_remaining,
                             (s16)effect->scale_x);
-                        effect_scatter_triple(&effect->direction.words);
+                        effect_scatter_triple(&effect->direction);
                     } else {
                         effect->type = KF_EFFECT_SLOT_FREE;
                     }
                 }
-                pulse_angle = effect->control.frames_remaining << SCATTER_PULSE_ANGLE_SHIFT;
+                pulse_angle = effect->frames_remaining << SCATTER_PULSE_ANGLE_SHIFT;
                 value = kf::angle_sine(pulse_angle);
-                value = (effect->visual.pulse_base_scale * value) >> (KF_FIXED12_BITS + 1);
-                next = effect->visual.pulse_base_scale + value;
+                value = (effect->pulse_base_scale * value) >> (KF_FIXED12_BITS + 1);
+                next = effect->pulse_base_scale + value;
                 effect->scale_z = next;
                 effect->scale_x = next;
                 value = kf::angle_cosine(pulse_angle);
-                effect->scale_y = effect->visual.pulse_base_scale
-                    + ((effect->visual.pulse_base_scale * value) >> (KF_FIXED12_BITS + 1));
+                effect->scale_y = effect->pulse_base_scale
+                    + ((effect->pulse_base_scale * value) >> (KF_FIXED12_BITS + 1));
                 return;
             }
             if (kind == KF_EFFECT_KIND_EMERGING_PROJECTILE) {
-                effect->rotation.vector.vz = (effect->rotation.vector.vz + EMERGING_ROLL_STEP) & KF_ANGLE_WRAP_MASK;
+                effect->rotation.vz = (effect->rotation.vz + EMERGING_ROLL_STEP) & KF_ANGLE_WRAP_MASK;
                 return;
             }
             if (kind == KF_EFFECT_KIND_MAP_EMITTER_PROJECTILE) {
@@ -373,12 +373,12 @@ void effect_update_dispatch(void)
             if (kind == KF_MAGIC_LIGHT_NEEDLE || kind == KF_EFFECT_KIND_PHYSICAL_PROJECTILE) {
                 return;
             }
-            effect->rotation.vector.vz = (effect->rotation.vector.vz + PROJECTILE_DEFAULT_ROLL_STEP) & KF_ANGLE_WRAP_MASK;
+            effect->rotation.vz = (effect->rotation.vz + PROJECTILE_DEFAULT_ROLL_STEP) & KF_ANGLE_WRAP_MASK;
             return;
         }
 
         if (phase < KF_EFFECT_FIRE_BALL_IMPACT_END && kind == KF_MAGIC_FIRE_BALL) {
-            effect->render_id.billboard = kf_enum_decode<KfEffectBillboardId>(kf_enum_encode<u8>(effect->base_render_id.billboard) + kf_enum_encode<u8>(phase));
+            effect->render_id.value = effect->base_render_id.value + kf_enum_encode<u8>(phase);
         } else if (phase < KF_EFFECT_PROJECTILE_IMPACT_END) {
             effect->type = KF_EFFECT_SLOT_FREE;
         } else if (phase < KF_EFFECT_PROJECTILE_DISSIPATE_END) {
@@ -397,8 +397,8 @@ void effect_update_dispatch(void)
                     &magic->sounds[0], &effect->position, KF_AUDIO_MAX_VOLUME);
             }
         } else if (phase == KF_EFFECT_PROJECTILE_FALL) {
-            effect->direction.words.y += EMERGING_FALL_ACCELERATION;
-            effect->position.vy += effect->direction.vector.vy;
+            effect->direction.vy += EMERGING_FALL_ACCELERATION;
+            effect->position.vy += effect->direction.vy;
             if (effect->position.vy
                 > -(map_floor_height_grid.cells[effect->position.vz / KF_MAP_TILE_SIZE]
                                         [effect->position.vx / KF_MAP_TILE_SIZE] * KF_MAP_HEIGHT_STEP)
@@ -425,14 +425,14 @@ void effect_update_dispatch(void)
         if (kf_enum_encode<u8>(phase) < kf_enum_encode<u8>(KF_EFFECT_MOONLIGHT_TRAVEL_LAST) + 1) {
             if (effect_map_collision(&effect->position, PROJECTILE_COLLISION_RADIUS).kind != KfCollisionKind::None) {
                 effect->animation_clip = KF_ANIMATION_CLIP_NONE;
-                effect->base_render_id.model = KF_EFFECT_MODEL_NONE;
-                effect->render_id.model = KF_EFFECT_MODEL_NONE;
+                effect->base_render_id = KF_EFFECT_MODEL_NONE;
+                effect->render_id = KF_EFFECT_MODEL_NONE;
                 effect->phase = KF_EFFECT_MOONLIGHT_IMPACT_FIRST;
                 audio_play_spatial_default_range(
                     &effect_state.magic.entries[kf_enum_encode<u8>(KF_EFFECT_KIND_RADIAL_BLAST)].sounds[1], &effect->position, KF_AUDIO_MAX_VOLUME);
                 return;
             }
-            effect->position += effect->direction.vector;
+            effect->position += effect->direction;
             effect->scale_z += MOONLIGHT_LENGTH_STEP;
             if ((s16)effect->scale_z < 0) {
                 effect->scale_z = MOONLIGHT_LENGTH_MAX;
@@ -450,7 +450,7 @@ void effect_update_dispatch(void)
             }
         } else {
             if (((kf_enum_encode<u8>(phase) - kf_enum_encode<u8>(KF_EFFECT_MOONLIGHT_IMPACT_FIRST)) & 1) == 0) {
-                effect_spawn_radial_blast(effect->id, effect->type, effect->position, effect->direction.vector,
+                effect_spawn_radial_blast(effect->id, effect->type, effect->position, effect->direction,
                     KfEffectVariant::Normal, KF_EFFECT_SOUND_PLAY);
             }
             if (phase > KF_EFFECT_MOONLIGHT_IMPACT_LAST) {
@@ -467,7 +467,7 @@ void effect_update_dispatch(void)
         KfCollisionKind collision_kind;
         u16 power;
 
-        linked_effect = &effect_state.records[effect->control.parent_effect_index];
+        linked_effect = &effect_state.records[effect->parent_effect_index];
         collision = effect_map_collision(&effect->position, radius);
         if (collision.kind != KfCollisionKind::None) {
             collision_kind = collision.kind;
@@ -479,7 +479,7 @@ void effect_update_dispatch(void)
                     KF_ACTOR_DAMAGE_SCALE_ONE, effect->type);
             }
         }
-        effect->position += effect->direction.vector;
+        effect->position += effect->direction;
         effect->position.vy =
             -(map_floor_height_grid.cells[effect->position.vz / KF_MAP_TILE_SIZE]
                                    [effect->position.vx / KF_MAP_TILE_SIZE] * KF_MAP_HEIGHT_STEP);
@@ -503,9 +503,9 @@ void effect_update_dispatch(void)
             break;
         }
         }
-        effect->render_id.billboard++;
-        if (kf_enum_encode<u8>(effect->render_id.billboard) >= kf_enum_encode<u8>(effect->base_render_id.billboard) + GROUND_TRAIL_RENDER_FRAME_COUNT) {
-            effect->render_id.billboard = effect->base_render_id.billboard;
+        effect->render_id.value++;
+        if (effect->render_id.value >= effect->base_render_id.value + GROUND_TRAIL_RENDER_FRAME_COUNT) {
+            effect->render_id = effect->base_render_id;
         }
         break;
     }
@@ -542,25 +542,25 @@ void effect_update_dispatch(void)
 
         effect_update_homing_direction(effect, phase);
 
-        effect->rotation.vector.vx = angle_approach(
-            effect->rotation.vector.vx, effect->direction.vector.vx, HOMING_TURN_STEP);
-        effect->rotation.vector.vy = angle_approach(
-            effect->rotation.vector.vy, effect->direction.vector.vy, HOMING_TURN_STEP);
+        effect->rotation.vx = angle_approach(
+            effect->rotation.vx, effect->direction.vx, HOMING_TURN_STEP);
+        effect->rotation.vy = angle_approach(
+            effect->rotation.vy, effect->direction.vy, HOMING_TURN_STEP);
         local_motion = {0, 0, HOMING_FORWARD_STEP};
-        matrix_set_rotation_x(effect->rotation.vector.vx, &matrix);
+        matrix_set_rotation_x(effect->rotation.vx, &matrix);
         movement = kf::matrix_apply_rotation(matrix, local_motion);
         local_motion = movement.narrowed();
-        matrix_set_rotation_y(effect->rotation.vector.vy, &matrix);
+        matrix_set_rotation_y(effect->rotation.vy, &matrix);
         movement = kf::matrix_apply_rotation(matrix, local_motion);
         effect->position += movement;
         effect->phase++;
-        effect->rotation.vector.vz = (effect->rotation.vector.vz + HOMING_ROLL_STEP) & KF_ANGLE_WRAP_MASK;
+        effect->rotation.vz = (effect->rotation.vz + HOMING_ROLL_STEP) & KF_ANGLE_WRAP_MASK;
         if (effect_map_collision(&effect->position, radius).kind != KfCollisionKind::None) {
-            if (effect->base_render_id.model == KF_EFFECT_MODEL_HOMING_PROJECTILE_ALTERNATE) {
-                effect_spawn_radial_blast(effect->id, effect->type, effect->position, effect->direction.vector,
+            if (effect->base_render_id.model() == KF_EFFECT_MODEL_HOMING_PROJECTILE_ALTERNATE) {
+                effect_spawn_radial_blast(effect->id, effect->type, effect->position, effect->direction,
                     KfEffectVariant::Alternate, KF_EFFECT_SOUND_PLAY);
             } else {
-                effect_spawn_radial_blast(effect->id, effect->type, effect->position, effect->direction.vector,
+                effect_spawn_radial_blast(effect->id, effect->type, effect->position, effect->direction,
                     KfEffectVariant::Normal, KF_EFFECT_SOUND_PLAY);
             }
             effect->type = KF_EFFECT_SLOT_FREE;
@@ -572,17 +572,17 @@ void effect_update_dispatch(void)
         if (phase > KF_EFFECT_LIGHTNING_IMPACT_PHASE_LAST) {
             effect->type = KF_EFFECT_SLOT_FREE;
         } else {
-            effect->render_id.billboard++;
-            if (kf_enum_encode<u8>(effect->render_id.billboard) >= kf_enum_encode<u8>(effect->base_render_id.billboard) + LIGHTNING_IMPACT_RENDER_FRAME_COUNT) {
-                effect->render_id.billboard = effect->base_render_id.billboard;
+            effect->render_id.value++;
+            if (effect->render_id.value >= effect->base_render_id.value + LIGHTNING_IMPACT_RENDER_FRAME_COUNT) {
+                effect->render_id = effect->base_render_id;
             }
             if (phase == KF_EFFECT_LIGHTNING_IMPACT_EMIT_FIRST || phase == KF_EFFECT_LIGHTNING_IMPACT_EMIT_SECOND || phase == KF_EFFECT_LIGHTNING_IMPACT_EMIT_LAST) {
-                if (effect->base_render_id.billboard == KF_EFFECT_BILLBOARD_LIGHTNING_IMPACT) {
+                if (effect->base_render_id.billboard() == KF_EFFECT_BILLBOARD_LIGHTNING_IMPACT) {
                     effect_spawn_lightning_radial_blast(effect->id, effect->type, effect->position,
-                        effect->rotation.vector, KfEffectVariant::Normal);
+                        effect->rotation, KfEffectVariant::Normal);
                 } else {
                     effect_spawn_lightning_radial_blast(effect->id, effect->type, effect->position,
-                        effect->rotation.vector, KfEffectVariant::Alternate);
+                        effect->rotation, KfEffectVariant::Alternate);
                 }
                 if (phase == KF_EFFECT_LIGHTNING_IMPACT_EMIT_FIRST) {
                     audio_play_spatial_default_range(
@@ -602,7 +602,7 @@ void effect_update_dispatch(void)
         } else {
             effect->scale_y = effect->scale_z =
                 effect->scale_x += LIGHTNING_BLAST_SCALE_STEP;
-            effect->rotation.vector.vy = (effect->rotation.vector.vy + LIGHTNING_BLAST_YAW_STEP) & KF_ANGLE_WRAP_MASK;
+            effect->rotation.vy = (effect->rotation.vy + LIGHTNING_BLAST_YAW_STEP) & KF_ANGLE_WRAP_MASK;
             if (kf_enum_encode<u8>(phase) & 1) {
                 u32 damage_radius;
                 KfMagicRecord *lightning_magic;
@@ -630,9 +630,9 @@ void effect_update_dispatch(void)
 
     case KF_MAGIC_FIRE_WALL:
         if (phase < KF_EFFECT_GROUND_BRANCH_GROW_END) {
-            if (effect->control.frames_remaining != KF_EFFECT_GROUND_BRANCH_TIMER_DONE) {
-                if (effect->control.frames_remaining-- == 0) {
-                    switch (effect->propagation.branch) {
+            if (effect->frames_remaining != KF_EFFECT_GROUND_BRANCH_TIMER_DONE) {
+                if (effect->frames_remaining-- == 0) {
+                    switch (effect->branch_role) {
                     case KF_EFFECT_GROUND_BRANCH_LEAF:
                         // A leaf emits no further branches.
                         break;
@@ -652,12 +652,12 @@ void effect_update_dispatch(void)
                             effect->id, effect, KF_ANGLE_THREE_QUARTER_TURN, KF_EFFECT_GROUND_BRANCH_LEAF);
                         break;
                     }
-                    effect->control.frames_remaining = KF_EFFECT_GROUND_BRANCH_TIMER_DONE;
+                    effect->frames_remaining = KF_EFFECT_GROUND_BRANCH_TIMER_DONE;
                 }
             }
             effect->scale_y += GROUND_BRANCH_SCALE_STEP;
             if (kf_enum_encode<u8>(phase) == kf_enum_encode<u8>(KF_EFFECT_GROUND_BRANCH_GROW_END) - 1) {
-                switch (effect->propagation.branch) {
+                switch (effect->branch_role) {
                 case KF_EFFECT_GROUND_BRANCH_ROOT:
                     effect->phase = KF_EFFECT_GROUND_BRANCH_ROOT_HOLD_BASE;
                     break;
@@ -681,7 +681,7 @@ void effect_update_dispatch(void)
                 spawn_position.vz = effect->position.vz
                     + ((kf::angle_cosine(angle) * distance) >> KF_FIXED12_BITS);
                 spawn_position.vy = effect->position.vy;
-                effect_spawn_ground_branch_visual(effect->id, effect->type, spawn_position, effect->rotation.vector);
+                effect_spawn_ground_branch_visual(effect->id, effect->type, spawn_position, effect->rotation);
                 power = effect_magic_power(effect);
                 actor_pool_apply_radial_damage(
                     &effect->position,
@@ -699,7 +699,7 @@ void effect_update_dispatch(void)
         } else {
             effect->type = KF_EFFECT_SLOT_FREE;
         }
-        effect->rotation.vector.vy = (effect->rotation.vector.vy + GROUND_EFFECT_YAW_STEP) & KF_ANGLE_WRAP_MASK;
+        effect->rotation.vy = (effect->rotation.vy + GROUND_EFFECT_YAW_STEP) & KF_ANGLE_WRAP_MASK;
         effect->phase++;
         break;
 
@@ -712,7 +712,7 @@ void effect_update_dispatch(void)
         } else {
             effect->type = KF_EFFECT_SLOT_FREE;
         }
-        effect->rotation.vector.vy = (effect->rotation.vector.vy + GROUND_EFFECT_YAW_STEP) & KF_ANGLE_WRAP_MASK;
+        effect->rotation.vy = (effect->rotation.vy + GROUND_EFFECT_YAW_STEP) & KF_ANGLE_WRAP_MASK;
         effect->phase++;
         break;
 
@@ -732,34 +732,30 @@ void effect_update_dispatch(void)
             VECTOR position;
             KfCollisionResult collision;
 
-            position.vx = effect->position.vx + effect->direction.vector.vx;
-            position.vz = effect->position.vz + effect->direction.vector.vz;
+            position.vx = effect->position.vx + effect->direction.vx;
+            position.vz = effect->position.vz + effect->direction.vz;
             position.vy = effect->position.vy;
             collision = collision_query_world(
                 position.vx, position.vy, position.vz, ACTOR_SPAWNER_COLLISION_RADIUS, 0,
                 KF_COLLISION_SKIP_MAP_OBJECTS | KF_COLLISION_SKIP_MAP_EVENTS);
-            if ((phase == KF_EFFECT_ACTOR_SPAWNER_TRAVEL_LAST && collision.kind != KfCollisionKind::None) || effect->control.frames_remaining == 0) {
+            if ((phase == KF_EFFECT_ACTOR_SPAWNER_TRAVEL_LAST && collision.kind != KfCollisionKind::None) || effect->frames_remaining == 0) {
                 effect->phase = KF_EFFECT_ACTOR_SPAWNER_WAIT_FIRST;
             } else {
                 effect->position.vx = position.vx;
                 effect->position.vz = position.vz;
-                effect->control.frames_remaining--;
+                effect->frames_remaining--;
             }
             if (phase != KF_EFFECT_ACTOR_SPAWNER_TRAVEL_LAST) {
                 effect->phase++;
             }
         } else if (phase < KF_EFFECT_ACTOR_SPAWNER_SHRINK_FIRST) {
             if (phase == KF_EFFECT_ACTOR_SPAWNER_CREATE_PHASE) {
-                struct KfVec3s actor_rotation;
-                VECTOR position;
-
-                position = {
+                const VECTOR position = {
                     effect->position.vx,
                     effect->position.vy + ACTOR_SPAWNER_CREATE_Y_OFFSET,
                     effect->position.vz};
-                actor_rotation.x = 0;
-                actor_rotation.z = 0;
-                actor_rotation.y = vector_xz_to_angle(
+                SVECTOR actor_rotation{};
+                actor_rotation.vy = vector_xz_to_angle(
                     player_state.camera_position.vx - position.vx,
                     player_state.camera_position.vz - position.vz);
                 value = kf::random_next();
@@ -783,9 +779,9 @@ void effect_update_dispatch(void)
         } else {
             effect->type = KF_EFFECT_SLOT_FREE;
         }
-        effect->rotation.vector.vy = (effect->rotation.vector.vy + ACTOR_SPAWNER_YAW_STEP) & KF_ANGLE_WRAP_MASK;
-        effect->rotation.vector.vx = (effect->rotation.vector.vx + ACTOR_SPAWNER_PITCH_STEP) & KF_ANGLE_WRAP_MASK;
-        effect->rotation.vector.vz = (effect->rotation.vector.vz + ACTOR_SPAWNER_ROLL_STEP) & KF_ANGLE_WRAP_MASK;
+        effect->rotation.vy = (effect->rotation.vy + ACTOR_SPAWNER_YAW_STEP) & KF_ANGLE_WRAP_MASK;
+        effect->rotation.vx = (effect->rotation.vx + ACTOR_SPAWNER_PITCH_STEP) & KF_ANGLE_WRAP_MASK;
+        effect->rotation.vz = (effect->rotation.vz + ACTOR_SPAWNER_ROLL_STEP) & KF_ANGLE_WRAP_MASK;
         break;
     }
 
@@ -799,48 +795,44 @@ void effect_update_dispatch(void)
 
     case KF_EFFECT_KIND_FLOOR_DEFORMATION: {
         s16 column;
-        s32 remaining;
+        auto &floor = effect->floor_deformation;
 
         switch (phase) {
         default:
             // Only advance, hold and reverse drive floor deformation.
             break;
         case KF_EFFECT_FLOOR_DEFORM_ADVANCE:
-            remaining = effect->direction.words.x - 1;
-            effect->direction.words.x = remaining;
-            if ((s16)remaining == -1) {
+            if (--floor.updates_remaining == UINT16_MAX) {
                 effect->phase = KF_EFFECT_FLOOR_DEFORM_HOLD;
                 return;
             }
-            effect->direction.words.z += effect->rotation.vector.vz;
-            for (column = 0; column < effect->rotation.vector.vy; column++) {
+            floor.progress += floor.progress_per_update;
+            for (column = 0; column < floor.segment_count; column++) {
                 effect_floor_deform_line(
-                    effect->rotation.vector.vx + column,
-                    effect->direction.vector.vz,
-                    -effect->direction.vector.vy);
+                    floor.first_segment + column,
+                    floor.progress,
+                    -floor.cell_stagger);
             }
             break;
         case KF_EFFECT_FLOOR_DEFORM_HOLD:
-            if (--effect->position.vy != -1) {
+            if (--floor.hold_countdown != -1) {
                 return;
             }
             effect->phase = KF_EFFECT_FLOOR_DEFORM_REVERSE;
-            effect->direction.words.z = KF_FIXED12_ONE;
-            effect->direction.words.x = effect->position.vx;
+            floor.progress = KF_FIXED12_ONE;
+            floor.updates_remaining = floor.sweep_updates;
             break;
         case KF_EFFECT_FLOOR_DEFORM_REVERSE:
-            remaining = effect->direction.words.x - 1;
-            effect->direction.words.x = remaining;
-            if ((s16)remaining == -1) {
+            if (--floor.updates_remaining == UINT16_MAX) {
                 effect->type = KF_EFFECT_SLOT_FREE;
                 return;
             }
-            effect->direction.words.z -= effect->rotation.vector.vz;
-            for (column = 0; column < effect->rotation.vector.vy; column++) {
+            floor.progress -= floor.progress_per_update;
+            for (column = 0; column < floor.segment_count; column++) {
                 effect_floor_deform_line(
-                    effect->rotation.vector.vx + column,
-                    effect->direction.vector.vz,
-                    effect->direction.vector.vy);
+                    floor.first_segment + column,
+                    floor.progress,
+                    floor.cell_stagger);
             }
             break;
         }

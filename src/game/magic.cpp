@@ -42,7 +42,7 @@ void magic_cast(void)
     case KF_MAGIC_LIGHT_NEEDLE: {
         SVECTOR direction;
         SVECTOR offset;
-        struct KfEulerAngles angles;
+        SVECTOR angles{};
         VECTOR world_pos;
         MATRIX matrix;
         s32 distance;
@@ -50,9 +50,9 @@ void magic_cast(void)
         s32 speed;
 
         offset = {MAGIC_LAUNCH_OFFSET_X, MAGIC_LAUNCH_OFFSET_Y, MAGIC_LAUNCH_OFFSET_Z};
-        angles.x = -player_state.camera_rotation.vx;
-        angles.y = player_state.camera_rotation.vy;
-        angles.z = -player_state.camera_rotation.vz;
+        angles.vx = -player_state.camera_rotation.vx;
+        angles.vy = player_state.camera_rotation.vy;
+        angles.vz = -player_state.camera_rotation.vz;
         matrix_set_rotation_yxz(&angles, &matrix);
         world_pos = kf::matrix_apply_rotation(matrix, offset);
         world_pos += player_state.camera_position;
@@ -64,11 +64,11 @@ void magic_cast(void)
             speed = KF_EFFECT_PROJECTILE_DEFAULT_SPEED;
             if (player_state.selected_magic_id == KF_MAGIC_LIGHTNING_BOLT) {
                 speed = KF_EFFECT_LIGHTNING_SPEED;
-                angles.x = LIGHTNING_UNTARGETED_PITCH;
+                angles.vx = LIGHTNING_UNTARGETED_PITCH;
                 distance = LIGHTNING_UNTARGETED_UPDATES;
             } else {
-                angles.x = 0;
-                angles.x += player_state.camera_rotation.vx;
+                angles.vx = 0;
+                angles.vx += player_state.camera_rotation.vx;
             }
         } else {
             speed = KF_EFFECT_PROJECTILE_DEFAULT_SPEED;
@@ -77,22 +77,22 @@ void magic_cast(void)
                         kf_enum_encode<u8>(map_cell_attribute_grid.cells[target->cell_z][target->cell_x]) - 1]
                         >= LIGHTNING_HEIGHT_CLASS_THRESHOLD) {
                     s32 aim_y = world_pos.vy + LIGHTNING_DEFAULT_TARGET_Y_OFFSET;
-                    angles.x = vector_xz_to_angle(aim_y - target->position.vy, -distance);
+                    angles.vx = vector_xz_to_angle(aim_y - target->position.vy, -distance);
                 } else {
                     s32 aim_y = world_pos.vy + LIGHTNING_LOWER_HEIGHT_Y_OFFSET;
-                    angles.x = vector_xz_to_angle(aim_y - target->position.vy, -distance);
+                    angles.vx = vector_xz_to_angle(aim_y - target->position.vy, -distance);
                 }
                 speed = KF_EFFECT_LIGHTNING_SPEED;
                 distance = distance / speed;
             } else {
-                angles.x = player_state.camera_rotation.vx;
+                angles.vx = player_state.camera_rotation.vx;
             }
         }
         if (player_state.selected_magic_id == KF_MAGIC_WIND_CUTTER) {
             speed = KF_EFFECT_WIND_CUTTER_SPEED;
         }
-        angles.y = player_state.camera_rotation.vy;
-        angles.z = player_state.camera_rotation.vz;
+        angles.vy = player_state.camera_rotation.vy;
+        angles.vz = player_state.camera_rotation.vz;
         pitch_yaw_to_forward_vector(&angles, &direction);
         vector3s_scale_shift12(speed, &direction);
         switch (player_state.selected_magic_id) {

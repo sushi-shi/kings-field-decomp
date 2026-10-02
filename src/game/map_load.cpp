@@ -18,28 +18,29 @@ enum {
 
 bool map_saved_link_valid(KfMapObjectOperation operation, const KfMapObjectLink &link)
 {
-    const KfObjectId *items = nullptr;
     switch (operation) {
-    case KF_MAP_OBJECT_OP_HINGED_CONTAINER: items = link.hinged_container.item_ids; break;
-    case KF_MAP_OBJECT_OP_ITEM_CONTAINER: items = link.item_ids; break;
+    case KF_MAP_OBJECT_OP_HINGED_CONTAINER:
+    case KF_MAP_OBJECT_OP_ITEM_CONTAINER:
+        for (unsigned slot = 0; slot < KF_MAP_CONTAINER_ITEM_COUNT; ++slot) {
+            const auto item = map_container_item(link, operation, slot);
+            if (item != KF_OBJECT_NONE && kf_enum_encode<u8>(item) >= KF_ITEM_COUNT)
+                return false;
+        }
+        return true;
     case KF_MAP_OBJECT_OP_HINGED_DOOR:
     case KF_MAP_OBJECT_OP_HINGED_DOOR_PARTNER:
-        return link.fields.action_parameter.object_index == KF_MAP_OBJECT_PARAMETER_NONE
-            || link.fields.action_parameter.object_index < KF_MAP_OBJECT_CAPACITY;
+        return link.action_parameter == KF_MAP_OBJECT_PARAMETER_NONE
+            || link.action_parameter < KF_MAP_OBJECT_CAPACITY;
     case KF_MAP_OBJECT_OP_COPY_REGION:
-        return link.fields.action_parameter.copy_region == KF_MAP_COPY_REGION_NONE
-            || kf_enum_encode<u8>(link.fields.action_parameter.copy_region) < KF_MAP_COPY_REGION_COUNT;
+        return kf_enum_decode<KfMapCopyRegionId>(link.action_parameter) == KF_MAP_COPY_REGION_NONE
+            || link.action_parameter < KF_MAP_COPY_REGION_COUNT;
     case KF_MAP_OBJECT_OP_RELEASE_ORBIT_OR_SHORT_SWING:
     case KF_MAP_OBJECT_OP_RELEASE_LONG_SWING:
     case KF_MAP_OBJECT_OP_EFFECT_SWITCH:
-        return link.fields.action_parameter.effect_index < KF_EFFECT_CAPACITY;
-    default: break;
+        return link.action_parameter < KF_EFFECT_CAPACITY;
+    default:
+        return true;
     }
-    if (items)
-        for (unsigned i = 0; i < KF_MAP_CONTAINER_ITEM_COUNT; ++i)
-            if (items[i] != KF_OBJECT_NONE && kf_enum_encode<u8>(items[i]) >= KF_ITEM_COUNT)
-                return false;
-    return true;
 }
 
 void map_restore_floor_state(void)
@@ -89,7 +90,7 @@ void map_restore_floor_state(void)
                 const bool fountain = object->object_id == KF_MAP_OBJECT_DRY_FOUNTAIN
                     && saved_id == KF_MAP_OBJECT_FILLED_FOUNTAIN;
                 const bool cross = i == cross_index && saved_id == KF_MAP_OBJECT_BROKEN_STONE_CROSS
-                    && map_floor_script(KF_FLOOR_1).floor1.actor_activation_stage == KF_MAP_TRIGGER_COMPLETE;
+                    && map_runtime_state.world_state.floor1.actor_activation_stage == KF_MAP_TRIGGER_COMPLETE;
                 if (object->object_id == KF_OBJECT_NONE || (!fountain && !cross))
                     kf::host_fail("Saved object identity is incompatible with the loaded floor");
             }
@@ -100,16 +101,17 @@ void map_restore_floor_state(void)
         while (--i != -1) {
             index = *in++;
             object = &map_object_state.objects[index];
-            KfMapObjectLink restored;
-            std::memcpy(&restored, in, sizeof restored);
-            in += sizeof restored;
+            KfMapObjectLinkBytes saved;
+            std::memcpy(saved.data(), in, saved.size());
+            in += saved.size();
+            KfMapObjectLink restored = map_object_link_from_bytes(saved);
             // Floor construction has already rebuilt effects. Their pool indexes
             // are transient references, not persistent game state.
             switch (object->action) {
             case KF_MAP_OBJECT_OP_RELEASE_ORBIT_OR_SHORT_SWING:
             case KF_MAP_OBJECT_OP_RELEASE_LONG_SWING:
             case KF_MAP_OBJECT_OP_EFFECT_SWITCH:
-                restored.fields.action_parameter.effect_index = object->link.fields.action_parameter.effect_index;
+                restored.action_parameter = object->link.action_parameter;
                 break;
             default: break;
             }
@@ -126,13 +128,13 @@ void map_restore_floor_state(void)
                 object->cell_z * KF_MAP_TILE_SIZE + ((kf::random_next() * KF_MAP_TILE_SIZE) >> MAP_RESTORE_POSITION_RANDOM_BITS);
             object->position.vy =
                 -(map_floor_height_grid.cells[object->cell_z][object->cell_x] * KF_MAP_HEIGHT_STEP);
-            object->rotation.angles.z = 0;
-            object->rotation.angles.y = 0;
-            object->rotation.angles.x = 0;
-            object->link.gold_amount = *in++;
-            object->link.gold_amount |= *in++ << 8;
-            object->link.fields.spawn.sequence = 0;
-            object->link.fields.vertical_velocity = 0;
+            object->rotation.vz = 0;
+            object->rotation.vy = 0;
+            object->rotation.vx = 0;
+            map_object_set_gold_amount(object->link, in[0] | in[1] << 8);
+            in += 2;
+            object->link.spawn_sequence = 0;
+            object->link.vertical_velocity = 0;
         }
 
         object = &map_object_state.objects[KF_MAP_OBJECT_DEFINITION_DROP_FIRST];
@@ -146,15 +148,15 @@ void map_restore_floor_state(void)
             object->position.vy =
                 -(map_floor_height_grid.cells[object->cell_z][object->cell_x] * KF_MAP_HEIGHT_STEP);
             if (object->object_id < KF_MAP_DROP_TIP_ID_END) {
-                object->rotation.angles.x = KF_ANGLE_QUARTER_TURN;
+                object->rotation.vx = KF_ANGLE_QUARTER_TURN;
             } else if (object->object_id < KF_MAP_DROP_SPIN_ID_END) {
-                object->rotation.angles.x = 0;
+                object->rotation.vx = 0;
             }
-            object->rotation.angles.z = 0;
-            object->rotation.angles.y = *in++ << KF_MAP_SAVED_YAW_SHIFT;
-            object->link.gold_amount = 0;
-            object->link.fields.spawn.sequence = 0;
-            object->link.fields.vertical_velocity = 0;
+            object->rotation.vz = 0;
+            object->rotation.vy = *in++ << KF_MAP_SAVED_YAW_SHIFT;
+            map_object_set_gold_amount(object->link, 0);
+            object->link.spawn_sequence = 0;
+            object->link.vertical_velocity = 0;
         }
     }
 
@@ -171,21 +173,21 @@ void map_restore_floor_state(void)
 
     switch (player_state.progress_state.current_floor) {
     case KF_FLOOR_1:
-        if (map_floor_script(KF_FLOOR_1).floor1.passage_opened == KF_MAP_SCRIPT_SET) {
+        if (map_runtime_state.world_state.floor1.passage_opened == KF_MAP_SCRIPT_SET) {
             map_apply_copy_region(KF_MAP_COPY_FLOOR1_PASSAGE);
         }
-        if (map_floor_script(KF_FLOOR_1).floor1.actor_activation_stage != KF_MAP_TRIGGER_COMPLETE) {
+        if (map_runtime_state.world_state.floor1.actor_activation_stage != KF_MAP_TRIGGER_COMPLETE) {
             index = actor_pool_find_at_tile(KF_FLOOR1_TRIGGER_ACTOR_TILE_X, KF_FLOOR1_TRIGGER_ACTOR_TILE_Z);
             if (index != -1) {
                 actor_state.actors[index].lifecycle = KF_ACTOR_LIFECYCLE_DISABLED;
             }
         }
-        if (map_floor_script(KF_FLOOR_5).floor5.weapon_transformed == KF_MAP_SCRIPT_SET) {
+        if (map_runtime_state.world_state.floor5.weapon_transformed == KF_MAP_SCRIPT_SET) {
             map_object_pool_clear_link(KF_MAP_LINK_WEAPON_TRANSFORM_DOORS);
         }
         break;
     case KF_FLOOR_2:
-        if (map_floor_script(KF_FLOOR_5).floor5.weapon_transformed == KF_MAP_SCRIPT_SET) {
+        if (map_runtime_state.world_state.floor5.weapon_transformed == KF_MAP_SCRIPT_SET) {
             map_object_pool_clear_link(KF_MAP_LINK_WEAPON_TRANSFORM_DOORS);
         }
         if (player_state.progress_state.highest_floor >= KF_FLOOR_3) {
@@ -193,10 +195,10 @@ void map_restore_floor_state(void)
         }
         break;
     case KF_FLOOR_3:
-        if (map_floor_script(KF_FLOOR_5).floor5.weapon_transformed == KF_MAP_SCRIPT_SET) {
+        if (map_runtime_state.world_state.floor5.weapon_transformed == KF_MAP_SCRIPT_SET) {
             map_object_pool_clear_link(KF_MAP_LINK_WEAPON_TRANSFORM_DOORS);
         }
-        if (map_floor_script(KF_FLOOR_3).floor3.revealed_piece_count == KF_MAP_FLOOR3_REQUIRED_REVEALS) {
+        if (map_runtime_state.world_state.floor3.revealed_piece_count == KF_MAP_FLOOR3_REQUIRED_REVEALS) {
             map_apply_copy_region(KF_MAP_COPY_FLOOR3_REVEAL_FIRST);
             map_apply_copy_region(KF_MAP_COPY_FLOOR3_REVEAL_SECOND);
         }
@@ -204,10 +206,10 @@ void map_restore_floor_state(void)
     case KF_FLOOR_4:
         break;
     case KF_FLOOR_5:
-        if (map_floor_script(KF_FLOOR_5).floor5.character_arrived == KF_MAP_SCRIPT_SET) {
+        if (map_runtime_state.world_state.floor5.character_arrived == KF_MAP_SCRIPT_SET) {
             map_runtime_state.events[KF_FLOOR5_WEAPON_TRANSFORM_EVENT].state = KF_MAP_EVENT_ACTIVE;
         }
-        if (map_floor_script(KF_FLOOR_5).floor5.boss_encounter_started == KF_MAP_SCRIPT_UNSET) {
+        if (map_runtime_state.world_state.floor5.boss_encounter_started == KF_MAP_SCRIPT_UNSET) {
             actor_state.definitions.entries[KF_FLOOR5_BOSS_DEFINITION].action_animations[KF_ACTOR_ANIM_SLOT_MELEE] = KF_ANIMATION_CLIP_NONE;
             actor_state.definitions.entries[KF_FLOOR5_BOSS_DEFINITION].action_animations[KF_ACTOR_ANIM_SLOT_EFFECT0] = KF_ANIMATION_CLIP_NONE;
             actor_state.definitions.entries[KF_FLOOR5_BOSS_DEFINITION].action_animations[KF_ACTOR_ANIM_SLOT_EFFECT1] = KF_ANIMATION_CLIP_NONE;
@@ -217,10 +219,10 @@ void map_restore_floor_state(void)
             map_apply_copy_region(KF_MAP_COPY_FLOOR5_BOSS_ENCOUNTER);
         }
         if (item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)][kf_enum_encode<u8>(KF_ITEM_DRAGON_SWORD)] != 0 || item_stock[kf_enum_encode<u8>(KF_ITEM_STOCK_PLAYER)][kf_enum_encode<u8>(KF_ITEM_MOONLIGHT_SWORD)] != 0
-                || map_floor_script(KF_FLOOR_5).floor5.weapon_transformed == KF_MAP_SCRIPT_SET) {
+                || map_runtime_state.world_state.floor5.weapon_transformed == KF_MAP_SCRIPT_SET) {
             map_object_pool_clear_link(KF_MAP_LINK_FLOOR5_SWORD_DOOR);
         }
-        if (map_floor_script(KF_FLOOR_5).floor5.boss_defeat != KF_MAP_SCRIPT_UNSET) {
+        if (map_runtime_state.world_state.floor5.boss_defeat != KF_MAP_SCRIPT_UNSET) {
             map_object_pool_trigger_link(KF_MAP_LINK_BOSS_EMITTERS);
             actor_pool_begin_death_by_definition(floor5_boss_death_cleanup_definitions[0]);
             actor_pool_begin_death_by_definition(floor5_boss_death_cleanup_definitions[1]);

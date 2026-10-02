@@ -8,7 +8,6 @@ enum {
     KF_MAP_COLUMNS = 100,
     KF_MAP_ROWS = 100,
     KF_MAP_CELL_COUNT = 10000,
-    KF_MAP_GRID_WORD_COUNT = 2500,
     KF_MAP_TILE_SIZE = 2000,
     KF_MAP_TILE_CENTER = 1000,
     KF_MAP_HEIGHT_STEP = 100,
@@ -158,28 +157,19 @@ enum class KfMapOrientation : u8 {
     KF_MAP_ORIENT_THREE_QUARTER_TURN = 4
 }; using enum KfMapOrientation;
 
-typedef union KfMapGrid {
-    u8 cells[KF_MAP_ROWS][KF_MAP_COLUMNS];
-    u8 linear[KF_MAP_CELL_COUNT];
-    u32 words[KF_MAP_GRID_WORD_COUNT];
-} KfMapGrid;
+// One value per map cell, stored row by row.
+template <typename Cell>
+struct KfMapCells {
+    Cell cells[KF_MAP_ROWS][KF_MAP_COLUMNS];
 
-typedef union KfMapAttributeGrid {
-    KfMapAttribute cells[KF_MAP_ROWS][KF_MAP_COLUMNS];
-    KfMapAttribute linear[KF_MAP_CELL_COUNT];
-    u32 words[KF_MAP_GRID_WORD_COUNT];
-} KfMapAttributeGrid;
+    // Collision queries address cells by row-major index.
+    Cell &cell(u16 index) { return cells[index / KF_MAP_COLUMNS][index % KF_MAP_COLUMNS]; }
+    const Cell &cell(u16 index) const { return cells[index / KF_MAP_COLUMNS][index % KF_MAP_COLUMNS]; }
+};
 
-typedef union KfMapCollisionGrid {
-    KfMapCellKind cells[KF_MAP_ROWS][KF_MAP_COLUMNS];
-    KfMapCellKind linear[KF_MAP_CELL_COUNT];
-    u32 words[KF_MAP_GRID_WORD_COUNT];
-} KfMapCollisionGrid;
-
-typedef union KfMapOrientationGrid {
-    KfMapOrientation cells[KF_MAP_ROWS][KF_MAP_COLUMNS];
-    KfMapOrientation linear[KF_MAP_CELL_COUNT];
-    u32 words[KF_MAP_GRID_WORD_COUNT];
-} KfMapOrientationGrid;
+using KfMapGrid = KfMapCells<u8>;
+using KfMapAttributeGrid = KfMapCells<KfMapAttribute>;
+using KfMapCollisionGrid = KfMapCells<KfMapCellKind>;
+using KfMapOrientationGrid = KfMapCells<KfMapOrientation>;
 
 #endif // KF_MAP_TYPES_H

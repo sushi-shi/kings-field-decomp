@@ -198,41 +198,6 @@ enum {
     KF_EFFECT_SWING_PROBE_COUNT = 2
 };
 
-typedef struct KfEffectDirectionWords {
-    u16 x;
-    u16 y;
-    u16 z;
-    u16 pad;
-} KfEffectDirectionWords;
-
-typedef union KfEffectDirection {
-    SVECTOR vector;
-    KfEffectDirectionWords words;
-} KfEffectDirection;
-
-typedef union KfEffectVisualState {
-    u16 animation_phase;
-    u16 pulse_base_scale;
-} KfEffectVisualState;
-
-typedef struct KfEffectControlBytes {
-    u8 low;
-    u8 high;
-} KfEffectControlBytes;
-
-typedef union KfEffectControl {
-    u16 frames_remaining;
-    u16 orbit_angle;
-    u8 parent_effect_index;
-    KfEffectHomingMode target_mode;
-    KfEffectControlBytes bytes;
-} KfEffectControl;
-
-typedef union KfEffectPropagation {
-    u16 generations_remaining;
-    KfEffectGroundBranchRole branch;
-} KfEffectPropagation;
-
 typedef struct KfFloorDeformSegment {
     u8 column;
     u8 row;
@@ -243,10 +208,29 @@ typedef struct KfFloorDeformSegment {
     u8 end_height;
 } KfFloorDeformSegment;
 
-typedef union KfEffectRenderId {
-    KfEffectBillboardId billboard;
-    KfEffectModelId model;
-} KfEffectRenderId;
+// One byte selects what an effect draws: a billboard sprite while its
+// animation clip is KF_ANIMATION_CLIP_NONE, otherwise a model.
+// KF_EFFECT_MODEL_NONE draws nothing.
+struct KfEffectRenderId {
+    u8 value;
+
+    KfEffectRenderId() = default;
+    constexpr KfEffectRenderId(KfEffectBillboardId id) : value(kf_enum_encode<u8>(id)) {}
+    constexpr KfEffectRenderId(KfEffectModelId id) : value(kf_enum_encode<u8>(id)) {}
+    constexpr KfEffectBillboardId billboard() const { return kf_enum_decode<KfEffectBillboardId>(value); }
+    constexpr KfEffectModelId model() const { return kf_enum_decode<KfEffectModelId>(value); }
+};
+
+struct KfFloorDeformation {
+    s16 first_segment;
+    s16 segment_count;
+    s16 progress_per_update;
+    s16 cell_stagger;
+    s16 progress;
+    u16 updates_remaining;
+    u16 sweep_updates;
+    s32 hold_countdown;
+};
 
 typedef struct KfEffectRecord {
     KfEffectType type;
@@ -257,18 +241,27 @@ typedef struct KfEffectRecord {
     KfAudioPlaybackResult sound_played;
     u8 id;
     KfEffectPhase phase;
-    KfEffectVisualState visual;
+    u16 animation_phase;
     u16 unknown_0a;
     VECTOR position;
-    KfRotation rotation;
+    SVECTOR rotation;
     u16 scale_x;
     u16 scale_y;
     u16 scale_z;
     u16 unknown_2a;
-    KfEffectDirection direction;
+    SVECTOR direction;
     struct KfAnimationCacheRecord *animation_cache;
-    KfEffectControl control;
-    KfEffectPropagation propagation;
+    // Kind-specific state. Each spawner initializes the fields its kind uses.
+    u16 frames_remaining; // lightning bolt, scatter, fire wall, actor spawner
+    u16 pulse_base_scale; // scatter
+    u16 generations_remaining; // scatter
+    KfEffectGroundBranchRole branch_role; // fire wall
+    u8 parent_effect_index; // ground trail
+    KfEffectHomingMode target_mode; // homing projectile
+    s16 pitch_velocity; // swinging hazard
+    u16 orbit_angle; // orbiting projectile
+    SVECTOR orbit_center; // orbiting projectile; x and z in KF_EFFECT_ORBIT_CENTER_SHIFT steps
+    KfFloorDeformation floor_deformation;
 } KfEffectRecord;
 
 typedef struct KfEffectState {
@@ -343,8 +336,8 @@ KfEffectRecord *effect_spawn_homing_projectile(u8 id, KfEffectType type, const V
 KfEffectRecord *effect_spawn_warp_shimmer(u8 id, KfEffectType type, const VECTOR &position,
     const SVECTOR &direction);
 extern KfEffectRecord *effect_pool_spawn_floor_deformation(
-    u16 first_segment, u16 segment_count, u16 progress_per_update, u16 cell_stagger,
-    s32 sweep_updates, s32 hold_countdown);
+    s16 first_segment, s16 segment_count, s16 progress_per_update, s16 cell_stagger,
+    u16 sweep_updates, s32 hold_countdown);
 extern void effect_pool_set_current(KfEffectRecord *effect);
 extern void effect_pool_reset(void);
 extern void effect_pool_update(void);
@@ -353,7 +346,7 @@ extern int effect_magic_power(KfEffectRecord *effect);
 extern void effect_update_swinging_hazard(SVECTOR *probe_offset, KfEffectPhase phase_limit);
 extern void effect_update_orbiting_projectile(s32 orbit_radius, KfEffectPhase phase_limit);
 extern void effect_floor_deform_line(s32 segment_index, s32 progress_start, s32 progress_step);
-extern void effect_scatter_triple(KfEffectDirectionWords *velocity);
+extern void effect_scatter_triple(SVECTOR *velocity);
 extern void effect_rotate_scale_offset_y(SVECTOR *offset, VECTOR *output, s16 angle, s32 scale);
 extern void effect_spawn_ground_trail(u8 id, KfEffectRecord *parent_effect, s16 angle, s32 distance);
 extern void effect_spawn_ground_branch(u8 id, KfEffectRecord *parent_effect, s16 angle_offset,
