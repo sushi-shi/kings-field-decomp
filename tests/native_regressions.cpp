@@ -6,6 +6,21 @@
 #include "../src/game/resources.cpp"
 #include "../src/game/equipment.cpp"
 
+// Constant evaluation rejects reads of an inactive union member.
+static_assert([] {
+    KfEffectRecord effect {};
+    effect.animation_clip = KF_ANIMATION_CLIP_NONE;
+    effect.render_id.billboard = KF_EFFECT_BILLBOARD_FIRE_BALL;
+    if (!effect_has_visual(effect)) return false;
+    effect.render_id.billboard = KF_EFFECT_BILLBOARD_NONE;
+    if (effect_has_visual(effect)) return false;
+    effect.animation_clip = KF_ANIMATION_CLIP_FIRST;
+    effect.render_id.model = KF_EFFECT_MODEL_LIGHT_NEEDLE;
+    if (!effect_has_visual(effect)) return false;
+    effect.render_id.model = KF_EFFECT_MODEL_NONE;
+    return !effect_has_visual(effect);
+}());
+
 constexpr std::size_t armor_offset = 0x1134;
 constexpr std::size_t object_offset = 0x1610;
 constexpr std::size_t growth_offset = 0x1a7c;

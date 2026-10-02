@@ -36,7 +36,6 @@ static void restore_module_initial_state()
     cutscene_entity_render_reset_module_state();
     opening_entity_pool_reset_module_state();
     cutscene_audio_reset_module_state();
-    format_reset_module_state();
 }
 
 void cutscene_play(Cutscene scene) {

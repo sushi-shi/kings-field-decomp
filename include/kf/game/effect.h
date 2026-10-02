@@ -271,6 +271,13 @@ typedef struct KfEffectRecord {
     KfEffectPropagation propagation;
 } KfEffectRecord;
 
+constexpr bool effect_has_visual(const KfEffectRecord &effect)
+{
+    return effect.animation_clip == KF_ANIMATION_CLIP_NONE
+        ? effect.render_id.billboard != KF_EFFECT_BILLBOARD_NONE
+        : effect.render_id.model != KF_EFFECT_MODEL_NONE;
+}
+
 typedef struct KfEffectState {
     KfMagicTable magic;
     std::array<KfEffectRecord, KF_EFFECT_CAPACITY> records;

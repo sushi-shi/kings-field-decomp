@@ -67,7 +67,7 @@ void opening_entity_render(KfOpeningEntity *entity)
         break;
     case KF_OPENING_CASTLE_MOUNTAIN_BACKDROP:
         tmd_select_object_vertices(cutscene_tmd_context(), kf_enum_encode<u16>(object_id));
-        tmd_project_vertices_perspective_right(tmd_get_object(cutscene_tmd_context(), kf_enum_encode<u16>(object_id))->vertex_count, &model, open_graphics_runtime.render_state.projection);
+        tmd_project_vertices_perspective_right(tmd_read_object(cutscene_tmd_context(), kf_enum_encode<u16>(object_id)).vertex_count, &model, open_graphics_runtime.render_state.projection);
         cutscene_render_enqueue_tmd(kf_enum_encode<u16>(object_id), 0, &light);
         return;
     case KF_OPENING_ENDING_ORANGE_DISK:
@@ -75,7 +75,7 @@ void opening_entity_render(KfOpeningEntity *entity)
         depth = object_id == KF_OPENING_ENDING_ORANGE_DISK
             ? ENDING_TRANSLATING_MODEL_DEPTH_BIAS : ENDING_ROTATING_MODEL_DEPTH_BIAS;
         tmd_select_object_vertices(cutscene_tmd_context(), kf_enum_encode<u16>(object_id));
-        cutscene_tmd_project_vertices(tmd_get_object(cutscene_tmd_context(), kf_enum_encode<u16>(object_id))->vertex_count, &model, open_graphics_runtime.render_state.projection);
+        cutscene_tmd_project_vertices(tmd_read_object(cutscene_tmd_context(), kf_enum_encode<u16>(object_id)).vertex_count, &model, open_graphics_runtime.render_state.projection);
         render_enqueue_unlit_triangles(kf_enum_encode<u16>(object_id), depth);
         return;
     default:
@@ -84,7 +84,7 @@ void opening_entity_render(KfOpeningEntity *entity)
     }
 
     tmd_select_object_vertices(cutscene_tmd_context(), kf_enum_encode<u16>(object_id));
-    cutscene_tmd_project_vertices(tmd_get_object(cutscene_tmd_context(), kf_enum_encode<u16>(object_id))->vertex_count, &model, open_graphics_runtime.render_state.projection);
+    cutscene_tmd_project_vertices(tmd_read_object(cutscene_tmd_context(), kf_enum_encode<u16>(object_id)).vertex_count, &model, open_graphics_runtime.render_state.projection);
     cutscene_render_enqueue_tmd(kf_enum_encode<u16>(object_id), depth, &light);
 }
 

@@ -3,7 +3,6 @@
 
 #include <kf/game/magic.h>
 #include <kf/game/save.h>
-#include <kf/lib/debug.h>
 #include <kf/lib/item.h>
 #include <kf/lib/map.h>
 #include <kf/lib/menu_types.h>
@@ -17,6 +16,11 @@
 
 enum class KfMenuAction { Close, GameLoaded, ReturnToIntro };
 using KfMenuOutcome = std::variant<KfMenuAction, KfObjectId>;
+
+enum class KfFormatPaddingMode : u8 {
+    KF_FORMAT_PAD_SPACES = 0,
+    KF_FORMAT_PAD_ZEROES = 1
+}; using enum KfFormatPaddingMode;
 
 enum class KfMenuRootChoice : s32 {
     KF_ROOT_CHOICE_NONE = -1,

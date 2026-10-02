@@ -34,7 +34,6 @@ void effect_pool_reset_module_state(void);
 void effect_map_collision_reset_module_state(void);
 void effect_update_reset_module_state(void);
 void effect_dispatch_reset_module_state(void);
-void debug_text_reset_module_state(void);
 
 static void restore_module_initial_state()
 {
@@ -70,8 +69,6 @@ static void restore_module_initial_state()
     effect_map_collision_reset_module_state();
     effect_update_reset_module_state();
     effect_dispatch_reset_module_state();
-    debug_text_reset_module_state();
-    format_reset_module_state();
 }
 
 GameResult game_play() {

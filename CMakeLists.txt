@@ -85,7 +85,6 @@ set(KF_GAME_SOURCES
   src/game/effect_update.cpp
   src/game/effect_dispatch.cpp
   src/game/magic.cpp
-  src/game/debug_text.cpp
   src/game/session.cpp
   src/cutscene/opening_render.cpp
   src/cutscene/opening_helpers.cpp
@@ -118,10 +117,8 @@ set(KF_GAME_SOURCES
   src/lib/display.cpp
   src/lib/tmd.cpp
   src/lib/floor_item.cpp
-  src/lib/format.cpp
   src/lib/resource_file.cpp
   src/lib/resources.cpp
-  src/lib/debug_matrix.cpp
   src/lib/render_view.cpp
   src/lib/render_face.cpp
 )

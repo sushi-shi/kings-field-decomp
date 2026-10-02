@@ -507,6 +507,7 @@ KfEffectRecord *effect_pool_spawn_floor_deformation(
         record->direction.words.y = cell_stagger;
         record->base_render_id.model = KF_EFFECT_MODEL_NONE;
         record->render_id.model = KF_EFFECT_MODEL_NONE;
+        record->animation_clip = KF_ANIMATION_CLIP_FIRST;
         record->kind = KF_EFFECT_KIND_FLOOR_DEFORMATION;
         record->type = KF_EFFECT_FLOOR_DEFORM_TYPE;
         record->phase = KF_EFFECT_FLOOR_DEFORM_ADVANCE;
