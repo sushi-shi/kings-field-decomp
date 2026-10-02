@@ -16,7 +16,7 @@ class NativeRegressions(unittest.TestCase):
         cls.addClassCleanup(cls.directory.cleanup)
         for name in ["native_regressions", "lighting_regressions", "resource_failures",
                      "cutscene_resources", "collision_results", "map_grids", "menu_outcomes", "dialogue_compare",
-                     "keyboard_controls", "cell_windows", "vertex_sources", "asset_lifetimes"]:
+                     "keyboard_controls", "cell_windows", "vertex_sources", "asset_lifetimes", "effect_construction"]:
             subprocess.run(
                 [
                     "clang++", "-std=c++20", "-O1", "-g", "-fno-rtti",
@@ -37,6 +37,9 @@ class NativeRegressions(unittest.TestCase):
                 check=True, text=True,
             )
         cls.binary = Path(cls.directory.name) / "native_regressions"
+
+    def test_effect_construction_contracts(self):
+        subprocess.run([Path(self.directory.name) / "effect_construction"], check=True, timeout=10)
 
     def test_map_grid_copy_alignment_and_bounds(self):
         for scenario in ("aligned", "unaligned", "truncated", "zero-orientation", "high-orientation"):

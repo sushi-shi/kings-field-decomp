@@ -78,10 +78,8 @@ void player_warp_shimmer(KfWarpShimmerMode shimmer_mode, VECTOR *position)
     display_flip_buffer_index();
     cursor = effects.data();
     for (i = KF_CYLINDER_TRANSITION_COUNT - 1; i != -1; i--) {
-        effect = effect_pool_construct(
-            WARP_SHIMMER_OWNER_ID,
-            KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS,
-            KF_EFFECT_KIND_WARP_SHIMMER, position, &scratch.direction);
+        effect = effect_spawn_warp_shimmer(WARP_SHIMMER_OWNER_ID,
+            KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS, *position, scratch.direction);
         effect->scale_y = scale_y;
         *cursor++ = effect;
     }

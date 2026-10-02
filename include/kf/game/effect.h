@@ -291,61 +291,57 @@ constexpr KfEffectSoundRequest effect_sound_request(bool requested)
     return requested ? KF_EFFECT_SOUND_PLAY : KF_EFFECT_SOUND_SILENT;
 }
 
-class KfEffectBranchArguments { public: KfEffectGroundBranchRole role; };
-class KfEffectRotationArguments { public: const SVECTOR *rotation; };
-class KfEffectRotationSoundArguments {
-public:
-    const SVECTOR *rotation;
-    KfEffectSoundRequest sound;
-};
-class KfEffectDurationSoundArguments {
-public:
-    s32 duration;
-    KfEffectSoundRequest sound;
-};
-class KfEffectScatterArguments {
-public:
-    s32 generations;
-    s32 duration;
-    s32 scale;
-};
-class KfEffectSoundArguments { public: KfEffectSoundRequest sound; };
-class KfEffectHomingArguments {
-public:
-    const SVECTOR *rotation;
-    KfEffectHomingMode target;
-    KfEffectSoundRequest sound;
-};
-class KfEffectParentArguments { public: s32 parent_index; };
+enum class KfEffectVariant { Normal, Alternate };
 
 extern KfEffectRecord *effect_pool_find_free(void);
-extern KfEffectRecord *effect_pool_construct(
-    u8 id, KfEffectType type, KfEffectKind kind, const VECTOR *position,
-    const SVECTOR *direction);
-extern KfEffectRecord *effect_pool_construct(
-    u8 id, KfEffectType type, KfEffectKind kind, const VECTOR *position,
-    const SVECTOR *direction, KfEffectBranchArguments arguments);
-extern KfEffectRecord *effect_pool_construct(
-    u8 id, KfEffectType type, KfEffectKind kind, const VECTOR *position,
-    const SVECTOR *direction, KfEffectRotationArguments arguments);
-extern KfEffectRecord *effect_pool_construct(
-    u8 id, KfEffectType type, KfEffectKind kind, const VECTOR *position,
-    const SVECTOR *direction, KfEffectRotationSoundArguments arguments);
-extern KfEffectRecord *effect_pool_construct(
-    u8 id, KfEffectType type, KfEffectKind kind, const VECTOR *position,
-    const SVECTOR *direction, KfEffectDurationSoundArguments arguments);
-extern KfEffectRecord *effect_pool_construct(
-    u8 id, KfEffectType type, KfEffectKind kind, const VECTOR *position,
-    const SVECTOR *direction, KfEffectScatterArguments arguments);
-extern KfEffectRecord *effect_pool_construct(
-    u8 id, KfEffectType type, KfEffectKind kind, const VECTOR *position,
-    const SVECTOR *direction, KfEffectSoundArguments arguments);
-extern KfEffectRecord *effect_pool_construct(
-    u8 id, KfEffectType type, KfEffectKind kind, const VECTOR *position,
-    const SVECTOR *direction, KfEffectHomingArguments arguments);
-extern KfEffectRecord *effect_pool_construct(
-    u8 id, KfEffectType type, KfEffectKind kind, const VECTOR *position,
-    const SVECTOR *direction, KfEffectParentArguments arguments);
+KfEffectRecord *effect_spawn_fire_ball(u8 id, KfEffectType type, const VECTOR &position,
+    const SVECTOR &direction);
+KfEffectRecord *effect_spawn_wind_cutter(u8 id, KfEffectType type, const VECTOR &position,
+    const SVECTOR &direction, KfEffectSoundRequest sound);
+KfEffectRecord *effect_spawn_lightning_bolt(u8 id, KfEffectType type, const VECTOR &position,
+    const SVECTOR &direction, KfEffectVariant variant, s32 duration, KfEffectSoundRequest sound);
+KfEffectRecord *effect_spawn_lightning_impact(u8 id, KfEffectType type, const VECTOR &position,
+    const SVECTOR &direction, KfEffectVariant variant);
+KfEffectRecord *effect_spawn_lightning_radial_blast(u8 id, KfEffectType type, const VECTOR &position,
+    const SVECTOR &direction, KfEffectVariant variant);
+KfEffectRecord *effect_spawn_fire_wall(u8 id, KfEffectType type, const VECTOR &position,
+    const SVECTOR &direction, KfEffectGroundBranchRole role);
+KfEffectRecord *effect_spawn_ground_branch_visual(u8 id, KfEffectType type, const VECTOR &position,
+    const SVECTOR &direction);
+KfEffectRecord *effect_spawn_actor_spawner(u8 id, KfEffectType type, const VECTOR &position,
+    const SVECTOR &direction, s32 duration);
+KfEffectRecord *effect_spawn_scatter_projectile(u8 id, KfEffectType type, const VECTOR &position,
+    const SVECTOR &direction, s32 generations, s32 duration, s32 scale);
+KfEffectRecord *effect_spawn_darkness_projectile(u8 id, KfEffectType type, const VECTOR &position,
+    const SVECTOR &direction);
+KfEffectRecord *effect_spawn_curse_projectile(u8 id, KfEffectType type, const VECTOR &position,
+    const SVECTOR &direction);
+KfEffectRecord *effect_spawn_emerging_projectile(u8 id, KfEffectType type, const VECTOR &position,
+    const SVECTOR &direction);
+KfEffectRecord *effect_spawn_map_emitter_projectile(u8 id, KfEffectType type, const VECTOR &position,
+    const SVECTOR &direction, const SVECTOR &rotation);
+KfEffectRecord *effect_spawn_map_switch(u8 id, KfEffectType type, const VECTOR &position,
+    const SVECTOR &direction, const SVECTOR &rotation);
+KfEffectRecord *effect_spawn_light_needle(u8 id, KfEffectType type, const VECTOR &position,
+    const SVECTOR &direction, const SVECTOR &rotation, KfEffectSoundRequest sound);
+KfEffectRecord *effect_spawn_physical_projectile(u8 id, KfEffectType type, const VECTOR &position,
+    const SVECTOR &direction, const SVECTOR &rotation, KfEffectSoundRequest sound);
+KfEffectRecord *effect_spawn_swinging_hazard_short(u8 id, KfEffectType type, const VECTOR &position,
+    const SVECTOR &direction, const SVECTOR &rotation);
+KfEffectRecord *effect_spawn_swinging_hazard_long(u8 id, KfEffectType type, const VECTOR &position,
+    const SVECTOR &direction, const SVECTOR &rotation);
+KfEffectRecord *effect_spawn_orbiting_projectile(u8 id, KfEffectType type, const VECTOR &position,
+    const SVECTOR &direction);
+KfEffectRecord *effect_spawn_moonlight_projectile(u8 id, KfEffectType type, const VECTOR &position,
+    const SVECTOR &direction, const SVECTOR &rotation);
+KfEffectRecord *effect_spawn_ground_trail(u8 id, KfEffectType type, const VECTOR &position,
+    const SVECTOR &direction, u8 parent_index);
+KfEffectRecord *effect_spawn_radial_blast(u8 id, KfEffectType type, const VECTOR &position,
+    const SVECTOR &direction, KfEffectVariant variant, KfEffectSoundRequest sound);
+KfEffectRecord *effect_spawn_homing_projectile(u8 id, KfEffectType type, const VECTOR &position,
+    const SVECTOR &direction, KfEffectVariant variant, const SVECTOR &rotation, KfEffectHomingMode target, KfEffectSoundRequest sound);
+KfEffectRecord *effect_spawn_warp_shimmer(u8 id, KfEffectType type, const VECTOR &position,
+    const SVECTOR &direction);
 extern KfEffectRecord *effect_pool_spawn_floor_deformation(
     u16 first_segment, u16 segment_count, u16 progress_per_update, u16 cell_stagger,
     s32 sweep_updates, s32 hold_countdown);
@@ -360,7 +356,8 @@ extern void effect_floor_deform_line(s32 segment_index, s32 progress_start, s32 
 extern void effect_scatter_triple(KfEffectDirectionWords *velocity);
 extern void effect_rotate_scale_offset_y(SVECTOR *offset, VECTOR *output, s16 angle, s32 scale);
 extern void effect_spawn_ground_trail(u8 id, KfEffectRecord *parent_effect, s16 angle, s32 distance);
-extern void effect_spawn_ground_branch(u8 id, KfEffectRecord *parent_effect, s16 angle_offset, KfEffectGroundBranchRole branch_role);
+extern void effect_spawn_ground_branch(u8 id, KfEffectRecord *parent_effect, s16 angle_offset,
+    KfEffectGroundBranchRole branch_role);
 extern KfCollisionResult effect_map_collision(VECTOR *position, s32 radius);
 
 #endif // KF_GAME_EFFECT_H

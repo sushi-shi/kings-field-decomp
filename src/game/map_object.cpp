@@ -417,13 +417,9 @@ void map_object_pool_update(void)
                 direction.vy = 0;
                 direction.vx = (kf::angle_sine(object->rotation.angles.y) * MAP_EMITTER_VELOCITY_NUMERATOR) >> MAP_EMITTER_VELOCITY_SHIFT;
                 direction.vz = (-kf::angle_cosine(object->rotation.angles.y) * MAP_EMITTER_VELOCITY_NUMERATOR) >> MAP_EMITTER_VELOCITY_SHIFT;
-                effect_pool_construct(
-                    object->link.fields.spawn.effect_id,
-                    KF_EFFECT_CLASS_20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
-                    KF_EFFECT_KIND_MAP_EMITTER_PROJECTILE,
-                    &object->position,
-                    &direction,
-                    KfEffectRotationArguments{&object->rotation.vector});
+                effect_spawn_map_emitter_projectile(object->link.fields.spawn.effect_id,
+                    KF_EFFECT_CLASS_20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER, object->position, direction,
+                    object->rotation.vector);
                 object->action_timer = kf_enum_decode<KfMapObjectProgress>((kf::random_next() >> MAP_EMITTER_COUNTDOWN_RANDOM_SHIFT) + MAP_EMITTER_COUNTDOWN_BASE);
                 break;
             case KF_MAP_OBJECT_FIRE_BALL_EMITTER:
@@ -433,13 +429,8 @@ void map_object_pool_update(void)
                 point.vx = object->position.vx;
                 point.vz = object->position.vz;
                 point.vy = object->position.vy + MAP_FIRE_BALL_EMITTER_Y_OFFSET;
-                effect_pool_construct(
-                    object->link.fields.spawn.effect_id,
-                    KF_EFFECT_CLASS_20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
-                    KF_MAGIC_FIRE_BALL,
-                    &point,
-                    &direction,
-                    KfEffectRotationArguments{&object->rotation.vector});
+                effect_spawn_fire_ball(object->link.fields.spawn.effect_id,
+                    KF_EFFECT_CLASS_20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER, point, direction);
                 object->action_timer = kf_enum_decode<KfMapObjectProgress>((kf::random_next() >> MAP_EMITTER_COUNTDOWN_RANDOM_SHIFT) + MAP_EMITTER_COUNTDOWN_BASE);
                 break;
             case KF_MAP_OBJECT_WIND_CUTTER_EMITTER:
@@ -449,13 +440,9 @@ void map_object_pool_update(void)
                 point.vx = object->position.vx;
                 point.vz = object->position.vz;
                 point.vy = object->position.vy + MAP_WIND_CUTTER_EMITTER_Y_OFFSET;
-                effect_pool_construct(
-                    object->link.fields.spawn.effect_id,
-                    KF_EFFECT_CLASS_20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
-                    KF_MAGIC_WIND_CUTTER,
-                    &point,
-                    &direction,
-                    KfEffectRotationSoundArguments{&object->rotation.vector, KF_EFFECT_SOUND_PLAY});
+                effect_spawn_wind_cutter(object->link.fields.spawn.effect_id,
+                    KF_EFFECT_CLASS_20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER, point, direction,
+                    KF_EFFECT_SOUND_PLAY);
                 object->action_timer = kf_enum_decode<KfMapObjectProgress>((kf::random_next() >> MAP_EMITTER_COUNTDOWN_RANDOM_SHIFT) + MAP_EMITTER_COUNTDOWN_BASE);
                 break;
             case KF_MAP_OBJECT_BOSS_PROJECTILE_EMITTER:
@@ -476,13 +463,9 @@ void map_object_pool_update(void)
                     break;
                 }
                 point.vy = object->position.vy + MAP_BOSS_EMITTER_Y_OFFSET;
-                effect_pool_construct(
-                    object->link.fields.spawn.effect_id,
-                    KF_EFFECT_CLASS_20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
-                    KF_MAGIC_WIND_CUTTER,
-                    &point,
-                    &direction,
-                    KfEffectRotationSoundArguments{&object->rotation.vector, effect_sound_request(kf::random_next() < MAP_BOSS_EMITTER_SOUND_RANDOM_LIMIT)});
+                effect_spawn_wind_cutter(object->link.fields.spawn.effect_id,
+                    KF_EFFECT_CLASS_20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER, point, direction,
+                    effect_sound_request(kf::random_next() < MAP_BOSS_EMITTER_SOUND_RANDOM_LIMIT));
                 object->action_timer = kf_enum_decode<KfMapObjectProgress>((kf::random_next() >> MAP_EMITTER_COUNTDOWN_RANDOM_SHIFT) + MAP_BOSS_EMITTER_COUNTDOWN_BASE);
                 break;
             }

@@ -369,9 +369,9 @@ void map_floor5_weapon_transform_cutscene(void)
                 } else if (hold == MAP_WEAPON_TRANSFORM_SWAP_COUNTDOWN) {
                     spawn = sword->position;
                     spawn.vy -= MAP_WEAPON_TRANSFORM_BLAST_HEIGHT;
-                    effect_pool_construct(
-                        0, KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
-                        KF_EFFECT_KIND_RADIAL_BLAST, &spawn, &direction, KfEffectSoundArguments{KF_EFFECT_SOUND_PLAY});
+                    effect_spawn_radial_blast(0,
+                        KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER, spawn, direction,
+                        KfEffectVariant::Normal, KF_EFFECT_SOUND_PLAY);
                     sword->object_id = KF_ITEM_MOONLIGHT_SWORD;
                 }
             } else if (spin < MAP_WEAPON_TRANSFORM_MAX_YAW_STEP) {
