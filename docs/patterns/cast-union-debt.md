@@ -16,8 +16,9 @@ only covers conversions not permitted in C++.
 Thirty-seven explicit typed conversions are restored or added, including the
 two copy implementations. Forty-two erasures are explicitly spelled as
 `(void *)` or `(const void *)`, preserving qualification at read-only save
-boundaries. Current totals are **430 written casts** (349 pointer, 81 scalar)
-and **30 unions**. The raw source `void* views` gate moves from 14 to 56 solely
+boundaries. Current totals are **625 written casts** (606 in sources: 530
+pointer, 76 scalar; 19 in headers: 14 pointer, 5 scalar) and **31 unions**.
+The raw source `void* views` gate moves from 14 to 56 solely
 for these 42 requested casts; no void-typed owner, variable or parameter is
 added. This is an explicit baseline adjustment, not a disabled gate or an
 exclusion from the cast census. Requiring the conversions is a project review
@@ -49,12 +50,46 @@ with zero errors. Its optional whole-file refactoring smoke test still reports
 unrelated macro-overlap/extraction failures; limiting feature probes to line
 one retains the full-file parse and avoids those refactoring exercises.
 
+## Open decisions from the per-site review
+
+A per-site review of every written cast, union and `goto` leaves these
+decisions open. Regenerate site lists with `kf casts --json`; line-keyed
+census snapshots go stale with every rename.
+
+- **`AddPrim`/`SetSemiTrans` erasures (about 135 sites) answer project
+  policy, not the SDK.** Release 2.5 `LIBGPU.H` declares both without
+  prototypes. The
+  `void *` parameters come from the C++-only declarations in
+  `vendor/include/psyq/sdk.h`, so the casts satisfy
+  `kf-implicit-void-erasure`. Removing both casts in `src/lib/sprite_add.c`
+  leaves `game.sprite_add_ft4` listing-identical (`kf try`). Exempting these
+  entry points in `scripts/kf/pointer_policy.py` would remove the casts, but it
+  narrows a gate. That is a policy decision, not a cleanup.
+- **`KfMapObjectLink.words[2]` is still declared** (`include/kf/lib/map.h`),
+  although no source reads or writes it and `KfMapObjectLinkFields` already
+  sets the eight-byte extent. The map-link section below records removed uses,
+  not a removed declaration. It can be removed after a focused rebuild.
+- **`KfMapFloorScript.bytes` has no reads but is load-bearing.** It sets the
+  ten-byte serialized extent inside the saved floor record.
+- **`render_bind_animated_instance` returns
+  `(KfAnimationCacheRecord *)KF_ANIMATION_BIND_STATIC`**, the literal 1. This
+  is the tree's only integer-to-pointer conversion, and callers only test it
+  against `NULL`, so the result is tri-state. Decide it together with the
+  callers.
+- **The `effect_pool_construct` argument-slot casts** belong with the typed
+  `va_arg` model in [effect-constructor-varargs.md](effect-constructor-varargs.md).
+  Do not decide them separately.
+- **All 72 `goto` statements are required control flow.** Each one jumps to a
+  block with more than one predecessor in the retail CFG. Removing a `goto`
+  either duplicates that block or adds a carrier variable and a test, and both
+  change the block structure that retail fixes.
+
 ## Readability follow-up snapshot (before explicit-pointer policy)
 
 The first cleanup made several callers harder to read. This follow-up to
 `4f2940c5` corrects that tradeoff; fewer union declarations alone were not a
-sufficient verdict. Current counts are **351 casts** (270 pointer, 81 scalar)
-and **30 unions**. The integration snapshot below is historical.
+sufficient verdict. Counts at that point were **351 casts** (270 pointer,
+81 scalar) and **30 unions**. The integration snapshot below is historical.
 
 - Grid queries now spell `map_floor_height_grid.linear[cell_index]`, with
   corresponding typed attribute, collision-kind and orientation views. Four
@@ -280,7 +315,9 @@ Three additional source experiments were rejected, not counted as reductions:
 
 ## Retained 26 non-grid unions
 
-Together with the four dual-index grids above these give 30 unions. These are
+Together with the four dual-index grids above these give 30 typedef unions;
+the anonymous packet-pointer union in OPEN `render_enqueue_map`, added with the
+explicit-boundary policy, brings the live count to 31. These are
 retention verdicts, not original union declarations recovered from
 bytes. The [earlier audit](type-assertion-and-union-audit.md) contains fuller
 consumer dossiers; its old live totals are superseded here.
