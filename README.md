@@ -110,14 +110,18 @@ Manually maintained cleanup checklist:
   Replacing the containing `INTR` object would cover **18 functions per overlay**;
   its [matching scope](docs/sdk-object-audit.md#interrupt-workaround-scope) is smaller
   than rebuilding all unresolved SDK modules.
-- [ ] Review casts and remove avoidable conversions: **430 written casts**
-  (**349 pointer**, **81 scalar**). The [cast/union debt campaign](docs/patterns/cast-union-debt.md)
+- [ ] Review casts and remove avoidable conversions: **625 written casts**
+  (**544 pointer**, **81 scalar**; 19 of them in headers). The [cast/union debt campaign](docs/patterns/cast-union-debt.md)
   clarifies grid, copy, and asset-offset access and requires explicit void-pointer boundaries;
-  raw counts remain review inputs, not a measure of incorrect types.
-- [ ] Review unions and simplify avoidable alternate views: **30 union definitions**;
+  raw counts remain review inputs, not a measure of incorrect types. Its
+  [open decisions](docs/patterns/cast-union-debt.md#open-decisions-from-the-per-site-review)
+  include the instruction-neutral `AddPrim`/`SetSemiTrans` erasures.
+- [ ] Review unions and simplify avoidable alternate views: **31 union definitions**;
   seven wrappers replaced with canonical structs or SDK types. Four grids retain
-  typed coordinate/linear views; grid word-copy and map-link copy/byte members are gone.
-- [ ] Review gotos: **74 statements** (**68 GAME**, **6 OPEN**).
+  typed coordinate/linear views plus the loader's word view; `KfMapObjectLink.words`
+  is declared but never accessed.
+- [x] Review gotos: **72 statements** (**66 GAME**, **4 OPEN**, **2** in shared
+  `src/lib/format.inc`); each joins a retail block with several predecessors.
 - [x] Review artificial address arithmetic: **0 cases**; the unallocated
   retail stack word in both OPEN emitters is carried by a never-read local.
 - [x] Review owner recovery from member pointers: **0 sites**.
