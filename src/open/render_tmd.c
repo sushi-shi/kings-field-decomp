@@ -26,6 +26,9 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
     u32 remaining = object->primitive_count;
     u8 *packet = (u8 *)open_graphics_runtime.tmd_state.current_tmd +
         (object->primitive_offset + KF_TMD_HEADER_BYTES);
+    /* Byte cursor: packet n fields are element-sized offsets and the GTE reads
+     * each normal with two word loads, so this base stays word-aligned
+     * (contract on TMD_OBJECT_VERTICES). */
     u8 *normals = (u8 *)open_graphics_runtime.tmd_state.current_tmd +
         (object->normal_offset + KF_TMD_HEADER_BYTES);
     KfScreenVertex *vertex0;
