@@ -18,19 +18,37 @@ KfCellHeightRecord map_cell_height_records[KF_MAP_CELL_HEIGHT_RECORD_COUNT] = {
 /* Switch jump table for the diagonal-wall cell shapes. */
 RODATA(0x80012ce0, 0x18)
 
-/* Geometry and target query for an already validated cell. */
-static inline u32 effect_collision_in_cell(
-    VECTOR *position, s32 radius, s16 x, s16 z, s32 subz,
-    KfEffectRecord *effect)
+/*
+ * Probe whether a world position collides with the map geometry at its cell.
+ * Converts x/z to a 100x100 cell, rejects out-of-range cells and positions
+ * below the cell floor, then tests the cell's attribute-driven height/step
+ * shape and its collision-grid shape (flat, four diagonal half-cells, or the
+ * neighbour-aware corner cell 0).  A surviving hit is forwarded to
+ * collision_query_world with the flags selected from the active effect record.
+ * Geometry rejection returns KF_COLLISION_TERRAIN; callers recognize
+ * KF_COLLISION_NONE as no collision.
+ */
+ADDRESS(0x80037850, 0x76c)
+u32 effect_map_collision(VECTOR *position, s32 radius)
 {
+    KfEffectRecord *effect;
+    s16 x;
+    s16 z;
+    s32 subz;
     KfCellHeightRecord *record;
     s32 subx;
     s32 y;
     s32 floor;
     s32 height;
     KfMapAttribute attr;
-    u32 result;
 
+    x = position->vx / KF_MAP_TILE_SIZE;
+    z = position->vz / KF_MAP_TILE_SIZE;
+    subz = position->vz % KF_MAP_TILE_SIZE;
+    effect = effect_state.current_record;
+    if (x < 0 || x >= KF_MAP_COLUMNS || z < 0 || z >= KF_MAP_ROWS) {
+        return KF_COLLISION_TERRAIN;
+    }
     y = position->vy;
     floor = map_floor_height_grid.cells[z][x] * -KF_MAP_HEIGHT_STEP;
     if (floor < y) {
@@ -44,8 +62,7 @@ static inline u32 effect_collision_in_cell(
             if (height < 0) {
                 height += floor;
                 if (y < height) {
-                    result = KF_COLLISION_TERRAIN;
-                    break;
+                    return KF_COLLISION_TERRAIN;
                 }
             } else {
                 record = &map_cell_height_records[height];
@@ -122,54 +139,22 @@ static inline u32 effect_collision_in_cell(
 
     collide:
         switch (effect->type & KF_EFFECT_COLLISION_TARGETS_MASK) {
-        default:
-            result = 1;
-            break;
         case KF_EFFECT_COLLISION_TARGET_ACTORS:
-            result = collision_query_world(position->vx, position->vy, position->vz, radius, 0,
+            return collision_query_world(position->vx, position->vy, position->vz, radius, 0,
                 KF_COLLISION_SKIP_TERRAIN | KF_COLLISION_SKIP_PLAYER
                     | KF_COLLISION_SKIP_MAP_OBJECTS | KF_COLLISION_SKIP_MAP_EVENTS);
-            break;
         case KF_EFFECT_COLLISION_TARGET_PLAYER:
-            result = collision_query_world(position->vx, position->vy, position->vz, radius, 0,
+            return collision_query_world(position->vx, position->vy, position->vz, radius, 0,
                 KF_COLLISION_SKIP_TERRAIN | KF_COLLISION_SKIP_ACTORS
                     | KF_COLLISION_SKIP_MAP_OBJECTS | KF_COLLISION_SKIP_MAP_EVENTS);
-            break;
         case KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER:
-            result = collision_query_world(position->vx, position->vy, position->vz, radius, 0,
+            return collision_query_world(position->vx, position->vy, position->vz, radius, 0,
                 KF_COLLISION_SKIP_TERRAIN | KF_COLLISION_SKIP_MAP_OBJECTS
                     | KF_COLLISION_SKIP_MAP_EVENTS);
-            break;
         }
-
     }
-    return result;
-}
-
-/*
- * Probe whether a world position collides with the map geometry at its cell.
- * Converts x/z to a 100x100 cell, rejects out-of-range cells and positions
- * below the cell floor, then tests the cell's attribute-driven height/step
- * shape and its collision-grid shape (flat, four diagonal half-cells, or the
- * neighbour-aware corner cell 0).  A surviving hit is forwarded to
- * collision_query_world with the flags selected from the active effect record.
- * Geometry rejection returns KF_COLLISION_TERRAIN; callers recognize
- * KF_COLLISION_NONE as no collision.
- */
-ADDRESS(0x80037850, 0x76c)
-u32 effect_map_collision(VECTOR *position, s32 radius)
-{
-    KfEffectRecord *effect;
-    s16 x;
-    s16 z;
-    s32 subz;
-
-    x = position->vx / KF_MAP_TILE_SIZE;
-    z = position->vz / KF_MAP_TILE_SIZE;
-    subz = position->vz % KF_MAP_TILE_SIZE;
-    effect = effect_state.current_record;
-    if (x < 0 || x >= KF_MAP_COLUMNS || z < 0 || z >= KF_MAP_ROWS) {
-        return KF_COLLISION_TERRAIN;
-    }
-    return effect_collision_in_cell(position, radius, x, z, subz, effect);
+    /*
+     * Class 0 falls off the end without a return value; retail then returns
+     * the class-1 compare constant left in $v0 (1).
+     */
 }

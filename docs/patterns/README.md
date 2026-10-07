@@ -112,6 +112,9 @@ promotes a probe to a proven historical toolchain.
   preserved newer source models and current validation of four partial functions.
 - [game-low-trial-campaign.md](game-low-trial-campaign.md): fixed campaign of
   eight non-exact functions with fewer than six recorded JSON trials at selection.
+- [gcc257-residue-followups.md](gcc257-residue-followups.md): three GAME
+  closures (missing return in the outer function, contour-weighted loop
+  index, dividend with two deaths) and allocator verdicts for the rest.
 - [gcc257-instrumentation.md](gcc257-instrumentation.md): source-pinned debug
   compiler, observational trace contract, controlled probes and OPEN residues.
 - [gcc257-address-quantities.md](gcc257-address-quantities.md): observed CSE
