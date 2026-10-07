@@ -210,6 +210,7 @@ incremental Ninja graph. The normal commands are:
 | `kf status [--json] [--all]` | report current state without building or writing |
 | [`kf casts [--kind K] [--scope S] [--list\|--json]`](cast-audit.md) | parse every selected target-C unit variant and count written C-style casts once by spelling location, including shared macros and headers |
 | [`kf enums [--value N] [--duplicates] [--json]`](enum-comparison.md) | compare evaluated enum names across source/image variants as leads for semantic review |
+| [`kf literals [--domains] [--member TEXT] [--value N] [--output PATH]`](patterns/enum-domain-plan.md) | census every written integer literal and enum constant by semantic sink (field, parameter, return, case subject, index, mask, shift, arithmetic, declaration), join sinks connected by value flow into candidate enum domains with KF2 counterparts, and reconcile all written numeric tokens |
 | [`kf parameters [--all] [--json]`](parameter-inventory.md) | inventory enum/record argument names, declarations and definitions in both modern and retail views for individual semantic review |
 | [`kf resources census FILE --offset N --length N --stride N --field-offset N --encoding E [--json]`](resource-census.md) | count an explicitly identified binary record field with row and byte references |
 | `kf check [--strict]` | fail on data mismatches/incomplete comparisons, known-reference ownership gaps, unfaithful target relink/placement, non-exact vendored source verification, unchanged-input regressions, lost banked rows, or invalid/stale reports |

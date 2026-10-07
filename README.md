@@ -214,8 +214,16 @@ the check. Conversions between typed pointers and `void *` must be explicit
 in source, in both directions. Modern C++ checking rejects implicit restoration
 of a typed pointer; the retail editor enables `-Werror=implicit-void-ptr-cast`.
 A read-only target-C AST check additionally rejects implicit erasure to `void *`,
-which Clang otherwise accepts silently. The checker does not rewrite source or
-suppress diagnostics. Logs are saved under `build/clangd/checks/`.
+which Clang otherwise accepts silently. It also runs the `kf literals` census
+and fails on any written literal stored into, compared with or passed as a
+scoped-enum field, parameter, return, promoted local or switch subject; a
+`KF_ENUM_ENCODE` boundary is an integer view and stays allowed. The checker
+does not rewrite source or suppress diagnostics. Logs are saved under
+`build/clangd/checks/`.
+
+Run `kf literals --domains` to list every written integer literal's sink and the
+value-flow domains that join them; see the
+[enum-domain plan](docs/patterns/enum-domain-plan.md).
 
 Run `kf bools --output build/boolean-audit/all.json` to audit integral fields,
 locals, globals, arguments, pointer outputs, arrays, and return values through

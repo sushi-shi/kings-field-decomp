@@ -79,6 +79,13 @@ promotes a probe to a proven historical toolchain.
   consumers, complete-converter and DOS controls, and the retail date window.
 - [boolean-modeling.md](boolean-modeling.md): whole-source libclang value-flow
   census, Boolean storage types, reviewed conversions and numeric exclusions.
+- [enum-domain-plan.md](enum-domain-plan.md): `kf literals` sink census and
+  value-flow domains ported from KF2, the stricter enum-literal check, query-miss
+  sentinels and floor-local definition names, and a verdict row in
+  [enum-domain-plan.tsv](enum-domain-plan.tsv) for every remaining domain.
+- [boolean-and-null-review.md](boolean-and-null-review.md): pointer zeros in both
+  language views, `NULL` as `nullptr` in C++, and the
+  [Boolean-candidate domain ledger](boolean-domain-review.tsv).
 - [typed-storage-cast-campaign.md](typed-storage-cast-campaign.md): shared object
   models, complete cast accounting, and verified packet/colour conversions.
 - [type-assertion-and-union-audit.md](type-assertion-and-union-audit.md):
