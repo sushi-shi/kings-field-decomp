@@ -171,10 +171,34 @@ default 32 KiB stack. The former zero-byte `.bss_start`/`.bss_end` sections,
 their ASMPSX 2.34 dependency and the `BSS_START`/`BSS_END` linker labels are
 removed: no King's Field object used them.
 
-A numeric layout must be kept in step with the link. The original
-maintainer had to do that. The reconstruction's native layout does not yet
+### Where the numbers came from
+
+The numbers cannot have been known before linking: the `.bss` start depends on
+every object's size and the link order. They come from the link itself. A
+build links once, reads the `.bss` start (and chooses a heap start above the
+static storage) from PSYLINK's `.MAP`, writes them into the header, recompiles
+the users and links again. The second link reproduces the first layout
+exactly: each address is an 8-byte `lui`/`ori` pair whatever its value, so
+changing the header changes no code or data size and moves nothing. That makes
+the workflow converge after one relink, and it explains why both retail
+values equal their program's exact final `.bss` start.
+
+The values cannot have been maintained by hand. Every change to any object's
+size or to the link order moves `.bss`, and nothing in a single build reveals
+that the header has gone stale. A stale value is not harmless: the startup
+store zeroes whatever word now sits at the old address, and a heap start below
+the moved static storage lets the allocator overwrite live globals. The
+reconstruction hit exactly this: with fixed retail numbers in a build whose
+layout differs, the game breaks, which is why the earlier source used symbolic
+bounds instead. A build that keeps working across development must re-read
+the map on every link, so the original most likely regenerated the header
+from the first link's map as part of the build, as this builder does. That
+mechanism remains a candidate; no original makefile, generator or map
+survives.
+
+A numeric layout must therefore be kept in step with the link. The reconstruction's native layout does not yet
 match retail; for example, GAME's native `.bss` extends past `800a0980`. The
-builder therefore checks the first link's map. If `.bss` starts elsewhere or
+builder therefore performs that step itself: it checks the first link's map. If `.bss` starts elsewhere or
 static storage reaches the heap start, it writes a refreshed header under the
 link directory, with the native `.bss` start and a heap start no lower than
 the 8-byte-aligned static-storage end. It then recompiles that header's

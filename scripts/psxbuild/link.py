@@ -25,9 +25,11 @@ OVERLAY_STARTUP = 'NONE2.OBJ'
 # LIBAPI A74/A75/A76/A69: identical BIOS B0 selectors 4a/4b/4c/45.
 GAME_SDK_ALIASES = {'InitCARD2': 'InitCARD', 'StartCARD2': 'StartCARD',
                     'StopCARD2': 'StopCARD', 'erase': 'delete'}
-# Overlay main compiles its .bss start and initial heap start as numbers, as
-# retail did (docs/patterns/startup-address-origins.md). Values that this
-# link's layout makes stale are refreshed from its map and the users relinked.
+# Overlay main compiles its .bss start and initial heap start as numbers read
+# from the link map, as retail did (docs/patterns/startup-address-origins.md).
+# After the first link the builder re-derives them from this link's map and,
+# when they differ from the header, recompiles the users and relinks. The
+# immediates are size-invariant, so the second link is a fixed point.
 STARTUP_LAYOUTS = {
     'GAME.EXE': ('kf/game/startup_layout.h', 'GAME_BSS_START', 'GAME_HEAP_START'),
     'OPEN.EXE': ('kf/open/startup_layout.h', 'OPEN_BSS_START', 'OPEN_HEAP_START'),
