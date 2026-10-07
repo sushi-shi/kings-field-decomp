@@ -205,6 +205,16 @@ end plus 4, the stock SDK pattern. Retail's overlays start through
 `NONE2.OBJ`, which does neither, so their `main` took over the job with
 numbers, a non-advancing store and a different heap rule.
 
+No other KF1 overlay build is available to test it; archive.org holds only
+the demo, the English patch of the same binary, and later PSP/PS2 ports. The
+sequels show how the studio's practice changed. Every King's Field II GAME
+`main` loads its heap start as a relocated `lui`/`addiu` symbol, and the
+value follows each build's layout: JP `801da018`, US `801daf5c`, EU
+`801df038`. King's Field III's Pilot Style does the same (`801e6ddc`), while
+King's Field III retail and rev1 read the heap start from linked data words.
+From King's Field II on, the boundary came from the linker rather than from
+numbers that had to be kept in sync by hand or by a build step.
+
 A numeric layout must therefore be kept in step with the link. The reconstruction's native layout does not yet
 match retail; for example, GAME's native `.bss` extends past `800a0980`. The
 builder therefore performs that step itself: it checks the first link's map. If `.bss` starts elsewhere or
