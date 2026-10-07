@@ -16,6 +16,7 @@ enum {
     KF_FIXED11_BITS = 11,
     KF_FIXED12_BITS = 12,
     KF_FIXED12_ONE = 0x1000,
+    KF_ANGLE_NO_TURN = 0,
     KF_ANGLE_EIGHTH_TURN = 0x200,
     KF_ANGLE_QUARTER_TURN = 0x400,
     KF_ANGLE_HALF_TURN = 0x800,
@@ -31,6 +32,12 @@ enum {
     KF_RANDOM_ANGLE_SHIFT = 3,
     /* Initial signed-halfword ranking error for actor and map-event cones. */
     KF_CONE_SEARCH_INITIAL_ANGLE_ERROR = 30000
+};
+
+/* The player, actor, map-object and map-event distance helpers return this
+ * when the point lies outside the requested reach. */
+enum {
+    KF_DISTANCE_NONE = -1
 };
 
 struct KfVecXZs {

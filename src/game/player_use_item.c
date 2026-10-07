@@ -80,7 +80,7 @@ void player_use_item(KfObjectId item_id)
     case KF_ITEM_SORCERER_KEY:
         for (;;) {
             index = map_object_pool_find_interaction_from(index, reach_x, reach_z, MAP_INTERACTION_RADIUS_PADDING);
-            if (index == -1) {
+            if (index == KF_MAP_OBJECT_INDEX_NONE) {
                 break;
             }
             object = &map_object_state.objects[index];
@@ -124,7 +124,7 @@ void player_use_item(KfObjectId item_id)
     case KF_ITEM_WIND_SEAL_STONE:
         for (;;) {
             index = map_object_pool_find_interaction_from(index, reach_x, reach_z, MAP_INTERACTION_RADIUS_PADDING);
-            if (index == -1) {
+            if (index == KF_MAP_OBJECT_INDEX_NONE) {
                 break;
             }
             object = &map_object_state.objects[index];

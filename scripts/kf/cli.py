@@ -129,6 +129,13 @@ def parser() -> argparse.ArgumentParser:
 
     add_enum_arguments(enums)
 
+    literals = subs.add_parser(
+        "literals", help="census integer literals by sink and join value-flow domains"
+    )
+    from scripts.kf.literals import add_arguments as add_literal_arguments
+
+    add_literal_arguments(literals)
+
     parameters = subs.add_parser("parameters", help="inventory enum/record parameter names")
     from scripts.kf.parameters import add_arguments as add_parameter_arguments
 
@@ -307,6 +314,10 @@ def main(argv: list[str] | None = None) -> int:
             from scripts.kf.enums import run as run_enum_audit
 
             return run_enum_audit(args)
+        if args.command == "literals":
+            from scripts.kf.literals import run as run_literal_census
+
+            return run_literal_census(args)
         if args.command == "parameters":
             from scripts.kf.parameters import run as run_parameter_audit
 

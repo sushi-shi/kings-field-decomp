@@ -99,7 +99,7 @@ s32 actor_pool_find_at_tile(u8 tile_x, u8 tile_z)
             return index;
         }
     }
-    return -1;
+    return KF_ACTOR_INDEX_NONE;
 }
 
 /* Floor 1 ambient script. */
@@ -131,12 +131,12 @@ void map_ambient_script_floor1(void)
 
             map_runtime_state.world_state.floors[0].script.floor1.actor_activation_stage = KF_MAP_TRIGGER_COMPLETE;
             actor_index = actor_pool_find_at_tile(7, 0x28);
-            if (actor_index != -1) {
+            if (actor_index != KF_ACTOR_INDEX_NONE) {
                 actor_state.actors[actor_index].lifecycle = KF_ACTOR_LIFECYCLE_DORMANT;
                 actor_initialize_slot(actor_index);
             }
             object_index = map_object_pool_find_near_point(0x5208, 0x105b8, MAP_SCRIPT_OBJECT_SEARCH_PADDING);
-            if (object_index != -1) {
+            if (object_index != KF_MAP_OBJECT_INDEX_NONE) {
                 map_object_state.objects[object_index].object_id = KF_MAP_OBJECT_BROKEN_STONE_CROSS;
             }
         }
@@ -161,7 +161,7 @@ void map_ambient_script_floor1(void)
 
             map_runtime_state.world_state.floors[0].script.floor1.object_removal_stage = KF_MAP_TRIGGER_COMPLETE;
             object_index = map_object_pool_find_near_point(0x2328, 0xdea8, MAP_SCRIPT_OBJECT_SEARCH_PADDING);
-            if (object_index != -1) {
+            if (object_index != KF_MAP_OBJECT_INDEX_NONE) {
                 map_object_state.objects[object_index].object_id = KF_OBJECT_NONE;
             }
         }
@@ -223,11 +223,11 @@ void map_ambient_script_floor5(void)
         render_frame(NULL, NULL);
         render_frame(NULL, NULL);
         screen_show_image_until_input("TALK\\C17\\T55172.TIM");
-        actor_state.definitions.entries[7].action_animations[KF_ACTOR_ANIM_SLOT_MELEE] = KF_ANIMATION_CLIP_THIRD;
-        actor_state.definitions.entries[7].action_animations[KF_ACTOR_ANIM_SLOT_EFFECT0] = KF_ANIMATION_CLIP_FOURTH;
-        actor_state.definitions.entries[7].action_animations[KF_ACTOR_ANIM_SLOT_EFFECT1] = KF_ANIMATION_CLIP_FOURTH;
-        actor_state.definitions.entries[7].action_animations[KF_ACTOR_ANIM_SLOT_EFFECT2] = KF_ANIMATION_CLIP_FOURTH;
-        actor_state.definitions.entries[7].action_animations[KF_ACTOR_ANIM_SLOT_MULTI_HIT_ATTACK]
+        actor_state.definitions.entries[KF_FLOOR5_BOSS_DEFINITION].action_animations[KF_ACTOR_ANIM_SLOT_MELEE] = KF_ANIMATION_CLIP_THIRD;
+        actor_state.definitions.entries[KF_FLOOR5_BOSS_DEFINITION].action_animations[KF_ACTOR_ANIM_SLOT_EFFECT0] = KF_ANIMATION_CLIP_FOURTH;
+        actor_state.definitions.entries[KF_FLOOR5_BOSS_DEFINITION].action_animations[KF_ACTOR_ANIM_SLOT_EFFECT1] = KF_ANIMATION_CLIP_FOURTH;
+        actor_state.definitions.entries[KF_FLOOR5_BOSS_DEFINITION].action_animations[KF_ACTOR_ANIM_SLOT_EFFECT2] = KF_ANIMATION_CLIP_FOURTH;
+        actor_state.definitions.entries[KF_FLOOR5_BOSS_DEFINITION].action_animations[KF_ACTOR_ANIM_SLOT_MULTI_HIT_ATTACK]
             = KF_ANIMATION_CLIP_SECOND;
         map_apply_copy_region(KF_MAP_COPY_FLOOR5_BOSS_ENCOUNTER);
     }
@@ -555,7 +555,7 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
     VECTOR_YAW_PROBE_XZ(probe_x, probe_z, *position, *rotation, MAP_INTERACTION_PROBE_DISTANCE);
     if (game_graphics_runtime.notification_state.control.effect_phase == KF_NOTIFICATION_IDLE
         && (index = map_event_pool_find_overlap(
-                probe_x, probe_z, MAP_INTERACTION_RADIUS_PADDING)) != -1) {
+                probe_x, probe_z, MAP_INTERACTION_RADIUS_PADDING)) != KF_MAP_EVENT_INDEX_NONE) {
         event = &map_runtime_state.events[index];
         switch (event->behavior) {
             case KF_MAP_EVENT_BEHAVIOR_SHOP:
@@ -604,7 +604,7 @@ clear_event_phase:
         for (index = 0;; index++) {
             index = map_object_pool_find_interaction_from(
                 index, probe_x, probe_z, MAP_INTERACTION_RADIUS_PADDING);
-            if (index == -1) {
+            if (index == KF_MAP_OBJECT_INDEX_NONE) {
                 break;
             }
             object = &map_object_state.objects[index];
@@ -754,7 +754,7 @@ notify_linked:
                 for (;;) {
                     neighbor_index = map_object_pool_find_interaction_from(
                         neighbor_index, object->position.vx, object->position.vz, MAP_DOOR_PARTNER_SEARCH_PADDING);
-                    if (neighbor_index == -1) {
+                    if (neighbor_index == KF_MAP_OBJECT_INDEX_NONE) {
                         break;
                     }
                     if (neighbor_index != index) {

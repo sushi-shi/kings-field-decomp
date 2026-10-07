@@ -1,7 +1,8 @@
 """Find written integer-zero literals converted to pointers; never edit sources.
 
 Run in nix develop: python -m scripts.kf.pointer_zeros [--image game] [--json]
-Every manifest C variant is parsed with the retail MIPS flags. This includes
+Every manifest C variant is parsed with the retail MIPS flags and again in the
+modern C++ view, so branches selected by either language are covered. This includes
 assignments, scalar/aggregate initializers, casts, arguments, returns and
 comparisons. Only active preprocessor branches and included headers are visible.
 Implicit aggregate zero-fill and arithmetic constant expressions are not written
@@ -149,6 +150,10 @@ def scan_file(path: Path, arguments: list[str], *, root: Path) -> tuple[Site, ..
                 if origin is None:
                     return
                 location, spelling = origin
+                # A macro may supply its own zero (for example CdSeekP's
+                # buffer argument). Its expansion site is not a written zero.
+                if not re.fullmatch(r"(?:0+|0[xX]0+)[uUlL]*", spelling):
+                    return
                 in_null = any(
                     span.start.file is not None and location.file is not None
                     and span.start.file.name == location.file.name
@@ -185,6 +190,8 @@ def main(argv: list[str] | None = None) -> int:
     parser.add_argument("--path", action="append", default=[], help="output path prefix (repeatable)")
     parser.add_argument("--json", action="store_true", help="emit a JSON report to stdout")
     parser.add_argument("--check", action="store_true", help="exit 1 if any sites remain")
+    parser.add_argument("--mode", choices=("retail", "modern", "all"), default="all",
+                        help="language view to parse (default: both)")
     args = parser.parse_args(argv)
     try:
         manifest = load_manifest()
@@ -194,8 +201,9 @@ def main(argv: list[str] | None = None) -> int:
         )
         compiler, sdk = environment()
         rows: dict[tuple[str, int], dict] = {}
-        for unit in units:
-            arguments = unit_arguments(unit, REPO, compiler, sdk, mode="retail")[1:-2]
+        modes = ("retail", "modern") if args.mode == "all" else (args.mode,)
+        for unit, mode in ((unit, mode) for unit in units for mode in modes):
+            arguments = unit_arguments(unit, REPO, compiler, sdk, mode=mode)[1:-2]
             for site in scan_file(REPO / unit.source, arguments, root=REPO):
                 if args.path and not any(site.file.startswith(prefix) for prefix in args.path):
                     continue
@@ -205,7 +213,7 @@ def main(argv: list[str] | None = None) -> int:
                        if key not in {"pointer_type", "function"}},
                     "contexts": [],
                 })
-                context = {"image": unit.image, "unit": unit.unit,
+                context = {"image": unit.image, "unit": unit.unit, "mode": mode,
                            "function": site.function, "pointer_type": site.pointer_type}
                 if context not in row["contexts"]:
                     row["contexts"].append(context)
@@ -214,12 +222,14 @@ def main(argv: list[str] | None = None) -> int:
         print(f"pointer-zeros: {error}", file=sys.stderr)
         return 2
     if args.json:
-        print(json.dumps({"variants": len(units), "count": len(sites), "sites": sites}, indent=2))
+        print(json.dumps({"variants": len(units), "modes": list(modes), "count": len(sites),
+                          "sites": sites}, indent=2))
     else:
         for site in sites:
             print(f"{site['file']}:{site['line']}:{site['column']}: "
                   f"zero converted to pointer: {site['line_text']}")
-        print(f"{len(sites)} written sites in {len(units)} C variants", file=sys.stderr)
+        print(f"{len(sites)} written sites in {len(units)} C variants ({', '.join(modes)})",
+              file=sys.stderr)
     return 1 if args.check and sites else 0
 
 

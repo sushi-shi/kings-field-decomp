@@ -16,7 +16,6 @@ enum {
     WARP_SHIMMER_SOUND_FRAME = 8,
     WARP_CELL_X_SHIFT = 24,
     WARP_CELL_Z_SHIFT = 16,
-    ACTOR_TRANSFORM_RESULT_DEFINITION = 6,
     ACTOR_TRANSFORM_BLEND_INTERVALS = 64,
     ACTOR_TRANSFORM_Y_STEP = 40
 };
@@ -273,7 +272,7 @@ void actor_transform_definition5_to6(KfActor *actor)
         render_frame(NULL, NULL);
         frame_pacer_wait();
     }
-    actor->definition_id = ACTOR_TRANSFORM_RESULT_DEFINITION;
+    actor->definition_id = KF_FLOOR4_TRANSFORM_RESULT_DEFINITION;
     for (blend = KF_FIXED12_ONE; blend >= 0; blend -= KF_FIXED12_ONE / ACTOR_TRANSFORM_BLEND_INTERVALS) {
         lighting_set_color_matrix(&saved, &actor_transform_color_matrix, blend);
         actor->position.vy -= ACTOR_TRANSFORM_Y_STEP;

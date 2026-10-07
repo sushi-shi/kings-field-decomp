@@ -89,7 +89,7 @@ void map_object_mark_collision_edge(const KfMapObject *object, KfMapCellKind cel
     case KF_MAP_OBJECT_OP_03:
         map_collision_grid.cells[cell_z][cell_x] = cell_kind;
         switch (yaw) {
-        case 0x000:
+        case KF_ANGLE_NO_TURN:
             cell_z++;
             break;
         case KF_ANGLE_QUARTER_TURN:
@@ -106,7 +106,7 @@ void map_object_mark_collision_edge(const KfMapObject *object, KfMapCellKind cel
         break;
     case KF_MAP_OBJECT_OP_HINGED_DOOR:
         switch (yaw) {
-        case 0x000:
+        case KF_ANGLE_NO_TURN:
             map_collision_grid.cells[cell_z][cell_x + 1] =
                 map_collision_grid.cells[cell_z - 1][cell_x + 1] = cell_kind;
             break;
@@ -149,7 +149,7 @@ s32 map_object_probe_door_closing(const KfMapObject *object, u16 yaw)
     case KF_MAP_OBJECT_OP_HINGED_DOOR:
         probe_radius = MAP_DOOR_CLOSING_PROBE_RADIUS;
         switch (yaw) {
-        case 0x000:
+        case KF_ANGLE_NO_TURN:
             point_x += KF_MAP_TILE_SIZE;
             goto probe;
         case KF_ANGLE_QUARTER_TURN:
@@ -336,7 +336,7 @@ s32 map_object_distance_to_point(
             }
         }
     }
-    return -1;
+    return KF_DISTANCE_NONE;
 }
 
 ADDRESS(0x800314f8, 0xcc)
@@ -355,9 +355,9 @@ s32 map_object_pool_find_near_point(s32 point_x, s32 point_z, s32 radius_padding
             continue;
         }
         if (map_object_distance_to_point(object, point_x, point_z, radius + radius_padding)
-            != -1) {
+            != KF_DISTANCE_NONE) {
             return index;
         }
     }
-    return -1;
+    return KF_MAP_OBJECT_INDEX_NONE;
 }

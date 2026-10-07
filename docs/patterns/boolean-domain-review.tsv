@@ -1,0 +1,344 @@
+# Boolean-candidate domains from kf literals with their verdicts (see boolean-and-null-review.md).
+# Regenerate the census with kf literals --output; domain roots are stable, D-numbers are not.
+root	verdict	reason	literal_sites	members
+*effect_pool_construct::va	named	no literal left: values spelled by existing constants (KF_EFFECT_SOUND_SILENT)	0	*effect_pool_construct::va
+*format_int_dec::out	reject	NUL string terminator	1	*format_int_dec::out
+*format_int_hex::out	reject	NUL string terminator	1	*format_int_hex::out
+*format_pad_left:arg0	reject	NUL string terminator	1	*format_pad_left:arg0
+*format_vsprintf:arg0	reject	NUL string terminator	1	*format_vsprintf:arg0
+*map_ambient_script_floor5::encounter_started	named	no literal left: values spelled by existing constants (KF_MAP_SCRIPT_SET, KF_MAP_SCRIPT_UNSET)	0	*map_ambient_script_floor5::encounter_started
+*map_object_pool_clear::link_words	reject	whole-word clear of the link union	2	*map_object_pool_clear::link_words
+*menu_config_panel_draw::state	named	no literal left: values spelled by existing constants (KF_PLAYER_OPTION_ON)	0	*menu_config_panel_draw::state
+*menu_drop_item_panel::player_stock	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	1	*menu_drop_item_panel::player_stock
+*menu_equip_select::player_stock	reject	count, size or quantity tested against zero	1	*menu_equip_select::player_stock
+*menu_use_item_panel::player_stock	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	4	*menu_use_item_panel::player_stock
+*notify_enqueue::head	reject	queue indices reset to 0	1	*notify_enqueue::head;KfNotificationControl.queue_tail;[KfGraphicsRuntimeGame.notification_message_ids];[KfNotificationState.message_payloads];[notify_enqueue::payload];notify_effect_update::tail
+*render_bind_animated_instance:arg0	named	no literal left: values spelled by existing constants (KF_ANIMATION_BIND_STATIC)	0	*render_bind_animated_instance:arg0;animation_cache_release:arg0;render_bind_animated_instance::record;render_bind_animated_instance:return
+*repeat_store_word:arg0	reject	BSS fill value	2	*repeat_store_word:arg0;repeat_store_word:arg2
+*shop_menu_buy::stock	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	2	*shop_menu_buy::stock
+*shop_menu_sell::stock	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	1	*shop_menu_sell::stock
+CdReadSync:arg0	named	no literal left: values spelled by existing constants (KF_CD_READ_POLL)	0	CdReadSync:arg0
+CdReadSync:return	reject	CD/IO result: CdReadSync remaining-sector count and loader results tested against 0	6	CdReadSync:return;cd_file_load_allocated::result;cd_file_load_into::result;cd_file_load_table_entry::result;display_show_system_screen::result
+CdlFILE.size&0x7ff	reject	sector remainder of a byte size	2	CdlFILE.size&0x7ff
+DAT_800a0768	reject	write-only zero reset of an unidentified word; no reader proves a 0/1 domain	1	DAT_800a0768
+DrawSync:arg0	reject	SDK, BIOS or libc argument/result (PadRead id, SetSemiTrans/SetDispMask switches, exit status, TestEvent/format result): kept as the SDK's integer	16	DrawSync:arg0
+EXEC.s_addr	named	no literal left: values spelled by existing constants (OVERLAY_LAUNCH)	0	EXEC.s_addr
+EXEC.s_size	named	no literal left: values spelled by existing constants (OVERLAY_LAUNCH)	0	EXEC.s_size
+Exec:arg1	named	no literal left: values spelled by existing constants (KF_OVERLAY_ENTRY_ARGC)	0	Exec:arg1
+GetClut:arg0	reject	SDK, BIOS or libc argument/result (PadRead id, SetSemiTrans/SetDispMask switches, exit status, TestEvent/format result): kept as the SDK's integer	18	GetClut:arg0
+GetTPage:arg1	named	no literal left: values spelled by existing constants (KF_GPU_BLEND_AVERAGE)	0	GetTPage:arg1
+InitCARD2:arg0	reject	SDK, BIOS or libc argument/result (PadRead id, SetSemiTrans/SetDispMask switches, exit status, TestEvent/format result): kept as the SDK's integer	1	InitCARD2:arg0
+KfActor.health	reject	quantity (angle, offset, health, gold, velocity or damage component) tested or reset at zero	2	KfActor.health;KfActorDefinition.initial_health
+KfActor.movement_x	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	2	KfActor.movement_x
+KfActor.movement_y	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	1	KfActor.movement_y
+KfActor.movement_z	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	2	KfActor.movement_z
+KfActorDefinition.status_effect_chance	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	1	KfActorDefinition.status_effect_chance
+KfArmorRecord.hp_drain_interval	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	5	KfArmorRecord.hp_drain_interval
+KfArmorRecord.hp_regen_interval	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	5	KfArmorRecord.hp_regen_interval
+KfAssetHeader.animation_clip_count	reject	count, size or quantity tested against zero	1	KfAssetHeader.animation_clip_count
+KfAudioVoiceSlots.notes	reject	program/tone/note IDs; the all-zero triple is the empty slot	2	KfAudioVoiceSlots.notes;SsUtKeyOff:arg4;SsUtKeyOn:arg3;audio_key_on_next_slot:arg3;audio_play_voice:arg3
+KfCdFileEntry.size&0x7ff	reject	sector remainder of a byte size	1	KfCdFileEntry.size&0x7ff
+KfCellWindow.cells#raw	reject	render_entities::visible joins the KfCellVisibility byte (0 = HIDDEN) with the square-culling predicate in one retail register; a nonzero test, not a Boolean slot	1	KfCellWindow.cells#raw;KfCellWindow.cells#raw#raw;render_entities::visible
+KfEffectControl.orbit_angle	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	1	KfEffectControl.orbit_angle
+KfEffectDirectionWords.x	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	5	KfEffectDirectionWords.x
+KfEffectDirectionWords.y	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	3	KfEffectDirectionWords.y
+KfEffectPropagation.generations_remaining	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	2	KfEffectPropagation.generations_remaining
+KfEffectRecord.phase#raw	reject	parity of an effect phase counter (KfEffectPhase encoded)	1	KfEffectRecord.phase#raw
+KfEffectRecord.type&0x10	named	no literal left: values spelled by existing constants (KF_EFFECT_TYPE_NONE)	0	KfEffectRecord.type&0x10
+KfEulerAngles.z	reject	quantity (angle, offset, health, gold, velocity or damage component) tested or reset at zero	11	KfEulerAngles.z;KfVec3s.z;actor_set_rotation:arg3;matrix_set_rotation_z:arg0
+KfFloorItem.animation_frame	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	1	KfFloorItem.animation_frame
+KfFloorItemStateOpen.count	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	2	KfFloorItemStateOpen.count
+KfGraphicsRuntimeGame.DAT_80095698	reject	write-only zero reset of an unidentified word; no reader proves a 0/1 domain	1	KfGraphicsRuntimeGame.DAT_80095698
+KfGraphicsRuntimeGame.DAT_8009569c	reject	write-only zero reset of an unidentified word; no reader proves a 0/1 domain	1	KfGraphicsRuntimeGame.DAT_8009569c
+KfGraphicsRuntimeGame.floor_item_count	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	2	KfGraphicsRuntimeGame.floor_item_count
+KfGraphicsRuntimeOpen.DAT_8006e040	reject	write-only zero reset of an unidentified word; no reader proves a 0/1 domain	1	KfGraphicsRuntimeOpen.DAT_8006e040
+KfGraphicsRuntimeOpen.DAT_8006e044	reject	write-only zero reset of an unidentified word; no reader proves a 0/1 domain	1	KfGraphicsRuntimeOpen.DAT_8006e044
+KfMapEvent.rotation_target	reject	quantity (angle, offset, health, gold, velocity or damage component) tested or reset at zero	1	KfMapEvent.rotation_target
+KfMapObjectLink.gold_amount	reject	quantity (angle, offset, health, gold, velocity or damage component) tested or reset at zero	2	KfMapObjectLink.gold_amount;actor_update_current_action::gold_amount;map_object_spawn_gold_drop:arg0
+KfMapObjectSpawn.sequence	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	2	KfMapObjectSpawn.sequence
+KfMapObjectState.definition_drop_sequence	reject	drop sequence counters reset to 0	1	KfMapObjectState.definition_drop_sequence
+KfMapObjectState.gold_drop_sequence	reject	drop sequence counters reset to 0	1	KfMapObjectState.gold_drop_sequence
+KfMapObjectState.placement_drop_sequence	reject	drop sequence counters reset to 0	1	KfMapObjectState.placement_drop_sequence
+KfMemoryAllocationState.stack	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	2	KfMemoryAllocationState.stack
+KfMenuList.cursor_row	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	3	KfMenuList.cursor_row
+KfMenuList.entry_count	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	22	KfMenuList.entry_count
+KfMenuList.scroll_offset	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	3	KfMenuList.scroll_offset
+KfMenuList.selected_index	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	3	KfMenuList.selected_index
+KfNotificationControl.queue_head	reject	queue indices reset to 0	1	KfNotificationControl.queue_head
+KfOpeningEntityState.unknown_control_50a	reject	write-only zero reset of an unidentified word; no reader proves a 0/1 domain	1	KfOpeningEntityState.unknown_control_50a
+KfOpeningEntityState.unknown_control_50c	reject	write-only zero reset of an unidentified word; no reader proves a 0/1 domain	1	KfOpeningEntityState.unknown_control_50c
+KfOpeningEntityState.unknown_control_50e	reject	write-only zero reset of an unidentified word; no reader proves a 0/1 domain	1	KfOpeningEntityState.unknown_control_50e
+KfPlayerAttackChargeState.committed	reject	attack charge value, copied from the current charge	2	KfPlayerAttackChargeState.committed
+KfPlayerMotionFields.forward_velocity	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	8	KfPlayerMotionFields.forward_velocity
+KfPlayerMotionFields.strafe_velocity	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	8	KfPlayerMotionFields.strafe_velocity
+KfPlayerMotionFields.yaw_step	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	7	KfPlayerMotionFields.yaw_step
+KfPlayerState.cutting_attack	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	1	KfPlayerState.cutting_attack
+KfPlayerState.death_visual_blend	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	2	KfPlayerState.death_visual_blend
+KfPlayerState.equipment_effect_ticks	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	1	KfPlayerState.equipment_effect_ticks
+KfPlayerState.fire_attack	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	1	KfPlayerState.fire_attack
+KfPlayerState.holy_attack	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	1	KfPlayerState.holy_attack
+KfPlayerState.piercing_attack	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	1	KfPlayerState.piercing_attack
+KfPlayerState.status_effect_flags&0x1	named	no literal left: values spelled by existing constants (KF_PLAYER_STATUS_NONE)	0	KfPlayerState.status_effect_flags&0x1
+KfPlayerState.status_effect_flags&0x10	named	no literal left: values spelled by existing constants (KF_PLAYER_STATUS_NONE)	0	KfPlayerState.status_effect_flags&0x10
+KfPlayerState.status_effect_flags&0x2	named	no literal left: values spelled by existing constants (KF_PLAYER_STATUS_NONE)	0	KfPlayerState.status_effect_flags&0x2
+KfPlayerState.status_effect_flags&0x4	named	no literal left: values spelled by existing constants (KF_PLAYER_STATUS_NONE)	0	KfPlayerState.status_effect_flags&0x4
+KfPlayerState.status_effect_flags&0x8	named	no literal left: values spelled by existing constants (KF_PLAYER_STATUS_NONE)	0	KfPlayerState.status_effect_flags&0x8
+KfPlayerState.striking_attack	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	1	KfPlayerState.striking_attack
+KfPlayerState.view_bob_offset	reject	quantity (angle, offset, health, gold, velocity or damage component) tested or reset at zero	2	KfPlayerState.view_bob_offset;rsin:return>>6
+KfPlayerState.view_bob_phase	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	1	KfPlayerState.view_bob_phase
+KfPlayerState.weapon_magic_shots_remaining	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	7	KfPlayerState.weapon_magic_shots_remaining
+KfPlayerVitals.current_hp	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	2	KfPlayerVitals.current_hp
+KfPlayerVitals.current_mp	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	1	KfPlayerVitals.current_mp
+KfSaveSlotSummary.current_hp	reject	quantity (angle, offset, health, gold, velocity or damage component) tested or reset at zero	2	KfSaveSlotSummary.current_hp
+KfTmdHeader.object_count	reject	count, size or quantity tested against zero	1	KfTmdHeader.object_count;tmd_prepare_primitive_indices::object_count
+KfTmdObject.primitive_count	reject	count, size or quantity tested against zero	1	KfTmdObject.primitive_count;tmd_prepare_primitive_indices::primitive_count
+KfVec3s.x	reject	quantity (angle, offset, health, gold, velocity or damage component) tested or reset at zero	2	KfVec3s.x;actor_set_rotation:arg1
+KfVec3s.y	reject	quantity (angle, offset, health, gold, velocity or damage component) tested or reset at zero	1	KfVec3s.y;actor_set_rotation:arg2
+KfVecXZs.x	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	1	KfVecXZs.x
+KfVecXZs.z	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	1	KfVecXZs.z
+KfWeaponRecord.hp_regen_interval	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	1	KfWeaponRecord.hp_regen_interval
+KfWeaponRecord.mp_regen_interval	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	1	KfWeaponRecord.mp_regen_interval
+Load:return	named	no literal left: values spelled by existing constants (OVERLAY_LAUNCH)	0	Load:return
+NormalClip:return	reject	SDK, BIOS or libc argument/result (PadRead id, SetSemiTrans/SetDispMask switches, exit status, TestEvent/format result): kept as the SDK's integer	34	NormalClip:return
+PadInit:arg0	reject	SDK, BIOS or libc argument/result (PadRead id, SetSemiTrans/SetDispMask switches, exit status, TestEvent/format result): kept as the SDK's integer	2	PadInit:arg0
+PadRead:arg0	reject	SDK, BIOS or libc argument/result (PadRead id, SetSemiTrans/SetDispMask switches, exit status, TestEvent/format result): kept as the SDK's integer	76	PadRead:arg0
+PadRead:return	reject	SDK, BIOS or libc argument/result (PadRead id, SetSemiTrans/SetDispMask switches, exit status, TestEvent/format result): kept as the SDK's integer	53	PadRead:return
+SetDefDispEnv:arg1	reject	SDK, BIOS or libc argument/result (PadRead id, SetSemiTrans/SetDispMask switches, exit status, TestEvent/format result): kept as the SDK's integer	4	SetDefDispEnv:arg1
+SetDefDrawEnv:arg1	reject	SDK, BIOS or libc argument/result (PadRead id, SetSemiTrans/SetDispMask switches, exit status, TestEvent/format result): kept as the SDK's integer	4	SetDefDrawEnv:arg1
+SetDispMask:arg0	reject	SDK, BIOS or libc argument/result (PadRead id, SetSemiTrans/SetDispMask switches, exit status, TestEvent/format result): kept as the SDK's integer	5	SetDispMask:arg0
+SetFarColor:arg0	reject	SDK, BIOS or libc argument/result (PadRead id, SetSemiTrans/SetDispMask switches, exit status, TestEvent/format result): kept as the SDK's integer	3	SetFarColor:arg0
+SetFarColor:arg1	reject	SDK, BIOS or libc argument/result (PadRead id, SetSemiTrans/SetDispMask switches, exit status, TestEvent/format result): kept as the SDK's integer	3	SetFarColor:arg1
+SetFarColor:arg2	reject	SDK, BIOS or libc argument/result (PadRead id, SetSemiTrans/SetDispMask switches, exit status, TestEvent/format result): kept as the SDK's integer	3	SetFarColor:arg2
+SetSemiTrans:arg1	reject	SDK, BIOS or libc argument/result (PadRead id, SetSemiTrans/SetDispMask switches, exit status, TestEvent/format result): kept as the SDK's integer	13	SetSemiTrans:arg1
+SoundRef.tone&0x80	reject	retail compares the masked bit 0x80 with 1, which is never true; preserved as written	1	SoundRef.tone&0x80
+SsSeqPlay:arg1	named	no literal left: values spelled by existing constants (SSPLAY_PLAY)	0	SsSeqPlay:arg1
+SsSeqPlay:arg2	named	no literal left: values spelled by existing constants (SSPLAY_INFINITY)	0	SsSeqPlay:arg2
+SsSetTableSize:arg2	named	no literal left: values spelled by existing constants (KF_AUDIO_TRACKS_PER_SEQUENCE)	0	SsSetTableSize:arg2
+SsSetTickMode:arg0	named	no literal left: values spelled by existing constants (SS_TICK60)	0	SsSetTickMode:arg0
+SsUtKeyOn:arg4	reject	SDK, BIOS or libc argument/result (PadRead id, SetSemiTrans/SetDispMask switches, exit status, TestEvent/format result): kept as the SDK's integer	1	SsUtKeyOn:arg4
+SsVabTransCompleted:arg0	named	no literal left: values spelled by existing constants (SS_WAIT_COMPLETED)	0	SsVabTransCompleted:arg0
+TestEvent:return	reject	SDK, BIOS or libc argument/result (PadRead id, SetSemiTrans/SetDispMask switches, exit status, TestEvent/format result): kept as the SDK's integer	4	TestEvent:return
+VSync:arg0	reject	SDK, BIOS or libc argument/result (PadRead id, SetSemiTrans/SetDispMask switches, exit status, TestEvent/format result): kept as the SDK's integer	12	VSync:arg0
+_card_auto:arg0	reject	SDK, BIOS or libc argument/result (PadRead id, SetSemiTrans/SetDispMask switches, exit status, TestEvent/format result): kept as the SDK's integer	1	_card_auto:arg0
+_card_info:arg0	named	no literal left: values spelled by existing constants (KF_CARD_CHANNEL)	0	_card_info:arg0
+_card_info:return	reject	SDK, BIOS or libc argument/result (PadRead id, SetSemiTrans/SetDispMask switches, exit status, TestEvent/format result): kept as the SDK's integer	2	_card_info:return
+actor_advance_animation_clamped:arg1	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	1	actor_advance_animation_clamped:arg1
+actor_advance_animation_wrapped:arg1	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	1	actor_advance_animation_wrapped:arg1
+actor_apply_damage::damage	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	1	actor_apply_damage::damage
+actor_apply_damage::health	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	1	actor_apply_damage::health
+actor_apply_damage::remaining	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	2	actor_apply_damage::remaining
+actor_apply_damage:arg1	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	2	actor_apply_damage:arg1
+actor_apply_damage:arg2	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	3	actor_apply_damage:arg2
+actor_apply_damage:arg3	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	4	actor_apply_damage:arg3
+actor_apply_damage:arg4	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	4	actor_apply_damage:arg4
+actor_apply_damage:arg5	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	3	actor_apply_damage:arg5
+actor_apply_damage:arg6	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	3	actor_apply_damage:arg6
+actor_apply_random_movement:arg0	named	no literal left: values spelled by existing constants (ACTOR_DRIFT_AXIS_ACCELERATION)	0	actor_apply_random_movement:arg0
+actor_distance_to_point:arg5	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	2	actor_distance_to_point:arg5
+actor_move_along_heading:arg0#raw	reject	sign test of the encoded KfActorMoveDirection (backward is -1)	1	actor_move_along_heading:arg0#raw
+actor_pool_apply_radial_damage:arg4	reject	quantity (angle, offset, health, gold, velocity or damage component) tested or reset at zero	3	actor_pool_apply_radial_damage:arg4
+actor_pool_apply_radial_damage:arg5	reject	quantity (angle, offset, health, gold, velocity or damage component) tested or reset at zero	3	actor_pool_apply_radial_damage:arg5
+actor_pool_apply_radial_damage:arg6	reject	quantity (angle, offset, health, gold, velocity or damage component) tested or reset at zero	3	actor_pool_apply_radial_damage:arg6
+actor_spawn_action_effect::i	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	2	actor_spawn_action_effect::i
+actor_spawn_action_effect:arg0&0x20	named	no literal left: values spelled by existing constants (KF_ACTOR_EFFECT_CODE_NONE)	0	actor_spawn_action_effect:arg0&0x20
+angle_mod_delta_le_half_turn:return	converted	KfBool/KfBoolU32 predicate result: its == 0 / != 0 comparison is now a truth test (byte-identical)	1	angle_mod_delta_le_half_turn:return
+angle_within_tolerance:return	converted	KfBool/KfBoolU32 predicate result: its == 0 / != 0 comparison is now a truth test (byte-identical)	1	angle_within_tolerance:return
+audio_stop_sequence_master_fade::volume	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	1	audio_stop_sequence_master_fade::volume
+camera_path_step:arg1	reject	camera Y offset quantity	1	camera_path_step:arg1
+cd_file_load_allocated::loaded	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	3	cd_file_load_allocated::loaded
+cd_file_load_into::loaded	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	3	cd_file_load_into::loaded
+cd_file_load_table_entry::loaded	typed	already a KfBool* slot; values spelled KF_FALSE/KF_TRUE	0	cd_file_load_table_entry::loaded
+collision_query_world::cell_flags&0x1f	reject	masked flag bit, sign or parity test of a wider word; the bit constant is already named	1	collision_query_world::cell_flags&0x1f
+collision_query_world::query_flags&0x1	reject	masked flag bit, sign or parity test of a wider word; the bit constant is already named	1	collision_query_world::query_flags&0x1
+collision_query_world::query_flags&0x10	reject	masked flag bit, sign or parity test of a wider word; the bit constant is already named	1	collision_query_world::query_flags&0x10
+collision_query_world::query_flags&0x20	reject	masked flag bit, sign or parity test of a wider word; the bit constant is already named	1	collision_query_world::query_flags&0x20
+collision_query_world::query_flags&0x80	reject	masked flag bit, sign or parity test of a wider word; the bit constant is already named	1	collision_query_world::query_flags&0x80
+combat_calculate_damage_component::difference	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	2	combat_calculate_damage_component::difference
+combat_calculate_damage_component:arg1	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	1	combat_calculate_damage_component:arg1
+combat_calculate_damage_component:arg2	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	2	combat_calculate_damage_component:arg2
+combat_calculate_damage_component:return	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	1	combat_calculate_damage_component:return
+debug_stop_flag	typed	already a KfBool* slot; values spelled KF_FALSE/KF_TRUE	0	debug_stop_flag
+effect_collision_in_cell::height	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	1	effect_collision_in_cell::height
+effect_floor_deform_line::range	reject	sign test of a range	1	effect_floor_deform_line::range;effect_floor_deform_line:arg2
+effect_update_dispatch::column	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	2	effect_update_dispatch::column
+effect_update_dispatch::phase#raw	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	1	effect_update_dispatch::phase#raw
+effect_update_dispatch::phase#raw&0x3	reject	period test of an effect phase counter	1	effect_update_dispatch::phase#raw&0x3
+effect_update_dispatch::scale	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	1	effect_update_dispatch::scale
+effect_update_orbiting_projectile::life#raw&0xff	named	no literal left: values spelled by existing constants (KF_EFFECT_HAZARD_RUNNING)	0	effect_update_orbiting_projectile::life#raw&0xff
+effect_update_swinging_hazard::next_pitch	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	3	effect_update_swinging_hazard::next_pitch
+effect_update_swinging_hazard::pitch	reject	sign test of a pitch angle	2	effect_update_swinging_hazard::pitch
+exit:arg0	reject	SDK, BIOS or libc argument/result (PadRead id, SetSemiTrans/SetDispMask switches, exit status, TestEvent/format result): kept as the SDK's integer	5	exit:arg0
+format:return	reject	SDK format() result; 1 is its success value	2	format:return;memory_card_format::formatted
+format_int_dec::digit	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	1	format_int_dec::digit
+format_int_dec:arg0	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	1	format_int_dec:arg0
+item_pickup_confirm::input&0x1000	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	item_pickup_confirm::input&0x1000
+item_pickup_confirm::input&0x20	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	item_pickup_confirm::input&0x20
+item_pickup_confirm::input&0x40	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	item_pickup_confirm::input&0x40
+item_pickup_confirm::input&0x4000	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	item_pickup_confirm::input&0x4000
+lseek:arg1	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	3	lseek:arg1
+lseek:arg2	named	no literal left: values spelled by existing constants (SEEK_SET)	0	lseek:arg2
+magic_load_records::count	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	1	magic_load_records::count
+map_event_pool_load::exhausted	typed	already a KfBool* slot; values spelled KF_FALSE/KF_TRUE	0	map_event_pool_load::exhausted
+map_event_pool_update::current	reject	dialogue gate countdown reaching zero	1	map_event_pool_update::current
+map_interaction_dispatch::found_item	typed	already a KfBool* slot; values spelled KF_FALSE/KF_TRUE	0	map_interaction_dispatch::found_item
+map_object_effect_pool_acquire::age	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	1	map_object_effect_pool_acquire::age
+map_object_pool_find_near_point::radius	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	1	map_object_pool_find_near_point::radius
+map_object_pool_load::ended	typed	already a KfBool* slot; values spelled KF_FALSE/KF_TRUE	0	map_object_pool_load::ended
+map_world_state_persist::active	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	2	map_world_state_persist::active
+memory_card_show_status_message::result	typed	already a KfBool* slot; values spelled KF_FALSE/KF_TRUE	0	memory_card_show_status_message::result;menu_load_message_image:return
+menu_config_panel::input&0x1000	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	menu_config_panel::input&0x1000
+menu_config_panel::input&0x20	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	menu_config_panel::input&0x20
+menu_config_panel::input&0x2000	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	menu_config_panel::input&0x2000
+menu_config_panel::input&0x40	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	menu_config_panel::input&0x40
+menu_config_panel::input&0x4000	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	menu_config_panel::input&0x4000
+menu_config_panel::input&0x8000	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	menu_config_panel::input&0x8000
+menu_config_panel::option_states	named	no literal left: values spelled by existing constants (KF_PLAYER_OPTION_OFF)	0	menu_config_panel::option_states
+menu_draw_number::i	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	1	menu_draw_number::i
+menu_draw_string::i	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	1	menu_draw_string::i
+menu_draw_window::row	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	1	menu_draw_window::row
+menu_drop_item_panel::found	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	1	menu_drop_item_panel::found
+menu_drop_item_panel::input	reject	pad input word: a button bitmask whose zero test means no button, not a flag	2	menu_drop_item_panel::input;menu_drop_item_panel::prev
+menu_drop_item_panel::input&0x1000	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	menu_drop_item_panel::input&0x1000
+menu_drop_item_panel::input&0x20	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	menu_drop_item_panel::input&0x20
+menu_drop_item_panel::input&0x40	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	menu_drop_item_panel::input&0x40
+menu_drop_item_panel::input&0x4000	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	menu_drop_item_panel::input&0x4000
+menu_drop_item_panel::quantities	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	1	menu_drop_item_panel::quantities
+menu_equip_select::found	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	1	menu_equip_select::found
+menu_equip_select::input	reject	pad input word: a button bitmask whose zero test means no button, not a flag	2	menu_equip_select::input;menu_equip_select::prev
+menu_equip_select::input&0x1000	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	menu_equip_select::input&0x1000
+menu_equip_select::input&0x20	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	menu_equip_select::input&0x20
+menu_equip_select::input&0x40	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	menu_equip_select::input&0x40
+menu_equip_select::input&0x4000	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	menu_equip_select::input&0x4000
+menu_equipment_root::input&0x1000	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	menu_equipment_root::input&0x1000
+menu_equipment_root::input&0x20	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	menu_equipment_root::input&0x20
+menu_equipment_root::input&0x40	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	menu_equipment_root::input&0x40
+menu_equipment_root::input&0x4000	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	menu_equipment_root::input&0x4000
+menu_format_number:arg0	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	1	menu_format_number:arg0
+menu_list_confirm::input	reject	pad input word: a button bitmask whose zero test means no button, not a flag	1	menu_list_confirm::input;menu_list_confirm::prev
+menu_list_confirm::input&0x1000	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	menu_list_confirm::input&0x1000
+menu_list_confirm::input&0x20	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	menu_list_confirm::input&0x20
+menu_list_confirm::input&0x40	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	menu_list_confirm::input&0x40
+menu_list_confirm::input&0x4000	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	menu_list_confirm::input&0x4000
+menu_list_render::i	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	1	menu_list_render::i
+menu_list_render::row	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	2	menu_list_render::row
+menu_list_render::tens	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	1	menu_list_render::tens
+menu_list_render::yoff	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	1	menu_list_render::yoff
+menu_load_panel::input&0x1000	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	menu_load_panel::input&0x1000
+menu_load_panel::input&0x20	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	menu_load_panel::input&0x20
+menu_load_panel::input&0x40	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	menu_load_panel::input&0x40
+menu_load_panel::input&0x4000	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	menu_load_panel::input&0x4000
+menu_magic_panel::found	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	1	menu_magic_panel::found
+menu_magic_panel::input	reject	pad input word: a button bitmask whose zero test means no button, not a flag	2	menu_magic_panel::input;menu_magic_panel::prev
+menu_magic_panel::input&0x1000	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	menu_magic_panel::input&0x1000
+menu_magic_panel::input&0x20	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	menu_magic_panel::input&0x20
+menu_magic_panel::input&0x40	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	menu_magic_panel::input&0x40
+menu_magic_panel::input&0x4000	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	menu_magic_panel::input&0x4000
+menu_root::input&0x1000	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	menu_root::input&0x1000
+menu_root::input&0x20	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	menu_root::input&0x20
+menu_root::input&0x40	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	menu_root::input&0x40
+menu_root::input&0x4000	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	menu_root::input&0x4000
+menu_save_panel::input&0x1000	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	menu_save_panel::input&0x1000
+menu_save_panel::input&0x20	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	menu_save_panel::input&0x20
+menu_save_panel::input&0x40	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	menu_save_panel::input&0x40
+menu_save_panel::input&0x4000	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	menu_save_panel::input&0x4000
+menu_spell_select::found	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	1	menu_spell_select::found
+menu_spell_select::input	reject	pad input word: a button bitmask whose zero test means no button, not a flag	2	menu_spell_select::input;menu_spell_select::prev
+menu_spell_select::input&0x1000	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	menu_spell_select::input&0x1000
+menu_spell_select::input&0x20	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	menu_spell_select::input&0x20
+menu_spell_select::input&0x40	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	menu_spell_select::input&0x40
+menu_spell_select::input&0x4000	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	menu_spell_select::input&0x4000
+menu_status_draw_backdrop_quad:arg2	typed	already a KfBool* slot; values spelled KF_FALSE/KF_TRUE	0	menu_status_draw_backdrop_quad:arg2
+menu_status_draw_backdrop_quad:arg3	typed	already a KfBool* slot; values spelled KF_FALSE/KF_TRUE	0	menu_status_draw_backdrop_quad:arg3
+menu_status_panel::input	reject	pad input word: a button bitmask whose zero test means no button, not a flag	1	menu_status_panel::input
+menu_system_panel::input&0x1000	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	menu_system_panel::input&0x1000
+menu_system_panel::input&0x20	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	menu_system_panel::input&0x20
+menu_system_panel::input&0x40	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	menu_system_panel::input&0x40
+menu_system_panel::input&0x4000	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	menu_system_panel::input&0x4000
+menu_two_option_prompt::input&0x1000	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	menu_two_option_prompt::input&0x1000
+menu_two_option_prompt::input&0x20	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	menu_two_option_prompt::input&0x20
+menu_two_option_prompt::input&0x40	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	menu_two_option_prompt::input&0x40
+menu_two_option_prompt::input&0x4000	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	menu_two_option_prompt::input&0x4000
+menu_use_item_panel::found	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	1	menu_use_item_panel::found
+menu_use_item_panel::input	reject	pad input word: a button bitmask whose zero test means no button, not a flag	2	menu_use_item_panel::input;menu_use_item_panel::prev
+menu_use_item_panel::input&0x1000	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	menu_use_item_panel::input&0x1000
+menu_use_item_panel::input&0x20	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	menu_use_item_panel::input&0x20
+menu_use_item_panel::input&0x40	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	menu_use_item_panel::input&0x40
+menu_use_item_panel::input&0x4000	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	menu_use_item_panel::input&0x4000
+notify_effect_update::counter	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	1	notify_effect_update::counter
+opening_camera_path_step:arg0	reject	camera Y offset quantity	2	opening_camera_path_step:arg0;rsin:return>>7
+opening_ending_scene_run::wave_angle	reject	quantity (angle, offset, health, gold, velocity or damage component) tested or reset at zero	1	opening_ending_scene_run::wave_angle
+opening_ending_scroll_run::sequence_volume	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	1	opening_ending_scroll_run::sequence_volume
+opening_entity_pool_load_placements::exhausted	typed	already a KfBool* slot; values spelled KF_FALSE/KF_TRUE	0	opening_entity_pool_load_placements::exhausted
+opening_entity_render::object_id#raw	reject	TMD object index 0 (first object of the model); array position	12	opening_entity_render::object_id#raw;render_enqueue_tmd:arg0;render_enqueue_unlit_triangles:arg0;render_map_object::id#raw;tmd_select_object_vertices:arg0
+opening_poll_input::input	reject	pad input word: a button bitmask whose zero test means no button, not a flag	1	opening_poll_input::input
+opening_poll_input::input&0x100	reject	pad input word: a button bitmask whose zero test means no button, not a flag	1	opening_poll_input::input&0x100
+opening_render_map_cells::cols	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	1	opening_render_map_cells::cols
+opening_render_map_cells::rows	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	1	opening_render_map_cells::rows
+opening_scene3_run::blend	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	2	opening_scene3_run::blend
+opening_scene3_run::wave_angle	reject	quantity (angle, offset, health, gold, velocity or damage component) tested or reset at zero	1	opening_scene3_run::wave_angle
+player_adjust_hp::value	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	1	player_adjust_hp::value
+player_adjust_mp::value	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	1	player_adjust_mp::value
+player_adjust_mp:arg0	reject	MP delta	1	player_adjust_mp:arg0
+player_apply_damage::loss	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	1	player_apply_damage::loss
+player_apply_damage::remaining	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	2	player_apply_damage::remaining
+player_apply_damage:arg3&0x1	named	no literal left: values spelled by existing constants (KF_PLAYER_STATUS_NONE)	0	player_apply_damage:arg3&0x1
+player_apply_damage:arg3&0x2	named	no literal left: values spelled by existing constants (KF_PLAYER_STATUS_NONE)	0	player_apply_damage:arg3&0x2
+player_apply_damage:arg3&0x4	named	no literal left: values spelled by existing constants (KF_PLAYER_STATUS_NONE)	0	player_apply_damage:arg3&0x4
+player_apply_damage:arg3&0x8	named	no literal left: values spelled by existing constants (KF_PLAYER_STATUS_NONE)	0	player_apply_damage:arg3&0x8
+player_apply_damage:arg4	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	10	player_apply_damage:arg4
+player_apply_damage:arg5	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	10	player_apply_damage:arg5
+player_apply_radial_damage:arg4	reject	quantity (angle, offset, health, gold, velocity or damage component) tested or reset at zero	3	player_apply_radial_damage:arg4
+player_apply_radial_damage:arg5	reject	quantity (angle, offset, health, gold, velocity or damage component) tested or reset at zero	3	player_apply_radial_damage:arg5
+player_apply_radial_damage:arg6	reject	quantity (angle, offset, health, gold, velocity or damage component) tested or reset at zero	3	player_apply_radial_damage:arg6
+player_calculate_damage_component::excess	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	2	player_calculate_damage_component::excess
+player_calculate_damage_component::threshold	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	2	player_calculate_damage_component::threshold
+player_calculate_damage_component:arg2	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	1	player_calculate_damage_component:arg2
+player_calculate_damage_component:return	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	1	player_calculate_damage_component:return
+player_move_horizontal::dx	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	1	player_move_horizontal::dx
+player_move_horizontal::dz	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	1	player_move_horizontal::dz
+player_move_horizontal:return	reject	every exit returns 1 and no caller reads the result (boolean-modeling.md single-value review)	2	player_move_horizontal:return
+player_recalculate_combat_stats::power	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	2	player_recalculate_combat_stats::power
+player_update::fade	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	2	player_update::fade
+player_update::forward	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	3	player_update::forward
+player_update::input&0x10	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	player_update::input&0x10
+player_update::input&0x20	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	player_update::input&0x20
+player_update::input&0x40	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	player_update::input&0x40
+player_update::input&0x80	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	player_update::input&0x80
+player_update::magnitude	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	1	player_update::magnitude
+player_update::strafe	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	3	player_update::strafe
+player_use_item::used	typed	already a KfBool* slot; values spelled KF_FALSE/KF_TRUE	0	player_use_item::used
+player_warp_trigger_update:return	converted	KfBool/KfBoolU32 predicate result: its == 0 / != 0 comparison is now a truth test (byte-identical)	1	player_warp_trigger_update:return
+primitive_allocation_count	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	1	primitive_allocation_count
+render_bind_animated_instance::phase_end	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	1	render_bind_animated_instance::phase_end
+render_bind_animated_instance::phase_start	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	1	render_bind_animated_instance::phase_start
+render_enqueue_sprite:arg1	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	4	render_enqueue_sprite:arg1
+render_enqueue_tmd_retextured:arg0	reject	TMD object index 0 (first object of the model); array position	1	render_enqueue_tmd_retextured:arg0
+render_enqueue_tmd_retextured:arg1	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	1	render_enqueue_tmd_retextured:arg1
+render_floor_item::facing#raw	named	no literal left: values spelled by existing constants (KF_FLOOR_ITEM_FACING_BILLBOARD)	0	render_floor_item::facing#raw
+render_frame::flags&0x1	named	no literal left: values spelled by existing constants (KF_PLAYER_STATUS_NONE)	0	render_frame::flags&0x1
+render_frame::flags&0x2	named	no literal left: values spelled by existing constants (KF_PLAYER_STATUS_NONE)	0	render_frame::flags&0x2
+render_frame::flags&0x4	named	no literal left: values spelled by existing constants (KF_PLAYER_STATUS_NONE)	0	render_frame::flags&0x4
+render_frame::flags&0x8	named	no literal left: values spelled by existing constants (KF_PLAYER_STATUS_NONE)	0	render_frame::flags&0x8
+render_map_cells::cols	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	1	render_map_cells::cols
+render_map_cells::rows	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	1	render_map_cells::rows
+screen_show_image_until_input::released	typed	already a KfBool* slot; values spelled KF_FALSE/KF_TRUE	0	screen_show_image_until_input::released
+shop_menu_buy::found	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	1	shop_menu_buy::found
+shop_menu_buy::input	reject	pad input word: a button bitmask whose zero test means no button, not a flag	2	shop_menu_buy::input;shop_menu_buy::prev
+shop_menu_buy::input&0x1000	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	shop_menu_buy::input&0x1000
+shop_menu_buy::input&0x20	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	shop_menu_buy::input&0x20
+shop_menu_buy::input&0x40	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	shop_menu_buy::input&0x40
+shop_menu_buy::input&0x4000	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	shop_menu_buy::input&0x4000
+shop_menu_root::input&0x1000	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	shop_menu_root::input&0x1000
+shop_menu_root::input&0x20	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	shop_menu_root::input&0x20
+shop_menu_root::input&0x40	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	shop_menu_root::input&0x40
+shop_menu_root::input&0x4000	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	shop_menu_root::input&0x4000
+shop_menu_sell::available	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	1	shop_menu_sell::available
+shop_menu_sell::found	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	1	shop_menu_sell::found
+shop_menu_sell::input	reject	pad input word: a button bitmask whose zero test means no button, not a flag	2	shop_menu_sell::input;shop_menu_sell::prev
+shop_menu_sell::input&0x1000	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	shop_menu_sell::input&0x1000
+shop_menu_sell::input&0x20	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	shop_menu_sell::input&0x20
+shop_menu_sell::input&0x40	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	shop_menu_sell::input&0x40
+shop_menu_sell::input&0x4000	named	no literal left: values spelled by existing constants (PAD_PRESSED)	0	shop_menu_sell::input&0x4000
+tmd_get_object:arg0	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	9	tmd_get_object:arg0
+vector_xz_to_angle:arg0	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	1	vector_xz_to_angle:arg0
+vector_xz_to_angle:arg1	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	2	vector_xz_to_angle:arg1

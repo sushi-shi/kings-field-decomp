@@ -29,7 +29,10 @@ enum {
     KF_MAP_OBJECT_CAPACITY = 190,
     KF_MAP_CONTAINER_ITEM_COUNT = 4,
     KF_MAP_OBJECT_EFFECT_FIRST = 160,
-    KF_MAP_EVENT_CAPACITY = 8
+    KF_MAP_EVENT_CAPACITY = 8,
+    /* The map-object and map-event pool searches found no slot. */
+    KF_MAP_OBJECT_INDEX_NONE = -1,
+    KF_MAP_EVENT_INDEX_NONE = -1
 };
 
 /* Each saved floor slot starts with script bytes before its runtime records. */
