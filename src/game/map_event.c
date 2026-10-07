@@ -113,7 +113,7 @@ s32 map_event_distance_to_point(
             }
         }
     }
-    return -1;
+    return KF_DISTANCE_NONE;
 }
 
 ADDRESS(0x80033b8c, 0x144)
@@ -138,7 +138,7 @@ KfMapEvent *map_event_pool_find_target_in_cone(
             continue;
         }
         distance = map_event_distance_to_point(event, origin->vx, origin->vz, max_distance);
-        if (distance == -1) {
+        if (distance == KF_DISTANCE_NONE) {
             continue;
         }
         angle = vector_xz_to_angle(
@@ -166,11 +166,11 @@ s32 map_event_pool_find_overlap(s32 point_x, s32 point_z, s32 radius_padding)
     do {
         if (event->state == KF_MAP_EVENT_ACTIVE
             && map_event_distance_to_point(
-                   event, point_x, point_z, event->radius + radius_padding) != -1) {
+                   event, point_x, point_z, event->radius + radius_padding) != KF_DISTANCE_NONE) {
             return index;
         }
         index++;
         event++;
     } while (index < KF_MAP_EVENT_CAPACITY);
-    return -1;
+    return KF_MAP_EVENT_INDEX_NONE;
 }

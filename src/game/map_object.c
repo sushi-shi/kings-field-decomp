@@ -91,7 +91,7 @@ s32 map_object_pool_find_interaction_from(s32 start_index, s32 point_x, s32 poin
             point.vz += point_z;
             if (map_object_distance_to_point(
                     object, point.vx, point.vz, definition->interaction_radius + radius_padding)
-                != -1) {
+                != KF_DISTANCE_NONE) {
                 return index;
             }
         } else if (definition->behavior_type == KF_MAP_OBJECT_OP_HINGED_DOOR_PARTNER) {
@@ -102,16 +102,16 @@ s32 map_object_pool_find_interaction_from(s32 start_index, s32 point_x, s32 poin
             point.vz += point_z;
             if (map_object_distance_to_point(
                     object, point.vx, point.vz, definition->interaction_radius + radius_padding)
-                != -1) {
+                != KF_DISTANCE_NONE) {
                 return index;
             }
         } else if (map_object_distance_to_point(
                        object, point_x, point_z, definition->interaction_radius + radius_padding)
-                   != -1) {
+                   != KF_DISTANCE_NONE) {
             return index;
         }
     }
-    return -1;
+    return KF_MAP_OBJECT_INDEX_NONE;
 }
 
 ADDRESS(0x80031784, 0x20)
@@ -336,7 +336,7 @@ void map_object_pool_update(void)
                     break;
                 }
                 if (timer == KF_MAP_OBJECT_DOOR_CLOSE_FIRST) {
-                    if (map_object_probe_door_closing(object, object->rotation.angles.y - KF_ANGLE_QUARTER_TURN) != -1) {
+                    if (map_object_probe_door_closing(object, object->rotation.angles.y - KF_ANGLE_QUARTER_TURN) != KF_COLLISION_NONE) {
                         object->action_timer = KF_MAP_OBJECT_DOOR_CLOSE_FIRST;
                         break;
                     }
@@ -379,7 +379,7 @@ void map_object_pool_update(void)
                     break;
                 }
                 if (elapsed == KF_MAP_OBJECT_DOOR_CLOSE_FIRST) {
-                    if (map_object_probe_door_closing(object, object->rotation.angles.y) != -1) {
+                    if (map_object_probe_door_closing(object, object->rotation.angles.y) != KF_COLLISION_NONE) {
                         object->action_timer = KF_MAP_OBJECT_DOOR_CLOSE_FIRST;
                         break;
                     }
@@ -459,7 +459,7 @@ void map_object_pool_update(void)
                         object->position.vz,
                         MAP_EMITTER_PLAYER_RANGE,
                         0)
-                    == -1) {
+                    == KF_DISTANCE_NONE) {
                     break;
                 }
                 switch (object->object_id) {
@@ -532,7 +532,7 @@ void map_object_pool_update(void)
                                    * MAP_BOSS_EMITTER_VELOCITY_NUMERATOR)
                     >> MAP_EMITTER_VELOCITY_SHIFT;
                 switch (object->rotation.angles.y) {
-                case 0:
+                case KF_ANGLE_NO_TURN:
                     point.vx = object->position.vx + MAP_BOSS_EMITTER_X_OFFSET;
                     point.vz = object->position.vz + MAP_BOSS_EMITTER_Z_OFFSET;
                     break;

@@ -269,7 +269,7 @@ void actor_update_awareness(void)
     switch (actor->lifecycle) {
     case KF_ACTOR_LIFECYCLE_DORMANT:
         distance = actor_player_distance(actor, ACTOR_ACTIVATION_RANGE);
-        if (distance == -1) {
+        if (distance == KF_DISTANCE_NONE) {
             return;
         }
         spawn_policy = slot_state;
@@ -281,7 +281,7 @@ void actor_update_awareness(void)
                         map_placement_axis_position(actor->tile_z, actor->local_z),
                         definition->collision_radius,
                         0)
-                    == -1) {
+                    == KF_ACTOR_INDEX_NONE) {
                     actor_initialize_current();
                     if (definition->action_animations[KF_ACTOR_ANIM_SLOT_MOVE] != KF_ANIMATION_CLIP_NONE) {
                         actor_set_action(actor, KF_ACTOR_ACTION_EXIT_BLOCKED_PLACEMENT);
@@ -305,7 +305,7 @@ void actor_update_awareness(void)
                             map_placement_axis_position(actor->tile_z, actor->local_z),
                             definition->collision_radius,
                             0)
-                        != -1) {
+                        != KF_ACTOR_INDEX_NONE) {
                         break;
                     }
                     actor_initialize_current();
@@ -318,7 +318,7 @@ void actor_update_awareness(void)
         break;
     case KF_ACTOR_LIFECYCLE_ACTIVE:
         distance = actor_player_distance(actor, ACTOR_ACTIVE_RANGE);
-        if (distance == -1) {
+        if (distance == KF_DISTANCE_NONE) {
             actor->lifecycle = KF_ACTOR_LIFECYCLE_DORMANT;
         } else {
             actor_select_next_action(distance);
@@ -326,7 +326,7 @@ void actor_update_awareness(void)
         break;
     case KF_ACTOR_LIFECYCLE_WAIT_FOR_RANGE_EXIT:
         if (actor_player_distance(actor, ACTOR_ACTIVE_RANGE)
-            == -1) {
+            == KF_DISTANCE_NONE) {
             actor->lifecycle = KF_ACTOR_LIFECYCLE_DORMANT;
         }
         break;
@@ -530,7 +530,7 @@ void actor_spawn_action_effect(KF_ENUM_PARAM(KfActorEffectCode, s32) effect_code
             facing = (KF_ANGLE_HALF_TURN - actor->rotation.angles.y) & KF_ANGLE_WRAP_MASK;
             distance = player_distance_to_point_in_cone(
                 &position, facing, ACTOR_EFFECT_AIM_RANGE, KF_ACTOR_AIM_TOLERANCE);
-            if (distance == -1) {
+            if (distance == KF_DISTANCE_NONE) {
                 effect_rotation.angles.x = 0;
                 if (actor_effect_kind_from_payload(effect_code) == KF_EFFECT_KIND_LIGHTNING_BOLT_ALTERNATE) {
                     speed = KF_EFFECT_LIGHTNING_SPEED;
@@ -1140,7 +1140,7 @@ void actor_update_current_action(void)
                     target.vz,
                     definition->collision_radius,
                     0)
-                == -1) {
+                == KF_ACTOR_INDEX_NONE) {
                 actor->position.vx = target.vx;
                 actor->position.vz = target.vz;
             }

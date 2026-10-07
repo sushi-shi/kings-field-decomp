@@ -469,7 +469,7 @@ void player_update(void)
                     launch_direction = &direction;
                     pitch_yaw_to_forward_vector(&effect_rotation.angles, launch_direction);
                     vector3s_scale_shift12(PLAYER_WEAPON_MAGIC_SPEED, launch_direction);
-                    effect_pool_construct(10,
+                    effect_pool_construct(KF_PLAYER_DAMAGE_MULTIPLIER_ONE,
                         KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS,
                         effect,
                         &position,
@@ -482,7 +482,7 @@ void player_update(void)
                             player_state.camera_rotation.vx + PLAYER_TRIPLE_FANG_PITCH_OFFSET,
                             player_state.camera_rotation.vy,
                             player_state.camera_rotation.vz);
-                        effect_pool_construct(10,
+                        effect_pool_construct(KF_PLAYER_DAMAGE_MULTIPLIER_ONE,
                             KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS,
                             KF_EFFECT_KIND_HOMING_PROJECTILE,
                             &position,
@@ -491,7 +491,7 @@ void player_update(void)
                                 &effect_rotation.vector, homing_target, KF_EFFECT_SOUND_SILENT));
                         effect_rotation.angles.x -= 2 * PLAYER_TRIPLE_FANG_PITCH_OFFSET;
                         position.vy -= 2 * PLAYER_TRIPLE_FANG_Y_OFFSET;
-                        effect_pool_construct(10,
+                        effect_pool_construct(KF_PLAYER_DAMAGE_MULTIPLIER_ONE,
                             KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS,
                             KF_EFFECT_KIND_HOMING_PROJECTILE,
                             &position,

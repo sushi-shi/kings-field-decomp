@@ -202,7 +202,7 @@ void player_update_weapon_attack(void)
             addVector(&result, &player_state.camera_position);
             actor_index = actor_pool_find_overlap(result.vx, result.vy, result.vz,
                 PLAYER_WEAPON_HIT_RADIUS, PLAYER_WEAPON_HIT_HEIGHT);
-            if (actor_index != -1) {
+            if (actor_index != KF_ACTOR_INDEX_NONE) {
                 actor_apply_damage(
                     actor_index,
                     player_state.physical_power,
@@ -299,14 +299,14 @@ s32 player_distance_to_point_in_cone(
     s16 delta;
 
     distance = player_distance_to_point(point->vx, KF_COLLISION_IGNORE_HEIGHT, point->vz, max_distance, 0);
-    if (distance != KF_COLLISION_NONE) {
+    if (distance != KF_DISTANCE_NONE) {
         delta = (vector_xz_to_angle(
                      player_state.camera_position.vx - point->vx,
                      point->vz - player_state.camera_position.vz)
                  - facing) & KF_ANGLE_WRAP_MASK;
         delta = angle_error_magnitude(delta);
         if (angle_tolerance < delta) {
-            distance = KF_COLLISION_NONE;
+            distance = KF_DISTANCE_NONE;
         }
     }
     return distance;
@@ -329,11 +329,11 @@ s32 player_distance_to_point(
     default:
         dx = player_state.camera_position.vx - point_x;
         if (dx < -max_distance || max_distance < dx) {
-            return KF_COLLISION_NONE;
+            return KF_DISTANCE_NONE;
         }
         dz = player_state.camera_position.vz - point_z;
         if (dz < -max_distance || max_distance < dz) {
-            return KF_COLLISION_NONE;
+            return KF_DISTANCE_NONE;
         }
         dx >>= KF_LENGTH_SQUARE_DOWNSHIFT;
         if (point_y != KF_COLLISION_IGNORE_HEIGHT) {
@@ -353,7 +353,7 @@ s32 player_distance_to_point(
         }
         return distance;
     }
-    return KF_COLLISION_NONE;
+    return KF_DISTANCE_NONE;
 }
 
 /*

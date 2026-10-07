@@ -21,7 +21,9 @@ enum {
     KF_ACTOR_DEFINITION_COUNT = 12,
     KF_ACTOR_DEFINITION_WORD_COUNT = 456,
     KF_ACTOR_ATTACHMENT_OFFSET_COUNT = 2,
-    KF_ACTOR_CAPACITY = 128
+    KF_ACTOR_CAPACITY = 128,
+    /* The actor-pool overlap and tile searches found no actor. */
+    KF_ACTOR_INDEX_NONE = -1
 };
 
 KF_ENUM_BEGIN(KfActorSlotState, u8)

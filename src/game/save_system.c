@@ -24,6 +24,8 @@ enum {
     SAVE_MESSAGE_SYSTEM_ERROR = 113,
     SAVE_MESSAGE_FAILED = 114,
     SAVE_MESSAGE_FORMAT_CONFIRMATION = 115,
+    /* A successful status selects no message; distinct from the loader's skip value. */
+    SAVE_MESSAGE_NONE = -1,
     MESSAGE_IMAGE_SKIP = 0xff
 };
 
@@ -728,7 +730,7 @@ s32 memory_card_show_status_message(KF_ENUM_PARAM(KfSaveStatus, s16) status)
 
     switch (status_value) {
     case SAVE_STATUS_OK:
-        message = -1; /* Distinct from the image loader's 255 skip value. */
+        message = SAVE_MESSAGE_NONE;
         break;
     case KF_CARD_STATUS_TIMEOUT:
         message = SAVE_MESSAGE_NO_CARD;
