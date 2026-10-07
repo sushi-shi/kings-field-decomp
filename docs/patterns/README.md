@@ -33,9 +33,10 @@ promotes a probe to a proven historical toolchain.
 - [effect-constructor-varargs.md](effect-constructor-varargs.md): kind-specific
   optional argument domains, native `va_arg` controls, and the remaining
   manual argument walker omitted from the cleanup checklist.
-- [startup-address-origins.md](startup-address-origins.md): proof that KF1
-  startup compiled numeric `.bss`/heap starts, compiler probes, the KF2 symbol
-  contrast, shared RAM/stack policy and the native layout refresh.
+- [startup-address-origins.md](startup-address-origins.md): startup literal
+  owners and xrefs, shared RAM/stack policy, the proven numeric retail form,
+  the King's Field II/III linker-label setup the source follows, and the
+  unresolved original derivation.
 - [startup-sdk-provenance.md](startup-sdk-provenance.md): SDK/BIOS ownership
   audit of startup and memory code, exact InitHeap trampoline controls,
   all-source signature screening and limits of negative provenance evidence.

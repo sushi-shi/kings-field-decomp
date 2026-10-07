@@ -14,9 +14,8 @@ def main():
     for image in manifest['images']:
         report = build_image(
             image['name'], repo / 'build' / image['name'][:-4].lower(), [image['units']],
-            lambda units, root, index, override=None: compile_program(
-                units, root, index, repo=repo, include_override=override),
-            repo=repo, load_address=image['load_address'])
+            lambda units, root, index: compile_program(units, root, index, repo=repo),
+            repo=repo, load_address=image['load_address'], bounds_source='link/overlay_bounds.asm')
         if not report['linked']:
             raise RuntimeError(f"{image['name']}: {report['error']}")
         print(report['executable'], flush=True)

@@ -25,8 +25,7 @@ def file_hash(path: Path) -> str:
     return hashlib.sha256(path.read_bytes()).hexdigest()
 
 
-def compile_unit(unit: Unit, profile: Profile, root: Path, index: int,
-                 include_override: Path | None = None) -> dict:
+def compile_unit(unit: Unit, profile: Profile, root: Path, index: int) -> dict:
     if profile.language != 'c' or profile.aspsx_version != '1.07':
         raise ValueError(f'{unit.unit}: executable build requires C and ASPSX 1.07')
     if profile.optimization is None:
@@ -34,8 +33,7 @@ def compile_unit(unit: Unit, profile: Profile, root: Path, index: int,
     result = compile_c(
         unit.source_path, root, f'U{index:04d}', compiler=profile.compiler,
         optimization=profile.optimization, small_data=profile.small_data,
-        include_dirs=(*([include_override] if include_override else []), REPO / 'include',
-                      REPO / 'vendor/include', Path(os.environ['PSYQ_INCLUDE'])),
+        include_dirs=(REPO / 'include', REPO / 'vendor/include', Path(os.environ['PSYQ_INCLUDE'])),
         cc1_flags=profile.cc1_flags, defines=unit.defines)
     dependencies = [unit.source, *IncludeScanner().headers(unit.source)]
     return {**result, 'unit': unit.unit, 'source': unit.source,
@@ -81,9 +79,9 @@ def build_image(name: str, manifest: Manifest, root: Path) -> dict:
     units = [u for u in manifest.units if u.image == name and u.scope != 'vendored']
     report = link_image(
         name, root, units,
-        lambda unit, output, index, override=None: compile_unit(
-            unit, manifest.profiles[unit.profile], output, index, override),
-        repo=REPO, load_address=IMAGE_LAYOUTS[name].load_address)
+        lambda unit, output, index: compile_unit(unit, manifest.profiles[unit.profile], output, index),
+        repo=REPO, load_address=IMAGE_LAYOUTS[name].load_address,
+        bounds_source='config/link/overlay_bounds.asm')
     report.update(output_rewritten=False, retail_payload_inputs=[],
                   game_execution_tested=False, historical_toolchain_proven=False)
     (root / 'build.json').write_text(json.dumps(report, indent=2) + '\n')

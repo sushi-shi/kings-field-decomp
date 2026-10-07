@@ -14,18 +14,19 @@ def main():
     repo = Path(__file__).resolve().parent
     manifest = json.loads((repo / 'build.json').read_text())
 
-    def compile_one(unit, output, index, override=None):
+    def compile_one(unit, output, index):
         return compile_classic(
             repo / unit['source'], output, f'U{index:04d}',
-            include_dirs=(*([override] if override else []), repo / 'include',
-                          repo / 'vendor/include', Path(os.environ['PSYQ_INCLUDE'])),
+            include_dirs=(repo / 'include', repo / 'vendor/include',
+                          Path(os.environ['PSYQ_INCLUDE'])),
             **unit['options'])
 
     failed = False
     for image in manifest['images']:
         report = build_image(
             image['name'], repo / 'build' / image['name'][:-4].lower(), image['units'],
-            compile_one, repo=repo, load_address=image['load_address'])
+            compile_one, repo=repo, load_address=image['load_address'],
+            bounds_source='link/overlay_bounds.asm')
         if report['linked']:
             print(report['executable'], flush=True)
         else:

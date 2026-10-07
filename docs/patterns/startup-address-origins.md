@@ -7,7 +7,8 @@ carried no relocation at those sites. Both store addresses equal the retail
 `.bss` start, so they were taken from that program's own link layout. How
 the heap starts were chosen remains unresolved. King's Field II differs:
 its GAME `main` references a linker-resolved symbol and computes the heap size
-at run time.
+at run time. The reconstruction deliberately uses that linker setup for KF1
+too and accepts the instruction-level mismatch in both `main` functions.
 
 ## Scope and evidence
 
@@ -162,14 +163,17 @@ while KF1 compiled numbers.
 
 ## Source and build model
 
-`include/kf/{game,open}/startup_layout.h` define `GAME_BSS_START`,
-`GAME_HEAP_START`, `OPEN_BSS_START` and `OPEN_HEAP_START` as the retail
-numbers. The names describe the decoded roles; the original spellings and
-header are not recovered. `main` derives the counts from the shared
-`OVERLAY_STACK_BOTTOM`, `801f8000`, which is cached RAM end minus the SDK
-default 32 KiB stack. The former zero-byte `.bss_start`/`.bss_end` sections,
-their ASMPSX 2.34 dependency and the `BSS_START`/`BSS_END` linker labels are
-removed: no King's Field object used them.
+The source follows the linker setup King's Field II and III use instead of
+compile-time numbers. `config/link/overlay_bounds.asm` places zero-byte
+`BSS_START` and `BSS_END` labels around `.bss` (assembled by the pinned
+native ASMPSX 2.34), and both `main` functions pass them to the store helper
+and `InitHeap`. The counts derive from the shared `OVERLAY_STACK_BOTTOM`,
+`801f8000`, cached RAM end minus the SDK default 32 KiB stack. The labels
+always match the build's own layout, so the playable build needs no second
+link. This is a project decision, not a recovered spelling: retail KF1 used
+numbers (above), so GAME and OPEN `main` stay non-exact (78.53% and 72.96%)
+by design. Their only differences are the relocated `lui`/`addiu` loads,
+the run-time count and size arithmetic, and the resulting register save.
 
 ### Where the numbers came from
 
@@ -191,10 +195,9 @@ the moved static storage lets the allocator overwrite live globals. The
 reconstruction hit exactly this: with fixed retail numbers in a build whose
 layout differs, the game breaks, which is why the earlier source used symbolic
 bounds instead. A build that keeps working across development must re-read
-the map on every link, so the original most likely regenerated the header
-from the first link's map as part of the build, as this builder does. That
-mechanism remains a candidate; no original makefile, generator or map
-survives.
+the map on every link, so the original most likely regenerated the numbers
+from the first link's map as part of the build. That mechanism remains a
+candidate; no original makefile, generator or map survives.
 
 The KF1 demo `KFIELD.EXE` (DemoDemo vol. 1 and the kfdemo disc; the two
 differ by 21 patched bytes) cannot test this directly: it is a standalone
@@ -215,25 +218,16 @@ King's Field III retail and rev1 read the heap start from linked data words.
 From King's Field II on, the boundary came from the linker rather than from
 numbers that had to be kept in sync by hand or by a build step.
 
-A numeric layout must therefore be kept in step with the link. The reconstruction's native layout does not yet
-match retail; for example, GAME's native `.bss` extends past `800a0980`. The
-builder therefore performs that step itself: it checks the first link's map. If `.bss` starts elsewhere or
-static storage reaches the heap start, it writes a refreshed header under the
-link directory, with the native `.bss` start and a heap start no lower than
-the 8-byte-aligned static-storage end. It then recompiles that header's
-users and relinks. `build.json` records the source, linked and refreshed
-values. The objdiff, `kf try` and `kf analyze` compilations use the checked-in
-retail numbers. A retail-faithful layout needs no refresh.
-
-The four former lui/ori relocation candidates in `relocs.tsv` are rejected as
-`folded-integer-constant`. The decoded objects at the store addresses remain
-established by their independent symbolic references.
+The four lui/ori sites remain candidate relocation rows in `relocs.tsv`; the
+symbolic source references them, while retail folded them. The decoded objects
+at the store addresses remain established by their independent symbolic
+references.
 
 ## Final verdicts
 
 | Function family, in both GAME and OPEN | Verdict |
 | --- | --- |
-| `main` | Exact. Numeric `.bss` start and heap start, with folded counts; KF1-specific mechanism proven; `.bss` start identity validated; heap-start derivation remains a candidate. |
+| `main` | Non-exact by decision (GAME 78.53%, OPEN 72.96%): source uses linker `.bss` labels like King's Field II/III. Retail's numeric form is proven and compiles to 100% when spelled as numbers; `.bss` start identity validated; heap-start derivation remains a candidate. |
 | `repeat_store_word` | Exact. Non-advancing store preserved; count equals words from the `.bss` start to the stack bottom; why it does not advance remains unresolved. |
 | `memory_malloc_checked` | RAM-base/extent check understood; SDK provides an authentic base-address definition. |
 | `memory_set_allocation_mode` | Initial/rebased arena boundaries and budgets understood; original names not recovered. |

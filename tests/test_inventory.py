@@ -1720,8 +1720,13 @@ class InventoryTests(unittest.TestCase):
             self.assertEqual(row["final_name"], identity.name)
             self.assertEqual(row["final_signature"], signature)
             self.assertIn(evidence_path.name, identity.evidence)
-            # Numeric startup layout constants reproduce both functions.
-            self.assertEqual(row["current_match"], "100.000000000% exact")
+            # Symbolic BSS bounds preserve the startup model but change main's
+            # code under the current probe; the repeated-store helper is exact.
+            expected_match = {
+                "repeat_store_word": "100.000000000% exact",
+                "main": "72.962960000% non-exact",
+            }
+            self.assertEqual(row["current_match"], expected_match[identity.name])
 
         _, relocation_rows = read_tsv(RETAIL_CONFIG / "relocs.tsv")
         campaign_rows = [
@@ -1741,10 +1746,8 @@ class InventoryTests(unittest.TestCase):
         self.assertEqual(set(startup_addresses), {0x8001376C, 0x8001378C})
         self.assertEqual(startup_addresses[0x8001376C]["target_name"], "cd_search_file")
         self.assertEqual(startup_addresses[0x8001378C]["target_name"], "initial_heap_start")
-        # Folded integer constants, not relocations in the original object.
         for row in startup_addresses.values():
-            self.assertEqual(row["status"], "rejected")
-            self.assertEqual(row["confidence"], "folded-integer-constant")
+            self.assertEqual(row["status"], "candidate")
             self.assertEqual(row["opcode"], "lui+ori")
 
     def test_open_opening_render_campaign_matches_curated_evidence(self) -> None:
@@ -2875,9 +2878,8 @@ class InventoryTests(unittest.TestCase):
             {0x800142A0, 0x80015198, 0x8001866C, 0x800186A4},
         )
         startup = matrix_rows.pop(0x800142A0)
-        # Startup's numeric .bss start coincides with the matrix; not a reference.
         self.assertEqual(startup["target_name"], "player_death_saved_color_matrix")
-        self.assertEqual(startup["status"], "rejected")
+        self.assertEqual(startup["status"], "candidate")
         self.assertEqual(startup["opcode"], "lui+ori")
         for row in matrix_rows.values():
             self.assertEqual(row["target_name"], "player_death_saved_color_matrix")

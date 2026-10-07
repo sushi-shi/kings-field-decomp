@@ -26,13 +26,12 @@ ASPSX 1.07 binary. The build report records every tool and input hash. This is
 a reproducible source-to-EXE chain, while exact historical compiler and
 assembler attribution remains open.
 
-Overlay `main` compiles its `.bss` start and initial heap start as numbers
-from `include/kf/{game,open}/startup_layout.h`, as retail did. After the first
-link the builder compares them with the map. When this link's `.bss` begins
-elsewhere or static storage reaches the heap start, it writes a refreshed copy
-of that header under the link directory, recompiles its users and relinks.
-`build.json` records the source, linked and refreshed values; a retail layout
-needs no refresh. See `docs/patterns/startup-address-origins.md`.
+Overlay startup uses `BSS_START` and `BSS_END` from zero-byte boundary
+declarations in `config/link/overlay_bounds.asm`. A separately pinned native
+ASMPSX 2.34 assembles those declarations because the C assembler lacks named
+sections and the Release 2.5 macro assembler requires a software key. PSYLINK
+places the labels around `.bss`; their object contains no instructions or
+storage. Startup derives its word count and heap size from RAM/stack settings.
 
 Derived ELF objects, delinked retail modules, objdiff projects, and semantic
 reports are analysis views. Source compilation in `kf analyze` and `kf try`

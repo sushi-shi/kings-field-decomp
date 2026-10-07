@@ -84,6 +84,15 @@ let
         tar -xzf ${aspsxArchive} -C "$out" ./1.07/ASPSX.EXE
       '';
 
+      # The C assembler lacks named sections, while the Release 2.5 macro
+      # assembler requires a software key. Use this preserved native ASMPSX
+      # solely for zero-byte linker boundary declarations, not game bodies.
+      asmpsxNative = pkgs.fetchurl {
+        name = "kings-field-asmpsx-2.34.exe";
+        url = "https://raw.githubusercontent.com/HighwayFrogs/frogger-psx/fa2d5185b19ae89aaceeb47b2828369e06566edf/sdk/bin/SDK4.0/DOS/ASMPSX.EXE";
+        sha256 = "c27e07db59f29282c837e06204a3a5efe69183dbfd2570c8b0d46f1cb5f760bb";
+      };
+
       cc1psx260 = pkgs.writeShellApplication {
         name = "cc1psx-260";
         text = ''exec ${gcc260Native}/bin/cc1 "$@"'';
@@ -106,5 +115,5 @@ let
 
 in {
   inherit psyqSdk gcc257Native gcc257Headers gcc260Native cc1psx257 cpppsx257 cc1psx260 cpppsx260
-    aspsxNative;
+    aspsxNative asmpsxNative;
 }

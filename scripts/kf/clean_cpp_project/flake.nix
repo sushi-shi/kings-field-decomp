@@ -15,6 +15,7 @@
         PSYQ_LIB = "${sdk.psyqSdk}/release-2.5/isa board/PSXLIB/LIB";
         PSYQ_H2000_LIB = "${sdk.psyqSdk}/release-2.5/H2000/LIB2000";
         PSYQ_ASPSX = "${sdk.aspsxNative}/1.07/ASPSX.EXE";
+        PSYQ_ASMPSX = "${sdk.asmpsxNative}";
         MIPS_LD = "${binutils}/bin/mipsel-unknown-linux-gnu-ld";
       };
       buildTools = [ python pkgs.llvmPackages.clang-unwrapped binutils pkgs.dosbox-x ];
