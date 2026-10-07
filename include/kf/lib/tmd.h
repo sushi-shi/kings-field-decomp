@@ -22,6 +22,8 @@ enum {
     KF_TMD_MODE_MASK = 0xfd,
     KF_TMD_ILEN_TO_BYTES_SHIFT = 6,
     KF_TMD_BODY_BYTES_MASK = 0x3fc,
+    /* Index to byte offset: one shift of sizeof(SVECTOR). See the alignment
+     * contract on TMD_OBJECT_VERTICES. */
     KF_TMD_VECTOR_OFFSET_SHIFT = 3,
     KF_TMD_DEFAULT_PERSPECTIVE_SHIFT = 1
 };
@@ -73,8 +75,20 @@ typedef struct KfTmdObject {
     s32 scale;
 } KfTmdObject;
 
-/* Unlinked object offsets are bytes from the end of the asset header.
- * The asset must contain the object's aligned SVECTOR array. */
+/*
+ * Unlinked object offsets are bytes from the end of the asset header, and the
+ * asset must contain the object's SVECTOR array.
+ *
+ * Alignment is a load-bearing precondition that the C type does not state:
+ * SVECTOR is four shorts, so C requires only two-byte alignment, while the GTE
+ * entry points that consume these vectors read them with word loads. Retail
+ * NormalColorDpq3 (GAME.EXE 0x8004dd40) issues lwc2 at 0(reg) and 4(reg) per
+ * vector, and RotTrans (0x8004dadc) stores three words; an odd-word base takes
+ * an address-error exception rather than degrading. Vertex and normal blocks
+ * therefore have to start on a four-byte boundary, which holds because the
+ * header is a whole number of words and the format keeps the block offsets
+ * word-aligned.
+ */
 #define TMD_OBJECT_VERTICES(asset, object) \
     ((SVECTOR *)((u8 *)(asset) + KF_TMD_HEADER_BYTES + (object)->vertex_offset))
 
@@ -268,7 +282,9 @@ typedef struct KfScreenVertex {
     s16 p2;
 } KfScreenVertex;
 
-/* Prepared TMD indices are byte offsets, not array subscripts. */
+/* Prepared TMD indices are byte offsets, not array subscripts: registration
+ * shifts them left by KF_TMD_VECTOR_OFFSET_SHIFT, so they address whole
+ * elements from a word-aligned base. */
 #define TMD_PREPARED_VERTEX(vertices, byte_offset) \
     ((KfScreenVertex *)((u8 *)(vertices) + (byte_offset)))
 

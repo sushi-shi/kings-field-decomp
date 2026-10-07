@@ -89,7 +89,13 @@ void item_load_database(void)
         name[11] = n / 100 + '0';
         rem = n % 100;
         name[12] = rem / 10 + '0';
-        name[13] = rem % 10 + '0';
+        /*
+         * Reusing n for the last digit gives it two deaths. local-alloc
+         * then leaves n to global allocation, and the n / 100 quotient
+         * ties to its divisor register as in retail.
+         */
+        n = rem % 10 + '0';
+        name[13] = n;
         if (CdSearchFile((CdlFILE *)&cd_file_table[i], name) != NULL) {
             if ((cd_file_table[i].size & (KF_CD_SECTOR_BYTES - 1)) != 0)
                 cd_file_table[i].size =

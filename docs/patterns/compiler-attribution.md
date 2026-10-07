@@ -242,6 +242,35 @@ how a DJGPP COFF `cc1` is executed on this host; the run's only evidential
 content is the assembly it emits, compared byte-for-byte against the carved
 retail objects.
 
+### Later supplied-compiler and driver controls
+
+A September 2026 control batch reran this question against the then
+eleven non-exact units. Nothing changed the conclusion above, and none of the
+following needs repeating without new evidence:
+
+- **Both Release 2.5 CC1 payloads (current sources):** the GO32-hosted GCC
+  2.4.1 kept 47 exact siblings and the supplied GCC 2.6.0 kept six, against 78
+  under the production profiles. Neither added an exact target.
+- **The separately archived
+  [GNU C Compiler Version 2.60 disk 1](https://archive.org/download/ps1_sdks/GNU%20C%20Compiler%20Version%202.60%20%28World%29%20%28Disk%201%29.img)**
+  (image SHA-256
+  `07af9fecd148cd423411ceb9127ed3f3e9149a1151a1a254df3e2b8f0c33bae7`): its
+  `CC1PSX.EXZ` decompresses to a binary (SHA-256
+  `6587ed37f9f8795f8e47601d3a71167e93c832959f2f314e08d11c53be04661e`) that
+  differs from the Release 2.5 GCC 2.6.0.
+  On all eleven units it still emits assembly and objects byte-identical to
+  that 2.6.0 binary. The version label is not binary identity, and this disk
+  adds no new compiler behavior.
+- **CCPSX 1.02 driver:** it passes `-O2`/`-O3` and `-g` straight to CC1, with
+  no hidden optimization flags. Applying its predefined macro set changes no
+  non-directive source line. The G8/CPU3000 defaults and the `-G0` rejection
+  are covered in [the OPEN driver control](open-driver-default-control.md).
+- **`-O3` and `-g0`:** each was tested alone, holding the compiler, CPU flag,
+  small-data setting and native assembler fixed. Both kept every target score
+  and all 78 exact siblings. `-O3` bodies were word-, call- and
+  referent-identical. `-g0` removes the debug symbols that conservative
+  reference resolution needs in two units, so keep compiler debug output on.
+
 ## Per-TU profile assignments (campaign sweep)
 
 The discriminator from the conclusion above was applied as a campaign. Every

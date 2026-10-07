@@ -155,9 +155,9 @@ literals stay numeric. The floor names replace 22 literal sites.
 - `memory_card_show_status_message` sends `SAVE_STATUS_OK` to
   `SAVE_MESSAGE_NONE` (-1). The loader does not treat -1 as its 0xff skip
   value. The old inline comment moved to the constant.
-- Untargeted effects (collision-target bits 0) return
-  `KF_COLLISION_UNTARGETED` (1). This value is neither `NONE` nor a classed hit.
-  The name records only where it occurs, as the earlier ledger noted.
+- Untargeted effects (collision-target bits 0) return 1, neither `NONE` nor a
+  classed hit. The exact source has no literal for it: the switch has no
+  default arm and retail returns the class-1 compare constant left in `$v0`.
 - `menu_format_number` writes `value % 10` as the glyph code, so digit glyphs
   equal their values. Zero padding fills with `MENU_NUMBER_ZERO`.
 - The player's weapon-magic effects pass `KF_PLAYER_DAMAGE_MULTIPLIER_ONE` to
@@ -174,7 +174,6 @@ literals stay numeric. The floor names replace 22 literal sites.
 | -1 | `KF_DISTANCE_NONE`, `KF_ACTOR_INDEX_NONE`, `KF_MAP_OBJECT_INDEX_NONE`, `KF_MAP_EVENT_INDEX_NONE`, `KF_COLLISION_NONE` | linked: `collision_query_world` tests each finder result with its own sentinel before it builds the packed result |
 | -1 | `SAVE_MESSAGE_NONE`, `KF_MENU_RESULT_CANCELLED`, `MENU_TEXT_END`, `KF_SAVE_OVERLAY_NONE` | retain: no flow between message IDs, menu results, glyph terminators and overlay rows |
 | 0 | `KF_ANGLE_NO_TURN`, `MENU_NUMBER_ZERO`, `KF_FLOOR5_BOSS_DEATH_DEFINITION_0` | retain: angle, glyph code and definition slot |
-| 1 | `KF_COLLISION_UNTARGETED`, `KF_MAP_ORIENT_UNROTATED` | retain: packed collision result versus orientation byte |
 | 7 | `KF_FLOOR5_BOSS_DEFINITION`; dialogue page 7 | retain: definition slot versus authored page number |
 | 10 | `KF_PLAYER_DAMAGE_MULTIPLIER_ONE`, `WARP_SHIMMER_OWNER_ID`, `MENU_NUMBER_BLANK` | linked (first two: both reach the constructor's byte, but the warp role is unproven, see above); retain the glyph code |
 

@@ -129,6 +129,40 @@ from the pinned Release 2.5 object, so all four rows use
 `sdk-lineage-supported`, not an exact confidence. They are excluded from the
 game denominator and are not reconstruction targets.
 
+## GTE vector alignment precondition
+
+Prepared TMD indices are byte offsets, not subscripts:
+`tmd_prepare_primitive_indices`, called by `tmd_register`, shifts each packet's
+`v`/`n` field left by `KF_TMD_VECTOR_OFFSET_SHIFT` (3), so the render paths
+address vertices and normals as `base + offset` through a `u8 *` cursor and
+convert to `SVECTOR *` at the call.
+
+That conversion carries an alignment requirement the C types do not state.
+`SVECTOR` is four `short`s, so C requires only two-byte alignment, while the
+GTE entry points consume these vectors a word at a time:
+
+| Retail entry point | Address | Access |
+| --- | --- | --- |
+| `NormalColorDpq3` | GAME `0x8004dd40` | `lwc2` at `0(reg)` and `4(reg)` per vector: eight bytes read, `pad` included |
+| `RotTrans` | GAME `0x8004dadc` | `swc2` at `0(a1)`, `4(a1)`, `8(a1)`: three words written, never offset 12 |
+
+A word access to an address that is not a multiple of four raises an address-error exception on the
+R3000A rather than degrading, so the vertex and normal blocks must start on a
+four-byte boundary. That holds structurally rather than by accident:
+`KF_TMD_HEADER_BYTES` is a whole number of words, the format keeps each
+object's block offsets word-aligned, and the shift is exactly one element, so
+every index-derived address inherits the base's alignment.
+`tests/fixtures/tmd_vector_alignment.c` states these as compiled checks, with
+`tests/test_tmd_vector_alignment.py` driving them through the pinned compiler
+and both Clang modes and failing if the shift stops matching
+`sizeof(SVECTOR)`.
+
+The same file records the `MATRIX.t` case. `RotTrans` is handed
+`(VECTOR *)&matrix.t`: `VECTOR` is four words, `t` is three, and `t` ends the
+`MATRIX`, so the view's fourth word lies past the object. The three-word store
+above is what keeps the call in bounds; the checks assert the extents that make
+that argument hold.
+
 ## Remaining questions
 
 - Prove the exact SDK revision that produced the two-function retail VSYNC
