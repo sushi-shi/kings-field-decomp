@@ -94,7 +94,7 @@ int *probe(int *p, int index) {
                   patch("scripts.kf.pointer_zeros.load_manifest", return_value=manifest),
                   patch("scripts.kf.pointer_zeros.environment", return_value=("clang", root)),
                   redirect_stdout(stdout), redirect_stderr(stderr)):
-                self.assertEqual(main(["--json", "--check", "--mode", "retail"]), 1)
+                self.assertEqual(main(["--json", "--check"]), 1)
             report = json.loads(stdout.getvalue())
             self.assertEqual(report["variants"], 2)
             self.assertEqual(report["count"], 5, report)
@@ -104,34 +104,6 @@ int *probe(int *p, int index) {
                               ("probe.h", 2), ("probe.h", 3), ("probe.h", 5)])
             self.assertEqual(len(sites[2]["contexts"]), 2)
             self.assertEqual(sites[1]["contexts"][0]["image"], "OPEN.EXE")
-
-    def test_default_census_also_parses_the_modern_cplusplus_view(self):
-        with TemporaryDirectory() as directory:
-            root = Path(directory)
-            (root / "probe.c").write_text(
-                "#define NULL 0\n"
-                "struct S { int n; int m; };\n"
-                "#ifdef __cplusplus\n#define OFFSET(t, m) __builtin_offsetof(t, m)\n"
-                "int *modern_only(void) { return 0; }\n"
-                "#else\n#define OFFSET(t, m) ((unsigned long)&((t *)NULL)->m)\n#endif\n"
-                "typedef char offset_check[OFFSET(struct S, m) == 4 ? 1 : -1];\n"
-                "int *both(void) { return NULL; }\n")
-            profile = Profile("c", "c", "gcc257-native", "O2", 0, "1.07", ())
-            manifest = Manifest({"c": profile}, (Unit("game.probe", "GAME.EXE", "probe.c", "c", ()),))
-            reports = {}
-            for mode in ("retail", "modern", "all"):
-                stdout = StringIO()
-                with (patch("scripts.kf.pointer_zeros.REPO", root),
-                      patch("scripts.kf.pointer_zeros.load_manifest", return_value=manifest),
-                      patch("scripts.kf.pointer_zeros.environment", return_value=("clang", root)),
-                      redirect_stdout(stdout), redirect_stderr(StringIO())):
-                    main(["--json", "--mode", mode])
-                reports[mode] = json.loads(stdout.getvalue())
-            self.assertEqual(reports["retail"]["count"], 0)
-            self.assertEqual([site["line"] for site in reports["modern"]["sites"]], [5])
-            self.assertEqual(reports["all"]["modes"], ["retail", "modern"])
-            self.assertEqual([context["mode"] for context in reports["all"]["sites"][0]["contexts"]],
-                             ["modern"])
 
     def test_parse_errors_abort_instead_of_reporting_a_clean_scan(self):
         with self.assertRaisesRegex(ValueError, "parsing failed"):

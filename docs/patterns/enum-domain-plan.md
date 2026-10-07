@@ -41,8 +41,7 @@ Each domain lists its KF2 counterparts. KF2 is read from `$KF2_REPO` or a
 sibling `kings-field-2-decomp` checkout, using KF2's `KF_ENUM_BEGIN` enums and
 the fields and parameters they type.
 
-The KF1 port differs from KF2's tool in three ways. Each change has a control
-in `tests/test_literals.py`:
+The KF1 port differs from KF2's tool in three ways:
 
 - A read through `KF_ENUM_ENCODE` is a raw integer view (`slot#raw`) and does
   not carry the enum domain. KF1 spells 522 explicit encode boundaries. Under
