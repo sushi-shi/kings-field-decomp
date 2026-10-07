@@ -35,7 +35,7 @@
         sdkBuilder = ./scripts/create-toolchain.py;
       };
       inherit (toolchain) psyqSdk gcc257Native gcc257Headers gcc260Native cc1psx257 cpppsx257
-        cc1psx260 cpppsx260 aspsxNative asmpsxNative;
+        cc1psx260 cpppsx260 aspsxNative;
 
       psy-k = pkgs.rustPlatform.buildRustPackage {
         pname = "psy-k";
@@ -348,7 +348,6 @@
           repo="$(git rev-parse --show-toplevel 2>/dev/null || pwd)"
           export PSYQ_ASPSX="${aspsxNative}/1.07/ASPSX.EXE"
           export PSYQ_SDK="${psyqSdk}/release-2.5"
-          export PSYQ_ASMPSX="${asmpsxNative}"
           export PSYQ_BIN="$PSYQ_SDK/isa board/PSXBIN/BIN"
           export PSYQ_INCLUDE="$PSYQ_SDK/isa board/PSXLIB/INCLUDE"
           export PSYQ_C_INCLUDE="${gcc257Headers}/include"
@@ -448,7 +447,6 @@
           export PSYQ_COMPILER="$PSYQ_SDK/compiler"
           export PSYQ_ASPSX="${aspsxNative}/1.07/ASPSX.EXE"
           export KF_GCC260_NATIVE="${gcc260Native}"
-          export PSYQ_ASMPSX="${asmpsxNative}"
           export KF_GCC257_NATIVE="${gcc257Native}"
           export GHIDRA_INSTALL_DIR="${pkgs.ghidra}/lib/ghidra"
           export NIX_GHIDRAHOME="${ghidraWithPlugins}/lib/ghidra/Ghidra"
@@ -489,7 +487,6 @@
         PSYQ_C_INCLUDE = "${gcc257Headers}/include";
         PSYQ_BIN = "${psyqSdk}/release-2.5/isa board/PSXBIN/BIN";
         PSYQ_ASPSX = "${aspsxNative}/1.07/ASPSX.EXE";
-        PSYQ_ASMPSX = "${asmpsxNative}";
       } ''
         mkdir project
         cp -r ${./scripts} project/scripts

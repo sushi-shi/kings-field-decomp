@@ -5,10 +5,6 @@
 #include <kf/lib/types.h>
 #include <kf/lib/memory_layout.h>
 
-/* Boundaries supplied by the program's link layout. */
-extern u8 BSS_START[];
-extern u8 BSS_END[];
-
 enum {
     OVERLAY_STACK_BYTES = 0x8000
 };

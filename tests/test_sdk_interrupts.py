@@ -43,8 +43,7 @@ class SdkInterruptControls(unittest.TestCase):
 
             output = root / 'linked'
             report = build_image('GAME.EXE', output, [{}], compile_one, repo=REPO,
-                                 load_address=0x80012000,
-                                 bounds_source='config/link/overlay_bounds.asm')
+                                 load_address=0x80012000)
             self.assertTrue(report['linked'], report.get('error'))
             library = next(x for x in report['libraries'] if x['file'] == 'LIBETC.LIB')
             self.assertNotEqual(library['sha256'], library['link_input_sha256'])

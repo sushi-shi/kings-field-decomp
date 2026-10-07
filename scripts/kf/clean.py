@@ -149,8 +149,6 @@ def generate(files: dict[str, bytes], *, modern: bool = False) -> dict[str, byte
         output[name] = re.sub(rb'(?m)^\s*#[^\n]*\n', b'', files[name])
     output['scripts/create-toolchain.py'] = without_python_comments(
         files['scripts/create-toolchain.py'].decode()).encode()
-    output['link/overlay_bounds.asm'] = re.sub(rb'(?m)^;[^\n]*\n', b'',
-                                             files['config/link/overlay_bounds.asm'])
     output['codecs/Cargo.toml'] = b'''[package]
 name = "kf-codec"
 version = "0.1.0"
@@ -262,19 +260,20 @@ def classic_reference(repo: Path) -> Path:
     manifest = tomllib.loads((repo / 'config/units.toml').read_text())
     reference = repo / 'build/clean-reference'
 
-    def compile_one(unit, root, index):
+    def compile_one(unit, root, index, override=None):
         profile = manifest['profiles'][unit['profile']]
         options = {key: profile[key] for key in ('compiler', 'optimization', 'small_data', 'cc1_flags')}
         return compile_classic(
             repo / unit['source'], root, f'U{index:04d}',
-            include_dirs=(repo / 'include', repo / 'vendor/include', Path(os.environ['PSYQ_INCLUDE'])),
+            include_dirs=(*([override] if override else []), repo / 'include',
+                          repo / 'vendor/include', Path(os.environ['PSYQ_INCLUDE'])),
             defines=unit.get('defines', ()), **options)
 
     for name, origin in ORIGINS.items():
         units = [unit for unit in manifest['unit']
                  if unit['image'] == name and unit.get('scope') != 'vendored']
         report = build_image(name, reference / name[:-4].lower(), units, compile_one,
-                             repo=repo, load_address=origin, bounds_source='config/link/overlay_bounds.asm')
+                             repo=repo, load_address=origin)
         if not report['linked']:
             raise ValueError(f'{name}: classic reference build failed: {report["error"]}')
     return reference

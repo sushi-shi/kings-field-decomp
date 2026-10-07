@@ -9,9 +9,9 @@ import re
 from .elf_to_lnk import convert
 
 
-def compile_program(units, root, index, *, repo):
+def compile_program(units, root, index, *, repo, include_override=None):
     sdk = root / 'sdk'
-    sdk.mkdir()
+    sdk.mkdir(exist_ok=True)
     for filename, symbol in (('LIBGPU.H', 'SetDrawOffset'), ('LIBCD.H', 'StFreeRing')):
         header = sdk / filename
         text = (Path(os.environ['PSYQ_INCLUDE']) / filename).read_text(encoding='latin-1')
@@ -28,7 +28,9 @@ def compile_program(units, root, index, *, repo):
                    '-fno-pic', '-G0', '-std=c++20',
                    '-O2', '-ffreestanding', '-fno-builtin', '-fno-exceptions', '-fno-rtti',
                    '-fno-threadsafe-statics', '-fno-use-cxa-atexit', '-fno-strict-aliasing',
-                   '-fwrapv', '-nostdinc', '-I', str(repo / 'include'),
+                   '-fwrapv', '-nostdinc',
+                   *(['-I', str(include_override)] if include_override else []),
+                   '-I', str(repo / 'include'),
                    '-I', str(repo / 'vendor/include'), '-isystem', str(sdk),
                    '-isystem', os.environ['PSYQ_INCLUDE'],
                    *(f'-D{d}' for d in unit['options']['defines']),

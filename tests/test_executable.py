@@ -107,6 +107,31 @@ class ComparisonTests(unittest.TestCase):
             self.assertIn('id="minimum"', html)
 
 
+class StartupLayoutControls(unittest.TestCase):
+    MAP = (' Start     Stop   Length  Section name\n'
+           ' 80012000 8001397F 00001980  .rdata\n'
+           ' 80057474 8005764B 000001D8  .sbss\n'
+           ' 8005764C 800A7B03 000504B8  .bss\n'
+           '\nProgram entry point : 00000000\n')
+
+    def test_map_sections_use_exclusive_ends(self):
+        from scripts.psxbuild.link import map_sections
+        with tempfile.TemporaryDirectory() as directory:
+            path = Path(directory) / 'GAME.MAP'
+            path.write_text(self.MAP)
+            self.assertEqual(map_sections(path), {
+                '.rdata': (0x80012000, 0x80013980), '.sbss': (0x80057474, 0x8005764c),
+                '.bss': (0x8005764c, 0x800a7b04)})
+
+    def test_linked_layout_keeps_a_heap_start_above_static_storage(self):
+        from scripts.psxbuild.link import linked_startup_layout
+        sections = {'.sbss': (0x80057474, 0x8005764c), '.bss': (0x8005764c, 0x800a7b04)}
+        self.assertEqual(linked_startup_layout(sections, 0x800a0980), (0x8005764c, 0x800a7b08))
+        self.assertEqual(linked_startup_layout(sections, 0x800b0000), (0x8005764c, 0x800b0000))
+        self.assertEqual(linked_startup_layout({'.sbss': (0x80057474, 0x8005764c)}, 0x80050000),
+                         (0x8005764c, 0x80057650))
+
+
 @unittest.skipUnless(all(shutil.which(tool) for tool in ('cpppsx-257', 'cc1psx-257', 'dosbox-x'))
                      and all(os.environ.get(key) for key in ('PSYQ_ASPSX', 'PSYQ_BIN', 'PSYQ_LIB',
                                                              'PSYQ_INCLUDE', 'PSYQ_H2000_LIB')),
@@ -280,6 +305,37 @@ class NativeBuildControls(unittest.TestCase):
                 for address, payload in loads:
                     offset = 2048 + address - origin
                     self.assertEqual(actual[offset:offset + len(payload)], payload)
+
+    def test_overlay_startup_layout_is_refreshed_from_its_own_link_map(self):
+        from scripts.kf.paths import REPO
+        from scripts.psxbuild.link import header_values, map_sections
+
+        names = ('GAME_BSS_START', 'GAME_HEAP_START')
+        source = header_values(REPO / 'include/kf/game/startup_layout.h', names)
+        with tempfile.TemporaryDirectory() as directory:
+            root = Path(directory)
+            manifest = self.manifest(root, (
+                '#include <kf/game/startup_layout.h>\n'
+                'unsigned char storage[0x100000];\n'
+                'int main(void) { storage[1] = 1; return GAME_BSS_START + GAME_HEAP_START; }\n',
+                'int helper(void) { return 0; }\n',
+            ), 'GAME.EXE')
+            output = root / 'output'
+            report = build_image('GAME.EXE', manifest, output)
+            self.assertTrue(report['linked'], report.get('error'))
+            layout = report['startup_layout']
+            self.assertEqual(layout['source_values'],
+                             {key: f'{value:#010x}' for key, value in source.items()})
+            start, end = map_sections(output / 'GAME.MAP')['.bss']
+            self.assertGreater(end, source['GAME_HEAP_START'])
+            linked = (start, (end + 7) & ~7)
+            self.assertEqual(layout['linked_values'],
+                             {key: f'{value:#010x}' for key, value in zip(names, linked)})
+            self.assertEqual(layout['refreshed_units'], [0])
+            refreshed = (output / 'U0000.I').read_text()
+            for value in linked:
+                self.assertIn(f'{value:#010x}u', refreshed)
+            self.assertNotIn('startup_layout', (output / 'U0001.I').read_text())
 
     def test_unresolved_source_symbol_fails_without_fallback_or_stale_executable(self):
         with tempfile.TemporaryDirectory() as directory:
