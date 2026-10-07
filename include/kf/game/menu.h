@@ -226,6 +226,8 @@ enum {
     MENU_TEXT_GLYPH_MASK = 0x0fff,
     MENU_TEXT_DAKUTEN = 0x1000,
     MENU_TEXT_HANDAKUTEN = 0x2000,
+    /* Numeric-atlas digits 0-9 are their own glyph codes. */
+    MENU_NUMBER_ZERO = 0,
     MENU_NUMBER_BLANK = 10,
     MENU_NUMBER_SLASH = 11,
     /* Screen pixels between consecutive digits in the numeric atlas. */

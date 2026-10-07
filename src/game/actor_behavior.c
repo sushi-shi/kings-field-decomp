@@ -633,7 +633,7 @@ void actor_prepare_charge_toward_player(void)
     s32 length;
 
     actor->movement_yaw = ACTOR_BEARING_TO_PLAYER(actor);
-    if (angle_within_tolerance(actor->rotation.angles.y, actor->movement_yaw, KF_ACTOR_AIM_TOLERANCE) == 0) {
+    if (!angle_within_tolerance(actor->rotation.angles.y, actor->movement_yaw, KF_ACTOR_AIM_TOLERANCE)) {
         actor->movement_yaw = actor->rotation.angles.y;
     }
     length = fixed_vector2_length(
@@ -818,10 +818,10 @@ void actor_update_boss_death_sequence(void)
         actor->lifecycle = KF_ACTOR_LIFECYCLE_DISABLED;
         map_runtime_state.world_state.floors[4].script.floor5.boss_defeat = KF_MAP_SCRIPT_SET;
         map_object_pool_trigger_link(KF_MAP_LINK_BOSS_EMITTERS);
-        actor_pool_begin_death_by_definition(0);
-        actor_pool_begin_death_by_definition(2);
-        actor_pool_begin_death_by_definition(3);
-        actor_pool_begin_death_by_definition(4);
+        actor_pool_begin_death_by_definition(KF_FLOOR5_BOSS_DEATH_DEFINITION_0);
+        actor_pool_begin_death_by_definition(KF_FLOOR5_BOSS_DEATH_DEFINITION_2);
+        actor_pool_begin_death_by_definition(KF_FLOOR5_BOSS_DEATH_DEFINITION_3);
+        actor_pool_begin_death_by_definition(KF_FLOOR5_BOSS_DEATH_DEFINITION_4);
     }
     if (actor->animation_phase
             % (definition->action_animation_steps[KF_ACTOR_ANIM_SLOT_DEATH]
@@ -950,7 +950,7 @@ void actor_update_current_action(void)
         actor_advance_animation_clamped(actor, definition->action_animation_steps[KF_ACTOR_ANIM_SLOT_DEATH]);
         actor_play_sound_at_phase(&definition->sounds[KF_ACTOR_SOUND_DEATH],
             definition->action_animation_phases[KF_ACTOR_ANIM_SLOT_DEATH]);
-        if (player_state.progress_state.current_floor == KF_FLOOR_5 && actor->definition_id == 7) {
+        if (player_state.progress_state.current_floor == KF_FLOOR_5 && actor->definition_id == KF_FLOOR5_BOSS_DEFINITION) {
             actor_update_boss_death_sequence();
             return;
         }
@@ -1021,7 +1021,7 @@ void actor_update_current_action(void)
         }
         break;
     case KF_ACTOR_ACTION_POST_DEATH:
-        if (player_state.progress_state.current_floor == KF_FLOOR_4 && actor->definition_id == 5) {
+        if (player_state.progress_state.current_floor == KF_FLOOR_4 && actor->definition_id == KF_FLOOR4_TRANSFORM_SOURCE_DEFINITION) {
             actor_transform_definition5_to6(actor);
             actor_initialize(actor);
             return;

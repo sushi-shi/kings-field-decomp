@@ -2303,7 +2303,7 @@ void menu_format_number(s32 value, s32 digit_count, KF_ENUM_PARAM(KfFormatPaddin
     s32 i = 0;
     s32 blank;
 
-    blank = (padding_mode == KF_FORMAT_PAD_SPACES) ? MENU_NUMBER_BLANK : 0;
+    blank = (padding_mode == KF_FORMAT_PAD_SPACES) ? MENU_NUMBER_BLANK : MENU_NUMBER_ZERO;
     for (; i < digit_count; i++) {
         out[i] = blank;
     }

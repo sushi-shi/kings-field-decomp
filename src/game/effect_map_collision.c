@@ -123,7 +123,7 @@ static inline u32 effect_collision_in_cell(
     collide:
         switch (effect->type & KF_EFFECT_COLLISION_TARGETS_MASK) {
         default:
-            result = 1;
+            result = KF_COLLISION_UNTARGETED;
             break;
         case KF_EFFECT_COLLISION_TARGET_ACTORS:
             result = collision_query_world(position->vx, position->vy, position->vz, radius, 0,

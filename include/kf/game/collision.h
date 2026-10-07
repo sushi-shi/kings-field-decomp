@@ -27,6 +27,9 @@ enum {
 
 enum {
     KF_COLLISION_NONE = -1,
+    /* effect_collision_in_cell's result for an effect without collision
+     * targets: neither NONE nor a classed hit; its identity is unresolved. */
+    KF_COLLISION_UNTARGETED = 1,
     KF_COLLISION_TERRAIN = 0x10000,
     KF_COLLISION_BELOW_FLOOR = 0x1fff0,
     KF_COLLISION_CEILING = 0x1fff1,

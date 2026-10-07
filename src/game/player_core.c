@@ -399,7 +399,7 @@ s32 player_move_horizontal(s32 heading, s32 distance)
         delta.vx = collision_target.position.vx - player_state.camera_position.vx;
         delta.vz = player_state.camera_position.vz - collision_target.position.vz;
         angle = vector_xz_to_angle(delta.vx, delta.vz);
-        angle = (angle_mod_delta_le_half_turn(heading, angle) == 0
+        angle = (!angle_mod_delta_le_half_turn(heading, angle)
             ? angle + (KF_ANGLE_HALF_TURN + PLAYER_COLLISION_DEFLECTION_ANGLE)
             : angle + (KF_ANGLE_HALF_TURN - PLAYER_COLLISION_DEFLECTION_ANGLE))
             & KF_ANGLE_WRAP_MASK;

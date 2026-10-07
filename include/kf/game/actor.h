@@ -26,6 +26,22 @@ enum {
     KF_ACTOR_INDEX_NONE = -1
 };
 
+/*
+ * Actor definition slots that code names on one floor. A slot indexes the
+ * loaded floor's KfActorDefinitionTable, so each name holds on its floor
+ * only. The floor-5 boss's death sequence, and a floor-5 load after its
+ * defeat, end every actor of the four BOSS_DEATH slots.
+ */
+enum {
+    KF_FLOOR4_TRANSFORM_SOURCE_DEFINITION = 5,
+    KF_FLOOR4_TRANSFORM_RESULT_DEFINITION = 6,
+    KF_FLOOR5_BOSS_DEFINITION = 7,
+    KF_FLOOR5_BOSS_DEATH_DEFINITION_0 = 0,
+    KF_FLOOR5_BOSS_DEATH_DEFINITION_2 = 2,
+    KF_FLOOR5_BOSS_DEATH_DEFINITION_3 = 3,
+    KF_FLOOR5_BOSS_DEATH_DEFINITION_4 = 4
+};
+
 KF_ENUM_BEGIN(KfActorSlotState, u8)
     KF_ACTOR_SLOT_DYNAMIC = 0,
     KF_ACTOR_SLOT_PERSISTENT = 1,

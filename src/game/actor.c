@@ -308,7 +308,7 @@ void actor_apply_damage(
     s32 health;
     s32 remaining;
 
-    if (player_state.progress_state.current_floor == KF_FLOOR_5 && actor->definition_id == 7) {
+    if (player_state.progress_state.current_floor == KF_FLOOR_5 && actor->definition_id == KF_FLOOR5_BOSS_DEFINITION) {
         if (map_runtime_state.world_state.floors[4].script.floor5.boss_encounter_started == KF_MAP_SCRIPT_UNSET) {
             return;
         }
@@ -670,7 +670,7 @@ void actor_play_sound_at_phase(const SoundRef *sound, u16 phase)
     if (!actor_animation_crossed_phase(actor, phase)) {
         return;
     }
-    if (player_state.progress_state.current_floor == KF_FLOOR_5 && actor->definition_id == 7) {
+    if (player_state.progress_state.current_floor == KF_FLOOR_5 && actor->definition_id == KF_FLOOR5_BOSS_DEFINITION) {
         audio_play_spatial_range(sound,
             &actor->position,
             KF_AUDIO_MAX_VOLUME,

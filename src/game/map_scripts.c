@@ -223,11 +223,11 @@ void map_ambient_script_floor5(void)
         render_frame(NULL, NULL);
         render_frame(NULL, NULL);
         screen_show_image_until_input("TALK\\C17\\T55172.TIM");
-        actor_state.definitions.entries[7].action_animations[KF_ACTOR_ANIM_SLOT_MELEE] = KF_ANIMATION_CLIP_THIRD;
-        actor_state.definitions.entries[7].action_animations[KF_ACTOR_ANIM_SLOT_EFFECT0] = KF_ANIMATION_CLIP_FOURTH;
-        actor_state.definitions.entries[7].action_animations[KF_ACTOR_ANIM_SLOT_EFFECT1] = KF_ANIMATION_CLIP_FOURTH;
-        actor_state.definitions.entries[7].action_animations[KF_ACTOR_ANIM_SLOT_EFFECT2] = KF_ANIMATION_CLIP_FOURTH;
-        actor_state.definitions.entries[7].action_animations[KF_ACTOR_ANIM_SLOT_MULTI_HIT_ATTACK]
+        actor_state.definitions.entries[KF_FLOOR5_BOSS_DEFINITION].action_animations[KF_ACTOR_ANIM_SLOT_MELEE] = KF_ANIMATION_CLIP_THIRD;
+        actor_state.definitions.entries[KF_FLOOR5_BOSS_DEFINITION].action_animations[KF_ACTOR_ANIM_SLOT_EFFECT0] = KF_ANIMATION_CLIP_FOURTH;
+        actor_state.definitions.entries[KF_FLOOR5_BOSS_DEFINITION].action_animations[KF_ACTOR_ANIM_SLOT_EFFECT1] = KF_ANIMATION_CLIP_FOURTH;
+        actor_state.definitions.entries[KF_FLOOR5_BOSS_DEFINITION].action_animations[KF_ACTOR_ANIM_SLOT_EFFECT2] = KF_ANIMATION_CLIP_FOURTH;
+        actor_state.definitions.entries[KF_FLOOR5_BOSS_DEFINITION].action_animations[KF_ACTOR_ANIM_SLOT_MULTI_HIT_ATTACK]
             = KF_ANIMATION_CLIP_SECOND;
         map_apply_copy_region(KF_MAP_COPY_FLOOR5_BOSS_ENCOUNTER);
     }
