@@ -107,10 +107,11 @@ void player_update(void)
     KfMagicRecord *record;
     KfActor *target;
     const VECTOR *origin;
+    SVECTOR unused_vector; /* unused; first frame slot in retail */
     SVECTOR direction;
-    KfRotation effect_rotation;
     SVECTOR *launch_direction;
     SVECTOR spawn_offset;
+    KfRotation effect_rotation;
     VECTOR position;
     MATRIX matrix;
     s32 distance;
