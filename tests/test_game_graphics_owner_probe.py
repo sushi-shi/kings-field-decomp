@@ -287,48 +287,23 @@ class GameGraphicsOwnerProbeTests(unittest.TestCase):
                     actual, calls, targets = linked_words(obj, unit, claim, addresses, functions)
                     expected = list(struct.unpack(f'<{claim.body_size // 4}I',
                                                  image.require(claim.va, claim.body_size)))
-                    if claim.symbol != 'render_map_cell':
-                        self.assertEqual(actual, expected, claim.symbol)
-                        shifted = dict(addresses, graphics_owner_probe=ORIGIN + 4)
-                        wrong, _, _ = linked_words(obj, unit, claim, shifted, functions)
+                    self.assertEqual(actual, expected, claim.symbol)
+                    shifted = dict(addresses, graphics_owner_probe=ORIGIN + 4)
+                    wrong, _, _ = linked_words(obj, unit, claim, shifted, functions)
+                    self.assertNotEqual(wrong, expected)
+                    if claim.symbol == 'game_main_loop':
+                        callback = 'frame_pacer_vsync_callback'
+                        shifted_functions = {**functions, callback: functions[callback] + 4}
+                        wrong, same_calls, _ = linked_words(
+                            obj, unit, claim, addresses, shifted_functions)
                         self.assertNotEqual(wrong, expected)
-                        if claim.symbol == 'game_main_loop':
-                            callback = 'frame_pacer_vsync_callback'
-                            shifted_functions = {**functions, callback: functions[callback] + 4}
-                            wrong, same_calls, _ = linked_words(
-                                obj, unit, claim, addresses, shifted_functions)
-                            self.assertNotEqual(wrong, expected)
-                            self.assertEqual(same_calls, calls)  # Function-pointer data, not a jal.
-                        elif claim.symbol == 'render_map_cells':
-                            shifted_section = {**addresses, '.data': addresses['.data'] + 4}
-                            wrong, same_calls, _ = linked_words(
-                                obj, unit, claim, shifted_section, functions)
-                            self.assertNotEqual(wrong, expected)
-                            self.assertEqual(same_calls, calls)
-                    else:
-                        self.assertNotEqual(actual, expected)
-                        self.assertEqual(len(actual) * 4, 592)
-                        self.assertEqual(actual[0], 0x27BDFFA8)  # 88-byte frame, retail 120.
-                        # All remaining differences are explicit stack operands,
-                        # not normalized away or admitted as an exact match.
-                        stack_offsets = {
-                            0x0, 0x4, 0x8, 0xc, 0x10, 0x148, 0x164, 0x190,
-                            0x1a4, 0x1b0, 0x1bc, 0x1e0, 0x1ec, 0x238, 0x23c,
-                            0x240, 0x244, 0x24c,
-                        }
-                        self.assertEqual(
-                            {4 * i for i, (a, b) in enumerate(zip(actual, expected)) if a != b},
-                            stack_offsets,
-                        )
-                        for offset in stack_offsets:
-                            self.assertEqual(actual[offset // 4],
-                                             expected[offset // 4] + (32 if offset == 0 else -32))
-                        self.assertEqual(targets, [
-                            0x8009A748, 0x800A07D2, 0x80069018, 0x80095744, 0x8009574C,
-                            0x80095900, 0x80095748, 0x800956A0, 0x800956A0, 0x80095760,
-                        ])
-                        self.assertEqual(calls, [0x8004D784, 0x8004D814, 0x8004DADC, 0x8004CDD4,
-                                                0x8004D784, 0x8004D814, 0x8004D7B4, 0x8001C148, 0x8001DE18])
+                        self.assertEqual(same_calls, calls)  # Function-pointer data, not a jal.
+                    elif claim.symbol == 'render_map_cells':
+                        shifted_section = {**addresses, '.data': addresses['.data'] + 4}
+                        wrong, same_calls, _ = linked_words(
+                            obj, unit, claim, shifted_section, functions)
+                        self.assertNotEqual(wrong, expected)
+                        self.assertEqual(same_calls, calls)
 
     def test_view_transform_matrix_rebuild_is_not_conditional(self):
         self.tools()
@@ -703,7 +678,6 @@ extern KfMaterialProbe material_probe;
             'menu_item_model_preview',
             'player_move_horizontal',
             'render_entities',
-            'render_map_cell',
             'talk_show_dialogue_page',
         }
         checked, exact = 0, 0
@@ -744,7 +718,7 @@ extern KfMaterialProbe material_probe;
                                         {**addresses, 'game_graphics_runtime': ORIGIN + 4}, functions)
                                     self.assertNotEqual(wrong, expected, claim.symbol)
                                     self.assertEqual(same_calls, calls)
-        self.assertEqual((checked, exact), (181, 167))
+        self.assertEqual((checked, exact), (181, 168))
 
 
 if __name__ == '__main__':
