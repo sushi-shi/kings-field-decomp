@@ -196,6 +196,15 @@ from the first link's map as part of the build, as this builder does. That
 mechanism remains a candidate; no original makefile, generator or map
 survives.
 
+The KF1 demo `KFIELD.EXE` (DemoDemo vol. 1 and the kfdemo disc; the two
+differ by 21 patched bytes) cannot test this directly: it is a standalone
+executable whose `main` (`80010c68`) never sets up memory. Its SN startup at
+`80017e80` clears `.bss` with an advancing loop between linker-resolved
+lui/addiu bounds (`8004206c`..`8007d484`) and calls `InitHeap` at the `.bss`
+end plus 4, the stock SDK pattern. Retail's overlays start through
+`NONE2.OBJ`, which does neither, so their `main` took over the job with
+numbers, a non-advancing store and a different heap rule.
+
 A numeric layout must therefore be kept in step with the link. The reconstruction's native layout does not yet
 match retail; for example, GAME's native `.bss` extends past `800a0980`. The
 builder therefore performs that step itself: it checks the first link's map. If `.bss` starts elsewhere or
