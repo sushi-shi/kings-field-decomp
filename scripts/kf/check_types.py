@@ -78,4 +78,20 @@ def check(
                 print(f"[types] PASS {unit.unit}")
     print(f"[types] {len(units) - failures}/{len(units)} source/image variants pass; "
           f"{failures} failed; diagnostics: {logs}")
-    return int(failures != 0)
+    # A written literal stored into, compared with or passed as an enum-typed
+    # slot survives the modern view only through a cast; spell the member.
+    from scripts.kf.literals import typed_enum_literals
+
+    try:
+        literals = typed_enum_literals(images=images, names=names, jobs=jobs, repo=repo,
+                                       manifest=manifest, sdk=sdk)
+    except (RuntimeError, ValueError) as error:
+        print(f"[types] enum-domain literal audit failed: {error}")
+        return 1
+    for site in literals:
+        sink = site["sink"]
+        print(f"{site['file']}:{site['line']}:{site['column']}: error: literal "
+              f"{site['spelling']} reaches enum-typed {sink['target']} ({sink['kind']}); "
+              "spell a member [kf-enum-literal]")
+    print(f"[types] {len(literals)} literal(s) in enum-typed domains")
+    return int(failures != 0 or bool(literals))

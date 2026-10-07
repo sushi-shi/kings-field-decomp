@@ -17,6 +17,7 @@ from dataclasses import asdict, dataclass
 import json
 import multiprocessing
 from pathlib import Path
+import re
 from typing import Any
 
 from scripts.kf.casts import (
@@ -254,8 +255,10 @@ class Extractor:
         for start, end, macro_domain in self.domain_ranges[here.file]:
             if cursor.extent.start.offset <= start and end <= here.offset:
                 domain = macro_domain
+        boolean_spelling = scalar.spelling.removeprefix('const ')
         if scalar.get_canonical().kind == self.cindex.TypeKind.BOOL \
-                or scalar.spelling.removeprefix('const ').startswith('KfBool'):
+                or boolean_spelling.startswith('KfBool') \
+                or boolean_spelling in {'b8', 'b16', 'b32'}:
             domain = 'boolean'
         definition = (parent is not None and parent.is_definition()) \
             if cursor.kind == self.ck.PARM_DECL else cursor.is_definition()
@@ -749,7 +752,9 @@ class Extractor:
                 path = Path(str(inclusion.include)).resolve().relative_to(self.repo)
             except ValueError:
                 continue
-            if path.parts and (path.parts[0] == 'include' or path.suffix == '.inc'):
+            if path.parts and (path.parts[0] == 'include'
+                               or path.parts[:2] == ('vendor', 'include')
+                               or path.suffix == '.inc'):
                 self.facts.headers.add(str(path))
         for node in self.tu.cursor.get_children():
             if node.kind != self.ck.MACRO_INSTANTIATION:
@@ -1033,6 +1038,13 @@ def _classification(slot: Slot, value: int, writes: list[Write], uses: list[Use]
     return 'candidate'
 
 
+def _directives_only(path: Path) -> bool:
+    """An unreferenced include wrapper contributes no C declarations to audit."""
+    body = re.sub(r'/\*.*?\*/|//[^\n]*', '', path.read_text(), flags=re.DOTALL)
+    return all(not line.strip() or line.lstrip().startswith('#')
+               for line in body.splitlines())
+
+
 def collect(*, images: tuple[str, ...] = (), names: tuple[str, ...] = (), jobs: int = 4,
             repo: Path = REPO, manifest: Manifest | None = None,
             sdk: Path | None = None) -> dict[str, Any]:
@@ -1057,8 +1069,13 @@ def collect(*, images: tuple[str, ...] = (), names: tuple[str, ...] = (), jobs: 
     sources = {unit.source for unit in selected} | set(facts.headers)
     missing_sources = sorted(path for path in before if path.startswith(('src/', 'vendor/'))
                              and path.endswith(('.c', '.inc')) and path not in sources)
-    missing_headers = sorted(path for path in before if path.startswith(('include/', 'vendor/include/'))
-                             and path.endswith('.h') and path not in facts.headers)
+    unreferenced_headers = sorted(path for path in before
+                                  if path.startswith(('include/', 'vendor/include/'))
+                                  and path.endswith('.h') and path not in facts.headers)
+    directive_only_headers = [path for path in unreferenced_headers
+                              if _directives_only(repo / path)]
+    missing_headers = [path for path in unreferenced_headers
+                       if path not in directive_only_headers]
     if not images and not names and (missing_sources or missing_headers):
         raise RuntimeError(f'incomplete Boolean-audit coverage: sources={missing_sources}; '
                            f'headers={missing_headers}')
@@ -1095,6 +1112,7 @@ def collect(*, images: tuple[str, ...] = (), names: tuple[str, ...] = (), jobs: 
             'indirect_write_sites': len(set(facts.indirect_writes)),
             'indirect_call_sites': len({call for call in facts.calls if not call.callee}),
             'missing_sources': missing_sources, 'missing_headers': missing_headers,
+            'unreferenced_directive_only_headers': directive_only_headers,
             'partial_selection': bool(images or names), 'parse_errors': 0,
         },
         'limitations': [
