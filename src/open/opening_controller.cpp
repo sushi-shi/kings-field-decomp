@@ -19,8 +19,6 @@ char opening_initial_tim_path[KF_OPENING_INITIAL_TIM_PATH_BYTES] = {'B', '0', '\
 void opening_run(KfOverlayMode overlay_mode)
 {
     u8 *tim_data;
-    KfEnumStorage<KfOpeningInputAction, s32> advance_action;
-    KfEnumStorage<KfOpeningInputAction, s32> skip_action;
 
     PadInit(0);
 
@@ -42,9 +40,7 @@ void opening_run(KfOverlayMode overlay_mode)
                 opening_initial_tim_path) != KF_RESOURCE_LOADED) {
             return;
         }
-        advance_action = KF_OPENING_INPUT_ADVANCE;
         tim_upload_images(open_graphics_runtime.display_state.asset_load_buffer);
-        skip_action = KF_OPENING_INPUT_SKIP;
         opening_fade_in();
         cd_file_load_allocated(&tim_data, "B0\\MIX0.");
         tim_upload_images(tim_data);
@@ -53,8 +49,8 @@ void opening_run(KfOverlayMode overlay_mode)
 
         for (;;) {
             opening_scene0_run();
-            if (opening_input_action != advance_action &&
-                opening_input_action == skip_action) {
+            if (opening_input_action != KF_OPENING_INPUT_ADVANCE &&
+                opening_input_action == KF_OPENING_INPUT_SKIP) {
 opening_reload:
 
                 memory_arena.allocation.cursor = memory_arena.start;
@@ -68,8 +64,8 @@ opening_reload:
 
             opening_input_action = KF_OPENING_INPUT_NONE;
             opening_scene1_run();
-            if (opening_input_action != advance_action) {
-                if (opening_input_action == skip_action) {
+            if (opening_input_action != KF_OPENING_INPUT_ADVANCE) {
+                if (opening_input_action == KF_OPENING_INPUT_SKIP) {
                     goto opening_reload;
                 }
                 continue;

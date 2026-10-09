@@ -38,7 +38,6 @@ static KfCellWindow render_fixed_cell_window = {
 void render_map_cell(s32 col, s32 row, KfCellVisibility visibility)
 {
     MATRIX cell_matrix;
-
     MATRIX unused_matrix;
     SVECTOR position;
     long flag;
@@ -66,7 +65,7 @@ void render_map_cell(s32 col, s32 row, KfCellVisibility visibility)
             break;
         }
     }
-    object_index = object_index - 1;
+    object_index--;
     if (object_index > KF_MAP_MESHES_PER_BANK - 1) {
         return;
     }

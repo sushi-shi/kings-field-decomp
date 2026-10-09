@@ -129,9 +129,8 @@ void opening_render_entities_and_items(void)
 
     SetLightMatrix(&floor_item_light_matrix);
     material_tpage = &open_graphics_runtime.floor_item_state.material.tpage;
-    open_graphics_runtime.floor_item_state.material.color.b = KF_FLOOR_ITEM_RENDER_BRIGHTNESS;
-    open_graphics_runtime.floor_item_state.material.color.g = open_graphics_runtime.floor_item_state.material.color.b;
-    open_graphics_runtime.floor_item_state.material.color.r = open_graphics_runtime.floor_item_state.material.color.g;
+    open_graphics_runtime.floor_item_state.material.color.r = open_graphics_runtime.floor_item_state.material.color.g =
+        open_graphics_runtime.floor_item_state.material.color.b = KF_FLOOR_ITEM_RENDER_BRIGHTNESS;
     *material_tpage = open_graphics_runtime.floor_item_state.texture_tpage;
     open_graphics_runtime.floor_item_state.material.clut = open_graphics_runtime.floor_item_state.texture_clut;
     item = open_graphics_runtime.floor_item_state.items;

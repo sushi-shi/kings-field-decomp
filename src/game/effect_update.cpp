@@ -83,6 +83,7 @@ void effect_update_swinging_hazard(SVECTOR *probe_offset, KfEffectPhase phase_li
             record->rotation.vector.vx = KF_ANGLE_EIGHTH_TURN;
             record->direction.words.x = 0;
         } else if (record->rotation.vector.vy < -KF_ANGLE_EIGHTH_TURN + 1) {
+
             record->rotation.vector.vx = -KF_ANGLE_EIGHTH_TURN;
             record->direction.words.x = 0;
         }
@@ -114,6 +115,7 @@ void effect_update_orbiting_projectile(s32 orbit_radius, KfEffectPhase phase_lim
     KfEffectRecord *record = effect_state.current_record;
     KfMagicRecord *magic = effect_state.current_magic;
     KfEnumStorage<KfEffectPhase, u32> life = record->phase;
+
     MATRIX rotation_matrix;
     MATRIX yaw_matrix;
     u32 collision;

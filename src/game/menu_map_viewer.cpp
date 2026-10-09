@@ -32,14 +32,16 @@ void menu_map_viewer(KfObjectId item_id)
     s32 map_set;
 
     map_set = MENU_MAP_DEFAULT_SET;
-    if (item_id == KF_ITEM_WATCHMAN_MAP)
+    if (item_id == KF_ITEM_WATCHMAN_MAP) {
         map_set = MENU_MAP_WATCHMAN_SET;
+    }
     path[5] = map_set + '0';
     path[6] = kf_enum_encode<u8>(player_state.progress_state.current_floor) + '0';
 
     buffer = game_graphics_runtime.display_state.primitive_buffer->cursor;
-    if (cd_file_load_into((void *)buffer, path) != KF_RESOURCE_LOADED)
+    if (cd_file_load_into((void *)buffer, path) != KF_RESOURCE_LOADED) {
         return;
+    }
     tim_upload_images(buffer);
 
     SetPolyFT4(&map_image_quads[0]);
@@ -78,14 +80,15 @@ void menu_map_viewer(KfObjectId item_id)
         if (frame < MENU_PANEL_INPUT_RELEASE_FRAME) {
             frame++;
         } else if (frame == MENU_PANEL_INPUT_RELEASE_FRAME) {
-            while (PadRead(1) != 0)
-                ;
+            while (PadRead(1) != 0) {
+            }
             frame++;
         } else {
-            if (PadRead(1) == 0)
+            if (PadRead(1) == 0) {
                 continue;
-            while (PadRead(1) != 0)
-                ;
+            }
+            while (PadRead(1) != 0) {
+            }
             return;
         }
     }

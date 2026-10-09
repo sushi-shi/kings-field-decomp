@@ -222,7 +222,7 @@ void map_object_pool_trigger_link(u8 link_id)
             if (map_object_state.definitions.entries[kf_enum_encode<u8>(object->object_id)]
                         .behavior_type
                     < KF_MAP_OBJECT_OP_LINK_TRIGGER_END
-                && !(object->link.fields.link_id < KF_MAP_LINK_REUSABLE_FIRST)
+                && object->link.fields.link_id >= KF_MAP_LINK_REUSABLE_FIRST
                 && object->link.fields.link_id == link_id) {
                 map_object_start_action_if_idle(
                     object, map_object_state.definitions.entries[kf_enum_encode<u8>(object->object_id)].behavior_type);
@@ -254,7 +254,6 @@ void map_object_pool_update(void)
     KfMapObject *object = map_object_state.objects;
     KfMapObject *pair;
     KfEffectRecord *record;
-    u8 *counter;
     SVECTOR direction;
     VECTOR point;
     s16 count;
@@ -433,92 +432,92 @@ void map_object_pool_update(void)
                     break;
                 }
                 switch (object->object_id) {
-            case KF_MAP_OBJECT_PROJECTILE_EMITTER:
-                direction.vy = 0;
-                direction.vx = (rsin(object->rotation.angles.y) * MAP_EMITTER_VELOCITY_NUMERATOR)
-                    >> MAP_EMITTER_VELOCITY_SHIFT;
-                direction.vz = (-rcos(object->rotation.angles.y) * MAP_EMITTER_VELOCITY_NUMERATOR)
-                    >> MAP_EMITTER_VELOCITY_SHIFT;
-                effect_pool_construct(
-                    object->link.fields.spawn.effect_id,
-                    KF_EFFECT_CLASS_20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
-                    KF_EFFECT_KIND_MAP_EMITTER_PROJECTILE,
-                    &object->position,
-                    &direction,
-                    KfEffectRotationArguments{&object->rotation.vector});
-                object->action_timer = kf_enum_decode<KfMapObjectProgress>((rand() >> MAP_EMITTER_COUNTDOWN_RANDOM_SHIFT) + MAP_EMITTER_COUNTDOWN_BASE);
-                break;
-            case KF_MAP_OBJECT_FIRE_BALL_EMITTER:
-                direction.vy = 0;
-                direction.vx
-                    = (rsin(object->rotation.angles.y) * MAP_FIRE_BALL_EMITTER_VELOCITY_NUMERATOR)
-                    >> MAP_FIRE_BALL_EMITTER_VELOCITY_SHIFT;
-                direction.vz
-                    = (-rcos(object->rotation.angles.y) * MAP_FIRE_BALL_EMITTER_VELOCITY_NUMERATOR)
-                    >> MAP_FIRE_BALL_EMITTER_VELOCITY_SHIFT;
-                point.vx = object->position.vx;
-                point.vz = object->position.vz;
-                point.vy = object->position.vy + MAP_FIRE_BALL_EMITTER_Y_OFFSET;
-                effect_pool_construct(
-                    object->link.fields.spawn.effect_id,
-                    KF_EFFECT_CLASS_20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
-                    KF_MAGIC_FIRE_BALL,
-                    &point,
-                    &direction,
-                    KfEffectRotationArguments{&object->rotation.vector});
-                object->action_timer = kf_enum_decode<KfMapObjectProgress>((rand() >> MAP_EMITTER_COUNTDOWN_RANDOM_SHIFT) + MAP_EMITTER_COUNTDOWN_BASE);
-                break;
-            case KF_MAP_OBJECT_WIND_CUTTER_EMITTER:
-                direction.vy = 0;
-                direction.vx = (rsin(object->rotation.angles.y) * MAP_EMITTER_VELOCITY_NUMERATOR)
-                    >> MAP_EMITTER_VELOCITY_SHIFT;
-                direction.vz = (-rcos(object->rotation.angles.y) * MAP_EMITTER_VELOCITY_NUMERATOR)
-                    >> MAP_EMITTER_VELOCITY_SHIFT;
-                point.vx = object->position.vx;
-                point.vz = object->position.vz;
-                point.vy = object->position.vy + MAP_WIND_CUTTER_EMITTER_Y_OFFSET;
-                effect_pool_construct(
-                    object->link.fields.spawn.effect_id,
-                    KF_EFFECT_CLASS_20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
-                    KF_MAGIC_WIND_CUTTER,
-                    &point,
-                    &direction,
-                    KfEffectRotationSoundArguments{&object->rotation.vector, KF_EFFECT_SOUND_PLAY});
-                object->action_timer = kf_enum_decode<KfMapObjectProgress>((rand() >> MAP_EMITTER_COUNTDOWN_RANDOM_SHIFT) + MAP_EMITTER_COUNTDOWN_BASE);
-                break;
-            case KF_MAP_OBJECT_BOSS_PROJECTILE_EMITTER:
-                if (map_runtime_state.world_state.floors[4].script.floor5.boss_encounter_started
-                    == KF_MAP_SCRIPT_UNSET) {
+                case KF_MAP_OBJECT_PROJECTILE_EMITTER:
+                    direction.vy = 0;
+                    direction.vx = (rsin(object->rotation.angles.y) * MAP_EMITTER_VELOCITY_NUMERATOR)
+                        >> MAP_EMITTER_VELOCITY_SHIFT;
+                    direction.vz = (-rcos(object->rotation.angles.y) * MAP_EMITTER_VELOCITY_NUMERATOR)
+                        >> MAP_EMITTER_VELOCITY_SHIFT;
+                    effect_pool_construct(
+                        object->link.fields.spawn.effect_id,
+                        KF_EFFECT_CLASS_20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
+                        KF_EFFECT_KIND_MAP_EMITTER_PROJECTILE,
+                        &object->position,
+                        &direction,
+                        KfEffectRotationArguments{&object->rotation.vector});
+                    object->action_timer = kf_enum_decode<KfMapObjectProgress>((rand() >> MAP_EMITTER_COUNTDOWN_RANDOM_SHIFT) + MAP_EMITTER_COUNTDOWN_BASE);
+                    break;
+                case KF_MAP_OBJECT_FIRE_BALL_EMITTER:
+                    direction.vy = 0;
+                    direction.vx
+                        = (rsin(object->rotation.angles.y) * MAP_FIRE_BALL_EMITTER_VELOCITY_NUMERATOR)
+                        >> MAP_FIRE_BALL_EMITTER_VELOCITY_SHIFT;
+                    direction.vz
+                        = (-rcos(object->rotation.angles.y) * MAP_FIRE_BALL_EMITTER_VELOCITY_NUMERATOR)
+                        >> MAP_FIRE_BALL_EMITTER_VELOCITY_SHIFT;
+                    point.vx = object->position.vx;
+                    point.vz = object->position.vz;
+                    point.vy = object->position.vy + MAP_FIRE_BALL_EMITTER_Y_OFFSET;
+                    effect_pool_construct(
+                        object->link.fields.spawn.effect_id,
+                        KF_EFFECT_CLASS_20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
+                        KF_MAGIC_FIRE_BALL,
+                        &point,
+                        &direction,
+                        KfEffectRotationArguments{&object->rotation.vector});
+                    object->action_timer = kf_enum_decode<KfMapObjectProgress>((rand() >> MAP_EMITTER_COUNTDOWN_RANDOM_SHIFT) + MAP_EMITTER_COUNTDOWN_BASE);
+                    break;
+                case KF_MAP_OBJECT_WIND_CUTTER_EMITTER:
+                    direction.vy = 0;
+                    direction.vx = (rsin(object->rotation.angles.y) * MAP_EMITTER_VELOCITY_NUMERATOR)
+                        >> MAP_EMITTER_VELOCITY_SHIFT;
+                    direction.vz = (-rcos(object->rotation.angles.y) * MAP_EMITTER_VELOCITY_NUMERATOR)
+                        >> MAP_EMITTER_VELOCITY_SHIFT;
+                    point.vx = object->position.vx;
+                    point.vz = object->position.vz;
+                    point.vy = object->position.vy + MAP_WIND_CUTTER_EMITTER_Y_OFFSET;
+                    effect_pool_construct(
+                        object->link.fields.spawn.effect_id,
+                        KF_EFFECT_CLASS_20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
+                        KF_MAGIC_WIND_CUTTER,
+                        &point,
+                        &direction,
+                        KfEffectRotationSoundArguments{&object->rotation.vector, KF_EFFECT_SOUND_PLAY});
+                    object->action_timer = kf_enum_decode<KfMapObjectProgress>((rand() >> MAP_EMITTER_COUNTDOWN_RANDOM_SHIFT) + MAP_EMITTER_COUNTDOWN_BASE);
+                    break;
+                case KF_MAP_OBJECT_BOSS_PROJECTILE_EMITTER:
+                    if (map_runtime_state.world_state.floors[4].script.floor5.boss_encounter_started
+                        == KF_MAP_SCRIPT_UNSET) {
+                        break;
+                    }
+                    direction.vy = 0;
+                    direction.vx = (rsin(object->rotation.angles.y + KF_ANGLE_QUARTER_TURN)
+                                       * MAP_BOSS_EMITTER_VELOCITY_NUMERATOR)
+                        >> MAP_EMITTER_VELOCITY_SHIFT;
+                    direction.vz = (-rcos(object->rotation.angles.y + KF_ANGLE_QUARTER_TURN)
+                                       * MAP_BOSS_EMITTER_VELOCITY_NUMERATOR)
+                        >> MAP_EMITTER_VELOCITY_SHIFT;
+                    switch (object->rotation.angles.y) {
+                    case KF_ANGLE_NO_TURN:
+                        point.vx = object->position.vx + MAP_BOSS_EMITTER_X_OFFSET;
+                        point.vz = object->position.vz + MAP_BOSS_EMITTER_Z_OFFSET;
+                        break;
+                    case KF_ANGLE_HALF_TURN:
+                        point.vx = object->position.vx - MAP_BOSS_EMITTER_X_OFFSET;
+                        point.vz = object->position.vz - MAP_BOSS_EMITTER_Z_OFFSET;
+                        break;
+                    }
+                    point.vy = object->position.vy + MAP_BOSS_EMITTER_Y_OFFSET;
+                    effect_pool_construct(object->link.fields.spawn.effect_id,
+                        KF_EFFECT_CLASS_20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
+                        KF_MAGIC_WIND_CUTTER,
+                        &point,
+                        &direction,
+                        KfEffectRotationSoundArguments{&object->rotation.vector, effect_sound_request(rand() < MAP_BOSS_EMITTER_SOUND_RANDOM_LIMIT)});
+                    object->action_timer = kf_enum_decode<KfMapObjectProgress>((rand() >> MAP_EMITTER_COUNTDOWN_RANDOM_SHIFT)
+                            + MAP_BOSS_EMITTER_COUNTDOWN_BASE);
                     break;
                 }
-                direction.vy = 0;
-                direction.vx = (rsin(object->rotation.angles.y + KF_ANGLE_QUARTER_TURN)
-                                   * MAP_BOSS_EMITTER_VELOCITY_NUMERATOR)
-                    >> MAP_EMITTER_VELOCITY_SHIFT;
-                direction.vz = (-rcos(object->rotation.angles.y + KF_ANGLE_QUARTER_TURN)
-                                   * MAP_BOSS_EMITTER_VELOCITY_NUMERATOR)
-                    >> MAP_EMITTER_VELOCITY_SHIFT;
-                switch (object->rotation.angles.y) {
-                case KF_ANGLE_NO_TURN:
-                    point.vx = object->position.vx + MAP_BOSS_EMITTER_X_OFFSET;
-                    point.vz = object->position.vz + MAP_BOSS_EMITTER_Z_OFFSET;
-                    break;
-                case KF_ANGLE_HALF_TURN:
-                    point.vx = object->position.vx - MAP_BOSS_EMITTER_X_OFFSET;
-                    point.vz = object->position.vz - MAP_BOSS_EMITTER_Z_OFFSET;
-                    break;
-                }
-                point.vy = object->position.vy + MAP_BOSS_EMITTER_Y_OFFSET;
-                effect_pool_construct(object->link.fields.spawn.effect_id,
-                    KF_EFFECT_CLASS_20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
-                    KF_MAGIC_WIND_CUTTER,
-                    &point,
-                    &direction,
-                    KfEffectRotationSoundArguments{&object->rotation.vector, effect_sound_request(rand() < MAP_BOSS_EMITTER_SOUND_RANDOM_LIMIT)});
-                object->action_timer = kf_enum_decode<KfMapObjectProgress>((rand() >> MAP_EMITTER_COUNTDOWN_RANDOM_SHIFT)
-                        + MAP_BOSS_EMITTER_COUNTDOWN_BASE);
-                break;
-            }
             } else {
                 object->action_timer--;
             }
@@ -597,14 +596,16 @@ void map_object_pool_update(void)
                         &gameplay_sound_refs[KF_GAMEPLAY_SOUND_MAP_PIECE_REVEAL],
                         &object->position,
                         KF_AUDIO_MAX_VOLUME);
-                    counter = &map_runtime_state.world_state.floors[2].script.floor3.revealed_piece_count;
-                    if (*counter != KF_MAP_FLOOR3_REQUIRED_REVEALS) {
-                        (*counter)++;
-                        if (*counter >= KF_MAP_FLOOR3_REQUIRED_REVEALS) {
+                    if (map_runtime_state.world_state.floors[2].script.floor3.revealed_piece_count
+                        != KF_MAP_FLOOR3_REQUIRED_REVEALS) {
+                        map_runtime_state.world_state.floors[2].script.floor3.revealed_piece_count++;
+                        if (map_runtime_state.world_state.floors[2].script.floor3.revealed_piece_count
+                            >= KF_MAP_FLOOR3_REQUIRED_REVEALS) {
                             map_apply_copy_region(KF_MAP_COPY_FLOOR3_REVEAL_FIRST);
                             map_apply_copy_region(KF_MAP_COPY_FLOOR3_REVEAL_SECOND);
                             sound_ref_play(&gameplay_sound_refs[KF_GAMEPLAY_SOUND_STONE_PASSAGE], KF_AUDIO_MAX_VOLUME);
-                            *counter = KF_MAP_FLOOR3_REQUIRED_REVEALS;
+                            map_runtime_state.world_state.floors[2].script.floor3.revealed_piece_count
+                                = KF_MAP_FLOOR3_REQUIRED_REVEALS;
                         }
                     }
                 } else if (player_state.progress_state.current_floor == KF_FLOOR_1) {

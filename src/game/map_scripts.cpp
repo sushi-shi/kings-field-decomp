@@ -190,15 +190,13 @@ void map_ambient_script_floor4(void)
 
 void map_ambient_script_floor5(void)
 {
-    KfMapScriptFlag *encounter_started = &map_runtime_state.world_state.floors[4].script.floor5.boss_encounter_started;
-
-    if (*encounter_started == KF_MAP_SCRIPT_UNSET
+    if (map_runtime_state.world_state.floors[4].script.floor5.boss_encounter_started == KF_MAP_SCRIPT_UNSET
         && player_state.motion_state.fields.map_cell.coords.x >= 38
         && player_state.motion_state.fields.map_cell.coords.x < 41
         && player_state.motion_state.fields.map_cell.coords.z == 7
         && (u16)player_state.camera_rotation.vy >= MAP_BOSS_REVEAL_YAW_MIN
         && (u16)player_state.camera_rotation.vy < MAP_BOSS_REVEAL_YAW_END) {
-        *encounter_started = KF_MAP_SCRIPT_SET;
+        map_runtime_state.world_state.floors[4].script.floor5.boss_encounter_started = KF_MAP_SCRIPT_SET;
         screen_show_image_until_input("TALK\\C17\\T55171.TIM");
         render_frame(NULL, NULL);
         render_frame(NULL, NULL);
@@ -474,13 +472,11 @@ void map_event_interact(KfMapEvent *event)
 
 void map_show_screen_image(KfMapImageGroup group, s32 index)
 {
-    char *directory_floor = &map_screen_image_path[5];
-
-    *directory_floor = kf_enum_encode<u8>(player_state.progress_state.current_floor) + '0';
+    map_screen_image_path[5] = kf_enum_encode<u8>(player_state.progress_state.current_floor) + '0';
     map_screen_image_path[8] = kf_enum_encode<s32>(group) + '0';
     map_screen_image_path[9] = index / 10 + '0';
     map_screen_image_path[10] = index % 10 + '0';
-    screen_show_image_until_input(directory_floor - 5);
+    screen_show_image_until_input(map_screen_image_path);
 }
 
 void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
@@ -499,8 +495,7 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
     KfMapObjectDefinition *definition;
     KfMapObjectDefinition *neighbor_definition;
 
-    (probe_x) = position->vx - ((rsin(rotation->vy) * MAP_ATTRIBUTE_PROBE_DISTANCE) >> KF_FIXED12_BITS);
-    (probe_z) = position->vz + ((rcos(rotation->vy) * MAP_ATTRIBUTE_PROBE_DISTANCE) >> KF_FIXED12_BITS);
+    VECTOR_YAW_PROBE_XZ(probe_x, probe_z, *position, *rotation, MAP_ATTRIBUTE_PROBE_DISTANCE);
     switch (map_cell_attribute_grid.cells[probe_z / KF_MAP_TILE_SIZE][probe_x / KF_MAP_TILE_SIZE]) {
     case KF_MAP_ATTRIBUTE_PITFALL:
         notify_enqueue(KF_NOTIFICATION_PITFALL);
@@ -518,14 +513,10 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
         break;
     }
 
-    (probe_x) = position->vx - ((rsin(rotation->vy) * MAP_INTERACTION_PROBE_DISTANCE) >> KF_FIXED12_BITS);
-    (probe_z) = position->vz + ((rcos(rotation->vy) * MAP_INTERACTION_PROBE_DISTANCE) >> KF_FIXED12_BITS);
-    if (game_graphics_runtime.notification_state.control.effect_phase != KF_NOTIFICATION_IDLE) {
-        goto scan_objects;
-    }
-    index = map_event_pool_find_overlap(
-        probe_x, probe_z, MAP_INTERACTION_RADIUS_PADDING);
-    if (index != KF_MAP_EVENT_INDEX_NONE) {
+    VECTOR_YAW_PROBE_XZ(probe_x, probe_z, *position, *rotation, MAP_INTERACTION_PROBE_DISTANCE);
+    if (game_graphics_runtime.notification_state.control.effect_phase == KF_NOTIFICATION_IDLE
+        && (index = map_event_pool_find_overlap(
+                probe_x, probe_z, MAP_INTERACTION_RADIUS_PADDING)) != KF_MAP_EVENT_INDEX_NONE) {
         event = &map_runtime_state.events[index];
         switch (event->behavior) {
             case KF_MAP_EVENT_BEHAVIOR_SHOP:
@@ -571,7 +562,6 @@ clear_event_phase:
                 break;
         }
     } else {
-scan_objects:
         for (index = 0;; index++) {
             index = map_object_pool_find_interaction_from(
                 index, probe_x, probe_z, MAP_INTERACTION_RADIUS_PADDING);

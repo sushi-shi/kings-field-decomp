@@ -62,7 +62,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 NormalColorDpq((SVECTOR *)(normals + p->ft3.n0), &tmd_textured_primitive_color,
                                (va->p2 + vb->p2 + vc->p2) / 3, &prim->packed.color0);
                 otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;
-                if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
+                if (otz + depth_bias >= KF_SCENE_MIN_OT_DEPTH) {
                     AddPrim(
                         (void *)(&game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK]),
                         (void *)&prim->sdk);
@@ -92,7 +92,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 NormalColorDpq((SVECTOR *)(normals + p->f4.n0), &p->color,
                                (va->p2 + vb->p2 + vc->p2 + vd->p2) >> 2, &prim->packed.color0);
                 otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);
-                if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
+                if (otz + depth_bias >= KF_SCENE_MIN_OT_DEPTH) {
                     AddPrim(
                         (void *)(&game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK]),
                         (void *)&prim->sdk);
@@ -121,7 +121,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                                 (SVECTOR *)(normals + p->g3.n2), &p->color, va->p2,
                                 &prim->packed.color0, &prim->packed.color1, &prim->packed.color2);
                 otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;
-                if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
+                if (otz + depth_bias >= KF_SCENE_MIN_OT_DEPTH) {
                     AddPrim(
                         (void *)(&game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK]),
                         (void *)&prim->sdk);
@@ -154,7 +154,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 NormalColorDpq((SVECTOR *)(normals + p->g4.n3), &p->color, va->p2,
                                &prim->packed.color3);
                 otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);
-                if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
+                if (otz + depth_bias >= KF_SCENE_MIN_OT_DEPTH) {
                     AddPrim(
                         (void *)(&game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK]),
                         (void *)&prim->sdk);
@@ -189,7 +189,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                                 (SVECTOR *)(normals + p->gt3.n2), &tmd_textured_primitive_color, va->p2,
                                 &prim->packed.color0, &prim->packed.color1, &prim->packed.color2);
                 otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;
-                if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
+                if (otz + depth_bias >= KF_SCENE_MIN_OT_DEPTH) {
                     AddPrim(
                         (void *)(&game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK]),
                         (void *)&prim->sdk);
@@ -229,7 +229,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 NormalColorDpq((SVECTOR *)(normals + p->gt4.n3), &tmd_textured_primitive_color, va->p2,
                                &prim->packed.color3);
                 otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);
-                if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
+                if (otz + depth_bias >= KF_SCENE_MIN_OT_DEPTH) {
                     AddPrim(
                         (void *)(&game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK]),
                         (void *)&prim->sdk);
@@ -259,7 +259,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                                 (SVECTOR *)(normals + p->g3.n2), &p->color,
                                 &prim->packed.color0, &prim->packed.color1, &prim->packed.color2);
                 otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;
-                if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
+                if (otz + depth_bias >= KF_SCENE_MIN_OT_DEPTH) {
                     AddPrim(
                         (void *)(&game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK]),
                         (void *)&prim->sdk);
@@ -296,7 +296,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 NormalColorDpq((SVECTOR *)(normals + p->ft4.n0), &tmd_textured_primitive_color,
                                (va->p2 + vb->p2 + vc->p2 + vd->p2) >> 2, &prim->packed.color0);
                 otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);
-                if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
+                if (otz + depth_bias >= KF_SCENE_MIN_OT_DEPTH) {
                     AddPrim(
                         (void *)(&game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK]),
                         (void *)&prim->sdk);
@@ -324,7 +324,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 NormalColorDpq((SVECTOR *)(normals + p->f3.n0), &p->color,
                                (va->p2 + vb->p2 + vc->p2) / 3, &prim->packed.color0);
                 otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;
-                if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
+                if (otz + depth_bias >= KF_SCENE_MIN_OT_DEPTH) {
                     AddPrim(
                         (void *)(&game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK]),
                         (void *)&prim->sdk);
@@ -357,7 +357,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 NormalColorDpq((SVECTOR *)(normals + p->g4.n2), &p->color, va->p2, &prim->packed.color2);
                 NormalColorDpq((SVECTOR *)(normals + p->g4.n3), &p->color, va->p2, &prim->packed.color3);
                 otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);
-                if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
+                if (otz + depth_bias >= KF_SCENE_MIN_OT_DEPTH) {
                     AddPrim(
                         (void *)(&game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK]),
                         (void *)&prim->sdk);
@@ -386,7 +386,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 NormalColorDpq((SVECTOR *)(normals + p->f3.n0), &p->color,
                                (va->p2 + vb->p2 + vc->p2) / 3, &prim->packed.color0);
                 otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;
-                if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
+                if (otz + depth_bias >= KF_SCENE_MIN_OT_DEPTH) {
                     AddPrim(
                         (void *)(&game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK]),
                         (void *)&prim->sdk);
@@ -417,7 +417,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 NormalColorDpq((SVECTOR *)(normals + p->f4.n0), &p->color,
                                (va->p2 + vb->p2 + vc->p2 + vd->p2) >> 2, &prim->packed.color0);
                 otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);
-                if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
+                if (otz + depth_bias >= KF_SCENE_MIN_OT_DEPTH) {
                     AddPrim(
                         (void *)(&game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK]),
                         (void *)&prim->sdk);
@@ -489,7 +489,7 @@ void render_enqueue_tmd_retextured(u16 object_index, s16 depth_bias)
                                 (SVECTOR *)(normals + primitive->gt3.n2), &retextured_primitive_color, va->p2,
                                 &prim->packed.color0, &prim->packed.color1, &prim->packed.color2);
                 otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;
-                if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
+                if (otz + depth_bias >= KF_SCENE_MIN_OT_DEPTH) {
                     AddPrim(
                         (void *)(&game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK]),
                         (void *)&prim->sdk);
@@ -527,7 +527,7 @@ void render_enqueue_tmd_retextured(u16 object_index, s16 depth_bias)
                 NormalColorDpq((SVECTOR *)(normals + primitive->gt4.n3), &retextured_primitive_color, va->p2,
                                &prim->packed.color3);
                 otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);
-                if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
+                if (otz + depth_bias >= KF_SCENE_MIN_OT_DEPTH) {
                     AddPrim(
                         (void *)(&game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK]),
                         (void *)&prim->sdk);
@@ -559,7 +559,7 @@ void render_enqueue_tmd_retextured(u16 object_index, s16 depth_bias)
                 NormalColorDpq((SVECTOR *)(normals + primitive->ft3.n0), &retextured_primitive_color,
                                (va->p2 + vb->p2 + vc->p2) / 3, &prim->packed.color0);
                 otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;
-                if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
+                if (otz + depth_bias >= KF_SCENE_MIN_OT_DEPTH) {
                     AddPrim(
                         (void *)(&game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK]),
                         (void *)&prim->sdk);
@@ -594,7 +594,7 @@ void render_enqueue_tmd_retextured(u16 object_index, s16 depth_bias)
                 NormalColorDpq((SVECTOR *)(normals + primitive->ft4.n0), &retextured_primitive_color,
                                (va->p2 + vb->p2 + vc->p2 + vd->p2) >> 2, &prim->packed.color0);
                 otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);
-                if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
+                if (otz + depth_bias >= KF_SCENE_MIN_OT_DEPTH) {
                     AddPrim(
                         (void *)(&game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK]),
                         (void *)&prim->sdk);

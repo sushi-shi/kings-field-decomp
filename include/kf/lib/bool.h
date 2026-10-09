@@ -30,8 +30,7 @@ public:
     template <typename Other>
     constexpr KfBoolStorage& operator=(KfBoolStorage<Other> value)
     {
-        *this = static_cast<bool>(value);
-        return *this;
+        return *this = static_cast<bool>(value);
     }
 
     template <typename Value>

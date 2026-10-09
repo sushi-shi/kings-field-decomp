@@ -184,60 +184,58 @@ void actor_select_next_action(s32 player_distance)
     } else if (definition->action_animations[KF_ACTOR_ANIM_SLOT_DRIFT] != KF_ANIMATION_CLIP_NONE) {
         chosen = KF_ACTOR_ACTION_DRIFT;
     } else {
-        switch (0) {
-        default:
-            recently_active = action == KF_ACTOR_ACTION_RETREAT
-                || action == KF_ACTOR_ACTION_MELEE_ATTACK
-                || action == KF_ACTOR_ACTION_JUMP_ATTACK
-                || action == KF_ACTOR_ACTION_SPECIAL_ATTACK
-                || action == KF_ACTOR_ACTION_EFFECT0
-                || action == KF_ACTOR_ACTION_EFFECT1
-                || action == KF_ACTOR_ACTION_EFFECT2;
-            if (definition->action_animations[KF_ACTOR_ANIM_SLOT_MOVE] != KF_ANIMATION_CLIP_NONE) {
-                if (recently_active || !(awareness < player_distance)) {
-                    if (!(awareness * ACTOR_RETREAT_RANGE_FACTOR < player_distance)
-                        && !(rand() < ACTOR_RETREAT_RANDOM_MIN)) {
-                        chosen = KF_ACTOR_ACTION_RETREAT;
-                        break;
-                    }
+        recently_active = action == KF_ACTOR_ACTION_RETREAT
+            || action == KF_ACTOR_ACTION_MELEE_ATTACK
+            || action == KF_ACTOR_ACTION_JUMP_ATTACK
+            || action == KF_ACTOR_ACTION_SPECIAL_ATTACK
+            || action == KF_ACTOR_ACTION_EFFECT0
+            || action == KF_ACTOR_ACTION_EFFECT1
+            || action == KF_ACTOR_ACTION_EFFECT2;
+        if (definition->action_animations[KF_ACTOR_ANIM_SLOT_MOVE] != KF_ANIMATION_CLIP_NONE) {
+            if (recently_active || awareness >= player_distance) {
+                if (awareness * ACTOR_RETREAT_RANGE_FACTOR >= player_distance
+                    && rand() >= ACTOR_RETREAT_RANDOM_MIN) {
+                    chosen = KF_ACTOR_ACTION_RETREAT;
+                    goto apply_choice;
                 }
-            }
-            if (definition->action_animations[KF_ACTOR_ANIM_SLOT_MOVE] != KF_ANIMATION_CLIP_NONE) {
-                if (recently_active || action == KF_ACTOR_ACTION_HIT_REACTION || action == KF_ACTOR_ACTION_PURSUE) {
-                    near_range = near_range * ACTOR_RECENT_PURSUIT_RANGE_FACTOR;
-                }
-                if (!(near_range < player_distance)) {
-                    chosen = KF_ACTOR_ACTION_PURSUE;
-                    break;
-                }
-            }
-            if (definition->action_animations[KF_ACTOR_ANIM_SLOT_IDLE] != KF_ANIMATION_CLIP_NONE) {
-                if (action != KF_ACTOR_ACTION_IDLE) {
-                    if (action == KF_ACTOR_ACTION_WANDER) {
-                        if (rand() < ACTOR_WANDER_TO_IDLE_RANDOM_LIMIT) {
-                            chosen = KF_ACTOR_ACTION_IDLE;
-                            break;
-                        }
-                    }
-                } else {
-                    if (!(rand() < ACTOR_REMAIN_IDLE_RANDOM_MIN)) {
-                        chosen = KF_ACTOR_ACTION_IDLE;
-                        break;
-                    }
-                }
-                if (definition->action_animations[KF_ACTOR_ANIM_SLOT_MOVE] == KF_ANIMATION_CLIP_NONE) {
-                    chosen = KF_ACTOR_ACTION_IDLE;
-                    break;
-                }
-            } else if (definition->action_animations[KF_ACTOR_ANIM_SLOT_MOVE] == KF_ANIMATION_CLIP_NONE) {
-                break;
-            }
-            chosen = KF_ACTOR_ACTION_WANDER;
-            if (actor->slot_state == KF_ACTOR_SLOT_HOMEBOUND) {
-                chosen = KF_ACTOR_ACTION_RETURN_HOME;
             }
         }
+        if (definition->action_animations[KF_ACTOR_ANIM_SLOT_MOVE] != KF_ANIMATION_CLIP_NONE) {
+            if (recently_active || action == KF_ACTOR_ACTION_HIT_REACTION || action == KF_ACTOR_ACTION_PURSUE) {
+                near_range = near_range * ACTOR_RECENT_PURSUIT_RANGE_FACTOR;
+            }
+            if (near_range >= player_distance) {
+                chosen = KF_ACTOR_ACTION_PURSUE;
+                goto apply_choice;
+            }
+        }
+        if (definition->action_animations[KF_ACTOR_ANIM_SLOT_IDLE] != KF_ANIMATION_CLIP_NONE) {
+            if (action != KF_ACTOR_ACTION_IDLE) {
+                if (action == KF_ACTOR_ACTION_WANDER) {
+                    if (rand() < ACTOR_WANDER_TO_IDLE_RANDOM_LIMIT) {
+                        chosen = KF_ACTOR_ACTION_IDLE;
+                        goto apply_choice;
+                    }
+                }
+            } else {
+                if (rand() >= ACTOR_REMAIN_IDLE_RANDOM_MIN) {
+                    chosen = KF_ACTOR_ACTION_IDLE;
+                    goto apply_choice;
+                }
+            }
+            if (definition->action_animations[KF_ACTOR_ANIM_SLOT_MOVE] == KF_ANIMATION_CLIP_NONE) {
+                chosen = KF_ACTOR_ACTION_IDLE;
+                goto apply_choice;
+            }
+        } else if (definition->action_animations[KF_ACTOR_ANIM_SLOT_MOVE] == KF_ANIMATION_CLIP_NONE) {
+            goto apply_choice;
+        }
+        chosen = KF_ACTOR_ACTION_WANDER;
+        if (actor->slot_state == KF_ACTOR_SLOT_HOMEBOUND) {
+            chosen = KF_ACTOR_ACTION_RETURN_HOME;
+        }
     }
+apply_choice:
     if (chosen != actor->action || actor->action_progress == KF_ACTOR_PROGRESS_COMPLETE) {
         actor_set_action(actor, chosen);
     }
@@ -276,27 +274,20 @@ void actor_update_awareness(void)
                 }
             }
         } else {
-            switch (0) {
-            default:
-                if (distance < ACTOR_NEAR_SPAWN_EXCLUSION_RANGE
-                    && player_state.allow_near_actor_spawn == KF_ACTOR_NEAR_SPAWN_FORBIDDEN) {
-                    break;
-                }
-                if ((actor->spawn_chance << ACTOR_SPAWN_CHANCE_SHIFT) > rand()
-                    || spawn_policy == KF_ACTOR_SLOT_PERSISTENT || spawn_policy == KF_ACTOR_SLOT_HOMEBOUND) {
-                    if (actor_pool_find_overlap(
-                            map_placement_axis_position(actor->tile_x, actor->local_x),
-                            KF_COLLISION_IGNORE_HEIGHT,
-                            map_placement_axis_position(actor->tile_z, actor->local_z),
-                            definition->collision_radius,
-                            0)
-                        != KF_ACTOR_INDEX_NONE) {
-                        break;
-                    }
-                    actor_initialize_current();
-                    actor_select_next_action(distance);
-                    return;
-                }
+            if ((distance >= ACTOR_NEAR_SPAWN_EXCLUSION_RANGE
+                    || player_state.allow_near_actor_spawn != KF_ACTOR_NEAR_SPAWN_FORBIDDEN)
+                && ((actor->spawn_chance << ACTOR_SPAWN_CHANCE_SHIFT) > rand()
+                    || spawn_policy == KF_ACTOR_SLOT_PERSISTENT || spawn_policy == KF_ACTOR_SLOT_HOMEBOUND)
+                && actor_pool_find_overlap(
+                       map_placement_axis_position(actor->tile_x, actor->local_x),
+                       KF_COLLISION_IGNORE_HEIGHT,
+                       map_placement_axis_position(actor->tile_z, actor->local_z),
+                       definition->collision_radius,
+                       0)
+                    == KF_ACTOR_INDEX_NONE) {
+                actor_initialize_current();
+                actor_select_next_action(distance);
+                return;
             }
             actor->lifecycle = KF_ACTOR_LIFECYCLE_WAIT_FOR_RANGE_EXIT;
         }
@@ -402,7 +393,7 @@ KfActorMoveResult actor_move_xz_with_collision(const struct KfVecXZs *delta, KfA
             actor->vertical_velocity = 0;
         }
     } else if (drop > 0) {
-        if (!(drop < ACTOR_STEP_HEIGHT_LIMIT)) {
+        if (drop >= ACTOR_STEP_HEIGHT_LIMIT) {
             goto blocked;
         }
         if (drop >= ACTOR_HIGH_STEP_HEIGHT) {
