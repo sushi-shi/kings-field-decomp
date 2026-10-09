@@ -21,13 +21,10 @@ enum {
  * effect-object pools (objects[160..169] and objects[170..189]). The common
  * tail dispatches a per-floor scripted setup on the current floor (1..5).
  *
- * map_runtime_state owns both the event pool and per-floor saved records;
- * the pool starts 556 bytes before the saved block.
- *
  * map_refresh_dialogue_stages refreshes the stage of every active map event.
- * map_load_floor loads the current floor:
- * map_resources_load, the world-state restore, the event refresh, render_prepare_actor_textures,
- * then copies colour_matrix_table[3] into the render lighting matrix.
+ * map_load_floor loads the current floor: map_resources_load, the world-state
+ * restore, the event refresh and render_prepare_actor_textures, then resets
+ * the HUD model colour matrix to the white preset.
  */
 
 /* map_restore_floor_state per-floor scripted-setup jump table (floors 1..5). */

@@ -6,6 +6,12 @@
 #include <kf/lib/memory.h>
 #include <kf/game/player.h>
 
+ADDRESS(0x80036e30, 0x8)
+void func_80036e30(void)
+{
+    /* Unreferenced return stub; purpose and original owner are unresolved. */
+}
+
 /*
  * menu_enter_mode (GAME.EXE): tear down and re-establish the system heap around a
  * mode-selected reload. It drains the GPU (DrawSync), runs animation_cache_release_all, resets
@@ -13,13 +19,6 @@
  * clears the player motion state. Callers pass a variable number of arguments;
  * the modes that take one read it through the standard argument macros.
  */
-
-ADDRESS(0x80036e30, 0x8)
-void func_80036e30(void)
-{
-    /* Unreferenced return stub; purpose and original owner are unresolved. */
-}
-
 ADDRESS(0x80036e38, 0xc8)
 u32 menu_enter_mode(KfMenuMode menu_mode, ...)
 {
