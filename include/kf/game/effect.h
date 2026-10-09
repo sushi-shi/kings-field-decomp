@@ -124,70 +124,60 @@ enum {
     KF_EFFECT_GROUND_BRANCH_TIMER_DONE = 0xff
 };
 
-enum class KfEffectPhase : u8 {
-    KF_EFFECT_PHASE_INIT = 0,
-    KF_EFFECT_FLOOR_DEFORM_ADVANCE = 0,
-    KF_EFFECT_FLOOR_DEFORM_HOLD = 1,
-    KF_EFFECT_FLOOR_DEFORM_REVERSE = 2,
-    KF_EFFECT_PROJECTILE_TRAVEL = 0,
-    KF_EFFECT_PROJECTILE_IMPACT_FIRST = 1,
-    KF_EFFECT_PROJECTILE_DISSIPATE_FIRST = 50,
-    KF_EFFECT_PROJECTILE_DISSIPATE_END = 60,
-    KF_EFFECT_PROJECTILE_EMERGE_FIRST = 100,
-    KF_EFFECT_PROJECTILE_EMERGE_LAST = 119,
-    KF_EFFECT_PROJECTILE_FALL = 120,
-    KF_EFFECT_PROJECTILE_SHRINK = 121,
-    KF_EFFECT_PROJECTILE_LAUNCH_WRAP = 0xff,
-    KF_EFFECT_GROUND_TRAIL_WAIT_FOR_PARENT = 0,
-    KF_EFFECT_GROUND_TRAIL_SHRINK = 1,
-    KF_EFFECT_HAZARD_RUNNING = 0,
-    KF_EFFECT_HAZARD_RELEASE_REQUEST = 1,
-    KF_EFFECT_HAZARD_RISE_FIRST = 10,
-    KF_EFFECT_SHORT_SWING_PHASE_LIMIT = 40,
-    KF_EFFECT_LONG_SWING_PHASE_LIMIT = 60,
-    KF_EFFECT_ORBIT_PHASE_LIMIT = 40,
-    KF_EFFECT_FIRE_BALL_IMPACT_END = 5,
-    KF_EFFECT_PROJECTILE_IMPACT_END = 10,
-    KF_EFFECT_MOONLIGHT_TRAVEL_LAST = 10,
-    KF_EFFECT_MOONLIGHT_TRAIL_EMIT_PHASE = 2,
-    KF_EFFECT_MOONLIGHT_IMPACT_FIRST = 20,
-    KF_EFFECT_MOONLIGHT_IMPACT_LAST = 23,
-    KF_EFFECT_RADIAL_BLAST_PHASE_END = 13,
-    KF_EFFECT_HOMING_INITIAL_PHASE_LAST = 4,
-    KF_EFFECT_HOMING_TRACKING_PHASE = 20,
-    KF_EFFECT_LIGHTNING_IMPACT_PHASE_LAST = 9,
-    KF_EFFECT_LIGHTNING_IMPACT_EMIT_FIRST = 3,
-    KF_EFFECT_LIGHTNING_IMPACT_EMIT_SECOND = 5,
-    KF_EFFECT_LIGHTNING_IMPACT_EMIT_LAST = 7,
-    KF_EFFECT_LIGHTNING_BLAST_PHASE_LAST = 7,
-    KF_EFFECT_GROUND_BRANCH_GROW_END = 16,
-    KF_EFFECT_GROUND_BRANCH_ROOT_HOLD_BASE = 16,
-    KF_EFFECT_GROUND_BRANCH_SIDE_HOLD_BASE = 26,
-    KF_EFFECT_GROUND_BRANCH_LEAF_HOLD_BASE = 36,
-    KF_EFFECT_GROUND_BRANCH_SHRINK_FIRST = 48,
-    KF_EFFECT_GROUND_BRANCH_PHASE_END = 64,
-    KF_EFFECT_GROUND_VISUAL_SHRINK_FIRST = 4,
-    KF_EFFECT_GROUND_VISUAL_PHASE_END = 8,
-    KF_EFFECT_ACTOR_SPAWNER_TRAVEL_FIRST = 17,
-    KF_EFFECT_ACTOR_SPAWNER_TRAVEL_LAST = 40,
-    KF_EFFECT_ACTOR_SPAWNER_WAIT_FIRST = 117,
-    KF_EFFECT_ACTOR_SPAWNER_CREATE_PHASE = 132,
-    KF_EFFECT_ACTOR_SPAWNER_SHRINK_FIRST = 149,
-    KF_EFFECT_ACTOR_SPAWNER_PHASE_END = 165
-}; using enum KfEffectPhase;
-inline KfEffectPhase& operator++(KfEffectPhase& value)
-    { value = static_cast<KfEffectPhase>(static_cast<u8>(value) + 1); return value; }
-    inline KfEffectPhase operator++(KfEffectPhase& value, int)
-    { KfEffectPhase previous = value; ++value; return previous; }
-    inline KfEffectPhase& operator--(KfEffectPhase& value)
-    { value = static_cast<KfEffectPhase>(static_cast<u8>(value) - 1); return value; }
-    inline KfEffectPhase operator--(KfEffectPhase& value, int)
-    { KfEffectPhase previous = value; --value; return previous; }
+inline constexpr u8 KF_EFFECT_PHASE_INIT = 0;
+inline constexpr u8 KF_EFFECT_FLOOR_DEFORM_ADVANCE = 0;
+inline constexpr u8 KF_EFFECT_FLOOR_DEFORM_HOLD = 1;
+inline constexpr u8 KF_EFFECT_FLOOR_DEFORM_REVERSE = 2;
+inline constexpr u8 KF_EFFECT_PROJECTILE_TRAVEL = 0;
+inline constexpr u8 KF_EFFECT_PROJECTILE_IMPACT_FIRST = 1;
+inline constexpr u8 KF_EFFECT_PROJECTILE_DISSIPATE_FIRST = 50;
+inline constexpr u8 KF_EFFECT_PROJECTILE_DISSIPATE_END = 60;
+inline constexpr u8 KF_EFFECT_PROJECTILE_EMERGE_FIRST = 100;
+inline constexpr u8 KF_EFFECT_PROJECTILE_EMERGE_LAST = 119;
+inline constexpr u8 KF_EFFECT_PROJECTILE_FALL = 120;
+inline constexpr u8 KF_EFFECT_PROJECTILE_SHRINK = 121;
+inline constexpr u8 KF_EFFECT_PROJECTILE_LAUNCH_WRAP = 0xff;
+inline constexpr u8 KF_EFFECT_GROUND_TRAIL_WAIT_FOR_PARENT = 0;
+inline constexpr u8 KF_EFFECT_GROUND_TRAIL_SHRINK = 1;
+inline constexpr u8 KF_EFFECT_HAZARD_RUNNING = 0;
+inline constexpr u8 KF_EFFECT_HAZARD_RELEASE_REQUEST = 1;
+inline constexpr u8 KF_EFFECT_HAZARD_RISE_FIRST = 10;
+inline constexpr u8 KF_EFFECT_SHORT_SWING_PHASE_LIMIT = 40;
+inline constexpr u8 KF_EFFECT_LONG_SWING_PHASE_LIMIT = 60;
+inline constexpr u8 KF_EFFECT_ORBIT_PHASE_LIMIT = 40;
+inline constexpr u8 KF_EFFECT_FIRE_BALL_IMPACT_END = 5;
+inline constexpr u8 KF_EFFECT_PROJECTILE_IMPACT_END = 10;
+inline constexpr u8 KF_EFFECT_MOONLIGHT_TRAVEL_LAST = 10;
+inline constexpr u8 KF_EFFECT_MOONLIGHT_TRAIL_EMIT_PHASE = 2;
+inline constexpr u8 KF_EFFECT_MOONLIGHT_IMPACT_FIRST = 20;
+inline constexpr u8 KF_EFFECT_MOONLIGHT_IMPACT_LAST = 23;
+inline constexpr u8 KF_EFFECT_RADIAL_BLAST_PHASE_END = 13;
+inline constexpr u8 KF_EFFECT_HOMING_INITIAL_PHASE_LAST = 4;
+inline constexpr u8 KF_EFFECT_HOMING_TRACKING_PHASE = 20;
+inline constexpr u8 KF_EFFECT_LIGHTNING_IMPACT_PHASE_LAST = 9;
+inline constexpr u8 KF_EFFECT_LIGHTNING_IMPACT_EMIT_FIRST = 3;
+inline constexpr u8 KF_EFFECT_LIGHTNING_IMPACT_EMIT_SECOND = 5;
+inline constexpr u8 KF_EFFECT_LIGHTNING_IMPACT_EMIT_LAST = 7;
+inline constexpr u8 KF_EFFECT_LIGHTNING_BLAST_PHASE_LAST = 7;
+inline constexpr u8 KF_EFFECT_GROUND_BRANCH_GROW_END = 16;
+inline constexpr u8 KF_EFFECT_GROUND_BRANCH_ROOT_HOLD_BASE = 16;
+inline constexpr u8 KF_EFFECT_GROUND_BRANCH_SIDE_HOLD_BASE = 26;
+inline constexpr u8 KF_EFFECT_GROUND_BRANCH_LEAF_HOLD_BASE = 36;
+inline constexpr u8 KF_EFFECT_GROUND_BRANCH_SHRINK_FIRST = 48;
+inline constexpr u8 KF_EFFECT_GROUND_BRANCH_PHASE_END = 64;
+inline constexpr u8 KF_EFFECT_GROUND_VISUAL_SHRINK_FIRST = 4;
+inline constexpr u8 KF_EFFECT_GROUND_VISUAL_PHASE_END = 8;
+inline constexpr u8 KF_EFFECT_ACTOR_SPAWNER_TRAVEL_FIRST = 17;
+inline constexpr u8 KF_EFFECT_ACTOR_SPAWNER_TRAVEL_LAST = 40;
+inline constexpr u8 KF_EFFECT_ACTOR_SPAWNER_WAIT_FIRST = 117;
+inline constexpr u8 KF_EFFECT_ACTOR_SPAWNER_CREATE_PHASE = 132;
+inline constexpr u8 KF_EFFECT_ACTOR_SPAWNER_SHRINK_FIRST = 149;
+inline constexpr u8 KF_EFFECT_ACTOR_SPAWNER_PHASE_END = 165;
 
 enum {
     KF_EFFECT_EMERGE_Y_STEP = 175,
     KF_EFFECT_EMERGE_DEPTH =
-        (kf_enum_encode<u8>(KF_EFFECT_PROJECTILE_FALL) - kf_enum_encode<u8>(KF_EFFECT_PROJECTILE_EMERGE_FIRST)) * KF_EFFECT_EMERGE_Y_STEP,
+        (KF_EFFECT_PROJECTILE_FALL - KF_EFFECT_PROJECTILE_EMERGE_FIRST) * KF_EFFECT_EMERGE_Y_STEP,
 
     KF_EFFECT_ORBIT_CENTER_SHIFT = 8
 };
@@ -240,7 +230,7 @@ typedef struct KfEffectRecord {
     KfAnimationClip animation_clip;
     KfAudioPlaybackResult sound_played;
     u8 id;
-    KfEffectPhase phase;
+    u8 phase;
     u16 animation_phase;
     u16 unknown_0a;
     VECTOR position;
@@ -350,8 +340,8 @@ extern void effect_pool_reset(void);
 extern void effect_pool_update(void);
 extern void effect_update_dispatch(void);
 extern int effect_magic_power(KfEffectRecord *effect);
-extern void effect_update_swinging_hazard(SVECTOR *probe_offset, KfEffectPhase phase_limit);
-extern void effect_update_orbiting_projectile(s32 orbit_radius, KfEffectPhase phase_limit);
+extern void effect_update_swinging_hazard(SVECTOR *probe_offset, u8 phase_limit);
+extern void effect_update_orbiting_projectile(s32 orbit_radius, u8 phase_limit);
 extern void effect_floor_deform_line(s32 segment_index, s32 progress_start, s32 progress_step);
 extern void effect_scatter_triple(SVECTOR *velocity);
 extern void effect_rotate_scale_offset_y(SVECTOR *offset, VECTOR *output, s16 angle, s32 scale);
