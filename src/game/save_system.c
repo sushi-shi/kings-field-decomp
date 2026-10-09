@@ -101,6 +101,14 @@ static inline void memory_card_acknowledge_new_device(void)
     memory_card_begin_status_check();
 }
 
+#define SAVE_SUMMARY_COPY(to, from) ( \
+    (to).experience = (from).experience, \
+    (to).current_floor = (from).current_floor, \
+    (to).current_hp = (from).current_hp, \
+    (to).maximum_hp = (from).maximum_hp, \
+    (to).current_mp = (from).current_mp, \
+    (to).maximum_mp = (from).maximum_mp)
+
 #define SAVE_SUMMARY_EQUAL(a, b) ( \
     (a).experience == (b).experience && \
     (a).current_floor == (b).current_floor && \
@@ -125,12 +133,7 @@ KfSaveResult save_system_read_catalog(KfSaveSlotSummary *summaries)
             if (slot != KF_SAVE_SLOT_EMPTY && slot != KF_SAVE_SLOT_SPARE) {
                 s32 entry = ((u8)(slot)) - ((s16)(KF_SAVE_SLOT_FIRST));
 
-                (summaries[entry]).experience = (header->directory.summaries[index]).experience;
-                (summaries[entry]).current_floor = (header->directory.summaries[index]).current_floor;
-                (summaries[entry]).current_hp = (header->directory.summaries[index]).current_hp;
-                (summaries[entry]).maximum_hp = (header->directory.summaries[index]).maximum_hp;
-                (summaries[entry]).current_mp = (header->directory.summaries[index]).current_mp;
-                (summaries[entry]).maximum_mp = (header->directory.summaries[index]).maximum_mp;
+                SAVE_SUMMARY_COPY(summaries[entry], header->directory.summaries[index]);
             }
         }
     }

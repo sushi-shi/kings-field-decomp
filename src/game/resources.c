@@ -53,18 +53,24 @@ void common_resources_load(void)
     asset_registry_set(
         KF_ASSET_HUD_MODELS, RESOURCE_STREAM_PAYLOAD(stream, KfAssetHeader));
     RESOURCE_STREAM_NEXT(stream);
+
     block = stream;
     memcpy((void *)render_cell_windows, (const void *)(block + KF_RESOURCE_CHUNK_HEADER_BYTES),
         sizeof render_cell_windows);
     RESOURCE_STREAM_NEXT(stream);
+
     weapon_records_load_and_mirror_angles(RESOURCE_STREAM_PAYLOAD(stream, const KfWeaponTable));
     RESOURCE_STREAM_NEXT(stream);
+
     armor_records_load(RESOURCE_STREAM_PAYLOAD(stream, const KfArmorTable));
     RESOURCE_STREAM_NEXT(stream);
+
     magic_load_records(RESOURCE_STREAM_PAYLOAD(stream, const KfMagicTable));
     RESOURCE_STREAM_NEXT(stream);
+
     map_object_definitions_load(RESOURCE_STREAM_PAYLOAD(stream, const KfMapObjectDefinitionTable));
     RESOURCE_STREAM_NEXT(stream);
+
     memcpy(
         (void *)player_level_growth_table,
         (const void *)RESOURCE_STREAM_PAYLOAD(stream, const KfPlayerLevelGrowth),
@@ -140,10 +146,12 @@ void map_resources_load(KfFloorId floor, s32 map_variant)
     stream = map_resource_load_file("MIXA.DAT");
     vab_header = stream + KF_RESOURCE_CHUNK_HEADER_BYTES;
     RESOURCE_STREAM_NEXT(stream);
+
     audio_load_vab(vab_header,
         stream + KF_RESOURCE_CHUNK_HEADER_BYTES);
     block = stream;
     RESOURCE_STREAM_NEXT(stream);
+
     audio_play_current_map_sequence();
     source = resource_stream_copy_words(
         map_cell_attribute_grid.words,
@@ -158,14 +166,19 @@ void map_resources_load(KfFloorId floor, s32 map_variant)
     resource_stream_copy_words(
         map_collision_grid.words, source, MAP_GRID_WORDS);
     RESOURCE_STREAM_NEXT(stream);
+
     item_load_floor_placements(RESOURCE_STREAM_PAYLOAD(stream, KfFloorItemPlacement));
     RESOURCE_STREAM_NEXT(stream);
+
     map_object_pool_load(RESOURCE_STREAM_PAYLOAD(stream, KfMapObjectPlacement));
     RESOURCE_STREAM_NEXT(stream);
+
     actor_pool_load_placements(RESOURCE_STREAM_PAYLOAD(stream, KfActorPlacement));
     RESOURCE_STREAM_NEXT(stream);
+
     actor_definitions_load(RESOURCE_STREAM_PAYLOAD(stream, const KfActorDefinitionTable));
     RESOURCE_STREAM_NEXT(stream);
+
     map_event_pool_load(RESOURCE_STREAM_PAYLOAD(stream, KfMapEventDefinition));
     memory_release_last();
     memory_arena.allocation.cursor = block + KF_RESOURCE_REUSE_PREFIX_BYTES;
@@ -173,15 +186,19 @@ void map_resources_load(KfFloorId floor, s32 map_variant)
     tmd_register(KF_TMD_SLOT_ENTITIES,
         RESOURCE_STREAM_PAYLOAD(stream, KfTmdHeader));
     RESOURCE_STREAM_NEXT(stream);
+
     tmd_register(KF_TMD_SLOT_MAP,
         RESOURCE_STREAM_PAYLOAD(stream, KfTmdHeader));
     RESOURCE_STREAM_NEXT(stream);
+
     asset_registry_load_tmd_archive(KF_ASSET_MAP_EVENT_FIRST,
         stream + KF_RESOURCE_CHUNK_HEADER_BYTES);
     RESOURCE_STREAM_NEXT(stream);
+
     asset_registry_load_tmd_archive(KF_ASSET_EFFECT_FIRST,
         stream + KF_RESOURCE_CHUNK_HEADER_BYTES);
     RESOURCE_STREAM_NEXT(stream);
+
     if (map_variant == KF_MAP_VARIANT_DEFAULT) {
         asset_registry_load_tmd_archive(KF_ASSET_ACTOR_FIRST,
             stream + KF_RESOURCE_CHUNK_HEADER_BYTES);
