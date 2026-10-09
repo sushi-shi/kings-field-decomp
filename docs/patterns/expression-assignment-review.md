@@ -22,8 +22,8 @@ Different overlay macro owners remain distinct contexts. Parse errors fail the
 census instead of returning an incomplete zero. Inactive branches outside the
 two selected language views are outside this metric.
 
-The initial census has **179 sites**; the retained exact cleanup has **11**.
-The committed down-only floor is 11. Zero remains the target; no exception
+The initial census has **179 sites**; the retained exact cleanup has **9**.
+The committed down-only floor is 9. Zero remains the target; no exception
 removes a retained assignment from the count.
 
 ## Kept source changes
@@ -43,6 +43,9 @@ removes a retained assignment from the count.
   enum/Boolean assignment chains. Sprite corners and texture edges use genuine
   shared values, preserving narrow conversion without extra field reloads.
 - Keep one typed menu-packet helper for the real generic SDK blending boundary.
+- Capture the first draw buffer's SDK dithering byte, then enable the second
+  and first buffers in separate statements. Both display initializers remain
+  strict 100%, including the complete affected comparison objects.
 
 ## Retained exact cases
 
@@ -50,15 +53,27 @@ removes a retained assignment from the count.
 | --- | ---: | --- |
 | GAME `effect_update_dispatch` | 5 | Separate field reads: 99.69785%; shared `u16` scale: 99.62963%; first raw divergence +0x38. |
 | GAME `map_object_mark_collision_edge` | 2 | Same parameter stores: 87.69231%; complete grid owner: 74.02098%; first branch difference +0x30. |
-| GAME `display_initialize` | 1 | Original store order: 94.90362%; forward order: 94.86747%; complete DRAWENV array owner: 85.07229%. |
-| OPEN `display_initialize` | 1 | Original store order: 96.37288%; forward order: 96.38983%; complete DRAWENV array owner: 75.50848%. |
-| GAME `tmd_register` | 1 | Separate stores, with either direct fields or the authentic state owner: 64 bytes, 48%; retail is 60 bytes. |
-| OPEN `tmd_register` | 1 | Same control: 64 bytes, 48%; retail is 60 bytes. |
+| GAME `tmd_register` | 1 | Direct separate stores or the state owner: 64 bytes, 48%; real destination pointers: 60 bytes, 86.666664%; explicit slot selection: 60 bytes, 86%. Retail is 60 bytes. |
+| OPEN `tmd_register` | 1 | Same paired controls: 64 bytes, 48%; destination pointers: 60 bytes, 86.666664%; explicit slot selection: 60 bytes, 86%. |
 
 These are probe observations, not explanations of original source or historical
-compiler behavior. The final six functions retain their original 100% source.
+compiler behavior. The final four functions retain their original 100% source.
 No inline assembly, fake variables, volatile carriers, padded storage, altered
 relocations or compiler flags were introduced to force zero.
+
+## Display dithering follow-up
+
+Ordinary duplicate stores initially changed GAME/OPEN instruction ordering;
+using the DRAWENV array owner throughout each initializer also changed code.
+The retained form captures the first environment's actual SDK `dtd` member,
+sets the second environment's flag, then writes the captured member. It uses
+an `u8 *` only for that one byte, without treating the member as an enclosing
+owner. Both complete comparison objects equal the paired original objects,
+including instructions and relocation records. GAME `display_initialize`
+remains 332 bytes and OPEN remains 472 bytes, both strict 100%.
+
+The paired controls are under
+`build/cleanup-evidence/expression-assignments/display-dither-control/`.
 
 ## Evidence
 
