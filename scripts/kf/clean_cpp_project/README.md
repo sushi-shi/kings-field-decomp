@@ -18,10 +18,10 @@ the game can be exercised before changing platforms.
 
 | Branch | Purpose |
 | --- | --- |
-| `master` | Reconstruction and matching |
-| `source` | C++ PS1 build, codecs, and base for porting |
-| `classic` | C PS1 build |
-| `port` | Crossplatform port |
+| [master](https://github.com/sushi-shi/kings-field-decomp/tree/master) | Reconstruction and matching |
+| [source](https://github.com/sushi-shi/kings-field-decomp/tree/source) | C++ PS1 build, codecs, and base for porting |
+| [classic](https://github.com/sushi-shi/kings-field-decomp/tree/classic) | C PS1 build |
+| [port](https://github.com/sushi-shi/kings-field-decomp/tree/port) | Crossplatform port |
 
 ## Build and run
 
@@ -54,5 +54,14 @@ nix develop .#codecs -c cargo build --offline --manifest-path codecs/Cargo.toml
 ## Regeneration
 
 The reconstruction branch generates this tree. Matching annotations, inventories,
-analysis tooling and tests are absent. Keep platform-port changes on `port` so
-this base can be regenerated from `master`.
+analysis tooling and tests are absent. Propose reconstruction changes through a
+PR targeting `master`. From that checkout, commit the input revision and generate
+a verified export:
+
+```sh
+nix develop -c kf clean --out build/clean-source --verify
+```
+
+Apply the verified generated tree on a new review branch based on `source`,
+record its `Source-Commit` provenance, and submit a PR targeting `source`.
+Keep platform adaptations in their own `port` PRs.

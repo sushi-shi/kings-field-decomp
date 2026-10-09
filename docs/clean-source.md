@@ -28,10 +28,8 @@ Both exports build and run on PS1. `source` is the base for the crossplatform po
 `port` owns platform changes and is not overwritten by regeneration.
 
 ```sh
-nix develop -c kf clean --out build/clean-source --verify \
-  --publish source --worktree build/source
-nix develop -c kf clean --classic --out build/clean-classic --verify \
-  --publish classic --worktree build/classic
+nix develop -c kf clean --out build/clean-source --verify
+nix develop -c kf clean --classic --out build/clean-classic --verify
 ```
 
 Generation reads committed `HEAD`, including that revision's templates, unit
@@ -40,14 +38,29 @@ input. `--working-tree` previews tracked working files, including staged new
 files, but cannot publish. Untracked work is never an export input.
 
 The output is deterministic. Only marked output directories can be replaced;
-an output inside this checkout must be below `build/`. Publication creates a
-local generated branch and a persistent worktree. It refuses dirty destination
-worktrees, unrelated existing branches, and collisions with ignored files.
-Each generated branch always contains exactly one root commit. Regeneration
-replaces that snapshot; identical regeneration from the same commit is a no-op.
-Older exports with ancestry are collapsed automatically. Provenance stays in
-commit messages. Publication is local; updating GitHub requires a push with an
-explicit expected-tip `--force-with-lease` for each generated branch.
+an output inside this checkout must be below `build/`.
+
+## Updates for review
+
+Submit cleanup exports through separate PRs targeting `source` and `classic`.
+Generate and verify a committed reconstruction revision first. Create a fresh
+review branch from the destination's current tip, apply the exact generated
+file tree, and record `Source-Commit` provenance in its commit message. Check
+the staged paths and bytes against the verified export, then push the review
+branch and open a PR. Leave it unmerged for the user to review. Port adaptations
+use their own PR; regeneration does not replace the port.
+
+The local `--publish BRANCH --worktree PATH` option remains a snapshot tool.
+It refuses dirty destination worktrees, unrelated existing branches, and
+collisions with ignored files. Its generated snapshot has one root commit;
+regeneration replaces that snapshot, identical output/provenance is a no-op,
+and older snapshot ancestry is collapsed. Use a separate temporary snapshot
+branch if needed during review preparation. A review branch instead retains
+the destination parent so its changes can be compared and merged as a PR.
+The snapshot tool's ancestry rule does not authorize direct destination
+rewrites or force-pushing cleanup exports before review.
+
+## Generated contents and verification
 
 The allowlist retains the C files used by the executable builder, shared `.inc`
 implementation fragments, their project

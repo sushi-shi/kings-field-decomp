@@ -3,8 +3,6 @@
 #include <kf/lib/map.h>
 #include <kf/game/player.h>
 
-/* Psy-Q LIBGTE: SquareRoot0. */
-
 /*
  * Advances to the next path point and prepares the Q4 position and
  * wrapped-rotation deltas that reach it at the point's speed; a point with

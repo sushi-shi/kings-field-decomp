@@ -3,7 +3,6 @@
 #include <kf/lib/address.h>
 #include <kf/game/player.h>
 #include <psyq/libc.h>
-#include <kf/game/game.h>
 
 enum {
     PLAYER_REVIVAL_POSITION_X = 64000,
@@ -53,11 +52,10 @@ DATA(0x800652a8, 0xf0)
 u8 item_stock[KF_ITEM_STOCK_BANK_COUNT][KF_ITEM_COUNT];
 
 /*
- * Player death, vitals, and combat run, one contiguous band
- * 0x80015164..0x80016848 (GAME.EXE): death sequence and restart, HP/MP
- * adjustment, damage application and combat-stat recalculation, experience and
- * training, and the physical damage-component formula. Assembled from seven
- * address-adjacent single-purpose player units; module boundary is WIP.
+ * Player death, vitals and combat (GAME.EXE 0x80015164..0x80016848): death
+ * sequence and restart, HP/MP adjustment, damage and combat-stat
+ * recalculation, experience and training.  The original module boundary is
+ * unknown.
  */
 ADDRESS(0x80015164, 0x68)
 void player_death_begin(void)
@@ -71,9 +69,8 @@ void player_death_begin(void)
 }
 
 /*
- * The two byte loops clear whole BSS runs that start at the named objects
- * (0x2134 bytes of map-event state, 0xf0 bytes of item stock) before seeding
- * the initial player quantities and shop availability.
+ * Reset the player to a new game: starting stats and equipment, cleared saved
+ * world state and item stock, then the initial inventory and shop stock.
  */
 ADDRESS(0x800151cc, 0x2e4)
 void game_state_initialize(void)
@@ -121,6 +118,7 @@ void game_state_initialize(void)
     player_state.poison_timer = KF_PLAYER_STATUS_TIMER_INACTIVE;
     player_state.darkness_timer = KF_PLAYER_STATUS_TIMER_INACTIVE;
     player_state.curse_timer = KF_PLAYER_STATUS_TIMER_INACTIVE;
+    /* Byte-clear the saved world state and every item-stock bank. */
     cursor = (u8 *)&map_runtime_state.world_state;
     count = sizeof(map_runtime_state.world_state) - 1;
     do {
@@ -166,6 +164,11 @@ void game_state_initialize(void)
     item_stock[KF_ENUM_ENCODE(u8, KF_ITEM_STOCK_SECOND_SHOP)][KF_ENUM_ENCODE(u8, KF_ITEM_GOLD_CROSS)] = 1;
 }
 
+/*
+ * Restarts after death.  Once the floor-1 revival is enabled, a held Dragon
+ * King Grass Fruit is consumed to revive at the floor-1 revival point with full HP and
+ * MP; otherwise the game state is reset to a new game at the floor-1 start.
+ */
 ADDRESS(0x800154b0, 0x19c)
 void player_death_restart(void)
 {
@@ -219,7 +222,6 @@ void player_adjust_hp(s32 delta)
     s32 value = player_state.vitals.current_hp;
 
     value += delta;
-
     if (value <= 0) {
         player_state.vitals.current_hp = 0;
         player_death_begin();
@@ -238,7 +240,6 @@ void player_adjust_mp(s32 delta)
     s32 value = player_state.vitals.current_mp;
 
     value += delta;
-
     if (value <= 0) {
         player_state.vitals.current_mp = 0;
         return;
@@ -252,7 +253,17 @@ void player_adjust_mp(s32 delta)
 
 RODATA(0x80012000, 0x2c)
 
-/* Magic records of 20 bytes; the first byte of records 0, 1, 4 and 6 gate milestones. */
+/* Retail adds each piece's cutting defense twice. */
+static inline void player_add_armor_defenses(const KfArmorRecord *armor)
+{
+    player_state.cutting_defense += armor->cutting_defense;
+    player_state.cutting_defense += armor->cutting_defense;
+    player_state.striking_defense += armor->striking_defense;
+    player_state.piercing_defense += armor->piercing_defense;
+    player_state.poison_resistance += armor->poison_resistance;
+    player_state.magic_defense += armor->magic_defense;
+    player_state.fire_defense += armor->fire_defense;
+}
 
 /*
  * Rebuilds physical power, magic, the five attack lanes and the six
@@ -297,58 +308,28 @@ void player_recalculate_combat_stats(void)
     }
     if (player_state.equipped_head_armor_id != KF_OBJECT_NONE) {
         armor = &armor_records.entries[KF_ENUM_ENCODE(u8, player_state.equipped_head_armor_id)
-            - KF_ENUM_ENCODE(u8, KF_ITEM_IRON_MASK)];
-        player_state.cutting_defense += armor->cutting_defense;
-        player_state.cutting_defense += armor->cutting_defense;
-        player_state.striking_defense += armor->striking_defense;
-        player_state.piercing_defense += armor->piercing_defense;
-        player_state.poison_resistance += armor->poison_resistance;
-        player_state.magic_defense += armor->magic_defense;
-        player_state.fire_defense += armor->fire_defense;
+                - KF_ENUM_ENCODE(u8, KF_ITEM_IRON_MASK)];
+        player_add_armor_defenses(armor);
     }
     if (player_state.equipped_body_armor_id != KF_OBJECT_NONE) {
         armor = &armor_records.entries[KF_ENUM_ENCODE(u8, player_state.equipped_body_armor_id)
-            - KF_ENUM_ENCODE(u8, KF_ITEM_IRON_MASK)];
-        player_state.cutting_defense += armor->cutting_defense;
-        player_state.cutting_defense += armor->cutting_defense;
-        player_state.striking_defense += armor->striking_defense;
-        player_state.piercing_defense += armor->piercing_defense;
-        player_state.poison_resistance += armor->poison_resistance;
-        player_state.magic_defense += armor->magic_defense;
-        player_state.fire_defense += armor->fire_defense;
+                - KF_ENUM_ENCODE(u8, KF_ITEM_IRON_MASK)];
+        player_add_armor_defenses(armor);
     }
     if (player_state.equipped_arm_armor_id != KF_OBJECT_NONE) {
         armor = &armor_records.entries[KF_ENUM_ENCODE(u8, player_state.equipped_arm_armor_id)
-            - KF_ENUM_ENCODE(u8, KF_ITEM_IRON_MASK)];
-        player_state.cutting_defense += armor->cutting_defense;
-        player_state.cutting_defense += armor->cutting_defense;
-        player_state.striking_defense += armor->striking_defense;
-        player_state.piercing_defense += armor->piercing_defense;
-        player_state.poison_resistance += armor->poison_resistance;
-        player_state.magic_defense += armor->magic_defense;
-        player_state.fire_defense += armor->fire_defense;
+                - KF_ENUM_ENCODE(u8, KF_ITEM_IRON_MASK)];
+        player_add_armor_defenses(armor);
     }
     if (player_state.equipped_leg_armor_id != KF_OBJECT_NONE) {
         armor = &armor_records.entries[KF_ENUM_ENCODE(u8, player_state.equipped_leg_armor_id)
-            - KF_ENUM_ENCODE(u8, KF_ITEM_IRON_MASK)];
-        player_state.cutting_defense += armor->cutting_defense;
-        player_state.cutting_defense += armor->cutting_defense;
-        player_state.striking_defense += armor->striking_defense;
-        player_state.piercing_defense += armor->piercing_defense;
-        player_state.poison_resistance += armor->poison_resistance;
-        player_state.magic_defense += armor->magic_defense;
-        player_state.fire_defense += armor->fire_defense;
+                - KF_ENUM_ENCODE(u8, KF_ITEM_IRON_MASK)];
+        player_add_armor_defenses(armor);
     }
     if (player_state.equipped_shield_id != KF_OBJECT_NONE) {
         armor = &armor_records.entries[KF_ENUM_ENCODE(u8, player_state.equipped_shield_id)
-            - KF_ENUM_ENCODE(u8, KF_ITEM_IRON_MASK)];
-        player_state.cutting_defense += armor->cutting_defense;
-        player_state.cutting_defense += armor->cutting_defense;
-        player_state.striking_defense += armor->striking_defense;
-        player_state.piercing_defense += armor->piercing_defense;
-        player_state.poison_resistance += armor->poison_resistance;
-        player_state.magic_defense += armor->magic_defense;
-        player_state.fire_defense += armor->fire_defense;
+                - KF_ENUM_ENCODE(u8, KF_ITEM_IRON_MASK)];
+        player_add_armor_defenses(armor);
     }
     switch (player_state.equipped_accessory_id) {
     case KF_ITEM_LIGHT_RING:
@@ -396,10 +377,10 @@ void player_recalculate_combat_stats(void)
         effect_state.magic.entries[KF_ENUM_ENCODE(u8, KF_MAGIC_LIGHTNING_BOLT)].learned = KF_MAGIC_LEARNED;
         notify_enqueue(KF_NOTIFICATION_MAGIC_LEARNED);
     }
-    if (player_state.physical_power >= KF_PLAYER_POWER_MAX + 1) {
+    if (player_state.physical_power > KF_PLAYER_POWER_MAX) {
         player_state.physical_power = KF_PLAYER_POWER_MAX;
     }
-    if (player_state.magic >= KF_PLAYER_POWER_MAX + 1) {
+    if (player_state.magic > KF_PLAYER_POWER_MAX) {
         player_state.magic = KF_PLAYER_POWER_MAX;
     }
 }
@@ -411,7 +392,7 @@ void player_increment_physical_power_training(void)
     if (player_state.physical_power_training >= KF_PLAYER_TRAINING_POINTS_PER_GAIN) {
         player_state.base_physical_power++;
         player_state.physical_power_training = 0;
-        if (player_state.base_physical_power >= KF_PLAYER_POWER_MAX + 1) {
+        if (player_state.base_physical_power > KF_PLAYER_POWER_MAX) {
             player_state.base_physical_power = KF_PLAYER_POWER_MAX;
         } else {
             notify_enqueue(KF_NOTIFICATION_PHYSICAL_POWER_INCREASED);
@@ -427,7 +408,7 @@ void player_increment_magic_training(void)
     if (player_state.magic_training >= KF_PLAYER_TRAINING_POINTS_PER_GAIN) {
         player_state.base_magic++;
         player_state.magic_training = 0;
-        if (player_state.base_magic >= KF_PLAYER_POWER_MAX + 1) {
+        if (player_state.base_magic > KF_PLAYER_POWER_MAX) {
             player_state.base_magic = KF_PLAYER_POWER_MAX;
         } else {
             notify_enqueue(KF_NOTIFICATION_MAGIC_POWER_INCREASED);
@@ -436,6 +417,11 @@ void player_increment_magic_training(void)
     }
 }
 
+/*
+ * Adds experience and applies every level gained.  Levels inside the growth
+ * table take its absolute values; beyond it, each level repeats the table's
+ * last increments.
+ */
 ADDRESS(0x80016058, 0x224)
 void player_add_experience(s16 amount)
 {
@@ -455,16 +441,13 @@ void player_add_experience(s16 amount)
         if (level >= KF_PLAYER_LEVEL_GROWTH_COUNT) {
             growth = &player_level_growth_table[KF_PLAYER_LEVEL_GROWTH_COUNT - 1];
             player_state.vitals.maximum_hp +=
-                growth->maximum_hp
-                - growth[-1].maximum_hp;
+                growth->maximum_hp - player_level_growth_table[KF_PLAYER_LEVEL_GROWTH_COUNT - 2].maximum_hp;
             player_state.vitals.maximum_mp +=
-                growth->maximum_mp
-                - growth[-1].maximum_mp;
+                growth->maximum_mp - player_level_growth_table[KF_PLAYER_LEVEL_GROWTH_COUNT - 2].maximum_mp;
             player_state.base_physical_power += growth->physical_power_step;
             player_state.base_magic += growth->magic_step;
             player_state.next_level_experience +=
-                growth->experience_threshold
-                - growth[-1].experience_threshold;
+                growth->experience_threshold - player_level_growth_table[KF_PLAYER_LEVEL_GROWTH_COUNT - 2].experience_threshold;
         } else {
             growth = &player_level_growth_table[level];
             player_state.vitals.maximum_hp = growth->maximum_hp;
@@ -473,16 +456,16 @@ void player_add_experience(s16 amount)
             player_state.base_magic += growth->magic_step;
             player_state.next_level_experience = growth->experience_threshold;
         }
-        if (player_state.vitals.maximum_hp >= KF_PLAYER_VITAL_MAX + 1) {
+        if (player_state.vitals.maximum_hp > KF_PLAYER_VITAL_MAX) {
             player_state.vitals.maximum_hp = KF_PLAYER_VITAL_MAX;
         }
-        if (player_state.vitals.maximum_mp >= KF_PLAYER_VITAL_MAX + 1) {
+        if (player_state.vitals.maximum_mp > KF_PLAYER_VITAL_MAX) {
             player_state.vitals.maximum_mp = KF_PLAYER_VITAL_MAX;
         }
-        if (player_state.base_physical_power >= KF_PLAYER_POWER_MAX + 1) {
+        if (player_state.base_physical_power > KF_PLAYER_POWER_MAX) {
             player_state.base_physical_power = KF_PLAYER_POWER_MAX;
         }
-        if (player_state.base_magic >= KF_PLAYER_POWER_MAX + 1) {
+        if (player_state.base_magic > KF_PLAYER_POWER_MAX) {
             player_state.base_magic = KF_PLAYER_POWER_MAX;
         }
         player_recalculate_combat_stats();
@@ -492,9 +475,14 @@ void player_add_experience(s16 amount)
 }
 
 /*
- * The working values are initialised from the parameters at their
- * declarations so they inherit the argument registers retail keeps them in
- * ($a0 for the threshold, $a1 for the excess); locals assigned later move.
+ * Damage taken from one component: the defense plus a fifth of the player's
+ * own power forms a threshold; the excess over it plus attack squared over
+ * twice the threshold is the damage.  combat_calculate_damage_component is
+ * the actor-side mirror, where the attacker's power raises the attack.
+ *
+ * Unresolved source form: retail keeps the threshold in $a0 and the excess in
+ * $a1; locals seeded from those parameters reproduce it, later assignment
+ * does not.
  */
 ADDRESS(0x8001627c, 0xa8)
 s32 player_calculate_damage_component(s32 defender_power, s32 defense, s32 attack)
@@ -524,12 +512,12 @@ s32 player_calculate_damage_component(s32 defender_power, s32 defense, s32 attac
  */
 ADDRESS(0x80016324, 0x390)
 void player_apply_damage(
-    u16 component0,
-    u16 component1,
-    u16 component2,
+    u16 cutting_damage,
+    u16 striking_damage,
+    u16 piercing_damage,
     KfPlayerStatusFlags status_effect_flags,
-    u16 component3,
-    u16 component4,
+    u16 magic_damage,
+    u16 fire_damage,
     u16 scale_q12,
     u16 multiplier_tenths)
 {
@@ -566,23 +554,23 @@ void player_apply_damage(
     damage = player_calculate_damage_component(
         player_state.physical_power * KF_DAMAGE_SUBUNITS_PER_HP,
         player_state.cutting_defense * KF_DAMAGE_SUBUNITS_PER_HP,
-        component0 * KF_DAMAGE_SUBUNITS_PER_HP);
+        cutting_damage * KF_DAMAGE_SUBUNITS_PER_HP);
     damage += player_calculate_damage_component(
         player_state.physical_power * KF_DAMAGE_SUBUNITS_PER_HP,
         player_state.striking_defense * KF_DAMAGE_SUBUNITS_PER_HP,
-        component1 * KF_DAMAGE_SUBUNITS_PER_HP);
+        striking_damage * KF_DAMAGE_SUBUNITS_PER_HP);
     damage += player_calculate_damage_component(
         player_state.physical_power * KF_DAMAGE_SUBUNITS_PER_HP,
         player_state.piercing_defense * KF_DAMAGE_SUBUNITS_PER_HP,
-        component2 * KF_DAMAGE_SUBUNITS_PER_HP);
+        piercing_damage * KF_DAMAGE_SUBUNITS_PER_HP);
     damage += player_calculate_damage_component(
         player_state.physical_power * KF_DAMAGE_SUBUNITS_PER_HP,
         player_state.magic_defense * KF_DAMAGE_SUBUNITS_PER_HP,
-        component3 * KF_DAMAGE_SUBUNITS_PER_HP);
+        magic_damage * KF_DAMAGE_SUBUNITS_PER_HP);
     damage += player_calculate_damage_component(
         player_state.physical_power * KF_DAMAGE_SUBUNITS_PER_HP,
         player_state.fire_defense * KF_DAMAGE_SUBUNITS_PER_HP,
-        component4 * KF_DAMAGE_SUBUNITS_PER_HP);
+        fire_damage * KF_DAMAGE_SUBUNITS_PER_HP);
     damage += KF_DAMAGE_SUBUNITS_PER_HP / 2;
     damage = (scale_q12 * (damage / KF_DAMAGE_SUBUNITS_PER_HP)) >> KF_FIXED12_BITS;
     loss = (multiplier_tenths * damage) / KF_PLAYER_DAMAGE_MULTIPLIER_ONE;
@@ -604,11 +592,11 @@ void player_apply_radial_damage(
     u32 radius,
     u16 falloff_q12,
     u16 base_power,
-    u16 component0,
-    u16 component1,
-    u16 component2,
-    u16 component3,
-    u16 component4,
+    u16 cutting_damage,
+    u16 striking_damage,
+    u16 piercing_damage,
+    u16 magic_damage,
+    u16 fire_damage,
     u16 scale_q12,
     u16 multiplier_tenths)
 {
@@ -625,7 +613,7 @@ void player_apply_radial_damage(
         attenuation = scale_q12;
     }
     player_apply_damage(
-        component0, component1, component2, KF_PLAYER_STATUS_NONE, component3, component4,
+        cutting_damage, striking_damage, piercing_damage, KF_PLAYER_STATUS_NONE, magic_damage, fire_damage,
         attenuation, multiplier_tenths);
 }
 

@@ -2,11 +2,13 @@
 #include <kf/lib/address.h>
 #include <kf/lib/math.h>
 #include <kf/game/render.h>
-#include <kf/game/game.h>
+#include <kf/game/player.h>
+#include <kf/game/system.h>
 
 enum {
-    LIGHTING_COLOR_BLEND_STEP = 0x400,
-    VITAL_RESTORE_COLOR_LEVEL = 0xfff
+    LIGHTING_COLOR_BLEND_STEP = KF_FIXED12_ONE / 4,
+    /* Full channel level, as in the white, green and blue colour presets. */
+    VITAL_RESTORE_COLOR_LEVEL = 4095
 };
 
 ADDRESS(0x80033d80, 0x68)
@@ -35,8 +37,6 @@ void color_matrix_set_rgb(s16 red, s16 green, s16 blue, MATRIX *matrix)
     matrix->m[2][1] = blue;
     matrix->m[2][0] = blue;
 }
-
-/* Psy-Q LIBGTE: ReadColorMatrix(MATRIX *). */
 
 /* Cycles the colour matrix green, cyan, white and back while restoring HP and MP. */
 ADDRESS(0x80033e10, 0xd4)

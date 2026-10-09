@@ -9,7 +9,6 @@
 #include <psyq/sdk.h>
 #include <psyq/libc.h>
 
-
 /* Cache full-weight keyframe morphs in a pool record; blend into shared scratch. */
 
 /* asset base + clip_table[KF_ENUM_ENCODE(u16, clip_index)]: one animation clip. */
@@ -228,7 +227,7 @@ void animation_cache_release(KfAnimationCacheRecord *record)
     record->state = KF_ANIMATION_CACHE_FREE;
     *record->owner_slot = NULL;
     if (record->cached_vertices != NULL) {
-        free((void *)record->cached_vertices);
+        free(record->cached_vertices);
         record->cached_vertices = NULL;
     }
 }

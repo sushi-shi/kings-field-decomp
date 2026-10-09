@@ -2,7 +2,10 @@
 #include <kf/lib/bool.h>
 #include <kf/lib/address.h>
 #include <kf/game/player.h>
-#include <kf/game/game.h>
+#include <kf/game/actor.h>
+#include <kf/game/render.h>
+#include <kf/game/notify.h>
+#include <kf/game/state.h>
 
 enum {
     PLAYER_KEY_UNLOCK_VOLUME = 110,
@@ -116,7 +119,9 @@ void player_use_item(KfObjectId item_id)
             }
             index++;
         }
-        /* fallthrough */
+        /* Keys fall through into the scan below with index still -1, so retail
+         * starts it one record before the object pool, looking for an object
+         * whose id equals the key's. */
     case KF_ITEM_DRAGON_CHALICE:
     case KF_ITEM_WATER_SEAL_STONE:
     case KF_ITEM_EARTH_SEAL_STONE:

@@ -5,17 +5,18 @@
 #include <kf/game/save.h>
 #include <psyq/kernel.h>
 #include <psyq/libc.h>
-#include <kf/game/game.h>
+#include <kf/lib/memory.h>
+#include <kf/game/resources.h>
+#include <kf/game/system.h>
+#include <kf/game/menu.h>
+#include <psyq/pad.h>
 
 enum {
-    INITIAL_ACTOR_CLEAR_BYTES = 0x2b48,
-    INITIAL_MAP_OBJECT_CLEAR_BYTES = 0x25b8,
-    INITIAL_MAP_EVENT_CLEAR_BYTES = 0x2360,
     FRAME_PACER_INTERVAL_TICKS = 3,
-    ENDING_MASTER_FADE_STEP_Q8 = 0x80
+    ENDING_MASTER_FADE_STEP_Q8 = 128
 };
 
-/* Keep the initialized counters' external symbols in the curated relocation model. */
+/* Root-counter ticks counted by the VSync event, and the tick of the last frame. */
 DATA(0x80057b0c, 0x4)
 u32 frame_pacer_vsync_count = 0;
 
@@ -25,18 +26,18 @@ u32 frame_pacer_last_vsync = 0;
 DATA(0x800958f8, 0x4)
 KfOverlayResultWord game_next_overlay_mode;
 
-/* Clear the reviewed BSS spans without changing their starting referents. */
+/* Boot the game session, then run one simulation and render pass per paced frame. */
 ADDRESS(0x800146b8, 0x2e4)
 void game_main_loop(void)
 {
     s32 vsync_event;
 
-    memset((void *)&game_graphics_runtime, 0, sizeof game_graphics_runtime);
-    memset((void *)&actor_state, 0, INITIAL_ACTOR_CLEAR_BYTES);
-    memset((void *)&map_object_state, 0, INITIAL_MAP_OBJECT_CLEAR_BYTES);
-    memset((void *)&effect_state, 0, sizeof(KfEffectState));
-    memset((void *)map_runtime_state.events, 0, INITIAL_MAP_EVENT_CLEAR_BYTES);
-    memset((void *)&player_state, 0, sizeof(KfPlayerState));
+    memset(&game_graphics_runtime, 0, sizeof game_graphics_runtime);
+    memset(&actor_state, 0, sizeof actor_state);
+    memset(&map_object_state, 0, sizeof map_object_state);
+    memset(&effect_state, 0, sizeof effect_state);
+    memset(&map_runtime_state, 0, sizeof map_runtime_state);
+    memset(&player_state, 0, sizeof player_state);
     memory_card_initialize();
     memory_set_allocation_mode(KF_MEMORY_CREATE_ARENA);
     audio_initialize();
@@ -114,6 +115,8 @@ void frame_pacer_vsync_callback(void)
     frame_pacer_vsync_count++;
 }
 
+/* Waits until three vertical blanks have passed since the last frame (20 fps
+ * on NTSC), or until the tick counter has wrapped. */
 ADDRESS(0x800149f4, 0x70)
 void frame_pacer_wait(void)
 {

@@ -157,8 +157,10 @@ slots, distinct from actor action IDs, animation IDs and effect kinds.
 
 Use s32 enum storage to retain both legacy parameter widths. Encode only for
 array indices and animation-slot arithmetic; forward the typed slot directly.
-The existing two-element attachment view is not resized: retail can compute
-the third slot's address, and this enum change preserves that existing access.
+At this enum review's baseline, the two-element attachment view was not resized: retail can compute
+the third slot's address, and that enum change preserved the existing access.
+The later [attachment reconstruction](actor-attachment-layout.md) models all
+three triples and their shared special-attack fields within one array owner.
 Source review covers all three callers and the single spawning call. Builds,
 compiler checks, tests and post-edit matches remain deferred as requested.
 

@@ -196,6 +196,44 @@ marks over the same screen rectangle. For example, authored label code
 0x104c is `MENU_TEXT_DAKUTEN | 0x4c`, producing `ず` from `す` in `はずす`.
 Character indices stay asset data; they are not Unicode values.
 
+### Decoded text atlas
+
+Decoding the same page as sixteen 14-by-12 columns gives the cells below
+(`·` is empty, `？` was not legible at the cell size). Kana, Latin and every
+kanji used by a source label are certain; the remaining kanji are best-effort
+readings of 12-pixel bitmaps. Rows 0x100 and up hold the four-cell class
+titles (SOLDIER, MAGE, WIZARD, HIGHSOLDIER).
+
+| Row | Codes | Cells |
+| --- | --- | --- |
+| 0 | 0x00-0x0f | ア イ ウ エ オ カ キ ク ケ コ サ シ ス セ ソ タ |
+| 1 | 0x10-0x1f | チ ツ テ ト ナ ニ ヌ ネ ノ ハ ヒ フ ヘ ホ マ ミ |
+| 2 | 0x20-0x2f | ム メ モ ヤ ユ ヨ ワ ン ラ リ ル レ ロ ー ゛ ゜ |
+| 3 | 0x30-0x3f | ァ ィ ゥ ェ ォ ッ ャ ュ ョ ・ · · · · · · |
+| 4 | 0x40-0x4f | あ い う え お か き く け こ さ し す せ そ た |
+| 5 | 0x50-0x5f | ち つ て と な に ぬ ね の は ひ ふ へ ほ ま み |
+| 6 | 0x60-0x6f | む め も や ゆ よ わ ん ら り る れ ろ を · · |
+| 7 | 0x70-0x7f | 装 備 使 売 買 捨 武 器 魔 法 防 具 店 頭 胴 腕 |
+| 8 | 0x80-0x8f | 足 他 経 験 値 状 態 ？ 毒 攻 撃 力 体 金 貨 薬 |
+| 9 | 0x90-0x9f | 草 消 回 復 竜 士 業 実 月 除 風 刃 輪 双 指 十 |
+| a | 0xa0-0xaf | 字 架 死 者 鍵 家 番 人 地 図 杯 幻 杖 緑 真 理 |
+| b | 0xb0-0xbf | 鏡 ト 年 ？ ？ 竪 琴 水 封 印 石 土 ？ 台 火 聖 |
+| c | 0xc0-0xcf | ？ ？ 目 手 ？ 正 常 暗 呪 ？ 個 数 階 層 総 合 |
+| d | 0xd0-0xdf | 御 切 打 刺 炎 効 果 音 楽 表 示 方 向 所 持 · |
+| e | 0xe0-0xef | 初 期 化 · · · · · · · · · · · · · |
+| f | 0xf0-0xff | H M P / 1 2 3 4 5 O N F · · ·   |
+
+Every label sequence in the menu sources decodes to a coherent word, which
+cross-checks the table: for example 経験値 (experience, 0x82 0x83 0x84),
+防御力 (defense), 捨てる (discard), はずす (unequip) and the configuration
+`ON`/`OFF` pair (0xf9 0xfa / 0xf9 0xfb 0xfb). The status page draws 魔力
+(magic) by writing only 魔 (0x78) and keeping 力 (0x8b) from the preceding
+体力 label. The per-element rows read 切る, 打つ, 刺す, 聖の魔法 (holy) and 炎の魔法
+(flame) for attack, matching the cutting/striking/piercing/holy/fire terms
+summed into the attack rating, and 毒 and 魔の魔法 (dark magic) for the
+poison-resistance and `magic_defense` lines; those formulas identify the
+small-bitmap readings of 0xbf and 0xd4. Source comments give each label's English meaning.
+
 Reproduction identities (SHA-256):
 
 - `KF/COM/STAT.DAT`, 5708 bytes:

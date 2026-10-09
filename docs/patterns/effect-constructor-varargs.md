@@ -85,6 +85,51 @@ Release 2.5 media omit `STDARG.H`; the project's current header is likewise
 a reconstruction whose exact menu/notification/formatter controls do not
 prove its suitability for this constructor.
 
+## Preserved Runtime Library 3.0 control
+
+A follow-up review on cleanup input `f773175a` checked three byte-identical
+local extractions labelled Runtime Library 3.0: the PSX 3.0 include tree and
+the ISO/LZH runtime include trees. The original CRLF header has SHA-256
+`43d39ef8cd688afd32994e98ae28cd5f8e956695e4cb1cd193d365b135a566e9`.
+The directly inspected `psx-3.0-1995-04-08.zip` container has SHA-256
+`416241637cdb0273b6bd936b0ab5627c8ba7225ee2b98066cf3b50fb09e57899`;
+its `psx/INCLUDE/STDARG.H` entry matches that header hash. The ZIP entry's
+1995-04-08 timestamp is archive metadata, not proof of its original release
+date or applicability to King's Field's earlier build. The other extracted
+copies corroborate the bytes; their extraction paths alone do not establish
+independent provenance.
+
+Its `va_list` is `char *`, while the pinned later 4.5 donor uses `void *`.
+Their rounded-size, start, advance/read, and end macro tokens agree. Both
+start after the last named argument. Neither is a witness for a cursor
+starting on the direction argument itself. Only CRLF-to-LF normalization was
+needed for the Unix probe preprocessor; macro tokens were preserved.
+
+The isolated five-fixed-argument control calls `va_start` before the free-slot
+lookup, consumes promoted integers before narrowing, reads rotation pointers
+with their pointer type, skips Wind Cutter's duration, and calls `va_end`.
+It uses the current production constructor body with these argument-access
+changes, not the old investigation's superseded declarations. The actual
+profile is GCC 2.5.7, `-O2 -G0 -mcpu=r2000`, with native ASPSX 1.07.
+
+| Control | Candidate bytes | Ordinary objdiff | First raw difference |
+| --- | ---: | ---: | --- |
+| Preserved 3.0 header | 2116 | 97.912050% | +0x24: retail `move s5,a0`; candidate `addiu s1,sp,76` |
+
+The candidate retains a 56-byte frame, but initializes the optional cursor
+early. Retail sets `s1 = sp + 72` at +0x34 in the lookup call's delay slot.
+The first differing words are `0080a821` and `27b1004c`, respectively.
+The known CFG block counts agree (52/52); the dispatch's unresolved indirect
+jump still prevents a full reachability/equivalence claim. This later header
+control reproduces the existing 4.5 control's size and percentage. It supplies
+additional header evidence, not a new exact replacement or compiler attribution.
+
+Fresh image-qualified constructor and caller evidence confirms the production
+constructor remains strict 100%. The native control object, compile metadata,
+header/container hashes, and raw verdict are retained locally under
+`build/cleanup-evidence/effect-arguments/sdk30/`; none are production or banked
+inputs. This documentation update leaves all executable inputs unchanged.
+
 ## Verdict and cleanup accounting
 
 The optional argument values and widths are supported. Original cursor/API

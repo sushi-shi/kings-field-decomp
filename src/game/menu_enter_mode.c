@@ -2,15 +2,9 @@
 #include <kf/lib/address.h>
 #define KF_MENU_MODE_IMPLEMENTATION
 #include <kf/game/menu.h>
-#include <kf/game/game.h>
-
-/*
- * menu_enter_mode (GAME.EXE): tear down and re-establish the system heap around a
- * mode-selected reload. It drains the GPU (DrawSync), runs animation_cache_release_all, resets
- * the system heap, dispatches on the mode argument, resets the heap again, and
- * clears the player motion state. Callers pass a variable number of arguments;
- * the modes that take one read it through the standard argument macros.
- */
+#include <kf/game/animation_cache.h>
+#include <kf/lib/memory.h>
+#include <kf/game/player.h>
 
 ADDRESS(0x80036e30, 0x8)
 void func_80036e30(void)
@@ -18,6 +12,12 @@ void func_80036e30(void)
     /* Unreferenced return stub; purpose and original owner are unresolved. */
 }
 
+/*
+ * Runs a menu mode on a clean system heap: drains the GPU, releases the
+ * animation cache, resets the heap, dispatches on MENU_MODE, resets the heap
+ * again and clears the player's motion. Callers pass a variable number of arguments;
+ * the modes that take one read it through the standard argument macros.
+ */
 ADDRESS(0x80036e38, 0xc8)
 u32 menu_enter_mode(KfMenuMode menu_mode, ...)
 {

@@ -7,7 +7,9 @@
 #include <kf/game/notify.h>
 #include <psyq/sdk.h>
 #include <psyq/libc.h>
-#include <kf/game/game.h>
+#include <kf/lib/resources.h>
+#include <kf/lib/memory.h>
+#include <psyq/pad.h>
 #include <kf/lib/tmd.h>
 #include <kf/lib/graphics.h>
 
@@ -16,7 +18,7 @@ enum {
     RENDER_PALETTE_NOTIFICATION,
     RENDER_PALETTE_COUNT,
     SYSTEM_SCREEN_READ_ATTEMPTS = 50,
-    PRIMITIVE_BUFFER_BYTES = 0x19640,
+    PRIMITIVE_BUFFER_BYTES = 104000,
     INITIAL_BACK_COLOR = 60,
     SYSTEM_SCREEN_BRIGHTNESS = 96,
     SYSTEM_SCREEN_PATH_DIGIT = 2,
@@ -69,7 +71,7 @@ void display_show_system_screen(KfSystemScreen screen)
 
     DrawSync(0);
     SetPolyFT4(&prim);
-    SetSemiTrans((void *)&prim, 1);
+    SetSemiTrans(&prim, 1);
     setXY4(&prim,
         KF_SYSTEM_SCREEN_LEFT, KF_SYSTEM_SCREEN_TOP,
         KF_SYSTEM_SCREEN_RIGHT, KF_SYSTEM_SCREEN_TOP,
@@ -81,7 +83,7 @@ void display_show_system_screen(KfSystemScreen screen)
         KF_GPU_TEXTURE_4BIT, KF_GPU_BLEND_AVERAGE,
         KF_SYSTEM_SCREEN_TPAGE_X, KF_TEXTURE_LOWER_PAGE_Y);
 
-    memcpy((void *)cd_path_buffer, (const void *)system_screen_path, sizeof system_screen_path);
+    memcpy(cd_path_buffer, system_screen_path, sizeof system_screen_path);
     cd_path_buffer[SYSTEM_SCREEN_PATH_DIGIT] = KF_ENUM_ENCODE(s32, screen) + '0';
     brightness = SYSTEM_SCREEN_BRIGHTNESS;
     if (CdSearchFile(&cd_search_file, cd_path_buffer) == NULL) {
@@ -113,7 +115,7 @@ void display_show_system_screen(KfSystemScreen screen)
     game_graphics_runtime.display_state.ordering_table = game_graphics_runtime.display_state.ordering_tables[back_buffer].entries;
     setRGB0(&prim, brightness, brightness, brightness);
     ClearOTagR(game_graphics_runtime.display_state.ordering_table, KF_ORDERING_TABLE_LENGTH);
-    AddPrim((void *)game_graphics_runtime.display_state.ordering_table, (void *)&prim);
+    AddPrim(game_graphics_runtime.display_state.ordering_table, &prim);
     DrawSync(0);
     DrawOTag(game_graphics_runtime.display_state.ordering_table + (KF_ORDERING_TABLE_LENGTH - 1));
     while (PadRead(1) == 0) {

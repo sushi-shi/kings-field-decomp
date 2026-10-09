@@ -67,7 +67,7 @@ enum {
     KF_MENU_CONFIG_MUSIC_ROW = 1,
     KF_MENU_CONFIG_GAUGES_ROW = 2,
     KF_MENU_CONFIG_COMPASS_ROW = 3,
-    KF_MENU_CONFIG_SETTING_COUNT = 4,
+    KF_MENU_CONFIG_SETTING_COUNT = KF_MENU_CONFIG_COMPASS_ROW + 1,
     KF_MENU_CONFIG_RETURN_ROW = KF_MENU_CONFIG_SETTING_COUNT,
     KF_MENU_CONFIG_ROW_COUNT = KF_MENU_CONFIG_RETURN_ROW + 1
 };
@@ -223,15 +223,25 @@ KF_ENUM_END(KfMenuSoundCue)
 enum {
     MENU_TEXT_END = -1,
     MENU_TEXT_BLANK = 0xff,
-    MENU_TEXT_GLYPH_MASK = 0x0fff,
     MENU_TEXT_DAKUTEN = 0x1000,
     MENU_TEXT_HANDAKUTEN = 0x2000,
+    MENU_TEXT_GLYPH_MASK = MENU_TEXT_DAKUTEN - 1,
     /* Numeric-atlas digits 0-9 are their own glyph codes. */
     MENU_NUMBER_ZERO = 0,
     MENU_NUMBER_BLANK = 10,
     MENU_NUMBER_SLASH = 11,
     /* Screen pixels between consecutive digits in the numeric atlas. */
     MENU_NUMBER_ADVANCE = 7
+};
+
+/* Status-row text cells: "seijou" (normal) and the one-kanji effect icons. */
+enum {
+    MENU_TEXT_STATUS_NORMAL_FIRST = 0xc5,
+    MENU_TEXT_STATUS_NORMAL_SECOND = 0xc6,
+    MENU_TEXT_STATUS_SLOWED = 0xc9,
+    MENU_TEXT_STATUS_POISON = 0x88,
+    MENU_TEXT_STATUS_DARKNESS = 0xc7,
+    MENU_TEXT_STATUS_CURSE = 0xc8
 };
 
 /* Decimal field widths shared by the header and detailed statistics views. */
@@ -265,8 +275,10 @@ enum {
     MENU_WIDGET_OT_DEPTH = 2000,
     MENU_WINDOW_OT_DEPTH = 2900,
     MENU_BACKGROUND_OT_DEPTH = 3000,
+    /* Frames a new screen or status message is held before input is read. */
+    MENU_SETTLE_FRAMES = 3,
     /* Zero-based: release held input after the third panel draw. */
-    MENU_PANEL_INPUT_RELEASE_FRAME = 2
+    MENU_PANEL_INPUT_RELEASE_FRAME = MENU_SETTLE_FRAMES - 1
 };
 
 /* Screen-space anchor shared by menu labels and sprite blitters. */
@@ -382,10 +394,11 @@ static inline void menu_list_previous(KfMenuList *list)
 {
     if (list->selected_index != 0) {
         list->selected_index--;
-        if (list->cursor_row == 0)
+        if (list->cursor_row == 0) {
             list->scroll_offset--;
-        else
+        } else {
             list->cursor_row--;
+        }
     } else {
         list->selected_index = list->entry_count - 1;
         if (list->entry_count < list->visible_rows) {
@@ -402,10 +415,11 @@ static inline void menu_list_next(KfMenuList *list)
 {
     if (list->selected_index < list->entry_count - 1) {
         list->selected_index++;
-        if (list->cursor_row == list->visible_rows - 1)
+        if (list->cursor_row == list->visible_rows - 1) {
             list->scroll_offset++;
-        else
+        } else {
             list->cursor_row++;
+        }
     } else {
         list->selected_index = 0;
         list->scroll_offset = 0;
@@ -419,16 +433,19 @@ enum {
     MENU_PICKUP_PREVIEW_YAW_STEP = 8
 };
 
-/* Shared inventory/shop model translation, in GTE transform units. */
+/* Shared inventory/shop model translation, in GTE transform units.  The
+ * pickup preview sits further left at the same height and depth. */
 enum {
     MENU_ITEM_PREVIEW_TRANSLATION_X = 560,
     MENU_ITEM_PREVIEW_TRANSLATION_Y = 140,
-    MENU_ITEM_PREVIEW_TRANSLATION_Z = 1500
+    MENU_ITEM_PREVIEW_TRANSLATION_Z = 1500,
+    MENU_PICKUP_PREVIEW_TRANSLATION_X = 220
 };
 
 /* Inventory/shop text positions and row pitch are screen pixels. */
 enum {
     MENU_ITEM_NAME_X = 174,
+    MENU_PICKUP_NAME_X = 128,
     MENU_ITEM_PREVIEW_NAME_Y = 36,
     MENU_ITEM_PREVIEW_LINE_HEIGHT = 18,
     MENU_ITEM_PREVIEW_QUANTITY_DIGITS = 2
@@ -523,13 +540,13 @@ extern void talk_show_dialogue_page(KF_ENUM_PARAM(KfFloorId, u8) floor, u8 stage
 
 /* Requires the GAME graphics state; preserve reverse primitive insertion order. */
 #define MENU_ENQUEUE_BACKGROUND() ( \
-    AddPrim((void *)(game_graphics_runtime.display_state.ordering_table + MENU_BACKGROUND_OT_DEPTH), \
-        (void *)&menu_assets.background_quads[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)][3]), \
-    AddPrim((void *)(game_graphics_runtime.display_state.ordering_table + MENU_BACKGROUND_OT_DEPTH), \
-        (void *)&menu_assets.background_quads[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)][2]), \
-    AddPrim((void *)(game_graphics_runtime.display_state.ordering_table + MENU_BACKGROUND_OT_DEPTH), \
-        (void *)&menu_assets.background_quads[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)][1]), \
-    AddPrim((void *)(game_graphics_runtime.display_state.ordering_table + MENU_BACKGROUND_OT_DEPTH), \
-        (void *)&menu_assets.background_quads[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)][0]))
+    AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_BACKGROUND_OT_DEPTH, \
+        &menu_assets.background_quads[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)][3]), \
+    AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_BACKGROUND_OT_DEPTH, \
+        &menu_assets.background_quads[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)][2]), \
+    AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_BACKGROUND_OT_DEPTH, \
+        &menu_assets.background_quads[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)][1]), \
+    AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_BACKGROUND_OT_DEPTH, \
+        &menu_assets.background_quads[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)][0]))
 
 #endif

@@ -1,7 +1,9 @@
 #include <kf/lib/address.h>
 #include <kf/lib/map_data.h>
 #include <kf/game/collision.h>
-#include <kf/game/game.h>
+#include <kf/game/player.h>
+#include <kf/game/actor.h>
+#include <kf/lib/map.h>
 
 /*
  * Negative values are floor-relative heights; nonnegative values select

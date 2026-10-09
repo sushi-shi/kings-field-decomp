@@ -3,7 +3,7 @@
 #include <kf/lib/types.h>
 #include <psyq/kernel.h>
 #include <psyq/libc.h>
-#include <kf/game/game.h>
+#include <kf/lib/memory.h>
 #include <kf/lib/memory_layout.h>
 
 enum {
@@ -25,16 +25,13 @@ enum {
 DATA(0x800a01f0, 0x58)
 KfMemoryArena memory_arena;
 
-
-/* Element 0 is the depth; elements 1..16 hold each allocation's size or malloc block. */
-
 /* Allocations must land in the 2 MiB of RAM mirrored at 0x80000000. */
 ADDRESS(0x8001aab0, 0x38)
 void *memory_malloc_checked(s32 size)
 {
     void *block = malloc(size);
 
-    if ((u32)block + MEMORY_CACHED_RAM_BASE > KF_MAIN_RAM_BYTES - 1) {
+    if ((u32)block + MEMORY_CACHED_RAM_BASE >= KF_MAIN_RAM_BYTES) {
         return NULL;
     }
     return block;
@@ -77,7 +74,7 @@ ADDRESS(0x8001abd0, 0x3c)
 void memory_reset_system_heap(void)
 {
     memory_arena.system_heap_size = (u8 *)MEMORY_SYSTEM_HEAP_END_ADDRESS - memory_arena.system_heap_start;
-    InitHeap((void *)memory_arena.system_heap_start, memory_arena.system_heap_size);
+    InitHeap(memory_arena.system_heap_start, memory_arena.system_heap_size);
 }
 
 /*
@@ -91,11 +88,12 @@ void *memory_allocate(s32 size)
     void *block;
     s32 depth;
 
+    /* SIZE becomes the recorded stack entry: the block itself on the heap. */
     if (*cursor == NULL) {
         block = memory_malloc_checked(size);
         size = (s32)block;
     } else {
-        block = (void *)*cursor;
+        block = *cursor;
         size = (size + (MEMORY_ALLOCATION_ALIGNMENT - 1))
             & ~(MEMORY_ALLOCATION_ALIGNMENT - 1);
         *cursor += size;

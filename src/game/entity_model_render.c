@@ -18,7 +18,6 @@ enum {
  * The actor descriptor's low nibble selects the asset; its high nibble selects
  * a cached texture page and CLUT when nonzero.
  */
-
 ADDRESS(0x8001e9a4, 0x214)
 void render_actor(KfActor *actor)
 {

@@ -3,7 +3,7 @@
 #include <kf/lib/map_data.h>
 #include <kf/game/collision.h>
 #include <kf/game/player.h>
-#include <kf/game/game.h>
+#include <kf/game/actor.h>
 #include <kf/game/magic.h>
 
 enum {
@@ -45,8 +45,12 @@ void magic_load_records(const KfMagicTable *table)
 /* magic_cast dispatch table (selected_magic_id 4..8). */
 RODATA(0x80012dc0, 0x14)
 
-/* Spawns the player's ranged magic effect for the current spell
- * (selected_magic_id 4..8), aiming at a target actor in the view cone. */
+/*
+ * Casts the selected attack spell.  Projectiles leave from in front of the
+ * camera and pitch toward an actor in the view cone (lightning arcs down at
+ * it); Fire Wall erupts under that actor, or three tiles ahead without one,
+ * and can also hurt the player.
+ */
 ADDRESS(0x8003a2a0, 0x4c0)
 void magic_cast(void)
 {
@@ -82,6 +86,7 @@ void magic_cast(void)
                 angles.x = LIGHTNING_UNTARGETED_PITCH;
                 distance = LIGHTNING_UNTARGETED_UPDATES;
             } else {
+                /* Unresolved source form: retail zeroes the pitch, then adds. */
                 angles.x = 0;
                 angles.x += player_state.camera_rotation.vx;
             }

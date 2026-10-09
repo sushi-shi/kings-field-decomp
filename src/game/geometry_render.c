@@ -55,11 +55,7 @@ enum {
  * renderer (render_frame).  Each walks a per-subsystem table of live entries,
  * feeds one through the GTE, and hands the projected model to the shared
  * display-list builder.
- */
-
-/* Six light/color matrices fed to SetLightMatrix, one per render subsystem. */
-
-/*
+ *
  * Draws the equipped weapon model held in the player's view.  Skips entirely
  * while no weapon swing is in progress (attack phase -1).  The weapon record
  * carries its own geometry-screen distance, an in-view translation, and a
@@ -104,7 +100,7 @@ void render_weapon(void)
  * color matrix is saved and replaced with render_state's HUD model color matrix
  * for the whole pass and restored afterwards.  Each live entry builds a rotated, uniformly scaled
  * model matrix with the translation folded into its t column, tests visibility
- * through render_bind_animated_instance, and, if visible, transforms and enqueues asset 0x15.
+ * through render_bind_animated_instance, and, if visible, transforms and enqueues the HUD model asset.
  */
 ADDRESS(0x8001f8b0, 0x124)
 void render_hud_models(void)
@@ -146,25 +142,19 @@ void render_hud_models(void)
 }
 
 /*
- * Walks a stride-14 table terminated by a 0xff type byte and dispatches every
- * active (type == 1) entry to render_screen_sprite, pointing it past the two-byte
- * header.  The table base is supplied by the caller.
+ * Draws every visible entry of a KF_SPRITE_END-terminated HUD sprite table
+ * through render_screen_sprite.
  */
 ADDRESS(0x8001f9d4, 0x70)
 void render_hud_sprites(KfHudSprite *table)
 {
     KfHudSprite *entry;
 
-    entry = table;
-    if (entry->state == KF_SPRITE_END) {
-        return;
-    }
-    do {
+    for (entry = table; entry->state != KF_SPRITE_END; entry++) {
         if (entry->state == KF_SPRITE_VISIBLE) {
             render_screen_sprite(&entry->sprite);
         }
-        entry++;
-    } while (entry->state != KF_SPRITE_END);
+    }
 }
 
 enum {
@@ -178,22 +168,18 @@ enum {
     NOTIFICATION_ATLAS_ROW_SHIFT = 4
 };
 
-
 /*
  * Notification queue and effect, one contiguous run
  * 0x8001fa44..0x8001fde4 (GAME.EXE): the notification ring enqueue/dequeue and
  * the on-screen notification effect. Module boundary is WIP.
- */
-
-/*
+ *
  * On-screen notification ring.  Player stat routines (level, training,
  * experience, item use) enqueue a message id here; the notification effect
- * state machine (notify_effect_update) consumes it a frame later.  Message id 0x13
- * carries a u16 payload stored in a parallel table.
+ * state machine (notify_effect_update) consumes it a frame later.  The gold
+ * message carries a u16 amount, stored in a parallel table.
  *
  * The optional second argument carries the gold-message payload.
  */
-
 ADDRESS(0x8001fa44, 0xa0)
 void notify_enqueue(KfNotificationArgument message_id, ...)
 {
@@ -222,6 +208,8 @@ void notification_digit_set_v(KfSpriteQuad *sprite, s32 digit)
     sprite->v = digit * NOTIFICATION_DIGIT_ROW_HEIGHT;
 }
 
+/* Drop the shown message together with any identical ones queued behind it
+ * (gold messages are never merged). */
 static inline void notify_dequeue_group(void)
 {
     KfNotificationControl *control;
@@ -243,11 +231,11 @@ static inline void notify_dequeue_group(void)
  * notify_enqueue and drives the six on-screen sprite records that
  * render_enqueue_sprite draws.
  *
- *   phase 0: a queued id starts an effect. Gold popups split their payload
- *            into four digit sprites; any other id shows one
- *            sprite whose atlas U/V cell comes from the id nibbles.
- *   phase 2: hold for fifteen frames.
- *   phase 3: rotate out, then clear the records and dequeue the entry.
+ *   IDLE:       a queued id starts an effect. Gold popups split their payload
+ *               into four digit sprites; any other id shows one
+ *               sprite whose atlas U/V cell comes from the id nibbles.
+ *   HOLD:       hold for fifteen frames.
+ *   ROTATE_OUT: rotate out, then clear the records and dequeue the entry.
  *
  * The six 14-byte notification_sprites rows share one complete descriptor
  * type; record 0 also anchors the four digit descriptors.
@@ -255,26 +243,22 @@ static inline void notify_dequeue_group(void)
  * The menu_format_number digit scratch reserves 24 stack bytes; only four
  * digits are read here, and the formatter's full capacity remains unverified.
  */
-
 ADDRESS(0x8001fafc, 0x2cc)
 void notify_effect_update(void)
 {
-    KfNotificationPhase *phase = &game_graphics_runtime.notification_state.control.effect_phase;
-
-    switch (*phase) {
+    switch (game_graphics_runtime.notification_state.control.effect_phase) {
     case KF_NOTIFICATION_IDLE: {
         u8 tail = game_graphics_runtime.notification_state.control.queue_tail;
         KfNotificationId id = game_graphics_runtime.notification_message_ids[tail];
         if (id == KF_NOTIFICATION_NONE) {
             return;
         }
-        *phase = KF_NOTIFICATION_HOLD;
+        game_graphics_runtime.notification_state.control.effect_phase = KF_NOTIFICATION_HOLD;
         game_graphics_runtime.notification_state.control.effect_angle_x = 0;
         game_graphics_runtime.notification_state.control.hold_frames = NOTIFICATION_HOLD_FRAMES;
         if (id == KF_NOTIFICATION_GOLD) {
-            KfNotificationSprite *sprite_records = notification_sprites;
             s16 digits[KF_NOTIFICATION_DIGIT_CAPACITY];
-            sprite_records[KF_NOTIFICATION_TEXT_SPRITE].active = KF_SPRITE_HIDDEN;
+            notification_sprites[KF_NOTIFICATION_TEXT_SPRITE].active = KF_SPRITE_HIDDEN;
             notification_sprites[KF_NOTIFICATION_GOLD_SPRITE].active = KF_SPRITE_VISIBLE;
             notification_sprites[KF_NOTIFICATION_GOLD_SPRITE].sprite.u =
                 (KF_ENUM_ENCODE(u8, id) & NOTIFICATION_ATLAS_COLUMN_MASK) << NOTIFICATION_ATLAS_COLUMN_SHIFT;
@@ -285,16 +269,16 @@ void notify_effect_update(void)
                 NOTIFICATION_GOLD_DIGITS, KF_FORMAT_PAD_SPACES, digits);
             notification_sprites[KF_NOTIFICATION_ONES_SPRITE].active = KF_SPRITE_VISIBLE;
             notification_digit_set_v(
-                &sprite_records[KF_NOTIFICATION_ONES_SPRITE].sprite, (u16)digits[3]);
+                &notification_sprites[KF_NOTIFICATION_ONES_SPRITE].sprite, (u16)digits[3]);
             notification_sprites[KF_NOTIFICATION_TENS_SPRITE].active = KF_SPRITE_VISIBLE;
             notification_digit_set_v(
-                &sprite_records[KF_NOTIFICATION_TENS_SPRITE].sprite, (u16)digits[2]);
+                &notification_sprites[KF_NOTIFICATION_TENS_SPRITE].sprite, (u16)digits[2]);
             notification_sprites[KF_NOTIFICATION_HUNDREDS_SPRITE].active = KF_SPRITE_VISIBLE;
             notification_digit_set_v(
-                &sprite_records[KF_NOTIFICATION_HUNDREDS_SPRITE].sprite, (u16)digits[1]);
+                &notification_sprites[KF_NOTIFICATION_HUNDREDS_SPRITE].sprite, (u16)digits[1]);
             notification_sprites[KF_NOTIFICATION_THOUSANDS_SPRITE].active = KF_SPRITE_VISIBLE;
             notification_digit_set_v(
-                &sprite_records[KF_NOTIFICATION_THOUSANDS_SPRITE].sprite, (u16)digits[0]);
+                &notification_sprites[KF_NOTIFICATION_THOUSANDS_SPRITE].sprite, (u16)digits[0]);
         } else {
             notification_sprites[KF_NOTIFICATION_TEXT_SPRITE].active = KF_SPRITE_VISIBLE;
             notification_sprites[KF_NOTIFICATION_TEXT_SPRITE].sprite.u =
@@ -310,10 +294,8 @@ void notify_effect_update(void)
         break;
     }
     case KF_NOTIFICATION_HOLD: {
-        u8 counter = game_graphics_runtime.notification_state.control.hold_frames - 1;
-        game_graphics_runtime.notification_state.control.hold_frames = counter;
-        if (counter == 0) {
-            *phase = KF_NOTIFICATION_ROTATE_OUT;
+        if (--game_graphics_runtime.notification_state.control.hold_frames == 0) {
+            game_graphics_runtime.notification_state.control.effect_phase = KF_NOTIFICATION_ROTATE_OUT;
         }
         break;
     }

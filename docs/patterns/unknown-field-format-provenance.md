@@ -1,7 +1,11 @@
 # Unknown-field format provenance
 
-The 79 remaining `unknown_` declarations belong to 33 reviewed owners. None is
-currently identified as an unnamed field *inside* an established complete SDK
+At the format-audit baseline, 79 `unknown_` declarations belonged to 33
+reviewed owners. The subsequent [actor attachment review](actor-attachment-layout.md)
+models `KfActorDefinition.unknown_38` as the third attachment's z coordinate;
+its ledger row now records that resolution. Other entries retain their
+individual unresolved verdicts. None was
+identified as an unnamed field *inside* an established complete SDK
 record. Several owners embed standard SDK types or point to standard files;
 those boundaries are documented below. The surrounding game layouts are
 supported by their consumers, but their unknown fields remain unresolved.
@@ -11,7 +15,8 @@ This audit does not certify every possible historical tool or SDK revision.
 the cited standard owner. It does not attribute a particular original author,
 converter, or historical C declaration. `Unresolved aggregate` also preserves
 uncertainty about subdivision and original ownership of the contiguous region.
-All 79 field spellings and extents remain unchanged by this format audit.
+The format audit itself changed no declarations; the later attachment
+reconstruction preserves the same bytes within their supported array owner.
 
 ## Pinned SDK evidence
 
@@ -69,9 +74,10 @@ itself. Retail/header evidence must decide that layout; neither revision gives
 meaning to KfSavePayload.unknown_0e0 or unknown_2548. This audit does not change
 the already modeled card header.
 
-## Complete owner coverage
+## Complete owner coverage at the format-audit baseline
 
-Each field listed here retains the `retain_unresolved` decision from the
+Except for the subsequently resolved actor attachment lane, fields below
+retain the `retain_unresolved` decision from the
 [field ledger](../unknown-field-review.tsv). The declaration link and the
 ledger provide exact offsets, widths, provenance and transport observations.
 A standard embedded member is not evidence for a neighboring unknown lane.
@@ -79,7 +85,7 @@ A standard embedded member is not evidence for a neighboring unknown lane.
 | Owner | Unknown fields (79 total) | Format/ownership verdict and evidence |
 | --- | --- | --- |
 | [KfActor](../../include/kf/game/actor.h) | `unknown_0c`, `unknown_1a`, `unknown_46` | Custom live actor: action, health, cached animation and tile state surround SDK VECTOR/KfRotation members. All three unknown ranges lie outside those members [S1]; no GsDOBJ layout match [S3]. |
-| [KfActorDefinition](../../include/kf/game/actor.h) | `unknown_38` | Custom MIXA actor definition: action tables, combat stats, packed sound selectors and attachment triples. The +0x38 lane is outside any SDK vector; a nonzero shipped row also rejects all-zero padding reasoning. |
+| [KfActorDefinition](../../include/kf/game/actor.h) | Historical `unknown_38` | Subsequently resolved as `attachment_offsets[2].z` by the [retail and shipped-data review](actor-attachment-layout.md). This remains a custom MIXA definition, not an SDK vector owner. |
 | [KfActorPlacement](../../include/kf/game/actor.h) | `unknown_07`, `unknown_0e` | Custom MIXA placement expanded by actor_pool_load_placements. The byte flags and tile/local-coordinate grammar are not a TMD object, GsDOBJ or SDK vector [S1,S3,F1]. |
 | [KfArmorRecord](../../include/kf/game/equipment.h) | `unknown_00`, `unknown_12` | Custom COM equipment/combat row, selected through item-ID-biased tables. No SDK equipment format was identified. Its nonzero suffix cannot acquire shop-price or reserved-field meaning from SDK documents. |
 | [KfAudioState](../../include/kf/lib/audio.h) | `unknown_06`, `unknown_0e` | Custom runtime glue: pointers to VAB/SEQ files, returned SDK IDs, listener transform and ten tracked voices. The two unknown ranges are outside the embedded SDK vectors and outside the pointed-to VabHdr/ProgAtr/VagAtr data [S1,S4]. It is not SpuVoiceAttr or SpuCommonAttr [S5]. |

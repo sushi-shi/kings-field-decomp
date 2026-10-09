@@ -15,6 +15,13 @@ promotes a probe to a proven historical toolchain.
 - [cpe2x-reserved-header.md](cpe2x-reserved-header.md): original converter
   write-mask control and the source export's separate linker/output checks.
 
+- [retained-source-forms.md](retained-source-forms.md): every jump label and
+  unresolved source form left after the readability pass, with the natural
+  rewrite tried for each and its listing similarity.
+
+- [actor-attachment-layout.md](actor-attachment-layout.md): retail and shipped-data
+  evidence for the three actor attachment triples and the shared special-attack lanes.
+
 - [cast-union-debt.md](cast-union-debt.md): master-based cast census and qualification,
   seven canonical owner/SDK replacements, retained dual-index grids, whole-object
   copying, named TMD decoding, and explicit void-pointer boundaries. Supersedes older

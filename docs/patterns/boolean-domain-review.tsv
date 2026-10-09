@@ -7,7 +7,7 @@ root	verdict	reason	literal_sites	members
 *format_pad_left:arg0	reject	NUL string terminator	1	*format_pad_left:arg0
 *format_vsprintf:arg0	reject	NUL string terminator	1	*format_vsprintf:arg0
 *map_ambient_script_floor5::encounter_started	named	no literal left: values spelled by existing constants (KF_MAP_SCRIPT_SET, KF_MAP_SCRIPT_UNSET)	0	*map_ambient_script_floor5::encounter_started
-*map_object_pool_clear::link_words	reject	whole-word clear of the link union	2	*map_object_pool_clear::link_words
+*map_object_pool_clear::link.words	reject	whole-word clear of the link union	2	*map_object_pool_clear::link.words
 *menu_config_panel_draw::state	named	no literal left: values spelled by existing constants (KF_PLAYER_OPTION_ON)	0	*menu_config_panel_draw::state
 *menu_drop_item_panel::player_stock	reject	quantity: an arithmetic- or increment-written slot (counter, delta, size, timer or index)	1	*menu_drop_item_panel::player_stock
 *menu_equip_select::player_stock	reject	count, size or quantity tested against zero	1	*menu_equip_select::player_stock

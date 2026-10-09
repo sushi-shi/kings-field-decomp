@@ -3,10 +3,9 @@
 #include <psyq/sdk.h>
 #include <kf/game/render.h>
 
-/* Emit a HUD quad in screen space using the current material. */
-
 enum { HUD_SPRITE_OT_DEPTH = 1 };
 
+/* Emit a HUD quad in screen space using the current material. */
 ADDRESS(0x8001e480, 0x16c)
 void render_screen_sprite(KfSpriteQuad *sprite)
 {
@@ -14,7 +13,8 @@ void render_screen_sprite(KfSpriteQuad *sprite)
 
     prim = (POLY_FT4 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
     game_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_FT4);
-    if (game_graphics_runtime.display_state.primitive_buffer->cursor > game_graphics_runtime.display_state.primitive_buffer->end) {
+    if (game_graphics_runtime.display_state.primitive_buffer->cursor
+        > game_graphics_runtime.display_state.primitive_buffer->end) {
         return;
     }
     SetPolyFT4(prim);
@@ -32,5 +32,5 @@ void render_screen_sprite(KfSpriteQuad *sprite)
         game_graphics_runtime.active_render_color.r,
         game_graphics_runtime.active_render_color.g,
         game_graphics_runtime.active_render_color.b);
-    AddPrim((void *)(&game_graphics_runtime.display_state.ordering_table[HUD_SPRITE_OT_DEPTH]), (void *)prim);
+    AddPrim(&game_graphics_runtime.display_state.ordering_table[HUD_SPRITE_OT_DEPTH], prim);
 }

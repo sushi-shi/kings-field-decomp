@@ -6,11 +6,12 @@
 #include <kf/game/actor.h>
 #include <kf/game/collision.h>
 #include <psyq/libc.h>
-#include <kf/game/game.h>
+#include <kf/game/player.h>
 
+/* Facing tolerances in 4096-per-turn angle units (about 35 and 40 degrees). */
 enum {
-    ACTOR_SELECTION_ANGLE_TOLERANCE = 0x18e,
-    ACTOR_MULTI_HIT_SELECTION_ANGLE_TOLERANCE = 0x1c7
+    ACTOR_SELECTION_ANGLE_TOLERANCE = 398,
+    ACTOR_MULTI_HIT_SELECTION_ANGLE_TOLERANCE = 455
 };
 
 enum {
@@ -19,8 +20,8 @@ enum {
     ACTOR_DYING_DAMAGE_CUTOFF_PHASE = 1548,
     ACTOR_STATUS_CHANCE_RANDOM_SHIFT = 7,
     ACTOR_SELECTION_RANDOM_SHIFT = 4,
-    ACTOR_SELECTION_FACING_BYPASS_LIMIT = 1638,
-    ACTOR_PROFILE_FACING_BYPASS_LIMIT = 819,
+    ACTOR_SELECTION_FACING_BYPASS_LIMIT = (RAND_MAX + 1) / 20,
+    ACTOR_PROFILE_FACING_BYPASS_LIMIT = (RAND_MAX + 1) / 40,
     ACTOR_SELECTION_FAR_RANGE_FACTOR = 4,
     ACTOR_SELECTION_FAR_CHANCE_SHIFT = 4,
     ACTOR_SELECTION_NEAR_CHANCE_SHIFT = 2,
@@ -294,11 +295,11 @@ ADDRESS(0x8002d120, 0x388)
 void actor_apply_damage(
     u16 actor_index,
     u16 base_power,
-    u16 component0,
-    u16 component1,
-    u16 component2,
-    u16 component3,
-    u16 component4,
+    u16 cutting_damage,
+    u16 striking_damage,
+    u16 piercing_damage,
+    u16 magic_damage,
+    u16 fire_damage,
     u16 scale,
     KF_ENUM_PARAM(KfEffectType, u16) hit_flags)
 {
@@ -324,23 +325,23 @@ void actor_apply_damage(
     }
     damage = combat_calculate_damage_component(
         base_power * KF_DAMAGE_SUBUNITS_PER_HP,
-        component0 * KF_DAMAGE_SUBUNITS_PER_HP,
+        cutting_damage * KF_DAMAGE_SUBUNITS_PER_HP,
         definition->defenses[KF_COMBAT_COMPONENT_CUTTING] * KF_DAMAGE_SUBUNITS_PER_HP);
     damage += combat_calculate_damage_component(
         base_power * KF_DAMAGE_SUBUNITS_PER_HP,
-        component1 * KF_DAMAGE_SUBUNITS_PER_HP,
+        striking_damage * KF_DAMAGE_SUBUNITS_PER_HP,
         definition->defenses[KF_COMBAT_COMPONENT_STRIKING] * KF_DAMAGE_SUBUNITS_PER_HP);
     damage += combat_calculate_damage_component(
         base_power * KF_DAMAGE_SUBUNITS_PER_HP,
-        component2 * KF_DAMAGE_SUBUNITS_PER_HP,
+        piercing_damage * KF_DAMAGE_SUBUNITS_PER_HP,
         definition->defenses[KF_COMBAT_COMPONENT_PIERCING] * KF_DAMAGE_SUBUNITS_PER_HP);
     damage += combat_calculate_damage_component(
         base_power * KF_DAMAGE_SUBUNITS_PER_HP,
-        component3 * KF_DAMAGE_SUBUNITS_PER_HP,
+        magic_damage * KF_DAMAGE_SUBUNITS_PER_HP,
         definition->defenses[KF_COMBAT_COMPONENT_HOLY] * KF_DAMAGE_SUBUNITS_PER_HP);
     damage += combat_calculate_damage_component(
         base_power * KF_DAMAGE_SUBUNITS_PER_HP,
-        component4 * KF_DAMAGE_SUBUNITS_PER_HP,
+        fire_damage * KF_DAMAGE_SUBUNITS_PER_HP,
         definition->defenses[KF_COMBAT_COMPONENT_FIRE] * KF_DAMAGE_SUBUNITS_PER_HP);
     damage += KF_DAMAGE_SUBUNITS_PER_HP / 2;
     damage = (damage / KF_DAMAGE_SUBUNITS_PER_HP) * scale / KF_ACTOR_DAMAGE_SCALE_ONE;
@@ -348,10 +349,12 @@ void actor_apply_damage(
     if (damage == 0) {
         return;
     }
+    /* A player hit trains magic when it has no physical part and physical
+     * power when it strikes or pierces; a purely cutting hit trains neither. */
     if (actor->health != 0 && hit_flags == KF_ACTOR_DAMAGE_CREDIT_PLAYER) {
-        if (component0 == 0 && component1 == 0 && component2 == 0) {
+        if (cutting_damage == 0 && striking_damage == 0 && piercing_damage == 0) {
             player_increment_magic_training();
-        } else if (component1 != 0 || component2 != 0) {
+        } else if (striking_damage != 0 || piercing_damage != 0) {
             player_increment_physical_power_training();
         }
     }
@@ -383,11 +386,11 @@ void actor_pool_apply_radial_damage(
     u32 radius,
     u16 falloff_q12,
     u16 base_power,
-    u16 component0,
-    u16 component1,
-    u16 component2,
-    u16 component3,
-    u16 component4,
+    u16 cutting_damage,
+    u16 striking_damage,
+    u16 piercing_damage,
+    u16 magic_damage,
+    u16 fire_damage,
     u16 scale,
     KF_ENUM_PARAM(KfEffectType, u16) hit_flags)
 {
@@ -427,11 +430,11 @@ void actor_pool_apply_radial_damage(
         actor_apply_damage(
             index,
             base_power,
-            component0,
-            component1,
-            component2,
-            component3,
-            component4,
+            cutting_damage,
+            striking_damage,
+            piercing_damage,
+            magic_damage,
+            fire_damage,
             damage_scale,
             hit_flags);
     }
@@ -545,36 +548,36 @@ s32 actor_distance_to_point(
     s32 delta_y;
     s32 distance;
 
-    switch (0) {
-    default:
-        point_x = actor->position.vx - point_x;
-        if (point_x < -max_distance || max_distance < point_x) {
-            return KF_DISTANCE_NONE;
-        }
-        point_z = actor->position.vz - point_z;
-        if (point_z < -max_distance || max_distance < point_z) {
-            return KF_DISTANCE_NONE;
-        }
-        point_x >>= KF_LENGTH_SQUARE_DOWNSHIFT;
-        if (point_y != KF_COLLISION_IGNORE_HEIGHT) {
-            actor_height >>= 1;
-            point_height >>= 1;
-            delta_y = (actor->position.vy - actor_height) - (point_y - point_height);
-            point_height += actor_height;
-            if (delta_y < -point_height) {
-                return KF_DISTANCE_NONE;
-            }
-            if (point_height < delta_y) {
-                break;
-            }
-        }
-        point_z >>= KF_LENGTH_SQUARE_DOWNSHIFT;
-        distance = SquareRoot0(point_x * point_x + point_z * point_z) << KF_LENGTH_SQUARE_DOWNSHIFT;
-        if (max_distance < distance) {
-            break;
-        }
-        return distance;
+    /* point_x and point_z become the actor's offsets from the point. */
+    point_x = actor->position.vx - point_x;
+    if (point_x < -max_distance || max_distance < point_x) {
+        return KF_DISTANCE_NONE;
     }
+    point_z = actor->position.vz - point_z;
+    if (point_z < -max_distance || max_distance < point_z) {
+        return KF_DISTANCE_NONE;
+    }
+    point_x >>= KF_LENGTH_SQUARE_DOWNSHIFT;
+    if (point_y != KF_COLLISION_IGNORE_HEIGHT) {
+        actor_height >>= 1;
+        point_height >>= 1;
+        delta_y = (actor->position.vy - actor_height) - (point_y - point_height);
+        point_height += actor_height;
+        if (delta_y < -point_height) {
+            return KF_DISTANCE_NONE;
+        }
+        if (point_height < delta_y) {
+            goto out_of_range;
+        }
+    }
+    point_z >>= KF_LENGTH_SQUARE_DOWNSHIFT;
+    distance = SquareRoot0(point_x * point_x + point_z * point_z) << KF_LENGTH_SQUARE_DOWNSHIFT;
+    if (max_distance < distance) {
+        goto out_of_range;
+    }
+    return distance;
+
+out_of_range:
     return KF_DISTANCE_NONE;
 }
 
@@ -708,7 +711,7 @@ KfActorAction actor_try_select_action_distance_facing(
     } else {
         odds >>= ACTOR_SELECTION_OUTER_CHANCE_SHIFT;
     }
-    if (!((rand() >> ACTOR_SELECTION_RANDOM_SHIFT) < odds)) {
+    if ((rand() >> ACTOR_SELECTION_RANDOM_SHIFT) >= odds) {
         return KF_ACTOR_ACTION_NONE;
     }
     if (rand() < ACTOR_SELECTION_FACING_BYPASS_LIMIT) {
@@ -748,11 +751,7 @@ KfActorAction actor_try_select_ground_action(KfActorAction action, s32 distance,
         }
         odds <<= ACTOR_GROUND_NEAR_CHANCE_SHIFT;
     }
-    switch (0) {
-    default:
-        if (!((rand() >> ACTOR_SELECTION_RANDOM_SHIFT) < odds)) {
-            break;
-        }
+    if ((rand() >> ACTOR_SELECTION_RANDOM_SHIFT) < odds) {
         if (rand() < ACTOR_SELECTION_FACING_BYPASS_LIMIT) {
             return action;
         }
@@ -783,7 +782,7 @@ KfActorAction actor_try_select_multi_hit_action(KfActorAction action, s32 distan
         }
         odds <<= ACTOR_MULTI_HIT_NEAR_CHANCE_SHIFT;
     }
-    if (!((rand() >> ACTOR_SELECTION_RANDOM_SHIFT) < odds)) {
+    if ((rand() >> ACTOR_SELECTION_RANDOM_SHIFT) >= odds) {
         return KF_ACTOR_ACTION_NONE;
     }
     if (angle_within_tolerance(
@@ -801,8 +800,7 @@ KfActorAction actor_try_select_profiled_action(KfActorAction action,
     KF_ENUM_PARAM(KfActorEffectCode, u16) effect_code,
     u16 chance)
 {
-    KF_ENUM_PARAM(KfEffectKind, u16)
-    profile = KF_ENUM_DECODE(KF_ENUM_PARAM(KfEffectKind, u16),
+    KF_ENUM_PARAM(KfEffectKind, u16) profile = KF_ENUM_DECODE(KF_ENUM_PARAM(KfEffectKind, u16),
         KF_ENUM_ENCODE(u16, effect_code & KF_ACTOR_EFFECT_KIND_MASK));
     KfActorActionProfile *weights = &actor_action_profiles[KF_ENUM_ENCODE(u16, profile)];
     KfActor *actor = actor_state.current;
@@ -824,47 +822,44 @@ KfActorAction actor_try_select_profiled_action(KfActorAction action,
         }
     }
     odds = (chance * odds) >> KF_FIXED8_BITS;
-    if (!((rand() >> ACTOR_SELECTION_RANDOM_SHIFT) < odds)) {
+    if ((rand() >> ACTOR_SELECTION_RANDOM_SHIFT) >= odds) {
         return KF_ACTOR_ACTION_NONE;
     }
-    switch (0) {
-    default:
-        if (!angle_within_tolerance(
-                actor->rotation.angles.y,
-                ACTOR_BEARING_TO_PLAYER(actor),
-                KF_ACTOR_AIM_TOLERANCE)
-            && rand() >= ACTOR_PROFILE_FACING_BYPASS_LIMIT) {
-            break;
-        }
-        switch (0) {
-        default:
-            if (profile != KF_EFFECT_KIND_ACTOR_SPAWNER) {
-                break;
-            }
-            candidate = actor_state.actors;
-            count = 0;
-            index = KF_ACTOR_CAPACITY - 1;
-            do {
-                if (candidate->slot_state != KF_ACTOR_SLOT_FREE
-                    && candidate->lifecycle == KF_ACTOR_LIFECYCLE_ACTIVE) {
-                    count++;
-                }
-                candidate++;
-            } while (--index != -1);
-            record = effect_state.records;
-            index = KF_EFFECT_CAPACITY - 1;
-            do {
-                if (record->type != KF_EFFECT_SLOT_FREE
-                    && record->kind == KF_EFFECT_KIND_ACTOR_SPAWNER) {
-                    count++;
-                }
-                record++;
-            } while (--index != -1);
-            if (count >= ACTOR_SPAWNER_POPULATION_LIMIT) {
-                return KF_ACTOR_ACTION_NONE;
-            }
-        }
-        return action;
+    if (!angle_within_tolerance(
+            actor->rotation.angles.y,
+            ACTOR_BEARING_TO_PLAYER(actor),
+            KF_ACTOR_AIM_TOLERANCE)
+        && rand() >= ACTOR_PROFILE_FACING_BYPASS_LIMIT) {
+        goto rejected;
     }
+    /* A spawner summons only while fewer than two actors are active (the
+     * caster included) and no summon is still in flight. */
+    if (profile == KF_EFFECT_KIND_ACTOR_SPAWNER) {
+        candidate = actor_state.actors;
+        count = 0;
+        index = KF_ACTOR_CAPACITY - 1;
+        do {
+            if (candidate->slot_state != KF_ACTOR_SLOT_FREE
+                && candidate->lifecycle == KF_ACTOR_LIFECYCLE_ACTIVE) {
+                count++;
+            }
+            candidate++;
+        } while (--index != -1);
+        record = effect_state.records;
+        index = KF_EFFECT_CAPACITY - 1;
+        do {
+            if (record->type != KF_EFFECT_SLOT_FREE
+                && record->kind == KF_EFFECT_KIND_ACTOR_SPAWNER) {
+                count++;
+            }
+            record++;
+        } while (--index != -1);
+        if (count >= ACTOR_SPAWNER_POPULATION_LIMIT) {
+            return KF_ACTOR_ACTION_NONE;
+        }
+    }
+    return action;
+
+rejected:
     return KF_ACTOR_ACTION_NONE;
 }

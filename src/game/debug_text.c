@@ -6,7 +6,7 @@
 
 /*
  * The formatter walks its va_list argument words and returns a byte count
- * including the terminating NUL. The diagnostic sink currently emits nothing.
+ * including the terminating NUL. The retail diagnostic sink is an empty stub.
  */
 
 /* "DEBUG STOP !!!" literal owned by this unit in the shared rodata pool. */
@@ -26,7 +26,7 @@ ADDRESS(0x8003a7dc, 0x40)
 void debug_stop(void)
 {
     debug_printf_sink("DEBUG STOP !!!\n");
-    debug_stop_flag = debug_stop_flag == KF_FALSE;
+    debug_stop_flag = !debug_stop_flag;
 }
 
 #include "../lib/format.inc"

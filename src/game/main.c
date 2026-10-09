@@ -2,7 +2,10 @@
 #include <kf/lib/overlay.h>
 #include <kf/lib/types.h>
 #include <psyq/kernel.h>
-#include <kf/game/game.h>
+#include <kf/game/system.h>
+#include <kf/game/state.h>
+#include <psyq/cd.h>
+#include <psyq/pad.h>
 
 #include "../lib/repeat_store_word.inc"
 
@@ -13,9 +16,11 @@
 ADDRESS(0x8001428c, 0x88)
 void main(s32 entry_arg0, KfOverlayArguments *entry_args)
 {
+    /* Meant to clear BSS and the stack, but repeat_store_word never advances
+     * its pointer, so retail only zeroes the first BSS word. */
     repeat_store_word((int *)BSS_START,
         (OVERLAY_STACK_BOTTOM - (u32)BSS_START) / sizeof(int), 0);
-    InitHeap((void *)BSS_END, OVERLAY_STACK_BOTTOM - (u32)BSS_END);
+    InitHeap(BSS_END, OVERLAY_STACK_BOTTOM - (u32)BSS_END);
     CdInit();
     PadInit(0);
     InitCARD2(1);

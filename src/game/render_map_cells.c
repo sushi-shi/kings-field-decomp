@@ -2,7 +2,7 @@
 #include <kf/lib/address.h>
 #include <kf/lib/map_data.h>
 #include <kf/game/render.h>
-#include <kf/game/game.h>
+#include <kf/game/player.h>
 
 enum {
     ILLUSION_STAFF_REMAP_PHASE_MASK = 3,
@@ -44,7 +44,8 @@ ADDRESS(0x8001e5ec, 0x250)
 void render_map_cell(s32 col, s32 row, KF_ENUM_PARAM(KfCellVisibility, char) visibility)
 {
     MATRIX cell_matrix;
-    MATRIX unused_matrix; /* unused; sizes the retail frame */
+    /* Unresolved source form: never used; retail reserves this frame slot. */
+    MATRIX unused_matrix;
     SVECTOR position;
     long flag;
     s32 orientation;
@@ -71,8 +72,8 @@ void render_map_cell(s32 col, s32 row, KF_ENUM_PARAM(KfCellVisibility, char) vis
             break;
         }
     }
-    object_index = object_index - 1;
-    if (object_index > KF_MAP_MESHES_PER_BANK - 1) {
+    object_index--;
+    if (object_index >= KF_MAP_MESHES_PER_BANK) {
         return;
     }
     orientation = KF_ENUM_ENCODE(u8, map_cell_orientation_grid.cells[row][col]) - 1;
@@ -113,7 +114,6 @@ void render_map_cell(s32 col, s32 row, KF_ENUM_PARAM(KfCellVisibility, char) vis
  * then walks the window's cell grid and hands every populated, in-range cell
  * to the per-cell emitter render_map_cell.
  */
-
 ADDRESS(0x8001e83c, 0x168)
 void render_map_cells(void)
 {

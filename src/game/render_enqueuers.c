@@ -53,7 +53,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 KfGpuFT3 *prim = (KfGpuFT3 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
                 game_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_FT3);
-                if (game_graphics_runtime.display_state.primitive_buffer->cursor > game_graphics_runtime.display_state.primitive_buffer->end) {
+                if (game_graphics_runtime.display_state.primitive_buffer->cursor
+                    > game_graphics_runtime.display_state.primitive_buffer->end) {
                     return;
                 }
                 SetPolyFT3(&prim->sdk);
@@ -69,10 +70,10 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 NormalColorDpq((SVECTOR *)(normals + p->ft3.n0), &tmd_textured_primitive_color,
                                (va->p2 + vb->p2 + vc->p2) / 3, &prim->packed.color0);
                 otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;
-                if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
+                if (otz + depth_bias >= KF_SCENE_MIN_OT_DEPTH) {
                     AddPrim(
-                        (void *)(&game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK]),
-                        (void *)&prim->sdk);
+                        &game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
+                        &prim->sdk);
                 }
             }
             break;
@@ -88,7 +89,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
 
                 vd = VTX(p->f4.v3);
                 game_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_F4);
-                if (game_graphics_runtime.display_state.primitive_buffer->cursor > game_graphics_runtime.display_state.primitive_buffer->end) {
+                if (game_graphics_runtime.display_state.primitive_buffer->cursor
+                    > game_graphics_runtime.display_state.primitive_buffer->end) {
                     return;
                 }
                 SetPolyF4(&prim->sdk);
@@ -99,10 +101,10 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 NormalColorDpq((SVECTOR *)(normals + p->f4.n0), &p->color,
                                (va->p2 + vb->p2 + vc->p2 + vd->p2) >> 2, &prim->packed.color0);
                 otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);
-                if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
+                if (otz + depth_bias >= KF_SCENE_MIN_OT_DEPTH) {
                     AddPrim(
-                        (void *)(&game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK]),
-                        (void *)&prim->sdk);
+                        &game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
+                        &prim->sdk);
                 }
             }
             break;
@@ -117,7 +119,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 KfGpuG3 *prim = (KfGpuG3 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
                 game_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_G3);
-                if (game_graphics_runtime.display_state.primitive_buffer->cursor > game_graphics_runtime.display_state.primitive_buffer->end) {
+                if (game_graphics_runtime.display_state.primitive_buffer->cursor
+                    > game_graphics_runtime.display_state.primitive_buffer->end) {
                     return;
                 }
                 SetPolyG3(&prim->sdk);
@@ -128,10 +131,10 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                                 (SVECTOR *)(normals + p->g3.n2), &p->color, va->p2,
                                 &prim->packed.color0, &prim->packed.color1, &prim->packed.color2);
                 otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;
-                if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
+                if (otz + depth_bias >= KF_SCENE_MIN_OT_DEPTH) {
                     AddPrim(
-                        (void *)(&game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK]),
-                        (void *)&prim->sdk);
+                        &game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
+                        &prim->sdk);
                 }
             }
             break;
@@ -147,7 +150,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
 
                 vd = VTX(p->g4.v3);
                 game_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_G4);
-                if (game_graphics_runtime.display_state.primitive_buffer->cursor > game_graphics_runtime.display_state.primitive_buffer->end) {
+                if (game_graphics_runtime.display_state.primitive_buffer->cursor
+                    > game_graphics_runtime.display_state.primitive_buffer->end) {
                     return;
                 }
                 SetPolyG4(&prim->sdk);
@@ -161,10 +165,10 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 NormalColorDpq((SVECTOR *)(normals + p->g4.n3), &p->color, va->p2,
                                &prim->packed.color3);
                 otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);
-                if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
+                if (otz + depth_bias >= KF_SCENE_MIN_OT_DEPTH) {
                     AddPrim(
-                        (void *)(&game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK]),
-                        (void *)&prim->sdk);
+                        &game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
+                        &prim->sdk);
                 }
             }
             break;
@@ -179,7 +183,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 KfGpuGT3 *prim = (KfGpuGT3 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
                 game_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_GT3);
-                if (game_graphics_runtime.display_state.primitive_buffer->cursor > game_graphics_runtime.display_state.primitive_buffer->end) {
+                if (game_graphics_runtime.display_state.primitive_buffer->cursor
+                    > game_graphics_runtime.display_state.primitive_buffer->end) {
                     return;
                 }
                 SetPolyGT3(&prim->sdk);
@@ -196,10 +201,10 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                                 (SVECTOR *)(normals + p->gt3.n2), &tmd_textured_primitive_color, va->p2,
                                 &prim->packed.color0, &prim->packed.color1, &prim->packed.color2);
                 otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;
-                if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
+                if (otz + depth_bias >= KF_SCENE_MIN_OT_DEPTH) {
                     AddPrim(
-                        (void *)(&game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK]),
-                        (void *)&prim->sdk);
+                        &game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
+                        &prim->sdk);
                 }
             }
             break;
@@ -215,7 +220,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
 
                 vd = VTX(p->gt4.v3);
                 game_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_GT4);
-                if (game_graphics_runtime.display_state.primitive_buffer->cursor > game_graphics_runtime.display_state.primitive_buffer->end) {
+                if (game_graphics_runtime.display_state.primitive_buffer->cursor
+                    > game_graphics_runtime.display_state.primitive_buffer->end) {
                     return;
                 }
                 SetPolyGT4(&prim->sdk);
@@ -236,10 +242,10 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 NormalColorDpq((SVECTOR *)(normals + p->gt4.n3), &tmd_textured_primitive_color, va->p2,
                                &prim->packed.color3);
                 otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);
-                if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
+                if (otz + depth_bias >= KF_SCENE_MIN_OT_DEPTH) {
                     AddPrim(
-                        (void *)(&game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK]),
-                        (void *)&prim->sdk);
+                        &game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
+                        &prim->sdk);
                 }
             }
             break;
@@ -254,11 +260,12 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 KfGpuG3 *prim = (KfGpuG3 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
                 game_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_G3);
-                if (game_graphics_runtime.display_state.primitive_buffer->cursor > game_graphics_runtime.display_state.primitive_buffer->end) {
+                if (game_graphics_runtime.display_state.primitive_buffer->cursor
+                    > game_graphics_runtime.display_state.primitive_buffer->end) {
                     return;
                 }
                 SetPolyG3(&prim->sdk);
-                SetSemiTrans((void *)&prim->sdk, 1);
+                SetSemiTrans(&prim->sdk, 1);
                 prim->packed.xy0 = va->sxy.word;
                 prim->packed.xy1 = vb->sxy.word;
                 prim->packed.xy2 = vc->sxy.word;
@@ -266,10 +273,10 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                                 (SVECTOR *)(normals + p->g3.n2), &p->color,
                                 &prim->packed.color0, &prim->packed.color1, &prim->packed.color2);
                 otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;
-                if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
+                if (otz + depth_bias >= KF_SCENE_MIN_OT_DEPTH) {
                     AddPrim(
-                        (void *)(&game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK]),
-                        (void *)&prim->sdk);
+                        &game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
+                        &prim->sdk);
                 }
             }
             break;
@@ -285,7 +292,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
 
                 vd = VTX(p->ft4.v3);
                 game_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_FT4);
-                if (game_graphics_runtime.display_state.primitive_buffer->cursor > game_graphics_runtime.display_state.primitive_buffer->end) {
+                if (game_graphics_runtime.display_state.primitive_buffer->cursor
+                    > game_graphics_runtime.display_state.primitive_buffer->end) {
                     return;
                 }
                 SetPolyFT4(&prim->sdk);
@@ -303,10 +311,10 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 NormalColorDpq((SVECTOR *)(normals + p->ft4.n0), &tmd_textured_primitive_color,
                                (va->p2 + vb->p2 + vc->p2 + vd->p2) >> 2, &prim->packed.color0);
                 otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);
-                if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
+                if (otz + depth_bias >= KF_SCENE_MIN_OT_DEPTH) {
                     AddPrim(
-                        (void *)(&game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK]),
-                        (void *)&prim->sdk);
+                        &game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
+                        &prim->sdk);
                 }
             }
             break;
@@ -321,7 +329,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 KfGpuF3 *prim = (KfGpuF3 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
                 game_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_F3);
-                if (game_graphics_runtime.display_state.primitive_buffer->cursor > game_graphics_runtime.display_state.primitive_buffer->end) {
+                if (game_graphics_runtime.display_state.primitive_buffer->cursor
+                    > game_graphics_runtime.display_state.primitive_buffer->end) {
                     return;
                 }
                 SetPolyF3(&prim->sdk);
@@ -331,10 +340,10 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 NormalColorDpq((SVECTOR *)(normals + p->f3.n0), &p->color,
                                (va->p2 + vb->p2 + vc->p2) / 3, &prim->packed.color0);
                 otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;
-                if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
+                if (otz + depth_bias >= KF_SCENE_MIN_OT_DEPTH) {
                     AddPrim(
-                        (void *)(&game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK]),
-                        (void *)&prim->sdk);
+                        &game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
+                        &prim->sdk);
                 }
             }
             break;
@@ -350,11 +359,12 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
 
                 vd = VTX(p->g4.v3);
                 game_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_G4);
-                if (game_graphics_runtime.display_state.primitive_buffer->cursor > game_graphics_runtime.display_state.primitive_buffer->end) {
+                if (game_graphics_runtime.display_state.primitive_buffer->cursor
+                    > game_graphics_runtime.display_state.primitive_buffer->end) {
                     return;
                 }
                 SetPolyG4(&prim->sdk);
-                SetSemiTrans((void *)&prim->sdk, 1);
+                SetSemiTrans(&prim->sdk, 1);
                 prim->packed.xy0 = va->sxy.word;
                 prim->packed.xy1 = vb->sxy.word;
                 prim->packed.xy2 = vc->sxy.word;
@@ -364,10 +374,10 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 NormalColorDpq((SVECTOR *)(normals + p->g4.n2), &p->color, va->p2, &prim->packed.color2);
                 NormalColorDpq((SVECTOR *)(normals + p->g4.n3), &p->color, va->p2, &prim->packed.color3);
                 otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);
-                if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
+                if (otz + depth_bias >= KF_SCENE_MIN_OT_DEPTH) {
                     AddPrim(
-                        (void *)(&game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK]),
-                        (void *)&prim->sdk);
+                        &game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
+                        &prim->sdk);
                 }
             }
             break;
@@ -382,21 +392,22 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 KfGpuF3 *prim = (KfGpuF3 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
                 game_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_F3);
-                if (game_graphics_runtime.display_state.primitive_buffer->cursor > game_graphics_runtime.display_state.primitive_buffer->end) {
+                if (game_graphics_runtime.display_state.primitive_buffer->cursor
+                    > game_graphics_runtime.display_state.primitive_buffer->end) {
                     return;
                 }
                 SetPolyF3(&prim->sdk);
-                SetSemiTrans((void *)&prim->sdk, 1);
+                SetSemiTrans(&prim->sdk, 1);
                 prim->packed.xy0 = va->sxy.word;
                 prim->packed.xy1 = vb->sxy.word;
                 prim->packed.xy2 = vc->sxy.word;
                 NormalColorDpq((SVECTOR *)(normals + p->f3.n0), &p->color,
                                (va->p2 + vb->p2 + vc->p2) / 3, &prim->packed.color0);
                 otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;
-                if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
+                if (otz + depth_bias >= KF_SCENE_MIN_OT_DEPTH) {
                     AddPrim(
-                        (void *)(&game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK]),
-                        (void *)&prim->sdk);
+                        &game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
+                        &prim->sdk);
                 }
             }
             break;
@@ -412,11 +423,12 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
 
                 vd = VTX(p->f4.v3);
                 game_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_F4);
-                if (game_graphics_runtime.display_state.primitive_buffer->cursor > game_graphics_runtime.display_state.primitive_buffer->end) {
+                if (game_graphics_runtime.display_state.primitive_buffer->cursor
+                    > game_graphics_runtime.display_state.primitive_buffer->end) {
                     return;
                 }
                 SetPolyF4(&prim->sdk);
-                SetSemiTrans((void *)&prim->sdk, 1);
+                SetSemiTrans(&prim->sdk, 1);
                 prim->packed.xy0 = va->sxy.word;
                 prim->packed.xy1 = vb->sxy.word;
                 prim->packed.xy2 = vc->sxy.word;
@@ -424,10 +436,10 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 NormalColorDpq((SVECTOR *)(normals + p->f4.n0), &p->color,
                                (va->p2 + vb->p2 + vc->p2 + vd->p2) >> 2, &prim->packed.color0);
                 otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);
-                if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
+                if (otz + depth_bias >= KF_SCENE_MIN_OT_DEPTH) {
                     AddPrim(
-                        (void *)(&game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK]),
-                        (void *)&prim->sdk);
+                        &game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
+                        &prim->sdk);
                 }
             }
             break;
@@ -484,7 +496,8 @@ void render_enqueue_tmd_retextured(u16 object_index, s16 depth_bias)
                 KfGpuGT3 *prim = (KfGpuGT3 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
                 game_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_GT3);
-                if (game_graphics_runtime.display_state.primitive_buffer->cursor > game_graphics_runtime.display_state.primitive_buffer->end) {
+                if (game_graphics_runtime.display_state.primitive_buffer->cursor
+                    > game_graphics_runtime.display_state.primitive_buffer->end) {
                     return;
                 }
                 SetPolyGT3(&prim->sdk);
@@ -501,10 +514,10 @@ void render_enqueue_tmd_retextured(u16 object_index, s16 depth_bias)
                                 (SVECTOR *)(normals + primitive->gt3.n2), &retextured_primitive_color, va->p2,
                                 &prim->packed.color0, &prim->packed.color1, &prim->packed.color2);
                 otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;
-                if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
+                if (otz + depth_bias >= KF_SCENE_MIN_OT_DEPTH) {
                     AddPrim(
-                        (void *)(&game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK]),
-                        (void *)&prim->sdk);
+                        &game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
+                        &prim->sdk);
                 }
             }
             break;
@@ -518,7 +531,8 @@ void render_enqueue_tmd_retextured(u16 object_index, s16 depth_bias)
 
                 vd = TMD_PREPARED_VERTEX(vertices, primitive->gt4.v3);
                 game_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_GT4);
-                if (game_graphics_runtime.display_state.primitive_buffer->cursor > game_graphics_runtime.display_state.primitive_buffer->end) {
+                if (game_graphics_runtime.display_state.primitive_buffer->cursor
+                    > game_graphics_runtime.display_state.primitive_buffer->end) {
                     return;
                 }
                 SetPolyGT4(&prim->sdk);
@@ -539,10 +553,10 @@ void render_enqueue_tmd_retextured(u16 object_index, s16 depth_bias)
                 NormalColorDpq((SVECTOR *)(normals + primitive->gt4.n3), &retextured_primitive_color, va->p2,
                                &prim->packed.color3);
                 otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);
-                if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
+                if (otz + depth_bias >= KF_SCENE_MIN_OT_DEPTH) {
                     AddPrim(
-                        (void *)(&game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK]),
-                        (void *)&prim->sdk);
+                        &game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
+                        &prim->sdk);
                 }
             }
             break;
@@ -555,7 +569,8 @@ void render_enqueue_tmd_retextured(u16 object_index, s16 depth_bias)
                 KfGpuFT3 *prim = (KfGpuFT3 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
                 game_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_FT3);
-                if (game_graphics_runtime.display_state.primitive_buffer->cursor > game_graphics_runtime.display_state.primitive_buffer->end) {
+                if (game_graphics_runtime.display_state.primitive_buffer->cursor
+                    > game_graphics_runtime.display_state.primitive_buffer->end) {
                     return;
                 }
                 SetPolyFT3(&prim->sdk);
@@ -571,10 +586,10 @@ void render_enqueue_tmd_retextured(u16 object_index, s16 depth_bias)
                 NormalColorDpq((SVECTOR *)(normals + primitive->ft3.n0), &retextured_primitive_color,
                                (va->p2 + vb->p2 + vc->p2) / 3, &prim->packed.color0);
                 otz = (va->sz + vb->sz + vc->sz) / 3 >> KF_GTE_DEPTH_TO_OT_SHIFT;
-                if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
+                if (otz + depth_bias >= KF_SCENE_MIN_OT_DEPTH) {
                     AddPrim(
-                        (void *)(&game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK]),
-                        (void *)&prim->sdk);
+                        &game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
+                        &prim->sdk);
                 }
             }
             break;
@@ -588,7 +603,8 @@ void render_enqueue_tmd_retextured(u16 object_index, s16 depth_bias)
 
                 vd = TMD_PREPARED_VERTEX(vertices, primitive->ft4.v3);
                 game_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_FT4);
-                if (game_graphics_runtime.display_state.primitive_buffer->cursor > game_graphics_runtime.display_state.primitive_buffer->end) {
+                if (game_graphics_runtime.display_state.primitive_buffer->cursor
+                    > game_graphics_runtime.display_state.primitive_buffer->end) {
                     return;
                 }
                 SetPolyFT4(&prim->sdk);
@@ -606,10 +622,10 @@ void render_enqueue_tmd_retextured(u16 object_index, s16 depth_bias)
                 NormalColorDpq((SVECTOR *)(normals + primitive->ft4.n0), &retextured_primitive_color,
                                (va->p2 + vb->p2 + vc->p2 + vd->p2) >> 2, &prim->packed.color0);
                 otz = (va->sz + vb->sz + vc->sz + vd->sz) >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2);
-                if (otz + depth_bias > (KF_SCENE_MIN_OT_DEPTH - 1)) {
+                if (otz + depth_bias >= KF_SCENE_MIN_OT_DEPTH) {
                     AddPrim(
-                        (void *)(&game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK]),
-                        (void *)&prim->sdk);
+                        &game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
+                        &prim->sdk);
                 }
             }
             break;
@@ -703,8 +719,8 @@ void render_enqueue_map(u16 object_index)
                         >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2)) + KF_MAP_OT_DEPTH_BIAS;
                     if (otz < KF_ORDERING_TABLE_LENGTH) {
                         AddPrim(
-                            (void *)(&game_graphics_runtime.display_state.ordering_table[otz & KF_ORDERING_TABLE_INDEX_MASK]),
-                            (void *)&prim->sdk);
+                            &game_graphics_runtime.display_state.ordering_table[otz & KF_ORDERING_TABLE_INDEX_MASK],
+                            &prim->sdk);
                     }
                 } else {
                     return;
@@ -743,8 +759,8 @@ void render_enqueue_map(u16 object_index)
                         >> KF_GTE_DEPTH_TO_OT_SHIFT) + KF_MAP_OT_DEPTH_BIAS;
                     if (otz < KF_ORDERING_TABLE_LENGTH) {
                         AddPrim(
-                            (void *)(&game_graphics_runtime.display_state.ordering_table[otz & KF_ORDERING_TABLE_INDEX_MASK]),
-                            (void *)&gt3->sdk);
+                            &game_graphics_runtime.display_state.ordering_table[otz & KF_ORDERING_TABLE_INDEX_MASK],
+                            &gt3->sdk);
                     }
                 } else {
                     return;
@@ -761,7 +777,7 @@ void render_enqueue_map(u16 object_index)
  * Enqueues one screen sprite as a depth-sorted textured quad.  The quad's four
  * corners are projected through the GTE, the primitive's colour is the light
  * normal shade depth-cued by the projected perspective term (optionally scaled
- * by 1.5 when flag selects it), and it sorts into the ordering table at the
+ * by 1.5 for KF_SPRITE_DEPTH_CUE_BOOSTED), and it sorts into the ordering table at the
  * projected depth biased by the caller's depth_bias.
  */
 ADDRESS(0x8001e230, 0x250)
@@ -792,17 +808,18 @@ void render_enqueue_sprite(
 
     prim = (KfGpuFT4 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
     game_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_FT4);
-    if (game_graphics_runtime.display_state.primitive_buffer->cursor > game_graphics_runtime.display_state.primitive_buffer->end) {
+    if (game_graphics_runtime.display_state.primitive_buffer->cursor
+        > game_graphics_runtime.display_state.primitive_buffer->end) {
         return;
     }
     SetPolyFT4(&prim->sdk);
     prim->sdk.clut = game_graphics_runtime.active_render_clut;
     prim->sdk.tpage = game_graphics_runtime.active_render_tpage;
     /* Each packed GTE word spans the SDK packet's x/y halfwords. */
-    memcpy((void *)&prim->sdk.x0, (const void *)&sxy0, sizeof sxy0);
-    memcpy((void *)&prim->sdk.x1, (const void *)&sxy1, sizeof sxy1);
-    memcpy((void *)&prim->sdk.x2, (const void *)&sxy2, sizeof sxy2);
-    memcpy((void *)&prim->sdk.x3, (const void *)&sxy3, sizeof sxy3);
+    memcpy(&prim->sdk.x0, &sxy0, sizeof sxy0);
+    memcpy(&prim->sdk.x1, &sxy1, sizeof sxy1);
+    memcpy(&prim->sdk.x2, &sxy2, sizeof sxy2);
+    memcpy(&prim->sdk.x3, &sxy3, sizeof sxy3);
     prim->sdk.u0 = prim->sdk.u2 = sprite->u;
     prim->sdk.u1 = prim->sdk.u3 = sprite->u + sprite->u_span;
     prim->sdk.v0 = prim->sdk.v1 = sprite->v;
@@ -815,7 +832,7 @@ void render_enqueue_sprite(
                    &prim->packed.color0);
     if (otz + depth_bias >= KF_SCENE_MIN_OT_DEPTH) {
         AddPrim(
-            (void *)(&game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK]),
-            (void *)&prim->sdk);
+            &game_graphics_runtime.display_state.ordering_table[(otz + depth_bias) & KF_ORDERING_TABLE_INDEX_MASK],
+            &prim->sdk);
     }
 }

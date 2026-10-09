@@ -7,8 +7,6 @@ src func_ refs	3
 src DAT_ refs	12
 GAME extern decls	0
 source-local extern decls	0
-# Both-language SDK/libc checking now requires explicit casts at previously
-# unchecked K&R call boundaries. This adds no void-typed storage or interfaces.
-void* views	246
+void* views	8
 .c-local aggregates	6
 unresolved func_ identities	3

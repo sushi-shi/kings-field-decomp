@@ -3,7 +3,7 @@
 #include <kf/lib/map_data.h>
 #include <kf/lib/map.h>
 #include <psyq/libc.h>
-#include <kf/game/game.h>
+#include <kf/game/player.h>
 
 enum {
     MAP_RESTORE_POSITION_RANDOM_BITS = 15
@@ -15,19 +15,16 @@ enum {
  * map_restore_floor_state is the per-floor world-state RESTORE routine: the exact inverse
  * of map_world_state_persist (map_events.c), which serialises the live event, actor, and
  * map-object state into map_runtime_state.world_state. It reads the same
- * 1700-byte per-floor record (base - 1690 + 1700 * current_floor), and when its
+ * 1700-byte per-floor record selected by the one-based floor ID, and when its
  * marker byte is 1 it rebuilds the eight map events, the live-actor lifecycle
  * overrides, the 190 map-object ids, the linked-object payloads, and the two
  * effect-object pools (objects[160..169] and objects[170..189]). The common
  * tail dispatches a per-floor scripted setup on the current floor (1..5).
  *
- * map_runtime_state owns both the event pool and per-floor saved records;
- * the pool starts 556 bytes before the saved block.
- *
  * map_refresh_dialogue_stages refreshes the stage of every active map event.
- * map_load_floor loads the current floor:
- * map_resources_load, the world-state restore, the event refresh, render_prepare_actor_textures,
- * then copies colour_matrix_table[3] into the render lighting matrix.
+ * map_load_floor loads the current floor: map_resources_load, the world-state
+ * restore, the event refresh and render_prepare_actor_textures, then resets
+ * the HUD model colour matrix to the white preset.
  */
 
 /* map_restore_floor_state per-floor scripted-setup jump table (floors 1..5). */
@@ -36,21 +33,14 @@ RODATA(0x80012bfc, 0x14)
 ADDRESS(0x80035e44, 0x69c)
 void map_restore_floor_state(void)
 {
-    u8 *base = (u8 *)&map_runtime_state.world_state;
     u8 *in;
     KfMapEvent *event;
     KfMapObject *object;
     s32 i;
     s32 index;
 
-    {
-        s32 floor_offset = KF_MAP_SAVED_FLOOR_BYTES
-            * KF_ENUM_ENCODE(u8, player_state.progress_state.current_floor);
-        u8 *records_base =
-            base - (KF_MAP_SAVED_FLOOR_BYTES - KF_MAP_SAVED_RECORDS_OFFSET);
-
-        in = records_base + floor_offset;
-    }
+    in = map_runtime_state.world_state.floors[
+        KF_ENUM_ENCODE(u8, player_state.progress_state.current_floor) - 1].records;
     if (*in++ == 1) {
         event = map_runtime_state.events;
         for (i = 0; i < KF_MAP_EVENT_CAPACITY; i++, event++) {
@@ -64,13 +54,11 @@ void map_restore_floor_state(void)
         }
 
         i = *in++;
-        if (--i != -1) {
+        while (--i != -1) {
             KfActor *actors = actor_state.actors;
 
-            do {
-                index = *in++;
-                actors[index].lifecycle = KF_ENUM_DECODE(KfActorLifecycle, *in++);
-            } while (--i != -1);
+            index = *in++;
+            actors[index].lifecycle = KF_ENUM_DECODE(KfActorLifecycle, *in++);
         }
 
         object = &map_object_state.objects[0];
@@ -140,7 +128,7 @@ void map_restore_floor_state(void)
             map_apply_copy_region(KF_MAP_COPY_FLOOR1_PASSAGE);
         }
         if (map_runtime_state.world_state.floors[0].script.floor1.actor_activation_stage != KF_MAP_TRIGGER_COMPLETE) {
-            index = actor_pool_find_at_tile(7, 0x28);
+            index = actor_pool_find_at_tile(KF_FLOOR1_GATED_ACTOR_TILE_X, KF_FLOOR1_GATED_ACTOR_TILE_Z);
             if (index != KF_ACTOR_INDEX_NONE) {
                 actor_state.actors[index].lifecycle = KF_ACTOR_LIFECYCLE_DISABLED;
             }
