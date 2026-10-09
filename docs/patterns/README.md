@@ -9,6 +9,10 @@ See the [current source cleanup review](../source-cleanup-review.md) for
 open owner, argument-access, stack-carrier, and alignment findings. Older
 campaign counts and verdicts retain their recorded scope.
 
+- [stack-carrier-review.md](stack-carrier-review.md): five individual source
+  verdicts, SDK output extents, paired ordinary-source controls and remaining
+  conflicts with source-modeling rules.
+
 - [animation-and-inherited-contracts.md](animation-and-inherited-contracts.md):
   retained animation pointer/sentinel contract, five retail callers, and four
   individually named inherited behavior questions.

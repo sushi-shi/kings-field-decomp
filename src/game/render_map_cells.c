@@ -44,7 +44,8 @@ ADDRESS(0x8001e5ec, 0x250)
 void render_map_cell(s32 col, s32 row, KF_ENUM_PARAM(KfCellVisibility, char) visibility)
 {
     MATRIX cell_matrix;
-    MATRIX unused_matrix; /* unused; sizes the retail frame */
+    /* Unresolved retail reservation; docs/patterns/stack-carrier-review.md. */
+    MATRIX unused_matrix;
     SVECTOR position;
     long flag;
     s32 orientation;

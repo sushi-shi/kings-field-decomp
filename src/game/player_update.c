@@ -112,7 +112,8 @@ void player_update(void)
     KfMagicRecord *record;
     KfActor *target;
     const VECTOR *origin;
-    SVECTOR unused_vector; /* unused; first frame slot in retail */
+    /* Unresolved retail reservation; docs/patterns/stack-carrier-review.md. */
+    SVECTOR unused_vector;
     SVECTOR direction;
     SVECTOR *launch_direction;
     SVECTOR spawn_offset;

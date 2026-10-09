@@ -18,9 +18,7 @@ ADDRESS(0x8001764c, 0xcf8)
 void render_enqueue_tmd(u16 object_index, s16 depth_bias)
 {
     KfTmdObject *object = tmd_get_object(object_index);
-    /* Retail reserves one unallocated stack word below its spills that no
-     * live value explains; this never-read local carries it
-     * (docs/patterns/reconstruction-debt-review.md). */
+    /* Unresolved retail reservation; docs/patterns/stack-carrier-review.md. */
     u16 unattributed_stack_slot[2];
     u32 header;
     u32 remaining = object->primitive_count;
