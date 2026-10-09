@@ -34,6 +34,9 @@ void player_warp_shimmer(KfWarpShimmerMode shimmer_mode, VECTOR *position)
     KfEffectRecord *effects[KF_CYLINDER_TRANSITION_COUNT];
     KfEffectRecord **cursor;
     KfEffectRecord *effect;
+    /* Unresolved source form: retail copies the position into this frame
+     * block but never reads it, and hands the constructor the uninitialised
+     * direction, which the shimmer kind copies and ignores. */
     struct {
         VECTOR position;
         SVECTOR direction;
@@ -163,6 +166,13 @@ void player_warp_same_floor(KF_ENUM_PARAM(KfMapVariant, u32) map_variant, s32 ce
 
 /* player_warp_trigger_update scripted-trigger jump table (current floor 1..5). */
 RODATA(0x80012c14, 0x14)
+
+/*
+ * Handles a step onto a warp cell: exit cells change floor, and on floor 5
+ * they move between map variants.  Returns true when the step starts the
+ * ending instead, at floor-1 cell (15, 2) or floor-5 cell (39, 47) once the
+ * floor-5 boss is defeated.  Two exits share the floor-4 destination label.
+ */
 
 ADDRESS(0x80036af0, 0x24c)
 KfBoolU32 player_warp_trigger_update(void)
