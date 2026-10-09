@@ -18,7 +18,7 @@ enum {
     KF_PLAYER_SOUND_WEAPON_ATTACK = 0,
     KF_PLAYER_SOUND_DEATH = 1,
     KF_PLAYER_SOUND_LEVEL_UP = 2,
-    KF_PLAYER_SOUND_COUNT = 3
+    KF_PLAYER_SOUND_COUNT = KF_PLAYER_SOUND_LEVEL_UP + 1
 };
 
 enum class KfPlayerOption : s32 {
@@ -276,13 +276,13 @@ extern void player_add_experience(s16 amount);
 extern void player_adjust_hp(s32 delta);
 extern void player_adjust_mp(s32 delta);
 extern void player_apply_damage(
-    u16 component0, u16 component1, u16 component2,
-    KfPlayerStatusFlags status_effect_flags, u16 component3, u16 component4,
+    u16 cutting_damage, u16 striking_damage, u16 piercing_damage,
+    KfPlayerStatusFlags status_effect_flags, u16 magic_damage, u16 fire_damage,
     u16 scale_q12, u16 multiplier_tenths);
 extern void player_begin_weapon_attack(void);
 extern void player_apply_radial_damage(
     const VECTOR *origin, u32 radius, u16 falloff_q12, u16 base_power,
-    u16 component0, u16 component1, u16 component2, u16 component3, u16 component4,
+    u16 cutting_damage, u16 striking_damage, u16 piercing_damage, u16 magic_damage, u16 fire_damage,
     u16 scale_q12, u16 multiplier_tenths);
 extern s32 player_calculate_damage_component(s32 defender_power, s32 defense, s32 attack);
 extern void player_clear_motion(void);

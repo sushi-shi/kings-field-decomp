@@ -2,7 +2,7 @@
 
 #include <kf/lib/map_data.h>
 #include <kf/game/actor.h>
-#include <kf/game/game.h>
+#include <kf/game/collision.h>
 
 enum class KfActorPlacementStreamState : s32 {
     KF_ACTOR_PLACEMENTS_READING = 0,

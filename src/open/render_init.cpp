@@ -8,7 +8,7 @@
 #include <kf/lib/graphics.h>
 
 enum {
-    PRIMITIVE_BUFFER_BYTES = 0x26160,
+    PRIMITIVE_BUFFER_BYTES = 156000,
     FLOOR_ITEM_TPAGE_X = 832,
     FLOOR_ITEM_CLUT = 0x7a00
 };
@@ -37,7 +37,7 @@ void render_initialize(void)
     u8 *buffer;
 
     open_graphics_runtime.display_state.buffer_index = KF_DISPLAY_BUFFER_UNINITIALIZED;
-    cd_file_load_into((void *)opening_cell_storage.rtbl_sectors, "B0\\RTBL.");
+    cd_file_load_into(opening_cell_storage.rtbl_sectors, "B0\\RTBL.");
     buffer = (u8 *)memory_allocate(KF_DISPLAY_BUFFER_COUNT * PRIMITIVE_BUFFER_BYTES);
     open_graphics_runtime.display_state.asset_load_buffer = buffer;
     open_graphics_runtime.display_state.primitive_buffers[0].start = buffer;
@@ -88,6 +88,7 @@ void render_initialize(void)
 
 void display_initialize(KfOverlayMode overlay_mode)
 {
+
     s32 framebuffer_height;
     s16 lower_buffer_y = KF_DISPLAY_HEIGHT;
 
@@ -150,10 +151,11 @@ void *primitive_buffer_allocate(u16 byte_count)
     open_graphics_runtime.display_state.primitive_buffer->cursor += byte_count;
     if (open_graphics_runtime.display_state.primitive_buffer->cursor >
         open_graphics_runtime.display_state.primitive_buffer->end) {
+
         for (;;) {
             printf("primitive over fllow!!!\n");
         }
     }
     primitive_allocation_count++;
-    return (void *)allocation;
+    return allocation;
 }

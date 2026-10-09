@@ -9,8 +9,8 @@
 
 enum {
     OPEN_SEQUENCE_BUFFER_BYTES = 0x4800,
-    OPEN_SEQUENCE_VOLUME = 0x50,
-    OPEN_REVERB_DEPTH = 0x30,
+    OPEN_SEQUENCE_VOLUME = 80,
+    OPEN_REVERB_DEPTH = 48,
     OPEN_VAB_SETTLE_FRAMES = 100,
     OPEN_SEQUENCE_FADE_IN_STEP = 8,
     OPEN_SEQUENCE_FADE_OUT_STEP = 4
@@ -68,7 +68,7 @@ void audio_play_sequence_file(const char *path)
     s32 volume;
 
     audio_stop_sequence(KF_AUDIO_STOP_IMMEDIATE);
-    if (cd_file_load_into((void *)audio_state.sequence_buffer, path) != KF_RESOURCE_LOADED) {
+    if (cd_file_load_into(audio_state.sequence_buffer, path) != KF_RESOURCE_LOADED) {
         return;
     }
     audio_state.sequence_id = SsSeqOpen(
@@ -109,11 +109,9 @@ void audio_stop_sequence(KfAudioStopMode stop_mode)
 
 void audio_close_vab(void)
 {
-    s16 *vab_id = &audio_state.active_vab_id;
-
-    if (*vab_id != KF_AUDIO_VAB_UNAVAILABLE) {
-        SsVabClose(*vab_id);
+    if (audio_state.active_vab_id != KF_AUDIO_VAB_UNAVAILABLE) {
+        SsVabClose(audio_state.active_vab_id);
     }
-    *vab_id = KF_AUDIO_VAB_UNAVAILABLE;
+    audio_state.active_vab_id = KF_AUDIO_VAB_UNAVAILABLE;
     audio_state.vab_header = NULL;
 }

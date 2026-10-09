@@ -1,7 +1,7 @@
 #include <kf/lib/null.h>
 
 #include <kf/game/effect.h>
-#include <kf/game/game.h>
+#include <kf/game/player.h>
 
 enum {
 
@@ -12,7 +12,7 @@ enum {
     EFFECT_EMERGING_INITIAL_SCALE = 1500,
     EFFECT_SHORT_SWING_SCALE = 2600,
     EFFECT_ORBIT_SCALE = 2800,
-    EFFECT_WARP_HORIZONTAL_SCALE = 0x1800
+    EFFECT_WARP_HORIZONTAL_SCALE = KF_FIXED12_ONE * 3 / 2
 };
 
 KfEffectState effect_state;
