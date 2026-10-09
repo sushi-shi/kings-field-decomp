@@ -11,6 +11,11 @@ enum {
     CD_TABLE_READ_ATTEMPTS = 5
 };
 
+/*
+ * The loaders below show a system error screen when a search or read fails
+ * and still return KF_RESOURCE_LOADED, so callers' failure checks never fire.
+ */
+
 DATA(0x80057b3c, 0x5)
 char cd_path_prefix[5] = "\\KF\\";
 DATA(0x80057b44, 0x3)
@@ -33,7 +38,8 @@ KfResourceLoadResult cd_file_load_allocated(u8 **destination, const char *relati
 {
     char *path = cd_path_buffer;
     s32 attempt;
-    s32 loaded; /* also the rounded sector count; retail keeps both in $s1 */
+    /* Unresolved source form: also holds the rounded sector count. */
+    s32 loaded;
 
     memcpy(path, cd_path_prefix, sizeof cd_path_prefix);
     strcat(path, relative_path);
@@ -100,7 +106,8 @@ KfResourceLoadResult cd_file_load_into(void *destination, const char *relative_p
 {
     char *path = cd_path_buffer;
     s32 attempt;
-    s32 loaded; /* also the rounded sector count; retail keeps both in $s1 */
+    /* Unresolved source form: also holds the rounded sector count. */
+    s32 loaded;
 
     memcpy(path, cd_path_prefix, sizeof cd_path_prefix);
     strcat(path, relative_path);
