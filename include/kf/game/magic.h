@@ -69,6 +69,8 @@ typedef struct KfMagicRecord {
     KfMagicLearningState learned;
     u8 charge_rate;
     SoundRef sounds[KF_MAGIC_SOUND_COUNT];
+    /* Every consumer reads magical kinds as {magic, fire} and physical
+     * projectiles as {cutting, piercing, striking}; the fourth is unread. */
     u16 damage_components[KF_MAGIC_DAMAGE_COMPONENT_COUNT];
     u16 mp_cost;
     u8 unknown_12[0x02];

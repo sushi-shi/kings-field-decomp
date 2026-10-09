@@ -128,7 +128,7 @@ void effect_update_orbiting_projectile(s32 orbit_radius, KF_ENUM_PARAM(KfEffectP
     MATRIX yaw_matrix;
     u32 collision;
 
-    if ((KF_ENUM_ENCODE(u32, life) & 0xff) < KF_ENUM_ENCODE(u8, KF_EFFECT_HAZARD_RELEASE_REQUEST) + 1) {
+    if ((KF_ENUM_ENCODE(u32, life) & 0xff) <= KF_ENUM_ENCODE(u8, KF_EFFECT_HAZARD_RELEASE_REQUEST)) {
         record->position.vx = (record->direction.vector.vx << KF_EFFECT_ORBIT_CENTER_SHIFT)
             + (rsin((s16)record->control.orbit_angle) * orbit_radius >> KF_FIXED12_BITS);
         record->position.vz = (record->direction.vector.vz << KF_EFFECT_ORBIT_CENTER_SHIFT)
