@@ -7,13 +7,13 @@
 #include <psyq/pad.h>
 
 /* Two eight-entry jump tables for the equipment panel: the category-range
- * switch and the slot-write switch, both indexed by the object argument. */
+ * switch and the slot-write switch, both indexed by the category. */
 RODATA(0x80012310, 0x40)
 
 /*
- * Equipment-selection panel dispatched by the equipment menu.  The object index
- * chooses one equipment category: it selects the item-id range to list from
- * the owned-item block, runs the windowed cursor, and on confirm writes the
+ * Equipment-selection panel dispatched by the equipment menu.  EQUIPMENT_CATEGORY
+ * selects the item-id range to list from the owned items (plus an unequip
+ * row), runs the windowed cursor, and on confirm writes the
  * chosen id into the matching player slot and recomputes combat stats.  The
  * body-armor slot additionally clears arm/leg equipment when Full Plate is
  * chosen, since it occupies those equipment categories too.
@@ -24,7 +24,6 @@ void menu_equip_select(KfEquipmentMenuCategory equipment_category)
     KfMenuList ctx;
     s16 labels[20][MENU_GLYPHS_PER_ROW];
     KfObjectId item_ids[20];
-    s16 *name;
     u8 *player_stock;
     s32 item_id;
     s32 j;
@@ -74,9 +73,8 @@ void menu_equip_select(KfEquipmentMenuCategory equipment_category)
     found = 0;
     for (item_id = start; item_id < end; item_id++) {
         if (player_stock[item_id] != 0) {
-            name = item_name_rows[item_id].codes;
             for (j = 0; j < MENU_GLYPHS_PER_ROW; j++) {
-                labels[found][j] = name[j];
+                labels[found][j] = item_name_rows[item_id].codes[j];
             }
             item_ids[found] = KF_ENUM_DECODE(KfObjectId, item_id);
             found++;
