@@ -3,7 +3,8 @@
 
 #include <kf/game/cd.h>
 #include <psyq/libc.h>
-#include <kf/game/game.h>
+#include <kf/game/render.h>
+#include <kf/lib/memory.h>
 
 enum {
     CD_PATH_READ_ATTEMPTS = 3,

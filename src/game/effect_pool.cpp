@@ -1,7 +1,7 @@
 #include <kf/lib/null.h>
 
 #include <kf/game/effect.h>
-#include <kf/game/game.h>
+#include <kf/game/player.h>
 
 enum {
 

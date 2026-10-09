@@ -6,7 +6,10 @@
 #include <kf/lib/item.h>
 #include <kf/game/cd.h>
 #include <psyq/libc.h>
-#include <kf/game/game.h>
+#include <kf/game/menu.h>
+#include <kf/game/player.h>
+#include <kf/lib/memory.h>
+#include <psyq/pad.h>
 #include <kf/lib/graphics.h>
 
 void shop_menu_buy(KfItemStockBank shop_bank);
@@ -66,7 +69,9 @@ void item_load_database(void)
         name[11] = n / 100 + '0';
         rem = n % 100;
         name[12] = rem / 10 + '0';
-        name[13] = rem % 10 + '0';
+
+        n = rem % 10 + '0';
+        name[13] = n;
         if (CdSearchFile((CdlFILE *)&cd_file_table[i], name) != NULL) {
             if ((cd_file_table[i].size & (KF_CD_SECTOR_BYTES - 1)) != 0)
                 cd_file_table[i].size =

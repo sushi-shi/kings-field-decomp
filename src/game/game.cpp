@@ -5,7 +5,11 @@
 #include <kf/game/save.h>
 #include <psyq/kernel.h>
 #include <psyq/libc.h>
-#include <kf/game/game.h>
+#include <kf/lib/memory.h>
+#include <kf/game/resources.h>
+#include <kf/game/system.h>
+#include <kf/game/menu.h>
+#include <psyq/pad.h>
 
 enum {
     INITIAL_ACTOR_CLEAR_BYTES = 0x2b48,
@@ -74,7 +78,7 @@ void game_main_loop(void)
             == KF_MAP_ATTRIBUTE_WARP) {
             if (player_state.previous_map_cell.word
                 != player_state.motion_state.fields.map_cell.word) {
-                if (player_warp_trigger_update() != 0) {
+                if (player_warp_trigger_update()) {
                     game_next_overlay_mode = KF_OVERLAY_MODE_ENDING;
                     player_warp_shimmer_at_player(KF_WARP_SHIMMER_GROW_KEEP);
                     display_play_transition();

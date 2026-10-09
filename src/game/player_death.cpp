@@ -3,7 +3,6 @@
 
 #include <kf/game/player.h>
 #include <psyq/libc.h>
-#include <kf/game/game.h>
 
 enum {
     PLAYER_REVIVAL_POSITION_X = 64000,
@@ -567,7 +566,7 @@ void player_apply_radial_damage(
     u16 attenuation;
 
     distance = player_distance_to_point(origin->vx, origin->vy, origin->vz, radius, radius);
-    if (distance == -1) {
+    if (distance == KF_DISTANCE_NONE) {
         return;
     }
     if (falloff_q12 != KF_FIXED12_ONE) {

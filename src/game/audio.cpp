@@ -5,7 +5,9 @@
 #include <kf/lib/audio_sequence.h>
 #include <psyq/audio.h>
 #include <psyq/libc.h>
-#include <kf/game/game.h>
+#include <kf/lib/memory.h>
+#include <kf/game/player.h>
+#include <kf/lib/cd_file.h>
 
 enum {
     GAME_SEQUENCE_BUFFER_BYTES = 0x3000,

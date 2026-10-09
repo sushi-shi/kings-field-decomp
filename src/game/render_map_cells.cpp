@@ -2,7 +2,7 @@
 
 #include <kf/lib/map_data.h>
 #include <kf/game/render.h>
-#include <kf/game/game.h>
+#include <kf/game/player.h>
 
 enum {
     ILLUSION_STAFF_REMAP_PHASE_MASK = 3,
@@ -38,6 +38,8 @@ static KfCellWindow render_fixed_cell_window = {
 void render_map_cell(s32 col, s32 row, KfCellVisibility visibility)
 {
     MATRIX cell_matrix;
+
+    MATRIX unused_matrix;
     SVECTOR position;
     long flag;
     s32 orientation;

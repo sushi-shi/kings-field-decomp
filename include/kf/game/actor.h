@@ -18,8 +18,20 @@ struct KfAnimationCacheRecord;
 enum {
     KF_ACTOR_DEFINITION_COUNT = 12,
     KF_ACTOR_DEFINITION_WORD_COUNT = 456,
-    KF_ACTOR_ATTACHMENT_OFFSET_COUNT = 2,
-    KF_ACTOR_CAPACITY = 128
+    KF_ACTOR_ATTACHMENT_OFFSET_COUNT = 3,
+    KF_ACTOR_CAPACITY = 128,
+
+    KF_ACTOR_INDEX_NONE = -1
+};
+
+enum {
+    KF_FLOOR4_TRANSFORM_SOURCE_DEFINITION = 5,
+    KF_FLOOR4_TRANSFORM_RESULT_DEFINITION = 6,
+    KF_FLOOR5_BOSS_DEFINITION = 7,
+    KF_FLOOR5_BOSS_DEATH_DEFINITION_0 = 0,
+    KF_FLOOR5_BOSS_DEATH_DEFINITION_2 = 2,
+    KF_FLOOR5_BOSS_DEATH_DEFINITION_3 = 3,
+    KF_FLOOR5_BOSS_DEATH_DEFINITION_4 = 4
 };
 
 enum class KfActorSlotState : u8 {
@@ -212,10 +224,8 @@ typedef struct KfActorDefinition {
     KfAnimationClip action_animations[KF_ACTOR_ANIM_SLOT_COUNT];
     u8 turn_rate;
     SoundRef sounds[KF_ACTOR_SOUND_COUNT];
+
     struct KfVec3s attachment_offsets[KF_ACTOR_ATTACHMENT_OFFSET_COUNT];
-    s16 special_attack_chance;
-    s16 special_attack_range;
-    u8 unknown_38[2];
     u16 action_animation_steps[KF_ACTOR_ANIM_SLOT_COUNT];
     u16 action_animation_phases[KF_ACTOR_ANIM_SLOT_COUNT];
     u16 collision_radius;
@@ -228,6 +238,16 @@ typedef struct KfActorDefinition {
     u16 defenses[KF_COMBAT_COMPONENT_COUNT];
     u16 gold_drop_limit;
 } KfActorDefinition;
+
+static inline s16 actor_definition_special_attack_chance(const KfActorDefinition *definition)
+{
+    return definition->attachment_offsets[kf_enum_encode<s32>(KF_ACTOR_EFFECT_SLOT_THIRD)].x;
+}
+
+static inline s16 actor_definition_special_attack_range(const KfActorDefinition *definition)
+{
+    return definition->attachment_offsets[kf_enum_encode<s32>(KF_ACTOR_EFFECT_SLOT_THIRD)].y;
+}
 
 typedef struct KfActorDefinitionTable {
     KfActorDefinition entries[KF_ACTOR_DEFINITION_COUNT];

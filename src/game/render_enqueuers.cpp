@@ -30,6 +30,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
     object = tmd_get_object(object_index);
     remaining = object->primitive_count;
     packet = (u8 *)game_graphics_runtime.tmd_state.current_tmd + (object->primitive_offset + KF_TMD_HEADER_BYTES);
+
     normals = (u8 *)game_graphics_runtime.tmd_state.current_tmd + (object->normal_offset + KF_TMD_HEADER_BYTES);
     while (remaining-- != 0) {
         header = *(u32 *)packet;

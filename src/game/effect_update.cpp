@@ -3,7 +3,9 @@
 #include <kf/game/collision.h>
 #include <kf/game/effect.h>
 #include <psyq/libc.h>
-#include <kf/game/game.h>
+#include <kf/game/player.h>
+#include <kf/game/actor.h>
+#include <kf/game/state.h>
 
 enum {
     EFFECT_FIXED_MAGIC_POWER = 5,
@@ -112,6 +114,8 @@ void effect_update_orbiting_projectile(s32 orbit_radius, KfEffectPhase phase_lim
     KfEffectRecord *record = effect_state.current_record;
     KfMagicRecord *magic = effect_state.current_magic;
     KfEnumStorage<KfEffectPhase, u32> life = record->phase;
+    MATRIX rotation_matrix;
+    MATRIX yaw_matrix;
     u32 collision;
 
     if ((kf_enum_encode<u32>(life) & 0xff) < kf_enum_encode<u8>(KF_EFFECT_HAZARD_RELEASE_REQUEST) + 1) {
