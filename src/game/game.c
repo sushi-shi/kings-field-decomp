@@ -13,7 +13,7 @@
 
 enum {
     FRAME_PACER_INTERVAL_TICKS = 3,
-    ENDING_MASTER_FADE_STEP_Q8 = 0x80
+    ENDING_MASTER_FADE_STEP_Q8 = 128
 };
 
 /* Root-counter ticks counted by the VSync event, and the tick of the last frame. */
@@ -115,6 +115,8 @@ void frame_pacer_vsync_callback(void)
     frame_pacer_vsync_count++;
 }
 
+/* Waits until three vertical blanks have passed since the last frame (20 fps
+ * on NTSC), or until the tick counter has wrapped. */
 ADDRESS(0x800149f4, 0x70)
 void frame_pacer_wait(void)
 {
