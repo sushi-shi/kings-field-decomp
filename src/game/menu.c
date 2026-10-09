@@ -63,7 +63,7 @@ s32 menu_root(void)
     }
 
     for (;;) {
-        if (selection != KF_ROOT_CHOICE_NONE || result == KF_ENUM_ENCODE(s32, selection)) {
+        if (selection != KF_ROOT_CHOICE_NONE || result == KF_ENUM_ENCODE(s32, KF_MENU_RESULT_CANCELLED)) {
             menu_frame_begin();
             menu_draw_status_summary();
             menu_draw_window(KF_MENU_WINDOW_ROOT, KF_MENU_ROOT_ROW_COUNT, cursor, confirm);
@@ -79,6 +79,7 @@ s32 menu_root(void)
             }
             break;
         case KF_ROOT_CHOICE_USE_MAGIC:
+            /* A cast spell closes the hub without an item result. */
             result = KF_ENUM_ENCODE(s32, menu_magic_panel());
             if (result == KF_ENUM_ENCODE(s32, KF_MENU_RESULT_CANCELLED)) {
                 result = KF_ENUM_ENCODE(s32, KF_MENU_RESULT_PENDING);
@@ -157,11 +158,12 @@ enum {
 };
 
 /*
- * Consumable-item panel: builds a scrollable list of the usable items the
- * player holds, runs the windowed cursor, and applies the selected item's
- * effect. Restorative herbs and medicine heal HP/MP and clear status flags
- * in place; the watchman's and sorcerer's maps are handled by menu_map_viewer.
- * Returns the chosen item code, or -1 on cancellation or model-load failure.
+ * Use-item panel: lists the two maps, then the consumables (Verdite up to the
+ * Light Ring), then the key items from the Gold Cross on.  The maps open
+ * menu_map_viewer in place; any other confirmed item is returned, and a
+ * consumable is spent here first.  The antidote clears poison, the recovery
+ * medicine poison and slowed, and both Dragon King Grass items every status.
+ * Returns -1 on cancellation or model-load failure.
  */
 ADDRESS(0x80022608, 0x774)
 s32 menu_use_item_panel(void)
