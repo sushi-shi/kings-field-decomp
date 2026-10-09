@@ -4,7 +4,7 @@
 
 enum {
     SHADOW_BLADE_COLOR_BLEND = 2500,
-    LIGHTING_EFFECT_BLEND = 0xc00
+    LIGHTING_EFFECT_BLEND = KF_FIXED12_ONE * 3 / 4
 };
 
 static inline void lighting_blend_current_color(const MATRIX *target, s32 amount)
@@ -19,6 +19,7 @@ ADDRESS(0x800187a4, 0x4c)
 void lighting_apply_shadow_blade_environment(void)
 {
     lighting_blend_current_color(&color_matrix_table[KF_ENUM_ENCODE(s32, KF_GAME_COLOR_BLACK)], SHADOW_BLADE_COLOR_BLEND);
+    /* Halve the fog-near distance, rounding up. */
     SetFogNear(game_graphics_runtime.render_state.fog_near_distance - (game_graphics_runtime.render_state.fog_near_distance >> 1),
         KF_DEFAULT_PROJECTION_DISTANCE);
 }
