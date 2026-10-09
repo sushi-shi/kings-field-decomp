@@ -19,6 +19,11 @@ char opening_initial_tim_path[KF_OPENING_INITIAL_TIM_PATH_BYTES] = {'B', '0', '\
 
 RODATA(0x80012020, 0x15)
 
+/*
+ * OPEN.EXE body.  The intro plays scenes 0 and 1 in a loop until the player
+ * advances into scene 3, or skips from either to the title textures; the
+ * ending mode plays the ending scene and the credits scroll.
+ */
 ADDRESS(0x800156bc, 0x214)
 void opening_run(KfOverlayMode overlay_mode)
 {
@@ -53,13 +58,11 @@ void opening_run(KfOverlayMode overlay_mode)
 
         for (;;) {
             opening_scene0_run();
+            /* Unresolved source form: retail tests "not advance" first. */
             if (opening_input_action != KF_OPENING_INPUT_ADVANCE &&
                 opening_input_action == KF_OPENING_INPUT_SKIP) {
 opening_reload:
-                /* Retail addresses this reload relative to the allocation
-                 * cursor's address: the compiler registerises the store's
-                 * destination first and derives the start and stack slots
-                 * from it, then hoists that address out of the loop. */
+                /* Rewind the whole arena before loading the title textures. */
                 memory_arena.allocation.cursor = memory_arena.start;
                 memory_arena.allocation.stack[KF_MEMORY_STACK_DEPTH_INDEX] = 0;
                 cd_file_load_allocated(&tim_data, "B0\\MIX3.");
