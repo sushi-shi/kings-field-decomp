@@ -438,8 +438,7 @@ KfSaveStatus save_file_write_slot(KfSaveSlotId slot_id)
         return SAVE_STATUS_WRITE_FAILED;
     }
     offset = payload_size * entry;
-    index = 0;
-    do {
+    for (index = 0; index < SAVE_FILE_IO_ATTEMPTS; index++) {
         memory_card_clear_events();
         lseek(file, header_size + offset, SEEK_SET);
         memory_card_clear_events();
@@ -447,8 +446,7 @@ KfSaveStatus save_file_write_slot(KfSaveSlotId slot_id)
         if (written == payload_size) {
             break;
         }
-        index++;
-    } while (index < SAVE_FILE_IO_ATTEMPTS);
+    }
     close(file);
     if (written != payload_size) {
         return SAVE_STATUS_WRITE_FAILED;
@@ -467,8 +465,7 @@ KfSaveStatus save_file_write_slot(KfSaveSlotId slot_id)
     if (file == -1) {
         return SAVE_STATUS_WRITE_FAILED;
     }
-    index = 0;
-    do {
+    for (index = 0; index < SAVE_FILE_IO_ATTEMPTS; index++) {
         memory_card_clear_events();
         lseek(file, 0, SEEK_SET);
         memory_card_clear_events();
@@ -476,8 +473,7 @@ KfSaveStatus save_file_write_slot(KfSaveSlotId slot_id)
         if (written == header_size) {
             break;
         }
-        index++;
-    } while (index < SAVE_FILE_IO_ATTEMPTS);
+    }
     close(file);
     if (written != header_size) {
         return SAVE_STATUS_WRITE_FAILED;
@@ -534,8 +530,7 @@ KfSaveStatus save_file_read_header(void)
     if (file == -1) {
         return SAVE_STATUS_NO_DATA;
     }
-    attempt = 0;
-    do {
+    for (attempt = 0; attempt < SAVE_FILE_IO_ATTEMPTS; attempt++) {
         memory_card_clear_events();
         lseek(file, 0, SEEK_SET);
         memory_card_clear_events();
@@ -543,8 +538,7 @@ KfSaveStatus save_file_read_header(void)
         if (count == length) {
             break;
         }
-        attempt++;
-    } while (attempt < SAVE_FILE_IO_ATTEMPTS);
+    }
     close(file);
     if (count != length) {
         return SAVE_STATUS_READ_FAILED;
@@ -619,8 +613,7 @@ KfSaveStatus save_file_read_slot(KfSaveSlotId slot_id)
     if (file == -1) {
         return SAVE_STATUS_NO_DATA;
     }
-    index = 0;
-    do {
+    for (index = 0; index < SAVE_FILE_IO_ATTEMPTS; index++) {
         memory_card_clear_events();
         lseek(file, 0, SEEK_SET);
         memory_card_clear_events();
@@ -628,8 +621,7 @@ KfSaveStatus save_file_read_slot(KfSaveSlotId slot_id)
         if (count == header_size) {
             break;
         }
-        index++;
-    } while (index < SAVE_FILE_IO_ATTEMPTS);
+    }
     if (count != header_size) {
         close(file);
         return SAVE_STATUS_READ_FAILED;
@@ -642,8 +634,7 @@ KfSaveStatus save_file_read_slot(KfSaveSlotId slot_id)
         }
     }
     offset = payload_size * entry;
-    index = 0;
-    do {
+    for (index = 0; index < SAVE_FILE_IO_ATTEMPTS; index++) {
         memory_card_clear_events();
         lseek(file, header_size + offset, SEEK_SET);
         memory_card_clear_events();
@@ -651,8 +642,7 @@ KfSaveStatus save_file_read_slot(KfSaveSlotId slot_id)
         if (count == payload_size) {
             break;
         }
-        index++;
-    } while (index < SAVE_FILE_IO_ATTEMPTS);
+    }
     close(file);
     if (count != payload_size) {
         return SAVE_STATUS_READ_FAILED;
