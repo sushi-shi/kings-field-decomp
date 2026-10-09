@@ -2,7 +2,6 @@
 #include <kf/lib/map_data.h>
 #include <kf/game/collision.h>
 #include <kf/game/effect.h>
-#include <kf/game/game.h>
 
 DATA(0x80055ab8, 0x38)
 KfCellHeightRecord map_cell_height_records[KF_MAP_CELL_HEIGHT_RECORD_COUNT] = {

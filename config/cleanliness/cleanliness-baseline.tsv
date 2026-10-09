@@ -2,7 +2,7 @@
 # RATCHET: down-only. Bless a lower number with `kf verify board --update`;
 # a higher one is a regression and fails `kf verify board --gate`.
 # Data inventory counts are informational and have no floors.
-# Never hand-edit to raise a floor - reconstruct/name the symbol instead.
+# Raising a floor requires an explicit user-approved policy change.
 src func_ refs	3
 src DAT_ refs	12
 GAME extern decls	0
@@ -12,3 +12,6 @@ source-local extern decls	0
 void* views	246
 .c-local aggregates	6
 unresolved func_ identities	3
+# User-approved polling/formatter reads, sprite chains and copy macros count (57).
+# Four additional exact chains have non-exact statement controls.
+assignments in expressions	61

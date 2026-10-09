@@ -88,7 +88,7 @@ binary equivalence. Builds, compiler checks and tests were deferred as requested
 
 | Line | Token | Expression | Reason |
 | ---: | --- | --- | --- |
-| 205 | `2` | `u8 unknown_38[2];` | Byte extent of the explicitly opaque `unknown_38` region, preserving the next modeled field or object end. Its purpose is unresolved; an invented domain name would obscure that limitation. |
+| 205 | `2` | Historical `u8 unknown_38[2];` | Superseded by the third attachment z lane; see [attachment layout](actor-attachment-layout.md). |
 | 236 | `3` | `u8 unknown_07[3];` | Byte extent of the explicitly opaque `unknown_07` region, preserving the next modeled field or object end. Its purpose is unresolved; an invented domain name would obscure that limitation. |
 | 239 | `2` | `u8 unknown_0e[2];` | Byte extent of the explicitly opaque `unknown_0e` region, preserving the next modeled field or object end. Its purpose is unresolved; an invented domain name would obscure that limitation. |
 | 255 | `2` | `u8 unknown_0c[2];` | Byte extent of the explicitly opaque `unknown_0c` region, preserving the next modeled field or object end. Its purpose is unresolved; an invented domain name would obscure that limitation. |

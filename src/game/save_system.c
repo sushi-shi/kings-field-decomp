@@ -8,7 +8,10 @@
 #include <psyq/audio.h>
 #include <psyq/kernel.h>
 #include <psyq/libc.h>
-#include <kf/game/game.h>
+#include <kf/game/menu.h>
+#include <kf/lib/memory.h>
+#include <kf/lib/resources.h>
+#include <psyq/pad.h>
 
 /* Direct TIM/Mddd. IDs; menu_load_texture instead uses an index plus one. */
 enum {
@@ -785,7 +788,9 @@ KfBool32 menu_load_message_image(s32 message_id)
     u8 *buffer;
 
     if (message_id != MESSAGE_IMAGE_SKIP) {
-        CD_PATH_WRITE_DECIMAL3(&path[5], message_id);
+        (& path[5])[0] = (message_id) / 100 + '0';
+        (& path[5])[1] = ((message_id) % 100) / 10 + '0';
+        (& path[5])[2] = ((message_id) % 100) % 10 + '0';
         buffer = game_graphics_runtime.display_state.primitive_buffer->cursor;
         if (cd_file_load_into((void *)buffer, path) != KF_RESOURCE_LOADED) {
             return KF_TRUE;
@@ -880,8 +885,9 @@ void talk_show_dialogue_page(KF_ENUM_PARAM(KfFloorId, u8) floor,
     talk_image_path_template[0xc] = KF_ENUM_ENCODE(s32, character_id) / 10 + '0';
     directory_character[0] = KF_ENUM_ENCODE(s32, character_id) / 10 + '0';
     talk_image_path_template[0xa] = KF_ENUM_ENCODE(u8, floor) + '0';
-    directory_character[1] = talk_image_path_template[0xd] =
+    talk_image_path_template[0xd] =
         KF_ENUM_ENCODE(s32, character_id) % 10 + '0';
+    directory_character[1] = talk_image_path_template[0xd];
     talk_image_path_template[0xb] = stage + '0';
     talk_image_path_template[0xe] = page + '0';
     screen_show_image_until_input(directory_character - 6);

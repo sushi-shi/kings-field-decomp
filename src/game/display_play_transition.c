@@ -1,7 +1,8 @@
 #include <kf/game/graphics.h>
 #include <kf/lib/address.h>
 #include <kf/game/render.h>
-#include <kf/game/game.h>
+#include <kf/lib/cd_file.h>
+#include <kf/lib/resources.h>
 
 /* The texture descriptor keeps byte alignment for retail's unaligned copies. */
 typedef struct {

@@ -33,9 +33,9 @@
     { return static_cast<name>(static_cast<storage>(lhs) ^ static_cast<storage>(rhs)); } \
     constexpr name operator~(name value) \
     { return static_cast<name>(~static_cast<storage>(value)); } \
-    inline name& operator|=(name& lhs, name rhs) { return lhs = lhs | rhs; } \
-    inline name& operator&=(name& lhs, name rhs) { return lhs = lhs & rhs; } \
-    inline name& operator^=(name& lhs, name rhs) { return lhs = lhs ^ rhs; }
+    inline name& operator|=(name& lhs, name rhs) { lhs = lhs | rhs; return lhs; } \
+    inline name& operator&=(name& lhs, name rhs) { lhs = lhs & rhs; return lhs; } \
+    inline name& operator^=(name& lhs, name rhs) { lhs = lhs ^ rhs; return lhs; }
 
 /* One domain may use different field widths in runtime and serialized data. */
 template <typename Enum, typename Storage>

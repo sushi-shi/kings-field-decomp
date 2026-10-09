@@ -2,7 +2,7 @@
 #include <kf/lib/address.h>
 #define KF_EFFECT_POOL_IMPLEMENTATION
 #include <kf/game/effect.h>
-#include <kf/game/game.h>
+#include <kf/game/player.h>
 
 enum {
     /* Initialized by retail; no modeled moonlight consumer reads these bytes. */
@@ -173,8 +173,10 @@ KfEffectRecord *effect_pool_construct(
             setVector(&record->rotation.vector, 0, 0, 0);
             record->propagation.generations_remaining = *(u16 *)(va + 1);
             record->control.frames_remaining = *(u16 *)(va + 2);
-            record->scale_x = record->scale_y = record->scale_z =
-                record->visual.pulse_base_scale = *(u16 *)(va + 3);
+            record->visual.pulse_base_scale = *(u16 *)(va + 3);
+            record->scale_z = record->visual.pulse_base_scale;
+            record->scale_y = record->scale_z;
+            record->scale_x = record->scale_y;
             audio_play_spatial_default_range(&magic->sounds[0],
                                              &record->position, KF_AUDIO_MAX_VOLUME);
             break;

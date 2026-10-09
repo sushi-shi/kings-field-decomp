@@ -5,7 +5,8 @@
 #include <kf/game/player.h>
 #include <kf/game/collision.h>
 #include <psyq/libc.h>
-#include <kf/game/game.h>
+#include <kf/lib/cd_file.h>
+#include <kf/lib/memory.h>
 
 enum {
     PLAYER_INITIAL_POSITION_X = 31000,

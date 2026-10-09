@@ -2,7 +2,7 @@
 #include <kf/lib/address.h>
 #include <kf/lib/map_data.h>
 #include <kf/game/render.h>
-#include <kf/game/game.h>
+#include <kf/game/player.h>
 
 enum {
     ILLUSION_STAFF_REMAP_PHASE_MASK = 3,
@@ -44,7 +44,8 @@ ADDRESS(0x8001e5ec, 0x250)
 void render_map_cell(s32 col, s32 row, KF_ENUM_PARAM(KfCellVisibility, char) visibility)
 {
     MATRIX cell_matrix;
-    MATRIX unused_matrix; /* unused; sizes the retail frame */
+    /* Unresolved retail reservation. */
+    MATRIX unused_matrix;
     SVECTOR position;
     long flag;
     s32 orientation;

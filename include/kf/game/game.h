@@ -2,9 +2,8 @@
 #define KF_GAME_H
 
 /*
- * Umbrella header for reconstructed GAME.EXE translation units: pulls in the
- * shared game type layouts and the once-declared global/prototype headers so a
- * source file consumes cross-unit symbols without re-spelling `extern` crutches.
+ * Convenience aggregate of GAME interfaces. Implementation files include
+ * the owner headers for the declarations they use.
  */
 
 #include <kf/lib/map_data.h>

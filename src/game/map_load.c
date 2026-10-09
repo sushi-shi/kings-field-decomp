@@ -3,7 +3,7 @@
 #include <kf/lib/map_data.h>
 #include <kf/lib/map.h>
 #include <psyq/libc.h>
-#include <kf/game/game.h>
+#include <kf/game/player.h>
 
 enum {
     MAP_RESTORE_POSITION_RANDOM_BITS = 15
@@ -15,7 +15,7 @@ enum {
  * map_restore_floor_state is the per-floor world-state RESTORE routine: the exact inverse
  * of map_world_state_persist (map_events.c), which serialises the live event, actor, and
  * map-object state into map_runtime_state.world_state. It reads the same
- * 1700-byte per-floor record (base - 1690 + 1700 * current_floor), and when its
+ * 1700-byte per-floor record selected by the one-based floor ID, and when its
  * marker byte is 1 it rebuilds the eight map events, the live-actor lifecycle
  * overrides, the 190 map-object ids, the linked-object payloads, and the two
  * effect-object pools (objects[160..169] and objects[170..189]). The common
@@ -36,21 +36,14 @@ RODATA(0x80012bfc, 0x14)
 ADDRESS(0x80035e44, 0x69c)
 void map_restore_floor_state(void)
 {
-    u8 *base = (u8 *)&map_runtime_state.world_state;
     u8 *in;
     KfMapEvent *event;
     KfMapObject *object;
     s32 i;
     s32 index;
 
-    {
-        s32 floor_offset = KF_MAP_SAVED_FLOOR_BYTES
-            * KF_ENUM_ENCODE(u8, player_state.progress_state.current_floor);
-        u8 *records_base =
-            base - (KF_MAP_SAVED_FLOOR_BYTES - KF_MAP_SAVED_RECORDS_OFFSET);
-
-        in = records_base + floor_offset;
-    }
+    in = map_runtime_state.world_state.floors[
+        KF_ENUM_ENCODE(u8, player_state.progress_state.current_floor) - 1].records;
     if (*in++ == 1) {
         event = map_runtime_state.events;
         for (i = 0; i < KF_MAP_EVENT_CAPACITY; i++, event++) {

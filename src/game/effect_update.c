@@ -4,7 +4,9 @@
 #include <kf/game/collision.h>
 #include <kf/game/effect.h>
 #include <psyq/libc.h>
-#include <kf/game/game.h>
+#include <kf/game/player.h>
+#include <kf/game/actor.h>
+#include <kf/game/state.h>
 
 enum {
     EFFECT_FIXED_MAGIC_POWER = 5,

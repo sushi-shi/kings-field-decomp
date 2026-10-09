@@ -5,7 +5,11 @@
 #include <kf/game/save.h>
 #include <psyq/kernel.h>
 #include <psyq/libc.h>
-#include <kf/game/game.h>
+#include <kf/lib/memory.h>
+#include <kf/game/resources.h>
+#include <kf/game/system.h>
+#include <kf/game/menu.h>
+#include <psyq/pad.h>
 
 enum {
     INITIAL_ACTOR_CLEAR_BYTES = 0x2b48,

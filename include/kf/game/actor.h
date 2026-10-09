@@ -20,7 +20,7 @@ struct KfAnimationCacheRecord;
 enum {
     KF_ACTOR_DEFINITION_COUNT = 12,
     KF_ACTOR_DEFINITION_WORD_COUNT = 456,
-    KF_ACTOR_ATTACHMENT_OFFSET_COUNT = 2,
+    KF_ACTOR_ATTACHMENT_OFFSET_COUNT = 3,
     KF_ACTOR_CAPACITY = 128,
     /* The actor-pool overlap and tile searches found no actor. */
     KF_ACTOR_INDEX_NONE = -1
@@ -242,10 +242,8 @@ typedef struct KfActorDefinition {
     KfAnimationClip action_animations[KF_ACTOR_ANIM_SLOT_COUNT];
     u8 turn_rate;
     SoundRef sounds[KF_ACTOR_SOUND_COUNT];
+    /* The third triple is also read as special-attack chance/range. */
     struct KfVec3s attachment_offsets[KF_ACTOR_ATTACHMENT_OFFSET_COUNT];
-    s16 special_attack_chance;
-    s16 special_attack_range;
-    u8 unknown_38[2];
     u16 action_animation_steps[KF_ACTOR_ANIM_SLOT_COUNT];
     u16 action_animation_phases[KF_ACTOR_ANIM_SLOT_COUNT];
     u16 collision_radius;
@@ -258,6 +256,17 @@ typedef struct KfActorDefinition {
     u16 defenses[KF_COMBAT_COMPONENT_COUNT];
     u16 gold_drop_limit; /* exclusive upper bound of rand-scaled gold drop */
 } KfActorDefinition;
+
+/* Actions 16/17 interpret the third attachment's first two signed lanes. */
+static inline s16 actor_definition_special_attack_chance(const KfActorDefinition *definition)
+{
+    return definition->attachment_offsets[KF_ENUM_ENCODE(s32, KF_ACTOR_EFFECT_SLOT_THIRD)].x;
+}
+
+static inline s16 actor_definition_special_attack_range(const KfActorDefinition *definition)
+{
+    return definition->attachment_offsets[KF_ENUM_ENCODE(s32, KF_ACTOR_EFFECT_SLOT_THIRD)].y;
+}
 
 typedef struct KfActorDefinitionTable {
     KfActorDefinition entries[KF_ACTOR_DEFINITION_COUNT];

@@ -4,7 +4,11 @@
 #include <kf/lib/map_data.h>
 #include <kf/game/player.h>
 #include <kf/game/collision.h>
-#include <kf/game/game.h>
+#include <kf/game/render.h>
+#include <kf/game/state.h>
+#include <kf/game/system.h>
+#include <kf/game/animation_cache.h>
+#include <kf/game/actor.h>
 
 DATA(0x80056248, 0x20)
 static MATRIX actor_transform_color_matrix = {

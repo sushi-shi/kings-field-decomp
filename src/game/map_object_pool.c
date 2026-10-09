@@ -4,7 +4,7 @@
 #include <kf/lib/map.h>
 #include <kf/game/collision.h>
 #include <psyq/libc.h>
-#include <kf/game/game.h>
+#include <kf/game/effect.h>
 
 /*
  * Map copy and map-object pool/load band (GAME 0x80030a98..0x800315c4).

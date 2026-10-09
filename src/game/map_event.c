@@ -4,7 +4,9 @@
 #include <kf/lib/map_data.h>
 #include <kf/lib/map.h>
 #include <kf/game/collision.h>
-#include <kf/game/game.h>
+#include <kf/game/player.h>
+#include <kf/game/render.h>
+#include <kf/game/system.h>
 
 ADDRESS(0x8003379c, 0x10)
 void map_event_set_current(KfMapEvent *event)

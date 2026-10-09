@@ -3,7 +3,6 @@
 #include <kf/lib/address.h>
 #include <kf/game/player.h>
 #include <psyq/libc.h>
-#include <kf/game/game.h>
 
 enum {
     PLAYER_REVIVAL_POSITION_X = 64000,

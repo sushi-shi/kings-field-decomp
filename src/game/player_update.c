@@ -5,7 +5,12 @@
 #include <kf/game/player.h>
 #include <kf/game/collision.h>
 #include <psyq/libc.h>
-#include <kf/game/game.h>
+#include <kf/game/actor.h>
+#include <kf/game/render.h>
+#include <kf/game/menu.h>
+#include <kf/game/animation_cache.h>
+#include <kf/game/state.h>
+#include <psyq/pad.h>
 
 /* Flash immediately before/on each one-HP poison tick. */
 enum {
@@ -107,7 +112,8 @@ void player_update(void)
     KfMagicRecord *record;
     KfActor *target;
     const VECTOR *origin;
-    SVECTOR unused_vector; /* unused; first frame slot in retail */
+    /* Unresolved retail reservation. */
+    SVECTOR unused_vector;
     SVECTOR direction;
     SVECTOR *launch_direction;
     SVECTOR spawn_offset;
