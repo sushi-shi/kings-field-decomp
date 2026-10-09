@@ -1,6 +1,7 @@
 # Development tool retention review
 
-Reviewed input: `5deb5b1a`. This audit covers all **95 tracked Python files**
+Original reviewed input: `5deb5b1a` (95 files). The assignment metric adds one
+module to the command closure; the current accounting covers **96 Python files**
 under `scripts/`, including package initializers and generated-project build
 templates. It does not claim every source body has been reviewed or every
 tool is used frequently.
@@ -16,7 +17,7 @@ manual commands were checked separately.
 
 | Primary accounting route | Files | Concrete consumer |
 | --- | ---: | --- |
-| Static closure of Nix commands and `kf` | 73 | `flake.nix` wrappers, `scripts/kf/cli.py` dispatch and their imports |
+| Static closure of Nix commands and `kf` | 74 | `flake.nix` wrappers, `scripts/kf/cli.py` dispatch and their imports |
 | Additional manual audits/oracles and shared helpers | 16 | Documented `python -m` commands, codec aggregate dispatch and oracle imports |
 | Additional toolchain/export builders | 5 | Nix SDK construction and the two standalone build templates |
 | Semantic module runner | 1 | `python -m scripts.kf.sema` package entry point |
@@ -30,8 +31,9 @@ deciding whether a tool is disposable.
 
 **Verdict:** retain the current tools. No approved deletion list or unused
 script has been established. In particular, preserve literal, Boolean, cast,
-type, ownership/relocation and strict-match checks. No tool implementation,
-CLI alias, build edge or test gate is changed by this review.
+type, ownership/relocation and strict-match checks. The assignment cleanup adds `expression_assignments.py` to the static command
+closure through the cleanliness board, with a dedicated libclang test gate.
+The remaining retention decisions still apply.
 
 ## Commands and shared infrastructure
 

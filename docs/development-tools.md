@@ -79,3 +79,10 @@ Use `--image game`, `--unit game.actor`, or `--path src/game/` to narrow the
 search; `--json` emits locations and image/unit/function/type contexts for agents.
 `--check` exits 1 when sites remain; parse errors exit 2. The script never edits
 C sources.
+
+Run `kf verify board --assignments` to list assignments inside other expressions
+using libclang in both language views. This metric has a down-only cleanliness
+floor; the retained non-exact cleanup controls still count. Use
+`python -m scripts.kf.expression_assignments --json` for locations, spelling
+origins and image/function contexts, or `--check` to require zero.
+See [the assignment verdicts](patterns/expression-assignment-review.md).

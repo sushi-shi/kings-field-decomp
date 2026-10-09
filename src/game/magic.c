@@ -149,8 +149,8 @@ void magic_cast(void)
             s32 cell_x;
             s32 cell_z;
 
-            VECTOR_YAW_PROBE_XZ(spawn.vx, spawn.vz, player_state.camera_position,
-                player_state.camera_rotation, FIRE_WALL_UNTARGETED_DISTANCE);
+            spawn.vx = player_state.camera_position.vx - ((rsin(player_state.camera_rotation.vy) * FIRE_WALL_UNTARGETED_DISTANCE) >> KF_FIXED12_BITS);
+            spawn.vz = player_state.camera_position.vz + ((rcos(player_state.camera_rotation.vy) * FIRE_WALL_UNTARGETED_DISTANCE) >> KF_FIXED12_BITS);
             cell_z = spawn.vz / KF_MAP_TILE_SIZE;
             cell_x = spawn.vx / KF_MAP_TILE_SIZE;
             spawn.vy = -(map_floor_height_grid.cells[cell_z][cell_x] * KF_MAP_HEIGHT_STEP);

@@ -120,15 +120,6 @@ static inline void memory_card_acknowledge_new_device(void)
     memory_card_begin_status_check();
 }
 
-/* Side-effect-free summary lvalues; ignore padding and keep field order. */
-#define SAVE_SUMMARY_COPY(to, from) ( \
-    (to).experience = (from).experience, \
-    (to).current_floor = (from).current_floor, \
-    (to).current_hp = (from).current_hp, \
-    (to).maximum_hp = (from).maximum_hp, \
-    (to).current_mp = (from).current_mp, \
-    (to).maximum_mp = (from).maximum_mp)
-
 #define SAVE_SUMMARY_EQUAL(a, b) ( \
     (a).experience == (b).experience && \
     (a).current_floor == (b).current_floor && \
@@ -155,7 +146,12 @@ KfSaveResult save_system_read_catalog(KfSaveSlotSummary *summaries)
             if (slot != KF_SAVE_SLOT_EMPTY && slot != KF_SAVE_SLOT_SPARE) {
                 s32 entry = KF_ENUM_ENCODE(u8, slot) - KF_ENUM_ENCODE(s16, KF_SAVE_SLOT_FIRST);
 
-                SAVE_SUMMARY_COPY(summaries[entry], header->directory.summaries[index]);
+                (summaries[entry]).experience = (header->directory.summaries[index]).experience;
+                (summaries[entry]).current_floor = (header->directory.summaries[index]).current_floor;
+                (summaries[entry]).current_hp = (header->directory.summaries[index]).current_hp;
+                (summaries[entry]).maximum_hp = (header->directory.summaries[index]).maximum_hp;
+                (summaries[entry]).current_mp = (header->directory.summaries[index]).current_mp;
+                (summaries[entry]).maximum_mp = (header->directory.summaries[index]).maximum_mp;
             }
         }
     }
@@ -788,7 +784,9 @@ KfBool32 menu_load_message_image(s32 message_id)
     u8 *buffer;
 
     if (message_id != MESSAGE_IMAGE_SKIP) {
-        CD_PATH_WRITE_DECIMAL3(&path[5], message_id);
+        (& path[5])[0] = (message_id) / 100 + '0';
+        (& path[5])[1] = ((message_id) % 100) / 10 + '0';
+        (& path[5])[2] = ((message_id) % 100) % 10 + '0';
         buffer = game_graphics_runtime.display_state.primitive_buffer->cursor;
         if (cd_file_load_into((void *)buffer, path) != KF_RESOURCE_LOADED) {
             return KF_TRUE;
@@ -883,8 +881,9 @@ void talk_show_dialogue_page(KF_ENUM_PARAM(KfFloorId, u8) floor,
     talk_image_path_template[0xc] = KF_ENUM_ENCODE(s32, character_id) / 10 + '0';
     directory_character[0] = KF_ENUM_ENCODE(s32, character_id) / 10 + '0';
     talk_image_path_template[0xa] = KF_ENUM_ENCODE(u8, floor) + '0';
-    directory_character[1] = talk_image_path_template[0xd] =
+    talk_image_path_template[0xd] =
         KF_ENUM_ENCODE(s32, character_id) % 10 + '0';
+    directory_character[1] = talk_image_path_template[0xd];
     talk_image_path_template[0xb] = stage + '0';
     talk_image_path_template[0xe] = page + '0';
     screen_show_image_until_input(directory_character - 6);

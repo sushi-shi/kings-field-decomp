@@ -984,3 +984,6 @@ campaign counts and verdicts retain their recorded scope.
   switches and conditional reads through misindexed armor records.
 - [Codec type consistency](codec-type-consistency.md): shared vector and sound
   types, header-backed record models, and explicit encoded-byte boundaries.
+
+- [expression-assignment-review.md](expression-assignment-review.md): libclang
+  metric, explicit statement cleanup, and eleven retained exact assignment sites.

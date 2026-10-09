@@ -11,9 +11,8 @@ enum {
     KF_RESOURCE_REUSE_PREFIX_BYTES = 16
 };
 
-/* Advance an aligned u8* cursor past a length-prefixed payload and return
- * the next chunk header. The argument must be a side-effect-free lvalue;
- * callers also use the assignment's result inside loader arguments. */
+/* Advance an aligned u8* cursor past a length-prefixed payload.
+ * Use as a standalone statement with a side-effect-free lvalue. */
 #define RESOURCE_STREAM_NEXT(stream) \
     ((stream) += *(u32 *)(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES)
 

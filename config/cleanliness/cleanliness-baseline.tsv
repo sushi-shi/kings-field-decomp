@@ -12,3 +12,5 @@ source-local extern decls	0
 void* views	246
 .c-local aggregates	6
 unresolved func_ identities	3
+# Retained exact chains: six functions; statement controls are non-exact.
+assignments in expressions	11

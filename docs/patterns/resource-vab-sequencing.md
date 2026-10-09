@@ -4,11 +4,12 @@
 
 The five GAME/OPEN resource loaders capture the header payload in a separate
 statement before calling `audio_load_vab`. The first argument then reads only
-that saved pointer; the second advances `stream` to the body chunk. In OPEN,
-that same expression also saves the body header as `vab_chunk` for later arena
-reuse. Argument evaluation order cannot change the chunk pairing.
+that saved pointer. A separate statement advances `stream` to the body chunk;
+OPEN then saves that chunk as `vab_chunk` for later arena reuse. The audio call
+contains no assignment or cursor advance. Argument evaluation order cannot
+change the chunk pairing.
 
-The cursor macro remains appropriate for calls with one cursor argument.
+Every resource cursor advance now appears as a standalone statement.
 There is no remaining conflicting read of `stream` in these five calls. The
 saved header is a real audio argument, not a stack reservation or compiler
 carrier. Its original historical source spelling remains unknown.
@@ -51,8 +52,11 @@ oracle or an exhaustive resource-state claim.
 
 ## Rejected candidates and tooling observation
 
-The earlier separate advance before the call added an instruction to GAME
-(body 0x258 became 0x25c). A new candidate computing the body pointer separately
+An earlier separate-advance candidate added an instruction to GAME
+(body 0x258 became 0x25c). The current control captures the header first and
+then separates the advance from the already-sequenced call; it preserves the
+complete GAME and OPEN comparison objects. See the
+[assignment review](expression-assignment-review.md) for the broader inventory. A new candidate computing the body pointer separately
 and assigning `stream` after the call also changes emitted instructions: its
 first body-pointer setup uses `lw s0,0(s2)` and a body payload displacement of
 8; arena reuse becomes an offset of 20 from that intermediate base. That
@@ -104,10 +108,12 @@ Focused Clang C89 controls use `-Werror=unsequenced`: the original GAME source
 has one diagnostic and original OPEN has four. Both corrected sources pass
 that gate; both corrected C++20 views also compile. This diagnostic control
 checks source sequencing independently of the identical target instructions.
-All three linked CPE/EXE pairs are byte-identical to the captured baseline.
+All three linked EXE files and the ordered CPE loads match the captured
+baseline; the GAME CPE raw record segmentation differs after the broader
+assignment cleanup. See its [verification](expression-assignment-review.md).
 
 Full `kf build` succeeds for all three images. `kf check-types` passes all
-97 image variants with zero enum-domain literals. Ruff, all 885 local tests
+97 image variants with zero enum-domain literals. Ruff, all 890 local tests
 (no skips), and diff whitespace checks pass. This package changes no tooling
 or flake inputs; the preceding actor package's flake gate remains recorded
 under its own verdict.

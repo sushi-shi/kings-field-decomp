@@ -537,7 +537,8 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
     KfMapObjectDefinition *definition;
     KfMapObjectDefinition *neighbor_definition;
 
-    VECTOR_YAW_PROBE_XZ(probe_x, probe_z, *position, *rotation, MAP_ATTRIBUTE_PROBE_DISTANCE);
+    (probe_x) = position->vx - ((rsin(rotation->vy) * MAP_ATTRIBUTE_PROBE_DISTANCE) >> KF_FIXED12_BITS);
+    (probe_z) = position->vz + ((rcos(rotation->vy) * MAP_ATTRIBUTE_PROBE_DISTANCE) >> KF_FIXED12_BITS);
     switch (map_cell_attribute_grid.cells[probe_z / KF_MAP_TILE_SIZE][probe_x / KF_MAP_TILE_SIZE]) {
     case KF_MAP_ATTRIBUTE_PITFALL:
         notify_enqueue(KF_NOTIFICATION_PITFALL);
@@ -555,10 +556,14 @@ void map_interaction_dispatch(const VECTOR *position, SVECTOR *rotation)
         break;
     }
 
-    VECTOR_YAW_PROBE_XZ(probe_x, probe_z, *position, *rotation, MAP_INTERACTION_PROBE_DISTANCE);
-    if (game_graphics_runtime.notification_state.control.effect_phase == KF_NOTIFICATION_IDLE
-        && (index = map_event_pool_find_overlap(
-                probe_x, probe_z, MAP_INTERACTION_RADIUS_PADDING)) != KF_MAP_EVENT_INDEX_NONE) {
+    (probe_x) = position->vx - ((rsin(rotation->vy) * MAP_INTERACTION_PROBE_DISTANCE) >> KF_FIXED12_BITS);
+    (probe_z) = position->vz + ((rcos(rotation->vy) * MAP_INTERACTION_PROBE_DISTANCE) >> KF_FIXED12_BITS);
+    if (game_graphics_runtime.notification_state.control.effect_phase != KF_NOTIFICATION_IDLE) {
+        goto scan_objects;
+    }
+    index = map_event_pool_find_overlap(
+        probe_x, probe_z, MAP_INTERACTION_RADIUS_PADDING);
+    if (index != KF_MAP_EVENT_INDEX_NONE) {
         event = &map_runtime_state.events[index];
         switch (event->behavior) {
             case KF_MAP_EVENT_BEHAVIOR_SHOP:
@@ -604,6 +609,7 @@ clear_event_phase:
                 break;
         }
     } else {
+scan_objects:
         for (index = 0;; index++) {
             index = map_object_pool_find_interaction_from(
                 index, probe_x, probe_z, MAP_INTERACTION_RADIUS_PADDING);
