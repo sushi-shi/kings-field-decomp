@@ -16,6 +16,10 @@ enum {
 #define RESOURCE_STREAM_NEXT(stream) \
     ((stream) += *(u32 *)(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES)
 
+/* Typed view of an aligned chunk payload; leaves the cursor unchanged. */
+#define RESOURCE_STREAM_PAYLOAD(stream, type) \
+    ((type *)((stream) + KF_RESOURCE_CHUNK_HEADER_BYTES))
+
 extern void tim_upload_images(u8 *tim_data);
 /* Both spans contain word_count aligned words; returns the advanced source. */
 extern const u32 *resource_stream_copy_words(

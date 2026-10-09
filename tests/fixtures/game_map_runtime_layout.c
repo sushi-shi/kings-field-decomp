@@ -28,18 +28,6 @@ CHECK_OFFSET(KfMapRuntimeState, world_state, 0x22c);
 CHECK_SIZE(KfWeaponTable, 704);
 CHECK_SIZE(KfArmorTable, 1176);
 CHECK_SIZE(KfActorDefinitionTable, 1824);
-CHECK_SIZE(KfActorDefinition, 0x98);
-CHECK_OFFSET(KfActorDefinition, attachment_offsets, 0x28);
-CHECK_OFFSET(KfActorDefinition, action_animation_steps, 0x3a);
-CHECK_OFFSET(KfActorDefinition, action_animation_phases, 0x5a);
-typedef char actor_attachment_extent[
-    sizeof(((KfActorDefinition *)0)->attachment_offsets) == 0x12 ? 1 : -1];
-typedef char actor_third_attachment_x[
-    FIELD_OFFSET(KfActorDefinition, attachment_offsets[2].x) == 0x34 ? 1 : -1];
-typedef char actor_third_attachment_y[
-    FIELD_OFFSET(KfActorDefinition, attachment_offsets[2].y) == 0x36 ? 1 : -1];
-typedef char actor_third_attachment_z[
-    FIELD_OFFSET(KfActorDefinition, attachment_offsets[2].z) == 0x38 ? 1 : -1];
 CHECK_SIZE(KfMapObjectDefinitionTable, 1280);
 CHECK_SIZE(KfMagicTable, 480);
 CHECK_SIZE(KfMapGrid, 10000);

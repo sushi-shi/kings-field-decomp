@@ -32,7 +32,8 @@ deciding whether a tool is disposable.
 **Verdict:** retain the current tools. No approved deletion list or unused
 script has been established. In particular, preserve literal, Boolean, cast,
 type, ownership/relocation and strict-match checks. The assignment cleanup adds `expression_assignments.py` to the static command
-closure through the cleanliness board, with a dedicated libclang test gate.
+closure through the cleanliness board. The tests added by this cleanup were
+removed at the user's request; the metric itself is retained.
 The remaining retention decisions still apply.
 
 ## Commands and shared infrastructure

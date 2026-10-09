@@ -64,14 +64,15 @@ consumer instructions; its other differences are the already-existing
 native section-relative relocation presentation. Strict results come from
 refreshed objdiff reports, independently of that listing comparison.
 
-The modern C++ contract exercises all three slots and the two signed readers.
-The pinned Psy-Q fixture checks the array's 18-byte extent, all third-lane
+The original modern C++ contract exercised all three slots and the two signed readers.
+The original pinned Psy-Q fixture checked the array's 18-byte extent, all third-lane
 offsets, later arrays, and complete record/table sizes, alongside its wrong
 owner-size negative control. The local resource control checks the shipped
-third-slot record and its exact retail table word. The existing record-loader
+third-slot record and its exact retail table word. Those added tests and fixture
+assertions were removed at the user's request. The existing record-loader
 oracle compares complete copied table bytes across retail, C, and Rust.
 
-## Verification verdict
+## Verification verdict at the original implementation
 
 All eleven functions in `game.actor_behavior` and all three in
 `game.actor_pool` remain strict objdiff 100% after rebuilding and refreshing

@@ -22,9 +22,10 @@ Different overlay macro owners remain distinct contexts. Parse errors fail the
 census instead of returning an incomplete zero. Inactive branches outside the
 two selected language views are outside this metric.
 
-The initial census has **179 sites**; the cleanup preserving baseline objects
-has **4**. The committed down-only floor is 4. Zero remains the target; no exception
-removes a retained assignment from the count.
+The initial census has **179 sites**. The cleanup reached 4 before the user
+requested retaining readable polling/formatter conditions and sprite chains.
+The current count and approved floor are **46**: 42 sites in those idioms plus
+four exactness exceptions. All remain counted; zero is no longer the target.
 
 ## Kept source changes
 
@@ -32,16 +33,16 @@ removes a retained assignment from the count.
   the audio loader. All four OPEN calls and the GAME call use statements.
 - Advance every resource cursor before its consumer, including common resource
   tables, placements, TMD registration and archives.
-- Put CD polling and formatter character reads in statements, preserving the
-  terminating read and formatter `continue` behavior.
+- Retain CD polling and formatter character reads in their `while` conditions,
+  with compact `{}` for empty polling bodies.
 - Preserve both event-lookup and object-scan routes when splitting the guarded
   interaction condition. The non-idle and missing-event routes still scan objects.
 - Expand seven project expression macros into their ordinary operations at
   existing call sites and remove the unused definitions. New statement blocks
   changed instructions; direct statements recover the exact functions.
 - Split exact attachment-scale, packet-coordinate, material-color and modern
-  enum/Boolean assignment chains. Sprite corners and texture edges use genuine
-  shared values, preserving narrow conversion without extra field reloads.
+  enum/Boolean assignment chains. Keep the readable shared-value chains for
+  sprite corners, screen coordinates and texture edges.
 - Keep one typed menu-packet helper for the real generic SDK blending boundary.
 - Capture the first draw buffer's SDK dithering byte, then enable the second
   and first buffers in separate statements. Both display initializers remain
@@ -102,8 +103,9 @@ Object equality proves non-regression, not retail exactness for this function.
 Local generated evidence is under
 `build/cleanup-evidence/expression-assignments/`: the initial inventory,
 image-qualified retail disassembly/references/strings/match state, original
-source controls and strict candidate scores. Tests exercise real libclang ASTs,
-macro provenance, overloaded assignments and fail-closed parsing.
+source controls and strict candidate scores. The census uses real libclang ASTs,
+macro provenance, overloaded assignments and fail-closed parsing. The tests added
+by this cleanup were removed at the user's request.
 
 All 97 native-derived comparison objects and all three complete EXE files are
 byte-identical to the captured baseline. CPE entry points and ordered loaded
@@ -111,8 +113,8 @@ memory are also identical. The GAME CPE's raw record segmentation differs;
 raw CPE-file equality is not claimed for that image. PSX and OPEN CPE files
 remain byte-identical.
 
-Full `kf build`, the cleanliness gate, all 97 type variants with zero enum
-literals, Ruff and all 890 local tests (no skips) pass. `nix flake check -L`
-passes; its isolated SDK suite runs 890 tests with the expected 147 retail-data
+Full `kf build`, the cleanliness gate at 46, all 97 type variants with zero enum
+literals, Ruff and all 765 remaining local tests (no skips) pass. `nix flake check -L`
+passes; its isolated SDK suite runs 765 tests with the expected 144 retail-data
 skips. Existing non-exact functions and separate data/relink failures retain
 their previous scope. No function was newly banked.

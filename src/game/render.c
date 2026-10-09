@@ -100,9 +100,7 @@ void display_show_system_screen(KfSystemScreen screen)
         CdControl(CdlSetloc, (u_char *)&cd_read_location, NULL);
         CdRead(cd_search_file.size >> KF_CD_SECTOR_SHIFT,
                (u_long *)game_graphics_runtime.display_state.asset_load_buffer, CdlModeSpeed);
-        do {
-            result = CdReadSync(KF_CD_READ_POLL, NULL);
-        } while (result > 0);
+        while ((result = CdReadSync(KF_CD_READ_POLL, NULL)) > 0) {}
         if (result == 0) {
             attempt = KF_CD_READ_STOP_ATTEMPT;
         }
