@@ -29,8 +29,6 @@ void render_frame(const VECTOR *position_or_null, const SVECTOR *rotation_or_nul
 {
     MATRIX model;
     SVECTOR spin;
-    KfHudSprite *poison_icon;
-    KfHudSprite *compass_sprite;
     KfNotificationSprite *record;
     s16 i;
 
@@ -40,8 +38,7 @@ void render_frame(const VECTOR *position_or_null, const SVECTOR *rotation_or_nul
     SetGeomScreen(KF_DEFAULT_PROJECTION_DISTANCE);
     render_map_cells();
     SetLightMatrix(&render_light_matrices[KF_RENDER_LIGHT_HUD]);
-    poison_icon = &hud_sprites[KF_HUD_POISON_ICON];
-    poison_icon->state = KF_SPRITE_HIDDEN;
+    hud_sprites[KF_HUD_POISON_ICON].state = KF_SPRITE_HIDDEN;
     hud_sprites[KF_HUD_SLOWED_ICON].state = KF_SPRITE_HIDDEN;
     hud_sprites[KF_HUD_DARKNESS_ICON].state = KF_SPRITE_HIDDEN;
     hud_sprites[KF_HUD_CURSE_ICON].state = KF_SPRITE_HIDDEN;
@@ -69,7 +66,7 @@ void render_frame(const VECTOR *position_or_null, const SVECTOR *rotation_or_nul
         } else if ((flags & KF_PLAYER_STATUS_DARKNESS) != KF_PLAYER_STATUS_NONE) {
             hud_sprites[KF_HUD_DARKNESS_ICON].state = KF_SPRITE_VISIBLE;
         } else if ((flags & KF_PLAYER_STATUS_POISON) != KF_PLAYER_STATUS_NONE) {
-            poison_icon->state = KF_SPRITE_VISIBLE;
+            hud_sprites[KF_HUD_POISON_ICON].state = KF_SPRITE_VISIBLE;
         } else if ((flags & KF_PLAYER_STATUS_SLOWED) != KF_PLAYER_STATUS_NONE) {
             hud_sprites[KF_HUD_SLOWED_ICON].state = KF_SPRITE_VISIBLE;
         }
@@ -84,8 +81,7 @@ void render_frame(const VECTOR *position_or_null, const SVECTOR *rotation_or_nul
         hud_sprites[KF_HUD_MAGIC_PANEL].state = KF_SPRITE_HIDDEN;
     }
 
-    compass_sprite = &hud_sprites[KF_HUD_COMPASS];
-    compass_sprite->state = ((KfSpriteState)(((u8)(player_state.compass_enabled))));
+    hud_sprites[KF_HUD_COMPASS].state = ((KfSpriteState)(((u8)(player_state.compass_enabled))));
     hud_models[KF_HUD_MODEL_COMPASS].state = ((KfSpriteState)(((u8)(player_state.compass_enabled))));
     hud_models[KF_HUD_MODEL_COMPASS].rotation.vz = -game_graphics_runtime.render_state.view_rotation.vy & KF_ANGLE_WRAP_MASK;
     render_hud_models();
@@ -95,7 +91,7 @@ void render_frame(const VECTOR *position_or_null, const SVECTOR *rotation_or_nul
     game_graphics_runtime.active_render_color.b = game_graphics_runtime.hud_brightness;
     game_graphics_runtime.active_render_color.g = game_graphics_runtime.hud_brightness;
     game_graphics_runtime.active_render_color.r = game_graphics_runtime.hud_brightness;
-    render_hud_sprites(compass_sprite - KF_HUD_COMPASS);
+    render_hud_sprites(hud_sprites);
 
     SetLightMatrix(&render_light_matrices[KF_RENDER_LIGHT_NOTIFICATION]);
     notify_effect_update();
@@ -115,14 +111,13 @@ void render_frame(const VECTOR *position_or_null, const SVECTOR *rotation_or_nul
 
     game_graphics_runtime.active_render_tpage = game_graphics_runtime.notification_text_tpage;
     game_graphics_runtime.active_render_clut = game_graphics_runtime.notification_text_clut;
-    record = notification_sprites;
-    if (record[KF_NOTIFICATION_TEXT_SPRITE].active == KF_SPRITE_VISIBLE) {
-        render_enqueue_sprite(&record[KF_NOTIFICATION_TEXT_SPRITE].sprite, 0, KF_SPRITE_DEPTH_CUE_NORMAL);
+    if (notification_sprites[KF_NOTIFICATION_TEXT_SPRITE].active == KF_SPRITE_VISIBLE) {
+        render_enqueue_sprite(&notification_sprites[KF_NOTIFICATION_TEXT_SPRITE].sprite, 0, KF_SPRITE_DEPTH_CUE_NORMAL);
     }
     if (notification_sprites[KF_NOTIFICATION_GOLD_SPRITE].active == KF_SPRITE_VISIBLE) {
-        render_enqueue_sprite(&record[KF_NOTIFICATION_GOLD_SPRITE].sprite, 0, KF_SPRITE_DEPTH_CUE_NORMAL);
+        render_enqueue_sprite(&notification_sprites[KF_NOTIFICATION_GOLD_SPRITE].sprite, 0, KF_SPRITE_DEPTH_CUE_NORMAL);
     }
-    record += KF_NOTIFICATION_ONES_SPRITE;
+    record = &notification_sprites[KF_NOTIFICATION_ONES_SPRITE];
     game_graphics_runtime.active_render_tpage = game_graphics_runtime.notification_digit_tpage;
     game_graphics_runtime.active_render_clut = game_graphics_runtime.notification_digit_clut;
     for (i = KF_NOTIFICATION_THOUSANDS_SPRITE - KF_NOTIFICATION_ONES_SPRITE; i != -1; i--) {

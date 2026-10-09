@@ -305,10 +305,11 @@ static inline void menu_list_previous(KfMenuList *list)
 {
     if (list->selected_index != 0) {
         list->selected_index--;
-        if (list->cursor_row == 0)
+        if (list->cursor_row == 0) {
             list->scroll_offset--;
-        else
+        } else {
             list->cursor_row--;
+        }
     } else {
         list->selected_index = list->entry_count - 1;
         if (list->entry_count < list->visible_rows) {
@@ -325,10 +326,11 @@ static inline void menu_list_next(KfMenuList *list)
 {
     if (list->selected_index < list->entry_count - 1) {
         list->selected_index++;
-        if (list->cursor_row == list->visible_rows - 1)
+        if (list->cursor_row == list->visible_rows - 1) {
             list->scroll_offset++;
-        else
+        } else {
             list->cursor_row++;
+        }
     } else {
         list->selected_index = 0;
         list->scroll_offset = 0;

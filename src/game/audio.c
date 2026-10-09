@@ -110,10 +110,8 @@ void audio_stop_sequence_master_fade(s32 fade_step)
 
 void audio_close_vab(void)
 {
-    s16 *vab_id = &audio_state.active_vab_id;
-
-    SsVabClose(*vab_id);
-    *vab_id = KF_AUDIO_VAB_UNAVAILABLE;
+    SsVabClose(audio_state.active_vab_id);
+    audio_state.active_vab_id = KF_AUDIO_VAB_UNAVAILABLE;
     audio_state.vab_header = NULL;
 }
 
@@ -153,6 +151,7 @@ KfAudioPlaybackResult audio_play_spatial(
         angle = KF_ANGLE_FULL_TURN - angle;
     }
     angle >>= 1;
+
     if ((sound->tone & 0x80) == 1) {
         attenuation += GAME_SOUND_ATTENUATION_BOOST;
         if (attenuation >= KF_AUDIO_MAX_VOLUME + 1) {

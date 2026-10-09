@@ -513,36 +513,35 @@ s32 actor_distance_to_point(
     s32 delta_y;
     s32 distance;
 
-    switch (0) {
-    default:
-        point_x = actor->position.vx - point_x;
-        if (point_x < -max_distance || max_distance < point_x) {
-            return KF_DISTANCE_NONE;
-        }
-        point_z = actor->position.vz - point_z;
-        if (point_z < -max_distance || max_distance < point_z) {
-            return KF_DISTANCE_NONE;
-        }
-        point_x >>= KF_LENGTH_SQUARE_DOWNSHIFT;
-        if (point_y != KF_COLLISION_IGNORE_HEIGHT) {
-            actor_height >>= 1;
-            point_height >>= 1;
-            delta_y = (actor->position.vy - actor_height) - (point_y - point_height);
-            point_height += actor_height;
-            if (delta_y < -point_height) {
-                return KF_DISTANCE_NONE;
-            }
-            if (point_height < delta_y) {
-                break;
-            }
-        }
-        point_z >>= KF_LENGTH_SQUARE_DOWNSHIFT;
-        distance = SquareRoot0(point_x * point_x + point_z * point_z) << KF_LENGTH_SQUARE_DOWNSHIFT;
-        if (max_distance < distance) {
-            break;
-        }
-        return distance;
+    point_x = actor->position.vx - point_x;
+    if (point_x < -max_distance || max_distance < point_x) {
+        return KF_DISTANCE_NONE;
     }
+    point_z = actor->position.vz - point_z;
+    if (point_z < -max_distance || max_distance < point_z) {
+        return KF_DISTANCE_NONE;
+    }
+    point_x >>= KF_LENGTH_SQUARE_DOWNSHIFT;
+    if (point_y != KF_COLLISION_IGNORE_HEIGHT) {
+        actor_height >>= 1;
+        point_height >>= 1;
+        delta_y = (actor->position.vy - actor_height) - (point_y - point_height);
+        point_height += actor_height;
+        if (delta_y < -point_height) {
+            return KF_DISTANCE_NONE;
+        }
+        if (point_height < delta_y) {
+            goto out_of_range;
+        }
+    }
+    point_z >>= KF_LENGTH_SQUARE_DOWNSHIFT;
+    distance = SquareRoot0(point_x * point_x + point_z * point_z) << KF_LENGTH_SQUARE_DOWNSHIFT;
+    if (max_distance < distance) {
+        goto out_of_range;
+    }
+    return distance;
+
+out_of_range:
     return KF_DISTANCE_NONE;
 }
 
@@ -669,7 +668,7 @@ KfActorAction actor_try_select_action_distance_facing(
     } else {
         odds >>= ACTOR_SELECTION_OUTER_CHANCE_SHIFT;
     }
-    if (!((rand() >> ACTOR_SELECTION_RANDOM_SHIFT) < odds)) {
+    if ((rand() >> ACTOR_SELECTION_RANDOM_SHIFT) >= odds) {
         return KF_ACTOR_ACTION_NONE;
     }
     if (rand() < ACTOR_SELECTION_FACING_BYPASS_LIMIT) {
@@ -708,11 +707,7 @@ KfActorAction actor_try_select_ground_action(KfActorAction action, s32 distance,
         }
         odds <<= ACTOR_GROUND_NEAR_CHANCE_SHIFT;
     }
-    switch (0) {
-    default:
-        if (!((rand() >> ACTOR_SELECTION_RANDOM_SHIFT) < odds)) {
-            break;
-        }
+    if ((rand() >> ACTOR_SELECTION_RANDOM_SHIFT) < odds) {
         if (rand() < ACTOR_SELECTION_FACING_BYPASS_LIMIT) {
             return action;
         }
@@ -742,7 +737,7 @@ KfActorAction actor_try_select_multi_hit_action(KfActorAction action, s32 distan
         }
         odds <<= ACTOR_MULTI_HIT_NEAR_CHANCE_SHIFT;
     }
-    if (!((rand() >> ACTOR_SELECTION_RANDOM_SHIFT) < odds)) {
+    if ((rand() >> ACTOR_SELECTION_RANDOM_SHIFT) >= odds) {
         return KF_ACTOR_ACTION_NONE;
     }
     if (angle_within_tolerance(
@@ -781,47 +776,42 @@ KfActorAction actor_try_select_profiled_action(KfActorAction action,
         }
     }
     odds = (chance * odds) >> KF_FIXED8_BITS;
-    if (!((rand() >> ACTOR_SELECTION_RANDOM_SHIFT) < odds)) {
+    if ((rand() >> ACTOR_SELECTION_RANDOM_SHIFT) >= odds) {
         return KF_ACTOR_ACTION_NONE;
     }
-    switch (0) {
-    default:
-        if (!angle_within_tolerance(
-                actor->rotation.angles.y,
-                ACTOR_BEARING_TO_PLAYER(actor),
-                KF_ACTOR_AIM_TOLERANCE)
-            && rand() >= ACTOR_PROFILE_FACING_BYPASS_LIMIT) {
-            break;
-        }
-        switch (0) {
-        default:
-            if (profile != KF_EFFECT_KIND_ACTOR_SPAWNER) {
-                break;
-            }
-            candidate = actor_state.actors;
-            count = 0;
-            index = KF_ACTOR_CAPACITY - 1;
-            do {
-                if (candidate->slot_state != KF_ACTOR_SLOT_FREE
-                    && candidate->lifecycle == KF_ACTOR_LIFECYCLE_ACTIVE) {
-                    count++;
-                }
-                candidate++;
-            } while (--index != -1);
-            record = effect_state.records;
-            index = KF_EFFECT_CAPACITY - 1;
-            do {
-                if (record->type != KF_EFFECT_SLOT_FREE
-                    && record->kind == KF_EFFECT_KIND_ACTOR_SPAWNER) {
-                    count++;
-                }
-                record++;
-            } while (--index != -1);
-            if (count >= ACTOR_SPAWNER_POPULATION_LIMIT) {
-                return KF_ACTOR_ACTION_NONE;
-            }
-        }
-        return action;
+    if (!angle_within_tolerance(
+            actor->rotation.angles.y,
+            ACTOR_BEARING_TO_PLAYER(actor),
+            KF_ACTOR_AIM_TOLERANCE)
+        && rand() >= ACTOR_PROFILE_FACING_BYPASS_LIMIT) {
+        goto rejected;
     }
+    if (profile == KF_EFFECT_KIND_ACTOR_SPAWNER) {
+        candidate = actor_state.actors;
+        count = 0;
+        index = KF_ACTOR_CAPACITY - 1;
+        do {
+            if (candidate->slot_state != KF_ACTOR_SLOT_FREE
+                && candidate->lifecycle == KF_ACTOR_LIFECYCLE_ACTIVE) {
+                count++;
+            }
+            candidate++;
+        } while (--index != -1);
+        record = effect_state.records;
+        index = KF_EFFECT_CAPACITY - 1;
+        do {
+            if (record->type != KF_EFFECT_SLOT_FREE
+                && record->kind == KF_EFFECT_KIND_ACTOR_SPAWNER) {
+                count++;
+            }
+            record++;
+        } while (--index != -1);
+        if (count >= ACTOR_SPAWNER_POPULATION_LIMIT) {
+            return KF_ACTOR_ACTION_NONE;
+        }
+    }
+    return action;
+
+rejected:
     return KF_ACTOR_ACTION_NONE;
 }

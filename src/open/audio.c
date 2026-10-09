@@ -109,11 +109,9 @@ void audio_stop_sequence(KfAudioStopMode stop_mode)
 
 void audio_close_vab(void)
 {
-    s16 *vab_id = &audio_state.active_vab_id;
-
-    if (*vab_id != KF_AUDIO_VAB_UNAVAILABLE) {
-        SsVabClose(*vab_id);
+    if (audio_state.active_vab_id != KF_AUDIO_VAB_UNAVAILABLE) {
+        SsVabClose(audio_state.active_vab_id);
     }
-    *vab_id = KF_AUDIO_VAB_UNAVAILABLE;
+    audio_state.active_vab_id = KF_AUDIO_VAB_UNAVAILABLE;
     audio_state.vab_header = NULL;
 }

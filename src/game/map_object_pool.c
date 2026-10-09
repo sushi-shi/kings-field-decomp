@@ -157,13 +157,10 @@ void map_object_pool_clear(void)
     u16 index = KF_MAP_OBJECT_CAPACITY - 1;
 
     do {
-        u32 *link_words = (u32 *)&object->link;
-
         object->object_id = KF_OBJECT_NONE;
         object->action = KF_MAP_OBJECT_OP_NONE;
-
-        link_words[1] = 0;
-        link_words[0] = 0;
+        object->link.words[1] = 0;
+        object->link.words[0] = 0;
         object++;
     } while (index-- != 0);
     map_object_state.placement_drop_sequence = 0;

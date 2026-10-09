@@ -42,6 +42,8 @@ enum {
     ENDING_ROTATION_START_POINT = 4,
     ENDING_MAX_BRIGHTNESS = 255,
     ENDING_BRIGHTEN_STEP = 4,
+
+    ENDING_SCENE_BLEND_STEP = 0x40,
     ENDING_FADE_DARKEN_STEP = 0x10,
     ENDING_PANEL_COUNT = 9,
     ENDING_PANEL_STOP_Y = 50,
@@ -174,7 +176,6 @@ void opening_scene0_run(void)
     KfOpeningEntity *decreasing_yaw_model;
     KfOpeningEntity *increasing_yaw_model;
     s16 blend;
-    s16 next_blend;
 
     blend = 0;
     opening_resources_load_scene0();
@@ -202,17 +203,15 @@ void opening_scene0_run(void)
             if (blend < 0) {
                 break;
             }
-            next_blend = blend - OPENING_COLOR_FADE_STEP;
-            blend = next_blend;
+            blend -= OPENING_COLOR_FADE_STEP;
             lighting_set_color_matrix(
                 &color_matrix_table[((s32)(KF_OPEN_COLOR_BLACK))],
-                &color_matrix_table[((s32)(KF_OPEN_COLOR_DEFAULT))], next_blend);
+                &color_matrix_table[((s32)(KF_OPEN_COLOR_DEFAULT))], blend);
         } else if (blend < KF_FIXED12_ONE) {
-            next_blend = blend + OPENING_COLOR_FADE_STEP;
-            blend = next_blend;
+            blend += OPENING_COLOR_FADE_STEP;
             lighting_set_color_matrix(
                 &color_matrix_table[((s32)(KF_OPEN_COLOR_BLACK))],
-                &color_matrix_table[((s32)(KF_OPEN_COLOR_DEFAULT))], next_blend);
+                &color_matrix_table[((s32)(KF_OPEN_COLOR_DEFAULT))], blend);
         }
 
         audio_set_listener_transform(
@@ -230,7 +229,6 @@ void opening_scene1_draw_fade(u8 shade)
 {
     POLY_FT4 *left;
     POLY_FT4 *right;
-    u32 **ordering_table_slot;
 
     display_begin_frame();
     left = (POLY_FT4 *)open_graphics_runtime.display_state.primitive_buffer->cursor;
@@ -248,19 +246,14 @@ void opening_scene1_draw_fade(u8 shade)
         SCENE1_RIGHT_TPAGE_X, KF_TEXTURE_LOWER_PAGE_Y);
 
     setXYWH(left, 0, 0, SCENE1_PANEL_WIDTH, KF_DISPLAY_HEIGHT);
-
     setXYWH(right, SCENE1_RIGHT_PANEL_X, 0, SCENE1_PANEL_WIDTH, KF_DISPLAY_HEIGHT);
-
     setUVWH(left, 0, 0, SCENE1_PANEL_WIDTH, KF_DISPLAY_HEIGHT);
-
     setUVWH(right, 0, 0, SCENE1_PANEL_WIDTH, KF_DISPLAY_HEIGHT);
-
     setRGB0(left, shade, shade, shade);
     setRGB0(right, shade, shade, shade);
 
-    ordering_table_slot = &open_graphics_runtime.ordering_table;
-    AddPrim((void *)*ordering_table_slot, (void *)left);
-    AddPrim((void *)*ordering_table_slot, (void *)right);
+    AddPrim((void *)open_graphics_runtime.ordering_table, (void *)left);
+    AddPrim((void *)open_graphics_runtime.ordering_table, (void *)right);
     display_present_frame();
 }
 
@@ -277,8 +270,7 @@ void opening_scene1_run(void)
         shade += SCENE1_SHADE_STEP;
     } while (shade < KF_TEXTURE_BASE_BRIGHTNESS + 1);
 
-    frame = 0;
-    do {
+    for (frame = 0; frame < SCENE1_HOLD_FRAMES; frame++) {
         if (frame == SCENE1_SEQUENCE_STOP_FRAME) {
             audio_stop_sequence(KF_AUDIO_STOP_IMMEDIATE);
         }
@@ -287,8 +279,7 @@ void opening_scene1_run(void)
         if (opening_input_action != KF_OPENING_INPUT_NONE) {
             break;
         }
-        frame++;
-    } while (frame < SCENE1_HOLD_FRAMES);
+    }
 
     audio_stop_sequence(KF_AUDIO_STOP_FADE);
     shade = KF_TEXTURE_BASE_BRIGHTNESS;
@@ -392,7 +383,6 @@ void opening_scene3_run(void)
 
     u32 cluts[SCENE3_CLUT_WORK_CAPACITY];
     KfScreenRect *panel;
-    s16 *panel_y;
     s16 blend;
     s16 panel_index;
     s32 wave_angle;
@@ -460,10 +450,9 @@ void opening_scene3_run(void)
         opening_render_entities();
         panel_index = 0;
         panel = opening_scene3_panels;
-        panel_y = &panel->y;
         do {
 
-            if ((u16)(--*panel_y + PANEL_CLIP_Y_BIAS) < PANEL_CLIP_SPAN) {
+            if ((u16)(--panel->y + PANEL_CLIP_Y_BIAS) < PANEL_CLIP_SPAN) {
                 sprite_add_ft4(
                     panel,
                     opening_scene3_panel_uv,
@@ -473,7 +462,6 @@ void opening_scene3_run(void)
                     PANEL_OT_DEPTH);
             }
             panel_index++;
-            panel_y += sizeof(*panel) / sizeof(*panel_y);
             panel++;
         } while (panel_index < KF_OPENING_SCENE3_PANEL_COUNT);
         display_present_frame();
@@ -575,10 +563,10 @@ void opening_ending_scene_run(void)
                 } else {
                     brightness += ENDING_BRIGHTEN_STEP;
                 }
-                if (blend < 0xfff) {
-                    blend += 0x40;
+                if (blend < KF_FIXED12_ONE - 1) {
+                    blend += ENDING_SCENE_BLEND_STEP;
                 } else {
-                    blend = 0xfff;
+                    blend = KF_FIXED12_ONE - 1;
                 }
             }
         } else {

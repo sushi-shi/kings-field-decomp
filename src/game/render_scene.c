@@ -57,14 +57,11 @@ void render_entities(void)
             if (row >= g->height) {
                 continue;
             }
-            {
-                col = actor->cell_x - window_origin_x;
-                if (col >= g->width) {
-                    continue;
-                }
-
-                visible = ((u8)(g->cells[row * g->width + col]));
+            col = actor->cell_x - window_origin_x;
+            if (col >= g->width) {
+                continue;
             }
+            visible = ((u8)(g->cells[row * g->width + col]));
         } else {
             row = actor->cell_z + ACTOR_CULL_SQUARE_HALF_WIDTH;
             row -= game_graphics_runtime.render_state.view_cell.z;
@@ -109,19 +106,17 @@ void render_entities(void)
     SetLightMatrix(effect_light_matrix);
     effect = effect_state.records;
     for (i = KF_EFFECT_CAPACITY - 1; i != -1; effect++, i--) {
+        const KfCellWindow *g;
+
         if (effect->type == KF_EFFECT_SLOT_FREE || effect->render_id.model == KF_EFFECT_MODEL_NONE) {
             continue;
         }
-        {
-            const KfCellWindow *g;
-
-            row = (effect->position.vz / KF_MAP_TILE_SIZE) - window_origin_z;
-            g = game_graphics_runtime.active_cell_window;
-            if (row < g->height) {
-                col = (effect->position.vx / KF_MAP_TILE_SIZE) - window_origin_x;
-                if (col < g->width && g->cells[row * g->width + col] != KF_CELL_WINDOW_HIDDEN) {
-                    render_effect(effect);
-                }
+        row = (effect->position.vz / KF_MAP_TILE_SIZE) - window_origin_z;
+        g = game_graphics_runtime.active_cell_window;
+        if (row < g->height) {
+            col = (effect->position.vx / KF_MAP_TILE_SIZE) - window_origin_x;
+            if (col < g->width && g->cells[row * g->width + col] != KF_CELL_WINDOW_HIDDEN) {
+                render_effect(effect);
             }
         }
     }

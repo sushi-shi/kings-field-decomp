@@ -228,6 +228,17 @@ void player_adjust_mp(s32 delta)
     }
 }
 
+static inline void player_add_armor_defenses(const KfArmorRecord *armor)
+{
+    player_state.cutting_defense += armor->cutting_defense;
+    player_state.cutting_defense += armor->cutting_defense;
+    player_state.striking_defense += armor->striking_defense;
+    player_state.piercing_defense += armor->piercing_defense;
+    player_state.poison_resistance += armor->poison_resistance;
+    player_state.magic_defense += armor->magic_defense;
+    player_state.fire_defense += armor->fire_defense;
+}
+
 void player_recalculate_combat_stats(void)
 {
     const KfWeaponRecord *weapon;
@@ -264,58 +275,28 @@ void player_recalculate_combat_stats(void)
     }
     if (player_state.equipped_head_armor_id != KF_OBJECT_NONE) {
         armor = &armor_records.entries[((u8)(player_state.equipped_head_armor_id))
-            - ((u8)(KF_ITEM_IRON_MASK))];
-        player_state.cutting_defense += armor->cutting_defense;
-        player_state.cutting_defense += armor->cutting_defense;
-        player_state.striking_defense += armor->striking_defense;
-        player_state.piercing_defense += armor->piercing_defense;
-        player_state.poison_resistance += armor->poison_resistance;
-        player_state.magic_defense += armor->magic_defense;
-        player_state.fire_defense += armor->fire_defense;
+                - ((u8)(KF_ITEM_IRON_MASK))];
+        player_add_armor_defenses(armor);
     }
     if (player_state.equipped_body_armor_id != KF_OBJECT_NONE) {
         armor = &armor_records.entries[((u8)(player_state.equipped_body_armor_id))
-            - ((u8)(KF_ITEM_IRON_MASK))];
-        player_state.cutting_defense += armor->cutting_defense;
-        player_state.cutting_defense += armor->cutting_defense;
-        player_state.striking_defense += armor->striking_defense;
-        player_state.piercing_defense += armor->piercing_defense;
-        player_state.poison_resistance += armor->poison_resistance;
-        player_state.magic_defense += armor->magic_defense;
-        player_state.fire_defense += armor->fire_defense;
+                - ((u8)(KF_ITEM_IRON_MASK))];
+        player_add_armor_defenses(armor);
     }
     if (player_state.equipped_arm_armor_id != KF_OBJECT_NONE) {
         armor = &armor_records.entries[((u8)(player_state.equipped_arm_armor_id))
-            - ((u8)(KF_ITEM_IRON_MASK))];
-        player_state.cutting_defense += armor->cutting_defense;
-        player_state.cutting_defense += armor->cutting_defense;
-        player_state.striking_defense += armor->striking_defense;
-        player_state.piercing_defense += armor->piercing_defense;
-        player_state.poison_resistance += armor->poison_resistance;
-        player_state.magic_defense += armor->magic_defense;
-        player_state.fire_defense += armor->fire_defense;
+                - ((u8)(KF_ITEM_IRON_MASK))];
+        player_add_armor_defenses(armor);
     }
     if (player_state.equipped_leg_armor_id != KF_OBJECT_NONE) {
         armor = &armor_records.entries[((u8)(player_state.equipped_leg_armor_id))
-            - ((u8)(KF_ITEM_IRON_MASK))];
-        player_state.cutting_defense += armor->cutting_defense;
-        player_state.cutting_defense += armor->cutting_defense;
-        player_state.striking_defense += armor->striking_defense;
-        player_state.piercing_defense += armor->piercing_defense;
-        player_state.poison_resistance += armor->poison_resistance;
-        player_state.magic_defense += armor->magic_defense;
-        player_state.fire_defense += armor->fire_defense;
+                - ((u8)(KF_ITEM_IRON_MASK))];
+        player_add_armor_defenses(armor);
     }
     if (player_state.equipped_shield_id != KF_OBJECT_NONE) {
         armor = &armor_records.entries[((u8)(player_state.equipped_shield_id))
-            - ((u8)(KF_ITEM_IRON_MASK))];
-        player_state.cutting_defense += armor->cutting_defense;
-        player_state.cutting_defense += armor->cutting_defense;
-        player_state.striking_defense += armor->striking_defense;
-        player_state.piercing_defense += armor->piercing_defense;
-        player_state.poison_resistance += armor->poison_resistance;
-        player_state.magic_defense += armor->magic_defense;
-        player_state.fire_defense += armor->fire_defense;
+                - ((u8)(KF_ITEM_IRON_MASK))];
+        player_add_armor_defenses(armor);
     }
     switch (player_state.equipped_accessory_id) {
     case KF_ITEM_LIGHT_RING:

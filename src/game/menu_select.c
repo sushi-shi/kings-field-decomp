@@ -23,8 +23,8 @@ void menu_equip_select(KfEquipmentMenuCategory equipment_category)
     s32 prev;
     s32 selection = ((s32)(KF_MENU_RESULT_PENDING));
 
-    while (PadRead(1) != 0)
-        ;
+    while (PadRead(1) != 0) {
+    }
 
     player_stock = item_stock[((u8)(KF_ITEM_STOCK_PLAYER))];
     switch (equipment_category) {
@@ -62,8 +62,9 @@ void menu_equip_select(KfEquipmentMenuCategory equipment_category)
     for (item_id = start; item_id < end; item_id++) {
         if (player_stock[item_id] != 0) {
             name = item_name_rows[item_id].codes;
-            for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)
+            for (j = 0; j < MENU_GLYPHS_PER_ROW; j++) {
                 labels[found][j] = name[j];
+            }
             item_ids[found] = ((KfObjectId)(item_id));
             found++;
         }
@@ -82,23 +83,25 @@ void menu_equip_select(KfEquipmentMenuCategory equipment_category)
     ctx.quantities = NULL;
 
     if (ctx.entry_count != 0) {
-        if (menu_load_item_model(item_ids[ctx.selected_index]) != KF_RESOURCE_LOADED)
+        if (menu_load_item_model(item_ids[ctx.selected_index]) != KF_RESOURCE_LOADED) {
             return;
+        }
     }
 
     for (;;) {
         if (confirm == KF_MENU_CONFIRM_REQUESTED) {
             if (menu_list_confirm(&ctx, KF_MENU_CONFIRM_EQUIP,
                     KF_MENU_PREVIEW_ITEM_MODEL, item_ids[ctx.selected_index], KF_ITEM_STOCK_PLAYER, KF_TRADE_BUY)
-                    == KF_MENU_RESULT_CANCELLED)
+                    == KF_MENU_RESULT_CANCELLED) {
                 selection = ((s32)(KF_MENU_RESULT_PENDING));
-            else
+            } else {
                 selection = ((u8)(item_ids[ctx.selected_index]));
+            }
         }
         confirm = KF_MENU_CONFIRM_IDLE;
         if (selection != ((s32)(KF_MENU_RESULT_PENDING))) {
-            while (PadRead(1) != 0)
-                ;
+            while (PadRead(1) != 0) {
+            }
             break;
         }
 
@@ -112,13 +115,15 @@ void menu_equip_select(KfEquipmentMenuCategory equipment_category)
         } else if (PAD_PRESSED(input, prev, PADLup)) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
             menu_list_previous(&ctx);
-            if (menu_load_item_model(item_ids[ctx.selected_index]) != KF_RESOURCE_LOADED)
+            if (menu_load_item_model(item_ids[ctx.selected_index]) != KF_RESOURCE_LOADED) {
                 return;
+            }
         } else if (PAD_PRESSED(input, prev, PADLdown)) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
             menu_list_next(&ctx);
-            if (menu_load_item_model(item_ids[ctx.selected_index]) != KF_RESOURCE_LOADED)
+            if (menu_load_item_model(item_ids[ctx.selected_index]) != KF_RESOURCE_LOADED) {
                 return;
+            }
         } else if (PAD_PRESSED(input, prev, PADRright)) {
             menu_play_input_sound(MENU_SOUND_CONFIRM);
             confirm = KF_MENU_CONFIRM_REQUESTED;
@@ -128,8 +133,9 @@ void menu_equip_select(KfEquipmentMenuCategory equipment_category)
         }
 
         menu_frame_begin();
-        if (ctx.entry_count != 0)
+        if (ctx.entry_count != 0) {
             menu_item_model_preview(item_ids[ctx.selected_index]);
+        }
         menu_list_render(&ctx);
         menu_present_frame();
     }
@@ -188,14 +194,15 @@ void menu_spell_select(void)
     s32 prev;
     s32 selection = ((s32)(KF_MENU_RESULT_PENDING));
 
-    while (PadRead(1) != 0)
-        ;
+    while (PadRead(1) != 0) {
+    }
 
     found = 0;
     for (magic_id = ((s32)(KF_MAGIC_LIGHTNING_BOLT)); magic_id < KF_MAGIC_PLAYER_COUNT; magic_id++) {
         if (effect_state.magic.entries[magic_id].learned == KF_MAGIC_LEARNED) {
-            for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)
+            for (j = 0; j < MENU_GLYPHS_PER_ROW; j++) {
                 labels[found][j] = magic_name_rows[magic_id].codes[j];
+            }
             magic_ids[found] = ((KfEffectKind)(magic_id));
             found++;
         }
@@ -215,10 +222,12 @@ void menu_spell_select(void)
 
     menu_frame_begin();
     if (ctx.entry_count != 0) {
-        if (menu_load_texture(menu_texture_from_magic(magic_ids[ctx.selected_index])) == KF_RESOURCE_LOAD_FAILED)
+        if (menu_load_texture(menu_texture_from_magic(magic_ids[ctx.selected_index])) == KF_RESOURCE_LOAD_FAILED) {
             return;
-        if (magic_ids[ctx.selected_index] != KF_MAGIC_NONE)
+        }
+        if (magic_ids[ctx.selected_index] != KF_MAGIC_NONE) {
             menu_add_magic_artwork_quad();
+        }
     }
     menu_list_render(&ctx);
 
@@ -227,14 +236,15 @@ void menu_spell_select(void)
         if (confirm == KF_MENU_CONFIRM_REQUESTED) {
             selection = ((s32)(menu_list_confirm(&ctx, KF_MENU_CONFIRM_EQUIP,
                     KF_MENU_PREVIEW_MAGIC_ARTWORK, magic_ids[ctx.selected_index], KF_ITEM_STOCK_PLAYER, KF_TRADE_BUY)));
-            if (selection == ((s32)(KF_MENU_RESULT_CANCELLED)))
+            if (selection == ((s32)(KF_MENU_RESULT_CANCELLED))) {
                 selection = ((s32)(KF_MENU_RESULT_PENDING));
-            else
+            } else {
                 selection = ctx.selected_index;
+            }
         }
         if (selection != ((s32)(KF_MENU_RESULT_PENDING))) {
-            while (PadRead(1) != 0)
-                ;
+            while (PadRead(1) != 0) {
+            }
             break;
         }
 
@@ -250,13 +260,15 @@ void menu_spell_select(void)
         } else if (PAD_PRESSED(input, prev, PADLup)) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
             menu_list_previous(&ctx);
-            if (menu_load_texture(menu_texture_from_magic(magic_ids[ctx.selected_index])) == KF_RESOURCE_LOAD_FAILED)
+            if (menu_load_texture(menu_texture_from_magic(magic_ids[ctx.selected_index])) == KF_RESOURCE_LOAD_FAILED) {
                 return;
+            }
         } else if (PAD_PRESSED(input, prev, PADLdown)) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
             menu_list_next(&ctx);
-            if (menu_load_texture(menu_texture_from_magic(magic_ids[ctx.selected_index])) == KF_RESOURCE_LOAD_FAILED)
+            if (menu_load_texture(menu_texture_from_magic(magic_ids[ctx.selected_index])) == KF_RESOURCE_LOAD_FAILED) {
                 return;
+            }
         } else if (PAD_PRESSED(input, prev, PADRright)) {
             menu_play_input_sound(MENU_SOUND_CONFIRM);
             confirm = KF_MENU_CONFIRM_REQUESTED;
@@ -266,8 +278,9 @@ void menu_spell_select(void)
         }
 
         if (ctx.entry_count != 0) {
-            if (magic_ids[ctx.selected_index] != KF_MAGIC_NONE)
+            if (magic_ids[ctx.selected_index] != KF_MAGIC_NONE) {
                 menu_add_magic_artwork_quad();
+            }
         }
         menu_list_render(&ctx);
     }

@@ -103,10 +103,8 @@ void player_update(void)
     KfMagicRecord *record;
     KfActor *target;
     const VECTOR *origin;
-
     SVECTOR unused_vector;
     SVECTOR direction;
-    SVECTOR *launch_direction;
     SVECTOR spawn_offset;
     KfRotation effect_rotation;
     VECTOR position;
@@ -461,14 +459,13 @@ void player_update(void)
                             homing_target = ((s32)(target - actor_state.actors));
                         }
                     }
-                    launch_direction = &direction;
-                    pitch_yaw_to_forward_vector(&effect_rotation.angles, launch_direction);
-                    vector3s_scale_shift12(PLAYER_WEAPON_MAGIC_SPEED, launch_direction);
+                    pitch_yaw_to_forward_vector(&effect_rotation.angles, &direction);
+                    vector3s_scale_shift12(PLAYER_WEAPON_MAGIC_SPEED, &direction);
                     effect_pool_construct(KF_PLAYER_DAMAGE_MULTIPLIER_ONE,
                         KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS,
                         effect,
                         &position,
-                        launch_direction,
+                        &direction,
                         (&player_state.camera_rotation), (homing_target), (KF_EFFECT_SOUND_PLAY));
                     if (effect == KF_EFFECT_KIND_HOMING_PROJECTILE) {
                         position.vy += PLAYER_TRIPLE_FANG_Y_OFFSET;
@@ -480,7 +477,7 @@ void player_update(void)
                             KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS,
                             KF_EFFECT_KIND_HOMING_PROJECTILE,
                             &position,
-                            launch_direction,
+                            &direction,
                             (&effect_rotation.vector), (homing_target), (KF_EFFECT_SOUND_SILENT));
                         effect_rotation.angles.x -= 2 * PLAYER_TRIPLE_FANG_PITCH_OFFSET;
                         position.vy -= 2 * PLAYER_TRIPLE_FANG_Y_OFFSET;
@@ -488,7 +485,7 @@ void player_update(void)
                             KF_EFFECT_USE_PLAYER_MAGIC | KF_EFFECT_COLLISION_TARGET_ACTORS,
                             KF_EFFECT_KIND_HOMING_PROJECTILE,
                             &position,
-                            launch_direction,
+                            &direction,
                             (&effect_rotation.vector), (homing_target), (KF_EFFECT_SOUND_SILENT));
                     }
                 }
@@ -507,7 +504,7 @@ void player_update(void)
     player_update_weapon_attack();
     lighting_set_active_color_matrix(KF_GAME_COLOR_DEFAULT);
     if (player_state.darkness_timer != KF_PLAYER_STATUS_TIMER_INACTIVE) {
-        if (!((player_state.status_effect_flags & KF_PLAYER_STATUS_DARKNESS) != KF_PLAYER_STATUS_NONE)
+        if ((player_state.status_effect_flags & KF_PLAYER_STATUS_DARKNESS) == KF_PLAYER_STATUS_NONE
             && player_state.darkness_timer >= DARKNESS_FADE_STEPS + 1) {
             player_state.darkness_timer = DARKNESS_FADE_STEPS;
         }
@@ -623,20 +620,18 @@ void player_update(void)
         break;
     }
     if (player_state.slowed_timer != KF_PLAYER_STATUS_TIMER_INACTIVE) {
-        do {
-            if (!((player_state.status_effect_flags & KF_PLAYER_STATUS_SLOWED) != KF_PLAYER_STATUS_NONE)) {
-                player_state.slowed_timer = KF_PLAYER_STATUS_TIMER_INACTIVE;
-            } else {
-                player_state.slowed_timer--;
-                if (player_state.slowed_timer != KF_PLAYER_STATUS_TIMER_INACTIVE) {
-                    break;
-                }
-            }
+        if ((player_state.status_effect_flags & KF_PLAYER_STATUS_SLOWED) == KF_PLAYER_STATUS_NONE) {
+            player_state.slowed_timer = KF_PLAYER_STATUS_TIMER_INACTIVE;
+            goto clear_slowed;
+        }
+        player_state.slowed_timer--;
+        if (player_state.slowed_timer == KF_PLAYER_STATUS_TIMER_INACTIVE) {
+        clear_slowed:
             player_state.status_effect_flags &= ~KF_PLAYER_STATUS_SLOWED;
-        } while (0);
+        }
     }
     if (player_state.poison_timer != KF_PLAYER_STATUS_TIMER_INACTIVE) {
-        if (!((player_state.status_effect_flags & KF_PLAYER_STATUS_POISON) != KF_PLAYER_STATUS_NONE)) {
+        if ((player_state.status_effect_flags & KF_PLAYER_STATUS_POISON) == KF_PLAYER_STATUS_NONE) {
             player_state.poison_timer = KF_PLAYER_STATUS_TIMER_INACTIVE;
             goto clear_poison;
         } else {
@@ -656,7 +651,7 @@ void player_update(void)
         }
     }
     if (player_state.curse_timer != KF_PLAYER_STATUS_TIMER_INACTIVE) {
-        if (!((player_state.status_effect_flags & KF_PLAYER_STATUS_CURSE) != KF_PLAYER_STATUS_NONE)) {
+        if ((player_state.status_effect_flags & KF_PLAYER_STATUS_CURSE) == KF_PLAYER_STATUS_NONE) {
             player_state.curse_timer = 0;
             goto clear_curse;
         } else if (player_state.curse_timer == 0) {

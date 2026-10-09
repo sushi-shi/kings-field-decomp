@@ -405,8 +405,7 @@ KfSaveStatus save_file_write_slot(KfSaveSlotId slot_id)
         return SAVE_STATUS_WRITE_FAILED;
     }
     offset = payload_size * entry;
-    index = 0;
-    do {
+    for (index = 0; index < SAVE_FILE_IO_ATTEMPTS; index++) {
         memory_card_clear_events();
         lseek(file, header_size + offset, SEEK_SET);
         memory_card_clear_events();
@@ -414,8 +413,7 @@ KfSaveStatus save_file_write_slot(KfSaveSlotId slot_id)
         if (written == payload_size) {
             break;
         }
-        index++;
-    } while (index < SAVE_FILE_IO_ATTEMPTS);
+    }
     close(file);
     if (written != payload_size) {
         return SAVE_STATUS_WRITE_FAILED;
@@ -434,8 +432,7 @@ KfSaveStatus save_file_write_slot(KfSaveSlotId slot_id)
     if (file == -1) {
         return SAVE_STATUS_WRITE_FAILED;
     }
-    index = 0;
-    do {
+    for (index = 0; index < SAVE_FILE_IO_ATTEMPTS; index++) {
         memory_card_clear_events();
         lseek(file, 0, SEEK_SET);
         memory_card_clear_events();
@@ -443,8 +440,7 @@ KfSaveStatus save_file_write_slot(KfSaveSlotId slot_id)
         if (written == header_size) {
             break;
         }
-        index++;
-    } while (index < SAVE_FILE_IO_ATTEMPTS);
+    }
     close(file);
     if (written != header_size) {
         return SAVE_STATUS_WRITE_FAILED;
@@ -499,8 +495,7 @@ KfSaveStatus save_file_read_header(void)
     if (file == -1) {
         return SAVE_STATUS_NO_DATA;
     }
-    attempt = 0;
-    do {
+    for (attempt = 0; attempt < SAVE_FILE_IO_ATTEMPTS; attempt++) {
         memory_card_clear_events();
         lseek(file, 0, SEEK_SET);
         memory_card_clear_events();
@@ -508,8 +503,7 @@ KfSaveStatus save_file_read_header(void)
         if (count == length) {
             break;
         }
-        attempt++;
-    } while (attempt < SAVE_FILE_IO_ATTEMPTS);
+    }
     close(file);
     if (count != length) {
         return SAVE_STATUS_READ_FAILED;
@@ -582,8 +576,7 @@ KfSaveStatus save_file_read_slot(KfSaveSlotId slot_id)
     if (file == -1) {
         return SAVE_STATUS_NO_DATA;
     }
-    index = 0;
-    do {
+    for (index = 0; index < SAVE_FILE_IO_ATTEMPTS; index++) {
         memory_card_clear_events();
         lseek(file, 0, SEEK_SET);
         memory_card_clear_events();
@@ -591,8 +584,7 @@ KfSaveStatus save_file_read_slot(KfSaveSlotId slot_id)
         if (count == header_size) {
             break;
         }
-        index++;
-    } while (index < SAVE_FILE_IO_ATTEMPTS);
+    }
     if (count != header_size) {
         close(file);
         return SAVE_STATUS_READ_FAILED;
@@ -605,8 +597,7 @@ KfSaveStatus save_file_read_slot(KfSaveSlotId slot_id)
         }
     }
     offset = payload_size * entry;
-    index = 0;
-    do {
+    for (index = 0; index < SAVE_FILE_IO_ATTEMPTS; index++) {
         memory_card_clear_events();
         lseek(file, header_size + offset, SEEK_SET);
         memory_card_clear_events();
@@ -614,8 +605,7 @@ KfSaveStatus save_file_read_slot(KfSaveSlotId slot_id)
         if (count == payload_size) {
             break;
         }
-        index++;
-    } while (index < SAVE_FILE_IO_ATTEMPTS);
+    }
     close(file);
     if (count != payload_size) {
         return SAVE_STATUS_READ_FAILED;
@@ -746,9 +736,7 @@ KfBool32 menu_load_message_image(s32 message_id)
     u8 *buffer;
 
     if (message_id != MESSAGE_IMAGE_SKIP) {
-        (& path[5])[0] = (message_id) / 100 + '0';
-        (& path[5])[1] = ((message_id) % 100) / 10 + '0';
-        (& path[5])[2] = ((message_id) % 100) % 10 + '0';
+        CD_PATH_WRITE_DECIMAL3(&path[5], message_id);
         buffer = game_graphics_runtime.display_state.primitive_buffer->cursor;
         if (cd_file_load_into((void *)buffer, path) != KF_RESOURCE_LOADED) {
             return KF_TRUE;
@@ -840,9 +828,8 @@ void talk_show_dialogue_page(u8 floor,
     talk_image_path_template[0xc] = ((s32)(character_id)) / 10 + '0';
     directory_character[0] = ((s32)(character_id)) / 10 + '0';
     talk_image_path_template[0xa] = ((u8)(floor)) + '0';
-    talk_image_path_template[0xd] =
+    directory_character[1] = talk_image_path_template[0xd] =
         ((s32)(character_id)) % 10 + '0';
-    directory_character[1] = talk_image_path_template[0xd];
     talk_image_path_template[0xb] = stage + '0';
     talk_image_path_template[0xe] = page + '0';
     screen_show_image_until_input(directory_character - 6);

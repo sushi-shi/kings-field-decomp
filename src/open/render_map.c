@@ -28,6 +28,7 @@ void render_enqueue_map(u16 object_index)
     for (; remaining-- != 0;
          packet += TMD_PACKET_BODY_BYTES(header)) {
         u8 *vertices = (u8 *)open_graphics_runtime.tmd_projected_vertices;
+
         union {
             KfGpuGT4 *quad;
             KfGpuGT3 *triangle;
