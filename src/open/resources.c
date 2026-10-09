@@ -58,7 +58,11 @@ RODATA(0x8001205c, 0xb1)
 
 #define MAP_GRID_WORDS (sizeof map_cell_attribute_grid / sizeof(u32))
 
-/* Loads \KF\<relative_path>;1 into a fresh arena allocation. */
+/*
+ * Loads \KF\<relative_path>;1 into a fresh arena allocation.  The OPEN
+ * loaders report a missing file, but a read that fails every attempt still
+ * returns KF_RESOURCE_LOADED.
+ */
 ADDRESS(0x80016014, 0x148)
 KfResourceLoadResult cd_file_load_allocated(
     u8 **destination, const char *relative_path)
