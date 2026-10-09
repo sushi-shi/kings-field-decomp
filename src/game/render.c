@@ -139,6 +139,8 @@ void render_prepare_actor_textures(KfFloorId floor)
 
 void display_initialize(void)
 {
+    u8 *first_buffer_dithering;
+
     ResetGraph(KF_GPU_RESET_KEEP_DISPLAY);
     InitGeom();
     SetGeomOffset(KF_DISPLAY_WIDTH / 2, KF_DISPLAY_HEIGHT / 2);
@@ -154,7 +156,9 @@ void display_initialize(void)
     SetDefDispEnv(
         &game_graphics_runtime.display_disp_environments[1], 0, 0,
         KF_DISPLAY_WIDTH, KF_DISPLAY_HEIGHT);
-    game_graphics_runtime.display_draw_environments[0].dtd = game_graphics_runtime.display_draw_environments[1].dtd = 1;
+    first_buffer_dithering = &game_graphics_runtime.display_draw_environments[0].dtd;
+    game_graphics_runtime.display_draw_environments[1].dtd = 1;
+    *first_buffer_dithering = 1;
     game_graphics_runtime.display_draw_environments[0].isbg = 1;
     game_graphics_runtime.display_draw_environments[1].isbg = 1;
     setRGB0(&game_graphics_runtime.display_draw_environments[0], 0, 0, 0);
