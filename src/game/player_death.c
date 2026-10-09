@@ -70,9 +70,8 @@ void player_death_begin(void)
 }
 
 /*
- * The two byte loops clear whole BSS runs that start at the named objects
- * (0x2134 bytes of map-event state, 0xf0 bytes of item stock) before seeding
- * the initial player quantities and shop availability.
+ * Reset the player to a new game: starting stats and equipment, cleared saved
+ * world state and item stock, then the initial inventory and shop stock.
  */
 ADDRESS(0x800151cc, 0x2e4)
 void game_state_initialize(void)
@@ -251,14 +250,24 @@ void player_adjust_mp(s32 delta)
 
 RODATA(0x80012000, 0x2c)
 
-/* Magic records of 20 bytes; the first byte of records 0, 1, 4 and 6 gate milestones. */
-
 /*
  * Rebuilds physical power, magic, the five attack lanes and the six
  * defense lanes from the base stats, the poison status, the weapon, the
  * five armor pieces and the accessory, then fires the magic milestones
  * and clamps both powers below 1000.
  */
+/* Retail adds each piece's cutting defense twice. */
+static inline void player_add_armor_defenses(const KfArmorRecord *armor)
+{
+    player_state.cutting_defense += armor->cutting_defense;
+    player_state.cutting_defense += armor->cutting_defense;
+    player_state.striking_defense += armor->striking_defense;
+    player_state.piercing_defense += armor->piercing_defense;
+    player_state.poison_resistance += armor->poison_resistance;
+    player_state.magic_defense += armor->magic_defense;
+    player_state.fire_defense += armor->fire_defense;
+}
+
 ADDRESS(0x80015714, 0x814)
 void player_recalculate_combat_stats(void)
 {
@@ -296,58 +305,28 @@ void player_recalculate_combat_stats(void)
     }
     if (player_state.equipped_head_armor_id != KF_OBJECT_NONE) {
         armor = &armor_records.entries[KF_ENUM_ENCODE(u8, player_state.equipped_head_armor_id)
-            - KF_ENUM_ENCODE(u8, KF_ITEM_IRON_MASK)];
-        player_state.cutting_defense += armor->cutting_defense;
-        player_state.cutting_defense += armor->cutting_defense;
-        player_state.striking_defense += armor->striking_defense;
-        player_state.piercing_defense += armor->piercing_defense;
-        player_state.poison_resistance += armor->poison_resistance;
-        player_state.magic_defense += armor->magic_defense;
-        player_state.fire_defense += armor->fire_defense;
+                - KF_ENUM_ENCODE(u8, KF_ITEM_IRON_MASK)];
+        player_add_armor_defenses(armor);
     }
     if (player_state.equipped_body_armor_id != KF_OBJECT_NONE) {
         armor = &armor_records.entries[KF_ENUM_ENCODE(u8, player_state.equipped_body_armor_id)
-            - KF_ENUM_ENCODE(u8, KF_ITEM_IRON_MASK)];
-        player_state.cutting_defense += armor->cutting_defense;
-        player_state.cutting_defense += armor->cutting_defense;
-        player_state.striking_defense += armor->striking_defense;
-        player_state.piercing_defense += armor->piercing_defense;
-        player_state.poison_resistance += armor->poison_resistance;
-        player_state.magic_defense += armor->magic_defense;
-        player_state.fire_defense += armor->fire_defense;
+                - KF_ENUM_ENCODE(u8, KF_ITEM_IRON_MASK)];
+        player_add_armor_defenses(armor);
     }
     if (player_state.equipped_arm_armor_id != KF_OBJECT_NONE) {
         armor = &armor_records.entries[KF_ENUM_ENCODE(u8, player_state.equipped_arm_armor_id)
-            - KF_ENUM_ENCODE(u8, KF_ITEM_IRON_MASK)];
-        player_state.cutting_defense += armor->cutting_defense;
-        player_state.cutting_defense += armor->cutting_defense;
-        player_state.striking_defense += armor->striking_defense;
-        player_state.piercing_defense += armor->piercing_defense;
-        player_state.poison_resistance += armor->poison_resistance;
-        player_state.magic_defense += armor->magic_defense;
-        player_state.fire_defense += armor->fire_defense;
+                - KF_ENUM_ENCODE(u8, KF_ITEM_IRON_MASK)];
+        player_add_armor_defenses(armor);
     }
     if (player_state.equipped_leg_armor_id != KF_OBJECT_NONE) {
         armor = &armor_records.entries[KF_ENUM_ENCODE(u8, player_state.equipped_leg_armor_id)
-            - KF_ENUM_ENCODE(u8, KF_ITEM_IRON_MASK)];
-        player_state.cutting_defense += armor->cutting_defense;
-        player_state.cutting_defense += armor->cutting_defense;
-        player_state.striking_defense += armor->striking_defense;
-        player_state.piercing_defense += armor->piercing_defense;
-        player_state.poison_resistance += armor->poison_resistance;
-        player_state.magic_defense += armor->magic_defense;
-        player_state.fire_defense += armor->fire_defense;
+                - KF_ENUM_ENCODE(u8, KF_ITEM_IRON_MASK)];
+        player_add_armor_defenses(armor);
     }
     if (player_state.equipped_shield_id != KF_OBJECT_NONE) {
         armor = &armor_records.entries[KF_ENUM_ENCODE(u8, player_state.equipped_shield_id)
-            - KF_ENUM_ENCODE(u8, KF_ITEM_IRON_MASK)];
-        player_state.cutting_defense += armor->cutting_defense;
-        player_state.cutting_defense += armor->cutting_defense;
-        player_state.striking_defense += armor->striking_defense;
-        player_state.piercing_defense += armor->piercing_defense;
-        player_state.poison_resistance += armor->poison_resistance;
-        player_state.magic_defense += armor->magic_defense;
-        player_state.fire_defense += armor->fire_defense;
+                - KF_ENUM_ENCODE(u8, KF_ITEM_IRON_MASK)];
+        player_add_armor_defenses(armor);
     }
     switch (player_state.equipped_accessory_id) {
     case KF_ITEM_LIGHT_RING:
@@ -491,9 +470,9 @@ void player_add_experience(s16 amount)
 }
 
 /*
- * The working values are initialised from the parameters at their
- * declarations so they inherit the argument registers retail keeps them in
- * ($a0 for the threshold, $a1 for the excess); locals assigned later move.
+ * Unresolved source form: retail keeps the threshold in $a0 and the excess in
+ * $a1; locals seeded from those parameters reproduce it, later assignment
+ * does not.
  */
 ADDRESS(0x8001627c, 0xa8)
 s32 player_calculate_damage_component(s32 defender_power, s32 defense, s32 attack)
