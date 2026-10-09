@@ -67,24 +67,26 @@ u32 effect_map_collision(VECTOR *position, s32 radius)
                 KfMapOrientation orient = map_cell_orientation_grid.cells[z][x];
                 s16 coordinate;
 
+                /* Each orientation picks the in-cell coordinate across the
+                 * step; all of them share the span test in the first case. */
                 subx = position->vx % KF_MAP_TILE_SIZE;
                 switch (orient) {
                 case KF_MAP_ORIENT_UNROTATED:
                     coordinate = subz;
-                rectangle_span:
+                test_span:
                     if (coordinate >= record->x_min && coordinate <= record->x_max) {
                         goto query_targets;
                     }
                     break;
                 case KF_MAP_ORIENT_QUARTER_TURN:
                     coordinate = subx;
-                    goto rectangle_span;
+                    goto test_span;
                 case KF_MAP_ORIENT_HALF_TURN:
                     coordinate = KF_MAP_TILE_SIZE - subz;
-                    goto rectangle_span;
+                    goto test_span;
                 case KF_MAP_ORIENT_THREE_QUARTER_TURN:
                     coordinate = KF_MAP_TILE_SIZE - subx;
-                    goto rectangle_span;
+                    goto test_span;
                 default:
                     break;
                 }

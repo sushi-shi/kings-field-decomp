@@ -143,7 +143,7 @@ the retail selected-value schedule and changes earlier live-value registers;
 restore the direct halfword local. Next recover the decoded backward join:
 the common rectangle-X check lies before the out-of-line orientation 2/3
 assignment arms, which both jump back to it. Put that real shared check in
-the first orientation arm, with an explicit `rectangle_span` label reached
+the first orientation arm, with an explicit `test_span` label reached
 by the other three mappings. This changes the check's ownership/layout,
 not its two inclusive predicates or the default grid fallback.
 

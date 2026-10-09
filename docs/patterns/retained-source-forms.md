@@ -29,7 +29,7 @@ launch macro dropped PSX `main` to 77.4%.
 | `actor_pool_load_placements`, `map_event_pool_load`, `map_object_pool_load`, `opening_entity_pool_load_placements` | `mark_free` / `fill` / `mark_empty` | single `if`/`else` without the shared store (event pool 88.7%); Shapes records the actor-pool form |
 | `render_bind_animated_instance` | `retry_allocation`, `reinitialize_record`, `update_vertex_cache` | `while`/`for` retry loop (91.1%) |
 | `effect_update_dispatch` | `travel`, `lightning_impact`, `play_phase_sound`, `invalidate_and_advance`, `advance_effect_phase`, `randomize_homing_direction` | Shapes (Wind Cutter tail); first pass |
-| `effect_map_collision` | `query_targets`, `rectangle_span` | per-orientation coordinate then one compare (63.6%) |
+| `effect_map_collision` | `query_targets`, `test_span` | per-orientation coordinate then one compare (63.6%), range check then compare (54.9%), inline span helper per case (51.8%) |
 | `effect_pool_construct` | `initialize_lightning_bolt`, `initialize_lightning_impact` | duplicated initialisation (90.7%) |
 | `shop_menu_buy` | `load_selected_model` | duplicated model load (95.5%) |
 | `map_event_refresh_dialogue_stage` | `reset_dialogue_page` | duplicated reset (61.3%), clamped target (25.0%); Shapes |

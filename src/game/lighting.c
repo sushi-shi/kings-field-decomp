@@ -7,7 +7,8 @@
 
 enum {
     LIGHTING_COLOR_BLEND_STEP = KF_FIXED12_ONE / 4,
-    VITAL_RESTORE_COLOR_LEVEL = KF_FIXED12_ONE - 1
+    /* Full channel level, as in the white, green and blue colour presets. */
+    VITAL_RESTORE_COLOR_LEVEL = 4095
 };
 
 ADDRESS(0x80033d80, 0x68)
