@@ -13,7 +13,7 @@ enum {
     EFFECT_EMERGING_INITIAL_SCALE = 1500,
     EFFECT_SHORT_SWING_SCALE = 2600,
     EFFECT_ORBIT_SCALE = 2800,
-    EFFECT_WARP_HORIZONTAL_SCALE = 0x1800
+    EFFECT_WARP_HORIZONTAL_SCALE = KF_FIXED12_ONE * 3 / 2
 };
 
 DATA(0x8009ce60, 0xd28)
@@ -41,7 +41,10 @@ KfEffectRecord *effect_pool_construct(
     u8 id, KfEffectType type, KfEffectKind kind, const VECTOR *position,
     const SVECTOR *direction, ...)
 {
-    s32 *va = (s32 *)&direction;   /* variadic stack base: va[1]=arg6, va[2]=arg7, va[3]=arg8 */
+    /* Optional arguments va[1..3] follow DIRECTION on the stack.  Unresolved
+     * source form: every standard va_start/va_arg spelling places the cursor
+     * differently (docs/patterns/effect-constructor-varargs.md). */
+    s32 *va = (s32 *)&direction;
     KfEffectRecord *record = effect_pool_find_free();
     KfMagicRecord *magic;
 
