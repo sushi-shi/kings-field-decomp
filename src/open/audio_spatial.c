@@ -26,8 +26,7 @@ KfAudioPlaybackResult audio_play_spatial(
     s32 left;
     s32 right;
 
-    attenuation =
-        fixed_vector3_length(delta_x, delta_y, delta_z);
+    attenuation = fixed_vector3_length(delta_x, delta_y, delta_z);
     if (attenuation >= max_distance) {
         return KF_AUDIO_NOT_PLAYED;
     }
@@ -42,6 +41,7 @@ KfAudioPlaybackResult audio_play_spatial(
         angle = KF_ANGLE_FULL_TURN - angle;
     }
     angle >>= 1;
+    /* Close sounds play centred at the raw attenuation, ignoring VOLUME. */
     if (attenuation >= OPEN_SOUND_EQUAL_PAN_THRESHOLD) {
         left = attenuation;
         right = attenuation;
