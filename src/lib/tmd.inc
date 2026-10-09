@@ -82,14 +82,13 @@ void tmd_prepare_primitive_indices(void)
                 packet = body + header.bytes.input_length * KF_TMD_WORD_BYTES;
                 primitive = (KfTmdPrimitive *)body;
                 switch (tmd_packet_kind(header.word)) {
-                case KF_TMD_MODE_F3: {
+                case KF_TMD_MODE_F3:
                     primitive->f3.v0 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
                     primitive->f3.v1 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
                     primitive->f3.v2 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
                     primitive->f3.n0 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
                     break;
-                }
-                case KF_TMD_MODE_G3: {
+                case KF_TMD_MODE_G3:
                     primitive->g3.v0 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
                     primitive->g3.v1 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
                     primitive->g3.v2 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
@@ -97,15 +96,13 @@ void tmd_prepare_primitive_indices(void)
                     primitive->g3.n1 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
                     primitive->g3.n2 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
                     break;
-                }
-                case KF_TMD_MODE_FT3: {
+                case KF_TMD_MODE_FT3:
                     primitive->ft3.v0 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
                     primitive->ft3.v1 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
                     primitive->ft3.v2 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
                     primitive->ft3.n0 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
                     break;
-                }
-                case KF_TMD_MODE_GT3: {
+                case KF_TMD_MODE_GT3:
                     primitive->gt3.v0 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
                     primitive->gt3.v1 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
                     primitive->gt3.v2 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
@@ -113,16 +110,14 @@ void tmd_prepare_primitive_indices(void)
                     primitive->gt3.n1 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
                     primitive->gt3.n2 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
                     break;
-                }
-                case KF_TMD_MODE_F4: {
+                case KF_TMD_MODE_F4:
                     primitive->f4.v0 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
                     primitive->f4.v1 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
                     primitive->f4.v2 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
                     primitive->f4.v3 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
                     primitive->f4.n0 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
                     break;
-                }
-                case KF_TMD_MODE_G4: {
+                case KF_TMD_MODE_G4:
                     primitive->g4.v0 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
                     primitive->g4.v1 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
                     primitive->g4.v2 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
@@ -132,16 +127,14 @@ void tmd_prepare_primitive_indices(void)
                     primitive->g4.n2 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
                     primitive->g4.n3 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
                     break;
-                }
-                case KF_TMD_MODE_FT4: {
+                case KF_TMD_MODE_FT4:
                     primitive->ft4.v0 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
                     primitive->ft4.v1 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
                     primitive->ft4.v2 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
                     primitive->ft4.v3 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
                     primitive->ft4.n0 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
                     break;
-                }
-                case KF_TMD_MODE_GT4: {
+                case KF_TMD_MODE_GT4:
                     primitive->gt4.v0 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
                     primitive->gt4.v1 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
                     primitive->gt4.v2 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
@@ -151,7 +144,6 @@ void tmd_prepare_primitive_indices(void)
                     primitive->gt4.n2 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
                     primitive->gt4.n3 <<= KF_TMD_VECTOR_OFFSET_SHIFT;
                     break;
-                }
                 }
             } while (primitives_left-- != 0);
         }

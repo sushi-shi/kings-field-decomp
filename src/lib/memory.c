@@ -25,9 +25,6 @@ enum {
 DATA(0x800a01f0, 0x58)
 KfMemoryArena memory_arena;
 
-
-/* Element 0 is the depth; elements 1..16 hold each allocation's size or malloc block. */
-
 /* Allocations must land in the 2 MiB of RAM mirrored at 0x80000000. */
 ADDRESS(0x8001aab0, 0x38)
 void *memory_malloc_checked(s32 size)

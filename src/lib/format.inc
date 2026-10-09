@@ -55,12 +55,10 @@ ADDRESS_AT("OPEN", 0x8001a568, 0x6c)
 char *format_pad_left(char *string, char pad, u8 width)
 {
     u8 len = 0;
-    char *p = string + 1;
+    char *p = string;
 
-    if (*string != 0) {
-        do {
-            len++;
-        } while (*p++ != 0);
+    while (*p++ != 0) {
+        len++;
     }
     if (len < width) {
         width -= len;

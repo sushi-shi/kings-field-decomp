@@ -2,18 +2,9 @@
 #include <kf/lib/address.h>
 #include <kf/lib/math.h>
 
-
 /*
  * Fixed-point angle and rotation-matrix builders. The following direction and
  * angle helpers continue in vector_math.c; the module boundary remains WIP.
- */
-
-
-/* Psy-Q LIBGTE: int rsin(int a); int rcos(int a). */
-
-/*
- * Psy-Q LIBGTE MATRIX/SVECTOR/VECTOR have the MATRIX/SVECTOR/VECTOR layouts:
- * MulMatrix(m0, m1), MulMatrix2(m0, m1), ApplyMatrix(m, v0, v1).
  */
 
 /*
