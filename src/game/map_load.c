@@ -3,7 +3,7 @@
 #include <kf/lib/map_data.h>
 #include <kf/lib/map.h>
 #include <psyq/libc.h>
-#include <kf/game/game.h>
+#include <kf/game/player.h>
 
 enum {
     MAP_RESTORE_POSITION_RANDOM_BITS = 15
@@ -11,21 +11,14 @@ enum {
 
 void map_restore_floor_state(void)
 {
-    u8 *base = (u8 *)&map_runtime_state.world_state;
     u8 *in;
     KfMapEvent *event;
     KfMapObject *object;
     s32 i;
     s32 index;
 
-    {
-        s32 floor_offset = KF_MAP_SAVED_FLOOR_BYTES
-            * ((u8)(player_state.progress_state.current_floor));
-        u8 *records_base =
-            base - (KF_MAP_SAVED_FLOOR_BYTES - KF_MAP_SAVED_RECORDS_OFFSET);
-
-        in = records_base + floor_offset;
-    }
+    in = map_runtime_state.world_state.floors[
+        ((u8)(player_state.progress_state.current_floor)) - 1].records;
     if (*in++ == 1) {
         event = map_runtime_state.events;
         for (i = 0; i < KF_MAP_EVENT_CAPACITY; i++, event++) {
@@ -39,13 +32,11 @@ void map_restore_floor_state(void)
         }
 
         i = *in++;
-        if (--i != -1) {
+        while (--i != -1) {
             KfActor *actors = actor_state.actors;
 
-            do {
-                index = *in++;
-                actors[index].lifecycle = ((KfActorLifecycle)(*in++));
-            } while (--i != -1);
+            index = *in++;
+            actors[index].lifecycle = ((KfActorLifecycle)(*in++));
         }
 
         object = &map_object_state.objects[0];
@@ -115,8 +106,8 @@ void map_restore_floor_state(void)
             map_apply_copy_region(KF_MAP_COPY_FLOOR1_PASSAGE);
         }
         if (map_runtime_state.world_state.floors[0].script.floor1.actor_activation_stage != KF_MAP_TRIGGER_COMPLETE) {
-            index = actor_pool_find_at_tile(7, 0x28);
-            if (index != -1) {
+            index = actor_pool_find_at_tile(KF_FLOOR1_GATED_ACTOR_TILE_X, KF_FLOOR1_GATED_ACTOR_TILE_Z);
+            if (index != KF_ACTOR_INDEX_NONE) {
                 actor_state.actors[index].lifecycle = KF_ACTOR_LIFECYCLE_DISABLED;
             }
         }
@@ -149,11 +140,11 @@ void map_restore_floor_state(void)
             map_runtime_state.events[1].state = KF_MAP_EVENT_ACTIVE;
         }
         if (map_runtime_state.world_state.floors[4].script.floor5.boss_encounter_started == KF_MAP_SCRIPT_UNSET) {
-            actor_state.definitions.entries[7].action_animations[KF_ACTOR_ANIM_SLOT_MELEE] = KF_ANIMATION_CLIP_NONE;
-            actor_state.definitions.entries[7].action_animations[KF_ACTOR_ANIM_SLOT_EFFECT0] = KF_ANIMATION_CLIP_NONE;
-            actor_state.definitions.entries[7].action_animations[KF_ACTOR_ANIM_SLOT_EFFECT1] = KF_ANIMATION_CLIP_NONE;
-            actor_state.definitions.entries[7].action_animations[KF_ACTOR_ANIM_SLOT_EFFECT2] = KF_ANIMATION_CLIP_NONE;
-            actor_state.definitions.entries[7]
+            actor_state.definitions.entries[KF_FLOOR5_BOSS_DEFINITION].action_animations[KF_ACTOR_ANIM_SLOT_MELEE] = KF_ANIMATION_CLIP_NONE;
+            actor_state.definitions.entries[KF_FLOOR5_BOSS_DEFINITION].action_animations[KF_ACTOR_ANIM_SLOT_EFFECT0] = KF_ANIMATION_CLIP_NONE;
+            actor_state.definitions.entries[KF_FLOOR5_BOSS_DEFINITION].action_animations[KF_ACTOR_ANIM_SLOT_EFFECT1] = KF_ANIMATION_CLIP_NONE;
+            actor_state.definitions.entries[KF_FLOOR5_BOSS_DEFINITION].action_animations[KF_ACTOR_ANIM_SLOT_EFFECT2] = KF_ANIMATION_CLIP_NONE;
+            actor_state.definitions.entries[KF_FLOOR5_BOSS_DEFINITION]
                 .action_animations[KF_ACTOR_ANIM_SLOT_MULTI_HIT_ATTACK]
                 = KF_ANIMATION_CLIP_NONE;
         } else {
@@ -171,10 +162,10 @@ void map_restore_floor_state(void)
         }
         if (map_runtime_state.world_state.floors[4].script.floor5.boss_defeat != KF_MAP_SCRIPT_UNSET) {
             map_object_pool_trigger_link(KF_MAP_LINK_BOSS_EMITTERS);
-            actor_pool_begin_death_by_definition(0);
-            actor_pool_begin_death_by_definition(2);
-            actor_pool_begin_death_by_definition(3);
-            actor_pool_begin_death_by_definition(4);
+            actor_pool_begin_death_by_definition(KF_FLOOR5_BOSS_DEATH_DEFINITION_0);
+            actor_pool_begin_death_by_definition(KF_FLOOR5_BOSS_DEATH_DEFINITION_2);
+            actor_pool_begin_death_by_definition(KF_FLOOR5_BOSS_DEATH_DEFINITION_3);
+            actor_pool_begin_death_by_definition(KF_FLOOR5_BOSS_DEATH_DEFINITION_4);
         }
         break;
     default:

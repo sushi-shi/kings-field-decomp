@@ -80,7 +80,7 @@ KfBool angle_within_tolerance(int lhs, int rhs, s16 tolerance)
 
 KfBool angle_mod_delta_le_half_turn(int lhs, int rhs)
 {
-    return ((lhs - rhs) & KF_ANGLE_WRAP_MASK) < (KF_ANGLE_HALF_TURN + 1);
+    return ((lhs - rhs) & KF_ANGLE_WRAP_MASK) <= KF_ANGLE_HALF_TURN;
 }
 
 s32 vector_xz_to_angle(s32 x, s32 z)

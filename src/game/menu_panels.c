@@ -2,7 +2,9 @@
 
 #include <kf/game/input.h>
 #include <kf/game/menu.h>
-#include <kf/game/game.h>
+#include <kf/game/player.h>
+#include <kf/game/effect.h>
+#include <psyq/pad.h>
 
 enum {
     BLESS_HP_RECOVERY_MAGIC_MULTIPLIER = 3
@@ -11,6 +13,7 @@ enum {
 KfMagicPanelResult menu_magic_panel(void)
 {
     KfMenuList ctx;
+
     s16 labels[10][MENU_GLYPHS_PER_ROW];
     KfEffectKind magic_ids[16];
     s32 found;
@@ -21,15 +24,16 @@ KfMagicPanelResult menu_magic_panel(void)
     s32 prev;
     KfMagicPanelResult selection = KF_MENU_RESULT_PENDING;
 
-    while (PadRead(1) != 0)
-        ;
+    while (PadRead(1) != 0) {
+    }
     menu_list_init(&ctx, KF_MENU_WINDOW_ROOT, ((s32)(KF_ROOT_CHOICE_USE_MAGIC)));
 
     found = 0;
     for (magic_id = ((s32)(KF_MAGIC_HEALING)); magic_id < ((s32)(KF_MAGIC_LIGHTNING_BOLT)); magic_id++) {
         if (effect_state.magic.entries[magic_id].learned == KF_MAGIC_LEARNED) {
-            for (j = 0; j < MENU_GLYPHS_PER_ROW; j++)
+            for (j = 0; j < MENU_GLYPHS_PER_ROW; j++) {
                 labels[found][j] = magic_name_rows[magic_id].codes[j];
+            }
             magic_ids[found] = ((KfEffectKind)(magic_id));
             found++;
         }
@@ -41,8 +45,9 @@ KfMagicPanelResult menu_magic_panel(void)
 
     menu_frame_begin();
     if (ctx.entry_count != 0) {
-        if (menu_load_texture(menu_texture_from_magic(magic_ids[ctx.selected_index])) == KF_RESOURCE_LOAD_FAILED)
+        if (menu_load_texture(menu_texture_from_magic(magic_ids[ctx.selected_index])) == KF_RESOURCE_LOAD_FAILED) {
             return KF_MENU_RESULT_CANCELLED;
+        }
         menu_add_magic_artwork_quad();
     }
     menu_list_render(&ctx);
@@ -52,14 +57,15 @@ KfMagicPanelResult menu_magic_panel(void)
         if (confirm == KF_MENU_CONFIRM_REQUESTED) {
             if (menu_list_confirm(&ctx, KF_MENU_CONFIRM_USE,
                     KF_MENU_PREVIEW_MAGIC_ARTWORK, magic_ids[ctx.selected_index], KF_ITEM_STOCK_PLAYER, KF_TRADE_BUY)
-                    == KF_MENU_RESULT_CANCELLED)
+                    == KF_MENU_RESULT_CANCELLED) {
                 selection = KF_MENU_RESULT_PENDING;
-            else
+            } else {
                 selection = magic_ids[ctx.selected_index];
+            }
         }
         if (selection != KF_MENU_RESULT_PENDING) {
-            while (PadRead(1) != 0)
-                ;
+            while (PadRead(1) != 0) {
+            }
             break;
         }
 
@@ -75,13 +81,15 @@ KfMagicPanelResult menu_magic_panel(void)
         } else if (PAD_PRESSED(input, prev, PADLup)) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
             menu_list_previous(&ctx);
-            if (menu_load_texture(menu_texture_from_magic(magic_ids[ctx.selected_index])) == KF_RESOURCE_LOAD_FAILED)
+            if (menu_load_texture(menu_texture_from_magic(magic_ids[ctx.selected_index])) == KF_RESOURCE_LOAD_FAILED) {
                 return KF_MENU_RESULT_CANCELLED;
+            }
         } else if (PAD_PRESSED(input, prev, PADLdown)) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
             menu_list_next(&ctx);
-            if (menu_load_texture(menu_texture_from_magic(magic_ids[ctx.selected_index])) == KF_RESOURCE_LOAD_FAILED)
+            if (menu_load_texture(menu_texture_from_magic(magic_ids[ctx.selected_index])) == KF_RESOURCE_LOAD_FAILED) {
                 return KF_MENU_RESULT_CANCELLED;
+            }
         } else if (PAD_PRESSED(input, prev, PADRright)) {
             menu_play_input_sound(MENU_SOUND_CONFIRM);
             confirm = KF_MENU_CONFIRM_REQUESTED;
@@ -90,14 +98,16 @@ KfMagicPanelResult menu_magic_panel(void)
             selection = KF_MENU_RESULT_CANCELLED;
         }
 
-        if (ctx.entry_count != 0)
+        if (ctx.entry_count != 0) {
             menu_add_magic_artwork_quad();
+        }
         menu_list_render(&ctx);
     }
 
     if (selection != KF_MENU_RESULT_CANCELLED) {
-        if (player_state.vitals.current_mp < effect_state.magic.entries[((s32)(selection))].mp_cost)
+        if (player_state.vitals.current_mp < effect_state.magic.entries[((s32)(selection))].mp_cost) {
             return selection;
+        }
         player_state.vitals.current_mp -= effect_state.magic.entries[((s32)(selection))].mp_cost;
         if (selection == KF_MAGIC_HEALING) {
             player_state.vitals.current_hp += player_state.magic;
@@ -110,8 +120,9 @@ KfMagicPanelResult menu_magic_panel(void)
             player_state.status_effect_flags &= KF_PLAYER_STATUS_POISON | KF_PLAYER_STATUS_SLOWED;
             player_state.vitals.current_hp += player_state.magic * BLESS_HP_RECOVERY_MAGIC_MULTIPLIER;
         }
-        if (player_state.vitals.current_hp > player_state.vitals.maximum_hp)
+        if (player_state.vitals.current_hp > player_state.vitals.maximum_hp) {
             player_state.vitals.current_hp = player_state.vitals.maximum_hp;
+        }
     }
     return selection;
 }
@@ -131,13 +142,13 @@ void menu_equipment_root(void)
 
     for (;;) {
         menu_present_frame();
-        if (selection != KF_EQUIP_MENU_NONE || ((s32)(result)) == ((s32)(selection))) {
+        if (selection != KF_EQUIP_MENU_NONE || result == KF_MENU_RESULT_CANCELLED) {
             menu_frame_begin();
             menu_draw_equipment_names();
             menu_draw_window(KF_MENU_WINDOW_EQUIPMENT, KF_MENU_EQUIPMENT_ROW_COUNT, cursor, confirm);
             menu_present_frame();
-            while (PadRead(1) != 0)
-                ;
+            while (PadRead(1) != 0) {
+            }
         }
         switch (selection) {
         case KF_EQUIP_MENU_ARM:
@@ -159,31 +170,35 @@ void menu_equipment_root(void)
             break;
         }
         selection = KF_EQUIP_MENU_NONE;
-        if (result != KF_MENU_RESULT_PENDING)
+        if (result != KF_MENU_RESULT_PENDING) {
             return;
+        }
         menu_frame_begin();
         confirm = KF_MENU_CONFIRM_IDLE;
         prev = input;
         input = PadRead(1);
         if (PAD_PRESSED(input, prev, PADLup)) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
-            if (cursor != 0)
+            if (cursor != 0) {
                 cursor--;
-            else
+            } else {
                 cursor = KF_MENU_EQUIPMENT_RETURN_ROW;
+            }
         } else if (PAD_PRESSED(input, prev, PADLdown)) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
-            if (cursor != KF_MENU_EQUIPMENT_RETURN_ROW)
+            if (cursor != KF_MENU_EQUIPMENT_RETURN_ROW) {
                 cursor++;
-            else
+            } else {
                 cursor = 0;
+            }
         } else if (PAD_PRESSED(input, prev, PADRright)) {
             menu_play_input_sound(MENU_SOUND_CONFIRM);
             confirm = KF_MENU_CONFIRM_REQUESTED;
-            if (cursor < KF_MENU_EQUIPMENT_RETURN_ROW)
+            if (cursor < KF_MENU_EQUIPMENT_RETURN_ROW) {
                 selection = ((KfEquipmentMenuCategory)(cursor));
-            else
+            } else {
                 result = KF_MENU_RESULT_CANCELLED;
+            }
         } else if (PAD_PRESSED(input, prev, PADRdown)) {
             menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
             result = KF_MENU_RESULT_CANCELLED;

@@ -29,8 +29,9 @@ KfOpeningEntity *opening_entity_find_by_object_id(
 
     if (entity->object_id != KF_OPENING_ENTITY_FREE) {
         do {
-            if (entity->object_id == object_id)
+            if (entity->object_id == object_id) {
                 return entity;
+            }
             entity++;
         } while (entity->object_id != KF_OPENING_ENTITY_FREE);
     }

@@ -209,7 +209,7 @@ void animation_cache_release(KfAnimationCacheRecord *record)
     record->state = KF_ANIMATION_CACHE_FREE;
     *record->owner_slot = NULL;
     if (record->cached_vertices != NULL) {
-        free((void *)record->cached_vertices);
+        free(record->cached_vertices);
         record->cached_vertices = NULL;
     }
 }

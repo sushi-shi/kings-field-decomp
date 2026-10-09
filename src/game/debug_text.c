@@ -11,7 +11,7 @@ static char format_number_storage[24];
 void debug_stop(void)
 {
     debug_printf_sink("DEBUG STOP !!!\n");
-    debug_stop_flag = debug_stop_flag == KF_FALSE;
+    debug_stop_flag = !debug_stop_flag;
 }
 
 #include "../lib/format.inc"
