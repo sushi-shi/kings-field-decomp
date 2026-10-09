@@ -32,6 +32,7 @@ void player_warp_shimmer(KfWarpShimmerMode shimmer_mode, VECTOR *position)
     KfEffectRecord *effects[KF_CYLINDER_TRANSITION_COUNT];
     KfEffectRecord **cursor;
     KfEffectRecord *effect;
+
     struct {
         VECTOR position;
         SVECTOR direction;

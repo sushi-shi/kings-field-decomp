@@ -13,7 +13,7 @@
 
 enum {
     FRAME_PACER_INTERVAL_TICKS = 3,
-    ENDING_MASTER_FADE_STEP_Q8 = 0x80
+    ENDING_MASTER_FADE_STEP_Q8 = 128
 };
 
 u32 frame_pacer_vsync_count = 0;

@@ -13,6 +13,7 @@ enum {
 KfMagicPanelResult menu_magic_panel(void)
 {
     KfMenuList ctx;
+
     s16 labels[10][MENU_GLYPHS_PER_ROW];
     KfEffectKind magic_ids[16];
     s32 found;
@@ -141,7 +142,7 @@ void menu_equipment_root(void)
 
     for (;;) {
         menu_present_frame();
-        if (selection != KF_EQUIP_MENU_NONE || kf_enum_encode<s32>(result) == kf_enum_encode<s32>(selection)) {
+        if (selection != KF_EQUIP_MENU_NONE || result == KF_MENU_RESULT_CANCELLED) {
             menu_frame_begin();
             menu_draw_equipment_names();
             menu_draw_window(KF_MENU_WINDOW_EQUIPMENT, KF_MENU_EQUIPMENT_ROW_COUNT, cursor, confirm);

@@ -249,6 +249,7 @@ lightning_impact:
 
                 if (--effect->control.frames_remaining == 0) {
                     if (effect->propagation.generations_remaining != 0) {
+
                         next = ((s16)effect->scale_x * 3) >> 2;
                         effect->visual.pulse_base_scale = next;
                         effect->scale_z = next;
@@ -350,7 +351,7 @@ play_phase_sound:
         goto advance_effect_phase;
 
     case KF_EFFECT_KIND_MOONLIGHT_PROJECTILE:
-        if (kf_enum_encode<u8>(phase) < kf_enum_encode<u8>(KF_EFFECT_MOONLIGHT_TRAVEL_LAST) + 1) {
+        if (kf_enum_encode<u8>(phase) <= kf_enum_encode<u8>(KF_EFFECT_MOONLIGHT_TRAVEL_LAST)) {
             if (effect_map_collision(&effect->position, PROJECTILE_COLLISION_RADIUS) != KF_COLLISION_NONE) {
                 effect->animation_clip = KF_ANIMATION_CLIP_NONE;
                 effect->base_render_id.model = KF_EFFECT_MODEL_NONE;
@@ -417,7 +418,7 @@ play_phase_sound:
                                    [effect->position.vx / KF_MAP_TILE_SIZE] * KF_MAP_HEIGHT_STEP);
         switch (phase) {
         case KF_EFFECT_GROUND_TRAIL_WAIT_FOR_PARENT:
-            if (kf_enum_encode<u8>(linked_effect->phase) > kf_enum_encode<u8>(KF_EFFECT_MOONLIGHT_IMPACT_FIRST) - 1) {
+            if (kf_enum_encode<u8>(linked_effect->phase) >= kf_enum_encode<u8>(KF_EFFECT_MOONLIGHT_IMPACT_FIRST)) {
                 effect->phase = KF_EFFECT_GROUND_TRAIL_SHRINK;
             }
             break;
@@ -715,6 +716,7 @@ advance_effect_phase:
 
     case KF_EFFECT_KIND_ACTOR_SPAWNER: {
         s32 scale;
+
         KfEffectPhase scale_phase;
 
         if (phase < KF_EFFECT_ACTOR_SPAWNER_TRAVEL_FIRST) {
@@ -725,7 +727,7 @@ advance_effect_phase:
             effect->scale_y = scale;
             scale_phase++;
             effect->phase = scale_phase;
-        } else if (kf_enum_encode<u8>(phase) < kf_enum_encode<u8>(KF_EFFECT_ACTOR_SPAWNER_TRAVEL_LAST) + 1) {
+        } else if (kf_enum_encode<u8>(phase) <= kf_enum_encode<u8>(KF_EFFECT_ACTOR_SPAWNER_TRAVEL_LAST)) {
             VECTOR position;
 
             position.vx = effect->position.vx + effect->direction.vector.vx;
@@ -759,6 +761,7 @@ advance_effect_phase:
                 actor_rotation.y = vector_xz_to_angle(
                     player_state.camera_position.vx - position.vx,
                     player_state.camera_position.vz - position.vz);
+
                 value = rand();
                 if (value < ACTOR_SPAWNER_SELECTION_RANDOM_CUTOFF) {
                     actor_pool_spawn(2, &position, &actor_rotation);

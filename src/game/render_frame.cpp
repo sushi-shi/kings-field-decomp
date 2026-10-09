@@ -60,6 +60,7 @@ void render_frame(const VECTOR *position_or_null, const SVECTOR *rotation_or_nul
                                   / player_state.vitals.maximum_mp;
         hud_sprites[KF_HUD_ATTACK_GAUGE].sprite.w = player_state.attack_charge_state.current / HUD_CHARGE_UNITS_PER_PIXEL;
         hud_sprites[KF_HUD_MAGIC_GAUGE].sprite.w = player_state.magic_charge / HUD_CHARGE_UNITS_PER_PIXEL;
+
         flags = player_state.status_effect_flags;
         if ((flags & KF_PLAYER_STATUS_CURSE) != KF_PLAYER_STATUS_NONE) {
             hud_sprites[KF_HUD_CURSE_ICON].state = KF_SPRITE_VISIBLE;

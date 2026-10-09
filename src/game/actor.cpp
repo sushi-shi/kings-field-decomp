@@ -9,8 +9,8 @@
 #include <kf/game/player.h>
 
 enum {
-    ACTOR_SELECTION_ANGLE_TOLERANCE = 0x18e,
-    ACTOR_MULTI_HIT_SELECTION_ANGLE_TOLERANCE = 0x1c7
+    ACTOR_SELECTION_ANGLE_TOLERANCE = 398,
+    ACTOR_MULTI_HIT_SELECTION_ANGLE_TOLERANCE = 455
 };
 
 enum {
@@ -266,11 +266,11 @@ s32 combat_calculate_damage_component(s32 base_power, s32 attack, s32 defense)
 void actor_apply_damage(
     u16 actor_index,
     u16 base_power,
-    u16 component0,
-    u16 component1,
-    u16 component2,
-    u16 component3,
-    u16 component4,
+    u16 cutting_damage,
+    u16 striking_damage,
+    u16 piercing_damage,
+    u16 magic_damage,
+    u16 fire_damage,
     u16 scale,
     KfEffectType hit_flags)
 {
@@ -296,23 +296,23 @@ void actor_apply_damage(
     }
     damage = combat_calculate_damage_component(
         base_power * KF_DAMAGE_SUBUNITS_PER_HP,
-        component0 * KF_DAMAGE_SUBUNITS_PER_HP,
+        cutting_damage * KF_DAMAGE_SUBUNITS_PER_HP,
         definition->defenses[KF_COMBAT_COMPONENT_CUTTING] * KF_DAMAGE_SUBUNITS_PER_HP);
     damage += combat_calculate_damage_component(
         base_power * KF_DAMAGE_SUBUNITS_PER_HP,
-        component1 * KF_DAMAGE_SUBUNITS_PER_HP,
+        striking_damage * KF_DAMAGE_SUBUNITS_PER_HP,
         definition->defenses[KF_COMBAT_COMPONENT_STRIKING] * KF_DAMAGE_SUBUNITS_PER_HP);
     damage += combat_calculate_damage_component(
         base_power * KF_DAMAGE_SUBUNITS_PER_HP,
-        component2 * KF_DAMAGE_SUBUNITS_PER_HP,
+        piercing_damage * KF_DAMAGE_SUBUNITS_PER_HP,
         definition->defenses[KF_COMBAT_COMPONENT_PIERCING] * KF_DAMAGE_SUBUNITS_PER_HP);
     damage += combat_calculate_damage_component(
         base_power * KF_DAMAGE_SUBUNITS_PER_HP,
-        component3 * KF_DAMAGE_SUBUNITS_PER_HP,
+        magic_damage * KF_DAMAGE_SUBUNITS_PER_HP,
         definition->defenses[KF_COMBAT_COMPONENT_HOLY] * KF_DAMAGE_SUBUNITS_PER_HP);
     damage += combat_calculate_damage_component(
         base_power * KF_DAMAGE_SUBUNITS_PER_HP,
-        component4 * KF_DAMAGE_SUBUNITS_PER_HP,
+        fire_damage * KF_DAMAGE_SUBUNITS_PER_HP,
         definition->defenses[KF_COMBAT_COMPONENT_FIRE] * KF_DAMAGE_SUBUNITS_PER_HP);
     damage += KF_DAMAGE_SUBUNITS_PER_HP / 2;
     damage = (damage / KF_DAMAGE_SUBUNITS_PER_HP) * scale / KF_ACTOR_DAMAGE_SCALE_ONE;
@@ -320,10 +320,11 @@ void actor_apply_damage(
     if (damage == 0) {
         return;
     }
+
     if (actor->health != 0 && hit_flags == KF_ACTOR_DAMAGE_CREDIT_PLAYER) {
-        if (component0 == 0 && component1 == 0 && component2 == 0) {
+        if (cutting_damage == 0 && striking_damage == 0 && piercing_damage == 0) {
             player_increment_magic_training();
-        } else if (component1 != 0 || component2 != 0) {
+        } else if (striking_damage != 0 || piercing_damage != 0) {
             player_increment_physical_power_training();
         }
     }
@@ -354,11 +355,11 @@ void actor_pool_apply_radial_damage(
     u32 radius,
     u16 falloff_q12,
     u16 base_power,
-    u16 component0,
-    u16 component1,
-    u16 component2,
-    u16 component3,
-    u16 component4,
+    u16 cutting_damage,
+    u16 striking_damage,
+    u16 piercing_damage,
+    u16 magic_damage,
+    u16 fire_damage,
     u16 scale,
     KfEffectType hit_flags)
 {
@@ -398,11 +399,11 @@ void actor_pool_apply_radial_damage(
         actor_apply_damage(
             index,
             base_power,
-            component0,
-            component1,
-            component2,
-            component3,
-            component4,
+            cutting_damage,
+            striking_damage,
+            piercing_damage,
+            magic_damage,
+            fire_damage,
             damage_scale,
             hit_flags);
     }
@@ -754,8 +755,7 @@ KfActorAction actor_try_select_profiled_action(KfActorAction action,
     KfActorEffectCode effect_code,
     u16 chance)
 {
-    KfEffectKind
-    profile = kf_enum_decode<KfEffectKind>(kf_enum_encode<u16>(effect_code & KF_ACTOR_EFFECT_KIND_MASK));
+    KfEffectKind profile = kf_enum_decode<KfEffectKind>(kf_enum_encode<u16>(effect_code & KF_ACTOR_EFFECT_KIND_MASK));
     KfActorActionProfile *weights = &actor_action_profiles[kf_enum_encode<u16>(profile)];
     KfActor *actor = actor_state.current;
     s32 odds;
@@ -786,6 +786,7 @@ KfActorAction actor_try_select_profiled_action(KfActorAction action,
         && rand() >= ACTOR_PROFILE_FACING_BYPASS_LIMIT) {
         goto rejected;
     }
+
     if (profile == KF_EFFECT_KIND_ACTOR_SPAWNER) {
         candidate = actor_state.actors;
         count = 0;

@@ -240,6 +240,7 @@ void map_object_pool_clear_link(u8 link_id)
     KfMapObjectDefinition *definitions = map_object_state.definitions.entries;
 
     do {
+
         if ((definitions[kf_enum_encode<u8>(object->object_id)].behavior_type < KF_MAP_OBJECT_OP_LINK_CLEAR_LAST
              || definitions[kf_enum_encode<u8>(object->object_id)].behavior_type == KF_MAP_OBJECT_OP_LINK_CLEAR_LAST)
             && object->link.fields.link_id == link_id) {
@@ -565,6 +566,7 @@ void map_object_pool_update(void)
                         &gameplay_sound_refs[KF_GAMEPLAY_SOUND_EFFECT_SWITCH], &object->position, KF_AUDIO_MAX_VOLUME);
                 }
                 record->visual.animation_phase -= MAP_EFFECT_SWITCH_PHASE_STEP;
+
                 if (record->visual.animation_phase > KF_FIXED12_ONE) {
                     record->visual.animation_phase = 0;
                     object->action_timer = KF_MAP_OBJECT_SWITCH_READY;

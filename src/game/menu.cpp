@@ -49,7 +49,7 @@ s32 menu_root(void)
     }
 
     for (;;) {
-        if (selection != KF_ROOT_CHOICE_NONE || result == kf_enum_encode<s32>(selection)) {
+        if (selection != KF_ROOT_CHOICE_NONE || result == kf_enum_encode<s32>(KF_MENU_RESULT_CANCELLED)) {
             menu_frame_begin();
             menu_draw_status_summary();
             menu_draw_window(KF_MENU_WINDOW_ROOT, KF_MENU_ROOT_ROW_COUNT, cursor, confirm);
@@ -65,6 +65,7 @@ s32 menu_root(void)
             }
             break;
         case KF_ROOT_CHOICE_USE_MAGIC:
+
             result = kf_enum_encode<s32>(menu_magic_panel());
             if (result == kf_enum_encode<s32>(KF_MENU_RESULT_CANCELLED)) {
                 result = kf_enum_encode<s32>(KF_MENU_RESULT_PENDING);

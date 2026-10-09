@@ -38,7 +38,7 @@ enum {
 };
 
 enum {
-    MENU_INPUT_SOUND_VOLUME = 0x40
+    MENU_INPUT_SOUND_VOLUME = 64
 };
 
 enum {
@@ -426,6 +426,7 @@ KfSaveStatus save_file_write_slot(KfSaveSlotId slot_id)
         return SAVE_STATUS_WRITE_FAILED;
     }
     save_header_buffer->directory.slot_ids[entry] = slot_id;
+
     save_header_buffer->directory.slot_ids[previous] = KF_SAVE_SLOT_SPARE;
     save_header_buffer->directory.summaries[entry].experience = player_state.experience;
     save_header_buffer->directory.summaries[entry].current_floor =
@@ -667,15 +668,15 @@ void save_file_initialize_buffers(void)
     cd_file_load_into(image, "TIM\\ICO1.TIM");
     memcpy(save_header_buffer->playstation_header.clut, &image[SAVE_ICON_TIM_CLUT_OFFSET],
            sizeof(save_header_buffer->playstation_header.clut));
-    memcpy((save_header_buffer->playstation_header.icon_frames[0]),
+    memcpy(save_header_buffer->playstation_header.icon_frames[0],
         &image[SAVE_ICON_TIM_PIXELS_OFFSET],
         sizeof(save_header_buffer->playstation_header.icon_frames[0]));
     cd_file_load_into(image, "TIM\\ICO2.TIM");
-    memcpy((save_header_buffer->playstation_header.icon_frames[1]),
+    memcpy(save_header_buffer->playstation_header.icon_frames[1],
         &image[SAVE_ICON_TIM_PIXELS_OFFSET],
         sizeof(save_header_buffer->playstation_header.icon_frames[1]));
     cd_file_load_into(image, "TIM\\ICO3.TIM");
-    memcpy((save_header_buffer->playstation_header.icon_frames[2]),
+    memcpy(save_header_buffer->playstation_header.icon_frames[2],
         &image[SAVE_ICON_TIM_PIXELS_OFFSET],
         sizeof(save_header_buffer->playstation_header.icon_frames[2]));
     memset(save_payload_buffer, 0, sizeof(KfSavePayload));
@@ -795,6 +796,7 @@ void screen_show_image_until_input(const char *path)
         return;
     }
     tim_upload_images(game_graphics_runtime.display_state.asset_load_buffer);
+
     index = game_graphics_runtime.display_state.buffer_index == KF_DISPLAY_BUFFER_FIRST;
     game_graphics_runtime.display_draw_environments[index].isbg = 0;
     game_graphics_runtime.display_draw_environments[index].dfe = 0;

@@ -27,6 +27,7 @@ KfResourceLoadResult cd_file_load_allocated(u8 **destination, const char *relati
 {
     char *path = cd_path_buffer;
     s32 attempt;
+
     s32 loaded;
 
     memcpy(path, cd_path_prefix, sizeof cd_path_prefix);
@@ -90,6 +91,7 @@ KfResourceLoadResult cd_file_load_into(void *destination, const char *relative_p
 {
     char *path = cd_path_buffer;
     s32 attempt;
+
     s32 loaded;
 
     memcpy(path, cd_path_prefix, sizeof cd_path_prefix);

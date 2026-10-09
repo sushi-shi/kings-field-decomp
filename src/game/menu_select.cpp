@@ -11,7 +11,6 @@ void menu_equip_select(KfEquipmentMenuCategory equipment_category)
     KfMenuList ctx;
     s16 labels[20][MENU_GLYPHS_PER_ROW];
     KfObjectId item_ids[20];
-    s16 *name;
     u8 *player_stock;
     s32 item_id;
     s32 j;
@@ -61,9 +60,8 @@ void menu_equip_select(KfEquipmentMenuCategory equipment_category)
     found = 0;
     for (item_id = start; item_id < end; item_id++) {
         if (player_stock[item_id] != 0) {
-            name = item_name_rows[item_id].codes;
             for (j = 0; j < MENU_GLYPHS_PER_ROW; j++) {
-                labels[found][j] = name[j];
+                labels[found][j] = item_name_rows[item_id].codes[j];
             }
             item_ids[found] = kf_enum_decode<KfObjectId>(item_id);
             found++;

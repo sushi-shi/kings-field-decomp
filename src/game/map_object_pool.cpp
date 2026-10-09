@@ -114,7 +114,7 @@ void map_object_mark_collision_edge(const KfMapObject *object, KfMapCellKind cel
 
 s32 map_object_probe_door_closing(const KfMapObject *object, u16 yaw)
 {
-    const KfMapObjectDefinition* definition
+    const KfMapObjectDefinition *definition
         = &map_object_state.definitions.entries[kf_enum_encode<u8>(object->object_id)];
     s32 point_x = object->position.vx;
     s32 point_z = object->position.vz;
@@ -186,6 +186,7 @@ void map_object_pool_load(const KfMapObjectPlacement *placements)
     const KfMapObjectPlacement *placement = placements;
     KfMapObject *object = map_object_state.objects;
     KfMapObjectDefinition *definition;
+
     SVECTOR effect_direction;
     KfObjectId object_id;
 
@@ -216,12 +217,12 @@ void map_object_pool_load(const KfMapObjectPlacement *placements)
             switch (object_id) {
             case KF_MAP_OBJECT_ORBITING_PROJECTILE:
                 object->link.fields.action_parameter.effect_index = effect_pool_construct(
-                                                    object->link.fields.spawn.effect_id,
-                                                    KF_EFFECT_CLASS_20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
-                                                    KF_EFFECT_KIND_ORBITING_PROJECTILE,
-                                                    &object->position,
-                                                    &effect_direction)
-                    - effect_state.records;
+                    object->link.fields.spawn.effect_id,
+                    KF_EFFECT_CLASS_20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
+                    KF_EFFECT_KIND_ORBITING_PROJECTILE,
+                    &object->position,
+                    &effect_direction)
+                - effect_state.records;
                 map_object_start_action_if_idle(object, KF_MAP_OBJECT_OP_RELEASE_ORBIT_OR_SHORT_SWING);
                 break;
             case KF_MAP_OBJECT_BOSS_PROJECTILE_EMITTER:
@@ -232,24 +233,24 @@ void map_object_pool_load(const KfMapObjectPlacement *placements)
                 break;
             case KF_MAP_OBJECT_SHORT_SWING:
                 object->link.fields.action_parameter.effect_index = effect_pool_construct(
-                                                    object->link.fields.spawn.effect_id,
-                                                    KF_EFFECT_CLASS_20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
-                                                    KF_EFFECT_KIND_SWINGING_HAZARD_SHORT,
-                                                    &object->position,
-                                                    &effect_direction,
-                                                    KfEffectRotationArguments{&object->rotation.vector})
-                    - effect_state.records;
+                    object->link.fields.spawn.effect_id,
+                    KF_EFFECT_CLASS_20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
+                    KF_EFFECT_KIND_SWINGING_HAZARD_SHORT,
+                    &object->position,
+                    &effect_direction,
+                    KfEffectRotationArguments{&object->rotation.vector})
+                - effect_state.records;
                 map_object_start_action_if_idle(object, KF_MAP_OBJECT_OP_RELEASE_ORBIT_OR_SHORT_SWING);
                 break;
             case KF_MAP_OBJECT_LONG_SWING:
                 object->link.fields.action_parameter.effect_index = effect_pool_construct(
-                                                    object->link.fields.spawn.effect_id,
-                                                    KF_EFFECT_CLASS_20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
-                                                    KF_EFFECT_KIND_SWINGING_HAZARD_LONG,
-                                                    &object->position,
-                                                    &effect_direction,
-                                                    KfEffectRotationArguments{&object->rotation.vector})
-                    - effect_state.records;
+                    object->link.fields.spawn.effect_id,
+                    KF_EFFECT_CLASS_20 | KF_EFFECT_COLLISION_TARGET_ACTORS_AND_PLAYER,
+                    KF_EFFECT_KIND_SWINGING_HAZARD_LONG,
+                    &object->position,
+                    &effect_direction,
+                    KfEffectRotationArguments{&object->rotation.vector})
+                - effect_state.records;
                 map_object_start_action_if_idle(object, KF_MAP_OBJECT_OP_RELEASE_LONG_SWING);
                 break;
             case KF_MAP_OBJECT_EFFECT_SWITCH:

@@ -38,6 +38,7 @@ static KfCellWindow render_fixed_cell_window = {
 void render_map_cell(s32 col, s32 row, KfCellVisibility visibility)
 {
     MATRIX cell_matrix;
+
     MATRIX unused_matrix;
     SVECTOR position;
     long flag;
