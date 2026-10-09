@@ -59,7 +59,7 @@ void effect_update_swinging_hazard(SVECTOR *probe_offset, KF_ENUM_PARAM(KfEffect
     s16 pitch;
     s16 next_pitch;
 
-    if (KF_ENUM_ENCODE(u8, life) < KF_ENUM_ENCODE(u8, KF_EFFECT_HAZARD_RELEASE_REQUEST) + 1u) {
+    if (KF_ENUM_ENCODE(u8, life) <= KF_ENUM_ENCODE(u8, KF_EFFECT_HAZARD_RELEASE_REQUEST)) {
         RotMatrix(&record->rotation.vector, &rotation_matrix);
         matrix_set_rotation_x(record->rotation.vector.vx, &rotation_matrix);
         matrix_set_rotation_y(record->rotation.vector.vy, &yaw_matrix);
@@ -123,7 +123,8 @@ void effect_update_orbiting_projectile(s32 orbit_radius, KF_ENUM_PARAM(KfEffectP
     KfEffectRecord *record = effect_state.current_record;
     KfMagicRecord *magic = effect_state.current_magic;
     KF_ENUM_STORAGE(KfEffectPhase, u32) life = record->phase;
-    /* Unused, as in the swinging hazard; both size the retail frame. */
+    /* Unresolved source form: never used here, but retail reserves the same
+     * two matrices as the swinging hazard in this frame. */
     MATRIX rotation_matrix;
     MATRIX yaw_matrix;
     u32 collision;
