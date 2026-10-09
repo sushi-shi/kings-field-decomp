@@ -70,8 +70,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 >> KF_GTE_DEPTH_TO_OT_SHIFT) + depth_bias;
             if (depth >= KF_SCENE_MIN_OT_DEPTH) {
                 AddPrim(
-                    (void *)(&open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK]),
-                    (void *)&prim->sdk);
+                    &open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
+                    &prim->sdk);
             }
             break;
         }
@@ -99,8 +99,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2)) + depth_bias;
             if (depth >= KF_SCENE_MIN_OT_DEPTH) {
                 AddPrim(
-                    (void *)(&open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK]),
-                    (void *)&prim->sdk);
+                    &open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
+                    &prim->sdk);
             }
             break;
         }
@@ -128,8 +128,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 >> KF_GTE_DEPTH_TO_OT_SHIFT) + depth_bias;
             if (depth >= KF_SCENE_MIN_OT_DEPTH) {
                 AddPrim(
-                    (void *)(&open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK]),
-                    (void *)&prim->sdk);
+                    &open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
+                    &prim->sdk);
             }
             break;
         }
@@ -161,8 +161,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2)) + depth_bias;
             if (depth >= KF_SCENE_MIN_OT_DEPTH) {
                 AddPrim(
-                    (void *)(&open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK]),
-                    (void *)&prim->sdk);
+                    &open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
+                    &prim->sdk);
             }
             break;
         }
@@ -196,8 +196,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 >> KF_GTE_DEPTH_TO_OT_SHIFT) + depth_bias;
             if (depth >= KF_SCENE_MIN_OT_DEPTH) {
                 AddPrim(
-                    (void *)(&open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK]),
-                    (void *)&prim->sdk);
+                    &open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
+                    &prim->sdk);
             }
             break;
         }
@@ -236,8 +236,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2)) + depth_bias;
             if (depth >= KF_SCENE_MIN_OT_DEPTH) {
                 AddPrim(
-                    (void *)(&open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK]),
-                    (void *)&prim->sdk);
+                    &open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
+                    &prim->sdk);
             }
             break;
         }
@@ -253,7 +253,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             }
             prim = (KfGpuG3 *)primitive_buffer_allocate(sizeof(POLY_G3));
             SetPolyG3(&prim->sdk);
-            SetSemiTrans((void *)&prim->sdk, 1);
+            SetSemiTrans(&prim->sdk, 1);
             prim->packed.xy0 = vertex0->sxy.word;
             prim->packed.xy1 = vertex1->sxy.word;
             prim->packed.xy2 = vertex2->sxy.word;
@@ -266,8 +266,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 >> KF_GTE_DEPTH_TO_OT_SHIFT) + depth_bias;
             if (depth >= KF_SCENE_MIN_OT_DEPTH) {
                 AddPrim(
-                    (void *)(&open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK]),
-                    (void *)&prim->sdk);
+                    &open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
+                    &prim->sdk);
             }
             break;
         }
@@ -302,8 +302,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2)) + depth_bias;
             if (depth >= KF_SCENE_MIN_OT_DEPTH) {
                 AddPrim(
-                    (void *)(&open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK]),
-                    (void *)&prim->sdk);
+                    &open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
+                    &prim->sdk);
             }
             break;
         }
@@ -329,8 +329,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 >> KF_GTE_DEPTH_TO_OT_SHIFT) + depth_bias;
             if (depth >= KF_SCENE_MIN_OT_DEPTH) {
                 AddPrim(
-                    (void *)(&open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK]),
-                    (void *)&prim->sdk);
+                    &open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
+                    &prim->sdk);
             }
             break;
         }
@@ -347,7 +347,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             vertex3 = VTX(polygon->g4.v3);
             prim = (KfGpuG4 *)primitive_buffer_allocate(sizeof(POLY_G4));
             SetPolyG4(&prim->sdk);
-            SetSemiTrans((void *)&prim->sdk, 1);
+            SetSemiTrans(&prim->sdk, 1);
             prim->packed.xy0 = vertex0->sxy.word;
             prim->packed.xy1 = vertex1->sxy.word;
             prim->packed.xy2 = vertex2->sxy.word;
@@ -364,8 +364,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2)) + depth_bias;
             if (depth >= KF_SCENE_MIN_OT_DEPTH) {
                 AddPrim(
-                    (void *)(&open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK]),
-                    (void *)&prim->sdk);
+                    &open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
+                    &prim->sdk);
             }
             break;
         }
@@ -381,7 +381,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             }
             prim = (KfGpuF3 *)primitive_buffer_allocate(sizeof(POLY_F3));
             SetPolyF3(&prim->sdk);
-            SetSemiTrans((void *)&prim->sdk, 1);
+            SetSemiTrans(&prim->sdk, 1);
             prim->packed.xy0 = vertex0->sxy.word;
             prim->packed.xy1 = vertex1->sxy.word;
             prim->packed.xy2 = vertex2->sxy.word;
@@ -392,8 +392,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 >> KF_GTE_DEPTH_TO_OT_SHIFT) + depth_bias;
             if (depth >= KF_SCENE_MIN_OT_DEPTH) {
                 AddPrim(
-                    (void *)(&open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK]),
-                    (void *)&prim->sdk);
+                    &open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
+                    &prim->sdk);
             }
             break;
         }
@@ -410,7 +410,7 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
             vertex3 = VTX(polygon->f4.v3);
             prim = (KfGpuF4 *)primitive_buffer_allocate(sizeof(POLY_F4));
             SetPolyF4(&prim->sdk);
-            SetSemiTrans((void *)&prim->sdk, 1);
+            SetSemiTrans(&prim->sdk, 1);
             prim->packed.xy0 = vertex0->sxy.word;
             prim->packed.xy1 = vertex1->sxy.word;
             prim->packed.xy2 = vertex2->sxy.word;
@@ -422,8 +422,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 >> (KF_GTE_DEPTH_TO_OT_SHIFT + 2)) + depth_bias;
             if (depth >= KF_SCENE_MIN_OT_DEPTH) {
                 AddPrim(
-                    (void *)(&open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK]),
-                    (void *)&prim->sdk);
+                    &open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
+                    &prim->sdk);
             }
             break;
         }

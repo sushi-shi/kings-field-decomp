@@ -26,8 +26,8 @@ void opening_run(KfOverlayMode overlay_mode)
 
     PadInit(0);
     /* Retail clears the display state and the contiguous opening runtime BSS. */
-    memset((void *)&open_graphics_runtime, 0, sizeof open_graphics_runtime);
-    memset((void *)&opening_entity_state, 0, sizeof opening_entity_state);
+    memset(&open_graphics_runtime, 0, sizeof open_graphics_runtime);
+    memset(&opening_entity_state, 0, sizeof opening_entity_state);
     memory_set_allocation_mode(KF_MEMORY_CREATE_ARENA);
     audio_initialize();
     display_initialize(overlay_mode);
@@ -40,7 +40,7 @@ void opening_run(KfOverlayMode overlay_mode)
     case KF_OVERLAY_MODE_INTRO:
         SetDispMask(1);
         if (cd_file_load_into(
-                (void *)open_graphics_runtime.display_state.asset_load_buffer,
+                open_graphics_runtime.display_state.asset_load_buffer,
                 opening_initial_tim_path) != KF_RESOURCE_LOADED) {
             return;
         }

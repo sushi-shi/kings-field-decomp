@@ -67,7 +67,7 @@ void common_resources_load(void)
     RESOURCE_STREAM_NEXT(stream);
 
     block = stream;
-    memcpy((void *)render_cell_windows, (const void *)(block + KF_RESOURCE_CHUNK_HEADER_BYTES),
+    memcpy(render_cell_windows, block + KF_RESOURCE_CHUNK_HEADER_BYTES,
         sizeof render_cell_windows);
     RESOURCE_STREAM_NEXT(stream);
 
@@ -84,8 +84,8 @@ void common_resources_load(void)
     RESOURCE_STREAM_NEXT(stream);
 
     memcpy(
-        (void *)player_level_growth_table,
-        (const void *)RESOURCE_STREAM_PAYLOAD(stream, const KfPlayerLevelGrowth),
+        player_level_growth_table,
+        RESOURCE_STREAM_PAYLOAD(stream, const KfPlayerLevelGrowth),
         sizeof player_level_growth_table);
     memory_release_last();
     memory_arena.allocation.cursor = block + KF_RESOURCE_REUSE_PREFIX_BYTES;
@@ -112,9 +112,9 @@ u8 *map_resource_load_file(const char *filename)
 ADDRESS(0x8001b414, 0x88)
 void map_variant_assets_load(void)
 {
-    memcpy((void *)(&map_resource_path[3]), (const void *)("CHR0.MIM"), sizeof "CHR0.MIM");
+    memcpy(&map_resource_path[3], "CHR0.MIM", sizeof "CHR0.MIM");
     map_resource_path[6] = KF_ENUM_ENCODE(u8, player_state.map_variant) + '0';
-    cd_file_load_into((void *)map_runtime_state.variant_asset_buffer, map_resource_path);
+    cd_file_load_into(map_runtime_state.variant_asset_buffer, map_resource_path);
     asset_registry_load_tmd_archive(KF_ASSET_ACTOR_FIRST, map_runtime_state.variant_asset_buffer);
 }
 

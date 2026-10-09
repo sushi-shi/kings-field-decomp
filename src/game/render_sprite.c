@@ -31,5 +31,5 @@ void render_screen_sprite(KfSpriteQuad *sprite)
         game_graphics_runtime.active_render_color.r,
         game_graphics_runtime.active_render_color.g,
         game_graphics_runtime.active_render_color.b);
-    AddPrim((void *)(&game_graphics_runtime.display_state.ordering_table[HUD_SPRITE_OT_DEPTH]), (void *)prim);
+    AddPrim(&game_graphics_runtime.display_state.ordering_table[HUD_SPRITE_OT_DEPTH], prim);
 }

@@ -144,7 +144,7 @@ void player_equip_weapon(KfObjectId weapon_id)
         player_state.equipped_weapon_record = &weapon_records.entries[KF_ENUM_ENCODE(u8, weapon_id)];
         weapon_asset_path_template[9] = '0' + KF_ENUM_ENCODE(u32, weapon_id) / 10;
         weapon_asset_path_template[10] = '0' + KF_ENUM_ENCODE(u32, weapon_id) % 10;
-        if (cd_file_load_into((void *)player_state.weapon_asset_buffer, weapon_asset_path_template)
+        if (cd_file_load_into(player_state.weapon_asset_buffer, weapon_asset_path_template)
             != KF_RESOURCE_LOADED) {
             exit(1);
         }

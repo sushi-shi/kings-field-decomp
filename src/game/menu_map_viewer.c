@@ -43,13 +43,13 @@ void menu_map_viewer(KF_ENUM_PARAM(KfObjectId, s32) item_id)
     path[6] = KF_ENUM_ENCODE(u8, player_state.progress_state.current_floor) + '0';
 
     buffer = game_graphics_runtime.display_state.primitive_buffer->cursor;
-    if (cd_file_load_into((void *)buffer, path) != KF_RESOURCE_LOADED) {
+    if (cd_file_load_into(buffer, path) != KF_RESOURCE_LOADED) {
         return;
     }
     tim_upload_images(buffer);
 
     SetPolyFT4(&map_image_quads[0]);
-    SetSemiTrans((void *)(&map_image_quads[0]), 1);
+    SetSemiTrans(&map_image_quads[0], 1);
     setRGB0(&map_image_quads[0], MENU_MAP_BRIGHTNESS, MENU_MAP_BRIGHTNESS, MENU_MAP_BRIGHTNESS);
     map_image_quads[0].clut = MENU_MAP_IMAGE_CLUT;
     map_image_quads[0].tpage = MENU_MAP_IMAGE_TPAGE;
@@ -75,10 +75,10 @@ void menu_map_viewer(KF_ENUM_PARAM(KfObjectId, s32) item_id)
 
     for (;;) {
         menu_frame_begin();
-        AddPrim((void *)(game_graphics_runtime.display_state.ordering_table + MENU_OVERLAY_OT_DEPTH),
-                (void *)(&marker_quads[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)]));
-        AddPrim((void *)(game_graphics_runtime.display_state.ordering_table + MENU_CONTENT_OT_DEPTH),
-                (void *)(&map_image_quads[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)]));
+        AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_OVERLAY_OT_DEPTH,
+                &marker_quads[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)]);
+        AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_CONTENT_OT_DEPTH,
+                &map_image_quads[KF_ENUM_ENCODE(u8, game_graphics_runtime.display_state.buffer_index)]);
         MENU_ENQUEUE_BACKGROUND();
         menu_present_frame();
         if (frame < MENU_PANEL_INPUT_RELEASE_FRAME) {

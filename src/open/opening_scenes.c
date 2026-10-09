@@ -274,8 +274,8 @@ void opening_scene1_draw_fade(u8 shade)
     setRGB0(left, shade, shade, shade);
     setRGB0(right, shade, shade, shade);
 
-    AddPrim((void *)open_graphics_runtime.ordering_table, (void *)left);
-    AddPrim((void *)open_graphics_runtime.ordering_table, (void *)right);
+    AddPrim(open_graphics_runtime.ordering_table, left);
+    AddPrim(open_graphics_runtime.ordering_table, right);
     display_present_frame();
 }
 
