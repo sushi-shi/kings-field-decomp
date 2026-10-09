@@ -777,7 +777,7 @@ void render_enqueue_map(u16 object_index)
  * Enqueues one screen sprite as a depth-sorted textured quad.  The quad's four
  * corners are projected through the GTE, the primitive's colour is the light
  * normal shade depth-cued by the projected perspective term (optionally scaled
- * by 1.5 when flag selects it), and it sorts into the ordering table at the
+ * by 1.5 for KF_SPRITE_DEPTH_CUE_BOOSTED), and it sorts into the ordering table at the
  * projected depth biased by the caller's depth_bias.
  */
 ADDRESS(0x8001e230, 0x250)
