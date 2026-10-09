@@ -20,7 +20,7 @@ enum {
     KF_PLAYER_SOUND_WEAPON_ATTACK = 0,
     KF_PLAYER_SOUND_DEATH = 1,
     KF_PLAYER_SOUND_LEVEL_UP = 2,
-    KF_PLAYER_SOUND_COUNT = 3
+    KF_PLAYER_SOUND_COUNT = KF_PLAYER_SOUND_LEVEL_UP + 1
 };
 
 /* Saved bytes and signed-word configuration copies share these option values. */

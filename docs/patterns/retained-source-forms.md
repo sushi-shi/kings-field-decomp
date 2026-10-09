@@ -45,6 +45,16 @@ launch macro dropped PSX `main` to 77.4%.
 | `opening_run` | `opening_reload` | duplicated reload (73.6%) |
 | `opening_cylinder_transition` | `deactivate` | `if (mode != REMOVE)` around the setup (84.9%) |
 
+## Countdown loops
+
+Twenty-nine pool walks count a capacity down to the sentinel, either
+`for (i = CAPACITY - 1; i != -1; i--)` or `count = CAPACITY - 1; do { ... }
+while (count-- != 0)`. Every site was tested with the natural alternative
+(an up-counting `for` when the counter is unused in the body, otherwise
+`count = CAPACITY; ... while (--count != 0)`), and none compiled to the same
+code, so the countdown is the authored form rather than a decompiler
+artefact.
+
 ## Unresolved source forms
 
 | Function | Construct | Rejected natural form (similarity) |

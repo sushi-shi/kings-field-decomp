@@ -82,7 +82,7 @@ enum {
     KF_RENDER_LIGHT_WEAPON = 3,
     KF_RENDER_LIGHT_HUD = 4,
     KF_RENDER_LIGHT_NOTIFICATION = 5,
-    KF_RENDER_LIGHT_COUNT = 6
+    KF_RENDER_LIGHT_COUNT = KF_RENDER_LIGHT_NOTIFICATION + 1
 };
 
 /* One row of the sentinel-terminated HUD gauge and status-sprite table. */

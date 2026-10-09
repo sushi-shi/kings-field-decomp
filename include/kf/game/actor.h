@@ -160,7 +160,7 @@ enum {
     KF_ACTOR_SOUND_ATTACK = 0,
     KF_ACTOR_SOUND_HIT_REACTION = 1,
     KF_ACTOR_SOUND_DEATH = 2,
-    KF_ACTOR_SOUND_COUNT = 3
+    KF_ACTOR_SOUND_COUNT = KF_ACTOR_SOUND_DEATH + 1
 };
 
 /* Shared actor selection/action ranges and random-angle extraction. */
@@ -172,8 +172,8 @@ enum {
 
 /* Definition flags in the placement stream; unrelated to effect-code bits. */
 enum {
-    KF_ACTOR_PLACEMENT_DEFINITION_MASK = 0x1f,
-    KF_ACTOR_PLACEMENT_NEAR_SQUARE_CULLING = 0x20
+    KF_ACTOR_PLACEMENT_NEAR_SQUARE_CULLING = 0x20,
+    KF_ACTOR_PLACEMENT_DEFINITION_MASK = KF_ACTOR_PLACEMENT_NEAR_SQUARE_CULLING - 1
 };
 
 /* The same encoded effect byte selects its action profile and spawned kind. */
