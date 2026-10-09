@@ -175,9 +175,9 @@ constexpr KfFloorItemAppearance operator|(KfFloorItemAppearance lhs, KfFloorItem
     { return static_cast<KfFloorItemAppearance>(static_cast<u8>(lhs) ^ static_cast<u8>(rhs)); }
     constexpr KfFloorItemAppearance operator~(KfFloorItemAppearance value)
     { return static_cast<KfFloorItemAppearance>(~static_cast<u8>(value)); }
-    inline KfFloorItemAppearance& operator|=(KfFloorItemAppearance& lhs, KfFloorItemAppearance rhs) { return lhs = lhs | rhs; }
-    inline KfFloorItemAppearance& operator&=(KfFloorItemAppearance& lhs, KfFloorItemAppearance rhs) { return lhs = lhs & rhs; }
-    inline KfFloorItemAppearance& operator^=(KfFloorItemAppearance& lhs, KfFloorItemAppearance rhs) { return lhs = lhs ^ rhs; }
+    inline KfFloorItemAppearance& operator|=(KfFloorItemAppearance& lhs, KfFloorItemAppearance rhs) { lhs = lhs | rhs; return lhs; }
+    inline KfFloorItemAppearance& operator&=(KfFloorItemAppearance& lhs, KfFloorItemAppearance rhs) { lhs = lhs & rhs; return lhs; }
+    inline KfFloorItemAppearance& operator^=(KfFloorItemAppearance& lhs, KfFloorItemAppearance rhs) { lhs = lhs ^ rhs; return lhs; }
 
 constexpr KfFloorItemAppearance floor_item_appearance(KfFloorItemFacing facing, u8 frames)
 {

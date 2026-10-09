@@ -15,16 +15,24 @@ void render_screen_sprite(KfSpriteQuad *sprite)
         return;
     }
     SetPolyFT4(prim);
-    prim->x0 = prim->x2 = sprite->x;
-    prim->x1 = prim->x3 = sprite->x + sprite->w;
-    prim->y0 = prim->y1 = sprite->y;
-    prim->y2 = prim->y3 = sprite->y + sprite->h;
+    prim->x2 = sprite->x;
+    prim->x0 = prim->x2;
+    prim->x3 = sprite->x + sprite->w;
+    prim->x1 = prim->x3;
+    prim->y1 = sprite->y;
+    prim->y0 = prim->y1;
+    prim->y3 = sprite->y + sprite->h;
+    prim->y2 = prim->y3;
     prim->clut = game_graphics_runtime.active_render_clut;
     prim->tpage = game_graphics_runtime.active_render_tpage;
-    prim->u0 = prim->u2 = sprite->u;
-    prim->u1 = prim->u3 = sprite->u + sprite->u_span;
-    prim->v0 = prim->v1 = sprite->v;
-    prim->v2 = prim->v3 = sprite->v + sprite->v_span;
+    prim->u2 = sprite->u;
+    prim->u0 = prim->u2;
+    prim->u3 = sprite->u + sprite->u_span;
+    prim->u1 = prim->u3;
+    prim->v1 = sprite->v;
+    prim->v0 = prim->v1;
+    prim->v3 = sprite->v + sprite->v_span;
+    prim->v2 = prim->v3;
     setRGB0(prim,
         game_graphics_runtime.active_render_color.r,
         game_graphics_runtime.active_render_color.g,

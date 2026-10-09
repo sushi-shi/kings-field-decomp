@@ -89,8 +89,9 @@ void display_show_system_screen(KfSystemScreen screen)
         CdControl(CdlSetloc, (u_char *)&cd_read_location, NULL);
         CdRead(cd_search_file.size >> KF_CD_SECTOR_SHIFT,
                (u_long *)game_graphics_runtime.display_state.asset_load_buffer, CdlModeSpeed);
-        while ((result = CdReadSync(KF_CD_READ_POLL, NULL)) > 0) {
-        }
+        do {
+            result = CdReadSync(KF_CD_READ_POLL, NULL);
+        } while (result > 0);
         if (result == 0) {
             attempt = KF_CD_READ_STOP_ATTEMPT;
         }
@@ -229,8 +230,9 @@ void render_initialize(void)
     game_graphics_runtime.notification_text_tpage = GetTPage(
         KF_GPU_TEXTURE_4BIT, KF_GPU_BLEND_AVERAGE,
         NOTIFICATION_TPAGE_X, KF_TEXTURE_LOWER_PAGE_Y);
-    game_graphics_runtime.notification_digit_clut = game_graphics_runtime.notification_text_clut =
+    game_graphics_runtime.notification_text_clut =
         GetClut(render_palette_rects[RENDER_PALETTE_NOTIFICATION].x, render_palette_rects[RENDER_PALETTE_NOTIFICATION].y);
+    game_graphics_runtime.notification_digit_clut = game_graphics_runtime.notification_text_clut;
     game_graphics_runtime.notification_digit_tpage = NOTIFICATION_DIGIT_TPAGE;
     game_graphics_runtime.notification_state.control.effect_phase = KF_NOTIFICATION_IDLE;
     game_graphics_runtime.notification_state.control.queue_tail = 0;

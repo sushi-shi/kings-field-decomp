@@ -21,8 +21,8 @@ constexpr KfPlayerStatusFlags operator|(KfPlayerStatusFlags lhs, KfPlayerStatusF
     { return static_cast<KfPlayerStatusFlags>(static_cast<u16>(lhs) ^ static_cast<u16>(rhs)); }
     constexpr KfPlayerStatusFlags operator~(KfPlayerStatusFlags value)
     { return static_cast<KfPlayerStatusFlags>(~static_cast<u16>(value)); }
-    inline KfPlayerStatusFlags& operator|=(KfPlayerStatusFlags& lhs, KfPlayerStatusFlags rhs) { return lhs = lhs | rhs; }
-    inline KfPlayerStatusFlags& operator&=(KfPlayerStatusFlags& lhs, KfPlayerStatusFlags rhs) { return lhs = lhs & rhs; }
-    inline KfPlayerStatusFlags& operator^=(KfPlayerStatusFlags& lhs, KfPlayerStatusFlags rhs) { return lhs = lhs ^ rhs; }
+    inline KfPlayerStatusFlags& operator|=(KfPlayerStatusFlags& lhs, KfPlayerStatusFlags rhs) { lhs = lhs | rhs; return lhs; }
+    inline KfPlayerStatusFlags& operator&=(KfPlayerStatusFlags& lhs, KfPlayerStatusFlags rhs) { lhs = lhs & rhs; return lhs; }
+    inline KfPlayerStatusFlags& operator^=(KfPlayerStatusFlags& lhs, KfPlayerStatusFlags rhs) { lhs = lhs ^ rhs; return lhs; }
 
 #endif

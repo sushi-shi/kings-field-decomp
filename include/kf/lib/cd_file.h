@@ -25,11 +25,6 @@ enum class KfResourceLoadResult : s32 {
     (destination).sector = (source).sector; \
 } while (0)
 
-#define CD_PATH_WRITE_DECIMAL3(digits, number) ( \
-    (digits)[0] = (number) / 100 + '0', \
-    (digits)[1] = ((number) % 100) / 10 + '0', \
-    (digits)[2] = ((number) % 100) % 10 + '0')
-
 extern KfResourceLoadResult cd_file_load_allocated(
     u8 **destination, const char *relative_path);
 extern KfResourceLoadResult cd_file_load_into(

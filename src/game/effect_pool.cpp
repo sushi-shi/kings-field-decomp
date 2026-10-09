@@ -174,8 +174,10 @@ static KfEffectRecord *effect_pool_construct_impl(u8 id, KfEffectType type, KfEf
             setVector(&record->rotation.vector, 0, 0, 0);
             record->propagation.generations_remaining = arguments.generations;
             record->control.frames_remaining = arguments.duration;
-            record->scale_x = record->scale_y = record->scale_z =
-                record->visual.pulse_base_scale = arguments.scale;
+            record->visual.pulse_base_scale = arguments.scale;
+            record->scale_z = record->visual.pulse_base_scale;
+            record->scale_y = record->scale_z;
+            record->scale_x = record->scale_y;
             audio_play_spatial_default_range(&magic->sounds[0],
                                              &record->position, KF_AUDIO_MAX_VOLUME);
             break;

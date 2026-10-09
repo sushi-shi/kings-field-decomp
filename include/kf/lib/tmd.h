@@ -45,9 +45,9 @@ constexpr KfTmdMode operator|(KfTmdMode lhs, KfTmdMode rhs)
     { return static_cast<KfTmdMode>(static_cast<u8>(lhs) ^ static_cast<u8>(rhs)); }
     constexpr KfTmdMode operator~(KfTmdMode value)
     { return static_cast<KfTmdMode>(~static_cast<u8>(value)); }
-    inline KfTmdMode& operator|=(KfTmdMode& lhs, KfTmdMode rhs) { return lhs = lhs | rhs; }
-    inline KfTmdMode& operator&=(KfTmdMode& lhs, KfTmdMode rhs) { return lhs = lhs & rhs; }
-    inline KfTmdMode& operator^=(KfTmdMode& lhs, KfTmdMode rhs) { return lhs = lhs ^ rhs; }
+    inline KfTmdMode& operator|=(KfTmdMode& lhs, KfTmdMode rhs) { lhs = lhs | rhs; return lhs; }
+    inline KfTmdMode& operator&=(KfTmdMode& lhs, KfTmdMode rhs) { lhs = lhs & rhs; return lhs; }
+    inline KfTmdMode& operator^=(KfTmdMode& lhs, KfTmdMode rhs) { lhs = lhs ^ rhs; return lhs; }
 
 constexpr KfTmdMode tmd_packet_mode(u32 word)
 {

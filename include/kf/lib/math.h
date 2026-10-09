@@ -86,10 +86,6 @@ static inline s32 fixed_vector3_length(s32 x, s32 y, s32 z)
     return SquareRoot0(x * x + y * y + z * z) << KF_LENGTH_SQUARE_DOWNSHIFT;
 }
 
-#define VECTOR_YAW_PROBE_XZ(x, z, position, rotation, reach) ( \
-    (x) = (position).vx - ((rsin((rotation).vy) * (reach)) >> KF_FIXED12_BITS), \
-    (z) = (position).vz + ((rcos((rotation).vy) * (reach)) >> KF_FIXED12_BITS))
-
 extern s16 angle_approach(s16 current, s16 target, s32 step);
 extern KfBool angle_mod_delta_le_half_turn(int lhs, int rhs);
 extern s16 angle_shortest_delta(s32 first, s32 second);

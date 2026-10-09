@@ -191,9 +191,9 @@ constexpr KfActorEffectCode operator|(KfActorEffectCode lhs, KfActorEffectCode r
     { return static_cast<KfActorEffectCode>(static_cast<u8>(lhs) ^ static_cast<u8>(rhs)); }
     constexpr KfActorEffectCode operator~(KfActorEffectCode value)
     { return static_cast<KfActorEffectCode>(~static_cast<u8>(value)); }
-    inline KfActorEffectCode& operator|=(KfActorEffectCode& lhs, KfActorEffectCode rhs) { return lhs = lhs | rhs; }
-    inline KfActorEffectCode& operator&=(KfActorEffectCode& lhs, KfActorEffectCode rhs) { return lhs = lhs & rhs; }
-    inline KfActorEffectCode& operator^=(KfActorEffectCode& lhs, KfActorEffectCode rhs) { return lhs = lhs ^ rhs; }
+    inline KfActorEffectCode& operator|=(KfActorEffectCode& lhs, KfActorEffectCode rhs) { lhs = lhs | rhs; return lhs; }
+    inline KfActorEffectCode& operator&=(KfActorEffectCode& lhs, KfActorEffectCode rhs) { lhs = lhs & rhs; return lhs; }
+    inline KfActorEffectCode& operator^=(KfActorEffectCode& lhs, KfActorEffectCode rhs) { lhs = lhs ^ rhs; return lhs; }
 
 constexpr KfEffectKind actor_effect_kind_from_payload(KfActorEffectCode payload)
 {

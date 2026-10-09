@@ -99,9 +99,9 @@ constexpr KfEffectType operator|(KfEffectType lhs, KfEffectType rhs)
     { return static_cast<KfEffectType>(static_cast<u8>(lhs) ^ static_cast<u8>(rhs)); }
     constexpr KfEffectType operator~(KfEffectType value)
     { return static_cast<KfEffectType>(~static_cast<u8>(value)); }
-    inline KfEffectType& operator|=(KfEffectType& lhs, KfEffectType rhs) { return lhs = lhs | rhs; }
-    inline KfEffectType& operator&=(KfEffectType& lhs, KfEffectType rhs) { return lhs = lhs & rhs; }
-    inline KfEffectType& operator^=(KfEffectType& lhs, KfEffectType rhs) { return lhs = lhs ^ rhs; }
+    inline KfEffectType& operator|=(KfEffectType& lhs, KfEffectType rhs) { lhs = lhs | rhs; return lhs; }
+    inline KfEffectType& operator&=(KfEffectType& lhs, KfEffectType rhs) { lhs = lhs & rhs; return lhs; }
+    inline KfEffectType& operator^=(KfEffectType& lhs, KfEffectType rhs) { lhs = lhs ^ rhs; return lhs; }
 
 enum class KfEffectHomingMode : u8 {
     KF_EFFECT_HOMING_WANDER = 0xff,
