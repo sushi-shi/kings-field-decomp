@@ -54,5 +54,14 @@ nix develop .#codecs -c cargo build --offline --manifest-path codecs/Cargo.toml
 ## Regeneration
 
 The reconstruction branch generates this tree. Matching annotations, inventories,
-analysis tooling and tests are absent. Keep platform-port changes on `port` so
-this base can be regenerated from `master`.
+analysis tooling and tests are absent. Propose reconstruction changes through a
+PR targeting `master`. From that checkout, commit the input revision and generate
+a verified export:
+
+```sh
+nix develop -c kf clean --out build/clean-source --verify
+```
+
+Apply the verified generated tree on a new review branch based on `source`,
+record its `Source-Commit` provenance, and submit a PR targeting `source`.
+Keep platform adaptations in their own `port` PRs.
