@@ -47,7 +47,7 @@ KfResourceLoadResult cd_file_load_allocated(
     char *path = cd_path_buffer;
     s32 attempt;
 
-    memcpy((void *)path, (const void *)cd_path_prefix, sizeof cd_path_prefix);
+    memcpy(path, cd_path_prefix, sizeof cd_path_prefix);
     strcat(path, relative_path);
     strcat(path, cd_version_suffix);
     if (CdSearchFile(&cd_search_file, path) == NULL) {
@@ -82,7 +82,7 @@ KfResourceLoadResult cd_file_load_into(
     char *path = cd_path_buffer;
     s32 attempt;
 
-    memcpy((void *)path, (const void *)cd_path_prefix, sizeof cd_path_prefix);
+    memcpy(path, cd_path_prefix, sizeof cd_path_prefix);
     strcat(path, relative_path);
     strcat(path, cd_version_suffix);
     if (CdSearchFile(&cd_search_file, path) == NULL) {

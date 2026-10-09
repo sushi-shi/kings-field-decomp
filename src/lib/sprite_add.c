@@ -14,8 +14,8 @@ void sprite_add_ft4(const KfScreenRect *rectangle, u8 *texcoords, u32 tpage, u32
             texcoords[KF_QUAD_TEX_U_SPAN], texcoords[KF_QUAD_TEX_V_SPAN]);
     setRGB0(prim, color->r, color->g, color->b);
     AddPrim(
-        (void *)(&KF_ACTIVE_ORDERING_TABLE[ot_index & KF_ORDERING_TABLE_INDEX_MASK]),
-        (void *)prim);
+        &KF_ACTIVE_ORDERING_TABLE[ot_index & KF_ORDERING_TABLE_INDEX_MASK],
+        prim);
 }
 
 #ifdef KF_OPEN
@@ -30,7 +30,7 @@ void sprite_add_f4(
     setXYWH(prim, rectangle->x, rectangle->y, rectangle->w, rectangle->h);
     setRGB0(prim, color->r, color->g, color->b);
     AddPrim(
-        (void *)(&KF_ACTIVE_ORDERING_TABLE[ot_index & KF_ORDERING_TABLE_INDEX_MASK]),
-        (void *)prim);
+        &KF_ACTIVE_ORDERING_TABLE[ot_index & KF_ORDERING_TABLE_INDEX_MASK],
+        prim);
 }
 #endif

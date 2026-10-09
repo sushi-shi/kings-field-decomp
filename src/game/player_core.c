@@ -124,7 +124,7 @@ void player_equip_weapon(KfObjectId weapon_id)
         player_state.equipped_weapon_record = &weapon_records.entries[((u8)(weapon_id))];
         weapon_asset_path_template[9] = '0' + ((u32)(weapon_id)) / 10;
         weapon_asset_path_template[10] = '0' + ((u32)(weapon_id)) % 10;
-        if (cd_file_load_into((void *)player_state.weapon_asset_buffer, weapon_asset_path_template)
+        if (cd_file_load_into(player_state.weapon_asset_buffer, weapon_asset_path_template)
             != KF_RESOURCE_LOADED) {
             exit(1);
         }
@@ -203,7 +203,7 @@ void player_update_weapon_attack(void)
             fixed6_ratio_step(
                 player_state.physical_power,
                 player_state.equipped_weapon_record->charge_rate) * KF_PLAYER_CHARGE_GAIN_MULTIPLIER;
-        if (player_state.attack_charge_state.current >= KF_PLAYER_CHARGE_FULL + 1) {
+        if (player_state.attack_charge_state.current > KF_PLAYER_CHARGE_FULL) {
             player_state.attack_charge_state.current = KF_PLAYER_CHARGE_FULL;
         }
     } else {
@@ -408,7 +408,7 @@ s32 player_move_horizontal(s32 heading, s32 distance)
                     player_state.camera_position.vx += half;
                 }
             } else if (type == KF_MAP_CELL_SUM_LE_SIZE) {
-                if (remainder_z + remainder_x >= KF_MAP_TILE_SIZE + 1) {
+                if (remainder_z + remainder_x > KF_MAP_TILE_SIZE) {
                     half = (remainder_z + remainder_x - KF_MAP_TILE_SIZE) / 2;
                     player_state.camera_position.vz -= half;
                     player_state.camera_position.vx -= half;

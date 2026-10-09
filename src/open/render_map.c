@@ -72,8 +72,8 @@ void render_enqueue_map(u16 object_index)
                 + KF_MAP_OT_DEPTH_BIAS;
             if (depth < KF_ORDERING_TABLE_LENGTH) {
                 AddPrim(
-                    (void *)&open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
-                    (void *)&prim.quad->sdk);
+                    &open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
+                    &prim.quad->sdk);
             }
             break;
         }
@@ -106,8 +106,8 @@ void render_enqueue_map(u16 object_index)
                 >> KF_GTE_DEPTH_TO_OT_SHIFT) + KF_MAP_OT_DEPTH_BIAS;
             if (depth < KF_ORDERING_TABLE_LENGTH) {
                 AddPrim(
-                    (void *)&open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
-                    (void *)&prim.triangle->sdk);
+                    &open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
+                    &prim.triangle->sdk);
             }
             break;
         }

@@ -184,6 +184,15 @@ enum {
 };
 
 enum {
+    MENU_TEXT_STATUS_NORMAL_FIRST = 0xc5,
+    MENU_TEXT_STATUS_NORMAL_SECOND = 0xc6,
+    MENU_TEXT_STATUS_SLOWED = 0xc9,
+    MENU_TEXT_STATUS_POISON = 0x88,
+    MENU_TEXT_STATUS_DARKNESS = 0xc7,
+    MENU_TEXT_STATUS_CURSE = 0xc8
+};
+
+enum {
     MENU_STATS_VITAL_DIGITS = 4,
     MENU_STATS_VALUE_DIGITS = 6
 };
@@ -211,7 +220,9 @@ enum {
     MENU_WINDOW_OT_DEPTH = 2900,
     MENU_BACKGROUND_OT_DEPTH = 3000,
 
-    MENU_PANEL_INPUT_RELEASE_FRAME = 2
+    MENU_SETTLE_FRAMES = 3,
+
+    MENU_PANEL_INPUT_RELEASE_FRAME = MENU_SETTLE_FRAMES - 1
 };
 
 typedef struct MenuPoint {
@@ -346,11 +357,13 @@ enum {
 enum {
     MENU_ITEM_PREVIEW_TRANSLATION_X = 560,
     MENU_ITEM_PREVIEW_TRANSLATION_Y = 140,
-    MENU_ITEM_PREVIEW_TRANSLATION_Z = 1500
+    MENU_ITEM_PREVIEW_TRANSLATION_Z = 1500,
+    MENU_PICKUP_PREVIEW_TRANSLATION_X = 220
 };
 
 enum {
     MENU_ITEM_NAME_X = 174,
+    MENU_PICKUP_NAME_X = 128,
     MENU_ITEM_PREVIEW_NAME_Y = 36,
     MENU_ITEM_PREVIEW_LINE_HEIGHT = 18,
     MENU_ITEM_PREVIEW_QUANTITY_DIGITS = 2
@@ -429,13 +442,13 @@ extern KfMenuResult menu_two_option_prompt(
 extern void talk_show_dialogue_page(u8 floor, u8 stage, s32 character_id, u8 page);
 
 #define MENU_ENQUEUE_BACKGROUND() ( \
-    AddPrim((void *)(game_graphics_runtime.display_state.ordering_table + MENU_BACKGROUND_OT_DEPTH), \
-        (void *)&menu_assets.background_quads[((u8)(game_graphics_runtime.display_state.buffer_index))][3]), \
-    AddPrim((void *)(game_graphics_runtime.display_state.ordering_table + MENU_BACKGROUND_OT_DEPTH), \
-        (void *)&menu_assets.background_quads[((u8)(game_graphics_runtime.display_state.buffer_index))][2]), \
-    AddPrim((void *)(game_graphics_runtime.display_state.ordering_table + MENU_BACKGROUND_OT_DEPTH), \
-        (void *)&menu_assets.background_quads[((u8)(game_graphics_runtime.display_state.buffer_index))][1]), \
-    AddPrim((void *)(game_graphics_runtime.display_state.ordering_table + MENU_BACKGROUND_OT_DEPTH), \
-        (void *)&menu_assets.background_quads[((u8)(game_graphics_runtime.display_state.buffer_index))][0]))
+    AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_BACKGROUND_OT_DEPTH, \
+        &menu_assets.background_quads[((u8)(game_graphics_runtime.display_state.buffer_index))][3]), \
+    AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_BACKGROUND_OT_DEPTH, \
+        &menu_assets.background_quads[((u8)(game_graphics_runtime.display_state.buffer_index))][2]), \
+    AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_BACKGROUND_OT_DEPTH, \
+        &menu_assets.background_quads[((u8)(game_graphics_runtime.display_state.buffer_index))][1]), \
+    AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_BACKGROUND_OT_DEPTH, \
+        &menu_assets.background_quads[((u8)(game_graphics_runtime.display_state.buffer_index))][0]))
 
 #endif

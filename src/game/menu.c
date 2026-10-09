@@ -16,7 +16,7 @@ void menu_save_confirm(void)
     save_payload_buffer = &payload;
     save_header_buffer = &header;
 
-    for (i = 0; i < 3; i++) {
+    for (i = 0; i < MENU_SETTLE_FRAMES; i++) {
         menu_frame_begin();
         menu_draw_save_slots(NULL, KF_SAVE_OVERLAY_ALL);
         menu_draw_window(KF_MENU_WINDOW_SAVE, KF_MENU_SAVE_ROW_COUNT, 0, KF_MENU_CONFIRM_IDLE);
@@ -38,7 +38,7 @@ s32 menu_root(void)
     KfMenuRootChoice selection = KF_ROOT_CHOICE_NONE;
     s32 i;
 
-    for (i = 0; i < 3; i++) {
+    for (i = 0; i < MENU_SETTLE_FRAMES; i++) {
         menu_frame_begin();
         menu_draw_status_summary();
         menu_draw_window(KF_MENU_WINDOW_ROOT, KF_MENU_ROOT_ROW_COUNT, cursor, confirm);

@@ -65,7 +65,7 @@ void audio_play_map_sequence(u8 sequence_index)
     if (player_state.audio_music_enabled != KF_PLAYER_OPTION_OFF) {
         path[6] = sequence_index + '0';
         path[1] = ((u8)(player_state.progress_state.current_floor)) + '0';
-        if (cd_file_load_into((void *)audio_state.sequence_buffer, path) == KF_RESOURCE_LOADED) {
+        if (cd_file_load_into(audio_state.sequence_buffer, path) == KF_RESOURCE_LOADED) {
             audio_state.sequence_id = SsSeqOpen(
                 audio_state.sequence_buffer, audio_state.active_vab_id);
             SsSeqSetVol(audio_state.sequence_id, GAME_SEQUENCE_VOLUME, GAME_SEQUENCE_VOLUME);
@@ -139,7 +139,7 @@ KfAudioPlaybackResult audio_play_spatial(
     level = (attenuation * volume) >> KF_FIXED7_BITS;
     if (level < 0) {
         level = 0;
-    } else if (level >= KF_AUDIO_MAX_VOLUME + 1) {
+    } else if (level > KF_AUDIO_MAX_VOLUME) {
         level = KF_AUDIO_MAX_VOLUME;
     }
     angle = vector_xz_to_angle(
@@ -154,7 +154,7 @@ KfAudioPlaybackResult audio_play_spatial(
 
     if ((sound->tone & 0x80) == 1) {
         attenuation += GAME_SOUND_ATTENUATION_BOOST;
-        if (attenuation >= KF_AUDIO_MAX_VOLUME + 1) {
+        if (attenuation > KF_AUDIO_MAX_VOLUME) {
             attenuation = KF_AUDIO_MAX_VOLUME;
         }
     }
@@ -164,11 +164,11 @@ KfAudioPlaybackResult audio_play_spatial(
             + KF_ANGLE_EIGHTH_TURN;
     }
     left = (level * rsin(angle)) / GAME_SOUND_PAN_DIVISOR;
-    if (left >= KF_AUDIO_MAX_VOLUME + 1) {
+    if (left > KF_AUDIO_MAX_VOLUME) {
         left = KF_AUDIO_MAX_VOLUME;
     }
     right = (level * rcos(angle)) / GAME_SOUND_PAN_DIVISOR;
-    if (right >= KF_AUDIO_MAX_VOLUME + 1) {
+    if (right > KF_AUDIO_MAX_VOLUME) {
         right = KF_AUDIO_MAX_VOLUME;
     }
     audio_play_voice(

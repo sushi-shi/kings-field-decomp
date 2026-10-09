@@ -344,10 +344,10 @@ void player_recalculate_combat_stats(void)
         effect_state.magic.entries[((u8)(KF_MAGIC_LIGHTNING_BOLT))].learned = KF_MAGIC_LEARNED;
         notify_enqueue(KF_NOTIFICATION_MAGIC_LEARNED);
     }
-    if (player_state.physical_power >= KF_PLAYER_POWER_MAX + 1) {
+    if (player_state.physical_power > KF_PLAYER_POWER_MAX) {
         player_state.physical_power = KF_PLAYER_POWER_MAX;
     }
-    if (player_state.magic >= KF_PLAYER_POWER_MAX + 1) {
+    if (player_state.magic > KF_PLAYER_POWER_MAX) {
         player_state.magic = KF_PLAYER_POWER_MAX;
     }
 }
@@ -358,7 +358,7 @@ void player_increment_physical_power_training(void)
     if (player_state.physical_power_training >= KF_PLAYER_TRAINING_POINTS_PER_GAIN) {
         player_state.base_physical_power++;
         player_state.physical_power_training = 0;
-        if (player_state.base_physical_power >= KF_PLAYER_POWER_MAX + 1) {
+        if (player_state.base_physical_power > KF_PLAYER_POWER_MAX) {
             player_state.base_physical_power = KF_PLAYER_POWER_MAX;
         } else {
             notify_enqueue(KF_NOTIFICATION_PHYSICAL_POWER_INCREASED);
@@ -373,7 +373,7 @@ void player_increment_magic_training(void)
     if (player_state.magic_training >= KF_PLAYER_TRAINING_POINTS_PER_GAIN) {
         player_state.base_magic++;
         player_state.magic_training = 0;
-        if (player_state.base_magic >= KF_PLAYER_POWER_MAX + 1) {
+        if (player_state.base_magic > KF_PLAYER_POWER_MAX) {
             player_state.base_magic = KF_PLAYER_POWER_MAX;
         } else {
             notify_enqueue(KF_NOTIFICATION_MAGIC_POWER_INCREASED);
@@ -418,16 +418,16 @@ void player_add_experience(s16 amount)
             player_state.base_magic += growth->magic_step;
             player_state.next_level_experience = growth->experience_threshold;
         }
-        if (player_state.vitals.maximum_hp >= KF_PLAYER_VITAL_MAX + 1) {
+        if (player_state.vitals.maximum_hp > KF_PLAYER_VITAL_MAX) {
             player_state.vitals.maximum_hp = KF_PLAYER_VITAL_MAX;
         }
-        if (player_state.vitals.maximum_mp >= KF_PLAYER_VITAL_MAX + 1) {
+        if (player_state.vitals.maximum_mp > KF_PLAYER_VITAL_MAX) {
             player_state.vitals.maximum_mp = KF_PLAYER_VITAL_MAX;
         }
-        if (player_state.base_physical_power >= KF_PLAYER_POWER_MAX + 1) {
+        if (player_state.base_physical_power > KF_PLAYER_POWER_MAX) {
             player_state.base_physical_power = KF_PLAYER_POWER_MAX;
         }
-        if (player_state.base_magic >= KF_PLAYER_POWER_MAX + 1) {
+        if (player_state.base_magic > KF_PLAYER_POWER_MAX) {
             player_state.base_magic = KF_PLAYER_POWER_MAX;
         }
         player_recalculate_combat_stats();
