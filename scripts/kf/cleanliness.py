@@ -271,9 +271,6 @@ def count() -> list[tuple[str, int]]:
     rows.append(("unresolved data ownership", sum(owner is None for _row, owner in data)))
     rows.append(("raw DAT_ identities", sum(bool(_DAT_NAME.fullmatch(row.name))
                                             for row, _owner in data)))
-    from scripts.kf.expression_assignments import census
-
-    rows.append(("assignments in expressions", len(census())))
     return rows
 
 
@@ -284,7 +281,6 @@ INFORMATIONAL = {
 }
 RATCHET = ({label for label, _m, _c in SOURCE_METRICS} - INFORMATIONAL) | {
     "unresolved func_ identities",
-    "assignments in expressions",
 }
 
 
@@ -366,16 +362,9 @@ def main(argv: list[str] | None = None) -> int:
                         help="MANUAL bless: rewrite the committed floor file")
     parser.add_argument("--externs", action="store_true",
                         help="list every source-local extern crutch")
-    parser.add_argument("--assignments", action="store_true",
-                        help="list assignment expressions found by libclang in both language views")
     parser.add_argument("--data", nargs="?", const="unresolved", choices=("unresolved", "all"),
                         help="list data ownership candidates, or all identities and their evidence")
     args = parser.parse_args(argv)
-
-    if args.assignments:
-        from scripts.kf.expression_assignments import main as assignment_main
-
-        return assignment_main([])
 
     if args.externs:
         sites = source_extern_sites()

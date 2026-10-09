@@ -2,11 +2,10 @@
 
 ## Current sequencing correction
 
-The KFI cleanup captures the VAB header before the five GAME/OPEN audio calls.
-The first argument reads that saved pointer while the second advances only
-`stream`; pairing no longer depends on argument evaluation order. All five
-functions remain strict 100%. See [retail and verification evidence](resource-vab-sequencing.md).
-The diagnostic counts and rejected trial below describe the earlier audit.
+The five GAME/OPEN audio loaders now capture the VAB header pointer before
+advancing `stream`, so header/body pairing no longer depends on argument
+evaluation order. All five functions remain strict 100%. The diagnostic
+counts and rejected trial below describe the earlier audit.
 
 ## Earlier warning review
 

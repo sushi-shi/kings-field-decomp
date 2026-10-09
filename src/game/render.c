@@ -100,7 +100,8 @@ void display_show_system_screen(KfSystemScreen screen)
         CdControl(CdlSetloc, (u_char *)&cd_read_location, NULL);
         CdRead(cd_search_file.size >> KF_CD_SECTOR_SHIFT,
                (u_long *)game_graphics_runtime.display_state.asset_load_buffer, CdlModeSpeed);
-        while ((result = CdReadSync(KF_CD_READ_POLL, NULL)) > 0) {}
+        while ((result = CdReadSync(KF_CD_READ_POLL, NULL)) > 0) {
+        }
         if (result == 0) {
             attempt = KF_CD_READ_STOP_ATTEMPT;
         }
@@ -150,8 +151,6 @@ void render_prepare_actor_textures(KfFloorId floor)
 ADDRESS(0x8001bb94, 0x14c)
 void display_initialize(void)
 {
-    u8 *first_buffer_dithering;
-
     ResetGraph(KF_GPU_RESET_KEEP_DISPLAY);
     InitGeom();
     SetGeomOffset(KF_DISPLAY_WIDTH / 2, KF_DISPLAY_HEIGHT / 2);
@@ -167,9 +166,7 @@ void display_initialize(void)
     SetDefDispEnv(
         &game_graphics_runtime.display_disp_environments[1], 0, 0,
         KF_DISPLAY_WIDTH, KF_DISPLAY_HEIGHT);
-    first_buffer_dithering = &game_graphics_runtime.display_draw_environments[0].dtd;
-    game_graphics_runtime.display_draw_environments[1].dtd = 1;
-    *first_buffer_dithering = 1;
+    game_graphics_runtime.display_draw_environments[0].dtd = game_graphics_runtime.display_draw_environments[1].dtd = 1;
     game_graphics_runtime.display_draw_environments[0].isbg = 1;
     game_graphics_runtime.display_draw_environments[1].isbg = 1;
     setRGB0(&game_graphics_runtime.display_draw_environments[0], 0, 0, 0);
@@ -246,9 +243,8 @@ void render_initialize(void)
     game_graphics_runtime.notification_text_tpage = GetTPage(
         KF_GPU_TEXTURE_4BIT, KF_GPU_BLEND_AVERAGE,
         NOTIFICATION_TPAGE_X, KF_TEXTURE_LOWER_PAGE_Y);
-    game_graphics_runtime.notification_text_clut =
+    game_graphics_runtime.notification_digit_clut = game_graphics_runtime.notification_text_clut =
         GetClut(render_palette_rects[RENDER_PALETTE_NOTIFICATION].x, render_palette_rects[RENDER_PALETTE_NOTIFICATION].y);
-    game_graphics_runtime.notification_digit_clut = game_graphics_runtime.notification_text_clut;
     game_graphics_runtime.notification_digit_tpage = NOTIFICATION_DIGIT_TPAGE;
     game_graphics_runtime.notification_state.control.effect_phase = KF_NOTIFICATION_IDLE;
     game_graphics_runtime.notification_state.control.queue_tail = 0;

@@ -86,7 +86,8 @@ KfResourceLoadResult cd_file_load_allocated(
             cd_search_file.size >> KF_CD_SECTOR_SHIFT,
             (u_long *)*destination,
             CdlModeSpeed);
-        while ((result = CdReadSync(KF_CD_READ_POLL, NULL)) > 0) {}
+        while ((result = CdReadSync(KF_CD_READ_POLL, NULL)) > 0) {
+        }
         if (result == 0) {
             attempt = KF_CD_READ_STOP_ATTEMPT;
         }
@@ -121,7 +122,8 @@ KfResourceLoadResult cd_file_load_into(
             cd_search_file.size >> KF_CD_SECTOR_SHIFT,
             (u_long *)destination,
             CdlModeSpeed);
-        while ((result = CdReadSync(KF_CD_READ_POLL, NULL)) > 0) {}
+        while ((result = CdReadSync(KF_CD_READ_POLL, NULL)) > 0) {
+        }
         if (result == 0) {
             attempt = KF_CD_READ_STOP_ATTEMPT;
         }

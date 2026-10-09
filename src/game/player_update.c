@@ -112,8 +112,7 @@ void player_update(void)
     KfMagicRecord *record;
     KfActor *target;
     const VECTOR *origin;
-    /* Unresolved retail reservation. */
-    SVECTOR unused_vector;
+    SVECTOR unused_vector; /* unused; first frame slot in retail */
     SVECTOR direction;
     SVECTOR *launch_direction;
     SVECTOR spawn_offset;

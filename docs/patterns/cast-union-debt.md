@@ -1,18 +1,6 @@
 # Cast and union reconstruction debt
 
-## Current representation policy
-
-Typed-pointer/`void *` boundaries remain explicit in both directions.
-The current resource-copy API accepts a `u32 *` destination, and grid
-loaders pass their `.words` members. Coordinate and linear views also remain.
-The grid-removal and `void *` copy descriptions below are historical trials.
-
-`KfMapObjectLink.words[2]` has no direct source consumer, but supplies the
-four-byte union alignment required by the pinned layout fixture. Removing
-it requires evidence for type alignment, containing offsets, and copies.
-See the [current source review](../source-cleanup-review.md).
-
-## Historical explicit-pointer integration
+## Explicit pointer boundaries and final integration
 
 The final policy requires explicit conversions in both directions between
 typed pointers and `void *`. The earlier removal of C-only conversion casts
@@ -36,10 +24,9 @@ added. This is an explicit baseline adjustment, not a disabled gate or an
 exclusion from the cast census. Requiring the conversions is a project review
 policy, not evidence that the original C source necessarily spelled them.
 
-At this integration snapshot, `.linear[index]` grid views and named TMD
-decoding remained. The whole-object copy API spelled `(void *)&grid` at
-callers and converted to `u32 *` inside; alignment and capacity were
-preconditions. This interface has since changed to the word-pointer API. The
+The useful `.linear[index]` grid views and named TMD decoding remain. The
+whole-object copy API now spells `(void *)&grid` at callers and converts to
+`u32 *` explicitly inside; alignment and capacity remain preconditions. The
 former auxiliary source adapter and its tests are removed (recoverable from
 git history), replaced by positive and negative enforcement tests covering
 assignment, argument, return, conditional, array decay, macros, const pointers,
@@ -81,17 +68,14 @@ census snapshots go stale with every rename.
 - **`KfMapObjectLink.words[2]` is still declared** (`include/kf/lib/map.h`),
   although no source reads or writes it and `KfMapObjectLinkFields` already
   sets the eight-byte extent. The map-link section below records removed uses,
-  not a removed declaration. Its four-byte alignment role must be preserved
-  and justified before removal; a focused rebuild alone is insufficient.
+  not a removed declaration. It can be removed after a focused rebuild.
 - **`KfMapFloorScript.bytes` has no reads but is load-bearing.** It sets the
   ten-byte serialized extent inside the saved floor record.
 - **`render_bind_animated_instance` returns
   `(KfAnimationCacheRecord *)KF_ANIMATION_BIND_STATIC`**, the literal 1. This
   is the tree's only integer-to-pointer conversion, and callers only test it
-  against `NULL`, so the result is tri-state. The
-  [contract review](animation-and-inherited-contracts.md) retains the mixed
-  pointer result and clarifies the owner slot; the static sentinel is not a
-  record. Original source spelling and computed indirect uses remain open.
+  against `NULL`, so the result is tri-state. Decide it together with the
+  callers.
 - **The `effect_pool_construct` argument-slot casts** belong with the typed
   `va_arg` model in [effect-constructor-varargs.md](effect-constructor-varargs.md).
   Do not decide them separately.

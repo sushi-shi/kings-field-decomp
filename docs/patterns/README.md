@@ -5,10 +5,6 @@ about which source shapes reproduce it under the current probes. Each note
 records the retail evidence first and the probe behaviour second; none of them
 promotes a probe to a proven historical toolchain.
 
-See the [current source cleanup review](../source-cleanup-review.md) for
-open owner, argument-access, stack-carrier, and alignment findings. Older
-campaign counts and verdicts retain their recorded scope.
-
 - [shared-game-open-code.md](shared-game-open-code.md): complete GAME/OPEN function
   accounting, common implementations, reusable single-image helpers, and retained
   behavior differences with unchanged compiler and linker outputs.
@@ -18,6 +14,9 @@ campaign counts and verdicts retain their recorded scope.
 
 - [cpe2x-reserved-header.md](cpe2x-reserved-header.md): original converter
   write-mask control and the source export's separate linker/output checks.
+
+- [actor-attachment-layout.md](actor-attachment-layout.md): retail and shipped-data
+  evidence for the three actor attachment triples and the shared special-attack lanes.
 
 - [cast-union-debt.md](cast-union-debt.md): master-based cast census and qualification,
   seven canonical owner/SDK replacements, retained dual-index grids, whole-object

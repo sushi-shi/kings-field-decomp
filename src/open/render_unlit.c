@@ -17,7 +17,9 @@ void render_enqueue_unlit_triangles(u16 object_index, s16 depth_bias)
     KfScreenVertex *vertex0;
     KfScreenVertex *vertex1;
     KfScreenVertex *vertex2;
-    /* Unresolved retail reservation. */
+    /* Retail reserves one unallocated stack word that no live value
+     * explains; this never-read local carries it
+     * (docs/patterns/reconstruction-debt-review.md). */
     u16 unattributed_stack_slot[2];
     u32 header;
     s32 depth;

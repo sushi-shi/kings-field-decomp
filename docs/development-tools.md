@@ -1,8 +1,5 @@
 # Development tools
 
-The [tool retention review](tool-accounting.md) traces command, manual-audit,
-oracle and export consumers. No unused-script deletion list is established.
-
 Inside `nix develop`, `objdiff` automatically opens `build/objdiff`, including
 from subdirectories. This single project groups units under `psx/`, `game/`,
 and `open/`. Run `kf analyze` first to generate it; an explicit `objdiff -p PATH`
@@ -80,10 +77,3 @@ search; `--json` emits locations and image/unit/function/type contexts for agent
 `--check` exits 1 when sites remain; parse errors exit 2. The script never edits
 C sources.
 
-Run `kf verify board --assignments` to list assignments inside other expressions
-using libclang in both language views. This metric has a down-only cleanliness
-floor; the retained non-exact cleanup controls still count. Use
-`python -m scripts.kf.expression_assignments --json` for locations, spelling
-origins and image/function contexts, or `--check` to require zero.
-Readable polling/formatter conditions, sprite chains and copy macros remain
-counted, along with four accepted exactness exceptions.

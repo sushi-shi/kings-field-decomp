@@ -77,7 +77,6 @@ for the algorithm, scope and per-image interactive reports.
 
 ## Documentation
 
-- [Current source cleanup findings](docs/source-cleanup-review.md)
 - [Three-target layout](docs/decompilation-layout.md)
 - [Delinking and objdiff matching](docs/delinking-and-matching.md)
 - [Semantic navigation and Ghidra](docs/semantic-navigation.md)
