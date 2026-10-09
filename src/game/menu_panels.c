@@ -23,6 +23,7 @@ ADDRESS(0x8002317c, 0x530)
 KfMagicPanelResult menu_magic_panel(void)
 {
     KfMenuList ctx;
+    /* Retail sizes these for more than the four support spells it lists. */
     s16 labels[10][MENU_GLYPHS_PER_ROW];
     KfEffectKind magic_ids[16];
     s32 found;
@@ -113,6 +114,9 @@ KfMagicPanelResult menu_magic_panel(void)
         menu_list_render(&ctx);
     }
 
+    /* Without enough MP nothing is cast, but the spell is still returned.
+     * Dispoison keeps only curse and darkness (so it also clears slowed and
+     * the fire boost); Bless keeps only poison and slowed. */
     if (selection != KF_MENU_RESULT_CANCELLED) {
         if (player_state.vitals.current_mp < effect_state.magic.entries[KF_ENUM_ENCODE(s32, selection)].mp_cost) {
             return selection;
