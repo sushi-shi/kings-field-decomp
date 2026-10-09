@@ -39,7 +39,7 @@ enum {
 };
 
 enum {
-    MENU_INPUT_SOUND_VOLUME = 0x40
+    MENU_INPUT_SOUND_VOLUME = 64
 };
 
 enum {
@@ -47,7 +47,9 @@ enum {
     IMAGE_WAIT_MAX_BRIGHTNESS = 127
 };
 
-/* Offsets in ICO1.TIM..ICO3.TIM, whose palettes each contain sixteen colors. */
+/* Offsets in ICO1.TIM..ICO3.TIM: the CLUT follows the 8-byte file header and
+ * its 12-byte block header; the pixels follow the 32-byte palette and the
+ * image block header. */
 enum {
     SAVE_ICON_TIM_CLUT_OFFSET = 0x14,
     SAVE_ICON_TIM_PIXELS_OFFSET = 0x40
@@ -97,7 +99,8 @@ RODATA(0x8001235c, 0x176)
 
 /* Memory-card create requests carry the block count in the high halfword. */
 #define SAVE_FILE_BLOCKS 5
-/* Shift-JIS card title; retail keeps it as a literal in this unit's read-only data. */
+/* Shift-JIS card title, full-width "<<  KING'S FIELD  >>" after six spaces;
+ * retail keeps it as a literal in this unit's read-only data. */
 #define SAVE_TITLE_TEXT \
     "\201@\201@\201@\201@\201@\201@\201\203\201\203\201@\201@\202j\202h\202m\202f" \
     "\201f\202r\201@\202e\202h\202d\202k\202c\201@\201@\201\204\201\204"
@@ -199,6 +202,7 @@ void memory_card_initialize(void)
 {
     u8 buffer[128];
 
+    /* Retail fills this card-frame-sized stack buffer and never reads it. */
     memset(buffer, 0xff, sizeof(buffer));
     memory_card_io_end_event = OpenEvent(HwCARD, EvSpIOE, EvMdNOINTR, NULL);
     memory_card_timeout_event = OpenEvent(HwCARD, EvSpTIMOUT, EvMdNOINTR, NULL);
@@ -460,6 +464,9 @@ KfSaveStatus save_file_write_slot(KfSaveSlotId slot_id)
         return SAVE_STATUS_WRITE_FAILED;
     }
     save_header_buffer->directory.slot_ids[entry] = slot_id;
+    /* The slot's old entry becomes the next spare.  For a slot never saved
+     * before, previous is -1 and retail overwrites the last icon byte of the
+     * PlayStation header that precedes the directory. */
     save_header_buffer->directory.slot_ids[previous] = KF_SAVE_SLOT_SPARE;
     save_header_buffer->directory.summaries[entry].experience = player_state.experience;
     save_header_buffer->directory.summaries[entry].current_floor =
@@ -708,15 +715,15 @@ void save_file_initialize_buffers(void)
     cd_file_load_into(image, "TIM\\ICO1.TIM");
     memcpy(save_header_buffer->playstation_header.clut, &image[SAVE_ICON_TIM_CLUT_OFFSET],
            sizeof(save_header_buffer->playstation_header.clut));
-    memcpy((save_header_buffer->playstation_header.icon_frames[0]),
+    memcpy(save_header_buffer->playstation_header.icon_frames[0],
         &image[SAVE_ICON_TIM_PIXELS_OFFSET],
         sizeof(save_header_buffer->playstation_header.icon_frames[0]));
     cd_file_load_into(image, "TIM\\ICO2.TIM");
-    memcpy((save_header_buffer->playstation_header.icon_frames[1]),
+    memcpy(save_header_buffer->playstation_header.icon_frames[1],
         &image[SAVE_ICON_TIM_PIXELS_OFFSET],
         sizeof(save_header_buffer->playstation_header.icon_frames[1]));
     cd_file_load_into(image, "TIM\\ICO3.TIM");
-    memcpy((save_header_buffer->playstation_header.icon_frames[2]),
+    memcpy(save_header_buffer->playstation_header.icon_frames[2],
         &image[SAVE_ICON_TIM_PIXELS_OFFSET],
         sizeof(save_header_buffer->playstation_header.icon_frames[2]));
     memset(save_payload_buffer, 0, sizeof(KfSavePayload));
@@ -840,6 +847,7 @@ void screen_show_image_until_input(const char *path)
         return;
     }
     tim_upload_images(game_graphics_runtime.display_state.asset_load_buffer);
+    /* Draw straight into the other display buffer, without clearing it. */
     index = game_graphics_runtime.display_state.buffer_index == KF_DISPLAY_BUFFER_FIRST;
     game_graphics_runtime.display_draw_environments[index].isbg = 0;
     game_graphics_runtime.display_draw_environments[index].dfe = 0;
