@@ -9,7 +9,7 @@
 #include <kf/lib/graphics.h>
 
 enum {
-    PRIMITIVE_BUFFER_BYTES = 0x26160,
+    PRIMITIVE_BUFFER_BYTES = 156000,
     FLOOR_ITEM_TPAGE_X = 832,
     FLOOR_ITEM_CLUT = 0x7a00
 };
