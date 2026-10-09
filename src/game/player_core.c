@@ -20,6 +20,8 @@ enum {
     PLAYER_FALL_ACCELERATION = 40,
     PLAYER_FALL_LANDING_OVERSHOOT = 100,
     PLAYER_STEP_UP_ACCELERATION = 5,
+    /* player_update caps movement speed at 180, so retail always takes the
+     * slow step; the fast step-up velocity is never used. */
     PLAYER_FAST_STEP_MIN_SPEED = 181,
     PLAYER_FAST_STEP_UP_VELOCITY = -300,
     PLAYER_SLOW_STEP_UP_VELOCITY = -100,
@@ -42,10 +44,9 @@ enum {
 };
 
 /*
- * Player movement, motion, and interaction run, one contiguous band
- * 0x80016848..0x80017edc (GAME.EXE): vertical motion, view bob, weapon attack,
- * warp helpers, and related per-frame player updates. Assembled from ten
- * address-adjacent single-purpose units; module boundary is WIP.
+ * Player movement, motion and interaction (GAME.EXE 0x80016848..0x80017edc):
+ * equipment, vertical motion, view bob, weapon attack and warp helpers.  The
+ * original module boundary is unknown.
  */
 
 RODATA(0x80012030, 0x18)
@@ -202,6 +203,7 @@ void player_update_weapon_attack(void)
             actor_index = actor_pool_find_overlap(result.vx, result.vy, result.vz,
                 PLAYER_WEAPON_HIT_RADIUS, PLAYER_WEAPON_HIT_HEIGHT);
             if (actor_index != KF_ACTOR_INDEX_NONE) {
+                /* Damage scales with the charge committed when the swing began. */
                 actor_apply_damage(
                     actor_index,
                     player_state.physical_power,

@@ -52,11 +52,10 @@ DATA(0x800652a8, 0xf0)
 u8 item_stock[KF_ITEM_STOCK_BANK_COUNT][KF_ITEM_COUNT];
 
 /*
- * Player death, vitals, and combat run, one contiguous band
- * 0x80015164..0x80016848 (GAME.EXE): death sequence and restart, HP/MP
- * adjustment, damage application and combat-stat recalculation, experience and
- * training, and the physical damage-component formula. Assembled from seven
- * address-adjacent single-purpose player units; module boundary is WIP.
+ * Player death, vitals and combat (GAME.EXE 0x80015164..0x80016848): death
+ * sequence and restart, HP/MP adjustment, damage and combat-stat
+ * recalculation, experience and training.  The original module boundary is
+ * unknown.
  */
 ADDRESS(0x80015164, 0x68)
 void player_death_begin(void)
