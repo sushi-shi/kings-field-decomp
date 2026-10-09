@@ -81,6 +81,7 @@ static inline void audio_reset_voice_slots(void)
     s32 index;
     s16 inactive_voice_id;
 
+    /* Unresolved source form: retail holds the sentinel in its own register. */
     inactive_voice_id = KF_AUDIO_VOICE_INACTIVE;
     index = KF_AUDIO_VOICE_SLOTS - 1;
     do {
