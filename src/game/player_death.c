@@ -118,6 +118,7 @@ void game_state_initialize(void)
     player_state.poison_timer = KF_PLAYER_STATUS_TIMER_INACTIVE;
     player_state.darkness_timer = KF_PLAYER_STATUS_TIMER_INACTIVE;
     player_state.curse_timer = KF_PLAYER_STATUS_TIMER_INACTIVE;
+    /* Byte-clear the saved world state and every item-stock bank. */
     cursor = (u8 *)&map_runtime_state.world_state;
     count = sizeof(map_runtime_state.world_state) - 1;
     do {
@@ -163,6 +164,11 @@ void game_state_initialize(void)
     item_stock[KF_ENUM_ENCODE(u8, KF_ITEM_STOCK_SECOND_SHOP)][KF_ENUM_ENCODE(u8, KF_ITEM_GOLD_CROSS)] = 1;
 }
 
+/*
+ * Restarts after death.  Once the floor-1 revival is enabled, a held Dragon
+ * King Grass Fruit is consumed to revive at the floor-1 revival point with full HP and
+ * MP; otherwise the game state is reset to a new game at the floor-1 start.
+ */
 ADDRESS(0x800154b0, 0x19c)
 void player_death_restart(void)
 {
@@ -216,7 +222,6 @@ void player_adjust_hp(s32 delta)
     s32 value = player_state.vitals.current_hp;
 
     value += delta;
-
     if (value <= 0) {
         player_state.vitals.current_hp = 0;
         player_death_begin();
@@ -235,7 +240,6 @@ void player_adjust_mp(s32 delta)
     s32 value = player_state.vitals.current_mp;
 
     value += delta;
-
     if (value <= 0) {
         player_state.vitals.current_mp = 0;
         return;
@@ -249,12 +253,6 @@ void player_adjust_mp(s32 delta)
 
 RODATA(0x80012000, 0x2c)
 
-/*
- * Rebuilds physical power, magic, the five attack lanes and the six
- * defense lanes from the base stats, the poison status, the weapon, the
- * five armor pieces and the accessory, then fires the magic milestones
- * and clamps both powers below 1000.
- */
 /* Retail adds each piece's cutting defense twice. */
 static inline void player_add_armor_defenses(const KfArmorRecord *armor)
 {
@@ -267,6 +265,12 @@ static inline void player_add_armor_defenses(const KfArmorRecord *armor)
     player_state.fire_defense += armor->fire_defense;
 }
 
+/*
+ * Rebuilds physical power, magic, the five attack lanes and the six
+ * defense lanes from the base stats, the poison status, the weapon, the
+ * five armor pieces and the accessory, then fires the magic milestones
+ * and clamps both powers below 1000.
+ */
 ADDRESS(0x80015714, 0x814)
 void player_recalculate_combat_stats(void)
 {
@@ -413,6 +417,11 @@ void player_increment_magic_training(void)
     }
 }
 
+/*
+ * Adds experience and applies every level gained.  Levels inside the growth
+ * table take its absolute values; beyond it, each level repeats the table's
+ * last increments.
+ */
 ADDRESS(0x80016058, 0x224)
 void player_add_experience(s16 amount)
 {
@@ -431,17 +440,12 @@ void player_add_experience(s16 amount)
         player_state.progress_state.level = level + 1;
         if (level >= KF_PLAYER_LEVEL_GROWTH_COUNT) {
             growth = &player_level_growth_table[KF_PLAYER_LEVEL_GROWTH_COUNT - 1];
-            player_state.vitals.maximum_hp +=
-                growth->maximum_hp
-                - growth[-1].maximum_hp;
-            player_state.vitals.maximum_mp +=
-                growth->maximum_mp
-                - growth[-1].maximum_mp;
+            player_state.vitals.maximum_hp += growth->maximum_hp - growth[-1].maximum_hp;
+            player_state.vitals.maximum_mp += growth->maximum_mp - growth[-1].maximum_mp;
             player_state.base_physical_power += growth->physical_power_step;
             player_state.base_magic += growth->magic_step;
             player_state.next_level_experience +=
-                growth->experience_threshold
-                - growth[-1].experience_threshold;
+                growth->experience_threshold - growth[-1].experience_threshold;
         } else {
             growth = &player_level_growth_table[level];
             player_state.vitals.maximum_hp = growth->maximum_hp;
@@ -469,6 +473,11 @@ void player_add_experience(s16 amount)
 }
 
 /*
+ * Damage taken from one component: the defense plus a fifth of the player's
+ * own power forms a threshold; the excess over it plus attack squared over
+ * twice the threshold is the damage.  combat_calculate_damage_component is
+ * the actor-side mirror, where the attacker's power raises the attack.
+ *
  * Unresolved source form: retail keeps the threshold in $a0 and the excess in
  * $a1; locals seeded from those parameters reproduce it, later assignment
  * does not.
