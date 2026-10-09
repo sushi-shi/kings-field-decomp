@@ -9,7 +9,6 @@
 #include <psyq/sdk.h>
 #include <psyq/libc.h>
 
-
 /* Cache full-weight keyframe morphs in a pool record; blend into shared scratch. */
 
 /* asset base + clip_table[KF_ENUM_ENCODE(u16, clip_index)]: one animation clip. */
