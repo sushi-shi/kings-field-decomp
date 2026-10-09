@@ -440,12 +440,14 @@ void player_add_experience(s16 amount)
         player_state.progress_state.level = level + 1;
         if (level >= KF_PLAYER_LEVEL_GROWTH_COUNT) {
             growth = &player_level_growth_table[KF_PLAYER_LEVEL_GROWTH_COUNT - 1];
-            player_state.vitals.maximum_hp += growth->maximum_hp - growth[-1].maximum_hp;
-            player_state.vitals.maximum_mp += growth->maximum_mp - growth[-1].maximum_mp;
+            player_state.vitals.maximum_hp +=
+                growth->maximum_hp - player_level_growth_table[KF_PLAYER_LEVEL_GROWTH_COUNT - 2].maximum_hp;
+            player_state.vitals.maximum_mp +=
+                growth->maximum_mp - player_level_growth_table[KF_PLAYER_LEVEL_GROWTH_COUNT - 2].maximum_mp;
             player_state.base_physical_power += growth->physical_power_step;
             player_state.base_magic += growth->magic_step;
             player_state.next_level_experience +=
-                growth->experience_threshold - growth[-1].experience_threshold;
+                growth->experience_threshold - player_level_growth_table[KF_PLAYER_LEVEL_GROWTH_COUNT - 2].experience_threshold;
         } else {
             growth = &player_level_growth_table[level];
             player_state.vitals.maximum_hp = growth->maximum_hp;
