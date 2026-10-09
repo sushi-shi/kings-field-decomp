@@ -100,7 +100,7 @@ void render_weapon(void)
  * color matrix is saved and replaced with render_state's HUD model color matrix
  * for the whole pass and restored afterwards.  Each live entry builds a rotated, uniformly scaled
  * model matrix with the translation folded into its t column, tests visibility
- * through render_bind_animated_instance, and, if visible, transforms and enqueues asset 0x15.
+ * through render_bind_animated_instance, and, if visible, transforms and enqueues the HUD model asset.
  */
 ADDRESS(0x8001f8b0, 0x124)
 void render_hud_models(void)
@@ -142,9 +142,8 @@ void render_hud_models(void)
 }
 
 /*
- * Walks a stride-14 table terminated by a 0xff type byte and dispatches every
- * active (type == 1) entry to render_screen_sprite, pointing it past the two-byte
- * header.  The table base is supplied by the caller.
+ * Draws every visible entry of a KF_SPRITE_END-terminated HUD sprite table
+ * through render_screen_sprite.
  */
 ADDRESS(0x8001f9d4, 0x70)
 void render_hud_sprites(KfHudSprite *table)
@@ -176,8 +175,8 @@ enum {
  *
  * On-screen notification ring.  Player stat routines (level, training,
  * experience, item use) enqueue a message id here; the notification effect
- * state machine (notify_effect_update) consumes it a frame later.  Message id 0x13
- * carries a u16 payload stored in a parallel table.
+ * state machine (notify_effect_update) consumes it a frame later.  The gold
+ * message carries a u16 amount, stored in a parallel table.
  *
  * The optional second argument carries the gold-message payload.
  */
@@ -209,6 +208,8 @@ void notification_digit_set_v(KfSpriteQuad *sprite, s32 digit)
     sprite->v = digit * NOTIFICATION_DIGIT_ROW_HEIGHT;
 }
 
+/* Drop the shown message together with any identical ones queued behind it
+ * (gold messages are never merged). */
 static inline void notify_dequeue_group(void)
 {
     KfNotificationControl *control;

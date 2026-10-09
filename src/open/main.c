@@ -10,6 +10,8 @@
 ADDRESS(0x80013758, 0x6c)
 void main(s32 entry_arg0, KfOverlayArguments *entry_args)
 {
+    /* Meant to clear BSS and the stack, but repeat_store_word never advances
+     * its pointer, so retail only zeroes the first BSS word. */
     repeat_store_word((int *)BSS_START,
         (OVERLAY_STACK_BOTTOM - (u32)BSS_START) / sizeof(int), 0);
     CdInit();
