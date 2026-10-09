@@ -13,10 +13,9 @@ void func_80036e30(void)
 }
 
 /*
- * menu_enter_mode (GAME.EXE): tear down and re-establish the system heap around a
- * mode-selected reload. It drains the GPU (DrawSync), runs animation_cache_release_all, resets
- * the system heap, dispatches on the mode argument, resets the heap again, and
- * clears the player motion state. Callers pass a variable number of arguments;
+ * Runs a menu mode on a clean system heap: drains the GPU, releases the
+ * animation cache, resets the heap, dispatches on MENU_MODE, resets the heap
+ * again and clears the player's motion. Callers pass a variable number of arguments;
  * the modes that take one read it through the standard argument macros.
  */
 ADDRESS(0x80036e38, 0xc8)
