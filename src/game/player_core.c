@@ -19,6 +19,7 @@ enum {
     PLAYER_FALL_ACCELERATION = 40,
     PLAYER_FALL_LANDING_OVERSHOOT = 100,
     PLAYER_STEP_UP_ACCELERATION = 5,
+
     PLAYER_FAST_STEP_MIN_SPEED = 181,
     PLAYER_FAST_STEP_UP_VELOCITY = -300,
     PLAYER_SLOW_STEP_UP_VELOCITY = -100,
@@ -180,6 +181,7 @@ void player_update_weapon_attack(void)
             actor_index = actor_pool_find_overlap(result.vx, result.vy, result.vz,
                 PLAYER_WEAPON_HIT_RADIUS, PLAYER_WEAPON_HIT_HEIGHT);
             if (actor_index != KF_ACTOR_INDEX_NONE) {
+
                 actor_apply_damage(
                     actor_index,
                     player_state.physical_power,

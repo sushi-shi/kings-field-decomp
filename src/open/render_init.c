@@ -8,7 +8,7 @@
 #include <kf/lib/graphics.h>
 
 enum {
-    PRIMITIVE_BUFFER_BYTES = 0x26160,
+    PRIMITIVE_BUFFER_BYTES = 156000,
     FLOOR_ITEM_TPAGE_X = 832,
     FLOOR_ITEM_CLUT = 0x7a00
 };
@@ -88,6 +88,7 @@ void render_initialize(void)
 
 void display_initialize(KfOverlayMode overlay_mode)
 {
+
     s32 framebuffer_height;
     s16 lower_buffer_y = KF_DISPLAY_HEIGHT;
 
@@ -150,6 +151,7 @@ void *primitive_buffer_allocate(u16 byte_count)
     open_graphics_runtime.display_state.primitive_buffer->cursor += byte_count;
     if (open_graphics_runtime.display_state.primitive_buffer->cursor >
         open_graphics_runtime.display_state.primitive_buffer->end) {
+
         for (;;) {
             printf("primitive over fllow!!!\n");
         }

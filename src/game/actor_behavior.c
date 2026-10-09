@@ -121,16 +121,12 @@ void actor_select_next_action(s32 player_distance)
     if (actor->action_progress == KF_ACTOR_PROGRESS_LOCKED) {
         return;
     }
-    if (actor->action_progress != KF_ACTOR_PROGRESS_COMPLETE) {
-        if (action == KF_ACTOR_ACTION_POST_DEATH) {
-            return;
-        }
-        if (action == KF_ACTOR_ACTION_HIT_REACTION || action == KF_ACTOR_ACTION_DYING) {
-            return;
-        }
-        if (action == KF_ACTOR_ACTION_EXIT_BLOCKED_PLACEMENT) {
-            return;
-        }
+    if (actor->action_progress != KF_ACTOR_PROGRESS_COMPLETE
+        && (action == KF_ACTOR_ACTION_POST_DEATH
+            || action == KF_ACTOR_ACTION_HIT_REACTION
+            || action == KF_ACTOR_ACTION_DYING
+            || action == KF_ACTOR_ACTION_EXIT_BLOCKED_PLACEMENT)) {
+        return;
     }
     near_range = definition->pursuit_distance_scale << ACTOR_PURSUIT_DISTANCE_SHIFT;
     awareness = definition->awareness_distance;
@@ -422,6 +418,7 @@ KfActorMoveResult actor_move_along_heading(KfActorMoveDirection direction, KfAct
     u32 rate;
 
     if (actor->collision_state == KF_ACTOR_COLLISION_SLIDING) {
+
         rate = definition->turn_rate;
         actor->rotation.angles.y = angle_approach(
             actor->rotation.angles.y, actor->movement_yaw, (rate + rate + rate) >> 1);
@@ -477,9 +474,9 @@ void actor_spawn_action_effect(s32 effect_code, KfActorEffectSlot effect_slot)
                 definition->attachment_offsets[((s32)(effect_slot))].z);
             if (repeat == 2) {
                 if (i == 0) {
-                    offset.vx = offset.vx + ACTOR_PAIRED_EFFECT_X_OFFSET;
+                    offset.vx += ACTOR_PAIRED_EFFECT_X_OFFSET;
                 } else {
-                    offset.vx = offset.vx - ACTOR_PAIRED_EFFECT_X_OFFSET;
+                    offset.vx -= ACTOR_PAIRED_EFFECT_X_OFFSET;
                 }
             }
             effect_rotation.angles.x = actor->rotation.angles.x;
@@ -1204,14 +1201,14 @@ vertical:
         floor_height = map_floor_height_at_position(&actor->position);
         next_y = actor->vertical_velocity + actor->position.vy;
         if (next_y > floor_height) {
-            goto fall;
+            goto apply_gravity;
         }
     land:
         actor->position.vy = floor_height;
         actor->vertical_state = KF_ACTOR_VERTICAL_NONE;
         actor->vertical_velocity = 0;
         break;
-    fall:
+    apply_gravity:
         actor->position.vy = next_y;
         actor->vertical_velocity += ACTOR_GRAVITY;
         break;
@@ -1222,7 +1219,7 @@ vertical:
         if (next_y >= floor_height) {
             goto land;
         }
-        goto fall;
+        goto apply_gravity;
     case KF_ACTOR_VERTICAL_JUMP_ATTACK:
         next_y = actor->vertical_velocity + actor->position.vy;
         hit = collision_query_world(
@@ -1233,7 +1230,7 @@ vertical:
             definition->collision_height,
             ACTOR_VELOCITY_COLLISION_FLAGS);
         if (hit == KF_COLLISION_NONE) {
-            goto fall;
+            goto apply_gravity;
         }
         if ((hit >> KF_COLLISION_KIND_SHIFT) == (KF_COLLISION_PLAYER >> KF_COLLISION_KIND_SHIFT)) {
             player_apply_damage(0,
@@ -1244,7 +1241,7 @@ vertical:
                 0,
                 KF_FIXED12_ONE,
                 KF_PLAYER_DAMAGE_MULTIPLIER_ONE);
-        stagger:
+        bounce:
             actor->vertical_state = KF_ACTOR_VERTICAL_JUMP_ATTACK;
             actor->vertical_velocity = ACTOR_JUMP_BOUNCE_VELOCITY_Y;
             actor->animation_phase = 0;
@@ -1259,7 +1256,7 @@ vertical:
                 break;
             }
         } else if ((hit >> KF_COLLISION_KIND_SHIFT) == (KF_COLLISION_ACTOR >> KF_COLLISION_KIND_SHIFT)) {
-            goto stagger;
+            goto bounce;
         }
         break;
     }

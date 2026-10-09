@@ -52,7 +52,7 @@ void effect_update_swinging_hazard(SVECTOR *probe_offset, s32 phase_limit)
     s16 pitch;
     s16 next_pitch;
 
-    if (((u8)(life)) < ((u8)(KF_EFFECT_HAZARD_RELEASE_REQUEST)) + 1u) {
+    if (((u8)(life)) <= ((u8)(KF_EFFECT_HAZARD_RELEASE_REQUEST))) {
         RotMatrix(&record->rotation.vector, &rotation_matrix);
         matrix_set_rotation_x(record->rotation.vector.vx, &rotation_matrix);
         matrix_set_rotation_y(record->rotation.vector.vy, &yaw_matrix);
@@ -120,7 +120,7 @@ void effect_update_orbiting_projectile(s32 orbit_radius, s32 phase_limit)
     MATRIX yaw_matrix;
     u32 collision;
 
-    if ((((u32)(life)) & 0xff) < ((u8)(KF_EFFECT_HAZARD_RELEASE_REQUEST)) + 1) {
+    if ((((u32)(life)) & 0xff) <= ((u8)(KF_EFFECT_HAZARD_RELEASE_REQUEST))) {
         record->position.vx = (record->direction.vector.vx << KF_EFFECT_ORBIT_CENTER_SHIFT)
             + (rsin((s16)record->control.orbit_angle) * orbit_radius >> KF_FIXED12_BITS);
         record->position.vz = (record->direction.vector.vz << KF_EFFECT_ORBIT_CENTER_SHIFT)

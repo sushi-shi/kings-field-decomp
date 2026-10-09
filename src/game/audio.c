@@ -11,8 +11,8 @@
 
 enum {
     GAME_SEQUENCE_BUFFER_BYTES = 0x3000,
-    GAME_SEQUENCE_VOLUME = 0x4b,
-    GAME_REVERB_DEPTH = 0x10,
+    GAME_SEQUENCE_VOLUME = 75,
+    GAME_REVERB_DEPTH = 16,
     GAME_SOUND_ATTENUATION_BOOST = 36,
     GAME_SOUND_PAN_NARROW_THRESHOLD = 64,
     GAME_SOUND_PAN_DIVISOR = 3000
@@ -63,6 +63,7 @@ void audio_play_map_sequence(u8 sequence_index)
 
     audio_stop_sequence_fade();
     if (player_state.audio_music_enabled != KF_PLAYER_OPTION_OFF) {
+
         path[6] = sequence_index + '0';
         path[1] = ((u8)(player_state.progress_state.current_floor)) + '0';
         if (cd_file_load_into(audio_state.sequence_buffer, path) == KF_RESOURCE_LOADED) {

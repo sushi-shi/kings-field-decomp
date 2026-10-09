@@ -49,6 +49,7 @@ void opening_run(KfOverlayMode overlay_mode)
 
         for (;;) {
             opening_scene0_run();
+
             if (opening_input_action != KF_OPENING_INPUT_ADVANCE &&
                 opening_input_action == KF_OPENING_INPUT_SKIP) {
 opening_reload:

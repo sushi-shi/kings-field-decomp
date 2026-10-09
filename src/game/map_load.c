@@ -32,13 +32,11 @@ void map_restore_floor_state(void)
         }
 
         i = *in++;
-        if (--i != -1) {
+        while (--i != -1) {
             KfActor *actors = actor_state.actors;
 
-            do {
-                index = *in++;
-                actors[index].lifecycle = ((KfActorLifecycle)(*in++));
-            } while (--i != -1);
+            index = *in++;
+            actors[index].lifecycle = ((KfActorLifecycle)(*in++));
         }
 
         object = &map_object_state.objects[0];

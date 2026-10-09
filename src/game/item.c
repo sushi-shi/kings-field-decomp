@@ -105,8 +105,7 @@ void shop_menu_root(s32 shop_bank)
 
     for (;;) {
         menu_present_frame();
-        if (trade_mode != KF_TRADE_NONE
-                || ((s32)(result)) == ((s32)(trade_mode))) {
+        if (trade_mode != KF_TRADE_NONE || result == KF_MENU_RESULT_CANCELLED) {
             menu_frame_begin();
             menu_draw_window(KF_MENU_WINDOW_SHOP, KF_SHOP_CHOICE_COUNT, cursor, confirm);
             menu_present_frame();
@@ -426,21 +425,15 @@ KfMenuResult item_pickup_confirm(s32 item_id)
 
     menu_frame_begin();
     menu_draw_pickup_preview(item_id);
-    menu_draw_two_option(
-        &accept_label,
-        &decline_label, KF_MENU_CHOICE_ACCEPT, KF_MENU_CONFIRM_IDLE);
+    menu_draw_two_option(&accept_label, &decline_label, KF_MENU_CHOICE_ACCEPT, KF_MENU_CONFIRM_IDLE);
     menu_present_frame();
     menu_frame_begin();
     menu_draw_pickup_preview(item_id);
-    menu_draw_two_option(
-        &accept_label,
-        &decline_label, KF_MENU_CHOICE_ACCEPT, KF_MENU_CONFIRM_IDLE);
+    menu_draw_two_option(&accept_label, &decline_label, KF_MENU_CHOICE_ACCEPT, KF_MENU_CONFIRM_IDLE);
     menu_present_frame();
     menu_frame_begin();
     menu_draw_pickup_preview(item_id);
-    menu_draw_two_option(
-        &accept_label,
-        &decline_label, KF_MENU_CHOICE_ACCEPT, KF_MENU_CONFIRM_IDLE);
+    menu_draw_two_option(&accept_label, &decline_label, KF_MENU_CHOICE_ACCEPT, KF_MENU_CONFIRM_IDLE);
     menu_play_input_sound(MENU_SOUND_CURSOR);
     while (PadRead(1) != 0) {
     }
@@ -450,9 +443,7 @@ KfMenuResult item_pickup_confirm(s32 item_id)
         if (result != KF_MENU_RESULT_PENDING) {
             menu_frame_begin();
             menu_draw_pickup_preview(item_id);
-            menu_draw_two_option(
-                &accept_label,
-                &decline_label, choice, confirm);
+            menu_draw_two_option(&accept_label, &decline_label, choice, confirm);
             menu_present_frame();
             while (PadRead(1) != 0) {
             }
@@ -486,9 +477,7 @@ KfMenuResult item_pickup_confirm(s32 item_id)
             result = KF_MENU_RESULT_DECLINED;
         }
         menu_draw_pickup_preview(item_id);
-        menu_draw_two_option(
-            &accept_label,
-            &decline_label, choice, confirm);
+        menu_draw_two_option(&accept_label, &decline_label, choice, confirm);
     }
 
     menu_release_item_model();

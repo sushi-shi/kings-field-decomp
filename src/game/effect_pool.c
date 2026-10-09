@@ -12,7 +12,7 @@ enum {
     EFFECT_EMERGING_INITIAL_SCALE = 1500,
     EFFECT_SHORT_SWING_SCALE = 2600,
     EFFECT_ORBIT_SCALE = 2800,
-    EFFECT_WARP_HORIZONTAL_SCALE = 0x1800
+    EFFECT_WARP_HORIZONTAL_SCALE = KF_FIXED12_ONE * 3 / 2
 };
 
 KfEffectState effect_state;
@@ -35,6 +35,7 @@ KfEffectRecord *effect_pool_construct(
     u8 id, KfEffectType type, KfEffectKind kind, const VECTOR *position,
     const SVECTOR *direction, ...)
 {
+
     s32 *va = (s32 *)&direction;
     KfEffectRecord *record = effect_pool_find_free();
     KfMagicRecord *magic;

@@ -2,7 +2,7 @@
 #include <kf/open/render.h>
 
 enum {
-    ENDING_GRADIENT_OT_DEPTH = 0x3fef
+    ENDING_GRADIENT_OT_DEPTH = 16367
 };
 
 void opening_render_frame(const VECTOR *position_or_null, const SVECTOR *rotation_or_null)
