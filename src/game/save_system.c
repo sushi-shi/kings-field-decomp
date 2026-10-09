@@ -62,6 +62,15 @@ char save_temporary_file_path[26] = "bu00:BISLPS-00017KFTMP   ";
 DATA(0x8005606c, 0x14)
 char talk_image_path_template[20] = "TALK\\C00\\T00000.TIM";
 
+/* Digit positions in TALK\Ccc\Tfsccp.TIM: character, floor, stage, page. */
+enum {
+    TALK_PATH_DIRECTORY_CHARACTER = 6,
+    TALK_PATH_FLOOR = 10,
+    TALK_PATH_STAGE = 11,
+    TALK_PATH_CHARACTER = 12,
+    TALK_PATH_PAGE = 14
+};
+
 DATA(0x80057b78, 0x6)
 char memory_card_root_path[6] = "bu00:";
 
@@ -144,8 +153,8 @@ KfSaveResult save_system_read_catalog(KfSaveSlotSummary *summaries)
     s32 index;
     KfSaveHeader *header;
 
-    /* Retail clears 0x24 bytes although three summaries span 0x48. */
-    memset(summaries, 0, 0x24);
+    /* Retail clears only 36 bytes, one and a half of the three summaries. */
+    memset(summaries, 0, 36);
     result = save_system_read_header();
     if (result == KF_SAVE_RESULT_OK) {
         header = save_header_buffer;
@@ -168,14 +177,14 @@ void menu_play_input_sound(KfMenuSoundCue cue)
     SoundRef sound;
 
     if (cue == MENU_SOUND_CURSOR) {
-        sound.program = 0xe;
-        sound.note = 0x44;
+        sound.program = 14;
+        sound.note = 68;
     } else if (cue == MENU_SOUND_CONFIRM) {
-        sound.program = 0xd;
-        sound.note = 0x3c;
+        sound.program = 13;
+        sound.note = 60;
     } else {
-        sound.program = 0xf;
-        sound.note = 0x3f;
+        sound.program = 15;
+        sound.note = 63;
     }
     /* Bank 0, zero fine pitch; equal channels at 64/127 volume. */
     SsVoKeyOn(sound.program,
@@ -189,7 +198,7 @@ void menu_play_input_sound(KfMenuSoundCue cue)
 ADDRESS(0x8002b1d4, 0x100)
 void memory_card_initialize(void)
 {
-    u8 buffer[0x80];
+    u8 buffer[128];
 
     memset(buffer, 0xff, sizeof(buffer));
     memory_card_io_end_event = OpenEvent(HwCARD, EvSpIOE, EvMdNOINTR, NULL);
@@ -868,14 +877,16 @@ void talk_show_dialogue_page(KF_ENUM_PARAM(KfFloorId, u8) floor,
     KF_ENUM_PARAM(KfCharacterId, s32) character_id,
     u8 page)
 {
-    char *directory_character = &talk_image_path_template[6];
+    /* Unresolved source form: retail writes the directory digits through
+     * their own base pointer and recovers the template from it. */
+    char *directory_character = &talk_image_path_template[TALK_PATH_DIRECTORY_CHARACTER];
 
-    talk_image_path_template[0xc] = KF_ENUM_ENCODE(s32, character_id) / 10 + '0';
+    talk_image_path_template[TALK_PATH_CHARACTER] = KF_ENUM_ENCODE(s32, character_id) / 10 + '0';
     directory_character[0] = KF_ENUM_ENCODE(s32, character_id) / 10 + '0';
-    talk_image_path_template[0xa] = KF_ENUM_ENCODE(u8, floor) + '0';
-    directory_character[1] = talk_image_path_template[0xd] =
+    talk_image_path_template[TALK_PATH_FLOOR] = KF_ENUM_ENCODE(u8, floor) + '0';
+    directory_character[1] = talk_image_path_template[TALK_PATH_CHARACTER + 1] =
         KF_ENUM_ENCODE(s32, character_id) % 10 + '0';
-    talk_image_path_template[0xb] = stage + '0';
-    talk_image_path_template[0xe] = page + '0';
-    screen_show_image_until_input(directory_character - 6);
+    talk_image_path_template[TALK_PATH_STAGE] = stage + '0';
+    talk_image_path_template[TALK_PATH_PAGE] = page + '0';
+    screen_show_image_until_input(directory_character - TALK_PATH_DIRECTORY_CHARACTER);
 }

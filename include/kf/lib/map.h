@@ -492,7 +492,7 @@ extern void map_action_script_floor5(void);
 extern void map_event_advance_animation_blocking(KfMapEvent *event, u16 target, s16 step);
 extern s32 map_event_distance_to_point( const KfMapEvent *event, s32 point_x, s32 point_z, s32 max_distance);
 extern s32 map_event_pool_find_overlap(s32 point_x, s32 point_z, s32 radius_padding);
-extern KfMapEvent *map_event_pool_find_target_in_cone( const VECTOR *origin, s16 facing, s32 max_distance, s32 angle_tolerance, s32 *distance_out);
+extern KfMapEvent *map_event_pool_find_target_in_cone(const VECTOR *origin, s16 facing, s32 max_distance, s32 angle_tolerance, s32 *distance_out);
 extern void map_event_pool_load(const KfMapEventDefinition *definitions);
 extern void map_event_pool_update(void);
 extern void map_event_refresh_dialogue_stage(KfMapEvent *event);

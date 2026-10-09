@@ -200,7 +200,7 @@ void map_ambient_script_floor3(void)
 {
     if (player_state.motion_state.fields.map_cell.coords.x >= 15
         && player_state.motion_state.fields.map_cell.coords.x < 18
-        && player_state.motion_state.fields.map_cell.coords.z == 0x40) {
+        && player_state.motion_state.fields.map_cell.coords.z == 64) {
         player_restore_vitals_with_color_cycle();
         if (effect_state.magic.entries[KF_ENUM_ENCODE(u8, KF_MAGIC_RESIST_FIRE)].learned
                 == KF_MAGIC_UNLEARNED

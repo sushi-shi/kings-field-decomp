@@ -421,16 +421,19 @@ enum {
     MENU_PICKUP_PREVIEW_YAW_STEP = 8
 };
 
-/* Shared inventory/shop model translation, in GTE transform units. */
+/* Shared inventory/shop model translation, in GTE transform units.  The
+ * pickup preview sits further left at the same height and depth. */
 enum {
     MENU_ITEM_PREVIEW_TRANSLATION_X = 560,
     MENU_ITEM_PREVIEW_TRANSLATION_Y = 140,
-    MENU_ITEM_PREVIEW_TRANSLATION_Z = 1500
+    MENU_ITEM_PREVIEW_TRANSLATION_Z = 1500,
+    MENU_PICKUP_PREVIEW_TRANSLATION_X = 220
 };
 
 /* Inventory/shop text positions and row pitch are screen pixels. */
 enum {
     MENU_ITEM_NAME_X = 174,
+    MENU_PICKUP_NAME_X = 128,
     MENU_ITEM_PREVIEW_NAME_Y = 36,
     MENU_ITEM_PREVIEW_LINE_HEIGHT = 18,
     MENU_ITEM_PREVIEW_QUANTITY_DIGITS = 2

@@ -53,7 +53,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 KfGpuFT3 *prim = (KfGpuFT3 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
                 game_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_FT3);
-                if (game_graphics_runtime.display_state.primitive_buffer->cursor > game_graphics_runtime.display_state.primitive_buffer->end) {
+                if (game_graphics_runtime.display_state.primitive_buffer->cursor
+                    > game_graphics_runtime.display_state.primitive_buffer->end) {
                     return;
                 }
                 SetPolyFT3(&prim->sdk);
@@ -88,7 +89,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
 
                 vd = VTX(p->f4.v3);
                 game_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_F4);
-                if (game_graphics_runtime.display_state.primitive_buffer->cursor > game_graphics_runtime.display_state.primitive_buffer->end) {
+                if (game_graphics_runtime.display_state.primitive_buffer->cursor
+                    > game_graphics_runtime.display_state.primitive_buffer->end) {
                     return;
                 }
                 SetPolyF4(&prim->sdk);
@@ -117,7 +119,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 KfGpuG3 *prim = (KfGpuG3 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
                 game_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_G3);
-                if (game_graphics_runtime.display_state.primitive_buffer->cursor > game_graphics_runtime.display_state.primitive_buffer->end) {
+                if (game_graphics_runtime.display_state.primitive_buffer->cursor
+                    > game_graphics_runtime.display_state.primitive_buffer->end) {
                     return;
                 }
                 SetPolyG3(&prim->sdk);
@@ -147,7 +150,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
 
                 vd = VTX(p->g4.v3);
                 game_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_G4);
-                if (game_graphics_runtime.display_state.primitive_buffer->cursor > game_graphics_runtime.display_state.primitive_buffer->end) {
+                if (game_graphics_runtime.display_state.primitive_buffer->cursor
+                    > game_graphics_runtime.display_state.primitive_buffer->end) {
                     return;
                 }
                 SetPolyG4(&prim->sdk);
@@ -179,7 +183,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 KfGpuGT3 *prim = (KfGpuGT3 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
                 game_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_GT3);
-                if (game_graphics_runtime.display_state.primitive_buffer->cursor > game_graphics_runtime.display_state.primitive_buffer->end) {
+                if (game_graphics_runtime.display_state.primitive_buffer->cursor
+                    > game_graphics_runtime.display_state.primitive_buffer->end) {
                     return;
                 }
                 SetPolyGT3(&prim->sdk);
@@ -215,7 +220,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
 
                 vd = VTX(p->gt4.v3);
                 game_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_GT4);
-                if (game_graphics_runtime.display_state.primitive_buffer->cursor > game_graphics_runtime.display_state.primitive_buffer->end) {
+                if (game_graphics_runtime.display_state.primitive_buffer->cursor
+                    > game_graphics_runtime.display_state.primitive_buffer->end) {
                     return;
                 }
                 SetPolyGT4(&prim->sdk);
@@ -254,7 +260,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 KfGpuG3 *prim = (KfGpuG3 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
                 game_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_G3);
-                if (game_graphics_runtime.display_state.primitive_buffer->cursor > game_graphics_runtime.display_state.primitive_buffer->end) {
+                if (game_graphics_runtime.display_state.primitive_buffer->cursor
+                    > game_graphics_runtime.display_state.primitive_buffer->end) {
                     return;
                 }
                 SetPolyG3(&prim->sdk);
@@ -285,7 +292,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
 
                 vd = VTX(p->ft4.v3);
                 game_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_FT4);
-                if (game_graphics_runtime.display_state.primitive_buffer->cursor > game_graphics_runtime.display_state.primitive_buffer->end) {
+                if (game_graphics_runtime.display_state.primitive_buffer->cursor
+                    > game_graphics_runtime.display_state.primitive_buffer->end) {
                     return;
                 }
                 SetPolyFT4(&prim->sdk);
@@ -321,7 +329,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 KfGpuF3 *prim = (KfGpuF3 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
                 game_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_F3);
-                if (game_graphics_runtime.display_state.primitive_buffer->cursor > game_graphics_runtime.display_state.primitive_buffer->end) {
+                if (game_graphics_runtime.display_state.primitive_buffer->cursor
+                    > game_graphics_runtime.display_state.primitive_buffer->end) {
                     return;
                 }
                 SetPolyF3(&prim->sdk);
@@ -350,7 +359,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
 
                 vd = VTX(p->g4.v3);
                 game_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_G4);
-                if (game_graphics_runtime.display_state.primitive_buffer->cursor > game_graphics_runtime.display_state.primitive_buffer->end) {
+                if (game_graphics_runtime.display_state.primitive_buffer->cursor
+                    > game_graphics_runtime.display_state.primitive_buffer->end) {
                     return;
                 }
                 SetPolyG4(&prim->sdk);
@@ -382,7 +392,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
                 KfGpuF3 *prim = (KfGpuF3 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
                 game_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_F3);
-                if (game_graphics_runtime.display_state.primitive_buffer->cursor > game_graphics_runtime.display_state.primitive_buffer->end) {
+                if (game_graphics_runtime.display_state.primitive_buffer->cursor
+                    > game_graphics_runtime.display_state.primitive_buffer->end) {
                     return;
                 }
                 SetPolyF3(&prim->sdk);
@@ -412,7 +423,8 @@ void render_enqueue_tmd(u16 object_index, s16 depth_bias)
 
                 vd = VTX(p->f4.v3);
                 game_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_F4);
-                if (game_graphics_runtime.display_state.primitive_buffer->cursor > game_graphics_runtime.display_state.primitive_buffer->end) {
+                if (game_graphics_runtime.display_state.primitive_buffer->cursor
+                    > game_graphics_runtime.display_state.primitive_buffer->end) {
                     return;
                 }
                 SetPolyF4(&prim->sdk);
@@ -484,7 +496,8 @@ void render_enqueue_tmd_retextured(u16 object_index, s16 depth_bias)
                 KfGpuGT3 *prim = (KfGpuGT3 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
                 game_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_GT3);
-                if (game_graphics_runtime.display_state.primitive_buffer->cursor > game_graphics_runtime.display_state.primitive_buffer->end) {
+                if (game_graphics_runtime.display_state.primitive_buffer->cursor
+                    > game_graphics_runtime.display_state.primitive_buffer->end) {
                     return;
                 }
                 SetPolyGT3(&prim->sdk);
@@ -518,7 +531,8 @@ void render_enqueue_tmd_retextured(u16 object_index, s16 depth_bias)
 
                 vd = TMD_PREPARED_VERTEX(vertices, primitive->gt4.v3);
                 game_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_GT4);
-                if (game_graphics_runtime.display_state.primitive_buffer->cursor > game_graphics_runtime.display_state.primitive_buffer->end) {
+                if (game_graphics_runtime.display_state.primitive_buffer->cursor
+                    > game_graphics_runtime.display_state.primitive_buffer->end) {
                     return;
                 }
                 SetPolyGT4(&prim->sdk);
@@ -555,7 +569,8 @@ void render_enqueue_tmd_retextured(u16 object_index, s16 depth_bias)
                 KfGpuFT3 *prim = (KfGpuFT3 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
                 game_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_FT3);
-                if (game_graphics_runtime.display_state.primitive_buffer->cursor > game_graphics_runtime.display_state.primitive_buffer->end) {
+                if (game_graphics_runtime.display_state.primitive_buffer->cursor
+                    > game_graphics_runtime.display_state.primitive_buffer->end) {
                     return;
                 }
                 SetPolyFT3(&prim->sdk);
@@ -588,7 +603,8 @@ void render_enqueue_tmd_retextured(u16 object_index, s16 depth_bias)
 
                 vd = TMD_PREPARED_VERTEX(vertices, primitive->ft4.v3);
                 game_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_FT4);
-                if (game_graphics_runtime.display_state.primitive_buffer->cursor > game_graphics_runtime.display_state.primitive_buffer->end) {
+                if (game_graphics_runtime.display_state.primitive_buffer->cursor
+                    > game_graphics_runtime.display_state.primitive_buffer->end) {
                     return;
                 }
                 SetPolyFT4(&prim->sdk);
@@ -792,7 +808,8 @@ void render_enqueue_sprite(
 
     prim = (KfGpuFT4 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
     game_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_FT4);
-    if (game_graphics_runtime.display_state.primitive_buffer->cursor > game_graphics_runtime.display_state.primitive_buffer->end) {
+    if (game_graphics_runtime.display_state.primitive_buffer->cursor
+        > game_graphics_runtime.display_state.primitive_buffer->end) {
         return;
     }
     SetPolyFT4(&prim->sdk);

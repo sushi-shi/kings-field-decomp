@@ -13,7 +13,8 @@ void render_screen_sprite(KfSpriteQuad *sprite)
 
     prim = (POLY_FT4 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
     game_graphics_runtime.display_state.primitive_buffer->cursor += sizeof(POLY_FT4);
-    if (game_graphics_runtime.display_state.primitive_buffer->cursor > game_graphics_runtime.display_state.primitive_buffer->end) {
+    if (game_graphics_runtime.display_state.primitive_buffer->cursor
+        > game_graphics_runtime.display_state.primitive_buffer->end) {
         return;
     }
     SetPolyFT4(prim);
