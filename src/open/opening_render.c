@@ -3,7 +3,7 @@
 #include <kf/open/render.h>
 
 enum {
-    ENDING_GRADIENT_OT_DEPTH = 0x3fef
+    ENDING_GRADIENT_OT_DEPTH = 16367
 };
 
 ADDRESS(0x800137c4, 0x40)
