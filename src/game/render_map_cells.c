@@ -72,7 +72,7 @@ void render_map_cell(s32 col, s32 row, KF_ENUM_PARAM(KfCellVisibility, char) vis
         }
     }
     object_index--;
-    if (object_index > KF_MAP_MESHES_PER_BANK - 1) {
+    if (object_index >= KF_MAP_MESHES_PER_BANK) {
         return;
     }
     orientation = KF_ENUM_ENCODE(u8, map_cell_orientation_grid.cells[row][col]) - 1;

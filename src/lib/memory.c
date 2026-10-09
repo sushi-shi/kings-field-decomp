@@ -31,7 +31,7 @@ void *memory_malloc_checked(s32 size)
 {
     void *block = malloc(size);
 
-    if ((u32)block + MEMORY_CACHED_RAM_BASE > KF_MAIN_RAM_BYTES - 1) {
+    if ((u32)block + MEMORY_CACHED_RAM_BASE >= KF_MAIN_RAM_BYTES) {
         return NULL;
     }
     return block;

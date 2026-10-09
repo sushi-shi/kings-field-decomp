@@ -265,7 +265,7 @@ void map_floor2_event_transfer_fade(void)
 
     saved = game_graphics_runtime.render_state.map_event_light_matrix;
 
-    for (blend = 0; blend < KF_FIXED12_ONE + 1; blend += MAP_TRANSFER_FADE_IN_STEP) {
+    for (blend = 0; blend <= KF_FIXED12_ONE; blend += MAP_TRANSFER_FADE_IN_STEP) {
         lighting_set_color_matrix(&color_matrix_table[KF_ENUM_ENCODE(s32, KF_GAME_COLOR_DEFAULT)],
             &color_matrix_table[KF_ENUM_ENCODE(s32, KF_GAME_COLOR_WHITE)],
             blend);

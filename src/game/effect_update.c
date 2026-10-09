@@ -89,7 +89,7 @@ void effect_update_swinging_hazard(SVECTOR *probe_offset, KF_ENUM_PARAM(KfEffect
         if (record->rotation.vector.vx >= KF_ANGLE_EIGHTH_TURN) {
             record->rotation.vector.vx = KF_ANGLE_EIGHTH_TURN;
             record->direction.words.x = 0;
-        } else if (record->rotation.vector.vy < -KF_ANGLE_EIGHTH_TURN + 1) {
+        } else if (record->rotation.vector.vy <= -KF_ANGLE_EIGHTH_TURN) {
             /* Retail tests the yaw here while clamping the pitch. */
             record->rotation.vector.vx = -KF_ANGLE_EIGHTH_TURN;
             record->direction.words.x = 0;
@@ -195,7 +195,7 @@ void effect_floor_deform_line(s32 segment_index, s32 progress_start, s32 progres
         progress_start += progress_step;
         if (progress < 0) {
             progress = 0;
-        } else if (progress >= KF_FIXED12_ONE + 1) {
+        } else if (progress > KF_FIXED12_ONE) {
             progress = KF_FIXED12_ONE;
         } else if (progress >= FLOOR_DEFORM_SOUND_PROGRESS && progress < range + FLOOR_DEFORM_SOUND_PROGRESS) {
             sound_position.vx = KF_MAP_TILE_SIZE * col + KF_MAP_TILE_CENTER;

@@ -94,6 +94,18 @@ static s32 player_movement_velocity_limit;
 DATA(0x80057e70, 0x4)
 static s32 player_turn_step_limit;
 
+/* One worn piece's periodic HP regeneration and drain. */
+#define PLAYER_TICK_ARMOR_VITALS(armor) do { \
+    if ((armor)->hp_regen_interval != 0 \
+        && player_state.equipment_effect_ticks % (armor)->hp_regen_interval == 0) { \
+        player_adjust_hp(1); \
+    } \
+    if ((armor)->hp_drain_interval != 0 \
+        && player_state.equipment_effect_ticks % (armor)->hp_drain_interval == 0) { \
+        player_adjust_hp(-1); \
+    } \
+} while (0)
+
 ADDRESS(0x80018880, 0x1a1c)
 void player_update(void)
 {
@@ -112,7 +124,8 @@ void player_update(void)
     KfMagicRecord *record;
     KfActor *target;
     const VECTOR *origin;
-    SVECTOR unused_vector; /* unused; first frame slot in retail */
+    /* Unresolved source form: retail reserves this never-used frame slot. */
+    SVECTOR unused_vector;
     SVECTOR direction;
     SVECTOR spawn_offset;
     KfRotation effect_rotation;
@@ -286,7 +299,7 @@ void player_update(void)
             (player_state.camera_rotation.vy + player_state.motion_state.fields.yaw_step) & KF_ANGLE_WRAP_MASK;
         if (input & PADm) {
             player_state.motion_state.fields.pitch_step += PLAYER_PITCH_ACCEL;
-            if (player_state.motion_state.fields.pitch_step >= PLAYER_PITCH_STEP_LIMIT + 1) {
+            if (player_state.motion_state.fields.pitch_step > PLAYER_PITCH_STEP_LIMIT) {
                 player_state.motion_state.fields.pitch_step = PLAYER_PITCH_STEP_LIMIT;
             }
         } else if (input & PADo) {
@@ -307,7 +320,7 @@ void player_update(void)
         }
         if (player_state.motion_state.fields.pitch_step > 0) {
             player_state.camera_rotation.vx += player_state.motion_state.fields.pitch_step;
-            if (player_state.camera_rotation.vx >= KF_PLAYER_CAMERA_PITCH_LIMIT + 1) {
+            if (player_state.camera_rotation.vx > KF_PLAYER_CAMERA_PITCH_LIMIT) {
                 player_state.camera_rotation.vx = KF_PLAYER_CAMERA_PITCH_LIMIT;
             }
         } else if (player_state.motion_state.fields.pitch_step < 0) {
@@ -519,7 +532,7 @@ void player_update(void)
     lighting_set_active_color_matrix(KF_GAME_COLOR_DEFAULT);
     if (player_state.darkness_timer != KF_PLAYER_STATUS_TIMER_INACTIVE) {
         if ((player_state.status_effect_flags & KF_PLAYER_STATUS_DARKNESS) == KF_PLAYER_STATUS_NONE
-            && player_state.darkness_timer >= DARKNESS_FADE_STEPS + 1) {
+            && player_state.darkness_timer > DARKNESS_FADE_STEPS) {
             player_state.darkness_timer = DARKNESS_FADE_STEPS;
         }
         player_state.darkness_timer--;
@@ -571,54 +584,19 @@ void player_update(void)
         }
     }
     if (player_state.equipped_head_armor_id != KF_OBJECT_NONE) {
-        if (player_state.equipped_head_armor_record->hp_regen_interval != 0
-            && player_state.equipment_effect_ticks % player_state.equipped_head_armor_record->hp_regen_interval == 0) {
-            player_adjust_hp(1);
-        }
-        if (player_state.equipped_head_armor_record->hp_drain_interval != 0
-            && player_state.equipment_effect_ticks % player_state.equipped_head_armor_record->hp_drain_interval == 0) {
-            player_adjust_hp(-1);
-        }
+        PLAYER_TICK_ARMOR_VITALS(player_state.equipped_head_armor_record);
     }
     if (player_state.equipped_body_armor_id != KF_OBJECT_NONE) {
-        if (player_state.equipped_body_armor_record->hp_regen_interval != 0
-            && player_state.equipment_effect_ticks % player_state.equipped_body_armor_record->hp_regen_interval == 0) {
-            player_adjust_hp(1);
-        }
-        if (player_state.equipped_body_armor_record->hp_drain_interval != 0
-            && player_state.equipment_effect_ticks % player_state.equipped_body_armor_record->hp_drain_interval == 0) {
-            player_adjust_hp(-1);
-        }
+        PLAYER_TICK_ARMOR_VITALS(player_state.equipped_body_armor_record);
     }
     if (player_state.equipped_shield_id != KF_OBJECT_NONE) {
-        if (player_state.equipped_shield_record->hp_regen_interval != 0
-            && player_state.equipment_effect_ticks % player_state.equipped_shield_record->hp_regen_interval == 0) {
-            player_adjust_hp(1);
-        }
-        if (player_state.equipped_shield_record->hp_drain_interval != 0
-            && player_state.equipment_effect_ticks % player_state.equipped_shield_record->hp_drain_interval == 0) {
-            player_adjust_hp(-1);
-        }
+        PLAYER_TICK_ARMOR_VITALS(player_state.equipped_shield_record);
     }
     if (player_state.equipped_arm_armor_id != KF_OBJECT_NONE) {
-        if (player_state.equipped_arm_armor_record->hp_regen_interval != 0
-            && player_state.equipment_effect_ticks % player_state.equipped_arm_armor_record->hp_regen_interval == 0) {
-            player_adjust_hp(1);
-        }
-        if (player_state.equipped_arm_armor_record->hp_drain_interval != 0
-            && player_state.equipment_effect_ticks % player_state.equipped_arm_armor_record->hp_drain_interval == 0) {
-            player_adjust_hp(-1);
-        }
+        PLAYER_TICK_ARMOR_VITALS(player_state.equipped_arm_armor_record);
     }
     if (player_state.equipped_leg_armor_id != KF_OBJECT_NONE) {
-        if (player_state.equipped_leg_armor_record->hp_regen_interval != 0
-            && player_state.equipment_effect_ticks % player_state.equipped_leg_armor_record->hp_regen_interval == 0) {
-            player_adjust_hp(1);
-        }
-        if (player_state.equipped_leg_armor_record->hp_drain_interval != 0
-            && player_state.equipment_effect_ticks % player_state.equipped_leg_armor_record->hp_drain_interval == 0) {
-            player_adjust_hp(-1);
-        }
+        PLAYER_TICK_ARMOR_VITALS(player_state.equipped_leg_armor_record);
     }
     player_state.equipment_effect_ticks++;
     attribute = map_cell_attribute_grid.cells[player_state.motion_state.fields.map_cell.coords.z]

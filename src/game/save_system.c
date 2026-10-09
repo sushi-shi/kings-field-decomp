@@ -117,7 +117,6 @@ KfSaveStatus save_file_read_slot(KfSaveSlotId slot_id);
 void save_file_initialize_buffers(void);
 s32 memory_card_show_status_message(KF_ENUM_PARAM(KfSaveStatus, s16) status);
 KfBool32 menu_load_message_image(s32 message_id);
-void screen_show_image_until_input(const char *path);
 
 static inline void memory_card_acknowledge_new_device(void)
 {

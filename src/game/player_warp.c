@@ -86,7 +86,7 @@ void player_warp_shimmer(KfWarpShimmerMode shimmer_mode, VECTOR *position)
             if (i * KF_CYLINDER_TRANSITION_STAGGER_FRAMES < frame) {
                 u16 current_scale_y = effect->scale_y;
 
-                if (current_scale_y < KF_CYLINDER_TRANSITION_TALL_SCALE + 1) {
+                if (current_scale_y <= KF_CYLINDER_TRANSITION_TALL_SCALE) {
                     effect->scale_y = scale_y_step + current_scale_y;
                 }
             }
@@ -269,7 +269,7 @@ void actor_transform_definition5_to6(KfActor *actor)
     /* Both blend endpoints execute: 65 motion updates per phase.
      * Y moves 40 world units per update; its design rationale is unresolved.
      * Blend and yaw advance by 1/64 of their full ranges, then reverse. */
-    for (blend = 0; blend < KF_FIXED12_ONE + 1; blend += KF_FIXED12_ONE / ACTOR_TRANSFORM_BLEND_INTERVALS) {
+    for (blend = 0; blend <= KF_FIXED12_ONE; blend += KF_FIXED12_ONE / ACTOR_TRANSFORM_BLEND_INTERVALS) {
         lighting_set_color_matrix(&saved, &actor_transform_color_matrix, blend);
         actor->position.vy += ACTOR_TRANSFORM_Y_STEP;
         actor->rotation.angles.y += KF_ANGLE_FULL_TURN / ACTOR_TRANSFORM_BLEND_INTERVALS;
