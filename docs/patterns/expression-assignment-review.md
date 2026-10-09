@@ -22,8 +22,8 @@ Different overlay macro owners remain distinct contexts. Parse errors fail the
 census instead of returning an incomplete zero. Inactive branches outside the
 two selected language views are outside this metric.
 
-The initial census has **179 sites**; the retained exact cleanup has **9**.
-The committed down-only floor is 9. Zero remains the target; no exception
+The initial census has **179 sites**; the cleanup preserving baseline objects
+has **4**. The committed down-only floor is 4. Zero remains the target; no exception
 removes a retained assignment from the count.
 
 ## Kept source changes
@@ -46,18 +46,23 @@ removes a retained assignment from the count.
 - Capture the first draw buffer's SDK dithering byte, then enable the second
   and first buffers in separate statements. Both display initializers remain
   strict 100%, including the complete affected comparison objects.
+- Use an explicit stored halfword for ground-trail scale copies and actual
+  scale-member destinations plus one narrowed value for each radial growth.
+  All five effect-dispatch sites are removed without changing its comparison
+  object or its existing 99.82781% retail residue.
 
 ## Retained exact cases
 
 | Image/function | Remaining sites | Statement controls |
 | --- | ---: | --- |
-| GAME `effect_update_dispatch` | 5 | Separate field reads: 99.69785%; shared `u16` scale: 99.62963%; first raw divergence +0x38. |
-| GAME `map_object_mark_collision_edge` | 2 | Same parameter stores: 87.69231%; complete grid owner: 74.02098%; first branch difference +0x30. |
-| GAME `tmd_register` | 1 | Direct separate stores or the state owner: 64 bytes, 48%; real destination pointers: 60 bytes, 86.666664%; explicit slot selection: 60 bytes, 86%. Retail is 60 bytes. |
-| OPEN `tmd_register` | 1 | Same paired controls: 64 bytes, 48%; destination pointers: 60 bytes, 86.666664%; explicit slot selection: 60 bytes, 86%. |
+| GAME `map_object_mark_collision_edge` | 2 | Same parameter stores: 87.69231%; complete grid owner: 74.02098%; actual edge cell: 560 bytes, 94.38461%; row view: 572 bytes, 92.72727%; shared column: 552 bytes, 88.61539%. Retail is 572 bytes. |
+| GAME `tmd_register` | 1 | Direct separate stores or the state owner: 64 bytes, 48%; real destination pointers: 60 bytes, 86.666664%; explicit slot selection: 60 bytes, 86%; explicit encoded slot: 60 bytes, 86.666664%. Retail is 60 bytes. |
+| OPEN `tmd_register` | 1 | Same paired controls: 64 bytes, 48%; destination pointers or encoded slot: 60 bytes, 86.666664%; explicit slot selection: 60 bytes, 86%. |
 
 These are probe observations, not explanations of original source or historical
-compiler behavior. The final four functions retain their original 100% source.
+compiler behavior. The three banked functions retain their original 100%
+source. The earlier description of the effect dispatcher as exact was incorrect;
+its five sites are now removed while preserving its existing residue.
 No inline assembly, fake variables, volatile carriers, padded storage, altered
 relocations or compiler flags were introduced to force zero.
 
@@ -74,6 +79,23 @@ remains 332 bytes and OPEN remains 472 bytes, both strict 100%.
 
 The paired controls are under
 `build/cleanup-evidence/expression-assignments/display-dither-control/`.
+
+## Effect scale follow-up
+
+GAME `effect_update_dispatch` already scores 99.82781%, not 100%, in the
+captured baseline. A fresh ordinary objdiff comparison and the semantic
+navigator confirm that result. Ground-trail shrink uses a wide value for
+its signed comparison and an explicit halfword for the stored axes. Radial
+and lightning growth use actual halfword destinations and a shared narrowed
+result. Each growth control separately, both together, and the final combined
+ground/growth control preserve the complete comparison object byte for byte.
+The original and final functions are both 6156 bytes and 99.82781%.
+
+An alternate uniform-scale inline setter changes registers at +0xb18 and scores
+99.67187%; a ground-trail member-pointer control drops four bytes and scores
+99.62963%. Neither is retained. Paired sources, assembly and objects are under
+`build/cleanup-evidence/expression-assignments/effect-scale-control/`.
+Object equality proves non-regression, not retail exactness for this function.
 
 ## Evidence
 
