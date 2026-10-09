@@ -3,27 +3,6 @@
 A Linux and browser port of the original Japanese King's Field (SLPS-00017).
 Supply your own disc image; game data is not bundled.
 
-## Branches
-
-```text
-              master
-                 |
-     +-----------+-----------+
-     |                       |
-     v                       v
-  source                  classic
-     |
-     v
-   port (you are here)
-```
-
-| Branch | Purpose |
-| --- | --- |
-| `master` | Reconstruction and matching |
-| `source` | C++ PS1 build, codecs, and base for porting |
-| `classic` | C PS1 build |
-| `port` | Linux and browser port |
-
 ## Play on Linux
 
 On x86_64 Linux with Nix flakes enabled:
@@ -39,8 +18,8 @@ Tested image: `King's Field (Japan).bin`, SHA-256:
 ae74beba377d686bfaa292ea40df8ade4454ec3139c2b5152364e02aac90b3d9
 ```
 
-The first launch extracts and caches game data locally. Saves use three separate
-slots.
+The first launch extracts and caches game data locally. Later launches can
+reuse that cache without `KF_DISC`. Saves use three separate slots.
 
 The game starts in English. Switch languages during play in **Configuration → Language**.
 English uses John Osborne's translation, prepared from your Japanese disc.
@@ -172,6 +151,27 @@ CMake downloads SDL automatically. For later builds, repeat from
 Open [the game](http://localhost:8000/kings-field.html), select your disc and press
 Play. The language selector also works during play. Data and saves stay in
 browser storage; clearing it removes them.
+
+## Branches
+
+```text
+              master
+                 |
+     +-----------+-----------+
+     |                       |
+     v                       v
+  source                  classic
+     |
+     v
+   port (you are here)
+```
+
+| Branch | Purpose |
+| --- | --- |
+| [`master`](https://github.com/sushi-shi/kings-field-decomp/tree/master) | Reconstruction and matching |
+| [`source`](https://github.com/sushi-shi/kings-field-decomp/tree/source) | C++ PS1 build, codecs, and base for porting |
+| [`classic`](https://github.com/sushi-shi/kings-field-decomp/tree/classic) | C PS1 build |
+| [`port`](https://github.com/sushi-shi/kings-field-decomp/tree/port) | Linux and browser port |
 
 ## Development
 

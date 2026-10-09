@@ -37,12 +37,12 @@ enum {
     ACTOR_RETREAT_RANGE_FACTOR = 2,
     ACTOR_RECENT_PURSUIT_RANGE_FACTOR = 6,
     ACTOR_RETREAT_RANDOM_MIN = 5462,
-    ACTOR_WANDER_TO_IDLE_RANDOM_LIMIT = 1092,
+    ACTOR_WANDER_TO_IDLE_RANDOM_LIMIT = (kf::random_max + 1) / 30,
     ACTOR_REMAIN_IDLE_RANDOM_MIN = 8193,
     ACTOR_SPAWN_CHANCE_SHIFT = 7,
-    ACTOR_WANDER_TURN_RANDOM_LIMIT = 2048,
-    ACTOR_PURSUIT_TURN_RANDOM_LIMIT = 4096,
-    ACTOR_HOME_TURN_RANDOM_LIMIT = 2048,
+    ACTOR_WANDER_TURN_RANDOM_LIMIT = (kf::random_max + 1) / 16,
+    ACTOR_PURSUIT_TURN_RANDOM_LIMIT = (kf::random_max + 1) / 8,
+    ACTOR_HOME_TURN_RANDOM_LIMIT = (kf::random_max + 1) / 16,
     ACTOR_PURSUIT_BACKOFF_RANDOM_SHIFT = 11
 };
 
@@ -50,8 +50,8 @@ enum {
     ACTOR_BLOCKED_TURN_STEP = KF_ANGLE_FULL_TURN / 64,
     ACTOR_LONG_DROP_HEIGHT = 600,
     ACTOR_DEEP_DROP_HEIGHT = 3000,
-    ACTOR_LONG_DROP_RANDOM_MAX = 16384,
-    ACTOR_DEEP_DROP_RANDOM_MAX = 1024,
+    ACTOR_LONG_DROP_RANDOM_MAX = (kf::random_max + 1) / 2,
+    ACTOR_DEEP_DROP_RANDOM_MAX = (kf::random_max + 1) / 32,
     ACTOR_STEP_HEIGHT_LIMIT = 1001,
     ACTOR_HIGH_STEP_HEIGHT = 400,
     ACTOR_HIGH_STEP_VELOCITY_Y = -300,
@@ -101,7 +101,7 @@ enum {
     ACTOR_BOSS_DEATH_EFFECT_PERIOD = 2,
     ACTOR_BOSS_DEATH_SOUND_PERIOD = 4,
     ACTOR_BOSS_DEATH_SCATTER_XZ_MASK = 8191,
-    ACTOR_BOSS_DEATH_SCATTER_XZ_BIAS = 4096,
+    ACTOR_BOSS_DEATH_SCATTER_XZ_BIAS = (ACTOR_BOSS_DEATH_SCATTER_XZ_MASK + 1) / 2,
     ACTOR_BOSS_DEATH_SCATTER_Y_MASK = 4095,
     ACTOR_BOSS_DEATH_LOOP_VOLUME = 100
 };
@@ -420,7 +420,7 @@ KfActorMoveResult actor_move_xz_with_collision(const struct KfVecXZs *delta, KfA
             actor->vertical_velocity = 0;
         }
     } else if (drop > 0) {
-        if (!(drop < ACTOR_STEP_HEIGHT_LIMIT)) {
+        if (drop >= ACTOR_STEP_HEIGHT_LIMIT) {
             return actor_handle_blocked_movement(actor, definition, delta, target, collision_policy);
         }
         if (drop >= ACTOR_HIGH_STEP_HEIGHT) {
@@ -513,9 +513,9 @@ void actor_spawn_action_effect(KfActorEffectCode effect_code, KfActorEffectSlot 
             }
             if (repeat == 2) {
                 if (i == 0) {
-                    offset.vx = offset.vx + ACTOR_PAIRED_EFFECT_X_OFFSET;
+                    offset.vx += ACTOR_PAIRED_EFFECT_X_OFFSET;
                 } else {
-                    offset.vx = offset.vx - ACTOR_PAIRED_EFFECT_X_OFFSET;
+                    offset.vx -= ACTOR_PAIRED_EFFECT_X_OFFSET;
                 }
             }
             effect_rotation.vx = actor->rotation.vx;

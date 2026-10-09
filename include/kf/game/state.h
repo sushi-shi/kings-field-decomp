@@ -32,7 +32,7 @@ enum {
     KF_GAMEPLAY_SOUND_FLOOR5_EVENT_LOOP = 10,
     KF_GAMEPLAY_SOUND_MAP_PIECE_REVEAL = 11,
     KF_GAMEPLAY_SOUND_KEY_UNLOCK = 12,
-    KF_GAMEPLAY_SOUND_COUNT = 13
+    KF_GAMEPLAY_SOUND_COUNT = KF_GAMEPLAY_SOUND_KEY_UNLOCK + 1
 };
 extern std::array<SoundRef, KF_GAMEPLAY_SOUND_COUNT> gameplay_sound_refs;
 inline constexpr unsigned talk_image_path_capacity = 20;

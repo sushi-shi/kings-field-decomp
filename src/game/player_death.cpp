@@ -350,7 +350,7 @@ void player_increment_physical_power_training(void)
     if (player_state.physical_power_training >= KF_PLAYER_TRAINING_POINTS_PER_GAIN) {
         player_state.base_physical_power++;
         player_state.physical_power_training = 0;
-        if (player_state.base_physical_power >= KF_PLAYER_POWER_MAX + 1) {
+        if (player_state.base_physical_power > KF_PLAYER_POWER_MAX) {
             player_state.base_physical_power = KF_PLAYER_POWER_MAX;
         } else {
             notify_enqueue(KF_NOTIFICATION_PHYSICAL_POWER_INCREASED);
@@ -365,7 +365,7 @@ void player_increment_magic_training(void)
     if (player_state.magic_training >= KF_PLAYER_TRAINING_POINTS_PER_GAIN) {
         player_state.base_magic++;
         player_state.magic_training = 0;
-        if (player_state.base_magic >= KF_PLAYER_POWER_MAX + 1) {
+        if (player_state.base_magic > KF_PLAYER_POWER_MAX) {
             player_state.base_magic = KF_PLAYER_POWER_MAX;
         } else {
             notify_enqueue(KF_NOTIFICATION_MAGIC_POWER_INCREASED);
@@ -390,16 +390,13 @@ void player_add_experience(s16 amount)
         if (level >= KF_PLAYER_LEVEL_GROWTH_COUNT) {
             growth = &player_level_growth_table[KF_PLAYER_LEVEL_GROWTH_COUNT - 1];
             player_state.vitals.maximum_hp +=
-                growth->maximum_hp
-                - growth[-1].maximum_hp;
+                growth->maximum_hp - player_level_growth_table[KF_PLAYER_LEVEL_GROWTH_COUNT - 2].maximum_hp;
             player_state.vitals.maximum_mp +=
-                growth->maximum_mp
-                - growth[-1].maximum_mp;
+                growth->maximum_mp - player_level_growth_table[KF_PLAYER_LEVEL_GROWTH_COUNT - 2].maximum_mp;
             player_state.base_physical_power += growth->physical_power_step;
             player_state.base_magic += growth->magic_step;
             player_state.next_level_experience +=
-                growth->experience_threshold
-                - growth[-1].experience_threshold;
+                growth->experience_threshold - player_level_growth_table[KF_PLAYER_LEVEL_GROWTH_COUNT - 2].experience_threshold;
         } else {
             growth = &player_level_growth_table[level];
             player_state.vitals.maximum_hp = growth->maximum_hp;
@@ -437,12 +434,12 @@ s32 player_calculate_damage_component(s32 defender_power, s32 defense, s32 attac
 }
 
 void player_apply_damage(
-    u16 component0,
-    u16 component1,
-    u16 component2,
+    u16 cutting_damage,
+    u16 striking_damage,
+    u16 piercing_damage,
     KfPlayerStatusFlags status_effect_flags,
-    u16 component3,
-    u16 component4,
+    u16 magic_damage,
+    u16 fire_damage,
     u16 scale_q12,
     u16 multiplier_tenths)
 {
@@ -478,23 +475,23 @@ void player_apply_damage(
     damage = player_calculate_damage_component(
         player_state.physical_power * KF_DAMAGE_SUBUNITS_PER_HP,
         player_state.cutting_defense * KF_DAMAGE_SUBUNITS_PER_HP,
-        component0 * KF_DAMAGE_SUBUNITS_PER_HP);
+        cutting_damage * KF_DAMAGE_SUBUNITS_PER_HP);
     damage += player_calculate_damage_component(
         player_state.physical_power * KF_DAMAGE_SUBUNITS_PER_HP,
         player_state.striking_defense * KF_DAMAGE_SUBUNITS_PER_HP,
-        component1 * KF_DAMAGE_SUBUNITS_PER_HP);
+        striking_damage * KF_DAMAGE_SUBUNITS_PER_HP);
     damage += player_calculate_damage_component(
         player_state.physical_power * KF_DAMAGE_SUBUNITS_PER_HP,
         player_state.piercing_defense * KF_DAMAGE_SUBUNITS_PER_HP,
-        component2 * KF_DAMAGE_SUBUNITS_PER_HP);
+        piercing_damage * KF_DAMAGE_SUBUNITS_PER_HP);
     damage += player_calculate_damage_component(
         player_state.physical_power * KF_DAMAGE_SUBUNITS_PER_HP,
         player_state.magic_defense * KF_DAMAGE_SUBUNITS_PER_HP,
-        component3 * KF_DAMAGE_SUBUNITS_PER_HP);
+        magic_damage * KF_DAMAGE_SUBUNITS_PER_HP);
     damage += player_calculate_damage_component(
         player_state.physical_power * KF_DAMAGE_SUBUNITS_PER_HP,
         player_state.fire_defense * KF_DAMAGE_SUBUNITS_PER_HP,
-        component4 * KF_DAMAGE_SUBUNITS_PER_HP);
+        fire_damage * KF_DAMAGE_SUBUNITS_PER_HP);
     damage += KF_DAMAGE_SUBUNITS_PER_HP / 2;
     damage = (scale_q12 * (damage / KF_DAMAGE_SUBUNITS_PER_HP)) >> KF_FIXED12_BITS;
     loss = (multiplier_tenths * damage) / KF_PLAYER_DAMAGE_MULTIPLIER_ONE;
@@ -512,11 +509,11 @@ void player_apply_radial_damage(
     const VECTOR *origin,
     u32 radius,
     u16 falloff_q12,
-    u16 component0,
-    u16 component1,
-    u16 component2,
-    u16 component3,
-    u16 component4,
+    u16 cutting_damage,
+    u16 striking_damage,
+    u16 piercing_damage,
+    u16 magic_damage,
+    u16 fire_damage,
     u16 scale_q12,
     u16 multiplier_tenths)
 {
@@ -533,7 +530,7 @@ void player_apply_radial_damage(
         attenuation = scale_q12;
     }
     player_apply_damage(
-        component0, component1, component2, KF_PLAYER_STATUS_NONE, component3, component4,
+        cutting_damage, striking_damage, piercing_damage, KF_PLAYER_STATUS_NONE, magic_damage, fire_damage,
         attenuation, multiplier_tenths);
 }
 

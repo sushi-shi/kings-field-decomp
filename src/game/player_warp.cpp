@@ -91,7 +91,7 @@ void player_warp_shimmer(KfWarpShimmerMode shimmer_mode, VECTOR *position)
             if (i * KF_CYLINDER_TRANSITION_STAGGER_FRAMES < frame) {
                 u16 current_scale_y = effect->scale_y;
 
-                if (current_scale_y < KF_CYLINDER_TRANSITION_TALL_SCALE + 1) {
+                if (current_scale_y <= KF_CYLINDER_TRANSITION_TALL_SCALE) {
                     effect->scale_y = scale_y_step + current_scale_y;
                 }
             }
@@ -252,7 +252,7 @@ void actor_transform_definition5_to6(KfActor *actor)
     map_runtime_state.events[floor4_transform_hidden_events[1]].state = KF_MAP_EVENT_DISABLED;
     saved = game_graphics_runtime.render_state.lighting.color_matrix;
 
-    for (blend = 0; blend < KF_FIXED12_ONE + 1; blend += KF_FIXED12_ONE / ACTOR_TRANSFORM_BLEND_INTERVALS) {
+    for (blend = 0; blend <= KF_FIXED12_ONE; blend += KF_FIXED12_ONE / ACTOR_TRANSFORM_BLEND_INTERVALS) {
         lighting_set_color_matrix(game_graphics_runtime.render_state, &saved, &actor_transform_color_matrix, blend);
         actor->position.vy += ACTOR_TRANSFORM_Y_STEP;
         actor->rotation.vy += KF_ANGLE_FULL_TURN / ACTOR_TRANSFORM_BLEND_INTERVALS;

@@ -35,8 +35,6 @@ void opening_run(Cutscene scene)
 {
     u8 *tim_data;
     std::size_t tim_size;
-    KfOpeningInputAction advance_action;
-    KfOpeningInputAction skip_action;
 
     open_graphics_runtime = {};
     opening_entity_state = {};
@@ -54,9 +52,7 @@ void opening_run(Cutscene scene)
                 opening_initial_tim_path.data(), &tim_size) != KF_RESOURCE_LOADED) {
             resource_file_fail(opening_initial_tim_path.data());
         }
-        advance_action = KF_OPENING_INPUT_ADVANCE;
         tim_upload_images(open_graphics_runtime.display_state.asset_load_buffer, tim_size);
-        skip_action = KF_OPENING_INPUT_SKIP;
         opening_fade_in();
         resource_file_load_allocated(cutscene_memory_arena, &tim_data, "B0/MIX0.", &tim_size);
         tim_upload_images(tim_data, tim_size);
@@ -65,16 +61,16 @@ void opening_run(Cutscene scene)
 
         for (;;) {
             opening_scene0_run();
-            if (opening_input_action != advance_action &&
-                opening_input_action == skip_action) {
+            if (opening_input_action != KF_OPENING_INPUT_ADVANCE &&
+                opening_input_action == KF_OPENING_INPUT_SKIP) {
                 opening_load_skip_assets();
                 break;
             }
 
             opening_input_action = KF_OPENING_INPUT_NONE;
             opening_scene1_run();
-            if (opening_input_action != advance_action) {
-                if (opening_input_action == skip_action) {
+            if (opening_input_action != KF_OPENING_INPUT_ADVANCE) {
+                if (opening_input_action == KF_OPENING_INPUT_SKIP) {
                     opening_load_skip_assets();
                     break;
                 }

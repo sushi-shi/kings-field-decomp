@@ -22,9 +22,9 @@ enum {
     SCENE0_FADE_OUT_START_POINT = 15,
     SCENE0_YAW_STEP = 40,
     SCENE0_SOUND_VOLUME = 100,
-    OPENING_COLOR_FADE_STEP = 0x100,
-    SCENE1_LEFT_TPAGE_X = 0x140,
-    SCENE1_RIGHT_TPAGE_X = 0x1c0,
+    OPENING_COLOR_FADE_STEP = KF_FIXED12_ONE / 16,
+    SCENE1_LEFT_TPAGE_X = 320,
+    SCENE1_RIGHT_TPAGE_X = 448,
     SCENE1_PANEL_WIDTH = 192,
     SCENE1_RIGHT_PANEL_X = 128,
     SCENE1_SHADE_STEP = 4,
@@ -132,7 +132,7 @@ static std::array<KfCameraPathPoint, ENDING_SCROLL_CAMERA_POINT_COUNT> opening_e
     KfCameraPathPoint{{KF_CAMERA_PATH_END_X, -1, -1, 0}, {-1, -1, -1, 0}, -1, 0},
 };
 
-SoundRef opening_scene0_sound = {9, 0, 0x43};
+SoundRef opening_scene0_sound = {9, 0, 67};
 
 std::array<KfScreenRect, KF_OPENING_SCENE3_PANEL_COUNT> opening_scene3_panels = {
     KfScreenRect{32, 256, 255, 254},
@@ -350,7 +350,7 @@ void opening_cylinder_transition(KfOpeningCylinderTransitionMode transition_mode
             if ((entity_index << KF_CYLINDER_TRANSITION_STAGGER_SHIFT) < frame) {
                 u16 scale_y = entity->scale.vy;
 
-                if (scale_y < KF_CYLINDER_TRANSITION_TALL_SCALE + 1) {
+                if (scale_y <= KF_CYLINDER_TRANSITION_TALL_SCALE) {
                     entity->scale.vy = scale_step + scale_y;
                 }
             }
@@ -408,7 +408,7 @@ void opening_scene3_run(void)
             &opening_camera_path_state.rotation);
         opening_poll_input();
         blend += OPENING_COLOR_FADE_STEP;
-        if (blend >= KF_FIXED12_ONE + 1) {
+        if (blend > KF_FIXED12_ONE) {
             break;
         }
     }

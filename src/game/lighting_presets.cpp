@@ -4,7 +4,7 @@
 
 enum {
     SHADOW_BLADE_COLOR_BLEND = 2500,
-    LIGHTING_EFFECT_BLEND = 0xc00
+    LIGHTING_EFFECT_BLEND = KF_FIXED12_ONE * 3 / 4
 };
 
 static inline void lighting_blend_current_color(const MATRIX *target, s32 amount)
