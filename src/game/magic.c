@@ -82,6 +82,7 @@ void magic_cast(void)
                 angles.x = LIGHTNING_UNTARGETED_PITCH;
                 distance = LIGHTNING_UNTARGETED_UPDATES;
             } else {
+                /* Unresolved source form: retail zeroes the pitch, then adds. */
                 angles.x = 0;
                 angles.x += player_state.camera_rotation.vx;
             }
