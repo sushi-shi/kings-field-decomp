@@ -502,12 +502,12 @@ s32 player_calculate_damage_component(s32 defender_power, s32 defense, s32 attac
  */
 ADDRESS(0x80016324, 0x390)
 void player_apply_damage(
-    u16 component0,
-    u16 component1,
-    u16 component2,
+    u16 cutting_damage,
+    u16 striking_damage,
+    u16 piercing_damage,
     KfPlayerStatusFlags status_effect_flags,
-    u16 component3,
-    u16 component4,
+    u16 magic_damage,
+    u16 fire_damage,
     u16 scale_q12,
     u16 multiplier_tenths)
 {
@@ -544,23 +544,23 @@ void player_apply_damage(
     damage = player_calculate_damage_component(
         player_state.physical_power * KF_DAMAGE_SUBUNITS_PER_HP,
         player_state.cutting_defense * KF_DAMAGE_SUBUNITS_PER_HP,
-        component0 * KF_DAMAGE_SUBUNITS_PER_HP);
+        cutting_damage * KF_DAMAGE_SUBUNITS_PER_HP);
     damage += player_calculate_damage_component(
         player_state.physical_power * KF_DAMAGE_SUBUNITS_PER_HP,
         player_state.striking_defense * KF_DAMAGE_SUBUNITS_PER_HP,
-        component1 * KF_DAMAGE_SUBUNITS_PER_HP);
+        striking_damage * KF_DAMAGE_SUBUNITS_PER_HP);
     damage += player_calculate_damage_component(
         player_state.physical_power * KF_DAMAGE_SUBUNITS_PER_HP,
         player_state.piercing_defense * KF_DAMAGE_SUBUNITS_PER_HP,
-        component2 * KF_DAMAGE_SUBUNITS_PER_HP);
+        piercing_damage * KF_DAMAGE_SUBUNITS_PER_HP);
     damage += player_calculate_damage_component(
         player_state.physical_power * KF_DAMAGE_SUBUNITS_PER_HP,
         player_state.magic_defense * KF_DAMAGE_SUBUNITS_PER_HP,
-        component3 * KF_DAMAGE_SUBUNITS_PER_HP);
+        magic_damage * KF_DAMAGE_SUBUNITS_PER_HP);
     damage += player_calculate_damage_component(
         player_state.physical_power * KF_DAMAGE_SUBUNITS_PER_HP,
         player_state.fire_defense * KF_DAMAGE_SUBUNITS_PER_HP,
-        component4 * KF_DAMAGE_SUBUNITS_PER_HP);
+        fire_damage * KF_DAMAGE_SUBUNITS_PER_HP);
     damage += KF_DAMAGE_SUBUNITS_PER_HP / 2;
     damage = (scale_q12 * (damage / KF_DAMAGE_SUBUNITS_PER_HP)) >> KF_FIXED12_BITS;
     loss = (multiplier_tenths * damage) / KF_PLAYER_DAMAGE_MULTIPLIER_ONE;
@@ -582,11 +582,11 @@ void player_apply_radial_damage(
     u32 radius,
     u16 falloff_q12,
     u16 base_power,
-    u16 component0,
-    u16 component1,
-    u16 component2,
-    u16 component3,
-    u16 component4,
+    u16 cutting_damage,
+    u16 striking_damage,
+    u16 piercing_damage,
+    u16 magic_damage,
+    u16 fire_damage,
     u16 scale_q12,
     u16 multiplier_tenths)
 {
@@ -603,7 +603,7 @@ void player_apply_radial_damage(
         attenuation = scale_q12;
     }
     player_apply_damage(
-        component0, component1, component2, KF_PLAYER_STATUS_NONE, component3, component4,
+        cutting_damage, striking_damage, piercing_damage, KF_PLAYER_STATUS_NONE, magic_damage, fire_damage,
         attenuation, multiplier_tenths);
 }
 

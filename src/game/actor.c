@@ -8,9 +8,10 @@
 #include <psyq/libc.h>
 #include <kf/game/player.h>
 
+/* Facing tolerances in 4096-per-turn angle units (about 35 and 40 degrees). */
 enum {
-    ACTOR_SELECTION_ANGLE_TOLERANCE = 0x18e,
-    ACTOR_MULTI_HIT_SELECTION_ANGLE_TOLERANCE = 0x1c7
+    ACTOR_SELECTION_ANGLE_TOLERANCE = 398,
+    ACTOR_MULTI_HIT_SELECTION_ANGLE_TOLERANCE = 455
 };
 
 enum {
@@ -294,11 +295,11 @@ ADDRESS(0x8002d120, 0x388)
 void actor_apply_damage(
     u16 actor_index,
     u16 base_power,
-    u16 component0,
-    u16 component1,
-    u16 component2,
-    u16 component3,
-    u16 component4,
+    u16 cutting_damage,
+    u16 striking_damage,
+    u16 piercing_damage,
+    u16 magic_damage,
+    u16 fire_damage,
     u16 scale,
     KF_ENUM_PARAM(KfEffectType, u16) hit_flags)
 {
@@ -324,23 +325,23 @@ void actor_apply_damage(
     }
     damage = combat_calculate_damage_component(
         base_power * KF_DAMAGE_SUBUNITS_PER_HP,
-        component0 * KF_DAMAGE_SUBUNITS_PER_HP,
+        cutting_damage * KF_DAMAGE_SUBUNITS_PER_HP,
         definition->defenses[KF_COMBAT_COMPONENT_CUTTING] * KF_DAMAGE_SUBUNITS_PER_HP);
     damage += combat_calculate_damage_component(
         base_power * KF_DAMAGE_SUBUNITS_PER_HP,
-        component1 * KF_DAMAGE_SUBUNITS_PER_HP,
+        striking_damage * KF_DAMAGE_SUBUNITS_PER_HP,
         definition->defenses[KF_COMBAT_COMPONENT_STRIKING] * KF_DAMAGE_SUBUNITS_PER_HP);
     damage += combat_calculate_damage_component(
         base_power * KF_DAMAGE_SUBUNITS_PER_HP,
-        component2 * KF_DAMAGE_SUBUNITS_PER_HP,
+        piercing_damage * KF_DAMAGE_SUBUNITS_PER_HP,
         definition->defenses[KF_COMBAT_COMPONENT_PIERCING] * KF_DAMAGE_SUBUNITS_PER_HP);
     damage += combat_calculate_damage_component(
         base_power * KF_DAMAGE_SUBUNITS_PER_HP,
-        component3 * KF_DAMAGE_SUBUNITS_PER_HP,
+        magic_damage * KF_DAMAGE_SUBUNITS_PER_HP,
         definition->defenses[KF_COMBAT_COMPONENT_HOLY] * KF_DAMAGE_SUBUNITS_PER_HP);
     damage += combat_calculate_damage_component(
         base_power * KF_DAMAGE_SUBUNITS_PER_HP,
-        component4 * KF_DAMAGE_SUBUNITS_PER_HP,
+        fire_damage * KF_DAMAGE_SUBUNITS_PER_HP,
         definition->defenses[KF_COMBAT_COMPONENT_FIRE] * KF_DAMAGE_SUBUNITS_PER_HP);
     damage += KF_DAMAGE_SUBUNITS_PER_HP / 2;
     damage = (damage / KF_DAMAGE_SUBUNITS_PER_HP) * scale / KF_ACTOR_DAMAGE_SCALE_ONE;
@@ -348,10 +349,12 @@ void actor_apply_damage(
     if (damage == 0) {
         return;
     }
+    /* A player hit trains magic when it has no physical part and physical
+     * power when it strikes or pierces; a purely cutting hit trains neither. */
     if (actor->health != 0 && hit_flags == KF_ACTOR_DAMAGE_CREDIT_PLAYER) {
-        if (component0 == 0 && component1 == 0 && component2 == 0) {
+        if (cutting_damage == 0 && striking_damage == 0 && piercing_damage == 0) {
             player_increment_magic_training();
-        } else if (component1 != 0 || component2 != 0) {
+        } else if (striking_damage != 0 || piercing_damage != 0) {
             player_increment_physical_power_training();
         }
     }
@@ -383,11 +386,11 @@ void actor_pool_apply_radial_damage(
     u32 radius,
     u16 falloff_q12,
     u16 base_power,
-    u16 component0,
-    u16 component1,
-    u16 component2,
-    u16 component3,
-    u16 component4,
+    u16 cutting_damage,
+    u16 striking_damage,
+    u16 piercing_damage,
+    u16 magic_damage,
+    u16 fire_damage,
     u16 scale,
     KF_ENUM_PARAM(KfEffectType, u16) hit_flags)
 {
@@ -427,11 +430,11 @@ void actor_pool_apply_radial_damage(
         actor_apply_damage(
             index,
             base_power,
-            component0,
-            component1,
-            component2,
-            component3,
-            component4,
+            cutting_damage,
+            striking_damage,
+            piercing_damage,
+            magic_damage,
+            fire_damage,
             damage_scale,
             hit_flags);
     }
@@ -545,6 +548,7 @@ s32 actor_distance_to_point(
     s32 delta_y;
     s32 distance;
 
+    /* point_x and point_z become the actor's offsets from the point. */
     point_x = actor->position.vx - point_x;
     if (point_x < -max_distance || max_distance < point_x) {
         return KF_DISTANCE_NONE;
@@ -796,8 +800,7 @@ KfActorAction actor_try_select_profiled_action(KfActorAction action,
     KF_ENUM_PARAM(KfActorEffectCode, u16) effect_code,
     u16 chance)
 {
-    KF_ENUM_PARAM(KfEffectKind, u16)
-    profile = KF_ENUM_DECODE(KF_ENUM_PARAM(KfEffectKind, u16),
+    KF_ENUM_PARAM(KfEffectKind, u16) profile = KF_ENUM_DECODE(KF_ENUM_PARAM(KfEffectKind, u16),
         KF_ENUM_ENCODE(u16, effect_code & KF_ACTOR_EFFECT_KIND_MASK));
     KfActorActionProfile *weights = &actor_action_profiles[KF_ENUM_ENCODE(u16, profile)];
     KfActor *actor = actor_state.current;
@@ -829,6 +832,8 @@ KfActorAction actor_try_select_profiled_action(KfActorAction action,
         && rand() >= ACTOR_PROFILE_FACING_BYPASS_LIMIT) {
         goto rejected;
     }
+    /* A spawner summons only while fewer than two actors are active (the
+     * caster included) and no summon is still in flight. */
     if (profile == KF_EFFECT_KIND_ACTOR_SPAWNER) {
         candidate = actor_state.actors;
         count = 0;
