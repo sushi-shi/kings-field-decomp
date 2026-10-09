@@ -19,7 +19,7 @@ void render_map_cell(s32 col, s32 row, KfCellVisibility visibility)
     if (object_index == KF_ENUM_ENCODE(u8, KF_MAP_ATTRIBUTE_NONE)) {
         return;
     }
-    object_index = object_index - 1;
+    object_index--;
     if (object_index > KF_MAP_MESHES_PER_BANK - 1) {
         return;
     }
