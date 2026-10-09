@@ -213,15 +213,13 @@ void map_ambient_script_floor4(void)
 ADDRESS(0x800342ec, 0xf4)
 void map_ambient_script_floor5(void)
 {
-    KfMapScriptFlag *encounter_started = &map_runtime_state.world_state.floors[4].script.floor5.boss_encounter_started;
-
-    if (*encounter_started == KF_MAP_SCRIPT_UNSET
+    if (map_runtime_state.world_state.floors[4].script.floor5.boss_encounter_started == KF_MAP_SCRIPT_UNSET
         && player_state.motion_state.fields.map_cell.coords.x >= 38
         && player_state.motion_state.fields.map_cell.coords.x < 41
         && player_state.motion_state.fields.map_cell.coords.z == 7
         && (u16)player_state.camera_rotation.vy >= MAP_BOSS_REVEAL_YAW_MIN
         && (u16)player_state.camera_rotation.vy < MAP_BOSS_REVEAL_YAW_END) {
-        *encounter_started = KF_MAP_SCRIPT_SET;
+        map_runtime_state.world_state.floors[4].script.floor5.boss_encounter_started = KF_MAP_SCRIPT_SET;
         screen_show_image_until_input("TALK\\C17\\T55171.TIM");
         render_frame(NULL, NULL);
         render_frame(NULL, NULL);
@@ -511,13 +509,11 @@ void map_event_interact(KfMapEvent *event)
 ADDRESS(0x80034d54, 0x90)
 void map_show_screen_image(KfMapImageGroup group, s32 index)
 {
-    char *directory_floor = &map_screen_image_path[5];
-
-    *directory_floor = KF_ENUM_ENCODE(u8, player_state.progress_state.current_floor) + '0';
+    map_screen_image_path[5] = KF_ENUM_ENCODE(u8, player_state.progress_state.current_floor) + '0';
     map_screen_image_path[8] = KF_ENUM_ENCODE(s32, group) + '0';
     map_screen_image_path[9] = index / 10 + '0';
     map_screen_image_path[10] = index % 10 + '0';
-    screen_show_image_until_input(directory_floor - 5);
+    screen_show_image_until_input(map_screen_image_path);
 }
 
 ADDRESS(0x80034de4, 0x904)
@@ -625,6 +621,10 @@ clear_event_phase:
                     break;
                 }
 
+                /*
+                 * Retail re-reads the first item slot on every pass. Unresolved
+                 * source form: the scan-end local reproduces its compare.
+                 */
                 item_index = KF_MAP_CONTAINER_ITEM_COUNT - 1;
                 for (;;) {
                     KfObjectId item_parameter = object->link.hinged_container.item_ids[0];

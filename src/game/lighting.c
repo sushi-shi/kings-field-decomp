@@ -37,8 +37,6 @@ void color_matrix_set_rgb(s16 red, s16 green, s16 blue, MATRIX *matrix)
     matrix->m[2][0] = blue;
 }
 
-/* Psy-Q LIBGTE: ReadColorMatrix(MATRIX *). */
-
 /* Cycles the colour matrix green, cyan, white and back while restoring HP and MP. */
 ADDRESS(0x80033e10, 0xd4)
 void player_restore_vitals_with_color_cycle(void)
