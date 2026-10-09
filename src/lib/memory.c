@@ -88,6 +88,7 @@ void *memory_allocate(s32 size)
     void *block;
     s32 depth;
 
+    /* SIZE becomes the recorded stack entry: the block itself on the heap. */
     if (*cursor == NULL) {
         block = memory_malloc_checked(size);
         size = (s32)block;
