@@ -112,13 +112,10 @@ u8 *map_resource_load_file(const char *filename)
 ADDRESS(0x8001b414, 0x88)
 void map_variant_assets_load(void)
 {
-    /* Both retail calls reload the buffer through one saved slot address. */
-    u8 **asset_buffer = &map_runtime_state.variant_asset_buffer;
-
     memcpy((void *)(&map_resource_path[3]), (const void *)("CHR0.MIM"), sizeof "CHR0.MIM");
     map_resource_path[6] = KF_ENUM_ENCODE(u8, player_state.map_variant) + '0';
-    cd_file_load_into((void *)*asset_buffer, map_resource_path);
-    asset_registry_load_tmd_archive(KF_ASSET_ACTOR_FIRST, *asset_buffer);
+    cd_file_load_into((void *)map_runtime_state.variant_asset_buffer, map_resource_path);
+    asset_registry_load_tmd_archive(KF_ASSET_ACTOR_FIRST, map_runtime_state.variant_asset_buffer);
 }
 
 ADDRESS(0x8001b49c, 0xbc)
