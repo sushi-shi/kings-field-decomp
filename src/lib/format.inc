@@ -74,7 +74,11 @@ s32 format_vsprintf(u8 *out, u8 *format, va_list args)
     u8 c;
     char *s;
 
-    while ((c = *format++) != 0) {
+    for (;;) {
+        c = *format++;
+        if (c == 0) {
+            break;
+        }
         if (c >= '1' && c <= '8') {
             if (parser_state != KF_FORMAT_PARSER_TEXT) {
                 width = c - '0';
@@ -109,7 +113,11 @@ s32 format_vsprintf(u8 *out, u8 *format, va_list args)
                     }
                 }
             copy:
-                while ((c = *s++) != 0) {
+                for (;;) {
+                    c = *s++;
+                    if (c == 0) {
+                        break;
+                    }
                     *out++ = c;
                     count++;
                 }

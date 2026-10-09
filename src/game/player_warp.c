@@ -109,7 +109,9 @@ void player_warp_change_floor(KfFloorId floor, u32 map_variant)
 {
     VECTOR position;
 
-    PLAYER_FLOOR_POSITION(position);
+    position.vx = player_state.camera_position.vx;
+    position.vz = player_state.camera_position.vz;
+    position.vy = player_state.foot_height;
     player_warp_shimmer(KF_WARP_SHIMMER_GROW_REMOVE, &position);
     map_unload_floor();
     player_state.progress_state.current_floor = floor;
@@ -134,7 +136,9 @@ void player_warp_same_floor(u32 map_variant, s32 cell_x, s32 cell_z)
     VECTOR position;
     KfMapVariant previous_variant;
 
-    PLAYER_FLOOR_POSITION(position);
+    position.vx = player_state.camera_position.vx;
+    position.vz = player_state.camera_position.vz;
+    position.vy = player_state.foot_height;
     player_warp_shimmer(KF_WARP_SHIMMER_GROW_REMOVE, &position);
     collision_adjust_cell_occupancy(player_state.motion_state.fields.map_cell.coords.x,
                                     player_state.motion_state.fields.map_cell.coords.z, -1);
