@@ -18,7 +18,7 @@ ADDRESS(0x8001764c, 0xcf8)
 void render_enqueue_tmd(u16 object_index, s16 depth_bias)
 {
     KfTmdObject *object = tmd_get_object(object_index);
-    /* Unresolved retail reservation; docs/patterns/stack-carrier-review.md. */
+    /* Unresolved retail reservation. */
     u16 unattributed_stack_slot[2];
     u32 header;
     u32 remaining = object->primitive_count;

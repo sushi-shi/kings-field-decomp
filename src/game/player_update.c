@@ -112,7 +112,7 @@ void player_update(void)
     KfMagicRecord *record;
     KfActor *target;
     const VECTOR *origin;
-    /* Unresolved retail reservation; docs/patterns/stack-carrier-review.md. */
+    /* Unresolved retail reservation. */
     SVECTOR unused_vector;
     SVECTOR direction;
     SVECTOR *launch_direction;

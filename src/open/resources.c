@@ -149,9 +149,11 @@ void opening_resources_load_scene0(void)
     cd_file_load_allocated(&stream, "B0\\MIXA0.");
     vab_header = stream + KF_RESOURCE_CHUNK_HEADER_BYTES;
     RESOURCE_STREAM_NEXT(stream);
+
     vab_chunk = stream;
     audio_load_vab(vab_header, vab_chunk + KF_RESOURCE_CHUNK_HEADER_BYTES);
     RESOURCE_STREAM_NEXT(stream);
+
     source = resource_stream_copy_words(
         map_cell_attribute_grid.words,
         RESOURCE_STREAM_PAYLOAD(stream, const u32),
@@ -165,12 +167,15 @@ void opening_resources_load_scene0(void)
     resource_stream_copy_words(
         map_collision_grid.words, source, MAP_GRID_WORDS);
     RESOURCE_STREAM_NEXT(stream);
+
     item_load_floor_placements(RESOURCE_STREAM_PAYLOAD(stream, KfFloorItemPlacement));
     RESOURCE_STREAM_NEXT(stream);
+
     opening_entity_pool_load_placements(
         RESOURCE_STREAM_PAYLOAD(stream, const KfMapObjectPlacement),
         KF_OPENING_ENTITY_FLOOR_HEIGHT);
     RESOURCE_STREAM_NEXT(stream);
+
     memory_release_last();
     memory_arena.allocation.cursor = vab_chunk + KF_RESOURCE_REUSE_PREFIX_BYTES;
     audio_play_sequence_file("B0\\OPEN0.");
@@ -178,9 +183,11 @@ void opening_resources_load_scene0(void)
     tmd_register(KF_TMD_SLOT_ENTITIES,
         RESOURCE_STREAM_PAYLOAD(stream, KfTmdHeader));
     RESOURCE_STREAM_NEXT(stream);
+
     tmd_register(KF_TMD_SLOT_MAP,
         RESOURCE_STREAM_PAYLOAD(stream, KfTmdHeader));
     RESOURCE_STREAM_NEXT(stream);
+
     memory_set_allocation_mode(KF_MEMORY_USE_HEAP);
 }
 
@@ -197,9 +204,11 @@ void opening_resources_load_scene1(void)
     cd_file_load_allocated(&stream, "B0\\MIXA1.");
     vab_header = stream + KF_RESOURCE_CHUNK_HEADER_BYTES;
     RESOURCE_STREAM_NEXT(stream);
+
     vab_chunk = stream;
     audio_load_vab(vab_header, vab_chunk + KF_RESOURCE_CHUNK_HEADER_BYTES);
     RESOURCE_STREAM_NEXT(stream);
+
     memory_release_last();
     opening_scene1_arena_cursor = vab_chunk + KF_RESOURCE_REUSE_PREFIX_BYTES;
     memory_arena.allocation.cursor = opening_scene1_arena_cursor;
@@ -224,11 +233,13 @@ void opening_resources_load_scene3(void)
         RESOURCE_STREAM_PAYLOAD(stream, const KfMapObjectPlacement),
         KF_OPENING_SCENE_BASE_Y);
     RESOURCE_STREAM_NEXT(stream);
+
     memory_release_last();
     cd_file_load_allocated(&stream, "B0\\MIXB3.");
     tmd_register(KF_TMD_SLOT_ENTITIES,
         RESOURCE_STREAM_PAYLOAD(stream, KfTmdHeader));
     RESOURCE_STREAM_NEXT(stream);
+
     memory_release_last();
     memory_set_allocation_mode(KF_MEMORY_USE_HEAP);
 }
@@ -249,13 +260,16 @@ void opening_resources_load_ending(void)
     cd_file_load_allocated(&stream, "B0\\MIXAE.");
     vab_header = stream + KF_RESOURCE_CHUNK_HEADER_BYTES;
     RESOURCE_STREAM_NEXT(stream);
+
     vab_chunk = stream;
     audio_load_vab(vab_header, vab_chunk + KF_RESOURCE_CHUNK_HEADER_BYTES);
     RESOURCE_STREAM_NEXT(stream);
+
     opening_entity_pool_load_placements(
         RESOURCE_STREAM_PAYLOAD(stream, const KfMapObjectPlacement),
         KF_OPENING_SCENE_BASE_Y);
     RESOURCE_STREAM_NEXT(stream);
+
     memory_release_last();
     *arena_cursor = vab_chunk + KF_RESOURCE_REUSE_PREFIX_BYTES;
     audio_play_sequence_file(opening_ending_sequence_path);
@@ -263,6 +277,7 @@ void opening_resources_load_ending(void)
     tmd_register(KF_TMD_SLOT_ENTITIES,
         RESOURCE_STREAM_PAYLOAD(stream, KfTmdHeader));
     RESOURCE_STREAM_NEXT(stream);
+
     opening_ending_arena_cursor = *arena_cursor;
     memory_set_allocation_mode(KF_MEMORY_USE_HEAP);
 }
@@ -277,6 +292,7 @@ void opening_resources_load_ending_entities(void)
         RESOURCE_STREAM_PAYLOAD(stream, const KfMapObjectPlacement),
         KF_OPENING_SCENE_BASE_Y);
     RESOURCE_STREAM_NEXT(stream);
+
     memory_release_last();
 }
 
@@ -295,6 +311,7 @@ void opening_resources_load_ending_sequence(void)
     cd_file_load_allocated(&stream, "B0\\MIXAG.");
     vab_header = stream + KF_RESOURCE_CHUNK_HEADER_BYTES;
     RESOURCE_STREAM_NEXT(stream);
+
     vab_chunk = stream;
     audio_load_vab(vab_header, vab_chunk + KF_RESOURCE_CHUNK_HEADER_BYTES);
     memory_release_last();

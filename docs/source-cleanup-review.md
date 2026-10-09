@@ -8,15 +8,15 @@ verdicts; generated syntax counts do not prove object bounds or ownership.
 
 | Finding | Source evidence | Current verdict |
 | --- | --- | --- |
-| Third actor attachment | Retail indexes three triples; the third x/y lanes are also special-attack chance/range | Candidate corrected to one three-element array with named signed readers; forced actor behavior and loader objects are byte-identical; see [layout evidence](patterns/actor-attachment-layout.md) |
+| Third actor attachment | Retail indexes three triples; the third x/y lanes are also special-attack chance/range | Candidate corrected to one three-element array with named signed readers; forced actor behavior and loader objects are byte-identical |
 | Saved-floor owner | `map_load.c` previously subtracted 1690 bytes before adding the floor stride | Candidate corrected to `world_state.floors[current_floor - 1].records`; forced `game.map_load` object is byte-identical to baseline |
-| Audio resource sequencing | Five GAME/OPEN loaders read and advance `stream` in one call | Corrected: capture the header before advancing `stream`; all five calls and 18 resource-unit functions remain strict 100%; see [sequencing evidence](patterns/resource-vab-sequencing.md) |
+| Audio resource sequencing | Five GAME/OPEN loaders read and advance `stream` in one call | Corrected: capture the header before advancing `stream`; all five calls and 18 resource-unit functions remain strict 100% |
 | Effect arguments | `effect_pool_construct` walks raw stack slots from `&direction` | Open: documented typed-varargs candidates are non-exact |
-| Stack carriers | Unused vectors/matrices in GAME, two OPEN reservations, one-shot menu loop | Five individual open verdicts: ordinary forms change frame instructions or glyph-loop registers; see [paired controls and SDK evidence](patterns/stack-carrier-review.md); exact bytes do not establish these source forms |
-| Shared memory dependency | `src/lib/memory.c` included `kf/game/game.h` | Corrected to `kf/lib/memory.h`; all 39 remaining GAME consumers now import reviewed owner headers; see [dependency verdicts](patterns/game-header-dependencies.md) |
+| Stack carriers | Unused vectors/matrices in GAME, two OPEN reservations, one-shot menu loop | Five individual open verdicts: ordinary forms change frame instructions or glyph-loop registers; exact bytes do not establish these source forms |
+| Shared memory dependency | `src/lib/memory.c` included `kf/game/game.h` | Corrected to `kf/lib/memory.h`; all 39 remaining GAME consumers now import reviewed owner headers |
 | Map-link word view | No direct `.words` consumer; retail copies the payload with two aligned word loads/stores | Retain: it supplies four-byte alignment for the aggregate copy; original declaration form remains unknown |
-| Animation binding result | Returns NULL, pointer-shaped static sentinel 1, or a live record | Retain mixed pointer contract; five direct callers and stored-pointer evidence reviewed; public ownership comment clarified; see [contract evidence and indirect limits](patterns/animation-and-inherited-contracts.md) |
-| Inherited behavior | Uninitialized animation read, missing returns, and an unwritten direction buffer | Retain four individually evidenced questions; original source explanations remain open; see [retention evidence](patterns/animation-and-inherited-contracts.md); intentional repairs belong in the port |
+| Animation binding result | Returns NULL, pointer-shaped static sentinel 1, or a live record | Retain mixed pointer contract; five direct callers and stored-pointer evidence reviewed; public ownership comment clarified |
+| Inherited behavior | Uninitialized animation read, missing returns, and an unwritten direction buffer | Retain four individually evidenced questions; original source explanations remain open; intentional repairs belong in the port |
 
 The clean baseline builds all three executables and reports **465/471 strict
 exact functions**. Analysis still fails existing data and section-placement

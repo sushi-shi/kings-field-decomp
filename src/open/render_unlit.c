@@ -17,7 +17,7 @@ void render_enqueue_unlit_triangles(u16 object_index, s16 depth_bias)
     KfScreenVertex *vertex0;
     KfScreenVertex *vertex1;
     KfScreenVertex *vertex2;
-    /* Unresolved retail reservation; docs/patterns/stack-carrier-review.md. */
+    /* Unresolved retail reservation. */
     u16 unattributed_stack_slot[2];
     u32 header;
     s32 depth;

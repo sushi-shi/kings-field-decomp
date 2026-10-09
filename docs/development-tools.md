@@ -85,4 +85,5 @@ using libclang in both language views. This metric has a down-only cleanliness
 floor; the retained non-exact cleanup controls still count. Use
 `python -m scripts.kf.expression_assignments --json` for locations, spelling
 origins and image/function contexts, or `--check` to require zero.
-See [the assignment verdicts](patterns/expression-assignment-review.md).
+Readable polling/formatter conditions, sprite chains and copy macros remain
+counted, along with four accepted exactness exceptions.

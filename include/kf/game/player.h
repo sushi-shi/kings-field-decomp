@@ -284,6 +284,12 @@ extern VECTOR player_position_snapshot;
 extern SVECTOR player_rotation_snapshot;
 extern KfPlayerState player_state;
 
+/* Side-effect-free VECTOR lvalue; preserves X/Z/foot-Y publication order. */
+#define PLAYER_FLOOR_POSITION(position) ( \
+    (position).vx = player_state.camera_position.vx, \
+    (position).vz = player_state.camera_position.vz, \
+    (position).vy = player_state.foot_height)
+
 /* Inventory table index, evaluated once for each slot until a match.
  * Supply a side-effect-free expression; magic uses a separate ID domain. */
 #define PLAYER_ITEM_IS_EQUIPPED(item_index) \

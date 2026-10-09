@@ -9,26 +9,6 @@ See the [current source cleanup review](../source-cleanup-review.md) for
 open owner, argument-access, stack-carrier, and alignment findings. Older
 campaign counts and verdicts retain their recorded scope.
 
-- [stack-carrier-review.md](stack-carrier-review.md): five individual source
-  verdicts, SDK output extents, paired ordinary-source controls and remaining
-  conflicts with source-modeling rules.
-
-- [animation-and-inherited-contracts.md](animation-and-inherited-contracts.md):
-  retained animation pointer/sentinel contract, five retail callers, and four
-  individually named inherited behavior questions.
-
-- [game-header-dependencies.md](game-header-dependencies.md): individual
-  declaration-owner imports for all 39 former GAME umbrella consumers, with
-  both language views and unchanged compiled/link outputs.
-
-- [resource-vab-sequencing.md](resource-vab-sequencing.md): five GAME/OPEN
-  audio calls with sequenced header capture, unchanged strict matches, and
-  preserved arena cursor ownership.
-
-- [actor-attachment-layout.md](actor-attachment-layout.md): three bounded
-  attachment slots, shared signed special-attack lanes, shipped boss evidence,
-  and byte-identical native compiler controls.
-
 - [shared-game-open-code.md](shared-game-open-code.md): complete GAME/OPEN function
   accounting, common implementations, reusable single-image helpers, and retained
   behavior differences with unchanged compiler and linker outputs.
@@ -984,6 +964,3 @@ campaign counts and verdicts retain their recorded scope.
   switches and conditional reads through misindexed armor records.
 - [Codec type consistency](codec-type-consistency.md): shared vector and sound
   types, header-backed record models, and explicit encoded-byte boundaries.
-
-- [expression-assignment-review.md](expression-assignment-review.md): libclang
-  metric, explicit statement cleanup, and eleven retained exact assignment sites.

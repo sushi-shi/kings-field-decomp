@@ -1446,7 +1446,7 @@ void menu_draw_item_detail(KF_ENUM_PARAM(KfObjectId, s32) item_id, KF_ENUM_PARAM
     current_poly_ft4 = (POLY_FT4 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
     text.position.x = MENU_ITEM_NAME_X;
     text.position.y = MENU_ITEM_PREVIEW_NAME_Y;
-    /* Unresolved source contour; docs/patterns/stack-carrier-review.md. */
+    /* Unresolved source contour. */
     do {
         i = 0;
     } while (0);
