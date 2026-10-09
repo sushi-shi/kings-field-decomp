@@ -17,10 +17,10 @@ The game builds as three C programs: the loader, main game, and opening.
 
 | Branch | Purpose |
 | --- | --- |
-| `master` | Reconstruction and matching |
-| `source` | C++ PS1 build, codecs, and base for porting |
-| `classic` | C PS1 build |
-| `port` | Crossplatform port |
+| [master](https://github.com/sushi-shi/kings-field-decomp/tree/master) | Reconstruction and matching |
+| [source](https://github.com/sushi-shi/kings-field-decomp/tree/source) | C++ PS1 build, codecs, and base for porting |
+| [classic](https://github.com/sushi-shi/kings-field-decomp/tree/classic) | C PS1 build |
+| [port](https://github.com/sushi-shi/kings-field-decomp/tree/port) | Crossplatform port |
 
 ## Build and run
 

@@ -1,44 +1,38 @@
 # King's Field
 
 Binary-matching decompilation of the original Japanese King's Field
-(`SLPS-00017`).
+(`SLPS-00017`), comprising the independently linked `PSX.EXE`, `GAME.EXE`,
+and `OPEN.EXE` programs. An address always belongs to one image.
 
-Original project contributions are dedicated to the public domain under
-[CC0 1.0 Universal](LICENSE), to the extent of the contributors' rights.
-This does not grant rights to FromSoftware's game or Sony/Psy-Q material,
-including the reconstructed library routines under `vendor/`.
-Retail game files must be supplied locally; they are not included in this
-repository. The Nix environment downloads the historical SDK separately; see
-[the toolchain documentation](docs/toolchain.md).
+## Quickstart
+
+```sh
+nix develop
+kf init --retail-dir /path/to/hash-identical/retail
+kf build
+kf analyze
+kf status
+```
+
+Supply retail game files locally. `kf build` produces the three executables;
+`kf analyze` refreshes comparison objects and checks reconstruction;
+`kf status` reads current results. Existing data and section-placement failures
+remain under investigation. Exact function matches, exact data owners, and
+executable similarity are separate measurements.
+
+See [build commands](docs/build-system.md), [toolchain setup](docs/toolchain.md),
+and [editor, emulator, and audit tools](docs/development-tools.md).
 
 ## Branches
 
-```text
-              master (you are here)
-                 |
-     +-----------+-----------+
-     |                       |
-     v                       v
-  source                  classic
-     |
-     v
-   port
-```
-
 | Branch | Purpose |
 | --- | --- |
-| `master` | Reconstruction and matching |
-| `source` | C++ PS1 build, codecs, and base for porting |
-| `classic` | C PS1 build |
-| `port` | Crossplatform port |
+| [master](https://github.com/sushi-shi/kings-field-decomp/tree/master) | Reconstruction and matching |
+| [source](https://github.com/sushi-shi/kings-field-decomp/tree/source) | Generated C++ PS1 source and resource codecs; base for porting |
+| [classic](https://github.com/sushi-shi/kings-field-decomp/tree/classic) | Generated C PS1 source |
+| [port](https://github.com/sushi-shi/kings-field-decomp/tree/port) | Linux and WebAssembly port |
 
-`source` is the clean C++ base for porting and includes the resource codecs.
-`classic` is the runnable C export without codecs. See [generation](docs/clean-source.md).
-
-Reusable math, memory, rendering, and audio helpers live in `src/lib`, including
-utilities used by only one image. See the [complete GAME/OPEN accounting](docs/patterns/shared-game-open-code.md).
-Public declarations mirror that ownership under `include/kf/lib`,
-`include/kf/game`, and `include/kf/open`.
+See [export generation](docs/clean-source.md) and the [port guide](docs/port-guide.md).
 
 <!-- match-score:start -->
 ## Match status
@@ -81,195 +75,28 @@ Missing or stale outputs show —. See [the linking guide](docs/executable-linki
 for the algorithm, scope and per-image interactive reports.
 <!-- executable-score:end -->
 
-## Reconstruction debt
-
-Manually maintained cleanup checklist:
-
-- Inspect unresolved data ownership with `kf verify board --data`.
-  The board separates ownership candidates from the informational raw `DAT_`
-  count; see [inventory metric rules](docs/function-and-data-inventory.md).
-- [ ] Close [SDK object evidence](docs/sdk-object-audit.md): **29 lineage
-  module identities**; the last ambiguous audio helper may belong to `SSCALL`.
-  Match the functions the game needs: **607 SDK occurrences** have proven or
-  validated reference paths, with **26 candidate-only** occurrences to review;
-  see the [usage TSV command and scope](docs/sdk-object-audit.md#matching-scope-and-function-list).
-  The [complete SDK function TSV](config/retail/functions_vendored.tsv) lists all
-  **1,138** known linked SDK occurrences; the **505 unreached** rows are not
-  automatically required reconstruction work or proven unused code.
-  Search missing 1994 SDK archives/source before reconstructing them.
-- [ ] Resolve the [SDK interrupt compatibility workaround](docs/patterns/sdk-interrupt-return.md).
-  Leaving the starting-door plaque open could stop BIOS input and sound updates
-  in rebuilt games under PCSX-Redux/OpenBIOS; retail worked. The build currently
-  applies a hash-guarded, one-instruction patch to the pinned SDK's interrupt
-  dispatcher. It resolves the reproduced failure, but is construction debt,
-  not a proven general SDK fix; original-BIOS/hardware validation remains open.
-  Preserve original game logic in `master` and `classic`: do not change plaque
-  timing, draw synchronization, or callback scheduling to avoid this failure.
-  Resolve the SDK/BIOS compatibility cause with evidence; intentional game-side
-  adaptations belong in `port`.
-  Replacing the containing `INTR` object would cover **18 functions per overlay**;
-  its [matching scope](docs/sdk-object-audit.md#interrupt-workaround-scope) is smaller
-  than rebuilding all unresolved SDK modules.
-- [ ] Review casts and remove avoidable conversions: **625 written casts**
-  (**544 pointer**, **81 scalar**; 19 of them in headers). The [cast/union debt campaign](docs/patterns/cast-union-debt.md)
-  clarifies grid, copy, and asset-offset access and requires explicit void-pointer boundaries;
-  raw counts remain review inputs, not a measure of incorrect types. Its
-  [open decisions](docs/patterns/cast-union-debt.md#open-decisions-from-the-per-site-review)
-  include the instruction-neutral `AddPrim`/`SetSemiTrans` erasures.
-- [ ] Review unions and simplify avoidable alternate views: **31 union definitions**;
-  seven wrappers replaced with canonical structs or SDK types. Four grids retain
-  typed coordinate/linear views plus the loader's word view; `KfMapObjectLink.words`
-  is declared but never accessed.
-- [x] Review gotos: **72 statements** (**66 GAME**, **4 OPEN**, **2** in shared
-  `src/lib/format.inc`); each joins a retail block with several predecessors.
-- [x] Review artificial address arithmetic: **0 cases**; the unallocated
-  retail stack word in both OPEN emitters is carried by a never-read local.
-- [x] Review owner recovery from member pointers: **0 sites**.
-- [x] Review out-of-object pointers: **0 cases**.
-- [ ] Review manual varargs: **1 function**; `effect_pool_construct` still
-  reads argument slots directly. The [argument-access audit](docs/patterns/effect-constructor-varargs.md)
-  records the typed `va_arg` candidate and its remaining non-exact code.
-- [x] Review unrelated variable reuse: **0 functions**; working values are
-  named locals initialised from their parameters at declaration.
-- [x] Review stack aggregates and unused members: **0 aggregates**; the
-  unread second `ReadSZ2` argument is the SDK call sequence retail makes.
-- [x] Review unresolved buffer bounds: **0 regions**; both formatter scratch
-  buffers are claimed as the aligned 24-byte reservation their code
-  accesses and match the data gate; the original declaration extents are
-  unknowable from the image and are noted in source.
-- [x] [Triage compiler warning families](docs/patterns/compiler-warning-triage.md):
-  15 safe cleanup sites retain identical code/data; **3,845 Clang C++20**,
-  **2,719 Clang C89**, **631 GCC** unique diagnostic lines remain, including
-  SDK/compatibility diagnostics. Per-site type/buffer work remains open.
-- [ ] Resolve five resource-cursor sequencing sites and **2 data preconditions**
-  narrowed by shipped-data checks. Preserve **4 inherited scalar uninitialized
-  reads** and three passed-buffer warnings on decomp; intentional behavior repairs
-  belong in `port`.
-- [x] Search for inline functions and apply the review; see the [39 retained helpers](docs/patterns/common-code-review.md).
-- [x] Search for macros for common code and apply the review; [522 function entries read](docs/common-code-functions.tsv), [90 candidate verdicts](docs/common-code-candidates.tsv).
-
-Preserve banked matches. Cast/union/goto counts cover the tree; other counts
-cover audited cases. See the
-[cast review and matching constraints](docs/patterns/cast-owner-reduction.md)
-and the [reconstruction debt review](docs/patterns/reconstruction-debt-review.md).
-
-## Quickstart
-
-```sh
-nix develop
-kf init --retail-dir /path/to/hash-identical/retail
-kf build
-kf analyze
-kf match
-kf status
-```
-
-`kf build` compiles the source into Psy-Q objects, links those objects and the
-SDK libraries with PSYLINK, and converts the result to the three PS-X EXEs.
-`kf analyze` refreshes derived delinked and ELF comparison views. `kf status`
-is read-only; `kf bank` is the only command that updates the committed
-high-water ledger. Use `--image psx|game|open` to focus one linked program and
-`kf status --json` for machine-readable output.
-
-Inside `nix develop`, `objdiff` automatically opens `build/objdiff`, including
-from subdirectories. This single project groups units under `psx/`, `game/`,
-and `open/`. Run `kf analyze` first to generate it; an explicit `objdiff -p PATH`
-still opens another project.
-
-The development shell also provides the pinned `pcsx-redux` build used for
-runtime checks. The Nix AppImage wrapper supplies its OpenGL, PulseAudio, and
-ALSA runtime dependencies. Disc images remain local and are not part of the
-flake.
-
-Use `kf-run-retail` to launch the hash-identical disc. After `kf build`,
-`kf-run-candidate` makes a temporary disc from the newly linked executables and
-launches it. Both use the retail resources configured by `kf init`. If the raw
-disc is not the sole `.cue`/`.bin` beside that resource directory, point to it
-explicitly:
-
-```sh
-export KF_RETAIL_DISC="/path/to/King's Field (Japan).cue"
-kf-run-retail
-kf build
-kf-run-candidate
-```
-
-`KF_RETAIL_DISC` may name a cue, raw Mode 2/2352 binary, or a directory
-containing one disc. The candidate defaults to `build/link`; an explicit
-`KF_CANDIDATE_DIR` can select another source-to-EXE output tree.
-`KF_CANDIDATE_IMAGES` can select a comma-separated subset of the three
-executables for controlled hybrid tests. The retail BIN must match SLPS-00017 SHA-256
-`ae74beba377d686bfaa292ea40df8ade4454ec3139c2b5152364e02aac90b3d9`.
-
-Neovim/CoC and other clangd clients discover the generated `compile_commands.json`
-at the repository root. `nix develop`, `kf configure`, and `kf analyze` refresh it
-with the pinned SDK includes, MIPS layout, and modern C++20 type checking.
-The retail build still compiles the C sources with its pinned C compiler;
-modern scoped enums and Boolean types preserve their declared storage widths.
-Use `kf clangd --image open`
-or `kf clangd --image game` to select the context for sources shared by both
-images; the choice persists under `build/clangd/`. Start Neovim inside the Nix
-shell so it uses the pinned clangd. `kf clangd --mode retail` selects the C89
-editor view; `--mode modern` restores scoped-enum checks. The mode also persists.
-
-Run `kf check-types` to check every source/image variant, including both
-versions of shared sources. Use `--unit game.actor` or `--image game` to focus
-the check. Conversions between typed pointers and `void *` must be explicit
-in source, in both directions. Modern C++ checking rejects implicit restoration
-of a typed pointer; the retail editor enables `-Werror=implicit-void-ptr-cast`.
-A read-only target-C AST check additionally rejects implicit erasure to `void *`,
-which Clang otherwise accepts silently. It also runs the `kf literals` census
-and fails on any written literal stored into, compared with or passed as a
-scoped-enum field, parameter, return, promoted local or switch subject; a
-`KF_ENUM_ENCODE` boundary is an integer view and stays allowed. The checker
-does not rewrite source or suppress diagnostics. Logs are saved under
-`build/clangd/checks/`.
-
-Run `kf literals --domains` to list every written integer literal's sink and the
-value-flow domains that join them; see the
-[enum-domain plan](docs/patterns/enum-domain-plan.md).
-
-Run `kf bools --output build/boolean-audit/all.json` to audit integral fields,
-locals, globals, arguments, pointer outputs, arrays, and return values through
-Python libclang. `--list` displays candidates and review cases; `--image` and
-`--unit` select a partial census. The report retains unknown writers, numeric
-uses, and existing enum/Boolean domains. Review proposals against retail before
-changing types; see [Boolean modeling](docs/patterns/boolean-modeling.md).
-
-Run `python -m scripts.kf.pointer_zeros` inside `nix develop` to find written
-zero literals converted to pointers using [pylibclang](https://pypi.org/project/pylibclang/).
-It prints `file:line:column` locations for assignments, initializers (including
-aggregates), casts, arguments, returns, and comparisons, excluding existing
-`NULL` expansions and ordinary integer zeros. It scans every manifest C variant
-and its included project headers, deduplicating written locations. Inactive
-preprocessor branches and implicit zero-fill are outside the scan.
-Use `--image game`, `--unit game.actor`, or `--path src/game/` to narrow the
-search; `--json` emits locations and image/unit/function/type contexts for agents.
-`--check` exits 1 when sites remain; parse errors exit 2. The script never edits
-C sources.
-
-## Project
-
-This is three decomps in one repository: the bootstrap `PSX.EXE`, main-game
-`GAME.EXE`, and opening `OPEN.EXE`. Each has its own address space and object
-outputs; they share one objdiff project and report. Reconstruction units live
-in `config/units.toml`; curated retail functions, data, relocations, and library
-attribution live under `config/retail/`.
-
 ## Documentation
 
-- [Generate the standalone source branch](docs/clean-source.md)
-- [Linux and WebAssembly port guide](docs/port-guide.md)
-- [Build, commands, and progress ledger](docs/build-system.md)
+- [Current source cleanup findings](docs/source-cleanup-review.md)
 - [Three-target layout](docs/decompilation-layout.md)
 - [Delinking and objdiff matching](docs/delinking-and-matching.md)
-- [Toolchain evidence](docs/toolchain.md)
-- [Ghidra environment](docs/ghidra.md)
-- [Semantic navigation](docs/semantic-navigation.md)
-- [Function, global, and static identities](docs/function-and-data-inventory.md)
-- [Recovered structure layouts](docs/structure-layouts.md)
-- [no_std Rust resource codecs and comparison commands](tools/README.md)
-- [GAME parser census and retail/C/Rust coverage](docs/game-resource-parser-coverage.md)
-- [Vendored-function evidence](docs/vendored-functions.md)
-- [Recovered object placement and link order](docs/object-link-order.md)
-- [Executable links and complete-file comparisons](docs/executable-linking.md)
+- [Semantic navigation and Ghidra](docs/semantic-navigation.md)
+- [Function and data identities](docs/function-and-data-inventory.md)
+- [Structure layouts](docs/structure-layouts.md)
+- [Compiler and MIPS evidence notes](docs/patterns/README.md)
+- [SDK and vendored functions](docs/sdk-object-audit.md)
+- [Object ownership and link order](docs/object-link-order.md)
+- [Executable linking and comparisons](docs/executable-linking.md)
+- [Resource codecs](tools/README.md) and [parser coverage](docs/game-resource-parser-coverage.md)
+
+Reusable helpers live in `src/lib`; declarations follow their owners under
+`include/kf/lib`, `include/kf/game`, and `include/kf/open`. See the
+[GAME/OPEN accounting](docs/patterns/shared-game-open-code.md).
+
+## License
+
+Original project contributions are dedicated to the public domain under
+[CC0 1.0 Universal](LICENSE), to the extent of the contributors' rights.
+This grants no rights to FromSoftware's game or Sony/Psy-Q material.
+Retail assets are absent from the repository; Nix obtains the historical SDK
+separately. See [toolchain provenance](docs/toolchain.md).

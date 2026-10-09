@@ -154,4 +154,3 @@ Preserve banked matches. Cast/union/goto counts cover the tree; other counts
 cover audited cases. See the
 [cast review and matching constraints](patterns/cast-owner-reduction.md)
 and the [reconstruction debt review](patterns/reconstruction-debt-review.md).
-
