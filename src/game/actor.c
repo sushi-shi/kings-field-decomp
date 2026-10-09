@@ -6,7 +6,7 @@
 #include <kf/game/actor.h>
 #include <kf/game/collision.h>
 #include <psyq/libc.h>
-#include <kf/game/game.h>
+#include <kf/game/player.h>
 
 enum {
     ACTOR_SELECTION_ANGLE_TOLERANCE = 0x18e,

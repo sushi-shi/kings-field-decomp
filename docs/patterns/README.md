@@ -9,6 +9,10 @@ See the [current source cleanup review](../source-cleanup-review.md) for
 open owner, argument-access, stack-carrier, and alignment findings. Older
 campaign counts and verdicts retain their recorded scope.
 
+- [game-header-dependencies.md](game-header-dependencies.md): individual
+  declaration-owner imports for all 39 former GAME umbrella consumers, with
+  both language views and unchanged compiled/link outputs.
+
 - [resource-vab-sequencing.md](resource-vab-sequencing.md): five GAME/OPEN
   audio calls with sequenced header capture, unchanged strict matches, and
   preserved arena cursor ownership.

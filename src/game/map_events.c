@@ -4,7 +4,9 @@
 #include <kf/lib/map.h>
 #include <kf/game/collision.h>
 #include <psyq/libc.h>
-#include <kf/game/game.h>
+#include <kf/game/player.h>
+#include <kf/game/state.h>
+#include <kf/game/animation_cache.h>
 
 enum {
     MAP_AMBIENT_COUNTDOWN_RELOAD = 10,

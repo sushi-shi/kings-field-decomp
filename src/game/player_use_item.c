@@ -2,7 +2,10 @@
 #include <kf/lib/bool.h>
 #include <kf/lib/address.h>
 #include <kf/game/player.h>
-#include <kf/game/game.h>
+#include <kf/game/actor.h>
+#include <kf/game/render.h>
+#include <kf/game/notify.h>
+#include <kf/game/state.h>
 
 enum {
     PLAYER_KEY_UNLOCK_VOLUME = 110,

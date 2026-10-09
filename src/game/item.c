@@ -6,7 +6,10 @@
 #include <kf/lib/item.h>
 #include <kf/game/cd.h>
 #include <psyq/libc.h>
-#include <kf/game/game.h>
+#include <kf/game/menu.h>
+#include <kf/game/player.h>
+#include <kf/lib/memory.h>
+#include <psyq/pad.h>
 #include <kf/lib/graphics.h>
 
 /* Shared menu primitives (frame begin/flush, item draw, input sound, poll). */

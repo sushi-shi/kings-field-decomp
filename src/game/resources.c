@@ -8,7 +8,9 @@
 #include <kf/game/render.h>
 #include <psyq/sdk.h>
 #include <psyq/libc.h>
-#include <kf/game/game.h>
+#include <kf/lib/cd_file.h>
+#include <kf/lib/memory.h>
+#include <kf/game/asset.h>
 
 enum {
     MAP_VARIANT_ASSET_BUFFER_BYTES = 0x5a000,

@@ -8,7 +8,10 @@
 #include <kf/game/collision.h>
 #include <kf/game/notify.h>
 #include <psyq/libc.h>
-#include <kf/game/game.h>
+#include <kf/game/player.h>
+#include <kf/game/state.h>
+#include <kf/game/system.h>
+#include <kf/game/menu.h>
 
 /* Floor-specific ambient/action scripts and their shared interaction dispatch.
  * The original module boundary remains WIP. */

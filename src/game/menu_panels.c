@@ -2,7 +2,9 @@
 #include <kf/lib/address.h>
 #include <kf/game/input.h>
 #include <kf/game/menu.h>
-#include <kf/game/game.h>
+#include <kf/game/player.h>
+#include <kf/game/effect.h>
+#include <psyq/pad.h>
 
 /* Player object and the double-buffered display state. */
 

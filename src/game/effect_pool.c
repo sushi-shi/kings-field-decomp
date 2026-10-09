@@ -2,7 +2,7 @@
 #include <kf/lib/address.h>
 #define KF_EFFECT_POOL_IMPLEMENTATION
 #include <kf/game/effect.h>
-#include <kf/game/game.h>
+#include <kf/game/player.h>
 
 enum {
     /* Initialized by retail; no modeled moonlight consumer reads these bytes. */

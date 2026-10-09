@@ -8,7 +8,10 @@
 #include <psyq/audio.h>
 #include <psyq/kernel.h>
 #include <psyq/libc.h>
-#include <kf/game/game.h>
+#include <kf/game/menu.h>
+#include <kf/lib/memory.h>
+#include <kf/lib/resources.h>
+#include <psyq/pad.h>
 
 /* Direct TIM/Mddd. IDs; menu_load_texture instead uses an index plus one. */
 enum {

@@ -3,7 +3,10 @@
 #include <kf/lib/address.h>
 #include <kf/game/input.h>
 #include <kf/game/menu.h>
-#include <kf/game/game.h>
+#include <kf/game/player.h>
+#include <kf/game/cd.h>
+#include <kf/lib/resources.h>
+#include <psyq/pad.h>
 #include <psyq/libc.h>
 #include <kf/game/graphics.h>
 

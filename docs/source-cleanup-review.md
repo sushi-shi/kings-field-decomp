@@ -13,7 +13,7 @@ verdicts; generated syntax counts do not prove object bounds or ownership.
 | Audio resource sequencing | Five GAME/OPEN loaders read and advance `stream` in one call | Corrected: capture the header before advancing `stream`; all five calls and 18 resource-unit functions remain strict 100%; see [sequencing evidence](patterns/resource-vab-sequencing.md) |
 | Effect arguments | `effect_pool_construct` walks raw stack slots from `&direction` | Open: documented typed-varargs candidates are non-exact |
 | Stack carriers | Unused vectors/matrices in GAME, two OPEN reservations, one-shot menu loop | Open: exact bytes alone do not establish these source forms |
-| Shared memory dependency | `src/lib/memory.c` included `kf/game/game.h` | Candidate corrected to `kf/lib/memory.h`; forced GAME and OPEN objects are byte-identical |
+| Shared memory dependency | `src/lib/memory.c` included `kf/game/game.h` | Corrected to `kf/lib/memory.h`; all 39 remaining GAME consumers now import reviewed owner headers; see [dependency verdicts](patterns/game-header-dependencies.md) |
 | Map-link word view | No direct `.words` consumer; retail copies the payload with two aligned word loads/stores | Retain: it supplies four-byte alignment for the aggregate copy; original declaration form remains unknown |
 | Animation binding result | Returns NULL, pointer-shaped static sentinel 1, or a live record | Retain pending complete direct/indirect contract review |
 | Inherited behavior | Uninitialized animation read, missing returns, and an unwritten direction buffer | Keep individual evidence questions; intentional repairs belong in the port |

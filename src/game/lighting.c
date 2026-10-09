@@ -2,7 +2,8 @@
 #include <kf/lib/address.h>
 #include <kf/lib/math.h>
 #include <kf/game/render.h>
-#include <kf/game/game.h>
+#include <kf/game/player.h>
+#include <kf/game/system.h>
 
 enum {
     LIGHTING_COLOR_BLEND_STEP = 0x400,

@@ -3,7 +3,11 @@
 #include <kf/lib/map_data.h>
 #include <kf/lib/map.h>
 #include <psyq/libc.h>
-#include <kf/game/game.h>
+#include <kf/game/state.h>
+#include <kf/lib/audio.h>
+#include <kf/game/collision.h>
+#include <kf/game/effect.h>
+#include <kf/game/player.h>
 
 /* Distances are world units; motion is per action update. */
 enum {

@@ -2,7 +2,9 @@
 #include <kf/lib/address.h>
 #define KF_MENU_MODE_IMPLEMENTATION
 #include <kf/game/menu.h>
-#include <kf/game/game.h>
+#include <kf/game/animation_cache.h>
+#include <kf/lib/memory.h>
+#include <kf/game/player.h>
 
 /*
  * menu_enter_mode (GAME.EXE): tear down and re-establish the system heap around a

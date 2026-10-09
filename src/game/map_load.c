@@ -3,7 +3,7 @@
 #include <kf/lib/map_data.h>
 #include <kf/lib/map.h>
 #include <psyq/libc.h>
-#include <kf/game/game.h>
+#include <kf/game/player.h>
 
 enum {
     MAP_RESTORE_POSITION_RANDOM_BITS = 15

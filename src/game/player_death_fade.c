@@ -3,7 +3,6 @@
 #include <kf/lib/address.h>
 #include <kf/lib/math.h>
 #include <kf/game/player.h>
-#include <kf/game/game.h>
 
 enum {
     PLAYER_DEATH_BOB_THRESHOLD = 1000,

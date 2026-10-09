@@ -4,7 +4,7 @@
 #include <kf/game/actor.h>
 #include <kf/game/collision.h>
 #include <psyq/libc.h>
-#include <kf/game/game.h>
+#include <kf/game/player.h>
 
 enum {
     ACTOR_ACTIVATION_RANGE = 28000,
