@@ -71,7 +71,7 @@ void render_map_cell(s32 col, s32 row, KF_ENUM_PARAM(KfCellVisibility, char) vis
             break;
         }
     }
-    object_index = object_index - 1;
+    object_index--;
     if (object_index > KF_MAP_MESHES_PER_BANK - 1) {
         return;
     }
@@ -113,7 +113,6 @@ void render_map_cell(s32 col, s32 row, KF_ENUM_PARAM(KfCellVisibility, char) vis
  * then walks the window's cell grid and hands every populated, in-range cell
  * to the per-cell emitter render_map_cell.
  */
-
 ADDRESS(0x8001e83c, 0x168)
 void render_map_cells(void)
 {

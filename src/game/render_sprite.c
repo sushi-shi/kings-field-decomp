@@ -3,10 +3,9 @@
 #include <psyq/sdk.h>
 #include <kf/game/render.h>
 
-/* Emit a HUD quad in screen space using the current material. */
-
 enum { HUD_SPRITE_OT_DEPTH = 1 };
 
+/* Emit a HUD quad in screen space using the current material. */
 ADDRESS(0x8001e480, 0x16c)
 void render_screen_sprite(KfSpriteQuad *sprite)
 {
