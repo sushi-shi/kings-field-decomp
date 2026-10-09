@@ -45,8 +45,12 @@ void magic_load_records(const KfMagicTable *table)
 /* magic_cast dispatch table (selected_magic_id 4..8). */
 RODATA(0x80012dc0, 0x14)
 
-/* Spawns the player's ranged magic effect for the current spell
- * (selected_magic_id 4..8), aiming at a target actor in the view cone. */
+/*
+ * Casts the selected attack spell.  Projectiles leave from in front of the
+ * camera and pitch toward an actor in the view cone (lightning arcs down at
+ * it); Fire Wall erupts under that actor, or three tiles ahead without one,
+ * and can also hurt the player.
+ */
 ADDRESS(0x8003a2a0, 0x4c0)
 void magic_cast(void)
 {
