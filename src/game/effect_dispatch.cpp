@@ -428,9 +428,12 @@ play_phase_sound:
             break;
         case KF_EFFECT_GROUND_TRAIL_SHRINK: {
             s32 scale = effect->scale_x - EFFECT_DISSIPATE_SCALE_STEP;
+            u16 stored_scale;
 
             effect->scale_x = scale;
-            effect->scale_y = effect->scale_z = scale;
+            stored_scale = scale;
+            effect->scale_z = stored_scale;
+            effect->scale_y = stored_scale;
             if ((s16)scale <= 0) {
                 effect->type = KF_EFFECT_SLOT_FREE;
             }
@@ -450,8 +453,15 @@ play_phase_sound:
         if (++effect->phase < KF_EFFECT_RADIAL_BLAST_PHASE_END) {
             u32 damage_radius;
 
-            effect->scale_y = effect->scale_z =
-                effect->scale_x += RADIAL_BLAST_SCALE_STEP;
+            {
+                u16 *scale_y = &effect->scale_y;
+                u16 *scale_z = &effect->scale_z;
+                u16 scale = effect->scale_x + RADIAL_BLAST_SCALE_STEP;
+
+                effect->scale_x = scale;
+                *scale_z = scale;
+                *scale_y = scale;
+            }
             damage_radius = kf_enum_encode<u8>(phase) * RADIAL_BLAST_RADIUS_STEP;
             power = effect_magic_power(effect);
             if (kf_enum_encode<u8>(effect->phase) & 1) {
@@ -597,8 +607,15 @@ randomize_homing_direction:
         if (phase > KF_EFFECT_LIGHTNING_BLAST_PHASE_LAST) {
             effect->type = KF_EFFECT_SLOT_FREE;
         } else {
-            effect->scale_y = effect->scale_z =
-                effect->scale_x += LIGHTNING_BLAST_SCALE_STEP;
+            {
+                u16 *scale_y = &effect->scale_y;
+                u16 *scale_z = &effect->scale_z;
+                u16 scale = effect->scale_x + LIGHTNING_BLAST_SCALE_STEP;
+
+                effect->scale_x = scale;
+                *scale_z = scale;
+                *scale_y = scale;
+            }
             effect->rotation.vector.vy = (effect->rotation.vector.vy + LIGHTNING_BLAST_YAW_STEP) & KF_ANGLE_WRAP_MASK;
             if (kf_enum_encode<u8>(phase) & 1) {
                 u32 damage_radius;
