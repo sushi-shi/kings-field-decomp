@@ -172,3 +172,7 @@ CMake downloads SDL automatically. For later builds, repeat from
 Open [the game](http://localhost:8000/kings-field.html), select your disc and press
 Play. The language selector also works during play. Data and saves stay in
 browser storage; clearing it removes them.
+
+## Development
+
+See [analysis tools](docs/analysis.md) for sanitizers, static checks and parser fuzzing.
