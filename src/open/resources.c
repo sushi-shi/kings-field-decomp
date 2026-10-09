@@ -142,13 +142,15 @@ void opening_resources_load_scene0(void)
 {
     u8 *stream;
     u8 *vab_chunk;
+    u8 *vab_header;
     const u32 *source;
 
     audio_stop_sequence(KF_AUDIO_STOP_FADE);
     audio_close_vab();
     memory_allocation_reset();
     cd_file_load_allocated(&stream, "B0\\MIXA0.");
-    audio_load_vab(stream + KF_RESOURCE_CHUNK_HEADER_BYTES,
+    vab_header = stream + KF_RESOURCE_CHUNK_HEADER_BYTES;
+    audio_load_vab(vab_header,
         (vab_chunk = RESOURCE_STREAM_NEXT(stream)) + KF_RESOURCE_CHUNK_HEADER_BYTES);
     RESOURCE_STREAM_NEXT(stream);
     source = resource_stream_copy_words(
@@ -186,12 +188,14 @@ void opening_resources_load_scene1(void)
 {
     u8 *stream;
     u8 *vab_chunk;
+    u8 *vab_header;
 
     audio_stop_sequence(KF_AUDIO_STOP_FADE);
     audio_close_vab();
     memory_allocation_reset();
     cd_file_load_allocated(&stream, "B0\\MIXA1.");
-    audio_load_vab(stream + KF_RESOURCE_CHUNK_HEADER_BYTES,
+    vab_header = stream + KF_RESOURCE_CHUNK_HEADER_BYTES;
+    audio_load_vab(vab_header,
         (vab_chunk = RESOURCE_STREAM_NEXT(stream)) + KF_RESOURCE_CHUNK_HEADER_BYTES);
     RESOURCE_STREAM_NEXT(stream);
     memory_release_last();
@@ -233,6 +237,7 @@ void opening_resources_load_ending(void)
     u8 *tim_stream;
     u8 *stream;
     u8 *vab_chunk;
+    u8 *vab_header;
     u8 **arena_cursor = &memory_arena.allocation.cursor;
 
     memory_allocation_reset();
@@ -240,7 +245,8 @@ void opening_resources_load_ending(void)
     tim_upload_images(tim_stream);
     memory_release_last();
     cd_file_load_allocated(&stream, "B0\\MIXAE.");
-    audio_load_vab(stream + KF_RESOURCE_CHUNK_HEADER_BYTES,
+    vab_header = stream + KF_RESOURCE_CHUNK_HEADER_BYTES;
+    audio_load_vab(vab_header,
         (vab_chunk = RESOURCE_STREAM_NEXT(stream)) + KF_RESOURCE_CHUNK_HEADER_BYTES);
     opening_entity_pool_load_placements(
         (const KfMapObjectPlacement *)(RESOURCE_STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES),
@@ -275,6 +281,7 @@ void opening_resources_load_ending_sequence(void)
 {
     u8 *stream;
     u8 *vab_chunk;
+    u8 *vab_header;
     u8 **arena_cursor = &memory_arena.allocation.cursor;
 
     audio_stop_sequence(KF_AUDIO_STOP_IMMEDIATE);
@@ -282,7 +289,8 @@ void opening_resources_load_ending_sequence(void)
     memory_allocation_reset();
     *arena_cursor = opening_ending_arena_cursor;
     cd_file_load_allocated(&stream, "B0\\MIXAG.");
-    audio_load_vab(stream + KF_RESOURCE_CHUNK_HEADER_BYTES,
+    vab_header = stream + KF_RESOURCE_CHUNK_HEADER_BYTES;
+    audio_load_vab(vab_header,
         (vab_chunk = RESOURCE_STREAM_NEXT(stream)) + KF_RESOURCE_CHUNK_HEADER_BYTES);
     memory_release_last();
     *arena_cursor = vab_chunk + KF_RESOURCE_REUSE_PREFIX_BYTES;

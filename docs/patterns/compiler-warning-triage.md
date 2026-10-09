@@ -1,6 +1,14 @@
 # Compiler warning triage
 
-## Current review
+## Current sequencing correction
+
+The KFI cleanup captures the VAB header before the five GAME/OPEN audio calls.
+The first argument reads that saved pointer while the second advances only
+`stream`; pairing no longer depends on argument evaluation order. All five
+functions remain strict 100%. See [retail and verification evidence](resource-vab-sequencing.md).
+The diagnostic counts and rejected trial below describe the earlier audit.
+
+## Earlier warning review
 
 The refreshed audit on `6158b383` covers **101 image/TU variants** (including two
 vendored PAD references). The older README counts came from 99 variants and
@@ -55,14 +63,15 @@ access diagnostic.
 | Missing `noreturn`, missed NRVO | Optional annotation/modern optimization diagnostics. Adding attributes can change caller control flow and code generation; no decomp requirement to eliminate them. |
 | Uninitialized reads/passed buffers and missing returns | See the instruction- and caller-based verdicts below. Keep inherited behavior visible; intentional repairs belong in `port`. |
 | Tautological comparisons / unreachable code | Evidence-review candidates: reconstructed spatial audio's `(tone & 0x80) == 1`, actor's high-half/low-half ceiling-code comparison, and the unsigned charge clamp's lower bound. Dead source spelling cannot be recovered just from bytes that omit it. Do not claim these are all original C bugs or change predicates based on host diagnostics alone. |
-| Unsequenced resource cursor access | Five loader sites: GAME `map_resources_load`; OPEN scene0, scene1, ending and ending-sequence loaders. The C arguments read and modify `stream` without sequencing. C++20 sequences parameter initializations but leaves their order unspecified, so the intended header/body pairing is still not guaranteed by the source. Requires a matching source repair. |
+| Unsequenced resource cursor access | Five loader sites: GAME `map_resources_load`; OPEN scene0, scene1, ending and ending-sequence loaders. The C arguments read and modify `stream` without sequencing. C++20 sequences parameter initializations but leaves their order unspecified, so the intended header/body pairing is still not guaranteed by the source. Resolved by the subsequent header-capture correction above. |
 
 For the resource warning, a controlled GAME candidate saved the first chunk
 pointer, advanced `stream` in a separate statement, then passed the two payload
 pointers. Retail proves the intended pair at `8001b5c4..8001b5d8`. The candidate
 adds `move a0,s2` before loading the chunk size and moves the audio call from
 function offset `0x7c` to `0x80` (body `0x258` becomes `0x25c`). It was reverted;
-the five warnings remain open, and no equivalent OPEN rewrite was applied.
+at that audit the five warnings remained open and no equivalent OPEN rewrite
+was applied. The subsequent header-capture form resolves all five sites.
 This is a concrete rejected source spelling, not evidence that every properly
 sequenced implementation must fail to match.
 

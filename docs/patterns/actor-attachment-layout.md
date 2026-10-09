@@ -58,7 +58,7 @@ x/y lanes. No raw-offset accessor, union pun, artificial padding, or changed
 compiler profile is required.
 
 Forced `gcc257-native` compilation of `game.actor_behavior` and
-`game.actor_pool` produces byte-identical complete native objects to the
+`game.actor_pool` produces byte-identical native-derived ELF comparison objects to the
 captured `19df9a3e` baseline. The textual `kf try` preserves the changed
 consumer instructions; its other differences are the already-existing
 native section-relative relocation presentation. Strict results come from
@@ -76,7 +76,7 @@ oracle compares complete copied table bytes across retail, C, and Rust.
 All eleven functions in `game.actor_behavior` and all three in
 `game.actor_pool` remain strict objdiff 100% after rebuilding and refreshing
 analysis. This includes both changed special-attack consumers and the
-indexed attachment consumer. Across the repository, all 97 native objects
+indexed attachment consumer. Across the repository, all 97 native-derived ELF comparison objects
 are byte-identical to the captured baseline; the strict total remains
 465/471. No function was newly banked.
 

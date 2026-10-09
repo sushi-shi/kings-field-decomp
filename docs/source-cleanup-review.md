@@ -10,7 +10,7 @@ verdicts; generated syntax counts do not prove object bounds or ownership.
 | --- | --- | --- |
 | Third actor attachment | Retail indexes three triples; the third x/y lanes are also special-attack chance/range | Candidate corrected to one three-element array with named signed readers; forced actor behavior and loader objects are byte-identical; see [layout evidence](patterns/actor-attachment-layout.md) |
 | Saved-floor owner | `map_load.c` previously subtracted 1690 bytes before adding the floor stride | Candidate corrected to `world_state.floors[current_floor - 1].records`; forced `game.map_load` object is byte-identical to baseline |
-| Audio resource sequencing | Five GAME/OPEN loaders read and advance `stream` in one call | Open: explicitly sequenced prior GAME trial is non-exact; chunk pairing and OPEN reuse cursors require reconstruction |
+| Audio resource sequencing | Five GAME/OPEN loaders read and advance `stream` in one call | Corrected: capture the header before advancing `stream`; all five calls and 18 resource-unit functions remain strict 100%; see [sequencing evidence](patterns/resource-vab-sequencing.md) |
 | Effect arguments | `effect_pool_construct` walks raw stack slots from `&direction` | Open: documented typed-varargs candidates are non-exact |
 | Stack carriers | Unused vectors/matrices in GAME, two OPEN reservations, one-shot menu loop | Open: exact bytes alone do not establish these source forms |
 | Shared memory dependency | `src/lib/memory.c` included `kf/game/game.h` | Candidate corrected to `kf/lib/memory.h`; forced GAME and OPEN objects are byte-identical |
@@ -49,8 +49,8 @@ another alignment mechanism.
 
 The saved-floor reader uses the same complete floor owner as its writer.
 The shared allocator imports `kf/lib/memory.h` directly. Forced compilation
-with the manifest's pinned `gcc257-native` profiles leaves all 97 native
-objects byte-identical to the clean baseline, including instructions,
+with the manifest's pinned `gcc257-native` profiles leaves all 97 native-derived
+ELF comparison objects byte-identical to the clean baseline, including instructions,
 relocations, and data. Refreshed strict results for each affected function:
 
 | Function | GAME address | OPEN address | Verdict |

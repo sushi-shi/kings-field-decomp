@@ -9,6 +9,10 @@ See the [current source cleanup review](../source-cleanup-review.md) for
 open owner, argument-access, stack-carrier, and alignment findings. Older
 campaign counts and verdicts retain their recorded scope.
 
+- [resource-vab-sequencing.md](resource-vab-sequencing.md): five GAME/OPEN
+  audio calls with sequenced header capture, unchanged strict matches, and
+  preserved arena cursor ownership.
+
 - [actor-attachment-layout.md](actor-attachment-layout.md): three bounded
   attachment slots, shared signed special-attack lanes, shipped boss evidence,
   and byte-identical native compiler controls.
