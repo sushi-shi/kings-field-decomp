@@ -28,8 +28,8 @@ void render_actor(KfActor *actor)
         actor->position.vy - game_graphics_runtime.render_state.view_position.vy,
         actor->position.vz - game_graphics_runtime.render_state.view_position.vz}.narrowed();
     kf::render_place_model(model, game_graphics_runtime.render_state.view_matrix, relative_position);
-    matrix_set_rotation_x(actor->rotation.angles.x, &model);
-    matrix_set_rotation_y(-actor->rotation.angles.y, &rot_y);
+    matrix_set_rotation_x(actor->rotation.vx, &model);
+    matrix_set_rotation_y(-actor->rotation.vy, &rot_y);
     kf::matrix_multiply_rotation(rot_y, model, model);
     kf::matrix_multiply_rotation(render_light_matrices[KF_RENDER_LIGHT_ACTOR], model, light);
     kf::matrix_multiply_rotation(game_graphics_runtime.render_state.view_matrix, model, model);
@@ -68,8 +68,8 @@ void render_map_object(KfMapObject *object)
         object->position.vy - game_graphics_runtime.render_state.view_position.vy,
         object->position.vz - game_graphics_runtime.render_state.view_position.vz}.narrowed();
     kf::render_place_model(model, game_graphics_runtime.render_state.view_matrix, relative_position);
-    matrix_set_rotation_x(object->rotation.angles.x, &rot_x);
-    matrix_set_rotation_y(object->rotation.angles.y, &model);
+    matrix_set_rotation_x(object->rotation.vx, &rot_x);
+    matrix_set_rotation_y(object->rotation.vy, &model);
     kf::matrix_multiply_rotation(model, rot_x, model);
     kf::matrix_multiply_rotation(game_graphics_runtime.render_state.light_matrix, model, light);
     kf::matrix_multiply_rotation(game_graphics_runtime.render_state.view_matrix, model, model);

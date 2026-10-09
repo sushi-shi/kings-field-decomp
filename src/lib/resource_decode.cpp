@@ -61,7 +61,8 @@ KfObjectPlacementData object(Reader input, KfPlacementLimits limits)
     result.local_z = input.s16_le();
     result.local_x = input.s16_le();
     result.local_y = input.s16_le();
-    result.link = {input.u32_le(), input.u32_le()};
+    for (auto &byte : result.link)
+        byte = input.byte();
     cell(result.tile_z, result.tile_x, limits);
     require(result.object_id < limits.definitions, "object definition exceeds available definitions");
     return result;

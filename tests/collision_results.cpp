@@ -56,24 +56,24 @@ int main()
 
     constexpr s32 cell = 50 * KF_MAP_COLUMNS + 50;
     constexpr s32 coordinate = 50 * KF_MAP_TILE_SIZE;
-    map_collision_grid.linear[cell] = KF_MAP_CELL_FLOOR;
-    map_cell_attribute_grid.linear[cell] = kf_enum_decode<KfMapAttribute>(1);
+    map_collision_grid.cell(cell) = KF_MAP_CELL_FLOOR;
+    map_cell_attribute_grid.cell(cell) = kf_enum_decode<KfMapAttribute>(1);
     const auto query = [&](s32 y, u32 flags = 0) {
         return collision_query_world(coordinate, y, coordinate, 100, 0, flags);
     };
     assert(query(-1).kind == KfCollisionKind::None);
     assert(query(1).kind == KfCollisionKind::BelowFloor);
     assert(query(-4000).kind == KfCollisionKind::Ceiling);
-    map_cell_attribute_grid.linear[cell] = KF_MAP_ATTRIBUTE_NONE;
+    map_cell_attribute_grid.cell(cell) = KF_MAP_ATTRIBUTE_NONE;
     assert(query(-1).kind == KfCollisionKind::MissingAttribute);
-    map_cell_attribute_grid.linear[cell] = kf_enum_decode<KfMapAttribute>(1);
-    map_collision_grid.linear[cell] = KF_MAP_CELL_BLOCKED;
+    map_cell_attribute_grid.cell(cell) = kf_enum_decode<KfMapAttribute>(1);
+    map_collision_grid.cell(cell) = KF_MAP_CELL_BLOCKED;
     assert(query(-1).kind == KfCollisionKind::Terrain);
-    map_collision_grid.linear[cell] = KF_MAP_CELL_FLOOR;
-    map_collision_flag_grid.linear[cell] = 0xa1;
+    map_collision_grid.cell(cell) = KF_MAP_CELL_FLOOR;
+    map_collision_flag_grid.cell(cell) = 0xa1;
     const auto rejection = query(-1, 0xa000);
     assert(rejection.kind == KfCollisionKind::CellFlags && rejection.detail == 0xa0);
-    map_collision_flag_grid.linear[cell] = 1;
+    map_collision_flag_grid.cell(cell) = 1;
     player_hit = 0; actor_hit = 2; object_hit = 3; event_hit = 4;
     assert(query(-1).kind == KfCollisionKind::Player);
     const auto actor = query(-1, KF_COLLISION_SKIP_PLAYER);

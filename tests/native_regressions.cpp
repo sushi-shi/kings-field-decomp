@@ -10,14 +10,14 @@
 static_assert([] {
     KfEffectRecord effect {};
     effect.animation_clip = KF_ANIMATION_CLIP_NONE;
-    effect.render_id.billboard = KF_EFFECT_BILLBOARD_FIRE_BALL;
+    effect.render_id = KF_EFFECT_BILLBOARD_FIRE_BALL;
     if (!effect_has_visual(effect)) return false;
-    effect.render_id.billboard = KF_EFFECT_BILLBOARD_NONE;
+    effect.render_id = KF_EFFECT_BILLBOARD_NONE;
     if (effect_has_visual(effect)) return false;
     effect.animation_clip = KF_ANIMATION_CLIP_FIRST;
-    effect.render_id.model = KF_EFFECT_MODEL_LIGHT_NEEDLE;
+    effect.render_id = KF_EFFECT_MODEL_LIGHT_NEEDLE;
     if (!effect_has_visual(effect)) return false;
-    effect.render_id.model = KF_EFFECT_MODEL_NONE;
+    effect.render_id = KF_EFFECT_MODEL_NONE;
     return !effect_has_visual(effect);
 }());
 

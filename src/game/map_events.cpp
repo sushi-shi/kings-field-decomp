@@ -242,13 +242,8 @@ void map_world_state_persist(void)
 
         active++;
         map_saved_put(out, end, i);
-        {
-            const u8 *link = (const u8 *)&object->link;
-            s32 k = sizeof(object->link) - 1;
-
-            for (; k != -1; k--) {
-                map_saved_put(out, end, *link++);
-            }
+        for (const u8 byte : map_object_link_bytes(object->link)) {
+            map_saved_put(out, end, byte);
         }
     }
     *count_slot = active;
@@ -257,15 +252,16 @@ void map_world_state_persist(void)
     for (i = 0; i < KF_MAP_OBJECT_EFFECT_GROUP_CAPACITY; i++, object++) {
         map_saved_put(out, end, object->cell_x);
         map_saved_put(out, end, object->cell_z);
-        map_saved_put(out, end, object->link.fields.link_id);
-        map_saved_put(out, end, object->link.gold_amount >> 8);
+        const u16 gold_amount = map_object_gold_amount(object->link);
+        map_saved_put(out, end, gold_amount & 0xff);
+        map_saved_put(out, end, gold_amount >> 8);
     }
 
     object = &map_object_state.objects[KF_MAP_OBJECT_DEFINITION_DROP_FIRST];
     for (i = 0; i < 2 * KF_MAP_OBJECT_EFFECT_GROUP_CAPACITY; i++, object++) {
         map_saved_put(out, end, object->cell_x);
         map_saved_put(out, end, object->cell_z);
-        map_saved_put(out, end, (u16)object->rotation.angles.y >> KF_MAP_SAVED_YAW_SHIFT);
+        map_saved_put(out, end, (u16)object->rotation.vy >> KF_MAP_SAVED_YAW_SHIFT);
     }
 }
 

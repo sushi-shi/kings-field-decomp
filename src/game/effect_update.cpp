@@ -59,9 +59,8 @@ void effect_update_swinging_hazard(SVECTOR *probe_offset, KfEffectPhase phase_li
     s16 next_pitch;
 
     if (kf_enum_encode<u8>(life) < kf_enum_encode<u8>(KF_EFFECT_HAZARD_RELEASE_REQUEST) + 1u) {
-        kf::matrix_set_rotation_xyz(record->rotation.vector, rotation_matrix);
-        matrix_set_rotation_x(record->rotation.vector.vx, &rotation_matrix);
-        matrix_set_rotation_y(record->rotation.vector.vy, &yaw_matrix);
+        matrix_set_rotation_x(record->rotation.vx, &rotation_matrix);
+        matrix_set_rotation_y(record->rotation.vy, &yaw_matrix);
         kf::matrix_multiply_rotation(yaw_matrix, rotation_matrix, rotation_matrix);
         world = kf::matrix_apply_rotation(rotation_matrix, *probe_offset);
         world += record->position;
@@ -76,7 +75,7 @@ void effect_update_swinging_hazard(SVECTOR *probe_offset, KfEffectPhase phase_li
                     magic->damage_components[2], magic->damage_components[1],
                     KF_PLAYER_STATUS_NONE, 0, 0, KF_FIXED12_ONE, record->id);
             }
-            record->direction.words.x = -record->direction.words.x;
+            record->pitch_velocity = -record->pitch_velocity;
         }
         if (record->sound_played == KF_AUDIO_NOT_PLAYED) {
             if (kf::random_next() < EFFECT_HAZARD_SOUND_RANDOM_CUTOFF) {
@@ -85,20 +84,21 @@ void effect_update_swinging_hazard(SVECTOR *probe_offset, KfEffectPhase phase_li
                     EFFECT_SWING_SOUND_MAX_DISTANCE, EFFECT_HAZARD_SOUND_ATTENUATION_DISTANCE);
             }
         }
-        if (record->rotation.vector.vx >= KF_ANGLE_EIGHTH_TURN) {
-            record->rotation.vector.vx = KF_ANGLE_EIGHTH_TURN;
-            record->direction.words.x = 0;
-        } else if (record->rotation.vector.vy < -KF_ANGLE_EIGHTH_TURN + 1) {
-            record->rotation.vector.vx = -KF_ANGLE_EIGHTH_TURN;
-            record->direction.words.x = 0;
+        if (record->rotation.vx >= KF_ANGLE_EIGHTH_TURN) {
+            record->rotation.vx = KF_ANGLE_EIGHTH_TURN;
+            record->pitch_velocity = 0;
+        } else if (record->rotation.vy < -KF_ANGLE_EIGHTH_TURN + 1) {
+            // Retail tests the yaw here, not the pitch.
+            record->rotation.vx = -KF_ANGLE_EIGHTH_TURN;
+            record->pitch_velocity = 0;
         }
-        if (record->rotation.vector.vx > 0) {
-            record->direction.words.x -= EFFECT_SWING_ANGULAR_ACCEL;
+        if (record->rotation.vx > 0) {
+            record->pitch_velocity -= EFFECT_SWING_ANGULAR_ACCEL;
         } else {
-            record->direction.words.x += EFFECT_SWING_ANGULAR_ACCEL;
+            record->pitch_velocity += EFFECT_SWING_ANGULAR_ACCEL;
         }
-        pitch = record->rotation.vector.vx;
-        next_pitch = record->rotation.vector.vx + record->direction.words.x;
+        pitch = record->rotation.vx;
+        next_pitch = record->rotation.vx + record->pitch_velocity;
         if ((next_pitch <= 0 && pitch >= 0) || (next_pitch >= 0 && pitch <= 0)) {
             if (life == KF_EFFECT_HAZARD_RELEASE_REQUEST) {
                 next_pitch = 0;
@@ -107,7 +107,7 @@ void effect_update_swinging_hazard(SVECTOR *probe_offset, KfEffectPhase phase_li
                 record->sound_played = KF_AUDIO_NOT_PLAYED;
             }
         }
-        record->rotation.vector.vx = next_pitch;
+        record->rotation.vx = next_pitch;
     } else if (kf_enum_encode<u8>(life) >= kf_enum_encode<u8>(KF_EFFECT_HAZARD_RISE_FIRST) && kf_enum_encode<s16>(phase_limit) >= kf_enum_encode<u8>(life)) {
         record->position.vy -= EFFECT_HAZARD_RISE_STEP;
         record->phase++;
@@ -122,13 +122,13 @@ void effect_update_orbiting_projectile(s32 orbit_radius, KfEffectPhase phase_lim
     KfCollisionResult collision;
 
     if ((kf_enum_encode<u32>(life) & EFFECT_PHASE_BYTE_MASK) < kf_enum_encode<u8>(KF_EFFECT_HAZARD_RELEASE_REQUEST) + 1) {
-        record->position.vx = (record->direction.vector.vx << KF_EFFECT_ORBIT_CENTER_SHIFT)
-            + (kf::angle_sine((s16)record->control.orbit_angle) * orbit_radius >> KF_FIXED12_BITS);
-        record->position.vz = (record->direction.vector.vz << KF_EFFECT_ORBIT_CENTER_SHIFT)
-            + (kf::angle_cosine((s16)record->control.orbit_angle) * orbit_radius >> KF_FIXED12_BITS);
-        record->position.vy = record->direction.vector.vy
-            + (kf::angle_sine((s16)record->control.orbit_angle << 1) >> 2);
-        record->control.orbit_angle = (record->control.orbit_angle
+        record->position.vx = (record->orbit_center.vx << KF_EFFECT_ORBIT_CENTER_SHIFT)
+            + (kf::angle_sine((s16)record->orbit_angle) * orbit_radius >> KF_FIXED12_BITS);
+        record->position.vz = (record->orbit_center.vz << KF_EFFECT_ORBIT_CENTER_SHIFT)
+            + (kf::angle_cosine((s16)record->orbit_angle) * orbit_radius >> KF_FIXED12_BITS);
+        record->position.vy = record->orbit_center.vy
+            + (kf::angle_sine((s16)record->orbit_angle << 1) >> 2);
+        record->orbit_angle = (record->orbit_angle
             + KF_ANGLE_FULL_TURN / EFFECT_ORBIT_UPDATES_PER_TURN) & KF_ANGLE_WRAP_MASK;
         collision = effect_map_collision(&record->position, EFFECT_ORBIT_COLLISION_RADIUS);
         if (collision.kind != KfCollisionKind::None) {
@@ -206,23 +206,23 @@ enum {
     SCATTER_VELOCITY_BIAS = ((kf::random_max >> SCATTER_RANDOM_SHIFT) + 1) / 2
 };
 
-void effect_scatter_triple(KfEffectDirectionWords *velocity)
+void effect_scatter_triple(SVECTOR *velocity)
 {
     int random;
     int centered;
 
     random = kf::random_next();
-    centered = velocity->x - SCATTER_VELOCITY_BIAS;
+    centered = velocity->vx - SCATTER_VELOCITY_BIAS;
     centered += random >> SCATTER_RANDOM_SHIFT;
-    velocity->x = centered;
+    velocity->vx = centered;
     random = kf::random_next();
-    centered = velocity->y - SCATTER_VELOCITY_BIAS;
+    centered = velocity->vy - SCATTER_VELOCITY_BIAS;
     centered += random >> SCATTER_RANDOM_SHIFT;
-    velocity->y = centered;
+    velocity->vy = centered;
     random = kf::random_next();
-    centered = velocity->z - SCATTER_VELOCITY_BIAS;
+    centered = velocity->vz - SCATTER_VELOCITY_BIAS;
     centered += random >> SCATTER_RANDOM_SHIFT;
-    velocity->z = centered;
+    velocity->vz = centered;
 }
 
 void effect_rotate_scale_offset_y(SVECTOR *offset, VECTOR *output, s16 angle, s32 scale)
@@ -246,18 +246,18 @@ void effect_spawn_ground_trail(u8 id, KfEffectRecord *parent_effect, s16 angle, 
     s32 index;
     s32 scale = (distance << KF_FIXED12_BITS) / TRAIL_UNIT_SCALE_DISTANCE;
 
-    effect_rotate_scale_offset_y(&parent_effect->direction.vector, &position, angle, scale);
+    effect_rotate_scale_offset_y(&parent_effect->direction, &position, angle, scale);
     index = parent_effect - effect_state.records.data();
     position.vx += parent_effect->position.vx;
     position.vz += parent_effect->position.vz;
-    effect_spawn_ground_trail(id, parent_effect->type, position, parent_effect->direction.vector, index);
+    effect_spawn_ground_trail(id, parent_effect->type, position, parent_effect->direction, index);
 }
 
 void effect_spawn_ground_branch(u8 id, KfEffectRecord *parent_effect, s16 angle_offset,
     KfEffectGroundBranchRole branch_role)
 {
     VECTOR position;
-    s32 angle = -(s16)(parent_effect->direction.words.y + angle_offset);
+    s32 angle = -(s16)(parent_effect->direction.vy + angle_offset);
     s32 cell_x;
     s32 cell_z;
 
@@ -266,7 +266,7 @@ void effect_spawn_ground_branch(u8 id, KfEffectRecord *parent_effect, s16 angle_
     cell_z = position.vz / KF_MAP_TILE_SIZE;
     cell_x = position.vx / KF_MAP_TILE_SIZE;
     position.vy = -(map_floor_height_grid.cells[cell_z][cell_x] * KF_MAP_HEIGHT_STEP);
-    effect_spawn_fire_wall(id, parent_effect->type, position, parent_effect->direction.vector, branch_role);
+    effect_spawn_fire_wall(id, parent_effect->type, position, parent_effect->direction, branch_role);
 }
 
 void effect_update_reset_module_state(void)

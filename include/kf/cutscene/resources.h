@@ -47,8 +47,7 @@ typedef struct KfOpeningEntity {
     u16 cell_z;
     std::array<u8, 2> unknown_06;
     VECTOR position;
-    struct KfEulerAngles rotation;
-    u16 unknown_1e;
+    SVECTOR rotation;
     SVECTOR scale;
 } KfOpeningEntity;
 

@@ -24,11 +24,13 @@ void map_grids_load(KfResourceChunk chunk, KfMapAttributeGrid &attributes,
     copy(orientations);
     copy(flags);
     copy(collision);
-    for (const auto value : orientations.linear) {
-        const auto orientation = kf_enum_encode<u8>(value);
-        if (orientation < kf_enum_encode<u8>(KF_MAP_ORIENT_UNROTATED) ||
-            orientation > kf_enum_encode<u8>(KF_MAP_ORIENT_THREE_QUARTER_TURN))
-            kf::host_fail("Invalid map cell orientation");
+    for (const auto &row : orientations.cells) {
+        for (const auto value : row) {
+            const auto orientation = kf_enum_encode<u8>(value);
+            if (orientation < kf_enum_encode<u8>(KF_MAP_ORIENT_UNROTATED) ||
+                orientation > kf_enum_encode<u8>(KF_MAP_ORIENT_THREE_QUARTER_TURN))
+                kf::host_fail("Invalid map cell orientation");
+        }
     }
 }
 

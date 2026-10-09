@@ -13,6 +13,7 @@
 #include <kf/lib/types.h>
 
 #include <array>
+#include <bit>
 #include <span>
 
 struct KfAnimationCacheRecord;
@@ -65,19 +66,16 @@ typedef struct KfMapFloor5Script {
     KfMapScriptFlag boss_defeat;
 } KfMapFloor5Script;
 
-typedef union KfMapFloorScript {
-    u8 bytes[KF_MAP_SAVED_RECORDS_OFFSET];
-    KfMapFloor1Script floor1;
-    KfMapFloor3Script floor3;
-    KfMapFloor5Script floor5;
-} KfMapFloorScript;
-
 typedef struct KfMapSavedFloor {
-    KfMapFloorScript script;
     std::array<u8, KF_MAP_SAVED_RECORD_BYTES> records;
 } KfMapSavedFloor;
 
+// Each floor's save slot begins with KF_MAP_SAVED_RECORDS_OFFSET script bytes;
+// only floors 1, 3 and 5 use them.
 typedef struct KfMapSavedWorld {
+    KfMapFloor1Script floor1;
+    KfMapFloor3Script floor3;
+    KfMapFloor5Script floor5;
     std::array<KfMapSavedFloor, KF_MAP_SAVED_FLOOR_COUNT> floors;
 } KfMapSavedWorld;
 
@@ -152,38 +150,69 @@ typedef struct KfMapCopyRegion {
     u8 height;
 } KfMapCopyRegion;
 
-typedef union KfMapObjectSpawn {
-    u16 sequence;
-    u8 effect_id;
-} KfMapObjectSpawn;
-
-typedef union KfMapObjectParameter {
-    u8 effect_index;
-    u8 object_index;
-    KfMapCopyRegionId copy_region;
-} KfMapObjectParameter;
-
-typedef struct KfMapObjectLinkFields {
+// Eight bytes of per-object state, read from the placement record and saved
+// with the floor. Most objects use the fields below; gold piles and containers
+// reuse the same bytes for their amount and contents (see the helpers after).
+typedef struct KfMapObjectLink {
     u8 link_id;
-    KfMapObjectParameter action_parameter;
-    KfMapObjectSpawn spawn;
+    u8 action_parameter; // effect index, partner object index or copy region
+    u16 spawn_sequence; // drop age; emitters keep their effect id in the low byte
     s16 vertical_velocity;
     KfNotificationId linked_notification;
     KfNotificationId default_notification;
-} KfMapObjectLinkFields;
-
-typedef struct KfMapObjectHingedContainer {
-    u8 link_id;
-    KfObjectId item_ids[KF_MAP_CONTAINER_ITEM_COUNT];
-} KfMapObjectHingedContainer;
-
-typedef union KfMapObjectLink {
-    KfMapObjectLinkFields fields;
-    u16 gold_amount;
-    KfMapObjectHingedContainer hinged_container;
-    KfObjectId item_ids[KF_MAP_CONTAINER_ITEM_COUNT];
-    u32 words[2];
 } KfMapObjectLink;
+
+using KfMapObjectLinkBytes = std::array<u8, 8>;
+static_assert(sizeof(KfMapObjectLink) == sizeof(KfMapObjectLinkBytes));
+// Placement records and saves store the link little-endian.
+static_assert(std::endian::native == std::endian::little);
+
+inline KfMapObjectLink map_object_link_from_bytes(const KfMapObjectLinkBytes &bytes)
+{
+    return std::bit_cast<KfMapObjectLink>(bytes);
+}
+
+inline KfMapObjectLinkBytes map_object_link_bytes(const KfMapObjectLink &link)
+{
+    return std::bit_cast<KfMapObjectLinkBytes>(link);
+}
+
+inline u8 map_object_effect_id(const KfMapObjectLink &link)
+{
+    return link.spawn_sequence & 0xff;
+}
+
+// Gold piles keep their amount in the first two bytes.
+inline u16 map_object_gold_amount(const KfMapObjectLink &link)
+{
+    return link.link_id | link.action_parameter << 8;
+}
+
+inline void map_object_set_gold_amount(KfMapObjectLink &link, u16 amount)
+{
+    link.link_id = amount & 0xff;
+    link.action_parameter = amount >> 8;
+}
+
+// Item containers keep their item ids from the first byte; hinged containers
+// keep them after their link id.
+inline std::size_t map_container_item_byte(KfMapObjectOperation container, unsigned slot)
+{
+    const std::size_t first = container == KF_MAP_OBJECT_OP_HINGED_CONTAINER ? sizeof(KfMapObjectLink::link_id) : 0;
+    return first + slot;
+}
+
+inline KfObjectId map_container_item(const KfMapObjectLink &link, KfMapObjectOperation container, unsigned slot)
+{
+    return kf_enum_decode<KfObjectId>(map_object_link_bytes(link)[map_container_item_byte(container, slot)]);
+}
+
+inline void map_container_set_item(KfMapObjectLink &link, KfMapObjectOperation container, unsigned slot, KfObjectId item)
+{
+    auto bytes = map_object_link_bytes(link);
+    bytes[map_container_item_byte(container, slot)] = kf_enum_encode<u8>(item);
+    link = map_object_link_from_bytes(bytes);
+}
 
 typedef struct KfMapObject {
     KfObjectId object_id;
@@ -192,7 +221,7 @@ typedef struct KfMapObject {
     u16 cell_z;
     std::array<u8, 2> unknown_06;
     VECTOR position;
-    KfRotation rotation;
+    SVECTOR rotation;
     KfMapObjectLink link;
     KfMapObjectOperation action;
     u8 unknown_29;
@@ -297,11 +326,6 @@ typedef struct KfMapRuntimeState {
 
 extern std::array<KfMapCopyRegion, KF_MAP_COPY_REGION_COUNT> map_copy_regions;
 extern KfMapRuntimeState map_runtime_state;
-
-inline KfMapFloorScript &map_floor_script(KfFloorId floor)
-{
-    return map_runtime_state.world_state.floors[kf_enum_encode<u8>(floor) - 1].script;
-}
 
 extern KfMapObjectState map_object_state;
 extern std::array<char, KF_MAP_RESOURCE_PATH_BYTES> map_resource_path;
