@@ -87,6 +87,7 @@ void item_load_database(void)
         s32 n = i + 1;
         s32 rem;
 
+        /* ITEMx holds thirty models each; Innn is the one-based item number. */
         name[8] = i / 30 + '1';
         name[11] = n / 100 + '0';
         rem = n % 100;
