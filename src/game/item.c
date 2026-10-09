@@ -123,6 +123,7 @@ void shop_menu_root(KF_ENUM_PARAM(KfItemStockBank, s32) shop_bank)
     KfMenuResult result = KF_MENU_RESULT_PENDING;
     KfTradeMode trade_mode = KF_TRADE_NONE;
 
+    /* Three settle frames; the loop presents the third. */
     menu_frame_begin();
     menu_draw_window(KF_MENU_WINDOW_SHOP, KF_SHOP_CHOICE_COUNT, KF_ENUM_ENCODE(s32, KF_TRADE_BUY), KF_MENU_CONFIRM_IDLE);
     menu_present_frame();
@@ -137,8 +138,7 @@ void shop_menu_root(KF_ENUM_PARAM(KfItemStockBank, s32) shop_bank)
 
     for (;;) {
         menu_present_frame();
-        if (trade_mode != KF_TRADE_NONE
-                || KF_ENUM_ENCODE(s32, result) == KF_ENUM_ENCODE(s32, trade_mode)) {
+        if (trade_mode != KF_TRADE_NONE || result == KF_MENU_RESULT_CANCELLED) {
             menu_frame_begin();
             menu_draw_window(KF_MENU_WINDOW_SHOP, KF_SHOP_CHOICE_COUNT, cursor, confirm);
             menu_present_frame();
@@ -219,6 +219,7 @@ void shop_menu_buy(KF_ENUM_PARAM(KfItemStockBank, s32) shop_bank)
     }
     menu_list_init(&ctx, KF_MENU_WINDOW_SHOP, KF_ENUM_ENCODE(s32, KF_TRADE_BUY));
 
+    /* The list starts at Verdite and wraps around to the first item. */
     stock = item_stock[KF_ENUM_ENCODE(s32, shop_bank)];
     found = 0;
     for (slot = KF_ENUM_ENCODE(s32, KF_ITEM_VERDITE); slot < KF_ITEM_COUNT; slot++) {
@@ -347,6 +348,7 @@ void shop_menu_sell(KF_ENUM_PARAM(KfItemStockBank, s32) shop_bank)
     }
     menu_list_init(&ctx, KF_MENU_WINDOW_SHOP, KF_ENUM_ENCODE(s32, KF_TRADE_SELL));
 
+    /* Items from the Gold Cross onward cannot be sold. */
     stock = item_stock[KF_ENUM_ENCODE(u8, KF_ITEM_STOCK_PLAYER)];
     found = 0;
     for (slot = 0; slot < KF_ENUM_ENCODE(s32, KF_ITEM_GOLD_CROSS); slot++) {
@@ -473,23 +475,18 @@ KfMenuResult item_pickup_confirm(KF_ENUM_PARAM(KfObjectId, s32) item_id)
     decline_label.glyphs.codes[2] = 0x6a;
     decline_label.glyphs.codes[3] = MENU_TEXT_END;
 
+    /* Three settle frames; the loop presents the third. */
     menu_frame_begin();
     menu_draw_pickup_preview(item_id);
-    menu_draw_two_option(
-        &accept_label,
-        &decline_label, KF_MENU_CHOICE_ACCEPT, KF_MENU_CONFIRM_IDLE);
+    menu_draw_two_option(&accept_label, &decline_label, KF_MENU_CHOICE_ACCEPT, KF_MENU_CONFIRM_IDLE);
     menu_present_frame();
     menu_frame_begin();
     menu_draw_pickup_preview(item_id);
-    menu_draw_two_option(
-        &accept_label,
-        &decline_label, KF_MENU_CHOICE_ACCEPT, KF_MENU_CONFIRM_IDLE);
+    menu_draw_two_option(&accept_label, &decline_label, KF_MENU_CHOICE_ACCEPT, KF_MENU_CONFIRM_IDLE);
     menu_present_frame();
     menu_frame_begin();
     menu_draw_pickup_preview(item_id);
-    menu_draw_two_option(
-        &accept_label,
-        &decline_label, KF_MENU_CHOICE_ACCEPT, KF_MENU_CONFIRM_IDLE);
+    menu_draw_two_option(&accept_label, &decline_label, KF_MENU_CHOICE_ACCEPT, KF_MENU_CONFIRM_IDLE);
     menu_play_input_sound(MENU_SOUND_CURSOR);
     while (PadRead(1) != 0) {
     }
@@ -499,9 +496,7 @@ KfMenuResult item_pickup_confirm(KF_ENUM_PARAM(KfObjectId, s32) item_id)
         if (result != KF_MENU_RESULT_PENDING) {
             menu_frame_begin();
             menu_draw_pickup_preview(item_id);
-            menu_draw_two_option(
-                &accept_label,
-                &decline_label, choice, confirm);
+            menu_draw_two_option(&accept_label, &decline_label, choice, confirm);
             menu_present_frame();
             while (PadRead(1) != 0) {
             }
@@ -535,9 +530,7 @@ KfMenuResult item_pickup_confirm(KF_ENUM_PARAM(KfObjectId, s32) item_id)
             result = KF_MENU_RESULT_DECLINED;
         }
         menu_draw_pickup_preview(item_id);
-        menu_draw_two_option(
-            &accept_label,
-            &decline_label, choice, confirm);
+        menu_draw_two_option(&accept_label, &decline_label, choice, confirm);
     }
 
     menu_release_item_model();
