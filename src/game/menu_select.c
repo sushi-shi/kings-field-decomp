@@ -82,6 +82,7 @@ void menu_equip_select(KfEquipmentMenuCategory equipment_category)
             found++;
         }
     }
+    /* "hazusu" (unequip) */
     labels[found][0] = 0x59;
     labels[found][1] = MENU_TEXT_DAKUTEN | 0x4c;
     labels[found][2] = 0x4c;
@@ -226,6 +227,7 @@ void menu_spell_select(void)
             found++;
         }
     }
+    /* "hazusu" (unequip) */
     labels[found][0] = 0x59;
     labels[found][1] = MENU_TEXT_DAKUTEN | 0x4c;
     labels[found][2] = 0x4c;

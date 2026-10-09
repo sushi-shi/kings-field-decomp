@@ -41,7 +41,7 @@ static inline void menu_preview_light_source(MATRIX *light_source)
     light_source->m[2][2] = 0;
 }
 
-/* Simple coordinate/flip expressions; preserve the full-width UV arithmetic. */
+/* Draw one mirrored backdrop tile; UVs use the sprite's full-width size. */
 #define MENU_DRAW_BACKDROP_TILE(x, y, flip_x, flip_y) ( \
     menu_begin_poly_ft4(), \
     SetSemiTrans(current_poly_ft4, 1), \
@@ -56,7 +56,10 @@ static inline void menu_preview_light_source(MATRIX *light_source)
         (flip_y) ? -menu_assets.window_backdrop.height : menu_assets.window_backdrop.height), \
     menu_commit_poly_ft4(MENU_WINDOW_OT_DEPTH))
 
-/* Draw one reflected tile of the status-panel backdrop. */
+/*
+ * Draw one reflected tile of the status-panel backdrop.  Unresolved source
+ * form: retail reads the texture page through a pointer the caller hoists.
+ */
 static inline void menu_status_draw_backdrop_quad(
     s32 x, s32 y, KfBool32 flip_x, KfBool32 flip_y, const u16 *texture_page)
 {
@@ -64,11 +67,8 @@ static inline void menu_status_draw_backdrop_quad(
     SetSemiTrans(current_poly_ft4, 1);
     current_poly_ft4->tpage = *texture_page;
     current_poly_ft4->clut = menu_assets.window_backdrop.clut;
-    setXYWH(current_poly_ft4,
-        x,
-        y,
-        menu_assets.window_backdrop.width,
-        menu_assets.window_backdrop.height);
+    setXYWH(current_poly_ft4, x, y,
+        menu_assets.window_backdrop.width, menu_assets.window_backdrop.height);
     /* UV dimensions wrap at eight bits; screen dimensions remain halfwords. */
     setUVWH(current_poly_ft4,
         flip_x
@@ -98,18 +98,17 @@ void menu_status_panel(void)
 
     frame = 0;
     texture_page = &menu_assets.window_backdrop.tpage;
-    while (1) {
+    for (;;) {
         menu_frame_begin();
         menu_draw_status_details();
-
-        menu_status_draw_backdrop_quad(MENU_STATUS_BACKDROP_LEFT_X, MENU_BACKDROP_TOP_Y, KF_FALSE, KF_FALSE, texture_page);
-
-        menu_status_draw_backdrop_quad(MENU_STATUS_BACKDROP_RIGHT_X, MENU_BACKDROP_TOP_Y, KF_TRUE, KF_FALSE, texture_page);
-
-        menu_status_draw_backdrop_quad(MENU_STATUS_BACKDROP_LEFT_X, MENU_BACKDROP_BOTTOM_Y, KF_FALSE, KF_TRUE, texture_page);
-
-        menu_status_draw_backdrop_quad(MENU_STATUS_BACKDROP_RIGHT_X, MENU_BACKDROP_BOTTOM_Y, KF_TRUE, KF_TRUE, texture_page);
-
+        menu_status_draw_backdrop_quad(MENU_STATUS_BACKDROP_LEFT_X, MENU_BACKDROP_TOP_Y,
+            KF_FALSE, KF_FALSE, texture_page);
+        menu_status_draw_backdrop_quad(MENU_STATUS_BACKDROP_RIGHT_X, MENU_BACKDROP_TOP_Y,
+            KF_TRUE, KF_FALSE, texture_page);
+        menu_status_draw_backdrop_quad(MENU_STATUS_BACKDROP_LEFT_X, MENU_BACKDROP_BOTTOM_Y,
+            KF_FALSE, KF_TRUE, texture_page);
+        menu_status_draw_backdrop_quad(MENU_STATUS_BACKDROP_RIGHT_X, MENU_BACKDROP_BOTTOM_Y,
+            KF_TRUE, KF_TRUE, texture_page);
         menu_draw_window_backdrop();
         menu_present_frame();
         if (frame < MENU_PANEL_INPUT_RELEASE_FRAME) {
@@ -160,9 +159,8 @@ void menu_drop_item_panel(void)
     menu_list_init(&ctx, KF_MENU_WINDOW_ROOT, KF_ENUM_ENCODE(s32, KF_ROOT_CHOICE_DROP_ITEM));
 
     found = 0;
-    item_id = 0;
     player_stock = item_stock[KF_ENUM_ENCODE(u8, KF_ITEM_STOCK_PLAYER)];
-    for (; item_id < KF_ITEM_COUNT; item_id++) {
+    for (item_id = 0; item_id < KF_ITEM_COUNT; item_id++) {
         if (player_stock[item_id] != 0) {
             quantities[found] = player_stock[item_id];
             if (PLAYER_ITEM_IS_EQUIPPED(item_id)) {
@@ -271,7 +269,7 @@ KfMenuResult menu_system_panel(void)
     save_header_buffer = &header;
 
     for (;;) {
-        if (action != KF_MENU_SYSTEM_ACTION_NONE || KF_ENUM_ENCODE(s32, result) == KF_ENUM_ENCODE(s32, action)) {
+        if (action != KF_MENU_SYSTEM_ACTION_NONE || result == KF_MENU_RESULT_CANCELLED) {
             menu_frame_begin();
             menu_draw_window(KF_MENU_WINDOW_SYSTEM, KF_MENU_SYSTEM_ROW_COUNT, cursor, confirm);
             menu_present_frame();
@@ -349,6 +347,14 @@ KfMenuResult menu_system_panel(void)
     return result;
 }
 
+/* Present one frame of a status message over the save or load window. */
+#define MENU_DRAW_SAVE_MESSAGE_FRAME(window_kind, row_count, summaries, cursor, confirm) ( \
+    menu_frame_begin(), \
+    menu_add_message_image_quad(), \
+    menu_draw_save_slots((summaries), KF_ENUM_DECODE(KfSaveSlotOverlay, (cursor))), \
+    menu_draw_window((window_kind), (row_count), (cursor), (confirm)), \
+    menu_present_frame())
+
 /*
  * Save panel dispatched by the save-confirmation screen.  Reads the catalogue
  * and runs a five-row cursor: three data slots, a card-format row (3), and an
@@ -373,11 +379,7 @@ KfMenuResult menu_save_panel(void)
     if (status != KF_ENUM_ENCODE(s32, KF_SAVE_RESULT_OK) && status != KF_ENUM_ENCODE(s32, KF_SAVE_RESULT_NO_SPACE)) {
         menu_play_input_sound(MENU_SOUND_CURSOR);
         while (PadRead(1) == 0) {
-            menu_frame_begin();
-            menu_add_message_image_quad();
-            menu_draw_save_slots(summaries, KF_ENUM_DECODE(KfSaveSlotOverlay, cursor));
-            menu_draw_window(KF_MENU_WINDOW_SAVE, KF_MENU_SAVE_ROW_COUNT, cursor, confirm);
-            menu_present_frame();
+            MENU_DRAW_SAVE_MESSAGE_FRAME(KF_MENU_WINDOW_SAVE, KF_MENU_SAVE_ROW_COUNT, summaries, cursor, confirm);
         }
         menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
         while (PadRead(1) != 0) {
@@ -401,11 +403,7 @@ KfMenuResult menu_save_panel(void)
                 if (status == KF_ENUM_ENCODE(s32, KF_SAVE_CLEANUP_TEMP_OPENED)) {
                     menu_load_texture(MENU_TEXTURE_CONFIRM_CARD_FORMAT);
                     while (PadRead(1) == 0) {
-                        menu_frame_begin();
-                        menu_add_message_image_quad();
-                        menu_draw_save_slots(summaries, KF_ENUM_DECODE(KfSaveSlotOverlay, cursor));
-                        menu_draw_window(KF_MENU_WINDOW_SAVE, KF_MENU_SAVE_ROW_COUNT, cursor, confirm);
-                        menu_present_frame();
+                        MENU_DRAW_SAVE_MESSAGE_FRAME(KF_MENU_WINDOW_SAVE, KF_MENU_SAVE_ROW_COUNT, summaries, cursor, confirm);
                     }
                 }
                 menu_play_input_sound(MENU_SOUND_CURSOR);
@@ -419,22 +417,14 @@ KfMenuResult menu_save_panel(void)
             } else {
                 if (cursor < KF_SAVE_SLOT_COUNT) {
                     menu_load_texture(MENU_TEXTURE_SAVING_DATA);
-                    for (i = 0; i < 3; i++) {
-                        menu_frame_begin();
-                        menu_add_message_image_quad();
-                        menu_draw_save_slots(summaries, KF_ENUM_DECODE(KfSaveSlotOverlay, cursor));
-                        menu_draw_window(KF_MENU_WINDOW_SAVE, KF_MENU_SAVE_ROW_COUNT, cursor, confirm);
-                        menu_present_frame();
+                    for (i = 0; i < MENU_SETTLE_FRAMES; i++) {
+                        MENU_DRAW_SAVE_MESSAGE_FRAME(KF_MENU_WINDOW_SAVE, KF_MENU_SAVE_ROW_COUNT, summaries, cursor, confirm);
                     }
                     status = KF_ENUM_ENCODE(s32, save_system_write_slot(KF_ENUM_DECODE(KfSaveSlotArgument, cursor + KF_ENUM_ENCODE(s16, KF_SAVE_SLOT_FIRST))));
                 } else if (cursor == KF_MENU_SAVE_FORMAT_ROW) {
                     menu_load_texture(MENU_TEXTURE_FORMATTING_CARD);
-                    for (i = 0; i < 3; i++) {
-                        menu_frame_begin();
-                        menu_add_message_image_quad();
-                        menu_draw_save_slots(summaries, KF_ENUM_DECODE(KfSaveSlotOverlay, cursor));
-                        menu_draw_window(KF_MENU_WINDOW_SAVE, KF_MENU_SAVE_ROW_COUNT, cursor, confirm);
-                        menu_present_frame();
+                    for (i = 0; i < MENU_SETTLE_FRAMES; i++) {
+                        MENU_DRAW_SAVE_MESSAGE_FRAME(KF_MENU_WINDOW_SAVE, KF_MENU_SAVE_ROW_COUNT, summaries, cursor, confirm);
                     }
                     status = KF_ENUM_ENCODE(s32, memory_card_check_or_format(KF_CARD_FORMAT_CONFIRMED));
                     memset(summaries, 0, sizeof(summaries));
@@ -442,11 +432,7 @@ KfMenuResult menu_save_panel(void)
 
                 if (status != KF_ENUM_ENCODE(s32, KF_SAVE_RESULT_OK)) {
                     while (PadRead(1) == 0) {
-                        menu_frame_begin();
-                        menu_add_message_image_quad();
-                        menu_draw_save_slots(summaries, KF_ENUM_DECODE(KfSaveSlotOverlay, cursor));
-                        menu_draw_window(KF_MENU_WINDOW_SAVE, KF_MENU_SAVE_ROW_COUNT, cursor, confirm);
-                        menu_present_frame();
+                        MENU_DRAW_SAVE_MESSAGE_FRAME(KF_MENU_WINDOW_SAVE, KF_MENU_SAVE_ROW_COUNT, summaries, cursor, confirm);
                     }
                     menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
                     while (PadRead(1) != 0) {
@@ -520,11 +506,7 @@ KfMenuResult menu_load_panel(void)
     if (save_system_read_catalog(summaries) != KF_SAVE_RESULT_OK) {
         menu_play_input_sound(MENU_SOUND_CURSOR);
         while (PadRead(1) == 0) {
-            menu_frame_begin();
-            menu_add_message_image_quad();
-            menu_draw_save_slots(summaries, KF_ENUM_DECODE(KfSaveSlotOverlay, cursor));
-            menu_draw_window(KF_MENU_WINDOW_LOAD, KF_MENU_LOAD_ROW_COUNT, cursor, confirm);
-            menu_present_frame();
+            MENU_DRAW_SAVE_MESSAGE_FRAME(KF_MENU_WINDOW_LOAD, KF_MENU_LOAD_ROW_COUNT, summaries, cursor, confirm);
         }
         menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
         while (PadRead(1) != 0) {
@@ -548,20 +530,12 @@ KfMenuResult menu_load_panel(void)
                 result = KF_MENU_RESULT_PENDING;
             } else {
                 menu_load_texture(MENU_TEXTURE_LOADING_DATA);
-                for (i = 0; i < 3; i++) {
-                    menu_frame_begin();
-                    menu_add_message_image_quad();
-                    menu_draw_save_slots(summaries, KF_ENUM_DECODE(KfSaveSlotOverlay, cursor));
-                    menu_draw_window(KF_MENU_WINDOW_LOAD, KF_MENU_LOAD_ROW_COUNT, cursor, confirm);
-                    menu_present_frame();
+                for (i = 0; i < MENU_SETTLE_FRAMES; i++) {
+                    MENU_DRAW_SAVE_MESSAGE_FRAME(KF_MENU_WINDOW_LOAD, KF_MENU_LOAD_ROW_COUNT, summaries, cursor, confirm);
                 }
                 if (save_system_read_slot(KF_ENUM_DECODE(KfSaveSlotArgument, cursor + KF_ENUM_ENCODE(s16, KF_SAVE_SLOT_FIRST))) != KF_SAVE_RESULT_OK) {
                     while (PadRead(1) == 0) {
-                        menu_frame_begin();
-                        menu_add_message_image_quad();
-                        menu_draw_save_slots(summaries, KF_ENUM_DECODE(KfSaveSlotOverlay, cursor));
-                        menu_draw_window(KF_MENU_WINDOW_LOAD, KF_MENU_LOAD_ROW_COUNT, cursor, confirm);
-                        menu_present_frame();
+                        MENU_DRAW_SAVE_MESSAGE_FRAME(KF_MENU_WINDOW_LOAD, KF_MENU_LOAD_ROW_COUNT, summaries, cursor, confirm);
                     }
                     menu_play_input_sound(MENU_SOUND_CANCEL_OR_ERROR);
                     while (PadRead(1) != 0) {
@@ -650,11 +624,13 @@ void menu_config_panel(void)
 
     on_label.position.x = CONFIG_OPTION_ON_X;
     on_label.position.y = CONFIG_OPTION_FIRST_Y;
+    /* "ON" */
     on_label.glyphs.codes[0] = 0xf9;
     on_label.glyphs.codes[1] = 0xfa;
     on_label.glyphs.codes[2] = MENU_TEXT_END;
     off_label.position.x = CONFIG_OPTION_OFF_X;
     off_label.position.y = CONFIG_OPTION_FIRST_Y;
+    /* "OFF" */
     off_label.glyphs.codes[0] = 0xf9;
     off_label.glyphs.codes[1] = 0xfb;
     off_label.glyphs.codes[2] = 0xfb;
@@ -800,12 +776,14 @@ void menu_draw_status_summary(void)
 
     text.position.x = 181;
     text.position.y = 36;
+    /* Experience */
     text.glyphs.codes[0] = 0x82;
     text.glyphs.codes[1] = 0x83;
     text.glyphs.codes[2] = 0x84;
     text.glyphs.codes[3] = MENU_TEXT_END;
     menu_draw_string(&menu_assets.glyph_atlas, &text);
 
+    /* Level */
     text.glyphs.codes[0] = 0x2b;
     text.glyphs.codes[1] = MENU_TEXT_DAKUTEN | 0x1c;
     text.glyphs.codes[2] = 0x2a;
@@ -813,6 +791,7 @@ void menu_draw_status_summary(void)
     text.position.y += row_step;
     menu_draw_string(&menu_assets.glyph_atlas, &text);
 
+    /* Class */
     text.glyphs.codes[0] = 7;
     text.glyphs.codes[1] = 0x28;
     text.glyphs.codes[2] = 0xc;
@@ -820,12 +799,14 @@ void menu_draw_status_summary(void)
     text.position.y += row_step;
     menu_draw_string(&menu_assets.glyph_atlas, &text);
 
+    /* Floor */
     text.glyphs.codes[0] = 0xcc;
     text.glyphs.codes[1] = 0xcd;
     text.glyphs.codes[2] = MENU_TEXT_END;
     text.position.y += row_step;
     menu_draw_string(&menu_assets.glyph_atlas, &text);
 
+    /* HP */
     text.glyphs.codes[0] = 0xf0;
     text.glyphs.codes[1] = 0xf2;
     text.glyphs.codes[2] = MENU_TEXT_END;
@@ -836,12 +817,14 @@ void menu_draw_status_summary(void)
     text.position.y += row_step;
     menu_draw_string(&menu_assets.glyph_atlas, &text);
 
+    /* Status */
     text.glyphs.codes[0] = 0x85;
     text.glyphs.codes[1] = 0x86;
     text.glyphs.codes[2] = MENU_TEXT_END;
     text.position.y += row_step;
     menu_draw_string(&menu_assets.glyph_atlas, &text);
 
+    /* Gold */
     text.glyphs.codes[0] = MENU_TEXT_DAKUTEN | 0x9;
     text.glyphs.codes[1] = 0x2d;
     text.glyphs.codes[2] = 0x2a;
@@ -970,12 +953,14 @@ void menu_draw_status_details(void)
 
     text.position.x = 21;
     text.position.y = 35;
+    /* Experience */
     text.glyphs.codes[0] = 0x82;
     text.glyphs.codes[1] = 0x83;
     text.glyphs.codes[2] = 0x84;
     text.glyphs.codes[3] = MENU_TEXT_END;
     menu_draw_string(&menu_assets.glyph_atlas, &text);
 
+    /* Level */
     text.glyphs.codes[0] = 0x2b;
     text.glyphs.codes[1] = MENU_TEXT_DAKUTEN | 0x1c;
     text.glyphs.codes[2] = 0x2a;
@@ -983,6 +968,7 @@ void menu_draw_status_details(void)
     text.position.y += STATUS_SUMMARY_ROW_STEP;
     menu_draw_string(&menu_assets.glyph_atlas, &text);
 
+    /* Class */
     text.glyphs.codes[0] = 7;
     text.glyphs.codes[1] = 0x28;
     text.glyphs.codes[2] = 0xc;
@@ -990,6 +976,7 @@ void menu_draw_status_details(void)
     text.position.y += STATUS_SUMMARY_ROW_STEP;
     menu_draw_string(&menu_assets.glyph_atlas, &text);
 
+    /* HP */
     text.glyphs.codes[0] = 0xf0;
     text.glyphs.codes[1] = 0xf2;
     text.glyphs.codes[2] = MENU_TEXT_END;
@@ -1000,12 +987,14 @@ void menu_draw_status_details(void)
     text.position.y += STATUS_SUMMARY_ROW_STEP;
     menu_draw_string(&menu_assets.glyph_atlas, &text);
 
+    /* Status */
     text.glyphs.codes[0] = 0x85;
     text.glyphs.codes[1] = 0x86;
     text.glyphs.codes[2] = MENU_TEXT_END;
     text.position.y += STATUS_SUMMARY_ROW_STEP;
     menu_draw_string(&menu_assets.glyph_atlas, &text);
 
+    /* Gold */
     text.glyphs.codes[0] = MENU_TEXT_DAKUTEN | 0x9;
     text.glyphs.codes[1] = 0x2d;
     text.glyphs.codes[2] = 0x2a;
@@ -1014,17 +1003,21 @@ void menu_draw_status_details(void)
     text.position.y += STATUS_SUMMARY_ROW_STEP;
     menu_draw_string(&menu_assets.glyph_atlas, &text);
 
+    /* Strength */
     text.glyphs.codes[0] = 0x8c;
     text.glyphs.codes[1] = 0x8b;
     text.glyphs.codes[2] = MENU_TEXT_END;
     text.position.y += STATUS_SUMMARY_ROW_STEP;
     menu_draw_string(&menu_assets.glyph_atlas, &text);
 
+    /* Magic: only the first cell changes; the second keeps the previous
+     * label's "ryoku", completing "maryoku". */
     text.glyphs.codes[0] = 0x78;
     text.glyphs.codes[2] = MENU_TEXT_END;
     text.position.y += STATUS_SUMMARY_ROW_STEP;
     menu_draw_string(&menu_assets.glyph_atlas, &text);
 
+    /* Total attack */
     text.glyphs.codes[0] = 0xce;
     text.glyphs.codes[1] = 0xcf;
     text.glyphs.codes[2] = 0x89;
@@ -1149,6 +1142,7 @@ void menu_draw_status_details(void)
     }
     text.position.x = 181;
     text.position.y = 30;
+    /* Attack */
     text.glyphs.codes[0] = 0x89;
     text.glyphs.codes[1] = 0x8a;
     text.glyphs.codes[2] = 0x8b;
@@ -1184,6 +1178,7 @@ void menu_draw_status_details(void)
     text.position.y += STATUS_COMPONENT_ROW_STEP;
     menu_draw_string(&menu_assets.glyph_atlas, &text);
 
+    /* Defense */
     text.glyphs.codes[0] = 0x7a;
     text.glyphs.codes[1] = 0xd0;
     text.glyphs.codes[2] = 0x8b;
@@ -1382,6 +1377,7 @@ void menu_item_model_preview(KF_ENUM_PARAM(KfObjectId, s32) item_id)
         menu_draw_string(&menu_assets.glyph_atlas, &text);
 
         text.position.x = MENU_INVENTORY_QUANTITY_LABEL_X;
+        /* Quantity */
         text.glyphs.codes[0] = 0xca;
         text.glyphs.codes[1] = 0xcb;
         text.glyphs.codes[2] = MENU_TEXT_END;
@@ -1481,6 +1477,7 @@ void menu_draw_item_detail(KF_ENUM_PARAM(KfObjectId, s32) item_id, KF_ENUM_PARAM
     menu_draw_number(&menu_assets.number_atlas, &text);
 
     text.position.x = MENU_ITEM_DETAIL_LABEL_X;
+    /* Gold */
     text.glyphs.codes[0] = MENU_TEXT_DAKUTEN | 0x9;
     text.glyphs.codes[1] = 0x2d;
     text.glyphs.codes[2] = 0x2a;
@@ -1489,6 +1486,7 @@ void menu_draw_item_detail(KF_ENUM_PARAM(KfObjectId, s32) item_id, KF_ENUM_PARAM
     menu_draw_string(&menu_assets.glyph_atlas, &text);
 
     text.position.x = MENU_ITEM_DETAIL_LABEL_X;
+    /* Quantity */
     text.glyphs.codes[0] = 0xca;
     text.glyphs.codes[1] = 0xcb;
     text.glyphs.codes[2] = MENU_TEXT_END;
@@ -1579,6 +1577,7 @@ void menu_draw_save_slots(const KfSaveSlotSummary *summaries, KfSaveSlotOverlay 
         text.position.y = i * MENU_SAVE_SUMMARY_ROW_HEIGHT + 30;
         if ((s32)summaries[i].current_hp > 0) {
             text.position.x = MENU_SAVE_SUMMARY_LABEL_X;
+            /* Experience */
             text.glyphs.codes[0] = 0x82;
             text.glyphs.codes[1] = 0x83;
             text.glyphs.codes[2] = 0x84;
@@ -1590,6 +1589,7 @@ void menu_draw_save_slots(const KfSaveSlotSummary *summaries, KfSaveSlotOverlay 
             menu_draw_number(&menu_assets.number_atlas, &text);
 
             text.position.x = MENU_SAVE_SUMMARY_LABEL_X;
+            /* Floor */
             text.glyphs.codes[0] = 0xcc;
             text.glyphs.codes[1] = 0xcd;
             text.glyphs.codes[2] = MENU_TEXT_END;
@@ -1602,6 +1602,7 @@ void menu_draw_save_slots(const KfSaveSlotSummary *summaries, KfSaveSlotOverlay 
             menu_draw_number(&menu_assets.number_atlas, &text);
 
             text.position.x = MENU_SAVE_SUMMARY_LABEL_X;
+            /* HP */
             text.glyphs.codes[0] = 0xf0;
             text.glyphs.codes[1] = 242;
             text.glyphs.codes[2] = MENU_TEXT_END;
@@ -1613,6 +1614,7 @@ void menu_draw_save_slots(const KfSaveSlotSummary *summaries, KfSaveSlotOverlay 
                 summaries[i].maximum_hp, MENU_SAVE_STATUS_DIGITS);
 
             text.position.x = MENU_SAVE_SUMMARY_LABEL_X;
+            /* MP */
             text.glyphs.codes[0] = 0xf1;
             text.glyphs.codes[1] = 242;
             text.glyphs.codes[2] = MENU_TEXT_END;
@@ -1662,37 +1664,45 @@ KfMenuResult menu_list_confirm(
     decline_label.position.x = MENU_CONFIRM_TEXT_X;
     decline_label.position.y = MENU_LIST_CONFIRM_DECLINE_Y;
     if (confirm_kind == KF_MENU_CONFIRM_USE) {
+        /* "tsukau" (use) */
         accept_label.glyphs.codes[0] = 0x72;
         accept_label.glyphs.codes[1] = 0x42;
         accept_label.glyphs.codes[2] = MENU_TEXT_END;
     } else if (confirm_kind == KF_MENU_CONFIRM_DROP) {
+        /* "suteru" (discard) */
         accept_label.glyphs.codes[0] = 0x75;
         accept_label.glyphs.codes[1] = 0x52;
         accept_label.glyphs.codes[2] = 0x6a;
         accept_label.glyphs.codes[3] = MENU_TEXT_END;
     } else if (confirm_kind == KF_MENU_CONFIRM_YES_NO) {
+        /* "hai" (yes) */
         accept_label.glyphs.codes[0] = 0x59;
         accept_label.glyphs.codes[1] = 0x41;
         accept_label.glyphs.codes[2] = MENU_TEXT_END;
     } else if (confirm_kind == KF_MENU_CONFIRM_BUY) {
+        /* "kau" (buy) */
         accept_label.glyphs.codes[0] = 0x74;
         accept_label.glyphs.codes[1] = 0x42;
         accept_label.glyphs.codes[2] = MENU_TEXT_END;
     } else if (confirm_kind == KF_MENU_CONFIRM_SELL) {
+        /* "uru" (sell) */
         accept_label.glyphs.codes[0] = 0x73;
         accept_label.glyphs.codes[1] = 0x6a;
         accept_label.glyphs.codes[2] = MENU_TEXT_END;
     } else {
+        /* "soubi" (equip) */
         accept_label.glyphs.codes[0] = 0x70;
         accept_label.glyphs.codes[1] = 0x71;
         accept_label.glyphs.codes[2] = MENU_TEXT_END;
     }
     if (confirm_kind == KF_MENU_CONFIRM_YES_NO) {
+        /* "iie" (no) */
         decline_label.glyphs.codes[0] = 0x41;
         decline_label.glyphs.codes[1] = 0x41;
         decline_label.glyphs.codes[2] = 0x43;
     } else {
-        decline_label.glyphs.codes[0] = 99;
+        /* "yameru" (cancel) */
+        decline_label.glyphs.codes[0] = 0x63;
         decline_label.glyphs.codes[1] = 0x61;
         decline_label.glyphs.codes[2] = 0x6a;
     }
@@ -1796,11 +1806,13 @@ KfMenuResult menu_two_option_prompt(
 
     accept_label.position.x = MENU_CONFIRM_TEXT_X;
     accept_label.position.y = row_count * MENU_CONFIRM_ROW_STEP + MENU_PROMPT_ACCEPT_Y_OFFSET;
+    /* "hai" (yes) */
     accept_label.glyphs.codes[0] = 0x59;
     accept_label.glyphs.codes[1] = 0x41;
     accept_label.glyphs.codes[2] = MENU_TEXT_END;
     decline_label.position.x = MENU_CONFIRM_TEXT_X;
     decline_label.position.y = row_count * MENU_CONFIRM_ROW_STEP + MENU_PROMPT_DECLINE_Y_OFFSET;
+    /* "iie" (no) */
     decline_label.glyphs.codes[0] = 0x41;
     decline_label.glyphs.codes[1] = 0x41;
     decline_label.glyphs.codes[2] = 0x43;

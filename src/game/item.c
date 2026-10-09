@@ -460,11 +460,13 @@ KfMenuResult item_pickup_confirm(KF_ENUM_PARAM(KfObjectId, s32) item_id)
 
     accept_label.position.x = MENU_PICKUP_CONFIRM_TEXT_X;
     accept_label.position.y = MENU_PICKUP_CONFIRM_ACCEPT_Y;
+    /* "toru" (take) */
     accept_label.glyphs.codes[0] = 0x53;
     accept_label.glyphs.codes[1] = 0x6a;
     accept_label.glyphs.codes[2] = MENU_TEXT_END;
     decline_label.position.x = MENU_PICKUP_CONFIRM_TEXT_X;
     decline_label.position.y = MENU_PICKUP_CONFIRM_DECLINE_Y;
+    /* "yameru" (cancel) */
     decline_label.glyphs.codes[0] = 0x63;
     decline_label.glyphs.codes[1] = 0x61;
     decline_label.glyphs.codes[2] = 0x6a;
