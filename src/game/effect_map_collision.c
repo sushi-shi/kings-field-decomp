@@ -73,7 +73,7 @@ u32 effect_map_collision(VECTOR *position, s32 radius)
                     coordinate = subz;
                 rectangle_span:
                     if (coordinate >= record->x_min && coordinate <= record->x_max) {
-                        goto collide;
+                        goto query_targets;
                     }
                     break;
                 case KF_MAP_ORIENT_QUARTER_TURN:
@@ -134,7 +134,7 @@ u32 effect_map_collision(VECTOR *position, s32 radius)
         break;
     }
 
-collide:
+query_targets:
     switch (effect->type & KF_EFFECT_COLLISION_TARGETS_MASK) {
     case KF_EFFECT_COLLISION_TARGET_ACTORS:
         return collision_query_world(position->vx, position->vy, position->vz, radius, 0,
