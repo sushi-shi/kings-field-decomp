@@ -3,7 +3,7 @@
 #include <kf/lib/types.h>
 #include <psyq/kernel.h>
 #include <psyq/libc.h>
-#include <kf/game/game.h>
+#include <kf/lib/memory.h>
 #include <kf/lib/memory_layout.h>
 
 enum {
@@ -27,7 +27,7 @@ void *memory_malloc_checked(s32 size)
 {
     void *block = malloc(size);
 
-    if ((u32)block + MEMORY_CACHED_RAM_BASE > KF_MAIN_RAM_BYTES - 1) {
+    if ((u32)block + MEMORY_CACHED_RAM_BASE >= KF_MAIN_RAM_BYTES) {
         return NULL;
     }
     return block;
@@ -66,7 +66,7 @@ void memory_capture_system_heap_start(void)
 void memory_reset_system_heap(void)
 {
     memory_arena.system_heap_size = (u8 *)MEMORY_SYSTEM_HEAP_END_ADDRESS - memory_arena.system_heap_start;
-    InitHeap((void *)memory_arena.system_heap_start, memory_arena.system_heap_size);
+    InitHeap(memory_arena.system_heap_start, memory_arena.system_heap_size);
 }
 
 void *memory_allocate(s32 size)
@@ -79,7 +79,7 @@ void *memory_allocate(s32 size)
         block = memory_malloc_checked(size);
         size = (s32)block;
     } else {
-        block = (void *)*cursor;
+        block = *cursor;
         size = (size + (MEMORY_ALLOCATION_ALIGNMENT - 1))
             & ~(MEMORY_ALLOCATION_ALIGNMENT - 1);
         *cursor += size;

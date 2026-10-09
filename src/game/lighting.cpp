@@ -2,11 +2,13 @@
 
 #include <kf/lib/math.h>
 #include <kf/game/render.h>
-#include <kf/game/game.h>
+#include <kf/game/player.h>
+#include <kf/game/system.h>
 
 enum {
-    LIGHTING_COLOR_BLEND_STEP = 0x400,
-    VITAL_RESTORE_COLOR_LEVEL = 0xfff
+    LIGHTING_COLOR_BLEND_STEP = KF_FIXED12_ONE / 4,
+
+    VITAL_RESTORE_COLOR_LEVEL = 4095
 };
 
 void lighting_transition_color_matrix(const MATRIX *from, const MATRIX *to)

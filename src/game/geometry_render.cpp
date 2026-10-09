@@ -121,16 +121,11 @@ void render_hud_sprites(KfHudSprite *table)
 {
     KfHudSprite *entry;
 
-    entry = table;
-    if (entry->state == KF_SPRITE_END) {
-        return;
-    }
-    do {
+    for (entry = table; entry->state != KF_SPRITE_END; entry++) {
         if (entry->state == KF_SPRITE_VISIBLE) {
             render_screen_sprite(&entry->sprite);
         }
-        entry++;
-    } while (entry->state != KF_SPRITE_END);
+    }
 }
 
 enum {
@@ -187,22 +182,19 @@ static inline void notify_dequeue_group(void)
 
 void notify_effect_update(void)
 {
-    KfNotificationPhase *phase = &game_graphics_runtime.notification_state.control.effect_phase;
-
-    switch (*phase) {
+    switch (game_graphics_runtime.notification_state.control.effect_phase) {
     case KF_NOTIFICATION_IDLE: {
         u8 tail = game_graphics_runtime.notification_state.control.queue_tail;
         KfNotificationId id = game_graphics_runtime.notification_message_ids[tail];
         if (id == KF_NOTIFICATION_NONE) {
             return;
         }
-        *phase = KF_NOTIFICATION_HOLD;
+        game_graphics_runtime.notification_state.control.effect_phase = KF_NOTIFICATION_HOLD;
         game_graphics_runtime.notification_state.control.effect_angle_x = 0;
         game_graphics_runtime.notification_state.control.hold_frames = NOTIFICATION_HOLD_FRAMES;
         if (id == KF_NOTIFICATION_GOLD) {
-            KfNotificationSprite *sprite_records = notification_sprites;
             s16 digits[KF_NOTIFICATION_DIGIT_CAPACITY];
-            sprite_records[KF_NOTIFICATION_TEXT_SPRITE].active = KF_SPRITE_HIDDEN;
+            notification_sprites[KF_NOTIFICATION_TEXT_SPRITE].active = KF_SPRITE_HIDDEN;
             notification_sprites[KF_NOTIFICATION_GOLD_SPRITE].active = KF_SPRITE_VISIBLE;
             notification_sprites[KF_NOTIFICATION_GOLD_SPRITE].sprite.u =
                 (kf_enum_encode<u8>(id) & NOTIFICATION_ATLAS_COLUMN_MASK) << NOTIFICATION_ATLAS_COLUMN_SHIFT;
@@ -213,16 +205,16 @@ void notify_effect_update(void)
                 NOTIFICATION_GOLD_DIGITS, KF_FORMAT_PAD_SPACES, digits);
             notification_sprites[KF_NOTIFICATION_ONES_SPRITE].active = KF_SPRITE_VISIBLE;
             notification_digit_set_v(
-                &sprite_records[KF_NOTIFICATION_ONES_SPRITE].sprite, (u16)digits[3]);
+                &notification_sprites[KF_NOTIFICATION_ONES_SPRITE].sprite, (u16)digits[3]);
             notification_sprites[KF_NOTIFICATION_TENS_SPRITE].active = KF_SPRITE_VISIBLE;
             notification_digit_set_v(
-                &sprite_records[KF_NOTIFICATION_TENS_SPRITE].sprite, (u16)digits[2]);
+                &notification_sprites[KF_NOTIFICATION_TENS_SPRITE].sprite, (u16)digits[2]);
             notification_sprites[KF_NOTIFICATION_HUNDREDS_SPRITE].active = KF_SPRITE_VISIBLE;
             notification_digit_set_v(
-                &sprite_records[KF_NOTIFICATION_HUNDREDS_SPRITE].sprite, (u16)digits[1]);
+                &notification_sprites[KF_NOTIFICATION_HUNDREDS_SPRITE].sprite, (u16)digits[1]);
             notification_sprites[KF_NOTIFICATION_THOUSANDS_SPRITE].active = KF_SPRITE_VISIBLE;
             notification_digit_set_v(
-                &sprite_records[KF_NOTIFICATION_THOUSANDS_SPRITE].sprite, (u16)digits[0]);
+                &notification_sprites[KF_NOTIFICATION_THOUSANDS_SPRITE].sprite, (u16)digits[0]);
         } else {
             notification_sprites[KF_NOTIFICATION_TEXT_SPRITE].active = KF_SPRITE_VISIBLE;
             notification_sprites[KF_NOTIFICATION_TEXT_SPRITE].sprite.u =
@@ -238,10 +230,8 @@ void notify_effect_update(void)
         break;
     }
     case KF_NOTIFICATION_HOLD: {
-        u8 counter = game_graphics_runtime.notification_state.control.hold_frames - 1;
-        game_graphics_runtime.notification_state.control.hold_frames = counter;
-        if (counter == 0) {
-            *phase = KF_NOTIFICATION_ROTATE_OUT;
+        if (--game_graphics_runtime.notification_state.control.hold_frames == 0) {
+            game_graphics_runtime.notification_state.control.effect_phase = KF_NOTIFICATION_ROTATE_OUT;
         }
         break;
     }
