@@ -2,7 +2,10 @@
 #include <kf/lib/bool.h>
 
 #include <kf/game/player.h>
-#include <kf/game/game.h>
+#include <kf/game/actor.h>
+#include <kf/game/render.h>
+#include <kf/game/notify.h>
+#include <kf/game/state.h>
 
 enum {
     PLAYER_KEY_UNLOCK_VOLUME = 110,
@@ -67,7 +70,7 @@ void player_use_item(KfObjectId item_id)
     case KF_ITEM_SORCERER_KEY:
         for (;;) {
             index = map_object_pool_find_interaction_from(index, reach_x, reach_z, MAP_INTERACTION_RADIUS_PADDING);
-            if (index == -1) {
+            if (index == KF_MAP_OBJECT_INDEX_NONE) {
                 break;
             }
             object = &map_object_state.objects[index];
@@ -111,7 +114,7 @@ void player_use_item(KfObjectId item_id)
     case KF_ITEM_WIND_SEAL_STONE:
         for (;;) {
             index = map_object_pool_find_interaction_from(index, reach_x, reach_z, MAP_INTERACTION_RADIUS_PADDING);
-            if (index == -1) {
+            if (index == KF_MAP_OBJECT_INDEX_NONE) {
                 break;
             }
             object = &map_object_state.objects[index];

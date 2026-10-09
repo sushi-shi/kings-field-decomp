@@ -17,10 +17,10 @@ The game builds as three C programs: the loader, main game, and opening.
 
 | Branch | Purpose |
 | --- | --- |
-| `master` | Reconstruction and matching |
-| `source` | C++ PS1 build, codecs, and base for porting |
-| `classic` | C PS1 build |
-| `port` | Crossplatform port |
+| [master](https://github.com/sushi-shi/kings-field-decomp/tree/master) | Reconstruction and matching |
+| [source](https://github.com/sushi-shi/kings-field-decomp/tree/source) | C++ PS1 build, codecs, and base for porting |
+| [classic](https://github.com/sushi-shi/kings-field-decomp/tree/classic) | C PS1 build |
+| [port](https://github.com/sushi-shi/kings-field-decomp/tree/port) | Crossplatform port |
 
 ## Build and run
 
@@ -55,13 +55,17 @@ are forwarded to PCSX-Redux.
 
 ## Regeneration
 
-This `classic` branch is generated from `master`. Make upstream
-source changes there and regenerate with:
+This tree is generated from the reconstruction branch. Propose source changes
+through a PR targeting `master`. From that checkout, commit the input revision
+and generate a verified export:
 
 ```sh
-nix develop -c kf clean --classic --out build/clean-classic --verify \
-  --publish classic --worktree build/classic
+nix develop -c kf clean --classic --out build/clean-classic --verify
 ```
+
+Apply the verified generated tree on a new review branch based on `classic`,
+record its `Source-Commit` provenance, and submit a PR targeting `classic`.
+Keep the destination unchanged until the PR is reviewed and merged.
 
 ## License
 

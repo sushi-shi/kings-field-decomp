@@ -3,7 +3,9 @@
 #include <kf/game/collision.h>
 #include <kf/game/effect.h>
 #include <psyq/libc.h>
-#include <kf/game/game.h>
+#include <kf/game/player.h>
+#include <kf/game/actor.h>
+#include <kf/game/state.h>
 
 enum {
     EFFECT_FIXED_MAGIC_POWER = 5,
@@ -50,7 +52,7 @@ void effect_update_swinging_hazard(SVECTOR *probe_offset, s32 phase_limit)
     s16 pitch;
     s16 next_pitch;
 
-    if (((u8)(life)) < ((u8)(KF_EFFECT_HAZARD_RELEASE_REQUEST)) + 1u) {
+    if (((u8)(life)) <= ((u8)(KF_EFFECT_HAZARD_RELEASE_REQUEST))) {
         RotMatrix(&record->rotation.vector, &rotation_matrix);
         matrix_set_rotation_x(record->rotation.vector.vx, &rotation_matrix);
         matrix_set_rotation_y(record->rotation.vector.vy, &yaw_matrix);
@@ -80,7 +82,8 @@ void effect_update_swinging_hazard(SVECTOR *probe_offset, s32 phase_limit)
         if (record->rotation.vector.vx >= KF_ANGLE_EIGHTH_TURN) {
             record->rotation.vector.vx = KF_ANGLE_EIGHTH_TURN;
             record->direction.words.x = 0;
-        } else if (record->rotation.vector.vy < -KF_ANGLE_EIGHTH_TURN + 1) {
+        } else if (record->rotation.vector.vy <= -KF_ANGLE_EIGHTH_TURN) {
+
             record->rotation.vector.vx = -KF_ANGLE_EIGHTH_TURN;
             record->direction.words.x = 0;
         }
@@ -112,9 +115,12 @@ void effect_update_orbiting_projectile(s32 orbit_radius, s32 phase_limit)
     KfEffectRecord *record = effect_state.current_record;
     KfMagicRecord *magic = effect_state.current_magic;
     u32 life = record->phase;
+
+    MATRIX rotation_matrix;
+    MATRIX yaw_matrix;
     u32 collision;
 
-    if ((((u32)(life)) & 0xff) < ((u8)(KF_EFFECT_HAZARD_RELEASE_REQUEST)) + 1) {
+    if ((((u32)(life)) & 0xff) <= ((u8)(KF_EFFECT_HAZARD_RELEASE_REQUEST))) {
         record->position.vx = (record->direction.vector.vx << KF_EFFECT_ORBIT_CENTER_SHIFT)
             + (rsin((s16)record->control.orbit_angle) * orbit_radius >> KF_FIXED12_BITS);
         record->position.vz = (record->direction.vector.vz << KF_EFFECT_ORBIT_CENTER_SHIFT)
@@ -180,7 +186,7 @@ void effect_floor_deform_line(s32 segment_index, s32 progress_start, s32 progres
         progress_start += progress_step;
         if (progress < 0) {
             progress = 0;
-        } else if (progress >= KF_FIXED12_ONE + 1) {
+        } else if (progress > KF_FIXED12_ONE) {
             progress = KF_FIXED12_ONE;
         } else if (progress >= FLOOR_DEFORM_SOUND_PROGRESS && progress < range + FLOOR_DEFORM_SOUND_PROGRESS) {
             sound_position.vx = KF_MAP_TILE_SIZE * col + KF_MAP_TILE_CENTER;

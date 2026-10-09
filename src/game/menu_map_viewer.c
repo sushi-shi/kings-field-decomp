@@ -1,7 +1,9 @@
 #include <kf/game/graphics.h>
 
 #include <kf/game/menu.h>
-#include <kf/game/game.h>
+#include <kf/game/player.h>
+#include <kf/lib/resources.h>
+#include <psyq/pad.h>
 
 enum {
     MENU_MAP_PIXELS_PER_CELL = 2,
@@ -30,18 +32,20 @@ void menu_map_viewer(s32 item_id)
     s32 map_set;
 
     map_set = MENU_MAP_DEFAULT_SET;
-    if (item_id == KF_ITEM_WATCHMAN_MAP)
+    if (item_id == KF_ITEM_WATCHMAN_MAP) {
         map_set = MENU_MAP_WATCHMAN_SET;
+    }
     path[5] = map_set + '0';
     path[6] = ((u8)(player_state.progress_state.current_floor)) + '0';
 
     buffer = game_graphics_runtime.display_state.primitive_buffer->cursor;
-    if (cd_file_load_into((void *)buffer, path) != KF_RESOURCE_LOADED)
+    if (cd_file_load_into(buffer, path) != KF_RESOURCE_LOADED) {
         return;
+    }
     tim_upload_images(buffer);
 
     SetPolyFT4(&map_image_quads[0]);
-    SetSemiTrans((void *)(&map_image_quads[0]), 1);
+    SetSemiTrans(&map_image_quads[0], 1);
     setRGB0(&map_image_quads[0], MENU_MAP_BRIGHTNESS, MENU_MAP_BRIGHTNESS, MENU_MAP_BRIGHTNESS);
     map_image_quads[0].clut = MENU_MAP_IMAGE_CLUT;
     map_image_quads[0].tpage = MENU_MAP_IMAGE_TPAGE;
@@ -67,23 +71,24 @@ void menu_map_viewer(s32 item_id)
 
     for (;;) {
         menu_frame_begin();
-        AddPrim((void *)(game_graphics_runtime.display_state.ordering_table + MENU_OVERLAY_OT_DEPTH),
-                (void *)(&marker_quads[((u8)(game_graphics_runtime.display_state.buffer_index))]));
-        AddPrim((void *)(game_graphics_runtime.display_state.ordering_table + MENU_CONTENT_OT_DEPTH),
-                (void *)(&map_image_quads[((u8)(game_graphics_runtime.display_state.buffer_index))]));
+        AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_OVERLAY_OT_DEPTH,
+                &marker_quads[((u8)(game_graphics_runtime.display_state.buffer_index))]);
+        AddPrim(game_graphics_runtime.display_state.ordering_table + MENU_CONTENT_OT_DEPTH,
+                &map_image_quads[((u8)(game_graphics_runtime.display_state.buffer_index))]);
         MENU_ENQUEUE_BACKGROUND();
         menu_present_frame();
         if (frame < MENU_PANEL_INPUT_RELEASE_FRAME) {
             frame++;
         } else if (frame == MENU_PANEL_INPUT_RELEASE_FRAME) {
-            while (PadRead(1) != 0)
-                ;
+            while (PadRead(1) != 0) {
+            }
             frame++;
         } else {
-            if (PadRead(1) == 0)
+            if (PadRead(1) == 0) {
                 continue;
-            while (PadRead(1) != 0)
-                ;
+            }
+            while (PadRead(1) != 0) {
+            }
             return;
         }
     }

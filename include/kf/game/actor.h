@@ -18,8 +18,20 @@ struct KfAnimationCacheRecord;
 enum {
     KF_ACTOR_DEFINITION_COUNT = 12,
     KF_ACTOR_DEFINITION_WORD_COUNT = 456,
-    KF_ACTOR_ATTACHMENT_OFFSET_COUNT = 2,
-    KF_ACTOR_CAPACITY = 128
+    KF_ACTOR_ATTACHMENT_OFFSET_COUNT = 3,
+    KF_ACTOR_CAPACITY = 128,
+
+    KF_ACTOR_INDEX_NONE = -1
+};
+
+enum {
+    KF_FLOOR4_TRANSFORM_SOURCE_DEFINITION = 5,
+    KF_FLOOR4_TRANSFORM_RESULT_DEFINITION = 6,
+    KF_FLOOR5_BOSS_DEFINITION = 7,
+    KF_FLOOR5_BOSS_DEATH_DEFINITION_0 = 0,
+    KF_FLOOR5_BOSS_DEATH_DEFINITION_2 = 2,
+    KF_FLOOR5_BOSS_DEATH_DEFINITION_3 = 3,
+    KF_FLOOR5_BOSS_DEATH_DEFINITION_4 = 4
 };
 
 typedef u8 KfActorSlotState; enum {
@@ -133,7 +145,7 @@ enum {
     KF_ACTOR_SOUND_ATTACK = 0,
     KF_ACTOR_SOUND_HIT_REACTION = 1,
     KF_ACTOR_SOUND_DEATH = 2,
-    KF_ACTOR_SOUND_COUNT = 3
+    KF_ACTOR_SOUND_COUNT = KF_ACTOR_SOUND_DEATH + 1
 };
 
 enum {
@@ -143,8 +155,8 @@ enum {
 };
 
 enum {
-    KF_ACTOR_PLACEMENT_DEFINITION_MASK = 0x1f,
-    KF_ACTOR_PLACEMENT_NEAR_SQUARE_CULLING = 0x20
+    KF_ACTOR_PLACEMENT_NEAR_SQUARE_CULLING = 0x20,
+    KF_ACTOR_PLACEMENT_DEFINITION_MASK = KF_ACTOR_PLACEMENT_NEAR_SQUARE_CULLING - 1
 };
 
 enum {
@@ -190,10 +202,8 @@ typedef struct KfActorDefinition {
     KfAnimationClip action_animations[KF_ACTOR_ANIM_SLOT_COUNT];
     u8 turn_rate;
     SoundRef sounds[KF_ACTOR_SOUND_COUNT];
+
     struct KfVec3s attachment_offsets[KF_ACTOR_ATTACHMENT_OFFSET_COUNT];
-    s16 special_attack_chance;
-    s16 special_attack_range;
-    u8 unknown_38[2];
     u16 action_animation_steps[KF_ACTOR_ANIM_SLOT_COUNT];
     u16 action_animation_phases[KF_ACTOR_ANIM_SLOT_COUNT];
     u16 collision_radius;
@@ -206,6 +216,16 @@ typedef struct KfActorDefinition {
     u16 defenses[KF_COMBAT_COMPONENT_COUNT];
     u16 gold_drop_limit;
 } KfActorDefinition;
+
+static inline s16 actor_definition_special_attack_chance(const KfActorDefinition *definition)
+{
+    return definition->attachment_offsets[((s32)(KF_ACTOR_EFFECT_SLOT_THIRD))].x;
+}
+
+static inline s16 actor_definition_special_attack_range(const KfActorDefinition *definition)
+{
+    return definition->attachment_offsets[((s32)(KF_ACTOR_EFFECT_SLOT_THIRD))].y;
+}
 
 typedef struct KfActorDefinitionTable {
     KfActorDefinition entries[KF_ACTOR_DEFINITION_COUNT];
@@ -304,8 +324,8 @@ extern void actor_apply_horizontal_movement(void);
 extern void actor_apply_random_movement(s16 step, s16 limit);
 extern void actor_bind_current(KfActor *actor);
 extern void actor_apply_damage(
-    u16 actor_index, u16 base_power, u16 component0, u16 component1,
-    u16 component2, u16 component3, u16 component4, u16 scale, u16 hit_flags);
+    u16 actor_index, u16 base_power, u16 cutting_damage, u16 striking_damage,
+    u16 piercing_damage, u16 magic_damage, u16 fire_damage, u16 scale, u16 hit_flags);
 extern void actor_definitions_load(const KfActorDefinitionTable *definitions);
 extern void actor_initialize(KfActor *actor);
 extern void actor_initialize_current(void);
@@ -317,8 +337,8 @@ extern void actor_pool_begin_death_by_definition(u16 definition_id);
 extern void actor_pool_clear(void);
 extern void actor_pool_apply_radial_damage(
     const VECTOR *origin, u32 radius, u16 falloff_q12, u16 base_power,
-    u16 component0, u16 component1, u16 component2, u16 component3,
-    u16 component4, u16 scale, u16 hit_flags);
+    u16 cutting_damage, u16 striking_damage, u16 piercing_damage, u16 magic_damage,
+    u16 fire_damage, u16 scale, u16 hit_flags);
 extern s32 actor_pool_find_at_tile(u8 tile_x, u8 tile_z);
 extern KfActor *actor_pool_find_target_in_cone(
     const VECTOR *origin, s16 facing, u32 max_distance,
@@ -335,7 +355,7 @@ extern s32 actor_distance_to_point(
 extern void actor_prepare_charge_toward_player(void);
 extern void actor_select_next_action(s32 player_distance);
 extern void actor_set_action(KfActor *actor, KfActorAction action);
-extern void actor_set_player_transform( const VECTOR *position_or_null, const SVECTOR *rotation_or_null);
+extern void actor_set_player_transform(const VECTOR *position_or_null, const SVECTOR *rotation_or_null);
 extern KfActorAction actor_try_select_action_distance_facing(
     KfActorAction action, s32 distance, u16 chance, u16 distance_scale);
 extern KfActorAction actor_try_select_multi_hit_action(

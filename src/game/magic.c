@@ -3,7 +3,7 @@
 #include <kf/lib/map_data.h>
 #include <kf/game/collision.h>
 #include <kf/game/player.h>
-#include <kf/game/game.h>
+#include <kf/game/actor.h>
 #include <kf/game/magic.h>
 
 enum {
@@ -74,6 +74,7 @@ void magic_cast(void)
                 angles.x = LIGHTNING_UNTARGETED_PITCH;
                 distance = LIGHTNING_UNTARGETED_UPDATES;
             } else {
+
                 angles.x = 0;
                 angles.x += player_state.camera_rotation.vx;
             }

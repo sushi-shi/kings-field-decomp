@@ -4,7 +4,11 @@
 #include <kf/lib/map_data.h>
 #include <kf/game/player.h>
 #include <kf/game/collision.h>
-#include <kf/game/game.h>
+#include <kf/game/render.h>
+#include <kf/game/state.h>
+#include <kf/game/system.h>
+#include <kf/game/animation_cache.h>
+#include <kf/game/actor.h>
 
 static MATRIX actor_transform_color_matrix = {
     {{250, 100, 500}, {250, 100, 500}, {250, 100, 500}}, {0, 0, 0}
@@ -15,7 +19,6 @@ enum {
     WARP_SHIMMER_SOUND_FRAME = 8,
     WARP_CELL_X_SHIFT = 24,
     WARP_CELL_Z_SHIFT = 16,
-    ACTOR_TRANSFORM_RESULT_DEFINITION = 6,
     ACTOR_TRANSFORM_BLEND_INTERVALS = 64,
     ACTOR_TRANSFORM_Y_STEP = 40
 };
@@ -29,6 +32,7 @@ void player_warp_shimmer(KfWarpShimmerMode shimmer_mode, VECTOR *position)
     KfEffectRecord *effects[KF_CYLINDER_TRANSITION_COUNT];
     KfEffectRecord **cursor;
     KfEffectRecord *effect;
+
     struct {
         VECTOR position;
         SVECTOR direction;
@@ -81,7 +85,7 @@ void player_warp_shimmer(KfWarpShimmerMode shimmer_mode, VECTOR *position)
             if (i * KF_CYLINDER_TRANSITION_STAGGER_FRAMES < frame) {
                 u16 current_scale_y = effect->scale_y;
 
-                if (current_scale_y < KF_CYLINDER_TRANSITION_TALL_SCALE + 1) {
+                if (current_scale_y <= KF_CYLINDER_TRANSITION_TALL_SCALE) {
                     effect->scale_y = scale_y_step + current_scale_y;
                 }
             }
@@ -254,14 +258,14 @@ void actor_transform_definition5_to6(KfActor *actor)
     map_runtime_state.events[2].state = KF_MAP_EVENT_DISABLED;
     ReadColorMatrix(&saved);
 
-    for (blend = 0; blend < KF_FIXED12_ONE + 1; blend += KF_FIXED12_ONE / ACTOR_TRANSFORM_BLEND_INTERVALS) {
+    for (blend = 0; blend <= KF_FIXED12_ONE; blend += KF_FIXED12_ONE / ACTOR_TRANSFORM_BLEND_INTERVALS) {
         lighting_set_color_matrix(&saved, &actor_transform_color_matrix, blend);
         actor->position.vy += ACTOR_TRANSFORM_Y_STEP;
         actor->rotation.angles.y += KF_ANGLE_FULL_TURN / ACTOR_TRANSFORM_BLEND_INTERVALS;
         render_frame(NULL, NULL);
         frame_pacer_wait();
     }
-    actor->definition_id = ACTOR_TRANSFORM_RESULT_DEFINITION;
+    actor->definition_id = KF_FLOOR4_TRANSFORM_RESULT_DEFINITION;
     for (blend = KF_FIXED12_ONE; blend >= 0; blend -= KF_FIXED12_ONE / ACTOR_TRANSFORM_BLEND_INTERVALS) {
         lighting_set_color_matrix(&saved, &actor_transform_color_matrix, blend);
         actor->position.vy -= ACTOR_TRANSFORM_Y_STEP;

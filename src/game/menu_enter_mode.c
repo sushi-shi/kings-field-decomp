@@ -1,7 +1,9 @@
 #include <stdarg.h>
 
 #include <kf/game/menu.h>
-#include <kf/game/game.h>
+#include <kf/game/animation_cache.h>
+#include <kf/lib/memory.h>
+#include <kf/game/player.h>
 
 void func_80036e30(void)
 {

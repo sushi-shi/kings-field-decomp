@@ -3,7 +3,9 @@
 #include <kf/lib/map.h>
 #include <kf/game/collision.h>
 #include <psyq/libc.h>
-#include <kf/game/game.h>
+#include <kf/game/player.h>
+#include <kf/game/state.h>
+#include <kf/game/animation_cache.h>
 
 enum {
     MAP_AMBIENT_COUNTDOWN_RELOAD = 10,
@@ -89,9 +91,7 @@ void map_event_pool_update(void)
     u16 index = KF_MAP_EVENT_CAPACITY - 1;
 
     do {
-        int state = event->state;
-
-        if (state == KF_MAP_EVENT_ACTIVE) {
+        if (event->state == KF_MAP_EVENT_ACTIVE) {
             map_event_set_current(event);
 
             switch (event->behavior) {
@@ -117,14 +117,8 @@ void map_event_pool_update(void)
         event++;
     } while (index-- != 0);
 
-    {
-        u16 *gate = &map_runtime_state.dialogue_advance_gate;
-        u16 current = *gate;
-
-        *gate = current - 1;
-        if (current == 0) {
-            *gate = KF_DIALOGUE_GATE_RELOAD;
-        }
+    if (map_runtime_state.dialogue_advance_gate-- == 0) {
+        map_runtime_state.dialogue_advance_gate = KF_DIALOGUE_GATE_RELOAD;
     }
 
     if (map_runtime_state.ambient_script_countdown-- == 0) {
@@ -199,7 +193,6 @@ void map_world_state_persist(void)
     count_slot = out++;
     active = 0;
     object = &map_object_state.objects[0];
-    definitions = map_object_state.definitions.entries;
     for (i = 0; i < KF_MAP_OBJECT_EFFECT_FIRST; i++, object++) {
         KfObjectId id = object->object_id;
         KfMapObjectOperation behavior;
@@ -208,6 +201,7 @@ void map_world_state_persist(void)
             continue;
         }
 
+        definitions = map_object_state.definitions.entries;
         behavior = definitions[((u8)(id))].behavior_type;
         if ((behavior == KF_MAP_OBJECT_OP_NONE
                 || behavior == KF_MAP_OBJECT_OP_SCREEN_IMAGE
