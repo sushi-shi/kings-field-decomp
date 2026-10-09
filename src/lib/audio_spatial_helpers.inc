@@ -18,12 +18,7 @@ KfAudioPlaybackResult audio_play_spatial_range(
     s32 max_distance,
     s32 attenuation_distance)
 {
-    return audio_play_spatial(
-        sound,
-        position,
-        volume,
-        max_distance,
-        attenuation_distance);
+    return audio_play_spatial(sound, position, volume, max_distance, attenuation_distance);
 }
 
 ADDRESS_AT("GAME", 0x80033014, 0x28)

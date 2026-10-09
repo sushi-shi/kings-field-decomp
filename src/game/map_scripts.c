@@ -105,7 +105,11 @@ s32 actor_pool_find_at_tile(u8 tile_x, u8 tile_z)
     return KF_ACTOR_INDEX_NONE;
 }
 
-/* Floor 1 ambient script. */
+/*
+ * Floor 1 ambient script: plays the revival sound once enabled, and runs two
+ * enter-then-leave area triggers.  Leaving the first area wakes the gated
+ * actor and breaks the stone cross; leaving the second removes an object.
+ */
 ADDRESS(0x80033f64, 0x288)
 void map_ambient_script_floor1(void)
 {
@@ -133,12 +137,15 @@ void map_ambient_script_floor1(void)
             s32 object_index;
 
             map_runtime_state.world_state.floors[0].script.floor1.actor_activation_stage = KF_MAP_TRIGGER_COMPLETE;
-            actor_index = actor_pool_find_at_tile(7, 0x28);
+            actor_index = actor_pool_find_at_tile(KF_FLOOR1_GATED_ACTOR_TILE_X, KF_FLOOR1_GATED_ACTOR_TILE_Z);
             if (actor_index != KF_ACTOR_INDEX_NONE) {
                 actor_state.actors[actor_index].lifecycle = KF_ACTOR_LIFECYCLE_DORMANT;
                 actor_initialize_slot(actor_index);
             }
-            object_index = map_object_pool_find_near_point(0x5208, 0x105b8, MAP_SCRIPT_OBJECT_SEARCH_PADDING);
+            object_index = map_object_pool_find_near_point(
+                map_placement_axis_position(10, KF_MAP_TILE_CENTER),
+                map_placement_axis_position(33, KF_MAP_TILE_CENTER),
+                MAP_SCRIPT_OBJECT_SEARCH_PADDING);
             if (object_index != KF_MAP_OBJECT_INDEX_NONE) {
                 map_object_state.objects[object_index].object_id = KF_MAP_OBJECT_BROKEN_STONE_CROSS;
             }
@@ -163,7 +170,10 @@ void map_ambient_script_floor1(void)
             s32 object_index;
 
             map_runtime_state.world_state.floors[0].script.floor1.object_removal_stage = KF_MAP_TRIGGER_COMPLETE;
-            object_index = map_object_pool_find_near_point(0x2328, 0xdea8, MAP_SCRIPT_OBJECT_SEARCH_PADDING);
+            object_index = map_object_pool_find_near_point(
+                map_placement_axis_position(4, KF_MAP_TILE_CENTER),
+                map_placement_axis_position(28, KF_MAP_TILE_CENTER),
+                MAP_SCRIPT_OBJECT_SEARCH_PADDING);
             if (object_index != KF_MAP_OBJECT_INDEX_NONE) {
                 map_object_state.objects[object_index].object_id = KF_OBJECT_NONE;
             }

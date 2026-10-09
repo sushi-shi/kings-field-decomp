@@ -1249,17 +1249,33 @@ prove the historical compiler.
 | Retail form | Source shape | Witness |
 | --- | --- | --- |
 | Five parser cases branch to one literal-byte tail | put the conversion switch in the width-digit `else`; let literal cases `break` and place the literal store after the switch | GAME and OPEN `format_vsprintf` |
-| Several policy exits jump forward to one chosen-result tail | use a constant single-pass `switch (0)` around only the policy region and replace those exits with `break`; leave backward loop joins outside it | `actor_select_next_action`, `actor_update_awareness` |
-| A bounded distance calculation has two late out-of-range exits | use the same single-pass region for the calculation and return the sentinel after it; retain genuine early returns for the cheap bounds checks | `player_distance_to_point`, `actor_distance_to_point` |
-| A special fatal-drop exemption skips to the common camera-height publisher | enclose the death/vertical-state region and let that exemption `break` to the publisher | `player_update_vertical_motion` |
-| Wind Cutter actor/player hits share the projectile advance tail | enclose only collision response; the two hit arms `break`, while all other collision results retain their return | `effect_update_dispatch` |
-| Negative attribute height returns the current collision result after the remaining geometry tests | enclose the attribute/grid/target selection region and break directly to the result return | `effect_collision_in_cell` in `effect_map_collision` |
+| Several policy exits jump forward to one chosen-result tail | assign `chosen` and `goto apply_choice` at the policy exits | `actor_select_next_action` |
+| A bounded distance calculation has two late out-of-range exits | `goto out_of_range` to one sentinel return; keep genuine early returns for the cheap bounds checks | `player_distance_to_point`, `actor_distance_to_point` |
+| A special fatal-drop exemption skips to the common camera-height publisher | `goto apply_camera_height` | `player_update_vertical_motion` |
+| Wind Cutter actor/player hits share the projectile advance tail | `goto travel` from the two hit arms; every other collision result keeps its return | `effect_update_dispatch` |
 
-The constant-switch form is intentionally narrow. It is useful only when its
-`break` names a coherent policy or calculation boundary and GCC erases the
-wrapper completely. A `do { ... } while (0)` replacement for
+The October 2026 readability pass replaced the earlier constant
+`switch (0) { default: ... break; }` regions with these labelled exits or with
+plain compound conditions (`actor_update_awareness`, `effect_map_collision`).
+GCC erased the wrapper, so both spellings compile to the same bytes, and a
+named label states the jump honestly. A `do { ... } while (0)` replacement for
 `opening_entity_transition` was also byte-identical, but was rejected because
-it merely disguised the multi-level jump and did not improve the source.
+it merely disguised the multi-level jump.
+
+Further negative controls from that pass:
+
+| Retained shape | Rejected natural form (listing similarity) | Witness |
+| --- | --- | --- |
+| `goto emit_padded` / `goto copy` into the decimal case's tail | fully duplicated per-case pad and copy (59.4%); a static inline padding helper (34.9%) | `format_vsprintf` |
+| `goto done` / `goto found` out of the countdown search | `return actor` inside the loop (88.9%); an up-counting `for` (64.7%); the spawn body inside the loop (48.5%); `break` plus `count == -1` (73.8%) | `actor_pool_find_free`, `actor_pool_spawn` |
+| `retry_allocation:` label before the malloc | a `while ((p = malloc()) == NULL)` loop or `for (;;)` with `break` (both 91.1%) | `render_bind_animated_instance` |
+| `goto render_alternate` between the two ending models | duplicated select/project/enqueue tail (90.5%) | `opening_entity_render` |
+| `goto deactivate` from the remove case | wrapping the scale switch in `if (mode != REMOVE)` (84.9%) | `opening_cylinder_transition` |
+| grounded case jumping into the falling/step-up cases | grounded transitions first, then a plain falling/step-up switch (61.2%) | `player_update_vertical_motion` |
+| `goto apply_choice` chain | the movement fallback as an inline helper with early returns (36.7%) | `actor_select_next_action` |
+| harp `goto done` | `notify_enqueue` plus `return` at the harp test (98.8%) | `player_use_item` |
+| two unrolled `OVERLAY_LAUNCH` calls | a two-entry launch loop (54.5%) | PSX `main` |
+| `for (count--; count != -1; count--)` | `while (count-- != 0)` (52.0%); an up-counting `for` (67.3%) | `tmd_project_vertices_depth_shift` |
 
 `map_event_refresh_dialogue_stage` is a negative control. Retail places the
 shared page-reset stores before the stage-limit arm, which jumps backward into

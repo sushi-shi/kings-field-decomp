@@ -65,6 +65,13 @@ typedef struct KfMapFloor1Script {
     KfMapScriptFlag revival_enabled;
 } KfMapFloor1Script;
 
+/* The floor-1 actor on this tile stays disabled until actor_activation_stage
+ * completes; the ambient script then wakes it. */
+enum {
+    KF_FLOOR1_GATED_ACTOR_TILE_X = 7,
+    KF_FLOOR1_GATED_ACTOR_TILE_Z = 40
+};
+
 typedef struct KfMapFloor3Script {
     u8 revealed_piece_count;
 } KfMapFloor3Script;

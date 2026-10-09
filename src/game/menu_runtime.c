@@ -736,24 +736,19 @@ void menu_config_panel(void)
 }
 
 /*
- * Draw four config rows.  Each row places two option boxes at the row's left
- * and right anchors -- highlighting the one whose per-row state equals 1 -- and
- * a label under each, then steps both anchors down 22 pixels.  Finally links
- * the four double-buffered map-viewer frame quads for the current buffer at
- * ordering-table slot 3000.
+ * Draw the four config rows as on/off option pairs, highlighting the box that
+ * matches each row's setting, then link the menu background quads.
  */
 ADDRESS(0x80025da0, 0x198)
 void menu_config_panel_draw(
     MenuGlyphString on_label, MenuGlyphString off_label, KfPlayerOption *option_states)
 {
     s32 i;
-    KfPlayerOption *state;
     const MenuSpriteDef *off_box;
 
     current_poly_ft4 = (POLY_FT4 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
-    state = option_states;
     for (i = 0; i < KF_MENU_CONFIG_SETTING_COUNT; i++) {
-        if (*state == KF_PLAYER_OPTION_ON) {
+        if (option_states[i] == KF_PLAYER_OPTION_ON) {
             menu_blit_sprite_translucent(&menu_assets.option_highlight, &on_label.position);
             off_box = &menu_assets.option_background;
         } else {
@@ -761,13 +756,8 @@ void menu_config_panel_draw(
             off_box = &menu_assets.option_highlight;
         }
         menu_blit_sprite_translucent(off_box, &off_label.position);
-        menu_draw_string(
-            &menu_assets.glyph_atlas,
-            &on_label);
-        menu_draw_string(
-            &menu_assets.glyph_atlas,
-            &off_label);
-        state++;
+        menu_draw_string(&menu_assets.glyph_atlas, &on_label);
+        menu_draw_string(&menu_assets.glyph_atlas, &off_label);
         on_label.position.y += CONFIG_OPTION_ROW_STEP;
         off_label.position.y += CONFIG_OPTION_ROW_STEP;
     }
@@ -778,7 +768,11 @@ enum {
     ROOT_STATUS_SUMMARY_ROW_STEP = 23
 };
 
-/* Simple workspace/value expressions; maximum is read after current/slash draw. */
+/*
+ * Draw CURRENT/MAXIMUM as two DIGITS-wide numbers around a slash.  A macro
+ * because callers pass both live u16 and saved s32 vitals, and MAXIMUM is
+ * evaluated only after the current value and slash are drawn.
+ */
 #define MENU_DRAW_VITAL_FRACTION(string, current, maximum, digits) ( \
     menu_format_number((current), (digits), KF_FORMAT_PAD_SPACES, (string).glyphs.codes), \
     menu_draw_number(&menu_assets.number_atlas, &(string)), \
@@ -1533,13 +1527,10 @@ void menu_add_message_image_quad(void)
 }
 
 /*
- * Draw save-slot overlays plus optional summary rows. The highlighted slot
- * omits its overlay; negative indices suppress all overlays and indices beyond
- * the three slots draw all overlays.  When `rows` is non-null,
- * up to three slot summaries are drawn, each gated by positive saved current
- * HP; every row prints an icon label plus its numeric fields through the
- * shared glyph-string workspace.  Used by the save/load panels, the save
- * confirmation, and the two-option confirm dialog.
+ * Draw the save-slot dimming overlays and, when SUMMARIES is non-null, the
+ * three slot summaries.  SLOT_OVERLAY names the highlighted slot, which is
+ * left undimmed; KF_SAVE_OVERLAY_NONE dims nothing and KF_SAVE_OVERLAY_ALL
+ * dims every slot.  A summary row is drawn only when its saved HP is positive.
  */
 ADDRESS(0x80027ee4, 0x49c)
 void menu_draw_save_slots(const KfSaveSlotSummary *summaries, KfSaveSlotOverlay slot_overlay)
@@ -1772,11 +1763,10 @@ enum {
 };
 
 /*
- * Interactive two-option confirm dialog.  Draws the window and the two labels
- * every frame, toggling the selected option on an up/down edge, and returns
- * once the player confirms (result -selected) or cancels (result -1).  Save
- * and load windows forward the caller's save summaries to the frame builder; all others
- * suppress the composite-frame selection (-1).
+ * Two-option confirm dialog over an open window.  Up/down toggles between the
+ * options; confirming accept returns KF_MENU_RESULT_ACCEPTED, while confirming
+ * decline or cancelling returns KF_MENU_RESULT_CANCELLED.  Save and load
+ * windows keep HIGHLIGHT_ROW's slot undimmed behind the dialog.
  */
 ADDRESS(0x800286d4, 0x240)
 KfMenuResult menu_two_option_prompt(
@@ -1851,12 +1841,10 @@ KfMenuResult menu_two_option_prompt(
 }
 
 /*
- * Draw one menu window: an optional title label (drawn when the record's first
- * halfword is non-zero), then `count` selectable rows, then the shared
- * translucent backdrop for every window kind but the configuration window.  The highlighted row
- * (index `highlight`) takes the confirmed-selection background when confirmation is
- * requested and always gets the selection-cursor sprite overlaid.  Rows advance one
- * MenuGlyphString per step starting at the record's first row.
+ * Draw one menu window: its title (when the layout gives it a position), then
+ * ROW_COUNT rows, then the shared backdrop for every window but the
+ * configuration window.  HIGHLIGHT_ROW gets the selection cursor, and the
+ * confirmed background while CONFIRMATION is requested.
  */
 ADDRESS(0x80028914, 0x15c)
 void menu_draw_window(KfMenuWindowKind window_kind, s32 row_count, s32 highlight_row, KfMenuConfirmState confirmation)
