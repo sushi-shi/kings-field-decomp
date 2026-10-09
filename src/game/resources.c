@@ -46,7 +46,7 @@ KfMapAttributeGrid map_cell_attribute_grid;
 
 RODATA(0x80012178, 0x39)
 
-/* Each map grid chunk holds 100 x 100 bytes, copied as 0x9c4 words. */
+/* Each map grid chunk holds 100 x 100 bytes, copied as 2500 words. */
 #define MAP_GRID_WORDS (sizeof map_cell_attribute_grid / sizeof(u32))
 
 #include "../lib/tim_upload_images.inc"
