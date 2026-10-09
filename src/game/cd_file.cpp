@@ -47,9 +47,7 @@ KfResourceLoadResult cd_file_load_allocated(u8 **destination, const char *relati
 
         CdControl(CdlSetloc, (u_char *)&cd_read_location, NULL);
         CdRead(cd_search_file.size >> KF_CD_SECTOR_SHIFT, (u_long *)*destination, CdlModeSpeed);
-        do {
-            result = CdReadSync(KF_CD_READ_POLL, NULL);
-        } while (result > 0);
+        while ((result = CdReadSync(KF_CD_READ_POLL, NULL)) > 0) {}
         if (result == 0) {
             attempt = KF_CD_READ_STOP_ATTEMPT;
             loaded = 1;
@@ -74,9 +72,7 @@ KfResourceLoadResult cd_file_load_table_entry(u8 **destination, s32 index)
 
         CdControl(CdlSetloc, (u_char *)&cd_read_location, NULL);
         CdRead(cd_file_table[index].size >> KF_CD_SECTOR_SHIFT, (u_long *)*destination, CdlModeSpeed);
-        do {
-            result = CdReadSync(KF_CD_READ_POLL, NULL);
-        } while (result > 0);
+        while ((result = CdReadSync(KF_CD_READ_POLL, NULL)) > 0) {}
         if (result == 0) {
             attempt = KF_CD_READ_STOP_ATTEMPT;
             loaded = KF_TRUE;
@@ -111,9 +107,7 @@ KfResourceLoadResult cd_file_load_into(void *destination, const char *relative_p
 
         CdControl(CdlSetloc, (u_char *)&cd_read_location, NULL);
         CdRead(cd_search_file.size >> KF_CD_SECTOR_SHIFT, (u_long *)destination, CdlModeSpeed);
-        do {
-            result = CdReadSync(KF_CD_READ_POLL, NULL);
-        } while (result > 0);
+        while ((result = CdReadSync(KF_CD_READ_POLL, NULL)) > 0) {}
         if (result == 0) {
             attempt = KF_CD_READ_STOP_ATTEMPT;
             loaded = 1;

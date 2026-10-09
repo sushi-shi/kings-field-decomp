@@ -67,9 +67,7 @@ KfResourceLoadResult cd_file_load_allocated(
             cd_search_file.size >> KF_CD_SECTOR_SHIFT,
             (u_long *)*destination,
             CdlModeSpeed);
-        do {
-            result = CdReadSync(KF_CD_READ_POLL, NULL);
-        } while (result > 0);
+        while ((result = CdReadSync(KF_CD_READ_POLL, NULL)) > 0) {}
         if (result == 0) {
             attempt = KF_CD_READ_STOP_ATTEMPT;
         }
@@ -102,9 +100,7 @@ KfResourceLoadResult cd_file_load_into(
             cd_search_file.size >> KF_CD_SECTOR_SHIFT,
             (u_long *)destination,
             CdlModeSpeed);
-        do {
-            result = CdReadSync(KF_CD_READ_POLL, NULL);
-        } while (result > 0);
+        while ((result = CdReadSync(KF_CD_READ_POLL, NULL)) > 0) {}
         if (result == 0) {
             attempt = KF_CD_READ_STOP_ATTEMPT;
         }
@@ -134,7 +130,7 @@ void opening_resources_load_scene0(void)
     RESOURCE_STREAM_NEXT(stream);
     source = resource_stream_copy_words(
         map_cell_attribute_grid.words,
-        (const u32 *)(stream + KF_RESOURCE_CHUNK_HEADER_BYTES),
+        RESOURCE_STREAM_PAYLOAD(stream, const u32),
         MAP_GRID_WORDS);
     source = resource_stream_copy_words(
         map_floor_height_grid.words, source, MAP_GRID_WORDS);
@@ -145,11 +141,10 @@ void opening_resources_load_scene0(void)
     resource_stream_copy_words(
         map_collision_grid.words, source, MAP_GRID_WORDS);
     RESOURCE_STREAM_NEXT(stream);
-    item_load_floor_placements(
-        (KfFloorItemPlacement *)(stream + KF_RESOURCE_CHUNK_HEADER_BYTES));
+    item_load_floor_placements(RESOURCE_STREAM_PAYLOAD(stream, KfFloorItemPlacement));
     RESOURCE_STREAM_NEXT(stream);
     opening_entity_pool_load_placements(
-        (const KfMapObjectPlacement *)(stream + KF_RESOURCE_CHUNK_HEADER_BYTES),
+        RESOURCE_STREAM_PAYLOAD(stream, const KfMapObjectPlacement),
         KF_OPENING_ENTITY_FLOOR_HEIGHT);
     RESOURCE_STREAM_NEXT(stream);
     memory_release_last();
@@ -157,10 +152,10 @@ void opening_resources_load_scene0(void)
     audio_play_sequence_file("B0\\OPEN0.");
     cd_file_load_allocated(&stream, "B0\\MIXB0.");
     tmd_register(KF_TMD_SLOT_ENTITIES,
-        (KfTmdHeader *)(stream + KF_RESOURCE_CHUNK_HEADER_BYTES));
+        RESOURCE_STREAM_PAYLOAD(stream, KfTmdHeader));
     RESOURCE_STREAM_NEXT(stream);
     tmd_register(KF_TMD_SLOT_MAP,
-        (KfTmdHeader *)(stream + KF_RESOURCE_CHUNK_HEADER_BYTES));
+        RESOURCE_STREAM_PAYLOAD(stream, KfTmdHeader));
     RESOURCE_STREAM_NEXT(stream);
     memory_set_allocation_mode(KF_MEMORY_USE_HEAP);
 }
@@ -200,13 +195,13 @@ void opening_resources_load_scene3(void)
     memory_release_last();
     cd_file_load_allocated(&stream, "B0\\MIXA3.");
     opening_entity_pool_load_placements(
-        (const KfMapObjectPlacement *)(stream + KF_RESOURCE_CHUNK_HEADER_BYTES),
+        RESOURCE_STREAM_PAYLOAD(stream, const KfMapObjectPlacement),
         KF_OPENING_SCENE_BASE_Y);
     RESOURCE_STREAM_NEXT(stream);
     memory_release_last();
     cd_file_load_allocated(&stream, "B0\\MIXB3.");
     tmd_register(KF_TMD_SLOT_ENTITIES,
-        (KfTmdHeader *)(stream + KF_RESOURCE_CHUNK_HEADER_BYTES));
+        RESOURCE_STREAM_PAYLOAD(stream, KfTmdHeader));
     RESOURCE_STREAM_NEXT(stream);
     memory_release_last();
     memory_set_allocation_mode(KF_MEMORY_USE_HEAP);
@@ -231,7 +226,7 @@ void opening_resources_load_ending(void)
     audio_load_vab(vab_header, vab_chunk + KF_RESOURCE_CHUNK_HEADER_BYTES);
     RESOURCE_STREAM_NEXT(stream);
     opening_entity_pool_load_placements(
-        (const KfMapObjectPlacement *)(stream + KF_RESOURCE_CHUNK_HEADER_BYTES),
+        RESOURCE_STREAM_PAYLOAD(stream, const KfMapObjectPlacement),
         KF_OPENING_SCENE_BASE_Y);
     RESOURCE_STREAM_NEXT(stream);
     memory_release_last();
@@ -239,7 +234,7 @@ void opening_resources_load_ending(void)
     audio_play_sequence_file(opening_ending_sequence_path);
     cd_file_load_allocated(&stream, "B0\\MIXBE.");
     tmd_register(KF_TMD_SLOT_ENTITIES,
-        (KfTmdHeader *)(stream + KF_RESOURCE_CHUNK_HEADER_BYTES));
+        RESOURCE_STREAM_PAYLOAD(stream, KfTmdHeader));
     RESOURCE_STREAM_NEXT(stream);
     opening_ending_arena_cursor = *arena_cursor;
     memory_set_allocation_mode(KF_MEMORY_USE_HEAP);
@@ -251,7 +246,7 @@ void opening_resources_load_ending_entities(void)
 
     cd_file_load_allocated(&stream, "B0\\MIXAF.");
     opening_entity_pool_load_placements(
-        (const KfMapObjectPlacement *)(stream + KF_RESOURCE_CHUNK_HEADER_BYTES),
+        RESOURCE_STREAM_PAYLOAD(stream, const KfMapObjectPlacement),
         KF_OPENING_SCENE_BASE_Y);
     RESOURCE_STREAM_NEXT(stream);
     memory_release_last();
