@@ -22,14 +22,12 @@ void menu_save_confirm(void)
     save_payload_buffer = &payload;
     save_header_buffer = &header;
 
-    i = 0;
-    do {
-        i++;
+    for (i = 0; i < 3; i++) {
         menu_frame_begin();
         menu_draw_save_slots(NULL, KF_SAVE_OVERLAY_ALL);
         menu_draw_window(KF_MENU_WINDOW_SAVE, KF_MENU_SAVE_ROW_COUNT, 0, KF_MENU_CONFIRM_IDLE);
         menu_present_frame();
-    } while (i < 3);
+    }
     menu_play_input_sound(MENU_SOUND_CURSOR);
     while (PadRead(1) != 0) {
     }
@@ -54,14 +52,12 @@ s32 menu_root(void)
     KfMenuRootChoice selection = KF_ROOT_CHOICE_NONE;
     s32 i;
 
-    i = 0;
-    do {
-        i++;
+    for (i = 0; i < 3; i++) {
         menu_frame_begin();
         menu_draw_status_summary();
         menu_draw_window(KF_MENU_WINDOW_ROOT, KF_MENU_ROOT_ROW_COUNT, cursor, confirm);
         menu_present_frame();
-    } while (i < 3);
+    }
     menu_play_input_sound(MENU_SOUND_CURSOR);
     while (PadRead(1) != 0) {
     }
@@ -302,7 +298,7 @@ s32 menu_use_item_panel(void)
     }
 
     menu_release_item_model();
-    if ((u32)(selection - KF_ENUM_ENCODE(s32, KF_ITEM_VERDITE)) < KF_ENUM_ENCODE(s32, KF_ITEM_LIGHT_RING) - KF_ENUM_ENCODE(s32, KF_ITEM_VERDITE)) {
+    if (selection >= KF_ENUM_ENCODE(s32, KF_ITEM_VERDITE) && selection < KF_ENUM_ENCODE(s32, KF_ITEM_LIGHT_RING)) {
         player_stock[selection]--;
         if (selection == KF_ENUM_ENCODE(s32, KF_ITEM_MEDICINAL_HERB)) {
             player_state.vitals.current_hp += MEDICINAL_HERB_HP_RECOVERY;
