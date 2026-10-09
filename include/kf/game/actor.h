@@ -377,7 +377,7 @@ extern s32 actor_distance_to_point(
 extern void actor_prepare_charge_toward_player(void);
 extern void actor_select_next_action(s32 player_distance);
 extern void actor_set_action(KfActor *actor, KfActorAction action);
-extern void actor_set_player_transform( const VECTOR *position_or_null, const SVECTOR *rotation_or_null);
+extern void actor_set_player_transform(const VECTOR *position_or_null, const SVECTOR *rotation_or_null);
 extern KfActorAction actor_try_select_action_distance_facing(
     KfActorAction action, s32 distance, u16 chance, u16 distance_scale);
 extern KfActorAction actor_try_select_multi_hit_action(

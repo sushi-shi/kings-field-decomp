@@ -108,7 +108,7 @@ void map_restore_floor_state(void)
             map_apply_copy_region(KF_MAP_COPY_FLOOR1_PASSAGE);
         }
         if (map_runtime_state.world_state.floors[0].script.floor1.actor_activation_stage != KF_MAP_TRIGGER_COMPLETE) {
-            index = actor_pool_find_at_tile(7, 0x28);
+            index = actor_pool_find_at_tile(KF_FLOOR1_GATED_ACTOR_TILE_X, KF_FLOOR1_GATED_ACTOR_TILE_Z);
             if (index != KF_ACTOR_INDEX_NONE) {
                 actor_state.actors[index].lifecycle = KF_ACTOR_LIFECYCLE_DISABLED;
             }

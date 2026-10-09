@@ -54,8 +54,8 @@ void render_enqueue_unlit_triangles(u16 object_index, s16 depth_bias)
                 >> KF_GTE_DEPTH_TO_OT_SHIFT) + depth_bias;
             if (depth >= KF_SCENE_MIN_OT_DEPTH) {
                 AddPrim(
-                    (void *)(&open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK]),
-                    (void *)&prim->sdk);
+                    &open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
+                    &prim->sdk);
             }
             break;
         }
@@ -79,8 +79,8 @@ void render_enqueue_unlit_triangles(u16 object_index, s16 depth_bias)
                 >> KF_GTE_DEPTH_TO_OT_SHIFT) + depth_bias;
             if (depth >= KF_SCENE_MIN_OT_DEPTH) {
                 AddPrim(
-                    (void *)(&open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK]),
-                    (void *)&prim->sdk);
+                    &open_graphics_runtime.ordering_table[depth & KF_ORDERING_TABLE_INDEX_MASK],
+                    &prim->sdk);
             }
             break;
         }

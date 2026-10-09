@@ -252,8 +252,8 @@ void opening_scene1_draw_fade(u8 shade)
     setRGB0(left, shade, shade, shade);
     setRGB0(right, shade, shade, shade);
 
-    AddPrim((void *)open_graphics_runtime.ordering_table, (void *)left);
-    AddPrim((void *)open_graphics_runtime.ordering_table, (void *)right);
+    AddPrim(open_graphics_runtime.ordering_table, left);
+    AddPrim(open_graphics_runtime.ordering_table, right);
     display_present_frame();
 }
 
@@ -268,7 +268,7 @@ void opening_scene1_run(void)
         opening_scene1_draw_fade((u8)shade);
         opening_poll_input();
         shade += SCENE1_SHADE_STEP;
-    } while (shade < KF_TEXTURE_BASE_BRIGHTNESS + 1);
+    } while (shade <= KF_TEXTURE_BASE_BRIGHTNESS);
 
     for (frame = 0; frame < SCENE1_HOLD_FRAMES; frame++) {
         if (frame == SCENE1_SEQUENCE_STOP_FRAME) {
@@ -346,7 +346,7 @@ void opening_cylinder_transition(KfOpeningCylinderTransitionMode transition_mode
             if ((entity_index << KF_CYLINDER_TRANSITION_STAGGER_SHIFT) < frame) {
                 u16 scale_y = entity->scale.vy;
 
-                if (scale_y < KF_CYLINDER_TRANSITION_TALL_SCALE + 1) {
+                if (scale_y <= KF_CYLINDER_TRANSITION_TALL_SCALE) {
                     entity->scale.vy = scale_step + scale_y;
                 }
             }
@@ -416,7 +416,7 @@ void opening_scene3_run(void)
             &opening_camera_path_state.rotation);
         opening_poll_input();
         blend += OPENING_COLOR_FADE_STEP;
-        if (blend >= KF_FIXED12_ONE + 1) {
+        if (blend > KF_FIXED12_ONE) {
             break;
         }
     }
@@ -485,7 +485,7 @@ void opening_scene3_run(void)
             &opening_camera_path_state.position,
             &opening_camera_path_state.rotation);
         blend += OPENING_COLOR_FADE_STEP;
-    } while (blend < KF_FIXED12_ONE + 1);
+    } while (blend <= KF_FIXED12_ONE);
 
     if (opening_input_action == KF_OPENING_INPUT_NONE) {
         opening_cylinder_transition(KF_OPENING_CYLINDER_TRANSITION_REMOVE, &transition_position);
@@ -526,7 +526,7 @@ void opening_ending_scene_run(void)
             &opening_camera_path_state.position,
             &opening_camera_path_state.rotation);
         blend += OPENING_COLOR_FADE_STEP;
-    } while (blend < KF_FIXED12_ONE + 1);
+    } while (blend <= KF_FIXED12_ONE);
 
     opening_cylinder_transition(KF_OPENING_CYLINDER_TRANSITION_SHRINK, &transition_position);
     brightness = 0;
@@ -599,7 +599,7 @@ void opening_ending_scene_run(void)
             &opening_camera_path_state.rotation);
         blend += OPENING_COLOR_FADE_STEP;
         brightness -= ENDING_FADE_DARKEN_STEP;
-    } while (blend < KF_FIXED12_ONE + 1);
+    } while (blend <= KF_FIXED12_ONE);
 }
 
 void opening_ending_scroll_run(void)

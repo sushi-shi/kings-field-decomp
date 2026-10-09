@@ -61,6 +61,11 @@ typedef struct KfMapFloor1Script {
     KfMapScriptFlag revival_enabled;
 } KfMapFloor1Script;
 
+enum {
+    KF_FLOOR1_GATED_ACTOR_TILE_X = 7,
+    KF_FLOOR1_GATED_ACTOR_TILE_Z = 40
+};
+
 typedef struct KfMapFloor3Script {
     u8 revealed_piece_count;
 } KfMapFloor3Script;
@@ -461,9 +466,9 @@ extern void map_action_script_floor3(void);
 extern void map_action_script_floor4(void);
 extern void map_action_script_floor5(void);
 extern void map_event_advance_animation_blocking(KfMapEvent *event, u16 target, s16 step);
-extern s32 map_event_distance_to_point( const KfMapEvent *event, s32 point_x, s32 point_z, s32 max_distance);
+extern s32 map_event_distance_to_point(const KfMapEvent *event, s32 point_x, s32 point_z, s32 max_distance);
 extern s32 map_event_pool_find_overlap(s32 point_x, s32 point_z, s32 radius_padding);
-extern KfMapEvent *map_event_pool_find_target_in_cone( const VECTOR *origin, s16 facing, s32 max_distance, s32 angle_tolerance, s32 *distance_out);
+extern KfMapEvent *map_event_pool_find_target_in_cone(const VECTOR *origin, s16 facing, s32 max_distance, s32 angle_tolerance, s32 *distance_out);
 extern void map_event_pool_load(const KfMapEventDefinition *definitions);
 extern void map_event_pool_update(void);
 extern void map_event_refresh_dialogue_stage(KfMapEvent *event);
@@ -474,7 +479,7 @@ extern void map_interaction_dispatch(
 extern void map_load_floor_wrapper(void);
 extern void map_load_floor(void);
 extern void map_object_definitions_load(const KfMapObjectDefinitionTable *definitions);
-extern s32 map_object_distance_to_point( const KfMapObject *object, s32 point_x, s32 point_z, s32 max_distance);
+extern s32 map_object_distance_to_point(const KfMapObject *object, s32 point_x, s32 point_z, s32 max_distance);
 extern KfMapObject *map_object_effect_pool_acquire(u16 first_index, u16 count, u16 sequence);
 extern void map_object_mark_collision_edge(const KfMapObject *object, KfMapCellKind cell_kind, u16 yaw);
 extern void map_object_pool_clear(void);

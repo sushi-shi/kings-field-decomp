@@ -48,17 +48,17 @@ void item_load_database(void)
     }
 
     src = stat_data;
-    memcpy((void *)&menu_assets, (const void *)src, sizeof menu_assets);
+    memcpy(&menu_assets, src, sizeof menu_assets);
     src += sizeof menu_assets;
-    memcpy((void *)menu_window_layouts, (const void *)src, sizeof menu_window_layouts);
+    memcpy(menu_window_layouts, src, sizeof menu_window_layouts);
     src += sizeof menu_window_layouts;
-    memcpy((void *)item_name_rows, (const void *)src, sizeof(item_name_rows));
+    memcpy(item_name_rows, src, sizeof(item_name_rows));
     src += sizeof(item_name_rows);
-    memcpy((void *)magic_name_rows, (const void *)src, sizeof(magic_name_rows));
+    memcpy(magic_name_rows, src, sizeof(magic_name_rows));
     src += sizeof(magic_name_rows);
-    memcpy((void *)item_buy_prices, (const void *)src, sizeof(item_buy_prices));
+    memcpy(item_buy_prices, src, sizeof(item_buy_prices));
     src += sizeof(item_buy_prices);
-    memcpy((void *)item_sell_prices, (const void *)src, sizeof(item_sell_prices));
+    memcpy(item_sell_prices, src, sizeof(item_sell_prices));
 
     memory_release_last();
 
@@ -412,11 +412,13 @@ KfMenuResult item_pickup_confirm(KfObjectId item_id)
 
     accept_label.position.x = MENU_PICKUP_CONFIRM_TEXT_X;
     accept_label.position.y = MENU_PICKUP_CONFIRM_ACCEPT_Y;
+
     accept_label.glyphs.codes[0] = 0x53;
     accept_label.glyphs.codes[1] = 0x6a;
     accept_label.glyphs.codes[2] = MENU_TEXT_END;
     decline_label.position.x = MENU_PICKUP_CONFIRM_TEXT_X;
     decline_label.position.y = MENU_PICKUP_CONFIRM_DECLINE_Y;
+
     decline_label.glyphs.codes[0] = 0x63;
     decline_label.glyphs.codes[1] = 0x61;
     decline_label.glyphs.codes[2] = 0x6a;
