@@ -99,9 +99,11 @@ The three definition sounds are attack, hit reaction and death. Parameter
 slots 0..2 contain encoded effect/profile IDs, slots 3..5 their selection
 chances, slot 6 the optional death-drop object and slot 7 its chance. These
 now have shared index names; the byte-array layout and dynamic effect indexing
-are unchanged. Effect index 2 also reaches beyond the current two-element
+are unchanged. At this review's baseline, effect index 2 reached beyond the two-element
 `attachment_offsets` declaration, into the following modeled fields. This
-review preserves that access and does not assert a proved three-vector owner.
+review preserved that access without establishing a three-vector owner.
+The later [attachment reconstruction](actor-attachment-layout.md) supplies
+the three-element owner and names its shared special-attack interpretations.
 A parameter's low five bits select the effect kind and index the 25-row
 action-profile table; indices 25..31 are not range-checked. Bit 5 requests
 two attachments mirrored by 1500 units.

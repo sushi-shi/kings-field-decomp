@@ -480,6 +480,7 @@
           analysisPython mipsBinutilsAliases psy-k objdiff-cli pkgs.dosbox-x pkgs.git
           cc1psx257 cpppsx257
           pkgs.llvmPackages.clang-unwrapped
+          pkgs.stdenv.cc
         ];
         GHIDRA_PSX_LOADER = "${ghidraPsxLoader}/lib/ghidra/Ghidra/Extensions/ghidra_psx_ldr";
         PSYQ_SDK = "${psyqSdk}/release-2.5";

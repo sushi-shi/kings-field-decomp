@@ -310,8 +310,8 @@ class InventoryTests(unittest.TestCase):
         self.assertGreaterEqual(counts["functions_named"], 240)
         self.assertGreaterEqual(counts["data_named"], 100)
         self.assertEqual(counts["structures"], 129)
-        self.assertEqual(counts["structure_fields"], 866)
-        self.assertEqual(counts["structure_fields_named"], 778)
+        self.assertEqual(counts["structure_fields"], 863)
+        self.assertEqual(counts["structure_fields_named"], 776)
 
     def test_sdk_field_ownership_has_individual_evidence(self) -> None:
         identities = load_data_identities(RETAIL_CONFIG)

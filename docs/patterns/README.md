@@ -9,6 +9,10 @@ See the [current source cleanup review](../source-cleanup-review.md) for
 open owner, argument-access, stack-carrier, and alignment findings. Older
 campaign counts and verdicts retain their recorded scope.
 
+- [actor-attachment-layout.md](actor-attachment-layout.md): three bounded
+  attachment slots, shared signed special-attack lanes, shipped boss evidence,
+  and byte-identical native compiler controls.
+
 - [shared-game-open-code.md](shared-game-open-code.md): complete GAME/OPEN function
   accounting, common implementations, reusable single-image helpers, and retained
   behavior differences with unchanged compiler and linker outputs.

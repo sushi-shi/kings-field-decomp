@@ -150,15 +150,15 @@ void actor_select_next_action(s32 player_distance)
     } else if (definition->action_animations[KF_ACTOR_ANIM_SLOT_JUMP_ATTACK]
             != KF_ANIMATION_CLIP_NONE
         && actor_try_select_ground_action(
-               KF_ACTOR_ACTION_JUMP_ATTACK, player_distance, definition->special_attack_chance)
+               KF_ACTOR_ACTION_JUMP_ATTACK, player_distance, actor_definition_special_attack_chance(definition))
             != KF_ACTOR_ACTION_NONE) {
         chosen = KF_ACTOR_ACTION_JUMP_ATTACK;
     } else if (definition->action_animations[KF_ACTOR_ANIM_SLOT_SPECIAL_ATTACK]
             != KF_ANIMATION_CLIP_NONE
         && actor_try_select_action_distance_facing(KF_ACTOR_ACTION_SPECIAL_ATTACK,
                player_distance,
-               definition->special_attack_chance,
-               definition->special_attack_range)
+               actor_definition_special_attack_chance(definition),
+               actor_definition_special_attack_range(definition))
             != KF_ACTOR_ACTION_NONE) {
         chosen = KF_ACTOR_ACTION_SPECIAL_ATTACK;
     } else if (definition->action_animations[KF_ACTOR_ANIM_SLOT_EFFECT0] != KF_ANIMATION_CLIP_NONE
@@ -1071,7 +1071,7 @@ void actor_update_current_action(void)
             break;
         case KF_ACTOR_PROGRESS_JUMP_ATTACK_PENDING:
             if (actor_animation_crossed_phase(actor, ACTOR_JUMP_CONTACT_PHASE)) {
-                actor_try_attack_player(0, definition->special_attack_range, 0, KF_ACTOR_AIM_TOLERANCE);
+                actor_try_attack_player(0, actor_definition_special_attack_range(definition), 0, KF_ACTOR_AIM_TOLERANCE);
                 actor->action_progress = KF_ACTOR_PROGRESS_JUMP_WAIT_FOR_LANDING;
             }
             break;
@@ -1110,7 +1110,7 @@ void actor_update_current_action(void)
             && actor->animation_phase
                 < definition->action_animation_steps[KF_ACTOR_ANIM_SLOT_SPECIAL_ATTACK]
                     + ACTOR_SPECIAL_CONTACT_PHASE) {
-            actor_try_attack_player(0, definition->special_attack_range, 0, KF_ACTOR_AIM_TOLERANCE);
+            actor_try_attack_player(0, actor_definition_special_attack_range(definition), 0, KF_ACTOR_AIM_TOLERANCE);
         }
         if (actor->animation_phase >= KF_ACTOR_ANIMATION_PHASE_MAX) {
             actor->action_progress = KF_ACTOR_PROGRESS_COMPLETE;

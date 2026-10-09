@@ -8,7 +8,7 @@ verdicts; generated syntax counts do not prove object bounds or ownership.
 
 | Finding | Source evidence | Current verdict |
 | --- | --- | --- |
-| Third actor attachment | `actor_behavior.c` forwards slot 2 into `attachment_offsets[2]`, declared with two entries in `actor.h` | Open: retail loads share bytes 0x34–0x39 with special-attack fields; preserve both consumers and the 0x98-byte definition |
+| Third actor attachment | Retail indexes three triples; the third x/y lanes are also special-attack chance/range | Candidate corrected to one three-element array with named signed readers; forced actor behavior and loader objects are byte-identical; see [layout evidence](patterns/actor-attachment-layout.md) |
 | Saved-floor owner | `map_load.c` previously subtracted 1690 bytes before adding the floor stride | Candidate corrected to `world_state.floors[current_floor - 1].records`; forced `game.map_load` object is byte-identical to baseline |
 | Audio resource sequencing | Five GAME/OPEN loaders read and advance `stream` in one call | Open: explicitly sequenced prior GAME trial is non-exact; chunk pairing and OPEN reuse cursors require reconstruction |
 | Effect arguments | `effect_pool_construct` walks raw stack slots from `&direction` | Open: documented typed-varargs candidates are non-exact |
