@@ -19,9 +19,6 @@ enum {
 DATA(0x8009ce60, 0xd28)
 KfEffectState effect_state;
 
-/* The whole shared state is cleared at startup. The selector reaches the magic
- * rows by a member-relative offset from the current-record pointer slot. */
-
 ADDRESS(0x80036f00, 0x44)
 KfEffectRecord *effect_pool_find_free(void)
 {
