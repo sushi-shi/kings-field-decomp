@@ -135,6 +135,7 @@ void effect_update_dispatch(void)
     switch (kind) {
     case KF_EFFECT_KIND_EMERGING_PROJECTILE:
         radius = EMERGING_COLLISION_RADIUS;
+        /* fallthrough */
     case KF_MAGIC_LIGHTNING_BOLT:
     case KF_MAGIC_FIRE_BALL:
     case KF_MAGIC_WIND_CUTTER:
@@ -145,96 +146,90 @@ void effect_update_dispatch(void)
     case KF_EFFECT_KIND_MAP_EMITTER_PROJECTILE:
     case KF_EFFECT_KIND_PHYSICAL_PROJECTILE:
         if (phase == KF_EFFECT_PROJECTILE_TRAVEL) {
-            switch (0) {
-            default:
-                collision = effect_map_collision(&effect->position, radius);
-                if (collision != KF_COLLISION_NONE) {
-                    u16 impact_power;
+            collision = effect_map_collision(&effect->position, radius);
+            if (collision != KF_COLLISION_NONE) {
+                u16 impact_power;
 
-                    impact_magic = effect_state.current_magic;
-                    collision_kind = collision >> KF_COLLISION_KIND_SHIFT;
-                    if (kind == KF_MAGIC_LIGHTNING_BOLT) {
-                        goto lightning_impact;
-                    }
-                    impact_power = effect_magic_power(effect);
-                    if (kind != KF_EFFECT_KIND_SCATTER_PROJECTILE) {
-                        audio_play_spatial_default_range(
-                            &impact_magic->sounds[1], &effect->position, KF_AUDIO_MAX_VOLUME);
-                    }
-                    if (collision_kind == (KF_COLLISION_ACTOR >> KF_COLLISION_KIND_SHIFT)) {
-                        if (kind == KF_EFFECT_KIND_MAP_EMITTER_PROJECTILE
-                            || kind == KF_EFFECT_KIND_PHYSICAL_PROJECTILE
-                            || kind == KF_MAGIC_WIND_CUTTER) {
-                            actor_apply_damage(
-                                (u16)collision, impact_power,
-                                impact_magic->damage_components[0],
-                                impact_magic->damage_components[2],
-                                impact_magic->damage_components[1],
-                                0, 0, KF_ACTOR_DAMAGE_SCALE_ONE, effect->type);
-                        } else if (kind != KF_EFFECT_KIND_EMERGING_PROJECTILE) {
-                            actor_apply_damage(
-                                (u16)collision, impact_power,
-                                0, 0, 0, impact_magic->damage_components[0],
-                                impact_magic->damage_components[1],
-                                KF_ACTOR_DAMAGE_SCALE_ONE, effect->type);
-                        }
-                        if (kind == KF_MAGIC_WIND_CUTTER) {
-                            break;
-                        }
-                    } else if (collision_kind == (KF_COLLISION_PLAYER >> KF_COLLISION_KIND_SHIFT)) {
-                        if (kind == KF_EFFECT_KIND_EMERGING_PROJECTILE
-                            || kind == KF_EFFECT_KIND_MAP_EMITTER_PROJECTILE
-                            || kind == KF_EFFECT_KIND_PHYSICAL_PROJECTILE) {
-                            player_apply_damage(
-                                impact_magic->damage_components[0],
-                                impact_magic->damage_components[2],
-                                impact_magic->damage_components[1],
-                                KF_PLAYER_STATUS_NONE, 0, 0, KF_FIXED12_ONE, effect->id);
-                        } else if (kind == KF_EFFECT_KIND_DARKNESS_PROJECTILE) {
-                            player_apply_damage(
-                                0, 0, 0, KF_PLAYER_STATUS_DARKNESS, 0, 0, KF_FIXED12_ONE, effect->id);
-                        } else if (kind == KF_EFFECT_KIND_SCATTER_PROJECTILE) {
-                            player_apply_damage(
-                                0, 0, 0, KF_PLAYER_STATUS_POISON, 0, 0, KF_FIXED12_ONE, effect->id);
-                        } else if (kind == KF_EFFECT_KIND_CURSE_PROJECTILE) {
-                            player_apply_damage(0, 0, 0, KF_PLAYER_STATUS_CURSE, 0, 0, KF_FIXED12_ONE, effect->id);
-                        } else {
-                            player_apply_damage(
-                                0, 0, 0, KF_PLAYER_STATUS_NONE,
-                                impact_magic->damage_components[0],
-                                impact_magic->damage_components[1],
-                                KF_FIXED12_ONE, effect->id);
-                        }
-                        if (kind == KF_MAGIC_WIND_CUTTER) {
-                            break;
-                        }
-                    }
-
-                    if (kind == KF_EFFECT_KIND_EMERGING_PROJECTILE) {
-                        effect->direction.words.y = 0;
-                        effect->phase = KF_EFFECT_PROJECTILE_FALL;
-                    } else if (kind == KF_EFFECT_KIND_DARKNESS_PROJECTILE
-                               || kind == KF_EFFECT_KIND_CURSE_PROJECTILE) {
-                        effect->phase = KF_EFFECT_PROJECTILE_SHRINK;
-                    } else {
-                        effect->phase = KF_EFFECT_PROJECTILE_IMPACT_FIRST;
-                    }
-                    return;
+                impact_magic = effect_state.current_magic;
+                collision_kind = collision >> KF_COLLISION_KIND_SHIFT;
+                if (kind == KF_MAGIC_LIGHTNING_BOLT) {
+                    goto lightning_impact;
                 }
+                impact_power = effect_magic_power(effect);
+                if (kind != KF_EFFECT_KIND_SCATTER_PROJECTILE) {
+                    audio_play_spatial_default_range(
+                        &impact_magic->sounds[1], &effect->position, KF_AUDIO_MAX_VOLUME);
+                }
+                if (collision_kind == (KF_COLLISION_ACTOR >> KF_COLLISION_KIND_SHIFT)) {
+                    if (kind == KF_EFFECT_KIND_MAP_EMITTER_PROJECTILE
+                        || kind == KF_EFFECT_KIND_PHYSICAL_PROJECTILE
+                        || kind == KF_MAGIC_WIND_CUTTER) {
+                        actor_apply_damage(
+                            (u16)collision, impact_power,
+                            impact_magic->damage_components[0],
+                            impact_magic->damage_components[2],
+                            impact_magic->damage_components[1],
+                            0, 0, KF_ACTOR_DAMAGE_SCALE_ONE, effect->type);
+                    } else if (kind != KF_EFFECT_KIND_EMERGING_PROJECTILE) {
+                        actor_apply_damage(
+                            (u16)collision, impact_power,
+                            0, 0, 0, impact_magic->damage_components[0],
+                            impact_magic->damage_components[1],
+                            KF_ACTOR_DAMAGE_SCALE_ONE, effect->type);
+                    }
+                    if (kind == KF_MAGIC_WIND_CUTTER) {
+                        goto travel;
+                    }
+                } else if (collision_kind == (KF_COLLISION_PLAYER >> KF_COLLISION_KIND_SHIFT)) {
+                    if (kind == KF_EFFECT_KIND_EMERGING_PROJECTILE
+                        || kind == KF_EFFECT_KIND_MAP_EMITTER_PROJECTILE
+                        || kind == KF_EFFECT_KIND_PHYSICAL_PROJECTILE) {
+                        player_apply_damage(
+                            impact_magic->damage_components[0],
+                            impact_magic->damage_components[2],
+                            impact_magic->damage_components[1],
+                            KF_PLAYER_STATUS_NONE, 0, 0, KF_FIXED12_ONE, effect->id);
+                    } else if (kind == KF_EFFECT_KIND_DARKNESS_PROJECTILE) {
+                        player_apply_damage(
+                            0, 0, 0, KF_PLAYER_STATUS_DARKNESS, 0, 0, KF_FIXED12_ONE, effect->id);
+                    } else if (kind == KF_EFFECT_KIND_SCATTER_PROJECTILE) {
+                        player_apply_damage(
+                            0, 0, 0, KF_PLAYER_STATUS_POISON, 0, 0, KF_FIXED12_ONE, effect->id);
+                    } else if (kind == KF_EFFECT_KIND_CURSE_PROJECTILE) {
+                        player_apply_damage(0, 0, 0, KF_PLAYER_STATUS_CURSE, 0, 0, KF_FIXED12_ONE, effect->id);
+                    } else {
+                        player_apply_damage(
+                            0, 0, 0, KF_PLAYER_STATUS_NONE,
+                            impact_magic->damage_components[0],
+                            impact_magic->damage_components[1],
+                            KF_FIXED12_ONE, effect->id);
+                    }
+                    if (kind == KF_MAGIC_WIND_CUTTER) {
+                        goto travel;
+                    }
+                }
+
+                if (kind == KF_EFFECT_KIND_EMERGING_PROJECTILE) {
+                    effect->direction.words.y = 0;
+                    effect->phase = KF_EFFECT_PROJECTILE_FALL;
+                } else if (kind == KF_EFFECT_KIND_DARKNESS_PROJECTILE
+                           || kind == KF_EFFECT_KIND_CURSE_PROJECTILE) {
+                    effect->phase = KF_EFFECT_PROJECTILE_SHRINK;
+                } else {
+                    effect->phase = KF_EFFECT_PROJECTILE_IMPACT_FIRST;
+                }
+                return;
             }
 
+travel:
             addVector(&effect->position, &effect->direction.vector);
             if (kind == KF_MAGIC_FIRE_BALL || kind == KF_EFFECT_KIND_DARKNESS_PROJECTILE) {
                 effect->rotation.vector.vz = (effect->rotation.vector.vz + PROJECTILE_ROLL_STEP) & KF_ANGLE_WRAP_MASK;
                 return;
             }
             if (kind == KF_MAGIC_LIGHTNING_BOLT) {
-                s32 remaining;
-
                 effect->rotation.vector.vz = (effect->rotation.vector.vz + PROJECTILE_ROLL_STEP) & KF_ANGLE_WRAP_MASK;
-                remaining = effect->control.frames_remaining - 1;
-                effect->control.frames_remaining = remaining;
-                if ((u16)remaining == 0) {
+                if (--effect->control.frames_remaining == 0) {
 lightning_impact:
                     audio_play_spatial_default_range(
                         &magic->sounds[1], &effect->position, KF_AUDIO_MAX_VOLUME);

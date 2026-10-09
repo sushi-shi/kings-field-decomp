@@ -90,6 +90,7 @@ void effect_update_swinging_hazard(SVECTOR *probe_offset, KF_ENUM_PARAM(KfEffect
             record->rotation.vector.vx = KF_ANGLE_EIGHTH_TURN;
             record->direction.words.x = 0;
         } else if (record->rotation.vector.vy < -KF_ANGLE_EIGHTH_TURN + 1) {
+            /* Retail tests the yaw here while clamping the pitch. */
             record->rotation.vector.vx = -KF_ANGLE_EIGHTH_TURN;
             record->direction.words.x = 0;
         }
@@ -122,7 +123,8 @@ void effect_update_orbiting_projectile(s32 orbit_radius, KF_ENUM_PARAM(KfEffectP
     KfEffectRecord *record = effect_state.current_record;
     KfMagicRecord *magic = effect_state.current_magic;
     KF_ENUM_STORAGE(KfEffectPhase, u32) life = record->phase;
-    MATRIX rotation_matrix; /* unused, as in the swinging hazard; sizes the frame */
+    /* Unused, as in the swinging hazard; both size the retail frame. */
+    MATRIX rotation_matrix;
     MATRIX yaw_matrix;
     u32 collision;
 
