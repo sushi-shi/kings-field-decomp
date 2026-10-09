@@ -1,5 +1,8 @@
 # Development tools
 
+The [tool retention review](tool-accounting.md) traces command, manual-audit,
+oracle and export consumers. No unused-script deletion list is established.
+
 Inside `nix develop`, `objdiff` automatically opens `build/objdiff`, including
 from subdirectories. This single project groups units under `psx/`, `game/`,
 and `open/`. Run `kf analyze` first to generate it; an explicit `objdiff -p PATH`
