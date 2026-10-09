@@ -30,8 +30,6 @@ KfAudioState audio_state;
 /* Error messages and the sequence path template of this unit in the retail data region. */
 RODATA(0x80012a14, 0x40)
 
-/* Sequence and VAB operations come from the pinned Psy-Q LIBSND.H. */
-
 ADDRESS(0x800328e0, 0xa4)
 void audio_initialize(void)
 {
@@ -124,10 +122,8 @@ void audio_stop_sequence_master_fade(s32 fade_step)
 ADDRESS(0x80032cb0, 0x40)
 void audio_close_vab(void)
 {
-    s16 *vab_id = &audio_state.active_vab_id;
-
-    SsVabClose(*vab_id);
-    *vab_id = KF_AUDIO_VAB_UNAVAILABLE;
+    SsVabClose(audio_state.active_vab_id);
+    audio_state.active_vab_id = KF_AUDIO_VAB_UNAVAILABLE;
     audio_state.vab_header = NULL;
 }
 
@@ -168,6 +164,7 @@ KfAudioPlaybackResult audio_play_spatial(
         angle = KF_ANGLE_FULL_TURN - angle;
     }
     angle >>= 1;
+    /* The masked high bit is never 1, so retail never applies this boost. */
     if ((sound->tone & 0x80) == 1) {
         attenuation += GAME_SOUND_ATTENUATION_BOOST;
         if (attenuation >= KF_AUDIO_MAX_VOLUME + 1) {
