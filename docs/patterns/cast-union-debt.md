@@ -65,10 +65,10 @@ census snapshots go stale with every rename.
   leaves `game.sprite_add_ft4` listing-identical (`kf try`). Exempting these
   entry points in `scripts/kf/pointer_policy.py` would remove the casts, but it
   narrows a gate. That is a policy decision, not a cleanup.
-- **`KfMapObjectLink.words[2]` is still declared** (`include/kf/lib/map.h`),
-  although no source reads or writes it and `KfMapObjectLinkFields` already
-  sets the eight-byte extent. The map-link section below records removed uses,
-  not a removed declaration. It can be removed after a focused rebuild.
+- **`KfMapObjectLink.words[2]` is the whole-link word view.**
+  `map_object_pool_clear` clears the link through `words[1]` and `words[0]`
+  (retail order), and the member supplies the union's four-byte alignment for
+  the aggregate copy in `map_object_pool_load`.
 - **`KfMapFloorScript.bytes` has no reads but is load-bearing.** It sets the
   ten-byte serialized extent inside the saved floor record.
 - **`render_bind_animated_instance` returns

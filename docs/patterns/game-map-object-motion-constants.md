@@ -240,10 +240,10 @@ their specific arithmetic, initialization, geometry or state role below.
 | map_object_probe_door_closing | 137 | `0` | `point_x, KF_COLLISION_IGNORE_HEIGHT, point_z, MAP_DOOR_CLOSING_PROBE_RADIUS, 0,` | Zero vertical extent of the height-ignored distance/collision query. |
 | map_object_probe_door_closing | 142 | `0x000` | `case 0x000:` | Zero yaw, the angular coordinate origin for this cardinal geometry branch. |
 | map_object_pool_clear | 164 | `1` | `u16 index = KF_MAP_OBJECT_CAPACITY - 1;` | Inclusive countdown starts at the last slot index. |
-| map_object_pool_clear | 172 | `1` | `link_words[1] = 0;` | Word indices 1/0 and zero stores clear the two aligned link words in retail order. |
-| map_object_pool_clear | 172 | `0` | `link_words[1] = 0;` | Word indices 1/0 and zero stores clear the two aligned link words in retail order. |
-| map_object_pool_clear | 173 | `0` | `link_words[0] = 0;` | Word indices 1/0 and zero stores clear the two aligned link words in retail order. |
-| map_object_pool_clear | 173 | `0` | `link_words[0] = 0;` | Word indices 1/0 and zero stores clear the two aligned link words in retail order. |
+| map_object_pool_clear | 172 | `1` | `object->link.words[1] = 0;` | Word indices 1/0 and zero stores clear the two aligned link words in retail order. |
+| map_object_pool_clear | 172 | `0` | `object->link.words[1] = 0;` | Word indices 1/0 and zero stores clear the two aligned link words in retail order. |
+| map_object_pool_clear | 173 | `0` | `object->link.words[0] = 0;` | Word indices 1/0 and zero stores clear the two aligned link words in retail order. |
+| map_object_pool_clear | 173 | `0` | `object->link.words[0] = 0;` | Word indices 1/0 and zero stores clear the two aligned link words in retail order. |
 | map_object_pool_clear | 175 | `0` | `} while (index-- != 0);` | Zero exhausted-count termination; preserves pre/postdecrement ordering. |
 | map_object_pool_clear | 176 | `0` | `map_object_effect_sequence_180 = 0;` | Reset the transient group allocation sequence to its initial value. |
 | map_object_pool_clear | 177 | `0` | `map_object_effect_sequence_170 = 0;` | Reset the transient group allocation sequence to its initial value. |
