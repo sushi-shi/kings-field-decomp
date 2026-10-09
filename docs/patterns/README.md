@@ -9,6 +9,10 @@ See the [current source cleanup review](../source-cleanup-review.md) for
 open owner, argument-access, stack-carrier, and alignment findings. Older
 campaign counts and verdicts retain their recorded scope.
 
+- [animation-and-inherited-contracts.md](animation-and-inherited-contracts.md):
+  retained animation pointer/sentinel contract, five retail callers, and four
+  individually named inherited behavior questions.
+
 - [game-header-dependencies.md](game-header-dependencies.md): individual
   declaration-owner imports for all 39 former GAME umbrella consumers, with
   both language views and unchanged compiled/link outputs.

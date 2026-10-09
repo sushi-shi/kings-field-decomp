@@ -15,8 +15,8 @@ verdicts; generated syntax counts do not prove object bounds or ownership.
 | Stack carriers | Unused vectors/matrices in GAME, two OPEN reservations, one-shot menu loop | Open: exact bytes alone do not establish these source forms |
 | Shared memory dependency | `src/lib/memory.c` included `kf/game/game.h` | Corrected to `kf/lib/memory.h`; all 39 remaining GAME consumers now import reviewed owner headers; see [dependency verdicts](patterns/game-header-dependencies.md) |
 | Map-link word view | No direct `.words` consumer; retail copies the payload with two aligned word loads/stores | Retain: it supplies four-byte alignment for the aggregate copy; original declaration form remains unknown |
-| Animation binding result | Returns NULL, pointer-shaped static sentinel 1, or a live record | Retain pending complete direct/indirect contract review |
-| Inherited behavior | Uninitialized animation read, missing returns, and an unwritten direction buffer | Keep individual evidence questions; intentional repairs belong in the port |
+| Animation binding result | Returns NULL, pointer-shaped static sentinel 1, or a live record | Retain mixed pointer contract; five direct callers and stored-pointer evidence reviewed; public ownership comment clarified; see [contract evidence and indirect limits](patterns/animation-and-inherited-contracts.md) |
+| Inherited behavior | Uninitialized animation read, missing returns, and an unwritten direction buffer | Retain four individually evidenced questions; original source explanations remain open; see [retention evidence](patterns/animation-and-inherited-contracts.md); intentional repairs belong in the port |
 
 The clean baseline builds all three executables and reports **465/471 strict
 exact functions**. Analysis still fails existing data and section-placement

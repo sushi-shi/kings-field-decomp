@@ -88,8 +88,10 @@ census snapshots go stale with every rename.
 - **`render_bind_animated_instance` returns
   `(KfAnimationCacheRecord *)KF_ANIMATION_BIND_STATIC`**, the literal 1. This
   is the tree's only integer-to-pointer conversion, and callers only test it
-  against `NULL`, so the result is tri-state. Decide it together with the
-  callers.
+  against `NULL`, so the result is tri-state. The
+  [contract review](animation-and-inherited-contracts.md) retains the mixed
+  pointer result and clarifies the owner slot; the static sentinel is not a
+  record. Original source spelling and computed indirect uses remain open.
 - **The `effect_pool_construct` argument-slot casts** belong with the typed
   `va_arg` model in [effect-constructor-varargs.md](effect-constructor-varargs.md).
   Do not decide them separately.

@@ -34,7 +34,11 @@ typedef struct KfAnimationCacheRecord {
     struct KfAnimationCacheRecord **owner_slot;
 } KfAnimationCacheRecord;
 
-/* Returns zero on pool exhaustion, one for a static asset, or the live record. */
+/*
+ * Returns NULL on pool exhaustion, KF_ANIMATION_BIND_STATIC cast to a pointer
+ * for a static asset, or the live record. The static sentinel is not a record
+ * and is never installed in *owner_slot; that slot owns the cached record.
+ */
 extern KfAnimationCacheRecord *render_bind_animated_instance(
     KfAnimationCacheRecord **owner_slot, u16 asset_index, KF_ENUM_PARAM(KfAnimationClip, u16) clip_index, u16 phase,
     u16 vertex_count);
