@@ -234,6 +234,16 @@ enum {
     MENU_NUMBER_ADVANCE = 7
 };
 
+/* Status-row text cells: "seijou" (normal) and the one-kanji effect icons. */
+enum {
+    MENU_TEXT_STATUS_NORMAL_FIRST = 0xc5,
+    MENU_TEXT_STATUS_NORMAL_SECOND = 0xc6,
+    MENU_TEXT_STATUS_SLOWED = 0xc9,
+    MENU_TEXT_STATUS_POISON = 0x88,
+    MENU_TEXT_STATUS_DARKNESS = 0xc7,
+    MENU_TEXT_STATUS_CURSE = 0xc8
+};
+
 /* Decimal field widths shared by the header and detailed statistics views. */
 enum {
     MENU_STATS_VITAL_DIGITS = 4,

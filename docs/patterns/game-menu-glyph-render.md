@@ -217,9 +217,9 @@ titles (SOLDIER, MAGE, WIZARD, HIGHSOLDIER).
 | 8 | 0x80-0x8f | 足 他 経 験 値 状 態 ？ 毒 攻 撃 力 体 金 貨 薬 |
 | 9 | 0x90-0x9f | 草 消 回 復 竜 士 業 実 月 除 風 刃 輪 双 指 十 |
 | a | 0xa0-0xaf | 字 架 死 者 鍵 家 番 人 地 図 杯 幻 杖 緑 真 理 |
-| b | 0xb0-0xbf | 鏡 ト 年 ？ ？ 竪 琴 水 封 印 石 土 ？ 台 火 星 |
+| b | 0xb0-0xbf | 鏡 ト 年 ？ ？ 竪 琴 水 封 印 石 土 ？ 台 火 聖 |
 | c | 0xc0-0xcf | ？ ？ 目 手 ？ 正 常 暗 呪 ？ 個 数 階 層 総 合 |
-| d | 0xd0-0xdf | 御 切 打 刺 突 効 果 音 楽 表 示 方 向 所 持 · |
+| d | 0xd0-0xdf | 御 切 打 刺 炎 効 果 音 楽 表 示 方 向 所 持 · |
 | e | 0xe0-0xef | 初 期 化 · · · · · · · · · · · · · |
 | f | 0xf0-0xff | H M P / 1 2 3 4 5 O N F · · ·   |
 
@@ -228,7 +228,11 @@ cross-checks the table: for example 経験値 (experience, 0x82 0x83 0x84),
 防御力 (defense), 捨てる (discard), はずす (unequip) and the configuration
 `ON`/`OFF` pair (0xf9 0xfa / 0xf9 0xfb 0xfb). The status page draws 魔力
 (magic) by writing only 魔 (0x78) and keeping 力 (0x8b) from the preceding
-体力 label. Source comments give each label's English meaning.
+体力 label. The per-element rows read 切る, 打つ, 刺す, 聖の魔法 (holy) and 炎の魔法
+(flame) for attack, matching the cutting/striking/piercing/holy/fire terms
+summed into the attack rating, and 毒 and 魔の魔法 (dark magic) for the
+poison-resistance and `magic_defense` lines; those formulas identify the
+small-bitmap readings of 0xbf and 0xd4. Source comments give each label's English meaning.
 
 Reproduction identities (SHA-256):
 
