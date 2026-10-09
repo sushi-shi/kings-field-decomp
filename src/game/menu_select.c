@@ -6,13 +6,6 @@
 #include <kf/game/effect.h>
 #include <psyq/pad.h>
 
-/* Shared menu primitives: frame begin/flush, input sound cue, vsync/pad poll,
- * and the deferred state acknowledgement. */
-
-/* Item-list widget helpers (init, render, preview, query). */
-
-/* Player equip/select operations. */
-
 /* Two eight-entry jump tables for the equipment panel: the category-range
  * switch and the slot-write switch, both indexed by the object argument. */
 RODATA(0x80012310, 0x40)

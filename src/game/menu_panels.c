@@ -6,15 +6,6 @@
 #include <kf/game/effect.h>
 #include <psyq/pad.h>
 
-/* Player object and the double-buffered display state. */
-
-/* Shared menu primitives: frame begin/flush, hub background, list-panel
- * background, input sound cue, and the vsync/pad poll. */
-
-/* Cursor/list widget helpers (init, render, query). */
-
-/* Sub-panel handlers dispatched by the equipment menu. */
-
 /* menu_equipment_root selection dispatch table. */
 RODATA(0x800122f0, 0x20)
 

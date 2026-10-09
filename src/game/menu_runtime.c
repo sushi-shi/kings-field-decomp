@@ -669,7 +669,7 @@ void menu_config_panel(void)
     menu_config_panel_draw(on_label, off_label, option_states);
     menu_draw_window(KF_MENU_WINDOW_CONFIG, KF_MENU_CONFIG_ROW_COUNT, row, confirm);
     menu_present_frame();
-    do {
+    for (;;) {
         if (confirm == KF_MENU_CONFIRM_REQUESTED || result == KF_MENU_RESULT_CANCELLED) {
             menu_frame_begin();
             menu_config_panel_draw(on_label, off_label, option_states);
@@ -699,8 +699,7 @@ void menu_config_panel(void)
             } else {
                 row = 0;
             }
-        } else if ((PAD_PRESSED(input, prev, PADLright)) ||
-                   (PAD_PRESSED(input, prev, PADLleft))) {
+        } else if (PAD_PRESSED(input, prev, PADLright) || PAD_PRESSED(input, prev, PADLleft)) {
             if (row != KF_MENU_CONFIG_RETURN_ROW) {
                 menu_play_input_sound(MENU_SOUND_CONFIRM);
                 option_states[row] = KF_ENUM_DECODE(
@@ -721,7 +720,7 @@ void menu_config_panel(void)
         menu_config_panel_draw(on_label, off_label, option_states);
         menu_draw_window(KF_MENU_WINDOW_CONFIG, KF_MENU_CONFIG_ROW_COUNT, row, confirm);
         menu_present_frame();
-    } while (1);
+    }
 
     player_state.audio_effects_enabled = option_states[KF_MENU_CONFIG_EFFECTS_ROW];
     player_state.audio_music_enabled = option_states[KF_MENU_CONFIG_MUSIC_ROW];
@@ -779,12 +778,6 @@ enum {
     ROOT_STATUS_SUMMARY_ROW_STEP = 23
 };
 
-/*
- * Draw the main menu's player statistics: experience, level, displayed class,
- * floor, HP/MP pairs, status-effect icons and gold. The class title occupies
- * four atlas cells selected by the base physical-power and magic tiers.
- */
-
 /* Simple workspace/value expressions; maximum is read after current/slash draw. */
 #define MENU_DRAW_VITAL_FRACTION(string, current, maximum, digits) ( \
     menu_format_number((current), (digits), KF_FORMAT_PAD_SPACES, (string).glyphs.codes), \
@@ -797,6 +790,11 @@ enum {
     menu_format_number((maximum), (digits), KF_FORMAT_PAD_SPACES, (string).glyphs.codes), \
     menu_draw_number(&menu_assets.number_atlas, &(string)))
 
+/*
+ * Draw the main menu's player statistics: experience, level, displayed class,
+ * floor, HP/MP pairs, status-effect icons and gold. The class title occupies
+ * four atlas cells selected by the base physical-power and magic tiers.
+ */
 ADDRESS(0x80025f38, 0x5a0)
 void menu_draw_status_summary(void)
 {
@@ -971,13 +969,11 @@ void menu_draw_status_details(void)
     MenuGlyphString text;
     s32 glyph_index;
     s32 rating;
-    s32 summary_y_origin;
 
     current_poly_ft4 = (POLY_FT4 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
 
-    summary_y_origin = 0x23;
     text.position.x = 0x15;
-    text.position.y = summary_y_origin;
+    text.position.y = 0x23;
     text.glyphs.codes[0] = 0x82;
     text.glyphs.codes[1] = 0x83;
     text.glyphs.codes[2] = 0x84;
@@ -1049,7 +1045,7 @@ void menu_draw_status_details(void)
     menu_draw_string(&menu_assets.glyph_atlas, &text);
 
     text.position.x = 0x5b;
-    text.position.y = summary_y_origin;
+    text.position.y = 0x23;
     menu_format_number(player_state.experience, MENU_STATS_VALUE_DIGITS, KF_FORMAT_PAD_SPACES, text.glyphs.codes);
     menu_draw_number(&menu_assets.number_atlas, &text);
 
@@ -1718,7 +1714,7 @@ KfMenuResult menu_list_confirm(
     menu_list_render(list);
     menu_draw_two_option(&accept_label, &decline_label, selected, confirmation);
     menu_present_frame();
-    do {
+    for (;;) {
         if (result != KF_MENU_RESULT_PENDING) {
             menu_frame_begin();
             if (preview_mode == KF_MENU_PREVIEW_ITEM_MODEL) {
@@ -1741,8 +1737,7 @@ KfMenuResult menu_list_confirm(
         menu_frame_begin();
         prev = input;
         input = PadRead(1);
-        if ((PAD_PRESSED(input, prev, PADLup)) ||
-            (PAD_PRESSED(input, prev, PADLdown))) {
+        if (PAD_PRESSED(input, prev, PADLup) || PAD_PRESSED(input, prev, PADLdown)) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
             if (selected == KF_MENU_CHOICE_ACCEPT) {
                 selected = KF_MENU_CHOICE_DECLINE;
@@ -1768,7 +1763,7 @@ KfMenuResult menu_list_confirm(
         menu_list_render(list);
         menu_draw_two_option(&accept_label, &decline_label, selected, confirmation);
         menu_present_frame();
-    } while (1);
+    }
 }
 
 enum {
@@ -1831,8 +1826,7 @@ KfMenuResult menu_two_option_prompt(
         confirmation = KF_MENU_CONFIRM_IDLE;
         prev = input;
         input = PadRead(1);
-        if ((PAD_PRESSED(input, prev, PADLup)) ||
-            (PAD_PRESSED(input, prev, PADLdown))) {
+        if (PAD_PRESSED(input, prev, PADLup) || PAD_PRESSED(input, prev, PADLdown)) {
             menu_play_input_sound(MENU_SOUND_CURSOR);
             if (selected != KF_MENU_CHOICE_ACCEPT) {
                 selected = KF_MENU_CHOICE_ACCEPT;
@@ -1877,22 +1871,18 @@ void menu_draw_window(KfMenuWindowKind window_kind, s32 row_count, s32 highlight
             &menu_assets.row_background, &layout->title.position);
         menu_draw_string(&menu_assets.glyph_atlas, &layout->title);
     }
-    if (row_count > 0) {
-        row = 0;
-        do {
-            if (row == highlight_row && confirmation == KF_MENU_CONFIRM_REQUESTED) {
-                menu_blit_sprite_translucent(&menu_assets.row_confirmed_background,
-                    &layout->rows[row].position);
-            } else {
-                menu_blit_sprite_translucent(&menu_assets.row_background,
-                    &layout->rows[row].position);
-            }
-            if (row == highlight_row) {
-                menu_blit_sprite(&menu_assets.selection_cursor, &layout->rows[row].position);
-            }
-            menu_draw_string(&menu_assets.glyph_atlas, &layout->rows[row]);
-            row++;
-        } while (row < row_count);
+    for (row = 0; row < row_count; row++) {
+        if (row == highlight_row && confirmation == KF_MENU_CONFIRM_REQUESTED) {
+            menu_blit_sprite_translucent(&menu_assets.row_confirmed_background,
+                &layout->rows[row].position);
+        } else {
+            menu_blit_sprite_translucent(&menu_assets.row_background,
+                &layout->rows[row].position);
+        }
+        if (row == highlight_row) {
+            menu_blit_sprite(&menu_assets.selection_cursor, &layout->rows[row].position);
+        }
+        menu_draw_string(&menu_assets.glyph_atlas, &layout->rows[row]);
     }
     if (window_kind != KF_MENU_WINDOW_CONFIG) {
         menu_draw_window_backdrop();
@@ -1947,35 +1937,32 @@ void menu_list_render(const KfMenuList *list)
             &menu_assets.glyph_atlas, &list->title);
     }
 
-    quantity = quantity + list->scroll_offset;
-    glyph = glyph + list->scroll_offset * list->glyphs_per_entry;
-    row = 0;
-    if (row < list->visible_rows && row < list->entry_count) {
-        do {
-            text.position.x = list->list_x + MENU_LIST_TEXT_INSET;
-            text.position.y = list->list_y + MENU_LIST_TEXT_INSET;
-            text.position.y += row * MENU_LIST_ROW_HEIGHT;
-            for (i = 0; i < list->glyphs_per_entry; i++) {
-                text.glyphs.codes[i] = *glyph++;
+    quantity += list->scroll_offset;
+    glyph += list->scroll_offset * list->glyphs_per_entry;
+    for (row = 0; row < list->visible_rows && row < list->entry_count; row++) {
+        text.position.x = list->list_x + MENU_LIST_TEXT_INSET;
+        text.position.y = list->list_y + MENU_LIST_TEXT_INSET;
+        text.position.y += row * MENU_LIST_ROW_HEIGHT;
+        for (i = 0; i < list->glyphs_per_entry; i++) {
+            text.glyphs.codes[i] = *glyph++;
+        }
+        menu_draw_string(
+            &menu_assets.glyph_atlas, &text);
+        if (list->quantities != NULL) {
+            tens = *quantity / 10u;
+            ones = *quantity % 10u;
+            text.position.x += MENU_LIST_QUANTITY_X_OFFSET;
+            text.position.y += MENU_LIST_QUANTITY_Y_OFFSET;
+            text.glyphs.codes[0] = tens;
+            if (tens == 0) {
+                text.glyphs.codes[0] = MENU_NUMBER_BLANK;
             }
-            menu_draw_string(
-                &menu_assets.glyph_atlas, &text);
-            if (list->quantities != NULL) {
-                tens = *quantity / 10u;
-                ones = *quantity % 10u;
-                text.position.x += MENU_LIST_QUANTITY_X_OFFSET;
-                text.position.y += MENU_LIST_QUANTITY_Y_OFFSET;
-                text.glyphs.codes[0] = tens;
-                if (tens == 0) {
-                    text.glyphs.codes[0] = MENU_NUMBER_BLANK;
-                }
-                text.glyphs.codes[1] = ones;
-                text.glyphs.codes[2] = MENU_TEXT_END;
-                menu_draw_number(
-                    &menu_assets.number_atlas, &text);
-                quantity++;
-            }
-        } while (++row < list->visible_rows && row < list->entry_count);
+            text.glyphs.codes[1] = ones;
+            text.glyphs.codes[2] = MENU_TEXT_END;
+            menu_draw_number(
+                &menu_assets.number_atlas, &text);
+            quantity++;
+        }
     }
 
     tile = &menu_assets.list_tiles[MENU_LIST_TILE_BACKDROP];
@@ -2213,26 +2200,24 @@ ADDRESS(0x8002a310, 0x200)
 void menu_draw_number(
     const MenuSpriteDef *font, const MenuGlyphString *string)
 {
-    const MenuSpriteDef *atlas = font;
-    const MenuGlyphString *label = string;
     s32 i;
     s32 x_offset;
 
-    for (i = 0; label->glyphs.codes[i] != MENU_TEXT_END; i++) {
+    for (i = 0; string->glyphs.codes[i] != MENU_TEXT_END; i++) {
         x_offset = i * MENU_NUMBER_ADVANCE;
         menu_begin_poly_ft4();
-        current_poly_ft4->tpage = atlas->tpage;
-        current_poly_ft4->clut = atlas->clut;
+        current_poly_ft4->tpage = font->tpage;
+        current_poly_ft4->clut = font->clut;
         setXYWH(current_poly_ft4,
-            label->position.x + x_offset,
-            label->position.y,
-            atlas->width,
-            atlas->height);
+            string->position.x + x_offset,
+            string->position.y,
+            font->width,
+            font->height);
         setUVWH(current_poly_ft4,
-            atlas->u,
-            label->glyphs.codes[i] * MENU_NUMBER_CELL_HEIGHT,
-            atlas->width,
-            atlas->height);
+            font->u,
+            string->glyphs.codes[i] * MENU_NUMBER_CELL_HEIGHT,
+            font->width,
+            font->height);
         menu_commit_poly_ft4(MENU_CONTENT_OT_DEPTH);
     }
 }
@@ -2333,11 +2318,11 @@ void menu_list_init(KfMenuList *list, KfMenuWindowKind window_kind, s32 title_ro
 ADDRESS(0x8002adf8, 0xac)
 void menu_format_number(s32 value, s32 digit_count, KF_ENUM_PARAM(KfFormatPaddingMode, s32) padding_mode, s16 *out)
 {
-    s32 i = 0;
+    s32 i;
     s32 blank;
 
     blank = (padding_mode == KF_FORMAT_PAD_SPACES) ? MENU_NUMBER_BLANK : MENU_NUMBER_ZERO;
-    for (; i < digit_count; i++) {
+    for (i = 0; i < digit_count; i++) {
         out[i] = blank;
     }
     out[digit_count] = MENU_TEXT_END;
