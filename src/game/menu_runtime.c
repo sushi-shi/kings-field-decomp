@@ -3,7 +3,10 @@
 
 #include <kf/game/input.h>
 #include <kf/game/menu.h>
-#include <kf/game/game.h>
+#include <kf/game/player.h>
+#include <kf/game/cd.h>
+#include <kf/lib/resources.h>
+#include <psyq/pad.h>
 #include <psyq/libc.h>
 #include <kf/game/graphics.h>
 
@@ -1333,7 +1336,11 @@ void menu_draw_item_detail(s32 item_id, s32 shop_bank, KfTradeMode price_mode)
     current_poly_ft4 = (POLY_FT4 *)game_graphics_runtime.display_state.primitive_buffer->cursor;
     text.position.x = MENU_ITEM_NAME_X;
     text.position.y = MENU_ITEM_PREVIEW_NAME_Y;
-    for (i = 0; i < MENU_GLYPHS_PER_ROW; i++) {
+
+    do {
+        i = 0;
+    } while (0);
+    for (; i < MENU_GLYPHS_PER_ROW; i++) {
         text.glyphs.codes[i] = *glyph++;
     }
     menu_draw_string(&menu_assets.glyph_atlas, &text);
@@ -2090,7 +2097,7 @@ void menu_format_number(s32 value, s32 digit_count, s32 padding_mode, s16 *out)
     s32 i = 0;
     s32 blank;
 
-    blank = (padding_mode == KF_FORMAT_PAD_SPACES) ? MENU_NUMBER_BLANK : 0;
+    blank = (padding_mode == KF_FORMAT_PAD_SPACES) ? MENU_NUMBER_BLANK : MENU_NUMBER_ZERO;
     for (; i < digit_count; i++) {
         out[i] = blank;
     }

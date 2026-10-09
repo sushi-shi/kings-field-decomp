@@ -8,7 +8,9 @@
 #include <kf/game/render.h>
 #include <psyq/sdk.h>
 #include <psyq/libc.h>
-#include <kf/game/game.h>
+#include <kf/lib/cd_file.h>
+#include <kf/lib/memory.h>
+#include <kf/game/asset.h>
 
 enum {
     MAP_VARIANT_ASSET_BUFFER_BYTES = 0x5a000,
@@ -124,6 +126,7 @@ void map_resources_load(KfFloorId floor, s32 map_variant)
 {
     u8 *stream;
     u8 *block;
+    u8 *vab_header;
     const u32 *source;
 
     audio_stop_sequence_fade();
@@ -133,7 +136,8 @@ void map_resources_load(KfFloorId floor, s32 map_variant)
     tim_upload_images(map_resource_load_file(map_mix_tim_filename));
     memory_release_last();
     stream = map_resource_load_file("MIXA.DAT");
-    audio_load_vab(stream + KF_RESOURCE_CHUNK_HEADER_BYTES,
+    vab_header = stream + KF_RESOURCE_CHUNK_HEADER_BYTES;
+    audio_load_vab(vab_header,
         RESOURCE_STREAM_NEXT(stream) + KF_RESOURCE_CHUNK_HEADER_BYTES);
     block = stream;
     RESOURCE_STREAM_NEXT(stream);

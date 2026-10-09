@@ -3,7 +3,7 @@
 #include <kf/lib/types.h>
 #include <psyq/kernel.h>
 #include <psyq/libc.h>
-#include <kf/game/game.h>
+#include <kf/lib/memory.h>
 #include <kf/lib/memory_layout.h>
 
 enum {

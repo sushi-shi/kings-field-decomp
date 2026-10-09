@@ -8,7 +8,10 @@
 #include <psyq/audio.h>
 #include <psyq/kernel.h>
 #include <psyq/libc.h>
-#include <kf/game/game.h>
+#include <kf/game/menu.h>
+#include <kf/lib/memory.h>
+#include <kf/lib/resources.h>
+#include <psyq/pad.h>
 
 enum {
     SAVE_MESSAGE_NO_CARD = 101,
@@ -23,6 +26,8 @@ enum {
     SAVE_MESSAGE_SYSTEM_ERROR = 113,
     SAVE_MESSAGE_FAILED = 114,
     SAVE_MESSAGE_FORMAT_CONFIRMATION = 115,
+
+    SAVE_MESSAGE_NONE = -1,
     MESSAGE_IMAGE_SKIP = 0xff
 };
 
@@ -687,7 +692,7 @@ s32 memory_card_show_status_message(s16 status)
 
     switch (status_value) {
     case SAVE_STATUS_OK:
-        message = -1;
+        message = SAVE_MESSAGE_NONE;
         break;
     case KF_CARD_STATUS_TIMEOUT:
         message = SAVE_MESSAGE_NO_CARD;

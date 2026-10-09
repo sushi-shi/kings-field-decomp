@@ -7,7 +7,9 @@
 #include <kf/game/notify.h>
 #include <psyq/sdk.h>
 #include <psyq/libc.h>
-#include <kf/game/game.h>
+#include <kf/lib/resources.h>
+#include <kf/lib/memory.h>
+#include <psyq/pad.h>
 #include <kf/lib/tmd.h>
 #include <kf/lib/graphics.h>
 

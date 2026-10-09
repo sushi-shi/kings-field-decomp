@@ -1,7 +1,8 @@
 #include <kf/game/graphics.h>
 
 #include <kf/game/render.h>
-#include <kf/game/game.h>
+#include <kf/lib/cd_file.h>
+#include <kf/lib/resources.h>
 
 typedef struct {
     u8 v[KF_QUAD_TEX_DESCRIPTOR_BYTES];

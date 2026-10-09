@@ -3,7 +3,9 @@
 #include <kf/lib/map.h>
 #include <kf/game/collision.h>
 #include <psyq/libc.h>
-#include <kf/game/game.h>
+#include <kf/game/player.h>
+#include <kf/game/state.h>
+#include <kf/game/animation_cache.h>
 
 enum {
     MAP_AMBIENT_COUNTDOWN_RELOAD = 10,
@@ -199,7 +201,6 @@ void map_world_state_persist(void)
     count_slot = out++;
     active = 0;
     object = &map_object_state.objects[0];
-    definitions = map_object_state.definitions.entries;
     for (i = 0; i < KF_MAP_OBJECT_EFFECT_FIRST; i++, object++) {
         KfObjectId id = object->object_id;
         KfMapObjectOperation behavior;
@@ -208,6 +209,7 @@ void map_world_state_persist(void)
             continue;
         }
 
+        definitions = map_object_state.definitions.entries;
         behavior = definitions[((u8)(id))].behavior_type;
         if ((behavior == KF_MAP_OBJECT_OP_NONE
                 || behavior == KF_MAP_OBJECT_OP_SCREEN_IMAGE

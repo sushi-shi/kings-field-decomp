@@ -2,7 +2,8 @@
 
 #include <kf/game/input.h>
 #include <kf/game/menu.h>
-#include <kf/game/game.h>
+#include <kf/game/player.h>
+#include <psyq/pad.h>
 
 s32 menu_use_item_panel(void);
 

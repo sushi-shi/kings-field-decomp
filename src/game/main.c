@@ -1,7 +1,10 @@
 #include <kf/lib/overlay.h>
 #include <kf/lib/types.h>
 #include <psyq/kernel.h>
-#include <kf/game/game.h>
+#include <kf/game/system.h>
+#include <kf/game/state.h>
+#include <psyq/cd.h>
+#include <psyq/pad.h>
 
 #include "../lib/repeat_store_word.inc"
 

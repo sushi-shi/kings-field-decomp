@@ -2,7 +2,9 @@
 
 #include <kf/game/input.h>
 #include <kf/game/menu.h>
-#include <kf/game/game.h>
+#include <kf/game/player.h>
+#include <kf/game/effect.h>
+#include <psyq/pad.h>
 
 void menu_equip_select(KfEquipmentMenuCategory equipment_category)
 {

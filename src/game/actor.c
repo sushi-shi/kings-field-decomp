@@ -6,7 +6,7 @@
 #include <kf/game/actor.h>
 #include <kf/game/collision.h>
 #include <psyq/libc.h>
-#include <kf/game/game.h>
+#include <kf/game/player.h>
 
 enum {
     ACTOR_SELECTION_ANGLE_TOLERANCE = 0x18e,
@@ -280,7 +280,7 @@ void actor_apply_damage(
     s32 health;
     s32 remaining;
 
-    if (player_state.progress_state.current_floor == KF_FLOOR_5 && actor->definition_id == 7) {
+    if (player_state.progress_state.current_floor == KF_FLOOR_5 && actor->definition_id == KF_FLOOR5_BOSS_DEFINITION) {
         if (map_runtime_state.world_state.floors[4].script.floor5.boss_encounter_started == KF_MAP_SCRIPT_UNSET) {
             return;
         }
@@ -387,7 +387,7 @@ void actor_pool_apply_radial_damage(
             radius,
             definition->collision_height,
             radius);
-        if (distance == -1) {
+        if (distance == KF_DISTANCE_NONE) {
             continue;
         }
         if (falloff_q12 != KF_FIXED12_ONE) {
@@ -428,7 +428,7 @@ void actor_try_attack_player(
         maximum_distance,
         definition->collision_height,
         KF_COLLISION_PLAYER_HEIGHT);
-    if (distance == -1) {
+    if (distance == KF_DISTANCE_NONE) {
         return;
     }
     if (distance < minimum_distance) {
@@ -482,7 +482,7 @@ KfActor *actor_pool_find_target_in_cone(
         }
         distance = actor_distance_to_point(
             actor, origin->vx, KF_COLLISION_IGNORE_HEIGHT, origin->vz, max_distance, 0, 0);
-        if (distance == -1) {
+        if (distance == KF_DISTANCE_NONE) {
             continue;
         }
         delta = vector_xz_to_angle(
@@ -517,11 +517,11 @@ s32 actor_distance_to_point(
     default:
         point_x = actor->position.vx - point_x;
         if (point_x < -max_distance || max_distance < point_x) {
-            return -1;
+            return KF_DISTANCE_NONE;
         }
         point_z = actor->position.vz - point_z;
         if (point_z < -max_distance || max_distance < point_z) {
-            return -1;
+            return KF_DISTANCE_NONE;
         }
         point_x >>= KF_LENGTH_SQUARE_DOWNSHIFT;
         if (point_y != KF_COLLISION_IGNORE_HEIGHT) {
@@ -530,7 +530,7 @@ s32 actor_distance_to_point(
             delta_y = (actor->position.vy - actor_height) - (point_y - point_height);
             point_height += actor_height;
             if (delta_y < -point_height) {
-                return -1;
+                return KF_DISTANCE_NONE;
             }
             if (point_height < delta_y) {
                 break;
@@ -543,7 +543,7 @@ s32 actor_distance_to_point(
         }
         return distance;
     }
-    return -1;
+    return KF_DISTANCE_NONE;
 }
 
 s32 actor_pool_find_overlap(s32 point_x, s32 point_y, s32 point_z, s32 radius_padding, s32 point_height)
@@ -573,11 +573,11 @@ s32 actor_pool_find_overlap(s32 point_x, s32 point_y, s32 point_z, s32 radius_pa
                 point_z,
                 definition->collision_radius + radius_padding,
                 definition->collision_height,
-                point_height) != -1) {
+                point_height) != KF_DISTANCE_NONE) {
             return index;
         }
     }
-    return -1;
+    return KF_ACTOR_INDEX_NONE;
 }
 
 void actor_bind_current(KfActor *actor)
@@ -632,7 +632,7 @@ void actor_play_sound_at_phase(const SoundRef *sound, u16 phase)
     if (!actor_animation_crossed_phase(actor, phase)) {
         return;
     }
-    if (player_state.progress_state.current_floor == KF_FLOOR_5 && actor->definition_id == 7) {
+    if (player_state.progress_state.current_floor == KF_FLOOR_5 && actor->definition_id == KF_FLOOR5_BOSS_DEFINITION) {
         audio_play_spatial_range(sound,
             &actor->position,
             KF_AUDIO_MAX_VOLUME,
