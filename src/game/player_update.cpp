@@ -61,7 +61,7 @@ enum {
     PLAYER_WEAPON_MAGIC_SPAWN_X = 200,
     PLAYER_WEAPON_MAGIC_SPAWN_Y = 200,
     PLAYER_WEAPON_MAGIC_SPAWN_Z = 400,
-    PLAYER_WEAPON_MAGIC_BURST_CONE = 0x155,
+    PLAYER_WEAPON_MAGIC_BURST_CONE = 341,
     PLAYER_WEAPON_MAGIC_JITTER_BIAS = 4,
     PLAYER_WEAPON_MAGIC_RANDOM_SHIFT = 9,
     PLAYER_WEAPON_MAGIC_SPEED = 900,
@@ -468,8 +468,8 @@ static void player_update_darkness()
     s32 fade;
 
     if (player_state.darkness_timer != KF_PLAYER_STATUS_TIMER_INACTIVE) {
-        if (!((player_state.status_effect_flags & KF_PLAYER_STATUS_DARKNESS) != KF_PLAYER_STATUS_NONE)
-            && player_state.darkness_timer >= DARKNESS_FADE_STEPS + 1) {
+        if ((player_state.status_effect_flags & KF_PLAYER_STATUS_DARKNESS) == KF_PLAYER_STATUS_NONE
+            && player_state.darkness_timer > DARKNESS_FADE_STEPS) {
             player_state.darkness_timer = DARKNESS_FADE_STEPS;
         }
         player_state.darkness_timer--;
@@ -600,7 +600,7 @@ static void player_update_status_effects()
         }
     }
     if (player_state.curse_timer != KF_PLAYER_STATUS_TIMER_INACTIVE) {
-        if (!((player_state.status_effect_flags & KF_PLAYER_STATUS_CURSE) != KF_PLAYER_STATUS_NONE)) {
+        if ((player_state.status_effect_flags & KF_PLAYER_STATUS_CURSE) == KF_PLAYER_STATUS_NONE) {
             player_state.curse_timer = 0;
         }
         if (player_state.curse_timer == 0) {

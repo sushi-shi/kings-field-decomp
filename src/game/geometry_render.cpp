@@ -196,9 +196,8 @@ void notify_effect_update(void)
         game_graphics_runtime.notification_state.control.effect_angle_x = 0;
         game_graphics_runtime.notification_state.control.hold_frames = NOTIFICATION_HOLD_FRAMES;
         if (id == KF_NOTIFICATION_GOLD) {
-            KfNotificationSprite *sprite_records = notification_sprites.data();
             std::array<s16, KF_NOTIFICATION_DIGIT_CAPACITY> digits;
-            sprite_records[KF_NOTIFICATION_TEXT_SPRITE].active = KF_SPRITE_HIDDEN;
+            notification_sprites[KF_NOTIFICATION_TEXT_SPRITE].active = KF_SPRITE_HIDDEN;
             notification_sprites[KF_NOTIFICATION_GOLD_SPRITE].active = KF_SPRITE_VISIBLE;
             notification_sprites[KF_NOTIFICATION_GOLD_SPRITE].sprite.u =
                 (kf_enum_encode<u8>(id) & NOTIFICATION_ATLAS_COLUMN_MASK) << NOTIFICATION_ATLAS_COLUMN_SHIFT;
@@ -209,16 +208,16 @@ void notify_effect_update(void)
                 NOTIFICATION_GOLD_DIGITS, KF_FORMAT_PAD_SPACES, digits);
             notification_sprites[KF_NOTIFICATION_ONES_SPRITE].active = KF_SPRITE_VISIBLE;
             notification_digit_set_v(
-                &sprite_records[KF_NOTIFICATION_ONES_SPRITE].sprite, (u16)digits[3]);
+                &notification_sprites[KF_NOTIFICATION_ONES_SPRITE].sprite, (u16)digits[3]);
             notification_sprites[KF_NOTIFICATION_TENS_SPRITE].active = KF_SPRITE_VISIBLE;
             notification_digit_set_v(
-                &sprite_records[KF_NOTIFICATION_TENS_SPRITE].sprite, (u16)digits[2]);
+                &notification_sprites[KF_NOTIFICATION_TENS_SPRITE].sprite, (u16)digits[2]);
             notification_sprites[KF_NOTIFICATION_HUNDREDS_SPRITE].active = KF_SPRITE_VISIBLE;
             notification_digit_set_v(
-                &sprite_records[KF_NOTIFICATION_HUNDREDS_SPRITE].sprite, (u16)digits[1]);
+                &notification_sprites[KF_NOTIFICATION_HUNDREDS_SPRITE].sprite, (u16)digits[1]);
             notification_sprites[KF_NOTIFICATION_THOUSANDS_SPRITE].active = KF_SPRITE_VISIBLE;
             notification_digit_set_v(
-                &sprite_records[KF_NOTIFICATION_THOUSANDS_SPRITE].sprite, (u16)digits[0]);
+                &notification_sprites[KF_NOTIFICATION_THOUSANDS_SPRITE].sprite, (u16)digits[0]);
         } else {
             notification_sprites[KF_NOTIFICATION_TEXT_SPRITE].active = KF_SPRITE_VISIBLE;
             notification_sprites[KF_NOTIFICATION_TEXT_SPRITE].sprite.u =

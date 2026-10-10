@@ -14,8 +14,8 @@
 #include <cstring>
 
 enum {
-    ACTOR_SELECTION_ANGLE_TOLERANCE = 0x18e,
-    ACTOR_MULTI_HIT_SELECTION_ANGLE_TOLERANCE = 0x1c7
+    ACTOR_SELECTION_ANGLE_TOLERANCE = 398,
+    ACTOR_MULTI_HIT_SELECTION_ANGLE_TOLERANCE = 455
 };
 
 enum {
@@ -24,8 +24,8 @@ enum {
     ACTOR_DYING_DAMAGE_CUTOFF_PHASE = 1548,
     ACTOR_STATUS_CHANCE_RANDOM_SHIFT = 7,
     ACTOR_SELECTION_RANDOM_SHIFT = 4,
-    ACTOR_SELECTION_FACING_BYPASS_LIMIT = 1638,
-    ACTOR_PROFILE_FACING_BYPASS_LIMIT = 819,
+    ACTOR_SELECTION_FACING_BYPASS_LIMIT = (kf::random_max + 1) / 20,
+    ACTOR_PROFILE_FACING_BYPASS_LIMIT = (kf::random_max + 1) / 40,
     ACTOR_SELECTION_FAR_RANGE_FACTOR = 4,
     ACTOR_SELECTION_FAR_CHANCE_SHIFT = 4,
     ACTOR_SELECTION_NEAR_CHANCE_SHIFT = 2,
@@ -254,11 +254,11 @@ s32 combat_calculate_damage_component(s32 base_power, s32 attack, s32 defense)
 void actor_apply_damage(
     u16 actor_index,
     u16 base_power,
-    u16 component0,
-    u16 component1,
-    u16 component2,
-    u16 component3,
-    u16 component4,
+    u16 cutting_damage,
+    u16 striking_damage,
+    u16 piercing_damage,
+    u16 magic_damage,
+    u16 fire_damage,
     u16 scale,
     KfEffectType hit_flags)
 {
@@ -284,23 +284,23 @@ void actor_apply_damage(
     }
     damage = combat_calculate_damage_component(
         base_power * KF_DAMAGE_SUBUNITS_PER_HP,
-        component0 * KF_DAMAGE_SUBUNITS_PER_HP,
+        cutting_damage * KF_DAMAGE_SUBUNITS_PER_HP,
         definition->defenses[KF_COMBAT_COMPONENT_CUTTING] * KF_DAMAGE_SUBUNITS_PER_HP);
     damage += combat_calculate_damage_component(
         base_power * KF_DAMAGE_SUBUNITS_PER_HP,
-        component1 * KF_DAMAGE_SUBUNITS_PER_HP,
+        striking_damage * KF_DAMAGE_SUBUNITS_PER_HP,
         definition->defenses[KF_COMBAT_COMPONENT_STRIKING] * KF_DAMAGE_SUBUNITS_PER_HP);
     damage += combat_calculate_damage_component(
         base_power * KF_DAMAGE_SUBUNITS_PER_HP,
-        component2 * KF_DAMAGE_SUBUNITS_PER_HP,
+        piercing_damage * KF_DAMAGE_SUBUNITS_PER_HP,
         definition->defenses[KF_COMBAT_COMPONENT_PIERCING] * KF_DAMAGE_SUBUNITS_PER_HP);
     damage += combat_calculate_damage_component(
         base_power * KF_DAMAGE_SUBUNITS_PER_HP,
-        component3 * KF_DAMAGE_SUBUNITS_PER_HP,
+        magic_damage * KF_DAMAGE_SUBUNITS_PER_HP,
         definition->defenses[KF_COMBAT_COMPONENT_HOLY] * KF_DAMAGE_SUBUNITS_PER_HP);
     damage += combat_calculate_damage_component(
         base_power * KF_DAMAGE_SUBUNITS_PER_HP,
-        component4 * KF_DAMAGE_SUBUNITS_PER_HP,
+        fire_damage * KF_DAMAGE_SUBUNITS_PER_HP,
         definition->defenses[KF_COMBAT_COMPONENT_FIRE] * KF_DAMAGE_SUBUNITS_PER_HP);
     damage += KF_DAMAGE_SUBUNITS_PER_HP / 2;
     damage = (damage / KF_DAMAGE_SUBUNITS_PER_HP) * scale / KF_ACTOR_DAMAGE_SCALE_ONE;
@@ -309,9 +309,9 @@ void actor_apply_damage(
         return;
     }
     if (actor->health != 0 && hit_flags == KF_ACTOR_DAMAGE_CREDIT_PLAYER) {
-        if (component0 == 0 && component1 == 0 && component2 == 0) {
+        if (cutting_damage == 0 && striking_damage == 0 && piercing_damage == 0) {
             player_increment_magic_training();
-        } else if (component1 != 0 || component2 != 0) {
+        } else if (striking_damage != 0 || piercing_damage != 0) {
             player_increment_physical_power_training();
         }
     }
@@ -342,11 +342,11 @@ void actor_pool_apply_radial_damage(
     u32 radius,
     u16 falloff_q12,
     u16 base_power,
-    u16 component0,
-    u16 component1,
-    u16 component2,
-    u16 component3,
-    u16 component4,
+    u16 cutting_damage,
+    u16 striking_damage,
+    u16 piercing_damage,
+    u16 magic_damage,
+    u16 fire_damage,
     u16 scale,
     KfEffectType hit_flags)
 {
@@ -385,11 +385,11 @@ void actor_pool_apply_radial_damage(
         actor_apply_damage(
             index,
             base_power,
-            component0,
-            component1,
-            component2,
-            component3,
-            component4,
+            cutting_damage,
+            striking_damage,
+            piercing_damage,
+            magic_damage,
+            fire_damage,
             damage_scale,
             hit_flags);
     }

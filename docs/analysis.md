@@ -11,8 +11,8 @@ python3 scripts/analyze.py static
 ```
 
 This builds the current source tree and runs all three analyzers using CMake's
-compilation database. New sources, including multiplayer sources, are picked up
-by the build. Choose one tool with `--tool clang`, `--tool tidy`, or
+compilation database. Sources are selected by the current CMake build.
+Choose one tool with `--tool clang`, `--tool tidy`, or
 `--tool cppcheck`; limit source paths with `--file src/audio/`. Use `--jobs` to
 bound parallel work. `--output` selects a separate report directory.
 
@@ -28,7 +28,7 @@ or unrelated build whose compiler flags you want to preserve.
 python3 scripts/analyze.py build address
 ASAN_OPTIONS=detect_stack_use_after_return=1:strict_string_checks=1:check_initialization_order=1 \
 UBSAN_OPTIONS=halt_on_error=1:print_stacktrace=1 \
-KF_DISC=/path/to/game.iso build/analysis/address/kings-field
+build/analysis/address/kings-field --data /path/to/verified/resources --language ja
 ```
 
 `address` combines ASan, UBSan, floating-point division checks and standard-library
@@ -82,14 +82,6 @@ restricted, LeakSanitizer may fail even for `kings-field --help`. Run in an
 environment that permits its process inspection, or explicitly set
 `ASAN_OPTIONS=detect_leaks=0` and use Valgrind for leaks. This disables only leak
 checking. The runner preserves your sanitizer environment options.
-
-## Scope for multiplayer
-
-Use the same checks on the multiplayer branch, then exercise its own protocol
-regressions. Disc-backed single-player runs do not validate network input. Test
-truncated messages, invalid IDs/counts/coordinates, size limits, disconnects and
-state transitions before accepting remote data into the game. Use TSan for shared
-state and parser fuzzing for malformed input; neither replaces semantic checks.
 
 ## Isolated codecs and fuzzing
 

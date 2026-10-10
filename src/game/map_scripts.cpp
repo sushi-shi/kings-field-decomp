@@ -51,7 +51,7 @@ enum {
     MAP_WEAPON_TRANSFORM_HOLD_UPDATES = 40,
     MAP_WEAPON_TRANSFORM_SWAP_COUNTDOWN = 20,
     MAP_SHOP_SEQUENCE_INDEX = 2,
-    MAP_FLOOR3_DIALOGUE_DOOR_LINK = 0x37
+    MAP_FLOOR3_DIALOGUE_DOOR_LINK = 55
 };
 
 enum {
@@ -253,9 +253,9 @@ void map_floor2_event_transfer_fade(void)
 
     saved = game_graphics_runtime.map_event_light_matrix;
 
-    for (blend = 0; blend < KF_FIXED12_ONE + 1; blend += MAP_TRANSFER_FADE_IN_STEP) {
+    for (blend = 0; blend <= KF_FIXED12_ONE; blend += MAP_TRANSFER_FADE_IN_STEP) {
         lighting_set_color_matrix(game_graphics_runtime.render_state, &color_matrix_table[kf_enum_encode<s32>(KF_GAME_COLOR_DEFAULT)], &color_matrix_table[kf_enum_encode<s32>(KF_GAME_COLOR_WHITE)], blend);
-        if (blend >= KF_FIXED12_ONE / 4 + 1) {
+        if (blend > KF_FIXED12_ONE / 4) {
             map_runtime_state.events[KF_FLOOR2_REVEAL_EVENT].reference_position.vy -= MAP_TRANSFER_RISE_STEP;
             map_runtime_state.events[KF_FLOOR2_REVEAL_EVENT].rotation.vy += MAP_TRANSFER_YAW_STEP;
         } else {
@@ -363,7 +363,7 @@ void map_floor5_weapon_transform_cutscene(void)
         case MAP_WEAPON_TRANSFORM_SPIN_UP:
             sword->rotation.vy += spin;
             if (hold != 0) {
-                hold -= 1;
+                hold--;
                 if (hold == 1) {
                     phase = MAP_WEAPON_TRANSFORM_SPIN_DOWN;
                 } else if (hold == MAP_WEAPON_TRANSFORM_SWAP_COUNTDOWN) {

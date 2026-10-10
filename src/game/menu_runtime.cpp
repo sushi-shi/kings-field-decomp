@@ -834,7 +834,8 @@ void menu_draw_status_summary(void)
 
 enum {
     STATUS_SUMMARY_ROW_STEP = 16,
-    STATUS_COMPONENT_ROW_STEP = 14
+    STATUS_COMPONENT_ROW_STEP = 14,
+    STATUS_COMPONENT_SECTION_GAP = 30
 };
 
 enum {
@@ -958,7 +959,7 @@ void menu_draw_status_details(void)
         menu_draw_vital_fraction(text, player_state.vitals.current_mp,
             player_state.vitals.maximum_mp, MENU_STATS_VITAL_DIGITS);
 
-        text.position.x = 0x3f;
+        text.position.x = 63;
         text.glyphs.codes[0] = MENU_TEXT_BLANK;
         text.glyphs.codes[1] = MENU_TEXT_BLANK;
         text.glyphs.codes[2] = MENU_TEXT_BLANK;
@@ -1017,7 +1018,7 @@ void menu_draw_status_details(void)
         menu_draw_number(&menu_resources().assets.number_atlas, &text);
     }
     text.position.x = 0xb5;
-    text.position.y = 0x1e;
+    text.position.y = 30;
     text.glyphs = menu_label(MenuLabel::Attack);
     menu_draw_string(&menu_resources().assets.glyph_atlas, &text);
 
@@ -1072,7 +1073,7 @@ void menu_draw_status_details(void)
     menu_draw_string(&menu_resources().assets.glyph_atlas, &text);
 
     text.position.x = 0xfb;
-    text.position.y = 0x2c;
+    text.position.y = 44;
     menu_format_number(player_state.cutting_attack, MENU_STATS_VALUE_DIGITS, KF_FORMAT_PAD_SPACES, text.glyphs.codes);
     menu_draw_number(&menu_resources().assets.number_atlas, &text);
     text.position.y += STATUS_COMPONENT_ROW_STEP;
@@ -1087,7 +1088,7 @@ void menu_draw_status_details(void)
     text.position.y += STATUS_COMPONENT_ROW_STEP;
     menu_format_number(player_state.fire_attack, MENU_STATS_VALUE_DIGITS, KF_FORMAT_PAD_SPACES, text.glyphs.codes);
     menu_draw_number(&menu_resources().assets.number_atlas, &text);
-    text.position.y += 0x1e;
+    text.position.y += STATUS_COMPONENT_SECTION_GAP;
     menu_format_number(player_state.cutting_defense, MENU_STATS_VALUE_DIGITS, KF_FORMAT_PAD_SPACES, text.glyphs.codes);
     menu_draw_number(&menu_resources().assets.number_atlas, &text);
     text.position.y += STATUS_COMPONENT_ROW_STEP;
@@ -1220,6 +1221,7 @@ enum {
     MENU_SAVE_SLOT0_QUAD = 2,
     MENU_SAVE_SLOT1_QUAD = 3,
     MENU_SAVE_SLOT2_QUAD = 4,
+    MENU_SAVE_SUMMARY_FIRST_Y = 30,
     MENU_SAVE_SUMMARY_ROW_HEIGHT = 65,
     MENU_SAVE_SUMMARY_LINE_HEIGHT = 14,
     MENU_SAVE_SUMMARY_LABEL_X = 181,
@@ -1334,7 +1336,7 @@ void menu_draw_save_slots(std::span<const KfSaveSlotSummary> summaries, KfSaveSl
     }
 
     for (i = 0; i < KF_SAVE_SLOT_COUNT; i++) {
-        text.position.y = i * MENU_SAVE_SUMMARY_ROW_HEIGHT + 30;
+        text.position.y = i * MENU_SAVE_SUMMARY_ROW_HEIGHT + MENU_SAVE_SUMMARY_FIRST_Y;
         if (summaries[i].state == KfSaveSlotState::Damaged ||
                 summaries[i].state == KfSaveSlotState::Unavailable) {
             // A damaged/unreadable slot is not empty. Keep it selectable for
@@ -1762,8 +1764,8 @@ void menu_draw_pickup_preview(KfObjectId item_id)
     kf::matrix_multiply_rotation(light_source, rotation, light_result);
     menu_render_item_model(&light_result, &rotation);
 
-    string.position.x = 0x80;
-    string.position.y = 0x24;
+    string.position.x = MENU_PICKUP_NAME_X;
+    string.position.y = MENU_ITEM_PREVIEW_NAME_Y;
     string.glyphs = menu_resources().items[kf_enum_encode<s32>(item_id)];
     menu_draw_string(&menu_resources().assets.glyph_atlas, &string);
 
@@ -1887,8 +1889,8 @@ void menu_list_init(KfMenuList *list, KfMenuWindowKind window_kind, s32 title_ro
     list->title_position = {12, 19};
     list->title_window = window_kind;
     list->title_row = title_row;
-    list->list_x = 0x16;
-    list->list_y = 0x26;
+    list->list_x = 22;
+    list->list_y = 38;
     list->entry_count = 0;
     list->visible_rows = MENU_LIST_DEFAULT_VISIBLE_ROWS;
     list->scroll_offset = 0;
@@ -1898,7 +1900,7 @@ void menu_list_init(KfMenuList *list, KfMenuWindowKind window_kind, s32 title_ro
 
 void menu_format_number(s32 value, s32 digit_count, KfFormatPaddingMode padding_mode, std::span<s16> out)
 {
-    s32 i = 0;
+    s32 i;
     s32 blank;
 
     blank = (padding_mode == KF_FORMAT_PAD_SPACES) ? MENU_NUMBER_BLANK : 0;

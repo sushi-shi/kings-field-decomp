@@ -421,7 +421,7 @@ s32 player_move_horizontal(s32 heading, s32 distance)
                     player_state.camera_position.vx += half;
                 }
             } else if (type == KF_MAP_CELL_SUM_LE_SIZE) {
-                if (remainder_z + remainder_x >= KF_MAP_TILE_SIZE + 1) {
+                if (remainder_z + remainder_x > KF_MAP_TILE_SIZE) {
                     half = (remainder_z + remainder_x - KF_MAP_TILE_SIZE) / 2;
                     player_state.camera_position.vz -= half;
                     player_state.camera_position.vx -= half;

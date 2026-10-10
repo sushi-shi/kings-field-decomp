@@ -6,8 +6,8 @@
 #include <kf/lib/null.h>
 
 enum {
-    LIGHTING_COLOR_BLEND_STEP = 0x400,
-    VITAL_RESTORE_COLOR_LEVEL = 0xfff
+    LIGHTING_COLOR_BLEND_STEP = KF_FIXED12_ONE / 4,
+    VITAL_RESTORE_COLOR_LEVEL = 4095
 };
 
 void lighting_transition_color_matrix(const MATRIX *from, const MATRIX *to)

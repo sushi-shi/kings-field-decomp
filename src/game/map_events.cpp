@@ -118,14 +118,8 @@ void map_event_pool_update(void)
         }
     }
 
-    {
-        u16 *gate = &map_runtime_state.dialogue_advance_gate;
-        u16 current = *gate;
-
-        *gate = current - 1;
-        if (current == 0) {
-            *gate = KF_DIALOGUE_GATE_RELOAD;
-        }
+    if (map_runtime_state.dialogue_advance_gate-- == 0) {
+        map_runtime_state.dialogue_advance_gate = KF_DIALOGUE_GATE_RELOAD;
     }
 
     if (map_runtime_state.ambient_script_countdown-- == 0) {
